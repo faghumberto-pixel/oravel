@@ -6,30 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('ativos', function (Blueprint $table) {
+        Schema::create('assets', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('tenant_id'); // Obrigatório
-            $table->string('nome');
-            $table->string('codigo')->unique();
-            // Adicione outros campos relevantes para um ativo aqui
+            $table->uuid('tenant_id');
+            $table->string('name');
+            $table->string('tag')->unique();
+            $table->string('patrimonio')->nullable();
+            $table->text('description')->nullable(); // Adicionado para evitar o erro de coluna
+            $table->string('serial_number')->nullable();
+            $table->string('status');
+            $table->string('criticality')->default('medium'); // Definido um padrão para evitar erros em novos cadastros
+            $table->foreignUuid('current_location_id')->nullable()->constrained('locations'); // Tornar nullable temporariamente para facilitar o seeding
             $table->timestamps();
-
-            // Adicionando a chave estrangeira para garantir a integridade no nível do banco.
-            // Assumindo que você terá uma tabela 'tenants'. Se não tiver ainda, pode comentar esta linha.
-            // $table->foreign('tenant_id')->references('id')->on('tenants')->onDelete('cascade');
+            $table->softDeletes();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('ativos');
+        Schema::dropIfExists('assets');
     }
 };

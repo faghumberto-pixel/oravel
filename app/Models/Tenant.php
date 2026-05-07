@@ -5,33 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Tenant extends Model
 {
     use HasFactory, HasUuids;
 
-    /**
-     * Indica que os IDs não são auto-incremento.
-     *
-     * @var bool
-     */
     public $incrementing = false;
-
-    /**
-     * O tipo da chave primária.
-     *
-     * @var string
-     */
     protected $keyType = 'string';
 
-    /**
-     * Os atributos que podem ser atribuídos em massa.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'nome'
-    ];
+    protected $fillable = ['id', 'name', 'slug'];
 
-    // Um Tenant não pertence a outro Tenant, então ele não usa nosso Trait BelongsToTenant.
+    // Este método é chamado automaticamente pelo Laravel antes de salvar
+    protected static function booted()
+    {
+        static::creating(function ($tenant) {
+            if (empty($tenant->slug)) {
+                $tenant->slug = Str::slug($tenant->name);
+            }
+        });
+    }
 }

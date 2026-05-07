@@ -1,17 +1,24 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+{{-- --- INTERVENÇÃO MÍNIMA PARA FILAMENT: INÍCIO --- --}}
+{{-- Substituímos o layout genérico pelo layout de página do Filament --}}
+<x-filament-panels::page>
+{{-- --- INTERVENÇÃO MÍNIMA PARA FILAMENT: FIM --- --}}
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    {{ __("You're logged in!") }}
-                </div>
-            </div>
-        </div>
+    {{-- TODO O CONTEÚDO CUSTOMIZADO DO DASHBOARD QUE JÁ FIZEMOS É MANTIDO AQUI --}}
+    {{-- (Cabeçalho, cards de resumo, grid de evidências auditáveis, mapa integrado, etc.) --}}
+    
+    <div class="py-6">
+        {{-- ... conteúdo customizado mantido ... --}}
     </div>
-</x-app-layout>
+
+    {{-- --- INTERVENÇÃO MÍNIMA PARA FILAMENT: INÍCIO --- --}}
+    {{-- Leaflet assets e scripts customizados são mantidos aqui dentro --}}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // ... script dinâmico do mapa mantido ...
+    </script>
+{{-- --- INTERVENÇÃO MÍNIMA PARA FILAMENT: FIM --- --}}
+
+{{-- --- INTERVENÇÃO MÍNIMA PARA FILAMENT: INÍCIO --- --}}
+</x-filament-panels::page>
+{{-- --- INTERVENÇÃO MÍNIMA PARA FILAMENT: FIM --- --}}

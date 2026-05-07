@@ -5,25 +5,26 @@ namespace App\Models\Scopes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TenantScope implements Scope
 {
     public function apply(Builder $builder, Model $model): void
     {
-        // 1. Em comandos Artisan ou Migrations, nunca filtrar.
-        if (App::runningInConsole()) {
-            return;
-        }
+        // Se estivermos em um ambiente de comando (CLI), não filtra
+        if (app()->runningInConsole()) return;
 
-        // 2. CRÍTICO: Se for Filament/Livewire (requisição interna), 
-        // ou se não tivermos sessão ainda, saia imediatamente.
-        if (Request::hasHeader('x-livewire') || !Request::hasSession() || !session()->has('tenant_id')) {
-            return;
-        }
+        $user = Auth::user();
+        
+        // Se não houver usuário ou for admin, não aplica filtro
+        if (!$user || $user->hasRole('admin')) return;
 
-        // 3. Aplica o filtro de segurança somente se tudo estiver validado.
-        $builder->where('tenant_id', session('tenant_id'));
+        // CORREÇÃO: Usando 'tenant_id' para corresponder ao seu banco de dados real
+        $builder->where('tenant_id', $user->tenant_id);
+
+        // Se for técnico, filtra por ele
+        if ($user->hasRole('Técnico de Manutenção Mecânica')) {
+            $builder->where('technician_id', $user->id);
+        }
     }
 }

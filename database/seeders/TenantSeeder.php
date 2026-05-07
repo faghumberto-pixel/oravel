@@ -18,7 +18,6 @@ class TenantSeeder extends Seeder
         User::query()->delete();
         Tenant::query()->delete();
 
-        // Dados fictícios baseados no ecossistema de Campinas
         $tenantsData = [
             [
                 'name' => 'Campinas Tech Solutions', 
@@ -41,13 +40,11 @@ class TenantSeeder extends Seeder
         ];
 
         foreach ($tenantsData as $data) {
-            // Cria o Tenant
             $tenant = Tenant::create([
                 'name' => $data['name'],
                 'slug' => $data['slug'],
             ]);
 
-            // Cria o Usuário Administrador do Tenant
             User::create([
                 'name' => $data['admin']['name'],
                 'email' => $data['admin']['email'],
@@ -56,13 +53,14 @@ class TenantSeeder extends Seeder
                 'email_verified_at' => now(),
             ]);
 
-            // Cria os Assets vinculados ao Tenant
             foreach ($data['assets'] as $assetData) {
                 Asset::create([
                     'name' => $assetData['name'],
                     'description' => 'Ativo da unidade ' . $data['name'],
+                    'tag' => $assetData['patrimonio'], // Obrigatório
                     'patrimonio' => $assetData['patrimonio'],
                     'status' => $assetData['status'],
+                    'criticality' => 'medium', // Valor padrão obrigatório para o banco
                     'tenant_id' => $tenant->id,
                 ]);
             }
