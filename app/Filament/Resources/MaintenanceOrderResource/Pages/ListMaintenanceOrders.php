@@ -13,7 +13,10 @@ class ListMaintenanceOrders extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->label('Nova Ordem de Serviço'),
+            // ADIÇÃO DO BOTÃO CRIAR NO TOPO
+            Actions\CreateAction::make()
+                ->label('Nova Ordem de Serviço')
+                ->icon('heroicon-m-plus'),
         ];
     }
 

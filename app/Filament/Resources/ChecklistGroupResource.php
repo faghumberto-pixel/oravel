@@ -12,7 +12,8 @@ use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 
 class ChecklistGroupResource extends Resource
-{
+{ 
+    protected static bool $shouldRegisterNavigation = false;
     // Define o model corretamente
     protected static ?string $model = ChecklistGroup::class;
 

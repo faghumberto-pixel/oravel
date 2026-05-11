@@ -17,6 +17,8 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Filament\Central\Widgets\SaaSStatsOverview;
+use App\Filament\Central\Widgets\RevenueChart;
 
 class CentralPanelProvider extends PanelProvider
 {
@@ -24,23 +26,28 @@ class CentralPanelProvider extends PanelProvider
     {
         return $panel
             ->id('central')
-            ->path('central') // Acesso via: seu-dominio.com/central
-            ->login() // Habilita login próprio para o dono
+            ->path('central') 
+            ->login() 
             ->colors([
-                'primary' => Color::Blue, // Cor Azul para diferenciar do Amber dos clientes
+                'primary' => Color::Blue, 
             ])
-            // Onde ficarão as telas de gestão de clientes (Tenants)
             ->discoverResources(in: app_path('Filament/Central/Resources'), for: 'App\\Filament\\Central\\Resources')
-            ->discoverPages(in: app_path('Filament/Central/Pages'), for: 'App\\Filament\\Central\\Pages')
+            
+            // 1. DESATIVAMOS A DESCOBERTA DE PÁGINAS (Para evitar o Dashboard customizado)
+            // ->discoverPages(in: app_path('Filament/Central/Pages'), for: 'App\\Filament\\Central\\Pages')
+            
             ->pages([
-                Pages\Dashboard::class,
+                Pages\Dashboard::class, 
             ])
-            // Onde ficarão os seus gráficos de faturamento e uso do SaaS
-            ->discoverWidgets(in: app_path('Filament/Central/Widgets'), for: 'App\\Filament\\Central\\Widgets')
+
+            // 2. DESATIVAMOS A DESCOBERTA AUTOMÁTICA DE WIDGETS
+            // Isso impede que o Filament "ache" os widgets de 6000 reais nas pastas
+            // ->discoverWidgets(in: app_path('Filament/Central/Widgets'), for: 'App\\Filament\\Central\\Widgets')
+
+            // 3. DEFINIMOS MANUALMENTE APENAS O QUE É REAL
             ->widgets([
-                // Widgets padrão comentados para limpar o topo do seu painel e dar espaço ao gráfico
-                // Widgets\AccountWidget::class,
-                // Widgets\FilamentInfoWidget::class,
+                SaaSStatsOverview::class,
+                RevenueChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -54,7 +61,7 @@ class CentralPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware([
-                Authenticate::class, // Garante que só usuários logados entrem
+                Authenticate::class,
             ]);
     }
 }

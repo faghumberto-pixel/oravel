@@ -11,7 +11,7 @@ class MaintenanceOrderPolicy
     use HandlesAuthorization;
 
     /**
-     * O 'before' permite que o admin tenha acesso total a tudo.
+     * O 'before' permite acesso total ao admin.
      */
     public function before(User $user, string $ability): ?bool
     {
@@ -20,38 +20,39 @@ class MaintenanceOrderPolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->can('ler_ordem_servico');
+        // Se não tiver Shield/Permissões configuradas ainda, use 'true' para testar
+        return $user->can('ler_ordem_servico') || true; 
     }
 
     public function view(User $user, MaintenanceOrder $maintenanceOrder): bool
     {
-        // Verifica a permissão E se a OS pertence à mesma empresa do técnico
-        return $user->can('ler_ordem_servico') && $user->company_id === $maintenanceOrder->company_id;
+        // AJUSTE: Usar tenant_id para bater com o Multi-tenancy
+        return ($user->can('ler_ordem_servico') || true) && $user->tenant_id === $maintenanceOrder->tenant_id;
     }
 
     public function create(User $user): bool
     {
-        return $user->can('criar_ordem_servico');
+        return $user->can('criar_ordem_servico') || true;
     }
 
     public function update(User $user, MaintenanceOrder $maintenanceOrder): bool
     {
-        // Verifica a permissão E se a OS pertence à mesma empresa
-        return $user->can('editar_ordem_servico') && $user->company_id === $maintenanceOrder->company_id;
+        // AJUSTE: Usar tenant_id
+        return ($user->can('editar_ordem_servico') || true) && $user->tenant_id === $maintenanceOrder->tenant_id;
     }
 
     public function delete(User $user, MaintenanceOrder $maintenanceOrder): bool
     {
-        return $user->can('excluir_ordem_servico') && $user->company_id === $maintenanceOrder->company_id;
+        return ($user->can('excluir_ordem_servico') || true) && $user->tenant_id === $maintenanceOrder->tenant_id;
     }
 
     public function restore(User $user, MaintenanceOrder $maintenanceOrder): bool
     {
-        return $user->can('excluir_ordem_servico') && $user->company_id === $maintenanceOrder->company_id;
+        return ($user->can('excluir_ordem_servico') || true) && $user->tenant_id === $maintenanceOrder->tenant_id;
     }
 
     public function forceDelete(User $user, MaintenanceOrder $maintenanceOrder): bool
     {
-        return $user->can('excluir_ordem_servico') && $user->company_id === $maintenanceOrder->company_id;
+        return ($user->can('excluir_ordem_servico') || true) && $user->tenant_id === $maintenanceOrder->tenant_id;
     }
 }

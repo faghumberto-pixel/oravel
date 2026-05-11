@@ -2,21 +2,25 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MaterialCategory extends Model
 {
-    use HasUuids;
+    use BelongsToTenant;
 
     protected $fillable = [
-        'name', 
-        'tenant_id'
+        'name',
+        'description',
+        'tenant_id', // Essencial estar aqui
     ];
 
-    public function materials(): HasMany
+    /**
+     * Relação obrigatória para o Multi-tenancy do Filament
+     */
+    public function tenant(): BelongsTo
     {
-        return $this->hasMany(Material::class, 'category_id');
+        return $this->belongsTo(Tenant::class);
     }
 }

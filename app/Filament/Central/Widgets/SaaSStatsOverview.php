@@ -8,41 +8,28 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class SaaSStatsOverview extends BaseWidget
 {
-    protected static ?int $sort = 1;
-    protected int | string | array $columnSpan = 'full';
-
     protected function getStats(): array
     {
-        $clientesAtivos = Tenant::whereIn('status', ['active', 'trial'])->count();
-        $mrrTotal = Tenant::where('status', 'active')->sum('mrr_value');
-        $novosEsteMes = Tenant::whereMonth('created_at', now()->month)->count();
-        $churn = Tenant::where('status', 'canceled')->count();
-
-        // Cálculo básico do LTV Estimado
-        $ticketMedio = $clientesAtivos > 0 ? ($mrrTotal / $clientesAtivos) : 0;
-        $tempoDeVidaEstimadoEmMeses = 12; // Projeção inicial (pode ser ajustada no futuro)
-        $ltv = $ticketMedio * $tempoDeVidaEstimadoEmMeses;
+        // 1. Soma real do MRR de todos os clientes no banco
+        $mrrTotal = Tenant::sum('mrr_value');
+        
+        // 2. Contagem real de empresas
+        $totalEmpresas = Tenant::count();
 
         return [
-            Stat::make('Receita Recorrente (MRR)', 'R$ ' . number_format($mrrTotal, 2, ',', '.'))
-                ->description('Faturamento mensal')
-                ->descriptionIcon('heroicon-m-currency-dollar')
-                ->color('success'),
-                
-            Stat::make('LTV (Lifetime Value)', 'R$ ' . number_format($ltv, 2, ',', '.'))
-                ->description('Valor gerado por cliente')
+            Stat::make('Faturamento Mensal (MRR)', 'R$ ' . number_format($mrrTotal, 2, ',', '.'))
+                ->description('Receita real acumulada no Oravel')
                 ->descriptionIcon('heroicon-m-banknotes')
-                ->color('info'), // Cor azul claro para destacar
-                
-            Stat::make('Clientes Ativos', $clientesAtivos)
-                ->description($novosEsteMes . ' novos este mês')
-                ->descriptionIcon('heroicon-m-building-office-2')
+                ->color('success'),
+
+            Stat::make('Empresas Ativas', $totalEmpresas)
+                ->description('Total de clientes na plataforma')
+                ->descriptionIcon('heroicon-m-building-office')
                 ->color('primary'),
                 
-            Stat::make('Cancelamentos (Churn)', $churn)
-                ->description('Perdas registradas')
-                ->descriptionIcon('heroicon-m-arrow-trending-down')
-                ->color($churn > 0 ? 'danger' : 'success'),
+            Stat::make('Ticket Médio', 'R$ ' . number_format($totalEmpresas > 0 ? $mrrTotal / $totalEmpresas : 0, 2, ',', '.'))
+                ->description('Valor médio por contrato')
+                ->color('info'),
         ];
     }
 }

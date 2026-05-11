@@ -15,9 +15,13 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
 
 class RoleResource extends Resource
-{
+{ 
+    protected static bool $shouldRegisterNavigation = false;
     protected static ?string $model = Role::class;
     
+    // RESOLUÇÃO DO ERRO: Impede que o Filament procure por tenant_id nesta tabela
+    protected static bool $isScopedToTenant = false;
+
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
     protected static ?string $navigationGroup = 'GESTAO DE PESSOAS';
     protected static ?string $navigationLabel = 'Funções';
@@ -37,12 +41,10 @@ class RoleResource extends Resource
             Section::make('Permissões')
                 ->description('Selecione as ações permitidas para esta função.')
                 ->schema([
-                    // A MÁGICA ESTÁ AQUI: O relationship gerencia o sync() automaticamente.
-                    // O options() garante que o valor enviado seja o ID (int), resolvendo o erro 22P02.
                     CheckboxList::make('permissions')
-                        ->relationship('permissions', 'name') // Usa o nome na busca
+                        ->relationship('permissions', 'name')
                         ->label('Lista de Permissões')
-                        ->options(Permission::all()->pluck('name', 'id')) // Envia o ID para o banco
+                        ->options(Permission::all()->pluck('name', 'id'))
                         ->columns(3)
                         ->bulkToggleable()
                         ->searchable()

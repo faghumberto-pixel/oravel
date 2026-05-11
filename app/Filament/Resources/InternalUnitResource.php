@@ -13,7 +13,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class InternalUnitResource extends Resource
-{
+{ 
+    protected static bool $shouldRegisterNavigation = false;
     protected static ?string $model = InternalUnit::class;
     
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';

@@ -11,7 +11,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 
 class CompanyResource extends Resource
-{
+{ 
+    protected static bool $shouldRegisterNavigation = false;
     protected static ?string $model = Company::class;
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
     protected static ?string $navigationGroup = 'ADMINISTRACAO';

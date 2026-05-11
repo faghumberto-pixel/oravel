@@ -4,6 +4,7 @@ namespace App\Filament\Central\Resources;
 
 use App\Filament\Central\Resources\TenantResource\Pages;
 use App\Models\Tenant;
+use App\Models\Plan;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -11,6 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
 
 class TenantResource extends Resource
 {
@@ -21,40 +24,76 @@ class TenantResource extends Resource
     protected static ?string $modelLabel = 'Cliente';
     protected static ?string $pluralModelLabel = 'Clientes';
     
-    // Agrupa este item no menu lateral e o coloca na primeira posição
     protected static ?string $navigationGroup = 'Gestão SaaS';
     protected static ?int $navigationSort = 1;
+
+    /**
+     * Garante que o Filament use o UUID para encontrar o registro na URL
+     * Isso previne o erro 404 ao tentar editar um Tenant
+     */
+    public static function getRecordRouteKeyName(): ?string
+    {
+        return 'id';
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Nome da Empresa')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('slug')
-                    ->label('Slug')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('status')
-                    ->label('Status')
-                    ->options([
-                        'trial' => 'Trial (Teste)',
-                        'active' => 'Ativo',
-                        'past_due' => 'Inadimplente',
-                        'canceled' => 'Cancelado',
-                    ])
-                    ->default('trial')
-                    ->required(),
-                Forms\Components\TextInput::make('mrr_value')
-                    ->label('MRR (Mensalidade)')
-                    ->numeric()
-                    ->default(0.00)
-                    ->prefix('R$'),
-                Forms\Components\Toggle::make('onboarding_completed')
-                    ->label('Onboarding Concluído')
-                    ->default(false),
+                Section::make('Identificação')
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nome da Empresa')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('slug')
+                            ->label('Slug (URL)')
+                            ->required()
+                            ->maxLength(255),
+                    ]),
+
+                Section::make('Assinatura e Plano')
+                    ->columns(2)
+                    ->schema([
+                        Select::make('plan_id')
+                            ->label('Plano de Assinatura')
+                            ->relationship('plan', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->live()
+                            ->afterStateUpdated(function ($state, Forms\Set $set) {
+                                if ($state) {
+                                    $plan = Plan::find($state);
+                                    $set('mrr_value', $plan?->price ?? 0);
+                                }
+                            }),
+
+                        Forms\Components\Select::make('status')
+                            ->label('Status')
+                            ->options([
+                                'trial' => 'Trial (Teste)',
+                                'active' => 'Ativo',
+                                'past_due' => 'Inadimplente',
+                                'canceled' => 'Cancelado',
+                            ])
+                            ->default('trial')
+                            ->required(),
+
+                        Forms\Components\TextInput::make('mrr_value')
+                            ->label('Valor da Mensalidade (MRR)')
+                            ->numeric()
+                            ->default(0.00)
+                            ->prefix('R$')
+                            ->helperText('Valor real cobrado mensalmente deste cliente'),
+                    ]),
+
+                Section::make('Configurações')
+                    ->schema([
+                        Forms\Components\Toggle::make('onboarding_completed')
+                            ->label('Onboarding Concluído')
+                            ->default(false),
+                    ]),
             ]);
     }
 
@@ -66,9 +105,13 @@ class TenantResource extends Resource
                     ->label('Empresa Cliente')
                     ->searchable()
                     ->sortable(),
+                
+                TextColumn::make('plan.name')
+                    ->label('Plano')
+                    ->sortable(),
                     
                 TextColumn::make('status')
-                    ->label('Status da Conta')
+                    ->label('Status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'trial' => 'warning',
@@ -89,12 +132,14 @@ class TenantResource extends Resource
                     ->falseIcon('heroicon-o-x-circle'),
 
                 TextColumn::make('created_at')
-                    ->label('Cliente desde')
+                    ->label('Desde')
                     ->dateTime('d/m/Y')
                     ->sortable(),
             ])
             ->filters([
-                // Filtros futuros
+                Tables\Filters\SelectFilter::make('plan_id')
+                    ->label('Filtrar por Plano')
+                    ->relationship('plan', 'name'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

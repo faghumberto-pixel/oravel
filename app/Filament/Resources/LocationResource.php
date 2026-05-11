@@ -14,7 +14,8 @@ use Filament\Forms\Set;
 use Illuminate\Support\Facades\Http;
 
 class LocationResource extends Resource
-{
+{ 
+    protected static bool $shouldRegisterNavigation = false;
     protected static ?string $model = Location::class;
     protected static ?string $navigationGroup = 'ADMINISTRACAO';
     protected static ?string $navigationLabel = 'Localizações';

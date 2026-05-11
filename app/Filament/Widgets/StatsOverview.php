@@ -3,42 +3,71 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Asset;
+use App\Models\Contract;
+use App\Models\Client;
+use Filament\Facades\Filament;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Filament\Facades\Filament;
+use Illuminate\Support\Facades\Auth;
 
 class StatsOverview extends BaseWidget
 {
-    // Força o widget de estatísticas a ocupar a linha inteira no topo
-    protected int | string | array $columnSpan = 'full';
+    protected static ?int $sort = 1;
 
     protected function getStats(): array
     {
-        // O jeito correto e seguro de pegar o Tenant no Filament Multi-tenancy
+        // Pega o tenant atual da URL. Se for nulo (Painel Central), usa o tenant do usuário logado.
         $tenant = Filament::getTenant();
+        $tenantId = $tenant ? $tenant->id : Auth::user()->tenant_id;
 
-        // Segurança: Se não houver empresa selecionada, não renderiza os gráficos para evitar erro 500
-        if (!$tenant) {
-            return [];
+        // Se o usuário for da Oravel e estiver no painel central (sem tenant na URL), 
+        // talvez você queira mostrar o global. Caso contrário, filtramos pelo ID.
+        $queryAtivos = Asset::query();
+        $queryContratos = Contract::query();
+        $queryClientes = Client::query();
+
+        if ($tenantId) {
+            $queryAtivos->where('tenant_id', $tenantId);
+            $queryContratos->where('tenant_id', $tenantId);
+            $queryClientes->where('tenant_id', $tenantId);
         }
 
-        $tenantId = $tenant->id;
-        
+        // 1. Ocupação e Utilização
+        $totalAtivos = (clone $queryAtivos)->count();
+        $locados = (clone $queryAtivos)->where('status', 'Locado')->count();
+        $taxaUtilizacao = $totalAtivos > 0 ? round(($locados / $totalAtivos) * 100) : 0;
+
+        // 2. Receita Contratual e Ticket Médio
+        $contratosAtivos = (clone $queryContratos)->where('status', 'Ativo');
+        $receitaPrevista = $contratosAtivos->sum('price');
+        $totalContratosAtivos = $contratosAtivos->count();
+        $ticketMedio = $totalContratosAtivos > 0 ? $receitaPrevista / $totalContratosAtivos : 0;
+
+        // 3. Novos Clientes (Últimos 30 dias)
+        $novosClientes = (clone $queryClientes)
+            ->where('created_at', '>=', now()->subDays(30))
+            ->count();
+
         return [
-            Stat::make('Total de Ativos', Asset::where('tenant_id', $tenantId)->count())
-                ->description('Ativos cadastrados na frota')
-                ->descriptionIcon('heroicon-m-cube')
-                ->color('primary'),
-                
-            Stat::make('Em Manutenção', Asset::where('tenant_id', $tenantId)->where('status', 'manutencao')->count())
-                ->description('Ativos parados')
-                ->descriptionIcon('heroicon-m-wrench-screwdriver')
-                ->color('danger'),
-                
-            Stat::make('Disponibilidade', '91.8%') // Dica: Futuramente podemos calcular isso pelo histórico de OS
-                ->description('Eficiência da frota')
-                ->descriptionIcon('heroicon-m-chart-bar')
+            Stat::make('Receita Contratual Ativa', 'R$ ' . number_format($receitaPrevista, 2, ',', '.'))
+                ->description('Total em contratos vigentes')
+                ->descriptionIcon('heroicon-m-currency-dollar')
                 ->color('success'),
+
+            Stat::make('Ticket Médio', 'R$ ' . number_format($ticketMedio, 2, ',', '.'))
+                ->description('Valor médio por locação')
+                ->descriptionIcon('heroicon-m-banknotes')
+                ->color('info'),
+
+            Stat::make('Taxa de Utilização', "{$taxaUtilizacao}%")
+                ->description("{$locados} de {$totalAtivos} ativos locados")
+                ->descriptionIcon('heroicon-m-chart-bar-square')
+                ->color($taxaUtilizacao > 70 ? 'success' : 'warning'),
+
+            Stat::make('Novos Clientes', $novosClientes)
+                ->description('Conquistados nos últimos 30 dias')
+                ->descriptionIcon('heroicon-m-user-plus')
+                ->color('primary'),
         ];
     }
 }

@@ -41,40 +41,47 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         'hourly_rate' => 'decimal:2',
     ];
 
-    // --- FILAMENT TENANCY INTERFACE (ESSENCIAL PARA O SAAS) ---
+    // --- FILAMENT TENANCY INTERFACE ---
+    
+    /**
+     * Retorna os tenants aos quais o usuário tem acesso.
+     * Crucial para evitar o 403.
+     */
     public function getTenants(Panel $panel): \Illuminate\Support\Collection
     {
-        // Se for o dono do SaaS, ele lista e acessa TODAS as empresas
+        // Administradores do sistema (SaaS Owner)
         if (str_ends_with($this->email, '@oravel.com.br')) {
             return Tenant::all();
         }
 
-        // Clientes normais veem apenas a própria empresa
+        // Usuário comum: só acessa o próprio tenant vinculado
         return collect([$this->tenant])->filter();
     }
 
+    /**
+     * Valida se o usuário pode acessar um tenant específico.
+     * Se retornar false aqui, gera o erro 403 Forbidden.
+     */
     public function canAccessTenant(Model $tenant): bool
     {
-        // O dono do SaaS tem passe livre para entrar em qualquer tenant
+        // Dono do SaaS tem acesso irrestrito
         if (str_ends_with($this->email, '@oravel.com.br')) {
             return true;
         }
 
-        // Validação de segurança para clientes normais (isolamento)
-        return $this->tenant_id === $tenant->id;
+        // Bloqueio de segurança: o tenant da URL deve ser o mesmo do perfil do usuário
+        // Usamos (string) para garantir comparação correta de UUIDs
+        return (string) $this->tenant_id === (string) $tenant->id;
     }
-    // ----------------------------------------------------------
+    // ----------------------------------
 
     protected static function booted(): void
     {
-        // 1. Vínculo Automático: Novos usuários herdam o tenant de quem os criou
         static::creating(function ($user) {
             if (auth()->check() && auth()->user()->tenant_id) {
                 $user->tenant_id = $user->tenant_id ?? auth()->user()->tenant_id;
             }
         });
-
-        // O GLOBAL SCOPE FOI REMOVIDO DAQUI PARA ACABAR COM O LOOP INFINITO NO LOGIN
     }
 
     public function tenant(): BelongsTo
@@ -84,17 +91,16 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
     public function canAccessPanel(Panel $panel): bool
     {
-        // Regra do QG: O painel /central é exclusivo do proprietário
         if ($panel->getId() === 'central') {
             return str_ends_with($this->email, '@oravel.com.br');
         }
 
-        // O painel normal (/admin) é liberado para todos
         return true;
     }
 
     /**
-     * Ajuste para compatibilidade Spatie + Multi-tenancy
+     * Ajuste Spatie + Tenancy
+     * Removido scopes para evitar conflitos de permissão entre tenants
      */
     public function roles(): \Illuminate\Database\Eloquent\Relations\MorphToMany
     {

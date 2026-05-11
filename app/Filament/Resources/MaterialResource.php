@@ -15,7 +15,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth; // Importação necessária para o filtro de Tenant
 
 class MaterialResource extends Resource
-{
+{ 
+    protected static bool $shouldRegisterNavigation = false;
     protected static ?string $model = Material::class;
 
     protected static ?string $modelLabel = 'Material';

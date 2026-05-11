@@ -4,13 +4,10 @@ use App\Http\Controllers\Api\AssetController;
 use Illuminate\Support\Facades\Route;
 
 /*
+
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-|
-| Aqui registramos as rotas da nossa API. Estas rotas são
-| automaticamente prefixadas com /api.
-|
 */
 
 /**
@@ -22,11 +19,14 @@ Route::get('/health', function () {
 
 /**
  * Grupo de rotas protegidas que exigem autenticação.
- * Todas as rotas de negócio da Oravel devem estar aqui dentro.
  */
 Route::middleware('auth:sanctum')->group(function () {
-    // Usamos 'assets' (minúsculo e plural) conforme padrão RESTful
+    
+    // Endpoint para buscar o checklist padrão baseado na categoria
+    // Adicionado antes do resource para não entrar no conflito de IDs
+    Route::get('assets/default-checklist/{category}', [AssetController::class, 'getDefaultChecklist']);
+
+    // Rotas padrão REST (index, store, show, update, destroy)
     Route::apiResource('assets', AssetController::class);
     
-    // As próximas rotas de negócio (ex: order-services) serão adicionadas aqui
 });

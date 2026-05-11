@@ -11,7 +11,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 
 class MaterialCategoryResource extends Resource
-{
+{ 
+    protected static bool $shouldRegisterNavigation = false;
     protected static ?string $model = MaterialCategory::class;
     protected static ?string $navigationIcon = 'heroicon-o-bookmark';
     protected static ?string $navigationGroup = 'GESTAO DE ESTOQUE';

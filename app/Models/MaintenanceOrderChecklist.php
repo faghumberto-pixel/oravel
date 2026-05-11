@@ -14,16 +14,12 @@ class MaintenanceOrderChecklist extends Model
 
     protected $table = 'maintenance_order_checklists';
     
-    /**
-     * Campos preenchíveis.
-     * Incluído 'category' para evitar violações de restrição NOT NULL no banco.
-     */
     protected $fillable = [
         'maintenance_order_id', 
         'checklist_group_id', 
         'section', 
         'item_name', 
-        'category', // Adicionado
+        'category', 
         'is_completed', 
         'is_template', 
         'notes', 
@@ -36,24 +32,34 @@ class MaintenanceOrderChecklist extends Model
     ];
 
     /**
+     * RELAÇÃO OBRIGATÓRIA PARA O FILAMENT MULTI-TENANCY
+     * Isso resolve o erro: "model does not have a relationship named [tenant]"
+     */
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+
+    /**
      * Gatilhos de automação (booted).
      */
     protected static function booted(): void
     {
         static::creating(function (MaintenanceOrderChecklist $checklist) {
+            // Garante o vínculo com a empresa logada
             $checklist->tenant_id ??= Auth::user()?->tenant_id;
             
-            // Valores padrão de segurança
-            $checklist->item_name  ??= 'Tarefa sem descrição';
-            $checklist->section    ??= 'Geral';
-            $checklist->category   ??= 'Geral'; // Valor padrão para evitar nulos
+            // Valores padrão de segurança para evitar erros de banco de dados
+            $checklist->item_name    ??= 'Tarefa sem descrição';
+            $checklist->section      ??= 'Geral';
+            $checklist->category     ??= 'Geral'; 
             $checklist->is_completed ??= false;
             $checklist->is_template  ??= false; 
         });
     }
 
     /**
-     * RELAÇÕES
+     * OUTRAS RELAÇÕES
      */
 
     public function group(): BelongsTo

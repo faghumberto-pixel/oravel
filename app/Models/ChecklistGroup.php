@@ -3,17 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ChecklistGroup extends Model
 {
-    use HasUuids;
+    // Adicione o tenant_id no fillable para permitir o salvamento
+    protected $fillable = ['name', 'tenant_id', 'description']; 
 
-    protected $fillable = ['name', 'tenant_id'];
-
-    public function checklists(): HasMany
+    /**
+     * ESSA É A RELAÇÃO QUE O FILAMENT ESTÁ COBRANDO:
+     */
+    public function tenant(): BelongsTo
     {
-        return $this->hasMany(MaintenanceOrderChecklist::class, 'checklist_group_id');
+        return $this->belongsTo(Tenant::class);
     }
 }

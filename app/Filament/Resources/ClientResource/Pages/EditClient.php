@@ -16,4 +16,12 @@ class EditClient extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    /**
+     * Redireciona de volta para a lista após editar, garantindo o contexto do Tenant.
+     */
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

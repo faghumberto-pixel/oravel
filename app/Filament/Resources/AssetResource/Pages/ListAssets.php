@@ -15,25 +15,20 @@ class ListAssets extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label('Novo Ativo'),
         ];
     }
 
-    /**
-     * --- INCLUSÃO MÍNIMA: Painel Analítico no Topo ---
-     * Renderiza os widgets de estatísticas e gráficos acima da tabela de ativos.
-     */
     protected function getHeaderWidgets(): array
     {
+        // Certifique-se de que estes widgets existem no diretório de Widgets
         return [
             AssetUtilizationStats::class,
             AssetStatusChart::class,
         ];
     }
 
-    /**
-     * Define o número de colunas para os widgets (2 colunas para ficarem lado a lado)
-     */
     public function getHeaderWidgetsColumns(): int | string | array
     {
         return 2;

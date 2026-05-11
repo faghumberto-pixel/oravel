@@ -5,7 +5,7 @@ namespace App\Filament\Resources\MaintenanceOrderResource\Widgets;
 use App\Models\Asset;
 use App\Models\CriticalityLevel;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Facades\Auth;
+use Filament\Facades\Filament;
 
 class CriticalityChart extends ChartWidget
 {
@@ -14,18 +14,26 @@ class CriticalityChart extends ChartWidget
 
     protected function getData(): array
     {
-        $tenantId = Auth::user()->tenant_id;
-        // Busca todos os níveis cadastrados para garantir que o D não seja ignorado
-        $levels = CriticalityLevel::where('tenant_id', $tenantId)->orderBy('code', 'asc')->get();
+        // Pega o ID do Tenant atual de forma segura
+        $tenantId = Filament::getTenant()->id;
+        
+        // Busca todos os níveis cadastrados para garantir que nenhum seja ignorado
+        $levels = CriticalityLevel::where('tenant_id', $tenantId)
+            ->orderBy('code', 'asc')
+            ->get();
         
         $data = [];
         $labels = [];
 
         foreach ($levels as $level) {
             $labels[] = "Nível " . $level->code;
-            // Contagem absoluta por ID de criticidade amarrada ao tenant
+            
+            /** * CORREÇÃO CRÍTICA:
+             * Alterado de 'criticality_level_id' para 'criticality_level'
+             * para bater com a coluna real do seu PostgreSQL.
+             */
             $data[] = Asset::where('tenant_id', $tenantId)
-                          ->where('criticality_level_id', $level->id)
+                          ->where('criticality_level', $level->id)
                           ->count();
         }
 
@@ -51,13 +59,20 @@ class CriticalityChart extends ChartWidget
     protected function getOptions(): array
     {
         return [
-            'plugins' => ['legend' => ['display' => false]],
+            'plugins' => [
+                'legend' => ['display' => false]
+            ],
             'scales' => [
                 'y' => [
                     'grid' => ['color' => '#334155'], 
-                    'ticks' => ['precision' => 0, 'color' => '#94a3b8']
+                    'ticks' => [
+                        'precision' => 0, 
+                        'color' => '#94a3b8'
+                    ]
                 ],
-                'x' => ['ticks' => ['color' => '#94a3b8']],
+                'x' => [
+                    'ticks' => ['color' => '#94a3b8']
+                ],
             ],
         ];
     }

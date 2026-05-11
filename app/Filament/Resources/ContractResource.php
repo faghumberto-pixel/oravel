@@ -19,7 +19,8 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Tables\Enums\FiltersLayout;
 
 class ContractResource extends Resource
-{
+{ 
+    protected static bool $shouldRegisterNavigation = false;
     protected static ?string $model = Contract::class;
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
     protected static ?string $navigationLabel = 'Contratos de Locação';

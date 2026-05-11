@@ -9,7 +9,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 
 class EditMaintenanceOrder extends EditRecord
@@ -24,7 +24,6 @@ class EditMaintenanceOrder extends EditRecord
                 ->label(fn () => $this->record->started_at ? 'Continuar Serviço' : 'Iniciar Serviço')
                 ->color('success')
                 ->icon('heroicon-o-play')
-                // Fica visível sempre, mas desabilita se NÃO estiver nestes status:
                 ->disabled(fn () => !in_array($this->record->status, ['Aberto', 'Pendente', 'Pausada', 'Reprogramado', 'Reprogramada']))
                 ->action(function () {
                     $data = [
@@ -51,7 +50,6 @@ class EditMaintenanceOrder extends EditRecord
                 ->label('Pausar')
                 ->color('warning')
                 ->icon('heroicon-o-pause')
-                // Desabilita se NÃO estiver em andamento
                 ->disabled(fn () => $this->record->status !== 'Em Andamento')
                 ->action(function () {
                     $secondsSinceStart = $this->record->last_timer_start 
@@ -77,7 +75,6 @@ class EditMaintenanceOrder extends EditRecord
                 ->label('Reprogramar')
                 ->color('info')
                 ->icon('heroicon-o-calendar')
-                // Permite clicar mesmo rodando
                 ->disabled(fn () => !in_array($this->record->status, ['Aberto', 'Pendente', 'Pausada', 'Em Andamento']))
                 ->form([
                     DateTimePicker::make('rescheduled_to')
@@ -111,7 +108,7 @@ class EditMaintenanceOrder extends EditRecord
                     $this->refreshFormData(['status', 'rescheduled_to', 'reschedule_reason']);
                 }),
 
-            // 4. BOTÃO TRANSFERIR
+            // 4. BOTÃO TRANSFERIR (Ajustado para Multi-tenancy)
             Actions\Action::make('transferir')
                 ->label('Transferir')
                 ->color('gray')
@@ -120,7 +117,8 @@ class EditMaintenanceOrder extends EditRecord
                 ->form([
                     Select::make('technician_id')
                         ->label('Transferir para qual Técnico?')
-                        ->options(User::where('tenant_id', Auth::user()->tenant_id)->pluck('name', 'id'))
+                        // CORREÇÃO: Usa o getTenant() para filtrar técnicos do cliente logado
+                        ->options(fn() => User::where('tenant_id', Filament::getTenant()->id)->pluck('name', 'id'))
                         ->required()
                         ->searchable(),
                     Textarea::make('transfer_reason')
@@ -153,7 +151,6 @@ class EditMaintenanceOrder extends EditRecord
                 ->label('Cancelar')
                 ->color('warning')
                 ->icon('heroicon-o-x-circle')
-                // Desabilita apenas se já estiver concluída ou cancelada
                 ->disabled(fn () => in_array($this->record->status, ['Concluída', 'Cancelado', 'Cancelada']))
                 ->requiresConfirmation()
                 ->modalHeading('Cancelar Ordem de Serviço?')
@@ -191,7 +188,6 @@ class EditMaintenanceOrder extends EditRecord
                 ->requiresConfirmation()
                 ->modalHeading('Concluir Ordem de Serviço?')
                 ->modalDescription('O tempo será totalizado e a OS será finalizada para faturamento/fechamento.')
-                // Desabilita se NÃO estiver em andamento ou pausada
                 ->disabled(fn () => !in_array($this->record->status, ['Em Andamento', 'Pausada']))
                 ->action(function () {
                     $secondsSinceStart = $this->record->last_timer_start 
