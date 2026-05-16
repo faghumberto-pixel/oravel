@@ -1,69 +1,60 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\AssetPublicController;
-use App\Models\Asset;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\MaintenanceOrderController;
-// --- INTERVENÇÃO MÍNIMA: IMPORTAÇÃO ADICIONAL PARA DEMO (SEM EXCLUSÃO) ---
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RentalDemoController;
-// --- ADITIVO: IMPORTAÇÃO DO MOTOR DE PDF (DOSSIÊ) ---
-use App\Http\Controllers\MaintenanceOrderDossieController;
-
-// Rota para a Demonstração da "Gestão de Locação"
-// Em produção, seria algo como /gestao-locacao/dashboard, mas para a demo
-// vamos focar na visualização de uma OS específica para mostrar as evidências.
-// Esta rota genérica original foi mantida intacta.
-Route::get('/gestao-locacao/os/{order}', [MaintenanceOrderController::class, 'showDashboardDemo'])
-     ->name('gestao-locacao.os.show');
+use Filament\Facades\Filament;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes (Oravel)
+| Web Routes
 |--------------------------------------------------------------------------
-*/
+|
+| Aqui é onde você pode registrar as rotas web para sua aplicação.
+|
+ */
 
-// Rota de leitura pública (QR Code)
-Route::get('/scan/{asset}', [AssetPublicController::class, 'show'])->name('asset.scan');
+// Rota raiz (Adapte se você tiver uma landing page ou tela de login direta)
+Route::get('/', function () {
+    return redirect()->to('/admin');
+});
 
-// Rota pública para impressão da etiqueta QR Code
-Route::get('/scan/{asset}/print', function ($uuid) {
-    $asset = Asset::findOrFail($uuid);
-    return view('assets.print-qr', compact('asset'));
-})->name('asset.print');
-
-// Rotas protegidas
+// ==========================================
+// ROTAS PROTEGIDAS POR AUTENTICAÇÃO
+// ==========================================
 Route::middleware(['auth', 'verified'])->group(function () {
     
-    // REDIRECIONAMENTO PARA O FILAMENT: 
-    // Em vez de carregar a view dashboard.blade.php, enviamos para o painel administrativo
+    /**
+     * 🛡️ REDIRECIONAMENTO INTELIGENTE FILAMENT MULTITENANT (Oravel Premium)
+     * Captura o contexto do tenant usando a fachada do Filament para evitar BadMethodCallException
+     */
     Route::get('/dashboard', function () {
-        return redirect()->route('filament.admin.pages.dashboard');
+        $user = auth()->user();
+        
+        // Resolve o Tenant buscando primeiro propriedades diretas ou os métodos do painel do Filament
+        $tenantSlug = $user->latest_tenant_slug 
+            ?? Filament::getUserTenants($user)->first()?->slug
+            ?? Filament::getUserTenants($user)->first()?->id
+            ?? $user->tenant?->slug 
+            ?? $user->tenant_id;
+
+        // Se o usuário não tiver nenhum vínculo de tenant mapeado, joga para a raiz do painel administrativo
+        if (! $tenantSlug) {
+            return redirect()->to('/admin');
+        }
+
+        return redirect()->route('filament.admin.pages.dashboard', ['tenant' => $tenantSlug]);
     })->name('dashboard');
 
-    // Rotas de perfil mantidas
+    // Rotas de gerenciamento de perfil padrão
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // --- CORREÇÃO CIRÚRGICA: INÍCIO (Issue #RouteNotFound na Demo) ---
-    // Rota Missing: Linka o botão do Filament à view minimalista simulada.
-    // (Puramente aditivo, focado na demo presencial).
+    // Rota cirúrgica do laudo minimalista preservada
     Route::get('/locacao/laudo-minimalista/{order}', [RentalDemoController::class, 'laudoMinimalista'])
          ->name('rental-demo.laudo-minimalista');
-    // --- CORREÇÃO CIRÚRGICA: FIM ---
-
-    // --- ADITIVO: Rota de Geração do Laudo/Dossiê em PDF ---
-    // Esta rota conecta o botão "Imprimir Laudo" do Filament ao Controller de PDF.
-    Route::get('/maintenance-orders/{record}/dossie', [MaintenanceOrderDossieController::class, 'download'])
-         ->name('maintenance-orders.dossie.pdf');
 });
 
-// Autenticação
+// Autenticação padrão do Laravel (se utilizado em paralelo ao Filament)
 require __DIR__.'/auth.php';
-
-// Rota raiz redirecionando para o ambiente de gestão
-Route::get('/', function () {
-    return redirect()->route('dashboard');
-});

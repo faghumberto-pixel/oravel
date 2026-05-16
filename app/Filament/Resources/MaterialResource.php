@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MaterialResource\Pages;
-use App\Filament\Resources\MaterialResource\RelationManagers;
 use App\Models\Material;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -11,25 +10,25 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Auth; // Importação necessária para o filtro de Tenant
 
 class MaterialResource extends Resource
 { 
-    protected static bool $shouldRegisterNavigation = false;
+    protected static bool $shouldRegisterNavigation = true; // Alterado para true para aparecer no menu
     protected static ?string $model = Material::class;
 
     protected static ?string $modelLabel = 'Material';
     protected static ?string $pluralModelLabel = 'Materiais';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'GESTAO DE ESTOQUE';
+    protected static ?string $navigationIcon = 'heroicon-o-beaker'; // Ícone mais sugestivo para materiais
+    protected static ?string $navigationGroup = 'GESTÃO DE MATERIAIS';
 
-    // CORREÇÃO: Filtro de Tenant isolado para Materiais (Remove o erro de technician_id)
+    /**
+     * AJUSTE: Removido o where manual. 
+     * O Filament agora usa a relação tenant() do Model Material automaticamente.
+     */
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->where('tenant_id', Auth::user()->tenant_id);
+        return parent::getEloquentQuery();
     }
 
     public static function form(Form $form): Form
@@ -144,9 +143,7 @@ class MaterialResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

@@ -32,11 +32,14 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->brandName('ORAVEL') 
             ->tenant(Tenant::class)
             ->tenantRegistration(RegisterTenant::class)
             ->colors(['primary' => Color::Amber])
 
-            // 1. Definição da Ordem dos Grupos de Navegação
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('4s')
+
             ->navigationGroups([
                 NavigationGroup::make('GESTÃO COMERCIAL'),
                 NavigationGroup::make('GESTÃO DE ATIVOS'),
@@ -47,56 +50,62 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('CONFIGURAÇÕES GERAIS')->collapsed(),
             ])
 
-            // 2. Itens de Menu Manuais
             ->navigationItems([
+                // QUADRO DE PÁTIO (KANBAN) - VISÃO ESTRATÉGICA
+                NavigationItem::make('Quadro de Pátio (Kanban)')
+                    ->group('GESTÃO DE MANUTENÇÃO')
+                    ->icon('heroicon-o-squares-2x2')
+                    ->sort(1)
+                    ->url(fn () => url('/admin/' . \Filament\Facades\Filament::getTenant()->id . '/maintenance-kanban')),
+
                 NavigationItem::make('Clientes')
                     ->group('GESTÃO COMERCIAL')
                     ->icon('heroicon-o-user-group')
-                    ->url(fn () => \App\Filament\Resources\ClientResource::getUrl('index')),
+                    ->url(fn () => url('/admin/' . \Filament\Facades\Filament::getTenant()->id . '/clients')),
                 
                 NavigationItem::make('Contratos de Locação')
                     ->group('GESTÃO COMERCIAL')
                     ->icon('heroicon-o-document-text')
-                    ->url(fn () => \App\Filament\Resources\ContractResource::getUrl('index')),
+                    ->url(fn () => url('/admin/' . \Filament\Facades\Filament::getTenant()->id . '/contracts')),
 
                 NavigationItem::make('Ativos')
                     ->group('GESTÃO DE ATIVOS')
                     ->icon('heroicon-o-truck')
-                    ->url(fn () => \App\Filament\Resources\AssetResource::getUrl('index')),
+                    ->url(fn () => url('/admin/' . \Filament\Facades\Filament::getTenant()->id . '/assets')),
 
                 NavigationItem::make('Gestão de Checklist')
                     ->group('GESTÃO DE MANUTENÇÃO')
                     ->icon('heroicon-o-clipboard-document-check')
-                    ->url(fn () => \App\Filament\Resources\ChecklistTemplateResource::getUrl('index')),
+                    ->url(fn () => url('/admin/' . \Filament\Facades\Filament::getTenant()->id . '/checklist-templates')),
                 
                 NavigationItem::make('Ordens de Serviço')
                     ->group('GESTÃO DE MANUTENÇÃO')
                     ->icon('heroicon-o-wrench-screwdriver')
-                    ->url(fn () => \App\Filament\Resources\MaintenanceOrderResource::getUrl('index')),
+                    ->url(fn () => url('/admin/' . \Filament\Facades\Filament::getTenant()->id . '/maintenance-orders')),
 
                 NavigationItem::make('Materiais')
                     ->group('GESTÃO DE MATERIAIS')
                     ->icon('heroicon-o-beaker')
-                    ->url(fn () => \App\Filament\Resources\MaterialResource::getUrl('index')),
+                    ->url(fn () => url('/admin/' . \Filament\Facades\Filament::getTenant()->id . '/materials')),
                 
                 NavigationItem::make('Funcionários')
                     ->group('GESTÃO DE PESSOAS')
                     ->icon('heroicon-o-identification')
-                    ->url(fn () => \App\Filament\Resources\UserResource::getUrl('index')),
+                    ->url(fn () => url('/admin/' . \Filament\Facades\Filament::getTenant()->id . '/users')),
             ])
 
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             
-            // O discoverWidgets permanece removido para manter o controle total e evitar erros de cache
             ->pages([
                 Pages\Dashboard::class,
+                \App\Filament\Pages\MaintenanceKanban::class,
+                \App\Filament\Pages\Chat::class,
             ])
 
-            // 3. Registro Explícito de Widgets (Incluindo o novo AssetUtilizationStats)
             ->widgets([
                 \App\Filament\Widgets\StatsOverview::class,
-                \App\Filament\Widgets\AssetUtilizationStats::class, // Widget recriado e funcional
+                \App\Filament\Widgets\AssetUtilizationStats::class,
                 \App\Filament\Widgets\OperationalAlerts::class,
                 \App\Filament\Widgets\FleetStatusChart::class,
                 \App\Filament\Widgets\AssetStatusChart::class,
@@ -122,12 +131,26 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::TOPBAR_START,
                 fn (): string => Blade::render('
-                    <div class="flex items-center px-4 h-12">
-                        <span class="text-sm font-black text-amber-500 uppercase tracking-tighter mr-4">
-                            ORAVEL SYSTEM
+                    <div class="hidden lg:flex items-center gap-4 ml-4 text-sm font-medium">
+                        <span class="text-amber-500 font-black uppercase tracking-tighter mr-2">ORAVEL</span>
+                        <span class="text-gray-400">|</span>
+                        <span class="text-gray-500 dark:text-gray-400">
+                            Bem-vindo à <strong class="text-gray-900 dark:text-gray-100">{{ \Filament\Facades\Filament::getTenant()?->name }}</strong>
                         </span>
+                        <span class="text-gray-300 dark:text-gray-700">|</span>
+                        <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400 font-mono" 
+                             x-data="{ now: \'\', update() { 
+                                const d = new Date(); 
+                                this.now = d.toLocaleDateString(\'pt-BR\') + \' - \' + d.toLocaleTimeString(\'pt-BR\', {hour: \'2-digit\', minute:\'2-digit\', second:\'2-digit\'}) 
+                             } }" 
+                             x-init="update(); setInterval(() => update(), 1000)">
+                            <svg class="w-4 h-4 text-amber-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span x-text="now"></span>
+                        </div>
                     </div>
-                ')
+                '),
             );
     }
 }

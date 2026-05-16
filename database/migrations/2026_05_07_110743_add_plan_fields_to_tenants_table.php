@@ -6,43 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('tenants', function (Blueprint $table) {
-            // Só cria o plan_id se ele ainda não existir no banco
+            // Se a coluna ainda não existir, cria como UUID
             if (!Schema::hasColumn('tenants', 'plan_id')) {
-                $table->foreignId('plan_id')
-                    ->nullable()
-                    ->after('id')
-                    ->constrained('plans')
-                    ->nullOnDelete();
+                $table->foreignUuid('plan_id')->nullable()->constrained('plans')->onDelete('set null');
             }
-
-            // Só cria o next_billing_date se ele ainda não existir no banco
-            if (!Schema::hasColumn('tenants', 'next_billing_date')) {
-                $table->date('next_billing_date')
-                    ->nullable()
-                    ->after('name'); // Ajustado para garantir que fique em local seguro
+            
+            // Adicione aqui outros campos que a sua migration tentava criar (ex: trial_ends_at)
+            if (!Schema::hasColumn('tenants', 'trial_ends_at')) {
+                $table->timestamp('trial_ends_at')->nullable();
             }
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('tenants', function (Blueprint $table) {
-            if (Schema::hasColumn('tenants', 'plan_id')) {
-                $table->dropConstrainedForeignId('plan_id');
-            }
-            
-            if (Schema::hasColumn('tenants', 'next_billing_date')) {
-                $table->dropColumn('next_billing_date');
-            }
+            $table->dropForeign(['plan_id']);
+            $table->dropColumn(['plan_id', 'trial_ends_at']);
         });
     }
 };

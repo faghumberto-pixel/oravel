@@ -5,7 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
 
 class Department extends Model
 {
@@ -13,7 +15,7 @@ class Department extends Model
 
     protected $fillable = [
         'name',
-        'code',       // Adicionado: necessário para salvar o código (ex: MANUT001)
+        'code',       // Necessário para salvar o código (ex: MANUT001)
         'tenant_id'
     ];
 
@@ -32,8 +34,27 @@ class Department extends Model
         });
     }
 
+    /**
+     * Relacionamento com a Empresa (Tenant)
+     */
     public function tenant(): BelongsTo
     {
-        return $this->belongsTo(Tenant::class);
+        return $this->belongsTo(Tenant::class, 'tenant_id');
+    }
+
+    /**
+     * INTEGRADO: Retorna as Funções (Roles) vinculadas a este departamento
+     */
+    public function roles(): HasMany
+    {
+        return $this->hasMany(Role::class, 'department_id');
+    }
+
+    /**
+     * INTEGRADO: Retorna os Funcionários (Users) alocados neste departamento
+     */
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class, 'department_id');
     }
 }

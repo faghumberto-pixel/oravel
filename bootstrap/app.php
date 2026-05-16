@@ -11,7 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Nada aqui, deixe o padrão do Laravel 12
+        // Injeta o rastreador de presença na pilha web padrão do Laravel 12
+        $middleware->web(append: [
+            \App\Http\Middleware\UpdateUserLastSeen::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

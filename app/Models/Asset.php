@@ -148,9 +148,13 @@ class Asset extends Model
         ];
     }
 
-    public static function getDefaultChecklist(string $category): array
+    // CORREÇÃO: Adicionado "?" antes de string para aceitar null
+    public static function getDefaultChecklist(?string $category): array
     {
         $lista = [];
+
+        // CORREÇÃO: Fallback caso a categoria seja null ou vazia
+        $category = $category ?? 'default';
 
         $lista[] = ['item' => '--- 1. DOCUMENTAÇÃO E ADMINISTRATIVO ---', 'status' => true];
         $lista[] = ['item' => 'Contrato/Pedido de Compra validado', 'status' => true];

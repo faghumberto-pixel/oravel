@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('chat_rooms', function (Blueprint $table) {
+            if (!Schema::hasColumn('chat_rooms', 'maintenance_order_id')) {
+                // Como existem salas globais ou antigas, criamos como nullable amarrado à tabela de OS
+                $table->foreignUuid('maintenance_order_id')
+                    ->nullable()
+                    ->after('id')
+                    ->constrained('maintenance_orders') // Altera para o nome exato da tua tabela de OS se for diferente
+                    ->cascadeOnDelete();
+            }
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('chat_rooms', function (Blueprint $table) {
+            if (Schema::hasColumn('chat_rooms', 'maintenance_order_id')) {
+                $table->dropForeign(['maintenance_order_id']);
+                $table->dropColumn('maintenance_order_id');
+            }
+        });
+    }
+};
+

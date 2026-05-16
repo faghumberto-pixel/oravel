@@ -8,6 +8,7 @@ use App\Models\Asset;
 use App\Models\User;
 use App\Models\Client;
 use App\Models\Material;
+use App\Models\ChatRoom;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -20,16 +21,20 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 use Saade\FilamentAutograph\Forms\Components\SignaturePad;
+use App\Traits\HasMaintenanceStyles;
 
 class MaintenanceOrderResource extends Resource
-{ 
+{
+    use HasMaintenanceStyles;
+
     protected static bool $shouldRegisterNavigation = true;
     protected static ?string $model = MaintenanceOrder::class;
     protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
     protected static ?string $navigationLabel = 'Ordens de Serviço';
-    protected static ?string $navigationGroup = 'GESTAO DE MANUTENCAO'; 
-    protected static ?int $navigationSort = 2; 
+    protected static ?string $navigationGroup = 'GESTÃO DE MANUTENÇÃO';
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $tenantRelationshipName = 'maintenanceOrders';
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';
@@ -55,11 +60,8 @@ class MaintenanceOrderResource extends Resource
                 })->visible(fn ($record) => $record && $record->status === 'Em Andamento'),
 
             Forms\Components\Tabs::make('Fluxo Oravel')->tabs([
-                
-                // ABA 1: MOBILIZAÇÃO E DADOS GERAIS
                 Forms\Components\Tabs\Tab::make('Dados Gerais')->schema([
                     Forms\Components\Grid::make(2)->schema([
-                        
                         Forms\Components\Select::make('asset_id')
                             ->label('Ativo / QR Code')
                             ->placeholder('Bipe o código ou digite Pat/Série/Tag')
@@ -68,30 +70,31 @@ class MaintenanceOrderResource extends Resource
                             ->preload()
                             ->live()
                             ->getSearchResultsUsing(function (string $search) {
-                                $query = Asset::where('tenant_id', Filament::getTenant()->id);
+                                $tenant = Filament::getTenant();
+                                $tenantId = $tenant?->id;
+                                if (!$tenantId) return [];
 
-                                return $query->where(function ($q) use ($search) {
-                                    $q->where('name', 'like', "%{$search}%")
-                                      ->orWhere('patrimonio', 'like', "%{$search}%");
-
-                                    if (Schema::hasColumn('assets', 'serial_number')) {
-                                        $q->orWhere('serial_number', 'like', "%{$search}%");
-                                    }
-                                    if (Schema::hasColumn('assets', 'asset_tag')) {
-                                        $q->orWhere('asset_tag', 'like', "%{$search}%");
-                                    }
-                                })
-                                ->limit(50)
-                                ->get()
-                                ->mapWithKeys(fn ($asset) => [$asset->id => "{$asset->name} [Pat: {$asset->patrimonio}]"]);
+                                return Asset::where('tenant_id', $tenantId)
+                                    ->where(function ($q) use ($search) {
+                                        $q->where('name', 'like', "%{$search}%")
+                                          ->orWhere('patrimonio', 'like', "%{$search}%");
+                                        if (Schema::hasColumn('assets', 'serial_number')) {
+                                            $q->orWhere('serial_number', 'like', "%{$search}%");
+                                        }
+                                        if (Schema::hasColumn('assets', 'asset_tag')) {
+                                            $q->orWhere('asset_tag', 'like', "%{$search}%");
+                                        }
+                                    })
+                                    ->limit(50)
+                                    ->get()
+                                    ->mapWithKeys(fn ($asset) => [$asset->id => "{$asset->name} [Pat: {$asset->patrimonio}]"]);
                             })
                             ->getOptionLabelUsing(fn ($value): ?string => Asset::find($value)?->name)
                             ->afterStateUpdated(function ($state, Set $set, Get $get) {
                                 if ($state) {
                                     $asset = Asset::find($state);
                                     if ($asset) {
-                                        $set('checklists', Asset::getDefaultChecklist($asset->asset_category));
-                                        // Busca horímetro anterior para referência
+                                        $set('checklists', Asset::getDefaultChecklist($asset?->asset_category ?? 'default'));
                                         $set('horimetro_anterior', $asset->last_horimetro ?? 0);
                                     }
                                 }
@@ -109,12 +112,11 @@ class MaintenanceOrderResource extends Resource
                             ->afterStateUpdated(function ($state, Set $set, Get $get) {
                                 $asset = Asset::find($get('asset_id'));
                                 if ($asset) {
-                                    $set('checklists', Asset::getDefaultChecklist($asset->asset_category));
+                                    $set('checklists', Asset::getDefaultChecklist($asset?->asset_category ?? 'default'));
                                 }
                             }),
                     ]),
 
-                    // HORÍMETRO E COMBUSTÍVEL AGORA SEMPRE VISÍVEIS EM DADOS GERAIS
                     Forms\Components\Grid::make(3)->schema([
                         Forms\Components\TextInput::make('horimetro_anterior')
                             ->label('Hor. Anterior')
@@ -126,7 +128,7 @@ class MaintenanceOrderResource extends Resource
                         Forms\Components\TextInput::make('horimetro_entry')
                             ->label('Horímetro Atual')
                             ->numeric()
-                            ->default(0) // Evita erro Not Null
+                            ->default(0) 
                             ->required()
                             ->prefixIcon('heroicon-m-clock'),
                         
@@ -139,12 +141,18 @@ class MaintenanceOrderResource extends Resource
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\Select::make('technician_id')
                             ->label('Responsável Técnico')
-                            ->options(fn() => User::where('tenant_id', Filament::getTenant()->id)->pluck('name', 'id'))
+                            ->options(function() {
+                                $tenant = Filament::getTenant();
+                                return $tenant ? User::where('tenant_id', $tenant->id)->pluck('name', 'id') : [];
+                            })
                             ->required()->searchable(),
 
                         Forms\Components\Select::make('client_id')
                             ->label('Cliente / Localidade')
-                            ->relationship('client', 'name', fn(Builder $query) => $query->where('tenant_id', Filament::getTenant()->id))
+                            ->relationship('client', 'name', function(Builder $query) {
+                                $tenant = Filament::getTenant();
+                                return $tenant ? $query->where('tenant_id', $tenant->id) : $query;
+                            })
                             ->searchable(),
                     ]),
 
@@ -153,7 +161,6 @@ class MaintenanceOrderResource extends Resource
                         ->default('Aberto')->disabled()
                 ]),
 
-                // ABA 2: CHECKLIST / DOSSIÊ
                 Forms\Components\Tabs\Tab::make('Checklist / Dossiê')->schema([
                     Forms\Components\Repeater::make('checklists')
                         ->relationship('checklists')
@@ -182,24 +189,56 @@ class MaintenanceOrderResource extends Resource
                         ->columns(4),
                 ]),
 
-                // ABA 3: MATERIAIS
-                Forms\Components\Tabs\Tab::make('Materiais')->schema([
-                    Forms\Components\Repeater::make('materials')
-                        ->relationship('materials')
-                        ->schema([
-                            Forms\Components\Select::make('material_id')
-                                ->relationship('material', 'name', fn(Builder $query) => $query->where('tenant_id', Filament::getTenant()->id))
-                                ->required()->searchable()->live()
-                                ->afterStateUpdated(fn ($state, Set $set) => $set('unit_price', Material::find($state)?->price ?? 0)),
-                            Forms\Components\TextInput::make('quantity')->label('Qtd')->numeric()->default(1)->live(),
-                            Forms\Components\TextInput::make('unit_price')->label('Vlr Unit')->prefix('R$')->readOnly(),
-                        ])->columns(3),
-                ]),
+                Forms\Components\Tabs\Tab::make('Materiais')
+                    ->visible(fn (Get $get) => in_array($get('maintenance_type'), ['Preventiva', 'Corretiva']))
+                    ->schema([
+                        Forms\Components\Repeater::make('materials')
+                            ->relationship('materials')
+                            ->schema([
+                                Forms\Components\Select::make('material_id')
+                                    ->relationship('material', 'name', function(Builder $query) {
+                                        $tenant = Filament::getTenant();
+                                        return $tenant ? $query->where('tenant_id', $tenant->id) : $query;
+                                    })
+                                    ->required()->searchable()->live()
+                                    ->afterStateUpdated(fn ($state, Set $set) => $set('unit_price', Material::find($state)?->price ?? 0)),
+                                Forms\Components\TextInput::make('quantity')->label('Qtd')->numeric()->default(1)->live(),
+                                Forms\Components\TextInput::make('unit_price')->label('Vlr Unit')->prefix('R$')->readOnly(),
+                            ])->columns(3),
+                    ]),
 
-                // ABA 4: APONTAMENTOS E EVIDÊNCIAS
                 Forms\Components\Tabs\Tab::make('Apontamentos')->schema([
+                    Forms\Components\Actions::make([
+                        Forms\Components\Actions\Action::make('pedir_peca')
+                            ->label('Solicitar Peça (Pausar OS)')
+                            ->color('danger')
+                            ->icon('heroicon-o-puzzle-piece')
+                            ->action(function ($record) {
+                                $record->update(['internal_status' => 'aguardando_peca']);
+                                
+                                // AJUSTE DE INTEGRAÇÃO: Garante o registro do alerta sistêmico na tabela unificada de ChatRoom
+                                $chatRoom = ChatRoom::firstOrCreate(
+                                    [
+                                        'maintenance_order_id' => $record->id,
+                                        'tenant_id' => Filament::getTenant()?->id ?? auth()->user()->tenant_id,
+                                    ],
+                                    [
+                                        'type' => 'maintenance',
+                                        'title' => "Chat da OS: " . substr($record->id, 0, 8),
+                                    ]
+                                );
+
+                                $chatRoom->messages()->create([
+                                    'user_id' => auth()->id(),
+                                    'message' => "🚨 Peça solicitada via PWA.",
+                                ]);
+                            })->visible(fn($record) => $record && $record->internal_status === 'em_manutencao'),
+                    ]),
+
+                    // COMPONENTE DO CHAT REMOVIDO DAQUI
+
                     Forms\Components\Textarea::make('technical_notes')
-                        ->label('Laudo Técnico / Notas de Mobilização')
+                        ->label(fn (Get $get) => in_array($get('maintenance_type'), ['Check-in', 'Check-out']) ? 'Notas de Mobilização / Observações de Recebimento' : 'Laudo Técnico da Manutenção')
                         ->rows(5)->columnSpanFull(),
                     
                     Forms\Components\SpatieMediaLibraryFileUpload::make('evidences')
@@ -215,28 +254,29 @@ class MaintenanceOrderResource extends Resource
                     ]),
                 ]),
 
-                // ABA 5: FINANCEIRO (AJUSTADO COM DEFAULT 0)
-                Forms\Components\Tabs\Tab::make('Financeiro')->schema([
-                    Forms\Components\Grid::make(3)->schema([
-                        Forms\Components\TextInput::make('labor_cost')
-                            ->label('Mão de Obra')
-                            ->prefix('R$')
-                            ->numeric()
-                            ->default(0), // Evita erro Not Null
-                        
-                        Forms\Components\TextInput::make('material_cost')
-                            ->label('Peças/Insumos')
-                            ->prefix('R$')
-                            ->readOnly()
-                            ->default(0), // Evita erro Not Null
-                        
-                        Forms\Components\TextInput::make('total_order_cost')
-                            ->label('Total Geral')
-                            ->prefix('R$')
-                            ->readOnly()
-                            ->default(0), // Evita erro Not Null
+                Forms\Components\Tabs\Tab::make('Financeiro')
+                    ->visible(fn (Get $get) => in_array($get('maintenance_type'), ['Preventiva', 'Corretiva']))
+                    ->schema([
+                        Forms\Components\Grid::make(3)->schema([
+                            Forms\Components\TextInput::make('labor_cost')
+                                ->label('Mão de Obra')
+                                ->prefix('R$')
+                                ->numeric()
+                                ->default(0), 
+                            
+                            Forms\Components\TextInput::make('material_cost')
+                                ->label('Peças/Insumos')
+                                ->prefix('R$')
+                                ->readOnly()
+                                ->default(0), 
+                            
+                            Forms\Components\TextInput::make('total_order_cost')
+                                ->label('Total Geral')
+                                ->prefix('R$')
+                                ->readOnly()
+                                ->default(0), 
+                        ]),
                     ]),
-                ]),
             ])->columnSpanFull()
         ]);
     }
@@ -248,39 +288,60 @@ class MaintenanceOrderResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('created_at')->label('Data')->dateTime('d/m/Y')->sortable(),
                 Tables\Columns\TextColumn::make('os_number')->label('Nº OS')->searchable()->weight('bold')->color('primary'),
-
                 Tables\Columns\TextColumn::make('asset.name')
                     ->label('Ativo / Equipamento')
-                    ->placeholder('Ativo Não Encontrado')
-                    ->description(function ($record): string {
-                        if (!$record->asset) return "N/A";
-                        $desc = "Pat: {$record->asset->patrimonio}";
-                        if (Schema::hasColumn('assets', 'serial_number') && $record->asset->serial_number) {
-                            $desc .= " | S/N: {$record->asset->serial_number}";
-                        }
-                        return $desc;
-                    })
-                    ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query->whereHas('asset', function ($q) use ($search) {
-                            $q->where('patrimonio', 'like', "%{$search}%")
-                              ->orWhere('name', 'like', "%{$search}%");
-                            
-                            if (Schema::hasColumn('assets', 'serial_number')) {
-                                $q->orWhere('serial_number', 'like', "%{$search}%");
-                            }
-                            if (Schema::hasColumn('assets', 'asset_tag')) {
-                                $q->orWhere('asset_tag', 'like', "%{$search}%");
-                            }
-                        });
-                    }),
+                    ->description(fn($record) => "Pat: {$record->asset?->patrimonio}")
+                    ->searchable(),
+                
+                Tables\Columns\TextColumn::make('internal_status')
+                    ->label('Status Pátio')
+                    ->badge()
+                    ->color(fn ($state) => match ($state) {
+                        'aguardando_diagnostico' => 'gray',
+                        'em_manutencao' => 'warning',
+                        'aguardando_peca' => 'danger',
+                        'teste_qualidade' => 'info',
+                        'disponivel_comercial' => 'success',
+                        default => 'gray'
+                    })->formatStateUsing(fn (string $state): string => str_replace('_', ' ', ucfirst($state))),
 
-                Tables\Columns\TextColumn::make('client.name')->label('Cliente')->placeholder('Uso Interno'),
+                Tables\Columns\TextColumn::make('client.name')->label('Cliente'),
                 Tables\Columns\TextColumn::make('status')->badge()->color(fn ($state) => match ($state) { 
                     'Aberto' => 'info', 'Em Andamento' => 'primary', 'Concluída' => 'success', 'Cancelada' => 'danger', default => 'gray' 
                 }),
                 Tables\Columns\TextColumn::make('technician.name')->label('Técnico'),
             ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('capacity')
+                    ->label('Capacidade/Modelo')
+                    ->options(function () {
+                        $tenant = Filament::getTenant();
+                        if (!$tenant || !Schema::hasTable('fleet_status')) return [];
+                        return DB::table('fleet_status')
+                            ->where('tenant_id', $tenant->id)
+                            ->whereNotNull('capacity_label')
+                            ->distinct()
+                            ->pluck('capacity_label', 'capacity_label');
+                    })
+                    ->query(function (Builder $query, array $data) {
+                        if ($data['value']) {
+                            $query->whereHas('asset', fn($q) => $q->whereExists(
+                                fn($sub) => $sub->select(DB::raw(1))
+                                    ->from('fleet_status')
+                                    ->whereColumn('fleet_status.asset_id', 'assets.id')
+                                    ->where('fleet_status.capacity_label', $data['value'])
+                            ));
+                        }
+                    })
+            ])
             ->actions([
+                Tables\Actions\Action::make('approve_service')
+                    ->label('Aprovar e Liberar')
+                    ->color('success')
+                    ->icon('heroicon-o-check-badge')
+                    ->requiresConfirmation()
+                    ->action(fn(MaintenanceOrder $record) => $record->update(['internal_status' => 'disponivel_comercial']))
+                    ->visible(fn(MaintenanceOrder $record) => $record->internal_status === 'teste_qualidade'),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ActionGroup::make([

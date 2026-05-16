@@ -6,32 +6,40 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::table('assets', function (Blueprint $table) {
-            // Criamos a chave estrangeira para a categoria
-            // Usamos nullable() para que ativos já existentes não causem erro na migração
-            $table->foreignId('asset_category_id')
-                ->nullable()
-                ->after('tenant_id') // Organiza a coluna logo após o tenant_id
-                ->constrained('asset_categories')
-                ->onDelete('set null'); // Se a categoria for excluída, o ativo apenas fica "sem categoria"
+        // Tabela de Conversas
+        Schema::create('conversations', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            
+            // CORREÇÃO: Usando foreignUuid para bater com o Tenant
+            $table->foreignUuid('tenant_id')->constrained()->cascadeOnDelete();
+            
+            $table->string('title')->nullable();
+            $table->timestamps();
+        });
+
+        // Tabela de Mensagens
+        Schema::create('messages', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('conversation_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->text('content');
+            $table->timestamp('read_at')->nullable();
+            $table->timestamps();
+        });
+        
+        // Tabela Pivot de Participantes (se houver no seu arquivo)
+        Schema::create('conversation_user', function (Blueprint $table) {
+            $table->foreignUuid('conversation_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::table('assets', function (Blueprint $table) {
-            // Removemos a restrição de chave estrangeira primeiro
-            $table->dropForeign(['asset_category_id']);
-            // Depois removemos a coluna
-            $table->dropColumn('asset_category_id');
-        });
+        Schema::dropIfExists('conversation_user');
+        Schema::dropIfExists('messages');
+        Schema::dropIfExists('conversations');
     }
 };

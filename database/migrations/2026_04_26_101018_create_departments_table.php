@@ -8,17 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('departments', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('name');
-            // Relacionamento obrigatório com o Tenant para o isolamento
-            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
-            $table->timestamps();
-        });
+        // Se a tabela já existir com os relacionamentos vivos, passa reto e protege os dados
+        if (!Schema::hasTable('departments')) {
+            Schema::create('departments', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->foreignUuid('tenant_id')->constrained()->cascadeOnDelete();
+                $table->string('name');
+                $table->string('description')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('departments');
+        // Mantemos seguro para não derrubar em cascata acidentalmente
     }
 };

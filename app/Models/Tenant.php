@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Tenant extends Model
@@ -24,6 +25,23 @@ class Tenant extends Model
     ];
 
     /**
+     * RELAÇÃO COM USUÁRIOS (ESSENCIAL PARA O LOGIN)
+     * Resolve o erro 'Call to undefined method users()'
+     */
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
+
+    /**
+     * Relação com Materiais (RESOLVE O ERRO NA LINHA 918 DO FILAMENT)
+     */
+    public function materials(): HasMany
+    {
+        return $this->hasMany(Material::class);
+    }
+
+    /**
      * Relação com o Plano (Central)
      */
     public function plan(): BelongsTo
@@ -33,7 +51,6 @@ class Tenant extends Model
 
     /**
      * Relação com os Clientes (Tenancy)
-     * Essencial para o ClientResource aparecer no grid do Tenant correto
      */
     public function clients(): HasMany
     {
@@ -41,8 +58,7 @@ class Tenant extends Model
     }
 
     /**
-     * Relação com Ordens de Serviço (ESSENCIAL PARA RESOLVER 403/404)
-     * O nome do método deve ser exatamente 'maintenanceOrders' como definimos no Resource
+     * Relação com Ordens de Serviço
      */
     public function maintenanceOrders(): HasMany
     {

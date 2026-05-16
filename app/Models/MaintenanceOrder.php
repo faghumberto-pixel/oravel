@@ -162,4 +162,12 @@ class MaintenanceOrder extends Model implements HasMedia
     {
         return $this->hasOne(MaintenanceOrderDelegation::class);
     }
+
+    /**
+     * INCLUSÃO: Sala de chat exclusiva para esta Ordem de Serviço (OS)
+     */
+    public function chatRoom(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(ChatRoom::class, 'maintenance_order_id');
+    }
 }

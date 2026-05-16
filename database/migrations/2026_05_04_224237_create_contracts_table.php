@@ -12,13 +12,18 @@ return new class extends Migration
         if (!Schema::hasTable('contracts')) {
             Schema::create('contracts', function (Blueprint $table) {
                 $table->uuid('id')->primary();
-                $table->foreignId('tenant_id')->constrained()->cascadeOnDelete();
+                
+                // Alterado para foreignUuid para ser compatível com a tabela Tenants
+                $table->foreignUuid('tenant_id')->constrained()->cascadeOnDelete();
+                
                 $table->foreignUuid('client_id')->constrained();
                 $table->foreignUuid('asset_id')->constrained();
+                
                 $table->string('contract_number')->unique();
                 $table->string('status')->default('Draft');
                 $table->date('start_date');
                 $table->decimal('price', 12, 2)->default(0);
+                
                 $table->timestamps();
                 $table->softDeletes();
             });
