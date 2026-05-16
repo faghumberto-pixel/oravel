@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Material extends Model
 {
-    // Adicionamos a Trait oficial do seu sistema, que substitui o escopo manual e evita erros duplos
     use HasUuids, BelongsToTenant;
 
     protected $fillable = [
@@ -20,17 +19,24 @@ class Material extends Model
         'min_stock',
         'max_stock',
         'ncm',
-        'category_id', // CORRIGIDO: O banco de dados exige 'category_id'
+        'category_id', 
         'price',
-        'tenant_id' // CORRIGIDO: O padrão do seu banco de dados é tenant_id
+        'tenant_id' 
     ];
 
     /**
-     * Relação corrigida: Apontando para MaterialCategory
+     * Relação exigida pelo Filament para o isolamento de dados (Multi-tenancy).
+     */
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class, 'tenant_id');
+    }
+
+    /**
+     * Relação com a categoria de materiais.
      */
     public function category(): BelongsTo
     {
-        // O Laravel já deduz automaticamente que a coluna de ligação é category_id
         return $this->belongsTo(MaterialCategory::class, 'category_id');
     }
 }
