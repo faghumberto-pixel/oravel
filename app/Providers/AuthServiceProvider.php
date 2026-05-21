@@ -5,9 +5,15 @@ namespace App\Providers;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
-// Importe seus Models e suas Policies
+// Importe seus Models
 use App\Models\MaintenanceOrder;
+use App\Models\Category;
+use App\Models\Asset;
+
+// Importe suas Policies
 use App\Policies\MaintenanceOrderPolicy;
+use App\Policies\CategoryPolicy;
+use App\Policies\AssetPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -17,6 +23,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         MaintenanceOrder::class => MaintenanceOrderPolicy::class,
+        Category::class         => CategoryPolicy::class,
+        Asset::class            => AssetPolicy::class,
     ];
 
     public function boot(): void
