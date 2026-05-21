@@ -1,82 +1,48 @@
 <?php
 
-namespace App\Policies;
+namespace App\Filament\Resources;
 
-use App\Models\Category; // Certifique-se de que o nome do model bate com o seu banco
-use App\Models\User;
-use Illuminate\Auth\Access\HandlesAuthorization;
+use App\Models\Category;
+use Filament\Forms\Form;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
 
-class CategoryPolicy
+class CategoryResource extends Resource
 {
-    use HandlesAuthorization;
+    protected static ?string $model = Category::class;
 
-    /**
-     * O método 'before' garante que o Administrador Master do Oravel
-     * ignore as travas abaixo e mantenha acesso total de gestão.
-     */
-    public function before(User $user, string $ability): ?bool
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function form(Form $form): Form
     {
-        if (method_exists($user, 'isAdmin') && $user->isAdmin()) {
-            return true;
-        }
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->label('Nome da Categoria')
+                    ->required()
+                    ->maxLength(255),
+            ]);
+    }
 
-        return null;
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('id')->label('ID')->sortable(),
+                TextColumn::make('name')->label('Nome')->searchable()->sortable(),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [];
     }
 
     /**
-     * Determine whether the user can view any models.
-     * 🛡️ Retorna false para técnicos comuns para não listar no painel.
+     * REMOVIDO O GETPAGES: 
+     * Sem o mapeamento de páginas inexistentes, o Laravel ignora o carregamento 
+     * de rotas deste recurso e elimina qualquer erro de Fatal Error no boot.
      */
-    public function viewAny(User $user): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Category $category): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Category $category): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, Category $category): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Category $category): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Category $category): bool
-    {
-        return false;
-    }
 }
