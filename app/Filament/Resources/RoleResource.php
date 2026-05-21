@@ -10,115 +10,91 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Facades\Filament;
+use Illuminate\Database\Eloquent\Model;
 
 class RoleResource extends Resource
-{ 
+{
     protected static ?string $model = Role::class;
-    
-    // Impede que o Filament procure por tenant_id nesta tabela global do Spatie
-    protected static bool $isScopedToTenant = false;
-
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
     protected static ?string $navigationGroup = 'GESTÃO DE PESSOAS';
-    protected static ?string $navigationLabel = 'Funções';
-    protected static ?string $pluralModelLabel = 'Funções';
-    
-    // Alinha a ordenação para ficar logo após os Departamentos
-    protected static ?int $navigationSort = 2;
-
-    /**
-     * Força o registro do menu na barra lateral para o Admin Oravel e para o Gestor do Tenant
-     */
-    public static function shouldRegisterNavigation(): bool
-    {
-        return auth()->user()?->hasRole('admin') || auth()->user()?->hasRole('gestor');
-    }
+    protected static ?string $navigationLabel = 'Perfis de Acesso';
+    protected static ?int $navigationSort = 3;
+    protected static bool $isScopedToTenant = false;
 
     public static function form(Form $form): Form
     {
+        $actions = ['ler', 'criar', 'editar', 'excluir'];
+        $departments = [
+            'Ordens de Serviço' => 'ordem_servico',
+            'Checklists'        => 'checklist',
+            'Funcionários'      => 'funcionario',
+            'Departamentos'     => 'departamento',
+            'Clientes'          => 'cliente',
+            'Materiais'         => 'material',
+            'Categorias'        => 'categoria_material',
+            'Fila de Logística' => 'fila_logistica',
+            'Canais de Chat'    => 'chat',
+            'Suprimentos'       => 'suprimentos',
+            'Ativos'            => 'ativo',
+        ];
+
+        $tabs = [];
+        foreach ($departments as $label => $slug) {
+            $components = [];
+            foreach ($actions as $action) {
+                $pName = "{$action}_{$slug}";
+                Permission::firstOrCreate(['name' => $pName, 'guard_name' => 'web']);
+
+                $components[] = Forms\Components\Toggle::make("perm_{$pName}")
+                    ->label(ucfirst($action))
+                    ->onColor('success')
+                    ->offColor('danger')
+                    ->inline(true)
+                    ->dehydrated(false); 
+            }
+            $tabs[] = Forms\Components\Tabs\Tab::make($label)->schema($components)->columns(4);
+        }
+
         return $form->schema([
-            Section::make('Dados da Função')
-                ->schema([
-                    // HIERARQUIA NO FORMULÁRIO: O departamento vem primeiro para classificar o cargo
+            Forms\Components\Section::make('Configuração Geral')->schema([
+                Forms\Components\Grid::make(2)->schema([
+                    Forms\Components\TextInput::make('name')->required(),
                     Forms\Components\Select::make('department_id')
-                        ->label('Departamento')
-                        ->relationship(
-                            'department', 
-                            'name', 
-                            fn ($query) => $query->where('tenant_id', Filament::getTenant()?->id)
-                        )
-                        ->placeholder('Selecione o Departamento')
-                        ->preload()
+                        ->relationship('department', 'name', fn ($query) => $query->where('tenant_id', Filament::getTenant()?->id))
                         ->required(),
-
-                    TextInput::make('name')
-                        ->label('Nome da Função')
-                        ->placeholder('Ex: Técnico Nível 1, Supervisor')
-                        ->required()
-                        ->unique(ignoreRecord: true),
-                ])->columns(2),
-
-            Section::make('Permissões')
-                ->description('Selecione as ações permitidas para esta função.')
-                ->schema([
-                    CheckboxList::make('permissions')
-                        ->relationship('permissions', 'name') // Lista TUDO do banco sem travas de options
-                        ->label('Lista de Permissões')
-                        ->columns(3)
-                        ->bulkToggleable()
-                        ->searchable()
-                        ->columnSpanFull(),
                 ]),
+                Forms\Components\Tabs::make('Permissões')->tabs($tabs)->columnSpanFull()
+            ])
         ]);
+    }
+
+    public static function mutateFormDataBeforeFill(array $data): array
+    {
+        $role = Role::find($data['id']);
+        if ($role) {
+            foreach ($role->permissions as $permission) {
+                $data["perm_{$permission->name}"] = true;
+            }
+        }
+        return $data;
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
-                // Segurança: Se não for o Admin mestre da Oravel, esconde as funções mestre do sistema
-                if (!auth()->user()?->hasRole('admin')) {
-                    return $query->whereNotIn('name', ['admin', 'gestor']);
-                }
-                return $query;
-            })
+            ->modifyQueryUsing(fn ($query) => Filament::getTenant() ? $query->where('tenant_id', Filament::getTenant()->id) : $query)
             ->columns([
-                // HIERARQUIA NO GRID: 1º DIRETRIZ - O Departamento vem sempre primeiro
-                Tables\Columns\TextColumn::make('department.name')
-                    ->label('Departamento')
-                    ->badge()
-                    ->color('gray')
-                    ->sortable()
-                    ->searchable(),
-
-                // HIERARQUIA NO GRID: 2º DIRETRIZ - O Nome da Função/Cargo
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Função / Cargo')
-                    ->searchable()
-                    ->sortable(),
-
-                // HIERARQUIA NO GRID: 3º DIRETRIZ - Quantos funcionários reais usam essa função ativa
-                Tables\Columns\TextColumn::make('users_count')
-                    ->label('Funcionários Ativos')
-                    ->counts('users')
-                    ->badge()
-                    ->color('success'),
-
-                Tables\Columns\TextColumn::make('permissions_count')
-                    ->label('Permissões Ativas')
-                    ->counts('permissions')
-                    ->badge()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('name')->label('Função')->searchable(),
+                Tables\Columns\TextColumn::make('created_at')->label('Criado em')->dateTime('d/m/Y'),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ]);
+            ->actions([Tables\Actions\EditAction::make(), Tables\Actions\DeleteAction::make()]);
+    }
+
+    public static function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['tenant_id'] = Filament::getTenant()?->id;
+        return $data;
     }
 
     public static function getPages(): array

@@ -1,8 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Facade;
-use Illuminate\Support\ServiceProvider;
-
 return [
 
     /*
@@ -12,11 +9,11 @@ return [
     |
     | This value is the name of your application, which will be used when the
     | framework needs to place the application's name in a notification or
-    | other UI elements where an application name needs to be displayed.
+    | any other UI element where the application name needs to be entered.
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Oravel'),
 
     /*
     |--------------------------------------------------------------------------
@@ -64,11 +61,11 @@ return [
     |
     | Here you may specify the default timezone for your application, which
     | will be used by the PHP date and date-time functions. The timezone
-    | is set to "UTC" by default as it is suitable for most use cases.
+    | is set to "America/Sao_Paulo" to match your operational ecosystem.
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => env('APP_TIMEZONE', 'America/Sao_Paulo'),
 
     /*
     |--------------------------------------------------------------------------
@@ -76,106 +73,53 @@ return [
     |--------------------------------------------------------------------------
     |
     | The application locale determines the default locale that will be used
-    | by Laravel's translation / localization methods. This option can be
-    | set to any locale for which you plan to have translation strings.
+    | by the translation service provider. We force 'pt_BR' puxando do seu 
+    | .env para colocar o Filament e o Laravel inteiramente em português.
     |
     */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    'locale' => env('APP_LOCALE', 'pt_BR'),
 
-    'locale' => 'pt_BR',
-    'faker_locale' => 'pt_BR',
+    /*
+    |--------------------------------------------------------------------------
+    | Application Fallback Locale
+    |--------------------------------------------------------------------------
+    |
+    | The fallback locale determines the locale to use when the current one
+    | is not available. Traduzido para pt_BR para evitar mensagens fantasmas
+    | em inglês caso algum pacote não possua dicionários completos.
+    |
+    */
+
+    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'pt_BR'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Faker Locale
+    |--------------------------------------------------------------------------
+    |
+    | This locale will be used by the Faker PHP library when generating fake
+    | data for your database seeds. E.g. we will generate Portuguese
+    | names, telephone numbers, and addresses.
+    |
+    */
+
+    'faker_locale' => env('APP_FAKER_LOCALE', 'pt_BR'),
+
     /*
     |--------------------------------------------------------------------------
     | Encryption Key
     |--------------------------------------------------------------------------
     |
-    | This key is utilized by Laravel's encryption services and should be set
-    | to a random, 32 character string to ensure that all encrypted values
-    | are secure. You should do this prior to deploying the application.
+    | This key is utilized by the Illuminate encrypter service and should be
+    | set to a random, 32 character string in your ".env" file otherwise
+    | these encrypted strings will not be safe. Please do this before deploying.
     |
     */
-
-    'cipher' => 'AES-256-CBC',
 
     'key' => env('APP_KEY'),
 
-    'previous_keys' => [
-        ...array_filter(
-            explode(',', (string) env('APP_PREVIOUS_KEYS', ''))
-        ),
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Autoloaded Service Providers
-    |--------------------------------------------------------------------------
-    |
-    | The service providers listed here will be automatically loaded on the
-    | request to your application. Feel free to add your own services to
-    | this array to grant expanded functionality to your applications.
-    |
-    */
-
-    'providers' => [
-        /*
-         * Laravel Framework Service Providers...
-         */
-        // Se você não tem o AuthServiceProvider, ele deve ser comentado ou removido.
-        // Illuminate\Auth\AuthServiceProvider::class,
-        Illuminate\Broadcasting\BroadcastServiceProvider::class,
-        Illuminate\Bus\BusServiceProvider::class,
-        Illuminate\Cache\CacheServiceProvider::class,
-        Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
-        Illuminate\Cookie\CookieServiceProvider::class,
-        Illuminate\Database\DatabaseServiceProvider::class,
-        Illuminate\Encryption\EncryptionServiceProvider::class,
-        Illuminate\Filesystem\FilesystemServiceProvider::class,
-        Illuminate\Foundation\Providers\FoundationServiceProvider::class,
-        Illuminate\Hashing\HashServiceProvider::class,
-        Illuminate\Mail\MailServiceProvider::class,
-        Illuminate\Notifications\NotificationServiceProvider::class,
-        Illuminate\Pagination\PaginationServiceProvider::class,
-        Illuminate\Pipeline\PipelineServiceProvider::class,
-        Illuminate\Queue\QueueServiceProvider::class,
-        Illuminate\Redis\RedisServiceProvider::class,
-        Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
-        Illuminate\Session\SessionServiceProvider::class,
-        Illuminate\Translation\TranslationServiceProvider::class,
-        Illuminate\Validation\ValidationServiceProvider::class,
-        Illuminate\View\ViewServiceProvider::class, // <-- CRÍTICO: DEVE ESTAR AQUI E ATIVO
-
-        /*
-         * Package Service Providers...
-         */
-        // Se você tiver pacotes como Barryvdh\Cors\ServiceProvider::class, adicione-os aqui.
-        // Laravel\Tinker\TinkerServiceProvider::class,
-
-        /*
-         * Application Service Providers...
-         */
-        App\Providers\AppServiceProvider::class,
-        // App\Providers\AuthServiceProvider::class, // <-- COMENTADO/REMOVIDO conforme sua necessidade
-        // App\Providers\BroadcastServiceProvider::class,
-        App\Providers\EventServiceProvider::class, // <-- ESTA LINHA DEVE ESTAR ATIVA
-        App\Providers\RouteServiceProvider::class,
-        App\Providers\TenantServiceProvider::class, // <-- SEU TENANT SERVICE PROVIDER
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Class Aliases
-    |--------------------------------------------------------------------------
-    |
-    | This array of class aliases will be registered when this application
-    | is started. However, feel free to register as many as you wish as
-    | the aliases are "lazy" loaded so they don't hinder performance.
-    |
-    */
-
-    'aliases' => Facade::defaultAliases()->merge([
-        // 'Example' => App\Facades\Example::class,
-    ])->toArray(),
+    'cipher' => 'AES-256-CBC',
 
     /*
     |--------------------------------------------------------------------------

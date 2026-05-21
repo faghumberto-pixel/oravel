@@ -2,7 +2,7 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
+use Filament\Pages\Dashboard as BaseDashboard; // 🔒 Extensão correta para o Core do Filament reconhecer o componente
 use App\Filament\Widgets\StatsOverview;
 use App\Filament\Widgets\PcmStatsOverview;
 use App\Filament\Widgets\AssetStatusChart;
@@ -10,13 +10,42 @@ use App\Filament\Widgets\MaintenanceTrendsChart;
 use App\Filament\Widgets\AssetDistributionChart;
 use App\Filament\Widgets\AssetMapWidget;
 
-class PainelGestao extends Page
+class PainelGestao extends BaseDashboard
 {
     protected static ?string $navigationIcon = 'heroicon-o-home';
-    protected static string $view = 'filament.pages.dashboard-custom';
+    
+    // 🔗 VÍNCULO FÍSICO CORRETO: Aponta exatamente para o seu arquivo blade na pasta filament/pages/
+    protected static string $view = 'filament.pages.painel-gestao'; 
+    
     protected static ?string $navigationLabel = 'Painel de Controle';
     protected static ?string $title = 'Painel de Controle';
     protected static ?string $slug = 'dashboard';
+
+    /**
+     * Trava de Segurança Suprema: Controla quem enxerga esta página na barra lateral esquerda.
+     * Some por completo para o Bruno (Técnico) inclusive se ele estiver na tela de Chat.
+     */
+    public static function shouldRegisterNavigation(): bool
+    {
+        $user = auth()->user();
+        
+        if (!$user) {
+            return false;
+        }
+
+        // Se for você (Admin mestre), o Dashboard aparece perfeito
+        if (method_exists($user, 'isAdmin') && $user->isAdmin()) {
+            return true;
+        }
+
+        // Se for Gestor da empresa contratante, também vê
+        if ($user->hasRole('gestor')) {
+            return true;
+        }
+
+        // Para funções puramente operacionais como a do Bruno, DESAPARECE tudo
+        return false;
+    }
 
     public function getHeaderWidgets(): array
     {

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Builder;
 
 class Tenant extends Model
 {
@@ -25,49 +26,58 @@ class Tenant extends Model
     ];
 
     /**
-     * RELAÇÃO COM USUÁRIOS (ESSENCIAL PARA O LOGIN)
-     * Resolve o erro 'Call to undefined method users()'
+     * MÉTODO DE VERIFICAÇÃO DE ASSINATURA (FEATURE GATE)
+     * Ajuste: Adicionado verificação de status ativo (Segurança extra para SaaS)
      */
+    public function hasAccess(string $featureSlug): bool
+    {
+        // Se a conta estiver bloqueada ou cancelada, bloqueia acesso a features
+        if ($this->status !== 'active') {
+            return false;
+        }
+
+        if (!$this->plan) {
+            return false;
+        }
+
+        return $this->plan->hasFeature($featureSlug);
+    }
+
+    /**
+     * SCOPE PARA FACILITAR CONSULTAS ATIVAS
+     */
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', 'active');
+    }
+
+    // --- RELAÇÕES ---
+
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
     }
 
-    /**
-     * Relação com Materiais (RESOLVE O ERRO NA LINHA 918 DO FILAMENT)
-     */
-    public function materials(): HasMany
-    {
-        return $this->hasMany(Material::class);
-    }
-
-    /**
-     * Relação com o Plano (Central)
-     */
     public function plan(): BelongsTo
     {
         return $this->belongsTo(Plan::class);
     }
 
-    /**
-     * Relação com os Clientes (Tenancy)
-     */
+    public function materials(): HasMany
+    {
+        return $this->hasMany(Material::class);
+    }
+
     public function clients(): HasMany
     {
         return $this->hasMany(Client::class);
     }
 
-    /**
-     * Relação com Ordens de Serviço
-     */
     public function maintenanceOrders(): HasMany
     {
         return $this->hasMany(MaintenanceOrder::class);
     }
 
-    /**
-     * Outras Relações do Sistema (Ativos e PCM)
-     */
     public function assets(): HasMany
     {
         return $this->hasMany(Asset::class);
@@ -88,9 +98,6 @@ class Tenant extends Model
         return $this->hasMany(CriticalityLevel::class);
     }
 
-    /**
-     * Relação com Filiais/Branches
-     */
     public function branches(): HasMany
     {
         return $this->hasMany(Branch::class);

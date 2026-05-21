@@ -10,15 +10,18 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+
+// Importações corretas dos seus arquivos
 use App\Filament\Central\Widgets\SaaSStatsOverview;
 use App\Filament\Central\Widgets\RevenueChart;
+use App\Filament\Central\Resources\PlanResource;
+use App\Filament\Resources\RoleResource;
 
 class CentralPanelProvider extends PanelProvider
 {
@@ -28,25 +31,17 @@ class CentralPanelProvider extends PanelProvider
             ->id('central')
             ->path('central') 
             ->login() 
-            ->colors([
-                'primary' => Color::Blue, 
+            ->colors(['primary' => Color::Blue])
+            ->resources([
+                PlanResource::class,
+                RoleResource::class,
             ])
             ->discoverResources(in: app_path('Filament/Central/Resources'), for: 'App\\Filament\\Central\\Resources')
-            
-            // 1. DESATIVAMOS A DESCOBERTA DE PÁGINAS (Para evitar o Dashboard customizado)
-            // ->discoverPages(in: app_path('Filament/Central/Pages'), for: 'App\\Filament\\Central\\Pages')
-            
             ->pages([
                 Pages\Dashboard::class, 
             ])
-
-            // 2. DESATIVAMOS A DESCOBERTA AUTOMÁTICA DE WIDGETS
-            // Isso impede que o Filament "ache" os widgets de 6000 reais nas pastas
-            // ->discoverWidgets(in: app_path('Filament/Central/Widgets'), for: 'App\\Filament\\Central\\Widgets')
-
-            // 3. DEFINIMOS MANUALMENTE APENAS O QUE É REAL
             ->widgets([
-                SaaSStatsOverview::class,
+                SaaSStatsOverview::class, // <-- NOME CORRETO E IMPORTADO LÁ EM CIMA
                 RevenueChart::class,
             ])
             ->middleware([

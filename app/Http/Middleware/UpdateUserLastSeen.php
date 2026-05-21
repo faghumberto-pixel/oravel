@@ -21,10 +21,14 @@ class UpdateUserLastSeen
         if (Auth::check()) {
             $user = Auth::user();
             
-            // Atualiza o timestamp forçando o fuso horário de Brasília/São Paulo
-            $user->timestamps = false; // Evita disparar observers ou alterar o updated_at geral
-            $user->last_seen_at = Carbon::now('America/Sao_Paulo');
-            $user->save();
+            // 🔥 BLINDAGEM DE EVENTOS: Isola completamente o salvamento do usuário,
+            // evitando que pacotes de terceiros (como Spatie) tentem injetar queries de verificação
+            // de papéis/permissões no meio do fluxo do Livewire.
+            $user::withoutEvents(function () use ($user) {
+                $user->timestamps = false; // Evita disparar observers ou alterar o updated_at geral
+                $user->last_seen_at = Carbon::now('America/Sao_Paulo');
+                $user->save();
+            });
         }
 
         return $next($request);

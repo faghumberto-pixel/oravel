@@ -13,6 +13,7 @@ use App\Models\MaterialRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Builder; // Importação do Eloquent Builder adicionada e preservada
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\WithFileUploads;
@@ -30,13 +31,14 @@ class Chat extends Page
 
     protected static string $view = 'filament.pages.chat';
 
+    // 🔒 FIX UUID: Adaptado para aceitar os UUIDs nativos do PostgreSQL do Oravel
     #[Url]
-    public ?int $activeChatId = null; 
+    public ?string $activeChatId = null; 
     public ?string $chatRoomId = null; 
     public string $newMessage = '';
     public string $searchQuery = ''; 
     
-    // Controle de Contextos Operacionais Dinâmicos (Abas)
+    // Controle de Contextos Operacionais Dinâmicos (Abas Laterais do Chat)
     public string $contextType = 'geral'; // geral, os, asset, material
     public ?string $contextId = null;     // Guarda o ID/UUID do registro selecionado
 
@@ -44,8 +46,49 @@ class Chat extends Page
     public $document = null;
     public int $refreshCounter = 0;
 
+    /**
+     * 🔒 CONTROLE DE VISIBILIDADE VISUAL DO MENU (SIDEBAR)
+     * Determina dinamicamente se esta página deve aparecer no menu lateral do usuário logado.
+     * Usa o método hasAnyPermission para evitar erros de chaves inexistentes no Spatie.
+     */
+    public static function shouldRegisterNavigation(): bool
+    {
+        $user = auth()->user();
+        
+        if (! $user) {
+            return false;
+        }
+
+        // Se for o administrador master do Oravel, exibe sempre
+        if (method_exists($user, 'isAdmin') && $user->isAdmin()) {
+            return true;
+        }
+
+        // 🔑 CORREÇÃO SEGURA: O hasAnyPermission não estoura erro fatal caso uma das chaves não exista no banco
+        return $user->hasAnyPermission(['ler_chat', 'ler_canais_de_chat']);
+    }
+
+    /**
+     * 🔒 PROTEÇÃO DE ACESSO DIRETO POR URL E BLINDAGEM DE SIDEBAR
+     * Caso o usuário tente digitar o caminho direto no navegador (/admin/{tenant}/chat),
+     * este método aborta o carregamento, dispara o bloqueio de segurança e limpa a árvore de menus.
+     */
     public function mount()
     {
+        $user = auth()->user();
+        
+        // 🔑 CORREÇÃO SEGURA: Aplica o mesmo tratamento no portão de entrada do Livewire
+        $hasPermission = $user && $user->hasAnyPermission(['ler_chat', 'ler_canais_de_chat']);
+
+        if (! $user || (! $user->isAdmin() && ! $hasPermission)) {
+            abort(403, 'Acesso não autorizado aos Canais de Chat corporativos.');
+        }
+
+        // Força a reconstrução da sidebar limpa para o técnico impedindo inflar os outros menus
+        if (!($user && method_exists($user, 'isAdmin') && $user->isAdmin())) {
+            \Filament\Facades\Filament::getNavigation(); 
+        }
+
         if ($this->activeChatId) {
             $this->resolveChatRoom();
         }
@@ -222,6 +265,10 @@ class Chat extends Page
         }
     }
 
+    /**
+     * FILTRO MULTI-TENANT SEGURO:
+     * Busca os usuários vinculados à empresa do painel atual via relacionamento de pivot.
+     */
     #[Computed]
     public function chats()
     {
@@ -230,7 +277,9 @@ class Chat extends Page
         $tenant = Filament::getTenant();
         if (!$tenant) return collect();
 
-        $query = User::where('tenant_id', $tenant->id)
+        $query = User::whereHas('tenants', function (Builder $q) use ($tenant) {
+                $q->where('tenants.id', $tenant->id);
+            })
             ->where('id', '!=', auth()->id())
             ->with('roles');
 
@@ -259,7 +308,8 @@ class Chat extends Page
     {
         if (!$this->activeChatId) return collect();
         try {
-            return MaintenanceOrder::where('user_id', $this->activeChatId)
+            // Mapeia as Ordens de Serviço baseadas no technician_id correto da tabela
+            return MaintenanceOrder::where('technician_id', $this->activeChatId)
                 ->where('status', '!=', 'encerrada')
                 ->get();
         } catch (\Exception $e) {

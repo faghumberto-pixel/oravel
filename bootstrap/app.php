@@ -11,16 +11,22 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Injeta o rastreador de presença na pilha web padrão do Laravel 12
+        // 🟢 Mantém o seu rastreador de presença na pilha web padrão do Laravel 12
         $middleware->web(append: [
             \App\Http\Middleware\UpdateUserLastSeen::class,
+        ]);
+
+        // 🔒 REGISTRO SUPREMO: Adiciona o apelido do novo middleware de segurança do Oravel
+        $middleware->alias([
+            'redirecionar.tecnico' => \App\Http\Middleware\RedirectTechnicianFromDashboard::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })
-    // Adicione esta linha abaixo para forçar o carregamento dos provedores essenciais:
+    // Força o carregamento dos provedores essenciais e das novas amarras de segurança
     ->registered(function ($app) {
         $app->register(\Illuminate\Auth\AuthServiceProvider::class);
+        $app->register(\App\Providers\AuthServiceProvider::class); // 🔒 ATIVADO: Interceptador de Gates atado ao núcleo
     })
     ->create();

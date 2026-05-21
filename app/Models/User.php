@@ -5,31 +5,29 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Filament\Facades\Filament;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Tenant;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class User extends Authenticatable implements FilamentUser, HasTenants
 {
-    use HasApiTokens, HasFactory, HasRoles, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     protected $fillable = [
-        'name', 
-        'email', 
-        'password', 
-        'tenant_id', 
-        'role',
-        'company_id',
+        'name',
+        'email',
+        'password',
         'department_id',
         'hourly_rate',
-        'last_seen_at' // Injetado de forma segura no fillable
+        'tenant_id', // Adicionado para garantir persistência no multi-tenant
     ];
 
     protected $hidden = [
@@ -41,56 +39,10 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'hourly_rate' => 'decimal:2',
-        'last_seen_at' => 'datetime', // BLINDAGEM OBRIGATÓRIA CONTRA CRASH DE STRING NO BLADE
     ];
 
-    // --- FILAMENT TENANCY INTERFACE ---
-    
     /**
-     * Retorna os tenants aos quais o usuário tem acesso.
-     */
-    public function getTenants(Panel $panel): \Illuminate\Support\Collection
-    {
-        // Administradores do sistema (SaaS Owner) acessam tudo
-        if (str_ends_with($this->email, '@oravel.com.br')) {
-            return Tenant::all();
-        }
-
-        // Usuário comum: só acessa o próprio tenant vinculado
-        return collect([$this->tenant])->filter();
-    }
-
-    /**
-     * Valida se o usuário pode acessar um tenant específico.
-     */
-    public function canAccessTenant(Model $tenant): bool
-    {
-        // Dono do SaaS tem acesso irrestrito
-        if (str_ends_with($this->email, '@oravel.com.br')) {
-            return true;
-        }
-
-        // Comparação de segurança para usuários comuns
-        return (string) $this->tenant_id === (string) $tenant->id;
-    }
-    // ----------------------------------
-
-    protected static function booted(): void
-    {
-        static::creating(function ($user) {
-            if (auth()->check() && auth()->user()->tenant_id) {
-                $user->tenant_id = $user->tenant_id ?? auth()->user()->tenant_id;
-            }
-        });
-    }
-
-    public function tenant(): BelongsTo
-    {
-        return $this->belongsTo(Tenant::class, 'tenant_id');
-    }
-
-    /**
-     * AJUSTE ORGANOGRAMA: Relacionamento do usuário com o Departamento do organograma
+     * 📂 RELACIONAMENTO DE DEPARTAMENTO
      */
     public function department(): BelongsTo
     {
@@ -98,45 +50,77 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     }
 
     /**
-     * RELACIONAMENTO: Um usuário pertence a muitas salas de chat (pivô chat_room_user)
-     * Utilizado para o motor de busca global de auditoria de termos do pátio corporativo.
+     * 🔄 RELACIONAMENTO MULTI-TENANT (1:N)
      */
-    public function chatRooms(): BelongsToMany
+    public function tenant(): BelongsTo
     {
-        return $this->belongsToMany(
-            ChatRoom::class,    // Modelo da sala
-            'chat_room_user',   // Tabela pivô no banco
-            'user_id',          // Chave estrangeira deste modelo na pivô
-            'chat_room_id'      // Chave estrangeira da sala na pivô
+        return $this->belongsTo(Tenant::class, 'tenant_id', 'id')->withDefault(function () {
+            try {
+                // Protegido contra execuções em Jobs de fila ou Comandos Artisan onde o painel não existe
+                return Filament::getTenant();
+            } catch (Throwable $e) {
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Relacionamento nativo conectando o Usuário aos seus Tenants (N:N)
+     */
+    public function tenants(): BelongsToMany
+    {
+        return $this->belongsToMany(Tenant::class, 'tenant_user', 'user_id', 'tenant_id');
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->morphToMany(
+            config('permission.models.role'),
+            'model',
+            config('permission.table_names.model_has_roles'),
+            config('permission.column_names.model_morph_key'),
+            'role_id'
         );
     }
 
-    /**
-     * Define quem pode fazer login no painel administrativo.
-     */
-    public function canAccessPanel(Panel $panel): bool
+    public function isAdmin(): bool
     {
-        // Se for o painel central, apenas e-mails @oravel entram
-        if ($panel->getId() === 'central') {
-            return str_ends_with($this->email, '@oravel.com.br');
+        if ($this->email && str_ends_with($this->email, '@oravel.com.br')) {
+            return true;
         }
 
-        // Para os outros painéis (admin/app), liberamos o acesso base
-        // O canAccessTenant cuidará do filtro por empresa
+        return DB::table('model_has_roles')
+            ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->where('model_has_roles.model_id', $this->id)
+            ->where('model_has_roles.model_type', get_class($this))
+            ->where('roles.name', 'admin')
+            ->exists();
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
         return true;
     }
 
-    /**
-     * Ajuste Spatie + Tenancy
-     */
-    public function roles(): \Illuminate\Database\Eloquent\Relations\MorphToMany
+    public function getTenants(Panel $panel): Collection
     {
-        return $this->morphToMany(
-            \Spatie\Permission\Models\Role::class,
-            'model',
-            config('permission.table_names.model_has_roles'),
-            'model_id',
-            'role_id'
-        )->withoutGlobalScopes();
+        if ($this->isAdmin()) {
+            return Tenant::all();
+        }
+
+        return $this->tenants; 
+    }
+
+    public function canAccessTenant(Model $tenant): bool
+    {
+        // 1. Libera imediatamente se for admin da plataforma
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        // 2. Resolve direto no banco de dados via SQL ao invés de carregar collections na memória.
+        // Além disso, evitamos chamar `Filament::getCurrentPanel()` aqui, pois em rotas POST de login 
+        // o painel pode não estar 100% resolvido, gerando falhas de roteamento.
+        return $this->tenants()->whereKey($tenant->getKey())->exists();
     }
 }

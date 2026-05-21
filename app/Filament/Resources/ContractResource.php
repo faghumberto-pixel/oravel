@@ -20,12 +20,39 @@ use Filament\Tables\Enums\FiltersLayout;
 
 class ContractResource extends Resource
 { 
-    protected static bool $shouldRegisterNavigation = false;
+    // 🔑 CORREÇÃO 1: Alterado para 'true' para ativar a exibição física do menu na barra lateral do Oravel
+    protected static bool $shouldRegisterNavigation = true;
+    
     protected static ?string $model = Contract::class;
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
     protected static ?string $navigationLabel = 'Contratos de Locação';
     protected static ?string $navigationGroup = '--- GESTÃO COMERCIAL ---';
     protected static ?int $navigationSort = 1;
+
+    /**
+     * 🛡️ CORREÇÃO 2: MÉTODO DE PROTEÇÃO E VISIBILIDADE DE ROTAS
+     * Garante que apenas você (Administrador) enxergue, crie ou altere contratos,
+     * ocultando o menu de forma absoluta da sidebar dos técnicos em campo.
+     */
+    public static function canViewAny(): bool
+    {
+        return auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin();
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin();
+    }
+
+    public static function canEdit($record): bool
+    {
+        return auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin();
+    }
+
+    public static function canDelete($record): bool
+    {
+        return auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin();
+    }
 
     public static function getEloquentQuery(): Builder
     {

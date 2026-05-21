@@ -23,12 +23,29 @@ class AssetCategoryResource extends Resource
     protected static ?int $navigationSort = 1; // Aparece antes dos ativos no menu
 
     /**
-     * PERMISSÕES: Ativa as ações de Criar, Editar e Excluir no painel
+     * 🛡️ TRAVA DE SEGURANÇA E ACESSO À SIDEBAR:
+     * Substituídos os retornos fixos (true) pela validação central de perfil.
+     * Corta a exibição e a rota para o técnico, limpando o re-render fantasma.
      */
-    public static function canViewAny(): bool { return true; }
-    public static function canCreate(): bool { return true; }
-    public static function canEdit($record): bool { return true; }
-    public static function canDelete($record): bool { return true; }
+    public static function canViewAny(): bool 
+    { 
+        return auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin(); 
+    }
+
+    public static function canCreate(): bool 
+    { 
+        return auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin(); 
+    }
+
+    public static function canEdit($record): bool 
+    { 
+        return auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin(); 
+    }
+
+    public static function canDelete($record): bool 
+    { 
+        return auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin(); 
+    }
 
     public static function form(Form $form): Form
     {

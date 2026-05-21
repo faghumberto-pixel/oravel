@@ -3,58 +3,44 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RentalDemoController;
+use App\Models\MaintenanceOrder;
 use Filament\Facades\Filament;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Aqui é onde você pode registrar as rotas web para sua aplicação.
-|
- */
+// Redirecionamento raiz
+Route::get('/', fn () => redirect()->to('/admin'));
 
-// Rota raiz (Adapte se você tiver uma landing page ou tela de login direta)
-Route::get('/', function () {
-    return redirect()->to('/admin');
-});
-
-// ==========================================
-// ROTAS PROTEGIDAS POR AUTENTICAÇÃO
-// ==========================================
 Route::middleware(['auth', 'verified'])->group(function () {
     
-    /**
-     * 🛡️ REDIRECIONAMENTO INTELIGENTE FILAMENT MULTITENANT (Oravel Premium)
-     * Captura o contexto do tenant usando a fachada do Filament para evitar BadMethodCallException
-     */
+    // Dashboard com redirecionamento de tenant
     Route::get('/dashboard', function () {
         $user = auth()->user();
-        
-        // Resolve o Tenant buscando primeiro propriedades diretas ou os métodos do painel do Filament
         $tenantSlug = $user->latest_tenant_slug 
             ?? Filament::getUserTenants($user)->first()?->slug
             ?? Filament::getUserTenants($user)->first()?->id
             ?? $user->tenant?->slug 
             ?? $user->tenant_id;
 
-        // Se o usuário não tiver nenhum vínculo de tenant mapeado, joga para a raiz do painel administrativo
-        if (! $tenantSlug) {
-            return redirect()->to('/admin');
-        }
-
-        return redirect()->route('filament.admin.pages.dashboard', ['tenant' => $tenantSlug]);
+        return $tenantSlug ? redirect()->route('filament.admin.pages.dashboard', ['tenant' => $tenantSlug]) : redirect()->to('/admin');
     })->name('dashboard');
 
-    // Rotas de gerenciamento de perfil padrão
+    // Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Rota cirúrgica do laudo minimalista preservada
-    Route::get('/locacao/laudo-minimalista/{order}', [RentalDemoController::class, 'laudoMinimalista'])
-         ->name('rental-demo.laudo-minimalista');
+    // Laudo
+    Route::get('/locacao/laudo-minimalista/{order}', [RentalDemoController::class, 'laudoMinimalista'])->name('rental-demo.laudo-minimalista');
+
+    // Rota de Impressão (NOME CORRIGIDO: maintenance-orders.print)
+    Route::get('/admin/maintenance-orders/{id}/print', function ($id) {
+        $tenantId = Filament::getTenant()?->id;
+        
+        $order = MaintenanceOrder::where('tenant_id', $tenantId)
+            ->with(['asset', 'client', 'technician', 'checklists', 'materials.material'])
+            ->findOrFail($id);
+
+        return view('maintenance-orders.print', compact('order'));
+    })->name('maintenance-orders.print');
 });
 
-// Autenticação padrão do Laravel (se utilizado em paralelo ao Filament)
 require __DIR__.'/auth.php';

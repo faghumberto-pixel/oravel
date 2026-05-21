@@ -1,14 +1,62 @@
 <div class="w-full" style="margin-top: 1rem; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif;">
     
-    {{-- LAYOUT PREMIUM COM POLLING AMARRADO AO REFRESH INTERNO --}}
-    <div wire:poll.4s="autoRefresh" style="display: grid; grid-template-columns: 340px 1fr; background-color: #0e1013; border: 2px solid #f59e0b; border-radius: 2.5rem; min-height: 75vh; height: calc(100vh - 14rem); overflow: hidden; box-shadow: 0 30px 60px -15px rgba(0,0,0,0.9);">
+    {{-- LAYOUT PREMIUM COM POLLING AMARRADO AO REFRESH INTERNO E COMPONENTE OFFLINE ALPINE --}}
+    <div wire:poll.4s="autoRefresh" 
+         x-data="{ 
+            isOnline: navigator.onLine,
+            offlineQueue: $persist([]),
+            localMessage: '',
+            init() {
+                window.addEventListener('online', () => { 
+                    this.isOnline = true; 
+                    this.flushOfflineQueue();
+                });
+                window.addEventListener('offline', () => { this.isOnline = false; });
+            },
+            triggerSend() {
+                if (!this.localMessage.trim()) return;
+                
+                if (this.isOnline) {
+                    @this.set('newMessage', this.localMessage);
+                    @this.sendMessage();
+                    this.localMessage = '';
+                } else {
+                    // Guarda o texto localmente se estiver sem sinal
+                    this.offlineQueue.push({
+                        text: this.localMessage,
+                        context_type: @this.get('contextType'),
+                        context_id: @this.get('contextId'),
+                        timestamp: new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})
+                    });
+                    this.localMessage = '';
+                    alert('Modo Offline: Mensagem salva no dispositivo. Será enviada assim que a conexão retornar.');
+                }
+            },
+            flushOfflineQueue() {
+                if (this.offlineQueue.length === 0) return;
+                this.offlineQueue.forEach(msg => {
+                    @this.set('contextType', msg.context_type);
+                    @this.set('contextId', msg.context_id);
+                    @this.set('newMessage', msg.text);
+                    @this.sendMessage();
+                });
+                this.offlineQueue = [];
+            }
+         }"
+         class="oravel-chat-grid">
         
+        {{-- BARRA LATERAL: CONTATOS CORPORATIVOS --}}
         <div style="background-color: #1a1c21; border-right: 1px solid rgba(255, 255, 255, 0.05); display: flex; flex-direction: column; height: 100%; overflow: hidden;">
             
             <div style="padding: 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); background-color: #111215; display: flex; flex-direction: column; gap: 1rem;">
-                <h3 style="font-size: 15px; font-weight: 900; color: #f59e0b; margin: 0; text-transform: uppercase; letter-spacing: 1px;">Central Corporativa</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="font-size: 15px; font-weight: 900; color: #f59e0b; margin: 0; text-transform: uppercase; letter-spacing: 1px;">Central Corporativa</h3>
+                    {{-- INDICADOR DE CONEXÃO DO CHÃO DE FÁBRICA --}}
+                    <span x-text="isOnline ? '🌐 ONLINE' : '🚨 OFFLINE'" 
+                          x-bind:style="isOnline ? 'color: #10b981' : 'color: #ef4444'" 
+                          style="font-size: 9px; font-weight: 900; letter-spacing: 1px;"></span>
+                </div>
                 
-                {{-- CAMPO DE BUSCA CORPORATIVA DE TERMOS BLINDADO --}}
                 <div style="position: relative; display: flex; align-items: center;">
                     <input type="text" 
                            wire:model="searchQuery"
@@ -66,13 +114,13 @@
             </div>
         </div>
 
+        {{-- PAINEL DA CONVERSA ACTIVA --}}
         <div style="background-color: #0e1013; display: flex; flex-direction: column; height: 100%; overflow: hidden;">
             
             <div style="padding: 1rem 2rem; background-color: #1a1c21; border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; flex-direction: column; min-height: auto; box-sizing: border-box; gap: 0.8rem;">
                 <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                     @if($activeChatId)
                         @php 
-                            // ISOLAMENTO ABSOLUTO: Puxa o usuário direto da base global para nunca sumir no cabeçalho
                             $activeUser = \App\Models\User::find($activeChatId);
                             $activeUserOnline = \Illuminate\Support\Facades\Cache::has('user-online-' . $activeChatId);
                         @endphp
@@ -93,7 +141,7 @@
                            target="_blank" 
                            style="display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background-color: #f59e0b; color: #000000; border-radius: 2rem; font-size: 11px; font-weight: 900; text-decoration: none; box-shadow: 0 10px 20px rgba(245, 158, 11, 0.2); border: none;">
                             <x-heroicon-m-printer style="width: 16px; height: 16px;" />
-                            IMPRIMIR DOSSIÊ
+                            IMPRIMIR
                         </a>
                     @else
                         <div style="display: flex; align-items: center; gap: 1rem;">
@@ -102,91 +150,87 @@
                             </div>
                             <div>
                                 <h4 style="font-size: 13px; font-weight: 900; color: #6b7280; margin: 0; text-transform: uppercase;">Aguardando Seleção</h4>
-                                <p style="font-size: 10px; color: #4b5563; font-weight: 700; margin: 0; text-transform: uppercase;">Selecione um funcionário ao lado</p>
+                                <p style="font-size: 10px; color: #4b5563; font-weight: 700; margin: 0; text-transform: uppercase;">Selecione um funcionário</p>
                             </div>
                         </div>
                     @endif
                 </div>
 
-                {{-- INJEÇÃO MÍNIMA 1: SELETOR DE ABAS OPERACIONAIS --}}
+                {{-- SELETOR DE ABAS OPERACIONAIS --}}
                 @if($activeChatId)
-                    <div style="display: flex; gap: 0.5rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.6rem;">
-                        <button wire:click="setContext('geral', null)" style="padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; border: none; transition: all 0.2s; {{ $contextType == 'geral' ? 'background:#f59e0b; color:#000000;' : 'background:#2a2d34; color:#ffffff;' }}">
-                            💬 Conversa Livre
-                        </button>
-                        <button wire:click="setContext('os', null)" style="padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; border: none; transition: all 0.2s; {{ $contextType == 'os' ? 'background:#f59e0b; color:#000000;' : 'background:#2a2d34; color:#ffffff;' }}">
-                            🛠️ Ordens de Serviço
-                        </button>
-                        <button wire:click="setContext('asset', null)" style="padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; border: none; transition: all 0.2s; {{ $contextType == 'asset' ? 'background:#f59e0b; color:#000000;' : 'background:#2a2d34; color:#ffffff;' }}">
-                            🚜 Frota / Equipamentos
-                        </button>
-                        <button wire:click="setContext('material', null)" style="padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; border: none; transition: all 0.2s; {{ $contextType == 'material' ? 'background:#f59e0b; color:#000000;' : 'background:#2a2d34; color:#ffffff;' }}">
-                            📦 Pedidos de Material
-                        </button>
+                    <div style="display: flex; gap: 0.5rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.6rem; overflow-x: auto; white-space: nowrap;">
+                        <button wire:click="setContext('geral', null)" style="padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; border: none; flex-shrink: 0; {{ $contextType == 'geral' ? 'background:#f59e0b; color:#000000;' : 'background:#2a2d34; color:#ffffff;' }}">💬 Geral</button>
+                        <button wire:click="setContext('os', null)" style="padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; border: none; flex-shrink: 0; {{ $contextType == 'os' ? 'background:#f59e0b; color:#000000;' : 'background:#2a2d34; color:#ffffff;' }}">🛠️ O.S.</button>
+                        <button wire:click="setContext('asset', null)" style="padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; border: none; flex-shrink: 0; {{ $contextType == 'asset' ? 'background:#f59e0b; color:#000000;' : 'background:#2a2d34; color:#ffffff;' }}">🚜 Frota</button>
+                        <button wire:click="setContext('material', null)" style="padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; border: none; flex-shrink: 0; {{ $contextType == 'material' ? 'background:#f59e0b; color:#000000;' : 'background:#2a2d34; color:#ffffff;' }}">📦 Materiais</button>
                     </div>
 
-                    {{-- INJEÇÃO MÍNIMA 2: ESTEIRA HORIZONTAL DE DOCUMENTOS OPERACIONAIS REAIS DO BANCO --}}
+                    {{-- ESTEIRA HORIZONTAL DE DOCUMENTOS --}}
                     <div style="background-color: #111215; padding: 0.5rem 1rem; border-radius: 10px; display: flex; gap: 0.5rem; overflow-x: auto; align-items: center; border: 1px solid rgba(255,255,255,0.02);">
                         @if($contextType == 'os')
-                            <span style="font-size: 10px; color:#f59e0b; font-weight: 800; text-transform: uppercase; white-space: nowrap;">O.S. do Técnico:</span>
+                            <span style="font-size: 10px; color:#f59e0b; font-weight: 800; text-transform: uppercase; white-space: nowrap;">O.S.:</span>
                             @forelse($this->activeOrders as $os)
-                                <button wire:click="$set('contextId', '{{ $os->id }}')" style="padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 10px; font-weight: 700; border: 1px solid #f59e0b; cursor: pointer; white-space: nowrap; {{ $contextId == $os->id ? 'background:#f59e0b; color:black;' : 'background:transparent; color:white;' }}">
-                                    #{{ $os->id }} - {{ Str::limit($os->title ?? $os->description, 18) }}
-                                </button>
+                                <button wire:click="$set('contextId', '{{ $os->id }}')" style="padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 10px; font-weight: 700; border: 1px solid #f59e0b; cursor: pointer; white-space: nowrap; {{ $contextId == $os->id ? 'background:#f59e0b; color:black;' : 'background:transparent; color:white;' }}">#{{ $os->id }}</button>
                             @empty
-                                <span style="font-size: 11px; color:#6b7280; font-style: italic;">Nenhuma O.S. aberta atribuída.</span>
+                                <span style="font-size: 11px; color:#6b7280; font-style: italic;">⚠ Nenhum evento relacionado</span>
                             @endforelse
                         @elseif($contextType == 'asset')
-                            <span style="font-size: 10px; color:#f59e0b; font-weight: 800; text-transform: uppercase; white-space: nowrap;">Equipamentos:</span>
-                            @foreach($this->activeAssets as $asset)
-                                <button wire:click="$set('contextId', '{{ $asset->id }}')" style="padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 10px; font-weight: 700; border: 1px solid #f59e0b; cursor: pointer; white-space: nowrap; {{ $contextId == $asset->id ? 'background:#f59e0b; color:black;' : 'background:transparent; color:white;' }}">
-                                    {{ $asset->name }}
-                                </button>
-                            @endforeach
-                        @elseif($contextType == 'material')
-                            <span style="font-size: 10px; color:#f59e0b; font-weight: 800; text-transform: uppercase; white-space: nowrap;">Pedidos de Compras:</span>
-                            @forelse($this->activeMaterialRequests as $req)
-                                <button wire:click="$set('contextId', '{{ $req->id }}')" style="padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 10px; font-weight: 700; border: 1px solid #f59e0b; cursor: pointer; white-space: nowrap; {{ $contextId == $req->id ? 'background:#f59e0b; color:black;' : 'background:transparent; color:white;' }}">
-                                    Req #{{ substr($req->id, 0, 6) }}... ({{ $req->provider_name ?? 'Almoxarifado' }})
-                                </button>
+                            <span style="font-size: 10px; color:#f59e0b; font-weight: 800; text-transform: uppercase; white-space: nowrap;">Ativos:</span>
+                            @forelse($this->activeAssets as $asset)
+                                <button wire:click="$set('contextId', '{{ $asset->id }}')" style="padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 10px; font-weight: 700; border: 1px solid #f59e0b; cursor: pointer; white-space: nowrap; {{ $contextId == $asset->id ? 'background:#f59e0b; color:black;' : 'background:transparent; color:white;' }}">{{ $asset->name }}</button>
                             @empty
-                                <span style="font-size: 11px; color:#6b7280; font-style: italic;">Nenhum pedido ativo no banco.</span>
+                                <span style="font-size: 11px; color:#6b7280; font-style: italic;">⚠ Nenhum evento relacionado</span>
+                            @endforelse
+                        @elseif($contextType == 'material')
+                            <span style="font-size: 10px; color:#f59e0b; font-weight: 800; text-transform: uppercase; white-space: nowrap;">Pedidos:</span>
+                            @forelse($this->activeMaterialRequests as $req)
+                                <button wire:click="$set('contextId', '{{ $req->id }}')" style="padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 10px; font-weight: 700; border: 1px solid #f59e0b; cursor: pointer; white-space: nowrap; {{ $contextId == $req->id ? 'background:#f59e0b; color:black;' : 'background:transparent; color:white;' }}">Req #{{ substr($req->id, 0, 6) }}</button>
+                            @empty
+                                <span style="font-size: 11px; color:#6b7280; font-style: italic;">⚠ Nenhum evento relacionado</span>
                             @endforelse
                         @else
-                            <span style="font-size: 11px; color:#6b7280; font-style: italic;">Canal geral corporativo aberto (Sem amarrações).</span>
+                            <span style="font-size: 11px; color:#6b7280; font-style: italic;">Canal livre.</span>
                         @endif
                     </div>
                 @endif
             </div>
 
+            {{-- HISTÓRICO DE MENSAGENS --}}
             <div class="custom-chat-scrollbar" 
-                 style="flex: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; background-color: #0b0c0e;"
+                 style="flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; background-color: #0b0c0e;"
                  x-data="{}" x-init="$el.scrollTop = $el.scrollHeight" x-on:scroll-to-bottom.window="$nextTick(() => { $el.scrollTop = $el.scrollHeight; })">
                 
                 @if($activeChatId)
-                    <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
-                        <div style="height: 1px; width: 40px; background-color: rgba(255,255,255,0.06);"></div>
-                        <span style="font-size: 10px; font-weight: 900; color: #f59e0b; text-transform: uppercase; letter-spacing: 4px;">HISTÓRICO DE MENSAGENS</span>
-                        <div style="height: 1px; width: 40px; background-color: rgba(255,255,255,0.06);"></div>
-                    </div>
+                    {{-- MOSTRA MENSAGENS SALVAS NA ESTEIRA LOCAL OFFLINE SE HOUVER --}}
+                    <template x-for="msg in offlineQueue" :key="msg.timestamp">
+                        <div style="display: flex; flex-direction: column; width: 100%; align-items: flex-end; opacity: 0.6;">
+                            <div style="max-width: 70%;">
+                                <div style="padding: 0.8rem 1.5rem; background-color: #2e323b; border: 1px dashed #f59e0b; border-radius: 2rem 2rem 0px 2rem; box-shadow: 0 8px 25px rgba(0,0,0,0.4);">
+                                    <p style="margin: 0; font-size: 14px; font-weight: 500; line-height: 1.5; color: #ffffff;" x-text="msg.text"></p>
+                                    <div style="display: flex; justify-content: flex-end; align-items: center; gap: 4px; margin-top: 4px;">
+                                        <span style="font-size: 9px; color: #f59e0b; font-weight: 700;">Aguardando Conexão...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
 
                     @foreach($this->messages as $msg)
                         @php $isMine = $msg->user_id == auth()->id(); @endphp
                         <div style="display: flex; flex-direction: column; width: 100%; align-items: {{ $isMine ? 'flex-end' : 'flex-start' }};">
-                            <div style="max-width: 70%;">
+                            <div style="max-width: 75%;">
                                 @if(!$isMine)
                                     <div style="font-size: 10px; font-weight: 900; color: #f59e0b; text-transform: uppercase; margin-bottom: 4px; margin-left: 12px; font-style: italic;">
                                         {{ $msg->user->name }}
                                     </div>
                                 @endif
 
-                                {{-- Destaca com borda dourada se a mensagem contiver o termo pesquisado --}}
                                 @php
                                     $containsTerm = !empty($searchQuery) && str_contains(strtolower($msg->message), strtolower($searchQuery));
                                     $borderStyle = $containsTerm ? 'border: 2px solid #f59e0b; box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);' : 'border: 1px solid;';
                                 @endphp
 
-                                <div style="padding: 0.8rem 1.5rem; {{ $borderStyle }} box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+                                <div style="padding: 0.8rem 1.2rem; {{ $borderStyle }} box-shadow: 0 8px 25px rgba(0,0,0,0.4);
                                             {{ $isMine 
                                                 ? 'background-color: #1f2228; border-color: rgba(245, 158, 11, 0.35); border-radius: 2rem 2rem 0px 2rem;' 
                                                 : 'background-color: #1a1c21; border-color: rgba(255, 255, 255, 0.08); border-radius: 2rem 2rem 2rem 0px;' }}">
@@ -210,38 +254,27 @@
                                             }
                                         @endphp
 
-                                        {{-- 1. MENSAGEM DE TEXTO TRADICIONAL --}}
                                         @if(!$isDownloadFile)
                                             <p style="margin: 0; font-size: 14px; font-weight: 500; line-height: 1.5; color: #ffffff;">{{ $msg->message }}</p>
                                         @endif
 
-                                        {{-- 2. MINIATURA DE IMAGEM --}}
                                         @if($isDownloadFile && $isImage)
-                                            <div style="margin-top: 0.5rem; border-radius: 1rem; overflow: hidden; border: 2px solid rgba(245,158,11,0.4); max-width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                                            <div style="margin-top: 0.5rem; border-radius: 1rem; overflow: hidden; border: 2px solid rgba(245,158,11,0.4); max-width: 100%;">
                                                 <a href="{{ asset('storage/' . $filepath) }}" target="_blank">
-                                                    <img src="{{ asset('storage/' . $filepath) }}" style="max-width: 100%; max-height: 280px; object-fit: cover; display: block;" onerror="this.src='https://placehold.co/300x200/1a1c21/f59e0b?text=Erro+no+Link+do+Storage'">
+                                                    <img src="{{ asset('storage/' . $filepath) }}" style="max-width: 100%; max-height: 200px; object-fit: cover; display: block;">
                                                 </a>
                                             </div>
                                         @endif
 
-                                        {{-- 3. DOCUMENTO / PDF --}}
                                         @if($isDownloadFile && !$isImage)
-                                            <div style="margin-top: 0.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.8rem; background: rgba(255,255,255,0.03); border-radius: 0.8rem; border: 1px solid rgba(245,158,11,0.2);">
-                                                <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 0;">
-                                                    <x-heroicon-s-document-text style="width: 24px; height: 24px; color: #f59e0b; flex-shrink: 0;" />
-                                                    <span style="font-size: 13px; color: #ffffff; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ $filename }}">
-                                                        {{ $filename }}
-                                                    </span>
-                                                </div>
-                                                <a href="{{ asset('storage/' . $filepath) }}" target="_blank" download style="font-size: 11px; font-weight: 900; background-color: #f59e0b; color: #000000; padding: 0.4rem 0.8rem; border-radius: 0.5rem; text-decoration: none; text-transform: uppercase; transition: background 0.2s;">
-                                                    Baixar
-                                                </a>
+                                            <div style="margin-top: 0.5rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.6rem; background: rgba(255,255,255,0.03); border-radius: 0.8rem; border: 1px solid rgba(245,158,11,0.2);">
+                                                <span style="font-size: 12px; color: #ffffff; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;" title="{{ $filename }}">{{ $filename }}</span>
+                                                <a href="{{ asset('storage/' . $filepath) }}" target="_blank" download style="font-size: 10px; font-weight: 900; background-color: #f59e0b; color: #000000; padding: 0.3rem 0.6rem; border-radius: 0.5rem; text-decoration: none;">Baixar</a>
                                             </div>
                                         @endif
 
-                                        {{-- AJUSTE DE HORA REATIVO TRAVADO EM SÃO PAULO --}}
                                         <div style="display: flex; justify-content: flex-end; align-items: center; width: 100%;">
-                                            <span style="font-size: 9px; font-weight: 700; opacity: 0.6; white-space: nowrap; color: #f59e0b;">
+                                            <span style="font-size: 9px; font-weight: 700; opacity: 0.6; color: #f59e0b;">
                                                 {{ \Carbon\Carbon::parse($msg->created_at)->timezone('America/Sao_Paulo')->format('H:i') }}
                                             </span>
                                         </div>
@@ -251,22 +284,21 @@
                         </div>
                     @endforeach
                 @else
-                    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.6;">
-                        <x-heroicon-o-chat-bubble-left-right style="width: 64px; height: 64px; color: #f59e0b; margin-bottom: 1rem;" />
-                        <p style="font-size: 11px; font-weight: 900; color: #f59e0b; text-transform: uppercase; letter-spacing: 3px; text-align: center; max-w: 380px;">
-                            Selecione um colaborador na lista à esquerda para carregar a central de interação
-                        </p>
+                    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.6; text-align: center;">
+                        <x-heroicon-o-chat-bubble-left-right style="width: 48px; height: 48px; color: #f59e0b; margin-bottom: 1rem;" />
+                        <p style="font-size: 11px; font-weight: 900; color: #f59e0b; text-transform: uppercase; letter-spacing: 2px;">Selecione um colaborador para iniciar</p>
                     </div>
                 @endif
             </div>
 
-            <div style="padding: 1.5rem; background-color: #0e1013; border-top: 1px solid rgba(255, 255, 255, 0.03); box-sizing: border-box;">
+            {{-- RODAPÉ DE DIGITAÇÃO E COMANDOS NATIVOS MÓVEIS --}}
+            <div style="padding: 1rem; background-color: #0e1013; border-top: 1px solid rgba(255, 255, 255, 0.03); box-sizing: border-box;">
                 
-                <div wire:loading wire:target="photo, document" style="font-size: 11px; color: #f59e0b; font-weight: bold; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 1px;">
+                <div wire:loading wire:target="photo, document" style="font-size: 11px; color: #f59e0b; font-weight: bold; text-transform: uppercase; margin-bottom: 0.5rem;">
                     ⚡ Enviando anexo para a Central Oravel...
                 </div>
 
-                <div style="display: flex; gap: 0.8rem; align-items: center; background-color: #1a1c21; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 50px; padding: 0.4rem 0.8rem; box-shadow: 0 20px 50px rgba(0,0,0,0.6);"
+                <div style="display: flex; gap: 0.5rem; align-items: center; background-color: #1a1c21; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 30px; padding: 0.3rem 0.6rem; box-shadow: 0 20px 50px rgba(0,0,0,0.6);"
                      x-data="{ 
                         recording: false,
                         recognition: null,
@@ -277,13 +309,10 @@
                                 this.recognition = new SpeechClass();
                                 this.recognition.lang = 'pt-BR';
                                 this.recognition.continuous = false;
-                                this.recognition.interimResults = false;
                                 
                                 this.recognition.onresult = (event) => {
-                                    const text = event.results[0][0].transcript;
-                                    @this.set('newMessage', @this.get('newMessage') + ' ' + text);
+                                    localMessage = localMessage + ' ' + event.results[0][0].transcript;
                                 };
-                                
                                 this.recognition.onend = () => { this.recording = false; };
                                 this.recognition.onerror = () => { this.recording = false; };
                             } catch (e) {}
@@ -291,60 +320,86 @@
                         toggleRecord() {
                             if(!this.recognition) this.initSpeech();
                             if(!this.recognition) return;
-                            
                             try {
                                 if(!this.recording) {
                                     this.recording = true;
                                     this.recognition.start();
                                 } else {
                                     this.recognition.stop();
-                                    this.recording = false;
                                 }
                             } catch (err) { this.recording = false; }
                         }
                      }">
                     
                     {{-- ANEXAR DOCUMENTOS --}}
-                    <label style="cursor: {{ $activeChatId ? 'pointer' : 'not-allowed' }}; opacity: {{ $activeChatId ? '1' : '0.3' }}; display: flex; align-items: center; justify-content: center; padding: 0.5rem;" title="Anexar Documento">
+                    <label style="cursor: pointer; padding: 0.4rem; display: flex; align-items: center;" title="Anexar Documento">
                         <input type="file" wire:model="document" {{ !$activeChatId ? 'disabled' : '' }} style="display: none;">
-                        <x-heroicon-s-paper-clip style="width: 22px; height: 22px; color: #9ca3af;" />
+                        <x-heroicon-s-paper-clip style="width: 20px; height: 20px; color: #9ca3af;" />
                     </label>
 
+                    {{-- CAIXA DE TEXTO CONECTADA À ESTEIRA OFFLINE LOCAL --}}
                     <input type="text" 
-                           wire:model="newMessage" 
-                           @keydown.enter="$wire.sendMessage()"
+                           x-model="localMessage"
+                           @keydown.enter="triggerSend()"
                            {{ !$activeChatId ? 'disabled' : '' }}
-                           placeholder="{{ $activeChatId ? 'Escreva uma mensagem para o colaborador...' : 'Selecione um contato na lista lateral...' }}" 
-                           style="flex: 1; background: transparent; border: none; font-size: 14px; color: #ffffff; outline: none; padding: 0 0.5rem; height: 44px; width: 100%; box-sizing: border-box; opacity: {{ !$activeChatId ? '0.2' : '1' }};">
+                           placeholder="{{ $activeChatId ? 'Mensagem...' : 'Selecione um contato...' }}" 
+                           style="flex: 1; background: transparent; border: none; font-size: 14px; color: #ffffff; outline: none; padding: 0 0.2rem; height: 40px; min-width: 0; box-sizing: border-box;">
                     
-                    {{-- ABRIR CÂMERA NATIVA DO DISPOSITIVO / SELECIONAR FOTOS --}}
-                    <label style="cursor: {{ $activeChatId ? 'pointer' : 'not-allowed' }}; opacity: {{ $activeChatId ? '1' : '0.3' }}; display: flex; align-items: center; justify-content: center; padding: 0.5rem;" title="Tirar Foto / Abrir Câmera">
+                    {{-- CÂMERA INTEGRADA DO DISPOSITIVO MÓVEL --}}
+                    <label style="cursor: pointer; padding: 0.4rem; display: flex; align-items: center;" title="Câmera">
                         <input type="file" accept="image/*" capture="environment" wire:model.live="photo" {{ !$activeChatId ? 'disabled' : '' }} style="display: none;">
-                        <x-heroicon-s-camera style="width: 24px; height: 24px; color: #f59e0b;" />
+                        <x-heroicon-s-camera style="width: 22px; height: 22px; color: #f59e0b;" />
                     </label>
 
-                    {{-- DITADO INTELIGENTE (SPEECH-TO-TEXT) --}}
+                    {{-- DITADO INTELIGENTE --}}
                     <button type="button"
                             {{ !$activeChatId ? 'disabled' : '' }}
                             x-on:click="toggleRecord()"
-                            style="background: transparent; border: none; padding: 0.5rem; cursor: pointer; opacity: {{ $activeChatId ? '1' : '0.3' }};" 
-                            title="Gravar e transformar em texto">
-                        <x-heroicon-s-microphone x-bind:style="recording ? 'width: 24px; height: 24px; color: #ef4444; filter: drop-shadow(0 0 8px #ef4444);' : 'width: 24px; height: 24px; color: #f59e0b;'" />
+                            style="background: transparent; border: none; padding: 0.4rem; cursor: pointer;">
+                        <x-heroicon-s-microphone x-bind:style="recording ? 'width: 22px; height: 22px; color: #ef4444; filter: drop-shadow(0 0 8px #ef4444);' : 'width: 22px; height: 22px; color: #f59e0b;'" />
                     </button>
 
-                    <button wire:click="sendMessage" 
+                    {{-- BOTÃO DE ENVIO INTELIGENTE (INTERCEPTA OFFLINE) --}}
+                    <button x-on:click="triggerSend()" 
                             {{ !$activeChatId ? 'disabled' : '' }}
-                            style="background-color: #f59e0b; border: none; border-radius: 50px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.2s; opacity: {{ !$activeChatId ? '0.2' : '1' }};">
-                        <x-heroicon-s-paper-airplane style="width: 18px; height: 18px; color: #000000; transform: rotate(45deg) translate(-1px, -1px);" />
+                            style="background-color: #f59e0b; border: none; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;">
+                        <x-heroicon-s-paper-airplane style="width: 16px; height: 16px; color: #000000; transform: rotate(45deg) translate(-1px, -1px);" />
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
+    {{-- MEDIA QUERIES EMBUTIDAS PARA ADAPTAÇÃO AUTOMÁTICA EM DISPOSITIVOS MÓVEIS --}}
     <style>
+        .oravel-chat-grid {
+            display: grid; 
+            grid-template-columns: 340px 1fr; 
+            background-color: #0e1013; 
+            border: 2px solid #f59e0b; 
+            border-radius: 2.5rem; 
+            min-height: 75vh; 
+            height: calc(100vh - 14rem); 
+            overflow: hidden; 
+            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.9);
+        }
+
         .custom-chat-scrollbar::-webkit-scrollbar { width: 3px; }
         .custom-chat-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-chat-scrollbar::-webkit-scrollbar-thumb { background: #f59e0b; border-radius: 50px; }
+
+        @media (max-width: 1023px) {
+            .oravel-chat-grid {
+                grid-template-columns: 1fr !important;
+                grid-template-rows: auto 1fr !important;
+                height: calc(100vh - 12rem) !important;
+                border-radius: 1.5rem !important;
+            }
+            .oravel-chat-grid > div:first-child {
+                max-height: 200px !important;
+                border-right: none !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+            }
+        }
     </style>
 </div>

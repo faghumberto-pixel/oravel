@@ -11,24 +11,16 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
 use Filament\Facades\Filament;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserResource extends Resource
 { 
     protected static ?string $model = User::class;
-
-    // CORREÇÃO 1: Ativa o menu na barra lateral para renderizar o submenu de usuários
-    protected static bool $shouldRegisterNavigation = true;
-
-    // Vincula o recurso ao escopo do Tenant ativo
-    protected static bool $isScopedToTenant = true;
-
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationGroup = 'GESTÃO DE PESSOAS';
     protected static ?string $navigationLabel = 'Funcionários';
     protected static ?string $pluralModelLabel = 'Funcionários';
     protected static ?string $modelLabel = 'Funcionário';
-    
-    // ORDENAÇÃO: 1º Departamentos, 2º Funções, 3º Funcionários
     protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
@@ -37,37 +29,29 @@ class UserResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Informações do Usuário')
                     ->schema([
-                        // NOVO: Seleção de Departamento (Ponto de partida do cadastro)
                         Forms\Components\Select::make('department_id')
                             ->label('Departamento')
                             ->relationship(
                                 'department', 
                                 'name', 
-                                fn ($query) => $query->where('tenant_id', Filament::getTenant()?->id)
+                                fn (Builder $query) => $query->where('tenant_id', Filament::getTenant()?->id)
                             )
-                            ->placeholder('Selecione o Departamento')
                             ->preload()
                             ->required()
                             ->reactive()
-                            ->afterStateUpdated(fn (callable $set) => $set('roles', null)), // Limpa a função se mudar o setor
+                            ->afterStateUpdated(fn (Forms\Set $set) => $set('roles', [])),
 
-                        // AJUSTE: Filtra as Funções de acordo com o Departamento selecionado acima
                         Forms\Components\Select::make('roles')
                             ->label('Função / Perfil')
-                            ->relationship(
-                                'roles', 
-                                'name',
-                                fn ($query, Forms\Get $get) => $query
-                                    ->where('department_id', $get('department_id'))
-                            )
+                            ->relationship('roles', 'name')
+                            ->multiple()
                             ->preload()
                             ->searchable()
                             ->required()
-                            ->disabled(fn (Forms\Get $get) => !$get('department_id')), // Travado até escolher o setor
+                            ->disabled(fn (Forms\Get $get) => !$get('department_id')),
 
                         Forms\Components\TextInput::make('name')
                             ->label('Nome do Funcionário')
-                            ->placeholder('Nome Completo')
                             ->required(),
 
                         Forms\Components\TextInput::make('email')
@@ -86,8 +70,8 @@ class UserResource extends Resource
                         Forms\Components\TextInput::make('password')
                             ->label('Senha')
                             ->password()
-                            ->dehydrateStateUsing(fn ($state): string => Hash::make($state))
-                            ->dehydrated(fn ($state): bool => filled($state))
+                            ->dehydrateStateUsing(fn ($state) => filled($state) ? Hash::make($state) : null)
+                            ->dehydrated(fn ($state) => filled($state))
                             ->required(fn (string $operation): bool => $operation === 'create')
                             ->revealable(),
                     ])->columns(2),
@@ -98,53 +82,38 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                // HIERARQUIA NO GRID: 1ª DIRETRIZ - O Departamento vem sempre primeiro
                 Tables\Columns\TextColumn::make('department.name')
                     ->label('Departamento')
-                    ->badge()
-                    ->color('gray')
-                    ->sortable()
-                    ->searchable(),
+                    ->badge()->color('gray'),
 
-                // HIERARQUIA NO GRID: 2ª DIRETRIZ - A Função/Cargo vem em segundo lugar
                 Tables\Columns\TextColumn::make('roles.name')
                     ->label('Função / Cargo')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'admin' => 'success',
-                        'Gerente de Manutenção' => 'danger',
-                        'Supervisor de Manutenção' => 'warning',
-                        default => 'info',
-                    })
-                    ->sortable()
-                    ->searchable(),
+                    ->color('info'),
 
-                // HIERARQUIA NO GRID: 3ª DIRETRIZ - Nome do Funcionário
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Nome do Funcionário')
-                    ->searchable()
-                    ->sortable(),
-
-                Tables\Columns\TextColumn::make('hourly_rate')
-                    ->label('Vlr. Hora')
-                    ->money('BRL')
-                    ->sortable(),
-
-                Tables\Columns\TextColumn::make('email')
-                    ->label('E-mail')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Cadastrado em')
-                    ->dateTime('d/m/Y')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('name')->label('Nome')->searchable(),
+                Tables\Columns\TextColumn::make('hourly_rate')->label('Vlr. Hora')->money('BRL'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ]);
+    }
+
+    // Garante o carregamento das Roles ao abrir a edição
+    public static function mutateFormDataBeforeFill(array $data): array
+    {
+        $user = User::find($data['id']);
+        if ($user) {
+            $data['roles'] = $user->roles->pluck('id')->toArray();
+        }
+        return $data;
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->whereHas('tenants', fn (Builder $query) => $query->where('tenants.id', Filament::getTenant()?->id));
     }
 
     public static function getPages(): array

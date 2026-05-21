@@ -1,13 +1,11 @@
 <?php
 
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
-
 return [
 
     'models' => [
-        'permission' => Permission::class,
-        'role' => Role::class,
+        'permission' => Spatie\Permission\Models\Permission::class,
+        // Aponta para o modelo customizado que criaremos abaixo
+        'role' => App\Models\Role::class, 
     ],
 
     'table_names' => [
@@ -19,27 +17,18 @@ return [
     ],
 
     'column_names' => [
-        'role_pivot_key' => null, 
-        'permission_pivot_key' => null, 
+        'role_pivot_key' => null,
+        'permission_pivot_key' => null,
         'model_morph_key' => 'model_id',
-        'team_foreign_key' => 'team_id', // Voltando ao padrão, pois a coluna tenant_id não existe
+        'team_foreign_key' => 'tenant_id', // Mapeado para o seu tenant_id
     ],
 
     'register_permission_check_method' => true,
     'register_octane_reset_listener' => false,
-    'events_enabled' => false,
-
-    /*
-     * ALTERAÇÃO CRITICA: 
-     * Alterado 'teams' para false para eliminar o erro de "column tenant_id does not exist".
-     */
-    'teams' => false, 
-
-    'use_passport_client_credentials' => false,
+    'teams' => true, // Ativado para isolamento por Tenant
     'display_permission_in_exception' => false,
     'display_role_in_exception' => false,
     'enable_wildcard_permission' => false,
-
     'cache' => [
         'expiration_time' => \DateInterval::createFromDateString('24 hours'),
         'key' => 'spatie.permission.cache',

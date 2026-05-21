@@ -2,34 +2,25 @@
 
 namespace App\Filament\Central\Widgets;
 
-use App\Models\Tenant;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use App\Models\Tenant;
+use App\Models\User;
 
 class SaaSStatsOverview extends BaseWidget
 {
+    // Esta herança (extends BaseWidget) é o que resolve o erro is_subclass_of na linha 115 do Livewire
+    
     protected function getStats(): array
     {
-        // 1. Soma real do MRR de todos os clientes no banco
-        $mrrTotal = Tenant::sum('mrr_value');
-        
-        // 2. Contagem real de empresas
-        $totalEmpresas = Tenant::count();
-
         return [
-            Stat::make('Faturamento Mensal (MRR)', 'R$ ' . number_format($mrrTotal, 2, ',', '.'))
-                ->description('Receita real acumulada no Oravel')
-                ->descriptionIcon('heroicon-m-banknotes')
+            Stat::make('Total de Tenants', Tenant::count() ?? 0)
+                ->description('Clientes ativos na plataforma')
                 ->color('success'),
 
-            Stat::make('Empresas Ativas', $totalEmpresas)
-                ->description('Total de clientes na plataforma')
-                ->descriptionIcon('heroicon-m-building-office')
+            Stat::make('Total de Usuários', User::count() ?? 0)
+                ->description('Usuários globais')
                 ->color('primary'),
-                
-            Stat::make('Ticket Médio', 'R$ ' . number_format($totalEmpresas > 0 ? $mrrTotal / $totalEmpresas : 0, 2, ',', '.'))
-                ->description('Valor médio por contrato')
-                ->color('info'),
         ];
     }
 }

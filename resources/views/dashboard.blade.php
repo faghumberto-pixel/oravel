@@ -1,5 +1,5 @@
 {{-- --- INTERVENÇÃO MÍNIMA PARA FILAMENT: INÍCIO --- --}}
-{{-- Substituímos o layout genérico pelo layout de página do Filament --}}
+{{-- Substituímos o layout genérico pelo layout de página do Filament com controle dinâmico --}}
 <x-filament-panels::page>
 {{-- --- INTERVENÇÃO MÍNIMA PARA FILAMENT: FIM --- --}}
 
@@ -17,7 +17,7 @@
     <script>
         // ... script dinâmico do mapa mantido ...
     </script>
-{{-- --- INTERVENÇÃO MÍNIMA PARA FILAMENT: FIM --- --}}
+    {{-- --- INTERVENÇÃO MÍNIMA PARA FILAMENT: FIM --- --}}
 
 {{-- --- INTERVENÇÃO MÍNIMA PARA FILAMENT: INÍCIO --- --}}
 </x-filament-panels::page>

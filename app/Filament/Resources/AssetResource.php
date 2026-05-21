@@ -24,10 +24,30 @@ class AssetResource extends Resource
 
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';
 
-    public static function canViewAny(): bool { return true; }
-    public static function canCreate(): bool { return true; }
-    public static function canEdit($record): bool { return true; }
-    public static function canDelete($record): bool { return true; }
+    /**
+     * 🛡️ TRAVA ABSOLUTA DE SIDEBAR E ROTAS:
+     * Garante o isolamento completo da barra lateral. Apenas administradores do Oravel
+     * conseguem ver a frota globalizada e configurar parâmetros de manutenção mestre.
+     */
+    public static function canViewAny(): bool 
+    { 
+        return auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin(); 
+    }
+
+    public static function canCreate(): bool 
+    { 
+        return auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin(); 
+    }
+
+    public static function canEdit($record): bool 
+    { 
+        return auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin(); 
+    }
+
+    public static function canDelete($record): bool 
+    { 
+        return auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin(); 
+    }
 
     public static function getEloquentQuery(): Builder
     {
@@ -76,7 +96,7 @@ class AssetResource extends Resource
                                         Forms\Components\TextInput::make('last_horimetro')
                                             ->label('Leitura Atual (Sistema)')
                                             ->numeric()
-                                            ->readOnly() // Permite gravação pelo sistema, mas protege contra digitação acidental
+                                            ->readOnly() 
                                             ->helperText('Sincronizado automaticamente pelas Ordens de Serviço.')
                                             ->prefixIcon('heroicon-m-arrow-path'),
 

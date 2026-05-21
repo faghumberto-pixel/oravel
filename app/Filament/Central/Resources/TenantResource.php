@@ -50,7 +50,35 @@ class TenantResource extends Resource
                         Forms\Components\TextInput::make('slug')
                             ->label('Slug (URL)')
                             ->required()
+                            ->unique(ignoreRecord: true)
                             ->maxLength(255),
+                    ]),
+
+                // --- NOVA SEÇÃO: CRIAÇÃO AUTOMÁTICA DO DONO ---
+                Section::make('Usuário Administrador (Dono)')
+                    ->description('Este usuário será criado automaticamente e vinculado como administrador desta empresa.')
+                    ->visibleOn('create') // Só aparece na tela de "Novo Cliente"
+                    ->columns(3)
+                    ->schema([
+                        Forms\Components\TextInput::make('admin_name')
+                            ->label('Nome Completo')
+                            ->required()
+                            ->dehydrated(false), // Impede que o Filament tente salvar isso na tabela 'tenants'
+
+                        Forms\Components\TextInput::make('admin_email')
+                            ->label('E-mail de Acesso')
+                            ->email()
+                            ->required()
+                            ->unique('users', 'email') // Verifica se o e-mail já existe no banco inteiro
+                            ->dehydrated(false),
+
+                        Forms\Components\TextInput::make('admin_password')
+                            ->label('Senha Provisória')
+                            ->password()
+                            ->revealable()
+                            ->required()
+                            ->minLength(8)
+                            ->dehydrated(false),
                     ]),
 
                 Section::make('Assinatura e Plano')

@@ -16,6 +16,7 @@
         "saade/filament-autograph": "^3.0",
         "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-activitylog": "^5.0",
+        "spatie/laravel-backup": "^10.2",
         "spatie/laravel-medialibrary": "^11.22",
         "spatie/laravel-permission": "^7.3"
     },

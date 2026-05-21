@@ -1,12 +1,11 @@
 <?php
 
 use Illuminate\Support\Str;
-use Pdo\Mysql;
 
 return [
 
-    'default' => env('DB_CONNECTION', 'pgsql'),
-
+    // 🔥 ALTERAÇÃO AQUI: Força o fallback padrão para 'pgsql' caso o env() falhe no terminal
+    'default' => 'pgsql',
     'connections' => [
 
         'sqlite' => [
@@ -35,8 +34,6 @@ return [
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
         ],
-
-        // ... (Deixei os outros drivers intactos para manter a estrutura)
     ],
 
     'migrations' => [

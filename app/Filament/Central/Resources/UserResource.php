@@ -57,12 +57,15 @@ class UserResource extends Resource
                             ->required(fn (string $context): bool => $context === 'create')
                             ->maxLength(255),
                             
+                        // FILTRO APLICADO: Central só vê perfis administrativos
                         Forms\Components\Select::make('roles')
-                            ->relationship('roles', 'name')
-                            ->label('Nível de Acesso')
+                            ->relationship('roles', 'name', fn ($query) => $query->whereIn('name', ['admin', 'gestor', 'colaborador']))
+                            ->label('Nível de Acesso (Central)')
+                            ->helperText('Selecione o nível administrativo para este usuário.')
                             ->multiple()
                             ->preload()
-                            ->searchable(),
+                            ->searchable()
+                            ->native(false), 
                     ])->columns(2),
             ]);
     }
@@ -71,16 +74,23 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('email')->searchable(),
-                Tables\Columns\TextColumn::make('tenant.name')
-                    ->label('Empresa')
-                    ->badge()
-                    ->color('info'),
+                Tables\Columns\TextColumn::make('name')->label('Nome')->searchable(),
+                Tables\Columns\TextColumn::make('email')->label('E-mail')->searchable(),
+                Tables\Columns\TextColumn::make('tenant.name')->label('Empresa')->badge()->color('info'),
+                Tables\Columns\TextColumn::make('roles.name')->label('Funções')->badge()->color('primary')->separator(', '),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ]);
+    }
+
+    public static function mutateFormDataBeforeFill(array $data): array
+    {
+        $user = User::find($data['id']);
+        if ($user) {
+            $data['roles'] = $user->roles->pluck('id')->toArray();
+        }
+        return $data;
     }
 
     public static function getPages(): array
