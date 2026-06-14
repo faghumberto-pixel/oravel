@@ -3,10 +3,9 @@
 namespace App\Filament\Resources\AssetResource\Pages;
 
 use App\Filament\Resources\AssetResource;
-use App\Filament\Widgets\AssetUtilizationStats;
-use App\Filament\Widgets\AssetStatusChart;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Facades\Filament;
 
 class ListAssets extends ListRecords
 {
@@ -20,12 +19,16 @@ class ListAssets extends ListRecords
         ];
     }
 
+    /**
+     * ATENÇÃO: Descomente os widgets APENAS após garantir que os arquivos 
+     * app/Filament/Widgets/AssetUtilizationStats.php 
+     * e app/Filament/Widgets/AssetStatusChart.php realmente existam.
+     */
     protected function getHeaderWidgets(): array
     {
-        // Certifique-se de que estes widgets existem no diretório de Widgets
         return [
-            AssetUtilizationStats::class,
-            AssetStatusChart::class,
+            // AssetUtilizationStats::class, // Comentado para evitar erro 500
+            // AssetStatusChart::class,      // Comentado para evitar erro 500
         ];
     }
 

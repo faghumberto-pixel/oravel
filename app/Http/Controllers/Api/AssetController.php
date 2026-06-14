@@ -14,7 +14,7 @@ class AssetController extends Controller
         return response()->json(Asset::all());
     }
 
-    // Criação protegida pela Trait BelongsToTenant (injetará o tenant_id automaticamente)
+    // Criação protegida pela Trait  (injetará o tenant_id automaticamente)
     public function store(Request $request)
     {
         $validated = $request->validate([

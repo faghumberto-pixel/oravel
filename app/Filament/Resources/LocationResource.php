@@ -19,7 +19,7 @@ class LocationResource extends Resource
     protected static ?string $model = Location::class;
     protected static ?string $navigationGroup = 'ADMINISTRACAO';
     protected static ?string $navigationLabel = 'Localizações';
-    // O método abaixo DEVE estar dentro destas chaves
+
     public static function form(Form $form): Form
     {
         return $form->schema([

@@ -2,12 +2,22 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSaaSMetadata;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Support\Facades\Auth;
 
 class PartsRequest extends Model
 {
+    use \App\Models\Concerns\BelongsToTenant;
+    use HasSaaSMetadata;
+
+    protected static ?string $saasFeatureKey = "tabela_parts_requests";
+    protected static ?string $saasPermissionSlug = "solicitacao_pecas";
+    protected static ?string $saasModuleLabel = "Solicitacao de Pecas";
+
     use HasUuids;
 
     protected $fillable = [
@@ -18,6 +28,18 @@ class PartsRequest extends Model
         'quantity',
         'status',
     ];
+
+    protected static function booted()
+    {
+        static::creating(function ($model) {
+            // Injeção automática e segura do tenant_id para isolamento dos dados
+            if (empty($model->tenant_id)) {
+                $model->tenant_id = Auth::user()?->tenant_id 
+                                    ?? filament()->getTenant()?->id 
+                                    ?? session('tenant_id');
+            }
+        });
+    }
 
     /**
      * Relacionamento com a empresa (Multi-tenancy)

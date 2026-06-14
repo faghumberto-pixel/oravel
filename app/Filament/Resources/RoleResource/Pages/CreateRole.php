@@ -4,10 +4,23 @@ namespace App\Filament\Resources\RoleResource\Pages;
 
 use App\Filament\Resources\RoleResource;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\Auth;
 
 class CreateRole extends CreateRecord
 {
     protected static string $resource = RoleResource::class;
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $user = Auth::user();
+
+        // Carimba o tenant do usuario logado (admin da empresa).
+        if ($user && ! $user->isSuperAdmin() && filled($user->tenant_id)) {
+            $data['tenant_id'] = $user->tenant_id;
+        }
+
+        return $data;
+    }
 
     protected function afterCreate(): void
     {

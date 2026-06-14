@@ -14,14 +14,15 @@ use Illuminate\Database\Eloquent\Builder;
 
 class MaterialCategoryResource extends Resource
 { 
+    
     // AJUSTE: Mudado para true para aparecer no menu
     protected static bool $shouldRegisterNavigation = true; 
     
     protected static ?string $model = MaterialCategory::class;
     protected static ?string $navigationIcon = 'heroicon-o-tag';
     
-    // AJUSTE: Alinhado com o grupo que aparece na sua imagem image_9ce6a4.jpg
-    protected static ?string $navigationGroup = 'GESTÃO DE MATERIAIS';
+    // AJUSTE: Alinhado com o grupo que aparece na sua imagem
+    protected static ?string $navigationGroup = 'SUPRIMENTOS';
     protected static ?string $navigationLabel = 'Categorias de Materiais';
     
     protected static ?string $modelLabel = 'Categoria de Material';
@@ -29,11 +30,6 @@ class MaterialCategoryResource extends Resource
 
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';
 
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->where('tenant_id', Filament::getTenant()->id);
-    }
 
     public static function form(Form $form): Form
     {

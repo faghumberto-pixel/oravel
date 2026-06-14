@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
-use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Support\Facades\Auth;
 
 class MaintenanceOrderMaterial extends Model
 {
-    use HasUuids, BelongsToTenant;
+    // Todos os Traits agora declarados corretamente DENTRO das chaves da classe
+    use HasUuids;
+    use \App\Models\Traits\BelongsToTenant;
 
     protected $fillable = [
         'maintenance_order_id',

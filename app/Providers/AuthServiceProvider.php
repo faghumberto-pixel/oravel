@@ -3,43 +3,25 @@
 namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Gate;
-
-// Importe seus Models
-use App\Models\MaintenanceOrder;
-use App\Models\Category;
-use App\Models\Asset;
-
-// Importe suas Policies
-use App\Policies\MaintenanceOrderPolicy;
-use App\Policies\CategoryPolicy;
-use App\Policies\AssetPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
     /**
-     * O mapeamento explícito é a forma mais profissional e rápida de autorização.
-     * O Laravel não perde tempo "adivinhando" onde a policy está.
+     * Mapeamento de Policies da aplicacao.
+     *
+     * Removidos os mapeamentos para SaaSResourcePolicy: Supplier e
+     * SolicitacaoLocacao agora caem na DynamicPolicy (via guessPolicyNamesUsing
+     * no AppServiceProvider), que delega a AbstractPolicy + SaaSRegistry.
      */
-    protected $policies = [
-        MaintenanceOrder::class => MaintenanceOrderPolicy::class,
-        Category::class         => CategoryPolicy::class,
-        Asset::class            => AssetPolicy::class,
-    ];
+    protected $policies = [];
 
     public function boot(): void
     {
         $this->registerPolicies();
 
-        /**
-         * 🛡️ Regra de Ouro: Admin Master tem acesso a TUDO.
-         * Isso elimina a necessidade de checar permissões dentro dos controllers/resources
-         * para o seu usuário administrador.
-         */
-        Gate::before(function ($user, $ability) {
-            if (method_exists($user, 'isAdmin') && $user->isAdmin()) {
-                return true;
-            }
-        });
+        // Gate::before removido: era um interceptador que desviava Supplier e
+        // SolicitacaoLocacao para a SaaSResourcePolicy (lista-branca invertida
+        // que liberava modelos fora do match). A autorizacao volta a ser unica,
+        // passando pela AbstractPolicy/registry para todos os modulos.
     }
 }

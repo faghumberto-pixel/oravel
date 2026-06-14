@@ -2,38 +2,38 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSaaSMetadata;
+
 use Spatie\Permission\Models\Role as SpatieRole;
-use Illuminate\Database\Eloquent\Builder;
-// use Illuminate\Database\Eloquent\Concerns\HasUuids; // Descomente se a PK da Role for UUID
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Role extends SpatieRole
 {
-    // use HasUuids;
+    use HasSaaSMetadata;
 
-    protected static function booted()
-    {
-        // 1. Escopo Global: Garante que o sistema só liste as Roles do Tenant logado
-        static::addGlobalScope('tenant', function (Builder $builder) {
-            if (auth()->check() && auth()->user()->tenant_id) {
-                // CORREÇÃO: qualifyColumn() adiciona o nome da tabela (roles.tenant_id)
-                // Isso elimina o erro SQLSTATE[42702]: Ambiguous column
-                $builder->where($builder->qualifyColumn('tenant_id'), auth()->user()->tenant_id);
-            }
-        });
-
-        // 2. Injeção Automática: Ao criar uma nova Role, insere o tenant_id automaticamente
-        static::creating(function ($role) {
-            if (auth()->check() && empty($role->tenant_id)) {
-                $role->tenant_id = auth()->user()->tenant_id;
-            }
-        });
-    }
+    protected static ?string $saasFeatureKey = "tabela_roles";
+    protected static ?string $saasPermissionSlug = "funcao";
+    protected static ?string $saasModuleLabel = "Perfis de Acesso";
 
     /**
-     * Relacionamento customizado para amarrar a função a um setor específico
+     * O modelo Role estende SpatieRole para suportar o gerenciamento de teams/tenants.
+     * Com a configuração 'teams' => true no config/permission.php,
+     * o Spatie utilizará automaticamente a coluna 'tenant_id' definida 
+     * no team_foreign_key para filtrar as permissões por tenant.
      */
-    public function department()
+
+    protected $fillable = [
+        'name',
+        'guard_name',
+        'tenant_id', // Essencial para o escopo do tenant
+    ];
+
+    /**
+     * Relação opcional para acessar o Tenant proprietário desta role,
+     * caso precise de consultas rápidas.
+     */
+    public function tenant(): BelongsTo
     {
-        return $this->belongsTo(Department::class, 'department_id');
+        return $this->belongsTo(Tenant::class, 'tenant_id');
     }
 }

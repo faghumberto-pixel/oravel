@@ -10,11 +10,17 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 
 class UserResource extends Resource
-{ 
+{
+    protected static ?string $tenantRelationshipName = 'tenants';
+
+    // Isolamento manual via Auth::user()->tenant_id (NÃO usamos tenancy nativa do Filament).
+    protected static bool $isScopedToTenant = false;
+
     protected static ?string $model = User::class;
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationGroup = 'GESTÃO DE PESSOAS';
@@ -32,10 +38,17 @@ class UserResource extends Resource
                         Forms\Components\Select::make('department_id')
                             ->label('Departamento')
                             ->relationship(
-                                'department', 
-                                'name', 
-                                fn (Builder $query) => $query->where('tenant_id', Filament::getTenant()?->id)
+                                name: 'department',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: function (Builder $query) {
+                                    $tenant = \App\Support\Tenancy::current();
+
+                                    return $query
+                                        ->when($tenant, fn (Builder $q) => $q->where('tenant_id', $tenant->id))
+                                        ->orderBy('name');
+                                },
                             )
+                            ->searchable()
                             ->preload()
                             ->required()
                             ->reactive()
@@ -43,7 +56,19 @@ class UserResource extends Resource
 
                         Forms\Components\Select::make('roles')
                             ->label('Função / Perfil')
-                            ->relationship('roles', 'name')
+                            ->relationship(
+                                name: 'roles',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: function (Builder $query) {
+                                    $user = Auth::user();
+
+                                    if ($user && ! $user->isSuperAdmin() && $user->tenant_id) {
+                                        $query->where('roles.tenant_id', $user->tenant_id);
+                                    }
+
+                                    return $query;
+                                },
+                            )
                             ->multiple()
                             ->preload()
                             ->searchable()
@@ -59,7 +84,7 @@ class UserResource extends Resource
                             ->email()
                             ->required()
                             ->unique(ignoreRecord: true),
-                        
+
                         Forms\Components\TextInput::make('hourly_rate')
                             ->label('Valor da Hora (Custo)')
                             ->prefix('R$')
@@ -100,7 +125,6 @@ class UserResource extends Resource
             ]);
     }
 
-    // Garante o carregamento das Roles ao abrir a edição
     public static function mutateFormDataBeforeFill(array $data): array
     {
         $user = User::find($data['id']);
@@ -112,8 +136,22 @@ class UserResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->whereHas('tenants', fn (Builder $query) => $query->where('tenants.id', Filament::getTenant()?->id));
+        $query = parent::getEloquentQuery();
+
+        $user = Auth::user();
+
+        // Console/seeder (sem usuário) ou super admin → sem filtro
+        if (! $user || $user->isSuperAdmin()) {
+            return $query;
+        }
+
+        // Usuário sem tenant_id → sem filtro (mesma política da trait BelongsToTenant)
+        if (! $user->tenant_id) {
+            return $query;
+        }
+
+        // Admin/funcionário → só usuários do próprio tenant
+        return $query->where('users.tenant_id', $user->tenant_id);
     }
 
     public static function getPages(): array

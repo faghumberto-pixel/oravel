@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Traits\BelongsToTenant;
+use App\Models\Concerns\HasSaaSMetadata;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,18 +13,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Client extends Model
 {
-    use HasFactory, HasUuids, SoftDeletes, BelongsToTenant;
+    use HasSaaSMetadata;
 
-    /**
-     * CONFIGURAÇÃO DE UUID
-     * Essencial para evitar erro 404: informa ao Laravel que o ID é string e não auto-incremento.
-     */
-    protected $keyType = 'string';
-    public $incrementing = false;
+    protected static ?string $saasFeatureKey = "tabela_clients";
+    protected static ?string $saasPermissionSlug = "cliente";
+    protected static ?string $saasModuleLabel = "Clientes";
+
+    // Todos os Traits agora estão corretamente declarados DENTRO do corpo da classe
+    use HasFactory, HasUuids, SoftDeletes;
+    use \App\Models\Traits\BelongsToTenant;
 
     /**
      * Atributos que podem ser preenchidos em massa.
-     * Incluímos o tenant_id para que o sistema Multi-tenancy carimbe os registros corretamente.
      */
     protected $fillable = [
         'name',
@@ -40,8 +41,7 @@ class Client extends Model
     ];
 
     /**
-     * RELAÇÃO COM O TENANT (Dono do Registro)
-     * Obrigatória para o Filament Multi-tenancy identificar a qual empresa este registro pertence.
+     * RELAÇÃO COM O TENANT
      */
     public function tenant(): BelongsTo
     {
@@ -57,8 +57,7 @@ class Client extends Model
     }
 
     /**
-     * Accessor para formatar endereço completo em colunas ou documentos.
-     * Uso: $client->full_location
+     * Accessor para formatar endereço completo.
      */
     public function getFullLocationAttribute(): string
     {

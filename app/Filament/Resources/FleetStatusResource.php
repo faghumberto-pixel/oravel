@@ -4,97 +4,54 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\FleetStatusResource\Pages;
 use App\Models\FleetStatus;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\DB;
 use Filament\Facades\Filament;
+use Illuminate\Database\Eloquent\Builder;
 
 class FleetStatusResource extends Resource
 {
     protected static ?string $model = FleetStatus::class;
-    protected static ?string $tenantOwnershipRelationshipName = 'tenant';
-    protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
-    protected static ?string $navigationLabel = 'Disponibilidade de equipamentos';
-    protected static ?string $navigationGroup = 'GESTÃO COMERCIAL';
-    protected static ?int $navigationSort = 5;
 
-    /**
-     * Bloqueia a criação manual de registros de frota
-     */
-    public static function canCreate(): bool
+
+    protected static bool $shouldRegisterNavigation = true;
+
+    protected static ?string $navigationIcon = 'heroicon-o-flag';
+
+    protected static ?string $navigationGroup = 'LOGÍSTICA';
+
+    protected static ?string $navigationLabel = 'Status da Frota';
+
+    public static function getEloquentQuery(): Builder
     {
-        return false;
+        $tenant = \App\Support\Tenancy::current();
+        return parent::getEloquentQuery()->where('tenant_id', $tenant?->id);
     }
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make('Status do Ativo')->schema([
-                    Forms\Components\Select::make('asset_id')
-                        ->relationship('asset', 'name')
-                        ->label('Equipamento')
-                        ->getOptionLabelFromRecordUsing(fn ($record) => $record->name ?? "Patrimônio: {$record->patrimonio}")
-                        ->disabled(),
-                    Forms\Components\Toggle::make('is_available')
-                        ->label('Disponível para Locação')
-                        ->onColor('success')
-                        ->offColor('danger'),
-                    Forms\Components\TextInput::make('capacity_label')
-                        ->label('Capacidade/Modelo')
-                        ->required(),
-                    Forms\Components\Select::make('last_maintenance_id')
-                        ->relationship('maintenanceOrder', 'os_number')
-                        ->label('Última Manutenção')
-                        ->disabled(),
-                ])->columns(2),
-            ]);
+        return $form->schema([
+            // Campos do formulário configurados futuramente
+        ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('asset.name')
-                    ->label('Ativo')
-                    ->description(fn($record) => "Pat: {$record->asset?->patrimonio}")
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('capacity_label')
-                    ->label('Capacidade')
-                    ->badge()
-                    ->color('primary'),
-                Tables\Columns\IconColumn::make('is_available')
-                    ->label('Status')
-                    ->boolean()
-                    ->trueIcon('heroicon-o-check-circle')
-                    ->falseIcon('heroicon-o-x-circle'),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->label('Última Atualização')
-                    ->dateTime('d/m/Y H:i'),
+                // Colunas da tabela configuradas futuramente
             ])
-            ->filters([
-                Tables\Filters\TernaryFilter::make('is_available')->label('Apenas Disponíveis'),
-                Tables\Filters\SelectFilter::make('capacity_label')
-                    ->label('Capacidade')
-                    ->options(fn() => DB::table('fleet_statuses')
-                        ->where('tenant_id', Filament::getTenant()?->id)
-                        ->whereNotNull('capacity_label')
-                        ->distinct()
-                        ->pluck('capacity_label', 'capacity_label')),
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ]);
+            ->filters([])
+            ->actions([])
+            ->bulkActions([]);
     }
 
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListFleetStatuses::route('/'),
+            'create' => Pages\CreateFleetStatus::route('/create'),
             'edit' => Pages\EditFleetStatus::route('/{record}/edit'),
         ];
     }

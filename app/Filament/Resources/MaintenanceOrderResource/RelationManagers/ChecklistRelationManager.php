@@ -37,6 +37,7 @@ class ChecklistRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make()->label('Adicionar Item'),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ]);

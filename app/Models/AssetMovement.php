@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AssetMovement extends Model
 {
-    use HasUuids, BelongsToTenant;
+    use \App\Traits\BelongsToTenant;
+    use HasUuids;
 
     protected $fillable = [
         'tenant_id',

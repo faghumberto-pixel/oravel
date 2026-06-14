@@ -17,26 +17,26 @@ class MaintenanceOrderPolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->can('ler_ordens_de_servico');
+        return $user->can('ler_ordem_servico');
     }
 
     public function view(User $user, MaintenanceOrder $order): bool
     {
-        return $user->can('ler_ordens_de_servico') && $user->tenant_id === $order->tenant_id;
+        return $user->can('ler_ordem_servico') && $user->tenant_id === $order->tenant_id;
     }
 
     public function create(User $user): bool
     {
-        return $user->can('criar_ordens_de_servico');
+        return $user->can('criar_ordem_servico');
     }
 
     public function update(User $user, MaintenanceOrder $order): bool
     {
-        return $user->can('editar_ordens_de_servico') && $user->tenant_id === $order->tenant_id;
+        return $user->can('editar_ordem_servico') && $user->tenant_id === $order->tenant_id;
     }
 
     public function delete(User $user, MaintenanceOrder $order): bool
     {
-        return $user->can('excluir_ordens_de_servico') && $user->tenant_id === $order->tenant_id;
+        return $user->can('excluir_ordem_servico') && $user->tenant_id === $order->tenant_id;
     }
 }

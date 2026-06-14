@@ -2,23 +2,41 @@
 
 namespace App\Models;
 
-use App\Models\Traits\BelongsToTenant;
+use App\Models\Concerns\HasSaaSMetadata;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 
 class Company extends Model
 {
-    use BelongsToTenant;
+    use \App\Models\Concerns\BelongsToTenant;
+    use HasSaaSMetadata;
+
+    protected static ?string $saasFeatureKey = "tabela_companies";
+    protected static ?string $saasPermissionSlug = "empresa";
+    protected static ?string $saasModuleLabel = "Empresas";
 
     protected $fillable = [
         'name',
-        'cnpj',
-        'address',
-        'tenant_id', // Essencial para o vínculo
+        'tenant_id',
+        // Adicione aqui os outros campos $fillable originais deste model caso existam (ex: cnpj, email, etc.)
     ];
 
+    protected static function booted()
+    {
+        static::creating(function ($model) {
+            // Garante a injeção automática e segura do tenant_id em tempo real
+            if (empty($model->tenant_id)) {
+                $model->tenant_id = Auth::user()?->tenant_id 
+                                    ?? filament()->getTenant()?->id 
+                                    ?? session('tenant_id');
+            }
+        });
+    }
+
     /**
-     * Relação obrigatória para o Multi-tenancy do Filament
+     * RELAÇÃO OBRIGATÓRIA PARA O FILAMENT (Tenancy)
      */
     public function tenant(): BelongsTo
     {

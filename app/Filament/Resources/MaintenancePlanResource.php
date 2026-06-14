@@ -13,10 +13,11 @@ use Filament\Tables\Table;
 use Filament\Facades\Filament;
 
 class MaintenancePlanResource extends Resource
-{
+{ 
+    
     protected static ?string $model = MaintenancePlan::class;
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
-    protected static ?string $navigationGroup = 'GESTÃO DE MANUTENÇÃO';
+    protected static ?string $navigationGroup = "GESTÃO DE MANUTENÇÃO";
     protected static ?string $navigationLabel = 'Planos Preventivos';
     
     // Garante que o resource seja escopado ao tenant atual
@@ -31,7 +32,7 @@ class MaintenancePlanResource extends Resource
             Forms\Components\Section::make('Configuração do Plano')->schema([
                 Forms\Components\Select::make('asset_id')
                     ->label('Ativo')
-                    ->relationship('asset', 'name', fn ($query) => $query->where('tenant_id', Filament::getTenant()?->id))
+                    ->relationship('asset', 'name', fn ($query) => $query->where('tenant_id', \App\Support\Tenancy::current()?->id))
                     ->required()
                     ->searchable()
                     ->preload(),
@@ -66,7 +67,7 @@ class MaintenancePlanResource extends Resource
     // Injeta o tenant_id antes de salvar para evitar erros de integridade
     public static function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['tenant_id'] = Filament::getTenant()?->id;
+        $data['tenant_id'] = \App\Support\Tenancy::current()?->id;
         return $data;
     }
 

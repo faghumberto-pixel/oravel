@@ -3,62 +3,104 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Plan extends Model
 {
-    // Adicionado os novos campos comerciais no fillable
+    use HasUuids;
+
+    protected $table = 'plans';
+
     protected $fillable = [
-        'name', 
-        'base_price',      // Preço cheio de tabela (ex: 2800.00)
-        'discount_value',  // Valor do desconto aplicado (ex: 500.00 ou 20.00)
-        'discount_type',   // 'fixed' (R$) ou 'percentage' (%)
-        'final_price',     // O valor líquido real calculado (MRR)
-        'billing_cycle',   // monthly, quarterly, semiannual, annual
-        'campaign_tag',    // Identificador (ex: 'socio_fundador', 'promocao_anual')
-        'features', 
-        'is_active'
+        'name', 'price', 'level', 'base_price', 'discount_value', 'discount_type', 'final_price', 'billing_cycle', 'campaign_tag', 'features', 'is_active'
     ];
 
     protected $casts = [
-        'base_price' => 'decimal:2',
+        'price'          => 'decimal:2',
+        'base_price'     => 'decimal:2',
         'discount_value' => 'decimal:2',
-        'final_price' => 'decimal:2',
-        'features' => 'array',
-        'is_active' => 'boolean',
+        'final_price'    => 'decimal:2',
+        'is_active'      => 'boolean',
+        'level'          => 'integer',
     ];
 
     /**
-     * Booted do Model: intercepta o evento 'saving' para calcular 
-     * o preço final automaticamente antes de gravar no banco de dados.
-     */
-    protected static function booted()
-    {
-        static::saving(function (Plan $plan) {
-            $basePrice = (float) ($plan->base_price ?? 0);
-            $discountValue = (float) ($plan->discount_value ?? 0);
-
-            // Se o desconto for em porcentagem (ex: 20% para plano Anual)
-            if ($plan->discount_type === 'percentage') {
-                $discountAmount = ($basePrice * $discountValue) / 100;
-                $plan->final_price = max(0, $basePrice - $discountAmount);
-            } else {
-                // Se o desconto for valor fixo em Reais (ex: R$ 500 de desconto para Sócio Fundador)
-                $plan->final_price = max(0, $basePrice - $discountValue);
-            }
-        });
-    }
-
-    public function tenants(): HasMany
-    {
-        return $this->hasMany(Tenant::class);
-    }
-
-    /**
-     * Método para checar se o plano possui o recurso (feature) comercial.
+     * Validador estruturado para checagem de dicionário booleano obtido do pgsql
+     * Resolve a exceção do arquivo app/Filament/Pages/Chat.php
      */
     public function hasFeature(string $featureSlug): bool
     {
-        return in_array($featureSlug, $this->features ?? []);
+        if (!$this->is_active) {
+            return false;
+        }
+
+        $features = $this->features;
+
+        if (is_string($features)) {
+            $features = json_decode($features, true) ?? [];
+        }
+
+        if (!is_array($features)) {
+            return false;
+        }
+
+        // Se a chave existe no dicionário JSON gerado pela Central, valida o estado lógico
+        if (array_key_exists($featureSlug, $features)) {
+            return $features[$featureSlug] === true || $features[$featureSlug] === 1 || $features[$featureSlug] === 'true' || $features[$featureSlug] === '1';
+        }
+
+        // Fallback linear de contingência
+        return in_array($featureSlug, $features, true);
+    }
+
+    /**
+     * Lista amigável estática das 21 chaves de recursos e tabelas mapeadas no banco
+     */
+    public static function getAvailableFeaturesOptions(): array
+    {
+        return [
+            'modulo_painel_gestao'       => 'Módulo: Painel de Gestão',
+            'modulo_kanban_oficina'      => 'Módulo: Kanban da Oficina',
+            'tabela_chat_rooms'          => 'Tabela: Salas de Chat',
+            'tabela_roles'               => 'Tabela: Perfis e Funções',
+            'tabela_users'               => 'Tabela: Usuários',
+            'tabela_departments'         => 'Tabela: Departamentos',
+            'tabela_clients'             => 'Tabela: Clientes',
+            'tabela_suppliers'           => 'Tabela: Fornecedores',
+            'tabela_assets'              => 'Tabela: Ativos / Frota',
+            'tabela_materials'           => 'Tabela: Materiais',
+            'tabela_material_categories' => 'Tabela: Categorias de Materiais',
+            'tabela_maintenance_orders'  => 'Tabela: Ordens de Manutenção',
+            'tabela_checklist_templates' => 'Tabela: Modelos de Checklist',
+            'tabela_contracts'           => 'Tabela: Contratos',
+            'tabela_purchases'           => 'Tabela: Compras',
+            'tabela_purchase_orders'     => 'Tabela: Pedidos de Compra',
+            'kanban_oficina'             => 'Painel Kanban Oficina',
+            'chat_os'                    => 'Chat de Ordens de Serviço',
+            'modulo_chat'                => 'Módulo: Chat Geral',
+            'tabela_fleet_statuses'      => 'Tabela: Status da Frota',
+            'painel_gestao'              => 'Painel de Gestão Direta',
+        ];
+    }
+
+    /**
+     * MUTATOR LARAVEL 12: Gerencia o armazenamento JSON limpo no Postgres
+     */
+    protected function features(): Attribute
+    {
+        return Attribute::make(
+            get: function (mixed $value) {
+                if (empty($value)) return [];
+                if (is_string($value)) {
+                    $decoded = json_decode($value, true);
+                    return is_array($decoded) ? $decoded : [];
+                }
+                return is_array($value) ? $value : [];
+            },
+            set: function (mixed $value) {
+                return json_encode(is_array($value) ? $value : [], JSON_UNESCAPED_UNICODE);
+            }
+        );
     }
 }

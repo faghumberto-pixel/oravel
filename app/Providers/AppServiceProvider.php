@@ -31,13 +31,12 @@ class AppServiceProvider extends ServiceProvider
         });
 
         /**
-         * PORTEIRO UNIVERSAL: 
+         * PORTEIRO UNIVERSAL:
          * Se o modelo não tiver uma Policy explícita (ex: AssetPolicy),
          * o Laravel redireciona a autorização para a DynamicPolicy.
          */
         Gate::guessPolicyNamesUsing(function ($modelClass) {
             $policy = 'App\\Policies\\' . class_basename($modelClass) . 'Policy';
-
             return class_exists($policy) ? $policy : DynamicPolicy::class;
         });
     }

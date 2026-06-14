@@ -9,77 +9,42 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class AssetCategoryResource extends Resource
 {
     protected static ?string $model = AssetCategory::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-tag';
     protected static ?string $navigationGroup = 'GESTÃO DE ATIVOS';
-    protected static ?string $modelLabel = 'Categoria de Ativo';
-    protected static ?string $pluralModelLabel = 'Categorias';
-    protected static ?int $navigationSort = 1; // Aparece antes dos ativos no menu
+    protected static ?string $navigationLabel = 'Categorias de Ativos';
+    protected static ?string $pluralModelLabel = 'Categorias de Ativos';
+    protected static ?string $slug = 'asset-categories';
 
-    /**
-     * 🛡️ TRAVA DE SEGURANÇA E ACESSO À SIDEBAR:
-     * Substituídos os retornos fixos (true) pela validação central de perfil.
-     * Corta a exibição e a rota para o técnico, limpando o re-render fantasma.
-     */
-    public static function canViewAny(): bool 
-    { 
-        return auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin(); 
-    }
-
-    public static function canCreate(): bool 
-    { 
-        return auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin(); 
-    }
-
-    public static function canEdit($record): bool 
-    { 
-        return auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin(); 
-    }
-
-    public static function canDelete($record): bool 
-    { 
-        return auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin(); 
-    }
+    // 🚀 AJUSTE DO ERRO DA IMAGEM: Vincula ao relacionamento no plural pertencente ao modelo Tenant
+    protected static ?string $tenantRelationshipName = 'assetCategories';
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make('Detalhes da Categoria')
-                    ->description('Organize seus ativos por segmentos (ex: Geradores, Munks, etc.)')
-                    ->schema([
-                        Forms\Components\Grid::make(2)->schema([
-                            Forms\Components\TextInput::make('name')
-                                ->label('Nome da Categoria')
-                                ->required()
-                                ->live(onBlur: true)
-                                ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => 
-                                    $operation === 'create' ? $set('slug', Str::slug($state)) : null
-                                ),
-                            Forms\Components\TextInput::make('slug')
-                                ->label('Slug (Identificador)')
-                                ->disabled()
-                                ->dehydrated()
-                                ->required(),
-                        ]),
-                        Forms\Components\Textarea::make('description')
-                            ->label('Descrição')
-                            ->rows(3),
-                        Forms\Components\Toggle::make('is_active')
-                            ->label('Ativa para Uso')
-                            ->default(true),
-                        
-                        // Garante que a categoria pertença à empresa logada
-                        Forms\Components\Hidden::make('tenant_id')
-                            ->default(fn () => Auth::user()->tenant_id),
-                    ])
-            ]);
+        return $form->schema([
+            Forms\Components\Section::make('Cadastro de Categoria de Ativos / Equipamentos')
+                ->schema([
+                    Forms\Components\TextInput::make('name')
+                        ->label('Nome da Categoria')
+                        ->required()
+                        ->maxLength(255)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => 
+                            $operation === 'create' ? $set('slug', Str::slug($state)) : null
+                        ),
+
+                    Forms\Components\TextInput::make('slug')
+                        ->label('Slug / URL Amigável')
+                        ->disabled()
+                        ->dehydrated()
+                        ->required()
+                        ->maxLength(255),
+                ])->columns(2),
+        ]);
     }
 
     public static function table(Table $table): Table
@@ -87,41 +52,33 @@ class AssetCategoryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Categoria')
+                    ->label('Nome')
                     ->searchable()
-                    ->sortable(),
-                
-                // Exibe quantos ativos estão vinculados a esta categoria
-                Tables\Columns\TextColumn::make('assets_count')
-                    ->label('Total de Ativos')
-                    ->counts('assets')
-                    ->badge()
-                    ->color('info'),
+                    ->sortable()
+                    ->weight('bold'),
 
-                Tables\Columns\IconColumn::make('is_active')
-                    ->label('Status')
-                    ->boolean(),
+                Tables\Columns\TextColumn::make('slug')
+                    ->label('Slug')
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Criado em')
-                    ->dateTime('d/m/Y')
+                    ->label('Cadastrado em')
+                    ->dateTime('d/m/Y H:i')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('Apenas Ativas'),
+                // 🚀 FILTRO REAL DO BANCO: Garante que os filtros de busca superiores da listagem 
+                // leiam estritamente as linhas físicas que existem na tabela asset_categories do Tenant.
+                Tables\Filters\SelectFilter::make('id')
+                    ->label('Filtrar Categoria')
+                    ->options(fn () => \App\Models\AssetCategory::pluck('name', 'id')->toArray()),
             ])
-            /**
-             * ATIVA OS BOTÕES DE AÇÃO NO GRID
-             */
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 

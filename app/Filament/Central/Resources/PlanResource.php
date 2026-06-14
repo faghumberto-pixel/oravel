@@ -9,27 +9,40 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class PlanResource extends Resource
 {
     protected static ?string $model = Plan::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
     protected static ?string $navigationGroup = 'Gestão SaaS';
     protected static ?string $navigationLabel = 'Planos de Assinatura';
     protected static ?string $pluralModelLabel = 'Planos';
+    protected static bool $isScopedToTenant = false;
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->withoutGlobalScopes();
+    }
 
     public static function form(Form $form): Form
     {
         return $form->schema([
             Forms\Components\Section::make('Configurações Básicas')
-                ->columns(2)
                 ->schema([
                     Forms\Components\TextInput::make('name')
                         ->label('Nome do Plano')
-                        ->placeholder('Ex: Standard - Sócio Fundador')
                         ->required()
                         ->maxLength(255),
+
+                    Forms\Components\Select::make('level')
+                        ->label('Nível de Hierarquia')
+                        ->options([
+                            1 => '1 - Track (Básico)',
+                            2 => '2 - Flow (Standard)',
+                            3 => '3 - Alpha (Premium)',
+                        ])
+                        ->required(),
 
                     Forms\Components\Select::make('billing_cycle')
                         ->label('Ciclo de Cobrança')
@@ -44,11 +57,9 @@ class PlanResource extends Resource
                 ]),
 
             Forms\Components\Section::make('Estratégia de Precificação e Campanhas')
-                ->description('Insira os valores de tabela e defina descontos especiais para Sócios Fundadores ou Fidelidade.')
-                ->columns(3)
                 ->schema([
                     Forms\Components\TextInput::make('base_price')
-                        ->label('Preço Base (Mensal bruto)')
+                        ->label('Preço Base')
                         ->numeric()
                         ->prefix('R$')
                         ->required(),
@@ -56,120 +67,48 @@ class PlanResource extends Resource
                     Forms\Components\Select::make('discount_type')
                         ->label('Tipo de Desconto')
                         ->options([
-                            'fixed' => 'Valor Fixo (R$)',
-                            'percentage' => 'Porcentagem (%)',
-                        ])
-                        ->default('fixed')
-                        ->required(),
+                            'fixed' => 'Valor Fixo (R$)', 
+                            'percentage' => 'Porcentagem (%)'
+                        ]),
 
                     Forms\Components\TextInput::make('discount_value')
-                        ->label('Desconto a Aplicar')
+                        ->label('Desconto')
                         ->numeric()
-                        ->default(0.00)
-                        ->helperText('Ex: 500.00 para Fixo ou 20 para 20%'),
+                        ->default(0.00),
 
                     Forms\Components\TextInput::make('campaign_tag')
-                        ->label('Tag de Campanha (Opcional)')
-                        ->placeholder('Ex: socio_fundador')
-                        ->maxLength(255)
-                        ->helperText('Identificador para rastrear esta oferta comercial nas métricas.'),
+                        ->maxLength(255),
 
                     Forms\Components\Toggle::make('is_active')
-                        ->label('Plano Disponível para Venda')
+                        ->label('Ativo para Venda')
                         ->default(true)
                         ->inline(false),
                 ]),
 
-            Forms\Components\Section::make('Funcionalidades e Barramentos do ERP')
-                ->description('Associe as chaves do pacote lógico para limitar ou liberar os recursos do cliente.')
+            Forms\Components\Section::make('Tabelas e Recursos Disponíveis no Plano')
+                ->description('Selecione detalhadamente quais recursos e tabelas estarão visíveis e operáveis para este plano.')
                 ->schema([
                     Forms\Components\CheckboxList::make('features')
-                        ->label('Módulos Inclusos no Plano')
-                        ->options([
-                            'plano_basic' => 'Módulo Básico (Materiais, Ativos, Clientes, Usuários e Chat)',
-                            'plano_standard' => 'Módulo Standard (Ordens de Serviço, Kanban, Preventivas, Custos e Checklists)',
-                            'plano_premium' => 'Módulo Premium (Contratos de Locação, Mobilização, Compras, ROI e Métricas)',
-                        ])
-                        ->required()
-                        ->bulkToggleable() // Facilita marcar/desmarcar todos de uma vez
-                        ->columns(1),
+                        ->label('Módulos Liberados')
+                        // Executa o método estático que adicionamos ao modelo Plan para renderizar as opções
+                        ->options(Plan::getAvailableFeaturesOptions())
+                        ->bulkToggleable()
+                        ->required(),
+                        // REMOVIDOS os ganchos manuais de hidratação e desidratação.
+                        // O Filament gerencia nativamente o array linear com o cast do Laravel 12.
                 ]),
         ]);
-}
+    }
 
     public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('name')
-                ->label('Plano')
-                ->searchable()
-                ->sortable(),
-
-            Tables\Columns\TextColumn::make('billing_cycle')
-                ->label('Ciclo')
-                ->badge()
-                ->color(fn (string $state): string => match ($state) {
-                    'monthly' => 'gray',
-                    'quarterly' => 'info',
-                    'semiannual' => 'warning',
-                    'annual' => 'success',
-                    default => 'primary',
-                })
-                ->formatStateUsing(fn (string $state): string => match ($state) {
-                    'monthly' => 'Mensal',
-                    'quarterly' => 'Trimestral',
-                    'semiannual' => 'Semestral',
-                    'annual' => 'Anual',
-                    default => $state,
-                }),
-
-            Tables\Columns\TextColumn::make('base_price')
-                ->label('Preço Tabela')
-                ->money('BRL')
-                ->sortable(),
-
-            Tables\Columns\TextColumn::make('final_price')
-                ->label('Preço Cobrado (Líquido)')
-                ->money('BRL')
-                ->fontFamily('mono')
-                ->weight('bold')
-                ->color('success')
-                ->sortable(),
-
-            Tables\Columns\TextColumn::make('campaign_tag')
-                ->label('Campanha')
-                ->badge()
-                ->placeholder('Nenhuma')
-                ->color('primary'),
-
-            Tables\Columns\IconColumn::make('is_active')
-                ->label('Ativo')
-                ->boolean(),
-
-            Tables\Columns\TextColumn::make('created_at')
-                ->label('Criado em')
-                ->dateTime('d/m/Y H:i')
-                ->sortable()
-                ->toggleable(isToggledHiddenByDefault: true),
+            Tables\Columns\TextColumn::make('name')->label('Plano')->searchable(),
+            Tables\Columns\TextColumn::make('level')->label('Nível'),
+            Tables\Columns\TextColumn::make('base_price')->label('Preço Tabela')->money('BRL'),
+            Tables\Columns\IconColumn::make('is_active')->label('Ativo')->boolean(),
         ])
-        ->filters([
-            Tables\Filters\SelectFilter::make('billing_cycle')
-                ->label('Ciclo de Cobrança')
-                ->options([
-                    'monthly' => 'Mensal',
-                    'quarterly' => 'Trimestral',
-                    'semiannual' => 'Semestral',
-                    'annual' => 'Anual',
-                ]),
-            Tables\Filters\TernaryFilter::make('is_active')
-                ->label('Apenas Ativos'),
-        ])
-        ->actions([
-            Tables\Actions\EditAction::make(),
-        ])
-        ->bulkActions([
-            Tables\Actions\DeleteBulkAction::make(),
-        ]);
+        ->actions([Tables\Actions\EditAction::make()]);
     }
 
     public static function getPages(): array

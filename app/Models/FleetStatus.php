@@ -2,12 +2,22 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSaaSMetadata;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Support\Facades\Auth;
 
 class FleetStatus extends Model
 {
+    use \App\Models\Concerns\BelongsToTenant;
+    use HasSaaSMetadata;
+
+    protected static ?string $saasFeatureKey = "tabela_fleet_statuses";
+    protected static ?string $saasPermissionSlug = "fila_logistica";
+    protected static ?string $saasModuleLabel = "Fila de Logistica";
+
     use HasUuids;
 
     protected $fillable = [
@@ -17,6 +27,18 @@ class FleetStatus extends Model
         'capacity_label',
         'last_maintenance_id',
     ];
+
+    protected static function booted()
+    {
+        static::creating(function ($model) {
+            // Injeção automática e segura do tenant_id para isolamento dos dados
+            if (empty($model->tenant_id)) {
+                $model->tenant_id = Auth::user()?->tenant_id 
+                                    ?? filament()->getTenant()?->id 
+                                    ?? session('tenant_id');
+            }
+        });
+    }
 
     /**
      * Relacionamento com o Tenant (Multi-tenancy)

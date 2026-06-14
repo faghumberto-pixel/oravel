@@ -34,9 +34,9 @@ class CreateMaintenanceOrder extends CreateRecord
         
         /**
          * AJUSTE DE MULTI-TENANCY:
-         * Filament::getTenant()->id é a forma recomendada de recuperar o UUID do inquilino atual.
+         * \App\Support\Tenancy::current()->id é a forma recomendada de recuperar o UUID do inquilino atual.
          */
-        $data['tenant_id'] = Filament::getTenant()->id;
+        $data['tenant_id'] = \App\Support\Tenancy::current()->id;
 
         return $data;
     }

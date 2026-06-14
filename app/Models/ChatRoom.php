@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class ChatRoom extends Model
 {
     use HasUuids; // Essencial para aceitar os IDs em formato UUID da Oravel
+    use \App\Traits\BelongsToTenant; // Injetado com sucesso no lugar correto!
 
     protected $fillable = [
         'id',

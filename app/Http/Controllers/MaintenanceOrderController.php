@@ -97,7 +97,7 @@ class MaintenanceOrderController extends Controller
             $path = $file->store($folder, 'public'); 
 
             // 3. Criar o registro de Evidência (Attachment)
-            // Como usamos a relação evidences(), o tenant_id (BelongsToTenant)
+            // Como usamos a relação evidences(), o tenant_id ()
             // é preenchido automaticamente se a OS já estiver contextualizada.
             $evidence = $order->evidences()->create([
                 'file_path' => $path,

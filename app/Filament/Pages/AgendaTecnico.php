@@ -9,6 +9,12 @@ use Illuminate\Support\Collection;
 
 class AgendaTecnico extends Page
 {
+    /**
+     * VÍNCULO DINÂMICO COM A RETAGUARDA SAAS
+     * O AppServiceProvider lê essa propriedade e esconde o menu automaticamente
+     */
+    public static ?string $requiredFeature = 'maintenance_sessions';
+
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
     protected static ?string $navigationLabel = 'Minha Agenda';
     protected static ?string $title = 'Agenda de Atendimentos';
@@ -20,13 +26,13 @@ class AgendaTecnico extends Page
 
     /**
      * 📊 HISTÓRICO E AGENDA:
-     * Método computado que traz as ordens de serviço do técnico logado.
+     * Método computado que trazer as ordens de serviço do técnico logado.
      * Administradores continuam vendo todo o pátio.
      */
     public function getEventsProperty(): Collection
     {
         $user = auth()->user();
-        $tenantId = Filament::getTenant()?->id;
+        $tenantId = \App\Support\Tenancy::current()?->id;
 
         if (!$tenantId) {
             return collect();
@@ -72,7 +78,7 @@ class AgendaTecnico extends Page
                     'status_label' => $statusLabel,
                     'style' => $color,
                     'date' => $order->created_at ? $order->created_at->format('d/m/Y') : now()->format('d/m/Y'),
-                    'url' => url("/admin/" . Filament::getTenant()->id . "/maintenance-orders/{$order->id}/edit"),
+                    'url' => url("/admin/" . \App\Support\Tenancy::current()->id . "/maintenance-orders/{$order->id}/edit"),
                 ];
             });
     }

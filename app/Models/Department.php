@@ -2,37 +2,30 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSaaSMetadata;
+use App\Models\Concerns\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
 
 class Department extends Model
 {
+    use HasSaaSMetadata;
     use HasUuids;
+    use BelongsToTenant;
+
+    protected static ?string $saasFeatureKey = "tabela_departments";
+    protected static ?string $saasPermissionSlug = "departamento";
+    protected static ?string $saasModuleLabel = "Departamentos";
 
     protected $fillable = [
         'name',
-        'code',       // Necessário para salvar o código (ex: MANUT001)
-        'tenant_id'
+        'code',
+        'tenant_id',
     ];
-
-    /**
-     * Gatilho de segurança para garantir que o tenant_id seja sempre preenchido,
-     * mesmo que o formulário falhe ou seja ignorado.
-     */
-    protected static function booted(): void
-    {
-        static::creating(function (Department $department) {
-            // Verifica se o tenant_id está vazio e se há um usuário autenticado
-            // Se estivermos em um seeder, o tenant_id deve vir preenchido manualmente
-            if (empty($department->tenant_id) && Auth::check()) {
-                $department->tenant_id = Auth::user()->tenant_id;
-            }
-        });
-    }
 
     /**
      * Relacionamento com a Empresa (Tenant)
@@ -43,7 +36,7 @@ class Department extends Model
     }
 
     /**
-     * INTEGRADO: Retorna as Funções (Roles) vinculadas a este departamento
+     * Funções (Roles) vinculadas a este departamento
      */
     public function roles(): HasMany
     {
@@ -51,7 +44,7 @@ class Department extends Model
     }
 
     /**
-     * INTEGRADO: Retorna os Funcionários (Users) alocados neste departamento
+     * Funcionários (Users) alocados neste departamento
      */
     public function users(): HasMany
     {

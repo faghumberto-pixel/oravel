@@ -9,8 +9,9 @@ use App\Models\User;
 
 class SaaSStatsOverview extends BaseWidget
 {
-    // Esta herança (extends BaseWidget) é o que resolve o erro is_subclass_of na linha 115 do Livewire
-    
+    /**
+     * Define as estatísticas globais da plataforma SaaS.
+     */
     protected function getStats(): array
     {
         return [

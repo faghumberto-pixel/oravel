@@ -15,7 +15,7 @@ class CriticalityChart extends ChartWidget
     protected function getData(): array
     {
         // Pega o ID do Tenant atual de forma segura
-        $tenantId = Filament::getTenant()->id;
+        $tenantId = \App\Support\Tenancy::current()->id;
         
         // Busca todos os níveis cadastrados para garantir que nenhum seja ignorado
         $levels = CriticalityLevel::where('tenant_id', $tenantId)

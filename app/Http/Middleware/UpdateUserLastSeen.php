@@ -5,30 +5,34 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Symfony\Component\HttpFoundation\Response;
 
 class UpdateUserLastSeen
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
-     */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
+        // Ignora completamente qualquer requisição do Livewire
+        if (
+            $request->hasHeader('X-Livewire') ||
+            $request->hasHeader('X-Livewire-Method') ||
+            $request->hasHeader('X-Livewire-Component-Name') ||
+            str_starts_with($request->path(), 'livewire/')
+        ) {
+            return $next($request);
+        }
+
+        // Atualização condicional (apenas a cada minuto)
         if (Auth::check()) {
-            $user = Auth::user();
-            
-            // 🔥 BLINDAGEM DE EVENTOS: Isola completamente o salvamento do usuário,
-            // evitando que pacotes de terceiros (como Spatie) tentem injetar queries de verificação
-            // de papéis/permissões no meio do fluxo do Livewire.
-            $user::withoutEvents(function () use ($user) {
-                $user->timestamps = false; // Evita disparar observers ou alterar o updated_at geral
-                $user->last_seen_at = Carbon::now('America/Sao_Paulo');
-                $user->save();
-            });
+            $now = Carbon::now('America/Sao_Paulo');
+            DB::table('users')
+                ->where('id', Auth::id())
+                ->where(function ($query) use ($now) {
+                    $query->whereNull('last_seen_at')
+                          ->orWhere('last_seen_at', '<', $now->copy()->subMinute());
+                })
+                ->update(['last_seen_at' => $now]);
         }
 
         return $next($request);

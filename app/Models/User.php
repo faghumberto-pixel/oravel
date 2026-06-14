@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSaaSMetadata;
+
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
@@ -15,10 +17,17 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Throwable;
 
-class User extends Authenticatable implements FilamentUser, HasTenants
+class User extends Authenticatable implements FilamentUser, HasTenants, MustVerifyEmail
 {
+    use HasSaaSMetadata;
+
+    protected static ?string $saasFeatureKey = "tabela_users";
+    protected static ?string $saasPermissionSlug = "funcionario";
+    protected static ?string $saasModuleLabel = "Funcionarios";
+
     use HasFactory, Notifiable, HasRoles;
 
     protected $fillable = [
@@ -27,7 +36,9 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         'password',
         'department_id',
         'hourly_rate',
-        'tenant_id', // Adicionado para garantir persistência no multi-tenant
+        'tenant_id',
+        'role',
+        'last_seen', // Adicionado aqui
     ];
 
     protected $hidden = [
@@ -39,24 +50,40 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'hourly_rate' => 'decimal:2',
+        'last_seen' => 'datetime', // Adicionado aqui
     ];
 
-    /**
-     * 📂 RELACIONAMENTO DE DEPARTAMENTO
-     */
+    public function routeNotificationForDatabase($notification)
+    {
+        return $this->notifications();
+    }
+
+    public function podeReceberFinancas(): bool
+    {
+        if ($this->isSuperAdmin()) return true;
+
+        $temRegraFinanceira = $this->hasAnyRole(['financeiro', 'admin', 'gerente']) 
+            || in_array(strtolower($this->role), ['financeiro', 'admin', 'gerente']);
+
+        if ($temRegraFinanceira) return true;
+
+        if ($this->department()->exists()) {
+            $nomeDepartamento = strtolower($this->department->name ?? '');
+            return str_contains($nomeDepartamento, 'finan') || str_contains($nomeDepartamento, 'adm');
+        }
+
+        return false;
+    }
+
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class, 'department_id');
     }
 
-    /**
-     * 🔄 RELACIONAMENTO MULTI-TENANT (1:N)
-     */
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class, 'tenant_id', 'id')->withDefault(function () {
             try {
-                // Protegido contra execuções em Jobs de fila ou Comandos Artisan onde o painel não existe
                 return Filament::getTenant();
             } catch (Throwable $e) {
                 return null;
@@ -64,30 +91,28 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         });
     }
 
-    /**
-     * Relacionamento nativo conectando o Usuário aos seus Tenants (N:N)
-     */
     public function tenants(): BelongsToMany
     {
         return $this->belongsToMany(Tenant::class, 'tenant_user', 'user_id', 'tenant_id');
     }
 
-    public function roles(): BelongsToMany
+    /**
+     * Super admin da plataforma definido por lista explicita em config/oravel.php
+     * (alimentada pelo .env SUPER_ADMINS). NUNCA pelo dominio do e-mail, e NUNCA
+     * editavel pela interface da aplicacao.
+     */
+    public function isSuperAdmin(): bool
     {
-        return $this->morphToMany(
-            config('permission.models.role'),
-            'model',
-            config('permission.table_names.model_has_roles'),
-            config('permission.column_names.model_morph_key'),
-            'role_id'
-        );
+        if (! $this->email) {
+            return false;
+        }
+
+        return in_array(strtolower($this->email), config('oravel.super_admins', []), true);
     }
 
     public function isAdmin(): bool
     {
-        if ($this->email && str_ends_with($this->email, '@oravel.com.br')) {
-            return true;
-        }
+        if ($this->isSuperAdmin()) return true;
 
         return DB::table('model_has_roles')
             ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
@@ -104,23 +129,21 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
     public function getTenants(Panel $panel): Collection
     {
-        if ($this->isAdmin()) {
-            return Tenant::all();
-        }
-
-        return $this->tenants; 
+        if ($this->isSuperAdmin()) return Tenant::all();
+        return Tenant::where('id', $this->tenant_id)->get();
     }
 
     public function canAccessTenant(Model $tenant): bool
     {
-        // 1. Libera imediatamente se for admin da plataforma
-        if ($this->isAdmin()) {
-            return true;
-        }
+        if ($this->isSuperAdmin()) return true;
+        return (string) $this->tenant_id === (string) $tenant->getKey();
+    }
 
-        // 2. Resolve direto no banco de dados via SQL ao invés de carregar collections na memória.
-        // Além disso, evitamos chamar `Filament::getCurrentPanel()` aqui, pois em rotas POST de login 
-        // o painel pode não estar 100% resolvido, gerando falhas de roteamento.
-        return $this->tenants()->whereKey($tenant->getKey())->exists();
+    /**
+     * Verifica se o usuário está online com base no último acesso.
+     */
+    public function isOnline(): bool
+    {
+        return $this->last_seen && $this->last_seen->gt(now()->subMinutes(5));
     }
 }

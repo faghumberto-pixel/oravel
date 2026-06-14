@@ -17,7 +17,7 @@ class CreateUser extends CreateRecord
      */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $tenant = Filament::getTenant();
+        $tenant = \App\Support\Tenancy::current();
         
         if ($tenant) {
             // Se a sua tabela users tiver a coluna direta tenant_id
@@ -34,7 +34,7 @@ class CreateUser extends CreateRecord
      */
     protected function afterCreate(): void
     {
-        $tenant = Filament::getTenant();
+        $tenant = \App\Support\Tenancy::current();
         $user = $this->getRecord();
 
         if ($tenant && $user) {

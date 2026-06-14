@@ -118,7 +118,7 @@ class EditMaintenanceOrder extends EditRecord
                     Select::make('technician_id')
                         ->label('Transferir para qual Técnico?')
                         // CORREÇÃO: Usa o getTenant() para filtrar técnicos do cliente logado
-                        ->options(fn() => User::where('tenant_id', Filament::getTenant()->id)->pluck('name', 'id'))
+                        ->options(fn() => User::where('tenant_id', \App\Support\Tenancy::current()->id)->pluck('name', 'id'))
                         ->required()
                         ->searchable(),
                     Textarea::make('transfer_reason')

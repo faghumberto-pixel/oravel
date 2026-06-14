@@ -3,50 +3,77 @@
 namespace App\Filament\Central\Resources\TenantResource\Pages;
 
 use App\Filament\Central\Resources\TenantResource;
-use Filament\Resources\Pages\CreateRecord;
 use App\Models\User;
+use App\Models\Plan;
+use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
 
 class CreateTenant extends CreateRecord
 {
     protected static string $resource = TenantResource::class;
 
-    /**
-     * Ciclo de vida do Filament: Executado imediatamente APÓS o Tenant ser salvo no banco.
-     */
-    protected function afterCreate(): void
+    /** Campos que pertencem ao ADMIN, nao a tabela tenants. */
+    protected array $adminData = [];
+
+    protected function mutateFormDataBeforeCreate(array $data): array
     {
-        // 1. Pega o objeto da Empresa que acabou de ser criada (contém o ID novo)
-        $tenant = $this->record;
-
-        // 2. Recupera as informações digitadas nos campos do Administrador
-        // vindas do formulário ($this->data)
-        $adminName = $this->data['admin_name'] ?? null;
-        $adminEmail = $this->data['admin_email'] ?? null;
-        $adminPassword = $this->data['admin_password'] ?? null;
-
-        // Proteção contra dados vazios
-        if (! $adminEmail || ! $adminPassword) {
-            return;
+        // E-mail @oravel.com.br viraria SUPER admin sem querer -> bloqueia.
+        if (str_ends_with(strtolower($data['admin_email'] ?? ''), '@oravel.com.br')) {
+            throw ValidationException::withMessages([
+                'data.admin_email' => 'E-mails @oravel.com.br sao reservados para super admins da plataforma.',
+            ]);
         }
 
-        // 3. Cria o usuário vinculando o 'tenant_id' direto (Relação 1:N se aplicável)
-        $user = User::create([
-            'name' => $adminName,
-            'email' => $adminEmail,
-            'password' => Hash::make($adminPassword),
-            'tenant_id' => $tenant->id, 
-            'hourly_rate' => 0.00, // Preenche campos obrigatórios se houver
-        ]);
+        // Colunas NOT NULL sem default: garante valor mesmo se o form nao preencher.
+        if (($data['mrr_value'] ?? null) === null) {
+            $data['mrr_value'] = optional(Plan::find($data['plan_id'] ?? null))->final_price ?? 0;
+        }
+        $data['status'] = $data['status'] ?? 'trial';
 
-        // 4. Cria o relacionamento Pivot (N:N na tabela tenant_user)
-        // Isso é o que impede o temido Erro 404 que o Renan enfrentou!
-        $user->tenants()->attach($tenant->id);
+        $this->adminData = Arr::only($data, ['admin_name', 'admin_email', 'admin_password']);
 
-        // 5. Garante que a role de 'admin' existe e atribui ao usuário
-        // Dando a ele o poder total que a sua SaaSResourcePolicy exige
-        Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
-        $user->assignRole('admin');
+        return Arr::except($data, ['admin_name', 'admin_email', 'admin_password']);
+    }
+
+    protected function afterCreate(): void
+    {
+        $tenant = $this->record;
+        $admin  = $this->adminData;
+
+        // Nao roubar um usuario que ja pertence a outra empresa.
+        $existing = User::where('email', $admin['admin_email'])->first();
+        if ($existing && $existing->tenant_id && (string) $existing->tenant_id !== (string) $tenant->id) {
+            throw new \RuntimeException(
+                "O e-mail {$admin['admin_email']} ja esta vinculado a outro tenant."
+            );
+        }
+
+        // 1. Cria (ou recupera) o admin ja carimbado com o tenant.
+        $user = User::firstOrCreate(
+            ['email' => $admin['admin_email']],
+            [
+                'name'      => $admin['admin_name'] ?: 'Administrador',
+                'password'  => Hash::make($admin['admin_password']),
+                'tenant_id' => $tenant->id,
+                'role'      => 'admin',
+            ]
+        );
+
+        // Se ja existia (mesmo tenant), garante vinculo sem trocar a senha.
+        if (! $user->wasRecentlyCreated) {
+            $user->forceFill(['tenant_id' => $tenant->id, 'role' => 'admin'])->save();
+        }
+
+        // 2. Pivot tenant_user (pelo lado do User).
+        $user->tenants()->syncWithoutDetaching([$tenant->id]);
+
+        // 3. Role 'admin' GLOBAL e compartilhada (isAdmin() exige name='admin').
+        $role = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+
+        // teams DESLIGADO -> assignRole recebe APENAS a role.
+        $user->assignRole($role);
     }
 }

@@ -1,15 +1,48 @@
 <x-filament-panels::page>
-    {{-- TODO O CONTEÚDO CUSTOMIZADO DO DASHBOARD QUE JÁ FIZEMOS É MANTIDO AQUI --}}
-    {{-- (Cabeçalho, cards de resumo, grid de evidências auditáveis, mapa integrado, etc.) --}}
-    
-    <div class="py-6">
-        {{-- ... seu conteúdo customizado do dashboard entra aqui ... --}}
-    </div>
+    <div class="space-y-6">
+        {{-- BOTOES DE NAVEGACAO --}}
+        <div class="flex gap-4">
+            <x-filament::button wire:click="selectTab('gestao')" color="{{ $activeTab === 'gestao' ? 'primary' : 'gray' }}">
+                Painel de Gestão
+            </x-filament::button>
+            <x-filament::button wire:click="selectTab('comando')" color="{{ $activeTab === 'comando' ? 'warning' : 'gray' }}">
+                Centro de Comando
+            </x-filament::button>
+        </div>
+        {{-- AREA DE CONTEUDO UNIFICADA --}}
+        <div class="w-full space-y-6">
+            @if($activeTab === 'gestao')
+                {{-- PAINEL DE GESTAO --}}
+                @livewire(\App\Filament\Widgets\RadarOperacional::class)
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="md:col-span-3 bg-[#0d1321] border border-slate-800 rounded-lg p-6 shadow-2xl min-h-[300px]">
+                        <h2 class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Lista de Ativos - Alerta Visual</h2>
+                        @livewire(\App\Filament\Widgets\ListaAlertaAtivos::class)
+                    </div>
+                    <div class="md:col-span-1 bg-[#0d1321] border border-slate-800 rounded-lg p-6 shadow-2xl min-h-[300px]">
+                        <h2 class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Agenda de Campo</h2>
+                        @livewire(\App\Filament\Widgets\AgendaCampo::class)
+                    </div>
+                </div>
+            @else
+                {{-- CENTRO DE COMANDO --}}
+                <div>
+                    <h2 class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-3">Minhas Ordens de Serviço</h2>
+                    @livewire(\App\Filament\Widgets\TechnicianOrderStats::class)
+                </div>
 
-    {{-- Leaflet assets e scripts customizados mantidos aqui dentro --}}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        // ... script dinâmico do mapa mantido ...
-    </script>
+                @livewire(\App\Filament\Widgets\RadarUrgencia::class)
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="md:col-span-3 bg-[#0d1321] border border-slate-800 rounded-lg p-6 shadow-2xl min-h-[300px]">
+                        <h2 class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Lista de Ativos - Alerta Visual</h2>
+                        @livewire(\App\Filament\Widgets\ListaAlertaAtivos::class)
+                    </div>
+                    <div class="md:col-span-1 bg-[#0d1321] border border-slate-800 rounded-lg p-6 shadow-2xl min-h-[300px]">
+                        <h2 class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Agenda de Campo</h2>
+                        @livewire(\App\Filament\Widgets\AgendaCampo::class)
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
 </x-filament-panels::page>

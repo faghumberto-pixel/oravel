@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Builder;
 
 class Tenant extends Model
 {
@@ -23,49 +23,75 @@ class Tenant extends Model
         'mrr_value',
         'plan_id',
         'onboarding_completed',
+        'features',
     ];
 
-    /**
-     * MÉTODO DE VERIFICAÇÃO DE ASSINATURA (FEATURE GATE)
-     * Ajuste: Adicionado verificação de status ativo (Segurança extra para SaaS)
-     */
-    public function hasAccess(string $featureSlug): bool
+    protected $casts = [
+        'id' => 'string',
+        'plan_id' => 'string',
+        'features' => 'array',
+        'onboarding_completed' => 'boolean',
+        'mrr_value' => 'decimal:2',
+    ];
+
+    public function hasModuleAccess(mixed $moduleId, string $moduleSlug): bool
     {
-        // Se a conta estiver bloqueada ou cancelada, bloqueia acesso a features
-        if ($this->status !== 'active') {
+        return $this->hasFeature($moduleSlug);
+    }
+
+    public function hasFeature(string $feature): bool
+    {
+        $plan = $this->plan()->first();
+        if (!$plan) {
             return false;
         }
 
-        if (!$this->plan) {
+        $planFeatures = $plan->features;
+
+        if (is_string($planFeatures)) {
+            $planFeatures = json_decode($planFeatures, true) ?? [];
+        }
+
+        if (!is_array($planFeatures)) {
             return false;
         }
 
-        return $this->plan->hasFeature($featureSlug);
-    }
+        if (array_key_exists($feature, $planFeatures)) {
+            return $planFeatures[$feature] === true || $planFeatures[$feature] === 1 || $planFeatures[$feature] === 'true' || $planFeatures[$feature] === '1';
+        }
 
-    /**
-     * SCOPE PARA FACILITAR CONSULTAS ATIVAS
-     */
-    public function scopeActive(Builder $query): Builder
-    {
-        return $query->where('status', 'active');
-    }
-
-    // --- RELAÇÕES ---
-
-    public function users(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class);
+        return in_array($feature, $planFeatures, true);
     }
 
     public function plan(): BelongsTo
     {
-        return $this->belongsTo(Plan::class);
+        return $this->belongsTo(Plan::class, 'plan_id', 'id');
     }
 
-    public function materials(): HasMany
+    /**
+     * Usuários vinculados a este tenant (pivot tenant_user).
+     */
+    public function users(): BelongsToMany
     {
-        return $this->hasMany(Material::class);
+        return $this->belongsToMany(User::class, 'tenant_user', 'tenant_id', 'user_id');
+    }
+
+    /**
+     * O administrador da empresa (coluna-string role = 'admin').
+     */
+    public function adminUser(): HasOne
+    {
+        return $this->hasOne(User::class, 'tenant_id', 'id')->where('role', 'admin');
+    }
+
+    public function assets(): HasMany
+    {
+        return $this->hasMany(Asset::class);
+    }
+
+    public function assetCategories(): HasMany
+    {
+        return $this->hasMany(AssetCategory::class, 'tenant_id');
     }
 
     public function clients(): HasMany
@@ -78,28 +104,48 @@ class Tenant extends Model
         return $this->hasMany(MaintenanceOrder::class);
     }
 
-    public function assets(): HasMany
+    public function materials(): HasMany
     {
-        return $this->hasMany(Asset::class);
+        return $this->hasMany(Material::class);
     }
 
-    public function assetCategories(): HasMany
+    public function suppliers(): HasMany
     {
-        return $this->hasMany(AssetCategory::class);
+        return $this->hasMany(Supplier::class);
     }
 
-    public function checklistTemplates(): HasMany
+    public function materialCategories(): HasMany
     {
-        return $this->hasMany(ChecklistTemplate::class);
+        return $this->hasMany(MaterialCategory::class);
     }
 
-    public function criticalityLevels(): HasMany
+    public function stockItems(): HasMany
     {
-        return $this->hasMany(CriticalityLevel::class);
+        return $this->hasMany(StockItem::class);
+    }
+
+    public function billCategories(): HasMany
+    {
+        return $this->hasMany(BillCategory::class, 'tenant_id');
+    }
+
+    public function accountPayables(): HasMany
+    {
+        return $this->hasMany(AccountPayable::class, 'tenant_id');
     }
 
     public function branches(): HasMany
     {
-        return $this->hasMany(Branch::class);
+        return $this->hasMany(Branch::class, 'tenant_id');
+    }
+
+    public function costCenters(): HasMany
+    {
+        return $this->hasMany(CostCenter::class, 'tenant_id');
+    }
+
+    public function solicitacaoLocacaos(): HasMany
+    {
+        return $this->hasMany(SolicitacaoLocacao::class, 'tenant_id');
     }
 }

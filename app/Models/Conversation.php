@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Conversation extends Model
 {
+    use \App\Traits\BelongsToTenant;
     protected $fillable = ['name', 'is_group', 'tenant_id'];
 
     public function tenant(): BelongsTo {

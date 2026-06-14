@@ -4,14 +4,34 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class ChecklistGroup extends Model
 {
-    // Adicione o tenant_id no fillable para permitir o salvamento
-    protected $fillable = ['name', 'tenant_id', 'description']; 
+    use \App\Models\Concerns\BelongsToTenant;
+    // Removida a Trait ausente e corrigida a ordem das chaves { }
+
+    protected $fillable = [
+        'name', 
+        'tenant_id', 
+        'description'
+    ];
+
+    protected static function booted()
+    {
+        static::creating(function ($model) {
+            // Garante a injeção automática e segura do tenant_id em tempo real
+            if (empty($model->tenant_id)) {
+                $model->tenant_id = Auth::user()?->tenant_id 
+                                    ?? filament()->getTenant()?->id 
+                                    ?? session('tenant_id');
+            }
+        });
+    }
 
     /**
-     * ESSA É A RELAÇÃO QUE O FILAMENT ESTÁ COBRANDO:
+     * RELAÇÃO OBRIGATÓRIA PARA O FILAMENT (Tenancy)
      */
     public function tenant(): BelongsTo
     {
