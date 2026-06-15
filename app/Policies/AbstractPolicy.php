@@ -29,7 +29,7 @@ abstract class AbstractPolicy
 
         // 2. TRAVA COMERCIAL SOBERANA: feature nao contratada (ou tenant sem plano)
         //    nega para todos, inclusive admin do tenant.
-        $tenant = Filament::getTenant();
+        $tenant = Tenancy::current();
         if ($tenant) {
             if (!$tenant->relationLoaded('plan')) {
                 $tenant->load(['plan' => fn($q) => $q->withoutGlobalScopes()]);
@@ -100,6 +100,11 @@ abstract class AbstractPolicy
             'role', 'permission' => 'tabela_roles',
             'financial', 'transaction' => 'modulo_financial',
             'chat', 'chat_room', 'message' => 'modulo_chat',
+            'material' => 'tabela_materials',
+            'asset' => 'tabela_assets',
+            'client' => 'tabela_clients',
+            'user' => 'tabela_users',
+            'maintenance_order' => 'tabela_maintenance_orders',
             default => null,
         };
     }
