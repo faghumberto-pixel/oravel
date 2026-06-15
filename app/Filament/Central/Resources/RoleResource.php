@@ -67,7 +67,9 @@ class RoleResource extends Resource
         $tabs = [];
 
         foreach (static::$modules as $label => $slug) {
-            $components = [];
+            $components  = [];
+            $toggleNames = [];
+
             foreach (static::$permActions as $action => $actionLabel) {
                 $permName = "{$action}_{$slug}";
 
@@ -75,7 +77,10 @@ class RoleResource extends Resource
                     continue;
                 }
 
-                $components[] = Forms\Components\Toggle::make("perm_{$permName}")
+                $field = "perm_{$permName}";
+                $toggleNames[] = $field;
+
+                $components[] = Forms\Components\Toggle::make($field)
                     ->label($actionLabel)
                     ->onColor('success')
                     ->offColor('danger')
@@ -88,8 +93,33 @@ class RoleResource extends Resource
             }
 
             $tabs[] = Forms\Components\Tabs\Tab::make($label)
-                ->schema($components)
-                ->columns(4);
+                ->schema([
+                    Forms\Components\Actions::make([
+                        Forms\Components\Actions\Action::make("marcar_todos_{$slug}")
+                            ->label('Marcar todos')
+                            ->icon('heroicon-m-check-circle')
+                            ->color('success')
+                            ->link()
+                            ->action(function (Forms\Set $set) use ($toggleNames) {
+                                foreach ($toggleNames as $name) {
+                                    $set($name, true);
+                                }
+                            }),
+
+                        Forms\Components\Actions\Action::make("desmarcar_todos_{$slug}")
+                            ->label('Desmarcar todos')
+                            ->icon('heroicon-m-x-circle')
+                            ->color('danger')
+                            ->link()
+                            ->action(function (Forms\Set $set) use ($toggleNames) {
+                                foreach ($toggleNames as $name) {
+                                    $set($name, false);
+                                }
+                            }),
+                    ]),
+
+                    Forms\Components\Grid::make(4)->schema($components),
+                ]);
         }
 
         return $form->schema([

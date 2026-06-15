@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Concerns\HasSaaSMetadata;
 
-class Asset extends Model
+class ServiceOrder extends Model
 {
     use HasFactory;
     use HasSaaSMetadata;
 
-    protected static ?string $saasFeatureKey = "tabela_assets";
+    protected static ?string $saasFeatureKey = "tabela_service_orders";
     protected $guarded = [];
 }

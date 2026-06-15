@@ -166,7 +166,7 @@ class MaintenanceOrderResource extends Resource
             Tables\Columns\TextColumn::make('status')->label('Status')->badge(),
         ])->filters([
             Tables\Filters\SelectFilter::make('criticality_level_id')->label('Matriz ABC')->relationship('criticalityLevel', 'name'),
-            Tables\Filters\SelectFilter::make('asset_category')->label('Filtrar por Categoria de Ativo')->relationship('asset.assetCategory', 'name'),
+
         ])->actions([
             Tables\Actions\ViewAction::make(),
             Tables\Actions\EditAction::make(),

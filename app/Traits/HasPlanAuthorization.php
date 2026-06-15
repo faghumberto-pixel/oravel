@@ -34,7 +34,7 @@ trait HasPlanAuthorization
      */
     protected static function passaFeatureDoPlano(): bool
     {
-        $tenant = Filament::getTenant();
+        $tenant = \App\Support\Tenancy::current();
 
         // Painel Central (sem tenant): libera.
         if (!$tenant) {
@@ -62,7 +62,7 @@ trait HasPlanAuthorization
     protected static function passaPermissaoDoUsuario(string $action): bool
     {
         // Fora de tenant (Central) não aplica trava de permissão por módulo.
-        if (!Filament::getTenant()) {
+        if (!\App\Support\Tenancy::current()) {
             return true;
         }
 

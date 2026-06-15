@@ -26,9 +26,11 @@ class CreateRole extends CreateRecord
 
     protected function syncPermissionsFromToggles(Role $role, array $data): void
     {
+        // getRawState() inclui campos dehydrated(false) — $data nao inclui.
+        $state = $this->form->getRawState();
         $names = [];
         foreach (RoleResource::existingPermissionNames() as $permName) {
-            if (! empty($data["perm_{$permName}"])) {
+            if (! empty($state["perm_{$permName}"])) {
                 $names[] = $permName;
             }
         }

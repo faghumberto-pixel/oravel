@@ -2,22 +2,15 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\HasSaaSMetadata;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Concerns\HasSaaSMetadata;
 
 class Supplier extends Model
 {
+    use HasFactory;
     use HasSaaSMetadata;
 
     protected static ?string $saasFeatureKey = "tabela_suppliers";
-    protected static ?string $saasPermissionSlug = "fornecedor";
-    protected static ?string $saasModuleLabel = "Fornecedores";
-
-    // Todos os Traits declarados de forma estrita e correta dentro do corpo do modelo
-    use HasUuids;
-    use \App\Models\Traits\BelongsToTenant;
+    protected $guarded = [];
 }

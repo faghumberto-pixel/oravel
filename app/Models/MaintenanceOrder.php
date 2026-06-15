@@ -37,7 +37,7 @@ class MaintenanceOrder extends Model implements HasMedia
     protected $fillable = [
         'os_number', 'asset_id', 'technician_id', 'client_id', 'branch_id', 'service_type',
         'maintenance_type', 'reported_problem_id', 'description', 'technical_notes',
-        'client_signature', 'technician_signature', 'status', 'internal_status', 'commercial_status', 
+        'client_signature', 'signature_path', 'status', 'internal_status', 'commercial_status', 
         'tenant_id', 'started_at', 'finished_at', 'rescheduled_to', 'total_time_seconds', 
         'last_timer_start', 'reschedule_reason', 'criticality_level_id', 'is_rework', 
         'parent_os_id', 'labor_cost', 'material_cost', 'logistics_cost', 'total_order_cost', 

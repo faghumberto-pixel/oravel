@@ -9,6 +9,11 @@ class EditRole extends EditRecord
 {
     protected static string $resource = RoleResource::class;
 
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        return RoleResource::mutateFormDataBeforeFill($data);
+    }
+
     protected function afterSave(): void
     {
         $permissions = collect($this->form->getRawState())
