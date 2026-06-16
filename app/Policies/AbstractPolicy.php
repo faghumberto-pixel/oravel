@@ -7,6 +7,7 @@ use App\Support\SaaSRegistry;
 use Filament\Facades\Filament;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Str;
+use App\Support\Tenancy;
 
 abstract class AbstractPolicy
 {
