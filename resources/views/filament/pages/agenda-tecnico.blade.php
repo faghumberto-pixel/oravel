@@ -1,62 +1,229 @@
-<x-filament-panels::page>
-    <div class="space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @forelse($this->events as $event)
-                <a href="{{ $event['url'] }}" class="block p-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md hover:border-amber-500 dark:hover:border-amber-500 transition duration-300 group relative overflow-hidden">
-                    
-                    {{-- Detalhe estético: Barra lateral que responde ao toque/hover --}}
-                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-amber-500 opacity-0 group-hover:opacity-100 transition duration-300"></div>
-
-                    <div class="flex items-center justify-between mb-4">
-                        {{-- 🔑 CORREÇÃO: Puxa o status_label traduzido do back-end --}}
-                        <span class="text-xs font-mono font-bold tracking-tight px-3 py-1 rounded-lg border {{ $event['style'] }}">
-                            {{ $event['status_label'] }}
-                        </span>
-                        <div class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 font-medium">
-                            <svg class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-                            </svg>
-                            {{ $event['date'] }}
-                        </div>
+<x-filament-panels::page class="!p-0">
+    @php
+        $isAdmin = auth()->user() && auth()->user()->hasRole('admin');
+        $user = auth()->user();
+    @endphp
+    
+    <div style="display: flex; height: 100vh; background-color: #111827;">
+        
+        <!-- SIDEBAR -->
+        <div style="width: 224px; background-color: #1f2937; border-right: 4px solid #374151; display: flex; flex-direction: column; overflow-y: auto;">
+            <div style="padding: 16px; border-bottom: 1px solid #374151;">
+                <div style="text-align: center;">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ urlencode($user->name) }}" 
+                         style="width: 48px; height: 48px; border-radius: 50%; margin: 0 auto 12px;">
+                    <div style="color: white; font-weight: 600; font-size: 14px;">{{ $user->name }}</div>
+                    <div style="color: #9ca3af; font-size: 12px; margin-top: 4px;">
+                        {{ $isAdmin ? '👨‍💼 Administrador' : '👨‍🔧 Técnico' }}
                     </div>
-
-                    <h3 class="text-base font-black text-gray-900 dark:text-white group-hover:text-amber-500 transition duration-200 tracking-tight">
-                        {{ $event['title'] }}
-                    </h3>
-
-                    <div class="mt-4 space-y-2.5 border-t border-gray-100 dark:border-gray-800/60 pt-4">
-                        <div class="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
-                            <svg class="w-4 h-4 mt-0.5 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            <span class="truncate"><strong class="text-gray-800 dark:text-gray-200 font-semibold">Ativo:</strong> {{ $event['asset'] }}</span>
-                        </div>
-
-                        <div class="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
-                            <svg class="w-4 h-4 mt-0.5 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a3 3 0 1115 0z" />
-                            </svg>
-                            <span class="truncate"><strong class="text-gray-800 dark:text-gray-200 font-semibold">Local:</strong> {{ $event['client'] }}</span>
-                        </div>
-                    </div>
-
-                    <div class="mt-5 pt-4 border-t border-gray-100 dark:border-gray-800/80 flex items-center justify-end text-xs font-bold text-amber-600 dark:text-amber-500 gap-1 group-hover:text-amber-500 transition duration-200">
-                        Abrir Checklist de Campo
-                        <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                        </svg>
-                    </div>
-                </a>
-            @empty
-                <div class="col-span-full p-12 text-center bg-gray-50 dark:bg-gray-900/40 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-800">
-                    <svg class="w-10 h-10 text-gray-300 dark:text-gray-600 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.375M9 18h3.375m14.125-11.25v10.5A2.25 2.25 0 0118 19.5H6A2.25 2.25 0 013.75 17.25V6.75A2.25 2.25 0 016 4.5h1.5m.75-1.5h3a.75.75 0 01.75.75V4.5h-4.5V3.75A.75.75 0 018.25 3zM16.5 4.5h1.5a.75.75 0 01.75.75v.008c0 .414-.336.75-.75.75h-1.5a.75.75 0 01-.75-.75V5.25c0-.414.336-.75.75-.75z" />
-                    </svg>
-                    <p class="text-gray-500 dark:text-gray-400 font-medium">Nenhum atendimento ou histórico localizado para o seu perfil.</p>
                 </div>
-            @endforelse
+            </div>
+
+            @if($isAdmin)
+                <div style="padding: 16px; flex: 1; overflow-y: auto;">
+                    <h3 style="font-size: 12px; font-weight: bold; color: #9ca3af; margin-bottom: 12px; text-transform: uppercase;">Técnicos</h3>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        @foreach($this->technicians as $tech)
+                            <button 
+                                wire:click="setSelectedTechnician('{{ $tech['id'] }}')"
+                                style="width: 100%; padding: 12px; border-radius: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer; border: none; background-color: {{ $selectedTechnician == $tech['id'] ? '#1e40af' : '#374151' }}; color: white; transition: all 0.2s;">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ urlencode($tech['name']) }}" 
+                                     style="width: 32px; height: 32px; border-radius: 50%;">
+                                <div style="flex: 1; text-align: left;">
+                                    <div style="font-size: 14px; font-weight: 600;">{{ $tech['name'] }}</div>
+                                    <div style="font-size: 11px; color: {{ $tech['pending_count'] > 0 ? '#ef4444' : '#10b981' }}; font-weight: bold;">
+                                        {{ $tech['pending_count'] > 0 ? '🔴 ' . $tech['pending_count'] . ' pendência' . ($tech['pending_count'] !== 1 ? 's' : '') : '✅ Tudo ok' }}
+                                    </div>
+                                </div>
+                                @if($selectedTechnician == $tech['id'])
+                                    <div style="font-size: 12px; color: #60a5fa;">✓</div>
+                                @endif
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+            @else
+                <div style="padding: 16px; flex: 1;"></div>
+            @endif
+        </div>
+
+        <!-- CONTEÚDO -->
+        <div style="flex: 1; display: flex; flex-direction: column; background-color: #1f2937;">
+            
+            <!-- CABEÇALHO -->
+            <div style="background-color: #374151; border-bottom: 4px solid #4b5563; padding: 24px 32px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <h1 style="font-size: 28px; font-weight: bold; color: white;">📅 Programação</h1>
+                        <button wire:click="openPendenciesModal()" style="background-color: {{ $this->pendingCountForTechnician > 0 ? '#ef4444' : '#10b981' }}; color: white; padding: 8px 12px; border-radius: 20px; font-weight: bold; font-size: 14px; border: none; cursor: pointer;">
+                            {{ $this->pendingCountForTechnician > 0 ? '🔴 ' . $this->pendingCountForTechnician . ' pendência' . ($this->pendingCountForTechnician !== 1 ? 's' : '') : '✅ Tudo em dia' }}
+                        </button>
+                    </div>
+                    <button wire:click="$set('showAppointmentModal', true)" style="padding: 12px 24px; background-color: #2563eb; color: white; font-weight: bold; border-radius: 8px; border: none; cursor: pointer;">
+                        + Novo Agendamento
+                    </button>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; gap: 8px; background-color: #1f2937; padding: 8px; border-radius: 8px;">
+                        <button wire:click="$set('activeTab', 'hoje')" style="padding: 8px 16px; font-weight: 600; border-radius: 6px; cursor: pointer; border: none; background-color: {{ $activeTab === 'hoje' ? '#2563eb' : 'transparent' }}; color: {{ $activeTab === 'hoje' ? 'white' : '#9ca3af' }};">Hoje</button>
+                        <button wire:click="$set('activeTab', 'semana')" style="padding: 8px 16px; font-weight: 600; border-radius: 6px; cursor: pointer; border: none; background-color: {{ $activeTab === 'semana' ? '#2563eb' : 'transparent' }}; color: {{ $activeTab === 'semana' ? 'white' : '#9ca3af' }};">Semana</button>
+                        <button wire:click="$set('activeTab', 'mes')" style="padding: 8px 16px; font-weight: 600; border-radius: 6px; cursor: pointer; border: none; background-color: {{ $activeTab === 'mes' ? '#2563eb' : 'transparent' }}; color: {{ $activeTab === 'mes' ? 'white' : '#9ca3af' }};">Mês</button>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 24px;">
+                        <button wire:click="setWeekOffset(-1)" style="padding: 8px; cursor: pointer; border: none; background-color: transparent; color: white; font-size: 16px;">◀</button>
+                        <div style="text-align: center; min-width: 224px;">
+                            @php $weekStart = \Carbon\Carbon::parse($weekStartDate); @endphp
+                            <div style="color: white; font-weight: bold; font-size: 16px;">{{ $weekStart->format('d M, Y') }}</div>
+                        </div>
+                        <button wire:click="setWeekOffset(1)" style="padding: 8px; cursor: pointer; border: none; background-color: transparent; color: white; font-size: 16px;">▶</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRID -->
+            <div style="flex: 1; overflow: auto; background-color: #111827;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead style="position: sticky; top: 0; z-index: 20;">
+                        <tr style="background-color: #1f2937; border-bottom: 3px solid #374151;">
+                            <th style="width: 96px; padding: 16px; text-align: left; font-size: 12px; font-weight: bold; color: #9ca3af; background-color: #0f1419; border-right: 3px solid #374151;">HORÁRIO</th>
+                            @foreach($this->weekDays as $day)
+                                <th style="width: 224px; padding: 16px; text-align: center; border-left: 3px solid #374151; background-color: {{ $day['is_today'] ? '#1e3a8a' : '#1f2937' }};">
+                                    <div style="font-size: 12px; font-weight: bold; color: #9ca3af; text-transform: uppercase;">{{ $day['day_name'] }}</div>
+                                    <div style="font-size: 20px; font-weight: bold; color: {{ $day['is_today'] ? '#60a5fa' : 'white' }}; margin-top: 4px;">{{ $day['full_date'] }}</div>
+                                    @if($day['is_today'])<div style="font-size: 10px; color: #60a5fa; font-weight: bold; margin-top: 4px;">HOJE</div>@endif
+                                </th>
+                            @endforeach
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($this->getTimeSlots() as $time)
+                            <tr style="border-bottom: 3px solid #374151; height: 192px;">
+                                <td style="padding: 12px; font-size: 12px; font-weight: bold; color: #9ca3af; background-color: #0f1419; border-right: 3px solid #374151; vertical-align: top;">{{ $time }}</td>
+                                @foreach($this->weekDays as $day)
+                                    <td wire:click="openAppointmentModal('{{ $day['date'] }}', '{{ $time }}')" style="padding: 12px; border-left: 3px solid #374151; background-color: {{ $day['is_today'] ? 'rgba(30, 58, 138, 0.1)' : '#1f2937' }}; vertical-align: top; cursor: pointer;">
+                                        @php
+                                            $events = [];
+                                            foreach ($this->gridEvents as $key => $event) {
+                                                if (str_contains($key, $day['date']) && str_contains($key, $time)) {
+                                                    if ($isAdmin && $selectedTechnician) {
+                                                        if (str_contains($key, "_{$selectedTechnician}_")) {
+                                                            $events[] = $event;
+                                                        }
+                                                    } else {
+                                                        if (str_contains($key, "_{$user->id}_")) {
+                                                            $events[] = $event;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        @endphp
+                                        @foreach($events as $event)
+                                            @if($event['type'] === 'appointment')
+                                                <button wire:click="toggleAppointmentComplete('{{ $event['appointmentId'] }}')" onclick="event.stopPropagation()" style="display: block; width: 100%; padding: 8px; border-radius: 8px; color: white; font-size: 12px; font-weight: bold; cursor: pointer; margin-bottom: 8px; border: none;" class="{{ $event['color'] }}">
+                                                    <div style="font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $event['title'] }}</div>
+                                                    <div style="font-size: 11px; opacity: 0.9; margin-top: 4px;">{{ $event['asset'] }}</div>
+                                                </button>
+                                            @else
+                                                <a href="{{ $event['uri'] }}" style="display: block; padding: 8px; border-radius: 8px; color: white; font-size: 12px; font-weight: bold; cursor: pointer; margin-bottom: 8px; text-decoration: none;" class="{{ $event['color'] }}">
+                                                    <div style="font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $event['title'] }}</div>
+                                                    <div style="font-size: 11px; opacity: 0.9; margin-top: 4px;">{{ $event['asset'] }}</div>
+                                                </a>
+                                            @endif
+                                        @endforeach
+                                    </td>
+                                @endforeach
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+
+    <!-- MODAL NOVO AGENDAMENTO -->
+    @if($showAppointmentModal)
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); z-index: 100; display: flex; align-items: center; justify-content: center;">
+            <div style="background-color: #1f2937; border-radius: 12px; padding: 32px; width: 100%; max-width: 500px; border: 2px solid #374151;">
+                <h2 style="color: white; font-size: 24px; font-weight: bold; margin-bottom: 24px;">📅 Novo Agendamento</h2>
+                <form wire:submit="saveAppointment" style="display: flex; flex-direction: column; gap: 16px;">
+                    <div>
+                        <label style="color: #9ca3af; font-size: 12px; font-weight: bold;">Data</label>
+                        <input type="date" wire:model="appointmentDate" style="width: 100%; padding: 12px; background-color: #374151; border: 1px solid #4b5563; color: white; border-radius: 6px; margin-top: 4px;">
+                    </div>
+                    <div>
+                        <label style="color: #9ca3af; font-size: 12px; font-weight: bold;">Hora</label>
+                        <input type="time" wire:model="appointmentTime" style="width: 100%; padding: 12px; background-color: #374151; border: 1px solid #4b5563; color: white; border-radius: 6px; margin-top: 4px;">
+                    </div>
+                    <div>
+                        <label style="color: #9ca3af; font-size: 12px; font-weight: bold;">Assunto *</label>
+                        <input type="text" wire:model="appointmentSubject" placeholder="Ex: Revisão periódica" style="width: 100%; padding: 12px; background-color: #374151; border: 1px solid #4b5563; color: white; border-radius: 6px; margin-top: 4px;">
+                    </div>
+                    <div>
+                        <label style="color: #9ca3af; font-size: 12px; font-weight: bold;">Descrição</label>
+                        <textarea wire:model="appointmentDescription" style="width: 100%; padding: 12px; background-color: #374151; border: 1px solid #4b5563; color: white; border-radius: 6px; margin-top: 4px; resize: vertical; height: 80px;"></textarea>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <input type="checkbox" id="urgentCheckbox" wire:model="appointmentUrgent" style="width: 20px; height: 20px; cursor: pointer;">
+                        <label for="urgentCheckbox" style="color: white; cursor: pointer;">🔴 URGENTE</label>
+                    </div>
+                    <div style="display: flex; gap: 12px; margin-top: 24px;">
+                        <button type="button" wire:click="$set('showAppointmentModal', false)" style="flex: 1; padding: 12px; background-color: #4b5563; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">✖️ Cancelar</button>
+                        <button type="submit" style="flex: 1; padding: 12px; background-color: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">✅ Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
+
+    <!-- MODAL PENDÊNCIAS -->
+    @if($showPendenciesModal)
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); z-index: 100; display: flex; align-items: center; justify-content: center;">
+            <div style="background-color: #1f2937; border-radius: 12px; padding: 32px; width: 100%; max-width: 700px; max-height: 80vh; overflow-y: auto; border: 2px solid #374151;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 24px;">
+                    <h2 style="color: white; font-size: 24px; font-weight: bold;">📋 Resumo de Pendências</h2>
+                    <button wire:click="closePendenciesModal()" style="background-color: #4b5563; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer;">✖️</button>
+                </div>
+
+                <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+                    <div style="flex: 1; background-color: #374151; padding: 16px; border-radius: 8px; border-left: 4px solid #ef4444;">
+                        <div style="color: #9ca3af; font-size: 12px; font-weight: bold;">PENDENTES</div>
+                        <div style="color: #ef4444; font-size: 28px; font-weight: bold; margin-top: 8px;">{{ $this->selectedPendingCount }}</div>
+                    </div>
+                    <div style="flex: 1; background-color: #374151; padding: 16px; border-radius: 8px; border-left: 4px solid #10b981;">
+                        <div style="color: #9ca3af; font-size: 12px; font-weight: bold;">CONCLUÍDOS</div>
+                        <div style="color: #10b981; font-size: 28px; font-weight: bold; margin-top: 8px;">{{ $this->selectedCompletedCount }}</div>
+                    </div>
+                    <div style="flex: 1; background-color: #374151; padding: 16px; border-radius: 8px; border-left: 4px solid #60a5fa;">
+                        <div style="color: #9ca3af; font-size: 12px; font-weight: bold;">TOTAL</div>
+                        <div style="color: #60a5fa; font-size: 28px; font-weight: bold; margin-top: 8px;">{{ $this->selectedPendingCount + $this->selectedCompletedCount }}</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    @forelse($this->selectedTechnicianAppointments as $appointment)
+                        <div style="background-color: #374151; padding: 16px; border-radius: 8px; display: flex; gap: 12px; align-items: flex-start; border-left: 4px solid {{ $appointment->completed ? '#10b981' : ($appointment->urgente ? '#ef4444' : '#60a5fa') }};">
+                            <button wire:click="toggleAppointmentComplete('{{ $appointment->id }}')" onclick="event.stopPropagation()" style="margin-top: 4px; width: 24px; height: 24px; border-radius: 6px; border: 2px solid {{ $appointment->completed ? '#10b981' : '#4b5563' }}; background-color: {{ $appointment->completed ? '#10b981' : 'transparent' }}; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; flex-shrink: 0;">{{ $appointment->completed ? '✓' : '' }}</button>
+                            <div style="flex: 1;">
+                                <div style="color: white; font-weight: bold; font-size: 14px; text-decoration: {{ $appointment->completed ? 'line-through' : 'none' }}; opacity: {{ $appointment->completed ? '0.6' : '1' }};">{{ $appointment->assunto }}</div>
+                                <div style="color: #9ca3af; font-size: 12px; margin-top: 4px;">📅 {{ $appointment->scheduled_at->format('d/m/Y H:i') }}</div>
+                                @if($appointment->descricao)<div style="color: #9ca3af; font-size: 12px; margin-top: 4px;">{{ $appointment->descricao }}</div>@endif
+                            </div>
+                            <div style="display: flex; gap: 8px; flex-direction: column;">
+                                @if($appointment->urgente)<span style="background-color: #ef4444; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">🔴 URGENTE</span>@endif
+                                @if($appointment->completed)<span style="background-color: #10b981; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">✅ FEITO</span>@else<span style="background-color: #60a5fa; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">📅 PENDENTE</span>@endif
+                            </div>
+                        </div>
+                    @empty
+                        <div style="text-align: center; padding: 32px; color: #9ca3af;"><div style="font-size: 48px; margin-bottom: 16px;">✨</div><div style="font-size: 16px; font-weight: bold;">Nenhum agendamento</div></div>
+                    @endforelse
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button wire:click="closePendenciesModal()" style="flex: 1; padding: 12px; background-color: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">✅ Fechar</button>
+                </div>
+            </div>
+        </div>
+    @endif
 </x-filament-panels::page>
