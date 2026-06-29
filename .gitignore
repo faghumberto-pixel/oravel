@@ -1,18 +1,55 @@
+# Ambiente
+.env
+.env.*.php
+.env.backup.*
+.env.bak*
+/.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
+storage/logs/*
+
+# Dependências
 /vendor
 /node_modules
-/bootstrap/cache/*.php
-/storage/*.key
-/storage/framework/cache/*
-/storage/framework/sessions/*
-/storage/framework/views/*
-/storage/logs/*
-.env
-.env.backup
-.phpunit.result.cache
-Homestead.json
-Homestead.yaml
-npm-debug.log
-yarn-error.log
 
-# backups locais
-*.bak*
+# Cache
+/bootstrap/cache/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+*.cache
+
+# Temporários
+storage/temp/*
+/tmp/*
+.tmp
+
+# Segurança
+*.key
+*.pem
+config/database.php.prod
+config/app.php.prod
+
+# Arquivos de teste
+.phpunit.result.cache
+/tests/coverage/
+
+# Backups
+*.backup
+*.bak.*
+
+# Ignore tudo em storage exceto .gitkeep
+storage/*
+!storage/.gitkeep
+!storage/app/.gitkeep
+!storage/logs/.gitkeep
