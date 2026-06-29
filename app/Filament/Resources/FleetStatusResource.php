@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\FleetStatusResource\Pages;
 use App\Models\FleetStatus;
 use Filament\Forms\Form;
@@ -10,6 +12,7 @@ use Filament\Tables\Table;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 
+#[BelongsToFeature('fleet')]
 class FleetStatusResource extends Resource
 {
     protected static ?string $model = FleetStatus::class;

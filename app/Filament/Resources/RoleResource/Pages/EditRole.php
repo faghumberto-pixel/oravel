@@ -2,9 +2,12 @@
 
 namespace App\Filament\Resources\RoleResource\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\RoleResource;
 use Filament\Resources\Pages\EditRecord;
 
+#[BelongsToFeature('roles')]
 class EditRole extends EditRecord
 {
     protected static string $resource = RoleResource::class;

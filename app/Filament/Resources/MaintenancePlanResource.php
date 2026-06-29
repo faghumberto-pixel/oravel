@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\MaintenancePlanResource\Pages;
 use App\Models\MaintenancePlan;
 use App\Models\Asset;
@@ -12,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Facades\Filament;
 
+#[BelongsToFeature('maintenance')]
 class MaintenancePlanResource extends Resource
 { 
     

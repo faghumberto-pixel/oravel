@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\SupplierResource\Pages;
 use App\Models\Supplier;
 use Filament\Forms;
@@ -10,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
+#[BelongsToFeature('suppliers')]
 class SupplierResource extends Resource
 {
     protected static ?string $model = Supplier::class;

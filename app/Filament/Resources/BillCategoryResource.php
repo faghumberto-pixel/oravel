@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\BillCategoryResource\Pages;
 use App\Models\BillCategory;
 use Filament\Forms;
@@ -10,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
+#[BelongsToFeature('bill_categories')]
 class BillCategoryResource extends Resource
 {
     protected static ?string $model = BillCategory::class;

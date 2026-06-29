@@ -2,10 +2,13 @@
 
 namespace App\Filament\Resources\AbcMatrixResource\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\AbcMatrixResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
+#[BelongsToFeature('maintenance_matrix')]
 class EditAbcMatrix extends EditRecord
 {
     protected static string $resource = AbcMatrixResource::class;

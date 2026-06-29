@@ -16,4 +16,12 @@ class EditTenant extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (isset($data['features']) && !is_array($data['features'])) {
+            $data['features'] = [];
+        }
+        return $data;
+    }
 }

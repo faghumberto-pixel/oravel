@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\AccountPayableResource\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\AccountPayableResource;
 use App\Models\AccountPayable;
 use Filament\Actions;
@@ -10,6 +12,7 @@ use Filament\Resources\Pages\ManageRecords;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 
+#[BelongsToFeature('accounts_payable')]
 class ManageAccountPayables extends ManageRecords
 {
     protected static string $resource = AccountPayableResource::class;

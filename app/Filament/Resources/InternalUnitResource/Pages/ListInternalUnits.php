@@ -2,10 +2,13 @@
 
 namespace App\Filament\Resources\InternalUnitResource\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\InternalUnitResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
+#[BelongsToFeature('internal_units')]
 class ListInternalUnits extends ListRecords
 {
     protected static string $resource = InternalUnitResource::class;

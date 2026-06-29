@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Models\MaintenanceOrder;
 use App\Models\Appointment;
 use App\Models\User;
@@ -12,6 +14,7 @@ use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
 
+#[BelongsToFeature('maintenance')]
 class AgendaTecnico extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';

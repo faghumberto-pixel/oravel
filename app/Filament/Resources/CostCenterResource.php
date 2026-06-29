@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\CostCenterResource\Pages;
 use App\Models\CostCenter;
 use Filament\Forms;
@@ -10,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
+#[BelongsToFeature('cost_centers')]
 class CostCenterResource extends Resource
 {
     protected static ?string $model = CostCenter::class;

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\AbcMatrixResource\Pages;
 use App\Models\AbcMatrix;
 use Filament\Forms;
@@ -10,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
+#[BelongsToFeature('maintenance_matrix')]
 class AbcMatrixResource extends Resource
 {
     protected static ?string $model = AbcMatrix::class;

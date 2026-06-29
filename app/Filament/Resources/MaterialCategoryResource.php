@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\MaterialCategoryResource\Pages;
 use App\Models\MaterialCategory;
 use Filament\Forms;
@@ -12,6 +14,7 @@ use Filament\Tables\Table;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 
+#[BelongsToFeature('materials')]
 class MaterialCategoryResource extends Resource
 { 
     

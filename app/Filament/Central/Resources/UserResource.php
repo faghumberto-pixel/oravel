@@ -15,13 +15,17 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+
     protected static ?string $navigationLabel = 'Usuários do Sistema';
+
     protected static ?string $modelLabel = 'Usuário';
+
     protected static ?string $pluralModelLabel = 'Usuários';
-    
-    protected static ?string $navigationGroup = 'Gestão SaaS';
+
     protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationGroup = 'Gestão SaaS';
 
     public static function form(Form $form): Form
     {
@@ -29,43 +33,39 @@ class UserResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Dados do Usuário')
                     ->schema([
-                        Forms\Components\Select::make('tenant_id')
-                            ->relationship('tenant', 'name')
-                            ->label('Empresa (Cliente)')
-                            ->searchable()
-                            ->preload()
-                            ->required()
-                            ->columnSpan('full'),
-                            
                         Forms\Components\TextInput::make('name')
                             ->label('Nome')
                             ->required()
                             ->maxLength(255),
-                            
+
                         Forms\Components\TextInput::make('email')
-                            ->label('E-mail')
+                            ->label('Email')
                             ->email()
                             ->required()
-                            ->maxLength(255),
-                            
+                            ->maxLength(255)
+                            ->unique(User::class, 'email', ignoreRecord: true),
+
+                        Forms\Components\Select::make('tenant_id')
+                            ->label('Empresa (Tenant)')
+                            ->relationship('tenant', 'name')
+                            ->searchable()
+                            ->preload(),
+
                         Forms\Components\TextInput::make('password')
                             ->label('Senha')
                             ->password()
-                            ->revealable()
-                            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                            ->dehydrated(fn ($state) => filled($state))
-                            ->required(fn (string $context): bool => $context === 'create')
-                            ->maxLength(255),
-                            
-                        // FILTRO APLICADO: Central só vê perfis administrativos
-                        Forms\Components\Select::make('roles')
-                            ->relationship('roles', 'name', fn ($query) => $query->whereIn('name', ['admin', 'gestor', 'colaborador']))
-                            ->label('Nível de Acesso (Central)')
-                            ->helperText('Selecione o nível administrativo para este usuário.')
-                            ->multiple()
-                            ->preload()
-                            ->searchable()
-                            ->native(false), 
+                            ->dehydrateStateUsing(fn($state) => $state ? Hash::make($state) : null)
+                            ->required(fn(string $operation) => $operation === 'create')
+                            ->helperText(fn(string $operation) => $operation === 'edit' ? 'Deixe em branco para manter a senha atual' : ''),
+
+                        Forms\Components\Select::make('role')
+                            ->label('Função')
+                            ->options([
+                                'admin' => 'Administrador',
+                                'technician' => 'Técnico',
+                                'manager' => 'Gerente',
+                            ])
+                            ->required(),
                     ])->columns(2),
             ]);
     }
@@ -74,23 +74,62 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->label('Nome')->searchable(),
-                Tables\Columns\TextColumn::make('email')->label('E-mail')->searchable(),
-                Tables\Columns\TextColumn::make('tenant.name')->label('Empresa')->badge()->color('info'),
-                Tables\Columns\TextColumn::make('roles.name')->label('Funções')->badge()->color('primary')->separator(', '),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Nome')
+                    ->searchable()
+                    ->sortable()
+                    ->url(fn(User $record) => route('filament.central.resources.users.edit', $record)),
+
+                Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('tenant.name')
+                    ->label('Empresa')
+                    ->sortable(),
+
+                Tables\Columns\BadgeColumn::make('role')
+                    ->label('Função')
+                    ->colors([
+                        'danger' => 'admin',
+                        'warning' => 'manager',
+                        'info' => 'technician',
+                    ]),
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Criado em')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable(),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('role')
+                    ->label('Função')
+                    ->options([
+                        'admin' => 'Administrador',
+                        'technician' => 'Técnico',
+                        'manager' => 'Gerente',
+                    ]),
+
+                Tables\Filters\SelectFilter::make('tenant_id')
+                    ->label('Empresa')
+                    ->relationship('tenant', 'name'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-            ]);
+                Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 
-    public static function mutateFormDataBeforeFill(array $data): array
+    public static function getRelations(): array
     {
-        $user = User::find($data['id']);
-        if ($user) {
-            $data['roles'] = $user->roles->pluck('id')->toArray();
-        }
-        return $data;
+        return [];
     }
 
     public static function getPages(): array

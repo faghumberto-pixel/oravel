@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\LocationResource\Pages;
 use App\Models\Location;
 use Filament\Forms\Form;
@@ -13,6 +15,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Illuminate\Support\Facades\Http;
 
+#[BelongsToFeature('locations')]
 class LocationResource extends Resource
 { 
     protected static bool $shouldRegisterNavigation = false;

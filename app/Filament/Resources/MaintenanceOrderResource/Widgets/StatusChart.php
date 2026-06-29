@@ -6,6 +6,8 @@ use App\Models\MaintenanceOrder;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\Auth;
 
+use AppFilamentAttributesBelongsToFeature;
+#[BelongsToFeature('maintenance')]
 class StatusChart extends ChartWidget
 {
     protected static ?string $heading = 'Volume por Status de OS';

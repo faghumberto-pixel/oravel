@@ -2,10 +2,13 @@
 
 namespace App\Filament\Resources\MaintenanceOrderResource\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\MaintenanceOrderResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
+#[BelongsToFeature('maintenance')]
 class ListMaintenanceOrders extends ListRecords
 {
     protected static string $resource = MaintenanceOrderResource::class;

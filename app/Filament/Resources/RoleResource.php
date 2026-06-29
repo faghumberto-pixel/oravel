@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\RoleResource\Pages;
 use App\Support\SaaSRegistry;
 use Spatie\Permission\Models\Role;
@@ -14,6 +16,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
+#[BelongsToFeature('roles')]
 class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\ChecklistTemplateResource\Pages;
 use App\Models\ChecklistTemplate; 
 use Filament\Forms;
@@ -10,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
+#[BelongsToFeature('checklists')]
 class ChecklistTemplateResource extends Resource
 
 { 

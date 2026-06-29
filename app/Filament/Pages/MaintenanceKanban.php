@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenanceStatusHistory;
 use Filament\Pages\Page;
@@ -9,6 +11,7 @@ use Filament\Facades\Filament;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Collection;
 
+#[BelongsToFeature('maintenance')]
 class MaintenanceKanban extends Page
 {
     protected static ?string $title = 'Quadro de Gestão Kanban';

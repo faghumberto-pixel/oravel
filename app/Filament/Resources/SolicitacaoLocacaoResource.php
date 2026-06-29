@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\SolicitacaoLocacaoResource\Pages;
 use App\Models\SolicitacaoLocacao;
 use App\Models\Contract;
@@ -15,6 +17,7 @@ use Filament\Tables\Table;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 
+#[BelongsToFeature('rental_requests')]
 class SolicitacaoLocacaoResource extends Resource
 {
     protected static ?string $model = SolicitacaoLocacao::class;

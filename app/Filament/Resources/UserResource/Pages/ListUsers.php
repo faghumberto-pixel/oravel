@@ -2,10 +2,13 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\UserResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
+#[BelongsToFeature('users')]
 class ListUsers extends ListRecords
 {
     protected static string $resource = UserResource::class;

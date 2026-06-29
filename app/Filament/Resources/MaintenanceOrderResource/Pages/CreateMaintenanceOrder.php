@@ -2,11 +2,14 @@
 
 namespace App\Filament\Resources\MaintenanceOrderResource\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\MaintenanceOrderResource;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Facades\Filament;
 use App\Models\MaintenanceOrder;
 
+#[BelongsToFeature('maintenance')]
 class CreateMaintenanceOrder extends CreateRecord
 {
     protected static string $resource = MaintenanceOrderResource::class;

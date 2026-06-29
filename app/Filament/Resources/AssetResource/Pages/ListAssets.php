@@ -2,11 +2,14 @@
 
 namespace App\Filament\Resources\AssetResource\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\AssetResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Facades\Filament;
 
+#[BelongsToFeature('assets')]
 class ListAssets extends ListRecords
 {
     protected static string $resource = AssetResource::class;

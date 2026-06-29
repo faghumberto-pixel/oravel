@@ -2,9 +2,12 @@
 
 namespace App\Filament\Resources\ClientResource\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\ClientResource;
 use Filament\Resources\Pages\CreateRecord;
 
+#[BelongsToFeature('clients')]
 class CreateClient extends CreateRecord
 {
     protected static string $resource = ClientResource::class;

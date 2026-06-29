@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\MaintenanceOrderResource\Pages;
 use App\Models\MaintenanceOrder;
 use App\Models\Asset;
@@ -18,6 +20,7 @@ use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 
+#[BelongsToFeature('maintenance')]
 class MaintenanceOrderResource extends Resource
 {
     protected static ?string $model = MaintenanceOrder::class;

@@ -2,11 +2,14 @@
 
 namespace App\Filament\Resources\AssetResource\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\AssetResource;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 
+#[BelongsToFeature('assets')]
 class ViewAsset extends ViewRecord
 {
     protected static string $resource = AssetResource::class;

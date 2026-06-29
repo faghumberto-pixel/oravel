@@ -2,11 +2,14 @@
 
 namespace App\Filament\Resources\MaintenanceOrderResource\Widgets;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Models\MaintenanceOrder;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+#[BelongsToFeature('maintenance')]
 class MaintenanceOrderVolumeChart extends ChartWidget
 {
     protected static ?string $heading = 'Volume por Status de OS';

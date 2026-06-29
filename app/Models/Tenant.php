@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Support\Facades\Auth;
 
 class Tenant extends Model
 {
@@ -24,6 +25,10 @@ class Tenant extends Model
         'plan_id',
         'onboarding_completed',
         'features',
+        'asaas_customer_id',
+        'asaas_subscription_id',
+        'asaas_status',
+        'asaas_synced_at',
     ];
 
     protected $casts = [
@@ -34,33 +39,47 @@ class Tenant extends Model
         'mrr_value' => 'decimal:2',
     ];
 
+    public function hasFeature(string $feature): bool
+    {
+        if (Auth::user()?->isSuperAdmin()) {
+            return true;
+        }
+
+        $localFeatures = $this->features ?? [];
+        
+        if (is_array($localFeatures)) {
+            if (array_key_exists($feature, $localFeatures)) {
+                if ($localFeatures[$feature] === true || $localFeatures[$feature] === 1) {
+                    return true;
+                }
+            } elseif (in_array($feature, $localFeatures, true)) {
+                return true;
+            }
+        }
+
+        $plan = $this->plan()->first();
+        if ($plan) {
+            $planFeatures = $plan->features;
+
+            if (is_string($planFeatures)) {
+                $planFeatures = json_decode($planFeatures, true) ?? [];
+            }
+
+            if (is_array($planFeatures)) {
+                if (array_key_exists($feature, $planFeatures)) {
+                    return $planFeatures[$feature] === true || $planFeatures[$feature] === 1;
+                } elseif (in_array($feature, $planFeatures, true)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public function hasModuleAccess(mixed $moduleId, string $moduleSlug): bool
     {
         return $this->hasFeature($moduleSlug);
-    }
-
-    public function hasFeature(string $feature): bool
-    {
-        $plan = $this->plan()->first();
-        if (!$plan) {
-            return false;
-        }
-
-        $planFeatures = $plan->features;
-
-        if (is_string($planFeatures)) {
-            $planFeatures = json_decode($planFeatures, true) ?? [];
-        }
-
-        if (!is_array($planFeatures)) {
-            return false;
-        }
-
-        if (array_key_exists($feature, $planFeatures)) {
-            return $planFeatures[$feature] === true || $planFeatures[$feature] === 1 || $planFeatures[$feature] === 'true' || $planFeatures[$feature] === '1';
-        }
-
-        return in_array($feature, $planFeatures, true);
     }
 
     public function plan(): BelongsTo
@@ -68,17 +87,11 @@ class Tenant extends Model
         return $this->belongsTo(Plan::class, 'plan_id', 'id');
     }
 
-    /**
-     * Usuários vinculados a este tenant (pivot tenant_user).
-     */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'tenant_user', 'tenant_id', 'user_id');
     }
 
-    /**
-     * O administrador da empresa (coluna-string role = 'admin').
-     */
     public function adminUser(): HasOne
     {
         return $this->hasOne(User::class, 'tenant_id', 'id')->where('role', 'admin');
@@ -89,16 +102,6 @@ class Tenant extends Model
         return $this->hasMany(Asset::class);
     }
 
-    public function assetCategories(): HasMany
-    {
-        return $this->hasMany(AssetCategory::class, 'tenant_id');
-    }
-
-    public function clients(): HasMany
-    {
-        return $this->hasMany(Client::class);
-    }
-
     public function maintenanceOrders(): HasMany
     {
         return $this->hasMany(MaintenanceOrder::class);
@@ -107,45 +110,5 @@ class Tenant extends Model
     public function materials(): HasMany
     {
         return $this->hasMany(Material::class);
-    }
-
-    public function suppliers(): HasMany
-    {
-        return $this->hasMany(Supplier::class);
-    }
-
-    public function materialCategories(): HasMany
-    {
-        return $this->hasMany(MaterialCategory::class);
-    }
-
-    public function stockItems(): HasMany
-    {
-        return $this->hasMany(StockItem::class);
-    }
-
-    public function billCategories(): HasMany
-    {
-        return $this->hasMany(BillCategory::class, 'tenant_id');
-    }
-
-    public function accountPayables(): HasMany
-    {
-        return $this->hasMany(AccountPayable::class, 'tenant_id');
-    }
-
-    public function branches(): HasMany
-    {
-        return $this->hasMany(Branch::class, 'tenant_id');
-    }
-
-    public function costCenters(): HasMany
-    {
-        return $this->hasMany(CostCenter::class, 'tenant_id');
-    }
-
-    public function solicitacaoLocacaos(): HasMany
-    {
-        return $this->hasMany(SolicitacaoLocacao::class, 'tenant_id');
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
 use Filament\Forms;
@@ -14,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 
+#[BelongsToFeature('users')]
 class UserResource extends Resource
 {
     protected static ?string $tenantRelationshipName = 'tenants';

@@ -2,10 +2,13 @@
 
 namespace App\Filament\Resources\MaintenancePlanResource\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\MaintenancePlanResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
+#[BelongsToFeature('maintenance')]
 class ListMaintenancePlans extends ListRecords
 {
     protected static string $resource = MaintenancePlanResource::class;

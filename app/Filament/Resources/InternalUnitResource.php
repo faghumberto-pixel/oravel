@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\InternalUnitResource\Pages;
 use App\Models\InternalUnit;
 use Filament\Forms;
@@ -12,6 +14,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
+#[BelongsToFeature('internal_units')]
 class InternalUnitResource extends Resource
 { 
     protected static bool $shouldRegisterNavigation = false;

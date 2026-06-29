@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\ClientResource\Pages;
 use App\Models\Client;
 use App\Traits\HasPlanAuthorization;
@@ -14,6 +16,7 @@ use Filament\Facades\Filament; // Adicionado para identificar o Tenant
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
+#[BelongsToFeature('clients')]
 class ClientResource extends Resource
 { 
     use HasPlanAuthorization;

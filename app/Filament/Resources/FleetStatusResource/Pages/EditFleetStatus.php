@@ -6,6 +6,8 @@ use App\Filament\Resources\FleetStatusResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
+use AppFilamentAttributesBelongsToFeature;
+#[BelongsToFeature('fleet')]
 class EditFleetStatus extends EditRecord
 {
     protected static string $resource = FleetStatusResource::class;

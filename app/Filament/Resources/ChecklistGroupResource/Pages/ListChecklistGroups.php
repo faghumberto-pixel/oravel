@@ -2,10 +2,13 @@
 
 namespace App\Filament\Resources\ChecklistGroupResource\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\ChecklistGroupResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
+#[BelongsToFeature('checklists')]
 class ListChecklistGroups extends ListRecords
 {
     protected static string $resource = ChecklistGroupResource::class;

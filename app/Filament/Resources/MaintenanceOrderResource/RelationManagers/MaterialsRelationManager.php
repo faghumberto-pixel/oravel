@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\MaintenanceOrderResource\RelationManagers;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Models\Material;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -10,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 
+#[BelongsToFeature('materials')]
 class MaterialsRelationManager extends RelationManager
 {
     protected static string $relationship = 'materials';

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\MaintenanceOrderResource\RelationManagers;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -9,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 
+#[BelongsToFeature('maintenance')]
 class CommunicationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'internalCommunications';

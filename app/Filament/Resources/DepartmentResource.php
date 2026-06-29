@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Models\Department;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -10,6 +12,7 @@ use Filament\Tables;
 use Filament\Forms;
 use Filament\Facades\Filament;
 
+#[BelongsToFeature('departments')]
 class DepartmentResource extends Resource
 {
     protected static ?string $model = Department::class;

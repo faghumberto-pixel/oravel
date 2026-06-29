@@ -2,8 +2,11 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use Filament\Pages\Page;
 
+#[BelongsToFeature('users')]
 class Chat extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';

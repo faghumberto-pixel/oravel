@@ -2,10 +2,13 @@
 
 namespace App\Filament\Resources\PartsRequestResource\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\PartsRequestResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
+#[BelongsToFeature('parts_request')]
 class ManagePartsRequests extends ManageRecords
 {
     protected static string $resource = PartsRequestResource::class;

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\AccountPayableResource\Pages;
 use App\Models\AccountPayable;
 use App\Models\BillCategory;
@@ -19,6 +21,7 @@ use Filament\Notifications\Notification;
 use Filament\Notifications\Actions\Action;
 use Illuminate\Support\Str;
 
+#[BelongsToFeature('accounts_payable')]
 class AccountPayableResource extends Resource
 {
     protected static ?string $model = AccountPayable::class;

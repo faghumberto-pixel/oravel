@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\MaintenanceOrderResource\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\MaintenanceOrderResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
@@ -12,6 +14,7 @@ use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 
+#[BelongsToFeature('maintenance')]
 class EditMaintenanceOrder extends EditRecord
 {
     protected static string $resource = MaintenanceOrderResource::class;

@@ -7,6 +7,8 @@ use App\Models\CriticalityLevel;
 use Filament\Widgets\ChartWidget;
 use Filament\Facades\Filament;
 
+use AppFilamentAttributesBelongsToFeature;
+#[BelongsToFeature('maintenance')]
 class CriticalityChart extends ChartWidget
 {
     protected static ?string $heading = 'Perfil de Risco da Frota';

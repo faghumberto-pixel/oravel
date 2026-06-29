@@ -2,10 +2,13 @@
 
 namespace App\Filament\Resources\AssetCategoryResource\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use App\Filament\Resources\AssetCategoryResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
+#[BelongsToFeature('assets')]
 class EditAssetCategory extends EditRecord
 {
     protected static string $resource = AssetCategoryResource::class;

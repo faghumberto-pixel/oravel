@@ -6,45 +6,43 @@ use App\Models\User;
 
 class UserPolicy
 {
-    /**
-     * Super admin da plataforma libera tudo.
-     */
-    public function before(User $user, string $ability): ?bool
-    {
-        if (method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) {
-            return true;
-        }
-        return null;
-    }
-
-    /**
-     * Só o admin do tenant vê/gerencia o módulo Funcionários.
-     * Técnico comum NÃO vê o menu.
-     */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin();
+        return true;
     }
 
     public function view(User $user, User $model): bool
     {
-        return $user->isAdmin() && $user->tenant_id === $model->tenant_id;
+        return true;
     }
 
     public function create(User $user): bool
     {
-        return $user->isAdmin();
+        return true;
     }
 
     public function update(User $user, User $model): bool
     {
-        return $user->isAdmin() && $user->tenant_id === $model->tenant_id;
+        return true;
     }
 
     public function delete(User $user, User $model): bool
     {
-        return $user->isAdmin()
-            && $user->tenant_id === $model->tenant_id
-            && $user->id !== $model->id; // não pode se autodeletar
+        return true;
+    }
+
+    public function deleteAny(User $user): bool
+    {
+        return true;
+    }
+
+    public function restore(User $user, User $model): bool
+    {
+        return true;
+    }
+
+    public function forceDelete(User $user, User $model): bool
+    {
+        return true;
     }
 }

@@ -2,12 +2,15 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
+
 use Filament\Pages\Page;
 use App\Filament\Widgets\RadarOperacional;
 use App\Filament\Widgets\RadarUrgencia;
 use App\Filament\Widgets\ListaAlertaAtivos;
 use App\Filament\Widgets\AgendaCampo;
 
+#[BelongsToFeature('users')]
 class PainelGestao extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';

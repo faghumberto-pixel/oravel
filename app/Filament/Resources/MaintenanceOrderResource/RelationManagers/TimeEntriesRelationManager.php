@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
+use AppFilamentAttributesBelongsToFeature;
+#[BelongsToFeature('maintenance')]
 class TimeEntriesRelationManager extends RelationManager
 {
     protected static string $relationship = 'timeEntries';
