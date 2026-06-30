@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class MaintenanceOrderDelegation extends Model
 {
-    use HasUuids;
+    use HasUuids, BelongsToTenant;
 
-    protected $fillable = ['maintenance_order_id', 'technician_id', 'supervisor_instructions', 'delegated_at', 'deadline'];
-
-    public function maintenanceOrder() { return $this->belongsTo(MaintenanceOrder::class); }
-    public function technician() { return $this->belongsTo(User::class, 'technician_id'); }
+    protected $fillable = [
+        'tenant_id',
+        'maintenance_order_id',
+        'delegated_to_user_id',
+    ];
 }
