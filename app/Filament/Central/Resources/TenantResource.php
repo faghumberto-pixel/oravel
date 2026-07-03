@@ -2,8 +2,8 @@
 
 namespace App\Filament\Central\Resources;
 
-use App\Enums\Feature;
 use App\Filament\Central\Resources\TenantResource\Pages;
+use App\Models\Plan;
 use App\Models\Tenant;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -33,9 +33,14 @@ class TenantResource extends Resource
                 Forms\Components\Toggle::make('onboarding_completed')->label('Onboarding Completo')->default(false),
             ])->columns(2),
 
-            Forms\Components\Section::make('🔐 Recursos Disponíveis')->description('Marque quais módulos este tenant pode acessar.')->schema([
-                Forms\Components\CheckboxList::make('features')->label('Módulos')->options(Feature::options())->columns(2),
-            ]),
+            Forms\Components\Section::make('🔐 Recursos Adicionais')
+                ->description('Libere aqui módulos além do que o plano contratado já concede. Deixar desmarcado não bloqueia nada do plano — só o plano define o que é negado.')
+                ->schema([
+                    Forms\Components\CheckboxList::make('features')
+                        ->label('Módulos extras liberados para este tenant')
+                        ->options(Plan::getAvailableFeaturesOptions())
+                        ->columns(2),
+                ]),
         ]);
     }
 

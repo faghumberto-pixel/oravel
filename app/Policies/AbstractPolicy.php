@@ -28,19 +28,18 @@ abstract class AbstractPolicy
             return true;
         }
 
-        // 2. TRAVA COMERCIAL SOBERANA: feature nao contratada (ou tenant sem plano)
-        //    nega para todos, inclusive admin do tenant.
+        // 2. TRAVA COMERCIAL SOBERANA: feature nao contratada nega para todos,
+        //    inclusive admin do tenant. Tenant::hasFeature() checa primeiro um
+        //    override aditivo do proprio tenant (libera algo alem do plano) e
+        //    cai pro plano quando o tenant nao tem override para essa feature.
         $tenant = Tenancy::current();
         if ($tenant) {
             if (!$tenant->relationLoaded('plan')) {
                 $tenant->load(['plan' => fn($q) => $q->withoutGlobalScopes()]);
             }
-            $plan = $tenant->plan;
             $featureKey = $this->getFeatureKeyFromModel($model);
-            if ($featureKey) {
-                if (!$plan || !$plan->hasFeature($featureKey)) {
-                    return false;
-                }
+            if ($featureKey && !$tenant->hasFeature($featureKey)) {
+                return false;
             }
         }
 

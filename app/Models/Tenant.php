@@ -39,6 +39,12 @@ class Tenant extends Model
         'mrr_value' => 'decimal:2',
     ];
 
+    /**
+     * Override aditivo: o tenant pode ganhar features alem do plano contratado
+     * (ex: cliente pagou o plano Basico mas ganhou um modulo do Premium).
+     * Nao da pra bloquear via tenant algo que o plano permite -- so o plano
+     * define o que e negado. Ver App\Policies\AbstractPolicy::check().
+     */
     public function hasFeature(string $feature): bool
     {
         if (Auth::user()?->isSuperAdmin()) {
@@ -46,10 +52,11 @@ class Tenant extends Model
         }
 
         $localFeatures = $this->features ?? [];
-        
+
         if (is_array($localFeatures)) {
             if (array_key_exists($feature, $localFeatures)) {
-                if ($localFeatures[$feature] === true || $localFeatures[$feature] === 1) {
+                $value = $localFeatures[$feature];
+                if ($value === true || $value === 1 || $value === '1' || $value === 'true') {
                     return true;
                 }
             } elseif (in_array($feature, $localFeatures, true)) {
@@ -57,24 +64,7 @@ class Tenant extends Model
             }
         }
 
-        $plan = $this->plan()->first();
-        if ($plan) {
-            $planFeatures = $plan->features;
-
-            if (is_string($planFeatures)) {
-                $planFeatures = json_decode($planFeatures, true) ?? [];
-            }
-
-            if (is_array($planFeatures)) {
-                if (array_key_exists($feature, $planFeatures)) {
-                    return $planFeatures[$feature] === true || $planFeatures[$feature] === 1;
-                } elseif (in_array($feature, $planFeatures, true)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return (bool) $this->plan?->hasFeature($feature);
     }
 
     public function hasModuleAccess(mixed $moduleId, string $moduleSlug): bool
