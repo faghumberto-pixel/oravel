@@ -96,6 +96,60 @@ class TenantFeatureOverrideTest extends TestCase
         $this->assertFalse(ClientResource::canViewAny());
     }
 
+    public function test_non_admin_user_with_granular_permission_can_view_any(): void
+    {
+        // Regressao do bug: viewAny()/create() roteados por uma Policy generica
+        // compartilhada (DynamicPolicy) sempre negavam para usuarios NAO-admin,
+        // porque o Gate do Laravel remove o argumento de classe nessas chamadas
+        // (ver Gate::callPolicyMethod() no vendor) -- so funcionava por acidente
+        // pra usuarios "admin" do tenant, que contornam essa checagem antes.
+        // Corrigido criando Policies nomeadas (ClientPolicy, etc.) que herdam
+        // tudo de AbstractPolicy -- o nome da classe deixa resolveModelClass()
+        // deduzir o modelo mesmo sem o argumento.
+        $plan = Plan::create([
+            'name' => 'Plano com clientes 2', 'price' => 100, 'base_price' => 100, 'level' => 1,
+            'billing_cycle' => 'monthly', 'is_active' => true, 'features' => ['tabela_clients'],
+        ]);
+        $tenant = Tenant::create([
+            'name' => 'Tenant usuario comum', 'slug' => 'comum-' . uniqid(),
+            'plan_id' => $plan->id, 'status' => 'active', 'features' => null,
+        ]);
+
+        $user = User::create([
+            'name' => 'Usuario Sem Admin', 'email' => 'comum-' . uniqid() . '@oravel.com.br',
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'email_verified_at' => now(),
+        ]);
+        $viewPermission = Permission::firstOrCreate(['name' => 'ler_cliente', 'guard_name' => 'web']);
+        $createPermission = Permission::firstOrCreate(['name' => 'criar_cliente', 'guard_name' => 'web']);
+        $role = Role::create(['name' => 'colaborador-' . uniqid(), 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
+        $role->givePermissionTo([$viewPermission, $createPermission]);
+        $user->assignRole($role);
+
+        $this->actingAs($user);
+        $this->assertFalse($user->isAdmin());
+        $this->assertTrue(ClientResource::canViewAny());
+        $this->assertTrue(ClientResource::canCreate());
+    }
+
+    public function test_non_admin_user_without_permission_is_still_denied(): void
+    {
+        $plan = Plan::create([
+            'name' => 'Plano com clientes 3', 'price' => 100, 'base_price' => 100, 'level' => 1,
+            'billing_cycle' => 'monthly', 'is_active' => true, 'features' => ['tabela_clients'],
+        ]);
+        $tenant = Tenant::create([
+            'name' => 'Tenant sem permissao', 'slug' => 'sem-permissao-' . uniqid(),
+            'plan_id' => $plan->id, 'status' => 'active', 'features' => null,
+        ]);
+        $user = User::create([
+            'name' => 'Usuario Sem Permissao', 'email' => 'sempermissao-' . uniqid() . '@oravel.com.br',
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'email_verified_at' => now(),
+        ]);
+
+        $this->actingAs($user);
+        $this->assertFalse(ClientResource::canViewAny());
+    }
+
     public function test_super_admin_bypasses_feature_gate_entirely(): void
     {
         $plan = Plan::create([

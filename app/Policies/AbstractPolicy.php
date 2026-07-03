@@ -148,7 +148,7 @@ abstract class AbstractPolicy
 
     public function viewAny(User $user, $model = null): bool { return $this->check($user, 'viewAny', $model); }
     public function view(User $user, $model): bool { return $this->check($user, 'view', $model); }
-    public function create(User $user, $model = null): bool { return $this->check($user, 'create', $model ?? static::class); }
+    public function create(User $user, $model = null): bool { return $this->check($user, 'create', $model); }
     public function update(User $user, $model): bool { return $this->check($user, 'update', $model); }
     public function delete(User $user, $model): bool { return $this->check($user, 'delete', $model); }
 }
