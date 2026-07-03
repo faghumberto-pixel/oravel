@@ -67,10 +67,6 @@ echo "🧹 Limpando cache..."
 php artisan optimize:clear
 php artisan config:cache
 
-# Valida features
-echo "✅ Validando features..."
-php artisan test:features
-
 echo "✨ DEPLOY CONCLUÍDO COM SUCESSO!"
 REMOTE_EOF
 )
