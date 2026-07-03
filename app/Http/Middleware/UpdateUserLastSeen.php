@@ -29,10 +29,10 @@ class UpdateUserLastSeen
             DB::table('users')
                 ->where('id', Auth::id())
                 ->where(function ($query) use ($now) {
-                    $query->whereNull('last_seen_at')
-                          ->orWhere('last_seen_at', '<', $now->copy()->subMinute());
+                    $query->whereNull('last_seen')
+                          ->orWhere('last_seen', '<', $now->copy()->subMinute());
                 })
-                ->update(['last_seen_at' => $now]);
+                ->update(['last_seen' => $now]);
         }
 
         return $next($request);
