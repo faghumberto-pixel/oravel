@@ -3,14 +3,15 @@
 set -e
 
 BRANCH=${1:-main}
-PROD_HOST="root@app.oravel.com.br"
+VM_INSTANCE="oravel-prod"
+VM_ZONE="southamerica-east1-c"
 PROD_PATH="/var/www/oravel"
 BACKUP_DIR="/var/backups"
 
 echo "🚀 INICIANDO DEPLOY PARA PRODUÇÃO"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Branch: $BRANCH"
-echo "Host: $PROD_HOST"
+echo "VM: $VM_INSTANCE ($VM_ZONE)"
 echo "Path: $PROD_PATH"
 echo ""
 
@@ -27,8 +28,9 @@ echo "✅ Git clean"
 echo "📤 Fazendo push para $BRANCH..."
 git push origin $BRANCH
 
-# 3. SSH para PROD
-ssh $PROD_HOST << PROD_COMMANDS
+# 3. Monta o script remoto (variáveis locais como $PROD_PATH e $BRANCH são
+# expandidas aqui; variáveis com \$ só existem no lado remoto, ex: \$BACKUP_FILE)
+REMOTE_SCRIPT=$(cat <<REMOTE_EOF
 set -e
 cd $PROD_PATH
 
@@ -45,11 +47,20 @@ git pull origin $BRANCH
 echo "🔍 Validando PHP..."
 find app -name "*.php" -exec php -l {} +
 
-# Roda migrations (se houver)
-if [ -f database/migrations/*.php ]; then
+# Instala dependências PHP
+echo "📦 Instalando dependências do Composer..."
+composer install --no-dev --optimize-autoloader --no-interaction
+
+# Roda migrations (se houver alguma)
+if compgen -G "database/migrations/*.php" > /dev/null; then
     echo "🗄️ Rodando migrations..."
     php artisan migrate --force
 fi
+
+# Instala dependências JS e builda assets
+echo "📦 Instalando dependências do NPM e buildando assets..."
+npm install
+npm run build
 
 # Limpa cache
 echo "🧹 Limpando cache..."
@@ -61,8 +72,12 @@ echo "✅ Validando features..."
 php artisan test:features
 
 echo "✨ DEPLOY CONCLUÍDO COM SUCESSO!"
+REMOTE_EOF
+)
 
-PROD_COMMANDS
+# 4. Conecta na VM via gcloud e roda o script remoto
+echo "🔌 Conectando na VM via gcloud compute ssh..."
+gcloud compute ssh "$VM_INSTANCE" --zone="$VM_ZONE" --command="$REMOTE_SCRIPT"
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
