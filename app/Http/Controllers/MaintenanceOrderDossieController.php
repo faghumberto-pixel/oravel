@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MaintenanceOrder;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class MaintenanceOrderDossieController extends Controller
@@ -10,15 +11,15 @@ class MaintenanceOrderDossieController extends Controller
     /**
      * Gera o PDF do Dossiê da Ordem de Manutenção.
      */
-    public function download($record)
+    public function download(MaintenanceOrder $record)
     {
-        // Por enquanto, apenas um retorno simples para não dar erro
-        return "Gerando Dossiê para a OS: " . $record;
-        
-        /* Futuramente, aqui entrará sua lógica do DomPDF ou Browsershot:
-           $order = MaintenanceOrder::findOrFail($record);
-           $pdf = Pdf::loadView('pdf.maintenance-dossie', compact('order'));
-           return $pdf->download("dossie-os-{$order->id}.pdf");
-        */
+        $order = $record->load(['asset', 'client', 'technician', 'evidences']);
+
+        $pdf = Pdf::loadView('pdf.maintenance_order_dossie', [
+            'order' => $order,
+            'generatedAt' => now()->format('d/m/Y H:i'),
+        ]);
+
+        return $pdf->download("dossie-os-{$order->os_number}.pdf");
     }
 }

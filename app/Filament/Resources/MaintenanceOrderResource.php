@@ -128,15 +128,36 @@ class MaintenanceOrderResource extends Resource
                 // --- ABA 4: FOTOS ---
                 Forms\Components\Tabs\Tab::make('Fotos e Evidências')->schema([
                     Forms\Components\Grid::make(2)->schema([
-                        Forms\Components\FileUpload::make('photo_before')
-                            ->label('Foto ANTES do Serviço (Estado Inicial)')
-                            ->image()->directory('os-evidences')
-                            ->extraInputAttributes(\App\Support\FormHelpers::cameraCaptureAttributes()),
-                        Forms\Components\FileUpload::make('photo_after')
-                            ->label('Foto DEPOIS do Serviço (Resultado Final)')
-                            ->image()->directory('os-evidences')
-                            ->extraInputAttributes(\App\Support\FormHelpers::cameraCaptureAttributes()),
+                        \App\Forms\Components\CameraCapture::make('photo_before')
+                            ->label('Foto ANTES do Serviço (Estado Inicial)'),
+                        \App\Forms\Components\CameraCapture::make('photo_after')
+                            ->label('Foto DEPOIS do Serviço (Resultado Final)'),
                     ]),
+
+                    Forms\Components\Repeater::make('extra_evidences')
+                        ->label('Evidências Adicionais')
+                        ->dehydrated()
+                        ->addActionLabel('Adicionar Evidência')
+                        ->schema([
+                            \App\Forms\Components\CameraCapture::make('photo')
+                                ->label('Foto'),
+                            Forms\Components\TextInput::make('category')
+                                ->label('Categoria')
+                                ->datalist(['Painel/Horímetro', 'Estrutura Geral', 'Avaria'])
+                                ->placeholder('Ex: Painel/Horímetro, Avaria: Esteira Esquerda'),
+                            Forms\Components\ToggleButtons::make('severity')
+                                ->label('Severidade')
+                                ->options(['ok' => 'OK', 'avaria' => 'Avaria'])
+                                ->colors(['ok' => 'success', 'avaria' => 'danger'])
+                                ->default('ok')->inline(),
+                            Forms\Components\Textarea::make('observation')
+                                ->label('Observação')
+                                ->rows(2)
+                                ->columnSpanFull(),
+                        ])
+                        ->columns(3)
+                        ->defaultItems(0)
+                        ->columnSpanFull(),
                 ]),
 
                 // --- ABA 5: MATERIAIS ---
@@ -153,8 +174,12 @@ class MaintenanceOrderResource extends Resource
                 Forms\Components\Tabs\Tab::make('Assinaturas Digitais')->schema([
                     Forms\Components\Placeholder::make('info_sig')->content('Colete a assinatura na tela do dispositivo.'),
                     Forms\Components\Grid::make(2)->schema([
-                        Forms\Components\FileUpload::make('technician_signature')->label('Assinatura do Técnico')->image()->directory('signatures'),
-                        Forms\Components\FileUpload::make('client_signature')->label('Assinatura do Cliente')->image()->directory('signatures'),
+                        \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('technician_signature')
+                            ->label('Assinatura do Técnico')
+                            ->loadStrategy('idle'),
+                        \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('client_signature')
+                            ->label('Assinatura do Cliente')
+                            ->loadStrategy('idle'),
                     ]),
                 ]),
             ])->columnSpanFull()

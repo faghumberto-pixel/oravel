@@ -5,6 +5,7 @@ namespace App\Filament\Resources\MaintenanceOrderResource\Pages;
 use App\Filament\Attributes\BelongsToFeature;
 
 use App\Filament\Resources\MaintenanceOrderResource;
+use App\Filament\Resources\MaintenanceOrderResource\Concerns\StoresPhotoEvidence;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Forms\Components\DateTimePicker;
@@ -17,11 +18,38 @@ use Filament\Notifications\Notification;
 #[BelongsToFeature('maintenance')]
 class EditMaintenanceOrder extends EditRecord
 {
+    use StoresPhotoEvidence;
+
     protected static string $resource = MaintenanceOrderResource::class;
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        return $this->fillPhotoEvidences($this->getRecord(), $data);
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $this->extractPhotoEvidences($data);
+
+        return $data;
+    }
+
+    protected function afterSave(): void
+    {
+        $this->persistPhotoEvidences($this->record);
+    }
 
     protected function getHeaderActions(): array
     {
         return [
+            // 0. BOTÃO DOSSIÊ OPERACIONAL
+            Actions\Action::make('dossie')
+                ->label('Dossiê Operacional')
+                ->color('gray')
+                ->icon('heroicon-o-document-chart-bar')
+                ->url(fn () => \App\Filament\Pages\DossieOperacional::getUrl(['record' => $this->record]))
+                ->openUrlInNewTab(),
+
             // 1. BOTÃO INICIAR / CONTINUAR
             Actions\Action::make('iniciar')
                 ->label(fn () => $this->record->started_at ? 'Continuar Serviço' : 'Iniciar Serviço')

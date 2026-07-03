@@ -13,8 +13,15 @@ class Attachment extends Model
     use HasUuids;
 
     protected $fillable = [
-        'maintenance_order_id', 'tenant_id', 'file_path', 'evidence_type',
+        'maintenance_order_id', 'tenant_id', 'file_path', 'file_name', 'mime_type', 'evidence_type',
+        'category', 'severity', 'observation',
         'latitude', 'longitude', 'address', 'captured_at'
+    ];
+
+    protected $casts = [
+        'captured_at' => 'datetime',
+        'latitude' => 'decimal:8',
+        'longitude' => 'decimal:8',
     ];
 
     protected static function booted()

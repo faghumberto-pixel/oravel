@@ -25,7 +25,12 @@
         .value { font-size: 11px; color: #111827; font-weight: 500; }
 
         .evidence-container { margin-top: 10px; }
-        .evidence-card { page-break-inside: avoid; border: 1px solid #e5e7eb; border-radius: 4px; padding: 12px; margin-bottom: 20px; background: #ffffff; }
+        .evidence-card { page-break-inside: avoid; border: 1px solid #e5e7eb; border-radius: 4px; padding: 0; margin-bottom: 20px; background: #ffffff; overflow: hidden; }
+        .evidence-header { padding: 6px 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; color: #ffffff; }
+        .evidence-header.severity-avaria { background: #dc2626; }
+        .evidence-header.severity-ok { background: #059669; }
+        .evidence-body { padding: 12px; }
+        .evidence-observation { margin-top: 6px; padding: 6px; background: #fffbeb; border-left: 3px solid #f59e0b; font-size: 9px; }
         .evidence-img { width: 100%; max-height: 380px; object-fit: contain; border-radius: 2px; margin-bottom: 10px; display: block; }
         .evidence-meta-table { width: 100%; background: #f3f4f6; padding: 8px; border-radius: 4px; }
         .evidence-meta-table td { border: none !important; padding: 2px 5px !important; font-size: 9px !important; }
@@ -98,24 +103,40 @@
         <div class="section-title">Dossiê Fotográfico e Rastreabilidade Satélite</div>
         <div class="evidence-container">
             @forelse($order->evidences as $evidence)
+                @php
+                    $isAvaria = $evidence->severity === 'avaria';
+                    $categoryLabel = $evidence->category ?: match($evidence->evidence_type) {
+                        'antes' => 'Estado Inicial',
+                        'depois' => 'Estado Final',
+                        default => 'Evidência',
+                    };
+                @endphp
                 <div class="evidence-card">
-                    @if($evidence->file_path)
-                        <img src="{{ public_path('storage/' . $evidence->file_path) }}" class="evidence-img">
-                    @endif
-                    <table class="evidence-meta-table">
-                        <tr>
-                            <td style="width: 15%;"><span class="meta-icon">📍 LOCAL:</span></td>
-                            <td>{{ $evidence->address ?? 'Coordenadas registradas no ato' }}</td>
-                        </tr>
-                        <tr>
-                            <td><span class="meta-icon">🌍 GPS:</span></td>
-                            <td>Lat: {{ $evidence->latitude }} | Long: {{ $evidence->longitude }}</td>
-                        </tr>
-                        <tr>
-                            <td><span class="meta-icon">⏰ DATA:</span></td>
-                            <td>{{ $evidence->captured_at?->format('d/m/Y H:i:s') }} (Timestamp Infalsificável)</td>
-                        </tr>
-                    </table>
+                    <div class="evidence-header {{ $isAvaria ? 'severity-avaria' : 'severity-ok' }}">
+                        {{ $categoryLabel }}
+                    </div>
+                    <div class="evidence-body">
+                        @if($evidence->file_path)
+                            <img src="{{ public_path('storage/' . $evidence->file_path) }}" class="evidence-img">
+                        @endif
+                        <table class="evidence-meta-table">
+                            <tr>
+                                <td style="width: 15%;"><span class="meta-icon">📍 LOCAL:</span></td>
+                                <td>{{ $evidence->address ?? 'Coordenadas registradas no ato' }}</td>
+                            </tr>
+                            <tr>
+                                <td><span class="meta-icon">🌍 GPS:</span></td>
+                                <td>Lat: {{ $evidence->latitude }} | Long: {{ $evidence->longitude }}</td>
+                            </tr>
+                            <tr>
+                                <td><span class="meta-icon">⏰ DATA:</span></td>
+                                <td>{{ $evidence->captured_at?->format('d/m/Y H:i:s') }} (Timestamp Infalsificável)</td>
+                            </tr>
+                        </table>
+                        @if($evidence->observation)
+                            <div class="evidence-observation">{{ $evidence->observation }}</div>
+                        @endif
+                    </div>
                 </div>
             @empty
                 <div style="padding: 20px; text-align: center; border: 1px dashed #ccc;">

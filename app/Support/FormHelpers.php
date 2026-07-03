@@ -45,13 +45,4 @@ class FormHelpers
             </script>
         ');
     }
-
-    /**
-     * Atributos para abrir a câmera nativa direto (mobile), evitando
-     * que o técnico precise anexar da galeria com as mãos sujas.
-     */
-    public static function cameraCaptureAttributes(): array
-    {
-        return ['capture' => 'environment'];
-    }
 }

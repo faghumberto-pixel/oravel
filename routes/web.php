@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RentalDemoController;
 use App\Http\Controllers\MaintenanceReportController;
+use App\Http\Controllers\MaintenanceOrderController;
+use App\Http\Controllers\MaintenanceOrderDossieController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Models\MaintenanceOrder;
 use App\Models\Asset; 
@@ -34,6 +36,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/locacao/laudo-minimalista/{order}', [RentalDemoController::class, 'laudoMinimalista'])->name('rental-demo.laudo-minimalista');
+
+    Route::get('/admin/maintenance-orders/{record}/dossie-pdf', [MaintenanceOrderDossieController::class, 'download'])
+        ->name('maintenance-orders.dossie.pdf');
+
+    Route::get('/admin/maintenance-orders/{order}/laudo-minimalista', [MaintenanceOrderController::class, 'laudoMinimalista'])
+        ->name('maintenance-orders.laudo-minimalista');
 
     Route::get('/admin/maintenance-orders/{id}/print', function ($id) {
         $tenant = Filament::getTenant();

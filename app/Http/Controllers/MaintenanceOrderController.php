@@ -142,4 +142,14 @@ class MaintenanceOrderController extends Controller
             'order' => $orderWithEvidences
         ]);
     }
+
+    /**
+     * Visualização minimalista (tela/impressão) do Dossiê Operacional, com dados reais da OS.
+     */
+    public function laudoMinimalista(MaintenanceOrder $order)
+    {
+        $order->load(['asset', 'client', 'technician', 'evidences']);
+
+        return view('maintenance-orders.laudo-minimalista', compact('order'));
+    }
 }
