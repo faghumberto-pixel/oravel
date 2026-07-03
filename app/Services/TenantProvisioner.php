@@ -2,31 +2,43 @@
 
 namespace App\Services;
 
+use App\Models\Role;
 use App\Models\Tenant;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
 class TenantProvisioner
 {
-    // A variável $tenant agora está declarada corretamente aqui
-    public static function provision(Tenant $tenant)
+    /**
+     * Cria o usuário administrador do tenant recém-criado. O papel 'admin'
+     * (App\Models\User::isAdmin()) já dá bypass total na trava de permissão
+     * individual em AbstractPolicy::check() -- só a trava comercial (feature
+     * do plano) continua valendo para ele. Por isso não é preciso conceder
+     * nenhuma Permission explícita aqui: o admin do tenant automaticamente
+     * tem acesso a tudo que o plano contratado libera.
+     *
+     * @param array{name: string, email: string, password: string} $adminData
+     */
+    public static function provision(Tenant $tenant, array $adminData): User
     {
-        $role = Role::firstOrCreate(['name' => 'Administrador', 'guard_name' => 'web']);
+        $role = Role::firstOrCreate(
+            ['name' => 'admin', 'guard_name' => 'web', 'tenant_id' => $tenant->id]
+        );
 
-        $resources = ['Asset', 'Client', 'Material', 'MaintenanceOrder', 'ChecklistTemplate', 'Supplier'];
+        $user = User::create([
+            'name' => $adminData['name'],
+            'email' => $adminData['email'],
+            'password' => $adminData['password'],
+            'tenant_id' => $tenant->id,
+            'role' => 'admin',
+            'hourly_rate' => 0,
+        ]);
 
-        foreach ($resources as $res) {
-            $perm = Permission::firstOrCreate(['name' => "view_any_{$res}", 'guard_name' => 'web']);
-            
-            DB::table('model_has_permissions')->updateOrInsert(
-                [
-                    'permission_id' => $perm->id, 
-                    'model_type' => 'Spatie\Permission\Models\Role', 
-                    'model_id' => $role->id, 
-                    'tenant_id' => $tenant->id
-                ]
-            );
-        }
+        // 'email_verified_at' nao esta no $fillable de User (create() acima o
+        // ignoraria silenciosamente) -- setado a parte de proposito.
+        $user->forceFill(['email_verified_at' => now()])->save();
+
+        $user->assignRole($role);
+
+        return $user;
     }
 }

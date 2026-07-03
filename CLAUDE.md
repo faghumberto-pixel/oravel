@@ -55,14 +55,23 @@ Tenant isolation is enforced at the Eloquent layer, **not** just in controllers/
 
 When adding a new tenant-owned model: give it a `tenant_id` column + the `BelongsToTenant` concern, and re-run the audit command.
 
-### Feature flags / plan gating
-`App\Enums\Feature` enumerates app modules (assets, fleet, contracts, accounts_payable, …). `App\Filament\Attributes\BelongsToFeature` is a PHP attribute used to tag Filament Resources with the feature they belong to; `App\Filament\Middleware\FilterResourcesByFeatures` and `App\Services\FeatureDiscoveryService` use this to gate navigation/resource visibility per tenant plan. Super admins bypass feature filtering.
+### SaaS module registry — the real source of truth for plan/permission gating
+`App\Support\SaaSRegistry::modules()` auto-discovers every `App\Models\*` class that `use`s `App\Models\Concerns\HasSaaSMetadata` and declares `$saasFeatureKey` (e.g. `tabela_clients`), `$saasPermissionSlug` (e.g. `cliente`, used to build permission names like `ler_cliente`/`criar_cliente`), and `$saasModuleLabel`. This is genuinely the single live source consulted by:
+- `App\Policies\AbstractPolicy` — commercial gate (`Tenant::hasFeature($saasFeatureKey)`) + individual permission check (`{ler|criar|editar|excluir}_{saasPermissionSlug}`).
+- `App\Filament\Resources\RoleResource` — builds one tab per module in the "Perfis de Acesso" form.
+- `App\Models\Plan::getAvailableFeaturesOptions()` — feeds the "Tabelas e Recursos" checklist on `PlanResource`/`TenantResource` in the `central` panel, so the SaaS operator can gate each module per plan or per tenant.
+
+**To add a new tenant-owned table/resource and have it show up everywhere automatically** (Central plan screen, RoleResource permission tabs, AbstractPolicy gating): add `use HasSaaSMetadata;` to the model plus the three static properties above. No other file needs editing — this was a real gap until 2026-07 (several models with real Filament Resources, e.g. `Asset`, `Supplier`, had no SaaS metadata and were invisible to the Central plan screen).
+
+**Every model needs its own named `App\Policies\{Model}Policy` extends `AbstractPolicy` (empty body)**, even though all logic is inherited. `viewAny`/`create` checks call the policy without a `$record`, and Laravel's `Gate::callPolicyMethod()` strips the class-string argument in that case (documented framework behavior, assumes one policy = one model) — so a policy *shared* across models (`App\Policies\DynamicPolicy`, the fallback from `Gate::guessPolicyNamesUsing()` in `AppServiceProvider`) can't identify which model it's authorizing and silently misbehaves for non-admin users with only granular permissions (tenant admins don't hit this because `isAdmin()` bypasses the permission check entirely). A dedicated named subclass fixes it because `AbstractPolicy::resolveModelClass()` guesses the model from the policy's own class name as a fallback.
+
+Separately, `App\Enums\Feature` + `App\Filament\Attributes\BelongsToFeature` + `App\Filament\Middleware\FilterResourcesByFeatures` + `App\Services\FeatureDiscoveryService` are an **unrelated, dead** feature-gating mechanism — the attribute is present on most Resources but the middleware that would consume it is never registered in `AdminPanelProvider`. Don't extend this path; it doesn't run.
 
 ### Permissions
-Uses `spatie/laravel-permission`. `User::isAdmin()` checks for the `admin` role via `model_has_roles`/`roles` tables directly (bypassing spatie's cache-heavy helpers) rather than `hasRole()`. `SyncPermissions`, `DiagnosePermissions`, `DebugPermissions`, `DebugPolicyFlow`, `TestPermissionSystem` commands exist for inspecting/repairing the permission state — reach for these instead of hand-writing debug scripts when something looks like a permissions/policy bug.
+Uses `spatie/laravel-permission`. `User::isAdmin()` checks for the `admin` role via `model_has_roles`/`roles` tables directly (bypassing spatie's cache-heavy helpers) rather than `hasRole()`. A user with the tenant-scoped `admin` role gets a full bypass of the individual-permission check in `AbstractPolicy` (still subject to the plan's feature gate) — so a tenant admin does not need explicit Permissions granted to see everything their plan includes. `SyncPermissions`, `DiagnosePermissions`, `DebugPermissions`, `DebugPolicyFlow`, `TestPermissionSystem` commands exist for inspecting/repairing the permission state — reach for these instead of hand-writing debug scripts when something looks like a permissions/policy bug.
 
 ### Other services worth knowing
-- `App\Services\TenantProvisioner` — provisions a new tenant (used by `tenant:test-provisioning` command).
+- `App\Services\TenantProvisioner::provision(Tenant $tenant, array $adminData)` — creates the tenant's first user with the tenant-scoped `admin` role, called from `CreateTenant::afterCreate()` (`central` panel) right after a `Tenant` is created. `TenantResource`'s create form collects `admin_name`/`admin_email`/`admin_password` (stripped out before the `Tenant` itself is saved, since they aren't tenant columns).
 - `App\Services\AsaasService` — integration with Asaas (Brazilian payments provider) for billing; the `/api/webhooks/asaas` route is intentionally commented out in `routes/api.php` because `WebhookAsaasController` doesn't exist yet — see the TODO comment there before wiring it up.
 - `App\Services\GovernanceService`, `MaintenanceService`, `AssetService` — domain logic for maintenance orders/assets kept out of Filament classes.
 

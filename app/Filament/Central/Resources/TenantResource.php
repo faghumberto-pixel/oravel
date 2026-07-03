@@ -29,9 +29,35 @@ class TenantResource extends Resource
                 Forms\Components\TextInput::make('slug')->label('Slug')->unique(Tenant::class, 'slug', ignoreRecord: true)->required()->maxLength(255),
                 Forms\Components\Select::make('plan_id')->label('Plano')->relationship('plan', 'name')->searchable()->preload(),
                 Forms\Components\Select::make('status')->label('Status')->options(['active' => 'Ativo', 'trial' => 'Teste', 'suspended' => 'Suspenso', 'canceled' => 'Cancelado'])->default('trial')->required(),
-                Forms\Components\TextInput::make('mrr_value')->label('MRR (R$)')->numeric()->step(0.01),
+                Forms\Components\TextInput::make('mrr_value')->label('MRR (R$)')->numeric()->step(0.01)->default(0),
                 Forms\Components\Toggle::make('onboarding_completed')->label('Onboarding Completo')->default(false),
             ])->columns(2),
+
+            Forms\Components\Section::make('Administrador do Tenant')
+                ->description('Este usuário nasce com o papel "admin": acesso total a tudo que o plano contratado libera, e pode criar outros usuários e perfis de acesso personalizados dentro da própria empresa.')
+                ->schema([
+                    Forms\Components\TextInput::make('admin_name')
+                        ->label('Nome do Administrador')
+                        ->required()
+                        ->visibleOn('create'),
+
+                    Forms\Components\TextInput::make('admin_email')
+                        ->label('E-mail do Administrador')
+                        ->email()
+                        ->required()
+                        ->unique(\App\Models\User::class, 'email')
+                        ->visibleOn('create'),
+
+                    Forms\Components\TextInput::make('admin_password')
+                        ->label('Senha')
+                        ->password()
+                        ->revealable()
+                        ->required()
+                        ->minLength(8)
+                        ->visibleOn('create'),
+                ])
+                ->visibleOn('create')
+                ->columns(3),
 
             Forms\Components\Section::make('🔐 Recursos Adicionais')
                 ->description('Libere aqui módulos além do que o plano contratado já concede. Deixar desmarcado não bloqueia nada do plano — só o plano define o que é negado.')

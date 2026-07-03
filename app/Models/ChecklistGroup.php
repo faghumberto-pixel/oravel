@@ -6,11 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Models\Concerns\HasSaaSMetadata;
 
 class ChecklistGroup extends Model
 {
     use \App\Models\Concerns\BelongsToTenant;
+    use HasSaaSMetadata;
     // Removida a Trait ausente e corrigida a ordem das chaves { }
+
+    protected static ?string $saasFeatureKey = "tabela_checklist_groups";
+    protected static ?string $saasPermissionSlug = "grupo_checklist";
+    protected static ?string $saasModuleLabel = "Grupos de Checklist";
 
     protected $fillable = [
         'name', 

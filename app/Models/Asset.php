@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSaaSMetadata;
 use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,11 +19,14 @@ class Asset extends Model
     use LogsActivity;
     use HasUuids;
     use BelongsToTenant;
+    use HasSaaSMetadata;
 
     protected $keyType = 'string';
     public $incrementing = false;
 
     protected static ?string $saasFeatureKey = "tabela_assets";
+    protected static ?string $saasPermissionSlug = "ativo";
+    protected static ?string $saasModuleLabel = "Ativos / Frota";
     protected $guarded = [];
 
     protected $casts = [

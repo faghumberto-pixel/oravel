@@ -55,33 +55,32 @@ class Plan extends Model
     }
 
     /**
-     * Lista amigável estática das 21 chaves de recursos e tabelas mapeadas no banco
+     * Lista de chaves de recursos/tabelas disponíveis para liberar num plano ou
+     * como override de tenant, exibida nos CheckboxList de PlanResource e
+     * TenantResource (painel Central).
+     *
+     * Gerada dinamicamente a partir de \App\Support\SaaSRegistry::modules() --
+     * a mesma fonte única de verdade usada por RoleResource e AbstractPolicy --
+     * então toda tabela/Model novo com a trait HasSaaSMetadata aparece aqui
+     * sozinho, sem precisar editar este método. 'modulo_chat' é mantida à mão
+     * porque o chat (Chat/ChatRoom/Message) é checado de verdade em
+     * AbstractPolicy::getFeatureKeyFromModel() mas não é uma "tabela" com
+     * Resource/CRUD própria, então não entra no SaaSRegistry.
      */
     public static function getAvailableFeaturesOptions(): array
     {
-        return [
-            'modulo_painel_gestao'       => 'Módulo: Painel de Gestão',
-            'modulo_kanban_oficina'      => 'Módulo: Kanban da Oficina',
-            'tabela_chat_rooms'          => 'Tabela: Salas de Chat',
-            'tabela_roles'               => 'Tabela: Perfis e Funções',
-            'tabela_users'               => 'Tabela: Usuários',
-            'tabela_departments'         => 'Tabela: Departamentos',
-            'tabela_clients'             => 'Tabela: Clientes',
-            'tabela_suppliers'           => 'Tabela: Fornecedores',
-            'tabela_assets'              => 'Tabela: Ativos / Frota',
-            'tabela_materials'           => 'Tabela: Materiais',
-            'tabela_material_categories' => 'Tabela: Categorias de Materiais',
-            'tabela_maintenance_orders'  => 'Tabela: Ordens de Manutenção',
-            'tabela_checklist_templates' => 'Tabela: Modelos de Checklist',
-            'tabela_contracts'           => 'Tabela: Contratos',
-            'tabela_purchases'           => 'Tabela: Compras',
-            'tabela_purchase_orders'     => 'Tabela: Pedidos de Compra',
-            'kanban_oficina'             => 'Painel Kanban Oficina',
-            'chat_os'                    => 'Chat de Ordens de Serviço',
-            'modulo_chat'                => 'Módulo: Chat Geral',
-            'tabela_fleet_statuses'      => 'Tabela: Status da Frota',
-            'painel_gestao'              => 'Painel de Gestão Direta',
+        $options = [
+            'modulo_chat' => 'Módulo: Chat Geral',
         ];
+
+        foreach (\App\Support\SaaSRegistry::modules() as $module) {
+            if (!$module['feature']) {
+                continue;
+            }
+            $options[$module['feature']] = 'Tabela: ' . ($module['label'] ?? $module['slug']);
+        }
+
+        return $options;
     }
 
     /**
