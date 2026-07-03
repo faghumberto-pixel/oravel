@@ -1,4 +1,3 @@
-// app/Http/Middleware/TenantMiddleware.php
 <?php
 
 namespace App\Http\Middleware;
@@ -12,23 +11,20 @@ class TenantMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // --- LINHA DE DEPURACAO COMENTADA ---
-        // dd('TenantMiddleware está sendo executado!');
-        // --- FIM LINHA DE DEPURACAO ---
-    $tenantSlug = $request-&gt;route('tenantSlug');
+        $tenantSlug = $request->route('tenantSlug');
 
-    if (!$tenantSlug) {
+        if (!$tenantSlug) {
+            return $next($request);
+        }
+
+        $tenant = Tenant::where('slug', $tenantSlug)->first();
+
+        if (!$tenant) {
+            abort(404, 'Tenant not found.');
+        }
+
+        app()->instance('tenant', $tenant);
+
         return $next($request);
     }
-
-    $tenant = Tenant::where('slug', $tenantSlug)-&gt;first();
-
-    if (!$tenant) {
-        abort(404, 'Tenant not found.');
-    }
-
-    app()-&gt;instance('tenant', $tenant);
-
-    return $next($request);
-}
 }

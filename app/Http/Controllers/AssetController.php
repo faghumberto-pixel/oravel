@@ -11,7 +11,7 @@ class AssetController extends Controller
     /**
      * Lista os ativos com filtros opcionais
      */
-    public function index(Request ): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $query = Asset::query();
 
@@ -26,7 +26,7 @@ class AssetController extends Controller
     /**
      * Salva o ativo injetando o checklist padrão se estiver vazio
      */
-    public function store(Request ): JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
             'name'              => 'required|string',

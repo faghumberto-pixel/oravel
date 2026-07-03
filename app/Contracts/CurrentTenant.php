@@ -1,12 +1,11 @@
-// app/Contracts/CurrentTenant.php
 <?php
 
 namespace App\Contracts;
 
-use App\Models\Tenant; // Importe o modelo Tenant
+use App\Models\Tenant;
 
 interface CurrentTenant
 {
     public function get(): ?Tenant;
-    public function set(Tenant $tenant): void; // Adicionei o método set aqui também
+    public function set(Tenant $tenant): void;
 }

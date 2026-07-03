@@ -1,4 +1,3 @@
-// Conteúdo de app/Console/Commands/TestSetupCommand.php
 <?php
 
 namespace App\Console\Commands;
@@ -22,7 +21,7 @@ public function handle()
 // --- 1. Criar Tenants (se ainda não existirem) ---
 $tenant1 = Tenant::where('slug', 'tenant-a')->first();
 if (!$tenant1) {
-    $tenant1 = Tenant::create(['name' =&amp;gt; 'Tenant A', 'slug' =&amp;gt; 'tenant-a']);
+    $tenant1 = Tenant::create(['name' => 'Tenant A', 'slug' => 'tenant-a']);
     $this->info("Tenant A created: " . $tenant1->name);
 } else {
     $this->info("Tenant A already exists: " . $tenant1->name);
@@ -30,7 +29,7 @@ if (!$tenant1) {
 
 $tenant2 = Tenant::where('slug', 'tenant-b')->first();
 if (!$tenant2) {
-    $tenant2 = Tenant::create(['name' =&amp;gt; 'Tenant B', 'slug' =&amp;gt; 'tenant-b']);
+    $tenant2 = Tenant::create(['name' => 'Tenant B', 'slug' => 'tenant-b']);
     $this->info("Tenant B created: " . $tenant2->name);
 } else {
     $this->info("Tenant B already exists: " . $tenant2->name);
@@ -41,11 +40,11 @@ if (!$tenant2) {
 $userA = User::where('email', 'user.a@tenant-a.com')->first();
 if (!$userA) {
     $userA = User::factory()->create([
-        'name' =&amp;gt; 'User A',
-        'email' =&amp;gt; 'user.a@tenant-a.com',
-        'password' =&amp;gt; bcrypt('password'),
-        'tenant_id' =&amp;gt; $tenant1->id,
-        'job_title' =&amp;gt; 'gestor',
+        'name' => 'User A',
+        'email' => 'user.a@tenant-a.com',
+        'password' => bcrypt('password'),
+        'tenant_id' => $tenant1->id,
+        'job_title' => 'gestor',
     ]);
     $this->info("User A created: " . $userA->email . " for Tenant: " . $userA->tenant->name . " with job_title: " . $userA->job_title);
 } else {
@@ -56,11 +55,11 @@ if (!$userA) {
 $userB = User::where('email', 'user.b@tenant-b.com')->first();
 if (!$userB) {
     $userB = User::factory()->create([
-        'name' =&amp;gt; 'User B',
-        'email' =&amp;gt; 'user.b@tenant-b.com',
-        'password' =&amp;gt; bcrypt('password'),
-        'tenant_id' =&amp;gt; $tenant2->id,
-        'job_title' =&amp;gt; 'colaborador',
+        'name' => 'User B',
+        'email' => 'user.b@tenant-b.com',
+        'password' => bcrypt('password'),
+        'tenant_id' => $tenant2->id,
+        'job_title' => 'colaborador',
     ]);
     $this->info("User B created: " . $userB->email . " for Tenant: " . $userB->tenant->name . " with job_title: " . $userB->job_title);
 } else {
@@ -71,11 +70,11 @@ if (!$userB) {
 $userAdminTenantA = User::where('email', 'admin.a@tenant-a.com')->first();
 if (!$userAdminTenantA) {
     $userAdminTenantA = User::factory()->create([
-        'name' =&amp;gt; 'Admin Tenant A',
-        'email' =&amp;gt; 'admin.a@tenant-a.com',
-        'password' =&amp;gt; bcrypt('password'),
-        'tenant_id' =&amp;gt; $tenant1->id,
-        'job_title' =&amp;gt; 'gestor',
+        'name' => 'Admin Tenant A',
+        'email' => 'admin.a@tenant-a.com',
+        'password' => bcrypt('password'),
+        'tenant_id' => $tenant1->id,
+        'job_title' => 'gestor',
     ]);
     $this->info("Admin Tenant A created: " . $userAdminTenantA->email);
 } else {
@@ -86,11 +85,11 @@ if (!$userAdminTenantA) {
 $userColaboradorTenantA = User::where('email', 'colab.a@tenant-a.com')->first();
 if (!$userColaboradorTenantA) {
     $userColaboradorTenantA = User::factory()->create([
-        'name' =&amp;gt; 'Colaborador Tenant A',
-        'email' =&amp;gt; 'colab.a@tenant-a.com',
-        'password' =&amp;gt; bcrypt('password'),
-        'tenant_id' =&amp;gt; $tenant1->id,
-        'job_title' =&amp;gt; 'analista',
+        'name' => 'Colaborador Tenant A',
+        'email' => 'colab.a@tenant-a.com',
+        'password' => bcrypt('password'),
+        'tenant_id' => $tenant1->id,
+        'job_title' => 'analista',
     ]);
     $this->info("Colaborador Tenant A created: " . $userColaboradorTenantA->email);
 } else {
@@ -101,11 +100,11 @@ if (!$userColaboradorTenantA) {
 $oravelAdmin = User::where('email', 'admin@oravel.com')->first();
 if (!$oravelAdmin) {
     $oravelAdmin = User::factory()->create([
-        'name' =&amp;gt; 'Oravel Admin',
-        'email' =&amp;gt; 'admin@oravel.com',
-        'password' =&amp;gt; bcrypt('password'),
-        'tenant_id' =&amp;gt; null, // Admin global não tem tenant_id
-        'job_title' =&amp;gt; 'oravel_admin',
+        'name' => 'Oravel Admin',
+        'email' => 'admin@oravel.com',
+        'password' => bcrypt('password'),
+        'tenant_id' => null, // Admin global não tem tenant_id
+        'job_title' => 'oravel_admin',
     ]);
     $this->info("Oravel Admin created: " . $oravelAdmin->email);
 } else {
@@ -118,8 +117,8 @@ Auth::login($userA);
 $this->info("\nLogged in as: " . Auth::user()->name . " (Tenant: " . Auth::user()->tenant->name . ") to create assets.");
 
 // Crie Assets para o Tenant A
-$assetA1 = Asset::firstOrCreate(['name' =&amp;gt; 'Máquina X', 'tenant_id' =&amp;gt; Auth::user()->tenant_id], ['description' =&amp;gt; 'Asset do Tenant A']);
-$assetA2 = Asset::firstOrCreate(['name' =&amp;gt; 'Ferramenta Y', 'tenant_id' =&amp;gt; Auth::user()->tenant_id], ['description' =&amp;gt; 'Outro Asset do Tenant A']);
+$assetA1 = Asset::firstOrCreate(['name' => 'Máquina X', 'tenant_id' => Auth::user()->tenant_id], ['description' => 'Asset do Tenant A']);
+$assetA2 = Asset::firstOrCreate(['name' => 'Ferramenta Y', 'tenant_id' => Auth::user()->tenant_id], ['description' => 'Outro Asset do Tenant A']);
 $this->info("Created Asset A1 (ID: " . $assetA1->id . ", Tenant ID: " . $assetA1->tenant_id . ")");
 $this->info("Created Asset A2 (ID: " . $assetA2->id . ", Tenant ID: " . $assetA2->tenant_id . ")");
 
@@ -128,7 +127,7 @@ Auth::login($userB);
 $this->info("Logged in as: " . Auth::user()->name . " (Tenant: " . Auth::user()->tenant->name . ") to create assets.");
 
 // Crie um Asset para o User B (Tenant B)
-$assetB1 = Asset::firstOrCreate(['name' =&amp;gt; 'Veículo Z', 'tenant_id' =&amp;gt; Auth::user()->tenant_id], ['description' =&amp;gt; 'Asset do Tenant B']);
+$assetB1 = Asset::firstOrCreate(['name' => 'Veículo Z', 'tenant_id' => Auth::user()->tenant_id], ['description' => 'Asset do Tenant B']);
 $this->info("Created Asset B1 (ID: " . $assetB1->id . ", Tenant ID: " . $assetB1->tenant_id . ")");
 
 // --- 4. Criar e Atribuir Permissões e Roles (Spatie) ---
@@ -147,13 +146,13 @@ $permissions = [
 ];
 
 foreach ($permissions as $permissionName) {
-    Permission::firstOrCreate(['name' =&amp;gt; $permissionName, 'tenant_id' =&amp;gt; Auth::user()->tenant_id]);
+    Permission::firstOrCreate(['name' => $permissionName, 'tenant_id' => Auth::user()->tenant_id]);
 }
 $this->info("Permissions created/ensured for Tenant A.");
 
 // Criar as Roles de Alto Nível
-$roleGestor = Role::firstOrCreate(['name' =&amp;gt; 'gestor', 'tenant_id' =&amp;gt; Auth::user()->tenant_id]);
-$roleColaborador = Role::firstOrCreate(['name' =&amp;gt; 'colaborador', 'tenant_id' =&amp;gt; Auth::user()->tenant_id]);
+$roleGestor = Role::firstOrCreate(['name' => 'gestor', 'tenant_id' => Auth::user()->tenant_id]);
+$roleColaborador = Role::firstOrCreate(['name' => 'colaborador', 'tenant_id' => Auth::user()->tenant_id]);
 $this->info("Roles 'gestor' and 'colaborador' created/ensured for Tenant A.");
 
 // Atribuir Permissões às Roles
@@ -174,7 +173,7 @@ $roleColaborador->givePermissionTo([
 $this->info("Permissions assigned to 'colaborador' role for Tenant A.");
 
 // Criar a role 'oravel_admin' (global, sem tenant_id)
-$roleOravelAdmin = Role::firstOrCreate(['name' =&amp;gt; 'oravel_admin', 'tenant_id' =&amp;gt; null]);
+$roleOravelAdmin = Role::firstOrCreate(['name' => 'oravel_admin', 'tenant_id' => null]);
 $oravelAdmin->assignRole('oravel_admin');
 $this->info("Role 'oravel_admin' created and assigned to " . $oravelAdmin->name . ".");
 
@@ -215,4 +214,5 @@ $this->info("Assets visible to User B: " . $assetsUserB->count()); // Deve ser 1
 $this->info("User B can 'os.aprovar'? " . (Auth::user()->can('os.aprovar') ? 'Yes' : 'No')); // Deve ser 'No'
 $this->info("User B can 'os.criar'? " . (Auth::user()->can('os.criar') ? 'Yes' : 'No')); // Deve ser 'Yes'
 
-$this->info("\nScript de setup e teste concluído!");
+$this->info("\nScript de setup e teste concluído!");    }
+}
