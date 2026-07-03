@@ -9,7 +9,10 @@ use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -17,6 +20,7 @@ class GlobalChat extends Component
 {
     use WithFileUploads;
 
+    #[Url]
     public ?string $selectedUserId = null;
     public $selectedDepartmentId = null;
     public string $newMessage = '';
@@ -24,7 +28,7 @@ class GlobalChat extends Component
 
     public function mount(): void
     {
-        $this->selectedUserId = $this->users->first()['id'] ?? null;
+        $this->selectedUserId ??= $this->users->first()['id'] ?? null;
         if ($this->selectedUserId) {
             $this->markRoomRead($this->selectedUserId);
         }
@@ -232,11 +236,35 @@ class GlobalChat extends Component
                 ->toMediaCollection('chat_attachments');
         }
 
+        $this->notifyRecipient($chatMessage);
+
         $this->reset(['newMessage', 'temporaryImage']);
 
         unset($this->chatMessages, $this->users);
 
         $this->dispatch('scroll-to-bottom');
+    }
+
+    protected function notifyRecipient(ChatMessage $chatMessage): void
+    {
+        $recipient = User::find($this->selectedUserId);
+
+        if (! $recipient) {
+            return;
+        }
+
+        Notification::make()
+            ->title('Nova mensagem de ' . Auth::user()->name)
+            ->body(Str::limit($chatMessage->message ?: '📷 Imagem', 60))
+            ->icon('heroicon-o-chat-bubble-left-right')
+            ->iconColor('warning')
+            ->actions([
+                Action::make('ver')
+                    ->label('Ver conversa')
+                    ->url(\App\Filament\Pages\Chat::getUrl(['selectedUserId' => Auth::id()]))
+                    ->button(),
+            ])
+            ->sendToDatabase($recipient);
     }
 
     public function sendAudioMessage(string $base64Audio): void

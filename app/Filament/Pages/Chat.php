@@ -186,6 +186,12 @@ class Chat extends Page
                     ->body(Str::limit($content, 60) . $contextLabel)
                     ->icon('heroicon-o-chat-bubble-left-right')
                     ->iconColor('warning')
+                    ->actions([
+                        \Filament\Notifications\Actions\Action::make('ver')
+                            ->label('Ver conversa')
+                            ->url(self::getUrl(['activeChatId' => Auth::id()]))
+                            ->button(),
+                    ])
                     ->sendToDatabase($recipient);
             }
         }
