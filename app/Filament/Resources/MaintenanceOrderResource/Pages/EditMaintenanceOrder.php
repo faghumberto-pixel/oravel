@@ -164,7 +164,7 @@ class EditMaintenanceOrder extends EditRecord
                     $this->record->update([
                         'technician_id' => $data['technician_id'],
                         'transfer_reason' => $data['transfer_reason'],
-                        'status' => 'Aberto', 
+                        'status' => 'Aberto',
                         'total_time_seconds' => (int) ($this->record->total_time_seconds + $secondsSinceStart),
                         'last_timer_start' => null,
                     ]);
@@ -173,6 +173,21 @@ class EditMaintenanceOrder extends EditRecord
                         ->title('Técnico alterado')
                         ->success()
                         ->send();
+
+                    if ($novoTecnico = User::find($data['technician_id'])) {
+                        Notification::make()
+                            ->title('Nova OS atribuída a você')
+                            ->body('OS #' . $this->record->os_number . ' foi transferida para você. Motivo: ' . $data['transfer_reason'])
+                            ->icon('heroicon-o-wrench-screwdriver')
+                            ->iconColor('info')
+                            ->actions([
+                                \Filament\Notifications\Actions\Action::make('ver')
+                                    ->label('Ver OS')
+                                    ->url(MaintenanceOrderResource::getUrl('edit', ['record' => $this->record]))
+                                    ->button(),
+                            ])
+                            ->sendToDatabase($novoTecnico);
+                    }
 
                     $this->refreshFormData(['technician_id', 'transfer_reason', 'status']);
                 }),

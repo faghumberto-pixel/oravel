@@ -8,7 +8,10 @@ use App\Filament\Resources\MaintenanceOrderResource;
 use App\Filament\Resources\MaintenanceOrderResource\Concerns\StoresPhotoEvidence;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Facades\Filament;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
 use App\Models\MaintenanceOrder;
+use App\Models\User;
 
 #[BelongsToFeature('maintenance')]
 class CreateMaintenanceOrder extends CreateRecord
@@ -54,6 +57,21 @@ class CreateMaintenanceOrder extends CreateRecord
     protected function afterCreate(): void
     {
         $this->persistPhotoEvidences($this->record);
+
+        if ($this->record->technician_id && ($technician = User::find($this->record->technician_id))) {
+            Notification::make()
+                ->title('Nova OS atribuída a você')
+                ->body('OS #' . $this->record->os_number . ' foi criada e atribuída a você.')
+                ->icon('heroicon-o-wrench-screwdriver')
+                ->iconColor('info')
+                ->actions([
+                    Action::make('ver')
+                        ->label('Ver OS')
+                        ->url(MaintenanceOrderResource::getUrl('edit', ['record' => $this->record]))
+                        ->button(),
+                ])
+                ->sendToDatabase($technician);
+        }
     }
 
     /**

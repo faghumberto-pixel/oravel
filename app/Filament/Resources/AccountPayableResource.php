@@ -107,27 +107,12 @@ class AccountPayableResource extends Resource
 
     protected static function sendNotification($record, $action): void
     {
-        // Garante que a notificação carrega o Tenant ID do contexto atual
-        $tenant = \App\Support\Tenancy::current();
-
-        $notification = Notification::make()
+        Notification::make()
             ->title("Conta {$action}")
             ->body("A conta '{$record->description}' foi {$action} com sucesso.")
-            ->success();
-
-        // Envia para o banco de dados vinculando ao usuário e, implicitamente, ao tenant do painel
-        $notification->sendToDatabase(auth()->user());
-
-        // Força a atualização do tenant_id caso o sistema de notificações não tenha feito automaticamente
-        if ($tenant) {
-            \DB::table('notifications')
-                ->where('notifiable_id', auth()->id())
-                ->latest()
-                ->limit(1)
-                ->update(['tenant_id' => $tenant->id]);
-        }
-
-        $notification->send();
+            ->success()
+            ->sendToDatabase(auth()->user())
+            ->send();
     }
 
     public static function getPages(): array
