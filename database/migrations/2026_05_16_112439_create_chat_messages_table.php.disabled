@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             
             // Relacionamentos Estruturais
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->uuid('user_id')->constrained()->onDelete('cascade');
             $table->uuid('chat_room_id');
             
             // Conteúdo do Diálogo (Texto cru ou Payload estruturado de arquivos)

@@ -26,7 +26,7 @@ return new class extends Migration
             $table->text('solution')->nullable();
             
             // Relacionamento com Usuário (Detectado como BigInt no seu sistema)
-            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->uuid('created_by')->nullable()->constrained('users')->nullOnDelete();
             
             $table->timestamps();
             $table->softDeletes();

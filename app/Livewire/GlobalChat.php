@@ -17,7 +17,7 @@ class GlobalChat extends Component
 {
     use WithFileUploads;
 
-    public ?int $selectedUserId = null;
+    public ?string $selectedUserId = null;
     public $selectedDepartmentId = null;
     public string $newMessage = '';
     public $temporaryImage = null;
@@ -170,7 +170,7 @@ class GlobalChat extends Component
             });
     }
 
-    public function selectUser(int $userId): void
+    public function selectUser(string $userId): void
     {
         $this->selectedUserId = $userId;
         $this->markRoomRead($userId);
@@ -181,7 +181,7 @@ class GlobalChat extends Component
         $this->dispatch('scroll-to-bottom');
     }
 
-    protected function markRoomRead(int $contactId): void
+    protected function markRoomRead(string $contactId): void
     {
         $authId = Auth::id();
 

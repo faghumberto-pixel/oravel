@@ -12,7 +12,7 @@ return new class extends Migration
             $table->uuid('id')->primary(); // Mantemos UUID aqui
             
             // Ajuste crucial: se a tabela users usa BigInt, aqui deve ser BigInt
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->uuid('user_id')->constrained('users')->onDelete('cascade');
             
             // Mantemos a relação com a OS como UUID, pois ela utiliza HasUuids
             $table->foreignUuid('maintenance_order_id')->constrained('maintenance_orders')->onDelete('cascade');

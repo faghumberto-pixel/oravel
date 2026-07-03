@@ -13,7 +13,7 @@ return new class extends Migration
         Schema::create('chat_messages', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('chat_room_id');
-            $table->integer('user_id');
+            $table->uuid('user_id');
             $table->text('message');
             $table->text('content')->nullable();
             $table->string('file_path')->nullable();

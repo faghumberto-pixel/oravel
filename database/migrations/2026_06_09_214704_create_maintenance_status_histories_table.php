@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignUuid('maintenance_order_id')->constrained('maintenance_orders')->cascadeOnDelete();
             
             // Alterado para foreignId para compatibilizar com o ID da tabela users
-            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->uuid('user_id')->nullable()->constrained('users')->nullOnDelete();
             
             $table->string('old_status')->nullable();
             $table->string('new_status');

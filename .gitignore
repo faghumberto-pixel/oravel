@@ -53,3 +53,6 @@ storage/*
 !storage/.gitkeep
 !storage/app/.gitkeep
 !storage/logs/.gitkeep
+
+# Backups de migrations (sessões de correção)
+database/migrations_backup_*/

@@ -9,7 +9,7 @@ return new class extends Migration {
         Schema::create('order_messages', function (Blueprint $table) {
             $table->id();
             $table->foreignUuid('maintenance_order_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained();
+            $table->uuid('user_id')->constrained();
             $table->text('message');
             $table->string('type')->default('user'); // user ou system (para automações)
             $table->timestamps();

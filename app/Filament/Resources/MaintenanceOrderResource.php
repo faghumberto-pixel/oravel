@@ -29,6 +29,18 @@ class MaintenanceOrderResource extends Resource
     protected static ?string $navigationLabel = 'Ordem de Serviço';
     protected static ?string $pluralModelLabel = 'Ordens de Serviço';
 
+    public static function canViewAny(): bool
+    {
+        $user = auth()->user();
+        return $user && ($user->isAdmin() || $user->hasAnyPermission(['ler_maintenance_order']));
+    }
+
+    public static function canEdit($record): bool
+    {
+        $user = auth()->user();
+        return $user && ($user->isAdmin() || $user->hasAnyPermission(['editar_maintenance_order']));
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -91,8 +103,8 @@ class MaintenanceOrderResource extends Resource
                         Forms\Components\DateTimePicker::make('started_at')->label('Início do Atendimento')->disabled()->dehydrated(true),
                         Forms\Components\DateTimePicker::make('finished_at')->label('Fim do Atendimento')->disabled()->dehydrated(true),
                     ]),
-                    Forms\Components\Textarea::make('description')->label('Problema Relatado / Escopo do Serviço')->rows(3)->required(),
-                    Forms\Components\Textarea::make('technical_notes')->label('Notas Técnicas / Diagnóstico Executado')->rows(3),
+                    Forms\Components\Textarea::make('description')->label('Problema Relatado / Escopo do Serviço')->rows(3)->required()->hint(\App\Support\FormHelpers::voiceButton()),
+                    Forms\Components\Textarea::make('technical_notes')->label('Notas Técnicas / Diagnóstico Executado')->rows(3)->hint(\App\Support\FormHelpers::voiceButton()),
                 ]),
                 
                 // --- ABA 3: VISTORIA / CHECKLIST REATIVO ---
@@ -118,10 +130,12 @@ class MaintenanceOrderResource extends Resource
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\FileUpload::make('photo_before')
                             ->label('Foto ANTES do Serviço (Estado Inicial)')
-                            ->image()->directory('os-evidences'),
+                            ->image()->directory('os-evidences')
+                            ->extraInputAttributes(\App\Support\FormHelpers::cameraCaptureAttributes()),
                         Forms\Components\FileUpload::make('photo_after')
                             ->label('Foto DEPOIS do Serviço (Resultado Final)')
-                            ->image()->directory('os-evidences'),
+                            ->image()->directory('os-evidences')
+                            ->extraInputAttributes(\App\Support\FormHelpers::cameraCaptureAttributes()),
                     ]),
                 ]),
 

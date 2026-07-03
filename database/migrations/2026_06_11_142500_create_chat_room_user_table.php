@@ -14,7 +14,7 @@ return new class extends Migration
                     ->constrained('chat_rooms')
                     ->cascadeOnDelete();
 
-                $table->foreignId('user_id')
+                $table->uuid('user_id')
                     ->constrained('users')
                     ->cascadeOnDelete();
 

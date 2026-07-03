@@ -9,20 +9,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('maintenance_orders', function (Blueprint $table) {
-            // Verifica se a coluna já existe para evitar erro
-            if (!Schema::hasColumn('maintenance_orders', 'resolved_by')) {
-                $table->uuid('resolved_by')->nullable();
-            }
-            if (!Schema::hasColumn('maintenance_orders', 'resolved_at')) {
-                $table->timestamp('resolved_at')->nullable();
-            }
+            $table->dropColumn('technician_id');
+        });
+
+        Schema::table('maintenance_orders', function (Blueprint $table) {
+            $table->uuid('technician_id')->nullable()->after('assigned_technician_id');
         });
     }
 
     public function down(): void
     {
         Schema::table('maintenance_orders', function (Blueprint $table) {
-            $table->dropColumn(['resolved_by', 'resolved_at']);
+            $table->dropColumn('technician_id');
+        });
+
+        Schema::table('maintenance_orders', function (Blueprint $table) {
+            $table->unsignedBigInteger('technician_id')->nullable();
         });
     }
 };

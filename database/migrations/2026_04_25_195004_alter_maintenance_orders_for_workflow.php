@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreign('parent_id')->references('id')->on('maintenance_orders')->onDelete('cascade');
             
             // foreignId usa bigint para alinhar com a tabela users padrão do Laravel
-            $table->foreignId('assigned_technician_id')->nullable()->constrained('users');
+            $table->uuid('assigned_technician_id')->nullable()->constrained('users');
             
             $table->dateTime('scheduled_at')->nullable();
             $table->string('workflow_status')->default('scheduled');

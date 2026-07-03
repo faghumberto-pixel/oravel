@@ -14,7 +14,7 @@ return new class extends Migration
             $table->uuid('tenant_id')->index(); // Multi-tenancy absoluto
             
             // Relacionamentos e Rastreabilidade do Processo
-            $table->unsignedBigInteger('user_id'); // Quem solicitou no pátio
+            $table->uuid('user_id'); // Quem solicitou no pátio
             $table->uuid('maintenance_order_id')->nullable(); // Se o pedido nasceu de uma O.S. específica
             $table->string('provider_name')->nullable(); // Nome do fornecedor (para análise de saúde/cadastro)
             

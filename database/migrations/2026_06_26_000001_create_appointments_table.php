@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('appointments', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('tenant_id')->index();
-            $table->bigInteger('technician_id')->index();
+            $table->uuid('technician_id')->index();
             $table->string('assunto');
             $table->text('descricao')->nullable();
             $table->boolean('urgente')->default(false);

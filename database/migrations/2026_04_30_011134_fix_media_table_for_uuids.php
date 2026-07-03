@@ -14,14 +14,21 @@ return new class extends Migration
     {
         // Verifica se a tabela existe antes de tentar qualquer alteração
         if (Schema::hasTable('media')) {
-            // Usa o comando nativo do PostgreSQL para dropar o índice com segurança
-            // Isso ignora o erro caso o índice não exista
-            DB::statement('DROP INDEX IF EXISTS "media_model_id_model_type_index"');
-            
-            // Prossiga com o restante da lógica que você pretendia para a tabela media
+            // SQLite usa sintaxe diferente de PostgreSQL para DROP INDEX
+            $driver = DB::getDriverName();
+
+            if ($driver === 'sqlite') {
+                // SQLite: sem aspas duplas, sem schema
+                DB::statement('DROP INDEX IF EXISTS media_model_id_model_type_index');
+            } else {
+                // PostgreSQL / MySQL
+                DB::statement('DROP INDEX IF EXISTS "media_model_id_model_type_index"');
+            }
+
+            // Schema alterations (se necessário)
             Schema::table('media', function (Blueprint $table) {
                 // Aqui você coloca as alterações de colunas que a migration original pretendia
-                // Exemplo hipotético: $table->uuid('model_id')->change();
+                // Exemplo: $table->uuid('model_id')->change();
             });
         }
     }
@@ -32,5 +39,16 @@ return new class extends Migration
     public function down(): void
     {
         // Se precisar reverter, recrie o índice se necessário
+        if (Schema::hasTable('media')) {
+            $driver = DB::getDriverName();
+
+            if ($driver === 'sqlite') {
+                // SQLite: recriar índice simples
+                DB::statement('CREATE INDEX IF NOT EXISTS media_model_id_model_type_index ON media(model_id, model_type)');
+            } else {
+                // PostgreSQL / MySQL
+                DB::statement('CREATE INDEX IF NOT EXISTS media_model_id_model_type_index ON media(model_id, model_type)');
+            }
+        }
     }
 };

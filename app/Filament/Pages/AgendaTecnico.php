@@ -25,7 +25,7 @@ class AgendaTecnico extends Page
     protected static string $view = 'filament.pages.agenda-tecnico';
 
     public string $weekStartDate = '';
-    public string|int $selectedTechnician = '';
+    public string $selectedTechnician = '';
     public string $activeTab = 'semana';
     public string $filterAsset = '';
     public string $filterCategory = '';
@@ -84,7 +84,7 @@ class AgendaTecnico extends Page
         $tenantId = \App\Support\Tenancy::current()?->id;
         $user = auth()->user();
         $isAdmin = $user && $user->hasRole('admin');
-        $techId = $isAdmin && $this->selectedTechnician ? (int)$this->selectedTechnician : $user->id;
+        $techId = $isAdmin && $this->selectedTechnician ? (string)$this->selectedTechnician : $user->id;
 
         $scheduledAt = Carbon::parse($this->appointmentDate . ' ' . $this->appointmentTime);
 
@@ -122,7 +122,7 @@ class AgendaTecnico extends Page
 
         if ($isAdmin && $this->selectedTechnician) {
             return Appointment::where('tenant_id', $tenantId)
-                ->where('technician_id', (int)$this->selectedTechnician)
+                ->where('technician_id', (string)$this->selectedTechnician)
                 ->where('completed', false)
                 ->count();
         }
@@ -165,7 +165,7 @@ class AgendaTecnico extends Page
 
         if ($isAdmin && $this->selectedTechnician) {
             return Appointment::where('tenant_id', $tenantId)
-                ->where('technician_id', (int)$this->selectedTechnician)
+                ->where('technician_id', (string)$this->selectedTechnician)
                 ->orderBy('scheduled_at', 'desc')
                 ->get();
         }
@@ -206,7 +206,6 @@ class AgendaTecnico extends Page
         
         if ($isAdmin) {
             return User::where('tenant_id', $tenantId)
-                ->where('id', '!=', 1)
                 ->where('id', '!=', $user->id)
                 ->orderBy('name')
                 ->get()
@@ -280,7 +279,7 @@ class AgendaTecnico extends Page
             ->with(['technician']);
 
         if ($isAdmin && $this->selectedTechnician) {
-            $appointmentQuery->where('technician_id', (int)$this->selectedTechnician);
+            $appointmentQuery->where('technician_id', (string)$this->selectedTechnician);
         } elseif (!$isAdmin) {
             $appointmentQuery->where('technician_id', $user->id);
         }
@@ -330,7 +329,7 @@ class AgendaTecnico extends Page
             ->with(['asset', 'technician', 'asset.category', 'asset.contracts']);
 
         if ($isAdmin && $this->selectedTechnician) {
-            $orderQuery->where('technician_id', (int)$this->selectedTechnician);
+            $orderQuery->where('technician_id', (string)$this->selectedTechnician);
         } elseif (!$isAdmin) {
             $orderQuery->where('technician_id', $user->id);
         }

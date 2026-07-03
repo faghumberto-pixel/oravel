@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('chat_room_user', function (Blueprint $table) {
             $table->id();
             $table->foreignUuid('chat_room_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->uuid('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
             
             // Evita duplicidade de usuário na mesma sala

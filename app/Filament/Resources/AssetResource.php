@@ -48,7 +48,7 @@ class AssetResource extends Resource
                             Forms\Components\Grid::make(2)->schema([
                                 Forms\Components\Select::make('asset_category_id')
                                     ->label('Categoria e Tipo')
-                                    ->options(Asset::getCategories())
+                                    ->options(\App\Models\AssetCategory::pluck('name', 'id'))
                                     ->searchable()
                                     ->required()
                                     ->native(false)
@@ -351,7 +351,7 @@ class AssetResource extends Resource
 
                 Tables\Columns\TextColumn::make('asset_category_id')
                     ->label('Categoria')
-                    ->formatStateUsing(fn ($state) => Asset::getCategories()[$state] ?? $state)
+                    ->formatStateUsing(fn ($state) => \App\Models\AssetCategory::pluck('name', 'id')[$state] ?? $state)
                     ->badge(),
                 
                 Tables\Columns\TextColumn::make('status')

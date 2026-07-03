@@ -19,7 +19,7 @@ return new class extends Migration
                 $table->text('cancel_reason')->nullable();
             }
             if (!Schema::hasColumn('maintenance_orders', 'technician_id')) {
-                $table->foreignId('technician_id')->nullable()->constrained('users')->nullOnDelete();
+                $table->uuid('technician_id')->nullable()->constrained('users')->nullOnDelete();
             }
             if (!Schema::hasColumn('maintenance_orders', 'workflow_status')) {
                 $table->string('workflow_status')->default('pending');

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid("conversation_id")->constrained()->cascadeOnDelete();
             // VOLTANDO PARA foreignId porque sua tabela 'users' usa BIGINT
-            $table->foreignId("user_id")->constrained()->cascadeOnDelete(); 
+            $table->uuid("user_id")->constrained()->cascadeOnDelete(); 
             $table->text("body")->nullable();
             $table->string("file_path")->nullable(); 
             $table->string("file_type")->nullable();
@@ -35,7 +35,7 @@ return new class extends Migration
             $table->id();
             $table->foreignUuid("conversation_id")->constrained()->cascadeOnDelete();
             // VOLTANDO PARA foreignId porque sua tabela 'users' usa BIGINT
-            $table->foreignId("user_id")->constrained()->cascadeOnDelete(); 
+            $table->uuid("user_id")->constrained()->cascadeOnDelete(); 
             $table->timestamps();
         });
     }

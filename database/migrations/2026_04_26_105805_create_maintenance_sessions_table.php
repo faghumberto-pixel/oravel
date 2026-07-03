@@ -14,7 +14,7 @@ return new class extends Migration
             
             // CORREÇÃO: Usamos foreignId para criar uma coluna bigint 
             // que é compatível com o id da sua tabela 'users'
-            $table->foreignId('user_id')->constrained('users'); 
+            $table->uuid('user_id')->constrained('users'); 
             
             $table->timestamp('started_at')->nullable();
             $table->timestamp('stopped_at')->nullable();

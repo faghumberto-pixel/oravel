@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             
             // Ajustado para foreignId para manter compatibilidade com a PK 'id' da tabela 'users'
-            $table->foreignId('user_id')->constrained('users');
+            $table->uuid('user_id')->constrained('users');
             
             $table->foreignUuid('customer_id')->constrained('clients');
             $table->foreignUuid('contract_id')->nullable()->constrained('contracts');
