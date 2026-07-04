@@ -90,6 +90,13 @@ class ViewEquipmentDamage extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('baixar_laudo')
+                ->label('Baixar Laudo Jurídico (PDF)')
+                ->color('gray')
+                ->icon('heroicon-o-document-arrow-down')
+                ->url(fn () => route('equipment-damages.laudo.pdf', $this->record))
+                ->openUrlInNewTab(),
+
             Actions\Action::make('confirmar')
                 ->label('Confirmar / Ajustar Diagnóstico')
                 ->color('success')

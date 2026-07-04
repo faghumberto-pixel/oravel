@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\EquipmentDamageReportController;
 use App\Http\Controllers\MaintenanceOrderController;
 use App\Http\Controllers\MaintenanceOrderDossieController;
 use App\Http\Controllers\MaintenanceReportController;
@@ -66,6 +67,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/admin/equipment-movements/{equipmentMovement}/avarias/create', EquipmentDamageMobile::class)
         ->name('equipment-movements.damages.create');
+
+    Route::get('/admin/equipment-damages/{record}/laudo-pdf', [EquipmentDamageReportController::class, 'download'])
+        ->name('equipment-damages.laudo.pdf');
 
     // --- ROTA UNIFICADA DE IMPRESSÃO (AJUSTADA) ---
     Route::get('/admin/app/{tenant}/assets/{asset}/print-qr', function ($tenant, Asset $asset) {
