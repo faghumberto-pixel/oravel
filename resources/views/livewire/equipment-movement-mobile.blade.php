@@ -115,6 +115,17 @@
         </div>
     </section>
 
+    {{-- Registrar avaria (nao ligada a nenhum item especifico) --}}
+    <section class="px-5 pb-4">
+        <a href="{{ route('equipment-movements.damages.create', $equipmentMovement) }}"
+           class="flex min-h-[2.75rem] w-full items-center justify-center gap-2 rounded-xl border border-red-500/40 bg-red-500/10 text-xs font-bold text-red-400">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-8.99 4.5h.008v.008h-.008v-.008z" />
+            </svg>
+            REGISTRAR AVARIA
+        </a>
+    </section>
+
     @error('photoRequired')
         <div class="mx-5 mb-3 rounded-xl bg-red-500/15 px-3 py-2 text-xs font-semibold text-red-400">
             {{ $message }}
@@ -215,6 +226,11 @@
                                 SALVAR
                             </button>
                         </div>
+
+                        <a href="{{ route('equipment-movements.damages.create', ['equipmentMovement' => $equipmentMovement, 'item' => $item->id]) }}"
+                           class="block pt-1 text-center text-[11px] font-semibold text-red-400 underline">
+                            Reportar avaria neste item
+                        </a>
                     </div>
                 @endif
             </div>

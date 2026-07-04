@@ -6,6 +6,7 @@ use App\Http\Controllers\MaintenanceOrderDossieController;
 use App\Http\Controllers\MaintenanceReportController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RentalDemoController;
+use App\Livewire\EquipmentDamageMobile;
 use App\Livewire\EquipmentMovementMobile;
 use App\Livewire\MaintenanceChecklistMobile;
 use App\Models\Asset;
@@ -62,6 +63,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/maintenance-orders/{maintenanceOrder}/movimentacao/{type}', EquipmentMovementMobile::class)
         ->where('type', 'mobilizacao|desmobilizacao')
         ->name('maintenance-orders.equipment-movement-mobile');
+
+    Route::get('/admin/equipment-movements/{equipmentMovement}/avarias/create', EquipmentDamageMobile::class)
+        ->name('equipment-movements.damages.create');
 
     // --- ROTA UNIFICADA DE IMPRESSÃO (AJUSTADA) ---
     Route::get('/admin/app/{tenant}/assets/{asset}/print-qr', function ($tenant, Asset $asset) {
