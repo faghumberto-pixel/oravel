@@ -2,14 +2,16 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Gate; // Importante
 use App\Models\Contract;
-use App\Observers\ContractObserver;
-use Spatie\Permission\Models\Role;
 use App\Models\Department;
-use App\Policies\DynamicPolicy; // Importar a DynamicPolicy
+use App\Models\EquipmentMovement; // Importante
+use App\Observers\ContractObserver;
+use App\Observers\EquipmentMovementObserver;
+use App\Policies\DynamicPolicy;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\ServiceProvider;
+use Spatie\Permission\Models\Role; // Importar a DynamicPolicy
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
 
         // ATIVAÇÃO FORÇADA
         Contract::observe(ContractObserver::class);
+        EquipmentMovement::observe(EquipmentMovementObserver::class);
 
         // INJEÇÃO CRUCIAL: Vincula dinamicamente a tabela de roles
         Role::resolveRelationUsing('department', function ($roleModel) {
@@ -36,7 +39,8 @@ class AppServiceProvider extends ServiceProvider
          * o Laravel redireciona a autorização para a DynamicPolicy.
          */
         Gate::guessPolicyNamesUsing(function ($modelClass) {
-            $policy = 'App\\Policies\\' . class_basename($modelClass) . 'Policy';
+            $policy = 'App\\Policies\\'.class_basename($modelClass).'Policy';
+
             return class_exists($policy) ? $policy : DynamicPolicy::class;
         });
     }

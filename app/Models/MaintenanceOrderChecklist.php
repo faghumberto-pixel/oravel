@@ -2,15 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Image\Enums\Fit;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class MaintenanceOrderChecklist extends Model
+class MaintenanceOrderChecklist extends Model implements HasMedia
 {
+    use BelongsToTenant;
     use HasUuids;
-    use \App\Models\Traits\BelongsToTenant;
+    use InteractsWithMedia;
 
     protected $table = 'maintenance_order_checklists';
 
@@ -32,7 +38,7 @@ class MaintenanceOrderChecklist extends Model
 
     protected $casts = [
         'is_completed' => 'boolean',
-        'is_template'  => 'boolean',
+        'is_template' => 'boolean',
     ];
 
     protected static function booted(): void
@@ -47,5 +53,12 @@ class MaintenanceOrderChecklist extends Model
     public function maintenanceOrder(): BelongsTo
     {
         return $this->belongsTo(MaintenanceOrder::class, 'maintenance_order_id');
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->fit(Fit::Contain, 300, 300)
+            ->nonQueued();
     }
 }

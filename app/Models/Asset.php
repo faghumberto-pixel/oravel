@@ -4,29 +4,33 @@ namespace App\Models;
 
 use App\Models\Concerns\HasSaaSMetadata;
 use App\Models\Traits\BelongsToTenant;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
-use Carbon\Carbon;
 
 class Asset extends Model
 {
-    use HasFactory;
-    use LogsActivity;
-    use HasUuids;
     use BelongsToTenant;
+    use HasFactory;
     use HasSaaSMetadata;
+    use HasUuids;
+    use LogsActivity;
 
     protected $keyType = 'string';
+
     public $incrementing = false;
 
-    protected static ?string $saasFeatureKey = "tabela_assets";
-    protected static ?string $saasPermissionSlug = "ativo";
-    protected static ?string $saasModuleLabel = "Ativos / Frota";
+    protected static ?string $saasFeatureKey = 'tabela_assets';
+
+    protected static ?string $saasPermissionSlug = 'ativo';
+
+    protected static ?string $saasModuleLabel = 'Ativos / Frota';
+
     protected $guarded = [];
 
     protected $casts = [
@@ -61,6 +65,11 @@ class Asset extends Model
         return $this->hasMany(Contract::class, 'asset_id');
     }
 
+    public function equipmentMovements(): HasMany
+    {
+        return $this->hasMany(EquipmentMovement::class);
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(AssetCategory::class, 'asset_category_id');
@@ -83,7 +92,7 @@ class Asset extends Model
         $usefulLifeYears = (int) ($this->useful_life_years ?? 0);
         $acquisitionDate = $this->acquisition_date;
 
-        if ($acquisitionValue <= 0 || $usefulLifeYears <= 0 || !$acquisitionDate) {
+        if ($acquisitionValue <= 0 || $usefulLifeYears <= 0 || ! $acquisitionDate) {
             return [
                 'current_value' => $acquisitionValue,
                 'accumulated_depreciation' => 0,
