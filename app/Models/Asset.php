@@ -8,7 +8,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
@@ -73,11 +72,6 @@ class Asset extends Model
     public function damages(): HasMany
     {
         return $this->hasMany(EquipmentDamage::class);
-    }
-
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(AssetCategory::class, 'asset_category_id');
     }
 
     public static function getCategories(): array

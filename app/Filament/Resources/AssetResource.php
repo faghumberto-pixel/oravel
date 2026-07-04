@@ -46,9 +46,9 @@ class AssetResource extends Resource
                         ->icon('heroicon-m-information-circle')
                         ->schema([
                             Forms\Components\Grid::make(2)->schema([
-                                Forms\Components\Select::make('asset_category_id')
+                                Forms\Components\Select::make('asset_category')
                                     ->label('Categoria e Tipo')
-                                    ->options(\App\Models\AssetCategory::pluck('name', 'id'))
+                                    ->options(\App\Models\AssetCategory::pluck('name', 'name'))
                                     ->searchable()
                                     ->required()
                                     ->native(false)
@@ -349,9 +349,8 @@ class AssetResource extends Resource
                     ->sortable()
                     ->alignEnd(),
 
-                Tables\Columns\TextColumn::make('asset_category_id')
+                Tables\Columns\TextColumn::make('asset_category')
                     ->label('Categoria')
-                    ->formatStateUsing(fn ($state) => \App\Models\AssetCategory::pluck('name', 'id')[$state] ?? $state)
                     ->badge(),
                 
                 Tables\Columns\TextColumn::make('status')
