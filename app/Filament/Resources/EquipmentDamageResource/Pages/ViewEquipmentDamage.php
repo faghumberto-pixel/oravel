@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\EquipmentDamageResource\Pages;
 
 use App\Filament\Resources\EquipmentDamageResource;
+use App\Models\Asset;
 use App\Models\EquipmentDamage;
 use Filament\Actions;
 use Filament\Forms;
@@ -69,6 +70,20 @@ class ViewEquipmentDamage extends ViewRecord
                     ])
                     ->columns(2)
                     ->visible(fn ($record) => $record->supervisor_notes || $record->supervisor_reviewed_at),
+
+                Infolists\Components\Section::make('Tratativa Comercial')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('estimated_cost')
+                            ->label('Valor estimado')
+                            ->money('BRL'),
+                        Infolists\Components\TextEntry::make('replacementAsset.name')
+                            ->label('Ativo substituto vinculado')
+                            ->placeholder('Nenhum vinculado ainda'),
+                        Infolists\Components\TextEntry::make('commercialReviewedBy.name')->label('Tratado por'),
+                        Infolists\Components\TextEntry::make('commercial_reviewed_at')->label('Em')->dateTime('d/m/Y H:i'),
+                    ])
+                    ->columns(2)
+                    ->visible(fn ($record) => $record->commercial_reviewed_at !== null || $record->replacement_asset_id !== null),
             ]);
     }
 
@@ -134,6 +149,59 @@ class ViewEquipmentDamage extends ViewRecord
 
                     Notification::make()
                         ->title('Pedido de informação enviado ao técnico')
+                        ->success()
+                        ->send();
+                }),
+
+            Actions\Action::make('iniciar_cobranca')
+                ->label('Iniciar Cobrança')
+                ->color('success')
+                ->icon('heroicon-o-currency-dollar')
+                ->visible(fn () => $this->record->status === EquipmentDamage::STATUS_AGUARDANDO_COMERCIAL
+                    && auth()->user()->can('update', $this->record))
+                ->form([
+                    Forms\Components\TextInput::make('estimated_cost')
+                        ->label('Valor estimado da cobrança (R$)')
+                        ->numeric()
+                        ->prefix('R$')
+                        ->required(),
+                ])
+                ->action(function (array $data): void {
+                    $this->record->update([
+                        'estimated_cost' => $data['estimated_cost'],
+                        'status' => EquipmentDamage::STATUS_EM_COBRANCA,
+                        'commercial_reviewed_by' => auth()->id(),
+                        'commercial_reviewed_at' => now(),
+                    ]);
+
+                    Notification::make()
+                        ->title('Cobrança iniciada')
+                        ->success()
+                        ->send();
+                }),
+
+            Actions\Action::make('vincular_substituto')
+                ->label('Vincular Ativo Substituto')
+                ->color('info')
+                ->icon('heroicon-o-arrow-path')
+                ->visible(fn () => $this->record->status === EquipmentDamage::STATUS_AGUARDANDO_COMERCIAL
+                    && $this->record->requires_replacement
+                    && auth()->user()->can('update', $this->record))
+                ->form([
+                    Forms\Components\Select::make('replacement_asset_id')
+                        ->label('Ativo substituto')
+                        ->options(fn () => Asset::query()
+                            ->where('asset_category', $this->record->asset?->asset_category)
+                            ->where('id', '!=', $this->record->asset_id)
+                            ->pluck('name', 'id'))
+                        ->searchable()
+                        ->required(),
+                ])
+                ->action(function (array $data): void {
+                    $this->record->update(['replacement_asset_id' => $data['replacement_asset_id']]);
+
+                    Notification::make()
+                        ->title('Ativo substituto vinculado')
                         ->success()
                         ->send();
                 }),
