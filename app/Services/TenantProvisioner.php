@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\EquipmentDamage;
 use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
@@ -16,7 +17,7 @@ class TenantProvisioner
      * nenhuma Permission explícita aqui: o admin do tenant automaticamente
      * tem acesso a tudo que o plano contratado libera.
      *
-     * @param array{name: string, email: string, password: string} $adminData
+     * @param  array{name: string, email: string, password: string}  $adminData
      */
     public static function provision(Tenant $tenant, array $adminData): User
     {
@@ -38,6 +39,18 @@ class TenantProvisioner
         $user->forceFill(['email_verified_at' => now()])->save();
 
         $user->assignRole($role);
+
+        foreach ([
+            EquipmentDamage::ROLE_SUPERVISOR_MANUTENCAO,
+            EquipmentDamage::ROLE_COMERCIAL,
+            EquipmentDamage::ROLE_GERENTE_MANUTENCAO,
+        ] as $roleName) {
+            Role::firstOrCreate([
+                'name' => $roleName,
+                'guard_name' => 'web',
+                'tenant_id' => $tenant->id,
+            ]);
+        }
 
         return $user;
     }

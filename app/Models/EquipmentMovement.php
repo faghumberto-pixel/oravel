@@ -75,4 +75,9 @@ class EquipmentMovement extends Model implements HasMedia
     {
         return $this->hasMany(EquipmentMovementItem::class);
     }
+
+    public function damages(): HasMany
+    {
+        return $this->hasMany(EquipmentDamage::class);
+    }
 }

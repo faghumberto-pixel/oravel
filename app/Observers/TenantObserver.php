@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
-use App\Models\Tenant;
 use App\Models\Plan;
+use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -19,12 +19,12 @@ class TenantObserver
     {
         DB::transaction(function () use ($tenant) {
             // 1. Garantir Plano Padrão e Status Ativo
-            if (!$tenant->plan_id) {
+            if (! $tenant->plan_id) {
                 $defaultPlan = Plan::where('name', 'BASIC')->first();
                 if ($defaultPlan) {
                     $tenant->update([
                         'plan_id' => $defaultPlan->id,
-                        'status'  => 'active'
+                        'status' => 'active',
                     ]);
                 }
             }
@@ -39,26 +39,26 @@ class TenantObserver
             // 3. Criação de Role de forma segura (Resolve o erro UniqueConstraintViolationException)
             // Buscamos a role existente no banco para não violar a constraint global
             $role = Role::where('name', 'Administrador')
-                        ->where('guard_name', 'web')
-                        ->first();
+                ->where('guard_name', 'web')
+                ->first();
 
             // Se não existir, criamos
-            if (!$role) {
+            if (! $role) {
                 $role = Role::create([
-                    'name'       => 'Administrador',
+                    'name' => 'Administrador',
                     'guard_name' => 'web',
-                    'tenant_id'  => $tenant->id,
+                    'tenant_id' => $tenant->id,
                 ]);
             }
 
             // 4. Criação do Administrador Automático
             $password = Str::random(10);
             $admin = User::create([
-                'name'          => 'Administrador ' . $tenant->name,
-                'email'         => 'admin@' . $tenant->slug . '.com',
-                'password'      => Hash::make($password),
+                'name' => 'Administrador '.$tenant->name,
+                'email' => 'admin@'.$tenant->slug.'.com',
+                'password' => Hash::make($password),
                 'temp_password' => $password,
-                'tenant_id'     => $tenant->id,
+                'tenant_id' => $tenant->id,
             ]);
 
             // Vincular ao Tenant e atribuir Role
@@ -71,7 +71,10 @@ class TenantObserver
     }
 
     public function updated(Tenant $tenant): void {}
+
     public function deleted(Tenant $tenant): void {}
+
     public function restored(Tenant $tenant): void {}
+
     public function forceDeleted(Tenant $tenant): void {}
 }

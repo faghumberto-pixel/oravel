@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Models\Contract;
 use App\Models\Department;
+use App\Models\EquipmentDamage;
 use App\Models\EquipmentMovement; // Importante
 use App\Observers\ContractObserver;
+use App\Observers\EquipmentDamageObserver;
 use App\Observers\EquipmentMovementObserver;
 use App\Policies\DynamicPolicy;
 use Illuminate\Support\Facades\Gate;
@@ -27,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
         // ATIVAÇÃO FORÇADA
         Contract::observe(ContractObserver::class);
         EquipmentMovement::observe(EquipmentMovementObserver::class);
+        EquipmentDamage::observe(EquipmentDamageObserver::class);
 
         // INJEÇÃO CRUCIAL: Vincula dinamicamente a tabela de roles
         Role::resolveRelationUsing('department', function ($roleModel) {

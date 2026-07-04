@@ -70,6 +70,11 @@ class Asset extends Model
         return $this->hasMany(EquipmentMovement::class);
     }
 
+    public function damages(): HasMany
+    {
+        return $this->hasMany(EquipmentDamage::class);
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(AssetCategory::class, 'asset_category_id');
