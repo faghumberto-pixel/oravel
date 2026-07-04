@@ -2,9 +2,10 @@
 
 namespace App\Policies;
 
-use Spatie\Permission\Models\Role;
 use App\Models\User;
+use App\Support\Tenancy;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Spatie\Permission\Models\Role;
 
 class RolePolicy
 {
@@ -15,6 +16,12 @@ class RolePolicy
      */
     public function before(User $user, string $ability): ?bool
     {
+        // Trava comercial: nega para todos, inclusive admin do tenant, se o
+        // plano nao incluir esse modulo (mesmo padrao de AbstractPolicy::check()).
+        if (($tenant = Tenancy::current()) && ! $tenant->hasFeature('tabela_roles')) {
+            return false;
+        }
+
         if (str_ends_with($user->email, '@oravel.com.br') || $user->hasRole('admin')) {
             return true;
         }
@@ -52,7 +59,7 @@ class RolePolicy
     public function update(User $user, Role $role): bool
     {
         // Impede que o gestor tente alterar a própria role de gestor por URL
-        if ($role->name === 'gestor' && !$user->hasRole('admin')) {
+        if ($role->name === 'gestor' && ! $user->hasRole('admin')) {
             return false;
         }
 

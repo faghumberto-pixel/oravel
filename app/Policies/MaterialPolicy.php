@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Material;
 use App\Models\User;
+use App\Support\Tenancy;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class MaterialPolicy
@@ -11,11 +12,17 @@ class MaterialPolicy
     use HandlesAuthorization;
 
     /**
-     * Trava de Segurança "Super Admin": 
+     * Trava de Segurança "Super Admin":
      * Libera tudo automaticamente para quem tem o papel de admin.
      */
     public function before(User $user, string $ability): ?bool
     {
+        // Trava comercial: nega para todos, inclusive admin do tenant, se o
+        // plano nao incluir esse modulo (mesmo padrao de AbstractPolicy::check()).
+        if (($tenant = Tenancy::current()) && ! $tenant->hasFeature('tabela_materials')) {
+            return false;
+        }
+
         if ($user->hasRole('admin')) {
             return true;
         }

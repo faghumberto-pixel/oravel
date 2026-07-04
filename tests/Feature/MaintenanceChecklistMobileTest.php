@@ -6,6 +6,7 @@ use App\Livewire\MaintenanceChecklistMobile;
 use App\Models\Asset;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenanceOrderChecklist;
+use App\Models\Plan;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -19,10 +20,16 @@ class MaintenanceChecklistMobileTest extends TestCase
 
     private function makeTenantWithUser(): array
     {
+        $plan = Plan::create([
+            'name' => 'Plano Checklist '.uniqid(), 'price' => 100, 'base_price' => 100, 'level' => 1,
+            'billing_cycle' => 'monthly', 'is_active' => true, 'features' => ['tabela_maintenance_orders'],
+        ]);
+
         $tenant = Tenant::create([
             'name' => 'Tenant Checklist '.uniqid(),
             'slug' => 'tenant-checklist-'.uniqid(),
             'status' => 'active',
+            'plan_id' => $plan->id,
         ]);
 
         $user = User::create([

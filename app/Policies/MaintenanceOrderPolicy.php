@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\MaintenanceOrder;
 use App\Models\User;
+use App\Support\Tenancy;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class MaintenanceOrderPolicy
@@ -12,6 +13,12 @@ class MaintenanceOrderPolicy
 
     public function before(User $user, string $ability): ?bool
     {
+        // Trava comercial: nega para todos, inclusive admin do tenant, se o
+        // plano nao incluir esse modulo (mesmo padrao de AbstractPolicy::check()).
+        if (($tenant = Tenancy::current()) && ! $tenant->hasFeature('tabela_maintenance_orders')) {
+            return false;
+        }
+
         return $user->hasRole('admin') ? true : null;
     }
 

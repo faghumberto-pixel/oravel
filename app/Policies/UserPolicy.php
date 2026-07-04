@@ -2,47 +2,13 @@
 
 namespace App\Policies;
 
-use App\Models\User;
-
-class UserPolicy
+/**
+ * Antes retornava true sempre para tudo (sem checar tenant, permissao ou
+ * plano). Migrado para o padrao real do sistema: delega 100% a
+ * AbstractPolicy (feature 'tabela_users' do plano + permissao
+ * ler_funcionario/criar_funcionario/etc + mesmo tenant).
+ */
+class UserPolicy extends AbstractPolicy
 {
-    public function viewAny(User $user): bool
-    {
-        return true;
-    }
-
-    public function view(User $user, User $model): bool
-    {
-        return true;
-    }
-
-    public function create(User $user): bool
-    {
-        return true;
-    }
-
-    public function update(User $user, User $model): bool
-    {
-        return true;
-    }
-
-    public function delete(User $user, User $model): bool
-    {
-        return true;
-    }
-
-    public function deleteAny(User $user): bool
-    {
-        return true;
-    }
-
-    public function restore(User $user, User $model): bool
-    {
-        return true;
-    }
-
-    public function forceDelete(User $user, User $model): bool
-    {
-        return true;
-    }
+    // Intencionalmente vazia, mesmo padrao de AssetPolicy.
 }

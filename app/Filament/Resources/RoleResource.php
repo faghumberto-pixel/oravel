@@ -3,11 +3,9 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\RoleResource\Pages;
 use App\Support\SaaSRegistry;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -15,14 +13,20 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 #[BelongsToFeature('roles')]
 class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
+
     protected static ?string $navigationGroup = 'GESTÃO DE PESSOAS';
+
     protected static ?string $navigationLabel = 'Perfis de Acesso';
+
     protected static ?int $navigationSort = 3;
 
     protected static bool $isScopedToTenant = false;
@@ -43,20 +47,30 @@ class RoleResource extends Resource
     public static function form(Form $form): Form
     {
         $actions = [
-            'ler'     => 'Ler',
-            'criar'   => 'Criar',
-            'editar'  => 'Editar',
+            'ler' => 'Ler',
+            'criar' => 'Criar',
+            'editar' => 'Editar',
             'excluir' => 'Excluir',
         ];
 
         $tabs = [];
 
+        // Interseccao com o plano do tenant: o admin de um tenant so pode
+        // configurar por-role o que o Plano (Central) ja libera pra ele --
+        // nunca a lista inteira do SaaSRegistry. Sem contexto de tenant
+        // (super admin/console), nao filtra.
+        $tenant = Tenancy::current();
+
         // Fonte unica de verdade: cada Model com a trait HasSaaSMetadata vira uma aba.
         foreach (SaaSRegistry::modules() as $module) {
-            $slug  = $module['slug'];
+            if ($tenant && $module['feature'] && ! $tenant->hasFeature($module['feature'])) {
+                continue;
+            }
+
+            $slug = $module['slug'];
             $label = $module['label'] ?? $slug;
 
-            $components  = [];
+            $components = [];
             $toggleNames = [];
 
             foreach ($actions as $action => $actionLabel) {
@@ -124,6 +138,7 @@ class RoleResource extends Resource
                 $data["perm_{$permission->name}"] = true;
             }
         }
+
         return $data;
     }
 
