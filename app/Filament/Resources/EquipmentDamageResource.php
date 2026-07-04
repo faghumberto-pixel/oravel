@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\EquipmentDamageResource\Pages;
+use App\Filament\Resources\EquipmentDamageResource\RelationManagers;
 use App\Models\EquipmentDamage;
 use Filament\Forms\Form;
 use Filament\Tables;
@@ -85,6 +86,13 @@ class EquipmentDamageResource extends BaseResource
             ->actions([
                 Tables\Actions\ViewAction::make(),
             ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\FollowUpsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array
