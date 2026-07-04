@@ -2,16 +2,26 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\HasSaaSMetadata;
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ChatRoom extends Model
 {
-    use HasUuids; // Essencial para aceitar os IDs em formato UUID da Oravel
-    use \App\Traits\BelongsToTenant; // Injetado com sucesso no lugar correto!
+    // Essencial para aceitar os IDs em formato UUID da Oravel
+    use BelongsToTenant; // Injetado com sucesso no lugar correto!
+    use HasSaaSMetadata;
+    use HasUuids;
+
+    protected static ?string $saasFeatureKey = 'modulo_chat';
+
+    protected static ?string $saasPermissionSlug = 'chat';
+
+    protected static ?string $saasModuleLabel = 'Chat Interno';
 
     protected $fillable = [
         'id',

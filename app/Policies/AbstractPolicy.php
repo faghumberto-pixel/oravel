@@ -4,10 +4,9 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Support\SaaSRegistry;
-use Filament\Facades\Filament;
+use App\Support\Tenancy;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Str;
-use App\Support\Tenancy;
 
 abstract class AbstractPolicy
 {
@@ -15,9 +14,10 @@ abstract class AbstractPolicy
 
     protected function isSameTenant(User $user, $model): bool
     {
-        if (!isset($model->tenant_id)) {
+        if (! isset($model->tenant_id)) {
             return true;
         }
+
         return (string) $user->tenant_id === (string) $model->tenant_id;
     }
 
@@ -34,11 +34,11 @@ abstract class AbstractPolicy
         //    cai pro plano quando o tenant nao tem override para essa feature.
         $tenant = Tenancy::current();
         if ($tenant) {
-            if (!$tenant->relationLoaded('plan')) {
-                $tenant->load(['plan' => fn($q) => $q->withoutGlobalScopes()]);
+            if (! $tenant->relationLoaded('plan')) {
+                $tenant->load(['plan' => fn ($q) => $q->withoutGlobalScopes()]);
             }
             $featureKey = $this->getFeatureKeyFromModel($model);
-            if ($featureKey && !$tenant->hasFeature($featureKey)) {
+            if ($featureKey && ! $tenant->hasFeature($featureKey)) {
                 return false;
             }
         }
@@ -50,13 +50,14 @@ abstract class AbstractPolicy
 
         // 4. Permissao individual.
         $permission = $this->getPermissionName($action, $model);
-        if (!$permission) {
+        if (! $permission) {
             return false;
         }
         $hasPermission = $user->can($permission);
         if ($model && is_object($model) && $action !== 'create') {
             return $hasPermission && $this->isSameTenant($user, $model);
         }
+
         return $hasPermission;
     }
 
@@ -79,14 +80,15 @@ abstract class AbstractPolicy
         if ($policyName === 'DynamicPolicy') {
             return null;
         }
-        $guess = 'App\\Models\\' . str_replace('Policy', '', $policyName);
+        $guess = 'App\\Models\\'.str_replace('Policy', '', $policyName);
+
         return class_exists($guess) ? $guess : null;
     }
 
     protected function getFeatureKeyFromModel($model): ?string
     {
         $class = $this->resolveModelClass($model);
-        if (!$class) {
+        if (! $class) {
             return null;
         }
 
@@ -95,16 +97,16 @@ abstract class AbstractPolicy
             return $meta['feature'];
         }
 
-        // 2) Fallback legado (Models ainda sem a trait).
+        // 2) Fallback legado (Models ainda sem a trait). A maioria das entradas
+        // que existiam aqui (role, material, asset, client, user,
+        // maintenance_order, chat/chat_room) ficou morta depois que esses
+        // Models ganharam HasSaaSMetadata -- a Fonte única de verdade acima
+        // sempre resolve primeiro. 'message' e 'permission' continuam porque
+        // Message (App\Models\Message) e Spatie\Permission\Models\Permission
+        // não têm a trait.
         return match (Str::snake(class_basename($class))) {
-            'role', 'permission' => 'tabela_roles',
-            'financial', 'transaction' => 'modulo_financial',
-            'chat', 'chat_room', 'message' => 'modulo_chat',
-            'material' => 'tabela_materials',
-            'asset' => 'tabela_assets',
-            'client' => 'tabela_clients',
-            'user' => 'tabela_users',
-            'maintenance_order' => 'tabela_maintenance_orders',
+            'permission' => 'tabela_roles',
+            'message' => 'modulo_chat',
             default => null,
         };
     }
@@ -117,14 +119,14 @@ abstract class AbstractPolicy
 
         $prefix = match ($action) {
             'viewAny', 'view' => 'ler',
-            'create'          => 'criar',
-            'update'          => 'editar',
-            'delete'          => 'excluir',
-            default           => $action
+            'create' => 'criar',
+            'update' => 'editar',
+            'delete' => 'excluir',
+            default => $action
         };
 
         $class = $this->resolveModelClass($model);
-        if (!$class) {
+        if (! $class) {
             return null;
         }
 
@@ -133,22 +135,39 @@ abstract class AbstractPolicy
             return "{$prefix}_{$meta['slug']}";
         }
 
-        // 2) Fallback legado (Models ainda sem a trait).
+        // 2) Fallback legado (Models ainda sem a trait) -- role/chat/chat_room/
+        // financial ficaram mortos depois que esses Models ganharam
+        // HasSaaSMetadata (a Fonte única de verdade acima sempre resolve
+        // primeiro). Nenhuma entrada de permission-slug sobrou por enquanto.
         $slugName = Str::snake(class_basename($class));
-        $map = [
-            'role'        => 'funcao',
-            'chat'        => 'chat',
-            'chat_room'   => 'chat',
-            'financial'   => 'financeiro',
-        ];
+        $map = [];
         $suffix = $map[$slugName] ?? $slugName;
 
         return "{$prefix}_{$suffix}";
     }
 
-    public function viewAny(User $user, $model = null): bool { return $this->check($user, 'viewAny', $model); }
-    public function view(User $user, $model): bool { return $this->check($user, 'view', $model); }
-    public function create(User $user, $model = null): bool { return $this->check($user, 'create', $model); }
-    public function update(User $user, $model): bool { return $this->check($user, 'update', $model); }
-    public function delete(User $user, $model): bool { return $this->check($user, 'delete', $model); }
+    public function viewAny(User $user, $model = null): bool
+    {
+        return $this->check($user, 'viewAny', $model);
+    }
+
+    public function view(User $user, $model): bool
+    {
+        return $this->check($user, 'view', $model);
+    }
+
+    public function create(User $user, $model = null): bool
+    {
+        return $this->check($user, 'create', $model);
+    }
+
+    public function update(User $user, $model): bool
+    {
+        return $this->check($user, 'update', $model);
+    }
+
+    public function delete(User $user, $model): bool
+    {
+        return $this->check($user, 'delete', $model);
+    }
 }

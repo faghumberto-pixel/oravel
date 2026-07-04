@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use App\Support\SaaSRegistry;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 
 class Plan extends Model
 {
@@ -13,16 +14,16 @@ class Plan extends Model
     protected $table = 'plans';
 
     protected $fillable = [
-        'name', 'price', 'level', 'base_price', 'discount_value', 'discount_type', 'final_price', 'billing_cycle', 'campaign_tag', 'features', 'is_active'
+        'name', 'price', 'level', 'base_price', 'discount_value', 'discount_type', 'final_price', 'billing_cycle', 'campaign_tag', 'features', 'is_active',
     ];
 
     protected $casts = [
-        'price'          => 'decimal:2',
-        'base_price'     => 'decimal:2',
+        'price' => 'decimal:2',
+        'base_price' => 'decimal:2',
         'discount_value' => 'decimal:2',
-        'final_price'    => 'decimal:2',
-        'is_active'      => 'boolean',
-        'level'          => 'integer',
+        'final_price' => 'decimal:2',
+        'is_active' => 'boolean',
+        'level' => 'integer',
     ];
 
     /**
@@ -31,7 +32,7 @@ class Plan extends Model
      */
     public function hasFeature(string $featureSlug): bool
     {
-        if (!$this->is_active) {
+        if (! $this->is_active) {
             return false;
         }
 
@@ -41,7 +42,7 @@ class Plan extends Model
             $features = json_decode($features, true) ?? [];
         }
 
-        if (!is_array($features)) {
+        if (! is_array($features)) {
             return false;
         }
 
@@ -62,22 +63,19 @@ class Plan extends Model
      * Gerada dinamicamente a partir de \App\Support\SaaSRegistry::modules() --
      * a mesma fonte única de verdade usada por RoleResource e AbstractPolicy --
      * então toda tabela/Model novo com a trait HasSaaSMetadata aparece aqui
-     * sozinho, sem precisar editar este método. 'modulo_chat' é mantida à mão
-     * porque o chat (Chat/ChatRoom/Message) é checado de verdade em
-     * AbstractPolicy::getFeatureKeyFromModel() mas não é uma "tabela" com
-     * Resource/CRUD própria, então não entra no SaaSRegistry.
+     * sozinho, sem precisar editar este método. ChatRoom (feature 'modulo_chat')
+     * também usa HasSaaSMetadata, então entra no loop abaixo como qualquer
+     * outro módulo -- não precisa mais de entrada manual.
      */
     public static function getAvailableFeaturesOptions(): array
     {
-        $options = [
-            'modulo_chat' => 'Módulo: Chat Geral',
-        ];
+        $options = [];
 
-        foreach (\App\Support\SaaSRegistry::modules() as $module) {
-            if (!$module['feature']) {
+        foreach (SaaSRegistry::modules() as $module) {
+            if (! $module['feature']) {
                 continue;
             }
-            $options[$module['feature']] = 'Tabela: ' . ($module['label'] ?? $module['slug']);
+            $options[$module['feature']] = 'Tabela: '.($module['label'] ?? $module['slug']);
         }
 
         return $options;
@@ -90,11 +88,15 @@ class Plan extends Model
     {
         return Attribute::make(
             get: function (mixed $value) {
-                if (empty($value)) return [];
+                if (empty($value)) {
+                    return [];
+                }
                 if (is_string($value)) {
                     $decoded = json_decode($value, true);
+
                     return is_array($decoded) ? $decoded : [];
                 }
+
                 return is_array($value) ? $value : [];
             },
             set: function (mixed $value) {
