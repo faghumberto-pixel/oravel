@@ -30,8 +30,11 @@ class MaintenanceChecklistMobileTest extends TestCase
             'email' => 'tecnico-'.uniqid().'@oravel.com.br',
             'password' => bcrypt('teste123'),
             'tenant_id' => $tenant->id,
-            'email_verified_at' => now(),
         ]);
+        // email_verified_at nao esta no $fillable de User (create() acima o
+        // ignoraria silenciosamente) -- setado a parte, mesmo padrao do
+        // App\Services\TenantProvisioner::provision().
+        $user->forceFill(['email_verified_at' => now()])->save();
 
         Permission::firstOrCreate(['name' => 'ler_ordem_servico', 'guard_name' => 'web']);
         $user->givePermissionTo('ler_ordem_servico');
