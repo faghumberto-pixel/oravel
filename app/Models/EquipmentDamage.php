@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -17,6 +19,7 @@ class EquipmentDamage extends Model implements HasMedia
     use HasSaaSMetadata;
     use HasUuids;
     use InteractsWithMedia;
+    use LogsActivity;
 
     public const SEVERITY_LEVE = 'leve';
 
@@ -67,6 +70,7 @@ class EquipmentDamage extends Model implements HasMedia
         'commercial_reviewed_by',
         'commercial_reviewed_at',
         'estimated_cost',
+        'supervisor_notes',
     ];
 
     protected $casts = [
@@ -80,6 +84,16 @@ class EquipmentDamage extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('photos');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logOnlyDirty();
+    }
+
+    public function activities()
+    {
+        return $this->activitiesAsSubject();
     }
 
     public function equipmentMovement(): BelongsTo
