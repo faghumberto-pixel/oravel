@@ -11,14 +11,20 @@ use App\Models\Department;
 use App\Models\EquipmentDamage;
 use App\Models\EquipmentDamageFollowUp;
 use App\Models\EquipmentMovement;
+use App\Models\FleetMaintenancePlan;
+use App\Models\FleetVehicle;
+use App\Models\FreightCarrier;
+use App\Models\FreightRecord;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenanceOrderChecklist;
 use App\Models\MaintenanceOrderMaterial;
 use App\Models\Material;
 use App\Models\MaterialCategory;
+use App\Models\PartsRequest;
 use App\Models\Plan;
 use App\Models\Role;
 use App\Models\SolicitacaoLocacao;
+use App\Models\Supplier;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\TenantProvisioner;
@@ -41,8 +47,7 @@ use Illuminate\Support\Str;
  * Uso: php artisan db:seed --class=RealisticDemoSeeder
  *
  * Fora de escopo nesta rodada (tabelas quebradas/inexistentes, ver auditoria):
- * PartsRequest (model fora de sincronia com a tabela real), AccountPayable/
- * BillCategory/CostCenter (tabelas nao existem), Supplier (tabela nao existe).
+ * AccountPayable/BillCategory/CostCenter (tabelas nao existem).
  */
 class RealisticDemoSeeder extends Seeder
 {
@@ -131,6 +136,10 @@ class RealisticDemoSeeder extends Seeder
             ['name' => 'Horizonte Eventos & Estruturas', 'slug' => 'horizonte-eventos', 'segment' => 'Eventos', 'plan' => $plans['STANDARD']],
             ['name' => 'Serra Alta Mineração', 'slug' => 'serra-alta-mineracao', 'segment' => 'Mineração', 'plan' => $plans['PREMIUM']],
             ['name' => 'Multiobras Engenharia', 'slug' => 'multiobras-engenharia', 'segment' => 'Construção Civil', 'plan' => $plans['BASIC']],
+            ['name' => 'Cascavel Equipamentos Industriais', 'slug' => 'cascavel-industrial', 'segment' => 'Industrial/Metalurgia', 'plan' => $plans['STANDARD']],
+            ['name' => 'Rota Norte Empreendimentos', 'slug' => 'rota-norte-empreendimentos', 'segment' => 'Construção Civil', 'plan' => $plans['PREMIUM']],
+            ['name' => 'Planalto Eventos Corporativos', 'slug' => 'planalto-eventos', 'segment' => 'Eventos', 'plan' => $plans['BASIC']],
+            ['name' => 'Pedra Forte Mineração', 'slug' => 'pedra-forte-mineracao', 'segment' => 'Mineração', 'plan' => $plans['PREMIUM']],
         ];
     }
 
@@ -172,9 +181,21 @@ class RealisticDemoSeeder extends Seeder
             $assets = $this->seedAssets($tenant, $clients);
             $this->seedContracts($tenant, $assets, $clients);
             $maintenanceOrders = $this->seedMaintenanceOrders($tenant, $assets, $clients);
-            $this->seedEquipmentMovements($tenant, $assets, $maintenanceOrders);
-            $this->seedMaterials($tenant);
+            $equipmentMovements = $this->seedEquipmentMovements($tenant, $assets, $maintenanceOrders);
+            $materials = $this->seedMaterials($tenant);
             $this->seedSolicitacoesLocacao($tenant, $clients, $assetCategories, $assets);
+
+            // Fornecedores/Pecas so existem a partir do plano STANDARD (ver
+            // $standardKeys em createPlans()); frota so no PREMIUM.
+            if ($tenant->hasFeature('tabela_suppliers')) {
+                $this->seedSuppliers($tenant, $materials);
+            }
+            if ($tenant->hasFeature('tabela_parts_requests')) {
+                $this->seedPartsRequests($tenant, $maintenanceOrders, $materials);
+            }
+            if ($tenant->hasFeature('tabela_fleet_vehicles')) {
+                $this->seedFleet($tenant, $equipmentMovements);
+            }
         });
 
         $this->command?->info("Tenant '{$bp['name']}' concluído.");
@@ -405,10 +426,13 @@ class RealisticDemoSeeder extends Seeder
         return $orders;
     }
 
-    private function seedEquipmentMovements(Tenant $tenant, Collection $assets, Collection $maintenanceOrders): void
+    /** @return Collection<int, EquipmentMovement> */
+    private function seedEquipmentMovements(Tenant $tenant, Collection $assets, Collection $maintenanceOrders): Collection
     {
+        $movements = collect();
+
         if ($maintenanceOrders->isEmpty()) {
-            return;
+            return $movements;
         }
 
         $states = ['aguardandoVistoria' => 4, 'emAndamento' => 3, 'concluido' => 3];
@@ -428,6 +452,7 @@ class RealisticDemoSeeder extends Seeder
                     'maintenance_order_id' => $order->id,
                     'asset_id' => $order->asset_id,
                 ]);
+                $movements->push($movement);
 
                 // ~30% das movimentacoes concluidas/em andamento tem avaria.
                 if ($stateKey !== 'aguardandoVistoria' && $this->faker()->boolean(30)) {
@@ -465,10 +490,14 @@ class RealisticDemoSeeder extends Seeder
                 }
             }
         }
+
+        return $movements;
     }
 
-    private function seedMaterials(Tenant $tenant): void
+    /** @return Collection<int, Material> */
+    private function seedMaterials(Tenant $tenant): Collection
     {
+        $materials = collect();
         $categoryDefs = ['Filtros', 'Hidráulica', 'Elétrica', 'Consumíveis'];
         $categories = [];
         foreach ($categoryDefs as $name) {
@@ -486,7 +515,7 @@ class RealisticDemoSeeder extends Seeder
             $belowMin = $this->faker()->boolean(20);
             $minStock = $this->faker()->numberBetween(5, 20);
 
-            Material::firstOrCreate(
+            $materials->push(Material::firstOrCreate(
                 ['tenant_id' => $tenant->id, 'sku' => 'SKU-'.strtoupper(Str::random(6))],
                 [
                     'name' => $name,
@@ -497,8 +526,10 @@ class RealisticDemoSeeder extends Seeder
                     'max_stock' => $minStock * 5,
                     'current_stock' => $belowMin ? $this->faker()->numberBetween(0, max($minStock - 1, 0)) : $this->faker()->numberBetween($minStock, $minStock * 4),
                 ]
-            );
+            ));
         }
+
+        return $materials;
     }
 
     private function seedSolicitacoesLocacao(Tenant $tenant, Collection $clients, array $assetCategories, Collection $assets): void
@@ -524,6 +555,90 @@ class RealisticDemoSeeder extends Seeder
                     'asset_id' => $this->faker()->boolean(60) ? $assets->random()->id : null,
                 ]);
             }
+        }
+    }
+
+    /**
+     * Fornecedores homologados, vinculados a uma parte dos materiais do
+     * tenant (o resto fica sem fornecedor de proposito, reflete a
+     * realidade de homologacao parcial).
+     */
+    private function seedSuppliers(Tenant $tenant, Collection $materials): void
+    {
+        $suppliers = Supplier::factory()->count(4)->create(['tenant_id' => $tenant->id]);
+
+        if ($suppliers->isEmpty() || $materials->isEmpty()) {
+            return;
+        }
+
+        foreach ($materials as $i => $material) {
+            if ($i % 4 !== 3) {
+                $material->update(['supplier_id' => $suppliers[$i % $suppliers->count()]->id]);
+            }
+        }
+    }
+
+    /**
+     * Solicitacoes de pecas ligadas a OS reais, refletindo o fluxo de
+     * compra (pendente -> pedida -> entregue).
+     */
+    private function seedPartsRequests(Tenant $tenant, Collection $maintenanceOrders, Collection $materials): void
+    {
+        if ($maintenanceOrders->isEmpty() || $materials->isEmpty()) {
+            return;
+        }
+
+        $plan = ['pendente' => 3, 'pedida' => 2, 'entregue' => 3];
+
+        foreach ($plan as $state => $count) {
+            for ($i = 0; $i < $count; $i++) {
+                $factory = PartsRequest::factory();
+                if ($state !== 'pendente') {
+                    $factory = $factory->{$state}();
+                }
+
+                $factory->create([
+                    'tenant_id' => $tenant->id,
+                    'maintenance_order_id' => $maintenanceOrders->random()->id,
+                    'material_id' => $materials->random()->id,
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Frota propria, transportadora terceirizada, fretes ligados a
+     * mobilizacoes/desmobilizacoes reais (equipment_movements) e plano de
+     * manutencao preventiva por veiculo.
+     */
+    private function seedFleet(Tenant $tenant, Collection $equipmentMovements): void
+    {
+        $vehicles = FleetVehicle::factory()->count(2)->create(['tenant_id' => $tenant->id]);
+        $vehicles->push(FleetVehicle::factory()->emManutencao()->create(['tenant_id' => $tenant->id]));
+
+        $carrier = FreightCarrier::factory()->create(['tenant_id' => $tenant->id]);
+
+        foreach ($vehicles as $vehicle) {
+            FleetMaintenancePlan::factory()->create([
+                'tenant_id' => $tenant->id,
+                'fleet_vehicle_id' => $vehicle->id,
+            ]);
+        }
+
+        if ($equipmentMovements->isEmpty()) {
+            return;
+        }
+
+        foreach ($equipmentMovements->take(5) as $i => $movement) {
+            $isProprio = $i % 2 === 0;
+            $factory = $isProprio ? FreightRecord::factory() : FreightRecord::factory()->terceirizado();
+
+            $factory->create([
+                'tenant_id' => $tenant->id,
+                'equipment_movement_id' => $movement->id,
+                'fleet_vehicle_id' => $isProprio ? $vehicles->random()->id : null,
+                'freight_carrier_id' => $isProprio ? null : $carrier->id,
+            ]);
         }
     }
 }

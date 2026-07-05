@@ -4,12 +4,14 @@ namespace App\Models;
 
 use App\Models\Concerns\BelongsToTenant;
 use App\Models\Concerns\HasSaaSMetadata;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PartsRequest extends Model
 {
     use BelongsToTenant;
+    use HasFactory;
     use HasSaaSMetadata;
 
     protected static ?string $saasFeatureKey = 'tabela_parts_requests';
