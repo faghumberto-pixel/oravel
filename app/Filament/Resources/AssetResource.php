@@ -4,36 +4,49 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\AssetResource\Pages;
 use App\Models\Asset;
+use App\Models\AssetCategory;
+use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Facades\Filament;
-use App\Support\Tenancy;
-use Filament\Forms\Components\Tabs;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 
 class AssetResource extends Resource
 {
     protected static ?string $model = Asset::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-truck';
+
     protected static ?string $modelLabel = 'Ativo';
+
     protected static ?string $pluralModelLabel = 'Ativos';
+
     protected static ?string $navigationGroup = 'Ativos';
 
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';
 
-    public static function canViewAny(): bool { return true; }
-    public static function canCreate(): bool { return true; }
-    public static function canEdit($record): bool { return true; }
-    public static function canDelete($record): bool { return true; }
-
-    public static function getEloquentQuery(): Builder
+    public static function canViewAny(): bool
     {
-        return parent::getEloquentQuery()
-            ->where('tenant_id', Tenancy::current()?->id);
+        return true;
+    }
+
+    public static function canCreate(): bool
+    {
+        return true;
+    }
+
+    public static function canEdit($record): bool
+    {
+        return true;
+    }
+
+    public static function canDelete($record): bool
+    {
+        return true;
     }
 
     public static function form(Form $form): Form
@@ -48,13 +61,12 @@ class AssetResource extends Resource
                             Forms\Components\Grid::make(2)->schema([
                                 Forms\Components\Select::make('asset_category')
                                     ->label('Categoria e Tipo')
-                                    ->options(\App\Models\AssetCategory::pluck('name', 'name'))
+                                    ->options(AssetCategory::pluck('name', 'name'))
                                     ->searchable()
                                     ->required()
                                     ->native(false)
-                                    ->live() 
-                                    ->afterStateUpdated(fn ($state, callable $set) => 
-                                        $set('checklist', Asset::getDefaultChecklist($state))
+                                    ->live()
+                                    ->afterStateUpdated(fn ($state, callable $set) => $set('checklist', Asset::getDefaultChecklist($state))
                                     ),
 
                                 Forms\Components\TextInput::make('name')
@@ -95,29 +107,29 @@ class AssetResource extends Resource
 
                                     Forms\Components\Placeholder::make('depreciation_display')
                                         ->label('Indicador de Depreciação')
-                                        ->content(function (\Filament\Forms\Get $get) {
+                                        ->content(function (Get $get) {
                                             $acquisitionValue = (float) ($get('acquisition_value') ?? 0);
                                             $residualValue = (float) ($get('residual_value') ?? 0);
                                             $usefulLifeYears = (int) ($get('useful_life_years') ?? 0);
                                             $acquisitionDate = $get('acquisition_date');
 
-                                            if ($acquisitionValue <= 0 || $usefulLifeYears <= 0 || !$acquisitionDate) {
-                                                return new \Illuminate\Support\HtmlString('<span class="text-gray-400">Preencha os campos acima para calcular.</span>');
+                                            if ($acquisitionValue <= 0 || $usefulLifeYears <= 0 || ! $acquisitionDate) {
+                                                return new HtmlString('<span class="text-gray-400">Preencha os campos acima para calcular.</span>');
                                             }
 
                                             $depreciableAmount = max($acquisitionValue - $residualValue, 0);
                                             $monthlyDepreciation = $depreciableAmount / ($usefulLifeYears * 12);
-                                            $monthsElapsed = \Carbon\Carbon::parse($acquisitionDate)->diffInMonths(now());
+                                            $monthsElapsed = Carbon::parse($acquisitionDate)->diffInMonths(now());
                                             $accumulated = min($monthlyDepreciation * $monthsElapsed, $depreciableAmount);
                                             $currentValue = $acquisitionValue - $accumulated;
                                             $percentage = $depreciableAmount > 0 ? round(($accumulated / $depreciableAmount) * 100, 1) : 0;
 
-                                            return new \Illuminate\Support\HtmlString(
-                                                "<div class='flex gap-6 text-sm'>" .
-                                                "<div><span class='text-gray-400'>Valor Atual:</span> <b>R$ " . number_format($currentValue, 2, ',', '.') . "</b></div>" .
-                                                "<div><span class='text-gray-400'>Depreciado:</span> <b>R$ " . number_format($accumulated, 2, ',', '.') . "</b></div>" .
-                                                "<div><span class='text-gray-400'>Percentual:</span> <b>{$percentage}%</b></div>" .
-                                                "</div>"
+                                            return new HtmlString(
+                                                "<div class='flex gap-6 text-sm'>".
+                                                "<div><span class='text-gray-400'>Valor Atual:</span> <b>R$ ".number_format($currentValue, 2, ',', '.').'</b></div>'.
+                                                "<div><span class='text-gray-400'>Depreciado:</span> <b>R$ ".number_format($accumulated, 2, ',', '.').'</b></div>'.
+                                                "<div><span class='text-gray-400'>Percentual:</span> <b>{$percentage}%</b></div>".
+                                                '</div>'
                                             );
                                         }),
                                 ]),
@@ -145,9 +157,9 @@ class AssetResource extends Resource
                                             ->label('Status Operacional')
                                             ->options([
                                                 'disponivel' => 'Disponível',
-                                                'locado'     => 'Locado',
+                                                'locado' => 'Locado',
                                                 'manutencao' => 'Em Manutenção',
-                                                'operando'   => 'Em Operação',
+                                                'operando' => 'Em Operação',
                                             ])
                                             ->default('disponivel')
                                             ->required(),
@@ -180,8 +192,11 @@ class AssetResource extends Resource
                             Forms\Components\Placeholder::make('qr_code_display')
                                 ->label('Identificação Digital (Bipe no Campo)')
                                 ->content(function ($record) {
-                                    if (!$record) return "O QR Code será gerado após o primeiro salvamento.";
+                                    if (! $record) {
+                                        return 'O QR Code será gerado após o primeiro salvamento.';
+                                    }
                                     $url = url("/admin/assets/{$record->id}");
+
                                     return new HtmlString("
                                         <div class='flex flex-col items-center p-4 bg-white border border-gray-200 rounded-xl shadow-sm w-fit'>
                                             <div class='bg-white p-2'>
@@ -222,9 +237,8 @@ class AssetResource extends Resource
                                 ->addable(false)
                                 ->deletable(false)
                                 ->reorderable(false)
-                                ->itemLabel(fn (array $state): ?string => 
-                                    isset($state['created_at']) 
-                                    ? "Registro de " . \Carbon\Carbon::parse($state['created_at'])->format('d/m/Y H:i') 
+                                ->itemLabel(fn (array $state): ?string => isset($state['created_at'])
+                                    ? 'Registro de '.Carbon::parse($state['created_at'])->format('d/m/Y H:i')
                                     : null
                                 )
                                 ->columnSpanFull(),
@@ -248,24 +262,25 @@ class AssetResource extends Resource
                             Forms\Components\Placeholder::make('financial_summary')
                                 ->label('Resumo Financeiro')
                                 ->content(function ($record) {
-                                    if (!$record) {
-                                        return new \Illuminate\Support\HtmlString('<span class="text-gray-400">Disponível após o primeiro salvamento.</span>');
+                                    if (! $record) {
+                                        return new HtmlString('<span class="text-gray-400">Disponível após o primeiro salvamento.</span>');
                                     }
                                     $s = $record->getFinancialSummary();
                                     $resultColor = $s['result'] >= 0 ? '#16a34a' : '#dc2626';
-                                    $fmt = fn($v) => number_format($v, 2, ',', '.');
-                                    return new \Illuminate\Support\HtmlString(
-                                        "<div class='grid grid-cols-3 gap-4 text-sm p-3 bg-gray-50 dark:bg-gray-800 rounded-lg'>" .
-                                        "<div><span class='text-gray-400'>Valor de Aquisição:</span><br><b>R\$ {$fmt($s['acquisition_value'])}</b></div>" .
-                                        "<div><span class='text-gray-400'>Valor Atual (Depreciado):</span><br><b>R\$ {$fmt($s['current_value'])}</b></div>" .
-                                        "<div><span class='text-gray-400'>Depreciação Acumulada:</span><br><b>R\$ {$fmt($s['accumulated_depreciation'])} ({$s['depreciation_percentage']}%)</b></div>" .
-                                        "<div><span class='text-gray-400'>Custo Mão de Obra:</span><br><b>R\$ {$fmt($s['total_labor_cost'])}</b></div>" .
-                                        "<div><span class='text-gray-400'>Custo Material:</span><br><b>R\$ {$fmt($s['total_material_cost'])}</b></div>" .
-                                        "<div><span class='text-gray-400'>Custo Logística:</span><br><b>R\$ {$fmt($s['total_logistics_cost'])}</b></div>" .
-                                        "<div><span class='text-gray-400'>Custo Total Manutenção:</span><br><b>R\$ {$fmt($s['total_maintenance_cost'])}</b></div>" .
-                                        "<div><span class='text-gray-400'>Receita Total de Locações:</span><br><b>R\$ {$fmt($s['total_rental_revenue'])}</b></div>" .
-                                        "<div><span class='text-gray-400'>Resultado:</span><br><b style='color: {$resultColor}'>R\$ {$fmt($s['result'])}</b></div>" .
-                                        "</div>"
+                                    $fmt = fn ($v) => number_format($v, 2, ',', '.');
+
+                                    return new HtmlString(
+                                        "<div class='grid grid-cols-3 gap-4 text-sm p-3 bg-gray-50 dark:bg-gray-800 rounded-lg'>".
+                                        "<div><span class='text-gray-400'>Valor de Aquisição:</span><br><b>R\$ {$fmt($s['acquisition_value'])}</b></div>".
+                                        "<div><span class='text-gray-400'>Valor Atual (Depreciado):</span><br><b>R\$ {$fmt($s['current_value'])}</b></div>".
+                                        "<div><span class='text-gray-400'>Depreciação Acumulada:</span><br><b>R\$ {$fmt($s['accumulated_depreciation'])} ({$s['depreciation_percentage']}%)</b></div>".
+                                        "<div><span class='text-gray-400'>Custo Mão de Obra:</span><br><b>R\$ {$fmt($s['total_labor_cost'])}</b></div>".
+                                        "<div><span class='text-gray-400'>Custo Material:</span><br><b>R\$ {$fmt($s['total_material_cost'])}</b></div>".
+                                        "<div><span class='text-gray-400'>Custo Logística:</span><br><b>R\$ {$fmt($s['total_logistics_cost'])}</b></div>".
+                                        "<div><span class='text-gray-400'>Custo Total Manutenção:</span><br><b>R\$ {$fmt($s['total_maintenance_cost'])}</b></div>".
+                                        "<div><span class='text-gray-400'>Receita Total de Locações:</span><br><b>R\$ {$fmt($s['total_rental_revenue'])}</b></div>".
+                                        "<div><span class='text-gray-400'>Resultado:</span><br><b style='color: {$resultColor}'>R\$ {$fmt($s['result'])}</b></div>".
+                                        '</div>'
                                     );
                                 })
                                 ->columnSpanFull(),
@@ -282,7 +297,7 @@ class AssetResource extends Resource
                                     Forms\Components\Grid::make(3)->schema([
                                         Forms\Components\TextInput::make('description')
                                             ->label('Ação')
-                                            ->formatStateUsing(fn ($state) => match($state) {
+                                            ->formatStateUsing(fn ($state) => match ($state) {
                                                 'created' => 'Criação',
                                                 'updated' => 'Atualização',
                                                 'deleted' => 'Exclusão',
@@ -336,13 +351,13 @@ class AssetResource extends Resource
                     ->label('Patrimônio')
                     ->searchable()
                     ->sortable()
-                    ->description(fn (Asset $record): string => "S/N: " . ($record->serial_number ?? 'N/A')),
-                
+                    ->description(fn (Asset $record): string => 'S/N: '.($record->serial_number ?? 'N/A')),
+
                 Tables\Columns\TextColumn::make('name')
                     ->label('Equipamento')
                     ->searchable()
-                    ->description(fn (Asset $record): string => "Tag: " . ($record->asset_tag ?? '---')),
-                
+                    ->description(fn (Asset $record): string => 'Tag: '.($record->asset_tag ?? '---')),
+
                 Tables\Columns\TextColumn::make('last_horimetro')
                     ->label('Horímetro Atual')
                     ->numeric(decimalPlaces: 1)
@@ -352,7 +367,7 @@ class AssetResource extends Resource
                 Tables\Columns\TextColumn::make('asset_category')
                     ->label('Categoria')
                     ->badge(),
-                
+
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\ClientResource\Pages;
 use App\Models\Client;
 use App\Traits\HasPlanAuthorization;
@@ -12,27 +11,27 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Facades\Filament; // Adicionado para identificar o Tenant
+// Adicionado para identificar o Tenant
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 #[BelongsToFeature('clients')]
 class ClientResource extends Resource
-{ 
+{
     use HasPlanAuthorization;
 
-    
     protected static ?string $model = Client::class;
-    
+
     // AJUSTE 1: Garante isolamento por tenant
     protected static bool $isScopedToTenant = true;
-    
+
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
+
     protected static ?string $navigationLabel = 'Clientes';
+
     protected static ?string $navigationGroup = 'Comercial';
 
     protected static ?string $tenantRelationshipName = 'clients';
-
 
     public static function form(Form $form): Form
     {
@@ -103,7 +102,7 @@ class ClientResource extends Resource
                             Forms\Components\TextInput::make('credit_score')->label('Score de Crédito PJ')->numeric(),
                         ]),
                 ])->columnSpanFull(),
-            ]);
+        ]);
     }
 
     public static function table(Table $table): Table
@@ -133,7 +132,6 @@ class ClientResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('tenant_id', \App\Support\Tenancy::current()?->id) 
             ->withoutGlobalScopes([SoftDeletingScope::class]);
     }
 }

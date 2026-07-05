@@ -2,11 +2,11 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Asset;
+use App\Models\MaintenanceOrder;
+use App\Support\Tenancy;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Filament\Facades\Filament;
-use App\Models\MaintenanceOrder;
-use App\Models\Asset;
 
 class RadarUrgencia extends BaseWidget
 {
@@ -16,47 +16,47 @@ class RadarUrgencia extends BaseWidget
      */
     public static function canView(): bool
     {
-        return (bool) \App\Support\Tenancy::current();
+        return (bool) Tenancy::current();
     }
 
     /**
      * Define as estatísticas exibidas no painel.
+     *
+     * "atrasado"/"proxima" nunca foram valores reais de MaintenanceOrder.status
+     * (nada no sistema os atribui) -- os stats abaixo usam os status/campos
+     * reais em uso (Aberto/Pendente/Em Andamento, maintenance_type, created_at).
+     * O filtro de tenant fica só por conta do global scope (BelongsToTenant),
+     * que já bypassa corretamente para super admin -- filtrar de novo aqui
+     * manualmente por Tenancy::current() escondia os dados de super admin.
      */
     protected function getStats(): array
     {
-        $tenant = \App\Support\Tenancy::current();
-
-        // Se por algum motivo o tenant for nulo, retornamos array vazio
-        if (!$tenant) {
+        if (! Tenancy::current()) {
             return [];
         }
 
-        $tenantId = $tenant->id;
-
         return [
-            Stat::make('Manutenção em Atraso', 
-                MaintenanceOrder::where('tenant_id', $tenantId)
-                                ->where('status', 'atrasado')
-                                ->count()
+            Stat::make('Manutenção em Atraso',
+                MaintenanceOrder::whereIn('status', ['Aberto', 'Pendente', 'Em Andamento'])
+                    ->where('created_at', '<', now()->subDays(3))
+                    ->count()
             )
-            ->description('O.S. críticas pendentes')
-            ->color('danger'),
+                ->description('O.S. abertas há mais de 3 dias')
+                ->color('danger'),
 
-            Stat::make('Preventiva Próxima', 
-                MaintenanceOrder::where('tenant_id', $tenantId)
-                                ->where('status', 'proxima')
-                                ->count()
+            Stat::make('Preventiva Próxima',
+                MaintenanceOrder::where('maintenance_type', 'Preventiva')
+                    ->where('status', 'Aberto')
+                    ->count()
             )
-            ->description('Baseado em horímetro')
-            ->color('warning'),
+                ->description('Preventivas ainda não iniciadas')
+                ->color('warning'),
 
-            Stat::make('Disponível no Pátio', 
-                Asset::where('tenant_id', $tenantId)
-                     ->where('status', 'disponivel')
-                     ->count()
+            Stat::make('Disponível no Pátio',
+                Asset::where('status', 'disponivel')->count()
             )
-            ->description('Pronto para despacho')
-            ->color('success'),
+                ->description('Pronto para despacho')
+                ->color('success'),
         ];
     }
 }
