@@ -3,32 +3,34 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasSaaSMetadata;
-
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Client extends Model
 {
     use HasSaaSMetadata;
 
-    protected static ?string $saasFeatureKey = "tabela_clients";
-    protected static ?string $saasPermissionSlug = "cliente";
-    protected static ?string $saasModuleLabel = "Clientes";
+    protected static ?string $saasFeatureKey = 'tabela_clients';
 
+    protected static ?string $saasPermissionSlug = 'cliente';
+
+    protected static ?string $saasModuleLabel = 'Clientes';
+
+    use BelongsToTenant;
     // Todos os Traits agora estão corretamente declarados DENTRO do corpo da classe
     use HasFactory, HasUuids, SoftDeletes;
-    use \App\Models\Traits\BelongsToTenant;
 
     /**
      * Atributos que podem ser preenchidos em massa.
      */
     protected $fillable = [
         'name',
-        'activity_type', 
+        'activity_type',
         'cpf_cnpj',
         'contact_name',
         'cep',
@@ -54,6 +56,14 @@ class Client extends Model
     public function maintenanceOrders(): HasMany
     {
         return $this->hasMany(MaintenanceOrder::class, 'client_id');
+    }
+
+    /**
+     * Relacionamento: Um cliente pode ter vários Contratos de locação.
+     */
+    public function contracts(): HasMany
+    {
+        return $this->hasMany(Contract::class, 'client_id');
     }
 
     /**
