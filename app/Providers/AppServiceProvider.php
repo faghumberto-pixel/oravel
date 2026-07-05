@@ -6,9 +6,13 @@ use App\Models\Contract;
 use App\Models\Department;
 use App\Models\EquipmentDamage;
 use App\Models\EquipmentMovement; // Importante
+use App\Models\FleetTollRecord;
+use App\Models\FreightRecord;
 use App\Observers\ContractObserver;
 use App\Observers\EquipmentDamageObserver;
 use App\Observers\EquipmentMovementObserver;
+use App\Observers\FleetTollRecordObserver;
+use App\Observers\FreightRecordObserver;
 use App\Policies\DynamicPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
@@ -30,6 +34,8 @@ class AppServiceProvider extends ServiceProvider
         Contract::observe(ContractObserver::class);
         EquipmentMovement::observe(EquipmentMovementObserver::class);
         EquipmentDamage::observe(EquipmentDamageObserver::class);
+        FreightRecord::observe(FreightRecordObserver::class);
+        FleetTollRecord::observe(FleetTollRecordObserver::class);
 
         // INJEÇÃO CRUCIAL: Vincula dinamicamente a tabela de roles
         Role::resolveRelationUsing('department', function ($roleModel) {

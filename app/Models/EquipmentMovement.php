@@ -48,6 +48,7 @@ class EquipmentMovement extends Model implements HasMedia
         'notes',
         'started_at',
         'completed_at',
+        'custo_transporte',
     ];
 
     protected $casts = [
@@ -56,7 +57,29 @@ class EquipmentMovement extends Model implements HasMedia
         'vistoria_geral_captured_at' => 'datetime',
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
+        'custo_transporte' => 'decimal:2',
     ];
+
+    /**
+     * Recalcula custo_transporte a partir dos FreightRecord vinculados
+     * (cada um ja soma seus proprios pedagios via getCustoTotalAttribute),
+     * e propaga pro logistics_cost da MaintenanceOrder (soma de todas as
+     * movimentacoes dessa OS). Chamado pelos Observers de FreightRecord/
+     * FleetTollRecord -- nunca editado a mao.
+     */
+    public function recalculateCustoTransporte(): void
+    {
+        $total = $this->freightRecords()->get()->sum(fn (FreightRecord $freight) => $freight->custo_total);
+
+        $this->updateQuietly(['custo_transporte' => $total]);
+
+        if ($this->maintenance_order_id) {
+            $logisticsCost = static::where('maintenance_order_id', $this->maintenance_order_id)->sum('custo_transporte');
+
+            MaintenanceOrder::where('id', $this->maintenance_order_id)
+                ->update(['logistics_cost' => $logisticsCost]);
+        }
+    }
 
     public function registerMediaCollections(): void
     {

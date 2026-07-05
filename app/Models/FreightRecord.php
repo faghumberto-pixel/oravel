@@ -37,12 +37,16 @@ class FreightRecord extends Model
         'origem',
         'destino',
         'km_percorrido',
+        'horas_motorista',
+        'custo_motorista',
         'data',
     ];
 
     protected $casts = [
         'valor' => 'decimal:2',
         'km_percorrido' => 'decimal:2',
+        'horas_motorista' => 'decimal:2',
+        'custo_motorista' => 'decimal:2',
         'data' => 'date',
     ];
 
@@ -64,5 +68,17 @@ class FreightRecord extends Model
     public function tollRecords(): HasMany
     {
         return $this->hasMany(FleetTollRecord::class);
+    }
+
+    /**
+     * Custo total do frete: valor do frete + custo do motorista + pedagios
+     * ligados a essa viagem. E' o que alimenta o rollup de
+     * EquipmentMovement::custo_transporte (ver FreightRecordObserver).
+     */
+    public function getCustoTotalAttribute(): float
+    {
+        return (float) $this->valor
+            + (float) ($this->custo_motorista ?? 0)
+            + (float) $this->tollRecords()->sum('valor');
     }
 }

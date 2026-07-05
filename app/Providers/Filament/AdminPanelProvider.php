@@ -34,6 +34,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('2.75rem')
             ->navigationGroups([
                 NavigationGroup::make('Manutenção'),
+                NavigationGroup::make('Logística'),
                 NavigationGroup::make('Ativos'),
                 NavigationGroup::make('Estoque'),
                 NavigationGroup::make('Equipe'),

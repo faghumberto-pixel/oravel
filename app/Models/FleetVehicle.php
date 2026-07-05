@@ -73,4 +73,9 @@ class FleetVehicle extends Model
     {
         return $this->hasMany(FleetTollRecord::class);
     }
+
+    public function fuelRecords(): HasMany
+    {
+        return $this->hasMany(FleetFuelRecord::class);
+    }
 }
