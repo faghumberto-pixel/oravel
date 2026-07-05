@@ -44,6 +44,7 @@ class TenantProvisioner
             EquipmentDamage::ROLE_SUPERVISOR_MANUTENCAO,
             EquipmentDamage::ROLE_COMERCIAL,
             EquipmentDamage::ROLE_GERENTE_MANUTENCAO,
+            'Gerente de Logística',
         ] as $roleName) {
             Role::firstOrCreate([
                 'name' => $roleName,

@@ -82,4 +82,9 @@ class EquipmentMovement extends Model implements HasMedia
     {
         return $this->hasMany(EquipmentDamage::class);
     }
+
+    public function freightRecords(): HasMany
+    {
+        return $this->hasMany(FreightRecord::class);
+    }
 }
