@@ -25,19 +25,13 @@
                     @livewire(\App\Filament\Widgets\ReplacementVsRepairChart::class)
                 </div>
 
-                <div class="grid grid-cols-1 gap-6">
-                    @livewire(\App\Filament\Widgets\TopClientsByRentals::class)
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    @livewire(\App\Filament\Widgets\MaintenanceCostChart::class)
+                    @livewire(\App\Filament\Widgets\DamagesBySeverityChart::class)
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="md:col-span-3 bg-[#0d1321] border border-slate-800 rounded-lg p-6 shadow-2xl min-h-[300px]">
-                        <h2 class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Lista de Ativos - Alerta Visual</h2>
-                        @livewire(\App\Filament\Widgets\ListaAlertaAtivos::class)
-                    </div>
-                    <div class="md:col-span-1 bg-[#0d1321] border border-slate-800 rounded-lg p-6 shadow-2xl min-h-[300px]">
-                        <h2 class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Agenda de Campo</h2>
-                        @livewire(\App\Filament\Widgets\AgendaCampo::class)
-                    </div>
+                <div class="grid grid-cols-1 gap-6">
+                    @livewire(\App\Filament\Widgets\TopClientsByRentals::class)
                 </div>
             @else
                 {{-- CENTRO DE COMANDO --}}
@@ -47,6 +41,12 @@
                 </div>
 
                 @livewire(\App\Filament\Widgets\RadarUrgencia::class)
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    @livewire(\App\Filament\Widgets\OrdersByTechnicianChart::class)
+                    @livewire(\App\Filament\Widgets\CompletedOrdersLast7DaysChart::class)
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div class="md:col-span-3 bg-[#0d1321] border border-slate-800 rounded-lg p-6 shadow-2xl min-h-[300px]">
                         <h2 class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Lista de Ativos - Alerta Visual</h2>
