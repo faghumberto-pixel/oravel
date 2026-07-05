@@ -217,6 +217,21 @@ class MaintenanceOrderResource extends Resource
                 ->sortable(),
             Tables\Columns\TextColumn::make('status')->label('Status')->badge(),
         ])->filters([
+            Tables\Filters\SelectFilter::make('status')
+                ->label('Status')
+                ->options([
+                    'Aberto' => 'Aberto',
+                    'Pendente' => 'Pendente',
+                    'Em Andamento' => 'Em Andamento',
+                    'Concluída' => 'Concluída',
+                    'Cancelada' => 'Cancelada',
+                ]),
+            Tables\Filters\SelectFilter::make('maintenance_type')
+                ->label('Tipo')
+                ->options([
+                    'Corretiva' => 'Corretiva',
+                    'Preventiva' => 'Preventiva',
+                ]),
             Tables\Filters\SelectFilter::make('criticality_level_id')->label('Matriz ABC')->relationship('criticalityLevel', 'name'),
 
         ])->actions([

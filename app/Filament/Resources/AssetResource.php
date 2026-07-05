@@ -25,7 +25,9 @@ class AssetResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Ativos';
 
-    protected static ?string $navigationGroup = 'Ativos';
+    protected static ?string $navigationGroup = 'Ativos e Materiais';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';
 
@@ -376,6 +378,19 @@ class AssetResource extends Resource
                         'locado' => 'warning',
                         default => 'info',
                     }),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Status')
+                    ->options([
+                        'disponivel' => 'Disponível',
+                        'locado' => 'Locado',
+                        'manutencao' => 'Em Manutenção',
+                        'operando' => 'Em Operação',
+                    ]),
+                Tables\Filters\SelectFilter::make('asset_category')
+                    ->label('Categoria')
+                    ->options(fn () => AssetCategory::pluck('name', 'name')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

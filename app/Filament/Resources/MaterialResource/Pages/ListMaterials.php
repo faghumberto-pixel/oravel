@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\MaterialResource\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\MaterialResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -18,5 +17,17 @@ class ListMaterials extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            MaterialResource\Widgets\MaterialStats::class,
+        ];
+    }
+
+    public function getHeaderWidgetsColumns(): int|string|array
+    {
+        return 4;
     }
 }

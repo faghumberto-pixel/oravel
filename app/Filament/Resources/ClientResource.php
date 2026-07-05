@@ -114,7 +114,16 @@ class ClientResource extends Resource
                 Tables\Columns\TextColumn::make('city')->label('Cidade')->sortable(),
                 Tables\Columns\TextColumn::make('state')->label('UF'),
             ])
-            ->filters([Tables\Filters\TrashedFilter::make()])
+            ->filters([
+                Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\SelectFilter::make('state')
+                    ->label('UF')
+                    ->options(fn () => Client::query()->whereNotNull('state')->distinct()->pluck('state', 'state')),
+                Tables\Filters\Filter::make('com_contrato_ativo')
+                    ->label('Com Contrato Ativo')
+                    ->query(fn (Builder $query) => $query->whereHas('contracts', fn ($q) => $q->where('status', 'Ativo')))
+                    ->toggle(),
+            ])
             ->actions([Tables\Actions\EditAction::make()])
             ->bulkActions([Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()])]);
     }

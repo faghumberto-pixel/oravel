@@ -3,33 +3,35 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\MaterialResource\Pages;
 use App\Models\Material;
 use App\Models\MaterialCategory;
 use App\Models\Supplier;
+use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Facades\Filament;
 
 #[BelongsToFeature('materials')]
 class MaterialResource extends Resource
-{ 
-    
-    protected static bool $shouldRegisterNavigation = true;
+{
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $model = Material::class;
 
     protected static ?string $modelLabel = 'Material/Peças';
+
     protected static ?string $pluralModelLabel = 'Materiais/Peças';
 
     protected static ?string $navigationIcon = 'heroicon-o-beaker';
-    // Alterado para 'Suprimentos' (Capitalizado) para garantir consistência
-    protected static ?string $navigationGroup = 'Estoque';
 
+    // Alterado para 'Suprimentos' (Capitalizado) para garantir consistência
+    protected static ?string $navigationGroup = 'Ativos e Materiais';
+
+    protected static ?int $navigationSort = 10;
 
     public static function form(Form $form): Form
     {
@@ -39,18 +41,18 @@ class MaterialResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('sku')
                             ->label('SKU / Código')
-                            ->required() 
+                            ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
                         Forms\Components\TextInput::make('name')
                             ->label('Nome do Material')
                             ->required()
                             ->maxLength(255),
-                        
+
                         Forms\Components\Select::make('material_category_id')
                             ->label('Categoria')
                             ->relationship('category', 'name', modifyQueryUsing: function (Builder $query) {
-                                return $query->where('tenant_id', \App\Support\Tenancy::current()?->id);
+                                return $query->where('tenant_id', Tenancy::current()?->id);
                             })
                             ->searchable()
                             ->preload()
@@ -64,8 +66,9 @@ class MaterialResource extends Resource
                                     ->maxLength(255),
                             ])
                             ->createOptionUsing(function (array $data) {
-                                $data['tenant_id'] = \App\Support\Tenancy::current()?->id;
+                                $data['tenant_id'] = Tenancy::current()?->id;
                                 $record = MaterialCategory::create($data);
+
                                 return $record->id;
                             }),
 
@@ -79,7 +82,7 @@ class MaterialResource extends Resource
                         Forms\Components\Select::make('supplier_id')
                             ->label('Fornecedor Homologado')
                             ->relationship('supplier', 'name', modifyQueryUsing: function (Builder $query) {
-                                return $query->where('tenant_id', \App\Support\Tenancy::current()?->id);
+                                return $query->where('tenant_id', Tenancy::current()?->id);
                             })
                             ->searchable()
                             ->preload()
@@ -93,8 +96,9 @@ class MaterialResource extends Resource
                                     ->maxLength(255),
                             ])
                             ->createOptionUsing(function (array $data) {
-                                $data['tenant_id'] = \App\Support\Tenancy::current()?->id;
+                                $data['tenant_id'] = Tenancy::current()?->id;
                                 $record = Supplier::create($data);
+
                                 return $record->id;
                             }),
 
@@ -102,7 +106,7 @@ class MaterialResource extends Resource
                             ->label('Marca do Componente / Equipamento')
                             ->options(function () {
                                 return Material::query()
-                                    ->where('tenant_id', \App\Support\Tenancy::current()?->id)
+                                    ->where('tenant_id', Tenancy::current()?->id)
                                     ->whereNotNull('brand_name')
                                     ->distinct()
                                     ->pluck('brand_name', 'brand_name')
@@ -166,6 +170,19 @@ class MaterialResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('category')->relationship('category', 'name')->label('Categoria'),
                 Tables\Filters\SelectFilter::make('supplier')->relationship('supplier', 'name')->label('Fornecedor'),
+                Tables\Filters\Filter::make('estoque_baixo')
+                    ->label('Abaixo do Estoque Mínimo')
+                    ->query(fn ($query) => $query->whereColumn('current_stock', '<', 'min_stock'))
+                    ->toggle(),
+                Tables\Filters\TernaryFilter::make('supplier_id')
+                    ->label('Fornecedor Homologado')
+                    ->nullable()
+                    ->trueLabel('Com fornecedor')
+                    ->falseLabel('Sem fornecedor')
+                    ->queries(
+                        true: fn ($query) => $query->whereNotNull('supplier_id'),
+                        false: fn ($query) => $query->whereNull('supplier_id'),
+                    ),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -3,9 +3,7 @@
 namespace App\Filament\Resources\PartsRequestResource\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\PartsRequestResource;
-use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
 #[BelongsToFeature('parts_request')]
@@ -18,5 +16,17 @@ class ManagePartsRequests extends ManageRecords
         return [
             // Removido o CreateAction para que as peças venham apenas das OS
         ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            PartsRequestResource\Widgets\PartsRequestStats::class,
+        ];
+    }
+
+    public function getHeaderWidgetsColumns(): int|string|array
+    {
+        return 4;
     }
 }

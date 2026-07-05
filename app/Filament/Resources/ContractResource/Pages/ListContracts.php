@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\ContractResource\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\ContractResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -18,5 +17,17 @@ class ListContracts extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            ContractResource\Widgets\ContractStats::class,
+        ];
+    }
+
+    public function getHeaderWidgetsColumns(): int|string|array
+    {
+        return 4;
     }
 }

@@ -3,41 +3,43 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\SolicitacaoLocacaoResource\Pages;
-use App\Models\SolicitacaoLocacao;
-use App\Models\Contract;
-use App\Models\Asset;
 use App\Models\Client;
+use App\Models\Contract;
+use App\Models\SolicitacaoLocacao;
+use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 
 #[BelongsToFeature('rental_requests')]
 class SolicitacaoLocacaoResource extends Resource
 {
     protected static ?string $model = SolicitacaoLocacao::class;
+
     protected static ?string $slug = 'solicitacoes-locacao';
+
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+
     protected static ?string $navigationGroup = 'Comercial';
+
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';
 
     public static function form(Form $form): Form
     {
         return $form->schema([
             // Injeção de segurança para evitar erro 23502 (Not null violation)
-            Forms\Components\Hidden::make('tenant_id')->default(fn () => \App\Support\Tenancy::current()?->id),
+            Forms\Components\Hidden::make('tenant_id')->default(fn () => Tenancy::current()?->id),
             Forms\Components\Hidden::make('user_id')->default(fn () => auth()->id()),
 
             Forms\Components\Section::make('Dados da Solicitação')->schema([
                 Forms\Components\Grid::make(3)->schema([
                     Forms\Components\Select::make('customer_id')
                         ->label('Cliente')
-                        ->relationship('customer', 'name', fn (Builder $query) => $query->where('tenant_id', \App\Support\Tenancy::current()?->id))
+                        ->relationship('customer', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
                         ->required()
                         ->searchable()
                         ->preload()
@@ -48,8 +50,9 @@ class SolicitacaoLocacaoResource extends Resource
                         ->createOptionUsing(function (array $data): string {
                             $cliente = Client::create([
                                 'name' => $data['name'],
-                                'tenant_id' => \App\Support\Tenancy::current()->id,
+                                'tenant_id' => Tenancy::current()->id,
                             ]);
+
                             return (string) $cliente->id;
                         })
                         ->live(),
@@ -67,9 +70,9 @@ class SolicitacaoLocacaoResource extends Resource
                         ->label('Status do Aluguel')
                         ->options([
                             'proposta_em_andamento' => 'Proposta em Andamento',
-                            'reserva_manutencao'    => 'Reservar para Manutenção (Urgente)',
-                            'contrato_fechado'      => 'Contrato Fechado',
-                            'cancelado'             => 'Cancelado',
+                            'reserva_manutencao' => 'Reservar para Manutenção (Urgente)',
+                            'contrato_fechado' => 'Contrato Fechado',
+                            'cancelado' => 'Cancelado',
                         ])
                         ->default('proposta_em_andamento')
                         ->required()
@@ -78,14 +81,14 @@ class SolicitacaoLocacaoResource extends Resource
 
                 Forms\Components\Select::make('cancellation_reason_id')
                     ->label('Motivo do Cancelamento')
-                    ->relationship('cancellationReason', 'name', fn (Builder $query) => $query->where('tenant_id', \App\Support\Tenancy::current()?->id))
+                    ->relationship('cancellationReason', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
                     ->visible(fn (Forms\Get $get) => $get('status_comercial') === 'cancelado')
                     ->required(fn (Forms\Get $get) => $get('status_comercial') === 'cancelado'),
 
                 Forms\Components\Grid::make(2)->schema([
                     Forms\Components\Select::make('category_id')
                         ->label('Categoria do Equipamento')
-                        ->relationship('category', 'name', fn (Builder $query) => $query->where('tenant_id', \App\Support\Tenancy::current()?->id))
+                        ->relationship('category', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
                         ->required()
                         ->searchable()
                         ->preload()
@@ -93,7 +96,7 @@ class SolicitacaoLocacaoResource extends Resource
 
                     Forms\Components\Select::make('asset_id')
                         ->label('Equipamento Específico (Série)')
-                        ->relationship('asset', 'name', fn (Builder $query) => $query->where('tenant_id', \App\Support\Tenancy::current()?->id))
+                        ->relationship('asset', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
                         ->searchable()
                         ->preload(),
                 ]),
@@ -116,11 +119,23 @@ class SolicitacaoLocacaoResource extends Resource
                 ->badge()
                 ->color(fn (string $state): string => match ($state) {
                     'proposta_em_andamento' => 'warning',
-                    'reserva_manutencao'    => 'danger',
-                    'contrato_fechado'      => 'success',
-                    'cancelado'             => 'gray',
+                    'reserva_manutencao' => 'danger',
+                    'contrato_fechado' => 'success',
+                    'cancelado' => 'gray',
                 }),
             Tables\Columns\TextColumn::make('data_saida_prevista')->label('Saída')->date('d/m/Y'),
+        ])->filters([
+            Tables\Filters\SelectFilter::make('status_comercial')
+                ->label('Status')
+                ->options([
+                    'proposta_em_andamento' => 'Proposta em Andamento',
+                    'reserva_manutencao' => 'Reservar para Manutenção (Urgente)',
+                    'contrato_fechado' => 'Contrato Fechado',
+                    'cancelado' => 'Cancelado',
+                ]),
+            Tables\Filters\SelectFilter::make('category_id')
+                ->label('Categoria')
+                ->relationship('category', 'name'),
         ]);
     }
 

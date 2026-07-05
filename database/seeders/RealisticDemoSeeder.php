@@ -79,6 +79,8 @@ class RealisticDemoSeeder extends Seeder
             'tabela_locations', 'tabela_maintenance_orders', 'tabela_maintenance_plans',
             'tabela_materials', 'tabela_material_categories', 'tabela_parts_requests',
             'tabela_roles', 'tabela_solicitacao_locacao', 'tabela_suppliers', 'tabela_users',
+            'tabela_fleet_vehicles', 'tabela_freight_carriers', 'tabela_freight_records',
+            'tabela_fleet_maintenance_plans',
         ];
 
         $basicKeys = [

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\PartsRequestResource\Pages;
 use App\Models\PartsRequest;
 use Filament\Forms;
@@ -14,14 +13,18 @@ use Filament\Tables\Table;
 
 #[BelongsToFeature('parts_request')]
 class PartsRequestResource extends Resource
-{ 
-    
+{
     protected static ?string $model = PartsRequest::class;
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationIcon = 'heroicon-o-truck';
-    protected static ?string $navigationGroup = "Estoque";
+
+    protected static ?string $navigationGroup = 'Ativos e Materiais';
+
     protected static ?string $navigationLabel = 'Solicitações de peças';
-    protected static ?int $navigationSort = 3;
+
+    protected static ?int $navigationSort = 13;
 
     protected static ?string $tenantRelationshipName = 'partsRequests';
 
@@ -33,10 +36,11 @@ class PartsRequestResource extends Resource
                     ->label('Ordem de Serviço')
                     ->relationship('maintenanceOrder', 'os_number')
                     ->disabled(),
-                
-                Forms\Components\TextInput::make('part_description')
-                    ->label('Descrição da Peça')
-                    ->readOnly(),
+
+                Forms\Components\Select::make('material_id')
+                    ->label('Material')
+                    ->relationship('material', 'name')
+                    ->disabled(),
 
                 Forms\Components\TextInput::make('quantity')
                     ->label('Quantidade')
@@ -52,7 +56,7 @@ class PartsRequestResource extends Resource
                     ])
                     ->required()
                     ->native(false),
-            ])->columns(2)
+            ])->columns(2),
         ]);
     }
 
@@ -64,16 +68,23 @@ class PartsRequestResource extends Resource
                     ->label('Solicitado em')
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
-                
+
                 Tables\Columns\TextColumn::make('maintenanceOrder.os_number')
                     ->label('Nº OS')
                     ->searchable()
                     ->weight('bold')
                     ->color('primary'),
 
-                Tables\Columns\TextColumn::make('part_description')
-                    ->label('Peça')
+                Tables\Columns\TextColumn::make('material.name')
+                    ->label('Material')
                     ->searchable(),
+
+                Tables\Columns\TextColumn::make('quantity')
+                    ->label('Qtd.'),
+
+                Tables\Columns\TextColumn::make('cost_at_time')
+                    ->label('Custo')
+                    ->money('BRL'),
 
                 Tables\Columns\BadgeColumn::make('status')
                     ->label('Situação')
@@ -83,9 +94,14 @@ class PartsRequestResource extends Resource
                         'success' => 'entregue',
                     ])
                     ->formatStateUsing(fn (string $state): string => ucfirst($state)),
-
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('Técnico'),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'pendente' => 'Pendente',
+                        'pedida' => 'Peça Comprada/Pedida',
+                        'entregue' => 'Entregue ao Técnico',
+                    ]),
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([

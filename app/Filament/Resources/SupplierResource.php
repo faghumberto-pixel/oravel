@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\SupplierResource\Pages;
 use App\Models\Supplier;
 use Filament\Forms;
@@ -17,10 +16,16 @@ class SupplierResource extends Resource
 {
     protected static ?string $model = Supplier::class;
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
-    protected static ?string $navigationGroup = 'Estoque';
+
+    protected static ?string $navigationGroup = 'Ativos e Materiais';
+
+    protected static ?int $navigationSort = 12;
 
     protected static ?string $modelLabel = 'Fornecedor';
+
     protected static ?string $pluralModelLabel = 'Fornecedores';
 
     public static function form(Form $form): Form
@@ -35,16 +40,16 @@ class SupplierResource extends Resource
                                     ->label('Razão Social / Nome')
                                     ->required()
                                     ->maxLength(255),
-                                
+
                                 Forms\Components\TextInput::make('document')
                                     ->label('CNPJ / CPF')
                                     ->required(),
-                                
+
                                 Forms\Components\TextInput::make('email')
                                     ->label('E-mail')
                                     ->email()
                                     ->maxLength(255),
-                                
+
                                 Forms\Components\TextInput::make('phone')
                                     ->label('Telefone / WhatsApp')
                                     ->tel(),
@@ -67,12 +72,12 @@ class SupplierResource extends Resource
                                     ->label('Regularidade CEIS/CNEP')
                                     ->helperText('Consulta de empresas inidôneas e suspensas')
                                     ->inline(false),
-                                
+
                                 Forms\Components\Toggle::make('lista_trabalho_escravo')
                                     ->label('Fora da Lista de Trabalho Escravo')
                                     ->helperText('Validação do Ministério do Trabalho')
                                     ->inline(false),
-                                
+
                                 Forms\Components\Toggle::make('termo_lgpd')
                                     ->label('Termo de Consentimento LGPD')
                                     ->helperText('Assinado e em conformidade')
@@ -105,12 +110,11 @@ class SupplierResource extends Resource
                     ->label('Documento')
                     ->searchable(),
 
-
                 // STATUS DE COMPLIANCE VISUAL
                 Tables\Columns\IconColumn::make('termo_lgpd')
                     ->label('LGPD')
                     ->boolean(),
-                
+
                 Tables\Columns\IconColumn::make('lista_trabalho_escravo')
                     ->label('Ficha Limpa MTE')
                     ->boolean(),

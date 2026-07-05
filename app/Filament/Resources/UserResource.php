@@ -3,18 +3,18 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
+use App\Support\Tenancy;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 #[BelongsToFeature('users')]
 class UserResource extends Resource
@@ -25,11 +25,17 @@ class UserResource extends Resource
     protected static bool $isScopedToTenant = false;
 
     protected static ?string $model = User::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-users';
+
     protected static ?string $navigationGroup = 'Equipe';
+
     protected static ?string $navigationLabel = 'Funcionários';
+
     protected static ?string $pluralModelLabel = 'Funcionários';
+
     protected static ?string $modelLabel = 'Funcionário';
+
     protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
@@ -44,7 +50,7 @@ class UserResource extends Resource
                                 name: 'department',
                                 titleAttribute: 'name',
                                 modifyQueryUsing: function (Builder $query) {
-                                    $tenant = \App\Support\Tenancy::current();
+                                    $tenant = Tenancy::current();
 
                                     return $query
                                         ->when($tenant, fn (Builder $q) => $q->where('tenant_id', $tenant->id))
@@ -76,7 +82,7 @@ class UserResource extends Resource
                             ->preload()
                             ->searchable()
                             ->required()
-                            ->disabled(fn (Forms\Get $get) => !$get('department_id')),
+                            ->disabled(fn (Forms\Get $get) => ! $get('department_id')),
 
                         Forms\Components\TextInput::make('name')
                             ->label('Nome do Funcionário')
@@ -122,6 +128,18 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('name')->label('Nome')->searchable(),
                 Tables\Columns\TextColumn::make('hourly_rate')->label('Vlr. Hora')->money('BRL'),
             ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('department')
+                    ->relationship('department', 'name')
+                    ->label('Departamento'),
+                Tables\Filters\SelectFilter::make('role')
+                    ->label('Função')
+                    ->options([
+                        'admin' => 'Administrador',
+                        'tecnico' => 'Técnico',
+                        'colaborador' => 'Colaborador',
+                    ]),
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
@@ -134,6 +152,7 @@ class UserResource extends Resource
         if ($user) {
             $data['roles'] = $user->roles->pluck('id')->toArray();
         }
+
         return $data;
     }
 

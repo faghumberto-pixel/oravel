@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\MaintenanceOrderResource\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\MaintenanceOrderResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -25,16 +24,13 @@ class ListMaintenanceOrders extends ListRecords
 
     protected function getHeaderWidgets(): array
     {
-        // Comentado temporariamente para evitar o erro ComponentNotFoundException
         return [
-            // MaintenanceOrderResource\Widgets\MaintenanceOrderStats::class,
-            // MaintenanceOrderResource\Widgets\CriticalityChart::class,
-            // MaintenanceOrderResource\Widgets\StatusChart::class,
+            MaintenanceOrderResource\Widgets\MaintenanceOrderStats::class,
         ];
     }
 
-    public function getHeaderWidgetsColumns(): int | array
+    public function getHeaderWidgetsColumns(): int|array
     {
-        return 2;
+        return 4;
     }
 }

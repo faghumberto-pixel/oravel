@@ -61,6 +61,12 @@ class MaintenancePlanResource extends Resource
             Tables\Columns\TextColumn::make('interval_hours')->label('Intervalo (h)'),
             Tables\Columns\IconColumn::make('is_active')->boolean()->label('Ativo'),
         ])
+            ->filters([
+                Tables\Filters\TernaryFilter::make('is_active')->label('Plano Ativo'),
+                Tables\Filters\SelectFilter::make('asset_id')
+                    ->label('Ativo')
+                    ->relationship('asset', 'name'),
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),

@@ -16,4 +16,16 @@ class ListFreightRecords extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            FreightRecordResource\Widgets\FreightRecordStats::class,
+        ];
+    }
+
+    public function getHeaderWidgetsColumns(): int|string|array
+    {
+        return 4;
+    }
 }

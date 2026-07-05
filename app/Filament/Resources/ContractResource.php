@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\ContractResource\Pages;
 use App\Models\Contract;
 use Filament\Forms;
@@ -16,7 +15,9 @@ use Filament\Tables\Table;
 class ContractResource extends Resource
 {
     protected static ?string $model = Contract::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
     protected static ?string $navigationGroup = 'Comercial';
 
     public static function form(Form $form): Form
@@ -98,6 +99,20 @@ class ContractResource extends Resource
                 Tables\Columns\TextColumn::make('asset.name')->label('Ativo'),
                 Tables\Columns\TextColumn::make('start_date')->date('d/m/Y'),
                 Tables\Columns\IconColumn::make('is_active')->boolean()->label('Ativo'),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'Draft' => 'Rascunho',
+                        'Ativo' => 'Ativo',
+                        'Encerrado' => 'Encerrado',
+                    ]),
+                Tables\Filters\Filter::make('vence_em_30_dias')
+                    ->label('Vence em 30 dias')
+                    ->query(fn ($query) => $query->where('status', 'Ativo')
+                        ->whereNotNull('end_date')
+                        ->whereBetween('end_date', [now(), now()->addDays(30)]))
+                    ->toggle(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

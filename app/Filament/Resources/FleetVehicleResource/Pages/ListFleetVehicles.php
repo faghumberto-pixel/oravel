@@ -16,4 +16,16 @@ class ListFleetVehicles extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            FleetVehicleResource\Widgets\FleetVehicleStats::class,
+        ];
+    }
+
+    public function getHeaderWidgetsColumns(): int|string|array
+    {
+        return 4;
+    }
 }

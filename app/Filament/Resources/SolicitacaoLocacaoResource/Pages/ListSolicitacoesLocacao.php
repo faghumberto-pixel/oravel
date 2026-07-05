@@ -6,7 +6,6 @@ use App\Filament\Resources\SolicitacaoLocacaoResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-use AppFilamentAttributesBelongsToFeature;
 #[BelongsToFeature('rental_requests')]
 class ListSolicitacoesLocacao extends ListRecords
 {
@@ -17,5 +16,17 @@ class ListSolicitacoesLocacao extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            SolicitacaoLocacaoResource\Widgets\SolicitacaoLocacaoStats::class,
+        ];
+    }
+
+    public function getHeaderWidgetsColumns(): int|string|array
+    {
+        return 4;
     }
 }

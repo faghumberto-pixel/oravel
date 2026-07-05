@@ -49,6 +49,12 @@ class FreightCarrierResource extends Resource
                     ->label('Fretes Realizados')
                     ->counts('freightRecords'),
             ])
+            ->filters([
+                Tables\Filters\Filter::make('ativas_no_mes')
+                    ->label('Com Frete no Mês')
+                    ->query(fn ($query) => $query->whereHas('freightRecords', fn ($q) => $q->where('data', '>=', now()->startOfMonth())))
+                    ->toggle(),
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
