@@ -23,7 +23,7 @@ class MaterialPolicy
             return false;
         }
 
-        if ($user->hasRole('admin')) {
+        if ($user->isAdmin()) {
             return true;
         }
 

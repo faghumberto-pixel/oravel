@@ -19,7 +19,7 @@ class MaintenanceOrderPolicy
             return false;
         }
 
-        return $user->hasRole('admin') ? true : null;
+        return $user->isAdmin() ? true : null;
     }
 
     public function viewAny(User $user): bool
