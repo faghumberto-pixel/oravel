@@ -3,26 +3,26 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\MaintenancePlanResource\Pages;
 use App\Models\MaintenancePlan;
-use App\Models\Asset;
+use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Facades\Filament;
 
 #[BelongsToFeature('maintenance')]
 class MaintenancePlanResource extends Resource
-{ 
-    
+{
     protected static ?string $model = MaintenancePlan::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
-    protected static ?string $navigationGroup = "Oficina";
+
+    protected static ?string $navigationGroup = 'Manutenção';
+
     protected static ?string $navigationLabel = 'Planos Preventivos';
-    
+
     // Garante que o resource seja escopado ao tenant atual
     protected static bool $isScopedToTenant = true;
 
@@ -35,7 +35,7 @@ class MaintenancePlanResource extends Resource
             Forms\Components\Section::make('Configuração do Plano')->schema([
                 Forms\Components\Select::make('asset_id')
                     ->label('Ativo')
-                    ->relationship('asset', 'name', fn ($query) => $query->where('tenant_id', \App\Support\Tenancy::current()?->id))
+                    ->relationship('asset', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
                     ->required()
                     ->searchable()
                     ->preload(),
@@ -49,7 +49,7 @@ class MaintenancePlanResource extends Resource
                 Forms\Components\Toggle::make('is_active')
                     ->label('Plano Ativo')
                     ->default(true),
-            ])
+            ]),
         ]);
     }
 
@@ -61,20 +61,22 @@ class MaintenancePlanResource extends Resource
             Tables\Columns\TextColumn::make('interval_hours')->label('Intervalo (h)'),
             Tables\Columns\IconColumn::make('is_active')->boolean()->label('Ativo'),
         ])
-        ->actions([
-            Tables\Actions\EditAction::make(),
-            Tables\Actions\DeleteAction::make(),
-        ]);
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ]);
     }
 
     // Injeta o tenant_id antes de salvar para evitar erros de integridade
     public static function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['tenant_id'] = \App\Support\Tenancy::current()?->id;
+        $data['tenant_id'] = Tenancy::current()?->id;
+
         return $data;
     }
 
-    public static function getPages(): array {
+    public static function getPages(): array
+    {
         return [
             'index' => Pages\ListMaintenancePlans::route('/'),
             'create' => Pages\CreateMaintenancePlan::route('/create'),

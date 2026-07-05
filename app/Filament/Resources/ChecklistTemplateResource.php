@@ -3,9 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\ChecklistTemplateResource\Pages;
-use App\Models\ChecklistTemplate; 
+use App\Models\ChecklistTemplate;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,14 +13,15 @@ use Filament\Tables\Table;
 
 #[BelongsToFeature('checklists')]
 class ChecklistTemplateResource extends Resource
-
-{ 
-
-    protected static ?string $model = ChecklistTemplate::class; 
+{
+    protected static ?string $model = ChecklistTemplate::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-    protected static ?string $navigationGroup = 'Oficina';
+
+    protected static ?string $navigationGroup = 'Manutenção';
+
     protected static ?string $modelLabel = 'Checklist';
+
     protected static ?string $pluralModelLabel = 'Checklists';
 
     public static function form(Form $form): Form
@@ -40,7 +40,7 @@ class ChecklistTemplateResource extends Resource
                         Forms\Components\Toggle::make('is_active')
                             ->label('Ativo')
                             ->default(true),
-                    ])
+                    ]),
             ]);
     }
 

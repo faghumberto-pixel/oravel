@@ -3,41 +3,48 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\MaintenanceOrderResource\Pages;
-use App\Models\MaintenanceOrder;
+use App\Forms\Components\CameraCapture;
 use App\Models\Asset;
+use App\Models\MaintenanceOrder;
 use App\Models\User;
-use App\Models\AssetCategory;
+use App\Support\FormHelpers;
+use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Facades\Filament;
-use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
+use Saade\FilamentAutograph\Forms\Components\SignaturePad;
 
 #[BelongsToFeature('maintenance')]
 class MaintenanceOrderResource extends Resource
 {
     protected static ?string $model = MaintenanceOrder::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
-    protected static ?string $navigationGroup = 'Ordens de Serviço';
+
+    protected static ?string $navigationGroup = 'Manutenção';
+
     protected static ?string $navigationLabel = 'Ordens de Serviço';
+
     protected static ?string $pluralModelLabel = 'Ordens de Serviço';
 
     public static function canViewAny(): bool
     {
         $user = auth()->user();
+
         return $user && ($user->isAdmin() || $user->hasAnyPermission(['ler_maintenance_order']));
     }
 
     public static function canEdit($record): bool
     {
         $user = auth()->user();
+
         return $user && ($user->isAdmin() || $user->hasAnyPermission(['editar_maintenance_order']));
     }
 
@@ -45,7 +52,7 @@ class MaintenanceOrderResource extends Resource
     {
         return $form->schema([
             Forms\Components\Tabs::make('Fluxo Oravel')->tabs([
-                
+
                 // --- ABA 1: DADOS GERAIS ---
                 Forms\Components\Tabs\Tab::make('Dados Gerais')->schema([
                     Forms\Components\Grid::make(2)->schema([
@@ -54,8 +61,11 @@ class MaintenanceOrderResource extends Resource
                             ->placeholder('Bipe o código ou digite Pat/Série/Tag')
                             ->required()->searchable()->preload()->live()
                             ->getSearchResultsUsing(function (string $search) {
-                                $tenantId = \App\Support\Tenancy::current()?->id;
-                                if (!$tenantId) return [];
+                                $tenantId = Tenancy::current()?->id;
+                                if (! $tenantId) {
+                                    return [];
+                                }
+
                                 return Asset::where('tenant_id', $tenantId)
                                     ->where(function ($q) use ($search) {
                                         $q->where('name', 'like', "%{$search}%")->orWhere('patrimonio', 'like', "%{$search}%");
@@ -74,7 +84,7 @@ class MaintenanceOrderResource extends Resource
                             ->options(['Check-in' => 'Check-in (Mobilização)', 'Check-out' => 'Check-out (Desmobilização)', 'Preventiva' => 'Manutenção Preventiva', 'Corretiva' => 'Manutenção Corretiva'])
                             ->required()->native(false)->live(),
                     ]),
-                    
+
                     Forms\Components\Select::make('criticality_level_id')
                         ->label('Matriz ABC')
                         ->relationship(name: 'criticalityLevel', titleAttribute: 'name')
@@ -86,27 +96,27 @@ class MaintenanceOrderResource extends Resource
                     Forms\Components\Grid::make(3)->schema([
                         Forms\Components\TextInput::make('horimetro_anterior')->label('Hor. Anterior')->numeric()->disabled()->dehydrated(false),
                         Forms\Components\TextInput::make('horimetro_entry')->label('Horímetro Atual')->numeric()->default(0)->required()->prefixIcon('heroicon-m-clock'),
-                        Forms\Components\Select::make('fuel_level')->label('Nível Combustível')->options(['0'=>'Reserva', '25'=>'1/4', '50'=>'1/2', '75'=>'3/4', '100'=>'Cheio'])->native(false),
+                        Forms\Components\Select::make('fuel_level')->label('Nível Combustível')->options(['0' => 'Reserva', '25' => '1/4', '50' => '1/2', '75' => '3/4', '100' => 'Cheio'])->native(false),
                     ]),
                     Forms\Components\Grid::make(2)->schema([
-                        Forms\Components\Select::make('technician_id')->label('Responsável Técnico')->options(fn() => User::where('tenant_id', \App\Support\Tenancy::current()?->id)->pluck('name', 'id'))->required()->searchable(),
-                        Forms\Components\Select::make('client_id')->label('Cliente')->relationship('client', 'name', fn(Builder $query) => $query->where('tenant_id', \App\Support\Tenancy::current()?->id))->searchable(),
+                        Forms\Components\Select::make('technician_id')->label('Responsável Técnico')->options(fn () => User::where('tenant_id', Tenancy::current()?->id)->pluck('name', 'id'))->required()->searchable(),
+                        Forms\Components\Select::make('client_id')->label('Cliente')->relationship('client', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))->searchable(),
                     ]),
                     Forms\Components\Select::make('status')
                         ->label('Status da OS')->options(['Aberto' => 'Aberto', 'Pendente' => 'Pendente', 'Em Andamento' => 'Em Andamento', 'Concluída' => 'Concluída', 'Cancelada' => 'Cancelada'])
                         ->default('Aberto')->disabled()->dehydrated(true),
                 ]),
-                
+
                 // --- ABA 2: APONTAMENTOS ---
                 Forms\Components\Tabs\Tab::make('Apontamentos')->schema([
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\DateTimePicker::make('started_at')->label('Início do Atendimento')->disabled()->dehydrated(true),
                         Forms\Components\DateTimePicker::make('finished_at')->label('Fim do Atendimento')->disabled()->dehydrated(true),
                     ]),
-                    Forms\Components\Textarea::make('description')->label('Problema Relatado / Escopo do Serviço')->rows(3)->required()->hint(\App\Support\FormHelpers::voiceButton()),
-                    Forms\Components\Textarea::make('technical_notes')->label('Notas Técnicas / Diagnóstico Executado')->rows(3)->hint(\App\Support\FormHelpers::voiceButton()),
+                    Forms\Components\Textarea::make('description')->label('Problema Relatado / Escopo do Serviço')->rows(3)->required()->hint(FormHelpers::voiceButton()),
+                    Forms\Components\Textarea::make('technical_notes')->label('Notas Técnicas / Diagnóstico Executado')->rows(3)->hint(FormHelpers::voiceButton()),
                 ]),
-                
+
                 // --- ABA 3: VISTORIA / CHECKLIST REATIVO ---
                 Forms\Components\Tabs\Tab::make('Vistoria / Checklist')
                     ->visible(fn (Get $get) => in_array($get('maintenance_type'), ['Check-in', 'Check-out']))
@@ -128,9 +138,9 @@ class MaintenanceOrderResource extends Resource
                 // --- ABA 4: FOTOS ---
                 Forms\Components\Tabs\Tab::make('Fotos e Evidências')->schema([
                     Forms\Components\Grid::make(2)->schema([
-                        \App\Forms\Components\CameraCapture::make('photo_before')
+                        CameraCapture::make('photo_before')
                             ->label('Foto ANTES do Serviço (Estado Inicial)'),
-                        \App\Forms\Components\CameraCapture::make('photo_after')
+                        CameraCapture::make('photo_after')
                             ->label('Foto DEPOIS do Serviço (Resultado Final)'),
                     ]),
 
@@ -139,7 +149,7 @@ class MaintenanceOrderResource extends Resource
                         ->dehydrated()
                         ->addActionLabel('Adicionar Evidência')
                         ->schema([
-                            \App\Forms\Components\CameraCapture::make('photo')
+                            CameraCapture::make('photo')
                                 ->label('Foto'),
                             Forms\Components\TextInput::make('category')
                                 ->label('Categoria')
@@ -165,7 +175,7 @@ class MaintenanceOrderResource extends Resource
                     Forms\Components\Repeater::make('materials')
                         ->relationship('materials')
                         ->schema([
-                            Forms\Components\Select::make('material_id')->relationship('material', 'name', fn(Builder $query) => $query->where('tenant_id', \App\Support\Tenancy::current()?->id))->required()->searchable(),
+                            Forms\Components\Select::make('material_id')->relationship('material', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))->required()->searchable(),
                             Forms\Components\TextInput::make('quantity')->label('Qtd')->numeric()->default(1)->required(),
                         ])->columns(2),
                 ]),
@@ -174,15 +184,15 @@ class MaintenanceOrderResource extends Resource
                 Forms\Components\Tabs\Tab::make('Assinaturas Digitais')->schema([
                     Forms\Components\Placeholder::make('info_sig')->content('Colete a assinatura na tela do dispositivo.'),
                     Forms\Components\Grid::make(2)->schema([
-                        \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('technician_signature')
+                        SignaturePad::make('technician_signature')
                             ->label('Assinatura do Técnico')
                             ->loadStrategy('idle'),
-                        \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('client_signature')
+                        SignaturePad::make('client_signature')
                             ->label('Assinatura do Cliente')
                             ->loadStrategy('idle'),
                     ]),
                 ]),
-            ])->columnSpanFull()
+            ])->columnSpanFull(),
         ]);
     }
 
@@ -229,7 +239,10 @@ class MaintenanceOrderResource extends Resource
             ->sendToDatabase(auth()->user());
     }
 
-    public static function getWidgets(): array { return []; }
+    public static function getWidgets(): array
+    {
+        return [];
+    }
 
     public static function getPages(): array
     {

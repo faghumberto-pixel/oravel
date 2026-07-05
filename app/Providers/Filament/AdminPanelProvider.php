@@ -33,10 +33,9 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(fn () => view('filament.brand-logo'))
             ->brandLogoHeight('2.75rem')
             ->navigationGroups([
-                NavigationGroup::make('Ordens de Serviço'),
+                NavigationGroup::make('Manutenção'),
                 NavigationGroup::make('Ativos'),
                 NavigationGroup::make('Estoque'),
-                NavigationGroup::make('Oficina'),
                 NavigationGroup::make('Equipe'),
                 NavigationGroup::make('Comercial'),
                 NavigationGroup::make('Financeiro'),

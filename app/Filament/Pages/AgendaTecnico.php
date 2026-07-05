@@ -3,47 +3,62 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
-
-use App\Models\MaintenanceOrder;
 use App\Models\Appointment;
+use App\Models\MaintenanceOrder;
 use App\Models\User;
-use App\Models\Asset;
-use App\Models\AssetCategory;
-use App\Models\Contract;
+use App\Support\Tenancy;
+use Carbon\Carbon;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
-use Carbon\Carbon;
 
 #[BelongsToFeature('maintenance')]
 class AgendaTecnico extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
+
     protected static ?string $navigationLabel = 'Programação';
+
     protected static ?string $title = 'Programação';
-    protected static ?string $navigationGroup = 'Oficina';
+
+    protected static ?string $navigationGroup = 'Manutenção';
+
     protected static ?int $navigationSort = 1;
+
     protected static string $view = 'filament.pages.agenda-tecnico';
 
     public string $weekStartDate = '';
+
     public string $selectedTechnician = '';
+
     public string $activeTab = 'semana';
+
     public string $filterAsset = '';
+
     public string $filterCategory = '';
+
     public string $filterTechnician = '';
+
     public string $filterContract = '';
+
     public bool $showAppointmentModal = false;
+
     public bool $showPendenciesModal = false;
+
     public string $appointmentDate = '';
+
     public string $appointmentTime = '';
+
     public string $appointmentSubject = '';
+
     public string $appointmentDescription = '';
+
     public bool $appointmentUrgent = false;
 
     public function mount(): void
     {
         $this->weekStartDate = now()->startOfWeek()->toDateString();
         $user = auth()->user();
-        $this->selectedTechnician = $user ? (string)$user->id : '';
+        $this->selectedTechnician = $user ? (string) $user->id : '';
     }
 
     public function setWeekOffset(int $offset): void
@@ -53,7 +68,7 @@ class AgendaTecnico extends Page
 
     public function setSelectedTechnician(string|int $techId): void
     {
-        $this->selectedTechnician = (string)$techId;
+        $this->selectedTechnician = (string) $techId;
     }
 
     public function openAppointmentModal(string $date = '', string $time = ''): void
@@ -81,12 +96,12 @@ class AgendaTecnico extends Page
             'appointmentTime' => 'required',
         ]);
 
-        $tenantId = \App\Support\Tenancy::current()?->id;
+        $tenantId = Tenancy::current()?->id;
         $user = auth()->user();
         $isAdmin = $user && $user->hasRole('admin');
-        $techId = $isAdmin && $this->selectedTechnician ? (string)$this->selectedTechnician : $user->id;
+        $techId = $isAdmin && $this->selectedTechnician ? (string) $this->selectedTechnician : $user->id;
 
-        $scheduledAt = Carbon::parse($this->appointmentDate . ' ' . $this->appointmentTime);
+        $scheduledAt = Carbon::parse($this->appointmentDate.' '.$this->appointmentTime);
 
         Appointment::create([
             'tenant_id' => $tenantId,
@@ -108,21 +123,23 @@ class AgendaTecnico extends Page
     {
         $appointment = Appointment::find($appointmentId);
         if ($appointment) {
-            $appointment->update(['completed' => !$appointment->completed]);
+            $appointment->update(['completed' => ! $appointment->completed]);
         }
     }
 
     public function getPendingCountForTechnicianProperty(): int
     {
-        $tenantId = \App\Support\Tenancy::current()?->id;
+        $tenantId = Tenancy::current()?->id;
         $user = auth()->user();
         $isAdmin = $user && $user->hasRole('admin');
-        
-        if (!$tenantId) return 0;
+
+        if (! $tenantId) {
+            return 0;
+        }
 
         if ($isAdmin && $this->selectedTechnician) {
             return Appointment::where('tenant_id', $tenantId)
-                ->where('technician_id', (string)$this->selectedTechnician)
+                ->where('technician_id', (string) $this->selectedTechnician)
                 ->where('completed', false)
                 ->count();
         }
@@ -135,9 +152,12 @@ class AgendaTecnico extends Page
 
     public function getPendingCountProperty(): int
     {
-        $tenantId = \App\Support\Tenancy::current()?->id;
+        $tenantId = Tenancy::current()?->id;
         $user = auth()->user();
-        if (!$tenantId) return 0;
+        if (! $tenantId) {
+            return 0;
+        }
+
         return Appointment::where('tenant_id', $tenantId)
             ->where('technician_id', $user->id)
             ->where('completed', false)
@@ -146,9 +166,12 @@ class AgendaTecnico extends Page
 
     public function getCompletedCountProperty(): int
     {
-        $tenantId = \App\Support\Tenancy::current()?->id;
+        $tenantId = Tenancy::current()?->id;
         $user = auth()->user();
-        if (!$tenantId) return 0;
+        if (! $tenantId) {
+            return 0;
+        }
+
         return Appointment::where('tenant_id', $tenantId)
             ->where('technician_id', $user->id)
             ->where('completed', true)
@@ -157,15 +180,17 @@ class AgendaTecnico extends Page
 
     public function getSelectedTechnicianAppointmentsProperty(): Collection
     {
-        $tenantId = \App\Support\Tenancy::current()?->id;
+        $tenantId = Tenancy::current()?->id;
         $user = auth()->user();
         $isAdmin = $user && $user->hasRole('admin');
-        
-        if (!$tenantId) return collect();
+
+        if (! $tenantId) {
+            return collect();
+        }
 
         if ($isAdmin && $this->selectedTechnician) {
             return Appointment::where('tenant_id', $tenantId)
-                ->where('technician_id', (string)$this->selectedTechnician)
+                ->where('technician_id', (string) $this->selectedTechnician)
                 ->orderBy('scheduled_at', 'desc')
                 ->get();
         }
@@ -188,9 +213,12 @@ class AgendaTecnico extends Page
 
     public function getAllAppointmentsProperty(): Collection
     {
-        $tenantId = \App\Support\Tenancy::current()?->id;
+        $tenantId = Tenancy::current()?->id;
         $user = auth()->user();
-        if (!$tenantId) return collect();
+        if (! $tenantId) {
+            return collect();
+        }
+
         return Appointment::where('tenant_id', $tenantId)
             ->where('technician_id', $user->id)
             ->orderBy('scheduled_at', 'desc')
@@ -199,44 +227,50 @@ class AgendaTecnico extends Page
 
     public function getTechniciansProperty(): Collection
     {
-        $tenantId = \App\Support\Tenancy::current()?->id;
+        $tenantId = Tenancy::current()?->id;
         $user = auth()->user();
         $isAdmin = $user && $user->hasRole('admin');
-        if (!$tenantId) return collect();
-        
+        if (! $tenantId) {
+            return collect();
+        }
+
         if ($isAdmin) {
             return User::where('tenant_id', $tenantId)
                 ->where('id', '!=', $user->id)
                 ->orderBy('name')
                 ->get()
-                ->map(function($u) use ($tenantId) {
+                ->map(function ($u) use ($tenantId) {
                     $pendingCount = Appointment::where('tenant_id', $tenantId)
                         ->where('technician_id', $u->id)
                         ->where('completed', false)
                         ->count();
+
                     return [
                         'id' => $u->id,
                         'name' => $u->name,
                         'email' => $u->email,
-                        'pending_count' => $pendingCount
+                        'pending_count' => $pendingCount,
                     ];
                 });
         }
-        return collect([$user])->map(fn($u) => ['id' => $u->id, 'name' => $u->name, 'email' => $u->email, 'pending_count' => 0]);
+
+        return collect([$user])->map(fn ($u) => ['id' => $u->id, 'name' => $u->name, 'email' => $u->email, 'pending_count' => 0]);
     }
 
     public function getWeekDaysProperty(): Collection
     {
         $startDate = Carbon::parse($this->weekStartDate ?: now()->startOfWeek()->toDateString());
+
         return collect(range(0, 6))->map(function ($day) use ($startDate) {
             $date = $startDate->clone()->addDays($day);
+
             return [
                 'date' => $date->toDateString(),
                 'day_name' => $date->format('D'),
                 'day_number' => $date->format('d'),
                 'month' => $date->format('m'),
                 'full_date' => $date->format('d/m'),
-                'is_today' => $date->isToday()
+                'is_today' => $date->isToday(),
             ];
         });
     }
@@ -248,17 +282,19 @@ class AgendaTecnico extends Page
 
     public function getGridEventsProperty(): array
     {
-        $tenantId = \App\Support\Tenancy::current()?->id;
+        $tenantId = Tenancy::current()?->id;
         $user = auth()->user();
         $isAdmin = $user && $user->hasRole('admin');
-        if (!$tenantId) return [];
+        if (! $tenantId) {
+            return [];
+        }
 
         try {
             $startDate = Carbon::parse($this->weekStartDate ?: now()->startOfWeek()->toDateString());
         } catch (\Exception $e) {
             $startDate = now()->startOfWeek();
         }
-        
+
         $endDate = $startDate->clone()->addDays(6)->endOfDay();
 
         if ($this->activeTab === 'hoje') {
@@ -279,8 +315,8 @@ class AgendaTecnico extends Page
             ->with(['technician']);
 
         if ($isAdmin && $this->selectedTechnician) {
-            $appointmentQuery->where('technician_id', (string)$this->selectedTechnician);
-        } elseif (!$isAdmin) {
+            $appointmentQuery->where('technician_id', (string) $this->selectedTechnician);
+        } elseif (! $isAdmin) {
             $appointmentQuery->where('technician_id', $user->id);
         }
 
@@ -329,36 +365,44 @@ class AgendaTecnico extends Page
             ->with(['asset', 'technician', 'asset.category', 'asset.contracts']);
 
         if ($isAdmin && $this->selectedTechnician) {
-            $orderQuery->where('technician_id', (string)$this->selectedTechnician);
-        } elseif (!$isAdmin) {
+            $orderQuery->where('technician_id', (string) $this->selectedTechnician);
+        } elseif (! $isAdmin) {
             $orderQuery->where('technician_id', $user->id);
         }
 
-        if ($this->filterAsset) $orderQuery->where('asset_id', $this->filterAsset);
-        if ($this->filterCategory) $orderQuery->whereHas('asset', fn($q) => $q->where('asset_category_id', $this->filterCategory));
-        if ($this->filterContract) $orderQuery->whereHas('asset.contracts', fn($q) => $q->where('contracts.id', $this->filterContract));
+        if ($this->filterAsset) {
+            $orderQuery->where('asset_id', $this->filterAsset);
+        }
+        if ($this->filterCategory) {
+            $orderQuery->whereHas('asset', fn ($q) => $q->where('asset_category_id', $this->filterCategory));
+        }
+        if ($this->filterContract) {
+            $orderQuery->whereHas('asset.contracts', fn ($q) => $q->where('contracts.id', $this->filterContract));
+        }
 
         $orders = $orderQuery->get();
 
         foreach ($orders as $order) {
             try {
-                if (!$order->scheduled_at) continue;
-                
-                $scheduledAt = is_string($order->scheduled_at) 
-                    ? Carbon::parse($order->scheduled_at)
-                    : $order->scheduled_at;
-                
-                if (!$scheduledAt instanceof Carbon) {
+                if (! $order->scheduled_at) {
                     continue;
                 }
-                
+
+                $scheduledAt = is_string($order->scheduled_at)
+                    ? Carbon::parse($order->scheduled_at)
+                    : $order->scheduled_at;
+
+                if (! $scheduledAt instanceof Carbon) {
+                    continue;
+                }
+
                 $scheduledDate = $scheduledAt->toDateString();
                 $hour = $scheduledAt->format('H:00');
                 $techId = $order->technician_id;
-                
+
                 // ✅ GARANTIR URI SEMPRE PREENCHIDA
                 $orderUri = route('filament.admin.resources.maintenance-orders.edit', ['record' => $order->id]);
-                
+
                 $statusColor = match ($order->status) {
                     'agendada', 'open' => 'bg-blue-600',
                     'em_progresso', 'in_progress' => 'bg-yellow-500',
@@ -367,7 +411,7 @@ class AgendaTecnico extends Page
                     'cancelada', 'cancelled' => 'bg-red-600',
                     default => 'bg-gray-600',
                 };
-                
+
                 $counter++;
                 $key = "os_{$techId}_{$scheduledDate}_{$hour}_{$counter}";
                 $grid[$key] = [
@@ -375,7 +419,7 @@ class AgendaTecnico extends Page
                     'technician_id' => $techId,
                     'date' => $scheduledDate,
                     'hour' => $hour,
-                    'title' => 'OS #' . ($order->os_number ?? 'N/A'),
+                    'title' => 'OS #'.($order->os_number ?? 'N/A'),
                     'asset' => $order->asset?->name ?? 'Equipamento',
                     'status' => $order->status,
                     'color' => $statusColor,
@@ -385,6 +429,7 @@ class AgendaTecnico extends Page
                 ];
             } catch (\Exception $e) {
                 \Log::warning("Erro ao processar order {$order->id}", ['error' => $e->getMessage()]);
+
                 continue;
             }
         }
