@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\AssetCategoryResource\Pages;
 use App\Models\AssetCategory;
 use Filament\Forms;
@@ -17,10 +16,17 @@ use Illuminate\Support\Str;
 class AssetCategoryResource extends Resource
 {
     protected static ?string $model = AssetCategory::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-tag';
-    protected static ?string $navigationGroup = 'Ativos';
+
+    protected static ?string $navigationGroup = 'Ativos e Materiais';
+
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $navigationLabel = 'Categorias de Ativos';
+
     protected static ?string $pluralModelLabel = 'Categorias de Ativos';
+
     protected static ?string $slug = 'asset-categories';
 
     // 🚀 AJUSTE DO ERRO DA IMAGEM: Vincula ao relacionamento no plural pertencente ao modelo Tenant
@@ -36,8 +42,7 @@ class AssetCategoryResource extends Resource
                         ->required()
                         ->maxLength(255)
                         ->live(onBlur: true)
-                        ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => 
-                            $operation === 'create' ? $set('slug', Str::slug($state)) : null
+                        ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null
                         ),
 
                     Forms\Components\TextInput::make('slug')
@@ -70,11 +75,11 @@ class AssetCategoryResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                // 🚀 FILTRO REAL DO BANCO: Garante que os filtros de busca superiores da listagem 
+                // 🚀 FILTRO REAL DO BANCO: Garante que os filtros de busca superiores da listagem
                 // leiam estritamente as linhas físicas que existem na tabela asset_categories do Tenant.
                 Tables\Filters\SelectFilter::make('id')
                     ->label('Filtrar Categoria')
-                    ->options(fn () => \App\Models\AssetCategory::pluck('name', 'id')->toArray()),
+                    ->options(fn () => AssetCategory::pluck('name', 'id')->toArray()),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

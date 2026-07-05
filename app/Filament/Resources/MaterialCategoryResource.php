@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\MaterialCategoryResource\Pages;
 use App\Models\MaterialCategory;
 use Filament\Forms;
@@ -11,28 +10,29 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Facades\Filament;
-use Illuminate\Database\Eloquent\Builder;
 
 #[BelongsToFeature('materials')]
 class MaterialCategoryResource extends Resource
-{ 
-    
+{
     // AJUSTE: Mudado para true para aparecer no menu
-    protected static bool $shouldRegisterNavigation = true; 
-    
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $model = MaterialCategory::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-tag';
-    
+
     // AJUSTE: Alinhado com o grupo que aparece na sua imagem
-    protected static ?string $navigationGroup = 'Estoque';
+    protected static ?string $navigationGroup = 'Ativos e Materiais';
+
+    protected static ?int $navigationSort = 11;
+
     protected static ?string $navigationLabel = 'Categorias de Materiais';
-    
+
     protected static ?string $modelLabel = 'Categoria de Material';
+
     protected static ?string $pluralModelLabel = 'Categorias de Materiais';
 
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';
-
 
     public static function form(Form $form): Form
     {
@@ -44,12 +44,12 @@ class MaterialCategoryResource extends Resource
                         ->placeholder('Ex: Filtros, Óleos, Peças Hidráulicas')
                         ->required()
                         ->maxLength(255),
-                        
+
                     Forms\Components\Textarea::make('description')
                         ->label('Descrição / Notas')
                         ->placeholder('Opcional: Detalhe o que compõe esta família de materiais')
                         ->rows(3),
-                ])
+                ]),
         ]);
     }
 
@@ -62,7 +62,7 @@ class MaterialCategoryResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
-                    
+
                 Tables\Columns\TextColumn::make('materials_count')
                     ->label('Materiais Vinculados')
                     ->counts('materials')

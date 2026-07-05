@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\AbcMatrixResource\Pages;
 use App\Models\AbcMatrix;
 use Filament\Forms;
@@ -18,9 +17,14 @@ class AbcMatrixResource extends Resource
     protected static ?string $model = AbcMatrix::class;
 
     protected static ?string $modelLabel = 'Matriz ABC';
+
     protected static ?string $pluralModelLabel = 'Matrizes ABC';
+
     protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
-    protected static ?string $navigationGroup = 'Ativos';
+
+    protected static ?string $navigationGroup = 'Ativos e Materiais';
+
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {

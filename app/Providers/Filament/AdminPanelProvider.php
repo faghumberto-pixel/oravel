@@ -2,9 +2,14 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\MaterialCategoryResource;
+use App\Filament\Resources\MaterialResource;
+use App\Filament\Resources\PartsRequestResource;
+use App\Filament\Resources\SupplierResource;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -27,21 +32,44 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->topNavigation()
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => Color::Orange,
                 'gray' => Color::Slate,
             ])
             ->brandLogo(fn () => view('filament.brand-logo'))
-            ->brandLogoHeight('2.75rem')
+            ->brandLogoHeight('1.75rem')
             ->navigationGroups([
                 NavigationGroup::make('Manutenção'),
                 NavigationGroup::make('Logística'),
-                NavigationGroup::make('Ativos'),
-                NavigationGroup::make('Estoque'),
+                NavigationGroup::make('Ativos e Materiais'),
                 NavigationGroup::make('Equipe'),
                 NavigationGroup::make('Comercial'),
                 NavigationGroup::make('Financeiro'),
                 NavigationGroup::make('Relatórios'),
                 NavigationGroup::make('Configurações'),
+            ])
+            ->navigationItems([
+                NavigationItem::make('Suprimentos')
+                    ->icon('heroicon-o-archive-box')
+                    ->group('Ativos e Materiais')
+                    ->sort(10)
+                    ->visible(fn () => MaterialResource::canViewAny()
+                        || MaterialCategoryResource::canViewAny()
+                        || SupplierResource::canViewAny()
+                        || PartsRequestResource::canViewAny())
+                    ->childItems([
+                        NavigationItem::make('Materiais')
+                            ->url(fn () => MaterialResource::getUrl())
+                            ->visible(fn () => MaterialResource::canViewAny()),
+                        NavigationItem::make('Categorias de Materiais')
+                            ->url(fn () => MaterialCategoryResource::getUrl())
+                            ->visible(fn () => MaterialCategoryResource::canViewAny()),
+                        NavigationItem::make('Fornecedores')
+                            ->url(fn () => SupplierResource::getUrl())
+                            ->visible(fn () => SupplierResource::canViewAny()),
+                        NavigationItem::make('Solicitações de Peças')
+                            ->url(fn () => PartsRequestResource::getUrl())
+                            ->visible(fn () => PartsRequestResource::canViewAny()),
+                    ]),
             ])
             ->renderHook(
                 PanelsRenderHook::TOPBAR_END,
