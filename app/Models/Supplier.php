@@ -4,16 +4,19 @@ namespace App\Models;
 
 use App\Models\Concerns\HasSaaSMetadata;
 use App\Models\Traits\BelongsToTenant;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Supplier extends Model
 {
-    use HasUuids, BelongsToTenant, HasSaaSMetadata;
+    use BelongsToTenant, HasFactory, HasSaaSMetadata, HasUuids;
 
-    protected static ?string $saasFeatureKey = "tabela_suppliers";
-    protected static ?string $saasPermissionSlug = "fornecedor";
-    protected static ?string $saasModuleLabel = "Fornecedores";
+    protected static ?string $saasFeatureKey = 'tabela_suppliers';
+
+    protected static ?string $saasPermissionSlug = 'fornecedor';
+
+    protected static ?string $saasModuleLabel = 'Fornecedores';
 
     protected $fillable = [
         'tenant_id',

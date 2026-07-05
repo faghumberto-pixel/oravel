@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\HasSaaSMetadata;
 use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -26,7 +27,7 @@ class MaintenanceOrder extends Model implements HasMedia
     protected static ?string $saasModuleLabel = 'Ordens de Servico';
 
     use BelongsToTenant;
-    use HasUuids, InteractsWithMedia, SoftDeletes;
+    use HasFactory, HasUuids, InteractsWithMedia, SoftDeletes;
 
     // --- CONSTANTES DE SERVIÇO ---
     public const TYPE_CHECKOUT = 'Check-out';
@@ -172,13 +173,24 @@ class MaintenanceOrder extends Model implements HasMedia
         static::creating(function (MaintenanceOrder $os) {
             if (empty($os->os_number)) {
                 $prefix = 'OS-'.now()->format('Ym').'-';
-                $latestOrder = static::withoutGlobalScopes()
-                    ->where('os_number', 'like', $prefix.'%')
-                    ->orderBy('os_number', 'desc')
-                    ->first();
 
-                $nextSequence = $latestOrder ? (int) substr($latestOrder->os_number, -5) + 1 : 10000;
-                $os->os_number = $prefix.str_pad($nextSequence, 5, '0', STR_PAD_LEFT);
+                // Comparacao por string (ORDER BY os_number DESC) quebra quando
+                // sequencias de tamanhos diferentes coexistem na mesma tabela
+                // (ex: legado "0005" de 4 digitos vs "00006" de 5 digitos --
+                // "0005" > "00006" lexicograficamente mesmo sendo menor). Calcula
+                // o maximo de verdade em PHP a partir do sufixo numerico real.
+                $maxSequence = static::withoutGlobalScopes()
+                    ->where('os_number', 'like', $prefix.'%')
+                    ->pluck('os_number')
+                    ->map(function ($value) use ($prefix) {
+                        $suffix = substr((string) $value, strlen($prefix));
+
+                        return ctype_digit($suffix) ? (int) $suffix : 0;
+                    })
+                    ->max();
+
+                $nextSequence = $maxSequence ? $maxSequence + 1 : 10000;
+                $os->os_number = $prefix.str_pad((string) $nextSequence, 5, '0', STR_PAD_LEFT);
             }
 
             $isUnderContract = Contract::where('asset_id', $os->asset_id)

@@ -2,21 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 
 class MaintenanceOrderMaterial extends Model
 {
+    use BelongsToTenant;
+    use HasFactory;
     // Todos os Traits agora declarados corretamente DENTRO das chaves da classe
     use HasUuids;
-    use \App\Models\Traits\BelongsToTenant;
 
     protected $fillable = [
         'maintenance_order_id',
         'name',
         'quantity',
-        'tenant_id'
+        'tenant_id',
     ];
 
     /**
@@ -31,7 +35,7 @@ class MaintenanceOrderMaterial extends Model
         });
     }
 
-    public function maintenanceOrder(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function maintenanceOrder(): BelongsTo
     {
         return $this->belongsTo(MaintenanceOrder::class, 'maintenance_order_id');
     }
