@@ -20,7 +20,7 @@ class AbcMatrixResource extends Resource
     protected static ?string $modelLabel = 'Matriz ABC';
     protected static ?string $pluralModelLabel = 'Matrizes ABC';
     protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
-    protected static ?string $navigationGroup = 'GESTÃO DE ATIVOS';
+    protected static ?string $navigationGroup = 'Ativos';
 
     public static function form(Form $form): Form
     {

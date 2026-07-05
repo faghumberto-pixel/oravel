@@ -1,0 +1,9 @@
+<x-filament::icon-button
+    color="gray"
+    icon="heroicon-o-question-mark-circle"
+    icon-size="lg"
+    label="Ajuda"
+    tooltip="Ajuda"
+    href="mailto:suporte@oravel.com.br"
+    tag="a"
+/>

@@ -27,7 +27,7 @@ class AccountPayableResource extends Resource
     protected static ?string $model = AccountPayable::class;
     protected static ?string $tenantRelationshipName = 'accountPayables';
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
-    protected static ?string $navigationGroup = 'GESTÃO FINANCEIRA';
+    protected static ?string $navigationGroup = 'Financeiro';
     protected static ?string $navigationLabel = 'Contas a Pagar';
     protected static ?string $modelLabel = 'Conta a Pagar';
     protected static ?string $pluralModelLabel = 'Contas a Pagar';

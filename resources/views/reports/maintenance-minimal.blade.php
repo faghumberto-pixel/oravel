@@ -17,7 +17,7 @@
     <h1 class="text-2xl font-black uppercase mb-2">Relatório Analítico de Manutenção</h1>
     <p class="text-gray-600 mb-8 italic">Data de geração: {{ now()->format('d/m/Y H:i') }}</p>
 
-    @foreach($orders as $status => $group)
+    @foreach($groupedOrders as $status => $group)
         <section class="mb-8">
             <h2 class="text-lg font-bold uppercase border-b-2 border-black mb-4">{{ str_replace('_', ' ', $status) }}</h2>
             <table class="w-full text-left text-sm">
@@ -37,8 +37,8 @@
                             <td class="py-2">{{ $order->asset->patrimonio ?? 'N/A' }}</td>
                             <td class="py-2">
                                 @php
-                                    $last = $order->statusHistory()->where('status', $status)->latest('changed_at')->first();
-                                    echo $last ? $last->changed_at->diffInDays(now()) : 0;
+                                    $last = $order->statusHistories()->where('new_status', $status)->latest('created_at')->first();
+                                    echo $last ? $last->created_at->diffInDays(now()) : 0;
                                 @endphp
                             </td>
                         </tr>

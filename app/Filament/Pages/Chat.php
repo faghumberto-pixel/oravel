@@ -25,7 +25,7 @@ class Chat extends Page
     use WithFileUploads;
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
-    protected static ?string $navigationGroup = 'COMUNICAÇÃO';
+    protected static ?string $navigationGroup = 'Equipe';
     protected static ?string $navigationLabel = 'Chat Interno';
     protected static ?string $title = '';
 

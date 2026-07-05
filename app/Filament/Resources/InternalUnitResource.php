@@ -22,7 +22,7 @@ class InternalUnitResource extends Resource
     
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
     protected static ?string $navigationLabel = 'Unidades Internas';
-    protected static ?string $navigationGroup = 'GESTAO DE ATIVOS';
+    protected static ?string $navigationGroup = 'Ativos';
 
     public static function getEloquentQuery(): Builder
     {

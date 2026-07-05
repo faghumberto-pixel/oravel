@@ -21,7 +21,7 @@ class BranchResource extends Resource
     protected static ?string $tenantRelationshipName = 'branches';
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2'; // Ícone mais adequado para filiais
-    protected static ?string $navigationGroup = 'CONFIGURAÇÕES';
+    protected static ?string $navigationGroup = 'Configurações';
     protected static ?string $navigationLabel = 'Filiais';
     protected static ?string $modelLabel = 'Filial';
     protected static ?string $pluralModelLabel = 'Filiais';

@@ -3,27 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\MaintenanceOrder;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Log;
 
 class MaintenanceReportController extends Controller
 {
-    /**
-     * @param string|int $tenant O ID ou Slug vindo da rota
-     */
-    public function show($tenant)
+    public function show()
     {
         try {
-            // 1. Busca global para garantir visibilidade dos dados
-            // Removemos a filtragem restritiva por tenant momentaneamente para testar se os dados existem
-            $orders = MaintenanceOrder::with(['asset', 'statusHistory'])
-                ->get();
+            $tenant = Tenancy::current();
 
-            // 2. Log para depuração caso a página venha vazia
-            if ($orders->isEmpty()) {
-                Log::warning("Relatório: Nenhuma ordem de serviço encontrada no banco de dados.");
+            if (! $tenant) {
+                return view('reports.maintenance-minimal', ['groupedOrders' => collect()]);
             }
 
-            // 3. Agrupamento robusto
+            $orders = MaintenanceOrder::where('tenant_id', $tenant->id)
+                ->with(['asset', 'statusHistories'])
+                ->get();
+
+            if ($orders->isEmpty()) {
+                Log::warning("Relatório: Nenhuma ordem de serviço encontrada para o tenant {$tenant->id}.");
+            }
+
             $groupedOrders = $orders->groupBy(fn($o) => $o->internal_status ?: 'Sem Status');
 
             return view('reports.maintenance-minimal', compact('groupedOrders'));

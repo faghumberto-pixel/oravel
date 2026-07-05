@@ -13,10 +13,12 @@ use App\Filament\Widgets\AgendaCampo;
 #[BelongsToFeature('users')]
 class PainelGestao extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
     protected static string $view = 'filament.pages.painel-gestao';
     protected static ?string $slug = 'painel-controle';
     protected static ?string $title = 'Painel de Controle';
+    protected static ?string $navigationLabel = 'Dashboard';
+    protected static ?int $navigationSort = -10;
 
     public $activeTab = 'gestao';
 

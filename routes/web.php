@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\EquipmentDamageReportController;
+use App\Http\Controllers\MaintenanceKanbanPrintController;
 use App\Http\Controllers\MaintenanceOrderController;
 use App\Http\Controllers\MaintenanceOrderDossieController;
 use App\Http\Controllers\MaintenanceReportController;
@@ -21,8 +22,12 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 Route::redirect('/admin/innova/categories', '/admin/innova/bill-categories');
 Route::get('/', fn () => redirect()->to('/admin'));
 
-Route::get('/admin/app/{tenant}/maintenance-report', [MaintenanceReportController::class, 'show'])
+Route::get('/admin/app/maintenance-report', [MaintenanceReportController::class, 'show'])
     ->name('maintenance.report')
+    ->middleware(['auth', 'verified']);
+
+Route::get('/admin/app/maintenance-kanban/print', [MaintenanceKanbanPrintController::class, 'show'])
+    ->name('maintenance.kanban.print')
     ->middleware(['auth', 'verified']);
 
 Route::middleware(['auth', 'verified'])->group(function () {

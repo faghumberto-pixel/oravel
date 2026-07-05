@@ -22,7 +22,7 @@ class FleetStatusResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-flag';
 
-    protected static ?string $navigationGroup = 'LOGÍSTICA';
+    protected static ?string $navigationGroup = 'Comercial';
 
     protected static ?string $navigationLabel = 'Status da Frota';
 

@@ -23,7 +23,7 @@ class SolicitacaoLocacaoResource extends Resource
     protected static ?string $model = SolicitacaoLocacao::class;
     protected static ?string $slug = 'solicitacoes-locacao';
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
-    protected static ?string $navigationGroup = 'GESTÃO COMERCIAL';
+    protected static ?string $navigationGroup = 'Comercial';
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';
 
     public static function form(Form $form): Form

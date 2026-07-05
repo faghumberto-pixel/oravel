@@ -3,26 +3,39 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenanceStatusHistory;
+use App\Models\User;
+use App\Support\Tenancy;
 use Filament\Pages\Page;
-use Filament\Facades\Filament;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 #[BelongsToFeature('maintenance')]
 class MaintenanceKanban extends Page
 {
-    protected static ?string $title = 'Quadro de Gestão Kanban';
+    protected static ?string $title = 'Oficina - Kanban Pátio';
+
     protected static ?string $navigationIcon = 'heroicon-o-view-columns';
-    protected static ?string $navigationGroup = 'GESTÃO DE MANUTENÇÃO';
-    protected static ?string $navigationLabel = 'Quadro de Pátio (Kanban)';
+
+    protected static ?string $navigationGroup = 'Oficina';
+
+    protected static ?string $navigationLabel = 'Kanban do Pátio';
+
     protected static ?int $navigationSort = 1;
+
     protected static string $view = 'filament.pages.maintenance-kanban';
 
-    public $viewMode = 'oficina'; 
-    public $search = ''; 
+    public $viewMode = 'oficina';
+
+    public $search = '';
+
+    public $technicianId = '';
+
+    public array $hiddenStatuses = [];
+
+    public bool $showFilters = false;
 
     public function getMaxContentWidth(): MaxWidth
     {
@@ -31,77 +44,141 @@ class MaintenanceKanban extends Page
 
     public function getTotalOrdersCount(): int
     {
-        $tenant = \App\Support\Tenancy::current();
-        if (!$tenant) return 0;
+        $tenant = Tenancy::current();
+        if (! $tenant) {
+            return 0;
+        }
 
         $query = MaintenanceOrder::where('tenant_id', $tenant->id);
-        
+
         if ($this->viewMode === 'oficina') {
-            $query->whereNotIn('status', ['Concluída', 'Cancelada']);
+            $query->where('status', '!=', 'Cancelada');
         }
-        
+
         return $query->count();
     }
 
-    // MÉTODO FALTANTE ADICIONADO
     public function getAverageLeadTime(): float
     {
         $records = $this->getRecords()->flatten();
-        if ($records->isEmpty()) return 0;
+        if ($records->isEmpty()) {
+            return 0;
+        }
 
-        $totalDays = $records->sum(fn($order) => $this->getDaysInStage($order));
+        $totalDays = $records->sum(fn ($order) => $this->getDaysInStage($order));
+
         return round($totalDays / $records->count(), 1);
+    }
+
+    /**
+     * Mapa de status -> título/cor, reaproveitado pelo Kanban e pela impressão.
+     */
+    public static function statusMap(string $viewMode): array
+    {
+        return $viewMode === 'comercial'
+            ? [
+                'disponivel' => ['title' => 'Disponível no Pátio', 'color' => 'bg-emerald-600'],
+                'locado' => ['title' => 'Em Obra (Locado)', 'color' => 'bg-blue-600'],
+                'oficina' => ['title' => 'Retido / Oficina', 'color' => 'bg-red-600'],
+            ]
+            : [
+                'aguardando_diagnostico' => ['title' => 'Aguardando Diagnóstico', 'color' => 'bg-slate-600'],
+                'em_manutencao' => ['title' => 'Em Manutenção', 'color' => 'bg-blue-600'],
+                'aguardando_peca' => ['title' => 'Aguardando Peça', 'color' => 'bg-amber-500', 'flag' => 'Gargalo'],
+                'teste_qualidade' => ['title' => 'Teste de Qualidade', 'color' => 'bg-purple-600'],
+                'pendencia' => ['title' => 'Pendência', 'color' => 'bg-orange-500'],
+                'concluido' => ['title' => 'Concluído', 'color' => 'bg-emerald-600'],
+            ];
     }
 
     public function getStatuses(): array
     {
-        return $this->viewMode === 'comercial' 
-            ? [
-                'disponivel' => ['title' => 'Disponível no Pátio', 'color' => 'bg-emerald-600'],
-                'locado'     => ['title' => 'Em Obra (Locado)', 'color' => 'bg-blue-600'],
-                'oficina'    => ['title' => 'Retido / Oficina', 'color' => 'bg-red-600'],
-            ]
-            : [
-                'aguardando_diagnostico' => ['title' => 'Aguardando Diagnóstico', 'color' => 'bg-red-600'],
-                'em_manutencao'          => ['title' => 'Em Manutenção', 'color' => 'bg-amber-500'],
-                'aguardando_peca'        => ['title' => 'Aguardando Peça', 'color' => 'bg-cyan-600'],
-                'teste_qualidade'        => ['title' => 'Teste de Qualidade', 'color' => 'bg-indigo-600'],
-            ];
+        return static::statusMap($this->viewMode);
+    }
+
+    /**
+     * Colunas visíveis, respeitando o filtro de status ocultos.
+     */
+    public function getVisibleStatuses(): array
+    {
+        return array_diff_key($this->getStatuses(), array_flip($this->hiddenStatuses));
+    }
+
+    /**
+     * Técnicos que aparecem em pelo menos uma OS do tenant -- base do filtro por usuário.
+     */
+    public function getTechniciansList(): Collection
+    {
+        $tenant = Tenancy::current();
+        if (! $tenant) {
+            return collect();
+        }
+
+        $technicianIds = MaintenanceOrder::where('tenant_id', $tenant->id)
+            ->whereNotNull('technician_id')
+            ->distinct()
+            ->pluck('technician_id');
+
+        return User::whereIn('id', $technicianIds)->orderBy('name')->pluck('name', 'id');
+    }
+
+    /**
+     * Query base compartilhada entre o board (Livewire) e a impressão (controller).
+     */
+    public static function buildQuery(string $viewMode, ?string $technicianId = null, ?string $search = null): Builder
+    {
+        $tenant = Tenancy::current();
+
+        $query = MaintenanceOrder::where('tenant_id', $tenant?->id)
+            ->with(['asset', 'technician', 'client', 'parts', 'statusHistories'])
+            ->withCount('evidences');
+
+        if ($viewMode === 'oficina') {
+            $query->where('status', '!=', 'Cancelada');
+        }
+
+        if (! empty($technicianId)) {
+            $query->where('technician_id', $technicianId);
+        }
+
+        if (! empty(trim((string) $search))) {
+            $term = '%'.trim($search).'%';
+            $query->where(function ($subQuery) use ($term) {
+                $subQuery->where('os_number', 'ilike', $term)
+                    ->orWhere('description', 'ilike', $term)
+                    ->orWhereHas('asset', fn ($q) => $q->where('name', 'ilike', $term));
+            });
+        }
+
+        return $query;
+    }
+
+    public static function groupByStatus(Collection $orders, string $viewMode): Collection
+    {
+        $validStatuses = array_keys(static::statusMap($viewMode));
+
+        return $orders->groupBy(function ($order) use ($validStatuses, $viewMode) {
+            $status = ($viewMode === 'oficina') ? $order->internal_status : $order->commercial_status;
+
+            return in_array($status, $validStatuses, true) ? $status : ($viewMode === 'oficina' ? 'aguardando_diagnostico' : 'oficina');
+        });
     }
 
     public function getRecords(): Collection
     {
-        $tenant = \App\Support\Tenancy::current();
-        if (!$tenant) return collect();
-
-        $query = MaintenanceOrder::where('tenant_id', $tenant->id)
-            ->with(['asset', 'technician', 'parts', 'statusHistories']); 
-
-        if ($this->viewMode === 'oficina') {
-            $query->whereNotIn('status', ['Concluída', 'Cancelada']);
+        if (! Tenancy::current()) {
+            return collect();
         }
 
-        if (!empty(trim($this->search))) {
-            $term = '%' . trim($this->search) . '%';
-            $query->where(function ($subQuery) use ($term) {
-                $subQuery->where('os_number', 'ilike', $term)
-                         ->orWhere('description', 'ilike', $term)
-                         ->orWhereHas('asset', fn($q) => $q->where('name', 'ilike', $term));
-            });
-        }
+        $orders = static::buildQuery($this->viewMode, $this->technicianId, $this->search)->get();
 
-        $validStatuses = array_keys($this->getStatuses());
-
-        return $query->get()->groupBy(function ($order) use ($validStatuses) {
-            $status = ($this->viewMode === 'oficina') ? $order->internal_status : $order->commercial_status;
-            return in_array($status, $validStatuses, true) ? $status : ($this->viewMode === 'oficina' ? 'aguardando_diagnostico' : 'oficina');
-        });
+        return static::groupByStatus($orders, $this->viewMode);
     }
 
     public function getDaysInStage($record): int
     {
         $status = ($this->viewMode === 'oficina') ? $record->internal_status : ($record->commercial_status ?? 'oficina');
-        
+
         $lastChange = $record->statusHistories()
             ->where('new_status', $status)
             ->latest('created_at')
@@ -115,11 +192,11 @@ class MaintenanceKanban extends Page
         $order = MaintenanceOrder::find($recordId);
         if ($order) {
             MaintenanceStatusHistory::create([
-                'tenant_id'            => \App\Support\Tenancy::current()->id,
+                'tenant_id' => Tenancy::current()->id,
                 'maintenance_order_id' => $recordId,
-                'old_status'           => ($this->viewMode === 'oficina') ? $order->internal_status : $order->commercial_status,
-                'new_status'           => $newStatus,
-                'created_at'           => now(),
+                'old_status' => ($this->viewMode === 'oficina') ? $order->internal_status : $order->commercial_status,
+                'new_status' => $newStatus,
+                'created_at' => now(),
             ]);
 
             if ($this->viewMode === 'oficina') {
@@ -127,8 +204,43 @@ class MaintenanceKanban extends Page
             } else {
                 $order->update(['commercial_status' => $newStatus]);
             }
-            
+
             $this->dispatch('notify', ['message' => 'Status atualizado com sucesso!', 'type' => 'success']);
         }
+    }
+
+    public function toggleStatusVisibility(string $statusId): void
+    {
+        if (in_array($statusId, $this->hiddenStatuses, true)) {
+            $this->hiddenStatuses = array_values(array_diff($this->hiddenStatuses, [$statusId]));
+        } else {
+            $this->hiddenStatuses[] = $statusId;
+        }
+    }
+
+    public function clearFilters(): void
+    {
+        $this->technicianId = '';
+        $this->hiddenStatuses = [];
+    }
+
+    public function toggleFiltersPanel(): void
+    {
+        $this->showFilters = ! $this->showFilters;
+    }
+
+    public function getActiveFilterCount(): int
+    {
+        return (! empty($this->technicianId) ? 1 : 0) + count($this->hiddenStatuses);
+    }
+
+    public function getPrintUrl(): string
+    {
+        return route('maintenance.kanban.print', array_filter([
+            'mode' => $this->viewMode,
+            'technician' => $this->technicianId ?: null,
+            'hidden' => ! empty($this->hiddenStatuses) ? implode(',', $this->hiddenStatuses) : null,
+            'search' => $this->search ?: null,
+        ]));
     }
 }

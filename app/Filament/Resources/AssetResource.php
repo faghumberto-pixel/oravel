@@ -21,7 +21,7 @@ class AssetResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-truck';
     protected static ?string $modelLabel = 'Ativo';
     protected static ?string $pluralModelLabel = 'Ativos';
-    protected static ?string $navigationGroup = 'GESTÃO DE ATIVOS';
+    protected static ?string $navigationGroup = 'Ativos';
 
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';
 

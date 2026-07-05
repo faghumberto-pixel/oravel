@@ -29,7 +29,7 @@ class ClientResource extends Resource
     
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
     protected static ?string $navigationLabel = 'Clientes';
-    protected static ?string $navigationGroup = 'GESTÃO COMERCIAL';
+    protected static ?string $navigationGroup = 'Comercial';
 
     protected static ?string $tenantRelationshipName = 'clients';
 

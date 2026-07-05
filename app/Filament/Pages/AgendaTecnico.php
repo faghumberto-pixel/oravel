@@ -20,7 +20,7 @@ class AgendaTecnico extends Page
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
     protected static ?string $navigationLabel = 'Programação';
     protected static ?string $title = 'Programação';
-    protected static ?string $navigationGroup = 'GESTÃO DE MANUTENÇÃO';
+    protected static ?string $navigationGroup = 'Oficina';
     protected static ?int $navigationSort = 1;
     protected static string $view = 'filament.pages.agenda-tecnico';
 

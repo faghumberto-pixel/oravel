@@ -20,7 +20,7 @@ class ChecklistTemplateResource extends Resource
     protected static ?string $model = ChecklistTemplate::class; 
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-    protected static ?string $navigationGroup = 'GESTÃO DE MANUTENÇÃO';
+    protected static ?string $navigationGroup = 'Oficina';
     protected static ?string $modelLabel = 'Checklist';
     protected static ?string $pluralModelLabel = 'Checklists';
 

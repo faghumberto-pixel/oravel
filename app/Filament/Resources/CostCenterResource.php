@@ -21,7 +21,7 @@ class CostCenterResource extends Resource
     protected static ?string $tenantRelationshipName = 'costCenters';
 
     protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
-    protected static ?string $navigationGroup = 'CONFIGURAÇÕES';
+    protected static ?string $navigationGroup = 'Configurações';
     protected static ?string $navigationLabel = 'Centros de Custo';
     protected static ?string $modelLabel = 'Centro de Custo';
 

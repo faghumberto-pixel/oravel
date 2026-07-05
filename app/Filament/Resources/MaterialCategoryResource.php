@@ -25,7 +25,7 @@ class MaterialCategoryResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-tag';
     
     // AJUSTE: Alinhado com o grupo que aparece na sua imagem
-    protected static ?string $navigationGroup = 'SUPRIMENTOS';
+    protected static ?string $navigationGroup = 'Estoque';
     protected static ?string $navigationLabel = 'Categorias de Materiais';
     
     protected static ?string $modelLabel = 'Categoria de Material';

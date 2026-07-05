@@ -26,7 +26,7 @@ class DepartmentResource extends Resource
 
     protected static bool $shouldRegisterNavigation = true;
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
-    protected static ?string $navigationGroup = 'GESTÃO DE PESSOAS';
+    protected static ?string $navigationGroup = 'Equipe';
     protected static ?string $navigationLabel = 'Departamentos';
 
 

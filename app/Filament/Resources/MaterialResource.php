@@ -28,7 +28,7 @@ class MaterialResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-beaker';
     // Alterado para 'Suprimentos' (Capitalizado) para garantir consistência
-    protected static ?string $navigationGroup = 'SUPRIMENTOS';
+    protected static ?string $navigationGroup = 'Estoque';
 
 
     public static function form(Form $form): Form

@@ -17,7 +17,7 @@ class EquipmentDamageResource extends BaseResource
 
     protected static ?string $navigationIcon = 'heroicon-o-exclamation-triangle';
 
-    protected static ?string $navigationGroup = 'GESTÃO DE MANUTENÇÃO';
+    protected static ?string $navigationGroup = 'Oficina';
 
     protected static ?string $modelLabel = 'Avaria de Equipamento';
 

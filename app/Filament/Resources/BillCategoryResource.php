@@ -24,7 +24,7 @@ class BillCategoryResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
     // Posiciona o link no bloco financeiro da sua árvore de menus
-    protected static ?string $navigationGroup = 'GESTÃO FINANCEIRA';
+    protected static ?string $navigationGroup = 'Financeiro';
 
     protected static ?string $navigationLabel = 'Categorias de Contas a Pagar';
 

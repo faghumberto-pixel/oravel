@@ -25,8 +25,8 @@ class MaintenanceOrderResource extends Resource
 {
     protected static ?string $model = MaintenanceOrder::class;
     protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
-    protected static ?string $navigationGroup = 'GESTÃO DE MANUTENÇÃO';
-    protected static ?string $navigationLabel = 'Ordem de Serviço';
+    protected static ?string $navigationGroup = 'Ordens de Serviço';
+    protected static ?string $navigationLabel = 'Ordens de Serviço';
     protected static ?string $pluralModelLabel = 'Ordens de Serviço';
 
     public static function canViewAny(): bool
