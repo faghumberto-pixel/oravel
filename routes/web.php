@@ -14,10 +14,13 @@ use App\Livewire\AssetDossierMobile;
 use App\Livewire\EquipmentDamageMobile;
 use App\Livewire\EquipmentMovementMobile;
 use App\Livewire\MaintenanceChecklistMobile;
+use App\Livewire\PreventiveMaintenanceMobile;
 use App\Models\Asset;
 use App\Models\ChatMessage;
 use App\Models\ChatRoom;
 use App\Models\MaintenanceOrder;
+use App\Models\MaintenancePlan;
+use App\Models\PreventiveMaintenanceExecution;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Route;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -75,6 +78,34 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/maintenance-orders/{maintenanceOrder}/movimentacao/{type}', EquipmentMovementMobile::class)
         ->where('type', 'mobilizacao|desmobilizacao')
         ->name('maintenance-orders.equipment-movement-mobile');
+
+    // Versao pro campo (celular do tecnico) do Plano de Manutencao Preventiva
+    // -- checkbox simples por item do template do Grupo do Ativo.
+    Route::get('/admin/maintenance-orders/{maintenanceOrder}/preventiva', PreventiveMaintenanceMobile::class)
+        ->name('maintenance-orders.preventiva-mobile');
+
+    Route::get('/admin/maintenance-orders/{maintenanceOrder}/preventiva/print', function (MaintenanceOrder $maintenanceOrder) {
+        $order = $maintenanceOrder;
+        $asset = $order->asset;
+        abort_unless($asset?->checklist_group_id, 404);
+
+        $executions = PreventiveMaintenanceExecution::where('maintenance_order_id', $order->id)
+            ->with('technician')
+            ->get()
+            ->keyBy('maintenance_plan_id');
+
+        $items = MaintenancePlan::where('checklist_group_id', $asset->checklist_group_id)
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get()
+            ->map(fn (MaintenancePlan $plan) => [
+                'plan' => $plan,
+                'execution' => $executions->get($plan->id),
+                'status' => $plan->dueStatusForAsset($asset),
+            ]);
+
+        return view('maintenance-orders.preventiva-print', compact('order', 'items'));
+    })->name('maintenance-orders.preventiva.print');
 
     Route::get('/admin/equipment-movements/{equipmentMovement}/avarias/create', EquipmentDamageMobile::class)
         ->name('equipment-movements.damages.create');

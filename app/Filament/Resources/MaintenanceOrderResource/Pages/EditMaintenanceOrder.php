@@ -3,17 +3,18 @@
 namespace App\Filament\Resources\MaintenanceOrderResource\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
-
+use App\Filament\Pages\DossieOperacional;
 use App\Filament\Resources\MaintenanceOrderResource;
 use App\Filament\Resources\MaintenanceOrderResource\Concerns\StoresPhotoEvidence;
+use App\Models\User;
+use App\Support\Tenancy;
 use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use App\Models\User;
-use Filament\Facades\Filament;
+use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
+use Filament\Resources\Pages\EditRecord;
 
 #[BelongsToFeature('maintenance')]
 class EditMaintenanceOrder extends EditRecord
@@ -47,7 +48,25 @@ class EditMaintenanceOrder extends EditRecord
                 ->label('Dossiê Operacional')
                 ->color('gray')
                 ->icon('heroicon-o-document-chart-bar')
-                ->url(fn () => \App\Filament\Pages\DossieOperacional::getUrl(['record' => $this->record]))
+                ->url(fn () => DossieOperacional::getUrl(['record' => $this->record]))
+                ->openUrlInNewTab(),
+
+            // 0b. BOTÃO PREVENTIVA (celular) -- so aparece se o ativo tiver
+            // Grupo definido, ja que o template de preventiva e por Grupo.
+            Actions\Action::make('preventiva')
+                ->label('Preventiva (Celular)')
+                ->color('gray')
+                ->icon('heroicon-o-wrench')
+                ->visible(fn () => (bool) $this->record->asset?->checklist_group_id)
+                ->url(fn () => route('maintenance-orders.preventiva-mobile', $this->record))
+                ->openUrlInNewTab(),
+
+            Actions\Action::make('preventiva_print')
+                ->label('Imprimir Preventiva')
+                ->color('gray')
+                ->icon('heroicon-o-printer')
+                ->visible(fn () => (bool) $this->record->asset?->checklist_group_id)
+                ->url(fn () => route('maintenance-orders.preventiva.print', $this->record))
                 ->openUrlInNewTab(),
 
             // 1. BOTÃO INICIAR / CONTINUAR
@@ -55,19 +74,19 @@ class EditMaintenanceOrder extends EditRecord
                 ->label(fn () => $this->record->started_at ? 'Continuar Serviço' : 'Iniciar Serviço')
                 ->color('success')
                 ->icon('heroicon-o-play')
-                ->disabled(fn () => !in_array($this->record->status, ['Aberto', 'Pendente', 'Pausada', 'Reprogramado', 'Reprogramada']))
+                ->disabled(fn () => ! in_array($this->record->status, ['Aberto', 'Pendente', 'Pausada', 'Reprogramado', 'Reprogramada']))
                 ->action(function () {
                     $data = [
                         'status' => 'Em Andamento',
                         'last_timer_start' => now(),
                     ];
 
-                    if (!$this->record->started_at) {
+                    if (! $this->record->started_at) {
                         $data['started_at'] = now();
                     }
 
                     $this->record->update($data);
-                    
+
                     Notification::make()
                         ->title('Serviço iniciado!')
                         ->success()
@@ -83,8 +102,8 @@ class EditMaintenanceOrder extends EditRecord
                 ->icon('heroicon-o-pause')
                 ->disabled(fn () => $this->record->status !== 'Em Andamento')
                 ->action(function () {
-                    $secondsSinceStart = $this->record->last_timer_start 
-                        ? now()->diffInSeconds($this->record->last_timer_start) 
+                    $secondsSinceStart = $this->record->last_timer_start
+                        ? now()->diffInSeconds($this->record->last_timer_start)
                         : 0;
 
                     $this->record->update([
@@ -106,7 +125,7 @@ class EditMaintenanceOrder extends EditRecord
                 ->label('Reprogramar')
                 ->color('info')
                 ->icon('heroicon-o-calendar')
-                ->disabled(fn () => !in_array($this->record->status, ['Aberto', 'Pendente', 'Pausada', 'Em Andamento']))
+                ->disabled(fn () => ! in_array($this->record->status, ['Aberto', 'Pendente', 'Pausada', 'Em Andamento']))
                 ->form([
                     DateTimePicker::make('rescheduled_to')
                         ->label('Nova Data e Hora')
@@ -119,12 +138,12 @@ class EditMaintenanceOrder extends EditRecord
                         ->placeholder('Justifique a alteração de data...'),
                 ])
                 ->action(function (array $data) {
-                    $secondsSinceStart = ($this->record->status === 'Em Andamento' && $this->record->last_timer_start) 
-                        ? now()->diffInSeconds($this->record->last_timer_start) 
+                    $secondsSinceStart = ($this->record->status === 'Em Andamento' && $this->record->last_timer_start)
+                        ? now()->diffInSeconds($this->record->last_timer_start)
                         : 0;
 
                     $this->record->update([
-                        'status' => 'Reprogramado', 
+                        'status' => 'Reprogramado',
                         'rescheduled_to' => $data['rescheduled_to'],
                         'reschedule_reason' => $data['reschedule_reason'],
                         'total_time_seconds' => (int) ($this->record->total_time_seconds + $secondsSinceStart),
@@ -144,12 +163,12 @@ class EditMaintenanceOrder extends EditRecord
                 ->label('Transferir')
                 ->color('gray')
                 ->icon('heroicon-o-arrows-right-left')
-                ->disabled(fn () => !in_array($this->record->status, ['Aberto', 'Pendente', 'Pausada', 'Reprogramado', 'Reprogramada', 'Em Andamento']))
+                ->disabled(fn () => ! in_array($this->record->status, ['Aberto', 'Pendente', 'Pausada', 'Reprogramado', 'Reprogramada', 'Em Andamento']))
                 ->form([
                     Select::make('technician_id')
                         ->label('Transferir para qual Técnico?')
                         // CORREÇÃO: Usa o getTenant() para filtrar técnicos do cliente logado
-                        ->options(fn() => User::where('tenant_id', \App\Support\Tenancy::current()->id)->pluck('name', 'id'))
+                        ->options(fn () => User::where('tenant_id', Tenancy::current()->id)->pluck('name', 'id'))
                         ->required()
                         ->searchable(),
                     Textarea::make('transfer_reason')
@@ -157,8 +176,8 @@ class EditMaintenanceOrder extends EditRecord
                         ->required(),
                 ])
                 ->action(function (array $data) {
-                    $secondsSinceStart = ($this->record->status === 'Em Andamento' && $this->record->last_timer_start) 
-                        ? now()->diffInSeconds($this->record->last_timer_start) 
+                    $secondsSinceStart = ($this->record->status === 'Em Andamento' && $this->record->last_timer_start)
+                        ? now()->diffInSeconds($this->record->last_timer_start)
                         : 0;
 
                     $this->record->update([
@@ -177,11 +196,11 @@ class EditMaintenanceOrder extends EditRecord
                     if ($novoTecnico = User::find($data['technician_id'])) {
                         Notification::make()
                             ->title('Nova OS atribuída a você')
-                            ->body('OS #' . $this->record->os_number . ' foi transferida para você. Motivo: ' . $data['transfer_reason'])
+                            ->body('OS #'.$this->record->os_number.' foi transferida para você. Motivo: '.$data['transfer_reason'])
                             ->icon('heroicon-o-wrench-screwdriver')
                             ->iconColor('info')
                             ->actions([
-                                \Filament\Notifications\Actions\Action::make('ver')
+                                Action::make('ver')
                                     ->label('Ver OS')
                                     ->url(MaintenanceOrderResource::getUrl('edit', ['record' => $this->record]))
                                     ->button(),
@@ -207,8 +226,8 @@ class EditMaintenanceOrder extends EditRecord
                         ->placeholder('Informe o motivo...'),
                 ])
                 ->action(function (array $data) {
-                    $secondsSinceStart = ($this->record->status === 'Em Andamento' && $this->record->last_timer_start) 
-                        ? now()->diffInSeconds($this->record->last_timer_start) 
+                    $secondsSinceStart = ($this->record->status === 'Em Andamento' && $this->record->last_timer_start)
+                        ? now()->diffInSeconds($this->record->last_timer_start)
                         : 0;
 
                     $this->record->update([
@@ -229,15 +248,15 @@ class EditMaintenanceOrder extends EditRecord
             // 6. BOTÃO CONCLUIR
             Actions\Action::make('concluir')
                 ->label('Concluir')
-                ->color('danger') 
+                ->color('danger')
                 ->icon('heroicon-o-check-circle')
                 ->requiresConfirmation()
                 ->modalHeading('Concluir Ordem de Serviço?')
                 ->modalDescription('O tempo será totalizado e a OS será finalizada para faturamento/fechamento.')
-                ->disabled(fn () => !in_array($this->record->status, ['Em Andamento', 'Pausada']))
+                ->disabled(fn () => ! in_array($this->record->status, ['Em Andamento', 'Pausada']))
                 ->action(function () {
-                    $secondsSinceStart = $this->record->last_timer_start 
-                        ? now()->diffInSeconds($this->record->last_timer_start) 
+                    $secondsSinceStart = $this->record->last_timer_start
+                        ? now()->diffInSeconds($this->record->last_timer_start)
                         : 0;
 
                     $this->record->update([
