@@ -17,6 +17,7 @@ use App\Models\PartsRequest;
 use App\Models\SolicitacaoLocacao;
 use App\Models\Supplier;
 use App\Models\User;
+use App\Models\UserActivityLog;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -174,6 +175,21 @@ class TablePrintController extends Controller
                 ['label' => 'Intervalo (horas)', 'value' => fn ($r) => $r->interval_hours],
                 ['label' => 'Ativo?', 'value' => fn ($r) => $r->is_active ? 'Sim' : 'Não'],
             ], ['asset']],
+
+            UserActivityLog::class => [[
+                ['label' => 'Data/Hora', 'value' => fn ($r) => optional($r->created_at)->format('d/m/Y H:i:s')],
+                ['label' => 'Usuário', 'value' => fn ($r) => $r->user?->name],
+                ['label' => 'Tela/Recurso', 'value' => fn ($r) => $r->resource_label],
+                ['label' => 'Ação', 'value' => fn ($r) => match ($r->action) {
+                    UserActivityLog::ACTION_VIEW => 'Visualizou',
+                    UserActivityLog::ACTION_CREATED => 'Criou',
+                    UserActivityLog::ACTION_UPDATED => 'Editou',
+                    UserActivityLog::ACTION_DELETED => 'Excluiu',
+                    UserActivityLog::ACTION_LOGIN => 'Login',
+                    UserActivityLog::ACTION_LOGOUT => 'Logout',
+                    default => $r->action ?? '—',
+                }],
+            ], ['user']],
 
             default => (function () use ($model) {
                 Log::warning("TablePrintController: sem colunas definidas para {$model}, usando fallback genérico.");
