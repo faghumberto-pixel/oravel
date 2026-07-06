@@ -3,10 +3,9 @@
 namespace App\Filament\Resources\RoleResource\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\RoleResource;
+use App\Support\Tenancy;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Support\Facades\Auth;
 
 #[BelongsToFeature('roles')]
 class CreateRole extends CreateRecord
@@ -15,11 +14,11 @@ class CreateRole extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $user = Auth::user();
-
-        // Carimba o tenant do usuario logado (admin da empresa).
-        if ($user && ! $user->isSuperAdmin() && filled($user->tenant_id)) {
-            $data['tenant_id'] = $user->tenant_id;
+        // Mesma fonte que RoleResource::getEloquentQuery() -- carimba o
+        // tenant atuante (do usuario logado, ou o escolhido pelo super
+        // admin), nao so o tenant_id direto do usuario.
+        if ($tenantId = Tenancy::current()?->id) {
+            $data['tenant_id'] = $tenantId;
         }
 
         return $data;

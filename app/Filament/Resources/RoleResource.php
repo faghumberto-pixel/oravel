@@ -12,7 +12,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -31,14 +30,25 @@ class RoleResource extends Resource
 
     protected static bool $isScopedToTenant = false;
 
+    /**
+     * Antes: super admin via os perfis de TODOS os tenants misturados (sem
+     * coluna de tenant na tabela pra diferenciar) -- como a maioria dos
+     * tenants usa os mesmos nomes de papel (Comercial, tecnico, admin...),
+     * a lista mostrava o mesmo nome repetido ate 8x. Agora usa
+     * Tenancy::current() (mesma fonte que o resto do painel), respeitando
+     * o "tenant atuante" do super admin: sem tenant atuante selecionado,
+     * nao mostra nada em vez de misturar tudo.
+     */
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery()->withoutGlobalScopes();
-        $user = Auth::user();
 
-        // Super admin ve todos; demais veem so os perfis da propria empresa.
-        if ($user && ! $user->isSuperAdmin() && filled($user->tenant_id)) {
-            $query->where('tenant_id', $user->tenant_id);
+        $tenantId = Tenancy::current()?->id;
+
+        if ($tenantId) {
+            $query->where('tenant_id', $tenantId);
+        } else {
+            $query->whereRaw('1 = 0');
         }
 
         return $query;
