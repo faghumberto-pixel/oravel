@@ -308,6 +308,80 @@ class EquipmentReplacementFlowTest extends TestCase
         $this->assertSame(1, $requesterNotifications);
     }
 
+    /**
+     * O contrato afetado precisa constar no historico desde a solicitacao
+     * (nao so quando a troca conclui), e o historico do ativo (nos dois
+     * sentidos: original e substituto) precisa expor tudo que da base ao
+     * diagnostico -- OS, patrimonio, tecnico que atestou e as datas.
+     */
+    public function test_contract_and_asset_expose_replacement_history_with_diagnosis_data(): void
+    {
+        $tenant = $this->makeTenant();
+        $technician = $this->makeUser($tenant, 'Tecnico Campo');
+        $comercial = $this->makeUser($tenant, 'Comercial User', 'Comercial');
+        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Teste']);
+        $originalAsset = $this->makeAsset($tenant, 'Guindaste Original', Asset::STATUS_LOCADO);
+        $originalAsset->update(['client_id' => $client->id, 'patrimonio' => 'PAT-0001']);
+        $replacementAsset = $this->makeAsset($tenant, 'Guindaste Substituto', Asset::STATUS_DISPONIVEL);
+        $replacementAsset->update(['patrimonio' => 'PAT-0002']);
+        $order = $this->makeOrder($tenant, $originalAsset, $technician);
+
+        $this->actingAs($technician);
+
+        $contract = Contract::create([
+            'tenant_id' => $tenant->id,
+            'client_id' => $client->id,
+            'asset_id' => $originalAsset->id,
+            'contract_number' => 'CT-'.uniqid(),
+            'start_date' => now(),
+            'is_active' => true,
+        ]);
+
+        $replacement = EquipmentReplacement::create([
+            'maintenance_order_id' => $order->id,
+            'original_asset_id' => $originalAsset->id,
+            'requested_by_user_id' => $technician->id,
+            'urgency' => EquipmentReplacement::URGENCY_NORMAL,
+            'reason' => 'Falha recorrente no motor, diagnostico do tecnico.',
+        ]);
+
+        // O vinculo com o contrato ja existe so com a solicitacao, antes de
+        // qualquer substituto ser definido ou movement criado.
+        $this->assertEquals($contract->id, $replacement->contract_id);
+        $this->assertTrue($contract->equipmentReplacements()->whereKey($replacement->id)->exists());
+
+        $replacement->identifyReplacement($replacementAsset, $comercial);
+        $replacement->startLogisticsMovements();
+        $replacement->refresh();
+        $replacement->desmobilizationMovement->update(['status' => EquipmentMovement::STATUS_CONCLUIDO, 'completed_at' => now()]);
+        $replacement->mobilizationMovement->update([
+            'status' => EquipmentMovement::STATUS_CONCLUIDO,
+            'completed_at' => now(),
+            'client_signature' => 'data:image/png;base64,FAKE',
+        ]);
+        $replacement->refresh();
+
+        // Historico do ATIVO ORIGINAL: base do diagnostico (OS, tecnico, motivo, data).
+        $fromOriginal = $originalAsset->equipmentReplacementsAsOriginal()->first();
+        $this->assertEquals($order->id, $fromOriginal->maintenance_order_id);
+        $this->assertEquals('PAT-0001', $fromOriginal->originalAsset->patrimonio);
+        $this->assertEquals($technician->id, $fromOriginal->requestedBy->id);
+        $this->assertEquals('Falha recorrente no motor, diagnostico do tecnico.', $fromOriginal->reason);
+        $this->assertNotNull($fromOriginal->created_at);
+
+        // Historico do ATIVO SUBSTITUTO: mesma troca, do outro lado.
+        $fromReplacement = $replacementAsset->equipmentReplacementsAsReplacement()->first();
+        $this->assertEquals($replacement->id, $fromReplacement->id);
+        $this->assertEquals('PAT-0002', $fromReplacement->replacementAsset->patrimonio);
+
+        // Historico do CONTRATO: qual ativo saiu, qual entrou, quando.
+        $fromContract = $contract->equipmentReplacements()->with(['originalAsset', 'replacementAsset'])->first();
+        $this->assertEquals('PAT-0001', $fromContract->originalAsset->patrimonio);
+        $this->assertEquals('PAT-0002', $fromContract->replacementAsset->patrimonio);
+        $this->assertEquals(EquipmentReplacement::STATUS_CONCLUIDO, $fromContract->status);
+        $this->assertNotNull($fromContract->delivered_at);
+    }
+
     public function test_completing_swap_without_active_contract_still_swaps_asset_status_directly(): void
     {
         $tenant = $this->makeTenant();

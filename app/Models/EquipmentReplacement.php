@@ -50,6 +50,7 @@ class EquipmentReplacement extends Model
         'equipment_damage_id',
         'original_asset_id',
         'replacement_asset_id',
+        'contract_id',
         'requested_by_user_id',
         'urgency',
         'reason',
@@ -71,6 +72,25 @@ class EquipmentReplacement extends Model
         'urgency' => self::URGENCY_NORMAL,
     ];
 
+    /**
+     * Resolve o contrato ativo do ativo original ja na criacao (nao so no
+     * completeSwap()) -- assim o historico do contrato mostra a troca desde
+     * "solicitado", nao so quando ela conclui.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (self $model) {
+            if ($model->contract_id) {
+                return;
+            }
+
+            $model->contract_id = Contract::where('asset_id', $model->original_asset_id)
+                ->where('is_active', true)
+                ->latest()
+                ->value('id');
+        });
+    }
+
     public function maintenanceOrder(): BelongsTo
     {
         return $this->belongsTo(MaintenanceOrder::class);
@@ -89,6 +109,11 @@ class EquipmentReplacement extends Model
     public function replacementAsset(): BelongsTo
     {
         return $this->belongsTo(Asset::class, 'replacement_asset_id');
+    }
+
+    public function contract(): BelongsTo
+    {
+        return $this->belongsTo(Contract::class);
     }
 
     public function requestedBy(): BelongsTo
@@ -212,11 +237,11 @@ class EquipmentReplacement extends Model
     }
 
     /**
-     * Efeito colateral do fim da troca: o contrato do cliente (se existir)
-     * passa a apontar pro ativo substituto -- o ContractObserver, ao
-     * detectar a mudanca de asset_id, libera o ativo original e trava o
-     * substituto no cliente. Sem contrato ativo (ativo proprio, sem
-     * locacao), troca o status/cliente direto nos ativos.
+     * Efeito colateral do fim da troca: o contrato (resolvido na criacao,
+     * ver booted()) passa a apontar pro ativo substituto -- o
+     * ContractObserver, ao detectar a mudanca de asset_id, libera o ativo
+     * original e trava o substituto no cliente. Sem contrato (ativo
+     * proprio, sem locacao), troca o status/cliente direto nos ativos.
      */
     public function completeSwap(): void
     {
@@ -225,13 +250,8 @@ class EquipmentReplacement extends Model
         }
 
         DB::transaction(function () {
-            $contract = Contract::where('asset_id', $this->original_asset_id)
-                ->where('is_active', true)
-                ->latest()
-                ->first();
-
-            if ($contract) {
-                $contract->update(['asset_id' => $this->replacement_asset_id]);
+            if ($this->contract) {
+                $this->contract->update(['asset_id' => $this->replacement_asset_id]);
             } else {
                 $clientId = $this->originalAsset?->client_id;
 

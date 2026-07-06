@@ -5,11 +5,13 @@ namespace App\Filament\Resources;
 use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\ContractResource\Pages;
 use App\Models\Contract;
+use App\Models\EquipmentReplacement;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\HtmlString;
 
 #[BelongsToFeature('contracts')]
 class ContractResource extends Resource
@@ -87,7 +89,89 @@ class ContractResource extends Resource
                         ->downloadable()
                         ->previewable(),
                 ]),
+
+            Forms\Components\Section::make('5. Histórico de Substituição de Equipamento')
+                ->description('Equipamentos locados neste contrato e, quando houve troca, qual equipamento entrou, quando e por quê.')
+                ->schema([
+                    Forms\Components\Placeholder::make('equipment_replacement_history')
+                        ->label('')
+                        ->content(fn (?Contract $record) => static::renderReplacementHistory($record))
+                        ->columnSpanFull(),
+                ])
+                ->visible(fn (?Contract $record) => $record !== null),
         ]);
+    }
+
+    /**
+     * Historico de troca de equipamento deste contrato: qual ativo saiu,
+     * qual entrou, o diagnostico (motivo), a OS/patrimonio/tecnico que
+     * atestou e as datas -- mesma informacao que tambem aparece no
+     * historico do proprio Ativo (AssetResource), aqui filtrada por
+     * contrato. EquipmentReplacement::contract_id e resolvido
+     * automaticamente na criacao (ver EquipmentReplacement::booted()).
+     */
+    private static function renderReplacementHistory(?Contract $record): HtmlString
+    {
+        if (! $record) {
+            return new HtmlString('<span class="text-gray-400">Disponível após o primeiro salvamento.</span>');
+        }
+
+        $replacements = $record->equipmentReplacements()
+            ->with(['originalAsset', 'replacementAsset', 'maintenanceOrder', 'requestedBy', 'mobilizationMovement'])
+            ->latest()
+            ->get();
+
+        if ($replacements->isEmpty()) {
+            return new HtmlString('<span class="text-gray-400">Nenhuma troca de equipamento registrada para este contrato.</span>');
+        }
+
+        $statusLabels = [
+            EquipmentReplacement::STATUS_SOLICITADO => ['Solicitado', 'gray'],
+            EquipmentReplacement::STATUS_SUBSTITUTO_IDENTIFICADO => ['Substituto Identificado', 'info'],
+            EquipmentReplacement::STATUS_DESMOBILIZACAO_ANDAMENTO => ['Desmobilização em Andamento', 'warning'],
+            EquipmentReplacement::STATUS_MOBILIZACAO_ANDAMENTO => ['Mobilização em Andamento', 'warning'],
+            EquipmentReplacement::STATUS_CONCLUIDO => ['Concluído', 'success'],
+            EquipmentReplacement::STATUS_CANCELADO => ['Cancelado', 'danger'],
+        ];
+        $badgeColors = [
+            'gray' => '#6b7280', 'info' => '#0ea5e9', 'warning' => '#d97706',
+            'success' => '#16a34a', 'danger' => '#dc2626',
+        ];
+
+        $rows = $replacements->map(function (EquipmentReplacement $r) use ($statusLabels, $badgeColors) {
+            [$statusLabel, $statusColor] = $statusLabels[$r->status] ?? [$r->status, 'gray'];
+            $color = $badgeColors[$statusColor];
+            $original = $r->originalAsset;
+            $replacement = $r->replacementAsset;
+            $os = $r->maintenanceOrder;
+            $deliveredAt = $r->delivered_at?->format('d/m/Y H:i');
+
+            $equipmentCell = e($original?->name ?? '—').' ('.e($original?->patrimonio ?? 's/ patrimônio').')'
+                .($replacement
+                    ? ' → '.e($replacement->name).' ('.e($replacement->patrimonio ?? 's/ patrimônio').')'
+                    : ' <span style="color:#9ca3af">(substituto ainda não definido)</span>');
+
+            return "<tr style='border-top:1px solid rgba(156,163,175,0.2)'>".
+                "<td style='padding:8px 12px'>{$equipmentCell}</td>".
+                "<td style='padding:8px 12px'>".e($r->reason).'</td>'.
+                "<td style='padding:8px 12px'>".e($os?->os_number ?? '—').'</td>'.
+                "<td style='padding:8px 12px'>".e($r->requestedBy?->name ?? '—').'</td>'.
+                "<td style='padding:8px 12px'><span style='color:{$color};font-weight:600'>{$statusLabel}</span></td>".
+                "<td style='padding:8px 12px'>".e($deliveredAt ?? '—').'</td>'.
+                '</tr>';
+        })->implode('');
+
+        return new HtmlString(
+            "<div style='overflow-x:auto'><table style='width:100%;font-size:13px;border-collapse:collapse'>".
+            '<thead><tr style="text-align:left;color:#9ca3af">'.
+            '<th style="padding:8px 12px">Equipamento (original → substituto)</th>'.
+            '<th style="padding:8px 12px">Diagnóstico</th>'.
+            '<th style="padding:8px 12px">OS</th>'.
+            '<th style="padding:8px 12px">Técnico</th>'.
+            '<th style="padding:8px 12px">Status</th>'.
+            '<th style="padding:8px 12px">Entrega ao Cliente</th>'.
+            "</tr></thead><tbody>{$rows}</tbody></table></div>"
+        );
     }
 
     public static function table(Table $table): Table

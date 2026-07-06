@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\AssetResource\Pages;
 use App\Models\Asset;
 use App\Models\AssetCategory;
+use App\Models\EquipmentReplacement;
 use App\Support\Tenancy;
 use Carbon\Carbon;
 use Filament\Forms;
@@ -273,6 +274,11 @@ class AssetResource extends Resource
                                 ->reorderable(false)
                                 ->columnSpanFull(),
 
+                            Forms\Components\Placeholder::make('equipment_replacement_history')
+                                ->label('Histórico de Substituição de Equipamento')
+                                ->content(fn (?Asset $record) => static::renderReplacementHistory($record))
+                                ->columnSpanFull(),
+
                             Forms\Components\Placeholder::make('financial_summary')
                                 ->label('Resumo Financeiro')
                                 ->content(function ($record) {
@@ -433,5 +439,74 @@ class AssetResource extends Resource
             'create' => Pages\CreateAsset::route('/create'),
             'edit' => Pages\EditAsset::route('/{record}/edit'),
         ];
+    }
+
+    /**
+     * Historico de troca de equipamento deste ativo, nos dois sentidos (ele
+     * foi substituido, ou ele foi o substituto de outro) -- mesmo
+     * diagnostico/OS/tecnico/datas que tambem aparecem no historico do
+     * Contrato (ContractResource), aqui filtrado por ativo.
+     */
+    private static function renderReplacementHistory(?Asset $record): HtmlString
+    {
+        if (! $record) {
+            return new HtmlString('<span class="text-gray-400">Disponível após o primeiro salvamento.</span>');
+        }
+
+        $asOriginal = $record->equipmentReplacementsAsOriginal()
+            ->with(['replacementAsset', 'maintenanceOrder', 'requestedBy'])
+            ->get()
+            ->map(fn (EquipmentReplacement $r) => [$r, 'original']);
+
+        $asReplacement = $record->equipmentReplacementsAsReplacement()
+            ->with(['originalAsset', 'maintenanceOrder', 'requestedBy'])
+            ->get()
+            ->map(fn (EquipmentReplacement $r) => [$r, 'replacement']);
+
+        $entries = $asOriginal->concat($asReplacement)->sortByDesc(fn ($entry) => $entry[0]->created_at);
+
+        if ($entries->isEmpty()) {
+            return new HtmlString('<span class="text-gray-400">Nenhuma troca de equipamento envolvendo este ativo.</span>');
+        }
+
+        $statusLabels = [
+            EquipmentReplacement::STATUS_SOLICITADO => ['Solicitado', '#6b7280'],
+            EquipmentReplacement::STATUS_SUBSTITUTO_IDENTIFICADO => ['Substituto Identificado', '#0ea5e9'],
+            EquipmentReplacement::STATUS_DESMOBILIZACAO_ANDAMENTO => ['Desmobilização em Andamento', '#d97706'],
+            EquipmentReplacement::STATUS_MOBILIZACAO_ANDAMENTO => ['Mobilização em Andamento', '#d97706'],
+            EquipmentReplacement::STATUS_CONCLUIDO => ['Concluído', '#16a34a'],
+            EquipmentReplacement::STATUS_CANCELADO => ['Cancelado', '#dc2626'],
+        ];
+
+        $rows = $entries->map(function (array $entry) use ($statusLabels) {
+            [$r, $direction] = $entry;
+            [$statusLabel, $color] = $statusLabels[$r->status] ?? [$r->status, '#6b7280'];
+            $os = $r->maintenanceOrder;
+
+            $direcaoLabel = $direction === 'original'
+                ? 'Substituído por: '.e($r->replacementAsset?->name ?? 'ainda não definido')
+                : 'Substituiu: '.e($r->originalAsset?->name ?? '—');
+
+            return "<tr style='border-top:1px solid rgba(156,163,175,0.2)'>".
+                "<td style='padding:8px 12px'>{$direcaoLabel}</td>".
+                "<td style='padding:8px 12px'>".e($r->reason).'</td>'.
+                "<td style='padding:8px 12px'>".e($os?->os_number ?? '—').'</td>'.
+                "<td style='padding:8px 12px'>".e($r->requestedBy?->name ?? '—').'</td>'.
+                "<td style='padding:8px 12px'><span style='color:{$color};font-weight:600'>{$statusLabel}</span></td>".
+                "<td style='padding:8px 12px'>".e($r->created_at->format('d/m/Y H:i')).'</td>'.
+                '</tr>';
+        })->implode('');
+
+        return new HtmlString(
+            "<div style='overflow-x:auto'><table style='width:100%;font-size:13px;border-collapse:collapse'>".
+            '<thead><tr style="text-align:left;color:#9ca3af">'.
+            '<th style="padding:8px 12px">Movimentação</th>'.
+            '<th style="padding:8px 12px">Diagnóstico</th>'.
+            '<th style="padding:8px 12px">OS</th>'.
+            '<th style="padding:8px 12px">Técnico</th>'.
+            '<th style="padding:8px 12px">Status</th>'.
+            '<th style="padding:8px 12px">Solicitado em</th>'.
+            "</tr></thead><tbody>{$rows}</tbody></table></div>"
+        );
     }
 }
