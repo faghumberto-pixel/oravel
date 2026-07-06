@@ -3,8 +3,10 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
+use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\AbcMatrixResource\Pages;
 use App\Models\AbcMatrix;
+use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,6 +16,8 @@ use Filament\Tables\Table;
 #[BelongsToFeature('maintenance_matrix')]
 class AbcMatrixResource extends Resource
 {
+    use HasSuperAdminTenantColumn;
+
     protected static ?string $model = AbcMatrix::class;
 
     protected static ?string $modelLabel = 'Matriz ABC';
@@ -30,11 +34,16 @@ class AbcMatrixResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nivel')
+                Forms\Components\Select::make('asset_id')
+                    ->label('Ativo')
+                    ->relationship('asset', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
+                    ->searchable()
+                    ->preload()
+                    ->required(),
+                Forms\Components\Select::make('nivel')
                     ->label('Nível')
-                    ->required()
-                    ->maxLength(1)
-                    ->placeholder('A, B ou C'),
+                    ->options(['A' => 'A', 'B' => 'B', 'C' => 'C'])
+                    ->required(),
                 Forms\Components\TextInput::make('descricao')
                     ->label('Descrição')
                     ->required()
@@ -47,10 +56,23 @@ class AbcMatrixResource extends Resource
     {
         return $table
             ->columns([
+                static::tenantColumn(),
+                Tables\Columns\TextColumn::make('asset.name')
+                    ->label('Ativo')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('asset.patrimonio')
+                    ->label('Patrimônio')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('nivel')
                     ->label('Nível')
-                    ->sortable()
-                    ->searchable(),
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'A' => 'danger',
+                        'B' => 'warning',
+                        default => 'success',
+                    })
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('descricao')
                     ->label('Descrição')
                     ->sortable()

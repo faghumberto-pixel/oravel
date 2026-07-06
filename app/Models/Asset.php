@@ -5,11 +5,13 @@ namespace App\Models;
 use App\Models\Concerns\HasSaaSMetadata;
 use App\Models\Traits\BelongsToTenant;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -46,6 +48,7 @@ class Asset extends Model
         'acquisition_value' => 'decimal:2',
         'residual_value' => 'decimal:2',
         'useful_life_years' => 'integer',
+        'checklist' => 'array',
     ];
 
     public function getActivitylogOptions(): LogOptions
@@ -83,6 +86,16 @@ class Asset extends Model
         return $this->hasMany(EquipmentDamage::class);
     }
 
+    public function abcMatrix(): HasOne
+    {
+        return $this->hasOne(AbcMatrix::class);
+    }
+
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class);
+    }
+
     public function equipmentReplacementsAsOriginal(): HasMany
     {
         return $this->hasMany(EquipmentReplacement::class, 'original_asset_id');
@@ -112,6 +125,36 @@ class Asset extends Model
     public static function getCategories(): array
     {
         return AssetCategory::orderBy('name')->pluck('name', 'id')->toArray();
+    }
+
+    /**
+     * Busca flexivel pro Dossie Rapido (QR code/campo): tecnico no patio
+     * raramente sabe o patrimonio exato de cor, ou digita com erro de
+     * espaco/maiuscula. Busca por trecho em patrimonio, tag, nome ou
+     * numero de serie -- nao so igualdade exata. Patrimonio comecando
+     * exatamente pelo termo aparece primeiro (major sinal de intencao).
+     *
+     * @return Collection<int, Asset>
+     */
+    public static function search(string $term): Collection
+    {
+        $term = trim($term);
+
+        if ($term === '') {
+            return new Collection;
+        }
+
+        return static::query()
+            ->where(function ($query) use ($term) {
+                $query->where('patrimonio', 'ilike', "%{$term}%")
+                    ->orWhere('tag', 'ilike', "%{$term}%")
+                    ->orWhere('name', 'ilike', "%{$term}%")
+                    ->orWhere('serial_number', 'ilike', "%{$term}%");
+            })
+            ->orderByRaw('(patrimonio ilike ?) desc', ["{$term}%"])
+            ->orderBy('name')
+            ->limit(20)
+            ->get();
     }
 
     public static function getDefaultChecklist($categoryId): array

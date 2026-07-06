@@ -11,6 +11,7 @@ use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -79,6 +80,34 @@ class AssetResourceEditTest extends TestCase
             ->assertHasNoFormErrors();
 
         $this->assertEquals('Gerador Teste Atualizado', $asset->fresh()->name);
+    }
+
+    /**
+     * Regressao: a coluna 'checklist' e jsonb, mas o model Asset nao tinha
+     * cast pra array -- lida de volta como string bruta ('[]', nao um
+     * array PHP de verdade). O Repeater da aba "Checklist de Verificacao"
+     * (Forms\Components\Repeater::make('checklist'), sem ->relationship())
+     * faz foreach() sobre esse valor ao abrir o form, quebrando com
+     * "foreach() argument must be of type array|object, string given"
+     * pra qualquer ativo que ja tivesse checklist preenchido (nao nulo).
+     * Reproduzido gravando a string bruta direto, ignorando o cast, pra
+     * simular o estado real de dados gravados antes da correcao.
+     */
+    public function test_asset_with_raw_json_checklist_value_opens_without_error(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $this->actingAs($admin);
+
+        $asset = Asset::create([
+            'tenant_id' => $tenant->id, 'name' => 'Plataforma Teste',
+            'tag' => 'AST-'.uniqid(), 'status' => Asset::STATUS_DISPONIVEL,
+        ]);
+        // Simula o dado real ja gravado antes do cast existir.
+        DB::table('assets')->where('id', $asset->id)->update(['checklist' => '[]']);
+
+        $response = $this->get(AssetResource::getUrl('edit', ['record' => $asset->fresh()->id]));
+
+        $response->assertOk();
     }
 
     public function test_asset_edit_page_shows_activity_history_and_correct_tag_field(): void

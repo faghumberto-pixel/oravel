@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssetDossierPdfController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\EquipmentDamageReportController;
 use App\Http\Controllers\MaintenanceKanbanPrintController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\MaintenanceReportController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RentalDemoController;
 use App\Http\Controllers\TablePrintController;
+use App\Livewire\AssetDossierMobile;
 use App\Livewire\EquipmentDamageMobile;
 use App\Livewire\EquipmentMovementMobile;
 use App\Livewire\MaintenanceChecklistMobile;
@@ -79,6 +81,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/admin/equipment-damages/{record}/laudo-pdf', [EquipmentDamageReportController::class, 'download'])
         ->name('equipment-damages.laudo.pdf');
+
+    Route::get('/admin/assets/{asset}/dossie-pdf', [AssetDossierPdfController::class, 'download'])
+        ->name('assets.dossier.pdf');
+
+    // Versao pro campo/patio (celular do tecnico) do Dossie Rapido -- destino
+    // do QR code do ativo, ver AssetResource::qr_code_display.
+    Route::get('/admin/assets/dossie-mobile/{assetId?}', AssetDossierMobile::class)
+        ->name('assets.dossier.mobile');
 
     // --- ROTA UNIFICADA DE IMPRESSÃO (AJUSTADA) ---
     Route::get('/admin/app/{tenant}/assets/{asset}/print-qr', function ($tenant, Asset $asset) {

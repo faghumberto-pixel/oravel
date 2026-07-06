@@ -213,7 +213,11 @@ class AssetResource extends Resource
                                     if (! $record) {
                                         return 'O QR Code será gerado após o primeiro salvamento.';
                                     }
-                                    $url = url("/admin/assets/{$record->id}");
+                                    // Antes apontava pra /admin/assets/{id} sem /edit -- rota
+                                    // que nunca existiu (sempre dava 404 ao escanear). Agora
+                                    // aponta pra versao mobile do dossie (celular no campo/patio,
+                                    // uso mais comum de quem escaneia), nao a tela de edicao.
+                                    $url = route('assets.dossier.mobile', ['assetId' => $record->id]);
 
                                     return new HtmlString("
                                         <div class='flex flex-col items-center p-4 bg-white border border-gray-200 rounded-xl shadow-sm w-fit'>
