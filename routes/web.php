@@ -8,6 +8,7 @@ use App\Http\Controllers\MaintenanceOrderDossieController;
 use App\Http\Controllers\MaintenanceReportController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RentalDemoController;
+use App\Http\Controllers\TablePrintController;
 use App\Livewire\EquipmentDamageMobile;
 use App\Livewire\EquipmentMovementMobile;
 use App\Livewire\MaintenanceChecklistMobile;
@@ -49,6 +50,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/admin/maintenance-orders/{record}/dossie-pdf', [MaintenanceOrderDossieController::class, 'download'])
         ->name('maintenance-orders.dossie.pdf');
+
+    Route::get('/admin/print/tabela/{token}', [TablePrintController::class, 'show'])
+        ->name('table-print.show');
 
     Route::get('/admin/maintenance-orders/{order}/laudo-minimalista', [MaintenanceOrderController::class, 'laudoMinimalista'])
         ->name('maintenance-orders.laudo-minimalista');

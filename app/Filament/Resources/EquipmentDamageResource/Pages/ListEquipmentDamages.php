@@ -2,12 +2,22 @@
 
 namespace App\Filament\Resources\EquipmentDamageResource\Pages;
 
+use App\Filament\Concerns\HasPrintAction;
 use App\Filament\Resources\EquipmentDamageResource;
 use Filament\Resources\Pages\ListRecords;
 
 class ListEquipmentDamages extends ListRecords
 {
+    use HasPrintAction;
+
     protected static string $resource = EquipmentDamageResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            $this->printAction(),
+        ];
+    }
 
     protected function getHeaderWidgets(): array
     {

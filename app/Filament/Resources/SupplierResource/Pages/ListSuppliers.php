@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SupplierResource\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
+use App\Filament\Concerns\HasPrintAction;
 use App\Filament\Resources\SupplierResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -10,6 +11,8 @@ use Filament\Resources\Pages\ListRecords;
 #[BelongsToFeature('suppliers')]
 class ListSuppliers extends ListRecords
 {
+    use HasPrintAction;
+
     protected static string $resource = SupplierResource::class;
 
     protected static ?string $title = 'Fornecedores';
@@ -18,6 +21,7 @@ class ListSuppliers extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            $this->printAction(),
         ];
     }
 

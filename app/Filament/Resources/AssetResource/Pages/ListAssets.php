@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\AssetResource\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
+use App\Filament\Concerns\HasPrintAction;
 use App\Filament\Resources\AssetResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -10,6 +11,8 @@ use Filament\Resources\Pages\ListRecords;
 #[BelongsToFeature('assets')]
 class ListAssets extends ListRecords
 {
+    use HasPrintAction;
+
     protected static string $resource = AssetResource::class;
 
     protected function getHeaderActions(): array
@@ -17,6 +20,7 @@ class ListAssets extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->label('Novo Ativo'),
+            $this->printAction(),
         ];
     }
 

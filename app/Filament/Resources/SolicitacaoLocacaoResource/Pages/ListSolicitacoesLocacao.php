@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SolicitacaoLocacaoResource\Pages;
 
+use App\Filament\Concerns\HasPrintAction;
 use App\Filament\Resources\SolicitacaoLocacaoResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -9,12 +10,15 @@ use Filament\Resources\Pages\ListRecords;
 #[BelongsToFeature('rental_requests')]
 class ListSolicitacoesLocacao extends ListRecords
 {
+    use HasPrintAction;
+
     protected static string $resource = SolicitacaoLocacaoResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),
+            $this->printAction(),
         ];
     }
 
