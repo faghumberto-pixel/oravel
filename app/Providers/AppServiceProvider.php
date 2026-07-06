@@ -2,18 +2,24 @@
 
 namespace App\Providers;
 
+use App\Models\Announcement;
+use App\Models\Asset;
 use App\Models\Contract;
 use App\Models\Department;
 use App\Models\EquipmentDamage;
 use App\Models\EquipmentMovement; // Importante
+use App\Models\EquipmentReplacement;
 use App\Models\FleetTollRecord;
 use App\Models\FreightRecord;
 use App\Models\MaintenanceOrder;
 use App\Models\User;
 use App\Models\UserActivityLog;
+use App\Observers\AnnouncementObserver;
+use App\Observers\AssetObserver;
 use App\Observers\ContractObserver;
 use App\Observers\EquipmentDamageObserver;
 use App\Observers\EquipmentMovementObserver;
+use App\Observers\EquipmentReplacementObserver;
 use App\Observers\FleetTollRecordObserver;
 use App\Observers\FreightRecordObserver;
 use App\Observers\MaintenanceOrderChecklistSnapshotObserver;
@@ -29,7 +35,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Permission\Models\Role;
 
- // Importar a DynamicPolicy
+// Importar a DynamicPolicy
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -43,12 +49,15 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
 
         // ATIVAÇÃO FORÇADA
+        Asset::observe(AssetObserver::class);
         Contract::observe(ContractObserver::class);
         EquipmentMovement::observe(EquipmentMovementObserver::class);
         EquipmentDamage::observe(EquipmentDamageObserver::class);
+        EquipmentReplacement::observe(EquipmentReplacementObserver::class);
         FreightRecord::observe(FreightRecordObserver::class);
         FleetTollRecord::observe(FleetTollRecordObserver::class);
         MaintenanceOrder::observe(MaintenanceOrderChecklistSnapshotObserver::class);
+        Announcement::observe(AnnouncementObserver::class);
 
         // INJEÇÃO CRUCIAL: Vincula dinamicamente a tabela de roles
         Role::resolveRelationUsing('department', function ($roleModel) {

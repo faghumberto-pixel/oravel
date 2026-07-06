@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Models\Asset;
 use App\Models\Contract;
 use Illuminate\Support\Facades\Log;
 
@@ -32,6 +33,29 @@ class ContractObserver
                 $contract->asset->update([
                     'status' => 'disponivel',
                     'client_id' => null,
+                ]);
+            }
+        }
+
+        // Troca de ativo dentro do mesmo contrato (ex: processo de Troca de
+        // Equipamento) -- libera o ativo antigo e trava o novo no cliente
+        // do contrato, mesmo efeito de created()/deleted() acima.
+        if ($contract->wasChanged('asset_id')) {
+            $originalAssetId = $contract->getOriginal('asset_id');
+
+            if ($originalAssetId) {
+                Asset::whereKey($originalAssetId)->update([
+                    'status' => 'disponivel',
+                    'client_id' => null,
+                ]);
+            }
+
+            if ($contract->asset) {
+                $contract->asset->update([
+                    'status' => 'locado',
+                    'client_id' => $contract->client_id,
+                    'latitude' => $contract->latitude_obra,
+                    'longitude' => $contract->longitude_obra,
                 ]);
             }
         }

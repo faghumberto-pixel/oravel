@@ -86,6 +86,7 @@ class RealisticDemoSeeder extends Seeder
             'tabela_roles', 'tabela_solicitacao_locacao', 'tabela_suppliers', 'tabela_users',
             'tabela_fleet_vehicles', 'tabela_freight_carriers', 'tabela_freight_records',
             'tabela_fleet_maintenance_plans', 'tabela_user_activity_logs',
+            'tabela_equipment_replacements',
         ];
 
         $basicKeys = [
@@ -98,7 +99,7 @@ class RealisticDemoSeeder extends Seeder
             'tabela_materials', 'tabela_material_categories', 'tabela_suppliers',
             'tabela_parts_requests', 'tabela_solicitacao_locacao', 'tabela_equipment_movements',
             'tabela_equipment_damages', 'tabela_checklist_templates', 'tabela_checklist_groups',
-            'modulo_chat',
+            'tabela_equipment_replacements', 'modulo_chat',
         ]);
 
         $plans = [];
@@ -253,6 +254,18 @@ class RealisticDemoSeeder extends Seeder
             $email = strtolower(Str::slug($def['name'], '.')).'@'.$slug.'.com.br';
             $user = $this->createUser($tenant, $def['name'], $email, $departments[$def['dept']]->id, 'colaborador');
             $user->assignRole($role);
+
+            // Alem do cargo "de fachada" acima (organograma ficticio), da
+            // tambem o papel base que TenantProvisioner::provision() ja cria
+            // vazio pra todo tenant real -- e o nome que os Observers de
+            // Avaria/Troca de Equipamento realmente checam pra notificar.
+            if ($def['role'] === 'Gerente Comercial') {
+                $baseRole = Role::firstOrCreate(
+                    ['name' => EquipmentDamage::ROLE_COMERCIAL, 'guard_name' => 'web', 'tenant_id' => $tenant->id]
+                );
+                $user->assignRole($baseRole);
+            }
+
             $this->userPool[] = $user;
         }
 

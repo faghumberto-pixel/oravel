@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\MediaLibrary\HasMedia;
@@ -141,5 +142,10 @@ class EquipmentDamage extends Model implements HasMedia
     public function followUps(): HasMany
     {
         return $this->hasMany(EquipmentDamageFollowUp::class);
+    }
+
+    public function equipmentReplacement(): HasOne
+    {
+        return $this->hasOne(EquipmentReplacement::class);
     }
 }

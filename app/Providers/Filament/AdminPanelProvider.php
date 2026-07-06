@@ -73,12 +73,20 @@ class AdminPanelProvider extends PanelProvider
                     ]),
             ])
             ->renderHook(
+                PanelsRenderHook::TOPBAR_START,
+                fn () => view('filament.topbar-tenant-switcher'),
+            )
+            ->renderHook(
                 PanelsRenderHook::TOPBAR_END,
                 fn () => view('filament.help-icon'),
             )
             ->renderHook(
-                PanelsRenderHook::PAGE_START,
+                PanelsRenderHook::BODY_START,
                 fn () => view('filament.acting-tenant-banner'),
+            )
+            ->renderHook(
+                PanelsRenderHook::BODY_START,
+                fn () => view('filament.announcement-banner'),
             )
             ->renderHook(
                 PanelsRenderHook::HEAD_END,

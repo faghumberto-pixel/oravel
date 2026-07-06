@@ -25,6 +25,14 @@ class Asset extends Model
 
     public $incrementing = false;
 
+    public const STATUS_DISPONIVEL = 'disponivel';
+
+    public const STATUS_LOCADO = 'locado';
+
+    public const STATUS_MANUTENCAO = 'manutencao';
+
+    public const STATUS_OPERANDO = 'operando';
+
     protected static ?string $saasFeatureKey = 'tabela_assets';
 
     protected static ?string $saasPermissionSlug = 'ativo';
@@ -73,6 +81,16 @@ class Asset extends Model
     public function damages(): HasMany
     {
         return $this->hasMany(EquipmentDamage::class);
+    }
+
+    public function equipmentReplacementsAsOriginal(): HasMany
+    {
+        return $this->hasMany(EquipmentReplacement::class, 'original_asset_id');
+    }
+
+    public function equipmentReplacementsAsReplacement(): HasMany
+    {
+        return $this->hasMany(EquipmentReplacement::class, 'replacement_asset_id');
     }
 
     public function checklistGroup(): BelongsTo

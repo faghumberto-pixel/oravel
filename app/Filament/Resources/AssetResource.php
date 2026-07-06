@@ -170,12 +170,12 @@ class AssetResource extends Resource
                                         Forms\Components\Select::make('status')
                                             ->label('Status Operacional')
                                             ->options([
-                                                'disponivel' => 'Disponível',
-                                                'locado' => 'Locado',
-                                                'manutencao' => 'Em Manutenção',
-                                                'operando' => 'Em Operação',
+                                                Asset::STATUS_DISPONIVEL => 'Disponível',
+                                                Asset::STATUS_LOCADO => 'Locado',
+                                                Asset::STATUS_MANUTENCAO => 'Em Manutenção',
+                                                Asset::STATUS_OPERANDO => 'Em Operação',
                                             ])
-                                            ->default('disponivel')
+                                            ->default(Asset::STATUS_DISPONIVEL)
                                             ->required(),
                                     ]),
                                 ]),

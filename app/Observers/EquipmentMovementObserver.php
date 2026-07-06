@@ -26,4 +26,21 @@ class EquipmentMovementObserver
             ]);
         }
     }
+
+    /**
+     * Quando este movement faz parte de uma operacao de Troca de
+     * Equipamento (EquipmentReplacement), propaga a conclusao pro status
+     * conjunto da troca -- ver EquipmentReplacement::syncStatusFromMovements().
+     */
+    public function updated(EquipmentMovement $equipmentMovement): void
+    {
+        if (! $equipmentMovement->wasChanged('status') || $equipmentMovement->status !== EquipmentMovement::STATUS_CONCLUIDO) {
+            return;
+        }
+
+        $replacement = $equipmentMovement->replacementAsDesmobilization
+            ?? $equipmentMovement->replacementAsMobilization;
+
+        $replacement?->syncStatusFromMovements();
+    }
 }

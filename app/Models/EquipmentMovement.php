@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -49,6 +50,7 @@ class EquipmentMovement extends Model implements HasMedia
         'started_at',
         'completed_at',
         'custo_transporte',
+        'client_signature',
     ];
 
     protected $casts = [
@@ -109,5 +111,20 @@ class EquipmentMovement extends Model implements HasMedia
     public function freightRecords(): HasMany
     {
         return $this->hasMany(FreightRecord::class);
+    }
+
+    /**
+     * Presentes so quando este movement faz parte de uma operacao de troca
+     * de equipamento (EquipmentReplacement) -- usado pelo mobile pra saber
+     * se deve exigir assinatura do cliente ao finalizar uma mobilizacao.
+     */
+    public function replacementAsDesmobilization(): HasOne
+    {
+        return $this->hasOne(EquipmentReplacement::class, 'desmobilization_movement_id');
+    }
+
+    public function replacementAsMobilization(): HasOne
+    {
+        return $this->hasOne(EquipmentReplacement::class, 'mobilization_movement_id');
     }
 }

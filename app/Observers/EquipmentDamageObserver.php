@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\EquipmentDamage;
+use App\Models\Role;
 use App\Models\User;
 use Filament\Notifications\Notification;
 
@@ -39,9 +40,27 @@ class EquipmentDamageObserver
         }
     }
 
+    /**
+     * Nao usa User::role($roleName) direto: Spatie resolve papel por nome
+     * globalmente (Role::findByName), ignorando tenant_id -- com varios
+     * tenants tendo cada um seu proprio registro com o mesmo nome (ex:
+     * "Comercial"), sempre resolvia pro primeiro criado no banco inteiro,
+     * retornando lista vazia (silenciosamente) pra qualquer outro tenant.
+     * Resolve a role certa primeiro e passa a instancia, que o scope aceita
+     * sem re-resolver por nome.
+     */
     private function notifyRole(EquipmentDamage $equipmentDamage, string $roleName, string $title): void
     {
-        $recipients = User::role($roleName)
+        $role = Role::where('name', $roleName)
+            ->where('guard_name', 'web')
+            ->where('tenant_id', $equipmentDamage->tenant_id)
+            ->first();
+
+        if (! $role) {
+            return;
+        }
+
+        $recipients = User::role($role)
             ->where('tenant_id', $equipmentDamage->tenant_id)
             ->get();
 

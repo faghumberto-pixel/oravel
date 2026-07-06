@@ -135,6 +135,11 @@ class MaintenanceOrder extends Model implements HasMedia
         return $this->hasMany(EquipmentDamage::class);
     }
 
+    public function equipmentReplacements(): HasMany
+    {
+        return $this->hasMany(EquipmentReplacement::class);
+    }
+
     public function internalCommunications(): HasMany
     {
         return $this->hasMany(InternalCommunication::class);

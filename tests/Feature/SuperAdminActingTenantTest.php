@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Filament\Pages\SelectActingTenant;
+use App\Filament\Resources\ChecklistGroupResource;
+use App\Livewire\TenantSwitcher;
 use App\Models\ChecklistGroup;
 use App\Models\Plan;
 use App\Models\Role;
@@ -149,5 +151,51 @@ class SuperAdminActingTenantTest extends TestCase
             ->call('save');
 
         $this->assertNull(session('acting_tenant_id'));
+    }
+
+    /**
+     * Regressao: o componente TenantSwitcher (seletor rapido no topo do
+     * painel) tinha um @if envolvendo todo o template sem uma div raiz por
+     * fora -- Livewire exige que todo componente tenha exatamente 1
+     * elemento raiz sempre renderizado, entao qualquer usuario para quem a
+     * lista de tenants ficava vazia (todo mundo que nao e super admin,
+     * pois o componente so lista tenants pra ele) derrubava a pagina
+     * inteira com 500. So foi percebido testando com um tenant admin
+     * normal -- os testes anteriores desta classe so verificavam texto,
+     * nao status HTTP.
+     */
+    public function test_normal_tenant_admin_can_load_a_real_page(): void
+    {
+        $tenant = $this->makeTenant($this->makePlan(), 'Tenant Pagina Real');
+        $this->actingAs($this->makeTenantAdmin($tenant));
+
+        $response = $this->get(ChecklistGroupResource::getUrl());
+
+        $response->assertOk();
+    }
+
+    /**
+     * Regressao: updatedActingTenantId() chamava $this->redirect(url()->current())
+     * -- dentro de uma acao do Livewire, url()->current() resolve pra URL da
+     * propria chamada AJAX (/livewire/update), nao pra tela que o usuario
+     * esta vendo. Isso fazia o navegador tentar um GET em /livewire/update
+     * (rota so aceita POST), quebrando a troca de tenant pelo seletor
+     * rapido. Trocado por $this->js('window.location.reload()'), que nao
+     * depende de reconstruir a URL no servidor.
+     */
+    public function test_tenant_switcher_reloads_via_js_not_server_redirect(): void
+    {
+        $tenant = $this->makeTenant($this->makePlan(), 'Tenant Switcher');
+        $this->actingAs($this->makeSuperAdmin());
+
+        $component = Livewire::test(TenantSwitcher::class)
+            ->set('actingTenantId', $tenant->id);
+
+        $this->assertEquals($tenant->id, session('acting_tenant_id'));
+
+        $effects = $component->effects;
+        $this->assertArrayNotHasKey('redirect', $effects);
+        $this->assertArrayHasKey('xjs', $effects);
+        $this->assertSame('window.location.reload()', $effects['xjs'][0]['expression']);
     }
 }
