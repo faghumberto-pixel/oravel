@@ -91,14 +91,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('assets.dossier.mobile');
 
     // --- ROTA UNIFICADA DE IMPRESSÃO (AJUSTADA) ---
+    // Botao "Imprimir Etiqueta" (EditAsset::getHeaderActions()) -- essa e a
+    // rota de QR realmente usada pra etiqueta fisica, mais visivel que o QR
+    // dentro da aba "Rastreabilidade". Antes gerava QR pra tela de edicao
+    // do painel (pesada, nao serve pro celular no campo); agora aponta pro
+    // Dossie Rapido mobile, mesmo destino do QR da aba.
     Route::get('/admin/app/{tenant}/assets/{asset}/print-qr', function ($tenant, Asset $asset) {
-        $editUrl = route('filament.admin.resources.assets.edit', [
-            'tenant' => $tenant,
-            'record' => $asset->id,
-        ]);
+        $dossierUrl = route('assets.dossier.mobile', ['assetId' => $asset->id]);
 
         // Geramos o SVG. Caso a biblioteca falhe, retorna um placeholder simples
-        $qrCodeSvg = QrCode::format('svg')->size(150)->margin(1)->generate($editUrl);
+        $qrCodeSvg = QrCode::format('svg')->size(150)->margin(1)->generate($dossierUrl);
 
         return view('print.print-qr', compact('asset', 'qrCodeSvg'));
     })->name('asset.print-qr');

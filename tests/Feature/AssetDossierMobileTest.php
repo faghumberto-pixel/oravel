@@ -124,4 +124,32 @@ class AssetDossierMobileTest extends TestCase
         $response->assertDontSee('Ativo Sigiloso');
         $response->assertDontSee('PAT-SIGILOSO');
     }
+
+    /**
+     * Regressao: o botao "Imprimir Etiqueta" (EditAsset::getHeaderActions())
+     * usa uma rota de QR SEPARADA (asset.print-qr, SimpleSoftwareIO\QrCode)
+     * da que fica dentro da aba "Rastreabilidade" do form (api.qrserver.com)
+     * -- so corrigi essa segunda e esqueci da primeira, que continuava
+     * gerando QR pra tela de edicao do painel (pesada, nao serve pro
+     * celular no campo). E o botao mais visivel/usado na pratica pra
+     * imprimir a etiqueta fisica do ativo. QR real (sem mock -- mockar o
+     * facade SimpleSoftwareIO\QrCode quebra com "Cannot redeclare
+     * Mockery_..._Generator::mockery_init()", bug conhecido da lib).
+     */
+    public function test_print_label_route_generates_a_real_qr_svg(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = Asset::create([
+            'tenant_id' => $tenant->id, 'name' => 'Ativo Etiqueta', 'tag' => 'AST-ETQ',
+            'patrimonio' => 'PAT-ETIQUETA', 'status' => 'disponivel',
+        ]);
+
+        $this->actingAs($admin);
+
+        $response = $this->get(route('asset.print-qr', ['tenant' => $tenant->slug, 'asset' => $asset->id]));
+
+        $response->assertOk();
+        $response->assertSee('PAT-ETIQUETA');
+        $response->assertSee('<svg', false);
+    }
 }
