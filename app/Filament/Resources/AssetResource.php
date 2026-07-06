@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\AssetResource\Pages;
 use App\Models\Asset;
 use App\Models\AssetCategory;
+use App\Support\Tenancy;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\Tabs;
@@ -60,7 +61,7 @@ class AssetResource extends Resource
                     Tabs\Tab::make('Informações Gerais')
                         ->icon('heroicon-m-information-circle')
                         ->schema([
-                            Forms\Components\Grid::make(2)->schema([
+                            Forms\Components\Grid::make(3)->schema([
                                 Forms\Components\Select::make('asset_category')
                                     ->label('Categoria e Tipo')
                                     ->options(AssetCategory::pluck('name', 'name'))
@@ -70,6 +71,17 @@ class AssetResource extends Resource
                                     ->live()
                                     ->afterStateUpdated(fn ($state, callable $set) => $set('checklist', Asset::getDefaultChecklist($state))
                                     ),
+
+                                Forms\Components\Select::make('checklist_group_id')
+                                    ->label('Grupo')
+                                    ->helperText('Define o checklist básico aplicado às OS deste ativo.')
+                                    ->relationship('checklistGroup', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
+                                    ->searchable()
+                                    ->preload()
+                                    ->createOptionForm([
+                                        Forms\Components\TextInput::make('name')->label('Nome do Grupo')->required(),
+                                        Forms\Components\Textarea::make('description')->label('Objetivo')->rows(2),
+                                    ]),
 
                                 Forms\Components\TextInput::make('name')
                                     ->label('Nome/Modelo')
@@ -370,6 +382,12 @@ class AssetResource extends Resource
                     ->label('Categoria')
                     ->badge(),
 
+                Tables\Columns\TextColumn::make('checklistGroup.name')
+                    ->label('Grupo')
+                    ->badge()
+                    ->color('gray')
+                    ->placeholder('Sem grupo'),
+
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
@@ -391,11 +409,21 @@ class AssetResource extends Resource
                 Tables\Filters\SelectFilter::make('asset_category')
                     ->label('Categoria')
                     ->options(fn () => AssetCategory::pluck('name', 'name')),
+                Tables\Filters\SelectFilter::make('checklist_group_id')
+                    ->label('Grupo')
+                    ->relationship('checklistGroup', 'name'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            AssetResource\RelationManagers\ChecklistItemsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

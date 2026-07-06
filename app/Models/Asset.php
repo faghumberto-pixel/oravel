@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
@@ -72,6 +73,22 @@ class Asset extends Model
     public function damages(): HasMany
     {
         return $this->hasMany(EquipmentDamage::class);
+    }
+
+    public function checklistGroup(): BelongsTo
+    {
+        return $this->belongsTo(ChecklistGroup::class);
+    }
+
+    /**
+     * Itens extras de checklist especificos deste ativo (is_template=true,
+     * asset_id preenchido) -- somam ao basico do grupo sem alterar o
+     * template do grupo, ex: itens do manual do fabricante daquele
+     * equipamento em particular.
+     */
+    public function extraChecklistItems(): HasMany
+    {
+        return $this->hasMany(MaintenanceOrderChecklist::class, 'asset_id')->where('is_template', true);
     }
 
     public static function getCategories(): array

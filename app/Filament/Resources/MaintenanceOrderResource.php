@@ -85,6 +85,14 @@ class MaintenanceOrderResource extends Resource
                             ->required()->native(false)->live(),
                     ]),
 
+                    Forms\Components\Placeholder::make('grupo_display')
+                        ->label('Grupo do Ativo')
+                        ->content(function (Get $get) {
+                            $asset = Asset::find($get('asset_id'));
+
+                            return $asset?->checklistGroup?->name ?? 'Sem grupo definido';
+                        }),
+
                     Forms\Components\Select::make('criticality_level_id')
                         ->label('Matriz ABC')
                         ->relationship(name: 'criticalityLevel', titleAttribute: 'name')
@@ -117,21 +125,24 @@ class MaintenanceOrderResource extends Resource
                     Forms\Components\Textarea::make('technical_notes')->label('Notas Técnicas / Diagnóstico Executado')->rows(3)->hint(FormHelpers::voiceButton()),
                 ]),
 
-                // --- ABA 3: VISTORIA / CHECKLIST REATIVO ---
+                // --- ABA 3: VISTORIA / CHECKLIST ---
                 Forms\Components\Tabs\Tab::make('Vistoria / Checklist')
-                    ->visible(fn (Get $get) => in_array($get('maintenance_type'), ['Check-in', 'Check-out']))
                     ->schema([
                         Forms\Components\Repeater::make('checklists')
                             ->relationship('checklists')
-                            ->label('Itens de Inspeção Obrigatórios')
+                            ->label('Checklist do Ativo (básico do Grupo + itens extras)')
                             ->schema([
                                 Forms\Components\TextInput::make('item_name')->label('Item de Inspeção')->disabled()->dehydrated(true),
                                 Forms\Components\ToggleButtons::make('status')
                                     ->label('Conformidade')
                                     ->options(['conforme' => 'Conforme', 'nao_conforme' => 'Não Conforme', 'nao_aplicavel' => 'N/A'])
                                     ->colors(['conforme' => 'success', 'nao_conforme' => 'danger', 'nao_aplicavel' => 'gray'])
-                                    ->inline()->required(),
-                                Forms\Components\TextInput::make('observation')->label('Observações / Evidência'),
+                                    ->inline(),
+                                Forms\Components\TextInput::make('notes')->label('Observações / Evidência'),
+                                Forms\Components\SpatieMediaLibraryFileUpload::make('photos')
+                                    ->collection('photos')
+                                    ->label('Foto')
+                                    ->image(),
                             ])->columns(3)->disableItemCreation()->disableItemDeletion(),
                     ]),
 
@@ -206,6 +217,11 @@ class MaintenanceOrderResource extends Resource
                 ->label('Categoria do Ativo')
                 ->sortable()
                 ->placeholder('Sem Categoria'),
+            Tables\Columns\TextColumn::make('asset.checklistGroup.name')
+                ->label('Grupo')
+                ->badge()
+                ->color('gray')
+                ->placeholder('Sem grupo'),
             Tables\Columns\TextColumn::make('criticalityLevel.name')
                 ->label('Matriz ABC')
                 ->badge()
@@ -233,6 +249,9 @@ class MaintenanceOrderResource extends Resource
                     'Preventiva' => 'Preventiva',
                 ]),
             Tables\Filters\SelectFilter::make('criticality_level_id')->label('Matriz ABC')->relationship('criticalityLevel', 'name'),
+            Tables\Filters\SelectFilter::make('asset.checklist_group_id')
+                ->label('Grupo')
+                ->relationship('asset.checklistGroup', 'name'),
 
         ])->actions([
             Tables\Actions\ViewAction::make(),

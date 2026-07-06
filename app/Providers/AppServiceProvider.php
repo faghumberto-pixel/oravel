@@ -8,11 +8,13 @@ use App\Models\EquipmentDamage;
 use App\Models\EquipmentMovement; // Importante
 use App\Models\FleetTollRecord;
 use App\Models\FreightRecord;
+use App\Models\MaintenanceOrder;
 use App\Observers\ContractObserver;
 use App\Observers\EquipmentDamageObserver;
 use App\Observers\EquipmentMovementObserver;
 use App\Observers\FleetTollRecordObserver;
 use App\Observers\FreightRecordObserver;
+use App\Observers\MaintenanceOrderChecklistSnapshotObserver;
 use App\Policies\DynamicPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
@@ -36,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
         EquipmentDamage::observe(EquipmentDamageObserver::class);
         FreightRecord::observe(FreightRecordObserver::class);
         FleetTollRecord::observe(FleetTollRecordObserver::class);
+        MaintenanceOrder::observe(MaintenanceOrderChecklistSnapshotObserver::class);
 
         // INJEÇÃO CRUCIAL: Vincula dinamicamente a tabela de roles
         Role::resolveRelationUsing('department', function ($roleModel) {
