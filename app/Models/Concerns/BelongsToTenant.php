@@ -2,6 +2,8 @@
 
 namespace App\Models\Concerns;
 
+use App\Models\Tenant;
+use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,16 +38,22 @@ trait BelongsToTenant
             );
         });
 
-        // ESCRITA: novo registro nasce com o tenant do usuario logado.
+        // ESCRITA: novo registro nasce com o tenant do usuario logado (ou,
+        // para super admin, o tenant "atuante" escolhido em sessao --
+        // ver App\Support\Tenancy::current()).
         static::creating(function (Model $model) {
-            if (blank($model->tenant_id) && Auth::check() && filled(Auth::user()->tenant_id)) {
-                $model->tenant_id = Auth::user()->tenant_id;
+            if (blank($model->tenant_id)) {
+                $tenant = Tenancy::current();
+
+                if ($tenant) {
+                    $model->tenant_id = $tenant->id;
+                }
             }
         });
     }
 
     public function tenant(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Tenant::class, 'tenant_id');
+        return $this->belongsTo(Tenant::class, 'tenant_id');
     }
 }
