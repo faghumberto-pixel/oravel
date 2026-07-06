@@ -193,7 +193,7 @@ class AssetResource extends Resource
                                     ->unique(ignoreRecord: true)
                                     ->prefixIcon('heroicon-m-hashtag'),
 
-                                Forms\Components\TextInput::make('asset_tag')
+                                Forms\Components\TextInput::make('tag')
                                     ->label('Asset Tag (Etiqueta)')
                                     ->placeholder('TAG-0000')
                                     ->prefixIcon('heroicon-m-tag'),
@@ -310,32 +310,9 @@ class AssetResource extends Resource
                     Tabs\Tab::make('Logs de Auditoria')
                         ->icon('heroicon-m-finger-print')
                         ->schema([
-                            Forms\Components\Repeater::make('activities')
-                                ->relationship('activities')
+                            Forms\Components\Placeholder::make('activities_history')
                                 ->label('Histórico de Alterações no Cadastro')
-                                ->schema([
-                                    Forms\Components\Grid::make(3)->schema([
-                                        Forms\Components\TextInput::make('description')
-                                            ->label('Ação')
-                                            ->formatStateUsing(fn ($state) => match ($state) {
-                                                'created' => 'Criação',
-                                                'updated' => 'Atualização',
-                                                'deleted' => 'Exclusão',
-                                                default => $state
-                                            })->disabled(),
-                                        Forms\Components\TextInput::make('causer.name')->label('Usuário')->disabled(),
-                                        Forms\Components\TextInput::make('created_at')->label('Data/Hora')->disabled(),
-                                    ]),
-                                    Forms\Components\KeyValue::make('properties.attributes')
-                                        ->label('Valores Novos')
-                                        ->disabled(),
-                                    Forms\Components\KeyValue::make('properties.old')
-                                        ->label('Valores Anteriores')
-                                        ->disabled(),
-                                ])
-                                ->addable(false)
-                                ->deletable(false)
-                                ->reorderable(false)
+                                ->content(fn (?Asset $record) => static::renderActivityHistory($record))
                                 ->columnSpanFull(),
                         ]),
 
@@ -376,7 +353,7 @@ class AssetResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Equipamento')
                     ->searchable()
-                    ->description(fn (Asset $record): string => 'Tag: '.($record->asset_tag ?? '---')),
+                    ->description(fn (Asset $record): string => 'Tag: '.($record->tag ?? '---')),
 
                 Tables\Columns\TextColumn::make('last_horimetro')
                     ->label('Horímetro Atual')
@@ -506,6 +483,62 @@ class AssetResource extends Resource
             '<th style="padding:8px 12px">Técnico</th>'.
             '<th style="padding:8px 12px">Status</th>'.
             '<th style="padding:8px 12px">Solicitado em</th>'.
+            "</tr></thead><tbody>{$rows}</tbody></table></div>"
+        );
+    }
+
+    /**
+     * Regressao: essa aba era um Repeater com ->relationship('activities'),
+     * o que faz o Filament tentar sincronizar (salvar) cada Activity
+     * existente ao salvar o form do Ativo. O campo 'causer.name' (notacao
+     * de ponto, so pra exibir o nome via relacao) deixava um 'causer' => []
+     * vazando no payload de update mesmo desabilitado -- e como
+     * Spatie\Activitylog\Models\Activity tem $guarded = [], o Eloquent
+     * tentava atualizar uma coluna "causer" que nao existe (a coluna real e
+     * causer_type/causer_id), quebrando TODA edicao de um ativo que ja
+     * tivesse pelo menos 1 log. Trocado por Placeholder somente-leitura,
+     * que nunca tenta gravar nada de volta.
+     */
+    private static function renderActivityHistory(?Asset $record): HtmlString
+    {
+        if (! $record) {
+            return new HtmlString('<span class="text-gray-400">Disponível após o primeiro salvamento.</span>');
+        }
+
+        $activities = $record->activities()->with('causer')->latest()->get();
+
+        if ($activities->isEmpty()) {
+            return new HtmlString('<span class="text-gray-400">Nenhuma alteração registrada para este ativo.</span>');
+        }
+
+        $actionLabels = [
+            'created' => 'Criação',
+            'updated' => 'Atualização',
+            'deleted' => 'Exclusão',
+        ];
+
+        $rows = $activities->map(function ($activity) use ($actionLabels) {
+            $action = $actionLabels[$activity->description] ?? $activity->description;
+            $causerName = $activity->causer?->name ?? '—';
+            $newValues = collect($activity->properties?->get('attributes') ?? [])
+                ->map(fn ($value, $key) => e($key).': '.e(is_scalar($value) ? $value : json_encode($value)))
+                ->implode('<br>');
+
+            return "<tr style='border-top:1px solid rgba(156,163,175,0.2)'>".
+                "<td style='padding:8px 12px'>".e($action).'</td>'.
+                "<td style='padding:8px 12px'>".e($causerName).'</td>'.
+                "<td style='padding:8px 12px'>".e($activity->created_at->format('d/m/Y H:i')).'</td>'.
+                "<td style='padding:8px 12px;font-size:12px'>".($newValues ?: '—').'</td>'.
+                '</tr>';
+        })->implode('');
+
+        return new HtmlString(
+            "<div style='overflow-x:auto'><table style='width:100%;font-size:13px;border-collapse:collapse'>".
+            '<thead><tr style="text-align:left;color:#9ca3af">'.
+            '<th style="padding:8px 12px">Ação</th>'.
+            '<th style="padding:8px 12px">Usuário</th>'.
+            '<th style="padding:8px 12px">Data/Hora</th>'.
+            '<th style="padding:8px 12px">Valores Alterados</th>'.
             "</tr></thead><tbody>{$rows}</tbody></table></div>"
         );
     }
