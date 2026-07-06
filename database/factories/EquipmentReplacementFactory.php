@@ -15,6 +15,17 @@ class EquipmentReplacementFactory extends Factory
         'Fim de vida útil estimada, custo de reparo não compensa.',
         'Estrutura comprometida após avaria, risco operacional.',
         'Cliente reportou perda de performance constante.',
+        'Vazamento hidráulico recorrente, sem solução definitiva nas últimas intervenções.',
+        'Desgaste excessivo do rodante/pneus, fora da tolerância de segurança.',
+        'Painel de controle com falhas intermitentes, difícil diagnóstico em campo.',
+        'Corrosão estrutural avançada identificada na última vistoria.',
+        'Consumo de combustível muito acima do esperado, indício de desgaste interno do motor.',
+        'Sistema elétrico com curtos recorrentes, risco de incêndio.',
+        'Capacidade de carga comprometida após sobrecarga acidental.',
+        'Ruído/vibração anormal na operação, possível dano em rolamentos internos.',
+        'Custo acumulado de manutenção já superou o valor residual do equipamento.',
+        'Equipamento reprovado em inspeção de segurança (NR-13/NR-12).',
+        'Peça crítica descontinuada pelo fabricante, sem reposição disponível.',
     ];
 
     public function definition(): array

@@ -388,18 +388,29 @@ class RealisticDemoSeeder extends Seeder
         }
     }
 
-    /** @return Collection<int, MaintenanceOrder> */
+    /**
+     * Faixas por estado (nao contadores fixos) -- cada tenant sorteia sua
+     * propria quantidade dentro da faixa, pra nao ficar com a mesma
+     * distribuicao de status em todo tenant do banco de demonstracao.
+     *
+     * @return Collection<int, MaintenanceOrder>
+     */
     private function seedMaintenanceOrders(Tenant $tenant, Collection $assets, Collection $clients)
     {
-        $plan = [
-            'aguardandoDiagnostico' => 4,
-            'emManutencao' => 5,
-            'aguardandoPeca' => 4,
-            'testeQualidade' => 3,
-            'pendencia' => 3,
-            'concluido' => 5,
-            'cancelada' => 1,
+        $ranges = [
+            'aguardandoDiagnostico' => [2, 6],
+            'emManutencao' => [3, 8],
+            'aguardandoPeca' => [2, 6],
+            'testeQualidade' => [1, 5],
+            'pendencia' => [1, 5],
+            'concluido' => [3, 8],
+            'cancelada' => [0, 2],
         ];
+
+        $plan = array_map(
+            fn (array $range) => $this->faker()->numberBetween($range[0], $range[1]),
+            $ranges
+        );
 
         $orders = collect();
 
@@ -449,7 +460,12 @@ class RealisticDemoSeeder extends Seeder
             return $movements;
         }
 
-        $states = ['aguardandoVistoria' => 4, 'emAndamento' => 3, 'concluido' => 3];
+        // Faixas, nao contadores fixos -- mesmo motivo de seedMaintenanceOrders().
+        $states = [
+            'aguardandoVistoria' => $this->faker()->numberBetween(2, 6),
+            'emAndamento' => $this->faker()->numberBetween(1, 5),
+            'concluido' => $this->faker()->numberBetween(1, 5),
+        ];
         $stateMethods = ['emAndamento' => 'emAndamento', 'concluido' => 'concluido'];
 
         foreach ($states as $stateKey => $count) {
