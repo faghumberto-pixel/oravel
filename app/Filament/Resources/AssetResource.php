@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\AssetResource\Pages;
 use App\Models\Asset;
 use App\Models\AssetCategory;
@@ -19,6 +20,8 @@ use Illuminate\Support\HtmlString;
 
 class AssetResource extends Resource
 {
+    use HasSuperAdminTenantColumn;
+
     protected static ?string $model = Asset::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-truck';
@@ -344,6 +347,8 @@ class AssetResource extends Resource
     {
         return $table
             ->columns([
+                static::tenantColumn(),
+
                 Tables\Columns\TextColumn::make('patrimonio')
                     ->label('Patrimônio')
                     ->searchable()

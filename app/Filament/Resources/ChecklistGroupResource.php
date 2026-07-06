@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
+use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\ChecklistGroupResource\Pages;
 use App\Models\ChecklistGroup;
 use Filament\Forms;
@@ -14,6 +15,8 @@ use Filament\Tables\Table;
 #[BelongsToFeature('checklists')]
 class ChecklistGroupResource extends Resource
 {
+    use HasSuperAdminTenantColumn;
+
     protected static ?string $model = ChecklistGroup::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
@@ -44,6 +47,7 @@ class ChecklistGroupResource extends Resource
     {
         return $table
             ->columns([
+                static::tenantColumn(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Grupo')
                     ->searchable()

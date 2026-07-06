@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
+use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\ClientResource\Pages;
 use App\Models\Client;
 use App\Traits\HasPlanAuthorization;
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ClientResource extends Resource
 {
     use HasPlanAuthorization;
+    use HasSuperAdminTenantColumn;
 
     protected static ?string $model = Client::class;
 
@@ -109,6 +111,7 @@ class ClientResource extends Resource
     {
         return $table
             ->columns([
+                static::tenantColumn(),
                 Tables\Columns\TextColumn::make('name')->label('Razão Social')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('document')->label('CNPJ')->searchable(),
                 Tables\Columns\TextColumn::make('city')->label('Cidade')->sortable(),

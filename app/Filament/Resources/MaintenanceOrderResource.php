@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
+use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\MaintenanceOrderResource\Pages;
 use App\Forms\Components\CameraCapture;
 use App\Models\Asset;
@@ -24,6 +25,8 @@ use Saade\FilamentAutograph\Forms\Components\SignaturePad;
 #[BelongsToFeature('maintenance')]
 class MaintenanceOrderResource extends Resource
 {
+    use HasSuperAdminTenantColumn;
+
     protected static ?string $model = MaintenanceOrder::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
@@ -210,6 +213,7 @@ class MaintenanceOrderResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->poll('10s')->columns([
+            static::tenantColumn(),
             Tables\Columns\TextColumn::make('created_at')->label('Data')->dateTime('d/m/Y'),
             Tables\Columns\TextColumn::make('os_number')->label('Nº OS')->searchable()->weight('bold'),
             Tables\Columns\TextColumn::make('asset.name')->label('Ativo')->searchable(),

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
+use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\ContractResource\Pages;
 use App\Models\Contract;
 use App\Models\EquipmentReplacement;
@@ -16,6 +17,8 @@ use Illuminate\Support\HtmlString;
 #[BelongsToFeature('contracts')]
 class ContractResource extends Resource
 {
+    use HasSuperAdminTenantColumn;
+
     protected static ?string $model = Contract::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
@@ -178,6 +181,7 @@ class ContractResource extends Resource
     {
         return $table
             ->columns([
+                static::tenantColumn(),
                 Tables\Columns\TextColumn::make('contract_number')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('client.name')->label('Cliente'),
                 Tables\Columns\TextColumn::make('asset.name')->label('Ativo'),
