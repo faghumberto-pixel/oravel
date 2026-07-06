@@ -8,6 +8,7 @@ use App\Filament\Resources\MaintenanceOrderResource\Pages;
 use App\Forms\Components\CameraCapture;
 use App\Models\Asset;
 use App\Models\MaintenanceOrder;
+use App\Models\MaintenancePlan;
 use App\Models\User;
 use App\Support\FormHelpers;
 use App\Support\Tenancy;
@@ -20,6 +21,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\HtmlString;
 use Saade\FilamentAutograph\Forms\Components\SignaturePad;
 
 #[BelongsToFeature('maintenance')]
@@ -94,6 +96,38 @@ class MaintenanceOrderResource extends Resource
                             $asset = Asset::find($get('asset_id'));
 
                             return $asset?->checklistGroup?->name ?? 'Sem grupo definido';
+                        }),
+
+                    Forms\Components\Placeholder::make('preventivas_pendentes')
+                        ->label('Preventivas Sugeridas (por Horímetro)')
+                        ->visible(fn (Get $get) => (bool) $get('asset_id'))
+                        ->content(function (Get $get) {
+                            $asset = Asset::find($get('asset_id'));
+
+                            if (! $asset || ! $asset->checklist_group_id) {
+                                return 'Ativo sem grupo definido — sem template de preventiva.';
+                            }
+
+                            $plans = MaintenancePlan::where('checklist_group_id', $asset->checklist_group_id)
+                                ->where('is_active', true)
+                                ->get();
+
+                            if ($plans->isEmpty()) {
+                                return 'Nenhum item de preventiva cadastrado para este grupo.';
+                            }
+
+                            $lines = $plans->map(function ($plan) use ($asset) {
+                                $status = $plan->dueStatusForAsset($asset);
+                                $situacao = $status['is_overdue']
+                                    ? 'VENCIDO há '.number_format($status['overdue_hours'], 0).'h'
+                                    : 'Próxima em '.number_format($status['due_at_hours'] - (float) $asset->horimetro_atual, 0).'h';
+
+                                return "{$plan->name}: trocado em {$status['last_service_hours']}h, horímetro atual {$asset->horimetro_atual}h, intervalo {$plan->interval_hours}h → {$situacao}";
+                            });
+
+                            return new HtmlString(
+                                $lines->map(fn ($line) => '<div>'.e($line).'</div>')->implode('')
+                            );
                         }),
 
                     Forms\Components\Select::make('criticality_level_id')

@@ -44,6 +44,12 @@ class MaterialResource extends Resource
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
+                        Forms\Components\TextInput::make('part_number')
+                            ->label('Part Number (Fabricante)')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('barcode')
+                            ->label('Código de Barras / EAN')
+                            ->maxLength(255),
                         Forms\Components\TextInput::make('name')
                             ->label('Nome do Material')
                             ->required()
@@ -77,6 +83,16 @@ class MaterialResource extends Resource
                             ->maxLength(255),
                     ])->columns(2),
 
+                Forms\Components\Section::make('Compatibilidade')
+                    ->schema([
+                        Forms\Components\Select::make('checklistGroups')
+                            ->label('Grupos de Ativo Compatíveis')
+                            ->relationship('checklistGroups', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
+                            ->multiple()
+                            ->searchable()
+                            ->preload(),
+                    ]),
+
                 Forms\Components\Section::make('Inteligência Comercial e Suprimentos')
                     ->schema([
                         Forms\Components\Select::make('supplier_id')
@@ -102,26 +118,9 @@ class MaterialResource extends Resource
                                 return $record->id;
                             }),
 
-                        Forms\Components\Select::make('brand_name')
+                        Forms\Components\TextInput::make('brand_name')
                             ->label('Marca do Componente / Equipamento')
-                            ->options(function () {
-                                return Material::query()
-                                    ->where('tenant_id', Tenancy::current()?->id)
-                                    ->whereNotNull('brand_name')
-                                    ->distinct()
-                                    ->pluck('brand_name', 'brand_name')
-                                    ->toArray();
-                            })
-                            ->searchable()
-                            ->preload()
-                            ->placeholder('Selecione ou crie uma marca')
-                            ->createOptionForm([
-                                Forms\Components\TextInput::make('new_brand')
-                                    ->label('Cadastrar Nova Marca')
-                                    ->required()
-                                    ->maxLength(255),
-                            ])
-                            ->createOptionUsing(fn (array $data) => $data['new_brand'] ?? null),
+                            ->maxLength(255),
 
                         Forms\Components\Select::make('supplier_type')
                             ->label('Tipo de Canal de Fornecimento')
@@ -131,23 +130,36 @@ class MaterialResource extends Resource
                                 'varejo' => 'Revenda / Varejo Local',
                                 'importacao' => 'Importador',
                             ])
-                            ->searchable()
-                            ->createOptionForm([
-                                Forms\Components\TextInput::make('new_type')
-                                    ->label('Novo Tipo de Canal')
-                                    ->required()
-                                    ->maxLength(255),
-                            ])
-                            ->createOptionUsing(fn (array $data) => $data['new_type'] ?? null),
+                            ->native(false),
                     ])->columns(3),
 
                 Forms\Components\Section::make('Controle Financeiro e Estoque')
                     ->schema([
                         Forms\Components\TextInput::make('unit_cost')->label('Custo Unitário')->required()->numeric()->prefix('R$'),
+                        Forms\Components\TextInput::make('last_purchase_price')->label('Último Preço de Compra')->numeric()->prefix('R$'),
                         Forms\Components\TextInput::make('price')->label('Preço de Venda')->required()->numeric()->default(0)->prefix('R$'),
                         Forms\Components\TextInput::make('current_stock')->label('Estoque Atual')->required()->numeric()->default(0),
                         Forms\Components\TextInput::make('min_stock')->label('Estoque Mínimo')->required()->numeric()->default(0),
                         Forms\Components\TextInput::make('max_stock')->label('Estoque Máximo')->required()->numeric()->default(0),
+                        Forms\Components\Select::make('unit_of_measure')
+                            ->label('Unidade de Medida')
+                            ->options(['un' => 'Unidade', 'l' => 'Litro', 'kg' => 'Quilograma', 'm' => 'Metro', 'par' => 'Par', 'cx' => 'Caixa'])
+                            ->default('un')
+                            ->native(false),
+                        Forms\Components\TextInput::make('warehouse_location')->label('Localização no Almoxarifado')->maxLength(255),
+                    ])->columns(3),
+
+                Forms\Components\Section::make('Rastreabilidade')
+                    ->schema([
+                        Forms\Components\Toggle::make('requires_serial_number')
+                            ->label('Exige número de série ao aplicar')
+                            ->helperText('Técnico será obrigado a informar o nº de série antes de salvar o uso desta peça.'),
+                        Forms\Components\Toggle::make('is_remanufactured')
+                            ->label('Peça remanufaturada'),
+                        Forms\Components\TextInput::make('warranty_days')
+                            ->label('Garantia (dias)')
+                            ->numeric()
+                            ->helperText('Se a peça falhar dentro deste prazo em outra OS, o gestor é alertado.'),
                     ])->columns(3),
             ]);
     }

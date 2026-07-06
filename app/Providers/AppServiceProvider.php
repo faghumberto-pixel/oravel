@@ -12,6 +12,7 @@ use App\Models\EquipmentReplacement;
 use App\Models\FleetTollRecord;
 use App\Models\FreightRecord;
 use App\Models\MaintenanceOrder;
+use App\Models\MaintenanceOrderMaterial;
 use App\Models\User;
 use App\Models\UserActivityLog;
 use App\Observers\AnnouncementObserver;
@@ -23,6 +24,7 @@ use App\Observers\EquipmentReplacementObserver;
 use App\Observers\FleetTollRecordObserver;
 use App\Observers\FreightRecordObserver;
 use App\Observers\MaintenanceOrderChecklistSnapshotObserver;
+use App\Observers\MaintenanceOrderMaterialObserver;
 use App\Policies\DynamicPolicy;
 use App\Support\Tenancy;
 use Illuminate\Auth\Events\Login;
@@ -57,6 +59,7 @@ class AppServiceProvider extends ServiceProvider
         FreightRecord::observe(FreightRecordObserver::class);
         FleetTollRecord::observe(FleetTollRecordObserver::class);
         MaintenanceOrder::observe(MaintenanceOrderChecklistSnapshotObserver::class);
+        MaintenanceOrderMaterial::observe(MaintenanceOrderMaterialObserver::class);
         Announcement::observe(AnnouncementObserver::class);
 
         // INJEÇÃO CRUCIAL: Vincula dinamicamente a tabela de roles

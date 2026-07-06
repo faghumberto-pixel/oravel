@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\MaintenancePlanResource\Pages;
+use App\Models\ChecklistGroup;
 use App\Models\MaintenancePlan;
 use App\Support\Tenancy;
 use Filament\Forms;
@@ -33,19 +34,30 @@ class MaintenancePlanResource extends Resource
     {
         return $form->schema([
             Forms\Components\Section::make('Configuração do Plano')->schema([
+                Forms\Components\Placeholder::make('scope_hint')
+                    ->label('')
+                    ->content('Preencha "Ativo" (regra só para esse equipamento) OU "Grupo de Ativo" (regra vale para todo equipamento do grupo, ex: template de preventiva por horas) — nunca os dois.'),
                 Forms\Components\Select::make('asset_id')
-                    ->label('Ativo')
+                    ->label('Ativo (regra individual)')
                     ->relationship('asset', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
-                    ->required()
+                    ->requiredWithout('checklist_group_id')
+                    ->searchable()
+                    ->preload(),
+                Forms\Components\Select::make('checklist_group_id')
+                    ->label('Grupo de Ativo (template do grupo)')
+                    ->relationship('checklistGroup', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
+                    ->requiredWithout('asset_id')
                     ->searchable()
                     ->preload(),
                 Forms\Components\TextInput::make('name')
-                    ->label('Nome do Plano (Ex: Preventiva 250h)')
+                    ->label('Nome do Item (Ex: Troca de óleo do motor)')
                     ->required(),
                 Forms\Components\TextInput::make('interval_hours')
                     ->label('Intervalo (Horas)')
                     ->numeric()
                     ->required(),
+                Forms\Components\TextInput::make('notes')
+                    ->label('Observação (Ex: Obrigatório NR-13)'),
                 Forms\Components\Toggle::make('is_active')
                     ->label('Plano Ativo')
                     ->default(true),
@@ -56,9 +68,11 @@ class MaintenancePlanResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('asset.name')->label('Ativo')->sortable(),
-            Tables\Columns\TextColumn::make('name')->label('Nome do Plano')->searchable(),
+            Tables\Columns\TextColumn::make('asset.name')->label('Ativo')->placeholder('—')->sortable(),
+            Tables\Columns\TextColumn::make('checklistGroup.name')->label('Grupo')->placeholder('—')->sortable(),
+            Tables\Columns\TextColumn::make('name')->label('Item')->searchable(),
             Tables\Columns\TextColumn::make('interval_hours')->label('Intervalo (h)'),
+            Tables\Columns\TextColumn::make('notes')->label('Observação')->placeholder('—'),
             Tables\Columns\IconColumn::make('is_active')->boolean()->label('Ativo'),
         ])
             ->filters([
@@ -66,6 +80,9 @@ class MaintenancePlanResource extends Resource
                 Tables\Filters\SelectFilter::make('asset_id')
                     ->label('Ativo')
                     ->relationship('asset', 'name'),
+                Tables\Filters\SelectFilter::make('checklist_group_id')
+                    ->label('Grupo de Ativo')
+                    ->options(fn () => ChecklistGroup::where('tenant_id', Tenancy::current()?->id)->pluck('name', 'id')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

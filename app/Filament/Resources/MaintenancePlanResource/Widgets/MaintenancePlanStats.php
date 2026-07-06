@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\MaintenancePlanResource\Widgets;
 
+use App\Models\Asset;
 use App\Models\MaintenancePlan;
 use App\Support\Tenancy;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -14,38 +15,58 @@ class MaintenancePlanStats extends BaseWidget
         return (bool) Tenancy::current();
     }
 
+    /**
+     * "Vencido" agora precisa lidar com dois formatos: plano por-Ativo
+     * (last_service_hours direto) e template por-Grupo (compartilhado por
+     * varios Ativos -- cada combinacao plano+ativo tem seu proprio status,
+     * calculado via dueStatusForAsset()).
+     */
     protected function getStats(): array
     {
-        $planos = MaintenancePlan::with('asset')->get();
+        $planos = MaintenancePlan::with(['asset', 'checklistGroup'])->where('is_active', true)->get();
 
-        $total = $planos->count();
-        $ativos = $planos->where('is_active', true)->count();
+        $assetsByGroup = Asset::whereIn('checklist_group_id', $planos->pluck('checklist_group_id')->filter()->unique())
+            ->get()
+            ->groupBy('checklist_group_id');
 
-        $vencidos = $planos->filter(function ($plan) {
-            if (! $plan->is_active || ! $plan->asset) {
-                return false;
+        $vencidos = 0;
+        $assetsCobertosIds = collect();
+
+        foreach ($planos as $plan) {
+            if ($plan->isGroupTemplate()) {
+                $assetsDoGrupo = $assetsByGroup->get($plan->checklist_group_id, collect());
+
+                foreach ($assetsDoGrupo as $asset) {
+                    $assetsCobertosIds->push($asset->id);
+
+                    if ($plan->dueStatusForAsset($asset)['is_overdue']) {
+                        $vencidos++;
+                    }
+                }
+            } elseif ($plan->asset) {
+                $assetsCobertosIds->push($plan->asset_id);
+
+                if ($plan->dueStatusForAsset($plan->asset)['is_overdue']) {
+                    $vencidos++;
+                }
             }
-
-            return (float) $plan->asset->horimetro_atual >= ($plan->last_service_hours + $plan->interval_hours);
-        })->count();
-
-        $ativosCobertos = $planos->pluck('asset_id')->unique()->count();
+        }
 
         return [
-            Stat::make('Total de Planos', $total)
-                ->description('Manutenções preventivas')
+            Stat::make('Total de Itens de Preventiva', $planos->count())
+                ->description('Por-ativo + templates de grupo')
                 ->color('gray'),
 
-            Stat::make('Ativos', $ativos)
+            Stat::make('Ativos', $planos->count())
                 ->description('Em monitoramento')
                 ->color('info'),
 
             Stat::make('Vencidos por Horímetro', $vencidos)
-                ->description('Ultrapassaram o intervalo previsto')
+                ->description('Item × Ativo que ultrapassou o intervalo previsto')
                 ->color($vencidos > 0 ? 'danger' : 'success'),
 
-            Stat::make('Ativos Cobertos', $ativosCobertos)
-                ->description('Com ao menos 1 plano')
+            Stat::make('Ativos Cobertos', $assetsCobertosIds->unique()->count())
+                ->description('Com ao menos 1 item de preventiva aplicável')
                 ->color('success'),
         ];
     }
