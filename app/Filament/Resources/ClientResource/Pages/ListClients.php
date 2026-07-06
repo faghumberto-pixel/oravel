@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ClientResource\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Concerns\HasPrintAction;
+use App\Filament\Exports\ClientExporter;
 use App\Filament\Resources\ClientResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -20,6 +21,7 @@ class ListClients extends ListRecords
         return [
             Actions\CreateAction::make(),
             $this->printAction(),
+            Actions\ExportAction::make()->exporter(ClientExporter::class),
         ];
     }
 

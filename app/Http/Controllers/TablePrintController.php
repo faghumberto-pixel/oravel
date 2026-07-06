@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Asset;
 use App\Models\Client;
 use App\Models\Contract;
+use App\Models\Department;
 use App\Models\EquipmentDamage;
 use App\Models\FleetMaintenancePlan;
 use App\Models\FleetVehicle;
@@ -21,6 +22,7 @@ use App\Models\UserActivityLog;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Spatie\Permission\Models\Role;
 
 class TablePrintController extends Controller
 {
@@ -170,11 +172,23 @@ class TablePrintController extends Controller
             ], ['customer', 'category']],
 
             MaintenancePlan::class => [[
-                ['label' => 'Ativo', 'value' => fn ($r) => $r->asset?->name],
+                ['label' => 'Ativo / Grupo', 'value' => fn ($r) => $r->asset?->name ?? $r->checklistGroup?->name.' (grupo)'],
                 ['label' => 'Nome do Plano', 'value' => fn ($r) => $r->name],
                 ['label' => 'Intervalo (horas)', 'value' => fn ($r) => $r->interval_hours],
                 ['label' => 'Ativo?', 'value' => fn ($r) => $r->is_active ? 'Sim' : 'Não'],
-            ], ['asset']],
+            ], ['asset', 'checklistGroup']],
+
+            Role::class => [[
+                ['label' => 'Função', 'value' => fn ($r) => $r->name],
+                ['label' => 'Departamento', 'value' => fn ($r) => $r->department?->name],
+                ['label' => 'Permissões', 'value' => fn ($r) => $r->permissions()->count()],
+            ], ['department']],
+
+            Department::class => [[
+                ['label' => 'Departamento', 'value' => fn ($r) => $r->name],
+                ['label' => 'Código', 'value' => fn ($r) => $r->code],
+                ['label' => 'Funcionários', 'value' => fn ($r) => $r->users()->count()],
+            ], []],
 
             UserActivityLog::class => [[
                 ['label' => 'Data/Hora', 'value' => fn ($r) => optional($r->created_at)->format('d/m/Y H:i:s')],

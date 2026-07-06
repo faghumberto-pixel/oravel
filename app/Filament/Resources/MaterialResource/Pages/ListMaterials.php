@@ -4,6 +4,7 @@ namespace App\Filament\Resources\MaterialResource\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Concerns\HasPrintAction;
+use App\Filament\Exports\MaterialExporter;
 use App\Filament\Resources\MaterialResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -20,6 +21,7 @@ class ListMaterials extends ListRecords
         return [
             Actions\CreateAction::make(),
             $this->printAction(),
+            Actions\ExportAction::make()->exporter(MaterialExporter::class),
         ];
     }
 

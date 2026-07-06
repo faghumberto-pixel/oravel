@@ -4,6 +4,7 @@ namespace App\Filament\Resources\AssetResource\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Concerns\HasPrintAction;
+use App\Filament\Exports\AssetExporter;
 use App\Filament\Resources\AssetResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -21,6 +22,7 @@ class ListAssets extends ListRecords
             Actions\CreateAction::make()
                 ->label('Novo Ativo'),
             $this->printAction(),
+            Actions\ExportAction::make()->exporter(AssetExporter::class),
         ];
     }
 

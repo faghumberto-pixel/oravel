@@ -4,6 +4,7 @@ namespace App\Filament\Resources\MaintenanceOrderResource\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Concerns\HasPrintAction;
+use App\Filament\Exports\MaintenanceOrderExporter;
 use App\Filament\Resources\MaintenanceOrderResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -23,6 +24,7 @@ class ListMaintenanceOrders extends ListRecords
                 ->label('Nova Ordem de Serviço')
                 ->icon('heroicon-m-plus'),
             $this->printAction(),
+            Actions\ExportAction::make()->exporter(MaintenanceOrderExporter::class),
         ];
     }
 
