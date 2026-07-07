@@ -162,14 +162,14 @@ class MaintenanceOrder extends Model implements HasMedia
 
     // --- LÓGICA DE NEGÓCIO ---
 
-    public function logStatusChange(string $newStatus, ?string $oldStatus = null, ?string $observation = null): void
+    public function logStatusChange(string $newStatus, ?string $oldStatus = null, ?string $observation = null, ?string $userId = null): void
     {
         $this->statusHistories()->create([
             'new_status' => $newStatus,
             'old_status' => $oldStatus,
             'observation' => $observation,
+            'user_id' => $userId ?? auth()->id(),
             'created_at' => now(),
-            'tenant_id' => $this->tenant_id,
         ]);
     }
 
@@ -215,7 +215,11 @@ class MaintenanceOrder extends Model implements HasMedia
                 }
 
                 if ($os->getOriginal('status') === 'Em Andamento' && $os->last_timer_start) {
-                    $os->total_time_seconds += now()->diffInSeconds($os->last_timer_start);
+                    // Carbon 3 mudou o default de diffInSeconds() pra $absolute=false
+                    // (era true no Carbon 2) e passou a retornar float -- sem o `true`
+                    // explicito aqui, isso virava um numero negativo com casas decimais
+                    // (ex: -602.69) sendo gravado direto na coluna integer.
+                    $os->total_time_seconds += (int) now()->diffInSeconds($os->last_timer_start, true);
                     $os->last_timer_start = null;
                 }
 

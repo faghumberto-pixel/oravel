@@ -185,7 +185,8 @@ class MaintenanceKanban extends Page
             ->latest('created_at')
             ->first();
 
-        return $lastChange ? $lastChange->created_at->diffInDays(now()) : 0;
+        // Carbon 3: diffInDays() retorna float; o metodo declara -> int.
+        return $lastChange ? (int) $lastChange->created_at->diffInDays(now(), true) : 0;
     }
 
     public function updateStatus($recordId, $newStatus)
@@ -193,10 +194,10 @@ class MaintenanceKanban extends Page
         $order = MaintenanceOrder::find($recordId);
         if ($order) {
             MaintenanceStatusHistory::create([
-                'tenant_id' => Tenancy::current()->id,
                 'maintenance_order_id' => $recordId,
                 'old_status' => ($this->viewMode === 'oficina') ? $order->internal_status : $order->commercial_status,
                 'new_status' => $newStatus,
+                'user_id' => auth()->id(),
                 'created_at' => now(),
             ]);
 

@@ -123,8 +123,10 @@ class UserActivityLogResource extends Resource
                             return '—';
                         }
 
-                        $seconds = Carbon::parse($record->created_at)
-                            ->diffInSeconds(Carbon::parse($next));
+                        // Carbon 3: diffInSeconds() sem `true` retorna float com sinal
+                        // dependendo da ordem -- forca absoluto + inteiro pra exibicao.
+                        $seconds = (int) Carbon::parse($record->created_at)
+                            ->diffInSeconds(Carbon::parse($next), true);
 
                         if ($seconds < 60) {
                             return "{$seconds}s";

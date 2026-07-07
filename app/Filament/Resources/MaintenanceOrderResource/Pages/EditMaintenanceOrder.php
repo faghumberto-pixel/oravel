@@ -70,22 +70,21 @@ class EditMaintenanceOrder extends EditRecord
                 ->openUrlInNewTab(),
 
             // 1. BOTÃO INICIAR / CONTINUAR
+            // O timer (last_timer_start/started_at/total_time_seconds/finished_at) é
+            // responsabilidade única do hook MaintenanceOrder::booted() -- as actions
+            // abaixo só mudam 'status' (+ campos próprios da transição) e deixam o
+            // hook recalcular o tempo. Antes disso, o timer era recalculado aqui E
+            // no hook a cada transição -- funcionava por coincidência de ordem de
+            // execução, mas era frágil pra qualquer mudança futura.
             Actions\Action::make('iniciar')
                 ->label(fn () => $this->record->started_at ? 'Continuar Serviço' : 'Iniciar Serviço')
                 ->color('success')
                 ->icon('heroicon-o-play')
                 ->disabled(fn () => ! in_array($this->record->status, ['Aberto', 'Pendente', 'Pausada', 'Reprogramado', 'Reprogramada']))
                 ->action(function () {
-                    $data = [
-                        'status' => 'Em Andamento',
-                        'last_timer_start' => now(),
-                    ];
-
-                    if (! $this->record->started_at) {
-                        $data['started_at'] = now();
-                    }
-
-                    $this->record->update($data);
+                    $oldStatus = $this->record->status;
+                    $this->record->update(['status' => 'Em Andamento']);
+                    $this->record->logStatusChange('Em Andamento', $oldStatus);
 
                     Notification::make()
                         ->title('Serviço iniciado!')
@@ -102,15 +101,9 @@ class EditMaintenanceOrder extends EditRecord
                 ->icon('heroicon-o-pause')
                 ->disabled(fn () => $this->record->status !== 'Em Andamento')
                 ->action(function () {
-                    $secondsSinceStart = $this->record->last_timer_start
-                        ? now()->diffInSeconds($this->record->last_timer_start)
-                        : 0;
-
-                    $this->record->update([
-                        'status' => 'Pausada',
-                        'total_time_seconds' => (int) ($this->record->total_time_seconds + $secondsSinceStart),
-                        'last_timer_start' => null,
-                    ]);
+                    $oldStatus = $this->record->status;
+                    $this->record->update(['status' => 'Pausada']);
+                    $this->record->logStatusChange('Pausada', $oldStatus);
 
                     Notification::make()
                         ->title('Serviço pausado')
@@ -138,17 +131,14 @@ class EditMaintenanceOrder extends EditRecord
                         ->placeholder('Justifique a alteração de data...'),
                 ])
                 ->action(function (array $data) {
-                    $secondsSinceStart = ($this->record->status === 'Em Andamento' && $this->record->last_timer_start)
-                        ? now()->diffInSeconds($this->record->last_timer_start)
-                        : 0;
+                    $oldStatus = $this->record->status;
 
                     $this->record->update([
                         'status' => 'Reprogramado',
                         'rescheduled_to' => $data['rescheduled_to'],
                         'reschedule_reason' => $data['reschedule_reason'],
-                        'total_time_seconds' => (int) ($this->record->total_time_seconds + $secondsSinceStart),
-                        'last_timer_start' => null,
                     ]);
+                    $this->record->logStatusChange('Reprogramado', $oldStatus, $data['reschedule_reason']);
 
                     Notification::make()
                         ->title('OS Reprogramada')
@@ -176,17 +166,14 @@ class EditMaintenanceOrder extends EditRecord
                         ->required(),
                 ])
                 ->action(function (array $data) {
-                    $secondsSinceStart = ($this->record->status === 'Em Andamento' && $this->record->last_timer_start)
-                        ? now()->diffInSeconds($this->record->last_timer_start)
-                        : 0;
+                    $oldStatus = $this->record->status;
 
                     $this->record->update([
                         'technician_id' => $data['technician_id'],
                         'transfer_reason' => $data['transfer_reason'],
                         'status' => 'Aberto',
-                        'total_time_seconds' => (int) ($this->record->total_time_seconds + $secondsSinceStart),
-                        'last_timer_start' => null,
                     ]);
+                    $this->record->logStatusChange('Aberto', $oldStatus, 'Transferida: '.$data['transfer_reason']);
 
                     Notification::make()
                         ->title('Técnico alterado')
@@ -226,16 +213,13 @@ class EditMaintenanceOrder extends EditRecord
                         ->placeholder('Informe o motivo...'),
                 ])
                 ->action(function (array $data) {
-                    $secondsSinceStart = ($this->record->status === 'Em Andamento' && $this->record->last_timer_start)
-                        ? now()->diffInSeconds($this->record->last_timer_start)
-                        : 0;
+                    $oldStatus = $this->record->status;
 
                     $this->record->update([
                         'status' => 'Cancelado',
                         'cancel_reason' => $data['cancel_reason'],
-                        'total_time_seconds' => (int) ($this->record->total_time_seconds + $secondsSinceStart),
-                        'last_timer_start' => null,
                     ]);
+                    $this->record->logStatusChange('Cancelado', $oldStatus, $data['cancel_reason']);
 
                     Notification::make()
                         ->title('OS Cancelada')
@@ -255,16 +239,9 @@ class EditMaintenanceOrder extends EditRecord
                 ->modalDescription('O tempo será totalizado e a OS será finalizada para faturamento/fechamento.')
                 ->disabled(fn () => ! in_array($this->record->status, ['Em Andamento', 'Pausada']))
                 ->action(function () {
-                    $secondsSinceStart = $this->record->last_timer_start
-                        ? now()->diffInSeconds($this->record->last_timer_start)
-                        : 0;
-
-                    $this->record->update([
-                        'status' => 'Concluída',
-                        'finished_at' => now(),
-                        'total_time_seconds' => (int) ($this->record->total_time_seconds + $secondsSinceStart),
-                        'last_timer_start' => null,
-                    ]);
+                    $oldStatus = $this->record->status;
+                    $this->record->update(['status' => 'Concluída']);
+                    $this->record->logStatusChange('Concluída', $oldStatus);
 
                     Notification::make()
                         ->title('Ordem de Serviço Concluída!')
