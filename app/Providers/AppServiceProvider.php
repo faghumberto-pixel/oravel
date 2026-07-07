@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Announcement;
 use App\Models\Asset;
 use App\Models\Contract;
+use App\Models\CrmLeadInteraction;
 use App\Models\Department;
 use App\Models\EquipmentDamage;
 use App\Models\EquipmentMovement; // Importante
@@ -18,6 +19,7 @@ use App\Models\UserActivityLog;
 use App\Observers\AnnouncementObserver;
 use App\Observers\AssetObserver;
 use App\Observers\ContractObserver;
+use App\Observers\CrmLeadInteractionObserver;
 use App\Observers\EquipmentDamageObserver;
 use App\Observers\EquipmentMovementObserver;
 use App\Observers\EquipmentReplacementObserver;
@@ -61,6 +63,7 @@ class AppServiceProvider extends ServiceProvider
         MaintenanceOrder::observe(MaintenanceOrderChecklistSnapshotObserver::class);
         MaintenanceOrderMaterial::observe(MaintenanceOrderMaterialObserver::class);
         Announcement::observe(AnnouncementObserver::class);
+        CrmLeadInteraction::observe(CrmLeadInteractionObserver::class);
 
         // INJEÇÃO CRUCIAL: Vincula dinamicamente a tabela de roles
         Role::resolveRelationUsing('department', function ($roleModel) {
