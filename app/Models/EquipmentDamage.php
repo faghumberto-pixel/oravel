@@ -102,6 +102,21 @@ class EquipmentDamage extends Model implements HasMedia
         $this->addMediaCollection('photos');
     }
 
+    /**
+     * @return array<string, string>
+     */
+    public static function damageTypeLabels(): array
+    {
+        return [
+            self::DAMAGE_TYPE_HIDRAULICO => 'Hidráulico',
+            self::DAMAGE_TYPE_ELETRICO => 'Elétrico',
+            self::DAMAGE_TYPE_PNEU_ESTEIRA => 'Pneu/Esteira',
+            self::DAMAGE_TYPE_MOTOR => 'Motor',
+            self::DAMAGE_TYPE_ESTRUTURAL => 'Estrutural',
+            self::DAMAGE_TYPE_OUTRO => 'Outro',
+        ];
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logOnlyDirty();

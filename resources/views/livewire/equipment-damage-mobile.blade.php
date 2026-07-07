@@ -4,14 +4,7 @@
         'moderada' => 'Moderada',
         'grave' => 'Grave / Perda Total',
     ];
-    $damageTypeLabels = [
-        'hidraulico' => 'Hidráulico',
-        'eletrico' => 'Elétrico',
-        'pneu_esteira' => 'Pneu/Esteira',
-        'motor' => 'Motor',
-        'estrutural' => 'Estrutural',
-        'outro' => 'Outro',
-    ];
+    $damageTypeLabels = \App\Models\EquipmentDamage::damageTypeLabels();
 @endphp
 
 <div class="mx-auto flex min-h-screen max-w-md flex-col">
