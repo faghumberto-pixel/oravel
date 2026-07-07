@@ -30,6 +30,18 @@ class EquipmentDamage extends Model implements HasMedia
 
     public const SEVERITY_GRAVE = 'grave';
 
+    public const DAMAGE_TYPE_HIDRAULICO = 'hidraulico';
+
+    public const DAMAGE_TYPE_ELETRICO = 'eletrico';
+
+    public const DAMAGE_TYPE_PNEU_ESTEIRA = 'pneu_esteira';
+
+    public const DAMAGE_TYPE_MOTOR = 'motor';
+
+    public const DAMAGE_TYPE_ESTRUTURAL = 'estrutural';
+
+    public const DAMAGE_TYPE_OUTRO = 'outro';
+
     public const STATUS_AGUARDANDO_ASSINATURA_CLIENTE = 'aguardando_assinatura_cliente';
 
     public const STATUS_AGUARDANDO_SUPERVISOR = 'aguardando_supervisor';
@@ -62,6 +74,7 @@ class EquipmentDamage extends Model implements HasMedia
         'asset_id',
         'reported_by_user_id',
         'severity',
+        'damage_type',
         'description',
         'requires_replacement',
         'replacement_asset_id',

@@ -25,6 +25,8 @@ class EquipmentDamageMobile extends Component
 
     public string $severity = '';
 
+    public string $damageType = '';
+
     public string $description = '';
 
     public bool $requiresReplacement = false;
@@ -76,6 +78,14 @@ class EquipmentDamageMobile extends Component
                 EquipmentDamage::SEVERITY_MODERADA,
                 EquipmentDamage::SEVERITY_GRAVE,
             ]),
+            'damageType' => 'required|in:'.implode(',', [
+                EquipmentDamage::DAMAGE_TYPE_HIDRAULICO,
+                EquipmentDamage::DAMAGE_TYPE_ELETRICO,
+                EquipmentDamage::DAMAGE_TYPE_PNEU_ESTEIRA,
+                EquipmentDamage::DAMAGE_TYPE_MOTOR,
+                EquipmentDamage::DAMAGE_TYPE_ESTRUTURAL,
+                EquipmentDamage::DAMAGE_TYPE_OUTRO,
+            ]),
             'description' => 'required|string|max:2000',
         ]);
 
@@ -84,6 +94,7 @@ class EquipmentDamageMobile extends Component
 
             $this->damage->update([
                 'severity' => $this->severity,
+                'damage_type' => $this->damageType,
                 'description' => $this->description,
                 'requires_replacement' => $this->requiresReplacement,
             ]);
@@ -98,6 +109,7 @@ class EquipmentDamageMobile extends Component
             'asset_id' => $this->equipmentMovement->asset_id,
             'reported_by_user_id' => auth()->id(),
             'severity' => $this->severity,
+            'damage_type' => $this->damageType,
             'description' => $this->description,
             'requires_replacement' => $this->requiresReplacement,
         ]);

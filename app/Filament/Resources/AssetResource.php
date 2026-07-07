@@ -93,6 +93,31 @@ class AssetResource extends Resource
                                     ->required(),
                             ]),
 
+                            Forms\Components\Grid::make(3)->schema([
+                                Forms\Components\TextInput::make('capacity_value')
+                                    ->label('Capacidade')
+                                    ->numeric()
+                                    ->helperText('Ex: 250 para um gerador de 250 kVA.'),
+
+                                Forms\Components\Select::make('capacity_unit')
+                                    ->label('Unidade')
+                                    ->options([
+                                        'kVA' => 'kVA',
+                                        'HP' => 'HP',
+                                        'toneladas' => 'toneladas',
+                                        'kg' => 'kg',
+                                        'm³' => 'm³',
+                                        'PCM' => 'PCM',
+                                        'L' => 'L',
+                                        'outro' => 'outro',
+                                    ])
+                                    ->native(false),
+
+                                Forms\Components\TextInput::make('specification')
+                                    ->label('Especificação Adicional')
+                                    ->helperText('Texto livre — detalhes que não cabem em capacidade estruturada.'),
+                            ]),
+
                             Forms\Components\Section::make('Investimento e Depreciação')
                                 ->description('Calculado automaticamente com base na vida útil informada.')
                                 ->compact()
@@ -382,6 +407,14 @@ class AssetResource extends Resource
                     ->color('gray')
                     ->placeholder('Sem grupo'),
 
+                Tables\Columns\TextColumn::make('capacity_value')
+                    ->label('Capacidade')
+                    ->sortable()
+                    ->formatStateUsing(fn (Asset $record) => $record->capacity_value !== null
+                        ? rtrim(rtrim(number_format((float) $record->capacity_value, 2, ',', '.'), '0'), ',').' '.($record->capacity_unit ?? '')
+                        : null)
+                    ->placeholder('Não informado'),
+
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
@@ -408,6 +441,33 @@ class AssetResource extends Resource
                 Tables\Filters\SelectFilter::make('checklist_group_id')
                     ->label('Grupo')
                     ->relationship('checklistGroup', 'name'),
+                Tables\Filters\SelectFilter::make('capacity_unit')
+                    ->label('Unidade de Capacidade')
+                    ->options([
+                        'kVA' => 'kVA',
+                        'HP' => 'HP',
+                        'toneladas' => 'toneladas',
+                        'kg' => 'kg',
+                        'm³' => 'm³',
+                        'PCM' => 'PCM',
+                        'L' => 'L',
+                        'outro' => 'outro',
+                    ]),
+                Tables\Filters\Filter::make('capacity_range')
+                    ->label('Faixa de Capacidade')
+                    ->form([
+                        Forms\Components\TextInput::make('capacity_min')
+                            ->label('De')
+                            ->numeric(),
+                        Forms\Components\TextInput::make('capacity_max')
+                            ->label('Até')
+                            ->numeric(),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when($data['capacity_min'] ?? null, fn ($q, $min) => $q->where('capacity_value', '>=', $min))
+                            ->when($data['capacity_max'] ?? null, fn ($q, $max) => $q->where('capacity_value', '<=', $max));
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -4,6 +4,14 @@
         'moderada' => 'Moderada',
         'grave' => 'Grave / Perda Total',
     ];
+    $damageTypeLabels = [
+        'hidraulico' => 'Hidráulico',
+        'eletrico' => 'Elétrico',
+        'pneu_esteira' => 'Pneu/Esteira',
+        'motor' => 'Motor',
+        'estrutural' => 'Estrutural',
+        'outro' => 'Outro',
+    ];
 @endphp
 
 <div class="mx-auto flex min-h-screen max-w-md flex-col">
@@ -52,6 +60,15 @@
                     @endforeach
                 </div>
                 @error('severity') <p class="text-[11px] text-red-400">{{ $message }}</p> @enderror
+
+                <select wire:model="damageType" @disabled($this->isLocked)
+                        class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 disabled:opacity-60">
+                    <option value="">Tipo de dano...</option>
+                    @foreach($damageTypeLabels as $value => $label)
+                        <option value="{{ $value }}">{{ $label }}</option>
+                    @endforeach
+                </select>
+                @error('damageType') <p class="text-[11px] text-red-400">{{ $message }}</p> @enderror
 
                 <textarea wire:model="description" rows="4" placeholder="Descreva o dano encontrado..."
                           @disabled($this->isLocked)

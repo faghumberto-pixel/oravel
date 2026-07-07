@@ -52,6 +52,19 @@ class EquipmentDamageResource extends BaseResource
                         EquipmentDamage::SEVERITY_MODERADA => 'warning',
                         default => 'success',
                     }),
+                Tables\Columns\TextColumn::make('damage_type')
+                    ->label('Tipo de Dano')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state) => match ($state) {
+                        EquipmentDamage::DAMAGE_TYPE_HIDRAULICO => 'Hidráulico',
+                        EquipmentDamage::DAMAGE_TYPE_ELETRICO => 'Elétrico',
+                        EquipmentDamage::DAMAGE_TYPE_PNEU_ESTEIRA => 'Pneu/Esteira',
+                        EquipmentDamage::DAMAGE_TYPE_MOTOR => 'Motor',
+                        EquipmentDamage::DAMAGE_TYPE_ESTRUTURAL => 'Estrutural',
+                        EquipmentDamage::DAMAGE_TYPE_OUTRO => 'Outro',
+                        default => 'Não classificado',
+                    })
+                    ->color('gray'),
                 Tables\Columns\IconColumn::make('requires_replacement')
                     ->label('Troca?')
                     ->boolean(),
@@ -80,6 +93,16 @@ class EquipmentDamageResource extends BaseResource
                         EquipmentDamage::SEVERITY_LEVE => 'Leve',
                         EquipmentDamage::SEVERITY_MODERADA => 'Moderada',
                         EquipmentDamage::SEVERITY_GRAVE => 'Grave / Perda Total',
+                    ]),
+                Tables\Filters\SelectFilter::make('damage_type')
+                    ->label('Tipo de Dano')
+                    ->options([
+                        EquipmentDamage::DAMAGE_TYPE_HIDRAULICO => 'Hidráulico',
+                        EquipmentDamage::DAMAGE_TYPE_ELETRICO => 'Elétrico',
+                        EquipmentDamage::DAMAGE_TYPE_PNEU_ESTEIRA => 'Pneu/Esteira',
+                        EquipmentDamage::DAMAGE_TYPE_MOTOR => 'Motor',
+                        EquipmentDamage::DAMAGE_TYPE_ESTRUTURAL => 'Estrutural',
+                        EquipmentDamage::DAMAGE_TYPE_OUTRO => 'Outro',
                     ]),
             ])
             ->defaultSort('created_at', 'desc')
