@@ -1,0 +1,116 @@
+<?php
+
+namespace App\Filament\Pages;
+
+use App\Models\CrmLead;
+use App\Support\Tenancy;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Collection;
+
+class CrmFunil extends Page
+{
+    protected static ?string $navigationIcon = 'heroicon-o-funnel';
+
+    protected static ?string $navigationLabel = 'Funil de Vendas';
+
+    protected static ?string $title = 'Funil de Vendas';
+
+    protected static ?string $navigationGroup = 'Comercial';
+
+    protected static string $view = 'filament.pages.crm-funil';
+
+    public string $search = '';
+
+    public static function canAccess(): bool
+    {
+        return (bool) auth()->user()?->can('viewAny', CrmLead::class);
+    }
+
+    public function getMaxContentWidth(): MaxWidth
+    {
+        return MaxWidth::Full;
+    }
+
+    public function getStages(): array
+    {
+        return CrmLead::stageLabels();
+    }
+
+    /**
+     * Leads do tenant agrupados por estagio. Nao-admin ve so os leads
+     * atribuidos a ele mesmo -- mesmo criterio usado no CrmAgendaWidget.
+     */
+    public function getLeadsByStage(): Collection
+    {
+        $tenant = Tenancy::current();
+        if (! $tenant) {
+            return collect();
+        }
+
+        $user = auth()->user();
+
+        $query = CrmLead::where('tenant_id', $tenant->id)
+            ->with('assignedUser');
+
+        if (! $user->isAdmin()) {
+            $query->where('assigned_user_id', $user->id);
+        }
+
+        if (trim($this->search) !== '') {
+            $term = '%'.trim($this->search).'%';
+            $query->where(function ($q) use ($term) {
+                $q->where('name', 'ilike', $term)
+                    ->orWhere('company_name', 'ilike', $term);
+            });
+        }
+
+        $leads = $query->orderByDesc('created_at')->get();
+
+        return $leads->groupBy(fn (CrmLead $lead) => array_key_exists($lead->stage, $this->getStages()) ? $lead->stage : CrmLead::STAGE_NOVO);
+    }
+
+    public function getStageValue(Collection $leads): float
+    {
+        return (float) $leads->sum('estimated_value');
+    }
+
+    /**
+     * Chamado pelo drag-and-drop das colunas. Nao-admin so pode mover leads
+     * atribuidos a ele mesmo. Mover para "perdido" exige o motivo (coletado
+     * via prompt() no JS antes de chamar isso).
+     */
+    public function moveStage(string $leadId, string $newStage, ?string $lostReason = null): void
+    {
+        if (! array_key_exists($newStage, $this->getStages())) {
+            return;
+        }
+
+        $tenant = Tenancy::current();
+        $user = auth()->user();
+
+        $lead = CrmLead::where('tenant_id', $tenant?->id)->find($leadId);
+
+        if (! $lead) {
+            return;
+        }
+
+        if (! $user->isAdmin() && $lead->assigned_user_id !== $user->id) {
+            return;
+        }
+
+        if ($newStage === CrmLead::STAGE_PERDIDO && trim((string) $lostReason) === '') {
+            Notification::make()->title('Informe o motivo da perda.')->danger()->send();
+
+            return;
+        }
+
+        $lead->update([
+            'stage' => $newStage,
+            'lost_reason' => $newStage === CrmLead::STAGE_PERDIDO ? $lostReason : $lead->lost_reason,
+        ]);
+
+        Notification::make()->title('Lead movido para '.$this->getStages()[$newStage].'.')->success()->send();
+    }
+}

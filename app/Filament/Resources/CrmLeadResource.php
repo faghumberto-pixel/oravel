@@ -84,7 +84,7 @@ class CrmLeadResource extends BaseResource
                 ]),
 
             Forms\Components\Section::make('Endereço')
-                ->description('Usado no mapa de clientes/leads.')
+                ->description('Latitude/Longitude são usadas no Mapa de Leads. Copie do Google Maps (clique com o botão direito no local → clique nas coordenadas).')
                 ->columns(3)
                 ->collapsible()
                 ->schema([
@@ -92,6 +92,8 @@ class CrmLeadResource extends BaseResource
                     Forms\Components\TextInput::make('cep')->label('CEP'),
                     Forms\Components\TextInput::make('city')->label('Cidade'),
                     Forms\Components\TextInput::make('uf')->label('UF')->maxLength(2),
+                    Forms\Components\TextInput::make('latitude')->label('Latitude')->numeric(),
+                    Forms\Components\TextInput::make('longitude')->label('Longitude')->numeric(),
                 ]),
         ]);
     }
