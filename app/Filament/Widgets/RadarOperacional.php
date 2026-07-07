@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\AssetResource;
 use App\Models\Asset;
 use App\Models\MaintenanceOrder;
 use App\Support\Tenancy;
@@ -44,25 +45,29 @@ class RadarOperacional extends BaseWidget
                 ->description('Prontos para locação')
                 ->descriptionIcon('heroicon-o-check-circle')
                 ->color('success')
-                ->chart($atividade),
+                ->chart($atividade)
+                ->url($this->assetStatusUrl('disponivel')),
 
             Stat::make('Locado', $locado)
                 ->description('Em contrato com cliente')
                 ->descriptionIcon('heroicon-o-building-office-2')
                 ->color('info')
-                ->chart($atividade),
+                ->chart($atividade)
+                ->url($this->assetStatusUrl('locado')),
 
             Stat::make('Em Operação', $operando)
                 ->description('Equipamentos em uso')
                 ->descriptionIcon('heroicon-o-bolt')
                 ->color('warning')
-                ->chart($atividade),
+                ->chart($atividade)
+                ->url($this->assetStatusUrl('operando')),
 
             Stat::make('Em Manutenção', $emManutencao)
                 ->description('Parados para manutenção')
                 ->descriptionIcon('heroicon-o-wrench-screwdriver')
                 ->color('danger')
-                ->chart($atividade),
+                ->chart($atividade)
+                ->url($this->assetStatusUrl('manutencao')),
         ];
     }
 
@@ -86,5 +91,12 @@ class RadarOperacional extends BaseWidget
         }
 
         return $series;
+    }
+
+    private function assetStatusUrl(string $status): string
+    {
+        return AssetResource::getUrl('index', [
+            'tableFilters' => ['status' => ['value' => $status]],
+        ]);
     }
 }

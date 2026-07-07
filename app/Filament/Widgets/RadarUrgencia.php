@@ -2,6 +2,8 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\AssetResource;
+use App\Filament\Resources\MaintenanceOrderResource;
 use App\Models\Asset;
 use App\Models\MaintenanceOrder;
 use App\Support\Tenancy;
@@ -42,7 +44,10 @@ class RadarUrgencia extends BaseWidget
                     ->count()
             )
                 ->description('O.S. abertas há mais de 3 dias')
-                ->color('danger'),
+                ->color('danger')
+                ->url(MaintenanceOrderResource::getUrl('index', [
+                    'tableFilters' => ['atrasada' => ['isActive' => true]],
+                ])),
 
             Stat::make('Preventiva Próxima',
                 MaintenanceOrder::where('maintenance_type', 'Preventiva')
@@ -50,13 +55,22 @@ class RadarUrgencia extends BaseWidget
                     ->count()
             )
                 ->description('Preventivas ainda não iniciadas')
-                ->color('warning'),
+                ->color('warning')
+                ->url(MaintenanceOrderResource::getUrl('index', [
+                    'tableFilters' => [
+                        'maintenance_type' => ['value' => 'Preventiva'],
+                        'status' => ['values' => ['Aberto']],
+                    ],
+                ])),
 
             Stat::make('Disponível no Pátio',
                 Asset::where('status', 'disponivel')->count()
             )
                 ->description('Pronto para despacho')
-                ->color('success'),
+                ->color('success')
+                ->url(AssetResource::getUrl('index', [
+                    'tableFilters' => ['status' => ['value' => 'disponivel']],
+                ])),
         ];
     }
 }

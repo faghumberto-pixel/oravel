@@ -31,7 +31,13 @@ trait HasPrintAction
                     ->filter(fn ($label, $name) => filled($this->tableFilters[$name] ?? null))
                     ->map(function ($label, $name) {
                         $value = $this->tableFilters[$name];
-                        $raw = is_array($value) ? ($value['value'] ?? $value['isActive'] ?? reset($value)) : $value;
+
+                        if (is_array($value) && array_key_exists('values', $value)) {
+                            // Filtro multiple(): 'values' é um array de opções selecionadas.
+                            $raw = implode(', ', array_map('strval', (array) $value['values']));
+                        } else {
+                            $raw = is_array($value) ? ($value['value'] ?? $value['isActive'] ?? reset($value)) : $value;
+                        }
 
                         if (is_bool($raw)) {
                             return "{$label}: ".($raw ? 'Sim' : 'Não');

@@ -273,6 +273,7 @@ class MaintenanceOrderResource extends Resource
         ])->filters([
             Tables\Filters\SelectFilter::make('status')
                 ->label('Status')
+                ->multiple()
                 ->options([
                     'Aberto' => 'Aberto',
                     'Pendente' => 'Pendente',
@@ -290,6 +291,15 @@ class MaintenanceOrderResource extends Resource
             Tables\Filters\SelectFilter::make('asset.checklist_group_id')
                 ->label('Grupo')
                 ->relationship('asset.checklistGroup', 'name'),
+            Tables\Filters\SelectFilter::make('technician_id')
+                ->label('Técnico')
+                ->relationship('technician', 'name'),
+            Tables\Filters\Filter::make('atrasada')
+                ->label('Em atraso (+3 dias aberta)')
+                ->toggle()
+                ->query(fn (Builder $query) => $query
+                    ->whereIn('status', ['Aberto', 'Pendente', 'Em Andamento'])
+                    ->where('created_at', '<', now()->subDays(3))),
 
         ])->actions([
             Tables\Actions\ViewAction::make(),
