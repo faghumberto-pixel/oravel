@@ -130,12 +130,21 @@ class MaintenanceOrderResource extends Resource
                             );
                         }),
 
-                    Forms\Components\Select::make('criticality_level_id')
-                        ->label('Matriz ABC')
-                        ->relationship(name: 'criticalityLevel', titleAttribute: 'name')
-                        ->preload()
-                        ->searchable()
-                        ->required(),
+                    // criticality_level_id (rotulado "Matriz ABC" mas era outra coisa --
+                    // tabela criticality_levels solta, sem tela de cadastro, e o unico
+                    // grafico que tentava agregar isso tinha um bug de comparacao de
+                    // tipo). A Matriz ABC de verdade vive em Asset::abcMatrix(), que ja
+                    // tem cadastro proprio (AbcMatrixResource) -- aqui so exibimos ela.
+                    Forms\Components\Placeholder::make('matriz_abc_ativo')
+                        ->label('Matriz ABC do Ativo')
+                        ->content(function (Get $get) {
+                            $asset = $get('asset_id') ? Asset::find($get('asset_id')) : null;
+                            $nivel = $asset?->abcMatrix?->nivel;
+
+                            return $nivel
+                                ? "Nível {$nivel}"
+                                : new HtmlString('<span class="text-gray-400">Ativo sem Matriz ABC cadastrada.</span>');
+                        }),
 
                     Forms\Components\TextInput::make('service_type')->label('Natureza do Serviço')->disabled()->dehydrated(true),
                     Forms\Components\Grid::make(3)->schema([
@@ -287,7 +296,13 @@ class MaintenanceOrderResource extends Resource
                     'Corretiva' => 'Corretiva',
                     'Preventiva' => 'Preventiva',
                 ]),
-            Tables\Filters\SelectFilter::make('criticality_level_id')->label('Matriz ABC')->relationship('criticalityLevel', 'name'),
+            Tables\Filters\SelectFilter::make('matriz_abc')
+                ->label('Matriz ABC')
+                ->options(['A' => 'A', 'B' => 'B', 'C' => 'C'])
+                ->query(fn (Builder $query, array $data) => $query->when(
+                    $data['value'] ?? null,
+                    fn (Builder $q, $nivel) => $q->whereHas('asset.abcMatrix', fn (Builder $q2) => $q2->where('nivel', $nivel))
+                )),
             Tables\Filters\SelectFilter::make('asset.checklist_group_id')
                 ->label('Grupo')
                 ->relationship('asset.checklistGroup', 'name'),
