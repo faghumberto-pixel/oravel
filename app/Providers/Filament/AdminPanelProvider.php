@@ -38,6 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->brandLogo(fn () => view('filament.brand-logo'))
             ->brandLogoHeight('1.75rem')
+            ->favicon(asset('favicon.png'))
             ->navigationGroups([
                 NavigationGroup::make('Manutenção'),
                 NavigationGroup::make('Logística'),

@@ -32,6 +32,7 @@ class CentralPanelProvider extends PanelProvider
             ->path('central') 
             ->login() 
             ->colors(['primary' => Color::Blue])
+            ->favicon(asset('favicon.png'))
             ->resources([
                 PlanResource::class,
                 RoleResource::class,
