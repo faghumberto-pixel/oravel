@@ -16,6 +16,7 @@ use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 
 class AssetResource extends Resource
@@ -178,6 +179,7 @@ class AssetResource extends Resource
                                                 Asset::STATUS_LOCADO => 'Locado',
                                                 Asset::STATUS_MANUTENCAO => 'Em Manutenção',
                                                 Asset::STATUS_OPERANDO => 'Em Operação',
+                                                Asset::STATUS_AGUARDANDO_TRIAGEM => 'Aguardando Triagem',
                                             ])
                                             ->default(Asset::STATUS_DISPONIVEL)
                                             ->required(),
@@ -386,6 +388,7 @@ class AssetResource extends Resource
                         'disponivel' => 'success',
                         'manutencao' => 'danger',
                         'locado' => 'warning',
+                        'aguardando_triagem' => 'gray',
                         default => 'info',
                     }),
             ])
@@ -397,6 +400,7 @@ class AssetResource extends Resource
                         'locado' => 'Locado',
                         'manutencao' => 'Em Manutenção',
                         'operando' => 'Em Operação',
+                        'aguardando_triagem' => 'Aguardando Triagem',
                     ]),
                 Tables\Filters\SelectFilter::make('asset_category')
                     ->label('Categoria')
@@ -408,6 +412,32 @@ class AssetResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('alterar_status_em_massa')
+                        ->label('Alterar Status em Massa')
+                        ->icon('heroicon-o-arrow-path')
+                        ->color('warning')
+                        ->form([
+                            Forms\Components\Select::make('status')
+                                ->label('Novo Status')
+                                ->options([
+                                    Asset::STATUS_DISPONIVEL => 'Disponível',
+                                    Asset::STATUS_LOCADO => 'Locado',
+                                    Asset::STATUS_MANUTENCAO => 'Em Manutenção',
+                                    Asset::STATUS_OPERANDO => 'Em Operação',
+                                    Asset::STATUS_AGUARDANDO_TRIAGEM => 'Aguardando Triagem',
+                                ])
+                                ->required(),
+                        ])
+                        ->action(function (Collection $records, array $data): void {
+                            $records->each->update(['status' => $data['status']]);
+                        })
+                        ->deselectRecordsAfterCompletion()
+                        ->requiresConfirmation(),
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ]);
     }
 

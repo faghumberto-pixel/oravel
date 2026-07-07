@@ -101,6 +101,14 @@ class SolicitacaoLocacaoResource extends Resource
                         ->preload(),
                 ]),
 
+                Forms\Components\Select::make('assets')
+                    ->label('Combo / Lote de Ativos (opcional)')
+                    ->helperText('Use quando a solicitação envolve mais de um equipamento simultaneamente (ex: gerador + mini-carregadeira, ou um lote de máquinas idênticas).')
+                    ->relationship('assets', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+
                 Forms\Components\Grid::make(2)->schema([
                     Forms\Components\DatePicker::make('data_saida_prevista')->required(),
                     Forms\Components\TextInput::make('purpose')->label('Finalidade / Obra'),
@@ -122,6 +130,25 @@ class SolicitacaoLocacaoResource extends Resource
                     'reserva_manutencao' => 'danger',
                     'contrato_fechado' => 'success',
                     'cancelado' => 'gray',
+                }),
+            Tables\Columns\TextColumn::make('assets_count')
+                ->label('Combo')
+                ->counts('assets')
+                ->formatStateUsing(fn (int $state) => $state > 1 ? "{$state} ativos" : ($state === 1 ? '1 ativo' : '—'))
+                ->badge()
+                ->color(fn (int $state) => $state > 1 ? 'info' : 'gray'),
+            Tables\Columns\IconColumn::make('kit_completo')
+                ->label('Kit Completo')
+                ->getStateUsing(fn (SolicitacaoLocacao $record) => $record->assets->count() > 1 ? $record->isKitComplete() : null)
+                ->icon(fn (?bool $state) => match ($state) {
+                    true => 'heroicon-o-check-badge',
+                    false => 'heroicon-o-clock',
+                    default => 'heroicon-o-minus',
+                })
+                ->color(fn (?bool $state) => match ($state) {
+                    true => 'success',
+                    false => 'warning',
+                    default => 'gray',
                 }),
             Tables\Columns\TextColumn::make('data_saida_prevista')->label('Saída')->date('d/m/Y'),
         ])->filters([

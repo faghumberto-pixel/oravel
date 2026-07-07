@@ -13,6 +13,7 @@
                     $allRecordsGrouped = $this->getRecords();
                     $totalFiltrado = $allRecordsGrouped->flatten()->count();
                     $totalGeral = $this->getTotalOrdersCount();
+                    $urgentAssetIds = $this->getUrgentAssetIds();
                 @endphp
                 <div class="flex gap-6 border-r border-gray-800 pr-8">
                     <div class="text-right">
@@ -184,8 +185,15 @@
                                 $elapsedSeconds = ($record->total_time_seconds ?? 0) + ($record->last_timer_start ? now()->diffInSeconds($record->last_timer_start) : 0);
                                 $elapsedLabel = sprintf('%02dh %02dm', intdiv($elapsedSeconds, 3600), intdiv($elapsedSeconds % 3600, 60));
                                 $partNames = $record->parts?->pluck('name')->filter()->implode(', ');
+                                $isUrgent = $record->asset_id && in_array($record->asset_id, $urgentAssetIds, true);
                             @endphp
-                            <div wire:key="kanban-card-{{ $record->id }}" class="bg-gray-800 p-4 rounded-lg border-l-4 {{ $borderColor }} border-t border-r border-b border-gray-700 hover:border-primary-500 transition-all shadow-lg hover:shadow-primary-900/10 group">
+                            <div wire:key="kanban-card-{{ $record->id }}" class="bg-gray-800 p-4 rounded-lg border-l-4 {{ $isUrgent ? 'border-red-500 ring-2 ring-red-500/50' : $borderColor }} border-t border-r border-b border-gray-700 hover:border-primary-500 transition-all shadow-lg hover:shadow-primary-900/10 group">
+                                @if($isUrgent)
+                                    <div class="flex items-center gap-1.5 mb-2 -mt-1 -mx-1 px-2 py-1 rounded bg-red-500/15 border border-red-500/40">
+                                        <x-heroicon-s-exclamation-triangle class="w-3.5 h-3.5 text-red-400 shrink-0" />
+                                        <span class="text-[9px] font-black uppercase tracking-wider text-red-400">Locação Urgente Aguardando Este Ativo</span>
+                                    </div>
+                                @endif
                                 <div class="flex justify-between items-start mb-2 gap-2">
                                     <span class="text-xs font-mono font-bold text-primary-400 group-hover:text-primary-300 transition-colors truncate max-w-[140px]">
                                         #{{ $record->os_number ?? substr($record->id, 0, 8) }}

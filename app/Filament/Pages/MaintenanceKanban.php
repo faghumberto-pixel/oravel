@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Filament\Attributes\BelongsToFeature;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenanceStatusHistory;
+use App\Models\SolicitacaoLocacao;
 use App\Models\User;
 use App\Support\Tenancy;
 use Filament\Pages\Page;
@@ -232,6 +233,26 @@ class MaintenanceKanban extends Page
     public function getActiveFilterCount(): int
     {
         return (! empty($this->technicianId) ? 1 : 0) + count($this->hiddenStatuses);
+    }
+
+    /**
+     * Ativos com Solicitacao de Locacao pendente marcada como "Reservar para
+     * Manutencao (Urgente)" (status_comercial = reserva_manutencao) -- o
+     * Kanban destaca o card daquele Ativo pra avisar a oficina que existe
+     * demanda comercial urgente esperando ele sair da manutencao.
+     */
+    public function getUrgentAssetIds(): array
+    {
+        $tenant = Tenancy::current();
+        if (! $tenant) {
+            return [];
+        }
+
+        return SolicitacaoLocacao::where('tenant_id', $tenant->id)
+            ->where('status_comercial', 'reserva_manutencao')
+            ->whereNotNull('asset_id')
+            ->pluck('asset_id')
+            ->all();
     }
 
     public function getPrintUrl(): string

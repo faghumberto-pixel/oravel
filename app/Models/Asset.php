@@ -35,6 +35,8 @@ class Asset extends Model
 
     public const STATUS_OPERANDO = 'operando';
 
+    public const STATUS_AGUARDANDO_TRIAGEM = 'aguardando_triagem';
+
     protected static ?string $saasFeatureKey = 'tabela_assets';
 
     protected static ?string $saasPermissionSlug = 'ativo';

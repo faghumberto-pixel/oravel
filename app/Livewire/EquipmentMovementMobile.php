@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Asset;
 use App\Models\EquipmentMovement;
 use App\Models\EquipmentMovementItem;
 use App\Models\MaintenanceOrder;
@@ -62,6 +63,16 @@ class EquipmentMovementMobile extends Component
                 'type' => $type,
                 'status' => EquipmentMovement::STATUS_AGUARDANDO_VISTORIA,
             ]);
+
+            // Ativo "acabou de retornar de obra" -- fica fora do pool
+            // disponivel ate o patio concluir o checklist de retorno
+            // (ver finalize()). So aqui, nao no Observer generico: os
+            // movements criados internamente pelo fluxo de Troca de
+            // Equipamento (EquipmentReplacement::startLogisticsMovements())
+            // gerenciam o status do Ativo com suas proprias regras.
+            if ($type === EquipmentMovement::TYPE_DESMOBILIZACAO) {
+                $maintenanceOrder->asset?->update(['status' => Asset::STATUS_AGUARDANDO_TRIAGEM]);
+            }
         }
 
         $this->maintenanceOrder = $maintenanceOrder;
@@ -201,6 +212,13 @@ class EquipmentMovementMobile extends Component
             'status' => EquipmentMovement::STATUS_CONCLUIDO,
             'completed_at' => now(),
         ]);
+
+        // Patio confirmou o checklist de retorno (revisao de retorno) --
+        // ativo sai de "aguardando triagem" e volta pro pool disponivel pro
+        // comercial ver na hora, sem precisar de edicao manual.
+        if ($this->equipmentMovement->type === EquipmentMovement::TYPE_DESMOBILIZACAO) {
+            $this->maintenanceOrder->asset?->update(['status' => Asset::STATUS_DISPONIVEL]);
+        }
 
         session()->flash('success', 'Movimentação finalizada com sucesso.');
 

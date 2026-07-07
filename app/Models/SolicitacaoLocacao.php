@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class SolicitacaoLocacao extends Model
 {
@@ -92,5 +93,30 @@ class SolicitacaoLocacao extends Model
     public function cancellationReason(): BelongsTo
     {
         return $this->belongsTo(CancellationReason::class, 'cancellation_reason_id');
+    }
+
+    /**
+     * Ativos do "combo" desta solicitacao -- aditivo ao asset_id legado
+     * (que continua servindo pra solicitacao de um unico equipamento
+     * especifico). Uma solicitacao "combo"/lote usa so este relacionamento.
+     */
+    public function assets(): BelongsToMany
+    {
+        return $this->belongsToMany(Asset::class, 'solicitacao_locacao_assets');
+    }
+
+    /**
+     * Todo o combo esta pronto pra embarque simultaneo? (todos os ativos
+     * vinculados estao com status Disponivel agora).
+     */
+    public function isKitComplete(): bool
+    {
+        $assets = $this->assets;
+
+        if ($assets->isEmpty()) {
+            return false;
+        }
+
+        return $assets->every(fn (Asset $asset) => $asset->status === Asset::STATUS_DISPONIVEL);
     }
 }
