@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Validation\ValidationException;
 
 class SolicitacaoLocacao extends Model
 {
@@ -51,6 +52,54 @@ class SolicitacaoLocacao extends Model
         return [
             'data_saida_prevista' => 'date',
         ];
+    }
+
+    /**
+     * Duas travas de negocio, validadas aqui (nao so no form do Resource)
+     * pra valerem em qualquer via de escrita:
+     *
+     * 1. So pode existir solicitacao pra cliente com contrato ja fechado
+     *    (contract_id preenchido) OU como reserva com prazo determinado
+     *    (data_saida_prevista preenchida) -- cliente potencial sem contrato
+     *    nao pode reservar por prazo indeterminado.
+     * 2. So pode fechar o contrato (status_comercial=contrato_fechado) se
+     *    o(s) ativo(s) envolvido(s) estiver(em) Disponivel -- nao deixa
+     *    "liberar" um equipamento que ainda esta em manutencao/operando.
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (SolicitacaoLocacao $solicitacao) {
+            if (blank($solicitacao->contract_id) && blank($solicitacao->data_saida_prevista)) {
+                throw ValidationException::withMessages([
+                    'data_saida_prevista' => 'Informe o prazo da reserva (cliente ainda sem contrato fechado) ou vincule um contrato existente.',
+                ]);
+            }
+
+            if ($solicitacao->isDirty('status_comercial') && $solicitacao->status_comercial === 'contrato_fechado') {
+                $unavailable = collect();
+
+                if ($solicitacao->asset_id) {
+                    $asset = Asset::find($solicitacao->asset_id);
+                    if ($asset && $asset->status !== Asset::STATUS_DISPONIVEL) {
+                        $unavailable->push($asset->name);
+                    }
+                }
+
+                if ($solicitacao->exists) {
+                    foreach ($solicitacao->assets as $asset) {
+                        if ($asset->status !== Asset::STATUS_DISPONIVEL) {
+                            $unavailable->push($asset->name);
+                        }
+                    }
+                }
+
+                if ($unavailable->isNotEmpty()) {
+                    throw ValidationException::withMessages([
+                        'status_comercial' => 'Não é possível fechar o contrato: '.$unavailable->unique()->implode(', ').' ainda não está disponível (verifique o status no pátio).',
+                    ]);
+                }
+            }
+        });
     }
 
     // --- RELACIONAMENTOS ---

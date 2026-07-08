@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -29,6 +30,15 @@ class EquipmentMovement extends Model implements HasMedia
 
     public const STATUS_EM_ANDAMENTO = 'em_andamento';
 
+    /**
+     * Operador completou 100% do checklist, mas o patio ainda nao deu o OK
+     * tecnico -- equipamento fica travado (QR invalido) ate a aprovacao.
+     * So usado no fluxo de despacho de locacao (solicitacao_locacao_id);
+     * a mobilizacao/desmobilizacao de OS de manutencao continua indo direto
+     * pra STATUS_CONCLUIDO, sem essa segunda etapa.
+     */
+    public const STATUS_AGUARDANDO_APROVACAO = 'aguardando_aprovacao';
+
     public const STATUS_CONCLUIDO = 'concluido';
 
     protected static ?string $saasFeatureKey = 'tabela_equipment_movements';
@@ -40,6 +50,7 @@ class EquipmentMovement extends Model implements HasMedia
     protected $fillable = [
         'tenant_id',
         'maintenance_order_id',
+        'solicitacao_locacao_id',
         'asset_id',
         'type',
         'status',
@@ -49,6 +60,10 @@ class EquipmentMovement extends Model implements HasMedia
         'notes',
         'started_at',
         'completed_at',
+        'approved_by_user_id',
+        'approved_at',
+        'rejected_reason',
+        'qr_token',
         'custo_transporte',
         'client_signature',
     ];
@@ -59,8 +74,16 @@ class EquipmentMovement extends Model implements HasMedia
         'vistoria_geral_captured_at' => 'datetime',
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
+        'approved_at' => 'datetime',
         'custo_transporte' => 'decimal:2',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (EquipmentMovement $movement) {
+            $movement->qr_token ??= (string) Str::uuid();
+        });
+    }
 
     /**
      * Recalcula custo_transporte a partir dos FreightRecord vinculados
@@ -88,9 +111,34 @@ class EquipmentMovement extends Model implements HasMedia
         $this->addMediaCollection('vistoria_geral')->singleFile();
     }
 
+    /**
+     * % de itens marcados -- usado tanto pelo app do operador (trava o
+     * "Finalizar" abaixo de 100%) quanto pela tela de auditoria do gestor.
+     */
+    public function progressPercent(): int
+    {
+        $items = $this->items;
+
+        if ($items->isEmpty()) {
+            return 0;
+        }
+
+        return (int) round($items->where('is_checked', true)->count() / $items->count() * 100);
+    }
+
     public function maintenanceOrder(): BelongsTo
     {
         return $this->belongsTo(MaintenanceOrder::class);
+    }
+
+    public function solicitacaoLocacao(): BelongsTo
+    {
+        return $this->belongsTo(SolicitacaoLocacao::class);
+    }
+
+    public function approvedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by_user_id');
     }
 
     public function asset(): BelongsTo

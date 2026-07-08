@@ -16,9 +16,11 @@ use App\Livewire\EquipmentDamageMobile;
 use App\Livewire\EquipmentMovementMobile;
 use App\Livewire\MaintenanceChecklistMobile;
 use App\Livewire\PreventiveMaintenanceMobile;
+use App\Livewire\RentalDispatchChecklistMobile;
 use App\Models\Asset;
 use App\Models\ChatMessage;
 use App\Models\ChatRoom;
+use App\Models\EquipmentMovement;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
 use App\Models\PreventiveMaintenanceExecution;
@@ -28,6 +30,19 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 Route::redirect('/admin/innova/categories', '/admin/innova/bill-categories');
 Route::get('/', fn () => redirect()->to('/admin'));
+
+// Publica, sem auth de proposito -- e' a portaria/guarita escaneando o QR
+// no celular dela, nao necessariamente logada no sistema.
+Route::get('/portaria/verificar/{token}', function (string $token) {
+    $movement = EquipmentMovement::where('qr_token', $token)->first();
+
+    $liberado = $movement && $movement->status === EquipmentMovement::STATUS_CONCLUIDO;
+
+    return view('portaria.verificar', [
+        'movement' => $movement,
+        'liberado' => $liberado,
+    ]);
+})->name('portaria.verificar');
 
 Route::get('/admin/app/maintenance-report', [MaintenanceReportController::class, 'show'])
     ->name('maintenance.report')
@@ -82,6 +97,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/maintenance-orders/{maintenanceOrder}/movimentacao/{type}', EquipmentMovementMobile::class)
         ->where('type', 'mobilizacao|desmobilizacao')
         ->name('maintenance-orders.equipment-movement-mobile');
+
+    Route::get('/admin/solicitacoes-locacao/{solicitacaoLocacao}/despacho', RentalDispatchChecklistMobile::class)
+        ->name('solicitacoes-locacao.despacho-mobile');
 
     // Versao pro campo (celular do tecnico) do Plano de Manutencao Preventiva
     // -- checkbox simples por item do template do Grupo do Ativo.

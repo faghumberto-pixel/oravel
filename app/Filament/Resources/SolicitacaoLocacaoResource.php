@@ -64,6 +64,7 @@ class SolicitacaoLocacaoResource extends Resource
                             ->pluck('contract_number', 'id')
                         )
                         ->searchable()
+                        ->live()
                         ->visible(fn (Forms\Get $get) => filled($get('customer_id'))),
 
                     Forms\Components\Select::make('status_comercial')
@@ -110,7 +111,12 @@ class SolicitacaoLocacaoResource extends Resource
                     ->preload(),
 
                 Forms\Components\Grid::make(2)->schema([
-                    Forms\Components\DatePicker::make('data_saida_prevista')->required(),
+                    Forms\Components\DatePicker::make('data_saida_prevista')
+                        ->label(fn (Forms\Get $get) => filled($get('contract_id')) ? 'Data de Saída' : 'Prazo da Reserva')
+                        ->helperText(fn (Forms\Get $get) => filled($get('contract_id'))
+                            ? null
+                            : 'Cliente ainda sem contrato fechado: informe até quando a reserva vale.')
+                        ->required(fn (Forms\Get $get) => blank($get('contract_id'))),
                     Forms\Components\TextInput::make('purpose')->label('Finalidade / Obra'),
                 ]),
             ]),
