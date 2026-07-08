@@ -49,13 +49,14 @@ class MaintenanceOrder extends Model implements HasMedia
         'tenant_id', 'started_at', 'finished_at', 'rescheduled_to', 'total_time_seconds',
         'last_timer_start', 'reschedule_reason', 'criticality_level_id', 'is_rework',
         'parent_os_id', 'labor_cost', 'material_cost', 'logistics_cost', 'total_order_cost',
-        'horimetro_entry', 'fuel_level',
+        'horimetro_entry', 'fuel_level', 'scheduled_at',
     ];
 
     protected $casts = [
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
         'last_timer_start' => 'datetime',
+        'scheduled_at' => 'datetime',
         'is_rework' => 'boolean',
         'total_time_seconds' => 'integer',
         'horimetro_entry' => 'decimal:2',

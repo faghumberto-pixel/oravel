@@ -152,9 +152,10 @@ class MaintenanceOrderResource extends Resource
                         Forms\Components\TextInput::make('horimetro_entry')->label('Horímetro Atual')->numeric()->default(0)->required()->prefixIcon('heroicon-m-clock'),
                         Forms\Components\Select::make('fuel_level')->label('Nível Combustível')->options(['0' => 'Reserva', '25' => '1/4', '50' => '1/2', '75' => '3/4', '100' => 'Cheio'])->native(false),
                     ]),
-                    Forms\Components\Grid::make(2)->schema([
+                    Forms\Components\Grid::make(3)->schema([
                         Forms\Components\Select::make('technician_id')->label('Responsável Técnico')->options(fn () => User::where('tenant_id', Tenancy::current()?->id)->pluck('name', 'id'))->required()->searchable(),
                         Forms\Components\Select::make('client_id')->label('Cliente')->relationship('client', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))->searchable(),
+                        Forms\Components\DateTimePicker::make('scheduled_at')->label('Agendado para')->helperText('Aparece na Agenda Técnica.'),
                     ]),
                     Forms\Components\Select::make('status')
                         ->label('Status da OS')->options(['Aberto' => 'Aberto', 'Pendente' => 'Pendente', 'Em Andamento' => 'Em Andamento', 'Concluída' => 'Concluída', 'Cancelada' => 'Cancelada'])
