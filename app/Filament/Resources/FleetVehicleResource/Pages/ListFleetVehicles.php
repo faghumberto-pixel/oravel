@@ -30,6 +30,6 @@ class ListFleetVehicles extends ListRecords
 
     public function getHeaderWidgetsColumns(): int|string|array
     {
-        return 4;
+        return 5;
     }
 }

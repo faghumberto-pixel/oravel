@@ -7,6 +7,7 @@ use App\Models\Concerns\HasSaaSMetadata;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class FleetVehicle extends Model
@@ -77,5 +78,28 @@ class FleetVehicle extends Model
     public function fuelRecords(): HasMany
     {
         return $this->hasMany(FleetFuelRecord::class);
+    }
+
+    public function drivers(): BelongsToMany
+    {
+        return $this->belongsToMany(FleetDriver::class, 'fleet_driver_vehicle');
+    }
+
+    public function equipmentMovements(): HasMany
+    {
+        return $this->hasMany(EquipmentMovement::class);
+    }
+
+    /**
+     * Fonte de verdade pra "disponivel agora" e' o proprio campo status,
+     * mantido automaticamente por EquipmentMovementObserver (disponivel <->
+     * em_rota) conforme movimentacoes atribuidas comecam/terminam.
+     * Checagem de conflito por JANELA de data/horario fica pra quando
+     * equipment_movements tiver um campo formal de "periodo necessario"
+     * (ver diagnostico do modulo de Logistica) -- nao inventado aqui.
+     */
+    public function isCurrentlyAvailable(): bool
+    {
+        return $this->status === self::STATUS_DISPONIVEL;
     }
 }

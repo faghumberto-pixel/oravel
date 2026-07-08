@@ -55,6 +55,95 @@
         </div>
     </section>
 
+    {{-- Veiculo & Motorista --}}
+    <section class="px-5 pb-4">
+        <div class="rounded-2xl bg-zinc-900 p-4">
+            <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">Veículo &amp; Motorista</h3>
+
+            <div class="mt-3 space-y-3">
+                <select wire:model.live="fleetVehicleId"
+                        class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 focus:ring-2 focus:ring-emerald-500">
+                    <option value="">Selecione o veículo...</option>
+                    @foreach($this->availableVehicles as $vehicle)
+                        <option value="{{ $vehicle->id }}">{{ $vehicle->placa }} — {{ $vehicle->modelo }}</option>
+                    @endforeach
+                </select>
+
+                @if($this->availableVehicles->isEmpty())
+                    <p class="text-[11px] text-amber-400">Nenhum veículo próprio disponível agora — considere acionar frete terceirizado.</p>
+                @endif
+
+                <select wire:model.live="fleetDriverId"
+                        class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 focus:ring-2 focus:ring-emerald-500">
+                    <option value="">Selecione o motorista...</option>
+                    @foreach($this->availableDrivers as $driver)
+                        <option value="{{ $driver->id }}">{{ $driver->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+    </section>
+
+    {{-- Rastreamento: checkpoints de localizacao --}}
+    <section class="px-5 pb-4">
+        <div class="rounded-2xl bg-zinc-900 p-4"
+             x-data="{
+                capturando: false,
+                registrar(tipo) {
+                    this.capturando = true;
+                    if (! navigator.geolocation) { this.capturando = false; return; }
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                            $wire.call('registrarCheckpoint', tipo, pos.coords.latitude, pos.coords.longitude)
+                                .then(() => { this.capturando = false; });
+                        },
+                        () => { this.capturando = false; },
+                        { timeout: 8000, maximumAge: 60000 }
+                    );
+                }
+             }">
+            <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">Rastreamento do Transporte</h3>
+
+            <div class="mt-3 grid grid-cols-1 gap-2">
+                @if($equipmentMovement->type === \App\Models\EquipmentMovement::TYPE_MOBILIZACAO)
+                    <button type="button" x-on:click="registrar('saida_patio')" :disabled="capturando"
+                            class="min-h-[2.75rem] rounded-xl border border-zinc-700 text-xs font-bold text-zinc-300 disabled:opacity-50">
+                        REGISTRAR SAÍDA DO PÁTIO
+                    </button>
+                    <button type="button" x-on:click="registrar('checkpoint')" :disabled="capturando"
+                            class="min-h-[2.75rem] rounded-xl border border-zinc-700 text-xs font-bold text-zinc-300 disabled:opacity-50">
+                        REGISTRAR CHECKPOINT
+                    </button>
+                    <button type="button" x-on:click="registrar('chegada_destino')" :disabled="capturando"
+                            class="min-h-[2.75rem] rounded-xl border border-zinc-700 text-xs font-bold text-zinc-300 disabled:opacity-50">
+                        REGISTRAR CHEGADA NO DESTINO
+                    </button>
+                @else
+                    <button type="button" x-on:click="registrar('saida_cliente')" :disabled="capturando"
+                            class="min-h-[2.75rem] rounded-xl border border-zinc-700 text-xs font-bold text-zinc-300 disabled:opacity-50">
+                        REGISTRAR SAÍDA DO CLIENTE
+                    </button>
+                    <button type="button" x-on:click="registrar('checkpoint')" :disabled="capturando"
+                            class="min-h-[2.75rem] rounded-xl border border-zinc-700 text-xs font-bold text-zinc-300 disabled:opacity-50">
+                        REGISTRAR CHECKPOINT
+                    </button>
+                    <button type="button" x-on:click="registrar('chegada_patio')" :disabled="capturando"
+                            class="min-h-[2.75rem] rounded-xl border border-zinc-700 text-xs font-bold text-zinc-300 disabled:opacity-50">
+                        REGISTRAR CHEGADA NO PÁTIO
+                    </button>
+                @endif
+            </div>
+
+            @if($this->locations->isNotEmpty())
+                <ul class="mt-3 space-y-1 text-[11px] text-zinc-500">
+                    @foreach($this->locations as $location)
+                        <li>{{ $location->captured_at->format('d/m H:i') }} — {{ str($location->checkpoint_type)->replace('_', ' ')->title() }}</li>
+                    @endforeach
+                </ul>
+            @endif
+        </div>
+    </section>
+
     {{-- Vistoria Geral (foto de capa) --}}
     <section class="px-5 pb-4">
         <div class="rounded-2xl bg-zinc-900 p-4">

@@ -19,6 +19,7 @@ class FleetVehicleStats extends BaseWidget
     {
         $total = FleetVehicle::count();
         $disponiveis = FleetVehicle::where('status', FleetVehicle::STATUS_DISPONIVEL)->count();
+        $emRota = FleetVehicle::where('status', FleetVehicle::STATUS_EM_ROTA)->count();
         $manutencao = FleetVehicle::where('status', FleetVehicle::STATUS_MANUTENCAO)->count();
 
         $documentosVencendo = FleetVehicleDocument::whereHas('fleetVehicle')
@@ -34,6 +35,10 @@ class FleetVehicleStats extends BaseWidget
             Stat::make('Disponíveis', $disponiveis)
                 ->description('Prontos para uso')
                 ->color('success'),
+
+            Stat::make('Em Rota', $emRota)
+                ->description('Em movimentação agora')
+                ->color($emRota > 0 ? 'info' : 'gray'),
 
             Stat::make('Em Manutenção', $manutencao)
                 ->description('Parados para reparo')

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
@@ -81,6 +82,16 @@ class Asset extends Model
     public function equipmentMovements(): HasMany
     {
         return $this->hasMany(EquipmentMovement::class);
+    }
+
+    /**
+     * Historico de idas e vindas do patio -- so' as movimentacoes com
+     * chegada formalmente confirmada (App\Filament\Pages\PatioChegadas),
+     * nao toda desmobilizacao concluida.
+     */
+    public function patioArrivals(): HasManyThrough
+    {
+        return $this->hasManyThrough(EquipmentPatioArrival::class, EquipmentMovement::class);
     }
 
     public function damages(): HasMany

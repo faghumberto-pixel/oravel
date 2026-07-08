@@ -101,6 +101,15 @@
             @endif
         </div>
 
+        {{-- Rota do transporte (checkpoints de rastreamento manual) --}}
+        @foreach($order->equipmentMovements as $movement)
+            @if($movement->locations->isNotEmpty())
+                <div class="rounded-xl border border-gray-800 bg-gray-900 p-2 shadow-xl">
+                    @livewire(\App\Filament\Widgets\EquipmentMovementRouteMapWidget::class, ['equipmentMovement' => $movement], key('rota-'.$movement->id))
+                </div>
+            @endif
+        @endforeach
+
         {{-- Diagnóstico + Validação Jurídica --}}
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div class="rounded-xl border border-gray-800 bg-gray-900 p-6 shadow-xl">

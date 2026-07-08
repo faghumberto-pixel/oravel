@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\FleetVehicleResource\Pages;
 use App\Filament\Resources\FleetVehicleResource\RelationManagers;
+use App\Models\EquipmentMovement;
 use App\Models\FleetVehicle;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -98,6 +99,39 @@ class FleetVehicleResource extends Resource
                         FleetVehicle::STATUS_MANUTENCAO => 'Em Manutenção',
                         default => 'Inativo',
                     }),
+                Tables\Columns\TextColumn::make('movimentacao_atual')
+                    ->label('Movimentação Atual')
+                    ->state(function (FleetVehicle $record) {
+                        if ($record->status !== FleetVehicle::STATUS_EM_ROTA) {
+                            return null;
+                        }
+
+                        $movement = $record->equipmentMovements()
+                            ->where('status', '!=', EquipmentMovement::STATUS_CONCLUIDO)
+                            ->latest('started_at')
+                            ->first();
+
+                        if (! $movement) {
+                            return null;
+                        }
+
+                        $tipo = $movement->type === EquipmentMovement::TYPE_MOBILIZACAO ? 'Mobilização' : 'Desmobilização';
+
+                        return "{$tipo} · {$movement->asset?->name}";
+                    })
+                    ->url(function (FleetVehicle $record) {
+                        if ($record->status !== FleetVehicle::STATUS_EM_ROTA) {
+                            return null;
+                        }
+
+                        $movement = $record->equipmentMovements()
+                            ->where('status', '!=', EquipmentMovement::STATUS_CONCLUIDO)
+                            ->latest('started_at')
+                            ->first();
+
+                        return $movement?->asset ? AssetResource::getUrl('edit', ['record' => $movement->asset]) : null;
+                    })
+                    ->placeholder('—'),
                 Tables\Columns\TextColumn::make('km_atual')->label('KM Atual')->numeric(decimalPlaces: 0)->sortable(),
                 Tables\Columns\TextColumn::make('alertas')
                     ->label('Alertas')

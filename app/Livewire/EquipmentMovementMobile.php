@@ -5,8 +5,12 @@ namespace App\Livewire;
 use App\Models\Asset;
 use App\Models\EquipmentMovement;
 use App\Models\EquipmentMovementItem;
+use App\Models\EquipmentMovementLocation;
+use App\Models\FleetDriver;
+use App\Models\FleetVehicle;
 use App\Models\MaintenanceOrder;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -36,6 +40,10 @@ class EquipmentMovementMobile extends Component
     public ?float $coverPhotoLat = null;
 
     public ?float $coverPhotoLng = null;
+
+    public ?string $fleetVehicleId = null;
+
+    public ?string $fleetDriverId = null;
 
     public function mount(MaintenanceOrder $maintenanceOrder, string $type): void
     {
@@ -76,6 +84,80 @@ class EquipmentMovementMobile extends Component
         }
 
         $this->maintenanceOrder = $maintenanceOrder;
+        $this->fleetVehicleId = $this->equipmentMovement->fleet_vehicle_id;
+        $this->fleetDriverId = $this->equipmentMovement->fleet_driver_id;
+    }
+
+    /**
+     * So veiculos DISPONIVEL entram na lista, mais o que ja estiver
+     * atribuido a esta movimentacao (senao ele some do <select> assim que
+     * vira em_rota por causa da propria atribuicao).
+     */
+    public function getAvailableVehiclesProperty()
+    {
+        return FleetVehicle::where(function ($query) {
+            $query->where('status', FleetVehicle::STATUS_DISPONIVEL);
+
+            if ($this->equipmentMovement->fleet_vehicle_id) {
+                $query->orWhere('id', $this->equipmentMovement->fleet_vehicle_id);
+            }
+        })->orderBy('placa')->get();
+    }
+
+    public function getAvailableDriversProperty()
+    {
+        return FleetDriver::where('active', true)->orderBy('name')->get();
+    }
+
+    public function updatedFleetVehicleId(): void
+    {
+        $this->equipmentMovement->update(['fleet_vehicle_id' => $this->fleetVehicleId ?: null]);
+        $this->markStarted();
+    }
+
+    public function updatedFleetDriverId(): void
+    {
+        $this->equipmentMovement->update(['fleet_driver_id' => $this->fleetDriverId ?: null]);
+        $this->markStarted();
+    }
+
+    /**
+     * Checkpoint manual de localizacao durante o transporte -- captura
+     * pelo celular do operador, mesmo padrao de lat/lng das fotos do
+     * checklist (navigator.geolocation no blade), so que sem foto.
+     */
+    public function registrarCheckpoint(string $checkpointType, float $lat, float $lng): void
+    {
+        Validator::make(
+            ['checkpoint_type' => $checkpointType, 'lat' => $lat, 'lng' => $lng],
+            [
+                'checkpoint_type' => 'required|in:'.implode(',', [
+                    EquipmentMovementLocation::CHECKPOINT_SAIDA_PATIO,
+                    EquipmentMovementLocation::CHECKPOINT_CHECKPOINT,
+                    EquipmentMovementLocation::CHECKPOINT_CHEGADA_DESTINO,
+                    EquipmentMovementLocation::CHECKPOINT_SAIDA_CLIENTE,
+                    EquipmentMovementLocation::CHECKPOINT_CHEGADA_PATIO,
+                ]),
+                'lat' => 'required|numeric|between:-90,90',
+                'lng' => 'required|numeric|between:-180,180',
+            ]
+        )->validate();
+
+        $this->equipmentMovement->locations()->create([
+            'tenant_id' => $this->equipmentMovement->tenant_id,
+            'checkpoint_type' => $checkpointType,
+            'latitude' => $lat,
+            'longitude' => $lng,
+            'captured_at' => now(),
+            'captured_by_user_id' => auth()->id(),
+        ]);
+
+        $this->markStarted();
+    }
+
+    public function getLocationsProperty()
+    {
+        return $this->equipmentMovement->locations;
     }
 
     public function getItemsProperty()
@@ -213,12 +295,12 @@ class EquipmentMovementMobile extends Component
             'completed_at' => now(),
         ]);
 
-        // Patio confirmou o checklist de retorno (revisao de retorno) --
-        // ativo sai de "aguardando triagem" e volta pro pool disponivel pro
-        // comercial ver na hora, sem precisar de edicao manual.
-        if ($this->equipmentMovement->type === EquipmentMovement::TYPE_DESMOBILIZACAO) {
-            $this->maintenanceOrder->asset?->update(['status' => Asset::STATUS_DISPONIVEL]);
-        }
+        // Checklist de coleta concluido (normalmente feito no cliente) NAO
+        // e' a mesma coisa que "chegou de volta no patio de verdade" -- o
+        // ativo continua "aguardando triagem" ate um responsavel do patio
+        // confirmar a chegada formalmente em App\Filament\Pages\PatioChegadas
+        // (EquipmentPatioArrival), que so entao libera pra disponivel. Antes
+        // essa distincao nao existia e o ativo virava disponivel na hora.
 
         session()->flash('success', 'Movimentação finalizada com sucesso.');
 

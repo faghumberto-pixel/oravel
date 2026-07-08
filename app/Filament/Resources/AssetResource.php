@@ -505,6 +505,7 @@ class AssetResource extends Resource
     {
         return [
             AssetResource\RelationManagers\ChecklistItemsRelationManager::class,
+            AssetResource\RelationManagers\PatioArrivalsRelationManager::class,
         ];
     }
 

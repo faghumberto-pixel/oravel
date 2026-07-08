@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Pages\MaintenanceKanban;
+use App\Filament\Pages\PatioChegadas;
 use App\Filament\Resources\AssetResource\Pages\ListAssets;
 use App\Livewire\EquipmentMovementMobile;
 use App\Models\Asset;
@@ -125,7 +126,15 @@ class DemoCommercialTriggersTest extends TestCase
         $this->assertSame(Asset::STATUS_AGUARDANDO_TRIAGEM, $asset->fresh()->status);
     }
 
-    public function test_finalizing_desmobilization_flips_asset_back_to_disponivel(): void
+    /**
+     * Ate 2026-07-11 o checklist de coleta (no cliente) sozinho ja liberava
+     * o ativo como disponivel. Isso confundia "saiu do cliente" com
+     * "chegou de volta no patio de verdade" -- corrigido: finalizar o
+     * checklist so' conclui a movimentacao, o ativo continua aguardando
+     * triagem ate um responsavel do patio confirmar a chegada formalmente
+     * (App\Filament\Pages\PatioChegadas).
+     */
+    public function test_finalizing_desmobilization_keeps_asset_aguardando_triagem_until_patio_confirms_arrival(): void
     {
         EquipmentMovementItemTemplate::create([
             'type' => EquipmentMovement::TYPE_DESMOBILIZACAO, 'section' => 'Geral',
@@ -153,7 +162,16 @@ class DemoCommercialTriggersTest extends TestCase
             ->assertSet('progress', 100)
             ->call('finalize');
 
+        $movement = $component->instance()->equipmentMovement->fresh();
+        $this->assertSame(EquipmentMovement::STATUS_CONCLUIDO, $movement->status);
+        $this->assertSame(Asset::STATUS_AGUARDANDO_TRIAGEM, $asset->fresh()->status, 'checklist concluido nao deveria por si so liberar o ativo');
+        $this->assertNull($movement->patioArrival);
+
+        Livewire::test(PatioChegadas::class)
+            ->call('registerArrival', $movement->id);
+
         $this->assertSame(Asset::STATUS_DISPONIVEL, $asset->fresh()->status);
+        $this->assertNotNull($movement->fresh()->patioArrival);
     }
 
     // --- Feature C: SolicitacaoLocacao multi-ativo (combo) ---

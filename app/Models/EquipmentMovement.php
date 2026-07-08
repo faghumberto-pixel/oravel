@@ -52,6 +52,8 @@ class EquipmentMovement extends Model implements HasMedia
         'maintenance_order_id',
         'solicitacao_locacao_id',
         'asset_id',
+        'fleet_vehicle_id',
+        'fleet_driver_id',
         'type',
         'status',
         'vistoria_geral_lat',
@@ -146,9 +148,29 @@ class EquipmentMovement extends Model implements HasMedia
         return $this->belongsTo(Asset::class);
     }
 
+    public function fleetVehicle(): BelongsTo
+    {
+        return $this->belongsTo(FleetVehicle::class);
+    }
+
+    public function fleetDriver(): BelongsTo
+    {
+        return $this->belongsTo(FleetDriver::class);
+    }
+
     public function items(): HasMany
     {
         return $this->hasMany(EquipmentMovementItem::class);
+    }
+
+    public function locations(): HasMany
+    {
+        return $this->hasMany(EquipmentMovementLocation::class)->orderBy('captured_at');
+    }
+
+    public function patioArrival(): HasOne
+    {
+        return $this->hasOne(EquipmentPatioArrival::class);
     }
 
     public function damages(): HasMany

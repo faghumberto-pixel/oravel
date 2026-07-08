@@ -28,7 +28,7 @@ class DossieOperacional extends Page
         $user = auth()->user();
         abort_unless($user && $user->can('view', $record), 403);
 
-        $this->record = $record->load(['asset', 'client', 'technician', 'evidences']);
+        $this->record = $record->load(['asset', 'client', 'technician', 'evidences', 'equipmentMovements.locations']);
     }
 
     public function getTitle(): string
