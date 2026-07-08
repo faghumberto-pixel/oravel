@@ -31,7 +31,7 @@
             <div class="flex-1 overflow-y-auto chat-scroll">
                 @forelse($this->users as $user)
                     <div
-                        wire:click="selectUser({{ data_get($user, 'id') }})"
+                        wire:click="selectUser('{{ data_get($user, 'id') }}')"
                         @click="mobileView = 'chat'"
                         wire:key="contact-{{ data_get($user, 'id') }}"
                         x-show="search === '' || @js(Str::lower(data_get($user, 'name', '') ?? '')).includes(search.toLowerCase())"
@@ -106,6 +106,13 @@
                         <h3 class="text-sm font-bold text-white truncate">{{ data_get($this->selectedUser, 'name', 'Usuário') }}</h3>
                         <p @class(['text-[11px] font-semibold','text-green-400' => data_get($this->selectedUser, 'is_online'),'text-gray-500' => ! data_get($this->selectedUser, 'is_online')])>{{ data_get($this->selectedUser, 'is_online') ? 'Online' : 'Offline' }}</p>
                     </div>
+                    @if($this->chatRoom)
+                        <a href="{{ route('chat.history.pdf', ['room' => $this->chatRoom->id]) }}" target="_blank"
+                           title="Exportar conversa em PDF"
+                           class="flex items-center justify-center w-9 h-9 text-gray-400 hover:text-primary-400 hover:bg-gray-800 transition shrink-0" style="border-radius:9999px;">
+                            <x-heroicon-o-arrow-down-tray class="w-5 h-5" />
+                        </a>
+                    @endif
                 </div>
 
                 <div class="flex-1 overflow-y-auto p-5 space-y-4 chat-scroll" x-ref="messagesContainer" style="background-color:#0b141a;">
@@ -139,6 +146,27 @@
 
                                 @if($audio = data_get($msg, 'audio'))
                                     <audio controls src="{{ $audio }}" preload="metadata" class="mt-2 w-56 max-w-full"></audio>
+                                    @if($transcript = data_get($msg, 'transcript'))
+                                        <p @class(['mt-1 text-xs italic', 'text-white/70' => data_get($msg, 'is_mine'), 'text-gray-400' => ! data_get($msg, 'is_mine')])>
+                                            "{{ $transcript }}"
+                                        </p>
+                                    @endif
+                                @endif
+
+                                @if(! empty(data_get($msg, 'documents')))
+                                    <div class="mt-2 space-y-1.5">
+                                        @foreach(data_get($msg, 'documents', []) as $doc)
+                                            <a href="{{ data_get($doc, 'url') }}" target="_blank"
+                                               @class(['flex items-center gap-2 px-3 py-2 border transition', 'border-white/20 hover:bg-white/10' => data_get($msg, 'is_mine'), 'border-gray-600 hover:bg-gray-700' => ! data_get($msg, 'is_mine')]) style="border-radius:0.5rem;">
+                                                <x-heroicon-o-document-text class="w-5 h-5 shrink-0" />
+                                                <span class="min-w-0 flex-1">
+                                                    <span class="block text-xs font-bold truncate">{{ data_get($doc, 'name') }}</span>
+                                                    <span class="block text-[10px] opacity-70">{{ data_get($doc, 'size') }}</span>
+                                                </span>
+                                                <x-heroicon-o-arrow-down-tray class="w-4 h-4 shrink-0 opacity-70" />
+                                            </a>
+                                        @endforeach
+                                    </div>
                                 @endif
 
                                 <div @class(['flex items-center justify-end gap-1.5 mt-1.5 text-[10px] font-semibold','text-white/70' => data_get($msg, 'is_mine'),'text-gray-400' => ! data_get($msg, 'is_mine')])>
@@ -149,7 +177,13 @@
                                     @endif
                                     <span>{{ data_get($msg, 'created_at') }}</span>
                                     @if(data_get($msg, 'is_mine'))
-                                        <span @class(['tracking-tighter','text-sky-300' => data_get($msg, 'is_read'),'text-white/50' => ! data_get($msg, 'is_read')]) title="{{ data_get($msg, 'is_read') ? 'Lido' : 'Enviado' }}">✓✓</span>
+                                        @if(data_get($msg, 'is_read'))
+                                            <span class="tracking-tighter text-sky-300" title="Lido">✓✓</span>
+                                        @elseif(data_get($msg, 'is_delivered'))
+                                            <span class="tracking-tighter text-white/70" title="Entregue">✓✓</span>
+                                        @else
+                                            <span class="tracking-tighter text-white/50" title="Enviado">✓</span>
+                                        @endif
                                     @endif
                                 </div>
                             </div>
@@ -166,6 +200,10 @@
 
                 <div wire:loading wire:target="temporaryImage" class="px-5 pb-1 shrink-0" style="background-color:#0b141a;">
                     <span class="text-xs text-gray-400 animate-pulse">Enviando imagem...</span>
+                </div>
+
+                <div wire:loading wire:target="temporaryDocument" class="px-5 pb-1 shrink-0" style="background-color:#0b141a;">
+                    <span class="text-xs text-gray-400 animate-pulse">Enviando documento...</span>
                 </div>
 
                 <div x-show="isRecording" x-cloak class="px-5 pb-1 flex items-center gap-2 text-red-400 text-sm shrink-0" style="background-color:#0b141a;">
@@ -187,6 +225,11 @@
                             <label title="Tirar foto" class="flex items-center justify-center w-9 h-9 cursor-pointer text-gray-400 hover:text-primary-400 transition shrink-0" style="border-radius:9999px;">
                                 <input type="file" wire:model="temporaryImage" accept="image/*" capture="environment" class="hidden">
                                 <x-heroicon-s-camera class="w-5 h-5" />
+                            </label>
+                            <label title="Anexar documento" class="flex items-center justify-center w-9 h-9 cursor-pointer text-gray-400 hover:text-primary-400 transition shrink-0" style="border-radius:9999px;">
+                                <input type="file" wire:model="temporaryDocument" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.csv" class="hidden">
+                                <div wire:loading wire:target="temporaryDocument" class="animate-spin h-5 w-5 border-2 border-primary-500 border-t-transparent" style="border-radius:9999px;"></div>
+                                <x-heroicon-s-document-text class="w-5 h-5" wire:loading.remove wire:target="temporaryDocument" />
                             </label>
                         </div>
                         <button type="button" x-show="hasText && !isRecording" x-cloak @click="$wire.sendMessage(); hasText = false"

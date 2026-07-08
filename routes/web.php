@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AssetDossierPdfController;
 use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\ChatHistoryPdfController;
 use App\Http\Controllers\EquipmentDamageReportController;
 use App\Http\Controllers\MaintenanceKanbanPrintController;
 use App\Http\Controllers\MaintenanceOrderController;
@@ -55,6 +56,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/admin/maintenance-orders/{record}/dossie-pdf', [MaintenanceOrderDossieController::class, 'download'])
         ->name('maintenance-orders.dossie.pdf');
+
+    Route::get('/admin/chat/{room}/historico-pdf', [ChatHistoryPdfController::class, 'download'])
+        ->name('chat.history.pdf');
 
     Route::get('/admin/print/tabela/{token}', [TablePrintController::class, 'show'])
         ->name('table-print.show');

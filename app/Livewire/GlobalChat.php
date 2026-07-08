@@ -2,15 +2,19 @@
 
 namespace App\Livewire;
 
+use App\Filament\Pages\Chat;
+use App\Jobs\TranscribeChatAudio;
 use App\Models\ChatMessage;
 use App\Models\ChatRoom;
 use App\Models\Department;
 use App\Models\User;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
+use App\Support\Tenancy;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -22,9 +26,14 @@ class GlobalChat extends Component
 
     #[Url]
     public ?string $selectedUserId = null;
+
     public $selectedDepartmentId = null;
+
     public string $newMessage = '';
+
     public $temporaryImage = null;
+
+    public $temporaryDocument = null;
 
     public function mount(): void
     {
@@ -37,7 +46,7 @@ class GlobalChat extends Component
     #[Computed]
     public function departments(): Collection
     {
-        if (blank(Auth::user()?->tenant_id)) {
+        if (blank(Tenancy::current()?->id)) {
             return collect();
         }
 
@@ -47,7 +56,7 @@ class GlobalChat extends Component
     #[Computed]
     public function users(): Collection
     {
-        $tenantId = Auth::user()?->tenant_id;
+        $tenantId = Tenancy::current()?->id;
 
         if (blank($tenantId)) {
             return collect();
@@ -60,6 +69,14 @@ class GlobalChat extends Component
             ->where('type', 'pessoal')
             ->whereHas('users', fn ($q) => $q->where('users.id', $myId))
             ->pluck('id');
+
+        // Meu cliente fez poll agora -> mensagens recebidas contam como entregues
+        // (nao necessariamente lidas -- so quando a conversa e aberta).
+        ChatMessage::query()
+            ->whereIn('chat_room_id', $myRoomIds)
+            ->whereNull('delivered_at')
+            ->where('user_id', '!=', $myId)
+            ->update(['delivered_at' => now()]);
 
         // Mensagens nao lidas por remetente
         $unreadByUser = ChatMessage::query()
@@ -78,11 +95,11 @@ class GlobalChat extends Component
             ->orderBy('name')
             ->get(['id', 'name', 'last_seen', 'department_id'])
             ->map(fn (User $user) => [
-                'id'         => $user->id,
-                'name'       => $user->name,
+                'id' => $user->id,
+                'name' => $user->name,
                 'department' => $user->department?->name,
-                'is_online'  => $user->isOnline(),
-                'unread'     => (int) ($unreadByUser[$user->id] ?? 0),
+                'is_online' => $user->isOnline(),
+                'unread' => (int) ($unreadByUser[$user->id] ?? 0),
             ]);
     }
 
@@ -109,8 +126,8 @@ class GlobalChat extends Component
             return null;
         }
 
-        $authId   = Auth::id();
-        $tenantId = Auth::user()?->tenant_id;
+        $authId = Auth::id();
+        $tenantId = Tenancy::current()?->id;
 
         $room = ChatRoom::query()
             ->where('type', 'pessoal')
@@ -122,7 +139,7 @@ class GlobalChat extends Component
         if (! $room) {
             $room = ChatRoom::create([
                 'tenant_id' => $tenantId,
-                'type'      => 'pessoal',
+                'type' => 'pessoal',
             ]);
 
             $room->users()->syncWithoutDetaching([$authId, $this->selectedUserId]);
@@ -142,11 +159,15 @@ class GlobalChat extends Component
 
         $authId = Auth::id();
 
-        // Conversa aberta -> marca as recebidas como lidas
+        // Conversa aberta -> marca as recebidas como lidas (e entregues, se
+        // ainda nao estivessem -- nao da pra ler sem ter sido entregue).
         $room->messages()
             ->whereNull('read_at')
             ->where('user_id', '!=', $authId)
-            ->update(['read_at' => now()]);
+            ->update([
+                'read_at' => now(),
+                'delivered_at' => DB::raw('COALESCE(delivered_at, NOW())'),
+            ]);
 
         return $room->messages()
             ->with('media')
@@ -160,16 +181,24 @@ class GlobalChat extends Component
                     ->map(fn ($m) => $m->getUrl())
                     ->values();
 
-                $audio = $media->first(fn ($m) => ! str_starts_with($m->mime_type, "image/"));
+                $audio = $media->first(fn ($m) => str_starts_with($m->mime_type, 'audio/'));
+
+                $documents = $media
+                    ->filter(fn ($m) => ! str_starts_with($m->mime_type, 'image/') && ! str_starts_with($m->mime_type, 'audio/'))
+                    ->map(fn ($m) => ['name' => $m->file_name, 'url' => $m->getUrl(), 'size' => $m->human_readable_size])
+                    ->values();
 
                 return [
-                    'id'          => $msg->id,
-                    'is_mine'     => $msg->user_id === $authId,
-                    'is_read'     => $msg->read_at !== null,
-                    'message'     => $msg->message,
+                    'id' => $msg->id,
+                    'is_mine' => $msg->user_id === $authId,
+                    'is_read' => $msg->read_at !== null,
+                    'is_delivered' => $msg->delivered_at !== null,
+                    'message' => $msg->message,
                     'attachments' => $images,
-                    'audio'       => $audio?->getUrl(),
-                    'created_at'  => $msg->created_at->format('d/m/Y H:i'),
+                    'audio' => $audio?->getUrl(),
+                    'transcript' => $msg->transcript,
+                    'documents' => $documents,
+                    'created_at' => $msg->created_at->format('d/m/Y H:i'),
                 ];
             });
     }
@@ -199,13 +228,22 @@ class GlobalChat extends Component
             $room->messages()
                 ->whereNull('read_at')
                 ->where('user_id', '!=', $authId)
-                ->update(['read_at' => now()]);
+                ->update([
+                    'read_at' => now(),
+                    'delivered_at' => DB::raw('COALESCE(delivered_at, NOW())'),
+                ]);
         }
     }
 
     public function updatedTemporaryImage(): void
     {
         $this->validate(['temporaryImage' => 'image|max:5120']);
+        $this->sendMessage();
+    }
+
+    public function updatedTemporaryDocument(): void
+    {
+        $this->validate(['temporaryDocument' => 'file|max:10240|mimes:pdf,doc,docx,xls,xlsx,txt,csv']);
         $this->sendMessage();
     }
 
@@ -219,15 +257,15 @@ class GlobalChat extends Component
             return;
         }
 
-        if (! $this->newMessage && ! $this->temporaryImage) {
+        if (! $this->newMessage && ! $this->temporaryImage && ! $this->temporaryDocument) {
             return;
         }
 
         $chatMessage = ChatMessage::create([
             'chat_room_id' => $room->id,
-            'tenant_id'    => $room->tenant_id,
-            'user_id'      => Auth::id(),
-            'message'      => $this->newMessage ?: '',
+            'tenant_id' => $room->tenant_id,
+            'user_id' => Auth::id(),
+            'message' => $this->newMessage ?: '',
         ]);
 
         if ($this->temporaryImage) {
@@ -236,9 +274,15 @@ class GlobalChat extends Component
                 ->toMediaCollection('chat_attachments');
         }
 
+        if ($this->temporaryDocument) {
+            $chatMessage->addMedia($this->temporaryDocument->getRealPath())
+                ->usingFileName($this->temporaryDocument->getClientOriginalName())
+                ->toMediaCollection('chat_attachments');
+        }
+
         $this->notifyRecipient($chatMessage);
 
-        $this->reset(['newMessage', 'temporaryImage']);
+        $this->reset(['newMessage', 'temporaryImage', 'temporaryDocument']);
 
         unset($this->chatMessages, $this->users);
 
@@ -254,17 +298,29 @@ class GlobalChat extends Component
         }
 
         Notification::make()
-            ->title('Nova mensagem de ' . Auth::user()->name)
-            ->body(Str::limit($chatMessage->message ?: '📷 Imagem', 60))
+            ->title('Nova mensagem de '.Auth::user()->name)
+            ->body(Str::limit($chatMessage->message ?: $this->attachmentSummary($chatMessage), 60))
             ->icon('heroicon-o-chat-bubble-left-right')
             ->iconColor('warning')
             ->actions([
                 Action::make('ver')
                     ->label('Ver conversa')
-                    ->url(\App\Filament\Pages\Chat::getUrl(['selectedUserId' => Auth::id()]))
+                    ->url(Chat::getUrl(['selectedUserId' => Auth::id()]))
                     ->button(),
             ])
             ->sendToDatabase($recipient);
+    }
+
+    protected function attachmentSummary(ChatMessage $chatMessage): string
+    {
+        $media = $chatMessage->getMedia('chat_attachments')->first();
+
+        return match (true) {
+            ! $media => '',
+            str_starts_with($media->mime_type, 'image/') => '📷 Imagem',
+            str_starts_with($media->mime_type, 'audio/') => '🎤 Áudio',
+            default => '📎 '.$media->file_name,
+        };
     }
 
     public function sendAudioMessage(string $base64Audio): void
@@ -275,22 +331,26 @@ class GlobalChat extends Component
             return;
         }
 
-        $data   = preg_replace('/^data:audio\/\w+;base64,/', '', $base64Audio);
+        $data = preg_replace('/^data:audio\/\w+;base64,/', '', $base64Audio);
         $binary = base64_decode($data);
 
-        $tmpPath = tempnam(sys_get_temp_dir(), 'audio_') . '.webm';
+        $tmpPath = tempnam(sys_get_temp_dir(), 'audio_').'.webm';
         file_put_contents($tmpPath, $binary);
 
         $chatMessage = ChatMessage::create([
             'chat_room_id' => $room->id,
-            'tenant_id'    => $room->tenant_id,
-            'user_id'      => Auth::id(),
-            'message'      => '',
+            'tenant_id' => $room->tenant_id,
+            'user_id' => Auth::id(),
+            'message' => '',
         ]);
 
         $chatMessage->addMedia($tmpPath)
-            ->usingFileName('audio-' . Str::uuid() . '.webm')
+            ->usingFileName('audio-'.Str::uuid().'.webm')
             ->toMediaCollection('chat_attachments');
+
+        TranscribeChatAudio::dispatch($chatMessage);
+
+        $this->notifyRecipient($chatMessage);
 
         unset($this->chatMessages, $this->users);
 
