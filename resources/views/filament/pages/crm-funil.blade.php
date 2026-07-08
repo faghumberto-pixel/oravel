@@ -1,85 +1,131 @@
 <x-filament-panels::page>
     @php
-        $stages = $this->getStages();
+        $funnelStages = $this->getFunnelStages();
         $grouped = $this->getLeadsByStage();
+        $widths = $this->getFunnelWidths();
         $stageColors = [
-            'novo' => 'bg-slate-600',
-            'contato_iniciado' => 'bg-blue-600',
-            'qualificado' => 'bg-amber-500',
-            'convertido' => 'bg-emerald-600',
-            'perdido' => 'bg-red-600',
+            'novo' => '#475569',
+            'contato_iniciado' => '#2563eb',
+            'qualificado' => '#f59e0b',
+            'convertido' => '#059669',
         ];
+        $topCount = max(1, $grouped->get(array_key_first($funnelStages), collect())->count());
+        $perdidoLeads = $grouped->get(\App\Models\CrmLead::STAGE_PERDIDO, collect());
     @endphp
 
-    <div class="mb-4">
+    <div class="mb-4 flex flex-wrap items-center gap-3 justify-between">
         <input
             type="text"
             wire:model.live.debounce.400ms="search"
             placeholder="Buscar por nome ou empresa..."
-            class="fi-input w-full max-w-sm rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white text-sm"
+            class="fi-input max-w-sm rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white text-sm"
         />
+
+        <div
+            wire:click="selectStage('{{ \App\Models\CrmLead::STAGE_PERDIDO }}')"
+            class="cursor-pointer rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-2 text-center hover:bg-red-500/20 transition-colors {{ $this->selectedStage === \App\Models\CrmLead::STAGE_PERDIDO ? 'ring-2 ring-red-500' : '' }}"
+        >
+            <p class="text-[10px] font-black uppercase tracking-widest text-red-400">Perdidos</p>
+            <p class="text-xs font-bold text-red-300">{{ $perdidoLeads->count() }} leads · R$ {{ number_format($this->getStageValue($perdidoLeads), 2, ',', '.') }}</p>
+        </div>
     </div>
 
-    <div
-        x-data="{ draggingId: null }"
-        class="flex flex-row gap-4 overflow-x-auto pb-4 min-h-[70vh]"
-    >
-        @foreach($stages as $stageId => $stageLabel)
-            @php $leads = $grouped->get($stageId, collect()); @endphp
+    {{-- Funil (piramide invertida): cada faixa afunila da largura da faixa anterior ate a propria largura --}}
+    <div class="mx-auto w-full" style="max-width: 700px;">
+        @php $previousWidth = 100; @endphp
+        @foreach($funnelStages as $stageId => $stageLabel)
+            @php
+                $leads = $grouped->get($stageId, collect());
+                $width = $widths[$stageId] ?? 20;
+                $topLeft = (100 - $previousWidth) / 2;
+                $topRight = 100 - $topLeft;
+                $bottomLeft = (100 - $width) / 2;
+                $bottomRight = 100 - $bottomLeft;
+                $conversion = $topCount > 0 ? round(($leads->count() / $topCount) * 100) : 0;
+            @endphp
 
             <div
-                x-on:dragover.prevent
-                x-on:drop.prevent="
-                    if (! draggingId) return;
-                    if ('{{ $stageId }}' === 'perdido') {
-                        let motivo = prompt('Motivo da perda:');
-                        if (! motivo) { draggingId = null; return; }
-                        $wire.moveStage(draggingId, '{{ $stageId }}', motivo);
-                    } else {
-                        $wire.moveStage(draggingId, '{{ $stageId }}');
-                    }
-                    draggingId = null;
-                "
-                class="flex-1 min-w-[280px] max-w-[360px] bg-gray-900/40 rounded-xl border border-gray-800/50 flex flex-col backdrop-blur-sm shadow-xl"
+                wire:click="selectStage('{{ $stageId }}')"
+                wire:key="funnel-band-{{ $stageId }}"
+                class="relative flex flex-col items-center justify-center text-center cursor-pointer transition-opacity hover:opacity-90 {{ $this->selectedStage === $stageId ? 'ring-2 ring-white' : '' }}"
+                style="height: 84px; margin-bottom: 3px; background-color: {{ $stageColors[$stageId] }}; clip-path: polygon({{ $topLeft }}% 0, {{ $topRight }}% 0, {{ $bottomRight }}% 100%, {{ $bottomLeft }}% 100%);"
             >
-                <div class="{{ $stageColors[$stageId] ?? 'bg-gray-600' }} p-3 border-b border-white/10 rounded-t-xl shadow-md">
-                    <h3 class="text-[10px] font-black uppercase tracking-widest text-white">{{ $stageLabel }}</h3>
-                    <div class="flex items-center justify-between mt-0.5">
-                        <span class="text-[10px] text-white/80 font-bold">{{ $leads->count() }} leads</span>
-                        <span class="text-[10px] text-white/80 font-bold">R$ {{ number_format($this->getStageValue($leads), 2, ',', '.') }}</span>
-                    </div>
-                </div>
-
-                <div class="p-3 space-y-3 flex-1 max-h-[65vh] overflow-y-auto bg-gray-950/20">
-                    @forelse($leads as $lead)
-                        <div
-                            wire:key="funil-card-{{ $lead->id }}"
-                            draggable="true"
-                            x-on:dragstart="draggingId = '{{ $lead->id }}'"
-                            x-on:dragend="draggingId = null"
-                            class="bg-gray-800 p-3 rounded-lg border border-gray-700 hover:border-primary-500 transition-all shadow-lg cursor-grab active:cursor-grabbing group"
-                        >
-                            <h4 class="text-sm font-bold text-gray-100 leading-tight mb-0.5 truncate">{{ $lead->name }}</h4>
-                            @if($lead->company_name)
-                                <p class="text-[10px] text-gray-500 font-semibold mb-2 truncate">{{ $lead->company_name }}</p>
-                            @endif
-
-                            @if($lead->estimated_value)
-                                <p class="text-xs font-mono font-bold text-primary-400 mb-2">R$ {{ number_format($lead->estimated_value, 2, ',', '.') }}</p>
-                            @endif
-
-                            <div class="flex items-center justify-between pt-2 border-t border-gray-700/50">
-                                <span class="text-[10px] text-gray-500 font-medium truncate max-w-[140px]">
-                                    {{ $lead->assignedUser?->name ? explode(' ', $lead->assignedUser->name)[0] : 'Sem vendedor' }}
-                                </span>
-                                <a href="{{ \App\Filament\Resources\CrmLeadResource::getUrl('edit', ['record' => $lead]) }}" class="text-[10px] font-black uppercase text-primary-400 hover:text-primary-300 tracking-wider transition-colors shrink-0">Abrir</a>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="text-center py-10 text-[10px] text-gray-700 uppercase font-bold italic tracking-wide border border-dashed border-gray-800/80 rounded-xl">Sem leads</div>
-                    @endforelse
-                </div>
+                <span class="text-xs font-black uppercase tracking-widest text-white">{{ $stageLabel }}</span>
+                <span class="text-[11px] font-bold text-white/90 mt-0.5">
+                    {{ $leads->count() }} leads · R$ {{ number_format($this->getStageValue($leads), 2, ',', '.') }}
+                    @if(!$loop->first)
+                        · {{ $conversion }}% do topo
+                    @endif
+                </span>
             </div>
+
+            @php $previousWidth = $width; @endphp
         @endforeach
     </div>
+
+    {{-- Lista do estagio selecionado --}}
+    @if($this->selectedStage)
+        @php
+            $selectedLabel = $this->getStages()[$this->selectedStage];
+            $selectedLeads = $grouped->get($this->selectedStage, collect());
+        @endphp
+
+        <div class="mt-6 rounded-xl border border-gray-800/50 bg-gray-900/40 backdrop-blur-sm">
+            <div class="p-3 border-b border-gray-800/50 flex items-center justify-between">
+                <h3 class="text-xs font-black uppercase tracking-widest text-gray-200">{{ $selectedLabel }} ({{ $selectedLeads->count() }})</h3>
+                <button wire:click="selectStage('{{ $this->selectedStage }}')" class="text-[10px] font-bold uppercase text-gray-500 hover:text-white">Fechar</button>
+            </div>
+
+            <div class="divide-y divide-gray-800/50">
+                @forelse($selectedLeads as $lead)
+                    <div wire:key="funnel-lead-{{ $lead->id }}" class="p-3 flex flex-wrap items-center gap-3 justify-between">
+                        <div class="min-w-[180px]">
+                            <p class="text-sm font-bold text-gray-100">{{ $lead->name }}</p>
+                            @if($lead->company_name)
+                                <p class="text-[10px] text-gray-500">{{ $lead->company_name }}</p>
+                            @endif
+                        </div>
+
+                        <span class="text-xs font-mono font-bold text-primary-400">
+                            @if($lead->estimated_value) R$ {{ number_format($lead->estimated_value, 2, ',', '.') }} @else -- @endif
+                        </span>
+
+                        <span class="text-[10px] text-gray-500 truncate max-w-[140px]">
+                            {{ $lead->assignedUser?->name ? explode(' ', $lead->assignedUser->name)[0] : 'Sem vendedor' }}
+                        </span>
+
+                        <div class="flex items-center gap-2">
+                            <select
+                                x-data
+                                x-on:change="
+                                    let stage = $event.target.value;
+                                    if (! stage) return;
+                                    if (stage === '{{ \App\Models\CrmLead::STAGE_PERDIDO }}') {
+                                        let motivo = prompt('Motivo da perda:');
+                                        if (! motivo) { $event.target.value = ''; return; }
+                                        $wire.moveStage('{{ $lead->id }}', stage, motivo);
+                                    } else {
+                                        $wire.moveStage('{{ $lead->id }}', stage);
+                                    }
+                                    $event.target.value = '';
+                                "
+                                class="fi-select rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white text-[11px] py-1"
+                            >
+                                <option value="">Mover para...</option>
+                                @foreach($this->getStages() as $stageId => $stageLabel)
+                                    @if($stageId !== $lead->stage)
+                                        <option value="{{ $stageId }}">{{ $stageLabel }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+
+                            <a href="{{ \App\Filament\Resources\CrmLeadResource::getUrl('edit', ['record' => $lead]) }}" class="text-[10px] font-black uppercase text-primary-400 hover:text-primary-300 tracking-wider transition-colors shrink-0">Abrir</a>
+                        </div>
+                    </div>
+                @empty
+                    <div class="p-6 text-center text-[10px] text-gray-700 uppercase font-bold italic tracking-wide">Sem leads neste estágio</div>
+                @endforelse
+            </div>
+        </div>
+    @endif
 </x-filament-panels::page>

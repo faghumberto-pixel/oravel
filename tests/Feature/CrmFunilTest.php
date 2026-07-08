@@ -59,6 +59,26 @@ class CrmFunilTest extends TestCase
         $this->assertCount(1, $grouped->get(CrmLead::STAGE_QUALIFICADO));
     }
 
+    public function test_selecting_a_stage_renders_its_lead_list(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'Lead Qualificado', 'stage' => CrmLead::STAGE_QUALIFICADO, 'estimated_value' => 2000]);
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'Lead Perdido', 'stage' => CrmLead::STAGE_PERDIDO, 'lost_reason' => 'Preço']);
+
+        $this->actingAs($admin);
+
+        Livewire::test(CrmFunil::class)
+            ->call('selectStage', CrmLead::STAGE_QUALIFICADO)
+            ->assertSee('Lead Qualificado')
+            ->call('selectStage', CrmLead::STAGE_QUALIFICADO)
+            ->assertSet('selectedStage', null);
+
+        Livewire::test(CrmFunil::class)
+            ->call('selectStage', CrmLead::STAGE_PERDIDO)
+            ->assertSee('Lead Perdido');
+    }
+
     public function test_moving_to_perdido_requires_reason(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();

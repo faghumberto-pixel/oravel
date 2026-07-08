@@ -23,6 +23,8 @@ class CrmFunil extends Page
 
     public string $search = '';
 
+    public ?string $selectedStage = null;
+
     public static function canAccess(): bool
     {
         return (bool) auth()->user()?->can('viewAny', CrmLead::class);
@@ -36,6 +38,39 @@ class CrmFunil extends Page
     public function getStages(): array
     {
         return CrmLead::stageLabels();
+    }
+
+    /**
+     * Estagios que formam o corpo da piramide (fluxo de progressao).
+     * "Perdido" fica fora -- e uma saida, nao um degrau do funil.
+     */
+    public function getFunnelStages(): array
+    {
+        $stages = $this->getStages();
+        unset($stages[CrmLead::STAGE_PERDIDO]);
+
+        return $stages;
+    }
+
+    public function selectStage(string $stageId): void
+    {
+        $this->selectedStage = $this->selectedStage === $stageId ? null : $stageId;
+    }
+
+    /**
+     * Largura de cada faixa (%) proporcional a quantidade de leads no
+     * estagio, com piso de 20% pra faixas vazias nao sumirem da piramide.
+     */
+    public function getFunnelWidths(): array
+    {
+        $grouped = $this->getLeadsByStage();
+        $counts = collect($this->getFunnelStages())
+            ->keys()
+            ->mapWithKeys(fn ($stage) => [$stage => $grouped->get($stage, collect())->count()]);
+
+        $max = max($counts->max(), 1);
+
+        return $counts->map(fn ($count) => $count > 0 ? max(20, (int) round(($count / $max) * 100)) : 20)->all();
     }
 
     /**
@@ -77,9 +112,10 @@ class CrmFunil extends Page
     }
 
     /**
-     * Chamado pelo drag-and-drop das colunas. Nao-admin so pode mover leads
-     * atribuidos a ele mesmo. Mover para "perdido" exige o motivo (coletado
-     * via prompt() no JS antes de chamar isso).
+     * Chamado pelo select de estagio na lista do estagio selecionado.
+     * Nao-admin so pode mover leads atribuidos a ele mesmo. Mover para
+     * "perdido" exige o motivo (coletado via prompt() no JS antes de
+     * chamar isso).
      */
     public function moveStage(string $leadId, string $newStage, ?string $lostReason = null): void
     {
