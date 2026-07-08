@@ -63,7 +63,7 @@ class RoleResource extends Resource
             'excluir' => 'Excluir',
         ];
 
-        $tabs = [];
+        $sections = [];
 
         // Interseccao com o plano do tenant: o admin de um tenant so pode
         // configurar por-role o que o Plano (Central) ja libera pra ele --
@@ -71,7 +71,11 @@ class RoleResource extends Resource
         // (super admin/console), nao filtra.
         $tenant = Tenancy::current();
 
-        // Fonte unica de verdade: cada Model com a trait HasSaaSMetadata vira uma aba.
+        // Fonte unica de verdade: cada Model com a trait HasSaaSMetadata vira
+        // uma secao. Layout em coluna (empilhado), nao em abas horizontais --
+        // com ~30 modulos, a barra de abas ficava grande demais e obrigava a
+        // clicar em cada uma pra editar; em coluna da pra rolar e ver/editar
+        // varias de uma vez.
         foreach (SaaSRegistry::modules() as $module) {
             if ($tenant && $module['feature'] && ! $tenant->hasFeature($module['feature'])) {
                 continue;
@@ -100,7 +104,9 @@ class RoleResource extends Resource
                     ->dehydrated(false);
             }
 
-            $tabs[] = Forms\Components\Tabs\Tab::make($label)
+            $sections[] = Forms\Components\Section::make($label)
+                ->collapsible()
+                ->collapsed()
                 ->schema([
                     Forms\Components\Actions::make([
                         Forms\Components\Actions\Action::make("marcar_todos_{$slug}")
@@ -135,8 +141,8 @@ class RoleResource extends Resource
                 Forms\Components\Grid::make(1)->schema([
                     Forms\Components\TextInput::make('name')->label('Nome do Perfil')->required(),
                 ]),
-                Forms\Components\Tabs::make('Permissões')->tabs($tabs)->columnSpanFull(),
             ]),
+            Forms\Components\Group::make($sections)->columnSpanFull(),
         ]);
     }
 
