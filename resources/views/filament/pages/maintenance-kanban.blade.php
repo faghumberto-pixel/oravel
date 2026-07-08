@@ -161,107 +161,120 @@
         @endif
 
         {{-- Grid Principal do Kanban --}}
-        <div class="flex flex-row gap-4 overflow-x-auto pb-4 custom-scrollbar min-h-[70vh]">
-            @forelse($this->getVisibleStatuses() as $statusId => $statusData)
-                @php
-                    $records = $allRecordsGrouped->get($statusId, collect());
-                    $borderColor = str_replace('bg-', 'border-', $statusData['color']);
-                @endphp
+        <div class="bg-[#1a1d23] rounded-2xl border border-gray-800/60 p-4">
+            <div class="flex flex-row gap-4 overflow-x-auto pb-2 custom-scrollbar min-h-[70vh]">
+                @forelse($this->getVisibleStatuses() as $statusId => $statusData)
+                    @php
+                        $records = $allRecordsGrouped->get($statusId, collect());
+                        $accentBorder = str_replace('bg-', 'border-', $statusData['color']);
+                        $accentText = str_replace('bg-', 'text-', $statusData['color']);
+                        $accentDot = $statusData['color'];
+                    @endphp
 
-                <div class="flex-1 min-w-[290px] max-w-[400px] bg-gray-900/40 rounded-xl border border-gray-800/50 flex flex-col backdrop-blur-sm shadow-xl">
-                    <div class="{{ $statusData['color'] }} p-3 border-b border-white/10 rounded-t-xl shadow-md">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-[10px] font-black uppercase tracking-widest text-white">{{ $statusData['title'] }}</h3>
-                            @if(!empty($statusData['flag']))
-                                <span class="text-[8px] font-black uppercase bg-black/25 text-white px-1.5 py-0.5 rounded">{{ $statusData['flag'] }}</span>
-                            @endif
-                        </div>
-                        <span class="text-[10px] text-white/80 font-bold">{{ $records->count() }} OS</span>
-                    </div>
-
-                    <div wire:loading.class="opacity-40" wire:target="search" class="p-3 space-y-3 flex-1 max-h-[58vh] overflow-y-auto vertical-scrollbar bg-gray-950/20 transition-opacity duration-200">
-                        @forelse($records as $record)
-                            @php
-                                $elapsedSeconds = ($record->total_time_seconds ?? 0) + ($record->last_timer_start ? now()->diffInSeconds($record->last_timer_start) : 0);
-                                $elapsedLabel = sprintf('%02dh %02dm', intdiv($elapsedSeconds, 3600), intdiv($elapsedSeconds % 3600, 60));
-                                $partNames = $record->parts?->pluck('name')->filter()->implode(', ');
-                                $isUrgent = $record->asset_id && in_array($record->asset_id, $urgentAssetIds, true);
-                            @endphp
-                            <div wire:key="kanban-card-{{ $record->id }}" class="bg-gray-800 p-4 rounded-lg border-l-4 {{ $isUrgent ? 'border-red-500 ring-2 ring-red-500/50' : $borderColor }} border-t border-r border-b border-gray-700 hover:border-primary-500 transition-all shadow-lg hover:shadow-primary-900/10 group">
-                                @if($isUrgent)
-                                    <div class="flex items-center gap-1.5 mb-2 -mt-1 -mx-1 px-2 py-1 rounded bg-red-500/15 border border-red-500/40">
-                                        <x-heroicon-s-exclamation-triangle class="w-3.5 h-3.5 text-red-400 shrink-0" />
-                                        <span class="text-[9px] font-black uppercase tracking-wider text-red-400">Locação Urgente Aguardando Este Ativo</span>
-                                    </div>
+                    <div class="flex-1 min-w-[290px] max-w-[400px] bg-[#20242c] rounded-xl border border-gray-800/60 flex flex-col shadow-xl overflow-hidden">
+                        <div class="border-t-4 {{ $accentBorder }} bg-[#23272f] px-4 py-3">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-[11px] font-bold uppercase tracking-wider text-gray-200">{{ $statusData['title'] }}</h3>
+                                @if(!empty($statusData['flag']))
+                                    <span class="text-[8px] font-black uppercase bg-black/30 {{ $accentText }} px-1.5 py-0.5 rounded">{{ $statusData['flag'] }}</span>
                                 @endif
-                                <div class="flex justify-between items-start mb-2 gap-2">
-                                    <span class="text-xs font-mono font-bold text-primary-400 group-hover:text-primary-300 transition-colors truncate max-w-[140px]">
-                                        #{{ $record->os_number ?? substr($record->id, 0, 8) }}
-                                    </span>
-                                    <span class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-gray-900 text-gray-500 shrink-0">
-                                        {{ $record->maintenance_type ?? 'Corretiva' }}
-                                    </span>
-                                </div>
-
-                                <h4 class="text-sm font-bold text-gray-100 leading-tight mb-0.5">{{ $record->asset?->name ?? 'Equipamento Indisponível' }}</h4>
-                                <p class="text-[10px] text-gray-500 uppercase font-semibold mb-3">Pat: {{ $record->asset?->patrimonio ?? '---' }}</p>
-
-                                @if($statusId === 'aguardando_peca' && $partNames)
-                                    <p class="text-[10px] text-amber-400 font-semibold mb-2 truncate">Peças: {{ $partNames }}</p>
-                                @endif
-
-                                @if($statusId === 'em_manutencao')
-                                    <div class="flex items-center gap-2 mb-2">
-                                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-primary-600 text-white shrink-0">
-                                            <x-heroicon-s-play class="w-3 h-3" />
-                                        </span>
-                                        <x-heroicon-o-bolt class="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                                        <span class="text-[11px] font-mono font-bold text-gray-200">{{ $elapsedLabel }}</span>
-                                    </div>
-                                @endif
-
-                                <div class="flex items-center justify-between pt-2 border-t border-gray-700/50">
-                                    @if($statusId === 'concluido')
-                                        <span class="text-[10px] text-gray-500 font-medium">
-                                            Concluído: {{ $record->finished_at?->format('d/m/y') ?? '--' }}
-                                        </span>
-                                    @elseif($record->client)
-                                        <span class="text-[10px] text-gray-500 font-medium truncate max-w-[160px]">
-                                            Cliente: {{ $record->client->name }}
-                                        </span>
-                                    @else
-                                        <span class="text-[10px] text-gray-500 font-medium truncate max-w-[160px]">
-                                            Técnico: {{ $record->technician?->name ? explode(' ', $record->technician->name)[0] : '--' }}
-                                        </span>
-                                    @endif
-
-                                    <a href="{{ \App\Filament\Resources\MaintenanceOrderResource::getUrl('edit', ['record' => $record]) }}" class="text-[10px] font-black uppercase text-primary-400 hover:text-primary-300 tracking-wider transition-colors shrink-0">Abrir</a>
-                                </div>
-
-                                <div class="flex items-center gap-2 mt-2 text-gray-600">
-                                    @if($statusId === 'teste_qualidade')
-                                        <x-heroicon-o-pause-circle class="w-3.5 h-3.5" />
-                                    @else
-                                        @if(($record->evidences_count ?? 0) > 0)
-                                            <x-heroicon-o-photo class="w-3.5 h-3.5" />
-                                        @endif
-                                        <x-heroicon-o-bolt class="w-3.5 h-3.5" />
-                                        @if($record->parts && $record->parts->isNotEmpty())
-                                            <x-heroicon-o-cube class="w-3.5 h-3.5" />
-                                        @endif
-                                    @endif
-                                </div>
                             </div>
-                        @empty
-                            <div class="text-center py-12 text-[10px] text-gray-700 uppercase font-bold italic tracking-wide border border-dashed border-gray-800/80 rounded-xl bg-black/5">Sem registros</div>
-                        @endforelse
+                            <div class="flex items-center gap-1.5 mt-1">
+                                <span class="w-1.5 h-1.5 rounded-full {{ $accentDot }}"></span>
+                                <span class="text-[10px] text-gray-500 font-semibold">{{ $records->count() }} OS</span>
+                            </div>
+                        </div>
+
+                        <div wire:loading.class="opacity-40" wire:target="search" class="p-3 space-y-3 flex-1 max-h-[58vh] overflow-y-auto vertical-scrollbar bg-[#1a1d23]/60 transition-opacity duration-200">
+                            @forelse($records as $record)
+                                @php
+                                    $elapsedSeconds = ($record->total_time_seconds ?? 0) + ($record->last_timer_start ? now()->diffInSeconds($record->last_timer_start) : 0);
+                                    $elapsedLabel = sprintf('%02dh %02dm', intdiv($elapsedSeconds, 3600), intdiv($elapsedSeconds % 3600, 60));
+                                    $isRunning = (bool) $record->last_timer_start;
+                                    $partNames = $record->parts?->pluck('name')->filter()->implode(', ');
+                                    $isUrgent = $record->asset_id && in_array($record->asset_id, $urgentAssetIds, true);
+                                    $hasSignature = ! empty($record->client_signature) || ! empty($record->technician_signature) || ! empty($record->signature_path);
+                                @endphp
+                                <div wire:key="kanban-card-{{ $record->id }}" class="bg-[#2a2f38] p-4 rounded-lg border {{ $isUrgent ? 'border-red-500 ring-2 ring-red-500/50' : 'border-gray-700/80' }} hover:border-primary-500 transition-all shadow-lg hover:shadow-primary-900/10 group">
+                                    @if($isUrgent)
+                                        <div class="flex items-center gap-1.5 mb-2 -mt-1 -mx-1 px-2 py-1 rounded bg-red-500/15 border border-red-500/40">
+                                            <x-heroicon-s-exclamation-triangle class="w-3.5 h-3.5 text-red-400 shrink-0" />
+                                            <span class="text-[9px] font-black uppercase tracking-wider text-red-400">Locação Urgente Aguardando Este Ativo</span>
+                                        </div>
+                                    @endif
+
+                                    <div class="flex justify-between items-start mb-2 gap-2">
+                                        <span class="text-sm font-mono font-black text-primary-400 group-hover:text-primary-300 transition-colors truncate max-w-[140px]">
+                                            OS #{{ $record->os_number ?? substr($record->id, 0, 8) }}
+                                        </span>
+                                        <span class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-black/30 text-gray-400 shrink-0">
+                                            {{ $record->maintenance_type ?? 'Corretiva' }}
+                                        </span>
+                                    </div>
+
+                                    <h4 class="text-sm font-bold text-gray-100 leading-tight mb-0.5">{{ $record->asset?->name ?? 'Equipamento Indisponível' }}</h4>
+                                    <p class="text-[10px] text-gray-500 uppercase font-semibold mb-2">Pat: {{ $record->asset?->patrimonio ?? '---' }}</p>
+
+                                    <div class="flex items-center gap-1.5 mb-2 text-gray-400">
+                                        <x-heroicon-o-user class="w-3.5 h-3.5 shrink-0" />
+                                        <span class="text-[11px] font-semibold truncate">{{ $record->technician?->name ?? 'Sem técnico' }}</span>
+                                    </div>
+
+                                    @if($statusId === 'aguardando_peca' && $partNames)
+                                        <p class="text-[10px] text-amber-400 font-semibold mb-2 truncate">Peças: {{ $partNames }}</p>
+                                    @endif
+
+                                    @if($record->client)
+                                        <p class="text-[10px] text-gray-500 font-medium mb-2 truncate">Cliente: {{ $record->client->name }}</p>
+                                    @endif
+
+                                    @if($statusId === 'concluido')
+                                        <p class="text-[10px] text-emerald-400 font-semibold mb-2">Concluído em {{ $record->finished_at?->format('d/m/y') ?? '--' }}</p>
+                                    @endif
+
+                                    @if($elapsedSeconds > 0)
+                                        <div class="flex items-center gap-2 mb-2 px-2 py-1.5 rounded-md bg-black/25">
+                                            <span class="flex items-center justify-center w-5 h-5 rounded-full shrink-0 {{ $isRunning ? 'bg-emerald-600' : 'bg-gray-600' }}">
+                                                @if($isRunning)
+                                                    <x-heroicon-s-play class="w-2.5 h-2.5 text-white" />
+                                                @else
+                                                    <x-heroicon-s-pause class="w-2.5 h-2.5 text-white" />
+                                                @endif
+                                            </span>
+                                            <span class="text-[11px] font-mono font-bold text-gray-200">{{ $elapsedLabel }}</span>
+                                            @if($isRunning)
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-auto"></span>
+                                            @endif
+                                        </div>
+                                    @endif
+
+                                    <div class="flex items-center justify-between pt-2 border-t border-gray-700/50">
+                                        <div class="flex items-center gap-2 text-gray-500">
+                                            @if(($record->evidences_count ?? 0) > 0)
+                                                <x-heroicon-o-photo class="w-3.5 h-3.5" title="Possui anexos" />
+                                            @endif
+                                            @if($hasSignature)
+                                                <x-heroicon-o-pencil-square class="w-3.5 h-3.5" title="Assinatura coletada" />
+                                            @endif
+                                            @if($record->parts && $record->parts->isNotEmpty())
+                                                <x-heroicon-o-cube class="w-3.5 h-3.5" title="Possui peças vinculadas" />
+                                            @endif
+                                        </div>
+
+                                        <a href="{{ \App\Filament\Resources\MaintenanceOrderResource::getUrl('edit', ['record' => $record]) }}" class="text-[10px] font-black uppercase text-primary-400 hover:text-primary-300 tracking-wider transition-colors shrink-0">Abrir</a>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-12 text-[10px] text-gray-700 uppercase font-bold italic tracking-wide border border-dashed border-gray-800/80 rounded-xl bg-black/5">Sem registros</div>
+                            @endforelse
+                        </div>
                     </div>
-                </div>
-            @empty
-                <div class="w-full text-center py-16 text-sm text-gray-600 italic">
-                    Todas as colunas estão ocultas pelo filtro. <button wire:click="clearFilters" class="underline text-primary-400">Limpar filtros</button>.
-                </div>
-            @endforelse
+                @empty
+                    <div class="w-full text-center py-16 text-sm text-gray-600 italic">
+                        Todas as colunas estão ocultas pelo filtro. <button wire:click="clearFilters" class="underline text-primary-400">Limpar filtros</button>.
+                    </div>
+                @endforelse
+            </div>
         </div>
     </div>
 
