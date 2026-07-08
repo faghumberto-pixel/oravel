@@ -16,8 +16,10 @@ class AgendaTecnico extends Page
 
     protected static ?string $title = 'Programação';
 
-    protected static ?string $navigationGroup = 'Manutenção';
-
+    // Sem grupo de proposito: autoatendimento (qualquer usuario ve a propria
+    // agenda, nao depende do plano ter "Ordens de Servico"), entao nao faz
+    // sentido aparecer sob o rotulo "Manutencao" -- isso sugeriria que o
+    // tenant tem o modulo comercial de Manutencao quando pode nao ter.
     protected static ?int $navigationSort = 1;
 
     protected static string $view = 'filament.pages.agenda-tecnico';

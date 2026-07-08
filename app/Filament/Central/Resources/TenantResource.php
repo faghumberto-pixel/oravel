@@ -5,20 +5,29 @@ namespace App\Filament\Central\Resources;
 use App\Filament\Central\Resources\TenantResource\Pages;
 use App\Models\Plan;
 use App\Models\Tenant;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\HtmlString;
 
 class TenantResource extends Resource
 {
     protected static ?string $model = Tenant::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
+
     protected static ?string $navigationLabel = 'Empresas (Tenants)';
+
     protected static ?string $modelLabel = 'Empresa';
+
     protected static ?string $pluralModelLabel = 'Empresas';
+
     protected static ?int $navigationSort = 1;
+
     protected static ?string $navigationGroup = 'Gestão SaaS';
 
     public static function form(Form $form): Form
@@ -27,7 +36,7 @@ class TenantResource extends Resource
             Forms\Components\Section::make('Informações da Empresa')->schema([
                 Forms\Components\TextInput::make('name')->label('Nome')->required()->maxLength(255),
                 Forms\Components\TextInput::make('slug')->label('Slug')->unique(Tenant::class, 'slug', ignoreRecord: true)->required()->maxLength(255),
-                Forms\Components\Select::make('plan_id')->label('Plano')->relationship('plan', 'name')->searchable()->preload(),
+                Forms\Components\Select::make('plan_id')->label('Plano')->relationship('plan', 'name')->searchable()->preload()->live(),
                 Forms\Components\Select::make('status')->label('Status')->options(['active' => 'Ativo', 'trial' => 'Teste', 'suspended' => 'Suspenso', 'canceled' => 'Cancelado'])->default('trial')->required(),
                 Forms\Components\TextInput::make('mrr_value')->label('MRR (R$)')->numeric()->step(0.01)->default(0),
                 Forms\Components\Toggle::make('onboarding_completed')->label('Onboarding Completo')->default(false),
@@ -45,7 +54,7 @@ class TenantResource extends Resource
                         ->label('E-mail do Administrador')
                         ->email()
                         ->required()
-                        ->unique(\App\Models\User::class, 'email')
+                        ->unique(User::class, 'email')
                         ->visibleOn('create'),
 
                     Forms\Components\TextInput::make('admin_password')
@@ -65,7 +74,41 @@ class TenantResource extends Resource
                     Forms\Components\CheckboxList::make('features')
                         ->label('Módulos extras liberados para este tenant')
                         ->options(Plan::getAvailableFeaturesOptions())
+                        ->live()
                         ->columns(2),
+
+                    Forms\Components\Placeholder::make('overrides_warning')
+                        ->label('')
+                        ->content(function (Get $get) {
+                            $selected = $get('features') ?? [];
+                            if (empty($selected)) {
+                                return null;
+                            }
+
+                            $plan = ($planId = $get('plan_id')) ? Plan::find($planId) : null;
+
+                            $labels = Plan::getAvailableFeaturesOptions();
+                            $extra = collect($selected)
+                                ->filter(fn ($feature) => ! $plan?->hasFeature($feature))
+                                ->map(fn ($feature) => $labels[$feature] ?? $feature)
+                                ->values();
+
+                            if ($extra->isEmpty()) {
+                                return null;
+                            }
+
+                            $planPhrase = $plan
+                                ? 'além do que o plano "'.e($plan->name).'" concede'
+                                : 'sem nenhum plano selecionado ainda pra comparar';
+
+                            return new HtmlString(
+                                '<div class="rounded-lg bg-amber-50 dark:bg-amber-500/10 ring-1 ring-amber-600/20 dark:ring-amber-400/20 p-3 text-sm text-amber-800 dark:text-amber-300">'
+                                .'⚠️ Estes módulos estão liberados <strong>só por override deste tenant</strong>, '.$planPhrase.': '
+                                .e($extra->implode(', ')).'. '
+                                .'Se o plano for restringido depois, eles continuam liberados aqui até serem desmarcados manualmente.'
+                                .'</div>'
+                            );
+                        }),
                 ]),
         ]);
     }

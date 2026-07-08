@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Pages\AgendaTecnico;
 use App\Filament\Pages\AvariasReincidencia;
 use App\Filament\Pages\Chat;
 use App\Filament\Pages\DesempenhoTecnico;
@@ -453,12 +454,16 @@ class PermissionAuditTest extends TestCase
         $this->get(DesempenhoTecnico::getUrl(['tenant' => $tenant->slug]))->assertForbidden();
         $this->get(Relatorios::getUrl(['tenant' => $tenant->slug]))->assertForbidden();
 
-        // Painel de Criticidade e' o unico relatorio que continua visivel --
-        // por desenho, e derivado 100% de dados de Asset (Matriz ABC), entao
-        // segue a mesma trava comercial de "tabela_assets" (documentado no
-        // proprio arquivo da page). Nao e' um vazamento: se o plano perde
-        // tabela_assets, ele some junto (ver proximo assert).
+        // Painel de Criticidade continua visivel -- por desenho, e derivado
+        // 100% de dados de Asset (Matriz ABC), entao segue a mesma trava
+        // comercial de "tabela_assets" (documentado no proprio arquivo da
+        // page). Nao e' um vazamento: se o plano perde tabela_assets, ele
+        // some junto (ver proximo assert). Desde 2026-07-10 seu grupo de
+        // navegacao tambem virou "Ativos e Materiais" (nao "Relatorios" mais),
+        // pra deixar isso visualmente coerente com a trava.
         $this->assertTrue(PainelCriticidade::canAccess());
+        $this->assertSame('Ativos e Materiais', PainelCriticidade::getNavigationGroup());
+        $this->assertNull(AgendaTecnico::getNavigationGroup());
 
         // Configuracoes: Logs de Atividade exige feature propria.
         $this->assertFalse(UserActivityLogResource::canViewAny());

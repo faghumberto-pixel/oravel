@@ -78,6 +78,14 @@ class Plan extends Model
             $options[$module['feature']] = 'Tabela: '.($module['label'] ?? $module['slug']);
         }
 
+        // Entrada manual: 'modulo_dashboard' nao tem Model/tabela por tras (e'
+        // so a pagina inicial App\Filament\Pages\PainelGestao), entao nao
+        // aparece no loop acima via HasSaaSMetadata. Migration
+        // 2026_07_09_000000_backfill_modulo_dashboard_feature_on_plans deixou
+        // todo plano existente com essa chave = true, pra ninguem perder o
+        // Dashboard sem querer; desmarcar aqui esconde so o Dashboard.
+        $options['modulo_dashboard'] = 'Painel: Dashboard (Painel de Controle)';
+
         return $options;
     }
 

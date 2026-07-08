@@ -3,22 +3,36 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
-
+use App\Support\Tenancy;
 use Filament\Pages\Page;
-use App\Filament\Widgets\RadarOperacional;
-use App\Filament\Widgets\RadarUrgencia;
-use App\Filament\Widgets\ListaAlertaAtivos;
-use App\Filament\Widgets\AgendaCampo;
 
 #[BelongsToFeature('users')]
 class PainelGestao extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
+
     protected static string $view = 'filament.pages.painel-gestao';
+
     protected static ?string $slug = 'painel-controle';
+
     protected static ?string $title = 'Painel de Controle';
+
     protected static ?string $navigationLabel = 'Dashboard';
+
     protected static ?int $navigationSort = -10;
+
+    public static function canAccess(): bool
+    {
+        $tenant = Tenancy::current();
+
+        // Sem tenant (super admin sem "atuar como", contexto de console): nao
+        // ha plano pra consultar, entao nao faz sentido esconder.
+        if (! $tenant) {
+            return true;
+        }
+
+        return $tenant->hasFeature('modulo_dashboard');
+    }
 
     public $activeTab = 'gestao';
 
