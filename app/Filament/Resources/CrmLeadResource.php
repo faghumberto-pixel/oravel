@@ -7,11 +7,14 @@ use App\Filament\Resources\CrmLeadResource\Pages;
 use App\Filament\Resources\CrmLeadResource\RelationManagers\InteractionsRelationManager;
 use App\Models\CrmLead;
 use App\Models\User;
+use App\Services\CepGeocodingService;
 use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\HtmlString;
 
 class CrmLeadResource extends BaseResource
 {
@@ -84,16 +87,56 @@ class CrmLeadResource extends BaseResource
                 ]),
 
             Forms\Components\Section::make('Endereço')
-                ->description('Latitude/Longitude são usadas no Mapa de Leads. Copie do Google Maps (clique com o botão direito no local → clique nas coordenadas).')
+                ->description('Preencha o CEP: endereço e localização no Mapa de Leads são preenchidos automaticamente.')
                 ->columns(3)
                 ->collapsible()
                 ->schema([
-                    Forms\Components\TextInput::make('address')->label('Endereço')->columnSpan(2),
-                    Forms\Components\TextInput::make('cep')->label('CEP'),
+                    Forms\Components\TextInput::make('cep')
+                        ->label('CEP')
+                        ->placeholder('00000-000')
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
+                            if (! $state) {
+                                return;
+                            }
+
+                            $service = app(CepGeocodingService::class);
+                            $endereco = $service->lookupCep($state);
+
+                            if (! $endereco) {
+                                Notification::make()->title('CEP não encontrado.')->warning()->send();
+
+                                return;
+                            }
+
+                            $set('address', $endereco['address']);
+                            $set('city', $endereco['city']);
+                            $set('uf', $endereco['uf']);
+
+                            $fullAddress = trim($endereco['address'].', '.$endereco['city'].' - '.$endereco['uf']);
+                            $coords = $service->geocodeAddress($fullAddress);
+
+                            if ($coords) {
+                                $set('latitude', $coords['latitude']);
+                                $set('longitude', $coords['longitude']);
+                                Notification::make()->title('Endereço localizado no mapa.')->success()->send();
+                            } else {
+                                $set('latitude', null);
+                                $set('longitude', null);
+                                Notification::make()->title('Endereço preenchido, mas não foi possível localizar no mapa automaticamente.')->warning()->send();
+                            }
+                        }),
+                    Forms\Components\TextInput::make('address')->label('Endereço')->columnSpan(2)->helperText('Complemente com o número, se necessário.'),
                     Forms\Components\TextInput::make('city')->label('Cidade'),
                     Forms\Components\TextInput::make('uf')->label('UF')->maxLength(2),
-                    Forms\Components\TextInput::make('latitude')->label('Latitude')->numeric(),
-                    Forms\Components\TextInput::make('longitude')->label('Longitude')->numeric(),
+                    Forms\Components\Placeholder::make('geo_status')
+                        ->label('Localização no Mapa de Leads')
+                        ->columnSpanFull()
+                        ->content(fn (Forms\Get $get) => $get('latitude') && $get('longitude')
+                            ? new HtmlString('<span class="text-emerald-500 font-semibold">✓ Localizado no mapa</span>')
+                            : new HtmlString('<span class="text-gray-400">Ainda não localizado — preencha o CEP acima.</span>')),
+                    Forms\Components\Hidden::make('latitude'),
+                    Forms\Components\Hidden::make('longitude'),
                 ]),
         ]);
     }
