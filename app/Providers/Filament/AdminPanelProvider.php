@@ -37,6 +37,7 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Orange,
                 'gray' => Color::Slate,
             ])
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->brandLogo(fn () => view('filament.brand-logo'))
             ->brandLogoHeight('1.75rem')
             ->favicon(asset('favicon.png'))
