@@ -3,35 +3,37 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasSaaSMetadata;
-
+use Filament\Facades\Filament;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
-use Filament\Facades\Filament;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Traits\HasRoles;
 use Throwable;
 
 class User extends Authenticatable implements FilamentUser, HasTenants, MustVerifyEmail
 {
+    use HasFactory, HasRoles, HasUuids, Notifiable;
     use HasSaaSMetadata;
-    use HasUuids, HasFactory, Notifiable, HasRoles;
 
-    protected static ?string $saasFeatureKey = "tabela_users";
-    protected static ?string $saasPermissionSlug = "funcionario";
-    protected static ?string $saasModuleLabel = "Funcionarios";
+    protected static ?string $saasFeatureKey = 'tabela_users';
+
+    protected static ?string $saasPermissionSlug = 'funcionario';
+
+    protected static ?string $saasModuleLabel = 'Funcionarios';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -73,15 +75,20 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
 
     public function podeReceberFinancas(): bool
     {
-        if ($this->isSuperAdmin()) return true;
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
 
         $temRegraFinanceira = $this->hasAnyRole(['financeiro', 'admin', 'gerente'])
             || in_array(strtolower($this->role), ['financeiro', 'admin', 'gerente']);
 
-        if ($temRegraFinanceira) return true;
+        if ($temRegraFinanceira) {
+            return true;
+        }
 
         if ($this->department()->exists()) {
             $nomeDepartamento = strtolower($this->department->name ?? '');
+
             return str_contains($nomeDepartamento, 'finan') || str_contains($nomeDepartamento, 'adm');
         }
 
@@ -125,7 +132,9 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
 
     public function isAdmin(): bool
     {
-        if ($this->isSuperAdmin()) return true;
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
 
         return DB::table('model_has_roles')
             ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
@@ -135,20 +144,39 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
             ->exists();
     }
 
+    /**
+     * O painel 'central' (operador SaaS: planos, tenants, receita entre
+     * empresas) e' restrito a super admin -- ANTES disso retornava true
+     * sempre, entao qualquer admin de qualquer tenant conseguia acessar
+     * /central e ver dados de todos os outros tenants (achado de auditoria
+     * de permissoes, 2026-07-08). O painel 'admin' (tenant) continua aberto
+     * a qualquer usuario autenticado, como sempre foi -- a trava por modulo/
+     * plano acontece nas Policies, nao aqui.
+     */
     public function canAccessPanel(Panel $panel): bool
     {
+        if ($panel->getId() === 'central') {
+            return $this->isSuperAdmin();
+        }
+
         return true;
     }
 
     public function getTenants(Panel $panel): Collection
     {
-        if ($this->isSuperAdmin()) return Tenant::all();
+        if ($this->isSuperAdmin()) {
+            return Tenant::all();
+        }
+
         return Tenant::where('id', $this->tenant_id)->get();
     }
 
     public function canAccessTenant(Model $tenant): bool
     {
-        if ($this->isSuperAdmin()) return true;
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
         return (string) $this->tenant_id === (string) $tenant->getKey();
     }
 
