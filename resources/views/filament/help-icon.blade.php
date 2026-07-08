@@ -4,6 +4,8 @@
     icon-size="lg"
     label="Ajuda"
     tooltip="Ajuda"
-    href="mailto:suporte@oravel.com.br"
+    href="https://academy.oravel.com.br/"
+    target="_blank"
+    rel="noopener"
     tag="a"
 />
