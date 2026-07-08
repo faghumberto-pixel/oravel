@@ -38,6 +38,11 @@ class PainelCriticidade extends Page
 
     protected static string $view = 'filament.pages.painel-criticidade';
 
+    public static function canAccess(): bool
+    {
+        return (bool) auth()->user()?->can('viewAny', Asset::class);
+    }
+
     public function getLinhasProperty(): Collection
     {
         $assets = Asset::query()

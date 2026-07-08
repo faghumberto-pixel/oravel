@@ -29,6 +29,11 @@ class AvariasReincidencia extends Page
 
     protected static string $view = 'filament.pages.avarias-reincidencia';
 
+    public static function canAccess(): bool
+    {
+        return (bool) auth()->user()?->can('viewAny', EquipmentDamage::class);
+    }
+
     public int $days = 90;
 
     public function getDaysOptions(): array

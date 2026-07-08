@@ -11,22 +11,29 @@ use Filament\Support\Enums\MaxWidth;
 class DossieOperacional extends Page
 {
     protected static ?string $slug = 'maintenance-orders/{record}/dossie';
+
     protected static bool $shouldRegisterNavigation = false;
+
     protected static string $view = 'filament.pages.dossie-operacional';
 
     public MaintenanceOrder $record;
 
+    public static function canAccess(): bool
+    {
+        return (bool) auth()->user()?->can('viewAny', MaintenanceOrder::class);
+    }
+
     public function mount(MaintenanceOrder $record): void
     {
         $user = auth()->user();
-        abort_unless($user && ($user->isAdmin() || $user->hasAnyPermission(['ler_maintenance_order'])), 403);
+        abort_unless($user && $user->can('view', $record), 403);
 
         $this->record = $record->load(['asset', 'client', 'technician', 'evidences']);
     }
 
     public function getTitle(): string
     {
-        return 'Dossiê Operacional — OS #' . $this->record->os_number;
+        return 'Dossiê Operacional — OS #'.$this->record->os_number;
     }
 
     public function getMaxContentWidth(): MaxWidth

@@ -33,6 +33,11 @@ class DesempenhoTecnico extends Page
 
     protected static string $view = 'filament.pages.desempenho-tecnico';
 
+    public static function canAccess(): bool
+    {
+        return (bool) auth()->user()?->can('viewAny', MaintenanceOrder::class);
+    }
+
     public int $janelaRetrabalho = 30;
 
     public function getJanelaOptions(): array

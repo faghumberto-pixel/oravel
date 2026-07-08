@@ -41,16 +41,12 @@ class MaintenanceOrderResource extends Resource
 
     public static function canViewAny(): bool
     {
-        $user = auth()->user();
-
-        return $user && ($user->isAdmin() || $user->hasAnyPermission(['ler_maintenance_order']));
+        return (bool) auth()->user()?->can('viewAny', MaintenanceOrder::class);
     }
 
     public static function canEdit($record): bool
     {
-        $user = auth()->user();
-
-        return $user && ($user->isAdmin() || $user->hasAnyPermission(['editar_maintenance_order']));
+        return (bool) auth()->user()?->can('update', $record);
     }
 
     public static function form(Form $form): Form

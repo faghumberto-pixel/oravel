@@ -2,9 +2,17 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Pages\AvariasReincidencia;
 use App\Filament\Pages\Chat;
+use App\Filament\Pages\DesempenhoTecnico;
+use App\Filament\Pages\MaintenanceKanban;
+use App\Filament\Pages\PainelCriticidade;
+use App\Filament\Pages\Relatorios;
+use App\Filament\Resources\AssetResource;
 use App\Filament\Resources\CrmLeadResource;
+use App\Filament\Resources\MaintenanceOrderResource;
 use App\Filament\Resources\RoleResource;
+use App\Filament\Resources\UserActivityLogResource;
 use App\Livewire\GlobalChat;
 use App\Models\Asset;
 use App\Models\CrmLead;
@@ -412,5 +420,58 @@ class PermissionAuditTest extends TestCase
         $this->actingAs($admin);
 
         $this->get(RoleResource::getUrl('index', ['tenant' => $tenant->slug]))->assertOk();
+    }
+
+    // ---------------------------------------------------------------
+    // 8. Regressao: plano so com "tabela_assets" nao deveria deixar visivel
+    //    Manutencao/Relatorios/Configuracoes (relato real do usuario,
+    //    2026-07-08). Causa raiz: 7 Filament Pages sem canAccess() (cai no
+    //    default do Filament, que e' `true`) + 2 Resources com canViewAny()
+    //    escrito a mao que nunca consultava a trava comercial
+    //    (MaintenanceOrderResource, UserActivityLogResource).
+    // ---------------------------------------------------------------
+    public function test_plan_with_only_assets_hides_maintenance_reports_and_activity_log(): void
+    {
+        [$tenant, $admin] = $this->makeTenant(['tabela_assets']);
+        $this->actingAs($admin);
+
+        // Ativos: continua acessivel, e' a unica feature do plano.
+        $this->assertTrue(AssetResource::canViewAny());
+        $this->get(AssetResource::getUrl('index', ['tenant' => $tenant->slug]))->assertOk();
+
+        // Manutencao: nao deveria aparecer nem ser acessivel via URL direta.
+        $this->assertFalse(MaintenanceOrderResource::canViewAny());
+        $this->assertFalse(MaintenanceKanban::canAccess());
+        $this->get(MaintenanceOrderResource::getUrl('index', ['tenant' => $tenant->slug]))->assertForbidden();
+        $this->get(MaintenanceKanban::getUrl(['tenant' => $tenant->slug]))->assertForbidden();
+
+        // Relatorios (os que dependem de OS/avarias, nao de ativos): idem.
+        $this->assertFalse(AvariasReincidencia::canAccess());
+        $this->assertFalse(DesempenhoTecnico::canAccess());
+        $this->assertFalse(Relatorios::canAccess());
+        $this->get(AvariasReincidencia::getUrl(['tenant' => $tenant->slug]))->assertForbidden();
+        $this->get(DesempenhoTecnico::getUrl(['tenant' => $tenant->slug]))->assertForbidden();
+        $this->get(Relatorios::getUrl(['tenant' => $tenant->slug]))->assertForbidden();
+
+        // Painel de Criticidade e' o unico relatorio que continua visivel --
+        // por desenho, e derivado 100% de dados de Asset (Matriz ABC), entao
+        // segue a mesma trava comercial de "tabela_assets" (documentado no
+        // proprio arquivo da page). Nao e' um vazamento: se o plano perde
+        // tabela_assets, ele some junto (ver proximo assert).
+        $this->assertTrue(PainelCriticidade::canAccess());
+
+        // Configuracoes: Logs de Atividade exige feature propria.
+        $this->assertFalse(UserActivityLogResource::canViewAny());
+        $this->get(UserActivityLogResource::getUrl('index', ['tenant' => $tenant->slug]))->assertForbidden();
+    }
+
+    public function test_painel_criticidade_follows_assets_feature_not_a_separate_reports_toggle(): void
+    {
+        [, $admin] = $this->makeTenant(['tabela_maintenance_orders']);
+        $this->actingAs($admin);
+
+        // Sem tabela_assets no plano, o Painel de Criticidade (derivado de
+        // Asset) tambem fica bloqueado, mesmo com outras features ativas.
+        $this->assertFalse(PainelCriticidade::canAccess());
     }
 }

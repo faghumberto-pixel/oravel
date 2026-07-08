@@ -36,7 +36,7 @@ class UserActivityLogResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return (bool) auth()->user()?->isAdmin();
+        return (bool) auth()->user()?->can('viewAny', UserActivityLog::class);
     }
 
     public static function canCreate(): bool
