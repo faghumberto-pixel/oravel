@@ -15,6 +15,8 @@ use App\Models\Plan;
 use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Models\UserActivityLog;
+use App\Support\SaaSRegistry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -132,20 +134,19 @@ class PermissionAuditTest extends TestCase
     }
 
     // ---------------------------------------------------------------
-    // 3. Achado da analise estatica: RolePolicy/MaintenanceOrderPolicy/
-    //    MaterialPolicy checam hasFeature() ANTES do proprio bypass de
-    //    admin (ordem diferente de AbstractPolicy, que checa super-admin
-    //    primeiro). Na pratica isso NAO vaza pra super admin porque
-    //    Tenant::hasFeature() (app/Models/Tenant.php:50-52) tem o SEU
-    //    PROPRIO bypass: "if (Auth::user()?->isSuperAdmin()) return true"
-    //    -- ou seja, ha um bypass redundante direto no model, nao so na
-    //    policy. Confirmado abaixo com dado real. O que IMPORTA de verdade
-    //    pra seguranca -- um ADMIN DE TENANT (nao super) sendo bloqueado
-    //    quando o PROPRIO plano do tenant nao tem a feature -- tambem e'
-    //    testado abaixo e funciona corretamente nas 3 policies.
+    // 3. [FIX] RolePolicy/MaintenanceOrderPolicy/MaterialPolicy agora
+    //    checam isSuperAdmin() PRIMEIRO, mesma ordem de
+    //    AbstractPolicy::check(). Antes checavam hasFeature() antes do
+    //    bypass de admin -- na pratica nunca vazou pra super admin porque
+    //    Tenant::hasFeature() (app/Models/Tenant.php:50-52) tem seu
+    //    PROPRIO bypass redundante de super admin, mas a ordem agora
+    //    tambem esta correta na propria policy, nao so mascarada pelo
+    //    model. O que IMPORTA de verdade pra seguranca -- um ADMIN DE
+    //    TENANT (nao super) sendo bloqueado quando o PROPRIO plano do
+    //    tenant nao tem a feature -- continua testado abaixo.
     // ---------------------------------------------------------------
 
-    public function test_super_admin_is_not_blocked_by_hand_rolled_policies_due_to_redundant_bypass_in_tenant_model(): void
+    public function test_super_admin_passes_hand_rolled_policies_regardless_of_acting_tenant_plan(): void
     {
         [$tenant, $admin] = $this->makeTenant([]); // plano sem NENHUMA feature
         $super = $this->makeSuperAdmin();
@@ -153,11 +154,6 @@ class PermissionAuditTest extends TestCase
         session(['acting_tenant_id' => $tenant->id]);
         $this->actingAs($super);
 
-        // Nao e' o AbstractPolicy que salva aqui -- e' Tenant::hasFeature()
-        // que devolve true pra qualquer feature quando o usuario autenticado
-        // e' super admin, entao mesmo as 3 policies hand-rolled (que checam
-        // hasFeature() antes do bypass de admin) acabam passando.
-        $this->assertTrue($tenant->hasFeature('tabela_roles'), 'Tenant::hasFeature() tem bypass proprio de super admin, mascarando a ordem de checagem da policy');
         $this->assertTrue($super->can('viewAny', Role::class));
         $this->assertTrue($super->can('viewAny', MaintenanceOrder::class));
         $this->assertTrue($super->can('viewAny', Material::class));
@@ -188,16 +184,16 @@ class PermissionAuditTest extends TestCase
     }
 
     /**
-     * BUG REAL E DISTINTO (nao mascarado pelo bypass do Tenant::hasFeature()):
-     * RolePolicy::before() checa super-admin por
+     * FIX aplicado: RolePolicy::before() checava super-admin por
      * str_ends_with($user->email, '@oravel.com.br') || $user->hasRole('admin')
      * -- NAO por $user->isSuperAdmin(). config('oravel.super_admins') e' uma
      * lista de e-mails arbitraria (SUPER_ADMINS no .env), nao restrita a
      *
-     * @oravel.com.br. Um super admin com e-mail de outro dominio e sem role
-     * 'admin' em tenant nenhum fica bloqueado de Perfis de Acesso.
+     * @oravel.com.br, entao um super admin de outro dominio e sem role
+     * 'admin' em tenant nenhum ficava bloqueado de Perfis de Acesso.
+     * Trocado por $user->isAdmin() (que ja checa isSuperAdmin() primeiro).
      */
-    public function test_super_admin_with_non_oravel_email_is_incorrectly_blocked_from_role_module(): void
+    public function test_super_admin_with_non_oravel_email_can_access_role_module(): void
     {
         [$tenant, $admin] = $this->makeTenant(['tabela_roles']);
 
@@ -212,7 +208,7 @@ class PermissionAuditTest extends TestCase
         $this->actingAs($super);
 
         $this->assertTrue($super->isSuperAdmin(), 'sanity check: isSuperAdmin() reconhece o e-mail configurado');
-        $this->assertFalse($super->can('viewAny', Role::class), 'BUG CONFIRMADO: RolePolicy nega super admin com e-mail fora de @oravel.com.br e sem role admin');
+        $this->assertTrue($super->can('viewAny', Role::class), 'super admin com e-mail fora de @oravel.com.br e sem role admin deve acessar Perfis de Acesso');
     }
 
     public function test_super_admin_is_correctly_allowed_asset_access_regardless_of_acting_tenant_plan(): void
@@ -227,51 +223,91 @@ class PermissionAuditTest extends TestCase
     }
 
     // ---------------------------------------------------------------
-    // 4. Chat ignora a trava comercial (Chat::canAccess() hardcoded true)
+    // 4. [FIX] Chat agora respeita a trava comercial do plano
+    //    (modulo_chat), tanto no Chat::canAccess() quanto no proprio
+    //    GlobalChat::mount() (defesa em profundidade).
     // ---------------------------------------------------------------
 
-    public function test_chat_page_is_accessible_even_when_plan_lacks_chat_module(): void
+    public function test_chat_page_is_blocked_when_plan_lacks_chat_module(): void
     {
         [$tenant, $admin] = $this->makeTenant(['tabela_assets']); // sem modulo_chat
         $this->actingAs($admin);
 
         $this->assertFalse($tenant->hasFeature('modulo_chat'), 'sanity check: plano realmente nao tem modulo_chat');
-
-        // Documenta o bug: Chat::canAccess() ignora a feature do plano.
-        $this->assertTrue(Chat::canAccess(), 'BUG CONFIRMADO: Chat::canAccess() retorna true mesmo sem modulo_chat no plano');
+        $this->assertFalse(Chat::canAccess());
     }
 
-    public function test_global_chat_livewire_has_no_authorization_check_at_all(): void
+    public function test_chat_page_is_accessible_when_plan_includes_chat_module(): void
+    {
+        [$tenant, $admin] = $this->makeTenant(['tabela_assets', 'modulo_chat']);
+        $this->actingAs($admin);
+
+        $this->assertTrue(Chat::canAccess());
+    }
+
+    public function test_global_chat_livewire_blocks_mount_when_plan_lacks_chat_module(): void
     {
         [$tenant, $admin] = $this->makeTenant([]); // sem NENHUMA feature
         $this->actingAs($admin);
 
-        // GlobalChat::mount() nao chama Gate::authorize nem ->can() em lugar
-        // nenhum -- o componente monta e responde 200 independente do plano.
+        Livewire::test(GlobalChat::class)->assertStatus(403);
+    }
+
+    public function test_global_chat_livewire_mounts_when_plan_includes_chat_module(): void
+    {
+        [$tenant, $admin] = $this->makeTenant(['modulo_chat']);
+        $this->actingAs($admin);
+
         Livewire::test(GlobalChat::class)->assertOk();
     }
 
-    // ---------------------------------------------------------------
-    // 5. CrmLeadInteraction sem HasSaaSMetadata -- nao-admin nunca
-    //    consegue permissao (nao ha aba no RoleResource pra conceder).
-    // ---------------------------------------------------------------
-
-    public function test_non_admin_role_can_never_be_granted_crm_interaction_permission_via_ui(): void
+    /**
+     * Achado colateral durante o fix do Chat: QUALQUER model com
+     * HasSaaSMetadata mas sem Policy nomeada propria cai no mesmo bug
+     * (DynamicPolicy nao resolve o model em viewAny/create, trava comercial
+     * e' pulada). UserActivityLog tinha o mesmo problema, corrigido junto.
+     */
+    public function test_user_activity_log_is_blocked_when_plan_lacks_feature(): void
     {
-        [$tenant, $admin] = $this->makeTenant(['tabela_assets', 'tabela_roles', 'tabela_crm_leads']);
+        [$tenant, $admin] = $this->makeTenant(['tabela_assets']); // sem tabela_user_activity_logs
         $this->actingAs($admin);
 
-        $vendedorRole = Role::create(['name' => 'vendedor', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
-
-        $response = $this->get(RoleResource::getUrl('edit', ['tenant' => $tenant->slug, 'record' => $vendedorRole->id]));
-        $response->assertOk();
-
-        // Nao existe aba/checkbox pra CrmLeadInteraction -- confirma que a
-        // permissao 'ler_crm_lead_interaction' nunca aparece na tela.
-        $response->assertDontSee('ler_crm_lead_interaction', false);
+        $this->assertFalse($tenant->hasFeature('tabela_user_activity_logs'));
+        $this->assertFalse($admin->can('viewAny', UserActivityLog::class));
     }
 
-    public function test_non_admin_user_cannot_manage_crm_interactions_even_with_crm_feature_enabled(): void
+    public function test_no_saas_registry_module_is_missing_a_dedicated_policy(): void
+    {
+        // Varredura completa: todo model com HasSaaSMetadata precisa de uma
+        // Policy nomeada propria (App\Policies\{Model}Policy), senao viewAny/
+        // create sem $record caem no DynamicPolicy e pulam a trava comercial
+        // silenciosamente (ver AbstractPolicy::resolveModelClass()).
+        $missing = [];
+
+        foreach (SaaSRegistry::modules() as $module) {
+            $model = $module['model'] ?? null;
+            if (! $model) {
+                continue;
+            }
+
+            $policyClass = 'App\\Policies\\'.class_basename($model).'Policy';
+            if (! class_exists($policyClass)) {
+                $missing[] = $model;
+            }
+        }
+
+        $this->assertEmpty($missing, 'Modelos do SaaSRegistry sem Policy dedicada: '.implode(', ', $missing));
+    }
+
+    // ---------------------------------------------------------------
+    // 5. [FIX] CrmLeadInteraction: tratado como auto-servico (igual
+    //    Appointment/ChatRoom) -- qualquer membro do tenant registra
+    //    interacao se o plano tiver CRM, sem precisar de permissao
+    //    granular concedida por role. update/delete ficam restritos ao
+    //    autor ou admin.
+    // ---------------------------------------------------------------
+
+    public function test_non_admin_user_can_create_crm_interaction_when_plan_has_crm(): void
     {
         [$tenant, $admin] = $this->makeTenant(['tabela_assets', 'tabela_crm_leads']);
 
@@ -284,12 +320,50 @@ class PermissionAuditTest extends TestCase
         $vendedor->assignRole($vendedorRole);
         $this->actingAs($vendedor);
 
-        // Mesmo tentando conceder manualmente via Spatie direto (bypassando a
-        // UI, que nem mostra a opcao), a permissao nem existe pra conceder
-        // com o slug que o CrmLeadInteractionPolicy espera.
-        $lead = CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'Lead Teste', 'stage' => CrmLead::STAGE_NOVO]);
+        $this->assertTrue($vendedor->can('create', CrmLeadInteraction::class), 'vendedor nao-admin deve conseguir registrar interacao quando o plano tem CRM');
+    }
 
-        $this->assertFalse($vendedor->can('create', CrmLeadInteraction::class), 'vendedor nao-admin nao consegue registrar interacao mesmo com CRM no plano');
+    public function test_non_admin_user_cannot_create_crm_interaction_when_plan_lacks_crm(): void
+    {
+        [$tenant, $admin] = $this->makeTenant(['tabela_assets']); // sem tabela_crm_leads
+
+        $vendedor = User::create([
+            'name' => 'Vendedor', 'email' => 'vendedor-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
+        ]);
+        $vendedor->forceFill(['email_verified_at' => now()])->save();
+        $vendedorRole = Role::create(['name' => 'vendedor', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
+        $vendedor->assignRole($vendedorRole);
+        $this->actingAs($vendedor);
+
+        $this->assertFalse($vendedor->can('create', CrmLeadInteraction::class), 'trava comercial deve continuar valendo mesmo sendo auto-servico');
+    }
+
+    public function test_non_author_non_admin_cannot_edit_or_delete_another_users_crm_interaction(): void
+    {
+        [$tenant, $admin] = $this->makeTenant(['tabela_assets', 'tabela_crm_leads']);
+
+        $vendedorA = User::create(['name' => 'Vendedor A', 'email' => 'vendedor-a-'.uniqid().'@oravel.com.br', 'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id]);
+        $vendedorA->forceFill(['email_verified_at' => now()])->save();
+        $vendedorB = User::create(['name' => 'Vendedor B', 'email' => 'vendedor-b-'.uniqid().'@oravel.com.br', 'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id]);
+        $vendedorB->forceFill(['email_verified_at' => now()])->save();
+        $vendedorRole = Role::create(['name' => 'vendedor', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
+        $vendedorA->assignRole($vendedorRole);
+        $vendedorB->assignRole($vendedorRole);
+
+        $lead = CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'Lead Teste', 'stage' => CrmLead::STAGE_NOVO]);
+        $interaction = CrmLeadInteraction::create([
+            'tenant_id' => $tenant->id, 'crm_lead_id' => $lead->id, 'user_id' => $vendedorA->id,
+            'channel' => CrmLeadInteraction::CHANNEL_TELEFONE, 'contact_date' => now(), 'summary' => 'Contato A',
+            'stage_at_time' => CrmLead::STAGE_NOVO,
+        ]);
+
+        $this->actingAs($vendedorB);
+        $this->assertFalse($vendedorB->can('update', $interaction), 'vendedor B nao pode editar interacao registrada pelo vendedor A');
+        $this->assertFalse($vendedorB->can('delete', $interaction));
+
+        $this->actingAs($vendedorA);
+        $this->assertTrue($vendedorA->can('update', $interaction), 'autor pode editar a propria interacao');
     }
 
     // ---------------------------------------------------------------

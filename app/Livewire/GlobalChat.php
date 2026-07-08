@@ -14,6 +14,7 @@ use Filament\Notifications\Notification;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
@@ -37,6 +38,12 @@ class GlobalChat extends Component
 
     public function mount(): void
     {
+        // Defesa em profundidade: Chat::canAccess() ja bloqueia a rota/menu,
+        // mas este componente e' o que de fato executa a logica -- sem essa
+        // checagem aqui, ele nunca teve nenhuma autorizacao propria (achado
+        // de auditoria de permissoes, 2026-07-08).
+        Gate::authorize('viewAny', ChatRoom::class);
+
         $this->selectedUserId ??= $this->users->first()['id'] ?? null;
         if ($this->selectedUserId) {
             $this->markRoomRead($this->selectedUserId);

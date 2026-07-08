@@ -17,6 +17,15 @@ class MaterialPolicy
      */
     public function before(User $user, string $ability): ?bool
     {
+        // Super admin acima de tudo, inclusive da trava comercial --
+        // mesma ordem de AbstractPolicy::check(). Antes a trava comercial
+        // era checada primeiro, o que so nao vazava porque
+        // Tenant::hasFeature() ja tem seu proprio bypass redundante de
+        // super admin (achado de auditoria de permissoes, 2026-07-08).
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+
         // Trava comercial: nega para todos, inclusive admin do tenant, se o
         // plano nao incluir esse modulo (mesmo padrao de AbstractPolicy::check()).
         if (($tenant = Tenancy::current()) && ! $tenant->hasFeature('tabela_materials')) {

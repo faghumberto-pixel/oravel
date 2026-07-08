@@ -3,21 +3,23 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
-use Filament\Pages\Page;
-use App\Models\User;
+use App\Models\Asset;
 use App\Models\ChatMessage;
 use App\Models\ChatRoom;
 use App\Models\MaintenanceOrder;
-use App\Models\Asset;
 use App\Models\MaterialRequest;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Support\Tenancy;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\WithFileUploads;
-use Filament\Notifications\Notification;
 
 #[BelongsToFeature('users')]
 class Chat extends Page
@@ -25,23 +27,32 @@ class Chat extends Page
     use WithFileUploads;
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+
     protected static ?string $navigationGroup = 'Equipe';
+
     protected static ?string $navigationLabel = 'Chat Interno';
+
     protected static ?string $title = '';
 
     protected static string $view = 'filament.pages.chat';
 
     #[Url]
     public ?string $activeChatId = null;
+
     public ?string $chatRoomId = null;
+
     public string $newMessage = '';
+
     public string $searchQuery = '';
 
     public string $contextType = 'geral';
+
     public ?string $contextId = null;
 
     public $photo = null;
+
     public $document = null;
+
     public int $refreshCounter = 0;
 
     public function getMaxContentWidth(): string
@@ -50,12 +61,16 @@ class Chat extends Page
     }
 
     /**
-     * Chat liberado para todos os usuarios autenticados,
-     * independente da feature do plano do tenant.
+     * Antes liberado pra qualquer usuario autenticado, independente do
+     * plano do tenant -- o toggle "Chat Interno" na tela de Plano do
+     * Central nao tinha efeito nenhum na pratica (achado de auditoria de
+     * permissoes, 2026-07-08). ChatRoom ja tem HasSaaSMetadata
+     * (modulo_chat/chat/"Chat Interno"), entao a checagem correta e' a
+     * mesma usada em todo o resto do sistema.
      */
     public static function canAccess(): bool
     {
-        return true;
+        return (bool) auth()->user()?->can('viewAny', ChatRoom::class);
     }
 
     public function mount()
@@ -80,7 +95,7 @@ class Chat extends Page
     protected function updateMyPresence()
     {
         if (Auth::check()) {
-            Cache::put('user-online-' . Auth::id(), true, 30);
+            Cache::put('user-online-'.Auth::id(), true, 30);
         }
     }
 
@@ -101,20 +116,22 @@ class Chat extends Page
 
     public function updatedPhoto()
     {
-        if (!$this->photo) return;
+        if (! $this->photo) {
+            return;
+        }
         $this->resolveChatRoom();
 
         $photoPath = $this->photo->store('chat_attachments', 'public');
         $originalName = $this->photo->getClientOriginalName();
 
         ChatMessage::create([
-            'user_id'      => Auth::id(),
-            'message'      => 'FILE_DOWNLOAD|' . $originalName . '|' . $photoPath,
+            'user_id' => Auth::id(),
+            'message' => 'FILE_DOWNLOAD|'.$originalName.'|'.$photoPath,
             'chat_room_id' => $this->chatRoomId,
             'context_type' => $this->contextType,
-            'context_id'   => $this->contextId,
-            'created_at'   => now(),
-            'updated_at'   => now(),
+            'context_id' => $this->contextId,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $this->sendSininhoNotification('Enviou uma foto');
@@ -125,23 +142,25 @@ class Chat extends Page
 
     public function updatedDocument()
     {
-        if (!$this->document) return;
+        if (! $this->document) {
+            return;
+        }
         $this->resolveChatRoom();
 
         $docPath = $this->document->store('chat_attachments', 'public');
         $originalName = $this->document->getClientOriginalName();
 
         ChatMessage::create([
-            'user_id'      => Auth::id(),
-            'message'      => 'FILE_DOWNLOAD|' . $originalName . '|' . $docPath,
+            'user_id' => Auth::id(),
+            'message' => 'FILE_DOWNLOAD|'.$originalName.'|'.$docPath,
             'chat_room_id' => $this->chatRoomId,
             'context_type' => $this->contextType,
-            'context_id'   => $this->contextId,
-            'created_at'   => now(),
-            'updated_at'   => now(),
+            'context_id' => $this->contextId,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
-        $this->sendSininhoNotification('Enviou um documento: ' . $originalName);
+        $this->sendSininhoNotification('Enviou um documento: '.$originalName);
 
         $this->reset('document');
         $this->dispatch('scroll-to-bottom');
@@ -149,18 +168,20 @@ class Chat extends Page
 
     public function sendMessage()
     {
-        if (empty(trim($this->newMessage))) return;
+        if (empty(trim($this->newMessage))) {
+            return;
+        }
 
         $this->resolveChatRoom();
 
         ChatMessage::create([
-            'user_id'      => Auth::id(),
-            'message'      => $this->newMessage,
+            'user_id' => Auth::id(),
+            'message' => $this->newMessage,
             'chat_room_id' => $this->chatRoomId,
             'context_type' => $this->contextType,
-            'context_id'   => $this->contextId,
-            'created_at'   => now(),
-            'updated_at'   => now(),
+            'context_id' => $this->contextId,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $this->sendSininhoNotification($this->newMessage);
@@ -177,17 +198,17 @@ class Chat extends Page
             $senderName = Auth::user()->name;
 
             $contextLabel = $this->contextType !== 'geral'
-                ? ' em ' . strtoupper($this->contextType) . ' (#' . substr($this->contextId, 0, 8) . ')'
+                ? ' em '.strtoupper($this->contextType).' (#'.substr($this->contextId, 0, 8).')'
                 : '';
 
             if ($recipient) {
                 Notification::make()
-                    ->title('Nova mensagem de ' . $senderName)
-                    ->body(Str::limit($content, 60) . $contextLabel)
+                    ->title('Nova mensagem de '.$senderName)
+                    ->body(Str::limit($content, 60).$contextLabel)
                     ->icon('heroicon-o-chat-bubble-left-right')
                     ->iconColor('warning')
                     ->actions([
-                        \Filament\Notifications\Actions\Action::make('ver')
+                        Action::make('ver')
                             ->label('Ver conversa')
                             ->url(self::getUrl(['activeChatId' => Auth::id()]))
                             ->button(),
@@ -199,23 +220,25 @@ class Chat extends Page
 
     public function resolveChatRoom()
     {
-        if (!$this->activeChatId) {
+        if (! $this->activeChatId) {
             $this->chatRoomId = null;
+
             return;
         }
 
         $myId = Auth::id();
         $targetId = $this->activeChatId;
-        $tenantId = \App\Support\Tenancy::current()?->id;
+        $tenantId = Tenancy::current()?->id;
 
         $participants = [$myId, $targetId];
         sort($participants);
-        $roomSlug = "room_" . $participants[0] . "_" . $participants[1];
+        $roomSlug = 'room_'.$participants[0].'_'.$participants[1];
 
         $room = ChatRoom::where('title', $roomSlug)->first();
 
         if ($room) {
             $this->chatRoomId = $room->id;
+
             return;
         }
 
@@ -223,10 +246,10 @@ class Chat extends Page
 
         try {
             DB::table('chat_rooms')->insert([
-                'id'         => $newRoomId,
-                'tenant_id'  => $tenantId,
-                'type'       => 'private',
-                'title'      => $roomSlug,
+                'id' => $newRoomId,
+                'tenant_id' => $tenantId,
+                'type' => 'private',
+                'title' => $roomSlug,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -236,7 +259,8 @@ class Chat extends Page
                     ['chat_room_id' => $newRoomId, 'user_id' => $myId],
                     ['chat_room_id' => $newRoomId, 'user_id' => $targetId],
                 ]);
-            } catch (\Exception $pivoteE) {}
+            } catch (\Exception $pivoteE) {
+            }
 
             $this->chatRoomId = $newRoomId;
         } catch (\Exception $e) {
@@ -254,15 +278,17 @@ class Chat extends Page
     {
         $this->updateMyPresence();
 
-        $tenantId = \App\Support\Tenancy::current()?->id;
-        if (!$tenantId) return collect();
+        $tenantId = Tenancy::current()?->id;
+        if (! $tenantId) {
+            return collect();
+        }
 
         $query = User::where('tenant_id', $tenantId)
             ->where('id', '!=', Auth::id())
             ->with('roles');
 
-        if (!empty(trim($this->searchQuery))) {
-            $query->where('name', 'ilike', '%' . trim($this->searchQuery) . '%');
+        if (! empty(trim($this->searchQuery))) {
+            $query->where('name', 'ilike', '%'.trim($this->searchQuery).'%');
         }
 
         return $query->get();
@@ -271,7 +297,9 @@ class Chat extends Page
     #[Computed]
     public function messages()
     {
-        if (!$this->chatRoomId) return collect();
+        if (! $this->chatRoomId) {
+            return collect();
+        }
 
         return ChatMessage::with('user')
             ->where('chat_room_id', $this->chatRoomId)
@@ -284,9 +312,11 @@ class Chat extends Page
     #[Computed]
     public function activeOrders()
     {
-        if (!$this->activeChatId) return collect();
+        if (! $this->activeChatId) {
+            return collect();
+        }
 
-        $tenantId = \App\Support\Tenancy::current()?->id;
+        $tenantId = Tenancy::current()?->id;
 
         try {
             return MaintenanceOrder::where('technician_id', $this->activeChatId)
@@ -308,7 +338,8 @@ class Chat extends Page
     public function activeAssets()
     {
         try {
-            $tenantId = \App\Support\Tenancy::current()?->id;
+            $tenantId = Tenancy::current()?->id;
+
             return Asset::where('tenant_id', $tenantId)->limit(10)->get();
         } catch (\Exception $e) {
             return collect();
@@ -319,7 +350,8 @@ class Chat extends Page
     public function activeMaterialRequests()
     {
         try {
-            $tenantId = \App\Support\Tenancy::current()?->id;
+            $tenantId = Tenancy::current()?->id;
+
             return MaterialRequest::where('tenant_id', $tenantId)
                 ->where('status', '!=', 'entregue')
                 ->orderBy('requested_at', 'desc')

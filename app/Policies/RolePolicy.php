@@ -16,13 +16,25 @@ class RolePolicy
      */
     public function before(User $user, string $ability): ?bool
     {
+        // Super admin acima de tudo, inclusive da trava comercial -- mesma
+        // ordem de AbstractPolicy::check(). Antes isso era checado depois
+        // da trava comercial (so nao vazava porque Tenant::hasFeature() ja
+        // tem seu proprio bypass redundante de super admin), e o proprio
+        // isAdmin() abaixo usava str_ends_with(email, '@oravel.com.br') ||
+        // hasRole('admin'), o que bloqueava super admins cadastrados com
+        // outro dominio de e-mail (achado de auditoria de permissoes,
+        // 2026-07-08).
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+
         // Trava comercial: nega para todos, inclusive admin do tenant, se o
         // plano nao incluir esse modulo (mesmo padrao de AbstractPolicy::check()).
         if (($tenant = Tenancy::current()) && ! $tenant->hasFeature('tabela_roles')) {
             return false;
         }
 
-        if (str_ends_with($user->email, '@oravel.com.br') || $user->hasRole('admin')) {
+        if ($user->isAdmin()) {
             return true;
         }
 
