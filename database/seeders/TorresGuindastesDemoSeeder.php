@@ -940,6 +940,7 @@ class TorresGuindastesDemoSeeder extends Seeder
         }
 
         $plan = ['base' => 2, 'fechada' => 1, 'cancelada' => 1];
+        $availableAssets = $assets->where('status', Asset::STATUS_DISPONIVEL)->values();
 
         foreach ($plan as $state => $count) {
             for ($i = 0; $i < $count; $i++) {
@@ -948,12 +949,19 @@ class TorresGuindastesDemoSeeder extends Seeder
                     $factory = $factory->{$state}();
                 }
 
+                // "Fechar o contrato" exige o ativo disponivel de verdade
+                // (SolicitacaoLocacao::booted() valida isso no saving()) --
+                // nao pode ser um ativo qualquer aleatorio como nos outros estados.
+                $assetId = $state === 'fechada'
+                    ? $availableAssets->first()?->id
+                    : ($this->faker()->boolean(60) ? $assets->random()->id : null);
+
                 $factory->create([
                     'tenant_id' => $tenant->id,
                     'user_id' => collect($this->userPool)->random()->id,
                     'customer_id' => $clients->random()->id,
                     'category_id' => $categories->random()->id,
-                    'asset_id' => $this->faker()->boolean(60) ? $assets->random()->id : null,
+                    'asset_id' => $assetId,
                 ]);
             }
         }
