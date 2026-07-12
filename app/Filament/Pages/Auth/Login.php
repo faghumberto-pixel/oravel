@@ -16,6 +16,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Notifications\Notification;
 use Filament\Pages\Auth\Login as BaseLogin;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification as NotificationFacade;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -247,12 +248,25 @@ class Login extends BaseLogin
 
         $admins = User::role($adminRole)->where('tenant_id', $tenant->id)->get();
 
-        foreach ($admins as $admin) {
+        if ($admins->isEmpty()) {
+            return;
+        }
+
+        // ->sendToDatabase() enfileira por baixo dos panos
+        // (Filament\Notifications\DatabaseNotification implementa
+        // ShouldQueue) -- em qualquer ambiente sem QUEUE_CONNECTION=sync
+        // e sem worker de fila rodando, a notificacao simplesmente nunca
+        // chega, sem erro nenhum (achado real: reproduzido em DEV
+        // forcando QUEUE_CONNECTION=database sem worker, o job ficava
+        // parado na tabela jobs pra sempre). sendNow() entrega na hora,
+        // sem depender de worker.
+        NotificationFacade::sendNow(
+            $admins,
             Notification::make()
                 ->title('Novo cadastro aguardando aprovação')
                 ->body($newUser->name.' ('.$newUser->email.') pediu acesso à sua empresa.')
                 ->warning()
-                ->sendToDatabase($admin);
-        }
+                ->toDatabase(),
+        );
     }
 }

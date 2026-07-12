@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification as NotificationFacade;
 
 #[BelongsToFeature('users')]
 class UserResource extends Resource
@@ -160,11 +161,19 @@ class UserResource extends Resource
                     ->action(function (User $record) {
                         $record->update(['is_approved' => true]);
 
-                        Notification::make()
-                            ->title('Sua conta foi aprovada!')
-                            ->body('Você já pode fazer login normalmente.')
-                            ->success()
-                            ->sendToDatabase($record);
+                        // sendToDatabase() enfileira (DatabaseNotification
+                        // implementa ShouldQueue) -- sem worker de fila
+                        // rodando a notificacao nunca chega, sem erro
+                        // (mesmo achado de Login::notifyTenantAdmins()).
+                        // sendNow() entrega na hora.
+                        NotificationFacade::sendNow(
+                            $record,
+                            Notification::make()
+                                ->title('Sua conta foi aprovada!')
+                                ->body('Você já pode fazer login normalmente.')
+                                ->success()
+                                ->toDatabase(),
+                        );
                     }),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
@@ -180,11 +189,14 @@ class UserResource extends Resource
                             $records->each(function (User $record) {
                                 $record->update(['is_approved' => true]);
 
-                                Notification::make()
-                                    ->title('Sua conta foi aprovada!')
-                                    ->body('Você já pode fazer login normalmente.')
-                                    ->success()
-                                    ->sendToDatabase($record);
+                                NotificationFacade::sendNow(
+                                    $record,
+                                    Notification::make()
+                                        ->title('Sua conta foi aprovada!')
+                                        ->body('Você já pode fazer login normalmente.')
+                                        ->success()
+                                        ->toDatabase(),
+                                );
                             });
                         })
                         ->deselectRecordsAfterCompletion(),
