@@ -39,22 +39,22 @@ class AssetResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return true;
+        return (bool) auth()->user()?->can('viewAny', Asset::class);
     }
 
     public static function canCreate(): bool
     {
-        return true;
+        return (bool) auth()->user()?->can('create', Asset::class);
     }
 
     public static function canEdit($record): bool
     {
-        return true;
+        return (bool) auth()->user()?->can('update', $record);
     }
 
     public static function canDelete($record): bool
     {
-        return true;
+        return (bool) auth()->user()?->can('delete', $record);
     }
 
     public static function form(Form $form): Form
