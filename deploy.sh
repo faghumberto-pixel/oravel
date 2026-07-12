@@ -45,6 +45,11 @@ BACKUP_FILE="$BACKUP_DIR/oravel_backup_\$(date +%Y%m%d_%H%M%S)"
 echo "💾 Criando backup: \$BACKUP_FILE"
 sudo cp -r $PROD_PATH \$BACKUP_FILE
 
+# Retenção: mantém só os 5 backups mais recentes (cada um é uma cópia completa
+# de $PROD_PATH — sem limpeza, isso já encheu o disco da VM uma vez, 2026-07).
+echo "🧹 Limpando backups antigos (mantendo os 5 mais recentes)..."
+sudo bash -c "cd $BACKUP_DIR && ls -dt oravel_backup_*/ 2>/dev/null | tail -n +6 | xargs -r rm -rf --"
+
 # Resto roda como $APP_USER, dono de $PROD_PATH
 sudo -u $APP_USER bash -c '
 set -e
