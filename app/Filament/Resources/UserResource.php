@@ -9,10 +9,12 @@ use App\Support\Tenancy;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -108,6 +110,11 @@ class UserResource extends Resource
                             ->dehydrated(fn ($state) => filled($state))
                             ->required(fn (string $operation): bool => $operation === 'create')
                             ->revealable(),
+
+                        Forms\Components\Toggle::make('is_approved')
+                            ->label('Aprovado')
+                            ->helperText('Usuários vindos do auto-cadastro nascem pendentes -- só conseguem logar depois de aprovados aqui.')
+                            ->default(true),
                     ])->columns(2),
             ]);
     }
@@ -127,6 +134,7 @@ class UserResource extends Resource
 
                 Tables\Columns\TextColumn::make('name')->label('Nome')->searchable(),
                 Tables\Columns\TextColumn::make('hourly_rate')->label('Vlr. Hora')->money('BRL'),
+                Tables\Columns\IconColumn::make('is_approved')->label('Aprovado')->boolean(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('department')
@@ -139,10 +147,49 @@ class UserResource extends Resource
                         'tecnico' => 'Técnico',
                         'colaborador' => 'Colaborador',
                     ]),
+                Tables\Filters\TernaryFilter::make('is_approved')
+                    ->label('Aprovado'),
             ])
             ->actions([
+                Tables\Actions\Action::make('approve')
+                    ->label('Aprovar')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->visible(fn (User $record) => ! $record->is_approved)
+                    ->action(function (User $record) {
+                        $record->update(['is_approved' => true]);
+
+                        Notification::make()
+                            ->title('Sua conta foi aprovada!')
+                            ->body('Você já pode fazer login normalmente.')
+                            ->success()
+                            ->sendToDatabase($record);
+                    }),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('approve')
+                        ->label('Aprovar selecionados')
+                        ->icon('heroicon-o-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->action(function (Collection $records) {
+                            $records->each(function (User $record) {
+                                $record->update(['is_approved' => true]);
+
+                                Notification::make()
+                                    ->title('Sua conta foi aprovada!')
+                                    ->body('Você já pode fazer login normalmente.')
+                                    ->success()
+                                    ->sendToDatabase($record);
+                            });
+                        })
+                        ->deselectRecordsAfterCompletion(),
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ]);
     }
 

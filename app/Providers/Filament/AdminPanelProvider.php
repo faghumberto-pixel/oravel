@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
 use App\Filament\Resources\MaterialCategoryResource;
 use App\Filament\Resources\MaterialResource;
 use App\Filament\Resources\PartsRequestResource;
@@ -9,6 +10,7 @@ use App\Filament\Resources\SupplierResource;
 use App\Http\Middleware\LogUserActivity;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
@@ -22,6 +24,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
+use Jeffgreco13\FilamentBreezy\Pages\MyProfilePage;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 class AdminPanelProvider extends PanelProvider
@@ -32,7 +35,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(Login::class)
             ->topNavigation()
             ->colors([
                 'primary' => Color::Orange,
@@ -125,10 +128,10 @@ class AdminPanelProvider extends PanelProvider
                 // por isso o menu mostrava soh o nome do usuario) -- usar a mesma
                 // chave faria o nosso ser sobrescrito. Isso soma um segundo atalho,
                 // visivel e com rotulo, pra mesma pagina.
-                'my_profile_link' => \Filament\Navigation\MenuItem::make()
+                'my_profile_link' => MenuItem::make()
                     ->label('Minha Conta')
                     ->icon('heroicon-o-user-circle')
-                    ->url(fn () => \Jeffgreco13\FilamentBreezy\Pages\MyProfilePage::getUrl()),
+                    ->url(fn () => MyProfilePage::getUrl()),
             ])
             ->middleware([
                 EncryptCookies::class,

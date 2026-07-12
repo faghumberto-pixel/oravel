@@ -47,6 +47,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
         'tenant_id',
         'role',
         'last_seen',
+        'is_approved',
     ];
 
     protected $hidden = [
@@ -151,9 +152,12 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
      * empresas) e' restrito a super admin -- ANTES disso retornava true
      * sempre, entao qualquer admin de qualquer tenant conseguia acessar
      * /central e ver dados de todos os outros tenants (achado de auditoria
-     * de permissoes, 2026-07-08). O painel 'admin' (tenant) continua aberto
-     * a qualquer usuario autenticado, como sempre foi -- a trava por modulo/
-     * plano acontece nas Policies, nao aqui.
+     * de permissoes, 2026-07-08). O painel 'admin' (tenant) exige
+     * is_approved=true -- usuarios que vieram do auto-cadastro
+     * (Login::register()) nascem com is_approved=false e ficam bloqueados
+     * ate o admin do tenant aprovar em UserResource; usuarios criados por
+     * seeder/TenantProvisioner/admin nascem aprovados (default da coluna).
+     * A trava por modulo/plano continua nas Policies, nao aqui.
      */
     public function canAccessPanel(Panel $panel): bool
     {
@@ -161,7 +165,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
             return $this->isSuperAdmin();
         }
 
-        return true;
+        return (bool) $this->is_approved;
     }
 
     public function getTenants(Panel $panel): Collection
