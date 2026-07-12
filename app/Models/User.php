@@ -18,6 +18,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use Throwable;
 
@@ -25,6 +26,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
 {
     use HasFactory, HasRoles, HasUuids, Notifiable;
     use HasSaaSMetadata;
+    use TwoFactorAuthenticatable;
 
     protected static ?string $saasFeatureKey = 'tabela_users';
 

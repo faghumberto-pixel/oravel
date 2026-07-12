@@ -16,6 +16,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Jeffgreco13\FilamentBreezy\BreezyCore;
 
 // Importações corretas dos seus arquivos
 use App\Filament\Central\Widgets\SaaSStatsOverview;
@@ -44,6 +45,20 @@ class CentralPanelProvider extends PanelProvider
             ->widgets([
                 SaaSStatsOverview::class, // <-- NOME CORRETO E IMPORTADO LÁ EM CIMA
                 RevenueChart::class,
+            ])
+            ->plugin(
+                // central so e acessado por super admins (ver CLAUDE.md) -- forcar 2FA
+                // aqui equivale a forcar 2FA so pra eles, sem logica extra de role.
+                BreezyCore::make()
+                    ->myProfile()
+                    ->enableTwoFactorAuthentication(force: true)
+            )
+            ->userMenuItems([
+                // chave != 'account' de proposito -- ver comentario em AdminPanelProvider
+                'my_profile_link' => \Filament\Navigation\MenuItem::make()
+                    ->label('Minha Conta')
+                    ->icon('heroicon-o-user-circle')
+                    ->url(fn () => \Jeffgreco13\FilamentBreezy\Pages\MyProfilePage::getUrl(panel: 'central')),
             ])
             ->middleware([
                 EncryptCookies::class,

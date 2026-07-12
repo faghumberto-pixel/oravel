@@ -37,6 +37,8 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use Jeffgreco13\FilamentBreezy\Livewire\TwoFactorAuthentication;
+use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
 // Importar a DynamicPolicy
@@ -82,6 +84,14 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->registerActivityLogging();
+
+        // filament-breezy so registra este componente Livewire dentro do boot()
+        // do panel "atual" -- e /livewire/update e uma rota global sem panel no
+        // path, entao o Filament resolve o panel default (admin) pra ela, e o
+        // registro condicional do plugin nao roda nesse contexto. Sem isso, o
+        // Livewire nao acha o componente e disfarca o erro real
+        // (ComponentNotFoundException) como "release token mismatch" (419).
+        Livewire::component('two_factor_authentication', TwoFactorAuthentication::class);
     }
 
     /**

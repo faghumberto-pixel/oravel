@@ -21,6 +21,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Jeffgreco13\FilamentBreezy\BreezyCore;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 class AdminPanelProvider extends PanelProvider
@@ -113,6 +114,22 @@ class AdminPanelProvider extends PanelProvider
                     ->editable()
                     ->locale('pt-br')
             )
+            ->plugin(
+                BreezyCore::make()
+                    ->myProfile()
+                    ->enableTwoFactorAuthentication()
+            )
+            ->userMenuItems([
+                // Chave != 'account' de proposito: BreezyCore::boot() roda depois de
+                // panel() e registra o proprio item na chave 'account' (sem label,
+                // por isso o menu mostrava soh o nome do usuario) -- usar a mesma
+                // chave faria o nosso ser sobrescrito. Isso soma um segundo atalho,
+                // visivel e com rotulo, pra mesma pagina.
+                'my_profile_link' => \Filament\Navigation\MenuItem::make()
+                    ->label('Minha Conta')
+                    ->icon('heroicon-o-user-circle')
+                    ->url(fn () => \Jeffgreco13\FilamentBreezy\Pages\MyProfilePage::getUrl()),
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
