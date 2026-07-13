@@ -163,7 +163,14 @@ class MaintenanceOrder extends Model implements HasMedia
 
     // --- LÓGICA DE NEGÓCIO ---
 
-    public function logStatusChange(string $newStatus, ?string $oldStatus = null, ?string $observation = null, ?string $userId = null): void
+    /**
+     * $extra aceita old_technician_id/new_technician_id/segment_seconds --
+     * so preenchidos pela acao "Transferir" (EditMaintenanceOrder.php), pra
+     * permitir calcular quanto tempo cada tecnico realmente trabalhou numa
+     * OS que passou por mais de uma mao (ver User::maintenanceOrders() e
+     * OrdensAtendidasRelationManager).
+     */
+    public function logStatusChange(string $newStatus, ?string $oldStatus = null, ?string $observation = null, ?string $userId = null, array $extra = []): void
     {
         $this->statusHistories()->create([
             'new_status' => $newStatus,
@@ -171,6 +178,7 @@ class MaintenanceOrder extends Model implements HasMedia
             'observation' => $observation,
             'user_id' => $userId ?? auth()->id(),
             'created_at' => now(),
+            ...$extra,
         ]);
     }
 

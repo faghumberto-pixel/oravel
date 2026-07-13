@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Spatie\Permission\Models\Role;
 
 class SolicitacaoLocacao extends Model
 {
@@ -100,6 +102,52 @@ class SolicitacaoLocacao extends Model
                 }
             }
         });
+    }
+
+    /**
+     * IDs de Asset com uma Solicitacao de Locacao urgente aguardando (status
+     * "reserva de manutencao") -- mesma consulta que ja alimentava o banner
+     * "Locacao Urgente" no Kanban (MaintenanceKanban::getUrgentAssetIds()),
+     * centralizada aqui pra tambem alimentar o aviso/bloqueio na criacao de
+     * O.S. sem duplicar a query em dois lugares.
+     *
+     * @return array<int, string>
+     */
+    public static function assetIdsComReservaUrgente(string $tenantId): array
+    {
+        return static::where('tenant_id', $tenantId)
+            ->where('status_comercial', 'reserva_manutencao')
+            ->whereNotNull('asset_id')
+            ->pluck('asset_id')
+            ->all();
+    }
+
+    /**
+     * Autoriza criar OS num ativo com reserva urgente: a senha precisa bater
+     * com a de ALGUM usuario do tenant com a role "Supervisor de Manutenção"
+     * (mesmo padrao de confirmacao usado em PatioAprovacoes::approve()).
+     * Extraido como metodo estatico puro (sem depender do Form/Livewire da
+     * pagina) pra ser testavel isoladamente.
+     */
+    public static function autorizaOverrideReserva(string $tenantId, ?string $password): bool
+    {
+        if (! $password) {
+            return false;
+        }
+
+        $supervisorRole = Role::where('name', 'Supervisor de Manutenção')
+            ->where('guard_name', 'web')
+            ->where('tenant_id', $tenantId)
+            ->first();
+
+        if (! $supervisorRole) {
+            return false;
+        }
+
+        return User::role($supervisorRole)
+            ->where('tenant_id', $tenantId)
+            ->get()
+            ->contains(fn (User $supervisor) => Hash::check($password, $supervisor->password));
     }
 
     // --- RELACIONAMENTOS ---

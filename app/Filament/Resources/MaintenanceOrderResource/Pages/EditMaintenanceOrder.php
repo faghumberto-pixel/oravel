@@ -167,13 +167,26 @@ class EditMaintenanceOrder extends EditRecord
                 ])
                 ->action(function (array $data) {
                     $oldStatus = $this->record->status;
+                    $oldTechnicianId = $this->record->technician_id;
+                    $timeBefore = $this->record->total_time_seconds;
 
                     $this->record->update([
                         'technician_id' => $data['technician_id'],
                         'transfer_reason' => $data['transfer_reason'],
                         'status' => 'Aberto',
                     ]);
-                    $this->record->logStatusChange('Aberto', $oldStatus, 'Transferida: '.$data['transfer_reason']);
+
+                    // O update() acima, se o status antigo era "Em Andamento", ja fechou
+                    // o segmento do cronometro sozinho (MaintenanceOrder::updating()) --
+                    // a diferenca antes/depois e' exatamente quanto o tecnico ANTIGO
+                    // acumulou nesse segmento que acabou de fechar.
+                    $segmentSeconds = $this->record->fresh()->total_time_seconds - $timeBefore;
+
+                    $this->record->logStatusChange('Aberto', $oldStatus, 'Transferida: '.$data['transfer_reason'], null, [
+                        'old_technician_id' => $oldTechnicianId,
+                        'new_technician_id' => $data['technician_id'],
+                        'segment_seconds' => $segmentSeconds,
+                    ]);
 
                     Notification::make()
                         ->title('Técnico alterado')

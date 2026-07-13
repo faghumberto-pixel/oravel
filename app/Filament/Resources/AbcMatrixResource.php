@@ -26,7 +26,7 @@ class AbcMatrixResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
 
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $navigationGroup = 'Manutenção';
 
     protected static ?int $navigationSort = 3;
 

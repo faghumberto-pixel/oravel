@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use App\Support\Tenancy;
 use Filament\Facades\Filament;
@@ -233,6 +234,13 @@ class UserResource extends Resource
 
         // Admin/funcionário → só usuários do próprio tenant
         return $query->where('users.tenant_id', $user->tenant_id);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\OrdensAtendidasRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

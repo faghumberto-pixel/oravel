@@ -35,11 +35,15 @@ class MaintenanceStatusHistory extends Model
         'new_status',
         'observation',
         'user_id',
+        'old_technician_id',
+        'new_technician_id',
+        'segment_seconds',
         'created_at',
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
+        'segment_seconds' => 'integer',
     ];
 
     public function maintenanceOrder(): BelongsTo
@@ -50,5 +54,15 @@ class MaintenanceStatusHistory extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function oldTechnician(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'old_technician_id');
+    }
+
+    public function newTechnician(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'new_technician_id');
     }
 }

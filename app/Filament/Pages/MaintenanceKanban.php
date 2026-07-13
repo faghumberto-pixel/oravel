@@ -273,11 +273,7 @@ class MaintenanceKanban extends Page
             return [];
         }
 
-        return SolicitacaoLocacao::where('tenant_id', $tenant->id)
-            ->where('status_comercial', 'reserva_manutencao')
-            ->whereNotNull('asset_id')
-            ->pluck('asset_id')
-            ->all();
+        return SolicitacaoLocacao::assetIdsComReservaUrgente($tenant->id);
     }
 
     public function getPrintUrl(): string

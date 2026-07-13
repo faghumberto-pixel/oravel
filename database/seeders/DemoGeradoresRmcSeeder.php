@@ -160,6 +160,7 @@ class DemoGeradoresRmcSeeder extends Seeder
 
         $tecnicoRole = Role::firstOrCreate(['name' => 'tecnico', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
         $this->seedEnrichment($tenant, $tecnicoRole, $cliente);
+        $this->ensureScheduledVolume($tenant);
 
         $this->command?->info('Geradores RMC: cenário de demo pronto (admin@geradoresrmc.com.br / Demo@Oravel1).');
     }
@@ -650,6 +651,41 @@ class DemoGeradoresRmcSeeder extends Seeder
         $this->command?->info('Geradores RMC: enriquecimento concluído.');
     }
 
+    /**
+     * Retrofit idempotente: roda mesmo se seedEnrichment() ja tiver rodado
+     * antes (guarda propria, separada da guarda de >=8 ativos) -- popula
+     * scheduled_at em parte das O.S./movimentacoes que ainda nao tem,
+     * pra Programacao mostrar volume real mesmo em bancos ja semeados
+     * antes desse campo ter sido adicionado ao seeder.
+     */
+    private function ensureScheduledVolume(Tenant $tenant): void
+    {
+        if (MaintenanceOrder::where('tenant_id', $tenant->id)->whereNotNull('scheduled_at')->count() > 1) {
+            // Mais de 1 (a do Scania, sempre agendada) = esse retrofit ja rodou.
+            return;
+        }
+
+        $candidateOrders = MaintenanceOrder::where('tenant_id', $tenant->id)
+            ->whereNull('scheduled_at')
+            ->whereIn('internal_status', ['aguardando_diagnostico', 'em_manutencao', 'teste_qualidade'])
+            ->get();
+
+        foreach ($candidateOrders as $order) {
+            if ($this->faker()->boolean(40)) {
+                $order->update(['scheduled_at' => now()->addDays($this->faker()->numberBetween(1, 10))->setTime($this->faker()->numberBetween(7, 17), 0)]);
+            }
+        }
+
+        $candidateMovements = EquipmentMovement::where('tenant_id', $tenant->id)
+            ->whereNull('scheduled_at')
+            ->where('status', EquipmentMovement::STATUS_AGUARDANDO_VISTORIA)
+            ->get();
+
+        foreach ($candidateMovements as $movement) {
+            $movement->update(['scheduled_at' => now()->addDays($this->faker()->numberBetween(1, 7))->setTime($this->faker()->numberBetween(7, 17), 0)]);
+        }
+    }
+
     private function faker(): Generator
     {
         return $this->faker ??= FakerFactory::create(config('app.faker_locale', 'pt_BR'));
@@ -897,6 +933,15 @@ class DemoGeradoresRmcSeeder extends Seeder
                     'client_id' => $asset->client_id ?: $clients->random()->id,
                 ]);
 
+                // ~40% das O.S. ainda nao concluidas/canceladas ganham scheduled_at
+                // (nem toda O.S. tem data marcada no mundo real) -- e' o unico campo
+                // que a Programacao (AgendaTecnicoWidget::fetchEvents()) enxerga, sem
+                // isso o calendario fica vazio mesmo com O.S. de sobra no banco.
+                if (in_array($state, ['aguardandoDiagnostico', 'emManutencao', 'testeQualidade'], true)
+                    && $this->faker()->boolean(40)) {
+                    $order->update(['scheduled_at' => now()->addDays($this->faker()->numberBetween(1, 10))->setTime($this->faker()->numberBetween(7, 17), 0)]);
+                }
+
                 $orders->push($order);
 
                 if (in_array($state, ['testeQualidade', 'concluido'], true)) {
@@ -950,6 +995,11 @@ class DemoGeradoresRmcSeeder extends Seeder
                     'tenant_id' => $tenant->id,
                     'maintenance_order_id' => $order->id,
                     'asset_id' => $order->asset_id,
+                    // So movimentacoes ainda nao iniciadas fazem sentido ter uma data
+                    // "planejada" -- as demais ja tem started_at/completed_at reais.
+                    'scheduled_at' => $stateKey === 'aguardandoVistoria'
+                        ? now()->addDays($this->faker()->numberBetween(1, 7))->setTime($this->faker()->numberBetween(7, 17), 0)
+                        : null,
                 ]);
                 $movements->push($movement);
 

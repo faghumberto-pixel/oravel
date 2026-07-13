@@ -4,20 +4,25 @@ namespace App\Filament\Widgets;
 
 use App\Filament\Resources\MaintenanceOrderResource;
 use App\Models\Appointment;
-use App\Models\Asset;
-use App\Models\EquipmentMovement;
 use App\Models\MaintenanceOrder;
 use App\Models\User;
 use App\Support\Tenancy;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms;
-use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
 use Saade\FilamentFullCalendar\Actions;
 use Saade\FilamentFullCalendar\Data\EventData;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
+/**
+ * Programacao da Manutencao: Agendamento pessoal (Appointment) + O.S. com
+ * scheduled_at. Mobilizacao/Desmobilizacao NAO entram aqui de proposito --
+ * cada departamento tem sua propria Programacao, sem misturar (ver
+ * LogisticaAgendaWidget para o equivalente de Logistica). Nao confundir o
+ * calendario de "o que a Manutencao tem que fazer" com "o que vai sair do
+ * patio".
+ */
 class AgendaTecnicoWidget extends FullCalendarWidget
 {
     public Model|string|null $model = Appointment::class;
@@ -44,19 +49,15 @@ class AgendaTecnicoWidget extends FullCalendarWidget
     }
 
     /**
-     * Mistura Appointment (compromissos livres), MaintenanceOrder
-     * (scheduled_at) e EquipmentMovement (mobilizacao/desmobilizacao
-     * agendada) no mesmo calendario. MaintenanceOrder/EquipmentMovement
-     * sao so-leitura aqui -- ver onEventClick().
+     * Mistura Appointment (compromissos livres) e MaintenanceOrder
+     * (scheduled_at) no mesmo calendario. MaintenanceOrder e' so-leitura
+     * aqui -- ver onEventClick().
      *
      * Visibilidade: tecnico comum ve so os proprios eventos. Quem tem
      * alguma role com "Setor supervisionado" (roles.department_id, ver
      * RoleResource) ve tambem os eventos de todos os usuarios daquele(s)
      * setor(es) -- alem dos proprios, mesmo que nao pertenca ao setor.
-     * Admin sempre ve tudo. EquipmentMovement nao tem technician_id (nao
-     * e' "de" ninguem especifico -- e' operacao de patio, cruza setores
-     * por natureza), entao fica visivel pra qualquer um que supervisione
-     * algum setor, sem comparar setores.
+     * Admin sempre ve tudo.
      */
     public function fetchEvents(array $fetchInfo): array
     {
@@ -69,7 +70,6 @@ class AgendaTecnicoWidget extends FullCalendarWidget
         $start = Carbon::parse($fetchInfo['start']);
         $end = Carbon::parse($fetchInfo['end']);
         $supervisedDeptIds = $user->supervisedDepartmentIds();
-        $canSeeSector = $user->isAdmin() || ! empty($supervisedDeptIds);
 
         $appointmentQuery = Appointment::where('tenant_id', $tenant->id)
             ->whereBetween('scheduled_at', [$start, $end]);
@@ -152,43 +152,14 @@ class AgendaTecnicoWidget extends FullCalendarWidget
                 ->extraProperties(['editable' => false]);
         });
 
-        $movementEvents = collect();
-
-        if ($canSeeSector) {
-            $movementEvents = EquipmentMovement::where('tenant_id', $tenant->id)
-                ->whereNotNull('scheduled_at')
-                ->whereBetween('scheduled_at', [$start, $end])
-                ->where('status', '!=', EquipmentMovement::STATUS_CONCLUIDO)
-                ->with(['asset', 'fleetDriver'])
-                ->get()
-                ->map(function (EquipmentMovement $movement) {
-                    $isMobilizacao = $movement->type === EquipmentMovement::TYPE_MOBILIZACAO;
-                    $label = $isMobilizacao ? 'Mobilização' : 'Desmobilização';
-
-                    return EventData::make()
-                        ->id('movement-'.$movement->id)
-                        ->title($label.' — '.($movement->asset?->name ?? 'Equipamento'))
-                        ->start($movement->scheduled_at)
-                        ->backgroundColor($isMobilizacao ? '#9333ea' : '#ea580c')
-                        ->extendedProps([
-                            'type' => 'movement',
-                            'driver' => $movement->fleetDriver?->name,
-                        ])
-                        // Mesmo motivo do 'order' acima -- sem tela de edicao
-                        // de EquipmentMovement ainda, arrastar so daria 403.
-                        ->extraProperties(['editable' => false]);
-                });
-        }
-
         // ->toArray() (nao ->all()) e' essencial aqui: EventData so implementa
         // Arrayable, com todas as propriedades protected e sem JsonSerializable
         // -- Collection::toArray() converte cada EventData num array puro
         // (chamando o toArray() dele), enquanto ->all() devolveria os objetos
         // EventData crus. Sem essa conversao, o Livewire serializa cada
         // evento como {} vazio pro JS (sem erro nenhum, silenciosamente) e o
-        // FullCalendar nao desenha nada -- era esse o bug real por tras do
-        // calendario aparecer "vazio" mesmo com os dados certos no banco.
-        return $appointmentEvents->concat($orderEvents)->concat($movementEvents)->toArray();
+        // FullCalendar nao desenha nada.
+        return $appointmentEvents->concat($orderEvents)->toArray();
     }
 
     /**
@@ -204,23 +175,6 @@ class AgendaTecnicoWidget extends FullCalendarWidget
             return;
         }
 
-        // Sem Resource dedicado pra EquipmentMovement ainda -- so mostra os
-        // dados, sem tentar abrir a modal generica do FullCalendar (o
-        // record nao existiria na model Appointment, que e' o $model
-        // deste widget).
-        if (($event['extendedProps']['type'] ?? null) === 'movement') {
-            Notification::make()
-                ->title($event['title'])
-                ->body(
-                    'Previsto para '.Carbon::parse($event['start'])->format('d/m/Y H:i')
-                    .($event['extendedProps']['driver'] ? ' — Motorista: '.$event['extendedProps']['driver'] : '')
-                )
-                ->info()
-                ->send();
-
-            return;
-        }
-
         parent::onEventClick($event);
     }
 
@@ -231,30 +185,8 @@ class AgendaTecnicoWidget extends FullCalendarWidget
                 ->label('Novo Agendamento')
                 ->mountUsing(function (Forms\Form $form, array $arguments) {
                     $form->fill([
-                        'tipo_evento' => 'appointment',
                         'scheduled_at' => $arguments['start'] ?? now(),
                         'technician_id' => auth()->id(),
-                    ]);
-                })
-                ->using(function (array $data) {
-                    $tipo = $data['tipo_evento'] ?? 'appointment';
-
-                    if (in_array($tipo, [EquipmentMovement::TYPE_MOBILIZACAO, EquipmentMovement::TYPE_DESMOBILIZACAO], true)) {
-                        return EquipmentMovement::create([
-                            'asset_id' => $data['asset_id'],
-                            'maintenance_order_id' => $data['maintenance_order_id'] ?? null,
-                            'type' => $tipo,
-                            'status' => EquipmentMovement::STATUS_AGUARDANDO_VISTORIA,
-                            'scheduled_at' => $data['scheduled_at'],
-                        ]);
-                    }
-
-                    return Appointment::create([
-                        'technician_id' => $data['technician_id'] ?? auth()->id(),
-                        'assunto' => $data['assunto'],
-                        'descricao' => $data['descricao'] ?? null,
-                        'scheduled_at' => $data['scheduled_at'],
-                        'urgente' => $data['urgente'] ?? false,
                     ]);
                 }),
         ];
@@ -276,83 +208,31 @@ class AgendaTecnicoWidget extends FullCalendarWidget
     public function getFormSchema(): array
     {
         $user = auth()->user();
-        $canScheduleMovements = $user->isAdmin() || ! empty($user->supervisedDepartmentIds());
-        $isAppointment = fn (Forms\Get $get) => ($get('tipo_evento') ?? 'appointment') === 'appointment';
-        $isMovement = fn (Forms\Get $get) => in_array($get('tipo_evento'), [
-            EquipmentMovement::TYPE_MOBILIZACAO,
-            EquipmentMovement::TYPE_DESMOBILIZACAO,
-        ], true);
 
         return [
-            Forms\Components\Select::make('tipo_evento')
-                ->label('Tipo de Evento')
-                ->options([
-                    'appointment' => 'Agendamento Pessoal',
-                    EquipmentMovement::TYPE_MOBILIZACAO => 'Mobilização',
-                    EquipmentMovement::TYPE_DESMOBILIZACAO => 'Desmobilização',
-                ])
-                ->default('appointment')
-                ->required()
-                ->reactive()
-                ->visible($canScheduleMovements)
-                ->columnSpanFull(),
-
             Forms\Components\Select::make('technician_id')
                 ->label('Técnico')
                 ->options(fn () => User::where('tenant_id', Tenancy::current()?->id)->pluck('name', 'id'))
                 ->searchable()
                 ->preload()
-                ->required($isAppointment)
-                ->visible(fn (Forms\Get $get) => $user->isAdmin() && $isAppointment($get))
+                ->required()
+                ->visible($user->isAdmin())
                 ->default($user->id),
             Forms\Components\TextInput::make('assunto')
                 ->label('Assunto')
-                ->required($isAppointment)
-                ->visible($isAppointment)
+                ->required()
                 ->columnSpanFull(),
             Forms\Components\Textarea::make('descricao')
                 ->label('Descrição')
-                ->visible($isAppointment)
                 ->columnSpanFull(),
-            Forms\Components\Toggle::make('urgente')
-                ->label('Urgente')
-                ->visible($isAppointment),
-            Forms\Components\Toggle::make('completed')
-                ->label('Concluído')
-                ->visible(fn (string $operation, Forms\Get $get) => $operation === 'edit' && $isAppointment($get)),
-
-            Forms\Components\Select::make('asset_id')
-                ->label('Equipamento')
-                ->options(fn () => Asset::where('tenant_id', Tenancy::current()?->id)->pluck('name', 'id'))
-                ->searchable()
-                ->preload()
-                ->required($isMovement)
-                ->visible($isMovement)
-                ->reactive()
-                ->columnSpanFull(),
-            Forms\Components\Select::make('maintenance_order_id')
-                ->label('Ordem de Serviço (opcional)')
-                ->helperText('Se selecionada, o app do operador vai reaproveitar este mesmo agendamento ao começar a mobilização/desmobilização no pátio.')
-                ->options(function (Forms\Get $get) {
-                    if (! $get('asset_id')) {
-                        return [];
-                    }
-
-                    return MaintenanceOrder::where('tenant_id', Tenancy::current()?->id)
-                        ->where('asset_id', $get('asset_id'))
-                        ->whereNotIn('status', ['Concluída', 'Cancelada'])
-                        ->get()
-                        ->mapWithKeys(fn (MaintenanceOrder $order) => [
-                            $order->id => 'OS #'.($order->os_number ?? 'S/N').' — '.($order->description ?? ''),
-                        ]);
-                })
-                ->searchable()
-                ->visible($isMovement)
-                ->columnSpanFull(),
-
             Forms\Components\DateTimePicker::make('scheduled_at')
                 ->label('Data/Hora')
                 ->required(),
+            Forms\Components\Toggle::make('urgente')
+                ->label('Urgente'),
+            Forms\Components\Toggle::make('completed')
+                ->label('Concluído')
+                ->visible(fn (string $operation) => $operation === 'edit'),
         ];
     }
 }

@@ -6,9 +6,11 @@ use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\MaintenanceOrderResource\Pages;
 use App\Forms\Components\CameraCapture;
+use App\Models\AbcMatrix;
 use App\Models\Asset;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
+use App\Models\SolicitacaoLocacao;
 use App\Models\User;
 use App\Support\FormHelpers;
 use App\Support\Tenancy;
@@ -86,6 +88,38 @@ class MaintenanceOrderResource extends Resource
                             ->required()->native(false)->live(),
                     ]),
 
+                    // Se o ativo escolhido tem uma Solicitacao de Locacao urgente
+                    // aguardando ele sair da manutencao (mesma condicao do banner
+                    // "Locacao Urgente" no Kanban -- ver SolicitacaoLocacao::assetIdsComReservaUrgente()),
+                    // criar uma OS nova aqui exige autorizacao do Supervisor de
+                    // Manutencao (checado em CreateMaintenanceOrder::beforeCreate()).
+                    Forms\Components\Placeholder::make('reserva_aviso')
+                        ->label('')
+                        ->visible(fn (Get $get) => $get('asset_id') && in_array(
+                            $get('asset_id'),
+                            SolicitacaoLocacao::assetIdsComReservaUrgente(Tenancy::current()?->id ?? ''),
+                            true
+                        ))
+                        ->content(new HtmlString(
+                            '<div class="rounded-lg bg-danger-50 dark:bg-danger-950 border border-danger-300 dark:border-danger-700 px-4 py-3 text-sm text-danger-700 dark:text-danger-300">'
+                            .'<strong>Atenção:</strong> este ativo está reservado por uma Locação urgente. '
+                            .'Criar uma nova O.S. aqui exige autorização do Supervisor de Manutenção.'
+                            .'</div>'
+                        ))
+                        ->columnSpanFull(),
+
+                    Forms\Components\TextInput::make('supervisor_override_password')
+                        ->label('Senha do Supervisor de Manutenção (autorização)')
+                        ->password()
+                        ->revealable()
+                        ->dehydrated(false)
+                        ->visible(fn (Get $get) => $get('asset_id') && in_array(
+                            $get('asset_id'),
+                            SolicitacaoLocacao::assetIdsComReservaUrgente(Tenancy::current()?->id ?? ''),
+                            true
+                        ))
+                        ->columnSpanFull(),
+
                     Forms\Components\Placeholder::make('grupo_display')
                         ->label('Grupo do Ativo')
                         ->content(function (Get $get) {
@@ -132,6 +166,7 @@ class MaintenanceOrderResource extends Resource
                     // tipo). A Matriz ABC de verdade vive em Asset::abcMatrix(), que ja
                     // tem cadastro proprio (AbcMatrixResource) -- aqui so exibimos ela.
                     Forms\Components\Placeholder::make('matriz_abc_ativo')
+                        ->key('matriz_abc_ativo_placeholder')
                         ->label('Matriz ABC do Ativo')
                         ->content(function (Get $get) {
                             $asset = $get('asset_id') ? Asset::find($get('asset_id')) : null;
@@ -140,7 +175,41 @@ class MaintenanceOrderResource extends Resource
                             return $nivel
                                 ? "Nível {$nivel}"
                                 : new HtmlString('<span class="text-gray-400">Ativo sem Matriz ABC cadastrada.</span>');
-                        }),
+                        })
+                        ->hintAction(
+                            // Matriz ABC continua sendo uma classificacao por ATIVO
+                            // (unique(tenant_id, asset_id) no banco), nao por OS -- isso
+                            // so' e' um atalho de criar/editar sem sair da tela da OS,
+                            // via updateOrCreate mesma chave unica do AbcMatrixResource.
+                            Forms\Components\Actions\Action::make('editar_matriz_abc')
+                                ->label('Editar')
+                                ->icon('heroicon-m-pencil-square')
+                                ->visible(fn (Get $get) => (bool) $get('asset_id'))
+                                ->form(fn (Get $get) => [
+                                    Forms\Components\Select::make('nivel')
+                                        ->label('Nível')
+                                        ->options(['A' => 'A', 'B' => 'B', 'C' => 'C'])
+                                        ->required()
+                                        ->default(fn () => Asset::find($get('asset_id'))?->abcMatrix?->nivel),
+                                    Forms\Components\Textarea::make('descricao')
+                                        ->label('Descrição')
+                                        ->required()
+                                        ->default(fn () => Asset::find($get('asset_id'))?->abcMatrix?->descricao),
+                                ])
+                                ->action(function (array $data, Get $get) {
+                                    $assetId = $get('asset_id');
+                                    if (! $assetId) {
+                                        return;
+                                    }
+
+                                    AbcMatrix::updateOrCreate(
+                                        ['tenant_id' => Tenancy::current()?->id, 'asset_id' => $assetId],
+                                        ['nivel' => $data['nivel'], 'descricao' => $data['descricao']]
+                                    );
+
+                                    Notification::make()->title('Matriz ABC atualizada')->success()->send();
+                                })
+                        ),
 
                     Forms\Components\TextInput::make('service_type')->label('Natureza do Serviço')->disabled()->dehydrated(true),
                     Forms\Components\Grid::make(3)->schema([
