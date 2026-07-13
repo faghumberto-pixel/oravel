@@ -45,10 +45,14 @@ class DemoGeradoresRmcSeeder extends Seeder
     {
         $tenant = Tenant::where('slug', self::SLUG)->first();
 
+        // Chamado sempre (tenant novo ou ja existente) -- ensurePlan() e'
+        // aditivo (so acrescenta feature que falte num plano ja criado),
+        // entao tambem serve pra retrofit de tenants ja seedados antes de
+        // uma feature nova (ex: modulo_chat) ter sido adicionada aqui.
+        $plan = $this->ensurePlan();
+
         if (! $tenant) {
             $this->command?->info('Semeando tenant Geradores RMC...');
-
-            $plan = $this->ensurePlan();
 
             $tenant = Tenant::create([
                 'name' => 'Geradores RMC',
@@ -125,15 +129,15 @@ class DemoGeradoresRmcSeeder extends Seeder
                     'tabela_equipment_damages', 'tabela_equipment_replacements', 'tabela_solicitacao_locacao',
                     'tabela_materials', 'tabela_material_categories', 'tabela_suppliers',
                     'tabela_parts_requests', 'tabela_user_activity_logs', 'tabela_abc_matrix',
-                    'tabela_fleet_vehicles',
+                    'tabela_fleet_vehicles', 'modulo_chat',
                 ],
             ]
         );
 
         $features = $plan->features ?? [];
-        if (! in_array('tabela_fleet_vehicles', $features, true)) {
-            $features[] = 'tabela_fleet_vehicles';
-            $plan->update(['features' => $features]);
+        $missing = array_diff(['tabela_fleet_vehicles', 'modulo_chat'], $features);
+        if (! empty($missing)) {
+            $plan->update(['features' => [...$features, ...array_values($missing)]]);
         }
 
         return $plan;
