@@ -6,7 +6,10 @@ use App\Models\Asset;
 use App\Models\AssetCategory;
 use App\Models\ChecklistGroup;
 use App\Models\Client;
+use App\Models\Contract;
 use App\Models\CriticalityLevel;
+use App\Models\Department;
+use App\Models\EquipmentMovement;
 use App\Models\FleetVehicle;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenanceOrderChecklist;
@@ -40,40 +43,63 @@ class DemoGeradoresRmcSeeder extends Seeder
 
     public function run(): void
     {
-        if (Tenant::where('slug', self::SLUG)->exists()) {
-            $this->command?->info("Tenant '".self::SLUG."' já existe -- pulando (idempotente).");
+        $tenant = Tenant::where('slug', self::SLUG)->first();
 
-            return;
+        if (! $tenant) {
+            $this->command?->info('Semeando tenant Geradores RMC...');
+
+            $plan = $this->ensurePlan();
+
+            $tenant = Tenant::create([
+                'name' => 'Geradores RMC',
+                'slug' => self::SLUG,
+                'status' => 'active',
+                'address' => self::OFICINA_ENDERECO,
+                'plan_id' => $plan->id,
+                'onboarding_completed' => true,
+            ]);
+
+            TenantProvisioner::provision($tenant, [
+                'name' => 'Admin Geradores RMC',
+                'email' => 'admin@geradoresrmc.com.br',
+                'password' => 'Demo@Oravel1',
+            ]);
+
+            $tecnico = $this->seedMecanico($tenant);
+            $checklistGroups = $this->seedChecklistGroupsAndTemplates($tenant);
+            $material = $this->seedMaterial($tenant, $checklistGroups['Geradores']);
+            $this->seedFleetVehicle($tenant);
+            $criticalidades = $this->seedCriticalityLevels($tenant);
+            $cliente = $this->seedCliente($tenant);
+            $assets = $this->seedAssets($tenant, $checklistGroups);
+
+            // Contrato precisa existir ANTES da O.S. do Scania pra
+            // MaintenanceOrder::booted()::creating() derivar
+            // service_type='Externo' sozinho.
+            $this->seedContratoScania($tenant, $assets['scania'], $cliente);
+            $this->seedMaintenanceOrders($tenant, $assets, $tecnico, $material, $criticalidades, $cliente);
+        } else {
+            $this->command?->info("Tenant '".self::SLUG."' já existe -- aplicando só os ajustes novos (contrato/agenda/atribuição/setor).");
+
+            $tecnico = User::where('tenant_id', $tenant->id)->where('email', 'mecanico@geradoresrmc.com.br')->firstOrFail();
+            $scaniaAsset = Asset::where('tenant_id', $tenant->id)->where('tag', 'GER-SCANIA-500')->firstOrFail();
+            $cliente = $this->seedCliente($tenant);
+
+            $this->seedContratoScania($tenant, $scaniaAsset, $cliente);
         }
 
-        $this->command?->info('Semeando tenant Geradores RMC...');
+        $scaniaAsset = Asset::where('tenant_id', $tenant->id)->where('tag', 'GER-SCANIA-500')->first();
+        $scaniaOs = MaintenanceOrder::where('tenant_id', $tenant->id)
+            ->where('asset_id', $scaniaAsset->id)
+            ->whereNotNull('criticality_level_id')
+            ->first();
 
-        $plan = $this->ensurePlan();
+        if ($scaniaOs) {
+            $this->seedMobilizacaoScania($tenant, $scaniaAsset, $scaniaOs);
+            $this->ensureAtribuicaoHistorico($scaniaOs, $tecnico);
+        }
 
-        $tenant = Tenant::create([
-            'name' => 'Geradores RMC',
-            'slug' => self::SLUG,
-            'status' => 'active',
-            'address' => self::OFICINA_ENDERECO,
-            'plan_id' => $plan->id,
-            'onboarding_completed' => true,
-        ]);
-
-        $admin = TenantProvisioner::provision($tenant, [
-            'name' => 'Admin Geradores RMC',
-            'email' => 'admin@geradoresrmc.com.br',
-            'password' => 'Demo@Oravel1',
-        ]);
-
-        $tecnico = $this->seedMecanico($tenant);
-        $checklistGroups = $this->seedChecklistGroupsAndTemplates($tenant);
-        $material = $this->seedMaterial($tenant, $checklistGroups['Geradores']);
-        $this->seedFleetVehicle($tenant);
-        $criticalidades = $this->seedCriticalityLevels($tenant);
-        $cliente = $this->seedCliente($tenant);
-
-        $assets = $this->seedAssets($tenant, $checklistGroups);
-        $this->seedMaintenanceOrders($tenant, $assets, $tecnico, $material, $criticalidades, $cliente);
+        $this->seedSetorTesteSupervisao($tenant);
 
         $this->command?->info('Geradores RMC: cenário de demo pronto (admin@geradoresrmc.com.br / Demo@Oravel1).');
     }
@@ -400,6 +426,127 @@ class DemoGeradoresRmcSeeder extends Seeder
                 'quantity' => 1,
                 'unit_price' => 150.00,
             ]);
+        }
+    }
+
+    /**
+     * Vinculo real (nao so texto na descricao) entre a O.S. do Scania e um
+     * contrato de locacao -- MaintenanceOrder::booted()::creating() ja
+     * deriva service_type='Externo' sozinho quando existe Contract com
+     * status='Ativo' pro mesmo asset_id.
+     */
+    private function seedContratoScania(Tenant $tenant, Asset $scania, Client $cliente): Contract
+    {
+        $contract = Contract::firstOrCreate(
+            ['tenant_id' => $tenant->id, 'asset_id' => $scania->id, 'client_id' => $cliente->id],
+            [
+                'contract_number' => 'CT-RMC-0001',
+                'status' => 'Ativo',
+                'start_date' => now()->addDay(),
+                'price' => 4200.00,
+                'payment_method' => 'Boleto',
+                'usage_purpose' => 'Locação para obra — geração de energia',
+                'is_active' => true,
+                'observations' => 'Retirada agendada para amanhã às 08:00.',
+            ]
+        );
+
+        // Se a O.S. ja existia (retrofit de tenant ja seedado) sem contrato
+        // ativo no momento da criacao, service_type nao se auto-corrige
+        // sozinho (so e' derivado em creating()) -- forca aqui.
+        MaintenanceOrder::where('tenant_id', $tenant->id)
+            ->where('asset_id', $scania->id)
+            ->where('service_type', '!=', 'Externo')
+            ->update(['service_type' => 'Externo']);
+
+        return $contract;
+    }
+
+    /**
+     * EquipmentMovement pre-agendado (scheduled_at) -- e' o que faz o Scania
+     * aparecer na Programacao/Centro de Comando como "programado pra sair"
+     * amanha. EquipmentMovementMobile::mount() ja busca por
+     * maintenance_order_id+type+status!=concluido antes de criar um novo,
+     * entao o fluxo mobile do operador no patio reaproveita este mesmo
+     * registro quando ele comecar de verdade -- sem duplicar.
+     */
+    private function seedMobilizacaoScania(Tenant $tenant, Asset $scania, MaintenanceOrder $scaniaOs): void
+    {
+        $amanha8h = now()->addDay()->setTime(8, 0);
+
+        EquipmentMovement::firstOrCreate(
+            [
+                'tenant_id' => $tenant->id,
+                'asset_id' => $scania->id,
+                'maintenance_order_id' => $scaniaOs->id,
+                'type' => EquipmentMovement::TYPE_MOBILIZACAO,
+            ],
+            [
+                'status' => EquipmentMovement::STATUS_AGUARDANDO_VISTORIA,
+                'scheduled_at' => $amanha8h,
+            ]
+        );
+
+        // AgendaCampo/relatorios ainda leem scheduled_at direto da O.S. --
+        // mantem os dois preenchidos, cada widget alimentado pela fonte certa.
+        if (! $scaniaOs->scheduled_at) {
+            $scaniaOs->update(['scheduled_at' => $amanha8h]);
+        }
+    }
+
+    /**
+     * MaintenanceOrder::create() direto (como o resto deste seeder faz) nao
+     * passa por logStatusChange()/updateStatus(), entao maintenance_status_histories
+     * fica vazio -- sem registro de quem/quando assumiu a O.S. Preenche isso
+     * uma vez so (idempotente).
+     */
+    private function ensureAtribuicaoHistorico(MaintenanceOrder $scaniaOs, User $tecnico): void
+    {
+        if ($scaniaOs->statusHistories()->exists()) {
+            return;
+        }
+
+        $scaniaOs->logStatusChange(
+            $scaniaOs->internal_status,
+            null,
+            "Ordem atribuída ao técnico {$tecnico->name} para liberação do equipamento.",
+            $tecnico->id
+        );
+    }
+
+    /**
+     * Setor "Logística" + perfil "Supervisor de Pátio" vinculado a ele
+     * (roles.department_id, ver RoleResource) + 1 usuario de teste -- pra
+     * validar a visibilidade por setor da Programacao sem precisar montar
+     * isso manualmente na UI a cada teste.
+     */
+    private function seedSetorTesteSupervisao(Tenant $tenant): void
+    {
+        $departamento = Department::firstOrCreate(
+            ['tenant_id' => $tenant->id, 'code' => 'LOG'],
+            ['name' => 'Logística']
+        );
+
+        $role = Role::firstOrCreate(
+            ['name' => 'Supervisor de Pátio', 'guard_name' => 'web', 'tenant_id' => $tenant->id]
+        );
+        if ($role->department_id !== $departamento->id) {
+            $role->update(['department_id' => $departamento->id]);
+        }
+
+        $supervisor = User::firstOrCreate(
+            ['email' => 'supervisor@geradoresrmc.com.br'],
+            [
+                'name' => 'Supervisor de Pátio RMC',
+                'password' => Hash::make('Demo@Oravel1'),
+                'tenant_id' => $tenant->id,
+                'role' => 'supervisor',
+                'department_id' => $departamento->id,
+            ]
+        );
+        $supervisor->forceFill(['email_verified_at' => now()])->save();
+        if (! $supervisor->hasRole($role)) {
+            $supervisor->assignRole($role);
         }
     }
 }

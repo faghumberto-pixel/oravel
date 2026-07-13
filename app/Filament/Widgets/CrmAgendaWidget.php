@@ -67,7 +67,13 @@ class CrmAgendaWidget extends FullCalendarWidget
                         default => '#E8541A',
                     });
             })
-            ->all();
+            // ->toArray() (nao ->all()) e' essencial -- EventData so
+            // implementa Arrayable, com propriedades protected e sem
+            // JsonSerializable. Sem a conversao, o Livewire manda {} vazio
+            // pro JS pra cada evento (sem erro), e o FullCalendar nao
+            // desenha nada. Mesmo bug encontrado e corrigido em
+            // AgendaTecnicoWidget::fetchEvents().
+            ->toArray();
     }
 
     protected function headerActions(): array

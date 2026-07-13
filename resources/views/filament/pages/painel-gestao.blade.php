@@ -43,7 +43,7 @@
                 @livewire(\App\Filament\Widgets\RadarUrgencia::class)
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    @livewire(\App\Filament\Widgets\OrdersByTechnicianChart::class)
+                    @livewire(\App\Filament\Widgets\ScheduledDispatchesWidget::class)
                     @livewire(\App\Filament\Widgets\CompletedOrdersLast7DaysChart::class)
                 </div>
 

@@ -1,5 +1,5 @@
 <x-filament-panels::page>
-    @if(auth()->user()->isAdmin())
+    @if($this->canViewAll)
         <div class="mb-4">
             <select wire:model.live="technicianId" class="fi-input w-full max-w-xs rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white text-sm">
                 <option value="">Todos os técnicos</option>

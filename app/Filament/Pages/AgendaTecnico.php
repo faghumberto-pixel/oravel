@@ -31,6 +31,12 @@ class AgendaTecnico extends Page
         return (bool) auth()->user()?->can('viewAny', Appointment::class);
     }
 
+    /**
+     * Admin ve todo mundo. Quem supervisiona algum setor (roles.department_id,
+     * ver RoleResource) ve so os usuarios daquele(s) setor(es) -- nao o
+     * tenant inteiro. Sem privilegio nenhum, a view nem chega a chamar isso
+     * (dropdown fica escondido, ver getCanViewAllProperty()).
+     */
     public function getTechniciansProperty(): Collection
     {
         $tenant = Tenancy::current();
@@ -38,6 +44,20 @@ class AgendaTecnico extends Page
             return collect();
         }
 
-        return User::where('tenant_id', $tenant->id)->orderBy('name')->pluck('name', 'id');
+        $user = auth()->user();
+        $query = User::where('tenant_id', $tenant->id);
+
+        if (! $user->isAdmin()) {
+            $query->whereIn('department_id', $user->supervisedDepartmentIds());
+        }
+
+        return $query->orderBy('name')->pluck('name', 'id');
+    }
+
+    public function getCanViewAllProperty(): bool
+    {
+        $user = auth()->user();
+
+        return $user->isAdmin() || ! empty($user->supervisedDepartmentIds());
     }
 }

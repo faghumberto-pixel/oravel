@@ -103,6 +103,24 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
         return $this->belongsTo(Department::class, 'department_id');
     }
 
+    /**
+     * IDs dos setores que este usuario supervisiona -- qualquer role dele
+     * com roles.department_id preenchido (ver RoleResource, campo "Setor
+     * supervisionado"). Vazio = usuario nao supervisiona ninguem, so ve a
+     * propria agenda em Programacao (AgendaTecnicoWidget).
+     *
+     * @return array<int, string>
+     */
+    public function supervisedDepartmentIds(): array
+    {
+        return $this->roles()
+            ->whereNotNull('department_id')
+            ->pluck('department_id')
+            ->unique()
+            ->values()
+            ->all();
+    }
+
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class, 'tenant_id', 'id')->withDefault(function () {

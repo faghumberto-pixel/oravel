@@ -140,6 +140,23 @@ class RoleResource extends Resource
             Forms\Components\Section::make('Configuração Geral')->schema([
                 Forms\Components\Grid::make(1)->schema([
                     Forms\Components\TextInput::make('name')->label('Nome do Perfil')->required(),
+
+                    Forms\Components\Select::make('department_id')
+                        ->label('Setor supervisionado')
+                        ->helperText('Quem tiver este perfil passa a ver, na Programação, a agenda de todos os colaboradores deste setor -- não só a própria. Deixe em branco pra um perfil comum, sem esse privilégio.')
+                        ->relationship(
+                            name: 'department',
+                            titleAttribute: 'name',
+                            modifyQueryUsing: function (Builder $query) {
+                                $tenant = Tenancy::current();
+
+                                return $query
+                                    ->when($tenant, fn (Builder $q) => $q->where('tenant_id', $tenant->id))
+                                    ->orderBy('name');
+                            },
+                        )
+                        ->searchable()
+                        ->preload(),
                 ]),
             ]),
             Forms\Components\Group::make($sections)->columnSpanFull(),
