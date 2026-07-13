@@ -2,13 +2,14 @@
 
 namespace App\Providers;
 
+use App\Livewire\DatabaseNotifications;
 use App\Models\Announcement;
 use App\Models\Asset;
 use App\Models\Contract;
 use App\Models\CrmLeadInteraction;
 use App\Models\Department;
-use App\Models\EquipmentDamage;
-use App\Models\EquipmentMovement; // Importante
+use App\Models\EquipmentDamage; // Importante
+use App\Models\EquipmentMovement;
 use App\Models\EquipmentReplacement;
 use App\Models\FleetTollRecord;
 use App\Models\FreightRecord;
@@ -92,6 +93,13 @@ class AppServiceProvider extends ServiceProvider
         // Livewire nao acha o componente e disfarca o erro real
         // (ComponentNotFoundException) como "release token mismatch" (419).
         Livewire::component('two_factor_authentication', TwoFactorAuthentication::class);
+
+        // Sobrescreve o registro padrao de NotificationsServiceProvider::packageBooted()
+        // (mesmo nome 'database-notifications', o ultimo registrado vence) --
+        // App\Livewire\DatabaseNotifications transforma clearNotifications()/
+        // removeNotification() em no-op, notificacao vira dado de auditoria
+        // que ninguem apaga pela UI.
+        Livewire::component('database-notifications', DatabaseNotifications::class);
     }
 
     /**
