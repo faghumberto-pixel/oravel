@@ -41,8 +41,18 @@
             {{-- Card de login/cadastro --}}
             <div class="flex flex-1 items-center justify-center px-6 py-10 md:px-12">
                 <div class="oravel-glass-card w-full max-w-md rounded-3xl border border-white/25 bg-white/15 p-8 shadow-2xl backdrop-blur-xl sm:p-10">
-                    <div class="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-full border border-white/30 bg-white/10">
+                    <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-white/30 bg-white/10">
                         <x-heroicon-o-bolt class="h-7 w-7 text-white" />
+                    </div>
+
+                    <div class="mb-6 flex items-center justify-center gap-3 text-xs">
+                        <a href="https://cliente.oravel.com.br" target="_blank" rel="noopener" class="text-white/70 hover:text-white hover:underline">
+                            Painel do Cliente
+                        </a>
+                        <span class="text-white/30">|</span>
+                        <a href="https://academy.oravel.com.br/" target="_blank" rel="noopener" class="text-white/70 hover:text-white hover:underline">
+                            Oravel Academy
+                        </a>
                     </div>
 
                     {{-- LOGIN: formulario real, autenticacao Filament sem alteracao --}}
