@@ -136,7 +136,7 @@ class MaintenanceKanban extends Page
         $tenant = Tenancy::current();
 
         $query = MaintenanceOrder::where('tenant_id', $tenant?->id)
-            ->with(['asset', 'technician', 'client', 'parts', 'statusHistories'])
+            ->with(['asset', 'technician', 'client', 'parts', 'statusHistories', 'criticalityLevel'])
             ->withCount('evidences');
 
         if ($viewMode === 'oficina') {
@@ -178,7 +178,26 @@ class MaintenanceKanban extends Page
 
         $orders = static::buildQuery($this->viewMode, $this->technicianId, $this->search)->get();
 
+        // Ordena por criticidade antes de agrupar -- groupBy() preserva a
+        // ordem relativa dentro de cada grupo, entao isso deixa as O.S.
+        // mais criticas no topo de cada coluna sem mudar a logica de
+        // agrupamento.
+        $orders = $orders->sortByDesc(fn (MaintenanceOrder $order) => static::criticalityRank($order))->values();
+
         return static::groupByStatus($orders, $this->viewMode);
+    }
+
+    /**
+     * alta > media > baixa > sem nivel definido.
+     */
+    public static function criticalityRank(MaintenanceOrder $order): int
+    {
+        return match ($order->criticalityLevel?->code) {
+            'alta' => 3,
+            'media' => 2,
+            'baixa' => 1,
+            default => 0,
+        };
     }
 
     public function getDaysInStage($record): int

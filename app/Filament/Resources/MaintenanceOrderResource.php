@@ -234,6 +234,38 @@ class MaintenanceOrderResource extends Resource
                         ])->columns(2),
                 ]),
 
+                // --- ABA 5B: CUSTOS ---
+                // Colunas reais (labor_cost/material_cost/logistics_cost/
+                // total_order_cost), mas ate agora sem nenhum campo em
+                // nenhuma aba da O.S. -- so existia leitura disso no
+                // dossie do Ativo. total_order_cost nao e calculado
+                // automaticamente em nenhum lugar do app, entao os 4
+                // ficam editaveis manualmente, igual as outras colunas.
+                Forms\Components\Tabs\Tab::make('Custos')->schema([
+                    Forms\Components\Grid::make(2)->schema([
+                        Forms\Components\TextInput::make('labor_cost')
+                            ->label('Mão de Obra (R$)')
+                            ->numeric()
+                            ->prefix('R$')
+                            ->default(0),
+                        Forms\Components\TextInput::make('material_cost')
+                            ->label('Material (R$)')
+                            ->numeric()
+                            ->prefix('R$')
+                            ->default(0),
+                        Forms\Components\TextInput::make('logistics_cost')
+                            ->label('Logística (R$)')
+                            ->numeric()
+                            ->prefix('R$')
+                            ->default(0),
+                        Forms\Components\TextInput::make('total_order_cost')
+                            ->label('Custo Total (R$)')
+                            ->numeric()
+                            ->prefix('R$')
+                            ->default(0),
+                    ]),
+                ]),
+
                 // --- ABA 6: ASSINATURAS ---
                 Forms\Components\Tabs\Tab::make('Assinaturas Digitais')->schema([
                     Forms\Components\Placeholder::make('info_sig')->content('Colete a assinatura na tela do dispositivo.'),

@@ -188,10 +188,17 @@
                                 $isRunning = (bool) $record->last_timer_start;
                                 $partNames = $record->parts?->pluck('name')->filter()->implode(', ');
                                 $isUrgent = $record->asset_id && in_array($record->asset_id, $urgentAssetIds, true);
+                                $isCritical = $record->criticalityLevel?->code === 'alta';
                             @endphp
                             <a href="{{ \App\Filament\Resources\MaintenanceOrderResource::getUrl('edit', ['record' => $record]) }}"
                                wire:key="kanban-card-{{ $record->id }}"
-                               class="block bg-white dark:bg-gray-900 p-3 rounded-lg border-l-4 {{ $isUrgent ? 'border-red-500 ring-2 ring-red-500/40' : $sideBorder }} border-t border-r border-b border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-400 dark:hover:border-blue-500 transition-all shadow-sm group">
+                               class="block bg-white dark:bg-gray-900 p-3 rounded-lg border-l-4 {{ ($isUrgent || $isCritical) ? 'border-red-500 ring-2 ring-red-500/40' : $sideBorder }} border-t border-r border-b border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-400 dark:hover:border-blue-500 transition-all shadow-sm group">
+                                @if($isCritical)
+                                    <div class="flex items-center gap-1.5 mb-2 -mt-1 -mx-1 px-2 py-1 rounded bg-red-500/10 border border-red-500/40">
+                                        <x-heroicon-s-fire class="w-3.5 h-3.5 text-red-500 shrink-0" />
+                                        <span class="text-[9px] font-black uppercase tracking-wider text-red-600 dark:text-red-400">{{ $record->description ?: 'Criticidade Alta' }}</span>
+                                    </div>
+                                @endif
                                 @if($isUrgent)
                                     <div class="flex items-center gap-1.5 mb-2 -mt-1 -mx-1 px-2 py-1 rounded bg-red-500/10 border border-red-500/40">
                                         <x-heroicon-s-exclamation-triangle class="w-3.5 h-3.5 text-red-500 shrink-0" />
