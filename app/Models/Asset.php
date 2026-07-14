@@ -236,7 +236,15 @@ class Asset extends Model
         $totalMaintenanceCost = (float) $this->maintenanceOrders()->sum('total_order_cost');
         $totalLaborCost = (float) $this->maintenanceOrders()->sum('labor_cost');
         $totalMaterialCost = (float) $this->maintenanceOrders()->sum('material_cost');
-        $totalLogisticsCost = (float) $this->maintenanceOrders()->sum('logistics_cost');
+        // Soma as 2 origens possiveis de custo logistico: movimentacoes
+        // ligadas a uma O.S. (via MaintenanceOrder.logistics_cost) e
+        // movimentacoes de Despacho de Locacao (via SolicitacaoLocacao.
+        // logistics_cost, ate 2026-07-14 nunca chegava aqui). Solicitacoes
+        // "combo" (multiplos ativos via assets() pivot) ficam de fora --
+        // mesma limitacao que rentalRequests() ja tem hoje, por so' usar
+        // o asset_id legado.
+        $totalLogisticsCost = (float) $this->maintenanceOrders()->sum('logistics_cost')
+            + (float) $this->rentalRequests()->sum('logistics_cost');
         $totalRentalRevenue = (float) $this->contracts()->sum('price');
 
         $result = $totalRentalRevenue - $totalMaintenanceCost;

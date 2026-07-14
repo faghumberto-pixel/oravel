@@ -119,6 +119,15 @@ class SolicitacaoLocacaoResource extends Resource
                         ->required(fn (Forms\Get $get) => blank($get('contract_id'))),
                     Forms\Components\TextInput::make('purpose')->label('Finalidade / Obra'),
                 ]),
+
+                // So' e' preenchido pelo rollup automatico de EquipmentMovement::
+                // recalculateCustoTransporte() quando o despacho (RentalDispatchChecklistMobile)
+                // atribui veiculo/KM -- nunca editado a mao aqui.
+                Forms\Components\TextInput::make('logistics_cost')
+                    ->label('Custo de Transporte (R$)')
+                    ->prefix('R$')
+                    ->disabled()
+                    ->visible(fn (?SolicitacaoLocacao $record) => $record !== null),
             ]),
         ]);
     }

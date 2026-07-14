@@ -6,6 +6,8 @@ use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Pages\DossieOperacional;
 use App\Filament\Resources\MaintenanceOrderResource;
 use App\Filament\Resources\MaintenanceOrderResource\Concerns\StoresPhotoEvidence;
+use App\Models\EquipmentMovement;
+use App\Models\MaintenanceOrder;
 use App\Models\User;
 use App\Support\Tenancy;
 use Filament\Actions;
@@ -142,6 +144,24 @@ class EditMaintenanceOrder extends EditRecord
                     ->icon('heroicon-o-printer')
                     ->visible(fn () => (bool) $this->record->asset?->checklist_group_id)
                     ->url(fn () => route('maintenance-orders.preventiva.print', $this->record))
+                    ->openUrlInNewTab(),
+
+                // Checklist mobile de mobilizacao/desmobilizacao (EquipmentMovementMobile)
+                // -- so' faz sentido pra O.S. de Check-in/Check-out (troca fisica do
+                // ativo), nao pra manutencao corretiva/preventiva comum. Ate 2026-07-14
+                // essa rota funcionava mas nao tinha NENHUM link pra ela na tela de OS.
+                Actions\Action::make('abrir_checklist_movimentacao')
+                    ->label(fn () => $this->record->maintenance_type === MaintenanceOrder::TYPE_CHECKOUT
+                        ? 'Abrir Checklist de Desmobilização'
+                        : 'Abrir Checklist de Mobilização')
+                    ->icon('heroicon-o-truck')
+                    ->visible(fn () => in_array($this->record->maintenance_type, [MaintenanceOrder::TYPE_CHECKIN, MaintenanceOrder::TYPE_CHECKOUT], true))
+                    ->url(fn () => route('maintenance-orders.equipment-movement-mobile', [
+                        'maintenanceOrder' => $this->record,
+                        'type' => $this->record->maintenance_type === MaintenanceOrder::TYPE_CHECKOUT
+                            ? EquipmentMovement::TYPE_DESMOBILIZACAO
+                            : EquipmentMovement::TYPE_MOBILIZACAO,
+                    ]))
                     ->openUrlInNewTab(),
 
                 Actions\Action::make('reprogramar')

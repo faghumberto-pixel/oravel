@@ -57,6 +57,8 @@ class Contract extends Model
         'required_nrs',
         'prohibit_sublease',
         'maintenance_clause',
+        'frete_incluso',
+        'responsavel_manutencao',
         'initial_horimeter',
         'initial_odometer',
         'local_tipo',
@@ -82,6 +84,7 @@ class Contract extends Model
         'initial_horimeter' => 'decimal:2',
         'initial_odometer' => 'decimal:2',
         'prohibit_sublease' => 'boolean',
+        'frete_incluso' => 'boolean',
         'is_active' => 'boolean',
     ];
 

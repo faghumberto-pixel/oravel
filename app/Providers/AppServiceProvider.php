@@ -12,10 +12,12 @@ use App\Models\EquipmentDamage; // Importante
 use App\Models\EquipmentMovement;
 use App\Models\EquipmentPatioArrival;
 use App\Models\EquipmentReplacement;
+use App\Models\FleetMaintenanceHistory;
 use App\Models\FleetTollRecord;
 use App\Models\FreightRecord;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenanceOrderMaterial;
+use App\Models\SolicitacaoLocacao;
 use App\Models\User;
 use App\Models\UserActivityLog;
 use App\Observers\AnnouncementObserver;
@@ -26,10 +28,12 @@ use App\Observers\EquipmentDamageObserver;
 use App\Observers\EquipmentMovementObserver;
 use App\Observers\EquipmentPatioArrivalObserver;
 use App\Observers\EquipmentReplacementObserver;
+use App\Observers\FleetMaintenanceHistoryObserver;
 use App\Observers\FleetTollRecordObserver;
 use App\Observers\FreightRecordObserver;
 use App\Observers\MaintenanceOrderChecklistSnapshotObserver;
 use App\Observers\MaintenanceOrderMaterialObserver;
+use App\Observers\SolicitacaoLocacaoObserver;
 use App\Policies\DynamicPolicy;
 use App\Support\Tenancy;
 use Illuminate\Auth\Events\Login;
@@ -70,6 +74,10 @@ class AppServiceProvider extends ServiceProvider
         MaintenanceOrderMaterial::observe(MaintenanceOrderMaterialObserver::class);
         Announcement::observe(AnnouncementObserver::class);
         CrmLeadInteraction::observe(CrmLeadInteractionObserver::class);
+        // Ate 2026-07-14 nenhum destes 2 estava registrado -- os observers
+        // existiam mas nunca rodavam de verdade (codigo morto).
+        SolicitacaoLocacao::observe(SolicitacaoLocacaoObserver::class);
+        FleetMaintenanceHistory::observe(FleetMaintenanceHistoryObserver::class);
 
         // INJEÇÃO CRUCIAL: Vincula dinamicamente a tabela de roles
         Role::resolveRelationUsing('department', function ($roleModel) {

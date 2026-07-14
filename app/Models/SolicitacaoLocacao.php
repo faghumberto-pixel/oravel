@@ -44,6 +44,7 @@ class SolicitacaoLocacao extends Model
         'status_comercial',
         'cancellation_reason_id', // Novo campo para rastreabilidade de perdas
         'observations',
+        'logistics_cost',
     ];
 
     /**
@@ -53,6 +54,7 @@ class SolicitacaoLocacao extends Model
     {
         return [
             'data_saida_prevista' => 'date',
+            'logistics_cost' => 'decimal:2',
         ];
     }
 

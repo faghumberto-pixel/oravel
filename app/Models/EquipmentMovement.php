@@ -112,6 +112,16 @@ class EquipmentMovement extends Model implements HasMedia
             MaintenanceOrder::where('id', $this->maintenance_order_id)
                 ->update(['logistics_cost' => $logisticsCost]);
         }
+
+        // Mesmo rollup, pro lado do Despacho de Locacao -- ate 2026-07-14
+        // esse custo ficava preso aqui e nunca chegava em nenhum relatorio
+        // financeiro (SolicitacaoLocacao nao tem maintenance_order_id).
+        if ($this->solicitacao_locacao_id) {
+            $logisticsCost = static::where('solicitacao_locacao_id', $this->solicitacao_locacao_id)->sum('custo_transporte');
+
+            SolicitacaoLocacao::where('id', $this->solicitacao_locacao_id)
+                ->update(['logistics_cost' => $logisticsCost]);
+        }
     }
 
     public function registerMediaCollections(): void

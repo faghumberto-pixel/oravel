@@ -212,6 +212,60 @@ class ViewEquipmentDamage extends ViewRecord
                         ->success()
                         ->send();
                 }),
+
+            // Ate 2026-07-14 resolvido/cancelado existiam como constante e
+            // como opcao de filtro na listagem, mas nenhuma acao de tela
+            // levava uma Avaria ate esses estados -- ficava sem fechamento
+            // formal depois de em_cobranca.
+            Actions\Action::make('marcar_resolvida')
+                ->label('Marcar como Resolvida')
+                ->color('success')
+                ->icon('heroicon-o-check-badge')
+                ->requiresConfirmation()
+                ->modalHeading('Marcar Avaria como Resolvida?')
+                ->visible(fn () => $this->record->status === EquipmentDamage::STATUS_EM_COBRANCA
+                    && auth()->user()->can('update', $this->record))
+                ->form([
+                    Forms\Components\Textarea::make('note')
+                        ->label('Observação final (opcional)'),
+                ])
+                ->action(function (array $data): void {
+                    $this->record->update([
+                        'status' => EquipmentDamage::STATUS_RESOLVIDO,
+                        'supervisor_notes' => $data['note'] ?: $this->record->supervisor_notes,
+                    ]);
+
+                    Notification::make()
+                        ->title('Avaria marcada como resolvida')
+                        ->success()
+                        ->send();
+                }),
+
+            Actions\Action::make('cancelar_avaria')
+                ->label('Cancelar Avaria')
+                ->color('danger')
+                ->icon('heroicon-o-x-circle')
+                ->requiresConfirmation()
+                ->modalHeading('Cancelar esta Avaria?')
+                ->modalDescription('Use quando a avaria reportada não procede (falso positivo).')
+                ->visible(fn () => ! in_array($this->record->status, [EquipmentDamage::STATUS_RESOLVIDO, EquipmentDamage::STATUS_CANCELADO], true)
+                    && auth()->user()->can('update', $this->record))
+                ->form([
+                    Forms\Components\Textarea::make('reason')
+                        ->label('Motivo do cancelamento')
+                        ->required(),
+                ])
+                ->action(function (array $data): void {
+                    $this->record->update([
+                        'status' => EquipmentDamage::STATUS_CANCELADO,
+                        'supervisor_notes' => $data['reason'],
+                    ]);
+
+                    Notification::make()
+                        ->title('Avaria cancelada')
+                        ->warning()
+                        ->send();
+                }),
         ];
     }
 }
