@@ -54,6 +54,8 @@ class EquipmentMovement extends Model implements HasMedia
         'asset_id',
         'fleet_vehicle_id',
         'fleet_driver_id',
+        'km_inicial',
+        'km_final',
         'scheduled_at',
         'type',
         'status',
@@ -80,6 +82,8 @@ class EquipmentMovement extends Model implements HasMedia
         'completed_at' => 'datetime',
         'approved_at' => 'datetime',
         'custo_transporte' => 'decimal:2',
+        'km_inicial' => 'decimal:2',
+        'km_final' => 'decimal:2',
     ];
 
     protected static function booted(): void
@@ -113,6 +117,20 @@ class EquipmentMovement extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('vistoria_geral')->singleFile();
+    }
+
+    /**
+     * Null enquanto o veiculo nao tiver km_inicial (atribuicao) e km_final
+     * (finalize()) preenchidos -- nunca armazenado, so' calculado, pra nao
+     * duplicar a mesma informacao de 2 jeitos que podem dessincronizar.
+     */
+    public function getKmPercorridoAttribute(): ?float
+    {
+        if ($this->km_inicial === null || $this->km_final === null) {
+            return null;
+        }
+
+        return (float) $this->km_final - (float) $this->km_inicial;
     }
 
     /**

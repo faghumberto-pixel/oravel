@@ -212,6 +212,54 @@ class AssetResource extends Resource
                                 ]),
                         ]),
 
+                    // ABA: LOCALIZAÇÃO -- internal_unit_id existia desde
+                    // 2026-05 mas sem relacao no model nem uso em nenhum
+                    // form; agora e' a base "onde o ativo mora" quando nao
+                    // esta locado. Quando locado, a fonte de verdade e' o
+                    // contrato vigente (Contract::resolvedLocation()), so
+                    // leitura aqui -- editar isso e' no ContractResource.
+                    Tabs\Tab::make('Localização')
+                        ->icon('heroicon-m-map-pin')
+                        ->schema([
+                            Forms\Components\Select::make('internal_unit_id')
+                                ->label('Unidade/Filial Base')
+                                ->relationship('internalUnit', 'name')
+                                ->helperText('Onde o ativo fica baseado quando NÃO está locado (pátio/matriz/filial).')
+                                ->searchable()
+                                ->preload(),
+
+                            Forms\Components\Placeholder::make('localizacao_atual_display')
+                                ->label('Localização Atual')
+                                ->content(function (?Asset $record) {
+                                    if (! $record) {
+                                        return new HtmlString('<span class="text-gray-400">Disponível após o primeiro salvamento.</span>');
+                                    }
+
+                                    if ($record->status === Asset::STATUS_LOCADO) {
+                                        $location = $record->activeContract()?->resolvedLocation();
+
+                                        if (! $location) {
+                                            return new HtmlString('<span class="text-gray-400">Ativo locado, mas sem localização definida no contrato vigente.</span>');
+                                        }
+
+                                        $endereco = trim(($location['address'] ?? '').', '.($location['city'] ?? '').' - '.($location['uf'] ?? ''), ', -');
+
+                                        return new HtmlString('<strong>'.e($location['label']).'</strong> (via contrato) — '.e($endereco ?: 'endereço não preenchido'));
+                                    }
+
+                                    $unit = $record->internalUnit;
+
+                                    if (! $unit) {
+                                        return new HtmlString('<span class="text-gray-400">Ativo não locado e sem unidade base definida acima.</span>');
+                                    }
+
+                                    $endereco = trim(($unit->address ?? '').', '.($unit->city ?? '').' - '.($unit->state ?? ''), ', -');
+
+                                    return new HtmlString('<strong>'.e($unit->name).'</strong> (base) — '.e($endereco ?: 'endereço não preenchido'));
+                                })
+                                ->columnSpanFull(),
+                        ]),
+
                     // ABA 2: RASTREABILIDADE (QR CODE)
                     Tabs\Tab::make('Rastreabilidade e QR Code')
                         ->icon('heroicon-m-qr-code')

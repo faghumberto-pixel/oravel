@@ -8,6 +8,7 @@ use App\Models\EquipmentMovementItem;
 use App\Models\EquipmentMovementLocation;
 use App\Models\FleetDriver;
 use App\Models\FleetVehicle;
+use App\Models\FreightRecord;
 use App\Models\MaintenanceOrder;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
@@ -44,6 +45,8 @@ class EquipmentMovementMobile extends Component
     public ?string $fleetVehicleId = null;
 
     public ?string $fleetDriverId = null;
+
+    public ?float $kmFinal = null;
 
     public function mount(MaintenanceOrder $maintenanceOrder, string $type): void
     {
@@ -86,6 +89,9 @@ class EquipmentMovementMobile extends Component
         $this->maintenanceOrder = $maintenanceOrder;
         $this->fleetVehicleId = $this->equipmentMovement->fleet_vehicle_id;
         $this->fleetDriverId = $this->equipmentMovement->fleet_driver_id;
+        $this->kmFinal = $this->equipmentMovement->km_final !== null
+            ? (float) $this->equipmentMovement->km_final
+            : null;
     }
 
     /**
@@ -109,9 +115,23 @@ class EquipmentMovementMobile extends Component
         return FleetDriver::where('active', true)->orderBy('name')->get();
     }
 
+    /**
+     * km_inicial e' o snapshot do odometro do veiculo NO MOMENTO da
+     * atribuicao -- so grava na primeira vez (evita sobrescrever se o
+     * operador trocar de veiculo no meio do caminho e o km_inicial ja
+     * tiver sido usado como referencia).
+     */
     public function updatedFleetVehicleId(): void
     {
-        $this->equipmentMovement->update(['fleet_vehicle_id' => $this->fleetVehicleId ?: null]);
+        $vehicleId = $this->fleetVehicleId ?: null;
+
+        $attributes = ['fleet_vehicle_id' => $vehicleId];
+
+        if ($vehicleId && $this->equipmentMovement->km_inicial === null) {
+            $attributes['km_inicial'] = FleetVehicle::find($vehicleId)?->km_atual;
+        }
+
+        $this->equipmentMovement->update($attributes);
         $this->markStarted();
     }
 
@@ -284,16 +304,56 @@ class EquipmentMovementMobile extends Component
         $this->coverPhotoLng = null;
     }
 
+    /**
+     * Veiculo + KM final sao obrigatorios pra finalizar mobilizacao/
+     * desmobilizacao -- nao da' pra saber quanto custou o transporte
+     * (matriz -> cliente ou vice-versa) sem os dois. Mesma trava de
+     * "progress < 100" do checklist, so' que pro veiculo/km.
+     */
     public function finalize()
     {
         if ($this->progress < 100) {
             return;
         }
 
+        if (! $this->equipmentMovement->fleet_vehicle_id) {
+            $this->addError('vehicleRequired', 'Selecione o veículo usado nesta movimentação antes de finalizar.');
+
+            return;
+        }
+
+        if ($this->kmFinal === null) {
+            $this->addError('kmRequired', 'Informe o KM final do veículo antes de finalizar.');
+
+            return;
+        }
+
+        if ($this->kmFinal <= (float) $this->equipmentMovement->km_inicial) {
+            $this->addError('kmRequired', 'O KM final deve ser maior que o KM inicial ('.$this->equipmentMovement->km_inicial.').');
+
+            return;
+        }
+
         $this->equipmentMovement->update([
             'status' => EquipmentMovement::STATUS_CONCLUIDO,
             'completed_at' => now(),
+            'km_final' => $this->kmFinal,
         ]);
+
+        $vehicle = $this->equipmentMovement->fleetVehicle;
+        $kmPercorrido = $this->equipmentMovement->km_percorrido;
+
+        FreightRecord::create([
+            'tenant_id' => $this->equipmentMovement->tenant_id,
+            'equipment_movement_id' => $this->equipmentMovement->id,
+            'tipo' => FreightRecord::TIPO_PROPRIO,
+            'fleet_vehicle_id' => $vehicle?->id,
+            'km_percorrido' => $kmPercorrido,
+            'valor' => $vehicle?->custo_por_km ? $kmPercorrido * (float) $vehicle->custo_por_km : 0,
+            'data' => now(),
+        ]);
+
+        $vehicle?->update(['km_atual' => $this->kmFinal]);
 
         // Checklist de coleta concluido (normalmente feito no cliente) NAO
         // e' a mesma coisa que "chegou de volta no patio de verdade" -- o

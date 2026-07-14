@@ -73,6 +73,19 @@
                     <p class="text-[11px] text-amber-400">Nenhum veículo próprio disponível agora — considere acionar frete terceirizado.</p>
                 @endif
 
+                @if($fleetVehicleId)
+                    <div>
+                        <label class="mb-1 block text-[11px] font-semibold text-zinc-400">
+                            KM Final do Veículo
+                            @if($equipmentMovement->km_inicial !== null)
+                                <span class="text-zinc-500">(inicial: {{ $equipmentMovement->km_inicial }})</span>
+                            @endif
+                        </label>
+                        <input type="number" step="0.1" wire:model="kmFinal" placeholder="Ex: 12345.6"
+                               class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                @endif
+
                 <select wire:model.live="fleetDriverId"
                         class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 focus:ring-2 focus:ring-emerald-500">
                     <option value="">Selecione o motorista...</option>
@@ -216,6 +229,18 @@
     </section>
 
     @error('photoRequired')
+        <div class="mx-5 mb-3 rounded-xl bg-red-500/15 px-3 py-2 text-xs font-semibold text-red-400">
+            {{ $message }}
+        </div>
+    @enderror
+
+    @error('vehicleRequired')
+        <div class="mx-5 mb-3 rounded-xl bg-red-500/15 px-3 py-2 text-xs font-semibold text-red-400">
+            {{ $message }}
+        </div>
+    @enderror
+
+    @error('kmRequired')
         <div class="mx-5 mb-3 rounded-xl bg-red-500/15 px-3 py-2 text-xs font-semibold text-red-400">
             {{ $message }}
         </div>

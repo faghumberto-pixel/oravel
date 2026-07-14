@@ -12,6 +12,7 @@ use App\Models\Client;
 use App\Models\EquipmentMovement;
 use App\Models\EquipmentMovementItemTemplate;
 use App\Models\EquipmentPatioArrival;
+use App\Models\FleetVehicle;
 use App\Models\MaintenanceOrder;
 use App\Models\Plan;
 use App\Models\Role;
@@ -162,8 +163,18 @@ class DemoCommercialTriggersTest extends TestCase
 
         $this->assertSame(Asset::STATUS_AGUARDANDO_TRIAGEM, $asset->fresh()->status);
 
+        // Veiculo + KM final sao obrigatorios pra finalizar (ver
+        // EquipmentMovementMobile::finalize()) -- sem isso o metodo bloqueia
+        // com addError() e a movimentacao fica presa em 'em_andamento'.
+        $vehicle = FleetVehicle::create([
+            'tenant_id' => $tenant->id, 'placa' => 'ABC1D23', 'modelo' => 'Carreta',
+            'tipo' => 'carreta', 'status' => FleetVehicle::STATUS_DISPONIVEL, 'km_atual' => 1000,
+        ]);
+
         $item = $component->instance()->equipmentMovement->items()->first();
-        $component->call('toggleItem', $item->id)
+        $component->set('fleetVehicleId', $vehicle->id)
+            ->set('kmFinal', 1050)
+            ->call('toggleItem', $item->id)
             ->assertSet('progress', 100)
             ->call('finalize');
 

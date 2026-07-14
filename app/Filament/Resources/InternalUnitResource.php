@@ -3,25 +3,35 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\InternalUnitResource\Pages;
 use App\Models\InternalUnit;
+use App\Services\CepGeocodingService;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\HtmlString;
 
+/**
+ * Registro de sede/filiais proprias do tenant -- vira relevante a partir
+ * de Contract.internal_unit_id (local_tipo=sede_empresa): o contrato de
+ * locacao aponta pra uma unidade daqui em vez de duplicar endereco. Por
+ * isso navegacao volta a aparecer (estava com shouldRegisterNavigation=false,
+ * inacessivel pela UI antes desta mudanca).
+ */
 #[BelongsToFeature('internal_units')]
 class InternalUnitResource extends Resource
-{ 
-    protected static bool $shouldRegisterNavigation = false;
+{
     protected static ?string $model = InternalUnit::class;
-    
+
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
+
     protected static ?string $navigationLabel = 'Unidades Internas';
+
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
     public static function getEloquentQuery(): Builder
@@ -40,36 +50,56 @@ class InternalUnitResource extends Resource
                         ->maxLength(255),
                 ]),
 
-            Forms\Components\Section::make('Geolocalização para Logística')
-                ->description('Dados necessários para cálculo de KM e deslocamento')
+            Forms\Components\Section::make('Endereço')
+                ->description('Preencha o CEP: endereço e localização no mapa são preenchidos automaticamente (mesmo padrão do Mapa de Leads).')
+                ->columns(3)
                 ->schema([
-                    Forms\Components\Grid::make(3)->schema([
-                        Forms\Components\TextInput::make('cep')
-                            ->label('CEP')
-                            ->mask('99999-999'),
-                        Forms\Components\TextInput::make('city')
-                            ->label('Cidade'),
-                        Forms\Components\TextInput::make('state')
-                            ->label('UF')
-                            ->maxLength(2),
-                    ]),
-                    Forms\Components\TextInput::make('address')
-                        ->label('Endereço Completo')
-                        ->columnSpanFull(),
-                    Forms\Components\Grid::make(2)->schema([
-                        Forms\Components\TextInput::make('latitude')
-                            ->label('Latitude')
-                            ->numeric(),
-                        Forms\Components\TextInput::make('longitude')
-                            ->label('Longitude')
-                            ->numeric(),
-                    ]),
-                    // Pequena ajuda visual: Link para validar no mapa
-                    Forms\Components\Placeholder::make('map_link')
-                        ->label('Visualizar no Mapa')
-                        ->content(fn ($record) => $record && $record->latitude && $record->longitude 
-                            ? new \Illuminate\Support\HtmlString("<a href='https://www.google.com/maps?q={$record->latitude},{$record->longitude}' target='_blank' style='color: #deff9a;'>Ver no Google Maps</a>")
-                            : 'Insira lat/long para habilitar link'),
+                    Forms\Components\TextInput::make('cep')
+                        ->label('CEP')
+                        ->placeholder('00000-000')
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
+                            if (! $state) {
+                                return;
+                            }
+
+                            $service = app(CepGeocodingService::class);
+                            $endereco = $service->lookupCep($state);
+
+                            if (! $endereco) {
+                                Notification::make()->title('CEP não encontrado.')->warning()->send();
+
+                                return;
+                            }
+
+                            $set('address', $endereco['address']);
+                            $set('city', $endereco['city']);
+                            $set('state', $endereco['uf']);
+
+                            $fullAddress = trim($endereco['address'].', '.$endereco['city'].' - '.$endereco['uf']);
+                            $coords = $service->geocodeAddress($fullAddress);
+
+                            if ($coords) {
+                                $set('latitude', $coords['latitude']);
+                                $set('longitude', $coords['longitude']);
+                                Notification::make()->title('Endereço localizado no mapa.')->success()->send();
+                            } else {
+                                $set('latitude', null);
+                                $set('longitude', null);
+                                Notification::make()->title('Endereço preenchido, mas não foi possível localizar no mapa automaticamente.')->warning()->send();
+                            }
+                        }),
+                    Forms\Components\TextInput::make('city')->label('Cidade'),
+                    Forms\Components\TextInput::make('state')->label('UF')->maxLength(2),
+                    Forms\Components\TextInput::make('address')->label('Endereço')->columnSpanFull(),
+                    Forms\Components\Placeholder::make('geo_status')
+                        ->label('Localização no Mapa')
+                        ->columnSpanFull()
+                        ->content(fn (Forms\Get $get) => $get('latitude') && $get('longitude')
+                            ? new HtmlString('<span class="text-emerald-500 font-semibold">✓ Localizado no mapa</span>')
+                            : new HtmlString('<span class="text-gray-400">Ainda não localizado — preencha o CEP acima.</span>')),
+                    Forms\Components\Hidden::make('latitude'),
+                    Forms\Components\Hidden::make('longitude'),
                 ]),
         ]);
     }
@@ -84,7 +114,7 @@ class InternalUnitResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('city')
                     ->label('Cidade/UF')
-                    ->getStateUsing(fn ($record) => $record->city . '/' . $record->state),
+                    ->getStateUsing(fn ($record) => $record->city.'/'.$record->state),
                 Tables\Columns\TextColumn::make('address')
                     ->label('Endereço')
                     ->limit(30),

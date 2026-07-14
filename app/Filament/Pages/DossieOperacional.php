@@ -3,6 +3,8 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
+use App\Models\Asset;
+use App\Models\Contract;
 use App\Models\MaintenanceOrder;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
@@ -28,7 +30,7 @@ class DossieOperacional extends Page
         $user = auth()->user();
         abort_unless($user && $user->can('view', $record), 403);
 
-        $this->record = $record->load(['asset', 'client', 'technician', 'evidences', 'equipmentMovements.locations']);
+        $this->record = $record->load(['asset.contracts.internalUnit', 'asset.internalUnit', 'client', 'technician', 'evidences', 'equipmentMovements.locations']);
     }
 
     public function getTitle(): string
@@ -72,5 +74,55 @@ class DossieOperacional extends Page
     {
         return $this->record->evidences->isNotEmpty()
             && $this->record->evidences->every(fn ($evidence) => filled($evidence->latitude) && filled($evidence->longitude));
+    }
+
+    /**
+     * Locado -> local resolvido do contrato vigente (Contract::resolvedLocation());
+     * senao -> unidade/filial base do ativo (Asset.internal_unit_id).
+     * Mesma logica usada no Placeholder de MaintenanceOrderResource e na
+     * aba Localização de AssetResource -- so' que aqui como array pro
+     * blade decidir a apresentacao.
+     */
+    public function getLocalizacaoAtual(): ?array
+    {
+        $asset = $this->record->asset;
+
+        if (! $asset) {
+            return null;
+        }
+
+        if ($asset->status === Asset::STATUS_LOCADO) {
+            $location = $asset->activeContract()?->resolvedLocation();
+
+            if (! $location) {
+                return null;
+            }
+
+            $condicao = $asset->activeContract()->condicao_ambiente;
+
+            return [
+                'origem' => 'Contrato (via localização)',
+                'label' => $location['label'],
+                'address' => $location['address'],
+                'city' => $location['city'],
+                'uf' => $location['uf'],
+                'condicao' => $condicao ? (Contract::condicaoOptions()[$condicao] ?? $condicao) : null,
+            ];
+        }
+
+        $unit = $asset->internalUnit;
+
+        if (! $unit) {
+            return null;
+        }
+
+        return [
+            'origem' => 'Unidade Base',
+            'label' => $unit->name,
+            'address' => $unit->address,
+            'city' => $unit->city,
+            'uf' => $unit->state,
+            'condicao' => null,
+        ];
     }
 }

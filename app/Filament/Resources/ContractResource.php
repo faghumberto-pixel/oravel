@@ -5,10 +5,15 @@ namespace App\Filament\Resources;
 use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\ContractResource\Pages;
+use App\Models\Client;
 use App\Models\Contract;
 use App\Models\EquipmentReplacement;
+use App\Services\CepGeocodingService;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -57,6 +62,98 @@ class ContractResource extends Resource
                             ->label('Início da Vigência')
                             ->required(),
                     ]),
+                ]),
+
+            Forms\Components\Section::make('Local de Instalação do Equipamento')
+                ->description('Onde o equipamento fica fisicamente instalado durante a locação — a Ordem de Serviço e o Dossiê do ativo puxam esta localização automaticamente.')
+                ->columns(3)
+                ->schema([
+                    Forms\Components\Radio::make('local_tipo')
+                        ->label('Local de Instalação')
+                        ->options(Contract::localTipoOptions())
+                        ->default(Contract::LOCAL_TIPO_SEDE_EMPRESA)
+                        ->live()
+                        ->required()
+                        ->columnSpanFull(),
+
+                    Forms\Components\Select::make('internal_unit_id')
+                        ->label('Unidade/Filial')
+                        ->relationship('internalUnit', 'name')
+                        ->visible(fn (Get $get) => $get('local_tipo') === Contract::LOCAL_TIPO_SEDE_EMPRESA)
+                        ->required(fn (Get $get) => $get('local_tipo') === Contract::LOCAL_TIPO_SEDE_EMPRESA)
+                        ->columnSpanFull(),
+
+                    Forms\Components\Placeholder::make('endereco_cliente_display')
+                        ->label('Endereço do Cliente (já cadastrado)')
+                        ->visible(fn (Get $get) => $get('local_tipo') === Contract::LOCAL_TIPO_ENDERECO_CLIENTE)
+                        ->content(function (Get $get) {
+                            $client = $get('client_id') ? Client::find($get('client_id')) : null;
+
+                            if (! $client || ! $client->address) {
+                                return new HtmlString('<span class="text-gray-400">Selecione um cliente com endereço cadastrado.</span>');
+                            }
+
+                            return new HtmlString(e("{$client->address}, {$client->city} - {$client->uf}, CEP {$client->cep}"));
+                        })
+                        ->columnSpanFull(),
+
+                    Forms\Components\TextInput::make('cep_obra')
+                        ->label('CEP')
+                        ->placeholder('00000-000')
+                        ->live(onBlur: true)
+                        ->visible(fn (Get $get) => $get('local_tipo') === Contract::LOCAL_TIPO_OUTRO)
+                        ->required(fn (Get $get) => $get('local_tipo') === Contract::LOCAL_TIPO_OUTRO)
+                        ->afterStateUpdated(function (Set $set, ?string $state) {
+                            if (! $state) {
+                                return;
+                            }
+
+                            $service = app(CepGeocodingService::class);
+                            $endereco = $service->lookupCep($state);
+
+                            if (! $endereco) {
+                                Notification::make()->title('CEP não encontrado.')->warning()->send();
+
+                                return;
+                            }
+
+                            $set('endereco_obra', $endereco['address']);
+                            $set('cidade_obra', $endereco['city']);
+                            $set('uf_obra', $endereco['uf']);
+
+                            $fullAddress = trim($endereco['address'].', '.$endereco['city'].' - '.$endereco['uf']);
+                            $coords = $service->geocodeAddress($fullAddress);
+
+                            if ($coords) {
+                                $set('latitude_obra', $coords['latitude']);
+                                $set('longitude_obra', $coords['longitude']);
+                                Notification::make()->title('Endereço localizado no mapa.')->success()->send();
+                            } else {
+                                $set('latitude_obra', null);
+                                $set('longitude_obra', null);
+                                Notification::make()->title('Endereço preenchido, mas não foi possível localizar no mapa automaticamente.')->warning()->send();
+                            }
+                        }),
+                    Forms\Components\TextInput::make('cidade_obra')
+                        ->label('Cidade')
+                        ->visible(fn (Get $get) => $get('local_tipo') === Contract::LOCAL_TIPO_OUTRO),
+                    Forms\Components\TextInput::make('uf_obra')
+                        ->label('UF')
+                        ->maxLength(2)
+                        ->visible(fn (Get $get) => $get('local_tipo') === Contract::LOCAL_TIPO_OUTRO),
+                    Forms\Components\TextInput::make('endereco_obra')
+                        ->label('Endereço')
+                        ->columnSpanFull()
+                        ->visible(fn (Get $get) => $get('local_tipo') === Contract::LOCAL_TIPO_OUTRO)
+                        ->required(fn (Get $get) => $get('local_tipo') === Contract::LOCAL_TIPO_OUTRO),
+                    Forms\Components\Hidden::make('latitude_obra'),
+                    Forms\Components\Hidden::make('longitude_obra'),
+
+                    Forms\Components\Select::make('condicao_ambiente')
+                        ->label('Condições do Ambiente')
+                        ->options(Contract::condicaoOptions())
+                        ->required()
+                        ->columnSpanFull(),
                 ]),
 
             Forms\Components\Section::make('3. Manutenção, Logística e Riscos')

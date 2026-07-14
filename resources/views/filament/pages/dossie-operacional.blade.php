@@ -48,6 +48,30 @@
             </div>
         </div>
 
+        {{-- Localização Atual --}}
+        @php $localizacao = $this->getLocalizacaoAtual(); @endphp
+        <div class="rounded-xl border border-gray-800 bg-gray-900 p-6 shadow-xl">
+            <div class="mb-3 flex items-center gap-2">
+                <x-heroicon-o-map-pin class="h-5 w-5 text-emerald-400" />
+                <h3 class="text-sm font-black uppercase tracking-widest text-white">Localização Atual</h3>
+            </div>
+
+            @if($localizacao)
+                <p class="text-xs text-gray-400">
+                    <span class="rounded-full bg-gray-800 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-gray-300">{{ $localizacao['origem'] }}</span>
+                    <span class="ml-2 font-bold text-white">{{ $localizacao['label'] }}</span>
+                    @if($localizacao['address'])
+                        — {{ $localizacao['address'] }}{{ $localizacao['city'] ? ', '.$localizacao['city'] : '' }}{{ $localizacao['uf'] ? ' - '.$localizacao['uf'] : '' }}
+                    @endif
+                    @if($localizacao['condicao'])
+                        <span class="ml-2 inline-flex items-center rounded-full bg-amber-600/20 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-400">{{ $localizacao['condicao'] }}</span>
+                    @endif
+                </p>
+            @else
+                <p class="text-[11px] text-gray-500">Sem localização definida (nem contrato vigente, nem unidade base cadastrada no Ativo).</p>
+            @endif
+        </div>
+
         {{-- Auditoria fotográfica --}}
         <div class="rounded-xl border border-gray-800 bg-gray-900 p-6 shadow-xl">
             <div class="mb-4 flex items-center gap-2">

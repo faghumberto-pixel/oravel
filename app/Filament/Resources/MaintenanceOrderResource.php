@@ -8,6 +8,7 @@ use App\Filament\Resources\MaintenanceOrderResource\Pages;
 use App\Forms\Components\CameraCapture;
 use App\Models\AbcMatrix;
 use App\Models\Asset;
+use App\Models\Contract;
 use App\Models\EquipmentDamage;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
@@ -211,6 +212,43 @@ class MaintenanceOrderResource extends Resource
                                     Notification::make()->title('Matriz ABC atualizada')->success()->send();
                                 })
                         ),
+
+                    // Localizacao "onde o ativo esta instalado agora" -- se
+                    // locado, vem do contrato vigente (Contract::resolvedLocation(),
+                    // mesmo dado usado no Dossie Operacional e no cadastro do
+                    // Ativo). Antes disso nao existia em lugar nenhum da OS.
+                    Forms\Components\Placeholder::make('localizacao_ativo')
+                        ->label('Localização do Ativo')
+                        ->columnSpanFull()
+                        ->content(function (Get $get) {
+                            $asset = $get('asset_id') ? Asset::find($get('asset_id')) : null;
+
+                            if (! $asset) {
+                                return new HtmlString('<span class="text-gray-400">Selecione um ativo.</span>');
+                            }
+
+                            if ($asset->status !== Asset::STATUS_LOCADO) {
+                                return new HtmlString('<span class="text-gray-400">Ativo não está locado — sem localização de contrato associada.</span>');
+                            }
+
+                            $location = $asset->activeContract()?->resolvedLocation();
+
+                            if (! $location) {
+                                return new HtmlString('<span class="text-gray-400">Ativo locado, mas sem localização definida no contrato vigente.</span>');
+                            }
+
+                            $condicao = $asset->activeContract()->condicao_ambiente;
+                            $condicaoLabel = $condicao ? (Contract::condicaoOptions()[$condicao] ?? $condicao) : null;
+
+                            $endereco = trim(($location['address'] ?? '').', '.($location['city'] ?? '').' - '.($location['uf'] ?? ''), ', -');
+
+                            return new HtmlString(
+                                '<div class="text-sm text-gray-700 dark:text-gray-300">'
+                                .'<strong>'.e($location['label']).'</strong> — '.e($endereco ?: 'endereço não preenchido')
+                                .($condicaoLabel ? ' <span class="ml-2 inline-block rounded-full bg-amber-100 dark:bg-amber-900 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-300">'.e($condicaoLabel).'</span>' : '')
+                                .'</div>'
+                            );
+                        }),
 
                     Forms\Components\TextInput::make('service_type')->label('Natureza do Serviço')->disabled()->dehydrated(true),
                     Forms\Components\Grid::make(3)->schema([

@@ -79,6 +79,27 @@ class Asset extends Model
         return $this->hasMany(Contract::class, 'asset_id');
     }
 
+    /**
+     * Contrato vigente deste ativo -- fonte de verdade de "onde ele esta
+     * fisicamente instalado agora" quando locado (Contract::resolvedLocation()),
+     * usado na O.S., Dossie Operacional e cadastro do Ativo. Mesmo valor
+     * 'Ativo' ja usado no filtro de ContractResource::table().
+     */
+    public function activeContract(): ?Contract
+    {
+        return $this->contracts()->where('status', 'Ativo')->latest('start_date')->first();
+    }
+
+    /**
+     * Unidade/filial propria onde o ativo fica baseado quando NAO esta
+     * locado (Asset.internal_unit_id existia desde 2026-05 mas nao tinha
+     * relacao no model nem uso em nenhum Resource ate agora).
+     */
+    public function internalUnit(): BelongsTo
+    {
+        return $this->belongsTo(InternalUnit::class);
+    }
+
     public function equipmentMovements(): HasMany
     {
         return $this->hasMany(EquipmentMovement::class);

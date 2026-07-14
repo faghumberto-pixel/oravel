@@ -64,6 +64,11 @@ class FleetVehicleResource extends Resource
                         ->label('KM Atual')
                         ->numeric()
                         ->required(),
+                    Forms\Components\TextInput::make('custo_por_km')
+                        ->label('Custo por KM (R$)')
+                        ->helperText('Usado pra calcular o custo do frete automaticamente ao finalizar uma movimentação. Deixe em branco pro financeiro completar depois.')
+                        ->numeric()
+                        ->prefix('R$'),
                     Forms\Components\TextInput::make('tag_sem_parar')
                         ->label('Tag Sem Parar')
                         ->maxLength(50),

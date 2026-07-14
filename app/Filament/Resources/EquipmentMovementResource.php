@@ -70,10 +70,17 @@ class EquipmentMovementResource extends Resource
                 ->label('Ativo')
                 ->relationship('asset', 'name')
                 ->disabled(),
+            Forms\Components\Select::make('fleet_vehicle_id')
+                ->label('Veículo')
+                ->relationship('fleetVehicle', 'placa')
+                ->disabled(),
             Forms\Components\Select::make('fleet_driver_id')
                 ->label('Motorista')
                 ->relationship('fleetDriver', 'name')
                 ->disabled(),
+            Forms\Components\TextInput::make('km_inicial')->label('KM Inicial')->disabled(),
+            Forms\Components\TextInput::make('km_final')->label('KM Final')->disabled(),
+            Forms\Components\TextInput::make('custo_transporte')->label('Custo do Transporte (R$)')->prefix('R$')->disabled(),
             Forms\Components\DateTimePicker::make('scheduled_at')->label('Programado Para')->disabled(),
             Forms\Components\DateTimePicker::make('started_at')->label('Iniciado')->disabled(),
             Forms\Components\DateTimePicker::make('completed_at')->label('Concluído')->disabled(),
@@ -102,9 +109,21 @@ class EquipmentMovementResource extends Resource
                 Tables\Columns\TextColumn::make('asset.name')
                     ->label('Ativo')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('fleetVehicle.placa')
+                    ->label('Veículo')
+                    ->placeholder('—')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('fleetDriver.name')
                     ->label('Motorista')
                     ->placeholder('—'),
+                Tables\Columns\TextColumn::make('km_percorrido')
+                    ->label('KM Rodado')
+                    ->placeholder('—')
+                    ->formatStateUsing(fn ($state) => $state !== null ? number_format($state, 1, ',', '.').' km' : '—'),
+                Tables\Columns\TextColumn::make('custo_transporte')
+                    ->label('Custo Transporte')
+                    ->money('BRL')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()

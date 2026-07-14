@@ -43,11 +43,13 @@ class FleetVehicle extends Model
         'status',
         'km_atual',
         'tag_sem_parar',
+        'custo_por_km',
     ];
 
     protected $casts = [
         'capacidade_carga' => 'decimal:2',
         'km_atual' => 'decimal:2',
+        'custo_por_km' => 'decimal:2',
     ];
 
     public function documents(): HasMany
