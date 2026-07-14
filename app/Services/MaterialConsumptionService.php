@@ -6,8 +6,10 @@ use App\Models\MaintenanceOrderMaterial;
 use App\Models\Material;
 use App\Models\PartsRequest;
 use App\Models\Role;
+use App\Models\StockMovement;
 use App\Models\User;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -33,6 +35,15 @@ class MaterialConsumptionService
         DB::transaction(function () use ($material, $consumption) {
             $material->decrement('current_stock', (float) $consumption->quantity);
             $material->refresh();
+
+            StockMovement::record(
+                $material,
+                StockMovement::TYPE_SAIDA_CONSUMO,
+                (float) $consumption->quantity,
+                (float) $material->current_stock,
+                $consumption,
+                Auth::id()
+            );
 
             if ($material->isLowStock()) {
                 $this->createPartsRequestIfNeeded($material, $consumption);

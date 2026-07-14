@@ -27,6 +27,7 @@ class PartsRequest extends Model
         'quantity',
         'status',
         'cost_at_time',
+        'converted_to_material_request_id',
     ];
 
     protected $casts = [
@@ -46,5 +47,15 @@ class PartsRequest extends Model
     public function material(): BelongsTo
     {
         return $this->belongsTo(Material::class);
+    }
+
+    /**
+     * Preenchido so' quando alguem usar o botao "Converter em Requisição"
+     * no PartsRequestResource -- link explicito, nao fusao de tabelas
+     * (ver comentario na migration 2026_07_14_100400).
+     */
+    public function convertedToMaterialRequest(): BelongsTo
+    {
+        return $this->belongsTo(MaterialRequest::class, 'converted_to_material_request_id');
     }
 }

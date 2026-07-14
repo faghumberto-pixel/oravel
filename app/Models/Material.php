@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Material extends Model
 {
@@ -81,5 +82,13 @@ class Material extends Model
     public function isLowStock(): bool
     {
         return (float) $this->current_stock <= (float) $this->min_stock;
+    }
+
+    /**
+     * Historico formal de entrada/saida de estoque (ver App\Models\StockMovement).
+     */
+    public function stockMovements(): HasMany
+    {
+        return $this->hasMany(StockMovement::class);
     }
 }

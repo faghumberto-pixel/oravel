@@ -3,9 +3,14 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Resources\GoodsReceiptResource;
 use App\Filament\Resources\MaterialCategoryResource;
+use App\Filament\Resources\MaterialRequestResource;
 use App\Filament\Resources\MaterialResource;
+use App\Filament\Resources\MaterialStockTakeResource;
 use App\Filament\Resources\PartsRequestResource;
+use App\Filament\Resources\PurchaseOrderResource;
+use App\Filament\Resources\StockMovementResource;
 use App\Filament\Resources\SupplierResource;
 use App\Http\Middleware\LogUserActivity;
 use Filament\Http\Middleware\Authenticate;
@@ -63,7 +68,12 @@ class AdminPanelProvider extends PanelProvider
                     ->visible(fn () => MaterialResource::canViewAny()
                         || MaterialCategoryResource::canViewAny()
                         || SupplierResource::canViewAny()
-                        || PartsRequestResource::canViewAny())
+                        || PartsRequestResource::canViewAny()
+                        || MaterialRequestResource::canViewAny()
+                        || PurchaseOrderResource::canViewAny()
+                        || GoodsReceiptResource::canViewAny()
+                        || MaterialStockTakeResource::canViewAny()
+                        || StockMovementResource::canViewAny())
                     ->childItems([
                         NavigationItem::make('Materiais')
                             ->url(fn () => MaterialResource::getUrl())
@@ -77,6 +87,21 @@ class AdminPanelProvider extends PanelProvider
                         NavigationItem::make('Solicitações de Peças')
                             ->url(fn () => PartsRequestResource::getUrl())
                             ->visible(fn () => PartsRequestResource::canViewAny()),
+                        NavigationItem::make('Requisições de Compra')
+                            ->url(fn () => MaterialRequestResource::getUrl())
+                            ->visible(fn () => MaterialRequestResource::canViewAny()),
+                        NavigationItem::make('Ordens de Compra')
+                            ->url(fn () => PurchaseOrderResource::getUrl())
+                            ->visible(fn () => PurchaseOrderResource::canViewAny()),
+                        NavigationItem::make('Recebimentos')
+                            ->url(fn () => GoodsReceiptResource::getUrl())
+                            ->visible(fn () => GoodsReceiptResource::canViewAny()),
+                        NavigationItem::make('Inventário')
+                            ->url(fn () => MaterialStockTakeResource::getUrl())
+                            ->visible(fn () => MaterialStockTakeResource::canViewAny()),
+                        NavigationItem::make('Histórico de Estoque')
+                            ->url(fn () => StockMovementResource::getUrl())
+                            ->visible(fn () => StockMovementResource::canViewAny()),
                     ]),
             ])
             ->renderHook(
