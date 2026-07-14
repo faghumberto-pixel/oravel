@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\MaintenanceOrderResource\Concerns;
 
+use App\Models\EquipmentDamage;
 use App\Models\MaintenanceOrder;
 use Illuminate\Support\Facades\Storage;
 
@@ -60,6 +61,8 @@ trait StoresPhotoEvidence
                 'latitude' => $photo['latitude'] ?? null,
                 'longitude' => $photo['longitude'] ?? null,
                 'captured_at' => $photo['captured_at'] ?? null,
+                'damage_severity' => $item['damage_severity'] ?? null,
+                'damage_type' => $item['damage_type'] ?? null,
             ];
         }
     }
@@ -78,7 +81,7 @@ trait StoresPhotoEvidence
             $extension = str($mimeType)->after('/')->toString();
             $binary = base64_decode(substr($imageData, strpos($imageData, ',') + 1));
 
-            $fileName = "{$item['evidence_type']}-" . now()->format('YmdHis') . '-' . substr(md5($imageData), 0, 8) . '.' . $extension;
+            $fileName = "{$item['evidence_type']}-".now()->format('YmdHis').'-'.substr(md5($imageData), 0, 8).'.'.$extension;
             $path = "attachments/os_{$order->id}/{$item['evidence_type']}/{$fileName}";
 
             Storage::disk('public')->put($path, $binary);
@@ -99,6 +102,28 @@ trait StoresPhotoEvidence
                 $order->evidences()->updateOrCreate(['evidence_type' => $item['evidence_type']], $attributes);
             } else {
                 $order->evidences()->create($attributes + ['evidence_type' => $item['evidence_type']]);
+
+                // "Avaria" numa evidencia adicional da propria OS agora cria um
+                // EquipmentDamage de verdade (nao so' marca a foto) -- unico jeito de
+                // registrar avaria antes disso era pelo checklist mobile de
+                // mobilizacao/desmobilizacao, que nao cobre atendimento externo
+                // corretivo sem nenhuma movimentacao em andamento. Sem etapa de
+                // assinatura do cliente aqui (registro interno da OS, nao despacho
+                // presencial) -- nasce direto em aguardando_supervisor.
+                if ($item['severity'] === 'avaria') {
+                    $damage = EquipmentDamage::create([
+                        'tenant_id' => $order->tenant_id,
+                        'maintenance_order_id' => $order->id,
+                        'asset_id' => $order->asset_id,
+                        'reported_by_user_id' => auth()->id(),
+                        'severity' => $item['damage_severity'] ?? EquipmentDamage::SEVERITY_MODERADA,
+                        'damage_type' => $item['damage_type'] ?? EquipmentDamage::DAMAGE_TYPE_OUTRO,
+                        'description' => $item['observation'] ?: "Avaria detectada na OS #{$order->os_number}",
+                        'status' => EquipmentDamage::STATUS_AGUARDANDO_SUPERVISOR,
+                    ]);
+
+                    $damage->addMediaFromDisk($path, 'public')->toMediaCollection('photos');
+                }
             }
         }
 

@@ -2,22 +2,22 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\Asset;
 use App\Models\EquipmentMovement;
-use App\Models\EquipmentPatioArrival;
 use App\Support\Tenancy;
-use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 
 /**
- * Evento formal de "chegada no patio" pra toda desmobilizacao -- ate aqui
- * o checklist de coleta (feito no cliente) ja liberava o ativo como
- * disponivel na hora (EquipmentMovementMobile::finalize()), confundindo
- * "saiu do cliente" com "chegou no patio de verdade". Essa tela exige
- * confirmacao ativa de um responsavel do patio, virando historico
- * permanente por ativo (EquipmentPatioArrival).
+ * Fila de desmobilizacoes aguardando o Laudo de Recebimento (checklist
+ * estruturado da chegada fisica no patio, ver EquipmentPatioArrivalMobile
+ * -- mesmo padrao do checklist de desmobilizacao, so' que pra chegada).
+ * Antes desta tela virar um checklist de verdade, era so um botao +
+ * campo de texto livre; o registro/liberacao do ativo ficava tudo no
+ * mesmo passo. Agora o EquipmentPatioArrival nasce em rascunho assim que
+ * o Laudo comeca (ver mount() do componente mobile), e so' fica
+ * "concluido" (completed_at preenchido) quando o checklist chega a 100%
+ * -- entao a fila aqui precisa continuar mostrando quem tem um laudo em
+ * andamento, nao so' quem nunca comecou nenhum.
  */
 class PatioChegadas extends Page
 {
@@ -30,10 +30,6 @@ class PatioChegadas extends Page
     protected static ?string $navigationGroup = 'Logística';
 
     protected static string $view = 'filament.pages.patio-chegadas';
-
-    public ?string $confirmingId = null;
-
-    public string $conditionNotes = '';
 
     public static function canAccess(): bool
     {
@@ -50,37 +46,12 @@ class PatioChegadas extends Page
         return EquipmentMovement::where('tenant_id', $tenant->id)
             ->where('type', EquipmentMovement::TYPE_DESMOBILIZACAO)
             ->where('status', EquipmentMovement::STATUS_CONCLUIDO)
-            ->whereDoesntHave('patioArrival')
-            ->with(['asset', 'maintenanceOrder.client'])
+            ->where(function ($query) {
+                $query->whereDoesntHave('patioArrival')
+                    ->orWhereHas('patioArrival', fn ($q) => $q->whereNull('completed_at'));
+            })
+            ->with(['asset', 'maintenanceOrder.client', 'patioArrival.items'])
             ->latest('completed_at')
             ->get();
-    }
-
-    public function confirm(?string $id): void
-    {
-        $this->confirmingId = $this->confirmingId === $id ? null : $id;
-        $this->conditionNotes = '';
-    }
-
-    public function registerArrival(string $id): void
-    {
-        $movement = EquipmentMovement::where('type', EquipmentMovement::TYPE_DESMOBILIZACAO)
-            ->where('status', EquipmentMovement::STATUS_CONCLUIDO)
-            ->whereDoesntHave('patioArrival')
-            ->findOrFail($id);
-
-        EquipmentPatioArrival::create([
-            'tenant_id' => $movement->tenant_id,
-            'equipment_movement_id' => $movement->id,
-            'arrived_at' => now(),
-            'confirmed_by_user_id' => Auth::id(),
-            'initial_condition_notes' => $this->conditionNotes ?: null,
-        ]);
-
-        $movement->asset?->update(['status' => Asset::STATUS_DISPONIVEL]);
-
-        Notification::make()->title('Chegada no pátio confirmada.')->success()->send();
-
-        $this->confirm(null);
     }
 }

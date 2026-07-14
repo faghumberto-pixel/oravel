@@ -9,6 +9,23 @@ use Filament\Notifications\Notification;
 
 class EquipmentDamageObserver
 {
+    /**
+     * Avaria criada pela propria OS (ver StoresPhotoEvidence) nasce direto
+     * em aguardando_supervisor -- sem "mudanca" de status pra updated()
+     * detectar (a etapa de assinatura do cliente e' pulada de proposito
+     * nesse fluxo). Sem isso, o supervisor nunca era notificado dessas.
+     */
+    public function created(EquipmentDamage $equipmentDamage): void
+    {
+        if ($equipmentDamage->status === EquipmentDamage::STATUS_AGUARDANDO_SUPERVISOR) {
+            $this->notifyRole(
+                $equipmentDamage,
+                EquipmentDamage::ROLE_SUPERVISOR_MANUTENCAO,
+                'Avaria aguardando revisão do supervisor',
+            );
+        }
+    }
+
     public function updated(EquipmentDamage $equipmentDamage): void
     {
         if (! $equipmentDamage->wasChanged('status')) {

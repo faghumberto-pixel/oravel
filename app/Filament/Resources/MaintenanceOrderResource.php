@@ -8,6 +8,7 @@ use App\Filament\Resources\MaintenanceOrderResource\Pages;
 use App\Forms\Components\CameraCapture;
 use App\Models\AbcMatrix;
 use App\Models\Asset;
+use App\Models\EquipmentDamage;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
 use App\Models\SolicitacaoLocacao;
@@ -282,7 +283,26 @@ class MaintenanceOrderResource extends Resource
                                 ->label('Severidade')
                                 ->options(['ok' => 'OK', 'avaria' => 'Avaria'])
                                 ->colors(['ok' => 'success', 'avaria' => 'danger'])
-                                ->default('ok')->inline(),
+                                ->default('ok')->inline()->live(),
+                            // Marcar "Avaria" aqui ja cria um EquipmentDamage de verdade
+                            // (ver StoresPhotoEvidence::persistPhotoEvidences()) -- antes
+                            // esse toggle so' marcava a foto salva, sem gerar nenhum
+                            // registro real na Avaria/fluxo de aprovacao.
+                            Forms\Components\Select::make('damage_severity')
+                                ->label('Gravidade da Avaria')
+                                ->options([
+                                    EquipmentDamage::SEVERITY_LEVE => 'Leve',
+                                    EquipmentDamage::SEVERITY_MODERADA => 'Moderada',
+                                    EquipmentDamage::SEVERITY_GRAVE => 'Grave / Perda Total',
+                                ])
+                                ->default(EquipmentDamage::SEVERITY_MODERADA)
+                                ->required(fn (Get $get) => $get('severity') === 'avaria')
+                                ->visible(fn (Get $get) => $get('severity') === 'avaria'),
+                            Forms\Components\Select::make('damage_type')
+                                ->label('Tipo de Avaria')
+                                ->options(EquipmentDamage::damageTypeLabels())
+                                ->required(fn (Get $get) => $get('severity') === 'avaria')
+                                ->visible(fn (Get $get) => $get('severity') === 'avaria'),
                             Forms\Components\Textarea::make('observation')
                                 ->label('Observação')
                                 ->rows(2)

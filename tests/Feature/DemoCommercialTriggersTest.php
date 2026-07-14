@@ -3,14 +3,15 @@
 namespace Tests\Feature;
 
 use App\Filament\Pages\MaintenanceKanban;
-use App\Filament\Pages\PatioChegadas;
 use App\Filament\Resources\AssetResource\Pages\ListAssets;
 use App\Livewire\EquipmentMovementMobile;
+use App\Livewire\EquipmentPatioArrivalMobile;
 use App\Models\Asset;
 use App\Models\AssetCategory;
 use App\Models\Client;
 use App\Models\EquipmentMovement;
 use App\Models\EquipmentMovementItemTemplate;
+use App\Models\EquipmentPatioArrival;
 use App\Models\MaintenanceOrder;
 use App\Models\Plan;
 use App\Models\Role;
@@ -131,14 +132,18 @@ class DemoCommercialTriggersTest extends TestCase
      * o ativo como disponivel. Isso confundia "saiu do cliente" com
      * "chegou de volta no patio de verdade" -- corrigido: finalizar o
      * checklist so' conclui a movimentacao, o ativo continua aguardando
-     * triagem ate um responsavel do patio confirmar a chegada formalmente
-     * (App\Filament\Pages\PatioChegadas).
+     * triagem ate o Laudo de Recebimento (App\Livewire\EquipmentPatioArrivalMobile,
+     * disparado a partir de App\Filament\Pages\PatioChegadas) ser concluido a 100%.
      */
     public function test_finalizing_desmobilization_keeps_asset_aguardando_triagem_until_patio_confirms_arrival(): void
     {
         EquipmentMovementItemTemplate::create([
             'type' => EquipmentMovement::TYPE_DESMOBILIZACAO, 'section' => 'Geral',
             'label' => 'Limpeza geral', 'sort_order' => 1, 'requires_photo' => false,
+        ]);
+        EquipmentMovementItemTemplate::create([
+            'type' => EquipmentPatioArrival::TEMPLATE_TYPE, 'section' => 'Geral',
+            'label' => 'Inspeção visual', 'sort_order' => 1, 'requires_photo' => false,
         ]);
 
         [$tenant, $admin] = $this->makeTenantAdmin();
@@ -167,11 +172,20 @@ class DemoCommercialTriggersTest extends TestCase
         $this->assertSame(Asset::STATUS_AGUARDANDO_TRIAGEM, $asset->fresh()->status, 'checklist concluido nao deveria por si so liberar o ativo');
         $this->assertNull($movement->patioArrival);
 
-        Livewire::test(PatioChegadas::class)
-            ->call('registerArrival', $movement->id);
+        $arrivalComponent = Livewire::test(EquipmentPatioArrivalMobile::class, [
+            'equipmentMovement' => $movement,
+        ]);
+
+        $this->assertSame(Asset::STATUS_AGUARDANDO_TRIAGEM, $asset->fresh()->status, 'laudo de recebimento recem-iniciado (rascunho) nao deveria por si so liberar o ativo');
+
+        $arrivalItem = $arrivalComponent->instance()->patioArrival->items()->first();
+        $arrivalComponent->call('toggleItem', $arrivalItem->id)
+            ->assertSet('progress', 100)
+            ->call('finalize');
 
         $this->assertSame(Asset::STATUS_DISPONIVEL, $asset->fresh()->status);
         $this->assertNotNull($movement->fresh()->patioArrival);
+        $this->assertNotNull($movement->fresh()->patioArrival->completed_at);
     }
 
     // --- Feature C: SolicitacaoLocacao multi-ativo (combo) ---

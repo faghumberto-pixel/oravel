@@ -14,6 +14,7 @@ use App\Http\Controllers\TablePrintController;
 use App\Livewire\AssetDossierMobile;
 use App\Livewire\EquipmentDamageMobile;
 use App\Livewire\EquipmentMovementMobile;
+use App\Livewire\EquipmentPatioArrivalMobile;
 use App\Livewire\MaintenanceChecklistMobile;
 use App\Livewire\PreventiveMaintenanceMobile;
 use App\Livewire\RentalDispatchChecklistMobile;
@@ -97,6 +98,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/maintenance-orders/{maintenanceOrder}/movimentacao/{type}', EquipmentMovementMobile::class)
         ->where('type', 'mobilizacao|desmobilizacao')
         ->name('maintenance-orders.equipment-movement-mobile');
+
+    Route::get('/admin/equipment-movements/{equipmentMovement}/laudo-recebimento', EquipmentPatioArrivalMobile::class)
+        ->name('equipment-movements.patio-arrival-mobile');
 
     Route::get('/admin/solicitacoes-locacao/{solicitacaoLocacao}/despacho', RentalDispatchChecklistMobile::class)
         ->name('solicitacoes-locacao.despacho-mobile');

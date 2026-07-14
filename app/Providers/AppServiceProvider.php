@@ -10,6 +10,7 @@ use App\Models\CrmLeadInteraction;
 use App\Models\Department;
 use App\Models\EquipmentDamage; // Importante
 use App\Models\EquipmentMovement;
+use App\Models\EquipmentPatioArrival;
 use App\Models\EquipmentReplacement;
 use App\Models\FleetTollRecord;
 use App\Models\FreightRecord;
@@ -23,6 +24,7 @@ use App\Observers\ContractObserver;
 use App\Observers\CrmLeadInteractionObserver;
 use App\Observers\EquipmentDamageObserver;
 use App\Observers\EquipmentMovementObserver;
+use App\Observers\EquipmentPatioArrivalObserver;
 use App\Observers\EquipmentReplacementObserver;
 use App\Observers\FleetTollRecordObserver;
 use App\Observers\FreightRecordObserver;
@@ -59,6 +61,7 @@ class AppServiceProvider extends ServiceProvider
         Asset::observe(AssetObserver::class);
         Contract::observe(ContractObserver::class);
         EquipmentMovement::observe(EquipmentMovementObserver::class);
+        EquipmentPatioArrival::observe(EquipmentPatioArrivalObserver::class);
         EquipmentDamage::observe(EquipmentDamageObserver::class);
         EquipmentReplacement::observe(EquipmentReplacementObserver::class);
         FreightRecord::observe(FreightRecordObserver::class);

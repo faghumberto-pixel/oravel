@@ -6,6 +6,7 @@ use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -20,16 +21,26 @@ class EquipmentPatioArrival extends Model implements HasMedia
     use HasUuids;
     use InteractsWithMedia;
 
+    /**
+     * Valor de EquipmentMovementItemTemplate.type usado pro Laudo de
+     * Recebimento -- reaproveita a mesma tabela de templates ja usada por
+     * mobilizacao/desmobilizacao (generica o bastante: type/section/label/
+     * sort_order/requires_photo), so' com um terceiro valor de type.
+     */
+    public const TEMPLATE_TYPE = 'recebimento';
+
     protected $fillable = [
         'tenant_id',
         'equipment_movement_id',
         'arrived_at',
         'confirmed_by_user_id',
         'initial_condition_notes',
+        'completed_at',
     ];
 
     protected $casts = [
         'arrived_at' => 'datetime',
+        'completed_at' => 'datetime',
     ];
 
     public function registerMediaCollections(): void
@@ -45,5 +56,11 @@ class EquipmentPatioArrival extends Model implements HasMedia
     public function confirmedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'confirmed_by_user_id');
+    }
+
+    /** Itens do Laudo de Recebimento (checklist item a item). */
+    public function items(): HasMany
+    {
+        return $this->hasMany(EquipmentPatioArrivalItem::class);
     }
 }

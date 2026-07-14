@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\EquipmentMovement;
 use App\Models\EquipmentMovementItemTemplate;
+use App\Models\EquipmentPatioArrival;
 use Illuminate\Database\Seeder;
 
 class EquipmentMovementItemTemplateSeeder extends Seeder
@@ -32,6 +33,19 @@ class EquipmentMovementItemTemplateSeeder extends Seeder
                 ['section' => 'Documentação', 'label' => 'Conferência de documentação de devolução', 'requires_photo' => false],
                 ['section' => 'Registro', 'label' => 'Horímetro de retorno', 'requires_photo' => false],
                 ['section' => 'Registro', 'label' => 'Foto do painel/horímetro', 'requires_photo' => true],
+            ],
+            // Laudo de Recebimento -- checklist da chegada FISICA no patio,
+            // etapa seguinte (e distinta) do checklist de desmobilizacao feito
+            // no cliente. Confere se o que chegou bate com o que saiu de la.
+            EquipmentPatioArrival::TEMPLATE_TYPE => [
+                ['section' => 'Estado do Equipamento', 'label' => 'Inspeção visual externa na chegada', 'requires_photo' => true],
+                ['section' => 'Estado do Equipamento', 'label' => 'Nível de óleo do motor', 'requires_photo' => false],
+                ['section' => 'Estado do Equipamento', 'label' => 'Nível de combustível', 'requires_photo' => false],
+                ['section' => 'Estado do Equipamento', 'label' => 'Estado dos pneus/rodízios', 'requires_photo' => false],
+                ['section' => 'Estado do Equipamento', 'label' => 'Verificação de avarias/danos novos', 'requires_photo' => true],
+                ['section' => 'Documentação', 'label' => 'Conferência de acessórios e cabos devolvidos', 'requires_photo' => false],
+                ['section' => 'Documentação', 'label' => 'Conferência de horímetro/odômetro contra o registro de saída', 'requires_photo' => false],
+                ['section' => 'Registro', 'label' => 'Foto geral do equipamento no pátio', 'requires_photo' => true],
             ],
         ];
 
