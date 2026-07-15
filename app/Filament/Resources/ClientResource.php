@@ -6,9 +6,13 @@ use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\ClientResource\Pages;
 use App\Models\Client;
+use App\Services\CepGeocodingService;
 use App\Traits\HasPlanAuthorization;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -58,7 +62,40 @@ class ClientResource extends Resource
                                 Forms\Components\TextInput::make('neighborhood')->label('Bairro')->maxLength(100),
                                 Forms\Components\TextInput::make('city')->label('Cidade')->maxLength(100),
                                 Forms\Components\TextInput::make('state')->label('UF')->maxLength(2),
-                                Forms\Components\TextInput::make('zip_code')->label('CEP')->maxLength(15),
+                                Forms\Components\TextInput::make('zip_code')
+                                    ->label('CEP')
+                                    ->maxLength(15)
+                                    ->live(onBlur: true)
+                                    ->helperText('Usado pra plotar o Cliente no Mapa de Equipamentos, junto com Logradouro/Cidade/UF acima.')
+                                    ->afterStateUpdated(function (Get $get, Set $set, ?string $state) {
+                                        if (! $state) {
+                                            return;
+                                        }
+
+                                        $fullAddress = trim(implode(', ', array_filter([
+                                            $get('address'),
+                                            $get('city'),
+                                            $get('state'),
+                                        ])));
+
+                                        if (! $fullAddress) {
+                                            return;
+                                        }
+
+                                        $coords = app(CepGeocodingService::class)->geocodeAddress($fullAddress);
+
+                                        if ($coords) {
+                                            $set('latitude', $coords['latitude']);
+                                            $set('longitude', $coords['longitude']);
+                                            Notification::make()->title('Cliente localizado no mapa.')->success()->send();
+                                        } else {
+                                            $set('latitude', null);
+                                            $set('longitude', null);
+                                            Notification::make()->title('CEP preenchido, mas não foi possível localizar no mapa automaticamente.')->warning()->send();
+                                        }
+                                    }),
+                                Forms\Components\Hidden::make('latitude'),
+                                Forms\Components\Hidden::make('longitude'),
                             ])->columns(3),
                         ]),
                     Forms\Components\Tabs\Tab::make('Entrega e Contatos')

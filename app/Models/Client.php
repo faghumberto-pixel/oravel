@@ -22,6 +22,7 @@ class Client extends Model
     protected static ?string $saasModuleLabel = 'Clientes';
 
     use BelongsToTenant;
+
     // Todos os Traits agora estão corretamente declarados DENTRO do corpo da classe
     use HasFactory, HasUuids, SoftDeletes;
 
@@ -40,6 +41,20 @@ class Client extends Model
         'phone',
         'whatsapp',
         'tenant_id',
+        // zip_code/state/neighborhood/address_complement ja existiam na
+        // tabela (migration add_erp_fields_to_clients_table) e ja
+        // apareciam no form do ClientResource -- mas como nao estavam
+        // aqui, o mass-assignment descartava tudo silenciosamente ao
+        // salvar (mesmo bug ja documentado em InternalUnit::$fillable).
+        // zip_code e' o CEP "oficial" dali pra frente (o form usa esse
+        // campo, nao o legado 'cep' acima). latitude/longitude sao
+        // geocodificados a partir dele.
+        'zip_code',
+        'state',
+        'neighborhood',
+        'address_complement',
+        'latitude',
+        'longitude',
     ];
 
     /**

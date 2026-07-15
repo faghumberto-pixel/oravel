@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Livewire\DatabaseNotifications;
 use App\Models\Announcement;
 use App\Models\Asset;
+use App\Models\Client;
 use App\Models\Contract;
 use App\Models\CrmLeadInteraction;
 use App\Models\Department;
@@ -24,6 +25,7 @@ use App\Models\User;
 use App\Models\UserActivityLog;
 use App\Observers\AnnouncementObserver;
 use App\Observers\AssetObserver;
+use App\Observers\ClientObserver;
 use App\Observers\ContractObserver;
 use App\Observers\CrmLeadInteractionObserver;
 use App\Observers\EquipmentDamageObserver;
@@ -67,6 +69,7 @@ class AppServiceProvider extends ServiceProvider
 
         // ATIVAÇÃO FORÇADA
         Asset::observe(AssetObserver::class);
+        Client::observe(ClientObserver::class);
         Contract::observe(ContractObserver::class);
         EquipmentMovement::observe(EquipmentMovementObserver::class);
         EquipmentPatioArrival::observe(EquipmentPatioArrivalObserver::class);
