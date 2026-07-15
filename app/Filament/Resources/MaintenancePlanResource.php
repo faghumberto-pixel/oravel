@@ -68,6 +68,7 @@ class MaintenancePlanResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
+            Tables\Columns\TextColumn::make('asset.patrimonio')->label('Patrimônio')->placeholder('—'),
             Tables\Columns\TextColumn::make('asset.name')->label('Ativo')->placeholder('—')->sortable(),
             Tables\Columns\TextColumn::make('checklistGroup.name')->label('Grupo')->placeholder('—')->sortable(),
             Tables\Columns\TextColumn::make('name')->label('Item')->searchable(),

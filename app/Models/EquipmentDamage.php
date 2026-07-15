@@ -60,6 +60,11 @@ class EquipmentDamage extends Model implements HasMedia
 
     public const ROLE_GERENTE_MANUTENCAO = 'Gerente de Manutenção';
 
+    // Vive aqui (nao em MaintenanceOrderPendencia) pra ficar junto das
+    // outras duas roles de manutencao ja existentes -- evita espalhar a
+    // mesma lista de papeis em mais de um lugar.
+    public const ROLE_ANALISTA_MANUTENCAO = 'Analista de Manutenção';
+
     protected static ?string $saasFeatureKey = 'tabela_equipment_damages';
 
     protected static ?string $saasPermissionSlug = 'avaria_equipamento';

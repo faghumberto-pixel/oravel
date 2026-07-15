@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\MaterialRequestResource\Pages;
 
+use App\Filament\Exports\MaterialRequestExporter;
 use App\Filament\Resources\MaterialRequestResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -14,6 +15,7 @@ class ListMaterialRequests extends ListRecords
     {
         return [
             Actions\CreateAction::make()->label('Nova Requisição'),
+            Actions\ExportAction::make()->exporter(MaterialRequestExporter::class),
         ];
     }
 }

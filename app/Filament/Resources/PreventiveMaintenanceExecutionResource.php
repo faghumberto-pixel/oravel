@@ -123,6 +123,7 @@ class PreventiveMaintenanceExecutionResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('created_at')->label('Data')->dateTime('d/m/Y H:i')->sortable(),
+                Tables\Columns\TextColumn::make('asset.patrimonio')->label('Patrimônio')->searchable(),
                 Tables\Columns\TextColumn::make('asset.name')->label('Ativo')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('asset.checklistGroup.name')->label('Grupo'),
                 Tables\Columns\TextColumn::make('maintenancePlan.name')->label('Item Executado'),

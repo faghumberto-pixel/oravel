@@ -5,11 +5,41 @@ namespace App\Observers;
 use App\Models\Asset;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\CepGeocodingService;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 
 class AssetObserver
 {
+    /**
+     * Cobre criacao/edicao fora do form do Filament (seeders, tinker,
+     * API) -- o form do AssetResource ja geocodifica ao vivo via
+     * afterStateUpdated no campo CEP, entao aqui so' completa
+     * latitude/longitude quando quem salvou nao fez isso sozinho.
+     */
+    public function saving(Asset $asset): void
+    {
+        if (! $asset->isDirty('cep') || blank($asset->cep) || $asset->latitude || $asset->longitude) {
+            return;
+        }
+
+        $service = app(CepGeocodingService::class);
+        $endereco = $service->lookupCep($asset->cep);
+
+        if (! $endereco) {
+            return;
+        }
+
+        $fullAddress = trim($endereco['address'].', '.$endereco['city'].' - '.$endereco['uf']);
+        $asset->endereco = $fullAddress;
+        $coords = $service->geocodeAddress($fullAddress);
+
+        if ($coords) {
+            $asset->latitude = $coords['latitude'];
+            $asset->longitude = $coords['longitude'];
+        }
+    }
+
     public function updated(Asset $asset): void
     {
         // Verifica se o status mudou para 'manutencao' E é criticidade 5

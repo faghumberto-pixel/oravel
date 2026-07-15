@@ -35,6 +35,9 @@ class EquipmentDamageResource extends BaseResource
                 Tables\Columns\TextColumn::make('maintenanceOrder.os_number')
                     ->label('OS')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('asset.patrimonio')
+                    ->label('Patrimônio')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('asset.name')
                     ->label('Ativo')
                     ->searchable(),

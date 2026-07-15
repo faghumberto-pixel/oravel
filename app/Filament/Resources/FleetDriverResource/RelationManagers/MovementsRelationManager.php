@@ -24,6 +24,7 @@ class MovementsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('id')
             ->columns([
+                Tables\Columns\TextColumn::make('asset.patrimonio')->label('Patrimônio'),
                 Tables\Columns\TextColumn::make('asset.name')->label('Ativo'),
                 Tables\Columns\TextColumn::make('type')
                     ->label('Tipo')

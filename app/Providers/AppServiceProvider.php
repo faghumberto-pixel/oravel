@@ -18,6 +18,7 @@ use App\Models\FreightRecord;
 use App\Models\GoodsReceiptItem;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenanceOrderMaterial;
+use App\Models\MaintenanceOrderPendencia;
 use App\Models\SolicitacaoLocacao;
 use App\Models\User;
 use App\Models\UserActivityLog;
@@ -35,6 +36,7 @@ use App\Observers\FreightRecordObserver;
 use App\Observers\GoodsReceiptItemObserver;
 use App\Observers\MaintenanceOrderChecklistSnapshotObserver;
 use App\Observers\MaintenanceOrderMaterialObserver;
+use App\Observers\MaintenanceOrderPendenciaObserver;
 use App\Observers\SolicitacaoLocacaoObserver;
 use App\Policies\DynamicPolicy;
 use App\Support\Tenancy;
@@ -81,6 +83,7 @@ class AppServiceProvider extends ServiceProvider
         SolicitacaoLocacao::observe(SolicitacaoLocacaoObserver::class);
         FleetMaintenanceHistory::observe(FleetMaintenanceHistoryObserver::class);
         GoodsReceiptItem::observe(GoodsReceiptItemObserver::class);
+        MaintenanceOrderPendencia::observe(MaintenanceOrderPendenciaObserver::class);
 
         // INJEÇÃO CRUCIAL: Vincula dinamicamente a tabela de roles
         Role::resolveRelationUsing('department', function ($roleModel) {

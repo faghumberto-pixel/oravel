@@ -15,6 +15,7 @@ class EquipmentDamageRolesSeeder extends Seeder
             EquipmentDamage::ROLE_SUPERVISOR_MANUTENCAO,
             EquipmentDamage::ROLE_COMERCIAL,
             EquipmentDamage::ROLE_GERENTE_MANUTENCAO,
+            EquipmentDamage::ROLE_ANALISTA_MANUTENCAO,
         ];
 
         foreach (Tenant::all() as $tenant) {

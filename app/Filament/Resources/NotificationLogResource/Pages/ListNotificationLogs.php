@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\NotificationLogResource\Pages;
 
 use App\Filament\Concerns\HasPrintAction;
+use App\Filament\Exports\NotificationLogExporter;
 use App\Filament\Resources\NotificationLogResource;
+use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class ListNotificationLogs extends ListRecords
@@ -16,6 +18,7 @@ class ListNotificationLogs extends ListRecords
     {
         return [
             $this->printAction(),
+            Actions\ExportAction::make()->exporter(NotificationLogExporter::class),
         ];
     }
 }

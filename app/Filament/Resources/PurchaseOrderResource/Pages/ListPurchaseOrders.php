@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PurchaseOrderResource\Pages;
 
+use App\Filament\Exports\PurchaseOrderExporter;
 use App\Filament\Resources\PurchaseOrderResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -14,6 +15,7 @@ class ListPurchaseOrders extends ListRecords
     {
         return [
             Actions\CreateAction::make()->label('Nova Ordem de Compra (Avulsa)'),
+            Actions\ExportAction::make()->exporter(PurchaseOrderExporter::class),
         ];
     }
 }

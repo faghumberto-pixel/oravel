@@ -7,12 +7,15 @@ use App\Filament\Resources\AssetResource\Pages;
 use App\Models\Asset;
 use App\Models\AssetCategory;
 use App\Models\EquipmentReplacement;
+use App\Services\CepGeocodingService;
 use App\Support\Tenancy;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -227,6 +230,43 @@ class AssetResource extends Resource
                                 ->helperText('Onde o ativo fica baseado quando NÃO está locado (pátio/matriz/filial).')
                                 ->searchable()
                                 ->preload(),
+
+                            Forms\Components\TextInput::make('cep')
+                                ->label('CEP do Equipamento')
+                                ->placeholder('00000-000')
+                                ->live(onBlur: true)
+                                ->helperText('Usado pra plotar este equipamento no Mapa de Equipamentos.')
+                                ->afterStateUpdated(function (Set $set, ?string $state) {
+                                    if (! $state) {
+                                        return;
+                                    }
+
+                                    $service = app(CepGeocodingService::class);
+                                    $endereco = $service->lookupCep($state);
+
+                                    if (! $endereco) {
+                                        Notification::make()->title('CEP não encontrado.')->warning()->send();
+
+                                        return;
+                                    }
+
+                                    $fullAddress = trim($endereco['address'].', '.$endereco['city'].' - '.$endereco['uf']);
+                                    $set('endereco', $fullAddress);
+                                    $coords = $service->geocodeAddress($fullAddress);
+
+                                    if ($coords) {
+                                        $set('latitude', $coords['latitude']);
+                                        $set('longitude', $coords['longitude']);
+                                        Notification::make()->title('Equipamento localizado no mapa.')->success()->send();
+                                    } else {
+                                        $set('latitude', null);
+                                        $set('longitude', null);
+                                        Notification::make()->title('CEP encontrado, mas não foi possível localizar no mapa automaticamente.')->warning()->send();
+                                    }
+                                }),
+                            Forms\Components\Hidden::make('endereco'),
+                            Forms\Components\Hidden::make('latitude'),
+                            Forms\Components\Hidden::make('longitude'),
 
                             Forms\Components\Placeholder::make('localizacao_atual_display')
                                 ->label('Localização Atual')

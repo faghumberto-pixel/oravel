@@ -135,7 +135,10 @@ class AdminPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
             ])
             ->databaseNotifications()
-            ->databaseNotificationsPolling('15s')
+            // 15s -> 8s: unico ajuste de "tempo real" que o usuario pediu pra
+            // essa fase -- sininho continua sendo polling, nao push de
+            // verdade (decisao explicita, ver plano de Suprimentos/Frota).
+            ->databaseNotificationsPolling('8s')
             ->plugin(
                 FilamentFullCalendarPlugin::make()
                     ->selectable(false)

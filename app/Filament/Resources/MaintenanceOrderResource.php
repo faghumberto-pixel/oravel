@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\MaintenanceOrderResource\Pages;
+use App\Filament\Resources\MaintenanceOrderResource\RelationManagers;
 use App\Forms\Components\CameraCapture;
 use App\Models\AbcMatrix;
 use App\Models\Asset;
@@ -74,7 +75,7 @@ class MaintenanceOrderResource extends Resource
                                 return Asset::where('tenant_id', $tenantId)
                                     ->where(function ($q) use ($search) {
                                         $q->where('name', 'like', "%{$search}%")->orWhere('patrimonio', 'like', "%{$search}%");
-                                    })->limit(50)->get()->mapWithKeys(fn ($asset) => [$asset->id => "{$asset->name} [Pat: {$asset->patrimonio}]"]);
+                                    })->limit(50)->get()->mapWithKeys(fn ($asset) => [$asset->id => "{$asset->patrimonio} — {$asset->name}"]);
                             })
                             ->afterStateUpdated(function ($state, Set $set) {
                                 if ($state) {
@@ -413,6 +414,7 @@ class MaintenanceOrderResource extends Resource
     {
         return $table->poll('10s')->columns([
             static::tenantColumn(),
+            Tables\Columns\TextColumn::make('asset.patrimonio')->label('Patrimônio')->weight('bold')->searchable(),
             Tables\Columns\TextColumn::make('created_at')->label('Data')->dateTime('d/m/Y'),
             Tables\Columns\TextColumn::make('os_number')->label('Nº OS')->searchable()->weight('bold'),
             Tables\Columns\TextColumn::make('asset.name')->label('Ativo')->searchable(),
@@ -495,6 +497,13 @@ class MaintenanceOrderResource extends Resource
     public static function getWidgets(): array
     {
         return [];
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\PendenciasRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

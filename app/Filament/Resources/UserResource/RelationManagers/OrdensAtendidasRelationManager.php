@@ -40,6 +40,9 @@ class OrdensAtendidasRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('os_number')
             ->columns([
+                Tables\Columns\TextColumn::make('asset.patrimonio')
+                    ->label('Patrimônio')
+                    ->placeholder('—'),
                 Tables\Columns\TextColumn::make('asset.name')
                     ->label('Ativo')
                     ->placeholder('—'),

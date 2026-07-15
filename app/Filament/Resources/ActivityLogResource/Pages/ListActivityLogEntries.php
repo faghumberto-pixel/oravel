@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\ActivityLogResource\Pages;
 
 use App\Filament\Concerns\HasPrintAction;
+use App\Filament\Exports\ActivityLogExporter;
 use App\Filament\Resources\ActivityLogResource;
+use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class ListActivityLogEntries extends ListRecords
@@ -16,6 +18,7 @@ class ListActivityLogEntries extends ListRecords
     {
         return [
             $this->printAction(),
+            Actions\ExportAction::make()->exporter(ActivityLogExporter::class),
         ];
     }
 }

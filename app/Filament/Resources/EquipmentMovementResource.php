@@ -106,6 +106,9 @@ class EquipmentMovementResource extends Resource
                         EquipmentMovement::TYPE_DESMOBILIZACAO => 'warning',
                         default => 'gray',
                     }),
+                Tables\Columns\TextColumn::make('asset.patrimonio')
+                    ->label('Patrimônio')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('asset.name')
                     ->label('Ativo')
                     ->searchable(),

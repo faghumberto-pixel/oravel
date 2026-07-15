@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\GoodsReceiptResource\Pages;
 
+use App\Filament\Exports\GoodsReceiptExporter;
 use App\Filament\Resources\GoodsReceiptResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -14,6 +15,7 @@ class ListGoodsReceipts extends ListRecords
     {
         return [
             Actions\CreateAction::make()->label('Novo Recebimento'),
+            Actions\ExportAction::make()->exporter(GoodsReceiptExporter::class),
         ];
     }
 }
