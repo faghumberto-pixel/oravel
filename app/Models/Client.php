@@ -55,6 +55,54 @@ class Client extends Model
         'address_complement',
         'latitude',
         'longitude',
+        // Resto do form (Identificacao PJ, Entrega, Contatos ERP,
+        // Representante Legal, Checklist de Documentos, Analise de
+        // Risco) -- mesmo bug, todos apareciam na tela e eram
+        // descartados no save. check_query_history/check_sinintegra/
+        // commercial_references existem como coluna mas NAO aparecem em
+        // nenhum campo do form hoje, entao ficam de fora (nada grava
+        // neles de qualquer forma).
+        'document',
+        'fantasy_name',
+        'state_registration',
+        'municipal_registration',
+        'tax_regime',
+        'delivery_address',
+        'site_manager',
+        'site_phone',
+        'email_financial',
+        'email_purchasing',
+        'legal_name',
+        'legal_cpf',
+        'legal_rg',
+        'legal_role',
+        'doc_cnpj',
+        'doc_statute',
+        'doc_id',
+        'doc_proxy',
+        'doc_address',
+        'doc_art',
+        'doc_registration_form',
+        'check_internal_fraud',
+        'check_blacklist',
+        'check_credit_bureau',
+        'credit_score',
+    ];
+
+    protected $casts = [
+        'latitude' => 'decimal:8',
+        'longitude' => 'decimal:8',
+        'credit_score' => 'integer',
+        'doc_cnpj' => 'boolean',
+        'doc_statute' => 'boolean',
+        'doc_id' => 'boolean',
+        'doc_proxy' => 'boolean',
+        'doc_address' => 'boolean',
+        'doc_art' => 'boolean',
+        'doc_registration_form' => 'boolean',
+        'check_internal_fraud' => 'boolean',
+        'check_blacklist' => 'boolean',
+        'check_credit_bureau' => 'boolean',
     ];
 
     /**
