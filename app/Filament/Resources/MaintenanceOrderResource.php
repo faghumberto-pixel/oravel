@@ -54,6 +54,24 @@ class MaintenanceOrderResource extends Resource
         return (bool) auth()->user()?->can('update', $record);
     }
 
+    /**
+     * Sem tenant atual (super admin sem "atuar como"), nao ha o que checar --
+     * antes disso, SolicitacaoLocacao::assetIdsComReservaUrgente() era
+     * chamado com Tenancy::current()?->id ?? '' e quebrava em runtime
+     * (Postgres rejeita string vazia como uuid: "invalid input syntax for
+     * type uuid").
+     */
+    private static function assetTemUrgenciaLocacao(?string $assetId): bool
+    {
+        $tenantId = Tenancy::current()?->id;
+
+        if (! $assetId || ! $tenantId) {
+            return false;
+        }
+
+        return in_array($assetId, SolicitacaoLocacao::assetIdsComReservaUrgente($tenantId), true);
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -98,11 +116,7 @@ class MaintenanceOrderResource extends Resource
                     // Manutencao (checado em CreateMaintenanceOrder::beforeCreate()).
                     Forms\Components\Placeholder::make('reserva_aviso')
                         ->label('')
-                        ->visible(fn (Get $get) => $get('asset_id') && in_array(
-                            $get('asset_id'),
-                            SolicitacaoLocacao::assetIdsComReservaUrgente(Tenancy::current()?->id ?? ''),
-                            true
-                        ))
+                        ->visible(fn (Get $get) => static::assetTemUrgenciaLocacao($get('asset_id')))
                         ->content(new HtmlString(
                             '<div class="rounded-lg bg-danger-50 dark:bg-danger-950 border border-danger-300 dark:border-danger-700 px-4 py-3 text-sm text-danger-700 dark:text-danger-300">'
                             .'<strong>Atenção:</strong> este ativo está reservado por uma Locação urgente. '
@@ -116,11 +130,7 @@ class MaintenanceOrderResource extends Resource
                         ->password()
                         ->revealable()
                         ->dehydrated(false)
-                        ->visible(fn (Get $get) => $get('asset_id') && in_array(
-                            $get('asset_id'),
-                            SolicitacaoLocacao::assetIdsComReservaUrgente(Tenancy::current()?->id ?? ''),
-                            true
-                        ))
+                        ->visible(fn (Get $get) => static::assetTemUrgenciaLocacao($get('asset_id')))
                         ->columnSpanFull(),
 
                     Forms\Components\Placeholder::make('grupo_display')
