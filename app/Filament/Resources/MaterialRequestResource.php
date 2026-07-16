@@ -51,6 +51,23 @@ class MaterialRequestResource extends Resource
                         ->label('Ordem de Serviço de Origem (opcional)')
                         ->relationship('maintenanceOrder', 'os_number', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
                         ->searchable(),
+                    Forms\Components\Select::make('requested_for_location_id')
+                        ->label('Filial de Destino')
+                        ->relationship('requestedForLocation', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
+                        // Mesmo padrao de GoodsReceiptResource::purchase_order_id --
+                        // preenchido quando vem do link da notificacao de
+                        // estoque baixo por filial (MaterialStockService).
+                        ->default(fn () => request()->query('requested_for_location_id'))
+                        ->searchable()
+                        ->preload(),
+                    Forms\Components\Select::make('priority')
+                        ->label('Prioridade')
+                        ->options(MaterialRequest::priorityOptions())
+                        ->default(MaterialRequest::PRIORITY_NORMAL)
+                        ->required()
+                        ->native(false),
+                    Forms\Components\DatePicker::make('target_delivery_date')
+                        ->label('Data Desejada de Entrega'),
                     Forms\Components\TextInput::make('provider_name')
                         ->label('Fornecedor Sugerido (opcional)')
                         ->maxLength(255),
@@ -62,6 +79,11 @@ class MaterialRequestResource extends Resource
                         ->native(false),
                     Forms\Components\Textarea::make('notes')
                         ->label('Observações')
+                        ->columnSpanFull(),
+                    Forms\Components\Textarea::make('rejection_reason')
+                        ->label('Motivo da Recusa')
+                        ->disabled()
+                        ->visible(fn (?MaterialRequest $record) => $record?->rejection_reason)
                         ->columnSpanFull(),
                 ])->columns(2),
         ]);
@@ -80,6 +102,17 @@ class MaterialRequestResource extends Resource
                 Tables\Columns\TextColumn::make('maintenanceOrder.os_number')
                     ->label('OS de Origem')
                     ->placeholder('—'),
+                Tables\Columns\TextColumn::make('requestedForLocation.name')
+                    ->label('Filial')
+                    ->placeholder('—'),
+                Tables\Columns\BadgeColumn::make('priority')
+                    ->label('Prioridade')
+                    ->colors([
+                        'gray' => MaterialRequest::PRIORITY_NORMAL,
+                        'warning' => MaterialRequest::PRIORITY_URGENTE,
+                        'danger' => MaterialRequest::PRIORITY_CRITICO,
+                    ])
+                    ->formatStateUsing(fn (string $state) => MaterialRequest::priorityOptions()[$state] ?? $state),
                 Tables\Columns\TextColumn::make('items_count')
                     ->label('Itens')
                     ->counts('items'),
@@ -99,6 +132,9 @@ class MaterialRequestResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->options(MaterialRequest::statusOptions()),
+                Tables\Filters\SelectFilter::make('priority')
+                    ->label('Prioridade')
+                    ->options(MaterialRequest::priorityOptions()),
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([

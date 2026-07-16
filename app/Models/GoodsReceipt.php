@@ -28,6 +28,7 @@ class GoodsReceipt extends Model
     protected $fillable = [
         'tenant_id',
         'purchase_order_id',
+        'internal_unit_id',
         'received_by_user_id',
         'received_at',
         'invoice_number',
@@ -41,6 +42,11 @@ class GoodsReceipt extends Model
     public function purchaseOrder(): BelongsTo
     {
         return $this->belongsTo(PurchaseOrder::class);
+    }
+
+    public function internalUnit(): BelongsTo
+    {
+        return $this->belongsTo(InternalUnit::class);
     }
 
     public function receivedBy(): BelongsTo

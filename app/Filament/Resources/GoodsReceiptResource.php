@@ -57,6 +57,12 @@ class GoodsReceiptResource extends Resource
                         ->preload()
                         ->required()
                         ->disabled(fn (?GoodsReceipt $record) => $record !== null),
+                    Forms\Components\Select::make('internal_unit_id')
+                        ->label('Filial de Destino')
+                        ->relationship('internalUnit', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
+                        ->searchable()
+                        ->preload()
+                        ->required(),
                     Forms\Components\Select::make('received_by_user_id')
                         ->label('Recebido por')
                         ->relationship('receivedBy', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
@@ -88,6 +94,8 @@ class GoodsReceiptResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('purchaseOrder.supplier.name')
                     ->label('Fornecedor'),
+                Tables\Columns\TextColumn::make('internalUnit.name')
+                    ->label('Filial'),
                 Tables\Columns\TextColumn::make('invoice_number')
                     ->label('Nota Fiscal')
                     ->placeholder('—'),

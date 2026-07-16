@@ -4,16 +4,16 @@ namespace App\Observers;
 
 use App\Models\GoodsReceiptItem;
 use App\Models\PurchaseOrderItem;
-use App\Models\StockMovement;
+use App\Services\MaterialStockService;
 use Illuminate\Support\Facades\DB;
 
 /**
  * Unico ponto de entrada de estoque a partir de uma compra -- ao
  * registrar uma linha de recebimento: valida numero de serie obrigatorio
- * (mesma trava de MaintenanceOrderMaterial::booted()), incrementa
- * Material.current_stock, grava MaterialStockMovement tipo entrada_compra,
- * soma em PurchaseOrderItem.quantity_received e recalcula
- * PurchaseOrder.status.
+ * (mesma trava de MaintenanceOrderMaterial::booted()), da entrada na
+ * filial do recebimento via MaterialStockService (que grava o ledger e
+ * recalcula Material.current_stock sozinho), soma em
+ * PurchaseOrderItem.quantity_received e recalcula PurchaseOrder.status.
  */
 class GoodsReceiptItemObserver
 {
@@ -34,24 +34,19 @@ class GoodsReceiptItemObserver
         DB::transaction(function () use ($item) {
             $purchaseOrderItem = $item->purchaseOrderItem;
             $material = $purchaseOrderItem->material;
+            $unit = $item->goodsReceipt?->internalUnit;
 
-            if (! $material) {
+            if (! $material || ! $unit) {
                 return;
             }
 
-            // Material.current_stock e' coluna integer (mesmo motivo ja
-            // documentado em MaterialStockTake::finalize()) -- arredonda
-            // em vez de truncar.
-            $novoSaldo = (int) round((float) $material->current_stock + (float) $item->quantity_received);
-            $material->update(['current_stock' => $novoSaldo]);
-
-            StockMovement::record(
+            app(MaterialStockService::class)->receive(
                 $material,
-                StockMovement::TYPE_ENTRADA_COMPRA,
+                $unit,
                 (float) $item->quantity_received,
-                (float) $novoSaldo,
                 $item,
-                $item->goodsReceipt?->received_by_user_id
+                $item->goodsReceipt?->received_by_user_id,
+                $item->goodsReceipt?->invoice_number,
             );
 
             $purchaseOrderItem->increment('quantity_received', (float) $item->quantity_received);

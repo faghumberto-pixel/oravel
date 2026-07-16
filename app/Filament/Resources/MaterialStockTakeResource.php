@@ -45,6 +45,13 @@ class MaterialStockTakeResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
+            Forms\Components\Select::make('internal_unit_id')
+                ->label('Filial')
+                ->relationship('internalUnit', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
+                ->required()
+                ->disabled(fn (?MaterialStockTake $record) => $record !== null)
+                ->searchable()
+                ->preload(),
             Forms\Components\Select::make('conducted_by_user_id')
                 ->label('Conduzido por')
                 ->relationship('conductedBy', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
@@ -64,6 +71,8 @@ class MaterialStockTakeResource extends Resource
                     ->label('Iniciado em')
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('internalUnit.name')
+                    ->label('Filial'),
                 Tables\Columns\TextColumn::make('conductedBy.name')
                     ->label('Conduzido por'),
                 Tables\Columns\TextColumn::make('items_count')

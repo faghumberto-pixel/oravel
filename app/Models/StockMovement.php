@@ -37,10 +37,16 @@ class StockMovement extends Model
 
     public const TYPE_AJUSTE_MANUAL = 'ajuste_manual';
 
+    public const TYPE_TRANSFERENCIA = 'transferencia';
+
     protected $fillable = [
         'tenant_id',
         'material_id',
+        'from_location_id',
+        'to_location_id',
         'type',
+        'reason',
+        'document_reference',
         'quantity',
         'balance_after',
         'reference_type',
@@ -56,6 +62,16 @@ class StockMovement extends Model
     public function material(): BelongsTo
     {
         return $this->belongsTo(Material::class);
+    }
+
+    public function fromLocation(): BelongsTo
+    {
+        return $this->belongsTo(InternalUnit::class, 'from_location_id');
+    }
+
+    public function toLocation(): BelongsTo
+    {
+        return $this->belongsTo(InternalUnit::class, 'to_location_id');
     }
 
     public function reference(): MorphTo
@@ -77,13 +93,32 @@ class StockMovement extends Model
      * $quantity e' sempre positivo pra entrada/saida (o "type" ja diz o
      * sentido) -- so' pra ajuste_manual ele carrega o sinal (pode ser
      * negativo, quando o inventario acha menos do que o sistema previa).
+     *
+     * from/to location, reason e document_reference sao opcionais --
+     * as 3 chamadas antigas (compra/consumo/ajuste) nao precisam deles,
+     * so' transferencia entre filiais (App\Services\MaterialStockService)
+     * os usa de verdade.
      */
-    public static function record(Material $material, string $type, float $quantity, float $balanceAfter, ?Model $reference = null, ?string $createdByUserId = null): self
-    {
+    public static function record(
+        Material $material,
+        string $type,
+        float $quantity,
+        float $balanceAfter,
+        ?Model $reference = null,
+        ?string $createdByUserId = null,
+        ?string $fromLocationId = null,
+        ?string $toLocationId = null,
+        ?string $reason = null,
+        ?string $documentReference = null,
+    ): self {
         return self::create([
             'tenant_id' => $material->tenant_id,
             'material_id' => $material->id,
+            'from_location_id' => $fromLocationId,
+            'to_location_id' => $toLocationId,
             'type' => $type,
+            'reason' => $reason,
+            'document_reference' => $documentReference,
             'quantity' => $type === self::TYPE_AJUSTE_MANUAL ? $quantity : abs($quantity),
             'balance_after' => $balanceAfter,
             'reference_type' => $reference ? $reference::class : null,

@@ -22,6 +22,14 @@ class Material extends Model
 
     protected static ?string $saasModuleLabel = 'Materiais';
 
+    /**
+     * Papel que recebe alerta de estoque baixo por filial
+     * (App\Services\MaterialStockService) e aprova Pedido de Compra
+     * (MaterialRequest, Fase 2) -- mesmo padrao de papel nomeado ja usado
+     * em EquipmentReplacement::ROLE_LOGISTICA.
+     */
+    public const ROLE_GESTOR_SUPRIMENTOS = 'Gestor de Suprimentos';
+
     protected $fillable = [
         'tenant_id',
         'sku',
@@ -90,5 +98,29 @@ class Material extends Model
     public function stockMovements(): HasMany
     {
         return $this->hasMany(StockMovement::class);
+    }
+
+    /**
+     * Saldo por filial (ver App\Models\MaterialLocationStock) -- fonte de
+     * verdade do estoque dali pra frente. current_stock (acima) continua
+     * existindo como cache, somado daqui por App\Services\MaterialStockService.
+     */
+    public function locationStocks(): HasMany
+    {
+        return $this->hasMany(MaterialLocationStock::class);
+    }
+
+    /**
+     * Recalcula o cache current_stock como soma de todas as filiais --
+     * chamado por MaterialStockService toda vez que uma linha de
+     * material_location_stock muda, pra nao quebrar leitura ja existente
+     * (isLowStock(), coloracao de tabela do MaterialResource, gatilho de
+     * PartsRequest) sem precisar reescrever cada ponto de leitura.
+     */
+    public function recalculateCurrentStock(): void
+    {
+        $this->updateQuietly([
+            'current_stock' => (int) $this->locationStocks()->sum('current_quantity'),
+        ]);
     }
 }

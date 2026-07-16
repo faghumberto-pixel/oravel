@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\MaterialResource\Pages;
+use App\Filament\Resources\MaterialResource\RelationManagers;
 use App\Models\Material;
 use App\Models\MaterialCategory;
 use App\Models\Supplier;
@@ -138,9 +139,16 @@ class MaterialResource extends Resource
                         Forms\Components\TextInput::make('unit_cost')->label('Custo Unitário')->required()->numeric()->prefix('R$'),
                         Forms\Components\TextInput::make('last_purchase_price')->label('Último Preço de Compra')->numeric()->prefix('R$'),
                         Forms\Components\TextInput::make('price')->label('Preço de Venda')->required()->numeric()->default(0)->prefix('R$'),
-                        Forms\Components\TextInput::make('current_stock')->label('Estoque Atual')->required()->numeric()->default(0),
-                        Forms\Components\TextInput::make('min_stock')->label('Estoque Mínimo')->required()->numeric()->default(0),
-                        Forms\Components\TextInput::make('max_stock')->label('Estoque Máximo')->required()->numeric()->default(0),
+                        Forms\Components\TextInput::make('current_stock')
+                            ->label('Estoque Atual (total, todas as filiais)')
+                            ->numeric()
+                            ->default(0)
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->helperText('Somado automaticamente. Editável por filial na aba "Estoque por Filial".'),
+                        Forms\Components\TextInput::make('min_stock')->label('Estoque Mínimo (padrão)')->required()->numeric()->default(0)
+                            ->helperText('Usado como padrão ao criar uma filial nova pra este material.'),
+                        Forms\Components\TextInput::make('max_stock')->label('Estoque Máximo (padrão)')->required()->numeric()->default(0),
                         Forms\Components\Select::make('unit_of_measure')
                             ->label('Unidade de Medida')
                             ->options(['un' => 'Unidade', 'l' => 'Litro', 'kg' => 'Quilograma', 'm' => 'Metro', 'par' => 'Par', 'cx' => 'Caixa'])
@@ -203,6 +211,13 @@ class MaterialResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()]),
             ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\LocationStocksRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

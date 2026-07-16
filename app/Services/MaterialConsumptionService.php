@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\InternalUnit;
 use App\Models\MaintenanceOrderMaterial;
 use App\Models\Material;
 use App\Models\PartsRequest;
 use App\Models\Role;
-use App\Models\StockMovement;
 use App\Models\User;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
@@ -32,18 +32,21 @@ class MaterialConsumptionService
             return;
         }
 
-        DB::transaction(function () use ($material, $consumption) {
-            $material->decrement('current_stock', (float) $consumption->quantity);
-            $material->refresh();
+        // Filial de consumo = a do Ativo da OS; sem isso (Ativo sem
+        // internal_unit_id definido), cai na filial padrao do tenant --
+        // nunca bloqueia o consumo por falta de localizacao.
+        $unit = $consumption->maintenanceOrder?->asset?->internalUnit
+            ?? InternalUnit::defaultForTenant($material->tenant_id);
 
-            StockMovement::record(
+        DB::transaction(function () use ($material, $consumption, $unit) {
+            app(MaterialStockService::class)->consume(
                 $material,
-                StockMovement::TYPE_SAIDA_CONSUMO,
+                $unit,
                 (float) $consumption->quantity,
-                (float) $material->current_stock,
                 $consumption,
                 Auth::id()
             );
+            $material->refresh();
 
             if ($material->isLowStock()) {
                 $this->createPartsRequestIfNeeded($material, $consumption);

@@ -71,11 +71,11 @@ class EditMaterialRequest extends EditRecord
                         'status' => MaterialRequest::STATUS_RECUSADA,
                         'approved_by_user_id' => auth()->id(),
                         'approved_at' => now(),
-                        'notes' => trim(($this->record->notes ?: '')."\nRecusada: {$data['reason']}"),
+                        'rejection_reason' => $data['reason'],
                     ]);
 
                     Notification::make()->title('Requisição recusada')->warning()->send();
-                    $this->refreshFormData(['status', 'notes']);
+                    $this->refreshFormData(['status', 'rejection_reason']);
                 }),
 
             // So' habilita depois de aprovada + ter uma cotacao marcada
@@ -139,15 +139,23 @@ class EditMaterialRequest extends EditRecord
     }
 
     /**
-     * Ver MaterialConsumptionService::notifyAdmins() -- mesmo papel
-     * ("admin"), mesmo motivo de resolver a Role escopada por tenant em
-     * vez de User::role($nome) puro (ignora tenant_id).
+     * Ver MaterialConsumptionService::notifyAdmins() -- mesmo motivo de
+     * resolver a Role escopada por tenant em vez de User::role($nome) puro
+     * (ignora tenant_id). Notifica admin (comportamento original, nao
+     * removido -- tenant sem o papel novo nao perde o alerta) + Gestor de
+     * Suprimentos (Fase 2: papel dedicado de aprovador de compras).
      */
     private function notifyAdmins(string $title): void
     {
         $tenantId = Tenancy::current()?->id;
 
-        $role = Role::where('name', 'admin')
+        $this->notifyRole($tenantId, 'admin', $title);
+        $this->notifyRole($tenantId, MaterialRequest::ROLE_GESTOR_SUPRIMENTOS, $title);
+    }
+
+    private function notifyRole(?string $tenantId, string $roleName, string $title): void
+    {
+        $role = Role::where('name', $roleName)
             ->where('guard_name', 'web')
             ->where('tenant_id', $tenantId)
             ->first();

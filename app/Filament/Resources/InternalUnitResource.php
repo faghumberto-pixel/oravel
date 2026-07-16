@@ -43,11 +43,30 @@ class InternalUnitResource extends Resource
     {
         return $form->schema([
             Forms\Components\Section::make('Identificação da Unidade')
+                ->columns(2)
                 ->schema([
                     Forms\Components\TextInput::make('name')
                         ->label('Nome da Unidade/Filial')
                         ->required()
                         ->maxLength(255),
+                    Forms\Components\TextInput::make('code')
+                        ->label('Código')
+                        ->placeholder('MATRIZ, FILIAL-01...')
+                        ->maxLength(255),
+                    Forms\Components\Select::make('type')
+                        ->label('Tipo')
+                        ->options(['matriz' => 'Matriz', 'filial' => 'Filial', 'deposito' => 'Depósito'])
+                        ->default('filial')
+                        ->native(false)
+                        ->required(),
+                    Forms\Components\Select::make('responsible_user_id')
+                        ->label('Responsável')
+                        ->relationship('responsibleUser', 'name', fn (Builder $query) => $query->where('tenant_id', Auth::user()->tenant_id))
+                        ->searchable()
+                        ->preload(),
+                    Forms\Components\Toggle::make('is_active')
+                        ->label('Ativa')
+                        ->default(true),
                 ]),
 
             Forms\Components\Section::make('Endereço')
@@ -112,6 +131,20 @@ class InternalUnitResource extends Resource
                     ->label('Nome')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('code')
+                    ->label('Código')
+                    ->placeholder('—'),
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Tipo')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state) => match ($state) {
+                        'matriz' => 'Matriz',
+                        'deposito' => 'Depósito',
+                        default => 'Filial',
+                    }),
+                Tables\Columns\IconColumn::make('is_active')
+                    ->label('Ativa')
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('city')
                     ->label('Cidade/UF')
                     ->getStateUsing(fn ($record) => $record->city.'/'.$record->state),

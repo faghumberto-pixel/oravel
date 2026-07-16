@@ -5,6 +5,7 @@ namespace App\Filament\Resources\MaintenanceOrderResource\Pages;
 use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\MaintenanceOrderResource;
 use App\Filament\Resources\MaintenanceOrderResource\Concerns\CreatesDamageFromAvariaType;
+use App\Filament\Resources\MaintenanceOrderResource\Concerns\CreatesReplacementFromOsType;
 use App\Filament\Resources\MaintenanceOrderResource\Concerns\StoresPhotoEvidence;
 use App\Models\MaintenanceOrder;
 use App\Models\SolicitacaoLocacao;
@@ -18,6 +19,7 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateMaintenanceOrder extends CreateRecord
 {
     use CreatesDamageFromAvariaType;
+    use CreatesReplacementFromOsType;
     use StoresPhotoEvidence;
 
     protected static string $resource = MaintenanceOrderResource::class;
@@ -93,6 +95,7 @@ class CreateMaintenanceOrder extends CreateRecord
     {
         $this->persistPhotoEvidences($this->record);
         $this->createDamageFromAvariaType($this->record);
+        $this->createReplacementFromOsType($this->record);
 
         if ($this->record->technician_id && ($technician = User::find($this->record->technician_id))) {
             Notification::make()

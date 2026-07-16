@@ -5,6 +5,7 @@ namespace App\Filament\Resources\EquipmentDamageResource\Pages;
 use App\Filament\Resources\EquipmentDamageResource;
 use App\Models\Asset;
 use App\Models\EquipmentDamage;
+use App\Models\EquipmentReplacement;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Infolists;
@@ -211,8 +212,26 @@ class ViewEquipmentDamage extends ViewRecord
                 ->action(function (array $data): void {
                     $this->record->update(['replacement_asset_id' => $data['replacement_asset_id']]);
 
+                    // Ate 2026-07-17 isso so' setava EquipmentDamage.replacement_asset_id
+                    // -- nao existia nenhum EquipmentReplacement de verdade ligado, entao
+                    // o workflow de troca (identificar/desmobilizar/mobilizar) nunca era
+                    // disparado a partir de uma Avaria. firstOrNew por equipment_damage_id
+                    // evita duplicar se a acao for repetida (troca de substituto).
+                    $replacement = EquipmentReplacement::firstOrNew(['equipment_damage_id' => $this->record->id]);
+                    $replacement->fill([
+                        'tenant_id' => $this->record->tenant_id,
+                        'maintenance_order_id' => $this->record->maintenance_order_id,
+                        'equipment_damage_id' => $this->record->id,
+                        'original_asset_id' => $this->record->asset_id,
+                        'requested_by_user_id' => $replacement->requested_by_user_id ?? auth()->id(),
+                        'reason' => $replacement->reason ?: ('Avaria: '.$this->record->description),
+                    ]);
+                    $replacement->save();
+                    $replacement->identifyReplacement(Asset::find($data['replacement_asset_id']), auth()->user());
+
                     Notification::make()
                         ->title('Ativo substituto vinculado')
+                        ->body('Troca de equipamento criada e substituto já identificado.')
                         ->success()
                         ->send();
                 }),

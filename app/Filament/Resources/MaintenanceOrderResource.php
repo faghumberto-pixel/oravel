@@ -12,6 +12,7 @@ use App\Models\Asset;
 use App\Models\Contract;
 use App\Models\CriticalityLevel;
 use App\Models\EquipmentDamage;
+use App\Models\EquipmentReplacement;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
 use App\Models\SolicitacaoLocacao;
@@ -118,6 +119,7 @@ class MaintenanceOrderResource extends Resource
                                 'Preventiva' => 'Manutenção Preventiva',
                                 'Corretiva' => 'Manutenção Corretiva',
                                 'Avaria' => 'Registro de Avaria',
+                                'Troca' => 'Troca de Equipamento',
                             ])
                             ->required()->native(false)->live(),
                     ]),
@@ -158,6 +160,27 @@ class MaintenanceOrderResource extends Resource
                                 ->dehydrated(false),
                         ])
                         ->columns(2),
+
+                    // "Troca de Equipamento" como Tipo de Operacao -- entrada principal
+                    // da Troca (confirmado: geralmente solicitada pelo tecnico em
+                    // campo), mesmo padrao da secao de Avaria acima. So' pede a
+                    // urgencia aqui; identificar substituto e iniciar movimentacoes
+                    // acontece depois em EquipmentReplacementResource. Campo
+                    // nao-persistido: CreatesReplacementFromOsType le via getRawState().
+                    Forms\Components\Section::make('Solicitação de Troca de Equipamento')
+                        ->description('O ativo selecionado acima será o "ativo original" da troca.')
+                        ->visible(fn (Get $get) => $get('maintenance_type') === MaintenanceOrder::TYPE_TROCA)
+                        ->schema([
+                            Forms\Components\Select::make('replacement_urgency')
+                                ->label('Urgência')
+                                ->options([
+                                    EquipmentReplacement::URGENCY_NORMAL => 'Normal',
+                                    EquipmentReplacement::URGENCY_URGENTE => 'Urgente',
+                                    EquipmentReplacement::URGENCY_CRITICO => 'Crítico',
+                                ])
+                                ->default(EquipmentReplacement::URGENCY_NORMAL)
+                                ->dehydrated(false),
+                        ]),
 
                     // Se o ativo escolhido tem uma Solicitacao de Locacao urgente
                     // aguardando ele sair da manutencao (mesma condicao do banner
@@ -517,6 +540,7 @@ class MaintenanceOrderResource extends Resource
                     'Corretiva' => 'Corretiva',
                     'Preventiva' => 'Preventiva',
                     'Avaria' => 'Registro de Avaria',
+                    'Troca' => 'Troca de Equipamento',
                 ]),
             Tables\Filters\SelectFilter::make('matriz_abc')
                 ->label('Matriz ABC')

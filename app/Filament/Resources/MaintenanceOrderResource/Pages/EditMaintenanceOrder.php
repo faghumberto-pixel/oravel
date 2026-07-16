@@ -6,6 +6,7 @@ use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Pages\DossieOperacional;
 use App\Filament\Resources\MaintenanceOrderResource;
 use App\Filament\Resources\MaintenanceOrderResource\Concerns\CreatesDamageFromAvariaType;
+use App\Filament\Resources\MaintenanceOrderResource\Concerns\CreatesReplacementFromOsType;
 use App\Filament\Resources\MaintenanceOrderResource\Concerns\StoresPhotoEvidence;
 use App\Models\EquipmentMovement;
 use App\Models\MaintenanceOrder;
@@ -23,6 +24,7 @@ use Filament\Resources\Pages\EditRecord;
 class EditMaintenanceOrder extends EditRecord
 {
     use CreatesDamageFromAvariaType;
+    use CreatesReplacementFromOsType;
     use StoresPhotoEvidence;
 
     protected static string $resource = MaintenanceOrderResource::class;
@@ -43,6 +45,7 @@ class EditMaintenanceOrder extends EditRecord
     {
         $this->persistPhotoEvidences($this->record);
         $this->createDamageFromAvariaType($this->record);
+        $this->createReplacementFromOsType($this->record);
     }
 
     /**

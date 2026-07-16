@@ -41,24 +41,55 @@ class MaterialRequest extends Model
 
     public const STATUS_ENTREGUE = 'entregue';
 
+    public const PRIORITY_NORMAL = 'normal';
+
+    public const PRIORITY_URGENTE = 'urgente';
+
+    public const PRIORITY_CRITICO = 'critico';
+
+    /**
+     * Papel que aprova/recusa Pedido de Compra e recebe alerta de estoque
+     * baixo -- ver Material::ROLE_GESTOR_SUPRIMENTOS (mesma constante,
+     * so' reexposta aqui pra quem so' conhece MaterialRequest).
+     */
+    public const ROLE_GESTOR_SUPRIMENTOS = Material::ROLE_GESTOR_SUPRIMENTOS;
+
     protected $fillable = [
         'tenant_id',
         'user_id',
         'maintenance_order_id',
+        'requested_for_location_id',
         'provider_name',
+        'priority',
+        'target_delivery_date',
         'status',
         'approved_by_user_id',
         'approved_at',
         'requested_at',
         'delivered_at',
         'notes',
+        'rejection_reason',
     ];
 
     protected $casts = [
         'requested_at' => 'datetime',
         'delivered_at' => 'datetime',
         'approved_at' => 'datetime',
+        'target_delivery_date' => 'date',
     ];
+
+    protected $attributes = [
+        'priority' => self::PRIORITY_NORMAL,
+    ];
+
+    public static function priorityOptions(): array
+    {
+        return [
+            self::PRIORITY_NORMAL => 'Normal',
+            self::PRIORITY_URGENTE => 'Urgente',
+            self::PRIORITY_CRITICO => 'Crítico',
+        ];
+    }
 
     public static function statusOptions(): array
     {
@@ -81,6 +112,11 @@ class MaterialRequest extends Model
     public function maintenanceOrder(): BelongsTo
     {
         return $this->belongsTo(MaintenanceOrder::class, 'maintenance_order_id');
+    }
+
+    public function requestedForLocation(): BelongsTo
+    {
+        return $this->belongsTo(InternalUnit::class, 'requested_for_location_id');
     }
 
     public function approvedBy(): BelongsTo
