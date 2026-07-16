@@ -42,7 +42,7 @@ class ReplacementHistoryUiTest extends TestCase
 
         $admin = User::create([
             'name' => 'Admin', 'email' => 'admin-'.uniqid().'@oravel.com.br',
-            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'email_verified_at' => now(),
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'email_verified_at' => now(), 'is_approved' => true,
         ]);
         $role = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
         $admin->assignRole($role);

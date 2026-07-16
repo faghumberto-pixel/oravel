@@ -44,7 +44,7 @@ class AssetDossierTest extends TestCase
         // ignora silenciosamente, precisa de forceFill() (mesmo padrao de
         // TenantProvisioner::provision()). Sem isso, a rota do PDF
         // (middleware 'verified') redireciona pra /verify-email.
-        $admin->forceFill(['email_verified_at' => now()])->save();
+        $admin->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $role = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
         $admin->assignRole($role);
 

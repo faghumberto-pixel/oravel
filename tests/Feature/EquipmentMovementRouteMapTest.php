@@ -37,7 +37,7 @@ class EquipmentMovementRouteMapTest extends TestCase
             'name' => 'Admin', 'email' => 'admin-'.uniqid().'@oravel.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
         ]);
-        $admin->forceFill(['email_verified_at' => now()])->save();
+        $admin->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $admin->assignRole(Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web', 'tenant_id' => $tenant->id]));
 
         $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Guindaste Rota', 'status' => Asset::STATUS_DISPONIVEL]);

@@ -57,7 +57,7 @@ class PermissionAuditTest extends TestCase
             'name' => 'Admin', 'email' => 'admin-'.uniqid().'@oravel.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
         ]);
-        $admin->forceFill(['email_verified_at' => now()])->save();
+        $admin->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
         $admin->assignRole($adminRole);
 
@@ -73,7 +73,7 @@ class PermissionAuditTest extends TestCase
             'name' => 'Super Admin', 'email' => $email,
             'password' => bcrypt('teste123'), 'tenant_id' => null,
         ]);
-        $super->forceFill(['email_verified_at' => now()])->save();
+        $super->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
 
         return $super;
     }
@@ -211,7 +211,7 @@ class PermissionAuditTest extends TestCase
             'name' => 'Super Externo', 'email' => 'dono@outraempresa.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => null,
         ]);
-        $super->forceFill(['email_verified_at' => now()])->save();
+        $super->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
 
         session(['acting_tenant_id' => $tenant->id]);
         $this->actingAs($super);
@@ -324,7 +324,7 @@ class PermissionAuditTest extends TestCase
             'name' => 'Vendedor', 'email' => 'vendedor-'.uniqid().'@oravel.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
         ]);
-        $vendedor->forceFill(['email_verified_at' => now()])->save();
+        $vendedor->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $vendedorRole = Role::create(['name' => 'vendedor', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
         $vendedor->assignRole($vendedorRole);
         $this->actingAs($vendedor);
@@ -340,7 +340,7 @@ class PermissionAuditTest extends TestCase
             'name' => 'Vendedor', 'email' => 'vendedor-'.uniqid().'@oravel.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
         ]);
-        $vendedor->forceFill(['email_verified_at' => now()])->save();
+        $vendedor->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $vendedorRole = Role::create(['name' => 'vendedor', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
         $vendedor->assignRole($vendedorRole);
         $this->actingAs($vendedor);
@@ -353,9 +353,9 @@ class PermissionAuditTest extends TestCase
         [$tenant, $admin] = $this->makeTenant(['tabela_assets', 'tabela_crm_leads']);
 
         $vendedorA = User::create(['name' => 'Vendedor A', 'email' => 'vendedor-a-'.uniqid().'@oravel.com.br', 'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id]);
-        $vendedorA->forceFill(['email_verified_at' => now()])->save();
+        $vendedorA->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $vendedorB = User::create(['name' => 'Vendedor B', 'email' => 'vendedor-b-'.uniqid().'@oravel.com.br', 'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id]);
-        $vendedorB->forceFill(['email_verified_at' => now()])->save();
+        $vendedorB->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $vendedorRole = Role::create(['name' => 'vendedor', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
         $vendedorA->assignRole($vendedorRole);
         $vendedorB->assignRole($vendedorRole);
@@ -398,7 +398,7 @@ class PermissionAuditTest extends TestCase
             'name' => 'Sem Role', 'email' => 'semrole-'.uniqid().'@empresa.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
         ]);
-        $random->forceFill(['email_verified_at' => now()])->save();
+        $random->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $this->actingAs($random);
 
         $this->get('/central')->assertForbidden();
@@ -409,8 +409,13 @@ class PermissionAuditTest extends TestCase
         $super = $this->makeSuperAdmin();
         $this->actingAs($super);
 
-        $this->get('/central')->assertOk();
-        $this->get('/central/plans')->assertOk();
+        // 2FA obrigatorio pro super admin (BreezyCore::enableTwoFactorAuthentication(force: true)
+        // no CentralPanelProvider) redireciona pra my-profile ate ser configurado --
+        // isso NAO e' bloqueio (nao e' 403/redirect pro login), e' a prova de que
+        // canAccessPanel() deixou o super admin passar, que e' o que este teste
+        // verifica (em contraste com os 2 testes acima, que sim devem dar 403).
+        $this->get('/central')->assertRedirect(route('filament.central.pages.my-profile'));
+        $this->get('/central/plans')->assertRedirect(route('filament.central.pages.my-profile'));
     }
 
     public function test_tenant_admin_can_still_access_own_admin_panel(): void
@@ -458,12 +463,13 @@ class PermissionAuditTest extends TestCase
         // 100% de dados de Asset (Matriz ABC), entao segue a mesma trava
         // comercial de "tabela_assets" (documentado no proprio arquivo da
         // page). Nao e' um vazamento: se o plano perde tabela_assets, ele
-        // some junto (ver proximo assert). Desde 2026-07-10 seu grupo de
-        // navegacao tambem virou "Ativos e Materiais" (nao "Relatorios" mais),
-        // pra deixar isso visualmente coerente com a trava.
+        // some junto (ver proximo assert). Grupo de navegacao e' "Manutenção"
+        // (decisao do usuario, 2026-07-16) -- a trava comercial e' por
+        // "tabela_assets" independente de onde o item aparece no menu.
         $this->assertTrue(PainelCriticidade::canAccess());
-        $this->assertSame('Ativos e Materiais', PainelCriticidade::getNavigationGroup());
-        $this->assertNull(AgendaTecnico::getNavigationGroup());
+        $this->assertSame('Manutenção', PainelCriticidade::getNavigationGroup());
+        // AgendaTecnico ("Programação" no menu) tambem esta em "Manutenção".
+        $this->assertSame('Manutenção', AgendaTecnico::getNavigationGroup());
 
         // Configuracoes: Logs de Atividade exige feature propria.
         $this->assertFalse(UserActivityLogResource::canViewAny());

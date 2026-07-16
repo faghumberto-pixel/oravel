@@ -34,7 +34,7 @@ class CrmFunilTest extends TestCase
             'name' => 'Admin', 'email' => 'admin-'.uniqid().'@oravel.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
         ]);
-        $admin->forceFill(['email_verified_at' => now()])->save();
+        $admin->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $role = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
         $admin->assignRole($role);
 
@@ -103,7 +103,7 @@ class CrmFunilTest extends TestCase
             'name' => 'Vendedor', 'email' => 'vendedor-'.uniqid().'@oravel.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
         ]);
-        $vendor->forceFill(['email_verified_at' => now()])->save();
+        $vendor->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $comercialRole = Role::firstOrCreate(['name' => 'comercial', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
         $vendor->assignRole($comercialRole);
         Permission::firstOrCreate(['name' => 'ler_crm_lead', 'guard_name' => 'web']);

@@ -36,7 +36,7 @@ class AgendaTecnicoTest extends TestCase
             'name' => 'Admin', 'email' => 'admin-'.uniqid().'@oravel.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
         ]);
-        $admin->forceFill(['email_verified_at' => now()])->save();
+        $admin->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $role = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
         $admin->assignRole($role);
 
@@ -81,7 +81,7 @@ class AgendaTecnicoTest extends TestCase
             'name' => 'Tecnico A', 'email' => 'tec-a-'.uniqid().'@oravel.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
         ]);
-        $techA->forceFill(['email_verified_at' => now()])->save();
+        $techA->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $tecnicoRole = Role::firstOrCreate(['name' => 'tecnico', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
         $techA->assignRole($tecnicoRole);
 
@@ -89,7 +89,7 @@ class AgendaTecnicoTest extends TestCase
             'name' => 'Tecnico B', 'email' => 'tec-b-'.uniqid().'@oravel.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
         ]);
-        $techB->forceFill(['email_verified_at' => now()])->save();
+        $techB->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $techB->assignRole($tecnicoRole);
 
         Appointment::create(['tenant_id' => $tenant->id, 'technician_id' => $techA->id, 'assunto' => 'Compromisso A', 'scheduled_at' => now()->addDay()]);
@@ -138,7 +138,7 @@ class AgendaTecnicoTest extends TestCase
             'name' => 'Tecnico A', 'email' => 'tec-a-'.uniqid().'@oravel.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
         ]);
-        $techA->forceFill(['email_verified_at' => now()])->save();
+        $techA->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $tecnicoRole = Role::firstOrCreate(['name' => 'tecnico', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
         $techA->assignRole($tecnicoRole);
 
@@ -146,7 +146,7 @@ class AgendaTecnicoTest extends TestCase
             'name' => 'Tecnico B', 'email' => 'tec-b-'.uniqid().'@oravel.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
         ]);
-        $techB->forceFill(['email_verified_at' => now()])->save();
+        $techB->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $techB->assignRole($tecnicoRole);
 
         $appointment = Appointment::create(['tenant_id' => $tenant->id, 'technician_id' => $techB->id, 'assunto' => 'Compromisso B', 'scheduled_at' => now()->addDay()]);

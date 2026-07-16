@@ -49,7 +49,7 @@ class SuperAdminTenantColumnTest extends TestCase
     {
         $user = User::create([
             'name' => 'Admin', 'email' => 'admin-'.uniqid().'@oravel.com.br',
-            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'email_verified_at' => now(),
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'email_verified_at' => now(), 'is_approved' => true,
         ]);
         $role = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
         $user->assignRole($role);
@@ -61,7 +61,7 @@ class SuperAdminTenantColumnTest extends TestCase
     {
         return User::create([
             'name' => 'Super', 'email' => 'humberto@oravel.com.br',
-            'password' => bcrypt('teste123'), 'tenant_id' => null, 'email_verified_at' => now(),
+            'password' => bcrypt('teste123'), 'tenant_id' => null, 'email_verified_at' => now(), 'is_approved' => true,
         ]);
     }
 

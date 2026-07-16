@@ -35,7 +35,7 @@ class CrmAgendaTest extends TestCase
             'name' => 'Admin', 'email' => 'admin-'.uniqid().'@oravel.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
         ]);
-        $admin->forceFill(['email_verified_at' => now()])->save();
+        $admin->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $role = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
         $admin->assignRole($role);
 
@@ -76,7 +76,7 @@ class CrmAgendaTest extends TestCase
             'name' => 'Vendedor A', 'email' => 'vendedor-a-'.uniqid().'@oravel.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
         ]);
-        $vendorA->forceFill(['email_verified_at' => now()])->save();
+        $vendorA->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $comercialRole = Role::firstOrCreate(['name' => 'comercial', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
         $vendorA->assignRole($comercialRole);
 
@@ -84,7 +84,7 @@ class CrmAgendaTest extends TestCase
             'name' => 'Vendedor B', 'email' => 'vendedor-b-'.uniqid().'@oravel.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
         ]);
-        $vendorB->forceFill(['email_verified_at' => now()])->save();
+        $vendorB->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $vendorB->assignRole($comercialRole);
 
         $leadA = CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'Lead do A', 'stage' => CrmLead::STAGE_NOVO, 'assigned_user_id' => $vendorA->id]);
