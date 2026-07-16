@@ -30,7 +30,7 @@ class CrmLeadMapWidget extends Widget
             ->whereNotNull('latitude')
             ->whereNotNull('longitude');
 
-        if (! $user->isAdmin()) {
+        if (! $user->canSeeAllCrmLeads()) {
             $query->where('assigned_user_id', $user->id);
         }
 

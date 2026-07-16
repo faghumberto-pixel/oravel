@@ -46,7 +46,7 @@ class CrmAgendaWidget extends FullCalendarWidget
             ])
             ->with('lead');
 
-        if (! $user->isAdmin()) {
+        if (! $user->canSeeAllCrmLeads()) {
             $query->whereHas('lead', fn ($q) => $q->where('assigned_user_id', $user->id));
         }
 

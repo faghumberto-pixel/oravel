@@ -7,6 +7,7 @@ use App\Models\Announcement;
 use App\Models\Asset;
 use App\Models\Client;
 use App\Models\Contract;
+use App\Models\CrmLead;
 use App\Models\CrmLeadInteraction;
 use App\Models\Department;
 use App\Models\EquipmentDamage; // Importante
@@ -28,6 +29,7 @@ use App\Observers\AssetObserver;
 use App\Observers\ClientObserver;
 use App\Observers\ContractObserver;
 use App\Observers\CrmLeadInteractionObserver;
+use App\Observers\CrmLeadObserver;
 use App\Observers\EquipmentDamageObserver;
 use App\Observers\EquipmentMovementObserver;
 use App\Observers\EquipmentPatioArrivalObserver;
@@ -81,6 +83,7 @@ class AppServiceProvider extends ServiceProvider
         MaintenanceOrderMaterial::observe(MaintenanceOrderMaterialObserver::class);
         Announcement::observe(AnnouncementObserver::class);
         CrmLeadInteraction::observe(CrmLeadInteractionObserver::class);
+        CrmLead::observe(CrmLeadObserver::class);
         // Ate 2026-07-14 nenhum destes 2 estava registrado -- os observers
         // existiam mas nunca rodavam de verdade (codigo morto).
         SolicitacaoLocacao::observe(SolicitacaoLocacaoObserver::class);

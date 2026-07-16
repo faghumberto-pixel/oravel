@@ -119,6 +119,18 @@
                                 @endforeach
                             </select>
 
+                            @if($lead->stage === \App\Models\CrmLead::STAGE_CONVERTIDO)
+                                @if($lead->client_id)
+                                    <a href="{{ \App\Filament\Resources\ClientResource::getUrl('edit', ['record' => $lead->client_id]) }}" class="text-[10px] font-black uppercase text-success-400 hover:text-success-300 tracking-wider transition-colors shrink-0">Ver Cliente</a>
+                                @else
+                                    <button
+                                        wire:click="converterEmCliente('{{ $lead->id }}')"
+                                        wire:confirm="Criar um Cliente formal a partir deste Lead? Não cria nenhum Contrato -- isso continua manual."
+                                        class="text-[10px] font-black uppercase text-success-400 hover:text-success-300 tracking-wider transition-colors shrink-0"
+                                    >Converter em Cliente</button>
+                                @endif
+                            @endif
+
                             <a href="{{ \App\Filament\Resources\CrmLeadResource::getUrl('edit', ['record' => $lead]) }}" class="text-[10px] font-black uppercase text-primary-400 hover:text-primary-300 tracking-wider transition-colors shrink-0">Abrir</a>
                         </div>
                     </div>

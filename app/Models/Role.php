@@ -26,6 +26,11 @@ class Role extends SpatieRole
         'name',
         'guard_name',
         'tenant_id', // Essencial para o escopo do tenant
+        'sees_all_crm_leads',
+    ];
+
+    protected $casts = [
+        'sees_all_crm_leads' => 'boolean',
     ];
 
     /**

@@ -172,6 +172,27 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
     }
 
     /**
+     * "Ve todos os leads do CRM" nao e' role fixa -- e' um privilegio que
+     * o admin do tenant liga em qualquer perfil (roles.sees_all_crm_leads,
+     * mesmo padrao de roles.department_id pra Programacao). Mesmo estilo
+     * de query direta de isAdmin(), evitando o cache pesado do
+     * hasRole()/getAllPermissions() do Spatie.
+     */
+    public function canSeeAllCrmLeads(): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        return DB::table('model_has_roles')
+            ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->where('model_has_roles.model_id', $this->id)
+            ->where('model_has_roles.model_type', get_class($this))
+            ->where('roles.sees_all_crm_leads', true)
+            ->exists();
+    }
+
+    /**
      * O painel 'central' (operador SaaS: planos, tenants, receita entre
      * empresas) e' restrito a super admin -- ANTES disso retornava true
      * sempre, entao qualquer admin de qualquer tenant conseguia acessar

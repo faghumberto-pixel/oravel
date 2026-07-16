@@ -89,7 +89,7 @@ class CrmFunil extends Page
         $query = CrmLead::where('tenant_id', $tenant->id)
             ->with('assignedUser');
 
-        if (! $user->isAdmin()) {
+        if (! $user->canSeeAllCrmLeads()) {
             $query->where('assigned_user_id', $user->id);
         }
 
@@ -132,7 +132,7 @@ class CrmFunil extends Page
             return;
         }
 
-        if (! $user->isAdmin() && $lead->assigned_user_id !== $user->id) {
+        if (! $user->canSeeAllCrmLeads() && $lead->assigned_user_id !== $user->id) {
             return;
         }
 
@@ -148,5 +148,29 @@ class CrmFunil extends Page
         ]);
 
         Notification::make()->title('Lead movido para '.$this->getStages()[$newStage].'.')->success()->send();
+    }
+
+    /**
+     * Mesma trava de moveStage(): nao-admin so' converte lead atribuido a
+     * ele mesmo. So' cria o Cliente (sem Contract, ver CrmLead::convertToClient()).
+     */
+    public function converterEmCliente(string $leadId): void
+    {
+        $tenant = Tenancy::current();
+        $user = auth()->user();
+
+        $lead = CrmLead::where('tenant_id', $tenant?->id)->find($leadId);
+
+        if (! $lead || $lead->stage !== CrmLead::STAGE_CONVERTIDO || $lead->client_id) {
+            return;
+        }
+
+        if (! $user->canSeeAllCrmLeads() && $lead->assigned_user_id !== $user->id) {
+            return;
+        }
+
+        $lead->convertToClient();
+
+        Notification::make()->title('Cliente criado a partir do Lead.')->success()->send();
     }
 }

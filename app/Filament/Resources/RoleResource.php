@@ -157,6 +157,10 @@ class RoleResource extends Resource
                         )
                         ->searchable()
                         ->preload(),
+
+                    Forms\Components\Toggle::make('sees_all_crm_leads')
+                        ->label('Vê todos os Leads do CRM')
+                        ->helperText('Quem tiver este perfil passa a ver todos os Leads do CRM, não só os atribuídos a si mesmo -- útil pra um gerente comercial, encarregado ou líder que precisa acompanhar o funil inteiro sem ser admin geral do sistema.'),
                 ]),
             ]),
             Forms\Components\Group::make($sections)->columnSpanFull(),

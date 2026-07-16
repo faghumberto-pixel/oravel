@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\CrmLeadResource\Pages;
+use App\Filament\Resources\CrmLeadResource\RelationManagers\AssignmentsRelationManager;
+use App\Filament\Resources\CrmLeadResource\RelationManagers\ContactsRelationManager;
 use App\Filament\Resources\CrmLeadResource\RelationManagers\InteractionsRelationManager;
 use App\Models\CrmLead;
 use App\Models\User;
@@ -14,6 +16,7 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 
 class CrmLeadResource extends BaseResource
@@ -34,6 +37,25 @@ class CrmLeadResource extends BaseResource
 
     protected static ?string $pluralModelLabel = 'Leads';
 
+    /**
+     * Ate aqui, so' o Funil/Mapa/Agenda restringiam vendedor aos proprios
+     * leads -- a listagem do Resource nao tinha nenhum getEloquentQuery(),
+     * entao qualquer vendedor via TODOS os leads do tenant aqui. Mesmo
+     * criterio dos outros 3 lugares (User::canSeeAllCrmLeads()).
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        $user = auth()->user();
+
+        if ($user && ! $user->canSeeAllCrmLeads()) {
+            $query->where('assigned_user_id', $user->id);
+        }
+
+        return $query;
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -45,9 +67,9 @@ class CrmLeadResource extends BaseResource
                         ->required(),
                     Forms\Components\TextInput::make('company_name')
                         ->label('Empresa'),
-                    Forms\Components\TextInput::make('source')
+                    Forms\Components\Select::make('source')
                         ->label('Origem')
-                        ->placeholder('Indicação, site, ligação ativa...'),
+                        ->options(CrmLead::sourceLabels()),
                     Forms\Components\TextInput::make('phone')
                         ->label('Telefone')
                         ->tel(),
@@ -59,6 +81,20 @@ class CrmLeadResource extends BaseResource
                         ->email(),
                     Forms\Components\TextInput::make('document')
                         ->label('CNPJ/CPF'),
+                    Forms\Components\Select::make('segment')
+                        ->label('Segmento')
+                        ->options(CrmLead::segmentLabels()),
+                    Forms\Components\Select::make('company_size')
+                        ->label('Porte')
+                        ->options(CrmLead::companySizeLabels()),
+                    Forms\Components\TextInput::make('estimated_revenue')
+                        ->label('Faturamento Aproximado')
+                        ->numeric()
+                        ->prefix('R$'),
+                    Forms\Components\Textarea::make('equipment_interest')
+                        ->label('Equipamento de Interesse')
+                        ->placeholder('Ex: Guindaste 50 toneladas, Gerador 100 kVA...')
+                        ->columnSpanFull(),
                 ]),
 
             Forms\Components\Section::make('Funil')
@@ -79,10 +115,21 @@ class CrmLeadResource extends BaseResource
                         ->label('Valor Estimado')
                         ->numeric()
                         ->prefix('R$'),
-                    Forms\Components\Textarea::make('lost_reason')
+                    Forms\Components\Select::make('lost_reason_category')
                         ->label('Motivo da Perda')
+                        ->options(CrmLead::lostReasonCategoryLabels())
+                        ->live()
                         ->visible(fn (Forms\Get $get) => $get('stage') === CrmLead::STAGE_PERDIDO)
-                        ->required(fn (Forms\Get $get) => $get('stage') === CrmLead::STAGE_PERDIDO)
+                        ->required(fn (Forms\Get $get) => $get('stage') === CrmLead::STAGE_PERDIDO),
+                    Forms\Components\Textarea::make('lost_reason')
+                        ->label(fn (Forms\Get $get) => $get('lost_reason_category') === CrmLead::LOST_REASON_CONCORRENCIA ? 'Qual concorrente?' : 'Detalhe do Motivo')
+                        ->visible(fn (Forms\Get $get) => $get('stage') === CrmLead::STAGE_PERDIDO)
+                        ->required(fn (Forms\Get $get) => $get('stage') === CrmLead::STAGE_PERDIDO
+                            && in_array($get('lost_reason_category'), CrmLead::lostReasonCategoriesRequiringDetail(), true))
+                        ->columnSpanFull(),
+                    Forms\Components\Textarea::make('won_notes')
+                        ->label('Notas de Fechamento')
+                        ->visible(fn (Forms\Get $get) => $get('stage') === CrmLead::STAGE_CONVERTIDO)
                         ->columnSpanFull(),
                 ]),
 
@@ -163,6 +210,14 @@ class CrmLeadResource extends BaseResource
                         default => 'gray',
                     }),
 
+                Tables\Columns\TextColumn::make('client_id')
+                    ->label('Cliente')
+                    ->badge()
+                    ->color('success')
+                    ->formatStateUsing(fn () => 'Convertido')
+                    ->url(fn (CrmLead $record) => $record->client_id ? ClientResource::getUrl('edit', ['record' => $record->client_id]) : null)
+                    ->placeholder('—'),
+
                 Tables\Columns\TextColumn::make('assignedUser.name')
                     ->label('Vendedor')
                     ->placeholder('Sem vendedor'),
@@ -201,6 +256,23 @@ class CrmLeadResource extends BaseResource
             ->defaultSort('created_at', 'desc')
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('converter_em_cliente')
+                    ->label('Converter em Cliente')
+                    ->icon('heroicon-o-user-plus')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalDescription('Cria um Cliente formal com o endereço e contato já cadastrados neste Lead. Não cria nenhum Contrato -- isso continua sendo feito manualmente quando a locação acontecer.')
+                    ->visible(fn (CrmLead $record) => $record->stage === CrmLead::STAGE_CONVERTIDO && ! $record->client_id)
+                    ->action(function (CrmLead $record) {
+                        $client = $record->convertToClient();
+
+                        Notification::make()
+                            ->title('Cliente criado a partir do Lead.')
+                            ->success()
+                            ->send();
+
+                        return redirect(ClientResource::getUrl('edit', ['record' => $client->id]));
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
@@ -210,7 +282,9 @@ class CrmLeadResource extends BaseResource
     public static function getRelations(): array
     {
         return [
+            ContactsRelationManager::class,
             InteractionsRelationManager::class,
+            AssignmentsRelationManager::class,
         ];
     }
 

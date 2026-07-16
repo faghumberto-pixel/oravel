@@ -36,7 +36,7 @@ class CrmLeadResourceTest extends TestCase
             'name' => 'Admin', 'email' => 'admin-'.uniqid().'@oravel.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
         ]);
-        $admin->forceFill(['email_verified_at' => now()])->save();
+        $admin->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $role = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
         $admin->assignRole($role);
 
@@ -65,7 +65,13 @@ class CrmLeadResourceTest extends TestCase
         ]);
     }
 
-    public function test_lost_reason_is_required_when_stage_is_perdido(): void
+    /**
+     * lost_reason (texto livre) virou o DETALHE de lost_reason_category
+     * (categoria estruturada, nova) -- a categoria e' sempre obrigatoria
+     * quando perdido; o detalhe so' e' obrigatorio pras categorias que
+     * precisam de mais contexto (concorrencia/outro).
+     */
+    public function test_lost_reason_category_is_required_when_stage_is_perdido(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();
         $this->actingAs($admin);
@@ -74,6 +80,31 @@ class CrmLeadResourceTest extends TestCase
             ->fillForm([
                 'name' => 'Lead Perdido',
                 'stage' => CrmLead::STAGE_PERDIDO,
+                'lost_reason_category' => null,
+            ])
+            ->call('create')
+            ->assertHasFormErrors(['lost_reason_category']);
+    }
+
+    public function test_lost_reason_detail_is_required_only_for_concorrencia_or_outro(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $this->actingAs($admin);
+
+        Livewire::test(CrmLeadResource\Pages\CreateCrmLead::class)
+            ->fillForm([
+                'name' => 'Lead Perdido Sem Orçamento',
+                'stage' => CrmLead::STAGE_PERDIDO,
+                'lost_reason_category' => CrmLead::LOST_REASON_SEM_ORCAMENTO,
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        Livewire::test(CrmLeadResource\Pages\CreateCrmLead::class)
+            ->fillForm([
+                'name' => 'Lead Perdido Pra Concorrente',
+                'stage' => CrmLead::STAGE_PERDIDO,
+                'lost_reason_category' => CrmLead::LOST_REASON_CONCORRENCIA,
                 'lost_reason' => null,
             ])
             ->call('create')
