@@ -23,6 +23,7 @@ class ViewEquipmentDamage extends ViewRecord
                 Infolists\Components\Section::make('Identificação')
                     ->schema([
                         Infolists\Components\TextEntry::make('maintenanceOrder.os_number')->label('OS'),
+                        Infolists\Components\TextEntry::make('asset.patrimonio')->label('Patrimônio')->placeholder('—'),
                         Infolists\Components\TextEntry::make('asset.name')->label('Ativo'),
                         Infolists\Components\TextEntry::make('reportedBy.name')->label('Reportado por'),
                         Infolists\Components\TextEntry::make('created_at')->label('Data do registro')->dateTime('d/m/Y H:i'),
@@ -76,6 +77,9 @@ class ViewEquipmentDamage extends ViewRecord
                         Infolists\Components\TextEntry::make('estimated_cost')
                             ->label('Valor estimado')
                             ->money('BRL'),
+                        Infolists\Components\TextEntry::make('replacementAsset.patrimonio')
+                            ->label('Patrimônio do substituto')
+                            ->placeholder('Nenhum vinculado ainda'),
                         Infolists\Components\TextEntry::make('replacementAsset.name')
                             ->label('Ativo substituto vinculado')
                             ->placeholder('Nenhum vinculado ainda'),

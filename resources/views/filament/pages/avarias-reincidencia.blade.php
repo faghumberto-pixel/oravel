@@ -53,7 +53,7 @@
                             @if ($grupo['asset'])
                                 <a href="{{ \App\Filament\Resources\AssetResource::getUrl('edit', ['record' => $grupo['asset']]) }}"
                                    class="text-sm font-semibold text-primary-600 hover:underline dark:text-primary-400">
-                                    {{ $grupo['asset']->name }}
+                                    {{ $grupo['asset']->patrimonio ?? '—' }} — {{ $grupo['asset']->name }}
                                 </a>
                             @else
                                 <span class="text-sm font-semibold text-gray-950 dark:text-white">Ativo removido</span>

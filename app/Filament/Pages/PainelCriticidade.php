@@ -3,8 +3,10 @@
 namespace App\Filament\Pages;
 
 use App\Models\Asset;
+use App\Models\CriticalityLevel;
 use App\Models\EquipmentDamage;
 use App\Models\MaintenancePlan;
+use App\Support\Tenancy;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -74,7 +76,15 @@ class PainelCriticidade extends Page
             ->pluck('asset_id')
             ->unique();
 
-        return $assets->map(function (Asset $asset) use ($planosPorAsset, $planosPorGrupo, $avariasAbertasPorAsset, $reincidentes) {
+        // Codigos de nivel marcados como urgente (CriticalityLevel.is_urgent,
+        // configuravel pelo admin do tenant) -- carregado uma vez, nao por
+        // linha da tabela.
+        $codigosUrgentes = CriticalityLevel::where('tenant_id', Tenancy::current()?->id)
+            ->where('is_urgent', true)
+            ->pluck('code')
+            ->all();
+
+        return $assets->map(function (Asset $asset) use ($planosPorAsset, $planosPorGrupo, $avariasAbertasPorAsset, $reincidentes, $codigosUrgentes) {
             $planosDoAtivo = $planosPorAsset->get($asset->id, collect())
                 ->merge($asset->checklist_group_id ? $planosPorGrupo->get($asset->checklist_group_id, collect()) : collect());
 
@@ -86,9 +96,10 @@ class PainelCriticidade extends Page
             $pontos = ($preventivaVencida ? 1 : 0) + ($avariasAbertas > 0 ? 1 : 0) + ($reincidente ? 1 : 0);
             $nivelAbc = $asset->abcMatrix?->nivel;
 
-            // Nivel A (mais critico pro negocio) some 1 ponto extra -- um
-            // ativo classe A com qualquer alerta pesa mais que um classe C.
-            if ($nivelAbc === 'A') {
+            // Nivel marcado como urgente (mais critico pro negocio, agora
+            // configuravel via CriticalityLevelResource) soma 1 ponto extra
+            // -- um ativo nesse nivel com qualquer alerta pesa mais.
+            if ($nivelAbc && in_array($nivelAbc, $codigosUrgentes, true)) {
                 $pontos++;
             }
 

@@ -96,6 +96,21 @@ class ActivityLogResource extends Resource
         return self::SUBJECT_TYPES[$type] ?? Str::afterLast((string) $type, '\\');
     }
 
+    /**
+     * A tabela so mostrava um rotulo generico do tipo ("Ativo"/"Avaria"),
+     * nunca QUAL ativo -- resolve o patrimonio do Asset por tras do registro
+     * (subject direto quando subject_type = Asset, ou via asset_id quando
+     * subject_type = EquipmentDamage). CrmLead nao tem ativo, retorna null.
+     */
+    private static function resolveAssetPatrimonio(ActivityLogEntry $record): ?string
+    {
+        return match ($record->subject_type) {
+            Asset::class => Asset::find($record->subject_id)?->patrimonio,
+            EquipmentDamage::class => EquipmentDamage::find($record->subject_id)?->asset?->patrimonio,
+            default => null,
+        };
+    }
+
     private static function formatChanges(ActivityLogEntry $record): string
     {
         $properties = $record->properties ?? collect();
@@ -135,6 +150,10 @@ class ActivityLogResource extends Resource
                 ->label('Modelo')
                 ->formatStateUsing(fn (?string $state) => self::subjectLabel($state))
                 ->disabled(),
+            Forms\Components\TextInput::make('patrimonio')
+                ->label('Patrimônio')
+                ->formatStateUsing(fn (ActivityLogEntry $record) => self::resolveAssetPatrimonio($record) ?? '—')
+                ->disabled(),
             Forms\Components\TextInput::make('event')
                 ->label('Evento')
                 ->formatStateUsing(fn (?string $state) => self::EVENTS[$state] ?? $state)
@@ -161,6 +180,11 @@ class ActivityLogResource extends Resource
                     ->formatStateUsing(fn (?string $state) => self::subjectLabel($state))
                     ->badge()
                     ->color('gray'),
+
+                Tables\Columns\TextColumn::make('patrimonio')
+                    ->label('Patrimônio')
+                    ->state(fn (ActivityLogEntry $record) => self::resolveAssetPatrimonio($record))
+                    ->placeholder('—'),
 
                 Tables\Columns\TextColumn::make('event')
                     ->label('Evento')

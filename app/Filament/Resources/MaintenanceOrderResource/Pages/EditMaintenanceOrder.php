@@ -5,6 +5,7 @@ namespace App\Filament\Resources\MaintenanceOrderResource\Pages;
 use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Pages\DossieOperacional;
 use App\Filament\Resources\MaintenanceOrderResource;
+use App\Filament\Resources\MaintenanceOrderResource\Concerns\CreatesDamageFromAvariaType;
 use App\Filament\Resources\MaintenanceOrderResource\Concerns\StoresPhotoEvidence;
 use App\Models\EquipmentMovement;
 use App\Models\MaintenanceOrder;
@@ -21,6 +22,7 @@ use Filament\Resources\Pages\EditRecord;
 #[BelongsToFeature('maintenance')]
 class EditMaintenanceOrder extends EditRecord
 {
+    use CreatesDamageFromAvariaType;
     use StoresPhotoEvidence;
 
     protected static string $resource = MaintenanceOrderResource::class;
@@ -40,6 +42,7 @@ class EditMaintenanceOrder extends EditRecord
     protected function afterSave(): void
     {
         $this->persistPhotoEvidences($this->record);
+        $this->createDamageFromAvariaType($this->record);
     }
 
     /**

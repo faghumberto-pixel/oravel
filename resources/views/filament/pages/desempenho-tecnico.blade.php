@@ -79,7 +79,7 @@
                                     {{ $linha['data']->format('d/m/Y') }}
                                 </a>
                             </td>
-                            <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ $linha['os']->asset?->name ?? '—' }}</td>
+                            <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ $linha['os']->asset?->patrimonio ?? '—' }} — {{ $linha['os']->asset?->name ?? '—' }}</td>
                             <td class="px-4 py-2 text-gray-700 dark:text-gray-300">
                                 {{ $linha['tecnico'] }}
                                 @if ($linha['tecnico'] !== $linha['tecnico_anterior'])

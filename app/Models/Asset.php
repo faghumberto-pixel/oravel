@@ -106,6 +106,20 @@ class Asset extends Model
     }
 
     /**
+     * Usado pelo registro de Chegada no Patio (PatioEntry) pra checar, ao
+     * digitar um patrimonio como "desmobilizacao", se ha uma mobilizacao
+     * registrada pra esse Ativo -- nao existia nenhum jeito reusavel de
+     * fazer essa pergunta antes.
+     */
+    public function latestMobilizacao(): ?EquipmentMovement
+    {
+        return $this->equipmentMovements()
+            ->where('type', EquipmentMovement::TYPE_MOBILIZACAO)
+            ->latest('completed_at')
+            ->first();
+    }
+
+    /**
      * Historico de idas e vindas do patio -- so' as movimentacoes com
      * chegada formalmente confirmada (App\Filament\Pages\PatioChegadas),
      * nao toda desmobilizacao concluida.

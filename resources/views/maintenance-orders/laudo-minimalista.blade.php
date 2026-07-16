@@ -47,6 +47,10 @@
                 <span class="text-gray-900 font-bold">{{ $order->status }}</span>
             </div>
             <div>
+                <span class="block text-[10px] uppercase tracking-widest text-gray-400">Patrimônio</span>
+                <span class="text-gray-900 font-bold">{{ $order->asset?->patrimonio ?? 'N/A' }}</span>
+            </div>
+            <div>
                 <span class="block text-[10px] uppercase tracking-widest text-gray-400">Ativo</span>
                 <span class="text-gray-900 font-bold">{{ $order->asset?->name ?? 'N/A' }}</span>
             </div>

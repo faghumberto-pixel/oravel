@@ -14,6 +14,7 @@
                     $totalFiltrado = $allRecordsGrouped->flatten()->count();
                     $totalGeral = $this->getTotalOrdersCount();
                     $urgentAssetIds = $this->getUrgentAssetIds();
+                    $codigosUrgentes = $this->getCriticalidadeUrgenteCodigos();
                 @endphp
                 <div class="flex gap-6 border-r border-gray-200 dark:border-gray-800 pr-8">
                     <div class="text-right">
@@ -188,7 +189,8 @@
                                 $isRunning = (bool) $record->last_timer_start;
                                 $partNames = $record->parts?->pluck('name')->filter()->implode(', ');
                                 $isUrgent = $record->asset_id && in_array($record->asset_id, $urgentAssetIds, true);
-                                $isCritical = $record->criticalityLevel?->code === 'alta';
+                                $nivelAbc = $record->asset?->abcMatrix?->nivel;
+                                $isCritical = $nivelAbc && in_array($nivelAbc, $codigosUrgentes, true);
                             @endphp
                             <a href="{{ \App\Filament\Resources\MaintenanceOrderResource::getUrl('edit', ['record' => $record]) }}"
                                wire:key="kanban-card-{{ $record->id }}"

@@ -87,6 +87,11 @@ class MaintenanceStatusHistoryResource extends Resource
                     ->searchable()
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('maintenanceOrder.asset.patrimonio')
+                    ->label('Patrimônio')
+                    ->searchable()
+                    ->placeholder('—'),
+
                 Tables\Columns\TextColumn::make('maintenanceOrder.asset.name')
                     ->label('Ativo')
                     ->searchable()

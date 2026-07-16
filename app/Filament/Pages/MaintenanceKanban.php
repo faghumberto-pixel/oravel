@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
+use App\Models\CriticalityLevel;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenanceStatusHistory;
 use App\Models\SolicitacaoLocacao;
@@ -136,7 +137,7 @@ class MaintenanceKanban extends Page
         $tenant = Tenancy::current();
 
         $query = MaintenanceOrder::where('tenant_id', $tenant?->id)
-            ->with(['asset', 'technician', 'client', 'parts', 'statusHistories', 'criticalityLevel'])
+            ->with(['asset.abcMatrix', 'technician', 'client', 'parts', 'statusHistories'])
             ->withCount('evidences');
 
         if ($viewMode === 'oficina') {
@@ -178,26 +179,35 @@ class MaintenanceKanban extends Page
 
         $orders = static::buildQuery($this->viewMode, $this->technicianId, $this->search)->get();
 
+        // Codigos de nivel marcados como urgente (CriticalityLevel.is_urgent,
+        // configuravel pelo admin do tenant) -- mesma fonte unica de
+        // criticidade usada pelo Painel de Criticidade (ver docblock de
+        // PainelCriticidade), carregado uma vez, nao por O.S.
+        $codigosUrgentes = CriticalityLevel::where('tenant_id', Tenancy::current()?->id)
+            ->where('is_urgent', true)
+            ->pluck('code')
+            ->all();
+
         // Ordena por criticidade antes de agrupar -- groupBy() preserva a
         // ordem relativa dentro de cada grupo, entao isso deixa as O.S.
         // mais criticas no topo de cada coluna sem mudar a logica de
         // agrupamento.
-        $orders = $orders->sortByDesc(fn (MaintenanceOrder $order) => static::criticalityRank($order))->values();
+        $orders = $orders->sortByDesc(fn (MaintenanceOrder $order) => static::criticalityRank($order, $codigosUrgentes))->values();
 
         return static::groupByStatus($orders, $this->viewMode);
     }
 
     /**
-     * alta > media > baixa > sem nivel definido.
+     * Nivel do ativo (via Matriz ABC) marcado como urgente > demais.
+     * A criticidade e' do Ativo (Asset::abcMatrix), nao da O.S. --
+     * MaintenanceOrder.criticality_level_id foi aposentado (ver
+     * PainelCriticidade), nunca era preenchido por nenhuma tela real.
      */
-    public static function criticalityRank(MaintenanceOrder $order): int
+    public static function criticalityRank(MaintenanceOrder $order, array $codigosUrgentes): int
     {
-        return match ($order->criticalityLevel?->code) {
-            'alta' => 3,
-            'media' => 2,
-            'baixa' => 1,
-            default => 0,
-        };
+        $nivel = $order->asset?->abcMatrix?->nivel;
+
+        return ($nivel && in_array($nivel, $codigosUrgentes, true)) ? 1 : 0;
     }
 
     public function getDaysInStage($record): int
@@ -274,6 +284,18 @@ class MaintenanceKanban extends Page
         }
 
         return SolicitacaoLocacao::assetIdsComReservaUrgente($tenant->id);
+    }
+
+    /**
+     * Codigos de CriticalityLevel marcados como urgente pelo admin do tenant
+     * -- usado pelo blade pra decidir o selo "criticidade alta" por card.
+     */
+    public function getCriticalidadeUrgenteCodigos(): array
+    {
+        return CriticalityLevel::where('tenant_id', Tenancy::current()?->id)
+            ->where('is_urgent', true)
+            ->pluck('code')
+            ->all();
     }
 
     public function getPrintUrl(): string

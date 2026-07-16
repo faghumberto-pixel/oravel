@@ -22,11 +22,23 @@
             </p>
         </div>
 
-        {{-- 3 cards de status --}}
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+        {{-- 4 cards de status --}}
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
             <div class="rounded-xl border border-gray-800 bg-gray-900/60 p-5 backdrop-blur-sm">
                 <span class="block text-[9px] font-black uppercase tracking-widest text-gray-500">Dossiê Operacional</span>
                 <span class="mt-1 block text-2xl font-black text-gray-200">OS #{{ $order->os_number }}</span>
+            </div>
+            <div class="rounded-xl border border-gray-800 bg-gray-900/60 p-5 backdrop-blur-sm">
+                <span class="block text-[9px] font-black uppercase tracking-widest text-gray-500">Ativo</span>
+                @if($order->asset)
+                    <a href="{{ \App\Filament\Resources\AssetResource::getUrl('edit', ['record' => $order->asset]) }}"
+                       class="mt-1 block truncate text-lg font-black text-emerald-400 hover:underline" title="{{ $order->asset->name }}">
+                        {{ $order->asset->patrimonio ?? '—' }}
+                    </a>
+                    <span class="block truncate text-[11px] text-gray-400" title="{{ $order->asset->name }}">{{ $order->asset->name }}</span>
+                @else
+                    <span class="mt-1 block text-lg font-black text-gray-500">Ativo removido</span>
+                @endif
             </div>
             <div class="rounded-xl border border-gray-800 bg-gray-900/60 p-5 backdrop-blur-sm">
                 <span class="block text-[9px] font-black uppercase tracking-widest text-gray-500">Status Operacional</span>

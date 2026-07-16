@@ -42,7 +42,7 @@
                                     {{ $pendencia->maintenanceOrder?->os_number ?? '—' }}
                                 </a>
                             </td>
-                            <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ $pendencia->maintenanceOrder?->asset?->name ?? '—' }}</td>
+                            <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ $pendencia->maintenanceOrder?->asset?->patrimonio ?? '—' }} — {{ $pendencia->maintenanceOrder?->asset?->name ?? '—' }}</td>
                             <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ $pendencia->description }}</td>
                             <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ $pendencia->createdBy?->name ?? '—' }}</td>
                             <td class="px-4 py-2 text-right">
@@ -87,7 +87,7 @@
                             <td class="px-4 py-2">
                                 <a href="{{ \App\Filament\Resources\AssetResource::getUrl('edit', ['record' => $linha['asset']]) }}"
                                    class="text-primary-600 hover:underline dark:text-primary-400">
-                                    {{ $linha['asset']->name }}
+                                    {{ $linha['asset']->patrimonio ?? '—' }} — {{ $linha['asset']->name }}
                                 </a>
                             </td>
                             <td class="px-4 py-2 font-semibold text-danger-600 dark:text-danger-400">
@@ -130,7 +130,7 @@
                                 @if ($evento['asset'])
                                     <a href="{{ \App\Filament\Resources\AssetResource::getUrl('edit', ['record' => $evento['asset']]) }}"
                                        class="text-primary-600 hover:underline dark:text-primary-400">
-                                        {{ $evento['asset']->name }}
+                                        {{ $evento['asset']->patrimonio ?? '—' }} — {{ $evento['asset']->name }}
                                     </a>
                                 @else
                                     <span class="text-gray-400">Ativo removido</span>

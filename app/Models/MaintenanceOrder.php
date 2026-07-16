@@ -38,6 +38,8 @@ class MaintenanceOrder extends Model implements HasMedia
 
     public const TYPE_PREVENTIVE = 'Preventiva';
 
+    public const TYPE_AVARIA = 'Avaria';
+
     protected $keyType = 'string';
 
     public $incrementing = false;

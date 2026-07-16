@@ -1,4 +1,54 @@
 <x-filament-panels::page>
+    @php $entries = $this->entries; @endphp
+
+    {{-- Registro de portaria (PatioEntry) -- qualquer veiculo entrando ou saindo --}}
+    <div class="mb-6 rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 overflow-hidden">
+        <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-800">
+            <h3 class="text-xs font-black uppercase tracking-widest text-gray-500 dark:text-gray-400">Movimentações Recentes na Portaria</h3>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead>
+                    <tr class="text-[10px] uppercase text-gray-500 dark:text-gray-400">
+                        <th class="px-4 py-2 font-medium">Data/Hora</th>
+                        <th class="px-4 py-2 font-medium">Direção</th>
+                        <th class="px-4 py-2 font-medium">Placa</th>
+                        <th class="px-4 py-2 font-medium">Motorista</th>
+                        <th class="px-4 py-2 font-medium">Motivo</th>
+                        <th class="px-4 py-2 font-medium">Ativo</th>
+                        <th class="px-4 py-2 font-medium">Registrado por</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($entries as $entry)
+                        <tr class="border-t border-gray-100 dark:border-gray-800">
+                            <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ $entry->arrived_at->format('d/m/Y H:i') }}</td>
+                            <td class="px-4 py-2">
+                                <span @class([
+                                    'fi-badge inline-flex items-center rounded-md px-2 py-1 text-[10px] font-bold uppercase tracking-wide',
+                                    'bg-success-50 text-success-700 dark:bg-success-400/10 dark:text-success-400' => $entry->direction === \App\Models\PatioEntry::DIRECTION_ENTRADA,
+                                    'bg-warning-50 text-warning-700 dark:bg-warning-400/10 dark:text-warning-400' => $entry->direction === \App\Models\PatioEntry::DIRECTION_SAIDA,
+                                ])>
+                                    {{ \App\Models\PatioEntry::directionLabels()[$entry->direction] ?? $entry->direction }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ $entry->plate ?? '—' }}</td>
+                            <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ $entry->driver_name ?? '—' }}</td>
+                            <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ \App\Models\PatioEntry::reasonLabels()[$entry->reason] ?? $entry->reason }}</td>
+                            <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ $entry->asset?->patrimonio ?? '—' }}</td>
+                            <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ $entry->registeredBy?->name ?? '—' }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="px-4 py-6 text-center text-xs text-gray-500 dark:text-gray-400">Nenhuma movimentação registrada ainda.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     @php $pending = $this->pending; @endphp
 
     @if($pending->isEmpty())

@@ -6,6 +6,7 @@ use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\AbcMatrixResource\Pages;
 use App\Models\AbcMatrix;
+use App\Models\CriticalityLevel;
 use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -42,7 +43,10 @@ class AbcMatrixResource extends Resource
                     ->required(),
                 Forms\Components\Select::make('nivel')
                     ->label('Nível')
-                    ->options(['A' => 'A', 'B' => 'B', 'C' => 'C'])
+                    ->options(fn () => CriticalityLevel::where('tenant_id', Tenancy::current()?->id)
+                        ->orderBy('sort_order')
+                        ->pluck('name', 'code'))
+                    ->helperText('Cadastrado em Manutenção → Níveis de Criticidade.')
                     ->required(),
                 Forms\Components\TextInput::make('descricao')
                     ->label('Descrição')
@@ -67,11 +71,9 @@ class AbcMatrixResource extends Resource
                 Tables\Columns\TextColumn::make('nivel')
                     ->label('Nível')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'A' => 'danger',
-                        'B' => 'warning',
-                        default => 'success',
-                    })
+                    ->color(fn (string $state): string => CriticalityLevel::where('tenant_id', Tenancy::current()?->id)
+                        ->where('code', $state)
+                        ->value('is_urgent') ? 'danger' : 'gray')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('descricao')
                     ->label('Descrição')

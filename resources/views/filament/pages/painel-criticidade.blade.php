@@ -32,7 +32,7 @@
                             <td class="px-4 py-2">
                                 <a href="{{ \App\Filament\Resources\AssetResource::getUrl('edit', ['record' => $linha['asset']]) }}"
                                    class="font-medium text-primary-600 hover:underline dark:text-primary-400">
-                                    {{ $linha['asset']->name }}
+                                    {{ $linha['asset']->patrimonio ?? '—' }} — {{ $linha['asset']->name }}
                                 </a>
                             </td>
                             <td class="px-4 py-2 text-gray-700 dark:text-gray-300">

@@ -10,6 +10,7 @@ use App\Forms\Components\CameraCapture;
 use App\Models\AbcMatrix;
 use App\Models\Asset;
 use App\Models\Contract;
+use App\Models\CriticalityLevel;
 use App\Models\EquipmentDamage;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
@@ -95,6 +96,12 @@ class MaintenanceOrderResource extends Resource
                                         $q->where('name', 'like', "%{$search}%")->orWhere('patrimonio', 'like', "%{$search}%");
                                     })->limit(50)->get()->mapWithKeys(fn ($asset) => [$asset->id => "{$asset->patrimonio} — {$asset->name}"]);
                             })
+                            // Sem isso, ao ABRIR uma OS existente pra editar (nao
+                            // durante a busca ao vivo, que ja formata certo via
+                            // getSearchResultsUsing acima) o Select mostrava o UUID
+                            // cru do Ativo -- lia como "campo quebrado" pro usuario,
+                            // sendo justamente o campo mais importante da tela.
+                            ->getOptionLabelUsing(fn ($value) => ($asset = Asset::find($value)) ? "{$asset->patrimonio} — {$asset->name}" : null)
                             ->afterStateUpdated(function ($state, Set $set) {
                                 if ($state) {
                                     $asset = Asset::find($state);
@@ -105,9 +112,52 @@ class MaintenanceOrderResource extends Resource
                             })->prefixIcon('heroicon-m-qr-code'),
                         Forms\Components\Select::make('maintenance_type')
                             ->label('Tipo de Operação')
-                            ->options(['Check-in' => 'Check-in (Mobilização)', 'Check-out' => 'Check-out (Desmobilização)', 'Preventiva' => 'Manutenção Preventiva', 'Corretiva' => 'Manutenção Corretiva'])
+                            ->options([
+                                'Check-in' => 'Check-in (Mobilização)',
+                                'Check-out' => 'Check-out (Desmobilização)',
+                                'Preventiva' => 'Manutenção Preventiva',
+                                'Corretiva' => 'Manutenção Corretiva',
+                                'Avaria' => 'Registro de Avaria',
+                            ])
                             ->required()->native(false)->live(),
                     ]),
+
+                    // "Registro de Avaria" como Tipo de Operacao -- ate aqui so' existiam
+                    // 2 jeitos indiretos de criar uma EquipmentDamage (checklist mobile de
+                    // movimentacao, ou o atalho via foto-de-evidencia com severidade
+                    // "avaria" dentro do repeater de evidencias, ver StoresPhotoEvidence).
+                    // Esta secao cobre o caso direto: abrir a OS ja com a intencao de
+                    // registrar uma avaria, sem precisar de foto. Reusa 'description' (ja
+                    // obrigatorio na OS) como descricao da avaria -- sem duplicar campo.
+                    // Campos nao-persistidos (dehydrated(false)): CreateMaintenanceOrder::afterCreate()
+                    // / EditMaintenanceOrder::afterSave() leem via getRawState() e criam o
+                    // EquipmentDamage.
+                    Forms\Components\Section::make('Registro de Avaria')
+                        ->description('Detalhes da avaria detectada nesta O.S.')
+                        ->visible(fn (Get $get) => $get('maintenance_type') === MaintenanceOrder::TYPE_AVARIA)
+                        ->schema([
+                            Forms\Components\Select::make('damage_severity')
+                                ->label('Severidade')
+                                ->options([
+                                    EquipmentDamage::SEVERITY_LEVE => 'Leve',
+                                    EquipmentDamage::SEVERITY_MODERADA => 'Moderada',
+                                    EquipmentDamage::SEVERITY_GRAVE => 'Grave',
+                                ])
+                                ->default(EquipmentDamage::SEVERITY_MODERADA)
+                                // Sem required(): so' importa na 1a vez que a OS e' salva
+                                // como Avaria (ver CreatesDamageFromAvariaType, que ja tem
+                                // fallback pra esses defaults). Exigir preenchimento toda
+                                // vez travaria edicoes seguintes da mesma OS, ja que estes
+                                // 2 campos nao sao persistidos (dehydrated(false)) e voltam
+                                // vazios ao reabrir o formulario.
+                                ->dehydrated(false),
+                            Forms\Components\Select::make('damage_type')
+                                ->label('Tipo de Avaria')
+                                ->options(EquipmentDamage::damageTypeLabels())
+                                ->default(EquipmentDamage::DAMAGE_TYPE_OUTRO)
+                                ->dehydrated(false),
+                        ])
+                        ->columns(2),
 
                     // Se o ativo escolhido tem uma Solicitacao de Locacao urgente
                     // aguardando ele sair da manutencao (mesma condicao do banner
@@ -201,7 +251,9 @@ class MaintenanceOrderResource extends Resource
                                 ->form(fn (Get $get) => [
                                     Forms\Components\Select::make('nivel')
                                         ->label('Nível')
-                                        ->options(['A' => 'A', 'B' => 'B', 'C' => 'C'])
+                                        ->options(fn () => CriticalityLevel::where('tenant_id', Tenancy::current()?->id)
+                                            ->orderBy('sort_order')
+                                            ->pluck('name', 'code'))
                                         ->required()
                                         ->default(fn () => Asset::find($get('asset_id'))?->abcMatrix?->nivel),
                                     Forms\Components\Textarea::make('descricao')
@@ -437,15 +489,16 @@ class MaintenanceOrderResource extends Resource
                 ->badge()
                 ->color('gray')
                 ->placeholder('Sem grupo'),
-            Tables\Columns\TextColumn::make('criticalityLevel.name')
+            Tables\Columns\TextColumn::make('asset.abcMatrix.nivel')
                 ->label('Matriz ABC')
                 ->badge()
-                ->color(fn ($record): string => match (strtolower($record->criticalityLevel?->code ?? '')) {
-                    'c' => 'danger',
-                    'b' => 'warning',
-                    default => 'gray',
-                })
-                ->sortable(),
+                ->formatStateUsing(fn (?string $state): string => $state
+                    ? (CriticalityLevel::where('tenant_id', Tenancy::current()?->id)->where('code', $state)->value('name') ?? $state)
+                    : '-')
+                ->color(fn (?string $state): string => $state && CriticalityLevel::where('tenant_id', Tenancy::current()?->id)
+                    ->where('code', $state)
+                    ->value('is_urgent') ? 'danger' : 'gray')
+                ->placeholder('-'),
             Tables\Columns\TextColumn::make('status')->label('Status')->badge(),
         ])->filters([
             Tables\Filters\SelectFilter::make('status')
@@ -463,10 +516,13 @@ class MaintenanceOrderResource extends Resource
                 ->options([
                     'Corretiva' => 'Corretiva',
                     'Preventiva' => 'Preventiva',
+                    'Avaria' => 'Registro de Avaria',
                 ]),
             Tables\Filters\SelectFilter::make('matriz_abc')
                 ->label('Matriz ABC')
-                ->options(['A' => 'A', 'B' => 'B', 'C' => 'C'])
+                ->options(fn () => CriticalityLevel::where('tenant_id', Tenancy::current()?->id)
+                    ->orderBy('sort_order')
+                    ->pluck('name', 'code'))
                 ->query(fn (Builder $query, array $data) => $query->when(
                     $data['value'] ?? null,
                     fn (Builder $q, $nivel) => $q->whereHas('asset.abcMatrix', fn (Builder $q2) => $q2->where('nivel', $nivel))
