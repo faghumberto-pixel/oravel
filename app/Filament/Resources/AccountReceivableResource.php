@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\AccountReceivableResource\Pages;
 use App\Models\AccountReceivable;
-use App\Models\BillCategory;
 use App\Support\Tenancy;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
@@ -15,7 +14,6 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Str;
 
 class AccountReceivableResource extends Resource
 {
@@ -55,15 +53,6 @@ class AccountReceivableResource extends Resource
                         ->searchable()->preload()
                         ->visible(fn () => Tenancy::current()?->isFieldVisible('billing_plan_id') ?? true),
 
-                    Select::make('bill_category_id')
-                        ->label('Categoria')
-                        ->relationship('billCategory', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
-                        ->searchable()->preload()
-                        ->createOptionForm([
-                            TextInput::make('name')->required()->live(onBlur: true)->afterStateUpdated(fn ($state, $set) => $set('slug', Str::slug($state))),
-                        ])
-                        ->createOptionUsing(fn ($data) => BillCategory::create(array_merge($data, ['tenant_id' => Tenancy::current()?->id]))->id),
-
                     TextInput::make('amount')->label('Valor')->numeric()->prefix('R$')->required(),
                     DatePicker::make('due_date')->label('Vencimento')->required()->live(),
                     DatePicker::make('payment_date')->label('Recebimento')->visible(fn ($get) => $get('status') === 'pago'),
@@ -79,11 +68,6 @@ class AccountReceivableResource extends Resource
                         ->label('Filial')
                         ->relationship('branch', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
                         ->searchable()->preload(),
-
-                    Select::make('cost_center_id')
-                        ->label('Centro de Custo')
-                        ->relationship('costCenter', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
-                        ->searchable()->preload(),
                 ])->columns(2),
         ]);
     }
@@ -94,7 +78,6 @@ class AccountReceivableResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('description')->label('Descrição')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('client.name')->label('Cliente')->searchable(),
-                Tables\Columns\TextColumn::make('billCategory.name')->label('Categoria'),
                 Tables\Columns\TextColumn::make('amount')->label('Valor')->money('BRL'),
                 Tables\Columns\TextColumn::make('due_date')->label('Vencimento')->date('d/m/Y'),
                 Tables\Columns\TextColumn::make('multa_valor')->label('Multa')->money('BRL')->placeholder('—'),
