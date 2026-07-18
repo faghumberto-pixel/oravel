@@ -191,7 +191,7 @@
                                 $isUrgent = $record->asset_id && in_array($record->asset_id, $urgentAssetIds, true);
                                 $nivelAbc = $record->asset?->abcMatrix?->nivel;
                                 $isCritical = $nivelAbc && in_array($nivelAbc, $codigosUrgentes, true);
-                                $isPrazoFatal = $record->is_prazo_fatal && $record->prazo_fatal_at && ! in_array($statusId, ['concluido', 'oficina'], true);
+                                $isPrazoFatal = $record->is_prazo_fatal && $record->prazo_fatal_at && $statusId !== 'concluido';
                                 $prazoFatalVencido = $isPrazoFatal && $record->prazo_fatal_at->isPast();
                                 $slaColor = $record->slaColor();
                             @endphp
