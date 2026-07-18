@@ -110,10 +110,6 @@ class AdminPanelProvider extends PanelProvider
             )
             ->renderHook(
                 PanelsRenderHook::TOPBAR_END,
-                fn () => view('filament.topbar-user-info'),
-            )
-            ->renderHook(
-                PanelsRenderHook::TOPBAR_END,
                 fn () => view('filament.help-icon'),
             )
             ->renderHook(
@@ -131,6 +127,10 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::BODY_END,
                 fn () => view('filament.chat-widget-mount'),
+            )
+            ->renderHook(
+                PanelsRenderHook::FOOTER,
+                fn () => view('filament.panel-footer'),
             )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
