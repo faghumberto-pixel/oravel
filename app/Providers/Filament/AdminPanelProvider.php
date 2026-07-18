@@ -125,6 +125,10 @@ class AdminPanelProvider extends PanelProvider
                 fn () => view('filament.login-background'),
             )
             ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn () => view('filament.bfcache-reload'),
+            )
+            ->renderHook(
                 PanelsRenderHook::BODY_END,
                 fn () => view('filament.chat-widget-mount'),
             )
