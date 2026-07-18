@@ -6,11 +6,13 @@ use App\Models\Asset;
 use App\Models\AssetCategory;
 use App\Models\Client;
 use App\Models\Department;
+use App\Models\EquipmentDamage;
 use App\Models\EquipmentMovement;
 use App\Models\EquipmentMovementItemTemplate;
 use App\Models\EquipmentMovementLocation;
 use App\Models\EquipmentPatioArrival;
 use App\Models\EquipmentPatioArrivalItem;
+use App\Models\EquipmentReplacement;
 use App\Models\FleetDriver;
 use App\Models\FleetVehicle;
 use App\Models\FreightCarrier;
@@ -94,9 +96,10 @@ class NicheVerticalsEnrichmentSeeder extends Seeder
             }
 
             if (InternalUnit::where('tenant_id', $tenant->id)->exists()) {
-                $this->command?->info("Tenant '{$ctx['slug']}' já foi enriquecido -- só garantindo scheduled_at e organograma.");
+                $this->command?->info("Tenant '{$ctx['slug']}' já foi enriquecido -- só garantindo scheduled_at, organograma e destinatários de notificação.");
                 $this->ensureScheduledAt($tenant);
                 $this->ensureOrganograma($tenant);
+                $this->ensureNotificationRecipients($tenant, $ctx);
 
                 continue;
             }
@@ -117,9 +120,51 @@ class NicheVerticalsEnrichmentSeeder extends Seeder
             });
 
             $this->ensureScheduledAt($tenant);
+            $this->ensureNotificationRecipients($tenant, $ctx);
         }
 
         $this->command?->info('Enriquecimento (usuários/ativos/OS/logística/compras/suprimentos) concluído.');
+    }
+
+    /**
+     * TenantProvisioner::provision() ja cria os papeis "Gerente de
+     * Logistica"/"Comercial"/"Supervisor de Manutencao" pra todo tenant
+     * novo (sao os nomes que os Observers de verdade notificam), mas
+     * ficam vazios ate alguem ser atribuido -- sem ninguem no papel, o
+     * observer dispara e nao acha destinatario, notificacao nenhuma e'
+     * criada (nao e' bug, e' lacuna de dado). Cria 1 usuario real por
+     * papel nos 3 tenants demo, pra notificacao chegar de verdade.
+     * Idempotente: User::firstOrCreate() por email.
+     */
+    private function ensureNotificationRecipients(Tenant $tenant, array $ctx): void
+    {
+        $defs = [
+            ['role' => EquipmentReplacement::ROLE_LOGISTICA, 'slug' => 'gerente.logistica'],
+            ['role' => EquipmentDamage::ROLE_COMERCIAL, 'slug' => 'comercial'],
+            ['role' => EquipmentDamage::ROLE_SUPERVISOR_MANUTENCAO, 'slug' => 'supervisor.manutencao'],
+        ];
+
+        foreach ($defs as $def) {
+            $role = Role::where('tenant_id', $tenant->id)->where('name', $def['role'])->first();
+            if (! $role) {
+                continue;
+            }
+
+            $email = $def['slug'].'@'.$ctx['domain'];
+            $user = User::firstOrCreate(
+                ['email' => $email],
+                [
+                    'name' => $def['role'],
+                    'password' => Hash::make('Demo@Oravel1'),
+                    'tenant_id' => $tenant->id,
+                ]
+            );
+            $user->forceFill(['email_verified_at' => now()])->save();
+
+            if (! $user->hasRole($role)) {
+                $user->assignRole($role);
+            }
+        }
     }
 
     /**
