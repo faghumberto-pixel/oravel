@@ -52,7 +52,9 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use Jeffgreco13\FilamentBreezy\Livewire\PersonalInfo;
 use Jeffgreco13\FilamentBreezy\Livewire\TwoFactorAuthentication;
+use Jeffgreco13\FilamentBreezy\Livewire\UpdatePassword;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
@@ -109,13 +111,18 @@ class AppServiceProvider extends ServiceProvider
 
         $this->registerActivityLogging();
 
-        // filament-breezy so registra este componente Livewire dentro do boot()
+        // filament-breezy so registra estes componentes Livewire dentro do boot()
         // do panel "atual" -- e /livewire/update e uma rota global sem panel no
         // path, entao o Filament resolve o panel default (admin) pra ela, e o
         // registro condicional do plugin nao roda nesse contexto. Sem isso, o
         // Livewire nao acha o componente e disfarca o erro real
         // (ComponentNotFoundException) como "release token mismatch" (419).
+        // personal_info/update_password (formulario de "Minha Conta", incluindo
+        // o upload de avatar) tinham o mesmo bug do two_factor_authentication,
+        // nunca corrigido -- so foi notado quando o avatar comecou a ser usado.
         Livewire::component('two_factor_authentication', TwoFactorAuthentication::class);
+        Livewire::component('personal_info', PersonalInfo::class);
+        Livewire::component('update_password', UpdatePassword::class);
 
         // Sobrescreve o registro padrao de NotificationsServiceProvider::packageBooted()
         // (mesmo nome 'database-notifications', o ultimo registrado vence) --
