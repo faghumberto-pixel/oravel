@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasSaaSMetadata;
-use Filament\Facades\Filament;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
@@ -21,7 +20,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
-use Throwable;
 
 class User extends Authenticatable implements FilamentUser, HasTenants, MustVerifyEmail
 {
@@ -49,6 +47,8 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
         'role',
         'last_seen',
         'is_approved',
+        'job_title',
+        'avatar_url',
     ];
 
     protected $hidden = [
@@ -150,15 +150,21 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
             ->exists();
     }
 
+    /**
+     * SEM withDefault() de proposito -- ->withDefault(closure) do Eloquent
+     * sempre cria um Tenant "vazio" quando o relacionamento nao resolve
+     * (mesmo a closure "retornando null"), nunca null de verdade. Isso
+     * fazia Tenancy::current() nunca ser null pra um usuario sem
+     * tenant_id valido, e telas como brand-logo.blade.php
+     * (`@if($tenant)` -- objeto vazio ainda e' truthy em PHP) renderizavam
+     * o elemento com nome em branco em vez de simplesmente nao mostrar
+     * nada. Filament::getTenant() tambem sempre retorna null neste painel
+     * (nao usamos tenancy nativa), entao o valor "default" nunca fazia
+     * sentido de qualquer forma.
+     */
     public function tenant(): BelongsTo
     {
-        return $this->belongsTo(Tenant::class, 'tenant_id', 'id')->withDefault(function () {
-            try {
-                return Filament::getTenant();
-            } catch (Throwable $e) {
-                return null;
-            }
-        });
+        return $this->belongsTo(Tenant::class, 'tenant_id', 'id');
     }
 
     public function tenants(): BelongsToMany

@@ -7,15 +7,20 @@ use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-    Route::get('register', [RegisteredUserController::class, 'create'])
+    // /register (GET e POST) sao scaffolding padrao do Breeze, nunca
+    // usados de verdade -- RegisteredUserController::store() cria
+    // usuario SEM tenant_id e SEM is_approved=false (ignora as duas
+    // travas que App\Filament\Pages\Auth\Login::register(), o cadastro
+    // de verdade deste app, aplica). Redireciona pro cadastro real em
+    // vez de deixar a rota antiga aberta.
+    Route::get('register', fn () => redirect()->route('filament.admin.auth.login'))
         ->name('register');
 
-    Route::post('register', [RegisteredUserController::class, 'store']);
+    Route::post('register', fn () => redirect()->route('filament.admin.auth.login'));
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');

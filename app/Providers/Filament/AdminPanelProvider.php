@@ -110,6 +110,10 @@ class AdminPanelProvider extends PanelProvider
             )
             ->renderHook(
                 PanelsRenderHook::TOPBAR_END,
+                fn () => view('filament.topbar-user-info'),
+            )
+            ->renderHook(
+                PanelsRenderHook::TOPBAR_END,
                 fn () => view('filament.help-icon'),
             )
             ->renderHook(
@@ -147,7 +151,7 @@ class AdminPanelProvider extends PanelProvider
             )
             ->plugin(
                 BreezyCore::make()
-                    ->myProfile()
+                    ->myProfile(hasAvatars: true)
                     ->enableTwoFactorAuthentication()
             )
             ->userMenuItems([
