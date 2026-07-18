@@ -94,7 +94,8 @@ class NicheVerticalsEnrichmentSeeder extends Seeder
             }
 
             if (InternalUnit::where('tenant_id', $tenant->id)->exists()) {
-                $this->command?->info("Tenant '{$ctx['slug']}' já foi enriquecido -- pulando.");
+                $this->command?->info("Tenant '{$ctx['slug']}' já foi enriquecido -- só garantindo scheduled_at.");
+                $this->ensureScheduledAt($tenant);
 
                 continue;
             }
@@ -113,9 +114,44 @@ class NicheVerticalsEnrichmentSeeder extends Seeder
                 $this->seedCompras($tenant, $unit, $materials, $users);
                 $this->seedPartsRequests($tenant, $orders, $materials);
             });
+
+            $this->ensureScheduledAt($tenant);
         }
 
         $this->command?->info('Enriquecimento (usuários/ativos/OS/logística/compras/suprimentos) concluído.');
+    }
+
+    /**
+     * Backfill idempotente de scheduled_at -- e' o campo que
+     * AgendaTecnicoWidget::fetchEvents() usa pra alimentar o Calendario de
+     * Manutencao. As O.S./movimentacoes semeadas por este seeder nunca
+     * preenchiam esse campo, entao o calendario ficava vazio pros tenants
+     * de nicho mesmo com dados reais no banco -- nao era bug de exibicao,
+     * era ausencia de dado. Roda tanto na primeira semeadura quanto em
+     * tenants ja enriquecidos antes (retrofit), mesmo padrao de
+     * DemoGeradoresRmcSeeder::ensureScheduledVolume().
+     */
+    private function ensureScheduledAt(Tenant $tenant): void
+    {
+        $orders = MaintenanceOrder::withoutGlobalScopes()
+            ->where('tenant_id', $tenant->id)
+            ->whereNull('scheduled_at')
+            ->whereNotIn('status', ['Concluído', 'Cancelada'])
+            ->get();
+
+        foreach ($orders as $order) {
+            $order->update(['scheduled_at' => now()->addDays($this->faker()->numberBetween(1, 10))->setTime($this->faker()->numberBetween(7, 17), 0)]);
+        }
+
+        $movements = EquipmentMovement::withoutGlobalScopes()
+            ->where('tenant_id', $tenant->id)
+            ->whereNull('scheduled_at')
+            ->where('status', '!=', EquipmentMovement::STATUS_CONCLUIDO)
+            ->get();
+
+        foreach ($movements as $movement) {
+            $movement->update(['scheduled_at' => now()->addDays($this->faker()->numberBetween(1, 7))->setTime($this->faker()->numberBetween(7, 17), 0)]);
+        }
     }
 
     private function faker(): Generator

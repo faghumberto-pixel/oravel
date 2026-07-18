@@ -29,7 +29,11 @@ class CepGeocodingService
             return null;
         }
 
-        if (! $response->ok() || $response->json('erro') === true) {
+        // ViaCEP devolve "erro": "true" como STRING, nao boolean -- confirmado
+        // batendo na API real. "true" === true e' false em PHP, entao um
+        // === estrito nunca disparava pra CEP genuinamente inexistente
+        // (o servico seguia adiante com endereco vazio/invalido).
+        if (! $response->ok() || filter_var($response->json('erro'), FILTER_VALIDATE_BOOLEAN)) {
             return null;
         }
 

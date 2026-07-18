@@ -16,6 +16,23 @@ class CrmLeadMapWidget extends Widget
     protected int|string|array $columnSpan = 'full';
 
     /**
+     * Chamado via $wire.refreshMapData() do Alpine (ver blade) -- o mapa
+     * vive dentro de wire:ignore (Leaflet nao pode ter o DOM remexido pelo
+     * Livewire), entao Livewire nunca re-renderiza os marcadores sozinho.
+     * Sem esse metodo pra buscar dado fresco sob demanda, cliente/lead
+     * novo so' aparecia no mapa apos recarregar a pagina inteira.
+     *
+     * @return array{clientes: array, leads: array}
+     */
+    public function refreshMapData(): array
+    {
+        return [
+            'clientes' => $this->getClients(),
+            'leads' => $this->getLeads(),
+        ];
+    }
+
+    /**
      * Leads com coordenadas cadastradas (marcador laranja no mapa).
      */
     public function getLeads(): array

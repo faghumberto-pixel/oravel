@@ -69,7 +69,13 @@ class AssetResource extends Resource
                     Tabs\Tab::make('Informações Gerais')
                         ->icon('heroicon-m-information-circle')
                         ->schema([
-                            Forms\Components\Grid::make(3)->schema([
+                            Forms\Components\Grid::make(4)->schema([
+                                Forms\Components\TextInput::make('patrimonio')
+                                    ->label('Nº Patrimônio')
+                                    ->required()
+                                    ->unique(ignoreRecord: true)
+                                    ->prefixIcon('heroicon-m-hashtag'),
+
                                 Forms\Components\Select::make('asset_category')
                                     ->label('Categoria e Tipo')
                                     ->options(AssetCategory::pluck('name', 'name'))
@@ -220,9 +226,13 @@ class AssetResource extends Resource
                     // ABA: LOCALIZAÇÃO -- internal_unit_id existia desde
                     // 2026-05 mas sem relacao no model nem uso em nenhum
                     // form; agora e' a base "onde o ativo mora" quando nao
-                    // esta locado. Quando locado, a fonte de verdade e' o
-                    // contrato vigente (Contract::resolvedLocation()), so
+                    // tem contrato vigente. Quando existe um Contract ativo
+                    // de verdade (Asset::activeContract()), a fonte de
+                    // verdade e' ele (Contract::resolvedLocation()), so
                     // leitura aqui -- editar isso e' no ContractResource.
+                    // Checagem e' pela EXISTENCIA do contrato ativo, nao
+                    // pelo campo Asset.status (editavel a mao, podia ficar
+                    // dessincronizado do contrato de verdade).
                     Tabs\Tab::make('Localização')
                         ->icon('heroicon-m-map-pin')
                         ->schema([
@@ -277,11 +287,13 @@ class AssetResource extends Resource
                                         return new HtmlString('<span class="text-gray-400">Disponível após o primeiro salvamento.</span>');
                                     }
 
-                                    if ($record->status === Asset::STATUS_LOCADO) {
-                                        $location = $record->activeContract()?->resolvedLocation();
+                                    $activeContract = $record->activeContract();
+
+                                    if ($activeContract) {
+                                        $location = $activeContract->resolvedLocation();
 
                                         if (! $location) {
-                                            return new HtmlString('<span class="text-gray-400">Ativo locado, mas sem localização definida no contrato vigente.</span>');
+                                            return new HtmlString('<span class="text-gray-400">Ativo com contrato vigente, mas sem localização definida nele.</span>');
                                         }
 
                                         $endereco = trim(($location['address'] ?? '').', '.($location['city'] ?? '').' - '.($location['uf'] ?? ''), ', -');
@@ -306,13 +318,7 @@ class AssetResource extends Resource
                     Tabs\Tab::make('Rastreabilidade e QR Code')
                         ->icon('heroicon-m-qr-code')
                         ->schema([
-                            Forms\Components\Grid::make(3)->schema([
-                                Forms\Components\TextInput::make('patrimonio')
-                                    ->label('Nº Patrimônio')
-                                    ->required()
-                                    ->unique(ignoreRecord: true)
-                                    ->prefixIcon('heroicon-m-hashtag'),
-
+                            Forms\Components\Grid::make(2)->schema([
                                 Forms\Components\TextInput::make('tag')
                                     ->label('Asset Tag (Etiqueta)')
                                     ->placeholder('TAG-0000')

@@ -23,6 +23,7 @@
                 <div
                     x-data="{
                         mapa: null,
+                        marcadores: [],
                         clientes: {{ json_encode($this->getClients()) }},
                         leads: {{ json_encode($this->getLeads()) }},
 
@@ -31,10 +32,23 @@
                                 let script = document.createElement('script');
                                 script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
                                 document.head.appendChild(script);
-                                script.onload = () => this.renderizarMapa();
+                                script.onload = () => this.criarMapa();
                             } else {
-                                this.renderizarMapa();
+                                this.criarMapa();
                             }
+
+                            // O mapa vive em wire:ignore (Leaflet precisa manter o DOM
+                            // pra ele mesmo, Livewire nao pode remexer) -- entao um
+                            // cliente/lead novo nunca aparecia sozinho sem recarregar a
+                            // pagina inteira. Busca dado fresco periodicamente e so'
+                            // redesenha os marcadores (o mapa em si nao e' recriado).
+                            setInterval(() => {
+                                this.$wire.refreshMapData().then((dados) => {
+                                    this.clientes = dados.clientes;
+                                    this.leads = dados.leads;
+                                    this.plotarMarcadores(false);
+                                });
+                            }, 30000);
                         },
 
                         criarIcone(cor) {
@@ -50,12 +64,24 @@
                             });
                         },
 
-                        renderizarMapa() {
+                        criarMapa() {
                             this.mapa = L.map(this.$refs.mapaComercial).setView([-22.9056, -47.0608], 6);
 
                             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                                 attribution: '© OpenStreetMap'
                             }).addTo(this.mapa);
+
+                            this.plotarMarcadores(true);
+
+                            setTimeout(() => this.mapa.invalidateSize(), 500);
+                        },
+
+                        // ajustarView=true so' no primeiro carregamento -- nos refreshes
+                        // periodicos nao faz sentido recentralizar/dar zoom sozinho
+                        // enquanto o usuario pode estar navegando o mapa.
+                        plotarMarcadores(ajustarView) {
+                            this.marcadores.forEach(m => this.mapa.removeLayer(m));
+                            this.marcadores = [];
 
                             let bounds = [];
                             let iconeCliente = this.criarIcone('#2563eb');
@@ -68,9 +94,10 @@
                                     let nome = cliente.name ?? 'Cliente sem nome';
                                     let cidade = cliente.city ? (cliente.city + (cliente.uf ? '/' + cliente.uf : '')) : '';
 
-                                    L.marker([lat, lng], { icon: iconeCliente })
+                                    let marcador = L.marker([lat, lng], { icon: iconeCliente })
                                         .addTo(this.mapa)
                                         .bindPopup('<b>' + nome + '</b>' + (cidade ? '<br><span style=\'color:#6b7280\'>' + cidade + '</span>' : '') + '<br><a href=\'' + cliente.url + '\' style=\'color:#2563eb\'>Abrir cliente</a>');
+                                    this.marcadores.push(marcador);
 
                                     bounds.push([lat, lng]);
                                 }
@@ -83,19 +110,18 @@
                                     let nome = lead.name ?? 'Lead sem nome';
                                     let empresa = lead.company_name ? ('<br>' + lead.company_name) : '';
 
-                                    L.marker([lat, lng], { icon: iconeLead })
+                                    let marcador = L.marker([lat, lng], { icon: iconeLead })
                                         .addTo(this.mapa)
                                         .bindPopup('<b>' + nome + '</b>' + empresa + '<br><span style=\'color:#6b7280\'>' + lead.stage_label + '</span><br><a href=\'' + lead.url + '\' style=\'color:#E8541A\'>Abrir lead</a>');
+                                    this.marcadores.push(marcador);
 
                                     bounds.push([lat, lng]);
                                 }
                             });
 
-                            if (bounds.length > 0) {
+                            if (ajustarView && bounds.length > 0) {
                                 this.mapa.fitBounds(bounds, { padding: [30, 30] });
                             }
-
-                            setTimeout(() => this.mapa.invalidateSize(), 500);
                         }
                     }"
                 >

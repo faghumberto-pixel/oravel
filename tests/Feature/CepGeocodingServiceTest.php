@@ -26,10 +26,24 @@ class CepGeocodingServiceTest extends TestCase
         $this->assertSame('SP', $result['uf']);
     }
 
-    public function test_lookup_cep_returns_null_when_viacep_reports_not_found(): void
+    public function test_lookup_cep_returns_null_when_viacep_reports_not_found_as_boolean(): void
     {
         Http::fake([
             'viacep.com.br/*' => Http::response(['erro' => true]),
+        ]);
+
+        $this->assertNull((new CepGeocodingService)->lookupCep('00000-000'));
+    }
+
+    /**
+     * Regressao: a API real do ViaCEP devolve "erro" como STRING "true",
+     * nao boolean -- um === estrito contra true nunca disparava pra esse
+     * caso real, entao "CEP nao encontrado" nunca era detectado de verdade.
+     */
+    public function test_lookup_cep_returns_null_when_viacep_reports_not_found_as_string(): void
+    {
+        Http::fake([
+            'viacep.com.br/*' => Http::response(['erro' => 'true']),
         ]);
 
         $this->assertNull((new CepGeocodingService)->lookupCep('00000-000'));
