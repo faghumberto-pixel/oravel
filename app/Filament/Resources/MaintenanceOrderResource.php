@@ -9,6 +9,7 @@ use App\Filament\Resources\MaintenanceOrderResource\RelationManagers;
 use App\Forms\Components\CameraCapture;
 use App\Models\AbcMatrix;
 use App\Models\Asset;
+use App\Models\Client;
 use App\Models\Contract;
 use App\Models\CriticalityLevel;
 use App\Models\EquipmentDamage;
@@ -113,14 +114,15 @@ class MaintenanceOrderResource extends Resource
                             })->prefixIcon('heroicon-m-qr-code'),
                         Forms\Components\Select::make('maintenance_type')
                             ->label('Tipo de Operação')
-                            ->options([
+                            ->options(fn () => array_filter([
                                 'Check-in' => 'Check-in (Mobilização)',
                                 'Check-out' => 'Check-out (Desmobilização)',
                                 'Preventiva' => 'Manutenção Preventiva',
                                 'Corretiva' => 'Manutenção Corretiva',
                                 'Avaria' => 'Registro de Avaria',
                                 'Troca' => 'Troca de Equipamento',
-                            ])
+                                'Emergência' => 'Chamado de Emergência',
+                            ], fn ($key) => $key !== 'Emergência' || (Tenancy::current()?->hasModuleEnabled('sla_emergencia') ?? true), ARRAY_FILTER_USE_KEY))
                             ->required()->native(false)->live(),
                     ]),
 
@@ -161,6 +163,26 @@ class MaintenanceOrderResource extends Resource
                         ])
                         ->columns(2),
 
+                    // Prazo Fatal (locadoras de evento) -- disponivel em QUALQUER OS,
+                    // nao trava nada por conta propria (o checklist de mobilizacao ja
+                    // e' bloqueante em 100%, ver EquipmentMovementMobile::finalize()).
+                    // O toggle so' liga o alerta visual/contagem regressiva no Kanban.
+                    Forms\Components\Section::make('Prazo Fatal')
+                        ->description('Use quando esta O.S. está vinculada a um compromisso com data/hora que não pode atrasar (ex: montagem de evento).')
+                        ->collapsed(fn (Get $get) => ! $get('is_prazo_fatal'))
+                        ->schema([
+                            Forms\Components\Toggle::make('is_prazo_fatal')
+                                ->label('Esta O.S. tem prazo fatal')
+                                ->live()
+                                ->default(fn (Get $get) => Asset::find($get('asset_id'))?->client?->activity_type === Client::NICHE_EVENTOS)
+                                ->visible(fn () => Tenancy::current()?->hasModuleEnabled('prazo_fatal') ?? true),
+                            Forms\Components\DateTimePicker::make('prazo_fatal_at')
+                                ->label('Prazo (data/hora limite)')
+                                ->required(fn (Get $get) => (bool) $get('is_prazo_fatal'))
+                                ->visible(fn (Get $get) => (bool) $get('is_prazo_fatal')),
+                        ])
+                        ->columns(2),
+
                     // "Troca de Equipamento" como Tipo de Operacao -- entrada principal
                     // da Troca (confirmado: geralmente solicitada pelo tecnico em
                     // campo), mesmo padrao da secao de Avaria acima. So' pede a
@@ -180,6 +202,34 @@ class MaintenanceOrderResource extends Resource
                                 ])
                                 ->default(EquipmentReplacement::URGENCY_NORMAL)
                                 ->dehydrated(false),
+                        ]),
+
+                    // "Chamado de Emergência" (locadoras industrial/hospitalar) --
+                    // sla_target_minutes vira o relogio pro badge de cor (ver
+                    // MaintenanceOrder::slaColor(), mesmo padrao de
+                    // EquipmentReplacementResource::slaColor(), so' que em minutos e
+                    // contado a partir de created_at, nao de uma janela fixa por
+                    // urgencia). Sugestao de prazo pelo nivel de criticidade do Ativo
+                    // (mesma fonte ja usada pro badge vermelho do Kanban) -- sempre
+                    // editavel, nunca trava a criacao da OS.
+                    Forms\Components\Section::make('Chamado de Emergência')
+                        ->description('SLA de atendimento contado a partir da abertura desta O.S.')
+                        ->visible(fn (Get $get) => $get('maintenance_type') === MaintenanceOrder::TYPE_EMERGENCIA
+                            && (Tenancy::current()?->hasModuleEnabled('sla_emergencia') ?? true))
+                        ->schema([
+                            Forms\Components\TextInput::make('sla_target_minutes')
+                                ->label('Prazo de Atendimento (minutos)')
+                                ->numeric()
+                                ->default(function (Get $get) {
+                                    $asset = Asset::find($get('asset_id'));
+                                    $nivel = $asset?->abcMatrix?->nivel;
+                                    $urgente = $nivel && CriticalityLevel::where('tenant_id', Tenancy::current()?->id)
+                                        ->where('code', $nivel)
+                                        ->value('is_urgent');
+
+                                    return $urgente ? 60 : 240;
+                                })
+                                ->helperText('Sugerido pelo nível de criticidade do Ativo — pode ajustar.'),
                         ]),
 
                     // Se o ativo escolhido tem uma Solicitacao de Locacao urgente
@@ -401,32 +451,38 @@ class MaintenanceOrderResource extends Resource
                                 ->label('Foto'),
                             Forms\Components\TextInput::make('category')
                                 ->label('Categoria')
-                                ->datalist(['Painel/Horímetro', 'Estrutura Geral', 'Avaria'])
+                                ->datalist(['Painel/Horímetro', 'Estrutura Geral', 'Avaria', 'Mau Uso'])
                                 ->placeholder('Ex: Painel/Horímetro, Avaria: Esteira Esquerda'),
                             Forms\Components\ToggleButtons::make('severity')
                                 ->label('Severidade')
-                                ->options(['ok' => 'OK', 'avaria' => 'Avaria'])
-                                ->colors(['ok' => 'success', 'avaria' => 'danger'])
+                                ->options(fn () => array_filter(
+                                    ['ok' => 'OK', 'avaria' => 'Avaria', 'mau_uso' => 'Mau Uso'],
+                                    fn ($key) => $key !== 'mau_uso' || (Tenancy::current()?->hasModuleEnabled('mau_uso') ?? true),
+                                    ARRAY_FILTER_USE_KEY
+                                ))
+                                ->colors(['ok' => 'success', 'avaria' => 'danger', 'mau_uso' => 'warning'])
                                 ->default('ok')->inline()->live(),
-                            // Marcar "Avaria" aqui ja cria um EquipmentDamage de verdade
-                            // (ver StoresPhotoEvidence::persistPhotoEvidences()) -- antes
-                            // esse toggle so' marcava a foto salva, sem gerar nenhum
-                            // registro real na Avaria/fluxo de aprovacao.
+                            // Marcar "Avaria" OU "Mau Uso" aqui ja cria um EquipmentDamage
+                            // de verdade (ver StoresPhotoEvidence::persistPhotoEvidences())
+                            // -- antes so' "avaria" fazia isso; "Mau Uso" (locadoras de
+                            // construcao civil, evidencia pra cobranca/contestacao com o
+                            // cliente da obra) reusa o mesmo fluxo, so' com severidade
+                            // diferente pra distinguir na listagem/comparativo Antes/Depois.
                             Forms\Components\Select::make('damage_severity')
-                                ->label('Gravidade da Avaria')
+                                ->label('Gravidade')
                                 ->options([
                                     EquipmentDamage::SEVERITY_LEVE => 'Leve',
                                     EquipmentDamage::SEVERITY_MODERADA => 'Moderada',
                                     EquipmentDamage::SEVERITY_GRAVE => 'Grave / Perda Total',
                                 ])
                                 ->default(EquipmentDamage::SEVERITY_MODERADA)
-                                ->required(fn (Get $get) => $get('severity') === 'avaria')
-                                ->visible(fn (Get $get) => $get('severity') === 'avaria'),
+                                ->required(fn (Get $get) => in_array($get('severity'), ['avaria', 'mau_uso'], true))
+                                ->visible(fn (Get $get) => in_array($get('severity'), ['avaria', 'mau_uso'], true)),
                             Forms\Components\Select::make('damage_type')
-                                ->label('Tipo de Avaria')
+                                ->label('Tipo')
                                 ->options(EquipmentDamage::damageTypeLabels())
-                                ->required(fn (Get $get) => $get('severity') === 'avaria')
-                                ->visible(fn (Get $get) => $get('severity') === 'avaria'),
+                                ->required(fn (Get $get) => in_array($get('severity'), ['avaria', 'mau_uso'], true))
+                                ->visible(fn (Get $get) => in_array($get('severity'), ['avaria', 'mau_uso'], true)),
                             Forms\Components\Textarea::make('observation')
                                 ->label('Observação')
                                 ->rows(2)
@@ -536,12 +592,13 @@ class MaintenanceOrderResource extends Resource
                 ]),
             Tables\Filters\SelectFilter::make('maintenance_type')
                 ->label('Tipo')
-                ->options([
+                ->options(fn () => array_filter([
                     'Corretiva' => 'Corretiva',
                     'Preventiva' => 'Preventiva',
                     'Avaria' => 'Registro de Avaria',
                     'Troca' => 'Troca de Equipamento',
-                ]),
+                    'Emergência' => 'Chamado de Emergência',
+                ], fn ($key) => $key !== 'Emergência' || (Tenancy::current()?->hasModuleEnabled('sla_emergencia') ?? true), ARRAY_FILTER_USE_KEY)),
             Tables\Filters\SelectFilter::make('matriz_abc')
                 ->label('Matriz ABC')
                 ->options(fn () => CriticalityLevel::where('tenant_id', Tenancy::current()?->id)

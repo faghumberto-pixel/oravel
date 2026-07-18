@@ -36,11 +36,14 @@ class EquipmentPatioArrival extends Model implements HasMedia
         'confirmed_by_user_id',
         'initial_condition_notes',
         'completed_at',
+        'quarantine_released_at',
+        'quarantine_released_by_user_id',
     ];
 
     protected $casts = [
         'arrived_at' => 'datetime',
         'completed_at' => 'datetime',
+        'quarantine_released_at' => 'datetime',
     ];
 
     public function registerMediaCollections(): void
@@ -56,6 +59,11 @@ class EquipmentPatioArrival extends Model implements HasMedia
     public function confirmedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'confirmed_by_user_id');
+    }
+
+    public function quarantineReleasedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'quarantine_released_by_user_id');
     }
 
     /** Itens do Laudo de Recebimento (checklist item a item). */

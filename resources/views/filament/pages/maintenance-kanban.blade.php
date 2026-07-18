@@ -191,10 +191,29 @@
                                 $isUrgent = $record->asset_id && in_array($record->asset_id, $urgentAssetIds, true);
                                 $nivelAbc = $record->asset?->abcMatrix?->nivel;
                                 $isCritical = $nivelAbc && in_array($nivelAbc, $codigosUrgentes, true);
+                                $isPrazoFatal = $record->is_prazo_fatal && $record->prazo_fatal_at && ! in_array($statusId, ['concluido', 'oficina'], true);
+                                $prazoFatalVencido = $isPrazoFatal && $record->prazo_fatal_at->isPast();
+                                $slaColor = $record->slaColor();
                             @endphp
                             <a href="{{ \App\Filament\Resources\MaintenanceOrderResource::getUrl('edit', ['record' => $record]) }}"
                                wire:key="kanban-card-{{ $record->id }}"
-                               class="block bg-white dark:bg-gray-900 p-3 rounded-lg border-l-4 {{ ($isUrgent || $isCritical) ? 'border-red-500 ring-2 ring-red-500/40' : $sideBorder }} border-t border-r border-b border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-400 dark:hover:border-blue-500 transition-all shadow-sm group">
+                               class="block bg-white dark:bg-gray-900 p-3 rounded-lg border-l-4 {{ ($isUrgent || $isCritical || $isPrazoFatal || $slaColor === 'danger') ? 'border-red-500 ring-2 ring-red-500/40' : $sideBorder }} border-t border-r border-b border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-400 dark:hover:border-blue-500 transition-all shadow-sm group">
+                                @if($slaColor && $slaColor !== 'gray')
+                                    <div class="flex items-center gap-1.5 mb-2 -mt-1 -mx-1 px-2 py-1 rounded {{ match($slaColor) { 'danger' => 'bg-red-600 animate-pulse', 'warning' => 'bg-amber-500/20 border border-amber-500/40', default => 'bg-emerald-500/10 border border-emerald-500/30' } }}">
+                                        <x-heroicon-s-bolt class="w-3.5 h-3.5 shrink-0 {{ $slaColor === 'danger' ? 'text-white' : ($slaColor === 'warning' ? 'text-amber-500' : 'text-emerald-500') }}" />
+                                        <span class="text-[9px] font-black uppercase tracking-wider {{ $slaColor === 'danger' ? 'text-white' : ($slaColor === 'warning' ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400') }}">
+                                            SLA: {{ $record->created_at->diffForHumans(null, true) }} decorridos (meta {{ $record->sla_target_minutes }}min)
+                                        </span>
+                                    </div>
+                                @endif
+                                @if($isPrazoFatal)
+                                    <div class="flex items-center gap-1.5 mb-2 -mt-1 -mx-1 px-2 py-1 rounded {{ $prazoFatalVencido ? 'bg-red-600 animate-pulse' : 'bg-red-500/10 border border-red-500/40' }}">
+                                        <x-heroicon-s-clock class="w-3.5 h-3.5 shrink-0 {{ $prazoFatalVencido ? 'text-white' : 'text-red-500' }}" />
+                                        <span class="text-[9px] font-black uppercase tracking-wider {{ $prazoFatalVencido ? 'text-white' : 'text-red-600 dark:text-red-400' }}">
+                                            {{ $prazoFatalVencido ? 'Prazo Fatal Vencido' : 'Prazo Fatal: '.$record->prazo_fatal_at->diffForHumans(null, true).' restantes' }}
+                                        </span>
+                                    </div>
+                                @endif
                                 @if($isCritical)
                                     <div class="flex items-center gap-1.5 mb-2 -mt-1 -mx-1 px-2 py-1 rounded bg-red-500/10 border border-red-500/40">
                                         <x-heroicon-s-fire class="w-3.5 h-3.5 text-red-500 shrink-0" />

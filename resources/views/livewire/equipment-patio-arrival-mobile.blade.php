@@ -97,6 +97,11 @@
                         <textarea wire:model="newObservation" rows="3" placeholder="Observação sobre este item..."
                                   class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-emerald-500"></textarea>
 
+                        <label class="flex items-center gap-2 rounded-xl bg-zinc-800 p-3 text-sm text-zinc-100">
+                            <input type="checkbox" wire:model="newHasDamage" class="h-5 w-5 rounded border-zinc-600 bg-zinc-700 text-red-500 focus:ring-red-500">
+                            <span>Avaria encontrada neste item (ativo vai pra quarentena)</span>
+                        </label>
+
                         @if($item->getMedia('photos')->count())
                             <div class="flex flex-wrap gap-2">
                                 @foreach($item->getMedia('photos') as $media)

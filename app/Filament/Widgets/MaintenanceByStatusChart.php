@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Pages\MaintenanceKanban;
 use App\Models\MaintenanceOrder;
 use Filament\Widgets\ChartWidget;
 
@@ -14,31 +15,45 @@ class MaintenanceByStatusChart extends ChartWidget
     protected int|string|array $columnSpan = ['md' => 1];
 
     /**
-     * Mesmas 6 colunas reais do Kanban (MaintenanceKanban::statusMap),
-     * na mesma ordem, para leitura consistente entre as duas telas.
-     */
-    private const STATUSES = [
-        'aguardando_diagnostico' => 'Aguardando Diagnóstico',
-        'em_manutencao' => 'Em Manutenção',
-        'aguardando_peca' => 'Aguardando Peça',
-        'teste_qualidade' => 'Teste de Qualidade',
-        'pendencia' => 'Pendência',
-        'concluido' => 'Concluído',
-    ];
-
-    /**
      * Paleta categorica validada (dataviz skill, dark mode) -- as cores
      * hexadecimais cruas do Kanban (Tailwind amber/orange/slate) nao
      * passam no validador de acessibilidade para esta superficie escura,
-     * entao aqui usamos a paleta validada, na mesma ordem das colunas.
+     * entao aqui usamos a paleta validada. Mapeada por chave de status (nao
+     * um array indexado) porque as colunas de MaintenanceKanban::statusMap()
+     * podem vir com 6 ou 8 entradas, dependendo de
+     * enabled_modules['kanban_oficina_extra'] do tenant -- indexar por
+     * posicao desalinharia as cores quando colunas do meio somem.
      */
-    private const COLORS = ['#3987e5', '#199e70', '#c98500', '#008300', '#9085e9', '#e66767'];
+    private const COLOR_MAP = [
+        'aguardando_diagnostico' => '#3987e5',
+        'em_manutencao' => '#199e70',
+        'aguardando_peca' => '#c98500',
+        'aguardando_peca_canibalizado' => '#a15c00',
+        'teste_qualidade' => '#008300',
+        'pronto_giro' => '#0d9488',
+        'pendencia' => '#9085e9',
+        'concluido' => '#e66767',
+    ];
+
+    /**
+     * Mesmas colunas reais do Kanban (MaintenanceKanban::statusMap('oficina')),
+     * ja' filtradas pelo toggle de tenant -- elimina a duplicacao que existia
+     * antes (lista hardcoded independente, sujeita a ficar dessincronizada).
+     */
+    private function statuses(): array
+    {
+        return array_map(fn ($column) => $column['title'], MaintenanceKanban::statusMap('oficina'));
+    }
 
     protected function getData(): array
     {
+        $statuses = $this->statuses();
+
         $counts = [];
-        foreach (self::STATUSES as $status => $label) {
+        $colors = [];
+        foreach ($statuses as $status => $label) {
             $counts[] = MaintenanceOrder::where('internal_status', $status)->count();
+            $colors[] = self::COLOR_MAP[$status] ?? '#64748b';
         }
 
         return [
@@ -46,11 +61,11 @@ class MaintenanceByStatusChart extends ChartWidget
                 [
                     'label' => 'OS',
                     'data' => $counts,
-                    'backgroundColor' => self::COLORS,
+                    'backgroundColor' => $colors,
                     'borderRadius' => 6,
                 ],
             ],
-            'labels' => array_values(self::STATUSES),
+            'labels' => array_values($statuses),
         ];
     }
 

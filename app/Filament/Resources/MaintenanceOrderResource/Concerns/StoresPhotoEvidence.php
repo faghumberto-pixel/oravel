@@ -103,14 +103,17 @@ trait StoresPhotoEvidence
             } else {
                 $order->evidences()->create($attributes + ['evidence_type' => $item['evidence_type']]);
 
-                // "Avaria" numa evidencia adicional da propria OS agora cria um
-                // EquipmentDamage de verdade (nao so' marca a foto) -- unico jeito de
-                // registrar avaria antes disso era pelo checklist mobile de
-                // mobilizacao/desmobilizacao, que nao cobre atendimento externo
-                // corretivo sem nenhuma movimentacao em andamento. Sem etapa de
-                // assinatura do cliente aqui (registro interno da OS, nao despacho
-                // presencial) -- nasce direto em aguardando_supervisor.
-                if ($item['severity'] === 'avaria') {
+                // "Avaria" OU "Mau Uso" (locadoras de construcao civil, evidencia
+                // pra cobranca/contestacao com o cliente da obra) numa evidencia
+                // adicional da propria OS agora cria um EquipmentDamage de verdade
+                // (nao so' marca a foto) -- unico jeito de registrar avaria antes
+                // disso era pelo checklist mobile de mobilizacao/desmobilizacao, que
+                // nao cobre atendimento externo corretivo sem nenhuma movimentacao em
+                // andamento. Sem etapa de assinatura do cliente aqui (registro interno
+                // da OS, nao despacho presencial) -- nasce direto em aguardando_supervisor.
+                if (in_array($item['severity'], ['avaria', 'mau_uso'], true)) {
+                    $isMauUso = $item['severity'] === 'mau_uso';
+
                     $damage = EquipmentDamage::create([
                         'tenant_id' => $order->tenant_id,
                         'maintenance_order_id' => $order->id,
@@ -118,7 +121,11 @@ trait StoresPhotoEvidence
                         'reported_by_user_id' => auth()->id(),
                         'severity' => $item['damage_severity'] ?? EquipmentDamage::SEVERITY_MODERADA,
                         'damage_type' => $item['damage_type'] ?? EquipmentDamage::DAMAGE_TYPE_OUTRO,
-                        'description' => $item['observation'] ?: "Avaria detectada na OS #{$order->os_number}",
+                        'description' => $item['observation'] ?: (
+                            $isMauUso
+                                ? "Mau uso detectado na OS #{$order->os_number}"
+                                : "Avaria detectada na OS #{$order->os_number}"
+                        ),
                         'status' => EquipmentDamage::STATUS_AGUARDANDO_SUPERVISOR,
                     ]);
 

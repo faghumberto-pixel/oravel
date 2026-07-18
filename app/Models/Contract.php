@@ -52,6 +52,7 @@ class Contract extends Model
         'start_date',
         'end_date',
         'price',
+        'multa_rescisoria',
         'payment_method',
         'usage_purpose',
         'required_nrs',

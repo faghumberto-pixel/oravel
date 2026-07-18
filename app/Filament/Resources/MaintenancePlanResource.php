@@ -61,6 +61,10 @@ class MaintenancePlanResource extends Resource
                 Forms\Components\Toggle::make('is_active')
                     ->label('Plano Ativo')
                     ->default(true),
+                Forms\Components\Toggle::make('auto_create_order')
+                    ->label('Gerar O.S. automaticamente quando vencer')
+                    ->helperText('Sem isso, o sistema só notifica o admin (comportamento padrão). Com isso ligado, uma O.S. Preventiva é criada sozinha assim que o horímetro ultrapassar o intervalo.')
+                    ->default(false),
             ]),
         ]);
     }

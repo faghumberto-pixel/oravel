@@ -281,11 +281,16 @@ class EditMaintenanceOrder extends EditRecord
                     ->action(function (array $data) {
                         $oldStatus = $this->record->status;
 
+                        // 'Cancelada' (feminino, concorda com "Ordem de Servico") -- ate
+                        // 2026-07-17 essa action gravava 'Cancelado', mas o Select do form
+                        // e o filtro do Kanban ('!= Cancelada') so reconhecem a grafia
+                        // feminina, entao uma OS cancelada por aqui nunca sumia do quadro
+                        // da oficina.
                         $this->record->update([
-                            'status' => 'Cancelado',
+                            'status' => 'Cancelada',
                             'cancel_reason' => $data['cancel_reason'],
                         ]);
-                        $this->record->logStatusChange('Cancelado', $oldStatus, $data['cancel_reason']);
+                        $this->record->logStatusChange('Cancelada', $oldStatus, $data['cancel_reason']);
 
                         Notification::make()
                             ->title('OS Cancelada')

@@ -10,6 +10,7 @@ use App\Models\FleetDriver;
 use App\Models\FleetVehicle;
 use App\Models\FreightRecord;
 use App\Models\MaintenanceOrder;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Attributes\Layout;
@@ -47,6 +48,10 @@ class EquipmentMovementMobile extends Component
     public ?string $fleetDriverId = null;
 
     public ?float $kmFinal = null;
+
+    public bool $loadBankTested = false;
+
+    public string $loadBankNotes = '';
 
     public function mount(MaintenanceOrder $maintenanceOrder, string $type): void
     {
@@ -92,6 +97,30 @@ class EquipmentMovementMobile extends Component
         $this->kmFinal = $this->equipmentMovement->km_final !== null
             ? (float) $this->equipmentMovement->km_final
             : null;
+        $this->loadBankTested = (bool) $this->equipmentMovement->load_bank_tested;
+        $this->loadBankNotes = (string) $this->equipmentMovement->load_bank_notes;
+    }
+
+    /**
+     * Teste em Banco de Carga (locadoras de evento/gerador) -- so' relevante
+     * na mobilizacao (entrega do equipamento), salvo em separado do resto
+     * do checklist pra nao exigir reabrir o item.
+     */
+    public function saveLoadBankTest(): void
+    {
+        if (! (Tenancy::current()?->hasModuleEnabled('banco_de_carga') ?? true)) {
+            return;
+        }
+
+        $this->validate([
+            'loadBankTested' => 'boolean',
+            'loadBankNotes' => 'nullable|string|max:2000',
+        ]);
+
+        $this->equipmentMovement->update([
+            'load_bank_tested' => $this->loadBankTested,
+            'load_bank_notes' => $this->loadBankNotes ?: null,
+        ]);
     }
 
     /**

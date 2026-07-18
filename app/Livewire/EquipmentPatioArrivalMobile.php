@@ -6,6 +6,7 @@ use App\Models\Asset;
 use App\Models\EquipmentMovement;
 use App\Models\EquipmentPatioArrival;
 use App\Models\EquipmentPatioArrivalItem;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -37,6 +38,8 @@ class EquipmentPatioArrivalMobile extends Component
     public ?string $expandedItemId = null;
 
     public string $newObservation = '';
+
+    public bool $newHasDamage = false;
 
     public $newPhoto = null;
 
@@ -115,6 +118,7 @@ class EquipmentPatioArrivalMobile extends Component
 
         $this->expandedItemId = $itemId;
         $this->newObservation = (string) $item->notes;
+        $this->newHasDamage = (bool) $item->has_damage;
         $this->resetPhotoForm();
     }
 
@@ -122,6 +126,7 @@ class EquipmentPatioArrivalMobile extends Component
     {
         $this->expandedItemId = null;
         $this->newObservation = '';
+        $this->newHasDamage = false;
         $this->resetPhotoForm();
     }
 
@@ -133,6 +138,7 @@ class EquipmentPatioArrivalMobile extends Component
 
         $this->validate([
             'newObservation' => 'nullable|string|max:2000',
+            'newHasDamage' => 'boolean',
             'newPhoto' => 'nullable|image|max:5120',
             'newPhotoLat' => 'nullable|numeric|between:-90,90',
             'newPhotoLng' => 'nullable|numeric|between:-180,180',
@@ -140,6 +146,7 @@ class EquipmentPatioArrivalMobile extends Component
 
         $item = $this->patioArrival->items()->whereKey($this->expandedItemId)->firstOrFail();
         $item->notes = $this->newObservation;
+        $item->has_damage = $this->newHasDamage;
         $item->save();
 
         if ($this->newPhoto) {
@@ -176,6 +183,12 @@ class EquipmentPatioArrivalMobile extends Component
         $this->patioArrival->update(['initial_condition_notes' => $this->generalNotes ?: null]);
     }
 
+    /**
+     * Checklist 100% com algum item marcado has_damage: ativo vai pra
+     * Quarentena em vez de Disponivel direto -- so' sai de la' pelo botao
+     * dedicado "Liberar da Quarentena" (AssetResource), nao automaticamente.
+     * Sem avaria encontrada, comportamento igual ao de sempre.
+     */
     public function finalize()
     {
         if ($this->progress < 100) {
@@ -184,9 +197,16 @@ class EquipmentPatioArrivalMobile extends Component
 
         $this->patioArrival->update(['completed_at' => now()]);
 
-        $this->equipmentMovement->asset?->update(['status' => Asset::STATUS_DISPONIVEL]);
+        $foundDamage = $this->patioArrival->items()->where('has_damage', true)->exists();
+        $goToQuarantine = $foundDamage && (Tenancy::current()?->hasModuleEnabled('quarentena') ?? true);
 
-        session()->flash('success', 'Laudo de Recebimento finalizado -- ativo liberado como disponível.');
+        $this->equipmentMovement->asset?->update([
+            'status' => $goToQuarantine ? Asset::STATUS_QUARENTENA : Asset::STATUS_DISPONIVEL,
+        ]);
+
+        session()->flash('success', $goToQuarantine
+            ? 'Laudo de Recebimento finalizado -- avaria encontrada, ativo em quarentena até revisão.'
+            : 'Laudo de Recebimento finalizado -- ativo liberado como disponível.');
 
         return redirect()->route('filament.admin.pages.patio-chegadas');
     }

@@ -55,6 +55,27 @@ class DossieOperacional extends Page
             : 'Check-in (Mobilização)';
     }
 
+    /**
+     * Comparativo Antes/Depois (locadoras de construcao civil, evidencia
+     * pra cobranca/contestacao com o cliente da obra) -- os 2 slots fixos
+     * ('antes'/'depois', singleton) ja existiam nas evidencias da OS, so'
+     * nunca tinham uma visualizacao lado a lado dedicada. Destaca quando
+     * alguma evidencia adicional (severity === 'mau_uso') foi registrada
+     * junto, ver StoresPhotoEvidence::persistPhotoEvidences().
+     */
+    public function getAntesDepoisProperty(): array
+    {
+        return [
+            'antes' => $this->record->evidences->firstWhere('evidence_type', 'antes'),
+            'depois' => $this->record->evidences->firstWhere('evidence_type', 'depois'),
+        ];
+    }
+
+    public function getMauUsoEvidencesProperty()
+    {
+        return $this->record->evidences->where('severity', 'mau_uso');
+    }
+
     public function getEvidencesByCategory()
     {
         return $this->record->evidences->groupBy(function ($evidence) {

@@ -38,6 +38,14 @@ class Asset extends Model
 
     public const STATUS_AGUARDANDO_TRIAGEM = 'aguardando_triagem';
 
+    /**
+     * Diferente de STATUS_AGUARDANDO_TRIAGEM (checklist de retorno em
+     * andamento): quarentena e' o estado POS-checklist quando o laudo de
+     * recebimento encontrou avaria -- fica retido ate liberacao manual
+     * mesmo com o checklist 100% preenchido (ver EquipmentPatioArrivalMobile::finalize()).
+     */
+    public const STATUS_QUARENTENA = 'quarentena';
+
     protected static ?string $saasFeatureKey = 'tabela_assets';
 
     protected static ?string $saasPermissionSlug = 'ativo';

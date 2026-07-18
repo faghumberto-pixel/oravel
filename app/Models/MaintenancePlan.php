@@ -25,6 +25,10 @@ class MaintenancePlan extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'auto_create_order' => 'boolean',
+    ];
+
     protected static function booted()
     {
         static::creating(function ($model) {

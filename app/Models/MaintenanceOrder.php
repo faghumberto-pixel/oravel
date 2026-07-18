@@ -42,6 +42,8 @@ class MaintenanceOrder extends Model implements HasMedia
 
     public const TYPE_TROCA = 'Troca';
 
+    public const TYPE_EMERGENCIA = 'Emergência';
+
     protected $keyType = 'string';
 
     public $incrementing = false;
@@ -54,6 +56,7 @@ class MaintenanceOrder extends Model implements HasMedia
         'last_timer_start', 'reschedule_reason', 'criticality_level_id', 'is_rework',
         'parent_os_id', 'labor_cost', 'material_cost', 'logistics_cost', 'total_order_cost',
         'horimetro_entry', 'fuel_level', 'scheduled_at',
+        'is_prazo_fatal', 'prazo_fatal_at', 'sla_target_minutes',
     ];
 
     protected $casts = [
@@ -64,7 +67,34 @@ class MaintenanceOrder extends Model implements HasMedia
         'is_rework' => 'boolean',
         'total_time_seconds' => 'integer',
         'horimetro_entry' => 'decimal:2',
+        'is_prazo_fatal' => 'boolean',
+        'prazo_fatal_at' => 'datetime',
+        'sla_target_minutes' => 'integer',
     ];
+
+    /**
+     * Cor do badge de SLA -- mesmo padrao de EquipmentReplacementResource::slaColor(),
+     * so' que em minutos (nao horas) e a partir de created_at (ticket aberto)
+     * em vez de uma janela fixa por urgencia.
+     */
+    public function slaColor(): ?string
+    {
+        if (! $this->sla_target_minutes) {
+            return null;
+        }
+
+        if ($this->started_at) {
+            return 'gray';
+        }
+
+        $minutosDecorridos = $this->created_at->diffInMinutes(now());
+
+        return match (true) {
+            $minutosDecorridos >= $this->sla_target_minutes => 'danger',
+            $minutosDecorridos >= $this->sla_target_minutes * 0.7 => 'warning',
+            default => 'success',
+        };
+    }
 
     public function registerMediaConversions(?Media $media = null): void
     {
@@ -244,6 +274,29 @@ class MaintenanceOrder extends Model implements HasMedia
                 if (in_array($os->status, ['Concluída', 'Completado'])) {
                     $os->finished_at = now();
                 }
+            }
+        });
+
+        /**
+         * horimetro_entry (preenchido em toda OS) ate 2026-07-17 nunca
+         * atualizava Asset.horimetro_atual -- so' PreventiveMaintenanceExecution::saved()
+         * fazia isso, deixando o gatilho de preventiva vencida (MaintenancePlan::dueStatusForAsset())
+         * olhando pra um horimetro desatualizado em qualquer fluxo que nao
+         * passasse pela execucao formal de preventiva. Mesmo criterio (so
+         * atualiza se o valor informado e' maior, nunca regride).
+         */
+        static::saved(function (MaintenanceOrder $os) {
+            if (! $os->horimetro_entry || ! $os->asset_id) {
+                return;
+            }
+
+            $asset = $os->asset;
+
+            if ($asset && (float) $os->horimetro_entry >= (float) $asset->horimetro_atual) {
+                $asset->updateQuietly([
+                    'horimetro_atual' => $os->horimetro_entry,
+                    'last_horimetro' => $os->horimetro_entry,
+                ]);
             }
         });
     }

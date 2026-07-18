@@ -23,6 +23,22 @@ class Client extends Model
 
     use BelongsToTenant;
 
+    /**
+     * Nicho de locação -- reaproveita 'activity_type' (coluna ja existia na
+     * tabela desde 2026-05-03, fillable, mas nunca exposta em nenhum
+     * form/tabela ate agora). Um mesmo tenant pode ter clientes de nichos
+     * diferentes; terminologia (Prazo Fatal/Quarentena/Emergencia/etc) e
+     * fixa pra todo mundo -- o nicho so' influencia sugestao de campos, nao
+     * trava nada.
+     */
+    public const NICHE_EVENTOS = 'eventos';
+
+    public const NICHE_INDUSTRIAL_HOSPITALAR = 'industrial_hospitalar';
+
+    public const NICHE_CONSTRUCAO_CIVIL = 'construcao_civil';
+
+    public const NICHE_OUTRO = 'outro';
+
     // Todos os Traits agora estão corretamente declarados DENTRO do corpo da classe
     use HasFactory, HasUuids, SoftDeletes;
 
@@ -143,5 +159,18 @@ class Client extends Model
     public function scopeByDocument($query, $document)
     {
         return $query->where('cpf_cnpj', $document);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function nicheLabels(): array
+    {
+        return [
+            self::NICHE_EVENTOS => 'Eventos',
+            self::NICHE_INDUSTRIAL_HOSPITALAR => 'Industrial / Hospitalar',
+            self::NICHE_CONSTRUCAO_CIVIL => 'Construção Civil',
+            self::NICHE_OUTRO => 'Outro',
+        ];
     }
 }

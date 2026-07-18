@@ -71,6 +71,8 @@ class EquipmentMovement extends Model implements HasMedia
         'qr_token',
         'custo_transporte',
         'client_signature',
+        'load_bank_tested',
+        'load_bank_notes',
     ];
 
     protected $casts = [
@@ -84,6 +86,7 @@ class EquipmentMovement extends Model implements HasMedia
         'custo_transporte' => 'decimal:2',
         'km_inicial' => 'decimal:2',
         'km_final' => 'decimal:2',
+        'load_bank_tested' => 'boolean',
     ];
 
     protected static function booted(): void

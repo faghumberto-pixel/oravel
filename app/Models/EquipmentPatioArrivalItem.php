@@ -29,12 +29,14 @@ class EquipmentPatioArrivalItem extends Model implements HasMedia
         'is_checked',
         'value',
         'notes',
+        'has_damage',
     ];
 
     protected $casts = [
         'sort_order' => 'integer',
         'requires_photo' => 'boolean',
         'is_checked' => 'boolean',
+        'has_damage' => 'boolean',
     ];
 
     public function registerMediaCollections(): void

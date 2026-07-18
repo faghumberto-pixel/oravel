@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Asset;
 use App\Models\MaintenanceDueAlert;
+use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
 use App\Models\Role;
 use App\Models\Tenant;
@@ -83,12 +84,39 @@ class CheckMaintenanceDueAlerts extends Command
 
         $this->notifyAdmins($tenant, $asset, $plano, $status);
 
+        // Opt-in por plano (auto_create_order, default false) -- nao muda
+        // comportamento de planos ja cadastrados. Soma a notificacao, nao
+        // substitui: mesmo com a O.S. criada sozinha, o admin ainda e'
+        // avisado. Dedupe de 7 dias (MaintenanceDueAlert) ja impede criar
+        // mais de uma O.S. pro mesmo Ativo+Plano em sequencia.
+        if ($plano->auto_create_order) {
+            $this->createOrderAutomatically($tenant, $asset, $plano, $status);
+        }
+
         MaintenanceDueAlert::updateOrCreate(
             ['asset_id' => $asset->id, 'maintenance_plan_id' => $plano->id],
             ['tenant_id' => $tenant->id, 'alerted_at' => now()]
         );
 
         return 1;
+    }
+
+    private function createOrderAutomatically(Tenant $tenant, Asset $asset, MaintenancePlan $plano, array $status): void
+    {
+        MaintenanceOrder::create([
+            'tenant_id' => $tenant->id,
+            'asset_id' => $asset->id,
+            'client_id' => $asset->client_id,
+            'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
+            'status' => 'Aberto',
+            'description' => sprintf(
+                'Gerada automaticamente: "%s" vencida há %s horas (previsto para %sh, horímetro atual %sh).',
+                $plano->name,
+                number_format($status['overdue_hours'], 1),
+                number_format($status['due_at_hours'], 1),
+                number_format((float) $asset->horimetro_atual, 1),
+            ),
+        ]);
     }
 
     /**

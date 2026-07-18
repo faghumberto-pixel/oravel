@@ -55,6 +55,11 @@ class ClientResource extends Resource
                                 Forms\Components\TextInput::make('state_registration')->label('Inscrição Estadual')->maxLength(50),
                                 Forms\Components\TextInput::make('municipal_registration')->label('Inscrição Municipal')->maxLength(50),
                                 Forms\Components\TextInput::make('tax_regime')->label('Regime Tributário')->placeholder('Ex: Simples Nacional, Lucro Presumido...')->maxLength(100),
+                                Forms\Components\Select::make('activity_type')
+                                    ->label('Nicho')
+                                    ->options(Client::nicheLabels())
+                                    ->native(false)
+                                    ->helperText('Usado pra sugerir campos relevantes nas Ordens de Serviço deste cliente (Prazo Fatal, Chamado de Emergência, etc).'),
                             ])->columns(2),
                             Forms\Components\Section::make('Endereço de Faturamento')->schema([
                                 Forms\Components\TextInput::make('address')->label('Logradouro e Nº')->maxLength(255),
@@ -153,9 +158,17 @@ class ClientResource extends Resource
                 Tables\Columns\TextColumn::make('document')->label('CNPJ')->searchable(),
                 Tables\Columns\TextColumn::make('city')->label('Cidade')->sortable(),
                 Tables\Columns\TextColumn::make('state')->label('UF'),
+                Tables\Columns\TextColumn::make('activity_type')
+                    ->label('Nicho')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state) => $state ? (Client::nicheLabels()[$state] ?? $state) : null)
+                    ->placeholder('—'),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\SelectFilter::make('activity_type')
+                    ->label('Nicho')
+                    ->options(Client::nicheLabels()),
                 Tables\Filters\SelectFilter::make('state')
                     ->label('UF')
                     ->options(fn () => Client::query()->whereNotNull('state')->distinct()->pluck('state', 'state')),

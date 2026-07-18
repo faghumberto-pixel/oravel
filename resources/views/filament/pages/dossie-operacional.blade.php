@@ -137,6 +137,57 @@
             @endif
         </div>
 
+        {{-- Comparativo Antes/Depois (locadoras de construção civil) --}}
+        @php $antesDepois = $this->antesDepois; @endphp
+        @if($antesDepois['antes'] || $antesDepois['depois'])
+            <div class="rounded-xl border border-gray-800 bg-gray-900 p-6 shadow-xl">
+                <div class="mb-4 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <x-heroicon-o-arrows-right-left class="h-5 w-5 text-emerald-400" />
+                        <h3 class="text-sm font-black uppercase tracking-widest text-white">Comparativo Antes / Depois</h3>
+                    </div>
+                    @if($this->mauUsoEvidences->isNotEmpty())
+                        <span class="inline-flex items-center gap-1 rounded-full bg-amber-600/20 px-3 py-1 text-[10px] font-black uppercase text-amber-400">
+                            <x-heroicon-o-exclamation-triangle class="h-3.5 w-3.5" />
+                            {{ $this->mauUsoEvidences->count() }} evidência(s) de mau uso
+                        </span>
+                    @endif
+                </div>
+
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    @foreach(['antes' => 'Estado Inicial', 'depois' => 'Estado Final'] as $tipo => $label)
+                        <div class="overflow-hidden rounded-lg border border-gray-800 bg-gray-950">
+                            <div class="bg-gray-800 px-3 py-1.5 text-[10px] font-black uppercase text-gray-300">{{ $label }}</div>
+                            @if($antesDepois[$tipo])
+                                <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($antesDepois[$tipo]->file_path) }}" class="h-56 w-full object-cover" />
+                                <div class="p-3 font-mono text-[10px] text-gray-400">
+                                    Capturada em: {{ optional($antesDepois[$tipo]->captured_at)->format('d/m/Y H:i:s') }}
+                                </div>
+                            @else
+                                <div class="flex h-56 items-center justify-center text-[11px] text-gray-600">Sem foto registrada</div>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+
+                @if($this->mauUsoEvidences->isNotEmpty())
+                    <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                        @foreach($this->mauUsoEvidences as $evidence)
+                            <div class="overflow-hidden rounded-lg border border-amber-600/40 bg-gray-950">
+                                <div class="bg-amber-600 px-3 py-1.5 text-[10px] font-black uppercase text-white">Mau Uso — {{ $evidence->category ?: 'Sem categoria' }}</div>
+                                @if($evidence->file_path)
+                                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($evidence->file_path) }}" class="h-40 w-full object-cover" />
+                                @endif
+                                @if($evidence->observation)
+                                    <div class="p-2 text-[10px] text-gray-300">{{ $evidence->observation }}</div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        @endif
+
         {{-- Rota do transporte (checkpoints de rastreamento manual) --}}
         @foreach($order->equipmentMovements as $movement)
             @if($movement->locations->isNotEmpty())

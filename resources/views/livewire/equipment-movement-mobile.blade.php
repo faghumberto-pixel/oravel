@@ -157,6 +157,25 @@
         </div>
     </section>
 
+    {{-- Banco de Carga (locadoras de evento/gerador) -- so' na mobilizacao --}}
+    @if($equipmentMovement->type === \App\Models\EquipmentMovement::TYPE_MOBILIZACAO && (\App\Support\Tenancy::current()?->hasModuleEnabled('banco_de_carga') ?? true))
+        <section class="px-5 pb-4">
+            <div class="rounded-2xl bg-zinc-900 p-4">
+                <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">Teste em Banco de Carga</h3>
+
+                <label class="mt-3 flex items-center gap-2 rounded-xl bg-zinc-800 p-3 text-sm text-zinc-100">
+                    <input type="checkbox" wire:model.live="loadBankTested" wire:change="saveLoadBankTest"
+                           class="h-5 w-5 rounded border-zinc-600 bg-zinc-700 text-emerald-500 focus:ring-emerald-500">
+                    <span>Equipamento testado em banco de carga antes da liberação</span>
+                </label>
+
+                <textarea wire:model.blur="loadBankNotes" wire:change="saveLoadBankTest" rows="2"
+                          placeholder="Observações do teste (kW aplicado, duração, resultado...)"
+                          class="mt-2 w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-emerald-500"></textarea>
+            </div>
+        </section>
+    @endif
+
     {{-- Vistoria Geral (foto de capa) --}}
     <section class="px-5 pb-4">
         <div class="rounded-2xl bg-zinc-900 p-4">

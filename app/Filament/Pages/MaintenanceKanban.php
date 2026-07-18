@@ -44,6 +44,17 @@ class MaintenanceKanban extends Page
 
     public bool $showFilters = false;
 
+    /**
+     * Define so' o valor INICIAL de $viewMode a partir da preferencia salva
+     * do tenant (ui_customizations['kanban_default_view']) -- o toggle
+     * manual do usuario (wire:click="$set('viewMode', ...)") continua
+     * funcionando igual, so' muda o default de cada carregamento.
+     */
+    public function mount(): void
+    {
+        $this->viewMode = (Tenancy::current()?->ui_customizations ?? [])['kanban_default_view'] ?? 'oficina';
+    }
+
     public function getMaxContentWidth(): MaxWidth
     {
         return MaxWidth::Full;
@@ -82,20 +93,35 @@ class MaintenanceKanban extends Page
      */
     public static function statusMap(string $viewMode): array
     {
-        return $viewMode === 'comercial'
-            ? [
+        if ($viewMode === 'comercial') {
+            return [
                 'disponivel' => ['title' => 'Disponível no Pátio', 'color' => 'bg-emerald-600'],
                 'locado' => ['title' => 'Em Obra (Locado)', 'color' => 'bg-blue-600'],
                 'oficina' => ['title' => 'Retido / Oficina', 'color' => 'bg-red-600'],
-            ]
-            : [
-                'aguardando_diagnostico' => ['title' => 'Aguardando Diagnóstico', 'color' => 'bg-slate-600'],
-                'em_manutencao' => ['title' => 'Em Manutenção', 'color' => 'bg-blue-600'],
-                'aguardando_peca' => ['title' => 'Aguardando Peça', 'color' => 'bg-amber-500', 'flag' => 'Gargalo'],
-                'teste_qualidade' => ['title' => 'Teste de Qualidade', 'color' => 'bg-purple-600'],
-                'pendencia' => ['title' => 'Pendência', 'color' => 'bg-orange-500'],
-                'concluido' => ['title' => 'Concluído', 'color' => 'bg-emerald-600'],
             ];
+        }
+
+        $map = [
+            'aguardando_diagnostico' => ['title' => 'Aguardando Diagnóstico', 'color' => 'bg-slate-600'],
+            'em_manutencao' => ['title' => 'Em Manutenção', 'color' => 'bg-blue-600'],
+            'aguardando_peca' => ['title' => 'Aguardando Peça', 'color' => 'bg-amber-500', 'flag' => 'Gargalo'],
+            // Locadoras de construcao civil (giro de patio/oficina) --
+            // 100% drag-and-drop manual, confirmado seguro:
+            // MaintenanceOrderObserver::updated() so' automatiza
+            // em_manutencao/teste_qualidade, nunca mexe nessas 2. Ficam
+            // condicionadas a enabled_modules['kanban_oficina_extra'].
+            'aguardando_peca_canibalizado' => ['title' => 'Aguardando Peças / Canibalizado', 'color' => 'bg-amber-700', 'flag' => 'Gargalo'],
+            'teste_qualidade' => ['title' => 'Teste de Qualidade', 'color' => 'bg-purple-600'],
+            'pronto_giro' => ['title' => 'Pronto para Giro/Pátio', 'color' => 'bg-teal-600'],
+            'pendencia' => ['title' => 'Pendência', 'color' => 'bg-orange-500'],
+            'concluido' => ['title' => 'Concluído', 'color' => 'bg-emerald-600'],
+        ];
+
+        if (! (Tenancy::current()?->hasModuleEnabled('kanban_oficina_extra') ?? true)) {
+            unset($map['aguardando_peca_canibalizado'], $map['pronto_giro']);
+        }
+
+        return $map;
     }
 
     public function getStatuses(): array
