@@ -11,9 +11,13 @@
             <div class="px-5 pt-5 pb-4 shrink-0">
                 <div class="flex items-center justify-between">
                     <h2 class="text-2xl font-extrabold tracking-tight text-white">Chat Interno</h2>
-                    <div class="w-10 h-10 bg-primary-500 text-white flex items-center justify-center text-sm font-bold shadow" style="border-radius:9999px;">
-                        {{ Str::upper(Str::substr(auth()->user()?->name ?? '?', 0, 1)) }}
-                    </div>
+                    @if($avatarUrl = auth()->user()?->getFilamentAvatarUrl())
+                        <img src="{{ $avatarUrl }}" class="w-10 h-10 rounded-full object-cover shadow" alt="">
+                    @else
+                        <div class="w-10 h-10 bg-primary-500 text-white flex items-center justify-center text-sm font-bold shadow" style="border-radius:9999px;">
+                            {{ Str::upper(Str::substr(auth()->user()?->name ?? '?', 0, 1)) }}
+                        </div>
+                    @endif
                 </div>
                 <p class="mt-1.5 text-xs font-medium text-gray-400">
                     Você: <span class="font-bold text-primary-400">{{ auth()->user()?->name }}</span>
@@ -42,9 +46,13 @@
                         ])
                     >
                         <div class="relative shrink-0">
-                            <div class="w-11 h-11 bg-primary-900/40 text-primary-300 flex items-center justify-center text-base font-bold" style="border-radius:9999px;">
-                                {{ Str::upper(Str::substr(data_get($user, 'name', '?'), 0, 1)) }}
-                            </div>
+                            @if(data_get($user, 'avatar_url'))
+                                <img src="{{ data_get($user, 'avatar_url') }}" class="w-11 h-11 rounded-full object-cover" alt="">
+                            @else
+                                <div class="w-11 h-11 bg-primary-900/40 text-primary-300 flex items-center justify-center text-base font-bold" style="border-radius:9999px;">
+                                    {{ Str::upper(Str::substr(data_get($user, 'name', '?'), 0, 1)) }}
+                                </div>
+                            @endif
                             <span @class(['absolute bottom-0 right-0 w-3 h-3 border-2 border-gray-900','bg-green-500' => data_get($user, 'is_online'),'bg-gray-600' => ! data_get($user, 'is_online')]) style="border-radius:9999px;"></span>
                         </div>
                         <div class="min-w-0 flex-1">
@@ -97,9 +105,13 @@
                         <x-heroicon-o-arrow-left class="w-5 h-5" />
                     </button>
                     <div class="relative shrink-0">
-                        <div class="w-10 h-10 bg-primary-900/40 text-primary-300 flex items-center justify-center text-base font-bold" style="border-radius:9999px;">
-                            {{ Str::upper(Str::substr(data_get($this->selectedUser, 'name', '?'), 0, 1)) }}
-                        </div>
+                        @if(data_get($this->selectedUser, 'avatar_url'))
+                            <img src="{{ data_get($this->selectedUser, 'avatar_url') }}" class="w-10 h-10 rounded-full object-cover" alt="">
+                        @else
+                            <div class="w-10 h-10 bg-primary-900/40 text-primary-300 flex items-center justify-center text-base font-bold" style="border-radius:9999px;">
+                                {{ Str::upper(Str::substr(data_get($this->selectedUser, 'name', '?'), 0, 1)) }}
+                            </div>
+                        @endif
                         <span @class(['absolute bottom-0 right-0 w-3 h-3 border-2 border-gray-900','bg-green-500' => data_get($this->selectedUser, 'is_online'),'bg-gray-600' => ! data_get($this->selectedUser, 'is_online')]) style="border-radius:9999px;"></span>
                     </div>
                     <div class="min-w-0 flex-1">

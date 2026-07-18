@@ -33,9 +33,13 @@
             {{-- Header: sempre visivel, clicavel pra expandir/recolher --}}
             <button type="button" wire:click="toggleExpanded" class="flex items-center justify-between px-4 py-3 bg-gray-900 hover:bg-gray-800 transition-colors shrink-0">
                 <div class="flex items-center gap-2 min-w-0">
-                    <span class="flex items-center justify-center w-7 h-7 rounded-full bg-primary-600 text-white text-xs font-bold shrink-0">
-                        {{ $this->selectedUser ? Illuminate\Support\Str::upper(Illuminate\Support\Str::substr($this->selectedUser['name'], 0, 1)) : '💬' }}
-                    </span>
+                    @if($this->selectedUser && ($this->selectedUser['avatar_url'] ?? null))
+                        <img src="{{ $this->selectedUser['avatar_url'] }}" class="w-7 h-7 rounded-full object-cover shrink-0" alt="">
+                    @else
+                        <span class="flex items-center justify-center w-7 h-7 rounded-full bg-primary-600 text-white text-xs font-bold shrink-0">
+                            {{ $this->selectedUser ? Illuminate\Support\Str::upper(Illuminate\Support\Str::substr($this->selectedUser['name'], 0, 1)) : '💬' }}
+                        </span>
+                    @endif
                     <span class="text-sm font-bold text-white truncate">{{ $this->selectedUser['name'] ?? 'Mensagens' }}</span>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
@@ -67,9 +71,13 @@
                             <button type="button" wire:click="selectConversation('{{ $contact['id'] }}')"
                                     class="w-full flex items-center gap-2.5 px-3 py-2.5 hover:bg-gray-800/60 transition-colors text-left">
                                 <div class="relative shrink-0">
-                                    <span class="flex items-center justify-center w-9 h-9 rounded-full bg-primary-900/40 text-primary-300 text-sm font-bold">
-                                        {{ Illuminate\Support\Str::upper(Illuminate\Support\Str::substr($contact['name'], 0, 1)) }}
-                                    </span>
+                                    @if($contact['avatar_url'] ?? null)
+                                        <img src="{{ $contact['avatar_url'] }}" class="w-9 h-9 rounded-full object-cover" alt="">
+                                    @else
+                                        <span class="flex items-center justify-center w-9 h-9 rounded-full bg-primary-900/40 text-primary-300 text-sm font-bold">
+                                            {{ Illuminate\Support\Str::upper(Illuminate\Support\Str::substr($contact['name'], 0, 1)) }}
+                                        </span>
+                                    @endif
                                     <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-gray-900 {{ $contact['is_online'] ? 'bg-green-500' : 'bg-gray-600' }}"></span>
                                 </div>
                                 <div class="min-w-0 flex-1">

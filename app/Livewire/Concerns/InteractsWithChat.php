@@ -89,7 +89,7 @@ trait InteractsWithChat
             ->when($departmentId, fn ($q) => $q->where('department_id', $departmentId))
             ->with('department:id,name')
             ->orderBy('name')
-            ->get(['id', 'name', 'last_seen', 'department_id'])
+            ->get(['id', 'name', 'last_seen', 'department_id', 'avatar_url'])
             ->map(function (User $user) use ($unreadByUser, $lastMessageByRoom, $roomIdByUser) {
                 $roomId = $roomIdByUser[$user->id] ?? null;
                 $lastMessage = $roomId ? $lastMessageByRoom->get($roomId) : null;
@@ -98,6 +98,7 @@ trait InteractsWithChat
                     'id' => $user->id,
                     'name' => $user->name,
                     'department' => $user->department?->name,
+                    'avatar_url' => $user->getFilamentAvatarUrl(),
                     'is_online' => $user->isOnline(),
                     'unread' => (int) ($unreadByUser[$user->id] ?? 0),
                     'last_message' => $lastMessage?->message,
