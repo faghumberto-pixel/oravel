@@ -58,6 +58,11 @@ class RentalDispatchChecklistMobile extends Component
                 'asset_id' => $solicitacaoLocacao->asset_id,
                 'type' => EquipmentMovement::TYPE_MOBILIZACAO,
                 'status' => EquipmentMovement::STATUS_AGUARDANDO_VISTORIA,
+                // scheduled_at=now() pra nascer visivel no mapa de
+                // Programacao da Logistica (LogisticaAgendaWidget exige
+                // scheduled_at preenchido) -- reagenda pelo calendario se
+                // precisar de outro horario.
+                'scheduled_at' => now(),
             ]);
         }
 

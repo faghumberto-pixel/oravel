@@ -78,6 +78,15 @@ class EquipmentMovementMobile extends Component
                 'asset_id' => $maintenanceOrder->asset_id,
                 'type' => $type,
                 'status' => EquipmentMovement::STATUS_AGUARDANDO_VISTORIA,
+                // Sem isso a movimentacao nasce com scheduled_at nulo e
+                // LogisticaAgendaWidget::fetchEvents() exige
+                // whereNotNull('scheduled_at') -- ela nunca aparecia no mapa
+                // de Programacao quando criada por aqui (so' aparecia quando
+                // nascia pelo fluxo inverso, agendada primeiro no calendario
+                // da Logistica). Agora nasce visivel nos dois casos; a
+                // Logistica reagenda pelo calendario se precisar de outro
+                // horario.
+                'scheduled_at' => now(),
             ]);
 
             // Ativo "acabou de retornar de obra" -- fica fora do pool

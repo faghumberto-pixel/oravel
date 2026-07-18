@@ -180,11 +180,15 @@ class EquipmentReplacement extends Model
             return;
         }
 
+        // scheduled_at=now() pra nascer visivel no mapa de Programacao da
+        // Logistica (LogisticaAgendaWidget exige scheduled_at preenchido) --
+        // Logistica reagenda pelo calendario se precisar de outro horario.
         $desmobilization = EquipmentMovement::create([
             'tenant_id' => $this->tenant_id,
             'maintenance_order_id' => $this->maintenance_order_id,
             'asset_id' => $this->original_asset_id,
             'type' => EquipmentMovement::TYPE_DESMOBILIZACAO,
+            'scheduled_at' => now(),
         ]);
 
         $mobilization = EquipmentMovement::create([
@@ -192,6 +196,7 @@ class EquipmentReplacement extends Model
             'maintenance_order_id' => $this->maintenance_order_id,
             'asset_id' => $this->replacement_asset_id,
             'type' => EquipmentMovement::TYPE_MOBILIZACAO,
+            'scheduled_at' => now(),
         ]);
 
         $this->update([
