@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\HasSaaSMetadata;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -18,10 +19,11 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser, HasTenants, MustVerifyEmail
+class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenants, MustVerifyEmail
 {
     use HasFactory, HasRoles, HasUuids, Notifiable;
     use HasSaaSMetadata;
@@ -240,6 +242,17 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
         }
 
         return (bool) $this->is_approved;
+    }
+
+    /**
+     * Sem isso, FilamentManager::getUserAvatarUrl() usa avatar_url "cru"
+     * (o FileUpload::avatar() do filament-breezy salva so o caminho
+     * relativo ao disco, nao a URL) -- o <img src> quebrava e o avatar
+     * nunca aparecia, mesmo com o upload funcionando.
+     */
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->avatar_url ? Storage::disk('public')->url($this->avatar_url) : null;
     }
 
     public function getTenants(Panel $panel): Collection
