@@ -2,30 +2,66 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\HasSaaSMetadata;
 use App\Models\Concerns\BelongsToTenant;
-
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\HasSaaSMetadata;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Permission\Models\Role;
 
 class Department extends Model
 {
+    use BelongsToTenant;
     use HasSaaSMetadata;
     use HasUuids;
-    use BelongsToTenant;
 
-    protected static ?string $saasFeatureKey = "tabela_departments";
-    protected static ?string $saasPermissionSlug = "departamento";
-    protected static ?string $saasModuleLabel = "Departamentos";
+    protected static ?string $saasFeatureKey = 'tabela_departments';
+
+    protected static ?string $saasPermissionSlug = 'departamento';
+
+    protected static ?string $saasModuleLabel = 'Departamentos';
 
     protected $fillable = [
         'name',
         'code',
         'tenant_id',
+        'sector_key',
     ];
+
+    /**
+     * Department e' 100% texto livre por tenant (nome/codigo digitados a
+     * mao, sem taxonomia canonica) -- sector_key resolve "qual
+     * departamento deste tenant e' o setor X de verdade", pra travas de
+     * hierarquia que precisam de certeza. Nullable/opcional: departamento
+     * "customizado" sem chave fica de fora das travas novas.
+     */
+    public const SECTOR_COMERCIAL = 'comercial';
+
+    public const SECTOR_MANUTENCAO = 'manutencao';
+
+    public const SECTOR_SUPRIMENTOS = 'suprimentos';
+
+    public const SECTOR_LOGISTICA = 'logistica';
+
+    public const SECTOR_FINANCEIRO = 'financeiro';
+
+    public const SECTOR_ADMINISTRATIVO = 'administrativo';
+
+    /**
+     * @return array<string, string>
+     */
+    public static function sectorLabels(): array
+    {
+        return [
+            self::SECTOR_COMERCIAL => 'Comercial',
+            self::SECTOR_MANUTENCAO => 'Manutenção',
+            self::SECTOR_SUPRIMENTOS => 'Suprimentos',
+            self::SECTOR_LOGISTICA => 'Logística',
+            self::SECTOR_FINANCEIRO => 'Financeiro',
+            self::SECTOR_ADMINISTRATIVO => 'Administrativo',
+        ];
+    }
 
     /**
      * Relacionamento com a Empresa (Tenant)

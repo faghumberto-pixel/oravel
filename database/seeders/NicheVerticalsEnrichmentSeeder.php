@@ -94,8 +94,9 @@ class NicheVerticalsEnrichmentSeeder extends Seeder
             }
 
             if (InternalUnit::where('tenant_id', $tenant->id)->exists()) {
-                $this->command?->info("Tenant '{$ctx['slug']}' já foi enriquecido -- só garantindo scheduled_at.");
+                $this->command?->info("Tenant '{$ctx['slug']}' já foi enriquecido -- só garantindo scheduled_at e organograma.");
                 $this->ensureScheduledAt($tenant);
+                $this->ensureOrganograma($tenant);
 
                 continue;
             }
@@ -194,16 +195,49 @@ class NicheVerticalsEnrichmentSeeder extends Seeder
         );
     }
 
-    /** @return array{tecnico: User, supervisor: User, suprimentos: User} */
-    private function seedExtraUsers(Tenant $tenant, array $ctx): array
+    /**
+     * Organograma (prova de conceito, setor Logistica): setor + niveis
+     * hierarquicos -- Tecnico=1, Supervisor=5. So' isso habilita a trava
+     * real de PatioAprovacoes::approve() pra estes 3 tenants
+     * (Department.sector_key='logistica' + papel com hierarchy_level).
+     * Idempotente e SEM criar usuario -- roda tanto na primeira
+     * semeadura quanto em retrofit de tenant ja enriquecido antes.
+     */
+    private function ensureOrganograma(Tenant $tenant): Department
     {
         $department = Department::firstOrCreate(
             ['tenant_id' => $tenant->id, 'code' => 'OPS'],
-            ['name' => 'Operações']
+            ['name' => 'Operações', 'sector_key' => Department::SECTOR_LOGISTICA]
         );
+        if ($department->sector_key !== Department::SECTOR_LOGISTICA) {
+            $department->update(['sector_key' => Department::SECTOR_LOGISTICA]);
+        }
 
-        $tecnicoRole = Role::firstOrCreate(['name' => 'tecnico', 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
-        $supervisorRole = Role::firstOrCreate(['name' => 'Supervisor de Operações', 'guard_name' => 'web', 'tenant_id' => $tenant->id], ['department_id' => $department->id]);
+        $tecnicoRole = Role::firstOrCreate(
+            ['name' => 'tecnico', 'guard_name' => 'web', 'tenant_id' => $tenant->id],
+            ['department_id' => $department->id, 'hierarchy_level' => Role::LEVEL_TECNICO]
+        );
+        $supervisorRole = Role::firstOrCreate(
+            ['name' => 'Supervisor de Operações', 'guard_name' => 'web', 'tenant_id' => $tenant->id],
+            ['department_id' => $department->id, 'hierarchy_level' => Role::LEVEL_SUPERVISOR]
+        );
+        if ($tecnicoRole->hierarchy_level !== Role::LEVEL_TECNICO || $tecnicoRole->department_id !== $department->id) {
+            $tecnicoRole->update(['department_id' => $department->id, 'hierarchy_level' => Role::LEVEL_TECNICO]);
+        }
+        if ($supervisorRole->hierarchy_level !== Role::LEVEL_SUPERVISOR) {
+            $supervisorRole->update(['hierarchy_level' => Role::LEVEL_SUPERVISOR]);
+        }
+
+        return $department;
+    }
+
+    /** @return array{tecnico: User, supervisor: User, suprimentos: User} */
+    private function seedExtraUsers(Tenant $tenant, array $ctx): array
+    {
+        $department = $this->ensureOrganograma($tenant);
+
+        $tecnicoRole = Role::where('tenant_id', $tenant->id)->where('name', 'tecnico')->firstOrFail();
+        $supervisorRole = Role::where('tenant_id', $tenant->id)->where('name', 'Supervisor de Operações')->firstOrFail();
         $suprimentosRole = Role::firstOrCreate(['name' => Material::ROLE_GESTOR_SUPRIMENTOS, 'guard_name' => 'web', 'tenant_id' => $tenant->id]);
 
         $tecnico = $this->createUser($tenant, $ctx, 'tecnico', $department->id);

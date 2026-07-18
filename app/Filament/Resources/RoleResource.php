@@ -158,6 +158,12 @@ class RoleResource extends Resource
                         ->searchable()
                         ->preload(),
 
+                    Forms\Components\Select::make('hierarchy_level')
+                        ->label('Nível hierárquico')
+                        ->helperText('Opcional. Usado por telas que exigem um nível mínimo além de "Setor supervisionado" -- ex: aprovação no Pátio exige Supervisor ou acima no setor Logística. Deixe em branco pra um perfil sem nível definido.')
+                        ->options(\App\Models\Role::levelLabels())
+                        ->native(false),
+
                     Forms\Components\Toggle::make('sees_all_crm_leads')
                         ->label('Vê todos os Leads do CRM')
                         ->helperText('Quem tiver este perfil passa a ver todos os Leads do CRM, não só os atribuídos a si mesmo -- útil pra um gerente comercial, encarregado ou líder que precisa acompanhar o funil inteiro sem ser admin geral do sistema.'),

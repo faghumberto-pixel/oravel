@@ -127,6 +127,29 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
             ->all();
     }
 
+    /**
+     * Verdadeira trava de hierarquia: o usuario tem algum papel com
+     * hierarchy_level >= $minLevel num Department deste tenant cujo
+     * sector_key seja $sectorKey. Usado por telas que precisam garantir
+     * "so' Supervisor+ da Logistica" em vez de so' checar permissao
+     * generica de CRUD (ver PatioAprovacoes::approve()).
+     */
+    public function hasMinimumLevelInSector(string $sectorKey, int $minLevel): bool
+    {
+        $departmentIds = Department::where('tenant_id', $this->tenant_id)
+            ->where('sector_key', $sectorKey)
+            ->pluck('id');
+
+        if ($departmentIds->isEmpty()) {
+            return false;
+        }
+
+        return $this->roles()
+            ->whereIn('department_id', $departmentIds)
+            ->where('hierarchy_level', '>=', $minLevel)
+            ->exists();
+    }
+
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class, 'tenant_id', 'id')->withDefault(function () {
