@@ -68,6 +68,7 @@ class SalesLead extends Model
         'segment',
         'estimated_contract_value',
         'critical_pain',
+        'oravel_solution',
         'pipeline_stage',
         'lost_reason',
         'lost_reason_detail',

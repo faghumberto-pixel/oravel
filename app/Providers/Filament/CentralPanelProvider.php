@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Central\Pages\FunilVendas;
 use App\Filament\Central\Pages\Programacao;
 use App\Filament\Central\Resources\PlanResource;
 use App\Filament\Central\Widgets\RevenueChart;
@@ -45,6 +46,7 @@ class CentralPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Central/Resources'), for: 'App\\Filament\\Central\\Resources')
             ->pages([
                 Pages\Dashboard::class,
+                FunilVendas::class,
                 Programacao::class,
             ])
             ->widgets([

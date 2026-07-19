@@ -75,6 +75,10 @@ class SalesLeadResource extends Resource
                     Forms\Components\Textarea::make('critical_pain')
                         ->label('Dor Crítica Mapeada')
                         ->columnSpanFull(),
+                    Forms\Components\Textarea::make('oravel_solution')
+                        ->label('Solução Oravel')
+                        ->helperText('O que o sistema oferece pra resolver essa dor específica -- vira a base do argumento de venda.')
+                        ->columnSpanFull(),
                 ]),
 
             Forms\Components\Section::make('Endereço')
