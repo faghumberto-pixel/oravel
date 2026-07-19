@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Central\Pages\FunilVendas;
+use App\Filament\Central\Pages\Kanban;
 use App\Filament\Central\Pages\Programacao;
 use App\Filament\Central\Resources\PlanResource;
 use App\Filament\Central\Widgets\RevenueChart;
@@ -49,6 +50,7 @@ class CentralPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
                 FunilVendas::class,
+                Kanban::class,
                 Programacao::class,
             ])
             ->widgets([
