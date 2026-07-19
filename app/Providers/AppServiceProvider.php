@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Filament\Central\Widgets\SalesAgendaWidget;
 use App\Livewire\DatabaseNotifications;
 use App\Models\Announcement;
 use App\Models\Asset;
@@ -126,6 +127,22 @@ class AppServiceProvider extends ServiceProvider
         Livewire::component('two_factor_authentication', TwoFactorAuthentication::class);
         Livewire::component('personal_info', PersonalInfo::class);
         Livewire::component('update_password', UpdatePassword::class);
+
+        // Mesmo bug de novo, agora auto-infligido: CentralPanelProvider usa
+        // ->pages([])/->widgets([]) explicitos em vez de discoverPages()/
+        // discoverWidgets() (que o AdminPanelProvider usa, e que registra
+        // um alias Livewire certo como efeito colateral pra cada classe
+        // encontrada). SalesAgendaWidget nunca entrou nem em ->widgets([])
+        // nem em nenhum discover -- so' e' referenciado via @livewire() cru
+        // dentro de Programacao.blade.php. Isso funciona na carga inicial
+        // (a classe e' instanciada direto), mas todo POST /livewire/update
+        // subsequente (qualquer clique no calendario) precisa RESOLVER o
+        // nome de volta pra classe via ComponentRegistry, que sem alias cai
+        // no fallback de prefixar com livewire.class_namespace
+        // ("App\Livewire\..."), gerando uma classe inexistente ->
+        // ComponentNotFoundException -> disfarcado como 419 "release token
+        // mismatch". Confirmado reproduzindo o POST real (nao so' o GET).
+        Livewire::component('sales-agenda-widget', SalesAgendaWidget::class);
 
         // Sobrescreve o registro padrao de NotificationsServiceProvider::packageBooted()
         // (mesmo nome 'database-notifications', o ultimo registrado vence) --
