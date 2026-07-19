@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\TestSetupCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -14,24 +15,26 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         // Adicione seu comando aqui
-        \App\Console\Commands\TestSetupCommand::class, // <-- ESTA LINHA É CRÍTICA
+        TestSetupCommand::class, // <-- ESTA LINHA É CRÍTICA
     ];
-/**
- * Define the application's command schedule.
- */
-protected function schedule(Schedule $schedule): void
-{
-    // $schedule->command('inspire')->hourly();
-    $schedule->command('maintenance:check-due-alerts')->daily();
-}
 
-/**
- * Register the commands for the application.
- */
-protected function commands(): void
-{
-    $this->load(__DIR__.'/Commands');
+    /**
+     * Define the application's command schedule.
+     */
+    protected function schedule(Schedule $schedule): void
+    {
+        // $schedule->command('inspire')->hourly();
+        $schedule->command('maintenance:check-due-alerts')->daily();
+        $schedule->command('sales:notify-appointments')->everyFiveMinutes();
+    }
 
-    require base_path('routes/console.php');
-}
+    /**
+     * Register the commands for the application.
+     */
+    protected function commands(): void
+    {
+        $this->load(__DIR__.'/Commands');
+
+        require base_path('routes/console.php');
+    }
 }

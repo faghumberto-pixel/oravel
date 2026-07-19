@@ -21,6 +21,7 @@ use App\Models\GoodsReceiptItem;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenanceOrderMaterial;
 use App\Models\MaintenanceOrderPendencia;
+use App\Models\SalesLeadInteraction;
 use App\Models\SolicitacaoLocacao;
 use App\Models\User;
 use App\Models\UserActivityLog;
@@ -41,6 +42,7 @@ use App\Observers\GoodsReceiptItemObserver;
 use App\Observers\MaintenanceOrderChecklistSnapshotObserver;
 use App\Observers\MaintenanceOrderMaterialObserver;
 use App\Observers\MaintenanceOrderPendenciaObserver;
+use App\Observers\SalesLeadInteractionObserver;
 use App\Observers\SolicitacaoLocacaoObserver;
 use App\Policies\DynamicPolicy;
 use App\Support\Tenancy;
@@ -86,6 +88,7 @@ class AppServiceProvider extends ServiceProvider
         Announcement::observe(AnnouncementObserver::class);
         CrmLeadInteraction::observe(CrmLeadInteractionObserver::class);
         CrmLead::observe(CrmLeadObserver::class);
+        SalesLeadInteraction::observe(SalesLeadInteractionObserver::class);
         // Ate 2026-07-14 nenhum destes 2 estava registrado -- os observers
         // existiam mas nunca rodavam de verdade (codigo morto).
         SolicitacaoLocacao::observe(SolicitacaoLocacaoObserver::class);
