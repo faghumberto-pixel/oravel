@@ -63,4 +63,18 @@ class Kanban extends Page
             Notification::make()->title('Não foi possível mover')->body($e->getMessage())->warning()->send();
         }
     }
+
+    /**
+     * Edicao rapida de segmento/origem direto do card, sem abrir o form
+     * completo de edicao -- mesmo espirito do moveToStage().
+     */
+    public function updateSegment(string $leadId, string $segment): void
+    {
+        SalesLead::findOrFail($leadId)->update(['segment' => $segment]);
+    }
+
+    public function updateSource(string $leadId, string $source): void
+    {
+        SalesLead::findOrFail($leadId)->update(['source' => $source]);
+    }
 }

@@ -14,6 +14,8 @@
         $leadsByStage = $this->getLeadsByStage();
         $openStageOptions = collect(\App\Models\SalesLead::stageLabels())
             ->except([\App\Models\SalesLead::STAGE_GANHO, \App\Models\SalesLead::STAGE_PERDIDO]);
+        $segmentOptions = \App\Models\Client::nicheLabels();
+        $sourceOptions = \App\Models\SalesLead::sourceLabels();
         $columnColors = [
             'prospeccao' => 'bg-slate-600',
             'contato_qualificado' => 'bg-blue-600',
@@ -48,18 +50,27 @@
                     @forelse($leads as $lead)
                         <div wire:key="funil-card-{{ $lead->id }}-{{ $lead->pipeline_stage }}"
                              class="bg-white dark:bg-gray-900 p-3 rounded-lg border-l-4 {{ $sideBorder }} border-t border-r border-b border-gray-200 dark:border-gray-700 hover:shadow-md transition-all shadow-sm group">
-                            <a href="{{ \App\Filament\Central\Resources\SalesLeadResource::getUrl('edit', ['record' => $lead]) }}" class="block">
-                                <div class="flex justify-between items-start mb-1.5 gap-2">
-                                    <span class="text-[11px] font-mono font-bold text-gray-400 dark:text-gray-500 truncate max-w-[110px]">
-                                        #{{ substr($lead->id, 0, 8) }}
-                                    </span>
-                                    @if($lead->segment)
-                                        <span class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 shrink-0">
-                                            {{ \App\Models\Client::nicheLabels()[$lead->segment] ?? $lead->segment }}
-                                        </span>
-                                    @endif
-                                </div>
+                            <div class="flex justify-between items-start mb-1.5 gap-2">
+                                <span class="text-[11px] font-mono font-bold text-gray-400 dark:text-gray-500 truncate max-w-[80px]">
+                                    #{{ substr($lead->id, 0, 8) }}
+                                </span>
+                                <select
+                                    wire:key="segment-select-{{ $lead->id }}-{{ $lead->segment }}"
+                                    wire:change="updateSegment('{{ $lead->id }}', $event.target.value)"
+                                    class="text-[9px] uppercase font-bold rounded bg-gray-100 dark:bg-gray-800 dark:[color-scheme:dark] text-gray-500 dark:text-gray-400 border-0 py-0.5 pl-1.5 pr-4 focus:ring-1 focus:ring-primary-500 cursor-pointer shrink-0"
+                                >
+                                    <option value="" @selected(blank($lead->segment)) class="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100">Sem segmento</option>
+                                    @foreach($segmentOptions as $segmentId => $segmentLabel)
+                                        <option
+                                            value="{{ $segmentId }}"
+                                            @selected($segmentId === $lead->segment)
+                                            class="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+                                        >{{ $segmentLabel }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
 
+                            <a href="{{ \App\Filament\Central\Resources\SalesLeadResource::getUrl('edit', ['record' => $lead]) }}" class="block">
                                 <h4 class="text-base font-black text-gray-900 dark:text-gray-50 leading-tight mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                                     {{ $lead->company_name }}
                                 </h4>
@@ -75,6 +86,24 @@
                                     @endif
                                 </p>
                             </a>
+
+                            <div class="flex items-center justify-between gap-2 pt-1.5 mt-1 border-t border-gray-100 dark:border-gray-800">
+                                <span class="text-[9px] uppercase font-bold text-gray-400 dark:text-gray-600 shrink-0">Origem</span>
+                                <select
+                                    wire:key="source-select-{{ $lead->id }}-{{ $lead->source }}"
+                                    wire:change="updateSource('{{ $lead->id }}', $event.target.value)"
+                                    class="text-[10px] font-bold text-gray-600 dark:text-gray-300 tracking-wide bg-transparent dark:[color-scheme:dark] border-0 py-0 pl-0 pr-4 focus:ring-0 cursor-pointer text-right"
+                                >
+                                    <option value="" @selected(blank($lead->source)) class="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100">Sem origem</option>
+                                    @foreach($sourceOptions as $sourceId => $sourceLabel)
+                                        <option
+                                            value="{{ $sourceId }}"
+                                            @selected($sourceId === $lead->source)
+                                            class="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+                                        >{{ $sourceLabel }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
 
                             <div class="flex items-center justify-between gap-2 pt-2 mt-1 border-t border-gray-100 dark:border-gray-800">
                                 @if($lead->isOpen())
