@@ -8,6 +8,7 @@ use App\Http\Controllers\MaintenanceKanbanPrintController;
 use App\Http\Controllers\MaintenanceOrderController;
 use App\Http\Controllers\MaintenanceOrderDossieController;
 use App\Http\Controllers\MaintenanceReportController;
+use App\Http\Controllers\PrintQrController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RentalDemoController;
 use App\Http\Controllers\TablePrintController;
@@ -44,6 +45,16 @@ Route::get('/portaria/verificar/{token}', function (string $token) {
         'liberado' => $liberado,
     ]);
 })->name('portaria.verificar');
+
+// QR fixo por ativo (nao por movimentacao) -- cola no equipamento, escaneia
+// a qualquer momento no patio pra ver status atual. Publica de proposito,
+// mesmo motivo do portaria.verificar acima.
+Route::get('/patio/ativo/{asset}', function (Asset $asset) {
+    return view('portaria.asset-status', ['asset' => $asset]);
+})->name('patio.ativo-status');
+
+Route::get('/patio/ativo/{asset}/qr.svg', [PrintQrController::class, 'show'])
+    ->name('assets.qr');
 
 Route::get('/admin/app/maintenance-report', [MaintenanceReportController::class, 'show'])
     ->name('maintenance.report')

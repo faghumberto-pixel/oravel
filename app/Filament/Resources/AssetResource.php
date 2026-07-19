@@ -576,6 +576,12 @@ class AssetResource extends Resource
                     }),
             ])
             ->actions([
+                Tables\Actions\Action::make('qr_patio')
+                    ->label('QR do Pátio')
+                    ->icon('heroicon-o-qr-code')
+                    ->color('gray')
+                    ->url(fn (Asset $record): string => route('assets.qr', ['asset' => $record->id]))
+                    ->openUrlInNewTab(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])

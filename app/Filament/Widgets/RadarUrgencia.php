@@ -71,6 +71,17 @@ class RadarUrgencia extends BaseWidget
                 ->url(AssetResource::getUrl('index', [
                     'tableFilters' => ['status' => ['value' => 'disponivel']],
                 ])),
+
+            Stat::make('Retrabalho (30 dias)',
+                MaintenanceOrder::where('is_rework', true)
+                    ->where('created_at', '>=', now()->subDays(30))
+                    ->count()
+            )
+                ->description('O.S. reabertas pro mesmo ativo')
+                ->color('warning')
+                ->url(MaintenanceOrderResource::getUrl('index', [
+                    'tableFilters' => ['is_rework' => ['isActive' => true]],
+                ])),
         ];
     }
 }

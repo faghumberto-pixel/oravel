@@ -124,6 +124,11 @@ class MaintenanceOrder extends Model implements HasMedia
         return $this->belongsTo(Asset::class);
     }
 
+    public function parentOrder(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'parent_os_id');
+    }
+
     public function technician(): BelongsTo
     {
         return $this->belongsTo(User::class, 'technician_id');

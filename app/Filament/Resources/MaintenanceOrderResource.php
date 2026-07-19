@@ -193,6 +193,33 @@ class MaintenanceOrderResource extends Resource
                         ])
                         ->columns(2),
 
+                    // Retrabalho -- campos is_rework/parent_os_id ja existiam no schema
+                    // desde 2026-05-05, mas sem lugar nenhum na tela pra preencher
+                    // (achado durante o levantamento de prontidao comercial,
+                    // 2026-07-19): coluna morta ate agora.
+                    Forms\Components\Section::make('Retrabalho')
+                        ->description('Marque quando esta O.S. e a continuacao de um servico que nao ficou resolvido de primeira no mesmo ativo.')
+                        ->collapsed(fn (Get $get) => ! $get('is_rework'))
+                        ->schema([
+                            Forms\Components\Toggle::make('is_rework')
+                                ->label('Esta O.S. e um retrabalho')
+                                ->live(),
+                            Forms\Components\Select::make('parent_os_id')
+                                ->label('O.S. original')
+                                ->relationship(
+                                    name: 'parentOrder',
+                                    titleAttribute: 'os_number',
+                                    modifyQueryUsing: fn (Builder $query, Get $get, ?MaintenanceOrder $record) => $query
+                                        ->when($get('asset_id'), fn (Builder $q, $assetId) => $q->where('asset_id', $assetId))
+                                        ->when($record, fn (Builder $q) => $q->where('id', '!=', $record->id)),
+                                )
+                                ->searchable()
+                                ->preload()
+                                ->required(fn (Get $get) => (bool) $get('is_rework'))
+                                ->visible(fn (Get $get) => (bool) $get('is_rework')),
+                        ])
+                        ->columns(2),
+
                     // "Troca de Equipamento" como Tipo de Operacao -- entrada principal
                     // da Troca (confirmado: geralmente solicitada pelo tecnico em
                     // campo), mesmo padrao da secao de Avaria acima. So' pede a
@@ -589,6 +616,13 @@ class MaintenanceOrderResource extends Resource
                     ->value('is_urgent') ? 'danger' : 'gray')
                 ->placeholder('-'),
             Tables\Columns\TextColumn::make('status')->label('Status')->badge(),
+            Tables\Columns\TextColumn::make('is_rework')
+                ->label('Retrabalho')
+                ->badge()
+                ->color('danger')
+                ->icon('heroicon-o-arrow-path')
+                ->formatStateUsing(fn (bool $state): ?string => $state ? 'Retrabalho' : null)
+                ->toggleable(),
         ])->filters([
             Tables\Filters\SelectFilter::make('status')
                 ->label('Status')
@@ -630,6 +664,10 @@ class MaintenanceOrderResource extends Resource
                 ->query(fn (Builder $query) => $query
                     ->whereIn('status', ['Aberto', 'Pendente', 'Em Andamento'])
                     ->where('created_at', '<', now()->subDays(3))),
+            Tables\Filters\Filter::make('is_rework')
+                ->label('Só retrabalho')
+                ->toggle()
+                ->query(fn (Builder $query) => $query->where('is_rework', true)),
 
         ])->actions([
             Tables\Actions\ViewAction::make(),

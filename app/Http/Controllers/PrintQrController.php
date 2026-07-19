@@ -9,18 +9,20 @@ class PrintQrController extends Controller
 {
     public function show(Asset $asset)
     {
-        $url = route('filament.admin.resources.assets.edit', [
-            'tenant' => $asset->tenant_id,
-            'record' => $asset->id
-        ]);
+        // Aponta pra pagina publica de status do patio (sem login), nao pro
+        // edit do painel -- quem escaneia no patio (motorista, portaria,
+        // cliente) normalmente nao tem acesso ao admin.
+        $url = route('patio.ativo-status', ['asset' => $asset->id]);
 
-        // Geramos o QR Code como um binário PNG puro
-        $qrCodeImage = QrCode::format('png')
+        // SVG, nao PNG -- o backend PNG do simple-qrcode exige a extensao
+        // Imagick do PHP, que nao esta instalada aqui (nem garantido em
+        // todo ambiente); SVG e' o mesmo formato ja usado no QR do Dossie
+        // Operacional (routes/web.php) e nao depende de Imagick.
+        $qrCodeSvg = QrCode::format('svg')
             ->size(250)
             ->generate($url);
 
-        // Retornamos a imagem diretamente com o Header correto
-        return response($qrCodeImage)
-            ->header('Content-Type', 'image/png');
+        return response($qrCodeSvg)
+            ->header('Content-Type', 'image/svg+xml');
     }
 }
