@@ -10,11 +10,12 @@ use Illuminate\Database\Eloquent\Collection;
 /**
  * Quadro por estagio do CRM Comercial, mesmo estilo visual do Kanban do
  * Patio (App\Filament\Pages\MaintenanceKanban) -- colunas por estagio,
- * card por lead. Sem drag-and-drop de proposito: so avanca pelas mesmas
- * acoes gated de SalesLeadResource (Avancar/Converter/Perder), nao por
- * arrastar livre -- e' literalmente o requisito de "evitar avanco
- * intuitivo" que motivou o design do model inteiro. O funil "de verdade"
- * (visual afunilado) fica em App\Filament\Central\Pages\FunilVendas.
+ * card por lead. Movimentacao entre os 4 estagios abertos e' livre (select
+ * no card, SalesLead::moveToStage()) -- pedido explicito do usuario
+ * revertendo a trava original ("evitar avanco intuitivo"). Ganho/Perdido
+ * continuam so' pelas acoes dedicadas em SalesLeadResource (Converter/
+ * Marcar Perdido), que exigem dado real. O funil "de verdade" (visual
+ * afunilado) fica em App\Filament\Central\Pages\FunilVendas.
  */
 class Kanban extends Page
 {
@@ -48,20 +49,18 @@ class Kanban extends Page
     }
 
     /**
-     * Sem parametro/form -- so' checa a mesma regra de
-     * SalesLead::blockerForNextStage(). Converter/Marcar Perdido exigem
-     * dado extra (plano+admin / motivo), entao ficam no detalhe do lead
-     * (SalesLeadResource), pra onde o card do quadro linka.
+     * Movimentacao livre (sem trava) entre os 4 estagios abertos -- ver
+     * comentario em SalesLead::moveToStage().
      */
-    public function advance(string $leadId): void
+    public function moveToStage(string $leadId, string $stage): void
     {
         $lead = SalesLead::findOrFail($leadId);
 
         try {
-            $lead->advanceStage();
-            Notification::make()->title('Estágio avançado.')->success()->send();
+            $lead->moveToStage($stage);
+            Notification::make()->title('Estágio atualizado.')->success()->send();
         } catch (\RuntimeException $e) {
-            Notification::make()->title('Não foi possível avançar')->body($e->getMessage())->warning()->send();
+            Notification::make()->title('Não foi possível mover')->body($e->getMessage())->warning()->send();
         }
     }
 }

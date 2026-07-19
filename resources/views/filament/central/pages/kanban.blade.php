@@ -12,6 +12,8 @@
     --}}
     @php
         $leadsByStage = $this->getLeadsByStage();
+        $openStageOptions = collect(\App\Models\SalesLead::stageLabels())
+            ->except([\App\Models\SalesLead::STAGE_GANHO, \App\Models\SalesLead::STAGE_PERDIDO]);
         $columnColors = [
             'prospeccao' => 'bg-slate-600',
             'contato_qualificado' => 'bg-blue-600',
@@ -74,20 +76,16 @@
                                 </p>
                             </a>
 
-                            <div class="flex items-center justify-between pt-2 mt-1 border-t border-gray-100 dark:border-gray-800">
-                                @if($lead->isOpen() && $lead->nextStage() && $lead->nextStage() !== \App\Models\SalesLead::STAGE_GANHO)
-                                    <button
-                                        wire:click="advance('{{ $lead->id }}')"
-                                        class="flex items-center gap-1 text-[10px] font-black uppercase text-primary-600 dark:text-primary-400 tracking-wider"
+                            <div class="flex items-center justify-between gap-2 pt-2 mt-1 border-t border-gray-100 dark:border-gray-800">
+                                @if($lead->isOpen())
+                                    <select
+                                        wire:change="moveToStage('{{ $lead->id }}', $event.target.value)"
+                                        class="text-[10px] font-black uppercase text-primary-600 dark:text-primary-400 tracking-wider bg-transparent border-0 py-0 pl-0 pr-5 focus:ring-0 cursor-pointer"
                                     >
-                                        <x-heroicon-s-arrow-right-circle class="w-3.5 h-3.5" />
-                                        Avançar
-                                    </button>
-                                @elseif($lead->pipeline_stage === \App\Models\SalesLead::STAGE_PROPOSTA_ENVIADA)
-                                    <span class="flex items-center gap-1 text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-400 tracking-wider">
-                                        <x-heroicon-s-check-badge class="w-3.5 h-3.5" />
-                                        Pronto pra converter
-                                    </span>
+                                        @foreach($openStageOptions as $stageId => $stageLabel)
+                                            <option value="{{ $stageId }}" @selected($stageId === $lead->pipeline_stage)>{{ $stageLabel }}</option>
+                                        @endforeach
+                                    </select>
                                 @else
                                     <span></span>
                                 @endif
@@ -97,6 +95,13 @@
                                     Editar
                                 </a>
                             </div>
+
+                            @if($lead->pipeline_stage === \App\Models\SalesLead::STAGE_PROPOSTA_ENVIADA)
+                                <span class="flex items-center gap-1 text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-400 tracking-wider mt-1.5">
+                                    <x-heroicon-s-check-badge class="w-3.5 h-3.5" />
+                                    Pronto pra converter
+                                </span>
+                            @endif
                         </div>
                     @empty
                         <div class="text-center py-12 text-[10px] text-gray-400 dark:text-gray-600 uppercase font-bold italic tracking-wide border border-dashed border-gray-300 dark:border-gray-700 rounded-xl">

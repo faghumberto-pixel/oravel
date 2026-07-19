@@ -243,6 +243,36 @@ class SalesLead extends Model
         $this->update(['pipeline_stage' => $next]);
     }
 
+    /**
+     * Movimentacao livre entre os estagios abertos do funil (sem a trava de
+     * blockerForNextStage()) -- pedido explicito do usuario revertendo a
+     * decisao anterior documentada em blockerForNextStage()/advanceStage()
+     * ("nao um drag-and-drop intuitivo"). Ganho/Perdido ficam de fora de
+     * proposito: tem efeito colateral real (criar Tenant, exigir motivo da
+     * perda) e continuam so' pelas acoes dedicadas (convertToTenant()/
+     * markLost()), pra nao virar so' uma troca de rotulo sem o dado que
+     * elas exigem.
+     */
+    public function moveToStage(string $stage): void
+    {
+        $openStages = [
+            self::STAGE_PROSPECCAO,
+            self::STAGE_CONTATO_QUALIFICADO,
+            self::STAGE_DEMONSTRACAO_REALIZADA,
+            self::STAGE_PROPOSTA_ENVIADA,
+        ];
+
+        if (! in_array($stage, $openStages, true)) {
+            throw new \RuntimeException('Use as ações "Converter" ou "Marcar Perdido" pra mover pra Ganho ou Perdido.');
+        }
+
+        if (! $this->isOpen()) {
+            throw new \RuntimeException('Lead já fechado (Ganho/Perdido) não pode voltar pro funil aberto.');
+        }
+
+        $this->update(['pipeline_stage' => $stage]);
+    }
+
     public function markLost(string $reason, ?string $detail = null): void
     {
         $this->update([
