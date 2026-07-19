@@ -19,8 +19,9 @@ use Filament\Navigation\MenuItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-// Importações corretas dos seus arquivos
 use Filament\Support\Colors\Color;
+// Importações corretas dos seus arquivos
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -61,6 +62,15 @@ class CentralPanelProvider extends PanelProvider
             ])
             ->databaseNotifications()
             ->databaseNotificationsPolling('8s')
+            ->renderHook(
+                // Central nunca teve esse hook (so' o admin tinha) -- pagina
+                // restaurada do bfcache do navegador carrega com token CSRF
+                // desatualizado, e o primeiro POST /livewire/update (ex.:
+                // qualquer acao na Programacao) da 419. Mesmo fix ja
+                // aplicado no AdminPanelProvider antes.
+                PanelsRenderHook::HEAD_END,
+                fn () => view('filament.bfcache-reload'),
+            )
             ->plugin(
                 // SalesAgendaWidget (Programacao) usa esse pacote -- sem
                 // registrar aqui, a tela quebrava com 500 ("Plugin
