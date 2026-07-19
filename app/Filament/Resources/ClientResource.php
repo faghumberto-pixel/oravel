@@ -39,6 +39,16 @@ class ClientResource extends Resource
 
     protected static ?string $tenantRelationshipName = 'clients';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return 'G C';
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'gray';
+    }
+
     public static function form(Form $form): Form
     {
         // (SEU CÓDIGO ORIGINAL DE TABS FOI MANTIDO INTEGRALMENTE)

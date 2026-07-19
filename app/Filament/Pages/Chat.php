@@ -36,6 +36,16 @@ class Chat extends Page
 
     protected static string $view = 'filament.pages.chat';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return 'G M';
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'gray';
+    }
+
     #[Url]
     public ?string $activeChatId = null;
 

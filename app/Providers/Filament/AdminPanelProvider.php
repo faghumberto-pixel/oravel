@@ -133,6 +133,10 @@ class AdminPanelProvider extends PanelProvider
                 fn () => view('filament.chat-widget-mount'),
             )
             ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn () => view('filament.keyboard-shortcuts'),
+            )
+            ->renderHook(
                 PanelsRenderHook::FOOTER,
                 fn () => view('filament.panel-footer'),
             )

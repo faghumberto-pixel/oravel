@@ -40,6 +40,16 @@ class AssetResource extends Resource
 
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return 'G A';
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'gray';
+    }
+
     public static function canViewAny(): bool
     {
         return (bool) auth()->user()?->can('viewAny', Asset::class);

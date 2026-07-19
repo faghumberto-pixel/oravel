@@ -47,6 +47,16 @@ class MaintenanceOrderResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Ordens de Serviço';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return 'G O';
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'gray';
+    }
+
     public static function canViewAny(): bool
     {
         return (bool) auth()->user()?->can('viewAny', MaintenanceOrder::class);

@@ -29,6 +29,16 @@ class MaintenanceKanban extends Page
 
     protected static string $view = 'filament.pages.maintenance-kanban';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return 'G P';
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'gray';
+    }
+
     public static function canAccess(): bool
     {
         return (bool) auth()->user()?->can('viewAny', MaintenanceOrder::class);
