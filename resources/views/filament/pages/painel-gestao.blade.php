@@ -12,27 +12,28 @@
         {{-- AREA DE CONTEUDO UNIFICADA --}}
         <div class="w-full space-y-6">
             @if($activeTab === 'gestao')
-                {{-- PAINEL DE GESTAO --}}
-                @livewire(\App\Filament\Widgets\RadarOperacional::class)
+                {{-- PAINEL DE GESTAO -- widgets exclusivos do segmento do tenant
+                     (Eventos/Construcao Civil/Industrial-Hospitalar/Generico),
+                     ver App\Support\SegmentDashboardWidgets --}}
+                @php
+                    $gestaoWidgets = $this->getGestaoWidgets();
+                    $fullWidthWidgets = collect($gestaoWidgets)->filter(
+                        fn ($widget) => is_a($widget, \Filament\Widgets\StatsOverviewWidget::class, true)
+                    );
+                    $gridWidgets = collect($gestaoWidgets)->diff($fullWidthWidgets);
+                @endphp
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    @livewire(\App\Filament\Widgets\AssetsByStatusChart::class)
-                    @livewire(\App\Filament\Widgets\MaintenanceByStatusChart::class)
-                </div>
+                @foreach($fullWidthWidgets as $widget)
+                    @livewire($widget)
+                @endforeach
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    @livewire(\App\Filament\Widgets\MobilizationVsDemobilizationChart::class)
-                    @livewire(\App\Filament\Widgets\ReplacementVsRepairChart::class)
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    @livewire(\App\Filament\Widgets\MaintenanceCostChart::class)
-                    @livewire(\App\Filament\Widgets\DamagesBySeverityChart::class)
-                </div>
-
-                <div class="grid grid-cols-1 gap-6">
-                    @livewire(\App\Filament\Widgets\TopClientsByRentals::class)
-                </div>
+                @if($gridWidgets->isNotEmpty())
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        @foreach($gridWidgets as $widget)
+                            @livewire($widget, [], $widget)
+                        @endforeach
+                    </div>
+                @endif
             @else
                 {{-- CENTRO DE COMANDO --}}
                 <div>

@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
+use App\Support\SegmentDashboardWidgets;
 use App\Support\Tenancy;
 use Filament\Pages\Page;
 
@@ -39,6 +40,11 @@ class PainelGestao extends Page
     public function selectTab($tab)
     {
         $this->activeTab = $tab;
+    }
+
+    public function getGestaoWidgets(): array
+    {
+        return SegmentDashboardWidgets::forSegment(Tenancy::current()?->segment);
     }
 
     // Retorna vazio para o Filament não injetar widgets automaticamente no topo
