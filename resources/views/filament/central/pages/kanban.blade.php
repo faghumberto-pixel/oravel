@@ -46,7 +46,7 @@
 
                 <div class="p-2.5 space-y-2.5 flex-1 max-h-[68vh] overflow-y-auto vertical-scrollbar">
                     @forelse($leads as $lead)
-                        <div wire:key="funil-card-{{ $lead->id }}"
+                        <div wire:key="funil-card-{{ $lead->id }}-{{ $lead->pipeline_stage }}"
                              class="bg-white dark:bg-gray-900 p-3 rounded-lg border-l-4 {{ $sideBorder }} border-t border-r border-b border-gray-200 dark:border-gray-700 hover:shadow-md transition-all shadow-sm group">
                             <a href="{{ \App\Filament\Central\Resources\SalesLeadResource::getUrl('edit', ['record' => $lead]) }}" class="block">
                                 <div class="flex justify-between items-start mb-1.5 gap-2">
@@ -79,6 +79,7 @@
                             <div class="flex items-center justify-between gap-2 pt-2 mt-1 border-t border-gray-100 dark:border-gray-800">
                                 @if($lead->isOpen())
                                     <select
+                                        wire:key="stage-select-{{ $lead->id }}-{{ $lead->pipeline_stage }}"
                                         wire:change="moveToStage('{{ $lead->id }}', $event.target.value)"
                                         class="text-[10px] font-black uppercase text-primary-600 dark:text-primary-400 tracking-wider bg-transparent border-0 py-0 pl-0 pr-5 focus:ring-0 cursor-pointer"
                                     >
