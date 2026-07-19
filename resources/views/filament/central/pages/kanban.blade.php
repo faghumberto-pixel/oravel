@@ -94,7 +94,7 @@
 
                                 <a href="{{ \App\Filament\Central\Resources\SalesLeadResource::getUrl('edit', ['record' => $lead]) }}"
                                    class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 hover:text-primary-600 dark:hover:text-primary-400 tracking-wider shrink-0">
-                                    Abrir
+                                    Editar
                                 </a>
                             </div>
                         </div>

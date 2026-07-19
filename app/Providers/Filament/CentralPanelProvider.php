@@ -2,10 +2,14 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Central\Pages\DashboardCrm;
+use App\Filament\Central\Pages\DashboardSaaS;
 use App\Filament\Central\Pages\FunilVendas;
 use App\Filament\Central\Pages\Kanban;
 use App\Filament\Central\Pages\Programacao;
 use App\Filament\Central\Resources\PlanResource;
+use App\Filament\Central\Widgets\ArrChart;
+use App\Filament\Central\Widgets\ChurnChart;
 use App\Filament\Central\Widgets\RevenueChart;
 use App\Filament\Central\Widgets\SaaSStatsOverview;
 use App\Filament\Central\Widgets\SalesCrmStatsWidget;
@@ -16,7 +20,6 @@ use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -49,14 +52,26 @@ class CentralPanelProvider extends PanelProvider
             ])
             ->discoverResources(in: app_path('Filament/Central/Resources'), for: 'App\\Filament\\Central\\Resources')
             ->pages([
-                Pages\Dashboard::class,
+                // Dashboard padrao do Filament trocado por 2 paginas
+                // separadas -- antes misturava metrica de SaaS com metrica
+                // comercial numa pagina so'.
+                DashboardSaaS::class,
+                DashboardCrm::class,
                 FunilVendas::class,
                 Kanban::class,
                 Programacao::class,
             ])
             ->widgets([
-                SaaSStatsOverview::class, // <-- NOME CORRETO E IMPORTADO LÁ EM CIMA
+                // Registro aqui (mesmo os que so' aparecem via getWidgets()
+                // das paginas de Dashboard, nao no array literal de nenhum
+                // ->widgets() de outra pagina) e' o que da' a eles um alias
+                // Livewire correto -- sem isso e' o mesmo bug do
+                // SalesAgendaWidget (ComponentNotFoundException disfarcada
+                // de 419 em todo clique).
+                SaaSStatsOverview::class,
                 RevenueChart::class,
+                ArrChart::class,
+                ChurnChart::class,
                 SalesCrmStatsWidget::class,
                 SalesLeadMapWidget::class,
             ])
