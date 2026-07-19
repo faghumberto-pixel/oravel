@@ -28,6 +28,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
 use Jeffgreco13\FilamentBreezy\Pages\MyProfilePage;
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 class CentralPanelProvider extends PanelProvider
 {
@@ -38,6 +39,7 @@ class CentralPanelProvider extends PanelProvider
             ->path('central')
             ->login()
             ->colors(['primary' => Color::Blue])
+            ->viteTheme('resources/css/filament/central/theme.css')
             ->favicon(asset('favicon.png'))
             ->resources([
                 PlanResource::class,
@@ -57,6 +59,16 @@ class CentralPanelProvider extends PanelProvider
             ])
             ->databaseNotifications()
             ->databaseNotificationsPolling('8s')
+            ->plugin(
+                // SalesAgendaWidget (Programacao) usa esse pacote -- sem
+                // registrar aqui, a tela quebrava com 500 ("Plugin
+                // [filament-fullcalendar] is not registered for panel
+                // [central]"), achado em PROD depois do deploy.
+                FilamentFullCalendarPlugin::make()
+                    ->selectable(false)
+                    ->editable()
+                    ->locale('pt-br')
+            )
             ->plugin(
                 // central so e acessado por super admins (ver CLAUDE.md) -- forcar 2FA
                 // aqui equivale a forcar 2FA so pra eles, sem logica extra de role.
