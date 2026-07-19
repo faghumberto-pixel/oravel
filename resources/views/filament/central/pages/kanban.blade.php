@@ -81,10 +81,14 @@
                                     <select
                                         wire:key="stage-select-{{ $lead->id }}-{{ $lead->pipeline_stage }}"
                                         wire:change="moveToStage('{{ $lead->id }}', $event.target.value)"
-                                        class="text-[10px] font-black uppercase text-primary-600 dark:text-primary-400 tracking-wider bg-transparent border-0 py-0 pl-0 pr-5 focus:ring-0 cursor-pointer"
+                                        class="text-[10px] font-black uppercase text-primary-600 dark:text-primary-400 tracking-wider bg-transparent dark:[color-scheme:dark] border-0 py-0 pl-0 pr-5 focus:ring-0 cursor-pointer"
                                     >
                                         @foreach($openStageOptions as $stageId => $stageLabel)
-                                            <option value="{{ $stageId }}" @selected($stageId === $lead->pipeline_stage)>{{ $stageLabel }}</option>
+                                            <option
+                                                value="{{ $stageId }}"
+                                                @selected($stageId === $lead->pipeline_stage)
+                                                class="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+                                            >{{ $stageLabel }}</option>
                                         @endforeach
                                     </select>
                                 @else
