@@ -44,19 +44,6 @@ class SalesLeadResource extends Resource
                         ->label('Site')
                         ->url()
                         ->prefix('https://'),
-                    Forms\Components\Select::make('segment')
-                        ->label('Segmento')
-                        // Mesmos valores de tenants.segment/Client::NICHE_* de
-                        // proposito -- quando converte, o Tenant nasce com o
-                        // segmento certo, sem vocabulario paralelo.
-                        ->options(Client::nicheLabels()),
-                    Forms\Components\TextInput::make('decision_maker_name')
-                        ->label('Tomador de Decisão'),
-                    Forms\Components\TextInput::make('decision_maker_role')
-                        ->label('Cargo'),
-                    Forms\Components\Select::make('source')
-                        ->label('Origem do Lead')
-                        ->options(SalesLead::sourceLabels()),
                     Forms\Components\TextInput::make('phone')
                         ->label('Telefone')
                         ->tel(),
@@ -72,6 +59,55 @@ class SalesLeadResource extends Resource
                         ->options(fn () => User::whereIn('email', config('oravel.super_admins', []))->pluck('name', 'id'))
                         ->searchable()
                         ->preload(),
+
+                    Forms\Components\Select::make('segment')
+                        ->label('Segmento Principal')
+                        // Mesmos valores de tenants.segment/Client::NICHE_* de
+                        // proposito -- quando converte, o Tenant nasce com o
+                        // segmento certo, sem vocabulario paralelo. Fica
+                        // como o valor UNICO usado pelo resto do sistema
+                        // (Kanban, mapa, dashboards) -- segmentos extras vao
+                        // no repeater abaixo, sem afetar quem depende desse.
+                        ->options(Client::nicheLabels()),
+                    Forms\Components\Repeater::make('additional_segments')
+                        ->label('Outros Segmentos')
+                        ->simple(
+                            Forms\Components\TextInput::make('segment')
+                                ->datalist(array_values(Client::nicheLabels()))
+                                ->required(),
+                        )
+                        ->addActionLabel('+ Adicionar segmento')
+                        ->defaultItems(0)
+                        ->columnSpan(2),
+
+                    Forms\Components\Select::make('source')
+                        ->label('Origem Principal')
+                        ->options(SalesLead::sourceLabels()),
+                    Forms\Components\Repeater::make('additional_sources')
+                        ->label('Outras Origens')
+                        ->simple(
+                            Forms\Components\TextInput::make('source')
+                                ->datalist(array_values(SalesLead::sourceLabels()))
+                                ->required(),
+                        )
+                        ->addActionLabel('+ Adicionar origem')
+                        ->defaultItems(0)
+                        ->columnSpan(2),
+
+                    Forms\Components\Repeater::make('decision_makers')
+                        ->label('Tomadores de Decisão')
+                        ->schema([
+                            Forms\Components\TextInput::make('name')
+                                ->label('Nome')
+                                ->required(),
+                            Forms\Components\TextInput::make('role')
+                                ->label('Cargo'),
+                        ])
+                        ->columns(2)
+                        ->addActionLabel('+ Adicionar tomador de decisão')
+                        ->defaultItems(0)
+                        ->columnSpanFull(),
+
                     Forms\Components\Textarea::make('critical_pain')
                         ->label('Dor Crítica Mapeada')
                         ->columnSpanFull(),
@@ -228,7 +264,7 @@ class SalesLeadResource extends Resource
                             ->required(),
                     ])
                     ->mountUsing(fn (Form $form, SalesLead $record) => $form->fill([
-                        'admin_name' => $record->decision_maker_name,
+                        'admin_name' => $record->primaryDecisionMaker()['name'] ?? null,
                         'admin_email' => $record->email,
                     ]))
                     ->action(function (SalesLead $record, array $data) {

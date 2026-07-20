@@ -62,7 +62,7 @@ class EditSalesLead extends EditRecord
                         ->required(),
                 ])
                 ->mountUsing(fn (Forms\Form $form) => $form->fill([
-                    'admin_name' => $record->decision_maker_name,
+                    'admin_name' => $record->primaryDecisionMaker()['name'] ?? null,
                     'admin_email' => $record->email,
                 ]))
                 ->action(function (array $data) use ($record) {

@@ -60,12 +60,13 @@ class SalesLead extends Model
     protected $fillable = [
         'company_name',
         'website',
-        'decision_maker_name',
-        'decision_maker_role',
+        'decision_makers',
         'phone',
         'email',
         'source',
         'segment',
+        'additional_segments',
+        'additional_sources',
         'estimated_contract_value',
         'critical_pain',
         'oravel_solution',
@@ -90,6 +91,9 @@ class SalesLead extends Model
         'longitude' => 'decimal:8',
         'last_interaction_at' => 'datetime',
         'next_followup_date' => 'date',
+        'decision_makers' => 'array',
+        'additional_segments' => 'array',
+        'additional_sources' => 'array',
     ];
 
     public static function stageLabels(): array
@@ -147,6 +151,16 @@ class SalesLead extends Model
     public function isOpen(): bool
     {
         return ! in_array($this->pipeline_stage, [self::STAGE_GANHO, self::STAGE_PERDIDO], true);
+    }
+
+    /**
+     * Primeiro tomador de decisao cadastrado -- usado so' como sugestao de
+     * preenchimento (admin_name) na hora de converter o lead em Tenant, nao
+     * como "o" tomador de decisao oficial (pode ter varios).
+     */
+    public function primaryDecisionMaker(): ?array
+    {
+        return $this->decision_makers[0] ?? null;
     }
 
     public function interactions(): HasMany
