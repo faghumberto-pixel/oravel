@@ -48,7 +48,32 @@ class CentralPanelProvider extends PanelProvider
             ->id('central')
             ->path('central')
             ->login()
-            ->colors(['primary' => Color::Blue])
+            ->colors([
+                'primary' => Color::Blue,
+                // Grafite azulado fixo (nao preto/branco padrao do
+                // Filament), pedido explicito do usuario pra ter uma
+                // referencia visual clara de "estou no Central, nao no
+                // Admin". So' os 2 tons mais escuros sao deslocados (950 =
+                // slate-900 #0f172a pro fundo, 900 = slate-800 #1e293b pros
+                // cards) -- o resto da escala fica no slate autentico,
+                // texto/borda continuam previsiveis.
+                'gray' => [
+                    50 => '248, 250, 252',
+                    100 => '241, 245, 249',
+                    200 => '226, 232, 240',
+                    300 => '203, 213, 225',
+                    400 => '148, 163, 184',
+                    500 => '100, 116, 139',
+                    600 => '71, 85, 105',
+                    700 => '51, 65, 85',
+                    800 => '30, 41, 59',
+                    900 => '30, 41, 59',
+                    950 => '15, 23, 42',
+                ],
+            ])
+            // Tema escuro fixo (nao alternavel) -- reforca a mesma
+            // referencia visual acima.
+            ->darkMode(true, isForced: true)
             ->viteTheme('resources/css/filament/central/theme.css')
             ->favicon(asset('favicon.png'))
             ->resources([
