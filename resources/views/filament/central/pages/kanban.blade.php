@@ -51,23 +51,23 @@
                         <div wire:key="funil-card-{{ $lead->id }}-{{ $lead->pipeline_stage }}"
                              class="bg-white dark:bg-gray-900 p-3 rounded-lg border-l-4 {{ $sideBorder }} border-t border-r border-b border-gray-200 dark:border-gray-700 hover:shadow-md transition-all shadow-sm group">
                             <div class="flex justify-between items-start mb-1.5 gap-2">
-                                <span class="text-[11px] font-mono font-bold text-gray-400 dark:text-gray-500 truncate max-w-[80px]">
+                                <span class="text-[11px] font-mono font-bold text-gray-400 dark:text-gray-500 truncate max-w-[70px]">
                                     #{{ substr($lead->id, 0, 8) }}
                                 </span>
-                                <select
-                                    wire:key="segment-select-{{ $lead->id }}-{{ $lead->segment }}"
+                                <input
+                                    type="text"
+                                    list="segment-options-{{ $lead->id }}"
+                                    value="{{ $segmentOptions[$lead->segment] ?? $lead->segment }}"
+                                    placeholder="Segmento"
+                                    wire:key="segment-input-{{ $lead->id }}-{{ $lead->segment }}"
                                     wire:change="updateSegment('{{ $lead->id }}', $event.target.value)"
-                                    class="text-[9px] uppercase font-bold rounded bg-gray-100 dark:bg-gray-800 dark:[color-scheme:dark] text-gray-500 dark:text-gray-400 border-0 py-0.5 pl-1.5 pr-4 focus:ring-1 focus:ring-primary-500 cursor-pointer shrink-0"
-                                >
-                                    <option value="" @selected(blank($lead->segment)) class="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100">Sem segmento</option>
-                                    @foreach($segmentOptions as $segmentId => $segmentLabel)
-                                        <option
-                                            value="{{ $segmentId }}"
-                                            @selected($segmentId === $lead->segment)
-                                            class="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
-                                        >{{ $segmentLabel }}</option>
+                                    class="text-[9px] uppercase font-bold rounded bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-0 py-0.5 px-1.5 focus:ring-1 focus:ring-primary-500 w-24 text-right"
+                                />
+                                <datalist id="segment-options-{{ $lead->id }}">
+                                    @foreach($segmentOptions as $segmentLabel)
+                                        <option value="{{ $segmentLabel }}"></option>
                                     @endforeach
-                                </select>
+                                </datalist>
                             </div>
 
                             <a href="{{ \App\Filament\Central\Resources\SalesLeadResource::getUrl('edit', ['record' => $lead]) }}" class="block">
@@ -89,20 +89,20 @@
 
                             <div class="flex items-center justify-between gap-2 pt-1.5 mt-1 border-t border-gray-100 dark:border-gray-800">
                                 <span class="text-[9px] uppercase font-bold text-gray-400 dark:text-gray-600 shrink-0">Origem</span>
-                                <select
-                                    wire:key="source-select-{{ $lead->id }}-{{ $lead->source }}"
+                                <input
+                                    type="text"
+                                    list="source-options-{{ $lead->id }}"
+                                    value="{{ $sourceOptions[$lead->source] ?? $lead->source }}"
+                                    placeholder="Origem"
+                                    wire:key="source-input-{{ $lead->id }}-{{ $lead->source }}"
                                     wire:change="updateSource('{{ $lead->id }}', $event.target.value)"
-                                    class="text-[10px] font-bold text-gray-600 dark:text-gray-300 tracking-wide bg-transparent dark:[color-scheme:dark] border-0 py-0 pl-0 pr-4 focus:ring-0 cursor-pointer text-right"
-                                >
-                                    <option value="" @selected(blank($lead->source)) class="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100">Sem origem</option>
-                                    @foreach($sourceOptions as $sourceId => $sourceLabel)
-                                        <option
-                                            value="{{ $sourceId }}"
-                                            @selected($sourceId === $lead->source)
-                                            class="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
-                                        >{{ $sourceLabel }}</option>
+                                    class="text-[10px] font-bold text-gray-600 dark:text-gray-300 tracking-wide bg-transparent border-0 py-0 px-0 focus:ring-0 text-right w-24"
+                                />
+                                <datalist id="source-options-{{ $lead->id }}">
+                                    @foreach($sourceOptions as $sourceLabel)
+                                        <option value="{{ $sourceLabel }}"></option>
                                     @endforeach
-                                </select>
+                                </datalist>
                             </div>
 
                             <div class="flex items-center justify-between gap-2 pt-2 mt-1 border-t border-gray-100 dark:border-gray-800">

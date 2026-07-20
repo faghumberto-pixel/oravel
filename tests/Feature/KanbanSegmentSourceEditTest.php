@@ -41,13 +41,35 @@ class KanbanSegmentSourceEditTest extends TestCase
         ]);
 
         Livewire::test(Kanban::class)
-            ->call('updateSegment', $lead->id, 'construcao_civil')
-            ->call('updateSource', $lead->id, SalesLead::SOURCE_INDICACAO)
+            ->call('updateSegment', $lead->id, 'Construção Civil')
+            ->call('updateSource', $lead->id, 'Indicação')
             ->assertHasNoErrors();
 
         $lead->refresh();
         $this->assertSame('construcao_civil', $lead->segment);
         $this->assertSame(SalesLead::SOURCE_INDICACAO, $lead->source);
+    }
+
+    public function test_typing_a_brand_new_value_creates_a_custom_segment_and_source(): void
+    {
+        $this->actingAs($this->superAdmin());
+        Filament::setCurrentPanel(Filament::getPanel('central'));
+
+        $lead = SalesLead::create([
+            'company_name' => 'Empresa Teste Valor Novo',
+            'pipeline_stage' => SalesLead::STAGE_PROSPECCAO,
+            'segment' => 'industrial_hospitalar',
+            'source' => SalesLead::SOURCE_SITE,
+        ]);
+
+        Livewire::test(Kanban::class)
+            ->call('updateSegment', $lead->id, 'Agronegócio')
+            ->call('updateSource', $lead->id, 'Feira do Setor')
+            ->assertHasNoErrors();
+
+        $lead->refresh();
+        $this->assertSame('agronegocio', $lead->segment);
+        $this->assertSame('feira_do_setor', $lead->source);
     }
 
     public function test_kanban_reflects_segment_source_update_on_a_real_livewire_update_post(): void
@@ -86,7 +108,7 @@ class KanbanSegmentSourceEditTest extends TestCase
                     'snapshot' => $kanbanSnapshotRaw,
                     'updates' => [],
                     'calls' => [
-                        ['path' => '', 'method' => 'updateSegment', 'params' => [$lead->id, 'construcao_civil']],
+                        ['path' => '', 'method' => 'updateSegment', 'params' => [$lead->id, 'Construção Civil']],
                     ],
                 ],
             ],

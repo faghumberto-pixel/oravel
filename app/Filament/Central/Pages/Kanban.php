@@ -2,10 +2,12 @@
 
 namespace App\Filament\Central\Pages;
 
+use App\Models\Client;
 use App\Models\SalesLead;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 
 /**
  * Quadro por estagio do CRM Comercial, mesmo estilo visual do Kanban do
@@ -65,16 +67,46 @@ class Kanban extends Page
     }
 
     /**
-     * Edicao rapida de segmento/origem direto do card, sem abrir o form
-     * completo de edicao -- mesmo espirito do moveToStage().
+     * Edicao rapida de segmento/origem direto do card (input com sugestoes,
+     * nao select fechado -- pedido explicito do usuario: "nao consigo
+     * adicionar, apenas escolher"). O campo recebe o ROTULO digitado (o que
+     * aparece no input), nao o slug interno -- resolveLabelToValue() traduz
+     * de volta pro slug quando bate com um rotulo conhecido, ou slugifica o
+     * texto novo como valor customizado.
      */
-    public function updateSegment(string $leadId, string $segment): void
+    public function updateSegment(string $leadId, string $typedLabel): void
     {
-        SalesLead::findOrFail($leadId)->update(['segment' => $segment]);
+        SalesLead::findOrFail($leadId)->update([
+            'segment' => $this->resolveLabelToValue($typedLabel, Client::nicheLabels()),
+        ]);
     }
 
-    public function updateSource(string $leadId, string $source): void
+    public function updateSource(string $leadId, string $typedLabel): void
     {
-        SalesLead::findOrFail($leadId)->update(['source' => $source]);
+        SalesLead::findOrFail($leadId)->update([
+            'source' => $this->resolveLabelToValue($typedLabel, SalesLead::sourceLabels()),
+        ]);
+    }
+
+    /**
+     * @param  array<string, string>  $knownLabels  slug => rotulo
+     */
+    private function resolveLabelToValue(string $typedLabel, array $knownLabels): ?string
+    {
+        $typedLabel = trim($typedLabel);
+
+        if ($typedLabel === '') {
+            return null;
+        }
+
+        foreach ($knownLabels as $slug => $label) {
+            if (mb_strtolower($label) === mb_strtolower($typedLabel)) {
+                return $slug;
+            }
+        }
+
+        // Valor novo, digitado pelo usuario -- vira slug (mesmo padrao dos
+        // valores conhecidos), sem precisar cadastrar em lugar nenhum antes.
+        return Str::slug($typedLabel, '_');
     }
 }
