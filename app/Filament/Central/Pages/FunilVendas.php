@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Pages;
 
+use App\Filament\Central\Resources\SalesLeadResource;
 use App\Models\SalesLead;
 use Filament\Pages\Page;
 
@@ -75,6 +76,11 @@ class FunilVendas extends Page
                 'label' => $stages[$stageId],
                 'count' => $count,
                 'widthPercent' => $widthPercent,
+                // Clicar na faixa abre a lista de leads ja filtrada por esse
+                // estagio -- pedido explicito do usuario.
+                'url' => SalesLeadResource::getUrl('index', [
+                    'tableFilters' => ['pipeline_stage' => ['value' => $stageId]],
+                ]),
             ];
         }
 

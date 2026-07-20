@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Filament\Central\Pages\FunilVendas;
 use App\Models\SalesLead;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -38,6 +39,7 @@ class FunilVendasVisualTest extends TestCase
         $response->assertOk();
         $response->assertSee('Taxa de Conversão');
 
+        Filament::setCurrentPanel(Filament::getPanel('central'));
         $page = app(FunilVendas::class);
         $rows = $page->getFunnelStages();
         $this->assertSame(0.0, end($rows)['bottomWidth']);
@@ -68,6 +70,7 @@ class FunilVendasVisualTest extends TestCase
             'segment' => 'industrial_hospitalar', 'source' => SalesLead::SOURCE_SITE,
         ]);
 
+        Filament::setCurrentPanel(Filament::getPanel('central'));
         $page = app(FunilVendas::class);
         $rows = $page->getFunnelStages();
 

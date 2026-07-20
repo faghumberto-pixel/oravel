@@ -9,8 +9,13 @@
 
         Visual: piramide invertida de verdade, cor solida (sem
         brilho/gradiente nem alvo -- versao anterior parecia foguete, nao
-        piramide, feedback direto do usuario). Mesma paleta do Kanban, pra
-        reconhecer o estagio de uma tela pra outra.
+        piramide, feedback direto do usuario, referencia:
+        blog.hookdig.com/como-integrar-as-metricas-de-inbound-marketing-com-o-ciclo-de-vendas).
+        Mesma paleta do Kanban, pra reconhecer o estagio de uma tela pra
+        outra. Cada faixa e' um link pra lista de leads ja filtrada por
+        aquele estagio -- clip-path tambem no <a>, nao so' num div interno,
+        pra area clicavel bater exatamente com o trapezio visivel (canto
+        "invisivel" fora do clip-path nao deve roubar clique da faixa vizinha).
     --}}
     @php
         $rows = $this->getFunnelStages();
@@ -37,17 +42,18 @@
                         . (50 + $bottom / 2) . '% 100%, '
                         . (50 - $bottom / 2) . '% 100%)';
                 @endphp
-                <div class="relative w-full h-[86px] -mt-px">
-                    <div
-                        class="absolute inset-0 {{ $bandColors[$row['stage']] ?? 'bg-gray-600' }}"
-                        style="clip-path: {{ $clipPath }};"
-                    ></div>
-
+                <a
+                    href="{{ $row['url'] }}"
+                    class="relative block w-full h-[86px] -mt-px group {{ $bandColors[$row['stage']] ?? 'bg-gray-600' }} hover:brightness-110 transition-[filter]"
+                    style="clip-path: {{ $clipPath }};"
+                    title="Ver leads em {{ $row['label'] }}"
+                >
                     <div class="relative h-full flex flex-col items-center justify-center text-center pointer-events-none px-4">
                         <span class="text-xs font-black uppercase tracking-wide text-white leading-tight">{{ $row['label'] }}</span>
                         <span class="text-2xl font-black text-white leading-tight">{{ $row['count'] }}</span>
+                        <span class="text-[9px] font-bold uppercase tracking-wide text-white/0 group-hover:text-white/80 transition-colors leading-tight">Ver leads →</span>
                     </div>
-                </div>
+                </a>
             @endforeach
         </div>
 
