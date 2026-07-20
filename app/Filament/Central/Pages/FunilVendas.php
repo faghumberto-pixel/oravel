@@ -28,54 +28,38 @@ class FunilVendas extends Page
     protected static string $view = 'filament.central.pages.funil-vendas';
 
     /**
-     * @return array<int, array{stage: string, label: string, count: int, widthPercent: float}>
+     * @return array<int, array{stage: string, label: string, count: int, topWidth: float, bottomWidth: float}>
      */
     public function getFunnelStages(): array
     {
         $stages = SalesLead::stageLabels();
         unset($stages[SalesLead::STAGE_PERDIDO]);
         $stageIds = array_keys($stages);
+        $totalStages = count($stageIds);
 
         $counts = SalesLead::whereIn('pipeline_stage', $stageIds)
             ->selectRaw('pipeline_stage, count(*) as total')
             ->groupBy('pipeline_stage')
             ->pluck('total', 'pipeline_stage');
 
-        // Cumulativo (leads NESSE estagio + em qualquer estagio mais a
-        // frente), nao o total bruto de cada estagio isolado -- e' o que
-        // garante a largura so' diminuir estagio a estagio, nunca "inchar"
-        // no meio (um estagio do meio pode ter mais lead parado do que o
-        // anterior, o que quebraria a forma de piramide invertida se
-        // contasse cada estagio isolado). Pedido explicito do usuario:
-        // "tem que ser uma piramide invertida".
-        $cumulative = [];
-        $running = 0;
-        foreach (array_reverse($stageIds) as $stageId) {
-            $running += (int) ($counts[$stageId] ?? 0);
-            $cumulative[$stageId] = $running;
-        }
-
-        $topCount = max($cumulative[$stageIds[0]] ?? 0, 1);
-
-        // Piso de 22% de largura -- uma faixa com 1 lead (ou 0) ainda fica
-        // legivel, nao desaparece visualmente. Como o cumulativo ja e'
-        // sempre decrescente, aplicar o mesmo piso em faixas menores nunca
-        // faz uma faixa mais funda ficar mais larga que a anterior.
-        $minWidth = 22.0;
-
+        // Largura FIXA por posicao (nao proporcional a contagem real) --
+        // pedido explicito do usuario ("largos como uma piramide invertida,
+        // a primeira e' a base"). Contagem proporcional foi tentada antes e
+        // ficou ruim de proposito: numa esteira real com atrito forte entre
+        // estagios (poucos leads sobrevivem ate' o fim), a largura
+        // cumulativa colapsava quase tudo perto do piso minimo, so' o
+        // primeiro estagio ficava largo. Aqui a piramide e' geometrica --
+        // primeiro estagio = base (100%), ultimo = ponta (0%), divisao
+        // igual entre os estagios -- sempre bem proporcionada, contagem
+        // real so' aparece como numero em cada faixa.
         $rows = [];
-        foreach ($stageIds as $stageId) {
-            $count = (int) ($counts[$stageId] ?? 0);
-            $cumulativeCount = $cumulative[$stageId];
-            $widthPercent = $cumulativeCount > 0
-                ? max($minWidth, round(($cumulativeCount / $topCount) * 100, 1))
-                : $minWidth;
-
+        foreach ($stageIds as $i => $stageId) {
             $rows[] = [
                 'stage' => $stageId,
                 'label' => $stages[$stageId],
-                'count' => $count,
-                'widthPercent' => $widthPercent,
+                'count' => (int) ($counts[$stageId] ?? 0),
+                'topWidth' => round(100 * ($totalStages - $i) / $totalStages, 1),
+                'bottomWidth' => round(100 * ($totalStages - $i - 1) / $totalStages, 1),
                 // Clicar na faixa abre a lista de leads ja filtrada por esse
                 // estagio -- pedido explicito do usuario.
                 'url' => SalesLeadResource::getUrl('index', [
@@ -83,16 +67,6 @@ class FunilVendas extends Page
                 ]),
             ];
         }
-
-        // topWidth/bottomWidth pra cada faixa ser um trapezio continuo --
-        // o fundo de uma faixa bate com o topo da proxima, sem degrau. A
-        // ultima faixa converge pra um ponto de verdade (bico do funil,
-        // como a referencia visual pedida), nao so' afunila um pouco.
-        foreach ($rows as $i => &$row) {
-            $row['topWidth'] = $row['widthPercent'];
-            $row['bottomWidth'] = $rows[$i + 1]['widthPercent'] ?? 0.0;
-        }
-        unset($row);
 
         return $rows;
     }

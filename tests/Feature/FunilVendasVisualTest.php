@@ -45,14 +45,17 @@ class FunilVendasVisualTest extends TestCase
         $this->assertSame(0.0, end($rows)['bottomWidth']);
     }
 
-    public function test_width_never_increases_even_when_a_middle_stage_has_more_raw_leads(): void
+    public function test_width_is_fixed_and_evenly_graduated_regardless_of_real_lead_distribution(): void
     {
-        // Cenario que quebraria uma piramide invertida se a largura fosse
-        // baseada na contagem bruta de cada estagio isolado: "contato
-        // qualificado" tem MAIS leads brutos do que "prospeccao" (comum
-        // numa esteira real, leads antigos se acumulam num estagio do
-        // meio). A largura tem que ser cumulativa (estagio + tudo depois
-        // dele) pra continuar so' diminuindo.
+        // Contagem BEM distorcida de proposito (contato qualificado tem
+        // muito mais lead que prospeccao, comum numa esteira real) -- a
+        // largura tem que continuar igual mesmo assim. Largura baseada em
+        // contagem real (cumulativa) foi tentada antes e ficou ruim: com
+        // atrito forte entre estagios, quase tudo colapsava perto do piso
+        // minimo, so' o primeiro estagio ficava largo -- "layout pessimo",
+        // feedback direto do usuario. Agora e' geometrico: primeiro
+        // estagio = base (100%), ultimo = ponta (0%), sempre bem largo e
+        // graduado, contagem real so' aparece como numero na faixa.
         for ($i = 0; $i < 2; $i++) {
             SalesLead::create([
                 'company_name' => "Prospeccao $i", 'pipeline_stage' => SalesLead::STAGE_PROSPECCAO,
@@ -65,18 +68,21 @@ class FunilVendasVisualTest extends TestCase
                 'segment' => 'industrial_hospitalar', 'source' => SalesLead::SOURCE_SITE,
             ]);
         }
-        SalesLead::create([
-            'company_name' => 'Demonstracao 1', 'pipeline_stage' => SalesLead::STAGE_DEMONSTRACAO_REALIZADA,
-            'segment' => 'industrial_hospitalar', 'source' => SalesLead::SOURCE_SITE,
-        ]);
 
         Filament::setCurrentPanel(Filament::getPanel('central'));
         $page = app(FunilVendas::class);
         $rows = $page->getFunnelStages();
 
-        $widths = array_column($rows, 'widthPercent');
-        for ($i = 1; $i < count($widths); $i++) {
-            $this->assertLessThanOrEqual($widths[$i - 1], $widths[$i], "Estagio {$i} mais largo que o anterior -- nao e' uma piramide invertida.");
+        // 5 estagios abertos (prospeccao..ganho): base 100%, degraus de
+        // 20% ate' a ponta (0%) -- fixo, nao mexe com a distorcao acima.
+        $this->assertSame(100.0, $rows[0]['topWidth']);
+        $this->assertSame(80.0, $rows[0]['bottomWidth']);
+        $this->assertSame(80.0, $rows[1]['topWidth']);
+        $this->assertSame(0.0, end($rows)['bottomWidth']);
+
+        $topWidths = array_column($rows, 'topWidth');
+        for ($i = 1; $i < count($topWidths); $i++) {
+            $this->assertLessThan($topWidths[$i - 1], $topWidths[$i], "Estagio {$i} nao ficou mais estreito que o anterior -- nao e' uma piramide invertida.");
         }
     }
 }
