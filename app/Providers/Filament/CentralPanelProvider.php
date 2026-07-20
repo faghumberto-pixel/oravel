@@ -10,10 +10,14 @@ use App\Filament\Central\Pages\Programacao;
 use App\Filament\Central\Resources\PlanResource;
 use App\Filament\Central\Widgets\ArrChart;
 use App\Filament\Central\Widgets\ChurnChart;
+use App\Filament\Central\Widgets\LeadsBySegmentChart;
+use App\Filament\Central\Widgets\LeadsBySourceChart;
+use App\Filament\Central\Widgets\LeadsCreatedTrendChart;
 use App\Filament\Central\Widgets\RevenueChart;
 use App\Filament\Central\Widgets\SaaSStatsOverview;
 use App\Filament\Central\Widgets\SalesCrmStatsWidget;
 use App\Filament\Central\Widgets\SalesLeadMapWidget;
+use App\Filament\Central\Widgets\WonLostTrendChart;
 use App\Filament\Resources\RoleResource;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -74,6 +78,10 @@ class CentralPanelProvider extends PanelProvider
                 ChurnChart::class,
                 SalesCrmStatsWidget::class,
                 SalesLeadMapWidget::class,
+                LeadsCreatedTrendChart::class,
+                WonLostTrendChart::class,
+                LeadsBySegmentChart::class,
+                LeadsBySourceChart::class,
             ])
             ->databaseNotifications()
             ->databaseNotificationsPolling('8s')

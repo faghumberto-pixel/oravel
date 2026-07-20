@@ -2,8 +2,12 @@
 
 namespace App\Filament\Central\Pages;
 
+use App\Filament\Central\Widgets\LeadsBySegmentChart;
+use App\Filament\Central\Widgets\LeadsBySourceChart;
+use App\Filament\Central\Widgets\LeadsCreatedTrendChart;
 use App\Filament\Central\Widgets\SalesCrmStatsWidget;
 use App\Filament\Central\Widgets\SalesLeadMapWidget;
+use App\Filament\Central\Widgets\WonLostTrendChart;
 use Filament\Pages\Dashboard as BaseDashboard;
 
 class DashboardCrm extends BaseDashboard
@@ -24,7 +28,16 @@ class DashboardCrm extends BaseDashboard
     {
         return [
             SalesCrmStatsWidget::class,
+            LeadsCreatedTrendChart::class,
+            WonLostTrendChart::class,
+            LeadsBySegmentChart::class,
+            LeadsBySourceChart::class,
             SalesLeadMapWidget::class,
         ];
+    }
+
+    public function getColumns(): int|array
+    {
+        return 2;
     }
 }
