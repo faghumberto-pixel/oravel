@@ -30,7 +30,13 @@
         ];
     @endphp
 
-    <div class="max-w-xl mx-auto">
+    {{--
+        Quadro bem maior de proposito -- pedido explicito do usuario
+        ("aumentar pra que caixa os titulos, nao tem problema se ficar
+        muito grande"), titulo longo ("Demonstração Realizada") precisa
+        caber sem quebrar feio numa faixa estreita perto da ponta.
+    --}}
+    <div class="max-w-5xl mx-auto">
         <div class="flex flex-col items-center">
             @foreach($rows as $row)
                 @php
@@ -44,20 +50,20 @@
                 @endphp
                 <a
                     href="{{ $row['url'] }}"
-                    class="relative block w-full h-[86px] -mt-px group {{ $bandColors[$row['stage']] ?? 'bg-gray-600' }} hover:brightness-110 transition-[filter]"
+                    class="relative block w-full h-[150px] -mt-px group {{ $bandColors[$row['stage']] ?? 'bg-gray-600' }} hover:brightness-110 transition-[filter]"
                     style="clip-path: {{ $clipPath }};"
                     title="Ver leads em {{ $row['label'] }}"
                 >
-                    <div class="relative h-full flex flex-col items-center justify-center text-center pointer-events-none px-4">
-                        <span class="text-xs font-black uppercase tracking-wide text-white leading-tight">{{ $row['label'] }}</span>
-                        <span class="text-2xl font-black text-white leading-tight">{{ $row['count'] }}</span>
-                        <span class="text-[9px] font-bold uppercase tracking-wide text-white/0 group-hover:text-white/80 transition-colors leading-tight">Ver leads →</span>
+                    <div class="relative h-full flex flex-col items-center justify-center text-center pointer-events-none px-6">
+                        <span class="text-base font-black uppercase tracking-wide text-white leading-tight">{{ $row['label'] }}</span>
+                        <span class="text-4xl font-black text-white leading-tight mt-1">{{ $row['count'] }}</span>
+                        <span class="text-xs font-bold uppercase tracking-wide text-white/0 group-hover:text-white/80 transition-colors leading-tight mt-1">Ver leads →</span>
                     </div>
                 </a>
             @endforeach
         </div>
 
-        <div class="mt-6 grid grid-cols-2 gap-4">
+        <div class="mt-8 grid grid-cols-2 gap-4 max-w-2xl mx-auto">
             <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-center">
                 <p class="text-[10px] font-black uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">Taxa de Conversão</p>
                 <p class="text-2xl font-black text-gray-900 dark:text-gray-50">
