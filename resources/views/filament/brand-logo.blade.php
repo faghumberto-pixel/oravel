@@ -21,6 +21,10 @@
             </span>
         @endif
     @else
-        <div class="text-xl font-bold tracking-tight text-white">O<span class="text-primary-500">r</span>avel</div>
+        {{-- Cor do "r" fixa na laranja da marca (nao text-primary-500) --
+             central usa azul como cor primaria do painel, ficaria com o
+             "r" azul se dependesse da cor primaria de cada painel. Mesmo
+             #E8541A usado nos marcadores dos mapas comerciais. --}}
+        <div class="text-xl font-bold tracking-tight text-white">O<span style="color: #E8541A">r</span>avel</div>
     @endif
 </div>

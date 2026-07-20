@@ -75,6 +75,10 @@ class CentralPanelProvider extends PanelProvider
             // referencia visual acima.
             ->darkMode(true, isForced: true)
             ->viteTheme('resources/css/filament/central/theme.css')
+            // Central nunca teve isso (so' o Admin) -- caia no texto padrao
+            // do Filament em vez do wordmark "Oravel" com o "r" laranja.
+            ->brandLogo(fn () => view('filament.brand-logo'))
+            ->brandLogoHeight('1.75rem')
             ->favicon(asset('favicon.png'))
             ->resources([
                 PlanResource::class,
@@ -120,6 +124,12 @@ class CentralPanelProvider extends PanelProvider
                 // aplicado no AdminPanelProvider antes.
                 PanelsRenderHook::HEAD_END,
                 fn () => view('filament.bfcache-reload'),
+            )
+            ->renderHook(
+                // Relogio ao vivo (dia/hora/mes) + total de compromissos de
+                // hoje no topbar -- pedido explicito do usuario.
+                PanelsRenderHook::TOPBAR_START,
+                fn () => view('filament.central.topbar-clock'),
             )
             ->plugin(
                 // SalesAgendaWidget (Programacao) usa esse pacote -- sem
