@@ -13,6 +13,7 @@ use App\Filament\Central\Widgets\ChurnChart;
 use App\Filament\Central\Widgets\LeadsBySegmentChart;
 use App\Filament\Central\Widgets\LeadsBySourceChart;
 use App\Filament\Central\Widgets\LeadsCreatedTrendChart;
+use App\Filament\Central\Widgets\ProspectingMapWidget;
 use App\Filament\Central\Widgets\RevenueChart;
 use App\Filament\Central\Widgets\SaaSStatsOverview;
 use App\Filament\Central\Widgets\SalesCrmStatsWidget;
@@ -78,6 +79,7 @@ class CentralPanelProvider extends PanelProvider
                 ChurnChart::class,
                 SalesCrmStatsWidget::class,
                 SalesLeadMapWidget::class,
+                ProspectingMapWidget::class,
                 LeadsCreatedTrendChart::class,
                 WonLostTrendChart::class,
                 LeadsBySegmentChart::class,

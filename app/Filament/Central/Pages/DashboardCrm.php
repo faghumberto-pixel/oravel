@@ -5,6 +5,7 @@ namespace App\Filament\Central\Pages;
 use App\Filament\Central\Widgets\LeadsBySegmentChart;
 use App\Filament\Central\Widgets\LeadsBySourceChart;
 use App\Filament\Central\Widgets\LeadsCreatedTrendChart;
+use App\Filament\Central\Widgets\ProspectingMapWidget;
 use App\Filament\Central\Widgets\SalesCrmStatsWidget;
 use App\Filament\Central\Widgets\SalesLeadMapWidget;
 use App\Filament\Central\Widgets\WonLostTrendChart;
@@ -33,6 +34,7 @@ class DashboardCrm extends BaseDashboard
             LeadsBySegmentChart::class,
             LeadsBySourceChart::class,
             SalesLeadMapWidget::class,
+            ProspectingMapWidget::class,
         ];
     }
 

@@ -6,13 +6,20 @@ use App\Filament\Central\Resources\SalesLeadResource;
 use App\Models\SalesLead;
 use Filament\Widgets\Widget;
 
-class SalesLeadMapWidget extends Widget
+/**
+ * Mapa "Prospecção Planejada" -- mesmo padrão do SalesLeadMapWidget, mas
+ * filtrado so' pros leads ainda no estágio inicial (Prospecção), pedido
+ * explícito do usuário: um segundo mapa ao lado do Mapa Comercial mostrando
+ * onde ainda ha' trabalho de prospecção a fazer, separado dos leads já
+ * qualificados/em andamento no funil.
+ */
+class ProspectingMapWidget extends Widget
 {
-    protected static string $view = 'filament.central.widgets.sales-lead-map-widget';
+    protected static string $view = 'filament.central.widgets.prospecting-map-widget';
 
     /**
      * Chamado via $wire.refreshMapData() -- mesmo motivo de
-     * CrmLeadMapWidget: o mapa vive em wire:ignore (Leaflet), Livewire
+     * SalesLeadMapWidget: o mapa vive em wire:ignore (Leaflet), Livewire
      * nunca redesenha os marcadores sozinho.
      */
     public function refreshMapData(): array
@@ -22,7 +29,8 @@ class SalesLeadMapWidget extends Widget
 
     public function getLeads(): array
     {
-        return SalesLead::whereNotNull('latitude')
+        return SalesLead::where('pipeline_stage', SalesLead::STAGE_PROSPECCAO)
+            ->whereNotNull('latitude')
             ->whereNotNull('longitude')
             ->get(['id', 'company_name', 'pipeline_stage', 'segment', 'latitude', 'longitude'])
             ->map(fn (SalesLead $lead) => [
