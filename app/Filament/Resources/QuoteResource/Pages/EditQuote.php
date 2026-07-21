@@ -10,6 +10,7 @@ use Filament\Actions;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
 
 class EditQuote extends EditRecord
@@ -116,12 +117,17 @@ class EditQuote extends EditRecord
                 ->icon('heroicon-o-banknotes')
                 ->color('warning')
                 ->visible(fn () => $record->status === Quote::STATUS_APROVADO && ! $record->financeiro_forwarded_at)
-                ->requiresConfirmation()
-                ->modalDescription('Reúne o PDF do orçamento e sinaliza pro Financeiro que está pronto pra cobrança.')
-                ->action(function () use ($record) {
+                ->modalDescription('Reúne o PDF do orçamento e cria a Conta a Receber correspondente, na fila que o Financeiro já usa.')
+                ->form([
+                    Forms\Components\DatePicker::make('due_date')
+                        ->label('Vencimento')
+                        ->required()
+                        ->default(fn () => now()->addDays(30)),
+                ])
+                ->action(function (array $data) use ($record) {
                     try {
-                        $record->forwardToFinanceiro();
-                        Notification::make()->title('Encaminhado ao Financeiro.')->success()->send();
+                        $record->forwardToFinanceiro(Carbon::parse($data['due_date']));
+                        Notification::make()->title('Encaminhado ao Financeiro.')->body('Conta a Receber criada.')->success()->send();
                     } catch (\RuntimeException $e) {
                         Notification::make()->title('Não foi possível encaminhar')->body($e->getMessage())->warning()->send();
                     }

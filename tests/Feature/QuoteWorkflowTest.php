@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\AccountReceivable;
 use App\Models\Client;
 use App\Models\Plan;
 use App\Models\Quote;
@@ -88,6 +89,13 @@ class QuoteWorkflowTest extends TestCase
         $quote->forwardToFinanceiro();
         $this->assertNotNull($quote->financeiro_forwarded_at);
 
+        $receivable = AccountReceivable::where('quote_id', $quote->id)->firstOrFail();
+        $this->assertSame($tenant->id, $receivable->tenant_id);
+        $this->assertSame($client->id, $receivable->client_id);
+        $this->assertSame('400.00', $receivable->amount);
+        $this->assertSame('pendente', $receivable->status);
+        $this->assertNotNull($receivable->due_date);
+
         $quote->complete();
         $this->assertSame(Quote::STATUS_CONCLUIDO, $quote->status);
         $this->assertNotNull($quote->completed_at);
@@ -138,6 +146,44 @@ class QuoteWorkflowTest extends TestCase
 
         $this->expectException(\RuntimeException::class);
         $quote->forwardToFinanceiro();
+    }
+
+    public function test_forwarding_to_financeiro_twice_throws_and_does_not_duplicate_the_receivable(): void
+    {
+        [$tenant, $client, $admin] = $this->makeTenantWithClient();
+        $this->actingAs($admin);
+
+        $quote = Quote::create(['tenant_id' => $tenant->id, 'client_id' => $client->id]);
+        $quote->items()->create([
+            'tenant_id' => $tenant->id, 'type' => QuoteItem::TYPE_PECA,
+            'description' => 'Peça X', 'quantity' => 1, 'unit_price' => 100,
+        ]);
+        $quote->send();
+        $quote->approve();
+        $quote->forwardToFinanceiro();
+
+        $this->expectException(\RuntimeException::class);
+        $quote->forwardToFinanceiro();
+    }
+
+    public function test_forward_to_financeiro_honors_a_custom_due_date(): void
+    {
+        [$tenant, $client, $admin] = $this->makeTenantWithClient();
+        $this->actingAs($admin);
+
+        $quote = Quote::create(['tenant_id' => $tenant->id, 'client_id' => $client->id]);
+        $quote->items()->create([
+            'tenant_id' => $tenant->id, 'type' => QuoteItem::TYPE_PECA,
+            'description' => 'Peça X', 'quantity' => 1, 'unit_price' => 100,
+        ]);
+        $quote->send();
+        $quote->approve();
+
+        $dueDate = now()->addDays(15)->startOfDay();
+        $quote->forwardToFinanceiro($dueDate);
+
+        $receivable = AccountReceivable::where('quote_id', $quote->id)->firstOrFail();
+        $this->assertTrue($dueDate->isSameDay($receivable->due_date));
     }
 
     public function test_deleting_item_recalculates_total(): void

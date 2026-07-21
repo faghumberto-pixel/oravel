@@ -86,6 +86,17 @@ class AccountReceivableResource extends Resource
                 ])->formatStateUsing(fn ($state) => ucfirst($state)),
             ])
             ->actions([
+                // POP 4: o Financeiro precisa conseguir abrir o PDF do
+                // orçamento (com os e-mails de aprovação registrados nele)
+                // sem sair da fila -- só existe quando a conta veio de
+                // Quote::forwardToFinanceiro() (item 9 da auditoria).
+                Tables\Actions\Action::make('baixarOrcamento')
+                    ->label('PDF do Orçamento')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('gray')
+                    ->visible(fn (AccountReceivable $record) => $record->quote_id !== null)
+                    ->url(fn (AccountReceivable $record) => route('quotes.pdf', $record->quote_id))
+                    ->openUrlInNewTab(),
                 Tables\Actions\Action::make('registrarRecebimento')
                     ->label('Dar Baixa')
                     ->icon('heroicon-o-check-circle')

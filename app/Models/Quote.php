@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
@@ -156,6 +157,16 @@ class Quote extends Model
         return $this->hasMany(QuoteItem::class);
     }
 
+    /**
+     * Conta a Receber criada por forwardToFinanceiro() (POP 4). A fila do
+     * Financeiro é a tela já existente App\Filament\Resources\
+     * AccountReceivableResource -- não uma tela nova só pra orçamentos.
+     */
+    public function receivable(): HasOne
+    {
+        return $this->hasOne(AccountReceivable::class);
+    }
+
     public function isOpen(): bool
     {
         return ! in_array($this->status, [self::STATUS_REPROVADO, self::STATUS_CONCLUIDO], true);
@@ -231,18 +242,36 @@ class Quote extends Model
     }
 
     /**
-     * POP 4: reúne PDF + e-mails de aprovação e encaminha ao Financeiro.
-     * So' um flag/timestamp por enquanto -- ainda não existe ponte real
-     * com App\Models\AccountPayable (fila do Financeiro em si e' um item
-     * separado da auditoria).
+     * POP 4: reúne PDF + e-mails de aprovação e encaminha ao Financeiro --
+     * gera a Conta a Receber de verdade (item 9 da auditoria), que passa a
+     * aparecer na fila que o Financeiro já usa (Contas a Receber). Ponte
+     * com AccountReceivable (não AccountPayable: o orçamento aprovado é
+     * dinheiro que o CLIENTE deve ao tenant, não o contrário).
      */
-    public function forwardToFinanceiro(): void
+    public function forwardToFinanceiro(?\DateTimeInterface $dueDate = null): void
     {
         if ($this->status !== self::STATUS_APROVADO) {
             throw new \RuntimeException('Só é possível encaminhar ao Financeiro um orçamento aprovado.');
         }
 
+        if ($this->financeiro_forwarded_at) {
+            throw new \RuntimeException('Este orçamento já foi encaminhado ao Financeiro.');
+        }
+
         $this->update(['financeiro_forwarded_at' => now()]);
+
+        $this->receivable()->create([
+            'tenant_id' => $this->tenant_id,
+            'client_id' => $this->client_id,
+            'description' => 'Orçamento '.self::typeLabels()[$this->type].' — '.$this->client->name,
+            // Soma direto dos itens (não $this->total_value): a coluna
+            // cacheada só reflete a última recalculateTotal() persistida no
+            // banco -- se o objeto Quote em memória não foi dado refresh()
+            // desde então, o atributo em PHP fica desatualizado (mesma
+            // classe de bug já documentada em SalesLead::pipeline_stage).
+            'amount' => $this->items()->sum('subtotal'),
+            'due_date' => $dueDate ?? now()->addDays(30),
+        ]);
     }
 
     public function complete(): void

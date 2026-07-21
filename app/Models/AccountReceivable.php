@@ -30,7 +30,7 @@ class AccountReceivable extends Model
         'description', 'amount', 'due_date', 'payment_date',
         'status', 'tenant_id', 'bill_category_id',
         'branch_id', 'cost_center_id', 'client_id', 'contract_id',
-        'billing_plan_id', 'multa_percentual', 'multa_valor',
+        'billing_plan_id', 'quote_id', 'multa_percentual', 'multa_valor',
         'mes', 'ano',
     ];
 
@@ -86,6 +86,16 @@ class AccountReceivable extends Model
     public function billingPlan(): BelongsTo
     {
         return $this->belongsTo(BillingPlan::class, 'billing_plan_id');
+    }
+
+    /**
+     * Origem: App\Models\Quote::forwardToFinanceiro() (POP 4 da auditoria)
+     * -- nulo pra contas a receber lançadas manualmente, sem origem num
+     * orçamento.
+     */
+    public function quote(): BelongsTo
+    {
+        return $this->belongsTo(Quote::class);
     }
 
     /**

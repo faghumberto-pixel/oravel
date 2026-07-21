@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Resources\QuoteResource\Pages\CreateQuote;
 use App\Filament\Resources\QuoteResource\Pages\EditQuote;
+use App\Models\AccountReceivable;
 use App\Models\Client;
 use App\Models\Plan;
 use App\Models\Quote;
@@ -113,8 +114,9 @@ class QuoteResourceTest extends TestCase
         $component->assertActionVisible('encaminhar_financeiro');
         $component->assertActionVisible('concluir');
 
-        $component->callAction('encaminhar_financeiro');
+        $component->callAction('encaminhar_financeiro', data: ['due_date' => now()->addDays(30)->toDateString()]);
         $this->assertNotNull($quote->fresh()->financeiro_forwarded_at);
+        $this->assertTrue(AccountReceivable::where('quote_id', $quote->id)->exists());
 
         $component->callAction('concluir');
         $this->assertSame(Quote::STATUS_CONCLUIDO, $quote->fresh()->status);
