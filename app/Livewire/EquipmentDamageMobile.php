@@ -27,6 +27,8 @@ class EquipmentDamageMobile extends Component
 
     public string $damageType = '';
 
+    public string $cause = '';
+
     public string $description = '';
 
     public bool $requiresReplacement = false;
@@ -86,6 +88,14 @@ class EquipmentDamageMobile extends Component
                 EquipmentDamage::DAMAGE_TYPE_ESTRUTURAL,
                 EquipmentDamage::DAMAGE_TYPE_OUTRO,
             ]),
+            // Opcional de proposito -- quem inspeciona na devolucao nem
+            // sempre tem certeza da causa na hora, fica "nao classificado"
+            // ate' o supervisor revisar se deixado em branco.
+            'cause' => 'nullable|in:'.implode(',', [
+                EquipmentDamage::CAUSE_DESGASTE_NATURAL,
+                EquipmentDamage::CAUSE_MAU_USO,
+                EquipmentDamage::CAUSE_DANO_CLIENTE,
+            ]),
             'description' => 'required|string|max:2000',
         ]);
 
@@ -95,6 +105,7 @@ class EquipmentDamageMobile extends Component
             $this->damage->update([
                 'severity' => $this->severity,
                 'damage_type' => $this->damageType,
+                'cause' => $this->cause ?: null,
                 'description' => $this->description,
                 'requires_replacement' => $this->requiresReplacement,
             ]);
@@ -107,6 +118,7 @@ class EquipmentDamageMobile extends Component
             'equipment_movement_item_id' => $this->originItem?->id,
             'maintenance_order_id' => $this->equipmentMovement->maintenance_order_id,
             'asset_id' => $this->equipmentMovement->asset_id,
+            'cause' => $this->cause ?: null,
             'reported_by_user_id' => auth()->id(),
             'severity' => $this->severity,
             'damage_type' => $this->damageType,

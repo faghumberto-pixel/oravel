@@ -43,6 +43,15 @@ class ViewEquipmentDamage extends ViewRecord
                                 default => $state,
                             }),
                         Infolists\Components\IconEntry::make('requires_replacement')->label('Exige troca?')->boolean(),
+                        Infolists\Components\TextEntry::make('cause')
+                            ->label('Causa')
+                            ->badge()
+                            ->formatStateUsing(fn (?string $state) => EquipmentDamage::causeLabels()[$state] ?? 'Não classificado')
+                            ->color(fn (?string $state) => match ($state) {
+                                EquipmentDamage::CAUSE_MAU_USO, EquipmentDamage::CAUSE_DANO_CLIENTE => 'danger',
+                                EquipmentDamage::CAUSE_DESGASTE_NATURAL => 'success',
+                                default => 'gray',
+                            }),
                         Infolists\Components\TextEntry::make('description')->label('Descrição')->columnSpanFull(),
                     ])
                     ->columns(2),
@@ -121,11 +130,18 @@ class ViewEquipmentDamage extends ViewRecord
                     Forms\Components\Toggle::make('requires_replacement')
                         ->label('Exige substituição do equipamento?')
                         ->default(fn () => $this->record->requires_replacement),
+                    Forms\Components\Select::make('cause')
+                        ->label('Causa')
+                        ->options(EquipmentDamage::causeLabels())
+                        ->default(fn () => $this->record->cause)
+                        ->placeholder('Não classificado')
+                        ->helperText('Confirme ou ajuste a causa antes de encaminhar ao Comercial.'),
                 ])
                 ->action(function (array $data): void {
                     $this->record->update([
                         'severity' => $data['severity'],
                         'requires_replacement' => $data['requires_replacement'],
+                        'cause' => $data['cause'] ?? null,
                         'status' => EquipmentDamage::STATUS_AGUARDANDO_COMERCIAL,
                         'supervisor_reviewed_by' => auth()->id(),
                         'supervisor_reviewed_at' => now(),

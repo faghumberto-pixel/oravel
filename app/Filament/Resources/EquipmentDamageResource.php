@@ -60,6 +60,15 @@ class EquipmentDamageResource extends BaseResource
                     ->badge()
                     ->formatStateUsing(fn (?string $state) => EquipmentDamage::damageTypeLabels()[$state] ?? 'Não classificado')
                     ->color('gray'),
+                Tables\Columns\TextColumn::make('cause')
+                    ->label('Causa')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state) => EquipmentDamage::causeLabels()[$state] ?? 'Não classificado')
+                    ->color(fn (?string $state) => match ($state) {
+                        EquipmentDamage::CAUSE_MAU_USO, EquipmentDamage::CAUSE_DANO_CLIENTE => 'danger',
+                        EquipmentDamage::CAUSE_DESGASTE_NATURAL => 'success',
+                        default => 'gray',
+                    }),
                 Tables\Columns\IconColumn::make('requires_replacement')
                     ->label('Troca?')
                     ->boolean(),
@@ -92,6 +101,9 @@ class EquipmentDamageResource extends BaseResource
                 Tables\Filters\SelectFilter::make('damage_type')
                     ->label('Tipo de Dano')
                     ->options(EquipmentDamage::damageTypeLabels()),
+                Tables\Filters\SelectFilter::make('cause')
+                    ->label('Causa')
+                    ->options(EquipmentDamage::causeLabels()),
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([

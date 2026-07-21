@@ -121,6 +121,10 @@ trait StoresPhotoEvidence
                         'reported_by_user_id' => auth()->id(),
                         'severity' => $item['damage_severity'] ?? EquipmentDamage::SEVERITY_MODERADA,
                         'damage_type' => $item['damage_type'] ?? EquipmentDamage::DAMAGE_TYPE_OUTRO,
+                        // So' classifica aqui quando da' pra saber com certeza
+                        // (mau_uso foi marcado explicitamente); "avaria" generica
+                        // fica sem causa ate' o supervisor revisar.
+                        'cause' => $isMauUso ? EquipmentDamage::CAUSE_MAU_USO : null,
                         'description' => $item['observation'] ?: (
                             $isMauUso
                                 ? "Mau uso detectado na OS #{$order->os_number}"

@@ -42,6 +42,12 @@ class EquipmentDamage extends Model implements HasMedia
 
     public const DAMAGE_TYPE_OUTRO = 'outro';
 
+    public const CAUSE_DESGASTE_NATURAL = 'desgaste_natural';
+
+    public const CAUSE_MAU_USO = 'mau_uso';
+
+    public const CAUSE_DANO_CLIENTE = 'dano_cliente';
+
     public const STATUS_AGUARDANDO_ASSINATURA_CLIENTE = 'aguardando_assinatura_cliente';
 
     public const STATUS_AGUARDANDO_SUPERVISOR = 'aguardando_supervisor';
@@ -80,6 +86,7 @@ class EquipmentDamage extends Model implements HasMedia
         'reported_by_user_id',
         'severity',
         'damage_type',
+        'cause',
         'description',
         'requires_replacement',
         'replacement_asset_id',
@@ -119,6 +126,18 @@ class EquipmentDamage extends Model implements HasMedia
             self::DAMAGE_TYPE_MOTOR => 'Motor',
             self::DAMAGE_TYPE_ESTRUTURAL => 'Estrutural',
             self::DAMAGE_TYPE_OUTRO => 'Outro',
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function causeLabels(): array
+    {
+        return [
+            self::CAUSE_DESGASTE_NATURAL => 'Desgaste Natural',
+            self::CAUSE_MAU_USO => 'Mau Uso',
+            self::CAUSE_DANO_CLIENTE => 'Dano do Cliente',
         ];
     }
 

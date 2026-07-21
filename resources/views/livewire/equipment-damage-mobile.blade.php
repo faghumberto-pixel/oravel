@@ -5,6 +5,7 @@
         'grave' => 'Grave / Perda Total',
     ];
     $damageTypeLabels = \App\Models\EquipmentDamage::damageTypeLabels();
+    $causeLabels = \App\Models\EquipmentDamage::causeLabels();
 @endphp
 
 <div class="mx-auto flex min-h-screen max-w-md flex-col">
@@ -62,6 +63,15 @@
                     @endforeach
                 </select>
                 @error('damageType') <p class="text-[11px] text-red-400">{{ $message }}</p> @enderror
+
+                <select wire:model="cause" @disabled($this->isLocked)
+                        class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 disabled:opacity-60">
+                    <option value="">Causa (se souber)...</option>
+                    @foreach($causeLabels as $value => $label)
+                        <option value="{{ $value }}">{{ $label }}</option>
+                    @endforeach
+                </select>
+                @error('cause') <p class="text-[11px] text-red-400">{{ $message }}</p> @enderror
 
                 <textarea wire:model="description" rows="4" placeholder="Descreva o dano encontrado..."
                           @disabled($this->isLocked)
