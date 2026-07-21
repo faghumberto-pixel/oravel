@@ -56,15 +56,22 @@ Route::get('/patio/ativo/{asset}', function (Asset $asset) {
 Route::get('/patio/ativo/{asset}/qr.svg', [PrintQrController::class, 'show'])
     ->name('assets.qr');
 
+// 'verified' removido de proposito -- nenhum outro lugar do app (nenhum
+// painel Filament) exige email verificado pra logar/usar, e nao existe
+// fluxo real de envio/confirmacao de verificacao pros usuarios criados
+// via TenantProvisioner/admin. Sobra do scaffolding padrao do Laravel:
+// travava ate' o proprio super admin (humberto@oravel.com.br, sem
+// email_verified_at em PROD) fora do relatorio, "erro pedindo verificar
+// email" -- reportado pelo usuario, achado em PROD.
 Route::get('/admin/app/maintenance-report', [MaintenanceReportController::class, 'show'])
     ->name('maintenance.report')
-    ->middleware(['auth', 'verified']);
+    ->middleware(['auth']);
 
 Route::get('/admin/app/maintenance-kanban/print', [MaintenanceKanbanPrintController::class, 'show'])
     ->name('maintenance.kanban.print')
-    ->middleware(['auth', 'verified']);
+    ->middleware(['auth']);
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/admin/trocar-senha', fn () => view('auth.trocar-senha'))->name('admin.trocar-senha');
     Route::post('/admin/trocar-senha', [PasswordController::class, 'update'])->name('admin.trocar-senha.update');
 
