@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\MediaLibrary\HasMedia;
@@ -199,5 +200,25 @@ class EquipmentDamage extends Model implements HasMedia
     public function equipmentReplacement(): HasOne
     {
         return $this->hasOne(EquipmentReplacement::class);
+    }
+
+    /**
+     * Orçamento(s) indenizatório(s) gerados a partir desta avaria (POP 5/6
+     * da auditoria: mau_uso/dano_cliente alimenta o fluxo de cobrança via
+     * App\Models\Quote em vez de só o campo estimated_cost de texto livre).
+     */
+    public function quotes(): MorphMany
+    {
+        return $this->morphMany(Quote::class, 'quotable');
+    }
+
+    /**
+     * Causas que responsabilizam o cliente pelo dano -- as únicas que
+     * fazem sentido virar cobrança/orçamento indenizatório. Desgaste
+     * natural nunca é cobrado do cliente.
+     */
+    public function isBillableToClient(): bool
+    {
+        return in_array($this->cause, [self::CAUSE_MAU_USO, self::CAUSE_DANO_CLIENTE], true);
     }
 }

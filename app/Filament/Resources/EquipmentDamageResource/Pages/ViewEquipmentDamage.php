@@ -3,9 +3,11 @@
 namespace App\Filament\Resources\EquipmentDamageResource\Pages;
 
 use App\Filament\Resources\EquipmentDamageResource;
+use App\Filament\Resources\QuoteResource;
 use App\Models\Asset;
 use App\Models\EquipmentDamage;
 use App\Models\EquipmentReplacement;
+use App\Models\Quote;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Infolists;
@@ -81,6 +83,40 @@ class ViewEquipmentDamage extends ViewRecord
                     ])
                     ->columns(2)
                     ->visible(fn ($record) => $record->supervisor_notes || $record->supervisor_reviewed_at),
+
+                Infolists\Components\Section::make('Orçamento Indenizatório')
+                    ->schema([
+                        Infolists\Components\RepeatableEntry::make('quotes')
+                            ->label('')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('type')
+                                    ->label('Tipo')
+                                    ->badge()
+                                    ->formatStateUsing(fn (string $state) => Quote::typeLabels()[$state] ?? $state)
+                                    ->color('gray'),
+                                Infolists\Components\TextEntry::make('status')
+                                    ->label('Status')
+                                    ->badge()
+                                    ->formatStateUsing(fn (string $state) => Quote::statusLabels()[$state] ?? $state)
+                                    ->color(fn (string $state) => match ($state) {
+                                        Quote::STATUS_ENVIADO => 'info',
+                                        Quote::STATUS_APROVADO => 'success',
+                                        Quote::STATUS_REPROVADO => 'danger',
+                                        Quote::STATUS_CONCLUIDO => 'primary',
+                                        default => 'gray',
+                                    }),
+                                Infolists\Components\TextEntry::make('total_value')
+                                    ->label('Valor')
+                                    ->money('BRL'),
+                                Infolists\Components\TextEntry::make('id')
+                                    ->label('')
+                                    ->formatStateUsing(fn () => 'Abrir orçamento →')
+                                    ->color('primary')
+                                    ->url(fn (Quote $record) => QuoteResource::getUrl('edit', ['record' => $record])),
+                            ])
+                            ->columns(4),
+                    ])
+                    ->visible(fn ($record) => $record->quotes()->exists()),
 
                 Infolists\Components\Section::make('Tratativa Comercial')
                     ->schema([
@@ -206,6 +242,49 @@ class ViewEquipmentDamage extends ViewRecord
                         ->title('Cobrança iniciada')
                         ->success()
                         ->send();
+                }),
+
+            // POP 5/6: quando a causa responsabiliza o cliente (mau_uso ou
+            // dano_cliente), o Comercial gera um orçamento indenizatório de
+            // verdade (peças via Almoxarifado + serviços) em vez de só
+            // digitar um valor solto em estimated_cost.
+            Actions\Action::make('gerar_orcamento_indenizatorio')
+                ->label('Gerar Orçamento Indenizatório')
+                ->color('primary')
+                ->icon('heroicon-o-document-plus')
+                ->visible(fn () => $this->record->status === EquipmentDamage::STATUS_AGUARDANDO_COMERCIAL
+                    && $this->record->isBillableToClient()
+                    && $this->record->quotes()->doesntExist()
+                    && auth()->user()->can('update', $this->record))
+                ->requiresConfirmation()
+                ->modalHeading('Gerar Orçamento Indenizatório?')
+                ->modalDescription('Cria um orçamento vinculado a esta avaria para cobrar o cliente. Você poderá adicionar os itens (peças e serviços) em seguida.')
+                ->action(function () {
+                    if (! $this->record->asset?->client_id) {
+                        Notification::make()
+                            ->title('Não foi possível gerar o orçamento')
+                            ->body('O ativo desta avaria não tem um cliente vinculado.')
+                            ->danger()
+                            ->send();
+
+                        return;
+                    }
+
+                    $quote = Quote::create([
+                        'quotable_type' => EquipmentDamage::class,
+                        'quotable_id' => $this->record->id,
+                        'client_id' => $this->record->asset->client_id,
+                        'assigned_user_id' => auth()->id(),
+                        'type' => Quote::TYPE_INDENIZATORIO,
+                    ]);
+
+                    Notification::make()
+                        ->title('Orçamento indenizatório criado')
+                        ->body('Adicione os itens (peças e serviços) para enviar ao cliente.')
+                        ->success()
+                        ->send();
+
+                    $this->redirect(QuoteResource::getUrl('edit', ['record' => $quote]));
                 }),
 
             Actions\Action::make('vincular_substituto')
