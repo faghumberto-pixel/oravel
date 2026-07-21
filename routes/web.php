@@ -10,6 +10,7 @@ use App\Http\Controllers\MaintenanceOrderDossieController;
 use App\Http\Controllers\MaintenanceReportController;
 use App\Http\Controllers\PrintQrController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\QuoteApprovalController;
 use App\Http\Controllers\QuoteReportController;
 use App\Http\Controllers\RentalDemoController;
 use App\Http\Controllers\TablePrintController;
@@ -56,6 +57,15 @@ Route::get('/patio/ativo/{asset}', function (Asset $asset) {
 
 Route::get('/patio/ativo/{asset}/qr.svg', [PrintQrController::class, 'show'])
     ->name('assets.qr');
+
+// Publica, sem auth de proposito -- e' o cliente final aprovando/reprovando
+// o orçamento pelo link que recebeu por e-mail, sem conta no sistema.
+Route::get('/orcamento/{token}', [QuoteApprovalController::class, 'show'])
+    ->name('quotes.public-approval');
+Route::post('/orcamento/{token}/aprovar', [QuoteApprovalController::class, 'approve'])
+    ->name('quotes.public-approve');
+Route::post('/orcamento/{token}/reprovar', [QuoteApprovalController::class, 'reject'])
+    ->name('quotes.public-reject');
 
 // 'verified' removido de proposito -- nenhum outro lugar do app (nenhum
 // painel Filament) exige email verificado pra logar/usar, e nao existe

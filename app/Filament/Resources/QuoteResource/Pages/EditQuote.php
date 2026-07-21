@@ -3,11 +3,14 @@
 namespace App\Filament\Resources\QuoteResource\Pages;
 
 use App\Filament\Resources\QuoteResource;
+use App\Mail\GenericPdfMail;
 use App\Models\Quote;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\Mail;
 
 class EditQuote extends EditRecord
 {
@@ -31,14 +34,43 @@ class EditQuote extends EditRecord
                 ->icon('heroicon-o-paper-airplane')
                 ->color('info')
                 ->visible(fn () => $record->status === Quote::STATUS_RASCUNHO)
-                ->requiresConfirmation()
-                ->action(function () use ($record) {
+                ->form([
+                    // Client ainda nao tem campo de e-mail geral (so'
+                    // email_financial/email_purchasing) -- pede aqui em vez
+                    // de travar o envio numa migration nova pra isso agora.
+                    Forms\Components\TextInput::make('client_email')
+                        ->label('E-mail do cliente')
+                        ->email()
+                        ->required()
+                        ->default(fn () => $record->client->email_financial),
+                ])
+                ->action(function (array $data) use ($record) {
                     try {
                         $record->send();
-                        Notification::make()->title('Orçamento enviado.')->success()->send();
                     } catch (\RuntimeException $e) {
                         Notification::make()->title('Não foi possível enviar')->body($e->getMessage())->warning()->send();
+
+                        return;
                     }
+
+                    $pdfContent = Pdf::loadView('pdf.quote', [
+                        'quote' => $record->fresh()->load(['client', 'items']),
+                        'generatedAt' => now()->format('d/m/Y H:i'),
+                    ])->output();
+
+                    $approvalUrl = route('quotes.public-approval', $record->approval_token);
+
+                    Mail::to($data['client_email'])->send(new GenericPdfMail(
+                        subjectLine: 'Orçamento — '.$record->client->name,
+                        greeting: 'Olá!',
+                        bodyText: "Segue o orçamento em anexo.\n\nPra aprovar ou reprovar, acesse o link abaixo:\n{$approvalUrl}",
+                        pdfContent: $pdfContent,
+                        pdfFilename: "orcamento-{$record->id}.pdf",
+                        senderDisplayName: auth()->user()?->tenant?->name,
+                        replyToAddress: auth()->user()?->email,
+                    ));
+
+                    Notification::make()->title('Orçamento enviado por e-mail.')->success()->send();
                 }),
 
             Actions\Action::make('aprovar')

@@ -12,6 +12,7 @@ use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -83,6 +84,7 @@ class QuoteResourceTest extends TestCase
 
     public function test_edit_page_stage_actions_gate_correctly(): void
     {
+        Mail::fake();
         [$tenant, $client, $admin] = $this->makeTenantWithClient();
         $this->actingAs($admin);
 
@@ -96,7 +98,7 @@ class QuoteResourceTest extends TestCase
         $component->assertActionVisible('enviar');
         $component->assertActionHidden('aprovar');
 
-        $component->callAction('enviar');
+        $component->callAction('enviar', data: ['client_email' => 'cliente@exemplo.com.br']);
         $this->assertSame(Quote::STATUS_ENVIADO, $quote->fresh()->status);
 
         $component = Livewire::test(EditQuote::class, ['record' => $quote->getKey(), 'tenant' => $tenant->slug]);
