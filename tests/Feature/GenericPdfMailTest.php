@@ -58,4 +58,38 @@ class GenericPdfMailTest extends TestCase
 
         $this->assertCount(0, $mail->attachments());
     }
+
+    public function test_mail_shows_tenant_name_and_replies_to_tenant_when_provided(): void
+    {
+        // SMTP compartilhado (uma conta so') -- o "envio em nome do tenant"
+        // e' so' nome de exibicao + reply-to, a conta autenticada de
+        // verdade continua sendo config('mail.from.address').
+        $mail = new GenericPdfMail(
+            subjectLine: 'Orçamento #123',
+            greeting: 'Olá!',
+            bodyText: 'Segue o orçamento.',
+            senderDisplayName: 'CampGeradores',
+            replyToAddress: 'contato@campgeradores.com.br',
+        );
+
+        $envelope = $mail->envelope();
+
+        $this->assertSame(config('mail.from.address'), $envelope->from->address);
+        $this->assertSame('CampGeradores via Oravel', $envelope->from->name);
+        $this->assertSame('contato@campgeradores.com.br', $envelope->replyTo[0]->address);
+    }
+
+    public function test_mail_uses_default_sender_when_tenant_name_not_provided(): void
+    {
+        $mail = new GenericPdfMail(
+            subjectLine: 'Aviso do sistema',
+            greeting: 'Olá!',
+            bodyText: 'Mensagem interna.',
+        );
+
+        $envelope = $mail->envelope();
+
+        $this->assertNull($envelope->from);
+        $this->assertCount(0, $envelope->replyTo);
+    }
 }

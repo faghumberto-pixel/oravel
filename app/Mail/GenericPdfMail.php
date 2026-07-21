@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -15,6 +16,13 @@ use Illuminate\Queue\SerializesModels;
  * (laudo de avaria, orçamento, dossiê), sem precisar de uma classe Mailable
  * nova pra cada caso. Especializar (ex: App\Mail\QuoteMail) so' faz sentido
  * quando o fluxo especifico precisar de logica alem de "corpo + anexo".
+ *
+ * SMTP compartilhado (uma conta so', contato@oravel.com.br) pra todo
+ * tenant -- decisao explicita do usuario, sem SMTP individual por locadora
+ * por enquanto. $senderDisplayName/$replyToAddress emulam o envio "em nome
+ * do tenant": remetente mostra o nome da locadora, resposta cai na caixa
+ * dela, mas a autenticacao SMTP de verdade continua sendo so' a da Oravel
+ * (evita problema de SPF/DKIM de mandar "como se fosse" outro dominio).
  */
 class GenericPdfMail extends Mailable
 {
@@ -27,11 +35,19 @@ class GenericPdfMail extends Mailable
         public string $bodyText,
         public ?string $pdfContent = null,
         public ?string $pdfFilename = null,
+        public ?string $senderDisplayName = null,
+        public ?string $replyToAddress = null,
     ) {}
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: $this->subjectLine);
+        return new Envelope(
+            subject: $this->subjectLine,
+            from: $this->senderDisplayName
+                ? new Address(config('mail.from.address'), $this->senderDisplayName.' via Oravel')
+                : null,
+            replyTo: $this->replyToAddress ? [new Address($this->replyToAddress)] : [],
+        );
     }
 
     public function content(): Content
