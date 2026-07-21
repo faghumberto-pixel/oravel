@@ -50,6 +50,7 @@ class Client extends Model
         'activity_type',
         'cpf_cnpj',
         'contact_name',
+        'email',
         'cep',
         'address',
         'city',

@@ -122,6 +122,10 @@ class ClientResource extends Resource
                                 Forms\Components\TextInput::make('site_phone')->label('Telefone do Canteiro')->tel(),
                             ])->columns(2),
                             Forms\Components\Section::make('Contatos e Setores (Campos ERP)')->schema([
+                                Forms\Components\TextInput::make('email')
+                                    ->label('E-mail de Contato (Principal)')
+                                    ->email()
+                                    ->helperText('Usado como destinatário padrão em envios (ex: orçamentos), quando os e-mails setoriais abaixo não se aplicam.'),
                                 Forms\Components\TextInput::make('phone')->label('Telefone Comercial')->tel(),
                                 Forms\Components\TextInput::make('whatsapp')->label('WhatsApp')->tel(),
                                 Forms\Components\TextInput::make('email_financial')->label('E-mail Financeiro')->email(),

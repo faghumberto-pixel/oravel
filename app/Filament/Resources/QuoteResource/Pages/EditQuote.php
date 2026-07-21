@@ -35,14 +35,16 @@ class EditQuote extends EditRecord
                 ->color('info')
                 ->visible(fn () => $record->status === Quote::STATUS_RASCUNHO)
                 ->form([
-                    // Client ainda nao tem campo de e-mail geral (so'
-                    // email_financial/email_purchasing) -- pede aqui em vez
-                    // de travar o envio numa migration nova pra isso agora.
+                    // Prefill com o e-mail de contato geral do Client (item 8
+                    // da auditoria); cai pro e-mail financeiro se o cliente
+                    // nao tiver o geral cadastrado. Sempre editável aqui --
+                    // o remetente pode querer mandar pra outro endereço numa
+                    // ocasião específica sem precisar editar o cadastro.
                     Forms\Components\TextInput::make('client_email')
                         ->label('E-mail do cliente')
                         ->email()
                         ->required()
-                        ->default(fn () => $record->client->email_financial),
+                        ->default(fn () => $record->client->email ?: $record->client->email_financial),
                 ])
                 ->action(function (array $data) use ($record) {
                     try {
