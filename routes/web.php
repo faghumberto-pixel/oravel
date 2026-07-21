@@ -10,6 +10,7 @@ use App\Http\Controllers\MaintenanceOrderDossieController;
 use App\Http\Controllers\MaintenanceReportController;
 use App\Http\Controllers\PrintQrController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\QuoteReportController;
 use App\Http\Controllers\RentalDemoController;
 use App\Http\Controllers\TablePrintController;
 use App\Livewire\AssetDossierMobile;
@@ -156,6 +157,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/admin/equipment-damages/{record}/laudo-pdf', [EquipmentDamageReportController::class, 'download'])
         ->name('equipment-damages.laudo.pdf');
+
+    Route::get('/admin/quotes/{record}/pdf', [QuoteReportController::class, 'download'])
+        ->name('quotes.pdf');
 
     Route::get('/admin/assets/{asset}/dossie-pdf', [AssetDossierPdfController::class, 'download'])
         ->name('assets.dossier.pdf');
