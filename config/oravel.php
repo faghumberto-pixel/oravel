@@ -16,4 +16,15 @@ return [
         explode(',', (string) env('SUPER_ADMINS', ''))
     ))),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Horímetro
+    |--------------------------------------------------------------------------
+    | Salto (em horas) entre duas leituras de horímetro acima do qual o
+    | apontamento pede confirmação explícita antes de salvar (provável erro
+    | de digitação). Ver App\Observers\HorimeterReadingObserver.
+    */
+
+    'horimeter_jump_threshold' => env('HORIMETER_JUMP_THRESHOLD', 500),
+
 ];

@@ -307,16 +307,16 @@ class MaintenanceOrderResource extends Resource
                         ->content(function (Get $get) {
                             $asset = Asset::find($get('asset_id'));
 
-                            if (! $asset || ! $asset->checklist_group_id) {
-                                return 'Ativo sem grupo definido — sem template de preventiva.';
+                            if (! $asset) {
+                                return 'Selecione um ativo.';
                             }
 
-                            $plans = MaintenancePlan::where('checklist_group_id', $asset->checklist_group_id)
-                                ->where('is_active', true)
-                                ->get();
+                            $plans = MaintenancePlan::applicableFor($asset)->where('is_active', true);
 
                             if ($plans->isEmpty()) {
-                                return 'Nenhum item de preventiva cadastrado para este grupo.';
+                                return $asset->checklist_group_id
+                                    ? 'Nenhum item de preventiva cadastrado para este grupo.'
+                                    : 'Ativo sem grupo definido — sem template de preventiva.';
                             }
 
                             $lines = $plans->map(function ($plan) use ($asset) {

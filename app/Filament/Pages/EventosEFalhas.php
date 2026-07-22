@@ -132,12 +132,9 @@ class EventosEFalhas extends Page
         }
 
         $planos = MaintenancePlan::query()->get();
-        $planosPorAsset = $planos->whereNotNull('asset_id')->groupBy('asset_id');
-        $planosPorGrupo = $planos->whereNotNull('checklist_group_id')->groupBy('checklist_group_id');
 
-        return $assets->flatMap(function (Asset $asset) use ($planosPorAsset, $planosPorGrupo) {
-            $planosDoAtivo = $planosPorAsset->get($asset->id, collect())
-                ->merge($asset->checklist_group_id ? $planosPorGrupo->get($asset->checklist_group_id, collect()) : collect());
+        return $assets->flatMap(function (Asset $asset) use ($planos) {
+            $planosDoAtivo = MaintenancePlan::applicableFor($asset, $planos);
 
             return $planosDoAtivo
                 ->map(fn (MaintenancePlan $plano) => ['asset' => $asset, 'plano' => $plano, 'status' => $plano->dueStatusForAsset($asset)])

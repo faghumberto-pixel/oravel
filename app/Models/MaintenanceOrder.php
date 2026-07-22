@@ -258,6 +258,25 @@ class MaintenanceOrder extends Model implements HasMedia
             $os->service_type = $isUnderContract ? 'Externo' : 'Interno';
         });
 
+        // Corretiva = ativo parado por quebra ate a OS fechar -- abre o
+        // AssetDowntimeEvent junto da OS (nao antes, nao depois) pra nao ter
+        // buraco na trilha de parada. Fechamento fica no updating() abaixo,
+        // junto do resto da logica de "OS concluida".
+        static::created(function (MaintenanceOrder $os) {
+            if ($os->maintenance_type === self::TYPE_CORRECTIVE && $os->asset_id) {
+                AssetDowntimeEvent::create([
+                    'tenant_id' => $os->tenant_id,
+                    'asset_id' => $os->asset_id,
+                    'started_at' => now(),
+                    'reason' => AssetDowntimeEvent::REASON_MANUTENCAO_CORRETIVA,
+                    'maintenance_order_id' => $os->id,
+                    'registered_by' => $os->technician_id,
+                ]);
+            }
+
+            $os->recordHorimeterReadingIfPresent();
+        });
+
         static::updating(function (MaintenanceOrder $os) {
             if ($os->isDirty('status')) {
                 if ($os->status === 'Em Andamento') {
@@ -278,6 +297,10 @@ class MaintenanceOrder extends Model implements HasMedia
 
                 if (in_array($os->status, ['Concluída', 'Completado'])) {
                     $os->finished_at = now();
+
+                    AssetDowntimeEvent::where('maintenance_order_id', $os->id)
+                        ->whereNull('ended_at')
+                        ->update(['ended_at' => now()]);
                 }
             }
         });
@@ -304,5 +327,37 @@ class MaintenanceOrder extends Model implements HasMedia
                 ]);
             }
         });
+
+        // Trilha de auditoria de horímetro (HorimeterReading) -- separado do
+        // saved() acima de proposito. wasChanged() SEMPRE retorna false logo
+        // apos um create() (nao existe "mudanca" quando nao havia original
+        // nenhum ainda), entao a criacao e' coberta aqui em created();
+        // updated() cobre só quando o valor de fato mudou numa edição
+        // posterior. Um único saved()+wasRecentlyCreated não dava pra usar:
+        // essa flag fica true pro resto da vida do objeto em memória, não só
+        // no save que criou o registro, e reabrir/salvar a mesma OS de novo
+        // (mesmo objeto) empilhava um apontamento idêntico a cada save.
+        static::updated(function (MaintenanceOrder $os) {
+            if ($os->wasChanged('horimetro_entry')) {
+                $os->recordHorimeterReadingIfPresent();
+            }
+        });
+    }
+
+    public function recordHorimeterReadingIfPresent(): void
+    {
+        if (! $this->horimetro_entry || ! $this->asset_id) {
+            return;
+        }
+
+        HorimeterReading::create([
+            'tenant_id' => $this->tenant_id,
+            'asset_id' => $this->asset_id,
+            'reading' => $this->horimetro_entry,
+            'recorded_at' => $this->finished_at ?? now(),
+            'recorded_by' => $this->technician_id,
+            'source' => HorimeterReading::SOURCE_MAINTENANCE_ORDER,
+            'reset_confirmed' => true,
+        ]);
     }
 }

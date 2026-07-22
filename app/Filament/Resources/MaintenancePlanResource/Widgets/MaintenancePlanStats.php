@@ -19,7 +19,10 @@ class MaintenancePlanStats extends BaseWidget
      * "Vencido" agora precisa lidar com dois formatos: plano por-Ativo
      * (last_service_hours direto) e template por-Grupo (compartilhado por
      * varios Ativos -- cada combinacao plano+ativo tem seu proprio status,
-     * calculado via dueStatusForAsset()).
+     * calculado via dueStatusForAsset()). Itera por ATIVO (nao por plano)
+     * e usa MaintenancePlan::applicableFor() -- assim um item do grupo que
+     * o Ativo ja personalizou (mesma logica de override por nome) conta
+     * uma vez so, nao duas.
      */
     protected function getStats(): array
     {
@@ -29,27 +32,22 @@ class MaintenancePlanStats extends BaseWidget
             ->get()
             ->groupBy('checklist_group_id');
 
+        $assetsComPlanoProprio = $planos->whereNotNull('asset_id')->pluck('asset')->filter();
+
+        $assetsRelevantes = $assetsByGroup->flatten(1)->merge($assetsComPlanoProprio)->unique('id');
+
         $vencidos = 0;
         $assetsCobertosIds = collect();
 
-        foreach ($planos as $plan) {
-            if ($plan->isGroupTemplate()) {
-                $assetsDoGrupo = $assetsByGroup->get($plan->checklist_group_id, collect());
+        foreach ($assetsRelevantes as $asset) {
+            $planosDoAtivo = MaintenancePlan::applicableFor($asset, $planos);
 
-                foreach ($assetsDoGrupo as $asset) {
-                    $assetsCobertosIds->push($asset->id);
-
-                    if ($plan->dueStatusForAsset($asset)['is_overdue']) {
-                        $vencidos++;
-                    }
-                }
-            } elseif ($plan->asset) {
-                $assetsCobertosIds->push($plan->asset_id);
-
-                if ($plan->dueStatusForAsset($plan->asset)['is_overdue']) {
-                    $vencidos++;
-                }
+            if ($planosDoAtivo->isEmpty()) {
+                continue;
             }
+
+            $assetsCobertosIds->push($asset->id);
+            $vencidos += $planosDoAtivo->filter(fn (MaintenancePlan $plano) => $plano->dueStatusForAsset($asset)['is_overdue'])->count();
         }
 
         return [

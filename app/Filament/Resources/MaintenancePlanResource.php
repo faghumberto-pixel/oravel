@@ -55,9 +55,18 @@ class MaintenancePlanResource extends Resource
                 Forms\Components\TextInput::make('interval_hours')
                     ->label('Intervalo (Horas)')
                     ->numeric()
-                    ->required(),
+                    ->requiredWithout('interval_days')
+                    ->helperText('Preencha horas, dias, ou os dois -- vence pelo que chegar primeiro.'),
+                Forms\Components\TextInput::make('interval_days')
+                    ->label('Intervalo (Dias)')
+                    ->numeric()
+                    ->requiredWithout('interval_hours'),
                 Forms\Components\TextInput::make('notes')
                     ->label('Observação (Ex: Obrigatório NR-13)'),
+                Forms\Components\Toggle::make('is_critical')
+                    ->label('Item crítico')
+                    ->helperText('Marca visualmente como prioridade máxima quando vencer.')
+                    ->default(false),
                 Forms\Components\Toggle::make('is_active')
                     ->label('Plano Ativo')
                     ->default(true),
@@ -76,7 +85,14 @@ class MaintenancePlanResource extends Resource
             Tables\Columns\TextColumn::make('asset.name')->label('Ativo')->placeholder('—')->sortable(),
             Tables\Columns\TextColumn::make('checklistGroup.name')->label('Grupo')->placeholder('—')->sortable(),
             Tables\Columns\TextColumn::make('name')->label('Item')->searchable(),
-            Tables\Columns\TextColumn::make('interval_hours')->label('Intervalo (h)'),
+            Tables\Columns\IconColumn::make('is_critical')->boolean()->label('Crítico')->trueColor('danger'),
+            Tables\Columns\TextColumn::make('interval_hours')->label('Intervalo (h)')->placeholder('—'),
+            Tables\Columns\TextColumn::make('interval_days')->label('Intervalo (dias)')->placeholder('—'),
+            Tables\Columns\TextColumn::make('source')
+                ->label('Origem')
+                ->badge()
+                ->formatStateUsing(fn (string $state) => $state === 'template' ? 'Copiado do Grupo' : 'Manual')
+                ->color(fn (string $state) => $state === 'template' ? 'info' : 'gray'),
             Tables\Columns\TextColumn::make('notes')->label('Observação')->placeholder('—'),
             Tables\Columns\IconColumn::make('is_active')->boolean()->label('Ativo'),
         ])

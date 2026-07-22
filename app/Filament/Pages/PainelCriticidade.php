@@ -57,8 +57,6 @@ class PainelCriticidade extends Page
         }
 
         $planos = MaintenancePlan::query()->get();
-        $planosPorAsset = $planos->whereNotNull('asset_id')->groupBy('asset_id');
-        $planosPorGrupo = $planos->whereNotNull('checklist_group_id')->groupBy('checklist_group_id');
 
         $avariasAbertasPorAsset = EquipmentDamage::query()
             ->where('status', '!=', EquipmentDamage::STATUS_CANCELADO)
@@ -84,9 +82,8 @@ class PainelCriticidade extends Page
             ->pluck('code')
             ->all();
 
-        return $assets->map(function (Asset $asset) use ($planosPorAsset, $planosPorGrupo, $avariasAbertasPorAsset, $reincidentes, $codigosUrgentes) {
-            $planosDoAtivo = $planosPorAsset->get($asset->id, collect())
-                ->merge($asset->checklist_group_id ? $planosPorGrupo->get($asset->checklist_group_id, collect()) : collect());
+        return $assets->map(function (Asset $asset) use ($planos, $avariasAbertasPorAsset, $reincidentes, $codigosUrgentes) {
+            $planosDoAtivo = MaintenancePlan::applicableFor($asset, $planos);
 
             $preventivaVencida = $planosDoAtivo->contains(fn (MaintenancePlan $plano) => $plano->dueStatusForAsset($asset)['is_overdue']);
 

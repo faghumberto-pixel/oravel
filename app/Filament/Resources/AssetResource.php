@@ -98,7 +98,7 @@ class AssetResource extends Resource
 
                                 Forms\Components\Select::make('checklist_group_id')
                                     ->label('Grupo')
-                                    ->helperText('Define o checklist básico aplicado às OS deste ativo.')
+                                    ->helperText('Define o checklist básico aplicado às OS deste ativo e o template de manutenção preventiva herdado (aba "Planos de Manutenção").')
                                     ->relationship('checklistGroup', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
                                     ->searchable()
                                     ->preload()
@@ -618,6 +618,7 @@ class AssetResource extends Resource
         return [
             AssetResource\RelationManagers\ChecklistItemsRelationManager::class,
             AssetResource\RelationManagers\PatioArrivalsRelationManager::class,
+            AssetResource\RelationManagers\MaintenancePlansRelationManager::class,
         ];
     }
 

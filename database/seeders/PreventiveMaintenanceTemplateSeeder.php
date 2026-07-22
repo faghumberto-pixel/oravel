@@ -18,12 +18,14 @@ class PreventiveMaintenanceTemplateSeeder extends Seeder
 {
     private const ITEMS_BY_GROUP = [
         'Geradores de Energia' => [
-            ['name' => 'Troca de óleo do motor', 'interval_hours' => 250],
+            ['name' => 'Troca de óleo do motor', 'interval_hours' => 250, 'is_critical' => true],
             ['name' => 'Troca de filtro de óleo', 'interval_hours' => 250],
             ['name' => 'Troca de filtro de ar', 'interval_hours' => 500],
             ['name' => 'Troca de filtro de combustível', 'interval_hours' => 500],
-            ['name' => 'Verificação/troca de correias', 'interval_hours' => 1000],
+            ['name' => 'Verificação/troca de correias', 'interval_hours' => 1000, 'is_critical' => true],
             ['name' => 'Análise de fluido de arrefecimento', 'interval_hours' => 1000],
+            ['name' => 'Troca de líquido de arrefecimento', 'interval_hours' => 2000],
+            ['name' => 'Ajuste de folga de válvulas', 'interval_hours' => 1000],
             ['name' => 'Teste de bateria', 'interval_hours' => 500],
         ],
         'Compressores de Ar' => [
@@ -73,7 +75,9 @@ class PreventiveMaintenanceTemplateSeeder extends Seeder
                         ],
                         [
                             'interval_hours' => $item['interval_hours'],
+                            'interval_days' => $item['interval_days'] ?? null,
                             'notes' => $item['notes'] ?? null,
+                            'is_critical' => $item['is_critical'] ?? false,
                             'is_active' => true,
                         ]
                     );

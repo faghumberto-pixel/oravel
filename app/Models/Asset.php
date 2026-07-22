@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -142,9 +143,85 @@ class Asset extends Model
         return $this->hasMany(EquipmentDamage::class);
     }
 
+    public function horimeterReadings(): HasMany
+    {
+        return $this->hasMany(HorimeterReading::class);
+    }
+
+    public function downtimeEvents(): HasMany
+    {
+        return $this->hasMany(AssetDowntimeEvent::class);
+    }
+
+    /**
+     * Última leitura de horímetro registrada (App\Models\HorimeterReading),
+     * com cache de 5 min por tenant+ativo -- diferente da coluna legada
+     * horimetro_atual (mantida em sincronia por HorimeterReadingObserver
+     * pra não quebrar MaintenancePlan::dueStatusForAsset() e outros
+     * consumidores que já leem aquela coluna direto).
+     */
+    public function getCurrentHorimeterAttribute(): ?float
+    {
+        return Cache::remember(
+            "horimeter:current:{$this->tenant_id}:{$this->id}",
+            300,
+            fn () => $this->horimeterReadings()->latestForAsset($this->id)->value('reading')
+        );
+    }
+
+    /**
+     * Chamado por HorimeterReadingObserver toda vez que um apontamento novo
+     * é criado -- evita que a leitura em cache sobreviva além dos 5 min só
+     * por coincidência de timing.
+     */
+    public function forgetCurrentHorimeterCache(): void
+    {
+        Cache::forget("horimeter:current:{$this->tenant_id}:{$this->id}");
+    }
+
     public function abcMatrix(): HasOne
     {
         return $this->hasOne(AbcMatrix::class);
+    }
+
+    /**
+     * Planos de manutenção específicos deste Ativo (asset_id preenchido) --
+     * NÃO inclui os herdados do Grupo de Checklist, ver
+     * MaintenancePlan::applicableFor() pra a lista combinada (grupo +
+     * próprios, com override por nome).
+     */
+    public function maintenancePlans(): HasMany
+    {
+        return $this->hasMany(MaintenancePlan::class);
+    }
+
+    /**
+     * "Personalizar" um item do template do Grupo pra este Ativo
+     * especificamente: copia name/interval_hours/interval_days/is_critical
+     * pra uma linha nova com asset_id preenchido (source=template), sem
+     * mexer no item original do grupo nem nos outros Ativos que o
+     * compartilham. Idempotente por nome -- chamar de novo com o mesmo
+     * item não duplica, só devolve a customização que já existe (manual ou
+     * copiada antes).
+     */
+    public function copyMaintenancePlanTemplateItem(MaintenancePlan $templateItem): MaintenancePlan
+    {
+        $existing = $this->maintenancePlans()->where('name', $templateItem->name)->first();
+
+        if ($existing) {
+            return $existing;
+        }
+
+        return $this->maintenancePlans()->create([
+            'tenant_id' => $this->tenant_id,
+            'name' => $templateItem->name,
+            'interval_hours' => $templateItem->interval_hours,
+            'interval_days' => $templateItem->interval_days,
+            'is_critical' => $templateItem->is_critical,
+            'notes' => $templateItem->notes,
+            'is_active' => true,
+            'source' => MaintenancePlan::SOURCE_TEMPLATE,
+        ]);
     }
 
     public function client(): BelongsTo
