@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\CompanyResource\Pages;
 
+use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\CompanyResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-use AppFilamentAttributesBelongsToFeature;
 #[BelongsToFeature('company')]
 class ListCompanies extends ListRecords
 {
