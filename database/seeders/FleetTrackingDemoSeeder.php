@@ -93,10 +93,6 @@ class FleetTrackingDemoSeeder extends Seeder
      */
     private function seedHorimeterHistory(Tenant $tenant): void
     {
-        if (HorimeterReading::where('tenant_id', $tenant->id)->exists()) {
-            return;
-        }
-
         $admin = User::where('tenant_id', $tenant->id)->whereHas('roles', fn ($q) => $q->where('name', 'admin'))->first();
 
         $assets = Asset::where('tenant_id', $tenant->id)
@@ -107,6 +103,15 @@ class FleetTrackingDemoSeeder extends Seeder
             ->get();
 
         foreach ($assets as $asset) {
+            // Idempotência por ATIVO, não por tenant -- um ativo pode já
+            // ter apontamento orgânico (ex: técnico usou a feature de
+            // verdade antes deste seeder rodar, via horimetro_entry numa
+            // O.S.) enquanto outro do mesmo tenant nunca teve nenhum. Pular
+            // o tenant inteiro deixava esse segundo ativo sem histórico.
+            if ($asset->horimeterReadings()->exists()) {
+                continue;
+            }
+
             $atual = (float) $asset->horimetro_atual;
             // 4 leituras crescentes terminando no valor que já existia --
             // ~15% do total em cada uma das 3 primeiras, resto na última.
