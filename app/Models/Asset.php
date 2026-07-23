@@ -154,6 +154,27 @@ class Asset extends Model
     }
 
     /**
+     * Rótulo pra Select de Ativo com patrimônio na frente (ex: "PAT-0042 —
+     * Gerador Perkins 180 kVA") -- nome sozinho não distingue ativos
+     * repetidos entre tenants/frota (mesmo modelo, patrimônios diferentes),
+     * usado em toda tela de Operação (apontamento de horímetro, paradas).
+     */
+    public function selectLabel(): string
+    {
+        return ($this->patrimonio ? "{$this->patrimonio} — " : '').$this->name;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function selectOptions(): array
+    {
+        return static::orderBy('name')->get()->mapWithKeys(
+            fn (Asset $asset) => [$asset->id => $asset->selectLabel()]
+        )->all();
+    }
+
+    /**
      * Última leitura de horímetro registrada (App\Models\HorimeterReading),
      * com cache de 5 min por tenant+ativo -- diferente da coluna legada
      * horimetro_atual (mantida em sincronia por HorimeterReadingObserver

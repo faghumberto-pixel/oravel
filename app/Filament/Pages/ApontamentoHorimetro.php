@@ -85,7 +85,7 @@ class ApontamentoHorimetro extends Page implements HasForms
         return $form->schema([
             Select::make('asset_id')
                 ->label('Ativo')
-                ->options(fn () => Asset::orderBy('name')->pluck('name', 'id'))
+                ->options(fn () => Asset::selectOptions())
                 ->searchable()
                 ->preload()
                 ->required()

@@ -196,4 +196,22 @@ class AssetDowntimeEventTest extends TestCase
 
         $this->assertSame(0, AssetDowntimeEvent::count());
     }
+
+    public function test_table_shows_the_assets_patrimonio(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = Asset::create([
+            'tenant_id' => $tenant->id, 'name' => 'Gerador Teste', 'tag' => 'AST-'.uniqid(),
+            'patrimonio' => 'PAT-0099', 'status' => 'disponivel',
+        ]);
+        $this->actingAs($admin);
+
+        AssetDowntimeEvent::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id,
+            'started_at' => now(), 'reason' => AssetDowntimeEvent::REASON_QUEBRA,
+        ]);
+
+        Livewire::test(ManageAssetDowntimeEvents::class)
+            ->assertSee('PAT-0099');
+    }
 }

@@ -210,6 +210,25 @@ class HorimeterReadingTest extends TestCase
         $this->assertSame(200.0, $asset->fresh()->current_horimeter);
     }
 
+    public function test_asset_select_options_include_patrimonio_alongside_the_name(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $comPatrimonio = Asset::create([
+            'tenant_id' => $tenant->id, 'name' => 'Gerador Com Patrimônio', 'tag' => 'AST-'.uniqid(),
+            'patrimonio' => 'PAT-0042', 'status' => 'disponivel',
+        ]);
+        $semPatrimonio = Asset::create([
+            'tenant_id' => $tenant->id, 'name' => 'Gerador Sem Patrimônio', 'tag' => 'AST-'.uniqid(),
+            'status' => 'disponivel',
+        ]);
+        $this->actingAs($admin);
+
+        $options = Asset::selectOptions();
+
+        $this->assertSame('PAT-0042 — Gerador Com Patrimônio', $options[$comPatrimonio->id]);
+        $this->assertSame('Gerador Sem Patrimônio', $options[$semPatrimonio->id]);
+    }
+
     public function test_saving_a_maintenance_order_with_horimetro_entry_creates_a_reading(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();

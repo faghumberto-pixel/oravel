@@ -38,7 +38,7 @@ class AssetDowntimeEventResource extends Resource
         return $form->schema([
             Forms\Components\Select::make('asset_id')
                 ->label('Ativo')
-                ->options(fn () => Asset::orderBy('name')->pluck('name', 'id'))
+                ->options(fn () => Asset::selectOptions())
                 ->searchable()
                 ->required(),
             Forms\Components\Select::make('reason')
@@ -59,6 +59,7 @@ class AssetDowntimeEventResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('asset.patrimonio')->label('Patrimônio')->searchable()->placeholder('—'),
                 Tables\Columns\TextColumn::make('asset.name')->label('Ativo')->searchable(),
                 Tables\Columns\TextColumn::make('reason')
                     ->label('Motivo')
