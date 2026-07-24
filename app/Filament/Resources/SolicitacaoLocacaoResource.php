@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\SolicitacaoLocacaoResource\Pages;
+use App\Models\Asset;
 use App\Models\Client;
 use App\Models\Contract;
 use App\Models\SolicitacaoLocacao;
@@ -13,6 +14,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 
 #[BelongsToFeature('rental_requests')]
@@ -86,29 +88,49 @@ class SolicitacaoLocacaoResource extends Resource
                     ->visible(fn (Forms\Get $get) => $get('status_comercial') === 'cancelado')
                     ->required(fn (Forms\Get $get) => $get('status_comercial') === 'cancelado'),
 
-                Forms\Components\Grid::make(2)->schema([
-                    Forms\Components\Select::make('category_id')
-                        ->label('Categoria do Equipamento')
-                        ->relationship('category', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
-                        ->required()
-                        ->searchable()
-                        ->preload()
-                        ->live(),
+                Forms\Components\Select::make('category_id')
+                    ->label('Categoria do Equipamento')
+                    ->relationship('category', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
+                    ->required()
+                    ->searchable()
+                    ->preload()
+                    ->live()
+                    // Muda a categoria: o Ativo específico escolhido antes
+                    // pode não pertencer mais a ela -- evita salvar uma
+                    // combinação categoria/ativo inconsistente.
+                    ->afterStateUpdated(fn (Forms\Set $set) => $set('asset_id', null)),
 
-                    Forms\Components\Select::make('asset_id')
-                        ->label('Equipamento Específico (Série)')
-                        ->relationship('asset', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
-                        ->searchable()
-                        ->preload(),
-                ]),
+                Forms\Components\Placeholder::make('disponibilidade')
+                    ->label('Disponibilidade nesta categoria')
+                    ->content(fn (Forms\Get $get) => static::disponibilidadeContent($get('category_id')))
+                    ->columnSpanFull(),
+
+                Forms\Components\Select::make('asset_id')
+                    ->label('Equipamento Específico (Patrimônio)')
+                    ->helperText('Só mostra ativos desta categoria que não estão locados agora.')
+                    ->options(fn (Forms\Get $get) => static::assetOptionsForCategory($get('category_id'), $get('asset_id')))
+                    ->searchable()
+                    ->disabled(fn (Forms\Get $get) => blank($get('category_id')))
+                    ->native(false),
 
                 Forms\Components\Select::make('assets')
                     ->label('Combo / Lote de Ativos (opcional)')
-                    ->helperText('Use quando a solicitação envolve mais de um equipamento simultaneamente (ex: gerador + mini-carregadeira, ou um lote de máquinas idênticas).')
-                    ->relationship('assets', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
+                    ->helperText('Use quando a solicitação envolve mais de um equipamento simultaneamente (ex: gerador + mini-carregadeira, ou um lote de máquinas idênticas). Mostra ativos de qualquer categoria, desde que não estejam locados.')
+                    ->relationship('assets', 'name', fn (Builder $query) => $query
+                        ->where('tenant_id', Tenancy::current()?->id)
+                        ->whereNotIn('status', [Asset::STATUS_LOCADO, Asset::STATUS_RESERVADO]))
+                    ->getOptionLabelFromRecordUsing(fn (Asset $asset) => ($asset->patrimonio ?: '—').' — '.$asset->name)
                     ->multiple()
                     ->searchable()
                     ->preload(),
+
+                Forms\Components\Placeholder::make('historico')
+                    ->label('Histórico')
+                    ->content(fn (?SolicitacaoLocacao $record) => $record
+                        ? view('filament.resources.solicitacao-locacao-resource.partials.historico-grid', ['solicitacao' => $record])
+                        : 'Disponível depois de salvar a solicitação pela primeira vez.')
+                    ->columnSpanFull()
+                    ->visible(fn (?SolicitacaoLocacao $record) => $record !== null),
 
                 Forms\Components\Grid::make(2)->schema([
                     Forms\Components\DatePicker::make('data_saida_prevista')
@@ -129,6 +151,80 @@ class SolicitacaoLocacaoResource extends Resource
                     ->disabled()
                     ->visible(fn (?SolicitacaoLocacao $record) => $record !== null),
             ]),
+        ]);
+    }
+
+    /**
+     * Ativos elegíveis pra uma categoria: mesma categoria (via
+     * Asset.asset_category_id, ver migration 2026_07_24_143615) e status
+     * diferente de "locado"/"reservado" -- nunca deixa escolher um
+     * equipamento que já está comprometido com outro cliente/reserva.
+     * Label sempre mostra o patrimônio primeiro.
+     *
+     * $currentAssetId: mantém o ativo já salvo no registro na lista mesmo
+     * que ele não bata mais no filtro (ficou locado depois, categoria não
+     * tinha vínculo no backfill etc.) -- sem isso, abrir uma Solicitação
+     * antiga pra editar mostraria o campo em branco mesmo com dado salvo.
+     *
+     * @return array<string, string>
+     */
+    private static function assetOptionsForCategory(?string $categoryId, ?string $currentAssetId = null): array
+    {
+        if (! $categoryId) {
+            return [];
+        }
+
+        $options = Asset::where('tenant_id', Tenancy::current()?->id)
+            ->where('asset_category_id', $categoryId)
+            ->whereNotIn('status', [Asset::STATUS_LOCADO, Asset::STATUS_RESERVADO])
+            ->orderBy('patrimonio')
+            ->get()
+            ->mapWithKeys(fn (Asset $asset) => [
+                $asset->id => ($asset->patrimonio ?: '—').' — '.$asset->name.' ('.ucfirst($asset->status ?? '—').')',
+            ]);
+
+        if ($currentAssetId && ! $options->has($currentAssetId)) {
+            $current = Asset::find($currentAssetId);
+            if ($current) {
+                $options->put($current->id, ($current->patrimonio ?: '—').' — '.$current->name.' (atual, fora do filtro)');
+            }
+        }
+
+        return $options->all();
+    }
+
+    /**
+     * Resumo de disponibilidade da categoria escolhida: quantos ativos
+     * (não locados, contando os em manutenção) e em qual Unidade Interna
+     * (filial/matriz) eles estão -- pedido explícito do usuário pra apoiar
+     * a decisão de reservar sem precisar abrir outra tela.
+     */
+    private static function disponibilidadeContent(?string $categoryId): View|string
+    {
+        if (! $categoryId) {
+            return 'Selecione uma categoria para ver quantos equipamentos existem e onde estão.';
+        }
+
+        $tenantId = Tenancy::current()?->id;
+
+        $assets = Asset::where('tenant_id', $tenantId)
+            ->where('asset_category_id', $categoryId)
+            ->with('internalUnit')
+            ->get();
+
+        $naoLocados = $assets->whereNotIn('status', [Asset::STATUS_LOCADO, Asset::STATUS_RESERVADO]);
+
+        $porUnidade = $naoLocados
+            ->groupBy(fn (Asset $asset) => $asset->internalUnit?->name ?? 'Sem unidade definida')
+            ->map->count()
+            ->sortDesc();
+
+        return view('filament.resources.solicitacao-locacao-resource.partials.disponibilidade', [
+            'total' => $assets->count(),
+            'disponiveis' => $naoLocados->where('status', Asset::STATUS_DISPONIVEL)->count(),
+            'emManutencao' => $naoLocados->where('status', Asset::STATUS_MANUTENCAO)->count(),
+            'naoLocadosTotal' => $naoLocados->count(),
+            'porUnidade' => $porUnidade,
         ]);
     }
 

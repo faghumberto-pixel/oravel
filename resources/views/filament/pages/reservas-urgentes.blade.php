@@ -71,7 +71,11 @@
                                 <td class="px-4 py-2.5">
                                     @if($asset)
                                         <span class="inline-flex items-center rounded-md px-2 py-1 text-[10px] font-bold uppercase tracking-wide
-                                            {{ $asset->status === \App\Models\Asset::STATUS_DISPONIVEL ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400' }}">
+                                            {{ match($asset->status) {
+                                                \App\Models\Asset::STATUS_DISPONIVEL => 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400',
+                                                \App\Models\Asset::STATUS_RESERVADO => 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400',
+                                                default => 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
+                                            } }}">
                                             {{ ucfirst($asset->status ?? '—') }}
                                         </span>
                                     @else
@@ -84,11 +88,30 @@
                                            class="text-primary-600 hover:underline dark:text-primary-400">
                                             OS #{{ $openOrder->os_number ?? \Illuminate\Support\Str::substr($openOrder->id, 0, 8) }}
                                         </a>
+                                        @if($openOrder->maintenance_type === \App\Models\MaintenanceOrder::TYPE_RESERVA)
+                                            <span class="ml-1 inline-flex items-center rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400">Reserva</span>
+                                            <button type="button"
+                                                    wire:click="concluirReserva('{{ $openOrder->id }}')"
+                                                    wire:confirm="Liberar {{ $asset->patrimonio ?? $asset->name }}? O ativo volta pra 'disponível' e o Comercial já pode fechar o contrato."
+                                                    class="ml-1.5 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold uppercase tracking-wide transition">
+                                                <x-heroicon-o-lock-open class="w-3 h-3" />
+                                                Liberar Ativo
+                                            </button>
+                                        @endif
                                     @elseif($asset)
-                                        <span class="inline-flex items-center gap-1 text-[11px] font-bold text-rose-600 dark:text-rose-400">
-                                            <x-heroicon-o-exclamation-triangle class="w-3.5 h-3.5" />
-                                            Nenhuma OS aberta
-                                        </span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="inline-flex items-center gap-1 text-[11px] font-bold text-rose-600 dark:text-rose-400">
+                                                <x-heroicon-o-exclamation-triangle class="w-3.5 h-3.5" />
+                                                Nenhuma OS aberta
+                                            </span>
+                                            <button type="button"
+                                                    wire:click="abrirOsReserva('{{ $solicitacao->id }}', '{{ $asset->id }}')"
+                                                    wire:confirm="Abrir OS de Reserva pra {{ $asset->patrimonio ?? $asset->name }}? Isso bloqueia o ativo (status vira 'reservado') pra ninguém mais poder pegar."
+                                                    class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold uppercase tracking-wide transition">
+                                                <x-heroicon-o-lock-closed class="w-3 h-3" />
+                                                Abrir OS de Reserva
+                                            </button>
+                                        </div>
                                     @else
                                         <span class="text-gray-400">—</span>
                                     @endif

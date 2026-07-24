@@ -47,6 +47,16 @@ class Asset extends Model
      */
     public const STATUS_QUARENTENA = 'quarentena';
 
+    /**
+     * Bloqueado pra uma Solicitação de Locação urgente (ver
+     * ReservasUrgentes::abrirOsReserva()) -- nem disponível pra outro
+     * pedido, nem "locado" de verdade ainda. Estado intermediário: alguém
+     * precisa devolver manualmente pra disponivel quando o ativo estiver
+     * pronto (esta ação não faz isso sozinha, de propósito -- ver docblock
+     * da OS de Reserva).
+     */
+    public const STATUS_RESERVADO = 'reservado';
+
     protected static ?string $saasFeatureKey = 'tabela_assets';
 
     protected static ?string $saasPermissionSlug = 'ativo';
@@ -263,6 +273,17 @@ class Asset extends Model
     public function checklistGroup(): BelongsTo
     {
         return $this->belongsTo(ChecklistGroup::class);
+    }
+
+    /**
+     * FK real pra AssetCategory (asset_category_id, 2026-07-24) -- o campo
+     * asset_category (texto livre) continua existindo por compatibilidade,
+     * mas essa é a fonte confiável daqui pra frente pra "quais Ativos são
+     * dessa categoria" (usado por SolicitacaoLocacaoResource).
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(AssetCategory::class, 'asset_category_id');
     }
 
     /**

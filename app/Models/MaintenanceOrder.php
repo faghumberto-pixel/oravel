@@ -44,13 +44,22 @@ class MaintenanceOrder extends Model implements HasMedia
 
     public const TYPE_EMERGENCIA = 'Emergência';
 
+    // "Reserva" nao e trabalho de manutencao de verdade -- e o registro
+    // formal de que a Manutencao bloqueou um Ativo pra uma Solicitacao de
+    // Locacao urgente (ver ReservasUrgentes::abrirOsReserva()), sem abrir
+    // uma OS de reparo. Usa o mesmo campo maintenance_type pra nao criar
+    // um segundo vocabulario de "tipo de registro".
+    public const TYPE_RESERVA = 'Reserva';
+
+    public const STATUS_RESERVADO = 'Reservado';
+
     protected $keyType = 'string';
 
     public $incrementing = false;
 
     protected $fillable = [
         'os_number', 'asset_id', 'technician_id', 'client_id', 'branch_id', 'service_type',
-        'maintenance_type', 'reported_problem_id', 'maintenance_plan_id', 'description', 'technical_notes',
+        'maintenance_type', 'reported_problem_id', 'maintenance_plan_id', 'solicitacao_locacao_id', 'description', 'technical_notes',
         'client_signature', 'technician_signature', 'signature_path', 'status', 'internal_status', 'commercial_status',
         'tenant_id', 'started_at', 'finished_at', 'rescheduled_to', 'total_time_seconds',
         'last_timer_start', 'reschedule_reason', 'criticality_level_id', 'is_rework',
@@ -147,6 +156,11 @@ class MaintenanceOrder extends Model implements HasMedia
     public function maintenancePlan(): BelongsTo
     {
         return $this->belongsTo(MaintenancePlan::class);
+    }
+
+    public function solicitacaoLocacao(): BelongsTo
+    {
+        return $this->belongsTo(SolicitacaoLocacao::class);
     }
 
     public function materials(): HasMany

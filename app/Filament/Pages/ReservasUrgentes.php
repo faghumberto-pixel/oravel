@@ -6,6 +6,7 @@ use App\Models\Asset;
 use App\Models\MaintenanceOrder;
 use App\Models\SolicitacaoLocacao;
 use App\Support\Tenancy;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Carbon;
@@ -140,5 +141,102 @@ class ReservasUrgentes extends Page
             'vencidas' => $reservas->filter(fn ($r) => $r['vencida'])->count(),
             'prontas' => $reservas->filter(fn ($r) => $r['asset']?->status === Asset::STATUS_DISPONIVEL)->count(),
         ];
+    }
+
+    /**
+     * A providência que faltava: até aqui a fila só avisava "sem OS
+     * aberta" sem dar nenhum jeito de agir. Cria uma OS tipo "Reserva"
+     * (não é trabalho de reparo, é o registro formal de bloqueio) já
+     * vinculada à Solicitação (FK direta, não mais best-effort por
+     * Ativo+janela de tempo) e muda o Ativo pra "reservado" -- ninguém
+     * mais consegue selecioná-lo numa Solicitação nova enquanto isso.
+     */
+    public function abrirOsReserva(string $solicitacaoId, string $assetId): void
+    {
+        $tenant = Tenancy::current();
+        if (! $tenant) {
+            return;
+        }
+
+        $solicitacao = SolicitacaoLocacao::where('tenant_id', $tenant->id)
+            ->where('id', $solicitacaoId)
+            ->where('status_comercial', 'reserva_manutencao')
+            ->with('customer')
+            ->first();
+
+        if (! $solicitacao) {
+            Notification::make()->title('Solicitação não encontrada ou não é mais urgente')->danger()->send();
+
+            return;
+        }
+
+        $asset = Asset::where('tenant_id', $tenant->id)->find($assetId);
+
+        if (! $asset) {
+            Notification::make()->title('Ativo não encontrado')->danger()->send();
+
+            return;
+        }
+
+        $jaTemOsAberta = MaintenanceOrder::where('asset_id', $asset->id)
+            ->whereNotIn('status', ['Concluída', 'Cancelada', 'Completado'])
+            ->exists();
+
+        if ($jaTemOsAberta) {
+            Notification::make()->title('Este ativo já tem uma OS aberta')->warning()->send();
+
+            return;
+        }
+
+        MaintenanceOrder::create([
+            'tenant_id' => $tenant->id,
+            'asset_id' => $asset->id,
+            'solicitacao_locacao_id' => $solicitacao->id,
+            'maintenance_type' => MaintenanceOrder::TYPE_RESERVA,
+            'status' => MaintenanceOrder::STATUS_RESERVADO,
+            'description' => 'Reserva de equipamento para a Solicitação de Locação de '
+                .($solicitacao->customer?->name ?? 'cliente não informado').'.',
+        ]);
+
+        $asset->update(['status' => Asset::STATUS_RESERVADO]);
+
+        Notification::make()->title('OS de Reserva criada -- Ativo bloqueado')->success()->send();
+    }
+
+    /**
+     * O outro lado do ciclo (discutido com o usuário): quando o Ativo já
+     * está pronto, Manutenção conclui a OS de Reserva aqui e ele volta
+     * pra "disponível" -- só a partir daí o Comercial consegue fechar o
+     * contrato (SolicitacaoLocacao::booted() já exige Asset disponível
+     * pra isso, então sem essa ação o fluxo ficaria travado). O outro
+     * caminho de saída -- Comercial cancelar ou sair de reserva_manutencao
+     * sem fechar -- é automático, ver SolicitacaoLocacaoObserver::revogarReservaAbandonada().
+     */
+    public function concluirReserva(string $maintenanceOrderId): void
+    {
+        $tenant = Tenancy::current();
+        if (! $tenant) {
+            return;
+        }
+
+        $order = MaintenanceOrder::where('tenant_id', $tenant->id)
+            ->where('id', $maintenanceOrderId)
+            ->where('maintenance_type', MaintenanceOrder::TYPE_RESERVA)
+            ->with('asset')
+            ->first();
+
+        if (! $order) {
+            Notification::make()->title('OS de Reserva não encontrada')->danger()->send();
+
+            return;
+        }
+
+        $order->update(['status' => 'Concluída']);
+
+        if ($order->asset && $order->asset->status === Asset::STATUS_RESERVADO) {
+            $order->asset->update(['status' => Asset::STATUS_DISPONIVEL]);
+        }
+
+        Notification::make()->title('Ativo liberado -- pronto pra o Comercial fechar o contrato')->success()->send();
     }
 }

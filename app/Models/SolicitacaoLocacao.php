@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
@@ -205,6 +206,16 @@ class SolicitacaoLocacao extends Model
     public function assets(): BelongsToMany
     {
         return $this->belongsToMany(Asset::class, 'solicitacao_locacao_assets');
+    }
+
+    /**
+     * FK direta (maintenance_orders.solicitacao_locacao_id, 2026-07-24) --
+     * hoje só populada pela OS de Reserva (ver ReservasUrgentes::abrirOsReserva()),
+     * mas qualquer OS futura pode ser vinculada aqui também.
+     */
+    public function maintenanceOrders(): HasMany
+    {
+        return $this->hasMany(MaintenanceOrder::class);
     }
 
     /**

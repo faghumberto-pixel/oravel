@@ -86,15 +86,30 @@ class AssetResource extends Resource
                                     ->unique(ignoreRecord: true)
                                     ->prefixIcon('heroicon-m-hashtag'),
 
-                                Forms\Components\Select::make('asset_category')
+                                // asset_category_id (2026-07-24): FK real pra AssetCategory --
+                                // asset_category (texto) é mantido em paralelo só por
+                                // compatibilidade com telas antigas que ainda leem o texto
+                                // (coluna/filtro da tabela, exports, AssetDossier). Sem essa
+                                // sincronia, a busca de disponibilidade por categoria em
+                                // SolicitacaoLocacaoResource não teria como funcionar.
+                                Forms\Components\Select::make('asset_category_id')
                                     ->label('Categoria e Tipo')
-                                    ->options(AssetCategory::pluck('name', 'name'))
+                                    // Não-obrigatório de propósito: o backfill da migration
+                                    // 2026_07_24_143615 deixou boa parte dos ativos existentes
+                                    // sem match seguro (nome do texto livre não batia com
+                                    // nenhuma AssetCategory) -- exigir aqui travaria a edição
+                                    // de qualquer campo desses ativos até alguém reclassificar.
+                                    ->relationship('category', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
                                     ->searchable()
-                                    ->required()
                                     ->native(false)
                                     ->live()
-                                    ->afterStateUpdated(fn ($state, callable $set) => $set('checklist', Asset::getDefaultChecklist($state))
-                                    ),
+                                    ->afterStateUpdated(function ($state, callable $set) {
+                                        $categoryName = $state ? AssetCategory::find($state)?->name : null;
+                                        $set('asset_category', $categoryName);
+                                        $set('checklist', Asset::getDefaultChecklist($categoryName));
+                                    }),
+
+                                Forms\Components\Hidden::make('asset_category'),
 
                                 Forms\Components\Select::make('checklist_group_id')
                                     ->label('Grupo')

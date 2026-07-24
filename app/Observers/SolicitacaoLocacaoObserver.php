@@ -3,7 +3,10 @@
 namespace App\Observers;
 
 use App\Filament\Resources\SolicitacaoLocacaoResource;
+use App\Models\Asset;
+use App\Models\EquipmentDamage;
 use App\Models\EquipmentReplacement;
+use App\Models\MaintenanceOrder;
 use App\Models\Role;
 use App\Models\SolicitacaoLocacao;
 use App\Models\User;
@@ -22,10 +25,75 @@ class SolicitacaoLocacaoObserver
      */
     public function updated(SolicitacaoLocacao $solicitacao): void
     {
-        if (! $solicitacao->wasChanged('status_comercial') || $solicitacao->status_comercial !== 'contrato_fechado') {
+        if (! $solicitacao->wasChanged('status_comercial')) {
             return;
         }
 
+        if ($solicitacao->status_comercial === 'contrato_fechado') {
+            $this->notifyLogisticaContratoFechado($solicitacao);
+
+            return;
+        }
+
+        // Saiu de "reserva_manutencao" pra qualquer coisa que NAO seja
+        // contrato_fechado (cancelado, ou revertida pra proposta) --
+        // revoga a reserva sozinha. contrato_fechado nao entra aqui de
+        // proposito: so' chega nesse status com o Ativo ja disponivel
+        // (regra em SolicitacaoLocacao::booted()), entao a OS de Reserva
+        // ja foi concluida manualmente antes (ver ReservasUrgentes::concluirReserva()).
+        if ($solicitacao->getOriginal('status_comercial') === 'reserva_manutencao') {
+            $this->revogarReservaAbandonada($solicitacao);
+        }
+    }
+
+    private function revogarReservaAbandonada(SolicitacaoLocacao $solicitacao): void
+    {
+        $ordens = MaintenanceOrder::where('solicitacao_locacao_id', $solicitacao->id)
+            ->where('maintenance_type', MaintenanceOrder::TYPE_RESERVA)
+            ->whereNotIn('status', ['Concluída', 'Cancelada', 'Completado'])
+            ->with('asset')
+            ->get();
+
+        foreach ($ordens as $ordem) {
+            $ordem->update(['status' => 'Cancelada']);
+
+            if ($ordem->asset && $ordem->asset->status === Asset::STATUS_RESERVADO) {
+                $ordem->asset->update(['status' => Asset::STATUS_DISPONIVEL]);
+            }
+
+            $this->notifyManutencaoReservaRevogada($solicitacao, $ordem);
+        }
+    }
+
+    private function notifyManutencaoReservaRevogada(SolicitacaoLocacao $solicitacao, MaintenanceOrder $ordem): void
+    {
+        $role = Role::where('name', EquipmentDamage::ROLE_GERENTE_MANUTENCAO)
+            ->where('guard_name', 'web')
+            ->where('tenant_id', $solicitacao->tenant_id)
+            ->first();
+
+        if (! $role) {
+            return;
+        }
+
+        $recipients = User::role($role)->where('tenant_id', $solicitacao->tenant_id)->get();
+
+        foreach ($recipients as $recipient) {
+            Notification::make()
+                ->title('Reserva revogada automaticamente')
+                ->body('A Solicitação de '.($solicitacao->customer?->name ?? 'cliente não informado')
+                    .' saiu de "Reservar para Manutenção" -- o Ativo '.($ordem->asset?->name ?? '—')
+                    .' foi liberado de volta pra disponível.')
+                ->actions([
+                    Action::make('ver')->button()->url(SolicitacaoLocacaoResource::getUrl('edit', ['record' => $solicitacao])),
+                ])
+                ->warning()
+                ->sendToDatabase($recipient);
+        }
+    }
+
+    private function notifyLogisticaContratoFechado(SolicitacaoLocacao $solicitacao): void
+    {
         $role = Role::where('name', EquipmentReplacement::ROLE_LOGISTICA)
             ->where('guard_name', 'web')
             ->where('tenant_id', $solicitacao->tenant_id)

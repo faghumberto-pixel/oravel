@@ -184,4 +184,85 @@ class ReservasUrgentesTest extends TestCase
             ->assertSee('Cliente Render')
             ->assertSee('Gerador Render');
     }
+
+    public function test_abrir_os_reserva_creates_order_and_blocks_asset(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $this->actingAs($admin);
+
+        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Reserva']);
+        $category = AssetCategory::create(['tenant_id' => $tenant->id, 'name' => 'Geradores']);
+        $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Gerador Reserva', 'status' => Asset::STATUS_MANUTENCAO]);
+        $solicitacao = SolicitacaoLocacao::create([
+            'tenant_id' => $tenant->id, 'user_id' => $admin->id, 'customer_id' => $client->id,
+            'category_id' => $category->id, 'asset_id' => $asset->id, 'data_saida_prevista' => now()->addWeek(),
+            'status_comercial' => 'reserva_manutencao',
+        ]);
+
+        (new ReservasUrgentes)->abrirOsReserva($solicitacao->id, $asset->id);
+
+        $asset->refresh();
+        $this->assertSame(Asset::STATUS_RESERVADO, $asset->status);
+
+        $order = MaintenanceOrder::where('solicitacao_locacao_id', $solicitacao->id)->sole();
+        $this->assertSame(MaintenanceOrder::TYPE_RESERVA, $order->maintenance_type);
+        $this->assertSame(MaintenanceOrder::STATUS_RESERVADO, $order->status);
+        $this->assertSame($asset->id, $order->asset_id);
+    }
+
+    public function test_abrir_os_reserva_refuses_when_asset_already_has_an_open_order(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $this->actingAs($admin);
+
+        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Duplicado']);
+        $category = AssetCategory::create(['tenant_id' => $tenant->id, 'name' => 'Geradores']);
+        $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Gerador Duplicado', 'status' => Asset::STATUS_MANUTENCAO]);
+        MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'description' => 'Preventiva já em curso',
+            'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE, 'status' => 'Aberto',
+        ]);
+        $solicitacao = SolicitacaoLocacao::create([
+            'tenant_id' => $tenant->id, 'user_id' => $admin->id, 'customer_id' => $client->id,
+            'category_id' => $category->id, 'asset_id' => $asset->id, 'data_saida_prevista' => now()->addWeek(),
+            'status_comercial' => 'reserva_manutencao',
+        ]);
+
+        (new ReservasUrgentes)->abrirOsReserva($solicitacao->id, $asset->id);
+
+        $asset->refresh();
+        $this->assertSame(Asset::STATUS_MANUTENCAO, $asset->status);
+        $this->assertSame(1, MaintenanceOrder::where('asset_id', $asset->id)->count());
+    }
+
+    public function test_concluir_reserva_releases_asset_back_to_disponivel(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $this->actingAs($admin);
+
+        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Libera']);
+        $category = AssetCategory::create(['tenant_id' => $tenant->id, 'name' => 'Geradores']);
+        $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Gerador Libera', 'status' => Asset::STATUS_MANUTENCAO]);
+        $solicitacao = SolicitacaoLocacao::create([
+            'tenant_id' => $tenant->id, 'user_id' => $admin->id, 'customer_id' => $client->id,
+            'category_id' => $category->id, 'asset_id' => $asset->id, 'data_saida_prevista' => now()->addWeek(),
+            'status_comercial' => 'reserva_manutencao',
+        ]);
+
+        $page = new ReservasUrgentes;
+        $page->abrirOsReserva($solicitacao->id, $asset->id);
+        $order = MaintenanceOrder::where('solicitacao_locacao_id', $solicitacao->id)->sole();
+
+        $page->concluirReserva($order->id);
+
+        $asset->refresh();
+        $order->refresh();
+        $this->assertSame(Asset::STATUS_DISPONIVEL, $asset->status);
+        $this->assertSame('Concluída', $order->status);
+
+        // A partir daqui a validação de SolicitacaoLocacao::booted() (só
+        // fecha contrato com Ativo disponível) já deixa passar.
+        $solicitacao->update(['status_comercial' => 'contrato_fechado']);
+        $this->assertSame('contrato_fechado', $solicitacao->fresh()->status_comercial);
+    }
 }
