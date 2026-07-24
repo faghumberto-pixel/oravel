@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Filament\Resources\CrmLeadResource;
 use App\Filament\Resources\CrmLeadResource\Pages\EditCrmLead;
 use App\Filament\Resources\CrmLeadResource\RelationManagers\InteractionsRelationManager;
+use App\Filament\Resources\CrmLeadResource\Widgets\CrmLeadStats;
 use App\Models\CrmLead;
 use App\Models\CrmLeadInteraction;
 use App\Models\Plan;
@@ -179,5 +180,35 @@ class CrmLeadResourceTest extends TestCase
         $response = $this->get(CrmLeadResource::getUrl('index'));
         $response->assertOk();
         $response->assertDontSee('Lead Tenant A');
+    }
+
+    /**
+     * Mesmo padrão já usado em Assets/Clients/Materials/Fornecedores
+     * (dashboard de 4 KPIs no topo da listagem) -- só faltava em Leads.
+     */
+    public function test_crm_lead_stats_widget_computes_funnel_counts(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'Novo 1', 'stage' => CrmLead::STAGE_NOVO]);
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'Contato 1', 'stage' => CrmLead::STAGE_CONTATO_INICIADO]);
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'Qualificado 1', 'stage' => CrmLead::STAGE_QUALIFICADO]);
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'Convertido 1', 'stage' => CrmLead::STAGE_CONVERTIDO]);
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'Perdido 1', 'stage' => CrmLead::STAGE_PERDIDO]);
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'Perdido 2', 'stage' => CrmLead::STAGE_PERDIDO]);
+
+        $this->actingAs($admin);
+
+        // getStats() é protected (mesmo padrão de todo StatsOverviewWidget
+        // do projeto) -- reflection é o jeito limpo de testar o cálculo
+        // sem expor o método ou passar pelo ciclo de vida do Livewire.
+        $method = new \ReflectionMethod(CrmLeadStats::class, 'getStats');
+        $method->setAccessible(true);
+        $stats = $method->invoke(new CrmLeadStats);
+
+        $this->assertSame(6, $stats[0]->getValue());
+        $this->assertSame(2, $stats[1]->getValue());
+        $this->assertSame(1, $stats[2]->getValue());
+        $this->assertSame(2, $stats[3]->getValue());
     }
 }

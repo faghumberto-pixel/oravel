@@ -20,4 +20,16 @@ class ListCrmLeads extends ListRecords
             $this->printAction(),
         ];
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            CrmLeadResource\Widgets\CrmLeadStats::class,
+        ];
+    }
+
+    public function getHeaderWidgetsColumns(): int|string|array
+    {
+        return 4;
+    }
 }
