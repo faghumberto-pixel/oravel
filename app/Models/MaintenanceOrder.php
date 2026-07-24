@@ -50,7 +50,7 @@ class MaintenanceOrder extends Model implements HasMedia
 
     protected $fillable = [
         'os_number', 'asset_id', 'technician_id', 'client_id', 'branch_id', 'service_type',
-        'maintenance_type', 'reported_problem_id', 'description', 'technical_notes',
+        'maintenance_type', 'reported_problem_id', 'maintenance_plan_id', 'description', 'technical_notes',
         'client_signature', 'technician_signature', 'signature_path', 'status', 'internal_status', 'commercial_status',
         'tenant_id', 'started_at', 'finished_at', 'rescheduled_to', 'total_time_seconds',
         'last_timer_start', 'reschedule_reason', 'criticality_level_id', 'is_rework',
@@ -142,6 +142,11 @@ class MaintenanceOrder extends Model implements HasMedia
     public function reportedProblem(): BelongsTo
     {
         return $this->belongsTo(ReportedProblem::class);
+    }
+
+    public function maintenancePlan(): BelongsTo
+    {
+        return $this->belongsTo(MaintenancePlan::class);
     }
 
     public function materials(): HasMany

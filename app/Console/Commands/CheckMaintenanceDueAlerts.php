@@ -107,6 +107,7 @@ class CheckMaintenanceDueAlerts extends Command
             'tenant_id' => $tenant->id,
             'asset_id' => $asset->id,
             'client_id' => $asset->client_id,
+            'maintenance_plan_id' => $plano->id,
             'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
             'status' => 'Aberto',
             'description' => sprintf(
