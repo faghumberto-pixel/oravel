@@ -9,6 +9,7 @@ use App\Models\EquipmentMovement;
 use App\Models\EquipmentMovementItemTemplate;
 use App\Models\EquipmentPatioArrival;
 use App\Models\MaintenanceOrder;
+use App\Models\PatioEntry;
 use App\Models\Plan;
 use App\Models\Role;
 use App\Models\Tenant;
@@ -33,7 +34,7 @@ class PatioChegadasTest extends TestCase
         ]);
         $admin = User::create([
             'name' => 'Admin', 'email' => 'admin-'.uniqid().'@oravel.com.br',
-            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'is_approved' => true,
         ]);
         $admin->forceFill(['email_verified_at' => now()])->save();
         $admin->assignRole(Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web', 'tenant_id' => $tenant->id]));
@@ -124,6 +125,35 @@ class PatioChegadasTest extends TestCase
 
         $this->assertSame($first->id, $second->id);
         $this->assertSame(1, EquipmentPatioArrival::where('equipment_movement_id', $movement->id)->count());
+    }
+
+    /**
+     * Cobertura que faltava: com os gráficos + KPIs novos (mesmo padrão do
+     * Dashboard PMP) acima da fila de laudos, garante que a página ainda
+     * renderiza sem erro de blade e que os KPIs batem com dado real.
+     */
+    public function test_page_renders_with_kpis_and_charts(): void
+    {
+        [$tenant, $admin] = $this->makeTenant();
+        PatioEntry::create([
+            'tenant_id' => $tenant->id, 'direction' => PatioEntry::DIRECTION_ENTRADA,
+            'reason' => PatioEntry::REASON_VISITA, 'arrived_at' => now(),
+            'registered_by_user_id' => $admin->id,
+        ]);
+        $movement = $this->makeConcludedDesmobilizacao($tenant, $admin);
+        $this->actingAs($admin);
+
+        $this->get(PatioChegadas::getUrl())->assertOk();
+
+        $page = new PatioChegadas;
+        $kpis = $page->getKpis();
+
+        $this->assertSame(1, $kpis['hoje']);
+        $this->assertSame(1, $kpis['entradasHoje']);
+        $this->assertSame(0, $kpis['saidasHoje']);
+        $this->assertSame(1, $kpis['aguardando']);
+        $this->assertSame(0, $kpis['emAndamento']);
+        $this->assertTrue($page->pending->contains('id', $movement->id));
     }
 
     public function test_page_is_blocked_when_plan_lacks_equipment_movements_feature(): void

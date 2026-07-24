@@ -12,6 +12,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Collection;
 
 /**
@@ -41,6 +42,36 @@ class PatioChegadas extends Page
     public static function canAccess(): bool
     {
         return (bool) auth()->user()?->can('viewAny', EquipmentMovement::class);
+    }
+
+    public function getMaxContentWidth(): MaxWidth
+    {
+        return MaxWidth::Full;
+    }
+
+    /**
+     * KPIs compactos do topo (mesmo padrão do Dashboard PMP) -- contagens
+     * reais do dia + fila de laudos, sem duplicar as queries já usadas
+     * pelas propriedades pending/entries abaixo.
+     */
+    public function getKpis(): array
+    {
+        $tenant = Tenancy::current();
+        if (! $tenant) {
+            return ['hoje' => 0, 'entradasHoje' => 0, 'saidasHoje' => 0, 'aguardando' => 0, 'emAndamento' => 0];
+        }
+
+        $hojeQuery = PatioEntry::where('tenant_id', $tenant->id)->whereDate('arrived_at', today());
+
+        $hoje = (clone $hojeQuery)->count();
+        $entradasHoje = (clone $hojeQuery)->where('direction', PatioEntry::DIRECTION_ENTRADA)->count();
+        $saidasHoje = (clone $hojeQuery)->where('direction', PatioEntry::DIRECTION_SAIDA)->count();
+
+        $pending = $this->pending;
+        $emAndamento = $pending->filter(fn ($m) => (bool) $m->patioArrival)->count();
+        $aguardando = $pending->count() - $emAndamento;
+
+        return compact('hoje', 'entradasHoje', 'saidasHoje', 'aguardando', 'emAndamento');
     }
 
     public function getPendingProperty(): Collection
