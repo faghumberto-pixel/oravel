@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\AbcMatrixHistory;
 use App\Models\Asset;
 use App\Models\EquipmentDamage;
 use App\Models\EquipmentReplacement;
@@ -20,12 +21,13 @@ use Illuminate\Support\Str;
  * Ativo, num painel com métricas/gráficos igual ao Dashboard PMP, filtrável
  * por Patrimônio, intervalo de data e tipo de evento.
  *
- * Cruza 4 fontes que HOJE não tem nenhuma tabela de histórico em comum
- * (mesma limitação já documentada na Linha do Tempo da Locação):
- * - EquipmentDamage (severidade grave -> "criticidade", demais -> "problemas
- *   reportados") -- não existe histórico de MUDANÇA de nível ABC (AbcMatrix
- *   é um snapshot único por Ativo), então "criticidade" aqui é o subconjunto
- *   de avarias graves, não uma trilha de nível.
+ * Cruza 5 fontes (mesma limitação de FK ausente já documentada na Linha do
+ * Tempo da Locação, exceto pra criticidade que ganhou tabela própria):
+ * - AbcMatrixHistory (tag "criticidade") -- histórico real de mudança de
+ *   nível, gravado por AbcMatrixObserver a cada create/update de AbcMatrix.
+ *   Não existia até 2026-07-24 (AbcMatrix era um snapshot único por Ativo).
+ * - EquipmentDamage (severidade grave -> também "criticidade", demais ->
+ *   "problemas reportados")
  * - MaintenanceOrder (tag "ordens_de_servico" sempre + preventivas/
  *   corretivas/trocas conforme maintenance_type)
  * - MaintenanceOrderPendencia (via maintenanceOrder.asset_id, sem FK direta)
@@ -156,6 +158,20 @@ class HistoricoPatrimonio extends Page
         }
 
         $events = collect();
+
+        // orderBy('id'): AbcMatrixHistory::id é uuid ordenado (HasUuids),
+        // então isso garante ordem cronológica correta mesmo se 2 mudanças
+        // caírem no mesmo changed_at.
+        $mudancasNivel = AbcMatrixHistory::where('asset_id', $this->asset->id)->orderBy('id')->get();
+
+        foreach ($mudancasNivel as $mudanca) {
+            $events->push([
+                'at' => $mudanca->changed_at,
+                'tipos' => ['criticidade'],
+                'title' => 'Nível ABC alterado: '.($mudanca->nivel_anterior ?? '—').' → '.$mudanca->nivel_novo,
+                'body' => $mudanca->changedBy?->name,
+            ]);
+        }
 
         foreach ($this->asset->damages as $damage) {
             $critico = $damage->severity === EquipmentDamage::SEVERITY_GRAVE;

@@ -200,8 +200,8 @@
         </div>
 
         <p class="text-[11px] text-gray-400 dark:text-gray-600 italic text-center pt-3">
-            "Criticidade" reflete avarias de severidade grave registradas no período -- não existe hoje um histórico
-            de mudança de nível ABC (só o nível atual do Ativo).
+            "Criticidade" reúne mudanças reais de nível ABC (a partir de 24/07/2026, quando o histórico passou a ser
+            gravado) e avarias de severidade grave registradas no período.
         </p>
     @endif
 </x-filament-panels::page>

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Filament\Central\Widgets\SalesAgendaWidget;
 use App\Livewire\DatabaseNotifications;
+use App\Models\AbcMatrix;
 use App\Models\Announcement;
 use App\Models\Asset;
 use App\Models\Client;
@@ -28,6 +29,7 @@ use App\Models\SalesLeadInteraction;
 use App\Models\SolicitacaoLocacao;
 use App\Models\User;
 use App\Models\UserActivityLog;
+use App\Observers\AbcMatrixObserver;
 use App\Observers\AnnouncementObserver;
 use App\Observers\AssetObserver;
 use App\Observers\ClientObserver;
@@ -102,6 +104,7 @@ class AppServiceProvider extends ServiceProvider
         GoodsReceiptItem::observe(GoodsReceiptItemObserver::class);
         MaintenanceOrderPendencia::observe(MaintenanceOrderPendenciaObserver::class);
         HorimeterReading::observe(HorimeterReadingObserver::class);
+        AbcMatrix::observe(AbcMatrixObserver::class);
 
         // INJEÇÃO CRUCIAL: Vincula dinamicamente a tabela de roles
         Role::resolveRelationUsing('department', function ($roleModel) {
