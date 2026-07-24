@@ -15,7 +15,9 @@ class PmpByEquipmentTypeChart extends ChartWidget
 {
     protected static ?string $heading = 'O.S. por Tipo de Equipamento';
 
-    protected static ?string $maxHeight = '220px';
+    // Fica ao lado do Kanban na seção inferior, esticando bem mais alto que
+    // os outros 2 gráficos (que ficam compactos na linha de cima).
+    protected static ?string $maxHeight = '440px';
 
     protected int|string|array $columnSpan = ['md' => 1];
 
