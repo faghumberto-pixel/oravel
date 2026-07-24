@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Pages\PainelPmp;
+use App\Filament\Widgets\Charts\GaugeChart;
 use App\Models\Asset;
 use App\Models\Client;
 use App\Models\MaintenanceDueAlert;
@@ -258,5 +259,110 @@ class PainelPmpTest extends TestCase
             ->call('moveCard', 'alert:'.$alert->id, PainelPmp::COL_EM_ANDAMENTO);
 
         $this->assertSame(0, MaintenanceOrder::where('tenant_id', $tenant->id)->count());
+    }
+
+    /**
+     * Alimenta o GaugeChart do topo do dashboard -- 2 de 4 preventivas
+     * concluídas tem que dar exatamente 50.0, não um valor arredondado
+     * torto.
+     */
+    public function test_taxa_conclusao_calculation(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Taxa', 'patrimonio' => 'PAT-TX', 'status' => 'disponivel']);
+
+        foreach (['concluido', 'concluido', 'em_manutencao', 'aguardando_diagnostico'] as $status) {
+            MaintenanceOrder::create([
+                'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'description' => 'Preventiva '.$status,
+                'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE, 'internal_status' => $status,
+            ]);
+        }
+
+        $this->actingAs($admin);
+
+        $this->assertSame(50.0, (new PainelPmp)->getTaxaConclusao());
+    }
+
+    public function test_taxa_conclusao_is_zero_without_orders(): void
+    {
+        [, $admin] = $this->makeTenantAdmin();
+        $this->actingAs($admin);
+
+        $this->assertSame(0.0, (new PainelPmp)->getTaxaConclusao());
+    }
+
+    /**
+     * Alimenta o AreaChart genérico (App\Filament\Widgets\Charts\AreaChart)
+     * que substituiu o antigo PmpEvolutionChart -- garante que a query
+     * continua contando "realizado" por finished_at e "planejado" por
+     * scheduled_at, não misturando os dois critérios.
+     */
+    public function test_evolution_area_data_splits_realizado_e_planejado(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Evolução', 'patrimonio' => 'PAT-EVO', 'status' => 'disponivel']);
+
+        MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'description' => 'Concluída este mês',
+            'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE, 'internal_status' => 'concluido',
+            'status' => 'Concluída', 'finished_at' => now(),
+        ]);
+        MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'description' => 'Agendada este mês',
+            'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE, 'internal_status' => 'aguardando_diagnostico',
+            'status' => 'Aberto', 'scheduled_at' => now(),
+        ]);
+
+        $this->actingAs($admin);
+
+        $data = (new PainelPmp)->getEvolutionAreaData();
+
+        $this->assertCount(6, $data['labels']);
+        $this->assertSame('Realizado', $data['seriesA']['name']);
+        $this->assertSame('Planejado', $data['seriesB']['name']);
+        $this->assertSame(1, $data['seriesA']['data'][5]);
+        $this->assertSame(1, $data['seriesB']['data'][5]);
+    }
+
+    /**
+     * Alimenta o LineChartWithMarkers -- só conta preventivas com
+     * is_prazo_fatal=true, não qualquer preventiva do mês.
+     */
+    public function test_prazo_fatal_por_mes_only_counts_flagged_orders(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Fatal', 'patrimonio' => 'PAT-FT', 'status' => 'disponivel']);
+
+        MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'description' => 'Prazo fatal',
+            'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE, 'internal_status' => 'em_manutencao',
+            'is_prazo_fatal' => true,
+        ]);
+        MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'description' => 'Normal',
+            'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE, 'internal_status' => 'em_manutencao',
+            'is_prazo_fatal' => false,
+        ]);
+
+        $this->actingAs($admin);
+
+        $data = (new PainelPmp)->getPrazoFatalPorMesData();
+
+        $this->assertSame(1, $data['series'][0]['data'][5]);
+    }
+
+    /**
+     * O ponteiro do GaugeChart precisa ficar sempre dentro do arco (0-100%)
+     * mesmo que quem chame passe um valor fora da faixa por engano --
+     * senão a plugin JS (oravel-gauge-chart-plugin) desenha o ponteiro
+     * fora do desenho do mostrador.
+     */
+    public function test_gauge_chart_clamps_value_to_valid_range(): void
+    {
+        [, $admin] = $this->makeTenantAdmin();
+        $this->actingAs($admin);
+
+        Livewire::test(GaugeChart::class, ['value' => 150])->assertSet('value', 100.0);
+        Livewire::test(GaugeChart::class, ['value' => -20])->assertSet('value', 0.0);
     }
 }
