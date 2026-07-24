@@ -3,36 +3,43 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\LocationResource\Pages;
 use App\Models\Location;
-use Filament\Forms\Form;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Illuminate\Support\Facades\Http;
 
 #[BelongsToFeature('locations')]
 class LocationResource extends Resource
-{ 
-    protected static bool $shouldRegisterNavigation = false;
+{
+    protected static bool $shouldRegisterNavigation = true;
+
     protected static ?string $model = Location::class;
+
     protected static ?string $navigationGroup = 'Configurações';
+
     protected static ?string $navigationLabel = 'Localizações';
+
+    protected static ?string $modelLabel = 'Localização';
+
+    protected static ?string $pluralModelLabel = 'Localizações';
 
     public static function form(Form $form): Form
     {
         return $form->schema([
-            \Filament\Forms\Components\Section::make('Dados do Local')
+            Section::make('Dados do Local')
                 ->schema([
                     TextInput::make('name')
                         ->label('Nome do Local/Filial/Cliente')
                         ->required()
                         ->maxLength(255),
-                    
+
                     TextInput::make('zip_code')
                         ->label('CEP')
                         ->mask('99999-999')
@@ -41,7 +48,7 @@ class LocationResource extends Resource
                             $cleanCep = str_replace('-', '', $state);
                             if (strlen($cleanCep) === 8) {
                                 $response = Http::get("https://viacep.com.br/ws/{$cleanCep}/json/")->json();
-                                if (!isset($response['erro'])) {
+                                if (! isset($response['erro'])) {
                                     $set('address', $response['logradouro']);
                                     $set('city', $response['localidade']);
                                     $set('state', $response['uf']);
