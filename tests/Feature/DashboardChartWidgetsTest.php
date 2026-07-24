@@ -6,8 +6,10 @@ use App\Filament\Pages\PainelGestao;
 use App\Filament\Widgets\FleetAvailabilityGaugeWidget;
 use App\Filament\Widgets\MaintenanceCostChart;
 use App\Filament\Widgets\MaintenanceOrdersOpenVsClosedAreaWidget;
+use App\Filament\Widgets\TopClientsByRentals;
 use App\Models\Asset;
 use App\Models\Client;
+use App\Models\Contract;
 use App\Models\MaintenanceOrder;
 use App\Models\Plan;
 use App\Models\Role;
@@ -144,12 +146,15 @@ class DashboardChartWidgetsTest extends TestCase
     }
 
     /**
-     * Segundo pedido do usuário: Top 5 Clientes / Taxa de Disponibilidade
+     * Segundo pedido do usuário: Top Clientes / Taxa de Disponibilidade
      * da Frota / O.S. Abertas vs. Concluídas também na mesma linha -- são
      * os itens 4-6 do array default, então com o grid já em 3 colunas
      * (ver teste acima) já caem sozinhos na 2ª linha, sem mudança de
      * código necessária. Este teste prova isso e protege contra alguém
      * reordenar o array e quebrar o agrupamento sem perceber.
+     *
+     * "Top 3" (não "Top 5") no segmento genérico -- terceiro pedido do
+     * usuário, reduzir a lista pra caber melhor na coluna de 1/3.
      */
     public function test_second_row_groups_top_clients_gauge_and_area_together(): void
     {
@@ -159,7 +164,7 @@ class DashboardChartWidgetsTest extends TestCase
         $html = $this->get(PainelGestao::getUrl())->assertOk()->getContent();
 
         $posCost = strpos($html, 'Custo de Manutenção por Mês');
-        $posTopClients = strpos($html, 'Top 5 Clientes com Mais Locações');
+        $posTopClients = strpos($html, 'Top 3 Clientes com Mais Locações');
         $posGauge = strpos($html, 'Taxa de Disponibilidade da Frota');
         $posArea = strpos($html, 'O.S. Abertas vs. Concluídas por Mês');
 
@@ -173,5 +178,86 @@ class DashboardChartWidgetsTest extends TestCase
         $this->assertTrue($posCost < $posTopClients);
         $this->assertTrue($posTopClients < $posGauge);
         $this->assertTrue($posGauge < $posArea);
+    }
+
+    /**
+     * O bug real que o usuário reportou: DOM order sozinho (teste acima)
+     * não pega isso -- TopClientsByRentals tinha columnSpan=['md'=>2],
+     * que o wrapper interno de todo widget Filament
+     * (vendor/filament/widgets/resources/views/components/widget.blade.php,
+     * via <x-filament::grid.column>) transforma numa classe/estilo
+     * "span 2 / span 2" REAL, mesmo dentro deste grid CSS hand-rolled.
+     * Num container de 3 colunas, isso empurrava o próximo item pra uma
+     * linha nova sozinho -- o "3, depois 2, depois 1" que o usuário
+     * descreveu. No segmento genérico não pode sobrar nenhum "span 2".
+     */
+    public function test_default_segment_has_no_wide_grid_items(): void
+    {
+        [, $admin] = $this->makeTenantAdmin(segment: null);
+        $this->actingAs($admin);
+
+        $html = $this->get(PainelGestao::getUrl())->assertOk()->getContent();
+
+        $this->assertStringNotContainsString('span 2 / span 2', $html);
+    }
+
+    /**
+     * O segmento Eventos não foi pedido pra mudar -- TopClientsByRentals
+     * continua span 2 lá (ocupa a linha inteira sozinho, comportamento
+     * de propósito), só o segmento genérico foi ajustado.
+     */
+    public function test_eventos_segment_keeps_wide_top_clients_widget(): void
+    {
+        [, $admin] = $this->makeTenantAdmin(segment: Client::NICHE_EVENTOS);
+        $this->actingAs($admin);
+
+        $html = $this->get(PainelGestao::getUrl())->assertOk()->getContent();
+
+        $this->assertStringContainsString('span 2 / span 2', $html);
+    }
+
+    /**
+     * Terceiro pedido do usuário: Top 3 (não Top 5) no segmento genérico,
+     * pra caber melhor na coluna de 1/3. Eventos continua Top 5 -- não foi
+     * pedido pra mudar, e lá o widget ocupa a linha inteira.
+     */
+    public function test_generic_segment_shows_only_top_3_clients(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin(segment: null);
+
+        foreach (range(1, 5) as $i) {
+            $client = Client::create(['tenant_id' => $tenant->id, 'name' => "Cliente {$i}"]);
+            $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => "Ativo {$i}", 'patrimonio' => "PAT-TC-{$i}", 'status' => 'disponivel']);
+            Contract::create([
+                'tenant_id' => $tenant->id, 'client_id' => $client->id, 'asset_id' => $asset->id,
+                'contract_number' => "CT-{$i}", 'start_date' => now(), 'price' => 100,
+            ]);
+        }
+
+        $this->actingAs($admin);
+
+        $component = Livewire::test(TopClientsByRentals::class);
+
+        $this->assertCount(3, $component->instance()->getTableRecords());
+    }
+
+    public function test_eventos_segment_still_shows_top_5_clients(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin(segment: Client::NICHE_EVENTOS);
+
+        foreach (range(1, 5) as $i) {
+            $client = Client::create(['tenant_id' => $tenant->id, 'name' => "Cliente {$i}"]);
+            $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => "Ativo {$i}", 'patrimonio' => "PAT-TC-{$i}", 'status' => 'disponivel']);
+            Contract::create([
+                'tenant_id' => $tenant->id, 'client_id' => $client->id, 'asset_id' => $asset->id,
+                'contract_number' => "CT-{$i}", 'start_date' => now(), 'price' => 100,
+            ]);
+        }
+
+        $this->actingAs($admin);
+
+        $component = Livewire::test(TopClientsByRentals::class);
+
+        $this->assertCount(5, $component->instance()->getTableRecords());
     }
 }
