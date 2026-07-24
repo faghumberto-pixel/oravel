@@ -53,6 +53,21 @@
                         fn ($widget) => is_a($widget, \Filament\Widgets\StatsOverviewWidget::class, true)
                     );
                     $gridWidgets = collect($gestaoWidgets)->diff($fullWidthWidgets);
+
+                    // Só o segmento "generico" (sem Eventos/Construcao Civil/
+                    // Industrial-Hospitalar, mesmo default de
+                    // SegmentDashboardWidgets::forSegment()) usa 3 colunas --
+                    // pedido explicito do usuario pra Ativos por Status +
+                    // Manutencoes por Status + Custo de Manutencao ficarem na
+                    // mesma linha (nessa ordem, ja e a ordem real do array).
+                    // Os outros 3 segmentos continuam em 2 colunas, sem tocar
+                    // no layout deles.
+                    $segmentoGenerico = ! in_array(\App\Support\Tenancy::current()?->segment, [
+                        \App\Models\Client::NICHE_EVENTOS,
+                        \App\Models\Client::NICHE_CONSTRUCAO_CIVIL,
+                        \App\Models\Client::NICHE_INDUSTRIAL_HOSPITALAR,
+                    ], true);
+                    $gridColsClass = $segmentoGenerico ? 'lg:grid-cols-3' : 'lg:grid-cols-2';
                 @endphp
 
                 @foreach($fullWidthWidgets as $widget)
@@ -60,7 +75,7 @@
                 @endforeach
 
                 @if($gridWidgets->isNotEmpty())
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 {{ $gridColsClass }} gap-3">
                         @foreach($gridWidgets as $widget)
                             @livewire($widget, [], $widget)
                         @endforeach

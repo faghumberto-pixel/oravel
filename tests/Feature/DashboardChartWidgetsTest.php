@@ -2,10 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Pages\PainelGestao;
 use App\Filament\Widgets\FleetAvailabilityGaugeWidget;
 use App\Filament\Widgets\MaintenanceCostChart;
 use App\Filament\Widgets\MaintenanceOrdersOpenVsClosedAreaWidget;
 use App\Models\Asset;
+use App\Models\Client;
 use App\Models\MaintenanceOrder;
 use App\Models\Plan;
 use App\Models\Role;
@@ -26,7 +28,7 @@ class DashboardChartWidgetsTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function makeTenantAdmin(): array
+    private function makeTenantAdmin(?string $segment = null): array
     {
         $plan = Plan::create([
             'name' => 'Plano Dash Charts '.uniqid(), 'price' => 100, 'base_price' => 100, 'level' => 1,
@@ -35,7 +37,7 @@ class DashboardChartWidgetsTest extends TestCase
         ]);
         $tenant = Tenant::create([
             'name' => 'Tenant Dash Charts '.uniqid(), 'slug' => 'tenant-dash-charts-'.uniqid(),
-            'plan_id' => $plan->id, 'status' => 'active',
+            'plan_id' => $plan->id, 'status' => 'active', 'segment' => $segment,
         ]);
         $admin = User::create([
             'name' => 'Admin Dash Charts', 'email' => 'admin-'.uniqid().'@oravel.com.br',
@@ -111,5 +113,33 @@ class DashboardChartWidgetsTest extends TestCase
             ->assertSet('chartTitle', 'Custo de Manutenção por Mês');
 
         $this->assertSame(1500.0, $component->get('series')[0]['data'][0]);
+    }
+
+    /**
+     * Pedido explícito do usuário: Ativos por Status, Manutenções por
+     * Status e Custo de Manutenção por Mês (nessa ordem, já é a ordem real
+     * do array default de SegmentDashboardWidgets) na mesma linha -- só
+     * pro segmento genérico (sem Eventos/Construção Civil/
+     * Industrial-Hospitalar), pra não mexer no layout dos outros 3.
+     */
+    public function test_default_segment_dashboard_uses_3_column_grid(): void
+    {
+        [, $admin] = $this->makeTenantAdmin(segment: null);
+        $this->actingAs($admin);
+
+        $html = $this->get(PainelGestao::getUrl())->assertOk()->getContent();
+
+        $this->assertStringContainsString('lg:grid-cols-3', $html);
+    }
+
+    public function test_other_segments_keep_2_column_grid(): void
+    {
+        [, $admin] = $this->makeTenantAdmin(segment: Client::NICHE_EVENTOS);
+        $this->actingAs($admin);
+
+        $html = $this->get(PainelGestao::getUrl())->assertOk()->getContent();
+
+        $this->assertStringNotContainsString('lg:grid-cols-3', $html);
+        $this->assertStringContainsString('lg:grid-cols-2', $html);
     }
 }
