@@ -24,6 +24,7 @@
                         <th class="px-4 py-2 font-medium">Avarias em Aberto</th>
                         <th class="px-4 py-2 font-medium">Reincidência (90d)</th>
                         <th class="px-4 py-2 font-medium">Nível</th>
+                        <th class="px-4 py-2 font-medium"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -58,10 +59,17 @@
                                     {{ $flagLabels[$linha['flag']] }}
                                 </span>
                             </td>
+                            <td class="px-4 py-2">
+                                <a href="{{ \App\Filament\Pages\HistoricoPatrimonio::getUrl(['assetId' => $linha['asset']]) }}"
+                                   class="inline-flex items-center gap-1 text-xs font-medium text-primary-600 hover:underline dark:text-primary-400">
+                                    <x-heroicon-o-clock class="w-3.5 h-3.5" />
+                                    Ver Histórico
+                                </a>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                            <td colspan="7" class="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
                                 Nenhum ativo com alerta no momento.
                             </td>
                         </tr>
