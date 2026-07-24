@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Attributes\BelongsToFeature;
+use App\Filament\Resources\MaintenanceOrderResource;
 use App\Models\MaintenanceDueAlert;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenanceStatusHistory;
@@ -77,6 +78,66 @@ class PainelPmp extends Page
     public function getMaxContentWidth(): MaxWidth
     {
         return MaxWidth::Full;
+    }
+
+    /**
+     * Grupo de KPI aberto no momento (null = modal fechado). Clicar num
+     * card de KPI abre a lista de equipamentos daquele grupo, com
+     * localização, pra apoiar a decisão de mandar técnico.
+     */
+    public ?string $openKpiGroup = null;
+
+    public function openKpiList(string $group): void
+    {
+        $this->openKpiGroup = $group;
+    }
+
+    public function closeKpiList(): void
+    {
+        $this->openKpiGroup = null;
+    }
+
+    public function getKpiGroupLabel(): string
+    {
+        return match ($this->openKpiGroup) {
+            'concluidas' => 'Manutenções Concluídas',
+            'em_andamento' => 'Em Andamento',
+            'revisao_pendente' => 'Revisão Pendente',
+            'criticas' => 'Críticas / Bloqueadas',
+            default => 'Ordens de Serviço Totais',
+        };
+    }
+
+    /**
+     * Equipamentos do grupo de KPI aberto, com localização (Asset.endereco,
+     * o mesmo campo que alimenta o Mapa de Equipamentos) pra apoiar a
+     * decisão de qual técnico mandar pra onde.
+     */
+    public function getKpiListItems(): Collection
+    {
+        if (! $this->openKpiGroup) {
+            return collect();
+        }
+
+        $query = $this->baseOrdersQuery()->with(['asset', 'technician', 'client']);
+
+        $query = match ($this->openKpiGroup) {
+            'concluidas' => $query->where('internal_status', 'concluido'),
+            'em_andamento' => $query->where('internal_status', 'em_manutencao'),
+            'revisao_pendente' => $query->where('internal_status', 'teste_qualidade'),
+            'criticas' => $query->where(fn ($q) => $q->whereIn('internal_status', ['aguardando_peca', 'aguardando_peca_canibalizado'])
+                ->orWhere('is_prazo_fatal', true)),
+            default => $query,
+        };
+
+        return $query->latest('scheduled_at')->get()->map(fn (MaintenanceOrder $o) => [
+            'os_number' => $o->os_number ?? Str::substr($o->id, 0, 8),
+            'asset_name' => $o->asset?->name ?? 'Equipamento indisponível',
+            'patrimonio' => $o->asset?->patrimonio ?? '—',
+            'location' => $o->asset?->endereco ?: $o->client?->name ?: 'Localização não informada',
+            'technician' => $o->technician?->name ?? 'Sem técnico',
+            'edit_url' => MaintenanceOrderResource::getUrl('edit', ['record' => $o]),
+        ])->values();
     }
 
     /**

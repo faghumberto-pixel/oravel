@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Pages\PainelPmp;
 use App\Models\Asset;
+use App\Models\Client;
 use App\Models\MaintenanceDueAlert;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
@@ -178,6 +179,59 @@ class PainelPmpTest extends TestCase
         $this->assertSame('concluido', $order->internal_status);
         $this->assertSame('Concluída', $order->status);
         $this->assertNotNull($order->finished_at);
+    }
+
+    /**
+     * Clicar num card de KPI abre a lista de equipamentos daquele grupo
+     * com a localização (Asset.endereco) -- pra apoiar a decisão de qual
+     * técnico mandar pra onde.
+     */
+    public function test_clicking_kpi_shows_equipment_list_with_location(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = Asset::create([
+            'tenant_id' => $tenant->id, 'name' => 'Guindaste Obra Norte', 'patrimonio' => 'PAT-LOC',
+            'status' => 'disponivel', 'endereco' => 'Av. das Nações, 1200 - Campinas/SP',
+        ]);
+        $order = MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'technician_id' => $admin->id,
+            'description' => 'Preventiva em andamento', 'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
+            'internal_status' => 'em_manutencao', 'status' => 'Em Andamento',
+        ]);
+
+        $this->actingAs($admin);
+
+        $page = Livewire::test(PainelPmp::class)
+            ->call('openKpiList', 'em_andamento')
+            ->assertSet('openKpiGroup', 'em_andamento')
+            ->assertSee('Guindaste Obra Norte')
+            ->assertSee('Av. das Nações, 1200 - Campinas/SP');
+
+        $items = $page->instance()->getKpiListItems();
+        $this->assertCount(1, $items);
+        $this->assertSame($order->os_number, $items->first()['os_number']);
+
+        $page->call('closeKpiList')->assertSet('openKpiGroup', null);
+    }
+
+    public function test_kpi_list_falls_back_to_client_name_when_asset_has_no_address(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Obra Sul']);
+        $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Sem Endereço', 'patrimonio' => 'PAT-SEM', 'status' => 'disponivel']);
+        MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'client_id' => $client->id,
+            'description' => 'Preventiva bloqueada', 'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
+            'internal_status' => 'aguardando_peca', 'status' => 'Em Andamento',
+        ]);
+
+        $this->actingAs($admin);
+
+        $page = new PainelPmp;
+        $page->openKpiGroup = 'criticas';
+        $items = $page->getKpiListItems();
+
+        $this->assertSame('Cliente Obra Sul', $items->first()['location']);
     }
 
     public function test_invalid_move_does_not_change_any_data(): void
