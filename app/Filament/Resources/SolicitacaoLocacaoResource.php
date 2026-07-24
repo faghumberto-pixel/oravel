@@ -187,6 +187,7 @@ class SolicitacaoLocacaoResource extends Resource
             'index' => Pages\ListSolicitacoesLocacao::route('/'),
             'create' => Pages\CreateSolicitacaoLocacao::route('/create'),
             'edit' => Pages\EditSolicitacaoLocacao::route('/{record}/edit'),
+            'timeline' => Pages\TimelineSolicitacaoLocacao::route('/{record}/timeline'),
         ];
     }
 }

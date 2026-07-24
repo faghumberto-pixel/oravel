@@ -16,6 +16,11 @@ class EditSolicitacaoLocacao extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('timeline')
+                ->label('Linha do Tempo')
+                ->icon('heroicon-o-clock')
+                ->color('gray')
+                ->url(fn () => SolicitacaoLocacaoResource::getUrl('timeline', ['record' => $this->record])),
             Actions\Action::make('despacho')
                 ->label(fn () => $this->dispatchStatusLabel())
                 ->icon('heroicon-o-clipboard-document-check')

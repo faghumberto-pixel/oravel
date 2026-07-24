@@ -9,7 +9,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
 
@@ -217,5 +220,169 @@ class SolicitacaoLocacao extends Model
         }
 
         return $assets->every(fn (Asset $asset) => $asset->status === Asset::STATUS_DISPONIVEL);
+    }
+
+    public static function statusComercialLabels(): array
+    {
+        return [
+            'proposta_em_andamento' => 'Proposta em Andamento',
+            'reserva_manutencao' => 'Reservar para Manutenção (Urgente)',
+            'contrato_fechado' => 'Contrato Fechado',
+            'cancelado' => 'Cancelado',
+        ];
+    }
+
+    /**
+     * Todos os IDs de Ativo envolvidos nesta solicitacao -- o unico
+     * (asset_id, legado) somado ao combo (assets(), lote).
+     *
+     * @return Collection<int, string>
+     */
+    public function assetIds(): Collection
+    {
+        $ids = $this->assets->pluck('id');
+
+        if ($this->asset_id) {
+            $ids->push($this->asset_id);
+        }
+
+        return $ids->unique()->values();
+    }
+
+    /**
+     * Linha do tempo unificada desta locacao, cruzando 4 fontes que HOJE
+     * nao tem nenhuma tabela de historico em comum:
+     *
+     * 1. A propria SolicitacaoLocacao (criacao + status atual -- sem
+     *    historico de transicao, so tem created_at/updated_at).
+     * 2. MaintenanceOrder + MaintenanceStatusHistory dos Ativos envolvidos
+     *    (SEM FK direta pra esta Solicitacao -- correlacionado por
+     *    Ativo + janela de tempo, ver $correlationEnd abaixo).
+     * 3. EquipmentMovement (mobilizacao/desmobilizacao) -- este SIM tem FK
+     *    direta (solicitacao_locacao_id), preenchida por
+     *    RentalDispatchChecklistMobile.
+     * 4. PatioEntry (portaria) dos Ativos envolvidos -- sem FK direta,
+     *    mesma correlacao por Ativo + janela de tempo.
+     *
+     * Por nao existir FK entre Ativo->OS/Portaria e esta Solicitacao, os
+     * itens 2 e 4 sao best-effort: qualquer OS/entrada de portaria do(s)
+     * mesmo(s) Ativo(s) criada entre a abertura da solicitacao e (prazo da
+     * reserva + 30 dias, ou agora, o que vier primeiro) entra na linha do
+     * tempo. Documentado de proposito -- nao existe hoje um jeito exato de
+     * saber se uma OS antiga/futura no mesmo Ativo pertence a ESTA locacao
+     * especificamente.
+     *
+     * @return Collection<int, array{at: Carbon, source: string, title: string, body: ?string}>
+     */
+    public function timelineEvents(): Collection
+    {
+        $events = collect();
+
+        $events->push([
+            'at' => $this->created_at,
+            'source' => 'comercial',
+            'title' => 'Solicitação de Locação criada',
+            'body' => $this->purpose ?: null,
+        ]);
+
+        if ($this->updated_at && $this->created_at && $this->updated_at->gt($this->created_at->addMinute())) {
+            $events->push([
+                'at' => $this->updated_at,
+                'source' => 'comercial',
+                'title' => 'Situação atual: '.(self::statusComercialLabels()[$this->status_comercial] ?? $this->status_comercial),
+                'body' => null,
+            ]);
+        }
+
+        $assetIds = $this->assetIds();
+
+        if ($assetIds->isEmpty()) {
+            return $events->sortBy('at')->values();
+        }
+
+        $correlationEnd = now();
+        if ($this->data_saida_prevista) {
+            $cap = Carbon::parse($this->data_saida_prevista)->addDays(30);
+            if ($cap->lt($correlationEnd)) {
+                $correlationEnd = $cap;
+            }
+        }
+
+        $orders = MaintenanceOrder::whereIn('asset_id', $assetIds)
+            ->where('created_at', '>=', $this->created_at)
+            ->where('created_at', '<=', $correlationEnd)
+            ->with('statusHistories')
+            ->get();
+
+        foreach ($orders as $order) {
+            $osLabel = 'OS #'.($order->os_number ?? Str::substr($order->id, 0, 8));
+
+            $events->push([
+                'at' => $order->created_at,
+                'source' => 'manutencao',
+                'title' => 'Ordem de Serviço aberta ('.$order->maintenance_type.')',
+                'body' => $osLabel,
+            ]);
+
+            foreach ($order->statusHistories as $history) {
+                $events->push([
+                    'at' => $history->created_at,
+                    'source' => 'manutencao',
+                    'title' => 'Status da OS: '.$history->old_status.' → '.$history->new_status,
+                    'body' => $osLabel,
+                ]);
+            }
+
+            if ($order->finished_at) {
+                $events->push([
+                    'at' => $order->finished_at,
+                    'source' => 'manutencao',
+                    'title' => 'Ordem de Serviço concluída',
+                    'body' => $osLabel,
+                ]);
+            }
+        }
+
+        $movements = EquipmentMovement::where('solicitacao_locacao_id', $this->id)->get();
+
+        foreach ($movements as $movement) {
+            $typeLabel = $movement->type === EquipmentMovement::TYPE_MOBILIZACAO ? 'Mobilização' : 'Desmobilização';
+
+            $steps = [
+                'scheduled_at' => $typeLabel.' agendada',
+                'started_at' => 'Checklist de '.$typeLabel.' iniciado',
+                'approved_at' => $typeLabel.' aprovada no pátio',
+                'completed_at' => $typeLabel.' concluída',
+            ];
+
+            foreach ($steps as $column => $title) {
+                if ($movement->{$column}) {
+                    $events->push([
+                        'at' => $movement->{$column},
+                        'source' => 'logistica',
+                        'title' => $title,
+                        'body' => null,
+                    ]);
+                }
+            }
+        }
+
+        $entries = PatioEntry::whereIn('asset_id', $assetIds)
+            ->where('arrived_at', '>=', $this->created_at)
+            ->where('arrived_at', '<=', $correlationEnd)
+            ->get();
+
+        foreach ($entries as $entry) {
+            $direction = $entry->direction === PatioEntry::DIRECTION_ENTRADA ? 'Entrada' : 'Saída';
+
+            $events->push([
+                'at' => $entry->arrived_at,
+                'source' => 'portaria',
+                'title' => $direction.' registrada na portaria',
+                'body' => trim(($entry->plate ?: '').($entry->driver_name ? ' — '.$entry->driver_name : '')) ?: null,
+            ]);
+        }
+
+        return $events->filter(fn ($e) => $e['at'] !== null)->sortBy('at')->values();
     }
 }
