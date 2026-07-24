@@ -32,6 +32,9 @@ class ListMaintenanceOrders extends ListRecords
     {
         return [
             MaintenanceOrderResource\Widgets\MaintenanceOrderStats::class,
+            MaintenanceOrderResource\Widgets\MaintenanceOrdersEvolutionChart::class,
+            MaintenanceOrderResource\Widgets\MaintenanceOrdersStatusDonutChart::class,
+            MaintenanceOrderResource\Widgets\MaintenanceOrdersByTypeChart::class,
         ];
     }
 
