@@ -10,11 +10,13 @@ use App\Filament\Widgets\CrmAgendaWidget;
 use App\Filament\Widgets\CrmLeadMapWidget;
 use App\Filament\Widgets\DamagesBySeverityChart;
 use App\Filament\Widgets\EquipmentMovementRouteMapWidget;
+use App\Filament\Widgets\FleetAvailabilityGaugeWidget;
 use App\Filament\Widgets\ListaAlertaAtivos;
 use App\Filament\Widgets\ListaAtivosParados;
 use App\Filament\Widgets\LogisticaAgendaWidget;
 use App\Filament\Widgets\MaintenanceByStatusChart;
 use App\Filament\Widgets\MaintenanceCostChart;
+use App\Filament\Widgets\MaintenanceOrdersOpenVsClosedAreaWidget;
 use App\Filament\Widgets\MobilizationVsDemobilizationChart;
 use App\Filament\Widgets\RadarOperacional;
 use App\Filament\Widgets\RadarUrgencia;
@@ -78,6 +80,8 @@ class SegmentDashboardWidgets
                 RadarUrgencia::class,
                 TechnicianOrderStats::class,
                 TopClientsByRentals::class,
+                FleetAvailabilityGaugeWidget::class,
+                MaintenanceOrdersOpenVsClosedAreaWidget::class,
             ],
         };
     }

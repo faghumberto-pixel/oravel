@@ -2,20 +2,29 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Charts\LineChartWithMarkers;
 use App\Models\MaintenanceOrder;
-use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\DB;
 
-class MaintenanceCostChart extends ChartWidget
+/**
+ * Ponte entre o LineChartWithMarkers genérico (sem query interna, por
+ * design) e App\Support\SegmentDashboardWidgets, que só registra widgets
+ * por class-string (@livewire($widget, [], $widget), sem props). Antes era
+ * um ChartWidget de barras próprio; a query não mudou, só o tipo visual.
+ *
+ * Assinatura do mount() repete a de LineChartWithMarkers::mount() de
+ * propósito (parâmetros nunca usados) -- ver comentário equivalente em
+ * FleetAvailabilityGaugeWidget::mount().
+ */
+class MaintenanceCostChart extends LineChartWithMarkers
 {
-    protected static ?string $heading = 'Custo de Manutenção por Mês';
-
-    protected static ?string $maxHeight = '280px';
-
-    protected int|string|array $columnSpan = ['md' => 2];
-
-    protected function getData(): array
-    {
+    public function mount(
+        array $labels = [],
+        array $series = [],
+        ?string $chartTitle = null,
+        ?string $sourceNote = null,
+        string $markerStyle = 'circle',
+    ): void {
         $results = MaintenanceOrder::select(
             DB::raw("to_char(created_at, 'YYYY-MM') as month_key"),
             DB::raw("to_char(created_at, 'Mon/YY') as month_label"),
@@ -31,41 +40,12 @@ class MaintenanceCostChart extends ChartWidget
             $labels = [now()->format('M/y')];
         }
 
-        return [
-            'datasets' => [
-                [
-                    'label' => 'Custo Total (R$)',
-                    'data' => $results->pluck('total_cost')->map(fn ($v) => round((float) $v, 2))->toArray() ?: [0],
-                    'backgroundColor' => '#3987e5',
-                    'borderRadius' => 6,
-                ],
+        parent::mount(
+            labels: $labels,
+            series: [
+                ['name' => 'Custo Total (R$)', 'color' => '#3987e5', 'data' => $results->pluck('total_cost')->map(fn ($v) => round((float) $v, 2))->toArray() ?: [0]],
             ],
-            'labels' => $labels,
-        ];
-    }
-
-    protected function getType(): string
-    {
-        return 'bar';
-    }
-
-    protected function getOptions(): array
-    {
-        return [
-            'plugins' => [
-                'legend' => ['display' => false],
-            ],
-            'scales' => [
-                'y' => [
-                    'beginAtZero' => true,
-                    'grid' => ['color' => '#334155'],
-                    'ticks' => ['color' => '#94a3b8'],
-                ],
-                'x' => [
-                    'grid' => ['display' => false],
-                    'ticks' => ['color' => '#94a3b8'],
-                ],
-            ],
-        ];
+            chartTitle: 'Custo de Manutenção por Mês',
+        );
     }
 }
