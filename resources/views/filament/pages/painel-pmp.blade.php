@@ -67,39 +67,16 @@
             @endforeach
         </div>
 
-        {{-- ===================== ÁREA / GAUGE / ROSCA ===================== --}}
+        {{-- ===================== LINHA / ROSCA / ALERTAS ===================== --}}
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
-            <div class="lg:col-span-6 rounded-xl bg-gray-800/60 backdrop-blur-sm ring-1 ring-white/5">
-                @livewire(\App\Filament\Widgets\Charts\AreaChart::class, [
-                    'labels' => $this->getEvolutionAreaData()['labels'],
-                    'seriesA' => $this->getEvolutionAreaData()['seriesA'],
-                    'seriesB' => $this->getEvolutionAreaData()['seriesB'],
-                    'chartTitle' => 'Evolução Mensal (Realizado vs. Planejado)',
-                ])
-            </div>
-            <div class="lg:col-span-3 rounded-xl bg-gray-800/60 backdrop-blur-sm ring-1 ring-white/5">
-                @livewire(\App\Filament\Widgets\Charts\GaugeChart::class, [
-                    'value' => $this->getTaxaConclusao(),
-                    'target' => 80,
-                    'chartTitle' => 'Taxa de Conclusão',
-                ])
+            <div class="lg:col-span-6">
+                @livewire(\App\Filament\Widgets\PmpEvolutionChart::class)
             </div>
             <div class="lg:col-span-3">
                 @livewire(\App\Filament\Widgets\PmpStatusDonutChart::class)
             </div>
-        </div>
 
-        {{-- ===================== LINHA COM MARCADORES / ALERTAS / BARRAS ===================== --}}
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
-            <div class="lg:col-span-4 rounded-xl bg-gray-800/60 backdrop-blur-sm ring-1 ring-white/5">
-                @livewire(\App\Filament\Widgets\Charts\LineChartWithMarkers::class, [
-                    'labels' => $this->getPrazoFatalPorMesData()['labels'],
-                    'series' => $this->getPrazoFatalPorMesData()['series'],
-                    'chartTitle' => 'O.S. com Prazo Fatal por Mês',
-                ])
-            </div>
-
-            <div class="lg:col-span-4 rounded-xl bg-gray-800/60 backdrop-blur-sm ring-1 ring-white/5 p-3 flex flex-col">
+            <div class="lg:col-span-3 rounded-xl bg-gray-800/60 backdrop-blur-sm ring-1 ring-white/5 p-3 flex flex-col">
                 <h3 class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
                     <x-heroicon-o-bell-alert class="w-3.5 h-3.5" />
                     Alertas Críticos &amp; Pendências
@@ -120,16 +97,12 @@
                     @endforelse
                 </div>
             </div>
-
-            <div class="lg:col-span-4">
-                @livewire(\App\Filament\Widgets\PmpByEquipmentTypeChart::class)
-            </div>
         </div>
 
-        {{-- ===================== KANBAN (largura cheia) ===================== --}}
-        <div class="flex-1 grid grid-cols-1 gap-3 min-h-0">
+        {{-- ===================== KANBAN + BARRAS (preenche o resto) ===================== --}}
+        <div class="flex-1 grid grid-cols-1 xl:grid-cols-12 gap-3 min-h-0">
 
-            <div class="rounded-xl bg-gray-800/60 backdrop-blur-sm ring-1 ring-white/5 p-3 flex flex-col min-h-0" x-data="{ dragging: null, overCol: null }">
+            <div class="xl:col-span-10 rounded-xl bg-gray-800/60 backdrop-blur-sm ring-1 ring-white/5 p-3 flex flex-col min-h-0" x-data="{ dragging: null, overCol: null }">
                 <div class="flex items-center justify-between mb-2">
                     <h3 class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400">
                         <x-heroicon-o-view-columns class="w-3.5 h-3.5" />
@@ -207,6 +180,10 @@
                         Users
                     </a>
                 </div>
+            </div>
+
+            <div class="xl:col-span-2 flex flex-col min-h-[300px]">
+                @livewire(\App\Filament\Widgets\PmpByEquipmentTypeChart::class)
             </div>
         </div>
     </div>

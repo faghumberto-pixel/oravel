@@ -137,10 +137,6 @@ class AdminPanelProvider extends PanelProvider
                 fn () => view('filament.keyboard-shortcuts'),
             )
             ->renderHook(
-                PanelsRenderHook::BODY_END,
-                fn () => view('filament.oravel-gauge-chart-plugin'),
-            )
-            ->renderHook(
                 PanelsRenderHook::FOOTER,
                 fn () => view('filament.panel-footer'),
             )
