@@ -142,4 +142,36 @@ class DashboardChartWidgetsTest extends TestCase
         $this->assertStringNotContainsString('lg:grid-cols-3', $html);
         $this->assertStringContainsString('lg:grid-cols-2', $html);
     }
+
+    /**
+     * Segundo pedido do usuário: Top 5 Clientes / Taxa de Disponibilidade
+     * da Frota / O.S. Abertas vs. Concluídas também na mesma linha -- são
+     * os itens 4-6 do array default, então com o grid já em 3 colunas
+     * (ver teste acima) já caem sozinhos na 2ª linha, sem mudança de
+     * código necessária. Este teste prova isso e protege contra alguém
+     * reordenar o array e quebrar o agrupamento sem perceber.
+     */
+    public function test_second_row_groups_top_clients_gauge_and_area_together(): void
+    {
+        [, $admin] = $this->makeTenantAdmin(segment: null);
+        $this->actingAs($admin);
+
+        $html = $this->get(PainelGestao::getUrl())->assertOk()->getContent();
+
+        $posCost = strpos($html, 'Custo de Manutenção por Mês');
+        $posTopClients = strpos($html, 'Top 5 Clientes com Mais Locações');
+        $posGauge = strpos($html, 'Taxa de Disponibilidade da Frota');
+        $posArea = strpos($html, 'O.S. Abertas vs. Concluídas por Mês');
+
+        $this->assertNotFalse($posCost);
+        $this->assertNotFalse($posTopClients);
+        $this->assertNotFalse($posGauge);
+        $this->assertNotFalse($posArea);
+
+        // Ordem exata dos 3 últimos itens do gridWidgets, todos depois do
+        // fim da 1ª linha (Custo de Manutenção).
+        $this->assertTrue($posCost < $posTopClients);
+        $this->assertTrue($posTopClients < $posGauge);
+        $this->assertTrue($posGauge < $posArea);
+    }
 }
