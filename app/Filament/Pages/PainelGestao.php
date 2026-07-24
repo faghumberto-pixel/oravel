@@ -6,6 +6,7 @@ use App\Filament\Attributes\BelongsToFeature;
 use App\Support\SegmentDashboardWidgets;
 use App\Support\Tenancy;
 use Filament\Pages\Page;
+use Filament\Support\Enums\MaxWidth;
 
 #[BelongsToFeature('users')]
 class PainelGestao extends Page
@@ -33,6 +34,11 @@ class PainelGestao extends Page
         }
 
         return $tenant->hasFeature('modulo_dashboard');
+    }
+
+    public function getMaxContentWidth(): MaxWidth
+    {
+        return MaxWidth::Full;
     }
 
     public $activeTab = 'gestao';

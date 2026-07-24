@@ -9,6 +9,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 /**
@@ -34,7 +35,7 @@ class DashboardFeatureGateTest extends TestCase
         ]);
         $admin = User::create([
             'name' => 'Admin', 'email' => 'admin-'.uniqid().'@oravel.com.br',
-            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'is_approved' => true,
         ]);
         $admin->forceFill(['email_verified_at' => now()])->save();
         $admin->assignRole(Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web', 'tenant_id' => $tenant->id]));
@@ -75,6 +76,29 @@ class DashboardFeatureGateTest extends TestCase
     public function test_modulo_dashboard_appears_in_available_features_options(): void
     {
         $this->assertArrayHasKey('modulo_dashboard', Plan::getAvailableFeaturesOptions());
+    }
+
+    /**
+     * Cobertura de render que faltava: com o redesenho pro mesmo padrão
+     * visual do Dashboard PMP (wrapper .dark + segmented control custom
+     * pras abas), garante que as duas abas ainda renderizam sem erro de
+     * blade -- pega quebra de sintaxe/duplicação de div antes de ir pro ar.
+     */
+    public function test_dashboard_renders_both_tabs_without_errors(): void
+    {
+        [, $admin] = $this->makeTenant(['tabela_assets', 'modulo_dashboard']);
+        $this->actingAs($admin);
+
+        $this->get(PainelGestao::getUrl())->assertOk();
+
+        $component = Livewire::test(PainelGestao::class)
+            ->assertSee('Painel de Gestão')
+            ->assertSee('Centro de Comando');
+
+        $component->call('selectTab', 'comando')
+            ->assertSet('activeTab', 'comando')
+            ->assertSuccessful()
+            ->assertSee('Minhas Ordens de Serviço');
     }
 
     public function test_backfill_migration_grants_modulo_dashboard_to_existing_plans_preserving_format(): void
