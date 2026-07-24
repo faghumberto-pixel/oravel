@@ -8,13 +8,18 @@
         // Painel de sala-de-controle: tema escuro fixo (não segue o toggle
         // claro/escuro do painel) -- o wrapper .dark abaixo escopa isso,
         // inclusive pros 3 ChartWidgets do Filament embutidos via @livewire.
+        //
+        // headerBg/cardBorder: mesma paleta literal de
+        // MaintenanceKanban::statusMap() (Kanban do Pátio) -- cabeçalho de
+        // coluna em bloco de cor sólida + card com borda esquerda colorida,
+        // pra esse Kanban ficar visualmente igual ao do Pátio.
         $tones = [
-            'critical' => ['text' => 'text-rose-400', 'chip' => 'bg-rose-500/15', 'bar' => 'bg-rose-500', 'dot' => 'bg-rose-500', 'ring' => 'ring-rose-500/50'],
-            'info' => ['text' => 'text-indigo-400', 'chip' => 'bg-indigo-500/15', 'bar' => 'bg-indigo-500', 'dot' => 'bg-indigo-500', 'ring' => 'ring-indigo-500/50'],
-            'lightblue' => ['text' => 'text-sky-400', 'chip' => 'bg-sky-500/15', 'bar' => 'bg-sky-500', 'dot' => 'bg-sky-500', 'ring' => 'ring-sky-500/50'],
-            'warning' => ['text' => 'text-amber-400', 'chip' => 'bg-amber-500/15', 'bar' => 'bg-amber-500', 'dot' => 'bg-amber-500', 'ring' => 'ring-amber-500/50'],
-            'success' => ['text' => 'text-emerald-400', 'chip' => 'bg-emerald-500/15', 'bar' => 'bg-emerald-500', 'dot' => 'bg-emerald-500', 'ring' => 'ring-emerald-500/50'],
-            'neutral' => ['text' => 'text-gray-300', 'chip' => 'bg-gray-700/60', 'bar' => 'bg-gray-500', 'dot' => 'bg-gray-500', 'ring' => 'ring-gray-500/40'],
+            'critical' => ['text' => 'text-rose-400', 'chip' => 'bg-rose-500/15', 'bar' => 'bg-rose-500', 'dot' => 'bg-rose-500', 'ring' => 'ring-rose-500/50', 'headerBg' => 'bg-red-600', 'cardBorder' => 'border-red-500'],
+            'info' => ['text' => 'text-indigo-400', 'chip' => 'bg-indigo-500/15', 'bar' => 'bg-indigo-500', 'dot' => 'bg-indigo-500', 'ring' => 'ring-indigo-500/50', 'headerBg' => 'bg-slate-600', 'cardBorder' => 'border-slate-500'],
+            'lightblue' => ['text' => 'text-sky-400', 'chip' => 'bg-sky-500/15', 'bar' => 'bg-sky-500', 'dot' => 'bg-sky-500', 'ring' => 'ring-sky-500/50', 'headerBg' => 'bg-blue-600', 'cardBorder' => 'border-blue-500'],
+            'warning' => ['text' => 'text-amber-400', 'chip' => 'bg-amber-500/15', 'bar' => 'bg-amber-500', 'dot' => 'bg-amber-500', 'ring' => 'ring-amber-500/50', 'headerBg' => 'bg-purple-600', 'cardBorder' => 'border-purple-500'],
+            'success' => ['text' => 'text-emerald-400', 'chip' => 'bg-emerald-500/15', 'bar' => 'bg-emerald-500', 'dot' => 'bg-emerald-500', 'ring' => 'ring-emerald-500/50', 'headerBg' => 'bg-emerald-600', 'cardBorder' => 'border-emerald-500'],
+            'neutral' => ['text' => 'text-gray-300', 'chip' => 'bg-gray-700/60', 'bar' => 'bg-gray-500', 'dot' => 'bg-gray-500', 'ring' => 'ring-gray-500/40', 'headerBg' => 'bg-gray-600', 'cardBorder' => 'border-gray-500'],
         ];
 
         $kpiCards = [
@@ -108,13 +113,12 @@
                 <div class="flex-1 grid grid-cols-5 gap-2 min-h-0">
                     @foreach($columns as $colKey => $col)
                         @php $tone = $tones[$col['tone']]; @endphp
-                        <div class="min-w-0 rounded-lg bg-gray-900/60 ring-1 ring-white/5 flex flex-col overflow-hidden">
-                            <div class="flex items-center justify-between px-2 py-1.5 border-b border-white/5">
-                                <div class="flex items-center gap-1 min-w-0">
-                                    <span class="w-1.5 h-1.5 rounded-full {{ $tone['dot'] }} shrink-0"></span>
-                                    <h4 class="text-[9px] font-bold uppercase tracking-wide text-gray-300 truncate">{{ $col['title'] }}</h4>
-                                </div>
-                                <span class="text-[9px] font-semibold tabular-nums text-gray-500 shrink-0 ml-1">{{ $col['cards']->count() }}</span>
+                        {{-- Mesmo idioma visual do Kanban do Pátio (MaintenanceKanban):
+                             cabeçalho em bloco de cor sólida + cards com borda esquerda colorida. --}}
+                        <div class="min-w-0 rounded-lg bg-gray-800/40 ring-1 ring-white/5 flex flex-col overflow-hidden shadow-sm">
+                            <div class="{{ $tone['headerBg'] }} px-2.5 py-2 shrink-0">
+                                <h4 class="text-[10px] font-black uppercase tracking-wide text-white leading-tight truncate">{{ $col['title'] }}</h4>
+                                <span class="text-[10px] text-white/90 font-bold">{{ $col['cards']->count() }} OS</span>
                             </div>
 
                             <div
@@ -130,16 +134,16 @@
                                         x-on:dragstart="dragging = '{{ $card['id'] }}'"
                                         x-on:dragend="dragging = null"
                                         wire:key="pmp-card-{{ $card['id'] }}"
-                                        class="bg-gray-800 p-1.5 rounded-md ring-1 ring-white/5 cursor-grab active:cursor-grabbing hover:ring-white/15 transition {{ $card['blocked'] ? 'ring-rose-500/50' : '' }}"
+                                        class="bg-gray-900 p-2 rounded-md border-l-4 {{ $card['blocked'] ? 'border-red-500 ring-1 ring-red-500/50' : $tone['cardBorder'] }} cursor-grab active:cursor-grabbing hover:shadow-md transition-all shadow-sm"
                                     >
                                         <div class="flex items-center justify-between gap-1 mb-1">
-                                            <span class="text-[9px] font-mono font-semibold text-gray-500 truncate">{{ $card['code'] }}</span>
+                                            <span class="text-[9px] font-mono font-bold text-gray-500 truncate">{{ $card['code'] }}</span>
                                             @if($card['blocked'])
-                                                <x-heroicon-s-exclamation-triangle class="w-2.5 h-2.5 text-rose-400 shrink-0" />
+                                                <x-heroicon-s-exclamation-triangle class="w-2.5 h-2.5 text-red-400 shrink-0" />
                                             @endif
                                         </div>
 
-                                        <p class="text-[10.5px] font-semibold text-gray-100 leading-snug mb-1 line-clamp-2">{{ $card['title'] }}</p>
+                                        <p class="text-[10.5px] font-bold text-gray-50 leading-snug mb-1 line-clamp-2">{{ $card['title'] }}</p>
 
                                         <div class="flex items-center gap-1 text-[9.5px] text-gray-400 mb-0.5">
                                             <x-heroicon-o-user class="w-2.5 h-2.5 shrink-0 text-gray-600" />
