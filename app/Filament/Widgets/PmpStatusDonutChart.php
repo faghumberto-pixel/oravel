@@ -15,7 +15,7 @@ class PmpStatusDonutChart extends ChartWidget
 {
     protected static ?string $heading = 'Status das O.S. Atuais';
 
-    protected static ?string $maxHeight = '260px';
+    protected static ?string $maxHeight = '200px';
 
     protected int|string|array $columnSpan = ['md' => 1];
 

@@ -16,7 +16,7 @@ class PmpEvolutionChart extends ChartWidget
 {
     protected static ?string $heading = 'Evolução Mensal de O.S. (Realizado vs. Planejado)';
 
-    protected static ?string $maxHeight = '260px';
+    protected static ?string $maxHeight = '200px';
 
     protected int|string|array $columnSpan = ['md' => 2];
 
