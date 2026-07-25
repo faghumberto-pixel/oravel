@@ -13,6 +13,13 @@ use App\Filament\Widgets\AssetsByStatusChart;
 class AssetStatusChartWidget extends AssetsByStatusChart
 {
     /**
+     * Era 280px (herdado de AssetsByStatusChart) -- padronizado em 220px
+     * junto com os outros 3 gráficos da linha, pra as 4 caixas ficarem do
+     * mesmo tamanho (pedido do usuário).
+     */
+    protected static ?string $maxHeight = '220px';
+
+    /**
      * Todo Filament\Widgets\Widget é lazy por padrão (Filament\Support\
      * Concerns\CanBeLazy, $isLazy=true) -- getHeaderWidgets() carrega o
      * conteúdo real via uma requisição Livewire separada depois do

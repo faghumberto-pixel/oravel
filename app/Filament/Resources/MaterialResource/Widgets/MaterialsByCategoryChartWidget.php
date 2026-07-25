@@ -10,7 +10,7 @@ class MaterialsByCategoryChartWidget extends ChartWidget
 {
     protected static ?string $heading = 'Materiais por Categoria';
 
-    protected static ?string $maxHeight = '260px';
+    protected static ?string $maxHeight = '220px';
 
     protected static bool $isLazy = false;
 

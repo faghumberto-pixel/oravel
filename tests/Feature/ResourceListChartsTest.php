@@ -514,4 +514,59 @@ class ResourceListChartsTest extends TestCase
         $this->assertSame('Fornecedor Top', $data['labels'][0]);
         $this->assertSame(2, $data['datasets'][0]['data'][0]);
     }
+
+    /**
+     * Pedido do usuário: as 4 caixas de cada página têm que ter o mesmo
+     * tamanho -- os 4 gráficos tinham maxHeight diferente (190px Gauge /
+     * 220px Linha e Área / 260px categórico / 280px o donut reaproveitado
+     * de AssetsByStatusChart), padronizados em 220px. Cada página abaixo
+     * só pode ter uma única altura no HTML.
+     */
+    private function assertUniformChartHeight(string $html): void
+    {
+        $this->assertStringContainsString('max-height: 220px', $html);
+        $this->assertStringNotContainsString('max-height: 190px', $html);
+        $this->assertStringNotContainsString('max-height: 260px', $html);
+        $this->assertStringNotContainsString('max-height: 280px', $html);
+    }
+
+    public function test_assets_page_has_uniform_chart_height(): void
+    {
+        [, $admin] = $this->makeTenantAdmin(['tabela_assets']);
+        $this->actingAs($admin);
+
+        $this->assertUniformChartHeight($this->get(AssetResource::getUrl('index'))->assertOk()->getContent());
+    }
+
+    public function test_leads_page_has_uniform_chart_height(): void
+    {
+        [, $admin] = $this->makeTenantAdmin(['tabela_crm_leads']);
+        $this->actingAs($admin);
+
+        $this->assertUniformChartHeight($this->get(CrmLeadResource::getUrl('index'))->assertOk()->getContent());
+    }
+
+    public function test_clients_page_has_uniform_chart_height(): void
+    {
+        [, $admin] = $this->makeTenantAdmin(['tabela_clients']);
+        $this->actingAs($admin);
+
+        $this->assertUniformChartHeight($this->get(ClientResource::getUrl('index'))->assertOk()->getContent());
+    }
+
+    public function test_materials_page_has_uniform_chart_height(): void
+    {
+        [, $admin] = $this->makeTenantAdmin(['tabela_materials']);
+        $this->actingAs($admin);
+
+        $this->assertUniformChartHeight($this->get(MaterialResource::getUrl('index'))->assertOk()->getContent());
+    }
+
+    public function test_suppliers_page_has_uniform_chart_height(): void
+    {
+        [, $admin] = $this->makeTenantAdmin(['tabela_suppliers']);
+        $this->actingAs($admin);
+
+        $this->assertUniformChartHeight($this->get(SupplierResource::getUrl('index'))->assertOk()->getContent());
+    }
 }

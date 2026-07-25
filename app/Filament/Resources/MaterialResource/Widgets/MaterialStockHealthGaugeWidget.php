@@ -23,6 +23,13 @@ class MaterialStockHealthGaugeWidget extends GaugeChart
      */
     protected static bool $isLazy = false;
 
+    /**
+     * Era 190px (herdado de GaugeChart) -- padronizado em 220px junto com
+     * os outros 3 gráficos da linha, pra as 4 caixas ficarem do mesmo
+     * tamanho (pedido do usuário).
+     */
+    protected static ?string $maxHeight = '220px';
+
     public static function canView(): bool
     {
         return (bool) Tenancy::current();
