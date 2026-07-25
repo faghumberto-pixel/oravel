@@ -8,8 +8,6 @@ use App\Support\Tenancy;
 
 class ConversionRateGaugeWidget extends GaugeChart
 {
-    protected int|string|array $columnSpan = 'full';
-
     protected static bool $isLazy = false;
 
     public static function canView(): bool

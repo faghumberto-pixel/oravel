@@ -5,18 +5,13 @@ namespace App\Filament\Resources\AssetResource\Widgets;
 use App\Filament\Widgets\AssetsByStatusChart;
 
 /**
- * Subclasse fina só pra mudar o columnSpan sem afetar o uso original de
- * AssetsByStatusChart no Painel de Controle (App\Support\
- * SegmentDashboardWidgets, columnSpan=['md'=>1], carga real lá -- não dá
- * pra mudar a classe original sem quebrar aquele contexto). Aqui, no
- * cabeçalho da listagem (ListAssets::getHeaderWidgets(), grid real do
- * Filament), o gráfico é o único item da linha, então ocupa a largura
- * inteira.
+ * Subclasse fina só pra herdar de AssetsByStatusChart sem acoplar
+ * diretamente o widget do Painel de Controle a este contexto (columnSpan
+ * de lá, ['md'=>1], já serve bem aqui também -- os 3 gráficos da página
+ * ficam lado a lado, ver ListAssets::getHeaderWidgetsColumns()).
  */
 class AssetStatusChartWidget extends AssetsByStatusChart
 {
-    protected int|string|array $columnSpan = 'full';
-
     /**
      * Todo Filament\Widgets\Widget é lazy por padrão (Filament\Support\
      * Concerns\CanBeLazy, $isLazy=true) -- getHeaderWidgets() carrega o

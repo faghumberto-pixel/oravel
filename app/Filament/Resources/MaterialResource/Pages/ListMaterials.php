@@ -32,6 +32,7 @@ class ListMaterials extends ListRecords
             MaterialResource\Widgets\MaterialStockHealthGaugeWidget::class,
             MaterialResource\Widgets\MaterialsCreatedTrendWidget::class,
             MaterialResource\Widgets\StockEntriesVsExitsAreaWidget::class,
+            MaterialResource\Widgets\MaterialsByCategoryChartWidget::class,
         ];
     }
 

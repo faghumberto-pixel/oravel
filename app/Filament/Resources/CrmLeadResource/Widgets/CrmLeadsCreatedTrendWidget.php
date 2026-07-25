@@ -16,8 +16,6 @@ use Illuminate\Support\Carbon;
  */
 class CrmLeadsCreatedTrendWidget extends LineChartWithMarkers
 {
-    protected int|string|array $columnSpan = 'full';
-
     /**
      * Todo Filament\Widgets\Widget é lazy por padrão (Filament\Support\
      * Concerns\CanBeLazy, $isLazy=true) -- getHeaderWidgets() carrega o

@@ -9,8 +9,6 @@ use Illuminate\Support\Carbon;
 
 class ContractsStartedVsEndedAreaWidget extends AreaChart
 {
-    protected int|string|array $columnSpan = 'full';
-
     protected static bool $isLazy = false;
 
     private const MESES_ABREV = [1 => 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];

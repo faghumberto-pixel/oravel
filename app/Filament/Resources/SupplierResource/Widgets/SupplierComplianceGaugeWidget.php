@@ -13,8 +13,6 @@ use App\Support\Tenancy;
  */
 class SupplierComplianceGaugeWidget extends GaugeChart
 {
-    protected int|string|array $columnSpan = 'full';
-
     /**
      * Todo Filament\Widgets\Widget é lazy por padrão (Filament\Support\
      * Concerns\CanBeLazy, $isLazy=true) -- getHeaderWidgets() carrega o

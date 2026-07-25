@@ -32,6 +32,7 @@ class ListSuppliers extends ListRecords
             SupplierResource\Widgets\SupplierComplianceGaugeWidget::class,
             SupplierResource\Widgets\SuppliersCreatedTrendWidget::class,
             SupplierResource\Widgets\PurchaseOrdersOpenVsReceivedAreaWidget::class,
+            SupplierResource\Widgets\TopSuppliersByMaterialsChartWidget::class,
         ];
     }
 

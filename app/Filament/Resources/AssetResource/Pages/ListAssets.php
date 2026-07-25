@@ -33,6 +33,7 @@ class ListAssets extends ListRecords
             AssetResource\Widgets\AssetStatusChartWidget::class,
             AssetResource\Widgets\FleetAvailabilityGaugeChartWidget::class,
             AssetResource\Widgets\AssetsCreatedTrendWidget::class,
+            AssetResource\Widgets\AssetsByCategoryChartWidget::class,
         ];
     }
 
