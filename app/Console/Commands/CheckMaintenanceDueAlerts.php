@@ -9,8 +9,7 @@ use App\Models\MaintenancePlan;
 use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
+use App\Notifications\MaintenanceDueNotification;
 use Illuminate\Console\Command;
 
 /**
@@ -140,22 +139,7 @@ class CheckMaintenanceDueAlerts extends Command
         $recipients = User::role($role)->where('tenant_id', $tenant->id)->get();
 
         foreach ($recipients as $recipient) {
-            Notification::make()
-                ->title('Preventiva vencida: '.$asset->name)
-                ->body(sprintf(
-                    'Patrimônio %s — %s horas de atraso (previsto para %sh, horímetro atual %sh).',
-                    $asset->patrimonio,
-                    number_format($status['overdue_hours'], 1),
-                    number_format($status['due_at_hours'], 1),
-                    number_format((float) $asset->horimetro_atual, 1),
-                ))
-                ->warning()
-                ->actions([
-                    Action::make('view')
-                        ->button()
-                        ->url(route('filament.admin.resources.assets.edit', $asset->id)),
-                ])
-                ->sendToDatabase($recipient);
+            $recipient->notify(new MaintenanceDueNotification($asset, $status));
         }
     }
 }

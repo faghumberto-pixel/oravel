@@ -26,6 +26,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->command('maintenance:check-due-alerts')->daily();
         $schedule->command('sales:notify-appointments')->everyFiveMinutes();
+        $schedule->command('financeiro:verificar-vencimentos')->daily();
     }
 
     /**

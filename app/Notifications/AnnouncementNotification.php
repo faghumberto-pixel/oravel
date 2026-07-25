@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Models\Announcement;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 
@@ -15,7 +16,18 @@ class AnnouncementNotification extends Notification
 
     public function via($notifiable): array
     {
-        return ['database'];
+        return ['database', 'mail'];
+    }
+
+    public function toMail($notifiable): MailMessage
+    {
+        $mail = (new MailMessage)
+            ->subject($this->announcement->title)
+            ->line($this->announcement->message);
+
+        return $this->announcement->level === Announcement::LEVEL_CRITICAL
+            ? $mail->error()
+            : $mail;
     }
 
     public function toDatabase($notifiable): array

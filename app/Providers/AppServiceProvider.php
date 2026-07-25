@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Filament\Central\Widgets\SalesAgendaWidget;
 use App\Livewire\DatabaseNotifications;
 use App\Models\AbcMatrix;
+use App\Models\AccountPayable;
 use App\Models\Announcement;
 use App\Models\Asset;
 use App\Models\Client;
@@ -33,6 +34,7 @@ use App\Observers\AbcMatrixObserver;
 use App\Observers\AnnouncementObserver;
 use App\Observers\AssetObserver;
 use App\Observers\ClientObserver;
+use App\Observers\ContaPagarObserver;
 use App\Observers\ContractObserver;
 use App\Observers\CrmLeadInteractionObserver;
 use App\Observers\CrmLeadObserver;
@@ -105,6 +107,9 @@ class AppServiceProvider extends ServiceProvider
         MaintenanceOrderPendencia::observe(MaintenanceOrderPendenciaObserver::class);
         HorimeterReading::observe(HorimeterReadingObserver::class);
         AbcMatrix::observe(AbcMatrixObserver::class);
+        // Ate 2026-07-25 este observer existia mas nunca rodava: referenciava
+        // um model App\Models\ContaPagar inexistente e nao estava registrado.
+        AccountPayable::observe(ContaPagarObserver::class);
 
         // INJEÇÃO CRUCIAL: Vincula dinamicamente a tabela de roles
         Role::resolveRelationUsing('department', function ($roleModel) {
