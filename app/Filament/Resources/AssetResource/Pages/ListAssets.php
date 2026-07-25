@@ -30,6 +30,7 @@ class ListAssets extends ListRecords
     {
         return [
             AssetResource\Widgets\AssetStats::class,
+            AssetResource\Widgets\AssetStatusChartWidget::class,
         ];
     }
 

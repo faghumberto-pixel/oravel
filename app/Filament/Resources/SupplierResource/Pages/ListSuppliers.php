@@ -29,6 +29,7 @@ class ListSuppliers extends ListRecords
     {
         return [
             SupplierResource\Widgets\SupplierStats::class,
+            SupplierResource\Widgets\SupplierComplianceGaugeWidget::class,
         ];
     }
 

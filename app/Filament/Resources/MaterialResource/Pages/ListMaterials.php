@@ -29,6 +29,7 @@ class ListMaterials extends ListRecords
     {
         return [
             MaterialResource\Widgets\MaterialStats::class,
+            MaterialResource\Widgets\MaterialStockHealthGaugeWidget::class,
         ];
     }
 

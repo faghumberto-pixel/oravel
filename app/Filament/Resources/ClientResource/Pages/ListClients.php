@@ -29,6 +29,7 @@ class ListClients extends ListRecords
     {
         return [
             ClientResource\Widgets\ClientStats::class,
+            ClientResource\Widgets\ClientActiveContractGaugeWidget::class,
         ];
     }
 
