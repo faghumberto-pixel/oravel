@@ -99,14 +99,14 @@ class SuperAdminTenantColumnTest extends TestCase
         $response->assertSee('Ativo Unico');
         // Nome do proprio tenant nao deveria aparecer como COLUNA da tabela
         // -- ele ja sabe de qual empresa e, nao precisa da coluna extra.
-        // Nao da mais pra checar so "assertDontSee('Tenant Unico')": desde
-        // que o nome do tenant conectado passou a aparecer no topbar (abaixo
-        // do logo), o nome aparece ali de qualquer forma -- inclusive 2x na
-        // pagina inteira, porque o Filament renderiza o brand-logo duas
-        // vezes (sidebar desktop + topbar mobile, alternados por CSS, nao
-        // JS). O que importa aqui e' NAO ter uma 3a/4a ocorrencia vinda da
-        // coluna da tabela.
-        $this->assertSame(2, substr_count($response->getContent(), 'Tenant Unico'), 'nome do tenant deveria aparecer so nas 2 copias responsivas do topbar, nao tambem como coluna da tabela');
+        // Nao da mais pra checar so "assertDontSee('Tenant Unico')": o nome
+        // do tenant conectado aparece abaixo do logo (brand-logo.blade.php).
+        // Desde que o painel voltou a usar sidebar (em vez de topNavigation),
+        // esse logo renderiza uma unica vez -- o mesmo componente de sidebar
+        // cobre desktop e mobile via CSS/JS, sem duplicar como acontecia com
+        // o topbar. O que importa aqui e' NAO ter uma 2a/3a ocorrencia vinda
+        // da coluna da tabela.
+        $this->assertSame(1, substr_count($response->getContent(), 'Tenant Unico'), 'nome do tenant deveria aparecer so na sidebar, nao tambem como coluna da tabela');
     }
 
     /**
