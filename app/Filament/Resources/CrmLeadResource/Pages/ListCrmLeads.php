@@ -26,6 +26,8 @@ class ListCrmLeads extends ListRecords
         return [
             CrmLeadResource\Widgets\CrmLeadStats::class,
             CrmLeadResource\Widgets\CrmLeadsCreatedTrendWidget::class,
+            CrmLeadResource\Widgets\ConversionRateGaugeWidget::class,
+            CrmLeadResource\Widgets\LeadsWonVsLostAreaWidget::class,
         ];
     }
 

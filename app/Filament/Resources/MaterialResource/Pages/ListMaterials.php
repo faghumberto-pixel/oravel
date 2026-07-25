@@ -30,6 +30,8 @@ class ListMaterials extends ListRecords
         return [
             MaterialResource\Widgets\MaterialStats::class,
             MaterialResource\Widgets\MaterialStockHealthGaugeWidget::class,
+            MaterialResource\Widgets\MaterialsCreatedTrendWidget::class,
+            MaterialResource\Widgets\StockEntriesVsExitsAreaWidget::class,
         ];
     }
 

@@ -3,21 +3,33 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\AssetResource;
+use App\Filament\Resources\AssetResource\Widgets\AssetsCreatedTrendWidget;
+use App\Filament\Resources\AssetResource\Widgets\FleetAvailabilityGaugeChartWidget;
 use App\Filament\Resources\ClientResource;
 use App\Filament\Resources\ClientResource\Widgets\ClientActiveContractGaugeWidget;
+use App\Filament\Resources\ClientResource\Widgets\ContractsStartedVsEndedAreaWidget;
+use App\Filament\Resources\ClientResource\Widgets\NewClientsTrendWidget;
 use App\Filament\Resources\CrmLeadResource;
+use App\Filament\Resources\CrmLeadResource\Widgets\ConversionRateGaugeWidget;
 use App\Filament\Resources\CrmLeadResource\Widgets\CrmLeadsCreatedTrendWidget;
+use App\Filament\Resources\CrmLeadResource\Widgets\LeadsWonVsLostAreaWidget;
 use App\Filament\Resources\MaterialResource;
+use App\Filament\Resources\MaterialResource\Widgets\MaterialsCreatedTrendWidget;
 use App\Filament\Resources\MaterialResource\Widgets\MaterialStockHealthGaugeWidget;
+use App\Filament\Resources\MaterialResource\Widgets\StockEntriesVsExitsAreaWidget;
 use App\Filament\Resources\SupplierResource;
+use App\Filament\Resources\SupplierResource\Widgets\PurchaseOrdersOpenVsReceivedAreaWidget;
 use App\Filament\Resources\SupplierResource\Widgets\SupplierComplianceGaugeWidget;
+use App\Filament\Resources\SupplierResource\Widgets\SuppliersCreatedTrendWidget;
 use App\Models\Asset;
 use App\Models\Client;
 use App\Models\Contract;
 use App\Models\CrmLead;
 use App\Models\Material;
 use App\Models\Plan;
+use App\Models\PurchaseOrder;
 use App\Models\Role;
+use App\Models\StockMovement;
 use App\Models\Supplier;
 use App\Models\Tenant;
 use App\Models\User;
@@ -57,7 +69,11 @@ class ResourceListChartsTest extends TestCase
         return [$tenant, $admin];
     }
 
-    public function test_assets_index_shows_status_chart(): void
+    /**
+     * Pedido do usuário: "não é apenas 1 gráfico por página, são 3" --
+     * cada página abaixo confirma os 3 títulos, não só o primeiro.
+     */
+    public function test_assets_index_shows_all_3_charts(): void
     {
         [, $admin] = $this->makeTenantAdmin(['tabela_assets']);
         $this->actingAs($admin);
@@ -65,46 +81,56 @@ class ResourceListChartsTest extends TestCase
         $html = $this->get(AssetResource::getUrl('index'))->assertOk()->getContent();
 
         $this->assertStringContainsString('Ativos por Status', $html);
+        $this->assertStringContainsString('Taxa de Disponibilidade da Frota', $html);
+        $this->assertStringContainsString('Ativos Cadastrados por Mês', $html);
     }
 
-    public function test_leads_index_shows_created_trend_chart(): void
+    public function test_leads_index_shows_all_3_charts(): void
     {
         [, $admin] = $this->makeTenantAdmin(['tabela_crm_leads']);
         $this->actingAs($admin);
 
-        $this->get(CrmLeadResource::getUrl('index'))
-            ->assertOk()
-            ->assertSee('Leads Criados por Mês');
+        $html = $this->get(CrmLeadResource::getUrl('index'))->assertOk()->getContent();
+
+        $this->assertStringContainsString('Leads Criados por Mês', $html);
+        $this->assertStringContainsString('Taxa de Conversão', $html);
+        $this->assertStringContainsString('Convertidos vs. Perdidos por Mês', $html);
     }
 
-    public function test_clients_index_shows_active_contract_gauge(): void
+    public function test_clients_index_shows_all_3_charts(): void
     {
         [, $admin] = $this->makeTenantAdmin(['tabela_clients']);
         $this->actingAs($admin);
 
-        $this->get(ClientResource::getUrl('index'))
-            ->assertOk()
-            ->assertSee('Taxa de Clientes com Contrato Ativo');
+        $html = $this->get(ClientResource::getUrl('index'))->assertOk()->getContent();
+
+        $this->assertStringContainsString('Taxa de Clientes com Contrato Ativo', $html);
+        $this->assertStringContainsString('Novos Clientes por Mês', $html);
+        $this->assertStringContainsString('Contratos Iniciados vs. Encerrados por Mês', $html);
     }
 
-    public function test_materials_index_shows_stock_health_gauge(): void
+    public function test_materials_index_shows_all_3_charts(): void
     {
         [, $admin] = $this->makeTenantAdmin(['tabela_materials']);
         $this->actingAs($admin);
 
-        $this->get(MaterialResource::getUrl('index'))
-            ->assertOk()
-            ->assertSee('Taxa de Estoque Saudável');
+        $html = $this->get(MaterialResource::getUrl('index'))->assertOk()->getContent();
+
+        $this->assertStringContainsString('Taxa de Estoque Saudável', $html);
+        $this->assertStringContainsString('Materiais Cadastrados por Mês', $html);
+        $this->assertStringContainsString('Entradas vs. Saídas de Estoque por Mês', $html);
     }
 
-    public function test_suppliers_index_shows_compliance_gauge(): void
+    public function test_suppliers_index_shows_all_3_charts(): void
     {
         [, $admin] = $this->makeTenantAdmin(['tabela_suppliers']);
         $this->actingAs($admin);
 
-        $this->get(SupplierResource::getUrl('index'))
-            ->assertOk()
-            ->assertSee('Taxa de Compliance Completo');
+        $html = $this->get(SupplierResource::getUrl('index'))->assertOk()->getContent();
+
+        $this->assertStringContainsString('Taxa de Compliance Completo', $html);
+        $this->assertStringContainsString('Fornecedores Cadastrados por Mês', $html);
+        $this->assertStringContainsString('Ordens de Compra Abertas vs. Recebidas por Mês', $html);
     }
 
     public function test_client_active_contract_gauge_computes_correct_percentage(): void
@@ -182,5 +208,198 @@ class ResourceListChartsTest extends TestCase
 
         $this->assertSame('Leads', $widget->series[0]['name']);
         $this->assertSame(2, $widget->series[0]['data'][5]);
+    }
+
+    public function test_fleet_availability_gauge_chart_widget_computes_percentage(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin(['tabela_assets']);
+
+        Asset::create(['tenant_id' => $tenant->id, 'name' => 'A1', 'patrimonio' => 'PAT-FG1', 'status' => Asset::STATUS_DISPONIVEL]);
+        Asset::create(['tenant_id' => $tenant->id, 'name' => 'A2', 'patrimonio' => 'PAT-FG2', 'status' => 'em_manutencao']);
+
+        $this->actingAs($admin);
+
+        $widget = new FleetAvailabilityGaugeChartWidget;
+        $widget->mount();
+
+        $this->assertSame(50.0, $widget->value);
+    }
+
+    public function test_assets_created_trend_counts_by_month(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin(['tabela_assets']);
+
+        Asset::create(['tenant_id' => $tenant->id, 'name' => 'A1', 'patrimonio' => 'PAT-AT1', 'status' => 'disponivel']);
+        Asset::create(['tenant_id' => $tenant->id, 'name' => 'A2', 'patrimonio' => 'PAT-AT2', 'status' => 'disponivel']);
+        Asset::create(['tenant_id' => $tenant->id, 'name' => 'A3', 'patrimonio' => 'PAT-AT3', 'status' => 'disponivel']);
+
+        $this->actingAs($admin);
+
+        $widget = new AssetsCreatedTrendWidget;
+        $widget->mount();
+
+        $this->assertSame(3, $widget->series[0]['data'][5]);
+    }
+
+    public function test_conversion_rate_gauge_computes_correct_percentage(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin(['tabela_crm_leads']);
+
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'L1', 'stage' => CrmLead::STAGE_CONVERTIDO]);
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'L2', 'stage' => CrmLead::STAGE_NOVO]);
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'L3', 'stage' => CrmLead::STAGE_NOVO]);
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'L4', 'stage' => CrmLead::STAGE_NOVO]);
+
+        $this->actingAs($admin);
+
+        $widget = new ConversionRateGaugeWidget;
+        $widget->mount();
+
+        $this->assertSame(25.0, $widget->value);
+    }
+
+    public function test_leads_won_vs_lost_area_splits_correctly(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin(['tabela_crm_leads']);
+
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'Ganho 1', 'stage' => CrmLead::STAGE_CONVERTIDO]);
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'Ganho 2', 'stage' => CrmLead::STAGE_CONVERTIDO]);
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'Perdido 1', 'stage' => CrmLead::STAGE_PERDIDO]);
+
+        $this->actingAs($admin);
+
+        $widget = new LeadsWonVsLostAreaWidget;
+        $widget->mount();
+
+        $this->assertSame('Convertidos', $widget->seriesA['name']);
+        $this->assertSame('Perdidos', $widget->seriesB['name']);
+        $this->assertSame(2, $widget->seriesA['data'][5]);
+        $this->assertSame(1, $widget->seriesB['data'][5]);
+    }
+
+    public function test_new_clients_trend_counts_by_month(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin(['tabela_clients']);
+
+        Client::create(['tenant_id' => $tenant->id, 'name' => 'C1']);
+        Client::create(['tenant_id' => $tenant->id, 'name' => 'C2']);
+
+        $this->actingAs($admin);
+
+        $widget = new NewClientsTrendWidget;
+        $widget->mount();
+
+        $this->assertSame(2, $widget->series[0]['data'][5]);
+    }
+
+    public function test_contracts_started_vs_ended_area_splits_correctly(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin(['tabela_clients']);
+
+        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Contratos']);
+        $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Contratos', 'patrimonio' => 'PAT-CTR', 'status' => 'disponivel']);
+
+        Contract::create([
+            'tenant_id' => $tenant->id, 'client_id' => $client->id, 'asset_id' => $asset->id,
+            'contract_number' => 'CT-1', 'start_date' => now(), 'price' => 100,
+        ]);
+        Contract::create([
+            'tenant_id' => $tenant->id, 'client_id' => $client->id, 'asset_id' => $asset->id,
+            'contract_number' => 'CT-2', 'start_date' => now()->subMonths(3), 'end_date' => now(), 'price' => 100,
+        ]);
+
+        $this->actingAs($admin);
+
+        $widget = new ContractsStartedVsEndedAreaWidget;
+        $widget->mount();
+
+        $this->assertSame('Iniciados', $widget->seriesA['name']);
+        $this->assertSame('Encerrados', $widget->seriesB['name']);
+        $this->assertSame(1, $widget->seriesA['data'][5]);
+        $this->assertSame(1, $widget->seriesB['data'][5]);
+    }
+
+    public function test_materials_created_trend_counts_by_month(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin(['tabela_materials']);
+
+        Material::create(['tenant_id' => $tenant->id, 'sku' => 'SKU-T1', 'name' => 'M1', 'unit_of_measure' => 'un', 'current_stock' => 5, 'min_stock' => 1, 'unit_cost' => 10]);
+
+        $this->actingAs($admin);
+
+        $widget = new MaterialsCreatedTrendWidget;
+        $widget->mount();
+
+        $this->assertSame(1, $widget->series[0]['data'][5]);
+    }
+
+    public function test_stock_entries_vs_exits_area_splits_correctly(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin(['tabela_materials']);
+
+        $material = Material::create(['tenant_id' => $tenant->id, 'sku' => 'SKU-MV1', 'name' => 'Material Mov', 'unit_of_measure' => 'un', 'current_stock' => 10, 'min_stock' => 1, 'unit_cost' => 10]);
+
+        StockMovement::create([
+            'tenant_id' => $tenant->id, 'material_id' => $material->id,
+            'type' => StockMovement::TYPE_ENTRADA_COMPRA, 'quantity' => 15, 'balance_after' => 15,
+        ]);
+        StockMovement::create([
+            'tenant_id' => $tenant->id, 'material_id' => $material->id,
+            'type' => StockMovement::TYPE_SAIDA_CONSUMO, 'quantity' => 5, 'balance_after' => 10,
+        ]);
+
+        $this->actingAs($admin);
+
+        $widget = new StockEntriesVsExitsAreaWidget;
+        $widget->mount();
+
+        $this->assertSame('Entradas', $widget->seriesA['name']);
+        $this->assertSame('Saídas', $widget->seriesB['name']);
+        $this->assertSame(15.0, $widget->seriesA['data'][5]);
+        $this->assertSame(5.0, $widget->seriesB['data'][5]);
+    }
+
+    public function test_suppliers_created_trend_counts_by_month(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin(['tabela_suppliers']);
+
+        Supplier::create(['tenant_id' => $tenant->id, 'name' => 'Fornecedor Novo']);
+
+        $this->actingAs($admin);
+
+        $widget = new SuppliersCreatedTrendWidget;
+        $widget->mount();
+
+        $this->assertSame(1, $widget->series[0]['data'][5]);
+    }
+
+    public function test_purchase_orders_open_vs_received_area_splits_correctly(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin(['tabela_suppliers']);
+
+        $supplier = Supplier::create(['tenant_id' => $tenant->id, 'name' => 'Fornecedor PO']);
+
+        PurchaseOrder::create([
+            'tenant_id' => $tenant->id, 'supplier_id' => $supplier->id, 'created_by_user_id' => $admin->id,
+            'status' => PurchaseOrder::STATUS_ABERTA,
+        ]);
+        PurchaseOrder::create([
+            'tenant_id' => $tenant->id, 'supplier_id' => $supplier->id, 'created_by_user_id' => $admin->id,
+            'status' => PurchaseOrder::STATUS_RECEBIDA,
+        ]);
+        PurchaseOrder::create([
+            'tenant_id' => $tenant->id, 'supplier_id' => $supplier->id, 'created_by_user_id' => $admin->id,
+            'status' => PurchaseOrder::STATUS_RECEBIDA,
+        ]);
+
+        $this->actingAs($admin);
+
+        $widget = new PurchaseOrdersOpenVsReceivedAreaWidget;
+        $widget->mount();
+
+        $this->assertSame('Abertas', $widget->seriesA['name']);
+        $this->assertSame('Recebidas', $widget->seriesB['name']);
+        $this->assertSame(1, $widget->seriesA['data'][5]);
+        $this->assertSame(2, $widget->seriesB['data'][5]);
     }
 }

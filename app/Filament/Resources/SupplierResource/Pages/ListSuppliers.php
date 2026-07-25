@@ -30,6 +30,8 @@ class ListSuppliers extends ListRecords
         return [
             SupplierResource\Widgets\SupplierStats::class,
             SupplierResource\Widgets\SupplierComplianceGaugeWidget::class,
+            SupplierResource\Widgets\SuppliersCreatedTrendWidget::class,
+            SupplierResource\Widgets\PurchaseOrdersOpenVsReceivedAreaWidget::class,
         ];
     }
 
