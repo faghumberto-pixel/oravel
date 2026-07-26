@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\AccountPayableResource\Pages;
 
+use App\Filament\Concerns\HasPrintAction;
+use App\Filament\Exports\AccountPayableExporter;
 use App\Filament\Resources\AccountPayableResource;
 use App\Models\AccountPayable;
 use App\Support\Tenancy;
@@ -12,13 +14,29 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ManageAccountPayables extends ManageRecords
 {
+    use HasPrintAction;
+
     protected static string $resource = AccountPayableResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),
+            $this->printAction(),
+            Actions\ExportAction::make()->exporter(AccountPayableExporter::class),
         ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            AccountPayableResource\Widgets\AccountPayableStats::class,
+        ];
+    }
+
+    public function getHeaderWidgetsColumns(): int|string|array
+    {
+        return 4;
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\AccountReceivableResource\Pages;
 
+use App\Filament\Concerns\HasPrintAction;
+use App\Filament\Exports\AccountReceivableExporter;
 use App\Filament\Resources\AccountReceivableResource;
 use App\Models\AccountReceivable;
 use App\Support\Tenancy;
@@ -12,13 +14,29 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ManageAccountReceivables extends ManageRecords
 {
+    use HasPrintAction;
+
     protected static string $resource = AccountReceivableResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),
+            $this->printAction(),
+            Actions\ExportAction::make()->exporter(AccountReceivableExporter::class),
         ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            AccountReceivableResource\Widgets\AccountReceivableStats::class,
+        ];
+    }
+
+    public function getHeaderWidgetsColumns(): int|string|array
+    {
+        return 4;
     }
 
     public function getTabs(): array

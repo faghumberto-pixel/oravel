@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccountPayable;
+use App\Models\AccountReceivable;
 use App\Models\Asset;
 use App\Models\Client;
 use App\Models\Contract;
@@ -16,6 +18,8 @@ use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
 use App\Models\Material;
 use App\Models\PartsRequest;
+use App\Models\PurchaseOrder;
+use App\Models\Quote;
 use App\Models\SolicitacaoLocacao;
 use App\Models\Supplier;
 use App\Models\User;
@@ -205,6 +209,38 @@ class TablePrintController extends Controller
                     default => $r->action ?? '—',
                 }],
             ], ['user']],
+
+            Quote::class => [[
+                ['label' => 'Cliente', 'value' => fn ($r) => $r->client?->name],
+                ['label' => 'Tipo', 'value' => fn ($r) => Quote::typeLabels()[$r->type] ?? $r->type],
+                ['label' => 'Status', 'value' => fn ($r) => Quote::statusLabels()[$r->status] ?? $r->status],
+                ['label' => 'Valor Total', 'value' => fn ($r) => 'R$ '.number_format((float) $r->total_value, 2, ',', '.')],
+                ['label' => 'Responsável', 'value' => fn ($r) => $r->assignedUser?->name],
+                ['label' => 'Criado em', 'value' => fn ($r) => optional($r->created_at)->format('d/m/Y')],
+            ], ['client', 'assignedUser']],
+
+            AccountPayable::class => [[
+                ['label' => 'Descrição', 'value' => fn ($r) => $r->description],
+                ['label' => 'Filial', 'value' => fn ($r) => $r->branch?->name],
+                ['label' => 'Valor', 'value' => fn ($r) => 'R$ '.number_format((float) $r->amount, 2, ',', '.')],
+                ['label' => 'Vencimento', 'value' => fn ($r) => optional($r->due_date)->format('d/m/Y')],
+                ['label' => 'Status', 'value' => fn ($r) => ucfirst($r->status)],
+            ], ['branch']],
+
+            AccountReceivable::class => [[
+                ['label' => 'Descrição', 'value' => fn ($r) => $r->description],
+                ['label' => 'Cliente', 'value' => fn ($r) => $r->client?->name],
+                ['label' => 'Valor', 'value' => fn ($r) => 'R$ '.number_format((float) $r->amount, 2, ',', '.')],
+                ['label' => 'Vencimento', 'value' => fn ($r) => optional($r->due_date)->format('d/m/Y')],
+                ['label' => 'Status', 'value' => fn ($r) => ucfirst($r->status)],
+            ], ['client']],
+
+            PurchaseOrder::class => [[
+                ['label' => 'Fornecedor', 'value' => fn ($r) => $r->supplier?->name],
+                ['label' => 'Valor Total', 'value' => fn ($r) => 'R$ '.number_format((float) $r->total_value, 2, ',', '.')],
+                ['label' => 'Previsão', 'value' => fn ($r) => optional($r->expected_delivery_date)->format('d/m/Y')],
+                ['label' => 'Status', 'value' => fn ($r) => PurchaseOrder::statusOptions()[$r->status] ?? $r->status],
+            ], ['supplier']],
 
             CrmLead::class => [[
                 ['label' => 'Lead', 'value' => fn ($r) => $r->name],

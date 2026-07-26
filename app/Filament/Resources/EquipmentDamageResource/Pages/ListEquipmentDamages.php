@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\EquipmentDamageResource\Pages;
 
 use App\Filament\Concerns\HasPrintAction;
+use App\Filament\Exports\EquipmentDamageExporter;
 use App\Filament\Resources\EquipmentDamageResource;
+use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class ListEquipmentDamages extends ListRecords
@@ -16,6 +18,7 @@ class ListEquipmentDamages extends ListRecords
     {
         return [
             $this->printAction(),
+            Actions\ExportAction::make()->exporter(EquipmentDamageExporter::class),
         ];
     }
 
