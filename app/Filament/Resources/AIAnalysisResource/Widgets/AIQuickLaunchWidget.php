@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AIAnalysisResource\Widgets;
 
+use App\Filament\Pages\AnaliseEstoque;
 use App\Filament\Pages\CrmFunil;
 use App\Filament\Pages\OtimizacaoRotas;
 use App\Filament\Resources\EquipmentDamageResource;
@@ -46,6 +47,14 @@ class AIQuickLaunchWidget extends Widget
                 'icon' => 'heroicon-o-presentation-chart-line',
                 'color' => '#f59e0b',
                 'url' => CrmFunil::getUrl(),
+                'visible' => $hasFeature,
+            ],
+            [
+                'label' => 'Análise de Estoque',
+                'description' => 'Verifica materiais críticos e parados, e receba uma priorização de compra por IA.',
+                'icon' => 'heroicon-o-archive-box',
+                'color' => '#16a34a',
+                'url' => AnaliseEstoque::getUrl(),
                 'visible' => $hasFeature,
             ],
         ];

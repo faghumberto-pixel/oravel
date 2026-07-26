@@ -150,6 +150,48 @@
                 @endforeach
             </ul>
         </div>
+    @elseif ($analysis->type === \App\Models\AIAnalysis::TYPE_ESTOQUE)
+        <div class="section">
+            <div class="section-title">Resumo</div>
+            <p>{{ $response['resumo_geral'] ?? '' }}</p>
+        </div>
+        <div class="section">
+            <div class="section-title">Prioridades de Compra</div>
+            <ul>
+                @foreach ($response['prioridades_compra'] ?? [] as $item)
+                    <li>{{ $item }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @if (! empty($response['materiais_criticos']))
+            <div class="section">
+                <div class="section-title">Materiais Críticos</div>
+                <table class="data-grid">
+                    <tr>
+                        <td><span class="label">Material</span></td>
+                        <td><span class="label">Atual / Mínimo</span></td>
+                        <td><span class="label">Dias até esgotar</span></td>
+                    </tr>
+                    @foreach ($response['materiais_criticos'] as $item)
+                        <tr>
+                            <td><span class="value">{{ $item['nome'] }}</span></td>
+                            <td><span class="value">{{ $item['estoque_atual'] }} / {{ $item['estoque_minimo'] }}</span></td>
+                            <td><span class="value">{{ $item['dias_estimados_para_esgotar'] !== null ? $item['dias_estimados_para_esgotar'].' dias' : '—' }}</span></td>
+                        </tr>
+                    @endforeach
+                </table>
+            </div>
+        @endif
+        @if (! empty($response['recomendacoes_estoque_parado']))
+            <div class="section">
+                <div class="section-title">Estoque Parado</div>
+                <ul>
+                    @foreach ($response['recomendacoes_estoque_parado'] as $item)
+                        <li>{{ $item }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
     @else
         <div class="section">
             <pre>{{ json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>

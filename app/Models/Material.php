@@ -100,6 +100,11 @@ class Material extends Model
         return $this->hasMany(StockMovement::class);
     }
 
+    public function purchaseOrderItems(): HasMany
+    {
+        return $this->hasMany(PurchaseOrderItem::class);
+    }
+
     /**
      * Saldo por filial (ver App\Models\MaterialLocationStock) -- fonte de
      * verdade do estoque dali pra frente. current_stock (acima) continua

@@ -72,6 +72,7 @@ class AIAnalysisResource extends BaseResource
                         AIAnalysis::TYPE_AVARIA => 'danger',
                         AIAnalysis::TYPE_LOGISTICA => 'info',
                         AIAnalysis::TYPE_COMERCIAL => 'warning',
+                        AIAnalysis::TYPE_ESTOQUE => 'success',
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('status')
