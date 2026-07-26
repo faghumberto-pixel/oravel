@@ -25,6 +25,7 @@ class CommercialLeadAnalysisService
             'tenant_id' => $lead->tenant_id,
             'user_id' => $userId,
             'type' => AIAnalysis::TYPE_COMERCIAL,
+            'crm_lead_id' => $lead->id,
             'context' => $context,
             'status' => AIAnalysis::STATUS_PENDENTE,
         ]);

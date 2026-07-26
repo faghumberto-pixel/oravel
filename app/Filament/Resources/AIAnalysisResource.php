@@ -6,6 +6,7 @@ use App\Filament\Resources\AIAnalysisResource\Pages;
 use App\Models\AIAnalysis;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * "Central de IA": historico de todas as analises geradas (avaria/
@@ -33,6 +34,11 @@ class AIAnalysisResource extends BaseResource
     public static function canCreate(): bool
     {
         return false;
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['equipmentDamage.asset', 'crmLead', 'user']);
     }
 
     public static function typeLabels(): array
@@ -77,9 +83,12 @@ class AIAnalysisResource extends BaseResource
                         AIAnalysis::STATUS_FALHOU => 'danger',
                         default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('equipmentDamage.asset.name')
+                Tables\Columns\TextColumn::make('reference_label')
                     ->label('Referência')
-                    ->placeholder('—'),
+                    ->placeholder('—')
+                    ->url(fn (AIAnalysis $record) => $record->type === AIAnalysis::TYPE_COMERCIAL && $record->crm_lead_id
+                        ? CrmLeadResource::getUrl('edit', ['record' => $record->crm_lead_id])
+                        : null),
                 Tables\Columns\TextColumn::make('user.name')->label('Solicitado por'),
                 Tables\Columns\TextColumn::make('created_at')->label('Data')->dateTime('d/m/Y H:i')->sortable(),
             ])

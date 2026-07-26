@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\AIAnalysisResource\Pages;
 
 use App\Filament\Resources\AIAnalysisResource;
+use App\Filament\Resources\CrmLeadResource;
 use App\Models\AIAnalysis;
 use Filament\Actions;
 use Filament\Infolists\Components;
@@ -45,6 +46,12 @@ class ViewAIAnalysis extends ViewRecord
                         }),
                     Components\TextEntry::make('user.name')->label('Solicitado por'),
                     Components\TextEntry::make('created_at')->label('Data')->dateTime('d/m/Y H:i'),
+                    Components\TextEntry::make('reference_label')
+                        ->label('Referência')
+                        ->placeholder('—')
+                        ->url(fn (AIAnalysis $record) => $record->type === AIAnalysis::TYPE_COMERCIAL && $record->crm_lead_id
+                            ? CrmLeadResource::getUrl('edit', ['record' => $record->crm_lead_id])
+                            : null),
                 ])
                 ->columns(4),
 

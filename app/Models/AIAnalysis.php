@@ -7,6 +7,7 @@ use App\Models\Concerns\HasSaaSMetadata;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * Registro de cada chamada feita a uma IA externa (Claude) -- guarda o
@@ -51,6 +52,7 @@ class AIAnalysis extends Model
         'user_id',
         'type',
         'equipment_damage_id',
+        'crm_lead_id',
         'context',
         'response',
         'status',
@@ -72,5 +74,30 @@ class AIAnalysis extends Model
     public function equipmentDamage(): BelongsTo
     {
         return $this->belongsTo(EquipmentDamage::class);
+    }
+
+    public function crmLead(): BelongsTo
+    {
+        return $this->belongsTo(CrmLead::class);
+    }
+
+    /**
+     * Rotulo de "do que trata" essa analise, usado na listagem e na tela
+     * de detalhe da Central de IA. Cada tipo referencia algo diferente
+     * (avaria -> ativo, comercial -> lead, logistica -> uma data, nao um
+     * registro so'), por isso nao da' pra usar uma unica FK generica.
+     */
+    public function getReferenceLabelAttribute(): ?string
+    {
+        return match ($this->type) {
+            self::TYPE_AVARIA => $this->equipmentDamage?->asset?->name,
+            // Lead pode ter sido excluido depois da analise; cai pro nome
+            // que ja estava salvo no context original nesse caso.
+            self::TYPE_COMERCIAL => $this->crmLead?->name ?? data_get($this->context, 'lead.nome'),
+            self::TYPE_LOGISTICA => filled(data_get($this->context, 'data'))
+                ? Carbon::parse(data_get($this->context, 'data'))->format('d/m/Y')
+                : null,
+            default => null,
+        };
     }
 }
