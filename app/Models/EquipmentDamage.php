@@ -202,6 +202,22 @@ class EquipmentDamage extends Model implements HasMedia
         return $this->hasOne(EquipmentReplacement::class);
     }
 
+    public function aiAnalyses(): HasMany
+    {
+        return $this->hasMany(AIAnalysis::class);
+    }
+
+    /**
+     * Nao usa latestOfMany(): ate' passando a coluna de ordenacao
+     * ('created_at'), o Eloquent ainda monta um desempate por MAX(id) --
+     * id aqui e' uuid, e o Postgres nao tem MAX() pra uuid. Accessor
+     * simples evita o aggregate subquery inteiro.
+     */
+    public function getLatestAiAnalysisAttribute(): ?AIAnalysis
+    {
+        return $this->aiAnalyses()->latest('created_at')->first();
+    }
+
     /**
      * Orçamento(s) indenizatório(s) gerados a partir desta avaria (POP 5/6
      * da auditoria: mau_uso/dano_cliente alimenta o fluxo de cobrança via

@@ -4,10 +4,13 @@ namespace App\Filament\Resources\EquipmentDamageResource\Pages;
 
 use App\Filament\Resources\EquipmentDamageResource;
 use App\Filament\Resources\QuoteResource;
+use App\Models\AIAnalysis;
 use App\Models\Asset;
 use App\Models\EquipmentDamage;
 use App\Models\EquipmentReplacement;
 use App\Models\Quote;
+use App\Services\EquipmentDamageDiagnosisService;
+use App\Support\Tenancy;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Infolists;
@@ -64,6 +67,45 @@ class ViewEquipmentDamage extends ViewRecord
                             ->label('')
                             ->view('filament.infolists.equipment-damage-photos'),
                     ]),
+
+                Infolists\Components\Section::make('Diagnóstico por IA')
+                    ->description('Sugestão gerada por IA a partir dos dados desta avaria — sempre confira antes de usar.')
+                    ->icon('heroicon-o-cpu-chip')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('latestAiAnalysis.response.diagnostico_provavel')
+                            ->label('Diagnóstico provável')
+                            ->columnSpanFull(),
+                        Infolists\Components\TextEntry::make('latestAiAnalysis.response.causa_raiz')
+                            ->label('Causa raiz'),
+                        Infolists\Components\TextEntry::make('latestAiAnalysis.response.tempo_estimado_reparo')
+                            ->label('Tempo estimado de reparo'),
+                        Infolists\Components\TextEntry::make('latestAiAnalysis.response.acoes_corretivas')
+                            ->label('Ações corretivas')
+                            ->listWithLineBreaks()
+                            ->bulleted(),
+                        Infolists\Components\TextEntry::make('latestAiAnalysis.response.pecas_necessarias')
+                            ->label('Peças necessárias')
+                            ->listWithLineBreaks()
+                            ->bulleted(),
+                        Infolists\Components\TextEntry::make('custo_estimado_ia')
+                            ->label('Custo estimado')
+                            ->state(function ($record) {
+                                $r = $record->latestAiAnalysis?->response;
+                                if (! $r || (blank($r['custo_estimado_min'] ?? null) && blank($r['custo_estimado_max'] ?? null))) {
+                                    return null;
+                                }
+
+                                $min = number_format((float) ($r['custo_estimado_min'] ?? 0), 2, ',', '.');
+                                $max = number_format((float) ($r['custo_estimado_max'] ?? 0), 2, ',', '.');
+
+                                return "R$ {$min} a R$ {$max}";
+                            }),
+                        Infolists\Components\TextEntry::make('latestAiAnalysis.response.equipamento_substituto_sugerido')
+                            ->label('Substituto sugerido')
+                            ->placeholder('—'),
+                    ])
+                    ->columns(2)
+                    ->visible(fn ($record) => $record->latestAiAnalysis?->status === AIAnalysis::STATUS_CONCLUIDA),
 
                 Infolists\Components\Section::make('Ciência do Cliente')
                     ->schema([
@@ -140,6 +182,33 @@ class ViewEquipmentDamage extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('analisar_ia')
+                ->label('Analisar com IA')
+                ->color('gray')
+                ->icon('heroicon-o-cpu-chip')
+                ->visible(fn () => (bool) Tenancy::current()?->hasFeature('ia_diagnostico_avarias')
+                    && ! in_array($this->record->status, [EquipmentDamage::STATUS_RESOLVIDO, EquipmentDamage::STATUS_CANCELADO], true))
+                ->requiresConfirmation()
+                ->modalHeading('Analisar avaria com IA?')
+                ->modalDescription('Envia os dados desta avaria (incluindo fotos) para análise por IA. A sugestão é só um apoio — nada é alterado automaticamente.')
+                ->modalSubmitActionLabel('Analisar')
+                ->action(function (EquipmentDamageDiagnosisService $service): void {
+                    $analysis = $service->analyze($this->record, auth()->id());
+
+                    if ($analysis->status === AIAnalysis::STATUS_CONCLUIDA) {
+                        Notification::make()
+                            ->title('Análise concluída')
+                            ->success()
+                            ->send();
+                    } else {
+                        Notification::make()
+                            ->title('Não foi possível concluir a análise')
+                            ->body($analysis->error)
+                            ->danger()
+                            ->send();
+                    }
+                }),
+
             Actions\Action::make('baixar_laudo')
                 ->label('Baixar Laudo Jurídico (PDF)')
                 ->color('gray')
