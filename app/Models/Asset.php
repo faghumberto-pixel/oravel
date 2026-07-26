@@ -119,6 +119,59 @@ class Asset extends Model
         return $this->belongsTo(InternalUnit::class);
     }
 
+    /**
+     * Posicao estruturada na planta baixa do patio (ver StorageLocation,
+     * context=patio_ativos).
+     */
+    public function storageLocation(): BelongsTo
+    {
+        return $this->belongsTo(StorageLocation::class);
+    }
+
+    /**
+     * Nivel de criticidade atual do ativo -- NAO e' um campo proprio do
+     * Asset (criticality_level e' coluna texto morta, nunca usada em
+     * nenhum form/tabela). A fonte real e' a Matriz ABC (abcMatrix.nivel,
+     * um codigo tipo "A"/"B" que bate com CriticalityLevel.code), o mesmo
+     * mecanismo ja usado por PainelCriticidade/MaintenanceKanban -- editar
+     * isso e' em Manutenção → Matriz ABC (AbcMatrixResource), nao aqui.
+     */
+    public function currentCriticalityLevel(): ?CriticalityLevel
+    {
+        $nivel = $this->abcMatrix?->nivel;
+
+        if (! $nivel) {
+            return null;
+        }
+
+        return CriticalityLevel::where('tenant_id', $this->tenant_id)
+            ->where('code', $nivel)
+            ->first();
+    }
+
+    /**
+     * Cor do badge de status -- extraido daqui pra ser reaproveitado tanto
+     * na tabela do AssetResource quanto no componente de planta baixa
+     * (PlantaBaixaGrid). Cobre os 7 status reais (antes so' 4 tinham cor
+     * propria, o resto caia num "info" generico e ficava indistinguivel).
+     */
+    public static function statusColor(string $status): string
+    {
+        return match ($status) {
+            self::STATUS_DISPONIVEL => 'success',
+            self::STATUS_OPERANDO => 'info',
+            self::STATUS_LOCADO => 'warning',
+            self::STATUS_MANUTENCAO => 'danger',
+            self::STATUS_AGUARDANDO_TRIAGEM => 'gray',
+            self::STATUS_RESERVADO => 'primary',
+            // 'purple' registrado em AdminPanelProvider::colors() so' pra
+            // esse caso -- os 6 nomes padrao do Filament (danger/gray/info/
+            // primary/success/warning) nao cobrem os 7 status reais.
+            self::STATUS_QUARENTENA => 'purple',
+            default => 'info',
+        };
+    }
+
     public function equipmentMovements(): HasMany
     {
         return $this->hasMany(EquipmentMovement::class);

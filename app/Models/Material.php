@@ -47,6 +47,7 @@ class Material extends Model
         'max_stock',
         'unit_of_measure',
         'warehouse_location',
+        'storage_location_id',
         'requires_serial_number',
         'is_remanufactured',
         'warranty_days',
@@ -76,6 +77,15 @@ class Material extends Model
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    /**
+     * Posicao estruturada na planta baixa do almoxarifado -- complementa
+     * (nao substitui) warehouse_location, que continua livre em texto.
+     */
+    public function storageLocation(): BelongsTo
+    {
+        return $this->belongsTo(StorageLocation::class);
     }
 
     /**

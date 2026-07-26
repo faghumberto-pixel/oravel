@@ -6,6 +6,7 @@ use App\Filament\Resources\MaterialResource\Pages;
 use App\Filament\Resources\MaterialResource\RelationManagers;
 use App\Models\Material;
 use App\Models\MaterialCategory;
+use App\Models\StorageLocation;
 use App\Models\Supplier;
 use App\Support\Tenancy;
 use Filament\Forms;
@@ -152,7 +153,16 @@ class MaterialResource extends Resource
                             ->options(['un' => 'Unidade', 'l' => 'Litro', 'kg' => 'Quilograma', 'm' => 'Metro', 'par' => 'Par', 'cx' => 'Caixa'])
                             ->default('un')
                             ->native(false),
-                        Forms\Components\TextInput::make('warehouse_location')->label('Localização no Almoxarifado')->maxLength(255),
+                        Forms\Components\TextInput::make('warehouse_location')->label('Localização no Almoxarifado (texto livre)')->maxLength(255),
+                        Forms\Components\Select::make('storage_location_id')
+                            ->label('Posição na Planta Baixa')
+                            ->relationship(
+                                'storageLocation',
+                                'code',
+                                fn ($query) => $query->where('context', StorageLocation::CONTEXT_ALMOXARIFADO)
+                            )
+                            ->searchable()
+                            ->preload(),
                     ])->columns(3),
 
                 Forms\Components\Section::make('Rastreabilidade')

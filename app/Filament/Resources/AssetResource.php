@@ -6,7 +6,9 @@ use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\AssetResource\Pages;
 use App\Models\Asset;
 use App\Models\AssetCategory;
+use App\Models\CriticalityLevel;
 use App\Models\EquipmentReplacement;
+use App\Models\StorageLocation;
 use App\Services\CepGeocodingService;
 use App\Support\Tenancy;
 use Carbon\Carbon;
@@ -17,6 +19,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Collection;
@@ -265,6 +268,19 @@ class AssetResource extends Resource
                                 ->label('Unidade/Filial Base')
                                 ->relationship('internalUnit', 'name')
                                 ->helperText('Onde o ativo fica baseado quando NÃO está locado (pátio/matriz/filial).')
+                                ->searchable()
+                                ->preload()
+                                ->live(),
+
+                            Forms\Components\Select::make('storage_location_id')
+                                ->label('Posição no Pátio (Planta Baixa)')
+                                ->relationship(
+                                    'storageLocation',
+                                    'code',
+                                    fn ($query, Get $get) => $query
+                                        ->where('context', StorageLocation::CONTEXT_PATIO_ATIVOS)
+                                        ->when($get('internal_unit_id'), fn ($q, $unitId) => $q->where('internal_unit_id', $unitId))
+                                )
                                 ->searchable()
                                 ->preload(),
 
@@ -538,13 +554,16 @@ class AssetResource extends Resource
 
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'disponivel' => 'success',
-                        'manutencao' => 'danger',
-                        'locado' => 'warning',
-                        'aguardando_triagem' => 'gray',
-                        default => 'info',
-                    }),
+                    ->color(fn (string $state): string => Asset::statusColor($state)),
+
+                Tables\Columns\TextColumn::make('abcMatrix.nivel')
+                    ->label('Criticidade')
+                    ->badge()
+                    ->formatStateUsing(fn (Asset $record): string => $record->currentCriticalityLevel()?->name ?? $record->abcMatrix?->nivel ?? '—')
+                    ->color(fn (Asset $record): string|array => $record->currentCriticalityLevel()?->color
+                        ? Color::hex($record->currentCriticalityLevel()->color)
+                        : 'gray')
+                    ->placeholder('Não definida'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
@@ -555,7 +574,16 @@ class AssetResource extends Resource
                         'manutencao' => 'Em Manutenção',
                         'operando' => 'Em Operação',
                         'aguardando_triagem' => 'Aguardando Triagem',
+                        'quarentena' => 'Quarentena',
+                        'reservado' => 'Reservado',
                     ]),
+                Tables\Filters\SelectFilter::make('abc_matrix_nivel')
+                    ->label('Criticidade')
+                    ->options(fn () => CriticalityLevel::orderBy('sort_order')->pluck('name', 'code'))
+                    ->query(fn ($query, array $data) => $query->when(
+                        $data['value'] ?? null,
+                        fn ($q, $nivel) => $q->whereHas('abcMatrix', fn ($q2) => $q2->where('nivel', $nivel))
+                    )),
                 Tables\Filters\SelectFilter::make('asset_category')
                     ->label('Categoria')
                     ->options(fn () => AssetCategory::pluck('name', 'name')),

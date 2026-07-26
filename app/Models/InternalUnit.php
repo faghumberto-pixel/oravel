@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -57,6 +58,24 @@ class InternalUnit extends Model
                                     ?? session('tenant_id');
             }
         });
+
+        // Toda unidade com endereco geocodificado (CEP -> lat/lng, ver form
+        // do InternalUnitResource) vira automaticamente uma origem valida
+        // pra rota, sem precisar de um Depot cadastrado a parte na mao.
+        static::saved(function (self $model) {
+            if ($model->wasChanged(['latitude', 'longitude', 'address', 'city', 'state', 'cep', 'name']) || $model->wasRecentlyCreated) {
+                Depot::syncFromInternalUnit($model);
+            }
+        });
+    }
+
+    /**
+     * Depot gerado a partir desta unidade (ver Depot::syncFromInternalUnit()) --
+     * nulo ate a unidade ter latitude/longitude preenchidas.
+     */
+    public function depot(): HasOne
+    {
+        return $this->hasOne(Depot::class);
     }
 
     /**

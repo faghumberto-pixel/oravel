@@ -84,6 +84,36 @@ class MaterialRequestResource extends Resource
                         ->visible(fn (?MaterialRequest $record) => $record?->rejection_reason)
                         ->columnSpanFull(),
                 ])->columns(2),
+
+            Forms\Components\Section::make('Itens da Requisição')
+                ->schema([
+                    Forms\Components\Repeater::make('items')
+                        ->relationship()
+                        ->label('')
+                        ->schema([
+                            Forms\Components\Select::make('material_id')
+                                ->label('Material')
+                                ->relationship('material', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
+                                ->searchable()
+                                ->preload()
+                                ->required(),
+                            Forms\Components\TextInput::make('quantity')
+                                ->label('Quantidade')
+                                ->numeric()
+                                ->required()
+                                ->default(1),
+                            Forms\Components\TextInput::make('brand')
+                                ->label('Marca (opcional)')
+                                ->maxLength(255),
+                            Forms\Components\TextInput::make('cost_price')
+                                ->label('Preço Praticado (opcional)')
+                                ->numeric()
+                                ->prefix('R$'),
+                        ])
+                        ->columns(2)
+                        ->addActionLabel('Adicionar Item')
+                        ->defaultItems(1),
+                ]),
         ]);
     }
 
@@ -103,6 +133,11 @@ class MaterialRequestResource extends Resource
                 Tables\Columns\TextColumn::make('requestedForLocation.name')
                     ->label('Filial')
                     ->placeholder('—'),
+                Tables\Columns\TextColumn::make('origin')
+                    ->label('Origem')
+                    ->badge()
+                    ->color('gray')
+                    ->formatStateUsing(fn (string $state) => MaterialRequest::originOptions()[$state] ?? $state),
                 Tables\Columns\BadgeColumn::make('priority')
                     ->label('Prioridade')
                     ->colors([
@@ -133,6 +168,9 @@ class MaterialRequestResource extends Resource
                 Tables\Filters\SelectFilter::make('priority')
                     ->label('Prioridade')
                     ->options(MaterialRequest::priorityOptions()),
+                Tables\Filters\SelectFilter::make('origin')
+                    ->label('Origem')
+                    ->options(MaterialRequest::originOptions()),
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([

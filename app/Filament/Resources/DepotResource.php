@@ -12,6 +12,7 @@ use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\HtmlString;
 
 class DepotResource extends BaseResource
 {
@@ -32,6 +33,14 @@ class DepotResource extends BaseResource
     public static function form(Form $form): Form
     {
         return $form->schema([
+            Forms\Components\Placeholder::make('internal_unit_notice')
+                ->label('')
+                ->columnSpanFull()
+                ->visible(fn (?Depot $record) => $record?->internal_unit_id !== null)
+                ->content(fn (?Depot $record) => new HtmlString(
+                    '<span class="text-sm text-gray-500">Gerado automaticamente a partir da unidade interna <strong>'.e($record?->internalUnit?->name).'</strong> — editar o endereço aqui não altera o cadastro da unidade (Ativos e Materiais → Unidades Internas).</span>'
+                )),
+
             Forms\Components\TextInput::make('name')
                 ->label('Nome')
                 ->placeholder('Ex: Matriz, Filial SP...')
@@ -99,6 +108,11 @@ class DepotResource extends BaseResource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')->label('Nome')->weight('bold')->searchable(),
+                Tables\Columns\TextColumn::make('internalUnit.name')
+                    ->label('Unidade Vinculada')
+                    ->badge()
+                    ->color('gray')
+                    ->placeholder('Avulso'),
                 Tables\Columns\TextColumn::make('city')->label('Cidade'),
                 Tables\Columns\TextColumn::make('state')->label('UF'),
                 Tables\Columns\IconColumn::make('is_default')->label('Padrão')->boolean(),

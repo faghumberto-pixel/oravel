@@ -127,6 +127,7 @@ class PartsRequestResource extends Resource
                             'tenant_id' => $record->tenant_id,
                             'user_id' => auth()->id(),
                             'maintenance_order_id' => $record->maintenance_order_id,
+                            'origin' => MaterialRequest::ORIGIN_CONVERSAO_PARTS_REQUEST,
                             'status' => MaterialRequest::STATUS_RASCUNHO,
                             'requested_at' => now(),
                             'notes' => 'Gerada automaticamente a partir da Solicitação de Peças por estoque baixo.',

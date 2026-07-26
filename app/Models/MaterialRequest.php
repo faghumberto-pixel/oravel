@@ -47,6 +47,14 @@ class MaterialRequest extends Model
 
     public const PRIORITY_CRITICO = 'critico';
 
+    public const ORIGIN_MANUAL = 'manual';
+
+    public const ORIGIN_ORDEM_SERVICO = 'ordem_servico';
+
+    public const ORIGIN_REPOSICAO_ESTOQUE = 'reposicao_estoque';
+
+    public const ORIGIN_CONVERSAO_PARTS_REQUEST = 'conversao_parts_request';
+
     /**
      * Papel que aprova/recusa Pedido de Compra e recebe alerta de estoque
      * baixo -- ver Material::ROLE_GESTOR_SUPRIMENTOS (mesma constante,
@@ -58,6 +66,7 @@ class MaterialRequest extends Model
         'tenant_id',
         'user_id',
         'maintenance_order_id',
+        'origin',
         'requested_for_location_id',
         'provider_name',
         'priority',
@@ -88,6 +97,16 @@ class MaterialRequest extends Model
             self::PRIORITY_NORMAL => 'Normal',
             self::PRIORITY_URGENTE => 'Urgente',
             self::PRIORITY_CRITICO => 'Crítico',
+        ];
+    }
+
+    public static function originOptions(): array
+    {
+        return [
+            self::ORIGIN_MANUAL => 'Manual',
+            self::ORIGIN_ORDEM_SERVICO => 'Ordem de Serviço',
+            self::ORIGIN_REPOSICAO_ESTOQUE => 'Reposição de Estoque',
+            self::ORIGIN_CONVERSAO_PARTS_REQUEST => 'Conversão de Solicitação de Peças',
         ];
     }
 
