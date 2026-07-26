@@ -22,6 +22,10 @@ class PreventiveMaintenanceExecutionResource extends Resource
 {
     use HasSuperAdminTenantColumn;
 
+    // Navegacao manual dentro do submenu "PMP" (AdminPanelProvider), nao
+    // auto-registrada -- ver MaintenancePlanResource.
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $model = PreventiveMaintenanceExecution::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-wrench';

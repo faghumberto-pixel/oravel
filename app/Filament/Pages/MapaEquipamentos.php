@@ -16,7 +16,9 @@ class MapaEquipamentos extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-map';
 
-    protected static ?string $navigationGroup = 'PCM';
+    // Movido de PCM pra Ativos e Materiais (pedido do usuario 2026-07-26) --
+    // e' um mapa de Ativos, mais proximo desse menu do que de PCM.
+    protected static ?string $navigationGroup = 'Ativos e Materiais';
 
     protected static ?string $navigationLabel = 'Mapa de Equipamentos';
 

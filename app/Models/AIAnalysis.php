@@ -13,8 +13,10 @@ use Illuminate\Support\Carbon;
  * Registro de cada chamada feita a uma IA externa (Claude) -- guarda o
  * contexto enviado e a resposta recebida, pra auditoria e pra nao perder
  * a analise se o usuario recarregar a pagina. Um tipo por caso de uso
- * (avaria/comercial/estoque/logistica); a v1 (2026-07-25) so' implementa
- * 'avaria'.
+ * (avaria/comercial/estoque/logistica/retrabalho/plano_preventivo). Nao e'
+ * morph generico -- tipos com um registro "dono" unico ganham FK propria
+ * (equipment_damage_id, crm_lead_id); tipos tenant-wide (estoque,
+ * retrabalho, plano_preventivo) nao tem FK, fica tudo em context/response.
  */
 class AIAnalysis extends Model
 {
@@ -29,6 +31,10 @@ class AIAnalysis extends Model
     public const TYPE_ESTOQUE = 'estoque';
 
     public const TYPE_LOGISTICA = 'logistica';
+
+    public const TYPE_RETRABALHO = 'retrabalho';
+
+    public const TYPE_PLANO_PREVENTIVO = 'plano_preventivo';
 
     public const STATUS_PENDENTE = 'pendente';
 

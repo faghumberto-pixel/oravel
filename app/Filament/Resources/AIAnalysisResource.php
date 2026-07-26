@@ -23,7 +23,10 @@ class AIAnalysisResource extends BaseResource
 
     protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
 
-    protected static ?string $navigationGroup = 'PCM';
+    // Movido de PCM pra Relatorios (pedido do usuario 2026-07-26) --
+    // Central de IA e' historico/auditoria de analises, mais proximo de
+    // relatorio do que de operacao diaria de PCM.
+    protected static ?string $navigationGroup = 'Relatórios';
 
     protected static ?string $navigationLabel = 'Central de IA';
 
@@ -48,6 +51,8 @@ class AIAnalysisResource extends BaseResource
             AIAnalysis::TYPE_COMERCIAL => 'Análise Comercial',
             AIAnalysis::TYPE_ESTOQUE => 'Análise de Estoque',
             AIAnalysis::TYPE_LOGISTICA => 'Otimização de Rotas',
+            AIAnalysis::TYPE_RETRABALHO => 'Retrabalho / Corretivas',
+            AIAnalysis::TYPE_PLANO_PREVENTIVO => 'Planos Preventivos',
         ];
     }
 
@@ -73,6 +78,12 @@ class AIAnalysisResource extends BaseResource
                         AIAnalysis::TYPE_LOGISTICA => 'info',
                         AIAnalysis::TYPE_COMERCIAL => 'warning',
                         AIAnalysis::TYPE_ESTOQUE => 'success',
+                        // 'primary' (laranja da marca) e 'purple' (registrado em
+                        // AdminPanelProvider::colors() so' pro status "quarentena"
+                        // do Ativo) -- os 6 nomes padrao do Filament ja estavam
+                        // todos ocupados pelos 4 tipos antigos.
+                        AIAnalysis::TYPE_RETRABALHO => 'primary',
+                        AIAnalysis::TYPE_PLANO_PREVENTIVO => 'purple',
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('status')

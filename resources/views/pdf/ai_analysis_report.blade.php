@@ -192,6 +192,84 @@
                 </ul>
             </div>
         @endif
+    @elseif ($analysis->type === \App\Models\AIAnalysis::TYPE_RETRABALHO)
+        <div class="section">
+            <div class="section-title">Resumo</div>
+            <p>{{ $response['resumo_geral'] ?? '' }}</p>
+        </div>
+        <div class="section">
+            <div class="section-title">Principais Causas</div>
+            <p>{{ $response['principais_causas_interpretadas'] ?? '' }}</p>
+        </div>
+        @if (! empty($response['ranking_retrabalho']))
+            <div class="section">
+                <div class="section-title">Ranking de Retrabalho por Ativo</div>
+                <table class="data-grid">
+                    <tr>
+                        <td><span class="label">Ativo</span></td>
+                        <td><span class="label">Total de Retrabalhos</span></td>
+                        <td><span class="label">Dias Médio Entre Ocorrências</span></td>
+                    </tr>
+                    @foreach ($response['ranking_retrabalho'] as $item)
+                        <tr>
+                            <td><span class="value">{{ $item['nome'] }}</span></td>
+                            <td><span class="value">{{ $item['total_retrabalhos'] }}</span></td>
+                            <td><span class="value">{{ $item['dias_medio_entre_ocorrencias'] }}</span></td>
+                        </tr>
+                    @endforeach
+                </table>
+            </div>
+        @endif
+        @if (! empty($response['recomendacoes']))
+            <div class="section">
+                <div class="section-title">Recomendações</div>
+                <ul>
+                    @foreach ($response['recomendacoes'] as $item)
+                        <li>{{ $item }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+    @elseif ($analysis->type === \App\Models\AIAnalysis::TYPE_PLANO_PREVENTIVO)
+        <div class="section">
+            <div class="section-title">Resumo</div>
+            <p>{{ $response['resumo_geral'] ?? '' }}</p>
+        </div>
+        @if (! empty($response['equipamentos_atrasados']))
+            <div class="section">
+                <div class="section-title">Equipamentos com Preventiva Atrasada</div>
+                <table class="data-grid">
+                    <tr>
+                        <td><span class="label">Ativo</span></td>
+                        <td><span class="label">Plano</span></td>
+                        <td><span class="label">Atraso</span></td>
+                    </tr>
+                    @foreach ($response['equipamentos_atrasados'] as $item)
+                        <tr>
+                            <td><span class="value">{{ $item['nome'] }}</span></td>
+                            <td><span class="value">{{ $item['plano'] }}</span></td>
+                            <td><span class="value">{{ $item['overdue_hours'] }}h / {{ $item['overdue_days'] }} dias</span></td>
+                        </tr>
+                    @endforeach
+                </table>
+            </div>
+        @endif
+        @if (! empty($response['padroes_quebra_pos_preventiva']))
+            <div class="section">
+                <div class="section-title">Padrões de Quebra Pós-Preventiva</div>
+                <p>{{ $response['padroes_quebra_pos_preventiva'] }}</p>
+            </div>
+        @endif
+        @if (! empty($response['recomendacoes']))
+            <div class="section">
+                <div class="section-title">Recomendações</div>
+                <ul>
+                    @foreach ($response['recomendacoes'] as $item)
+                        <li>{{ $item }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
     @else
         <div class="section">
             <pre>{{ json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>

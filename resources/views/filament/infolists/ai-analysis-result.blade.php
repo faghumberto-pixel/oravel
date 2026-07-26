@@ -132,6 +132,72 @@
             @endforeach
         </div>
     @endif
+@elseif ($record->type === \App\Models\AIAnalysis::TYPE_RETRABALHO)
+    <p class="text-sm">{{ $response['resumo_geral'] ?? '' }}</p>
+
+    @if (! empty($response['principais_causas_interpretadas']))
+        <p class="mt-3 text-sm font-medium text-gray-500 dark:text-gray-400">Principais causas</p>
+        <p class="mt-1 text-sm">{{ $response['principais_causas_interpretadas'] }}</p>
+    @endif
+
+    @if (! empty($response['equipamentos_criticos_comentario']))
+        <p class="mt-3 text-sm font-medium text-gray-500 dark:text-gray-400">Equipamentos críticos</p>
+        <p class="mt-1 text-sm">{{ $response['equipamentos_criticos_comentario'] }}</p>
+    @endif
+
+    @if (! empty($response['recomendacoes']))
+        <p class="mt-3 text-sm font-medium text-gray-500 dark:text-gray-400">Recomendações</p>
+        <ul class="mt-1 list-disc space-y-1 pl-5 text-sm">
+            @foreach ($response['recomendacoes'] as $item)
+                <li>{{ $item }}</li>
+            @endforeach
+        </ul>
+    @endif
+
+    @if (! empty($response['ranking_retrabalho']))
+        <p class="mt-4 text-sm font-medium text-gray-500 dark:text-gray-400">Ranking de retrabalho por ativo</p>
+        <div class="mt-2 grid grid-cols-1 gap-3 lg:grid-cols-2">
+            @foreach ($response['ranking_retrabalho'] as $item)
+                <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-700">
+                    <p class="font-bold">{{ $item['nome'] }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $item['total_retrabalhos'] }} retrabalho(s), média de {{ $item['dias_medio_entre_ocorrencias'] }} dias entre ocorrências</p>
+                </div>
+            @endforeach
+        </div>
+    @endif
+@elseif ($record->type === \App\Models\AIAnalysis::TYPE_PLANO_PREVENTIVO)
+    <p class="text-sm">{{ $response['resumo_geral'] ?? '' }}</p>
+
+    @if (! empty($response['equipamentos_criticos_comentario']))
+        <p class="mt-3 text-sm font-medium text-gray-500 dark:text-gray-400">Equipamentos críticos</p>
+        <p class="mt-1 text-sm">{{ $response['equipamentos_criticos_comentario'] }}</p>
+    @endif
+
+    @if (! empty($response['padroes_quebra_pos_preventiva']))
+        <p class="mt-3 text-sm font-medium text-gray-500 dark:text-gray-400">Padrões de quebra pós-preventiva</p>
+        <p class="mt-1 text-sm">{{ $response['padroes_quebra_pos_preventiva'] }}</p>
+    @endif
+
+    @if (! empty($response['recomendacoes']))
+        <p class="mt-3 text-sm font-medium text-gray-500 dark:text-gray-400">Recomendações</p>
+        <ul class="mt-1 list-disc space-y-1 pl-5 text-sm">
+            @foreach ($response['recomendacoes'] as $item)
+                <li>{{ $item }}</li>
+            @endforeach
+        </ul>
+    @endif
+
+    @if (! empty($response['equipamentos_atrasados']))
+        <p class="mt-4 text-sm font-medium text-gray-500 dark:text-gray-400">Equipamentos com preventiva atrasada</p>
+        <div class="mt-2 grid grid-cols-1 gap-3 lg:grid-cols-2">
+            @foreach ($response['equipamentos_atrasados'] as $item)
+                <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-700">
+                    <p class="font-bold">{{ $item['nome'] }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $item['plano'] }} — {{ $item['overdue_hours'] }}h / {{ $item['overdue_days'] }} dias de atraso</p>
+                </div>
+            @endforeach
+        </div>
+    @endif
 @else
     <pre class="overflow-x-auto rounded-lg bg-gray-50 p-4 text-xs dark:bg-gray-900">{{ json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
 @endif

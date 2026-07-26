@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\AIAnalysisResource\Widgets;
 
 use App\Filament\Pages\AnaliseEstoque;
+use App\Filament\Pages\AnalisePlanoPreventivo;
+use App\Filament\Pages\AnaliseRetrabalho;
 use App\Filament\Pages\CrmFunil;
 use App\Filament\Pages\OtimizacaoRotas;
 use App\Filament\Resources\EquipmentDamageResource;
@@ -55,6 +57,22 @@ class AIQuickLaunchWidget extends Widget
                 'icon' => 'heroicon-o-archive-box',
                 'color' => '#16a34a',
                 'url' => AnaliseEstoque::getUrl(),
+                'visible' => $hasFeature,
+            ],
+            [
+                'label' => 'Retrabalho / Corretivas',
+                'description' => 'Verifica ativos que voltaram pra oficina em corretiva mais de uma vez, e receba as causas prováveis.',
+                'icon' => 'heroicon-o-arrow-path',
+                'color' => '#ea580c',
+                'url' => AnaliseRetrabalho::getUrl(),
+                'visible' => $hasFeature,
+            ],
+            [
+                'label' => 'Planos Preventivos',
+                'description' => 'Verifica equipamentos com preventiva atrasada e quebras logo após a preventiva.',
+                'icon' => 'heroicon-o-calendar-days',
+                'color' => '#9333ea',
+                'url' => AnalisePlanoPreventivo::getUrl(),
                 'visible' => $hasFeature,
             ],
         ];
