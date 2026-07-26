@@ -29,6 +29,17 @@
 
     Atencao: um update do pacote filament/filament que mude o arquivo
     original NAO vai refletir aqui automaticamente, em nenhum dos 2 ramos.
+
+    Mudanca nova (2026-07-26, so' ramo admin): itens com childItems() (ex.
+    "Almoxarifado"/"Compras" em Ativos e Materiais) paravam de ser um
+    dropdown de verdade -- o componente nativo do Filament em modo topbar
+    so' sabe achatar pai+filhos numa lista so', sempre expandida, sem seta
+    (ver historico do componente original: o mesmo bloco de flatten existia
+    la'). Substituido por um toggle Alpine local (x-data="{ open: false }")
+    por item-pai, fechado por padrao, com chevron que gira -- mesmo icone/
+    transicao que o proprio Filament usa no grupo colapsavel da sidebar
+    (components/sidebar/group.blade.php), so' que aqui e' por item dentro
+    do dropdown, nao o dropdown inteiro.
 --}}
 @props([
     'navigation',
@@ -121,50 +132,104 @@
 
                                         foreach ($group->getItems() as $item) {
                                             if ($childItems = $item->getChildItems()) {
-                                                $lists[] = [
-                                                    $item,
-                                                    ...$childItems,
-                                                ];
-                                                $lists[] = [];
+                                                $lists[] = ['type' => 'group', 'parent' => $item, 'children' => $childItems];
+                                                $lists[] = ['type' => 'flat', 'items' => []];
 
                                                 continue;
                                             }
 
-                                            if (empty($lists)) {
-                                                $lists[] = [$item];
+                                            if (empty($lists) || ($lists[count($lists) - 1]['type'] ?? null) !== 'flat') {
+                                                $lists[] = ['type' => 'flat', 'items' => [$item]];
 
                                                 continue;
                                             }
 
-                                            $lists[count($lists) - 1][] = $item;
+                                            $lists[count($lists) - 1]['items'][] = $item;
                                         }
 
-                                        if (empty($lists[count($lists) - 1])) {
+                                        if (($lists[count($lists) - 1]['type'] ?? null) === 'flat' && empty($lists[count($lists) - 1]['items'])) {
                                             array_pop($lists);
                                         }
                                     @endphp
 
                                     @foreach ($lists as $list)
-                                        <x-filament::dropdown.list>
-                                            @foreach ($list as $item)
-                                                @php
-                                                    $itemIsActive = $item->isActive();
-                                                @endphp
-
-                                                <x-filament::dropdown.list.item
-                                                    :badge="$item->getBadge()"
-                                                    :badge-color="$item->getBadgeColor()"
-                                                    :badge-tooltip="$item->getBadgeTooltip()"
-                                                    :color="$itemIsActive ? 'primary' : 'gray'"
-                                                    :href="$item->getUrl()"
-                                                    :icon="$itemIsActive ? ($item->getActiveIcon() ?? $item->getIcon()) : $item->getIcon()"
-                                                    tag="a"
-                                                    :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
+                                        @if ($list['type'] === 'group')
+                                            {{-- Flyout lateral (nao accordion pra baixo, pedido explicito do
+                                                 usuario 2026-07-26): x-data local com posicionamento absolute
+                                                 left-full, nao x-collapse. Fecha sozinho em @click.outside. --}}
+                                            <div class="fi-dropdown-list relative p-1" x-data="{ open: false }" x-on:click.outside="open = false">
+                                                <button
+                                                    type="button"
+                                                    x-on:click="open = ! open"
+                                                    class="fi-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm outline-none transition-colors duration-75 hover:bg-gray-50 dark:hover:bg-white/5"
                                                 >
-                                                    {{ $item->getLabel() }}
-                                                </x-filament::dropdown.list.item>
-                                            @endforeach
-                                        </x-filament::dropdown.list>
+                                                    @if ($icon = $list['parent']->getIcon())
+                                                        <x-filament::icon
+                                                            :icon="$icon"
+                                                            class="fi-dropdown-list-item-icon h-5 w-5 text-gray-400 dark:text-gray-500"
+                                                        />
+                                                    @endif
+
+                                                    <span class="fi-dropdown-list-item-label flex-1 truncate text-start text-gray-700 dark:text-gray-200">
+                                                        {{ $list['parent']->getLabel() }}
+                                                    </span>
+
+                                                    <x-filament::icon
+                                                        icon="heroicon-m-chevron-right"
+                                                        class="h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500"
+                                                    />
+                                                </button>
+
+                                                <ul
+                                                    x-show="open"
+                                                    x-cloak
+                                                    x-transition:enter="transition ease-out duration-100"
+                                                    x-transition:enter-start="opacity-0 -translate-x-1"
+                                                    x-transition:enter-end="opacity-100 translate-x-0"
+                                                    class="fi-dropdown-panel absolute start-full top-0 z-20 ms-1 flex w-56 flex-col divide-y divide-gray-100 rounded-lg bg-white p-1 shadow-lg ring-1 ring-gray-950/5 dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10"
+                                                >
+                                                    @foreach ($list['children'] as $childItem)
+                                                        @php
+                                                            $childItemIsActive = $childItem->isActive();
+                                                        @endphp
+
+                                                        <x-filament::dropdown.list.item
+                                                            :badge="$childItem->getBadge()"
+                                                            :badge-color="$childItem->getBadgeColor()"
+                                                            :badge-tooltip="$childItem->getBadgeTooltip()"
+                                                            :color="$childItemIsActive ? 'primary' : 'gray'"
+                                                            :href="$childItem->getUrl()"
+                                                            :icon="$childItemIsActive ? ($childItem->getActiveIcon() ?? $childItem->getIcon()) : $childItem->getIcon()"
+                                                            tag="a"
+                                                            :target="$childItem->shouldOpenUrlInNewTab() ? '_blank' : null"
+                                                        >
+                                                            {{ $childItem->getLabel() }}
+                                                        </x-filament::dropdown.list.item>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        @else
+                                            <x-filament::dropdown.list>
+                                                @foreach ($list['items'] as $item)
+                                                    @php
+                                                        $itemIsActive = $item->isActive();
+                                                    @endphp
+
+                                                    <x-filament::dropdown.list.item
+                                                        :badge="$item->getBadge()"
+                                                        :badge-color="$item->getBadgeColor()"
+                                                        :badge-tooltip="$item->getBadgeTooltip()"
+                                                        :color="$itemIsActive ? 'primary' : 'gray'"
+                                                        :href="$item->getUrl()"
+                                                        :icon="$itemIsActive ? ($item->getActiveIcon() ?? $item->getIcon()) : $item->getIcon()"
+                                                        tag="a"
+                                                        :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
+                                                    >
+                                                        {{ $item->getLabel() }}
+                                                    </x-filament::dropdown.list.item>
+                                                @endforeach
+                                            </x-filament::dropdown.list>
+                                        @endif
                                     @endforeach
                                 </x-filament::dropdown>
                             @else

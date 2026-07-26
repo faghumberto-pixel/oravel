@@ -2,15 +2,22 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\AnalisePlanoPreventivo;
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\PainelPmp;
+use App\Filament\Pages\PlantaBaixaAlmoxarifado;
+use App\Filament\Pages\RequisicaoReposicaoEstoque;
 use App\Filament\Resources\GoodsReceiptResource;
+use App\Filament\Resources\MaintenancePlanResource;
 use App\Filament\Resources\MaterialCategoryResource;
 use App\Filament\Resources\MaterialRequestResource;
 use App\Filament\Resources\MaterialResource;
 use App\Filament\Resources\MaterialStockTakeResource;
 use App\Filament\Resources\PartsRequestResource;
+use App\Filament\Resources\PreventiveMaintenanceExecutionResource;
 use App\Filament\Resources\PurchaseOrderResource;
 use App\Filament\Resources\StockMovementResource;
+use App\Filament\Resources\StorageLocationResource;
 use App\Filament\Resources\SupplierResource;
 use App\Http\Middleware\LogUserActivity;
 use Filament\Http\Middleware\Authenticate;
@@ -48,6 +55,9 @@ class AdminPanelProvider extends PanelProvider
                 // slate frio, pra bater com o fundo creme/bordas do tema novo.
                 'primary' => Color::hex('#ea580c'),
                 'gray' => Color::Stone,
+                // So' pro status "quarentena" do Ativo (Asset::statusColor()) --
+                // os 6 nomes padrao do Filament nao cobrem os 7 status reais.
+                'purple' => Color::Purple,
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->brandLogo(fn () => view('filament.brand-logo'))
@@ -64,19 +74,50 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Configurações'),
             ])
             ->navigationItems([
-                NavigationItem::make('Suprimentos')
+                // Agrupa tudo que e' Preventiva dentro de PCM (pedido do
+                // usuario 2026-07-26) -- Planos Preventivos, execucoes de
+                // Preventiva e o Dashboard PMP (Planejamento de Manutencao
+                // Preventiva, ja usava essa sigla) ficavam soltos junto com
+                // OS/Kanban/Avarias/etc, um menu so' longo demais.
+                NavigationItem::make('PMP')
+                    ->icon('heroicon-o-clipboard-document-check')
+                    ->group('PCM')
+                    ->sort(2)
+                    ->visible(fn () => MaintenancePlanResource::canViewAny()
+                        || PreventiveMaintenanceExecutionResource::canViewAny()
+                        || PainelPmp::canAccess()
+                        || AnalisePlanoPreventivo::canAccess())
+                    ->childItems([
+                        NavigationItem::make('Dashboard PMP')
+                            ->url(fn () => PainelPmp::getUrl())
+                            ->visible(fn () => PainelPmp::canAccess()),
+                        NavigationItem::make('Planos Preventivos')
+                            ->url(fn () => MaintenancePlanResource::getUrl())
+                            ->visible(fn () => MaintenancePlanResource::canViewAny()),
+                        NavigationItem::make('Preventivas')
+                            ->url(fn () => PreventiveMaintenanceExecutionResource::getUrl())
+                            ->visible(fn () => PreventiveMaintenanceExecutionResource::canViewAny()),
+                        NavigationItem::make('Análise IA - Preventivas')
+                            ->url(fn () => AnalisePlanoPreventivo::getUrl())
+                            ->visible(fn () => AnalisePlanoPreventivo::canAccess()),
+                    ]),
+
+                // Antes um unico dropdown "Suprimentos" com 10+ itens
+                // misturando operacao diaria de almoxarifado com o ciclo
+                // formal de compras -- separado em 2 pra refletir que sao
+                // atribuicoes/papeis diferentes (quem repoe estoque fisico
+                // nao e' necessariamente quem aprova/cotaOC).
+                NavigationItem::make('Almoxarifado')
                     ->icon('heroicon-o-archive-box')
                     ->group('Ativos e Materiais')
                     ->sort(10)
                     ->visible(fn () => MaterialResource::canViewAny()
                         || MaterialCategoryResource::canViewAny()
-                        || SupplierResource::canViewAny()
                         || PartsRequestResource::canViewAny()
-                        || MaterialRequestResource::canViewAny()
-                        || PurchaseOrderResource::canViewAny()
-                        || GoodsReceiptResource::canViewAny()
                         || MaterialStockTakeResource::canViewAny()
-                        || StockMovementResource::canViewAny())
+                        || StockMovementResource::canViewAny()
+                        || StorageLocationResource::canViewAny()
+                        || RequisicaoReposicaoEstoque::canAccess())
                     ->childItems([
                         NavigationItem::make('Materiais')
                             ->url(fn () => MaterialResource::getUrl())
@@ -84,12 +125,38 @@ class AdminPanelProvider extends PanelProvider
                         NavigationItem::make('Categorias de Materiais')
                             ->url(fn () => MaterialCategoryResource::getUrl())
                             ->visible(fn () => MaterialCategoryResource::canViewAny()),
-                        NavigationItem::make('Fornecedores')
-                            ->url(fn () => SupplierResource::getUrl())
-                            ->visible(fn () => SupplierResource::canViewAny()),
                         NavigationItem::make('Solicitações de Peças')
                             ->url(fn () => PartsRequestResource::getUrl())
                             ->visible(fn () => PartsRequestResource::canViewAny()),
+                        NavigationItem::make('Reposição de Estoque')
+                            ->url(fn () => RequisicaoReposicaoEstoque::getUrl())
+                            ->visible(fn () => RequisicaoReposicaoEstoque::canAccess()),
+                        NavigationItem::make('Inventário')
+                            ->url(fn () => MaterialStockTakeResource::getUrl())
+                            ->visible(fn () => MaterialStockTakeResource::canViewAny()),
+                        NavigationItem::make('Histórico de Estoque')
+                            ->url(fn () => StockMovementResource::getUrl())
+                            ->visible(fn () => StockMovementResource::canViewAny()),
+                        NavigationItem::make('Localizações (Planta Baixa)')
+                            ->url(fn () => StorageLocationResource::getUrl())
+                            ->visible(fn () => StorageLocationResource::canViewAny()),
+                        NavigationItem::make('Planta Baixa (Almoxarifado)')
+                            ->url(fn () => PlantaBaixaAlmoxarifado::getUrl())
+                            ->visible(fn () => PlantaBaixaAlmoxarifado::canAccess()),
+                    ]),
+
+                NavigationItem::make('Compras')
+                    ->icon('heroicon-o-shopping-cart')
+                    ->group('Ativos e Materiais')
+                    ->sort(11)
+                    ->visible(fn () => SupplierResource::canViewAny()
+                        || MaterialRequestResource::canViewAny()
+                        || PurchaseOrderResource::canViewAny()
+                        || GoodsReceiptResource::canViewAny())
+                    ->childItems([
+                        NavigationItem::make('Fornecedores')
+                            ->url(fn () => SupplierResource::getUrl())
+                            ->visible(fn () => SupplierResource::canViewAny()),
                         NavigationItem::make('Requisições de Compra')
                             ->url(fn () => MaterialRequestResource::getUrl())
                             ->visible(fn () => MaterialRequestResource::canViewAny()),
@@ -99,12 +166,6 @@ class AdminPanelProvider extends PanelProvider
                         NavigationItem::make('Recebimentos')
                             ->url(fn () => GoodsReceiptResource::getUrl())
                             ->visible(fn () => GoodsReceiptResource::canViewAny()),
-                        NavigationItem::make('Inventário')
-                            ->url(fn () => MaterialStockTakeResource::getUrl())
-                            ->visible(fn () => MaterialStockTakeResource::canViewAny()),
-                        NavigationItem::make('Histórico de Estoque')
-                            ->url(fn () => StockMovementResource::getUrl())
-                            ->visible(fn () => StockMovementResource::canViewAny()),
                     ]),
             ])
             ->renderHook(
