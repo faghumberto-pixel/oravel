@@ -2,8 +2,12 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Resources\AIAnalysisResource;
+use App\Models\AIAnalysis;
 use App\Models\CrmLead;
+use App\Services\CommercialLeadAnalysisService;
 use App\Support\Tenancy;
+use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
@@ -50,6 +54,11 @@ class CrmFunil extends Page
         unset($stages[CrmLead::STAGE_PERDIDO]);
 
         return $stages;
+    }
+
+    public function canUseAI(): bool
+    {
+        return (bool) Tenancy::current()?->hasFeature('ia_diagnostico_avarias');
     }
 
     public function selectStage(string $stageId): void
@@ -172,5 +181,46 @@ class CrmFunil extends Page
         $lead->convertToClient();
 
         Notification::make()->title('Cliente criado a partir do Lead.')->success()->send();
+    }
+
+    /**
+     * Mesma trava de moveStage()/converterEmCliente(): nao-admin so'
+     * analisa lead atribuido a ele mesmo.
+     */
+    public function analisarComIA(string $leadId, CommercialLeadAnalysisService $service): void
+    {
+        $tenant = Tenancy::current();
+        $user = auth()->user();
+
+        $lead = CrmLead::where('tenant_id', $tenant?->id)->find($leadId);
+
+        if (! $lead) {
+            return;
+        }
+
+        if (! $user->canSeeAllCrmLeads() && $lead->assigned_user_id !== $user->id) {
+            return;
+        }
+
+        $analysis = $service->analyze($lead, $user->id);
+
+        if ($analysis->status === AIAnalysis::STATUS_CONCLUIDA) {
+            Notification::make()
+                ->title('Análise concluída')
+                ->success()
+                ->actions([
+                    NotificationAction::make('ver')
+                        ->label('Ver análise')
+                        ->url(AIAnalysisResource::getUrl('view', ['record' => $analysis]))
+                        ->button(),
+                ])
+                ->send();
+        } else {
+            Notification::make()
+                ->title('Não foi possível concluir a análise')
+                ->body($analysis->error)
+                ->danger()
+                ->send();
+        }
     }
 }

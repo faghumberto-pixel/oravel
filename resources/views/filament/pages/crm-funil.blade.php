@@ -131,6 +131,18 @@
                                 @endif
                             @endif
 
+                            @if($this->canUseAI() && $lead->isOpen())
+                                <button
+                                    wire:click="analisarComIA('{{ $lead->id }}')"
+                                    wire:loading.attr="disabled"
+                                    wire:target="analisarComIA('{{ $lead->id }}')"
+                                    class="text-[10px] font-black uppercase text-amber-400 hover:text-amber-300 tracking-wider transition-colors shrink-0 disabled:opacity-50"
+                                >
+                                    <span wire:loading.remove wire:target="analisarComIA('{{ $lead->id }}')">🤖 IA</span>
+                                    <span wire:loading wire:target="analisarComIA('{{ $lead->id }}')">Analisando…</span>
+                                </button>
+                            @endif
+
                             <a href="{{ \App\Filament\Resources\CrmLeadResource::getUrl('edit', ['record' => $lead]) }}" class="text-[10px] font-black uppercase text-primary-400 hover:text-primary-300 tracking-wider transition-colors shrink-0">Abrir</a>
                         </div>
                     </div>
