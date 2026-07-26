@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\AIAnalysis;
 use App\Models\EquipmentDamage;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -12,13 +11,15 @@ use Illuminate\Support\Facades\Log;
  * (fotos da MediaLibrary). Sem ANTHROPIC_API_KEY configurada, analyze()
  * retorna null -- a tela de avaria continua funcionando normalmente, so'
  * fica sem a acao de IA. Mesmo padrao de degradacao do
- * App\Services\AudioTranscriptionService (OpenAI Whisper).
+ * App\Services\AudioTranscriptionService (OpenAI Whisper). Chamada real
+ * feita via App\Services\AnthropicApiClient (compartilhado com os outros
+ * servicos de IA).
  */
 class EquipmentDamageDiagnosisService
 {
-    private const MODEL = 'claude-sonnet-5';
-
     private const MAX_PHOTOS = 3;
+
+    public function __construct(private AnthropicApiClient $client) {}
 
     public function analyze(EquipmentDamage $damage, string $userId): AIAnalysis
     {
@@ -33,78 +34,27 @@ class EquipmentDamageDiagnosisService
             'status' => AIAnalysis::STATUS_PENDENTE,
         ]);
 
-        $apiKey = config('services.anthropic.key');
+        $result = $this->client->send($this->systemPrompt(), $this->buildMessageContent($context, $damage));
 
-        if (blank($apiKey)) {
-            $analysis->update([
-                'status' => AIAnalysis::STATUS_FALHOU,
-                'error' => 'ANTHROPIC_API_KEY não configurada.',
-            ]);
+        if (! $result['ok']) {
+            $analysis->update(['status' => AIAnalysis::STATUS_FALHOU, 'error' => $result['error']]);
 
             return $analysis;
         }
 
-        try {
-            $response = Http::withHeaders([
-                'x-api-key' => $apiKey,
-                'anthropic-version' => '2023-06-01',
-                'content-type' => 'application/json',
-            ])
-                ->timeout(60)
-                ->post('https://api.anthropic.com/v1/messages', [
-                    'model' => self::MODEL,
-                    'max_tokens' => 1500,
-                    'system' => $this->systemPrompt(),
-                    'messages' => [
-                        ['role' => 'user', 'content' => $this->buildMessageContent($context, $damage)],
-                    ],
-                ]);
-        } catch (\Throwable $e) {
-            Log::warning('Falha ao chamar Claude API pro diagnostico de avaria', [
-                'equipment_damage_id' => $damage->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            $analysis->update([
-                'status' => AIAnalysis::STATUS_FALHOU,
-                'error' => $e->getMessage(),
-            ]);
-
-            return $analysis;
-        }
-
-        if (! $response->ok()) {
-            Log::warning('Claude API retornou erro no diagnostico de avaria', [
-                'equipment_damage_id' => $damage->id,
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-
-            $analysis->update([
-                'status' => AIAnalysis::STATUS_FALHOU,
-                'error' => "Claude API respondeu {$response->status()}: ".$this->extractErrorMessage($response),
-            ]);
-
-            return $analysis;
-        }
-
-        $text = $response->json('content.0.text');
-        $parsed = $this->parseJsonResponse($text);
+        $parsed = $this->client->parseJson($result['text']);
 
         if ($parsed === null) {
             $analysis->update([
                 'status' => AIAnalysis::STATUS_FALHOU,
                 'error' => 'A resposta da IA não veio em um formato reconhecível.',
-                'response' => ['raw' => $text],
+                'response' => ['raw' => $result['text']],
             ]);
 
             return $analysis;
         }
 
-        $analysis->update([
-            'status' => AIAnalysis::STATUS_CONCLUIDA,
-            'response' => $parsed,
-        ]);
+        $analysis->update(['status' => AIAnalysis::STATUS_CONCLUIDA, 'response' => $parsed]);
 
         return $analysis;
     }
@@ -137,7 +87,7 @@ class EquipmentDamageDiagnosisService
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<int, array<string, mixed>>
      */
     private function buildMessageContent(array $context, EquipmentDamage $damage): array
     {
@@ -231,27 +181,5 @@ class EquipmentDamageDiagnosisService
             ],
             'historico_manutencao_recente' => $recentMaintenance,
         ];
-    }
-
-    private function parseJsonResponse(?string $text): ?array
-    {
-        if (blank($text)) {
-            return null;
-        }
-
-        // Apesar do system prompt pedir "sem markdown, sem crases", o
-        // modelo as vezes embrulha a resposta em ```json ... ``` mesmo
-        // assim -- tira as crases antes de tentar decodificar.
-        $text = trim($text);
-        $text = preg_replace('/^```(?:json)?\s*|\s*```$/', '', $text);
-
-        $decoded = json_decode(trim($text), true);
-
-        return is_array($decoded) ? $decoded : null;
-    }
-
-    private function extractErrorMessage($response): string
-    {
-        return (string) ($response->json('error.message') ?? $response->body());
     }
 }

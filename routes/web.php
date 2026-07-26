@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AIAnalysisPdfController;
 use App\Http\Controllers\AssetDossierPdfController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\ChatHistoryPdfController;
@@ -167,6 +168,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/admin/equipment-damages/{record}/laudo-pdf', [EquipmentDamageReportController::class, 'download'])
         ->name('equipment-damages.laudo.pdf');
+
+    Route::get('/admin/ai-analyses/{record}/pdf', [AIAnalysisPdfController::class, 'download'])
+        ->name('ai-analyses.pdf');
 
     Route::get('/admin/quotes/{record}/pdf', [QuoteReportController::class, 'download'])
         ->name('quotes.pdf');

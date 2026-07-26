@@ -5,8 +5,6 @@ namespace App\Services;
 use App\Models\AIAnalysis;
 use App\Models\Depot;
 use App\Models\EquipmentMovement;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 /**
  * Analise de rotas do dia por veiculo: RouteOptimizationService faz a
@@ -16,13 +14,16 @@ use Illuminate\Support\Facades\Log;
  * natural por cima dos numeros ja calculados. Mesmo padrao de degradacao
  * de EquipmentDamageDiagnosisService: sem ANTHROPIC_API_KEY, a analise
  * fica com status 'falhou' mas os numeros calculados continuam
- * disponiveis em $analysis->context.
+ * disponiveis em $analysis->context. Chamada real feita via
+ * App\Services\AnthropicApiClient (compartilhado com os outros servicos
+ * de IA).
  */
 class LogisticsRouteAnalysisService
 {
-    private const MODEL = 'claude-sonnet-5';
-
-    public function __construct(private RouteOptimizationService $router) {}
+    public function __construct(
+        private RouteOptimizationService $router,
+        private AnthropicApiClient $client,
+    ) {}
 
     public function analyzeDate(string $tenantId, string $userId, string $date): AIAnalysis
     {
@@ -45,62 +46,24 @@ class LogisticsRouteAnalysisService
             return $analysis;
         }
 
-        $apiKey = config('services.anthropic.key');
+        $result = $this->client->send(
+            $this->systemPrompt(),
+            "Rotas calculadas:\n".json_encode($context, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
+        );
 
-        if (blank($apiKey)) {
-            $analysis->update([
-                'status' => AIAnalysis::STATUS_FALHOU,
-                'error' => 'ANTHROPIC_API_KEY não configurada.',
-            ]);
-
-            return $analysis;
-        }
-
-        try {
-            $response = Http::withHeaders([
-                'x-api-key' => $apiKey,
-                'anthropic-version' => '2023-06-01',
-                'content-type' => 'application/json',
-            ])
-                ->timeout(60)
-                ->post('https://api.anthropic.com/v1/messages', [
-                    'model' => self::MODEL,
-                    'max_tokens' => 1500,
-                    'system' => $this->systemPrompt(),
-                    'messages' => [
-                        ['role' => 'user', 'content' => "Rotas calculadas:\n".json_encode($context, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)],
-                    ],
-                ]);
-        } catch (\Throwable $e) {
-            Log::warning('Falha ao chamar Claude API pra analise de logistica', ['error' => $e->getMessage()]);
-
-            $analysis->update(['status' => AIAnalysis::STATUS_FALHOU, 'error' => $e->getMessage()]);
+        if (! $result['ok']) {
+            $analysis->update(['status' => AIAnalysis::STATUS_FALHOU, 'error' => $result['error']]);
 
             return $analysis;
         }
 
-        if (! $response->ok()) {
-            Log::warning('Claude API retornou erro na analise de logistica', [
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-
-            $analysis->update([
-                'status' => AIAnalysis::STATUS_FALHOU,
-                'error' => "Claude API respondeu {$response->status()}",
-            ]);
-
-            return $analysis;
-        }
-
-        $text = $response->json('content.0.text');
-        $parsed = $this->parseJsonResponse($text);
+        $parsed = $this->client->parseJson($result['text']);
 
         if ($parsed === null) {
             $analysis->update([
                 'status' => AIAnalysis::STATUS_FALHOU,
                 'error' => 'A resposta da IA não veio em um formato reconhecível.',
-                'response' => ['raw' => $text],
+                'response' => ['raw' => $result['text']],
             ]);
 
             return $analysis;
@@ -200,19 +163,5 @@ class LogisticsRouteAnalysisService
             'patio_origem' => $depot->name,
             'rotas' => $rotas,
         ];
-    }
-
-    private function parseJsonResponse(?string $text): ?array
-    {
-        if (blank($text)) {
-            return null;
-        }
-
-        $text = trim($text);
-        $text = preg_replace('/^```(?:json)?\s*|\s*```$/', '', $text);
-
-        $decoded = json_decode(trim($text), true);
-
-        return is_array($decoded) ? $decoded : null;
     }
 }
