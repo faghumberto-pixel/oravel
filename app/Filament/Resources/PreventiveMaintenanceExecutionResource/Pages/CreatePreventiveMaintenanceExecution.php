@@ -2,12 +2,10 @@
 
 namespace App\Filament\Resources\PreventiveMaintenanceExecutionResource\Pages;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\PreventiveMaintenanceExecutionResource;
 use App\Support\Tenancy;
 use Filament\Resources\Pages\CreateRecord;
 
-#[BelongsToFeature('maintenance')]
 class CreatePreventiveMaintenanceExecution extends CreateRecord
 {
     protected static string $resource = PreventiveMaintenanceExecutionResource::class;

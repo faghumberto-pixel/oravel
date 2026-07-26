@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\MaterialCategoryResource\Pages;
 use App\Models\MaterialCategory;
 use Filament\Forms;
@@ -11,7 +10,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-#[BelongsToFeature('materials')]
 class MaterialCategoryResource extends Resource
 {
     // AJUSTE: Mudado para true para aparecer no menu

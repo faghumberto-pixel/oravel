@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\MaterialRequestResource\Pages;
 use App\Filament\Resources\MaterialRequestResource\RelationManagers\ItemsRelationManager;
 use App\Filament\Resources\MaterialRequestResource\RelationManagers\QuotationsRelationManager;
@@ -22,7 +21,6 @@ use Illuminate\Database\Eloquent\Builder;
  * itens, ou pra receber a conversao de um PartsRequest (botao "Converter
  * em Requisição" em PartsRequestResource).
  */
-#[BelongsToFeature('material_requests')]
 class MaterialRequestResource extends Resource
 {
     protected static bool $shouldRegisterNavigation = false;

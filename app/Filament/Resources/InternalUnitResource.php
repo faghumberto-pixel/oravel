@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\InternalUnitResource\Pages;
 use App\Models\InternalUnit;
 use App\Services\CepGeocodingService;
@@ -23,7 +22,6 @@ use Illuminate\Support\HtmlString;
  * isso navegacao volta a aparecer (estava com shouldRegisterNavigation=false,
  * inacessivel pela UI antes desta mudanca).
  */
-#[BelongsToFeature('internal_units')]
 class InternalUnitResource extends Resource
 {
     protected static ?string $model = InternalUnit::class;

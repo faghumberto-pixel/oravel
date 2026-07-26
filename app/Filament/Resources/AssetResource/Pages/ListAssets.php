@@ -2,14 +2,12 @@
 
 namespace App\Filament\Resources\AssetResource\Pages;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Concerns\HasPrintAction;
 use App\Filament\Exports\AssetExporter;
 use App\Filament\Resources\AssetResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-#[BelongsToFeature('assets')]
 class ListAssets extends ListRecords
 {
     use HasPrintAction;

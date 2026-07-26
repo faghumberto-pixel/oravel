@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\PreventiveMaintenanceExecutionResource\Pages;
 use App\Models\Asset;
@@ -19,7 +18,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-#[BelongsToFeature('maintenance')]
 class PreventiveMaintenanceExecutionResource extends Resource
 {
     use HasSuperAdminTenantColumn;

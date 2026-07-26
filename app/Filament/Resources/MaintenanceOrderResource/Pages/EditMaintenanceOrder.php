@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\MaintenanceOrderResource\Pages;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Pages\DossieOperacional;
 use App\Filament\Resources\MaintenanceOrderResource;
 use App\Filament\Resources\MaintenanceOrderResource\Concerns\CreatesDamageFromAvariaType;
@@ -20,7 +19,6 @@ use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 
-#[BelongsToFeature('maintenance')]
 class EditMaintenanceOrder extends EditRecord
 {
     use CreatesDamageFromAvariaType;

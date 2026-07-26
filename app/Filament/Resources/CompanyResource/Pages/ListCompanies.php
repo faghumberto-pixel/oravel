@@ -2,12 +2,10 @@
 
 namespace App\Filament\Resources\CompanyResource\Pages;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\CompanyResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-#[BelongsToFeature('company')]
 class ListCompanies extends ListRecords
 {
     protected static string $resource = CompanyResource::class;

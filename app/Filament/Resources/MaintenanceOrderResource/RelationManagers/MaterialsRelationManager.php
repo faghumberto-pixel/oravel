@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\MaintenanceOrderResource\RelationManagers;
 
-use App\Filament\Attributes\BelongsToFeature;
-
 use App\Models\Material;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,10 +10,10 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 
-#[BelongsToFeature('materials')]
 class MaterialsRelationManager extends RelationManager
 {
     protected static string $relationship = 'materials';
+
     protected static ?string $title = 'Materiais Utilizados';
 
     public function form(Form $form): Form
@@ -58,12 +56,12 @@ class MaterialsRelationManager extends RelationManager
                     ->mutateFormDataUsing(function (array $data): array {
                         // O 'recordId' é o nome padrão do Filament para o ID selecionado no AttachAction
                         $materialId = $data['recordId'] ?? null;
-                        
+
                         $material = Material::find($materialId);
-                        
+
                         // Garante que o custo seja gravado na tabela pivot
                         $data['cost_at_time'] = $material->price ?? 0;
-                        
+
                         return $data;
                     }),
             ])

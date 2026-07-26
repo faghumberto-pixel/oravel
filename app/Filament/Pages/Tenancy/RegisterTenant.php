@@ -2,12 +2,10 @@
 
 namespace App\Filament\Pages\Tenancy;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Models\Tenant;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\RegisterTenant as BaseRegisterTenant;
 
-#[BelongsToFeature('company')]
 class RegisterTenant extends BaseRegisterTenant
 {
     public static function getLabel(): string
@@ -26,6 +24,7 @@ class RegisterTenant extends BaseRegisterTenant
     protected function handleRegistration(array $data): Tenant
     {
         $tenant = Tenant::create($data);
+
         return $tenant;
     }
 }

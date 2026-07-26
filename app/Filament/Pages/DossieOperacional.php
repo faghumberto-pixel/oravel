@@ -2,14 +2,12 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Models\Asset;
 use App\Models\Contract;
 use App\Models\MaintenanceOrder;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 
-#[BelongsToFeature('maintenance')]
 class DossieOperacional extends Page
 {
     protected static ?string $slug = 'maintenance-orders/{record}/dossie';

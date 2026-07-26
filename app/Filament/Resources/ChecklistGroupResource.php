@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\ChecklistGroupResource\Pages;
 use App\Models\ChecklistGroup;
@@ -12,7 +11,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-#[BelongsToFeature('checklists')]
 class ChecklistGroupResource extends Resource
 {
     use HasSuperAdminTenantColumn;

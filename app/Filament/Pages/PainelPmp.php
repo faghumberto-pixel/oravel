@@ -2,7 +2,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\MaintenanceOrderResource;
 use App\Models\MaintenanceDueAlert;
 use App\Models\MaintenanceOrder;
@@ -34,7 +33,6 @@ use Illuminate\Support\Str;
  *   (moveAlertToPlanned), preenchendo maintenance_plan_id -- ver migration
  *   2026_07_24_092852.
  */
-#[BelongsToFeature('maintenance')]
 class PainelPmp extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';

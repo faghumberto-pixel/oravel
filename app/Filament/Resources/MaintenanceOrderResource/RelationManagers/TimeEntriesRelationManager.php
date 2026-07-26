@@ -2,20 +2,18 @@
 
 namespace App\Filament\Resources\MaintenanceOrderResource\RelationManagers;
 
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 
-use AppFilamentAttributesBelongsToFeature;
-#[BelongsToFeature('maintenance')]
 class TimeEntriesRelationManager extends RelationManager
 {
     protected static string $relationship = 'timeEntries';
+
     protected static ?string $title = 'Apontamentos de Mão de Obra';
 
     public function form(Form $form): Form
@@ -25,7 +23,7 @@ class TimeEntriesRelationManager extends RelationManager
                 ->label('O que foi feito?')
                 ->required()
                 ->columnSpanFull(),
-            
+
             // Campos invisíveis para o técnico, preenchidos pelo sistema
             Forms\Components\DateTimePicker::make('started_at')
                 ->label('Início')
@@ -58,6 +56,7 @@ class TimeEntriesRelationManager extends RelationManager
                     ->mutateFormDataUsing(function (array $data): array {
                         $data['started_at'] = now();
                         $data['user_id'] = Auth::id();
+
                         return $data;
                     }),
             ])
@@ -74,7 +73,10 @@ class TimeEntriesRelationManager extends RelationManager
 
     protected function calculateDuration($record)
     {
-        if (!$record->stopped_at) return 'Em andamento...';
-        return Carbon::parse($record->started_at)->diffInMinutes($record->stopped_at) . ' min';
+        if (! $record->stopped_at) {
+            return 'Em andamento...';
+        }
+
+        return Carbon::parse($record->started_at)->diffInMinutes($record->stopped_at).' min';
     }
 }

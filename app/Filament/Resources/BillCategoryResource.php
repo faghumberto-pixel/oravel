@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\BillCategoryResource\Pages;
 use App\Models\BillCategory;
 use Filament\Forms;
@@ -12,14 +10,12 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-#[BelongsToFeature('bill_categories')]
 class BillCategoryResource extends Resource
 {
     protected static ?string $model = BillCategory::class;
 
     // 🚀 CORREÇÃO CIRÚRGICA: Adicionada a ? para bater exatamente com a tipagem da classe pai do Filament
     protected static ?string $tenantRelationshipName = 'billCategories';
-
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
@@ -29,6 +25,7 @@ class BillCategoryResource extends Resource
     protected static ?string $navigationLabel = 'Categorias de Contas a Pagar';
 
     protected static ?string $modelLabel = 'Categoria de Conta a Pagar';
+
     protected static ?string $pluralModelLabel = 'Categorias de Contas a Pagar';
 
     // Força a rota do link lateral a ignorar o antigo /categories

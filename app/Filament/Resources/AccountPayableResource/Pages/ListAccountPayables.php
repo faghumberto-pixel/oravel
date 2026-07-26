@@ -2,13 +2,10 @@
 
 namespace App\Filament\Resources\AccountPayableResource\Pages;
 
-use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\AccountPayableResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-#[BelongsToFeature('accounts_payable')]
 class ListAccountPayables extends ListRecords
 {
     protected static string $resource = AccountPayableResource::class;

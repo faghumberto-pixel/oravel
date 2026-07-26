@@ -2,13 +2,10 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\UserResource;
+use App\Support\Tenancy;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Facades\Filament;
 
-#[BelongsToFeature('users')]
 class CreateUser extends CreateRecord
 {
     protected static string $resource = UserResource::class;
@@ -20,8 +17,8 @@ class CreateUser extends CreateRecord
      */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $tenant = \App\Support\Tenancy::current();
-        
+        $tenant = Tenancy::current();
+
         if ($tenant) {
             // Se a sua tabela users tiver a coluna direta tenant_id
             $data['tenant_id'] = $tenant->id;
@@ -37,7 +34,7 @@ class CreateUser extends CreateRecord
      */
     protected function afterCreate(): void
     {
-        $tenant = \App\Support\Tenancy::current();
+        $tenant = Tenancy::current();
         $user = $this->getRecord();
 
         if ($tenant && $user) {

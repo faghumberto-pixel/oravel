@@ -2,17 +2,12 @@
 
 namespace App\Filament\Resources\AssetResource\RelationManagers;
 
-use App\Filament\Attributes\BelongsToFeature;
-
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-#[BelongsToFeature('maintenance')]
 class MaintenanceOrdersRelationManager extends RelationManager
 {
     protected static string $relationship = 'maintenanceOrders';

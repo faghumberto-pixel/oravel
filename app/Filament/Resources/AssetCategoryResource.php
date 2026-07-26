@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\AssetCategoryResource\Pages;
 use App\Models\AssetCategory;
 use Filament\Forms;
@@ -12,7 +11,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 
-#[BelongsToFeature('assets')]
 class AssetCategoryResource extends Resource
 {
     protected static ?string $model = AssetCategory::class;

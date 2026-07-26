@@ -2,14 +2,12 @@
 
 namespace App\Filament\Resources\MaterialResource\Pages;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Concerns\HasPrintAction;
 use App\Filament\Exports\MaterialExporter;
 use App\Filament\Resources\MaterialResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-#[BelongsToFeature('materials')]
 class ListMaterials extends ListRecords
 {
     use HasPrintAction;

@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\MaintenanceOrderResource\RelationManagers;
 
-use App\Filament\Attributes\BelongsToFeature;
-
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -11,7 +9,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 
-#[BelongsToFeature('maintenance')]
 class CommunicationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'internalCommunications';
@@ -24,7 +21,7 @@ class CommunicationsRelationManager extends RelationManager
                     ->label('Mensagem')
                     ->required()
                     ->columnSpanFull(),
-                
+
                 // Captura automática do Usuário
                 Forms\Components\Hidden::make('user_id')
                     ->default(Auth::id()),
@@ -35,7 +32,7 @@ class CommunicationsRelationManager extends RelationManager
             ]);
     }
 
-    // Este método garante que, mesmo que o campo esteja escondido, 
+    // Este método garante que, mesmo que o campo esteja escondido,
     // o tenant_id seja injetado no momento da criação.
     protected function mutateFormDataBeforeCreate(array $data): array
     {

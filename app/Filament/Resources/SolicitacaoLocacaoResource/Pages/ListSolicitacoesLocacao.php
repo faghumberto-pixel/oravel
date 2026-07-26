@@ -7,7 +7,6 @@ use App\Filament\Resources\SolicitacaoLocacaoResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-#[BelongsToFeature('rental_requests')]
 class ListSolicitacoesLocacao extends ListRecords
 {
     use HasPrintAction;

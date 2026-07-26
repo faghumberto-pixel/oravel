@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\PartsRequestResource\Pages;
 use App\Models\MaterialRequest;
 use App\Models\PartsRequest;
@@ -14,7 +13,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-#[BelongsToFeature('parts_request')]
 class PartsRequestResource extends Resource
 {
     protected static ?string $model = PartsRequest::class;

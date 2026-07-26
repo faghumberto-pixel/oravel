@@ -2,14 +2,12 @@
 
 namespace App\Filament\Resources\DepartmentResource\Pages;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Concerns\HasPrintAction;
 use App\Filament\Exports\DepartmentExporter;
 use App\Filament\Resources\DepartmentResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-#[BelongsToFeature('departments')]
 class ListDepartments extends ListRecords
 {
     use HasPrintAction;

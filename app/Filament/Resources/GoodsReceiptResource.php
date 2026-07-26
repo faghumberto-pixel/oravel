@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\GoodsReceiptResource\Pages;
 use App\Filament\Resources\GoodsReceiptResource\RelationManagers\ItemsRelationManager;
 use App\Models\GoodsReceipt;
@@ -22,7 +21,6 @@ use Illuminate\Database\Eloquent\Builder;
  * em App\Observers\GoodsReceiptItemObserver, disparado ao adicionar um
  * item aqui (ItemsRelationManager).
  */
-#[BelongsToFeature('goods_receipts')]
 class GoodsReceiptResource extends Resource
 {
     protected static bool $shouldRegisterNavigation = false;

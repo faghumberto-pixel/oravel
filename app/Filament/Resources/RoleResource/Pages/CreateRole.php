@@ -2,12 +2,10 @@
 
 namespace App\Filament\Resources\RoleResource\Pages;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\RoleResource;
 use App\Support\Tenancy;
 use Filament\Resources\Pages\CreateRecord;
 
-#[BelongsToFeature('roles')]
 class CreateRole extends CreateRecord
 {
     protected static string $resource = RoleResource::class;

@@ -2,14 +2,12 @@
 
 namespace App\Filament\Resources\MaintenanceOrderResource\Widgets;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Models\Asset;
 use App\Models\MaintenanceOrder;
 use App\Support\Tenancy;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
-#[BelongsToFeature('maintenance')]
 class MaintenanceOrderStats extends BaseWidget
 {
     /**

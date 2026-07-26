@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\AssetResource\Pages;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\AssetResource;
 use App\Models\Asset;
 use App\Support\Tenancy;
@@ -11,7 +10,6 @@ use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 
-#[BelongsToFeature('assets')]
 class EditAsset extends EditRecord
 {
     protected static string $resource = AssetResource::class;

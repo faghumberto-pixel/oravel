@@ -2,21 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\FleetStatusResource\Pages;
 use App\Models\FleetStatus;
+use App\Support\Tenancy;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
-use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 
-#[BelongsToFeature('fleet')]
 class FleetStatusResource extends Resource
 {
     protected static ?string $model = FleetStatus::class;
-
 
     protected static bool $shouldRegisterNavigation = true;
 
@@ -28,7 +24,8 @@ class FleetStatusResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $tenant = \App\Support\Tenancy::current();
+        $tenant = Tenancy::current();
+
         return parent::getEloquentQuery()->where('tenant_id', $tenant?->id);
     }
 

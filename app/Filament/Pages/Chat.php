@@ -2,7 +2,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Models\Asset;
 use App\Models\ChatMessage;
 use App\Models\ChatRoom;
@@ -21,7 +20,6 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\WithFileUploads;
 
-#[BelongsToFeature('users')]
 class Chat extends Page
 {
     use WithFileUploads;

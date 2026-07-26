@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\PurchaseOrderResource\Pages;
 use App\Filament\Resources\PurchaseOrderResource\RelationManagers\ItemsRelationManager;
 use App\Models\PurchaseOrder;
@@ -22,7 +21,6 @@ use Illuminate\Database\Eloquent\Builder;
  * (PurchaseOrder::recalculateStatus(), ver Fase de Recebimento) -- nao
  * editavel a mao.
  */
-#[BelongsToFeature('purchase_orders')]
 class PurchaseOrderResource extends Resource
 {
     protected static bool $shouldRegisterNavigation = false;

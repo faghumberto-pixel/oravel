@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\MaintenanceOrderResource\Pages;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\MaintenanceOrderResource;
 use App\Filament\Resources\MaintenanceOrderResource\Concerns\CreatesDamageFromAvariaType;
 use App\Filament\Resources\MaintenanceOrderResource\Concerns\CreatesReplacementFromOsType;
@@ -15,7 +14,6 @@ use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 
-#[BelongsToFeature('maintenance')]
 class CreateMaintenanceOrder extends CreateRecord
 {
     use CreatesDamageFromAvariaType;

@@ -2,14 +2,12 @@
 
 namespace App\Filament\Resources\MaintenanceOrderResource\Pages;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Concerns\HasPrintAction;
 use App\Filament\Exports\MaintenanceOrderExporter;
 use App\Filament\Resources\MaintenanceOrderResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-#[BelongsToFeature('maintenance')]
 class ListMaintenanceOrders extends ListRecords
 {
     use HasPrintAction;

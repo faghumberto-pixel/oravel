@@ -2,13 +2,11 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Support\SegmentDashboardWidgets;
 use App\Support\Tenancy;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 
-#[BelongsToFeature('users')]
 class PainelGestao extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';

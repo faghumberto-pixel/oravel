@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\AbcMatrixResource\Pages;
 use App\Models\AbcMatrix;
@@ -14,7 +13,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-#[BelongsToFeature('maintenance_matrix')]
 class AbcMatrixResource extends Resource
 {
     use HasSuperAdminTenantColumn;

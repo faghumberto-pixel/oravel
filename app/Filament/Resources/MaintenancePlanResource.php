@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\MaintenancePlanResource\Pages;
 use App\Models\ChecklistGroup;
 use App\Models\MaintenancePlan;
@@ -13,7 +12,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-#[BelongsToFeature('maintenance')]
 class MaintenancePlanResource extends Resource
 {
     protected static ?string $model = MaintenancePlan::class;

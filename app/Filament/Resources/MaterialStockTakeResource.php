@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\MaterialStockTakeResource\Pages;
 use App\Filament\Resources\MaterialStockTakeResource\RelationManagers\ItemsRelationManager;
 use App\Models\MaterialStockTake;
@@ -21,7 +20,6 @@ use Filament\Tables\Table;
  * action dedicada (MaterialStockTake::finalize()) -- so' ai' os ajustes
  * viram MaterialStockMovement de verdade e corrigem Material.current_stock.
  */
-#[BelongsToFeature('material_stock_takes')]
 class MaterialStockTakeResource extends Resource
 {
     protected static bool $shouldRegisterNavigation = false;

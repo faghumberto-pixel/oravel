@@ -6,11 +6,10 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-use AppFilamentAttributesBelongsToFeature;
-#[BelongsToFeature('maintenance')]
 class ActivitiesRelationManager extends RelationManager
 {
     protected static string $relationship = 'activities'; // Garante que a relação seja reconhecida
+
     protected static ?string $title = 'Log de Auditoria';
 
     public function table(Table $table): Table

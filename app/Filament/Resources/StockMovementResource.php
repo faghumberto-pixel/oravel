@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Resources\StockMovementResource\Pages;
 use App\Models\StockMovement;
 use Filament\Forms;
@@ -18,7 +17,6 @@ use Filament\Tables\Table;
  * compra, ou ajuste de inventario via MaterialStockTake::finalize()),
  * nunca criada/editada por aqui.
  */
-#[BelongsToFeature('material_stock_movements')]
 class StockMovementResource extends Resource
 {
     protected static bool $shouldRegisterNavigation = false;

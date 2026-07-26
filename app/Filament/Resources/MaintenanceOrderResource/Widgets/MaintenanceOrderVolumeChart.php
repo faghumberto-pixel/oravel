@@ -2,18 +2,16 @@
 
 namespace App\Filament\Resources\MaintenanceOrderResource\Widgets;
 
-use App\Filament\Attributes\BelongsToFeature;
-
 use App\Models\MaintenanceOrder;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-#[BelongsToFeature('maintenance')]
 class MaintenanceOrderVolumeChart extends ChartWidget
 {
     protected static ?string $heading = 'Volume por Status de OS';
-    protected int | string | array $columnSpan = 'full';
+
+    protected int|string|array $columnSpan = 'full';
 
     protected function getData(): array
     {
@@ -31,10 +29,12 @@ class MaintenanceOrderVolumeChart extends ChartWidget
             ->orderBy('month_num')
             ->get();
 
-        // Se você tiver poucos dados, o gráfico fica vazio. 
+        // Se você tiver poucos dados, o gráfico fica vazio.
         // Aqui pegamos os nomes dos meses para o eixo X
         $labels = $results->pluck('month_name')->toArray();
-        if (empty($labels)) { $labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai']; }
+        if (empty($labels)) {
+            $labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai'];
+        }
 
         return [
             'datasets' => [
@@ -64,7 +64,7 @@ class MaintenanceOrderVolumeChart extends ChartWidget
     protected function getType(): string
     {
         // MUDE PARA LINE. O Chart.js usa 'line' com 'fill' para fazer o efeito de área.
-        return 'line'; 
+        return 'line';
     }
 
     protected function getOptions(): array

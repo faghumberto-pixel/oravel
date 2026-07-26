@@ -2,13 +2,10 @@
 
 namespace App\Filament\Resources\ClientResource\Pages;
 
-use App\Filament\Attributes\BelongsToFeature;
-
 use App\Filament\Resources\ClientResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-#[BelongsToFeature('clients')]
 class EditClient extends EditRecord
 {
     protected static string $resource = ClientResource::class;

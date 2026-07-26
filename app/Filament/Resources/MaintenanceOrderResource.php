@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Attributes\BelongsToFeature;
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\MaintenanceOrderResource\Pages;
 use App\Filament\Resources\MaintenanceOrderResource\RelationManagers;
@@ -32,7 +31,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 use Saade\FilamentAutograph\Forms\Components\SignaturePad;
 
-#[BelongsToFeature('maintenance')]
 class MaintenanceOrderResource extends Resource
 {
     use HasSuperAdminTenantColumn;
