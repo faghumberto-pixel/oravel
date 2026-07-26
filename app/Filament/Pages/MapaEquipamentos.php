@@ -16,7 +16,7 @@ class MapaEquipamentos extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-map';
 
-    protected static ?string $navigationGroup = 'Manutenção';
+    protected static ?string $navigationGroup = 'PCM';
 
     protected static ?string $navigationLabel = 'Mapa de Equipamentos';
 

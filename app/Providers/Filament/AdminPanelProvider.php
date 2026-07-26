@@ -41,16 +41,20 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(Login::class)
+            ->topNavigation()
             ->colors([
-                'primary' => Color::Orange,
-                'gray' => Color::Slate,
+                // Paleta do artefato "Central de Artefatos" (2026-07-25):
+                // laranja de destaque + neutros quentes (stone) no lugar do
+                // slate frio, pra bater com o fundo creme/bordas do tema novo.
+                'primary' => Color::hex('#ea580c'),
+                'gray' => Color::Stone,
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->brandLogo(fn () => view('filament.brand-logo'))
             ->brandLogoHeight('1.75rem')
             ->favicon(asset('favicon.png'))
             ->navigationGroups([
-                NavigationGroup::make('Manutenção'),
+                NavigationGroup::make('PCM'),
                 NavigationGroup::make('Logística'),
                 NavigationGroup::make('Ativos e Materiais'),
                 NavigationGroup::make('Equipe'),
@@ -105,6 +109,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->renderHook(
                 PanelsRenderHook::TOPBAR_START,
+                fn () => view('filament.topbar-brand-and-ticker'),
+            )
+            ->renderHook(
+                PanelsRenderHook::TOPBAR_START,
                 fn () => view('filament.topbar-tenant-switcher'),
             )
             ->renderHook(
@@ -116,12 +124,12 @@ class AdminPanelProvider extends PanelProvider
                 fn () => view('filament.acting-tenant-banner'),
             )
             ->renderHook(
-                PanelsRenderHook::BODY_START,
-                fn () => view('filament.announcement-banner'),
+                PanelsRenderHook::HEAD_END,
+                fn () => view('filament.login-background'),
             )
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
-                fn () => view('filament.login-background'),
+                fn () => view('filament.brand-header-background'),
             )
             ->renderHook(
                 PanelsRenderHook::HEAD_END,

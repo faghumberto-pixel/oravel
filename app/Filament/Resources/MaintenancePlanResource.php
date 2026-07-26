@@ -20,7 +20,7 @@ class MaintenancePlanResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
 
-    protected static ?string $navigationGroup = 'Manutenção';
+    protected static ?string $navigationGroup = 'PCM';
 
     protected static ?string $navigationLabel = 'Planos Preventivos';
 

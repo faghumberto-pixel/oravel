@@ -2,197 +2,405 @@
     Override de vendor/filament/filament/resources/views/components/topbar/index.blade.php
     (Laravel resolve resources/views/vendor/{package}/... antes do pacote, sem tocar em vendor/).
 
-    Unica mudanca real: a classe "dark" fixa na div externa. Tailwind com
-    darkMode:'class' gera regras tipo ".dark .dark\:bg-gray-900{...}" -- o
-    seletor so exige um ANCESTRAL com classe "dark", nao precisa ser o <html>.
-    Isso forca o topbar (e tudo dentro: dropdown, busca global, sino de
-    notificacao, avatar) a usar sempre o visual dark, independente do tema
-    claro/escuro escolhido pelo usuario -- pedido explicito: topbar sempre
-    azul escuro (igual ao footer), so o conteudo/sidebar acompanha o tema.
+    Esse componente e' compartilhado por TODOS os paineis Filament do app
+    (namespace filament-panels::), nao so' o admin -- por isso o
+    @if (filament()->getId() === 'admin') abaixo: o painel `central` nunca
+    usou ->topNavigation() e tem seu proprio relogio
+    (filament.central.topbar-clock), sem pedido de mudanca nenhuma aqui.
+    Sem essa condicional, a reestruturacao do admin vazaria pro central
+    tambem (o relogio dele sumiria, apareceria uma barra cinza vazia, etc).
 
-    Atencao: um update do pacote filament/filament que mude este arquivo
-    upstream NAO vai refletir aqui automaticamente.
+    Historico: a classe "dark" fixa na div externa ja vinha de uma versao
+    anterior deste mesmo override -- Tailwind com darkMode:'class' gera
+    regras tipo ".dark .dark\:bg-gray-900{...}", que so exigem um
+    ANCESTRAL com classe "dark" (nao precisa ser o <html>). Isso forca
+    dropdown/busca global/sino/avatar (componentes que usam dark: por
+    baixo) a sempre renderizar no visual escuro. Mantido pros dois ramos.
+
+    Mudanca nova (2026-07-25, so' admin): topbar (logo/tenant/relogio/
+    avisos) e menu (grupos + busca/sino/perfil/ajuda) viraram 2 elementos
+    HTML de verdade em vez de 1 <nav> so' com flex-wrap+CSS. Tentar simular
+    2 linhas so' com CSS por cima do HTML padrao (flex-wrap, margem
+    negativa, JS de scroll pra "esconder ao rolar") gerou bug (barra
+    desproporcional, tremor no scroll, texto sobreposto) -- com 2
+    elementos reais, "topbar some ao descer" e' scroll comum (nao e'
+    sticky, sai da tela sozinho) e "menu sempre visivel" e'
+    position:sticky nativo do <nav>, sem 1 linha de JS.
+
+    Atencao: um update do pacote filament/filament que mude o arquivo
+    original NAO vai refletir aqui automaticamente, em nenhum dos 2 ramos.
 --}}
 @props([
     'navigation',
 ])
 
-<div
-    {{
-        $attributes->class([
-            'fi-topbar sticky top-0 z-20 overflow-x-clip dark',
-            'fi-topbar-with-navigation' => filament()->hasTopNavigation(),
-        ])
-    }}
->
-    <nav
-        class="flex h-16 items-center gap-x-4 bg-white px-4 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 md:px-6 lg:px-8"
+@if (filament()->getId() === 'admin')
+    <div
+        {{
+            $attributes->class([
+                'fi-topbar overflow-x-clip dark',
+            ])
+        }}
     >
-        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_START) }}
+        {{-- Linha 1: topbar de verdade -- fluxo normal da pagina (nao e'
+             sticky), some ao rolar pra baixo e volta ao rolar pra cima,
+             sem nenhum JS. Conteudo vem de
+             filament.topbar-brand-and-ticker via TOPBAR_START (logo+
+             tenant, relogio, avisos).
 
-        @if (filament()->hasNavigation())
-            <x-filament::icon-button
-                color="gray"
-                icon="heroicon-o-bars-3"
-                icon-alias="panels::topbar.open-sidebar-button"
-                icon-size="lg"
-                :label="__('filament-panels::layout.actions.sidebar.expand.label')"
-                x-cloak
-                x-data="{}"
-                x-on:click="$store.sidebar.open()"
-                x-show="! $store.sidebar.isOpen"
-                @class([
-                    'fi-topbar-open-sidebar-btn',
-                    'lg:hidden' => (! filament()->isSidebarFullyCollapsibleOnDesktop()) || filament()->isSidebarCollapsibleOnDesktop(),
-                ])
-            />
+             fi-oravel-topbar-row1: classe usada em CSS puro (ver
+             brand-header-background.blade.php) pro espacamento entre os
+             filhos -- classes novas do Tailwind tipo "gap-x-10"/"me-10"
+             NAO tem efeito aqui: o Vite nao builda neste ambiente (Node
+             desatualizado), entao o CSS compilado em public/build so'
+             contem as classes que ja existiam ANTES desta sessao. --}}
+        <div class="fi-oravel-topbar-row1 hidden bg-[#121826] px-4 md:px-6 lg:flex lg:items-center lg:px-8">
+            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_START) }}
+        </div>
 
-            <x-filament::icon-button
-                color="gray"
-                icon="heroicon-o-x-mark"
-                icon-alias="panels::topbar.close-sidebar-button"
-                icon-size="lg"
-                :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
-                x-cloak
-                x-data="{}"
-                x-on:click="$store.sidebar.close()"
-                x-show="$store.sidebar.isOpen"
-                class="fi-topbar-close-sidebar-btn lg:hidden"
-            />
-        @endif
+        {{-- Linha 2: o menu de verdade -- sticky sozinho, sempre visivel. --}}
+        <nav
+            class="sticky top-0 z-20 flex h-16 items-center gap-x-4 bg-black px-4 shadow-sm ring-1 ring-white/10 md:px-6 lg:px-8"
+        >
+            @if (filament()->hasNavigation())
+                <x-filament::icon-button
+                    color="gray"
+                    icon="heroicon-o-bars-3"
+                    icon-alias="panels::topbar.open-sidebar-button"
+                    icon-size="lg"
+                    :label="__('filament-panels::layout.actions.sidebar.expand.label')"
+                    x-cloak
+                    x-data="{}"
+                    x-on:click="$store.sidebar.open()"
+                    x-show="! $store.sidebar.isOpen"
+                    @class([
+                        'fi-topbar-open-sidebar-btn',
+                        'lg:hidden' => (! filament()->isSidebarFullyCollapsibleOnDesktop()) || filament()->isSidebarCollapsibleOnDesktop(),
+                    ])
+                />
 
-        @if (filament()->hasTopNavigation() || (! filament()->hasNavigation()))
-            <div class="me-6 hidden lg:flex">
-                @if ($homeUrl = filament()->getHomeUrl())
-                    <a {{ \Filament\Support\generate_href_html($homeUrl) }}>
-                        <x-filament-panels::logo />
-                    </a>
+                <x-filament::icon-button
+                    color="gray"
+                    icon="heroicon-o-x-mark"
+                    icon-alias="panels::topbar.close-sidebar-button"
+                    icon-size="lg"
+                    :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
+                    x-cloak
+                    x-data="{}"
+                    x-on:click="$store.sidebar.close()"
+                    x-show="$store.sidebar.isOpen"
+                    class="fi-topbar-close-sidebar-btn lg:hidden"
+                />
+            @endif
+
+            @if (filament()->hasTopNavigation() || (! filament()->hasNavigation()))
+                @if (filament()->hasTenancy() && filament()->hasTenantMenu())
+                    <x-filament-panels::tenant-menu class="hidden lg:block" />
+                @endif
+
+                @if (filament()->hasNavigation())
+                    <ul class="me-4 hidden items-center gap-x-4 lg:flex">
+                        @foreach ($navigation as $group)
+                            @if ($groupLabel = $group->getLabel())
+                                <x-filament::dropdown
+                                    placement="bottom-start"
+                                    teleport
+                                    :attributes="\Filament\Support\prepare_inherited_attributes($group->getExtraTopbarAttributeBag())"
+                                >
+                                    <x-slot name="trigger">
+                                        <x-filament-panels::topbar.item
+                                            :active="$group->isActive()"
+                                            :icon="$group->getIcon()"
+                                        >
+                                            {{ $groupLabel }}
+                                        </x-filament-panels::topbar.item>
+                                    </x-slot>
+
+                                    @php
+                                        $lists = [];
+
+                                        foreach ($group->getItems() as $item) {
+                                            if ($childItems = $item->getChildItems()) {
+                                                $lists[] = [
+                                                    $item,
+                                                    ...$childItems,
+                                                ];
+                                                $lists[] = [];
+
+                                                continue;
+                                            }
+
+                                            if (empty($lists)) {
+                                                $lists[] = [$item];
+
+                                                continue;
+                                            }
+
+                                            $lists[count($lists) - 1][] = $item;
+                                        }
+
+                                        if (empty($lists[count($lists) - 1])) {
+                                            array_pop($lists);
+                                        }
+                                    @endphp
+
+                                    @foreach ($lists as $list)
+                                        <x-filament::dropdown.list>
+                                            @foreach ($list as $item)
+                                                @php
+                                                    $itemIsActive = $item->isActive();
+                                                @endphp
+
+                                                <x-filament::dropdown.list.item
+                                                    :badge="$item->getBadge()"
+                                                    :badge-color="$item->getBadgeColor()"
+                                                    :badge-tooltip="$item->getBadgeTooltip()"
+                                                    :color="$itemIsActive ? 'primary' : 'gray'"
+                                                    :href="$item->getUrl()"
+                                                    :icon="$itemIsActive ? ($item->getActiveIcon() ?? $item->getIcon()) : $item->getIcon()"
+                                                    tag="a"
+                                                    :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
+                                                >
+                                                    {{ $item->getLabel() }}
+                                                </x-filament::dropdown.list.item>
+                                            @endforeach
+                                        </x-filament::dropdown.list>
+                                    @endforeach
+                                </x-filament::dropdown>
+                            @else
+                                @foreach ($group->getItems() as $item)
+                                    <x-filament-panels::topbar.item
+                                        :active="$item->isActive()"
+                                        :active-icon="$item->getActiveIcon()"
+                                        :badge="$item->getBadge()"
+                                        :badge-color="$item->getBadgeColor()"
+                                        :badge-tooltip="$item->getBadgeTooltip()"
+                                        :icon="$item->getIcon()"
+                                        :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
+                                        :url="$item->getUrl()"
+                                    >
+                                        {{ $item->getLabel() }}
+                                    </x-filament-panels::topbar.item>
+                                @endforeach
+                            @endif
+                        @endforeach
+                    </ul>
+                @endif
+            @endif
+
+            <div
+                @if (filament()->hasTenancy())
+                    x-persist="topbar.end.panel-{{ filament()->getId() }}.tenant-{{ filament()->getTenant()?->getKey() }}"
                 @else
-                    <x-filament-panels::logo />
+                    x-persist="topbar.end.panel-{{ filament()->getId() }}"
+                @endif
+                class="flex items-center gap-x-6 lg:ms-6"
+            >
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_BEFORE) }}
+
+                @if (filament()->isGlobalSearchEnabled())
+                    @livewire(Filament\Livewire\GlobalSearch::class)
+                @endif
+
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_AFTER) }}
+
+                @if (filament()->auth()->check())
+                    @if (filament()->hasDatabaseNotifications())
+                        @livewire(Filament\Livewire\DatabaseNotifications::class, [
+                            'lazy' => filament()->hasLazyLoadedDatabaseNotifications(),
+                        ])
+                    @endif
+
+                    <x-filament-panels::user-menu />
                 @endif
             </div>
 
-            @if (filament()->hasTenancy() && filament()->hasTenantMenu())
-                <x-filament-panels::tenant-menu class="hidden lg:block" />
-            @endif
+            <div class="ms-2 flex items-center">
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_END) }}
+            </div>
+        </nav>
+    </div>
+@else
+    {{-- Painel central (ou qualquer outro que nao seja o admin): mantido
+         exatamente como estava antes da mudanca de 2026-07-25, sem
+         nenhuma das mudancas de layout acima. --}}
+    <div
+        {{
+            $attributes->class([
+                'fi-topbar sticky top-0 z-20 overflow-x-clip dark',
+                'fi-topbar-with-navigation' => filament()->hasTopNavigation(),
+            ])
+        }}
+    >
+        <nav
+            class="flex h-16 items-center gap-x-4 bg-white px-4 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 md:px-6 lg:px-8"
+        >
+            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_START) }}
 
             @if (filament()->hasNavigation())
-                <ul class="me-4 hidden items-center gap-x-4 lg:flex">
-                    @foreach ($navigation as $group)
-                        @if ($groupLabel = $group->getLabel())
-                            <x-filament::dropdown
-                                placement="bottom-start"
-                                teleport
-                                :attributes="\Filament\Support\prepare_inherited_attributes($group->getExtraTopbarAttributeBag())"
-                            >
-                                <x-slot name="trigger">
-                                    <x-filament-panels::topbar.item
-                                        :active="$group->isActive()"
-                                        :icon="$group->getIcon()"
-                                    >
-                                        {{ $groupLabel }}
-                                    </x-filament-panels::topbar.item>
-                                </x-slot>
-
-                                @php
-                                    $lists = [];
-
-                                    foreach ($group->getItems() as $item) {
-                                        if ($childItems = $item->getChildItems()) {
-                                            $lists[] = [
-                                                $item,
-                                                ...$childItems,
-                                            ];
-                                            $lists[] = [];
-
-                                            continue;
-                                        }
-
-                                        if (empty($lists)) {
-                                            $lists[] = [$item];
-
-                                            continue;
-                                        }
-
-                                        $lists[count($lists) - 1][] = $item;
-                                    }
-
-                                    if (empty($lists[count($lists) - 1])) {
-                                        array_pop($lists);
-                                    }
-                                @endphp
-
-                                @foreach ($lists as $list)
-                                    <x-filament::dropdown.list>
-                                        @foreach ($list as $item)
-                                            @php
-                                                $itemIsActive = $item->isActive();
-                                            @endphp
-
-                                            <x-filament::dropdown.list.item
-                                                :badge="$item->getBadge()"
-                                                :badge-color="$item->getBadgeColor()"
-                                                :badge-tooltip="$item->getBadgeTooltip()"
-                                                :color="$itemIsActive ? 'primary' : 'gray'"
-                                                :href="$item->getUrl()"
-                                                :icon="$itemIsActive ? ($item->getActiveIcon() ?? $item->getIcon()) : $item->getIcon()"
-                                                tag="a"
-                                                :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
-                                            >
-                                                {{ $item->getLabel() }}
-                                            </x-filament::dropdown.list.item>
-                                        @endforeach
-                                    </x-filament::dropdown.list>
-                                @endforeach
-                            </x-filament::dropdown>
-                        @else
-                            @foreach ($group->getItems() as $item)
-                                <x-filament-panels::topbar.item
-                                    :active="$item->isActive()"
-                                    :active-icon="$item->getActiveIcon()"
-                                    :badge="$item->getBadge()"
-                                    :badge-color="$item->getBadgeColor()"
-                                    :badge-tooltip="$item->getBadgeTooltip()"
-                                    :icon="$item->getIcon()"
-                                    :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
-                                    :url="$item->getUrl()"
-                                >
-                                    {{ $item->getLabel() }}
-                                </x-filament-panels::topbar.item>
-                            @endforeach
-                        @endif
-                    @endforeach
-                </ul>
-            @endif
-        @endif
-
-        <div
-            @if (filament()->hasTenancy())
-                x-persist="topbar.end.panel-{{ filament()->getId() }}.tenant-{{ filament()->getTenant()?->getKey() }}"
-            @else
-                x-persist="topbar.end.panel-{{ filament()->getId() }}"
-            @endif
-            class="ms-auto flex items-center gap-x-4"
-        >
-            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_BEFORE) }}
-
-            @if (filament()->isGlobalSearchEnabled())
-                @livewire(Filament\Livewire\GlobalSearch::class)
-            @endif
-
-            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_AFTER) }}
-
-            @if (filament()->auth()->check())
-                @if (filament()->hasDatabaseNotifications())
-                    @livewire(Filament\Livewire\DatabaseNotifications::class, [
-                        'lazy' => filament()->hasLazyLoadedDatabaseNotifications(),
+                <x-filament::icon-button
+                    color="gray"
+                    icon="heroicon-o-bars-3"
+                    icon-alias="panels::topbar.open-sidebar-button"
+                    icon-size="lg"
+                    :label="__('filament-panels::layout.actions.sidebar.expand.label')"
+                    x-cloak
+                    x-data="{}"
+                    x-on:click="$store.sidebar.open()"
+                    x-show="! $store.sidebar.isOpen"
+                    @class([
+                        'fi-topbar-open-sidebar-btn',
+                        'lg:hidden' => (! filament()->isSidebarFullyCollapsibleOnDesktop()) || filament()->isSidebarCollapsibleOnDesktop(),
                     ])
+                />
+
+                <x-filament::icon-button
+                    color="gray"
+                    icon="heroicon-o-x-mark"
+                    icon-alias="panels::topbar.close-sidebar-button"
+                    icon-size="lg"
+                    :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
+                    x-cloak
+                    x-data="{}"
+                    x-on:click="$store.sidebar.close()"
+                    x-show="$store.sidebar.isOpen"
+                    class="fi-topbar-close-sidebar-btn lg:hidden"
+                />
+            @endif
+
+            @if (filament()->hasTopNavigation() || (! filament()->hasNavigation()))
+                <div class="me-6 hidden lg:flex">
+                    @if ($homeUrl = filament()->getHomeUrl())
+                        <a {{ \Filament\Support\generate_href_html($homeUrl) }}>
+                            <x-filament-panels::logo />
+                        </a>
+                    @else
+                        <x-filament-panels::logo />
+                    @endif
+                </div>
+
+                @if (filament()->hasTenancy() && filament()->hasTenantMenu())
+                    <x-filament-panels::tenant-menu class="hidden lg:block" />
                 @endif
 
-                <x-filament-panels::user-menu />
-            @endif
-        </div>
+                @if (filament()->hasNavigation())
+                    <ul class="me-4 hidden items-center gap-x-4 lg:flex">
+                        @foreach ($navigation as $group)
+                            @if ($groupLabel = $group->getLabel())
+                                <x-filament::dropdown
+                                    placement="bottom-start"
+                                    teleport
+                                    :attributes="\Filament\Support\prepare_inherited_attributes($group->getExtraTopbarAttributeBag())"
+                                >
+                                    <x-slot name="trigger">
+                                        <x-filament-panels::topbar.item
+                                            :active="$group->isActive()"
+                                            :icon="$group->getIcon()"
+                                        >
+                                            {{ $groupLabel }}
+                                        </x-filament-panels::topbar.item>
+                                    </x-slot>
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_END) }}
-    </nav>
-</div>
+                                    @php
+                                        $lists = [];
+
+                                        foreach ($group->getItems() as $item) {
+                                            if ($childItems = $item->getChildItems()) {
+                                                $lists[] = [
+                                                    $item,
+                                                    ...$childItems,
+                                                ];
+                                                $lists[] = [];
+
+                                                continue;
+                                            }
+
+                                            if (empty($lists)) {
+                                                $lists[] = [$item];
+
+                                                continue;
+                                            }
+
+                                            $lists[count($lists) - 1][] = $item;
+                                        }
+
+                                        if (empty($lists[count($lists) - 1])) {
+                                            array_pop($lists);
+                                        }
+                                    @endphp
+
+                                    @foreach ($lists as $list)
+                                        <x-filament::dropdown.list>
+                                            @foreach ($list as $item)
+                                                @php
+                                                    $itemIsActive = $item->isActive();
+                                                @endphp
+
+                                                <x-filament::dropdown.list.item
+                                                    :badge="$item->getBadge()"
+                                                    :badge-color="$item->getBadgeColor()"
+                                                    :badge-tooltip="$item->getBadgeTooltip()"
+                                                    :color="$itemIsActive ? 'primary' : 'gray'"
+                                                    :href="$item->getUrl()"
+                                                    :icon="$itemIsActive ? ($item->getActiveIcon() ?? $item->getIcon()) : $item->getIcon()"
+                                                    tag="a"
+                                                    :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
+                                                >
+                                                    {{ $item->getLabel() }}
+                                                </x-filament::dropdown.list.item>
+                                            @endforeach
+                                        </x-filament::dropdown.list>
+                                    @endforeach
+                                </x-filament::dropdown>
+                            @else
+                                @foreach ($group->getItems() as $item)
+                                    <x-filament-panels::topbar.item
+                                        :active="$item->isActive()"
+                                        :active-icon="$item->getActiveIcon()"
+                                        :badge="$item->getBadge()"
+                                        :badge-color="$item->getBadgeColor()"
+                                        :badge-tooltip="$item->getBadgeTooltip()"
+                                        :icon="$item->getIcon()"
+                                        :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
+                                        :url="$item->getUrl()"
+                                    >
+                                        {{ $item->getLabel() }}
+                                    </x-filament-panels::topbar.item>
+                                @endforeach
+                            @endif
+                        @endforeach
+                    </ul>
+                @endif
+            @endif
+
+            <div
+                @if (filament()->hasTenancy())
+                    x-persist="topbar.end.panel-{{ filament()->getId() }}.tenant-{{ filament()->getTenant()?->getKey() }}"
+                @else
+                    x-persist="topbar.end.panel-{{ filament()->getId() }}"
+                @endif
+                class="ms-auto flex items-center gap-x-4"
+            >
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_BEFORE) }}
+
+                @if (filament()->isGlobalSearchEnabled())
+                    @livewire(Filament\Livewire\GlobalSearch::class)
+                @endif
+
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_AFTER) }}
+
+                @if (filament()->auth()->check())
+                    @if (filament()->hasDatabaseNotifications())
+                        @livewire(Filament\Livewire\DatabaseNotifications::class, [
+                            'lazy' => filament()->hasLazyLoadedDatabaseNotifications(),
+                        ])
+                    @endif
+
+                    <x-filament-panels::user-menu />
+                @endif
+            </div>
+
+            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_END) }}
+        </nav>
+    </div>
+@endif

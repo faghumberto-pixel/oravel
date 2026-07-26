@@ -32,7 +32,7 @@ class PainelCriticidade extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-fire';
 
-    protected static ?string $navigationGroup = 'Manutenção';
+    protected static ?string $navigationGroup = 'PCM';
 
     protected static ?string $navigationLabel = 'Painel de Criticidade';
 

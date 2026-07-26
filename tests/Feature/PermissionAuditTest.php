@@ -463,13 +463,14 @@ class PermissionAuditTest extends TestCase
         // 100% de dados de Asset (Matriz ABC), entao segue a mesma trava
         // comercial de "tabela_assets" (documentado no proprio arquivo da
         // page). Nao e' um vazamento: se o plano perde tabela_assets, ele
-        // some junto (ver proximo assert). Grupo de navegacao e' "Manutenção"
-        // (decisao do usuario, 2026-07-16) -- a trava comercial e' por
+        // some junto (ver proximo assert). Grupo de navegacao e' "PCM"
+        // (decisao do usuario, 2026-07-16; grupo renomeado de "Manutenção"
+        // para "PCM" em 2026-07-25) -- a trava comercial e' por
         // "tabela_assets" independente de onde o item aparece no menu.
         $this->assertTrue(PainelCriticidade::canAccess());
-        $this->assertSame('Manutenção', PainelCriticidade::getNavigationGroup());
-        // AgendaTecnico ("Programação" no menu) tambem esta em "Manutenção".
-        $this->assertSame('Manutenção', AgendaTecnico::getNavigationGroup());
+        $this->assertSame('PCM', PainelCriticidade::getNavigationGroup());
+        // AgendaTecnico ("Programação" no menu) tambem esta em "PCM".
+        $this->assertSame('PCM', AgendaTecnico::getNavigationGroup());
 
         // Configuracoes: Logs de Atividade exige feature propria.
         $this->assertFalse(UserActivityLogResource::canViewAny());

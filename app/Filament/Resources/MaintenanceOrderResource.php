@@ -41,7 +41,7 @@ class MaintenanceOrderResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
-    protected static ?string $navigationGroup = 'Manutenção';
+    protected static ?string $navigationGroup = 'PCM';
 
     protected static ?string $navigationLabel = 'Ordens de Serviço';
 

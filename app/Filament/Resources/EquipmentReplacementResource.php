@@ -33,7 +33,7 @@ class EquipmentReplacementResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-arrow-path';
 
-    protected static ?string $navigationGroup = 'Manutenção';
+    protected static ?string $navigationGroup = 'PCM';
 
     protected static ?int $navigationSort = 5;
 

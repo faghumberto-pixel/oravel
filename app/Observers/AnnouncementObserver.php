@@ -5,6 +5,8 @@ namespace App\Observers;
 use App\Models\Announcement;
 use App\Models\User;
 use App\Notifications\AnnouncementNotification;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 /**
  * Ao criar um aviso (ja ativo), notifica de imediato os usuarios do
@@ -37,7 +39,22 @@ class AnnouncementObserver
             ->get();
 
         foreach ($users as $user) {
-            $user->notify(new AnnouncementNotification($announcement));
+            // O canal 'mail' da AnnouncementNotification envia sincrono
+            // (QUEUE_CONNECTION=sync) -- uma falha de SMTP pra 1 usuario
+            // (endereco invalido, limite de bounce do provedor, etc) nao
+            // pode travar o aviso pros outros nem impedir o Announcement
+            // de ser criado. Descoberto 2026-07-25: limite de bounce da
+            // Titan Email interrompeu a criacao de avisos globais no meio
+            // do loop.
+            try {
+                $user->notify(new AnnouncementNotification($announcement));
+            } catch (Throwable $e) {
+                Log::warning('Falha ao notificar usuario sobre aviso', [
+                    'announcement_id' => $announcement->id,
+                    'user_id' => $user->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
     }
 }
