@@ -65,7 +65,11 @@
              NAO tem efeito aqui: o Vite nao builda neste ambiente (Node
              desatualizado), entao o CSS compilado em public/build so'
              contem as classes que ja existiam ANTES desta sessao. --}}
-        <div class="fi-oravel-topbar-row1 hidden bg-black px-4 md:px-6 lg:flex lg:items-center lg:px-8">
+        {{-- bg-stone-900 (nao bg-black) -- preto puro destoava do resto do
+             tema, que e' quente (creme/laranja/stone), nao frio. Mesmo
+             cinza-quente ja declarado como padrao do painel em
+             AdminPanelProvider::colors() (Color::Stone). --}}
+        <div class="fi-oravel-topbar-row1 hidden bg-stone-900 px-4 md:px-6 lg:flex lg:items-center lg:px-8">
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_START) }}
         </div>
 
