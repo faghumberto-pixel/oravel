@@ -1,3 +1,13 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
 @config 'tailwind.config.js';
+
+/* Titulo grande de pagina removido em toda tela do painel admin (pedido do
+   usuario, 2026-07-27) -- so' o <h1 class="fi-header-heading"> (components/
+   header/index.blade.php do pacote filament/filament), nao o resto do
+   cabecalho: botoes de acao (Nova Ordem de Servico, Exportar, filtros etc.)
+   ficam no mesmo <header>, ao lado do h1, e continuam funcionando
+   normalmente. Breadcrumb tambem mantido. */
+.fi-header-heading {
+    display: none;
+}
