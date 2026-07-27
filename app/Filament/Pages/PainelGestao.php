@@ -39,6 +39,17 @@ class PainelGestao extends Page
         return MaxWidth::Full;
     }
 
+    // Titulo grande "Painel de Controle" removido (pedido do usuario,
+    // 2026-07-27) -- ja tem o mesmo texto, menor, dentro do cabecalho
+    // escuro compacto logo abaixo (ver painel-gestao.blade.php). Retornar
+    // vazio some com o bloco de heading inteiro (components/page/index.
+    // blade.php so' renderiza <x-filament-panels::header> quando getHeading()
+    // nao e' vazio), nao so' o texto.
+    public function getHeading(): string
+    {
+        return '';
+    }
+
     public $activeTab = 'gestao';
 
     public function selectTab($tab)
