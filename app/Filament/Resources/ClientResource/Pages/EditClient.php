@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\ClientResource\Pages;
 
+use App\Filament\Pages\CaixaDeEmail;
 use App\Filament\Resources\ClientResource;
+use App\Models\Client;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -13,6 +15,17 @@ class EditClient extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('enviar_email')
+                ->label('Enviar E-mail')
+                ->icon('heroicon-o-envelope')
+                ->color('gray')
+                ->visible(fn (Client $record) => filled($record->email))
+                ->url(fn (Client $record) => CaixaDeEmail::getUrl([
+                    'to' => $record->email,
+                    'related_type' => Client::class,
+                    'related_id' => $record->id,
+                ])),
+
             Actions\DeleteAction::make(),
         ];
     }

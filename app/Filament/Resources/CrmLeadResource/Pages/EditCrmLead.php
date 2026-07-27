@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\CrmLeadResource\Pages;
 
+use App\Filament\Pages\CaixaDeEmail;
 use App\Filament\Resources\AIAnalysisResource;
 use App\Filament\Resources\CrmLeadResource;
 use App\Models\AIAnalysis;
+use App\Models\CrmLead;
 use App\Services\CommercialLeadAnalysisService;
 use App\Support\Tenancy;
 use Filament\Actions;
@@ -19,6 +21,17 @@ class EditCrmLead extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('enviar_email')
+                ->label('Enviar E-mail')
+                ->icon('heroicon-o-envelope')
+                ->color('gray')
+                ->visible(fn (CrmLead $record) => filled($record->email))
+                ->url(fn (CrmLead $record) => CaixaDeEmail::getUrl([
+                    'to' => $record->email,
+                    'related_type' => CrmLead::class,
+                    'related_id' => $record->id,
+                ])),
+
             Actions\Action::make('analisar_ia')
                 ->label('Analisar risco com IA')
                 ->color('gray')

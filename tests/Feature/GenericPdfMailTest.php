@@ -48,6 +48,33 @@ class GenericPdfMailTest extends TestCase
         });
     }
 
+    public function test_mail_attaches_generic_files_alongside_pdf(): void
+    {
+        Mail::fake();
+
+        Mail::to('cliente@exemplo.com.br')->send(new GenericPdfMail(
+            subjectLine: 'Com anexos genéricos',
+            greeting: 'Olá!',
+            bodyText: 'Segue.',
+            pdfContent: '%PDF-1.4 conteudo fake',
+            pdfFilename: 'laudo.pdf',
+            extraAttachments: [
+                ['content' => 'conteudo do arquivo 1', 'filename' => 'foto1.jpg', 'mime' => 'image/jpeg'],
+                ['content' => 'conteudo do arquivo 2', 'filename' => 'planilha.xlsx', 'mime' => null],
+            ],
+        ));
+
+        Mail::assertSent(GenericPdfMail::class, function (GenericPdfMail $mail) {
+            return $mail->hasAttachment(
+                Attachment::fromData(fn () => '%PDF-1.4 conteudo fake', 'laudo.pdf')->withMime('application/pdf')
+            ) && $mail->hasAttachment(
+                Attachment::fromData(fn () => 'conteudo do arquivo 1', 'foto1.jpg')->withMime('image/jpeg')
+            ) && $mail->hasAttachment(
+                Attachment::fromData(fn () => 'conteudo do arquivo 2', 'planilha.xlsx')
+            );
+        });
+    }
+
     public function test_mail_has_no_attachment_when_pdf_not_provided(): void
     {
         $mail = new GenericPdfMail(

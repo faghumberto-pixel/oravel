@@ -29,6 +29,16 @@ class GenericPdfMail extends Mailable
     use Queueable;
     use SerializesModels;
 
+    /**
+     * @param  array<int, array{content: string, filename: string, mime?: ?string}>  $extraAttachments
+     *         Anexos genericos adicionais (alem do pdfContent unico abaixo) --
+     *         cada item ja vem com o conteudo em memoria, mesmo esquema do
+     *         pdfContent. Usado pela Caixa de E-mail, que pode mandar
+     *         varios arquivos/imagens de uma vez. Nome diferente de
+     *         "attachments" de proposito -- Illuminate\Mail\Mailable ja
+     *         declara uma propriedade protegida "$attachments" internamente
+     *         (acumulada durante o build), reusar o nome quebra a classe.
+     */
     public function __construct(
         public string $subjectLine,
         public string $greeting,
@@ -37,6 +47,7 @@ class GenericPdfMail extends Mailable
         public ?string $pdfFilename = null,
         public ?string $senderDisplayName = null,
         public ?string $replyToAddress = null,
+        public array $extraAttachments = [],
     ) {}
 
     public function envelope(): Envelope
@@ -66,13 +77,23 @@ class GenericPdfMail extends Mailable
      */
     public function attachments(): array
     {
-        if (! $this->pdfContent) {
-            return [];
+        $attachments = [];
+
+        if ($this->pdfContent) {
+            $attachments[] = Attachment::fromData(fn () => $this->pdfContent, $this->pdfFilename ?? 'documento.pdf')
+                ->withMime('application/pdf');
         }
 
-        return [
-            Attachment::fromData(fn () => $this->pdfContent, $this->pdfFilename ?? 'documento.pdf')
-                ->withMime('application/pdf'),
-        ];
+        foreach ($this->extraAttachments as $attachment) {
+            $item = Attachment::fromData(fn () => $attachment['content'], $attachment['filename']);
+
+            if (! empty($attachment['mime'])) {
+                $item = $item->withMime($attachment['mime']);
+            }
+
+            $attachments[] = $item;
+        }
+
+        return $attachments;
     }
 }

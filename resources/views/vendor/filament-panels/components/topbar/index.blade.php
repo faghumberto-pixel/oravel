@@ -282,6 +282,21 @@
                         ])
                     @endif
 
+                    {{-- Caixa de E-mail: so' icone, depois do sino (pedido do
+                         usuario 2026-07-27) -- a Page tem
+                         shouldRegisterNavigation=false, entao nao aparece de
+                         novo no menu normal. Mesmo estilo do botao da lupa
+                         (livewire/screen-search.blade.php). --}}
+                    <a
+                        href="{{ \App\Filament\Pages\CaixaDeEmail::getUrl() }}"
+                        class="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition hover:bg-white/5 hover:text-gray-200"
+                        title="Caixa de E-mail"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                        </svg>
+                    </a>
+
                     <x-filament-panels::user-menu />
                 @endif
             </div>
