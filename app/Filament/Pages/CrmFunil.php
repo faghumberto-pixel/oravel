@@ -67,19 +67,33 @@ class CrmFunil extends Page
     }
 
     /**
-     * Largura de cada faixa (%) proporcional a quantidade de leads no
-     * estagio, com piso de 20% pra faixas vazias nao sumirem da piramide.
+     * Largura de cada faixa (%), afunilando por posicao no funil (base larga
+     * no topo, ponta estreita embaixo) -- nao pela quantidade de leads.
+     * Contagem de leads por estagio raramente decresce estagio a estagio
+     * num CRM real (lead pode entrar direto em "qualificado", por exemplo),
+     * entao largura proporcional a contagem virava um bloco quadrado
+     * sempre que os numeros nao caiam em ordem. O numero real de leads e
+     * valor continuam exibidos como texto em cada faixa, so a largura que
+     * e' fixa por posicao.
      */
     public function getFunnelWidths(): array
     {
-        $grouped = $this->getLeadsByStage();
-        $counts = collect($this->getFunnelStages())
-            ->keys()
-            ->mapWithKeys(fn ($stage) => [$stage => $grouped->get($stage, collect())->count()]);
+        $stages = array_keys($this->getFunnelStages());
+        $total = count($stages);
 
-        $max = max($counts->max(), 1);
+        $topWidth = 100;
+        $bottomWidth = 34;
 
-        return $counts->map(fn ($count) => $count > 0 ? max(20, (int) round(($count / $max) * 100)) : 20)->all();
+        if ($total <= 1) {
+            return collect($stages)->mapWithKeys(fn ($stage) => [$stage => $topWidth])->all();
+        }
+
+        return collect($stages)->mapWithKeys(function ($stage, $index) use ($total, $topWidth, $bottomWidth) {
+            $ratio = $index / ($total - 1);
+            $width = $topWidth - ($ratio * ($topWidth - $bottomWidth));
+
+            return [$stage => (int) round($width)];
+        })->all();
     }
 
     /**

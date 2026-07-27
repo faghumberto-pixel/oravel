@@ -79,6 +79,32 @@ class CrmFunilTest extends TestCase
             ->assertSee('Lead Perdido');
     }
 
+    public function test_funnel_widths_always_taper_regardless_of_lead_counts(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+
+        // Convertido tem MAIS leads que os estagios anteriores -- contagem
+        // nao decresce estagio a estagio, cenario real que fazia a largura
+        // proporcional a contagem virar um bloco quadrado.
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'A', 'stage' => CrmLead::STAGE_NOVO]);
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'B', 'stage' => CrmLead::STAGE_CONTATO_INICIADO]);
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'C', 'stage' => CrmLead::STAGE_QUALIFICADO]);
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'D1', 'stage' => CrmLead::STAGE_CONVERTIDO]);
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'D2', 'stage' => CrmLead::STAGE_CONVERTIDO]);
+        CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'D3', 'stage' => CrmLead::STAGE_CONVERTIDO]);
+
+        $this->actingAs($admin);
+
+        $widths = Livewire::test(CrmFunil::class)->instance()->getFunnelWidths();
+        $ordered = array_values($widths);
+
+        $this->assertSame(100, $ordered[0]);
+
+        for ($i = 1; $i < count($ordered); $i++) {
+            $this->assertLessThan($ordered[$i - 1], $ordered[$i], 'A largura deve estritamente diminuir estagio a estagio, formando um triangulo invertido.');
+        }
+    }
+
     public function test_moving_to_perdido_requires_reason(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();
