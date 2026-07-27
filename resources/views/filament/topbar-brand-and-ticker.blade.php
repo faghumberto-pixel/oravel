@@ -15,7 +15,7 @@
         x-data="{ now: new Date() }"
         x-init="setInterval(() => now = new Date(), 1000)"
         x-text="now.toLocaleString('pt-BR', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })"
-        class="text-xs font-medium capitalize text-gray-300"
+        class="text-[11px] font-medium capitalize text-gray-300"
     ></span>
 </div>
 
@@ -72,7 +72,7 @@
                 x-transition:leave="transition ease-in duration-300"
                 x-transition:leave-start="opacity-100 translate-x-0"
                 x-transition:leave-end="opacity-0 translate-x-3"
-                class="flex min-w-0 items-center gap-x-2 text-sm font-medium text-amber-400"
+                class="flex min-w-0 items-center gap-x-2 text-xs font-medium text-amber-400"
             >
                 <span class="truncate">
                     <strong x-text="item.title"></strong>: <span x-text="item.message"></span>
