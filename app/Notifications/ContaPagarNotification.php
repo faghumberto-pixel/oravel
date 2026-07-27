@@ -39,6 +39,12 @@ class ContaPagarNotification extends Notification
 
         return [
             'id' => Str::uuid()->toString(),
+            // 'format' => 'filament' e' obrigatorio -- sem ele, o sino
+            // (DatabaseNotifications::getNotificationsQuery(), que filtra
+            // por 'data->format'='filament') nunca mostra esta notificacao,
+            // mesmo com a linha certinha no banco. So' Notification::make()
+            // ->sendToDatabase() (Filament) seta isso sozinho.
+            'format' => 'filament',
             'title' => $config['title'],
             'body' => $config['body'],
             'status' => $config['status'],

@@ -46,6 +46,12 @@ class AnnouncementNotification extends Notification
 
         return [
             'id' => (string) Str::uuid(),
+            // 'format' => 'filament' e' obrigatorio -- sem ele, o sino
+            // (DatabaseNotifications::getNotificationsQuery(), que filtra
+            // por 'data->format'='filament') nunca mostra esta notificacao,
+            // mesmo com a linha certinha no banco. So' Notification::make()
+            // ->sendToDatabase() (Filament) seta isso sozinho.
+            'format' => 'filament',
             'title' => $this->announcement->title,
             'body' => $this->announcement->message,
             'status' => $status,

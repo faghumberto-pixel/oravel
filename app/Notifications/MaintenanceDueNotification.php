@@ -23,6 +23,12 @@ class MaintenanceDueNotification extends Notification
     {
         return [
             'id' => (string) Str::uuid(),
+            // 'format' => 'filament' e' obrigatorio -- sem ele, o sino
+            // (DatabaseNotifications::getNotificationsQuery(), que filtra
+            // por 'data->format'='filament') nunca mostra esta notificacao,
+            // mesmo com a linha certinha no banco. So' Notification::make()
+            // ->sendToDatabase() (Filament) seta isso sozinho.
+            'format' => 'filament',
             'title' => 'Preventiva vencida: '.$this->asset->name,
             'body' => $this->body(),
             'status' => 'warning',
