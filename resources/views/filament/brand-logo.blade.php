@@ -18,12 +18,12 @@
         <div class="text-xl font-bold tracking-tight text-white">O<span style="color: #E8541A">r</span>avel</div>
 
         @if($tenant)
-            <span class="text-sm font-bold tracking-tight text-primary-500 truncate max-w-[8rem]">{{ $tenant->name }}</span>
+            <span class="text-xs font-bold tracking-tight text-primary-500 truncate max-w-[16rem]">{{ $tenant->name }}</span>
         @endif
     </div>
 
     @if($tenant && $segmentLabel)
-        <span class="flex items-center gap-1.5 text-[11px] font-medium tracking-wide text-gray-400 truncate max-w-[12rem]">
+        <span class="flex items-center gap-1.5 text-[11px] font-medium tracking-wide text-gray-400 truncate max-w-[16rem]">
             <span class="inline-block h-1.5 w-1.5 rounded-full {{ $segmentDotClass }} shrink-0"></span>
             {{ $segmentLabel }}
         </span>

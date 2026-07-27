@@ -40,7 +40,7 @@
                             {{ $this->selectedUser ? Illuminate\Support\Str::upper(Illuminate\Support\Str::substr($this->selectedUser['name'], 0, 1)) : '💬' }}
                         </span>
                     @endif
-                    <span class="text-sm font-bold text-white truncate">{{ $this->selectedUser['name'] ?? 'Mensagens' }}</span>
+                    <span class="text-xs font-bold text-white truncate">{{ $this->selectedUser['name'] ?? 'Mensagens' }}</span>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
                     @if($this->totalUnread > 0)

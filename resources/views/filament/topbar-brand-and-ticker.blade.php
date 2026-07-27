@@ -15,7 +15,7 @@
         x-data="{ now: new Date() }"
         x-init="setInterval(() => now = new Date(), 1000)"
         x-text="now.toLocaleString('pt-BR', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })"
-        class="text-sm font-medium capitalize text-gray-300"
+        class="text-xs font-medium capitalize text-gray-300"
     ></span>
 </div>
 
