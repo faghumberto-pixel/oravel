@@ -65,19 +65,19 @@
              NAO tem efeito aqui: o Vite nao builda neste ambiente (Node
              desatualizado), entao o CSS compilado em public/build so'
              contem as classes que ja existiam ANTES desta sessao. --}}
-        {{-- bg-stone-900 (nao bg-black) -- preto puro destoava do resto do
-             tema, que e' quente (creme/laranja/stone), nao frio. Mesmo
-             cinza-quente ja declarado como padrao do painel em
-             AdminPanelProvider::colors() (Color::Stone). --}}
-        <div class="fi-oravel-topbar-row1 hidden bg-stone-900 px-4 md:px-6 lg:flex lg:items-center lg:px-8">
+        {{-- Transparente (pedido do usuario 2026-07-26): a barra de menu
+             (row2, logo abaixo) passou a levar o gradiente navy, entao o
+             topbar (row1) virou transparente pra nao competir com ele. --}}
+        <div class="fi-oravel-topbar-row1 hidden bg-transparent px-4 md:px-6 lg:flex lg:items-center lg:px-8">
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_START) }}
         </div>
 
         {{-- Linha 2: o menu de verdade -- sticky sozinho, sempre visivel.
-             Transparente (pedido do usuario 2026-07-26): topo preto, barra
-             de menu transparente, footer transparente. --}}
+             Gradiente navy (2026-07-26, pedido do usuario): mesma cor da
+             barra de titulo da Central de Artefatos (#0f172a -> #1a2438),
+             pra manter a mesma identidade visual entre as duas telas. --}}
         <nav
-            class="sticky top-0 z-20 flex h-16 items-center gap-x-4 bg-transparent px-4 shadow-sm ring-1 ring-white/10 md:px-6 lg:px-8"
+            class="sticky top-0 z-20 flex h-16 items-center gap-x-4 bg-gradient-to-br from-[#0f172a] to-[#1a2438] px-4 shadow-sm ring-1 ring-white/10 md:px-6 lg:px-8"
         >
             @if (filament()->hasNavigation())
                 <x-filament::icon-button
