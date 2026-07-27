@@ -65,17 +65,15 @@
              NAO tem efeito aqui: o Vite nao builda neste ambiente (Node
              desatualizado), entao o CSS compilado em public/build so'
              contem as classes que ja existiam ANTES desta sessao. --}}
-        <div class="fi-oravel-topbar-row1 hidden bg-stone-900 px-4 md:px-6 lg:flex lg:items-center lg:px-8">
+        <div class="fi-oravel-topbar-row1 hidden bg-black px-4 md:px-6 lg:flex lg:items-center lg:px-8">
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_START) }}
         </div>
 
         {{-- Linha 2: o menu de verdade -- sticky sozinho, sempre visivel.
-             bg-[#121826] (o mesmo azul-marinho que a linha 1 ja usava) --
-             pedido explicito do usuario (2026-07-26): topo em cinza, barra
-             de menu no azul do sistema, footer preto (3 cores distintas,
-             nao tudo igual). --}}
+             Transparente (pedido do usuario 2026-07-26): topo preto, barra
+             de menu transparente, footer transparente. --}}
         <nav
-            class="sticky top-0 z-20 flex h-16 items-center gap-x-4 bg-[#121826] px-4 shadow-sm ring-1 ring-white/10 md:px-6 lg:px-8"
+            class="sticky top-0 z-20 flex h-16 items-center gap-x-4 bg-transparent px-4 shadow-sm ring-1 ring-white/10 md:px-6 lg:px-8"
         >
             @if (filament()->hasNavigation())
                 <x-filament::icon-button
