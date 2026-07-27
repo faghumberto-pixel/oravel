@@ -24,10 +24,18 @@ class AnthropicApiClient
     private const API_URL = 'https://api.anthropic.com/v1/messages';
 
     /**
+     * Default subido de 1500 pra 4096 (2026-07-27): analise de estoque (e
+     * potencialmente qualquer outro servico que compartilha este client)
+     * podia gerar uma resposta longa o bastante (resumo + varios itens em
+     * prioridades_compra/recomendacoes) pra estourar 1500 tokens no meio do
+     * JSON -- o texto vinha cortado, parseJson() rejeitava (json_decode
+     * invalido) e a analise falhava com "formato nao reconhecivel", mesmo
+     * a IA tendo respondido corretamente ate' o limite bater.
+     *
      * @param  array<int, array<string, mixed>>|string  $userContent
      * @return array{ok: bool, text: ?string, error: ?string}
      */
-    public function send(string $systemPrompt, array|string $userContent, int $maxTokens = 1500): array
+    public function send(string $systemPrompt, array|string $userContent, int $maxTokens = 4096): array
     {
         $apiKey = config('services.anthropic.key');
 
