@@ -76,6 +76,30 @@ class FunilVendas extends Page
         return SalesLead::where('pipeline_stage', SalesLead::STAGE_PERDIDO)->count();
     }
 
+    /**
+     * Soma do valor estimado de todo lead ainda aberto (nao Ganho/Perdido)
+     * -- "quanto tem em jogo" no funil agora, estilo resumo de pipeline do
+     * Pipedrive (pedido do usuario 2026-07-28, "tudo modificado").
+     */
+    public function getOpenPipelineValue(): float
+    {
+        return (float) SalesLead::whereNotIn('pipeline_stage', [SalesLead::STAGE_GANHO, SalesLead::STAGE_PERDIDO])
+            ->sum('estimated_contract_value');
+    }
+
+    public function getAverageTicket(): ?float
+    {
+        $won = SalesLead::where('pipeline_stage', SalesLead::STAGE_GANHO)
+            ->whereNotNull('estimated_contract_value')
+            ->get();
+
+        if ($won->isEmpty()) {
+            return null;
+        }
+
+        return (float) $won->avg('estimated_contract_value');
+    }
+
     public function getConversionRate(array $rows): ?float
     {
         $first = $rows[0]['count'] ?? 0;

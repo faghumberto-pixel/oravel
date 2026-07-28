@@ -34,18 +34,25 @@ class SalesCrmStatsWidget extends BaseWidget
                 ->orWhere('last_interaction_at', '<=', now()->subDays(3)))
             ->count();
 
+        // Icones nos stats -- pedido do usuario 2026-07-28 (estilo
+        // Pipedrive: metrica sempre acompanhada de um icone, nao so' numero
+        // pelado).
         return [
             Stat::make('Tempo Médio de Conversão', $tempoMedioDias !== null ? $tempoMedioDias.' dias' : '—')
                 ->description('Da criação até o fechamento (leads ganhos)')
+                ->descriptionIcon('heroicon-m-clock')
                 ->color('success'),
             Stat::make('Taxa de Perda por Estágio', $taxaPerda !== null ? $taxaPerda.'%' : '—')
                 ->description('Sobre o total de leads fechados')
+                ->descriptionIcon('heroicon-m-arrow-trending-down')
                 ->color('danger'),
             Stat::make('Projeção de Receita no Funil', 'R$ '.number_format($projecao, 2, ',', '.'))
                 ->description('Ponderada pela probabilidade de cada estágio')
+                ->descriptionIcon('heroicon-m-banknotes')
                 ->color('primary'),
             Stat::make('Leads Ociosos', $ociosos)
                 ->description('Sem interação há 3+ dias')
+                ->descriptionIcon($ociosos > 0 ? 'heroicon-m-exclamation-triangle' : 'heroicon-m-check-circle')
                 ->color($ociosos > 0 ? 'warning' : 'success'),
         ];
     }

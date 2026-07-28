@@ -14,10 +14,15 @@ use Illuminate\Database\Eloquent\Builder;
 class PlanResource extends Resource
 {
     protected static ?string $model = Plan::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
+
     protected static ?string $navigationGroup = 'Gestão SaaS';
+
     protected static ?string $navigationLabel = 'Planos de Assinatura';
+
     protected static ?string $pluralModelLabel = 'Planos';
+
     protected static bool $isScopedToTenant = false;
 
     public static function getEloquentQuery(): Builder
@@ -67,8 +72,8 @@ class PlanResource extends Resource
                     Forms\Components\Select::make('discount_type')
                         ->label('Tipo de Desconto')
                         ->options([
-                            'fixed' => 'Valor Fixo (R$)', 
-                            'percentage' => 'Porcentagem (%)'
+                            'fixed' => 'Valor Fixo (R$)',
+                            'percentage' => 'Porcentagem (%)',
                         ]),
 
                     Forms\Components\TextInput::make('discount_value')
@@ -94,8 +99,8 @@ class PlanResource extends Resource
                         ->options(Plan::getAvailableFeaturesOptions())
                         ->bulkToggleable()
                         ->required(),
-                        // REMOVIDOS os ganchos manuais de hidratação e desidratação.
-                        // O Filament gerencia nativamente o array linear com o cast do Laravel 12.
+                    // REMOVIDOS os ganchos manuais de hidratação e desidratação.
+                    // O Filament gerencia nativamente o array linear com o cast do Laravel 12.
                 ]),
         ]);
     }
@@ -103,12 +108,29 @@ class PlanResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('name')->label('Plano')->searchable(),
-            Tables\Columns\TextColumn::make('level')->label('Nível'),
-            Tables\Columns\TextColumn::make('base_price')->label('Preço Tabela')->money('BRL'),
+            Tables\Columns\TextColumn::make('name')->label('Plano')->weight('bold')->searchable(),
+            // Cor por nivel (1 Track / 2 Flow / 3 Alpha), nao mais texto
+            // pelado -- pedido do usuario 2026-07-28 ("mesmo padrao, mais
+            // colorido e vivo").
+            Tables\Columns\TextColumn::make('level')
+                ->label('Nível')
+                ->badge()
+                ->formatStateUsing(fn (int $state) => match ($state) {
+                    1 => 'Track',
+                    2 => 'Flow',
+                    3 => 'Alpha',
+                    default => (string) $state,
+                })
+                ->color(fn (int $state) => match ($state) {
+                    1 => 'gray',
+                    2 => 'crmBlue',
+                    3 => 'crmPurple',
+                    default => 'gray',
+                }),
+            Tables\Columns\TextColumn::make('base_price')->label('Preço Tabela')->money('BRL')->weight('bold'),
             Tables\Columns\IconColumn::make('is_active')->label('Ativo')->boolean(),
         ])
-        ->actions([Tables\Actions\EditAction::make()]);
+            ->actions([Tables\Actions\EditAction::make()]);
     }
 
     public static function getPages(): array

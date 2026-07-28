@@ -10,13 +10,16 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
 /**
- * Quadro por estagio do CRM Comercial, mesmo estilo visual do Kanban do
- * Patio (App\Filament\Pages\MaintenanceKanban) -- colunas por estagio,
- * card por lead. Movimentacao entre os 4 estagios abertos e' livre (select
- * no card, SalesLead::moveToStage()) -- pedido explicito do usuario
- * revertendo a trava original ("evitar avanco intuitivo"). Ganho/Perdido
- * continuam so' pelas acoes dedicadas em SalesLeadResource (Converter/
- * Marcar Perdido), que exigem dado real. O funil "de verdade" (visual
+ * Quadro por estagio do CRM Comercial, estilo Pipedrive (pedido explicito
+ * do usuario 2026-07-28: cards com avatar do responsavel, valor total por
+ * coluna, drag-and-drop suave via SortableJS -- ver resources/js/
+ * central-kanban.js). Movimentacao entre os 4 estagios abertos e' livre
+ * (arrastar o card OU o <select> de fallback acessivel, ambos chamam
+ * moveToStage() abaixo) -- pedido explicito do usuario revertendo a trava
+ * original ("evitar avanco intuitivo"). Ganho/Perdido continuam so' pelas
+ * acoes dedicadas em SalesLeadResource (Converter/Marcar Perdido), que
+ * exigem dado real -- a coluna Ganho no quadro e' so' leitura (nao aceita
+ * soltar card, ver data-accepts-drop na view). O funil "de verdade" (visual
  * afunilado) fica em App\Filament\Central\Pages\FunilVendas.
  */
 class Kanban extends Page

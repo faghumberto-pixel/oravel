@@ -20,6 +20,8 @@
         $rows = $this->getFunnelStages();
         $lostCount = $this->getLostCount();
         $conversionRate = $this->getConversionRate($rows);
+        $openPipelineValue = $this->getOpenPipelineValue();
+        $averageTicket = $this->getAverageTicket();
         // Taxa de conversao colorida por faixa (nao mais cinza fixo) --
         // pedido do usuario 2026-07-28 ("mais cor nas fontes"). Faixas sao
         // as mesmas usadas informalmente em funil B2B (>=20% saudavel,
@@ -66,16 +68,48 @@
             @endforeach
         </div>
 
-        <div class="mt-8 grid grid-cols-2 gap-4 max-w-2xl mx-auto">
-            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-center">
-                <p class="text-[10px] font-black uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">Taxa de Conversão</p>
+        {{--
+            4 cards (era 2) -- pedido do usuario 2026-07-28 ("mesmo padrao
+            [do resto], mais colorido e vivo"): estilo resumo de pipeline do
+            Pipedrive, valor em jogo e ticket medio ao lado da taxa de
+            conversao/perdidos que ja existiam.
+        --}}
+        <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-center hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-center gap-1.5 mb-1">
+                    <x-heroicon-m-banknotes class="w-3.5 h-3.5 text-emerald-500" />
+                    <p class="text-[10px] font-black uppercase tracking-wide text-gray-400 dark:text-gray-500">Em Pipeline</p>
+                </div>
+                <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400">
+                    R$ {{ number_format($openPipelineValue, 0, ',', '.') }}
+                </p>
+                <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">Soma dos leads abertos</p>
+            </div>
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-center hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-center gap-1.5 mb-1">
+                    <x-heroicon-m-arrow-trending-up class="w-3.5 h-3.5 {{ $conversionColorClass }}" />
+                    <p class="text-[10px] font-black uppercase tracking-wide text-gray-400 dark:text-gray-500">Taxa de Conversão</p>
+                </div>
                 <p class="text-2xl font-black {{ $conversionColorClass }}">
                     {{ $conversionRate !== null ? number_format($conversionRate, 1, ',', '.').'%' : '—' }}
                 </p>
                 <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">Prospecção até Ganho</p>
             </div>
-            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-center">
-                <p class="text-[10px] font-black uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">Perdidos</p>
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-center hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-center gap-1.5 mb-1">
+                    <x-heroicon-m-calculator class="w-3.5 h-3.5 text-blue-500" />
+                    <p class="text-[10px] font-black uppercase tracking-wide text-gray-400 dark:text-gray-500">Ticket Médio</p>
+                </div>
+                <p class="text-2xl font-black text-blue-600 dark:text-blue-400">
+                    {{ $averageTicket !== null ? 'R$ '.number_format($averageTicket, 0, ',', '.') : '—' }}
+                </p>
+                <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">Média dos leads ganhos</p>
+            </div>
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-center hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-center gap-1.5 mb-1">
+                    <x-heroicon-m-x-circle class="w-3.5 h-3.5 text-red-500" />
+                    <p class="text-[10px] font-black uppercase tracking-wide text-gray-400 dark:text-gray-500">Perdidos</p>
+                </div>
                 <p class="text-2xl font-black text-red-600 dark:text-red-400">{{ $lostCount }}</p>
                 <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">Fora do funil acima</p>
             </div>
