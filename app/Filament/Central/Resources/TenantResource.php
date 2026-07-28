@@ -3,9 +3,11 @@
 namespace App\Filament\Central\Resources;
 
 use App\Filament\Central\Resources\TenantResource\Pages;
+use App\Models\Client;
 use App\Models\Plan;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Support\CrmPalette;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -119,10 +121,17 @@ class TenantResource extends Resource
             Tables\Columns\TextColumn::make('name')->label('Empresa')->searchable()->sortable(),
             Tables\Columns\TextColumn::make('slug')->label('Slug')->searchable()->sortable(),
             Tables\Columns\TextColumn::make('plan.name')->label('Plano')->sortable(),
+            Tables\Columns\TextColumn::make('segment')
+                ->label('Segmento')
+                ->badge()
+                ->color(fn (?string $state) => CrmPalette::segment($state)['filament'])
+                ->formatStateUsing(fn (?string $state) => $state ? (Client::nicheLabels()[$state] ?? $state) : null)
+                ->placeholder('—'),
             Tables\Columns\BadgeColumn::make('status')->label('Status')->colors(['success' => 'active', 'warning' => 'trial', 'danger' => 'suspended', 'gray' => 'canceled']),
             Tables\Columns\TextColumn::make('created_at')->label('Criado em')->dateTime('d/m/Y H:i')->sortable(),
         ])->filters([
             Tables\Filters\SelectFilter::make('status')->label('Status')->options(['active' => 'Ativo', 'trial' => 'Teste']),
+            Tables\Filters\SelectFilter::make('segment')->label('Segmento')->options(Client::nicheLabels()),
         ])->actions([
             Tables\Actions\EditAction::make(),
             Tables\Actions\DeleteAction::make(),

@@ -1,11 +1,10 @@
 <x-filament-panels::page>
     {{--
-        Classes de cor literais aqui de proposito -- mesmo motivo
-        documentado em kanban.blade.php: tailwind.config.js so escaneia
-        .blade.php. clip-path e' calculado por linha (a largura reflete
-        quantos leads reais tem em cada estagio, acumulado ate' o final do
-        funil), entao vai via style inline mesmo -- nao tem como isso ser
-        uma classe Tailwind.
+        Cores vêm de App\Support\CrmPalette (fonte única, mesma do Kanban --
+        ver comentário lá). clip-path e' calculado por linha (a largura
+        reflete quantos leads reais tem em cada estagio, acumulado ate' o
+        final do funil), entao vai via style inline mesmo -- nao tem como
+        isso ser uma classe Tailwind.
 
         Visual: piramide invertida de verdade, cor solida (sem
         brilho/gradiente nem alvo -- versao anterior parecia foguete, nao
@@ -21,13 +20,16 @@
         $rows = $this->getFunnelStages();
         $lostCount = $this->getLostCount();
         $conversionRate = $this->getConversionRate($rows);
-        $bandColors = [
-            'prospeccao' => 'bg-slate-600',
-            'contato_qualificado' => 'bg-blue-600',
-            'demonstracao_realizada' => 'bg-purple-600',
-            'proposta_enviada' => 'bg-orange-500',
-            'ganho' => 'bg-emerald-600',
-        ];
+        // Taxa de conversao colorida por faixa (nao mais cinza fixo) --
+        // pedido do usuario 2026-07-28 ("mais cor nas fontes"). Faixas sao
+        // as mesmas usadas informalmente em funil B2B (>=20% saudavel,
+        // 10-20% atencao, <10% critico).
+        $conversionColorClass = match (true) {
+            $conversionRate === null => 'text-gray-400 dark:text-gray-500',
+            $conversionRate >= 20 => 'text-emerald-600 dark:text-emerald-400',
+            $conversionRate >= 10 => 'text-amber-600 dark:text-amber-400',
+            default => 'text-red-600 dark:text-red-400',
+        };
     @endphp
 
     {{--
@@ -47,10 +49,11 @@
                         . (50 + $top / 2) . '% 0%, '
                         . (50 + $bottom / 2) . '% 100%, '
                         . (50 - $bottom / 2) . '% 100%)';
+                    $bandColor = \App\Support\CrmPalette::stage($row['stage'])['bg'];
                 @endphp
                 <a
                     href="{{ $row['url'] }}"
-                    class="relative block w-full h-[150px] -mt-px group {{ $bandColors[$row['stage']] ?? 'bg-gray-600' }} hover:brightness-110 transition-[filter]"
+                    class="relative block w-full h-[150px] -mt-px group {{ $bandColor }} hover:brightness-110 transition-[filter]"
                     style="clip-path: {{ $clipPath }};"
                     title="Ver leads em {{ $row['label'] }}"
                 >
@@ -66,7 +69,7 @@
         <div class="mt-8 grid grid-cols-2 gap-4 max-w-2xl mx-auto">
             <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-center">
                 <p class="text-[10px] font-black uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">Taxa de Conversão</p>
-                <p class="text-2xl font-black text-gray-900 dark:text-gray-50">
+                <p class="text-2xl font-black {{ $conversionColorClass }}">
                     {{ $conversionRate !== null ? number_format($conversionRate, 1, ',', '.').'%' : '—' }}
                 </p>
                 <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">Prospecção até Ganho</p>

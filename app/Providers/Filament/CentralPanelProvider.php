@@ -70,6 +70,19 @@ class CentralPanelProvider extends PanelProvider
                     900 => '30, 41, 59',
                     950 => '15, 23, 42',
                 ],
+                // Cores por estágio/segmento do CRM (App\Support\CrmPalette
+                // é a fonte única -- mudar lá já reflete aqui e no Kanban/
+                // Funil). Registradas aqui pra virarem nomes usáveis direto
+                // em Tables\Columns\*::color('crmBlue') etc, em vez de ficar
+                // preso aos 6 nomes semânticos padrão do Filament.
+                'crmSlate' => Color::Slate,
+                'crmBlue' => Color::Blue,
+                'crmPurple' => Color::Purple,
+                'crmOrange' => Color::Orange,
+                'crmEmerald' => Color::Emerald,
+                'crmPink' => Color::Pink,
+                'crmCyan' => Color::Cyan,
+                'crmAmber' => Color::Amber,
             ])
             // Tema escuro fixo (nao alternavel) -- reforca a mesma
             // referencia visual acima.

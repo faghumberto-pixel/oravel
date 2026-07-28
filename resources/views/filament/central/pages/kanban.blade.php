@@ -1,14 +1,17 @@
 <x-filament-panels::page>
     {{--
-        Classes de cor literais aqui de proposito, nao vindas so' da classe
-        PHP da Page -- tailwind.config.js so escaneia .blade.php (nao
-        app/**/*.php), entao uma classe so e' compilada se aparecer como
-        texto literal em algum arquivo escaneado. MaintenanceKanban usa
-        str_replace('bg-','border-',...) em runtime e SO "funciona" pra
-        border-blue-600 por coincidencia (aparece literal num botao
-        daquele mesmo arquivo) -- as outras cores dele nunca foram
-        realmente compiladas. Aqui cada uma fica literal, sem depender
-        de coincidencia nenhuma.
+        Cores vêm de App\Support\CrmPalette (fonte única, ver comentário lá)
+        -- antes cada Blade tinha seu próprio array de classes Tailwind
+        literais duplicado; agora só existe aqui via PHP, e
+        tailwind.config.js escaneia app/**\/*.php pra compilar mesmo assim.
+
+        Drag-and-drop nativo (HTML5 DnD + Alpine) chamando o MESMO
+        Livewire::moveToStage() que o <select> já usava -- pedido do usuário
+        2026-07-28 ("mais interativo"). O <select> continua existindo como
+        fallback acessível (teclado/leitor de tela), drag é só um atalho
+        visual por cima da mesma validação de servidor (SalesLead::
+        moveToStage() já rejeita Ganho/Perdido como destino, ver catch()
+        abaixo -- soltar lá só mostra a notificação de aviso que já existia).
     --}}
     @php
         $leadsByStage = $this->getLeadsByStage();
@@ -16,43 +19,46 @@
             ->except([\App\Models\SalesLead::STAGE_GANHO, \App\Models\SalesLead::STAGE_PERDIDO]);
         $segmentOptions = \App\Models\Client::nicheLabels();
         $sourceOptions = \App\Models\SalesLead::sourceLabels();
-        $columnColors = [
-            'prospeccao' => 'bg-slate-600',
-            'contato_qualificado' => 'bg-blue-600',
-            'demonstracao_realizada' => 'bg-purple-600',
-            'proposta_enviada' => 'bg-orange-500',
-            'ganho' => 'bg-emerald-600',
-        ];
-        $columnBorderColors = [
-            'prospeccao' => 'border-slate-600',
-            'contato_qualificado' => 'border-blue-600',
-            'demonstracao_realizada' => 'border-purple-600',
-            'proposta_enviada' => 'border-orange-500',
-            'ganho' => 'border-emerald-600',
-        ];
     @endphp
 
-    <div class="flex flex-row gap-4 overflow-x-auto pb-4 custom-scrollbar min-h-[70vh]">
+    <div x-data="{ dragOverStage: null }" class="flex flex-row gap-4 overflow-x-auto pb-4 custom-scrollbar min-h-[70vh]">
         @foreach($this->getColumns() as $stageId => $stageLabel)
             @php
                 $leads = $leadsByStage->get($stageId, collect());
-                $headerBg = $columnColors[$stageId] ?? 'bg-gray-600';
-                $sideBorder = $columnBorderColors[$stageId] ?? 'border-gray-600';
+                $colors = \App\Support\CrmPalette::stage($stageId);
             @endphp
 
-            <div class="flex-1 min-w-[230px] max-w-[280px] bg-gray-50 dark:bg-gray-800/60 rounded-xl border border-gray-200 dark:border-gray-700/60 flex flex-col shadow-sm overflow-hidden">
-                <div class="{{ $headerBg }} px-3 py-3 shadow-sm">
+            <div
+                class="flex-1 min-w-[230px] max-w-[280px] bg-gray-50 dark:bg-gray-800/60 rounded-xl border flex flex-col shadow-sm overflow-hidden transition-colors"
+                :class="dragOverStage === @js($stageId) ? '{{ $colors['border'] }} ring-2 ring-offset-1 dark:ring-offset-gray-900 {{ $colors['ring'] }}' : 'border-gray-200 dark:border-gray-700/60'"
+                @dragover.prevent="dragOverStage = @js($stageId)"
+                @dragleave="dragOverStage = null"
+                @drop.prevent="
+                    dragOverStage = null;
+                    $wire.moveToStage($event.dataTransfer.getData('text/plain'), @js($stageId));
+                "
+            >
+                <div class="{{ $colors['bg'] }} px-3 py-3 shadow-sm flex items-center justify-between gap-2">
                     <h3 class="text-[11px] font-black uppercase tracking-wide text-white leading-tight">{{ $stageLabel }}</h3>
-                    <span class="text-[11px] text-white/90 font-bold">{{ $leads->count() }} {{ $leads->count() === 1 ? 'lead' : 'leads' }}</span>
+                    <span class="text-[11px] text-white bg-white/20 rounded-full px-2 py-0.5 font-black shrink-0">{{ $leads->count() }}</span>
                 </div>
 
                 <div class="p-2.5 space-y-2.5 flex-1 max-h-[68vh] overflow-y-auto vertical-scrollbar">
                     @forelse($leads as $lead)
-                        <div wire:key="funil-card-{{ $lead->id }}-{{ $lead->pipeline_stage }}"
-                             class="bg-white dark:bg-gray-900 p-3 rounded-lg border-l-4 {{ $sideBorder }} border-t border-r border-b border-gray-200 dark:border-gray-700 hover:shadow-md transition-all shadow-sm group">
+                        @php $segColors = \App\Support\CrmPalette::segment($lead->segment); @endphp
+                        <div
+                            wire:key="funil-card-{{ $lead->id }}-{{ $lead->pipeline_stage }}"
+                            @if($lead->isOpen())
+                                draggable="true"
+                                @dragstart="$event.dataTransfer.setData('text/plain', '{{ $lead->id }}'); $event.dataTransfer.effectAllowed = 'move'"
+                                @dragend="dragOverStage = null"
+                            @endif
+                            class="bg-white dark:bg-gray-900 p-3 rounded-lg border-l-4 {{ $colors['border'] }} border-t border-r border-b border-gray-200 dark:border-gray-700 hover:shadow-md transition-all shadow-sm group {{ $lead->isOpen() ? 'cursor-grab active:cursor-grabbing' : '' }}"
+                        >
                             <div class="flex justify-between items-start mb-1.5 gap-2">
-                                <span class="text-[11px] font-mono font-bold text-gray-400 dark:text-gray-500 truncate max-w-[70px]">
-                                    #{{ substr($lead->id, 0, 8) }}
+                                <span class="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wide {{ $segColors['text'] }} {{ $segColors['soft'] }} rounded-full px-2 py-0.5 truncate max-w-[110px]">
+                                    <span class="w-1.5 h-1.5 rounded-full {{ $segColors['dot'] }} shrink-0"></span>
+                                    <span class="truncate">{{ $segmentOptions[$lead->segment] ?? $lead->segment ?? 'Sem segmento' }}</span>
                                 </span>
                                 <input
                                     type="text"
@@ -61,7 +67,7 @@
                                     placeholder="Segmento"
                                     wire:key="segment-input-{{ $lead->id }}-{{ $lead->segment }}"
                                     wire:change="updateSegment('{{ $lead->id }}', $event.target.value)"
-                                    class="text-[9px] uppercase font-bold rounded bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-0 py-0.5 px-1.5 focus:ring-1 focus:ring-primary-500 w-24 text-right"
+                                    class="sr-only focus:not-sr-only text-[9px] uppercase font-bold rounded bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-0 py-0.5 px-1.5 focus:ring-1 focus:ring-primary-500 w-24 text-right"
                                 />
                                 <datalist id="segment-options-{{ $lead->id }}">
                                     @foreach($segmentOptions as $segmentLabel)
@@ -71,7 +77,7 @@
                             </div>
 
                             <a href="{{ \App\Filament\Central\Resources\SalesLeadResource::getUrl('edit', ['record' => $lead]) }}" class="block">
-                                <h4 class="text-base font-black text-gray-900 dark:text-gray-50 leading-tight mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                                <h4 class="text-base font-black text-gray-900 dark:text-gray-50 leading-tight mb-2 group-hover:{{ $colors['text'] }} transition-colors">
                                     {{ $lead->company_name }}
                                 </h4>
 
@@ -82,7 +88,7 @@
                                 <p class="text-[11px] text-gray-500 dark:text-gray-400 font-semibold mb-1.5 truncate">
                                     {{ $lead->assignedUser?->name ? explode(' ', $lead->assignedUser->name)[0] : 'Sem responsável' }}
                                     @if($lead->estimated_contract_value)
-                                        · <span class="text-gray-700 dark:text-gray-300">R$ {{ number_format($lead->estimated_contract_value, 0, ',', '.') }}</span>
+                                        · <span class="{{ $colors['text'] }} font-black">R$ {{ number_format($lead->estimated_contract_value, 0, ',', '.') }}</span>
                                     @endif
                                 </p>
                             </a>
@@ -110,14 +116,14 @@
                                     <select
                                         wire:key="stage-select-{{ $lead->id }}-{{ $lead->pipeline_stage }}"
                                         wire:change="moveToStage('{{ $lead->id }}', $event.target.value)"
-                                        class="text-[10px] font-black uppercase text-primary-600 dark:text-primary-400 tracking-wider bg-transparent dark:[color-scheme:dark] border-0 py-0 pl-0 pr-5 focus:ring-0 cursor-pointer"
+                                        class="text-[10px] font-black uppercase {{ $colors['text'] }} tracking-wider bg-transparent dark:[color-scheme:dark] border-0 py-0 pl-0 pr-5 focus:ring-0 cursor-pointer"
                                     >
-                                        @foreach($openStageOptions as $stageId => $stageLabel)
+                                        @foreach($openStageOptions as $optStageId => $optStageLabel)
                                             <option
-                                                value="{{ $stageId }}"
-                                                @selected($stageId === $lead->pipeline_stage)
+                                                value="{{ $optStageId }}"
+                                                @selected($optStageId === $lead->pipeline_stage)
                                                 class="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
-                                            >{{ $stageLabel }}</option>
+                                            >{{ $optStageLabel }}</option>
                                         @endforeach
                                     </select>
                                 @else
@@ -125,7 +131,7 @@
                                 @endif
 
                                 <a href="{{ \App\Filament\Central\Resources\SalesLeadResource::getUrl('edit', ['record' => $lead]) }}"
-                                   class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 hover:text-primary-600 dark:hover:text-primary-400 tracking-wider shrink-0">
+                                   class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 hover:{{ $colors['text'] }} tracking-wider shrink-0">
                                     Editar
                                 </a>
                             </div>

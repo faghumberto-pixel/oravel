@@ -10,6 +10,7 @@ use App\Models\Plan;
 use App\Models\SalesLead;
 use App\Models\User;
 use App\Services\CepGeocodingService;
+use App\Support\CrmPalette;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -195,18 +196,14 @@ class SalesLeadResource extends Resource
                 Tables\Columns\TextColumn::make('segment')
                     ->label('Segmento')
                     ->badge()
-                    ->color('gray')
+                    ->color(fn (?string $state) => CrmPalette::segment($state)['filament'])
                     ->formatStateUsing(fn (?string $state) => $state ? (Client::nicheLabels()[$state] ?? $state) : null)
                     ->placeholder('—'),
                 Tables\Columns\TextColumn::make('pipeline_stage')
                     ->label('Estágio')
                     ->badge()
                     ->formatStateUsing(fn (string $state) => SalesLead::stageLabels()[$state] ?? $state)
-                    ->color(fn (string $state) => match ($state) {
-                        SalesLead::STAGE_GANHO => 'success',
-                        SalesLead::STAGE_PERDIDO => 'danger',
-                        default => 'warning',
-                    }),
+                    ->color(fn (string $state) => CrmPalette::stage($state)['filament']),
                 Tables\Columns\TextColumn::make('estimated_contract_value')
                     ->label('Valor Estimado')
                     ->money('BRL')
