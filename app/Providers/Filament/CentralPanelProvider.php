@@ -144,6 +144,14 @@ class CentralPanelProvider extends PanelProvider
                 PanelsRenderHook::TOPBAR_START,
                 fn () => view('filament.central.topbar-clock'),
             )
+            ->renderHook(
+                // Bloco de perfil fixo no rodape da sidebar (avatar+nome+
+                // cargo+dropdown) -- design system "Convertico" pedido pelo
+                // usuario 2026-07-28. Ver resources/views/filament/central/
+                // sidebar-footer.blade.php.
+                PanelsRenderHook::SIDEBAR_FOOTER,
+                fn () => view('filament.central.sidebar-footer'),
+            )
             ->plugin(
                 // SalesAgendaWidget (Programacao) usa esse pacote -- sem
                 // registrar aqui, a tela quebrava com 500 ("Plugin

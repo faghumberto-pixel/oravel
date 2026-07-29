@@ -2,6 +2,55 @@
 
 @config '../../../../tailwind.config.js';
 
+/* ── ETAPA 1 do design system "Convertico" (dark), pedido do usuario 2026-07-28 ──
+   Contexto pra quem for mexer aqui depois: o painel Central ja roda em dark
+   mode forcado (CentralPanelProvider ->darkMode(true, isForced:true)) com
+   uma escala "gray" customizada (gray-900 = #1e293b, gray-950 = #0f172a).
+   O corpo da pagina (.fi-body) ja usa dark:bg-gray-950 nativamente -- isso
+   ja E' o navy de fundo, nao precisa recriar. O que faltava era o .fi-main
+   (area principal de conteudo) nao ter NENHUM fundo/raio/sombra proprio
+   (so' padding horizontal, ver vendor/filament/filament/resources/views/
+   components/layout/index.blade.php) -- cada widget/tabela do Filament ja
+   usa gray-900 individualmente, mas sem moldura unificando tudo aquilo
+   parecia um mar cinza continuo, sem hierarquia visual nenhuma.
+
+   Decisao: NAO virou branco -- um .fi-main branco criaria um choque visual
+   feio com os componentes internos do proprio Filament, que continuam
+   escuros (dark:bg-gray-900) mesmo dentro dele, ja que a classe .dark
+   continua ativa em toda a arvore (dark mode e' global, nao troca por
+   secao). Em vez disso, .fi-main vira um painel "elevado" no MESMO tom que
+   os widgets internos ja usam (gray-900) -- a diferenca de profundidade
+   vem do raio+sombra+margem, nao de trocar claro/escuro. */
+.dark .fi-main {
+    background-color: rgb(30 41 59); /* gray-900 customizado, mesmo token do resto do painel */
+    border-radius: 1.25rem;
+    box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.45);
+    margin: 1.25rem 1rem 1.5rem;
+    padding-top: 1.75rem;
+    padding-bottom: 1.75rem;
+}
+@media (min-width: 1024px) {
+    .dark .fi-main {
+        margin-left: 1.5rem;
+        margin-right: 1.5rem;
+    }
+}
+
+/* Item ativo da sidebar: o padrao do Filament e' bg-gray-100 dark:bg-white/5
+   (ver vendor/filament/filament/resources/views/components/sidebar/
+   item.blade.php) -- quase invisivel no dark mode, contribuia pro "sem
+   graca". Aqui vira um destaque translucido de verdade, cor do primary
+   (blue). Empate de especificidade com a regra nativa (mesmo peso,
+   0 classes cada) -- !important garante que nao dependa da ordem de
+   import do CSS compilado. */
+.dark .fi-sidebar-item.fi-active .fi-sidebar-item-button {
+    background-color: rgba(59, 130, 246, 0.16) !important;
+}
+.dark .fi-sidebar-item.fi-active .fi-sidebar-item-icon,
+.dark .fi-sidebar-item.fi-active .fi-sidebar-item-label {
+    color: rgb(96 165 250) !important; /* blue-400 */
+}
+
 /* Feedback visual do drag-and-drop do Kanban Comercial (SortableJS, ver
    resources/js/central-kanban.js) -- classes puras, nao utilities Tailwind,
    entao nao dependem do content scan do JIT. */
