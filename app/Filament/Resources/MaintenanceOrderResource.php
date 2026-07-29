@@ -561,34 +561,51 @@ class MaintenanceOrderResource extends Resource
                 ]),
 
                 // --- ABA 5B: CUSTOS ---
-                // Colunas reais (labor_cost/material_cost/logistics_cost/
-                // total_order_cost), mas ate agora sem nenhum campo em
-                // nenhuma aba da O.S. -- so existia leitura disso no
-                // dossie do Ativo. total_order_cost nao e calculado
-                // automaticamente em nenhum lugar do app, entao os 4
-                // ficam editaveis manualmente, igual as outras colunas.
+                // Confirmado 2026-07-29: os 4 campos eram TextInput livre,
+                // sem nenhum calculo automatico e sem trava nenhuma -- um
+                // tecnico conseguia digitar qualquer numero direto na O.S.
+                // Agora: material_cost/total_order_cost sao 100% calculados
+                // (MaintenanceOrderMaterialObserver soma quantity*unit_price
+                // de cada material aplicado; total_order_cost soma os 3),
+                // por isso ficam sempre travados -- nao tem "modo manual"
+                // pra eles, exibem so' o resultado. labor_cost/logistics_cost
+                // nao tem fonte automatica hoje (nenhuma tabela de horas
+                // trabalhadas ou frete ligada a O.S. ainda), entao continuam
+                // editaveis, mas so' pra quem NAO e' tecnico -- pedido
+                // explicito do usuario ("acredito que isso pro tecnico nao
+                // deve ser permitido").
                 Forms\Components\Tabs\Tab::make('Custos')->schema([
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\TextInput::make('labor_cost')
                             ->label('Mão de Obra (R$)')
                             ->numeric()
                             ->prefix('R$')
-                            ->default(0),
+                            ->default(0)
+                            ->disabled(fn () => ! auth()->user()?->isAdmin())
+                            ->dehydrated(),
                         Forms\Components\TextInput::make('material_cost')
                             ->label('Material (R$)')
+                            ->helperText('Calculado automaticamente pelos materiais aplicados nesta O.S.')
                             ->numeric()
                             ->prefix('R$')
-                            ->default(0),
+                            ->default(0)
+                            ->disabled()
+                            ->dehydrated(),
                         Forms\Components\TextInput::make('logistics_cost')
                             ->label('Logística (R$)')
                             ->numeric()
                             ->prefix('R$')
-                            ->default(0),
+                            ->default(0)
+                            ->disabled(fn () => ! auth()->user()?->isAdmin())
+                            ->dehydrated(),
                         Forms\Components\TextInput::make('total_order_cost')
                             ->label('Custo Total (R$)')
+                            ->helperText('Mão de obra + Material + Logística, somados automaticamente.')
                             ->numeric()
                             ->prefix('R$')
-                            ->default(0),
+                            ->default(0)
+                            ->disabled()
+                            ->dehydrated(),
                     ]),
                 ]),
 

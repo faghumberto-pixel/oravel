@@ -322,6 +322,17 @@ class MaintenanceOrder extends Model implements HasMedia
                         ->update(['ended_at' => now()]);
                 }
             }
+
+            // total_order_cost nunca era recalculado quando mao de obra/
+            // logistica mudavam direto na aba Custos (so' material_cost
+            // reagia, e so' via MaintenanceOrderMaterialObserver, quando um
+            // material era adicionado/removido) -- confirmado 2026-07-29.
+            // material_cost fica de fora do isDirty aqui de proposito: quem
+            // recalcula ele e' o Observer acima, que ja chama update() com
+            // os 2 campos juntos.
+            if ($os->isDirty(['labor_cost', 'logistics_cost'])) {
+                $os->total_order_cost = (float) $os->labor_cost + (float) $os->material_cost + (float) $os->logistics_cost;
+            }
         });
 
         /**

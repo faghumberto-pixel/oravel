@@ -56,6 +56,16 @@ class MaintenanceOrderMaterial extends Model
                 if (blank($model->name)) {
                     $model->name = $material?->name;
                 }
+
+                // unit_price nunca era preenchido em lugar nenhum (o form da
+                // O.S. nem tinha campo pra isso) -- sem isso, material_cost
+                // no pedido/OS nao tinha como ser calculado de verdade
+                // (MaintenanceOrderMaterialObserver soma este campo). Copia
+                // do custo real do material no catalogo no momento da
+                // aplicacao, nao um preco de venda.
+                if (blank($model->unit_price)) {
+                    $model->unit_price = $material?->unit_cost ?? $material?->last_purchase_price ?? 0;
+                }
             }
         });
     }
