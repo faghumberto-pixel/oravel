@@ -6,42 +6,87 @@
         x-data="{
             state: $wire.$entangle('{{ $getStatePath() }}'),
             capturing: false,
-            handleFile(event) {
+            // Redimensiona/recomprime no canvas antes de guardar como base64
+            // -- pedido do usuario 2026-07-29: foto de celular sem tratamento
+            // (3-8MB) e' guardada direto no estado do Livewire, que reenvia o
+            // formulario inteiro (com TODAS as fotos ja tiradas) a cada acao
+            // na mesma tela -- inclusive so' pra adicionar um material.
+            // Depois de 2-3 fotos isso estoura post_max_size e vira erro 413.
+            // Reduzindo pro lado maior de 1600px + JPEG 72%, uma foto tipica
+            // de 5MB vira ~150-300KB -- resolve na raiz, sem depender de
+            // configuracao de servidor.
+            async compressImage(file) {
+                const dataUrl = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+
+                const img = await new Promise((resolve, reject) => {
+                    const el = new Image();
+                    el.onload = () => resolve(el);
+                    el.onerror = reject;
+                    el.src = dataUrl;
+                });
+
+                const maxSide = 1600;
+                const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.round(img.width * scale);
+                canvas.height = Math.round(img.height * scale);
+
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                return canvas.toDataURL('image/jpeg', 0.72);
+            },
+            async handleFile(event) {
                 const file = event.target.files[0];
                 if (!file) return;
 
                 this.capturing = true;
 
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const payload = {
-                        image: e.target.result,
-                        latitude: null,
-                        longitude: null,
-                        captured_at: new Date().toISOString().slice(0, 19).replace('T', ' '),
-                    };
+                let compressed;
+                try {
+                    compressed = await this.compressImage(file);
+                } catch (e) {
+                    // Se o canvas falhar por algum motivo, cai pro arquivo
+                    // original em vez de travar a captura -- pior o
+                    // tamanho do que perder a foto.
+                    compressed = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.readAsDataURL(file);
+                    });
+                }
 
-                    const finish = () => {
-                        this.state = payload;
-                        this.capturing = false;
-                        event.target.value = '';
-                    };
-
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(
-                            (pos) => {
-                                payload.latitude = pos.coords.latitude;
-                                payload.longitude = pos.coords.longitude;
-                                finish();
-                            },
-                            () => finish(),
-                            { timeout: 5000, maximumAge: 60000 }
-                        );
-                    } else {
-                        finish();
-                    }
+                const payload = {
+                    image: compressed,
+                    latitude: null,
+                    longitude: null,
+                    captured_at: new Date().toISOString().slice(0, 19).replace('T', ' '),
                 };
-                reader.readAsDataURL(file);
+
+                const finish = () => {
+                    this.state = payload;
+                    this.capturing = false;
+                    event.target.value = '';
+                };
+
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                            payload.latitude = pos.coords.latitude;
+                            payload.longitude = pos.coords.longitude;
+                            finish();
+                        },
+                        () => finish(),
+                        { timeout: 5000, maximumAge: 60000 }
+                    );
+                } else {
+                    finish();
+                }
             },
             clear() {
                 this.state = null;

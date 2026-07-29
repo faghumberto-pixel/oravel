@@ -110,11 +110,19 @@ class PreventiveMaintenanceExecutionResource extends Resource
                     ->rows(3)
                     ->columnSpanFull(),
 
+                // Mesmo problema da foto da vistoria da O.S. (ver comentario em
+                // MaintenanceOrderResource, aba "Vistoria / Checklist"): foto de
+                // celular estourava os tetos de upload do servidor e o Livewire
+                // respondia "failed to upload". Resize no navegador.
                 Forms\Components\SpatieMediaLibraryFileUpload::make('photos')
                     ->collection('photos')
                     ->label('Fotos')
                     ->multiple()
                     ->image()
+                    ->imageResizeMode('contain')
+                    ->imageResizeTargetWidth('1600')
+                    ->imageResizeTargetHeight('1600')
+                    ->imageResizeUpscale(false)
                     ->columnSpanFull(),
             ])->columns(2),
         ]);

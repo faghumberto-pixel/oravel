@@ -461,10 +461,32 @@ class MaintenanceOrderResource extends Resource
                                     ->colors(['conforme' => 'success', 'nao_conforme' => 'danger', 'nao_aplicavel' => 'gray'])
                                     ->inline(),
                                 Forms\Components\TextInput::make('notes')->label('Observações / Evidência'),
+                                // Reproduzido no PROD 2026-07-29: tirar foto na vistoria
+                                // falhava com "The data.checklists.record-X.photos... failed
+                                // to upload". Recusa por TAMANHO, e o PROD tinha dois tetos --
+                                // client_max_body_size do nginx, que nem estava configurado e
+                                // portanto valia o default de 1MB (o mais apertado dos dois, e
+                                // o que corta antes de chegar no PHP), e upload_max_filesize=2M
+                                // do PHP. Os dois foram levantados no servidor, mas config de
+                                // servidor sozinha nao resolve: teria que ser refeita em todo
+                                // ambiente que hospeda o app, e subir 3-8MB por foto e'
+                                // desperdicio de banda/disco pra uma evidencia de vistoria.
+                                // Entao o FilePond tambem redimensiona no proprio navegador
+                                // antes de enviar: 'contain' + 1600x1600 = lado maior de 1600px
+                                // sem cortar nada (o default 'cover' do Filament CORTARIA a
+                                // foto pra preencher 1600x1600 exatos), e uma foto tipica de
+                                // 5MB sai em ~300-700KB. upscale(false) pra nao inflar foto
+                                // pequena. NAO adicionar ->maxSize() pequeno aqui: o FilePond
+                                // valida tamanho no arquivo ORIGINAL, antes do resize, e
+                                // rejeitaria justamente a foto que isso conserta.
                                 Forms\Components\SpatieMediaLibraryFileUpload::make('photos')
                                     ->collection('photos')
                                     ->label('Foto')
-                                    ->image(),
+                                    ->image()
+                                    ->imageResizeMode('contain')
+                                    ->imageResizeTargetWidth('1600')
+                                    ->imageResizeTargetHeight('1600')
+                                    ->imageResizeUpscale(false),
                             ])->columns(3)->disableItemCreation()->disableItemDeletion(),
                     ]),
 

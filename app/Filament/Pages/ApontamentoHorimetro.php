@@ -123,9 +123,17 @@ class ApontamentoHorimetro extends Page implements HasForms
                 ->helperText('Leitura menor que a anterior, ou salto grande demais -- confirme pra prosseguir mesmo assim.')
                 ->visible(fn (Get $get) => self::precisaConfirmarReset($get)),
 
+            // capture=environment abre a camera direto, entao aqui a foto e'
+            // sempre em resolucao cheia de celular -- mesmo estouro dos tetos de
+            // upload do servidor descrito em MaintenanceOrderResource (aba
+            // "Vistoria / Checklist"). Resize no navegador.
             FileUpload::make('photo_path')
                 ->label('Foto do painel (opcional)')
                 ->image()
+                ->imageResizeMode('contain')
+                ->imageResizeTargetWidth('1600')
+                ->imageResizeTargetHeight('1600')
+                ->imageResizeUpscale(false)
                 ->directory('horimeter-readings')
                 ->extraInputAttributes(['capture' => 'environment']),
 
