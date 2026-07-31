@@ -35,6 +35,11 @@ class AgendaTecnico extends Page
         return (bool) auth()->user();
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return (bool) auth()->user();
+    }
+
     public function mount(): void
     {
         $user = auth()->user();

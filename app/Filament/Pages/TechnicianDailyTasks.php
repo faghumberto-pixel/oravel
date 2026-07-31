@@ -29,6 +29,11 @@ class TechnicianDailyTasks extends Page
         return (bool) auth()->user();
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return (bool) auth()->user();
+    }
+
     // Filtros
     #[Url]
     public string $filterType = ''; // 'maintenance' | 'mobilization' | 'demobilization' | ''
