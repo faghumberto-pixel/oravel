@@ -73,112 +73,9 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('1.75rem')
             ->favicon(asset('favicon.png'))
             ->navigationGroups([
-                NavigationGroup::make('PCM'),
                 NavigationGroup::make('Manutenção'),
-                NavigationGroup::make('Logística'),
-                NavigationGroup::make('Ativos e Materiais'),
-                NavigationGroup::make('Equipe'),
-                NavigationGroup::make('Comercial'),
-                NavigationGroup::make('Financeiro'),
-                NavigationGroup::make('Relatórios'),
-                NavigationGroup::make('Configurações'),
             ])
-            ->navigationItems([
-                // Agrupa tudo que e' Preventiva dentro de PCM (pedido do
-                // usuario 2026-07-26) -- Planos Preventivos, execucoes de
-                // Preventiva e o Dashboard PMP (Planejamento de Manutencao
-                // Preventiva, ja usava essa sigla) ficavam soltos junto com
-                // OS/Kanban/Avarias/etc, um menu so' longo demais.
-                NavigationItem::make('PMP')
-                    ->icon('heroicon-o-clipboard-document-check')
-                    ->group('PCM')
-                    ->sort(2)
-                    ->visible(fn () => MaintenancePlanResource::canViewAny()
-                        || PreventiveMaintenanceExecutionResource::canViewAny()
-                        || PainelPmp::canAccess()
-                        || AnalisePlanoPreventivo::canAccess())
-                    ->childItems([
-                        NavigationItem::make('Dashboard PMP')
-                            ->url(fn () => PainelPmp::getUrl())
-                            ->visible(fn () => PainelPmp::canAccess()),
-                        NavigationItem::make('Planos Preventivos')
-                            ->url(fn () => MaintenancePlanResource::getUrl())
-                            ->visible(fn () => MaintenancePlanResource::canViewAny()),
-                        NavigationItem::make('Preventivas')
-                            ->url(fn () => PreventiveMaintenanceExecutionResource::getUrl())
-                            ->visible(fn () => PreventiveMaintenanceExecutionResource::canViewAny()),
-                        NavigationItem::make('Análise IA - Preventivas')
-                            ->url(fn () => AnalisePlanoPreventivo::getUrl())
-                            ->visible(fn () => AnalisePlanoPreventivo::canAccess()),
-                    ]),
-
-
-                // Antes um unico dropdown "Suprimentos" com 10+ itens
-                // misturando operacao diaria de almoxarifado com o ciclo
-                // formal de compras -- separado em 2 pra refletir que sao
-                // atribuicoes/papeis diferentes (quem repoe estoque fisico
-                // nao e' necessariamente quem aprova/cotaOC).
-                NavigationItem::make('Almoxarifado')
-                    ->icon('heroicon-o-archive-box')
-                    ->group('Ativos e Materiais')
-                    ->sort(10)
-                    ->visible(fn () => MaterialResource::canViewAny()
-                        || MaterialCategoryResource::canViewAny()
-                        || PartsRequestResource::canViewAny()
-                        || MaterialStockTakeResource::canViewAny()
-                        || StockMovementResource::canViewAny()
-                        || StorageLocationResource::canViewAny()
-                        || RequisicaoReposicaoEstoque::canAccess())
-                    ->childItems([
-                        NavigationItem::make('Materiais')
-                            ->url(fn () => MaterialResource::getUrl())
-                            ->visible(fn () => MaterialResource::canViewAny()),
-                        NavigationItem::make('Categorias de Materiais')
-                            ->url(fn () => MaterialCategoryResource::getUrl())
-                            ->visible(fn () => MaterialCategoryResource::canViewAny()),
-                        NavigationItem::make('Solicitações de Peças')
-                            ->url(fn () => PartsRequestResource::getUrl())
-                            ->visible(fn () => PartsRequestResource::canViewAny()),
-                        NavigationItem::make('Reposição de Estoque')
-                            ->url(fn () => RequisicaoReposicaoEstoque::getUrl())
-                            ->visible(fn () => RequisicaoReposicaoEstoque::canAccess()),
-                        NavigationItem::make('Inventário')
-                            ->url(fn () => MaterialStockTakeResource::getUrl())
-                            ->visible(fn () => MaterialStockTakeResource::canViewAny()),
-                        NavigationItem::make('Histórico de Estoque')
-                            ->url(fn () => StockMovementResource::getUrl())
-                            ->visible(fn () => StockMovementResource::canViewAny()),
-                        NavigationItem::make('Localizações (Planta Baixa)')
-                            ->url(fn () => StorageLocationResource::getUrl())
-                            ->visible(fn () => StorageLocationResource::canViewAny()),
-                        NavigationItem::make('Planta Baixa (Almoxarifado)')
-                            ->url(fn () => PlantaBaixaAlmoxarifado::getUrl())
-                            ->visible(fn () => PlantaBaixaAlmoxarifado::canAccess()),
-                    ]),
-
-                NavigationItem::make('Compras')
-                    ->icon('heroicon-o-shopping-cart')
-                    ->group('Ativos e Materiais')
-                    ->sort(11)
-                    ->visible(fn () => SupplierResource::canViewAny()
-                        || MaterialRequestResource::canViewAny()
-                        || PurchaseOrderResource::canViewAny()
-                        || GoodsReceiptResource::canViewAny())
-                    ->childItems([
-                        NavigationItem::make('Fornecedores')
-                            ->url(fn () => SupplierResource::getUrl())
-                            ->visible(fn () => SupplierResource::canViewAny()),
-                        NavigationItem::make('Requisições de Compra')
-                            ->url(fn () => MaterialRequestResource::getUrl())
-                            ->visible(fn () => MaterialRequestResource::canViewAny()),
-                        NavigationItem::make('Ordens de Compra')
-                            ->url(fn () => PurchaseOrderResource::getUrl())
-                            ->visible(fn () => PurchaseOrderResource::canViewAny()),
-                        NavigationItem::make('Recebimentos')
-                            ->url(fn () => GoodsReceiptResource::getUrl())
-                            ->visible(fn () => GoodsReceiptResource::canViewAny()),
-                    ]),
-            ])
+            ->navigationItems([])
             ->renderHook(
                 PanelsRenderHook::TOPBAR_START,
                 fn () => view('filament.topbar-brand-and-ticker'),
@@ -231,8 +128,13 @@ class AdminPanelProvider extends PanelProvider
                 PanelsRenderHook::FOOTER,
                 fn () => view('filament.panel-footer'),
             )
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->pages([
+                TechnicianDailyTasks::class,
+                AgendaTecnico::class,
+            ])
+            ->resources([
+                MaintenanceOrderResource::class,
+            ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
