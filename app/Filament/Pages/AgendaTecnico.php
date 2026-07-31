@@ -32,7 +32,7 @@ class AgendaTecnico extends Page
 
     public static function canAccess(): bool
     {
-        return (bool) auth()->user()?->can('viewAny', Appointment::class);
+        return (bool) auth()->user();
     }
 
     public function mount(): void
