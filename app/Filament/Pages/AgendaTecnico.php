@@ -19,7 +19,6 @@ class AgendaTecnico extends Page
     // Cada departamento tem sua propria Programacao, sem misturar (Logistica
     // tem a dela, ver ProgramacaoLogistica). Esta e' a de Manutencao --
     // Agendamento pessoal + O.S., nada de mobilizacao/desmobilizacao aqui.
-    protected static ?string $navigationGroup = 'PCM';
 
     protected static ?int $navigationSort = 1;
 

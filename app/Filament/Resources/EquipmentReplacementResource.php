@@ -33,10 +33,6 @@ class EquipmentReplacementResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-arrow-path';
 
-    protected static ?string $navigationGroup = 'PCM';
-
-    protected static ?int $navigationSort = 5;
-
     /**
      * Prazo por urgencia (horas ate' o substituto precisar estar
      * identificado) -- so' usado pro indicador visual de SLA na tabela,

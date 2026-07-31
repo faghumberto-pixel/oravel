@@ -18,8 +18,6 @@ class PainelSlaEmergencia extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-bolt';
 
-    protected static ?string $navigationGroup = 'PCM';
-
     protected static ?string $navigationLabel = 'Painel de SLA';
 
     protected static ?string $title = 'Painel de SLA de Emergência';

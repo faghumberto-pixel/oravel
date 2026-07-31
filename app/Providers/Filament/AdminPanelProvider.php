@@ -3,11 +3,20 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\AnalisePlanoPreventivo;
+use App\Filament\Pages\ApontamentoHorimetro;
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\AgendaTecnico;
+use App\Filament\Pages\MaintenanceKanban;
+use App\Filament\Pages\PainelCriticidade;
 use App\Filament\Pages\PainelPmp;
+use App\Filament\Pages\PainelSlaEmergencia;
 use App\Filament\Pages\PlantaBaixaAlmoxarifado;
 use App\Filament\Pages\RequisicaoReposicaoEstoque;
+use App\Filament\Pages\ReservasUrgentes;
+use App\Filament\Pages\TechnicianDailyTasks;
+use App\Filament\Resources\EquipmentReplacementResource;
 use App\Filament\Resources\GoodsReceiptResource;
+use App\Filament\Resources\MaintenanceOrderResource;
 use App\Filament\Resources\MaintenancePlanResource;
 use App\Filament\Resources\MaterialCategoryResource;
 use App\Filament\Resources\MaterialRequestResource;
@@ -100,6 +109,58 @@ class AdminPanelProvider extends PanelProvider
                         NavigationItem::make('Análise IA - Preventivas')
                             ->url(fn () => AnalisePlanoPreventivo::getUrl())
                             ->visible(fn () => AnalisePlanoPreventivo::canAccess()),
+                    ]),
+
+                // Submenu Manutenção em PCM
+                NavigationItem::make('Manutenção')
+                    ->icon('heroicon-o-wrench-screwdriver')
+                    ->group('PCM')
+                    ->sort(1)
+                    ->visible(fn () => TechnicianDailyTasks::canAccess()
+                        || ApontamentoHorimetro::canAccess()
+                        || AgendaTecnico::canAccess()
+                        || MaintenanceKanban::canAccess()
+                        || MaintenanceOrderResource::canViewAny()
+                        || ReservasUrgentes::canAccess()
+                        || EquipmentReplacementResource::canViewAny())
+                    ->childItems([
+                        NavigationItem::make('Minhas Ordens de Serviço')
+                            ->url(fn () => TechnicianDailyTasks::getUrl())
+                            ->visible(fn () => TechnicianDailyTasks::canAccess()),
+                        NavigationItem::make('Apontamento de Horímetro')
+                            ->url(fn () => ApontamentoHorimetro::getUrl())
+                            ->visible(fn () => ApontamentoHorimetro::canAccess()),
+                        NavigationItem::make('Programação')
+                            ->url(fn () => AgendaTecnico::getUrl())
+                            ->visible(fn () => AgendaTecnico::canAccess()),
+                        NavigationItem::make('Kanban do Pátio')
+                            ->url(fn () => MaintenanceKanban::getUrl())
+                            ->visible(fn () => MaintenanceKanban::canAccess()),
+                        NavigationItem::make('Ordens de Serviço')
+                            ->url(fn () => MaintenanceOrderResource::getUrl())
+                            ->visible(fn () => MaintenanceOrderResource::canViewAny()),
+                        NavigationItem::make('Reservas Urgentes')
+                            ->url(fn () => ReservasUrgentes::getUrl())
+                            ->visible(fn () => ReservasUrgentes::canAccess()),
+                        NavigationItem::make('Troca de Equipamentos')
+                            ->url(fn () => EquipmentReplacementResource::getUrl())
+                            ->visible(fn () => EquipmentReplacementResource::canViewAny()),
+                    ]),
+
+                // Submenus de Relatórios em PCM
+                NavigationItem::make('Relatórios')
+                    ->icon('heroicon-o-chart-bar')
+                    ->group('Relatórios')
+                    ->sort(1)
+                    ->visible(fn () => PainelCriticidade::canAccess()
+                        || PainelSlaEmergencia::canAccess())
+                    ->childItems([
+                        NavigationItem::make('Painel de Criticidade')
+                            ->url(fn () => PainelCriticidade::getUrl())
+                            ->visible(fn () => PainelCriticidade::canAccess()),
+                        NavigationItem::make('Painel SLA')
+                            ->url(fn () => PainelSlaEmergencia::getUrl())
+                            ->visible(fn () => PainelSlaEmergencia::canAccess()),
                     ]),
 
                 // Antes um unico dropdown "Suprimentos" com 10+ itens

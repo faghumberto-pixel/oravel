@@ -30,8 +30,6 @@ class ReservasUrgentes extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-bell-alert';
 
-    protected static ?string $navigationGroup = 'PCM';
-
     protected static ?string $navigationLabel = 'Reservas Urgentes';
 
     protected static ?string $title = 'Reservas Urgentes para Manutenção';
