@@ -90,7 +90,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard', function () {
         $user = auth()->user();
-        $tenantSlug = $user->latest_tenant_slug ?? Filament::getUserTenants($user)->first()?->slug ?? $user->tenant?->slug ?? $user->tenant_id;
+        $tenantSlug = $user->latest_tenant_slug ?? collect(Filament::getUserTenants($user))->first()?->slug ?? $user->tenant?->slug ?? $user->tenant_id;
 
         return $tenantSlug ? redirect()->route('filament.admin.pages.dashboard', ['tenant' => $tenantSlug]) : redirect()->to('/admin');
     })->name('dashboard');
