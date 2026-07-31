@@ -38,7 +38,7 @@ class MaintenanceOrderResource extends Resource
     protected static ?string $model = MaintenanceOrder::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
-
+    protected static ?string $navigationGroup = 'PCM - Manutenção';
     protected static ?string $navigationLabel = 'Ordens de Serviço';
 
     protected static ?string $pluralModelLabel = 'Ordens de Serviço';

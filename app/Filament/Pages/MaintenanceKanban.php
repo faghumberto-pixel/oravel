@@ -18,7 +18,7 @@ class MaintenanceKanban extends Page
     protected static ?string $title = 'Oficina - Kanban Pátio';
 
     protected static ?string $navigationIcon = 'heroicon-o-view-columns';
-
+    protected static ?string $navigationGroup = 'PCM - Manutenção';
     protected static ?string $navigationLabel = 'Kanban do Pátio';
 
     protected static ?int $navigationSort = 1;

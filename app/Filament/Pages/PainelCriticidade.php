@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\DB;
 class PainelCriticidade extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-fire';
-
+    protected static ?string $navigationGroup = 'Relatórios';
     protected static ?string $navigationLabel = 'Painel de Criticidade';
 
     protected static ?string $title = 'Painel de Criticidade';
