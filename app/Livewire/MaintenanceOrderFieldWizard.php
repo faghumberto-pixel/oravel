@@ -7,12 +7,16 @@ use App\Models\EquipmentReplacement;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenanceOrderMaterial;
 use App\Models\Material;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Saade\FilamentAutograph\Forms\Components\SignaturePad;
 
 /**
  * "Modo Campo" -- execucao da O.S. no celular do tecnico, uma etapa por tela.
@@ -33,9 +37,10 @@ use Livewire\WithFileUploads;
  * versao anterior interceptava as chamadas do Livewire e quebrava o app.
  */
 #[Layout('layouts.checklist-mobile')]
-class MaintenanceOrderFieldWizard extends Component
+class MaintenanceOrderFieldWizard extends Component implements HasForms
 {
     use HandlesChecklistItems;
+    use InteractsWithForms;
     use WithFileUploads;
 
     public const TOTAL_STEPS = 5;
@@ -92,9 +97,16 @@ class MaintenanceOrderFieldWizard extends Component
     public int $materialQuantity = 1;
 
     // --- Etapa 5: assinatura ---
-    public ?string $technicianSignature = null;
-
-    public ?string $clientSignature = null;
+    // Via saade/filament-autograph (mesmo pacote do form desktop) em vez de
+    // canvas escrito a mao -- o pacote ja' resolve touch/mouse, DPR e o
+    // problema de o campo so' existir no DOM depois de uma troca de $step
+    // (que e' AJAX do Livewire, nao um reload de pagina onde
+    // DOMContentLoaded faria sentido).
+    /** @var array<string, ?string> */
+    public ?array $signatureData = [
+        'technician_signature' => null,
+        'client_signature' => null,
+    ];
 
     /**
      * idle | saving | saved | error -- alimenta o indicador no rodape. 'error'
@@ -117,6 +129,27 @@ class MaintenanceOrderFieldWizard extends Component
             : null;
 
         $this->step = $this->clampStep($this->step);
+
+        $this->signatureForm->fill([
+            'technician_signature' => $maintenanceOrder->technician_signature,
+            'client_signature' => $maintenanceOrder->client_signature,
+        ]);
+    }
+
+    public function signatureForm(Form $form): Form
+    {
+        return $form
+            ->schema([
+                SignaturePad::make('technician_signature')
+                    ->label('Assinatura do Técnico')
+                    ->required()
+                    ->loadStrategy('idle'),
+                SignaturePad::make('client_signature')
+                    ->label('Assinatura do Cliente')
+                    ->required()
+                    ->loadStrategy('idle'),
+            ])
+            ->statePath('signatureData');
     }
 
     /**
@@ -573,28 +606,17 @@ class MaintenanceOrderFieldWizard extends Component
 
     // --- Etapa 5: assinatura ---
 
-    public function clearSignature(): void
-    {
-        $this->technicianSignature = null;
-    }
-
     private function persistSignature(): void
     {
-        // Etapa 5: a assinatura pode ser capturada via Alpine/JavaScript,
-        // mas aqui apenas validamos que a assinatura foi fornecida antes de
-        // permitir finalizar. O completeOrder() sera' chamado por next().
-    }
+        // required() no schema ja' bloqueia o getState() com ValidationException
+        // se alguma assinatura estiver vazia -- persistCurrentStep() ja' trata
+        // esse tipo de excecao sem acender o aviso de "sem conexao".
+        $state = $this->signatureForm->getState();
 
-    public function saveSignatures(string $technicianSignature, string $clientSignature): void
-    {
         $this->maintenanceOrder->update([
-            'technician_signature' => $technicianSignature,
-            'client_signature' => $clientSignature,
+            'technician_signature' => $state['technician_signature'],
+            'client_signature' => $state['client_signature'],
         ]);
-
-        $this->technicianSignature = $technicianSignature;
-        $this->clientSignature = $clientSignature;
-        $this->saveState = 'saved';
     }
 
     private function completeOrder(): void

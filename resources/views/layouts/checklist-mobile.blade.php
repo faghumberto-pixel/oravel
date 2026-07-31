@@ -12,8 +12,19 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        {{--
+            Escopado a filament/support (define x-load, usado pelo
+            SignaturePad) + saade/filament-autograph (assinatura em si).
+            filament/support nao e' marcado ->core() entao nao duplica
+            Alpine (ja' vem via resources/js/app.js) -- ver o comentario
+            sobre Alpine.start() la' pra' entender por que isso importa.
+        --}}
+        @filamentStyles(['filament/support', 'saade/filament-autograph'])
     </head>
     <body class="font-sans antialiased bg-zinc-950 text-zinc-100 overscroll-none">
         {{ $slot }}
+
+        @filamentScripts(['filament/support', 'saade/filament-autograph'])
     </body>
 </html>

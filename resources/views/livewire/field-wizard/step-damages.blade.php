@@ -1,7 +1,11 @@
 <div class="space-y-4">
-    {{-- Descrição do problema --}}
+    {{-- Descrição do problema. Ditado por voz usa o teclado nativo do
+         aparelho (ícone de microfone do Gboard/teclado da Apple), sem
+         JavaScript proprio -- mais confiavel que Web Speech API, que so'
+         funciona em Chrome/Edge e exige rede. --}}
     <div class="rounded-2xl bg-zinc-900 p-4">
         <label class="text-xs font-bold uppercase tracking-wide text-zinc-400">Descrição do Problema</label>
+        <p class="mt-1 text-[11px] text-zinc-500">Toque no microfone do teclado do celular para ditar</p>
         <textarea
             wire:model="damageDescription"
             rows="3"
@@ -12,24 +16,14 @@
 
     {{-- Notas técnicas --}}
     <div class="rounded-2xl bg-zinc-900 p-4">
-        <div class="flex items-center justify-between">
-            <label class="text-xs font-bold uppercase tracking-wide text-zinc-400">Notas Técnicas</label>
-            <button
-                type="button"
-                id="micButton"
-                class="rounded-full bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 text-xs font-bold transition active:scale-95"
-            >
-                🎤 Falar
-            </button>
-        </div>
+        <label class="text-xs font-bold uppercase tracking-wide text-zinc-400">Notas Técnicas</label>
+        <p class="mt-1 text-[11px] text-zinc-500">Toque no microfone do teclado do celular para ditar</p>
         <textarea
             wire:model="technicalNotes"
             rows="3"
-            id="technicalNotesField"
             placeholder="Observações técnicas adicionais..."
             class="mt-2 w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-emerald-500"
         ></textarea>
-        <div id="micStatus" class="mt-2 text-xs text-zinc-500 hidden"></div>
     </div>
 
     {{-- Fotos ANTES/DEPOIS --}}
@@ -167,102 +161,3 @@
         </div>
     @endif
 </div>
-
-@once
-    <script>
-        // Delegação no document: a Etapa 3 é inserida no DOM via navegação
-        // AJAX do Livewire (troca de $step), não via carregamento de página --
-        // DOMContentLoaded já disparou antes do botão/textarea existirem.
-        // Por isso os listeners ficam no document (sempre presente) e resolvem
-        // os elementos de novo a cada clique, em vez de cachear referências
-        // que podem apontar pro DOM antigo depois de um morph do Livewire.
-        (function () {
-            // Guarda contra registro duplicado do listener: cada visita a
-            // etapa 3 chega via uma resposta AJAX nova do Livewire, e a
-            // diretiva Blade so' deduplica dentro do mesmo ciclo de
-            // request/response -- sem isso, voltar/avançar repetidas vezes
-            // empilha listeners.
-            if (window.__oravelMicDelegated) return;
-            window.__oravelMicDelegated = true;
-
-            const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-            let recognition = null;
-            let isListening = false;
-
-            function stopListening(micButton, micStatus) {
-                isListening = false;
-                if (micButton) {
-                    micButton.textContent = '🎤 Falar';
-                    micButton.classList.remove('bg-red-500', 'hover:bg-red-600');
-                    micButton.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
-                }
-                if (micStatus) {
-                    setTimeout(() => micStatus.classList.add('hidden'), 2000);
-                }
-            }
-
-            document.addEventListener('click', function (e) {
-                const micButton = e.target.closest('#micButton');
-                if (!micButton) return;
-
-                e.preventDefault();
-
-                const micStatus = document.getElementById('micStatus');
-                const textField = document.getElementById('technicalNotesField');
-
-                if (!SpeechRecognition) {
-                    micButton.disabled = true;
-                    micButton.textContent = '🎤 Não suportado';
-                    return;
-                }
-
-                if (isListening) {
-                    recognition?.stop();
-                    return;
-                }
-
-                recognition = new SpeechRecognition();
-                recognition.lang = 'pt-BR';
-                recognition.continuous = false;
-                recognition.interimResults = true;
-
-                recognition.onresult = function (event) {
-                    let transcript = '';
-                    for (let i = event.resultIndex; i < event.results.length; i++) {
-                        transcript += event.results[i][0].transcript + ' ';
-                    }
-
-                    if (event.results[event.results.length - 1].isFinal) {
-                        const field = document.getElementById('technicalNotesField');
-                        if (!field) return;
-                        const currentText = field.value;
-                        field.value = currentText ? currentText + ' ' + transcript : transcript;
-                        field.dispatchEvent(new Event('input', { bubbles: true }));
-                    }
-                };
-
-                recognition.onerror = function (event) {
-                    const status = document.getElementById('micStatus');
-                    if (status) {
-                        status.textContent = '❌ Erro: ' + event.error;
-                        status.classList.remove('hidden');
-                    }
-                    stopListening(document.getElementById('micButton'), status);
-                };
-
-                recognition.onend = function () {
-                    stopListening(document.getElementById('micButton'), document.getElementById('micStatus'));
-                };
-
-                textField?.focus();
-                recognition.start();
-                isListening = true;
-                micStatus?.classList.remove('hidden');
-                if (micStatus) micStatus.textContent = '🎤 Escutando...';
-                micButton.textContent = '⏹ Parar';
-                micButton.classList.add('bg-red-500', 'hover:bg-red-600');
-                micButton.classList.remove('bg-emerald-500', 'hover:bg-emerald-600');
-            });
-        })();
-    </script>
-@endonce
