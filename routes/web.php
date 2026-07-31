@@ -20,6 +20,7 @@ use App\Livewire\EquipmentDamageMobile;
 use App\Livewire\EquipmentMovementMobile;
 use App\Livewire\EquipmentPatioArrivalMobile;
 use App\Livewire\MaintenanceChecklistMobile;
+use App\Livewire\MaintenanceOrderFieldWizard;
 use App\Livewire\PreventiveMaintenanceMobile;
 use App\Livewire\RentalDispatchChecklistMobile;
 use App\Models\Asset;
@@ -124,6 +125,17 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/admin/maintenance-orders/{maintenanceOrder}/checklist-digital', MaintenanceChecklistMobile::class)
         ->name('maintenance-orders.checklist-mobile');
+
+    // "Modo Campo": execucao da O.S. no celular do tecnico, uma etapa por tela,
+    // em vez do form de 7 abas do painel. Ponto de entrada em
+    // EditMaintenanceOrder, na tabela de O.S. e no dossie mobile do ativo
+    // (destino do QR da etiqueta).
+    Route::get('/admin/maintenance-orders/{maintenanceOrder}/campo', MaintenanceOrderFieldWizard::class)
+        ->name('maintenance-orders.field-wizard');
+
+    // Wizard de Mobilização: técnico remove equipamento do pátio para o cliente
+    Route::get('/admin/asset-movements/mobilization/{movement?}', 'App\Livewire\AssetMobilizationWizard')
+        ->name('asset-movements.mobilization');
 
     Route::get('/admin/maintenance-orders/{maintenanceOrder}/movimentacao/{type}', EquipmentMovementMobile::class)
         ->where('type', 'mobilizacao|desmobilizacao')
