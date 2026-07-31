@@ -31,8 +31,10 @@ class TestTechnicianSeeder extends Seeder
                 'password' => bcrypt('senha123'),
                 'tenant_id' => $tenant->id,
                 'is_approved' => true,
+                'email_verified_at' => now(),
             ]
         );
+        $technician->update(['email_verified_at' => now(), 'is_approved' => true]);
         echo "✓ Técnico: {$technician->name}\n";
 
         // 3. Criar admin
@@ -43,8 +45,10 @@ class TestTechnicianSeeder extends Seeder
                 'password' => bcrypt('senha123'),
                 'tenant_id' => $tenant->id,
                 'is_approved' => true,
+                'email_verified_at' => now(),
             ]
         );
+        $admin->update(['email_verified_at' => now(), 'is_approved' => true]);
         $admin->assignRole('admin');
         echo "✓ Admin: {$admin->name}\n";
 
