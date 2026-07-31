@@ -136,6 +136,19 @@ class MaintenanceOrderFieldWizard extends Component implements HasForms
         ]);
     }
 
+    /**
+     * Registro obrigatorio para formularios com nome != 'form' -- sem isso
+     * `{{ $this->signatureForm }}` no Blade nao resolve e o Livewire lanca
+     * PropertyNotFoundException (achado em PROD, corrigido no mesmo deploy
+     * que introduziu esse formulario).
+     *
+     * @return array<int, string>
+     */
+    protected function getForms(): array
+    {
+        return ['signatureForm'];
+    }
+
     public function signatureForm(Form $form): Form
     {
         return $form
