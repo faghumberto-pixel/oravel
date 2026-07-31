@@ -127,7 +127,7 @@
                                 'Corretiva' => 'bg-amber-900/30 text-amber-400',
                                 'Avaria' => 'bg-red-900/30 text-red-400',
                                 'Emergência' => 'bg-red-900/30 text-red-400',
-                                default => 'bg-zinc-800 text-zinc-400',
+                                'default' => 'bg-zinc-800 text-zinc-400',
                             ];
                             $maintTypeColor = $maintTypeColors[$task['maintenance_type']] ?? $maintTypeColors['default'];
                         @endphp
