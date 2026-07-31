@@ -10,7 +10,7 @@ use Livewire\Attributes\Url;
 
 class MaintenanceOrderListPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-list';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
     protected static ?string $navigationLabel = 'Ordens de Serviço';
     protected static ?string $navigationGroup = 'OS';
     protected static string $view = 'filament.admin.pages.maintenance-order-list';
