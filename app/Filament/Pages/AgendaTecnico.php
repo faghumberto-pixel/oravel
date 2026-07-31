@@ -41,7 +41,7 @@ class AgendaTecnico extends Page
 
         // Técnicos comuns são redirecionados para mobile
         if (! $user->isAdmin() && empty($user->supervisedDepartmentIds())) {
-            redirect()->route('agenda-tecnico.mobile')->send();
+            $this->redirect(route('agenda-tecnico.mobile'), navigate: true);
         }
     }
 
