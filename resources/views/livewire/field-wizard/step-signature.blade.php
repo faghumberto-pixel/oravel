@@ -113,93 +113,51 @@
 @endPushOnce
 
 <script>
-    function initSignaturePads() {
-        try {
-            const techCanvas = document.getElementById('technicianSignaturePad');
-            const clientCanvas = document.getElementById('clientSignaturePad');
+    function setupCanvas(canvasId, clearBtnId) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return null;
 
-            if (!techCanvas || !clientCanvas) {
-                console.error('❌ Canvas não encontrados. Tech:', !!techCanvas, 'Client:', !!clientCanvas);
-                // Tenta de novo em 200ms
-                setTimeout(initSignaturePads, 200);
-                return;
-            }
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const dpr = window.devicePixelRatio || 1;
 
-            console.log('📐 Canvas encontrados, inicializando SignaturePad...');
-            console.log('Tech canvas rect:', techCanvas.getBoundingClientRect());
-            console.log('Client canvas rect:', clientCanvas.getBoundingClientRect());
+        // Redimensionar canvas para DPR
+        canvas.width = 300 * dpr;
+        canvas.height = 150 * dpr;
+        ctx.scale(dpr, dpr);
 
-            // Inicializar SignaturePad para técnico
-            const techPad = new SignaturePad(techCanvas, {
-                backgroundColor: 'rgb(15, 23, 42)',
-                penColor: 'rgb(255, 255, 255)',
-                minWidth: 0.5,
-                maxWidth: 2.5,
-                throttle: 16,
-                minDistance: 5,
-                velocityFilterWeight: 0.7,
-            });
+        // Desenhar fundo
+        ctx.fillStyle = 'rgb(15, 23, 42)';
+        ctx.fillRect(0, 0, 300, 150);
 
-            // Inicializar SignaturePad para cliente
-            const clientPad = new SignaturePad(clientCanvas, {
-                backgroundColor: 'rgb(15, 23, 42)',
-                penColor: 'rgb(255, 255, 255)',
-                minWidth: 0.5,
-                maxWidth: 2.5,
-                throttle: 16,
-                minDistance: 5,
-                velocityFilterWeight: 0.7,
-            });
-
-            // Teste de eventos
-            techCanvas.addEventListener('mousedown', () => console.log('🖱️ Mouse down no tech canvas'));
-            techCanvas.addEventListener('touchstart', () => console.log('👆 Touch start no tech canvas'));
-
-            // Botões de limpar
-            document.getElementById('clearTechSignature')?.addEventListener('click', () => {
-                console.log('🔄 Limpando assinatura do técnico');
-                techPad.clear();
-            });
-
-            document.getElementById('clearClientSignature')?.addEventListener('click', () => {
-                console.log('🔄 Limpando assinatura do cliente');
-                clientPad.clear();
-            });
-
-            // Funções globais
-            window.getTechnicianSignature = () => {
-                const sig = !techPad.isEmpty() ? techPad.toDataURL('image/png') : null;
-                console.log('📝 Tech signature:', sig ? '✓ Existe' : '✗ Vazia');
-                return sig;
-            };
-
-            window.getClientSignature = () => {
-                const sig = !clientPad.isEmpty() ? clientPad.toDataURL('image/png') : null;
-                console.log('📝 Client signature:', sig ? '✓ Existe' : '✗ Vazia');
-                return sig;
-            };
-
-            window.isTechnicianSigned = () => !techPad.isEmpty();
-            window.isClientSigned = () => !clientPad.isEmpty();
-
-            console.log('✅ SignaturePad inicializado com sucesso!');
-        } catch (e) {
-            console.error('❌ Erro ao inicializar SignaturePad:', e.message, e.stack);
-        }
-    }
-
-    // Iniciar quando DOM estiver pronto
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initSignaturePads);
-    } else {
-        initSignaturePads();
-    }
-
-    // Também tentar no load do Livewire
-    if (window.Livewire) {
-        window.Livewire.on('updated', () => {
-            console.log('📡 Livewire updated, reinicializando pads...');
-            setTimeout(initSignaturePads, 100);
+        const pad = new SignaturePad(canvas, {
+            backgroundColor: 'rgb(15, 23, 42)',
+            penColor: 'rgb(255, 255, 255)',
+            minWidth: 0.5,
+            maxWidth: 2,
+            throttle: 16,
+            velocityFilterWeight: 0.7,
         });
+
+        // Botão limpar
+        const clearBtn = document.getElementById(clearBtnId);
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => pad.clear());
+        }
+
+        return pad;
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(() => {
+            const techPad = setupCanvas('technicianSignaturePad', 'clearTechSignature');
+            const clientPad = setupCanvas('clientSignaturePad', 'clearClientSignature');
+
+            window.getTechnicianSignature = () => !techPad?.isEmpty?.() ? techPad?.toDataURL?.('image/png') : null;
+            window.getClientSignature = () => !clientPad?.isEmpty?.() ? clientPad?.toDataURL?.('image/png') : null;
+            window.isTechnicianSigned = () => techPad && !techPad.isEmpty();
+            window.isClientSigned = () => clientPad && !clientPad.isEmpty();
+
+            console.log('✅ SignaturePad OK');
+        }, 100);
+    });
 </script>
