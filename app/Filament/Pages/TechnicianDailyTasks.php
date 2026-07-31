@@ -24,6 +24,10 @@ class TechnicianDailyTasks extends Page
     protected static ?string $title = 'Minhas Ordens de Serviço';
     protected static string $view = 'filament.pages.technician-daily-tasks';
 
+    public static function canAccess(): bool
+    {
+        return true;
+    }
 
     // Filtros
     #[Url]

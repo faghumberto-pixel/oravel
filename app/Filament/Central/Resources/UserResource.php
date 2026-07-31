@@ -55,6 +55,7 @@ class UserResource extends Resource
                             ->label('Senha')
                             ->password()
                             ->dehydrateStateUsing(fn($state) => $state ? Hash::make($state) : null)
+                            ->dehydrated(fn($state) => filled($state))
                             ->required(fn(string $operation) => $operation === 'create')
                             ->helperText(fn(string $operation) => $operation === 'edit' ? 'Deixe em branco para manter a senha atual' : ''),
 
