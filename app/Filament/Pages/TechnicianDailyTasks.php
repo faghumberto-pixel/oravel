@@ -68,6 +68,10 @@ class TechnicianDailyTasks extends Page
                 'cep' => $order->asset?->cep ?? null,
                 'status' => $order->status,
                 'created_at' => $order->created_at,
+                'maintenance_type' => $order->maintenance_type,
+                'sla_target_minutes' => $order->sla_target_minutes,
+                'sla_color' => $order->slaColor(),
+                'replacement_status' => $order->equipmentReplacements?->first()?->status,
                 'url' => route('maintenance-orders.field-wizard', $order),
             ]);
 

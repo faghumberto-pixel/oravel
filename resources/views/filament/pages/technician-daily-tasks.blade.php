@@ -112,9 +112,71 @@
     <main class="flex-1 overflow-y-auto">
         @forelse ($this->technicianTasks as $task)
             <a href="{{ $task['url'] }}" class="block border-b border-zinc-800 p-4 transition active:bg-zinc-900">
-                {{-- Badge de tipo --}}
-                <div class="mb-2 inline-block rounded-full bg-zinc-800 px-2 py-0.5 text-[10px] font-bold uppercase text-zinc-300">
-                    {{ $task['label'] }}
+                {{-- Badges: Tipo de manutenção + SLA + Troca --}}
+                <div class="mb-2 flex flex-wrap gap-1">
+                    {{-- Badge de tipo de tarefa (Manutenção/Mobilização/Desmobilização) --}}
+                    <div class="inline-block rounded-full bg-zinc-800 px-2 py-0.5 text-[10px] font-bold uppercase text-zinc-300">
+                        {{ $task['label'] }}
+                    </div>
+
+                    {{-- Badge de tipo de manutenção (Preventiva/Corretiva) --}}
+                    @if ($task['maintenance_type'])
+                        @php
+                            $maintTypeColors = [
+                                'Preventiva' => 'bg-emerald-900/30 text-emerald-400',
+                                'Corretiva' => 'bg-amber-900/30 text-amber-400',
+                                'Avaria' => 'bg-red-900/30 text-red-400',
+                                'Emergência' => 'bg-red-900/30 text-red-400',
+                                default => 'bg-zinc-800 text-zinc-400',
+                            ];
+                            $maintTypeColor = $maintTypeColors[$task['maintenance_type']] ?? $maintTypeColors['default'];
+                        @endphp
+                        <span class="inline-block rounded-full px-2 py-0.5 text-[10px] font-bold uppercase {{ $maintTypeColor }}">
+                            {{ $task['maintenance_type'] }}
+                        </span>
+                    @endif
+
+                    {{-- Badge de SLA (se houver) --}}
+                    @if ($task['sla_target_minutes'])
+                        @php
+                            $minutesElapsed = $task['created_at']->diffInMinutes(now());
+                            $minutesRemaining = $task['sla_target_minutes'] - $minutesElapsed;
+                            $slaColor = $task['sla_color'];
+                            $slaColorClasses = $slaColor === 'success' ? 'bg-emerald-900/30 text-emerald-400' : ($slaColor === 'warning' ? 'bg-amber-900/30 text-amber-400' : ($slaColor === 'danger' ? 'bg-red-900/30 text-red-400' : 'bg-zinc-800 text-zinc-400'));
+                        @endphp
+                        <span class="inline-block rounded-full px-2 py-0.5 text-[10px] font-bold {{ $slaColorClasses }}">
+                            @if ($minutesRemaining <= 0)
+                                ⏰ EXPIRADO
+                            @else
+                                ⏱ {{ floor($minutesRemaining / 60) }}h {{ $minutesRemaining % 60 }}m
+                            @endif
+                        </span>
+                    @endif
+
+                    {{-- Status de troca de equipamento --}}
+                    @if ($task['replacement_status'])
+                        @php
+                            $replacementStatusLabel = match($task['replacement_status']) {
+                                'solicitado' => '🔄 Troca Solicitada',
+                                'substituto_identificado' => '✓ Substituto ID',
+                                'desmobilizacao_andamento' => '↓ Desmob.',
+                                'mobilizacao_andamento' => '↑ Mob.',
+                                'concluido' => '✓ Concluído',
+                                'cancelado' => '✕ Cancelado',
+                                default => $task['replacement_status'],
+                            };
+                            $replacementStatusColor = match($task['replacement_status']) {
+                                'solicitado' => 'bg-amber-900/30 text-amber-400',
+                                'substituto_identificado', 'desmobilizacao_andamento', 'mobilizacao_andamento' => 'bg-blue-900/30 text-blue-400',
+                                'concluido' => 'bg-emerald-900/30 text-emerald-400',
+                                'cancelado' => 'bg-red-900/30 text-red-400',
+                                default => 'bg-zinc-800 text-zinc-400',
+                            };
+                        @endphp
+                        <span class="inline-block rounded-full px-2 py-0.5 text-[10px] font-bold {{ $replacementStatusColor }}">
+                            {{ $replacementStatusLabel }}
+                        </span>
+                    @endif
                 </div>
 
                 {{-- Informações principais --}}
