@@ -57,13 +57,12 @@
         <label class="text-xs font-bold uppercase tracking-wide text-slate-400">✍️ Assinatura do Técnico</label>
         <p class="mt-1 text-[11px] text-slate-500">Use o dedo para assinar na área abaixo</p>
 
-        <div class="mt-3 rounded-xl border-2 border-slate-600 bg-slate-900 overflow-hidden" style="height: 120px; touch-action: none; display: block;">
+        <div class="mt-3 rounded-xl border-2 border-slate-600 bg-slate-900" style="height: 150px; touch-action: none; -webkit-user-select: none; user-select: none;">
             <canvas
                 id="technicianSignaturePad"
-                width="320"
-                height="120"
-                class="w-full h-full cursor-crosshair block"
-                style="display: block; touch-action: none; background: rgb(15, 23, 42);"
+                width="300"
+                height="150"
+                style="display: block; width: 100%; height: 100%; background-color: rgb(15, 23, 42); touch-action: none; cursor: crosshair; -webkit-touch-callout: none;"
                 wire:ignore
             ></canvas>
         </div>
@@ -82,13 +81,12 @@
         <label class="text-xs font-bold uppercase tracking-wide text-slate-400">✍️ Assinatura do Cliente</label>
         <p class="mt-1 text-[11px] text-slate-500">Cliente deve assinar para confirmar o trabalho realizado</p>
 
-        <div class="mt-3 rounded-xl border-2 border-slate-600 bg-slate-900 overflow-hidden" style="height: 120px; touch-action: none; display: block;">
+        <div class="mt-3 rounded-xl border-2 border-slate-600 bg-slate-900" style="height: 150px; touch-action: none; -webkit-user-select: none; user-select: none;">
             <canvas
                 id="clientSignaturePad"
-                width="320"
-                height="120"
-                class="w-full h-full cursor-crosshair block"
-                style="display: block; touch-action: none; background: rgb(15, 23, 42);"
+                width="300"
+                height="150"
+                style="display: block; width: 100%; height: 100%; background-color: rgb(15, 23, 42); touch-action: none; cursor: crosshair; -webkit-touch-callout: none;"
                 wire:ignore
             ></canvas>
         </div>
@@ -113,72 +111,57 @@
 @pushOnce('scripts')
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Pequeno delay para garantir que tudo foi renderizado
+        window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                const initSignaturePad = (canvasId, clearBtnId) => {
-                    const canvas = document.getElementById(canvasId);
-                    if (!canvas) {
-                        console.error(`Canvas ${canvasId} not found`);
-                        return null;
+                try {
+                    const techCanvas = document.getElementById('technicianSignaturePad');
+                    const clientCanvas = document.getElementById('clientSignaturePad');
+
+                    if (!techCanvas || !clientCanvas) {
+                        console.error('Canvas elementos não encontrados');
+                        return;
                     }
 
-                    // Limpar e resetar o canvas
-                    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-
-                    // Usar dimensões já definidas em width/height attributes
-                    const dpr = window.devicePixelRatio || 1;
-                    canvas.width = canvas.getAttribute('width') * dpr;
-                    canvas.height = canvas.getAttribute('height') * dpr;
-                    ctx.scale(dpr, dpr);
-
-                    // Desenhar fundo escuro
-                    ctx.fillStyle = 'rgb(15, 23, 42)';
-                    ctx.fillRect(0, 0, canvas.width / dpr, canvas.height / dpr);
-
-                    // Garantir que o canvas está visível
-                    canvas.style.display = 'block';
-
-                    if (!window.SignaturePad) {
-                        console.error('SignaturePad library not loaded');
-                        return null;
-                    }
-
-                    const signaturePad = new window.SignaturePad(canvas, {
+                    // Inicializar SignaturePad para técnico
+                    const techPad = new SignaturePad(techCanvas, {
                         backgroundColor: 'rgb(15, 23, 42)',
                         penColor: 'rgb(255, 255, 255)',
+                        minWidth: 0.5,
+                        maxWidth: 2.5,
                         throttle: 16,
-                        minWidth: 1,
-                        maxWidth: 3,
-                        velocityFilterWeight: 0.7,
-                        onEnd: () => console.log(`${canvasId} signature drawn`)
+                        minDistance: 5,
                     });
 
-                    const clearBtn = document.getElementById(clearBtnId);
-                    if (clearBtn) {
-                        clearBtn.addEventListener('click', () => {
-                            signaturePad.clear();
-                        });
-                    }
+                    // Inicializar SignaturePad para cliente
+                    const clientPad = new SignaturePad(clientCanvas, {
+                        backgroundColor: 'rgb(15, 23, 42)',
+                        penColor: 'rgb(255, 255, 255)',
+                        minWidth: 0.5,
+                        maxWidth: 2.5,
+                        throttle: 16,
+                        minDistance: 5,
+                    });
 
-                    return signaturePad;
-                };
+                    // Botões de limpar
+                    document.getElementById('clearTechSignature')?.addEventListener('click', () => {
+                        techPad.clear();
+                    });
 
-                const techSignature = initSignaturePad('technicianSignaturePad', 'clearTechSignature');
-                const clientSignature = initSignaturePad('clientSignaturePad', 'clearClientSignature');
+                    document.getElementById('clearClientSignature')?.addEventListener('click', () => {
+                        clientPad.clear();
+                    });
 
-                // Expor para uso global
-                window.getTechnicianSignature = () => {
-                    if (!techSignature?.isEmpty?.()) return null;
-                    return techSignature?.toDataURL?.('image/png');
-                };
-                window.getClientSignature = () => {
-                    if (!clientSignature?.isEmpty?.()) return null;
-                    return clientSignature?.toDataURL?.('image/png');
-                };
-                window.isTechnicianSigned = () => techSignature && !techSignature.isEmpty?.();
-                window.isClientSigned = () => clientSignature && !clientSignature.isEmpty?.();
-            }, 100);
+                    // Funções globais
+                    window.getTechnicianSignature = () => !techPad.isEmpty() ? techPad.toDataURL('image/png') : null;
+                    window.getClientSignature = () => !clientPad.isEmpty() ? clientPad.toDataURL('image/png') : null;
+                    window.isTechnicianSigned = () => !techPad.isEmpty();
+                    window.isClientSigned = () => !clientPad.isEmpty();
+
+                    console.log('✓ SignaturePad inicializado para técnico e cliente');
+                } catch (e) {
+                    console.error('Erro ao inicializar SignaturePad:', e);
+                }
+            }, 50);
         });
     </script>
 @endPushOnce
