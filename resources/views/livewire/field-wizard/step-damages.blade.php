@@ -12,13 +12,24 @@
 
     {{-- Notas técnicas --}}
     <div class="rounded-2xl bg-zinc-900 p-4">
-        <label class="text-xs font-bold uppercase tracking-wide text-zinc-400">Notas Técnicas</label>
+        <div class="flex items-center justify-between">
+            <label class="text-xs font-bold uppercase tracking-wide text-zinc-400">Notas Técnicas</label>
+            <button
+                type="button"
+                id="micButton"
+                class="rounded-full bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 text-xs font-bold transition active:scale-95"
+            >
+                🎤 Falar
+            </button>
+        </div>
         <textarea
             wire:model="technicalNotes"
             rows="3"
+            id="technicalNotesField"
             placeholder="Observações técnicas adicionais..."
             class="mt-2 w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-emerald-500"
         ></textarea>
+        <div id="micStatus" class="mt-2 text-xs text-zinc-500 hidden"></div>
     </div>
 
     {{-- Fotos ANTES/DEPOIS --}}
@@ -156,3 +167,75 @@
         </div>
     @endif
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const micButton = document.getElementById('micButton');
+        const micStatus = document.getElementById('micStatus');
+        const textField = document.getElementById('technicalNotesField');
+
+        if (!micButton) return;
+
+        // Verificar suporte a Web Speech API
+        const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+        if (!SpeechRecognition) {
+            micButton.disabled = true;
+            micButton.textContent = '🎤 Não suportado';
+            return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'pt-BR';
+        recognition.continuous = false;
+        recognition.interimResults = true;
+
+        let isListening = false;
+
+        micButton.addEventListener('click', function() {
+            if (isListening) {
+                recognition.stop();
+            } else {
+                textField.focus();
+                recognition.start();
+                micStatus.textContent = '🎤 Escutando...';
+                micStatus.classList.remove('hidden');
+                micButton.textContent = '⏹ Parar';
+                micButton.classList.add('bg-red-500', 'hover:bg-red-600');
+                micButton.classList.remove('bg-emerald-500', 'hover:bg-emerald-600');
+            }
+            isListening = !isListening;
+        });
+
+        recognition.onresult = function(event) {
+            let transcript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                transcript += event.results[i][0].transcript + ' ';
+            }
+
+            if (event.isFinal) {
+                // Adicionar ao final do texto existente
+                const currentText = textField.value;
+                textField.value = currentText ? currentText + ' ' + transcript : transcript;
+
+                // Trigger Livewire update
+                Livewire.dispatch('input', { technicalNotes: textField.value });
+                textField.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        };
+
+        recognition.onerror = function(event) {
+            micStatus.textContent = '❌ Erro: ' + event.error;
+            micStatus.classList.remove('hidden');
+        };
+
+        recognition.onend = function() {
+            isListening = false;
+            micButton.textContent = '🎤 Falar';
+            micButton.classList.remove('bg-red-500', 'hover:bg-red-600');
+            micButton.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
+            setTimeout(() => {
+                micStatus.classList.add('hidden');
+            }, 2000);
+        };
+    });
+</script>
