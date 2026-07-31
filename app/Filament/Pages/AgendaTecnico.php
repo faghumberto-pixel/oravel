@@ -19,6 +19,10 @@ class AgendaTecnico extends Page
     // Cada departamento tem sua propria Programacao, sem misturar (Logistica
     // tem a dela, ver ProgramacaoLogistica). Esta e' a de Manutencao --
     // Agendamento pessoal + O.S., nada de mobilizacao/desmobilizacao aqui.
+    //
+    // Técnicos comuns (não-admin) são redirecionados para a versão mobile
+    // (AgendaTecnicoMobile) que é otimizada para campo. Admins/supervisores
+    // veem o calendário full com saade/filament-fullcalendar.
 
     protected static ?int $navigationSort = 1;
 
@@ -28,7 +32,18 @@ class AgendaTecnico extends Page
 
     public static function canAccess(): bool
     {
-        return (bool) auth()->user()?->can('viewAny', Appointment::class);
+        $user = auth()->user();
+
+        if (! $user?->can('viewAny', Appointment::class)) {
+            return false;
+        }
+
+        // Técnicos comuns são redirecionados para mobile
+        if (! $user->isAdmin() && empty($user->supervisedDepartmentIds())) {
+            redirect()->route('agenda-tecnico.mobile')->send();
+        }
+
+        return true;
     }
 
     /**

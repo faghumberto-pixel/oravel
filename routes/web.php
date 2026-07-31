@@ -126,6 +126,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/maintenance-orders/{maintenanceOrder}/checklist-digital', MaintenanceChecklistMobile::class)
         ->name('maintenance-orders.checklist-mobile');
 
+    // Agenda técnica mobile: próximos 30 dias de compromissos e O.S. agendadas
+    Route::get('/admin/agenda-tecnico/mobile', 'App\Livewire\AgendaTecnicoMobile')
+        ->name('agenda-tecnico.mobile');
+
     // "Modo Campo": execucao da O.S. no celular do tecnico, uma etapa por tela,
     // em vez do form de 7 abas do painel. Ponto de entrada em
     // EditMaintenanceOrder, na tabela de O.S. e no dossie mobile do ativo

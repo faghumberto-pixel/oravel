@@ -24,10 +24,6 @@ class TechnicianDailyTasks extends Page
     protected static ?string $title = 'Minhas Ordens de Serviço';
     protected static string $view = 'filament.pages.technician-daily-tasks';
 
-    public static function canAccess(): bool
-    {
-        return false; // Desabilitado temporariamente por erro de relacionamento
-    }
 
     // Filtros
     #[Url]
@@ -60,7 +56,7 @@ class TechnicianDailyTasks extends Page
             ->where('technician_id', $userId)
             ->where('tenant_id', Auth::user()->tenant_id)
             ->whereNotIn('status', ['Concluída', 'Cancelada'])
-            ->with(['asset', 'asset.criticalityLevel'])
+            ->with(['asset', 'asset.abcMatrix'])
             ->get()
             ->map(fn (MaintenanceOrder $order) => [
                 'id' => $order->id,
@@ -69,7 +65,7 @@ class TechnicianDailyTasks extends Page
                 'patrimonio' => $order->asset?->patrimonio ?? '—',
                 'asset_name' => $order->asset?->name ?? 'Sem ativo',
                 'client' => $order->client?->name ?? null,
-                'criticality' => $order->asset?->criticalityLevel?->letter ?? 'C',
+                'criticality' => $order->asset?->currentCriticalityLevel()?->letter ?? 'C',
                 'nature' => $order->natureza_do_servico ?? 'Interno',
                 'cep' => $order->asset?->cep ?? null,
                 'status' => $order->status,
@@ -87,7 +83,7 @@ class TechnicianDailyTasks extends Page
             ->where('tenant_id', Auth::user()->tenant_id)
             ->where('movement_type', 'mobilization')
             ->where('sync_status', '!=', 'synced')
-            ->with(['asset', 'asset.criticalityLevel', 'contract'])
+            ->with(['asset', 'asset.abcMatrix', 'contract'])
             ->get()
             ->map(fn (AssetMovement $movement) => [
                 'id' => $movement->id,
@@ -96,7 +92,7 @@ class TechnicianDailyTasks extends Page
                 'patrimonio' => $movement->asset?->patrimonio ?? '—',
                 'asset_name' => $movement->asset?->name ?? 'Sem ativo',
                 'client' => $movement->contract?->client?->name ?? null,
-                'criticality' => $movement->asset?->criticalityLevel?->letter ?? 'C',
+                'criticality' => $movement->asset?->currentCriticalityLevel()?->letter ?? 'C',
                 'nature' => 'Externo',
                 'cep' => $movement->contract?->client?->cep ?? null,
                 'status' => $movement->sync_status,
@@ -110,7 +106,7 @@ class TechnicianDailyTasks extends Page
             ->where('tenant_id', Auth::user()->tenant_id)
             ->where('movement_type', 'demobilization')
             ->where('sync_status', '!=', 'synced')
-            ->with(['asset', 'asset.criticalityLevel', 'contract'])
+            ->with(['asset', 'asset.abcMatrix', 'contract'])
             ->get()
             ->map(fn (AssetMovement $movement) => [
                 'id' => $movement->id,
@@ -119,7 +115,7 @@ class TechnicianDailyTasks extends Page
                 'patrimonio' => $movement->asset?->patrimonio ?? '—',
                 'asset_name' => $movement->asset?->name ?? 'Sem ativo',
                 'client' => $movement->contract?->client?->name ?? null,
-                'criticality' => $movement->asset?->criticalityLevel?->letter ?? 'C',
+                'criticality' => $movement->asset?->currentCriticalityLevel()?->letter ?? 'C',
                 'nature' => 'Retorno',
                 'cep' => $movement->contract?->client?->cep ?? null,
                 'status' => $movement->sync_status,
