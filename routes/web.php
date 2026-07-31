@@ -137,6 +137,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/asset-movements/mobilization/{movement?}', 'App\Livewire\AssetMobilizationWizard')
         ->name('asset-movements.mobilization');
 
+    // Wizard de Desmobilização: técnico retorna equipamento do cliente ao pátio
+    Route::get('/admin/asset-movements/demobilization/{movement?}', 'App\Livewire\AssetDemobilizationWizard')
+        ->name('asset-movements.demobilization');
+
     Route::get('/admin/maintenance-orders/{maintenanceOrder}/movimentacao/{type}', EquipmentMovementMobile::class)
         ->where('type', 'mobilizacao|desmobilizacao')
         ->name('maintenance-orders.equipment-movement-mobile');
