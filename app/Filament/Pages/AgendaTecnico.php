@@ -32,18 +32,17 @@ class AgendaTecnico extends Page
 
     public static function canAccess(): bool
     {
-        $user = auth()->user();
+        return (bool) auth()->user()?->can('viewAny', Appointment::class);
+    }
 
-        if (! $user?->can('viewAny', Appointment::class)) {
-            return false;
-        }
+    public function mount(): void
+    {
+        $user = auth()->user();
 
         // Técnicos comuns são redirecionados para mobile
         if (! $user->isAdmin() && empty($user->supervisedDepartmentIds())) {
             redirect()->route('agenda-tecnico.mobile')->send();
         }
-
-        return true;
     }
 
     /**
