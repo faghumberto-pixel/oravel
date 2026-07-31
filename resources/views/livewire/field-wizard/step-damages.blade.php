@@ -93,16 +93,71 @@
         </div>
     </div>
 
-    {{-- Registro de Avaria (opcional) --}}
-    <div class="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
-        <label class="flex items-center gap-2">
-            <input
-                type="checkbox"
-                wire:model="shouldRegisterDamage"
-                class="rounded border-zinc-700 bg-zinc-800 text-emerald-500 focus:ring-emerald-500"
-            >
-            <span class="text-xs font-bold uppercase tracking-wide text-zinc-400">Registrar como Avaria Formal</span>
-        </label>
-        <p class="mt-2 text-[11px] text-zinc-500">Marque para criar um registro de avaria que pode ser consultado depois</p>
-    </div>
+    {{-- Decisão: Encontrou problema não previsto? (só aparece em Preventiva) --}}
+    @if ($this->maintenanceType === 'Preventiva')
+        <div class="rounded-2xl border border-emerald-800 bg-emerald-900/20 p-4">
+            <p class="text-sm font-bold uppercase tracking-wide text-emerald-400">
+                ⚠️ Encontrou algum problema não previsto?
+            </p>
+            <p class="mt-1 text-[11px] text-emerald-300">
+                Se encontrou um dano que exige troca de equipamento, marque abaixo para solicitar a substituição.
+            </p>
+
+            <label class="mt-3 flex items-center gap-2">
+                <input
+                    type="checkbox"
+                    wire:model="shouldRegisterDamage"
+                    class="rounded border-zinc-700 bg-zinc-800 text-emerald-500 focus:ring-emerald-500"
+                >
+                <span class="text-xs font-bold text-zinc-300">Sim, solicitar troca de equipamento</span>
+            </label>
+        </div>
+
+        {{-- Seletor de urgência (aparece se shouldRegisterDamage marcado) --}}
+        @if ($shouldRegisterDamage && filled($damageDescription))
+            <div class="rounded-2xl border border-amber-800 bg-amber-900/20 p-4 animate-pulse">
+                <label class="text-xs font-bold uppercase tracking-wide text-amber-400">
+                    ⏱ Qual é a urgência da troca?
+                </label>
+                <p class="mt-1 text-[11px] text-amber-300">Escolha o nível de urgência para definir o SLA de atendimento</p>
+
+                <div class="mt-3 space-y-2">
+                    <button
+                        type="button"
+                        wire:click="$set('replacementUrgency', 'critico')"
+                        class="w-full rounded-lg px-3 py-2 text-xs font-bold transition {{ $replacementUrgency === 'critico' ? 'bg-red-600 text-zinc-950' : 'bg-red-900/30 text-red-400 hover:bg-red-900/50' }}"
+                    >
+                        🔴 CRÍTICO — 2 horas (Operação parada)
+                    </button>
+                    <button
+                        type="button"
+                        wire:click="$set('replacementUrgency', 'urgente')"
+                        class="w-full rounded-lg px-3 py-2 text-xs font-bold transition {{ $replacementUrgency === 'urgente' ? 'bg-amber-600 text-zinc-950' : 'bg-amber-900/30 text-amber-400 hover:bg-amber-900/50' }}"
+                    >
+                        🟠 URGENTE — 8 horas (Operando com risco)
+                    </button>
+                    <button
+                        type="button"
+                        wire:click="$set('replacementUrgency', 'normal')"
+                        class="w-full rounded-lg px-3 py-2 text-xs font-bold transition {{ $replacementUrgency === 'normal' ? 'bg-zinc-600 text-zinc-100' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700' }}"
+                    >
+                        ⚪ NORMAL — 48 horas (Planejado)
+                    </button>
+                </div>
+            </div>
+        @endif
+    @else
+        {{-- Para Corretiva/Avaria: só checkbox simples --}}
+        <div class="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+            <label class="flex items-center gap-2">
+                <input
+                    type="checkbox"
+                    wire:model="shouldRegisterDamage"
+                    class="rounded border-zinc-700 bg-zinc-800 text-emerald-500 focus:ring-emerald-500"
+                >
+                <span class="text-xs font-bold uppercase tracking-wide text-zinc-400">Registrar como Avaria Formal</span>
+            </label>
+            <p class="mt-2 text-[11px] text-zinc-500">Marque para criar um registro de avaria que pode ser consultado depois</p>
+        </div>
+    @endif
 </div>

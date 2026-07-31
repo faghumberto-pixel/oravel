@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Livewire\Concerns\HandlesChecklistItems;
+use App\Models\EquipmentReplacement;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenanceOrderMaterial;
 use App\Models\Material;
@@ -76,6 +77,12 @@ class MaintenanceOrderFieldWizard extends Component
     public $damagePhotoAfter = null;
 
     public bool $shouldRegisterDamage = false;
+
+    /**
+     * Urgência da troca de equipamento (se Preventiva + dano encontrado)
+     * Mapeia a 2h|8h|48h de SLA: critico|urgente|normal
+     */
+    public string $replacementUrgency = 'normal';
 
     // --- Etapa 4: materiais ---
     public string $materialSearch = '';
@@ -400,9 +407,41 @@ class MaintenanceOrderFieldWizard extends Component
                 ->toMediaCollection('damage_photos_after');
         }
 
+        // Se Preventiva + dano encontrado: cria solicitação de troca
+        if ($this->shouldRegisterDamage &&
+            $this->maintenanceOrder->maintenance_type === MaintenanceOrder::TYPE_PREVENTIVE &&
+            filled($this->damageDescription)) {
+            $this->createEquipmentReplacement();
+        }
+
         // Limpa uploads temporários
         $this->damagePhotoBefore = null;
         $this->damagePhotoAfter = null;
+    }
+
+    private function createEquipmentReplacement(): void
+    {
+        // Cria EquipmentReplacement vinculada à O.S. com urgência mapeada para SLA
+        $urgencyToSla = [
+            'critico' => 120,    // 2 horas
+            'urgente' => 480,    // 8 horas
+            'normal' => 1440,    // 48 horas
+        ];
+
+        EquipmentReplacement::create([
+            'tenant_id' => $this->maintenanceOrder->tenant_id,
+            'maintenance_order_id' => $this->maintenanceOrder->id,
+            'original_asset_id' => $this->maintenanceOrder->asset_id,
+            'requested_by_user_id' => auth()->id(),
+            'urgency' => $this->replacementUrgency,
+            'reason' => $this->damageDescription,
+            'status' => EquipmentReplacement::STATUS_SOLICITADO,
+        ]);
+
+        // Atualizar MaintenanceOrder com SLA
+        $this->maintenanceOrder->update([
+            'sla_target_minutes' => $urgencyToSla[$this->replacementUrgency] ?? 1440,
+        ]);
     }
 
     public function clearDamagePhotoBefore(): void
