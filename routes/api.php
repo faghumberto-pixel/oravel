@@ -24,6 +24,11 @@ Route::get('/health', function () {
  *
  * Route::post('/webhooks/asaas', [WebhookAsaasController::class, 'handle']);
  */
+// Technician offline field app
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/technician/tasks-of-day', 'App\Http\Controllers\Api\TechnicianTasksController@tasksOfDay');
+    Route::get('/health-check', 'App\Http\Controllers\Api\TechnicianTasksController@healthCheck');
+});
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('assets/default-checklist/{category}', [AssetController::class, 'getDefaultChecklist']);

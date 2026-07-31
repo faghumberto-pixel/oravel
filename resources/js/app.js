@@ -1,4 +1,5 @@
 import './bootstrap';
+import './offline/init'; // Offline-first initialization for field technician
 
 import Alpine from 'alpinejs';
 import SignaturePad from 'signature_pad';
