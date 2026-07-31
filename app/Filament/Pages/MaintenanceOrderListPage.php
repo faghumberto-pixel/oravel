@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Pages;
+namespace App\Filament\Pages;
 
 use App\Models\MaintenanceOrder;
 use Filament\Pages\Page;
@@ -13,8 +13,8 @@ class MaintenanceOrderListPage extends Page
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-list';
     protected static ?string $navigationLabel = 'Ordens de Serviço';
     protected static ?string $navigationGroup = 'OS';
-    protected static string $view = 'filament.admin.pages.maintenance-order-list';
-    protected static string $slug = 'maintenance-order-list';
+    protected static ?string $view = 'filament.admin.pages.maintenance-order-list';
+    protected static ?string $slug = 'maintenance-order-list';
 
     #[Url]
     public string $search = '';
