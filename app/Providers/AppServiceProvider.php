@@ -68,6 +68,8 @@ use Jeffgreco13\FilamentBreezy\Livewire\TwoFactorAuthentication;
 use Jeffgreco13\FilamentBreezy\Livewire\UpdatePassword;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
+use Illuminate\Auth\AuthenticationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 // Importar a DynamicPolicy
 
@@ -81,6 +83,14 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Schema::defaultStringLength(191);
+
+        // Render customizado para erros 403
+        app('Illuminate\Foundation\Exceptions\Handler')->renderable(function (HttpException $e) {
+            if ($e->getStatusCode() === 403) {
+                return redirect()->back()
+                    ->with('error', 'Você não tem permissão de acessar essa funcionalidade');
+            }
+        });
 
         // ATIVAÇÃO FORÇADA
         Asset::observe(AssetObserver::class);
