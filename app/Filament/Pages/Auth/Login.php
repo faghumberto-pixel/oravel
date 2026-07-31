@@ -162,6 +162,11 @@ class Login extends BaseLogin
 
         session()->regenerate();
 
+        // Técnico comum (não admin, sem departamentos supervisionados) vai direto para "Minhas Ordens de Serviço"
+        if ($user instanceof User && ! $user->isAdmin() && empty($user->supervisedDepartmentIds())) {
+            return app(LoginResponse::class)->redirectTo(route('filament.admin.pages.technician-daily-tasks'));
+        }
+
         return app(LoginResponse::class);
     }
 
