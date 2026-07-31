@@ -144,15 +144,9 @@
 
     {{-- Rodapé fixo: ações --}}
     <footer class="sticky bottom-0 border-t border-zinc-800 bg-zinc-900 px-5 pb-4 pt-3">
-        <div class="flex gap-3">
-            <a href="{{ route('filament.admin.pages.agenda-tecnico') }}"
-               class="flex-1 rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-3 text-center text-sm font-bold text-zinc-300 hover:bg-zinc-700">
-                📅 Calendário
-            </a>
-            <a href="{{ route('filament.admin.pages.painel-gestao', ['tenant' => auth()->user()->latest_tenant_slug]) }}"
-               class="flex-1 rounded-xl bg-emerald-600 px-3 py-3 text-center text-sm font-bold text-zinc-950 hover:bg-emerald-500">
-                ⚙️ Menu
-            </a>
-        </div>
+        <a href="{{ route('filament.admin.pages.agenda-tecnico') }}"
+           class="block w-full rounded-xl bg-emerald-600 px-3 py-3 text-center text-sm font-bold text-zinc-950 hover:bg-emerald-500">
+            📅 Voltar ao Calendário
+        </a>
     </footer>
 </div>
