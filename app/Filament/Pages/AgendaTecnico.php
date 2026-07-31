@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 class AgendaTecnico extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
-    protected static ?string $navigationGroup = 'PCM - Manutenção';
+    protected static ?string $navigationGroup = 'Manutenção';
     protected static ?string $navigationLabel = 'Programação';
 
     protected static ?string $title = 'Programação';

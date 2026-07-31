@@ -74,7 +74,7 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(asset('favicon.png'))
             ->navigationGroups([
                 NavigationGroup::make('PCM'),
-                NavigationGroup::make('PCM - Manutenção'),
+                NavigationGroup::make('Manutenção'),
                 NavigationGroup::make('Logística'),
                 NavigationGroup::make('Ativos e Materiais'),
                 NavigationGroup::make('Equipe'),

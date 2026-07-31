@@ -20,7 +20,7 @@ use Livewire\Attributes\Url;
 class TechnicianDailyTasks extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
-    protected static ?string $navigationGroup = 'PCM - Manutenção';
+    protected static ?string $navigationGroup = 'Manutenção';
     protected static ?string $title = 'Minhas Ordens de Serviço';
     protected static string $view = 'filament.pages.technician-daily-tasks';
 
