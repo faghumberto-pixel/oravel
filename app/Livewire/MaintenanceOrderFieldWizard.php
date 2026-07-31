@@ -94,6 +94,8 @@ class MaintenanceOrderFieldWizard extends Component
     // --- Etapa 5: assinatura ---
     public ?string $technicianSignature = null;
 
+    public ?string $clientSignature = null;
+
     /**
      * idle | saving | saved | error -- alimenta o indicador no rodape. 'error'
      * e' o caso de campo: gravacao falhou (rede caiu no meio), o tecnico ve o
@@ -581,6 +583,18 @@ class MaintenanceOrderFieldWizard extends Component
         // Etapa 5: a assinatura pode ser capturada via Alpine/JavaScript,
         // mas aqui apenas validamos que a assinatura foi fornecida antes de
         // permitir finalizar. O completeOrder() sera' chamado por next().
+    }
+
+    public function saveSignatures(string $technicianSignature, string $clientSignature): void
+    {
+        $this->maintenanceOrder->update([
+            'technician_signature' => $technicianSignature,
+            'client_signature' => $clientSignature,
+        ]);
+
+        $this->technicianSignature = $technicianSignature;
+        $this->clientSignature = $clientSignature;
+        $this->saveState = 'saved';
     }
 
     private function completeOrder(): void

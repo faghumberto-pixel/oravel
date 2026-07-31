@@ -146,3 +146,40 @@
         </div>
     </footer>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const nextBtn = document.querySelector('button[wire\\:click="next"]');
+        if (!nextBtn) return;
+
+        nextBtn.addEventListener('click', function(e) {
+            // Se estamos na etapa 5 (assinatura), captura as assinaturas antes de enviar
+            const stepElement = document.querySelector('[wire\\:model="step"]');
+            const isStep5 = @js($step) === 5;
+
+            if (isStep5) {
+                e.preventDefault();
+
+                // Captura as assinaturas
+                const techSig = window.getTechnicianSignature?.();
+                const clientSig = window.getClientSignature?.();
+
+                if (!techSig || window.isTechnicianSignature?.() === false) {
+                    alert('⚠️ Técnico deve assinar para continuar');
+                    return;
+                }
+
+                if (!clientSig || window.isClientSigned?.() === false) {
+                    alert('⚠️ Cliente deve assinar para continuar');
+                    return;
+                }
+
+                // Envia para o Livewire
+                @this.call('saveSignatures', techSig, clientSig, () => {
+                    // Após salvar, chama o next normalmente
+                    @this.call('next');
+                });
+            }
+        });
+    });
+</script>
