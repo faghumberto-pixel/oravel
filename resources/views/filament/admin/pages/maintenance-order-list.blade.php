@@ -64,7 +64,7 @@
     {{-- Lista de cards --}}
     <div class="px-5 pb-32 space-y-3">
         @forelse ($this->orders as $order)
-            <a href="{{ route('filament.admin.resources.maintenance-orders.edit', $order) }}" class="block bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition p-4">
+            <a href="{{ route('maintenance-orders.field-wizard', $order) }}" class="block bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition p-4">
                 {{-- Header do card --}}
                 <div class="flex items-center justify-between mb-3">
                     <span class="text-blue-600 font-semibold">OS #{{ $order->os_number }}</span>
@@ -127,7 +127,7 @@
 
     {{-- Bottom tab bar --}}
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-20">
-        <a href="{{ route('filament.admin.pages.dashboard') }}" class="flex flex-col items-center justify-center h-full w-full text-gray-600 hover:text-blue-600 transition">
+        <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center h-full w-full text-gray-600 hover:text-blue-600 transition">
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
             </svg>

@@ -6,15 +6,18 @@ use App\Models\MaintenanceOrder;
 use Filament\Pages\Page;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 
+#[Layout('layouts.checklist-mobile')]
 class MaintenanceOrderListPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
-    protected static ?string $navigationLabel = 'Ordens de Serviço';
-    protected static ?string $navigationGroup = 'OS';
     protected static string $view = 'filament.admin.pages.maintenance-order-list';
     protected static ?string $slug = 'maintenance-order-list';
+
+    // Tela mobile de entrada direta (link/QR/redirect), não um item de menu --
+    // "Ordens de Serviço" já existe em Manutenção via MaintenanceOrderResource.
+    protected static bool $shouldRegisterNavigation = false;
 
     #[Url]
     public string $search = '';
