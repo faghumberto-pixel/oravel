@@ -1,229 +1,214 @@
 {{--
     "Minhas Ordens de Serviço" — lista do dia do técnico.
-    Otimizado para mobile (375-430px), offline-first, com filtros rápidos.
-    Design: Clean vertical PWA interface para uso em campo.
+    Design polido para parecer um app mobile nativo.
 --}}
 
-<div class="mx-auto flex min-h-screen max-w-md flex-col bg-zinc-950">
-    {{-- Cabeçalho fixo --}}
-    <header class="sticky top-0 z-40 border-b-2 border-zinc-800 bg-gradient-to-b from-zinc-900 to-zinc-950 px-4 py-3">
-        <div class="flex items-center justify-between">
-            <div class="flex-1">
-                <h1 class="text-lg font-bold tracking-tight text-white">MINHAS ORDENS DO DIA</h1>
-                <p class="mt-1 text-xs font-semibold text-zinc-300">
-                    {{ $this->pendingCount }} pendentes
-                </p>
+<div class="fixed inset-0 mx-auto flex max-w-md flex-col bg-white dark:bg-slate-950">
+    {{-- Header polido --}}
+    <header class="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/95 backdrop-blur px-5 py-4">
+        <div class="space-y-3">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Suas Tarefas</p>
+                    <h1 class="text-2xl font-black text-slate-900 dark:text-white mt-1">Ordens de Serviço</h1>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-xs font-bold text-white shadow-lg">
+                        {{ strtoupper(mb_substr(Auth::user()?->name ?? '?', 0, 1)) }}
+                    </div>
+                </div>
             </div>
-            <div class="flex items-center gap-2">
-                {{-- Status Offline --}}
-                <div class="flex flex-col items-center gap-1">
-                    <div class="text-xl">☁️</div>
-                    <span class="text-[10px] font-bold text-zinc-400">Offline</span>
-                </div>
-                {{-- Avatar --}}
-                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600 text-sm font-bold text-zinc-950">
-                    {{ strtoupper(mb_substr(Auth::user()?->name ?? '?', 0, 1)) }}
-                </div>
+            <div class="flex items-center gap-2 text-sm">
+                <div class="h-2 w-2 rounded-full bg-emerald-500"></div>
+                <span class="font-semibold text-slate-700 dark:text-slate-300">{{ $this->pendingCount }} pendentes</span>
+                <span class="text-slate-500 dark:text-slate-400">•</span>
+                <span class="text-slate-600 dark:text-slate-400">{{ $this->completedCount }} completas</span>
             </div>
         </div>
     </header>
 
-    {{-- Filtros rápidos (chips tactilmente grandes) --}}
-    <nav class="border-b-2 border-zinc-700 bg-zinc-900 px-3 py-3 space-y-3">
-        {{-- Linha 1: Tipo de tarefa --}}
+    {{-- Filtros estilo iOS --}}
+    <div class="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 px-4 py-4 space-y-4 overflow-y-auto">
+        {{-- Tipo de Tarefa --}}
         <div>
-            <p class="text-[10px] font-bold uppercase text-zinc-500 mb-2">Tipo de Tarefa</p>
-            <div class="flex gap-2 overflow-x-auto">
+            <p class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">Tipo</p>
+            <div class="flex gap-2">
                 <button wire:click="$set('filterType', '')"
-                        wire:loading.attr="disabled"
-                        :class="$filterType === '' ? 'bg-emerald-600 text-zinc-950' : 'border-2 border-zinc-700 bg-zinc-800 text-zinc-300'"
-                        class="shrink-0 rounded-lg px-3 py-2 text-xs font-bold transition active:scale-95">
+                        :class="$filterType === '' ? 'bg-emerald-500 text-white shadow-md' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'"
+                        class="flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition active:scale-95">
                     Todos
                 </button>
                 <button wire:click="$set('filterType', 'maintenance')"
-                        wire:loading.attr="disabled"
-                        :class="$filterType === 'maintenance' ? 'bg-emerald-600 text-zinc-950' : 'border-2 border-zinc-700 bg-zinc-800 text-zinc-300'"
-                        class="shrink-0 rounded-lg px-3 py-2 text-xs font-bold transition active:scale-95">
+                        :class="$filterType === 'maintenance' ? 'bg-emerald-500 text-white shadow-md' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'"
+                        class="flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition active:scale-95">
                     Manutenção
                 </button>
                 <button wire:click="$set('filterType', 'mobilization')"
-                        wire:loading.attr="disabled"
-                        :class="$filterType === 'mobilization' ? 'bg-emerald-600 text-zinc-950' : 'border-2 border-zinc-700 bg-zinc-800 text-zinc-300'"
-                        class="shrink-0 rounded-lg px-3 py-2 text-xs font-bold transition active:scale-95">
-                    Mobilização
+                        :class="$filterType === 'mobilization' ? 'bg-emerald-500 text-white shadow-md' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'"
+                        class="flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition active:scale-95">
+                    Mob.
                 </button>
                 <button wire:click="$set('filterType', 'demobilization')"
-                        wire:loading.attr="disabled"
-                        :class="$filterType === 'demobilization' ? 'bg-emerald-600 text-zinc-950' : 'border-2 border-zinc-700 bg-zinc-800 text-zinc-300'"
-                        class="shrink-0 rounded-lg px-3 py-2 text-xs font-bold transition active:scale-95">
-                    Desmobilização
+                        :class="$filterType === 'demobilization' ? 'bg-emerald-500 text-white shadow-md' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'"
+                        class="flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition active:scale-95">
+                    Desm.
                 </button>
             </div>
         </div>
 
-        {{-- Linha 2: Prioridade ABC --}}
+        {{-- Prioridade --}}
         <div>
-            <p class="text-[10px] font-bold uppercase text-zinc-500 mb-2">Prioridade</p>
+            <p class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">Prioridade</p>
             <div class="flex gap-2">
                 <button wire:click="$set('filterCriticality', '')"
-                        wire:loading.attr="disabled"
-                        :class="$filterCriticality === '' ? 'bg-emerald-600 text-zinc-950' : 'border-2 border-zinc-700 bg-zinc-800 text-zinc-300'"
-                        class="flex-1 rounded-lg px-2 py-2 text-xs font-bold transition active:scale-95">
+                        :class="$filterCriticality === '' ? 'bg-emerald-500 text-white shadow-md' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'"
+                        class="flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition active:scale-95">
                     Todas
                 </button>
                 <button wire:click="$set('filterCriticality', 'A')"
-                        wire:loading.attr="disabled"
-                        :class="$filterCriticality === 'A' ? 'bg-red-600 text-white' : 'border-2 border-red-900/40 bg-red-900/20 text-red-300'"
-                        class="rounded-lg px-3 py-2 text-xs font-black transition active:scale-95">
+                        :class="$filterCriticality === 'A' ? 'bg-red-500 text-white shadow-md' : 'bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300'"
+                        class="rounded-lg px-3 py-2 text-xs font-bold transition active:scale-95">
                     Alta
                 </button>
                 <button wire:click="$set('filterCriticality', 'B')"
-                        wire:loading.attr="disabled"
-                        :class="$filterCriticality === 'B' ? 'bg-yellow-600 text-zinc-950' : 'border-2 border-yellow-900/40 bg-yellow-900/20 text-yellow-300'"
-                        class="rounded-lg px-3 py-2 text-xs font-black transition active:scale-95">
+                        :class="$filterCriticality === 'B' ? 'bg-amber-500 text-white shadow-md' : 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300'"
+                        class="rounded-lg px-3 py-2 text-xs font-bold transition active:scale-95">
                     Média
                 </button>
                 <button wire:click="$set('filterCriticality', 'C')"
-                        wire:loading.attr="disabled"
-                        :class="$filterCriticality === 'C' ? 'bg-green-600 text-zinc-950' : 'border-2 border-green-900/40 bg-green-900/20 text-green-300'"
-                        class="rounded-lg px-3 py-2 text-xs font-black transition active:scale-95">
+                        :class="$filterCriticality === 'C' ? 'bg-green-500 text-white shadow-md' : 'bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300'"
+                        class="rounded-lg px-3 py-2 text-xs font-bold transition active:scale-95">
                     Baixa
                 </button>
             </div>
         </div>
 
-        {{-- Linha 3: Natureza --}}
+        {{-- Localização --}}
         <div>
-            <p class="text-[10px] font-bold uppercase text-zinc-500 mb-2">Localização</p>
+            <p class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">Local</p>
             <div class="flex gap-2">
                 <button wire:click="$set('filterNature', '')"
-                        wire:loading.attr="disabled"
-                        :class="$filterNature === '' ? 'bg-emerald-600 text-zinc-950' : 'border-2 border-zinc-700 bg-zinc-800 text-zinc-300'"
-                        class="flex-1 rounded-lg px-2 py-2 text-xs font-bold transition active:scale-95">
+                        :class="$filterNature === '' ? 'bg-emerald-500 text-white shadow-md' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'"
+                        class="flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition active:scale-95">
                     Ambas
                 </button>
                 <button wire:click="$set('filterNature', 'internal')"
-                        wire:loading.attr="disabled"
-                        :class="$filterNature === 'internal' ? 'bg-blue-600 text-white' : 'border-2 border-blue-900/40 bg-blue-900/20 text-blue-300'"
-                        class="flex-1 rounded-lg px-2 py-2 text-xs font-bold transition active:scale-95">
+                        :class="$filterNature === 'internal' ? 'bg-blue-500 text-white shadow-md' : 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300'"
+                        class="flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition active:scale-95">
                     Interna
                 </button>
                 <button wire:click="$set('filterNature', 'external')"
-                        wire:loading.attr="disabled"
-                        :class="$filterNature === 'external' ? 'bg-purple-600 text-white' : 'border-2 border-purple-900/40 bg-purple-900/20 text-purple-300'"
-                        class="flex-1 rounded-lg px-2 py-2 text-xs font-bold transition active:scale-95">
+                        :class="$filterNature === 'external' ? 'bg-purple-500 text-white shadow-md' : 'bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300'"
+                        class="flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition active:scale-95">
                     Externa
                 </button>
             </div>
         </div>
-    </nav>
+    </div>
 
-    {{-- Lista de tarefas (large touch targets) --}}
-    <main class="flex-1 overflow-y-auto px-3 py-4 space-y-3">
+    {{-- Lista com scroll --}}
+    <main class="flex-1 overflow-y-auto px-4 py-4 space-y-3">
         @forelse ($this->technicianTasks as $task)
-            <a href="{{ $task['url'] }}" class="block rounded-xl border-2 border-zinc-700 bg-zinc-900 p-4 transition active:scale-95 active:bg-zinc-800">
-                {{-- Status badge no canto superior --}}
-                <div class="mb-3 flex items-start justify-between">
-                    <div class="flex items-center gap-2">
-                        {{-- Ícone de tipo --}}
-                        <span class="text-2xl">
-                            @if ($task['type'] === 'maintenance')
-                                🔧
-                            @elseif ($task['type'] === 'mobilization')
-                                🚚
-                            @else
-                                🔄
-                            @endif
-                        </span>
-                        {{-- Badge de status --}}
+            <a href="{{ $task['url'] }}" class="block rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 overflow-hidden transition hover:shadow-lg active:scale-95">
+                <div class="p-4 space-y-3">
+                    {{-- Tipo + Status --}}
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="h-10 w-10 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-lg">
+                                @if ($task['type'] === 'maintenance')
+                                    ⚙️
+                                @elseif ($task['type'] === 'mobilization')
+                                    📦
+                                @else
+                                    🔄
+                                @endif
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">{{ $task['label'] }}</p>
+                                @php
+                                    $statusLabel = match($task['status']) {
+                                        'Concluída' => 'Concluída',
+                                        'Em Andamento' => 'Em Andamento',
+                                        'synced' => 'Sincronizada',
+                                        'pending' => 'Pendente',
+                                        default => ucfirst($task['status']),
+                                    };
+                                @endphp
+                                <p class="text-xs text-slate-600 dark:text-slate-300">{{ $statusLabel }}</p>
+                            </div>
+                        </div>
+                        {{-- Prioridade --}}
                         @php
-                            $statusBadge = match($task['status']) {
-                                'Concluída' => ['EM CONCLUSÃO', 'bg-emerald-600/20 text-emerald-300'],
-                                'Em Andamento' => ['EM ANDAMENTO', 'bg-yellow-600/20 text-yellow-300'],
-                                'Agendada' => ['AGENDADA', 'bg-blue-600/20 text-blue-300'],
-                                'synced' => ['SINCRONIZADO', 'bg-emerald-600/20 text-emerald-300'],
-                                'pending' => ['PENDENTE', 'bg-amber-600/20 text-amber-300'],
-                                default => ['NOVO', 'bg-zinc-700 text-zinc-300'],
+                            $critColor = match($task['criticality']) {
+                                'A' => 'bg-red-500 text-white',
+                                'B' => 'bg-amber-500 text-white',
+                                'C' => 'bg-green-500 text-white',
+                                default => 'bg-slate-400 text-white',
                             };
                         @endphp
-                        <div class="rounded-lg {{ $statusBadge[1] }} px-2 py-1 text-xs font-bold">
-                            {{ $statusBadge[0] }}
+                        <div class="rounded-full {{ $critColor }} h-9 w-9 flex items-center justify-center text-xs font-black">
+                            {{ $task['criticality'] }}
                         </div>
                     </div>
-                    {{-- Criticidade à direita --}}
-                    @php
-                        $critColor = match($task['criticality']) {
-                            'A' => 'bg-red-600 text-white',
-                            'B' => 'bg-yellow-600 text-zinc-950',
-                            'C' => 'bg-green-600 text-white',
-                            default => 'bg-zinc-700 text-zinc-300',
-                        };
-                    @endphp
-                    <div class="rounded-full {{ $critColor }} h-10 w-10 flex items-center justify-center text-lg font-black">
-                        {{ $task['criticality'] }}
+
+                    {{-- Nome do ativo --}}
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white">
+                        {{ $task['asset_name'] }}
+                    </h3>
+
+                    {{-- Patrimônio + Cliente --}}
+                    <div class="space-y-1">
+                        <p class="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                            # {{ $task['patrimonio'] }}
+                        </p>
+                        @if ($task['client'])
+                            <p class="text-xs text-slate-600 dark:text-slate-400">
+                                📍 {{ $task['client'] }}
+                            </p>
+                        @endif
                     </div>
-                </div>
 
-                {{-- Título principal (nome do ativo) --}}
-                <h3 class="text-lg font-bold text-white line-clamp-2">
-                    {{ $task['asset_name'] }}
-                </h3>
-
-                {{-- Patrimônio --}}
-                <p class="mt-1 text-sm font-semibold text-zinc-300">
-                    # {{ $task['patrimonio'] }}
-                </p>
-
-                {{-- Detalhes (Cliente + Contrato + CEP se externo) --}}
-                @if ($task['client'])
-                    <p class="mt-2 text-xs text-zinc-400">
-                        📍 {{ $task['client'] }} | CEP: {{ $task['cep'] ?? '—' }}
-                    </p>
-                @endif
-
-                {{-- SLA em destaque se expirado --}}
-                @if ($task['sla_target_minutes'])
-                    @php
-                        $minutesElapsed = $task['created_at']->diffInMinutes(now());
-                        $minutesRemaining = $task['sla_target_minutes'] - $minutesElapsed;
-                    @endphp
-                    @if ($minutesRemaining <= 0)
-                        <div class="mt-3 rounded-lg bg-red-600/30 px-3 py-2 text-sm font-bold text-red-300">
-                            ⚠️ SLA EXPIRADO
-                        </div>
-                    @elseif ($minutesRemaining <= 60)
-                        <div class="mt-3 rounded-lg bg-yellow-600/30 px-3 py-2 text-sm font-bold text-yellow-300">
-                            ⏱ {{ floor($minutesRemaining) }}m restantes
-                        </div>
+                    {{-- SLA Alert --}}
+                    @if ($task['sla_target_minutes'])
+                        @php
+                            $minutesElapsed = $task['created_at']->diffInMinutes(now());
+                            $minutesRemaining = $task['sla_target_minutes'] - $minutesElapsed;
+                        @endphp
+                        @if ($minutesRemaining <= 0)
+                            <div class="rounded-lg bg-red-100 dark:bg-red-950/30 px-3 py-2 text-sm font-bold text-red-600 dark:text-red-400">
+                                ⚠️ SLA EXPIRADO
+                            </div>
+                        @elseif ($minutesRemaining <= 60)
+                            <div class="rounded-lg bg-amber-100 dark:bg-amber-950/30 px-3 py-2 text-sm font-bold text-amber-700 dark:text-amber-300">
+                                ⏱ {{ floor($minutesRemaining) }}m restantes
+                            </div>
+                        @endif
                     @endif
-                @endif
+                </div>
             </a>
         @empty
             <div class="flex h-96 items-center justify-center">
                 <div class="text-center">
-                    <p class="text-2xl">📭</p>
-                    <p class="mt-2 text-sm font-semibold text-zinc-400">Nenhuma tarefa para hoje</p>
-                    <p class="mt-1 text-xs text-zinc-600">Volte mais tarde ou sincronize.</p>
+                    <p class="text-4xl mb-2">📭</p>
+                    <p class="text-base font-bold text-slate-900 dark:text-white">Nenhuma tarefa</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Volte mais tarde ou sincronize</p>
                 </div>
             </div>
         @endforelse
+        <div class="h-20"></div>
     </main>
 
-    {{-- Rodapé fixo: ações --}}
-    <footer class="sticky bottom-0 border-t-2 border-zinc-700 bg-gradient-to-t from-zinc-900 to-zinc-950 px-3 pb-4 pt-3 space-y-2">
-        {{-- Botão primário: Iniciar próxima tarefa --}}
+    {{-- Botões fixos no fundo --}}
+    <footer class="sticky bottom-0 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/95 backdrop-blur px-4 py-3 space-y-2">
         @if ($this->pendingCount > 0)
             <a href="{{ $this->technicianTasks->first()['url'] ?? '#' }}"
-               class="block w-full rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 px-4 py-4 text-center text-lg font-black text-zinc-950 transition active:scale-95 hover:from-emerald-500 hover:to-emerald-400">
-                ▶️ INICIAR PRÓXIMA TAREFA
+               class="block w-full rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-3 text-center font-bold text-base transition active:scale-95 hover:shadow-lg shadow-lg">
+                Iniciar Próxima Tarefa
             </a>
         @endif
-
-        {{-- Botão secundário: Sincronizar --}}
         <button wire:click="$dispatch('refresh-technician-tasks')"
-                wire:loading.attr="disabled"
-                class="w-full rounded-lg border-2 border-zinc-700 bg-zinc-800 px-4 py-3 text-sm font-bold text-zinc-300 transition active:scale-95 hover:bg-zinc-700 disabled:opacity-50">
-            🔄 Sincronizar
+                class="w-full rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white px-4 py-2.5 text-sm font-semibold transition active:scale-95">
+            Sincronizar
         </button>
     </footer>
 </div>

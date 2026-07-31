@@ -1,152 +1,151 @@
 {{--
-    Agenda Técnica — próximos 30 dias de compromissos e O.S. agendadas.
-    Otimizado para mobile (375-430px), lista simples com filtros rápidos.
+    Agenda Técnica — próximos 30 dias, design polido mobile-first.
 --}}
 
-<div class="mx-auto flex min-h-screen max-w-md flex-col bg-zinc-950">
-    {{-- Cabeçalho fixo --}}
-    <header class="sticky top-0 z-40 border-b border-zinc-800 bg-zinc-900 px-5 py-4">
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-xs font-bold tracking-widest text-zinc-400">MINHA AGENDA</h1>
-                <p class="mt-1 text-sm font-semibold text-zinc-100">
-                    {{ count($this->agendaItems) }} agendamentos
-                </p>
+<div class="fixed inset-0 mx-auto flex max-w-md flex-col bg-white dark:bg-slate-950">
+    {{-- Header polido --}}
+    <header class="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/95 backdrop-blur px-5 py-4">
+        <div class="space-y-3">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Próximos 30 dias</p>
+                    <h1 class="text-2xl font-black text-slate-900 dark:text-white mt-1">Programação</h1>
+                </div>
+                <div class="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-xs font-bold text-white shadow-lg">
+                    {{ strtoupper(mb_substr(Auth::user()?->name ?? '?', 0, 1)) }}
+                </div>
             </div>
-            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800 text-xs font-bold text-zinc-300">
-                {{ strtoupper(mb_substr(Auth::user()?->name ?? '?', 0, 1)) }}
+            <div class="flex items-center gap-2 text-sm">
+                <div class="h-2 w-2 rounded-full bg-blue-500"></div>
+                <span class="font-semibold text-slate-700 dark:text-slate-300">{{ count($this->agendaItems) }} agendamentos</span>
             </div>
-        </div>
-
-        {{-- Campo de busca --}}
-        <div class="mt-3">
-            <input wire:model.live="search"
-                   type="text"
-                   placeholder="Buscar agendamento..."
-                   class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-xs text-zinc-100 placeholder-zinc-500 focus:border-emerald-600 focus:ring-emerald-600">
         </div>
     </header>
 
-    {{-- Filtros rápidos (chips) --}}
-    <div class="border-b border-zinc-800 bg-zinc-900 px-3 py-3">
-        <div class="space-y-2 text-[11px]">
-            {{-- Tipo de agendamento --}}
-            <div class="flex gap-1 overflow-x-auto">
-                <button wire:click="$set('filterType', '')"
-                        wire:loading.attr="disabled"
-                        :class="$filterType === '' ? 'bg-emerald-600 text-zinc-950' : 'bg-zinc-800 text-zinc-400'"
-                        class="shrink-0 rounded-full px-3 py-1 font-semibold transition hover:bg-emerald-600 hover:text-zinc-950">
-                    Todos
-                </button>
-                <button wire:click="$set('filterType', 'appointment')"
-                        wire:loading.attr="disabled"
-                        :class="$filterType === 'appointment' ? 'bg-emerald-600 text-zinc-950' : 'bg-zinc-800 text-zinc-400'"
-                        class="shrink-0 rounded-full px-3 py-1 font-semibold transition hover:bg-emerald-600 hover:text-zinc-950">
-                    📅 Agendamentos
-                </button>
-                <button wire:click="$set('filterType', 'order')"
-                        wire:loading.attr="disabled"
-                        :class="$filterType === 'order' ? 'bg-emerald-600 text-zinc-950' : 'bg-zinc-800 text-zinc-400'"
-                        class="shrink-0 rounded-full px-3 py-1 font-semibold transition hover:bg-emerald-600 hover:text-zinc-950">
-                    🔧 O.S. Agendadas
-                </button>
-            </div>
+    {{-- Busca + Filtros --}}
+    <div class="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 px-4 py-3 space-y-3">
+        {{-- Campo de busca --}}
+        <div class="relative">
+            <input wire:model.live="search"
+                   type="text"
+                   placeholder="Buscar..."
+                   class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">🔍</span>
+        </div>
 
-            {{-- Ordenação --}}
-            <div class="flex gap-1">
-                <button wire:click="$set('sortBy', 'date')"
-                        wire:loading.attr="disabled"
-                        :class="$sortBy === 'date' ? 'bg-emerald-600 text-zinc-950' : 'bg-zinc-800 text-zinc-400'"
-                        class="shrink-0 rounded-full px-3 py-1 font-semibold transition hover:bg-emerald-600 hover:text-zinc-950">
-                    ↓ Data
-                </button>
-                <button wire:click="$set('sortBy', 'urgency')"
-                        wire:loading.attr="disabled"
-                        :class="$sortBy === 'urgency' ? 'bg-emerald-600 text-zinc-950' : 'bg-zinc-800 text-zinc-400'"
-                        class="shrink-0 rounded-full px-3 py-1 font-semibold transition hover:bg-emerald-600 hover:text-zinc-950">
-                    🚨 Urgência
-                </button>
-            </div>
+        {{-- Filtros tipo --}}
+        <div class="flex gap-2">
+            <button wire:click="$set('filterType', '')"
+                    :class="$filterType === '' ? 'bg-blue-500 text-white shadow-md' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'"
+                    class="flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition active:scale-95">
+                Todos
+            </button>
+            <button wire:click="$set('filterType', 'appointment')"
+                    :class="$filterType === 'appointment' ? 'bg-blue-500 text-white shadow-md' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'"
+                    class="flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition active:scale-95">
+                Agendamentos
+            </button>
+            <button wire:click="$set('filterType', 'order')"
+                    :class="$filterType === 'order' ? 'bg-blue-500 text-white shadow-md' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'"
+                    class="flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition active:scale-95">
+                O.S.
+            </button>
+        </div>
+
+        {{-- Ordenação --}}
+        <div class="flex gap-2">
+            <button wire:click="$set('sortBy', 'date')"
+                    :class="$sortBy === 'date' ? 'bg-slate-600 dark:bg-slate-700 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'"
+                    class="flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition active:scale-95">
+                Por Data
+            </button>
+            <button wire:click="$set('sortBy', 'urgency')"
+                    :class="$sortBy === 'urgency' ? 'bg-slate-600 dark:bg-slate-700 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'"
+                    class="flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition active:scale-95">
+                Por Urgência
+            </button>
         </div>
     </div>
 
     {{-- Lista de agendamentos --}}
-    <main class="flex-1 overflow-y-auto">
+    <main class="flex-1 overflow-y-auto px-4 py-4 space-y-3">
         @forelse ($this->agendaItems as $item)
-            <div class="border-b border-zinc-800 p-4 transition active:bg-zinc-900
-                @if($item['type'] === 'order') cursor-pointer hover:bg-zinc-800/50 @endif">
+            <div @if($item['type'] === 'order')
+                    onclick="window.location.href='{{ $item['url'] }}'"
+                @endif
+                class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 overflow-hidden @if($item['type'] === 'order') cursor-pointer transition active:scale-95 hover:shadow-lg @endif">
+                <div class="p-4 space-y-2">
+                    {{-- Header: Ícone, tipo, urgência --}}
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="h-10 w-10 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-lg">
+                                {{ $item['icon'] }}
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">{{ $item['label'] }}</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-300">{{ $item['date'] }} às {{ $item['time'] }}</p>
+                            </div>
+                        </div>
+                        @if ($item['urgente'] ?? false)
+                            <span class="inline-block rounded-full bg-red-500 text-white px-2 py-1 text-[10px] font-bold">
+                                URGENTE
+                            </span>
+                        @endif
+                    </div>
 
-                {{-- Tipo de item --}}
-                <div class="mb-2 flex items-center gap-2">
-                    <span class="text-lg">{{ $item['icon'] }}</span>
-                    <span class="inline-block rounded-full bg-zinc-800 px-2 py-0.5 text-[10px] font-bold uppercase text-zinc-300">
-                        {{ $item['label'] }}
-                    </span>
-                    @if ($item['urgente'] ?? false)
-                        <span class="inline-block rounded-full bg-red-900/30 px-2 py-0.5 text-[10px] font-bold text-red-400">
-                            🚨 URGENTE
-                        </span>
+                    {{-- Título --}}
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white line-clamp-2">
+                        {{ $item['title'] }}
+                    </h3>
+
+                    {{-- Descrição --}}
+                    @if ($item['description'])
+                        <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
+                            {{ $item['description'] }}
+                        </p>
                     @endif
-                </div>
 
-                {{-- Título/Assunto --}}
-                <h3 class="font-semibold text-zinc-100 line-clamp-2">
-                    {{ $item['title'] }}
-                </h3>
+                    {{-- Detalhes (PAT, Cliente) --}}
+                    <div class="space-y-1 text-xs">
+                        @if ($item['type'] === 'order' && $item['patrimonio'])
+                            <p class="text-slate-600 dark:text-slate-400">
+                                Patrimônio: <span class="font-semibold text-slate-900 dark:text-white"># {{ $item['patrimonio'] }}</span>
+                            </p>
+                        @endif
+                        @if ($item['client'] ?? false)
+                            <p class="text-slate-600 dark:text-slate-400">
+                                Local: <span class="font-semibold text-slate-900 dark:text-white">📍 {{ $item['client'] }}</span>
+                            </p>
+                        @endif
+                    </div>
 
-                {{-- Descrição (se houver) --}}
-                @if ($item['description'])
-                    <p class="mt-1 text-xs text-zinc-400 line-clamp-2">
-                        {{ $item['description'] }}
-                    </p>
-                @endif
-
-                {{-- Patrimônio (só para O.S.) --}}
-                @if ($item['type'] === 'order' && $item['patrimonio'])
-                    <p class="mt-1 text-xs text-zinc-500">
-                        PAT. {{ $item['patrimonio'] }}
-                    </p>
-                @endif
-
-                {{-- Cliente (se externo) --}}
-                @if ($item['client'] ?? false)
-                    <p class="mt-1 text-[11px] text-zinc-500">
-                        📍 {{ $item['client'] }}
-                    </p>
-                @endif
-
-                {{-- Data, hora e status --}}
-                <div class="mt-3 flex items-center justify-between">
-                    <span class="text-xs font-semibold text-zinc-300">
-                        📆 {{ $item['date'] }} às {{ $item['time'] }}
-                    </span>
+                    {{-- Status para O.S. --}}
                     @if ($item['type'] === 'order')
-                        <span class="inline-block rounded-full px-2 py-0.5 text-[10px] font-bold {{ $item['color'] }}">
-                            {{ $item['status'] }}
-                        </span>
+                        <div class="pt-2 border-t border-slate-200 dark:border-slate-700">
+                            <span class="inline-block {{ $item['color'] }} px-3 py-1 text-xs font-semibold rounded-full">
+                                {{ $item['status'] }}
+                            </span>
+                        </div>
                     @endif
                 </div>
-
-                {{-- Link para O.S. (clique aqui) --}}
-                @if ($item['type'] === 'order')
-                    <a href="{{ $item['url'] }}" class="absolute inset-0"></a>
-                @endif
             </div>
         @empty
             <div class="flex h-96 items-center justify-center">
                 <div class="text-center">
-                    <p class="text-sm text-zinc-400">Nenhum agendamento nos próximos 30 dias.</p>
-                    <p class="mt-1 text-[11px] text-zinc-600">Você está em dia! 🎉</p>
+                    <p class="text-4xl mb-2">🎉</p>
+                    <p class="text-base font-bold text-slate-900 dark:text-white">Sem agendamentos</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Você está em dia nos próximos 30 dias</p>
                 </div>
             </div>
         @endforelse
+        <div class="h-20"></div>
     </main>
 
-    {{-- Rodapé fixo: ações --}}
-    <footer class="sticky bottom-0 border-t border-zinc-800 bg-zinc-900 px-5 pb-4 pt-3">
+    {{-- Botão fixo no fundo --}}
+    <footer class="sticky bottom-0 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/95 backdrop-blur px-4 py-3">
         <a href="{{ route('filament.admin.pages.agenda-tecnico') }}"
-           class="block w-full rounded-xl bg-emerald-600 px-3 py-3 text-center text-sm font-bold text-zinc-950 hover:bg-emerald-500">
-            📅 Voltar ao Calendário
+           class="block w-full rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-3 text-center font-bold text-base transition active:scale-95 hover:shadow-lg shadow-lg">
+            Ver Calendário Completo
         </a>
     </footer>
 </div>
