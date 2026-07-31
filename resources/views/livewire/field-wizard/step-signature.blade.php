@@ -113,51 +113,105 @@
 @endPushOnce
 
 <script>
-    function setupCanvas(canvasId, clearBtnId) {
-        const canvas = document.getElementById(canvasId);
-        if (!canvas) return null;
+    console.log('📝 Carregando script de assinatura...');
 
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        const dpr = window.devicePixelRatio || 1;
+    function initSignatures() {
+        console.log('🔍 Procurando canvas...');
 
-        // Redimensionar canvas para DPR
-        canvas.width = 300 * dpr;
-        canvas.height = 150 * dpr;
-        ctx.scale(dpr, dpr);
+        const techCanvas = document.getElementById('technicianSignaturePad');
+        const clientCanvas = document.getElementById('clientSignaturePad');
 
-        // Desenhar fundo
-        ctx.fillStyle = 'rgb(15, 23, 42)';
-        ctx.fillRect(0, 0, 300, 150);
+        console.log('Tech canvas:', techCanvas ? '✓ Encontrado' : '✗ NÃO ENCONTRADO');
+        console.log('Client canvas:', clientCanvas ? '✓ Encontrado' : '✗ NÃO ENCONTRADO');
 
-        const pad = new SignaturePad(canvas, {
-            backgroundColor: 'rgb(15, 23, 42)',
-            penColor: 'rgb(255, 255, 255)',
-            minWidth: 0.5,
-            maxWidth: 2,
-            throttle: 16,
-            velocityFilterWeight: 0.7,
-        });
-
-        // Botão limpar
-        const clearBtn = document.getElementById(clearBtnId);
-        if (clearBtn) {
-            clearBtn.addEventListener('click', () => pad.clear());
+        if (!techCanvas || !clientCanvas) {
+            console.error('❌ Faltam canvas, tentando novamente em 200ms...');
+            setTimeout(initSignatures, 200);
+            return;
         }
 
-        return pad;
+        try {
+            console.log('📐 Verificando tamanho dos canvas...');
+            console.log('Tech: offsetWidth=' + techCanvas.offsetWidth + ' offsetHeight=' + techCanvas.offsetHeight);
+            console.log('Client: offsetWidth=' + clientCanvas.offsetWidth + ' offsetHeight=' + clientCanvas.offsetHeight);
+
+            // Canvas técnico
+            const techCtx = techCanvas.getContext('2d');
+            techCanvas.width = 320;
+            techCanvas.height = 150;
+
+            const techPad = new SignaturePad(techCanvas, {
+                backgroundColor: 'rgb(15, 23, 42)',
+                penColor: 'rgb(255, 255, 255)',
+                minWidth: 1,
+                maxWidth: 3,
+            });
+
+            // Canvas cliente
+            const clientCtx = clientCanvas.getContext('2d');
+            clientCanvas.width = 320;
+            clientCanvas.height = 150;
+
+            const clientPad = new SignaturePad(clientCanvas, {
+                backgroundColor: 'rgb(15, 23, 42)',
+                penColor: 'rgb(255, 255, 255)',
+                minWidth: 1,
+                maxWidth: 3,
+            });
+
+            console.log('✅ SignaturePad criado para ambos canvas');
+
+            // Listeners para DEBUG
+            techCanvas.addEventListener('mousedown', () => console.log('🖱️ Técnico: mouse down'));
+            techCanvas.addEventListener('mousemove', () => console.log('🖱️ Técnico: mouse move'));
+            techCanvas.addEventListener('mouseup', () => console.log('🖱️ Técnico: mouse up'));
+            techCanvas.addEventListener('touchstart', () => console.log('👆 Técnico: touch start'));
+            techCanvas.addEventListener('touchmove', () => console.log('👆 Técnico: touch move'));
+            techCanvas.addEventListener('touchend', () => console.log('👆 Técnico: touch end'));
+
+            clientCanvas.addEventListener('mousedown', () => console.log('🖱️ Cliente: mouse down'));
+            clientCanvas.addEventListener('mousemove', () => console.log('🖱️ Cliente: mouse move'));
+            clientCanvas.addEventListener('mouseup', () => console.log('🖱️ Cliente: mouse up'));
+            clientCanvas.addEventListener('touchstart', () => console.log('👆 Cliente: touch start'));
+            clientCanvas.addEventListener('touchmove', () => console.log('👆 Cliente: touch move'));
+            clientCanvas.addEventListener('touchend', () => console.log('👆 Cliente: touch end'));
+
+            // Botões limpar
+            document.getElementById('clearTechSignature')?.addEventListener('click', () => {
+                console.log('🔄 Limpando técnico');
+                techPad.clear();
+            });
+
+            document.getElementById('clearClientSignature')?.addEventListener('click', () => {
+                console.log('🔄 Limpando cliente');
+                clientPad.clear();
+            });
+
+            // Funções globais
+            window.getTechnicianSignature = () => {
+                const sig = techPad.toDataURL('image/png');
+                console.log('📝 Tech signature capturada');
+                return sig;
+            };
+
+            window.getClientSignature = () => {
+                const sig = clientPad.toDataURL('image/png');
+                console.log('📝 Client signature capturada');
+                return sig;
+            };
+
+            window.isTechnicianSigned = () => !techPad.isEmpty();
+            window.isClientSigned = () => !clientPad.isEmpty();
+
+            console.log('✅✅✅ ASSINATURA PRONTA PARA USAR ✅✅✅');
+        } catch (e) {
+            console.error('❌ ERRO:', e.message, e.stack);
+        }
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(() => {
-            const techPad = setupCanvas('technicianSignaturePad', 'clearTechSignature');
-            const clientPad = setupCanvas('clientSignaturePad', 'clearClientSignature');
-
-            window.getTechnicianSignature = () => !techPad?.isEmpty?.() ? techPad?.toDataURL?.('image/png') : null;
-            window.getClientSignature = () => !clientPad?.isEmpty?.() ? clientPad?.toDataURL?.('image/png') : null;
-            window.isTechnicianSigned = () => techPad && !techPad.isEmpty();
-            window.isClientSigned = () => clientPad && !clientPad.isEmpty();
-
-            console.log('✅ SignaturePad OK');
-        }, 100);
-    });
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSignatures);
+    } else {
+        initSignatures();
+    }
 </script>

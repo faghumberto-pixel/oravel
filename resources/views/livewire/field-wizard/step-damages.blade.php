@@ -169,15 +169,23 @@
 </div>
 
 <script>
+    console.log('🎤 Carregando script de voz...');
+
     document.addEventListener('DOMContentLoaded', function() {
         const micButton = document.getElementById('micButton');
         const micStatus = document.getElementById('micStatus');
         const textField = document.getElementById('technicalNotesField');
 
+        console.log('Mic button:', micButton ? '✓' : '✗');
+        console.log('Mic status:', micStatus ? '✓' : '✗');
+        console.log('Text field:', textField ? '✓' : '✗');
+
         if (!micButton) return;
 
         // Verificar suporte a Web Speech API
         const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+        console.log('SpeechRecognition:', SpeechRecognition ? '✓ Suportado' : '✗ Não suportado');
+
         if (!SpeechRecognition) {
             micButton.disabled = true;
             micButton.textContent = '🎤 Não suportado';
@@ -191,10 +199,15 @@
 
         let isListening = false;
 
-        micButton.addEventListener('click', function() {
+        micButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('🎤 Clique no mic, isListening:', isListening);
+
             if (isListening) {
+                console.log('⏹ Parando...');
                 recognition.stop();
             } else {
+                console.log('🎤 Iniciando escuta...');
                 textField.focus();
                 recognition.start();
                 micStatus.textContent = '🎤 Escutando...';
@@ -206,29 +219,35 @@
             isListening = !isListening;
         });
 
+        recognition.onstart = function() {
+            console.log('✅ Reconhecimento iniciado');
+        };
+
         recognition.onresult = function(event) {
+            console.log('📝 Resultado:', event.results.length);
             let transcript = '';
             for (let i = event.resultIndex; i < event.results.length; i++) {
                 transcript += event.results[i][0].transcript + ' ';
             }
 
+            console.log('Texto:', transcript, 'Final:', event.isFinal);
+
             if (event.isFinal) {
-                // Adicionar ao final do texto existente
                 const currentText = textField.value;
                 textField.value = currentText ? currentText + ' ' + transcript : transcript;
-
-                // Trigger Livewire update
-                Livewire.dispatch('input', { technicalNotes: textField.value });
                 textField.dispatchEvent(new Event('input', { bubbles: true }));
+                console.log('✅ Texto adicionado');
             }
         };
 
         recognition.onerror = function(event) {
+            console.error('❌ Erro de voz:', event.error);
             micStatus.textContent = '❌ Erro: ' + event.error;
             micStatus.classList.remove('hidden');
         };
 
         recognition.onend = function() {
+            console.log('🔚 Reconhecimento terminado');
             isListening = false;
             micButton.textContent = '🎤 Falar';
             micButton.classList.remove('bg-red-500', 'hover:bg-red-600');
@@ -237,5 +256,7 @@
                 micStatus.classList.add('hidden');
             }, 2000);
         };
+
+        console.log('✅✅✅ VOZ PRONTA PARA USAR ✅✅✅');
     });
 </script>
