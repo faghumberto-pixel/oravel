@@ -48,6 +48,17 @@ class MaintenanceOrderPolicy
 
     public function update(User $user, MaintenanceOrder $order): bool
     {
+        // Admin e super admin (já permitidos pelo before())
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        // Técnico atribuído à ordem pode editar sua execução
+        if ($order->technician_id === $user->id && $user->tenant_id === $order->tenant_id) {
+            return true;
+        }
+
+        // Permissão granular para outros
         return $user->can('editar_ordem_servico') && $user->tenant_id === $order->tenant_id;
     }
 

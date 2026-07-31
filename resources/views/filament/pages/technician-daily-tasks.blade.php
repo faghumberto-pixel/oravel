@@ -29,83 +29,92 @@
     </header>
 
     {{-- Filtros rápidos (chips tactilmente grandes) --}}
-    <nav class="border-b-2 border-zinc-800 bg-zinc-900 px-3 py-3 space-y-2">
+    <nav class="border-b-2 border-zinc-700 bg-zinc-900 px-3 py-3 space-y-3">
         {{-- Linha 1: Tipo de tarefa --}}
-        <div class="flex gap-2 overflow-x-auto pb-1">
-            <button wire:click="$set('filterType', '')"
-                    wire:loading.attr="disabled"
-                    :class="$filterType === '' ? 'bg-emerald-600 text-zinc-950' : 'bg-zinc-800 text-zinc-300'"
-                    class="shrink-0 rounded-lg px-3 py-2 text-xs font-bold transition active:scale-95">
-                🔧 Todos
-            </button>
-            <button wire:click="$set('filterType', 'maintenance')"
-                    wire:loading.attr="disabled"
-                    :class="$filterType === 'maintenance' ? 'bg-emerald-600 text-zinc-950' : 'bg-zinc-800 text-zinc-300'"
-                    class="shrink-0 rounded-lg px-3 py-2 text-xs font-bold transition active:scale-95">
-                🏭 Manutenção
-            </button>
-            <button wire:click="$set('filterType', 'mobilization')"
-                    wire:loading.attr="disabled"
-                    :class="$filterType === 'mobilization' ? 'bg-emerald-600 text-zinc-950' : 'bg-zinc-800 text-zinc-300'"
-                    class="shrink-0 rounded-lg px-3 py-2 text-xs font-bold transition active:scale-95">
-                🚚 Mobilização
-            </button>
-            <button wire:click="$set('filterType', 'demobilization')"
-                    wire:loading.attr="disabled"
-                    :class="$filterType === 'demobilization' ? 'bg-emerald-600 text-zinc-950' : 'bg-zinc-800 text-zinc-300'"
-                    class="shrink-0 rounded-lg px-3 py-2 text-xs font-bold transition active:scale-95">
-                🔄 Desmobilização
-            </button>
+        <div>
+            <p class="text-[10px] font-bold uppercase text-zinc-500 mb-2">Tipo de Tarefa</p>
+            <div class="flex gap-2 overflow-x-auto">
+                <button wire:click="$set('filterType', '')"
+                        wire:loading.attr="disabled"
+                        :class="$filterType === '' ? 'bg-emerald-600 text-zinc-950' : 'border-2 border-zinc-700 bg-zinc-800 text-zinc-300'"
+                        class="shrink-0 rounded-lg px-3 py-2 text-xs font-bold transition active:scale-95">
+                    Todos
+                </button>
+                <button wire:click="$set('filterType', 'maintenance')"
+                        wire:loading.attr="disabled"
+                        :class="$filterType === 'maintenance' ? 'bg-emerald-600 text-zinc-950' : 'border-2 border-zinc-700 bg-zinc-800 text-zinc-300'"
+                        class="shrink-0 rounded-lg px-3 py-2 text-xs font-bold transition active:scale-95">
+                    Manutenção
+                </button>
+                <button wire:click="$set('filterType', 'mobilization')"
+                        wire:loading.attr="disabled"
+                        :class="$filterType === 'mobilization' ? 'bg-emerald-600 text-zinc-950' : 'border-2 border-zinc-700 bg-zinc-800 text-zinc-300'"
+                        class="shrink-0 rounded-lg px-3 py-2 text-xs font-bold transition active:scale-95">
+                    Mobilização
+                </button>
+                <button wire:click="$set('filterType', 'demobilization')"
+                        wire:loading.attr="disabled"
+                        :class="$filterType === 'demobilization' ? 'bg-emerald-600 text-zinc-950' : 'border-2 border-zinc-700 bg-zinc-800 text-zinc-300'"
+                        class="shrink-0 rounded-lg px-3 py-2 text-xs font-bold transition active:scale-95">
+                    Desmobilização
+                </button>
+            </div>
         </div>
 
         {{-- Linha 2: Prioridade ABC --}}
-        <div class="flex gap-2">
-            <button wire:click="$set('filterCriticality', '')"
-                    wire:loading.attr="disabled"
-                    :class="$filterCriticality === '' ? 'bg-emerald-600 text-zinc-950' : 'bg-zinc-800 text-zinc-300'"
-                    class="flex-1 rounded-lg px-2 py-2 text-xs font-bold transition active:scale-95">
-                ⚠️ Prioridade
-            </button>
-            <button wire:click="$set('filterCriticality', 'A')"
-                    wire:loading.attr="disabled"
-                    :class="$filterCriticality === 'A' ? 'bg-red-600 text-white' : 'bg-red-900/40 text-red-300'"
-                    class="rounded-lg px-3 py-2 text-xs font-black transition active:scale-95">
-                A
-            </button>
-            <button wire:click="$set('filterCriticality', 'B')"
-                    wire:loading.attr="disabled"
-                    :class="$filterCriticality === 'B' ? 'bg-yellow-600 text-zinc-950' : 'bg-yellow-900/40 text-yellow-300'"
-                    class="rounded-lg px-3 py-2 text-xs font-black transition active:scale-95">
-                B
-            </button>
-            <button wire:click="$set('filterCriticality', 'C')"
-                    wire:loading.attr="disabled"
-                    :class="$filterCriticality === 'C' ? 'bg-green-600 text-zinc-950' : 'bg-green-900/40 text-green-300'"
-                    class="rounded-lg px-3 py-2 text-xs font-black transition active:scale-95">
-                C
-            </button>
+        <div>
+            <p class="text-[10px] font-bold uppercase text-zinc-500 mb-2">Prioridade</p>
+            <div class="flex gap-2">
+                <button wire:click="$set('filterCriticality', '')"
+                        wire:loading.attr="disabled"
+                        :class="$filterCriticality === '' ? 'bg-emerald-600 text-zinc-950' : 'border-2 border-zinc-700 bg-zinc-800 text-zinc-300'"
+                        class="flex-1 rounded-lg px-2 py-2 text-xs font-bold transition active:scale-95">
+                    Todas
+                </button>
+                <button wire:click="$set('filterCriticality', 'A')"
+                        wire:loading.attr="disabled"
+                        :class="$filterCriticality === 'A' ? 'bg-red-600 text-white' : 'border-2 border-red-900/40 bg-red-900/20 text-red-300'"
+                        class="rounded-lg px-3 py-2 text-xs font-black transition active:scale-95">
+                    Alta
+                </button>
+                <button wire:click="$set('filterCriticality', 'B')"
+                        wire:loading.attr="disabled"
+                        :class="$filterCriticality === 'B' ? 'bg-yellow-600 text-zinc-950' : 'border-2 border-yellow-900/40 bg-yellow-900/20 text-yellow-300'"
+                        class="rounded-lg px-3 py-2 text-xs font-black transition active:scale-95">
+                    Média
+                </button>
+                <button wire:click="$set('filterCriticality', 'C')"
+                        wire:loading.attr="disabled"
+                        :class="$filterCriticality === 'C' ? 'bg-green-600 text-zinc-950' : 'border-2 border-green-900/40 bg-green-900/20 text-green-300'"
+                        class="rounded-lg px-3 py-2 text-xs font-black transition active:scale-95">
+                    Baixa
+                </button>
+            </div>
         </div>
 
         {{-- Linha 3: Natureza --}}
-        <div class="flex gap-2">
-            <button wire:click="$set('filterNature', '')"
-                    wire:loading.attr="disabled"
-                    :class="$filterNature === '' ? 'bg-emerald-600 text-zinc-950' : 'bg-zinc-800 text-zinc-300'"
-                    class="flex-1 rounded-lg px-2 py-2 text-xs font-bold transition active:scale-95">
-                🏠 Natureza
-            </button>
-            <button wire:click="$set('filterNature', 'internal')"
-                    wire:loading.attr="disabled"
-                    :class="$filterNature === 'internal' ? 'bg-blue-600 text-white' : 'bg-blue-900/40 text-blue-300'"
-                    class="flex-1 rounded-lg px-2 py-2 text-xs font-bold transition active:scale-95">
-                🏭 Interno
-            </button>
-            <button wire:click="$set('filterNature', 'external')"
-                    wire:loading.attr="disabled"
-                    :class="$filterNature === 'external' ? 'bg-purple-600 text-white' : 'bg-purple-900/40 text-purple-300'"
-                    class="flex-1 rounded-lg px-2 py-2 text-xs font-bold transition active:scale-95">
-                🌐 Externo
-            </button>
+        <div>
+            <p class="text-[10px] font-bold uppercase text-zinc-500 mb-2">Localização</p>
+            <div class="flex gap-2">
+                <button wire:click="$set('filterNature', '')"
+                        wire:loading.attr="disabled"
+                        :class="$filterNature === '' ? 'bg-emerald-600 text-zinc-950' : 'border-2 border-zinc-700 bg-zinc-800 text-zinc-300'"
+                        class="flex-1 rounded-lg px-2 py-2 text-xs font-bold transition active:scale-95">
+                    Ambas
+                </button>
+                <button wire:click="$set('filterNature', 'internal')"
+                        wire:loading.attr="disabled"
+                        :class="$filterNature === 'internal' ? 'bg-blue-600 text-white' : 'border-2 border-blue-900/40 bg-blue-900/20 text-blue-300'"
+                        class="flex-1 rounded-lg px-2 py-2 text-xs font-bold transition active:scale-95">
+                    Interna
+                </button>
+                <button wire:click="$set('filterNature', 'external')"
+                        wire:loading.attr="disabled"
+                        :class="$filterNature === 'external' ? 'bg-purple-600 text-white' : 'border-2 border-purple-900/40 bg-purple-900/20 text-purple-300'"
+                        class="flex-1 rounded-lg px-2 py-2 text-xs font-bold transition active:scale-95">
+                    Externa
+                </button>
+            </div>
         </div>
     </nav>
 
