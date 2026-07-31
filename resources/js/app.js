@@ -7,7 +7,8 @@ import SignaturePad from 'signature_pad';
 window.Alpine = Alpine;
 window.SignaturePad = SignaturePad;
 
-Alpine.start();
+// Alpine já está iniciado pelo Filament/Livewire, não duplicar
+// Alpine.start();
 
 /**
  * Compressao de foto antes do upload do Livewire -- pedido do usuario
