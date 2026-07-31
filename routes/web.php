@@ -90,6 +90,12 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard', function () {
         $user = auth()->user();
+
+        // Técnicos vão direto para "Minhas Ordens de Serviço"
+        if (!$user->isAdmin() && empty($user->supervisedDepartmentIds())) {
+            return redirect()->route('filament.admin.pages.technician-daily-tasks');
+        }
+
         $tenantSlug = $user->latest_tenant_slug ?? collect(Filament::getUserTenants($user))->first()?->slug ?? $user->tenant?->slug ?? $user->tenant_id;
 
         return $tenantSlug ? redirect()->route('filament.admin.pages.painel-gestao', ['tenant' => $tenantSlug]) : redirect()->to('/admin');
