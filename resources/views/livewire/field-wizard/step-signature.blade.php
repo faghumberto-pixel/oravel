@@ -57,10 +57,13 @@
         <label class="text-xs font-bold uppercase tracking-wide text-slate-400">✍️ Assinatura do Técnico</label>
         <p class="mt-1 text-[11px] text-slate-500">Use o dedo para assinar na área abaixo</p>
 
-        <div class="mt-3 rounded-xl border-2 border-slate-600 bg-slate-900 overflow-hidden" style="height: 120px; touch-action: none;">
+        <div class="mt-3 rounded-xl border-2 border-slate-600 bg-slate-900 overflow-hidden" style="height: 120px; touch-action: none; display: block;">
             <canvas
                 id="technicianSignaturePad"
-                class="w-full h-full cursor-crosshair"
+                width="320"
+                height="120"
+                class="w-full h-full cursor-crosshair block"
+                style="display: block; touch-action: none; background: rgb(15, 23, 42);"
                 wire:ignore
             ></canvas>
         </div>
@@ -79,10 +82,13 @@
         <label class="text-xs font-bold uppercase tracking-wide text-slate-400">✍️ Assinatura do Cliente</label>
         <p class="mt-1 text-[11px] text-slate-500">Cliente deve assinar para confirmar o trabalho realizado</p>
 
-        <div class="mt-3 rounded-xl border-2 border-slate-600 bg-slate-900 overflow-hidden" style="height: 120px; touch-action: none;">
+        <div class="mt-3 rounded-xl border-2 border-slate-600 bg-slate-900 overflow-hidden" style="height: 120px; touch-action: none; display: block;">
             <canvas
                 id="clientSignaturePad"
-                class="w-full h-full cursor-crosshair"
+                width="320"
+                height="120"
+                class="w-full h-full cursor-crosshair block"
+                style="display: block; touch-action: none; background: rgb(15, 23, 42);"
                 wire:ignore
             ></canvas>
         </div>
@@ -108,38 +114,71 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const initSignaturePad = (canvasId, clearBtnId) => {
-                const canvas = document.getElementById(canvasId);
-                if (!canvas) return null;
+            // Pequeno delay para garantir que tudo foi renderizado
+            setTimeout(() => {
+                const initSignaturePad = (canvasId, clearBtnId) => {
+                    const canvas = document.getElementById(canvasId);
+                    if (!canvas) {
+                        console.error(`Canvas ${canvasId} not found`);
+                        return null;
+                    }
 
-                const ctx = canvas.getContext('2d');
-                canvas.width = canvas.offsetWidth * window.devicePixelRatio;
-                canvas.height = canvas.offsetHeight * window.devicePixelRatio;
-                ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+                    // Limpar e resetar o canvas
+                    const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
-                const signaturePad = new SignaturePad(canvas, {
-                    backgroundColor: 'rgb(15, 23, 42)',
-                    penColor: 'rgb(255, 255, 255)',
-                    throttle: 16,
-                    minWidth: 1,
-                    maxWidth: 3,
-                });
+                    // Usar dimensões já definidas em width/height attributes
+                    const dpr = window.devicePixelRatio || 1;
+                    canvas.width = canvas.getAttribute('width') * dpr;
+                    canvas.height = canvas.getAttribute('height') * dpr;
+                    ctx.scale(dpr, dpr);
 
-                document.getElementById(clearBtnId)?.addEventListener('click', () => {
-                    signaturePad.clear();
-                });
+                    // Desenhar fundo escuro
+                    ctx.fillStyle = 'rgb(15, 23, 42)';
+                    ctx.fillRect(0, 0, canvas.width / dpr, canvas.height / dpr);
 
-                return signaturePad;
-            };
+                    // Garantir que o canvas está visível
+                    canvas.style.display = 'block';
 
-            const techSignature = initSignaturePad('technicianSignaturePad', 'clearTechSignature');
-            const clientSignature = initSignaturePad('clientSignaturePad', 'clearClientSignature');
+                    if (!window.SignaturePad) {
+                        console.error('SignaturePad library not loaded');
+                        return null;
+                    }
 
-            // Expor para uso global
-            window.getTechnicianSignature = () => techSignature?.toDataURL('image/png');
-            window.getClientSignature = () => clientSignature?.toDataURL('image/png');
-            window.isTechnicianSigned = () => !techSignature?.isEmpty();
-            window.isClientSigned = () => !clientSignature?.isEmpty();
+                    const signaturePad = new window.SignaturePad(canvas, {
+                        backgroundColor: 'rgb(15, 23, 42)',
+                        penColor: 'rgb(255, 255, 255)',
+                        throttle: 16,
+                        minWidth: 1,
+                        maxWidth: 3,
+                        velocityFilterWeight: 0.7,
+                        onEnd: () => console.log(`${canvasId} signature drawn`)
+                    });
+
+                    const clearBtn = document.getElementById(clearBtnId);
+                    if (clearBtn) {
+                        clearBtn.addEventListener('click', () => {
+                            signaturePad.clear();
+                        });
+                    }
+
+                    return signaturePad;
+                };
+
+                const techSignature = initSignaturePad('technicianSignaturePad', 'clearTechSignature');
+                const clientSignature = initSignaturePad('clientSignaturePad', 'clearClientSignature');
+
+                // Expor para uso global
+                window.getTechnicianSignature = () => {
+                    if (!techSignature?.isEmpty?.()) return null;
+                    return techSignature?.toDataURL?.('image/png');
+                };
+                window.getClientSignature = () => {
+                    if (!clientSignature?.isEmpty?.()) return null;
+                    return clientSignature?.toDataURL?.('image/png');
+                };
+                window.isTechnicianSigned = () => techSignature && !techSignature.isEmpty?.();
+                window.isClientSigned = () => clientSignature && !clientSignature.isEmpty?.();
+            }, 100);
         });
     </script>
 @endPushOnce
