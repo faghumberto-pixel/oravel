@@ -10,20 +10,15 @@
         ></textarea>
     </div>
 
-    {{-- Notas técnicas com voz --}}
+    {{-- Notas técnicas --}}
     <div class="rounded-2xl bg-zinc-900 p-4">
         <label class="text-xs font-bold uppercase tracking-wide text-zinc-400">Notas Técnicas</label>
         <textarea
             wire:model="technicalNotes"
-            rows="2"
+            rows="3"
             placeholder="Observações técnicas adicionais..."
             class="mt-2 w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-emerald-500"
         ></textarea>
-
-        {{-- Componente de voz --}}
-        <div class="mt-3 border-t border-zinc-800 pt-3">
-            @livewire('voice-input', ['modelName' => 'technicalNotes'], key('voice-technical-notes-' . uniqid()))
-        </div>
     </div>
 
     {{-- Fotos ANTES/DEPOIS --}}

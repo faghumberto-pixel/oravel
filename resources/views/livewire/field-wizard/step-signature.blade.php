@@ -10,19 +10,19 @@
             </div>
             <div class="flex items-center justify-between rounded-lg bg-slate-700 px-3 py-2">
                 <span class="text-slate-400">Checklist ({{ $maintenanceOrder->checklists_count ?? 0 }} itens)</span>
-                <span :class="$maintenanceOrder->checklists_count > 0 ? 'text-emerald-400' : 'text-slate-500'" class="font-semibold">
+                <span class="font-semibold {{ $maintenanceOrder->checklists_count > 0 ? 'text-emerald-400' : 'text-slate-500' }}">
                     {{ $maintenanceOrder->checklists_count > 0 ? '✓ Vistoriado' : '— Opcional' }}
                 </span>
             </div>
             <div class="flex items-center justify-between rounded-lg bg-slate-700 px-3 py-2">
                 <span class="text-slate-400">Avarias</span>
-                <span class="font-semibold" :class="strlen($maintenanceOrder->description ?? '') > 0 ? 'text-emerald-400' : 'text-slate-500'">
+                <span class="font-semibold {{ strlen($maintenanceOrder->description ?? '') > 0 ? 'text-emerald-400' : 'text-slate-500' }}">
                     {{ strlen($maintenanceOrder->description ?? '') > 0 ? '✓ Documentado' : '— Nenhum' }}
                 </span>
             </div>
             <div class="flex items-center justify-between rounded-lg bg-slate-700 px-3 py-2">
                 <span class="text-slate-400">Materiais ({{ $maintenanceOrder->materials_count ?? 0 }})</span>
-                <span class="font-semibold" :class="$maintenanceOrder->materials_count > 0 ? 'text-emerald-400' : 'text-slate-500'">
+                <span class="font-semibold {{ $maintenanceOrder->materials_count > 0 ? 'text-emerald-400' : 'text-slate-500' }}">
                     {{ $maintenanceOrder->materials_count > 0 ? '✓ Aplicado' : '— Nenhum' }}
                 </span>
             </div>
