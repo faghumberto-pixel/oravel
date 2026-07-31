@@ -73,7 +73,15 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('1.75rem')
             ->favicon(asset('favicon.png'))
             ->navigationGroups([
+                NavigationGroup::make('PCM'),
                 NavigationGroup::make('Manutenção'),
+                NavigationGroup::make('Logística'),
+                NavigationGroup::make('Ativos e Materiais'),
+                NavigationGroup::make('Equipe'),
+                NavigationGroup::make('Comercial'),
+                NavigationGroup::make('Financeiro'),
+                NavigationGroup::make('Relatórios'),
+                NavigationGroup::make('Configurações'),
             ])
             ->navigationItems([])
             ->renderHook(
@@ -132,9 +140,7 @@ class AdminPanelProvider extends PanelProvider
                 TechnicianDailyTasks::class,
                 AgendaTecnico::class,
             ])
-            ->resources([
-                MaintenanceOrderResource::class,
-            ])
+            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
