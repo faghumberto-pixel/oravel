@@ -29,6 +29,43 @@
 
     {{-- Identificacao da O.S. --}}
     <section class="px-5 pb-4">
+        {{-- Badges de tipo e SLA --}}
+        <div class="mb-3 flex flex-wrap gap-2">
+            {{-- Tipo de manutenção --}}
+            @php
+                $typeColors = [
+                    'emerald' => 'bg-emerald-900/30 text-emerald-400',
+                    'amber' => 'bg-amber-900/30 text-amber-400',
+                    'red' => 'bg-red-900/30 text-red-400',
+                    'zinc' => 'bg-zinc-800 text-zinc-400',
+                ];
+                $typeColor = $typeColors[$this->maintenanceTypeColor] ?? $typeColors['zinc'];
+            @endphp
+            <span class="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide {{ $typeColor }}">
+                {{ $this->maintenanceTypeLabel }}
+            </span>
+
+            {{-- SLA (se houver) --}}
+            @if ($this->slaRemaining)
+                @php
+                    $slaColors = [
+                        'success' => 'bg-emerald-900/30 text-emerald-400',
+                        'warning' => 'bg-amber-900/30 text-amber-400',
+                        'danger' => 'bg-red-900/30 text-red-400',
+                        'gray' => 'bg-zinc-800 text-zinc-400',
+                    ];
+                    $slaColor = $slaColors[$this->slaColor] ?? $slaColors['gray'];
+                @endphp
+                <span class="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide {{ $slaColor }}">
+                    @if ($this->slaRemaining['exceeded'])
+                        ⏰ SLA EXPIRADO
+                    @else
+                        ⏱ {{ $this->slaRemaining['hours'] }}h {{ $this->slaRemaining['minutes'] }}m
+                    @endif
+                </span>
+            @endif
+        </div>
+
         <h2 class="text-xl font-extrabold leading-tight text-white">
             ORDEM DE SERVIÇO Nº. {{ $maintenanceOrder->os_number }}
         </h2>

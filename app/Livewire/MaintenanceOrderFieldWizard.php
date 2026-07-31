@@ -194,6 +194,57 @@ class MaintenanceOrderFieldWizard extends Component
         return in_array($this->maintenanceOrder->status, self::STARTABLE_STATUSES, true);
     }
 
+    public function getMaintenanceTypeProperty(): ?string
+    {
+        return $this->maintenanceOrder->maintenance_type;
+    }
+
+    public function getMaintenanceTypeLabelProperty(): string
+    {
+        return match ($this->maintenanceOrder->maintenance_type) {
+            MaintenanceOrder::TYPE_PREVENTIVE => 'PREVENTIVA',
+            MaintenanceOrder::TYPE_CORRECTIVE => 'CORRETIVA',
+            MaintenanceOrder::TYPE_AVARIA => 'AVARIA',
+            MaintenanceOrder::TYPE_EMERGENCIA => 'EMERGÊNCIA',
+            default => 'SERVIÇO',
+        };
+    }
+
+    public function getMaintenanceTypeColorProperty(): string
+    {
+        return match ($this->maintenanceOrder->maintenance_type) {
+            MaintenanceOrder::TYPE_PREVENTIVE => 'emerald',
+            MaintenanceOrder::TYPE_CORRECTIVE => 'amber',
+            MaintenanceOrder::TYPE_AVARIA => 'red',
+            MaintenanceOrder::TYPE_EMERGENCIA => 'red',
+            default => 'zinc',
+        };
+    }
+
+    public function getSlaRemainingProperty(): ?array
+    {
+        if (! $this->maintenanceOrder->sla_target_minutes) {
+            return null;
+        }
+
+        $minutesElapsed = $this->maintenanceOrder->created_at->diffInMinutes(now());
+        $minutesRemaining = $this->maintenanceOrder->sla_target_minutes - $minutesElapsed;
+
+        if ($minutesRemaining <= 0) {
+            return ['hours' => 0, 'minutes' => 0, 'exceeded' => true];
+        }
+
+        $hours = (int) floor($minutesRemaining / 60);
+        $minutes = $minutesRemaining % 60;
+
+        return ['hours' => $hours, 'minutes' => $minutes, 'exceeded' => false];
+    }
+
+    public function getSlaColorProperty(): string
+    {
+        return $this->maintenanceOrder->slaColor() ?? 'zinc';
+    }
+
     public function getPrimaryLabelProperty(): string
     {
         if ($this->step === 1 && $this->canStart) {
