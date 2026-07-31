@@ -108,125 +108,152 @@
     </div>
 </div>
 
-<script>
-    function createSignatureCanvas(canvasId, clearBtnId) {
-        const canvas = document.getElementById(canvasId);
-        if (!canvas) return null;
+@once
+    <script>
+        // Delegação no document + MutationObserver: a Etapa 5 e' inserida no
+        // DOM via navegação AJAX do Livewire (troca de $step), não via
+        // carregamento de pagina -- DOMContentLoaded ja disparou muito antes
+        // do canvas existir. Guarda contra registro duplicado pelo mesmo
+        // motivo do script de voz (cada visita a etapa 5 e' uma resposta
+        // nova do Livewire, a diretiva Blade so' deduplica dentro do mesmo
+        // request/response).
+        (function () {
+            if (window.__oravelSignatureDelegated) return;
+            window.__oravelSignatureDelegated = true;
 
-        const ctx = canvas.getContext('2d');
-        let isDrawing = false;
-        let lastX = 0, lastY = 0;
+            const BG = 'rgb(15, 23, 42)';
+            const BG_RGB = [15, 23, 42];
+            const pads = {};
 
-        // Configurar tamanho real do canvas
-        const dpr = window.devicePixelRatio || 1;
-        canvas.width = 300 * dpr;
-        canvas.height = 150 * dpr;
-        ctx.scale(dpr, dpr);
+            function isSignatureCanvas(el) {
+                return el && (el.id === 'technicianSignaturePad' || el.id === 'clientSignaturePad');
+            }
 
-        // Desenhar fundo
-        ctx.fillStyle = 'rgb(15, 23, 42)';
-        ctx.fillRect(0, 0, 300, 150);
+            function ensureSetup(canvas) {
+                if (canvas.dataset.oravelSigReady === '1') {
+                    return pads[canvas.id];
+                }
 
-        // Desenho com mouse
-        canvas.addEventListener('mousedown', (e) => {
-            isDrawing = true;
-            const rect = canvas.getBoundingClientRect();
-            lastX = (e.clientX - rect.left) / dpr;
-            lastY = (e.clientY - rect.top) / dpr;
-        });
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                const dpr = window.devicePixelRatio || 1;
+                const w = canvas.clientWidth || 300;
+                const h = canvas.clientHeight || 150;
+                canvas.width = w * dpr;
+                canvas.height = h * dpr;
+                ctx.scale(dpr, dpr);
+                ctx.fillStyle = BG;
+                ctx.fillRect(0, 0, w, h);
 
-        canvas.addEventListener('mousemove', (e) => {
-            if (!isDrawing) return;
-            const rect = canvas.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / dpr;
-            const y = (e.clientY - rect.top) / dpr;
+                canvas.dataset.oravelSigReady = '1';
+                pads[canvas.id] = { ctx, w, h, drawing: false, lastX: 0, lastY: 0 };
 
-            ctx.strokeStyle = 'rgb(255, 255, 255)';
-            ctx.lineWidth = 2;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.beginPath();
-            ctx.moveTo(lastX, lastY);
-            ctx.lineTo(x, y);
-            ctx.stroke();
+                return pads[canvas.id];
+            }
 
-            lastX = x;
-            lastY = y;
-        });
+            function clearCanvas(canvas) {
+                const pad = ensureSetup(canvas);
+                pad.ctx.fillStyle = BG;
+                pad.ctx.fillRect(0, 0, pad.w, pad.h);
+            }
 
-        canvas.addEventListener('mouseup', () => {
-            isDrawing = false;
-        });
-
-        canvas.addEventListener('mouseleave', () => {
-            isDrawing = false;
-        });
-
-        // Desenho com touch (dedo)
-        canvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            isDrawing = true;
-            const touch = e.touches[0];
-            const rect = canvas.getBoundingClientRect();
-            lastX = (touch.clientX - rect.left) / dpr;
-            lastY = (touch.clientY - rect.top) / dpr;
-        });
-
-        canvas.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            if (!isDrawing) return;
-            const touch = e.touches[0];
-            const rect = canvas.getBoundingClientRect();
-            const x = (touch.clientX - rect.left) / dpr;
-            const y = (touch.clientY - rect.top) / dpr;
-
-            ctx.strokeStyle = 'rgb(255, 255, 255)';
-            ctx.lineWidth = 2;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.beginPath();
-            ctx.moveTo(lastX, lastY);
-            ctx.lineTo(x, y);
-            ctx.stroke();
-
-            lastX = x;
-            lastY = y;
-        });
-
-        canvas.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            isDrawing = false;
-        });
-
-        // Botão limpar
-        document.getElementById(clearBtnId)?.addEventListener('click', () => {
-            ctx.fillStyle = 'rgb(15, 23, 42)';
-            ctx.fillRect(0, 0, 300, 150);
-        });
-
-        // Funções globais
-        return {
-            getImage: () => canvas.toDataURL('image/png'),
-            isEmpty: () => {
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const data = imageData.data;
+            function isCanvasEmpty(canvas) {
+                const pad = pads[canvas.id];
+                if (!pad) return true;
+                const { data } = pad.ctx.getImageData(0, 0, canvas.width, canvas.height);
                 for (let i = 0; i < data.length; i += 4) {
-                    if (data[i + 3] > 128) return false;
+                    if (data[i] !== BG_RGB[0] || data[i + 1] !== BG_RGB[1] || data[i + 2] !== BG_RGB[2]) {
+                        return false;
+                    }
                 }
                 return true;
             }
-        };
-    }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const tech = createSignatureCanvas('technicianSignaturePad', 'clearTechSignature');
-        const client = createSignatureCanvas('clientSignaturePad', 'clearClientSignature');
+            function getPos(canvas, e) {
+                const rect = canvas.getBoundingClientRect();
+                const point = e.touches && e.touches.length ? e.touches[0] : e;
+                return { x: point.clientX - rect.left, y: point.clientY - rect.top };
+            }
 
-        window.getTechnicianSignature = () => !tech?.isEmpty?.() ? tech?.getImage?.() : null;
-        window.getClientSignature = () => !client?.isEmpty?.() ? client?.getImage?.() : null;
-        window.isTechnicianSigned = () => tech && !tech.isEmpty();
-        window.isClientSigned = () => client && !client.isEmpty();
+            function handleStart(e) {
+                if (!isSignatureCanvas(e.target)) return;
+                e.preventDefault();
+                const pad = ensureSetup(e.target);
+                const pos = getPos(e.target, e);
+                pad.drawing = true;
+                pad.lastX = pos.x;
+                pad.lastY = pos.y;
+            }
 
-        console.log('✅ Canvas de assinatura puro ativado');
-    });
-</script>
+            function handleMove(e) {
+                if (!isSignatureCanvas(e.target)) return;
+                const pad = pads[e.target.id];
+                if (!pad || !pad.drawing) return;
+                e.preventDefault();
+                const pos = getPos(e.target, e);
+                pad.ctx.strokeStyle = 'rgb(255, 255, 255)';
+                pad.ctx.lineWidth = 2;
+                pad.ctx.lineCap = 'round';
+                pad.ctx.lineJoin = 'round';
+                pad.ctx.beginPath();
+                pad.ctx.moveTo(pad.lastX, pad.lastY);
+                pad.ctx.lineTo(pos.x, pos.y);
+                pad.ctx.stroke();
+                pad.lastX = pos.x;
+                pad.lastY = pos.y;
+            }
+
+            function handleEnd(e) {
+                if (!isSignatureCanvas(e.target)) return;
+                const pad = pads[e.target.id];
+                if (pad) pad.drawing = false;
+            }
+
+            document.addEventListener('mousedown', handleStart);
+            document.addEventListener('mousemove', handleMove);
+            document.addEventListener('mouseup', handleEnd);
+            document.addEventListener('mouseleave', handleEnd, true);
+            document.addEventListener('touchstart', handleStart, { passive: false });
+            document.addEventListener('touchmove', handleMove, { passive: false });
+            document.addEventListener('touchend', handleEnd);
+
+            document.addEventListener('click', function (e) {
+                if (e.target.id === 'clearTechSignature') {
+                    const canvas = document.getElementById('technicianSignaturePad');
+                    if (canvas) clearCanvas(canvas);
+                }
+                if (e.target.id === 'clearClientSignature') {
+                    const canvas = document.getElementById('clientSignaturePad');
+                    if (canvas) clearCanvas(canvas);
+                }
+            });
+
+            // Garante que um canvas recem-inserido pelo Livewire ja' nasce com
+            // tamanho/fundo prontos, mesmo que o tecnico nunca toque nele
+            // antes de tentar enviar (isEmpty precisa do ctx existir).
+            function scanAndSetup() {
+                document.querySelectorAll('#technicianSignaturePad, #clientSignaturePad').forEach(ensureSetup);
+            }
+            scanAndSetup();
+            new MutationObserver(scanAndSetup).observe(document.body, { childList: true, subtree: true });
+
+            window.getTechnicianSignature = () => {
+                const canvas = document.getElementById('technicianSignaturePad');
+                if (!canvas || isCanvasEmpty(canvas)) return null;
+                return canvas.toDataURL('image/png');
+            };
+            window.getClientSignature = () => {
+                const canvas = document.getElementById('clientSignaturePad');
+                if (!canvas || isCanvasEmpty(canvas)) return null;
+                return canvas.toDataURL('image/png');
+            };
+            window.isTechnicianSigned = () => {
+                const canvas = document.getElementById('technicianSignaturePad');
+                return !!canvas && !isCanvasEmpty(canvas);
+            };
+            window.isClientSigned = () => {
+                const canvas = document.getElementById('clientSignaturePad');
+                return !!canvas && !isCanvasEmpty(canvas);
+            };
+        })();
+    </script>
+@endonce

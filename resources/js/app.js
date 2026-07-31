@@ -67,7 +67,8 @@ document.addEventListener('change', async function (event) {
         return;
     }
 
-    if (input.getAttribute('wire:model') !== 'newPhoto') {
+    const compressedFields = ['newPhoto', 'damagePhotoBefore', 'damagePhotoAfter'];
+    if (!compressedFields.includes(input.getAttribute('wire:model'))) {
         return;
     }
 

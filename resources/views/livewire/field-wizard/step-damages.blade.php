@@ -168,95 +168,101 @@
     @endif
 </div>
 
-<script>
-    console.log('🎤 Carregando script de voz...');
+@once
+    <script>
+        // Delegação no document: a Etapa 3 é inserida no DOM via navegação
+        // AJAX do Livewire (troca de $step), não via carregamento de página --
+        // DOMContentLoaded já disparou antes do botão/textarea existirem.
+        // Por isso os listeners ficam no document (sempre presente) e resolvem
+        // os elementos de novo a cada clique, em vez de cachear referências
+        // que podem apontar pro DOM antigo depois de um morph do Livewire.
+        (function () {
+            // Guarda contra registro duplicado do listener: cada visita a
+            // etapa 3 chega via uma resposta AJAX nova do Livewire, e a
+            // diretiva Blade so' deduplica dentro do mesmo ciclo de
+            // request/response -- sem isso, voltar/avançar repetidas vezes
+            // empilha listeners.
+            if (window.__oravelMicDelegated) return;
+            window.__oravelMicDelegated = true;
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const micButton = document.getElementById('micButton');
-        const micStatus = document.getElementById('micStatus');
-        const textField = document.getElementById('technicalNotesField');
+            const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+            let recognition = null;
+            let isListening = false;
 
-        console.log('Mic button:', micButton ? '✓' : '✗');
-        console.log('Mic status:', micStatus ? '✓' : '✗');
-        console.log('Text field:', textField ? '✓' : '✗');
+            function stopListening(micButton, micStatus) {
+                isListening = false;
+                if (micButton) {
+                    micButton.textContent = '🎤 Falar';
+                    micButton.classList.remove('bg-red-500', 'hover:bg-red-600');
+                    micButton.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
+                }
+                if (micStatus) {
+                    setTimeout(() => micStatus.classList.add('hidden'), 2000);
+                }
+            }
 
-        if (!micButton) return;
+            document.addEventListener('click', function (e) {
+                const micButton = e.target.closest('#micButton');
+                if (!micButton) return;
 
-        // Verificar suporte a Web Speech API
-        const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-        console.log('SpeechRecognition:', SpeechRecognition ? '✓ Suportado' : '✗ Não suportado');
+                e.preventDefault();
 
-        if (!SpeechRecognition) {
-            micButton.disabled = true;
-            micButton.textContent = '🎤 Não suportado';
-            return;
-        }
+                const micStatus = document.getElementById('micStatus');
+                const textField = document.getElementById('technicalNotesField');
 
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'pt-BR';
-        recognition.continuous = false;
-        recognition.interimResults = true;
+                if (!SpeechRecognition) {
+                    micButton.disabled = true;
+                    micButton.textContent = '🎤 Não suportado';
+                    return;
+                }
 
-        let isListening = false;
+                if (isListening) {
+                    recognition?.stop();
+                    return;
+                }
 
-        micButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('🎤 Clique no mic, isListening:', isListening);
+                recognition = new SpeechRecognition();
+                recognition.lang = 'pt-BR';
+                recognition.continuous = false;
+                recognition.interimResults = true;
 
-            if (isListening) {
-                console.log('⏹ Parando...');
-                recognition.stop();
-            } else {
-                console.log('🎤 Iniciando escuta...');
-                textField.focus();
+                recognition.onresult = function (event) {
+                    let transcript = '';
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        transcript += event.results[i][0].transcript + ' ';
+                    }
+
+                    if (event.results[event.results.length - 1].isFinal) {
+                        const field = document.getElementById('technicalNotesField');
+                        if (!field) return;
+                        const currentText = field.value;
+                        field.value = currentText ? currentText + ' ' + transcript : transcript;
+                        field.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                };
+
+                recognition.onerror = function (event) {
+                    const status = document.getElementById('micStatus');
+                    if (status) {
+                        status.textContent = '❌ Erro: ' + event.error;
+                        status.classList.remove('hidden');
+                    }
+                    stopListening(document.getElementById('micButton'), status);
+                };
+
+                recognition.onend = function () {
+                    stopListening(document.getElementById('micButton'), document.getElementById('micStatus'));
+                };
+
+                textField?.focus();
                 recognition.start();
-                micStatus.textContent = '🎤 Escutando...';
-                micStatus.classList.remove('hidden');
+                isListening = true;
+                micStatus?.classList.remove('hidden');
+                if (micStatus) micStatus.textContent = '🎤 Escutando...';
                 micButton.textContent = '⏹ Parar';
                 micButton.classList.add('bg-red-500', 'hover:bg-red-600');
                 micButton.classList.remove('bg-emerald-500', 'hover:bg-emerald-600');
-            }
-            isListening = !isListening;
-        });
-
-        recognition.onstart = function() {
-            console.log('✅ Reconhecimento iniciado');
-        };
-
-        recognition.onresult = function(event) {
-            console.log('📝 Resultado:', event.results.length);
-            let transcript = '';
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                transcript += event.results[i][0].transcript + ' ';
-            }
-
-            console.log('Texto:', transcript, 'Final:', event.isFinal);
-
-            if (event.isFinal) {
-                const currentText = textField.value;
-                textField.value = currentText ? currentText + ' ' + transcript : transcript;
-                textField.dispatchEvent(new Event('input', { bubbles: true }));
-                console.log('✅ Texto adicionado');
-            }
-        };
-
-        recognition.onerror = function(event) {
-            console.error('❌ Erro de voz:', event.error);
-            micStatus.textContent = '❌ Erro: ' + event.error;
-            micStatus.classList.remove('hidden');
-        };
-
-        recognition.onend = function() {
-            console.log('🔚 Reconhecimento terminado');
-            isListening = false;
-            micButton.textContent = '🎤 Falar';
-            micButton.classList.remove('bg-red-500', 'hover:bg-red-600');
-            micButton.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
-            setTimeout(() => {
-                micStatus.classList.add('hidden');
-            }, 2000);
-        };
-
-        console.log('✅✅✅ VOZ PRONTA PARA USAR ✅✅✅');
-    });
-</script>
+            });
+        })();
+    </script>
+@endonce
