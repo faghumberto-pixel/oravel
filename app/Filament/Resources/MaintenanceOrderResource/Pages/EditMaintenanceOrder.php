@@ -124,6 +124,14 @@ class EditMaintenanceOrder extends EditRecord
                     $this->refreshFormData(['status', 'finished_at']);
                 }),
 
+            // 3.5. BOTÃO MODO CAMPO (CELULAR) - Acesso ao wizard de execução em campo
+            Actions\Action::make('modo_campo')
+                ->label('Modo Campo (Celular)')
+                ->color('info')
+                ->icon('heroicon-o-phone')
+                ->url(fn () => route('maintenance-orders.field-wizard', $this->record))
+                ->openUrlInNewTab(),
+
             // 4. MAIS AÇÕES (agrupa tudo que não é do dia a dia num dropdown --
             // consultas/impressão primeiro, depois transições administrativas,
             // destrutivas por último)
