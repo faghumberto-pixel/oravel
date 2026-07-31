@@ -18,6 +18,7 @@ db.version(1).stores({
 
     // Dados locais (rascunhos e edições offline)
     wizard_drafts: 'id, type, task_id',        // { id, type: 'maintenance|mobilization', task_id, data: {...}, last_save }
+    replacement_requests: 'id',       // { id, maintenance_order_id, asset_id, urgency, reason, created_at, synced }
     sync_queue: '++id, task_id, action, synced', // { id, action, table, task_id, data, created_at, synced }
     offline_photos: 'id',             // { id, task_id, type: 'damage|equipment', blob, mime_type, metadata }
     offline_audio: 'id',              // { id, task_id, blob, mime_type, is_transcribed, transcription }
@@ -247,6 +248,65 @@ export async function getDBSize() {
     } catch (error) {
         console.error('[IDB] Erro ao calcular tamanho:', error);
         return 0;
+    }
+}
+
+/**
+ * Salva solicitação de troca de equipamento (offline-first)
+ * Cria registro local + enfileira para sync ao reconectar
+ */
+export async function saveReplacementRequest(maintenanceOrderId, assetId, urgency, reason) {
+    try {
+        const id = `replacement-${maintenanceOrderId}-${Date.now()}`;
+
+        // Salvar localmente
+        await db.replacement_requests.put({
+            id,
+            maintenance_order_id: maintenanceOrderId,
+            asset_id: assetId,
+            urgency, // 'critico' | 'urgente' | 'normal'
+            reason,
+            created_at: new Date(),
+            synced: false,
+        });
+
+        // Enfileirar para sincronização
+        await queueSyncAction('create', 'equipment_replacements', maintenanceOrderId, {
+            maintenance_order_id: maintenanceOrderId,
+            asset_id: assetId,
+            urgency,
+            reason,
+        });
+
+        console.log('[IDB] Solicitação de troca salva offline:', id);
+        return id;
+    } catch (error) {
+        console.error('[IDB] Erro ao salvar solicitação de troca:', error);
+        return null;
+    }
+}
+
+/**
+ * Obtém solicitações de troca pendentes de sincronização
+ */
+export async function getPendingReplacements() {
+    try {
+        return await db.replacement_requests.where('synced').equals(false).toArray();
+    } catch (error) {
+        console.error('[IDB] Erro ao obter solicitações pendentes:', error);
+        return [];
+    }
+}
+
+/**
+ * Marca solicitação de troca como sincronizada
+ */
+export async function markReplacementSynced(replacementId) {
+    try {
+        await db.replacement_requests.update(replacementId, { synced: true });
+        console.log('[IDB] Solicitação de troca marcada como sincronizada:', replacementId);
+    } catch (error) {
+        console.error('[IDB] Erro ao marcar solicitação sincronizada:', error);
     }
 }
 
