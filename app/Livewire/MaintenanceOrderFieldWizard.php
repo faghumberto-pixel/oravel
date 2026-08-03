@@ -116,6 +116,8 @@ class MaintenanceOrderFieldWizard extends Component
             ? (string) $maintenanceOrder->fuel_level
             : null;
 
+        $this->refreshComputedCosts();
+
         $this->step = $this->clampStep($this->step);
     }
 
@@ -352,6 +354,12 @@ class MaintenanceOrderFieldWizard extends Component
 
             return false;
         }
+
+        // Atualiza a mao de obra corrida a cada etapa avançada, nao so' ao
+        // adicionar/remover material -- o tempo passa mesmo que o tecnico so'
+        // esteja preenchendo campos, entao o custo exibido na etapa 5 fica
+        // sempre proximo do real.
+        $this->refreshComputedCosts();
 
         $this->saveState = 'saved';
 
@@ -592,11 +600,52 @@ class MaintenanceOrderFieldWizard extends Component
 
         $this->clearSelectedMaterial();
         $this->materialSearch = '';
+
+        // O Observer atualiza material_cost/total_order_cost direto no banco
+        // via uma query fresca ($maintenanceOrderMaterial->maintenanceOrder,
+        // uma instancia PHP DIFERENTE da que o componente segura) -- sem
+        // recarregar, $this->maintenanceOrder ficava com os custos antigos
+        // em memoria e a tela nunca refletia o material recem-adicionado.
+        $this->refreshComputedCosts();
     }
 
     public function removeMaterial(string $materialId): void
     {
         MaintenanceOrderMaterial::whereKey($materialId)->delete();
+
+        $this->refreshComputedCosts();
+    }
+
+    /**
+     * Mao de obra corrida: hourly_rate do tecnico (users.hourly_rate) vezes
+     * o tempo decorrido desde o inicio do servico -- total_time_seconds
+     * (acumulado de pausas anteriores) + o trecho em andamento agora, se
+     * last_timer_start estiver setado (timer ativo). Chamado a cada
+     * interacao relevante (adicionar/remover material, avancar de etapa)
+     * pra que o custo apareca atualizado sem o tecnico precisar de uma acao
+     * separada de "salvar" -- e grava no banco, nao so' em memoria.
+     */
+    private function refreshComputedCosts(): void
+    {
+        $order = $this->maintenanceOrder;
+        $hourlyRate = (float) ($order->technician?->hourly_rate ?? 0);
+
+        $elapsedSeconds = (int) $order->total_time_seconds;
+        if ($order->last_timer_start) {
+            // Timestamp Unix direto, nao diffInSeconds() do Carbon: o sinal
+            // do diff depende da versao/parametro absolute e ja' inverteu
+            // (retornou negativo com last_timer_start no passado e "agora"
+            // depois) -- subtracao de timestamp e' inequivoca.
+            $elapsedSeconds += now()->getTimestamp() - $order->last_timer_start->getTimestamp();
+        }
+
+        $laborCost = round($hourlyRate * (max(0, $elapsedSeconds) / 3600), 2);
+
+        if ((float) $order->labor_cost !== $laborCost) {
+            $order->update(['labor_cost' => $laborCost]);
+        }
+
+        $this->maintenanceOrder = $order->fresh();
     }
 
     private function persistMaterials(): void

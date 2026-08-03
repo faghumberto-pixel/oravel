@@ -105,23 +105,29 @@
                 </div>
             @endforeach
         </div>
-
-        {{-- Resumo de custos --}}
-        <div class="rounded-2xl border border-zinc-700 bg-zinc-900 p-4">
-            <div class="space-y-2 text-sm">
-                <div class="flex justify-between">
-                    <span class="text-zinc-400">Subtotal de Materiais:</span>
-                    <span class="font-semibold text-zinc-100">R$ {{ number_format($this->materialCostTotal, 2, ',', '.') }}</span>
-                </div>
-                <div class="flex justify-between border-t border-zinc-800 pt-2">
-                    <span class="text-xs font-bold uppercase tracking-wide text-zinc-400">Total da O.S.:</span>
-                    <span class="text-lg font-bold text-emerald-400">R$ {{ number_format($this->orderTotalCost, 2, ',', '.') }}</span>
-                </div>
-            </div>
-        </div>
     @else
         <div class="rounded-2xl border border-dashed border-zinc-700 px-4 py-8 text-center">
             <p class="text-sm text-zinc-500">Nenhum material adicionado ainda</p>
         </div>
     @endif
+
+    {{-- Resumo de custos: sempre visivel (nao so' quando ha' material),
+         porque a mao de obra corre desde o inicio do servico mesmo sem
+         nenhum material aplicado ainda. --}}
+    <div class="rounded-2xl border border-zinc-700 bg-zinc-900 p-4">
+        <div class="space-y-2 text-sm">
+            <div class="flex justify-between">
+                <span class="text-zinc-400">Mão de Obra (corrida):</span>
+                <span class="font-semibold text-zinc-100">R$ {{ number_format($maintenanceOrder->labor_cost ?? 0, 2, ',', '.') }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-zinc-400">Subtotal de Materiais:</span>
+                <span class="font-semibold text-zinc-100">R$ {{ number_format($this->materialCostTotal, 2, ',', '.') }}</span>
+            </div>
+            <div class="flex justify-between border-t border-zinc-800 pt-2">
+                <span class="text-xs font-bold uppercase tracking-wide text-zinc-400">Total da O.S.:</span>
+                <span class="text-lg font-bold text-emerald-400">R$ {{ number_format($this->orderTotalCost, 2, ',', '.') }}</span>
+            </div>
+        </div>
+    </div>
 </div>
