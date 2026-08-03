@@ -125,11 +125,25 @@
             <div class="rounded-2xl bg-zinc-900 p-4">
                 <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">✍️ Registrar Apontamento</h3>
 
+                {{-- Última leitura salva: valor + data/hora + foto (se houve),
+                     como evidencia/auditoria de quando e como foi registrada. --}}
                 @if ($this->lastHorimeterReading)
-                    <p class="mt-1 text-[11px] text-zinc-500">
-                        Última leitura: {{ number_format((float) $this->lastHorimeterReading->reading, 2, ',', '.') }}h,
-                        em {{ $this->lastHorimeterReading->recorded_at->format('d/m/Y H:i') }}
-                    </p>
+                    <div class="mt-2 rounded-xl border border-zinc-800 bg-zinc-950/50 p-3">
+                        <p class="text-[11px] text-zinc-500">Última leitura registrada</p>
+                        <p class="mt-1 text-sm font-semibold text-zinc-100">
+                            {{ number_format((float) $this->lastHorimeterReading->reading, 2, ',', '.') }}h
+                            <span class="text-zinc-500">— {{ $this->lastHorimeterReading->recorded_at->format('d/m/Y \à\s H:i') }}</span>
+                        </p>
+                        @if ($this->lastHorimeterReading->photo_path)
+                            <img
+                                src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($this->lastHorimeterReading->photo_path) }}"
+                                alt="Foto da última leitura"
+                                class="mt-2 h-24 w-full rounded-lg object-cover"
+                            >
+                        @else
+                            <p class="mt-2 text-[11px] text-zinc-600">Sem foto anexada nesse apontamento.</p>
+                        @endif
+                    </div>
                 @else
                     <p class="mt-1 text-[11px] text-zinc-500">Nenhum apontamento registrado ainda para este ativo.</p>
                 @endif
@@ -139,6 +153,13 @@
                         ✓ Apontamento registrado com sucesso
                     </div>
                 @endif
+
+                {{-- Data/hora que sera' gravada -- fixa no momento do render;
+                     nao e' um relogio ao vivo (LivewireJS nao re-renderiza so'
+                     pra isso), mas atualiza a cada interacao com a tela. --}}
+                <p class="mt-3 text-[11px] font-semibold text-zinc-400">
+                    🕐 Este apontamento sera' registrado em {{ now()->format('d/m/Y \à\s H:i') }}
+                </p>
 
                 <div class="mt-3 space-y-3">
                     <div>
