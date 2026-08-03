@@ -121,6 +121,94 @@
                 </div>
             </div>
 
+            {{-- Registrar apontamento de horímetro --}}
+            <div class="rounded-2xl bg-zinc-900 p-4">
+                <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">✍️ Registrar Apontamento</h3>
+
+                @if ($this->lastHorimeterReading)
+                    <p class="mt-1 text-[11px] text-zinc-500">
+                        Última leitura: {{ number_format((float) $this->lastHorimeterReading->reading, 2, ',', '.') }}h,
+                        em {{ $this->lastHorimeterReading->recorded_at->format('d/m/Y H:i') }}
+                    </p>
+                @else
+                    <p class="mt-1 text-[11px] text-zinc-500">Nenhum apontamento registrado ainda para este ativo.</p>
+                @endif
+
+                @if ($horimeterSaved)
+                    <div class="mt-3 rounded-xl bg-emerald-900/30 px-3 py-2 text-xs font-bold text-emerald-400">
+                        ✓ Apontamento registrado com sucesso
+                    </div>
+                @endif
+
+                <div class="mt-3 space-y-3">
+                    <div>
+                        <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            wire:model.live="horimeterReading"
+                            placeholder="Leitura atual (horas)"
+                            class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-orange-500"
+                        />
+                        @error('horimeterReading')
+                            <p class="mt-1 text-[11px] text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    @if ($this->horimeterNeedsResetConfirm)
+                        <label class="flex items-start gap-2 rounded-xl border border-amber-800 bg-amber-950/30 p-3">
+                            <input
+                                type="checkbox"
+                                wire:model="horimeterResetConfirmed"
+                                class="mt-0.5 rounded border-zinc-700 bg-zinc-800 text-amber-500 focus:ring-amber-500"
+                            >
+                            <span class="text-[11px] font-semibold text-amber-400">
+                                Leitura menor que a anterior, ou salto grande demais. Confirmo que este valor está correto (ex: reset do horímetro por troca de painel).
+                            </span>
+                        </label>
+                    @endif
+
+                    @if ($horimeterPhoto)
+                        <div class="relative h-32 w-full">
+                            <img src="{{ $horimeterPhoto->temporaryUrl() }}" alt="Foto do painel" class="h-32 w-full rounded-xl object-cover">
+                            <button
+                                type="button"
+                                wire:click="$set('horimeterPhoto', null)"
+                                class="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white hover:bg-red-600"
+                            >
+                                ✕
+                            </button>
+                        </div>
+                    @else
+                        <label class="flex min-h-[3rem] cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-700 hover:border-zinc-600">
+                            <input type="file" accept="image/*" capture="environment" wire:model="horimeterPhoto" class="hidden">
+                            <span class="text-xs font-semibold text-zinc-400">📷 Foto do painel (opcional)</span>
+                        </label>
+                    @endif
+                    <div wire:loading wire:target="horimeterPhoto" class="text-[11px] text-zinc-500">Enviando foto...</div>
+                    @error('horimeterPhoto')
+                        <p class="text-[11px] text-red-400">{{ $message }}</p>
+                    @enderror
+
+                    <textarea
+                        wire:model="horimeterNotes"
+                        rows="2"
+                        placeholder="Observações (opcional)"
+                        class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-orange-500"
+                    ></textarea>
+
+                    <button
+                        type="button"
+                        wire:click="saveHorimeterReading"
+                        wire:loading.attr="disabled"
+                        wire:target="saveHorimeterReading"
+                        class="min-h-[3rem] w-full rounded-xl bg-orange-500 text-sm font-bold text-white active:bg-orange-600 disabled:opacity-50"
+                    >
+                        Salvar Apontamento
+                    </button>
+                </div>
+            </div>
+
             {{-- Matriz ABC --}}
             <div class="rounded-2xl bg-zinc-900 p-4">
                 <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">Matriz ABC</h3>
