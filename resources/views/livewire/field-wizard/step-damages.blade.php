@@ -1,30 +1,48 @@
 <div class="space-y-4">
-    {{-- Descrição do problema. Ditado por voz usa o microfone nativo do
-         teclado do aparelho (Gboard/teclado da Apple) -- tentamos antes com
-         Web Speech API custom e nao funcionou de forma confiavel no
-         aparelho de teste; o teclado nativo funciona em qualquer textarea
-         sem nenhum JS proprio. --}}
+    {{-- Descrição do problema. Botão de microfone in-app (Web Speech API) --
+         teclados de celular nem sempre tem o microfone habilitado por
+         configuracao do sistema, entao a app precisa oferecer o proprio. --}}
     <div class="rounded-2xl bg-zinc-900 p-4">
-        <label class="text-xs font-bold uppercase tracking-wide text-zinc-400">Descrição do Problema</label>
-        <p class="mt-1 text-[11px] text-zinc-500">Toque no microfone do teclado do celular para ditar</p>
+        <div class="flex items-center justify-between">
+            <label class="text-xs font-bold uppercase tracking-wide text-zinc-400">Descrição do Problema</label>
+            <button
+                type="button"
+                data-mic-target="damageDescriptionField"
+                class="oravel-mic-btn rounded-full bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 text-xs font-bold transition active:scale-95"
+            >
+                🎤 Falar
+            </button>
+        </div>
         <textarea
             wire:model="damageDescription"
             rows="3"
+            id="damageDescriptionField"
             placeholder="Descreva o problema encontrado..."
             class="mt-2 w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-emerald-500"
         ></textarea>
+        <div class="oravel-mic-status mt-2 text-xs text-zinc-500 hidden" data-mic-status-for="damageDescriptionField"></div>
     </div>
 
     {{-- Notas técnicas --}}
     <div class="rounded-2xl bg-zinc-900 p-4">
-        <label class="text-xs font-bold uppercase tracking-wide text-zinc-400">Notas Técnicas</label>
-        <p class="mt-1 text-[11px] text-zinc-500">Toque no microfone do teclado do celular para ditar</p>
+        <div class="flex items-center justify-between">
+            <label class="text-xs font-bold uppercase tracking-wide text-zinc-400">Notas Técnicas</label>
+            <button
+                type="button"
+                data-mic-target="technicalNotesField"
+                class="oravel-mic-btn rounded-full bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 text-xs font-bold transition active:scale-95"
+            >
+                🎤 Falar
+            </button>
+        </div>
         <textarea
             wire:model="technicalNotes"
             rows="3"
+            id="technicalNotesField"
             placeholder="Observações técnicas adicionais..."
             class="mt-2 w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-emerald-500"
         ></textarea>
+        <div class="oravel-mic-status mt-2 text-xs text-zinc-500 hidden" data-mic-status-for="technicalNotesField"></div>
     </div>
 
     {{-- Fotos ANTES/DEPOIS --}}
@@ -175,3 +193,117 @@
         </div>
     @endif
 </div>
+
+{{--
+    @script, nao <script> puro: essa etapa (3) so' entra no DOM via morph
+    AJAX do Livewire, nunca via carregamento de pagina completo -- exatamente
+    o mesmo motivo pelo qual o botao de microfone "nao funcionava" antes,
+    igual descoberto na assinatura (etapa 5). @script garante que o JS roda
+    tanto no mount quanto em updates subsequentes.
+--}}
+@script
+    <script>
+        (function () {
+            if (window.__oravelMicDelegated) return;
+            window.__oravelMicDelegated = true;
+
+            const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+            let recognition = null;
+            let isListening = false;
+            let activeTargetId = null;
+
+            function setButtonState(button, listening) {
+                if (!button) return;
+                button.textContent = listening ? '⏹ Parar' : '🎤 Falar';
+                button.classList.toggle('bg-red-500', listening);
+                button.classList.toggle('hover:bg-red-600', listening);
+                button.classList.toggle('bg-emerald-500', !listening);
+                button.classList.toggle('hover:bg-emerald-600', !listening);
+            }
+
+            function statusFor(targetId) {
+                return document.querySelector(`[data-mic-status-for="${targetId}"]`);
+            }
+
+            function buttonFor(targetId) {
+                return document.querySelector(`[data-mic-target="${targetId}"]`);
+            }
+
+            function stopListening() {
+                const targetId = activeTargetId;
+                isListening = false;
+                activeTargetId = null;
+                setButtonState(buttonFor(targetId), false);
+                const status = statusFor(targetId);
+                if (status) {
+                    setTimeout(() => status.classList.add('hidden'), 1500);
+                }
+            }
+
+            document.addEventListener('click', function (e) {
+                const button = e.target.closest('.oravel-mic-btn');
+                if (!button) return;
+
+                e.preventDefault();
+
+                const targetId = button.dataset.micTarget;
+                const textField = document.getElementById(targetId);
+                const status = statusFor(targetId);
+
+                if (!SpeechRecognition) {
+                    button.disabled = true;
+                    button.textContent = '🎤 Não suportado';
+                    return;
+                }
+
+                if (isListening) {
+                    recognition?.stop();
+                    return;
+                }
+
+                recognition = new SpeechRecognition();
+                recognition.lang = 'pt-BR';
+                recognition.continuous = false;
+                recognition.interimResults = true;
+
+                recognition.onresult = function (event) {
+                    let transcript = '';
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        transcript += event.results[i][0].transcript + ' ';
+                    }
+
+                    if (event.results[event.results.length - 1].isFinal) {
+                        const field = document.getElementById(targetId);
+                        if (!field) return;
+                        const currentText = field.value;
+                        field.value = currentText ? currentText + ' ' + transcript : transcript;
+                        field.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                };
+
+                recognition.onerror = function (event) {
+                    const s = statusFor(targetId);
+                    if (s) {
+                        s.textContent = '❌ Erro: ' + event.error;
+                        s.classList.remove('hidden');
+                    }
+                    stopListening();
+                };
+
+                recognition.onend = function () {
+                    stopListening();
+                };
+
+                textField?.focus();
+                recognition.start();
+                isListening = true;
+                activeTargetId = targetId;
+                setButtonState(button, true);
+                if (status) {
+                    status.textContent = '🎤 Escutando...';
+                    status.classList.remove('hidden');
+                }
+            });
+        })();
+    </script>
+@endscript

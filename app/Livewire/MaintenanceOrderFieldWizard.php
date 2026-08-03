@@ -619,15 +619,35 @@ class MaintenanceOrderFieldWizard extends Component
         // permitir finalizar. O completeOrder() sera' chamado por next().
     }
 
-    public function saveSignatures(string $technicianSignature, string $clientSignature): void
+    /**
+     * Aceita qualquer combinacao (so' tecnico, so' cliente, ou ambos) porque
+     * e' chamado tanto pelo autosave a cada traco desenhado (uma assinatura
+     * pode estar vazia ainda) quanto pelo "Continuar" (ambas obrigatorias,
+     * validado no JS antes de chamar). Autosave existe porque o canvas e'
+     * recriado do zero sempre que a etapa 5 sai/volta do DOM (voltar pra
+     * etapa 4 e retornar apagava o traço -- so' existia no pixel do canvas,
+     * nunca tinha sido mandado pro servidor). Gravando a cada traco, a
+     * assinatura sobrevive a navegacao E fica de verdade no banco (visivel
+     * no form desktop mesmo se o tecnico sair da O.S. sem finalizar).
+     */
+    public function saveSignatures(?string $technicianSignature = null, ?string $clientSignature = null): void
     {
-        $this->maintenanceOrder->update([
-            'technician_signature' => $technicianSignature,
-            'client_signature' => $clientSignature,
-        ]);
+        $data = [];
 
-        $this->technicianSignature = $technicianSignature;
-        $this->clientSignature = $clientSignature;
+        if (filled($technicianSignature)) {
+            $data['technician_signature'] = $technicianSignature;
+            $this->technicianSignature = $technicianSignature;
+        }
+
+        if (filled($clientSignature)) {
+            $data['client_signature'] = $clientSignature;
+            $this->clientSignature = $clientSignature;
+        }
+
+        if ($data) {
+            $this->maintenanceOrder->update($data);
+        }
+
         $this->saveState = 'saved';
     }
 

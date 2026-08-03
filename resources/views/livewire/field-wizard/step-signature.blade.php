@@ -62,6 +62,7 @@
                 id="technicianSignaturePad"
                 width="300"
                 height="150"
+                data-existing-signature="{{ $maintenanceOrder->technician_signature }}"
                 style="display: block; width: 100%; height: 100%; background-color: rgb(15, 23, 42); touch-action: none; cursor: crosshair; -webkit-touch-callout: none;"
                 wire:ignore
             ></canvas>
@@ -86,6 +87,7 @@
                 id="clientSignaturePad"
                 width="300"
                 height="150"
+                data-existing-signature="{{ $maintenanceOrder->client_signature }}"
                 style="display: block; width: 100%; height: 100%; background-color: rgb(15, 23, 42); touch-action: none; cursor: crosshair; -webkit-touch-callout: none;"
                 wire:ignore
             ></canvas>
@@ -151,7 +153,36 @@
                 canvas.dataset.oravelSigReady = '1';
                 pads[canvas.id] = { ctx, w, h, drawing: false, lastX: 0, lastY: 0 };
 
+                // Se ja' existe assinatura salva no banco (voltou pra essa
+                // etapa, ou reabriu a O.S.), desenha ela por cima do fundo
+                // em vez de nascer em branco -- sem isso, sair da etapa 5 e
+                // voltar (ou so' reabrir a pagina) parecia "apagar" a
+                // assinatura, quando na verdade ela nunca tinha sido
+                // restaurada visualmente.
+                const existing = canvas.dataset.existingSignature;
+                if (existing && existing.indexOf('data:image') === 0) {
+                    const img = new Image();
+                    img.onload = () => ctx.drawImage(img, 0, 0, w, h);
+                    img.src = existing;
+                }
+
                 return pads[canvas.id];
+            }
+
+            let autosaveTimer = null;
+
+            function scheduleAutosave() {
+                clearTimeout(autosaveTimer);
+                autosaveTimer = setTimeout(() => {
+                    const techCanvas = document.getElementById('technicianSignaturePad');
+                    const clientCanvas = document.getElementById('clientSignaturePad');
+                    const techSig = techCanvas && !isCanvasEmpty(techCanvas) ? techCanvas.toDataURL('image/png') : null;
+                    const clientSig = clientCanvas && !isCanvasEmpty(clientCanvas) ? clientCanvas.toDataURL('image/png') : null;
+
+                    if (techSig || clientSig) {
+                        @this.call('saveSignatures', techSig, clientSig);
+                    }
+                }, 800);
             }
 
             function clearCanvas(canvas) {
@@ -210,6 +241,7 @@
                 if (!isSignatureCanvas(e.target)) return;
                 const pad = pads[e.target.id];
                 if (pad) pad.drawing = false;
+                scheduleAutosave();
             }
 
             document.addEventListener('mousedown', handleStart);
