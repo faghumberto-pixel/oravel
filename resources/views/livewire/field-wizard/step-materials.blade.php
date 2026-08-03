@@ -18,7 +18,7 @@
                     @foreach ($this->materialSearchResults as $material)
                         <button
                             type="button"
-                            wire:click="selectMaterial({{ $material->id }})"
+                            wire:click="selectMaterial('{{ $material->id }}')"
                             class="w-full border-b border-zinc-700 px-3 py-2 text-left text-xs hover:bg-zinc-700 last:border-b-0"
                         >
                             <span class="block font-semibold text-zinc-100">{{ $material->name }}</span>
@@ -97,7 +97,7 @@
                     </div>
                     <button
                         type="button"
-                        wire:click="removeMaterial({{ $applied->id }})"
+                        wire:click="removeMaterial('{{ $applied->id }}')"
                         class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-red-800 text-xs font-bold text-red-400 hover:bg-red-900/20"
                     >
                         ✕
