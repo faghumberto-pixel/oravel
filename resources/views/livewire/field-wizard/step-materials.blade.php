@@ -23,7 +23,7 @@
                         >
                             <span class="block font-semibold text-zinc-100">{{ $material->name }}</span>
                             <span class="text-[11px] text-zinc-500">
-                                SKU: {{ $material->sku ?? '—' }} · R$ {{ number_format($material->unit_price, 2, ',', '.') }}
+                                SKU: {{ $material->sku ?? '—' }} · R$ {{ number_format($material->price, 2, ',', '.') }}
                             </span>
                         </button>
                     @endforeach
@@ -44,7 +44,7 @@
                     <p class="text-xs font-bold uppercase tracking-wide text-emerald-400">Material Selecionado</p>
                     <p class="mt-1 text-sm font-semibold text-zinc-100">{{ $this->selectedMaterial?->name }}</p>
                     <p class="text-[11px] text-zinc-500">
-                        Unitário: R$ {{ number_format($this->selectedMaterial?->unit_price, 2, ',', '.') }}
+                        Unitário: R$ {{ number_format($this->selectedMaterial?->price, 2, ',', '.') }}
                     </p>
                 </div>
                 <button

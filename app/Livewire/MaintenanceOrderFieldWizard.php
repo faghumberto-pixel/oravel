@@ -459,7 +459,10 @@ class MaintenanceOrderFieldWizard extends Component
     // --- Etapa 4: materiais ---
 
     /**
-     * Busca materiais pelo termo digitado (nome ou código).
+     * Busca ampla: nome, SKU, código de peça, código de barras, marca e
+     * categoria (tipo) -- o tecnico em campo nao sabe de cor qual desses
+     * campos foi cadastrado pra cada peca, entao restringir a nome/SKU
+     * deixava a busca "nao encontra nada" na pratica.
      */
     public function getMaterialSearchResultsProperty()
     {
@@ -467,11 +470,19 @@ class MaintenanceOrderFieldWizard extends Component
             return collect();
         }
 
+        $term = '%'.strtolower($this->materialSearch).'%';
+
         return Material::query()
             ->where('tenant_id', $this->maintenanceOrder->tenant_id)
-            ->where(function ($q) {
-                $q->whereRaw('LOWER(name) LIKE ?', ["%{$this->materialSearch}%"])
-                    ->orWhereRaw('LOWER(sku) LIKE ?', ["%{$this->materialSearch}%"]);
+            ->where(function ($q) use ($term) {
+                $q->whereRaw('LOWER(name) LIKE ?', [$term])
+                    ->orWhereRaw('LOWER(sku) LIKE ?', [$term])
+                    ->orWhereRaw('LOWER(part_number) LIKE ?', [$term])
+                    ->orWhereRaw('LOWER(barcode) LIKE ?', [$term])
+                    ->orWhereRaw('LOWER(brand_name) LIKE ?', [$term])
+                    ->orWhereHas('category', function ($q) use ($term) {
+                        $q->whereRaw('LOWER(name) LIKE ?', [$term]);
+                    });
             })
             ->limit(10)
             ->get();
@@ -553,7 +564,7 @@ class MaintenanceOrderFieldWizard extends Component
             'maintenance_order_id' => $this->maintenanceOrder->id,
             'material_id' => $material->id,
             'quantity' => $this->materialQuantity,
-            'unit_price' => $material->unit_price,
+            'unit_price' => $material->price,
         ]);
 
         $this->clearSelectedMaterial();
