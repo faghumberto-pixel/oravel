@@ -148,38 +148,44 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const nextBtn = document.querySelector('button[wire\\:click="next"]');
+    // Captura no document, fase de CAPTURA (terceiro argumento true) -- nao
+    // no botao, fase de bolha. wire:click="next" tambem registra seu proprio
+    // listener direto no botao (Livewire/Alpine); um listener nosso no MESMO
+    // elemento/fase competeria por ordem de registro, que nao da' pra garantir
+    // (Alpine inicializa em paralelo com o parse do <script> daqui). Fase de
+    // CAPTURA num ancestral SEMPRE roda antes de qualquer listener de bolha
+    // no proprio elemento, goberna quem registrou primeiro -- e' a unica
+    // forma de garantir que a assinatura e' salva ANTES do next() nativo
+    // rodar (sem isso, os dois podiam disparar em paralelo e a O.S. virava
+    // "Concluída" sem nunca gravar a assinatura).
+    document.addEventListener('click', function(e) {
+        const nextBtn = e.target.closest('button[wire\\:click="next"]');
         if (!nextBtn) return;
 
-        nextBtn.addEventListener('click', function(e) {
-            // Se estamos na etapa 5 (assinatura), captura as assinaturas antes de enviar
-            const stepElement = document.querySelector('[wire\\:model="step"]');
-            const isStep5 = @js($step) === 5;
+        // @this.step le' o valor reativo AO VIVO do componente (nao
+        // @js($step), que fica congelado no valor da primeira renderizacao
+        // da pagina -- quase sempre 1, porque o wizard sempre comeca na
+        // etapa 1 -- e nunca fica true de verdade ao navegar via AJAX).
+        if (@this.step !== 5) return;
 
-            if (isStep5) {
-                e.preventDefault();
+        e.preventDefault();
+        e.stopImmediatePropagation();
 
-                // Captura as assinaturas
-                const techSig = window.getTechnicianSignature?.();
-                const clientSig = window.getClientSignature?.();
+        const techSig = window.getTechnicianSignature?.();
+        const clientSig = window.getClientSignature?.();
 
-                if (!techSig || window.isTechnicianSignature?.() === false) {
-                    alert('⚠️ Técnico deve assinar para continuar');
-                    return;
-                }
+        if (!techSig || window.isTechnicianSigned?.() === false) {
+            alert('⚠️ Técnico deve assinar para continuar');
+            return;
+        }
 
-                if (!clientSig || window.isClientSigned?.() === false) {
-                    alert('⚠️ Cliente deve assinar para continuar');
-                    return;
-                }
+        if (!clientSig || window.isClientSigned?.() === false) {
+            alert('⚠️ Cliente deve assinar para continuar');
+            return;
+        }
 
-                // Envia para o Livewire
-                @this.call('saveSignatures', techSig, clientSig, () => {
-                    // Após salvar, chama o next normalmente
-                    @this.call('next');
-                });
-            }
+        @this.call('saveSignatures', techSig, clientSig, () => {
+            @this.call('next');
         });
-    });
+    }, true);
 </script>

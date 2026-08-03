@@ -389,25 +389,13 @@ class MaintenanceOrderFieldWizard extends Component
 
     private function persistDamages(): void
     {
-        // Etapa 3: salva descrição e notas técnicas da O.S., e opcionalmente
-        // cria uma avaria formal. Fotos sao' anexadas via media library.
+        // Etapa 3: so' descricao/notas/avaria formal ficam pra' aqui -- fotos
+        // ja' foram anexadas via media library no momento da selecao (ver
+        // updatedDamagePhotoBefore/After), nao esperam o "Continuar".
         $this->maintenanceOrder->update([
             'description' => $this->damageDescription,
             'technical_notes' => $this->technicalNotes,
         ]);
-
-        // Se fotos foram selecionadas, anexa à O.S. via media library
-        if ($this->damagePhotoBefore) {
-            $this->maintenanceOrder->addMedia($this->damagePhotoBefore->getRealPath())
-                ->usingFileName('damage_before_'.now()->timestamp.'.'.$this->damagePhotoBefore->getClientOriginalExtension())
-                ->toMediaCollection('damage_photos_before');
-        }
-
-        if ($this->damagePhotoAfter) {
-            $this->maintenanceOrder->addMedia($this->damagePhotoAfter->getRealPath())
-                ->usingFileName('damage_after_'.now()->timestamp.'.'.$this->damagePhotoAfter->getClientOriginalExtension())
-                ->toMediaCollection('damage_photos_after');
-        }
 
         // Se Preventiva + dano encontrado: cria solicitação de troca
         if ($this->shouldRegisterDamage &&
@@ -415,10 +403,6 @@ class MaintenanceOrderFieldWizard extends Component
             filled($this->damageDescription)) {
             $this->createEquipmentReplacement();
         }
-
-        // Limpa uploads temporários
-        $this->damagePhotoBefore = null;
-        $this->damagePhotoAfter = null;
     }
 
     private function createEquipmentReplacement(): void
@@ -446,14 +430,53 @@ class MaintenanceOrderFieldWizard extends Component
         ]);
     }
 
-    public function clearDamagePhotoBefore(): void
+    /**
+     * Anexa a foto assim que selecionada, em vez de esperar o "Continuar" da
+     * etapa. Achado real de campo: o upload temporario do Livewire e' fragil
+     * (expira, se perde se o componente reidrata de um jeito inesperado) --
+     * o tecnico tirava a foto, via a previa, mas ela "nao ficava estavel"
+     * porque so' virava media de verdade se ele chegasse ate' clicar
+     * Continuar. Salvando na hora, a previa reflete a media ja' persistida.
+     */
+    public function updatedDamagePhotoBefore(): void
     {
-        $this->damagePhotoBefore = null;
+        $this->persistDamagePhoto('damagePhotoBefore', 'damage_photos_before', 'damage_before');
     }
 
-    public function clearDamagePhotoAfter(): void
+    public function updatedDamagePhotoAfter(): void
     {
-        $this->damagePhotoAfter = null;
+        $this->persistDamagePhoto('damagePhotoAfter', 'damage_photos_after', 'damage_after');
+    }
+
+    private function persistDamagePhoto(string $property, string $collection, string $filePrefix): void
+    {
+        $photo = $this->$property;
+
+        if (! $photo) {
+            return;
+        }
+
+        try {
+            $this->validate([$property => ['image', 'max:5120']]);
+        } catch (ValidationException $e) {
+            $this->$property = null;
+
+            throw $e;
+        }
+
+        $this->maintenanceOrder->addMedia($photo->getRealPath())
+            ->usingFileName($filePrefix.'_'.now()->timestamp.'.'.$photo->getClientOriginalExtension())
+            ->toMediaCollection($collection);
+
+        // Ja' esta' persistido como Media -- limpa o upload temporario pra'
+        // view passar a mostrar a foto salva (via getFirstMediaUrl), nao o
+        // preview temporario.
+        $this->$property = null;
+    }
+
+    public function removeDamagePhoto(string $collection): void
+    {
+        $this->maintenanceOrder->clearMediaCollection($collection);
     }
 
     // --- Etapa 4: materiais ---

@@ -108,15 +108,19 @@
     </div>
 </div>
 
-@once
+{{--
+    @script, nao @once/<script> puro: a etapa 5 so' entra no DOM via morph
+    AJAX do Livewire (troca de $step 4->5), nunca via carregamento de pagina
+    completo. Uma <script> comum injetada por innerHTML/morph NAO executa --
+    e' assim que o navegador funciona, Livewire nao muda isso. @script e'
+    o mecanismo do proprio Livewire v3 pra' garantir que o JS rode tanto no
+    mount inicial quanto em updates subsequentes (fonte: mesmo padrao usado
+    em vendor/filament/filament .../unsaved-action-changes-alert.blade.php).
+    Esse era o motivo real de "assinatura nao funciona" sobreviver a varias
+    rodadas de fix no JS em si -- o script simplesmente nunca rodava.
+--}}
+@script
     <script>
-        // Delegação no document + MutationObserver: a Etapa 5 e' inserida no
-        // DOM via navegação AJAX do Livewire (troca de $step), não via
-        // carregamento de pagina -- DOMContentLoaded ja disparou muito antes
-        // do canvas existir. Guarda contra registro duplicado pelo mesmo
-        // motivo do script de voz (cada visita a etapa 5 e' uma resposta
-        // nova do Livewire, a diretiva Blade so' deduplica dentro do mesmo
-        // request/response).
         (function () {
             if (window.__oravelSignatureDelegated) return;
             window.__oravelSignatureDelegated = true;
@@ -256,4 +260,4 @@
             };
         })();
     </script>
-@endonce
+@endscript
