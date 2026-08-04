@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\AssetController;
+use App\Http\Controllers\Api\V1\HourMeterPreloadController;
+use App\Http\Controllers\Api\V1\HourMeterSyncController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,4 +35,9 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('assets/default-checklist/{category}', [AssetController::class, 'getDefaultChecklist']);
     Route::apiResource('assets', AssetController::class);
+});
+
+Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
+    Route::get('/hour-meters/preload', [HourMeterPreloadController::class, 'index']);
+    Route::post('/hour-meters/sync', [HourMeterSyncController::class, 'sync']);
 });

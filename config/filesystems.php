@@ -60,6 +60,22 @@ return [
             'report' => false,
         ],
 
+        // Requer o pacote `league/flysystem-google-cloud-storage` instalado
+        // (composer require league/flysystem-google-cloud-storage) para o
+        // driver 'gcs' ser reconhecido pelo Storage manager. Até lá,
+        // HourMeterSyncController cai automaticamente para o disk 'public'.
+        'gcs' => [
+            'driver' => 'gcs',
+            'project_id' => env('GOOGLE_CLOUD_PROJECT_ID'),
+            'key_file' => env('GOOGLE_CLOUD_KEY_FILE'),
+            'bucket' => env('GOOGLE_CLOUD_STORAGE_BUCKET'),
+            'path_prefix' => env('GOOGLE_CLOUD_STORAGE_PATH_PREFIX'),
+            'storage_api_uri' => env('GOOGLE_CLOUD_STORAGE_API_URI'),
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*

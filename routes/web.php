@@ -5,6 +5,7 @@ use App\Http\Controllers\AssetDossierPdfController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\ChatHistoryPdfController;
 use App\Http\Controllers\EquipmentDamageReportController;
+use App\Http\Controllers\HourMeterOfflineController;
 use App\Http\Controllers\MaintenanceKanbanPrintController;
 use App\Http\Controllers\MaintenanceOrderController;
 use App\Http\Controllers\MaintenanceOrderDossieController;
@@ -92,7 +93,7 @@ Route::middleware(['auth'])->group(function () {
         $user = auth()->user();
 
         // Técnicos vão direto para "Minhas Ordens de Serviço"
-        if (!$user->isAdmin() && empty($user->supervisedDepartmentIds())) {
+        if (! $user->isAdmin() && empty($user->supervisedDepartmentIds())) {
             return redirect()->route('filament.admin.pages.technician-daily-tasks');
         }
 
@@ -208,6 +209,11 @@ Route::middleware(['auth'])->group(function () {
     // do QR code do ativo, ver AssetResource::qr_code_display.
     Route::get('/admin/assets/dossie-mobile/{assetId?}', AssetDossierMobile::class)
         ->name('assets.dossier.mobile');
+
+    // Tela dedicada de registro de horimetro, offline-first (JS puro,
+    // localStorage + fila de sync -- ver HourMeterOfflineController).
+    Route::get('/admin/hour-meter', [HourMeterOfflineController::class, 'show'])
+        ->name('hour-meter.offline');
 
     // --- ROTA UNIFICADA DE IMPRESSÃO (AJUSTADA) ---
     // Botao "Imprimir Etiqueta" (EditAsset::getHeaderActions()) -- essa e a
