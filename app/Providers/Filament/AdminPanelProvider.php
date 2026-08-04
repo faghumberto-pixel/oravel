@@ -2,33 +2,10 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\AnalisePlanoPreventivo;
 use App\Filament\Pages\ApontamentoHorimetro;
 use App\Filament\Pages\Auth\Login;
-use App\Filament\Pages\AgendaTecnico;
-use App\Filament\Pages\MaintenanceKanban;
-use App\Filament\Pages\PainelCriticidade;
-use App\Filament\Pages\PainelPmp;
-use App\Filament\Pages\PainelSlaEmergencia;
-use App\Filament\Pages\PlantaBaixaAlmoxarifado;
-use App\Filament\Pages\RequisicaoReposicaoEstoque;
-use App\Filament\Pages\ReservasUrgentes;
-use App\Filament\Pages\TechnicianDailyTasks;
-use App\Filament\Resources\EquipmentReplacementResource;
-use App\Filament\Resources\GoodsReceiptResource;
-use App\Filament\Resources\MaintenanceOrderResource;
-use App\Filament\Resources\MaintenancePlanResource;
-use App\Filament\Resources\MaterialCategoryResource;
-use App\Filament\Resources\MaterialRequestResource;
-use App\Filament\Resources\MaterialResource;
-use App\Filament\Resources\MaterialStockTakeResource;
-use App\Filament\Resources\PartsRequestResource;
-use App\Filament\Resources\PreventiveMaintenanceExecutionResource;
-use App\Filament\Resources\PurchaseOrderResource;
-use App\Filament\Resources\StockMovementResource;
-use App\Filament\Resources\StorageLocationResource;
-use App\Filament\Resources\SupplierResource;
 use App\Http\Middleware\LogUserActivity;
+use App\Models\Asset;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
@@ -83,7 +60,21 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Relatórios'),
                 NavigationGroup::make('Configurações'),
             ])
-            ->navigationItems([])
+            ->navigationItems([
+                // Tela dedicada de registro de horimetro (offline-first, JS
+                // puro) -- rota comum (HourMeterOfflineController), nao uma
+                // Filament Page, entao entra no menu via NavigationItem em
+                // vez de discoverPages(). Mesma visibilidade de "Ativos"
+                // (viewAny Asset), nao a permissao granular restrita que
+                // ApontamentoHorimetro (pagina desktop) exige -- essa aqui
+                // e' pensada pro tecnico comum, nao so pra quem tem
+                // 'criar_apontamento_horimetro'.
+                NavigationItem::make('Registrar Horímetro')
+                    ->icon('heroicon-o-clock')
+                    ->group('Manutenção')
+                    ->url(fn () => route('hour-meter.offline'))
+                    ->visible(fn () => (bool) auth()->user()?->can('viewAny', Asset::class)),
+            ])
             ->renderHook(
                 PanelsRenderHook::TOPBAR_START,
                 fn () => view('filament.topbar-brand-and-ticker'),

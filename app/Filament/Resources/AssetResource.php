@@ -625,6 +625,17 @@ class AssetResource extends Resource
                     ->color('gray')
                     ->url(fn (Asset $record): string => route('assets.qr', ['asset' => $record->id]))
                     ->openUrlInNewTab(),
+                // Atalho direto pro dossie mobile (celular) deste ativo --
+                // antes so' dava pra chegar la escaneando o QR fisico ou
+                // entrando em Editar > aba Rastreabilidade. E' de la que o
+                // tecnico registra o horimetro e, se o ativo estiver
+                // locado, copia o link publico pro funcionario do cliente.
+                Tables\Actions\Action::make('dossie_horimetro')
+                    ->label('Dossiê / Horímetro')
+                    ->icon('heroicon-o-clock')
+                    ->color('gray')
+                    ->url(fn (Asset $record): string => route('assets.dossier.mobile', ['assetId' => $record->id]))
+                    ->openUrlInNewTab(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
