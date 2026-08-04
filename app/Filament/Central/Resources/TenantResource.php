@@ -115,29 +115,50 @@ class TenantResource extends Resource
         ]);
     }
 
+    /**
+     * Mesma linguagem visual de SalesLeadResource: borda lateral colorida
+     * na linha inteira, pra bater o olho e já saber o status sem ler a
+     * coluna -- pedido do usuário 2026-08-04.
+     */
+    private static function statusBorderClass(?string $status): string
+    {
+        return match ($status) {
+            'active' => 'border-emerald-600',
+            'trial' => 'border-amber-500',
+            'suspended' => 'border-red-600',
+            'canceled' => 'border-gray-600',
+            default => 'border-gray-700',
+        };
+    }
+
     public static function table(Table $table): Table
     {
-        return $table->columns([
-            Tables\Columns\TextColumn::make('name')->label('Empresa')->searchable()->sortable(),
-            Tables\Columns\TextColumn::make('slug')->label('Slug')->searchable()->sortable(),
-            Tables\Columns\TextColumn::make('plan.name')->label('Plano')->sortable(),
-            Tables\Columns\TextColumn::make('segment')
-                ->label('Segmento')
-                ->badge()
-                ->color(fn (?string $state) => CrmPalette::segment($state)['filament'])
-                ->formatStateUsing(fn (?string $state) => $state ? (Client::nicheLabels()[$state] ?? $state) : null)
-                ->placeholder('—'),
-            Tables\Columns\BadgeColumn::make('status')->label('Status')->colors(['success' => 'active', 'warning' => 'trial', 'danger' => 'suspended', 'gray' => 'canceled']),
-            Tables\Columns\TextColumn::make('created_at')->label('Criado em')->dateTime('d/m/Y H:i')->sortable(),
-        ])->filters([
-            Tables\Filters\SelectFilter::make('status')->label('Status')->options(['active' => 'Ativo', 'trial' => 'Teste']),
-            Tables\Filters\SelectFilter::make('segment')->label('Segmento')->options(Client::nicheLabels()),
-        ])->actions([
-            Tables\Actions\EditAction::make(),
-            Tables\Actions\DeleteAction::make(),
-        ])->bulkActions([
-            Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()]),
-        ])->defaultSort('created_at', 'desc');
+        return $table
+            ->recordClasses(fn (Tenant $record) => 'border-s-4 '.self::statusBorderClass($record->status))
+            ->columns([
+                Tables\Columns\TextColumn::make('name')->label('Empresa')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('slug')->label('Slug')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('plan.name')->label('Plano')->sortable(),
+                Tables\Columns\TextColumn::make('segment')
+                    ->label('Segmento')
+                    ->badge()
+                    ->color(fn (?string $state) => CrmPalette::segment($state)['filament'])
+                    ->formatStateUsing(fn (?string $state) => $state ? (Client::nicheLabels()[$state] ?? $state) : null)
+                    ->placeholder('—'),
+                Tables\Columns\BadgeColumn::make('status')
+                    ->label('Status')
+                    ->icons(['heroicon-o-check-circle' => 'active', 'heroicon-o-clock' => 'trial', 'heroicon-o-exclamation-triangle' => 'suspended', 'heroicon-o-x-circle' => 'canceled'])
+                    ->colors(['success' => 'active', 'warning' => 'trial', 'danger' => 'suspended', 'gray' => 'canceled']),
+                Tables\Columns\TextColumn::make('created_at')->label('Criado em')->dateTime('d/m/Y H:i')->sortable(),
+            ])->filters([
+                Tables\Filters\SelectFilter::make('status')->label('Status')->options(['active' => 'Ativo', 'trial' => 'Teste']),
+                Tables\Filters\SelectFilter::make('segment')->label('Segmento')->options(Client::nicheLabels()),
+            ])->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])->bulkActions([
+                Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()]),
+            ])->defaultSort('created_at', 'desc');
     }
 
     public static function getPages(): array

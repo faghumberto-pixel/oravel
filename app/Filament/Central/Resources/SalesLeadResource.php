@@ -188,9 +188,34 @@ class SalesLeadResource extends Resource
         ]);
     }
 
+    /**
+     * Ícone por estágio -- reforça a diferenciação visual junto com a cor
+     * (não depende só de cor pra "escanear" a lista rápido, também ajuda
+     * quem tem dificuldade de perceber a diferença entre tons próximos).
+     */
+    private static function stageIcon(string $stage): string
+    {
+        return match ($stage) {
+            SalesLead::STAGE_PROSPECCAO => 'heroicon-o-magnifying-glass',
+            SalesLead::STAGE_CONTATO_QUALIFICADO => 'heroicon-o-chat-bubble-left-right',
+            SalesLead::STAGE_DEMONSTRACAO_REALIZADA => 'heroicon-o-presentation-chart-line',
+            SalesLead::STAGE_PROPOSTA_ENVIADA => 'heroicon-o-document-text',
+            SalesLead::STAGE_GANHO => 'heroicon-o-check-badge',
+            SalesLead::STAGE_PERDIDO => 'heroicon-o-x-circle',
+            default => 'heroicon-o-question-mark-circle',
+        };
+    }
+
     public static function table(Table $table): Table
     {
         return $table
+            // Borda lateral colorida na linha inteira, mesma cor do estágio
+            // (CrmPalette::stage()['border']) -- o badge sozinho é discreto
+            // demais numa lista longa; a borda dá pra "escanear" a tabela de
+            // relance sem ler cada linha. Pedido do usuário 2026-08-04:
+            // "tudo branco, sem distinguir o que está em prospecção,
+            // cancelado etc".
+            ->recordClasses(fn (SalesLead $record) => 'border-s-4 '.CrmPalette::stage($record->pipeline_stage)['border'])
             ->columns([
                 Tables\Columns\TextColumn::make('company_name')->label('Empresa')->searchable()->weight('bold'),
                 Tables\Columns\TextColumn::make('segment')
@@ -202,6 +227,7 @@ class SalesLeadResource extends Resource
                 Tables\Columns\TextColumn::make('pipeline_stage')
                     ->label('Estágio')
                     ->badge()
+                    ->icon(fn (string $state) => self::stageIcon($state))
                     ->formatStateUsing(fn (string $state) => SalesLead::stageLabels()[$state] ?? $state)
                     ->color(fn (string $state) => CrmPalette::stage($state)['filament']),
                 Tables\Columns\TextColumn::make('estimated_contract_value')

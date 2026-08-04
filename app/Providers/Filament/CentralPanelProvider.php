@@ -53,10 +53,15 @@ class CentralPanelProvider extends PanelProvider
                 // Grafite azulado fixo (nao preto/branco padrao do
                 // Filament), pedido explicito do usuario pra ter uma
                 // referencia visual clara de "estou no Central, nao no
-                // Admin". So' os 2 tons mais escuros sao deslocados (950 =
-                // slate-900 #0f172a pro fundo, 900 = slate-800 #1e293b pros
-                // cards) -- o resto da escala fica no slate autentico,
-                // texto/borda continuam previsiveis.
+                // Admin". Ate 2026-08-04 os tons 800/900 eram IDENTICOS
+                // (30,41,59 duplicado) -- exatamente o motivo do usuario ver
+                // "tudo cinza, topbar/sidebar/conteudo iguais": o Filament
+                // usa 900 pra sidebar/topbar e 800 pra cards internos, sem
+                // diferenca entre eles a hierarquia de profundidade some.
+                // Agora sao 3 degraus reais e distintos: 950 (fundo, mais
+                // escuro) < 900 (sidebar/topbar) < 800 (cards de conteudo,
+                // mais claro = "mais perto do usuario"). Resto da escala
+                // continua no slate autentico, texto/borda previsiveis.
                 'gray' => [
                     50 => '248, 250, 252',
                     100 => '241, 245, 249',
@@ -66,8 +71,8 @@ class CentralPanelProvider extends PanelProvider
                     500 => '100, 116, 139',
                     600 => '71, 85, 105',
                     700 => '51, 65, 85',
-                    800 => '30, 41, 59',
-                    900 => '30, 41, 59',
+                    800 => '38, 51, 71',
+                    900 => '24, 33, 48',
                     950 => '15, 23, 42',
                 ],
                 // Cores por estágio/segmento do CRM (App\Support\CrmPalette
