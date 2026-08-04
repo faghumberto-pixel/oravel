@@ -63,6 +63,17 @@ class HourMeterOfflinePageTest extends TestCase
         $response->assertSee('hourMeterOffline', false);
     }
 
+    public function test_page_has_a_way_back_to_the_technicians_task_list(): void
+    {
+        [, $admin] = $this->makeTenantAdmin();
+        $this->actingAs($admin);
+
+        $response = $this->get('/admin/hour-meter');
+
+        $response->assertOk();
+        $response->assertSee(route('filament.admin.pages.technician-daily-tasks'), false);
+    }
+
     public function test_preload_returns_only_current_tenant_assets_with_last_reading(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();

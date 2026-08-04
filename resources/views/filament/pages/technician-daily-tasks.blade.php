@@ -3,19 +3,81 @@
     Design native app mobile.
 --}}
 
-<div class="fixed inset-0 mx-auto flex max-w-md flex-col bg-slate-950">
+<div class="fixed inset-0 mx-auto flex max-w-md flex-col bg-slate-950" x-data="{ menuOpen: false }">
     {{-- Header minimalista --}}
     <header class="sticky top-0 z-40 border-b border-slate-800 bg-slate-900/95 backdrop-blur px-5 py-4">
-        <div class="flex items-center justify-between">
-            <div>
+        <div class="flex items-center justify-between gap-3">
+            <button
+                type="button"
+                @click="menuOpen = true"
+                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-700 text-slate-300 active:bg-slate-800"
+                aria-label="Abrir menu"
+            >
+                ☰
+            </button>
+            <div class="flex-1">
                 <h1 class="text-3xl font-black text-white">Tarefas</h1>
                 <p class="text-sm text-slate-400 mt-1">{{ $this->pendingCount }} pendentes</p>
             </div>
-            <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-lg font-bold text-white shadow-lg">
+            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-lg font-bold text-white shadow-lg">
                 {{ strtoupper(mb_substr(Auth::user()?->name ?? '?', 0, 1)) }}
             </div>
         </div>
     </header>
+
+    {{-- Drawer de menu -- atalhos do tecnico, nao o sidebar completo do
+         Filament (tem itens de admin que nao fazem sentido aqui). Layout
+         checklist-mobile (compartilhado com checklist/wizard/dossie) e'
+         minimalista de proposito, entao o menu fica so nesta tela. --}}
+    <div
+        x-show="menuOpen"
+        x-cloak
+        @click="menuOpen = false"
+        class="fixed inset-0 z-50 bg-black/60"
+    ></div>
+    <aside
+        x-show="menuOpen"
+        x-cloak
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="-translate-x-full"
+        x-transition:enter-end="translate-x-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="translate-x-0"
+        x-transition:leave-end="-translate-x-full"
+        class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-slate-900 border-r border-slate-800 px-4 py-6"
+    >
+        <div class="mb-6 flex items-center gap-3 px-2">
+            <div class="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-base font-bold text-white">
+                {{ strtoupper(mb_substr(Auth::user()?->name ?? '?', 0, 1)) }}
+            </div>
+            <div class="min-w-0">
+                <p class="truncate text-sm font-semibold text-white">{{ Auth::user()?->name }}</p>
+                <p class="truncate text-xs text-slate-500">{{ Auth::user()?->email }}</p>
+            </div>
+        </div>
+
+        <nav class="flex-1 space-y-1">
+            <a href="{{ route('filament.admin.pages.technician-daily-tasks') }}"
+               class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-white bg-slate-800">
+                📋 Minhas Ordens de Serviço
+            </a>
+            <a href="{{ route('hour-meter.offline') }}"
+               class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-slate-300 active:bg-slate-800">
+                🕐 Registrar Horímetro
+            </a>
+            <a href="{{ route('filament.admin.pages.my-profile') }}"
+               class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-slate-300 active:bg-slate-800">
+                👤 Meu Perfil
+            </a>
+        </nav>
+
+        <form method="POST" action="{{ route('filament.admin.auth.logout') }}">
+            @csrf
+            <button type="submit" class="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-red-400 active:bg-slate-800">
+                🚪 Sair
+            </button>
+        </form>
+    </aside>
 
     {{-- Abertas / Encerradas --}}
     <div class="sticky top-16 z-30 flex border-b border-slate-800 bg-slate-900/95">

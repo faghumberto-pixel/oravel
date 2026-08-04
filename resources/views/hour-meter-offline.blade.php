@@ -15,9 +15,18 @@
     </head>
     <body class="font-sans antialiased bg-zinc-950 text-zinc-100 overscroll-none">
     <div class="mx-auto flex min-h-screen max-w-md flex-col" x-data="hourMeterOffline()" x-init="init()">
-        <header class="flex items-center justify-between px-5 pb-2 pt-6">
-            <h1 class="text-xs font-bold tracking-widest text-zinc-400">REGISTRO DE HORÍMETRO</h1>
-            <span class="text-xs font-bold tracking-wide text-zinc-300">{{ strtoupper(config('app.name', 'ORAVEL')) }}</span>
+        <header class="flex items-center gap-3 px-5 pb-2 pt-6">
+            <a
+                href="{{ route('filament.admin.pages.technician-daily-tasks') }}"
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-zinc-700 text-zinc-300 active:bg-zinc-800"
+                aria-label="Voltar"
+            >
+                ←
+            </a>
+            <div class="flex flex-1 items-center justify-between">
+                <h1 class="text-xs font-bold tracking-widest text-zinc-400">REGISTRO DE HORÍMETRO</h1>
+                <span class="text-xs font-bold tracking-wide text-zinc-300">{{ strtoupper(config('app.name', 'ORAVEL')) }}</span>
+            </div>
         </header>
 
         {{-- Técnico autenticado --}}

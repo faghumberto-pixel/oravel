@@ -45,6 +45,19 @@ class TechnicianDailyTasksTest extends TestCase
         return [$tenant, $technician];
     }
 
+    public function test_page_has_a_menu_drawer_with_technician_shortcuts(): void
+    {
+        [, $technician] = $this->makeTenantAndTechnician();
+        $this->actingAs($technician);
+
+        $response = $this->get(route('filament.admin.pages.technician-daily-tasks'));
+
+        $response->assertOk();
+        $response->assertSee(route('hour-meter.offline'), false);
+        $response->assertSee(route('filament.admin.pages.my-profile'), false);
+        $response->assertSee(route('filament.admin.auth.logout'), false);
+    }
+
     public function test_pure_technician_is_redirected_here_instead_of_the_dashboard(): void
     {
         [, $technician] = $this->makeTenantAndTechnician();
