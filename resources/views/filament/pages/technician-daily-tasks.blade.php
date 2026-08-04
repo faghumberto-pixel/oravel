@@ -120,8 +120,13 @@
     {{-- Lista com scroll --}}
     <main class="flex-1 overflow-y-auto px-4 py-4 space-y-3">
         @if ($activeTab === 'encerrada')
+            {{-- Nao clicavel de proposito: uma vez "Concluída", o tecnico
+                 perde acesso de edicao da propria O.S. (MaintenanceOrderPolicy::update()
+                 -- so admin/supervisor do departamento a partir daqui,
+                 pedido explicito do usuario 2026-08-04). Abrir o wizard
+                 aqui so daria 403. --}}
             @forelse ($this->closedTasks as $task)
-                <a href="{{ $task['url'] }}" class="block rounded-2xl bg-slate-800 border border-slate-700 overflow-hidden transition hover:shadow-lg active:scale-95">
+                <div class="rounded-2xl bg-slate-800 border border-slate-700 overflow-hidden opacity-90">
                     <div class="p-4 space-y-3">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
@@ -142,7 +147,7 @@
                             @endif
                         </div>
                     </div>
-                </a>
+                </div>
             @empty
                 <div class="flex h-96 items-center justify-center">
                     <div class="text-center">

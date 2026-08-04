@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Livewire\MaintenanceOrderFieldWizard;
 use App\Models\Asset;
+use App\Models\Department;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenanceOrderChecklist;
 use App\Models\Material;
@@ -217,6 +218,68 @@ class MaintenanceOrderFieldWizardTest extends TestCase
      * Injetar o model direto no Livewire pularia justamente essa protecao e o
      * teste passaria a testar nada.
      */
+    /**
+     * Pedido explicito do usuario 2026-08-04: uma vez enviada (status
+     * Concluída), o tecnico so pode voltar a editar com autorizacao do
+     * supervisor -- MaintenanceOrderPolicy::update() agora nega o
+     * bypass "tecnico atribuido" quando status === 'Concluída'.
+     */
+    public function test_technician_cannot_reopen_the_wizard_after_the_order_is_completed(): void
+    {
+        $tenant = $this->makeTenant();
+        $technician = $this->makeTechnician($tenant);
+        $order = $this->makeOrder($tenant, ['status' => 'Concluída', 'technician_id' => $technician->id]);
+
+        $this->actingAs($technician)
+            ->get(route('maintenance-orders.field-wizard', $order))
+            ->assertForbidden();
+    }
+
+    public function test_technician_can_still_edit_before_the_order_is_completed(): void
+    {
+        $tenant = $this->makeTenant();
+        $technician = $this->makeTechnician($tenant);
+        $order = $this->makeOrder($tenant, ['status' => 'Em Andamento', 'technician_id' => $technician->id]);
+
+        $this->actingAs($technician)
+            ->get(route('maintenance-orders.field-wizard', $order))
+            ->assertOk();
+    }
+
+    public function test_department_supervisor_can_reopen_a_completed_order_from_their_technician(): void
+    {
+        $tenant = $this->makeTenant();
+        $department = Department::create(['tenant_id' => $tenant->id, 'name' => 'Manutenção', 'sector_key' => 'manutencao']);
+
+        $technician = $this->makeTechnician($tenant);
+        $technician->update(['department_id' => $department->id]);
+
+        $supervisor = $this->makeTechnician($tenant);
+        $supervisorRole = Role::create([
+            'name' => 'supervisor-manutencao-'.uniqid(), 'guard_name' => 'web',
+            'tenant_id' => $tenant->id, 'department_id' => $department->id,
+        ]);
+        $supervisor->assignRole($supervisorRole);
+
+        $order = $this->makeOrder($tenant, ['status' => 'Concluída', 'technician_id' => $technician->id]);
+
+        $this->actingAs($supervisor)
+            ->get(route('maintenance-orders.field-wizard', $order))
+            ->assertOk();
+    }
+
+    public function test_unrelated_technician_cannot_reopen_someone_elses_completed_order(): void
+    {
+        $tenant = $this->makeTenant();
+        $technician = $this->makeTechnician($tenant);
+        $otherTechnician = $this->makeTechnician($tenant);
+        $order = $this->makeOrder($tenant, ['status' => 'Concluída', 'technician_id' => $technician->id]);
+
+        $this->actingAs($otherTechnician)
+            ->get(route('maintenance-orders.field-wizard', $order))
+            ->assertForbidden();
+    }
+
     public function test_order_from_another_tenant_is_not_reachable(): void
     {
         $tenantA = $this->makeTenant();
