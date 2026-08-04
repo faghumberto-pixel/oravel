@@ -17,32 +17,80 @@
         </div>
     </header>
 
-    {{-- Tabs de filtro (simples e limpo) --}}
-    <div class="sticky top-16 z-30 border-b border-slate-800 bg-slate-900/95 px-4 py-2 overflow-x-auto flex gap-2">
-        <button wire:click="$set('filterType', '')"
-                :class="$filterType === '' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400'"
-                class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95">
-            Todos
+    {{-- Abertas / Encerradas --}}
+    <div class="sticky top-16 z-30 flex border-b border-slate-800 bg-slate-900/95">
+        <button wire:click="$set('activeTab', 'aberta')"
+                class="flex-1 border-b-2 py-3 text-sm font-bold transition {{ $activeTab === 'aberta' ? 'border-emerald-500 text-white' : 'border-transparent text-slate-500' }}">
+            Abertas ({{ $this->pendingCount }})
         </button>
-        <button wire:click="$set('filterCriticality', 'A')"
-                :class="$filterCriticality === 'A' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'"
-                class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95">
-            🔴 Urgente
-        </button>
-        <button wire:click="$set('filterCriticality', 'B')"
-                :class="$filterCriticality === 'B' ? 'bg-amber-600 text-white' : 'bg-slate-800 text-slate-400'"
-                class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95">
-            🟡 Média
-        </button>
-        <button wire:click="$set('filterNature', 'external')"
-                :class="$filterNature === 'external' ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-400'"
-                class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95">
-            🌐 Cliente
+        <button wire:click="$set('activeTab', 'encerrada')"
+                class="flex-1 border-b-2 py-3 text-sm font-bold transition {{ $activeTab === 'encerrada' ? 'border-emerald-500 text-white' : 'border-transparent text-slate-500' }}">
+            Encerradas
         </button>
     </div>
 
+    {{-- Tabs de filtro (simples e limpo) -- so fazem sentido pra lista de abertas --}}
+    @if ($activeTab === 'aberta')
+        <div class="sticky top-[6.5rem] z-30 border-b border-slate-800 bg-slate-900/95 px-4 py-2 overflow-x-auto flex gap-2">
+            <button wire:click="$set('filterType', '')"
+                    :class="$filterType === '' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400'"
+                    class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95">
+                Todos
+            </button>
+            <button wire:click="$set('filterCriticality', 'A')"
+                    :class="$filterCriticality === 'A' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'"
+                    class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95">
+                🔴 Urgente
+            </button>
+            <button wire:click="$set('filterCriticality', 'B')"
+                    :class="$filterCriticality === 'B' ? 'bg-amber-600 text-white' : 'bg-slate-800 text-slate-400'"
+                    class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95">
+                🟡 Média
+            </button>
+            <button wire:click="$set('filterNature', 'external')"
+                    :class="$filterNature === 'external' ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-400'"
+                    class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95">
+                🌐 Cliente
+            </button>
+        </div>
+    @endif
+
     {{-- Lista com scroll --}}
     <main class="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+        @if ($activeTab === 'encerrada')
+            @forelse ($this->closedTasks as $task)
+                <a href="{{ $task['url'] }}" class="block rounded-2xl bg-slate-800 border border-slate-700 overflow-hidden transition hover:shadow-lg active:scale-95">
+                    <div class="p-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="h-10 w-10 rounded-lg bg-slate-700 flex items-center justify-center text-lg">⚙️</div>
+                                <div>
+                                    <p class="text-xs font-bold text-slate-400 uppercase">{{ $task['label'] }}</p>
+                                    <p class="text-xs text-emerald-400">Concluída em {{ $task['closed_at']->format('d/m/Y H:i') }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 class="text-base font-bold text-white">{{ $task['asset_name'] }}</h3>
+
+                        <div class="space-y-1">
+                            <p class="text-sm font-semibold text-slate-300"># {{ $task['patrimonio'] }}</p>
+                            @if ($task['client'])
+                                <p class="text-xs text-slate-400">📍 {{ $task['client'] }}</p>
+                            @endif
+                        </div>
+                    </div>
+                </a>
+            @empty
+                <div class="flex h-96 items-center justify-center">
+                    <div class="text-center">
+                        <p class="text-4xl mb-2">📭</p>
+                        <p class="text-base font-bold text-white">Nenhuma O.S. encerrada</p>
+                    </div>
+                </div>
+            @endforelse
+            <div class="h-20"></div>
+        @else
         @forelse ($this->technicianTasks as $task)
             <a href="{{ $task['url'] }}" class="block rounded-2xl bg-slate-800 border border-slate-700 overflow-hidden transition hover:shadow-lg active:scale-95">
                 <div class="p-4 space-y-3">
@@ -131,11 +179,12 @@
             </div>
         @endforelse
         <div class="h-20"></div>
+        @endif
     </main>
 
-    {{-- Botões fixos no fundo --}}
+    {{-- Botões fixos no fundo -- so na aba de abertas, nao faz sentido pra encerradas --}}
     <footer class="sticky bottom-0 border-t border-slate-800 bg-white dark:bg-slate-900/95 backdrop-blur px-4 py-3 space-y-2">
-        @if ($this->pendingCount > 0)
+        @if ($activeTab === 'aberta' && $this->pendingCount > 0)
             <a href="{{ $this->technicianTasks->first()['url'] ?? '#' }}"
                class="block w-full rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-3 text-center font-bold text-base transition active:scale-95 hover:shadow-lg shadow-lg">
                 Iniciar Próxima Tarefa

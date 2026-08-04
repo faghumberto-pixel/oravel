@@ -72,6 +72,7 @@ class AdminPanelProvider extends PanelProvider
                 NavigationItem::make('Registrar Horímetro')
                     ->icon('heroicon-o-clock')
                     ->group('Manutenção')
+                    ->sort(-8)
                     ->url(fn () => route('hour-meter.offline'))
                     ->visible(fn () => (bool) auth()->user()?->can('viewAny', Asset::class)),
             ])

@@ -20,9 +20,20 @@ use Livewire\Attributes\Url;
 class TechnicianDailyTasks extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
     protected static ?string $navigationGroup = 'Manutenção';
+
     protected static ?string $title = 'Minhas Ordens de Serviço';
+
     protected static string $view = 'filament.pages.technician-daily-tasks';
+
+    // Sort baixo (mesmo estilo de PainelGestao::$navigationSort = -10) --
+    // e' o destino padrao do tecnico (redirect de /dashboard, ver
+    // routes/web.php), e o RedirectToHomeController do Filament manda
+    // /admin pra primeira pagina navegavel por ordem de sort. Sem isso,
+    // qualquer NavigationItem sem sort definido (ex: "Registrar Horímetro")
+    // podia acabar competindo e virando o destino de fato.
+    protected static ?int $navigationSort = -9;
 
     public static function canAccess(): bool
     {
@@ -52,6 +63,13 @@ class TechnicianDailyTasks extends Page
 
     #[Url]
     public string $search = ''; // busca livre por patrimônio/nome do ativo
+
+    // Aberta = tarefas pendentes (comportamento original desta pagina).
+    // Encerrada = O.S. de manutencao concluidas pelo tecnico -- pedido
+    // explicito do usuario 2026-08-04 pra virar o destino padrao do
+    // tecnico no lugar do Dashboard, sem grafico, so o essencial.
+    #[Url]
+    public string $activeTab = 'aberta'; // 'aberta' | 'encerrada'
 
     public function getTechnicianTasksProperty(): Collection
     {
@@ -157,8 +175,7 @@ class TechnicianDailyTasks extends Page
 
         if ($this->search) {
             $search = strtolower($this->search);
-            $tasks = $tasks->filter(fn ($task) =>
-                str_contains(strtolower($task['patrimonio']), $search) ||
+            $tasks = $tasks->filter(fn ($task) => str_contains(strtolower($task['patrimonio']), $search) ||
                 str_contains(strtolower($task['asset_name']), $search)
             );
         }
@@ -182,5 +199,48 @@ class TechnicianDailyTasks extends Page
     public function getCompletedCountProperty(): int
     {
         return $this->technicianTasks->filter(fn ($t) => $t['status'] === 'synced')->count();
+    }
+
+    /**
+     * O.S. de manutenção encerradas (status Concluída) pelo técnico --
+     * mobilização/desmobilização não entram aqui: uma vez sincronizadas
+     * elas não têm mais uma noção equivalente de "encerrada" que o
+     * técnico precise revisitar, diferente da O.S. em si.
+     */
+    public function getClosedTasksProperty(): Collection
+    {
+        $tasks = MaintenanceOrder::query()
+            ->where('technician_id', Auth::id())
+            ->where('tenant_id', Auth::user()->tenant_id)
+            ->where('status', 'Concluída')
+            ->with(['asset', 'asset.abcMatrix'])
+            ->orderByDesc('updated_at')
+            ->limit(100)
+            ->get()
+            ->map(fn (MaintenanceOrder $order) => [
+                'id' => $order->id,
+                'type' => 'maintenance',
+                'label' => 'MANUTENÇÃO',
+                'patrimonio' => $order->asset?->patrimonio ?? '—',
+                'asset_name' => $order->asset?->name ?? 'Sem ativo',
+                'client' => $order->client?->name ?? null,
+                'criticality' => $order->asset?->currentCriticalityLevel()?->letter ?? 'C',
+                'nature' => $order->natureza_do_servico ?? 'Interno',
+                'cep' => $order->asset?->cep ?? null,
+                'status' => $order->status,
+                'created_at' => $order->created_at,
+                'closed_at' => $order->updated_at,
+                'maintenance_type' => $order->maintenance_type,
+                'url' => route('maintenance-orders.field-wizard', $order),
+            ]);
+
+        if ($this->search) {
+            $search = strtolower($this->search);
+            $tasks = $tasks->filter(fn ($task) => str_contains(strtolower($task['patrimonio']), $search) ||
+                str_contains(strtolower($task['asset_name']), $search)
+            );
+        }
+
+        return $tasks;
     }
 }
