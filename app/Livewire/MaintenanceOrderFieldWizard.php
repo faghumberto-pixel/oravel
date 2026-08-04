@@ -301,11 +301,7 @@ class MaintenanceOrderFieldWizard extends Component
             return;
         }
 
-        $this->redirectRoute(
-            'filament.admin.resources.maintenance-orders.edit',
-            ['record' => $this->maintenanceOrder],
-            navigate: false
-        );
+        $this->redirectRoute('filament.admin.pages.technician-daily-tasks', navigate: false);
     }
 
     /**
@@ -712,12 +708,16 @@ class MaintenanceOrderFieldWizard extends Component
         $this->maintenanceOrder->update(['status' => 'Concluída']);
         $this->maintenanceOrder->logStatusChange('Concluída', $oldStatus);
 
-        // Redireciona pro edit da O.S. como confirmacao de conclusao.
-        $this->redirectRoute(
-            'filament.admin.resources.maintenance-orders.edit',
-            ['record' => $this->maintenanceOrder],
-            navigate: false
-        );
+        // Redireciona pra "Minhas Ordens de Servico" (aba Encerradas mostra
+        // essa O.S. em seguida), nao pro edit desktop da O.S. -- essa
+        // ultima exige a permissao granular 'ler_ordem_servico'
+        // (MaintenanceOrderResource::canViewAny()) que um tecnico puro
+        // normalmente nao tem, e nao ha' como dar bypass so' pra ESSA
+        // ordem (canViewAny nao recebe um record especifico pra checar "e'
+        // o tecnico dela"). A O.S. era concluida com sucesso no banco, mas
+        // o redirect pos-sucesso caia num 403 -- parecia que "enviar nao
+        // funcionava" (bug reportado pelo usuario, 2026-08-04).
+        $this->redirectRoute('filament.admin.pages.technician-daily-tasks', navigate: false);
     }
 
     public function render()

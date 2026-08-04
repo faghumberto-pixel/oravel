@@ -50,6 +50,24 @@ class MaintenanceOrderFieldWizardTest extends TestCase
         return $user;
     }
 
+    /**
+     * Tecnico puro de verdade (sem role admin, sem permissao granular
+     * 'ler_ordem_servico') -- diferente de makeAdmin(), usado por todos os
+     * outros testes deste arquivo. MaintenanceOrderPolicy::before() so'
+     * bypassa pra isAdmin()/super admin; sem isso o Gate::authorize('view')
+     * que EditMaintenanceOrder chama no mount() barra com 403.
+     */
+    private function makeTechnician(Tenant $tenant): User
+    {
+        $user = User::create([
+            'name' => 'Tecnico Puro', 'email' => 'tecnico-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'is_approved' => true,
+        ]);
+        $user->forceFill(['email_verified_at' => now()])->save();
+
+        return $user;
+    }
+
     private function makeOrder(Tenant $tenant, array $attributes = []): MaintenanceOrder
     {
         $asset = Asset::create(array_merge([
@@ -501,9 +519,7 @@ class MaintenanceOrderFieldWizardTest extends TestCase
         // Navegar para step 5 e chamar next() deve concluir a O.S.
         Livewire::test(MaintenanceOrderFieldWizard::class, ['maintenanceOrder' => $order, 'step' => 5])
             ->call('next')
-            ->assertRedirect(
-                route('filament.admin.resources.maintenance-orders.edit', ['record' => $order])
-            );
+            ->assertRedirect(route('filament.admin.pages.technician-daily-tasks'));
 
         $order->refresh();
         $this->assertSame('Concluída', $order->status);
@@ -511,6 +527,39 @@ class MaintenanceOrderFieldWizardTest extends TestCase
             $order->statusHistories()->where('new_status', 'Concluída')->exists(),
             'A transicao deve ser registrada via logStatusChange'
         );
+    }
+
+    /**
+     * Bug real reportado pelo usuario 2026-08-04: "enviar a OS nao esta
+     * funcionando" pro tecnico de campo. completeOrder() de fato conclui a
+     * O.S. no banco, mas ANTES redirecionava pra EditMaintenanceOrder
+     * (pagina Filament do painel desktop) -- que checa
+     * MaintenanceOrderResource::canEdit() (ok, tecnico atribuido passa) E
+     * canViewAny() (exige a permissao granular 'ler_ordem_servico', sem
+     * excecao pra tecnico -- nao recebe um record especifico pra checar
+     * "e' o tecnico dessa ordem"). A O.S. era concluida com sucesso, mas o
+     * tecnico caia numa 403 logo em seguida -- parecia que "enviar nao
+     * funcionou". Corrigido trocando o destino do redirect pra "Minhas
+     * Ordens de Servico" em vez de mexer em canViewAny() (que afetaria a
+     * visibilidade do modulo inteiro pra qualquer tecnico).
+     */
+    public function test_technician_without_view_permission_does_not_hit_a_403_after_sending_the_order(): void
+    {
+        $tenant = $this->makeTenant();
+        $technician = $this->makeTechnician($tenant);
+        $order = $this->makeOrder($tenant, ['status' => 'Em Andamento', 'technician_id' => $technician->id]);
+        $this->actingAs($technician);
+
+        $response = Livewire::test(MaintenanceOrderFieldWizard::class, ['maintenanceOrder' => $order, 'step' => 5])
+            ->call('next');
+
+        $order->refresh();
+        $this->assertSame('Concluída', $order->status, 'A O.S. deveria ser concluida no banco independente do redirect.');
+
+        $location = $response->effects['redirect'] ?? null;
+        $this->assertNotNull($location, 'next() deveria redirecionar apos concluir.');
+
+        $this->get($location)->assertOk();
     }
 
     public function test_step_five_from_step_four_advances_correctly(): void
