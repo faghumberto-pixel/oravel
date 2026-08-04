@@ -184,7 +184,12 @@
             return;
         }
 
-        @this.call('saveSignatures', techSig, clientSig, () => {
+        // @this.call() nao aceita callback como argumento extra -- vira so'
+        // mais um parametro posicional que saveSignatures() (2 args) ignora
+        // em silencio, e next() nunca era chamado (bug real: "enviar nao
+        // faz nada", reportado pelo usuario 2026-08-04). A chamada retorna
+        // uma Promise de verdade; .then() e' a forma suportada de encadear.
+        @this.call('saveSignatures', techSig, clientSig).then(() => {
             @this.call('next');
         });
     }, true);
