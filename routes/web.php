@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\ChatHistoryPdfController;
 use App\Http\Controllers\EquipmentDamageReportController;
 use App\Http\Controllers\HourMeterOfflineController;
+use App\Http\Controllers\HourMeterPublicController;
 use App\Http\Controllers\MaintenanceKanbanPrintController;
 use App\Http\Controllers\MaintenanceOrderController;
 use App\Http\Controllers\MaintenanceOrderDossieController;
@@ -69,6 +70,15 @@ Route::post('/orcamento/{token}/aprovar', [QuoteApprovalController::class, 'appr
     ->name('quotes.public-approve');
 Route::post('/orcamento/{token}/reprovar', [QuoteApprovalController::class, 'reject'])
     ->name('quotes.public-reject');
+
+// Publica, sem auth de proposito -- funcionario do cliente que alugou o
+// equipamento registra o horimetro sem precisar de conta no ERP. Token
+// dedicado por ativo (Asset::hourMeterPublicToken()), so valido enquanto o
+// ativo estiver "locado" -- ver HourMeterPublicController.
+Route::get('/hour-meter/publico/{token}', [HourMeterPublicController::class, 'show'])
+    ->name('hour-meter.public.show');
+Route::post('/hour-meter/publico/{token}', [HourMeterPublicController::class, 'store'])
+    ->name('hour-meter.public.store');
 
 // 'verified' removido de proposito -- nenhum outro lugar do app (nenhum
 // painel Filament) exige email verificado pra logar/usar, e nao existe

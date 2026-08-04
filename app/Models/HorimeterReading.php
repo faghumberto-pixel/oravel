@@ -25,6 +25,14 @@ class HorimeterReading extends Model
 
     public const SOURCE_MOBILE_SYNC = 'mobile_sync';
 
+    /**
+     * Registrado por funcionário do cliente locatário via link público
+     * (sem login), não pelo técnico/usuário do tenant -- ver
+     * HourMeterPublicController. recorded_by fica null (não há User),
+     * recorded_by_name guarda o nome digitado na hora.
+     */
+    public const SOURCE_PUBLIC_CLIENT = 'public_client';
+
     protected static ?string $saasFeatureKey = 'tabela_horimeter_readings';
 
     protected static ?string $saasPermissionSlug = 'apontamento_horimetro';
@@ -37,6 +45,7 @@ class HorimeterReading extends Model
         'reading',
         'recorded_at',
         'recorded_by',
+        'recorded_by_name',
         'source',
         'reset_confirmed',
         'notes',
@@ -59,6 +68,7 @@ class HorimeterReading extends Model
             self::SOURCE_MAINTENANCE_ORDER => 'Ordem de Serviço',
             self::SOURCE_CHECKLIST => 'Checklist',
             self::SOURCE_MOBILE_SYNC => 'App Mobile (Campo)',
+            self::SOURCE_PUBLIC_CLIENT => 'Cliente Locatário (Link Público)',
         ];
     }
 
@@ -87,8 +97,27 @@ class HorimeterReading extends Model
         return $this->source === self::SOURCE_MOBILE_SYNC;
     }
 
+    public function isPublicClientSource(): bool
+    {
+        return $this->source === self::SOURCE_PUBLIC_CLIENT;
+    }
+
     public function originLabel(): string
     {
-        return $this->isFieldSource() ? 'Externo (Campo)' : 'Interno';
+        return match (true) {
+            $this->isPublicClientSource() => 'Externo (Cliente Locatário)',
+            $this->isFieldSource() => 'Externo (Campo)',
+            default => 'Interno',
+        };
+    }
+
+    /**
+     * Nome de quem registrou, independente da origem -- User.name quando
+     * veio de dentro do sistema, recorded_by_name (texto livre) quando
+     * veio do link público sem login.
+     */
+    public function recordedByLabel(): string
+    {
+        return $this->recordedBy?->name ?? $this->recorded_by_name ?? '—';
     }
 }

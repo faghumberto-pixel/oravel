@@ -7,12 +7,11 @@ use App\Http\Requests\Api\StoreHourMeterRequest;
 use App\Models\Asset;
 use App\Models\EquipmentHourMeter;
 use App\Models\HorimeterReading;
-use Illuminate\Contracts\Filesystem\Filesystem;
+use App\Support\HourMeterReadingWriter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Throwable;
@@ -26,9 +25,7 @@ use Throwable;
  */
 class HourMeterSyncController extends Controller
 {
-    private const GCS_DISK = 'gcs';
-
-    private const FALLBACK_DISK = 'public';
+    public function __construct(private HourMeterReadingWriter $writer) {}
 
     public function sync(StoreHourMeterRequest $request): JsonResponse
     {
@@ -73,7 +70,7 @@ class HourMeterSyncController extends Controller
             return $this->result($clientUuid, 'failed', null, 'Equipamento não encontrado ou sem permissão de acesso.');
         }
 
-        $photoPath = $photo ? $this->uploadPhoto($photo, $tenantId) : null;
+        $photoPath = $photo ? $this->writer->uploadPhoto($photo, $tenantId) : null;
 
         try {
             $record = DB::transaction(function () use ($tenantId, $userId, $payload, $clientUuid, $photoPath, $existing) {
@@ -118,7 +115,7 @@ class HourMeterSyncController extends Controller
             return $this->result($clientUuid, 'synced', $record->id);
         } catch (ValidationException $e) {
             if ($photoPath) {
-                $this->photoDisk()->delete($photoPath);
+                $this->writer->photoDisk()->delete($photoPath);
             }
 
             $this->recordFailure($tenantId, $userId, $payload, $clientUuid, $existing, implode(' ', $e->validator->errors()->all()));
@@ -126,7 +123,7 @@ class HourMeterSyncController extends Controller
             return $this->result($clientUuid, 'failed', null, implode(' ', $e->validator->errors()->all()));
         } catch (Throwable $e) {
             if ($photoPath) {
-                $this->photoDisk()->delete($photoPath);
+                $this->writer->photoDisk()->delete($photoPath);
             }
 
             $this->recordFailure($tenantId, $userId, $payload, $clientUuid, $existing, $e->getMessage());
@@ -170,35 +167,6 @@ class HourMeterSyncController extends Controller
         $attributes['client_uuid'] = $clientUuid;
 
         EquipmentHourMeter::create($attributes);
-    }
-
-    private function uploadPhoto(UploadedFile $photo, string $tenantId): string
-    {
-        $path = $photo->store("horimeter-readings/{$tenantId}", $this->photoDiskName());
-
-        return $path;
-    }
-
-    private function photoDisk(): Filesystem
-    {
-        return Storage::disk($this->photoDiskName());
-    }
-
-    /**
-     * GCS só é usado se o driver estiver de fato registrado (pacote
-     * league/flysystem-google-cloud-storage instalado + credenciais no
-     * .env). Sem isso, cai pro disk local 'public' em vez de quebrar o
-     * sync -- mesma foto, outro storage por trás.
-     */
-    private function photoDiskName(): string
-    {
-        try {
-            Storage::disk(self::GCS_DISK)->exists('.');
-
-            return self::GCS_DISK;
-        } catch (Throwable) {
-            return self::FALLBACK_DISK;
-        }
     }
 
     /**

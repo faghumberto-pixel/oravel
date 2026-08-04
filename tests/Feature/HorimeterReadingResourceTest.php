@@ -126,6 +126,30 @@ class HorimeterReadingResourceTest extends TestCase
             ->assertCanNotSeeTableRecords([$doOutro]);
     }
 
+    public function test_shows_public_client_source_with_typed_name_and_no_user(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Locatario Relatorio']);
+        $asset = Asset::create([
+            'tenant_id' => $tenant->id, 'name' => 'Gerador Publico', 'tag' => 'AST-'.uniqid(),
+            'status' => 'locado', 'client_id' => $client->id,
+        ]);
+        $this->actingAs($admin);
+
+        $publicReading = HorimeterReading::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'reading' => 321,
+            'recorded_at' => now(), 'recorded_by' => null, 'recorded_by_name' => 'Funcionario do Cliente',
+            'source' => HorimeterReading::SOURCE_PUBLIC_CLIENT,
+        ]);
+
+        $this->assertSame('Externo (Cliente Locatário)', $publicReading->originLabel());
+        $this->assertSame('Funcionario do Cliente', $publicReading->recordedByLabel());
+
+        Livewire::test(ListHorimeterReadings::class)
+            ->assertCanSeeTableRecords([$publicReading])
+            ->assertSee('Funcionario do Cliente');
+    }
+
     public function test_filters_by_client(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();

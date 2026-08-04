@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -261,6 +262,21 @@ class Asset extends Model
     public function forgetCurrentHorimeterCache(): void
     {
         Cache::forget("horimeter:current:{$this->tenant_id}:{$this->id}");
+    }
+
+    /**
+     * Token do link público de registro de horímetro (sem login) --
+     * gerado sob demanda no primeiro acesso, não no creating(), porque
+     * ativos já existentes precisam do token também. Ver
+     * HourMeterPublicController e a rota /hour-meter/publico/{token}.
+     */
+    public function hourMeterPublicToken(): string
+    {
+        if (! $this->hour_meter_public_token) {
+            $this->forceFill(['hour_meter_public_token' => (string) Str::uuid()])->save();
+        }
+
+        return $this->hour_meter_public_token;
     }
 
     public function abcMatrix(): HasOne

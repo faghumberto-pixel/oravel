@@ -125,6 +125,43 @@ class AssetDossierMobileTest extends TestCase
         $response->assertDontSee('PAT-SIGILOSO');
     }
 
+    public function test_hour_meter_public_link_appears_when_asset_is_locado(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = Asset::create([
+            'tenant_id' => $tenant->id, 'name' => 'Gerador Locado Dossie', 'tag' => 'AST-LOC',
+            'status' => Asset::STATUS_LOCADO,
+        ]);
+
+        $this->actingAs($admin);
+
+        $response = $this->get(route('assets.dossier.mobile', ['assetId' => $asset->id]));
+
+        $response->assertOk();
+        $response->assertSee('Link Público', false);
+
+        $asset->refresh();
+        $this->assertNotNull($asset->hour_meter_public_token);
+        $response->assertSee(route('hour-meter.public.show', ['token' => $asset->hour_meter_public_token]), false);
+    }
+
+    public function test_hour_meter_public_link_does_not_appear_when_asset_is_not_locado(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = Asset::create([
+            'tenant_id' => $tenant->id, 'name' => 'Gerador Disponivel Dossie', 'tag' => 'AST-DISP',
+            'status' => Asset::STATUS_DISPONIVEL,
+        ]);
+
+        $this->actingAs($admin);
+
+        $response = $this->get(route('assets.dossier.mobile', ['assetId' => $asset->id]));
+
+        $response->assertOk();
+        $response->assertDontSee('Link Público', false);
+        $this->assertNull($asset->fresh()->hour_meter_public_token);
+    }
+
     /**
      * Regressao: o botao "Imprimir Etiqueta" (EditAsset::getHeaderActions())
      * usa uma rota de QR SEPARADA (asset.print-qr, SimpleSoftwareIO\QrCode)

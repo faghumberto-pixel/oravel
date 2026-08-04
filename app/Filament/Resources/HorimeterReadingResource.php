@@ -70,7 +70,10 @@ class HorimeterReadingResource extends Resource
             Forms\Components\TextInput::make('asset.name')->label('Equipamento')->disabled(),
             Forms\Components\TextInput::make('asset.client.name')->label('Cliente')->disabled()->default('—'),
             Forms\Components\TextInput::make('reading')->label('Horímetro')->disabled(),
-            Forms\Components\TextInput::make('recordedBy.name')->label('Registrado Por')->disabled(),
+            Forms\Components\TextInput::make('recorded_by_label')
+                ->label('Registrado Por')
+                ->formatStateUsing(fn (?HorimeterReading $record) => $record?->recordedByLabel())
+                ->disabled(),
             Forms\Components\TextInput::make('source')
                 ->label('Origem')
                 ->formatStateUsing(fn (?HorimeterReading $record) => $record?->originLabel())
@@ -94,10 +97,15 @@ class HorimeterReadingResource extends Resource
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('recordedBy.name')
-                    ->label('Técnico / Usuário')
-                    ->searchable()
-                    ->placeholder('—'),
+                Tables\Columns\TextColumn::make('recorded_by_label')
+                    ->label('Técnico / Usuário / Responsável')
+                    ->state(fn (HorimeterReading $record) => $record->recordedByLabel())
+                    ->description(fn (HorimeterReading $record) => $record->isPublicClientSource() ? 'Cliente locatário' : null)
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query
+                            ->orWhereHas('recordedBy', fn (Builder $q) => $q->where('name', 'like', "%{$search}%"))
+                            ->orWhere('recorded_by_name', 'like', "%{$search}%");
+                    }),
 
                 Tables\Columns\TextColumn::make('asset.name')
                     ->label('Equipamento')
@@ -118,7 +126,11 @@ class HorimeterReadingResource extends Resource
                     ->label('Origem')
                     ->badge()
                     ->formatStateUsing(fn (HorimeterReading $record) => $record->originLabel())
-                    ->color(fn (HorimeterReading $record) => $record->isFieldSource() ? 'warning' : 'gray'),
+                    ->color(fn (HorimeterReading $record) => match (true) {
+                        $record->isPublicClientSource() => 'info',
+                        $record->isFieldSource() => 'warning',
+                        default => 'gray',
+                    }),
 
                 Tables\Columns\IconColumn::make('photo_path')
                     ->label('Foto')
@@ -155,7 +167,8 @@ class HorimeterReadingResource extends Resource
                 Tables\Filters\SelectFilter::make('source')
                     ->label('Tipo (Interno/Externo)')
                     ->options([
-                        HorimeterReading::SOURCE_MOBILE_SYNC => 'Externo (Campo)',
+                        HorimeterReading::SOURCE_MOBILE_SYNC => 'Externo — Técnico (Campo)',
+                        HorimeterReading::SOURCE_PUBLIC_CLIENT => 'Externo — Cliente Locatário',
                         HorimeterReading::SOURCE_MANUAL => 'Interno — Manual',
                         HorimeterReading::SOURCE_MAINTENANCE_ORDER => 'Interno — Ordem de Serviço',
                         HorimeterReading::SOURCE_CHECKLIST => 'Interno — Checklist',

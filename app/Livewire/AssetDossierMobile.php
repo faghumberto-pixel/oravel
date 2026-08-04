@@ -131,6 +131,21 @@ class AssetDossierMobile extends Component
     }
 
     /**
+     * Link público (sem login) pra funcionário do cliente locatário
+     * registrar o horímetro ele mesmo -- só existe enquanto o ativo está
+     * "locado" (ver HourMeterPublicController). O token só é gerado na
+     * hora que a tela pede ele, não antes.
+     */
+    public function getHourMeterPublicLinkProperty(): ?string
+    {
+        if (! $this->asset || $this->asset->status !== Asset::STATUS_LOCADO) {
+            return null;
+        }
+
+        return route('hour-meter.public.show', ['token' => $this->asset->hourMeterPublicToken()]);
+    }
+
+    /**
      * Mesma regra do ApontamentoHorimetro::precisaConfirmarReset() -- so'
      * pra decidir se mostra o checkbox antes do submit. Quem trava de
      * verdade e' o HorimeterReadingObserver.

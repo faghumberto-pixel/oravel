@@ -121,6 +121,28 @@
                 </div>
             </div>
 
+            {{-- Link publico pro cliente locatario registrar o horimetro
+                 ele mesmo, sem precisar de tecnico nem login -- so aparece
+                 com o ativo locado. --}}
+            @if ($this->hourMeterPublicLink)
+                <div class="rounded-2xl bg-zinc-900 p-4" x-data="{ copied: false }">
+                    <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">🔗 Link Público — Cliente Locatário</h3>
+                    <p class="mt-1 text-[11px] text-zinc-500">
+                        Compartilhe com o responsável designado da empresa que alugou o equipamento pra ele
+                        registrar o horímetro sem precisar de conta no sistema. Fica identificado no relatório
+                        pelo nome que a pessoa informar.
+                    </p>
+                    <button
+                        type="button"
+                        x-on:click="navigator.clipboard.writeText('{{ $this->hourMeterPublicLink }}'); copied = true; setTimeout(() => copied = false, 2000)"
+                        class="mt-3 flex min-h-[2.75rem] w-full items-center justify-center rounded-xl border border-zinc-700 text-xs font-bold text-zinc-200 active:bg-zinc-800"
+                    >
+                        <span x-show="!copied">Copiar Link</span>
+                        <span x-show="copied" x-cloak class="text-emerald-400">✓ Copiado!</span>
+                    </button>
+                </div>
+            @endif
+
             {{-- Registrar apontamento de horímetro --}}
             <div class="rounded-2xl bg-zinc-900 p-4">
                 <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">✍️ Registrar Apontamento</h3>

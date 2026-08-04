@@ -4,7 +4,7 @@
     "name": "module.esm"
   },
   "resources/css/app.css": {
-    "file": "assets/app-Ci9KCNeF.css",
+    "file": "assets/app-bijJnUaB.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -17,7 +17,7 @@
     "src": "resources/css/filament/admin/theme.css"
   },
   "resources/css/filament/central/theme.css": {
-    "file": "assets/theme-N7C3EF9B.css",
+    "file": "assets/theme-CCVPo2R6.css",
     "src": "resources/css/filament/central/theme.css",
     "isEntry": true,
     "name": "theme",
@@ -44,6 +44,15 @@
     "file": "assets/hour-meter-offline-m--z-lmY.js",
     "name": "hour-meter-offline",
     "src": "resources/js/hour-meter-offline.js",
+    "isEntry": true,
+    "imports": [
+      "_module.esm-CCyjftVT.js"
+    ]
+  },
+  "resources/js/hour-meter-public.js": {
+    "file": "assets/hour-meter-public-Dv5Ctgk8.js",
+    "name": "hour-meter-public",
+    "src": "resources/js/hour-meter-public.js",
     "isEntry": true,
     "imports": [
       "_module.esm-CCyjftVT.js"
