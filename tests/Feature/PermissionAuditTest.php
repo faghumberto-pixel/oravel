@@ -8,6 +8,7 @@ use App\Filament\Pages\Chat;
 use App\Filament\Pages\DesempenhoTecnico;
 use App\Filament\Pages\MaintenanceKanban;
 use App\Filament\Pages\PainelCriticidade;
+use App\Filament\Pages\PainelGestao;
 use App\Filament\Pages\Relatorios;
 use App\Filament\Resources\AssetResource;
 use App\Filament\Resources\CrmLeadResource;
@@ -484,5 +485,73 @@ class PermissionAuditTest extends TestCase
         // Sem tabela_assets no plano, o Painel de Criticidade (derivado de
         // Asset) tambem fica bloqueado, mesmo com outras features ativas.
         $this->assertFalse(PainelCriticidade::canAccess());
+    }
+
+    /**
+     * Item "Dashboard" (PainelGestao) nao deveria aparecer/ser acessivel
+     * pra tecnico puro -- pedido do usuario 2026-08-04, mesmo criterio ja
+     * usado pelo redirect de /dashboard (routes/web.php) pra mandar esse
+     * tipo de usuario direto pra "Minhas Ordens de Servico".
+     */
+    public function test_pure_technician_cannot_access_the_dashboard(): void
+    {
+        // modulo_dashboard incluso de proposito: sem isso o teste passaria
+        // mesmo sem o criterio de tecnico, so pela trava comercial de plano
+        // ja existente antes desta mudanca -- nao provaria nada.
+        [$tenant, $admin] = $this->makeTenant(['tabela_assets', 'modulo_dashboard']);
+
+        $technician = User::create([
+            'name' => 'Tecnico Puro', 'email' => 'tecnico-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
+        ]);
+        $technician->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
+
+        $this->actingAs($technician);
+
+        $this->assertFalse($technician->isAdmin());
+        $this->assertEmpty($technician->supervisedDepartmentIds());
+        $this->assertFalse(PainelGestao::canAccess());
+        $this->get(PainelGestao::getUrl(['tenant' => $tenant->slug]))->assertForbidden();
+    }
+
+    public function test_tenant_admin_still_sees_the_dashboard(): void
+    {
+        [$tenant, $admin] = $this->makeTenant(['tabela_assets', 'modulo_dashboard']);
+        $this->actingAs($admin);
+
+        $this->assertTrue($admin->isAdmin());
+        $this->assertTrue(PainelGestao::canAccess());
+        $this->get(PainelGestao::getUrl(['tenant' => $tenant->slug]))->assertOk();
+    }
+
+    /**
+     * Nao-admin que supervisiona um departamento (roles.department_id
+     * preenchido, mesmo mecanismo de App\Models\User::supervisedDepartmentIds())
+     * nao e' "tecnico puro" -- continua vendo o dashboard, mesmo criterio
+     * do redirect em routes/web.php.
+     */
+    public function test_department_supervisor_still_sees_the_dashboard(): void
+    {
+        [$tenant] = $this->makeTenant(['tabela_assets', 'modulo_dashboard']);
+
+        $department = \App\Models\Department::create(['tenant_id' => $tenant->id, 'name' => 'Manutenção', 'sector_key' => 'manutencao']);
+
+        $supervisor = User::create([
+            'name' => 'Supervisor', 'email' => 'supervisor-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
+        ]);
+        $supervisor->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
+
+        $supervisorRole = Role::create([
+            'name' => 'supervisor-manutencao-'.uniqid(), 'guard_name' => 'web',
+            'tenant_id' => $tenant->id, 'department_id' => $department->id,
+        ]);
+        $supervisor->assignRole($supervisorRole);
+
+        $this->actingAs($supervisor);
+
+        $this->assertFalse($supervisor->isAdmin());
+        $this->assertNotEmpty($supervisor->supervisedDepartmentIds());
+        $this->assertTrue(PainelGestao::canAccess());
     }
 }

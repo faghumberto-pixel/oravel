@@ -23,6 +23,18 @@ class PainelGestao extends Page
 
     public static function canAccess(): bool
     {
+        $user = auth()->user();
+
+        // Tecnico puro (nao admin, nao supervisiona nenhum departamento) nao
+        // precisa do dashboard de gestao -- mesmo criterio ja usado no
+        // redirect de /dashboard (routes/web.php) pra mandar esse usuario
+        // direto pra "Minhas Ordens de Servico" em vez do Painel de
+        // Controle. Antes o redirect ja evitava isso no login, mas o item
+        // "Dashboard" continuava visivel e clicavel no menu lateral.
+        if ($user && ! $user->isAdmin() && empty($user->supervisedDepartmentIds())) {
+            return false;
+        }
+
         $tenant = Tenancy::current();
 
         // Sem tenant (super admin sem "atuar como", contexto de console): nao
