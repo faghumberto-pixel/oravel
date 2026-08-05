@@ -4,7 +4,7 @@
     "name": "module.esm"
   },
   "resources/css/app.css": {
-    "file": "assets/app-_mwTP2NM.css",
+    "file": "assets/app-Bn1oB031.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -17,7 +17,7 @@
     "src": "resources/css/filament/admin/theme.css"
   },
   "resources/css/filament/central/theme.css": {
-    "file": "assets/theme-NqdEwufb.css",
+    "file": "assets/theme-DmNgmYTK.css",
     "src": "resources/css/filament/central/theme.css",
     "isEntry": true,
     "name": "theme",
