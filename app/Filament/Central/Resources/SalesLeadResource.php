@@ -116,6 +116,11 @@ class SalesLeadResource extends Resource
                         ->label('Solução Oravel')
                         ->helperText('O que o sistema oferece pra resolver essa dor específica -- vira a base do argumento de venda.')
                         ->columnSpanFull(),
+                    Forms\Components\Textarea::make('outreach_email_draft')
+                        ->label('Rascunho do E-mail de Prospecção (D3)')
+                        ->helperText('Texto personalizado pronto pra copiar e enviar -- fica salvo aqui pra não se perder numa conversa avulsa, e sai junto na exportação.')
+                        ->rows(6)
+                        ->columnSpanFull(),
                 ]),
 
             Forms\Components\Section::make('Endereço')
