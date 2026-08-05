@@ -17,6 +17,8 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 
 class SalesLeadResource extends Resource
 {
@@ -214,15 +216,29 @@ class SalesLeadResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            // Borda lateral colorida na linha inteira, mesma cor do estágio
-            // (CrmPalette::stage()['border']) -- o badge sozinho é discreto
-            // demais numa lista longa; a borda dá pra "escanear" a tabela de
-            // relance sem ler cada linha. Pedido do usuário 2026-08-04:
-            // "tudo branco, sem distinguir o que está em prospecção,
-            // cancelado etc".
-            ->recordClasses(fn (SalesLead $record) => 'border-s-4 '.CrmPalette::stage($record->pipeline_stage)['border'])
+            // Borda lateral + fundo translúcido na linha inteira, mesma cor
+            // do estágio (CrmPalette::stage()['border']/['soft']) -- o badge
+            // sozinho é discreto demais numa lista longa; a linha inteira dá
+            // pra "escanear" a tabela de relance. Pedido do usuário
+            // 2026-08-04/05: "tudo branco, sem distinguir estágio" + fundo
+            // "bem mais claro, baixa opacidade, só destaque sutil".
+            // hover:bg-transparent sobrescreve o hover cinza padrão do
+            // Filament, que senão apagava a cor de fundo ao passar o mouse.
+            ->recordClasses(fn (SalesLead $record) => 'border-s-4 hover:!bg-transparent '
+                .CrmPalette::stage($record->pipeline_stage)['border'].' '
+                .CrmPalette::stage($record->pipeline_stage)['soft'])
             ->columns([
-                Tables\Columns\TextColumn::make('company_name')->label('Empresa')->searchable()->weight('bold'),
+                Tables\Columns\TextColumn::make('company_name')
+                    ->label('Empresa')
+                    ->searchable()
+                    ->weight('bold')
+                    // Laranja padrão da Oravel -- pedido explícito do usuário
+                    // 2026-08-05, mesmo tom usado nos CTAs/logo em todo o
+                    // resto do sistema (--orange do site institucional).
+                    // 'primary' aqui é azul (cor do painel Central), por
+                    // isso usa 'crmOrange' (mesmo laranja já registrado pro
+                    // estágio Proposta Enviada) em vez disso.
+                    ->color('crmOrange'),
                 Tables\Columns\TextColumn::make('segment')
                     ->label('Segmento')
                     ->badge()
@@ -234,7 +250,8 @@ class SalesLeadResource extends Resource
                     ->badge()
                     ->icon(fn (string $state) => self::stageIcon($state))
                     ->formatStateUsing(fn (string $state) => SalesLead::stageLabels()[$state] ?? $state)
-                    ->color(fn (string $state) => CrmPalette::stage($state)['filament']),
+                    ->color(fn (string $state) => CrmPalette::stage($state)['filament'])
+                    ->weight('bold'),
                 Tables\Columns\TextColumn::make('estimated_contract_value')
                     ->label('Valor Estimado')
                     ->money('BRL')
@@ -247,12 +264,62 @@ class SalesLeadResource extends Resource
                     ->color(fn (?SalesLead $record) => $record?->isOpen() && (! $record->last_interaction_at || $record->last_interaction_at->diffInDays(now()) >= 3) ? 'danger' : null),
             ])
             ->filters([
+                // Filtro por coluna, pedido do usuário 2026-08-05 -- um
+                // filtro pra cada coluna visível da tabela, não só
+                // Estágio/Segmento como antes.
                 Tables\Filters\SelectFilter::make('pipeline_stage')
                     ->label('Estágio')
                     ->options(SalesLead::stageLabels()),
                 Tables\Filters\SelectFilter::make('segment')
                     ->label('Segmento')
                     ->options(Client::nicheLabels()),
+                Tables\Filters\SelectFilter::make('assigned_user_id')
+                    ->label('Responsável')
+                    ->options(fn () => User::whereIn('email', config('oravel.super_admins', []))->pluck('name', 'id')),
+                Tables\Filters\Filter::make('estimated_contract_value')
+                    ->label('Valor Estimado')
+                    ->form([
+                        Forms\Components\TextInput::make('valor_min')->label('De (R$)')->numeric(),
+                        Forms\Components\TextInput::make('valor_max')->label('Até (R$)')->numeric(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when($data['valor_min'] ?? null, fn ($q, $v) => $q->where('estimated_contract_value', '>=', $v))
+                            ->when($data['valor_max'] ?? null, fn ($q, $v) => $q->where('estimated_contract_value', '<=', $v));
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['valor_min'] ?? null) {
+                            $indicators[] = 'A partir de R$ '.number_format((float) $data['valor_min'], 2, ',', '.');
+                        }
+                        if ($data['valor_max'] ?? null) {
+                            $indicators[] = 'Até R$ '.number_format((float) $data['valor_max'], 2, ',', '.');
+                        }
+
+                        return $indicators;
+                    }),
+                Tables\Filters\Filter::make('last_interaction_at')
+                    ->label('Última Interação')
+                    ->form([
+                        Forms\Components\DatePicker::make('de')->label('De'),
+                        Forms\Components\DatePicker::make('ate')->label('Até'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when($data['de'] ?? null, fn ($q, $date) => $q->whereDate('last_interaction_at', '>=', $date))
+                            ->when($data['ate'] ?? null, fn ($q, $date) => $q->whereDate('last_interaction_at', '<=', $date));
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['de'] ?? null) {
+                            $indicators[] = 'De: '.Carbon::parse($data['de'])->format('d/m/Y');
+                        }
+                        if ($data['ate'] ?? null) {
+                            $indicators[] = 'Até: '.Carbon::parse($data['ate'])->format('d/m/Y');
+                        }
+
+                        return $indicators;
+                    }),
             ])
             ->actions([
                 Tables\Actions\Action::make('advance')

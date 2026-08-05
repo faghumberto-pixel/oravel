@@ -82,6 +82,7 @@ class CentralPanelProvider extends PanelProvider
                 // preso aos 6 nomes semânticos padrão do Filament.
                 'crmSlate' => Color::Slate,
                 'crmBlue' => Color::Blue,
+                'crmIndigo' => Color::Indigo,
                 'crmPurple' => Color::Purple,
                 'crmOrange' => Color::Orange,
                 'crmEmerald' => Color::Emerald,

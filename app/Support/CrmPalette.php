@@ -29,26 +29,30 @@ class CrmPalette
     public static function stage(?string $stage): array
     {
         return match ($stage) {
+            // Azul pra Prospecção -- pedido explicito do usuario 2026-08-05
+            // (era slate/cinza ate aqui). Contato Qualificado passou pra
+            // indigo pra nao colidir -- efeito colateral aceito pelo
+            // usuario: Kanban e Funil de Vendas tambem mudam, mesma fonte.
             SalesLead::STAGE_PROSPECCAO => [
-                'filament' => 'crmSlate',
-                'bg' => 'bg-slate-600',
-                'border' => 'border-slate-600',
-                'text' => 'text-slate-600 dark:text-slate-400',
-                'soft' => 'bg-slate-50 dark:bg-slate-500/10',
-                'dot' => 'bg-slate-500',
-                // Classe literal (não montada em runtime) -- Tailwind JIT só
-                // compila o que aparece como texto exato num arquivo
-                // escaneado, então "ring-" . $cor . "-400" não funcionaria.
-                'ring' => 'ring-slate-400',
-            ],
-            SalesLead::STAGE_CONTATO_QUALIFICADO => [
                 'filament' => 'crmBlue',
                 'bg' => 'bg-blue-600',
                 'border' => 'border-blue-600',
                 'text' => 'text-blue-600 dark:text-blue-400',
                 'soft' => 'bg-blue-50 dark:bg-blue-500/10',
                 'dot' => 'bg-blue-500',
+                // Classe literal (não montada em runtime) -- Tailwind JIT só
+                // compila o que aparece como texto exato num arquivo
+                // escaneado, então "ring-" . $cor . "-400" não funcionaria.
                 'ring' => 'ring-blue-400',
+            ],
+            SalesLead::STAGE_CONTATO_QUALIFICADO => [
+                'filament' => 'crmIndigo',
+                'bg' => 'bg-indigo-600',
+                'border' => 'border-indigo-600',
+                'text' => 'text-indigo-600 dark:text-indigo-400',
+                'soft' => 'bg-indigo-50 dark:bg-indigo-500/10',
+                'dot' => 'bg-indigo-500',
+                'ring' => 'ring-indigo-400',
             ],
             SalesLead::STAGE_DEMONSTRACAO_REALIZADA => [
                 'filament' => 'crmPurple',
