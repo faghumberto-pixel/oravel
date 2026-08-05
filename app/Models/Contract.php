@@ -44,6 +44,12 @@ class Contract extends Model
 
     public const CONDICAO_OUTRO = 'outro';
 
+    public const BILLING_MENSAL_FIXO = 'mensal_fixo';
+
+    public const BILLING_POR_HORA = 'por_hora';
+
+    public const BILLING_FRANQUIA_EXCEDENTE = 'franquia_excedente';
+
     protected $fillable = [
         'tenant_id',
         'client_id',
@@ -52,6 +58,7 @@ class Contract extends Model
         'start_date',
         'end_date',
         'price',
+        'billing_type',
         'multa_rescisoria',
         'payment_method',
         'usage_purpose',
@@ -122,6 +129,28 @@ class Contract extends Model
             self::CONDICAO_LITORANEO => 'Litorâneo (maresia)',
             self::CONDICAO_OUTRO => 'Outro',
         ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function billingTypeOptions(): array
+    {
+        return [
+            self::BILLING_MENSAL_FIXO => 'Mensal Fixo',
+            self::BILLING_POR_HORA => 'Por Hora',
+            self::BILLING_FRANQUIA_EXCEDENTE => 'Franquia de Horas + Excedente',
+        ];
+    }
+
+    /**
+     * RentalHourFranchise (app/Domain/Fleet) só é relevante quando o
+     * contrato está nessa modalidade -- resto do sistema (formulário,
+     * cálculo de excedente) deve checar isto antes de exigir/ler franquia.
+     */
+    public function usesHourFranchise(): bool
+    {
+        return $this->billing_type === self::BILLING_FRANQUIA_EXCEDENTE;
     }
 
     public function tenant(): BelongsTo

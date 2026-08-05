@@ -99,6 +99,11 @@ class Asset extends Model
         return $this->hasMany(Contract::class, 'asset_id');
     }
 
+    public function accountPayables(): HasMany
+    {
+        return $this->hasMany(AccountPayable::class);
+    }
+
     /**
      * Contrato vigente deste ativo -- fonte de verdade de "onde ele esta
      * fisicamente instalado agora" quando locado (Contract::resolvedLocation()),
@@ -470,6 +475,86 @@ class Asset extends Model
             'total_maintenance_cost' => round($totalMaintenanceCost, 2),
             'total_rental_revenue' => round($totalRentalRevenue, 2),
             'result' => round($result, 2),
+        ];
+    }
+
+    /**
+     * TCO = receita de locação (Contract.price) menos custo total: O.S.
+     * (já coberto por getFinancialSummary) mais despesas avulsas do ativo
+     * lançadas direto em AccountPayable (asset_id), que getFinancialSummary
+     * não somava -- eram uma fonte de custo real do ativo (revisão
+     * terceirizada, multa, etc.) fora do fluxo de O.S.
+     */
+    public function getTotalCostOfOwnership(): array
+    {
+        $summary = $this->getFinancialSummary();
+
+        $totalAccountsPayable = (float) $this->accountPayables()->sum('amount');
+        $totalCost = $summary['total_maintenance_cost'] + $totalAccountsPayable;
+        $result = $summary['total_rental_revenue'] - $totalCost;
+
+        return [
+            'total_rental_revenue' => $summary['total_rental_revenue'],
+            'total_maintenance_cost' => $summary['total_maintenance_cost'],
+            'total_accounts_payable' => round($totalAccountsPayable, 2),
+            'total_cost' => round($totalCost, 2),
+            'result' => round($result, 2),
+        ];
+    }
+
+    /**
+     * MTBF (Mean Time Between Failures) em horas -- período total em
+     * operação (primeira leitura de horímetro até agora, ou até a última
+     * leitura se o ativo já foi baixado) dividido pelo número de paradas
+     * por quebra/corretiva (AssetDowntimeEvent). Sem pelo menos 1 parada
+     * fechada, não há intervalo real medido -- retorna null em vez de
+     * infinito/zero enganoso.
+     */
+    public function getMtbfHours(): ?float
+    {
+        $failureCount = $this->downtimeEvents()
+            ->whereIn('reason', [AssetDowntimeEvent::REASON_QUEBRA, AssetDowntimeEvent::REASON_MANUTENCAO_CORRETIVA])
+            ->whereNotNull('ended_at')
+            ->count();
+
+        if ($failureCount === 0) {
+            return null;
+        }
+
+        $first = $this->horimeterReadings()->oldest('recorded_at')->value('reading');
+        $last = $this->horimeterReadings()->latest('recorded_at')->value('reading');
+
+        if ($first === null || $last === null || (float) $last <= (float) $first) {
+            return null;
+        }
+
+        return round(((float) $last - (float) $first) / $failureCount, 1);
+    }
+
+    /**
+     * Média de horas de uso por dia/mês, a partir do delta entre a primeira
+     * e a última leitura de horímetro no período corrido desde a primeira
+     * leitura -- usada por MaintenancePlan pra estimar quando a próxima
+     * preventiva por horímetro deve vencer (dueStatusForAsset já calcula o
+     * "quando", isto calcula o "quão rápido está chegando lá").
+     */
+    public function getAverageHourlyUsage(): array
+    {
+        $first = $this->horimeterReadings()->oldest('recorded_at')->first();
+        $last = $this->horimeterReadings()->latest('recorded_at')->first();
+
+        if (! $first || ! $last || $first->is($last)) {
+            return ['daily_average' => 0.0, 'monthly_average' => 0.0];
+        }
+
+        $hoursDelta = (float) $last->reading - (float) $first->reading;
+        $daysDelta = max($first->recorded_at->diffInDays($last->recorded_at), 1);
+
+        $dailyAverage = $hoursDelta / $daysDelta;
+
+        return [
+            'daily_average' => round($dailyAverage, 2),
+            'monthly_average' => round($dailyAverage * 30, 2),
         ];
     }
 }
