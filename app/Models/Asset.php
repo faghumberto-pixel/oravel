@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Domain\Fleet\Models\ForkliftSpecification;
 use App\Models\Concerns\HasSaaSMetadata;
 use App\Models\Traits\BelongsToTenant;
 use Carbon\Carbon;
@@ -102,6 +103,11 @@ class Asset extends Model
     public function accountPayables(): HasMany
     {
         return $this->hasMany(AccountPayable::class);
+    }
+
+    public function forkliftSpecification(): HasOne
+    {
+        return $this->hasOne(ForkliftSpecification::class);
     }
 
     /**

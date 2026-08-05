@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Domain\Fleet\Models\ForkliftSpecification;
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\AssetResource\Pages;
 use App\Models\Asset;
@@ -478,6 +479,75 @@ class AssetResource extends Resource
                         ]),
 
                     // ABA 4: LOGS DE AUDITORIA (Rastreabilidade de Ações)
+                    // Aba condicional -- só aparece quando a categoria
+                    // escolhida acima é "Empilhadeira". asset_category
+                    // (Hidden, sincronizado no afterStateUpdated do Select
+                    // de categoria) é o campo lido aqui, não
+                    // asset_category_id, porque é o texto que o resto do
+                    // sistema já usa pra esse tipo de filtro condicional.
+                    // Section::relationship() salva/carrega o 1:1 em
+                    // ForkliftSpecification automaticamente (cria a linha
+                    // se ainda não existir, atualiza se já existir).
+                    Tabs\Tab::make('Empilhadeira')
+                        ->icon('heroicon-m-cog-8-tooth')
+                        ->visible(fn (Get $get) => $get('asset_category') === 'Empilhadeira')
+                        ->schema([
+                            Forms\Components\Section::make('Especificações Técnicas')
+                                ->relationship('forkliftSpecification')
+                                ->schema([
+                                    Forms\Components\Grid::make(3)->schema([
+                                        Forms\Components\TextInput::make('load_capacity_kg')
+                                            ->label('Capacidade de Carga')
+                                            ->numeric()->suffix('kg'),
+
+                                        Forms\Components\TextInput::make('lift_height_m')
+                                            ->label('Altura Máxima de Elevação')
+                                            ->numeric()->suffix('m'),
+
+                                        Forms\Components\Select::make('energy_type')
+                                            ->label('Tipo de Propulsão')
+                                            ->options(ForkliftSpecification::energyTypeLabels())
+                                            ->native(false)->live(),
+
+                                        Forms\Components\Select::make('mast_type')
+                                            ->label('Tipo de Torre / Elevação')
+                                            ->options(ForkliftSpecification::mastTypeLabels())
+                                            ->native(false),
+
+                                        Forms\Components\Select::make('tire_type')
+                                            ->label('Tipo de Pneu')
+                                            ->options(ForkliftSpecification::tireTypeLabels())
+                                            ->native(false),
+                                    ]),
+                                ]),
+
+                            Forms\Components\Section::make('Bateria e Carregador')
+                                ->relationship('forkliftSpecification')
+                                ->description('Aplicável apenas a empilhadeiras elétricas.')
+                                ->visible(fn (Get $get) => $get('forkliftSpecification.energy_type') === ForkliftSpecification::ENERGY_ELETRICA)
+                                ->schema([
+                                    Forms\Components\Grid::make(4)->schema([
+                                        Forms\Components\TextInput::make('battery_voltage')
+                                            ->label('Voltagem da Bateria')
+                                            ->placeholder('Ex: 80V'),
+
+                                        Forms\Components\TextInput::make('battery_amperage_ah')
+                                            ->label('Amperagem')
+                                            ->numeric()->suffix('Ah'),
+
+                                        Forms\Components\TextInput::make('battery_serial_number')
+                                            ->label('Número de Série da Bateria'),
+
+                                        Forms\Components\TextInput::make('charger_model')
+                                            ->label('Modelo do Carregador'),
+
+                                        Forms\Components\TextInput::make('battery_cycles')
+                                            ->label('Ciclos de Carga')
+                                            ->numeric(),
+                                    ]),
+                                ]),
+                        ]),
+
                     Tabs\Tab::make('Logs de Auditoria')
                         ->icon('heroicon-m-finger-print')
                         ->schema([
