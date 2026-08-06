@@ -87,7 +87,10 @@ class DemoVerticalGapsSeeder extends Seeder
                 Asset::firstOrCreate(
                     ['tenant_id' => $tenant->id, 'name' => $def['name']],
                     [
-                        'tag' => 'CAM-'.($i + 1),
+                        // 'tag' é UNIQUE globalmente (não escopada por
+                        // tenant) -- prefixo com o slug evita colisão com
+                        // ativos de qualquer outro tenant, real ou demo.
+                        'tag' => 'MUNKMAQ-CAM-'.($i + 1),
                         'patrimonio' => 'PAT-'.random_int(100000, 999999),
                         'serial_number' => 'SN-'.strtoupper(substr(md5($def['name']), 0, 8)),
                         'status' => $def['status'],
@@ -114,7 +117,7 @@ class DemoVerticalGapsSeeder extends Seeder
                 Asset::firstOrCreate(
                     ['tenant_id' => $tenant->id, 'name' => $def['name']],
                     [
-                        'tag' => 'GUI-'.($i + 1),
+                        'tag' => 'MUNKMAQ-GUI-'.($i + 1),
                         'patrimonio' => 'PAT-'.random_int(100000, 999999),
                         'serial_number' => 'SN-'.strtoupper(substr(md5($def['name']), 0, 8)),
                         'status' => $def['status'],
@@ -181,7 +184,7 @@ class DemoVerticalGapsSeeder extends Seeder
                 Asset::firstOrCreate(
                     ['tenant_id' => $tenant->id, 'name' => $def['name']],
                     [
-                        'tag' => 'PLA-'.($i + 2),
+                        'tag' => 'RMCPLAT-PLA-'.($i + 2),
                         'patrimonio' => 'PAT-'.random_int(100000, 999999),
                         'serial_number' => 'SN-'.strtoupper(substr(md5($def['name']), 0, 8)),
                         'status' => $def['status'],
@@ -254,7 +257,7 @@ class DemoVerticalGapsSeeder extends Seeder
             $atlasCopco = Asset::create([
                 'tenant_id' => $tenant->id,
                 'name' => 'Compressor de Ar Atlas Copco XATS 400',
-                'tag' => 'COM-1',
+                'tag' => 'COMPNOVO-COM-1',
                 'patrimonio' => 'PAT-'.random_int(100000, 999999),
                 'serial_number' => 'SN-ATLAS400',
                 'status' => Asset::STATUS_DISPONIVEL,
@@ -272,7 +275,7 @@ class DemoVerticalGapsSeeder extends Seeder
             $chicagoPneumatic = Asset::create([
                 'tenant_id' => $tenant->id,
                 'name' => 'Compressor de Ar Chicago Pneumatic CPS 185',
-                'tag' => 'COM-2',
+                'tag' => 'COMPNOVO-COM-2',
                 'patrimonio' => 'PAT-'.random_int(100000, 999999),
                 'serial_number' => 'CP18500427',
                 'status' => Asset::STATUS_LOCADO,
