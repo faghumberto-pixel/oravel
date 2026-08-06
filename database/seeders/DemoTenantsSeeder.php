@@ -45,8 +45,11 @@ class DemoTenantsSeeder extends Seeder
 {
     public function run(): void
     {
-        if (app()->environment('production')) {
-            abort(1, 'DemoTenantsSeeder nunca deve rodar em producao -- e dado fictício pra demonstração comercial em DEV.');
+        // Guard original (abort incondicional) trocado por confirmação
+        // explícita em 2026-08-06 -- ver mesma decisão documentada em
+        // DemoVerticalGapsSeeder::run().
+        if (app()->environment('production') && env('ALLOW_DEMO_SEED_IN_PRODUCTION') !== 'true') {
+            abort(1, 'DemoTenantsSeeder requer ALLOW_DEMO_SEED_IN_PRODUCTION=true para rodar em produção -- dado fictício de demonstração comercial, ver decisão de 2026-08-06.');
         }
 
         // Tabela global (nao tenant-scoped) usada pelo EquipmentMovementObserver
@@ -224,10 +227,10 @@ class DemoTenantsSeeder extends Seeder
         }
 
         DB::transaction(function () use ($plan) {
-            [$tenant, $tecnico, $comercial] = $this->setupTenant('Munkmaq', 'munkmaq', $plan);
+            [$tenant, $tecnico, $comercial] = $this->setupTenant('Guindaste Demo', 'munkmaq', $plan);
 
             $group = $this->checklistGroup($tenant, 'Caminhão Munck');
-            $klabin = Client::create(['tenant_id' => $tenant->id, 'name' => 'Klabin']);
+            $klabin = Client::create(['tenant_id' => $tenant->id, 'name' => 'Papel e Celulose Vale Sul']);
 
             $asset = Asset::create([
                 'tenant_id' => $tenant->id,
@@ -367,7 +370,7 @@ class DemoTenantsSeeder extends Seeder
                 $this->markGroupChecklistOk($tenant, $order, $asset, $group);
             }
 
-            $construtora = Client::create(['tenant_id' => $tenant->id, 'name' => 'Construtora Anel Viário Campinas']);
+            $construtora = Client::create(['tenant_id' => $tenant->id, 'name' => 'Construtora Vale Norte']);
 
             Contract::create([
                 'tenant_id' => $tenant->id,
@@ -646,7 +649,7 @@ class DemoTenantsSeeder extends Seeder
                 ]);
             });
 
-            $replan = Client::create(['tenant_id' => $tenant->id, 'name' => 'Replan']);
+            $replan = Client::create(['tenant_id' => $tenant->id, 'name' => 'Refinaria Vale do Sul']);
             $category = AssetCategory::firstOrCreate(['tenant_id' => $tenant->id, 'name' => 'Inversora de Solda Industrial Multi-processo']);
 
             $solicitacao = SolicitacaoLocacao::create([
