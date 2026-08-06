@@ -48,7 +48,7 @@ class DemoTenantsSeeder extends Seeder
         // Guard original (abort incondicional) trocado por confirmação
         // explícita em 2026-08-06 -- ver mesma decisão documentada em
         // DemoVerticalGapsSeeder::run().
-        if (app()->environment('production') && env('ALLOW_DEMO_SEED_IN_PRODUCTION') !== 'true') {
+        if (app()->environment('production') && ! filter_var(env('ALLOW_DEMO_SEED_IN_PRODUCTION'), FILTER_VALIDATE_BOOL)) {
             abort(1, 'DemoTenantsSeeder requer ALLOW_DEMO_SEED_IN_PRODUCTION=true para rodar em produção -- dado fictício de demonstração comercial, ver decisão de 2026-08-06.');
         }
 

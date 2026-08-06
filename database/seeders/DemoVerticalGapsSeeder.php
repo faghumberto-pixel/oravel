@@ -42,7 +42,7 @@ class DemoVerticalGapsSeeder extends Seeder
         // ALLOW_DEMO_SEED_IN_PRODUCTION=true (não fica em .env versionado,
         // setar só na hora de rodar) pra não rodar por engano numa chamada
         // futura de `db:seed` genérico em produção.
-        if (app()->environment('production') && env('ALLOW_DEMO_SEED_IN_PRODUCTION') !== 'true') {
+        if (app()->environment('production') && ! filter_var(env('ALLOW_DEMO_SEED_IN_PRODUCTION'), FILTER_VALIDATE_BOOL)) {
             abort(1, 'DemoVerticalGapsSeeder requer ALLOW_DEMO_SEED_IN_PRODUCTION=true para rodar em produção -- dado fictício de demonstração comercial, ver decisão de 2026-08-06.');
         }
 
