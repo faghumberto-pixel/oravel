@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\RedirectTechnicianFromDashboard;
+use App\Http\Middleware\TrackSiteVisit;
 use App\Http\Middleware\UpdateUserLastSeen;
 use Illuminate\Auth\AuthServiceProvider;
 use Illuminate\Foundation\Application;
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // 🟢 Mantém o seu rastreador de presença na pilha web padrão do Laravel 12
         $middleware->web(append: [
             UpdateUserLastSeen::class,
+            TrackSiteVisit::class,
         ]);
 
         // 🔒 REGISTRO SUPREMO: Adiciona o apelido do novo middleware de segurança do Oravel

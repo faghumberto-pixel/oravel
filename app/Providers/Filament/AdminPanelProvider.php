@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\ApontamentoHorimetro;
 use App\Filament\Pages\Auth\Login;
 use App\Http\Middleware\LogUserActivity;
+use App\Http\Middleware\TrackSiteVisit;
 use App\Models\Asset;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -168,6 +169,11 @@ class AdminPanelProvider extends PanelProvider
                 AuthenticateSession::class,
                 SubstituteBindings::class,
                 DispatchServingFilamentEvent::class,
+                // Painéis Filament têm pilha de middleware própria, não passam
+                // pelo grupo "web" global (bootstrap/app.php) -- por isso
+                // TrackSiteVisit precisa ser registrado aqui também, senão
+                // /admin/login e todo o restante do painel nunca gera visita.
+                TrackSiteVisit::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

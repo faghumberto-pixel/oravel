@@ -4,12 +4,15 @@ namespace App\Providers\Filament;
 
 use App\Filament\Central\Pages\DashboardCrm;
 use App\Filament\Central\Pages\DashboardSaaS;
+use App\Filament\Central\Pages\DashboardVisitantes;
 use App\Filament\Central\Pages\FunilVendas;
 use App\Filament\Central\Pages\Kanban;
 use App\Filament\Central\Pages\Programacao;
 use App\Filament\Central\Resources\PlanResource;
+use App\Filament\Central\Widgets\AcquisitionChannelChart;
 use App\Filament\Central\Widgets\ArrChart;
 use App\Filament\Central\Widgets\ChurnChart;
+use App\Filament\Central\Widgets\EngagementChart;
 use App\Filament\Central\Widgets\LeadsBySegmentChart;
 use App\Filament\Central\Widgets\LeadsBySourceChart;
 use App\Filament\Central\Widgets\LeadsCreatedTrendChart;
@@ -18,8 +21,11 @@ use App\Filament\Central\Widgets\RevenueChart;
 use App\Filament\Central\Widgets\SaaSStatsOverview;
 use App\Filament\Central\Widgets\SalesCrmStatsWidget;
 use App\Filament\Central\Widgets\SalesLeadMapWidget;
+use App\Filament\Central\Widgets\SiteVisitsStatsOverview;
+use App\Filament\Central\Widgets\TopReferrersChart;
 use App\Filament\Central\Widgets\WonLostTrendChart;
 use App\Filament\Resources\RoleResource;
+use App\Http\Middleware\TrackSiteVisit;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -109,6 +115,7 @@ class CentralPanelProvider extends PanelProvider
                 // separadas -- antes misturava metrica de SaaS com metrica
                 // comercial numa pagina so'.
                 DashboardSaaS::class,
+                DashboardVisitantes::class,
                 DashboardCrm::class,
                 FunilVendas::class,
                 Kanban::class,
@@ -132,6 +139,10 @@ class CentralPanelProvider extends PanelProvider
                 WonLostTrendChart::class,
                 LeadsBySegmentChart::class,
                 LeadsBySourceChart::class,
+                SiteVisitsStatsOverview::class,
+                EngagementChart::class,
+                TopReferrersChart::class,
+                AcquisitionChannelChart::class,
             ])
             ->databaseNotifications()
             ->databaseNotificationsPolling('8s')
@@ -192,6 +203,10 @@ class CentralPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                // Painéis Filament não passam pelo grupo "web" global
+                // (bootstrap/app.php) -- ver mesmo comentário em
+                // AdminPanelProvider.
+                TrackSiteVisit::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
