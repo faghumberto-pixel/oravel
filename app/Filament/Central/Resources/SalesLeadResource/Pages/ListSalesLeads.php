@@ -36,9 +36,19 @@ class ListSalesLeads extends ListRecords
      * duplicar logica; os demais sao novos, especificos desta listagem
      * (ver docblocks deles). InteractionChannelStats/Chart respondem
      * "quantos e quais leads eu contatei por canal" (pedido 2026-08-10).
+     *
+     * Somem quando algum filtro esta ativo (pedido do usuario 2026-08-10:
+     * "quando clico em um card deve aparecer a lista sem nenhum card ou
+     * grafico") -- os cards sao a porta de entrada pra uma pergunta ("quem
+     * eu contatei por email?"), a resposta e' so' a lista, sem repetir os
+     * mesmos 10 widgets em cima dela.
      */
     protected function getHeaderWidgets(): array
     {
+        if ($this->hasActiveTableFilters()) {
+            return [];
+        }
+
         return [
             SalesLeadListStats::class,
             InteractionChannelStats::class,
@@ -51,6 +61,19 @@ class ListSalesLeads extends ListRecords
             SalesLeadMapWidget::class,
             ProspectingMapWidget::class,
         ];
+    }
+
+    private function hasActiveTableFilters(): bool
+    {
+        foreach ($this->tableFilters ?? [] as $filterData) {
+            foreach ((array) $filterData as $value) {
+                if (filled($value)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public function getHeaderWidgetsColumns(): int|string|array
