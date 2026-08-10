@@ -2,18 +2,45 @@
 
 @config '../../../../tailwind.config.js';
 
-/* ── ETAPA 1 do design system "Convertico" (dark), pedido do usuario 2026-07-28 ──
-   ── revisado 2026-08-04: usuario reportou "tudo cinza, topbar/sidebar/
-   conteudo iguais" -- causa raiz era a escala 'gray' custom (ver
-   CentralPanelProvider) ter 800 e 900 IDENTICOS, entao sidebar/topbar
-   (gray-900 nativo do Filament) e cards internos (gray-800) saiam pintados
-   da mesma cor, apagando a moldura/sombra que este arquivo ja tentava criar.
-   Corrigido lá primeiro (3 tons reais: 950 fundo < 900 sidebar/topbar < 800
-   cards); aqui so ajusta o valor literal do .fi-main pro novo 900 (900 e' o
-   MEIO da hierarquia -- mais escuro que os cards em 800 que ficam dentro
-   dele, mais claro que o fundo 950 atras da sidebar). */
+/* ── Design system "Convertico" (dark), pedido do usuario 2026-07-28 ──
+   ── revisado 2026-08-10: paleta e tipografia agora vem direto dos
+   artefatos/subdominios institucionais (guin-index.html, comp-index.html
+   etc, tokens :root[data-theme="dark"]) -- "cor do sistema da central da
+   mesma cor dos artefatos, tudo da mesma coisa, fonte, fundo etc". Cores
+   (--bg/--surface/--accent) ja viraram a escala 'gray'/'primary' no
+   CentralPanelProvider; aqui entra o que o sistema de cor do Filament nao
+   cobre: as 3 familias de fonte do artefato (serif nos titulos, sans no
+   corpo, mono nos numeros). */
+:root {
+    /* Mesma cadeia de fallback do artefato original (--display/--mono em
+       guin-index.html etc) -- fontes de sistema, sem webfont carregada. */
+    --oravel-display: Charter, 'Iowan Old Style', Georgia, ui-serif, serif;
+    --oravel-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+/* Titulos de pagina/secao ficam na serifada do artefato -- o resto do
+   corpo (labels, texto de tabela, botao) continua na sans nativa do
+   Filament, que ja e' a mesma familia de sistema (-apple-system/Segoe UI/
+   Roboto) usada no --sans do artefato. */
+.fi-header-heading,
+.fi-modal-heading,
+.fi-section-header-heading,
+.fi-ta-heading {
+    font-family: var(--oravel-display);
+}
+
+/* Numero grande de cada stat card usa a mono do artefato (nao a serifada
+   acima) -- alinhamento de digito e leitura de dado rapida. */
+.fi-wi-stats-overview-stat-value {
+    font-family: var(--oravel-mono);
+    font-variant-numeric: tabular-nums;
+}
+
+/* 3 degraus reais de profundidade (950 fundo < 900 sidebar/topbar < 800
+   cards) -- mesma hierarquia de antes, valores agora vindos da escala
+   'gray' do artefato (ver CentralPanelProvider) em vez de slate azulado. */
 .dark .fi-main {
-    background-color: rgb(24 33 48); /* gray-900 customizado (ver CentralPanelProvider) */
+    background-color: rgb(28 24 16); /* gray-900 = --surface-2 do artefato */
     border-radius: 1.25rem;
     box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.45);
     margin: 1.25rem 1rem 1.5rem;
@@ -31,15 +58,16 @@
    (ver vendor/filament/filament/resources/views/components/sidebar/
    item.blade.php) -- quase invisivel no dark mode, contribuia pro "sem
    graca". Aqui vira um destaque translucido de verdade, cor do primary
-   (blue). Empate de especificidade com a regra nativa (mesmo peso,
+   (accent do artefato, ver CentralPanelProvider -- era azul puro ate
+   2026-08-10). Empate de especificidade com a regra nativa (mesmo peso,
    0 classes cada) -- !important garante que nao dependa da ordem de
    import do CSS compilado. */
 .dark .fi-sidebar-item.fi-active .fi-sidebar-item-button {
-    background-color: rgba(59, 130, 246, 0.16) !important;
+    background-color: rgba(132, 150, 174, 0.16) !important; /* primary-500 */
 }
 .dark .fi-sidebar-item.fi-active .fi-sidebar-item-icon,
 .dark .fi-sidebar-item.fi-active .fi-sidebar-item-label {
-    color: rgb(96 165 250) !important; /* blue-400 */
+    color: rgb(181 192 206) !important; /* primary-300 */
 }
 
 /* Feedback visual do drag-and-drop do Kanban Comercial (SortableJS, ver

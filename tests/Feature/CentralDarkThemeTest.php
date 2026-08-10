@@ -10,7 +10,7 @@ class CentralDarkThemeTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_central_panel_forces_dark_mode_with_slate_background(): void
+    public function test_central_panel_forces_dark_mode_with_convertico_background(): void
     {
         $super = User::create([
             'name' => 'Super', 'email' => 'super-'.uniqid().'@oravel.com.br',
@@ -32,10 +32,13 @@ class CentralDarkThemeTest extends TestCase
         // e' forcado -- confirma que o painel realmente abre escuro sempre.
         $this->assertMatchesRegularExpression('/<html[^>]*class="[^"]*\bdark\b/', $html);
 
-        // Cor customizada (slate) injetada via CSS custom properties no
-        // <head> -- confirma que a paleta gray realmente foi trocada, nao
-        // so' o dark mode ligado com a cinza padrao do Filament.
-        $this->assertStringContainsString('15, 23, 42', $html);
-        $this->assertStringContainsString('30, 41, 59', $html);
+        // Cor customizada (paleta "Convertico", marrom-creme dos artefatos
+        // institucionais -- ver CentralPanelProvider) injetada via CSS
+        // custom properties no <head> -- confirma que a paleta gray
+        // realmente foi trocada, nao so' o dark mode ligado com a cinza
+        // padrao do Filament. 23, 20, 15 = gray-950 (--bg do artefato),
+        // 33, 28, 21 = gray-800 (--surface do artefato).
+        $this->assertStringContainsString('23, 20, 15', $html);
+        $this->assertStringContainsString('33, 28, 21', $html);
     }
 }

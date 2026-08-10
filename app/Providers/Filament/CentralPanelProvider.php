@@ -59,31 +59,45 @@ class CentralPanelProvider extends PanelProvider
             ->path('central')
             ->login()
             ->colors([
-                'primary' => Color::Blue,
-                // Grafite azulado fixo (nao preto/branco padrao do
-                // Filament), pedido explicito do usuario pra ter uma
-                // referencia visual clara de "estou no Central, nao no
-                // Admin". Ate 2026-08-04 os tons 800/900 eram IDENTICOS
-                // (30,41,59 duplicado) -- exatamente o motivo do usuario ver
-                // "tudo cinza, topbar/sidebar/conteudo iguais": o Filament
-                // usa 900 pra sidebar/topbar e 800 pra cards internos, sem
-                // diferenca entre eles a hierarquia de profundidade some.
-                // Agora sao 3 degraus reais e distintos: 950 (fundo, mais
-                // escuro) < 900 (sidebar/topbar) < 800 (cards de conteudo,
-                // mais claro = "mais perto do usuario"). Resto da escala
-                // continua no slate autentico, texto/borda previsiveis.
+                // Paleta "Convertico" (design system dos artefatos/subdominios
+                // institucionais -- guin-index.html, comp-index.html etc,
+                // token :root[data-theme="dark"]) -- pedido do usuario
+                // 2026-08-10: "cor do sistema da central da mesma cor dos
+                // artefatos, tudo da mesma coisa". accent = --accent daqueles
+                // artefatos (#a0aec0), nao mais o azul padrao do Filament.
+                'primary' => [
+                    50 => '246, 247, 249',
+                    100 => '234, 237, 241',
+                    200 => '209, 216, 224',
+                    300 => '181, 192, 206',
+                    400 => '157, 171, 190',
+                    500 => '132, 150, 174',
+                    600 => '102, 124, 153',
+                    700 => '81, 99, 123',
+                    800 => '61, 75, 92',
+                    900 => '45, 55, 67',
+                    950 => '31, 37, 46',
+                ],
+                // Substitui a escala slate azulada anterior pela mesma
+                // familia marrom-creme dos artefatos (--bg/--surface/
+                // --surface-2/--line dos tokens dark). 950 (fundo, mais
+                // escuro) < 900 (sidebar/topbar, = --surface-2) < 800
+                // (cards de conteudo, = --surface, mais claro = "mais perto
+                // do usuario") -- mesma hierarquia de 3 degraus de antes,
+                // valores agora vindos direto do artefato em vez de
+                // inventados.
                 'gray' => [
-                    50 => '248, 250, 252',
-                    100 => '241, 245, 249',
-                    200 => '226, 232, 240',
-                    300 => '203, 213, 225',
-                    400 => '148, 163, 184',
-                    500 => '100, 116, 139',
-                    600 => '71, 85, 105',
-                    700 => '51, 65, 85',
-                    800 => '38, 51, 71',
-                    900 => '24, 33, 48',
-                    950 => '15, 23, 42',
+                    50 => '246, 245, 243',
+                    100 => '237, 235, 232',
+                    200 => '222, 218, 211',
+                    300 => '194, 186, 174',
+                    400 => '156, 144, 124',
+                    500 => '122, 111, 92',
+                    600 => '87, 79, 66',
+                    700 => '55, 47, 34',
+                    800 => '33, 28, 21',
+                    900 => '28, 24, 16',
+                    950 => '23, 20, 15',
                 ],
                 // Cores por estágio/segmento do CRM (App\Support\CrmPalette
                 // é a fonte única -- mudar lá já reflete aqui e no Kanban/

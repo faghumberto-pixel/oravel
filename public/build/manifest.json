@@ -4,7 +4,7 @@
     "name": "module.esm"
   },
   "resources/css/app.css": {
-    "file": "assets/app-Bn1oB031.css",
+    "file": "assets/app-CdBt100f.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -13,11 +13,11 @@
     ]
   },
   "resources/css/filament/admin/theme.css": {
-    "file": "assets/theme-C_kIEbBO.css",
+    "file": "assets/theme-g8wm4BD2.css",
     "src": "resources/css/filament/admin/theme.css"
   },
   "resources/css/filament/central/theme.css": {
-    "file": "assets/theme-DmNgmYTK.css",
+    "file": "assets/theme-DI4gtChp.css",
     "src": "resources/css/filament/central/theme.css",
     "isEntry": true,
     "name": "theme",
