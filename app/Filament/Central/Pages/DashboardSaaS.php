@@ -18,6 +18,13 @@ use Filament\Pages\Dashboard as BaseDashboard;
  */
 class DashboardSaaS extends BaseDashboard
 {
+    // Sem isso, herda '/' da classe base e colide com DashboardVisitantes
+    // (tambem na raiz) -- a rota nomeada "dashboard-saa-s" nunca fica
+    // registrada, e o item de menu quebra com RouteNotFoundException ao
+    // montar a navegacao (500 em QUALQUER pagina do painel Central, nao so'
+    // nesta). Mesmo padrao ja usado em DashboardCrm.
+    protected static string $routePath = 'dashboard-saas';
+
     protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
 
     protected static ?string $navigationLabel = 'Dashboard SaaS';

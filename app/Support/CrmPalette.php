@@ -144,6 +144,15 @@ class CrmPalette
                 'dot' => 'bg-amber-500',
                 'hex' => '#d97706',
             ],
+            Client::NICHE_LOCACAO_EQUIPAMENTOS => [
+                'filament' => 'crmTeal',
+                'bg' => 'bg-teal-600',
+                'border' => 'border-teal-600',
+                'text' => 'text-teal-600 dark:text-teal-400',
+                'soft' => 'bg-teal-50 dark:bg-teal-500/25',
+                'dot' => 'bg-teal-500',
+                'hex' => '#0d9488',
+            ],
             default => [
                 'filament' => 'gray',
                 'bg' => 'bg-gray-500',

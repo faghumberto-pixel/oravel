@@ -95,6 +95,7 @@ class CentralPanelProvider extends PanelProvider
                 'crmPink' => Color::Pink,
                 'crmCyan' => Color::Cyan,
                 'crmAmber' => Color::Amber,
+                'crmTeal' => Color::Teal,
             ])
             // Tema escuro fixo (nao alternavel) -- reforca a mesma
             // referencia visual acima.

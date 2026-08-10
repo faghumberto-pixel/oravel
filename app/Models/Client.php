@@ -37,6 +37,8 @@ class Client extends Model
 
     public const NICHE_CONSTRUCAO_CIVIL = 'construcao_civil';
 
+    public const NICHE_LOCACAO_EQUIPAMENTOS = 'locacao_equipamentos';
+
     public const NICHE_OUTRO = 'outro';
 
     // Todos os Traits agora estão corretamente declarados DENTRO do corpo da classe
@@ -171,6 +173,7 @@ class Client extends Model
             self::NICHE_EVENTOS => 'Eventos',
             self::NICHE_INDUSTRIAL_HOSPITALAR => 'Industrial / Hospitalar',
             self::NICHE_CONSTRUCAO_CIVIL => 'Construção Civil',
+            self::NICHE_LOCACAO_EQUIPAMENTOS => 'Locação de Equipamentos',
             self::NICHE_OUTRO => 'Outro',
         ];
     }
