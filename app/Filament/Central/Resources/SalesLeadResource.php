@@ -320,6 +320,19 @@ class SalesLeadResource extends Resource
 
                         return $indicators;
                     }),
+                // Sem isso, os cards de estatistica da listagem ("Com
+                // Contato"/"Sem Contato Direto") nao tem pra onde levar --
+                // pedido do usuario 2026-08-10: card clicavel deve linkar
+                // pro dado real no banco, nao so decorativo.
+                Tables\Filters\TernaryFilter::make('has_contact')
+                    ->label('Tem Contato Direto')
+                    ->placeholder('Todos')
+                    ->trueLabel('Com telefone ou e-mail')
+                    ->falseLabel('Sem telefone e sem e-mail')
+                    ->queries(
+                        true: fn (Builder $query) => $query->where(fn ($q) => $q->whereNotNull('phone')->orWhereNotNull('email')),
+                        false: fn (Builder $query) => $query->whereNull('phone')->whereNull('email'),
+                    ),
             ])
             ->actions([
                 Tables\Actions\Action::make('advance')
