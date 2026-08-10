@@ -296,6 +296,20 @@
 
                 @if($expandedItemId === $item->id)
                     <div class="space-y-3 border-t border-zinc-800 px-4 py-4">
+                        <div>
+                            <label class="mb-1 block text-[11px] font-semibold uppercase text-zinc-500">Resultado da Inspeção</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                @foreach(\App\Models\EquipmentMovementItem::resultLabels() as $value => $resultLabel)
+                                    <button type="button" wire:click="setResult('{{ $value }}')"
+                                            class="min-h-[2.5rem] rounded-xl border text-xs font-bold transition-colors {{ $newResult === $value
+                                                ? ($value === 'nok' ? 'border-red-500 bg-red-500/15 text-red-400' : ($value === 'ok' ? 'border-emerald-500 bg-emerald-500/15 text-emerald-400' : 'border-zinc-500 bg-zinc-500/15 text-zinc-300'))
+                                                : 'border-zinc-700 text-zinc-400' }}">
+                                        {{ $resultLabel }}
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
+
                         @if($this->isHorimeterItem($item))
                             <div>
                                 <label class="mb-1 block text-[11px] font-semibold uppercase text-zinc-500">Horímetro (horas)</label>

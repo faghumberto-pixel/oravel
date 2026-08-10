@@ -94,6 +94,20 @@
 
                 @if($expandedItemId === $item->id)
                     <div class="space-y-3 border-t border-zinc-800 px-4 py-4">
+                        <div>
+                            <label class="mb-1 block text-[11px] font-semibold uppercase text-zinc-500">Resultado da Inspeção</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                @foreach(\App\Models\EquipmentPatioArrivalItem::resultLabels() as $value => $resultLabel)
+                                    <button type="button" wire:click="setResult('{{ $value }}')"
+                                            class="min-h-[2.5rem] rounded-xl border text-xs font-bold transition-colors {{ $newResult === $value
+                                                ? ($value === 'nok' ? 'border-red-500 bg-red-500/15 text-red-400' : ($value === 'ok' ? 'border-emerald-500 bg-emerald-500/15 text-emerald-400' : 'border-zinc-500 bg-zinc-500/15 text-zinc-300'))
+                                                : 'border-zinc-700 text-zinc-400' }}">
+                                        {{ $resultLabel }}
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
+
                         <textarea wire:model="newObservation" rows="3" placeholder="Observação sobre este item..."
                                   class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-emerald-500"></textarea>
 

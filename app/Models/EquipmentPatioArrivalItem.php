@@ -19,6 +19,12 @@ class EquipmentPatioArrivalItem extends Model implements HasMedia
     use HasUuids;
     use InteractsWithMedia;
 
+    public const RESULT_OK = 'ok';
+
+    public const RESULT_NOK = 'nok';
+
+    public const RESULT_NA = 'nao_aplicavel';
+
     protected $fillable = [
         'equipment_patio_arrival_id',
         'tenant_id',
@@ -28,9 +34,22 @@ class EquipmentPatioArrivalItem extends Model implements HasMedia
         'requires_photo',
         'is_checked',
         'value',
+        'result',
         'notes',
         'has_damage',
     ];
+
+    /**
+     * @return array<string, string>
+     */
+    public static function resultLabels(): array
+    {
+        return [
+            self::RESULT_OK => 'OK',
+            self::RESULT_NOK => 'NOK',
+            self::RESULT_NA => 'N/A',
+        ];
+    }
 
     protected $casts = [
         'sort_order' => 'integer',

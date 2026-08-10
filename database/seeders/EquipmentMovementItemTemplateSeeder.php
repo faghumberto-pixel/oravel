@@ -17,6 +17,16 @@ class EquipmentMovementItemTemplateSeeder extends Seeder
                 ['section' => 'Estado do Equipamento', 'label' => 'Nível de óleo do motor', 'requires_photo' => false],
                 ['section' => 'Estado do Equipamento', 'label' => 'Nível de combustível', 'requires_photo' => false],
                 ['section' => 'Estado do Equipamento', 'label' => 'Estado dos pneus/rodízios', 'requires_photo' => false],
+                // Itens especificos de Plataforma de Trabalho Aerea
+                // (NR-18/NR-35) -- aparecem no checklist de qualquer
+                // equipamento (a lista e' unica por tipo de movimentacao,
+                // nao filtrada por categoria de ativo), mas so' fazem
+                // sentido de fato pra PTA; result fica nao_aplicavel/vazio
+                // pros demais.
+                ['section' => 'Segurança (NR-18/NR-35)', 'label' => 'Sensor de inclinação', 'requires_photo' => false],
+                ['section' => 'Segurança (NR-18/NR-35)', 'label' => 'Sistema de parada de emergência', 'requires_photo' => false],
+                ['section' => 'Segurança (NR-18/NR-35)', 'label' => 'Trava de plataforma', 'requires_photo' => false],
+                ['section' => 'Segurança (NR-18/NR-35)', 'label' => 'Cinto de segurança', 'requires_photo' => false],
                 ['section' => 'Documentação e Segurança', 'label' => 'Sinalização e amarração da carga', 'requires_photo' => true],
                 ['section' => 'Documentação e Segurança', 'label' => 'Conferência de documentação de transporte', 'requires_photo' => false],
                 ['section' => 'Documentação e Segurança', 'label' => 'Acessórios e cabos inclusos conferidos', 'requires_photo' => false],
@@ -29,6 +39,10 @@ class EquipmentMovementItemTemplateSeeder extends Seeder
                 ['section' => 'Estado do Equipamento', 'label' => 'Nível de combustível', 'requires_photo' => false],
                 ['section' => 'Estado do Equipamento', 'label' => 'Estado dos pneus/rodízios', 'requires_photo' => false],
                 ['section' => 'Estado do Equipamento', 'label' => 'Verificação de avarias/danos', 'requires_photo' => true],
+                ['section' => 'Segurança (NR-18/NR-35)', 'label' => 'Sensor de inclinação', 'requires_photo' => false],
+                ['section' => 'Segurança (NR-18/NR-35)', 'label' => 'Sistema de parada de emergência', 'requires_photo' => false],
+                ['section' => 'Segurança (NR-18/NR-35)', 'label' => 'Trava de plataforma', 'requires_photo' => false],
+                ['section' => 'Segurança (NR-18/NR-35)', 'label' => 'Cinto de segurança', 'requires_photo' => false],
                 ['section' => 'Documentação', 'label' => 'Conferência de acessórios e cabos devolvidos', 'requires_photo' => false],
                 ['section' => 'Documentação', 'label' => 'Conferência de documentação de devolução', 'requires_photo' => false],
                 ['section' => 'Registro', 'label' => 'Horímetro de retorno', 'requires_photo' => false],

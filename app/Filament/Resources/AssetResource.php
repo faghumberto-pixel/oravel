@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Domain\Fleet\Models\ForkliftSpecification;
+use App\Domain\Fleet\Models\PlatformSpecification;
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\AssetResource\Pages;
 use App\Models\Asset;
@@ -495,14 +496,28 @@ class AssetResource extends Resource
                             Forms\Components\Section::make('Especificações Técnicas')
                                 ->relationship('forkliftSpecification')
                                 ->schema([
+                                    Forms\Components\Select::make('forklift_type')
+                                        ->label('Subtipo / Classe')
+                                        ->options(ForkliftSpecification::forkliftTypeLabels())
+                                        ->native(false)->live()
+                                        ->columnSpanFull(),
+
                                     Forms\Components\Grid::make(3)->schema([
                                         Forms\Components\TextInput::make('load_capacity_kg')
                                             ->label('Capacidade de Carga')
-                                            ->numeric()->suffix('kg'),
+                                            ->numeric()->minValue(0)->suffix('kg'),
 
+                                        // Transpaleteira eletrica/patolada nao tem
+                                        // torre/mastro no mesmo sentido de uma
+                                        // Classe II -- ver ForkliftSpecification::
+                                        // hasMastLikeElevation().
                                         Forms\Components\TextInput::make('lift_height_m')
                                             ->label('Altura Máxima de Elevação')
-                                            ->numeric()->suffix('m'),
+                                            ->numeric()->minValue(0)->suffix('m')
+                                            ->visible(fn (Get $get) => ! in_array($get('forklift_type'), [
+                                                ForkliftSpecification::TYPE_TRANSPALETEIRA_ELETRICA,
+                                                ForkliftSpecification::TYPE_TRANSPALETEIRA_PATOLADA,
+                                            ], true)),
 
                                         Forms\Components\Select::make('energy_type')
                                             ->label('Tipo de Propulsão')
@@ -512,7 +527,11 @@ class AssetResource extends Resource
                                         Forms\Components\Select::make('mast_type')
                                             ->label('Tipo de Torre / Elevação')
                                             ->options(ForkliftSpecification::mastTypeLabels())
-                                            ->native(false),
+                                            ->native(false)
+                                            ->visible(fn (Get $get) => ! in_array($get('forklift_type'), [
+                                                ForkliftSpecification::TYPE_TRANSPALETEIRA_ELETRICA,
+                                                ForkliftSpecification::TYPE_TRANSPALETEIRA_PATOLADA,
+                                            ], true)),
 
                                         Forms\Components\Select::make('tire_type')
                                             ->label('Tipo de Pneu')
@@ -544,6 +563,56 @@ class AssetResource extends Resource
                                         Forms\Components\TextInput::make('battery_cycles')
                                             ->label('Ciclos de Carga')
                                             ->numeric(),
+                                    ]),
+                                ]),
+                        ]),
+
+                    // Aba condicional -- visivel pra qualquer categoria de
+                    // plataforma elevatoria ja usada no seeder (Tesoura,
+                    // Articulada). in_array() de proposito, nao string
+                    // unica -- padrao a seguir daqui pra frente em vez de
+                    // repetir o hardcode rigido que a aba Empilhadeira
+                    // tinha antes (asset_category === 'Empilhadeira').
+                    Tabs\Tab::make('Plataforma Elevatória')
+                        ->icon('heroicon-m-arrows-up-down')
+                        ->visible(fn (Get $get) => in_array($get('asset_category'), [
+                            'Plataforma Elevatória Articulada',
+                            'Plataforma Elevatória Tesoura',
+                        ], true))
+                        ->schema([
+                            Forms\Components\Section::make('Especificações Técnicas')
+                                ->relationship('platformSpecification')
+                                ->schema([
+                                    Forms\Components\Grid::make(3)->schema([
+                                        Forms\Components\Select::make('platform_type')
+                                            ->label('Tipo de Plataforma')
+                                            ->options(PlatformSpecification::platformTypeLabels())
+                                            ->native(false),
+
+                                        Forms\Components\Select::make('energy_type')
+                                            ->label('Tipo de Propulsão')
+                                            ->options(PlatformSpecification::energyTypeLabels())
+                                            ->native(false),
+
+                                        Forms\Components\TextInput::make('platform_capacity_kg')
+                                            ->label('Capacidade de Carga na Plataforma')
+                                            ->numeric()->minValue(0)->suffix('kg'),
+
+                                        Forms\Components\TextInput::make('working_height_m')
+                                            ->label('Altura de Trabalho')
+                                            ->numeric()->minValue(0)->suffix('m'),
+
+                                        Forms\Components\TextInput::make('platform_height_m')
+                                            ->label('Altura da Plataforma (Piso)')
+                                            ->numeric()->minValue(0)->suffix('m'),
+
+                                        Forms\Components\TextInput::make('horizontal_outreach_m')
+                                            ->label('Alcance Horizontal')
+                                            ->numeric()->minValue(0)->suffix('m'),
+
+                                        Forms\Components\TextInput::make('operational_weight_kg')
+                                            ->label('Peso Operacional')
+                                            ->numeric()->minValue(0)->suffix('kg'),
                                     ]),
                                 ]),
                         ]),

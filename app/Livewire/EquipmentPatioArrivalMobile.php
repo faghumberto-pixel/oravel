@@ -41,6 +41,8 @@ class EquipmentPatioArrivalMobile extends Component
 
     public bool $newHasDamage = false;
 
+    public ?string $newResult = null;
+
     public $newPhoto = null;
 
     public ?float $newPhotoLat = null;
@@ -119,7 +121,13 @@ class EquipmentPatioArrivalMobile extends Component
         $this->expandedItemId = $itemId;
         $this->newObservation = (string) $item->notes;
         $this->newHasDamage = (bool) $item->has_damage;
+        $this->newResult = $item->result;
         $this->resetPhotoForm();
+    }
+
+    public function setResult(string $result): void
+    {
+        $this->newResult = $this->newResult === $result ? null : $result;
     }
 
     public function collapse(): void
@@ -127,6 +135,7 @@ class EquipmentPatioArrivalMobile extends Component
         $this->expandedItemId = null;
         $this->newObservation = '';
         $this->newHasDamage = false;
+        $this->newResult = null;
         $this->resetPhotoForm();
     }
 
@@ -142,11 +151,13 @@ class EquipmentPatioArrivalMobile extends Component
             'newPhoto' => 'nullable|image|max:5120',
             'newPhotoLat' => 'nullable|numeric|between:-90,90',
             'newPhotoLng' => 'nullable|numeric|between:-180,180',
+            'newResult' => 'nullable|in:'.implode(',', array_keys(EquipmentPatioArrivalItem::resultLabels())),
         ]);
 
         $item = $this->patioArrival->items()->whereKey($this->expandedItemId)->firstOrFail();
         $item->notes = $this->newObservation;
         $item->has_damage = $this->newHasDamage;
+        $item->result = $this->newResult;
         $item->save();
 
         if ($this->newPhoto) {

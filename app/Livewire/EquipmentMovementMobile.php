@@ -66,6 +66,8 @@ class EquipmentMovementMobile extends Component
      */
     private const HORIMETER_ITEM_LABELS = ['Horímetro de saída', 'Horímetro de retorno'];
 
+    public ?string $newResult = null;
+
     public function mount(MaintenanceOrder $maintenanceOrder, string $type): void
     {
         Gate::authorize('view', $maintenanceOrder);
@@ -276,6 +278,7 @@ class EquipmentMovementMobile extends Component
         $this->expandedItemId = $itemId;
         $this->newObservation = (string) $item->notes;
         $this->newHorimeterValue = $item->value !== null ? (float) $item->value : null;
+        $this->newResult = $item->result;
         $this->resetPhotoForm();
     }
 
@@ -284,11 +287,17 @@ class EquipmentMovementMobile extends Component
         return in_array($item->label, self::HORIMETER_ITEM_LABELS, true);
     }
 
+    public function setResult(string $result): void
+    {
+        $this->newResult = $this->newResult === $result ? null : $result;
+    }
+
     public function collapse(): void
     {
         $this->expandedItemId = null;
         $this->newObservation = '';
         $this->newHorimeterValue = null;
+        $this->newResult = null;
         $this->resetPhotoForm();
     }
 
@@ -307,9 +316,11 @@ class EquipmentMovementMobile extends Component
             'newPhotoLat' => 'nullable|numeric|between:-90,90',
             'newPhotoLng' => 'nullable|numeric|between:-180,180',
             'newHorimeterValue' => $isHorimeterItem ? 'required|numeric|min:0' : 'nullable|numeric|min:0',
+            'newResult' => 'nullable|in:'.implode(',', array_keys(EquipmentMovementItem::resultLabels())),
         ]);
 
         $item->notes = $this->newObservation;
+        $item->result = $this->newResult;
 
         if ($isHorimeterItem) {
             $item->value = (string) $this->newHorimeterValue;
