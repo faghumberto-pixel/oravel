@@ -4,23 +4,23 @@ namespace App\Filament\Central\Widgets;
 
 use App\Models\Tenant;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Carbon;
 
 class RevenueChart extends ChartWidget
 {
     protected static ?string $heading = 'Faturamento Real Acumulado (MRR)';
+
     protected static ?string $maxHeight = '300px';
 
     protected function getData(): array
     {
         $data = [];
         $labels = [];
-        
-        // Pegamos o mês atual dinamicamente (Maio = 5)
-        $mesAtual = now()->month;
-        $nomesMeses = [1 => 'Jan', 2 => 'Fev', 3 => 'Mar', 4 => 'Abr', 5 => 'Mai', 6 => 'Jun', 7 => 'Jul'];
 
-        // O loop só vai até o mês de hoje. Junho não aparecerá.
+        // Pegamos o mês atual dinamicamente
+        $mesAtual = now()->month;
+        $nomesMeses = [1 => 'Jan', 2 => 'Fev', 3 => 'Mar', 4 => 'Abr', 5 => 'Mai', 6 => 'Jun', 7 => 'Jul', 8 => 'Ago', 9 => 'Set', 10 => 'Out', 11 => 'Nov', 12 => 'Dez'];
+
+        // O loop só vai até o mês de hoje.
         foreach (range(1, $mesAtual) as $month) {
             $labels[] = $nomesMeses[$month];
 
@@ -28,7 +28,7 @@ class RevenueChart extends ChartWidget
             $somaReal = Tenant::where('created_at', '<=', now()->month($month)->endOfMonth())
                 ->whereYear('created_at', now()->year)
                 ->sum('mrr_value');
-            
+
             $data[] = $somaReal;
         }
 
