@@ -3,6 +3,8 @@
 namespace App\Filament\Central\Resources\SalesLeadResource\Pages;
 
 use App\Filament\Central\Resources\SalesLeadResource;
+use App\Filament\Central\Resources\SalesLeadResource\Widgets\InteractionChannelChart;
+use App\Filament\Central\Resources\SalesLeadResource\Widgets\InteractionChannelStats;
 use App\Filament\Central\Resources\SalesLeadResource\Widgets\LeadsByStageChart;
 use App\Filament\Central\Resources\SalesLeadResource\Widgets\SalesLeadListStats;
 use App\Filament\Central\Widgets\LeadsBySegmentChart;
@@ -28,16 +30,19 @@ class ListSalesLeads extends ListRecords
     }
 
     /**
-     * 9 widgets acima do grid (pedido do usuario 2026-08-10: cards e
+     * 10 widgets acima do grid (pedido do usuario 2026-08-10: cards e
      * graficos como o padrao do app -- ver ListAssets -- no minimo 8).
      * Os 2 mapas ja existem no Dashboard CRM, reaproveitados aqui pra nao
-     * duplicar logica; SalesLeadListStats/LeadsByStageChart sao novos,
-     * especificos desta listagem (ver docblocks deles).
+     * duplicar logica; os demais sao novos, especificos desta listagem
+     * (ver docblocks deles). InteractionChannelStats/Chart respondem
+     * "quantos e quais leads eu contatei por canal" (pedido 2026-08-10).
      */
     protected function getHeaderWidgets(): array
     {
         return [
             SalesLeadListStats::class,
+            InteractionChannelStats::class,
+            InteractionChannelChart::class,
             LeadsByStageChart::class,
             LeadsBySegmentChart::class,
             LeadsBySourceChart::class,

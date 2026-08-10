@@ -9,6 +9,8 @@ use App\Filament\Central\Pages\FunilVendas;
 use App\Filament\Central\Pages\Kanban;
 use App\Filament\Central\Pages\Programacao;
 use App\Filament\Central\Resources\PlanResource;
+use App\Filament\Central\Resources\SalesLeadResource\Widgets\InteractionChannelChart;
+use App\Filament\Central\Resources\SalesLeadResource\Widgets\InteractionChannelStats;
 use App\Filament\Central\Resources\SalesLeadResource\Widgets\LeadsByStageChart;
 use App\Filament\Central\Resources\SalesLeadResource\Widgets\SalesLeadListStats;
 use App\Filament\Central\Widgets\AcquisitionChannelChart;
@@ -137,6 +139,8 @@ class CentralPanelProvider extends PanelProvider
                 ChurnChart::class,
                 SalesCrmStatsWidget::class,
                 SalesLeadListStats::class,
+                InteractionChannelStats::class,
+                InteractionChannelChart::class,
                 SalesLeadMapWidget::class,
                 ProspectingMapWidget::class,
                 LeadsCreatedTrendChart::class,

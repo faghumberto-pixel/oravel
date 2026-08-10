@@ -8,6 +8,7 @@ use App\Filament\Central\Resources\SalesLeadResource\RelationManagers\Interactio
 use App\Models\Client;
 use App\Models\Plan;
 use App\Models\SalesLead;
+use App\Models\SalesLeadInteraction;
 use App\Models\User;
 use App\Services\CepGeocodingService;
 use App\Support\CrmPalette;
@@ -333,6 +334,19 @@ class SalesLeadResource extends Resource
                         true: fn (Builder $query) => $query->where(fn ($q) => $q->whereNotNull('phone')->orWhereNotNull('email')),
                         false: fn (Builder $query) => $query->whereNull('phone')->whereNull('email'),
                     ),
+                // Filtro por canal de interacao ja registrada (Follow Up) --
+                // viabiliza o card "quantos/quais leads eu liguei/mandei
+                // email/etc" (pedido do usuario 2026-08-10) linkar pra
+                // listagem real, nao so' mostrar o numero.
+                Tables\Filters\SelectFilter::make('interaction_channel')
+                    ->label('Canal de Contato Já Feito')
+                    ->options(SalesLeadInteraction::channelLabels())
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query->when(
+                            $data['value'] ?? null,
+                            fn (Builder $q, string $channel) => $q->whereHas('interactions', fn ($iq) => $iq->where('channel', $channel)),
+                        );
+                    }),
             ])
             ->actions([
                 Tables\Actions\Action::make('advance')

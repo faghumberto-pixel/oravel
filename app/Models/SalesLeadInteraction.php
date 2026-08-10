@@ -22,7 +22,11 @@ class SalesLeadInteraction extends Model
 
     public const CHANNEL_WHATSAPP = 'whatsapp';
 
-    public const CHANNEL_PRESENCIAL = 'presencial';
+    public const CHANNEL_REUNIAO_PRESENCIAL = 'reuniao_presencial';
+
+    public const CHANNEL_REUNIAO_ONLINE = 'reuniao_online';
+
+    public const CHANNEL_VISITA = 'visita';
 
     public const CHANNEL_OUTRO = 'outro';
 
@@ -45,7 +49,9 @@ class SalesLeadInteraction extends Model
             self::CHANNEL_TELEFONE => 'Telefone',
             self::CHANNEL_EMAIL => 'E-mail',
             self::CHANNEL_WHATSAPP => 'WhatsApp',
-            self::CHANNEL_PRESENCIAL => 'Presencial',
+            self::CHANNEL_REUNIAO_PRESENCIAL => 'Reunião Presencial',
+            self::CHANNEL_REUNIAO_ONLINE => 'Reunião Online',
+            self::CHANNEL_VISITA => 'Visita',
             self::CHANNEL_OUTRO => 'Outro',
         ];
     }
