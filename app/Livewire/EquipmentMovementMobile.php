@@ -9,6 +9,7 @@ use App\Models\EquipmentMovementLocation;
 use App\Models\FleetDriver;
 use App\Models\FleetVehicle;
 use App\Models\FreightRecord;
+use App\Models\HorimeterReading;
 use App\Models\MaintenanceOrder;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Gate;
@@ -52,6 +53,18 @@ class EquipmentMovementMobile extends Component
     public bool $loadBankTested = false;
 
     public string $loadBankNotes = '';
+
+    public ?float $newHorimeterValue = null;
+
+    /**
+     * Labels exatos definidos em EquipmentMovementItemTemplateSeeder --
+     * usados pra saber quando o item expandido e' um dos dois pontos de
+     * captura de horimetro do checklist (entrada/saida), pra exibir o
+     * input numerico e, ao salvar, gerar um HorimeterReading real (ver
+     * saveItemDetails()). Antes disso o valor so' existia como texto livre
+     * em EquipmentMovementItem.value, nunca virava leitura rastreavel.
+     */
+    private const HORIMETER_ITEM_LABELS = ['Horímetro de saída', 'Horímetro de retorno'];
 
     public function mount(MaintenanceOrder $maintenanceOrder, string $type): void
     {
@@ -262,13 +275,20 @@ class EquipmentMovementMobile extends Component
 
         $this->expandedItemId = $itemId;
         $this->newObservation = (string) $item->notes;
+        $this->newHorimeterValue = $item->value !== null ? (float) $item->value : null;
         $this->resetPhotoForm();
+    }
+
+    public function isHorimeterItem(EquipmentMovementItem $item): bool
+    {
+        return in_array($item->label, self::HORIMETER_ITEM_LABELS, true);
     }
 
     public function collapse(): void
     {
         $this->expandedItemId = null;
         $this->newObservation = '';
+        $this->newHorimeterValue = null;
         $this->resetPhotoForm();
     }
 
@@ -278,16 +298,42 @@ class EquipmentMovementMobile extends Component
             return;
         }
 
+        $item = $this->equipmentMovement->items()->whereKey($this->expandedItemId)->firstOrFail();
+        $isHorimeterItem = $this->isHorimeterItem($item);
+
         $this->validate([
             'newObservation' => 'nullable|string|max:2000',
             'newPhoto' => 'nullable|image|max:5120',
             'newPhotoLat' => 'nullable|numeric|between:-90,90',
             'newPhotoLng' => 'nullable|numeric|between:-180,180',
+            'newHorimeterValue' => $isHorimeterItem ? 'required|numeric|min:0' : 'nullable|numeric|min:0',
         ]);
 
-        $item = $this->equipmentMovement->items()->whereKey($this->expandedItemId)->firstOrFail();
         $item->notes = $this->newObservation;
+
+        if ($isHorimeterItem) {
+            $item->value = (string) $this->newHorimeterValue;
+        }
+
         $item->save();
+
+        if ($isHorimeterItem && $this->equipmentMovement->asset_id) {
+            // updateOrCreate por item (nao create puro) -- reabrir e corrigir
+            // o valor do mesmo item de checklist atualiza a leitura existente
+            // em vez de duplicar.
+            HorimeterReading::updateOrCreate(
+                ['equipment_movement_item_id' => $item->id],
+                [
+                    'tenant_id' => $this->equipmentMovement->tenant_id,
+                    'asset_id' => $this->equipmentMovement->asset_id,
+                    'reading' => $this->newHorimeterValue,
+                    'recorded_at' => now(),
+                    'recorded_by' => auth()->id(),
+                    'source' => HorimeterReading::SOURCE_CHECKLIST,
+                    'notes' => "Registrado via checklist de {$this->equipmentMovement->type} — {$item->label}",
+                ]
+            );
+        }
 
         if ($this->newPhoto) {
             $media = $item->addMedia($this->newPhoto->getRealPath())

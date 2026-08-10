@@ -296,7 +296,16 @@
 
                 @if($expandedItemId === $item->id)
                     <div class="space-y-3 border-t border-zinc-800 px-4 py-4">
-                        @if($item->value !== null)
+                        @if($this->isHorimeterItem($item))
+                            <div>
+                                <label class="mb-1 block text-[11px] font-semibold uppercase text-zinc-500">Horímetro (horas)</label>
+                                <input type="number" step="0.1" min="0" wire:model="newHorimeterValue" placeholder="Ex: 1234.5"
+                                       class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-emerald-500">
+                                @error('newHorimeterValue')
+                                    <p class="mt-1 text-[11px] font-semibold text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        @elseif($item->value !== null)
                             <p class="text-[11px] text-zinc-500">Valor registrado: <span class="text-zinc-300">{{ $item->value }}</span></p>
                         @endif
 

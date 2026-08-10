@@ -42,6 +42,7 @@ class HorimeterReading extends Model
     protected $fillable = [
         'tenant_id',
         'asset_id',
+        'equipment_movement_item_id',
         'reading',
         'recorded_at',
         'recorded_by',
@@ -80,6 +81,11 @@ class HorimeterReading extends Model
     public function recordedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'recorded_by');
+    }
+
+    public function equipmentMovementItem(): BelongsTo
+    {
+        return $this->belongsTo(EquipmentMovementItem::class);
     }
 
     public function scopeLatestForAsset(Builder $query, string $assetId): Builder
