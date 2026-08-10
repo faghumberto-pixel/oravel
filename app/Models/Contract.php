@@ -54,6 +54,7 @@ class Contract extends Model
         'tenant_id',
         'client_id',
         'asset_id',
+        'solicitacao_locacao_id',
         'contract_number',
         'start_date',
         'end_date',
@@ -166,6 +167,16 @@ class Contract extends Model
     public function asset(): BelongsTo
     {
         return $this->belongsTo(Asset::class, 'asset_id');
+    }
+
+    /**
+     * Combo comercial de origem (SolicitacaoLocacao::assets(), N:N) --
+     * preenchido quando este contrato faz parte de um "kit" fechado junto
+     * (ex: gerador + cabo + QTA, cada um com seu proprio Contract).
+     */
+    public function solicitacaoLocacao(): BelongsTo
+    {
+        return $this->belongsTo(SolicitacaoLocacao::class);
     }
 
     public function internalUnit(): BelongsTo

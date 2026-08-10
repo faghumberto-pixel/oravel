@@ -54,6 +54,12 @@ class EquipmentMovementMobile extends Component
 
     public string $loadBankNotes = '';
 
+    public ?int $loadBankPercentage = null;
+
+    public ?int $loadBankDurationMinutes = null;
+
+    public ?float $loadBankTemperature = null;
+
     public ?float $newHorimeterValue = null;
 
     /**
@@ -123,6 +129,11 @@ class EquipmentMovementMobile extends Component
             : null;
         $this->loadBankTested = (bool) $this->equipmentMovement->load_bank_tested;
         $this->loadBankNotes = (string) $this->equipmentMovement->load_bank_notes;
+        $this->loadBankPercentage = $this->equipmentMovement->load_bank_percentage;
+        $this->loadBankDurationMinutes = $this->equipmentMovement->load_bank_duration_minutes;
+        $this->loadBankTemperature = $this->equipmentMovement->load_bank_temperature_c !== null
+            ? (float) $this->equipmentMovement->load_bank_temperature_c
+            : null;
     }
 
     /**
@@ -139,11 +150,17 @@ class EquipmentMovementMobile extends Component
         $this->validate([
             'loadBankTested' => 'boolean',
             'loadBankNotes' => 'nullable|string|max:2000',
+            'loadBankPercentage' => 'nullable|integer|min:0|max:100',
+            'loadBankDurationMinutes' => 'nullable|integer|min:0',
+            'loadBankTemperature' => 'nullable|numeric',
         ]);
 
         $this->equipmentMovement->update([
             'load_bank_tested' => $this->loadBankTested,
             'load_bank_notes' => $this->loadBankNotes ?: null,
+            'load_bank_percentage' => $this->loadBankPercentage,
+            'load_bank_duration_minutes' => $this->loadBankDurationMinutes,
+            'load_bank_temperature_c' => $this->loadBankTemperature,
         ]);
     }
 

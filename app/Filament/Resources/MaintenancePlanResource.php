@@ -58,12 +58,17 @@ class MaintenancePlanResource extends Resource
                 Forms\Components\TextInput::make('interval_hours')
                     ->label('Intervalo (Horas)')
                     ->numeric()
-                    ->requiredWithout('interval_days')
-                    ->helperText('Preencha horas, dias, ou os dois -- vence pelo que chegar primeiro.'),
+                    ->requiredWithoutAll(['interval_days', 'interval_battery_cycles'])
+                    ->helperText('Preencha ao menos um dos três intervalos -- vence pelo que chegar primeiro.'),
                 Forms\Components\TextInput::make('interval_days')
                     ->label('Intervalo (Dias)')
                     ->numeric()
-                    ->requiredWithout('interval_hours'),
+                    ->requiredWithoutAll(['interval_hours', 'interval_battery_cycles']),
+                Forms\Components\TextInput::make('interval_battery_cycles')
+                    ->label('Intervalo (Ciclos de Bateria)')
+                    ->numeric()
+                    ->requiredWithoutAll(['interval_hours', 'interval_days'])
+                    ->helperText('Relevante pra equipamentos elétricos (empilhadeira, PTA).'),
                 Forms\Components\TextInput::make('notes')
                     ->label('Observação (Ex: Obrigatório NR-13)'),
                 Forms\Components\Toggle::make('is_critical')
@@ -91,6 +96,7 @@ class MaintenancePlanResource extends Resource
             Tables\Columns\IconColumn::make('is_critical')->boolean()->label('Crítico')->trueColor('danger'),
             Tables\Columns\TextColumn::make('interval_hours')->label('Intervalo (h)')->placeholder('—'),
             Tables\Columns\TextColumn::make('interval_days')->label('Intervalo (dias)')->placeholder('—'),
+            Tables\Columns\TextColumn::make('interval_battery_cycles')->label('Intervalo (ciclos)')->placeholder('—')->toggleable(isToggledHiddenByDefault: true),
             Tables\Columns\TextColumn::make('source')
                 ->label('Origem')
                 ->badge()

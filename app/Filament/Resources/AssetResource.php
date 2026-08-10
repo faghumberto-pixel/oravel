@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Domain\Fleet\Models\ForkliftSpecification;
+use App\Domain\Fleet\Models\GeneratorSpecification;
 use App\Domain\Fleet\Models\PlatformSpecification;
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\AssetResource\Pages;
@@ -613,6 +614,38 @@ class AssetResource extends Resource
                                         Forms\Components\TextInput::make('operational_weight_kg')
                                             ->label('Peso Operacional')
                                             ->numeric()->minValue(0)->suffix('kg'),
+                                    ]),
+                                ]),
+                        ]),
+
+                    // Aba condicional -- visivel pra categoria "Gerador"
+                    // (nome usado no seeder de demonstracao
+                    // DemoGeradoresRmcSeeder).
+                    Tabs\Tab::make('Gerador')
+                        ->icon('heroicon-m-bolt')
+                        ->visible(fn (Get $get) => $get('asset_category') === 'Gerador')
+                        ->schema([
+                            Forms\Components\Section::make('Especificações Técnicas')
+                                ->relationship('generatorSpecification')
+                                ->schema([
+                                    Forms\Components\Grid::make(3)->schema([
+                                        Forms\Components\Select::make('voltage_type')
+                                            ->label('Tipo de Tensão')
+                                            ->options(GeneratorSpecification::voltageTypeLabels())
+                                            ->native(false),
+
+                                        Forms\Components\TextInput::make('voltage')
+                                            ->label('Voltagem')
+                                            ->placeholder('Ex: 220V/380V'),
+
+                                        Forms\Components\Select::make('starter_type')
+                                            ->label('Tipo de Partida')
+                                            ->options(GeneratorSpecification::starterTypeLabels())
+                                            ->native(false),
+
+                                        Forms\Components\TextInput::make('fuel_tank_capacity_l')
+                                            ->label('Capacidade do Tanque')
+                                            ->numeric()->minValue(0)->suffix('L'),
                                     ]),
                                 ]),
                         ]),

@@ -34,6 +34,20 @@ class FreightCarrierResource extends Resource
             Forms\Components\TextInput::make('contato_telefone')
                 ->label('Telefone')
                 ->tel(),
+
+            Forms\Components\CheckboxList::make('vehicle_types')
+                ->label('Tipos de Veículo Disponíveis')
+                ->options(FreightCarrier::vehicleTypeLabels())
+                ->columns(3)
+                ->columnSpanFull(),
+
+            Forms\Components\Grid::make(2)->schema([
+                Forms\Components\TextInput::make('insurance_policy_number')
+                    ->label('Número da Apólice de Seguro'),
+                Forms\Components\TextInput::make('insurance_coverage_value')
+                    ->label('Valor de Cobertura do Seguro')
+                    ->numeric()->minValue(0)->prefix('R$'),
+            ]),
         ]);
     }
 
@@ -45,6 +59,12 @@ class FreightCarrierResource extends Resource
                 Tables\Columns\TextColumn::make('documento')->label('CNPJ/CPF'),
                 Tables\Columns\TextColumn::make('contato_nome')->label('Contato'),
                 Tables\Columns\TextColumn::make('contato_telefone')->label('Telefone'),
+                Tables\Columns\TextColumn::make('vehicle_types')
+                    ->label('Veículos')
+                    ->formatStateUsing(fn (?array $state) => $state
+                        ? collect($state)->map(fn ($v) => FreightCarrier::vehicleTypeLabels()[$v] ?? $v)->implode(', ')
+                        : '—')
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('freight_records_count')
                     ->label('Fretes Realizados')
                     ->counts('freightRecords'),

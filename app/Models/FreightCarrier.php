@@ -22,13 +22,45 @@ class FreightCarrier extends Model
 
     protected static ?string $saasModuleLabel = 'Transportadoras';
 
+    public const VEHICLE_PRANCHA = 'prancha';
+
+    public const VEHICLE_MUNCK = 'munck';
+
+    public const VEHICLE_GUINCHO = 'guincho';
+
+    public const VEHICLE_CARRETA = 'carreta';
+
+    public const VEHICLE_OUTRO = 'outro';
+
     protected $fillable = [
         'tenant_id',
         'nome',
         'documento',
         'contato_nome',
         'contato_telefone',
+        'vehicle_types',
+        'insurance_policy_number',
+        'insurance_coverage_value',
     ];
+
+    protected $casts = [
+        'vehicle_types' => 'array',
+        'insurance_coverage_value' => 'decimal:2',
+    ];
+
+    /**
+     * @return array<string, string>
+     */
+    public static function vehicleTypeLabels(): array
+    {
+        return [
+            self::VEHICLE_PRANCHA => 'Prancha',
+            self::VEHICLE_MUNCK => 'Munck',
+            self::VEHICLE_GUINCHO => 'Guincho',
+            self::VEHICLE_CARRETA => 'Carreta',
+            self::VEHICLE_OUTRO => 'Outro',
+        ];
+    }
 
     public function freightRecords(): HasMany
     {

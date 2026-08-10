@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Domain\Fleet\Models\ForkliftSpecification;
+use App\Domain\Fleet\Models\GeneratorSpecification;
 use App\Domain\Fleet\Models\PlatformSpecification;
 use App\Models\Concerns\HasSaaSMetadata;
 use App\Models\Traits\BelongsToTenant;
@@ -114,6 +115,11 @@ class Asset extends Model
     public function platformSpecification(): HasOne
     {
         return $this->hasOne(PlatformSpecification::class);
+    }
+
+    public function generatorSpecification(): HasOne
+    {
+        return $this->hasOne(GeneratorSpecification::class);
     }
 
     /**

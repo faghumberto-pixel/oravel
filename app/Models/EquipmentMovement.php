@@ -73,6 +73,9 @@ class EquipmentMovement extends Model implements HasMedia
         'client_signature',
         'load_bank_tested',
         'load_bank_notes',
+        'load_bank_percentage',
+        'load_bank_duration_minutes',
+        'load_bank_temperature_c',
     ];
 
     protected $casts = [
@@ -87,6 +90,7 @@ class EquipmentMovement extends Model implements HasMedia
         'km_inicial' => 'decimal:2',
         'km_final' => 'decimal:2',
         'load_bank_tested' => 'boolean',
+        'load_bank_temperature_c' => 'decimal:2',
     ];
 
     protected static function booted(): void

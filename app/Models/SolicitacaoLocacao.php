@@ -219,6 +219,17 @@ class SolicitacaoLocacao extends Model
     }
 
     /**
+     * Todos os Contract gerados a partir deste combo comercial (ex: um
+     * contrato pro gerador, outro pro cabo, outro pra QTA -- cada
+     * acessorio e' um Asset/Contract proprio, agrupados aqui pela mesma
+     * Solicitacao de origem via Contract.solicitacao_locacao_id).
+     */
+    public function siblingContracts(): HasMany
+    {
+        return $this->hasMany(Contract::class, 'solicitacao_locacao_id');
+    }
+
+    /**
      * Todo o combo esta pronto pra embarque simultaneo? (todos os ativos
      * vinculados estao com status Disponivel agora).
      */

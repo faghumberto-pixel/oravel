@@ -40,6 +40,8 @@ class FreightRecord extends Model
         'horas_motorista',
         'custo_motorista',
         'data',
+        'vehicle_type_used',
+        'insurance_confirmed',
     ];
 
     protected $casts = [
@@ -48,6 +50,7 @@ class FreightRecord extends Model
         'horas_motorista' => 'decimal:2',
         'custo_motorista' => 'decimal:2',
         'data' => 'date',
+        'insurance_confirmed' => 'boolean',
     ];
 
     public function equipmentMovement(): BelongsTo

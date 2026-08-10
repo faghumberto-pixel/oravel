@@ -88,17 +88,21 @@ class MaintenancePlan extends Model
      * (linha) e compartilhado por varios Ativos do grupo, cada um com seu
      * proprio historico de quando foi executado.
      *
-     * interval_days (novo, opcional) e' avaliado em paralelo ao
-     * interval_hours -- vencido em QUALQUER uma das duas dimensoes ja
-     * preenchidas conta como vencido (ex: "troca a cada 250h OU 6 meses,
-     * o que vier primeiro").
+     * interval_days e interval_battery_cycles (opcionais) sao avaliados em
+     * paralelo ao interval_hours -- vencido em QUALQUER uma das dimensoes
+     * ja preenchidas conta como vencido (ex: "troca a cada 250h OU 6
+     * meses, o que vier primeiro"). interval_battery_cycles usa
+     * Asset.battery_cycles_atual (alimentado por BatteryCycleReading,
+     * mesmo padrao de horimetro_atual/HorimeterReading) -- relevante pra
+     * PTA/empilhadeira eletrica.
      *
-     * @return array{last_service_hours: float, due_at_hours: float, overdue_hours: float, is_overdue: bool, due_at_date: ?string, overdue_days: int}
+     * @return array{last_service_hours: float, due_at_hours: float, overdue_hours: float, is_overdue: bool, due_at_date: ?string, overdue_days: int, overdue_battery_cycles: int}
      */
     public function dueStatusForAsset(Asset $asset): array
     {
         $lastServiceHours = (float) $this->last_service_hours;
         $lastServiceDate = $this->last_service_date;
+        $lastServiceBatteryCycles = (int) $this->last_service_battery_cycles;
 
         if ($this->isGroupTemplate()) {
             $lastExecution = $this->executions()
@@ -135,13 +139,24 @@ class MaintenancePlan extends Model
             $overdueDays = $overdueByDays ? (int) now()->diffInDays($dueAtDate, true) : 0;
         }
 
+        $overdueByBatteryCycles = false;
+        $overdueBatteryCycles = 0;
+
+        if ($this->interval_battery_cycles) {
+            $dueAtCycles = $lastServiceBatteryCycles + $this->interval_battery_cycles;
+            $currentCycles = (int) $asset->battery_cycles_atual;
+            $overdueBatteryCycles = max(0, $currentCycles - $dueAtCycles);
+            $overdueByBatteryCycles = $currentCycles >= $dueAtCycles;
+        }
+
         return [
             'last_service_hours' => $lastServiceHours,
             'due_at_hours' => $dueAtHours,
             'overdue_hours' => $overdueHours,
             'due_at_date' => $dueAtDate?->toDateString(),
             'overdue_days' => $overdueDays,
-            'is_overdue' => $overdueByHours || $overdueByDays,
+            'overdue_battery_cycles' => $overdueBatteryCycles,
+            'is_overdue' => $overdueByHours || $overdueByDays || $overdueByBatteryCycles,
         ];
     }
 

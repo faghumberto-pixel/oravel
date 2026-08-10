@@ -82,9 +82,27 @@ class FreightRecordResource extends Resource
             Forms\Components\Select::make('freight_carrier_id')
                 ->label('Transportadora')
                 ->options(fn () => FreightCarrier::pluck('nome', 'id'))
-                ->searchable()
+                ->searchable()->live()
                 ->visible(fn (Get $get) => $get('tipo') === FreightRecord::TIPO_TERCEIRIZADO)
                 ->required(fn (Get $get) => $get('tipo') === FreightRecord::TIPO_TERCEIRIZADO),
+
+            Forms\Components\Grid::make(2)
+                ->visible(fn (Get $get) => $get('tipo') === FreightRecord::TIPO_TERCEIRIZADO)
+                ->schema([
+                    Forms\Components\Select::make('vehicle_type_used')
+                        ->label('Tipo de Veículo Usado')
+                        ->options(fn (Get $get) => $get('freight_carrier_id')
+                            ? array_intersect_key(
+                                FreightCarrier::vehicleTypeLabels(),
+                                array_flip(FreightCarrier::find($get('freight_carrier_id'))?->vehicle_types ?? [])
+                            )
+                            : FreightCarrier::vehicleTypeLabels())
+                        ->native(false),
+
+                    Forms\Components\Toggle::make('insurance_confirmed')
+                        ->label('Seguro de Transporte Confirmado')
+                        ->helperText('Confirma que a transportadora tem cobertura de seguro válida para este frete.'),
+                ]),
 
             Forms\Components\Grid::make(2)->schema([
                 Forms\Components\TextInput::make('origem')->label('Origem'),

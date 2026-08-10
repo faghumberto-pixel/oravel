@@ -8,12 +8,13 @@ use App\Models\AbcMatrix;
 use App\Models\AccountPayable;
 use App\Models\Announcement;
 use App\Models\Asset;
+use App\Models\BatteryCycleReading;
 use App\Models\Client;
 use App\Models\Contract;
 use App\Models\CrmLead;
 use App\Models\CrmLeadInteraction;
-use App\Models\Department;
-use App\Models\EquipmentDamage; // Importante
+use App\Models\Department; // Importante
+use App\Models\EquipmentDamage;
 use App\Models\EquipmentMovement;
 use App\Models\EquipmentPatioArrival;
 use App\Models\EquipmentReplacement;
@@ -33,6 +34,7 @@ use App\Models\UserActivityLog;
 use App\Observers\AbcMatrixObserver;
 use App\Observers\AnnouncementObserver;
 use App\Observers\AssetObserver;
+use App\Observers\BatteryCycleReadingObserver;
 use App\Observers\ClientObserver;
 use App\Observers\ContaPagarObserver;
 use App\Observers\ContractObserver;
@@ -115,6 +117,7 @@ class AppServiceProvider extends ServiceProvider
         GoodsReceiptItem::observe(GoodsReceiptItemObserver::class);
         MaintenanceOrderPendencia::observe(MaintenanceOrderPendenciaObserver::class);
         HorimeterReading::observe(HorimeterReadingObserver::class);
+        BatteryCycleReading::observe(BatteryCycleReadingObserver::class);
         AbcMatrix::observe(AbcMatrixObserver::class);
         // Ate 2026-07-25 este observer existia mas nunca rodava: referenciava
         // um model App\Models\ContaPagar inexistente e nao estava registrado.

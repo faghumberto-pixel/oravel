@@ -169,8 +169,26 @@
                     <span>Equipamento testado em banco de carga antes da liberação</span>
                 </label>
 
+                <div class="mt-2 grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="mb-1 block text-[10px] font-semibold uppercase text-zinc-500">Carga (%)</label>
+                        <input type="number" min="0" max="100" wire:model.blur="loadBankPercentage" wire:change="saveLoadBankTest"
+                               class="w-full rounded-xl border-0 bg-zinc-800 p-2.5 text-sm text-zinc-100 focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="mb-1 block text-[10px] font-semibold uppercase text-zinc-500">Duração (min)</label>
+                        <input type="number" min="0" wire:model.blur="loadBankDurationMinutes" wire:change="saveLoadBankTest"
+                               class="w-full rounded-xl border-0 bg-zinc-800 p-2.5 text-sm text-zinc-100 focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="mb-1 block text-[10px] font-semibold uppercase text-zinc-500">Temp. (°C)</label>
+                        <input type="number" step="0.1" wire:model.blur="loadBankTemperature" wire:change="saveLoadBankTest"
+                               class="w-full rounded-xl border-0 bg-zinc-800 p-2.5 text-sm text-zinc-100 focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+
                 <textarea wire:model.blur="loadBankNotes" wire:change="saveLoadBankTest" rows="2"
-                          placeholder="Observações do teste (kW aplicado, duração, resultado...)"
+                          placeholder="Observações do teste (resultado, ressalvas...)"
                           class="mt-2 w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-emerald-500"></textarea>
             </div>
         </section>
