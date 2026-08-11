@@ -34,6 +34,7 @@ class Tenant extends Model
         'segment',
         'enabled_modules',
         'ui_customizations',
+        'targets',
     ];
 
     protected $casts = [
@@ -44,7 +45,38 @@ class Tenant extends Model
         'mrr_value' => 'decimal:2',
         'enabled_modules' => 'array',
         'ui_customizations' => 'array',
+        'targets' => 'array',
     ];
+
+    /**
+     * Metas padrao dos KPIs de "Gestao a Vista" -- usadas quando o tenant
+     * ainda nao configurou (ou nunca configurou) uma meta propria em
+     * targets. Mesma semantica "ausente = valor default" de
+     * hasModuleEnabled()/isFieldVisible(): nenhum tenant existente
+     * regride, todos ja nascem com meta razoavel sem precisar configurar
+     * nada.
+     */
+    private const DEFAULT_TARGETS = [
+        'manutencao_realizada' => 90.0,
+        'disponibilidade' => 90.0,
+        'efetividade' => 85.0,
+    ];
+
+    /**
+     * Meta configuravel por tenant para um KPI de "Gestao a Vista" (ex:
+     * 'disponibilidade'). Retorna o valor default do KPI quando o tenant
+     * nao tem targets configurado ou a chave especifica esta ausente.
+     */
+    public function getTarget(string $key): float
+    {
+        $targets = $this->targets ?? [];
+
+        if (is_array($targets) && array_key_exists($key, $targets) && is_numeric($targets[$key])) {
+            return (float) $targets[$key];
+        }
+
+        return self::DEFAULT_TARGETS[$key] ?? 0.0;
+    }
 
     /**
      * Override aditivo: o tenant pode ganhar features alem do plano contratado

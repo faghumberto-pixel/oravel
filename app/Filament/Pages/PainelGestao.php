@@ -2,10 +2,13 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\Asset;
+use App\Models\Branch;
 use App\Support\SegmentDashboardWidgets;
 use App\Support\Tenancy;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Collection;
 
 class PainelGestao extends Page
 {
@@ -64,9 +67,71 @@ class PainelGestao extends Page
 
     public $activeTab = 'gestao';
 
+    // Filtros globais da aba "Gestão à Vista" -- mesmo padrão de chave
+    // from/until do Filter::make() de data range ja usado no projeto
+    // (PreventiveMaintenanceExecutionResource/SiteVisitResource), aqui como
+    // propriedades publicas Livewire em vez de filtro de Table. Default:
+    // mes atual (pedido do prompt original).
+    public ?string $gestaoFrom = null;
+
+    public ?string $gestaoUntil = null;
+
+    public ?string $gestaoBranchId = null;
+
+    public ?string $gestaoAssetId = null;
+
+    // Contador incrementado por atualizarDados() -- vira parte da wire:key
+    // dos widgets da aba Gestao a Vista, forcando o Livewire a
+    // reinstancia-los (e rechamar mount() com os filtros atuais) mesmo
+    // quando nenhuma propriedade publica dos widgets filhos mudou sozinha.
+    public int $gestaoRefreshTick = 0;
+
+    public function mount(): void
+    {
+        $this->gestaoFrom = now()->startOfMonth()->toDateString();
+        $this->gestaoUntil = now()->endOfMonth()->toDateString();
+    }
+
     public function selectTab($tab)
     {
         $this->activeTab = $tab;
+    }
+
+    public function atualizarDados(): void
+    {
+        $this->gestaoRefreshTick++;
+    }
+
+    /**
+     * Filtros atuais da aba Gestão à Vista, no formato que
+     * GestaoAVistaService/os widgets esperam.
+     *
+     * @return array{from: ?string, until: ?string, branchId: ?string, assetId: ?string}
+     */
+    public function getGestaoFiltros(): array
+    {
+        return [
+            'from' => $this->gestaoFrom,
+            'until' => $this->gestaoUntil,
+            'branchId' => $this->gestaoBranchId,
+            'assetId' => $this->gestaoAssetId,
+        ];
+    }
+
+    /**
+     * @return Collection<int, Branch>
+     */
+    public function getGestaoBranches(): Collection
+    {
+        return Branch::query()->orderBy('name')->get(['id', 'name']);
+    }
+
+    /**
+     * @return Collection<int, Asset>
+     */
+    public function getGestaoAssets(): Collection
+    {
+        return Asset::query()->orderBy('name')->get(['id', 'name', 'patrimonio']);
     }
 
     public function getGestaoWidgets(): array

@@ -169,6 +169,21 @@ class MaintenanceOrderResource extends Resource
                         ])
                         ->columns(2),
 
+                    // Categoria de falha (Corretiva) -- alimenta o card "Principais Causas
+                    // de Falha" do dashboard Gestao a Vista. Ao contrario da secao de
+                    // Avaria acima, este campo E persistido direto em failure_category
+                    // (coluna real da OS, sem virar registro separado) -- sem
+                    // dehydrated(false).
+                    Forms\Components\Section::make('Categoria de Falha')
+                        ->description('Classificação usada nos indicadores de manutenção (Gestão à Vista).')
+                        ->visible(fn (Get $get) => $get('maintenance_type') === MaintenanceOrder::TYPE_CORRECTIVE)
+                        ->schema([
+                            Forms\Components\Select::make('failure_category')
+                                ->label('Sistema/Categoria')
+                                ->options(MaintenanceOrder::failureCategoryLabels())
+                                ->native(false),
+                        ]),
+
                     // Prazo Fatal (locadoras de evento) -- disponivel em QUALQUER OS,
                     // nao trava nada por conta propria (o checklist de mobilizacao ja
                     // e' bloqueante em 100%, ver EquipmentMovementMobile::finalize()).
