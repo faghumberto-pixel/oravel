@@ -16,7 +16,7 @@ use App\Filament\Widgets\GestaoAVista\MttrMetricCard;
 use App\Filament\Widgets\GestaoAVista\OsResumoStats;
 use App\Filament\Widgets\GestaoAVista\TempoParadaEvolucaoAreaChart;
 use App\Filament\Widgets\GestaoAVista\TempoParadaMetricCard;
-use App\Filament\Widgets\GestaoAVista\TiposManutencaoDonutChart;
+use App\Filament\Widgets\GestaoAVista\TiposManutencaoAreaChart;
 use App\Models\Asset;
 use App\Models\AssetDowntimeEvent;
 use App\Models\MaintenanceOrder;
@@ -108,7 +108,7 @@ class GestaoAVistaWidgetsSmokeTest extends TestCase
 
         $widgets = [
             OsResumoStats::class,
-            TiposManutencaoDonutChart::class,
+            TiposManutencaoAreaChart::class,
             CustoTotalMetricCard::class,
             ManutencaoRealizadaGauge::class,
             ManutencaoRealizadaEvolucao::class,
@@ -136,7 +136,7 @@ class GestaoAVistaWidgetsSmokeTest extends TestCase
 
         $widgets = [
             OsResumoStats::class,
-            TiposManutencaoDonutChart::class,
+            TiposManutencaoAreaChart::class,
             CustoTotalMetricCard::class,
             ManutencaoRealizadaGauge::class,
             ManutencaoRealizadaEvolucao::class,

@@ -137,6 +137,49 @@ class GestaoAVistaService
     }
 
     /**
+     * Serie mensal de OS finalizadas por tipo, separando Preventiva e
+     * Corretiva (as duas categorias sempre relevantes pro grafico de area
+     * empilhada) -- qualquer outro maintenance_type concluido no periodo
+     * (Avaria/Troca/Emergencia etc, mais raros) entra agregado em
+     * "Outras", pra nao poluir o grafico com series demais.
+     *
+     * @param  array{from: ?string, until: ?string, branchId: ?string, assetId: ?string}  $filtros
+     * @return array{labels: array<int,string>, preventiva: array<int,int>, corretiva: array<int,int>, outras: array<int,int>}
+     */
+    public function distribuicaoPorTipoMensal(array $filtros): array
+    {
+        $labels = [];
+        $preventiva = [];
+        $corretiva = [];
+        $outras = [];
+
+        foreach ($this->mesesDoPeriodo($filtros) as $mes) {
+            $filtrosDoMes = array_merge($filtros, [
+                'from' => $mes->toDateString(),
+                'until' => $mes->copy()->endOfMonth()->toDateString(),
+            ]);
+
+            $porTipo = (clone $this->baseQuery($filtrosDoMes))
+                ->whereIn('status', self::STATUS_CONCLUIDA)
+                ->selectRaw('maintenance_type, count(*) as total')
+                ->groupBy('maintenance_type')
+                ->pluck('total', 'maintenance_type');
+
+            $labels[] = ucfirst($mes->translatedFormat('M/y'));
+            $preventiva[] = (int) ($porTipo[MaintenanceOrder::TYPE_PREVENTIVE] ?? 0);
+            $corretiva[] = (int) ($porTipo[MaintenanceOrder::TYPE_CORRECTIVE] ?? 0);
+            $outras[] = (int) $porTipo->except([MaintenanceOrder::TYPE_PREVENTIVE, MaintenanceOrder::TYPE_CORRECTIVE])->sum();
+        }
+
+        return [
+            'labels' => $labels,
+            'preventiva' => $preventiva,
+            'corretiva' => $corretiva,
+            'outras' => $outras,
+        ];
+    }
+
+    /**
      * Custo total de manutencao no periodo (labor+material+logistics, ja
      * somados em total_order_cost) e variacao % vs. periodo anterior de
      * mesmo tamanho.
