@@ -14,11 +14,16 @@ class TestTechnicianSeeder extends Seeder
     public function run(): void
     {
         // 1. Criar tenant
+        // 'features' precisa incluir 'tabela_maintenance_orders' explicitamente: sem plan_id,
+        // Tenant::hasFeature() cai no fallback $this->plan?->hasFeature() = null = false, e
+        // MaintenanceOrderPolicy::before() bloqueia com 403 mesmo o technician_id/tenant_id
+        // batendo certinho (isso só aparece em request HTTP real, não em tinker sem Auth::user()).
         $tenant = Tenant::firstOrCreate(
             ['slug' => 'teste-tecnico'],
             [
                 'name' => 'Teste Técnico',
                 'segment' => 'demo',
+                'features' => ['tabela_maintenance_orders' => true],
             ]
         );
         echo "✓ Tenant: {$tenant->name}\n";

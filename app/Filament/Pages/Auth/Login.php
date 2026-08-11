@@ -163,8 +163,14 @@ class Login extends BaseLogin
         session()->regenerate();
 
         // Técnico comum (não admin, sem departamentos supervisionados) vai direto para "Minhas Ordens de Serviço"
+        // Precisa ser $this->redirect() (Livewire), nao redirect()->route() puro: dentro de uma
+        // action Livewire, redirect() ja registra o effect de navegacao como side-effect da chamada;
+        // o valor de retorno da action nunca vira navegacao, so alimenta o effect "returns" do
+        // $wire.call() -- daí o retorno aqui tem que ser null (compativel com ?LoginResponse).
         if ($user instanceof User && ! $user->isAdmin() && empty($user->supervisedDepartmentIds())) {
-            return redirect()->route('filament.admin.pages.technician-daily-tasks');
+            $this->redirect(route('filament.admin.pages.technician-daily-tasks'));
+
+            return null;
         }
 
         return app(LoginResponse::class);
