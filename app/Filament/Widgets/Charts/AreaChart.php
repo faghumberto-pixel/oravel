@@ -5,12 +5,16 @@ namespace App\Filament\Widgets\Charts;
 use Filament\Widgets\ChartWidget;
 
 /**
- * Duas séries preenchidas (área), sem empilhamento -- podem se cruzar
- * visualmente. Uso: métricas complementares/opostas ao longo do tempo
- * (ex.: Realizado vs. Planejado, Receita vs. Custo).
+ * Duas ou tres series preenchidas (area). Por padrao (empilhar=false) nao
+ * empilha -- podem se cruzar visualmente, uso pra metricas complementares/
+ * opostas (ex.: Realizado vs. Planejado, Receita vs. Custo). Com
+ * empilhar=true, as series se somam visualmente (a altura total da pilha
+ * = soma no ponto), uso pra composicao de um total ao longo do tempo (ex.:
+ * Preventiva + Corretiva = total de OS do mes).
  *
- * Sem lógica de query aqui -- $labels/$seriesA/$seriesB já vêm prontos de
- * quem instancia o widget.
+ * Sem lógica de query aqui -- $labels/$seriesA/$seriesB/$seriesC já vêm
+ * prontos de quem instancia o widget. $seriesC é opcional (default vazio)
+ * -- widgets com só 2 séries continuam funcionando sem alteração.
  */
 class AreaChart extends ChartWidget
 {
@@ -25,6 +29,11 @@ class AreaChart extends ChartWidget
     /** @var array{name: string, color: string, data: array<int, int|float>} */
     public array $seriesB = [];
 
+    /** @var array{name: string, color: string, data: array<int, int|float>} */
+    public array $seriesC = [];
+
+    public bool $empilhar = false;
+
     public ?string $chartTitle = null;
 
     public ?string $sourceNote = null;
@@ -38,6 +47,7 @@ class AreaChart extends ChartWidget
      * @param  array<int, string>  $labels
      * @param  array{name: string, color: string, data: array<int, int|float>}  $seriesA
      * @param  array{name: string, color: string, data: array<int, int|float>}  $seriesB
+     * @param  array{name: string, color: string, data: array<int, int|float>}  $seriesC
      */
     public function mount(
         array $labels = [],
@@ -45,10 +55,14 @@ class AreaChart extends ChartWidget
         array $seriesB = [],
         ?string $chartTitle = null,
         ?string $sourceNote = null,
+        array $seriesC = [],
+        bool $empilhar = false,
     ): void {
         $this->labels = $labels;
         $this->seriesA = $seriesA;
         $this->seriesB = $seriesB;
+        $this->seriesC = $seriesC;
+        $this->empilhar = $empilhar;
         $this->chartTitle = $chartTitle;
         $this->sourceNote = $sourceNote;
         $this->dataChecksum = $this->generateDataChecksum();
@@ -71,11 +85,10 @@ class AreaChart extends ChartWidget
 
     protected function getData(): array
     {
+        $series = array_filter([$this->seriesA, $this->seriesB, $this->seriesC], fn ($s) => ! empty($s));
+
         return [
-            'datasets' => [
-                $this->seriesDataset($this->seriesA),
-                $this->seriesDataset($this->seriesB),
-            ],
+            'datasets' => array_map(fn ($s) => $this->seriesDataset($s), array_values($series)),
             'labels' => $this->labels,
         ];
     }
@@ -88,8 +101,9 @@ class AreaChart extends ChartWidget
             'label' => $series['name'] ?? '',
             'data' => $series['data'] ?? [],
             'borderColor' => $color,
-            'backgroundColor' => $this->withAlpha($color, 0.18),
-            'fill' => true,
+            'backgroundColor' => $this->empilhar ? $this->withAlpha($color, 0.75) : $this->withAlpha($color, 0.18),
+            'fill' => $this->empilhar ? 'origin' : true,
+            'stack' => $this->empilhar ? 'total' : null,
             'tension' => 0.35,
             'pointRadius' => 0,
         ];
@@ -125,11 +139,13 @@ class AreaChart extends ChartWidget
             ],
             'scales' => [
                 'y' => [
+                    'stacked' => $this->empilhar,
                     'beginAtZero' => true,
                     'grid' => ['color' => '#374151'],
                     'ticks' => ['precision' => 0, 'color' => '#94a3b8'],
                 ],
                 'x' => [
+                    'stacked' => $this->empilhar,
                     'grid' => ['display' => false],
                     'ticks' => ['color' => '#94a3b8'],
                 ],

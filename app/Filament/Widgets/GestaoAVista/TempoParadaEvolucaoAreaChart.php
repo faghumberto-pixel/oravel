@@ -20,6 +20,8 @@ class TempoParadaEvolucaoAreaChart extends AreaChart
         array $seriesB = [],
         ?string $chartTitle = null,
         ?string $sourceNote = null,
+        array $seriesC = [],
+        bool $empilhar = false,
         ?string $from = null,
         ?string $until = null,
         ?string $branchId = null,

@@ -30,6 +30,8 @@ class LeadsWonVsLostAreaWidget extends AreaChart
         array $seriesB = [],
         ?string $chartTitle = null,
         ?string $sourceNote = null,
+        array $seriesC = [],
+        bool $empilhar = false,
     ): void {
         $months = collect(range(5, 0))->map(fn ($i) => now()->subMonths($i)->startOfMonth());
         $labels = $months->map(fn (Carbon $m) => self::MESES_ABREV[$m->month])->all();

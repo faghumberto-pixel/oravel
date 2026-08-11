@@ -140,7 +140,7 @@
                     {{-- SIDEBAR ESQUERDA: resumo de OS, tipos, custo total --}}
                     <div class="flex flex-col gap-3">
                         @livewire(\App\Filament\Widgets\GestaoAVista\OsResumoStats::class, $gestaoFiltros, key($gestaoKeyBase.'-resumo'))
-                        @livewire(\App\Filament\Widgets\GestaoAVista\TiposManutencaoDonutChart::class, $gestaoFiltros, key($gestaoKeyBase.'-tipos'))
+                        @livewire(\App\Filament\Widgets\GestaoAVista\TiposManutencaoAreaChart::class, $gestaoFiltros, key($gestaoKeyBase.'-tipos'))
                         @livewire(\App\Filament\Widgets\GestaoAVista\CustoTotalMetricCard::class, $gestaoFiltros, key($gestaoKeyBase.'-custo'))
                     </div>
 
