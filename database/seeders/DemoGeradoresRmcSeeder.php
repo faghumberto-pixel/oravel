@@ -192,7 +192,14 @@ class DemoGeradoresRmcSeeder extends Seeder
         );
 
         $features = $plan->features ?? [];
-        $missing = array_diff(['tabela_fleet_vehicles', 'modulo_chat'], $features);
+        // modulo_dashboard/tabela_branches/tabela_asset_downtime_events
+        // adicionados junto do dashboard "Gestao a Vista" (GestaoAVistaDemoSeeder)
+        // -- sem modulo_dashboard, App\Filament\Pages\PainelGestao::canAccess()
+        // nega acesso a pagina inteira (403), mesmo pro admin do tenant.
+        $missing = array_diff([
+            'tabela_fleet_vehicles', 'modulo_chat', 'modulo_dashboard',
+            'tabela_branches', 'tabela_asset_downtime_events',
+        ], $features);
         if (! empty($missing)) {
             $plan->update(['features' => [...$features, ...array_values($missing)]]);
         }
