@@ -53,13 +53,31 @@ class MaintenanceOrder extends Model implements HasMedia
 
     public const STATUS_RESERVADO = 'Reservado';
 
+    // --- CATEGORIA DE FALHA (so' faz sentido pra maintenance_type Corretiva) ---
+    // Mesmo vocabulario de EquipmentDamage::DAMAGE_TYPE_* de proposito -- um
+    // unico jeito de categorizar falha no sistema, nao dois vocabularios
+    // paralelos. EquipmentDamage e' preenchido so' quando o fluxo de avaria
+    // e' usado (fatia parcial das corretivas); failure_category e' capturado
+    // direto na OS, em toda corretiva, pro dashboard "Gestao a Vista".
+    public const FAILURE_CATEGORY_HIDRAULICO = 'hidraulico';
+
+    public const FAILURE_CATEGORY_ELETRICO = 'eletrico';
+
+    public const FAILURE_CATEGORY_PNEU_ESTEIRA = 'pneu_esteira';
+
+    public const FAILURE_CATEGORY_MOTOR = 'motor';
+
+    public const FAILURE_CATEGORY_ESTRUTURAL = 'estrutural';
+
+    public const FAILURE_CATEGORY_OUTRO = 'outro';
+
     protected $keyType = 'string';
 
     public $incrementing = false;
 
     protected $fillable = [
         'os_number', 'asset_id', 'technician_id', 'client_id', 'branch_id', 'service_type',
-        'maintenance_type', 'reported_problem_id', 'maintenance_plan_id', 'solicitacao_locacao_id', 'description', 'technical_notes',
+        'maintenance_type', 'failure_category', 'reported_problem_id', 'maintenance_plan_id', 'solicitacao_locacao_id', 'description', 'technical_notes',
         'client_signature', 'technician_signature', 'signature_path', 'status', 'internal_status', 'commercial_status',
         'tenant_id', 'started_at', 'finished_at', 'rescheduled_to', 'total_time_seconds',
         'last_timer_start', 'reschedule_reason', 'criticality_level_id', 'is_rework',
@@ -80,6 +98,25 @@ class MaintenanceOrder extends Model implements HasMedia
         'prazo_fatal_at' => 'datetime',
         'sla_target_minutes' => 'integer',
     ];
+
+    /**
+     * Labels PT-BR de failure_category -- mesmo padrao de
+     * EquipmentDamage::damageTypeLabels() (mesmo vocabulario, mesmos
+     * valores de constante, so' outra classe).
+     *
+     * @return array<string, string>
+     */
+    public static function failureCategoryLabels(): array
+    {
+        return [
+            self::FAILURE_CATEGORY_HIDRAULICO => 'Hidráulico',
+            self::FAILURE_CATEGORY_ELETRICO => 'Elétrico',
+            self::FAILURE_CATEGORY_PNEU_ESTEIRA => 'Pneu/Esteira',
+            self::FAILURE_CATEGORY_MOTOR => 'Motor',
+            self::FAILURE_CATEGORY_ESTRUTURAL => 'Estrutural',
+            self::FAILURE_CATEGORY_OUTRO => 'Outro',
+        ];
+    }
 
     /**
      * Cor do badge de SLA -- mesmo padrao de EquipmentReplacementResource::slaColor(),

@@ -37,7 +37,7 @@
                 wire:click="selectTab('comando')"
                 class="px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide rounded-md transition {{ $activeTab === 'comando' ? 'bg-amber-500 text-white shadow-sm' : 'text-gray-400 hover:text-gray-200' }}"
             >
-                Centro de Comando
+                Gestão à Vista
             </button>
         </div>
 
@@ -82,36 +82,105 @@
                     </div>
                 @endif
             @else
-                {{-- CENTRO DE COMANDO --}}
+                {{-- GESTÃO À VISTA -- indicadores de resultado de manutenção. Todos os
+                     widgets abaixo recebem os mesmos 4 filtros via @livewire(...) e
+                     usam :key com $gestaoRefreshTick pra reinstanciar (e rechamar
+                     mount(), refazendo as queries) quando "ATUALIZAR DADOS" é clicado,
+                     mesmo sem nenhuma propriedade pública do widget filho ter mudado
+                     sozinha. --}}
+                @php
+                    $gestaoFiltros = $this->getGestaoFiltros();
+                    $gestaoKeyBase = 'gav-'.$gestaoRefreshTick.'-'.md5(json_encode($gestaoFiltros));
+                @endphp
+
+                {{-- Cabeçalho + Filtros --}}
                 <div class="rounded-xl bg-gray-800/60 backdrop-blur-sm ring-1 ring-white/5 p-3">
-                    <h2 class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
-                        <x-heroicon-o-clipboard-document-list class="w-3.5 h-3.5" />
-                        Minhas Ordens de Serviço
-                    </h2>
-                    @livewire(\App\Filament\Widgets\TechnicianOrderStats::class)
-                </div>
-
-                @livewire(\App\Filament\Widgets\RadarUrgencia::class)
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    @livewire(\App\Filament\Widgets\ScheduledDispatchesWidget::class)
-                    @livewire(\App\Filament\Widgets\CompletedOrdersLast7DaysChart::class)
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <div class="md:col-span-3 rounded-xl bg-gray-800/60 backdrop-blur-sm ring-1 ring-white/5 p-3 min-h-[300px]">
-                        <h2 class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
-                            <x-heroicon-o-exclamation-triangle class="w-3.5 h-3.5" />
-                            Lista de Ativos — Alerta Visual
-                        </h2>
-                        @livewire(\App\Filament\Widgets\ListaAlertaAtivos::class)
+                    <div class="mb-2">
+                        <p class="text-[13px] font-bold uppercase tracking-wide text-gray-100">Indicadores de Resultados – Manutenção</p>
+                        <p class="text-[10px] uppercase tracking-wider text-gray-500">Dados que geram confiabilidade e resultados</p>
                     </div>
-                    <div class="md:col-span-1 rounded-xl bg-gray-800/60 backdrop-blur-sm ring-1 ring-white/5 p-3 min-h-[300px]">
-                        <h2 class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
-                            <x-heroicon-o-calendar class="w-3.5 h-3.5" />
-                            Agenda de Campo
-                        </h2>
-                        @livewire(\App\Filament\Widgets\AgendaCampo::class)
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 items-end">
+                        <div>
+                            <label class="block text-[9px] font-semibold uppercase tracking-wider text-gray-500 mb-1">Data Início</label>
+                            <input type="date" wire:model="gestaoFrom" class="w-full rounded-lg bg-gray-900 border-gray-700 text-gray-100 text-[12px] py-1.5 focus:border-indigo-500 focus:ring-indigo-500" />
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-semibold uppercase tracking-wider text-gray-500 mb-1">Data Fim</label>
+                            <input type="date" wire:model="gestaoUntil" class="w-full rounded-lg bg-gray-900 border-gray-700 text-gray-100 text-[12px] py-1.5 focus:border-indigo-500 focus:ring-indigo-500" />
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-semibold uppercase tracking-wider text-gray-500 mb-1">Unidade</label>
+                            <select wire:model="gestaoBranchId" class="w-full rounded-lg bg-gray-900 border-gray-700 text-gray-100 text-[12px] py-1.5 focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">Todas</option>
+                                @foreach ($this->getGestaoBranches() as $branch)
+                                    <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-semibold uppercase tracking-wider text-gray-500 mb-1">Equipamento</label>
+                            <select wire:model="gestaoAssetId" class="w-full rounded-lg bg-gray-900 border-gray-700 text-gray-100 text-[12px] py-1.5 focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">Todos</option>
+                                @foreach ($this->getGestaoAssets() as $asset)
+                                    <option value="{{ $asset->id }}">{{ $asset->name }}{{ $asset->patrimonio ? " ({$asset->patrimonio})" : '' }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <button
+                            type="button"
+                            wire:click="atualizarDados"
+                            class="rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold uppercase tracking-wide py-2 transition"
+                        >
+                            Atualizar Dados
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-3 items-start">
+                    {{-- SIDEBAR ESQUERDA: resumo de OS, tipos, custo total --}}
+                    <div class="flex flex-col gap-3">
+                        @livewire(\App\Filament\Widgets\GestaoAVista\OsResumoStats::class, $gestaoFiltros, key($gestaoKeyBase.'-resumo'))
+                        @livewire(\App\Filament\Widgets\GestaoAVista\TiposManutencaoDonutChart::class, $gestaoFiltros, key($gestaoKeyBase.'-tipos'))
+                        @livewire(\App\Filament\Widgets\GestaoAVista\CustoTotalMetricCard::class, $gestaoFiltros, key($gestaoKeyBase.'-custo'))
+                    </div>
+
+                    {{-- CONTEÚDO PRINCIPAL --}}
+                    <div class="flex flex-col gap-3">
+                        {{-- KPIS DE EXECUÇÃO E DISPONIBILIDADE (3 colunas) --}}
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                            <div class="flex flex-col gap-2">
+                                @livewire(\App\Filament\Widgets\GestaoAVista\ManutencaoRealizadaGauge::class, $gestaoFiltros, key($gestaoKeyBase.'-mr-gauge'))
+                                @livewire(\App\Filament\Widgets\GestaoAVista\ManutencaoRealizadaEvolucao::class, $gestaoFiltros, key($gestaoKeyBase.'-mr-evo'))
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                @livewire(\App\Filament\Widgets\GestaoAVista\DisponibilidadeGauge::class, $gestaoFiltros, key($gestaoKeyBase.'-disp-gauge'))
+                                @livewire(\App\Filament\Widgets\GestaoAVista\DisponibilidadeEvolucao::class, $gestaoFiltros, key($gestaoKeyBase.'-disp-evo'))
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                @livewire(\App\Filament\Widgets\GestaoAVista\EfetividadeGauge::class, $gestaoFiltros, key($gestaoKeyBase.'-efet-gauge'))
+                                @livewire(\App\Filament\Widgets\GestaoAVista\EfetividadeEvolucao::class, $gestaoFiltros, key($gestaoKeyBase.'-efet-evo'))
+                            </div>
+                        </div>
+
+                        {{-- MÉTRICAS OPERACIONAIS E CAUSAS (4 colunas) --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            @livewire(\App\Filament\Widgets\GestaoAVista\MtbfMetricCard::class, $gestaoFiltros, key($gestaoKeyBase.'-mtbf'))
+                            @livewire(\App\Filament\Widgets\GestaoAVista\MttrMetricCard::class, $gestaoFiltros, key($gestaoKeyBase.'-mttr'))
+                            @livewire(\App\Filament\Widgets\GestaoAVista\TempoParadaMetricCard::class, $gestaoFiltros, key($gestaoKeyBase.'-parada'))
+                            @livewire(\App\Filament\Widgets\GestaoAVista\CausasFalhaBarChart::class, $gestaoFiltros, key($gestaoKeyBase.'-causas'))
+                        </div>
+
+                        {{-- FECHAMENTO: evolução da parada + conclusões --}}
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                            @livewire(\App\Filament\Widgets\GestaoAVista\TempoParadaEvolucaoAreaChart::class, $gestaoFiltros, key($gestaoKeyBase.'-parada-evo'))
+                            @livewire(\App\Filament\Widgets\GestaoAVista\ConclusoesPanel::class, $gestaoFiltros, key($gestaoKeyBase.'-conclusoes'))
+                        </div>
+
+                        {{-- BANNER DE RODAPÉ --}}
+                        <div class="rounded-xl bg-gradient-to-r from-indigo-950/60 via-gray-800/60 to-indigo-950/60 ring-1 ring-white/5 p-4 text-center">
+                            <p class="text-[12px] font-bold uppercase tracking-wide text-gray-200">Dados não tomam decisões. Pessoas informadas, sim.</p>
+                            <p class="text-[10px] uppercase tracking-wider text-indigo-300 mt-1">Gestão à vista, decisão na hora, resultado todo dia.</p>
+                        </div>
                     </div>
                 </div>
             @endif

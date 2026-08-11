@@ -10,6 +10,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -58,6 +59,15 @@ class ManageTenantSettings extends Page implements HasForms
         'billing_plan_id',
     ];
 
+    // Mesmas chaves de Tenant::DEFAULT_TARGETS -- centralizado la' pro
+    // getTarget() usado no dashboard Gestao a Vista, repetido aqui so'
+    // pros defaults do form (nao da pra acessar a const privada do Model).
+    private const TARGET_DEFAULTS = [
+        'manutencao_realizada' => 90.0,
+        'disponibilidade' => 90.0,
+        'efetividade' => 85.0,
+    ];
+
     public static function canAccess(): bool
     {
         return (bool) auth()->user()?->isAdmin();
@@ -69,9 +79,11 @@ class ManageTenantSettings extends Page implements HasForms
 
         $enabledModules = is_array($tenant?->enabled_modules) ? $tenant->enabled_modules : [];
         $uiCustomizations = is_array($tenant?->ui_customizations) ? $tenant->ui_customizations : [];
+        $targets = is_array($tenant?->targets) ? $tenant->targets : [];
 
         $this->form->fill([
             'segment' => $tenant?->segment,
+            'targets' => array_merge(self::TARGET_DEFAULTS, array_intersect_key($targets, self::TARGET_DEFAULTS)),
             'enabled_modules' => array_keys(array_filter(array_merge(
                 array_fill_keys(self::MODULE_KEYS, true),
                 array_intersect_key($enabledModules, array_flip(self::MODULE_KEYS))
@@ -144,6 +156,21 @@ class ManageTenantSettings extends Page implements HasForms
                         ])
                         ->native(false),
                 ]),
+
+            Section::make('Metas de Manutenção')
+                ->description('Usadas como referência visual (meta ≥) nos indicadores do painel "Gestão à Vista".')
+                ->schema([
+                    TextInput::make('targets.manutencao_realizada')
+                        ->label('Meta de Manutenção Realizada')
+                        ->numeric()->minValue(0)->maxValue(100)->suffix('%'),
+                    TextInput::make('targets.disponibilidade')
+                        ->label('Meta de Disponibilidade')
+                        ->numeric()->minValue(0)->maxValue(100)->suffix('%'),
+                    TextInput::make('targets.efetividade')
+                        ->label('Meta de Efetividade')
+                        ->numeric()->minValue(0)->maxValue(100)->suffix('%'),
+                ])
+                ->columns(3),
         ])->statePath('data');
     }
 
@@ -168,10 +195,18 @@ class ManageTenantSettings extends Page implements HasForms
         }
         $uiCustomizations['kanban_default_view'] = $state['kanban_default_view'] ?? 'oficina';
 
+        $targets = self::TARGET_DEFAULTS;
+        foreach (self::TARGET_DEFAULTS as $key => $default) {
+            if (isset($state['targets'][$key]) && is_numeric($state['targets'][$key])) {
+                $targets[$key] = (float) $state['targets'][$key];
+            }
+        }
+
         $tenant->update([
             'segment' => $state['segment'] ?? null,
             'enabled_modules' => $enabledModules,
             'ui_customizations' => $uiCustomizations,
+            'targets' => $targets,
         ]);
 
         Notification::make()
