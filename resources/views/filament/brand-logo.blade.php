@@ -11,11 +11,14 @@
 @endphp
 <div class="flex flex-col leading-tight">
     <div class="fi-oravel-brand-logo-row flex items-center gap-4">
-        {{-- Cor do "r" fixa na laranja da marca (nao text-primary-500) --
-             central usa azul como cor primaria do painel, ficaria com o
-             "r" azul se dependesse da cor primaria de cada painel. Mesmo
-             #E8541A usado nos marcadores dos mapas comerciais. --}}
-        <div class="text-xl font-bold tracking-tight text-white">O<span style="color: #E8541A">r</span>avel</div>
+        {{-- Wordmark ORAveL (2026-08) -- so' o texto no header, sem o
+             monograma OR sobreposto (esse fica reservado pro favicon/icone,
+             onde funciona sozinho; em tamanho pequeno de topbar os dois
+             juntos ficavam ilegiveis). Padrao de caixa ORA-ve-L e' proposital,
+             parte da marca -- nao e' erro de digitacao. --}}
+        <svg viewBox="0 0 460 130" class="h-6 w-auto" role="img" aria-label="Oravel">
+            <text x="0" y="98" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-weight="700" font-size="76" fill="currentColor" letter-spacing="-1" class="text-white">ORA<tspan font-weight="600">ve</tspan>L</text>
+        </svg>
 
         @if($tenant)
             <span class="text-xs font-bold tracking-tight text-primary-500 truncate max-w-[16rem]">{{ $tenant->name }}</span>
