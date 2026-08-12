@@ -1,10 +1,10 @@
-<div style="height: var(--oravel-chat-height, 100%);">
+<div>
     <div
         x-data="chatComponent()"
         x-init="init()"
         wire:poll.15s="checkForNewMessages"
         class="flex shadow-xl border"
-        style="height: 100%; min-height: 540px; border-radius: 1.5rem; overflow: hidden; border-color: #d1d7db;"
+        style="height: {{ request()->routeIs('chat.index') ? '100dvh' : 'calc(100vh - 8rem)' }}; min-height: 540px; border-radius: 1.5rem; overflow: hidden; border-color: #d1d7db;"
     >
         {{-- SIDEBAR --}}
         <div class="border-r flex-col shrink-0 flex" style="background-color:#ffffff; border-color:#e9edef;" :style="{ width: isDesktop ? '22rem' : '100%' }" x-show="isDesktop || mobileView === 'list'">
