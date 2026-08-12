@@ -1,10 +1,14 @@
 {
+  "_import-wrapper-prod-BUuldluI.js": {
+    "file": "assets/import-wrapper-prod-BUuldluI.js",
+    "name": "import-wrapper-prod"
+  },
   "_module.esm-CCyjftVT.js": {
     "file": "assets/module.esm-CCyjftVT.js",
     "name": "module.esm"
   },
   "resources/css/app.css": {
-    "file": "assets/app-CdBt100f.css",
+    "file": "assets/app-B9M3_4LI.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -13,11 +17,11 @@
     ]
   },
   "resources/css/filament/admin/theme.css": {
-    "file": "assets/theme-g8wm4BD2.css",
+    "file": "assets/theme-DKtIGElm.css",
     "src": "resources/css/filament/admin/theme.css"
   },
   "resources/css/filament/central/theme.css": {
-    "file": "assets/theme-DI4gtChp.css",
+    "file": "assets/theme-DOgcYwdF.css",
     "src": "resources/css/filament/central/theme.css",
     "isEntry": true,
     "name": "theme",
@@ -26,11 +30,12 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-BxXUXzIa.js",
+    "file": "assets/app-DZAxs4OT.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
+      "_import-wrapper-prod-BUuldluI.js",
       "_module.esm-CCyjftVT.js"
     ]
   },
@@ -39,6 +44,18 @@
     "name": "central-kanban",
     "src": "resources/js/central-kanban.js",
     "isEntry": true
+  },
+  "resources/js/chat-app.js": {
+    "file": "assets/chat-app-XdBB16SL.js",
+    "name": "chat-app",
+    "src": "resources/js/chat-app.js",
+    "isEntry": true,
+    "imports": [
+      "_import-wrapper-prod-BUuldluI.js"
+    ],
+    "css": [
+      "assets/app-B9M3_4LI.css"
+    ]
   },
   "resources/js/hour-meter-offline.js": {
     "file": "assets/hour-meter-offline-m--z-lmY.js",
