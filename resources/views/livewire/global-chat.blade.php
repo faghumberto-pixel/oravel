@@ -19,9 +19,22 @@
                         </div>
                     @endif
                 </div>
-                <p class="mt-1.5 text-xs font-medium text-gray-400">
-                    Você: <span class="font-bold text-primary-400">{{ auth()->user()?->name }}</span>
-                </p>
+                <div class="mt-1.5 flex items-center justify-between gap-2">
+                    <p class="text-xs font-medium text-gray-400 min-w-0 truncate">
+                        Você: <span class="font-bold text-primary-400">{{ auth()->user()?->name }}</span>
+                    </p>
+                    {{-- Só existe rota chat.logout no chat standalone (/chat) --
+                         este mesmo Blade é reaproveitado como <livewire:global-chat/>
+                         dentro do painel admin, onde o logout é o do Filament. --}}
+                    @if(\Illuminate\Support\Facades\Route::has('chat.logout') && request()->routeIs('chat.*'))
+                        <form method="POST" action="{{ route('chat.logout') }}" class="shrink-0">
+                            @csrf
+                            <button type="submit" class="text-xs font-semibold text-gray-500 hover:text-red-400 transition" title="Sair">
+                                Sair
+                            </button>
+                        </form>
+                    @endif
+                </div>
             </div>
 
             <div class="px-4 pt-1 pb-4 shrink-0">

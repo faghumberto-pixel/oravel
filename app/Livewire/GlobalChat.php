@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Livewire\Concerns\InteractsWithChat;
 use App\Models\ChatRoom;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -46,6 +47,18 @@ class GlobalChat extends Component
 
     public function mount(): void
     {
+        // GET /chat (rota raiz, ver routes/chat.php) fica fora do middleware
+        // chat.auth de propósito -- um redirect HTTP no start_url do PWA
+        // trava tela preta na primeira abertura em vários WebViews Android/
+        // iOS (bug real 2026-08-12). Guest cai aqui em vez de nunca chegar
+        // no mount: sem autorizar/carregar nada, render() decide mostrar o
+        // login. Quando incluído via <livewire:global-chat/> dentro do
+        // painel (sempre autenticado por causa do middleware do Filament),
+        // este branch nunca é atingido.
+        if (! Auth::check()) {
+            return;
+        }
+
         // Defesa em profundidade: Chat::canAccess() ja bloqueia a rota/menu,
         // mas este componente e' o que de fato executa a logica -- sem essa
         // checagem aqui, ele nunca teve nenhuma autorizacao propria (achado
@@ -208,6 +221,14 @@ class GlobalChat extends Component
 
     public function render()
     {
+        // Guest chegando por GET /chat direto (ver mount() acima): mesmo
+        // response 200, sem redirect -- só o conteúdo muda pro formulário
+        // de login. Nenhuma das #[Computed] acima (users/chatRoom/...) é
+        // avaliada nesse branch, porque a view de login não as referencia.
+        if (! Auth::check()) {
+            return view('chat.auth._login-form');
+        }
+
         return view('livewire.global-chat');
     }
 }

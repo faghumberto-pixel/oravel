@@ -42,11 +42,18 @@ class ChatStandaloneAuthTest extends TestCase
         $response->assertSee('Oravel Chat');
     }
 
-    public function test_guest_is_redirected_to_chat_login_when_accessing_chat(): void
+    public function test_guest_sees_login_form_when_accessing_chat_without_redirect(): void
     {
+        // GET /chat (start_url do manifest-chat.json) nunca deve devolver
+        // um redirect HTTP -- PWAs instalados (display: standalone) travam
+        // em tela preta na primeira abertura ao seguir um redirect no
+        // start_url em vários WebViews Android/iOS (bug real 2026-08-12).
+        // O próprio componente decide mostrar o login, mesmo response 200.
         $response = $this->get(route('chat.index'));
 
-        $response->assertRedirect(route('chat.login'));
+        $response->assertOk();
+        $response->assertSee('Oravel Chat');
+        $response->assertSee(route('chat.login'), false);
     }
 
     public function test_user_can_authenticate_via_chat_login_and_reach_chat_index(): void
@@ -95,5 +102,15 @@ class ChatStandaloneAuthTest extends TestCase
 
         $response->assertRedirect(route('chat.login'));
         $this->assertGuest();
+    }
+
+    public function test_chat_index_shows_logout_button_when_authenticated(): void
+    {
+        $user = $this->makeUserWithChatPlan();
+
+        $response = $this->actingAs($user)->get(route('chat.index'));
+
+        $response->assertOk();
+        $response->assertSee(route('chat.logout'), false);
     }
 }

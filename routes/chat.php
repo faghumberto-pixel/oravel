@@ -18,8 +18,18 @@ Route::prefix('chat')->name('chat.')->group(function () {
         Route::post('/login', [ChatAuthenticatedSessionController::class, 'store']);
     });
 
+    /*
+     * GET / (start_url do manifest-chat.json) fica FORA do middleware
+     * chat.auth de propósito: um PWA instalado (display: standalone) que
+     * segue um redirect HTTP logo no start_url costuma travar em tela
+     * preta/branca na primeira abertura em vários WebViews Android/iOS --
+     * bug real reproduzido 2026-08-12. GlobalChat::mount() resolve
+     * guest vs autenticado internamente (mesmo response 200), sem
+     * redirect de navegação de topo.
+     */
+    Route::get('/', GlobalChat::class)->name('index');
+
     Route::middleware('chat.auth')->group(function () {
-        Route::get('/', GlobalChat::class)->name('index');
         Route::post('/logout', [ChatAuthenticatedSessionController::class, 'destroy'])->name('logout');
         Route::post('/messages/sync', [ChatMessageSyncController::class, 'store'])->name('messages.sync');
     });
