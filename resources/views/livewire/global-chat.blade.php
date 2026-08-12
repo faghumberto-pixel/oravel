@@ -11,13 +11,23 @@
             <div class="px-5 pt-5 pb-4 shrink-0" style="background-color:#f0f2f5;">
                 <div class="flex items-center justify-between">
                     <h2 class="text-2xl font-extrabold tracking-tight" style="color:#111b21;">Chat Interno</h2>
-                    @if($avatarUrl = auth()->user()?->getFilamentAvatarUrl())
-                        <img src="{{ $avatarUrl }}" class="w-10 h-10 rounded-full object-cover shadow" alt="">
-                    @else
-                        <div class="w-10 h-10 text-white flex items-center justify-center text-sm font-bold shadow" style="border-radius:9999px; background-color:#00a884;">
-                            {{ Str::upper(Str::substr(auth()->user()?->name ?? '?', 0, 1)) }}
-                        </div>
-                    @endif
+                    <div class="flex items-center gap-2">
+                        @if($avatarUrl = auth()->user()?->getFilamentAvatarUrl())
+                            <img src="{{ $avatarUrl }}" class="w-10 h-10 rounded-full object-cover shadow" alt="">
+                        @else
+                            <div class="w-10 h-10 text-white flex items-center justify-center text-sm font-bold shadow" style="border-radius:9999px; background-color:#00a884;">
+                                {{ Str::upper(Str::substr(auth()->user()?->name ?? '?', 0, 1)) }}
+                            </div>
+                        @endif
+                        @if(request()->routeIs('chat.index'))
+                            <form method="POST" action="{{ route('chat.logout') }}">
+                                @csrf
+                                <button type="submit" title="Sair" class="flex items-center justify-center w-9 h-9 transition" style="border-radius:9999px; color:#667781;">
+                                    <x-heroicon-o-arrow-left-on-rectangle class="w-5 h-5" />
+                                </button>
+                            </form>
+                        @endif
+                    </div>
                 </div>
                 <p class="mt-1.5 text-xs font-medium" style="color:#667781;">
                     Você: <span class="font-bold" style="color:#008069;">{{ auth()->user()?->name }}</span>
@@ -227,20 +237,32 @@
                             <span class="flex items-center justify-center w-9 h-9 text-lg leading-none select-none shrink-0">😊</span>
                             <input type="text" id="chat-draft-message" x-model="draftMessage" x-on:input="hasText = $event.target.value.trim().length > 0" @keydown.enter="sendOrQueue()" :disabled="isRecording"
                                 class="flex-1 min-w-0 bg-transparent px-2 py-2 outline-none border-0 focus:ring-0 text-sm font-medium" style="color:#111b21;" placeholder="Digite uma mensagem...">
-                            <label title="Anexar imagem" class="flex items-center justify-center w-9 h-9 cursor-pointer transition shrink-0" style="border-radius:9999px; color:#54656f;">
-                                <input type="file" wire:model="temporaryImage" accept="image/*" class="hidden">
-                                <div wire:loading wire:target="temporaryImage" class="animate-spin h-5 w-5 border-2 border-t-transparent" style="border-radius:9999px; border-color:#00a884;"></div>
-                                <x-heroicon-s-paper-clip class="w-5 h-5" wire:loading.remove wire:target="temporaryImage" />
-                            </label>
-                            <label title="Tirar foto" class="flex items-center justify-center w-9 h-9 cursor-pointer transition shrink-0" style="border-radius:9999px; color:#54656f;">
-                                <input type="file" wire:model="temporaryImage" accept="image/*" capture="environment" class="hidden">
-                                <x-heroicon-s-camera class="w-5 h-5" />
-                            </label>
-                            <label title="Anexar documento" class="flex items-center justify-center w-9 h-9 cursor-pointer transition shrink-0" style="border-radius:9999px; color:#54656f;">
-                                <input type="file" wire:model="temporaryDocument" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.csv" class="hidden">
-                                <div wire:loading wire:target="temporaryDocument" class="animate-spin h-5 w-5 border-2 border-t-transparent" style="border-radius:9999px; border-color:#00a884;"></div>
-                                <x-heroicon-s-document-text class="w-5 h-5" wire:loading.remove wire:target="temporaryDocument" />
-                            </label>
+                            <div class="relative shrink-0" x-data="{ openAttach: false }" @click.outside="openAttach = false">
+                                <button type="button" @click="openAttach = !openAttach" title="Anexar" class="flex items-center justify-center w-9 h-9 transition" style="border-radius:9999px; color:#54656f;">
+                                    <x-heroicon-o-plus class="w-6 h-6" />
+                                </button>
+                                <div x-show="openAttach" x-cloak x-transition
+                                    class="absolute bottom-12 right-0 flex flex-col gap-1 p-2 shadow-lg border z-10"
+                                    style="border-radius:0.75rem; background-color:#ffffff; border-color:#e9edef; min-width:11rem;">
+                                    <label @click="openAttach = false" title="Anexar imagem" class="flex items-center gap-2 px-2 py-2 cursor-pointer transition text-sm font-medium" style="border-radius:0.5rem; color:#111b21;">
+                                        <input type="file" wire:model="temporaryImage" accept="image/*" class="hidden">
+                                        <div wire:loading wire:target="temporaryImage" class="animate-spin h-4 w-4 border-2 border-t-transparent" style="border-radius:9999px; border-color:#00a884;"></div>
+                                        <x-heroicon-s-paper-clip class="w-4 h-4 shrink-0" style="color:#54656f;" wire:loading.remove wire:target="temporaryImage" />
+                                        <span>Imagem</span>
+                                    </label>
+                                    <label @click="openAttach = false" title="Tirar foto" class="flex items-center gap-2 px-2 py-2 cursor-pointer transition text-sm font-medium" style="border-radius:0.5rem; color:#111b21;">
+                                        <input type="file" wire:model="temporaryImage" accept="image/*" capture="environment" class="hidden">
+                                        <x-heroicon-s-camera class="w-4 h-4 shrink-0" style="color:#54656f;" />
+                                        <span>Câmera</span>
+                                    </label>
+                                    <label @click="openAttach = false" title="Anexar documento" class="flex items-center gap-2 px-2 py-2 cursor-pointer transition text-sm font-medium" style="border-radius:0.5rem; color:#111b21;">
+                                        <input type="file" wire:model="temporaryDocument" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.csv" class="hidden">
+                                        <div wire:loading wire:target="temporaryDocument" class="animate-spin h-4 w-4 border-2 border-t-transparent" style="border-radius:9999px; border-color:#00a884;"></div>
+                                        <x-heroicon-s-document-text class="w-4 h-4 shrink-0" style="color:#54656f;" wire:loading.remove wire:target="temporaryDocument" />
+                                        <span>Documento</span>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                         <button type="button" x-show="dictationSupported && !isRecording" x-cloak class="oravel-mic-btn flex items-center justify-center w-11 h-11 border shadow-sm transition shrink-0" data-mic-target="chat-draft-message"
                             :style="{ color: isDictating ? '#e63946' : '#54656f', borderColor: isDictating ? '#e63946' : '#e9edef' }" :title="isDictating ? 'Parar ditado' : 'Ditar mensagem por voz'" style="border-radius:9999px; background-color:#ffffff;">
