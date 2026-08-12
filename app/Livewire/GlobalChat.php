@@ -7,10 +7,19 @@ use App\Models\ChatRoom;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
+/**
+ * #[Layout] só tem efeito quando o componente é montado como raiz de uma
+ * rota (ex: Route::get('/chat', GlobalChat::class), ver routes/chat.php)
+ * -- é ignorado quando incluído via <livewire:global-chat /> dentro de
+ * outra página (caso do painel, resources/views/filament/pages/chat.blade.php),
+ * então é seguro declarar aqui sem afetar o uso existente dentro do admin.
+ */
+#[Layout('layouts.chat')]
 class GlobalChat extends Component
 {
     use InteractsWithChat;
@@ -27,6 +36,14 @@ class GlobalChat extends Component
 
     public $temporaryDocument = null;
 
+    /**
+     * Snapshot do total de não lidas no poll anterior -- usado só pra
+     * detectar "chegou mensagem nova desde o último poll" e disparar o
+     * evento JS de notificação (som/badge/título da aba). Ver
+     * resources/js/chat-app.js.
+     */
+    public int $lastKnownUnreadTotal = 0;
+
     public function mount(): void
     {
         // Defesa em profundidade: Chat::canAccess() ja bloqueia a rota/menu,
@@ -39,6 +56,38 @@ class GlobalChat extends Component
         if ($this->selectedUserId) {
             $this->markRoomRead($this->selectedUserId);
         }
+
+        $this->lastKnownUnreadTotal = $this->totalUnreadChatMessages();
+    }
+
+    /**
+     * Chamado a cada wire:poll (ver global-chat.blade.php). Compara o total
+     * de não lidas com o snapshot anterior -- se subiu, dispara o evento JS
+     * que toca som/mostra notificação/atualiza o badge (chat-app.js).
+     *
+     * Nota: se a conversa aberta no momento é justamente a que recebeu a
+     * mensagem nova, chatMessagesForRoom() já marca como lida ao renderizar
+     * -- então o total pode não subir nesse caso específico (comportamento
+     * esperado: não notificar de uma mensagem que o usuário já está vendo).
+     */
+    public function checkForNewMessages(): void
+    {
+        unset($this->users);
+
+        $currentTotal = $this->totalUnreadChatMessages();
+
+        if ($currentTotal > $this->lastKnownUnreadTotal) {
+            $latestSender = $this->users->sortByDesc('last_message_at')->first();
+
+            $this->dispatch(
+                'chat-new-message',
+                senderName: $latestSender['name'] ?? 'Oravel Chat',
+                preview: $latestSender['last_message'] ?? null,
+                unreadTotal: $currentTotal,
+            );
+        }
+
+        $this->lastKnownUnreadTotal = $currentTotal;
     }
 
     #[Computed]
