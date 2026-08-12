@@ -2,7 +2,7 @@
     <div
         x-data="chatComponent()"
         x-init="init()"
-        wire:poll.15s
+        wire:poll.15s="checkForNewMessages"
         class="flex bg-gray-950 shadow-xl border border-gray-800"
         style="height: calc(100vh - 8rem); min-height: 540px; border-radius: 1.5rem; overflow: hidden;"
     >
@@ -223,11 +223,16 @@
                     <span x-text="`Gravando... ${recordingTime}s`"></span>
                 </div>
 
+                <div x-show="pendingOfflineCount > 0" x-cloak class="px-5 pb-1 flex items-center gap-2 text-amber-400 text-xs shrink-0" style="background-color:#0b141a;">
+                    <span class="w-1.5 h-1.5 bg-amber-400" style="border-radius:9999px;"></span>
+                    <span x-text="pendingOfflineCount === 1 ? '1 mensagem aguardando conexão' : `${pendingOfflineCount} mensagens aguardando conexão`"></span>
+                </div>
+
                 <div class="p-3 sm:p-4 border-t border-gray-800/70 shrink-0" style="background-color:#0b141a;">
                     <div class="flex items-center gap-2">
                         <div class="flex-1 flex items-center gap-0.5 bg-gray-800 border border-gray-700 px-2 py-1 focus-within:ring-2 focus-within:ring-primary-500 transition" style="border-radius:9999px;">
                             <span class="flex items-center justify-center w-9 h-9 text-lg leading-none select-none shrink-0">😊</span>
-                            <input type="text" wire:model="newMessage" x-on:input="hasText = $event.target.value.trim().length > 0" wire:keydown.enter="sendMessage" @keydown.enter="hasText = false" :disabled="isRecording"
+                            <input type="text" x-model="draftMessage" x-on:input="hasText = $event.target.value.trim().length > 0" @keydown.enter="sendOrQueue()" :disabled="isRecording"
                                 class="flex-1 bg-transparent text-white placeholder-gray-500 px-2 py-2 outline-none border-0 focus:ring-0 text-sm font-medium" placeholder="Digite uma mensagem...">
                             <label title="Anexar imagem" class="flex items-center justify-center w-9 h-9 cursor-pointer text-gray-400 hover:text-primary-400 transition shrink-0" style="border-radius:9999px;">
                                 <input type="file" wire:model="temporaryImage" accept="image/*" class="hidden">
@@ -244,7 +249,7 @@
                                 <x-heroicon-s-document-text class="w-5 h-5" wire:loading.remove wire:target="temporaryDocument" />
                             </label>
                         </div>
-                        <button type="button" x-show="hasText && !isRecording" x-cloak @click="$wire.sendMessage(); hasText = false"
+                        <button type="button" x-show="hasText && !isRecording" x-cloak @click="sendOrQueue()"
                             class="flex items-center justify-center w-12 h-12 bg-primary-600 hover:bg-primary-700 text-white shadow-lg transition shrink-0" style="border-radius:9999px;" title="Enviar">
                             <x-heroicon-s-paper-airplane class="w-5 h-5" />
                         </button>
@@ -271,11 +276,67 @@
             return {
                 mobileView: 'list', isDesktop: window.innerWidth >= 768, search: '', hasText: false,
                 isRecording: false, recordingTime: 0, mediaRecorder: null, audioChunks: [], recordingInterval: null,
+                draftMessage: '', pendingOfflineCount: 0,
                 init() {
                     this.isDesktop = window.innerWidth >= 768;
                     window.addEventListener('resize', () => { this.isDesktop = window.innerWidth >= 768; });
                     this.$wire.on('scroll-to-bottom', () => { this.$nextTick(() => this.scrollToBottom()); });
                     this.$nextTick(() => this.scrollToBottom());
+
+                    // Fila offline (só disponível na rota /chat standalone,
+                    // que carrega resources/js/chat-app.js -- dentro do
+                    // painel/admin essa window global não existe, então
+                    // sendOrQueue() cai direto no caminho normal).
+                    this.refreshPendingOfflineCount();
+                    window.addEventListener('chat-offline-synced', () => {
+                        this.refreshPendingOfflineCount();
+                        this.$wire.checkForNewMessages();
+                    });
+                },
+                async refreshPendingOfflineCount() {
+                    if (window.OravelChatOffline) {
+                        this.pendingOfflineCount = await window.OravelChatOffline.pendingCount();
+                    }
+                },
+                /**
+                 * Tenta enviar a mensagem digitada. Se o navegador já
+                 * reportar offline, enfileira direto sem tentar a rede. Se
+                 * o navegador achar que está online mas a requisição falhar
+                 * de verdade (wi-fi "morto", sem internet real por trás),
+                 * cai pra fila do mesmo jeito -- não basta confiar só em
+                 * navigator.onLine, que é notoriamente otimista demais.
+                 */
+                async sendOrQueue() {
+                    const text = this.draftMessage.trim();
+                    if (!text || this.isRecording) return;
+
+                    this.hasText = false;
+                    const recipientId = this.$wire.selectedUserId;
+
+                    const queueLocally = async () => {
+                        if (!window.OravelChatOffline || !recipientId) return false;
+                        await window.OravelChatOffline.enqueueMessage(recipientId, text);
+                        await this.refreshPendingOfflineCount();
+                        this.$nextTick(() => this.scrollToBottom());
+                        return true;
+                    };
+
+                    if (!navigator.onLine) {
+                        this.draftMessage = '';
+                        await queueLocally();
+                        return;
+                    }
+
+                    this.draftMessage = '';
+                    await this.$wire.set('newMessage', text);
+
+                    try {
+                        await this.$wire.sendMessage();
+                    } catch (error) {
+                        // Falha de rede real durante o request -- devolve o
+                        // texto pra fila em vez de perder silenciosamente.
+                        await queueLocally();
+                    }
                 },
                 scrollToBottom() { const el = this.$refs.messagesContainer; if (el) { el.scrollTop = el.scrollHeight; } },
                 async shareMessage(text) {

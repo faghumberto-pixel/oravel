@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\RedirectGuestToChatLogin;
 use App\Http\Middleware\RedirectTechnicianFromDashboard;
 use App\Http\Middleware\TrackSiteVisit;
 use App\Http\Middleware\UpdateUserLastSeen;
@@ -25,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // 🔒 REGISTRO SUPREMO: Adiciona o apelido do novo middleware de segurança do Oravel
         $middleware->alias([
             'redirecionar.tecnico' => RedirectTechnicianFromDashboard::class,
+            'chat.auth' => RedirectGuestToChatLogin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
