@@ -27,9 +27,9 @@
             }
         }"
         wire:poll.15s
-        class="fixed bottom-0 right-6 z-[9999] w-80 font-sans"
+        class="fixed bottom-0 right-6 z-[9999] w-[380px] font-sans"
     >
-        <div class="bg-gray-900 rounded-t-xl shadow-2xl border border-gray-800 border-b-0 overflow-hidden flex flex-col" style="max-height: 28rem;">
+        <div class="bg-gray-900 rounded-t-xl shadow-2xl border border-gray-800 border-b-0 overflow-hidden flex flex-col" style="max-height: min(38rem, 80vh);">
             {{-- Header: sempre visivel, clicavel pra expandir/recolher --}}
             <button type="button" wire:click="toggleExpanded" class="flex items-center justify-between px-4 py-3 bg-gray-900 hover:bg-gray-800 transition-colors shrink-0">
                 <div class="flex items-center gap-2 min-w-0">
@@ -55,7 +55,7 @@
                 </div>
             </button>
 
-            <div x-show="expanded" x-cloak class="flex-1 flex flex-col min-h-0" style="height: 24rem;">
+            <div x-show="expanded" x-cloak class="flex-1 flex flex-col min-h-0" style="height: min(34rem, 76vh);">
                 @if(! $this->selectedUserId)
                     {{-- Lista de conversas --}}
                     <div class="px-3 pt-3 pb-2 shrink-0">
@@ -144,7 +144,7 @@
                                 <div wire:loading wire:target="temporaryImage" class="animate-spin h-4 w-4 border-2 border-primary-500 border-t-transparent rounded-full"></div>
                             </label>
                             <input type="text" wire:model="newMessage" wire:keydown.enter="sendMessage" placeholder="Digite uma mensagem..."
-                                   class="flex-1 bg-gray-800 text-xs text-white placeholder-gray-500 px-3 py-2 rounded-full border border-gray-700 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 outline-none">
+                                   class="flex-1 bg-gray-800 text-sm text-white placeholder-gray-500 px-3 py-2.5 rounded-full border border-gray-700 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 outline-none">
                             <button type="button" wire:click="sendMessage"
                                     class="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 hover:bg-primary-700 text-white shrink-0 transition-colors">
                                 <x-heroicon-s-paper-airplane class="w-3.5 h-3.5" />
