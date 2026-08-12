@@ -225,8 +225,12 @@
                     <div class="flex items-center gap-2">
                         <div class="flex-1 flex items-center gap-0.5 border px-2 py-1 focus-within:ring-2 transition" style="border-radius:9999px; background-color:#ffffff; border-color:#e9edef;">
                             <span class="flex items-center justify-center w-9 h-9 text-lg leading-none select-none shrink-0">😊</span>
-                            <input type="text" x-model="draftMessage" x-on:input="hasText = $event.target.value.trim().length > 0" @keydown.enter="sendOrQueue()" :disabled="isRecording"
+                            <input type="text" id="chat-draft-message" x-model="draftMessage" x-on:input="hasText = $event.target.value.trim().length > 0" @keydown.enter="sendOrQueue()" :disabled="isRecording"
                                 class="flex-1 bg-transparent px-2 py-2 outline-none border-0 focus:ring-0 text-sm font-medium" style="color:#111b21;" placeholder="Digite uma mensagem...">
+                            <button type="button" x-show="dictationSupported && !isRecording" x-cloak class="oravel-mic-btn flex items-center justify-center w-9 h-9 transition shrink-0" data-mic-target="chat-draft-message"
+                                :style="{ color: isDictating ? '#e63946' : '#54656f' }" :title="isDictating ? 'Parar ditado' : 'Ditar mensagem por voz'" style="border-radius:9999px;">
+                                <span x-text="isDictating ? '⏹' : '🎙️'"></span>
+                            </button>
                             <label title="Anexar imagem" class="flex items-center justify-center w-9 h-9 cursor-pointer transition shrink-0" style="border-radius:9999px; color:#54656f;">
                                 <input type="file" wire:model="temporaryImage" accept="image/*" class="hidden">
                                 <div wire:loading wire:target="temporaryImage" class="animate-spin h-5 w-5 border-2 border-t-transparent" style="border-radius:9999px; border-color:#00a884;"></div>
@@ -246,8 +250,8 @@
                             class="flex items-center justify-center w-12 h-12 text-white shadow-lg transition shrink-0" style="border-radius:9999px; background-color:#00a884;" title="Enviar">
                             <x-heroicon-s-paper-airplane class="w-5 h-5" />
                         </button>
-                        <button type="button" x-show="!hasText || isRecording" x-cloak @click="toggleRecording()"
-                            class="flex items-center justify-center w-12 h-12 text-white shadow-lg transition shrink-0 text-xl leading-none" style="border-radius:9999px;" :style="{ backgroundColor: isRecording ? '#e63946' : '#00a884' }" title="Gravar áudio">
+                        <button type="button" x-show="!hasText || isRecording" x-cloak @click="toggleRecording()" :disabled="isDictating"
+                            class="flex items-center justify-center w-12 h-12 text-white shadow-lg transition shrink-0 text-xl leading-none disabled:opacity-40" style="border-radius:9999px;" :style="{ backgroundColor: isRecording ? '#e63946' : '#00a884' }" title="Gravar áudio">
                             <span x-text="isRecording ? '⏹️' : '🎤'"></span>
                         </button>
                     </div>
@@ -269,11 +273,24 @@
                 mobileView: 'list', isDesktop: window.innerWidth >= 768, search: '', hasText: false,
                 isRecording: false, recordingTime: 0, mediaRecorder: null, audioChunks: [], recordingInterval: null,
                 draftMessage: '', pendingOfflineCount: 0,
+                isDictating: false, dictationSupported: !!(window.webkitSpeechRecognition || window.SpeechRecognition),
                 init() {
                     this.isDesktop = window.innerWidth >= 768;
                     window.addEventListener('resize', () => { this.isDesktop = window.innerWidth >= 768; });
                     this.$wire.on('scroll-to-bottom', () => { this.$nextTick(() => this.scrollToBottom()); });
                     this.$nextTick(() => this.scrollToBottom());
+
+                    // Ditado por voz do campo de mensagem, reaproveitando o
+                    // mesmo mecanismo (Web Speech API nativa do navegador)
+                    // já usado em step-damages.blade.php (wizard de OS em
+                    // campo) -- diferente do botão de microfone abaixo, que
+                    // grava áudio (MediaRecorder) e envia como anexo.
+                    window.addEventListener('chat-dictation-result', (e) => {
+                        const transcript = e.detail.transcript;
+                        this.draftMessage = this.draftMessage ? this.draftMessage.trim() + ' ' + transcript : transcript;
+                        this.hasText = this.draftMessage.trim().length > 0;
+                    });
+                    window.addEventListener('chat-dictation-state', (e) => { this.isDictating = e.detail.listening; });
 
                     // Fila offline (só disponível na rota /chat standalone,
                     // que carrega resources/js/chat-app.js -- dentro do
@@ -371,4 +388,91 @@
             .chat-scroll::-webkit-scrollbar-thumb { background-color: rgba(75,85,99,0.6); border-radius: 9999px; }
         </style>
     @endpush
+
+    {{--
+        Ditado por voz do campo de mensagem -- mesmo padrão de delegação de
+        evento (.oravel-mic-btn + data-mic-target) usado em
+        step-damages.blade.php (wizard de OS em campo), reaproveitado aqui.
+        Diferença: lá o campo é controlado por wire:model, então o script
+        escreve direto em field.value + dispatchEvent('input'). Aqui o campo
+        de mensagem é Alpine puro (x-model="draftMessage"), então em vez de
+        tocar no DOM o script dispara eventos customizados que o componente
+        Alpine (chatComponent(), acima) escuta e usa pra atualizar seu
+        próprio estado.
+    --}}
+    @script
+        <script>
+            (function () {
+                if (window.__oravelMicDelegated) return;
+                window.__oravelMicDelegated = true;
+
+                const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+                let recognition = null;
+                let isListening = false;
+                let activeTargetId = null;
+
+                function setListening(listening) {
+                    window.dispatchEvent(new CustomEvent('chat-dictation-state', { detail: { listening } }));
+                }
+
+                function stopListening() {
+                    isListening = false;
+                    activeTargetId = null;
+                    setListening(false);
+                }
+
+                document.addEventListener('click', function (e) {
+                    const button = e.target.closest('.oravel-mic-btn');
+                    if (!button) return;
+
+                    e.preventDefault();
+
+                    const targetId = button.dataset.micTarget;
+
+                    if (!SpeechRecognition) {
+                        button.disabled = true;
+                        return;
+                    }
+
+                    if (isListening) {
+                        recognition?.stop();
+                        return;
+                    }
+
+                    recognition = new SpeechRecognition();
+                    recognition.lang = 'pt-BR';
+                    recognition.continuous = false;
+                    recognition.interimResults = true;
+
+                    recognition.onresult = function (event) {
+                        const last = event.results[event.results.length - 1];
+                        if (!last.isFinal) return;
+
+                        let transcript = '';
+                        for (let i = event.resultIndex; i < event.results.length; i++) {
+                            transcript += event.results[i][0].transcript + ' ';
+                        }
+                        transcript = transcript.trim();
+                        if (!transcript) return;
+
+                        window.dispatchEvent(new CustomEvent('chat-dictation-result', { detail: { transcript } }));
+                    };
+
+                    recognition.onerror = function () {
+                        stopListening();
+                    };
+
+                    recognition.onend = function () {
+                        stopListening();
+                    };
+
+                    document.getElementById(targetId)?.focus();
+                    recognition.start();
+                    isListening = true;
+                    activeTargetId = targetId;
+                    setListening(true);
+                });
+            })();
+        </script>
+    @endscript
 </div>
