@@ -1,10 +1,10 @@
-<div>
+<div style="height: var(--oravel-chat-height, 100%);">
     <div
         x-data="chatComponent()"
         x-init="init()"
         wire:poll.15s="checkForNewMessages"
         class="flex shadow-xl border"
-        style="height: calc(100vh - 8rem); min-height: 540px; border-radius: 1.5rem; overflow: hidden; border-color: #d1d7db;"
+        style="height: 100%; min-height: 540px; border-radius: 1.5rem; overflow: hidden; border-color: #d1d7db;"
     >
         {{-- SIDEBAR --}}
         <div class="border-r flex-col shrink-0 flex" style="background-color:#ffffff; border-color:#e9edef;" :style="{ width: isDesktop ? '22rem' : '100%' }" x-show="isDesktop || mobileView === 'list'">
@@ -226,11 +226,7 @@
                         <div class="flex-1 flex items-center gap-0.5 border px-2 py-1 focus-within:ring-2 transition" style="border-radius:9999px; background-color:#ffffff; border-color:#e9edef;">
                             <span class="flex items-center justify-center w-9 h-9 text-lg leading-none select-none shrink-0">😊</span>
                             <input type="text" id="chat-draft-message" x-model="draftMessage" x-on:input="hasText = $event.target.value.trim().length > 0" @keydown.enter="sendOrQueue()" :disabled="isRecording"
-                                class="flex-1 bg-transparent px-2 py-2 outline-none border-0 focus:ring-0 text-sm font-medium" style="color:#111b21;" placeholder="Digite uma mensagem...">
-                            <button type="button" x-show="dictationSupported && !isRecording" x-cloak class="oravel-mic-btn flex items-center justify-center w-9 h-9 transition shrink-0" data-mic-target="chat-draft-message"
-                                :style="{ color: isDictating ? '#e63946' : '#54656f' }" :title="isDictating ? 'Parar ditado' : 'Ditar mensagem por voz'" style="border-radius:9999px;">
-                                <span x-text="isDictating ? '⏹' : '🎙️'"></span>
-                            </button>
+                                class="flex-1 min-w-0 bg-transparent px-2 py-2 outline-none border-0 focus:ring-0 text-sm font-medium" style="color:#111b21;" placeholder="Digite uma mensagem...">
                             <label title="Anexar imagem" class="flex items-center justify-center w-9 h-9 cursor-pointer transition shrink-0" style="border-radius:9999px; color:#54656f;">
                                 <input type="file" wire:model="temporaryImage" accept="image/*" class="hidden">
                                 <div wire:loading wire:target="temporaryImage" class="animate-spin h-5 w-5 border-2 border-t-transparent" style="border-radius:9999px; border-color:#00a884;"></div>
@@ -246,6 +242,10 @@
                                 <x-heroicon-s-document-text class="w-5 h-5" wire:loading.remove wire:target="temporaryDocument" />
                             </label>
                         </div>
+                        <button type="button" x-show="dictationSupported && !isRecording" x-cloak class="oravel-mic-btn flex items-center justify-center w-11 h-11 border shadow-sm transition shrink-0" data-mic-target="chat-draft-message"
+                            :style="{ color: isDictating ? '#e63946' : '#54656f', borderColor: isDictating ? '#e63946' : '#e9edef' }" :title="isDictating ? 'Parar ditado' : 'Ditar mensagem por voz'" style="border-radius:9999px; background-color:#ffffff;">
+                            <span x-text="isDictating ? '⏹' : '🎙️'"></span>
+                        </button>
                         <button type="button" x-show="hasText && !isRecording" x-cloak @click="sendOrQueue()"
                             class="flex items-center justify-center w-12 h-12 text-white shadow-lg transition shrink-0" style="border-radius:9999px; background-color:#00a884;" title="Enviar">
                             <x-heroicon-s-paper-airplane class="w-5 h-5" />
