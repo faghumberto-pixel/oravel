@@ -41,6 +41,10 @@ class TenantResource extends Resource
                 Forms\Components\Select::make('plan_id')->label('Plano')->relationship('plan', 'name')->searchable()->preload()->live(),
                 Forms\Components\Select::make('status')->label('Status')->options(['active' => 'Ativo', 'trial' => 'Teste', 'suspended' => 'Suspenso', 'canceled' => 'Cancelado'])->default('trial')->required(),
                 Forms\Components\TextInput::make('mrr_value')->label('MRR (R$)')->numeric()->step(0.01)->default(0),
+                Forms\Components\TextInput::make('cpf_cnpj')
+                    ->label('CPF/CNPJ')
+                    ->helperText('Exigido pra criar a cobrança recorrente na Asaas -- sem isso, a assinatura SaaS deste tenant não é sincronizada com o gateway de pagamento.')
+                    ->maxLength(20),
                 Forms\Components\Toggle::make('onboarding_completed')->label('Onboarding Completo')->default(false),
             ])->columns(2),
 

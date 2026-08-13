@@ -3,6 +3,7 @@
 namespace App\Filament\Central\Resources\TenantResource\Pages;
 
 use App\Filament\Central\Resources\TenantResource;
+use App\Services\AsaasService;
 use App\Services\TenantProvisioner;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -14,7 +15,7 @@ class CreateTenant extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        if (isset($data['features']) && !is_array($data['features'])) {
+        if (isset($data['features']) && ! is_array($data['features'])) {
             $data['features'] = [];
         }
 
@@ -31,5 +32,7 @@ class CreateTenant extends CreateRecord
     protected function afterCreate(): void
     {
         TenantProvisioner::provision($this->record, $this->adminData);
+
+        app(AsaasService::class)->syncTenantCustomer($this->record);
     }
 }

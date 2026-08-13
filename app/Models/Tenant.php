@@ -36,6 +36,7 @@ class Tenant extends Model
         'status',
         'address',
         'mrr_value',
+        'cpf_cnpj',
         'plan_id',
         'onboarding_completed',
         'features',
