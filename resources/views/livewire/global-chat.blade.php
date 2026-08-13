@@ -243,10 +243,10 @@
 
                 <div class="p-3 sm:p-4 border-t border-gray-200 shrink-0 bg-gray-50">
                     <div class="flex items-center gap-2">
-                        <div class="flex-1 flex items-center gap-0.5 bg-white border border-gray-300 px-2 py-1 focus-within:ring-2 focus-within:ring-orange-500 focus-within:border-orange-500 transition" style="border-radius:9999px;">
-                            <span class="flex items-center justify-center w-9 h-9 text-lg leading-none select-none shrink-0">😊</span>
+                        <div class="flex-1 min-w-0 flex items-center gap-0.5 bg-white border border-gray-300 px-2 py-1 focus-within:ring-2 focus-within:ring-orange-500 focus-within:border-orange-500 transition" style="border-radius:9999px;">
+                            <span class="hidden sm:flex items-center justify-center w-9 h-9 text-lg leading-none select-none shrink-0">😊</span>
                             <input type="text" x-model="draftMessage" x-on:input="hasText = $event.target.value.trim().length > 0" @keydown.enter="sendOrQueue()" :disabled="isRecording"
-                                class="flex-1 bg-transparent text-gray-900 placeholder-gray-400 px-2 py-2 outline-none border-0 focus:ring-0 text-sm font-medium" placeholder="Digite uma mensagem...">
+                                class="flex-1 min-w-0 bg-transparent text-gray-900 placeholder-gray-400 px-2 py-2 outline-none border-0 focus:ring-0 text-sm font-medium" placeholder="Digite uma mensagem...">
                             <label title="Anexar imagem" class="flex items-center justify-center w-9 h-9 cursor-pointer text-gray-500 hover:text-orange-600 hover:bg-gray-100 transition shrink-0" style="border-radius:9999px;">
                                 <input type="file" wire:model="temporaryImage" accept="image/*" class="hidden">
                                 <div wire:loading wire:target="temporaryImage" class="animate-spin h-5 w-5 border-2 border-orange-500 border-t-transparent" style="border-radius:9999px;"></div>
