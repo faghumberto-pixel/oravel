@@ -298,6 +298,7 @@
                 mobileView: 'list', isDesktop: window.innerWidth >= 768, search: '', hasText: false,
                 isRecording: false, recordingTime: 0, mediaRecorder: null, audioChunks: [], recordingInterval: null,
                 draftMessage: '', pendingOfflineCount: 0,
+                speechRecognition: null, audioTranscript: '',
                 init() {
                     this.isDesktop = window.innerWidth >= 768;
                     window.addEventListener('resize', () => { this.isDesktop = window.innerWidth >= 768; });
@@ -367,6 +368,37 @@
                         else if (navigator.clipboard) { await navigator.clipboard.writeText(text); alert('Mensagem copiada para a área de transferência.'); }
                     } catch (e) {}
                 },
+                /**
+                 * Transcrição via Web Speech API nativa do navegador (mesmo
+                 * mecanismo já usado no wizard de campo da OS, ver
+                 * x-mobile.voice-note -- NÃO usa OpenAI/Whisper, que exigia
+                 * OPENAI_API_KEY nunca configurada em PROD e por isso nunca
+                 * transcrevia áudio do chat, silenciosamente). Roda em
+                 * paralelo ao MediaRecorder durante a gravação; o texto
+                 * acumulado é enviado junto com o áudio ao parar.
+                 */
+                setupSpeechRecognition() {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    if (!SpeechRecognition) { this.speechRecognition = null; return; }
+
+                    const recognition = new SpeechRecognition();
+                    recognition.lang = 'pt-BR';
+                    recognition.continuous = true;
+                    recognition.interimResults = false;
+                    recognition.onresult = (event) => {
+                        let finalText = '';
+                        for (let i = event.resultIndex; i < event.results.length; i++) {
+                            if (event.results[i].isFinal) {
+                                finalText += event.results[i][0].transcript;
+                            }
+                        }
+                        if (finalText) {
+                            this.audioTranscript = (this.audioTranscript + ' ' + finalText).trim();
+                        }
+                    };
+                    recognition.onerror = (event) => { console.error('Erro no reconhecimento de voz:', event.error); };
+                    this.speechRecognition = recognition;
+                },
                 async toggleRecording() {
                     if (this.isRecording) { this.stopRecording(); return; }
                     try {
@@ -377,15 +409,20 @@
                             stream.getTracks().forEach(track => track.stop());
                             const blob = new Blob(this.audioChunks, { type: 'audio/webm' });
                             const reader = new FileReader();
-                            reader.onloadend = () => { this.$wire.sendAudioMessage(reader.result); };
+                            reader.onloadend = () => { this.$wire.sendAudioMessage(reader.result, this.audioTranscript.trim()); };
                             reader.readAsDataURL(blob);
                         };
                         this.mediaRecorder.start(); this.isRecording = true; this.recordingTime = 0;
                         this.recordingInterval = setInterval(() => { this.recordingTime++; }, 1000);
+
+                        this.audioTranscript = '';
+                        this.setupSpeechRecognition();
+                        if (this.speechRecognition) { this.speechRecognition.start(); }
                     } catch (err) { console.error('Erro ao acessar microfone:', err); alert('Não foi possível acessar o microfone. Verifique as permissões do navegador.'); }
                 },
                 stopRecording() {
                     if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') { this.mediaRecorder.stop(); }
+                    if (this.speechRecognition) { this.speechRecognition.stop(); }
                     this.isRecording = false; clearInterval(this.recordingInterval); this.recordingTime = 0;
                 }
             }

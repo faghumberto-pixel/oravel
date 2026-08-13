@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Concerns;
 
-use App\Jobs\TranscribeChatAudio;
 use App\Models\ChatMessage;
 use App\Models\ChatRoom;
 use App\Models\Department;
@@ -226,7 +225,16 @@ trait InteractsWithChat
         return $chatMessage;
     }
 
-    protected function createChatAudioMessage(ChatRoom $room, string $base64Audio): ?ChatMessage
+    /**
+     * $transcript vem pronto do client-side (Web Speech API nativa do
+     * navegador, ver script de chatComponent() em global-chat.blade.php --
+     * mesmo mecanismo já usado no wizard de campo da OS, x-mobile.voice-note).
+     * NÃO despacha mais TranscribeChatAudio/AudioTranscriptionService
+     * (Whisper via OPENAI_API_KEY): essa chave nunca foi configurada em
+     * PROD, então a transcrição do chat nunca funcionou, silenciosamente
+     * (achado 2026-08-13). Web Speech API não tem esse custo/dependência.
+     */
+    protected function createChatAudioMessage(ChatRoom $room, string $base64Audio, string $transcript = ''): ?ChatMessage
     {
         if (empty($base64Audio)) {
             return null;
@@ -243,13 +251,12 @@ trait InteractsWithChat
             'tenant_id' => $room->tenant_id,
             'user_id' => Auth::id(),
             'message' => '',
+            'transcript' => $transcript !== '' ? $transcript : null,
         ]);
 
         $chatMessage->addMedia($tmpPath)
             ->usingFileName('audio-'.Str::uuid().'.webm')
             ->toMediaCollection('chat_attachments');
-
-        TranscribeChatAudio::dispatch($chatMessage);
 
         return $chatMessage;
     }

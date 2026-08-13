@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Jobs\TranscribeChatAudio;
 use App\Livewire\GlobalChat;
 use App\Models\ChatMessage;
 use App\Models\ChatRoom;
@@ -12,7 +11,6 @@ use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -162,10 +160,34 @@ class GlobalChatTest extends TestCase
         $this->assertNull($mapped['audio']);
     }
 
-    public function test_sending_audio_dispatches_transcription_job(): void
+    public function test_sending_audio_stores_client_side_transcript(): void
     {
-        Queue::fake();
+        // Transcrição agora vem pronta do client-side (Web Speech API
+        // nativa do navegador, ver chatComponent() em global-chat.blade.php)
+        // -- não depende mais de nenhum job/serviço em background
+        // (App\Jobs\TranscribeChatAudio + App\Services\AudioTranscriptionService,
+        // que usavam OpenAI Whisper via OPENAI_API_KEY, removidos: a chave
+        // nunca foi configurada em PROD, então a transcrição do chat nunca
+        // funcionou, silenciosamente).
+        [$tenant, $admin, $colleague] = $this->makeTenantWithTwoUsers();
 
+        $this->actingAs($admin);
+
+        $base64 = 'data:audio/webm;base64,'.base64_encode('fake-audio-bytes');
+
+        Livewire::test(GlobalChat::class)
+            ->call('selectUser', $colleague->id)
+            ->call('sendAudioMessage', $base64, 'texto transcrito pelo navegador');
+
+        $this->assertDatabaseHas('chat_messages', [
+            'transcript' => 'texto transcrito pelo navegador',
+        ]);
+    }
+
+    public function test_sending_audio_without_transcript_stores_null(): void
+    {
+        // Navegador sem suporte a Web Speech API (ex: Firefox) -- o áudio
+        // continua funcionando normalmente, só sem transcrição.
         [$tenant, $admin, $colleague] = $this->makeTenantWithTwoUsers();
 
         $this->actingAs($admin);
@@ -176,7 +198,9 @@ class GlobalChatTest extends TestCase
             ->call('selectUser', $colleague->id)
             ->call('sendAudioMessage', $base64);
 
-        Queue::assertPushed(TranscribeChatAudio::class);
+        $message = ChatMessage::latest('created_at')->first();
+        $this->assertNotNull($message);
+        $this->assertNull($message->transcript);
     }
 
     public function test_only_room_participants_can_export_pdf(): void

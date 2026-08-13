@@ -204,7 +204,7 @@ class GlobalChat extends Component
         $this->dispatch('scroll-to-bottom');
     }
 
-    public function sendAudioMessage(string $base64Audio): void
+    public function sendAudioMessage(string $base64Audio, string $transcript = ''): void
     {
         $room = $this->chatRoom;
 
@@ -212,7 +212,7 @@ class GlobalChat extends Component
             return;
         }
 
-        $this->createChatAudioMessage($room, $base64Audio);
+        $this->createChatAudioMessage($room, $base64Audio, $transcript);
 
         unset($this->chatMessages, $this->users);
 
