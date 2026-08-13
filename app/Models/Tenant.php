@@ -18,6 +18,18 @@ class Tenant extends Model
 
     public $incrementing = false;
 
+    /**
+     * Status de PAGAMENTO da assinatura SaaS, atualizado pelo webhook do
+     * Asaas (App\Http\Controllers\AsaasWebhookController) -- separado de
+     * asaas_status, que é sobre sincronização de CADASTRO (customer/
+     * subscription criados na Asaas), não sobre a cobrança em si.
+     */
+    public const PAYMENT_STATUS_EM_DIA = 'em_dia';
+
+    public const PAYMENT_STATUS_ATRASADO = 'atrasado';
+
+    public const PAYMENT_STATUS_CANCELADO = 'cancelado';
+
     protected $fillable = [
         'name',
         'slug',
@@ -31,6 +43,9 @@ class Tenant extends Model
         'asaas_subscription_id',
         'asaas_status',
         'asaas_synced_at',
+        'asaas_payment_status',
+        'asaas_last_payment_id',
+        'asaas_payment_updated_at',
         'segment',
         'enabled_modules',
         'ui_customizations',
@@ -46,6 +61,8 @@ class Tenant extends Model
         'enabled_modules' => 'array',
         'ui_customizations' => 'array',
         'targets' => 'array',
+        'asaas_synced_at' => 'datetime',
+        'asaas_payment_updated_at' => 'datetime',
     ];
 
     /**

@@ -84,6 +84,61 @@ class AnthropicApiClient
     }
 
     /**
+     * Variante de send() pra conversas multi-turno (ex: atendimento de
+     * WhatsApp com histórico) -- send() só monta um único turno 'user',
+     * insuficiente quando é preciso alternar user/assistant no payload
+     * 'messages' da API. Mesmo contrato de retorno.
+     *
+     * @param  array<int, array{role: string, content: string}>  $messages
+     * @return array{ok: bool, text: ?string, error: ?string}
+     */
+    public function sendConversation(string $systemPrompt, array $messages, int $maxTokens = 4096): array
+    {
+        $apiKey = config('services.anthropic.key');
+
+        if (blank($apiKey)) {
+            return ['ok' => false, 'text' => null, 'error' => 'ANTHROPIC_API_KEY não configurada.'];
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'x-api-key' => $apiKey,
+                'anthropic-version' => '2023-06-01',
+                'content-type' => 'application/json',
+            ])
+                ->timeout(60)
+                ->post(self::API_URL, [
+                    'model' => self::MODEL,
+                    'max_tokens' => $maxTokens,
+                    'system' => $systemPrompt,
+                    'messages' => $messages,
+                ]);
+        } catch (\Throwable $e) {
+            Log::warning('Falha ao chamar Claude API (conversa)', ['error' => $e->getMessage()]);
+
+            return ['ok' => false, 'text' => null, 'error' => $e->getMessage()];
+        }
+
+        if (! $response->ok()) {
+            Log::warning('Claude API retornou erro (conversa)', ['status' => $response->status(), 'body' => $response->body()]);
+
+            return [
+                'ok' => false,
+                'text' => null,
+                'error' => "Claude API respondeu {$response->status()}: ".(string) ($response->json('error.message') ?? $response->body()),
+            ];
+        }
+
+        $text = $this->extractText($response->json('content') ?? []);
+
+        if ($text === null) {
+            return ['ok' => false, 'text' => null, 'error' => 'A resposta da IA não veio em um formato reconhecível.'];
+        }
+
+        return ['ok' => true, 'text' => $text, 'error' => null];
+    }
+
+    /**
      * Extrai o JSON de dentro de um texto que pode vir com crases
      * ```json ... ``` -- o system prompt pede "sem markdown" mas o modelo
      * as vezes ignora isso mesmo assim.

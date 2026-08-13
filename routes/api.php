@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\AssetController;
 use App\Http\Controllers\Api\V1\HourMeterPreloadController;
 use App\Http\Controllers\Api\V1\HourMeterSyncController;
+use App\Http\Controllers\AsaasWebhookController;
+use App\Http\Controllers\WhatsAppWebhookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,17 +17,26 @@ Route::get('/health', function () {
     return response()->json(['status' => 'ok']);
 });
 
-/**
- * TODO (integração financeira - módulo "financial"):
- * Webhook do Asaas ainda não implementado. O controller
- * App\Http\Controllers\WebhookAsaasController não existe no projeto.
- * Antes de reativar esta rota:
- *   1. Criar o WebhookAsaasController com validação de assinatura do Asaas;
- *   2. Adicionar credenciais/segredo do Asaas em config/services.php e .env;
- *   3. Tratar os eventos de cobrança e atualizar AccountPayable.
- *
- * Route::post('/webhooks/asaas', [WebhookAsaasController::class, 'handle']);
+/*
+ * Webhook do Asaas (cobrança da assinatura SaaS que cada Tenant paga pra
+ * Oravel, não confundir com AccountPayable/AccountReceivable -- ver
+ * docblock de AsaasWebhookController). Fora de auth:sanctum de propósito:
+ * quem chama é a Asaas, não um usuário logado; autenticação é via header
+ * 'asaas-access-token' comparado no próprio controller (mecanismo real
+ * do Asaas -- token estático, não HMAC).
  */
+Route::post('/webhooks/asaas', [AsaasWebhookController::class, 'handle']);
+
+/*
+ * Webhook do atendente virtual de WhatsApp (Meta Cloud API) -- atendimento
+ * único da Oravel, não é por tenant. Fora de auth:sanctum de propósito:
+ * quem chama é a plataforma da Meta, não um usuário logado. GET é o
+ * handshake de verificação exigido ao cadastrar a URL do webhook; POST
+ * recebe as mensagens de fato.
+ */
+Route::get('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'verify']);
+Route::post('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'handle']);
+
 // Technician offline field app
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/technician/tasks-of-day', 'App\Http\Controllers\Api\TechnicianTasksController@tasksOfDay');
