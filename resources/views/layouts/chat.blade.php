@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-        <meta name="theme-color" content="#101010">
+        <meta name="theme-color" content="#f0f2f5">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>Oravel Chat</title>
@@ -14,7 +14,7 @@
         <link rel="icon" type="image/png" href="{{ asset('icon.png') }}">
         <link rel="apple-touch-icon" href="{{ asset('icon.png') }}">
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
         <meta name="apple-mobile-web-app-title" content="Oravel Chat">
         <meta name="mobile-web-app-capable" content="yes">
 
@@ -22,8 +22,9 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
 
         @vite(['resources/css/app.css', 'resources/js/chat-app.js'])
+        @stack('styles')
     </head>
-    <body class="font-sans antialiased bg-zinc-950 text-zinc-100 overscroll-none">
+    <body class="font-sans antialiased bg-white text-gray-900 overscroll-none">
         {{ $slot }}
     </body>
 </html>
