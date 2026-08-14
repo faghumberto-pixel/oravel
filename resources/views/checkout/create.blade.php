@@ -88,7 +88,7 @@
                     <h1 class="text-2xl font-bold text-white sm:text-3xl">Bem-vindo ao Oravel!</h1>
                     <p class="mt-2 max-w-lg text-sm text-white/75">
                         Falta pouco para simplificar a gestão da sua frota e manutenção. Preencha seus
-                        dados para ativar o plano <strong class="text-white">{{ $selectedPlan?->name ?? 'escolhido' }}</strong>.
+                        dados para ativar o plano <strong class="text-white">{{ $selectedPlan->name }}</strong>.
                     </p>
 
                     <div class="my-6 h-px w-full bg-white/15"></div>
@@ -97,14 +97,14 @@
                         @csrf
 
                         <div>
-                            <label for="plan_id" class="oravel-auth-label">Plano</label>
-                            <select id="plan_id" name="plan_id" required class="oravel-auth-input w-full px-4 py-2.5 text-sm">
-                                @foreach($plans as $plan)
-                                    <option value="{{ $plan->id }}" @selected(old('plan_id', $selectedPlan?->id) === $plan->id)>
-                                        {{ $plan->name }} -- R$ {{ number_format($plan->price, 2, ',', '.') }}/{{ $plan->billing_cycle === 'monthly' ? 'mês' : $plan->billing_cycle }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <span class="oravel-auth-label">Plano</span>
+                            <input type="hidden" name="plan_id" value="{{ $selectedPlan->id }}">
+                            <div class="oravel-auth-field">
+                                <x-heroicon-o-check-badge class="oravel-auth-field-icon" />
+                                <span class="oravel-auth-input-raw py-0.5">
+                                    {{ $selectedPlan->name }} -- R$ {{ number_format($selectedPlan->price, 2, ',', '.') }}/{{ $selectedPlan->billing_cycle === 'monthly' ? 'mês' : $selectedPlan->billing_cycle }}
+                                </span>
+                            </div>
                             <x-input-error :messages="$errors->get('plan_id')" class="oravel-auth-error" />
                         </div>
 

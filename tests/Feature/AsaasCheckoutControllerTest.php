@@ -57,11 +57,32 @@ class AsaasCheckoutControllerTest extends TestCase
         $response->assertSee($plan->name);
     }
 
-    public function test_checkout_form_ignores_invalid_plan_id_without_error(): void
+    public function test_checkout_form_redirects_to_site_when_plan_id_is_invalid(): void
     {
         $response = $this->get('/assinar?plano=not-a-real-uuid');
 
+        $response->assertRedirect('https://oravel.com.br/#planos');
+    }
+
+    public function test_checkout_form_redirects_to_site_when_plan_is_missing(): void
+    {
+        $response = $this->get('/assinar');
+
+        $response->assertRedirect('https://oravel.com.br/#planos');
+    }
+
+    public function test_checkout_form_does_not_expose_a_plan_picker(): void
+    {
+        $plan = $this->makePlan();
+        $otherPlan = $this->makePlan();
+
+        $response = $this->get('/assinar?plano='.$plan->id);
+
         $response->assertOk();
+        $response->assertSee($plan->name);
+        $response->assertDontSee($otherPlan->name);
+        $this->assertStringContainsString('type="hidden" name="plan_id" value="'.$plan->id.'"', $response->getContent());
+        $this->assertStringNotContainsString('<select id="plan_id"', $response->getContent());
     }
 
     public function test_submitting_checkout_creates_tenant_and_admin_without_logging_in(): void

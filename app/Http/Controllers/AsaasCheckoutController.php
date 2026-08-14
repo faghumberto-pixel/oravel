@@ -31,11 +31,13 @@ use Illuminate\View\View;
 class AsaasCheckoutController extends Controller
 {
     /**
-     * Formulário de cadastro, com o plano pré-selecionado vindo do link
-     * "Assinar" do site (?plano={uuid}) -- se o id não existir/estiver
-     * ausente, mostra a lista de planos ativos pra escolher.
+     * Formulário de cadastro -- o plano vem travado do link "Assinar" do
+     * site (?plano={uuid}), sem opção de troca aqui. A escolha do plano
+     * acontece só no site institucional (oravel.com.br#planos); sem um
+     * ?plano= válido, manda de volta pra lá em vez de deixar escolher
+     * nesta tela (pedido do usuário 2026-08-14).
      */
-    public function create(Request $request): View
+    public function create(Request $request): View|RedirectResponse
     {
         $planoParam = $request->query('plano');
 
@@ -50,9 +52,12 @@ class AsaasCheckoutController extends Controller
             ? Plan::where('is_active', true)->find($planoParam)
             : null;
 
+        if (! $selectedPlan) {
+            return redirect()->away('https://oravel.com.br/#planos');
+        }
+
         return view('checkout.create', [
             'selectedPlan' => $selectedPlan,
-            'plans' => Plan::where('is_active', true)->orderBy('level')->get(),
             'segments' => Client::nicheLabels(),
             'equipmentTypes' => self::EQUIPMENT_TYPES,
         ]);
