@@ -1,31 +1,14 @@
-{{-- Nome do tenant + relogio + ticker de avisos no topbar -- o logo NAO
-     entra mais aqui (2026-08): com a sidebar ativa (nao topNavigation()),
-     o Filament ja renderiza o brand-logo nativamente no header da propria
-     sidebar; incluir de novo aqui duplicava o logo (sidebar + topbar) e
-     ficava desalinhado. O nome do tenant tambem saiu do header da sidebar
-     (era estreito demais pra logo + nome sem cortar o botao de colapsar)
-     e migrou pra ca, que sobrou livre depois que o logo saiu. --}}
-@php
-    $tenant = \App\Support\Tenancy::current();
-    $segmentLabel = $tenant?->segment ? (\App\Models\Client::nicheLabels()[$tenant->segment] ?? null) : null;
-    $segmentDotClass = match ($tenant?->segment) {
-        \App\Models\Client::NICHE_EVENTOS => 'bg-violet-500',
-        \App\Models\Client::NICHE_CONSTRUCAO_CIVIL => 'bg-sky-500',
-        \App\Models\Client::NICHE_INDUSTRIAL_HOSPITALAR => 'bg-teal-500',
-        default => 'bg-gray-500',
-    };
-@endphp
-@if($tenant)
-    <div class="flex flex-col leading-tight shrink-0">
-        <span class="text-xs font-bold tracking-tight text-primary-500 truncate max-w-[16rem]">{{ $tenant->name }}</span>
-        @if($segmentLabel)
-            <span class="flex items-center gap-1.5 text-[11px] font-medium tracking-wide text-gray-400 truncate max-w-[16rem]">
-                <span class="inline-block h-1.5 w-1.5 rounded-full {{ $segmentDotClass }} shrink-0"></span>
-                {{ $segmentLabel }}
-            </span>
-        @endif
-    </div>
-@endif
+{{-- Conteudo da linha 1 (topbar de verdade) -- o wrapper flex/sticky fica
+     no template que sobrescreve o topbar do Filament, ver
+     resources/views/vendor/filament-panels/components/topbar/index.blade.php.
+     Nao precisa de JS nem de wrapper proprio aqui: por nao ser sticky,
+     "some ao rolar pra baixo" e' scroll comum. Espacamento entre logo/
+     relogio/avisos vem do "gap" em CSS puro no .fi-oravel-topbar-row1
+     (brand-header-background.blade.php), nao de classes Tailwind tipo
+     "me-10" que nao existem no CSS compilado deste ambiente. --}}
+<a href="{{ filament()->getUrl() }}" class="flex items-center">
+    @include('filament.brand-logo')
+</a>
 
 <div class="flex items-center">
     <span
