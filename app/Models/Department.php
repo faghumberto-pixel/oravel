@@ -49,6 +49,15 @@ class Department extends Model
     public const SECTOR_ADMINISTRATIVO = 'administrativo';
 
     /**
+     * Adicionados 2026-08 junto com o seed de estrutura organizacional
+     * padrão (App\Services\OrganizationalStructureSeeder) -- antes só
+     * existiam como parte de "administrativo" sem setor próprio.
+     */
+    public const SECTOR_DEPARTAMENTO_PESSOAL = 'departamento_pessoal';
+
+    public const SECTOR_SEGURANCA_TRABALHO = 'seguranca_trabalho';
+
+    /**
      * @return array<string, string>
      */
     public static function sectorLabels(): array
@@ -60,6 +69,8 @@ class Department extends Model
             self::SECTOR_LOGISTICA => 'Logística',
             self::SECTOR_FINANCEIRO => 'Financeiro',
             self::SECTOR_ADMINISTRATIVO => 'Administrativo',
+            self::SECTOR_DEPARTAMENTO_PESSOAL => 'Departamento Pessoal',
+            self::SECTOR_SEGURANCA_TRABALHO => 'Segurança do Trabalho',
         ];
     }
 

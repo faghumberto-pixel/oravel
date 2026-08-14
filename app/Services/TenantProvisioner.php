@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\EquipmentDamage;
 use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
@@ -40,19 +39,11 @@ class TenantProvisioner
 
         $user->assignRole($role);
 
-        foreach ([
-            EquipmentDamage::ROLE_SUPERVISOR_MANUTENCAO,
-            EquipmentDamage::ROLE_COMERCIAL,
-            EquipmentDamage::ROLE_GERENTE_MANUTENCAO,
-            EquipmentDamage::ROLE_ANALISTA_MANUTENCAO,
-            'Gerente de Logística',
-        ] as $roleName) {
-            Role::firstOrCreate([
-                'name' => $roleName,
-                'guard_name' => 'web',
-                'tenant_id' => $tenant->id,
-            ]);
-        }
+        // 8 setores (Comercial, Manutenção, Ativos e Materiais, Logística,
+        // Financeiro, Administrativo, Departamento Pessoal, Segurança do
+        // Trabalho) + cargos de cada um, prontos pro tenant usar ou
+        // ajustar -- ver App\Services\OrganizationalStructureSeeder.
+        OrganizationalStructureSeeder::seed($tenant);
 
         return $user;
     }
