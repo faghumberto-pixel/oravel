@@ -53,6 +53,54 @@ class AsaasTenantSyncTest extends TestCase
             && $request['cpfCnpj'] === '12345678901');
     }
 
+    public function test_sync_customer_also_creates_subscription_when_mrr_is_set(): void
+    {
+        config(['services.asaas.api_key' => 'test-key']);
+        Http::fake([
+            'sandbox.asaas.com/*/customers' => Http::response(['id' => 'cus_com_mrr'], 200),
+            'sandbox.asaas.com/*/subscriptions' => Http::response(['id' => 'sub_novo456'], 200),
+        ]);
+
+        $plan = Plan::create([
+            'name' => 'Plano Mensal '.uniqid(), 'price' => 297, 'base_price' => 297, 'level' => 1,
+            'billing_cycle' => 'monthly', 'is_active' => true, 'features' => [],
+        ]);
+
+        $tenant = Tenant::create([
+            'name' => 'Tenant Com MRR '.uniqid(), 'slug' => 'tenant-com-mrr-'.uniqid(),
+            'plan_id' => $plan->id, 'status' => 'active',
+            'cpf_cnpj' => '123.456.789-01', 'mrr_value' => 297,
+        ]);
+
+        app(AsaasService::class)->syncTenantCustomer($tenant);
+        $tenant->refresh();
+
+        $this->assertSame('sub_novo456', $tenant->asaas_subscription_id);
+
+        Http::assertSent(fn ($request) => str_contains($request->url(), '/subscriptions')
+            && $request['customer'] === 'cus_com_mrr'
+            && $request['value'] === 297.0
+            && $request['cycle'] === 'MONTHLY'
+            && $request['billingType'] === 'UNDEFINED');
+    }
+
+    public function test_sync_subscription_is_skipped_without_mrr(): void
+    {
+        config(['services.asaas.api_key' => 'test-key']);
+        Http::fake([
+            'sandbox.asaas.com/*/customers' => Http::response(['id' => 'cus_sem_mrr'], 200),
+        ]);
+
+        $tenant = $this->makeTenant('123.456.789-01');
+        $tenant->update(['mrr_value' => 0]);
+
+        app(AsaasService::class)->syncTenantCustomer($tenant);
+        $tenant->refresh();
+
+        $this->assertNull($tenant->asaas_subscription_id);
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), '/subscriptions'));
+    }
+
     public function test_sync_without_cpf_cnpj_marks_as_pending_without_calling_api(): void
     {
         config(['services.asaas.api_key' => 'test-key']);

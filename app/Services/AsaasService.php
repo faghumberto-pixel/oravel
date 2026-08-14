@@ -66,6 +66,76 @@ class AsaasService
             'asaas_status' => 'synced',
             'asaas_synced_at' => now(),
         ]);
+
+        $this->syncTenantSubscription($tenant);
+    }
+
+    /**
+     * Cria a assinatura recorrente na Asaas pro tenant já sincronizado
+     * como customer -- sem isso, o cliente ficava cadastrado na Asaas mas
+     * sem nenhuma cobrança de fato configurada (o operador tinha que criar
+     * a assinatura manualmente lá). billingType fica UNDEFINED de propósito
+     * (pedido do usuário 2026-08-13): a Asaas gera um link de pagamento
+     * onde o próprio cliente escolhe boleto/cartão/pix, em vez de travar
+     * numa forma só. Mesmo tratamento de erro que syncTenantCustomer():
+     * nunca lança, só loga e marca 'error' -- não bloqueia o fluxo de
+     * criação do Tenant.
+     */
+    public function syncTenantSubscription(Tenant $tenant): void
+    {
+        if (blank($tenant->asaas_customer_id)) {
+            // Sem customer sincronizado ainda, não faz sentido tentar
+            // criar assinatura -- syncTenantCustomer() já cobre esse caso
+            // (chama esta função só depois de confirmar o customer).
+            return;
+        }
+
+        if (blank($tenant->mrr_value) || (float) $tenant->mrr_value <= 0) {
+            Log::info('AsaasService: tenant sem MRR definido, assinatura não criada.', ['tenant_id' => $tenant->id]);
+
+            return;
+        }
+
+        try {
+            $subscription = $this->createSubscription([
+                'customer' => $tenant->asaas_customer_id,
+                'billingType' => 'UNDEFINED',
+                'value' => (float) $tenant->mrr_value,
+                'nextDueDate' => now()->addDays(7)->toDateString(),
+                'cycle' => $this->mapBillingCycle($tenant->plan?->billing_cycle),
+                'description' => "Assinatura Oravel -- {$tenant->name}",
+            ]);
+        } catch (\Throwable $e) {
+            Log::warning('AsaasService: falha ao criar assinatura.', ['tenant_id' => $tenant->id, 'error' => $e->getMessage()]);
+            $tenant->update(['asaas_status' => 'error']);
+
+            return;
+        }
+
+        $tenant->update([
+            'asaas_subscription_id' => $subscription['id'] ?? null,
+        ]);
+    }
+
+    /**
+     * Plan.billing_cycle é string livre no banco (sem enum), sempre visto
+     * como 'monthly' nos dados existentes -- a Asaas exige um dos valores
+     * fixos em maiúsculo (WEEKLY/BIWEEKLY/MONTHLY/BIMONTHLY/QUARTERLY/
+     * SEMIANNUALLY/YEARLY). Default MONTHLY pra qualquer valor não
+     * reconhecido, em vez de falhar a criação da assinatura por causa de
+     * uma string de ciclo inesperada.
+     */
+    private function mapBillingCycle(?string $cycle): string
+    {
+        return match (strtolower((string) $cycle)) {
+            'weekly' => 'WEEKLY',
+            'biweekly' => 'BIWEEKLY',
+            'bimonthly' => 'BIMONTHLY',
+            'quarterly' => 'QUARTERLY',
+            'semiannually', 'semiannual' => 'SEMIANNUALLY',
+            'yearly', 'annual', 'annually' => 'YEARLY',
+            default => 'MONTHLY',
+        };
     }
 
     public function createCustomer(array $data): array
