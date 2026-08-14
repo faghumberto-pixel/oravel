@@ -25,7 +25,7 @@ class AssetDowntimeEventResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-pause-circle';
 
-    protected static ?string $navigationGroup = 'PCM';
+    protected static ?string $navigationGroup = 'Manutenção';
 
     protected static ?string $navigationLabel = 'Histórico de Paradas';
 

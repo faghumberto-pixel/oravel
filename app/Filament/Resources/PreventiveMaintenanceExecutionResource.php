@@ -30,7 +30,7 @@ class PreventiveMaintenanceExecutionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-wrench';
 
-    protected static ?string $navigationGroup = 'PCM';
+    protected static ?string $navigationGroup = 'Manutenção';
 
     protected static ?string $navigationLabel = 'Preventivas';
 

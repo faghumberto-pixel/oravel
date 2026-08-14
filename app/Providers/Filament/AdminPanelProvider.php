@@ -51,7 +51,6 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('1.25rem')
             ->favicon(asset('favicon.png').'?v=4')
             ->navigationGroups([
-                NavigationGroup::make('PCM'),
                 NavigationGroup::make('Manutenção'),
                 NavigationGroup::make('Logística'),
                 NavigationGroup::make('Ativos e Materiais'),
