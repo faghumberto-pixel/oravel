@@ -11,9 +11,11 @@
 @endphp
 <div class="flex flex-col leading-tight">
     <div class="fi-oravel-brand-logo-row flex items-center gap-3">
-        {{-- Logo oficial (imagem enviada pelo usuario 2026-08-14), fundo
-             transparente, usada tal como fornecida -- sem redesenho. --}}
-        <img src="{{ asset('images/oravel-logo.png') }}?v=3" alt="Oravel" class="h-5 w-auto shrink-0">
+        {{-- Wordmark "Oravel" (2026-08) -- recorte do logo oficial sem o
+             monograma OR, so' o texto. Corte no espaco real entre os dois
+             blocos (x=98 a 349 da imagem original 351x68), sem cortar
+             nenhuma letra. --}}
+        <img src="{{ asset('images/oravel-wordmark-only.png') }}?v=1" alt="Oravel" class="h-5 w-auto shrink-0">
 
         @if($tenant)
             <span class="text-xs font-bold tracking-tight text-gray-300 truncate max-w-[16rem]">{{ $tenant->name }}</span>
