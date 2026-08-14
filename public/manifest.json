@@ -4,8 +4,8 @@
   "description": "Sistema de Gestão de Manutenção",
   "start_url": "/admin/maintenance-orders",
   "display": "standalone",
-  "background_color": "#101010",
-  "theme_color": "#101010",
+  "background_color": "#1a1a1a",
+  "theme_color": "#1a1a1a",
   "icons": [
     {
       "src": "/icon.png",
