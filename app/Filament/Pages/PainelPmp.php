@@ -41,7 +41,7 @@ class PainelPmp extends Page
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $navigationGroup = 'PCM';
+    protected static ?string $navigationGroup = 'Manutenção';
 
     protected static ?string $navigationLabel = 'Dashboard PMP';
 
