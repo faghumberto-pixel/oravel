@@ -118,6 +118,35 @@ class AsaasService
     }
 
     /**
+     * URL da fatura da primeira cobrança gerada pela assinatura -- é pra
+     * onde o cliente recém-cadastrado é redirecionado no fluxo de
+     * autoatendimento (ver AsaasCheckoutController) pra efetivamente
+     * pagar. createSubscription() não devolve esse link diretamente; a
+     * cobrança é gerada de forma assíncrona pela Asaas, então precisa
+     * buscar depois via GET /subscriptions/{id}/payments. Retorna null
+     * (não lança) se a assinatura não existir ou a cobrança ainda não
+     * tiver sido gerada -- chamador decide o que fazer nesse caso.
+     */
+    public function getFirstInvoiceUrl(string $subscriptionId): ?string
+    {
+        try {
+            $response = Http::withHeaders([
+                'access_token' => $this->apiKey,
+            ])->get("{$this->baseUrl}/subscriptions/{$subscriptionId}/payments");
+
+            if ($response->failed()) {
+                return null;
+            }
+
+            return $response->json('data.0.invoiceUrl');
+        } catch (\Throwable $e) {
+            Log::warning('AsaasService: falha ao buscar fatura da assinatura.', ['subscription_id' => $subscriptionId, 'error' => $e->getMessage()]);
+
+            return null;
+        }
+    }
+
+    /**
      * Plan.billing_cycle é string livre no banco (sem enum), sempre visto
      * como 'monthly' nos dados existentes -- a Asaas exige um dos valores
      * fixos em maiúsculo (WEEKLY/BIWEEKLY/MONTHLY/BIMONTHLY/QUARTERLY/

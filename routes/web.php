@@ -252,3 +252,4 @@ Route::middleware(['auth'])->group(function () {
 
 require __DIR__.'/auth.php';
 require __DIR__.'/chat.php';
+require __DIR__.'/checkout.php';
