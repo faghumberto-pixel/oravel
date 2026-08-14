@@ -35,6 +35,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(Login::class)
+            ->topNavigation()
             ->colors([
                 // Paleta do artefato "Central de Artefatos" (2026-07-25):
                 // laranja de destaque + neutros quentes (stone) no lugar do

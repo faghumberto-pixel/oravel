@@ -28,15 +28,52 @@
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
     }
 
+    /* Topbar (linha 1, some ao rolar) e menu (linha 2, sticky) agora sao
+       2 elementos HTML de verdade -- ver
+       resources/views/vendor/filament-panels/components/topbar/index.blade.php.
+       Cores/tamanhos deles ja estao no template; aqui so' fica o que
+       ainda precisa ser CSS mesmo (cores de texto/icone que nao tem
+       variante dark: propria, cards, etc). */
+
+    /* Espacamento de verdade entre Logo+Tenant / Relogio / Avisos --
+       precisa ser CSS puro (gap, nao classe Tailwind tipo "gap-x-10"):
+       o Vite nao builda neste ambiente, entao classes novas que nao
+       existiam no CSS compilado ANTES desta sessao nao tem efeito nenhum
+       -- essa era a causa real do "tudo colado" reportado varias vezes. */
+    .fi-oravel-topbar-row1 {
+        padding-top: 0.625rem;
+        padding-bottom: 0.625rem;
+        gap: 2.5rem;
+    }
+
     /* Espaco entre "Oravel" e o nome do tenant, dentro do logo. */
     .fi-oravel-brand-logo-row {
         gap: 1rem;
+    }
+
+    .fi-topbar-item {
+        color: #e5e7eb !important;
+    }
+
+    .fi-topbar-item.fi-active {
+        color: #fff !important;
     }
 
     .fi-topbar .fi-icon-btn svg {
         color: #e5e7eb !important;
     }
 
+    /* Sem opcao de ocultar o topbar no desktop -- some com os botoes de
+       abrir/fechar a sidebar (o menu de navegacao real e' o topo). So'
+       desktop: no celular esses botoes ainda sao a unica forma de abrir
+       a gaveta com os grupos de navegacao (o menu horizontal e' lg:flex,
+       nao aparece no celular). */
+    @media (min-width: 1024px) {
+        .fi-topbar-open-sidebar-btn,
+        .fi-topbar-close-sidebar-btn {
+            display: none !important;
+        }
+    }
 
     /* Cards/paineis (Section do Filament, compartilhado por forms e
        infolists, + widgets e tabelas) -- borda e sombra suaves como nos
