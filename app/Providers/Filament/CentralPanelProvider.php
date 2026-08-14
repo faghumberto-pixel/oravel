@@ -118,6 +118,7 @@ class CentralPanelProvider extends PanelProvider
             // Tema escuro fixo (nao alternavel) -- reforca a mesma
             // referencia visual acima.
             ->darkMode(true, isForced: true)
+            ->sidebarCollapsibleOnDesktop()
             ->viteTheme('resources/css/filament/central/theme.css')
             // Central nunca teve isso (so' o Admin) -- caia no texto padrao
             // do Filament em vez do wordmark "Oravel" com o "r" laranja.
