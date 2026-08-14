@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Plan;
 use App\Models\Tenant;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -182,5 +183,43 @@ class AsaasWebhookControllerTest extends TestCase
 
         $this->assertSame(Tenant::PAYMENT_STATUS_ATRASADO, $tenantA->fresh()->asaas_payment_status);
         $this->assertSame(Tenant::PAYMENT_STATUS_EM_DIA, $tenantB->fresh()->asaas_payment_status);
+    }
+
+    public function test_payment_confirmation_approves_pending_admin_from_checkout(): void
+    {
+        config(['services.asaas.webhook_token' => 'token-correto']);
+
+        $tenant = $this->makeTenant('cus_abc');
+        $admin = User::create([
+            'name' => 'Admin Pendente', 'email' => 'admin-pendente-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('senha12345'), 'role' => 'admin', 'hourly_rate' => 0,
+            'tenant_id' => $tenant->id,
+        ]);
+        $admin->forceFill(['is_approved' => false])->save();
+
+        $this->postJson('/api/webhooks/asaas', $this->payload('PAYMENT_RECEIVED', 'cus_abc'), [
+            'asaas-access-token' => 'token-correto',
+        ])->assertOk();
+
+        $this->assertTrue((bool) $admin->fresh()->is_approved);
+    }
+
+    public function test_payment_overdue_does_not_approve_pending_admin(): void
+    {
+        config(['services.asaas.webhook_token' => 'token-correto']);
+
+        $tenant = $this->makeTenant('cus_abc');
+        $admin = User::create([
+            'name' => 'Admin Pendente', 'email' => 'admin-pendente-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('senha12345'), 'role' => 'admin', 'hourly_rate' => 0,
+            'tenant_id' => $tenant->id,
+        ]);
+        $admin->forceFill(['is_approved' => false])->save();
+
+        $this->postJson('/api/webhooks/asaas', $this->payload('PAYMENT_OVERDUE', 'cus_abc'), [
+            'asaas-access-token' => 'token-correto',
+        ])->assertOk();
+
+        $this->assertFalse((bool) $admin->fresh()->is_approved);
     }
 }

@@ -109,7 +109,7 @@ Route::middleware(['auth'])->group(function () {
 
         $tenantSlug = $user->latest_tenant_slug ?? collect(Filament::getUserTenants($user))->first()?->slug ?? $user->tenant?->slug ?? $user->tenant_id;
 
-        return $tenantSlug ? redirect()->route('filament.admin.pages.painel-gestao', ['tenant' => $tenantSlug]) : redirect()->to('/admin');
+        return $tenantSlug ? redirect()->route('filament.admin.pages.painel-controle', ['tenant' => $tenantSlug]) : redirect()->to('/admin');
     })->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

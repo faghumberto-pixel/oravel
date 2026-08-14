@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tenant;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -108,5 +109,18 @@ class AsaasWebhookController extends Controller
             'asaas_last_payment_id' => $paymentId,
             'asaas_payment_updated_at' => now(),
         ]);
+
+        // Fluxo de autoatendimento (AsaasCheckoutController) cria o admin
+        // com is_approved=false -- acesso só é liberado aqui, na primeira
+        // confirmação de pagamento. Não reverte a aprovação em atraso/
+        // cancelamento (não é o escopo deste fluxo bloquear acesso de
+        // quem já pagou uma vez, ver decisão registrada no checkout).
+        if ($newStatus === Tenant::PAYMENT_STATUS_EM_DIA) {
+            // users() é a pivot tenant_user (multi-tenant do Filament),
+            // separada da coluna tenant_id direta que TenantProvisioner
+            // usa pra criar o admin -- por isso a query direta aqui em
+            // vez da relation.
+            User::where('tenant_id', $tenant->id)->where('is_approved', false)->update(['is_approved' => true]);
+        }
     }
 }

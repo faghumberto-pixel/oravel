@@ -15,4 +15,5 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('guest')->group(function () {
     Route::get('/assinar', [AsaasCheckoutController::class, 'create'])->name('checkout.create');
     Route::post('/assinar', [AsaasCheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/assinar/pendente', fn () => view('checkout.pending'))->name('checkout.pending');
 });
