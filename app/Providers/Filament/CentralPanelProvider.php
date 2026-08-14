@@ -122,7 +122,7 @@ class CentralPanelProvider extends PanelProvider
             // Central nunca teve isso (so' o Admin) -- caia no texto padrao
             // do Filament em vez do wordmark "Oravel" com o "r" laranja.
             ->brandLogo(fn () => view('filament.brand-logo'))
-            ->brandLogoHeight('1.75rem')
+            ->brandLogoHeight('1.25rem')
             ->favicon(asset('favicon.png').'?v=4')
             ->resources([
                 PlanResource::class,

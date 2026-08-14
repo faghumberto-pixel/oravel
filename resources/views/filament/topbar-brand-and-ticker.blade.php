@@ -2,22 +2,14 @@
      no template que sobrescreve o topbar do Filament, ver
      resources/views/vendor/filament-panels/components/topbar/index.blade.php.
      Nao precisa de JS nem de wrapper proprio aqui: por nao ser sticky,
-     "some ao rolar pra baixo" e' scroll comum. Espacamento entre logo/
-     relogio/avisos vem do "gap" em CSS puro no .fi-oravel-topbar-row1
+     "some ao rolar pra baixo" e' scroll comum. So' logo + avisos agora
+     (relogio removido 2026-08, poluia o visual minimalista) --
+     espacamento vem do "gap" em CSS puro no .fi-oravel-topbar-row1
      (brand-header-background.blade.php), nao de classes Tailwind tipo
      "me-10" que nao existem no CSS compilado deste ambiente. --}}
 <a href="{{ filament()->getUrl() }}" class="flex items-center">
     @include('filament.brand-logo')
 </a>
-
-<div class="flex items-center">
-    <span
-        x-data="{ now: new Date() }"
-        x-init="setInterval(() => now = new Date(), 1000)"
-        x-text="now.toLocaleString('pt-BR', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })"
-        class="text-[11px] font-medium capitalize text-gray-300"
-    ></span>
-</div>
 
 @php
     // Mesma fonte/logica de resources/views/filament/announcement-banner.blade.php
@@ -72,7 +64,7 @@
                 x-transition:leave="transition ease-in duration-300"
                 x-transition:leave-start="opacity-100 translate-x-0"
                 x-transition:leave-end="opacity-0 translate-x-3"
-                class="flex min-w-0 items-center gap-x-2 text-xs font-medium text-amber-400"
+                class="flex min-w-0 items-center gap-x-2 text-xs font-medium text-white"
             >
                 <span class="truncate">
                     <strong x-text="item.title"></strong>: <span x-text="item.message"></span>
