@@ -13,7 +13,7 @@
     <div class="fi-oravel-brand-logo-row flex items-center gap-3">
         {{-- Logo oficial (imagem enviada pelo usuario 2026-08-14), usada
              tal como fornecida -- sem redesenho. --}}
-        <img src="{{ asset('images/oravel-logo.jpg') }}" alt="Oravel" class="h-8 w-auto shrink-0">
+        <img src="{{ asset('images/oravel-logo.jpg') }}?v=2" alt="Oravel" class="h-8 w-auto shrink-0">
 
         @if($tenant)
             <span class="text-xs font-bold tracking-tight text-primary-500 truncate max-w-[16rem]">{{ $tenant->name }}</span>
