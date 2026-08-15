@@ -80,6 +80,7 @@ class EmployeeResource extends BaseResource
                         Employee::STATUS_ATIVO => 'success',
                         Employee::STATUS_AFASTADO => 'warning',
                         Employee::STATUS_DESLIGADO => 'gray',
+                        Employee::STATUS_INCOMPLETO => 'danger',
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('certificacoes_alerta')

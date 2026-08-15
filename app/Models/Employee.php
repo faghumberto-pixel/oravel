@@ -28,6 +28,13 @@ class Employee extends Model
 
     public const STATUS_DESLIGADO = 'desligado';
 
+    // Employee criado por backfill (tenant:backfill-employees) sem CPF real
+    // disponivel -- cpf recebe um placeholder obviamente falso (prefixo
+    // 00000) ate alguem do RH completar via UserResource.
+    public const STATUS_INCOMPLETO = 'incompleto';
+
+    public const CPF_PLACEHOLDER_PREFIX = '00000';
+
     protected $fillable = [
         'tenant_id',
         'user_id',
@@ -49,7 +56,13 @@ class Employee extends Model
             self::STATUS_ATIVO => 'Ativo',
             self::STATUS_AFASTADO => 'Afastado',
             self::STATUS_DESLIGADO => 'Desligado',
+            self::STATUS_INCOMPLETO => 'Incompleto (CPF pendente)',
         ];
+    }
+
+    public function hasPlaceholderCpf(): bool
+    {
+        return str_starts_with($this->cpf, self::CPF_PLACEHOLDER_PREFIX);
     }
 
     public function user(): BelongsTo
