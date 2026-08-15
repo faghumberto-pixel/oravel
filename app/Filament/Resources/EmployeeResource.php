@@ -14,6 +14,8 @@ class EmployeeResource extends BaseResource
 {
     protected static ?string $model = Employee::class;
 
+    protected static bool $shouldRegisterNavigation = true;
+
     protected static ?string $navigationIcon = 'heroicon-o-identification';
 
     protected static ?string $navigationGroup = 'Departamento Pessoal';

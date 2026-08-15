@@ -18,6 +18,8 @@ class EquipmentAllocationResource extends BaseResource
 {
     protected static ?string $model = EquipmentAllocation::class;
 
+    protected static bool $shouldRegisterNavigation = true;
+
     protected static ?string $navigationIcon = 'heroicon-o-link';
 
     protected static ?string $navigationGroup = 'Departamento Pessoal';
