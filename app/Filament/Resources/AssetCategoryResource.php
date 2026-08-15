@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\AssetCategoryResource\Pages;
+use App\Filament\Resources\AssetCategoryResource\RelationManagers;
 use App\Models\AssetCategory;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -86,6 +87,13 @@ class AssetCategoryResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\NrRequirementsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

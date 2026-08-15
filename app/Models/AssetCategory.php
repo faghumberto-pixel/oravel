@@ -43,4 +43,9 @@ class AssetCategory extends Model
     {
         return $this->hasMany(Asset::class, 'asset_category_id');
     }
+
+    public function nrRequirements(): HasMany
+    {
+        return $this->hasMany(NrRequirementByCategory::class, 'asset_category_id');
+    }
 }
