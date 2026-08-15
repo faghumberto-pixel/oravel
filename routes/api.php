@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AssetController;
 use App\Http\Controllers\Api\V1\HourMeterPreloadController;
 use App\Http\Controllers\Api\V1\HourMeterSyncController;
+use App\Http\Controllers\Api\V1\TimeClockSyncController;
 use App\Http\Controllers\AsaasWebhookController;
 use App\Http\Controllers\WhatsAppWebhookController;
 use Illuminate\Support\Facades\Route;
@@ -51,4 +52,5 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::get('/hour-meters/preload', [HourMeterPreloadController::class, 'index']);
     Route::post('/hour-meters/sync', [HourMeterSyncController::class, 'sync']);
+    Route::post('/time-clocks/sync', [TimeClockSyncController::class, 'sync']);
 });

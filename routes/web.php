@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\ChatHistoryPdfController;
 use App\Http\Controllers\EquipmentDamageReportController;
 use App\Http\Controllers\HourMeterOfflineController;
+use App\Http\Controllers\TimeClockOfflineController;
 use App\Http\Controllers\HourMeterPublicController;
 use App\Http\Controllers\MaintenanceKanbanPrintController;
 use App\Http\Controllers\MaintenanceOrderController;
@@ -224,6 +225,11 @@ Route::middleware(['auth'])->group(function () {
     // localStorage + fila de sync -- ver HourMeterOfflineController).
     Route::get('/admin/hour-meter', [HourMeterOfflineController::class, 'show'])
         ->name('hour-meter.offline');
+
+    // Tela dedicada de ponto eletrônico, offline-first -- mesmo padrão do
+    // horímetro (ver TimeClockOfflineController).
+    Route::get('/admin/time-clock', [TimeClockOfflineController::class, 'show'])
+        ->name('time-clock.offline');
 
     // --- ROTA UNIFICADA DE IMPRESSÃO (AJUSTADA) ---
     // Botao "Imprimir Etiqueta" (EditAsset::getHeaderActions()) -- essa e a

@@ -76,6 +76,16 @@ class AdminPanelProvider extends PanelProvider
                     ->sort(-8)
                     ->url(fn () => route('hour-meter.offline'))
                     ->visible(fn () => (bool) auth()->user()?->can('viewAny', Asset::class)),
+
+                // Mesmo padrão -- so' aparece pra quem tem Employee vinculado
+                // ao próprio User (TimeClockOfflineController::show() aborta
+                // 404 sem isso, o link nem precisa aparecer nesse caso).
+                NavigationItem::make('Bater Ponto')
+                    ->icon('heroicon-o-finger-print')
+                    ->group('Departamento Pessoal')
+                    ->sort(-8)
+                    ->url(fn () => route('time-clock.offline'))
+                    ->visible(fn () => \App\Models\Employee::where('user_id', auth()->id())->exists()),
             ])
             ->renderHook(
                 PanelsRenderHook::TOPBAR_START,

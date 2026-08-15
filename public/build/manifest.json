@@ -8,7 +8,7 @@
     "name": "module.esm"
   },
   "resources/css/app.css": {
-    "file": "assets/app-B9M3_4LI.css",
+    "file": "assets/app-XGx_5bao.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -17,11 +17,11 @@
     ]
   },
   "resources/css/filament/admin/theme.css": {
-    "file": "assets/theme-DKtIGElm.css",
+    "file": "assets/theme-1ATSCJBN.css",
     "src": "resources/css/filament/admin/theme.css"
   },
   "resources/css/filament/central/theme.css": {
-    "file": "assets/theme-DOgcYwdF.css",
+    "file": "assets/theme-ClHta4oP.css",
     "src": "resources/css/filament/central/theme.css",
     "isEntry": true,
     "name": "theme",
@@ -46,7 +46,7 @@
     "isEntry": true
   },
   "resources/js/chat-app.js": {
-    "file": "assets/chat-app-XdBB16SL.js",
+    "file": "assets/chat-app-DLkHDP9U.js",
     "name": "chat-app",
     "src": "resources/js/chat-app.js",
     "isEntry": true,
@@ -54,7 +54,7 @@
       "_import-wrapper-prod-BUuldluI.js"
     ],
     "css": [
-      "assets/app-B9M3_4LI.css"
+      "assets/app-XGx_5bao.css"
     ]
   },
   "resources/js/hour-meter-offline.js": {
@@ -70,6 +70,15 @@
     "file": "assets/hour-meter-public-Dv5Ctgk8.js",
     "name": "hour-meter-public",
     "src": "resources/js/hour-meter-public.js",
+    "isEntry": true,
+    "imports": [
+      "_module.esm-CCyjftVT.js"
+    ]
+  },
+  "resources/js/time-clock-offline.js": {
+    "file": "assets/time-clock-offline-BSbEUecM.js",
+    "name": "time-clock-offline",
+    "src": "resources/js/time-clock-offline.js",
     "isEntry": true,
     "imports": [
       "_module.esm-CCyjftVT.js"
