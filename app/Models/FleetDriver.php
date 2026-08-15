@@ -30,6 +30,7 @@ class FleetDriver extends Model
 
     protected $fillable = [
         'tenant_id',
+        'employee_id',
         'name',
         'cpf',
         'phone',
@@ -49,6 +50,11 @@ class FleetDriver extends Model
     public function freightCarrier(): BelongsTo
     {
         return $this->belongsTo(FreightCarrier::class);
+    }
+
+    public function employee(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class);
     }
 
     public function vehicles(): BelongsToMany

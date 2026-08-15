@@ -5,11 +5,13 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\FleetDriverResource\Pages;
 use App\Filament\Resources\FleetDriverResource\RelationManagers;
 use App\Models\FleetDriver;
+use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class FleetDriverResource extends Resource
 {
@@ -53,6 +55,22 @@ class FleetDriverResource extends Resource
                         ->preload()
                         ->visible(fn (Forms\Get $get) => $get('employment_type') === FleetDriver::EMPLOYMENT_TERCEIRO)
                         ->required(fn (Forms\Get $get) => $get('employment_type') === FleetDriver::EMPLOYMENT_TERCEIRO),
+                    Forms\Components\Select::make('employee_id')
+                        ->label('Colaborador (Departamento Pessoal)')
+                        ->helperText('Motorista próprio precisa ter um Colaborador vinculado -- é o que dá lastro pra bater ponto e registrar deslocamento pelo app.')
+                        ->relationship(
+                            name: 'employee',
+                            titleAttribute: 'name',
+                            modifyQueryUsing: function (Builder $query) {
+                                $tenant = Tenancy::current();
+
+                                return $query->when($tenant, fn ($q) => $q->where('tenant_id', $tenant->id));
+                            },
+                        )
+                        ->searchable()
+                        ->preload()
+                        ->visible(fn (Forms\Get $get) => $get('employment_type') === FleetDriver::EMPLOYMENT_PROPRIO)
+                        ->required(fn (Forms\Get $get) => $get('employment_type') === FleetDriver::EMPLOYMENT_PROPRIO),
                     Forms\Components\Toggle::make('active')
                         ->label('Ativo')
                         ->default(true)
@@ -95,6 +113,10 @@ class FleetDriverResource extends Resource
                 Tables\Columns\TextColumn::make('name')->label('Nome')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('cpf')->label('CPF')->searchable(),
                 Tables\Columns\TextColumn::make('phone')->label('Telefone'),
+                Tables\Columns\TextColumn::make('employee.name')
+                    ->label('Colaborador')
+                    ->placeholder('Sem vínculo')
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('employment_type')
                     ->label('Vínculo')
                     ->badge()

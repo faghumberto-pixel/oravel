@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Employee extends Model
 {
@@ -69,5 +70,10 @@ class Employee extends Model
     public function allocations(): HasMany
     {
         return $this->hasMany(EquipmentAllocation::class);
+    }
+
+    public function fleetDriver(): HasOne
+    {
+        return $this->hasOne(FleetDriver::class);
     }
 }

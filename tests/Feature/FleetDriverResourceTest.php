@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Resources\FleetDriverResource;
 use App\Filament\Resources\FleetDriverResource\Pages\CreateFleetDriver;
+use App\Models\Employee;
 use App\Models\FleetDriver;
 use App\Models\FleetVehicle;
 use App\Models\Plan;
@@ -62,6 +63,10 @@ class FleetDriverResourceTest extends TestCase
     {
         [$tenant, $admin] = $this->makeTenant(['tabela_fleet_drivers']);
         $vehicle = FleetVehicle::create(['tenant_id' => $tenant->id, 'placa' => 'ZZZ0001', 'modelo' => 'Truck', 'tipo' => 'truck']);
+        $employee = Employee::create([
+            'tenant_id' => $tenant->id, 'name' => 'Novo Motorista', 'cpf' => '11122233344',
+            'status' => Employee::STATUS_ATIVO,
+        ]);
         $this->actingAs($admin);
 
         Livewire::test(CreateFleetDriver::class)
@@ -69,6 +74,7 @@ class FleetDriverResourceTest extends TestCase
                 'name' => 'Novo Motorista',
                 'cpf' => '111.222.333-44',
                 'employment_type' => FleetDriver::EMPLOYMENT_PROPRIO,
+                'employee_id' => $employee->id,
                 'cnh_number' => '99988877766',
                 'cnh_category' => 'E',
                 'cnh_expiry_date' => now()->addYear()->toDateString(),
@@ -79,6 +85,21 @@ class FleetDriverResourceTest extends TestCase
 
         $driver = FleetDriver::where('name', 'Novo Motorista')->firstOrFail();
         $this->assertTrue($driver->vehicles->contains($vehicle));
+        $this->assertSame($employee->id, $driver->employee_id);
+    }
+
+    public function test_proprio_driver_requires_a_linked_employee(): void
+    {
+        [$tenant, $admin] = $this->makeTenant(['tabela_fleet_drivers']);
+        $this->actingAs($admin);
+
+        Livewire::test(CreateFleetDriver::class)
+            ->fillForm([
+                'name' => 'Motorista Proprio Sem Employee',
+                'employment_type' => FleetDriver::EMPLOYMENT_PROPRIO,
+            ])
+            ->call('create')
+            ->assertHasFormErrors(['employee_id']);
     }
 
     public function test_terceiro_driver_requires_a_freight_carrier(): void

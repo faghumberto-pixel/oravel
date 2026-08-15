@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Models\Employee;
 use App\Models\User;
 use App\Support\Tenancy;
 use Filament\Facades\Filament;
@@ -116,6 +117,38 @@ class UserResource extends Resource
                             ->helperText('Usuários vindos do auto-cadastro nascem pendentes -- só conseguem logar depois de aprovados aqui.')
                             ->default(true),
                     ])->columns(2),
+
+                Forms\Components\Section::make('Vínculo com Departamento Pessoal')
+                    ->description('Preencha o CPF se este funcionário também bate ponto, é alocado a equipamentos ou precisa de controle de horas formal. Cria/atualiza automaticamente o cadastro de Colaborador correspondente (o CPF é o campo que decide se o vínculo é criado).')
+                    ->schema([
+                        Forms\Components\TextInput::make('employee_cpf')
+                            ->label('CPF')
+                            ->length(11)
+                            ->numeric()
+                            ->dehydrated(true)
+                            ->rule(function (?User $record) {
+                                return function (string $attribute, $value, \Closure $fail) use ($record) {
+                                    $tenant = Tenancy::current();
+                                    if (! $tenant || blank($value)) {
+                                        return;
+                                    }
+                                    $query = Employee::where('tenant_id', $tenant->id)->where('cpf', $value);
+                                    if ($record) {
+                                        $query->where('user_id', '!=', $record->id);
+                                    }
+                                    if ($query->exists()) {
+                                        $fail('Já existe um Colaborador com este CPF neste tenant.');
+                                    }
+                                };
+                            }),
+                        Forms\Components\TextInput::make('employee_role_title')
+                            ->label('Cargo')
+                            ->maxLength(191)
+                            ->dehydrated(true),
+                        Forms\Components\DatePicker::make('employee_admission_date')
+                            ->label('Data de Admissão')
+                            ->dehydrated(true),
+                    ])->columns(3),
             ]);
     }
 

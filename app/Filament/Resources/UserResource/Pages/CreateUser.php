@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
+use App\Models\Employee;
 use App\Support\Tenancy;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -11,12 +12,26 @@ class CreateUser extends CreateRecord
     protected static string $resource = UserResource::class;
 
     /**
+     * Campos do bloco "Vínculo com Departamento Pessoal" não existem em
+     * `users` -- guardamos aqui antes de sumirem do $data e usamos em
+     * afterCreate() pra criar o Employee correspondente.
+     */
+    protected array $employeeData = [];
+
+    /**
      * 🔄 INTERCEPTADOR DE SALVAMENTO MULTI-TENANT
      * Modifica os dados antes de salvar no banco, garantindo que o novo funcionário
      * nasça com o tenant_id preenchido e seja vinculado à empresa locadora atual.
      */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $this->employeeData = [
+            'cpf' => $data['employee_cpf'] ?? null,
+            'role_title' => $data['employee_role_title'] ?? null,
+            'admission_date' => $data['employee_admission_date'] ?? null,
+        ];
+        unset($data['employee_cpf'], $data['employee_role_title'], $data['employee_admission_date']);
+
         $tenant = Tenancy::current();
 
         if ($tenant) {
@@ -43,6 +58,29 @@ class CreateUser extends CreateRecord
                 $user->tenants()->syncWithoutDetaching([$tenant->id]);
             }
         }
+
+        $this->syncEmployee($user, $tenant?->id);
+    }
+
+    /**
+     * CPF é o campo que decide se o vínculo com Departamento Pessoal existe
+     * (employees.cpf é NOT NULL) -- sem CPF, não cria Employee.
+     */
+    protected function syncEmployee($user, ?string $tenantId): void
+    {
+        if (blank($this->employeeData['cpf'] ?? null) || ! $tenantId) {
+            return;
+        }
+
+        Employee::create([
+            'tenant_id' => $tenantId,
+            'user_id' => $user->id,
+            'department_id' => $user->department_id,
+            'name' => $user->name,
+            'cpf' => $this->employeeData['cpf'],
+            'role_title' => $this->employeeData['role_title'],
+            'admission_date' => $this->employeeData['admission_date'],
+        ]);
     }
 
     /**
