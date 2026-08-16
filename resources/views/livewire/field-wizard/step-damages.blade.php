@@ -278,6 +278,11 @@
                         const currentText = field.value;
                         field.value = currentText ? currentText + ' ' + transcript : transcript;
                         field.dispatchEvent(new Event('input', { bubbles: true }));
+                        // wire:model (sem .live) so' sincroniza no evento
+                        // "change" (blur) -- sem isso o texto aparece na tela
+                        // mas nunca chega no componente Livewire ate' o
+                        // tecnico tocar em outro campo manualmente.
+                        field.dispatchEvent(new Event('change', { bubbles: true }));
                     }
                 };
 

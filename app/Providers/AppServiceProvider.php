@@ -85,6 +85,16 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
+        // php artisan serve/nginx nao terminam TLS -- quando ha' um proxy
+        // reverso na frente (ngrok pra teste, ou qualquer LB em producao)
+        // o request chega como http:// mesmo com o cliente usando https://,
+        // e Vite::asset()/url() geram links http:// -- navegador bloqueia
+        // como mixed content numa pagina https (CSS/JS somem em silencio).
+        // X-Forwarded-Proto e' o header padrao que esses proxies mandam.
+        if (request()->header('X-Forwarded-Proto') === 'https') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         // Render customizado para erros 403
         app('Illuminate\Foundation\Exceptions\Handler')->renderable(function (HttpException $e) {
             if ($e->getStatusCode() === 403) {
