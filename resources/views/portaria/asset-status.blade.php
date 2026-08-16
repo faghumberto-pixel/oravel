@@ -9,7 +9,10 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,600,800&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css'])
 </head>
-<body class="font-sans antialiased bg-zinc-950 text-zinc-100 overscroll-none">
+{{-- Mobile-first (max-w-md) -- em telas largas o body vira moldura neutra
+     e o conteudo fica centralizado com formato de celular, em vez de
+     esticar. --}}
+<body class="font-sans antialiased bg-zinc-950 text-zinc-100 overscroll-none md:bg-zinc-900 md:flex md:min-h-screen md:items-center md:justify-center md:py-6">
     {{--
         Classes de cor precisam ser strings literais completas (nao
         interpoladas tipo bg-{{ $cor }}-500), senao o Tailwind JIT nao
@@ -29,7 +32,7 @@
         [$statusLabel, $statusClasses] = $statusMeta[$asset->status] ?? [$asset->status, 'bg-zinc-500/15 text-zinc-400'];
         $lastOrder = $asset->maintenanceOrders()->latest('created_at')->first();
     @endphp
-    <div class="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-8 text-center">
+    <div class="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-8 text-center md:h-[844px] md:min-h-0 md:w-[390px] md:overflow-y-auto md:rounded-[2rem] md:border md:border-zinc-800 md:shadow-2xl">
         <p class="text-xs font-bold uppercase tracking-widest text-zinc-500">Patrimônio {{ $asset->patrimonio ?? '—' }}</p>
         <p class="mt-1 text-2xl font-extrabold text-white">{{ $asset->name }}</p>
 

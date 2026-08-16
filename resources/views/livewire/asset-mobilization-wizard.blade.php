@@ -1,6 +1,6 @@
 {{-- Wizard de Mobilização: 5 etapas para remover equipamento do pátio --}}
 
-<div class="mx-auto flex min-h-screen max-w-md flex-col bg-zinc-950" x-data="{
+<div class="mx-auto flex min-h-screen max-w-md flex-col bg-zinc-950 md:h-full md:min-h-0 md:overflow-y-auto" x-data="{
     signaturePad: null,
     initSignature() {
         const canvas = document.getElementById('signaturePad');

@@ -3,7 +3,11 @@
     Design native app mobile.
 --}}
 
-<div class="fixed inset-0 mx-auto flex max-w-md flex-col bg-slate-950" x-data="{ menuOpen: false }">
+{{-- absolute (nao fixed) -- em telas largas o pai (layouts.checklist-mobile)
+     e' a moldura de celular centralizada, entao esta tela deve preencher
+     SO' essa moldura, nao a viewport inteira (fixed ignoraria o md:rounded/
+     md:overflow-hidden do pai e vazaria por cima). --}}
+<div class="absolute inset-0 mx-auto flex max-w-md flex-col bg-slate-950" x-data="{ menuOpen: false }">
     {{-- Header minimalista --}}
     <header class="sticky top-0 z-40 border-b border-slate-800 bg-slate-900/95 backdrop-blur px-5 py-4">
         <div class="flex items-center justify-between gap-3">

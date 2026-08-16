@@ -2,7 +2,7 @@
     $asset = $equipmentMovement->asset;
 @endphp
 
-<div class="mx-auto flex min-h-screen max-w-md flex-col">
+<div class="mx-auto flex min-h-screen max-w-md flex-col md:h-full md:min-h-0 md:overflow-y-auto">
     {{-- Header --}}
     <header class="flex items-center justify-between px-5 pb-2 pt-6">
         <h1 class="text-xs font-bold tracking-widest text-zinc-400">LAUDO DE RECEBIMENTO</h1>

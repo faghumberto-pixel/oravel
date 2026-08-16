@@ -13,7 +13,14 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased bg-zinc-950 text-zinc-100 overscroll-none">
-        {{ $slot }}
+    {{-- Desenhado mobile-first (max-w-md nas telas internas) -- em telas
+         largas (notebook/desktop), o body vira uma moldura neutra ao redor
+         em vez de esticar o conteudo, e a tela de celular fica centralizada
+         com sombra/borda pra deixar claro que e' uma area de celular, nao
+         a pagina inteira. --}}
+    <body class="h-screen font-sans antialiased bg-zinc-950 text-zinc-100 overscroll-none md:flex md:h-screen md:items-center md:justify-center md:bg-zinc-900 md:py-6">
+        <div class="relative h-full md:mx-auto md:h-[844px] md:w-[390px] md:overflow-hidden md:rounded-[2rem] md:border md:border-zinc-800 md:shadow-2xl">
+            {{ $slot }}
+        </div>
     </body>
 </html>

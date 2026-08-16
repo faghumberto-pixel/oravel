@@ -9,8 +9,11 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,600,800&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css'])
 </head>
-<body class="font-sans antialiased bg-zinc-950 text-zinc-100 overscroll-none">
-    <div class="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-8 text-center">
+{{-- Mobile-first (max-w-md) -- em telas largas o body vira moldura neutra
+     e o conteudo fica centralizado com formato de celular, em vez de
+     esticar. --}}
+<body class="font-sans antialiased bg-zinc-950 text-zinc-100 overscroll-none md:bg-zinc-900 md:flex md:min-h-screen md:items-center md:justify-center md:py-6">
+    <div class="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-8 text-center md:h-[844px] md:min-h-0 md:w-[390px] md:overflow-y-auto md:rounded-[2rem] md:border md:border-zinc-800 md:shadow-2xl">
         @if(! $movement)
             <p class="text-2xl font-extrabold text-zinc-500">QR CODE INVÁLIDO</p>
             <p class="mt-2 text-sm text-zinc-500">Nenhuma movimentação encontrada para este código.</p>

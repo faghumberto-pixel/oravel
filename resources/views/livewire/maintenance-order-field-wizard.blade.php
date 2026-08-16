@@ -4,7 +4,7 @@
     sticky com acao full-width, alvos de 2.75rem/3.25rem = 44/52px, dark zinc,
     esmeralda no concluido). Nao inventar espacamento novo aqui.
 --}}
-<div class="mx-auto flex min-h-screen max-w-md flex-col">
+<div class="mx-auto flex min-h-screen max-w-md flex-col md:h-full md:min-h-0 md:overflow-y-auto">
     {{-- Cabecalho fixo: modulo + status + usuario. Sem menu. --}}
     <header class="flex items-center justify-between px-5 pb-2 pt-6">
         <h1 class="text-xs font-bold tracking-widest text-zinc-400">MODO CAMPO</h1>

@@ -9,7 +9,7 @@
     $released = $equipmentMovement->status === \App\Models\EquipmentMovement::STATUS_CONCLUIDO;
 @endphp
 
-<div class="mx-auto flex min-h-screen max-w-md flex-col" wire:poll.10s>
+<div class="mx-auto flex min-h-screen max-w-md flex-col md:h-full md:min-h-0 md:overflow-y-auto" wire:poll.10s>
     {{-- Header --}}
     <header class="flex items-center justify-between px-5 pb-2 pt-6">
         <h1 class="text-xs font-bold tracking-widest text-zinc-400">DESPACHO DE LOCAÇÃO</h1>

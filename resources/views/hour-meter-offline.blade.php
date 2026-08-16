@@ -13,8 +13,11 @@
 
         @vite(['resources/css/app.css', 'resources/js/hour-meter-offline.js'])
     </head>
-    <body class="font-sans antialiased bg-zinc-950 text-zinc-100 overscroll-none">
-    <div class="mx-auto flex min-h-screen max-w-md flex-col" x-data="hourMeterOffline()" x-init="init()">
+    {{-- Mobile-first (max-w-md) -- em telas largas o body vira moldura
+         neutra e o conteudo fica centralizado com formato de celular, em
+         vez de esticar. --}}
+    <body class="font-sans antialiased bg-zinc-950 text-zinc-100 overscroll-none md:bg-zinc-900 md:flex md:min-h-screen md:items-center md:justify-center md:py-6">
+    <div class="mx-auto flex min-h-screen max-w-md flex-col md:h-[844px] md:min-h-0 md:w-[390px] md:overflow-y-auto md:rounded-[2rem] md:border md:border-zinc-800 md:shadow-2xl" x-data="hourMeterOffline()" x-init="init()">
         <header class="flex items-center gap-3 px-5 pb-2 pt-6">
             <a
                 href="{{ route('filament.admin.pages.technician-daily-tasks') }}"

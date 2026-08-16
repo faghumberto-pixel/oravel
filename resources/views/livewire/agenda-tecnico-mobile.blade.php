@@ -2,7 +2,9 @@
     Agenda Técnica — próximos 30 dias, design polido mobile-first.
 --}}
 
-<div class="fixed inset-0 mx-auto flex max-w-md flex-col bg-slate-950">
+{{-- absolute (nao fixed) -- em telas largas o pai (layouts.checklist-mobile)
+     e' a moldura de celular centralizada; fixed vazaria por cima dela. --}}
+<div class="absolute inset-0 mx-auto flex max-w-md flex-col bg-slate-950">
     {{-- Header polido --}}
     <header class="sticky top-0 z-40 border-b border-slate-800 bg-slate-900/95 backdrop-blur px-5 py-4">
         <div class="space-y-3">
