@@ -130,9 +130,19 @@
                 @elseif($saveState === 'saved')
                     <span class="text-emerald-400">✓ Salvo</span>
                 @endif
-                <span wire:loading wire:target="next,retry" class="text-zinc-400">Salvando...</span>
+                <span wire:loading wire:target="next,retry,saveAndPause" class="text-zinc-400">Salvando...</span>
             </span>
         </div>
+
+        @if ($step === 3)
+            {{-- So' nesta etapa: texto (descricao/notas, inclusive ditado por
+                 voz) so' persiste ao avancar de step -- se o tecnico for
+                 chamado pra outra coisa no meio, perde tudo sem isso. --}}
+            <button type="button" wire:click="saveAndPause" wire:loading.attr="disabled" wire:target="saveAndPause,next"
+                    class="mb-3 min-h-[2.75rem] w-full rounded-xl border border-amber-700 bg-amber-900/20 text-xs font-bold tracking-wide text-amber-400">
+                SALVAR E PAUSAR
+            </button>
+        @endif
 
         <div class="flex gap-3">
             <button type="button" wire:click="back"
