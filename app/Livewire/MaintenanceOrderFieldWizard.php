@@ -312,6 +312,27 @@ class MaintenanceOrderFieldWizard extends Component
         $this->persistCurrentStep();
     }
 
+    /**
+     * Salva a etapa atual (texto/notas -- fotos ja' salvam sozinhas) sem
+     * exigir avancar pro proximo step, e pausa a O.S. -- pro tecnico que
+     * precisa atender outra coisa no meio do preenchimento sem perder o que
+     * ja' descreveu/ditou por voz.
+     */
+    public function saveAndPause(): void
+    {
+        if (! $this->persistCurrentStep()) {
+            return;
+        }
+
+        if ($this->maintenanceOrder->status === 'Em Andamento') {
+            $oldStatus = $this->maintenanceOrder->status;
+            $this->maintenanceOrder->update(['status' => 'Pausada']);
+            $this->maintenanceOrder->logStatusChange('Pausada', $oldStatus);
+        }
+
+        $this->redirectRoute('filament.admin.pages.technician-daily-tasks', navigate: false);
+    }
+
     private function startService(): void
     {
         $oldStatus = $this->maintenanceOrder->status;

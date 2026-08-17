@@ -391,6 +391,40 @@ class MaintenanceOrderFieldWizardTest extends TestCase
         $this->assertSame('Necessário reposição imediata', $order->technical_notes);
     }
 
+    public function test_step_three_save_and_pause_persists_text_and_pauses_in_progress_order(): void
+    {
+        $tenant = $this->makeTenant();
+        $user = $this->makeAdmin($tenant);
+        $order = $this->makeOrder($tenant, ['status' => 'Em Andamento']);
+        $this->actingAs($user);
+
+        Livewire::test(MaintenanceOrderFieldWizard::class, ['maintenanceOrder' => $order, 'step' => 3])
+            ->set('damageDescription', 'Vazamento no cilindro')
+            ->set('technicalNotes', 'Ditado por voz, tecnico foi chamado pra outra O.S.')
+            ->call('saveAndPause');
+
+        $order->refresh();
+        $this->assertSame('Vazamento no cilindro', $order->description);
+        $this->assertSame('Ditado por voz, tecnico foi chamado pra outra O.S.', $order->technical_notes);
+        $this->assertSame('Pausada', $order->status);
+    }
+
+    public function test_step_three_save_and_pause_does_not_change_status_when_not_in_progress(): void
+    {
+        $tenant = $this->makeTenant();
+        $user = $this->makeAdmin($tenant);
+        $order = $this->makeOrder($tenant, ['status' => 'Aberto']);
+        $this->actingAs($user);
+
+        Livewire::test(MaintenanceOrderFieldWizard::class, ['maintenanceOrder' => $order, 'step' => 3])
+            ->set('damageDescription', 'Rascunho salvo antes de iniciar')
+            ->call('saveAndPause');
+
+        $order->refresh();
+        $this->assertSame('Rascunho salvo antes de iniciar', $order->description);
+        $this->assertSame('Aberto', $order->status);
+    }
+
     public function test_step_three_can_clear_damage_photos(): void
     {
         $tenant = $this->makeTenant();
