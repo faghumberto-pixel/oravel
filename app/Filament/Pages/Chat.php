@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\WithFileUploads;
@@ -127,6 +128,15 @@ class Chat extends Page
         if (! $this->photo) {
             return;
         }
+
+        try {
+            $this->validate(['photo' => 'image|max:5120']);
+        } catch (ValidationException $e) {
+            $this->reset('photo');
+
+            throw $e;
+        }
+
         $this->resolveChatRoom();
 
         $photoPath = $this->photo->store('chat_attachments', 'public');
@@ -153,6 +163,15 @@ class Chat extends Page
         if (! $this->document) {
             return;
         }
+
+        try {
+            $this->validate(['document' => 'file|max:10240|mimes:pdf,doc,docx,xls,xlsx,txt,csv']);
+        } catch (ValidationException $e) {
+            $this->reset('document');
+
+            throw $e;
+        }
+
         $this->resolveChatRoom();
 
         $docPath = $this->document->store('chat_attachments', 'public');
