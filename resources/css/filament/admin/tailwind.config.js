@@ -14,5 +14,13 @@ export default {
         // arquivo dos globs acima.
         './resources/views/vendor/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
+        // layouts/checklist-mobile.blade.php (Modo Campo) + standalone
+        // (hour-meter-offline, portaria/*, etc) ficavam de fora de todos os
+        // globs acima -- mesmo bug ja documentado pra resources/views/vendor,
+        // agora achado em layouts/ e nas views soltas na raiz de views/.
+        './resources/views/layouts/**/*.blade.php',
+        './resources/views/*.blade.php',
+        './resources/views/portaria/**/*.blade.php',
+        './resources/views/checkout/**/*.blade.php',
     ],
 }
