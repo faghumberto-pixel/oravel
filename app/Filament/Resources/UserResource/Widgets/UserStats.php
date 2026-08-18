@@ -16,11 +16,14 @@ class UserStats extends BaseWidget
 
     protected function getStats(): array
     {
-        $total = User::count();
-        $tecnicos = User::where('role', 'tecnico')->count();
-        $admins = User::where('role', 'admin')->count();
+        $tenant = Tenancy::current();
+        $base = User::query()->when($tenant, fn ($q) => $q->where('tenant_id', $tenant->id));
 
-        $ativosNaSemana = User::where('last_seen', '>=', now()->subDays(7))->count();
+        $total = (clone $base)->count();
+        $tecnicos = (clone $base)->where('role', 'tecnico')->count();
+        $admins = (clone $base)->where('role', 'admin')->count();
+
+        $ativosNaSemana = (clone $base)->where('last_seen', '>=', now()->subDays(7))->count();
 
         return [
             Stat::make('Total de Funcionários', $total)

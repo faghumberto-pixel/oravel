@@ -5,10 +5,12 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\EmployeeResource\Pages;
 use App\Filament\Resources\EmployeeResource\RelationManagers;
 use App\Models\Employee;
+use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class EmployeeResource extends BaseResource
 {
@@ -56,7 +58,15 @@ class EmployeeResource extends BaseResource
                     Forms\Components\Select::make('user_id')
                         ->label('Usuário do painel vinculado')
                         ->helperText('Só preencher se este colaborador também faz login no Oravel.')
-                        ->relationship('user', 'name')
+                        ->relationship(
+                            name: 'user',
+                            titleAttribute: 'name',
+                            modifyQueryUsing: function (Builder $query) {
+                                $tenant = Tenancy::current();
+
+                                return $query->when($tenant, fn (Builder $q) => $q->where('tenant_id', $tenant->id));
+                            },
+                        )
                         ->searchable()
                         ->preload()
                         ->columnSpanFull(),

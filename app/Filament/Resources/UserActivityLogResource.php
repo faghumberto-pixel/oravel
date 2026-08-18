@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserActivityLogResource\Pages;
 use App\Models\UserActivityLog;
+use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -138,7 +139,15 @@ class UserActivityLogResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('user_id')
                     ->label('Usuário')
-                    ->relationship('user', 'name')
+                    ->relationship(
+                        name: 'user',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: function (Builder $query) {
+                            $tenant = Tenancy::current();
+
+                            return $query->when($tenant, fn (Builder $q) => $q->where('tenant_id', $tenant->id));
+                        },
+                    )
                     ->searchable()
                     ->preload(),
 
