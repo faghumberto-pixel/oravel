@@ -79,8 +79,10 @@ REMOTE_EOF
 )
 
 # 4. Conecta na VM via gcloud e roda o script remoto
-echo "🔌 Conectando na VM via gcloud compute ssh..."
-gcloud compute ssh "$VM_INSTANCE" --zone="$VM_ZONE" --command="$REMOTE_SCRIPT"
+# --tunnel-through-iap: a porta 22 publica foi fechada (2026-08-18, pos-incidente
+# de mineracao); SSH so e permitido via IAP (range 35.235.240.0/20).
+echo "🔌 Conectando na VM via gcloud compute ssh (IAP)..."
+gcloud compute ssh "$VM_INSTANCE" --zone="$VM_ZONE" --tunnel-through-iap --command="$REMOTE_SCRIPT"
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
