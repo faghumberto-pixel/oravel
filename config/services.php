@@ -60,6 +60,7 @@ return [
         'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
         'base_url' => env('WHATSAPP_BASE_URL', 'https://graph.facebook.com/v20.0'),
         'webhook_token' => env('WHATSAPP_WEBHOOK_TOKEN'),
+        'app_secret' => env('WHATSAPP_APP_SECRET'),
     ],
 
 ];

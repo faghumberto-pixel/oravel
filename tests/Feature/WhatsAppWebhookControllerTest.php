@@ -5,11 +5,14 @@ namespace Tests\Feature;
 use App\Jobs\ProcessWhatsAppMessageJob;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 class WhatsAppWebhookControllerTest extends TestCase
 {
     use RefreshDatabase;
+
+    private const APP_SECRET = 'meu-app-secret-de-teste';
 
     private function messagePayload(string $from, string $text, string $messageId = 'wamid.abc'): array
     {
@@ -33,6 +36,23 @@ class WhatsAppWebhookControllerTest extends TestCase
                 ],
             ],
         ];
+    }
+
+    private function postSigned(array $payload, ?string $secret = self::APP_SECRET): TestResponse
+    {
+        config(['services.whatsapp.app_secret' => self::APP_SECRET]);
+
+        $body = json_encode($payload);
+        $headers = [
+            'CONTENT_TYPE' => 'application/json',
+            'Accept' => 'application/json',
+        ];
+
+        if ($secret !== null) {
+            $headers['X-Hub-Signature-256'] = 'sha256='.hash_hmac('sha256', $body, $secret);
+        }
+
+        return $this->call('POST', '/api/webhooks/whatsapp', [], [], [], $this->transformHeadersToServerVars($headers), $body);
     }
 
     public function test_verify_returns_challenge_when_token_matches(): void
@@ -79,7 +99,7 @@ class WhatsAppWebhookControllerTest extends TestCase
     {
         Bus::fake();
 
-        $response = $this->postJson('/api/webhooks/whatsapp', $this->messagePayload('5511999998888', 'Olá, quero saber mais'));
+        $response = $this->postSigned($this->messagePayload('5511999998888', 'Olá, quero saber mais'));
 
         $response->assertOk();
         $response->assertJson(['status' => 'received']);
@@ -96,7 +116,7 @@ class WhatsAppWebhookControllerTest extends TestCase
         // WhatsApp) acontece dentro da requisicao HTTP em si.
         Bus::fake();
 
-        $response = $this->postJson('/api/webhooks/whatsapp', $this->messagePayload('5511999998888', 'Teste de latência'));
+        $response = $this->postSigned($this->messagePayload('5511999998888', 'Teste de latência'));
 
         $response->assertOk();
         Bus::assertDispatched(ProcessWhatsAppMessageJob::class);
@@ -122,7 +142,7 @@ class WhatsAppWebhookControllerTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/api/webhooks/whatsapp', $payload);
+        $response = $this->postSigned($payload);
 
         $response->assertOk();
         Bus::assertNotDispatched(ProcessWhatsAppMessageJob::class);
@@ -149,7 +169,7 @@ class WhatsAppWebhookControllerTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/api/webhooks/whatsapp', $payload);
+        $response = $this->postSigned($payload);
 
         $response->assertOk();
         Bus::assertDispatchedTimes(ProcessWhatsAppMessageJob::class, 2);
@@ -159,9 +179,40 @@ class WhatsAppWebhookControllerTest extends TestCase
     {
         Bus::fake();
 
-        $response = $this->postJson('/api/webhooks/whatsapp', []);
+        $response = $this->postSigned([]);
 
         $response->assertOk();
+        Bus::assertNotDispatched(ProcessWhatsAppMessageJob::class);
+    }
+
+    public function test_handle_rejects_request_without_signature(): void
+    {
+        Bus::fake();
+
+        $response = $this->postSigned($this->messagePayload('5511999998888', 'Sem assinatura'), secret: null);
+
+        $response->assertForbidden();
+        Bus::assertNotDispatched(ProcessWhatsAppMessageJob::class);
+    }
+
+    public function test_handle_rejects_request_with_wrong_signature(): void
+    {
+        Bus::fake();
+
+        $response = $this->postSigned($this->messagePayload('5511999998888', 'Assinatura errada'), secret: 'segredo-errado');
+
+        $response->assertForbidden();
+        Bus::assertNotDispatched(ProcessWhatsAppMessageJob::class);
+    }
+
+    public function test_handle_rejects_request_when_app_secret_not_configured(): void
+    {
+        Bus::fake();
+        config(['services.whatsapp.app_secret' => null]);
+
+        $response = $this->postJson('/api/webhooks/whatsapp', $this->messagePayload('5511999998888', 'Sem app secret'));
+
+        $response->assertForbidden();
         Bus::assertNotDispatched(ProcessWhatsAppMessageJob::class);
     }
 }

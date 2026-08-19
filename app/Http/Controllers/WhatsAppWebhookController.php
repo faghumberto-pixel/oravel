@@ -34,6 +34,10 @@ class WhatsAppWebhookController extends Controller
 
     public function handle(Request $request): JsonResponse
     {
+        if (! $this->hasValidSignature($request)) {
+            return response()->json(['status' => 'forbidden'], 403);
+        }
+
         $validated = $request->validate([
             'entry' => ['nullable', 'array'],
             'entry.*.changes' => ['nullable', 'array'],
@@ -64,5 +68,31 @@ class WhatsAppWebhookController extends Controller
         }
 
         return response()->json(['status' => 'received'], 200);
+    }
+
+    /**
+     * A Meta assina o corpo bruto do POST com HMAC-SHA256 usando o App
+     * Secret (não o hub_verify_token, que só serve pro handshake GET) e
+     * manda o resultado no header X-Hub-Signature-256, formato
+     * "sha256=<hex>". Sem isso, qualquer requisição externa podia
+     * disparar ProcessWhatsAppMessageJob com phone/text arbitrários.
+     */
+    private function hasValidSignature(Request $request): bool
+    {
+        $appSecret = config('services.whatsapp.app_secret');
+
+        if (blank($appSecret)) {
+            return false;
+        }
+
+        $header = $request->header('X-Hub-Signature-256', '');
+
+        if (! str_starts_with($header, 'sha256=')) {
+            return false;
+        }
+
+        $expected = hash_hmac('sha256', $request->getContent(), $appSecret);
+
+        return hash_equals($expected, substr($header, strlen('sha256=')));
     }
 }

@@ -13,6 +13,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
 
 class GlobalChatTest extends TestCase
@@ -94,6 +95,72 @@ class GlobalChatTest extends TestCase
         $contacts = Livewire::test(GlobalChat::class)->instance()->users();
 
         $this->assertCount(0, $contacts);
+    }
+
+    /**
+     * Achado de auditoria de segurança 2026-08-19: selectedUserId e' uma
+     * propriedade publica Livewire com #[Url] (bindavel via querystring,
+     * ver GlobalChat::$selectedUserId), lida diretamente por chatRoom()
+     * sem validar tenant. Cobre tanto o caminho via selectUser() quanto
+     * via mount() (querystring), garantindo que resolveOrCreateChatRoom()
+     * bloqueia usuario de outro tenant em vez de criar uma ChatRoom
+     * cruzando os dois tenants.
+     */
+    public function test_cannot_open_chat_room_with_user_from_another_tenant_via_select_user(): void
+    {
+        [, $admin] = $this->makeTenantWithTwoUsers();
+        [, , $outsiderFromOtherTenant] = $this->makeTenantWithTwoUsers();
+
+        $this->actingAs($admin);
+
+        try {
+            Livewire::test(GlobalChat::class)
+                ->call('selectUser', $outsiderFromOtherTenant->id)
+                ->instance()
+                ->chatRoom();
+            $this->fail('Esperava HttpException 403 ao tentar abrir sala com usuário de outro tenant.');
+        } catch (HttpException $e) {
+            $this->assertSame(403, $e->getStatusCode());
+        }
+    }
+
+    public function test_cannot_open_chat_room_with_user_from_another_tenant_via_querystring(): void
+    {
+        [, $admin] = $this->makeTenantWithTwoUsers();
+        [, , $outsiderFromOtherTenant] = $this->makeTenantWithTwoUsers();
+
+        $this->actingAs($admin);
+
+        try {
+            Livewire::test(GlobalChat::class, ['selectedUserId' => $outsiderFromOtherTenant->id])
+                ->instance()
+                ->chatRoom();
+            $this->fail('Esperava HttpException 403 ao tentar abrir sala com usuário de outro tenant.');
+        } catch (HttpException $e) {
+            $this->assertSame(403, $e->getStatusCode());
+        }
+    }
+
+    public function test_no_chat_room_is_created_when_selected_user_belongs_to_another_tenant(): void
+    {
+        [, $admin] = $this->makeTenantWithTwoUsers();
+        [, , $outsiderFromOtherTenant] = $this->makeTenantWithTwoUsers();
+
+        $this->actingAs($admin);
+
+        try {
+            Livewire::test(GlobalChat::class)
+                ->call('selectUser', $outsiderFromOtherTenant->id)
+                ->instance()
+                ->chatRoom();
+        } catch (HttpException) {
+            // esperado -- o que importa aqui e' o efeito colateral abaixo.
+        }
+
+        $this->assertFalse(
+            ChatRoom::query()->whereHas('users', fn ($q) => $q->where('users.id', $outsiderFromOtherTenant->id))->exists(),
+            'Nenhuma ChatRoom deveria ter sido criada com um usuário de outro tenant.'
+        );
     }
 
     public function test_message_lifecycle_goes_from_sent_to_delivered_to_read(): void

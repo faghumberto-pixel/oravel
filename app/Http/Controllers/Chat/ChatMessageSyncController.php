@@ -41,13 +41,11 @@ class ChatMessageSyncController extends Controller
             'client_id' => ['required', 'string'], // id gerado no cliente, pra idempotência
         ]);
 
-        // resolveOrCreateChatRoom() (InteractsWithChat) não valida por si só
-        // que o destinatário é do mesmo tenant quando a sala ainda não
-        // existe -- essa checagem existe hoje só porque o Livewire GlobalChat
-        // só oferece IDs já filtrados via $this->users(). Este endpoint HTTP
-        // aceita recipient_id livre do request, então precisa confirmar o
-        // tenant explicitamente antes de criar/usar a sala (senão seria
-        // possível criar uma ChatRoom cruzando dois tenants diferentes).
+        // resolveOrCreateChatRoom() (InteractsWithChat) também valida isso
+        // internamente agora, mas este endpoint aceita recipient_id livre
+        // do request (diferente do Livewire, que só oferece IDs já
+        // filtrados via $this->users()) -- checagem redundante aqui só pra
+        // devolver 404 antes de tocar em Cache::remember/idempotência.
         $tenantId = Tenancy::current()?->id;
         $recipientBelongsToTenant = User::query()
             ->where('id', $validated['recipient_id'])

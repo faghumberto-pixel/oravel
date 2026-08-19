@@ -111,6 +111,15 @@ trait InteractsWithChat
         $authId = Auth::id();
         $tenantId = Tenancy::current()?->id;
 
+        $selectedUserBelongsToTenant = User::query()
+            ->where('id', $selectedUserId)
+            ->where('tenant_id', $tenantId)
+            ->exists();
+
+        if (! $selectedUserBelongsToTenant) {
+            abort(403);
+        }
+
         $room = ChatRoom::query()
             ->where('type', 'pessoal')
             ->where('tenant_id', $tenantId)
@@ -183,9 +192,11 @@ trait InteractsWithChat
     protected function markChatRoomRead(string $contactId): void
     {
         $authId = Auth::id();
+        $tenantId = Tenancy::current()?->id;
 
         $room = ChatRoom::query()
             ->where('type', 'pessoal')
+            ->where('tenant_id', $tenantId)
             ->whereHas('users', fn ($q) => $q->where('users.id', $authId))
             ->whereHas('users', fn ($q) => $q->where('users.id', $contactId))
             ->first();
