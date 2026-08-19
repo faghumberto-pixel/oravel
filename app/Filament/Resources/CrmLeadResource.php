@@ -245,7 +245,15 @@ class CrmLeadResource extends BaseResource
                     ->options(CrmLead::stageLabels()),
                 Tables\Filters\SelectFilter::make('assigned_user_id')
                     ->label('Vendedor')
-                    ->relationship('assignedUser', 'name'),
+                    ->relationship(
+                        name: 'assignedUser',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: function (Builder $query) {
+                            $tenant = Tenancy::current();
+
+                            return $query->when($tenant, fn (Builder $q) => $q->where('tenant_id', $tenant->id));
+                        },
+                    ),
                 Tables\Filters\TernaryFilter::make('sem_followup')
                     ->label('Sem próximo follow-up')
                     ->queries(

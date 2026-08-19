@@ -182,4 +182,30 @@ class CaixaDeEmailTest extends TestCase
         $rascunhosDeB = Livewire::test(CaixaDeEmail::class)->call('setFolder', 'rascunhos')->instance()->getMessagesQuery()->get();
         $this->assertCount(0, $rascunhosDeB);
     }
+
+    /**
+     * Achado de auditoria de segurança 2026-08-19: form()'s Select::options()
+     * já filtra "Para (usuário da equipe)" por tenant na UI, mas o state do
+     * Livewire vem do cliente -- recipients()->sync() confiava só na lista
+     * de opções renderizada, sem revalidar no servidor. Simula um payload
+     * manipulado (to_user_ids contendo um ID de outro tenant).
+     */
+    public function test_cannot_send_internal_email_to_user_from_another_tenant(): void
+    {
+        [, $userA] = $this->makeTenantWithTwoUsers();
+        [, , $outsiderFromOtherTenant] = $this->makeTenantWithTwoUsers();
+
+        $this->actingAs($userA);
+
+        Livewire::test(CaixaDeEmail::class)
+            ->call('newDraft')
+            ->set('composeData.to_user_ids', [$outsiderFromOtherTenant->id])
+            ->set('composeData.subject', 'Não deveria ir pra fora do tenant')
+            ->set('composeData.body', 'Teste')
+            ->call('sendMessage');
+
+        $message = EmailMessage::sole();
+        $this->assertFalse($message->recipients->contains('id', $outsiderFromOtherTenant->id));
+        $this->assertCount(0, $message->recipients);
+    }
 }

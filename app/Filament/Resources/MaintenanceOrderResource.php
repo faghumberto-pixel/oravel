@@ -38,7 +38,9 @@ class MaintenanceOrderResource extends Resource
     protected static ?string $model = MaintenanceOrder::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
+
     protected static ?string $navigationGroup = 'Manutenção';
+
     protected static ?string $navigationLabel = 'Ordens de Serviço';
 
     protected static ?string $pluralModelLabel = 'Ordens de Serviço';
@@ -707,7 +709,15 @@ class MaintenanceOrderResource extends Resource
                 ->relationship('asset.checklistGroup', 'name'),
             Tables\Filters\SelectFilter::make('technician_id')
                 ->label('Técnico')
-                ->relationship('technician', 'name'),
+                ->relationship(
+                    name: 'technician',
+                    titleAttribute: 'name',
+                    modifyQueryUsing: function (Builder $query) {
+                        $tenant = Tenancy::current();
+
+                        return $query->when($tenant, fn (Builder $q) => $q->where('tenant_id', $tenant->id));
+                    },
+                ),
             Tables\Filters\Filter::make('atrasada')
                 ->label('Em atraso (+3 dias aberta)')
                 ->toggle()

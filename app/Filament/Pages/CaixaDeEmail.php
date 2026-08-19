@@ -9,8 +9,8 @@ use App\Support\Tenancy;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -245,6 +245,15 @@ class CaixaDeEmail extends Page implements HasForms
 
             return null;
         }
+
+        // form()'s Select::options() já filtra por tenant na UI, mas o
+        // state do Livewire vem do cliente -- revalida aqui antes de
+        // recipients()->sync() pra não confiar só na lista de opções
+        // renderizada (achado de auditoria de segurança 2026-08-19).
+        $data['to_user_ids'] = User::where('tenant_id', Tenancy::current()?->id)
+            ->whereIn('id', $data['to_user_ids'] ?? [])
+            ->pluck('id')
+            ->all();
 
         return $data;
     }

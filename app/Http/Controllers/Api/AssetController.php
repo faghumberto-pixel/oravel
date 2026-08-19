@@ -5,53 +5,69 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Asset;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class AssetController extends Controller
 {
-    // Listagem protegida pelo TenantScope
+    // Isolamento por tenant vem de Asset::class usar Concerns\BelongsToTenant
+    // (global scope); autorização por plano/permissão (AssetPolicy ->
+    // AbstractPolicy) é explícita abaixo -- Gate::authorize não é chamado
+    // automaticamente por rota de API, diferente do painel Filament.
     public function index()
     {
+        Gate::authorize('viewAny', Asset::class);
+
         return response()->json(Asset::all());
     }
 
-    // Criação protegida pela Trait  (injetará o tenant_id automaticamente)
     public function store(Request $request)
     {
+        Gate::authorize('create', Asset::class);
+
         $validated = $request->validate([
-            'name'        => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'patrimonio'  => 'required|string|unique:assets',
-            'status'      => 'required|string',
+            'patrimonio' => 'required|string|unique:assets',
+            'status' => 'required|string',
         ]);
 
         return response()->json(Asset::create($validated), 201);
     }
 
-    // Exibição de um único ativo (o find já respeita o scope)
     public function show($id)
     {
-        return response()->json(Asset::findOrFail($id));
+        $asset = Asset::findOrFail($id);
+
+        Gate::authorize('view', $asset);
+
+        return response()->json($asset);
     }
 
-    // Atualização
     public function update(Request $request, $id)
     {
         $asset = Asset::findOrFail($id);
 
+        Gate::authorize('update', $asset);
+
         $validated = $request->validate([
-            'name'        => 'sometimes|required|string|max:255',
+            'name' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
-            'status'      => 'sometimes|required|string',
+            'status' => 'sometimes|required|string',
         ]);
 
         $asset->update($validated);
+
         return response()->json($asset);
     }
 
-    // Deleção
     public function destroy($id)
     {
-        Asset::findOrFail($id)->delete();
+        $asset = Asset::findOrFail($id);
+
+        Gate::authorize('delete', $asset);
+
+        $asset->delete();
+
         return response()->json(null, 204);
     }
 
@@ -60,6 +76,8 @@ class AssetController extends Controller
      */
     public function getDefaultChecklist(string $category)
     {
+        Gate::authorize('viewAny', Asset::class);
+
         return response()->json(Asset::getDefaultChecklist($category));
     }
 }

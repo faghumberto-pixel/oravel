@@ -9,15 +9,14 @@ class AssetService
 {
     /**
      * Lista todos os Assets pertencentes ao tenant do usuário logado.
-     * A lógica de multi-tenancy é aplicada automaticamente pelo BaseModel.
-     *
-     * @return LengthAwarePaginator
      */
     public function listarAssetPaginado(): LengthAwarePaginator
     {
-        // A mágica acontece aqui.
-        // Não precisamos de ->where('tenant_id', ...). Nosso TenantScope já faz isso.
-        // A simplicidade é a nossa força.
+        // Não precisamos de ->where('tenant_id', ...): Asset usa
+        // Concerns\BelongsToTenant, cujo global scope já filtra pelo
+        // tenant do usuário autenticado. App\Models\Scopes\TenantScope
+        // (nome parecido, implementação diferente/mais antiga) não é
+        // usado por este model.
         return Asset::latest()->paginate(15);
     }
 

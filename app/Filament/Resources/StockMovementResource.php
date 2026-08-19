@@ -4,11 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\StockMovementResource\Pages;
 use App\Models\StockMovement;
+use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Historico de entrada/saida de estoque -- so'-leitura de proposito,
@@ -48,7 +50,15 @@ class StockMovementResource extends Resource
             Forms\Components\TextInput::make('balance_after')->label('Saldo Após')->disabled(),
             Forms\Components\Select::make('created_by_user_id')
                 ->label('Registrado por')
-                ->relationship('createdBy', 'name')
+                ->relationship(
+                    name: 'createdBy',
+                    titleAttribute: 'name',
+                    modifyQueryUsing: function (Builder $query) {
+                        $tenant = Tenancy::current();
+
+                        return $query->when($tenant, fn (Builder $q) => $q->where('tenant_id', $tenant->id));
+                    },
+                )
                 ->disabled(),
         ]);
     }

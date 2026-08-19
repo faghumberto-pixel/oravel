@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Resources\CrmLeadResource;
 use App\Filament\Resources\CrmLeadResource\Pages\EditCrmLead;
+use App\Filament\Resources\CrmLeadResource\Pages\ListCrmLeads;
 use App\Filament\Resources\CrmLeadResource\RelationManagers\InteractionsRelationManager;
 use App\Filament\Resources\CrmLeadResource\Widgets\CrmLeadStats;
 use App\Models\CrmLead;
@@ -210,5 +211,33 @@ class CrmLeadResourceTest extends TestCase
         $this->assertSame(2, $stats[1]->getValue());
         $this->assertSame(1, $stats[2]->getValue());
         $this->assertSame(2, $stats[3]->getValue());
+    }
+
+    /**
+     * Achado de auditoria de segurança 2026-08-19: o filtro "Vendedor"
+     * (assigned_user_id) tinha o mesmo padrão do bug corrigido no commit
+     * 1425168 -- relationship('assignedUser', 'name') sem modifyQueryUsing,
+     * vazando nomes de usuários de todos os tenants nas opções do filtro.
+     */
+    public function test_assigned_user_filter_only_offers_users_from_the_current_tenant(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+
+        [$otherTenant] = $this->makeTenantAdmin();
+        $userFromOtherTenant = User::create([
+            'name' => 'Vendedor de Outro Tenant', 'email' => 'vendedor-outro-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('teste123'), 'tenant_id' => $otherTenant->id,
+        ]);
+        $userFromOtherTenant->forceFill(['email_verified_at' => now()])->save();
+
+        $this->actingAs($admin);
+
+        // Exercita o dropdown do filtro de verdade (mesmo caminho que o
+        // navegador percorre ao abrir o painel de filtros da tabela),
+        // em vez de reimplementar a query -- só assim se confirma que o
+        // modifyQueryUsing aplicado de fato afeta o que o Filament exibe.
+        Livewire::test(ListCrmLeads::class)
+            ->assertSeeHtml($admin->name)
+            ->assertDontSeeHtml($userFromOtherTenant->name);
     }
 }
