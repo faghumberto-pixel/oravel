@@ -5,6 +5,7 @@ namespace App\Filament\Central\Resources;
 use App\Filament\Central\Resources\SalesLeadResource\Pages;
 use App\Filament\Central\Resources\SalesLeadResource\RelationManagers\AppointmentsRelationManager;
 use App\Filament\Central\Resources\SalesLeadResource\RelationManagers\InteractionsRelationManager;
+use App\Filament\Central\Resources\SalesLeadResource\RelationManagers\TimelineRelationManager;
 use App\Models\Client;
 use App\Models\Plan;
 use App\Models\SalesLead;
@@ -427,6 +428,7 @@ class SalesLeadResource extends Resource
     public static function getRelations(): array
     {
         return [
+            TimelineRelationManager::class,
             InteractionsRelationManager::class,
             AppointmentsRelationManager::class,
         ];
