@@ -357,6 +357,13 @@ class SalesLeadResource extends Resource
                         );
                     }),
             ])
+            // Filtros sempre visiveis numa linha acima do grid, em vez de
+            // atras do botao "Filtros" -- pedido do usuario 2026-08-19
+            // ("coloque acima do grid os list box com os filtros em cada
+            // coluna"). filtersFormColumns() maior que o padrao (2) pra
+            // caber os 6 filtros numa faixa horizontal em vez de empilhar.
+            ->filtersLayout(Tables\Enums\FiltersLayout::AboveContent)
+            ->filtersFormColumns(3)
             ->actions([
                 Tables\Actions\Action::make('advance')
                     ->label('Avançar Estágio')

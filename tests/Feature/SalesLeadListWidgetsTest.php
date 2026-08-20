@@ -56,6 +56,23 @@ class SalesLeadListWidgetsTest extends TestCase
         $this->assertStringNotContainsString('sales-lead-list-stats', $html);
     }
 
+    /**
+     * Pedido do usuario 2026-08-19 ("coloque acima do grid os list box com
+     * os filtros em cada coluna"): filtros sempre visiveis numa linha acima
+     * da tabela, nao mais atras do botao dropdown padrao do Filament.
+     */
+    public function test_filters_render_above_content_instead_of_in_a_dropdown(): void
+    {
+        $this->actingAsSuperAdmin();
+
+        $html = Livewire::test(ListSalesLeads::class)
+            ->assertSuccessful()
+            ->html();
+
+        $this->assertStringContainsString('fi-ta-filters-above-content', $html);
+        $this->assertStringNotContainsString('fi-ta-filters-dropdown', $html);
+    }
+
     public function test_stats_widget_counts_and_links_are_correct(): void
     {
         $this->actingAsSuperAdmin();
