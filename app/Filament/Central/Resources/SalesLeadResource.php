@@ -226,39 +226,47 @@ class SalesLeadResource extends Resource
             // "bem mais claro, baixa opacidade, só destaque sutil".
             // hover:bg-transparent sobrescreve o hover cinza padrão do
             // Filament, que senão apagava a cor de fundo ao passar o mouse.
+            // Grid estilo planilha (pedido 2026-08-19: "grid semelhante a
+            // uma planilha do Excel") vem via CSS em
+            // resources/css/filament/central/theme.css, escopado pela
+            // classe .fi-resource-sales-leads que o Filament ja' gera
+            // sozinho pro wrapper deste Resource (Table::extraAttributes()
+            // nao existe nesta versao do Filament) -- mantem a cor por
+            // estagio (nao remove, so' soma linhas de grade por cima).
             ->recordClasses(fn (SalesLead $record) => 'border-s-4 hover:!bg-transparent '
                 .CrmPalette::stage($record->pipeline_stage)['border'].' '
                 .CrmPalette::stage($record->pipeline_stage)['soft'])
             ->columns([
-                Tables\Columns\TextColumn::make('company_name')
+                // Edicao inline (pedido 2026-08-19: "editar direto na
+                // celula, como Excel/Sheets") nas colunas onde faz sentido
+                // clicar e trocar sem abrir o form inteiro -- Empresa,
+                // Estagio, Valor Estimado, Responsavel. Ultima Interacao
+                // fica de fora por ser um campo calculado (refreshInteractionCache,
+                // ver SalesLead::refreshInteractionCache()), nao editavel a mao.
+                Tables\Columns\TextInputColumn::make('company_name')
                     ->label('Empresa')
                     ->searchable()
-                    ->weight('bold')
-                    // Laranja padrão da Oravel -- pedido explícito do usuário
-                    // 2026-08-05, mesmo tom usado nos CTAs/logo em todo o
-                    // resto do sistema (--orange do site institucional).
-                    // 'primary' aqui é azul (cor do painel Central), por
-                    // isso usa 'crmOrange' (mesmo laranja já registrado pro
-                    // estágio Proposta Enviada) em vez disso.
-                    ->color('crmOrange'),
+                    ->extraInputAttributes(['class' => 'font-bold'])
+                    ->rules(['required', 'string', 'max:255']),
                 Tables\Columns\TextColumn::make('segment')
                     ->label('Segmento')
                     ->badge()
                     ->color(fn (?string $state) => CrmPalette::segment($state)['filament'])
                     ->formatStateUsing(fn (?string $state) => $state ? (Client::nicheLabels()[$state] ?? $state) : null)
                     ->placeholder('—'),
-                Tables\Columns\TextColumn::make('pipeline_stage')
+                Tables\Columns\SelectColumn::make('pipeline_stage')
                     ->label('Estágio')
-                    ->badge()
-                    ->icon(fn (string $state) => self::stageIcon($state))
-                    ->formatStateUsing(fn (string $state) => SalesLead::stageLabels()[$state] ?? $state)
-                    ->color(fn (string $state) => CrmPalette::stage($state)['filament'])
-                    ->weight('bold'),
-                Tables\Columns\TextColumn::make('estimated_contract_value')
+                    ->options(SalesLead::stageLabels())
+                    ->selectablePlaceholder(false),
+                Tables\Columns\TextInputColumn::make('estimated_contract_value')
                     ->label('Valor Estimado')
-                    ->money('BRL')
+                    ->type('number')
+                    ->rules(['nullable', 'numeric', 'min:0'])
                     ->placeholder('—'),
-                Tables\Columns\TextColumn::make('assignedUser.name')->label('Responsável')->placeholder('—'),
+                Tables\Columns\SelectColumn::make('assigned_user_id')
+                    ->label('Responsável')
+                    ->options(fn () => User::whereIn('email', config('oravel.super_admins', []))->pluck('name', 'id'))
+                    ->placeholder('—'),
                 Tables\Columns\TextColumn::make('last_interaction_at')
                     ->label('Última Interação')
                     ->dateTime('d/m/Y H:i')

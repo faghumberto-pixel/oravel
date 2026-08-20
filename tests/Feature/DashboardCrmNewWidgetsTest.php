@@ -2,6 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Central\Resources\SalesLeadResource\Widgets\InteractionChannelChart;
+use App\Filament\Central\Resources\SalesLeadResource\Widgets\InteractionChannelStats;
+use App\Filament\Central\Resources\SalesLeadResource\Widgets\LeadsByStageChart;
+use App\Filament\Central\Resources\SalesLeadResource\Widgets\SalesLeadListStats;
 use App\Filament\Central\Widgets\LeadsBySegmentChart;
 use App\Filament\Central\Widgets\LeadsBySourceChart;
 use App\Filament\Central\Widgets\LeadsCreatedTrendChart;
@@ -127,5 +131,35 @@ class DashboardCrmNewWidgetsTest extends TestCase
         }
 
         $this->assertCount(4, $found, 'Nem todos os 4 gráficos novos foram encontrados na página: '.implode(', ', $found));
+    }
+
+    /**
+     * Pedido do usuario 2026-08-19 ("separe o grid dos graficos"): os 4
+     * widgets que antes ficavam so em cima do grid de ListSalesLeads agora
+     * tambem aparecem aqui -- este dashboard passou a reunir todos os
+     * graficos/cards do modulo comercial num so lugar, com fundo branco
+     * (ver resources/views/filament/central/pages/dashboard-crm.blade.php).
+     */
+    public function test_dashboard_crm_includes_the_widgets_moved_from_the_list_page(): void
+    {
+        $this->actingAs($this->superAdmin());
+
+        SalesLead::create([
+            'company_name' => 'Empresa Movida', 'pipeline_stage' => SalesLead::STAGE_PROSPECCAO,
+            'segment' => 'industrial_hospitalar', 'source' => SalesLead::SOURCE_SITE,
+        ]);
+
+        $response = $this->get('/central/dashboard-crm');
+        $response->assertOk();
+        $html = $response->getContent();
+
+        $this->assertStringContainsString('bg-white', $html);
+
+        foreach ([SalesLeadListStats::class, InteractionChannelStats::class, InteractionChannelChart::class, LeadsByStageChart::class] as $widgetClass) {
+            $widget = new $widgetClass;
+            $method = new \ReflectionMethod($widget, method_exists($widget, 'getStats') ? 'getStats' : 'getData');
+            $method->setAccessible(true);
+            $method->invoke($widget);
+        }
     }
 }

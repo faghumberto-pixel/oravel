@@ -31,7 +31,14 @@ class SalesLeadListWidgetsTest extends TestCase
         return $super;
     }
 
-    public function test_list_page_renders_with_all_header_widgets(): void
+    /**
+     * Pedido do usuario 2026-08-19 ("separe o grid dos graficos"): a
+     * listagem agora e' so' a tabela, sem widgets acima -- os 10 widgets
+     * que ficavam aqui foram pra DashboardCrm (ver DashboardCrmNewWidgetsTest
+     * e SalesLeadListStats/InteractionChannelStats/InteractionChannelChart/
+     * LeadsByStageChart la' registrados).
+     */
+    public function test_list_page_renders_without_any_header_widgets(): void
     {
         $this->actingAsSuperAdmin();
 
@@ -40,41 +47,13 @@ class SalesLeadListWidgetsTest extends TestCase
             'phone' => '11999999999',
             'pipeline_stage' => SalesLead::STAGE_PROSPECCAO,
         ]);
-        SalesLead::create([
-            'company_name' => 'Empresa Sem Contato',
-            'pipeline_stage' => SalesLead::STAGE_GANHO,
-        ]);
 
         $html = Livewire::test(ListSalesLeads::class)
-            ->assertSuccessful()
-            ->html();
-
-        // Widgets sao lazy por padrao (placeholder no snapshot inicial,
-        // conteudo real via requisicao Livewire separada) -- confirma que
-        // o componente foi montado na pagina pelo container real do
-        // Filament, nao pelo texto (que so aparece depois do lazy load).
-        $this->assertStringContainsString('fi-page-header-widgets', $html);
-        $this->assertStringContainsString('sales-lead-list-stats', $html);
-    }
-
-    /**
-     * Pedido do usuario 2026-08-10: "quando clico em um card deve
-     * aparecer a lista sem nenhum card ou grafico" -- clicar num card
-     * chega na listagem com tableFilters ja preenchido (mesmo mecanismo
-     * que o Stat::url() usa, ver SalesLeadListStats/InteractionChannelStats).
-     */
-    public function test_header_widgets_disappear_when_a_table_filter_is_active(): void
-    {
-        $this->actingAsSuperAdmin();
-
-        SalesLead::create(['company_name' => 'Com Telefone', 'phone' => '11999999999']);
-
-        $html = Livewire::test(ListSalesLeads::class)
-            ->set('tableFilters.has_contact.value', '1')
             ->assertSuccessful()
             ->html();
 
         $this->assertStringNotContainsString('fi-page-header-widgets', $html);
+        $this->assertStringNotContainsString('sales-lead-list-stats', $html);
     }
 
     public function test_stats_widget_counts_and_links_are_correct(): void
