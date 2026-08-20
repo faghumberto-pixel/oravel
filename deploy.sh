@@ -3,15 +3,21 @@
 set -e
 
 BRANCH=${1:-main}
-VM_INSTANCE="oravel-prod"
+# oravel-prod (nome antigo) foi TERMINATED em 2026-08-19 apos o incidente do
+# rootkit; a VM ativa e oravel-prod-new, reprovisionada do zero.
+VM_INSTANCE="oravel-prod-new"
 VM_ZONE="southamerica-east1-c"
 PROD_PATH="/var/www/oravel"
 BACKUP_DIR="/var/backups"
 # gcloud compute ssh conecta como o usuario "oravel" (OS Login), que nao e
-# dono nem de PROD_PATH (faghumberto:faghumberto) nem de BACKUP_DIR (root:root).
-# Backup roda via sudo (root); o resto roda como faghumberto via sudo -u, para
-# preservar o dono dos arquivos da aplicacao.
-APP_USER="faghumberto"
+# dono nem de PROD_PATH nem de BACKUP_DIR (root:root). Na VM reprovisionada
+# nao existe mais o usuario faghumberto - PROD_PATH pertence a www-data:www-data.
+# Backup roda via sudo (root); o resto roda como www-data via sudo -u, para
+# preservar o dono dos arquivos da aplicacao. www-data tem shell nologin, mas
+# "sudo -u www-data bash -c '...'" funciona normalmente.
+# HOME=/var/www nao e gravavel por www-data (psysh/composer/git precisam
+# escrever cache/config), entao forcamos HOME=/tmp no bloco remoto.
+APP_USER="www-data"
 
 echo "🚀 INICIANDO DEPLOY PARA PRODUÇÃO"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -51,7 +57,8 @@ echo "🧹 Limpando backups antigos (mantendo os 5 mais recentes)..."
 sudo bash -c "cd $BACKUP_DIR && ls -dt oravel_backup_*/ 2>/dev/null | tail -n +6 | xargs -r rm -rf --"
 
 # Resto roda como $APP_USER, dono de $PROD_PATH
-sudo -u $APP_USER bash -c '
+# HOME=/tmp: /var/www (HOME padrao de www-data) nao e gravavel por ele.
+sudo -u $APP_USER HOME=/tmp bash -c '
 set -e
 cd $PROD_PATH
 
