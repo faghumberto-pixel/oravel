@@ -88,4 +88,49 @@ class AvariasReincidencia extends Page
             ];
         });
     }
+
+    /**
+     * Reincidência por CLIENTE, não por Ativo -- pedido do usuário
+     * 2026-08-25 (item 3 do roteiro de artefatos comerciais): a
+     * reincidência por ativo não distingue se o padrão é do equipamento
+     * (peça ruim, desgaste) ou de um cliente específico que devolve
+     * equipamentos danificados com frequência. Só entram avarias
+     * cobráveis (mau_uso/dano_cliente) -- desgaste natural não é "culpa"
+     * de ninguém, não faz sentido contar aqui. Cliente vem de
+     * MaintenanceOrder.client_id (mais direto que ir por Asset/Contract,
+     * que não têm client_id garantido no momento da avaria).
+     */
+    public function getReincidenciasPorClienteProperty(): Collection
+    {
+        $causasCobraveis = [EquipmentDamage::CAUSE_MAU_USO, EquipmentDamage::CAUSE_DANO_CLIENTE];
+
+        $grupos = EquipmentDamage::query()
+            ->join('maintenance_orders', 'maintenance_orders.id', '=', 'equipment_damages.maintenance_order_id')
+            ->whereNotNull('maintenance_orders.client_id')
+            ->whereIn('equipment_damages.cause', $causasCobraveis)
+            ->where('equipment_damages.created_at', '>=', now()->subDays($this->days))
+            ->groupBy('maintenance_orders.client_id')
+            ->selectRaw('maintenance_orders.client_id, count(*) as total')
+            ->having(DB::raw('count(*)'), '>=', 2)
+            ->orderByDesc('total')
+            ->get();
+
+        return $grupos->map(function ($grupo) use ($causasCobraveis) {
+            $ocorrencias = EquipmentDamage::query()
+                ->join('maintenance_orders', 'maintenance_orders.id', '=', 'equipment_damages.maintenance_order_id')
+                ->where('maintenance_orders.client_id', $grupo->client_id)
+                ->whereIn('equipment_damages.cause', $causasCobraveis)
+                ->where('equipment_damages.created_at', '>=', now()->subDays($this->days))
+                ->with(['asset', 'reportedBy', 'maintenanceOrder.client'])
+                ->select('equipment_damages.*')
+                ->orderByDesc('equipment_damages.created_at')
+                ->get();
+
+            return [
+                'client' => $ocorrencias->first()?->maintenanceOrder?->client,
+                'total' => $grupo->total,
+                'ocorrencias' => $ocorrencias,
+            ];
+        });
+    }
 }

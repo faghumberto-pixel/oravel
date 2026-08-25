@@ -111,4 +111,61 @@
             @endforelse
         </div>
     </div>
+
+    <div class="fi-section mt-6 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+        <h2 class="text-base font-semibold text-gray-950 dark:text-white">Reincidência por Cliente</h2>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            Clientes com 2+ avarias cobráveis (mau uso ou dano do cliente) no período — separado da reincidência por
+            ativo acima, porque um equipamento que quebra muito pode ser problema da peça, não do cliente.
+        </p>
+
+        <div class="mt-4 space-y-4">
+            @forelse ($this->reincidenciasPorCliente as $grupo)
+                <div class="rounded-lg border border-gray-200 dark:border-gray-700">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-800/50">
+                        <div>
+                            @if ($grupo['client'])
+                                <a href="{{ \App\Filament\Resources\ClientResource::getUrl('edit', ['record' => $grupo['client']]) }}"
+                                   class="text-sm font-semibold text-primary-600 hover:underline dark:text-primary-400">
+                                    {{ $grupo['client']->name }}
+                                </a>
+                            @else
+                                <span class="text-sm font-semibold text-gray-950 dark:text-white">Cliente removido</span>
+                            @endif
+                        </div>
+                        <span class="fi-badge inline-flex items-center rounded-md bg-danger-50 px-2 py-1 text-xs font-medium text-danger-700 ring-1 ring-inset ring-danger-600/10 dark:bg-danger-400/10 dark:text-danger-400">
+                            {{ $grupo['total'] }} avarias cobráveis
+                        </span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead>
+                                <tr class="text-xs uppercase text-gray-500 dark:text-gray-400">
+                                    <th class="px-4 py-2 font-medium">Data</th>
+                                    <th class="px-4 py-2 font-medium">Ativo</th>
+                                    <th class="px-4 py-2 font-medium">Causa</th>
+                                    <th class="px-4 py-2 font-medium">Severidade</th>
+                                    <th class="px-4 py-2 font-medium">Reportado por</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($grupo['ocorrencias'] as $ocorrencia)
+                                    <tr class="border-t border-gray-100 dark:border-gray-800">
+                                        <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ $ocorrencia->created_at->format('d/m/Y') }}</td>
+                                        <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ $ocorrencia->asset?->name ?? '—' }}</td>
+                                        <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ \App\Models\EquipmentDamage::causeLabels()[$ocorrencia->cause] ?? $ocorrencia->cause }}</td>
+                                        <td class="px-4 py-2 capitalize text-gray-700 dark:text-gray-300">{{ $ocorrencia->severity }}</td>
+                                        <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ $ocorrencia->reportedBy?->name ?? '—' }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            @empty
+                <p class="text-sm text-gray-500 dark:text-gray-400">Nenhum cliente com reincidência de avaria cobrável no período selecionado.</p>
+            @endforelse
+        </div>
+    </div>
 </x-filament-panels::page>
