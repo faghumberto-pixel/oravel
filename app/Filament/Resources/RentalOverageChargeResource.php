@@ -9,8 +9,10 @@ use App\Support\Tenancy;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -56,6 +58,12 @@ class RentalOverageChargeResource extends Resource
                         ->label('Status')
                         ->options(RentalOverageCharge::statusLabels())
                         ->required()->default(RentalOverageCharge::STATUS_PENDING)->native(false),
+
+                    Textarea::make('conflict_reason')
+                        ->label('Motivo do Conflito')
+                        ->columnSpanFull()
+                        ->visible(fn (?RentalOverageCharge $record) => $record?->status === RentalOverageCharge::STATUS_CONFLICT)
+                        ->disabled(),
                 ])->columns(2),
         ]);
     }
@@ -78,6 +86,7 @@ class RentalOverageChargeResource extends Resource
                         RentalOverageCharge::STATUS_PENDING => 'warning',
                         RentalOverageCharge::STATUS_INVOICED => 'success',
                         RentalOverageCharge::STATUS_CANCELLED => 'danger',
+                        RentalOverageCharge::STATUS_CONFLICT => 'danger',
                         default => 'gray',
                     }),
             ])
@@ -88,6 +97,29 @@ class RentalOverageChargeResource extends Resource
                     ->options(RentalOverageCharge::statusLabels()),
             ])
             ->actions([
+                Tables\Actions\Action::make('aprovar')
+                    ->label('Aprovar e Gerar Cobrança')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->visible(fn (RentalOverageCharge $record) => $record->status === RentalOverageCharge::STATUS_PENDING)
+                    ->requiresConfirmation()
+                    ->modalDescription('Isso vai gerar uma Conta a Receber com o valor calculado. Confirme os dados antes de aprovar.')
+                    ->form([
+                        DatePicker::make('due_date')
+                            ->label('Vencimento da Cobrança')
+                            ->default(now()->addDays(15))
+                            ->required(),
+                    ])
+                    ->action(function (RentalOverageCharge $record, array $data) {
+                        $record->approve(auth()->user(), $data['due_date']);
+
+                        Notification::make()
+                            ->title('Excedente aprovado')
+                            ->body('Conta a receber gerada com sucesso.')
+                            ->success()
+                            ->send();
+                    }),
+
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])

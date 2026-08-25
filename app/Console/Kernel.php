@@ -29,6 +29,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('financeiro:verificar-vencimentos')->daily();
         $schedule->command('site-visits:close-stale')->everyFiveMinutes();
         $schedule->command('employees:check-certification-expirations')->daily();
+        $schedule->command('contracts:calculate-overage')->monthlyOn(1, '03:00');
     }
 
     /**
