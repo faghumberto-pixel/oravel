@@ -479,8 +479,20 @@ class Asset extends Model
         $totalLogisticsCost = (float) $this->maintenanceOrders()->sum('logistics_cost')
             + (float) $this->rentalRequests()->sum('logistics_cost');
         $totalRentalRevenue = (float) $this->contracts()->sum('price');
+        $totalOverageRevenue = (float) \App\Domain\Fleet\Models\RentalOverageCharge::query()
+            ->where('asset_id', $this->id)
+            ->where('status', \App\Domain\Fleet\Models\RentalOverageCharge::STATUS_INVOICED)
+            ->sum('amount');
+        $totalDamageRevenue = (float) \App\Models\Quote::query()
+            ->whereHasMorph('quotable', [EquipmentDamage::class], function ($query) {
+                $query->where('asset_id', $this->id)
+                    ->whereIn('cause', [EquipmentDamage::CAUSE_MAU_USO, EquipmentDamage::CAUSE_DANO_CLIENTE]);
+            })
+            ->whereIn('status', [\App\Models\Quote::STATUS_APROVADO, \App\Models\Quote::STATUS_CONCLUIDO])
+            ->sum('total_value');
 
-        $result = $totalRentalRevenue - $totalMaintenanceCost;
+        $totalRevenue = $totalRentalRevenue + $totalOverageRevenue + $totalDamageRevenue;
+        $result = $totalRevenue - $totalMaintenanceCost - $depreciation['accumulated_depreciation'];
 
         return [
             'acquisition_value' => (float) ($this->acquisition_value ?? 0),
@@ -492,6 +504,9 @@ class Asset extends Model
             'total_logistics_cost' => round($totalLogisticsCost, 2),
             'total_maintenance_cost' => round($totalMaintenanceCost, 2),
             'total_rental_revenue' => round($totalRentalRevenue, 2),
+            'total_overage_revenue' => round($totalOverageRevenue, 2),
+            'total_damage_revenue' => round($totalDamageRevenue, 2),
+            'total_revenue' => round($totalRevenue, 2),
             'result' => round($result, 2),
         ];
     }

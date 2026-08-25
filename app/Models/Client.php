@@ -149,6 +149,47 @@ class Client extends Model
     }
 
     /**
+     * Espelha Asset::getFinancialSummary() no nível do Cliente: soma receita
+     * de todos os contratos dele + excedente de franquia aprovado + avaria
+     * cobrada dos ativos que ele usou (via Contract.asset_id), menos o custo
+     * de manutenção das O.S. abertas diretamente para este cliente
+     * (MaintenanceOrder.client_id) -- pedido do usuário 2026-08-24.
+     */
+    public function getFinancialSummary(): array
+    {
+        $assetIds = $this->contracts()->pluck('asset_id')->filter()->unique()->values();
+
+        $totalRentalRevenue = (float) $this->contracts()->sum('price');
+
+        $totalOverageRevenue = $assetIds->isEmpty() ? 0.0 : (float) \App\Domain\Fleet\Models\RentalOverageCharge::query()
+            ->whereIn('asset_id', $assetIds)
+            ->where('status', \App\Domain\Fleet\Models\RentalOverageCharge::STATUS_INVOICED)
+            ->sum('amount');
+
+        $totalDamageRevenue = $assetIds->isEmpty() ? 0.0 : (float) Quote::query()
+            ->whereHasMorph('quotable', [EquipmentDamage::class], function ($query) use ($assetIds) {
+                $query->whereIn('asset_id', $assetIds)
+                    ->whereIn('cause', [EquipmentDamage::CAUSE_MAU_USO, EquipmentDamage::CAUSE_DANO_CLIENTE]);
+            })
+            ->whereIn('status', [Quote::STATUS_APROVADO, Quote::STATUS_CONCLUIDO])
+            ->sum('total_value');
+
+        $totalMaintenanceCost = (float) $this->maintenanceOrders()->sum('total_order_cost');
+
+        $totalRevenue = $totalRentalRevenue + $totalOverageRevenue + $totalDamageRevenue;
+        $result = $totalRevenue - $totalMaintenanceCost;
+
+        return [
+            'total_rental_revenue' => round($totalRentalRevenue, 2),
+            'total_overage_revenue' => round($totalOverageRevenue, 2),
+            'total_damage_revenue' => round($totalDamageRevenue, 2),
+            'total_revenue' => round($totalRevenue, 2),
+            'total_maintenance_cost' => round($totalMaintenanceCost, 2),
+            'result' => round($result, 2),
+        ];
+    }
+
+    /**
      * Accessor para formatar endereço completo.
      */
     public function getFullLocationAttribute(): string

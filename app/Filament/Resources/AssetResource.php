@@ -472,8 +472,11 @@ class AssetResource extends Resource
                                         "<div><span class='text-gray-400'>Custo Material:</span><br><b>R\$ {$fmt($s['total_material_cost'])}</b></div>".
                                         "<div><span class='text-gray-400'>Custo Logística:</span><br><b>R\$ {$fmt($s['total_logistics_cost'])}</b></div>".
                                         "<div><span class='text-gray-400'>Custo Total Manutenção:</span><br><b>R\$ {$fmt($s['total_maintenance_cost'])}</b></div>".
-                                        "<div><span class='text-gray-400'>Receita Total de Locações:</span><br><b>R\$ {$fmt($s['total_rental_revenue'])}</b></div>".
-                                        "<div><span class='text-gray-400'>Resultado:</span><br><b style='color: {$resultColor}'>R\$ {$fmt($s['result'])}</b></div>".
+                                        "<div><span class='text-gray-400'>Receita de Locações:</span><br><b>R\$ {$fmt($s['total_rental_revenue'])}</b></div>".
+                                        "<div><span class='text-gray-400'>Receita de Excedente de Franquia:</span><br><b>R\$ {$fmt($s['total_overage_revenue'])}</b></div>".
+                                        "<div><span class='text-gray-400'>Receita de Avaria Cobrada:</span><br><b>R\$ {$fmt($s['total_damage_revenue'])}</b></div>".
+                                        "<div><span class='text-gray-400'>Receita Total:</span><br><b>R\$ {$fmt($s['total_revenue'])}</b></div>".
+                                        "<div><span class='text-gray-400'>Resultado (após depreciação):</span><br><b style='color: {$resultColor}'>R\$ {$fmt($s['result'])}</b></div>".
                                         '</div>'
                                     );
                                 })

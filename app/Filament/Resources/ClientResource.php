@@ -18,6 +18,7 @@ use Filament\Tables\Table;
 // Adicionado para identificar o Tenant
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\HtmlString;
 
 class ClientResource extends Resource
 {
@@ -156,6 +157,31 @@ class ClientResource extends Resource
                             Forms\Components\Toggle::make('check_blacklist')->label('Blacklist Interna'),
                             Forms\Components\Toggle::make('check_credit_bureau')->label('Birôs de Crédito'),
                             Forms\Components\TextInput::make('credit_score')->label('Score de Crédito PJ')->numeric(),
+                        ]),
+                    Forms\Components\Tabs\Tab::make('Resumo Financeiro')
+                        ->icon('heroicon-o-banknotes')
+                        ->schema([
+                            Forms\Components\Placeholder::make('financial_summary')
+                                ->label('')
+                                ->content(function (?Client $record) {
+                                    if (! $record) {
+                                        return new HtmlString('<span class="text-gray-400">Disponível após o primeiro salvamento.</span>');
+                                    }
+                                    $s = $record->getFinancialSummary();
+                                    $resultColor = $s['result'] >= 0 ? '#16a34a' : '#dc2626';
+                                    $fmt = fn ($v) => number_format($v, 2, ',', '.');
+
+                                    return new HtmlString(
+                                        "<div class='grid grid-cols-3 gap-4 text-sm p-3 bg-gray-50 dark:bg-gray-800 rounded-lg'>".
+                                        "<div><span class='text-gray-400'>Receita de Contratos:</span><br><b>R\$ {$fmt($s['total_rental_revenue'])}</b></div>".
+                                        "<div><span class='text-gray-400'>Receita de Excedente de Franquia:</span><br><b>R\$ {$fmt($s['total_overage_revenue'])}</b></div>".
+                                        "<div><span class='text-gray-400'>Receita de Avaria Cobrada:</span><br><b>R\$ {$fmt($s['total_damage_revenue'])}</b></div>".
+                                        "<div><span class='text-gray-400'>Receita Total:</span><br><b>R\$ {$fmt($s['total_revenue'])}</b></div>".
+                                        "<div><span class='text-gray-400'>Custo de Manutenção (O.S. do cliente):</span><br><b>R\$ {$fmt($s['total_maintenance_cost'])}</b></div>".
+                                        "<div><span class='text-gray-400'>Resultado:</span><br><b style='color: {$resultColor}'>R\$ {$fmt($s['result'])}</b></div>".
+                                        '</div>'
+                                    );
+                                }),
                         ]),
                 ])->columnSpanFull(),
         ]);
