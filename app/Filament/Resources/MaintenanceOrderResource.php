@@ -83,6 +83,38 @@ class MaintenanceOrderResource extends Resource
         return in_array($assetId, SolicitacaoLocacao::assetIdsComReservaUrgente($tenantId), true);
     }
 
+    /**
+     * Pedido do usuário 2026-08-25: sugerir o técnico menos carregado
+     * primeiro na hora de abrir uma OS, sem travar a escolha manual --
+     * mesmo critério de "em aberto" usado em CargaTecnica/TechnicianOrderStats
+     * (Aberto/Pendente/Em Andamento). Não usa ->default() de propósito: um
+     * valor pré-selecionado silenciosamente pode passar despercebido e
+     * atribuir a pessoa errada; a ordenação + contagem no label já
+     * comunica a sugestão sem decidir pelo usuário.
+     */
+    private static function technicianOptionsByWorkload(): array
+    {
+        $tenantId = Tenancy::current()?->id;
+
+        if (! $tenantId) {
+            return [];
+        }
+
+        return User::query()
+            ->where('tenant_id', $tenantId)
+            ->withCount([
+                'maintenanceOrders as em_aberto_count' => fn ($query) => $query->whereIn('status', ['Aberto', 'Pendente', 'Em Andamento']),
+            ])
+            ->get()
+            ->sortBy('em_aberto_count')
+            ->mapWithKeys(fn (User $user) => [
+                $user->id => $user->em_aberto_count > 0
+                    ? "{$user->name} ({$user->em_aberto_count} em aberto)"
+                    : "{$user->name} (livre)",
+            ])
+            ->all();
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -443,7 +475,12 @@ class MaintenanceOrderResource extends Resource
                         Forms\Components\Select::make('fuel_level')->label('Nível Combustível')->options(['0' => 'Reserva', '25' => '1/4', '50' => '1/2', '75' => '3/4', '100' => 'Cheio'])->native(false),
                     ]),
                     Forms\Components\Grid::make(3)->schema([
-                        Forms\Components\Select::make('technician_id')->label('Responsável Técnico')->options(fn () => User::where('tenant_id', Tenancy::current()?->id)->pluck('name', 'id'))->required()->searchable(),
+                        Forms\Components\Select::make('technician_id')
+                            ->label('Responsável Técnico')
+                            ->helperText('Ordenado do menos pro mais carregado agora (OS em Aberto/Pendente/Em Andamento) — sugestão, não obrigatório seguir.')
+                            ->options(fn () => static::technicianOptionsByWorkload())
+                            ->required()
+                            ->searchable(),
                         Forms\Components\Select::make('client_id')->label('Cliente')->relationship('client', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))->searchable(),
                         Forms\Components\DateTimePicker::make('scheduled_at')->label('Agendado para')->helperText('Aparece na Agenda Técnica.'),
                     ]),
