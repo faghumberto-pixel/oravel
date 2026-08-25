@@ -26,6 +26,8 @@ use App\Models\HorimeterReading;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenanceOrderMaterial;
 use App\Models\MaintenanceOrderPendencia;
+use App\Models\PropostaComercial;
+use App\Models\PropostaComercialItem;
 use App\Models\QuoteItem;
 use App\Models\SalesLeadInteraction;
 use App\Models\SolicitacaoLocacao;
@@ -52,6 +54,8 @@ use App\Observers\HorimeterReadingObserver;
 use App\Observers\MaintenanceOrderChecklistSnapshotObserver;
 use App\Observers\MaintenanceOrderMaterialObserver;
 use App\Observers\MaintenanceOrderPendenciaObserver;
+use App\Observers\PropostaComercialItemObserver;
+use App\Observers\PropostaComercialObserver;
 use App\Observers\QuoteItemObserver;
 use App\Observers\SalesLeadInteractionObserver;
 use App\Observers\SolicitacaoLocacaoObserver;
@@ -120,6 +124,8 @@ class AppServiceProvider extends ServiceProvider
         CrmLead::observe(CrmLeadObserver::class);
         SalesLeadInteraction::observe(SalesLeadInteractionObserver::class);
         QuoteItem::observe(QuoteItemObserver::class);
+        PropostaComercialItem::observe(PropostaComercialItemObserver::class);
+        PropostaComercial::observe(PropostaComercialObserver::class);
         // Ate 2026-07-14 nenhum destes 2 estava registrado -- os observers
         // existiam mas nunca rodavam de verdade (codigo morto).
         SolicitacaoLocacao::observe(SolicitacaoLocacaoObserver::class);

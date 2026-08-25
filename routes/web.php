@@ -25,6 +25,7 @@ use App\Livewire\EquipmentPatioArrivalMobile;
 use App\Livewire\MaintenanceChecklistMobile;
 use App\Livewire\MaintenanceOrderFieldWizard;
 use App\Livewire\PreventiveMaintenanceMobile;
+use App\Livewire\PropostaComercialMobile;
 use App\Livewire\RentalDispatchChecklistMobile;
 use App\Models\Asset;
 use App\Models\ChatMessage;
@@ -203,6 +204,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/admin/equipment-movements/{equipmentMovement}/avarias/create', EquipmentDamageMobile::class)
         ->name('equipment-movements.damages.create');
+
+    Route::get('/admin/propostas-comerciais/nova', PropostaComercialMobile::class)
+        ->name('proposta-comercial.mobile.create');
 
     Route::get('/admin/equipment-damages/{record}/laudo-pdf', [EquipmentDamageReportController::class, 'download'])
         ->name('equipment-damages.laudo.pdf');
