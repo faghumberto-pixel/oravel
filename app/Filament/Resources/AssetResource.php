@@ -144,6 +144,7 @@ class AssetResource extends Resource
                                     ->options([
                                         'kVA' => 'kVA',
                                         'HP' => 'HP',
+                                        'A' => 'Ampères (A)',
                                         'toneladas' => 'toneladas',
                                         'kg' => 'kg',
                                         'm³' => 'm³',
@@ -770,6 +771,7 @@ class AssetResource extends Resource
                     ->options([
                         'kVA' => 'kVA',
                         'HP' => 'HP',
+                        'A' => 'Ampères (A)',
                         'toneladas' => 'toneladas',
                         'kg' => 'kg',
                         'm³' => 'm³',

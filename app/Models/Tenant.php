@@ -230,6 +230,16 @@ class Tenant extends Model
                 'sla_emergencia' => false,
                 'contas_a_receber' => true,
             ],
+            Client::NICHE_LOCACAO_EQUIPAMENTOS => [
+                'mau_uso' => true,
+                'horimetro_rigido' => true,
+                'quarentena' => true,
+                'kanban_oficina_extra' => true,
+                'prazo_fatal' => false,
+                'banco_de_carga' => false,
+                'sla_emergencia' => false,
+                'contas_a_receber' => true,
+            ],
             default => [
                 'prazo_fatal' => true,
                 'sla_emergencia' => true,

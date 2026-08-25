@@ -29,8 +29,8 @@ use App\Models\Client;
 /**
  * Widgets exclusivos da aba "Painel de Gestao" (PainelGestao) por
  * tenants.segment -- pedido explicito: cada segmento (Eventos/Construcao
- * Civil/Industrial-Hospitalar) enxerga um conjunto proprio, nao um
- * dashboard generico com tudo misturado. Mesma logica de
+ * Civil/Industrial-Hospitalar/Locacao de Equipamentos) enxerga um conjunto
+ * proprio, nao um dashboard generico com tudo misturado. Mesma logica de
  * App\Models\Tenant::applySegmentPreset() (modulos habilitados por
  * segmento), so que pra widgets em vez de features.
  */
@@ -70,6 +70,18 @@ class SegmentDashboardWidgets
                 ListaAlertaAtivos::class,
                 MaintenanceCostChart::class,
                 AgendaTecnicoWidget::class,
+                TechnicianOrderStats::class,
+            ],
+            Client::NICHE_LOCACAO_EQUIPAMENTOS => [
+                FleetAvailabilityGaugeWidget::class,
+                AssetsByStatusChart::class,
+                RadarOperacional::class,
+                ListaAtivosParados::class,
+                ListaAlertaAtivos::class,
+                MaintenanceByStatusChart::class,
+                MaintenanceCostChart::class,
+                TopClientsByRentals::class,
+                DamagesBySeverityChart::class,
                 TechnicianOrderStats::class,
             ],
             default => [
