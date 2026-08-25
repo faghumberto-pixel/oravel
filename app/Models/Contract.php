@@ -50,6 +50,8 @@ class Contract extends Model
 
     public const BILLING_FRANQUIA_EXCEDENTE = 'franquia_excedente';
 
+    public const BILLING_DIARIA = 'diaria';
+
     protected $fillable = [
         'tenant_id',
         'client_id',
@@ -141,6 +143,7 @@ class Contract extends Model
             self::BILLING_MENSAL_FIXO => 'Mensal Fixo',
             self::BILLING_POR_HORA => 'Por Hora',
             self::BILLING_FRANQUIA_EXCEDENTE => 'Franquia de Horas + Excedente',
+            self::BILLING_DIARIA => 'Diária',
         ];
     }
 
@@ -152,6 +155,31 @@ class Contract extends Model
     public function usesHourFranchise(): bool
     {
         return $this->billing_type === self::BILLING_FRANQUIA_EXCEDENTE;
+    }
+
+    public function usesDailyBilling(): bool
+    {
+        return $this->billing_type === self::BILLING_DIARIA;
+    }
+
+    /**
+     * Contagem inclusive-inclusive: 01/09 a 03/09 = 3 diárias.
+     * Null quando faltam datas ou a modalidade não é diária -- form/placeholder
+     * decide o que exibir nesse caso, não é responsabilidade do model.
+     */
+    public function calculatedDailyTotal(): ?float
+    {
+        if (! $this->usesDailyBilling() || ! $this->start_date || ! $this->end_date) {
+            return null;
+        }
+
+        $dias = $this->start_date->diffInDays($this->end_date) + 1;
+
+        if ($dias <= 0) {
+            return null;
+        }
+
+        return $dias * (float) $this->price;
     }
 
     public function tenant(): BelongsTo

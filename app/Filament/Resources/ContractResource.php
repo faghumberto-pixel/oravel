@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Models\Contract;
 use App\Models\EquipmentReplacement;
 use App\Services\CepGeocodingService;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -58,7 +59,12 @@ class ContractResource extends Resource
                             ->required(),
                         Forms\Components\DatePicker::make('start_date')
                             ->label('Início da Vigência')
+                            ->live()
                             ->required(),
+                        Forms\Components\DatePicker::make('end_date')
+                            ->label('Fim da Vigência')
+                            ->live()
+                            ->required(fn (Get $get) => $get('billing_type') === Contract::BILLING_DIARIA),
                     ]),
                 ]),
 
@@ -172,14 +178,50 @@ class ContractResource extends Resource
             Forms\Components\Section::make('4. Responsabilidades e Rescisão')
                 ->schema([
                     Forms\Components\Grid::make(2)->schema([
-                        Forms\Components\TextInput::make('price')
-                            ->label('Valor Mensal')
-                            ->prefix('R$')
-                            ->numeric()
+                        Forms\Components\Select::make('billing_type')
+                            ->label('Modalidade de Cobrança')
+                            ->options(Contract::billingTypeOptions())
+                            ->default(Contract::BILLING_MENSAL_FIXO)
+                            ->live()
                             ->required(),
                         Forms\Components\TextInput::make('multa_rescisoria')
                             ->label('Multa Rescisória (%)')
                             ->numeric(),
+                    ]),
+                    Forms\Components\Grid::make(2)->schema([
+                        Forms\Components\TextInput::make('price')
+                            ->label(fn (Get $get) => $get('billing_type') === Contract::BILLING_DIARIA ? 'Valor da Diária' : 'Valor Mensal')
+                            ->prefix('R$')
+                            ->numeric()
+                            ->live()
+                            ->required(),
+                        Forms\Components\Placeholder::make('total_diaria_calculado')
+                            ->label('Valor Total do Contrato (calculado)')
+                            ->visible(fn (Get $get) => $get('billing_type') === Contract::BILLING_DIARIA)
+                            ->content(function (Get $get) {
+                                $start = $get('start_date');
+                                $end = $get('end_date');
+                                $price = (float) ($get('price') ?? 0);
+
+                                if (! $start || ! $end) {
+                                    return new HtmlString('<span class="text-gray-400">Preencha início e fim da vigência.</span>');
+                                }
+
+                                $dias = Carbon::parse($start)->diffInDays(Carbon::parse($end)) + 1;
+
+                                if ($dias <= 0) {
+                                    return new HtmlString('<span class="text-danger-500">Data de fim deve ser após o início.</span>');
+                                }
+
+                                $total = $dias * $price;
+
+                                return new HtmlString(sprintf(
+                                    '%d dia(s) x R$ %s = <strong>R$ %s</strong>',
+                                    $dias,
+                                    number_format($price, 2, ',', '.'),
+                                    number_format($total, 2, ',', '.')
+                                ));
+                            }),
                     ]),
                     Forms\Components\FileUpload::make('vistoria_entrega')
                         ->label('Laudo de Vistoria de Entrega (PDF/Imagem)')
