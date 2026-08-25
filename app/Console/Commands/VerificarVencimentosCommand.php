@@ -2,48 +2,49 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
+use App\Models\AccountPayable;
+use App\Models\AccountReceivable;
 use App\Models\User;
 use App\Notifications\ContaPagarNotification;
+use App\Notifications\ContaReceberNotification;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Notification;
 
 class VerificarVencimentosCommand extends Command
 {
     protected $signature = 'financeiro:verificar-vencimentos';
-    protected $description = 'Verifica contas vencendo hoje, em breve e atrasadas por empresa';
+
+    protected $description = 'Verifica contas a pagar e a receber vencendo hoje, em breve e atrasadas por empresa';
 
     public function handle()
     {
-        $modelClass = '\App\Models\AccountPayable';
+        // Pedido do usuário 2026-08-25 (item 4 do roteiro): antes este
+        // comando só cobria AccountPayable -- o único alerta proativo de
+        // vencimento do sistema nunca avisava sobre contas a receber.
+        $totalNotificados = $this->processar(AccountPayable::class, ContaPagarNotification::class);
+        $totalNotificados += $this->processar(AccountReceivable::class, ContaReceberNotification::class);
 
-        if (!class_exists($modelClass)) {
-            $this->error('Erro: O Model \App\Models\AccountPayable não foi encontrado.');
-            return Command::FAILURE;
-        }
+        $this->info("Sucesso! {$totalNotificados} notificações geradas no banco de dados.");
 
-        $hoje = Carbon::today();
-        $totalNotificados = 0;
+        return Command::SUCCESS;
+    }
 
-        // 🚨 FILTRO CORRIGIDO: Busca estritamente o status 'pendente' minúsculo que está no banco
+    private function processar(string $modelClass, string $notificationClass): int
+    {
         $contas = $modelClass::where('status', 'pendente')
             ->whereBetween('due_date', [Carbon::today()->subDays(30), Carbon::today()->addDays(7)])
             ->get();
 
-        if ($contas->isEmpty()) {
-            $this->warn('Nenhuma conta com status "pendente" foi localizada no período.');
-            return Command::SUCCESS;
-        }
+        $totalNotificados = 0;
 
         foreach ($contas as $conta) {
-            // Busca todos os usuários associados ao tenant_id da conta
             $usuariosDoTenant = User::where('tenant_id', $conta->tenant_id)->get();
 
             if ($usuariosDoTenant->isEmpty()) {
                 continue;
             }
 
-            // Define o tipo com base no vencimento
             $dueDate = Carbon::parse($conta->due_date);
             if ($dueDate->isToday()) {
                 $tipo = 'vencimento_hoje';
@@ -53,12 +54,10 @@ class VerificarVencimentosCommand extends Command
                 $tipo = 'vencendo_breve';
             }
 
-            // Dispara a notificação para os usuários da empresa
-            Notification::send($usuariosDoTenant, new ContaPagarNotification($conta, $tipo));
+            Notification::send($usuariosDoTenant, new $notificationClass($conta, $tipo));
             $totalNotificados += $usuariosDoTenant->count();
         }
 
-        $this->info("Sucesso! {$totalNotificados} notificações geradas no banco de dados.");
-        return Command::SUCCESS;
+        return $totalNotificados;
     }
 }
