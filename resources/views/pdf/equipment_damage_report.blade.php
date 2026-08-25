@@ -112,6 +112,17 @@
                     <span class="value">{{ strtoupper(str_replace('_', ' ', $damage->status)) }}</span>
                 </td>
             </tr>
+            <tr>
+                <td style="width: 33%;">
+                    <span class="label">Causa Atribuída</span>
+                    <span class="value">{{ $damage->cause ? (\App\Models\EquipmentDamage::causeLabels()[$damage->cause] ?? $damage->cause) : 'Não classificada' }}</span>
+                </td>
+                <td style="width: 33%;">
+                    <span class="label">Cobrável ao Cliente?</span>
+                    <span class="value">{{ $damage->isBillableToClient() ? 'SIM' : 'NÃO' }}</span>
+                </td>
+                <td style="width: 34%;"></td>
+            </tr>
         </table>
         <div class="description-box">{{ $damage->description }}</div>
     </div>
@@ -192,6 +203,34 @@
                     <td style="width: 33%;">
                         <span class="label">Tratado por</span>
                         <span class="value">{{ $damage->commercialReviewedBy->name ?? 'N/A' }}</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    @endif
+
+    @php
+        $approvedQuote = $damage->quotes->whereIn('status', [
+            \App\Models\Quote::STATUS_APROVADO,
+            \App\Models\Quote::STATUS_CONCLUIDO,
+        ])->sortByDesc('created_at')->first();
+    @endphp
+    @if($approvedQuote)
+        <div class="section">
+            <div class="section-title">Orçamento Indenizatório</div>
+            <table class="data-grid">
+                <tr>
+                    <td style="width: 34%;">
+                        <span class="label">Valor Aprovado</span>
+                        <span class="value">R$ {{ number_format($approvedQuote->total_value, 2, ',', '.') }}</span>
+                    </td>
+                    <td style="width: 33%;">
+                        <span class="label">Status do Orçamento</span>
+                        <span class="value">{{ \App\Models\Quote::statusLabels()[$approvedQuote->status] ?? $approvedQuote->status }}</span>
+                    </td>
+                    <td style="width: 33%;">
+                        <span class="label">Encaminhado ao Financeiro</span>
+                        <span class="value">{{ $approvedQuote->financeiro_forwarded_at?->format('d/m/Y H:i') ?? 'Ainda não' }}</span>
                     </td>
                 </tr>
             </table>

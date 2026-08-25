@@ -165,9 +165,25 @@
                             Anexe pelo menos uma foto do dano antes de coletar a assinatura do cliente.
                         </p>
                     @else
-                        <p class="mt-2 text-[11px] text-zinc-500">
-                            Peça para o cliente assinar abaixo confirmando ciência do dano descrito.
-                        </p>
+                        @if($damage->cause)
+                            {{-- A assinatura só prova o que está exposto nela: se a causa já
+                                 foi marcada em campo, ela precisa aparecer aqui, destacada,
+                                 antes do cliente assinar -- senão a assinatura só comprova
+                                 ciência do dano físico, não da responsabilização atribuída
+                                 (achado real da investigação de 2026-08-25: causa preenchida
+                                 em campo não aparecia nesta tela, mesmo já sendo conhecida). --}}
+                            <div class="mt-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2">
+                                <p class="text-[10px] font-bold uppercase tracking-wide text-amber-400">Causa atribuída a este dano</p>
+                                <p class="mt-0.5 text-sm font-semibold text-amber-200">{{ $causeLabels[$damage->cause] ?? $damage->cause }}</p>
+                            </div>
+                            <p class="mt-2 text-[11px] text-zinc-500">
+                                Leia a causa acima para o cliente antes de coletar a assinatura — ela confirma ciência do dano descrito <strong class="text-zinc-300">e da causa atribuída</strong> acima. A causa ainda pode ser revisada pelo supervisor depois.
+                            </p>
+                        @else
+                            <p class="mt-2 text-[11px] text-zinc-500">
+                                Causa ainda não identificada em campo — a assinatura confirma apenas ciência do dano físico descrito. A causa será definida pelo supervisor na revisão, sem participação do cliente nessa etapa.
+                            </p>
+                        @endif
                         <div
                             class="mt-3"
                             x-data="{

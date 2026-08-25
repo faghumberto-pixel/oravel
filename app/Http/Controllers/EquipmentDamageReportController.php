@@ -21,6 +21,7 @@ class EquipmentDamageReportController extends Controller
             'replacementAsset',
             'followUps.user',
             'media',
+            'quotes',
         ]);
 
         $pdf = Pdf::loadView('pdf.equipment_damage_report', [
