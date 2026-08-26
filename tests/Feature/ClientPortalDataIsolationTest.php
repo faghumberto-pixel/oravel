@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Contract;
 use App\Models\Plan;
 use App\Models\Tenant;
+use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
@@ -121,5 +122,37 @@ class ClientPortalDataIsolationTest extends TestCase
         $this->actingAs($client, 'client')
             ->get('/admin')
             ->assertRedirect(); // redireciona pro login do admin (guard web), não autoriza acesso
+    }
+
+    /**
+     * Bug real de PROD (2026-08-26): Filament\Http\Middleware\Authenticate
+     * aborta com 403 fora do ambiente 'local' pra qualquer model
+     * autenticado que não implemente FilamentUser -- Client não
+     * implementava, então todo o painel 'portal-cliente' ficava
+     * inacessível em produção (só não pegava em teste local nem em
+     * Livewire::test(), que não passam pelo middleware do painel).
+     * canAccessPanel() precisa liberar 'portal-cliente' e negar os
+     * demais, senão isso vira um jeito de Client acessar admin/central.
+     */
+    public function test_client_can_access_own_portal_panel_in_production_environment(): void
+    {
+        [, $client] = $this->makeTenantWithClient('A');
+
+        config(['app.env' => 'production']);
+
+        $this->actingAs($client, 'client')
+            ->get('/cliente/abrir-chamado')
+            ->assertOk();
+    }
+
+    public function test_client_cannot_access_panel_it_does_not_belong_to(): void
+    {
+        [, $client] = $this->makeTenantWithClient('A');
+
+        $adminPanel = Filament::getPanel('admin');
+        $centralPanel = Filament::getPanel('central');
+
+        $this->assertFalse($client->canAccessPanel($adminPanel));
+        $this->assertFalse($client->canAccessPanel($centralPanel));
     }
 }

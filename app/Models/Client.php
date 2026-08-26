@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Domain\Fleet\Models\RentalOverageCharge;
 use App\Models\Concerns\HasSaaSMetadata;
 use App\Models\Traits\BelongsToTenant;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -23,7 +25,7 @@ use Illuminate\Notifications\Notifiable;
  * global scope de BelongsToTenant, que resolve Auth::user() no guard
  * default e nao enxerga o guard 'client'.
  */
-class Client extends Model implements AuthenticatableContract
+class Client extends Model implements AuthenticatableContract, FilamentUser
 {
     use Authenticatable, Notifiable;
     use HasSaaSMetadata;
@@ -145,6 +147,18 @@ class Client extends Model implements AuthenticatableContract
         'check_blacklist' => 'boolean',
         'check_credit_bureau' => 'boolean',
     ];
+
+    /**
+     * Filament\Http\Middleware\Authenticate::authenticate() aborta com 403
+     * fora do ambiente 'local' quando o model autenticado não implementa
+     * FilamentUser -- sem isso, todo o Portal do Cliente (guard 'client')
+     * ficava inacessível em produção. Só o painel 'portal-cliente' é
+     * liberado; Client nunca deve acessar 'admin'/'central'.
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $panel->getId() === 'portal-cliente';
+    }
 
     /**
      * RELAÇÃO COM O TENANT
