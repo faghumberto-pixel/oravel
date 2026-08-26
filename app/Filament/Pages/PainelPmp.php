@@ -3,9 +3,11 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Resources\MaintenanceOrderResource;
+use App\Models\Client;
 use App\Models\MaintenanceDueAlert;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenanceStatusHistory;
+use App\Models\User;
 use App\Support\Tenancy;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -39,14 +41,15 @@ class PainelPmp extends Page
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    // Sem navigationGroup de proposito -- fica como item solto na barra de
-    // topo (mesmo padrao do Dashboard padrao do Filament), nao afundado
+    // Grupo de topo proprio "PMP" (AdminPanelProvider), nao mais afundado
     // dentro do submenu "Manutencao" que ja tem muitos itens.
+    protected static ?string $navigationGroup = 'PMP';
+
     protected static ?string $navigationLabel = 'Dashboard PMP';
 
     protected static ?string $title = 'Planejamento de Manutenção Preventiva';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
 
     protected static string $view = 'filament.pages.painel-pmp';
 
@@ -142,13 +145,81 @@ class PainelPmp extends Page
     }
 
     /**
-     * Query base das OS preventivas do tenant, nunca cancelada.
+     * Filtros globais do Dashboard (pedido do usuário 2026-08-26): todos
+     * opcionais/nulos por padrão, sem filtro = comportamento idêntico ao
+     * anterior. Aplicados uma única vez em baseOrdersQuery(), consumida por
+     * getKpis()/getKanbanColumns()/getPendingAlerts()/getCriticalAlerts()/
+     * getKpiListItems()/moveCard() -- todo o Dashboard filtra junto.
+     */
+    public ?string $filterTechnicianId = null;
+
+    public ?string $filterPeriod = null; // 'day' | 'week' | 'month' | null
+
+    public ?string $filterStatus = null; // 'programado' | 'concluido' | 'pendente' | null
+
+    public ?string $filterClientId = null;
+
+    /**
+     * Query base das OS preventivas do tenant, nunca cancelada, com os
+     * filtros globais aplicados.
      */
     protected function baseOrdersQuery()
     {
-        return MaintenanceOrder::where('tenant_id', Tenancy::current()?->id)
+        $query = MaintenanceOrder::where('tenant_id', Tenancy::current()?->id)
             ->where('maintenance_type', MaintenanceOrder::TYPE_PREVENTIVE)
             ->where('status', '!=', 'Cancelada');
+
+        if ($this->filterTechnicianId) {
+            $query->where('technician_id', $this->filterTechnicianId);
+        }
+
+        if ($this->filterClientId) {
+            $query->where('client_id', $this->filterClientId);
+        }
+
+        if ($this->filterStatus) {
+            $query->where(fn ($q) => match ($this->filterStatus) {
+                'concluido' => $q->where('internal_status', 'concluido'),
+                'pendente' => $q->whereIn('internal_status', ['aguardando_diagnostico', 'aguardando_peca', 'aguardando_peca_canibalizado']),
+                'programado' => $q->whereNotNull('scheduled_at')->where('internal_status', '!=', 'concluido'),
+                default => $q,
+            });
+        }
+
+        if ($this->filterPeriod) {
+            [$start, $end] = match ($this->filterPeriod) {
+                'day' => [now()->startOfDay(), now()->endOfDay()],
+                'week' => [now()->startOfWeek(), now()->endOfWeek()],
+                'month' => [now()->startOfMonth(), now()->endOfMonth()],
+                default => [null, null],
+            };
+
+            if ($start && $end) {
+                $query->whereBetween('scheduled_at', [$start, $end]);
+            }
+        }
+
+        return $query;
+    }
+
+    /**
+     * Opções do filtro de técnico: só quem já tem alguma OS preventiva no
+     * tenant, pra não poluir o select com todo mundo (motorista,
+     * financeiro etc).
+     */
+    public function getFilterableTechnicians(): Collection
+    {
+        return User::where('tenant_id', Tenancy::current()?->id)
+            ->whereHas('maintenanceOrders', fn ($q) => $q->where('maintenance_type', MaintenanceOrder::TYPE_PREVENTIVE))
+            ->orderBy('name')
+            ->get(['id', 'name']);
+    }
+
+    public function getFilterableClients(): Collection
+    {
+        return Client::where('tenant_id', Tenancy::current()?->id)
+            ->orderBy('name')
+            ->get(['id', 'name']);
     }
 
     public function getKpis(): array

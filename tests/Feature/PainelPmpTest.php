@@ -234,6 +234,120 @@ class PainelPmpTest extends TestCase
         $this->assertSame('Cliente Obra Sul', $items->first()['location']);
     }
 
+    /**
+     * Filtros globais (pedido do usuário 2026-08-26): técnico, cliente,
+     * período e status afetam getKpis() -- consumido também por
+     * getKanbanColumns()/getPendingAlerts()/getCriticalAlerts(), então
+     * testar aqui cobre o ponto único de filtragem (baseOrdersQuery()).
+     */
+    public function test_technician_filter_only_counts_that_technicians_orders(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Filtro Tec', 'patrimonio' => 'PAT-FT', 'status' => 'disponivel']);
+
+        $technicianA = User::create([
+            'name' => 'Tecnico A', 'email' => 'tec-a-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'is_approved' => true,
+        ]);
+        $technicianB = User::create([
+            'name' => 'Tecnico B', 'email' => 'tec-b-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'is_approved' => true,
+        ]);
+
+        MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'technician_id' => $technicianA->id,
+            'description' => 'OS Tecnico A', 'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
+            'internal_status' => 'concluido',
+        ]);
+        MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'technician_id' => $technicianB->id,
+            'description' => 'OS Tecnico B', 'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
+            'internal_status' => 'concluido',
+        ]);
+
+        $this->actingAs($admin);
+
+        $page = new PainelPmp;
+        $page->filterTechnicianId = $technicianA->id;
+
+        $this->assertSame(1, $page->getKpis()['total']);
+    }
+
+    public function test_client_filter_only_counts_that_clients_orders(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Filtro Cli', 'patrimonio' => 'PAT-FC', 'status' => 'disponivel']);
+
+        $clientA = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Filtro A']);
+        $clientB = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Filtro B']);
+
+        MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'client_id' => $clientA->id,
+            'description' => 'OS Cliente A', 'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
+            'internal_status' => 'concluido',
+        ]);
+        MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'client_id' => $clientB->id,
+            'description' => 'OS Cliente B', 'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
+            'internal_status' => 'concluido',
+        ]);
+
+        $this->actingAs($admin);
+
+        $page = new PainelPmp;
+        $page->filterClientId = $clientA->id;
+
+        $this->assertSame(1, $page->getKpis()['total']);
+    }
+
+    public function test_period_filter_restricts_by_scheduled_at(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Filtro Periodo', 'patrimonio' => 'PAT-FP', 'status' => 'disponivel']);
+
+        MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id,
+            'description' => 'OS Esta Semana', 'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
+            'internal_status' => 'concluido', 'scheduled_at' => now(),
+        ]);
+        MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id,
+            'description' => 'OS Mes Que Vem', 'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
+            'internal_status' => 'concluido', 'scheduled_at' => now()->addMonth(),
+        ]);
+
+        $this->actingAs($admin);
+
+        $page = new PainelPmp;
+        $page->filterPeriod = 'week';
+
+        $this->assertSame(1, $page->getKpis()['total']);
+    }
+
+    public function test_status_filter_pendente_only_counts_awaiting_orders(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Filtro Status', 'patrimonio' => 'PAT-FS', 'status' => 'disponivel']);
+
+        MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id,
+            'description' => 'OS Pendente', 'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
+            'internal_status' => 'aguardando_diagnostico',
+        ]);
+        MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id,
+            'description' => 'OS Concluida', 'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
+            'internal_status' => 'concluido',
+        ]);
+
+        $this->actingAs($admin);
+
+        $page = new PainelPmp;
+        $page->filterStatus = 'pendente';
+
+        $this->assertSame(1, $page->getKpis()['total']);
+    }
+
     public function test_invalid_move_does_not_change_any_data(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();

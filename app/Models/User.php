@@ -112,6 +112,21 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
         return $this->hasMany(MaintenanceOrder::class, 'technician_id');
     }
 
+    public function specialties(): HasMany
+    {
+        return $this->hasMany(UserSpecialty::class);
+    }
+
+    /**
+     * $failureCategory e' um dos MaintenanceOrder::FAILURE_CATEGORY_* --
+     * mesmo vocabulario reaproveitado como especialidade do tecnico (ver
+     * migration user_specialty).
+     */
+    public function hasSpecialty(string $failureCategory): bool
+    {
+        return $this->specialties()->where('specialty', $failureCategory)->exists();
+    }
+
     /**
      * IDs dos setores que este usuario supervisiona -- qualquer role dele
      * com roles.department_id preenchido (ver RoleResource, campo "Setor

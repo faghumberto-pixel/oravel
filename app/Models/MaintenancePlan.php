@@ -161,6 +161,73 @@ class MaintenancePlan extends Model
     }
 
     /**
+     * Projeta em qual mês (0 = mês atual, 1 = próximo, ...) este plano vai
+     * vencer, olhando pros próximos $months meses -- dueStatusForAsset()
+     * só responde "vencido agora ou não", isto responde "quando" pros
+     * meses seguintes. Usa a MESMA regra de "vence pelo que chegar
+     * primeiro" (horas via Asset::getAverageHourlyUsage(), ou data
+     * absoluta via interval_days) -- nenhum cálculo de vencimento novo,
+     * só projeção temporal em cima do que já existe.
+     *
+     * Batería (interval_battery_cycles) não é projetada aqui -- não existe
+     * hoje uma média de uso de ciclos por mês equivalente a
+     * getAverageHourlyUsage(), então o vencimento por bateria só aparece
+     * quando já estiver vencido (ver dueStatusForAsset()).
+     *
+     * @return array<int, array{month_offset: int, month_label: string, due_at: string, reason: string}>
+     */
+    public function projectedDueDates(Asset $asset, int $months = 3): array
+    {
+        $status = $this->dueStatusForAsset($asset);
+        $projections = [];
+
+        if ($status['is_overdue']) {
+            return [[
+                'month_offset' => 0,
+                'month_label' => now()->translatedFormat('F/Y'),
+                'due_at' => $status['due_at_date'] ?? now()->toDateString(),
+                'reason' => $status['due_at_date'] ? 'Vencido por data' : 'Vencido por horímetro',
+            ]];
+        }
+
+        if ($this->interval_days && $status['due_at_date']) {
+            $dueAt = Carbon::parse($status['due_at_date']);
+            $monthOffset = now()->startOfMonth()->diffInMonths($dueAt->copy()->startOfMonth());
+
+            if ($monthOffset <= $months) {
+                $projections[] = [
+                    'month_offset' => $monthOffset,
+                    'month_label' => $dueAt->translatedFormat('F/Y'),
+                    'due_at' => $dueAt->toDateString(),
+                    'reason' => 'Vencimento por data',
+                ];
+            }
+        }
+
+        if ($this->interval_hours) {
+            $dailyAverage = $asset->getAverageHourlyUsage()['daily_average'];
+
+            if ($dailyAverage > 0) {
+                $remainingHours = max(0, $status['due_at_hours'] - (float) $asset->horimetro_atual);
+                $daysUntilDue = (int) ceil($remainingHours / $dailyAverage);
+                $dueAt = now()->addDays($daysUntilDue);
+                $monthOffset = now()->startOfMonth()->diffInMonths($dueAt->copy()->startOfMonth());
+
+                if ($monthOffset <= $months) {
+                    $projections[] = [
+                        'month_offset' => $monthOffset,
+                        'month_label' => $dueAt->translatedFormat('F/Y'),
+                        'due_at' => $dueAt->toDateString(),
+                        'reason' => 'Vencimento por horímetro (projetado)',
+                    ];
+                }
+            }
+        }
+
+        return $projections;
+    }
+
+    /**
      * Resolve quais planos (de um conjunto ja pre-carregado, evitando N+1
      * quando chamado num loop sobre varios Ativos) se aplicam a um Ativo:
      * os proprios (asset_id) + os do Grupo dele (checklist_group_id), MENOS

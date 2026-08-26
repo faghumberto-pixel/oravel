@@ -7,6 +7,7 @@ use App\Filament\Pages\Auth\Login;
 use App\Http\Middleware\LogUserActivity;
 use App\Http\Middleware\TrackSiteVisit;
 use App\Models\Asset;
+use App\Models\Employee;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
@@ -51,6 +52,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('1.25rem')
             ->favicon(asset('favicon.png').'?v=5')
             ->navigationGroups([
+                NavigationGroup::make('PMP'),
                 NavigationGroup::make('Manutenção'),
                 NavigationGroup::make('Logística'),
                 NavigationGroup::make('Ativos e Materiais'),
@@ -85,7 +87,7 @@ class AdminPanelProvider extends PanelProvider
                     ->group('Departamento Pessoal')
                     ->sort(-8)
                     ->url(fn () => route('time-clock.offline'))
-                    ->visible(fn () => \App\Models\Employee::where('user_id', auth()->id())->exists()),
+                    ->visible(fn () => Employee::where('user_id', auth()->id())->exists()),
             ])
             ->renderHook(
                 PanelsRenderHook::TOPBAR_START,

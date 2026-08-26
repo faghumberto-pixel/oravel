@@ -33,6 +33,7 @@ use App\Models\PropostaComercialItem;
 use App\Models\QuoteItem;
 use App\Models\SalesLeadInteraction;
 use App\Models\SolicitacaoLocacao;
+use App\Models\TechnicianAllocation;
 use App\Models\User;
 use App\Models\UserActivityLog;
 use App\Observers\AbcMatrixObserver;
@@ -64,6 +65,7 @@ use App\Observers\PropostaComercialObserver;
 use App\Observers\QuoteItemObserver;
 use App\Observers\SalesLeadInteractionObserver;
 use App\Observers\SolicitacaoLocacaoObserver;
+use App\Observers\TechnicianAllocationObserver;
 use App\Policies\DynamicPolicy;
 use App\Support\Tenancy;
 use Illuminate\Auth\Events\Login;
@@ -141,6 +143,7 @@ class AppServiceProvider extends ServiceProvider
         // Ate 2026-07-14 nenhum destes 2 estava registrado -- os observers
         // existiam mas nunca rodavam de verdade (codigo morto).
         SolicitacaoLocacao::observe(SolicitacaoLocacaoObserver::class);
+        TechnicianAllocation::observe(TechnicianAllocationObserver::class);
         FleetMaintenanceHistory::observe(FleetMaintenanceHistoryObserver::class);
         GoodsReceiptItem::observe(GoodsReceiptItemObserver::class);
         MaintenanceOrderPendencia::observe(MaintenanceOrderPendenciaObserver::class);

@@ -47,6 +47,49 @@
             </div>
         </div>
 
+        {{-- ===================== FILTROS GLOBAIS ===================== --}}
+        <div class="flex flex-wrap items-center gap-2 rounded-xl bg-gray-800/60 backdrop-blur-sm px-3 py-2 ring-1 ring-white/5">
+            <span class="text-[10px] font-semibold uppercase tracking-wide text-gray-500 shrink-0">Filtros</span>
+
+            <select wire:model.live="filterTechnicianId" class="text-xs rounded-md bg-gray-900 border-gray-700 text-gray-200 py-1 pl-2 pr-7 focus:border-indigo-500 focus:ring-indigo-500">
+                <option value="">Todos os técnicos</option>
+                @foreach($this->getFilterableTechnicians() as $technician)
+                    <option value="{{ $technician->id }}">{{ $technician->name }}</option>
+                @endforeach
+            </select>
+
+            <select wire:model.live="filterClientId" class="text-xs rounded-md bg-gray-900 border-gray-700 text-gray-200 py-1 pl-2 pr-7 focus:border-indigo-500 focus:ring-indigo-500">
+                <option value="">Todos os clientes</option>
+                @foreach($this->getFilterableClients() as $client)
+                    <option value="{{ $client->id }}">{{ $client->name }}</option>
+                @endforeach
+            </select>
+
+            <select wire:model.live="filterPeriod" class="text-xs rounded-md bg-gray-900 border-gray-700 text-gray-200 py-1 pl-2 pr-7 focus:border-indigo-500 focus:ring-indigo-500">
+                <option value="">Qualquer período</option>
+                <option value="day">Hoje</option>
+                <option value="week">Esta semana</option>
+                <option value="month">Este mês</option>
+            </select>
+
+            <select wire:model.live="filterStatus" class="text-xs rounded-md bg-gray-900 border-gray-700 text-gray-200 py-1 pl-2 pr-7 focus:border-indigo-500 focus:ring-indigo-500">
+                <option value="">Qualquer status</option>
+                <option value="programado">Programado</option>
+                <option value="pendente">Pendente</option>
+                <option value="concluido">Concluído</option>
+            </select>
+
+            @if($filterTechnicianId || $filterClientId || $filterPeriod || $filterStatus)
+                <button
+                    type="button"
+                    wire:click="$set('filterTechnicianId', null); $set('filterClientId', null); $set('filterPeriod', null); $set('filterStatus', null)"
+                    class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 hover:text-white transition"
+                >
+                    Limpar filtros
+                </button>
+            @endif
+        </div>
+
         {{-- ===================== KPIs (1 linha única) ===================== --}}
         <div class="grid grid-cols-5 gap-2">
             @foreach($kpiCards as $kpi)
