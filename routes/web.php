@@ -4,6 +4,7 @@ use App\Http\Controllers\AIAnalysisPdfController;
 use App\Http\Controllers\AssetDossierPdfController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\ChatHistoryPdfController;
+use App\Http\Controllers\ClientManagementPrintController;
 use App\Http\Controllers\ContractPdfController;
 use App\Http\Controllers\EquipmentDamageReportController;
 use App\Http\Controllers\HourMeterOfflineController;
@@ -138,6 +139,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/admin/print/tabela/{token}', [TablePrintController::class, 'show'])
         ->name('table-print.show');
+
+    Route::get('/admin/gestao-clientes/{client}/print', [ClientManagementPrintController::class, 'show'])
+        ->name('client-management.print');
 
     Route::get('/admin/maintenance-orders/{order}/laudo-minimalista', [MaintenanceOrderController::class, 'laudoMinimalista'])
         ->name('maintenance-orders.laudo-minimalista');
