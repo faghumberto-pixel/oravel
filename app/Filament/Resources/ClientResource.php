@@ -19,8 +19,10 @@ use Filament\Tables\Table;
 // Adicionado para identificar o Tenant
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Throwable;
 
 class ClientResource extends Resource
 {
@@ -233,12 +235,28 @@ class ClientResource extends Resource
                             'portal_access_enabled_at' => now(),
                         ]);
 
-                        $record->notify(new ClientPortalAccessGranted($temporaryPassword));
+                        // Senha/flag já ficam salvas mesmo se o e-mail falhar
+                        // (SMTP fora do ar, credencial inválida, etc.) -- sem
+                        // isso uma falha de e-mail virava 500 pro operador,
+                        // apesar do acesso já ter sido concedido de verdade.
+                        try {
+                            $record->notify(new ClientPortalAccessGranted($temporaryPassword));
 
-                        Notification::make()
-                            ->title('Acesso ao portal enviado')
-                            ->success()
-                            ->send();
+                            Notification::make()
+                                ->title('Acesso ao portal enviado')
+                                ->success()
+                                ->send();
+                        } catch (Throwable $e) {
+                            Log::warning('ClientResource: falha ao enviar e-mail de acesso ao portal.', [
+                                'client_id' => $record->id, 'error' => $e->getMessage(),
+                            ]);
+
+                            Notification::make()
+                                ->title('Acesso concedido, mas o e-mail não pôde ser enviado')
+                                ->body('Verifique a configuração de e-mail do sistema. A senha temporária foi gerada e o acesso já está ativo.')
+                                ->warning()
+                                ->send();
+                        }
                     }),
             ])
             ->bulkActions([Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()])]);
