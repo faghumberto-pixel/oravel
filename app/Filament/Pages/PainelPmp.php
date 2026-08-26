@@ -39,8 +39,9 @@ class PainelPmp extends Page
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $navigationGroup = 'Manutenção';
-
+    // Sem navigationGroup de proposito -- fica como item solto na barra de
+    // topo (mesmo padrao do Dashboard padrao do Filament), nao afundado
+    // dentro do submenu "Manutencao" que ja tem muitos itens.
     protected static ?string $navigationLabel = 'Dashboard PMP';
 
     protected static ?string $title = 'Planejamento de Manutenção Preventiva';
