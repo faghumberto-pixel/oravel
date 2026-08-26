@@ -40,6 +40,8 @@ class GestaoClientes extends Page implements HasForms
 
     public ?string $selectedClientId = null;
 
+    public ?string $search = null;
+
     public ?array $replyData = [];
 
     public ?array $communicationData = [];
@@ -102,6 +104,8 @@ class GestaoClientes extends Page implements HasForms
         $tenantId = Tenancy::current()?->id;
 
         return Client::where('tenant_id', $tenantId)
+            ->when(filled($this->search), fn ($query) => $query->where('name', 'like', "%{$this->search}%"))
+            ->orderBy('name')
             ->get()
             ->map(function (Client $client) use ($tenantId) {
                 $client->pending_count = $this->pendingCountFor($client->id, $tenantId);
@@ -113,7 +117,9 @@ class GestaoClientes extends Page implements HasForms
                     ->count();
 
                 return $client;
-            });
+            })
+            ->sortByDesc(fn (Client $client) => ($client->unread_count * 1000) + $client->pending_count)
+            ->values();
     }
 
     public function getSelectedClientProperty(): ?Client
