@@ -160,6 +160,11 @@ class MaintenanceOrder extends Model implements HasMedia
         return $this->belongsTo(Client::class);
     }
 
+    public function technicianAllocations(): HasMany
+    {
+        return $this->hasMany(TechnicianAllocation::class);
+    }
+
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class, 'branch_id');
