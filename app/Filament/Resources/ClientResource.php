@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\ClientResource\Pages;
 use App\Models\Client;
+use App\Notifications\ClientPortalAccessGranted;
 use App\Services\CepGeocodingService;
 use App\Traits\HasPlanAuthorization;
 use Filament\Forms;
@@ -19,6 +20,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 
 class ClientResource extends Resource
 {
@@ -215,7 +217,30 @@ class ClientResource extends Resource
                     ->query(fn (Builder $query) => $query->whereHas('contracts', fn ($q) => $q->where('status', 'Ativo')))
                     ->toggle(),
             ])
-            ->actions([Tables\Actions\EditAction::make()])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('grantPortalAccess')
+                    ->label(fn (Client $record) => $record->portal_access_enabled_at ? 'Reenviar acesso' : 'Conceder acesso ao portal')
+                    ->icon('heroicon-o-key')
+                    ->visible(fn (Client $record) => filled($record->email))
+                    ->requiresConfirmation()
+                    ->modalDescription('Uma senha temporária será gerada e enviada por e-mail ao cliente.')
+                    ->action(function (Client $record) {
+                        $temporaryPassword = Str::password(12);
+
+                        $record->update([
+                            'password' => $temporaryPassword,
+                            'portal_access_enabled_at' => now(),
+                        ]);
+
+                        $record->notify(new ClientPortalAccessGranted($temporaryPassword));
+
+                        Notification::make()
+                            ->title('Acesso ao portal enviado')
+                            ->success()
+                            ->send();
+                    }),
+            ])
             ->bulkActions([Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()])]);
     }
 

@@ -2,17 +2,30 @@
 
 namespace App\Models;
 
+use App\Domain\Fleet\Models\RentalOverageCharge;
 use App\Models\Concerns\HasSaaSMetadata;
 use App\Models\Traits\BelongsToTenant;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 
-class Client extends Model
+/**
+ * Implementa Authenticatable para o guard 'client' (Portal do Cliente,
+ * app/Providers/Filament/ClientPanelProvider) -- guard separado do 'web'
+ * usado por User, sem overlap. As queries do portal filtram
+ * tenant_id+client_id manualmente (ver ClientPanel Pages), nao dependem do
+ * global scope de BelongsToTenant, que resolve Auth::user() no guard
+ * default e nao enxerga o guard 'client'.
+ */
+class Client extends Model implements AuthenticatableContract
 {
+    use Authenticatable, Notifiable;
     use HasSaaSMetadata;
 
     protected static ?string $saasFeatureKey = 'tabela_clients';
@@ -60,6 +73,8 @@ class Client extends Model
         'phone',
         'whatsapp',
         'tenant_id',
+        'password',
+        'portal_access_enabled_at',
         // zip_code/state/neighborhood/address_complement ja existiam na
         // tabela (migration add_erp_fields_to_clients_table) e ja
         // apareciam no form do ClientResource -- mas como nao estavam
@@ -108,10 +123,17 @@ class Client extends Model
         'credit_score',
     ];
 
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
     protected $casts = [
         'latitude' => 'decimal:8',
         'longitude' => 'decimal:8',
         'credit_score' => 'integer',
+        'password' => 'hashed',
+        'portal_access_enabled_at' => 'datetime',
         'doc_cnpj' => 'boolean',
         'doc_statute' => 'boolean',
         'doc_id' => 'boolean',
@@ -161,9 +183,9 @@ class Client extends Model
 
         $totalRentalRevenue = (float) $this->contracts()->sum('price');
 
-        $totalOverageRevenue = $assetIds->isEmpty() ? 0.0 : (float) \App\Domain\Fleet\Models\RentalOverageCharge::query()
+        $totalOverageRevenue = $assetIds->isEmpty() ? 0.0 : (float) RentalOverageCharge::query()
             ->whereIn('asset_id', $assetIds)
-            ->where('status', \App\Domain\Fleet\Models\RentalOverageCharge::STATUS_INVOICED)
+            ->where('status', RentalOverageCharge::STATUS_INVOICED)
             ->sum('amount');
 
         $totalDamageRevenue = $assetIds->isEmpty() ? 0.0 : (float) Quote::query()

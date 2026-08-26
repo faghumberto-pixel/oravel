@@ -68,6 +68,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Jeffgreco13\FilamentBreezy\Livewire\PersonalInfo;
 use Jeffgreco13\FilamentBreezy\Livewire\TwoFactorAuthentication;
@@ -96,7 +97,7 @@ class AppServiceProvider extends ServiceProvider
         // como mixed content numa pagina https (CSS/JS somem em silencio).
         // X-Forwarded-Proto e' o header padrao que esses proxies mandam.
         if (request()->header('X-Forwarded-Proto') === 'https') {
-            \Illuminate\Support\Facades\URL::forceScheme('https');
+            URL::forceScheme('https');
         }
 
         // Render customizado para erros 403
@@ -230,7 +231,10 @@ class AppServiceProvider extends ServiceProvider
         $user = Auth::user();
         $tenant = Tenancy::current();
 
-        if (! $user || ! $tenant || blank($model->tenant_id ?? null)) {
+        // user_activity_logs.user_id tem FK pra users -- um Client
+        // autenticado (guard 'client', Portal do Cliente) não é User e
+        // quebraria a FK aqui se não checássemos o tipo.
+        if (! $user instanceof User || ! $tenant || blank($model->tenant_id ?? null)) {
             return;
         }
 

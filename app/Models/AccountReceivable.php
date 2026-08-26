@@ -32,6 +32,7 @@ class AccountReceivable extends Model
         'branch_id', 'cost_center_id', 'client_id', 'contract_id',
         'billing_plan_id', 'quote_id', 'multa_percentual', 'multa_valor',
         'mes', 'ano',
+        'asaas_payment_id', 'asaas_invoice_url', 'asaas_boleto_url',
     ];
 
     protected $casts = [

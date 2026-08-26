@@ -193,6 +193,27 @@ class AsaasService
         return $response->json();
     }
 
+    /**
+     * Cobrança avulsa (POST /payments), diferente de createSubscription()
+     * (assinatura recorrente) -- resposta já traz invoiceUrl/bankSlipUrl
+     * de forma síncrona, sem precisar do passo indireto que
+     * getFirstInvoiceUrl() faz pra assinatura. Usado pelo Portal do
+     * Cliente (2ª via de AccountReceivable), genérico como createCustomer/
+     * createSubscription, não acoplado a Tenant.
+     */
+    public function createPayment(array $data): array
+    {
+        $response = Http::withHeaders([
+            'access_token' => $this->apiKey,
+        ])->post("{$this->baseUrl}/payments", $data);
+
+        if ($response->failed()) {
+            throw new \Exception('ASAAS Error: '.$response->body());
+        }
+
+        return $response->json();
+    }
+
     public function updateSubscription(string $subscriptionId, array $data): array
     {
         $response = Http::withHeaders([
