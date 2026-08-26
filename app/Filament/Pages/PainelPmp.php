@@ -35,9 +35,7 @@ use Illuminate\Support\Str;
  */
 class PainelPmp extends Page
 {
-    // Navegacao manual dentro do submenu "PMP" (AdminPanelProvider), nao
-    // auto-registrada -- ver MaintenancePlanResource.
-    protected static bool $shouldRegisterNavigation = false;
+    protected static bool $shouldRegisterNavigation = true;
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
