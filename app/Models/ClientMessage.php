@@ -32,8 +32,25 @@ class ClientMessage extends Model implements HasMedia
 
     public const SENDER_USER = 'user';
 
+    /**
+     * 4 áreas fixas -- Client escolhe ao mandar a mensagem (não é
+     * inferida depois). Cada área tem uma role dedicada (ver
+     * areaRoleName()/database/seeders/ClientMessageAreaRolesSeeder.php)
+     * que filtra quem no Tenant enxerga a mensagem
+     * (User::visibleClientMessageAreas()). Mensagens antigas sem área
+     * (area = null) ficam visíveis a todos -- fallback seguro, não
+     * esconde histórico pré-existente.
+     */
+    public const AREA_FINANCEIRO = 'financeiro';
+
+    public const AREA_MANUTENCAO = 'manutencao';
+
+    public const AREA_COMERCIAL = 'comercial';
+
+    public const AREA_LOGISTICA = 'logistica';
+
     protected $fillable = [
-        'tenant_id', 'client_id', 'sender_type', 'sender_id', 'body', 'read_at',
+        'tenant_id', 'client_id', 'area', 'sender_type', 'sender_id', 'body', 'read_at',
     ];
 
     protected $casts = [
@@ -48,6 +65,35 @@ class ClientMessage extends Model implements HasMedia
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function areaLabels(): array
+    {
+        return [
+            self::AREA_FINANCEIRO => 'Financeiro',
+            self::AREA_MANUTENCAO => 'Manutenção',
+            self::AREA_COMERCIAL => 'Comercial',
+            self::AREA_LOGISTICA => 'Logística',
+        ];
+    }
+
+    /**
+     * Nome da Role dedicada que enxerga mensagens desta área -- ver
+     * ClientMessageAreaRolesSeeder. Roles próprias (sufixo "(Mensagens)"),
+     * não reaproveitam roles existentes de outro domínio (ex: 'Comercial'
+     * já usada por EquipmentDamageObserver com semântica diferente).
+     */
+    public static function areaRoleName(string $area): ?string
+    {
+        return [
+            self::AREA_FINANCEIRO => 'Financeiro (Mensagens)',
+            self::AREA_MANUTENCAO => 'Manutenção (Mensagens)',
+            self::AREA_COMERCIAL => 'Comercial (Mensagens)',
+            self::AREA_LOGISTICA => 'Logística (Mensagens)',
+        ][$area] ?? null;
     }
 
     public function isFromClient(): bool

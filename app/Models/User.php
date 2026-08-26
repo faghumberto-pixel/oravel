@@ -154,6 +154,30 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
     }
 
     /**
+     * Áreas de ClientMessage que este usuário pode ver -- admin vê tudo
+     * (mesmo bypass usado em AbstractPolicy), demais usuários só veem
+     * a área cuja Role dedicada (ClientMessage::areaRoleName()) eles
+     * possuem. $this->roles() já é implicitamente tenant-scoped (via
+     * model_has_roles, só roles atribuídas a este User específico) --
+     * não precisa re-filtrar por tenant_id aqui.
+     *
+     * @return array<int, string>
+     */
+    public function visibleClientMessageAreas(): array
+    {
+        if ($this->isAdmin()) {
+            return array_keys(ClientMessage::areaLabels());
+        }
+
+        $roleNames = $this->roles->pluck('name')->all();
+
+        return array_values(array_filter(
+            array_keys(ClientMessage::areaLabels()),
+            fn (string $area) => in_array(ClientMessage::areaRoleName($area), $roleNames, true)
+        ));
+    }
+
+    /**
      * SEM withDefault() de proposito -- ->withDefault(closure) do Eloquent
      * sempre cria um Tenant "vazio" quando o relacionamento nao resolve
      * (mesmo a closure "retornando null"), nunca null de verdade. Isso

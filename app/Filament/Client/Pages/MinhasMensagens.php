@@ -42,6 +42,10 @@ class MinhasMensagens extends Page implements HasForms
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('area')
+                    ->label('Assunto')
+                    ->options(ClientMessage::areaLabels())
+                    ->required(),
                 Forms\Components\Textarea::make('body')
                     ->label('Mensagem')
                     ->rows(3),
@@ -86,6 +90,7 @@ class MinhasMensagens extends Page implements HasForms
         $message = ClientMessage::create([
             'tenant_id' => $client->tenant_id,
             'client_id' => $client->id,
+            'area' => $state['area'],
             'sender_type' => ClientMessage::SENDER_CLIENT,
             'sender_id' => $client->id,
             'body' => $state['body'] ?? null,

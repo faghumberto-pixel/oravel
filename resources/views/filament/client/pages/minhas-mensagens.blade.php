@@ -8,6 +8,9 @@
             ])>
                 <div class="text-xs text-gray-500 mb-1">
                     {{ $message->senderName() }} — {{ $message->created_at->format('d/m/Y H:i') }}
+                    @if ($message->area)
+                        · {{ \App\Models\ClientMessage::areaLabels()[$message->area] ?? $message->area }}
+                    @endif
                 </div>
                 @if ($message->body)
                     <div class="text-sm">{{ $message->body }}</div>

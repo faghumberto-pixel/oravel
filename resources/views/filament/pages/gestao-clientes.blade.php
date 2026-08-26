@@ -147,11 +147,21 @@
                                 'bg-white shadow-sm dark:bg-gray-800' => $message->isFromClient(),
                             ])>
                                 <div @class([
-                                    'mb-0.5 text-xs',
+                                    'mb-0.5 flex items-center gap-2 text-xs',
                                     'text-primary-100' => ! $message->isFromClient(),
                                     'text-gray-400' => $message->isFromClient(),
                                 ])>
-                                    {{ $message->senderName() }} · {{ $message->created_at->format('d/m/Y H:i') }}
+                                    <span>{{ $message->senderName() }} · {{ $message->created_at->format('d/m/Y H:i') }}</span>
+
+                                    @if ($message->area)
+                                        <span @class([
+                                            'rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide',
+                                            'bg-white/20' => ! $message->isFromClient(),
+                                            'bg-gray-100 text-gray-500 dark:bg-white/10' => $message->isFromClient(),
+                                        ])>
+                                            {{ \App\Models\ClientMessage::areaLabels()[$message->area] ?? $message->area }}
+                                        </span>
+                                    @endif
                                 </div>
 
                                 @if ($message->body)
@@ -172,6 +182,24 @@
                                         {{ $media->file_name }}
                                     </a>
                                 @endforeach
+
+                                <div class="mt-1.5 flex flex-wrap gap-1" wire:key="reclassify-{{ $message->id }}">
+                                    @foreach (\App\Models\ClientMessage::areaLabels() as $areaKey => $areaLabel)
+                                        @if ($areaKey !== $message->area)
+                                            <button
+                                                type="button"
+                                                wire:click="reclassify('{{ $message->id }}', '{{ $areaKey }}')"
+                                                @class([
+                                                    'rounded px-1.5 py-0.5 text-[10px] underline-offset-2 hover:underline',
+                                                    'text-primary-100' => ! $message->isFromClient(),
+                                                    'text-gray-400' => $message->isFromClient(),
+                                                ])
+                                            >
+                                                → {{ $areaLabel }}
+                                            </button>
+                                        @endif
+                                    @endforeach
+                                </div>
                             </div>
                         @empty
                             <p class="py-6 text-center text-sm text-gray-400">Nenhuma mensagem ainda.</p>

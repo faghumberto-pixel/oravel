@@ -6,6 +6,7 @@ use App\Filament\Client\Pages\MinhasMensagens;
 use App\Models\Client;
 use App\Models\ClientMessage;
 use App\Models\Plan;
+use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Notifications\ClientMessageReceivedNotification;
@@ -47,6 +48,11 @@ class ClientPortalMessagesTest extends TestCase
             'name' => 'User Msg', 'email' => 'user-msg-'.uniqid().'@oravel.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'is_approved' => true,
         ]);
+        $role = Role::firstOrCreate([
+            'name' => ClientMessage::areaRoleName(ClientMessage::AREA_MANUTENCAO),
+            'guard_name' => 'web', 'tenant_id' => $tenant->id,
+        ]);
+        $user->assignRole($role);
 
         return [$tenant, $client, $user];
     }
@@ -59,7 +65,7 @@ class ClientPortalMessagesTest extends TestCase
         $this->actingAs($client, 'client');
 
         Livewire::test(MinhasMensagens::class)
-            ->fillForm(['body' => 'Preciso de ajuda com o equipamento.'])
+            ->fillForm(['area' => ClientMessage::AREA_MANUTENCAO, 'body' => 'Preciso de ajuda com o equipamento.'])
             ->call('send');
 
         $message = ClientMessage::withoutGlobalScope('tenant')

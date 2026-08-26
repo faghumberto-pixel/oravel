@@ -103,24 +103,38 @@ class GestaoClientes extends Page implements HasForms
     public function getClientsProperty()
     {
         $tenantId = Tenancy::current()?->id;
+        $areas = $this->visibleAreas();
 
         return Client::where('tenant_id', $tenantId)
             ->when(filled($this->search), fn ($query) => $query->where('name', 'like', "%{$this->search}%"))
             ->orderBy('name')
             ->get()
-            ->map(function (Client $client) use ($tenantId) {
+            ->map(function (Client $client) use ($tenantId, $areas) {
                 $client->pending_count = $this->pendingCountFor($client->id, $tenantId);
                 $client->unread_count = ClientMessage::withoutGlobalScope('tenant')
                     ->where('tenant_id', $tenantId)
                     ->where('client_id', $client->id)
                     ->where('sender_type', ClientMessage::SENDER_CLIENT)
                     ->whereNull('read_at')
+                    ->where(fn ($q) => $q->whereIn('area', $areas)->orWhereNull('area'))
                     ->count();
 
                 return $client;
             })
             ->sortByDesc(fn (Client $client) => ($client->unread_count * 1000) + $client->pending_count)
             ->values();
+    }
+
+    /**
+     * Áreas de ClientMessage que o usuário logado pode ver -- mensagens
+     * antigas sem área (area = null) ficam visíveis a todos, fallback
+     * seguro pra não esconder histórico pré-existente à feature.
+     *
+     * @return array<int, string>
+     */
+    private function visibleAreas(): array
+    {
+        return Auth::user()?->visibleClientMessageAreas() ?? [];
     }
 
     public function getSelectedClientProperty(): ?Client
@@ -138,9 +152,12 @@ class GestaoClientes extends Page implements HasForms
             return collect();
         }
 
+        $areas = $this->visibleAreas();
+
         return ClientMessage::withoutGlobalScope('tenant')
             ->where('tenant_id', Tenancy::current()?->id)
             ->where('client_id', $this->selectedClientId)
+            ->where(fn ($q) => $q->whereIn('area', $areas)->orWhereNull('area'))
             ->with('media')
             ->orderBy('created_at')
             ->get();
@@ -171,6 +188,22 @@ class GestaoClientes extends Page implements HasForms
         ];
     }
 
+    /**
+     * Reclassifica a área de uma mensagem já recebida -- não guarda quem
+     * reclassificou nem quando (não pedido nesta fase). A partir daqui o
+     * filtro de área já reflete a mudança: quem via a área antiga deixa
+     * de contar, quem vê a nova passa a contar.
+     */
+    public function reclassify(string $messageId, string $area): void
+    {
+        ClientMessage::withoutGlobalScope('tenant')
+            ->where('tenant_id', Tenancy::current()?->id)
+            ->where('id', $messageId)
+            ->update(['area' => $area]);
+
+        Notification::make()->title('Mensagem encaminhada')->success()->send();
+    }
+
     public function selectClient(string $clientId): void
     {
         $this->selectedClientId = $clientId;
@@ -195,9 +228,21 @@ class GestaoClientes extends Page implements HasForms
             return;
         }
 
+        // Herda a área da última mensagem do Client na conversa -- sem
+        // isso a resposta ficaria com area=null (visível a todos),
+        // "vazando" a resposta de uma área restrita pra fora do filtro.
+        $lastClientArea = ClientMessage::withoutGlobalScope('tenant')
+            ->where('tenant_id', Tenancy::current()?->id)
+            ->where('client_id', $this->selectedClientId)
+            ->where('sender_type', ClientMessage::SENDER_CLIENT)
+            ->whereNotNull('area')
+            ->latest('created_at')
+            ->value('area');
+
         ClientMessage::create([
             'tenant_id' => Tenancy::current()?->id,
             'client_id' => $this->selectedClientId,
+            'area' => $lastClientArea,
             'sender_type' => ClientMessage::SENDER_USER,
             'sender_id' => Auth::id(),
             'body' => $state['body'],

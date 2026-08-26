@@ -9,12 +9,12 @@ use Illuminate\Support\Facades\Log;
 use Throwable;
 
 /**
- * Notifica todos os User do tenant quando o Client manda mensagem --
- * mesmo padrão de VerificarVencimentosCommand/AnnouncementObserver (não
- * existe role dedicada pra "quem responde mensagem de cliente" hoje,
- * inventar uma seria escopo além do pedido). Mensagens enviadas pelo
- * User (sender_type='user') não disparam nada aqui -- o Client não tem
- * sino/push, só vê ao entrar no portal.
+ * Notifica só os User do tenant que enxergam a área da mensagem
+ * (User::visibleClientMessageAreas() -- admin vê tudo, demais só a área
+ * cuja Role dedicada eles têm). Mensagem sem área (legada, antes desta
+ * feature) notifica todos, mesmo comportamento de antes. Mensagens
+ * enviadas pelo User (sender_type='user') não disparam nada aqui -- o
+ * Client não tem sino/push, só vê ao entrar no portal.
  */
 class ClientMessageObserver
 {
@@ -24,7 +24,9 @@ class ClientMessageObserver
             return;
         }
 
-        $users = User::where('tenant_id', $message->tenant_id)->get();
+        $users = User::where('tenant_id', $message->tenant_id)
+            ->get()
+            ->filter(fn (User $user) => blank($message->area) || in_array($message->area, $user->visibleClientMessageAreas(), true));
 
         foreach ($users as $user) {
             try {
