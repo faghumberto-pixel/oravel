@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\SiteVisit;
+use App\Models\User;
 use App\Support\RequestNoiseFilter;
 use App\Support\SiteVisitTenantResolver;
 use App\Support\Tenancy;
@@ -79,7 +80,7 @@ class TrackSiteVisit
         $visit = new SiteVisit;
         $visit->id = (string) Str::uuid();
         $visit->tenant_id = $this->resolveTenantId($request);
-        $visit->user_id = Auth::id();
+        $visit->user_id = $this->resolveUserId();
         $visit->visitor_token = $request->cookie(self::VISITOR_COOKIE) ?: (string) Str::uuid();
         $visit->session_token = (string) Str::uuid();
         $visit->ip_address = $request->ip();
@@ -107,8 +108,8 @@ class TrackSiteVisit
     {
         $now = Carbon::now();
 
-        if (! $visit->user_id && Auth::check()) {
-            $visit->user_id = Auth::id();
+        if (! $visit->user_id && ($userId = $this->resolveUserId())) {
+            $visit->user_id = $userId;
 
             if (! $visit->tenant_id) {
                 $visit->tenant_id = $this->resolveTenantId($request);
@@ -127,6 +128,19 @@ class TrackSiteVisit
     private function resolveTenantId(Request $request): ?string
     {
         return Tenancy::current()?->id ?? SiteVisitTenantResolver::resolve($request);
+    }
+
+    /**
+     * site_visits.user_id tem FK pra users -- um Client autenticado
+     * (guard 'client', Portal do Cliente) não é User e quebraria a FK
+     * aqui se não checássemos o tipo (Auth::id() usa o guard "current",
+     * que o middleware auth:client já deixou apontando pro Client).
+     */
+    private function resolveUserId(): ?string
+    {
+        $user = Auth::user();
+
+        return $user instanceof User ? $user->id : null;
     }
 
     private function resolveEntryPanel(Request $request): string

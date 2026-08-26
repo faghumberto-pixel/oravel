@@ -4,9 +4,9 @@ use App\Http\Controllers\AIAnalysisPdfController;
 use App\Http\Controllers\AssetDossierPdfController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\ChatHistoryPdfController;
+use App\Http\Controllers\ContractPdfController;
 use App\Http\Controllers\EquipmentDamageReportController;
 use App\Http\Controllers\HourMeterOfflineController;
-use App\Http\Controllers\TimeClockOfflineController;
 use App\Http\Controllers\HourMeterPublicController;
 use App\Http\Controllers\MaintenanceKanbanPrintController;
 use App\Http\Controllers\MaintenanceOrderController;
@@ -18,6 +18,7 @@ use App\Http\Controllers\QuoteApprovalController;
 use App\Http\Controllers\QuoteReportController;
 use App\Http\Controllers\RentalDemoController;
 use App\Http\Controllers\TablePrintController;
+use App\Http\Controllers\TimeClockOfflineController;
 use App\Livewire\AssetDossierMobile;
 use App\Livewire\EquipmentDamageMobile;
 use App\Livewire\EquipmentMovementMobile;
@@ -81,6 +82,15 @@ Route::get('/hour-meter/publico/{token}', [HourMeterPublicController::class, 'sh
     ->name('hour-meter.public.show');
 Route::post('/hour-meter/publico/{token}', [HourMeterPublicController::class, 'store'])
     ->name('hour-meter.public.store');
+
+// Guard 'client' (Portal do Cliente), não 'web' -- fora do grupo auth
+// abaixo. ContractPdfController já filtra tenant_id+client_id na query,
+// o middleware aqui é defesa em profundidade (401 limpo pra quem nem
+// logou, em vez do controller ter que checar Auth::guard() manualmente).
+Route::middleware(['auth:client'])->group(function () {
+    Route::get('/cliente/contratos/{contract}/pdf', [ContractPdfController::class, 'download'])
+        ->name('cliente.contracts.pdf');
+});
 
 // 'verified' removido de proposito -- nenhum outro lugar do app (nenhum
 // painel Filament) exige email verificado pra logar/usar, e nao existe

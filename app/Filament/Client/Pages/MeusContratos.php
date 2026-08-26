@@ -55,6 +55,13 @@ class MeusContratos extends Page implements HasTable
                     ->label('Valor')
                     ->money('BRL'),
             ])
+            ->actions([
+                Tables\Actions\Action::make('baixarPdf')
+                    ->label('Baixar PDF')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->url(fn (Contract $record) => route('cliente.contracts.pdf', ['contract' => $record->id]))
+                    ->openUrlInNewTab(),
+            ])
             ->defaultSort('start_date', 'desc');
     }
 

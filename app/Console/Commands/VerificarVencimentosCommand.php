@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\AccountPayable;
 use App\Models\AccountReceivable;
 use App\Models\User;
+use App\Notifications\ClientAccountReceivableOverdueNotification;
 use App\Notifications\ContaPagarNotification;
 use App\Notifications\ContaReceberNotification;
 use Carbon\Carbon;
@@ -56,6 +57,11 @@ class VerificarVencimentosCommand extends Command
 
             Notification::send($usuariosDoTenant, new $notificationClass($conta, $tipo));
             $totalNotificados += $usuariosDoTenant->count();
+
+            if ($modelClass === AccountReceivable::class && $tipo === 'atrasada'
+                && $conta->client_id && $conta->client?->portal_access_enabled_at) {
+                Notification::send($conta->client, new ClientAccountReceivableOverdueNotification($conta));
+            }
         }
 
         return $totalNotificados;

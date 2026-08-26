@@ -17,6 +17,7 @@ use App\Models\Department; // Importante
 use App\Models\EquipmentDamage;
 use App\Models\EquipmentMovement;
 use App\Models\EquipmentPatioArrival;
+use App\Models\EquipmentPickupRequest;
 use App\Models\EquipmentReplacement;
 use App\Models\FleetMaintenanceHistory;
 use App\Models\FleetTollRecord;
@@ -37,6 +38,7 @@ use App\Observers\AbcMatrixObserver;
 use App\Observers\AnnouncementObserver;
 use App\Observers\AssetObserver;
 use App\Observers\BatteryCycleReadingObserver;
+use App\Observers\ClientMaintenanceOrderNotificationObserver;
 use App\Observers\ClientObserver;
 use App\Observers\ContaPagarObserver;
 use App\Observers\ContractObserver;
@@ -45,6 +47,7 @@ use App\Observers\CrmLeadObserver;
 use App\Observers\EquipmentDamageObserver;
 use App\Observers\EquipmentMovementObserver;
 use App\Observers\EquipmentPatioArrivalObserver;
+use App\Observers\EquipmentPickupRequestObserver;
 use App\Observers\EquipmentReplacementObserver;
 use App\Observers\FleetMaintenanceHistoryObserver;
 use App\Observers\FleetTollRecordObserver;
@@ -119,7 +122,12 @@ class AppServiceProvider extends ServiceProvider
         FreightRecord::observe(FreightRecordObserver::class);
         FleetTollRecord::observe(FleetTollRecordObserver::class);
         MaintenanceOrder::observe(MaintenanceOrderChecklistSnapshotObserver::class);
+        // Segundo observer registrado no mesmo model (Laravel permite
+        // múltiplos) -- deliberadamente separado do MaintenanceOrderObserver
+        // legado (não registrado, ver docblock da classe abaixo).
+        MaintenanceOrder::observe(ClientMaintenanceOrderNotificationObserver::class);
         MaintenanceOrderMaterial::observe(MaintenanceOrderMaterialObserver::class);
+        EquipmentPickupRequest::observe(EquipmentPickupRequestObserver::class);
         Announcement::observe(AnnouncementObserver::class);
         CrmLeadInteraction::observe(CrmLeadInteractionObserver::class);
         CrmLead::observe(CrmLeadObserver::class);

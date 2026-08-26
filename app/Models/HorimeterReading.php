@@ -33,6 +33,16 @@ class HorimeterReading extends Model
      */
     public const SOURCE_PUBLIC_CLIENT = 'public_client';
 
+    /**
+     * Registrado pelo Client autenticado no Portal do Cliente (guard
+     * 'client', app/Filament/Client/Pages/AtualizarHorimetro.php) --
+     * distinto de SOURCE_PUBLIC_CLIENT (link sem login) para manter a
+     * auditoria de "autenticado vs anônimo". recorded_by também fica
+     * null aqui (Client não tem linha em users), recorded_by_name usa
+     * Client.name.
+     */
+    public const SOURCE_CLIENT_PORTAL = 'client_portal';
+
     protected static ?string $saasFeatureKey = 'tabela_horimeter_readings';
 
     protected static ?string $saasPermissionSlug = 'apontamento_horimetro';
@@ -70,6 +80,7 @@ class HorimeterReading extends Model
             self::SOURCE_CHECKLIST => 'Checklist',
             self::SOURCE_MOBILE_SYNC => 'App Mobile (Campo)',
             self::SOURCE_PUBLIC_CLIENT => 'Cliente Locatário (Link Público)',
+            self::SOURCE_CLIENT_PORTAL => 'Cliente Locatário (Portal)',
         ];
     }
 
@@ -108,9 +119,15 @@ class HorimeterReading extends Model
         return $this->source === self::SOURCE_PUBLIC_CLIENT;
     }
 
+    public function isClientPortalSource(): bool
+    {
+        return $this->source === self::SOURCE_CLIENT_PORTAL;
+    }
+
     public function originLabel(): string
     {
         return match (true) {
+            $this->isClientPortalSource() => 'Externo (Cliente Locatário — Portal)',
             $this->isPublicClientSource() => 'Externo (Cliente Locatário)',
             $this->isFieldSource() => 'Externo (Campo)',
             default => 'Interno',

@@ -5,7 +5,9 @@ namespace App\Observers;
 use App\Models\EquipmentDamage;
 use App\Models\Role;
 use App\Models\User;
+use App\Notifications\ClientEquipmentDamageNotification;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Notification as LaravelNotification;
 
 class EquipmentDamageObserver
 {
@@ -53,6 +55,11 @@ class EquipmentDamageObserver
                     EquipmentDamage::ROLE_GERENTE_MANUTENCAO,
                     'Avaria exige substituição de equipamento',
                 );
+            }
+
+            $client = $equipmentDamage->maintenanceOrder?->client;
+            if ($client?->portal_access_enabled_at) {
+                LaravelNotification::send($client, new ClientEquipmentDamageNotification($equipmentDamage));
             }
         }
     }

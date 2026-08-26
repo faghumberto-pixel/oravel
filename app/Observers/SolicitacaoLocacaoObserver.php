@@ -10,8 +10,10 @@ use App\Models\MaintenanceOrder;
 use App\Models\Role;
 use App\Models\SolicitacaoLocacao;
 use App\Models\User;
+use App\Notifications\ClientRequestStatusUpdatedNotification;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Notification as LaravelNotification;
 
 class SolicitacaoLocacaoObserver
 {
@@ -29,6 +31,8 @@ class SolicitacaoLocacaoObserver
             return;
         }
 
+        $this->notifyClientStatusChanged($solicitacao);
+
         if ($solicitacao->status_comercial === 'contrato_fechado') {
             $this->notifyLogisticaContratoFechado($solicitacao);
 
@@ -44,6 +48,31 @@ class SolicitacaoLocacaoObserver
         if ($solicitacao->getOriginal('status_comercial') === 'reserva_manutencao') {
             $this->revogarReservaAbandonada($solicitacao);
         }
+    }
+
+    /**
+     * Só notifica o Client nos 2 status finais relevantes pra ele --
+     * proposta_em_andamento/reserva_manutencao são internos, não geram
+     * e-mail.
+     */
+    private function notifyClientStatusChanged(SolicitacaoLocacao $solicitacao): void
+    {
+        if (! in_array($solicitacao->status_comercial, ['contrato_fechado', 'cancelado'], true)) {
+            return;
+        }
+
+        $client = $solicitacao->customer;
+        if (! $client?->portal_access_enabled_at) {
+            return;
+        }
+
+        $label = $solicitacao->status_comercial === 'contrato_fechado' ? 'Contrato Fechado' : 'Cancelado';
+
+        LaravelNotification::send($client, new ClientRequestStatusUpdatedNotification(
+            'Solicitação de Equipamento',
+            $label,
+            '/cliente/solicitar-equipamento',
+        ));
     }
 
     private function revogarReservaAbandonada(SolicitacaoLocacao $solicitacao): void
