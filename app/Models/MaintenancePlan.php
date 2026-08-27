@@ -81,6 +81,46 @@ class MaintenancePlan extends Model
     }
 
     /**
+     * Importa os itens de uma PmpEquipmentFamily (catálogo global, sem
+     * tenant_id -- ver app/Models/PmpEquipmentFamily.php) para um
+     * ChecklistGroup do tenant, um MaintenancePlan por item. Mesmo padrão
+     * de override-por-nome de Asset::copyMaintenancePlanTemplateItem(): se
+     * já existe uma linha com o mesmo nome nesse grupo (import anterior ou
+     * customização manual do tenant), não duplica nem sobrescreve -- o
+     * import é uma cópia pontual, não um link vivo com o catálogo global.
+     *
+     * @return Collection<int, MaintenancePlan>
+     */
+    public static function importFromFamilyTemplate(PmpEquipmentFamily $family, ChecklistGroup $targetGroup): Collection
+    {
+        $existingNames = static::where('tenant_id', $targetGroup->tenant_id)
+            ->where('checklist_group_id', $targetGroup->id)
+            ->pluck('name')
+            ->all();
+
+        return $family->templateItems->map(function (PmpTemplateItem $item) use ($targetGroup, $existingNames) {
+            if (in_array($item->name, $existingNames, true)) {
+                return static::where('tenant_id', $targetGroup->tenant_id)
+                    ->where('checklist_group_id', $targetGroup->id)
+                    ->where('name', $item->name)
+                    ->first();
+            }
+
+            return static::create([
+                'tenant_id' => $targetGroup->tenant_id,
+                'checklist_group_id' => $targetGroup->id,
+                'name' => $item->name,
+                'interval_hours' => $item->interval_hours,
+                'interval_days' => $item->interval_days,
+                'is_critical' => $item->is_critical,
+                'notes' => $item->notes,
+                'is_active' => true,
+                'source' => self::SOURCE_TEMPLATE,
+            ]);
+        });
+    }
+
+    /**
      * Status de vencimento deste item de preventiva para um Ativo especifico.
      * Para planos por-Ativo legados, usa last_service_hours direto. Para
      * templates por-Grupo, busca a ultima execucao REAL deste item para

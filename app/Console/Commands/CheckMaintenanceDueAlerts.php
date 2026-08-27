@@ -52,9 +52,14 @@ class CheckMaintenanceDueAlerts extends Command
                 $planosDoAtivo = $planosPorAsset->get($asset->id, collect())
                     ->merge($asset->checklist_group_id ? $planosPorGrupo->get($asset->checklist_group_id, collect()) : collect());
 
+                $statusPorPlano = [];
                 foreach ($planosDoAtivo as $plano) {
-                    $totalAlertas += $this->checkPlano($tenant, $asset, $plano);
+                    $status = $plano->dueStatusForAsset($asset);
+                    $statusPorPlano[] = ['plano' => $plano, 'status' => $status];
+                    $totalAlertas += $this->checkPlano($tenant, $asset, $plano, $status);
                 }
+
+                $this->syncCriticalBlock($asset, $statusPorPlano);
             }
         }
 
@@ -63,10 +68,8 @@ class CheckMaintenanceDueAlerts extends Command
         return Command::SUCCESS;
     }
 
-    private function checkPlano(Tenant $tenant, Asset $asset, MaintenancePlan $plano): int
+    private function checkPlano(Tenant $tenant, Asset $asset, MaintenancePlan $plano, array $status): int
     {
-        $status = $plano->dueStatusForAsset($asset);
-
         $alertaExistente = MaintenanceDueAlert::where('asset_id', $asset->id)
             ->where('maintenance_plan_id', $plano->id)
             ->first();
@@ -98,6 +101,45 @@ class CheckMaintenanceDueAlerts extends Command
         );
 
         return 1;
+    }
+
+    /**
+     * Bloqueio automático (pedido do usuário 2026-08-27): qualquer item
+     * CRÍTICO vencido move o Asset pra STATUS_MANUTENCAO, impedindo
+     * locação nova (ver ContractResource). Reverte pro status real de
+     * antes (não sempre "disponível" -- pode ter sido "locado") quando
+     * nenhum item crítico do Ativo estiver mais vencido. Não mexe em nada
+     * se o Ativo já estava em STATUS_MANUTENCAO por outro motivo manual
+     * (blocked_by_pmp_at nulo nesse caso, então a reversão não se aplica).
+     */
+    private function syncCriticalBlock(Asset $asset, array $statusPorPlano): void
+    {
+        $temItemCriticoVencido = collect($statusPorPlano)
+            ->contains(fn (array $item) => $item['plano']->is_critical && $item['status']['is_overdue']);
+
+        if ($temItemCriticoVencido) {
+            if ($asset->blocked_by_pmp_at) {
+                return;
+            }
+
+            $asset->forceFill([
+                'status_before_pmp_block' => $asset->status,
+                'blocked_by_pmp_at' => now(),
+                'status' => Asset::STATUS_MANUTENCAO,
+            ])->save();
+
+            return;
+        }
+
+        if (! $asset->blocked_by_pmp_at) {
+            return;
+        }
+
+        $asset->forceFill([
+            'status' => $asset->status_before_pmp_block ?? Asset::STATUS_DISPONIVEL,
+            'status_before_pmp_block' => null,
+            'blocked_by_pmp_at' => null,
+        ])->save();
     }
 
     private function createOrderAutomatically(Tenant $tenant, Asset $asset, MaintenancePlan $plano, array $status): void

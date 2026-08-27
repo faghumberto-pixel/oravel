@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\ContractResource\Pages;
+use App\Models\Asset;
 use App\Models\Client;
 use App\Models\Contract;
 use App\Models\EquipmentReplacement;
@@ -56,7 +57,25 @@ class ContractResource extends Resource
                         Forms\Components\Select::make('asset_id')
                             ->relationship('asset', 'name')
                             ->label('Equipamento (Marca/Série)')
-                            ->required(),
+                            ->required()
+                            ->live()
+                            // Bloqueio automatico por PMP critico vencido (pedido
+                            // do usuario 2026-08-27, CheckMaintenanceDueAlerts
+                            // marca Asset.blocked_by_pmp_at) -- so' impede
+                            // CRIAR contrato novo pro ativo bloqueado, nao afeta
+                            // edicao de um contrato ja existente pro mesmo ativo.
+                            ->rule(function (?Contract $record) {
+                                return function (string $attribute, $value, \Closure $fail) use ($record) {
+                                    if ($record) {
+                                        return;
+                                    }
+
+                                    $asset = Asset::find($value);
+                                    if ($asset?->blocked_by_pmp_at) {
+                                        $fail('Equipamento com manutenção preventiva crítica vencida — regularize antes de locar.');
+                                    }
+                                };
+                            }),
                         Forms\Components\DatePicker::make('start_date')
                             ->label('Início da Vigência')
                             ->live()
