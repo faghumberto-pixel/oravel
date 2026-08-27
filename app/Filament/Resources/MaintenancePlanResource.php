@@ -17,15 +17,15 @@ class MaintenancePlanResource extends Resource
     // Navegacao manual dentro do submenu "PMP" (AdminPanelProvider), nao
     // auto-registrada -- agrupa tudo que e' preventiva (pedido do usuario
     // 2026-07-26), mesmo padrao de Almoxarifado/Compras.
-    protected static bool $shouldRegisterNavigation = false;
-
     protected static ?string $model = MaintenancePlan::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
 
-    protected static ?string $navigationGroup = 'Manutenção';
+    protected static ?string $navigationGroup = 'PMP';
 
     protected static ?string $navigationLabel = 'Planos Preventivos';
+
+    protected static ?int $navigationSort = 4;
 
     // Garante que o resource seja escopado ao tenant atual
     protected static bool $isScopedToTenant = true;
