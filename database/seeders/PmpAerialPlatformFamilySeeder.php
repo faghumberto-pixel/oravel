@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\PmpEquipmentFamily;
+use App\Models\PmpTemplateChecklistItem;
 use App\Models\PmpTemplateItem;
 use Illuminate\Database\Seeder;
 
@@ -13,10 +14,11 @@ use Illuminate\Database\Seeder;
  * NR-12 e NR-35. Documento separa por categoria de plataforma -- 3
  * familias, mesmo padrao de Empilhadeiras/Compressores.
  *
- * Checklist de inspecao NAO foi fornecido junto (mensagem cortou antes
- * do conteudo) -- seedInspectionChecklist() fica pendente, adicionar
- * quando o usuario enviar (mesmo padrao de
- * PmpCompressorFamilySeeder::seedInspectionChecklist()).
+ * Checklist de inspecao (2026-08-27, enviado em seguida) e' "Tesoura e
+ * Lanca" -- vale pras 2 familias operacionais (Tesoura Eletrica,
+ * Articulada/Lanca), NAO pra Sistema Eletronico de Seguranca (nao e' um
+ * tipo de equipamento fisico, e' um agrupamento transversal de
+ * componentes -- mesmo raciocinio de nao aplicar checklist la).
  *
  * Idempotente por nome: mesmo padrao dos outros seeders de PMP.
  *
@@ -28,11 +30,14 @@ class PmpAerialPlatformFamilySeeder extends Seeder
 
     public function run(): void
     {
-        $this->seedTesouraEletrica();
-        $this->seedArticuladaLanca();
+        $tesoura = $this->seedTesouraEletrica();
+        $lanca = $this->seedArticuladaLanca();
         $this->seedSistemaEletronicoSeguranca();
 
-        $this->command?->info('Catálogo PMP "Plataformas Elevatórias": 3 famílias semeadas/atualizadas (checklist de inspeção pendente).');
+        $this->seedInspectionChecklist($tesoura);
+        $this->seedInspectionChecklist($lanca);
+
+        $this->command?->info('Catálogo PMP "Plataformas Elevatórias": 3 famílias + checklist (Tesoura/Lança) semeados/atualizados.');
     }
 
     private function family(string $name, string $description): PmpEquipmentFamily
@@ -55,6 +60,14 @@ class PmpAerialPlatformFamilySeeder extends Seeder
                 'auto_create_order' => $data['auto_create_order'] ?? true,
                 'notes' => $data['notes'] ?? null,
             ],
+        );
+    }
+
+    private function checklistItem(PmpEquipmentFamily $family, string $section, string $itemName, int $sortOrder, ?string $instructions = null): void
+    {
+        PmpTemplateChecklistItem::firstOrCreate(
+            ['pmp_equipment_family_id' => $family->id, 'item_name' => $itemName],
+            ['section' => $section, 'sort_order' => $sortOrder, 'instructions' => $instructions],
         );
     }
 
@@ -138,7 +151,7 @@ class PmpAerialPlatformFamilySeeder extends Seeder
         ]);
     }
 
-    private function seedTesouraEletrica(): void
+    private function seedTesouraEletrica(): PmpEquipmentFamily
     {
         $family = $this->family(
             'Tesoura Elétrica (Scissor)',
@@ -171,9 +184,11 @@ class PmpAerialPlatformFamilySeeder extends Seeder
         ]);
 
         $this->seedAnnualSafetyTest($family);
+
+        return $family;
     }
 
-    private function seedArticuladaLanca(): void
+    private function seedArticuladaLanca(): PmpEquipmentFamily
     {
         $family = $this->family(
             'Articulada / Lança (A Combustão / Híbrida)',
@@ -210,6 +225,8 @@ class PmpAerialPlatformFamilySeeder extends Seeder
         ]);
 
         $this->seedAnnualSafetyTest($family);
+
+        return $family;
     }
 
     private function seedSistemaEletronicoSeguranca(): void
@@ -241,5 +258,46 @@ class PmpAerialPlatformFamilySeeder extends Seeder
         ]);
 
         $this->seedAnnualSafetyTest($family);
+    }
+
+    /**
+     * Checklist de Manutenção Preventiva — Plataformas Elevatórias
+     * (Tesoura e Lança), documento completo fornecido pelo usuário
+     * 2026-08-27, 4 seções / 21 itens. Aplicado às 2 famílias
+     * operacionais (Tesoura Elétrica, Articulada/Lança) -- não ao
+     * Sistema Eletrônico de Segurança.
+     */
+    private function seedInspectionChecklist(PmpEquipmentFamily $family): void
+    {
+        $sort = 1;
+
+        $section1 = '1. Estrutura, Cesto & Segurança do Operador';
+        $this->checklistItem($family, $section1, 'Ponto de ancoragem do cinto de segurança (ausência de trincas/deformações)', $sort++);
+        $this->checklistItem($family, $section1, 'Fechamento e travamento automático do portão/barra de entrada do cesto', $sort++);
+        $this->checklistItem($family, $section1, 'Integridade dos guarda-corpos e assoalho antiderrapante do cesto', $sort++);
+        $this->checklistItem($family, $section1, 'Hastes da tesoura / Seções da lança (ausência de empenamentos e trincas de solda)', $sort++);
+        $this->checklistItem($family, $section1, 'Sistema anti-buracos (Pothole Protection) — abertura e recolhimento (Tesouras)', $sort++);
+        $this->checklistItem($family, $section1, 'Pneus (sem cortes/deformações) e aperto das porcas das rodas', $sort++);
+
+        $section2 = '2. Controles, Sensores & Sistema Elétrico/Alimentação';
+        $this->checklistItem($family, $section2, 'Botões de parada de emergência (E-stop) operantes no cesto e na base', $sort++);
+        $this->checklistItem($family, $section2, 'Chave seletora de controle (Painel Solo / Painel Cesto) funcionando', $sort++);
+        $this->checklistItem($family, $section2, 'Joystick proporcional com retorno ao centro e coifa de borracha sem rasgos', $sort++);
+        $this->checklistItem($family, $section2, 'Sensor de inclinação (Tilt Sensor) e alarmes sonoros/luminosos ativos', $sort++);
+        $this->checklistItem($family, $section2, 'Baterias: nível de eletrólito, bornes limpos/apertados e cabos sem ressecamento', $sort++, 'Registrar voltagem em VDC.');
+        $this->checklistItem($family, $section2, 'Nível de combustível, óleo do motor e arrefecimento (modelos a combustão)', $sort++);
+
+        $section3 = '3. Sistema Hidráulico & Mecânica de Elevação';
+        $this->checklistItem($family, $section3, 'Nível de óleo hidráulico no reservatório', $sort++);
+        $this->checklistItem($family, $section3, 'Ausência de vazamentos em cilindros, blocos de válvulas e conexões', $sort++);
+        $this->checklistItem($family, $section3, 'Estado das mangueiras no catraca (esteira guia) sem atrito ou deformação', $sort++);
+        $this->checklistItem($family, $section3, 'Correntes, cabos de aço e roldanas da lança tensionados e lubrificados (Lança)', $sort++);
+        $this->checklistItem($family, $section3, 'Engraxamento dos pinos de articulação, buchas e mesa do giratório', $sort++);
+
+        $section4 = '4. Teste Operacional sem Carga';
+        $this->checklistItem($family, $section4, 'Válvula / Sistema de descida manual de emergência testado e funcional', $sort++);
+        $this->checklistItem($family, $section4, 'Elevação, descida, extensão e rotação com movimentos suaves (sem solavancos)', $sort++);
+        $this->checklistItem($family, $section4, 'Atuação dos freios automáticos no momento de parada da tração', $sort++);
+        $this->checklistItem($family, $section4, 'Redução automática da velocidade de tração quando o cesto está elevado', $sort++);
     }
 }

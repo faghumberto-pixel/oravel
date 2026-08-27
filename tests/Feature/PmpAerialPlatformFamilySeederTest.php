@@ -13,9 +13,9 @@ use Tests\TestCase;
 /**
  * Segmento 'plataformas_elevatorias' -- 3 famílias por categoria (Tesoura
  * Elétrica, Articulada/Lança, Sistema Eletrônico de Segurança). Checklist
- * de inspeção não foi fornecido ainda (mensagem do usuário cortou antes
- * do conteúdo) -- confirma isso explicitamente, pra não passar
- * despercebido quando for adicionado depois.
+ * de inspeção (2026-08-27, enviado em mensagem separada, "Tesoura e
+ * Lança") aplica só às 2 famílias operacionais -- Sistema Eletrônico de
+ * Segurança não é um tipo de equipamento físico, fica sem checklist.
  */
 class PmpAerialPlatformFamilySeederTest extends TestCase
 {
@@ -33,22 +33,18 @@ class PmpAerialPlatformFamilySeederTest extends TestCase
         }
     }
 
-    /**
-     * Documento de checklist ainda não foi enviado -- este teste é
-     * intencional: vira um lembrete claro (falha) quando alguém adicionar
-     * checklistItems sem também remover/atualizar este assert, ou serve
-     * de sinalizador de que o checklist já foi adicionado corretamente.
-     */
-    public function test_checklist_is_still_pending_for_all_three_families(): void
+    public function test_checklist_applies_only_to_the_two_operational_families(): void
     {
         $this->seed(PmpAerialPlatformFamilySeeder::class);
 
-        $totalChecklist = PmpEquipmentFamily::where('segment', 'plataformas_elevatorias')
+        $families = PmpEquipmentFamily::where('segment', 'plataformas_elevatorias')
             ->withCount('checklistItems')
             ->get()
-            ->sum('checklist_items_count');
+            ->keyBy('name');
 
-        $this->assertSame(0, $totalChecklist, 'Checklist de plataformas elevatórias foi adicionado -- atualize este teste.');
+        $this->assertGreaterThan(0, $families['Tesoura Elétrica (Scissor)']->checklist_items_count);
+        $this->assertGreaterThan(0, $families['Articulada / Lança (A Combustão / Híbrida)']->checklist_items_count);
+        $this->assertSame(0, $families['Sistema Eletrônico de Segurança']->checklist_items_count);
     }
 
     public function test_seeder_is_idempotent(): void
