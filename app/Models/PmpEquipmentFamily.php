@@ -26,4 +26,9 @@ class PmpEquipmentFamily extends Model
     {
         return $this->hasMany(PmpTemplateItem::class);
     }
+
+    public function checklistItems(): HasMany
+    {
+        return $this->hasMany(PmpTemplateChecklistItem::class)->orderBy('sort_order');
+    }
 }

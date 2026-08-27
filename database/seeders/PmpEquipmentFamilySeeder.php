@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\PmpEquipmentFamily;
+use App\Models\PmpTemplateChecklistItem;
 use App\Models\PmpTemplateItem;
 use Illuminate\Database\Seeder;
 
@@ -24,13 +25,24 @@ class PmpEquipmentFamilySeeder extends Seeder
 
     public function run(): void
     {
-        $this->seedEletricosLeves();
-        $this->seedEletricosPesados();
-        $this->seedCombustao();
-        $this->seedTrabalhoEmAltura();
-        $this->seedSistemasDeEnergia();
+        $families = [
+            $this->seedEletricosLeves(),
+            $this->seedEletricosPesados(),
+            $this->seedCombustao(),
+            $this->seedTrabalhoEmAltura(),
+            $this->seedSistemasDeEnergia(),
+        ];
 
-        $this->command?->info('Catálogo PMP "Empilhadeiras": 5 famílias semeadas/atualizadas.');
+        // Checklist Diário de Inspeção Pré-Turno (usuário 2026-08-27):
+        // formulário único (5 seções, ~18 itens C/NC/NA), vale pra
+        // qualquer empilhadeira -- cadastrado uma vez, associado às 5
+        // famílias (confirmado com o usuário: "toda OS do grupo" recebe o
+        // mesmo checklist, não um por família).
+        foreach ($families as $family) {
+            $this->seedPreTurnoChecklist($family);
+        }
+
+        $this->command?->info('Catálogo PMP "Empilhadeiras": 5 famílias + checklist pré-turno semeados/atualizados.');
     }
 
     private function family(string $name, string $description): PmpEquipmentFamily
@@ -50,12 +62,61 @@ class PmpEquipmentFamilySeeder extends Seeder
                 'interval_hours' => $data['interval_hours'] ?? null,
                 'interval_days' => $data['interval_days'] ?? null,
                 'is_critical' => $data['is_critical'] ?? false,
+                'auto_create_order' => $data['auto_create_order'] ?? true,
                 'notes' => $data['notes'] ?? null,
             ],
         );
     }
 
-    private function seedEletricosLeves(): void
+    private function checklistItem(PmpEquipmentFamily $family, string $section, string $itemName, int $sortOrder): void
+    {
+        PmpTemplateChecklistItem::firstOrCreate(
+            ['pmp_equipment_family_id' => $family->id, 'item_name' => $itemName],
+            ['section' => $section, 'sort_order' => $sortOrder],
+        );
+    }
+
+    /**
+     * Checklist Diário de Inspeção Pré-Turno (Operadores) -- documento
+     * completo fornecido pelo usuário 2026-08-27, 5 seções / 18 itens.
+     * Vira MaintenanceOrderChecklist is_template=true no tenant que
+     * importar (MaintenancePlan::importChecklistFromFamilyTemplate()),
+     * com toggles Conforme/Não Conforme/N-A já prontos na tela da OS.
+     */
+    private function seedPreTurnoChecklist(PmpEquipmentFamily $family): void
+    {
+        $sort = 1;
+
+        $section1 = '1. Estrutural & Pneus';
+        $this->checklistItem($family, $section1, 'Pneus / Rodas de Poliuretano (sem trincas, cortes ou desgaste excessivo)', $sort++);
+        $this->checklistItem($family, $section1, 'Garfos, trava dos garfos e suporte da torre (sem deformações/trincas)', $sort++);
+        $this->checklistItem($family, $section1, 'Correntes de elevação e mangueiras (tensão adequada, sem vazamentos)', $sort++);
+        $this->checklistItem($family, $section1, 'Chassi, protetor de teto e encosto de carga em bom estado', $sort++);
+
+        $section2 = '2. Sistema de Energia (Bateria / Combustível)';
+        $this->checklistItem($family, $section2, 'Conectores de bateria / bateria de lítio fixados e sem folgas', $sort++);
+        $this->checklistItem($family, $section2, 'Nível de solução/água da bateria tracionária (quando aplicável)', $sort++);
+        $this->checklistItem($family, $section2, 'Botijão de GLP / Mangueira e conexões sem vazamentos ou odores', $sort++);
+        $this->checklistItem($family, $section2, 'Nível de combustível / Indicador de carga no painel com autonomia', $sort++);
+
+        $section3 = '3. Níveis de Fluídos (Somente Combustão)';
+        $this->checklistItem($family, $section3, 'Nível de óleo do motor e fluido de arrefecimento (radiador)', $sort++);
+        $this->checklistItem($family, $section3, 'Nível de óleo hidráulico no visor/vareta', $sort++);
+        $this->checklistItem($family, $section3, 'Ausência de vazamentos sob a máquina (óleo, água ou combustível)', $sort++);
+
+        $section4 = '4. Controles & Dispositivos de Segurança';
+        $this->checklistItem($family, $section4, 'Botão de emergência / Botão de inversão do leme (botão de umbigo)', $sort++);
+        $this->checklistItem($family, $section4, 'Buzina, alarme de ré e giroflex / Blue Point funcionando', $sort++);
+        $this->checklistItem($family, $section4, 'Freio de serviço e freio de estacionamento operantes', $sort++);
+        $this->checklistItem($family, $section4, 'Cinto de segurança em bom estado e travando corretamente', $sort++);
+        $this->checklistItem($family, $section4, 'Direção / Leme sem folgas excessivas ou travamentos', $sort++);
+
+        $section5 = '5. Operação Hidráulica (Sem Carga)';
+        $this->checklistItem($family, $section5, 'Elevação e descida da torre/plataforma de forma suave', $sort++);
+        $this->checklistItem($family, $section5, 'Inclinador e deslocador lateral funcionando sem ruídos anormais', $sort++);
+    }
+
+    private function seedEletricosLeves(): PmpEquipmentFamily
     {
         $family = $this->family(
             'Elétricos Leves / Modulares',
@@ -86,9 +147,11 @@ class PmpEquipmentFamilySeeder extends Seeder
 
         $this->seedAdvanced500h($family);
         $this->seedGeneral1000h($family);
+
+        return $family;
     }
 
-    private function seedEletricosPesados(): void
+    private function seedEletricosPesados(): PmpEquipmentFamily
     {
         $family = $this->family(
             'Elétricos Pesados & Retráteis',
@@ -120,9 +183,11 @@ class PmpEquipmentFamilySeeder extends Seeder
 
         $this->seedAdvanced500h($family);
         $this->seedGeneral1000h($family);
+
+        return $family;
     }
 
-    private function seedCombustao(): void
+    private function seedCombustao(): PmpEquipmentFamily
     {
         $family = $this->family(
             'Equipamentos a Combustão',
@@ -152,9 +217,11 @@ class PmpEquipmentFamilySeeder extends Seeder
 
         $this->seedAdvanced500h($family);
         $this->seedGeneral1000h($family);
+
+        return $family;
     }
 
-    private function seedTrabalhoEmAltura(): void
+    private function seedTrabalhoEmAltura(): PmpEquipmentFamily
     {
         $family = $this->family(
             'Trabalho em Altura',
@@ -190,9 +257,11 @@ class PmpEquipmentFamilySeeder extends Seeder
         ]);
 
         $this->seedGeneral1000h($family);
+
+        return $family;
     }
 
-    private function seedSistemasDeEnergia(): void
+    private function seedSistemasDeEnergia(): PmpEquipmentFamily
     {
         $family = $this->family(
             'Sistemas de Energia',
@@ -234,6 +303,8 @@ class PmpEquipmentFamilySeeder extends Seeder
         ]);
 
         $this->seedGeneral1000h($family);
+
+        return $family;
     }
 
     private function seedDailyChecklist(PmpEquipmentFamily $family): void

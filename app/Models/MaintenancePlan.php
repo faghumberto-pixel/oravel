@@ -113,9 +113,48 @@ class MaintenancePlan extends Model
                 'interval_hours' => $item->interval_hours,
                 'interval_days' => $item->interval_days,
                 'is_critical' => $item->is_critical,
+                'auto_create_order' => $item->auto_create_order,
                 'notes' => $item->notes,
                 'is_active' => true,
                 'source' => self::SOURCE_TEMPLATE,
+            ]);
+        });
+    }
+
+    /**
+     * Complementa importFromFamilyTemplate(): copia o checklist técnico da
+     * família (PmpTemplateChecklistItem, catálogo global) para
+     * MaintenanceOrderChecklist is_template=true no ChecklistGroup do
+     * tenant. Daqui, MaintenanceOrderChecklistSnapshotObserver já copia
+     * pra qualquer OS nova daquele grupo automaticamente -- não precisa
+     * mexer no Observer. Mesmo override-por-nome de importFromFamilyTemplate().
+     *
+     * @return Collection<int, MaintenanceOrderChecklist>
+     */
+    public static function importChecklistFromFamilyTemplate(PmpEquipmentFamily $family, ChecklistGroup $targetGroup): Collection
+    {
+        $existingNames = MaintenanceOrderChecklist::where('tenant_id', $targetGroup->tenant_id)
+            ->where('checklist_group_id', $targetGroup->id)
+            ->where('is_template', true)
+            ->pluck('item_name')
+            ->all();
+
+        return $family->checklistItems->map(function (PmpTemplateChecklistItem $item) use ($targetGroup, $existingNames) {
+            if (in_array($item->item_name, $existingNames, true)) {
+                return MaintenanceOrderChecklist::where('tenant_id', $targetGroup->tenant_id)
+                    ->where('checklist_group_id', $targetGroup->id)
+                    ->where('is_template', true)
+                    ->where('item_name', $item->item_name)
+                    ->first();
+            }
+
+            return MaintenanceOrderChecklist::create([
+                'tenant_id' => $targetGroup->tenant_id,
+                'checklist_group_id' => $targetGroup->id,
+                'is_template' => true,
+                'section' => $item->section,
+                'item_name' => $item->item_name,
+                'instructions' => $item->instructions,
             ]);
         });
     }

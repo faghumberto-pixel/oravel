@@ -3,6 +3,7 @@
 namespace App\Filament\Central\Resources;
 
 use App\Filament\Central\Resources\PmpEquipmentFamilyResource\Pages;
+use App\Filament\Central\Resources\PmpEquipmentFamilyResource\RelationManagers\ChecklistItemsRelationManager;
 use App\Filament\Central\Resources\PmpEquipmentFamilyResource\RelationManagers\TemplateItemsRelationManager;
 use App\Models\PmpEquipmentFamily;
 use Filament\Forms;
@@ -69,6 +70,9 @@ class PmpEquipmentFamilyResource extends Resource
                 Tables\Columns\TextColumn::make('template_items_count')
                     ->label('Itens')
                     ->counts('templateItems'),
+                Tables\Columns\TextColumn::make('checklist_items_count')
+                    ->label('Checklist')
+                    ->counts('checklistItems'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('segment')
@@ -87,6 +91,7 @@ class PmpEquipmentFamilyResource extends Resource
     {
         return [
             TemplateItemsRelationManager::class,
+            ChecklistItemsRelationManager::class,
         ];
     }
 

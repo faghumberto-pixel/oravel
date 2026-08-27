@@ -67,15 +67,16 @@ class ListMaintenancePlans extends ListRecords
                     ->helperText('Os itens importados valem para todo Ativo deste grupo.'),
             ])
             ->action(function (array $data) {
-                $family = PmpEquipmentFamily::with('templateItems')->findOrFail($data['pmp_equipment_family_id']);
+                $family = PmpEquipmentFamily::with(['templateItems', 'checklistItems'])->findOrFail($data['pmp_equipment_family_id']);
                 $group = ChecklistGroup::where('tenant_id', Tenancy::current()?->id)
                     ->findOrFail($data['checklist_group_id']);
 
                 $imported = MaintenancePlan::importFromFamilyTemplate($family, $group);
+                $checklist = MaintenancePlan::importChecklistFromFamilyTemplate($family, $group);
 
                 Notification::make()
                     ->title('Template importado')
-                    ->body($imported->count().' itens de manutenção disponíveis no grupo "'.$group->name.'".')
+                    ->body($imported->count().' itens de manutenção e '.$checklist->count().' itens de checklist disponíveis no grupo "'.$group->name.'".')
                     ->success()
                     ->send();
             });

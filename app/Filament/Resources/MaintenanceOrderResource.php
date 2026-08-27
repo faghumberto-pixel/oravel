@@ -503,8 +503,15 @@ class MaintenanceOrderResource extends Resource
                 Forms\Components\Tabs\Tab::make('Vistoria / Checklist')
                     ->schema([
                         Forms\Components\Repeater::make('checklists')
-                            ->relationship('checklists')
+                            // Pedido do usuário 2026-08-27: itens do
+                            // checklist organizados por seção (ex: "1.
+                            // Estrutural & Pneus") em vez de lista solta --
+                            // sem reescrever o form pra Fieldset por seção,
+                            // só ordena pela coluna que já existia
+                            // (section) e prefixa o rótulo de cada item.
+                            ->relationship('checklists', modifyQueryUsing: fn (Builder $query) => $query->orderBy('section')->orderBy('id'))
                             ->label('Checklist do Ativo (básico do Grupo + itens extras)')
+                            ->itemLabel(fn (array $state): ?string => $state['section'] ? $state['section'].' — '.$state['item_name'] : $state['item_name'])
                             ->schema([
                                 Forms\Components\TextInput::make('item_name')->label('Item de Inspeção')->disabled()->dehydrated(true),
                                 Forms\Components\ToggleButtons::make('status')
@@ -712,6 +719,17 @@ class MaintenanceOrderResource extends Resource
                 ->icon('heroicon-o-arrow-path')
                 ->formatStateUsing(fn (bool $state): ?string => $state ? 'Retrabalho' : null)
                 ->toggleable(),
+            // Pedido do usuário 2026-08-27: precisa estar claro que a OS
+            // nasceu sozinha do vencimento de um plano de PMP, não foi
+            // aberta manualmente -- origin='pmp_auto' setado só em
+            // CheckMaintenanceDueAlerts::createOrderAutomatically().
+            Tables\Columns\TextColumn::make('origin')
+                ->label('Origem')
+                ->badge()
+                ->color('warning')
+                ->icon('heroicon-o-clock')
+                ->formatStateUsing(fn (?string $state): ?string => $state === 'pmp_auto' ? 'PMP Automática' : null)
+                ->toggleable(),
         ])->filters([
             Tables\Filters\SelectFilter::make('status')
                 ->label('Status')
@@ -765,6 +783,10 @@ class MaintenanceOrderResource extends Resource
                 ->label('Só retrabalho')
                 ->toggle()
                 ->query(fn (Builder $query) => $query->where('is_rework', true)),
+            Tables\Filters\Filter::make('origin_pmp_auto')
+                ->label('Só PMP automática')
+                ->toggle()
+                ->query(fn (Builder $query) => $query->where('origin', 'pmp_auto')),
 
         ])->actions([
             Tables\Actions\ViewAction::make(),

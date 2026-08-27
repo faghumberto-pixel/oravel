@@ -6,26 +6,20 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class PmpTemplateItem extends Model
+class PmpTemplateChecklistItem extends Model
 {
     use HasUuids;
 
     protected $fillable = [
         'pmp_equipment_family_id',
-        'name',
-        'periodicity_label',
-        'interval_hours',
-        'interval_days',
-        'is_critical',
-        'auto_create_order',
-        'notes',
+        'section',
+        'item_name',
+        'instructions',
+        'sort_order',
     ];
 
     protected $casts = [
-        'is_critical' => 'boolean',
-        'auto_create_order' => 'boolean',
-        'interval_hours' => 'integer',
-        'interval_days' => 'integer',
+        'sort_order' => 'integer',
     ];
 
     public function family(): BelongsTo

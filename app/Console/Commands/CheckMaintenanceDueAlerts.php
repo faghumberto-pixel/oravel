@@ -142,8 +142,17 @@ class CheckMaintenanceDueAlerts extends Command
         ])->save();
     }
 
+    /**
+     * Pedido do usuário 2026-08-27: precisa estar claro que a OS é PMP do
+     * grupo, não uma corretiva qualquer -- prefixo "PMP · {grupo}" na
+     * descrição (só quando o plano é template de grupo, isGroupTemplate())
+     * + campo estruturado origin='pmp_auto' pra badge/filtro na tabela
+     * (MaintenanceOrderResource), sem depender de parsear texto.
+     */
     private function createOrderAutomatically(Tenant $tenant, Asset $asset, MaintenancePlan $plano, array $status): void
     {
+        $prefix = $plano->isGroupTemplate() ? 'PMP · '.$plano->checklistGroup?->name.' — ' : '';
+
         MaintenanceOrder::create([
             'tenant_id' => $tenant->id,
             'asset_id' => $asset->id,
@@ -151,8 +160,10 @@ class CheckMaintenanceDueAlerts extends Command
             'maintenance_plan_id' => $plano->id,
             'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
             'status' => 'Aberto',
+            'origin' => 'pmp_auto',
             'description' => sprintf(
-                'Gerada automaticamente: "%s" vencida há %s horas (previsto para %sh, horímetro atual %sh).',
+                '%s"%s" vencida há %s horas (previsto para %sh, horímetro atual %sh).',
+                $prefix,
                 $plano->name,
                 number_format($status['overdue_hours'], 1),
                 number_format($status['due_at_hours'], 1),
