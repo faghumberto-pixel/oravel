@@ -21,7 +21,12 @@ class ChecklistGroupResource extends Resource
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
-    protected static ?string $navigationLabel = 'Grupos de Checklist';
+    // "Grupos de Ativos": nome ajustado a pedido do usuario 2026-08-27 --
+    // ChecklistGroup serve pra 2 coisas ao mesmo tempo (agrupar itens de
+    // checklist de inspecao E ser o "grupo de ativo" onde planos de PMP se
+    // aplicam, ver MaintenancePlan::isGroupTemplate()), "Grupos de
+    // Checklist" so cobria a primeira funcao.
+    protected static ?string $navigationLabel = 'Grupos de Ativos';
 
     protected static ?int $navigationSort = 4;
 
