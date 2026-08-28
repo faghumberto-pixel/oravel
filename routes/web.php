@@ -36,6 +36,7 @@ use App\Models\EquipmentMovement;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
 use App\Models\PreventiveMaintenanceExecution;
+use App\Support\Tenancy;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Route;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -147,7 +148,12 @@ Route::middleware(['auth'])->group(function () {
         ->name('maintenance-orders.laudo-minimalista');
 
     Route::get('/admin/maintenance-orders/{id}/print', function ($id) {
-        $tenant = Filament::getTenant();
+        // Filament::getTenant() sempre retorna null aqui -- o painel admin
+        // nao usa tenancy nativa do Filament (ver App\Support\Tenancy,
+        // mesmo bug ja corrigido antes em ClientManagementPrintController).
+        // Isso dava 403 pra QUALQUER usuario, inclusive super admin
+        // atuando num tenant de teste (acting_tenant_id).
+        $tenant = Tenancy::current();
         if (! $tenant) {
             abort(403);
         }
