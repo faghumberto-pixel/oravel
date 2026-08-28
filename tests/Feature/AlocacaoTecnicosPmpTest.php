@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Pages\AlocacaoTecnicosPmp;
 use App\Models\Asset;
+use App\Models\Client;
 use App\Models\MaintenanceDueAlert;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
@@ -181,5 +182,107 @@ class AlocacaoTecnicosPmpTest extends TestCase
 
         $allocation->refresh();
         $this->assertSame(TechnicianAllocation::STATUS_CONFIRMADO, $allocation->status);
+    }
+
+    /**
+     * Pedido do usuário 2026-08-28: filtros de cliente/técnico/patrimônio
+     * ao lado dos controles de período, afetando o que o Gantt mostra.
+     */
+    public function test_filters_narrow_down_visible_allocations(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+
+        $clientA = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente A']);
+        $clientB = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente B']);
+
+        $assetA = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo A', 'patrimonio' => 'PAT-AAA', 'status' => Asset::STATUS_DISPONIVEL, 'client_id' => $clientA->id]);
+        $assetB = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo B', 'patrimonio' => 'PAT-BBB', 'status' => Asset::STATUS_DISPONIVEL, 'client_id' => $clientB->id]);
+
+        $orderA = MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $assetA->id, 'description' => 'Corretiva A',
+            'maintenance_type' => MaintenanceOrder::TYPE_CORRECTIVE, 'internal_status' => 'aguardando_diagnostico',
+        ]);
+        $orderB = MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $assetB->id, 'description' => 'Corretiva B',
+            'maintenance_type' => MaintenanceOrder::TYPE_CORRECTIVE, 'internal_status' => 'aguardando_diagnostico',
+        ]);
+
+        $technicianA = User::create([
+            'name' => 'Tecnico A', 'email' => 'tec-filtro-a-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'is_approved' => true,
+        ]);
+        $technicianB = User::create([
+            'name' => 'Tecnico B', 'email' => 'tec-filtro-b-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'is_approved' => true,
+        ]);
+
+        TechnicianAllocation::create([
+            'tenant_id' => $tenant->id, 'technician_id' => $technicianA->id, 'maintenance_order_id' => $orderA->id,
+            'starts_at' => now(), 'ends_at' => now()->addHours(2),
+        ]);
+        TechnicianAllocation::create([
+            'tenant_id' => $tenant->id, 'technician_id' => $technicianB->id, 'maintenance_order_id' => $orderB->id,
+            'starts_at' => now(), 'ends_at' => now()->addHours(2),
+        ]);
+
+        $this->actingAs($admin);
+
+        // Filtro por cliente
+        $page = Livewire::test(AlocacaoTecnicosPmp::class)->set('filterClientId', $clientA->id);
+        $this->assertCount(1, $page->instance()->allocations);
+        $this->assertSame($orderA->id, $page->instance()->allocations->first()->maintenance_order_id);
+
+        // Filtro por técnico
+        $page = Livewire::test(AlocacaoTecnicosPmp::class)->set('filterTechnicianId', $technicianB->id);
+        $this->assertCount(1, $page->instance()->allocations);
+        $this->assertSame($technicianB->id, $page->instance()->allocations->first()->technician_id);
+
+        // Filtro por patrimônio
+        $page = Livewire::test(AlocacaoTecnicosPmp::class)->set('filterPatrimonio', 'bbb');
+        $this->assertCount(1, $page->instance()->allocations);
+        $this->assertSame($orderB->id, $page->instance()->allocations->first()->maintenance_order_id);
+    }
+
+    public function test_technician_summary_counts_allocated_pending_and_confirmed(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Resumo', 'status' => Asset::STATUS_DISPONIVEL]);
+        $technician = User::create([
+            'name' => 'Tecnico Resumo', 'email' => 'tec-resumo-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'is_approved' => true,
+        ]);
+
+        $pendingOrder = MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'description' => 'Pendente',
+            'maintenance_type' => MaintenanceOrder::TYPE_CORRECTIVE, 'internal_status' => 'aguardando_diagnostico',
+        ]);
+        $confirmedOrder = MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'description' => 'Confirmada',
+            'maintenance_type' => MaintenanceOrder::TYPE_CORRECTIVE, 'internal_status' => 'aguardando_diagnostico',
+        ]);
+
+        TechnicianAllocation::create([
+            'tenant_id' => $tenant->id, 'technician_id' => $technician->id, 'maintenance_order_id' => $pendingOrder->id,
+            'starts_at' => now(), 'ends_at' => now()->addHours(2),
+        ]);
+        TechnicianAllocation::create([
+            'tenant_id' => $tenant->id, 'technician_id' => $technician->id, 'maintenance_order_id' => $confirmedOrder->id,
+            'starts_at' => now(), 'ends_at' => now()->addHours(2),
+            'status' => TechnicianAllocation::STATUS_CONFIRMADO,
+        ]);
+
+        $this->actingAs($admin);
+
+        $page = Livewire::test(AlocacaoTecnicosPmp::class)->instance();
+        $row = $page->technicianSummary->firstWhere('technician.id', $technician->id);
+
+        $this->assertSame(2, $row['alocados']);
+        $this->assertSame(1, $row['aguardando']);
+        $this->assertSame(1, $row['confirmados']);
+
+        $totals = $page->technicianSummaryTotals;
+        $this->assertSame(2, $totals['alocados']);
+        $this->assertSame(1, $totals['aguardando']);
+        $this->assertSame(1, $totals['confirmados']);
     }
 }

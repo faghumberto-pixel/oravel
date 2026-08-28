@@ -14,7 +14,7 @@
 
     <div x-data="{ dragging: null, overSlot: null }" class="flex flex-col gap-4">
 
-        {{-- ===================== CONTROLES DE PERÍODO ===================== --}}
+        {{-- ===================== CONTROLES DE PERÍODO + FILTROS ===================== --}}
         <div class="flex flex-wrap items-center justify-between gap-2">
             <div class="flex flex-wrap items-center gap-2">
                 <select wire:model.live="viewMode" class="text-sm rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200">
@@ -23,14 +23,52 @@
                     <option value="month">Mês</option>
                 </select>
                 <input type="date" wire:model.live="referenceDate" class="text-sm rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200" />
+
+                <select wire:model.live="filterClientId" class="text-sm rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200">
+                    <option value="">Todos os clientes</option>
+                    @foreach($this->filterClientOptions as $clientId => $clientName)
+                        <option value="{{ $clientId }}">{{ $clientName }}</option>
+                    @endforeach
+                </select>
+
+                <select wire:model.live="filterTechnicianId" class="text-sm rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200">
+                    <option value="">Todos os técnicos</option>
+                    @foreach($technicians as $technicianOption)
+                        <option value="{{ $technicianOption->id }}">{{ $technicianOption->name }}</option>
+                    @endforeach
+                </select>
+
+                <input
+                    type="text"
+                    wire:model.live.debounce.400ms="filterPatrimonio"
+                    placeholder="Buscar patrimônio..."
+                    class="text-sm rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+                />
             </div>
 
-            @if($this->pendingDigitalCount > 0)
-                <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 px-3 py-1 text-xs font-medium">
-                    <x-heroicon-o-clock class="w-3.5 h-3.5" />
-                    {{ $this->pendingDigitalCount }} aguardando confirmação do técnico
-                </span>
-            @endif
+            <div class="flex flex-wrap items-center gap-2">
+                @if($this->pendingDigitalCount > 0)
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 px-3 py-1 text-xs font-medium">
+                        <x-heroicon-o-clock class="w-3.5 h-3.5" />
+                        {{ $this->pendingDigitalCount }} aguardando confirmação do técnico
+                    </span>
+                @endif
+
+                <a
+                    href="{{ route('alocacao-tecnicos-pmp.print', [
+                        'viewMode' => $viewMode,
+                        'referenceDate' => $referenceDate,
+                        'filterClientId' => $filterClientId,
+                        'filterTechnicianId' => $filterTechnicianId,
+                        'filterPatrimonio' => $filterPatrimonio,
+                    ]) }}"
+                    target="_blank"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-3 py-1.5 text-xs font-medium hover:bg-gray-200 dark:hover:bg-gray-700"
+                >
+                    <x-heroicon-o-printer class="w-3.5 h-3.5" />
+                    Imprimir
+                </a>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 xl:grid-cols-4 gap-4">

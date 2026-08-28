@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\Asset;
+use App\Models\Client;
 use App\Models\MaintenanceDueAlert;
 use App\Models\MaintenanceOrder;
 use App\Models\TechnicianAllocation;
@@ -38,6 +40,15 @@ class AlocacaoTecnicosPmp extends Page
 
     public ?string $referenceDate = null;
 
+    // Filtros de consulta -- pedido do usuário 2026-08-28: além de
+    // dia/semana/mês, poder filtrar por cliente, técnico e patrimônio do
+    // equipamento. Afetam o Gantt em tela E o conteúdo da impressão.
+    public ?string $filterClientId = null;
+
+    public ?string $filterTechnicianId = null;
+
+    public ?string $filterPatrimonio = null;
+
     public static function canAccess(): bool
     {
         return (bool) auth()->user()?->can('viewAny', MaintenanceOrder::class);
@@ -46,6 +57,21 @@ class AlocacaoTecnicosPmp extends Page
     public function mount(): void
     {
         $this->referenceDate = now()->toDateString();
+    }
+
+    /**
+     * Lista de clientes pro select do filtro -- só os que têm algum ativo
+     * vinculado (via Asset::client_id), pra não poluir o dropdown com
+     * clientes sem equipamento.
+     */
+    public function getFilterClientOptionsProperty(): Collection
+    {
+        $clientIds = Asset::where('tenant_id', Tenancy::current()?->id)
+            ->whereNotNull('client_id')
+            ->distinct()
+            ->pluck('client_id');
+
+        return Client::whereIn('id', $clientIds)->orderBy('name')->pluck('name', 'id');
     }
 
     protected function referenceCarbon(): Carbon
@@ -117,22 +143,115 @@ class AlocacaoTecnicosPmp extends Page
             $query->when($departmentIds, fn ($q) => $q->whereIn('department_id', $departmentIds));
         }
 
+        if ($this->filterTechnicianId) {
+            $query->where('id', $this->filterTechnicianId);
+        }
+
         return $query->orderBy('name')->get();
+    }
+
+    /**
+     * Resumo por técnico: alocados / aguardando confirmação (digital
+     * pendente) / confirmados -- base tanto do indicador em tela quanto da
+     * impressão. Reaproveita $this->allocations (já filtrado por
+     * período+cliente+técnico+patrimônio) e $this->technicians (já
+     * filtrado por supervisão+técnico), então o resumo respeita os mesmos
+     * filtros aplicados ao Gantt.
+     */
+    public function getTechnicianSummaryProperty(): Collection
+    {
+        $byTechnician = $this->allocations->groupBy('technician_id');
+
+        return $this->technicians->map(function (User $technician) use ($byTechnician) {
+            $items = $byTechnician->get($technician->id, collect());
+
+            $aguardando = $items->filter(fn (TechnicianAllocation $a) => $a->delivery_mode === TechnicianAllocation::DELIVERY_DIGITAL
+                && $a->status === TechnicianAllocation::STATUS_PLANEJADO
+            )->count();
+
+            $confirmados = $items->filter(fn (TechnicianAllocation $a) => $a->status === TechnicianAllocation::STATUS_CONFIRMADO)->count();
+
+            return [
+                'technician' => $technician,
+                'alocados' => $items->count(),
+                'aguardando' => $aguardando,
+                'confirmados' => $confirmados,
+            ];
+        })->values();
+    }
+
+    /**
+     * Total consolidado (soma de todos os técnicos) -- vai no rodapé do
+     * impresso.
+     */
+    public function getTechnicianSummaryTotalsProperty(): array
+    {
+        return [
+            'alocados' => $this->technicianSummary->sum('alocados'),
+            'aguardando' => $this->technicianSummary->sum('aguardando'),
+            'confirmados' => $this->technicianSummary->sum('confirmados'),
+        ];
+    }
+
+    /**
+     * Monta a página em memória (sem HTTP) aplicando os mesmos filtros da
+     * URL da tela, pra rota de impressão (routes/web.php) reaproveitar toda
+     * a lógica de filtro/resumo já escrita aqui em vez de duplicá-la.
+     */
+    public static function forPrint(array $filters): self
+    {
+        $page = new self;
+        $page->viewMode = $filters['viewMode'] ?? 'week';
+        $page->referenceDate = $filters['referenceDate'] ?? now()->toDateString();
+        $page->filterClientId = $filters['filterClientId'] ?? null;
+        $page->filterTechnicianId = $filters['filterTechnicianId'] ?? null;
+        $page->filterPatrimonio = $filters['filterPatrimonio'] ?? null;
+
+        return $page;
     }
 
     public function getAllocationsProperty(): Collection
     {
         [$start, $end] = $this->periodBounds();
 
-        return TechnicianAllocation::whereBetween('starts_at', [$start, $end])
+        $query = TechnicianAllocation::whereBetween('starts_at', [$start, $end])
             ->with([
                 'technician',
-                'maintenanceOrder.asset',
+                'maintenanceOrder.asset.client',
                 'maintenanceOrder.maintenancePlan',
-                'maintenanceDueAlert.asset',
+                'maintenanceOrder.client',
+                'maintenanceDueAlert.asset.client',
                 'maintenanceDueAlert.maintenancePlan',
-            ])
-            ->get();
+            ]);
+
+        if ($this->filterTechnicianId) {
+            $query->where('technician_id', $this->filterTechnicianId);
+        }
+
+        $allocations = $query->get();
+
+        if ($this->filterClientId) {
+            $allocations = $allocations->filter(function (TechnicianAllocation $allocation) {
+                $clientId = $allocation->maintenanceOrder?->client_id
+                    ?? $allocation->maintenanceOrder?->asset?->client_id
+                    ?? $allocation->maintenanceDueAlert?->asset?->client_id;
+
+                return $clientId === $this->filterClientId;
+            })->values();
+        }
+
+        if ($this->filterPatrimonio) {
+            $needle = mb_strtolower($this->filterPatrimonio);
+            $allocations = $allocations->filter(function (TechnicianAllocation $allocation) use ($needle) {
+                $patrimonio = $allocation->maintenanceOrder?->asset?->patrimonio
+                    ?? $allocation->maintenanceDueAlert?->asset?->patrimonio
+                    ?? '';
+
+                return str_contains(mb_strtolower($patrimonio), $needle);
+            })->values();
+        }
+
+        return $allocations;
     }
 
     /**

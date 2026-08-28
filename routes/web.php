@@ -1,5 +1,6 @@
 <?php
 
+use App\Filament\Pages\AlocacaoTecnicosPmp;
 use App\Http\Controllers\AIAnalysisPdfController;
 use App\Http\Controllers\AssetDossierPdfController;
 use App\Http\Controllers\Auth\PasswordController;
@@ -32,12 +33,15 @@ use App\Livewire\RentalDispatchChecklistMobile;
 use App\Models\Asset;
 use App\Models\ChatMessage;
 use App\Models\ChatRoom;
+use App\Models\Client;
 use App\Models\EquipmentMovement;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
 use App\Models\PreventiveMaintenanceExecution;
+use App\Models\User;
 use App\Support\Tenancy;
 use Filament\Facades\Filament;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -161,6 +165,40 @@ Route::middleware(['auth'])->group(function () {
 
         return view('maintenance-orders.print', compact('order'));
     })->name('maintenance-orders.print');
+
+    // Impressão PHP minimalista do Gantt de Alocação de Técnicos -- pedido
+    // do usuário 2026-08-28: refletir os mesmos filtros (período, cliente,
+    // técnico, patrimônio) escolhidos na tela, com resumo por técnico
+    // (alocados/aguardando confirmação/confirmados) no topo e total
+    // consolidado no rodapé. Reaproveita a lógica de filtro já escrita em
+    // AlocacaoTecnicosPmp em vez de duplicá-la aqui.
+    Route::get('/admin/alocacao-tecnicos-pmp/print', function (Request $request) {
+        $tenant = Tenancy::current();
+        if (! $tenant) {
+            abort(403);
+        }
+
+        $page = AlocacaoTecnicosPmp::forPrint([
+            'viewMode' => $request->query('viewMode'),
+            'referenceDate' => $request->query('referenceDate'),
+            'filterClientId' => $request->query('filterClientId'),
+            'filterTechnicianId' => $request->query('filterTechnicianId'),
+            'filterPatrimonio' => $request->query('filterPatrimonio'),
+        ]);
+
+        [$periodStart, $periodEnd] = $page->periodBounds();
+
+        return view('filament.pages.alocacao-tecnicos-pmp-print', [
+            'page' => $page,
+            'periodStart' => $periodStart,
+            'periodEnd' => $periodEnd,
+            'technicianSummary' => $page->technicianSummary,
+            'technicianSummaryTotals' => $page->technicianSummaryTotals,
+            'clientName' => $request->query('filterClientId') ? Client::find($request->query('filterClientId'))?->name : null,
+            'technicianName' => $request->query('filterTechnicianId') ? User::find($request->query('filterTechnicianId'))?->name : null,
+            'patrimonioFilter' => $request->query('filterPatrimonio'),
+        ]);
+    })->name('alocacao-tecnicos-pmp.print');
 
     Route::get('/admin/maintenance-orders/{maintenanceOrder}/checklist-digital', MaintenanceChecklistMobile::class)
         ->name('maintenance-orders.checklist-mobile');
