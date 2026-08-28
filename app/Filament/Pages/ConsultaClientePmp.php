@@ -6,6 +6,7 @@ use App\Models\Asset;
 use App\Models\Client;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
+use App\Models\User;
 use App\Support\Tenancy;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
@@ -20,6 +21,10 @@ use Illuminate\Support\Collection;
  * ativo (Asset::contracts()). Reaproveita MaintenancePlan::applicableFor()
  * e dueStatusForAsset()/projectedDueDates() sem alterar a lógica de
  * vencimento, só agrega/categoriza pra exibição.
+ *
+ * Pedido do usuário 2026-08-28: virar uma planilha única (uma linha por
+ * Ativo+Plano, coluna de Status) em vez de 5 tabelas separadas por
+ * categoria, com filtros de Equipamento/Status/Técnico.
  */
 class ConsultaClientePmp extends Page
 {
@@ -36,6 +41,12 @@ class ConsultaClientePmp extends Page
     protected static string $view = 'filament.pages.consulta-cliente-pmp';
 
     public ?string $clientId = null;
+
+    public ?string $filterAssetId = null;
+
+    public ?string $filterStatus = null;
+
+    public ?string $filterTechnicianId = null;
 
     public static function canAccess(): bool
     {
@@ -57,7 +68,38 @@ class ConsultaClientePmp extends Page
 
         return Asset::where('tenant_id', Tenancy::current()?->id)
             ->whereHas('contracts', fn ($q) => $q->where('client_id', $this->clientId)->where('is_active', true))
+            ->with(['contracts' => fn ($q) => $q->where('client_id', $this->clientId)->where('is_active', true)])
             ->get();
+    }
+
+    /**
+     * Opções pro select de equipamento -- só os ativos do cliente
+     * selecionado, pra não listar o cadastro inteiro do tenant.
+     */
+    public function getFilterAssetOptionsProperty(): Collection
+    {
+        return $this->clientAssets()->pluck('name', 'id');
+    }
+
+    /**
+     * Opções pro select de técnico -- só quem já tem alguma OS vinculada
+     * às manutenções deste cliente, pra não listar o quadro inteiro do
+     * tenant quando a maioria nunca atendeu esse cliente.
+     */
+    public function getFilterTechnicianOptionsProperty(): Collection
+    {
+        $assetIds = $this->clientAssets()->pluck('id');
+        if ($assetIds->isEmpty()) {
+            return collect();
+        }
+
+        $technicianIds = MaintenanceOrder::where('tenant_id', Tenancy::current()?->id)
+            ->whereIn('asset_id', $assetIds)
+            ->whereNotNull('technician_id')
+            ->distinct()
+            ->pluck('technician_id');
+
+        return User::whereIn('id', $technicianIds)->orderBy('name')->pluck('name', 'id');
     }
 
     /**
@@ -70,6 +112,10 @@ class ConsultaClientePmp extends Page
     {
         $assets = $this->clientAssets();
 
+        if ($this->filterAssetId) {
+            $assets = $assets->where('id', $this->filterAssetId);
+        }
+
         if ($assets->isEmpty()) {
             return collect();
         }
@@ -78,6 +124,7 @@ class ConsultaClientePmp extends Page
 
         foreach ($assets as $asset) {
             $plans = MaintenancePlan::applicableFor($asset);
+            $location = $asset->contracts->first()?->resolvedLocation();
 
             foreach ($plans as $plan) {
                 $status = $plan->dueStatusForAsset($asset);
@@ -85,7 +132,15 @@ class ConsultaClientePmp extends Page
                     ->where('asset_id', $asset->id)
                     ->where('maintenance_plan_id', $plan->id)
                     ->where('status', '!=', 'Cancelada')
+                    ->with('technician')
                     ->latest('created_at')
+                    ->first();
+
+                $lastCompleted = MaintenanceOrder::where('tenant_id', $asset->tenant_id)
+                    ->where('asset_id', $asset->id)
+                    ->where('maintenance_plan_id', $plan->id)
+                    ->whereNotNull('finished_at')
+                    ->latest('finished_at')
                     ->first();
 
                 $rows->push([
@@ -95,8 +150,18 @@ class ConsultaClientePmp extends Page
                     'order' => $order,
                     'category' => $this->categorize($status, $order),
                     'projections' => $plan->projectedDueDates($asset, 3),
+                    'location' => $location,
+                    'last_completed_at' => $lastCompleted?->finished_at,
                 ]);
             }
+        }
+
+        if ($this->filterStatus) {
+            $rows = $rows->where('category', $this->filterStatus)->values();
+        }
+
+        if ($this->filterTechnicianId) {
+            $rows = $rows->filter(fn ($row) => $row['order']?->technician_id === $this->filterTechnicianId)->values();
         }
 
         return $rows;
@@ -126,18 +191,5 @@ class ConsultaClientePmp extends Page
         }
 
         return 'pendente';
-    }
-
-    public function getRowsByCategoryProperty(): array
-    {
-        $rows = $this->maintenanceRows;
-
-        return [
-            'atrasada' => $rows->where('category', 'atrasada')->values(),
-            'programada' => $rows->where('category', 'programada')->values(),
-            'em_andamento' => $rows->where('category', 'em_andamento')->values(),
-            'pendente' => $rows->where('category', 'pendente')->values(),
-            'concluida' => $rows->where('category', 'concluida')->values(),
-        ];
     }
 }

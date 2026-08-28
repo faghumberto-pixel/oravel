@@ -81,10 +81,11 @@ class ConsultaClientePmpTest extends TestCase
         $page = Livewire::test(ConsultaClientePmp::class)
             ->set('clientId', $client->id);
 
-        $rows = $page->instance()->rowsByCategory;
+        $rows = $page->instance()->maintenanceRows;
 
-        $this->assertCount(1, $rows['atrasada']);
-        $this->assertSame('Ativo A', $rows['atrasada']->first()['asset']->name);
+        $this->assertCount(1, $rows);
+        $this->assertSame('atrasada', $rows->first()['category']);
+        $this->assertSame('Ativo A', $rows->first()['asset']->name);
     }
 
     public function test_asset_of_another_client_never_appears(): void
@@ -133,9 +134,10 @@ class ConsultaClientePmpTest extends TestCase
         $page = Livewire::test(ConsultaClientePmp::class)
             ->set('clientId', $client->id);
 
-        $rows = $page->instance()->rowsByCategory;
+        $rows = $page->instance()->maintenanceRows;
 
-        $this->assertCount(1, $rows['em_andamento']);
+        $this->assertCount(1, $rows);
+        $this->assertSame('em_andamento', $rows->first()['category']);
     }
 
     public function test_asset_with_inactive_contract_does_not_appear(): void
@@ -160,5 +162,107 @@ class ConsultaClientePmpTest extends TestCase
             ->set('clientId', $client->id);
 
         $this->assertCount(0, $page->instance()->maintenanceRows);
+    }
+
+    /**
+     * Pedido do usuário 2026-08-28: filtros de Equipamento/Status/Técnico
+     * ao lado do seletor de cliente, tudo numa tabela única (estilo
+     * planilha) em vez de seções separadas por status.
+     */
+    public function test_asset_filter_restricts_to_selected_asset(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        [$client, $assetA] = $this->makeClientWithAsset($tenant, 'FiltroA');
+        $assetB = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo FiltroB', 'status' => Asset::STATUS_LOCADO]);
+        Contract::create([
+            'tenant_id' => $tenant->id, 'client_id' => $client->id, 'asset_id' => $assetB->id,
+            'contract_number' => 'CT-FILTRO-B-'.uniqid(), 'start_date' => now(),
+            'billing_type' => Contract::BILLING_MENSAL_FIXO, 'price' => 1000, 'is_active' => true,
+        ]);
+
+        MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $assetA->id, 'name' => 'Plano A',
+            'interval_days' => 30, 'last_service_date' => now()->subDays(60),
+        ]);
+        MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $assetB->id, 'name' => 'Plano B',
+            'interval_days' => 30, 'last_service_date' => now()->subDays(60),
+        ]);
+
+        $this->actingAs($admin);
+
+        $page = Livewire::test(ConsultaClientePmp::class)
+            ->set('clientId', $client->id)
+            ->set('filterAssetId', $assetB->id);
+
+        $rows = $page->instance()->maintenanceRows;
+
+        $this->assertCount(1, $rows);
+        $this->assertSame('Ativo FiltroB', $rows->first()['asset']->name);
+    }
+
+    public function test_status_filter_restricts_to_selected_category(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        [$client, $asset] = $this->makeClientWithAsset($tenant, 'StatusFiltro');
+
+        MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'name' => 'Plano vencido',
+            'interval_days' => 30, 'last_service_date' => now()->subDays(60),
+        ]);
+        MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'name' => 'Plano em dia',
+            'interval_days' => 30, 'last_service_date' => now(),
+        ]);
+
+        $this->actingAs($admin);
+
+        $page = Livewire::test(ConsultaClientePmp::class)
+            ->set('clientId', $client->id)
+            ->set('filterStatus', 'atrasada');
+
+        $rows = $page->instance()->maintenanceRows;
+
+        $this->assertCount(1, $rows);
+        $this->assertSame('Plano vencido', $rows->first()['plan']->name);
+    }
+
+    public function test_technician_filter_restricts_to_orders_from_that_technician(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        [$client, $asset] = $this->makeClientWithAsset($tenant, 'TecFiltro');
+
+        $technicianA = User::create([
+            'name' => 'Tecnico Consulta A', 'email' => 'tec-consulta-a-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'is_approved' => true,
+        ]);
+        $technicianB = User::create([
+            'name' => 'Tecnico Consulta B', 'email' => 'tec-consulta-b-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'is_approved' => true,
+        ]);
+
+        $planA = MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'name' => 'Plano Tecnico A',
+            'interval_days' => 30, 'last_service_date' => now(),
+        ]);
+        MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'maintenance_plan_id' => $planA->id,
+            'description' => 'OS tecnico A', 'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
+            'internal_status' => 'em_manutencao', 'status' => 'Em Andamento', 'technician_id' => $technicianA->id,
+        ]);
+
+        $this->actingAs($admin);
+
+        $page = Livewire::test(ConsultaClientePmp::class)
+            ->set('clientId', $client->id)
+            ->set('filterTechnicianId', $technicianB->id);
+
+        $this->assertCount(0, $page->instance()->maintenanceRows);
+
+        $page->set('filterTechnicianId', $technicianA->id);
+        $rows = $page->instance()->maintenanceRows;
+
+        $this->assertCount(1, $rows);
+        $this->assertSame('Plano Tecnico A', $rows->first()['plan']->name);
     }
 }
