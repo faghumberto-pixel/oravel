@@ -157,7 +157,7 @@ Route::middleware(['auth'])->group(function () {
         if (! $tenant) {
             abort(403);
         }
-        $order = MaintenanceOrder::where('tenant_id', $tenant->id)->with(['asset', 'client', 'technician', 'checklists', 'materials.material'])->findOrFail($id);
+        $order = MaintenanceOrder::where('tenant_id', $tenant->id)->with(['asset', 'client', 'technician', 'checklists', 'materials.material', 'maintenancePlan'])->findOrFail($id);
 
         return view('maintenance-orders.print', compact('order'));
     })->name('maintenance-orders.print');

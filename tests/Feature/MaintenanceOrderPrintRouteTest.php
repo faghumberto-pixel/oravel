@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Asset;
 use App\Models\MaintenanceOrder;
+use App\Models\MaintenancePlan;
 use App\Models\Plan;
 use App\Models\Role;
 use App\Models\Tenant;
@@ -76,5 +77,35 @@ class MaintenanceOrderPrintRouteTest extends TestCase
         $this->actingAs($adminA)
             ->get(route('maintenance-orders.print', $orderB->id))
             ->assertNotFound();
+    }
+
+    /**
+     * Pedido do usuário 2026-08-28: a OS impressa (usada pelo botão
+     * "Imprimir OS" do Gantt de Alocação) precisa trazer o plano de
+     * manutenção preventiva (PMP) vinculado, não só o checklist de
+     * inspeção -- "o PMP deve estar contido dentro de uma Ordem de
+     * Serviço que faz parte do planejamento preventivo".
+     */
+    public function test_print_route_shows_linked_maintenance_plan_for_preventive_order(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo PMP Print', 'patrimonio' => 'PAT-PMP', 'status' => Asset::STATUS_DISPONIVEL]);
+        $plan = MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'name' => 'Revisão 250h',
+            'interval_hours' => 250, 'last_service_hours' => 0,
+        ]);
+        $order = MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'description' => 'Preventiva print route',
+            'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE, 'maintenance_plan_id' => $plan->id,
+            'internal_status' => 'aguardando_diagnostico',
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->get(route('maintenance-orders.print', $order->id))
+            ->assertOk();
+
+        $response->assertSee('Plano de Manutenção Preventiva');
+        $response->assertSee('Revisão 250h');
+        $response->assertSee('250h');
     }
 }
