@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\AssetMovement;
 use App\Models\MaintenanceOrder;
+use App\Models\TechnicianAllocation;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -242,5 +243,37 @@ class TechnicianDailyTasks extends Page
         }
 
         return $tasks;
+    }
+
+    /**
+     * Pedido do usuário 2026-08-28: alocações do Gantt (Alocação de
+     * Técnicos) que precisam de confirmação do técnico -- só as digitais
+     * (delivery_mode=digital), já que a impressa nasce confirmada na hora
+     * de imprimir (ver AlocacaoTecnicosPmp::printAllocation()). Fica na
+     * tela mobile que o técnico já usa no dia a dia, não numa página nova
+     * e isolada do admin.
+     */
+    public function getPendingAllocationsProperty(): Collection
+    {
+        return TechnicianAllocation::where('technician_id', Auth::id())
+            ->where('status', TechnicianAllocation::STATUS_PLANEJADO)
+            ->where('delivery_mode', TechnicianAllocation::DELIVERY_DIGITAL)
+            ->with(['maintenanceOrder.asset', 'maintenanceOrder.maintenancePlan', 'maintenanceDueAlert.asset', 'maintenanceDueAlert.maintenancePlan'])
+            ->orderBy('starts_at')
+            ->get();
+    }
+
+    /**
+     * where('technician_id', Auth::id()) já escopa a busca -- um técnico
+     * nunca confirma alocação de outro, mesmo manipulando o ID no client.
+     */
+    public function confirmAllocation(string $allocationId): void
+    {
+        $allocation = TechnicianAllocation::where('technician_id', Auth::id())->find($allocationId);
+        if (! $allocation) {
+            return;
+        }
+
+        $allocation->update(['status' => TechnicianAllocation::STATUS_CONFIRMADO]);
     }
 }

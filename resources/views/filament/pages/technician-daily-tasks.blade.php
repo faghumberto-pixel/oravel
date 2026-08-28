@@ -162,6 +162,30 @@
             @endforelse
             <div class="h-20"></div>
         @else
+        {{-- Alocações do Gantt aguardando confirmação -- pedido do
+             usuário 2026-08-28. Técnico vê aqui e confirma sem sair da
+             tela que já usa no dia a dia. --}}
+        @if ($this->pendingAllocations->isNotEmpty())
+            <div class="space-y-2">
+                <p class="text-xs font-bold uppercase tracking-wide text-amber-400">
+                    ⏳ Aguardando sua confirmação
+                </p>
+                @foreach ($this->pendingAllocations as $allocation)
+                    <div class="rounded-2xl bg-amber-950/30 border border-amber-800/50 overflow-hidden p-4 space-y-2">
+                        <p class="text-sm font-bold text-white">{{ $allocation->displayLabel() }}</p>
+                        <p class="text-xs text-amber-300">{{ $allocation->starts_at->format('d/m/Y H:i') }}</p>
+                        <button
+                            wire:click="confirmAllocation('{{ $allocation->id }}')"
+                            wire:key="confirm-{{ $allocation->id }}"
+                            class="w-full rounded-xl bg-amber-500 text-slate-950 px-4 py-2.5 text-sm font-bold transition active:scale-95"
+                        >
+                            Confirmar
+                        </button>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+
         @forelse ($this->technicianTasks as $task)
             <a href="{{ $task['url'] }}" class="block rounded-2xl bg-slate-800 border border-slate-700 overflow-hidden transition hover:shadow-lg active:scale-95">
                 <div class="p-4 space-y-3">

@@ -15,13 +15,22 @@
     <div x-data="{ dragging: null, overSlot: null }" class="flex flex-col gap-4">
 
         {{-- ===================== CONTROLES DE PERÍODO ===================== --}}
-        <div class="flex flex-wrap items-center gap-2">
-            <select wire:model.live="viewMode" class="text-sm rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200">
-                <option value="day">Dia</option>
-                <option value="week">Semana</option>
-                <option value="month">Mês</option>
-            </select>
-            <input type="date" wire:model.live="referenceDate" class="text-sm rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200" />
+        <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+                <select wire:model.live="viewMode" class="text-sm rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200">
+                    <option value="day">Dia</option>
+                    <option value="week">Semana</option>
+                    <option value="month">Mês</option>
+                </select>
+                <input type="date" wire:model.live="referenceDate" class="text-sm rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200" />
+            </div>
+
+            @if($this->pendingDigitalCount > 0)
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 px-3 py-1 text-xs font-medium">
+                    <x-heroicon-o-clock class="w-3.5 h-3.5" />
+                    {{ $this->pendingDigitalCount }} aguardando confirmação do técnico
+                </span>
+            @endif
         </div>
 
         <div class="grid grid-cols-1 xl:grid-cols-4 gap-4">
@@ -96,8 +105,29 @@
                                             x-on:drop.prevent="overSlot = null; if (dragging) { $wire.allocate(dragging, '{{ $technician->id }}', '{{ $slotStart }}'); dragging = null; }"
                                         >
                                             @forelse($dayAllocations as $allocation)
-                                                <div wire:key="alloc-{{ $allocation->id }}" class="rounded bg-indigo-600 text-white text-[10px] px-1.5 py-1 mb-1">
-                                                    {{ $allocation->maintenanceOrder?->asset?->name ?? 'Alocação' }}
+                                                @php
+                                                    $isPendingDigital = $allocation->delivery_mode === \App\Models\TechnicianAllocation::DELIVERY_DIGITAL
+                                                        && $allocation->status === \App\Models\TechnicianAllocation::STATUS_PLANEJADO;
+                                                    $cardColor = $isPendingDigital ? 'bg-amber-500' : 'bg-indigo-600';
+                                                @endphp
+                                                <div wire:key="alloc-{{ $allocation->id }}" class="rounded {{ $cardColor }} text-white text-[10px] px-1.5 py-1 mb-1">
+                                                    <div class="flex items-center justify-between gap-1">
+                                                        <span class="leading-snug">{{ $allocation->displayLabel() }}</span>
+                                                        @if($allocation->delivery_mode === \App\Models\TechnicianAllocation::DELIVERY_IMPRESSA)
+                                                            <x-heroicon-o-printer class="w-3 h-3 shrink-0" title="OS impressa" />
+                                                        @endif
+                                                    </div>
+                                                    @if($allocation->maintenance_order_id)
+                                                        <a
+                                                            href="{{ route('maintenance-orders.print', $allocation->maintenance_order_id) }}"
+                                                            target="_blank"
+                                                            x-on:click="$wire.printAllocation('{{ $allocation->id }}')"
+                                                            class="mt-0.5 inline-flex items-center gap-1 text-[9px] text-white/80 hover:text-white underline"
+                                                        >
+                                                            <x-heroicon-o-printer class="w-2.5 h-2.5" />
+                                                            Imprimir OS
+                                                        </a>
+                                                    @endif
                                                 </div>
                                             @empty
                                                 <div class="h-8 rounded border border-dashed border-gray-300 dark:border-gray-700"></div>

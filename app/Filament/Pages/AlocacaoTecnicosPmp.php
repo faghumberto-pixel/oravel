@@ -125,7 +125,13 @@ class AlocacaoTecnicosPmp extends Page
         [$start, $end] = $this->periodBounds();
 
         return TechnicianAllocation::whereBetween('starts_at', [$start, $end])
-            ->with(['technician', 'maintenanceOrder.asset'])
+            ->with([
+                'technician',
+                'maintenanceOrder.asset',
+                'maintenanceOrder.maintenancePlan',
+                'maintenanceDueAlert.asset',
+                'maintenanceDueAlert.maintenancePlan',
+            ])
             ->get();
     }
 
@@ -180,5 +186,37 @@ class AlocacaoTecnicosPmp extends Page
         TechnicianAllocation::create($data);
 
         Notification::make()->title('Alocação criada')->success()->send();
+    }
+
+    /**
+     * Pedido do usuário 2026-08-28: técnico que não usa o app recebe a OS
+     * impressa -- o ato de imprimir já conta como entregue (sem passo de
+     * aceite digital). whereNotNull() evita imprimir alocação que ainda
+     * só tem MaintenanceDueAlert (OS ainda não existe).
+     */
+    public function printAllocation(string $allocationId): void
+    {
+        $allocation = TechnicianAllocation::whereNotNull('maintenance_order_id')->find($allocationId);
+        if (! $allocation) {
+            return;
+        }
+
+        $allocation->update([
+            'delivery_mode' => TechnicianAllocation::DELIVERY_IMPRESSA,
+            'status' => TechnicianAllocation::STATUS_CONFIRMADO,
+        ]);
+    }
+
+    /**
+     * Quantas alocações digitais (do período visível) ainda aguardam o
+     * técnico confirmar pelo app -- impressa já nasce confirmada, não
+     * entra nessa contagem.
+     */
+    public function getPendingDigitalCountProperty(): int
+    {
+        return $this->allocations
+            ->where('delivery_mode', TechnicianAllocation::DELIVERY_DIGITAL)
+            ->where('status', TechnicianAllocation::STATUS_PLANEJADO)
+            ->count();
     }
 }
