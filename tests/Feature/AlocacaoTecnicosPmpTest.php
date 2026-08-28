@@ -149,4 +149,37 @@ class AlocacaoTecnicosPmpTest extends TestCase
         $this->assertSame($technician->id, $allocation->technician_id);
         $this->assertNull($allocation->maintenance_order_id);
     }
+
+    /**
+     * Pedido do usuário 2026-08-28: card do Gantt precisa de um botão de
+     * confirmar ali mesmo, pro analista confirmar em nome do técnico --
+     * diferente de TechnicianDailyTasks::confirmAllocation(), que é o
+     * próprio técnico confirmando (escopado por Auth::id()).
+     */
+    public function test_confirm_allocation_from_gantt_changes_status(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Confirmar Gantt', 'status' => Asset::STATUS_DISPONIVEL]);
+        $order = MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id,
+            'description' => 'Corretiva confirmar gantt', 'maintenance_type' => MaintenanceOrder::TYPE_CORRECTIVE,
+            'internal_status' => 'aguardando_diagnostico',
+        ]);
+        $technician = User::create([
+            'name' => 'Tecnico Confirmar Gantt', 'email' => 'tec-confirmar-gantt-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'is_approved' => true,
+        ]);
+        $allocation = TechnicianAllocation::create([
+            'tenant_id' => $tenant->id, 'technician_id' => $technician->id, 'maintenance_order_id' => $order->id,
+            'starts_at' => now(), 'ends_at' => now()->addHours(2),
+        ]);
+
+        $this->actingAs($admin);
+
+        Livewire::test(AlocacaoTecnicosPmp::class)
+            ->call('confirmAllocation', $allocation->id);
+
+        $allocation->refresh();
+        $this->assertSame(TechnicianAllocation::STATUS_CONFIRMADO, $allocation->status);
+    }
 }

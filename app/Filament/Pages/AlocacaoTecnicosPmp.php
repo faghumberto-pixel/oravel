@@ -219,4 +219,23 @@ class AlocacaoTecnicosPmp extends Page
             ->where('status', TechnicianAllocation::STATUS_PLANEJADO)
             ->count();
     }
+
+    /**
+     * Pedido do usuário 2026-08-28: o card do Gantt não mostrava opção de
+     * confirmar, só o link de imprimir. Diferente de
+     * TechnicianDailyTasks::confirmAllocation() (escopado por
+     * Auth::id() === technician_id, pro próprio técnico confirmar), aqui
+     * quem confirma é o analista vendo o Gantt -- por isso o escopo é a
+     * permissão de gerenciar a alocação (mesmo gate de canAccess() desta
+     * página), não a identidade do técnico.
+     */
+    public function confirmAllocation(string $allocationId): void
+    {
+        $allocation = TechnicianAllocation::find($allocationId);
+        if (! $allocation) {
+            return;
+        }
+
+        $allocation->update(['status' => TechnicianAllocation::STATUS_CONFIRMADO]);
+    }
 }

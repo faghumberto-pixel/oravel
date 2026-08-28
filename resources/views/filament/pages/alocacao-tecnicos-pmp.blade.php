@@ -106,9 +106,28 @@
                                         >
                                             @forelse($dayAllocations as $allocation)
                                                 @php
+                                                    $order = $allocation->maintenanceOrder;
                                                     $isPendingDigital = $allocation->delivery_mode === \App\Models\TechnicianAllocation::DELIVERY_DIGITAL
                                                         && $allocation->status === \App\Models\TechnicianAllocation::STATUS_PLANEJADO;
-                                                    $cardColor = $isPendingDigital ? 'bg-amber-500' : 'bg-indigo-600';
+
+                                                    // Cancelada da OS tem prioridade visual sobre o status da
+                                                    // alocação em si -- nao faz sentido mostrar "confirmado" numa
+                                                    // OS que foi cancelada depois da alocacao ter sido feita.
+                                                    if ($order?->status === 'Cancelada') {
+                                                        $cardColor = 'bg-gray-400 dark:bg-gray-600';
+                                                        $statusLabel = 'Cancelada';
+                                                    } elseif ($isPendingDigital) {
+                                                        $cardColor = 'bg-amber-500';
+                                                        $statusLabel = 'Pendente';
+                                                    } elseif ($allocation->status === \App\Models\TechnicianAllocation::STATUS_CONFIRMADO) {
+                                                        $cardColor = 'bg-emerald-600';
+                                                        $statusLabel = 'Confirmado';
+                                                    } else {
+                                                        $cardColor = 'bg-indigo-600';
+                                                        $statusLabel = 'Em aberto';
+                                                    }
+
+                                                    $isUrgent = (bool) ($order->is_prazo_fatal ?? false);
                                                 @endphp
                                                 <div wire:key="alloc-{{ $allocation->id }}" class="rounded {{ $cardColor }} text-white text-[10px] px-1.5 py-1 mb-1">
                                                     <div class="flex items-center justify-between gap-1">
@@ -117,17 +136,43 @@
                                                             <x-heroicon-o-printer class="w-3 h-3 shrink-0" title="OS impressa" />
                                                         @endif
                                                     </div>
-                                                    @if($allocation->maintenance_order_id)
-                                                        <a
-                                                            href="{{ route('maintenance-orders.print', $allocation->maintenance_order_id) }}"
-                                                            target="_blank"
-                                                            x-on:click="$wire.printAllocation('{{ $allocation->id }}')"
-                                                            class="mt-0.5 inline-flex items-center gap-1 text-[9px] text-white/80 hover:text-white underline"
-                                                        >
-                                                            <x-heroicon-o-printer class="w-2.5 h-2.5" />
-                                                            Imprimir OS
-                                                        </a>
-                                                    @endif
+
+                                                    <div class="flex items-center gap-1 mt-0.5">
+                                                        <span class="inline-flex items-center rounded-full bg-black/20 px-1.5 py-0.5 text-[9px] font-medium">
+                                                            {{ $statusLabel }}
+                                                        </span>
+                                                        @if($isUrgent)
+                                                            <span class="inline-flex items-center rounded-full bg-red-700 px-1.5 py-0.5 text-[9px] font-semibold">
+                                                                Urgente
+                                                            </span>
+                                                        @endif
+                                                    </div>
+
+                                                    <div class="flex items-center gap-2 mt-0.5">
+                                                        @if($allocation->maintenance_order_id)
+                                                            <a
+                                                                href="{{ route('maintenance-orders.print', $allocation->maintenance_order_id) }}"
+                                                                target="_blank"
+                                                                x-on:click="$wire.printAllocation('{{ $allocation->id }}')"
+                                                                class="inline-flex items-center gap-1 text-[9px] text-white/80 hover:text-white underline"
+                                                            >
+                                                                <x-heroicon-o-printer class="w-2.5 h-2.5" />
+                                                                Imprimir OS
+                                                            </a>
+                                                        @endif
+
+                                                        @if($isPendingDigital)
+                                                            <button
+                                                                type="button"
+                                                                wire:click="confirmAllocation('{{ $allocation->id }}')"
+                                                                wire:key="confirm-gantt-{{ $allocation->id }}"
+                                                                class="inline-flex items-center gap-1 text-[9px] text-white/80 hover:text-white underline"
+                                                            >
+                                                                <x-heroicon-o-check class="w-2.5 h-2.5" />
+                                                                Confirmar
+                                                            </button>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             @empty
                                                 <div class="h-8 rounded border border-dashed border-gray-300 dark:border-gray-700"></div>
