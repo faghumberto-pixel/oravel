@@ -137,4 +137,37 @@ class PropostaComercialResourceTest extends TestCase
             ->assertActionHidden('aprovar')
             ->assertActionHidden('rejeitar');
     }
+
+    public function test_admin_cria_proposta_pelo_desktop_com_itens(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Teste']);
+        $category = AssetCategory::create(['tenant_id' => $tenant->id, 'name' => 'Empilhadeira '.uniqid()]);
+
+        $this->actingAs($admin);
+
+        Livewire::test(\App\Filament\Resources\PropostaComercialResource\Pages\CreatePropostaComercial::class)
+            ->fillForm([
+                'client_id' => $client->id,
+                'seller_user_id' => $admin->id,
+                'items' => [
+                    [
+                        'type' => PropostaComercialItem::TYPE_EQUIPAMENTO,
+                        'asset_category_id' => $category->id,
+                        'description' => 'Empilhadeira 2.5t',
+                        'quantity' => 1,
+                        'unit_price' => 3000,
+                    ],
+                ],
+                'terms' => 'Termos de teste',
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $proposta = PropostaComercial::where('client_id', $client->id)->firstOrFail();
+        $this->assertSame($tenant->id, $proposta->tenant_id);
+        $this->assertSame(PropostaComercial::STATUS_RASCUNHO, $proposta->status);
+        $this->assertSame(1, $proposta->items()->count());
+        $this->assertSame('3000.00', $proposta->items()->first()->unit_price);
+    }
 }

@@ -3,8 +3,14 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PropostaComercialResource\Pages;
+use App\Models\AssetCategory;
+use App\Models\Client;
 use App\Models\PropostaComercial;
 use App\Models\PropostaComercialItem;
+use App\Models\PropostaComercialTemplate;
+use App\Models\User;
+use App\Support\Tenancy;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
@@ -15,9 +21,11 @@ use Filament\Tables\Table;
 
 /**
  * Tela do time Comercial pra revisar propostas enviadas pelo vendedor de
- * campo. Não tem Create/Edit -- a proposta só é editada pelo próprio
- * vendedor (no wizard mobile, enquanto rascunho); o Comercial só visualiza
- * e aciona as Actions de aprovar/rejeitar (ver ViewPropostaComercial).
+ * campo, e (desde 2026-08-28) também criar uma proposta pelo desktop --
+ * o wizard mobile (App\Livewire\PropostaComercialMobile) continua
+ * existindo e funcionando igual, esta é uma segunda porta de entrada,
+ * não substitui a primeira. Edição continua só pelo vendedor no wizard
+ * mobile enquanto a proposta está em rascunho -- não há EditPropostaComercial.
  */
 class PropostaComercialResource extends BaseResource
 {
@@ -35,7 +43,103 @@ class PropostaComercialResource extends BaseResource
 
     public static function form(Form $form): Form
     {
-        return $form->schema([]);
+        return $form->schema([
+            Forms\Components\Section::make('Identificação')
+                ->columns(2)
+                ->schema([
+                    Forms\Components\Select::make('client_id')
+                        ->label('Cliente')
+                        ->options(fn () => Client::where('tenant_id', Tenancy::current()?->id)->orderBy('name')->pluck('name', 'id'))
+                        ->searchable()
+                        ->helperText('Obrigatório antes de enviar ao Comercial -- pode ficar em branco enquanto rascunho.'),
+                    Forms\Components\Select::make('seller_user_id')
+                        ->label('Vendedor')
+                        ->options(fn () => User::where('tenant_id', Tenancy::current()?->id)->orderBy('name')->pluck('name', 'id'))
+                        ->searchable()
+                        ->default(fn () => auth()->id())
+                        ->required(),
+                ]),
+
+            Forms\Components\Section::make('Itens')
+                ->schema([
+                    Forms\Components\Repeater::make('items')
+                        ->relationship()
+                        ->label('')
+                        ->schema([
+                            Forms\Components\Select::make('type')
+                                ->label('Tipo')
+                                ->options(PropostaComercialItem::typeLabels())
+                                ->default(PropostaComercialItem::TYPE_EQUIPAMENTO)
+                                ->live()
+                                ->required(),
+                            Forms\Components\Select::make('asset_category_id')
+                                ->label('Categoria do Equipamento')
+                                ->options(fn () => AssetCategory::where('tenant_id', Tenancy::current()?->id)->orderBy('name')->pluck('name', 'id'))
+                                ->searchable()
+                                ->visible(fn (Forms\Get $get) => $get('type') === PropostaComercialItem::TYPE_EQUIPAMENTO)
+                                ->required(fn (Forms\Get $get) => $get('type') === PropostaComercialItem::TYPE_EQUIPAMENTO),
+                            Forms\Components\TextInput::make('description')
+                                ->label('Descrição')
+                                ->required()
+                                ->maxLength(255),
+                            Forms\Components\TextInput::make('quantity')
+                                ->label('Quantidade')
+                                ->numeric()
+                                ->default(1)
+                                ->minValue(0.01)
+                                ->required(),
+                            Forms\Components\TextInput::make('unit_price')
+                                ->label('Valor Unitário')
+                                ->numeric()
+                                ->prefix('R$')
+                                ->minValue(0)
+                                ->required(),
+                            Forms\Components\TextInput::make('unit_period')
+                                ->label('Período')
+                                ->placeholder('ex: mensal, diária')
+                                ->maxLength(191),
+                            Forms\Components\DatePicker::make('start_date')->label('Início'),
+                            Forms\Components\DatePicker::make('end_date')->label('Fim')->afterOrEqual('start_date'),
+                            Forms\Components\Textarea::make('item_terms')
+                                ->label('Observações do Item')
+                                ->maxLength(2000)
+                                ->columnSpanFull(),
+                        ])
+                        ->columns(3)
+                        ->defaultItems(1)
+                        ->addActionLabel('Adicionar Item'),
+                ]),
+
+            Forms\Components\Section::make('Termos')
+                ->columns(3)
+                ->schema([
+                    Forms\Components\Select::make('proposta_comercial_template_id')
+                        ->label('Aplicar Template')
+                        ->options(fn () => PropostaComercialTemplate::where('tenant_id', Tenancy::current()?->id)->where('is_active', true)->orderBy('name')->pluck('name', 'id'))
+                        ->searchable()
+                        ->live()
+                        ->dehydrated(false)
+                        ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
+                            if (! $state) {
+                                return;
+                            }
+
+                            $template = PropostaComercialTemplate::find($state);
+                            $set('terms', $template?->default_terms);
+
+                            if ($template?->default_valid_days) {
+                                $set('valid_until', now()->addDays($template->default_valid_days)->toDateString());
+                            }
+                        }),
+                    Forms\Components\DatePicker::make('valid_until')
+                        ->label('Válida até')
+                        ->columnSpan(2),
+                    Forms\Components\Textarea::make('terms')
+                        ->label('Termos')
+                        ->columnSpanFull()
+                        ->rows(4),
+                ]),
+        ]);
     }
 
     public static function infolist(Infolist $infolist): Infolist
@@ -136,6 +240,7 @@ class PropostaComercialResource extends BaseResource
     {
         return [
             'index' => Pages\ListPropostaComerciais::route('/'),
+            'create' => Pages\CreatePropostaComercial::route('/create'),
             'view' => Pages\ViewPropostaComercial::route('/{record}'),
         ];
     }
