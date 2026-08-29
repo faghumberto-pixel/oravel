@@ -104,4 +104,75 @@ class MaintenanceOrderChecklistSnapshotFromPmpTest extends TestCase
             ->assertSee('Pneus sem trincas')
             ->assertSee('Conectores de bateria');
     }
+
+    public function test_new_order_gets_pmp_checklist_items_for_overdue_plans(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $group = ChecklistGroup::create(['tenant_id' => $tenant->id, 'name' => 'Grupo PMP Snapshot']);
+        $asset = Asset::create([
+            'tenant_id' => $tenant->id, 'name' => 'Ativo PMP Snapshot', 'status' => Asset::STATUS_DISPONIVEL,
+            'checklist_group_id' => $group->id, 'horimetro_atual' => 500,
+        ]);
+        \App\Models\MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'checklist_group_id' => $group->id, 'name' => 'Troca de óleo',
+            'interval_hours' => 250, 'last_service_hours' => 0, 'is_active' => true,
+        ]);
+
+        $order = MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'description' => 'Preventiva teste',
+            'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE, 'internal_status' => 'aguardando_diagnostico',
+        ]);
+
+        $pmpItems = $order->checklists()->where('checklist_type', 'pmp')->get();
+
+        $this->assertCount(1, $pmpItems);
+        $this->assertSame('Troca de óleo', $pmpItems->first()->item_name);
+        $this->assertFalse($pmpItems->first()->is_completed);
+    }
+
+    public function test_new_order_gets_no_pmp_items_when_no_plan_is_overdue(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $group = ChecklistGroup::create(['tenant_id' => $tenant->id, 'name' => 'Grupo Sem Vencimento']);
+        $asset = Asset::create([
+            'tenant_id' => $tenant->id, 'name' => 'Ativo Sem Vencimento', 'status' => Asset::STATUS_DISPONIVEL,
+            'checklist_group_id' => $group->id, 'horimetro_atual' => 10,
+        ]);
+        \App\Models\MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'checklist_group_id' => $group->id, 'name' => 'Troca de óleo',
+            'interval_hours' => 5000, 'last_service_hours' => 0, 'is_active' => true,
+        ]);
+
+        $order = MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'description' => 'Corretiva teste',
+            'maintenance_type' => MaintenanceOrder::TYPE_CORRECTIVE, 'internal_status' => 'aguardando_diagnostico',
+        ]);
+
+        $this->assertSame(0, $order->checklists()->where('checklist_type', 'pmp')->count());
+    }
+
+    public function test_new_order_gets_one_pmp_item_per_overdue_plan_when_multiple(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $group = ChecklistGroup::create(['tenant_id' => $tenant->id, 'name' => 'Grupo Multiplos PMP']);
+        $asset = Asset::create([
+            'tenant_id' => $tenant->id, 'name' => 'Ativo Multiplos PMP', 'status' => Asset::STATUS_DISPONIVEL,
+            'checklist_group_id' => $group->id, 'horimetro_atual' => 500,
+        ]);
+        \App\Models\MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'checklist_group_id' => $group->id, 'name' => 'Troca de óleo',
+            'interval_hours' => 250, 'last_service_hours' => 0, 'is_active' => true,
+        ]);
+        \App\Models\MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'checklist_group_id' => $group->id, 'name' => 'Verificação de freios',
+            'interval_hours' => 300, 'last_service_hours' => 0, 'is_active' => true,
+        ]);
+
+        $order = MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'description' => 'Preventiva multipla',
+            'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE, 'internal_status' => 'aguardando_diagnostico',
+        ]);
+
+        $this->assertSame(2, $order->checklists()->where('checklist_type', 'pmp')->count());
+    }
 }
