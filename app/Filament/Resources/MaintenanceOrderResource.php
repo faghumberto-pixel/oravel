@@ -549,6 +549,38 @@ class MaintenanceOrderResource extends Resource
                             ])->columns(3)->disableItemCreation()->disableItemDeletion(),
                     ]),
 
+                // --- ABA PMP: itens de Plano de Manutenção Preventiva
+                // vencidos/vencendo do ativo (snapshot criado por
+                // MaintenanceOrderChecklistSnapshotObserver na criação da
+                // OS) -- mesma estrutura da aba Vistoria/Checklist acima,
+                // só filtrando checklist_type='pmp'. Ver
+                // docs/superpowers/specs/2026-08-29-cobertura-pmp-design.md.
+                Forms\Components\Tabs\Tab::make('PMP')
+                    ->visible(fn (?MaintenanceOrder $record) => $record && $record->checklists()->where('checklist_type', 'pmp')->exists())
+                    ->schema([
+                        Forms\Components\Repeater::make('pmp_items')
+                            ->relationship('checklists', modifyQueryUsing: fn (Builder $query) => $query->where('checklist_type', 'pmp'))
+                            ->label('Planos de Manutenção Preventiva aplicáveis')
+                            ->itemLabel(fn (array $state): ?string => $state['item_name'])
+                            ->schema([
+                                Forms\Components\TextInput::make('item_name')->label('Plano')->disabled()->dehydrated(true),
+                                Forms\Components\ToggleButtons::make('status')
+                                    ->label('Conformidade')
+                                    ->options(['conforme' => 'Conforme', 'nao_conforme' => 'Não Conforme', 'nao_aplicavel' => 'N/A'])
+                                    ->colors(['conforme' => 'success', 'nao_conforme' => 'danger', 'nao_aplicavel' => 'gray'])
+                                    ->inline(),
+                                Forms\Components\TextInput::make('notes')->label('Observações / Evidência'),
+                                Forms\Components\SpatieMediaLibraryFileUpload::make('photos')
+                                    ->collection('photos')
+                                    ->label('Foto')
+                                    ->image()
+                                    ->imageResizeMode('contain')
+                                    ->imageResizeTargetWidth('1600')
+                                    ->imageResizeTargetHeight('1600')
+                                    ->imageResizeUpscale(false),
+                            ])->columns(3)->disableItemCreation()->disableItemDeletion(),
+                    ]),
+
                 // --- ABA 4: FOTOS ---
                 Forms\Components\Tabs\Tab::make('Fotos e Evidências')->schema([
                     Forms\Components\Grid::make(2)->schema([

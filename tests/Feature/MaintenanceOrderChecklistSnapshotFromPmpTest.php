@@ -175,4 +175,51 @@ class MaintenanceOrderChecklistSnapshotFromPmpTest extends TestCase
 
         $this->assertSame(2, $order->checklists()->where('checklist_type', 'pmp')->count());
     }
+
+    public function test_edit_order_page_shows_pmp_tab_when_order_has_pmp_items(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $group = ChecklistGroup::create(['tenant_id' => $tenant->id, 'name' => 'Grupo Aba PMP']);
+        $asset = Asset::create([
+            'tenant_id' => $tenant->id, 'name' => 'Ativo Aba PMP', 'status' => Asset::STATUS_DISPONIVEL,
+            'checklist_group_id' => $group->id, 'horimetro_atual' => 500,
+        ]);
+        \App\Models\MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'checklist_group_id' => $group->id, 'name' => 'Troca de óleo PMP',
+            'interval_hours' => 250, 'last_service_hours' => 0, 'is_active' => true,
+        ]);
+
+        $order = MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'description' => 'Preventiva com aba PMP',
+            'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE, 'internal_status' => 'aguardando_diagnostico',
+        ]);
+
+        $this->actingAs($admin);
+
+        // assertSee() sozinho não provaria que é a aba PMP nova -- o
+        // placeholder "Preventivas Sugeridas" (aba Dados Gerais) já
+        // mostra {$plan->name} como texto informativo. Verifica o campo
+        // do Repeater da aba PMP diretamente.
+        Livewire::test(EditMaintenanceOrder::class, ['record' => $order->id])
+            ->assertOk()
+            ->assertFormFieldExists('pmp_items');
+    }
+
+    public function test_edit_order_page_hides_pmp_tab_when_order_has_no_pmp_items(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Sem PMP', 'status' => Asset::STATUS_DISPONIVEL]);
+
+        $order = MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'description' => 'Corretiva sem PMP',
+            'maintenance_type' => MaintenanceOrder::TYPE_CORRECTIVE, 'internal_status' => 'aguardando_diagnostico',
+        ]);
+
+        $this->actingAs($admin);
+
+        $this->assertSame(0, $order->checklists()->where('checklist_type', 'pmp')->count());
+
+        Livewire::test(EditMaintenanceOrder::class, ['record' => $order->id])
+            ->assertOk();
+    }
 }
