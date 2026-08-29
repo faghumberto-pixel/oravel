@@ -55,6 +55,28 @@ class CrmLeadDemoSeeder extends Seeder
             ['name' => 'Dra. Isabela Freire', 'company_name' => 'Clínica Vida Freire', 'segment' => CrmLead::SEGMENT_SERVICOS, 'stage' => CrmLead::STAGE_CONTATO_INICIADO, 'source' => CrmLead::SOURCE_EVENTO, 'city' => 'Americana'],
             ['name' => 'Eng. Paulo Cerqueira', 'company_name' => 'Laboratório Cerqueira Diagnósticos', 'segment' => CrmLead::SEGMENT_SERVICOS, 'stage' => CrmLead::STAGE_CONVERTIDO, 'source' => CrmLead::SOURCE_SITE, 'city' => 'Campinas'],
         ],
+        // Prospects 2026-08-28 (tenants Alumaq/Gêmeos Guindastes/Eletraq),
+        // segmento real de cada tenant (ver tenants.segment em PROD).
+        'alumaq' => [
+            ['name' => 'Cristiano Malheiros', 'company_name' => 'Malheiros Estruturas Metálicas', 'segment' => CrmLead::SEGMENT_INDUSTRIA, 'stage' => CrmLead::STAGE_QUALIFICADO, 'source' => CrmLead::SOURCE_INDICACAO, 'city' => 'Campinas', 'equipment_interest' => 'Máquina de solda MIG/MAG pra linha de produção'],
+            ['name' => 'Denise Aparecida Rocha', 'company_name' => 'Rocha Caldeiraria Industrial', 'segment' => CrmLead::SEGMENT_INDUSTRIA, 'stage' => CrmLead::STAGE_CONTATO_INICIADO, 'source' => CrmLead::SOURCE_SITE, 'city' => 'Sumaré', 'equipment_interest' => 'Equipamento de corte plasma CNC'],
+            ['name' => 'Wellington Sá', 'company_name' => 'Sá Serralheria e Estruturas', 'segment' => CrmLead::SEGMENT_FERRARIA, 'stage' => CrmLead::STAGE_NOVO, 'source' => CrmLead::SOURCE_CONTATO_FRIO, 'city' => 'Hortolândia'],
+            ['name' => 'Priscila Nogueira', 'company_name' => 'Nogueira Manutenção Industrial', 'segment' => CrmLead::SEGMENT_INDUSTRIA, 'stage' => CrmLead::STAGE_CONVERTIDO, 'source' => CrmLead::SOURCE_INDICACAO, 'city' => 'Paulínia'],
+            ['name' => 'Alexandre Tude', 'company_name' => 'Tude Construção Metálica', 'segment' => CrmLead::SEGMENT_CONSTRUCAO, 'stage' => CrmLead::STAGE_PERDIDO, 'source' => CrmLead::SOURCE_EVENTO, 'lost_reason_category' => CrmLead::LOST_REASON_PRECO, 'lost_reason' => 'Optou por comprar equipamento próprio em vez de alugar.'],
+        ],
+        'gemeos-guindastes' => [
+            ['name' => 'Anderson Villela', 'company_name' => 'Villela Montagens Industriais', 'segment' => CrmLead::SEGMENT_INDUSTRIA, 'stage' => CrmLead::STAGE_QUALIFICADO, 'source' => CrmLead::SOURCE_INDICACAO, 'city' => 'Campinas', 'equipment_interest' => 'Guindaste 60t pra montagem de painel elétrico industrial'],
+            ['name' => 'Beatriz Sequeira', 'company_name' => 'Sequeira Construtora', 'segment' => CrmLead::SEGMENT_CONSTRUCAO, 'stage' => CrmLead::STAGE_CONTATO_INICIADO, 'source' => CrmLead::SOURCE_SITE, 'city' => 'Valinhos', 'equipment_interest' => 'Munck pra descarga de pré-moldados'],
+            ['name' => 'Everton Damasceno', 'company_name' => 'Damasceno Torres de Telecom', 'segment' => CrmLead::SEGMENT_SERVICOS, 'stage' => CrmLead::STAGE_NOVO, 'source' => CrmLead::SOURCE_CONTATO_FRIO, 'city' => 'Indaiatuba'],
+            ['name' => 'Marilda Quaresma', 'company_name' => 'Quaresma Incorporadora', 'segment' => CrmLead::SEGMENT_CONSTRUCAO, 'stage' => CrmLead::STAGE_CONVERTIDO, 'source' => CrmLead::SOURCE_INDICACAO, 'city' => 'Campinas'],
+            ['name' => 'Robson Estevão', 'company_name' => 'Estevão Guindastes (concorrente pesquisando preço)', 'segment' => CrmLead::SEGMENT_OUTROS, 'stage' => CrmLead::STAGE_PERDIDO, 'source' => CrmLead::SOURCE_EVENTO, 'lost_reason_category' => CrmLead::LOST_REASON_CONCORRENCIA, 'lost_reason' => 'Fechou com fornecedor local mais barato.'],
+        ],
+        'eletraq' => [
+            ['name' => 'Simone Bacelar', 'company_name' => 'Bacelar Centro de Distribuição', 'segment' => CrmLead::SEGMENT_COMERCIO, 'stage' => CrmLead::STAGE_QUALIFICADO, 'source' => CrmLead::SOURCE_INDICACAO, 'city' => 'Campinas', 'equipment_interest' => 'Empilhadeira elétrica 2,5t pra armazém, contrato mensal'],
+            ['name' => 'Tiago Manso', 'company_name' => 'Manso Logística e Armazenagem', 'segment' => CrmLead::SEGMENT_SERVICOS, 'stage' => CrmLead::STAGE_CONTATO_INICIADO, 'source' => CrmLead::SOURCE_SITE, 'city' => 'Sumaré', 'equipment_interest' => 'Empilhadeira retrátil pra corredor estreito'],
+            ['name' => 'Vanessa Cordeiro', 'company_name' => 'Cordeiro Distribuidora de Alimentos', 'segment' => CrmLead::SEGMENT_COMERCIO, 'stage' => CrmLead::STAGE_NOVO, 'source' => CrmLead::SOURCE_CONTATO_FRIO, 'city' => 'Americana'],
+            ['name' => 'Ubirajara Pontes', 'company_name' => 'Pontes Indústria e Comércio', 'segment' => CrmLead::SEGMENT_INDUSTRIA, 'stage' => CrmLead::STAGE_CONVERTIDO, 'source' => CrmLead::SOURCE_INDICACAO, 'city' => 'Campinas'],
+        ],
     ];
 
     public function run(): void
