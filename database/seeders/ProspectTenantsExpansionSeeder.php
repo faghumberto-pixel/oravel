@@ -225,8 +225,19 @@ class ProspectTenantsExpansionSeeder extends Seeder
 
         $reviewer = User::where('tenant_id', $tenant->id)->where('role', 'colaborador')->first();
 
+        // client_id é NOT NULL em quotes -- nem toda MaintenanceOrder tem
+        // client_id preenchido (asset sem cliente vinculado), então cai
+        // pra um cliente aleatório do tenant quando faltar.
+        $fallbackClientId = \App\Models\Client::where('tenant_id', $tenant->id)->inRandomOrder()->value('id');
+
         foreach ($damages as $damage) {
             if ($damage->quotes()->exists()) {
+                continue;
+            }
+
+            $clientId = $damage->maintenanceOrder?->client_id ?? $fallbackClientId;
+
+            if (! $clientId) {
                 continue;
             }
 
@@ -236,7 +247,7 @@ class ProspectTenantsExpansionSeeder extends Seeder
                 'tenant_id' => $tenant->id,
                 'quotable_type' => EquipmentDamage::class,
                 'quotable_id' => $damage->id,
-                'client_id' => $damage->maintenanceOrder?->client_id,
+                'client_id' => $clientId,
                 'assigned_user_id' => $reviewer?->id,
                 'type' => Quote::TYPE_INDENIZATORIO,
                 'status' => Quote::STATUS_ENVIADO,
