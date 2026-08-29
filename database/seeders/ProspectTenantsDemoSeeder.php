@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Asset;
+use App\Models\AssetCategory;
 use App\Models\Client;
 use App\Models\Contract;
 use App\Models\CriticalityLevel;
@@ -416,8 +417,16 @@ class ProspectTenantsDemoSeeder extends Seeder
 
         $categoryIds = $assets->pluck('asset_category_id')->filter()->unique()->values();
 
+        // category_id é NOT NULL em solicitacoes_locacao (constrained,
+        // sem ->nullable()) -- assets do catálogo PMP não têm
+        // asset_category_id preenchido (usam ChecklistGroup como taxonomia),
+        // então cria uma categoria genérica de fallback pra não pular o
+        // módulo inteiro.
         if ($categoryIds->isEmpty()) {
-            return;
+            $fallback = AssetCategory::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'name' => 'Equipamentos Diversos']
+            );
+            $categoryIds = collect([$fallback->id]);
         }
 
         $plan = ['base' => 3, 'fechada' => 1, 'cancelada' => 1];
