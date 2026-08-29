@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Resources\PropostaComercialResource\Pages\ListPropostaComerciais;
 use App\Filament\Resources\PropostaComercialResource\Pages\ViewPropostaComercial;
 use App\Models\AssetCategory;
 use App\Models\Client;
@@ -169,5 +170,15 @@ class PropostaComercialResourceTest extends TestCase
         $this->assertSame(PropostaComercial::STATUS_RASCUNHO, $proposta->status);
         $this->assertSame(1, $proposta->items()->count());
         $this->assertSame('3000.00', $proposta->items()->first()->unit_price);
+    }
+
+    public function test_botao_nova_proposta_aparece_na_listagem(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+
+        $this->actingAs($admin);
+
+        Livewire::test(ListPropostaComerciais::class)
+            ->assertActionExists('create');
     }
 }
