@@ -126,7 +126,26 @@ class AlocacaoTecnicosPmp extends Page
                 'allocated' => (bool) $order->technician_id,
             ]);
 
-        return $alerts->concat($corrective)->values();
+        // OS preventivas planejadas via Kanban do PMP (PainelPmp::moveCard())
+        // não caíam aqui antes -- a query de $corrective é explicitamente
+        // TYPE_CORRECTIVE, então mover um card pra "Planejado" no PMP não
+        // deixava nada visível pra alocar um técnico (achado 2026-08-29).
+        $preventive = MaintenanceOrder::where('tenant_id', $tenant->id)
+            ->where('maintenance_type', MaintenanceOrder::TYPE_PREVENTIVE)
+            ->where('internal_status', '!=', 'concluido')
+            ->where('status', '!=', 'Cancelada')
+            ->with(['asset', 'maintenancePlan'])
+            ->get()
+            ->filter(fn (MaintenanceOrder $order) => $order->asset)
+            ->map(fn (MaintenanceOrder $order) => [
+                'source_id' => 'os:'.$order->id,
+                'title' => $order->asset->name.' — '.($order->maintenancePlan?->name ?? 'Preventiva'),
+                'failure_category' => null,
+                'criticality' => $order->asset->currentCriticalityLevel(),
+                'allocated' => (bool) $order->technician_id,
+            ]);
+
+        return $alerts->concat($corrective)->concat($preventive)->values();
     }
 
     /**

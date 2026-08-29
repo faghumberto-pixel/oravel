@@ -67,6 +67,33 @@ class AlocacaoTecnicosPmpTest extends TestCase
         $this->assertSame(MaintenanceOrder::FAILURE_CATEGORY_ELETRICO, $queue->first()['failure_category']);
     }
 
+    public function test_preventive_order_planned_via_pmp_kanban_appears_in_queue_as_unallocated(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Preventiva Fila', 'status' => Asset::STATUS_DISPONIVEL]);
+        $plan = MaintenancePlan::create(['tenant_id' => $tenant->id, 'name' => 'Plano Troca de Óleo', 'asset_id' => $asset->id]);
+
+        // Mesmo internal_status gravado por PainelPmp::updateOrderColumn()
+        // quando o card entra na coluna "Planejado" (COLUMN_TO_ORDER_STATUS).
+        MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id,
+            'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
+            'maintenance_plan_id' => $plan->id,
+            'internal_status' => 'aguardando_diagnostico',
+            'status' => 'Aberto',
+        ]);
+
+        $this->actingAs($admin);
+
+        $page = Livewire::test(AlocacaoTecnicosPmp::class);
+        $queue = $page->instance()->queueItems;
+
+        $this->assertCount(1, $queue);
+        $this->assertFalse($queue->first()['allocated']);
+        $this->assertNull($queue->first()['failure_category']);
+        $this->assertStringContainsString('Plano Troca de Óleo', $queue->first()['title']);
+    }
+
     public function test_allocate_creates_technician_allocation_and_syncs_order(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();
