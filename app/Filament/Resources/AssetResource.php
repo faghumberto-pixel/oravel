@@ -387,13 +387,17 @@ class AssetResource extends Resource
                                     // uso mais comum de quem escaneia), nao a tela de edicao.
                                     $url = route('assets.dossier.mobile', ['assetId' => $record->id]);
 
+                                    $name = e($record->name);
+                                    $patrimonio = e($record->patrimonio);
+
                                     return new HtmlString("
                                         <div class='flex flex-col items-center p-4 bg-white border border-gray-200 rounded-xl shadow-sm w-fit'>
                                             <div class='bg-white p-2'>
                                                 <img src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={$url}' alt='QR Code' />
                                             </div>
                                             <span class='text-[10px] mt-2 font-mono text-gray-400 uppercase tracking-widest'>Digital Asset ID</span>
-                                            <span class='text-xs font-bold text-primary-600'>{$record->patrimonio}</span>
+                                            <span class='text-sm font-semibold text-gray-700 text-center'>{$name}</span>
+                                            <span class='text-xs font-bold text-primary-600'>{$patrimonio}</span>
                                         </div>
                                     ");
                                 })->visible(fn ($record) => $record !== null),
