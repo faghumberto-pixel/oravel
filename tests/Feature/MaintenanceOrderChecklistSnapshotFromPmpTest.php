@@ -7,6 +7,7 @@ use App\Models\Asset;
 use App\Models\ChecklistGroup;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenanceOrderChecklist;
+use App\Models\MaintenancePlan;
 use App\Models\Plan;
 use App\Models\Role;
 use App\Models\Tenant;
@@ -113,7 +114,7 @@ class MaintenanceOrderChecklistSnapshotFromPmpTest extends TestCase
             'tenant_id' => $tenant->id, 'name' => 'Ativo PMP Snapshot', 'status' => Asset::STATUS_DISPONIVEL,
             'checklist_group_id' => $group->id, 'horimetro_atual' => 500,
         ]);
-        \App\Models\MaintenancePlan::create([
+        MaintenancePlan::create([
             'tenant_id' => $tenant->id, 'checklist_group_id' => $group->id, 'name' => 'Troca de óleo',
             'interval_hours' => 250, 'last_service_hours' => 0, 'is_active' => true,
         ]);
@@ -138,7 +139,7 @@ class MaintenanceOrderChecklistSnapshotFromPmpTest extends TestCase
             'tenant_id' => $tenant->id, 'name' => 'Ativo Sem Vencimento', 'status' => Asset::STATUS_DISPONIVEL,
             'checklist_group_id' => $group->id, 'horimetro_atual' => 10,
         ]);
-        \App\Models\MaintenancePlan::create([
+        MaintenancePlan::create([
             'tenant_id' => $tenant->id, 'checklist_group_id' => $group->id, 'name' => 'Troca de óleo',
             'interval_hours' => 5000, 'last_service_hours' => 0, 'is_active' => true,
         ]);
@@ -159,11 +160,11 @@ class MaintenanceOrderChecklistSnapshotFromPmpTest extends TestCase
             'tenant_id' => $tenant->id, 'name' => 'Ativo Multiplos PMP', 'status' => Asset::STATUS_DISPONIVEL,
             'checklist_group_id' => $group->id, 'horimetro_atual' => 500,
         ]);
-        \App\Models\MaintenancePlan::create([
+        MaintenancePlan::create([
             'tenant_id' => $tenant->id, 'checklist_group_id' => $group->id, 'name' => 'Troca de óleo',
             'interval_hours' => 250, 'last_service_hours' => 0, 'is_active' => true,
         ]);
-        \App\Models\MaintenancePlan::create([
+        MaintenancePlan::create([
             'tenant_id' => $tenant->id, 'checklist_group_id' => $group->id, 'name' => 'Verificação de freios',
             'interval_hours' => 300, 'last_service_hours' => 0, 'is_active' => true,
         ]);
@@ -184,7 +185,7 @@ class MaintenanceOrderChecklistSnapshotFromPmpTest extends TestCase
             'tenant_id' => $tenant->id, 'name' => 'Ativo Aba PMP', 'status' => Asset::STATUS_DISPONIVEL,
             'checklist_group_id' => $group->id, 'horimetro_atual' => 500,
         ]);
-        \App\Models\MaintenancePlan::create([
+        MaintenancePlan::create([
             'tenant_id' => $tenant->id, 'checklist_group_id' => $group->id, 'name' => 'Troca de óleo PMP',
             'interval_hours' => 250, 'last_service_hours' => 0, 'is_active' => true,
         ]);

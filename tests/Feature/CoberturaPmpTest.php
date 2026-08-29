@@ -5,12 +5,15 @@ namespace Tests\Feature;
 use App\Filament\Pages\CoberturaPmp;
 use App\Models\Asset;
 use App\Models\ChecklistGroup;
+use App\Models\HorimeterReading;
+use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
 use App\Models\Plan;
 use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 class CoberturaPmpTest extends TestCase
@@ -86,7 +89,7 @@ class CoberturaPmpTest extends TestCase
         // Fixa "hoje" no dia 1 do mês -- sem isso o teste é flaky perto do
         // fim do mês real (projectedDueDates() joga a projeção de +5 dias
         // pro mês seguinte quando o teste roda, por exemplo, no dia 29).
-        \Illuminate\Support\Carbon::setTestNow(\Illuminate\Support\Carbon::create(2026, 3, 1));
+        Carbon::setTestNow(Carbon::create(2026, 3, 1));
 
         [$tenant] = $this->makeTenantAdmin();
         $group = ChecklistGroup::create(['tenant_id' => $tenant->id, 'name' => 'Grupo Vencendo']);
@@ -97,11 +100,11 @@ class CoberturaPmpTest extends TestCase
             'tenant_id' => $tenant->id, 'name' => 'Ativo Vencendo', 'status' => Asset::STATUS_DISPONIVEL,
             'checklist_group_id' => $group->id, 'horimetro_atual' => 950,
         ]);
-        \App\Models\HorimeterReading::create([
+        HorimeterReading::create([
             'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'reading' => 900,
             'recorded_at' => now()->subDays(5), 'source' => 'manual',
         ]);
-        \App\Models\HorimeterReading::create([
+        HorimeterReading::create([
             'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'reading' => 950,
             'recorded_at' => now(), 'source' => 'manual',
         ]);
@@ -112,7 +115,7 @@ class CoberturaPmpTest extends TestCase
 
         $this->assertSame('vencendo', CoberturaPmp::statusFor($asset));
 
-        \Illuminate\Support\Carbon::setTestNow();
+        Carbon::setTestNow();
     }
 
     public function test_abrir_os_cria_ordem_preventiva_vinculada_ao_ativo(): void
@@ -132,9 +135,9 @@ class CoberturaPmpTest extends TestCase
 
         $orderId = CoberturaPmp::abrirOs($asset->id);
 
-        $order = \App\Models\MaintenanceOrder::findOrFail($orderId);
+        $order = MaintenanceOrder::findOrFail($orderId);
         $this->assertSame($asset->id, $order->asset_id);
-        $this->assertSame(\App\Models\MaintenanceOrder::TYPE_PREVENTIVE, $order->maintenance_type);
+        $this->assertSame(MaintenanceOrder::TYPE_PREVENTIVE, $order->maintenance_type);
         $this->assertSame('aguardando_diagnostico', $order->internal_status);
     }
 
@@ -159,6 +162,6 @@ class CoberturaPmpTest extends TestCase
 
         CoberturaPmp::abrirOs($asset->id);
 
-        $this->assertSame(1, \App\Models\MaintenanceOrder::where('asset_id', $asset->id)->count());
+        $this->assertSame(1, MaintenanceOrder::where('asset_id', $asset->id)->count());
     }
 }

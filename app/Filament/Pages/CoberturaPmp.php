@@ -2,13 +2,20 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Resources\MaintenanceOrderResource;
 use App\Models\Asset;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Dá visibilidade ao vínculo Plano de Manutenção <-> Ativo (já existente,
@@ -114,27 +121,27 @@ class CoberturaPmp extends Page implements HasTable
         return $order->id;
     }
 
-    public function getTableQuery(): \Illuminate\Database\Eloquent\Builder
+    public function getTableQuery(): Builder
     {
         return Asset::query();
     }
 
-    public function table(\Filament\Tables\Table $table): \Filament\Tables\Table
+    public function table(Table $table): Table
     {
         return $table
             ->query($this->getTableQuery())
             ->columns([
-                \Filament\Tables\Columns\TextColumn::make('name')->label('Ativo')->searchable(),
-                \Filament\Tables\Columns\TextColumn::make('patrimonio')->label('Patrimônio'),
-                \Filament\Tables\Columns\TextColumn::make('checklistGroup.name')->label('Grupo')->placeholder('Sem grupo'),
-                \Filament\Tables\Columns\TextColumn::make('pmp_status')
+                TextColumn::make('name')->label('Ativo')->searchable(),
+                TextColumn::make('patrimonio')->label('Patrimônio'),
+                TextColumn::make('checklistGroup.name')->label('Grupo')->placeholder('Sem grupo'),
+                TextColumn::make('pmp_status')
                     ->label('Status PMP')
                     ->badge()
                     ->state(fn (Asset $record) => static::statusLabel(static::statusFor($record)))
                     ->color(fn (Asset $record) => static::statusColor(static::statusFor($record))),
             ])
             ->filters([
-                \Filament\Tables\Filters\SelectFilter::make('pmp_status')
+                SelectFilter::make('pmp_status')
                     ->label('Status PMP')
                     ->options([
                         'sem_grupo' => 'Sem Grupo',
@@ -142,7 +149,7 @@ class CoberturaPmp extends Page implements HasTable
                         'vencendo' => 'Vencendo',
                         'vencido' => 'Vencido',
                     ])
-                    ->query(function (\Illuminate\Database\Eloquent\Builder $query, array $data) {
+                    ->query(function (Builder $query, array $data) {
                         if (blank($data['value'] ?? null)) {
                             return $query;
                         }
@@ -155,7 +162,7 @@ class CoberturaPmp extends Page implements HasTable
                     }),
             ])
             ->actions([
-                \Filament\Tables\Actions\Action::make('abrir_os')
+                Action::make('abrir_os')
                     ->label('Abrir OS')
                     ->icon('heroicon-o-wrench-screwdriver')
                     ->color('warning')
@@ -165,9 +172,9 @@ class CoberturaPmp extends Page implements HasTable
                     ->action(function (Asset $record) {
                         $orderId = static::abrirOs($record->id);
 
-                        \Filament\Notifications\Notification::make()->title('OS criada')->success()->send();
+                        Notification::make()->title('OS criada')->success()->send();
 
-                        return redirect(\App\Filament\Resources\MaintenanceOrderResource::getUrl('edit', ['record' => $orderId]));
+                        return redirect(MaintenanceOrderResource::getUrl('edit', ['record' => $orderId]));
                     }),
             ]);
     }
