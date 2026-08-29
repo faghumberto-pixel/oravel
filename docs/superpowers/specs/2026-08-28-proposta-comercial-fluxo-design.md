@@ -1,4 +1,4 @@
-# Proposta Comercial: fluxo de envio, e-mail, impressão e avaliação por IA
+# Proposta Comercial: fluxo, e-mail, impressão, IA e campos dinâmicos por tenant
 
 Data: 2026-08-28
 Status: aprovado para implementação
@@ -11,6 +11,17 @@ só interna (time Comercial). O usuário relatou que não fica claro pra
 quem/quando a proposta é enviada, faltam ferramentas de envio por e-mail
 direto do sistema, impressão (individual e em lote) e um recurso de
 avaliação por IA que ajude o Comercial a decidir.
+
+Além disso, cada tenant real tem o próprio documento oficial de Proposta/
+Orçamento/Contrato (PDF com a marca e os campos específicos daquela
+empresa — ex: "Franquia de KM" pode existir num contrato e não no de
+outro tenant). Isso é tratado aqui como **padrão de adequação
+recorrente**, não caso pontual de um tenant: toda vez que um tenant novo
+ou existente muda o próprio documento, ele precisa conseguir refletir
+isso no sistema **sem depender de código/deploy da equipe Oravel** — daí
+o mecanismo de campos dinâmicos por tenant (seção 6), que o tenant
+administra sozinho (upload do PDF, IA sugere campos, tenant revisa/edita/
+exclui/adiciona à vontade).
 
 Módulos de referência já existentes e testados, reaproveitados por este
 design:
@@ -26,6 +37,10 @@ design:
 - `App\Services\AnthropicApiClient` — já em produção no atendente de
   WhatsApp; `send(systemPrompt, userContent, maxTokens)` +
   `parseJson($text)` prontos para resposta estruturada.
+- `App\Models\PropostaComercialTemplate` — já existe hoje, mas resolve um
+  problema diferente (texto padrão/`terms` copiado pra proposta, mesmo
+  formulário fixo pra todos os tenants). Não confundir com o mecanismo da
+  seção 6 (campos, não texto).
 
 ## Escopo
 
@@ -35,6 +50,9 @@ design:
 3. PDF real da proposta (para o e-mail) + impressão via navegador
    individual e em lote (para a tela).
 4. Avaliação por IA sob demanda (botão), 3 critérios combinados.
+5. (não numerado — ver seção 6) Mecanismo de campos dinâmicos por tenant,
+   construído de forma genérica mas ligado só em Proposta Comercial nesta
+   primeira rodada; Orçamento e Contrato reaproveitam depois sem redesenho.
 
 Fora de escopo (não pedido, não implementar): histórico versionado de
 avaliações de IA (reavaliar sobrescreve); SMTP dedicado por tenant;
@@ -245,6 +263,152 @@ Nova coluna `ai_evaluation` (jsonb, nullable) + `ai_evaluated_at`
   `Infolists\Components\TextEntry` (um por critério, com nota + comentário)
   na tela de detalhe, visível só quando `ai_evaluated_at` não é nulo.
 
+## 6. Campos dinâmicos por tenant (Proposta Comercial primeiro)
+
+Objetivo: cada tenant tem campos próprios no documento oficial dele
+(além dos campos fixos que já existem: cliente, itens, valor, datas,
+status). O tenant sobe o PDF real que usa hoje fora do sistema, a IA
+sugere uma lista de campos a partir dele, o tenant revisa essa lista
+(edita nome/tipo, apaga o que não serve, adiciona o que faltou) — e
+dali em diante o formulário de Proposta Comercial daquele tenant mostra
+esses campos, sem nenhuma intervenção de código ou deploy da equipe
+Oravel. Atualizar o documento oficial depois é o tenant repetir esse
+mesmo fluxo (reimportar), nunca pedir um ajuste técnico.
+
+Construído de forma genérica desde o início (`document_type` é um enum
+extensível), mas **ligado só em Proposta Comercial nesta rodada** —
+Quote e Contract reaproveitam a mesma tabela/mecanismo depois, sem
+redesenho, só habilitando a seção dinâmica nos respectivos `form()`.
+
+### 6.1 Modelo de dados
+
+Nova tabela `document_field_definitions`:
+```
+id (uuid), tenant_id (uuid, fk tenants),
+document_type (string: 'proposta_comercial' — único valor usado por ora,
+  mas coluna já pensada pra 'orcamento'/'contrato' no futuro),
+key (string, slug — ex: "franquia_km", único por tenant+document_type),
+label (string — ex: "Franquia de KM"),
+field_type (string enum: texto|numero|data|selecao),
+options (jsonb, nullable — só usado quando field_type=selecao),
+is_required (boolean, default false),
+sort_order (integer, default 0),
+timestamps
+```
+
+`App\Models\DocumentFieldDefinition`: `BelongsToTenant`, `HasSaaSMetadata`
+(`saasFeatureKey = 'tabela_document_field_definitions'`,
+`saasPermissionSlug = 'campo_documento'`, `saasModuleLabel = 'Campos
+Personalizados de Documentos'`). Constantes `DOCUMENT_TYPE_*` e
+`FIELD_TYPE_*`. Método estático `forTenantAndType(string $tenantId,
+string $documentType)` — query scope reaproveitado tanto pelo form
+quanto pela impressão/PDF.
+
+Nova coluna `custom_fields` (jsonb, nullable, default `{}`) em
+`proposta_comerciais` — guarda os valores preenchidos, chaveados pelo
+`key` da definição: `{"franquia_km": "500", "prazo_instalacao":
+"2026-09-15"}`. Sem FK formal entre chave do jsonb e a linha de
+definição (jsonb não suporta isso) — a integridade é garantida na
+camada de aplicação (o formulário só grava chaves que vêm de definições
+existentes daquele tenant).
+
+### 6.2 Tela "Campos Personalizados" (gestão manual, sem PDF)
+
+`App\Filament\Resources\DocumentFieldDefinitionResource` — novo Resource,
+dentro do grupo de configuração do tenant (mesmo grupo de "Perfis de
+Acesso"/Templates). Acesso: `admin` (bypass já existe via
+`AbstractPolicy`) + role `Comercial` (`EquipmentDamage::ROLE_COMERCIAL`) —
+exige um caso especial na policy, já que hoje `AbstractPolicy` só dá
+bypass total pra `admin`; usuário com role Comercial mas sem permissão
+granular `criar_campo_documento` não deveria ver este Resource por
+padrão — resolvido concedendo essa permissão automaticamente pra role
+Comercial na mesma migration/seeder que cria a tabela (mesmo espírito de
+`RoleResource::firstOrCreate()` já usado hoje).
+
+Form: `key` (gerado via `Str::slug` do `label`, readonly depois de
+criado — mudar a key quebraria valores já salvos no jsonb), `label`,
+`field_type` (`Select`), `options` (Repeater, só visível se
+`field_type = selecao`), `is_required`, `sort_order` (`Reorderable` na
+tabela, drag-and-drop nativo do Filament).
+
+### 6.3 Importação por IA (upload do PDF → sugestão → revisão)
+
+Nova página `App\Filament\Pages\ImportarModeloDocumento` (ou
+Action dentro do próprio `DocumentFieldDefinitionResource` — a decidir
+na hora da implementação, sem impacto no design):
+
+1. `Forms\Components\FileUpload::make('pdf')` — mesmo padrão de
+   `ContractResource::vistoria_entrega` (`directory('modelos-documento')`,
+   aceita só `application/pdf`).
+2. Botão "Analisar com IA": `App\Services\DocumentFieldExtractor`
+   (novo) — usa `smalot/pdfparser` (`composer require smalot/pdfparser`,
+   dependência nova, sem lib de leitura de PDF no projeto hoje) pra
+   extrair texto puro do arquivo, manda esse texto pro
+   `AnthropicApiClient::send()` com um prompt pedindo uma lista JSON de
+   campos candidatos (`[{"label": "...", "field_type": "texto|numero|
+   data|selecao", "options": [...]}]`), usa `parseJson()` no retorno.
+3. Sugestões preenchem a tabela de "Campos Personalizados" como **rascunho
+   local na sessão** (não gravado direto no banco) — o tenant vê a lista,
+   edita cada linha (label, tipo, obrigatório) ou remove antes de
+   confirmar. Ação "Salvar Campos" só então persiste em
+   `document_field_definitions` (bulk insert).
+4. O PDF enviado não é usado depois de gerar a sugestão — não vira
+   template de saída, só insumo pontual da extração. Fica salvo no
+   storage só como referência histórica ("PDF que originou estes
+   campos"), sem papel funcional no fluxo de emissão.
+5. Falha de extração (PDF escaneado como imagem, sem texto selecionável,
+   ou IA fora do ar): mensagem clara orientando o tenant a usar
+   "Adicionar Campo" manualmente em vez de importar — nunca bloqueia o
+   uso do sistema.
+
+### 6.4 Formulário dinâmico em `PropostaComercialResource`
+
+```php
+Forms\Components\Section::make('Campos Adicionais')
+    ->schema(fn () => DocumentFieldDefinition::forTenantAndType(
+            Tenancy::current()->id,
+            DocumentFieldDefinition::DOCUMENT_TYPE_PROPOSTA_COMERCIAL
+        )
+        ->orderBy('sort_order')
+        ->get()
+        ->map(fn (DocumentFieldDefinition $def) => static::buildDynamicField($def))
+        ->all())
+    ->visible(fn () => DocumentFieldDefinition::forTenantAndType(
+        Tenancy::current()->id,
+        DocumentFieldDefinition::DOCUMENT_TYPE_PROPOSTA_COMERCIAL
+    )->exists()),
+```
+
+`buildDynamicField(DocumentFieldDefinition $def)`: mapeia `field_type`
+para o componente Filament certo (`TextInput` p/ texto, `TextInput::
+numeric()` p/ numero, `DatePicker` p/ data, `Select` com `options` p/
+selecao), sempre com `->statePath("custom_fields.{$def->key}")` — grava
+e lê direto do jsonb sem mutators manuais, e `->required($def->
+is_required)`.
+
+### 6.5 Impacto em impressão e PDF do e-mail
+
+O partial `_conteudo.blade.php` (seção 4) ganha, ao final, um loop sobre
+`DocumentFieldDefinition::forTenantAndType($proposta->tenant_id,
+'proposta_comercial')->orderBy('sort_order')->get()`, exibindo
+`label: valor` pra cada definição cujo `key` existe em
+`$proposta->custom_fields` — não precisa saber os campos de antemão,
+funciona igual pra qualquer tenant, com qualquer quantidade de campos
+(inclusive zero, onde a seção simplesmente não aparece).
+
+### 6.6 Fora de escopo desta rodada (mencionar, não implementar)
+
+- Aplicar o mesmo mecanismo em Quote/Contract — arquitetura já suporta
+  (`document_type` extensível), mas a implementação nos outros 2
+  Resources fica para depois de validar em Proposta Comercial.
+- Versionamento de definições de campo (se o tenant editar um campo
+  depois que propostas já usaram a versão antiga, não há histórico —
+  o valor salvo no jsonb da proposta antiga permanece intacto, só o
+  *label* exibido na tela/impressão passa a refletir a definição atual).
+- OCR de PDF escaneado (imagem, sem texto selecionável) — fora do
+  alcance de `smalot/pdfparser`; tenant usa "Adicionar Campo" manual
+  nesse caso.
+
 ## Testes
 
 Seguir `superpowers:test-driven-development` para as partes com lógica
@@ -261,3 +425,12 @@ de negócio real (não é seed/dado, é comportamento):
   confirma parsing e persistência — não bater na API real em teste.
 - Envio de e-mail: `Mail::fake()` + `assertQueued(GenericPdfMail::class)`
   nos dois pontos de disparo.
+- `DocumentFieldDefinitionTest`: CRUD tenant-scoped, `key` único por
+  tenant+document_type, reorder.
+- `DocumentFieldExtractorTest`: mock do `AnthropicApiClient` (não bater
+  API real), confirma parsing da lista sugerida a partir de um texto de
+  exemplo; caso de PDF sem texto extraível retorna lista vazia sem
+  lançar exceção.
+- `PropostaComercialResource` (Filament test, `Livewire::test`): tenant
+  sem definições não mostra a seção "Campos Adicionais"; tenant com
+  definições mostra os campos certos e persiste em `custom_fields`.
