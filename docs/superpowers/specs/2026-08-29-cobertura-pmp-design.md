@@ -52,14 +52,22 @@ Tabela (não Kanban) com uma linha por `Asset` do tenant:
 | Planos aplicáveis | contagem de `MaintenancePlan::applicableFor($asset)` |
 
 **Status PMP** (badge colorido, mesma paleta de cores já usada em
-`Asset::statusColor()`):
+`Asset::statusColor()`). Correção de suposição inicial: não existe uma
+"janela de alerta em horas" configurável no código — `CheckMaintenanceDueAlerts`
+só distingui vencido/não-vencido (`is_overdue`). O sinal certo de
+"vencendo em breve" já existe pronto em
+`MaintenancePlan::projectedDueDates($asset, $months = 3)`
+(`app/Models/MaintenancePlan.php:258-307`), que projeta o mês de
+vencimento usando a mesma regra de `dueStatusForAsset()` + uso médio
+diário do horímetro (`Asset::getAverageHourlyUsage()`). "Vencendo" =
+alguma projeção com `month_offset === 0` (vence ainda este mês, mas não
+está vencido agora):
 - `sem_grupo` (cinza) — `checklist_group_id` nulo, ou grupo sem nenhum
   `MaintenancePlan` ativo.
-- `em_dia` (verde) — todos os planos aplicáveis com `is_overdue = false`
-  e fora da janela de alerta.
-- `vencendo` (amarelo) — algum plano dentro da janela de alerta (mesmo
-  critério de `MaintenanceDueAlert`, ver `CheckMaintenanceDueAlerts`),
-  ainda não vencido.
+- `em_dia` (verde) — nenhum plano vencido, e nenhuma projeção com
+  `month_offset === 0`.
+- `vencendo` (amarelo) — nenhum plano vencido, mas `projectedDueDates()`
+  retorna ao menos uma entrada com `month_offset === 0`.
 - `vencido` (vermelho) — algum plano com `is_overdue = true`.
 
 Filtro por Status PMP (`Tables\Filters\SelectFilter`) e por Grupo.
@@ -119,9 +127,11 @@ $plans = MaintenancePlan::applicableFor($asset)->where('is_active', true);
 
 foreach ($plans as $plan) {
     $status = $plan->dueStatusForAsset($asset);
+    $vencendoEsteMes = collect($plan->projectedDueDates($asset, 0))
+        ->contains(fn (array $p) => $p['month_offset'] === 0);
 
-    if (! $status['is_overdue'] && ($status['due_at_hours'] - (float) $asset->horimetro_atual) > config('oravel.pmp_alert_window_hours', 50)) {
-        continue; // fora da janela de alerta, não polui a aba PMP com planos ainda distantes
+    if (! $status['is_overdue'] && ! $vencendoEsteMes) {
+        continue; // nem vencido nem vencendo este mês, não polui a aba PMP com planos ainda distantes
     }
 
     MaintenanceOrderChecklist::create([
@@ -136,10 +146,9 @@ foreach ($plans as $plan) {
 }
 ```
 
-(O limiar de "janela de alerta" deve reaproveitar a mesma constante/config
-já usada por `CheckMaintenanceDueAlerts` para calcular `vencendo` — não
-inventar um segundo número solto; confirmar o nome exato da config na
-implementação.)
+Mesmo critério `month_offset === 0` usado na Parte 1 (seção "Status PMP"),
+via `projectedDueDates($asset, 0)` — só precisa do mês atual aqui, não
+dos 3 meses de projeção padrão.
 
 ### 2.2 Nova aba no formulário
 
