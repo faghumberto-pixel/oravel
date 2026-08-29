@@ -29,6 +29,7 @@ class EditUser extends EditRecord
     {
         $employee = Employee::where('user_id', $data['id'])->first();
 
+        $data['is_employee'] = $employee !== null;
         $data['employee_cpf'] = $employee?->cpf;
         $data['employee_role_title'] = $employee?->role_title;
         $data['employee_admission_date'] = $employee?->admission_date?->toDateString();
@@ -39,22 +40,33 @@ class EditUser extends EditRecord
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $this->employeeData = [
+            'is_employee' => (bool) ($data['is_employee'] ?? false),
             'cpf' => $data['employee_cpf'] ?? null,
             'role_title' => $data['employee_role_title'] ?? null,
             'admission_date' => $data['employee_admission_date'] ?? null,
         ];
-        unset($data['employee_cpf'], $data['employee_role_title'], $data['employee_admission_date']);
+        unset($data['is_employee'], $data['employee_cpf'], $data['employee_role_title'], $data['employee_admission_date']);
 
         return $data;
     }
 
+    /**
+     * Desligar o toggle NUNCA apaga o Employee (perderia CPF real/histórico
+     * já preenchido) -- só desvincula (user_id = null), mesmo padrão que o
+     * EmployeeResource já suporta pra colaborador avulso/terceirizado.
+     */
     protected function afterSave(): void
     {
         $user = $this->getRecord();
+        $employee = Employee::where('user_id', $user->id)->first();
 
-        if (blank($this->employeeData['cpf'] ?? null)) {
+        if (! ($this->employeeData['is_employee'] ?? false)) {
+            $employee?->update(['user_id' => null]);
+
             return;
         }
+
+        $cpf = $this->employeeData['cpf'] ?? null;
 
         Employee::updateOrCreate(
             ['user_id' => $user->id],
@@ -62,9 +74,10 @@ class EditUser extends EditRecord
                 'tenant_id' => $user->tenant_id,
                 'department_id' => $user->department_id,
                 'name' => $user->name,
-                'cpf' => $this->employeeData['cpf'],
+                'cpf' => blank($cpf) ? ($employee?->cpf ?? Employee::nextPlaceholderCpf($user->tenant_id)) : $cpf,
                 'role_title' => $this->employeeData['role_title'],
                 'admission_date' => $this->employeeData['admission_date'],
+                'status' => blank($cpf) ? ($employee?->status ?? Employee::STATUS_INCOMPLETO) : Employee::STATUS_ATIVO,
             ],
         );
     }

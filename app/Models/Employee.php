@@ -65,6 +65,24 @@ class Employee extends Model
         return str_starts_with($this->cpf, self::CPF_PLACEHOLDER_PREFIX);
     }
 
+    /**
+     * Próximo CPF placeholder livre do tenant (prefixo 00000 + sequência),
+     * mesmo padrão usado por tenant:backfill-employees -- evita colidir
+     * com o unique(tenant_id, cpf) quando várias sequências placeholder
+     * já existem (backfill + toggle "Tornar Colaborador" sem CPF).
+     */
+    public static function nextPlaceholderCpf(string $tenantId): string
+    {
+        $lastSequence = self::withoutGlobalScopes()
+            ->where('tenant_id', $tenantId)
+            ->where('cpf', 'like', self::CPF_PLACEHOLDER_PREFIX.'%')
+            ->get(['cpf'])
+            ->map(fn (self $e) => (int) substr($e->cpf, strlen(self::CPF_PLACEHOLDER_PREFIX)))
+            ->max() ?? 0;
+
+        return self::CPF_PLACEHOLDER_PREFIX.str_pad((string) ($lastSequence + 1), 6, '0', STR_PAD_LEFT);
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

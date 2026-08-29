@@ -119,13 +119,19 @@ class UserResource extends Resource
                     ])->columns(2),
 
                 Forms\Components\Section::make('Vínculo com Departamento Pessoal')
-                    ->description('Preencha o CPF se este funcionário também bate ponto, é alocado a equipamentos ou precisa de controle de horas formal. Cria/atualiza automaticamente o cadastro de Colaborador correspondente (o CPF é o campo que decide se o vínculo é criado).')
+                    ->description('Ligue se este funcionário também bate ponto, é alocado a equipamentos ou precisa de controle de horas formal -- cria (ou reativa) o cadastro de Colaborador correspondente. Desligar não apaga o Colaborador já existente, só desvincula.')
                     ->schema([
+                        Forms\Components\Toggle::make('is_employee')
+                            ->label('Tornar Colaborador')
+                            ->live()
+                            ->dehydrated(true),
                         Forms\Components\TextInput::make('employee_cpf')
                             ->label('CPF')
                             ->length(11)
                             ->numeric()
                             ->dehydrated(true)
+                            ->visible(fn (Forms\Get $get) => $get('is_employee'))
+                            ->helperText('Deixe em branco para preencher depois -- o Colaborador nasce com status "Incompleto".')
                             ->rule(function (?User $record) {
                                 return function (string $attribute, $value, \Closure $fail) use ($record) {
                                     $tenant = Tenancy::current();
@@ -144,10 +150,12 @@ class UserResource extends Resource
                         Forms\Components\TextInput::make('employee_role_title')
                             ->label('Cargo')
                             ->maxLength(191)
-                            ->dehydrated(true),
+                            ->dehydrated(true)
+                            ->visible(fn (Forms\Get $get) => $get('is_employee')),
                         Forms\Components\DatePicker::make('employee_admission_date')
                             ->label('Data de Admissão')
-                            ->dehydrated(true),
+                            ->dehydrated(true)
+                            ->visible(fn (Forms\Get $get) => $get('is_employee')),
                     ])->columns(3),
             ]);
     }
