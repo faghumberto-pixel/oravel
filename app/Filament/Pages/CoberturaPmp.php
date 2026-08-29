@@ -7,6 +7,8 @@ use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
 
 /**
  * Dá visibilidade ao vínculo Plano de Manutenção <-> Ativo (já existente,
@@ -15,8 +17,10 @@ use Filament\Support\Enums\MaxWidth;
  * MaintenanceOrderResource.php, Placeholder "Preventivas Sugeridas").
  * Ver docs/superpowers/specs/2026-08-29-cobertura-pmp-design.md.
  */
-class CoberturaPmp extends Page
+class CoberturaPmp extends Page implements HasTable
 {
+    use InteractsWithTable;
+
     protected static bool $shouldRegisterNavigation = true;
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
@@ -86,5 +90,85 @@ class CoberturaPmp extends Page
             'vencido' => 'Vencido',
             default => 'Sem Grupo',
         };
+    }
+
+    public static function abrirOs(string $assetId): ?string
+    {
+        $asset = Asset::find($assetId);
+
+        if (! $asset) {
+            return null;
+        }
+
+        $order = MaintenanceOrder::create([
+            'tenant_id' => $asset->tenant_id,
+            'asset_id' => $asset->id,
+            'client_id' => $asset->client_id,
+            'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
+            'status' => 'Aberto',
+            'internal_status' => 'aguardando_diagnostico',
+            'scheduled_at' => now(),
+            'description' => 'Planejada via Cobertura de PMP.',
+        ]);
+
+        return $order->id;
+    }
+
+    public function getTableQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return Asset::query();
+    }
+
+    public function table(\Filament\Tables\Table $table): \Filament\Tables\Table
+    {
+        return $table
+            ->query($this->getTableQuery())
+            ->columns([
+                \Filament\Tables\Columns\TextColumn::make('name')->label('Ativo')->searchable(),
+                \Filament\Tables\Columns\TextColumn::make('patrimonio')->label('Patrimônio'),
+                \Filament\Tables\Columns\TextColumn::make('checklistGroup.name')->label('Grupo')->placeholder('Sem grupo'),
+                \Filament\Tables\Columns\TextColumn::make('pmp_status')
+                    ->label('Status PMP')
+                    ->badge()
+                    ->state(fn (Asset $record) => static::statusLabel(static::statusFor($record)))
+                    ->color(fn (Asset $record) => static::statusColor(static::statusFor($record))),
+            ])
+            ->filters([
+                \Filament\Tables\Filters\SelectFilter::make('pmp_status')
+                    ->label('Status PMP')
+                    ->options([
+                        'sem_grupo' => 'Sem Grupo',
+                        'em_dia' => 'Em Dia',
+                        'vencendo' => 'Vencendo',
+                        'vencido' => 'Vencido',
+                    ])
+                    ->query(function (\Illuminate\Database\Eloquent\Builder $query, array $data) {
+                        if (blank($data['value'] ?? null)) {
+                            return $query;
+                        }
+
+                        $ids = Asset::query()->get()->filter(
+                            fn (Asset $asset) => static::statusFor($asset) === $data['value']
+                        )->pluck('id');
+
+                        return $query->whereIn('id', $ids);
+                    }),
+            ])
+            ->actions([
+                \Filament\Tables\Actions\Action::make('abrir_os')
+                    ->label('Abrir OS')
+                    ->icon('heroicon-o-wrench-screwdriver')
+                    ->color('warning')
+                    ->visible(fn (Asset $record) => in_array(static::statusFor($record), ['vencendo', 'vencido'], true))
+                    ->requiresConfirmation()
+                    ->modalDescription(fn (Asset $record) => 'Cria uma OS preventiva para "'.$record->name.'" cobrindo todos os planos vencidos/vencendo, e já entra na Fila de Alocação de Técnicos.')
+                    ->action(function (Asset $record) {
+                        $orderId = static::abrirOs($record->id);
+
+                        \Filament\Notifications\Notification::make()->title('OS criada')->success()->send();
+
+                        return redirect(\App\Filament\Resources\MaintenanceOrderResource::getUrl('edit', ['record' => $orderId]));
+                    }),
+            ]);
     }
 }

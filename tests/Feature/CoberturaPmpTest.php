@@ -114,4 +114,51 @@ class CoberturaPmpTest extends TestCase
 
         \Illuminate\Support\Carbon::setTestNow();
     }
+
+    public function test_abrir_os_cria_ordem_preventiva_vinculada_ao_ativo(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $group = ChecklistGroup::create(['tenant_id' => $tenant->id, 'name' => 'Grupo Abrir OS']);
+        $asset = Asset::create([
+            'tenant_id' => $tenant->id, 'name' => 'Ativo Abrir OS', 'status' => Asset::STATUS_DISPONIVEL,
+            'checklist_group_id' => $group->id, 'horimetro_atual' => 500,
+        ]);
+        MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'checklist_group_id' => $group->id, 'name' => 'Troca de óleo',
+            'interval_hours' => 250, 'last_service_hours' => 0, 'is_active' => true,
+        ]);
+
+        $this->actingAs($admin);
+
+        $orderId = CoberturaPmp::abrirOs($asset->id);
+
+        $order = \App\Models\MaintenanceOrder::findOrFail($orderId);
+        $this->assertSame($asset->id, $order->asset_id);
+        $this->assertSame(\App\Models\MaintenanceOrder::TYPE_PREVENTIVE, $order->maintenance_type);
+        $this->assertSame('aguardando_diagnostico', $order->internal_status);
+    }
+
+    public function test_abrir_os_com_multiplos_planos_vencidos_cria_uma_unica_os(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $group = ChecklistGroup::create(['tenant_id' => $tenant->id, 'name' => 'Grupo Multiplos Planos']);
+        $asset = Asset::create([
+            'tenant_id' => $tenant->id, 'name' => 'Ativo Multiplos Planos', 'status' => Asset::STATUS_DISPONIVEL,
+            'checklist_group_id' => $group->id, 'horimetro_atual' => 500,
+        ]);
+        MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'checklist_group_id' => $group->id, 'name' => 'Troca de óleo',
+            'interval_hours' => 250, 'last_service_hours' => 0, 'is_active' => true,
+        ]);
+        MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'checklist_group_id' => $group->id, 'name' => 'Verificação de freios',
+            'interval_hours' => 300, 'last_service_hours' => 0, 'is_active' => true,
+        ]);
+
+        $this->actingAs($admin);
+
+        CoberturaPmp::abrirOs($asset->id);
+
+        $this->assertSame(1, \App\Models\MaintenanceOrder::where('asset_id', $asset->id)->count());
+    }
 }
