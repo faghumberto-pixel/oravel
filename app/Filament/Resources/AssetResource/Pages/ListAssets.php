@@ -28,15 +28,11 @@ class ListAssets extends ListRecords
     {
         return [
             AssetResource\Widgets\AssetStats::class,
-            AssetResource\Widgets\AssetStatusChartWidget::class,
-            AssetResource\Widgets\FleetAvailabilityGaugeChartWidget::class,
-            AssetResource\Widgets\AssetsCreatedTrendWidget::class,
-            AssetResource\Widgets\AssetsByCategoryChartWidget::class,
         ];
     }
 
     public function getHeaderWidgetsColumns(): int|string|array
     {
-        return 4;
+        return 2;
     }
 }

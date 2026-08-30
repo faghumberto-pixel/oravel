@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Filament\Resources\AssetResource;
 use App\Filament\Resources\AssetResource\Widgets\AssetsByCategoryChartWidget;
 use App\Filament\Resources\AssetResource\Widgets\AssetsCreatedTrendWidget;
 use App\Filament\Resources\AssetResource\Widgets\FleetAvailabilityGaugeChartWidget;
@@ -80,22 +79,11 @@ class ResourceListChartsTest extends TestCase
     /**
      * Pedido do usuário: "não é apenas 1 gráfico por página, são 3", depois
      * "está faltando mais um para ficar uniforme" -- 4 gráficos por
-     * página agora, lado a lado (getHeaderWidgetsColumns()=4), cada
-     * página abaixo confirma os 4 títulos.
+     * página, lado a lado (getHeaderWidgetsColumns()=4), cada página abaixo
+     * confirma os 4 títulos. Ativos saiu dessa lista em 2026-08-30 (pedido
+     * do usuário: retirar os gráficos da tela de Ativos, deixar só os
+     * cards Total de Ativos / Ativos sem PMP -- ver AssetStatsWidgetTest).
      */
-    public function test_assets_index_shows_all_4_charts(): void
-    {
-        [, $admin] = $this->makeTenantAdmin(['tabela_assets']);
-        $this->actingAs($admin);
-
-        $html = $this->get(AssetResource::getUrl('index'))->assertOk()->getContent();
-
-        $this->assertStringContainsString('Ativos por Status', $html);
-        $this->assertStringContainsString('Taxa de Disponibilidade da Frota', $html);
-        $this->assertStringContainsString('Ativos Cadastrados por Mês', $html);
-        $this->assertStringContainsString('Ativos por Categoria', $html);
-    }
-
     public function test_leads_index_shows_all_4_charts(): void
     {
         [, $admin] = $this->makeTenantAdmin(['tabela_crm_leads']);
@@ -528,14 +516,6 @@ class ResourceListChartsTest extends TestCase
         $this->assertStringNotContainsString('max-height: 190px', $html);
         $this->assertStringNotContainsString('max-height: 260px', $html);
         $this->assertStringNotContainsString('max-height: 280px', $html);
-    }
-
-    public function test_assets_page_has_uniform_chart_height(): void
-    {
-        [, $admin] = $this->makeTenantAdmin(['tabela_assets']);
-        $this->actingAs($admin);
-
-        $this->assertUniformChartHeight($this->get(AssetResource::getUrl('index'))->assertOk()->getContent());
     }
 
     public function test_leads_page_has_uniform_chart_height(): void
