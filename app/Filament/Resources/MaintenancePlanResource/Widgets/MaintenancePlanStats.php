@@ -2,12 +2,20 @@
 
 namespace App\Filament\Resources\MaintenancePlanResource\Widgets;
 
-use App\Models\Asset;
+use App\Filament\Resources\MaintenancePlanResource\Support\PlanStatus;
 use App\Models\MaintenancePlan;
 use App\Support\Tenancy;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
+/**
+ * 3 cards de status por PLANO (Vencidos / A Vencer / Dentro do Prazo),
+ * clicáveis -- cada um aplica o filtro plan_status da tabela via
+ * querystring (?tableFilters[plan_status][value]=vencido), mesmo mecanismo
+ * usado pelo botão Imprimir de MaintenancePlanResource pra respeitar o
+ * filtro atual. Substituiu os 4 stats genéricos anteriores (pedido do
+ * usuário 2026-08-30: cards clicáveis que filtram a lista).
+ */
 class MaintenancePlanStats extends BaseWidget
 {
     public static function canView(): bool
@@ -16,56 +24,46 @@ class MaintenancePlanStats extends BaseWidget
     }
 
     /**
-     * "Vencido" agora precisa lidar com dois formatos: plano por-Ativo
-     * (last_service_hours direto) e template por-Grupo (compartilhado por
-     * varios Ativos -- cada combinacao plano+ativo tem seu proprio status,
-     * calculado via dueStatusForAsset()). Itera por ATIVO (nao por plano)
-     * e usa MaintenancePlan::applicableFor() -- assim um item do grupo que
-     * o Ativo ja personalizou (mesma logica de override por nome) conta
-     * uma vez so, nao duas.
+     * Todo Filament\Widgets\Widget é lazy por padrão (Filament\Support\
+     * Concerns\CanBeLazy, $isLazy=true) -- carrega o conteúdo real via uma
+     * requisição Livewire separada depois do placeholder inicial. Desligado
+     * aqui: os cards precisam aparecer já na 1ª resposta (mesmo padrão de
+     * AssetStatusChartWidget).
      */
+    protected static bool $isLazy = false;
+
     protected function getStats(): array
     {
         $planos = MaintenancePlan::with(['asset', 'checklistGroup'])->where('is_active', true)->get();
 
-        $assetsByGroup = Asset::whereIn('checklist_group_id', $planos->pluck('checklist_group_id')->filter()->unique())
-            ->get()
-            ->groupBy('checklist_group_id');
+        $porStatus = $planos->groupBy(fn (MaintenancePlan $plan) => PlanStatus::forPlan($plan));
 
-        $assetsComPlanoProprio = $planos->whereNotNull('asset_id')->pluck('asset')->filter();
-
-        $assetsRelevantes = $assetsByGroup->flatten(1)->merge($assetsComPlanoProprio)->unique('id');
-
-        $vencidos = 0;
-        $assetsCobertosIds = collect();
-
-        foreach ($assetsRelevantes as $asset) {
-            $planosDoAtivo = MaintenancePlan::applicableFor($asset, $planos);
-
-            if ($planosDoAtivo->isEmpty()) {
-                continue;
-            }
-
-            $assetsCobertosIds->push($asset->id);
-            $vencidos += $planosDoAtivo->filter(fn (MaintenancePlan $plano) => $plano->dueStatusForAsset($asset)['is_overdue'])->count();
-        }
+        $vencidos = $porStatus->get('vencido', collect())->count();
+        $aVencer = $porStatus->get('a_vencer', collect())->count();
+        $dentroDoPrazo = $porStatus->get('dentro_do_prazo', collect())->count();
 
         return [
-            Stat::make('Total de Itens de Preventiva', $planos->count())
-                ->description('Por-ativo + templates de grupo')
-                ->color('gray'),
+            Stat::make('Vencidos', $vencidos)
+                ->description('Planos com item de preventiva vencido')
+                ->color($vencidos > 0 ? 'danger' : 'success')
+                ->url(static::filterUrl('vencido')),
 
-            Stat::make('Ativos', $planos->count())
-                ->description('Em monitoramento')
-                ->color('info'),
+            Stat::make('A Vencer', $aVencer)
+                ->description('Vence dentro deste mês')
+                ->color($aVencer > 0 ? 'warning' : 'success')
+                ->url(static::filterUrl('a_vencer')),
 
-            Stat::make('Vencidos por Horímetro', $vencidos)
-                ->description('Item × Ativo que ultrapassou o intervalo previsto')
-                ->color($vencidos > 0 ? 'danger' : 'success'),
-
-            Stat::make('Ativos Cobertos', $assetsCobertosIds->unique()->count())
-                ->description('Com ao menos 1 item de preventiva aplicável')
-                ->color('success'),
+            Stat::make('Dentro do Prazo', $dentroDoPrazo)
+                ->description('Sem vencimento próximo')
+                ->color('success')
+                ->url(static::filterUrl('dentro_do_prazo')),
         ];
+    }
+
+    private static function filterUrl(string $status): string
+    {
+        return route('filament.admin.resources.maintenance-plans.index', [
+            'tableFilters' => ['plan_status' => ['value' => $status]],
+        ]);
     }
 }

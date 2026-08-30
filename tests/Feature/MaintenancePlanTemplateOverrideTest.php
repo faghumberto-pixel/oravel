@@ -192,7 +192,18 @@ class MaintenancePlanTemplateOverrideTest extends TestCase
         $this->assertCount(1, $linhasDoAtivo);
     }
 
-    public function test_maintenance_plan_stats_widget_does_not_double_count_overridden_items(): void
+    /**
+     * Semântica do card "Vencidos" mudou em 2026-08-30 (pedido do usuário:
+     * cards clicáveis que filtram a tabela de Planos Preventivos por
+     * status DO PLANO, não do Ativo). Antes o widget contava "Ativo×Item
+     * vencido, deduplicado por override" -- agora conta PLANOS vencidos
+     * (linhas reais da tabela), então o override intencionalmente conta 2
+     * (2 linhas na tabela, 2 planos vencidos), não 1. O dedupe por override
+     * continua existindo onde é o comportamento certo -- ver
+     * MaintenancePlan::applicableFor(), usado por EventosEFalhas e
+     * PainelCriticidade, ambos testados acima e inalterados.
+     */
+    public function test_maintenance_plan_stats_widget_conta_planos_vencidos_incluindo_override(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();
         $group = ChecklistGroup::create(['tenant_id' => $tenant->id, 'name' => 'Geradores']);
@@ -209,16 +220,13 @@ class MaintenancePlanTemplateOverrideTest extends TestCase
 
         $this->actingAs($admin);
 
-        // Le' o Stat "Vencidos por Horimetro" direto (nao por texto solto na
-        // tela -- "Total de Itens de Preventiva" legitimamente mostra 2 aqui,
-        // que nao e' o que este teste verifica).
         $widget = new MaintenancePlanStats;
         $getStats = new \ReflectionMethod($widget, 'getStats');
         $getStats->setAccessible(true);
         $stats = $getStats->invoke($widget);
 
-        $vencidos = collect($stats)->first(fn ($stat) => str_contains($stat->getLabel(), 'Vencidos'));
+        $vencidos = collect($stats)->first(fn ($stat) => $stat->getLabel() === 'Vencidos');
 
-        $this->assertSame(1, $vencidos->getValue());
+        $this->assertSame(2, $vencidos->getValue());
     }
 }

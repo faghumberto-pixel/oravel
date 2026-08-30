@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Filament\Pages\CoberturaPmp;
+use App\Filament\Resources\MaintenancePlanResource\Support\PlanStatus;
 use App\Models\AccountPayable;
 use App\Models\AccountReceivable;
 use App\Models\Asset;
@@ -58,6 +59,16 @@ class TablePrintController extends Controller
                 ['label' => 'Status PMP', 'value' => fn (Asset $r) => CoberturaPmp::statusLabel(CoberturaPmp::statusFor($r))],
             ];
             $records->load('checklistGroup');
+        } elseif (($payload['report'] ?? null) === 'planos_preventivos') {
+            $columns = [
+                ['label' => 'Patrimônio', 'value' => fn ($r) => $r->asset?->patrimonio],
+                ['label' => 'Ativo / Grupo', 'value' => fn ($r) => $r->asset?->name ?? $r->checklistGroup?->name.' (grupo)'],
+                ['label' => 'Item', 'value' => fn ($r) => $r->name],
+                ['label' => 'Intervalo (h)', 'value' => fn ($r) => $r->interval_hours],
+                ['label' => 'Intervalo (dias)', 'value' => fn ($r) => $r->interval_days],
+                ['label' => 'Status', 'value' => fn ($r) => PlanStatus::label(PlanStatus::forPlan($r))],
+            ];
+            $records->load(['asset', 'checklistGroup']);
         } else {
             [$columns, $with] = $this->columnsFor($model);
 

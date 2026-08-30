@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MaintenancePlanResource\Pages;
+use App\Filament\Resources\MaintenancePlanResource\Support\PlanStatus;
 use App\Models\ChecklistGroup;
 use App\Models\MaintenancePlan;
 use App\Support\Tenancy;
@@ -10,7 +11,9 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class MaintenancePlanResource extends Resource
 {
@@ -104,8 +107,31 @@ class MaintenancePlanResource extends Resource
                 ->color(fn (string $state) => $state === 'template' ? 'info' : 'gray'),
             Tables\Columns\TextColumn::make('notes')->label('Observação')->placeholder('—'),
             Tables\Columns\IconColumn::make('is_active')->boolean()->label('Ativo'),
+            Tables\Columns\TextColumn::make('plan_status')
+                ->label('Status')
+                ->badge()
+                ->state(fn (MaintenancePlan $record) => PlanStatus::label(PlanStatus::forPlan($record)))
+                ->color(fn (MaintenancePlan $record) => PlanStatus::color(PlanStatus::forPlan($record))),
         ])
             ->filters([
+                Tables\Filters\SelectFilter::make('plan_status')
+                    ->label('Status do Plano')
+                    ->options([
+                        'vencido' => 'Vencido',
+                        'a_vencer' => 'A Vencer',
+                        'dentro_do_prazo' => 'Dentro do Prazo',
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        if (blank($data['value'] ?? null)) {
+                            return $query;
+                        }
+
+                        $ids = $query->get()->filter(
+                            fn (MaintenancePlan $plan) => PlanStatus::forPlan($plan) === $data['value']
+                        )->pluck('id');
+
+                        return $query->whereIn('id', $ids);
+                    }),
                 Tables\Filters\TernaryFilter::make('is_active')->label('Plano Ativo'),
                 Tables\Filters\SelectFilter::make('asset_id')
                     ->label('Ativo')
@@ -114,6 +140,8 @@ class MaintenancePlanResource extends Resource
                     ->label('Grupo de Ativo')
                     ->options(fn () => ChecklistGroup::where('tenant_id', Tenancy::current()?->id)->pluck('name', 'id')),
             ])
+            ->filtersLayout(FiltersLayout::AboveContent)
+            ->filtersFormColumns(4)
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),

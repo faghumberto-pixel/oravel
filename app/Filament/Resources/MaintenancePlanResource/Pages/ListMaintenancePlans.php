@@ -13,6 +13,8 @@ use Filament\Actions;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class ListMaintenancePlans extends ListRecords
 {
@@ -25,9 +27,63 @@ class ListMaintenancePlans extends ListRecords
         return [
             Actions\CreateAction::make(),
             $this->importFamilyTemplateAction(),
-            $this->printAction(),
+            $this->imprimirPlanosAction(),
             Actions\ExportAction::make()->exporter(MaintenancePlanExporter::class),
         ];
+    }
+
+    /**
+     * Não reaproveita $this->printAction() (HasPrintAction) porque as
+     * colunas do relatório precisam do Status do Plano calculado
+     * (PlanStatus::forPlan()), que não é uma coluna real do banco -- mesmo
+     * padrão de CoberturaPmp::getHeaderActions(): payload['report'] sem
+     * closures (Cache::put serializa, Closure não é serializável), colunas
+     * montadas do lado de TablePrintController::show().
+     */
+    private function imprimirPlanosAction(): Actions\Action
+    {
+        return Actions\Action::make('imprimir_planos')
+            ->label('Imprimir')
+            ->icon('heroicon-o-printer')
+            ->color('gray')
+            ->url(function () {
+                $query = $this->getFilteredSortedTableQuery();
+                $ids = $query->pluck('id')->all();
+
+                $filtros = collect($this->getTable()->getFilters())
+                    ->mapWithKeys(fn ($filter) => [$filter->getName() => $filter->getLabel()])
+                    ->filter(fn ($label, $name) => filled($this->tableFilters[$name] ?? null))
+                    ->map(function ($label, $name) {
+                        $value = $this->tableFilters[$name];
+                        $raw = is_array($value) ? ($value['value'] ?? reset($value)) : $value;
+
+                        if ($name === 'plan_status') {
+                            $raw = match ($raw) {
+                                'vencido' => 'Vencido',
+                                'a_vencer' => 'A Vencer',
+                                'dentro_do_prazo' => 'Dentro do Prazo',
+                                default => $raw,
+                            };
+                        }
+
+                        return "{$label}: {$raw}";
+                    })
+                    ->values()
+                    ->all();
+
+                $token = (string) Str::uuid();
+
+                Cache::put("table-print:{$token}", [
+                    'model' => MaintenancePlan::class,
+                    'ids' => $ids,
+                    'filtros' => $filtros,
+                    'titulo' => 'Planos Preventivos',
+                    'report' => 'planos_preventivos',
+                ], now()->addMinutes(15));
+
+                return route('table-print.show', ['token' => $token]);
+            })
+            ->openUrlInNewTab();
     }
 
     /**
