@@ -135,11 +135,11 @@
                                             >
                                                 Ver OS
                                             </button>
-                                        @elseif($row['category'] === 'atrasada')
+                                        @elseif(in_array($row['category'], ['atrasada', 'pendente'], true))
                                             <button
                                                 type="button"
                                                 wire:click="abrirOuVerOs('{{ $row['asset']->id }}', '{{ $row['plan']->id }}')"
-                                                wire:confirm="Criar uma OS preventiva para este item vencido?"
+                                                wire:confirm="Criar uma OS preventiva para este item?"
                                                 class="text-xs font-semibold px-2 py-1 rounded-md bg-amber-500 hover:bg-amber-600 text-white transition"
                                             >
                                                 Abrir OS

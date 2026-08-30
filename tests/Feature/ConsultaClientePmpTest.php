@@ -423,6 +423,34 @@ class ConsultaClientePmpTest extends TestCase
         $this->assertStringContainsString('Ver OS', $html);
     }
 
+    /**
+     * Pedido do usuário 2026-08-30 (achado real em PROD via screenshot):
+     * "Pendente" na prática é o caso comum de plano aplicável sem NENHUMA
+     * OS criada ainda (não "OS sem técnico", como a categoria mais rara do
+     * teste acima) -- o botão Abrir OS precisa aparecer aqui também, não
+     * só em Atrasada.
+     */
+    public function test_linha_pendente_sem_os_mostra_botao_abrir_os(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        [$client, $asset] = $this->makeClientWithAsset($tenant, 'PendenteSemOs');
+
+        MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'name' => 'Plano Pendente Sem OS',
+            'interval_days' => 30, 'last_service_date' => now(),
+        ]);
+
+        $this->actingAs($admin);
+
+        $page = Livewire::test(ConsultaClientePmp::class)->set('clientId', $client->id);
+
+        $row = $page->instance()->maintenanceRows->first();
+        $this->assertSame('pendente', $row['category']);
+        $this->assertNull($row['order']);
+
+        $page->assertSee('Abrir OS');
+    }
+
     public function test_botao_imprimir_gera_relatorio_respeitando_filtros(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();
