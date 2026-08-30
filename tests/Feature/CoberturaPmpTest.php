@@ -232,4 +232,60 @@ class CoberturaPmpTest extends TestCase
             ->assertCanSeeTableRecords(Asset::where('client_id', $clientA->id)->get())
             ->assertCanNotSeeTableRecords(Asset::where('client_id', $clientB->id)->get());
     }
+
+    /**
+     * Pedido do usuário: filtros visíveis acima da tabela, não escondidos
+     * atrás do ícone de funil (padrão default do Filament). Confirma isso
+     * checando a classe de layout que o Filament aplica no HTML quando
+     * FiltersLayout::AboveContent está em uso.
+     */
+    public function test_filtros_ficam_visiveis_acima_da_tabela(): void
+    {
+        [, $admin] = $this->makeTenantAdmin();
+
+        $this->actingAs($admin);
+
+        $html = Livewire::test(CoberturaPmp::class)->html();
+
+        $this->assertStringContainsString('fi-ta-filters-above-content', $html);
+    }
+
+    /**
+     * Cache::put() serializa o payload (CACHE_STORE=database) -- se o
+     * botão de imprimir tentasse cachear closures diretamente (como as
+     * colunas do relatório precisam ser), a gravação falharia ou
+     * corromperia o cache silenciosamente. Este teste prova que o botão
+     * gera uma URL de impressão válida e que a página de impressão
+     * carrega com Status PMP visível, sem erro.
+     */
+    public function test_botao_imprimir_gera_relatorio_com_status_pmp(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $group = ChecklistGroup::create(['tenant_id' => $tenant->id, 'name' => 'Grupo Impressão']);
+        Asset::create([
+            'tenant_id' => $tenant->id, 'name' => 'Ativo Impressão', 'patrimonio' => 'PAT-IMP-01',
+            'status' => Asset::STATUS_DISPONIVEL, 'checklist_group_id' => $group->id, 'horimetro_atual' => 500,
+        ]);
+        MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'checklist_group_id' => $group->id, 'name' => 'Troca de óleo',
+            'interval_hours' => 250, 'last_service_hours' => 0, 'is_active' => true,
+        ]);
+
+        $this->actingAs($admin);
+
+        $component = Livewire::test(CoberturaPmp::class);
+        $reflection = new \ReflectionMethod(CoberturaPmp::class, 'getHeaderActions');
+        $reflection->setAccessible(true);
+        $action = $reflection->invoke($component->instance())[0];
+        $url = $action->getUrl();
+
+        $this->assertNotEmpty($url);
+
+        $response = $this->get($url);
+
+        $response->assertOk();
+        $response->assertSee('Cobertura de Manutenção Preventiva');
+        $response->assertSee('PAT-IMP-01');
+        $response->assertSee('Vencido');
+    }
 }

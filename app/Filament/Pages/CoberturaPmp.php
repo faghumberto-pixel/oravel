@@ -6,6 +6,7 @@ use App\Filament\Resources\MaintenanceOrderResource;
 use App\Models\Asset;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
+use Filament\Actions\Action as PageAction;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
@@ -13,9 +14,12 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 /**
  * Dá visibilidade ao vínculo Plano de Manutenção <-> Ativo (já existente,
@@ -50,6 +54,63 @@ class CoberturaPmp extends Page implements HasTable
     public function getMaxContentWidth(): MaxWidth
     {
         return MaxWidth::Full;
+    }
+
+    /**
+     * Reaproveita a mesma infraestrutura de App\Filament\Concerns\HasPrintAction
+     * (rota table-print.show, cache por token, view reports.table-print) sem
+     * usar o trait em si -- ele assume static::getResource() (só existe em
+     * Resource List Pages), e CoberturaPmp é uma Page avulsa. As colunas do
+     * relatório também são próprias desta tela (Status PMP, Grupo, Próximo
+     * Vencimento) em vez das colunas genéricas de Asset compartilhadas pelas
+     * outras 27 telas que já imprimem Ativos.
+     */
+    protected function getHeaderActions(): array
+    {
+        return [
+            PageAction::make('imprimir')
+                ->label('Imprimir')
+                ->icon('heroicon-o-printer')
+                ->color('gray')
+                ->url(function () {
+                    $query = $this->getFilteredSortedTableQuery();
+                    $ids = $query->pluck('id')->all();
+
+                    $filtros = collect($this->getTable()->getFilters())
+                        ->mapWithKeys(fn ($filter) => [$filter->getName() => $filter->getLabel()])
+                        ->filter(fn ($label, $name) => filled($this->tableFilters[$name] ?? null))
+                        ->map(function ($label, $name) {
+                            $value = $this->tableFilters[$name];
+                            $raw = is_array($value) ? ($value['value'] ?? reset($value)) : $value;
+
+                            if ($name === 'pmp_status') {
+                                $raw = static::statusLabel((string) $raw);
+                            }
+
+                            return "{$label}: {$raw}";
+                        })
+                        ->values()
+                        ->all();
+
+                    $token = (string) Str::uuid();
+
+                    Cache::put("table-print:{$token}", [
+                        'model' => Asset::class,
+                        'ids' => $ids,
+                        'filtros' => $filtros,
+                        'titulo' => 'Cobertura de Manutenção Preventiva',
+                        // Sem closures aqui -- Cache::put() serializa o
+                        // payload (CACHE_STORE=database), e Closure não é
+                        // serializável. O controller reconhece este report
+                        // e monta as colunas (com o Status PMP calculado)
+                        // do lado dele, não aqui.
+                        'report' => 'cobertura_pmp',
+                    ], now()->addMinutes(15));
+
+                    return route('table-print.show', ['token' => $token]);
+                })
+                ->openUrlInNewTab(),
+        ];
     }
 
     /**
@@ -181,6 +242,8 @@ class CoberturaPmp extends Page implements HasTable
                     ->searchable()
                     ->preload(),
             ])
+            ->filtersLayout(FiltersLayout::AboveContent)
+            ->filtersFormColumns(5)
             ->actions([
                 Action::make('abrir_os')
                     ->label('Abrir OS')

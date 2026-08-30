@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Filament\Pages\CoberturaPmp;
 use App\Models\AccountPayable;
 use App\Models\AccountReceivable;
 use App\Models\Asset;
@@ -42,10 +43,27 @@ class TablePrintController extends Controller
         $model = $payload['model'];
         $records = $model::whereIn((new $model)->getKeyName(), $payload['ids'])->get();
 
-        [$columns, $with] = $this->columnsFor($model);
+        // 'report' identifica um layout de colunas próprio, fora do match
+        // genérico por model (columnsFor()) -- usado quando a tela de
+        // origem precisa de colunas calculadas (não uma coluna real do
+        // banco) que não fazem sentido pras outras telas que imprimem o
+        // mesmo model. Closures não podem viver no payload cacheado
+        // (Cache::put serializa, Closure não é serializável), então são
+        // montadas aqui, não em CoberturaPmp.
+        if (($payload['report'] ?? null) === 'cobertura_pmp') {
+            $columns = [
+                ['label' => 'Patrimônio', 'value' => fn (Asset $r) => $r->patrimonio],
+                ['label' => 'Ativo', 'value' => fn (Asset $r) => $r->name],
+                ['label' => 'Grupo', 'value' => fn (Asset $r) => $r->checklistGroup?->name],
+                ['label' => 'Status PMP', 'value' => fn (Asset $r) => CoberturaPmp::statusLabel(CoberturaPmp::statusFor($r))],
+            ];
+            $records->load('checklistGroup');
+        } else {
+            [$columns, $with] = $this->columnsFor($model);
 
-        if ($with) {
-            $records->load($with);
+            if ($with) {
+                $records->load($with);
+            }
         }
 
         return view('reports.table-print', [
