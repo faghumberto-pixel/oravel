@@ -58,6 +58,7 @@
                     <th class="py-2 pr-3">Plano</th>
                     <th class="py-2 pr-3">Técnico</th>
                     <th class="py-2 pr-3">OS</th>
+                    <th class="py-2 pr-3">Aberta em</th>
                     <th class="py-2 pr-3">Próximas datas previstas</th>
                 </tr>
             </thead>
@@ -74,6 +75,7 @@
                         <td class="py-2 pr-3 text-gray-600">{{ $row['plan']->name }}</td>
                         <td class="py-2 pr-3 text-gray-600">{{ $row['order']?->technician?->name ?? 'Sem técnico' }}</td>
                         <td class="py-2 pr-3 text-gray-600 font-mono">{{ $row['order']?->os_number ?? '—' }}</td>
+                        <td class="py-2 pr-3 text-gray-600">{{ $row['order']?->created_at?->format('d/m/Y') ?? '—' }}</td>
                         <td class="py-2 pr-3 text-gray-600">
                             @forelse($row['projections'] as $projection)
                                 <span class="inline-block mr-2">{{ $projection['month_label'] }} ({{ $projection['reason'] }})</span>
@@ -84,7 +86,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="py-6 text-center text-gray-400">Nenhum resultado para os filtros selecionados.</td>
+                        <td colspan="9" class="py-6 text-center text-gray-400">Nenhum resultado para os filtros selecionados.</td>
                     </tr>
                 @endforelse
             </tbody>

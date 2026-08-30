@@ -386,6 +386,43 @@ class ConsultaClientePmpTest extends TestCase
         $this->assertSame(1, MaintenanceOrder::where('asset_id', $asset->id)->count());
     }
 
+    /**
+     * Pedido do usuário 2026-08-30: linha "Pendente" já tem OS aberta, mas
+     * faltava mostrar data de abertura, técnico e um botão "Ver OS" --
+     * antes só a linha "Atrasada" tinha ação.
+     */
+    public function test_linha_pendente_com_os_mostra_data_tecnico_numero_e_botao_ver_os(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        [$client, $asset] = $this->makeClientWithAsset($tenant, 'Pendente');
+
+        $technician = User::create([
+            'name' => 'Tecnico Pendente', 'email' => 'tec-pendente-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'is_approved' => true,
+        ]);
+
+        $plan = MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'name' => 'Plano Pendente',
+            'interval_days' => 30, 'last_service_date' => now(),
+        ]);
+        $order = MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'maintenance_plan_id' => $plan->id,
+            'description' => 'OS pendente', 'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
+            'internal_status' => 'aguardando_diagnostico', 'status' => 'Aberto',
+            'os_number' => 'OS-PENDENTE-001', 'technician_id' => null,
+        ]);
+
+        $this->actingAs($admin);
+
+        $html = Livewire::test(ConsultaClientePmp::class)
+            ->set('clientId', $client->id)
+            ->html();
+
+        $this->assertStringContainsString($order->created_at->format('d/m/Y'), $html);
+        $this->assertStringContainsString('OS-PENDENTE-001', $html);
+        $this->assertStringContainsString('Ver OS', $html);
+    }
+
     public function test_botao_imprimir_gera_relatorio_respeitando_filtros(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();

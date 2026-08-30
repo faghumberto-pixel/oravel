@@ -93,6 +93,7 @@
                                 <th class="py-2 pr-4">Plano</th>
                                 <th class="py-2 pr-4">Técnico</th>
                                 <th class="py-2 pr-4">OS</th>
+                                <th class="py-2 pr-4">Aberta em</th>
                                 <th class="py-2 pr-4">Última manutenção</th>
                                 <th class="py-2 pr-4">Próximas datas previstas</th>
                                 <th class="py-2 pr-4">Ação</th>
@@ -116,6 +117,7 @@
                                     <td class="py-2 pr-4 text-gray-600 dark:text-gray-400">{{ $row['plan']->name }}</td>
                                     <td class="py-2 pr-4 text-gray-600 dark:text-gray-400">{{ $row['order']?->technician?->name ?? 'Sem técnico' }}</td>
                                     <td class="py-2 pr-4 text-gray-600 dark:text-gray-400 font-mono">{{ $row['order']?->os_number ?? '—' }}</td>
+                                    <td class="py-2 pr-4 text-gray-600 dark:text-gray-400">{{ $row['order']?->created_at?->format('d/m/Y') ?? '—' }}</td>
                                     <td class="py-2 pr-4 text-gray-600 dark:text-gray-400">{{ $row['last_completed_at']?->format('d/m/Y') ?? '—' }}</td>
                                     <td class="py-2 pr-4 text-gray-600 dark:text-gray-400">
                                         @forelse($row['projections'] as $projection)
@@ -125,14 +127,22 @@
                                         @endforelse
                                     </td>
                                     <td class="py-2 pr-4">
-                                        @if($row['category'] === 'atrasada')
+                                        @if($row['order'])
                                             <button
                                                 type="button"
                                                 wire:click="abrirOuVerOs('{{ $row['asset']->id }}', '{{ $row['plan']->id }}')"
-                                                wire:confirm="{{ $row['order'] ? 'Abrir a OS já existente para este item?' : 'Criar uma OS preventiva para este item vencido?' }}"
+                                                class="text-xs font-semibold px-2 py-1 rounded-md bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 transition"
+                                            >
+                                                Ver OS
+                                            </button>
+                                        @elseif($row['category'] === 'atrasada')
+                                            <button
+                                                type="button"
+                                                wire:click="abrirOuVerOs('{{ $row['asset']->id }}', '{{ $row['plan']->id }}')"
+                                                wire:confirm="Criar uma OS preventiva para este item vencido?"
                                                 class="text-xs font-semibold px-2 py-1 rounded-md bg-amber-500 hover:bg-amber-600 text-white transition"
                                             >
-                                                {{ $row['order'] ? 'Ver OS' : 'Abrir OS' }}
+                                                Abrir OS
                                             </button>
                                         @else
                                             —
