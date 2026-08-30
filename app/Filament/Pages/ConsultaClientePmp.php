@@ -2,12 +2,15 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Resources\MaintenanceOrderResource;
 use App\Models\Asset;
 use App\Models\Client;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
 use App\Models\User;
 use App\Support\Tenancy;
+use Filament\Actions\Action as PageAction;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 
@@ -48,9 +51,117 @@ class ConsultaClientePmp extends Page
 
     public ?string $filterTechnicianId = null;
 
+    public ?string $filterGroupId = null;
+
     public static function canAccess(): bool
     {
         return (bool) auth()->user()?->can('viewAny', MaintenanceOrder::class);
+    }
+
+    /**
+     * Não usa o padrão table-print genérico (Cache::put de ids + model) --
+     * as linhas aqui não são um Model, são uma Collection montada em
+     * memória (1 linha por Ativo+Plano, com status/OS/projeções
+     * calculados). Segue o padrão de AlocacaoTecnicosPmp::forPrint(): a
+     * rota de impressão reconstrói a página com os mesmos filtros da URL
+     * (query string), reaproveitando getMaintenanceRowsProperty() em vez
+     * de duplicar a lógica de junção no controller.
+     */
+    protected function getHeaderActions(): array
+    {
+        return [
+            PageAction::make('imprimir_consulta')
+                ->label('Imprimir')
+                ->icon('heroicon-o-printer')
+                ->color('gray')
+                ->visible(fn () => (bool) $this->clientId)
+                ->url(fn () => route('consulta-cliente-pmp.print', [
+                    'clientId' => $this->clientId,
+                    'filterAssetId' => $this->filterAssetId,
+                    'filterGroupId' => $this->filterGroupId,
+                    'filterStatus' => $this->filterStatus,
+                    'filterTechnicianId' => $this->filterTechnicianId,
+                ]))
+                ->openUrlInNewTab(),
+        ];
+    }
+
+    /**
+     * Monta a página em memória (sem HTTP) aplicando os mesmos filtros da
+     * URL, pra rota de impressão reaproveitar toda a lógica de junção já
+     * escrita aqui -- mesmo padrão de AlocacaoTecnicosPmp::forPrint().
+     */
+    public static function forPrint(array $filters): self
+    {
+        $page = new self;
+        $page->clientId = $filters['clientId'] ?? null;
+        $page->filterAssetId = $filters['filterAssetId'] ?? null;
+        $page->filterGroupId = $filters['filterGroupId'] ?? null;
+        $page->filterStatus = $filters['filterStatus'] ?? null;
+        $page->filterTechnicianId = $filters['filterTechnicianId'] ?? null;
+
+        return $page;
+    }
+
+    public function getFilterGroupOptionsProperty(): Collection
+    {
+        return $this->clientAssets()
+            ->pluck('checklistGroup')
+            ->filter()
+            ->unique('id')
+            ->sortBy('name')
+            ->pluck('name', 'id');
+    }
+
+    /**
+     * Se já existe uma OS (não cancelada) pra este Ativo+Plano, retorna o id
+     * dela sem criar outra -- evita duplicar quando o gestor clica de novo.
+     * Caso contrário, cria uma OS preventiva nova, mesmo padrão de
+     * CoberturaPmp::abrirOs().
+     */
+    public function resolveOrCreateOrder(string $assetId, string $planId): ?string
+    {
+        $existing = MaintenanceOrder::where('asset_id', $assetId)
+            ->where('maintenance_plan_id', $planId)
+            ->where('status', '!=', 'Cancelada')
+            ->latest('created_at')
+            ->first();
+
+        if ($existing) {
+            return $existing->id;
+        }
+
+        $asset = Asset::find($assetId);
+        if (! $asset) {
+            return null;
+        }
+
+        $order = MaintenanceOrder::create([
+            'tenant_id' => $asset->tenant_id,
+            'asset_id' => $asset->id,
+            'client_id' => $asset->client_id,
+            'maintenance_plan_id' => $planId,
+            'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
+            'status' => 'Aberto',
+            'internal_status' => 'aguardando_diagnostico',
+            'scheduled_at' => now(),
+            'description' => 'Planejada via Consulta por Cliente.',
+        ]);
+
+        return $order->id;
+    }
+
+    public function abrirOuVerOs(string $assetId, string $planId)
+    {
+        $orderId = $this->resolveOrCreateOrder($assetId, $planId);
+
+        if (! $orderId) {
+            return null;
+        }
+
+        Notification::make()->title('OS aberta')->success()->send();
+
+        return redirect(MaintenanceOrderResource::getUrl('edit', ['record' => $orderId]));
     }
 
     public function getClientsProperty(): Collection
@@ -68,7 +179,10 @@ class ConsultaClientePmp extends Page
 
         return Asset::where('tenant_id', Tenancy::current()?->id)
             ->whereHas('contracts', fn ($q) => $q->where('client_id', $this->clientId)->where('is_active', true))
-            ->with(['contracts' => fn ($q) => $q->where('client_id', $this->clientId)->where('is_active', true)])
+            ->with([
+                'contracts' => fn ($q) => $q->where('client_id', $this->clientId)->where('is_active', true),
+                'checklistGroup',
+            ])
             ->get();
     }
 
@@ -114,6 +228,10 @@ class ConsultaClientePmp extends Page
 
         if ($this->filterAssetId) {
             $assets = $assets->where('id', $this->filterAssetId);
+        }
+
+        if ($this->filterGroupId) {
+            $assets = $assets->where('checklist_group_id', $this->filterGroupId);
         }
 
         if ($assets->isEmpty()) {

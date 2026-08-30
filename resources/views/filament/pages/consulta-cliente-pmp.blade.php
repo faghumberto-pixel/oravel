@@ -34,6 +34,16 @@
                 </div>
 
                 <div class="max-w-xs w-full">
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Grupo</label>
+                    <select wire:model.live="filterGroupId" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 text-sm">
+                        <option value="">Todos os grupos</option>
+                        @foreach($this->filterGroupOptions as $groupId => $groupName)
+                            <option value="{{ $groupId }}">{{ $groupName }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="max-w-xs w-full">
                     <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
                     <select wire:model.live="filterStatus" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 text-sm">
                         <option value="">Todos os status</option>
@@ -85,6 +95,7 @@
                                 <th class="py-2 pr-4">OS</th>
                                 <th class="py-2 pr-4">Última manutenção</th>
                                 <th class="py-2 pr-4">Próximas datas previstas</th>
+                                <th class="py-2 pr-4">Ação</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -112,6 +123,20 @@
                                         @empty
                                             —
                                         @endforelse
+                                    </td>
+                                    <td class="py-2 pr-4">
+                                        @if($row['category'] === 'atrasada')
+                                            <button
+                                                type="button"
+                                                wire:click="abrirOuVerOs('{{ $row['asset']->id }}', '{{ $row['plan']->id }}')"
+                                                wire:confirm="{{ $row['order'] ? 'Abrir a OS já existente para este item?' : 'Criar uma OS preventiva para este item vencido?' }}"
+                                                class="text-xs font-semibold px-2 py-1 rounded-md bg-amber-500 hover:bg-amber-600 text-white transition"
+                                            >
+                                                {{ $row['order'] ? 'Ver OS' : 'Abrir OS' }}
+                                            </button>
+                                        @else
+                                            —
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

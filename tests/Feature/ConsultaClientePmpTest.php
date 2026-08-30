@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Pages\ConsultaClientePmp;
 use App\Models\Asset;
+use App\Models\ChecklistGroup;
 use App\Models\Client;
 use App\Models\Contract;
 use App\Models\MaintenanceOrder;
@@ -264,5 +265,156 @@ class ConsultaClientePmpTest extends TestCase
 
         $this->assertCount(1, $rows);
         $this->assertSame('Plano Tecnico A', $rows->first()['plan']->name);
+    }
+
+    /**
+     * Pedido do usuário 2026-08-30: gestor da Eletraq não conseguia
+     * estabelecer referência de grupo nesta tela nem tomar providência
+     * (abrir OS) direto na linha atrasada, e faltava o botão Imprimir que
+     * as outras telas de PMP já têm.
+     */
+    public function test_group_filter_restricts_to_selected_group(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Grupo']);
+        $groupA = ChecklistGroup::create(['tenant_id' => $tenant->id, 'name' => 'Empilhadeiras']);
+        $groupB = ChecklistGroup::create(['tenant_id' => $tenant->id, 'name' => 'Plataformas']);
+
+        $assetA = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Empilhadeira 1', 'status' => Asset::STATUS_LOCADO, 'checklist_group_id' => $groupA->id]);
+        $assetB = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Plataforma 1', 'status' => Asset::STATUS_LOCADO, 'checklist_group_id' => $groupB->id]);
+
+        foreach ([$assetA, $assetB] as $i => $asset) {
+            Contract::create([
+                'tenant_id' => $tenant->id, 'client_id' => $client->id, 'asset_id' => $asset->id,
+                'contract_number' => 'CT-GRUPO-'.$i.'-'.uniqid(), 'start_date' => now(),
+                'billing_type' => Contract::BILLING_MENSAL_FIXO, 'price' => 1000, 'is_active' => true,
+            ]);
+        }
+
+        MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $assetA->id, 'name' => 'Plano Empilhadeira',
+            'interval_days' => 30, 'last_service_date' => now()->subDays(60),
+        ]);
+        MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $assetB->id, 'name' => 'Plano Plataforma',
+            'interval_days' => 30, 'last_service_date' => now()->subDays(60),
+        ]);
+
+        $this->actingAs($admin);
+
+        $page = Livewire::test(ConsultaClientePmp::class)
+            ->set('clientId', $client->id)
+            ->set('filterGroupId', $groupA->id);
+
+        $rows = $page->instance()->maintenanceRows;
+
+        $this->assertCount(1, $rows);
+        $this->assertSame('Empilhadeira 1', $rows->first()['asset']->name);
+    }
+
+    public function test_group_filter_options_only_include_groups_of_that_client(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Grupo Opcoes']);
+        $groupDoCliente = ChecklistGroup::create(['tenant_id' => $tenant->id, 'name' => 'Grupo Do Cliente']);
+        $groupDeOutro = ChecklistGroup::create(['tenant_id' => $tenant->id, 'name' => 'Grupo De Outro Tenant Asset']);
+
+        $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Com Grupo', 'status' => Asset::STATUS_LOCADO, 'checklist_group_id' => $groupDoCliente->id]);
+        Contract::create([
+            'tenant_id' => $tenant->id, 'client_id' => $client->id, 'asset_id' => $asset->id,
+            'contract_number' => 'CT-OPCOES-'.uniqid(), 'start_date' => now(),
+            'billing_type' => Contract::BILLING_MENSAL_FIXO, 'price' => 1000, 'is_active' => true,
+        ]);
+
+        Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Sem Contrato Com Este Cliente', 'status' => Asset::STATUS_DISPONIVEL, 'checklist_group_id' => $groupDeOutro->id]);
+
+        $this->actingAs($admin);
+
+        $page = Livewire::test(ConsultaClientePmp::class)->set('clientId', $client->id);
+
+        $options = $page->instance()->filterGroupOptions;
+
+        $this->assertTrue($options->has($groupDoCliente->id));
+        $this->assertFalse($options->has($groupDeOutro->id));
+    }
+
+    public function test_abrir_os_action_creates_new_order_when_none_exists(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        [$client, $asset] = $this->makeClientWithAsset($tenant, 'AbrirOs');
+        $plan = MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'name' => 'Plano Sem OS',
+            'interval_days' => 30, 'last_service_date' => now()->subDays(60),
+        ]);
+
+        $this->actingAs($admin);
+
+        $page = Livewire::test(ConsultaClientePmp::class)->set('clientId', $client->id);
+        $row = $page->instance()->maintenanceRows->first();
+
+        $this->assertNull($row['order']);
+
+        $orderId = $page->instance()->resolveOrCreateOrder($asset->id, $plan->id);
+
+        $order = MaintenanceOrder::findOrFail($orderId);
+        $this->assertSame($asset->id, $order->asset_id);
+        $this->assertSame($plan->id, $order->maintenance_plan_id);
+        $this->assertSame(MaintenanceOrder::TYPE_PREVENTIVE, $order->maintenance_type);
+    }
+
+    public function test_abrir_os_action_returns_existing_order_without_duplicating(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        [$client, $asset] = $this->makeClientWithAsset($tenant, 'ComOs');
+        $plan = MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'name' => 'Plano Com OS',
+            'interval_days' => 30, 'last_service_date' => now()->subDays(60),
+        ]);
+        $existingOrder = MaintenanceOrder::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'maintenance_plan_id' => $plan->id,
+            'description' => 'OS já existente', 'maintenance_type' => MaintenanceOrder::TYPE_PREVENTIVE,
+            'internal_status' => 'aguardando_diagnostico', 'status' => 'Aberto',
+        ]);
+
+        $this->actingAs($admin);
+
+        $page = Livewire::test(ConsultaClientePmp::class)->set('clientId', $client->id);
+
+        $orderId = $page->instance()->resolveOrCreateOrder($asset->id, $plan->id);
+
+        $this->assertSame($existingOrder->id, $orderId);
+        $this->assertSame(1, MaintenanceOrder::where('asset_id', $asset->id)->count());
+    }
+
+    public function test_botao_imprimir_gera_relatorio_respeitando_filtros(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        [$client, $asset] = $this->makeClientWithAsset($tenant, 'Imprimir');
+        $asset->update(['patrimonio' => 'PAT-CLI-01']);
+        MaintenancePlan::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'name' => 'Plano Para Imprimir',
+            'interval_days' => 30, 'last_service_date' => now()->subDays(60),
+        ]);
+
+        $this->actingAs($admin);
+
+        $component = Livewire::test(ConsultaClientePmp::class)->set('clientId', $client->id);
+
+        $reflection = new \ReflectionMethod(ConsultaClientePmp::class, 'getHeaderActions');
+        $reflection->setAccessible(true);
+        $actions = $reflection->invoke($component->instance());
+
+        $imprimir = collect($actions)->first(fn ($action) => $action->getName() === 'imprimir_consulta');
+        $this->assertNotNull($imprimir);
+
+        $url = $imprimir->getUrl();
+        $this->assertNotEmpty($url);
+        $this->assertStringContainsString('consulta-cliente-pmp/print', $url);
+
+        $response = $this->get($url);
+
+        $response->assertOk();
+        $response->assertSee('PAT-CLI-01');
+        $response->assertSee('Plano Para Imprimir');
     }
 }

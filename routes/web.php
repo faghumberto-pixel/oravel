@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Pages\AlocacaoTecnicosPmp;
+use App\Filament\Pages\ConsultaClientePmp;
 use App\Http\Controllers\AIAnalysisPdfController;
 use App\Http\Controllers\AssetDossierPdfController;
 use App\Http\Controllers\Auth\PasswordController;
@@ -199,6 +200,31 @@ Route::middleware(['auth'])->group(function () {
             'patrimonioFilter' => $request->query('filterPatrimonio'),
         ]);
     })->name('alocacao-tecnicos-pmp.print');
+
+    // Impressão PHP minimalista da Consulta por Cliente -- pedido do
+    // usuário 2026-08-30: refletir os mesmos filtros (equipamento, grupo,
+    // status, técnico) escolhidos na tela. Reaproveita
+    // ConsultaClientePmp::forPrint() + getMaintenanceRowsProperty() em vez
+    // de duplicar a lógica de junção Ativo+Plano aqui.
+    Route::get('/admin/consulta-cliente-pmp/print', function (Request $request) {
+        $tenant = Tenancy::current();
+        if (! $tenant) {
+            abort(403);
+        }
+
+        $page = ConsultaClientePmp::forPrint([
+            'clientId' => $request->query('clientId'),
+            'filterAssetId' => $request->query('filterAssetId'),
+            'filterGroupId' => $request->query('filterGroupId'),
+            'filterStatus' => $request->query('filterStatus'),
+            'filterTechnicianId' => $request->query('filterTechnicianId'),
+        ]);
+
+        return view('filament.pages.consulta-cliente-pmp-print', [
+            'rows' => $page->maintenanceRows,
+            'clientName' => $request->query('clientId') ? Client::find($request->query('clientId'))?->name : null,
+        ]);
+    })->name('consulta-cliente-pmp.print');
 
     Route::get('/admin/maintenance-orders/{maintenanceOrder}/checklist-digital', MaintenanceChecklistMobile::class)
         ->name('maintenance-orders.checklist-mobile');
