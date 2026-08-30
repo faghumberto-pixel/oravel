@@ -4,8 +4,11 @@ namespace Tests\Feature;
 
 use App\Filament\Pages\CoberturaPmp;
 use App\Models\Asset;
+use App\Models\AssetCategory;
 use App\Models\ChecklistGroup;
+use App\Models\Client;
 use App\Models\HorimeterReading;
+use App\Models\InternalUnit;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
 use App\Models\Plan;
@@ -14,6 +17,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class CoberturaPmpTest extends TestCase
@@ -163,5 +167,69 @@ class CoberturaPmpTest extends TestCase
         CoberturaPmp::abrirOs($asset->id);
 
         $this->assertSame(1, MaintenanceOrder::where('asset_id', $asset->id)->count());
+    }
+
+    public function test_filtro_grupo_de_ativo_restringe_a_tabela(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $groupA = ChecklistGroup::create(['tenant_id' => $tenant->id, 'name' => 'Grupo Geradores']);
+        $groupB = ChecklistGroup::create(['tenant_id' => $tenant->id, 'name' => 'Grupo Guindastes']);
+        Asset::create(['tenant_id' => $tenant->id, 'name' => 'Gerador 1', 'status' => Asset::STATUS_DISPONIVEL, 'checklist_group_id' => $groupA->id]);
+        Asset::create(['tenant_id' => $tenant->id, 'name' => 'Guindaste 1', 'status' => Asset::STATUS_DISPONIVEL, 'checklist_group_id' => $groupB->id]);
+
+        $this->actingAs($admin);
+
+        Livewire::test(CoberturaPmp::class)
+            ->filterTable('checklist_group_id', $groupA->id)
+            ->assertCanSeeTableRecords(Asset::where('checklist_group_id', $groupA->id)->get())
+            ->assertCanNotSeeTableRecords(Asset::where('checklist_group_id', $groupB->id)->get());
+    }
+
+    public function test_filtro_categoria_de_ativo_restringe_a_tabela(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $categoryA = AssetCategory::create(['tenant_id' => $tenant->id, 'name' => 'Empilhadeiras']);
+        $categoryB = AssetCategory::create(['tenant_id' => $tenant->id, 'name' => 'Compressores']);
+        Asset::create(['tenant_id' => $tenant->id, 'name' => 'Empilhadeira 1', 'status' => Asset::STATUS_DISPONIVEL, 'asset_category_id' => $categoryA->id]);
+        Asset::create(['tenant_id' => $tenant->id, 'name' => 'Compressor 1', 'status' => Asset::STATUS_DISPONIVEL, 'asset_category_id' => $categoryB->id]);
+
+        $this->actingAs($admin);
+
+        Livewire::test(CoberturaPmp::class)
+            ->filterTable('asset_category_id', $categoryA->id)
+            ->assertCanSeeTableRecords(Asset::where('asset_category_id', $categoryA->id)->get())
+            ->assertCanNotSeeTableRecords(Asset::where('asset_category_id', $categoryB->id)->get());
+    }
+
+    public function test_filtro_unidade_interna_restringe_a_tabela(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $unitA = InternalUnit::create(['tenant_id' => $tenant->id, 'name' => 'Unidade Campinas']);
+        $unitB = InternalUnit::create(['tenant_id' => $tenant->id, 'name' => 'Unidade Sorocaba']);
+        Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Campinas', 'status' => Asset::STATUS_DISPONIVEL, 'internal_unit_id' => $unitA->id]);
+        Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Sorocaba', 'status' => Asset::STATUS_DISPONIVEL, 'internal_unit_id' => $unitB->id]);
+
+        $this->actingAs($admin);
+
+        Livewire::test(CoberturaPmp::class)
+            ->filterTable('internal_unit_id', $unitA->id)
+            ->assertCanSeeTableRecords(Asset::where('internal_unit_id', $unitA->id)->get())
+            ->assertCanNotSeeTableRecords(Asset::where('internal_unit_id', $unitB->id)->get());
+    }
+
+    public function test_filtro_cliente_restringe_a_tabela(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $clientA = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente A']);
+        $clientB = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente B']);
+        Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Cliente A', 'status' => Asset::STATUS_LOCADO, 'client_id' => $clientA->id]);
+        Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Cliente B', 'status' => Asset::STATUS_LOCADO, 'client_id' => $clientB->id]);
+
+        $this->actingAs($admin);
+
+        Livewire::test(CoberturaPmp::class)
+            ->filterTable('client_id', $clientA->id)
+            ->assertCanSeeTableRecords(Asset::where('client_id', $clientA->id)->get())
+            ->assertCanNotSeeTableRecords(Asset::where('client_id', $clientB->id)->get());
     }
 }

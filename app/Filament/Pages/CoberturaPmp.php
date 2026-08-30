@@ -160,6 +160,26 @@ class CoberturaPmp extends Page implements HasTable
 
                         return $query->whereIn('id', $ids);
                     }),
+                SelectFilter::make('checklist_group_id')
+                    ->label('Grupo de Ativo')
+                    ->relationship('checklistGroup', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('asset_category_id')
+                    ->label('Categoria de Ativo')
+                    ->relationship('category', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('internal_unit_id')
+                    ->label('Unidade Interna')
+                    ->relationship('internalUnit', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('client_id')
+                    ->label('Cliente')
+                    ->relationship('client', 'name')
+                    ->searchable()
+                    ->preload(),
             ])
             ->actions([
                 Action::make('abrir_os')
