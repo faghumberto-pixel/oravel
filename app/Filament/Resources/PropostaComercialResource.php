@@ -188,7 +188,10 @@ class PropostaComercialResource extends BaseResource
                     TextEntry::make('reviewedByUser.name')->label('Revisado por')->placeholder('—'),
                     TextEntry::make('reviewed_at')->label('Em')->dateTime('d/m/Y H:i')->placeholder('—'),
                     TextEntry::make('rejection_reason')->label('Motivo da Rejeição')->placeholder('—')->columnSpanFull()
-                        ->visible(fn (PropostaComercial $record) => $record->status === PropostaComercial::STATUS_REJEITADA),
+                        ->visible(fn (PropostaComercial $record) => in_array($record->status, [
+                            PropostaComercial::STATUS_REJEITADA,
+                            PropostaComercial::STATUS_RECUSADA_PELO_CLIENTE,
+                        ], true)),
                 ]),
         ]);
     }
@@ -209,7 +212,9 @@ class PropostaComercialResource extends BaseResource
                     ->formatStateUsing(fn (string $state) => PropostaComercial::statusLabels()[$state] ?? $state)
                     ->color(fn (string $state) => match ($state) {
                         PropostaComercial::STATUS_ENVIADA_PARA_COMERCIAL => 'info',
-                        PropostaComercial::STATUS_APROVADA => 'success',
+                        PropostaComercial::STATUS_APROVADA_INTERNA => 'warning',
+                        PropostaComercial::STATUS_ACEITA_PELO_CLIENTE => 'success',
+                        PropostaComercial::STATUS_RECUSADA_PELO_CLIENTE => 'danger',
                         PropostaComercial::STATUS_REJEITADA => 'danger',
                         default => 'gray',
                     }),

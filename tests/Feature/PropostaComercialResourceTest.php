@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Resources\PropostaComercialResource\Pages\CreatePropostaComercial;
 use App\Filament\Resources\PropostaComercialResource\Pages\ListPropostaComerciais;
 use App\Filament\Resources\PropostaComercialResource\Pages\ViewPropostaComercial;
 use App\Models\AssetCategory;
@@ -72,10 +73,10 @@ class PropostaComercialResourceTest extends TestCase
         return $proposta;
     }
 
-    public function test_comercial_aprova_via_action_e_cria_solicitacao_locacao(): void
+    public function test_comercial_aprova_via_action_muda_status_sem_criar_solicitacao(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();
-        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Teste']);
+        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Teste', 'email' => 'cliente-'.uniqid().'@teste.com']);
         $proposta = $this->makePropostaEnviada($tenant, $client, $admin);
 
         $this->actingAs($admin);
@@ -85,7 +86,12 @@ class PropostaComercialResourceTest extends TestCase
             ->assertHasNoActionErrors();
 
         $proposta->refresh();
-        $this->assertSame(PropostaComercial::STATUS_APROVADA, $proposta->status);
+        $this->assertSame(PropostaComercial::STATUS_APROVADA_INTERNA, $proposta->status);
+        $this->assertNull($proposta->solicitacao_locacao_id);
+        $this->assertSame(0, SolicitacaoLocacao::count());
+
+        $proposta->aceitarPeloCliente();
+        $proposta->refresh();
         $this->assertNotNull($proposta->solicitacao_locacao_id);
         $this->assertSame(1, SolicitacaoLocacao::count());
     }
@@ -110,7 +116,7 @@ class PropostaComercialResourceTest extends TestCase
     public function test_aprovar_proposta_100_por_cento_servico_nao_cria_solicitacao(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();
-        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Teste']);
+        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Teste', 'email' => 'cliente-'.uniqid().'@teste.com']);
         $proposta = $this->makePropostaEnviada($tenant, $client, $admin, comEquipamento: false);
 
         $this->actingAs($admin);
@@ -120,7 +126,7 @@ class PropostaComercialResourceTest extends TestCase
             ->assertHasNoActionErrors();
 
         $proposta->refresh();
-        $this->assertSame(PropostaComercial::STATUS_APROVADA, $proposta->status);
+        $this->assertSame(PropostaComercial::STATUS_APROVADA_INTERNA, $proposta->status);
         $this->assertNull($proposta->solicitacao_locacao_id);
         $this->assertSame(0, SolicitacaoLocacao::count());
     }
@@ -128,7 +134,7 @@ class PropostaComercialResourceTest extends TestCase
     public function test_aprovar_action_nao_visivel_apos_ja_aprovada(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();
-        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Teste']);
+        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Teste', 'email' => 'cliente-'.uniqid().'@teste.com']);
         $proposta = $this->makePropostaEnviada($tenant, $client, $admin);
         $proposta->aprovar($admin);
 
@@ -142,12 +148,12 @@ class PropostaComercialResourceTest extends TestCase
     public function test_admin_cria_proposta_pelo_desktop_com_itens(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();
-        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Teste']);
+        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Teste', 'email' => 'cliente-'.uniqid().'@teste.com']);
         $category = AssetCategory::create(['tenant_id' => $tenant->id, 'name' => 'Empilhadeira '.uniqid()]);
 
         $this->actingAs($admin);
 
-        Livewire::test(\App\Filament\Resources\PropostaComercialResource\Pages\CreatePropostaComercial::class)
+        Livewire::test(CreatePropostaComercial::class)
             ->fillForm([
                 'client_id' => $client->id,
                 'seller_user_id' => $admin->id,

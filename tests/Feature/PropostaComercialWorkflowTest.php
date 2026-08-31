@@ -4,9 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\AssetCategory;
 use App\Models\Client;
+use App\Models\Plan;
 use App\Models\PropostaComercial;
 use App\Models\PropostaComercialItem;
-use App\Models\Plan;
+use App\Models\PropostaComercialTemplate;
 use App\Models\Role;
 use App\Models\SolicitacaoLocacao;
 use App\Models\Tenant;
@@ -37,7 +38,7 @@ class PropostaComercialWorkflowTest extends TestCase
             'plan_id' => $plan->id, 'status' => 'active',
         ]);
         $client = Client::create([
-            'name' => 'Cliente Teste', 'tenant_id' => $tenant->id,
+            'name' => 'Cliente Teste', 'tenant_id' => $tenant->id, 'email' => 'cliente-'.uniqid().'@teste.com',
         ]);
         $admin = User::create([
             'name' => 'Admin', 'email' => 'admin-'.uniqid().'@oravel.com.br',
@@ -77,7 +78,7 @@ class PropostaComercialWorkflowTest extends TestCase
         $proposta->enviarParaComercial();
     }
 
-    public function test_full_lifecycle_send_approve_creates_solicitacao_locacao(): void
+    public function test_full_lifecycle_send_approve_and_client_accept_creates_solicitacao_locacao(): void
     {
         [$tenant, $client, $admin] = $this->makeTenantWithClient();
         $this->actingAs($admin);
@@ -107,9 +108,13 @@ class PropostaComercialWorkflowTest extends TestCase
         $this->assertNotNull($proposta->sent_at);
 
         $proposta->aprovar($admin);
-        $this->assertSame(PropostaComercial::STATUS_APROVADA, $proposta->status);
+        $this->assertSame(PropostaComercial::STATUS_APROVADA_INTERNA, $proposta->status);
         $this->assertNotNull($proposta->reviewed_at);
         $this->assertSame($admin->id, $proposta->reviewed_by_user_id);
+        $this->assertNull($proposta->solicitacao_locacao_id);
+
+        $proposta->aceitarPeloCliente();
+        $this->assertSame(PropostaComercial::STATUS_ACEITA_PELO_CLIENTE, $proposta->status);
         $this->assertNotNull($proposta->solicitacao_locacao_id);
 
         $solicitacao = SolicitacaoLocacao::findOrFail($proposta->solicitacao_locacao_id);
@@ -135,7 +140,7 @@ class PropostaComercialWorkflowTest extends TestCase
 
         $proposta->aprovar($admin);
 
-        $this->assertSame(PropostaComercial::STATUS_APROVADA, $proposta->status);
+        $this->assertSame(PropostaComercial::STATUS_APROVADA_INTERNA, $proposta->status);
         $this->assertNull($proposta->solicitacao_locacao_id);
         $this->assertSame(0, SolicitacaoLocacao::count());
     }
@@ -225,7 +230,7 @@ class PropostaComercialWorkflowTest extends TestCase
         [$tenant, $client, $admin] = $this->makeTenantWithClient();
         $this->actingAs($admin);
 
-        $template = \App\Models\PropostaComercialTemplate::create([
+        $template = PropostaComercialTemplate::create([
             'tenant_id' => $tenant->id, 'name' => 'Padrão', 'is_default' => true,
             'is_active' => true, 'default_terms' => 'Pagamento em até 30 dias.',
         ]);

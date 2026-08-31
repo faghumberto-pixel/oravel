@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -37,7 +38,11 @@ class PropostaComercial extends Model
 
     public const STATUS_ENVIADA_PARA_COMERCIAL = 'enviada_para_comercial';
 
-    public const STATUS_APROVADA = 'aprovada';
+    public const STATUS_APROVADA_INTERNA = 'aprovada_interna';
+
+    public const STATUS_ACEITA_PELO_CLIENTE = 'aceita_pelo_cliente';
+
+    public const STATUS_RECUSADA_PELO_CLIENTE = 'recusada_pelo_cliente';
 
     public const STATUS_REJEITADA = 'rejeitada';
 
@@ -71,6 +76,9 @@ class PropostaComercial extends Model
         'sent_at',
         'reviewed_at',
         'solicitacao_locacao_id',
+        'approval_token',
+        'client_viewed_at',
+        'client_responded_at',
     ];
 
     protected $casts = [
@@ -78,6 +86,8 @@ class PropostaComercial extends Model
         'total_value' => 'decimal:2',
         'sent_at' => 'datetime',
         'reviewed_at' => 'datetime',
+        'client_viewed_at' => 'datetime',
+        'client_responded_at' => 'datetime',
     ];
 
     /**
@@ -88,7 +98,9 @@ class PropostaComercial extends Model
         return [
             self::STATUS_RASCUNHO => 'Rascunho',
             self::STATUS_ENVIADA_PARA_COMERCIAL => 'Enviada para o Comercial',
-            self::STATUS_APROVADA => 'Aprovada',
+            self::STATUS_APROVADA_INTERNA => 'Aprovada — Aguardando Cliente',
+            self::STATUS_ACEITA_PELO_CLIENTE => 'Aceita pelo Cliente',
+            self::STATUS_RECUSADA_PELO_CLIENTE => 'Recusada pelo Cliente',
             self::STATUS_REJEITADA => 'Rejeitada',
         ];
     }
@@ -206,10 +218,44 @@ class PropostaComercial extends Model
             throw new \RuntimeException('Só é possível aprovar uma proposta enviada ao Comercial.');
         }
 
+        if (blank($this->client?->email)) {
+            throw new \RuntimeException('Defina o e-mail do cliente antes de aprovar.');
+        }
+
         $this->update([
-            'status' => self::STATUS_APROVADA,
+            'status' => self::STATUS_APROVADA_INTERNA,
             'reviewed_by_user_id' => $revisor->id,
             'reviewed_at' => now(),
+            'approval_token' => $this->approval_token ?? Str::random(48),
+        ]);
+    }
+
+    /**
+     * Chamado quando o cliente abre o link público de aprovação -- só
+     * registra a PRIMEIRA visualização, mesmo padrão de Quote::markViewedByClient().
+     */
+    public function markViewedByClient(): void
+    {
+        if ($this->client_viewed_at) {
+            return;
+        }
+
+        $this->update(['client_viewed_at' => now()]);
+    }
+
+    /**
+     * Cliente aceita pelo link público -- SÓ AQUI a SolicitacaoLocacao é
+     * criada (antes era em aprovar(), que agora só marca aprovação interna).
+     */
+    public function aceitarPeloCliente(): void
+    {
+        if ($this->status !== self::STATUS_APROVADA_INTERNA) {
+            throw new \RuntimeException('Só é possível aceitar uma proposta aprovada internamente.');
+        }
+
+        $this->update([
+            'status' => self::STATUS_ACEITA_PELO_CLIENTE,
+            'client_responded_at' => now(),
         ]);
 
         $primeiroEquipamento = $this->items()->where('type', PropostaComercialItem::TYPE_EQUIPAMENTO)->first();
@@ -221,6 +267,19 @@ class PropostaComercial extends Model
         $solicitacao = $this->criarSolicitacaoLocacao($primeiroEquipamento);
 
         $this->update(['solicitacao_locacao_id' => $solicitacao->id]);
+    }
+
+    public function recusarPeloCliente(string $motivo): void
+    {
+        if ($this->status !== self::STATUS_APROVADA_INTERNA) {
+            throw new \RuntimeException('Só é possível recusar uma proposta aprovada internamente.');
+        }
+
+        $this->update([
+            'status' => self::STATUS_RECUSADA_PELO_CLIENTE,
+            'client_responded_at' => now(),
+            'rejection_reason' => $motivo,
+        ]);
     }
 
     public function rejeitar(User $revisor, string $motivo): void
@@ -243,8 +302,8 @@ class PropostaComercial extends Model
      */
     public function reabrirParaEdicao(): void
     {
-        if ($this->status !== self::STATUS_REJEITADA) {
-            throw new \RuntimeException('Só é possível reabrir uma proposta rejeitada.');
+        if (! in_array($this->status, [self::STATUS_REJEITADA, self::STATUS_RECUSADA_PELO_CLIENTE], true)) {
+            throw new \RuntimeException('Só é possível reabrir uma proposta rejeitada ou recusada pelo cliente.');
         }
 
         $this->update([
