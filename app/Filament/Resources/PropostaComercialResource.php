@@ -194,6 +194,18 @@ class PropostaComercialResource extends BaseResource
                             PropostaComercial::STATUS_RECUSADA_PELO_CLIENTE,
                         ], true)),
                 ]),
+
+            Section::make('Avaliação por IA')
+                ->visible(fn (PropostaComercial $record) => $record->ai_evaluated_at !== null)
+                ->columns(3)
+                ->schema([
+                    TextEntry::make('ai_evaluation.risco_coerencia.nota')->label('Risco/Coerência (nota)'),
+                    TextEntry::make('ai_evaluation.qualidade_clareza.nota')->label('Qualidade/Clareza (nota)'),
+                    TextEntry::make('ai_evaluation.probabilidade_fechamento.nota')->label('Prob. Fechamento (nota)'),
+                    TextEntry::make('ai_evaluation.risco_coerencia.comentario')->label('Comentário — Risco/Coerência')->columnSpanFull(),
+                    TextEntry::make('ai_evaluation.qualidade_clareza.comentario')->label('Comentário — Qualidade/Clareza')->columnSpanFull(),
+                    TextEntry::make('ai_evaluation.probabilidade_fechamento.comentario')->label('Comentário — Prob. Fechamento')->columnSpanFull(),
+                ]),
         ]);
     }
 

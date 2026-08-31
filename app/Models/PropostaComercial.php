@@ -82,6 +82,8 @@ class PropostaComercial extends Model
         'approval_token',
         'client_viewed_at',
         'client_responded_at',
+        'ai_evaluation',
+        'ai_evaluated_at',
     ];
 
     protected $casts = [
@@ -91,6 +93,8 @@ class PropostaComercial extends Model
         'reviewed_at' => 'datetime',
         'client_viewed_at' => 'datetime',
         'client_responded_at' => 'datetime',
+        'ai_evaluation' => 'array',
+        'ai_evaluated_at' => 'datetime',
     ];
 
     /**

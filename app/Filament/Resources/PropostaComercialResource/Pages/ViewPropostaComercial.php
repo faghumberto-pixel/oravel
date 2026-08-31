@@ -5,6 +5,7 @@ namespace App\Filament\Resources\PropostaComercialResource\Pages;
 use App\Filament\Resources\PropostaComercialResource;
 use App\Filament\Resources\SolicitacaoLocacaoResource;
 use App\Models\PropostaComercial;
+use App\Services\PropostaComercialAiEvaluator;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Notifications\Notification;
@@ -70,6 +71,27 @@ class ViewPropostaComercial extends ViewRecord
                         Notification::make()->title('Proposta rejeitada')->success()->send();
                     } catch (\RuntimeException $e) {
                         Notification::make()->title('Não foi possível rejeitar')->body($e->getMessage())->warning()->send();
+                    }
+                }),
+
+            Actions\Action::make('avaliar_ia')
+                ->label('Avaliar com IA')
+                ->icon('heroicon-o-sparkles')
+                ->color('warning')
+                ->action(function (PropostaComercialAiEvaluator $evaluator) {
+                    try {
+                        $evaluator->evaluate($this->record);
+
+                        Notification::make()
+                            ->title('Proposta avaliada com sucesso.')
+                            ->success()
+                            ->send();
+                    } catch (\RuntimeException $e) {
+                        Notification::make()
+                            ->title('Falha ao avaliar')
+                            ->body($e->getMessage())
+                            ->danger()
+                            ->send();
                     }
                 }),
 
