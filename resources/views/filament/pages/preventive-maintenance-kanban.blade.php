@@ -52,7 +52,7 @@
             </div>
 
             <div class="flex gap-3">
-                <button wire:click="toggleFiltersPanel"
+                <button wire:click="toggleFiltersPanel" type="button"
                         class="relative flex items-center gap-2 px-5 py-2.5 text-[10px] font-black uppercase rounded-lg border transition-all whitespace-nowrap {{ $showFilters ? 'border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-500/10' : 'border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
                     <x-heroicon-o-funnel class="w-4 h-4" />
                     Filtros
