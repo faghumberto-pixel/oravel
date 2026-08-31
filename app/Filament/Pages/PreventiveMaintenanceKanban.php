@@ -46,6 +46,14 @@ class PreventiveMaintenanceKanban extends Page
 
     public $weekFilter = '';
 
+    public $startDate = '';
+
+    public $endDate = '';
+
+    public $groupId = '';
+
+    public $clientId = '';
+
     public array $hiddenStatuses = [];
 
     public bool $showFilters = false;
@@ -81,7 +89,7 @@ class PreventiveMaintenanceKanban extends Page
     {
         $tenant = Tenancy::current();
         $query = PreventiveMaintenanceExecution::where('tenant_id', $tenant->id)
-            ->with(['asset', 'maintenancePlan', 'maintenanceOrder', 'technician']);
+            ->with(['asset', 'maintenancePlan', 'maintenanceOrder', 'technician', 'asset.client']);
 
         if (!empty($this->search)) {
             $query->whereHas('asset', fn ($q) => $q->where('patrimonio', 'like', '%' . $this->search . '%')
@@ -96,7 +104,17 @@ class PreventiveMaintenanceKanban extends Page
             $query->where('asset_id', $this->assetId);
         }
 
-        if (!empty($this->weekFilter)) {
+        if (!empty($this->groupId)) {
+            $query->whereHas('asset', fn ($q) => $q->where('checklist_group_id', $this->groupId));
+        }
+
+        if (!empty($this->clientId)) {
+            $query->whereHas('asset', fn ($q) => $q->where('client_id', $this->clientId));
+        }
+
+        if (!empty($this->startDate) && !empty($this->endDate)) {
+            $query->whereBetween('created_at', [$this->startDate, $this->endDate . ' 23:59:59']);
+        } elseif (!empty($this->weekFilter)) {
             [$startDate, $endDate] = $this->parseWeekFilter($this->weekFilter);
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
@@ -181,12 +199,47 @@ class PreventiveMaintenanceKanban extends Page
             ->get();
     }
 
+    public function getGroupsList(): Collection
+    {
+        $tenant = Tenancy::current();
+        if (!$tenant) {
+            return collect();
+        }
+
+        return \App\Models\ChecklistGroup::whereHas('assets', fn ($q) =>
+            $q->whereHas('preventiveMaintenanceExecutions', fn ($q2) => $q2->where('tenant_id', $tenant->id))
+        )
+            ->where('tenant_id', $tenant->id)
+            ->select('id', 'name')
+            ->orderBy('name')
+            ->get();
+    }
+
+    public function getClientsList(): Collection
+    {
+        $tenant = Tenancy::current();
+        if (!$tenant) {
+            return collect();
+        }
+
+        return \App\Models\Client::whereHas('assets', fn ($q) =>
+            $q->whereHas('preventiveMaintenanceExecutions', fn ($q2) => $q2->where('tenant_id', $tenant->id))
+        )
+            ->where('tenant_id', $tenant->id)
+            ->select('id', 'name')
+            ->orderBy('name')
+            ->get();
+    }
+
     public function getActiveFilterCount(): int
     {
         $count = 0;
         if (!empty($this->search)) $count++;
         if (!empty($this->technicianId)) $count++;
         if (!empty($this->assetId)) $count++;
+        if (!empty($this->groupId)) $count++;
+        if (!empty($this->clientId)) $count++;
+        if (!empty($this->startDate) || !empty($this->endDate)) $count++;
         if (!empty($this->weekFilter)) $count++;
 
         return $count;
@@ -207,11 +260,58 @@ class PreventiveMaintenanceKanban extends Page
         $this->technicianId = '';
         $this->assetId = '';
         $this->weekFilter = '';
+        $this->startDate = '';
+        $this->endDate = '';
+        $this->groupId = '';
+        $this->clientId = '';
         $this->hiddenStatuses = [];
     }
 
     public function toggleFiltersPanel(): void
     {
         $this->showFilters = !$this->showFilters;
+    }
+
+    public function getPrintData(): array
+    {
+        $records = $this->getRecords();
+        $statuses = $this->getStatuses();
+
+        return [
+            'records' => $records,
+            'statuses' => $statuses,
+            'filtros' => $this->getActiveFilterLabels(),
+        ];
+    }
+
+    private function getActiveFilterLabels(): array
+    {
+        $labels = [];
+
+        if (!empty($this->technicianId)) {
+            $tech = User::find($this->technicianId);
+            $labels[] = "Técnico: {$tech?->name}";
+        }
+
+        if (!empty($this->assetId)) {
+            $asset = \App\Models\Asset::find($this->assetId);
+            $labels[] = "Equipamento: {$asset?->patrimonio}";
+        }
+
+        if (!empty($this->groupId)) {
+            $group = \App\Models\ChecklistGroup::find($this->groupId);
+            $labels[] = "Grupo: {$group?->name}";
+        }
+
+        if (!empty($this->clientId)) {
+            $client = \App\Models\Client::find($this->clientId);
+            $labels[] = "Cliente: {$client?->name}";
+        }
+
+        if (!empty($this->startDate) && !empty($this->endDate)) {
+            $labels[] = "Período: {$this->startDate} a {$this->endDate}";
+        }
+
+        return $labels;
     }
 }

@@ -62,12 +62,18 @@
                         </span>
                     @endif
                 </button>
+
+                <button onclick="window.print()"
+                        class="flex items-center gap-2 px-5 py-2.5 text-[10px] font-black uppercase rounded-lg border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all whitespace-nowrap">
+                    <x-heroicon-o-printer class="w-4 h-4" />
+                    Imprimir
+                </button>
             </div>
         </div>
 
-        {{-- Painel de Filtros (Técnico + Equipamento + Semana + Colunas) --}}
+        {{-- Painel de Filtros (Técnico + Equipamento + Período + Grupo + Cliente + Colunas) --}}
         @if($showFilters)
-            <div class="mb-2 p-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="mb-2 p-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 grid grid-cols-1 lg:grid-cols-3 gap-3">
                 <div>
                     <label class="block text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Filtrar por técnico</label>
                     <select wire:model.live="technicianId"
@@ -91,13 +97,42 @@
                 </div>
 
                 <div>
-                    <label class="block text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Filtrar por semana</label>
-                    <input wire:model.live="weekFilter"
-                           type="week"
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Filtrar por grupo de equipamento</label>
+                    <select wire:model.live="groupId"
+                            class="w-full py-2 px-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-xs text-gray-900 dark:text-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
+                        <option value="">Todos os grupos</option>
+                        @foreach($this->getGroupsList() as $group)
+                            <option value="{{ $group->id }}">{{ $group->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Filtrar por cliente</label>
+                    <select wire:model.live="clientId"
+                            class="w-full py-2 px-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-xs text-gray-900 dark:text-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
+                        <option value="">Todos os clientes</option>
+                        @foreach($this->getClientsList() as $client)
+                            <option value="{{ $client->id }}">{{ $client->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Data inicial</label>
+                    <input wire:model.live="startDate"
+                           type="date"
                            class="w-full py-2 px-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-xs text-gray-900 dark:text-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
                 </div>
 
                 <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Data final</label>
+                    <input wire:model.live="endDate"
+                           type="date"
+                           class="w-full py-2 px-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-xs text-gray-900 dark:text-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="lg:col-span-3">
                     <label class="block text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Colunas visíveis</label>
                     <div class="flex flex-wrap gap-2">
                         @foreach($this->getStatuses() as $statusId => $statusData)
@@ -237,5 +272,13 @@
         .vertical-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .vertical-scrollbar::-webkit-scrollbar-thumb { background: rgb(203 213 225); border-radius: 10px; }
         :is(.dark .vertical-scrollbar)::-webkit-scrollbar-thumb { background: rgb(51 65 85); }
+
+        @media print {
+            .max-w-full > * { page-break-inside: avoid; }
+            .flex.flex-row.gap-4 { display: grid; grid-template-columns: repeat(3, 1fr); }
+            .min-w-\[230px\] { min-width: auto; max-width: 100%; }
+            .overflow-x-auto { overflow: visible; }
+            .p-2\.5 { max-height: none !important; }
+        }
     </style>
 </x-filament-panels::page>
