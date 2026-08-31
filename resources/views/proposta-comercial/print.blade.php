@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Proposta Comercial - Oravel</title>
+    <title>Proposta Comercial #{{ $proposta->id }} - Oravel</title>
     <style>
         @page { margin: 1.5cm; }
-        body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 11px; color: #1f2937; line-height: 1.5; margin: 0; padding: 0; }
+        body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 11px; color: #1f2937; line-height: 1.5; margin: 0; padding: 20px; }
         .header { border-bottom: 2px solid #E8541A; padding-bottom: 15px; margin-bottom: 25px; }
         .header table { width: 100%; border: none; }
         .logo-area { width: 60%; }
@@ -25,14 +25,17 @@
         .items-table th, .items-table td { border: 1px solid #e5e7eb; padding: 6px 8px; font-size: 10px; text-align: left; }
         .items-table th { background: #f9fafb; text-transform: uppercase; color: #4b5563; font-size: 9px; }
         .items-table td.numeric { text-align: right; }
-        .items-table tfoot td { font-weight: bold; background: #f9fafb; }
         .total-row { text-align: right; font-size: 14px; font-weight: bold; color: #111827; padding-top: 10px; }
         .total-row .amount { color: #E8541A; }
-        .footer { position: fixed; bottom: -10px; width: 100%; text-align: center; font-size: 8px; color: #9ca3af; border-top: 1px solid #f3f4f6; padding-top: 10px; }
+        @media print {
+            .no-print { display: none !important; }
+        }
     </style>
 </head>
 <body>
+    <div class="no-print" style="margin-bottom: 16px; text-align: right;">
+        <button onclick="window.print()" style="padding: 8px 16px; background: #E8541A; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Imprimir</button>
+    </div>
     @include('proposta-comercial._conteudo', ['proposta' => $proposta])
-    <div class="footer">Gerado em {{ $generatedAt }} — Oravel Sistemas</div>
 </body>
 </html>

@@ -79,6 +79,13 @@ class ViewPropostaComercial extends ViewRecord
                 ->color('gray')
                 ->visible(fn () => filled($record->solicitacao_locacao_id))
                 ->url(fn () => SolicitacaoLocacaoResource::getUrl('edit', ['record' => $record->solicitacao_locacao_id])),
+
+            Actions\Action::make('imprimir')
+                ->label('Imprimir')
+                ->icon('heroicon-o-printer')
+                ->color('gray')
+                ->url(fn () => route('proposta-comercial.print', $this->record))
+                ->openUrlInNewTab(),
         ];
     }
 }
