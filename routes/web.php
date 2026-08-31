@@ -17,6 +17,7 @@ use App\Http\Controllers\MaintenanceOrderDossieController;
 use App\Http\Controllers\MaintenanceReportController;
 use App\Http\Controllers\PrintQrController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PropostaComercialApprovalController;
 use App\Http\Controllers\QuoteApprovalController;
 use App\Http\Controllers\QuoteReportController;
 use App\Http\Controllers\RentalDemoController;
@@ -80,6 +81,15 @@ Route::post('/orcamento/{token}/aprovar', [QuoteApprovalController::class, 'appr
     ->name('quotes.public-approve');
 Route::post('/orcamento/{token}/reprovar', [QuoteApprovalController::class, 'reject'])
     ->name('quotes.public-reject');
+
+// Publica, sem auth de proposito -- e' o cliente final aceitando/recusando
+// a proposta comercial pelo link que recebeu, sem conta no sistema.
+Route::get('/proposta-comercial/{token}', [PropostaComercialApprovalController::class, 'show'])
+    ->name('proposta-comercial.public-approval');
+Route::post('/proposta-comercial/{token}/aceitar', [PropostaComercialApprovalController::class, 'approve'])
+    ->name('proposta-comercial.public-accept');
+Route::post('/proposta-comercial/{token}/recusar', [PropostaComercialApprovalController::class, 'reject'])
+    ->name('proposta-comercial.public-reject');
 
 // Publica, sem auth de proposito -- funcionario do cliente que alugou o
 // equipamento registra o horimetro sem precisar de conta no ERP. Token
