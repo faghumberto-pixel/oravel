@@ -141,6 +141,10 @@ class AdminPanelProvider extends PanelProvider
                 PanelsRenderHook::FOOTER,
                 fn () => view('filament.panel-footer'),
             )
+            ->renderHook(
+                PanelsRenderHook::PAGE_START,
+                fn () => view('filament.breadcrumb'),
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')

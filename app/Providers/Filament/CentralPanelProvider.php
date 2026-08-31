@@ -192,6 +192,10 @@ class CentralPanelProvider extends PanelProvider
                 PanelsRenderHook::SIDEBAR_FOOTER,
                 fn () => view('filament.central.sidebar-footer'),
             )
+            ->renderHook(
+                PanelsRenderHook::PAGE_START,
+                fn () => view('filament.breadcrumb'),
+            )
             ->plugin(
                 // SalesAgendaWidget (Programacao) usa esse pacote -- sem
                 // registrar aqui, a tela quebrava com 500 ("Plugin
