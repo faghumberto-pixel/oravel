@@ -18,6 +18,7 @@ use App\Http\Controllers\MaintenanceReportController;
 use App\Http\Controllers\PrintQrController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropostaComercialApprovalController;
+use App\Http\Controllers\PropostaComercialBatchPrintController;
 use App\Http\Controllers\PropostaComercialReportController;
 use App\Http\Controllers\QuoteApprovalController;
 use App\Http\Controllers\QuoteReportController;
@@ -162,6 +163,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/admin/proposta-comercial/{record}/print', [PropostaComercialReportController::class, 'print'])
         ->name('proposta-comercial.print');
+
+    Route::get('/admin/proposta-comercial/print', [PropostaComercialBatchPrintController::class, 'show'])
+        ->name('proposta-comercial.print-batch');
 
     Route::get('/admin/gestao-clientes/{client}/print', [ClientManagementPrintController::class, 'show'])
         ->name('client-management.print');

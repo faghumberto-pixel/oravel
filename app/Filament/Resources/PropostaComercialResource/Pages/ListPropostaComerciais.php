@@ -23,6 +23,18 @@ class ListPropostaComerciais extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('imprimir_filtro_atual')
+                ->label('Imprimir Todas (filtro atual)')
+                ->icon('heroicon-o-printer')
+                ->color('gray')
+                ->url(function () {
+                    $filtroStatus = $this->tableFilters['status']['value'] ?? null;
+
+                    return route('proposta-comercial.print-batch', array_filter([
+                        'status' => $filtroStatus,
+                    ]));
+                })
+                ->openUrlInNewTab(),
             Actions\CreateAction::make()
                 ->label('Nova Proposta Comercial'),
         ];

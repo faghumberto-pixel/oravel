@@ -18,6 +18,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 
 /**
  * Tela do time Comercial pra revisar propostas enviadas pelo vendedor de
@@ -238,6 +239,17 @@ class PropostaComercialResource extends BaseResource
             ->defaultSort('created_at', 'desc')
             ->actions([
                 Tables\Actions\ViewAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkAction::make('imprimir_selecionadas')
+                    ->label('Imprimir Selecionadas')
+                    ->icon('heroicon-o-printer')
+                    ->action(function (Collection $records) {
+                        $ids = $records->pluck('id')->all();
+
+                        return redirect(route('proposta-comercial.print-batch', ['ids' => $ids]));
+                    })
+                    ->deselectRecordsAfterCompletion(),
             ]);
     }
 
