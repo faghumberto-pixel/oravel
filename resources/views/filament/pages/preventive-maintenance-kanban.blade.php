@@ -72,8 +72,7 @@
         </div>
 
         {{-- Painel de Filtros (Técnico + Equipamento + Período + Grupo + Cliente + Colunas) --}}
-        @if($showFilters)
-            <div class="mb-2 p-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 grid grid-cols-1 lg:grid-cols-3 gap-3">
+        <div class="mb-2 p-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 grid grid-cols-1 lg:grid-cols-3 gap-3">
                 <div>
                     <label class="block text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Filtrar por técnico</label>
                     <select wire:model.live="technicianId"
@@ -146,7 +145,6 @@
                     </div>
                 </div>
             </div>
-        @endif
 
         {{-- Chips de filtros ativos --}}
         @if($this->getActiveFilterCount() > 0)
