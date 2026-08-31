@@ -16,3 +16,32 @@
 .fi-page-header {
     margin-bottom: 0.5rem !important;
 }
+
+/* Propaga espaçamento compactado para TODAS as páginas (2026-08-31) */
+/* Reduz margin-bottom de sections/cards */
+.rounded-xl {
+    margin-bottom: 0.5rem !important;
+}
+
+/* Reduz gap nos flex containers */
+.flex {
+    gap: 0.25rem !important;
+}
+
+/* Reduz padding geral */
+.p-6 {
+    padding: 1rem !important;
+}
+
+.p-4 {
+    padding: 0.75rem !important;
+}
+
+/* Reduz margin-bottom de elementos gerais */
+.mb-6 {
+    margin-bottom: 0.5rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 0.25rem !important;
+}
