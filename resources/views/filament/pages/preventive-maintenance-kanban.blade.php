@@ -1,176 +1,240 @@
 <x-filament-panels::page>
-    <div style="max-width: 100%;">
+    <div class="max-w-full">
 
         {{-- Cabeçalho Analítico --}}
-        <div style="display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 1.5rem; padding: 1.5rem; background-color: #1f2937; border-radius: 12px; border: 4px solid #374151;">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
             <div>
-                <h2 style="font-size: 1.125rem; font-weight: 900; color: #f3f4f6; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">Execuções de Manutenção Preventiva</h2>
-                <p style="font-size: 0.6875rem; color: #9ca3af; margin: 0.25rem 0 0 0;">Acompanhamento de preventivas em andamento</p>
+                <h2 class="text-lg font-black text-gray-900 dark:text-white uppercase tracking-tight">Análise de Preventivas</h2>
+                <p class="text-[11px] text-gray-500 dark:text-gray-400">Execuções de manutenção preventiva em andamento</p>
             </div>
 
-            <div style="display: flex; gap: 2rem; align-items: center;">
+            <div class="flex items-center gap-8 mt-4 md:mt-0">
                 @php
-                    $allRecords = $this->getRecords();
-                    $totalFiltrado = $allRecords->flatten()->count();
+                    $allRecordsGrouped = $this->getRecords();
+                    $totalFiltrado = $allRecordsGrouped->flatten()->count();
                     $totalGeral = $this->getTotalExecutionsCount();
                 @endphp
-
-                <div style="display: flex; gap: 1.5rem; border-right: 1px solid #4b5563; padding-right: 2rem;">
-                    <div style="text-align: right;">
-                        <span style="display: block; font-size: 0.5625rem; color: #6b7280; text-transform: uppercase; font-weight: 900; letter-spacing: 0.08em; margin-bottom: 0.25rem;">Total de Execuções</span>
-                        <span style="font-size: 1.875rem; font-weight: 900; color: #d1d5db;">{{ $totalGeral }}</span>
+                <div class="flex gap-6 border-r border-gray-200 dark:border-gray-800 pr-8">
+                    <div class="text-right">
+                        <span class="block text-[9px] text-gray-400 dark:text-gray-500 uppercase font-black tracking-widest">Total de Execuções</span>
+                        <span class="text-2xl font-black text-gray-700 dark:text-gray-300">{{ $totalGeral }}</span>
                     </div>
-                    <div style="text-align: right;">
-                        <span style="display: block; font-size: 0.5625rem; color: #6b7280; text-transform: uppercase; font-weight: 900; letter-spacing: 0.08em; margin-bottom: 0.25rem;">Encontradas</span>
-                        <span style="font-size: 1.875rem; font-weight: 900; color: {{ $search || $technicianId || $assetId || $weekFilter ? '#f59e0b' : '#6b7280' }};">{{ $totalFiltrado }}</span>
+                    <div class="text-right">
+                        <span class="block text-[9px] text-gray-400 dark:text-gray-500 uppercase font-black tracking-widest">Encontradas</span>
+                        <span class="text-2xl font-black {{ $search || $technicianId || $assetId || $weekFilter ? 'text-amber-500' : 'text-gray-600 dark:text-gray-400' }}">{{ $totalFiltrado }}</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Barra de Filtros --}}
-        <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 0.75rem; padding: 1rem; background-color: #1f2937; border-radius: 12px; border: 4px solid #374151;">
-            <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-                {{-- Input de Busca --}}
-                <div style="position: relative; flex: 1; min-width: 250px;">
-                    <input wire:model.live.debounce.300ms="search"
-                           type="text"
-                           placeholder="Buscar patrimônio..."
-                           style="width: 100%; padding: 0.625rem 0.75rem 0.625rem 2rem; background-color: #111827; border: 1px solid #374151; border-radius: 8px; font-size: 0.75rem; color: #f3f4f6; font-weight: 700; box-sizing: border-box;">
-                    @if(!empty($search))
-                        <button wire:click="$set('search', '')" style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: #6b7280; cursor: pointer; padding: 0; font-size: 1rem;">
-                            ✕
-                        </button>
-                    @endif
+        {{-- Barra de Filtros Avançada --}}
+        <div class="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between mb-3 p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
+            {{-- Input de Busca --}}
+            <div class="relative flex-1 max-w-xl">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 z-10">
+                    <x-heroicon-o-magnifying-glass wire:loading.remove wire:target="search" class="w-4 h-4" />
+                    <svg wire:loading wire:target="search" class="animate-spin h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
                 </div>
 
+                <input wire:model.live.debounce.300ms="search"
+                       type="text"
+                       placeholder="Buscar patrimônio..."
+                       class="w-full pl-9 pr-10 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-xs text-gray-900 dark:text-gray-100 font-bold placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all">
+
+                @if(!empty($search))
+                    <button wire:click="$set('search', '')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 dark:text-gray-400 font-bold hover:scale-110 transition active:scale-95 z-10">
+                        <x-heroicon-o-x-mark class="w-4 h-4 stroke-[3]" />
+                    </button>
+                @endif
+            </div>
+
+            <div class="flex gap-3">
                 <button wire:click="toggleFiltersPanel"
-                        style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; font-size: 0.625rem; font-weight: 900; text-transform: uppercase; border-radius: 8px; border: 2px solid {{ $showFilters ? '#3b82f6' : '#374151' }}; background-color: transparent; color: {{ $showFilters ? '#60a5fa' : '#9ca3af' }}; cursor: pointer; white-space: nowrap; transition: all 0.2s;">
-                    🔽 Filtros
+                        class="relative flex items-center gap-2 px-5 py-2.5 text-[10px] font-black uppercase rounded-lg border transition-all whitespace-nowrap {{ $showFilters ? 'border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-500/10' : 'border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
+                    <x-heroicon-o-funnel class="w-4 h-4" />
+                    Filtros
                     @if($this->getActiveFilterCount() > 0)
-                        <span style="display: inline-flex; align-items: center; justify-content: center; background-color: #f59e0b; color: white; font-size: 0.5rem; font-weight: 900; border-radius: 50%; width: 1rem; height: 1rem;">
+                        <span class="absolute -top-2 -right-2 bg-amber-500 text-white text-[9px] font-black rounded-full w-4 h-4 flex items-center justify-center">
                             {{ $this->getActiveFilterCount() }}
                         </span>
                     @endif
                 </button>
             </div>
-
-            {{-- Painel de Filtros Avançados --}}
-            @if($showFilters)
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; padding-top: 1rem; border-top: 1px solid #374151;">
-                    {{-- Filtro por Técnico --}}
-                    <div>
-                        <label style="display: block; font-size: 0.625rem; font-weight: 900; color: #9ca3af; text-transform: uppercase; margin-bottom: 0.5rem;">Técnico Responsável</label>
-                        <select wire:model.live="technicianId" style="width: 100%; padding: 0.625rem; background-color: #111827; border: 1px solid #374151; border-radius: 8px; font-size: 0.75rem; color: #f3f4f6; box-sizing: border-box;">
-                            <option value="">Todos</option>
-                            @foreach($this->getTechniciansList() as $tech)
-                                <option value="{{ $tech->id }}">{{ $tech->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    {{-- Filtro por Equipamento --}}
-                    <div>
-                        <label style="display: block; font-size: 0.625rem; font-weight: 900; color: #9ca3af; text-transform: uppercase; margin-bottom: 0.5rem;">Equipamento</label>
-                        <select wire:model.live="assetId" style="width: 100%; padding: 0.625rem; background-color: #111827; border: 1px solid #374151; border-radius: 8px; font-size: 0.75rem; color: #f3f4f6; box-sizing: border-box;">
-                            <option value="">Todos</option>
-                            @foreach($this->getAssetsList() as $asset)
-                                <option value="{{ $asset->id }}">{{ $asset->patrimonio }} - {{ $asset->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    {{-- Filtro por Semana --}}
-                    <div>
-                        <label style="display: block; font-size: 0.625rem; font-weight: 900; color: #9ca3af; text-transform: uppercase; margin-bottom: 0.5rem;">Semana</label>
-                        <input wire:model.live="weekFilter"
-                               type="week"
-                               style="width: 100%; padding: 0.625rem; background-color: #111827; border: 1px solid #374151; border-radius: 8px; font-size: 0.75rem; color: #f3f4f6; box-sizing: border-box;">
-                    </div>
-
-                    {{-- Botão Limpar Filtros --}}
-                    <div style="display: flex; align-items: flex-end;">
-                        <button wire:click="clearFilters()" style="width: 100%; padding: 0.625rem; background-color: #6b7280; border: none; border-radius: 8px; font-size: 0.625rem; font-weight: 900; color: white; cursor: pointer; text-transform: uppercase; transition: background-color 0.2s;">
-                            Limpar Filtros
-                        </button>
-                    </div>
-                </div>
-            @endif
         </div>
 
-        {{-- Kanban Board --}}
-        <div style="display: flex; gap: 1.5rem; overflow-x: auto; padding: 1.5rem; background-color: #111827; border-radius: 12px; border: 4px solid #374151; min-height: 600px;">
-            @foreach($this->getVisibleStatuses() as $statusKey => $statusConfig)
-                <div style="flex: 0 0 380px; display: flex; flex-direction: column; background-color: #1f2937; border-radius: 8px; border: 2px solid {{ $statusConfig['color'] }}; overflow: hidden;">
-                    {{-- Cabeçalho da Coluna --}}
-                    <div style="background-color: {{ $statusConfig['color'] }}; padding: 1rem; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <h3 style="font-size: 0.875rem; font-weight: 900; color: white; margin: 0; text-transform: uppercase;">{{ $statusConfig['title'] }}</h3>
-                            <p style="font-size: 0.625rem; color: rgba(255,255,255,0.8); margin: 0.25rem 0 0 0;">{{ $allRecords[$statusKey]->count() }} itens</p>
+        {{-- Painel de Filtros (Técnico + Equipamento + Semana + Colunas) --}}
+        @if($showFilters)
+            <div class="mb-3 p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Filtrar por técnico</label>
+                    <select wire:model.live="technicianId"
+                            class="w-full py-2 px-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-xs text-gray-900 dark:text-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
+                        <option value="">Todos os técnicos</option>
+                        @foreach($this->getTechniciansList() as $tech)
+                            <option value="{{ $tech->id }}">{{ $tech->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Filtrar por equipamento</label>
+                    <select wire:model.live="assetId"
+                            class="w-full py-2 px-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-xs text-gray-900 dark:text-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
+                        <option value="">Todos os equipamentos</option>
+                        @foreach($this->getAssetsList() as $asset)
+                            <option value="{{ $asset->id }}">{{ $asset->patrimonio }} - {{ $asset->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Filtrar por semana</label>
+                    <input wire:model.live="weekFilter"
+                           type="week"
+                           class="w-full py-2 px-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-xs text-gray-900 dark:text-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Colunas visíveis</label>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($this->getStatuses() as $statusId => $statusData)
+                            @php $isHidden = in_array($statusId, $hiddenStatuses, true); @endphp
+                            <button wire:click="toggleStatusVisibility('{{ $statusId }}')"
+                                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase border transition-all {{ $isHidden ? 'border-gray-200 dark:border-gray-800 text-gray-400 dark:text-gray-600 bg-gray-50 dark:bg-gray-950/40 line-through' : 'border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800' }}">
+                                <span class="w-2 h-2 rounded-full {{ $statusData['color'] }}"></span>
+                                {{ $statusData['title'] }}
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        {{-- Chips de filtros ativos --}}
+        @if($this->getActiveFilterCount() > 0)
+            <div class="flex flex-wrap items-center gap-2 mb-6">
+                <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">Filtros ativos:</span>
+
+                @if($technicianId)
+                    <span class="flex items-center gap-1.5 pl-3 pr-1.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/40 text-blue-600 dark:text-blue-300 text-[10px] font-bold">
+                        Técnico: {{ $this->getTechniciansList()->firstWhere('id', $technicianId)?->name ?? '--' }}
+                        <button wire:click="$set('technicianId', '')" class="hover:text-blue-800 dark:hover:text-white"><x-heroicon-o-x-mark class="w-3 h-3" /></button>
+                    </span>
+                @endif
+
+                @if($assetId)
+                    <span class="flex items-center gap-1.5 pl-3 pr-1.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/40 text-blue-600 dark:text-blue-300 text-[10px] font-bold">
+                        Equipamento: {{ $this->getAssetsList()->firstWhere('id', $assetId)?->patrimonio ?? '--' }}
+                        <button wire:click="$set('assetId', '')" class="hover:text-blue-800 dark:hover:text-white"><x-heroicon-o-x-mark class="w-3 h-3" /></button>
+                    </span>
+                @endif
+
+                @if($weekFilter)
+                    <span class="flex items-center gap-1.5 pl-3 pr-1.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/40 text-blue-600 dark:text-blue-300 text-[10px] font-bold">
+                        Semana: {{ $weekFilter }}
+                        <button wire:click="$set('weekFilter', '')" class="hover:text-blue-800 dark:hover:text-white"><x-heroicon-o-x-mark class="w-3 h-3" /></button>
+                    </span>
+                @endif
+
+                <button wire:click="clearFilters" class="text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white underline">
+                    Limpar tudo
+                </button>
+            </div>
+        @else
+            <div class="mb-6"></div>
+        @endif
+
+        {{-- Grid Principal do Kanban --}}
+        <div class="flex flex-row gap-4 overflow-x-auto pb-4 custom-scrollbar min-h-[70vh]">
+            @forelse($this->getVisibleStatuses() as $statusId => $statusData)
+                @php
+                    $records = $allRecordsGrouped->get($statusId, collect());
+                    $statusColorMap = [
+                        'aguardando_diagnostico' => 'bg-slate-600',
+                        'em_manutencao' => 'bg-blue-600',
+                        'aguardando_peca' => 'bg-amber-500',
+                        'teste_qualidade' => 'bg-purple-600',
+                        'pronto_giro' => 'bg-teal-600',
+                        'pendencia' => 'bg-orange-500',
+                        'concluido' => 'bg-emerald-600',
+                    ];
+                    $headerBg = $statusColorMap[$statusId] ?? 'bg-slate-600';
+                    $sideBorder = str_replace('bg-', 'border-', $headerBg);
+                @endphp
+
+                <div class="flex-1 min-w-[230px] max-w-[280px] bg-gray-50 dark:bg-gray-800/60 rounded-xl border border-gray-200 dark:border-gray-700/60 flex flex-col shadow-sm overflow-hidden">
+                    <div class="{{ $headerBg }} px-3 py-3 shadow-sm">
+                        <div class="flex items-center justify-between gap-2">
+                            <h3 class="text-[11px] font-black uppercase tracking-wide text-white leading-tight">{{ $statusData['title'] }}</h3>
                         </div>
-                        <button wire:click="toggleStatusVisibility('{{ $statusKey }}')" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.25rem; padding: 0;">
-                            👁️
-                        </button>
+                        <span class="text-[11px] text-white/90 font-bold">{{ $records->count() }} execuções</span>
                     </div>
 
-                    {{-- Cards da Coluna --}}
-                    <div style="flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
-                        @forelse($allRecords[$statusKey] as $execution)
-                            <div style="background-color: #111827; border-radius: 8px; padding: 0.75rem; border-left: 4px solid {{ $statusConfig['color'] }}; cursor: move;">
-                                {{-- Patrimônio e Plano --}}
-                                <div style="font-size: 0.75rem; font-weight: 900; color: #f3f4f6; margin-bottom: 0.5rem;">
-                                    {{ $execution->asset?->patrimonio ?? 'N/A' }}
+                    <div wire:loading.class="opacity-40" wire:target="search" class="p-2.5 space-y-2.5 flex-1 max-h-[62vh] overflow-y-auto vertical-scrollbar transition-opacity duration-200">
+                        @forelse($records as $execution)
+                            <div class="block bg-white dark:bg-gray-900 p-3 rounded-lg border-l-4 {{ $sideBorder }} border-t border-r border-b border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-400 dark:hover:border-blue-500 transition-all shadow-sm group">
+                                {{-- Patrimônio --}}
+                                <div class="flex justify-between items-start mb-1.5 gap-2">
+                                    <span class="text-[11px] font-mono font-bold text-gray-400 dark:text-gray-500 truncate max-w-[110px]">
+                                        {{ $execution->asset?->patrimonio ?? 'N/A' }}
+                                    </span>
                                 </div>
-                                <div style="font-size: 0.625rem; color: #9ca3af; margin-bottom: 0.5rem;">
+
+                                {{-- Plano de Manutenção --}}
+                                <h4 class="text-base font-black text-gray-900 dark:text-gray-50 leading-tight mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                     {{ $execution->maintenancePlan?->name ?? 'Sem Plano' }}
-                                </div>
+                                </h4>
 
                                 {{-- Técnico --}}
                                 @if($execution->technician)
-                                    <div style="font-size: 0.625rem; color: #60a5fa; margin-bottom: 0.25rem;">
+                                    <p class="text-[11px] text-gray-500 dark:text-gray-400 font-semibold mb-1.5 truncate">
                                         👤 {{ $execution->technician->name }}
-                                    </div>
+                                    </p>
                                 @endif
 
                                 {{-- Horímetro --}}
-                                <div style="font-size: 0.625rem; color: #10b981; padding-top: 0.5rem; border-top: 1px solid #374151;">
-                                    H: {{ number_format($execution->horimetro_at_execution, 2) }}
-                                    @if($execution->next_due_horimetro)
-                                        / {{ number_format($execution->next_due_horimetro, 2) }}
-                                    @endif
-                                </div>
-
-                                {{-- Data --}}
-                                <div style="font-size: 0.625rem; color: #6b7280; margin-top: 0.5rem;">
-                                    {{ $execution->created_at?->format('d/m/Y H:i') }}
+                                <div class="flex items-center justify-between pt-2 mt-1 border-t border-gray-100 dark:border-gray-800">
+                                    <div class="flex items-center gap-1.5 text-gray-600 dark:text-gray-400">
+                                        <x-heroicon-o-bolt class="w-3.5 h-3.5 text-emerald-500" />
+                                        <span class="text-[11px] font-mono font-bold">
+                                            {{ number_format($execution->horimetro_at_execution, 0) }}h
+                                            @if($execution->next_due_horimetro)
+                                                / {{ number_format($execution->next_due_horimetro, 0) }}h
+                                            @endif
+                                        </span>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500">
+                                        {{ $execution->created_at?->format('d/m') ?? '--' }}
+                                    </span>
                                 </div>
                             </div>
                         @empty
-                            <div style="text-align: center; padding: 2rem 1rem; color: #6b7280; font-size: 0.75rem;">
-                                Nenhuma execução
-                            </div>
+                            <div class="text-center py-12 text-[10px] text-gray-400 dark:text-gray-600 uppercase font-bold italic tracking-wide border border-dashed border-gray-300 dark:border-gray-700 rounded-xl">Sem registros</div>
                         @endforelse
                     </div>
                 </div>
-            @endforeach
+            @empty
+                <div class="w-full text-center py-16 text-sm text-gray-500 dark:text-gray-400 italic">
+                    Todas as colunas estão ocultas pelo filtro. <button wire:click="clearFilters" class="underline text-blue-600 dark:text-blue-400">Limpar filtros</button>.
+                </div>
+            @endforelse
         </div>
-
     </div>
 
     <style>
-        div::-webkit-scrollbar {
-            height: 8px;
-            width: 8px;
-        }
-        div::-webkit-scrollbar-track {
-            background: #1f2937;
-        }
-        div::-webkit-scrollbar-thumb {
-            background: #374151;
-            border-radius: 4px;
-        }
-        div::-webkit-scrollbar-thumb:hover {
-            background: #4b5563;
-        }
+        .custom-scrollbar::-webkit-scrollbar { height: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgb(203 213 225); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgb(148 163 184); }
+        :is(.dark .custom-scrollbar)::-webkit-scrollbar-thumb { background: rgb(51 65 85); }
+        :is(.dark .custom-scrollbar)::-webkit-scrollbar-thumb:hover { background: rgb(71 85 105); }
+
+        .vertical-scrollbar::-webkit-scrollbar { width: 5px; }
+        .vertical-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .vertical-scrollbar::-webkit-scrollbar-thumb { background: rgb(203 213 225); border-radius: 10px; }
+        :is(.dark .vertical-scrollbar)::-webkit-scrollbar-thumb { background: rgb(51 65 85); }
     </style>
 </x-filament-panels::page>

@@ -16,7 +16,7 @@ class PreventiveMaintenanceKanban extends Page
     protected static ?string $title = 'Kanban de Execuções Preventivas';
 
     protected static ?string $navigationIcon = 'heroicon-o-view-columns';
-    protected static ?string $navigationGroup = 'Manutenção';
+    protected static ?string $navigationGroup = 'PMP';
     protected static ?string $navigationLabel = 'Kanban Preventivas';
 
     protected static ?int $navigationSort = 2;
@@ -135,13 +135,13 @@ class PreventiveMaintenanceKanban extends Page
     public static function statusMap(): array
     {
         return [
-            'aguardando_diagnostico' => ['title' => 'Aguardando Diagnóstico', 'color' => '#64748b'],
-            'em_manutencao' => ['title' => 'Em Manutenção', 'color' => '#2563eb'],
-            'aguardando_peca' => ['title' => 'Aguardando Peça', 'color' => '#f59e0b'],
-            'teste_qualidade' => ['title' => 'Teste de Qualidade', 'color' => '#a855f7'],
-            'pronto_giro' => ['title' => 'Pronto para Giro', 'color' => '#14b8a6'],
-            'pendencia' => ['title' => 'Pendência', 'color' => '#f97316'],
-            'concluido' => ['title' => 'Concluído', 'color' => '#10b981'],
+            'aguardando_diagnostico' => ['title' => 'Aguardando Diagnóstico', 'color' => 'bg-slate-600'],
+            'em_manutencao' => ['title' => 'Em Manutenção', 'color' => 'bg-blue-600'],
+            'aguardando_peca' => ['title' => 'Aguardando Peça', 'color' => 'bg-amber-500'],
+            'teste_qualidade' => ['title' => 'Teste de Qualidade', 'color' => 'bg-purple-600'],
+            'pronto_giro' => ['title' => 'Pronto para Giro', 'color' => 'bg-teal-600'],
+            'pendencia' => ['title' => 'Pendência', 'color' => 'bg-orange-500'],
+            'concluido' => ['title' => 'Concluído', 'color' => 'bg-emerald-600'],
         ];
     }
 
