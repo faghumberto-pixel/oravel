@@ -5,10 +5,10 @@
 @endphp
 
 @if ($module && $title)
-    <div class="px-6 py-3 bg-slate-800 dark:bg-slate-900">
+    <div class="px-6 py-3 bg-gray-950 dark:bg-gray-950">
         <p class="text-sm text-white font-medium">
             <span>{{ $module }}</span>
-            <span class="mx-2 text-slate-400">→</span>
+            <span class="mx-2 text-gray-400">→</span>
             <span>{{ $title }}</span>
         </p>
     </div>
