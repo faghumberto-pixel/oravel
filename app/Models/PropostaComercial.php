@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Mail\GenericPdfMail;
 use App\Models\Concerns\BelongsToTenant;
 use App\Models\Concerns\HasSaaSMetadata;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
@@ -201,6 +204,18 @@ class PropostaComercial extends Model
             'status' => self::STATUS_ENVIADA_PARA_COMERCIAL,
             'sent_at' => now(),
         ]);
+
+        $comerciais = User::where('tenant_id', $this->tenant_id)
+            ->whereHas('roles', fn ($q) => $q->where('name', EquipmentDamage::ROLE_COMERCIAL))
+            ->get();
+
+        foreach ($comerciais as $user) {
+            Mail::to($user->email)->send(new GenericPdfMail(
+                subjectLine: "Proposta comercial aguardando revisão — {$this->client?->name}",
+                greeting: "Olá, {$user->name}",
+                bodyText: "Uma proposta comercial foi enviada por {$this->sellerUser?->name} e aguarda sua revisão no painel.",
+            ));
+        }
     }
 
     /**
@@ -228,6 +243,21 @@ class PropostaComercial extends Model
             'reviewed_at' => now(),
             'approval_token' => $this->approval_token ?? Str::random(48),
         ]);
+
+        $pdf = Pdf::loadView('pdf.proposta-comercial', [
+            'proposta' => $this->load(['items', 'client', 'sellerUser']),
+            'generatedAt' => now()->format('d/m/Y H:i'),
+        ])->output();
+
+        Mail::to($this->client->email)->send(new GenericPdfMail(
+            subjectLine: "Proposta comercial — {$this->client->name}",
+            greeting: "Olá, {$this->client->name}",
+            bodyText: 'Segue em anexo a proposta comercial. Para aceitar ou recusar, acesse: '
+                .route('proposta-comercial.public-approval', $this->approval_token),
+            pdfContent: $pdf,
+            pdfFilename: "proposta-comercial-{$this->id}.pdf",
+            senderDisplayName: $this->tenant->name,
+        ));
     }
 
     /**
