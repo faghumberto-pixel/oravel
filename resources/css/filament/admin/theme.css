@@ -11,3 +11,18 @@
 .fi-header-heading {
     display: none;
 }
+
+/* Reduz espaçamento geral entre header e conteúdo (2026-08-31) */
+.fi-page-header {
+    margin-bottom: 0.5rem !important;
+}
+
+/* Reduz gap entre header e tabela/conteúdo */
+.fi-page {
+    gap: 1rem !important;
+}
+
+/* Reduz padding interno de páginas */
+.fi-page-content {
+    padding: 1rem !important;
+}
