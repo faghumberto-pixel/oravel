@@ -2,7 +2,7 @@
     <div class="max-w-full">
 
         {{-- Cabeçalho Analítico --}}
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-2 p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
             <div>
                 <h2 class="text-lg font-black text-gray-900 dark:text-white uppercase tracking-tight">Análise de Preventivas</h2>
                 <p class="text-[11px] text-gray-500 dark:text-gray-400">Execuções de manutenção preventiva em andamento</p>
@@ -28,7 +28,7 @@
         </div>
 
         {{-- Barra de Filtros Avançada --}}
-        <div class="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between mb-3 p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
+        <div class="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between mb-2 p-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
             {{-- Input de Busca --}}
             <div class="relative flex-1 max-w-xl">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 z-10">
@@ -67,7 +67,7 @@
 
         {{-- Painel de Filtros (Técnico + Equipamento + Semana + Colunas) --}}
         @if($showFilters)
-            <div class="mb-3 p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="mb-2 p-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Filtrar por técnico</label>
                     <select wire:model.live="technicianId"
@@ -115,7 +115,7 @@
 
         {{-- Chips de filtros ativos --}}
         @if($this->getActiveFilterCount() > 0)
-            <div class="flex flex-wrap items-center gap-2 mb-6">
+            <div class="flex flex-wrap items-center gap-2 mb-2">
                 <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">Filtros ativos:</span>
 
                 @if($technicianId)
@@ -144,7 +144,7 @@
                 </button>
             </div>
         @else
-            <div class="mb-6"></div>
+            <div class="mb-1"></div>
         @endif
 
         {{-- Grid Principal do Kanban --}}
