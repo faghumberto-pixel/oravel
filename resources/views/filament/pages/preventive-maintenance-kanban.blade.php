@@ -175,7 +175,8 @@
 
                     <div wire:loading.class="opacity-40" wire:target="search" class="p-2.5 space-y-2.5 flex-1 max-h-[62vh] overflow-y-auto vertical-scrollbar transition-opacity duration-200">
                         @forelse($records as $execution)
-                            <div class="block bg-white dark:bg-gray-900 p-3 rounded-lg border-l-4 {{ $sideBorder }} border-t border-r border-b border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-400 dark:hover:border-blue-500 transition-all shadow-sm group">
+                            <a href="{{ \App\Filament\Resources\MaintenanceOrderResource::getUrl('edit', ['record' => $execution->maintenanceOrder?->id]) }}"
+                               class="block bg-white dark:bg-gray-900 p-3 rounded-lg border-l-4 {{ $sideBorder }} border-t border-r border-b border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-400 dark:hover:border-blue-500 transition-all shadow-sm group">
                                 {{-- Patrimônio --}}
                                 <div class="flex justify-between items-start mb-1.5 gap-2">
                                     <span class="text-[11px] font-mono font-bold text-gray-400 dark:text-gray-500 truncate max-w-[110px]">
@@ -206,11 +207,11 @@
                                             @endif
                                         </span>
                                     </div>
-                                    <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500">
-                                        {{ $execution->created_at?->format('d/m') ?? '--' }}
+                                    <span class="text-[10px] font-bold text-blue-600 dark:text-blue-400 group-hover:underline">
+                                        Ver OS
                                     </span>
                                 </div>
-                            </div>
+                            </a>
                         @empty
                             <div class="text-center py-12 text-[10px] text-gray-400 dark:text-gray-600 uppercase font-bold italic tracking-wide border border-dashed border-gray-300 dark:border-gray-700 rounded-xl">Sem registros</div>
                         @endforelse
