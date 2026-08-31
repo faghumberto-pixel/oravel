@@ -2,50 +2,17 @@
 
 @config 'tailwind.config.js';
 
-/* Navegação apenas por breadcrumb hierárquico - sem títulos redundantes (2026-08-31)
-   Estratégia: remover todos os títulos de página, manter apenas breadcrumb
-   funcional. Padrão usado por Stripe, Vercel, Supabase, Linear.
-   Benefícios: economiza espaço, reduz redundância, melhor UX mobile. */
-
-/* Remove título principal da página */
+/* Titulo grande de pagina removido em toda tela do painel admin (pedido do
+   usuario, 2026-07-27) -- so' o <h1 class="fi-header-heading"> (components/
+   header/index.blade.php do pacote filament/filament), nao o resto do
+   cabecalho: botoes de acao (Nova Ordem de Servico, Exportar, filtros etc.)
+   ficam no mesmo <header>, ao lado do h1, e continuam funcionando
+   normalmente. Breadcrumb tambem mantido. */
 .fi-header-heading {
     display: none;
 }
 
-/* Remove espaço reservado para título */
-.fi-header {
-    gap: 0.5rem !important;
-}
-
-/* Compacta breadcrumb e ações no header */
+/* Reduz espaçamento geral entre header e conteúdo (2026-08-31) */
 .fi-page-header {
     margin-bottom: 0.5rem !important;
-    padding: 0.75rem 1.5rem !important;
-}
-
-/* Reduz gap entre header e tabela/conteúdo */
-.fi-page {
-    gap: 0.75rem !important;
-}
-
-/* Reduz padding interno de páginas */
-.fi-page-content {
-    padding: 1rem !important;
-}
-
-/* Otimiza breadcrumb para ser elemento principal */
-.fi-breadcrumbs {
-    padding: 0 !important;
-    margin: 0 !important;
-    font-size: 0.95rem !important;
-    font-weight: 600 !important;
-}
-
-/* Garante que breadcrumb é o foco visual do header */
-.fi-breadcrumb-item {
-    color: rgb(59, 130, 246) !important;
-}
-
-.fi-breadcrumb-item:hover {
-    text-decoration: underline !important;
 }
