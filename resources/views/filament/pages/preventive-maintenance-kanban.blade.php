@@ -63,11 +63,22 @@
                     @endif
                 </button>
 
-                <button onclick="window.print()"
-                        class="flex items-center gap-2 px-5 py-2.5 text-[10px] font-black uppercase rounded-lg border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all whitespace-nowrap">
+                @php
+                    $printUrl = route('preventive-maintenance-kanban.print', [
+                        'startDate' => $startDate,
+                        'endDate' => $endDate,
+                        'technicianId' => $technicianId,
+                        'assetId' => $assetId,
+                        'groupId' => $groupId,
+                        'clientId' => $clientId,
+                    ]);
+                @endphp
+                <a href="{{ $printUrl }}"
+                   target="_blank"
+                   class="flex items-center gap-2 px-5 py-2.5 text-[10px] font-black uppercase rounded-lg border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all whitespace-nowrap">
                     <x-heroicon-o-printer class="w-4 h-4" />
                     Imprimir
-                </button>
+                </a>
             </div>
         </div>
 

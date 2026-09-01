@@ -13,6 +13,7 @@ use App\Http\Controllers\HourMeterOfflineController;
 use App\Http\Controllers\HourMeterPublicController;
 use App\Http\Controllers\MaintenanceKanbanPrintController;
 use App\Http\Controllers\MaintenanceOrderController;
+use App\Http\Controllers\PreventiveMaintenanceKanbanPrintController;
 use App\Http\Controllers\MaintenanceOrderDossieController;
 use App\Http\Controllers\MaintenanceReportController;
 use App\Http\Controllers\PrintQrController;
@@ -124,6 +125,10 @@ Route::get('/admin/app/maintenance-report', [MaintenanceReportController::class,
 
 Route::get('/admin/app/maintenance-kanban/print', [MaintenanceKanbanPrintController::class, 'show'])
     ->name('maintenance.kanban.print')
+    ->middleware(['auth']);
+
+Route::get('/admin/app/preventive-maintenance-kanban/print', [PreventiveMaintenanceKanbanPrintController::class, 'show'])
+    ->name('preventive-maintenance-kanban.print')
     ->middleware(['auth']);
 
 Route::middleware(['auth'])->group(function () {
