@@ -14,6 +14,7 @@ use App\Http\Controllers\HourMeterPublicController;
 use App\Http\Controllers\MaintenanceKanbanPrintController;
 use App\Http\Controllers\MaintenanceOrderController;
 use App\Http\Controllers\PreventiveMaintenanceKanbanPrintController;
+use App\Http\Controllers\Pmp5w2hController;
 use App\Http\Controllers\MaintenanceOrderDossieController;
 use App\Http\Controllers\MaintenanceReportController;
 use App\Http\Controllers\PrintQrController;
@@ -129,6 +130,10 @@ Route::get('/admin/app/maintenance-kanban/print', [MaintenanceKanbanPrintControl
 
 Route::get('/admin/app/preventive-maintenance-kanban/print', [PreventiveMaintenanceKanbanPrintController::class, 'show'])
     ->name('preventive-maintenance-kanban.print')
+    ->middleware(['auth']);
+
+Route::get('/admin/pmp/5w2h/{feature}', [Pmp5w2hController::class, 'show'])
+    ->name('pmp.5w2h.show')
     ->middleware(['auth']);
 
 Route::middleware(['auth'])->group(function () {
