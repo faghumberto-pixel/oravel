@@ -184,6 +184,11 @@ class Client extends Model implements AuthenticatableContract, FilamentUser
         return $this->hasMany(Contract::class, 'client_id');
     }
 
+    public function assets(): HasMany
+    {
+        return $this->hasMany(Asset::class, 'client_id');
+    }
+
     public function preventiveMaintenanceExecutions(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
     {
         return $this->hasManyThrough(
