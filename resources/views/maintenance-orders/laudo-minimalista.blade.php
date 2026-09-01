@@ -32,7 +32,7 @@
 
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-200 pb-6 mb-6 gap-4">
             <div>
-                <h1 class="text-2xl font-black tracking-tight text-emerald-600">ORAVEL SISTEMAS</h1>
+                <h1 class="text-2xl font-black tracking-tight"><span class="text-emerald-600">O</span>ravel ERP</h1>
                 <p class="text-xs text-gray-500 font-mono mt-1">Dossiê Operacional de Locação — {{ $operationLabel }}</p>
             </div>
             <div class="text-left sm:text-right">

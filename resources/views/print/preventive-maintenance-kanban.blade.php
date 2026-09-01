@@ -178,7 +178,7 @@
     <div class="container">
         <div class="title-section">
             <div class="title-left">
-                <h1>ORAVEL SISTEMAS</h1>
+                <h1><span style="color: #ffa500;">O</span>ravel ERP</h1>
                 <p>{{ now()->format('d/m/Y H:i:s') }}</p>
             </div>
             <div class="title-right">

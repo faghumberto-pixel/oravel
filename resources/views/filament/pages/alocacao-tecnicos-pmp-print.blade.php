@@ -27,7 +27,7 @@
 
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-200 pb-6 mb-6 gap-4">
             <div>
-                <h1 class="text-2xl font-black tracking-tight text-amber-500">ORAVEL SISTEMAS</h1>
+                <h1 class="text-2xl font-black tracking-tight"><span class="text-amber-500">O</span>ravel ERP</h1>
                 <p class="text-xs text-gray-500 font-mono mt-1">{{ now()->format('d/m/Y H:i:s') }}</p>
             </div>
             <div class="text-left sm:text-right">
