@@ -105,6 +105,18 @@ class Pmp5w2hController extends Controller
         return view('pmp.5w2h-print', compact('feature', 'data', 'features'));
     }
 
+    public function printShow(Request $request, string $feature): View
+    {
+        if (!isset($this->features[$feature])) {
+            abort(404, 'Funcionalidade não encontrada');
+        }
+
+        $data = $this->features[$feature];
+        $allFeatures = $this->features;
+
+        return view('pmp.5w2h-minimalista', compact('feature', 'data', 'allFeatures'));
+    }
+
     public function index(): View
     {
         return view('pmp.5w2h-index', ['features' => $this->features]);

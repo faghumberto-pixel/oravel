@@ -136,6 +136,10 @@ Route::get('/admin/pmp/5w2h/{feature}', [Pmp5w2hController::class, 'show'])
     ->name('pmp.5w2h.show')
     ->middleware(['auth']);
 
+Route::get('/admin/pmp/5w2h/{feature}/print', [Pmp5w2hController::class, 'printShow'])
+    ->name('pmp.5w2h.print')
+    ->middleware(['auth']);
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/trocar-senha', fn () => view('auth.trocar-senha'))->name('admin.trocar-senha');
     Route::post('/admin/trocar-senha', [PasswordController::class, 'update'])->name('admin.trocar-senha.update');
