@@ -389,6 +389,11 @@ class Asset extends Model
         return $this->hasMany(MaintenanceOrderChecklist::class, 'asset_id')->where('is_template', true);
     }
 
+    public function preventiveMaintenanceExecutions(): HasMany
+    {
+        return $this->hasMany(PreventiveMaintenanceExecution::class);
+    }
+
     public static function getCategories(): array
     {
         return AssetCategory::orderBy('name')->pluck('name', 'id')->toArray();

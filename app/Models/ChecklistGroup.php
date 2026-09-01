@@ -58,4 +58,14 @@ class ChecklistGroup extends Model
     {
         return $this->hasMany(MaintenanceOrderChecklist::class, 'checklist_group_id')->where('is_template', true);
     }
+
+    public function preventiveMaintenanceExecutions(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->hasManyThrough(
+            PreventiveMaintenanceExecution::class,
+            Asset::class,
+            'checklist_group_id',
+            'asset_id'
+        );
+    }
 }

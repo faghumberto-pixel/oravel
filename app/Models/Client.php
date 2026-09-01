@@ -184,6 +184,16 @@ class Client extends Model implements AuthenticatableContract, FilamentUser
         return $this->hasMany(Contract::class, 'client_id');
     }
 
+    public function preventiveMaintenanceExecutions(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->hasManyThrough(
+            PreventiveMaintenanceExecution::class,
+            Asset::class,
+            'client_id',
+            'asset_id'
+        );
+    }
+
     /**
      * Espelha Asset::getFinancialSummary() no nível do Cliente: soma receita
      * de todos os contratos dele + excedente de franquia aprovado + avaria
