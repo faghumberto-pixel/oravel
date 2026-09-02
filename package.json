@@ -13,7 +13,7 @@
         "alpinejs": "^3.4.2",
         "autoprefixer": "^10.5.2",
         "axios": "^1.11.0",
-        "concurrently": "^9.0.1",
+        "concurrently": "^9.2.4",
         "laravel-vite-plugin": "^2.0.0",
         "postcss": "^8.5.16",
         "postcss-nesting": "^14.0.0",
