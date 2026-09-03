@@ -43,6 +43,11 @@ class Login extends BaseLogin
      */
     protected static string $layout = 'filament-panels::components.layout.base';
 
+    public static function getRouteMiddleware(): array
+    {
+        return ['guest'];
+    }
+
     public string $registerName = '';
 
     public string $registerEmail = '';
