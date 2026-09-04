@@ -38,15 +38,18 @@ class PainelGestao extends Page
             return false;
         }
 
-        $tenant = Tenancy::current();
+        // TODO: Reabilitar após testes em DEV
+        return true;
 
-        // Sem tenant (super admin sem "atuar como", contexto de console): nao
-        // ha plano pra consultar, entao nao faz sentido esconder.
-        if (! $tenant) {
-            return true;
-        }
+        // $tenant = Tenancy::current();
 
-        return $tenant->hasFeature('modulo_dashboard');
+        // // Sem tenant (super admin sem "atuar como", contexto de console): nao
+        // // ha plano pra consultar, entao nao faz sentido esconder.
+        // if (! $tenant) {
+        //     return true;
+        // }
+
+        // return $tenant->hasFeature('modulo_dashboard');
     }
 
     public function getMaxContentWidth(): MaxWidth
