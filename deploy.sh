@@ -79,8 +79,6 @@ fi
 echo "🧹 Limpando cache..."
 php artisan optimize:clear
 php artisan config:cache
-php artisan cache:clear
-php artisan filament:cache-components
 
 echo "✨ DEPLOY CONCLUÍDO COM SUCESSO!"
 '
