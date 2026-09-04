@@ -4,12 +4,13 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Hash;
 
 class EnableDashboardFeature extends Command
 {
-    protected $signature = 'feature:enable-dashboard {email}';
+    protected $signature = 'feature:enable-dashboard {email} {--password=}';
 
-    protected $description = 'Enable modulo_dashboard feature on a user tenant plan';
+    protected $description = 'Enable modulo_dashboard feature on a user tenant plan, optionally reset password';
 
     public function handle(): int
     {
@@ -43,6 +44,12 @@ class EnableDashboardFeature extends Command
 
         $this->info("✅ modulo_dashboard enabled for tenant: {$tenant->name}");
         $this->info("Plan: {$plan->name}");
+
+        if ($this->option('password')) {
+            $user->password = Hash::make($this->option('password'));
+            $user->save();
+            $this->info("✅ Password reset to: {$this->option('password')}");
+        }
 
         return 0;
     }
