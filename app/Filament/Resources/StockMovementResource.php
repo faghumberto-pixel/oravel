@@ -4,36 +4,32 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\StockMovementResource\Pages;
 use App\Models\StockMovement;
-use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
-/**
- * Historico de entrada/saida de estoque -- so'-leitura de proposito,
- * mesmo padrao de EquipmentMovementResource: cada linha nasce sozinha
- * (consumo em O.S. via MaterialConsumptionService, recebimento de
- * compra, ou ajuste de inventario via MaterialStockTake::finalize()),
- * nunca criada/editada por aqui.
- */
-class StockMovementResource extends Resource
+class StockMovementResource extends BaseResource
 {
-    protected static bool $shouldRegisterNavigation = false;
-
     protected static ?string $model = StockMovement::class;
 
-    protected static ?string $modelLabel = 'Movimentação de Estoque';
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-path';
 
-    protected static ?string $pluralModelLabel = 'Histórico de Estoque';
+    protected static ?string $navigationGroup = 'Almoxarifado';
 
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
+    protected static ?int $navigationSort = 5;
 
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $label = 'Movimentação de Estoque';
+
+    protected static ?string $pluralLabel = 'Histórico de Movimentações (Kardex)';
 
     public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canDelete($record): bool
     {
         return false;
     }
@@ -41,25 +37,79 @@ class StockMovementResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Select::make('material_id')
-                ->label('Material')
-                ->relationship('material', 'name')
-                ->disabled(),
-            Forms\Components\TextInput::make('type')->label('Tipo')->disabled(),
-            Forms\Components\TextInput::make('quantity')->label('Quantidade')->disabled(),
-            Forms\Components\TextInput::make('balance_after')->label('Saldo Após')->disabled(),
-            Forms\Components\Select::make('created_by_user_id')
-                ->label('Registrado por')
-                ->relationship(
-                    name: 'createdBy',
-                    titleAttribute: 'name',
-                    modifyQueryUsing: function (Builder $query) {
-                        $tenant = Tenancy::current();
+            Forms\Components\Section::make('Dados da Movimentação')
+                ->schema([
+                    Forms\Components\TextInput::make('movement_type')
+                        ->label('Tipo de Movimentação')
+                        ->readOnly(),
 
-                        return $query->when($tenant, fn (Builder $q) => $q->where('tenant_id', $tenant->id));
-                    },
-                )
-                ->disabled(),
+                    Forms\Components\TextInput::make('reference_document')
+                        ->label('Documento de Referência')
+                        ->readOnly(),
+
+                    Forms\Components\TextInput::make('part.sku')
+                        ->label('SKU da Peça')
+                        ->readOnly(),
+
+                    Forms\Components\TextInput::make('part.name')
+                        ->label('Peça')
+                        ->readOnly(),
+                ])
+                ->columns(2),
+
+            Forms\Components\Section::make('Quantidade e Saldo')
+                ->schema([
+                    Forms\Components\TextInput::make('quantity')
+                        ->label('Quantidade Movimentada')
+                        ->readOnly()
+                        ->numeric(decimals: 2),
+
+                    Forms\Components\TextInput::make('balance_before')
+                        ->label('Saldo Anterior')
+                        ->readOnly()
+                        ->numeric(decimals: 2),
+
+                    Forms\Components\TextInput::make('balance_after')
+                        ->label('Novo Saldo')
+                        ->readOnly()
+                        ->numeric(decimals: 2),
+                ])
+                ->columns(3),
+
+            Forms\Components\Section::make('Custos')
+                ->schema([
+                    Forms\Components\TextInput::make('unit_cost')
+                        ->label('Custo Unitário (R$)')
+                        ->readOnly()
+                        ->money('BRL'),
+
+                    Forms\Components\TextInput::make('total_cost')
+                        ->label('Custo Total (R$)')
+                        ->readOnly()
+                        ->money('BRL'),
+                ])
+                ->columns(2),
+
+            Forms\Components\Section::make('Detalhes')
+                ->schema([
+                    Forms\Components\TextInput::make('warehouse.name')
+                        ->label('Almoxarifado')
+                        ->readOnly(),
+
+                    Forms\Components\TextInput::make('createdBy.name')
+                        ->label('Registrado por')
+                        ->readOnly(),
+
+                    Forms\Components\TextInput::make('created_at')
+                        ->label('Data/Hora')
+                        ->readOnly(),
+
+                    Forms\Components\Textarea::make('notes')
+                        ->label('Observações')
+                        ->readOnly()
+                        ->rows(3),
+                ])
+                ->columns(2),
         ]);
     }
 
@@ -69,57 +119,150 @@ class StockMovementResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Data/Hora')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('material.sku')
-                    ->label('SKU')
+                    ->dateTime('d/m/Y H:i:s')
+                    ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('material.name')
-                    ->label('Material')
-                    ->searchable(),
-                Tables\Columns\BadgeColumn::make('type')
+
+                Tables\Columns\TextColumn::make('movement_type')
                     ->label('Tipo')
-                    ->colors([
-                        'success' => StockMovement::TYPE_ENTRADA_COMPRA,
-                        'danger' => StockMovement::TYPE_SAIDA_CONSUMO,
-                        'warning' => StockMovement::TYPE_AJUSTE_MANUAL,
-                    ])
+                    ->badge()
+                    ->color(fn (string $state) => match ($state) {
+                        'entry_purchase' => 'success',
+                        'entry_adjustment' => 'info',
+                        'entry_return' => 'info',
+                        'exit_work_order' => 'warning',
+                        'exit_adjustment' => 'danger',
+                        'exit_loss' => 'danger',
+                        'transfer_out' => 'secondary',
+                        'transfer_in' => 'secondary',
+                    })
                     ->formatStateUsing(fn (string $state) => match ($state) {
-                        StockMovement::TYPE_ENTRADA_COMPRA => 'Entrada (Compra)',
-                        StockMovement::TYPE_SAIDA_CONSUMO => 'Saída (Consumo)',
-                        StockMovement::TYPE_AJUSTE_MANUAL => 'Ajuste (Inventário)',
-                        default => $state,
-                    }),
+                        'entry_purchase' => 'Compra',
+                        'entry_adjustment' => 'Ajuste (Entrada)',
+                        'entry_return' => 'Devolução',
+                        'exit_work_order' => 'OS/Trabalho',
+                        'exit_adjustment' => 'Ajuste (Saída)',
+                        'exit_loss' => 'Perda/Dano',
+                        'transfer_out' => 'Transfer. (Saída)',
+                        'transfer_in' => 'Transfer. (Entrada)',
+                    })
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('warehouse.name')
+                    ->label('Almoxarifado')
+                    ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('part.sku')
+                    ->label('SKU')
+                    ->searchable()
+                    ->sortable()
+                    ->badge(),
+
+                Tables\Columns\TextColumn::make('part.name')
+                    ->label('Peça')
+                    ->searchable()
+                    ->sortable()
+                    ->limit(30),
+
                 Tables\Columns\TextColumn::make('quantity')
-                    ->label('Quantidade')
-                    ->numeric(decimalPlaces: 2)
-                    ->alignEnd(),
+                    ->label('Qtd.')
+                    ->numeric(decimals: 2)
+                    ->sortable()
+                    ->weight('bold'),
+
+                Tables\Columns\TextColumn::make('balance_before')
+                    ->label('Saldo Anterior')
+                    ->numeric(decimals: 2)
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('balance_after')
-                    ->label('Saldo Após')
-                    ->numeric(decimalPlaces: 2)
-                    ->alignEnd(),
+                    ->label('Novo Saldo')
+                    ->numeric(decimals: 2)
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('unit_cost')
+                    ->label('Custo Unit. (R$)')
+                    ->money('BRL')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('total_cost')
+                    ->label('Custo Total (R$)')
+                    ->money('BRL')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('reference_document')
+                    ->label('Referência')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('createdBy.name')
                     ->label('Registrado por')
-                    ->placeholder('Sistema'),
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+
+                Tables\Columns\TextColumn::make('notes')
+                    ->label('Observações')
+                    ->limit(30)
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('type')
-                    ->label('Tipo')
+                Tables\Filters\SelectFilter::make('warehouse_id')
+                    ->label('Almoxarifado')
+                    ->relationship('warehouse', 'name'),
+
+                Tables\Filters\SelectFilter::make('part_id')
+                    ->label('Peça')
+                    ->relationship('part', 'name'),
+
+                Tables\Filters\SelectFilter::make('movement_type')
+                    ->label('Tipo de Movimentação')
                     ->options([
-                        StockMovement::TYPE_ENTRADA_COMPRA => 'Entrada (Compra)',
-                        StockMovement::TYPE_SAIDA_CONSUMO => 'Saída (Consumo)',
-                        StockMovement::TYPE_AJUSTE_MANUAL => 'Ajuste (Inventário)',
+                        'entry_purchase' => 'Compra',
+                        'entry_adjustment' => 'Ajuste (Entrada)',
+                        'entry_return' => 'Devolução',
+                        'exit_work_order' => 'OS/Trabalho',
+                        'exit_adjustment' => 'Ajuste (Saída)',
+                        'exit_loss' => 'Perda/Dano',
+                        'transfer_out' => 'Transfer. (Saída)',
+                        'transfer_in' => 'Transfer. (Entrada)',
                     ]),
-                Tables\Filters\SelectFilter::make('material_id')
-                    ->label('Material')
-                    ->relationship('material', 'name')
-                    ->searchable()
-                    ->preload(),
+
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        Forms\Components\DatePicker::make('created_from')
+                            ->label('De'),
+                        Forms\Components\DatePicker::make('created_until')
+                            ->label('Até'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn ($q) => $q->whereDate('created_at', '>=', $data['created_from']),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn ($q) => $q->whereDate('created_at', '<=', $data['created_until']),
+                            );
+                    }),
             ])
-            ->defaultSort('created_at', 'desc')
             ->actions([
                 Tables\Actions\ViewAction::make(),
-            ]);
+            ])
+            ->bulkActions([])
+            ->defaultSort('created_at', 'desc');
+    }
+
+    public static function getRelations(): array
+    {
+        return [];
     }
 
     public static function getPages(): array
