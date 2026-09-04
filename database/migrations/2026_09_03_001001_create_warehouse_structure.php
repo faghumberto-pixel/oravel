@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('state')->nullable();
             $table->boolean('is_active')->default(true)->index();
-            $table->unsignedBigInteger('manager_id')->nullable();
+            $table->uuid('manager_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
