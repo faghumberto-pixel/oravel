@@ -37,6 +37,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(Login::class)
             ->topNavigation()
+            ->homeUrl(fn () => route('filament.admin.pages.painel-controle'))
             ->colors([
                 // Paleta do artefato "Central de Artefatos" (2026-07-25):
                 // laranja de destaque + neutros quentes (stone) no lugar do

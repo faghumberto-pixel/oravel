@@ -45,3 +45,41 @@
 .mb-4 {
     margin-bottom: 0.25rem !important;
 }
+
+/* Menu items selecionados em laranja (2026-09-04) */
+.fi-topbar-item.fi-active,
+.fi-sidebar-item.fi-active {
+    color: #ea580c !important;
+}
+
+.fi-topbar-item.fi-active::after,
+.fi-sidebar-item.fi-active::after {
+    background-color: #ea580c !important;
+}
+
+.fi-topbar-item[aria-current="page"],
+.fi-sidebar-item[aria-current="page"] {
+    color: #ea580c !important;
+    font-weight: 600;
+}
+
+/* Menu dropdown/parent selecionado */
+.fi-topbar-item.fi-active > button,
+.fi-sidebar-item.fi-active > button {
+    color: #ea580c !important;
+}
+
+/* Menus com submenus (Almoxarifado) com background diferenciado */
+.fi-topbar-item:has(~ .fi-topbar-item[aria-current]),
+.fi-sidebar-item:has(~ .fi-sidebar-item[aria-current]) {
+    background-color: rgba(234, 88, 12, 0.08) !important;
+    border-radius: 0.375rem;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Background mais forte quando selecionado */
+.fi-topbar-item.fi-active:has(~ .fi-topbar-item[aria-current]),
+.fi-sidebar-item.fi-active:has(~ .fi-sidebar-item[aria-current]) {
+    background-color: rgba(234, 88, 12, 0.12) !important;
+    font-weight: 600;
+}
