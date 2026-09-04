@@ -301,7 +301,9 @@ class MaintenanceOrderFieldWizard extends Component
             return;
         }
 
-        $this->redirectRoute('filament.admin.pages.technician-daily-tasks', navigate: false);
+        // [DESABILITADO 2026-09-02: módulo Tarefas travado]
+        // $this->redirectRoute('filament.admin.pages.technician-daily-tasks', navigate: false);
+        $this->redirectRoute('filament.admin.pages.painel-controle', navigate: false);
     }
 
     /**
@@ -330,7 +332,9 @@ class MaintenanceOrderFieldWizard extends Component
             $this->maintenanceOrder->logStatusChange('Pausada', $oldStatus);
         }
 
-        $this->redirectRoute('filament.admin.pages.technician-daily-tasks', navigate: false);
+        // [DESABILITADO 2026-09-02: módulo Tarefas travado]
+        // $this->redirectRoute('filament.admin.pages.technician-daily-tasks', navigate: false);
+        $this->redirectRoute('filament.admin.pages.painel-controle', navigate: false);
     }
 
     private function startService(): void
@@ -738,7 +742,9 @@ class MaintenanceOrderFieldWizard extends Component
         // o tecnico dela"). A O.S. era concluida com sucesso no banco, mas
         // o redirect pos-sucesso caia num 403 -- parecia que "enviar nao
         // funcionava" (bug reportado pelo usuario, 2026-08-04).
-        $this->redirectRoute('filament.admin.pages.technician-daily-tasks', navigate: false);
+        // [DESABILITADO 2026-09-02: módulo Tarefas travado]
+        // $this->redirectRoute('filament.admin.pages.technician-daily-tasks', navigate: false);
+        $this->redirectRoute('filament.admin.pages.painel-controle', navigate: false);
     }
 
     public function render()

@@ -3,127 +3,126 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToTenant;
-use App\Models\Concerns\HasSaaSMetadata;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-/**
- * Ledger formal de entrada/saida de estoque de Material -- toda mudanca
- * em Material.current_stock (fora do cadastro manual direto) devia
- * gravar uma linha aqui, pra ter um historico auditavel de "por que o
- * estoque mudou" (tabela `material_stock_movements`, ver migration
- * 2026_07_14_100000 -- nome novo pra nao colidir com o arquivo morto
- * "create_stock_movements_table" que nunca criava a tabela de verdade).
- */
 class StockMovement extends Model
 {
-    use BelongsToTenant;
-    use HasSaaSMetadata;
-    use HasUuids;
+    use BelongsToTenant, HasFactory;
 
-    protected static ?string $saasFeatureKey = 'tabela_material_stock_movements';
-
-    protected static ?string $saasPermissionSlug = 'movimentacao_estoque';
-
-    protected static ?string $saasModuleLabel = 'Histórico de Estoque';
-
-    protected $table = 'material_stock_movements';
-
-    public const TYPE_ENTRADA_COMPRA = 'entrada_compra';
-
-    public const TYPE_SAIDA_CONSUMO = 'saida_consumo';
-
-    public const TYPE_AJUSTE_MANUAL = 'ajuste_manual';
-
-    public const TYPE_TRANSFERENCIA = 'transferencia';
+    public $timestamps = false;
+    const CREATED_AT = 'created_at';
+    const UPDATED_AT = null;
 
     protected $fillable = [
         'tenant_id',
-        'material_id',
-        'from_location_id',
-        'to_location_id',
-        'type',
-        'reason',
-        'document_reference',
+        'part_id',
+        'warehouse_id',
+        'movement_type',
         'quantity',
+        'balance_before',
         'balance_after',
-        'reference_type',
-        'reference_id',
-        'created_by_user_id',
+        'unit_cost',
+        'total_cost',
+        'reference_document',
+        'notes',
+        'created_by',
+        'created_at',
     ];
 
     protected $casts = [
         'quantity' => 'decimal:2',
+        'balance_before' => 'decimal:2',
         'balance_after' => 'decimal:2',
+        'unit_cost' => 'decimal:4',
+        'total_cost' => 'decimal:2',
+        'created_at' => 'datetime',
     ];
 
-    public function material(): BelongsTo
+    public const MOVEMENT_TYPES = [
+        'entry_purchase' => 'Entrada - Compra',
+        'entry_adjustment' => 'Entrada - Ajuste',
+        'entry_return' => 'Entrada - Devolução',
+        'exit_work_order' => 'Saída - Ordem de Serviço',
+        'exit_adjustment' => 'Saída - Ajuste',
+        'exit_loss' => 'Saída - Perda/Quebra',
+        'transfer_out' => 'Transferência - Saída',
+        'transfer_in' => 'Transferência - Entrada',
+    ];
+
+    protected static function booted()
     {
-        return $this->belongsTo(Material::class);
+        static::creating(function ($model) {
+            if (empty($model->tenant_id) && auth()->check()) {
+                $model->tenant_id = auth()->user()->tenant_id;
+            }
+            if (empty($model->created_by) && auth()->check()) {
+                $model->created_by = auth()->id();
+            }
+            if (empty($model->created_at)) {
+                $model->created_at = now();
+            }
+        });
     }
 
-    public function fromLocation(): BelongsTo
+    public function tenant(): BelongsTo
     {
-        return $this->belongsTo(InternalUnit::class, 'from_location_id');
+        return $this->belongsTo(Tenant::class);
     }
 
-    public function toLocation(): BelongsTo
+    public function part(): BelongsTo
     {
-        return $this->belongsTo(InternalUnit::class, 'to_location_id');
+        return $this->belongsTo(Part::class);
     }
 
-    public function reference(): MorphTo
+    public function warehouse(): BelongsTo
     {
-        return $this->morphTo();
+        return $this->belongsTo(Warehouse::class);
     }
 
     public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'created_by_user_id');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
-    /**
-     * Fonte unica de escrita no ledger -- sempre grava o saldo resultante
-     * (nao so a variacao), pra permitir auditoria rapida sem precisar
-     * somar tudo desde o inicio. Nao atualiza Material.current_stock
-     * sozinho (quem chama decide o saldo antes de gravar aqui).
-     *
-     * $quantity e' sempre positivo pra entrada/saida (o "type" ja diz o
-     * sentido) -- so' pra ajuste_manual ele carrega o sinal (pode ser
-     * negativo, quando o inventario acha menos do que o sistema previa).
-     *
-     * from/to location, reason e document_reference sao opcionais --
-     * as 3 chamadas antigas (compra/consumo/ajuste) nao precisam deles,
-     * so' transferencia entre filiais (App\Services\MaterialStockService)
-     * os usa de verdade.
-     */
-    public static function record(
-        Material $material,
-        string $type,
-        float $quantity,
-        float $balanceAfter,
-        ?Model $reference = null,
-        ?string $createdByUserId = null,
-        ?string $fromLocationId = null,
-        ?string $toLocationId = null,
-        ?string $reason = null,
-        ?string $documentReference = null,
-    ): self {
-        return self::create([
-            'tenant_id' => $material->tenant_id,
-            'material_id' => $material->id,
-            'from_location_id' => $fromLocationId,
-            'to_location_id' => $toLocationId,
-            'type' => $type,
-            'reason' => $reason,
-            'document_reference' => $documentReference,
-            'quantity' => $type === self::TYPE_AJUSTE_MANUAL ? $quantity : abs($quantity),
-            'balance_after' => $balanceAfter,
-            'reference_type' => $reference ? $reference::class : null,
-            'reference_id' => $reference?->getKey(),
-            'created_by_user_id' => $createdByUserId,
-        ]);
+    public function scopeByType($query, string $type)
+    {
+        return $query->where('movement_type', $type);
+    }
+
+    public function scopeByPart($query, int $partId)
+    {
+        return $query->where('part_id', $partId);
+    }
+
+    public function scopeByWarehouse($query, int $warehouseId)
+    {
+        return $query->where('warehouse_id', $warehouseId);
+    }
+
+    public function getMovementTypeNameAttribute(): string
+    {
+        return self::MOVEMENT_TYPES[$this->movement_type] ?? $this->movement_type;
+    }
+
+    public function getIsEntryAttribute(): bool
+    {
+        return str_starts_with($this->movement_type, 'entry_');
+    }
+
+    public function getIsExitAttribute(): bool
+    {
+        return str_starts_with($this->movement_type, 'exit_');
+    }
+
+    public function getIsTransferAttribute(): bool
+    {
+        return str_starts_with($this->movement_type, 'transfer_');
+    }
+
+    public static function getTypeLabel(string $type): string
+    {
+        return self::MOVEMENT_TYPES[$type] ?? $type;
     }
 }

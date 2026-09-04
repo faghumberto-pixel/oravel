@@ -73,6 +73,10 @@
                class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-slate-300 active:bg-slate-800">
                 👤 Meu Perfil
             </a>
+            <button onclick="window.location.href = '/admin'; return false;"
+               class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-blue-400 active:bg-slate-800 w-full text-left">
+                🏠 Dashboard
+            </button>
         </nav>
 
         <form method="POST" action="{{ route('filament.admin.auth.logout') }}">

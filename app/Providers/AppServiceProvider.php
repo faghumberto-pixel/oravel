@@ -15,6 +15,7 @@ use App\Models\Contract;
 use App\Models\CrmLead;
 use App\Models\CrmLeadInteraction;
 use App\Models\Department; // Importante
+use App\Models\DocumentSignature;
 use App\Models\EquipmentDamage;
 use App\Models\EquipmentMovement;
 use App\Models\EquipmentPatioArrival;
@@ -47,6 +48,7 @@ use App\Observers\ContaPagarObserver;
 use App\Observers\ContractObserver;
 use App\Observers\CrmLeadInteractionObserver;
 use App\Observers\CrmLeadObserver;
+use App\Observers\DocumentSignatureObserver;
 use App\Observers\EquipmentDamageObserver;
 use App\Observers\EquipmentMovementObserver;
 use App\Observers\EquipmentPatioArrivalObserver;
@@ -153,6 +155,7 @@ class AppServiceProvider extends ServiceProvider
         // Ate 2026-07-25 este observer existia mas nunca rodava: referenciava
         // um model App\Models\ContaPagar inexistente e nao estava registrado.
         AccountPayable::observe(ContaPagarObserver::class);
+        DocumentSignature::observe(DocumentSignatureObserver::class);
 
         // INJEÇÃO CRUCIAL: Vincula dinamicamente a tabela de roles
         Role::resolveRelationUsing('department', function ($roleModel) {

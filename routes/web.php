@@ -22,6 +22,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropostaComercialApprovalController;
 use App\Http\Controllers\PropostaComercialBatchPrintController;
 use App\Http\Controllers\PropostaComercialReportController;
+use App\Http\Controllers\PublicSignatureController;
 use App\Http\Controllers\QuoteApprovalController;
 use App\Http\Controllers\QuoteReportController;
 use App\Http\Controllers\RentalDemoController;
@@ -95,6 +96,17 @@ Route::post('/proposta-comercial/{token}/aceitar', [PropostaComercialApprovalCon
 Route::post('/proposta-comercial/{token}/recusar', [PropostaComercialApprovalController::class, 'reject'])
     ->name('proposta-comercial.public-reject');
 
+// Publica, sem auth de proposito -- cliente/signatário assinando contrato
+// ou ordem de serviço via link seguro (token único), sem conta no sistema.
+Route::get('/assinatura/{token}', [PublicSignatureController::class, 'show'])
+    ->name('signature.sign');
+Route::post('/assinatura/{token}/assinar', [PublicSignatureController::class, 'store'])
+    ->name('signature.store');
+Route::get('/assinatura/{token}/sucesso', [PublicSignatureController::class, 'success'])
+    ->name('signature.success');
+Route::get('/assinatura/{token}/download', [PublicSignatureController::class, 'download'])
+    ->name('signature.download');
+
 // Publica, sem auth de proposito -- funcionario do cliente que alugou o
 // equipamento registra o horimetro sem precisar de conta no ERP. Token
 // dedicado por ativo (Asset::hourMeterPublicToken()), so valido enquanto o
@@ -148,9 +160,10 @@ Route::middleware(['auth'])->group(function () {
         $user = auth()->user();
 
         // Técnicos vão direto para "Minhas Ordens de Serviço"
-        if (! $user->isAdmin() && empty($user->supervisedDepartmentIds())) {
-            return redirect()->route('filament.admin.pages.technician-daily-tasks');
-        }
+        // [DESABILITADO 2026-09-02: módulo Tarefas travado com modal offline]
+        // if (! $user->isAdmin() && empty($user->supervisedDepartmentIds())) {
+        //     return redirect()->route('filament.admin.pages.technician-daily-tasks');
+        // }
 
         $tenantSlug = $user->latest_tenant_slug ?? collect(Filament::getUserTenants($user))->first()?->slug ?? $user->tenant?->slug ?? $user->tenant_id;
 
@@ -377,6 +390,13 @@ Route::middleware(['auth'])->group(function () {
 
         return view('maintenance.chat-print', compact('room', 'messages'));
     })->name('maintenance.chat.print');
+
+    // [DESABILITADO 2026-09-02: módulo Tarefas travado com modal offline]
+    Route::get('/admin/technician-daily-tasks', function () {
+        $user = auth()->user();
+        $tenantSlug = $user->latest_tenant_slug ?? collect(Filament::getUserTenants($user))->first()?->slug ?? $user->tenant?->slug ?? $user->tenant_id;
+        return redirect()->route('filament.admin.pages.painel-controle', ['tenant' => $tenantSlug]);
+    })->name('filament.admin.pages.technician-daily-tasks');
 });
 
 require __DIR__.'/auth.php';

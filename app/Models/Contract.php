@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasSaaSMetadata;
+use App\Models\Concerns\HasSignatures;
 use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,7 +18,7 @@ use Spatie\Activitylog\Support\LogOptions;
 class Contract extends Model
 {
     use BelongsToTenant, HasFactory, HasUuids, SoftDeletes;
-    use HasSaaSMetadata;
+    use HasSaaSMetadata, HasSignatures;
     use LogsActivity;
 
     protected static ?string $saasFeatureKey = 'tabela_contracts';

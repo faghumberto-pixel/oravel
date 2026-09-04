@@ -3,60 +3,73 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
+use Throwable;
 
-/**
- * Client de envio pra WhatsApp Cloud API (Meta) -- credenciais em
- * config('services.whatsapp'), preenchidas via .env
- * (WHATSAPP_API_TOKEN/WHATSAPP_PHONE_NUMBER_ID). Mesmo contrato de
- * retorno ok/error usado por AnthropicApiClient, pra quem consome não
- * precisar tratar exception em cada chamada.
- */
 class WhatsAppService
 {
-    /**
-     * @return array{ok: bool, error: ?string}
-     */
-    public function sendMessage(string $to, string $text): array
+    private string $provider;
+    private string $apiUrl;
+    private string $apiKey;
+    private ?string $instance;
+
+    public function __construct()
     {
-        $token = config('services.whatsapp.token');
-        $phoneNumberId = config('services.whatsapp.phone_number_id');
-        $baseUrl = config('services.whatsapp.base_url');
+        $this->provider = config('services.whatsapp.provider', 'evolution');
+        $this->apiUrl = config('services.whatsapp.api_url', '');
+        $this->apiKey = config('services.whatsapp.api_key', '');
+        $this->instance = config('services.whatsapp.instance', '');
+    }
 
-        if (blank($token) || blank($phoneNumberId)) {
-            Log::warning('WhatsAppService: token ou phone_number_id não configurado, mensagem não enviada.', ['to' => $to]);
-
-            return ['ok' => false, 'error' => 'Credenciais do WhatsApp não configuradas.'];
-        }
-
+    public function sendMessage(string $phone, string $message): bool
+    {
         try {
-            $response = Http::withToken($token)
-                ->timeout(20)
-                ->post("{$baseUrl}/{$phoneNumberId}/messages", [
-                    'messaging_product' => 'whatsapp',
-                    'to' => $to,
-                    'type' => 'text',
-                    'text' => ['body' => $text],
-                ]);
-        } catch (\Throwable $e) {
-            Log::warning('WhatsAppService: falha ao chamar a API do WhatsApp', ['error' => $e->getMessage(), 'to' => $to]);
-
-            return ['ok' => false, 'error' => $e->getMessage()];
+            return match ($this->provider) {
+                'evolution' => $this->sendViaEvolutionApi($phone, $message),
+                'twilio' => $this->sendViaTwilio($phone, $message),
+                'zapi' => $this->sendViaZApi($phone, $message),
+                default => false,
+            };
+        } catch (Throwable $e) {
+            \Log::error('Erro ao enviar WhatsApp', ['error' => $e->getMessage()]);
+            return false;
         }
+    }
 
-        if (! $response->ok()) {
-            Log::warning('WhatsAppService: API do WhatsApp retornou erro', [
-                'status' => $response->status(),
-                'body' => $response->body(),
-                'to' => $to,
+    private function sendViaEvolutionApi(string $phone, string $message): bool
+    {
+        $response = Http::withToken($this->apiKey)
+            ->post("{$this->apiUrl}/message/sendText/{$this->instance}", [
+                'number' => $phone,
+                'text' => $message,
             ]);
+        return $response->successful();
+    }
 
-            return [
-                'ok' => false,
-                'error' => "WhatsApp API respondeu {$response->status()}: ".(string) ($response->json('error.message') ?? $response->body()),
-            ];
-        }
+    private function sendViaTwilio(string $phone, string $message): bool
+    {
+        $response = Http::withBasicAuth(
+            config('services.whatsapp.account_sid'),
+            config('services.whatsapp.auth_token')
+        )->post("https://api.twilio.com/2010-04-01/Accounts/".config('services.whatsapp.account_sid')."/Messages.json", [
+            'From' => config('services.whatsapp.from'),
+            'To' => "whatsapp:{$phone}",
+            'Body' => $message,
+        ]);
+        return $response->successful();
+    }
 
-        return ['ok' => true, 'error' => null];
+    private function sendViaZApi(string $phone, string $message): bool
+    {
+        $response = Http::post('https://api.z-api.io/instances/me/token/send', [
+            'phone' => $phone,
+            'message' => $message,
+        ], ['Authorization' => "Bearer {$this->apiKey}"]);
+        return $response->successful();
+    }
+
+    public static function validatePhone(string $phone): bool
+    {
+        $phone = preg_replace('/\D/', '', $phone);
+        return strlen($phone) >= 12 && strlen($phone) <= 15;
     }
 }
