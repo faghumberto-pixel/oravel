@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToTenant;
+use App\Models\Concerns\HasSaaSMetadata;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +11,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class StockMovement extends Model
 {
     use BelongsToTenant, HasFactory;
+    use HasSaaSMetadata;
+
+    protected static ?string $saasFeatureKey = 'tabela_stock_movements';
+    protected static ?string $saasPermissionSlug = 'movimento_estoque';
+    protected static ?string $saasModuleLabel = 'Movimentações de Estoque';
 
     public $timestamps = false;
     const CREATED_AT = 'created_at';

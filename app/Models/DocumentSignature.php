@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToTenant;
+use App\Models\Concerns\HasSaaSMetadata;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +16,12 @@ use Spatie\Activitylog\Support\LogOptions;
 class DocumentSignature extends Model
 {
     use BelongsToTenant, HasFactory, HasUuids, SoftDeletes;
+    use HasSaaSMetadata;
     use LogsActivity;
+
+    protected static ?string $saasFeatureKey = 'assinatura_eletronica';
+    protected static ?string $saasPermissionSlug = 'assinatura';
+    protected static ?string $saasModuleLabel = 'Assinatura Eletrônica';
 
     protected $fillable = [
         'tenant_id',

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSaaSMetadata;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +10,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WarehouseStock extends Model
 {
     use HasFactory;
+    use HasSaaSMetadata;
+
+    protected static ?string $saasFeatureKey = 'tabela_warehouses';
+    protected static ?string $saasPermissionSlug = 'almoxarifado';
+    protected static ?string $saasModuleLabel = 'Almoxarifados';
 
     protected $fillable = [
         'warehouse_id',
