@@ -38,7 +38,7 @@ class PainelGestao extends Page
             return false;
         }
 
-        // TODO: Reabilitar após testes em DEV
+        // TODO: Temporário - reabilitar após habilitar modulo_dashboard no plano do tenant em PROD
         return true;
 
         // $tenant = Tenancy::current();
