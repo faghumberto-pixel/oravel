@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Pages\Almoxarifado;
 use App\Filament\Resources\MaterialResource\Pages;
 use App\Filament\Resources\MaterialResource\RelationManagers;
 use App\Models\Material;
@@ -18,7 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class MaterialResource extends Resource
 {
-    protected static bool $shouldRegisterNavigation = false;
+    protected static bool $shouldRegisterNavigation = true;
 
     protected static ?string $model = Material::class;
 
@@ -28,10 +29,9 @@ class MaterialResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-beaker';
 
-    // Alterado para 'Suprimentos' (Capitalizado) para garantir consistência
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $navigationParentItem = Almoxarifado::class;
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {

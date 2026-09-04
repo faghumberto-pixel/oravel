@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Pages\Almoxarifado;
 use App\Filament\Resources\PartCategoryResource\Pages;
 use App\Models\PartCategory;
 use Filament\Forms;
@@ -18,9 +19,9 @@ class PartCategoryResource extends BaseResource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $navigationParentItem = Almoxarifado::class;
 
-    protected static ?int $navigationSort = 13;
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $label = 'Categoria de Peça';
 
