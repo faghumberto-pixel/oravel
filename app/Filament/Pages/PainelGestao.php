@@ -38,6 +38,11 @@ class PainelGestao extends Page
             return false;
         }
 
+        // Tenant admin sempre pode acessar
+        if ($user?->isAdmin()) {
+            return true;
+        }
+
         $tenant = Tenancy::current();
 
         // Sem tenant (super admin sem "atuar como", contexto de console): nao
