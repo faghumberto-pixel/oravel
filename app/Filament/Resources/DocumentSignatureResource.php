@@ -20,11 +20,13 @@ class DocumentSignatureResource extends Resource
 
     protected static ?string $navigationLabel = 'Assinaturas Eletrônicas';
 
+    protected static ?string $navigationGroup = 'Configurações';
+
     protected static ?string $modelLabel = 'Assinatura Eletrônica';
 
     protected static ?string $pluralModelLabel = 'Assinaturas Eletrônicas';
 
-    protected static ?int $navigationSort = 45;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {

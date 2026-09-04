@@ -18,9 +18,9 @@ class WarehouseResource extends BaseResource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
 
-    protected static ?string $navigationGroup = 'Almoxarifado';
+    protected static ?string $navigationGroup = 'Ativos e Materiais';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $label = 'Almoxarifado';
 

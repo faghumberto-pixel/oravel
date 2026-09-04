@@ -16,9 +16,9 @@ class PartCategoryResource extends BaseResource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?string $navigationGroup = 'Almoxarifado';
+    protected static ?string $navigationGroup = 'Ativos e Materiais';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 13;
 
     protected static ?string $label = 'Categoria de Peça';
 
