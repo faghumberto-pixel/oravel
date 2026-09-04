@@ -20,7 +20,9 @@ class PartResource extends BaseResource
 
     protected static ?string $navigationIcon = 'heroicon-o-square-3-stack-3d';
 
-    protected static ?string $navigationParentItem = Almoxarifado::class;
+    protected static ?string $navigationGroup = 'Ativos e Materiais';
+
+    protected static ?string $navigationParentItem = 'Almoxarifado';
 
     protected static ?int $navigationSort = 2;
 

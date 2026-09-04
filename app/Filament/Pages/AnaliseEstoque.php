@@ -20,7 +20,9 @@ class AnaliseEstoque extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
 
-    protected static ?string $navigationParentItem = Almoxarifado::class;
+    protected static ?string $navigationGroup = 'Ativos e Materiais';
+
+    protected static ?string $navigationParentItem = 'Almoxarifado';
 
     protected static ?string $navigationLabel = 'Análise de Estoque';
 

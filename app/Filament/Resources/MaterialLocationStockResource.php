@@ -20,7 +20,9 @@ class MaterialLocationStockResource extends BaseResource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
 
-    protected static ?string $navigationParentItem = Almoxarifado::class;
+    protected static ?string $navigationGroup = 'Ativos e Materiais';
+
+    protected static ?string $navigationParentItem = 'Almoxarifado';
 
     protected static ?string $label = 'Saldo por Filial';
 

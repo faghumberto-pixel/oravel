@@ -17,7 +17,9 @@ class Inventario extends Page implements HasTable
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
 
-    protected static ?string $navigationParentItem = Almoxarifado::class;
+    protected static ?string $navigationGroup = 'Ativos e Materiais';
+
+    protected static ?string $navigationParentItem = 'Almoxarifado';
 
     protected static ?string $navigationLabel = 'Histórico de Movimentação';
 
