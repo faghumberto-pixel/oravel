@@ -6,6 +6,6 @@ use Filament\Resources\Resource;
 
 abstract class BaseResource extends Resource
 {
-
-    protected static bool $shouldRegisterNavigation = false;
+    // Resources herdam a definição de shouldRegisterNavigation de cada classe filha
+    // (não forçar false aqui permite que Resources individuais a sobrescrevam)
 }
