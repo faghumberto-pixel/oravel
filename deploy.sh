@@ -63,7 +63,7 @@ set -e
 cd $PROD_PATH
 
 echo "📥 Puxando código..."
-git pull origin $BRANCH
+git pull --rebase=false origin $BRANCH
 
 echo "🔍 Validando PHP..."
 find app -name "*.php" -exec php -l {} +
