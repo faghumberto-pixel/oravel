@@ -41,7 +41,24 @@ class TrackSiteVisit
     {
         $response = $next($request);
 
-        $this->track($request);
+        // Tracking e' telemetria pura, best-effort -- nunca pode derrubar a
+        // resposta real. Rotas publicas por token (patio.ativo-status,
+        // quotes.public-*, hour-meter.public.*, portaria.verificar) recebem
+        // parametros arbitrarios de visitantes/bots; um token que nao bate
+        // com o formato UUID/coluna esperado gera QueryException no Postgres
+        // (ex: "invalid input syntax for type uuid") dentro de
+        // SiteVisitTenantResolver::resolve() ou de resolveAssetTenantId(), e
+        // sem este catch essa excecao subia direto (fora do fluxo normal de
+        // tratamento de excecao do request, que ja rodou dentro de $next())
+        // e virava 500 puro -- ja aconteceu com /patio/ativo/<token invalido>
+        // (ver commit revertido f419475) e explica erros 500 aparentemente
+        // sem relacao, incluindo /admin/login, quando trafego de bot bate
+        // repetidamente nessas rotas publicas.
+        try {
+            $this->track($request);
+        } catch (\Throwable $e) {
+            report($e);
+        }
 
         return $response;
     }
