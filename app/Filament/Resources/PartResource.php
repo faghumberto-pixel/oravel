@@ -15,8 +15,6 @@ class PartResource extends BaseResource
 {
     protected static ?string $model = Part::class;
 
-    protected static bool $shouldRegisterNavigation = true;
-
     protected static ?string $navigationIcon = 'heroicon-o-square-3-stack-3d';
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';

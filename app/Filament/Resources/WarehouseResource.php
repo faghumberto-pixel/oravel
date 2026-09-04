@@ -16,8 +16,6 @@ class WarehouseResource extends BaseResource
 {
     protected static ?string $model = Warehouse::class;
 
-    protected static bool $shouldRegisterNavigation = true;
-
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
