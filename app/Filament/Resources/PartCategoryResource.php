@@ -14,6 +14,8 @@ class PartCategoryResource extends BaseResource
 {
     protected static ?string $model = PartCategory::class;
 
+    protected static bool $shouldRegisterNavigation = true;
+
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
