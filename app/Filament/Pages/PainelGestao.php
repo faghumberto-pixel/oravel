@@ -38,18 +38,15 @@ class PainelGestao extends Page
             return false;
         }
 
-        // TODO: Temporário - reabilitar após habilitar modulo_dashboard no plano do tenant em PROD
-        return true;
+        $tenant = Tenancy::current();
 
-        // $tenant = Tenancy::current();
+        // Sem tenant (super admin sem "atuar como", contexto de console): nao
+        // ha plano pra consultar, entao nao faz sentido esconder.
+        if (! $tenant) {
+            return true;
+        }
 
-        // // Sem tenant (super admin sem "atuar como", contexto de console): nao
-        // // ha plano pra consultar, entao nao faz sentido esconder.
-        // if (! $tenant) {
-        //     return true;
-        // }
-
-        // return $tenant->hasFeature('modulo_dashboard');
+        return $tenant->hasFeature('modulo_dashboard');
     }
 
     public function getMaxContentWidth(): MaxWidth
