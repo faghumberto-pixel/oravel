@@ -8,7 +8,7 @@ class Almoxarifado extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
 
-    protected static ?string $navigationGroup = 'Ativos Materiais';
+    protected static ?string $navigationGroup = 'Ativos e Materiais';
 
     protected static ?string $navigationLabel = 'Almoxarifado';
 
@@ -16,5 +16,5 @@ class Almoxarifado extends Page
 
     protected static string $view = 'filament.pages.almoxarifado';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 10;
 }
