@@ -94,7 +94,7 @@ return new class extends Migration
             $table->decimal('total_cost', 12, 2);
             $table->string('reference_document')->nullable(); // NF, ID de OS, etc
             $table->text('notes')->nullable();
-            $table->unsignedBigInteger('created_by'); // Usuário responsável
+            $table->uuid('created_by'); // Usuário responsável
             $table->timestamp('created_at')->useCurrent();
 
             $table->foreign('tenant_id')->references('id')->on('tenants')->onDelete('cascade');
