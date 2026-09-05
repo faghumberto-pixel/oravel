@@ -113,19 +113,19 @@ class WarehouseStockResource extends BaseResource
 
                 Tables\Columns\TextColumn::make('current_quantity')
                     ->label('Atual')
-                    ->numeric(decimals: 2)
+                    ->formatStateUsing(fn ($state) => number_format($state ?? 0, 2, ",", "."))
                     ->sortable()
                     ->weight('bold'),
 
                 Tables\Columns\TextColumn::make('reserved_quantity')
                     ->label('Reservado')
-                    ->numeric(decimals: 2)
+                    ->formatStateUsing(fn ($state) => number_format($state ?? 0, 2, ",", "."))
                     ->sortable()
                     ->color('warning'),
 
                 Tables\Columns\TextColumn::make('available_quantity')
                     ->label('Disponível')
-                    ->numeric(decimals: 2)
+                    ->formatStateUsing(fn ($state) => number_format($state ?? 0, 2, ",", "."))
                     ->sortable()
                     ->weight('bold')
                     ->color(fn (WarehouseStock $record) => match (true) {
