@@ -41,13 +41,13 @@ class StocksRelationManager extends RelationManager
                     ->sortable(),
                 Tables\Columns\TextColumn::make('current_quantity')
                     ->label('Quantidade Atual')
-                    ->numeric(decimals: 2),
+                    ->formatStateUsing(fn ($state) => number_format($state ?? 0, 2, ",", ".")),
                 Tables\Columns\TextColumn::make('reserved_quantity')
                     ->label('Reservada')
-                    ->numeric(decimals: 2),
+                    ->formatStateUsing(fn ($state) => number_format($state ?? 0, 2, ",", ".")),
                 Tables\Columns\TextColumn::make('available_quantity')
                     ->label('Disponível')
-                    ->numeric(decimals: 2),
+                    ->formatStateUsing(fn ($state) => number_format($state ?? 0, 2, ",", ".")),
             ])
             ->filters([])
             ->headerActions([])
