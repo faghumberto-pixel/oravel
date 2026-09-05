@@ -2,60 +2,69 @@
 
 namespace Database\Seeders;
 
+use App\Models\Material;
+use App\Models\MaterialCategory;
+use App\Models\Tenant;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class MaterialSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $materials = [
-            [
-                'name' => 'Correia de Transmissão p/ Betoneira 400L',
-                'sku' => 'COR-BET-400',
-                'current_stock' => 12,
-                'unit_cost' => 45.00
-            ],
-            [
-                'name' => 'Ponteiro Encaixe Sextavado p/ Rompedor 30kg',
-                'sku' => 'PNT-ROM-30K',
-                'current_stock' => 2,
-                'unit_cost' => 189.00
-            ],
-            [
-                'name' => 'Sapata de Borracha p/ Compactador de Solo',
-                'sku' => 'SAP-COMP-01',
-                'current_stock' => 8,
-                'unit_cost' => 220.00
-            ],
+            ['sku' => 'PARA06', 'name' => 'Parafuso M6', 'category' => 'Fixadores'],
+            ['sku' => 'PARA08', 'name' => 'Parafuso M8', 'category' => 'Fixadores'],
+            ['sku' => 'PORC06', 'name' => 'Porca M6', 'category' => 'Fixadores'],
+            ['sku' => 'PORC08', 'name' => 'Porca M8', 'category' => 'Fixadores'],
+            ['sku' => 'ARRE06', 'name' => 'Arruela M6', 'category' => 'Fixadores'],
+            ['sku' => 'ORRE10', 'name' => 'Corrente 10mm', 'category' => 'Correntes e Cabos'],
+            ['sku' => 'ORRE12', 'name' => 'Corrente 12mm', 'category' => 'Correntes e Cabos'],
+            ['sku' => 'CABO06', 'name' => 'Cabo de Aço 6mm', 'category' => 'Correntes e Cabos'],
+            ['sku' => 'OHID00', 'name' => 'Óleo Hidráulico', 'category' => 'Fluidos'],
+            ['sku' => 'OMOT15', 'name' => 'Óleo Motor 15W40', 'category' => 'Fluidos'],
+            ['sku' => 'GRAX00', 'name' => 'Graxa NLGI 2', 'category' => 'Lubrificantes'],
+            ['sku' => 'ROLE01', 'name' => 'Rolamento 6203', 'category' => 'Rolamentos'],
+            ['sku' => 'ROLE02', 'name' => 'Rolamento 6205', 'category' => 'Rolamentos'],
+            ['sku' => 'CORV00', 'name' => 'Correia V', 'category' => 'Transmissão'],
+            ['sku' => 'CORSER', 'name' => 'Correia Serpentina', 'category' => 'Transmissão'],
+            ['sku' => 'DISC00', 'name' => 'Disco de Freio', 'category' => 'Freios'],
+            ['sku' => 'PAST00', 'name' => 'Pastilha de Freio', 'category' => 'Freios'],
+            ['sku' => 'CLHI50', 'name' => 'Cilindro Hidráulico 50mm', 'category' => 'Hidráulica'],
+            ['sku' => 'VALAL', 'name' => 'Válvula de Alívio', 'category' => 'Hidráulica'],
+            ['sku' => 'FILTAR', 'name' => 'Filtro de Ar', 'category' => 'Filtros'],
         ];
 
-        foreach ($materials as $material) {
-            // Buscamos se o SKU já existe para evitar duplicados
-            $exists = DB::table('materials')->where('sku', $material['sku'])->first();
+        $tenants = Tenant::all();
 
-            if ($exists) {
-                DB::table('materials')->where('id', $exists->id)->update([
-                    'name' => $material['name'],
-                    'current_stock' => $material['current_stock'],
-                    'unit_cost' => $material['unit_cost'],
-                    'updated_at' => now(),
-                ]);
-            } else {
-                DB::table('materials')->insert([
-                    'id' => Str::uuid()->toString(), // Mantendo o padrão de UUID do projeto
-                    'sku' => $material['sku'],
-                    'name' => $material['name'],
-                    'current_stock' => $material['current_stock'],
-                    'unit_cost' => $material['unit_cost'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
+        foreach ($tenants as $tenant) {
+            foreach ($materials as $idx => $materialData) {
+                $category = MaterialCategory::firstOrCreate(
+                    [
+                        'tenant_id' => $tenant->id,
+                        'name' => $materialData['category'],
+                    ],
+                    [
+                        'description' => "Categoria: {$materialData['category']}",
+                    ]
+                );
+
+                Material::firstOrCreate(
+                    [
+                        'tenant_id' => $tenant->id,
+                        'sku' => $materialData['sku'] . '-T' . substr($tenant->id, 0, 4),
+                    ],
+                    [
+                        'name' => $materialData['name'],
+                        'material_category_id' => $category->id,
+                        'description' => "Material: {$materialData['name']}",
+                        'unit' => 'un',
+                        'minimum_stock' => rand(5, 20),
+                    ]
+                );
             }
+            $this->command->info("✓ Materiais criados para {$tenant->name}");
         }
+
+        $this->command->info('✅ Material seeder concluído!');
     }
 }
