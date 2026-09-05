@@ -26,6 +26,21 @@ echo "VM: $VM_INSTANCE ($VM_ZONE)"
 echo "Path: $PROD_PATH"
 echo ""
 
+# PRÉ-DEPLOY: Validação local de assets
+# Previne que PROD seja deployada sem assets, ou com APP_ENV=local/APP_DEBUG=true
+echo "🔍 Executando pre-deploy validation..."
+if [[ ! -f "scripts/pre-deploy-validation.sh" ]]; then
+    echo "⚠️  AVISO: scripts/pre-deploy-validation.sh não encontrado, pulando validação"
+else
+    if ! bash scripts/pre-deploy-validation.sh; then
+        echo "❌ PRÉ-DEPLOY VALIDATION FALHOU!"
+        echo ""
+        echo "Corrija os problemas acima antes de fazer deploy."
+        exit 1
+    fi
+fi
+echo ""
+
 # 1. Verifica se há mudanças não commitadas
 if ! git diff-index --quiet HEAD --; then
     echo "❌ ERRO: Existem mudanças não commitadas!"
@@ -80,6 +95,12 @@ echo "🧹 Limpando cache..."
 php artisan optimize:clear
 php artisan config:cache
 
+echo "🔍 Verificando integridade de Vite assets..."
+php artisan vite:check --strict || {
+    echo "⚠️  AVISO: Possível problema com Vite assets detectado"
+    echo "   Verifique a configuração de ambiente acima"
+}
+
 echo "✨ DEPLOY CONCLUÍDO COM SUCESSO!"
 '
 REMOTE_EOF
@@ -95,3 +116,22 @@ echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "✅ DEPLOY FINALIZADO!"
 echo "🌐 Acesse: https://app.oravel.com.br"
+echo ""
+
+# 5. PÓS-DEPLOY: Health check automatizado
+# Verifica se PROD está funcional e não está tentando usar Vite dev server
+echo "🏥 Executando health check pós-deploy..."
+if [[ ! -f "scripts/health-check-post-deploy.sh" ]]; then
+    echo "⚠️  AVISO: scripts/health-check-post-deploy.sh não encontrado, pulando health check"
+else
+    if bash scripts/health-check-post-deploy.sh "https://app.oravel.com.br"; then
+        echo ""
+        echo "✅ HEALTH CHECK PASSOU!"
+    else
+        echo ""
+        echo "⚠️  AVISO: Health check detectou problemas"
+        echo "   Verifique o site manualmente em https://app.oravel.com.br"
+        echo "   ou rode o health check novamente com:"
+        echo "   bash scripts/health-check-post-deploy.sh"
+    fi
+fi
