@@ -56,3 +56,6 @@ storage/*
 
 # Backups de migrations (sessões de correção)
 database/migrations_backup_*/
+
+# Vite dev server file (should never be in production)
+/public/hot
