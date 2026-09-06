@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Clusters\ContratoCluster;
 use App\Filament\Resources\DocumentSignatureResource\Pages;
 use App\Models\DocumentSignature;
 use Filament\Forms;
@@ -15,13 +14,13 @@ use Illuminate\Support\Facades\URL;
 
 class DocumentSignatureResource extends Resource
 {
-    protected static ?string $cluster = ContratoCluster::class;
-
     protected static ?string $model = DocumentSignature::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-check';
 
     protected static ?string $navigationLabel = 'Assinaturas Eletrônicas';
+
+    protected static ?string $navigationGroup = 'Comercial';
 
     protected static ?string $modelLabel = 'Assinatura Eletrônica';
 
