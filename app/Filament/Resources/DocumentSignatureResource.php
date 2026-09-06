@@ -4,13 +4,15 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\DocumentSignatureResource\Pages;
 use App\Models\DocumentSignature;
+use App\Notifications\SignatureLinkNotification;
+use App\Services\SignatureService;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\URL;
 
 class DocumentSignatureResource extends Resource
 {
@@ -21,6 +23,8 @@ class DocumentSignatureResource extends Resource
     protected static ?string $navigationLabel = 'Assinaturas Eletrônicas';
 
     protected static ?string $navigationGroup = 'Comercial';
+
+    protected static ?string $navigationParentItem = 'Gestão Comercial';
 
     protected static ?string $modelLabel = 'Assinatura Eletrônica';
 
@@ -87,7 +91,7 @@ class DocumentSignatureResource extends Resource
                             ->disabled()
                             ->columnSpan(1),
 
-                        Forms\Components\DateTimePickerComponent::make('signed_at')
+                        Forms\Components\DateTimePicker::make('signed_at')
                             ->label('Assinado em')
                             ->disabled()
                             ->columnSpan(1),
@@ -104,7 +108,6 @@ class DocumentSignatureResource extends Resource
                         Forms\Components\TextInput::make('token')
                             ->label('Token')
                             ->disabled()
-                            ->copyable()
                             ->columnSpan(2),
 
                         Forms\Components\TextInput::make('ip_address')
@@ -126,7 +129,6 @@ class DocumentSignatureResource extends Resource
                         Forms\Components\TextInput::make('document_hash')
                             ->label('Hash SHA-256 do PDF')
                             ->disabled()
-                            ->copyable()
                             ->columnSpan(2),
 
                         Forms\Components\TextInput::make('signature_image_path')
@@ -242,7 +244,7 @@ class DocumentSignatureResource extends Resource
                         ->action(function (DocumentSignature $record) {
                             $link = route('signature.sign', ['token' => $record->token]);
                             // Copia para clipboard via JS
-                            \Filament\Notifications\Notification::make()
+                            Notification::make()
                                 ->title('Link copiado!')
                                 ->body($link)
                                 ->success()
@@ -262,9 +264,9 @@ class DocumentSignatureResource extends Resource
                                 ->default(fn (DocumentSignature $record) => $record->signer_email),
                         ])
                         ->action(function (DocumentSignature $record, array $data) {
-                            $record->notify(new \App\Notifications\SignatureLinkNotification('email'));
+                            $record->notify(new SignatureLinkNotification('email'));
 
-                            \Filament\Notifications\Notification::make()
+                            Notification::make()
                                 ->title('E-mail enviado!')
                                 ->success()
                                 ->send();
@@ -276,9 +278,9 @@ class DocumentSignatureResource extends Resource
                         ->icon('heroicon-o-chat-bubble-left')
                         ->color('success')
                         ->action(function (DocumentSignature $record) {
-                            $record->notify(new \App\Notifications\SignatureLinkNotification('whatsapp'));
+                            $record->notify(new SignatureLinkNotification('whatsapp'));
 
-                            \Filament\Notifications\Notification::make()
+                            Notification::make()
                                 ->title('Mensagem enviada!')
                                 ->success()
                                 ->send();
@@ -301,10 +303,10 @@ class DocumentSignatureResource extends Resource
                                 ->required(),
                         ])
                         ->action(function (DocumentSignature $record, array $data) {
-                            app(\App\Services\SignatureService::class)
+                            app(SignatureService::class)
                                 ->renewSignatureToken($record, $data['days']);
 
-                            \Filament\Notifications\Notification::make()
+                            Notification::make()
                                 ->title('Token renovado!')
                                 ->success()
                                 ->send();
@@ -316,10 +318,10 @@ class DocumentSignatureResource extends Resource
                         ->icon('heroicon-o-x-mark')
                         ->color('danger')
                         ->action(function (DocumentSignature $record) {
-                            app(\App\Services\SignatureService::class)
+                            app(SignatureService::class)
                                 ->cancelSignature($record);
 
-                            \Filament\Notifications\Notification::make()
+                            Notification::make()
                                 ->title('Assinatura cancelada!')
                                 ->success()
                                 ->send();

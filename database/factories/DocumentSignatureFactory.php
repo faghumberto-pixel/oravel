@@ -30,6 +30,13 @@ class DocumentSignatureFactory extends Factory
                 'status' => 'signed',
                 'signed_at' => now(),
                 'signature_image_path' => 'signatures/test.png',
+                'ip_address' => $this->faker->ipv4(),
+                'user_agent' => $this->faker->userAgent(),
+                'document_hash' => hash('sha256', $this->faker->uuid()),
+                'geolocation' => [
+                    'latitude' => $this->faker->latitude(-23.7, -23.4),
+                    'longitude' => $this->faker->longitude(-46.8, -46.4),
+                ],
             ];
         });
     }

@@ -6,7 +6,6 @@ use App\Filament\Resources\WarehouseStockResource\Pages;
 use App\Models\WarehouseStock;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -20,6 +19,8 @@ class WarehouseStockResource extends BaseResource
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
+    protected static ?string $navigationParentItem = 'Gestão Almoxarifado';
+
     protected static ?int $navigationSort = 12;
 
     protected static ?string $label = 'Saldo em Estoque';
@@ -31,7 +32,7 @@ class WarehouseStockResource extends BaseResource
         return $form->schema([
             Forms\Components\Section::make('Saldo de Estoque')
                 ->schema([
-                    Forms\Components\SelectRelation::make('warehouse_id')
+                    Forms\Components\Select::make('warehouse_id')
                         ->relationship('warehouse', 'name')
                         ->label('Almoxarifado')
                         ->required()
@@ -39,7 +40,7 @@ class WarehouseStockResource extends BaseResource
                         ->preload()
                         ->disabled(),
 
-                    Forms\Components\SelectRelation::make('part_id')
+                    Forms\Components\Select::make('part_id')
                         ->relationship('part', 'name')
                         ->label('Peça/Insumo')
                         ->required()
@@ -113,19 +114,19 @@ class WarehouseStockResource extends BaseResource
 
                 Tables\Columns\TextColumn::make('current_quantity')
                     ->label('Atual')
-                    ->formatStateUsing(fn ($state) => number_format($state ?? 0, 2, ",", "."))
+                    ->formatStateUsing(fn ($state) => number_format($state ?? 0, 2, ',', '.'))
                     ->sortable()
                     ->weight('bold'),
 
                 Tables\Columns\TextColumn::make('reserved_quantity')
                     ->label('Reservado')
-                    ->formatStateUsing(fn ($state) => number_format($state ?? 0, 2, ",", "."))
+                    ->formatStateUsing(fn ($state) => number_format($state ?? 0, 2, ',', '.'))
                     ->sortable()
                     ->color('warning'),
 
                 Tables\Columns\TextColumn::make('available_quantity')
                     ->label('Disponível')
-                    ->formatStateUsing(fn ($state) => number_format($state ?? 0, 2, ",", "."))
+                    ->formatStateUsing(fn ($state) => number_format($state ?? 0, 2, ',', '.'))
                     ->sortable()
                     ->weight('bold')
                     ->color(fn (WarehouseStock $record) => match (true) {
@@ -136,9 +137,8 @@ class WarehouseStockResource extends BaseResource
                 Tables\Columns\TextColumn::make('is_critical')
                     ->label('Status')
                     ->badge()
-                    ->color('danger')
                     ->state(fn (WarehouseStock $record) => $record->is_critical ? 'CRÍTICO' : 'OK')
-                    ->visible(fn (WarehouseStock $record) => $record->is_critical),
+                    ->color(fn (WarehouseStock $record) => $record->is_critical ? 'danger' : 'success'),
 
                 Tables\Columns\TextColumn::make('part.cost_price')
                     ->label('Custo Unit. (R$)')

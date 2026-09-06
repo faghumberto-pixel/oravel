@@ -2,15 +2,12 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Pages\Almoxarifado;
 use App\Filament\Resources\PartResource\Pages;
 use App\Models\Part;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class PartResource extends BaseResource
 {
@@ -22,7 +19,7 @@ class PartResource extends BaseResource
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
-    protected static ?string $navigationParentItem = 'Almoxarifado';
+    protected static ?string $navigationParentItem = 'Gestão Almoxarifado';
 
     protected static ?int $navigationSort = 2;
 
@@ -47,7 +44,7 @@ class PartResource extends BaseResource
                         ->placeholder('7891234567890')
                         ->maxLength(50),
 
-                    Forms\Components\SelectRelation::make('part_category_id')
+                    Forms\Components\Select::make('part_category_id')
                         ->relationship('category', 'name')
                         ->label('Categoria')
                         ->required()

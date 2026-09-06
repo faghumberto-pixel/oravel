@@ -7,10 +7,8 @@ use App\Filament\Resources\WarehouseResource\RelationManagers;
 use App\Models\Warehouse;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class WarehouseResource extends BaseResource
 {
@@ -21,6 +19,8 @@ class WarehouseResource extends BaseResource
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
+
+    protected static ?string $navigationParentItem = 'Gestão Almoxarifado';
 
     protected static ?int $navigationSort = 10;
 
@@ -64,7 +64,7 @@ class WarehouseResource extends BaseResource
 
             Forms\Components\Section::make('Responsável e Status')
                 ->schema([
-                    Forms\Components\SelectRelation::make('manager_id')
+                    Forms\Components\Select::make('manager_id')
                         ->relationship('manager', 'name')
                         ->label('Gerente do Almoxarifado')
                         ->searchable()
