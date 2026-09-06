@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Fleet\Models\ContractMeasurement;
 use App\Filament\Pages\CoberturaPmp;
 use App\Filament\Resources\MaintenancePlanResource\Support\PlanStatus;
 use App\Models\AccountPayable;
@@ -204,6 +205,16 @@ class TablePrintController extends Controller
                 ['label' => 'Departamento', 'value' => fn ($r) => $r->department?->name],
                 ['label' => 'Função', 'value' => fn ($r) => $r->role],
             ], ['department']],
+
+            ContractMeasurement::class => [[
+                ['label' => 'Contrato', 'value' => fn ($r) => $r->contract?->contract_number],
+                ['label' => 'Período', 'value' => fn ($r) => $r->reference_period_start->format('d/m/Y').' – '.$r->reference_period_end->format('d/m/Y')],
+                ['label' => 'Base', 'value' => fn ($r) => 'R$ '.number_format((float) $r->total_base_amount, 2, ',', '.')],
+                ['label' => 'Excedente', 'value' => fn ($r) => 'R$ '.number_format((float) $r->total_excess_hours_amount, 2, ',', '.')],
+                ['label' => 'Extras', 'value' => fn ($r) => 'R$ '.number_format((float) $r->total_extras_amount, 2, ',', '.')],
+                ['label' => 'Total', 'value' => fn ($r) => 'R$ '.number_format((float) $r->total_amount, 2, ',', '.')],
+                ['label' => 'Status', 'value' => fn ($r) => ContractMeasurement::statusLabels()[$r->status] ?? $r->status],
+            ], ['contract']],
 
             DocumentSignature::class => [[
                 ['label' => 'Signatário', 'value' => fn ($r) => $r->signer_name],

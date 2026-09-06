@@ -31,6 +31,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('site-visits:close-stale')->everyFiveMinutes();
         $schedule->command('employees:check-certification-expirations')->daily();
         $schedule->command('contracts:calculate-overage')->monthlyOn(1, '03:00');
+        // 30min depois de propósito: reaproveita o excedente já calculado
+        // acima em vez de recalcular (ver ContractMeasurementService).
+        $schedule->command('contracts:generate-measurements')->monthlyOn(1, '03:30');
     }
 
     /**
