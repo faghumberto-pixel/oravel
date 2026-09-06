@@ -6,7 +6,9 @@ use App\Http\Controllers\AIAnalysisPdfController;
 use App\Http\Controllers\AssetDossierPdfController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\ChatHistoryPdfController;
+use App\Http\Controllers\ClientMagicLinkController;
 use App\Http\Controllers\ClientManagementPrintController;
+use App\Http\Controllers\ClientReceivableMirrorController;
 use App\Http\Controllers\ContractPdfController;
 use App\Http\Controllers\EquipmentDamageReportController;
 use App\Http\Controllers\GenericRecordPrintController;
@@ -124,7 +126,21 @@ Route::post('/hour-meter/publico/{token}', [HourMeterPublicController::class, 's
 Route::middleware(['auth:client'])->group(function () {
     Route::get('/cliente/contratos/{contract}/pdf', [ContractPdfController::class, 'download'])
         ->name('cliente.contracts.pdf');
+    Route::get('/cliente/financeiro/{accountReceivable}/espelho', [ClientReceivableMirrorController::class, 'download'])
+        ->name('cliente.receivable.mirror');
 });
+
+// "Entrar sem senha" do Portal do Cliente -- públicas de propósito (é
+// exatamente o fluxo de quem ainda não está logado). O token real de posse
+// fica no Cache (ver ClientMagicLinkController), a assinatura da URL de
+// login é só uma camada extra contra adulteração.
+Route::get('/cliente/entrar-sem-senha', [ClientMagicLinkController::class, 'create'])
+    ->name('cliente.magic-link.request');
+Route::post('/cliente/entrar-sem-senha', [ClientMagicLinkController::class, 'send'])
+    ->name('cliente.magic-link.send');
+Route::get('/cliente/login-magico/{token}', [ClientMagicLinkController::class, 'login'])
+    ->middleware('signed')
+    ->name('cliente.magic-link.login');
 
 // 'verified' removido de proposito -- nenhum outro lugar do app (nenhum
 // painel Filament) exige email verificado pra logar/usar, e nao existe

@@ -5,6 +5,7 @@ namespace App\Filament\Client\Pages;
 use App\Models\AccountReceivable;
 use App\Models\Client;
 use App\Services\AsaasService;
+use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Tables;
@@ -56,30 +57,40 @@ class MeuFinanceiro extends Page implements HasTable
             ])
             ->actions([
                 Tables\Actions\Action::make('verBoleto')
-                    ->label('Ver boleto')
+                    ->label('Ver boleto/PIX')
                     ->icon('heroicon-o-document-text')
-                    ->visible(fn (AccountReceivable $record) => filled($record->asaas_boleto_url))
-                    ->url(fn (AccountReceivable $record) => $record->asaas_boleto_url)
+                    ->visible(fn (AccountReceivable $record) => filled($record->asaas_invoice_url))
+                    ->url(fn (AccountReceivable $record) => $record->asaas_invoice_url)
                     ->openUrlInNewTab(),
                 Tables\Actions\Action::make('gerarSegundaVia')
                     ->label('Gerar 2ª via')
                     ->icon('heroicon-o-document-plus')
-                    ->visible(fn (AccountReceivable $record) => blank($record->asaas_boleto_url))
-                    ->action(function (AccountReceivable $record) {
+                    ->visible(fn (AccountReceivable $record) => blank($record->asaas_invoice_url))
+                    ->form([
+                        Forms\Components\Radio::make('billingType')
+                            ->label('Forma de pagamento')
+                            ->options([
+                                'BOLETO' => 'Boleto',
+                                'PIX' => 'PIX',
+                            ])
+                            ->default('BOLETO')
+                            ->required(),
+                    ])
+                    ->action(function (AccountReceivable $record, array $data) {
                         /** @var Client $client */
                         $client = $this->guard()->user();
 
                         try {
                             $payment = app(AsaasService::class)->createPayment([
                                 'customer' => $client->tenant->asaas_customer_id,
-                                'billingType' => 'BOLETO',
+                                'billingType' => $data['billingType'],
                                 'value' => (float) $record->amount,
                                 'dueDate' => $record->due_date->toDateString(),
                                 'description' => $record->description,
                             ]);
                         } catch (\Throwable $e) {
                             Notification::make()
-                                ->title('Não foi possível gerar o boleto agora')
+                                ->title('Não foi possível gerar a cobrança agora')
                                 ->body('Tente novamente em instantes ou contate a locadora.')
                                 ->danger()
                                 ->send();
@@ -94,10 +105,16 @@ class MeuFinanceiro extends Page implements HasTable
                         ]);
 
                         Notification::make()
-                            ->title('Boleto gerado')
+                            ->title($data['billingType'] === 'PIX' ? 'Cobrança PIX gerada' : 'Boleto gerado')
                             ->success()
                             ->send();
                     }),
+                Tables\Actions\Action::make('espelho')
+                    ->label('Baixar Espelho')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('gray')
+                    ->url(fn (AccountReceivable $record) => route('cliente.receivable.mirror', $record))
+                    ->openUrlInNewTab(),
             ])
             ->defaultSort('due_date', 'desc');
     }

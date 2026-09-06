@@ -39,6 +39,9 @@ class MinhasOS extends Page implements HasTable
                     ->where('client_id', $client->id)
                     ->with(['statusHistories' => fn ($query) => $query->latest()->limit(1)])
             )
+            // Polling leve (não websocket) -- suficiente pro caso de uso real:
+            // cliente acompanhando o chamado, não precisa ser instantâneo.
+            ->poll('15s')
             ->columns([
                 Tables\Columns\TextColumn::make('os_number')
                     ->label('OS'),
@@ -65,6 +68,18 @@ class MinhasOS extends Page implements HasTable
                             ? "{$latest->old_status} → {$latest->new_status} em {$latest->created_at->format('d/m/Y H:i')}"
                             : 'Sem histórico ainda';
                     }),
+            ])
+            ->actions([
+                Tables\Actions\Action::make('timeline')
+                    ->label('Ver Andamento')
+                    ->icon('heroicon-o-map')
+                    ->color('gray')
+                    ->modalHeading(fn (MaintenanceOrder $record) => "Andamento do chamado {$record->os_number}")
+                    ->modalContent(fn (MaintenanceOrder $record) => view('components.client.status-timeline', [
+                        'status' => $record->status,
+                    ]))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Fechar'),
             ])
             ->defaultSort('created_at', 'desc');
     }

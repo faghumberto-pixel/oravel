@@ -60,14 +60,24 @@ class AbrirChamado extends Page implements HasForms
                     ->label('Equipamento')
                     ->options($assetOptions)
                     ->required(),
+                Forms\Components\Select::make('failure_category')
+                    ->label('Tipo de Falha')
+                    ->options(MaintenanceOrder::failureCategoryLabels())
+                    ->native(false)
+                    ->required(),
+                Forms\Components\TextInput::make('horimetro_entry')
+                    ->label('Horímetro no momento da parada')
+                    ->numeric()
+                    ->step(0.1)
+                    ->suffix('h'),
                 Forms\Components\Textarea::make('description')
                     ->label('O que está acontecendo?')
                     ->rows(4)
                     ->required(),
                 Forms\Components\FileUpload::make('photos')
-                    ->label('Fotos (opcional)')
-                    ->image()
+                    ->label('Fotos ou vídeos (opcional)')
                     ->multiple()
+                    ->acceptedFileTypes(['image/*', 'video/*'])
                     ->directory('chamados-portal-cliente'),
             ])
             ->statePath('data');
@@ -85,6 +95,8 @@ class AbrirChamado extends Page implements HasForms
             'client_id' => $client->id,
             'asset_id' => $state['asset_id'],
             'maintenance_type' => MaintenanceOrder::TYPE_CORRECTIVE,
+            'failure_category' => $state['failure_category'],
+            'horimetro_entry' => $state['horimetro_entry'] ?? null,
             'status' => 'Aberto',
             'description' => $state['description'],
         ]);

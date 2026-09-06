@@ -48,6 +48,14 @@ class ClientPanelProvider extends PanelProvider
                 PanelsRenderHook::PAGE_START,
                 fn () => view('filament.breadcrumb'),
             )
+            ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+                fn () => view('filament.client.auth.magic-link-hint'),
+            )
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn () => view('filament.client.login-background'),
+            )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

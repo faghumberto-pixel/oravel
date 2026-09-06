@@ -63,6 +63,8 @@ class ClientPortalMaintenanceRequestTest extends TestCase
         Livewire::test(AbrirChamado::class)
             ->fillForm([
                 'asset_id' => $asset->id,
+                'failure_category' => MaintenanceOrder::FAILURE_CATEGORY_ELETRICO,
+                'horimetro_entry' => 123.5,
                 'description' => 'Equipamento não liga.',
             ])
             ->call('create');
@@ -75,6 +77,8 @@ class ClientPortalMaintenanceRequestTest extends TestCase
         $this->assertNotNull($order);
         $this->assertSame($asset->id, $order->asset_id);
         $this->assertSame(MaintenanceOrder::TYPE_CORRECTIVE, $order->maintenance_type);
+        $this->assertSame(MaintenanceOrder::FAILURE_CATEGORY_ELETRICO, $order->failure_category);
+        $this->assertEquals(123.5, $order->horimetro_entry);
         $this->assertSame('Aberto', $order->status);
         $this->assertSame('Equipamento não liga.', $order->description);
     }
