@@ -32,7 +32,7 @@ use Illuminate\Validation\ValidationException;
  */
 class Login extends BaseLogin
 {
-    protected static string $view = 'filament-panels::pages.auth.login';
+    protected static string $view = 'filament.pages.auth.login';
 
     /**
      * SimplePage (pai da classe base) usa
