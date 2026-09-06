@@ -41,7 +41,6 @@ class Login extends BaseLogin
      * <html>/<head>/assets do Filament) pra poder desenhar as duas
      * colunas por conta propria na view.
      */
-    protected static string $layout = 'filament-panels::components.layout.base';
 
     public static function getRouteMiddleware(): array
     {
