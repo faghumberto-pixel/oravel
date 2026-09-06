@@ -10,7 +10,7 @@ use Throwable;
 
 class SignatureService
 {
-    private const SIGNATURE_DISK = 's3'; // ou 'local' se preferir
+    private const SIGNATURE_DISK = 'local'; // S3 em PROD, local em DEV
 
     /**
      * Gera um link seguro de assinatura via token único.
@@ -211,16 +211,29 @@ class SignatureService
      */
     private function generateDocumentPdf(Model $signable): string
     {
-        // Implementar de acordo com o tipo de documento
-        // Por enquanto, retorna PDF genérico
-        $view = match ($signable::class) {
-            \App\Models\Contract::class => 'documents.contract-pdf',
-            \App\Models\MaintenanceOrder::class => 'documents.maintenance-order-pdf',
-            default => 'documents.generic-pdf',
-        };
+        try {
+            // Tenta usar view específica por tipo de documento
+            $view = match ($signable::class) {
+                \App\Models\Contract::class => 'pdf.contract',
+                \App\Models\MaintenanceOrder::class => 'pdf.maintenance_order_dossie',
+                default => null,
+            };
 
-        return Pdf::loadView($view, ['document' => $signable])
-            ->output();
+            if ($view) {
+                return Pdf::loadView($view, ['contract' => $signable])
+                    ->output();
+            }
+        } catch (\Throwable $e) {
+            \Log::warning('Erro ao gerar PDF do documento', [
+                'type' => $signable::class,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        // Fallback: gera PDF genérico simples
+        return Pdf::loadView('pdf.contract', [
+            'contract' => $signable,
+        ])->output();
     }
 
     /**
