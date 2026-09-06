@@ -32,6 +32,16 @@ use Illuminate\Validation\ValidationException;
  */
 class Login extends BaseLogin
 {
+    protected static string $view = 'filament.pages.auth.login';
+
+    /**
+     * SimplePage (pai da classe base) usa
+     * 'filament-panels::components.layout.simple', que forca um card
+     * branco centralizado unico -- vamos direto no layout.base (so
+     * <html>/<head>/assets do Filament) pra poder desenhar as duas
+     * colunas por conta propria na view.
+     */
+    protected static string $layout = 'filament-panels::components.layout.base';
 
     public static function getRouteMiddleware(): array
     {
