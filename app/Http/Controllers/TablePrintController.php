@@ -11,6 +11,7 @@ use App\Models\Client;
 use App\Models\Contract;
 use App\Models\CrmLead;
 use App\Models\Department;
+use App\Models\DocumentSignature;
 use App\Models\EquipmentDamage;
 use App\Models\FleetMaintenancePlan;
 use App\Models\FleetVehicle;
@@ -70,7 +71,7 @@ class TablePrintController extends Controller
             ];
             $records->load(['asset', 'checklistGroup']);
         } else {
-            [$columns, $with] = $this->columnsFor($model);
+            [$columns, $with] = self::columnsFor($model);
 
             if ($with) {
                 $records->load($with);
@@ -95,7 +96,13 @@ class TablePrintController extends Controller
      *
      * @return array{0: array<int, array{label: string, value: \Closure}>, 1: array<int, string>}
      */
-    private function columnsFor(string $model): array
+    /**
+     * Publico e estatico (nao 'private') para ser reaproveitado por
+     * GenericRecordPrintController (botao "Imprimir" das telas de
+     * detalhe/View de qualquer Resource) sem duplicar este mapeamento de
+     * colunas por Model.
+     */
+    public static function columnsFor(string $model): array
     {
         return match ($model) {
             Material::class => [[
@@ -197,6 +204,20 @@ class TablePrintController extends Controller
                 ['label' => 'Departamento', 'value' => fn ($r) => $r->department?->name],
                 ['label' => 'Função', 'value' => fn ($r) => $r->role],
             ], ['department']],
+
+            DocumentSignature::class => [[
+                ['label' => 'Signatário', 'value' => fn ($r) => $r->signer_name],
+                ['label' => 'Documento', 'value' => fn ($r) => class_basename($r->signable_type).' #'.$r->signable_id],
+                ['label' => 'Status', 'value' => fn ($r) => match ($r->status) {
+                    'pending' => 'Pendente',
+                    'signed' => 'Assinado',
+                    'expired' => 'Expirado',
+                    'canceled' => 'Cancelado',
+                    default => $r->status,
+                }],
+                ['label' => 'Assinado em', 'value' => fn ($r) => optional($r->signed_at)->format('d/m/Y H:i')],
+                ['label' => 'E-mail', 'value' => fn ($r) => $r->signer_email],
+            ], []],
 
             SolicitacaoLocacao::class => [[
                 ['label' => 'Cliente', 'value' => fn ($r) => $r->customer?->name],

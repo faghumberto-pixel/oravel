@@ -9,14 +9,15 @@ use App\Http\Controllers\ChatHistoryPdfController;
 use App\Http\Controllers\ClientManagementPrintController;
 use App\Http\Controllers\ContractPdfController;
 use App\Http\Controllers\EquipmentDamageReportController;
+use App\Http\Controllers\GenericRecordPrintController;
 use App\Http\Controllers\HourMeterOfflineController;
 use App\Http\Controllers\HourMeterPublicController;
 use App\Http\Controllers\MaintenanceKanbanPrintController;
 use App\Http\Controllers\MaintenanceOrderController;
-use App\Http\Controllers\PreventiveMaintenanceKanbanPrintController;
-use App\Http\Controllers\Pmp5w2hController;
 use App\Http\Controllers\MaintenanceOrderDossieController;
 use App\Http\Controllers\MaintenanceReportController;
+use App\Http\Controllers\Pmp5w2hController;
+use App\Http\Controllers\PreventiveMaintenanceKanbanPrintController;
 use App\Http\Controllers\PrintQrController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropostaComercialApprovalController;
@@ -184,6 +185,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/admin/print/tabela/{token}', [TablePrintController::class, 'show'])
         ->name('table-print.show');
+
+    // Botão "Imprimir" genérico das telas de detalhe (ViewRecord) de
+    // qualquer Filament Resource -- ver App\Filament\Concerns\HasPrintAction.
+    Route::get('/admin/print/registro/{resource}/{record}', [GenericRecordPrintController::class, 'show'])
+        ->name('generic-record.print');
 
     Route::get('/admin/proposta-comercial/{record}/pdf', [PropostaComercialReportController::class, 'download'])
         ->name('proposta-comercial.pdf');
@@ -395,6 +401,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/technician-daily-tasks', function () {
         $user = auth()->user();
         $tenantSlug = $user->latest_tenant_slug ?? collect(Filament::getUserTenants($user))->first()?->slug ?? $user->tenant?->slug ?? $user->tenant_id;
+
         return redirect()->route('filament.admin.pages.painel-controle', ['tenant' => $tenantSlug]);
     })->name('filament.admin.pages.technician-daily-tasks');
 });

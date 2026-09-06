@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\EquipmentReplacementResource\Pages;
 
+use App\Filament\Concerns\HasRecordPrintAction;
 use App\Filament\Resources\EquipmentReplacementResource;
 use App\Models\Asset;
 use App\Models\EquipmentReplacement;
@@ -21,6 +22,8 @@ use Filament\Resources\Pages\ViewRecord;
  */
 class ViewEquipmentReplacement extends ViewRecord
 {
+    use HasRecordPrintAction;
+
     protected static string $resource = EquipmentReplacementResource::class;
 
     public function infolist(Infolist $infolist): Infolist
@@ -61,6 +64,8 @@ class ViewEquipmentReplacement extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            $this->printAction(),
+
             Actions\Action::make('identificar_substituto')
                 ->label('Identificar Substituto')
                 ->icon('heroicon-o-magnifying-glass')

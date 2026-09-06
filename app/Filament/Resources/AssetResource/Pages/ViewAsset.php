@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AssetResource\Pages;
 
+use App\Filament\Concerns\HasRecordPrintAction;
 use App\Filament\Resources\AssetResource;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
@@ -9,7 +10,14 @@ use Filament\Resources\Pages\ViewRecord;
 
 class ViewAsset extends ViewRecord
 {
+    use HasRecordPrintAction;
+
     protected static string $resource = AssetResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [$this->printAction()];
+    }
 
     // Esta função define o layout de visualização do ativo
     public function infolist(Infolist $infolist): Infolist

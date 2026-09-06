@@ -2,14 +2,26 @@
 
 namespace App\Filament\Resources\PreventiveMaintenanceExecutionResource\Pages;
 
+use App\Filament\Concerns\HasRecordPrintAction;
 use App\Filament\Resources\PreventiveMaintenanceExecutionResource;
+use Filament\Actions;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewPreventiveMaintenanceExecution extends ViewRecord
 {
+    use HasRecordPrintAction;
+
     protected static string $resource = PreventiveMaintenanceExecutionResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            $this->printAction(),
+            Actions\EditAction::make(),
+        ];
+    }
 
     public function infolist(Infolist $infolist): Infolist
     {

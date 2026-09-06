@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\EquipmentDamageResource\Pages;
 
+use App\Filament\Concerns\HasRecordPrintAction;
 use App\Filament\Resources\EquipmentDamageResource;
 use App\Filament\Resources\QuoteResource;
 use App\Models\AIAnalysis;
@@ -20,6 +21,8 @@ use Filament\Resources\Pages\ViewRecord;
 
 class ViewEquipmentDamage extends ViewRecord
 {
+    use HasRecordPrintAction;
+
     protected static string $resource = EquipmentDamageResource::class;
 
     public function infolist(Infolist $infolist): Infolist
@@ -182,6 +185,8 @@ class ViewEquipmentDamage extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            $this->printAction(),
+
             Actions\Action::make('analisar_ia')
                 ->label('Analisar com IA')
                 ->color('gray')
