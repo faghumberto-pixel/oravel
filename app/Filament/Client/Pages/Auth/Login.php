@@ -18,6 +18,16 @@ use Filament\Pages\Auth\Login as BaseLogin;
  */
 class Login extends BaseLogin
 {
+    /**
+     * Sobrescreve só o heading -- o título da aba (getTitle()) e o resto do
+     * texto de login (labels dos campos, "Login" do botão etc) continuam
+     * vindo da tradução padrão do Filament (vendor, nunca editada direto).
+     */
+    public function getHeading(): string
+    {
+        return 'Portal do Cliente';
+    }
+
     protected function getCredentialsFromFormData(array $data): array
     {
         $client = Client::where('email', $data['email'])->first();
