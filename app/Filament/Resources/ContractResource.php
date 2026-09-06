@@ -28,7 +28,7 @@ class ContractResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationGroup = 'Comercial / Contratos';
+    protected static ?string $navigationGroup = 'Comercial';
 
     public static function form(Form $form): Form
     {

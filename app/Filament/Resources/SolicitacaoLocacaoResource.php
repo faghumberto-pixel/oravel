@@ -24,7 +24,7 @@ class SolicitacaoLocacaoResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
 
-    protected static ?string $navigationGroup = 'Comercial / Contratos';
+    protected static ?string $navigationGroup = 'Comercial';
 
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';
 
