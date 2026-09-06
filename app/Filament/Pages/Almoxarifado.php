@@ -10,9 +10,9 @@ class Almoxarifado extends Page
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
-    protected static ?string $navigationLabel = 'Almoxarifado';
+    protected static ?string $navigationLabel = 'Gestão Almoxarifado';
 
-    protected static ?string $title = 'Almoxarifado';
+    protected static ?string $title = 'Gestão Almoxarifado';
 
     protected static string $view = 'filament.pages.almoxarifado';
 

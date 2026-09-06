@@ -15,6 +15,8 @@ class CrmAgenda extends Page
 
     protected static ?string $navigationGroup = 'Comercial';
 
+    protected static ?string $navigationParentItem = 'Gestão CRM';
+
     protected static string $view = 'filament.pages.crm-agenda';
 
     public static function canAccess(): bool

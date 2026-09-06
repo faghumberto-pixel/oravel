@@ -20,6 +20,8 @@ class FleetStatusResource extends Resource
 
     protected static ?string $navigationGroup = 'Comercial';
 
+    protected static ?string $navigationParentItem = 'Gestão Comercial';
+
     protected static ?string $navigationLabel = 'Status da Frota';
 
     public static function getEloquentQuery(): Builder

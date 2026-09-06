@@ -25,6 +25,8 @@ class RentalOverageChargeResource extends Resource
 
     protected static ?string $navigationGroup = 'Comercial';
 
+    protected static ?string $navigationParentItem = 'Gestão Comercial';
+
     protected static ?string $navigationLabel = 'Excedentes de Locação';
 
     protected static ?string $modelLabel = 'Excedente de Locação';

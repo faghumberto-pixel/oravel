@@ -33,6 +33,8 @@ class CrmLeadResource extends BaseResource
 
     protected static ?string $navigationGroup = 'Comercial';
 
+    protected static ?string $navigationParentItem = 'Gestão CRM';
+
     protected static ?string $modelLabel = 'Lead';
 
     protected static ?string $pluralModelLabel = 'Leads';

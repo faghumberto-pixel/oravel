@@ -29,6 +29,8 @@ class RentalHourFranchiseResource extends Resource
 
     protected static ?string $navigationGroup = 'Comercial';
 
+    protected static ?string $navigationParentItem = 'Gestão Comercial';
+
     protected static ?string $navigationLabel = 'Franquias de Horas';
 
     protected static ?string $modelLabel = 'Franquia de Horas';

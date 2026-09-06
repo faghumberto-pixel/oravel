@@ -4,7 +4,6 @@ namespace App\Filament\Pages;
 
 use App\Models\MaterialStockMovement;
 use App\Support\Tenancy;
-use Filament\Filament;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -19,7 +18,7 @@ class Inventario extends Page implements HasTable
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
-    protected static ?string $navigationParentItem = 'Almoxarifado';
+    protected static ?string $navigationParentItem = 'Gestão Almoxarifado';
 
     protected static ?string $navigationLabel = 'Histórico de Movimentação';
 
@@ -59,9 +58,9 @@ class Inventario extends Page implements HasTable
 
                 TextColumn::make('type')
                     ->label('Tipo')
-                    ->formatStateUsing(fn($state) => MaterialStockMovement::TYPES[$state] ?? $state)
+                    ->formatStateUsing(fn ($state) => MaterialStockMovement::TYPES[$state] ?? $state)
                     ->badge()
-                    ->color(fn($state) => $state === MaterialStockMovement::TYPE_ENTRADA ? 'success' : ($state === MaterialStockMovement::TYPE_SAIDA ? 'danger' : 'gray'))
+                    ->color(fn ($state) => $state === MaterialStockMovement::TYPE_ENTRADA ? 'success' : ($state === MaterialStockMovement::TYPE_SAIDA ? 'danger' : 'gray'))
                     ->sortable(),
 
                 TextColumn::make('quantity')

@@ -2,12 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Pages\Almoxarifado;
 use App\Filament\Resources\PartCategoryResource\Pages;
 use App\Models\PartCategory;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -21,7 +19,7 @@ class PartCategoryResource extends BaseResource
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
-    protected static ?string $navigationParentItem = 'Almoxarifado';
+    protected static ?string $navigationParentItem = 'Gestão Almoxarifado';
 
     protected static ?int $navigationSort = 4;
 

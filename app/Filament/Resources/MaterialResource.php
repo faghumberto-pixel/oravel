@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Pages\Almoxarifado;
 use App\Filament\Resources\MaterialResource\Pages;
 use App\Filament\Resources\MaterialResource\RelationManagers;
 use App\Models\Material;
@@ -31,7 +30,7 @@ class MaterialResource extends Resource
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
-    protected static ?string $navigationParentItem = 'Almoxarifado';
+    protected static ?string $navigationParentItem = 'Gestão Almoxarifado';
 
     protected static ?int $navigationSort = 1;
 

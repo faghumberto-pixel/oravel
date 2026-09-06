@@ -25,6 +25,8 @@ class QuoteResource extends BaseResource
 
     protected static ?string $navigationGroup = 'Comercial';
 
+    protected static ?string $navigationParentItem = 'Gestão Comercial';
+
     protected static ?string $modelLabel = 'Orçamento';
 
     protected static ?string $pluralModelLabel = 'Orçamentos';

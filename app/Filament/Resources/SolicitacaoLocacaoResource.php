@@ -24,7 +24,15 @@ class SolicitacaoLocacaoResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
 
+    protected static ?string $navigationLabel = 'Solicitações de Locação';
+
+    protected static ?string $modelLabel = 'Solicitação de Locação';
+
+    protected static ?string $pluralModelLabel = 'Solicitações de Locação';
+
     protected static ?string $navigationGroup = 'Comercial';
+
+    protected static ?string $navigationParentItem = 'Gestão Comercial';
 
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';
 

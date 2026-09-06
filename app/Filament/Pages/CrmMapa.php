@@ -15,6 +15,8 @@ class CrmMapa extends Page
 
     protected static ?string $navigationGroup = 'Comercial';
 
+    protected static ?string $navigationParentItem = 'Gestão CRM';
+
     protected static string $view = 'filament.pages.crm-mapa';
 
     public static function canAccess(): bool

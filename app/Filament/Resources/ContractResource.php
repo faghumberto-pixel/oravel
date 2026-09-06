@@ -30,6 +30,10 @@ class ContractResource extends Resource
 
     protected static ?string $navigationGroup = 'Comercial';
 
+    protected static ?string $navigationLabel = 'Contratos';
+
+    protected static ?string $navigationParentItem = 'Gestão Comercial';
+
     public static function form(Form $form): Form
     {
         return $form->schema([

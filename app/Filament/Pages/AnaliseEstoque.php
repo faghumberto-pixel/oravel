@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use App\Models\AIAnalysis;
 use App\Services\StockAnalysisService;
 use App\Support\Tenancy;
-use Filament\Filament;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -22,7 +21,7 @@ class AnaliseEstoque extends Page
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
-    protected static ?string $navigationParentItem = 'Almoxarifado';
+    protected static ?string $navigationParentItem = 'Gestão Almoxarifado';
 
     protected static ?string $navigationLabel = 'Análise de Estoque';
 

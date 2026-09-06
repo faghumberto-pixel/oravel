@@ -40,6 +40,8 @@ class ClientResource extends Resource
 
     protected static ?string $navigationGroup = 'Comercial';
 
+    protected static ?string $navigationParentItem = 'Gestão Comercial';
+
     protected static ?string $tenantRelationshipName = 'clients';
 
     public static function getNavigationBadge(): ?string

@@ -2,12 +2,13 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Pages\Almoxarifado;
+use App\Filament\Resources\MaterialLocationStockResource\Pages\CreateMaterialLocationStock;
+use App\Filament\Resources\MaterialLocationStockResource\Pages\EditMaterialLocationStock;
+use App\Filament\Resources\MaterialLocationStockResource\Pages\ListMaterialLocationStocks;
 use App\Models\MaterialLocationStock;
 use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,7 +23,9 @@ class MaterialLocationStockResource extends BaseResource
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
-    protected static ?string $navigationParentItem = 'Almoxarifado';
+    protected static ?string $navigationParentItem = 'Gestão Almoxarifado';
+
+    protected static ?string $navigationLabel = 'Saldo de Materiais por Filial';
 
     protected static ?string $label = 'Saldo por Filial';
 
@@ -97,7 +100,7 @@ class MaterialLocationStockResource extends BaseResource
                 Tables\Columns\TextColumn::make('current_quantity')
                     ->label('Quantidade')
                     ->numeric(decimalPlaces: 2)
-                    ->color(fn($record) => $record->isLowStock() ? 'danger' : 'success')
+                    ->color(fn ($record) => $record->isLowStock() ? 'danger' : 'success')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('minimum_threshold')
@@ -121,7 +124,7 @@ class MaterialLocationStockResource extends BaseResource
 
                 Tables\Filters\Filter::make('baixo_estoque')
                     ->label('Abaixo do Mínimo')
-                    ->query(fn($query) => $query->whereColumn('current_quantity', '<=', 'minimum_threshold'))
+                    ->query(fn ($query) => $query->whereColumn('current_quantity', '<=', 'minimum_threshold'))
                     ->toggle(),
             ])
             ->actions([
@@ -138,9 +141,9 @@ class MaterialLocationStockResource extends BaseResource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Resources\MaterialLocationStockResource\Pages\ListMaterialLocationStocks::route('/'),
-            'create' => \App\Filament\Resources\MaterialLocationStockResource\Pages\CreateMaterialLocationStock::route('/create'),
-            'edit' => \App\Filament\Resources\MaterialLocationStockResource\Pages\EditMaterialLocationStock::route('/{record}/edit'),
+            'index' => ListMaterialLocationStocks::route('/'),
+            'create' => CreateMaterialLocationStock::route('/create'),
+            'edit' => EditMaterialLocationStock::route('/{record}/edit'),
         ];
     }
 }
