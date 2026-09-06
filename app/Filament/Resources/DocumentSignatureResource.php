@@ -20,7 +20,7 @@ class DocumentSignatureResource extends Resource
 
     protected static ?string $navigationLabel = 'Assinaturas Eletrônicas';
 
-    protected static ?string $navigationGroup = 'Configurações';
+    protected static ?string $navigationGroup = 'Comercial / Contratos';
 
     protected static ?string $modelLabel = 'Assinatura Eletrônica';
 
