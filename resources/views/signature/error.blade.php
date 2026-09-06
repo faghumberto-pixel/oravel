@@ -1,166 +1,173 @@
-@extends('layouts.app-signature')
-
-@section('content')
-<div class="error-container">
-    <div class="error-card">
-        <div class="error-icon">❌</div>
-        <h1 class="error-title">Ops! Algo deu errado</h1>
-        <p class="error-message">{{ $message }}</p>
-
-        <div class="error-suggestions">
-            <h3>O que fazer?</h3>
-            <ul>
-                <li>✓ Verifique se o link está correto</li>
-                <li>✓ Confirme se a assinatura não expirou</li>
-                <li>✓ Tente novamente em alguns instantes</li>
-                <li>✓ Entre em contato com o suporte se o problema persistir</li>
-            </ul>
-        </div>
-
-        <div class="error-actions">
-            <a href="/" class="btn btn-primary">
-                Voltar ao Início
-            </a>
-        </div>
-    </div>
-</div>
-@endsection
-
-@section('styles')
-<style>
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-    }
-
-    .error-container {
-        width: 100%;
-        max-width: 600px;
-    }
-
-    .error-card {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        padding: 40px;
-        text-align: center;
-        animation: slideUp 0.5s ease-out;
-    }
-
-    @keyframes slideUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erro na Assinatura</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
 
-    .error-icon {
-        font-size: 64px;
-        margin-bottom: 20px;
-        animation: shake 0.5s;
-    }
-
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-10px); }
-        75% { transform: translateX(10px); }
-    }
-
-    .error-title {
-        font-size: 28px;
-        font-weight: 700;
-        color: #dc3545;
-        margin-bottom: 10px;
-    }
-
-    .error-message {
-        font-size: 16px;
-        color: #666;
-        margin-bottom: 30px;
-        padding: 15px;
-        background: #f8d7da;
-        border: 1px solid #f5c6cb;
-        border-radius: 6px;
-        color: #721c24;
-    }
-
-    .error-suggestions {
-        background: #f9f9f9;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 30px;
-        text-align: left;
-    }
-
-    .error-suggestions h3 {
-        font-size: 14px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 12px;
-    }
-
-    .error-suggestions ul {
-        list-style: none;
-        font-size: 14px;
-        color: #666;
-    }
-
-    .error-suggestions li {
-        padding: 6px 0;
-    }
-
-    .error-actions {
-        display: flex;
-        gap: 10px;
-    }
-
-    .btn {
-        flex: 1;
-        padding: 12px 20px;
-        border: none;
-        border-radius: 6px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-    }
-
-    @media (max-width: 480px) {
-        .error-card {
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0b0f0d 0%, #1a2f27 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
         }
 
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
         .error-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            background: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 48px;
         }
 
-        .error-title {
-            font-size: 24px;
+        h1 {
+            font-size: 28px;
+            color: #123028;
+            margin-bottom: 12px;
         }
-    }
-</style>
-@endsection
+
+        .error-message {
+            background: #fee;
+            color: #c00;
+            border-left: 4px solid #c00;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .error-message-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-direction: column;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #123028;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0f1f1c;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .help-text {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 13px;
+            color: #666;
+            text-align: left;
+        }
+
+        .help-text h3 {
+            color: #123028;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .help-text ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 40px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Error Icon -->
+        <div class="error-icon">⚠️</div>
+
+        <!-- Header -->
+        <h1>Erro na Assinatura</h1>
+
+        <!-- Error Message -->
+        <div class="error-message">
+            <div class="error-message-title">{{ $message ?? 'Ocorreu um erro ao processar sua assinatura' }}</div>
+            <p style="margin-top: 8px; font-size: 13px;">
+                Por favor, tente novamente ou entre em contato com o suporte.
+            </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+            <button class="btn btn-primary" onclick="window.history.back()">
+                ← Voltar
+            </button>
+            <a href="/" class="btn btn-secondary">
+                🏠 Voltar ao Início
+            </a>
+        </div>
+
+        <!-- Help Text -->
+        <div class="help-text">
+            <h3>Possíveis Causas:</h3>
+            <ul>
+                <li><strong>Token expirado:</strong> Sua assinatura pode ter expirado após 30 dias. Solicite um novo link.</li>
+                <li><strong>Documento já assinado:</strong> Este documento já foi assinado anteriormente.</li>
+                <li><strong>Assinatura cancelada:</strong> O administrador cancelou esta assinatura.</li>
+                <li><strong>Erro técnico:</strong> Tente novamente ou use outro navegador.</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -15,13 +15,17 @@ class DocumentSignatureObserver
      */
     public function created(DocumentSignature $signature): void
     {
-        LogActivity::useLog('document-signatures')
-            ->performedOn($signature)
-            ->withProperties([
-                'signer_name' => $signature->signer_name,
-                'signer_email' => $signature->signer_email,
-            ])
-            ->log('Assinatura solicitada');
+        try {
+            LogActivity::useLog('document-signatures')
+                ->performedOn($signature)
+                ->withProperties([
+                    'signer_name' => $signature->signer_name,
+                    'signer_email' => $signature->signer_email,
+                ])
+                ->log('Assinatura solicitada');
+        } catch (\Throwable $e) {
+            \Log::warning('LogActivity não disponível para DocumentSignature', ['error' => $e->getMessage()]);
+        }
 
         // Dispara notificações por e-mail e/ou WhatsApp
         $this->notifySignatories($signature);
@@ -32,24 +36,28 @@ class DocumentSignatureObserver
      */
     public function updated(DocumentSignature $signature): void
     {
-        // Log apenas mudanças relevantes
-        if ($signature->wasChanged('status')) {
-            LogActivity::useLog('document-signatures')
-                ->performedOn($signature)
-                ->withProperties([
-                    'old_status' => $signature->getOriginal('status'),
-                    'new_status' => $signature->status,
-                ])
-                ->log("Status alterado para {$signature->status}");
-        }
+        try {
+            // Log apenas mudanças relevantes
+            if ($signature->wasChanged('status')) {
+                LogActivity::useLog('document-signatures')
+                    ->performedOn($signature)
+                    ->withProperties([
+                        'old_status' => $signature->getOriginal('status'),
+                        'new_status' => $signature->status,
+                    ])
+                    ->log("Status alterado para {$signature->status}");
+            }
 
-        if ($signature->wasChanged('signed_at')) {
-            LogActivity::useLog('document-signatures')
-                ->performedOn($signature)
-                ->withProperties([
-                    'signed_at' => $signature->signed_at,
-                ])
-                ->log('Documento assinado');
+            if ($signature->wasChanged('signed_at')) {
+                LogActivity::useLog('document-signatures')
+                    ->performedOn($signature)
+                    ->withProperties([
+                        'signed_at' => $signature->signed_at,
+                    ])
+                    ->log('Documento assinado');
+            }
+        } catch (\Throwable $e) {
+            \Log::warning('LogActivity não disponível para DocumentSignature', ['error' => $e->getMessage()]);
         }
     }
 
@@ -58,9 +66,13 @@ class DocumentSignatureObserver
      */
     public function deleted(DocumentSignature $signature): void
     {
-        LogActivity::useLog('document-signatures')
-            ->performedOn($signature)
-            ->log('Assinatura deletada');
+        try {
+            LogActivity::useLog('document-signatures')
+                ->performedOn($signature)
+                ->log('Assinatura deletada');
+        } catch (\Throwable $e) {
+            \Log::warning('LogActivity não disponível para DocumentSignature', ['error' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -68,9 +80,13 @@ class DocumentSignatureObserver
      */
     public function restored(DocumentSignature $signature): void
     {
-        LogActivity::useLog('document-signatures')
-            ->performedOn($signature)
-            ->log('Assinatura restaurada');
+        try {
+            LogActivity::useLog('document-signatures')
+                ->performedOn($signature)
+                ->log('Assinatura restaurada');
+        } catch (\Throwable $e) {
+            \Log::warning('LogActivity não disponível para DocumentSignature', ['error' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -78,9 +94,13 @@ class DocumentSignatureObserver
      */
     public function forceDeleted(DocumentSignature $signature): void
     {
-        LogActivity::useLog('document-signatures')
-            ->performedOn($signature)
-            ->log('Assinatura permanentemente deletada');
+        try {
+            LogActivity::useLog('document-signatures')
+                ->performedOn($signature)
+                ->log('Assinatura permanentemente deletada');
+        } catch (\Throwable $e) {
+            \Log::warning('LogActivity não disponível para DocumentSignature', ['error' => $e->getMessage()]);
+        }
     }
 
     /**

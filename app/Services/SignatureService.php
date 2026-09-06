@@ -241,17 +241,62 @@ class SignatureService
     /**
      * Mescla dois PDFs (original + auditoria).
      *
-     * Usa a biblioteca setasign/fpdf com tcpdf ou fusionpdf se disponível.
+     * Usa setasign/fpdi para importar páginas do PDF original
+     * e adiciona a página de auditoria ao final.
      */
     private function mergePdfs(string $originalPdf, string $auditPdf): string
     {
-        // Implementação simplificada: retorna original + audit como concatenação
-        // Em produção, usar biblioteca especializada em merge de PDF
-        // Exemplo: setasign/fpdf, fusionpdf, etc.
+        try {
+            $pdf = new \setasign\Fpdi\Fpdi();
 
-        // Por ora, apenas retorna o PDF original
-        // TODO: Implementar merge real de PDFs
-        return $originalPdf;
+            // Importa páginas do PDF original
+            $originalPageCount = $pdf->setSourceFile(\Illuminate\Support\Facades\File::tempnam(
+                sys_get_temp_dir(),
+                'pdf'
+            ));
+
+            // Escreve conteúdo temporário do PDF original
+            file_put_contents($tempOriginal = tempnam(sys_get_temp_dir(), 'pdf'), $originalPdf);
+            $pageCount = $pdf->setSourceFile($tempOriginal);
+
+            // Copia todas as páginas do documento original
+            for ($i = 1; $i <= $pageCount; $i++) {
+                $templateId = $pdf->importPage($i);
+                $size = $pdf->getTemplateSize($templateId);
+
+                $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+                $pdf->useTemplate($templateId);
+            }
+
+            // Escreve conteúdo temporário do PDF de auditoria
+            file_put_contents($tempAudit = tempnam(sys_get_temp_dir(), 'pdf'), $auditPdf);
+            $auditPageCount = $pdf->setSourceFile($tempAudit);
+
+            // Adiciona página de auditoria
+            if ($auditPageCount > 0) {
+                $templateId = $pdf->importPage(1);
+                $size = $pdf->getTemplateSize($templateId);
+
+                $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+                $pdf->useTemplate($templateId);
+            }
+
+            // Gera PDF final
+            $mergedPdf = $pdf->Output(null, 'S');
+
+            // Limpa arquivos temporários
+            @unlink($tempOriginal);
+            @unlink($tempAudit);
+
+            return $mergedPdf;
+        } catch (Throwable $e) {
+            \Log::error('Erro ao mesclar PDFs', [
+                'error' => $e->getMessage(),
+            ]);
+
+            // Fallback: retorna PDF original se merge falhar
+            return $originalPdf;
+        }
     }
 
     /**
