@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Clusters\ContratoCluster;
 use App\Filament\Resources\SolicitacaoLocacaoResource\Pages;
 use App\Models\Asset;
 use App\Models\Client;
@@ -18,13 +19,13 @@ use Illuminate\Database\Eloquent\Builder;
 
 class SolicitacaoLocacaoResource extends Resource
 {
+    protected static ?string $cluster = ContratoCluster::class;
+
     protected static ?string $model = SolicitacaoLocacao::class;
 
     protected static ?string $slug = 'solicitacoes-locacao';
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
-
-    protected static ?string $navigationGroup = 'Comercial';
 
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';
 

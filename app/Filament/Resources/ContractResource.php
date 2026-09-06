@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Clusters\ContratoCluster;
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\ContractResource\Pages;
 use App\Models\Asset;
@@ -24,11 +25,9 @@ class ContractResource extends Resource
 {
     use HasSuperAdminTenantColumn;
 
+    protected static ?string $cluster = ContratoCluster::class;
+
     protected static ?string $model = Contract::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
-    protected static ?string $navigationGroup = 'Comercial';
 
     public static function form(Form $form): Form
     {
