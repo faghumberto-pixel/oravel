@@ -34,6 +34,14 @@ class Kernel extends ConsoleKernel
         // 30min depois de propósito: reaproveita o excedente já calculado
         // acima em vez de recalcular (ver ContractMeasurementService).
         $schedule->command('contracts:generate-measurements')->monthlyOn(1, '03:30');
+
+        // Backup diário do banco (spatie/laravel-backup). Só dump do banco,
+        // não do código: o código já está no git e o deploy.sh já copia a
+        // aplicação inteira a cada deploy. Clean antes do run para não
+        // arriscar encher o disco (já aconteceu em 2026-07, ver deploy.sh).
+        $schedule->command('backup:clean')->daily()->at('01:00')->onOneServer();
+        $schedule->command('backup:run --only-db')->daily()->at('01:15')->onOneServer();
+        $schedule->command('backup:monitor')->daily()->at('02:00')->onOneServer();
     }
 
     /**
