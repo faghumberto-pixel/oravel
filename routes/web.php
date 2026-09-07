@@ -303,6 +303,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/agenda-tecnico/mobile', 'App\Livewire\AgendaTecnicoMobile')
         ->name('agenda-tecnico.mobile');
 
+    // Almoxarifado Volante: saldo do próprio veículo, consulta no celular
+    Route::get('/admin/meu-estoque', 'App\Livewire\MobileWarehouseStock')
+        ->name('warehouse.mobile-stock');
+
     // "Modo Campo": execucao da O.S. no celular do tecnico, uma etapa por tela,
     // em vez do form de 7 abas do painel. Ponto de entrada em
     // EditMaintenanceOrder, na tabela de O.S. e no dossie mobile do ativo

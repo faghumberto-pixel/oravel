@@ -211,9 +211,21 @@ class MaintenanceOrder extends Model implements HasMedia
         return $this->hasMany(MaintenanceOrderMaterial::class);
     }
 
+    // Relação corrigida para bater com o Kanban e a Migration
     public function parts(): HasMany
     {
         return $this->hasMany(MaintenanceOrderMaterial::class, 'maintenance_order_id');
+    }
+
+    /**
+     * Peças do catálogo Part aplicadas nesta OS via Almoxarifado Volante --
+     * distinto de materials()/parts() acima (ambos catálogo Material; ver
+     * App\Models\MaintenanceOrderPart). Nome diferente de propósito: parts()
+     * já está em uso pelo Kanban apontando pra MaintenanceOrderMaterial.
+     */
+    public function catalogParts(): HasMany
+    {
+        return $this->hasMany(MaintenanceOrderPart::class);
     }
 
     // Relação corrigida para bater com o Kanban e a Migration

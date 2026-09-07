@@ -14,17 +14,22 @@ class StockMovement extends Model
     use HasSaaSMetadata;
 
     protected static ?string $saasFeatureKey = 'tabela_stock_movements';
+
     protected static ?string $saasPermissionSlug = 'movimento_estoque';
+
     protected static ?string $saasModuleLabel = 'Movimentações de Estoque';
 
     public $timestamps = false;
+
     const CREATED_AT = 'created_at';
+
     const UPDATED_AT = null;
 
     protected $fillable = [
         'tenant_id',
         'part_id',
         'warehouse_id',
+        'work_order_id',
         'movement_type',
         'quantity',
         'balance_before',
@@ -85,6 +90,11 @@ class StockMovement extends Model
     public function warehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class);
+    }
+
+    public function workOrder(): BelongsTo
+    {
+        return $this->belongsTo(MaintenanceOrder::class, 'work_order_id');
     }
 
     public function createdBy(): BelongsTo

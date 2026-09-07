@@ -43,10 +43,38 @@ class WarehouseResource extends BaseResource
                         ->label('Código')
                         ->placeholder('ALM-01')
                         ->maxLength(50),
+
+                    Forms\Components\Select::make('type')
+                        ->label('Tipo')
+                        ->options(Warehouse::typeLabels())
+                        ->default(Warehouse::TYPE_CENTRAL)
+                        ->live()
+                        ->required()
+                        ->native(false),
+                ])
+                ->columns(3),
+
+            // Almoxarifado Volante: veículo/técnico como depósito
+            // secundário -- endereço fixo não se aplica aqui.
+            Forms\Components\Section::make('Veículo e Técnico Responsável')
+                ->visible(fn (Forms\Get $get) => $get('type') === Warehouse::TYPE_MOBILE)
+                ->schema([
+                    Forms\Components\Select::make('user_id')
+                        ->label('Técnico Responsável')
+                        ->relationship('technician', 'name')
+                        ->searchable()
+                        ->preload()
+                        ->required(fn (Forms\Get $get) => $get('type') === Warehouse::TYPE_MOBILE),
+
+                    Forms\Components\TextInput::make('vehicle_plate')
+                        ->label('Placa do Veículo')
+                        ->placeholder('ABC1D23')
+                        ->maxLength(20),
                 ])
                 ->columns(2),
 
             Forms\Components\Section::make('Localização')
+                ->visible(fn (Forms\Get $get) => $get('type') !== Warehouse::TYPE_MOBILE)
                 ->schema([
                     Forms\Components\TextInput::make('address')
                         ->label('Endereço')
@@ -91,6 +119,19 @@ class WarehouseResource extends BaseResource
                     ->label('Código')
                     ->searchable()
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Tipo')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state) => Warehouse::typeLabels()[$state] ?? $state)
+                    ->color(fn (string $state) => $state === Warehouse::TYPE_MOBILE ? 'warning' : 'gray'),
+
+                Tables\Columns\TextColumn::make('technician.name')
+                    ->label('Técnico / Placa')
+                    ->formatStateUsing(fn (?string $state, Warehouse $record) => $record->isMobile()
+                        ? trim(($state ?? '—').' · '.($record->vehicle_plate ?? 's/ placa'))
+                        : '—')
+                    ->visible(fn () => true),
 
                 Tables\Columns\TextColumn::make('city')
                     ->label('Cidade')
