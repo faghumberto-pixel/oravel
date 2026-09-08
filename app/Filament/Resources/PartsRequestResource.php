@@ -23,6 +23,8 @@ class PartsRequestResource extends Resource
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
+    protected static ?string $navigationParentItem = 'Gestão de Compras';
+
     protected static ?string $navigationLabel = 'Solicitações de peças';
 
     protected static ?int $navigationSort = 13;

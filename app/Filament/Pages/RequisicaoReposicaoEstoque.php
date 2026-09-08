@@ -31,6 +31,8 @@ class RequisicaoReposicaoEstoque extends Page
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
+    protected static ?string $navigationParentItem = 'Gestão de Compras';
+
     protected static ?string $navigationLabel = 'Reposição de Estoque';
 
     protected static ?string $title = 'Reposição de Estoque';
