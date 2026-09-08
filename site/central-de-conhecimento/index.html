@@ -1,0 +1,315 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="https://oravel.com.br/nova/assets/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="https://oravel.com.br/nova/assets/favicon-32.png"><link rel="icon" type="image/x-icon" href="https://oravel.com.br/nova/assets/favicon.ico"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}</style></head><body>
+<title>Central de Conhecimento</title>
+<style>
+  :root {
+    --bg-dark: #f5f2ec;
+    --bg-card: #ffffff;
+    --text-primary: #635c4d;
+    --text-light: #18140e;
+    --accent: #ea580c;
+    --accent-hover: #9a3412;
+    --border: rgba(24, 20, 14, 0.12);
+    --success: #15803d;
+    --orange-tint: #fdead9;
+    --text-faint: rgba(24, 20, 14, 0.55);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+    --bg-dark: #0b0f0d;
+    --bg-card: #1a1a18;
+    --text-primary: #c9c5b6;
+    --text-light: #f4f2ea;
+    --accent: #ff6a1a;
+    --accent-hover: #ff7d38;
+    --border: rgba(244, 242, 234, 0.14);
+    --success: #10b981;
+    --orange-tint: #2b1b10;
+    --text-faint: rgba(201, 197, 182, 0.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg-dark: #0b0f0d;
+    --bg-card: #1a1a18;
+    --text-primary: #c9c5b6;
+    --text-light: #f4f2ea;
+    --accent: #ff6a1a;
+    --accent-hover: #ff7d38;
+    --border: rgba(244, 242, 234, 0.14);
+    --success: #10b981;
+    --orange-tint: #2b1b10;
+    --text-faint: rgba(201, 197, 182, 0.6);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg-dark); color: var(--text-primary); font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, sans-serif; font-size: 15px; line-height: 1.6; }
+  h1, h2, h3, .logo { font-family: "Manrope", "Source Sans 3", sans-serif; font-weight: 700; }
+  h1, h2 { text-wrap: balance; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(11,15,13,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+  .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; height: 68px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-size: 22px; color: var(--text-light); }
+  .logo span { color: var(--accent); }
+  .nav-tag { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--success); background: rgba(21,128,61,0.14); border: 1px solid rgba(21,128,61,0.3); border-radius: 6px; padding: 5px 12px; }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+  .hero { padding: 148px 0 60px; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 20px; }
+  .eyebrow::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  h1.hero-title { font-size: 46px; letter-spacing: -1px; line-height: 1.15; color: var(--text-light); max-width: 760px; margin: 0 0 20px; }
+  h1.hero-title .hi { color: var(--accent); }
+  .hero-sub { font-size: 17px; color: var(--text-primary); max-width: 640px; margin: 0; }
+
+  section { padding: 20px 0 72px; }
+  .section-eyebrow { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 12px; }
+  h2.section-title { font-size: 26px; letter-spacing: -0.5px; color: var(--text-light); margin: 0 0 32px; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .doc-card {
+    display: flex; flex-direction: column; background: var(--bg-card);
+    border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+    text-decoration: none; color: inherit; transition: all 0.3s ease;
+  }
+  .doc-card:hover { transform: translateY(-8px); border-color: var(--accent); background: var(--bg-card); }
+  .doc-card.is-new { border-color: rgba(234,88,12,0.3); }
+  .doc-top { padding: 28px 28px 0; }
+  .doc-tag { display: inline-block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); background: rgba(234,88,12,0.14); border-radius: 6px; padding: 4px 10px; margin-bottom: 16px; }
+  .doc-card h3 { font-size: 19px; color: var(--text-light); margin: 0 0 10px; letter-spacing: -0.3px; }
+  .doc-card p { font-size: 13.5px; color: var(--text-primary); margin: 0; line-height: 1.6; }
+  .doc-bottom { margin-top: auto; padding: 20px 28px 26px; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--accent); }
+  .doc-bottom svg { width: 15px; height: 15px; transition: transform 0.2s ease; }
+  .doc-card:hover .doc-bottom svg { transform: translateX(4px); }
+
+  .doc-icon { width: 44px; height: 44px; border-radius: 8px; background: rgba(234,88,12,0.14); display: flex; align-items: center; justify-content: center; color: var(--accent); margin-bottom: 18px; }
+  .doc-icon svg { width: 22px; height: 22px; }
+
+  footer { padding: 40px 0 60px; text-align: center; border-top: 1px solid var(--border); margin-top: 40px; }
+  footer p { font-size: 12px; color: var(--text-faint); margin: 0; }
+
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .nav-inner, .container { padding-left: 20px; padding-right: 20px; }
+    h1.hero-title { font-size: 30px; }
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Source+Sans+3:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo">O<span>ravel</span></div>
+    <div class="nav-tag">Central de Conhecimento</div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container">
+    <div class="eyebrow">Materiais para conhecer a Oravel</div>
+    <h1 class="hero-title">Um lugar só para <span class="hi">entender o que a Oravel resolve</span> na prática.</h1>
+    <p class="hero-sub">Casos de uso reais, com exemplos concretos de como a plataforma organiza o financeiro, o relacionamento com o cliente e o estoque de peças de uma locadora de equipamentos.</p>
+  </div>
+</header>
+
+<section>
+  <div class="container">
+    <div class="section-eyebrow">Documentos</div>
+    <h2 class="section-title">Escolha um tema</h2>
+
+    <div class="grid">
+      <a class="doc-card" href="fornecedores-compras.html" target="_blank" rel="noopener">
+        <div class="doc-top">
+          <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12L6 6Z"/><path d="M6 6 5 3H2"/><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/></svg></div>
+          <span class="doc-tag">Suprimentos</span>
+          <h3>Fornecedores &amp; Compras</h3>
+          <p>Cadastro único de fornecedor, cotação item a item entre vários fornecedores e conta a pagar gerada sozinha no recebimento.</p>
+        </div>
+        <div class="doc-bottom">Ver documento <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </a>
+
+      <a class="doc-card" href="ativos-inventario.html" target="_blank" rel="noopener">
+        <div class="doc-top">
+          <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.5 12.5 12 21l-9-9 8.5-8.5H20a1 1 0 0 1 1 1v8.5Z"/><circle cx="15.5" cy="7.5" r="1.5"/></svg></div>
+          <span class="doc-tag">Ativos &amp; Materiais</span>
+          <h3>Ativos &amp; Inventário</h3>
+          <p>Cada equipamento com QR Code, depreciação automática e rastreabilidade completa no inventário.</p>
+        </div>
+        <div class="doc-bottom">Ver documento <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </a>
+
+      <a class="doc-card" href="manutencao-os-preventivas.html" target="_blank" rel="noopener">
+        <div class="doc-top">
+          <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 1 5.4-5.4l-2.2 2.2-1.5-1.5 2.2-2.2Z"/></svg></div>
+          <span class="doc-tag">Manutenção</span>
+          <h3>Manutenção (OS + Preventivas)</h3>
+          <p>Dashboard de ordens de serviço e checklist digital de vistoria, preventivas e corretivas no mesmo painel.</p>
+        </div>
+        <div class="doc-bottom">Ver documento <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </a>
+
+      <a class="doc-card" href="contratos-locacao.html" target="_blank" rel="noopener">
+        <div class="doc-top">
+          <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></div>
+          <span class="doc-tag">Contratos</span>
+          <h3>Contratos &amp; Locação</h3>
+          <p>Franquia de horas com cobrança de excedente e histórico de substituição de equipamento, dentro do mesmo contrato.</p>
+        </div>
+        <div class="doc-bottom">Ver documento <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </a>
+
+      <a class="doc-card" href="motor-medicoes.html" target="_blank" rel="noopener">
+        <div class="doc-top">
+          <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5M16 4v5M8 15h2M13 15h3"/></svg></div>
+          <span class="doc-tag">Comercial &amp; Financeiro</span>
+          <h3>Medição de Contratos</h3>
+          <p>Como a mensalidade, o excedente de horímetro e as taxas extras viram um único total aprovável, sem planilha paralela pra fechar o mês.</p>
+        </div>
+        <div class="doc-bottom">Ver documento <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </a>
+
+      <a class="doc-card" href="portal-do-cliente.html" target="_blank" rel="noopener">
+        <div class="doc-top">
+          <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg></div>
+          <span class="doc-tag">Relacionamento com o Cliente</span>
+          <h3>Portal do Cliente</h3>
+          <p>A área exclusiva do locatário — ativos, chamados, OS e financeiro — e como uma mensagem dele chega até a equipe certa dentro da locadora.</p>
+        </div>
+        <div class="doc-bottom">Ver documento <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </a>
+
+      <a class="doc-card" href="almoxarifado-volante.html" target="_blank" rel="noopener">
+        <div class="doc-top">
+          <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M5 12V7a2 2 0 0 1 2-2h6l4 4v3M5 12v6a1 1 0 0 0 1 1h1M19 12v6a1 1 0 0 1-1 1h-1"/><circle cx="8" cy="19" r="2"/><circle cx="16" cy="19" r="2"/></svg></div>
+          <span class="doc-tag">Almoxarifado &amp; Materiais</span>
+          <h3>Almoxarifado Volante</h3>
+          <p>Como cada veículo de campo vira um depósito com estoque próprio, e a peça aplicada na manutenção já sai debitada e apropriada na OS certa.</p>
+        </div>
+        <div class="doc-bottom">Ver documento <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </a>
+
+      <a class="doc-card" href="assinatura-eletronica.html" target="_blank" rel="noopener">
+        <div class="doc-top">
+          <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h16M6 16l9-9 3 3-9 9H6v-3Z"/></svg></div>
+          <span class="doc-tag">Contratos</span>
+          <h3>Assinatura Eletrônica</h3>
+          <p>Como o cliente assina o contrato direto na tela, sem imprimir nada, e a locadora tem prova automática de quem assinou e quando.</p>
+        </div>
+        <div class="doc-bottom">Ver documento <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </a>
+
+      <a class="doc-card" href="manutencao-preventiva.html" target="_blank" rel="noopener">
+        <div class="doc-top">
+          <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M17.5 15.5 20 18M18 6l-2.5 2.5M8.5 15.5 6 18"/><circle cx="12" cy="12" r="3"/></svg></div>
+          <span class="doc-tag">Manutenção</span>
+          <h3>Manutenção Preventiva</h3>
+          <p>Como a locadora acompanha a cobertura preventiva da frota inteira, organiza a agenda dos técnicos e prova que a preventiva evita quebra.</p>
+        </div>
+        <div class="doc-bottom">Ver documento <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </a>
+
+      <a class="doc-card" href="ordens-de-servico.html" target="_blank" rel="noopener">
+        <div class="doc-top">
+          <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 1 5.4-5.4l-2.2 2.2-1.5-1.5 2.2-2.2Z"/></svg></div>
+          <span class="doc-tag">Operação</span>
+          <h3>Ordens de Serviço</h3>
+          <p>Do abrir ao fechar de um atendimento — status, custo somado sozinho e assinatura digital direto no celular do técnico.</p>
+        </div>
+        <div class="doc-bottom">Ver documento <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </a>
+
+      <a class="doc-card" href="custos-e-resultado.html" target="_blank" rel="noopener">
+        <div class="doc-top">
+          <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V10M10 19V5M16 19v-7M22 19H2"/></svg></div>
+          <span class="doc-tag">Financeiro</span>
+          <h3>Custo e Resultado por Equipamento</h3>
+          <p>Como saber se um equipamento está dando lucro ou prejuízo em tempo real, sem esperar o fechamento do mês.</p>
+        </div>
+        <div class="doc-bottom">Ver documento <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </a>
+
+      <a class="doc-card" href="frota-propria.html" target="_blank" rel="noopener">
+        <div class="doc-top">
+          <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 16V7a1 1 0 0 1 1-1h9v10M3 16h10M13 16h8M17 10h3l2 3v3h-5v-6Z"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="17.5" cy="17.5" r="1.5"/></svg></div>
+          <span class="doc-tag">Logística</span>
+          <h3>Frota Própria e Logística</h3>
+          <p>Como caminhões, motoristas, documentos e manutenção preventiva da frota própria ficam organizados num só painel.</p>
+        </div>
+        <div class="doc-bottom">Ver documento <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </a>
+
+      <a class="doc-card" href="comunicacao-e-apps-de-campo.html" target="_blank" rel="noopener">
+        <div class="doc-top">
+          <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-8.9 8.4 8.7 8.7 0 0 1-3.6-.8L3 20l1-4.5A8.4 8.4 0 1 1 21 11.5Z"/></svg></div>
+          <span class="doc-tag">Comunicação</span>
+          <h3>Chat Corporativo e Apps de Campo</h3>
+          <p>Como o chat interno, o assistente de WhatsApp e mais de dez telas mobile levam a operação pro celular do técnico, motorista e mecânico.</p>
+        </div>
+        <div class="doc-bottom">Ver documento <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </a>
+
+      <a class="doc-card" href="crm-comercial.html" target="_blank" rel="noopener">
+        <div class="doc-top">
+          <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8M21 7v6M21 7h-6"/></svg></div>
+          <span class="doc-tag">Comercial</span>
+          <h3>CRM e Funil de Vendas</h3>
+          <p>Como cada oportunidade comercial anda pelo funil, com agenda de follow-up, mapa de prospecção e histórico até virar cliente.</p>
+        </div>
+        <div class="doc-bottom">Ver documento <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </a>
+
+      <a class="doc-card" href="gestao-almoxarifado.html" target="_blank" rel="noopener">
+        <div class="doc-top">
+          <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></div>
+          <span class="doc-tag">Almoxarifado &amp; Materiais</span>
+          <h3>Gestão do Almoxarifado e Almoxarifado Móvel</h3>
+          <p>Como o estoque de peças fica sob controle da central até o veículo do técnico, com alerta automático de reposição.</p>
+        </div>
+        <div class="doc-bottom">Ver documento <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </a>
+
+      <a class="doc-card" href="cobranca-e-faturamento.html" target="_blank" rel="noopener">
+        <div class="doc-top">
+          <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg></div>
+          <span class="doc-tag">Financeiro</span>
+          <h3>Cobrança e Faturamento</h3>
+          <p>Como o cliente gera boleto ou PIX na hora, direto no portal, via integração com o Asaas.</p>
+        </div>
+        <div class="doc-bottom">Ver documento <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>Oravel · Gestão completa de locação de equipamentos</p>
+  </div>
+</footer>
+
+
+<style>
+  html, body, body * {
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+    -webkit-touch-callout: none !important;
+  }
+</style>
+<script>
+(function () {
+  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  document.addEventListener('copy', function (e) { e.preventDefault(); });
+  document.addEventListener('cut', function (e) { e.preventDefault(); });
+  document.addEventListener('dragstart', function (e) { e.preventDefault(); });
+  document.addEventListener('keydown', function (e) {
+    var k = e.key ? e.key.toLowerCase() : '';
+    if ((e.ctrlKey || e.metaKey) && (k === 'c' || k === 'x' || k === 'u' || k === 's' || k === 'p')) {
+      e.preventDefault();
+    }
+  });
+})();
+</script>
+</body></html>

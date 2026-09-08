@@ -1,0 +1,6 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home2/oravel93/public_html/central-de-conhecimento/
+    - /bin/mkdir -p $DEPLOYPATH
+    - /bin/cp -R site/central-de-conhecimento/. $DEPLOYPATH
