@@ -32,10 +32,10 @@ use App\Models\Contract;
 use App\Models\CrmLead;
 use App\Models\Material;
 use App\Models\MaterialCategory;
+use App\Models\MaterialStockMovement;
 use App\Models\Plan;
 use App\Models\PurchaseOrder;
 use App\Models\Role;
-use App\Models\StockMovement;
 use App\Models\Supplier;
 use App\Models\Tenant;
 use App\Models\User;
@@ -342,13 +342,13 @@ class ResourceListChartsTest extends TestCase
 
         $material = Material::create(['tenant_id' => $tenant->id, 'sku' => 'SKU-MV1', 'name' => 'Material Mov', 'unit_of_measure' => 'un', 'current_stock' => 10, 'min_stock' => 1, 'unit_cost' => 10]);
 
-        StockMovement::create([
+        MaterialStockMovement::create([
             'tenant_id' => $tenant->id, 'material_id' => $material->id,
-            'type' => StockMovement::TYPE_ENTRADA_COMPRA, 'quantity' => 15, 'balance_after' => 15,
+            'type' => MaterialStockMovement::TYPE_ENTRADA_COMPRA, 'quantity' => 15, 'balance_after' => 15,
         ]);
-        StockMovement::create([
+        MaterialStockMovement::create([
             'tenant_id' => $tenant->id, 'material_id' => $material->id,
-            'type' => StockMovement::TYPE_SAIDA_CONSUMO, 'quantity' => 5, 'balance_after' => 10,
+            'type' => MaterialStockMovement::TYPE_SAIDA_CONSUMO, 'quantity' => 5, 'balance_after' => 10,
         ]);
 
         $this->actingAs($admin);

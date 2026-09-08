@@ -103,11 +103,13 @@ class Material extends Model
     }
 
     /**
-     * Historico formal de entrada/saida de estoque (ver App\Models\StockMovement).
+     * Historico formal de entrada/saida de estoque (ver
+     * App\Models\MaterialStockMovement -- nao App\Models\StockMovement,
+     * que e' o ledger legado de Part/Warehouse, um sistema diferente).
      */
     public function stockMovements(): HasMany
     {
-        return $this->hasMany(StockMovement::class);
+        return $this->hasMany(MaterialStockMovement::class);
     }
 
     public function purchaseOrderItems(): HasMany

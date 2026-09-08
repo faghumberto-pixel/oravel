@@ -6,8 +6,8 @@ use App\Filament\Resources\MaterialRequestResource;
 use App\Models\InternalUnit;
 use App\Models\Material;
 use App\Models\MaterialLocationStock;
+use App\Models\MaterialStockMovement;
 use App\Models\Role;
-use App\Models\StockMovement;
 use App\Models\User;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Ponto unico de escrita de estoque por filial -- substitui as chamadas
- * diretas a StockMovement::record() que existiam antes (GoodsReceiptItemObserver,
+ * diretas a MaterialStockMovement::record() que existiam antes (GoodsReceiptItemObserver,
  * MaterialConsumptionService, MaterialStockTake), agora todas passando por
  * aqui pra manter material_location_stock, o ledger e o cache
  * Material.current_stock sempre consistentes entre si.
@@ -36,9 +36,9 @@ class MaterialStockService
             $stock->increment('current_quantity', (int) round($quantity));
             $stock->refresh();
 
-            StockMovement::record(
+            MaterialStockMovement::record(
                 $material,
-                StockMovement::TYPE_ENTRADA_COMPRA,
+                MaterialStockMovement::TYPE_ENTRADA_COMPRA,
                 $quantity,
                 (float) $stock->current_quantity,
                 $reference,
@@ -66,9 +66,9 @@ class MaterialStockService
             $stock->decrement('current_quantity', (int) round($quantity));
             $stock->refresh();
 
-            StockMovement::record(
+            MaterialStockMovement::record(
                 $material,
-                StockMovement::TYPE_SAIDA_CONSUMO,
+                MaterialStockMovement::TYPE_SAIDA_CONSUMO,
                 $quantity,
                 (float) $stock->current_quantity,
                 $reference,
@@ -100,9 +100,9 @@ class MaterialStockService
             $toStock->increment('current_quantity', (int) round($quantity));
             $toStock->refresh();
 
-            StockMovement::record(
+            MaterialStockMovement::record(
                 $material,
-                StockMovement::TYPE_TRANSFERENCIA,
+                MaterialStockMovement::TYPE_TRANSFERENCIA,
                 $quantity,
                 (float) $toStock->current_quantity,
                 null,
@@ -133,9 +133,9 @@ class MaterialStockService
             $difference = $newQuantity - $stock->current_quantity;
             $stock->update(['current_quantity' => (int) round($newQuantity)]);
 
-            StockMovement::record(
+            MaterialStockMovement::record(
                 $material,
-                StockMovement::TYPE_AJUSTE_MANUAL,
+                MaterialStockMovement::TYPE_AJUSTE_MANUAL,
                 $difference,
                 (float) $stock->current_quantity,
                 $reference,
