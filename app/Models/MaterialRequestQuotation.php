@@ -38,6 +38,15 @@ class MaterialRequestQuotation extends Model
         'is_selected' => 'boolean',
     ];
 
+    /**
+     * Default tambem em PHP (nao so' na migration) -- mesma armadilha ja
+     * documentada em Quote::$attributes: sem isso, total_value fica null
+     * no objeto em memoria logo apos create() ate' um refresh().
+     */
+    protected $attributes = [
+        'total_value' => 0,
+    ];
+
     public function materialRequest(): BelongsTo
     {
         return $this->belongsTo(MaterialRequest::class);
