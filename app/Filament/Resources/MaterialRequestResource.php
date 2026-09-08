@@ -23,8 +23,6 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class MaterialRequestResource extends Resource
 {
-    protected static bool $shouldRegisterNavigation = false;
-
     protected static ?string $model = MaterialRequest::class;
 
     protected static ?string $modelLabel = 'Requisição de Compra';

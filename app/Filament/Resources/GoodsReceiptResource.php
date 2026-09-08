@@ -23,8 +23,6 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class GoodsReceiptResource extends Resource
 {
-    protected static bool $shouldRegisterNavigation = false;
-
     protected static ?string $model = GoodsReceipt::class;
 
     protected static ?string $modelLabel = 'Recebimento';
