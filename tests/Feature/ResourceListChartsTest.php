@@ -384,7 +384,7 @@ class ResourceListChartsTest extends TestCase
 
         PurchaseOrder::create([
             'tenant_id' => $tenant->id, 'supplier_id' => $supplier->id, 'created_by_user_id' => $admin->id,
-            'status' => PurchaseOrder::STATUS_ABERTA,
+            'status' => PurchaseOrder::STATUS_ENVIADA_FORNECEDOR,
         ]);
         PurchaseOrder::create([
             'tenant_id' => $tenant->id, 'supplier_id' => $supplier->id, 'created_by_user_id' => $admin->id,

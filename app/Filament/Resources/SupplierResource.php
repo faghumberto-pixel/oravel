@@ -3,6 +3,9 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SupplierResource\Pages;
+use App\Filament\Resources\SupplierResource\RelationManagers\ContactsRelationManager;
+use App\Filament\Resources\SupplierResource\RelationManagers\EvaluationsRelationManager;
+use App\Filament\Resources\SupplierResource\RelationManagers\PurchaseHistoryRelationManager;
 use App\Models\Supplier;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -14,13 +17,13 @@ class SupplierResource extends Resource
 {
     protected static ?string $model = Supplier::class;
 
-    protected static bool $shouldRegisterNavigation = false;
+    protected static bool $shouldRegisterNavigation = true;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
 
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $navigationGroup = 'Compras';
 
-    protected static ?int $navigationSort = 12;
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $modelLabel = 'Fornecedor';
 
@@ -58,6 +61,14 @@ class SupplierResource extends Resource
                                 Forms\Components\TextInput::make('bank_account_pix')
                                     ->label('Conta Bancária / Chave PIX')
                                     ->maxLength(255),
+                            ]),
+
+                        Forms\Components\Section::make('Categorias de Fornecimento')
+                            ->schema([
+                                Forms\Components\CheckboxList::make('categories')
+                                    ->label('')
+                                    ->relationship('categories', 'name')
+                                    ->columns(3),
                             ]),
                     ])->columnSpan(['lg' => 2]),
 
@@ -116,6 +127,17 @@ class SupplierResource extends Resource
                 Tables\Columns\IconColumn::make('lista_trabalho_escravo')
                     ->label('Ficha Limpa MTE')
                     ->boolean(),
+
+                Tables\Columns\TextColumn::make('rating_avg')
+                    ->label('Avaliação')
+                    ->badge()
+                    ->color(fn ($state) => match (true) {
+                        $state >= 4 => 'success',
+                        $state >= 3 => 'warning',
+                        $state > 0 => 'danger',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn ($state) => $state > 0 ? number_format($state, 1).' / 5' : '—'),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('termo_lgpd')
@@ -134,7 +156,9 @@ class SupplierResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ContactsRelationManager::class,
+            EvaluationsRelationManager::class,
+            PurchaseHistoryRelationManager::class,
         ];
     }
 

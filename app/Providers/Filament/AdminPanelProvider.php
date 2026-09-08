@@ -57,6 +57,7 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Manutenção'),
                 NavigationGroup::make('Logística'),
                 NavigationGroup::make('Ativos e Materiais'),
+                NavigationGroup::make('Compras'),
                 NavigationGroup::make('Equipe'),
                 NavigationGroup::make('Departamento Pessoal'),
                 NavigationGroup::make('Comercial'),

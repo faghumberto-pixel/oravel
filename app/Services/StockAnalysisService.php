@@ -184,7 +184,7 @@ class StockAnalysisService
     {
         return $material->purchaseOrderItems()
             ->whereHas('purchaseOrder', fn ($q) => $q->whereIn('status', [
-                PurchaseOrder::STATUS_ABERTA,
+                PurchaseOrder::STATUS_ENVIADA_FORNECEDOR,
                 PurchaseOrder::STATUS_PARCIALMENTE_RECEBIDA,
             ]))
             ->exists();

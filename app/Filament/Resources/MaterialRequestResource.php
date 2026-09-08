@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class MaterialRequestResource extends Resource
 {
-    protected static bool $shouldRegisterNavigation = false;
+    protected static bool $shouldRegisterNavigation = true;
 
     protected static ?string $model = MaterialRequest::class;
 
@@ -33,7 +33,9 @@ class MaterialRequestResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $navigationGroup = 'Compras';
+
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {

@@ -147,7 +147,7 @@ class StockAnalysisServiceTest extends TestCase
 
         $order = PurchaseOrder::create([
             'tenant_id' => $tenant->id, 'supplier_id' => $supplier->id,
-            'status' => PurchaseOrder::STATUS_ABERTA, 'total_value' => 300,
+            'status' => PurchaseOrder::STATUS_ENVIADA_FORNECEDOR, 'total_value' => 300,
             'created_by_user_id' => $admin->id,
         ]);
 
