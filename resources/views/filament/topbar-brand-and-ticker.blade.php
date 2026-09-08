@@ -7,7 +7,7 @@
      espacamento vem do "gap" em CSS puro no .fi-oravel-topbar-row1
      (brand-header-background.blade.php), nao de classes Tailwind tipo
      "me-10" que nao existem no CSS compilado deste ambiente. --}}
-<a href="{{ filament()->getUrl() }}" class="flex items-center">
+<a href="https://oravel.com.br" target="_blank" rel="noopener noreferrer" class="flex items-center">
     @include('filament.brand-logo')
 </a>
 
