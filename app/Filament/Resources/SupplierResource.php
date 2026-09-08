@@ -20,6 +20,8 @@ class SupplierResource extends Resource
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
+    protected static ?string $navigationParentItem = 'Gestão de Compras';
+
     protected static ?int $navigationSort = 12;
 
     protected static ?string $modelLabel = 'Fornecedor';

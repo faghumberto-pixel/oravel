@@ -39,6 +39,8 @@ class HistoricoPatrimonio extends Page
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
+    protected static ?string $navigationParentItem = 'Gestão de Ativos';
+
     protected static ?string $navigationLabel = 'Histórico do Patrimônio';
 
     protected static ?string $title = 'Histórico do Patrimônio';

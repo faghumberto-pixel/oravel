@@ -42,6 +42,8 @@ class AssetResource extends Resource
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
+    protected static ?string $navigationParentItem = 'Gestão de Ativos';
+
     protected static ?int $navigationSort = 1;
 
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';

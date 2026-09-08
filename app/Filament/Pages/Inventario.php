@@ -18,7 +18,7 @@ class Inventario extends Page implements HasTable
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
-    protected static ?string $navigationParentItem = 'Gestão Almoxarifado';
+    protected static ?string $navigationParentItem = 'Gestão de Estoque';
 
     protected static ?string $navigationLabel = 'Histórico de Movimentação';
 

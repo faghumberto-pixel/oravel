@@ -17,7 +17,7 @@ class StockMovementResource extends BaseResource
 
     protected static ?string $navigationIcon = 'heroicon-o-arrow-path';
 
-    protected static ?string $navigationParentItem = 'Gestão Almoxarifado';
+    protected static ?string $navigationParentItem = 'Gestão de Estoque';
 
     protected static ?int $navigationSort = 6;
 

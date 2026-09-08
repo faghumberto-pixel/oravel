@@ -20,6 +20,8 @@ class MapaEquipamentos extends Page
     // e' um mapa de Ativos, mais proximo desse menu do que de PCM.
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
+    protected static ?string $navigationParentItem = 'Gestão de Ativos';
+
     protected static ?string $navigationLabel = 'Mapa de Equipamentos';
 
     protected static ?string $title = 'Mapa de Equipamentos';

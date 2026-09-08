@@ -22,6 +22,8 @@ class MaterialCategoryResource extends Resource
     // AJUSTE: Alinhado com o grupo que aparece na sua imagem
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
+    protected static ?string $navigationParentItem = 'Gestão de Estoque';
+
     protected static ?int $navigationSort = 11;
 
     protected static ?string $navigationLabel = 'Categorias de Materiais';

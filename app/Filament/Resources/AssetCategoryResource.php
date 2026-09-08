@@ -20,6 +20,8 @@ class AssetCategoryResource extends Resource
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
+    protected static ?string $navigationParentItem = 'Gestão de Ativos';
+
     protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationLabel = 'Categorias de Ativos';

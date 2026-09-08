@@ -21,6 +21,8 @@ class PlantaBaixaAlmoxarifado extends Page
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
 
+    protected static ?string $navigationParentItem = 'Gestão de Estoque';
+
     protected static ?string $navigationLabel = 'Planta Baixa (Almoxarifado)';
 
     protected static ?string $title = 'Planta Baixa — Almoxarifado';
