@@ -23,8 +23,6 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class PurchaseOrderResource extends Resource
 {
-    protected static bool $shouldRegisterNavigation = true;
-
     protected static ?string $model = PurchaseOrder::class;
 
     protected static ?string $modelLabel = 'Ordem de Compra';

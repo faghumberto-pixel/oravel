@@ -23,10 +23,6 @@ use Illuminate\Support\Facades\DB;
  */
 class RequisicaoReposicaoEstoque extends Page
 {
-    // Navegacao manual dentro do submenu "Almoxarifado" (AdminPanelProvider),
-    // nao auto-registrada -- mesmo padrao de MaterialRequestResource etc.
-    protected static bool $shouldRegisterNavigation = false;
-
     protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';

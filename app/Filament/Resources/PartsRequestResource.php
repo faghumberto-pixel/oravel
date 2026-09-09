@@ -17,8 +17,6 @@ class PartsRequestResource extends Resource
 {
     protected static ?string $model = PartsRequest::class;
 
-    protected static bool $shouldRegisterNavigation = false;
-
     protected static ?string $navigationIcon = 'heroicon-o-truck';
 
     protected static ?string $navigationGroup = 'Ativos e Materiais';
