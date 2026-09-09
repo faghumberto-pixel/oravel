@@ -20,7 +20,10 @@ class PurchaseOrderStats extends BaseWidget
 
         $valorTotal = PurchaseOrder::sum('total_value');
 
-        $abertas = PurchaseOrder::where('status', PurchaseOrder::STATUS_ABERTA)->count();
+        $abertas = PurchaseOrder::whereNotIn('status', [
+            PurchaseOrder::STATUS_RECEBIDA,
+            PurchaseOrder::STATUS_CANCELADA,
+        ])->count();
 
         $recebidas = PurchaseOrder::where('status', PurchaseOrder::STATUS_RECEBIDA)->count();
 

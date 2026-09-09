@@ -31,7 +31,9 @@ class PurchaseOrderResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
 
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $navigationGroup = 'Compras';
+
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $navigationParentItem = 'Gestão de Compras';
 
@@ -88,7 +90,8 @@ class PurchaseOrderResource extends Resource
                 Tables\Columns\BadgeColumn::make('status')
                     ->label('Status')
                     ->colors([
-                        'gray' => PurchaseOrder::STATUS_ABERTA,
+                        'gray' => [PurchaseOrder::STATUS_RASCUNHO, PurchaseOrder::STATUS_AGUARDANDO_APROVACAO],
+                        'info' => [PurchaseOrder::STATUS_APROVADA, PurchaseOrder::STATUS_ENVIADA_FORNECEDOR],
                         'warning' => PurchaseOrder::STATUS_PARCIALMENTE_RECEBIDA,
                         'success' => PurchaseOrder::STATUS_RECEBIDA,
                         'danger' => PurchaseOrder::STATUS_CANCELADA,

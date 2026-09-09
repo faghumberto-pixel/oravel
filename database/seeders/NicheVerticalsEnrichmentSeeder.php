@@ -548,7 +548,7 @@ class NicheVerticalsEnrichmentSeeder extends Seeder
             ['tenant_id' => $tenant->id, 'material_request_id' => $request->id, 'material_request_quotation_id' => $quotation->id],
             [
                 'supplier_id' => $supplier->id,
-                'status' => PurchaseOrder::STATUS_ABERTA,
+                'status' => PurchaseOrder::STATUS_ENVIADA_FORNECEDOR,
                 'total_value' => $quotation->total_value,
                 'expected_delivery_date' => now()->addDays(5),
                 'created_by_user_id' => $users['suprimentos']->id,

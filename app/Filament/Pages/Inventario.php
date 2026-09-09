@@ -60,7 +60,12 @@ class Inventario extends Page implements HasTable
                     ->label('Tipo')
                     ->formatStateUsing(fn ($state) => MaterialStockMovement::TYPES[$state] ?? $state)
                     ->badge()
-                    ->color(fn ($state) => $state === MaterialStockMovement::TYPE_ENTRADA ? 'success' : ($state === MaterialStockMovement::TYPE_SAIDA ? 'danger' : 'gray'))
+                    ->color(fn ($state) => match ($state) {
+                        MaterialStockMovement::TYPE_ENTRADA_COMPRA => 'success',
+                        MaterialStockMovement::TYPE_SAIDA_CONSUMO => 'danger',
+                        MaterialStockMovement::TYPE_TRANSFERENCIA => 'info',
+                        default => 'gray',
+                    })
                     ->sortable(),
 
                 TextColumn::make('quantity')

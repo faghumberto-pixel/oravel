@@ -5,9 +5,9 @@ namespace Tests\Feature;
 use App\Filament\Resources\MaintenanceOrderResource\Pages\ListMaintenanceOrders;
 use App\Filament\Resources\StockMovementResource\Pages\ViewStockMovement;
 use App\Models\Material;
+use App\Models\MaterialStockMovement;
 use App\Models\Plan;
 use App\Models\Role;
-use App\Models\StockMovement;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -89,9 +89,9 @@ class CrossTenantFilterLeakRegressionTest extends TestCase
         // resolveria/exibiria um usuário de outro tenant caso o dado
         // estivesse corrompido, e que o modifyQueryUsing não quebra a
         // resolução do caso normal.
-        $movement = StockMovement::create([
+        $movement = MaterialStockMovement::create([
             'tenant_id' => $tenant->id, 'material_id' => $material->id,
-            'type' => StockMovement::TYPE_AJUSTE_MANUAL, 'quantity' => 1, 'balance_after' => 11,
+            'type' => MaterialStockMovement::TYPE_AJUSTE_MANUAL, 'quantity' => 1, 'balance_after' => 11,
             'created_by_user_id' => $admin->id,
         ]);
 
