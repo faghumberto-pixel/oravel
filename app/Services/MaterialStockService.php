@@ -6,8 +6,8 @@ use App\Filament\Resources\MaterialRequestResource;
 use App\Models\InternalUnit;
 use App\Models\Material;
 use App\Models\MaterialLocationStock;
+use App\Models\MaterialStockMovement;
 use App\Models\Role;
-use App\Models\StockMovement;
 use App\Models\User;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
@@ -36,16 +36,16 @@ class MaterialStockService
             $stock->increment('current_quantity', (int) round($quantity));
             $stock->refresh();
 
-            StockMovement::record(
-                $material,
-                StockMovement::TYPE_ENTRADA_COMPRA,
-                $quantity,
-                (float) $stock->current_quantity,
-                $reference,
-                $userId,
-                toLocationId: $unit->id,
-                documentReference: $documentReference,
-            );
+            MaterialStockMovement::create([
+                'tenant_id' => $material->tenant_id,
+                'material_id' => $material->id,
+                'type' => MaterialStockMovement::TYPE_ENTRADA,
+                'quantity' => $quantity,
+                'balance_after' => (float) $stock->current_quantity,
+                'reference_type' => $reference ? $reference::class : null,
+                'reference_id' => $reference?->getKey(),
+                'created_by_user_id' => $userId,
+            ]);
 
             $material->recalculateCurrentStock();
             $this->notifyIfLowStock($stock);
@@ -66,15 +66,16 @@ class MaterialStockService
             $stock->decrement('current_quantity', (int) round($quantity));
             $stock->refresh();
 
-            StockMovement::record(
-                $material,
-                StockMovement::TYPE_SAIDA_CONSUMO,
-                $quantity,
-                (float) $stock->current_quantity,
-                $reference,
-                $userId,
-                fromLocationId: $unit->id,
-            );
+            MaterialStockMovement::create([
+                'tenant_id' => $material->tenant_id,
+                'material_id' => $material->id,
+                'type' => MaterialStockMovement::TYPE_SAIDA,
+                'quantity' => $quantity,
+                'balance_after' => (float) $stock->current_quantity,
+                'reference_type' => $reference ? $reference::class : null,
+                'reference_id' => $reference?->getKey(),
+                'created_by_user_id' => $userId,
+            ]);
 
             $material->recalculateCurrentStock();
             $this->notifyIfLowStock($stock);
@@ -100,17 +101,25 @@ class MaterialStockService
             $toStock->increment('current_quantity', (int) round($quantity));
             $toStock->refresh();
 
-            StockMovement::record(
-                $material,
-                StockMovement::TYPE_TRANSFERENCIA,
-                $quantity,
-                (float) $toStock->current_quantity,
-                null,
-                $userId,
-                fromLocationId: $from->id,
-                toLocationId: $to->id,
-                reason: $reason,
-            );
+            // MaterialStockMovement nao tem colunas de localizacao (from/to)
+            // nem "reason" -- registra como saida na origem + entrada no
+            // destino, mesmo padrao de receive()/consume() acima.
+            MaterialStockMovement::create([
+                'tenant_id' => $material->tenant_id,
+                'material_id' => $material->id,
+                'type' => MaterialStockMovement::TYPE_SAIDA,
+                'quantity' => $quantity,
+                'balance_after' => (float) $fromStock->current_quantity,
+                'created_by_user_id' => $userId,
+            ]);
+            MaterialStockMovement::create([
+                'tenant_id' => $material->tenant_id,
+                'material_id' => $material->id,
+                'type' => MaterialStockMovement::TYPE_ENTRADA,
+                'quantity' => $quantity,
+                'balance_after' => (float) $toStock->current_quantity,
+                'created_by_user_id' => $userId,
+            ]);
 
             // current_stock (soma de todas as filiais) nao muda numa
             // transferencia -- so' redistribui entre duas linhas. Ainda
@@ -133,15 +142,16 @@ class MaterialStockService
             $difference = $newQuantity - $stock->current_quantity;
             $stock->update(['current_quantity' => (int) round($newQuantity)]);
 
-            StockMovement::record(
-                $material,
-                StockMovement::TYPE_AJUSTE_MANUAL,
-                $difference,
-                (float) $stock->current_quantity,
-                $reference,
-                $userId,
-                toLocationId: $unit->id,
-            );
+            MaterialStockMovement::create([
+                'tenant_id' => $material->tenant_id,
+                'material_id' => $material->id,
+                'type' => MaterialStockMovement::TYPE_AJUSTE,
+                'quantity' => $difference,
+                'balance_after' => (float) $stock->current_quantity,
+                'reference_type' => $reference ? $reference::class : null,
+                'reference_id' => $reference?->getKey(),
+                'created_by_user_id' => $userId,
+            ]);
 
             $material->recalculateCurrentStock();
             $this->notifyIfLowStock($stock);
