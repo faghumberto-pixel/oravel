@@ -29,7 +29,9 @@ class EpiDeliveryResource extends BaseResource
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
 
-    protected static ?string $navigationGroup = 'Departamento Pessoal';
+    protected static ?string $navigationGroup = 'Ativos e Materiais';
+
+    protected static ?string $navigationParentItem = 'Gestão de Estoque';
 
     protected static ?string $navigationLabel = 'Entrega de EPI';
 
