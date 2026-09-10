@@ -199,11 +199,6 @@ class EpiDeliveryResource extends BaseResource
                     static::registerReplacementAction(),
                 ]),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])
             ->defaultSort('delivered_at', 'desc');
     }
 

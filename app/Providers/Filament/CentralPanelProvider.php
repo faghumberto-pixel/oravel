@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Central\Pages\CentralConhecimento;
 use App\Filament\Central\Pages\DashboardCrm;
 use App\Filament\Central\Pages\DashboardSaaS;
 use App\Filament\Central\Pages\DashboardVisitantes;
@@ -140,7 +139,6 @@ class CentralPanelProvider extends PanelProvider
                 FunilVendas::class,
                 Kanban::class,
                 Programacao::class,
-                CentralConhecimento::class,
             ])
             ->widgets([
                 // Registro aqui (mesmo os que so' aparecem via getWidgets()

@@ -40,11 +40,15 @@ class CheckEpiCaExpirations extends Command
             // Re-save força a trigger de epi_deliveries a reavaliar -- se
             // o CA deste material acabou de vencer, entregas ativas dele
             // passam a aparecer bloqueadas (dado que alimenta o dashboard
-            // de "EPI vencido em uso").
+            // de "EPI vencido em uso"). touch() em vez de save(): Eloquent
+            // pula o UPDATE inteiro quando o model nao esta dirty (nenhum
+            // atributo mudou), entao save() sozinho aqui e' um no-op --
+            // nunca dispara a trigger. Confirmado empiricamente rodando
+            // este fluxo contra um Postgres real (2026-09-10).
             EpiDelivery::where('material_id', $specification->material_id)
                 ->where('status', EpiDelivery::STATUS_ATIVO)
                 ->where('blocked', false)
-                ->each(fn (EpiDelivery $delivery) => $delivery->save());
+                ->each(fn (EpiDelivery $delivery) => $delivery->touch());
         }
 
         foreach ([7 => 'vencendo_7d', 15 => 'vencendo_15d', 30 => 'vencendo_30d'] as $dias => $tipo) {

@@ -188,7 +188,12 @@ class MaterialResource extends Resource
                             ->label('Este material é um EPI?')
                             ->live()
                             ->dehydrated(false)
-                            ->default(fn (?Material $record) => $record?->epiSpecification !== null)
+                            // default() so' preenche formulario novo (create); como o
+                            // campo nao dehydrata (nao e' coluna real), editar um
+                            // Material que ja e' EPI vinha com o toggle desmarcado e a
+                            // secao de CA escondida ate' o usuario remarcar na mao --
+                            // afterStateHydrated roda tanto no create quanto no edit.
+                            ->afterStateHydrated(fn (Forms\Components\Toggle $component, ?Material $record) => $component->state($record?->epiSpecification !== null))
                             ->columnSpanFull(),
 
                         Forms\Components\Section::make('CA e Vida Útil')

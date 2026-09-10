@@ -37,7 +37,7 @@ return new class extends Migration
             $table->foreignUuid('returned_by_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('returned_condition')->nullable();
 
-            $table->foreignUuid('replaced_by_delivery_id')->nullable()->constrained('epi_deliveries')->nullOnDelete();
+            $table->uuid('replaced_by_delivery_id')->nullable();
             $table->foreignUuid('material_stock_movement_id')->nullable()->constrained('material_stock_movements')->nullOnDelete();
 
             // Trava real de negocio (nao so' validacao de formulario), mesma
@@ -54,6 +54,18 @@ return new class extends Migration
             $table->index(['tenant_id', 'employee_id']);
             $table->index(['tenant_id', 'material_id']);
             $table->index(['employee_id', 'status']);
+        });
+
+        // replaced_by_delivery_id auto-referencia epi_deliveries.id -- a FK
+        // precisa vir depois da tabela criada (com a primary key ja
+        // commitada), senao o Postgres rejeita "no unique constraint
+        // matching given keys" (confirmado empiricamente rodando a
+        // migration original com o ->constrained() dentro do Schema::create
+        // acima; mesma causa-raiz do padrao ja usado em parent_id/
+        // parent_os_id de maintenance_orders, que tambem so' ganham FK via
+        // Schema::table() numa migration separada).
+        Schema::table('epi_deliveries', function (Blueprint $table) {
+            $table->foreign('replaced_by_delivery_id')->references('id')->on('epi_deliveries')->nullOnDelete();
         });
 
         // Antes de gravar uma entrega com blocked=false, confere se o CA do
