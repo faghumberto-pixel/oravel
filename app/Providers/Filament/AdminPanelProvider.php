@@ -51,7 +51,7 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->brandLogo(fn () => view('filament.brand-logo'))
             ->brandLogoHeight('1.25rem')
-            ->favicon(asset('favicon.png').'?v=5')
+            ->favicon(asset('favicon.png').'?v=6')
             ->navigationGroups([
                 NavigationGroup::make('PMP'),
                 NavigationGroup::make('Manutenção'),

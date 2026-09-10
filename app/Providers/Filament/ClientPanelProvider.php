@@ -40,7 +40,7 @@ class ClientPanelProvider extends PanelProvider
                 'primary' => Color::hex('#ea580c'),
                 'gray' => Color::Stone,
             ])
-            ->favicon(asset('favicon.png').'?v=5')
+            ->favicon(asset('favicon.png').'?v=6')
             ->discoverResources(in: app_path('Filament/Client/Resources'), for: 'App\\Filament\\Client\\Resources')
             ->discoverPages(in: app_path('Filament/Client/Pages'), for: 'App\\Filament\\Client\\Pages')
             ->discoverWidgets(in: app_path('Filament/Client/Widgets'), for: 'App\\Filament\\Client\\Widgets')
