@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Material extends Model
 {
@@ -113,6 +114,21 @@ class Material extends Model
     public function purchaseOrderItems(): HasMany
     {
         return $this->hasMany(PurchaseOrderItem::class);
+    }
+
+    /**
+     * Metadados de EPI (CA, vida util, tipo) quando este Material e' um
+     * EPI -- ver App\Models\EpiSpecification. Ausente pra materiais
+     * comuns.
+     */
+    public function epiSpecification(): HasOne
+    {
+        return $this->hasOne(EpiSpecification::class);
+    }
+
+    public function epiDeliveries(): HasMany
+    {
+        return $this->hasMany(EpiDelivery::class);
     }
 
     /**

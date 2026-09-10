@@ -98,6 +98,15 @@ class Employee extends Model
         return $this->hasMany(EmployeeCertification::class);
     }
 
+    /**
+     * Ficha de EPI (compliance NR-6) -- historico completo de entregas/
+     * emprestimos, ver App\Models\EpiDelivery.
+     */
+    public function epiDeliveries(): HasMany
+    {
+        return $this->hasMany(EpiDelivery::class);
+    }
+
     public function allocations(): HasMany
     {
         return $this->hasMany(EquipmentAllocation::class);

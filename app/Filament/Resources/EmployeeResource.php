@@ -138,6 +138,7 @@ class EmployeeResource extends BaseResource
     {
         return [
             RelationManagers\CertificationsRelationManager::class,
+            RelationManagers\EpiDeliveriesRelationManager::class,
         ];
     }
 

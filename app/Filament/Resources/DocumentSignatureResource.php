@@ -153,6 +153,7 @@ class DocumentSignatureResource extends Resource
                     ->formatStateUsing(fn ($state) => match ($state) {
                         'App\\Models\\Contract' => '📋 Contrato',
                         'App\\Models\\MaintenanceOrder' => '🔧 Ordem de Serviço',
+                        'App\\Models\\EpiDelivery' => '🦺 Entrega de EPI',
                         default => $state,
                     })
                     ->sortable(),
@@ -215,6 +216,7 @@ class DocumentSignatureResource extends Resource
                     ->options([
                         'App\\Models\\Contract' => 'Contrato',
                         'App\\Models\\MaintenanceOrder' => 'Ordem de Serviço',
+                        'App\\Models\\EpiDelivery' => 'Entrega de EPI',
                     ]),
 
                 Tables\Filters\Filter::make('has_email')

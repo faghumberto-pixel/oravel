@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\MaterialResource\Pages;
 use App\Filament\Resources\MaterialResource\RelationManagers;
+use App\Models\EpiSpecification;
 use App\Models\Material;
 use App\Models\MaterialCategory;
 use App\Models\StorageLocation;
@@ -11,6 +12,7 @@ use App\Models\Supplier;
 use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -178,6 +180,58 @@ class MaterialResource extends Resource
                             ->numeric()
                             ->helperText('Se a peça falhar dentro deste prazo em outra OS, o gestor é alertado.'),
                     ])->columns(3),
+
+                Forms\Components\Section::make('Dados de EPI')
+                    ->description('Preencha quando este material for um Equipamento de Proteção Individual (compliance NR-6). Cada tamanho/numeração é cadastrado como um Material separado, com seu próprio CA aqui.')
+                    ->schema([
+                        Forms\Components\Toggle::make('is_epi')
+                            ->label('Este material é um EPI?')
+                            ->live()
+                            ->dehydrated(false)
+                            ->default(fn (?Material $record) => $record?->epiSpecification !== null)
+                            ->columnSpanFull(),
+
+                        Forms\Components\Section::make('CA e Vida Útil')
+                            ->relationship('epiSpecification')
+                            ->visible(fn (Get $get) => (bool) $get('is_epi'))
+                            ->schema([
+                                Forms\Components\Select::make('epi_type')
+                                    ->label('Tipo de EPI')
+                                    ->options(EpiSpecification::typeLabels())
+                                    ->required()
+                                    ->native(false),
+                                Forms\Components\TextInput::make('size_label')
+                                    ->label('Tamanho/Numeração')
+                                    ->placeholder('Ex: G, 42, Único')
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('ca_number')
+                                    ->label('Número do CA')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('ca_manufacturer')
+                                    ->label('Fabricante')
+                                    ->maxLength(255),
+                                Forms\Components\DatePicker::make('ca_validade')
+                                    ->label('Validade do CA')
+                                    ->required(),
+                                Forms\Components\TextInput::make('estimated_lifespan_days')
+                                    ->label('Vida Útil Estimada')
+                                    ->numeric()
+                                    ->suffix('dias')
+                                    ->helperText('Tempo de uso recomendado antes da troca, separado da validade do CA.'),
+                                Forms\Components\Select::make('default_ownership_mode')
+                                    ->label('Modo de Posse Padrão')
+                                    ->options(EpiSpecification::ownershipModeLabels())
+                                    ->default(EpiSpecification::OWNERSHIP_DEFINITIVA)
+                                    ->required()
+                                    ->native(false),
+                                Forms\Components\Textarea::make('notes')
+                                    ->label('Observações')
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns(3)
+                            ->columnSpanFull(),
+                    ])->columns(1),
             ]);
     }
 
@@ -195,6 +249,17 @@ class MaterialResource extends Resource
                     ->label('Qtd. Atual')
                     ->numeric()
                     ->color(fn ($record) => $record->current_stock <= $record->min_stock ? 'danger' : 'success'),
+                Tables\Columns\TextColumn::make('epiSpecification.ca_number')
+                    ->label('CA (EPI)')
+                    ->placeholder('—')
+                    ->badge()
+                    ->color(fn (Material $record) => match (true) {
+                        $record->epiSpecification === null => 'gray',
+                        $record->epiSpecification->isCaVencido() => 'danger',
+                        $record->epiSpecification->isCaProximoVencimento() => 'warning',
+                        default => 'success',
+                    })
+                    ->toggleable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('category')->relationship('category', 'name')->label('Categoria'),
