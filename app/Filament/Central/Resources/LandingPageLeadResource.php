@@ -16,7 +16,6 @@ class LandingPageLeadResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-envelope';
     protected static ?string $navigationLabel = 'Leads Landing Page';
-    protected static ?string $navigationParentItem = 'SalesLead';
     protected static ?string $modelLabel = 'Lead';
 
     public static function form(Form $form): Form
