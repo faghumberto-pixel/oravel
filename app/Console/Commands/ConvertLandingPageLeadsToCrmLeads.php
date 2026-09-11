@@ -37,15 +37,23 @@ class ConvertLandingPageLeadsToCrmLeads extends Command
                 'stage' => 'prospecção',
             ]);
 
-            CrmLeadInteraction::create([
-                'tenant_id' => $tenantId,
-                'crm_lead_id' => $crmLead->id,
-                'user_id' => auth()->id() ?? Tenant::first()->users->first()->id,
-                'channel' => $lead->product === 'wms' ? 'Landing WMS' : 'Landing CRM',
-                'contact_date' => $lead->created_at,
-                'summary' => "Lead capturado da landing page. Segmento: {$lead->segment}",
-                'stage_at_time' => 'prospecção',
-            ]);
+            $userId = auth()->id();
+            if (!$userId) {
+                $user = \App\Models\User::where('email', 'humberto@oravel.com.br')->first();
+                $userId = $user?->id;
+            }
+
+            if ($userId) {
+                CrmLeadInteraction::create([
+                    'tenant_id' => $tenantId,
+                    'crm_lead_id' => $crmLead->id,
+                    'user_id' => $userId,
+                    'channel' => $lead->product === 'wms' ? 'Landing WMS' : 'Landing CRM',
+                    'contact_date' => $lead->created_at,
+                    'summary' => "Lead capturado da landing page. Segmento: {$lead->segment}",
+                    'stage_at_time' => 'prospecção',
+                ]);
+            }
 
             $lead->update(['converted_at' => now()]);
             $count++;
