@@ -57,3 +57,8 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
 
 // Landing page leads (sem auth - público)
 Route::post('/landing-page/leads', [\App\Http\Controllers\LandingPageLeadController::class, 'store']);
+
+// Debug
+Route::get('/landing-page/test', function () {
+    return response()->json(['test' => 'ok', 'table_exists' => \Illuminate\Support\Facades\Schema::hasTable('landing_page_leads')]);
+});
