@@ -126,7 +126,6 @@ class CentralPanelProvider extends PanelProvider
             ->brandLogoHeight('1.25rem')
             ->favicon(asset('favicon.png').'?v=6')
             ->resources([
-                LandingPageLeadResource::class,
                 PlanResource::class,
                 RoleResource::class,
             ])
