@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\LandingPageLead;
+use App\Models\CrmLead;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -13,12 +13,12 @@ class NewLeadNotification extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public LandingPageLead $lead)
+    public function __construct(public CrmLead $lead)
     {}
 
     public function envelope(): Envelope
     {
-        $product = $this->lead->product === 'wms' ? 'WMS' : 'CRM';
+        $product = str_contains($this->lead->source, 'wms') ? 'WMS' : 'CRM';
         return new Envelope(
             subject: "Novo Lead - Oravel {$product}",
         );

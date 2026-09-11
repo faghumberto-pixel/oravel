@@ -34,15 +34,19 @@ class LandingPageLeadController extends Controller
             'stage' => 'prospecção',
         ]);
 
-        CrmLeadInteraction::create([
-            'tenant_id' => $tenant->id,
-            'crm_lead_id' => $crmLead->id,
-            'user_id' => $tenant->users->first()?->id,
-            'channel' => $validated['product'] === 'wms' ? 'Landing WMS' : 'Landing CRM',
-            'contact_date' => now(),
-            'summary' => "Lead capturado da landing page. Segmento: {$validated['segment']}",
-            'stage_at_time' => 'prospecção',
-        ]);
+        $userId = $tenant->users()->first()?->id;
+
+        if ($userId) {
+            CrmLeadInteraction::create([
+                'tenant_id' => $tenant->id,
+                'crm_lead_id' => $crmLead->id,
+                'user_id' => $userId,
+                'channel' => $validated['product'] === 'wms' ? 'Landing WMS' : 'Landing CRM',
+                'contact_date' => now(),
+                'summary' => "Lead capturado da landing page. Segmento: {$validated['segment']}",
+                'stage_at_time' => 'prospecção',
+            ]);
+        }
 
         try {
             Mail::to('contato@oravel.com.br')->send(new \App\Mail\NewLeadNotification($crmLead));
