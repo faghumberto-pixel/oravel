@@ -29,8 +29,12 @@ class LandingPageLeadController extends Controller
             'status' => 'novo',
         ]);
 
-        Mail::to('contato@oravel.com.br')->queue(new \App\Mail\NewLeadNotification($lead));
-        Mail::to($lead->email)->queue(new \App\Mail\LeadWelcome($lead));
+        try {
+            Mail::to('contato@oravel.com.br')->send(new \App\Mail\NewLeadNotification($lead));
+            Mail::to($lead->email)->send(new \App\Mail\LeadWelcome($lead));
+        } catch (\Exception $e) {
+            \Log::error('Email error: ' . $e->getMessage());
+        }
 
         return response()->json([
             'success' => true,
