@@ -21,7 +21,7 @@ class LandingPageLeadController extends Controller
             'product' => 'required|in:wms,crm',
         ]);
 
-        $tenant = Tenant::first();
+        $tenant = Tenant::where('slug', 'oravel')->first() ?? Tenant::first();
 
         $crmLead = CrmLead::create([
             'tenant_id' => $tenant->id,
