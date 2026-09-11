@@ -426,6 +426,12 @@ Route::middleware(['auth'])->group(function () {
     })->name('filament.admin.pages.technician-daily-tasks');
 });
 
+// Dashboard simples dos leads da landing page
+Route::get('/leads', function () {
+    $leads = \App\Models\LandingPageLead::orderBy('created_at', 'desc')->get();
+    return view('leads-manager', compact('leads'));
+});
+
 require __DIR__.'/auth.php';
 require __DIR__.'/chat.php';
 require __DIR__.'/checkout.php';
