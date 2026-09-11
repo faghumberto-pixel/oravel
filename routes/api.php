@@ -54,3 +54,6 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::post('/hour-meters/sync', [HourMeterSyncController::class, 'sync']);
     Route::post('/time-clocks/sync', [TimeClockSyncController::class, 'sync']);
 });
+
+// Landing page leads (sem auth - público)
+Route::post('/landing-page/leads', [\App\Http\Controllers\LandingPageLeadController::class, 'store']);

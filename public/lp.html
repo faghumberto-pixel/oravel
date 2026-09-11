@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oravel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark: #0b0f0d;
+            --orange: #ff6a1a;
+            --orange-dark: #e55a0a;
+            --white: #ffffff;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .hero {
+            padding: 100px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero.wms {
+            background: linear-gradient(135deg, #fafaf8 0%, #f5f3f0 50%, #fff9f5 100%);
+        }
+
+        .hero.crm {
+            background: linear-gradient(135deg, #f8f9fb 0%, #f0f4f9 50%, #faf8ff 100%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -5%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255, 106, 26, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero .container {
+            max-width: 950px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-header {
+            font-size: 1.3em;
+            font-weight: 800;
+            margin-bottom: 40px;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-header .brand {
+            color: var(--dark);
+        }
+
+        .logo-header .product {
+            color: var(--orange);
+            margin-left: 6px;
+        }
+
+        .hero h1 {
+            font-size: 3.5em;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--dark);
+            line-height: 1.15;
+            letter-spacing: -1px;
+        }
+
+        .hero .subheading {
+            font-size: 1.3em;
+            color: #555;
+            margin-bottom: 50px;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .cta-button {
+            background: var(--orange);
+            color: var(--white);
+            padding: 18px 56px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-block;
+            text-decoration: none;
+            box-shadow: 0 8px 24px rgba(255, 106, 26, 0.3);
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.3px;
+        }
+
+        .cta-button:hover {
+            background: var(--orange-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(255, 106, 26, 0.4);
+        }
+
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 60px;
+            padding-top: 50px;
+            border-top: 2px solid rgba(0, 0, 0, 0.1);
+            flex-wrap: wrap;
+        }
+
+        .badge { text-align: center; }
+        .badge-value {
+            font-size: 1.3em;
+            font-weight: 800;
+            color: var(--orange);
+            display: block;
+            margin-bottom: 4px;
+        }
+        .badge-label {
+            font-size: 0.9em;
+            color: #888;
+            font-weight: 500;
+        }
+
+        .section {
+            padding: 120px 20px;
+            background: var(--white);
+        }
+
+        .section.highlight {
+            background: linear-gradient(135deg, rgba(255, 106, 26, 0.04) 0%, rgba(255, 106, 26, 0.01) 100%);
+        }
+
+        .section .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section h2 {
+            font-size: 2.8em;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--dark);
+            letter-spacing: -0.5px;
+        }
+
+        .section .description {
+            font-size: 1.15em;
+            color: #666;
+            margin-bottom: 20px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 500;
+            line-height: 1.7;
+        }
+
+        .problem-highlight {
+            background: linear-gradient(135deg, #fff5f0 0%, #ffeae0 100%);
+            padding: 50px;
+            border-radius: 16px;
+            border-left: 6px solid var(--orange);
+            margin: 40px 0;
+        }
+
+        .problem-highlight p {
+            font-size: 1.1em;
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.8;
+            font-weight: 500;
+        }
+
+        .problem-number {
+            font-size: 1.5em;
+            color: var(--orange);
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 70px;
+        }
+
+        .feature-card {
+            background: var(--white);
+            padding: 45px;
+            border-radius: 14px;
+            border: 2px solid rgba(0, 0, 0, 0.06);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--orange), transparent);
+            border-radius: 14px 14px 0 0;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--orange);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(255, 106, 26, 0.15), rgba(255, 106, 26, 0.05));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            font-size: 1.8em;
+            border: 2px solid rgba(255, 106, 26, 0.1);
+        }
+
+        .feature-card h3 {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            font-size: 0.95em;
+            color: #666;
+            line-height: 1.7;
+            font-weight: 500;
+        }
+
+        .form-section {
+            padding: 120px 20px;
+            background: linear-gradient(135deg, var(--dark) 0%, #1a2a25 50%, #0f1f1a 100%);
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-section::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -15%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(255, 106, 26, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .form-section .container {
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-section h2 {
+            font-size: 2.5em;
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: var(--white);
+            letter-spacing: -0.5px;
+        }
+
+        .form-section .description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1em;
+            margin-bottom: 50px;
+            font-weight: 500;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        input, select {
+            padding: 16px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-family: 'Inter', sans-serif;
+            color: var(--white);
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        select {
+            color: #000;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        select option {
+            background: var(--white);
+            color: #000;
+            font-weight: 500;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--orange);
+            box-shadow: 0 0 0 4px rgba(255, 106, 26, 0.15);
+        }
+
+        form button {
+            background: var(--orange);
+            color: var(--white);
+            padding: 18px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Inter', sans-serif;
+            margin-top: 10px;
+            letter-spacing: 0.3px;
+            box-shadow: 0 8px 24px rgba(255, 106, 26, 0.3);
+        }
+
+        form button:hover {
+            background: var(--orange-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(255, 106, 26, 0.4);
+        }
+
+        .form-note {
+            font-size: 0.85em;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 16px;
+            font-weight: 500;
+        }
+
+        footer {
+            background: #1a1a18;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            padding: 50px;
+            font-size: 0.9em;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        footer p {
+            margin: 8px 0;
+            font-weight: 500;
+        }
+
+        footer strong {
+            color: var(--white);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2em; }
+            .hero .subheading { font-size: 1.05em; }
+            .section h2 { font-size: 1.9em; }
+            .hero { padding: 60px 20px; }
+            .section { padding: 70px 20px; }
+            .form-section { padding: 70px 20px; }
+            .features-grid { grid-template-columns: 1fr; gap: 20px; }
+            .trust-badges { flex-direction: column; gap: 25px; }
+        }
+
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body>
+
+<div id="wms-page" class="hidden">
+    <div class="hero wms">
+        <div class="container">
+            <div class="logo-header"><span class="brand">Oravel</span><span class="product">WMS</span></div>
+            <h1>Recupere 20% de Margem Perdida Todo Mês</h1>
+            <p class="subheading">Sistema de gestão de estoque que organiza sua operação em 30 dias — ou não custa nada.</p>
+            <button class="cta-button" onclick="scrollToForm()">Começar Teste Grátis Agora</button>
+            <div class="trust-badges">
+                <div class="badge"><span class="badge-value">30 dias</span><span class="badge-label">Teste completo grátis</span></div>
+                <div class="badge"><span class="badge-value">Zero</span><span class="badge-label">Cartão de crédito</span></div>
+                <div class="badge"><span class="badge-value">Garantia</span><span class="badge-label">20% de economia</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section highlight">
+        <div class="container">
+            <div class="section-header">
+                <h2>O Sangramento Silencioso</h2>
+                <p class="description">A perda que ninguém ve até virar número vermelho no balanço.</p>
+            </div>
+            <div class="problem-highlight">
+                <p>Você recebe 100 caixas de produtos. O conferente anota errado. Coloca em lugar errado. Semanas depois, descobrem produtos vencendo no fundo do depósito.</p>
+                <div class="problem-number">Resultado: -15% a -20% de margem perdida todo mês.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Como Oravel WMS Resolve Isto</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">✓</div>
+                    <h3>Conferência Sem Erro</h3>
+                    <p>Nota entra no sistema. Conferente valida. Sistema registra. 100% rastreado.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>20% de Economia</h3>
+                    <p>Em 2-3 meses você economiza 20% de desperdício. O sistema se paga sozinho.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="container">
+            <h2>Recupere Sua Margem</h2>
+            <p class="description">30 dias grátis. Se economizar 20%, você continua. Se não, você não paga nada.</p>
+            <form id="form" onsubmit="handleSubmit(event)">
+                <input type="text" name="name" placeholder="Seu nome completo" required>
+                <input type="email" name="email" placeholder="Seu email profissional" required>
+                <input type="tel" name="phone" placeholder="(11) 99999-9999" inputmode="numeric" pattern="[\d\s\(\)\-]+" required>
+                <input type="text" name="company" placeholder="Nome da sua empresa" required>
+                <select name="segment" required>
+                    <option value="">Qual é seu segmento?</option>
+                    <option>Eletrônicos</option>
+                    <option>Peças</option>
+                    <option>Alimentos</option>
+                </select>
+                <button type="submit">Ativar Teste de 30 Dias</button>
+                <p class="form-note">Acesso via email e WhatsApp em menos de 1 hora. Suporte 24/7.</p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="crm-page" class="hidden">
+    <div class="hero crm">
+        <div class="container">
+            <div class="logo-header"><span class="brand">Oravel</span><span class="product">CRM</span></div>
+            <h1>Multiplique Suas Vendas por 1,3x em 30 Dias</h1>
+            <p class="subheading">Sistema de gestão de vendas que organiza prospects automaticamente.</p>
+            <button class="cta-button" onclick="scrollToForm()">Começar Teste Grátis Agora</button>
+            <div class="trust-badges">
+                <div class="badge"><span class="badge-value">30 dias</span><span class="badge-label">Teste completo grátis</span></div>
+                <div class="badge"><span class="badge-value">Zero</span><span class="badge-label">Cartão de crédito</span></div>
+                <div class="badge"><span class="badge-value">+30%</span><span class="badge-label">Mais conversão garantida</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section highlight">
+        <div class="container">
+            <div class="section-header">
+                <h2>A Oportunidade que Ninguém Vê Passar</h2>
+            </div>
+            <div class="problem-highlight">
+                <p>Você tem 50 prospects em negociação. Alguns estão quentes, alguns frios, alguns esquecidos.</p>
+                <div class="problem-number">Resultado: até 30% de vendas perdidas por falta de organização.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Como Oravel CRM Resolve Isto</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">✓</div>
+                    <h3>Funil Cristalino</h3>
+                    <p>Cada prospect em sua etapa. Você vê quem vai fechar hoje.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>+30% em Conversão</h3>
+                    <p>Melhor rastreamento + follow-ups automáticos = mais vendas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="container">
+            <h2>Aumente Suas Vendas Agora</h2>
+            <p class="description">30 dias grátis. Se vender mais, você continua. Se não, você não paga nada.</p>
+            <form id="form" onsubmit="handleSubmit(event)">
+                <input type="text" name="name" placeholder="Seu nome completo" required>
+                <input type="email" name="email" placeholder="Seu email profissional" required>
+                <input type="tel" name="phone" placeholder="(11) 99999-9999" inputmode="numeric" pattern="[\d\s\(\)\-]+" required>
+                <input type="text" name="company" placeholder="Nome da sua empresa" required>
+                <select name="segment" required>
+                    <option value="">Qual é seu segmento?</option>
+                    <option>Serviços</option>
+                    <option>Consultoria</option>
+                    <option>Construção</option>
+                </select>
+                <button type="submit">Ativar Teste de 30 Dias</button>
+                <p class="form-note">Acesso via email e WhatsApp em menos de 1 hora. Suporte 24/7.</p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p><strong>Oravel</strong> — Plataforma de Gestão Empresarial</p>
+    <p>contato@oravel.com.br | (19) 99933-2615 | www.oravel.com.br</p>
+</footer>
+
+<script>
+    function getPageType() {
+        const params = new URLSearchParams(window.location.search);
+        return (params.get('type') || 'wms').toLowerCase();
+    }
+
+    function showPage() {
+        const type = getPageType();
+        document.getElementById('wms-page').classList.add('hidden');
+        document.getElementById('crm-page').classList.add('hidden');
+
+        if (type === 'crm') {
+            document.getElementById('crm-page').classList.remove('hidden');
+            document.title = 'Oravel CRM';
+        } else {
+            document.getElementById('wms-page').classList.remove('hidden');
+            document.title = 'Oravel WMS';
+        }
+    }
+
+    function scrollToForm() {
+        const form = document.getElementById('form');
+        if (form) form.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function handleSubmit(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = {
+            name: formData.get('name'),
+            email: formData.get('email'),
+            phone: formData.get('phone'),
+            company: formData.get('company'),
+            segment: formData.get('segment'),
+            product: getPageType(),
+        };
+
+        const btn = event.target.querySelector('button');
+        const btnText = btn.textContent;
+        btn.textContent = 'Enviando...';
+        btn.disabled = true;
+
+        console.log('Enviando:', data);
+        fetch('https://app.oravel.com.br/api/landing-page/leads', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(result => {
+            console.log('Resposta:', result);
+            if (result.success) {
+                alert('✓ Sucesso! Acesso via email e WhatsApp em menos de 1 hora.');
+                event.target.reset();
+            } else {
+                const errorMsg = result.message || JSON.stringify(result.errors || result);
+                console.error('Erro detalhado:', errorMsg);
+                alert('Erro: ' + errorMsg);
+            }
+        })
+        .catch(err => {
+            console.error('Erro na requisição:', err);
+            alert('Erro ao registrar: ' + err.message + '\n\nAbra o console (F12) para mais detalhes.');
+        })
+        .finally(() => {
+            btn.textContent = btnText;
+            btn.disabled = false;
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', showPage);
+</script>
+
+</body>
+</html>

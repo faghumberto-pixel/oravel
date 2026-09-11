@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test API</title>
+</head>
+<body>
+    <h1>Teste da API Landing Page</h1>
+    <button onclick="testAPI()">Enviar Teste</button>
+    <pre id="resultado"></pre>
+
+    <script>
+        async function testAPI() {
+            const resultado = document.getElementById('resultado');
+            resultado.textContent = 'Enviando...';
+
+            try {
+                const response = await fetch('https://app.oravel.com.br/api/landing-page/leads', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: 'Teste',
+                        email: 'teste@example.com',
+                        phone: '(11) 99999-9999',
+                        company: 'Teste',
+                        segment: 'Eletrônicos',
+                        product: 'wms'
+                    })
+                });
+
+                const text = await response.text();
+                resultado.textContent = 'Status: ' + response.status + '\n\n' + text;
+
+                try {
+                    const data = JSON.parse(text);
+                    resultado.textContent = 'SUCESSO!\n\n' + JSON.stringify(data, null, 2);
+                } catch (e) {
+                    resultado.textContent = 'Erro de parse JSON:\n\n' + text;
+                }
+            } catch (err) {
+                resultado.textContent = 'Erro: ' + err.message;
+            }
+        }
+    </script>
+</body>
+</html>
