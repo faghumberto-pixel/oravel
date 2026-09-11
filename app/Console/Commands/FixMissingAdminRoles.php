@@ -74,7 +74,7 @@ class FixMissingAdminRoles extends Command
 
                     $this->line("      <fg=green>✓</> Assigned admin role (Role ID: " . $role->id . ')');
                 } else {
-                    $this->line("      <fg=yellow>[DRY RUN]</> Would assign admin role');
+                    $this->line("      <fg=yellow>[DRY RUN]</> Would assign admin role");
                 }
             }
             $this->line('');
