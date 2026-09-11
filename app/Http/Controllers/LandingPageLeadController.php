@@ -29,9 +29,8 @@ class LandingPageLeadController extends Controller
             'status' => 'novo',
         ]);
 
-        // TODO: Configurar fila de emails
-        // Mail::to('contato@oravel.com.br')->queue(new \App\Mail\NewLeadNotification($lead));
-        // Mail::to($lead->email)->queue(new \App\Mail\LeadWelcome($lead));
+        Mail::to('contato@oravel.com.br')->queue(new \App\Mail\NewLeadNotification($lead));
+        Mail::to($lead->email)->queue(new \App\Mail\LeadWelcome($lead));
 
         return response()->json([
             'success' => true,
