@@ -62,3 +62,12 @@ Route::post('/landing-page/leads', [\App\Http\Controllers\LandingPageLeadControl
 Route::get('/landing-page/test', function () {
     return response()->json(['test' => 'ok', 'table_exists' => \Illuminate\Support\Facades\Schema::hasTable('landing_page_leads')]);
 });
+
+Route::get('/landing-page/migrate', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        return response()->json(['success' => true, 'message' => 'Migrations ran', 'table_exists' => \Illuminate\Support\Facades\Schema::hasTable('landing_page_leads')]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
