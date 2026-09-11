@@ -84,11 +84,4 @@ class LandingPageLeadResource extends Resource
             ]);
     }
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => \App\Filament\Central\Resources\LandingPageLeadResource\Pages\ListLandingPageLeads::route('/'),
-            'edit' => \App\Filament\Central\Resources\LandingPageLeadResource\Pages\EditLandingPageLead::route('/{record}/edit'),
-        ];
-    }
 }
