@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\LandingPageLead;
+use App\Models\CrmLead;
+use App\Models\CrmLeadInteraction;
+use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -19,25 +21,39 @@ class LandingPageLeadController extends Controller
             'product' => 'required|in:wms,crm',
         ]);
 
-        $lead = LandingPageLead::create([
+        $tenant = Tenant::first();
+
+        $crmLead = CrmLead::create([
+            'tenant_id' => $tenant->id,
             'name' => $validated['name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],
-            'company' => $validated['company'],
+            'company_name' => $validated['company'],
             'segment' => $validated['segment'],
-            'product' => $validated['product'],
-            'status' => 'novo',
+            'source' => 'landing_page_' . $validated['product'],
+            'stage' => 'prospecção',
         ]);
 
-        // TODO: Configurar serviço de email (SendGrid, Mailtrap, etc)
-        // Por enquanto, emails desabilitados para não bloquear lead capture
-        // Mail::to('contato@oravel.com.br')->send(new \App\Mail\NewLeadNotification($lead));
-        // Mail::to($lead->email)->send(new \App\Mail\LeadWelcome($lead));
+        CrmLeadInteraction::create([
+            'tenant_id' => $tenant->id,
+            'crm_lead_id' => $crmLead->id,
+            'user_id' => $tenant->users->first()?->id,
+            'channel' => $validated['product'] === 'wms' ? 'Landing WMS' : 'Landing CRM',
+            'contact_date' => now(),
+            'summary' => "Lead capturado da landing page. Segmento: {$validated['segment']}",
+            'stage_at_time' => 'prospecção',
+        ]);
+
+        try {
+            Mail::to('contato@oravel.com.br')->send(new \App\Mail\NewLeadNotification($crmLead));
+        } catch (\Exception $e) {
+            \Log::warning('Email não enviado: ' . $e->getMessage());
+        }
 
         return response()->json([
             'success' => true,
             'message' => 'Lead registrado com sucesso!',
-            'data' => $lead
+            'data' => $crmLead
         ], 201);
     }
 }
