@@ -29,12 +29,10 @@ class LandingPageLeadController extends Controller
             'status' => 'novo',
         ]);
 
-        try {
-            Mail::to('contato@oravel.com.br')->send(new \App\Mail\NewLeadNotification($lead));
-            Mail::to($lead->email)->send(new \App\Mail\LeadWelcome($lead));
-        } catch (\Exception $e) {
-            \Log::error('Email error: ' . $e->getMessage());
-        }
+        // TODO: Configurar serviço de email (SendGrid, Mailtrap, etc)
+        // Por enquanto, emails desabilitados para não bloquear lead capture
+        // Mail::to('contato@oravel.com.br')->send(new \App\Mail\NewLeadNotification($lead));
+        // Mail::to($lead->email)->send(new \App\Mail\LeadWelcome($lead));
 
         return response()->json([
             'success' => true,
