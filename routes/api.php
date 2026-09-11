@@ -57,3 +57,15 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
 
 // Landing page leads (sem auth - público)
 Route::post('/landing-page/leads', [\App\Http\Controllers\LandingPageLeadController::class, 'store']);
+
+// Debug email
+Route::get('/test-email', function () {
+    try {
+        \Illuminate\Support\Facades\Mail::raw('Test email from Oravel', function ($message) {
+            $message->to('contato@oravel.com.br')->subject('Test Email');
+        });
+        return response()->json(['success' => true, 'driver' => config('mail.driver'), 'from' => config('mail.from')]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage(), 'driver' => config('mail.driver')], 500);
+    }
+});
