@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -17,10 +18,10 @@ class LandingPageLeadResource extends Resource
 {
     protected static ?string $model = LandingPageLead::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-envelope';
+    protected static ?string $navigationIcon = 'heroicon-o-phone';
     protected static ?string $navigationLabel = 'Leads das Landing Pages';
-    protected static ?string $navigationGroup = 'Comercial';
-    protected static ?int $navigationSort = 50;
+    protected static ?string $modelLabel = 'Lead';
+    protected static ?string $pluralModelLabel = 'Leads';
 
     public static function form(Form $form): Form
     {
@@ -63,56 +64,84 @@ class LandingPageLeadResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Nome')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->weight('bold'),
                 Tables\Columns\TextColumn::make('email')
-                    ->label('Email')
-                    ->copyable()
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('phone')
-                    ->label('Telefone')
-                    ->copyable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('company')
-                    ->label('Empresa')
-                    ->searchable(),
-                Tables\Columns\BadgeColumn::make('product')
-                    ->label('Produto')
-                    ->color(fn (string $state): string => match ($state) {
-                        'crm' => 'blue',
-                        'wms' => 'purple',
-                        'frota' => 'orange',
-                        'os' => 'green',
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('segment')
+                    ->label('Landing Page')
+                    ->searchable()
+                    ->sortable()
+                    ->badge()
+                    ->color('info'),
+                Tables\Columns\TextColumn::make('product')
+                    ->searchable()
+                    ->sortable()
+                    ->badge()
+                    ->color(fn (string $state): string => match($state) {
+                        'CRM' => 'blue',
+                        'WMS' => 'purple',
+                        'FROTA' => 'orange',
+                        'OS' => 'green',
                         default => 'gray',
                     }),
-                Tables\Columns\BadgeColumn::make('status')
-                    ->label('Status')
-                    ->colors([
-                        'primary' => 'novo',
-                        'warning' => 'contatado',
-                        'success' => 'convertido',
-                        'danger' => 'rejeitado',
-                    ]),
-                Tables\Columns\TextColumn::make('contacted_at')
-                    ->label('Contatado em')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('status')
+                    ->searchable()
+                    ->sortable()
+                    ->badge()
+                    ->color(fn (string $state): string => match($state) {
+                        'novo' => 'primary',
+                        'contatado' => 'warning',
+                        'convertido' => 'success',
+                        'rejeitado' => 'danger',
+                        default => 'gray',
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Recebido em')
+                    ->label('Data de Cadastro')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('contacted_at')
+                    ->label('Data de Contato')
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('converted_at')
-                    ->dateTime()
-                    ->sortable(),
+                    ->label('Data de Conversão')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
             ])
             ->filters([
-                //
+                SelectFilter::make('product')
+                    ->options([
+                        'CRM' => 'CRM',
+                        'WMS' => 'WMS',
+                        'FROTA' => 'Frota',
+                        'OS' => 'Ordem de Serviço',
+                    ]),
+                SelectFilter::make('status')
+                    ->options([
+                        'novo' => 'Novo',
+                        'contatado' => 'Contatado',
+                        'convertido' => 'Convertido',
+                        'rejeitado' => 'Rejeitado',
+                    ]),
+                SelectFilter::make('segment')
+                    ->label('Landing Page')
+                    ->options([
+                        'CRM' => 'CRM',
+                        'WMS' => 'WMS',
+                        'FROTA' => 'Frota',
+                        'OS' => 'Ordem de Serviço',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
