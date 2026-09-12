@@ -18,21 +18,23 @@ class DebugFilamentRoutes extends Command
             $this->line('1️⃣ Testando carregamento do Resource...');
             $resource = new \App\Filament\Central\Resources\LandingPageLeadResource();
             $this->info('   ✓ LandingPageLeadResource carregada');
+            $this->line('   Model: ' . $resource::getModel());
             $this->line('   Slug: ' . $resource::getSlug());
 
-            // Teste 2: Verificar se está registrada no Provider
-            $this->line('2️⃣ Verificando CentralPanelProvider...');
-            $provider = new \App\Providers\Filament\CentralPanelProvider();
-            $this->info('   ✓ CentralPanelProvider instanciada');
+            // Teste 2: Rodar filament:upgrade
+            $this->line('2️⃣ Executando filament:upgrade...');
+            $exitCode = $this->call('filament:upgrade');
+            $this->info('   ✓ filament:upgrade completado (exit: ' . $exitCode . ')');
 
-            // Teste 3: Rodar filament:upgrade
-            $this->line('3️⃣ Executando filament:upgrade...');
-            $this->call('filament:upgrade', ['--quiet' => true]);
-            $this->info('   ✓ filament:upgrade completado');
-
-            // Teste 4: Listar rotas
-            $this->line('4️⃣ Listando rotas de landing-page...');
-            $this->call('route:list', ['--grep' => 'landing-page']);
+            // Teste 3: Listar rotas
+            $this->line('3️⃣ Verificando se rota foi criada...');
+            \Illuminate\Support\Facades\Artisan::call('route:list', [], $output = new \Symfony\Component\Console\Output\BufferedOutput());
+            $routes = $output->fetch();
+            if (str_contains($routes, 'landing-page-leads')) {
+                $this->info('   ✓ Rota central/landing-page-leads ENCONTRADA');
+            } else {
+                $this->error('   ✗ Rota central/landing-page-leads NÃO ENCONTRADA');
+            }
 
             $this->info('✅ Diagnóstico concluído!');
 
