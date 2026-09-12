@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\LandingPageLead;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class LandingPageLeadsController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth')->except('diagnose');
     }
 
     public function diagnose()
@@ -19,7 +20,8 @@ class LandingPageLeadsController extends Controller
             'controller' => 'LandingPageLeadsController',
             'user' => auth()->user() ? auth()->user()->email : null,
             'model_exists' => class_exists(LandingPageLead::class),
-            'table_exists' => \Schema::hasTable('landing_page_leads'),
+            'table_exists' => Schema::hasTable('landing_page_leads'),
+            'timestamp' => now(),
         ]);
     }
 
