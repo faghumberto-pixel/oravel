@@ -212,10 +212,11 @@
 
         /* ===== CRM PAGE ===== */
         .crm-hero {
-            background: linear-gradient(135deg, #d4c4a3 0%, #e5d5b4 50%, #c9ae5a 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
             padding: 100px 20px;
             position: relative;
             overflow: hidden;
+            color: var(--white);
         }
 
         .crm-hero .logo .brand { color: var(--navy); }
@@ -233,32 +234,32 @@
             font-size: 2.4em;
             font-weight: 800;
             margin-bottom: 12px;
-            color: var(--navy);
+            color: var(--white);
             line-height: 1.2;
         }
 
-        .crm-content h1 .orange { color: var(--orange); }
+        .crm-content h1 .orange { color: #fbbf24; }
 
         .crm-content .subtitle {
             font-size: 0.95em;
-            color: rgba(26, 42, 74, 0.85);
+            color: rgba(255, 255, 255, 0.85);
             margin-bottom: 30px;
             line-height: 1.7;
             font-weight: 500;
         }
 
         .crm-testimonial {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.95);
             padding: 40px;
             border-radius: 16px;
             margin-top: 30px;
-            border: 2px solid rgba(26, 42, 74, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
         .crm-testimonial .face {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, #ff9a76, #ffb399);
+            background: linear-gradient(135deg, #7e22ce, #9333ea);
             border-radius: 50%;
             margin-bottom: 20px;
             display: flex;
@@ -268,7 +269,7 @@
         }
 
         .crm-testimonial p {
-            color: var(--navy);
+            color: #1f2937;
             font-size: 0.95em;
             font-style: italic;
             margin-bottom: 12px;
@@ -277,7 +278,7 @@
         }
 
         .crm-testimonial .name {
-            color: var(--navy);
+            color: #374151;
             font-weight: 700;
             font-size: 0.9em;
         }
@@ -645,28 +646,28 @@
             <div class="content-right">
                 <div class="features-list">
                     <div class="feature-item">
-                        <div class="icon">✓</div>
+                        <div class="icon">01</div>
                         <div>
                             <h4>Conferência 100% Rastreada</h4>
                             <p>Nota entra → Conferente valida → Sistema registra. Zero divergências, zero produtos fantasmas.</p>
                         </div>
                     </div>
                     <div class="feature-item">
-                        <div class="icon">💰</div>
+                        <div class="icon">02</div>
                         <div>
                             <h4>20% de Economia Garantida</h4>
                             <p>Elimina desperdício de produtos vencidos, devoluções desnecessárias e estoque parado. O sistema se paga em 2-3 meses.</p>
                         </div>
                     </div>
                     <div class="feature-item">
-                        <div class="icon">📊</div>
+                        <div class="icon">03</div>
                         <div>
                             <h4>Visibilidade Total em Tempo Real</h4>
                             <p>Sabe exatamente onde cada produto está, quanto custa manter, quando vai vencer. Controle total do dinheiro parado.</p>
                         </div>
                     </div>
                     <div class="feature-item">
-                        <div class="icon">⚡</div>
+                        <div class="icon">04</div>
                         <div>
                             <h4>Implementação em 7 dias</h4>
                             <p>Setup rápido, integração com seu sistema atual, treinamento 24/7. Você não fica sem estoque.</p>
@@ -687,7 +688,6 @@
                 <p class="subtitle">Agências e consultorias de marketing perdem 30% das vendas por falta de organização. Prospects esquecidos em planilhas. Follow-ups perdidos. Oravel CRM centraliza tudo.</p>
 
                 <div class="crm-testimonial">
-                    <div class="face">👩‍💼</div>
                     <p>"Implantamos Oravel CRM em 1 semana. Em 30 dias, nosso closing rate subiu de 18% para 24%."</p>
                     <div class="name">Marina Soto, Diretora de Vendas</div>
                 </div>
@@ -754,28 +754,28 @@
             <div class="content-right">
                 <div class="features-list">
                     <div class="feature-item">
-                        <div class="icon">✓</div>
+                        <div class="icon">01</div>
                         <div>
                             <h4>Funil Cristalino — Saiba Quem Vai Fechar Hoje</h4>
                             <p>Cada prospect em sua etapa correta. Você sabe instantaneamente quem está pronto, quem precisa de push.</p>
                         </div>
                     </div>
                     <div class="feature-item">
-                        <div class="icon">📈</div>
+                        <div class="icon">02</div>
                         <div>
                             <h4>+30% em Conversão Garantida</h4>
                             <p>Melhor rastreamento + automação de follow-ups + lembretes inteligentes = mais vendas fechadas.</p>
                         </div>
                     </div>
                     <div class="feature-item">
-                        <div class="icon">⏱️</div>
+                        <div class="icon">03</div>
                         <div>
                             <h4>Menos Tempo em Burocracia, Mais em Venda</h4>
                             <p>O CRM cuida de registros, automações, relatórios. Seu time foca 100% em vender.</p>
                         </div>
                     </div>
                     <div class="feature-item">
-                        <div class="icon">🎯</div>
+                        <div class="icon">04</div>
                         <div>
                             <h4>Integrações que Funcionam</h4>
                             <p>WhatsApp, Email, Google, seu sistema atual. Tudo conectado. Sem perda de informação.</p>
@@ -840,7 +840,7 @@
         .then(res => res.json())
         .then(result => {
             if (result.success) {
-                alert('✓ Sucesso! Receberá contato em menos de 1 hora pelo WhatsApp ou email.');
+                alert('Sucesso! Receberá contato em menos de 1 hora pelo WhatsApp ou email.');
                 event.target.reset();
             } else {
                 const errorMsg = result.message || JSON.stringify(result.errors || result);
