@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oravel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark: #0b0f0d;
+            --navy: #1a2a4a;
+            --navy-light: #2a3d5a;
+            --orange: #ff6a1a;
+            --orange-dark: #e55a0a;
+            --white: #ffffff;
+            --beige: #c9ae5a;
+            --light-gray: #f5f5f5;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        input, textarea, select {
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+        }
+
+        .hidden { display: none !important; }
+
+        .logo {
+            font-size: 1.3em;
+            font-weight: 800;
+            margin-bottom: 50px;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo .brand { color: var(--white); }
+        .logo .product { color: var(--orange); }
+
+        /* ===== WMS PAGE ===== */
+        .wms-hero {
+            background: linear-gradient(135deg, #1a2a3a 0%, #0f1920 50%, #0a0f15 100%);
+            padding: 100px 20px;
+            position: relative;
+            overflow: hidden;
+            color: var(--white);
+        }
+
+        .wms-hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255, 106, 26, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .wms-hero .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 60px;
+            align-items: flex-start;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-section-wrapper {
+            display: flex;
+            justify-content: center;
+        }
+
+        .wms-content h1 {
+            font-size: 2.6em;
+            font-weight: 800;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .wms-content h1 .orange { color: var(--orange); }
+
+        .wms-content .subtitle {
+            font-size: 1.05em;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 50px;
+            line-height: 1.7;
+            font-weight: 500;
+        }
+
+        .stats-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .stat {
+            background: rgba(255, 106, 26, 0.1);
+            padding: 30px;
+            border-radius: 12px;
+            border-left: 4px solid var(--orange);
+        }
+
+        .stat .number {
+            font-size: 2.2em;
+            font-weight: 800;
+            color: var(--orange);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .stat .label {
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .mockup-container {
+            position: relative;
+            background: linear-gradient(135deg, #0a0f15 0%, #1a2a3a 100%);
+            border-radius: 20px;
+            padding: 20px;
+            border: 2px solid rgba(255, 106, 26, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+
+        .mockup-container.wms-mockup {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+        }
+
+        .mockup-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            color: rgba(255, 255, 255, 0.5);
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .mockup-icon {
+            font-size: 3em;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .play-button {
+            width: 80px;
+            height: 80px;
+            background: var(--orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            box-shadow: 0 20px 40px rgba(255, 106, 26, 0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 2;
+        }
+
+        .play-button:hover {
+            background: var(--orange-dark);
+            transform: scale(1.1);
+        }
+
+        .video-embed {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ===== CRM PAGE ===== */
+        .crm-hero {
+            background: linear-gradient(135deg, #d4c4a3 0%, #e5d5b4 50%, #c9ae5a 100%);
+            padding: 100px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .crm-hero .logo .brand { color: var(--navy); }
+
+        .crm-hero .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 60px;
+            align-items: flex-start;
+        }
+
+        .crm-content h1 {
+            font-size: 2.4em;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--navy);
+            line-height: 1.2;
+        }
+
+        .crm-content h1 .orange { color: var(--orange); }
+
+        .crm-content .subtitle {
+            font-size: 0.95em;
+            color: rgba(26, 42, 74, 0.85);
+            margin-bottom: 30px;
+            line-height: 1.7;
+            font-weight: 500;
+        }
+
+        .crm-testimonial {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 40px;
+            border-radius: 16px;
+            margin-top: 30px;
+            border: 2px solid rgba(26, 42, 74, 0.1);
+        }
+
+        .crm-testimonial .face {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff9a76, #ffb399);
+            border-radius: 50%;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+        }
+
+        .crm-testimonial p {
+            color: var(--navy);
+            font-size: 0.95em;
+            font-style: italic;
+            margin-bottom: 12px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .crm-testimonial .name {
+            color: var(--navy);
+            font-weight: 700;
+            font-size: 0.9em;
+        }
+
+        /* ===== FORM CARDS ===== */
+        .form-card {
+            background: var(--navy);
+            padding: 50px;
+            border-radius: 20px;
+            color: var(--white);
+            height: fit-content;
+        }
+
+        .form-card h2 {
+            font-size: 1.5em;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .form-card .form-subtitle {
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.75);
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 0.85em;
+            margin-bottom: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        input, select {
+            padding: 12px 14px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-family: 'Inter', sans-serif;
+            color: var(--white);
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        select {
+            color: #000;
+            background: rgba(255, 255, 255, 0.92);
+        }
+
+        select option {
+            background: var(--white);
+            color: #000;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--orange);
+            box-shadow: 0 0 0 4px rgba(255, 106, 26, 0.15);
+        }
+
+        form button {
+            background: var(--orange);
+            color: var(--white);
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Inter', sans-serif;
+            margin-top: 6px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 8px 24px rgba(255, 106, 26, 0.3);
+        }
+
+        form button:hover {
+            background: var(--orange-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(255, 106, 26, 0.4);
+        }
+
+        .form-note {
+            font-size: 0.75em;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 10px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .form-warning {
+            background: rgba(255, 106, 26, 0.12);
+            border-left: 3px solid var(--orange);
+            padding: 12px 14px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.85);
+            margin-top: 14px;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        /* ===== CONTENT SECTIONS ===== */
+        .content-section {
+            padding: 100px 20px;
+            background: linear-gradient(135deg, #f0ebe0 0%, #faf7f1 50%, #f5ede5 100%);
+        }
+
+        .content-section.dark-bg {
+            background: linear-gradient(135deg, #1a2a3a 0%, #0f1920 50%, #0a0f15 100%);
+            color: var(--white);
+        }
+
+        .content-section.dark-bg h2 { color: var(--white); }
+        .content-section.dark-bg p { color: rgba(255, 255, 255, 0.85); }
+
+        .content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .content-left h2 {
+            font-size: 2em;
+            font-weight: 800;
+            margin-bottom: 24px;
+            color: var(--dark);
+            line-height: 1.2;
+        }
+
+        .content-section.dark-bg .content-left h2 {
+            color: var(--white);
+        }
+
+        .content-left h2 .orange { color: var(--orange); }
+
+        .content-left p {
+            font-size: 0.95em;
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.8;
+            font-weight: 500;
+        }
+
+        .content-section.dark-bg .content-left p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .problem-box {
+            background: linear-gradient(135deg, #fff5f0 0%, #ffeae0 100%);
+            padding: 30px;
+            border-radius: 12px;
+            border-left: 5px solid var(--orange);
+            margin: 30px 0;
+        }
+
+        .content-section.dark-bg .problem-box {
+            background: rgba(255, 106, 26, 0.1);
+            border-color: var(--orange);
+        }
+
+        .problem-box p {
+            color: #555;
+            margin-bottom: 12px;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .content-section.dark-bg .problem-box p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .problem-number {
+            font-size: 1.1em;
+            color: var(--orange);
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .features-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            gap: 16px;
+        }
+
+        .feature-item .icon {
+            font-size: 1.6em;
+            flex-shrink: 0;
+            width: 28px;
+            text-align: center;
+            color: var(--orange);
+        }
+
+        .feature-item h4 {
+            font-size: 0.95em;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 6px;
+        }
+
+        .content-section.dark-bg .feature-item h4 {
+            color: var(--white);
+        }
+
+        .feature-item p {
+            font-size: 0.85em;
+            color: #666;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .content-section.dark-bg .feature-item p {
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        footer {
+            background: #1a1a18;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            padding: 40px 20px;
+            font-size: 0.85em;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        footer p {
+            margin: 6px 0;
+            font-weight: 500;
+        }
+
+        footer a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .wms-hero .container,
+            .crm-hero .container,
+            .content-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .wms-content h1 { font-size: 1.8em; }
+            .crm-content h1 { font-size: 1.8em; }
+            .stats-box { grid-template-columns: 1fr; }
+            .form-card { padding: 35px; }
+            .wms-hero, .crm-hero { padding: 60px 20px; }
+            .content-section { padding: 60px 20px; }
+            .content-left h2 { font-size: 1.6em; }
+            .mockup-container { min-height: 250px; }
+        }
+
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body>
+
+<!-- WMS PAGE -->
+<div id="wms-page" class="hidden">
+    <div class="wms-hero">
+        <div class="container">
+            <div class="wms-content">
+                <h1>Recupere <span class="orange">20% de Margem Perdida</span> Todo Mês</h1>
+                <p class="subtitle">A maioria dos depósitos perde dinheiro todo dia com estoque desorganizado. Identificamos e eliminamos esse vazamento silencioso em 30 dias.</p>
+
+                <div class="stats-box">
+                    <div class="stat">
+                        <span class="number">−18%</span>
+                        <span class="label">Margem média perdida mensalmente</span>
+                    </div>
+                    <div class="stat">
+                        <span class="number">2.500+</span>
+                        <span class="label">Empresas economizando com Oravel</span>
+                    </div>
+                </div>
+
+                <div class="mockup-container wms-mockup" style="margin-top: 30px; height: 250px;">
+                    <iframe src="https://drive.google.com/file/d/1bW-lA0WhHVF5k0w6nC0VQvDvNEkHH7ER/preview" style="width: 100%; height: 100%; border: none; border-radius: 16px;"></iframe>
+                </div>
+            </div>
+
+            <div class="form-section-wrapper">
+                <div class="form-card" style="width: 100%; max-width: 400px;">
+                <h2>Solicite Sua Demonstração</h2>
+                <p class="form-subtitle">Preencha seus dados para acesso imediato</p>
+                <form id="form" onsubmit="handleSubmit(event)">
+                    <div class="form-group">
+                        <label>Nome Completo*</label>
+                        <input type="text" name="name" placeholder="Seu nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Profissional*</label>
+                        <input type="email" name="email" placeholder="seu@empresa.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone/WhatsApp*</label>
+                        <input type="tel" name="phone" placeholder="(11) 99999-9999" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Empresa*</label>
+                        <input type="text" name="company" placeholder="Nome da empresa" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Seu Segmento*</label>
+                        <select name="segment" required>
+                            <option value="">Selecione...</option>
+                            <option>Distribuição</option>
+                            <option>Eletrônicos</option>
+                            <option>Peças e Autopeças</option>
+                            <option>Alimentos e Bebidas</option>
+                            <option>E-commerce</option>
+                            <option>Varejo</option>
+                            <option>Outro</option>
+                        </select>
+                    </div>
+                    <button type="submit">Solicitar Demonstração</button>
+                    <p class="form-note">Acesso em 1 hora | Suporte 24/7</p>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <div class="content-container">
+            <div class="content-left">
+                <h2>O Vazamento Silencioso que Ninguém Vê</h2>
+                <p>Produtos mal contabilizados, estoque divergente, itens vencendo no fundo do depósito, erros de conferência que cascateiam em devoluções. Essa é a realidade de 80% dos armazéns no Brasil.</p>
+
+                <div class="problem-box">
+                    <p><strong>Cenário real:</strong> Você recebe 100 caixas. Conferente anota errado. Coloca em lugar errado. Semanas depois, descobrem produtos vencendo perdidos entre prateleiras.</p>
+                    <div class="problem-number">Resultado: −15% a −20% de margem desaparece todo mês</div>
+                </div>
+
+                <p><strong>Oravel WMS resolve isto em 4 pontos:</strong></p>
+            </div>
+            <div class="content-right">
+                <div class="features-list">
+                    <div class="feature-item">
+                        <div class="icon">✓</div>
+                        <div>
+                            <h4>Conferência 100% Rastreada</h4>
+                            <p>Nota entra → Conferente valida → Sistema registra. Zero divergências, zero produtos fantasmas.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon">💰</div>
+                        <div>
+                            <h4>20% de Economia Garantida</h4>
+                            <p>Elimina desperdício de produtos vencidos, devoluções desnecessárias e estoque parado. O sistema se paga em 2-3 meses.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon">📊</div>
+                        <div>
+                            <h4>Visibilidade Total em Tempo Real</h4>
+                            <p>Sabe exatamente onde cada produto está, quanto custa manter, quando vai vencer. Controle total do dinheiro parado.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon">⚡</div>
+                        <div>
+                            <h4>Implementação em 7 dias</h4>
+                            <p>Setup rápido, integração com seu sistema atual, treinamento 24/7. Você não fica sem estoque.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CRM PAGE -->
+<div id="crm-page" class="hidden">
+    <div class="crm-hero">
+        <div class="container">
+            <div class="crm-content">
+                <h1>Multiplique Suas Vendas por <span class="orange">1,3x em 30 Dias</span></h1>
+                <p class="subtitle">Agências e consultorias de marketing perdem 30% das vendas por falta de organização. Prospects esquecidos em planilhas. Follow-ups perdidos. Oravel CRM centraliza tudo.</p>
+
+                <div class="crm-testimonial">
+                    <div class="face">👩‍💼</div>
+                    <p>"Implantamos Oravel CRM em 1 semana. Em 30 dias, nosso closing rate subiu de 18% para 24%."</p>
+                    <div class="name">Marina Soto, Diretora de Vendas</div>
+                </div>
+
+                <div class="mockup-container" style="margin-top: 30px; height: 250px;">
+                    <iframe src="https://drive.google.com/file/d/1OatTl9FXJ8uNZng7doIyfHV6TOhmWI_M/preview" style="width: 100%; height: 100%; border: none; border-radius: 16px;"></iframe>
+                </div>
+            </div>
+
+            <div class="form-section-wrapper">
+                <div class="form-card" style="width: 100%; max-width: 400px;">
+                <h2>Conte Um Pouco Sobre Você</h2>
+                <p class="form-subtitle">Receba uma proposta personalizada</p>
+                <form id="form" onsubmit="handleSubmit(event)">
+                    <div class="form-group">
+                        <label>Seu Nome*</label>
+                        <input type="text" name="name" placeholder="Nome completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Seu Email*</label>
+                        <input type="email" name="email" placeholder="seu@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Seu Telefone*</label>
+                        <input type="tel" name="phone" placeholder="(11) 99999-9999" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Empresa*</label>
+                        <input type="text" name="company" placeholder="Nome da empresa" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Você é?*</label>
+                        <select name="segment" required>
+                            <option value="">Selecione...</option>
+                            <option>Agência de Marketing</option>
+                            <option>Agência de Publicidade</option>
+                            <option>Consultoria de Vendas</option>
+                            <option>Consultoria Empresarial</option>
+                            <option>Imobiliária</option>
+                            <option>Outro</option>
+                        </select>
+                    </div>
+                    <button type="submit">Agendar Sessão Estratégica</button>
+                    <p class="form-note">30 min | Sem compromisso | Customizado</p>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-section dark-bg">
+        <div class="content-container">
+            <div class="content-left">
+                <h2>A Oportunidade que <span class="orange">Ninguém Vê Passar</span></h2>
+                <p>Você tem 50 prospects em negociação. Alguns estão quentes, prontos pra fechar. Alguns estão frios. E alguns? Completamente esquecidos em uma planilha de 2022 do Excel.</p>
+
+                <div class="problem-box">
+                    <p><strong>O problema:</strong> Sem um CRM centralizado, você perde prospects. Não há follow-up automático. Oportunidades esfriam enquanto seu time tenta se lembrar de quem é quem.</p>
+                    <div class="problem-number">Até 30% de vendas perdidas por desorganização</div>
+                </div>
+
+                <p><strong>Oravel CRM oferece precisamente isto:</strong></p>
+            </div>
+            <div class="content-right">
+                <div class="features-list">
+                    <div class="feature-item">
+                        <div class="icon">✓</div>
+                        <div>
+                            <h4>Funil Cristalino — Saiba Quem Vai Fechar Hoje</h4>
+                            <p>Cada prospect em sua etapa correta. Você sabe instantaneamente quem está pronto, quem precisa de push.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon">📈</div>
+                        <div>
+                            <h4>+30% em Conversão Garantida</h4>
+                            <p>Melhor rastreamento + automação de follow-ups + lembretes inteligentes = mais vendas fechadas.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon">⏱️</div>
+                        <div>
+                            <h4>Menos Tempo em Burocracia, Mais em Venda</h4>
+                            <p>O CRM cuida de registros, automações, relatórios. Seu time foca 100% em vender.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon">🎯</div>
+                        <div>
+                            <h4>Integrações que Funcionam</h4>
+                            <p>WhatsApp, Email, Google, seu sistema atual. Tudo conectado. Sem perda de informação.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p><strong>Oravel</strong> — Plataforma de Gestão Empresarial para Locadoras, Distribuidoras e Agências</p>
+    <p>contato@oravel.com.br | (19) 99933-2615 | www.oravel.com.br</p>
+</footer>
+
+<script>
+    function getPageType() {
+        const params = new URLSearchParams(window.location.search);
+        return (params.get('type') || 'wms').toLowerCase();
+    }
+
+    function showPage() {
+        const type = getPageType();
+        document.getElementById('wms-page').classList.add('hidden');
+        document.getElementById('crm-page').classList.add('hidden');
+
+        if (type === 'crm') {
+            document.getElementById('crm-page').classList.remove('hidden');
+            document.title = 'Oravel CRM';
+        } else {
+            document.getElementById('wms-page').classList.remove('hidden');
+            document.title = 'Oravel WMS';
+        }
+    }
+
+    function handleSubmit(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = {
+            name: formData.get('name'),
+            email: formData.get('email'),
+            phone: formData.get('phone'),
+            company: formData.get('company'),
+            segment: formData.get('segment'),
+            product: getPageType(),
+        };
+
+        const btn = event.target.querySelector('button');
+        const btnText = btn.textContent;
+        btn.textContent = 'Enviando...';
+        btn.disabled = true;
+
+        fetch('https://app.oravel.com.br/api/landing-page/leads', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(result => {
+            if (result.success) {
+                alert('✓ Sucesso! Receberá contato em menos de 1 hora pelo WhatsApp ou email.');
+                event.target.reset();
+            } else {
+                const errorMsg = result.message || JSON.stringify(result.errors || result);
+                alert('Erro: ' + errorMsg);
+            }
+        })
+        .catch(err => {
+            alert('Erro ao registrar: ' + err.message);
+        })
+        .finally(() => {
+            btn.textContent = btnText;
+            btn.disabled = false;
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', showPage);
+</script>
+</body>
+</html>
