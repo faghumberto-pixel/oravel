@@ -14,11 +14,17 @@ class LandingPageLeadsController extends Controller
 
     public function index(Request $request)
     {
+        \Log::info('LandingPageLeads::index accessed');
+
         $html = '<html><head><title>Leads</title><style>body{font-family:Arial;margin:20px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#f5f5f5}</style></head><body>';
         $html .= '<h1>Leads das Landing Pages</h1>';
+        $html .= '<p>Usuário: ' . (auth()->user()->email ?? 'N/A') . '</p>';
 
         try {
+            \Log::info('LandingPageLeads: Iniciando query');
             $leads = LandingPageLead::orderBy('created_at', 'desc')->limit(100)->get();
+            \Log::info('LandingPageLeads: Query executada, ' . $leads->count() . ' registros');
+
             $html .= '<p>Total: ' . $leads->count() . ' leads</p>';
 
             if ($leads->count() > 0) {
@@ -30,9 +36,15 @@ class LandingPageLeadsController extends Controller
             } else {
                 $html .= '<p>Nenhum lead encontrado</p>';
             }
-        } catch (\Exception $e) {
-            $html .= '<p style="color:red">Erro ao carregar leads: ' . htmlspecialchars($e->getMessage()) . '</p>';
-            \Log::error('LandingPageLeads: ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            \Log::error('LandingPageLeads ERROR', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => substr($e->getTraceAsString(), 0, 500),
+            ]);
+            $html .= '<p style="color:red"><strong>Erro:</strong> ' . htmlspecialchars($e->getMessage()) . '</p>';
+            $html .= '<p style="color:gray;font-size:12px">' . htmlspecialchars($e->getFile()) . ':' . $e->getLine() . '</p>';
         }
 
         $html .= '</body></html>';
