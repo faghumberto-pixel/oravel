@@ -120,6 +120,8 @@ Route::post('/hour-meter/publico/{token}', [HourMeterPublicController::class, 's
     ->name('hour-meter.public.store');
 
 // Landing Page Leads - Simple endpoint (workaround for Filament routing issue in PROD)
+Route::get('/central/landing-page-leads/diagnose', [App\Http\Controllers\LandingPageLeadsController::class, 'diagnose']);
+
 Route::middleware(['auth', 'web'])->group(function () {
     Route::get('/central/landing-page-leads', [App\Http\Controllers\LandingPageLeadsController::class, 'index'])
         ->name('landing-page-leads.index');

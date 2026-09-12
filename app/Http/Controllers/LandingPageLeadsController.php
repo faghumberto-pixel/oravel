@@ -12,6 +12,17 @@ class LandingPageLeadsController extends Controller
         $this->middleware('auth');
     }
 
+    public function diagnose()
+    {
+        return response()->json([
+            'status' => 'ok',
+            'controller' => 'LandingPageLeadsController',
+            'user' => auth()->user() ? auth()->user()->email : null,
+            'model_exists' => class_exists(LandingPageLead::class),
+            'table_exists' => \Schema::hasTable('landing_page_leads'),
+        ]);
+    }
+
     public function index(Request $request)
     {
         \Log::info('LandingPageLeads::index accessed');
