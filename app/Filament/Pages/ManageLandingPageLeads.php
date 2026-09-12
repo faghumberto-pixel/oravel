@@ -23,6 +23,8 @@ class ManageLandingPageLeads extends Page implements HasTable
     protected static ?string $navigationLabel = 'Leads da Landing Page';
     protected static ?int $navigationSort = 50;
     protected static ?string $navigationGroup = 'Comercial';
+    protected static ?string $slug = 'manage-landing-page-leads';
+    protected static ?string $title = 'Leads da Landing Page';
 
     protected static string $view = 'filament.pages.manage-landing-page-leads';
 
