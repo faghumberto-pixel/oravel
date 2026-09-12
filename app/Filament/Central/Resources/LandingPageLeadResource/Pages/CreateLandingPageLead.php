@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\LandingPageLeadResource\Pages;
+namespace App\Filament\Central\Resources\LandingPageLeadResource\Pages;
 
-use App\Filament\Resources\LandingPageLeadResource;
+use App\Filament\Central\Resources\LandingPageLeadResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
