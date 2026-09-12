@@ -28,7 +28,8 @@ class ManageLandingPageLeads extends Page implements HasTable
 
     public static function canAccess(): bool
     {
-        return auth()->check();
+        $user = auth()->user();
+        return $user && ($user->isSuperAdmin() || $user->isAdmin());
     }
 
     public function table(Table $table): Table
