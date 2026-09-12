@@ -119,15 +119,8 @@ Route::get('/hour-meter/publico/{token}', [HourMeterPublicController::class, 'sh
 Route::post('/hour-meter/publico/{token}', [HourMeterPublicController::class, 'store'])
     ->name('hour-meter.public.store');
 
-// Landing Page Leads - Simple endpoint (workaround for Filament routing issue in PROD)
-Route::get('/central/landing-page-leads/diagnose', [App\Http\Controllers\LandingPageLeadsController::class, 'diagnose']);
-
-Route::middleware(['auth', 'web'])->group(function () {
-    Route::get('/central/landing-page-leads', [App\Http\Controllers\LandingPageLeadsController::class, 'index'])
-        ->name('landing-page-leads.index');
-    Route::post('/central/landing-page-leads/{lead}/status', [App\Http\Controllers\LandingPageLeadsController::class, 'updateStatus'])
-        ->name('landing-page-leads.update-status');
-});
+// Landing Page Leads - Filament Resource handles routing
+// (removed manual routes - Filament auto-discovers the Resource)
 
 // Guard 'client' (Portal do Cliente), não 'web' -- fora do grupo auth
 // abaixo. ContractPdfController já filtra tenant_id+client_id na query,
