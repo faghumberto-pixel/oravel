@@ -98,6 +98,11 @@ php artisan config:cache
 echo "⚙️ Atualizando Filament (recursos e rotas)..."
 php artisan filament:upgrade
 
+echo "🔄 Limpando cache de rotas..."
+rm -f bootstrap/cache/filament-routes-manifest.php 2>/dev/null || true
+php artisan cache:forget filament.resources 2>/dev/null || true
+php artisan cache:forget filament.pages 2>/dev/null || true
+
 echo "🔍 Verificando integridade de Vite assets..."
 php artisan vite:check --strict || {
     echo "⚠️  AVISO: Possível problema com Vite assets detectado"
