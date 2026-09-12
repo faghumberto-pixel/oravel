@@ -1,7 +1,5 @@
 <?php
 
-<?php
-
 use App\Filament\Pages\AlocacaoTecnicosPmp;
 use App\Filament\Pages\ConsultaClientePmp;
 use App\Http\Controllers\AIAnalysisPdfController;
