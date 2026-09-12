@@ -28,11 +28,6 @@ class ManageLandingPageLeads extends Page implements HasTable
 
     protected static string $view = 'filament.pages.manage-landing-page-leads';
 
-    public static function canAccess(): bool
-    {
-        $user = auth()->user();
-        return $user && ($user->isSuperAdmin() || $user->isAdmin());
-    }
 
     public function table(Table $table): Table
     {
