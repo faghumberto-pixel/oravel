@@ -95,6 +95,9 @@ echo "🧹 Limpando cache..."
 php artisan optimize:clear
 php artisan config:cache
 
+echo "⚙️ Atualizando Filament (recursos e rotas)..."
+php artisan filament:upgrade
+
 echo "🔍 Verificando integridade de Vite assets..."
 php artisan vite:check --strict || {
     echo "⚠️  AVISO: Possível problema com Vite assets detectado"
