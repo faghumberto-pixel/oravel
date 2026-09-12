@@ -8,10 +8,6 @@ use Illuminate\Support\Facades\Schema;
 
 class LandingPageLeadsController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth')->except('diagnose');
-    }
 
     public function diagnose()
     {
