@@ -27,35 +27,7 @@ class LandingPageLeadResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(191),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(191),
-                Forms\Components\TextInput::make('phone')
-                    ->tel()
-                    ->required()
-                    ->maxLength(191),
-                Forms\Components\TextInput::make('company')
-                    ->required()
-                    ->maxLength(191),
-                Forms\Components\TextInput::make('segment')
-                    ->required()
-                    ->maxLength(191),
-                Forms\Components\TextInput::make('product')
-                    ->required()
-                    ->maxLength(191)
-                    ->default('wms'),
-                Forms\Components\TextInput::make('status')
-                    ->required()
-                    ->maxLength(191)
-                    ->default('novo'),
-                Forms\Components\Textarea::make('notes')
-                    ->columnSpanFull(),
-                Forms\Components\DateTimePicker::make('contacted_at'),
-                Forms\Components\DateTimePicker::make('converted_at'),
+                //
             ]);
     }
 
@@ -63,88 +35,25 @@ class LandingPageLeadResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable()
-                    ->sortable()
-                    ->weight('bold'),
-                Tables\Columns\TextColumn::make('email')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('phone')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('company')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('segment')
-                    ->label('Landing Page')
-                    ->searchable()
-                    ->sortable()
-                    ->badge()
-                    ->color('info'),
-                Tables\Columns\TextColumn::make('product')
-                    ->searchable()
-                    ->sortable()
-                    ->badge()
-                    ->color(fn (string $state): string => match($state) {
-                        'CRM' => 'blue',
-                        'WMS' => 'purple',
-                        'FROTA' => 'orange',
-                        'OS' => 'green',
-                        default => 'gray',
-                    }),
-                Tables\Columns\TextColumn::make('status')
-                    ->searchable()
-                    ->sortable()
-                    ->badge()
-                    ->color(fn (string $state): string => match($state) {
-                        'novo' => 'primary',
-                        'contatado' => 'warning',
-                        'convertido' => 'success',
-                        'rejeitado' => 'danger',
-                        default => 'gray',
-                    }),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Data de Cadastro')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('contacted_at')
-                    ->label('Data de Contato')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('converted_at')
-                    ->label('Data de Conversão')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                Tables\Columns\TextColumn::make('name')->searchable()->sortable()->weight('bold'),
+                Tables\Columns\TextColumn::make('email')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('phone')->searchable(),
+                Tables\Columns\TextColumn::make('segment')->label('Landing Page')->badge()->color('info'),
+                Tables\Columns\TextColumn::make('product')->badge()->color(fn(string $state) => match($state) {
+                    'CRM' => 'blue', 'WMS' => 'purple', 'FROTA' => 'orange', 'OS' => 'green', default => 'gray'
+                }),
+                Tables\Columns\TextColumn::make('status')->badge()->color(fn(string $state) => match($state) {
+                    'novo' => 'primary', 'contatado' => 'warning', 'convertido' => 'success', 'rejeitado' => 'danger', default => 'gray'
+                }),
+                Tables\Columns\TextColumn::make('created_at')->label('Data')->dateTime('d/m/Y H:i')->sortable(),
             ])
             ->filters([
-                SelectFilter::make('product')
-                    ->options([
-                        'CRM' => 'CRM',
-                        'WMS' => 'WMS',
-                        'FROTA' => 'Frota',
-                        'OS' => 'Ordem de Serviço',
-                    ]),
-                SelectFilter::make('status')
-                    ->options([
-                        'novo' => 'Novo',
-                        'contatado' => 'Contatado',
-                        'convertido' => 'Convertido',
-                        'rejeitado' => 'Rejeitado',
-                    ]),
-                SelectFilter::make('segment')
-                    ->label('Landing Page')
-                    ->options([
-                        'CRM' => 'CRM',
-                        'WMS' => 'WMS',
-                        'FROTA' => 'Frota',
-                        'OS' => 'Ordem de Serviço',
-                    ]),
+                SelectFilter::make('product')->options(['CRM' => 'CRM', 'WMS' => 'WMS', 'FROTA' => 'Frota', 'OS' => 'Ordem de Serviço']),
+                SelectFilter::make('status')->options(['novo' => 'Novo', 'contatado' => 'Contatado', 'convertido' => 'Convertido', 'rejeitado' => 'Rejeitado']),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -153,19 +62,10 @@ class LandingPageLeadResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListLandingPageLeads::route('/'),
-            'create' => Pages\CreateLandingPageLead::route('/create'),
-            'edit' => Pages\EditLandingPageLead::route('/{record}/edit'),
+            'index' => Pages\ManageLandingPageLeads::route('/'),
         ];
     }
 }
