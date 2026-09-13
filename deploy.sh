@@ -100,6 +100,7 @@ php artisan filament:upgrade
 
 echo "🔄 Limpeza AGRESSIVA de cache..."
 rm -rf bootstrap/cache/* 2>/dev/null || true
+php artisan route:clear 2>/dev/null || true
 php artisan cache:clear 2>/dev/null || true
 php artisan config:cache 2>/dev/null || true
 
