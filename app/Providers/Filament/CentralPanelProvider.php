@@ -8,6 +8,7 @@ use App\Filament\Central\Pages\DashboardVisitantes;
 use App\Filament\Central\Pages\FunilVendas;
 use App\Filament\Central\Pages\Kanban;
 use App\Filament\Central\Pages\Programacao;
+use App\Filament\Central\Resources\LandingPageLeadResource;
 use App\Filament\Central\Resources\PlanResource;
 use App\Filament\Central\Resources\SalesLeadResource\Widgets\InteractionChannelChart;
 use App\Filament\Central\Resources\SalesLeadResource\Widgets\InteractionChannelStats;
@@ -125,6 +126,7 @@ class CentralPanelProvider extends PanelProvider
             ->brandLogoHeight('1.25rem')
             ->favicon(asset('favicon.png').'?v=6')
             ->resources([
+                LandingPageLeadResource::class,
                 PlanResource::class,
                 RoleResource::class,
             ])
