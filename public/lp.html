@@ -564,7 +564,15 @@
 <script>
     function getPageType() {
         const params = new URLSearchParams(window.location.search);
-        return (params.get('type') || 'wms').toLowerCase();
+        const type = (params.get('type') || 'wms').toLowerCase();
+
+        // Map OS e Frota para wms/crm por enquanto
+        const typeMap = {
+            'os': 'crm',  // OS uses CRM form
+            'frota': 'wms' // Frota uses WMS form
+        };
+
+        return typeMap[type] || type;
     }
 
     function showPage() {
@@ -574,10 +582,10 @@
 
         if (type === 'crm') {
             document.getElementById('crm-page').classList.remove('hidden');
-            document.title = 'Oravel CRM';
+            document.title = 'Oravel CRM / OS';
         } else {
             document.getElementById('wms-page').classList.remove('hidden');
-            document.title = 'Oravel WMS';
+            document.title = 'Oravel WMS / Frota';
         }
     }
 
