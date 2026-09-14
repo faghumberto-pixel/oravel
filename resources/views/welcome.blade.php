@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oravel - ERP para Locadoras</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@400;500;600;700&display=swap">
+    <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --color-bg: #0a0e27; --color-accent: #0066ff; --color-accent-light: #3399ff; --color-text-primary: #ffffff; --color-text-secondary: #b0b3c1; --color-success: #00d084; }
+html { scroll-behavior: smooth; }
+body { background: linear-gradient(135deg, var(--color-bg) 0%, #1a1f3a 100%); color: var(--color-text-primary); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+body::before { content: ''; position: fixed; top: -50%; right: -10%; width: 800px; height: 800px; background: radial-gradient(circle, rgba(0, 102, 255, 0.08) 0%, transparent 70%); border-radius: 50%; animation: float 25s ease-in-out infinite; pointer-events: none; z-index: 1; }
+@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(40px); } }
+.container { max-width: 1400px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
+nav { display: flex; justify-content: space-between; align-items: center; padding: 28px 0; border-bottom: 1px solid rgba(0, 102, 255, 0.15); position: sticky; top: 0; z-index: 50; }
+.logo { font-size: 32px; font-weight: 800; font-family: 'Syne', sans-serif; background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-accent-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.nav-links { display: flex; gap: 48px; list-style: none; }
+.nav-links a { font-size: 14px; color: var(--color-text-secondary); text-decoration: none; font-weight: 500; }
+.nav-links a:hover { color: var(--color-accent-light); }
+.cta-nav { background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%); color: #000; padding: 12px 32px; border-radius: 8px; border: none; font-weight: 600; font-size: 14px; cursor: pointer; box-shadow: 0 0 20px rgba(0, 102, 255, 0.3); }
+.cta-nav:hover { transform: translateY(-2px); }
+.hero { padding: 100px 0 120px; text-align: center; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: clamp(52px, 12vw, 88px); font-weight: 800; line-height: 1.1; margin-bottom: 28px; background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-accent-light) 50%, var(--color-text-primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hero-subtitle { font-size: 20px; color: var(--color-text-secondary); max-width: 800px; margin: 0 auto 48px; line-height: 1.7; }
+.hero-buttons { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+.btn-primary { background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%); color: #000; padding: 18px 56px; border-radius: 8px; border: none; font-weight: 600; font-size: 16px; cursor: pointer; }
+.btn-primary:hover { transform: translateY(-3px); }
+.btn-secondary { background: transparent; color: var(--color-accent-light); padding: 18px 56px; border-radius: 8px; border: 2px solid var(--color-accent); font-weight: 600; font-size: 16px; cursor: pointer; }
+.btn-secondary:hover { background: rgba(0, 102, 255, 0.1); transform: translateY(-3px); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 32px; margin-top: 100px; padding-top: 80px; border-top: 1px solid rgba(0, 102, 255, 0.15); }
+.stat-number { font-size: 48px; font-weight: 800; background: linear-gradient(135deg, var(--color-success) 0%, var(--color-accent-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px; }
+.stat-label { font-size: 14px; color: var(--color-text-secondary); font-weight: 500; }
+.features { margin-top: 160px; padding: 80px 0; }
+.section-title { font-family: 'Syne', sans-serif; font-size: clamp(40px, 8vw, 56px); font-weight: 800; margin-bottom: 72px; text-align: center; }
+.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; }
+.feature-box { padding: 48px; background: linear-gradient(135deg, rgba(0, 102, 255, 0.08) 0%, rgba(0, 102, 255, 0.02) 100%); border: 1px solid rgba(0, 102, 255, 0.25); border-radius: 16px; }
+.feature-box:hover { border-color: rgba(0, 102, 255, 0.6); box-shadow: 0 20px 40px rgba(0, 102, 255, 0.15); transform: translateY(-8px); }
+.feature-title { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 700; margin-bottom: 16px; }
+.feature-desc { font-size: 15px; color: var(--color-text-secondary); line-height: 1.8; }
+.cta-section { margin-top: 160px; padding: 80px; background: linear-gradient(135deg, rgba(0, 102, 255, 0.12) 0%, rgba(0, 102, 255, 0.04) 100%); border: 1px solid rgba(0, 102, 255, 0.25); border-radius: 20px; text-align: center; margin-bottom: 120px; }
+.cta-title { font-family: 'Syne', sans-serif; font-size: clamp(32px, 6vw, 48px); font-weight: 800; margin-bottom: 24px; }
+.cta-subtitle { font-size: 18px; color: var(--color-text-secondary); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; }
+footer { border-top: 1px solid rgba(0, 102, 255, 0.15); padding: 60px 0; text-align: center; color: var(--color-text-secondary); font-size: 13px; }
+.footer-links { display: flex; gap: 32px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap; }
+.footer-links a { color: var(--color-text-secondary); text-decoration: none; }
+.footer-links a:hover { color: var(--color-accent-light); }
+@media (max-width: 768px) { .hero { padding: 60px 0 80px; } .hero h1 { font-size: 42px; } .features-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <div class="logo">Oravel</div>
+            <ul class="nav-links">
+                <li><a href="#features">Recursos</a></li>
+                <li><a href="/landingpages/landingpages-hub-v2.html">Módulos</a></li>
+            </ul>
+            <button class="cta-nav" onclick="location.href='/admin'">Acessar App</button>
+        </nav>
+
+        <section class="hero">
+            <h1>ERP para Locadoras</h1>
+            <p class="hero-subtitle">Frota, estoque, vendas, dados. Uma plataforma que resolve tudo.</p>
+            <div class="hero-buttons">
+                <button class="btn-primary" onclick="location.href='/admin'">Começar</button>
+                <button class="btn-secondary" onclick="alert('Demo em breve')">Demonstração</button>
+            </div>
+
+            <div class="stats">
+                <div><div class="stat-number">500+</div><div class="stat-label">Empresas</div></div>
+                <div><div class="stat-number">50K+</div><div class="stat-label">Usuários</div></div>
+                <div><div class="stat-number">99.9%</div><div class="stat-label">Uptime</div></div>
+                <div><div class="stat-number">24/7</div><div class="stat-label">Suporte</div></div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <h2 class="section-title">Controle Total</h2>
+            <div class="features-grid">
+                <div class="feature-box"><div class="feature-title">Frota Rastreada</div><div class="feature-desc">GPS tempo real, manutenção preventiva, histórico. Reduza custos, evite quebras.</div></div>
+                <div class="feature-box"><div class="feature-title">Estoque Inteligente</div><div class="feature-desc">Peças rastreadas, consumo automático. Sem desperdício, sem surpresas.</div></div>
+                <div class="feature-box"><div class="feature-title">Vendas Estruturadas</div><div class="feature-desc">Pipeline visual, propostas rastreadas, faturamento automático.</div></div>
+                <div class="feature-box"><div class="feature-title">Decisões Tempo Real</div><div class="feature-desc">Dashboards automáticos, IA, previsões. Dados que fazem sentido.</div></div>
+                <div class="feature-box"><div class="feature-title">Segurança Garantida</div><div class="feature-desc">LGPD compliant, auditoria completa. Dados protegidos.</div></div>
+                <div class="feature-box"><div class="feature-title">Escalável</div><div class="feature-desc">De 1 a 1000 colaboradores. Cresce com você. Sem limites.</div></div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h2 class="cta-title">Transforme Sua Locadora Agora</h2>
+            <p class="cta-subtitle">90 dias de implantação. Treinamento incluído. Suporte 24/7.</p>
+            <button class="btn-primary" onclick="location.href='/admin'">Começar</button>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="/landingpages/landingpages-hub-v2.html">Landing Pages</a>
+            <a href="#contact">Contato</a>
+        </div>
+        <p>&copy; 2026 Oravel. Tecnologia que faz crescer.</p>
+    </footer>
+</body>
+</html>
