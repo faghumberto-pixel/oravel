@@ -56,7 +56,12 @@ use Illuminate\Support\Facades\Route;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 Route::redirect('/admin/innova/categories', '/admin/innova/bill-categories');
-Route::get('/', fn () => view('welcome'));
+
+// Site institucional
+Route::get('/', fn () => view('website.home'))->name('home');
+Route::get('/sobre', fn () => view('website.sobre'))->name('about');
+Route::get('/produtos/{slug}', fn ($slug) => view('website.placeholder', ['title' => 'Oravel ' . ucfirst(str_replace('-', ' ', $slug))]))->name('product');
+Route::get('/solucoes/{slug}', fn ($slug) => view('website.placeholder', ['title' => 'Oravel ' . ucfirst(str_replace('-', ' ', $slug))]))->name('solution');
 
 // Publica, sem auth de proposito -- e' a portaria/guarita escaneando o QR
 // no celular dela, nao necessariamente logada no sistema.
