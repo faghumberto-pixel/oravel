@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oravel ERP — Sistema Integrado de Gestão</title>
+  <meta name="description" content="ERP completo para locadoras: gestão de frota, manutenção, estoque, financeiro e RH integrados.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: #333;
+      line-height: 1.6;
+      background: #fff;
+    }
+
+    header { background: #fff; border-bottom: 1px solid #e5e5e5; }
+    header .container { max-width: 1200px; margin: 0 auto; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 24px; font-weight: 700; color: #333; text-decoration: none; }
+    .logo span { color: #f97316; }
+    nav a { margin-left: 40px; color: #666; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+    nav a:hover { color: #f97316; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+
+    .hero {
+      background: linear-gradient(135deg, #f97316 0%, #ff8c42 100%);
+      color: white;
+      padding: 100px 40px;
+      text-align: center;
+    }
+    .hero .container { padding: 0 40px; }
+    .hero h1 { font-size: 48px; margin-bottom: 20px; font-weight: 700; }
+    .hero p { font-size: 20px; max-width: 600px; margin: 0 auto 30px; opacity: 0.9; }
+    .cta-btn { display: inline-block; background: white; color: #f97316; padding: 14px 40px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: transform 0.2s; }
+    .cta-btn:hover { transform: scale(1.05); }
+    .cta-btn-secondary { background: rgba(255,255,255,0.2); color: white; margin-left: 15px; }
+
+    section { padding: 80px 40px; }
+    section h2 { font-size: 36px; text-align: center; margin-bottom: 60px; color: #333; font-weight: 700; }
+
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 60px; }
+    .feature-card { padding: 30px; border: 1px solid #e5e5e5; border-radius: 12px; transition: all 0.3s; }
+    .feature-card:hover { border-color: #f97316; box-shadow: 0 10px 30px rgba(249, 115, 22, 0.1); }
+    .feature-card h3 { font-size: 18px; margin-bottom: 15px; color: #333; font-weight: 600; }
+    .feature-card p { color: #666; font-size: 14px; }
+    .feature-icon { font-size: 32px; margin-bottom: 15px; }
+
+    .pricing-section { background: #f9f9f9; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+    .plan-card { background: white; padding: 40px; border-radius: 12px; border: 1px solid #e5e5e5; }
+    .plan-card.featured { border-color: #f97316; border-width: 2px; }
+    .plan-price { font-size: 36px; font-weight: 700; color: #f97316; margin: 20px 0; }
+    .plan-features { margin: 20px 0; }
+    .plan-features li { list-style: none; padding: 10px 0; border-bottom: 1px solid #e5e5e5; }
+    .plan-features li:last-child { border-bottom: none; }
+    .plan-features li::before { content: '✓ '; color: #f97316; font-weight: 700; }
+    .plan-card .cta-btn { display: block; text-align: center; margin-top: 30px; }
+
+    .testimonials { background: #f9f9f9; }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
+    .testimonial-card { background: white; padding: 30px; border-radius: 12px; }
+    .testimonial-author { font-weight: 600; margin-top: 15px; color: #333; }
+    .testimonial-role { font-size: 14px; color: #666; }
+    .testimonial-text { color: #666; font-size: 14px; font-style: italic; margin-bottom: 10px; }
+    .stars { color: #f97316; }
+
+    footer { background: #333; color: white; padding: 40px; text-align: center; }
+    footer p { font-size: 14px; }
+
+    @media (max-width: 768px) {
+      .features-grid, .pricing-grid, .testimonials-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 32px; }
+      nav a { margin-left: 20px; }
+      section { padding: 40px 20px; }
+      header .container { padding: 15px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo"><span>O</span>ravel</a>
+    <nav>
+      <a href="#funcionalidades">Funcionalidades</a>
+      <a href="#planos">Planos</a>
+      <a href="https://oravel.com.br/contato.php">Contato</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <h1>ERP Completo para Locadoras</h1>
+    <p>Gerencie frota, manutenção, estoque, financeiro e RH em uma única plataforma.</p>
+    <a href="https://oravel.com.br/contato.php" class="cta-btn">Solicitar Demo</a>
+    <a href="/" class="cta-btn cta-btn-secondary">Voltar à Home</a>
+  </div>
+</section>
+
+<section id="funcionalidades">
+  <div class="container">
+    <h2>Funcionalidades Principais</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🚗</div>
+        <h3>Gestão de Frota</h3>
+        <p>Rastreamento GPS, manutenção preventiva, combustível e custos por veículo em tempo real.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔧</div>
+        <h3>Manutenção Inteligente</h3>
+        <p>Ordens de serviço automáticas, histórico de ativos e alertas de manutenção preventiva.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📦</div>
+        <h3>Gestão de Estoque</h3>
+        <p>Controle em tempo real, reposição automática e movimentação entre almoxarifados.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Financeiro Integrado</h3>
+        <p>Contas a receber, a pagar, fluxo de caixa e análise de rentabilidade.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👥</div>
+        <h3>RH e Folha</h3>
+        <p>Gestão de colaboradores, alocação por projeto e integração contábil automática.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Relatórios e Analytics</h3>
+        <p>Dashboards customizáveis, ROI por ativo e comparativos de lucratividade.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="planos" class="pricing-section">
+  <div class="container">
+    <h2>Planos e Preços</h2>
+    <div class="pricing-grid">
+      <div class="plan-card">
+        <h3>Operacional</h3>
+        <p style="color: #666; margin: 10px 0;">Para pequenas operações</p>
+        <div class="plan-price">R$ 299<span style="font-size: 16px;">/mês</span></div>
+        <ul class="plan-features">
+          <li>Gestão de frota</li>
+          <li>Estoque básico</li>
+          <li>Até 50 ativos</li>
+          <li>Suporte por email</li>
+        </ul>
+        <a href="https://oravel.com.br/contato.php" class="cta-btn">Começar</a>
+      </div>
+
+      <div class="plan-card featured">
+        <h3>Gestão</h3>
+        <p style="color: #666; margin: 10px 0;">Plano recomendado</p>
+        <div class="plan-price">R$ 799<span style="font-size: 16px;">/mês</span></div>
+        <ul class="plan-features">
+          <li>Todas funcionalidades</li>
+          <li>Até 500 ativos</li>
+          <li>Financeiro completo</li>
+          <li>RH integrado</li>
+          <li>Suporte 24/7</li>
+        </ul>
+        <a href="https://oravel.com.br/contato.php" class="cta-btn">Começar</a>
+      </div>
+
+      <div class="plan-card">
+        <h3>Enterprise</h3>
+        <p style="color: #666; margin: 10px 0;">Para grandes operações</p>
+        <div class="plan-price">Customizado</div>
+        <ul class="plan-features">
+          <li>Ativos ilimitados</li>
+          <li>Integração API</li>
+          <li>Usuários ilimitados</li>
+          <li>Suporte prioritário</li>
+          <li>Consultoria incluída</li>
+        </ul>
+        <a href="https://oravel.com.br/contato.php" class="cta-btn">Cotação</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials">
+  <div class="container">
+    <h2>O que Nossos Clientes Dizem</h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-text">"Oravel transformou completamente nossa operação. Reduzimos custos em 30% no primeiro ano."</div>
+        <div class="testimonial-author">João Silva</div>
+        <div class="testimonial-role">Gerente de Operações</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-text">"A implementação foi rápida e o suporte foi excepcional. Hoje não vivemos sem Oravel."</div>
+        <div class="testimonial-author">Maria Santos</div>
+        <div class="testimonial-role">Diretora de Operações</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2026 Oravel — Sistema de Gestão para Locadoras | <a href="https://oravel.com.br/contato.php" style="color: #f97316; text-decoration: none;">Contato</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
