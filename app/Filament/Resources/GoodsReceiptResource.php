@@ -31,7 +31,9 @@ class GoodsReceiptResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-inbox-arrow-down';
 
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $navigationGroup = 'Compras';
+
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $navigationParentItem = 'Gestão de Compras';
 
@@ -47,7 +49,7 @@ class GoodsReceiptResource extends Resource
                             'id',
                             fn (Builder $query) => $query
                                 ->where('tenant_id', Tenancy::current()?->id)
-                                ->whereIn('status', [PurchaseOrder::STATUS_ABERTA, PurchaseOrder::STATUS_PARCIALMENTE_RECEBIDA])
+                                ->whereIn('status', [PurchaseOrder::STATUS_ENVIADA_FORNECEDOR, PurchaseOrder::STATUS_PARCIALMENTE_RECEBIDA])
                         )
                         ->getOptionLabelFromRecordUsing(fn (PurchaseOrder $record) => "#{$record->id} — {$record->supplier?->name}")
                         ->default(fn () => request()->query('purchase_order_id'))

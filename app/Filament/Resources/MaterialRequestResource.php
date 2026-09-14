@@ -31,7 +31,9 @@ class MaterialRequestResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $navigationGroup = 'Compras';
+
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $navigationParentItem = 'Gestão de Compras';
 

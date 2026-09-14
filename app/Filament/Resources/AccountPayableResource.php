@@ -49,6 +49,11 @@ class AccountPayableResource extends Resource
 
             Section::make('Alocação e Origem')
                 ->schema([
+                    Select::make('supplier_id')
+                        ->label('Fornecedor')
+                        ->relationship('supplier', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
+                        ->searchable()->preload(),
+
                     Select::make('branch_id')
                         ->label('Filial')
                         ->relationship('branch', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
@@ -67,6 +72,7 @@ class AccountPayableResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('description')->label('Descrição')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('supplier.name')->label('Fornecedor')->placeholder('—'),
                 Tables\Columns\TextColumn::make('branch.name')->label('Filial'),
                 Tables\Columns\TextColumn::make('amount')->label('Valor')->money('BRL'),
                 Tables\Columns\TextColumn::make('due_date')->label('Vencimento')->date('d/m/Y'),

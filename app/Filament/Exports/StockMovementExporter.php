@@ -2,19 +2,19 @@
 
 namespace App\Filament\Exports;
 
-use App\Models\StockMovement;
+use App\Models\MaterialStockMovement;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 
 class StockMovementExporter extends Exporter
 {
-    protected static ?string $model = StockMovement::class;
+    protected static ?string $model = MaterialStockMovement::class;
 
     private const TYPES = [
-        StockMovement::TYPE_ENTRADA_COMPRA => 'Entrada (Compra)',
-        StockMovement::TYPE_SAIDA_CONSUMO => 'Saída (Consumo)',
-        StockMovement::TYPE_AJUSTE_MANUAL => 'Ajuste (Inventário)',
+        MaterialStockMovement::TYPE_ENTRADA_COMPRA => 'Entrada (Compra)',
+        MaterialStockMovement::TYPE_SAIDA_CONSUMO => 'Saída (Consumo)',
+        MaterialStockMovement::TYPE_AJUSTE_MANUAL => 'Ajuste (Inventário)',
     ];
 
     public static function getColumns(): array

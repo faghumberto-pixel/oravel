@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Models\AIAnalysis;
 use App\Models\Material;
+use App\Models\MaterialStockMovement;
 use App\Models\PurchaseOrder;
-use App\Models\StockMovement;
 
 /**
  * Analise de saude do estoque via Claude API. Mesmo padrao de
@@ -173,7 +173,7 @@ class StockAnalysisService
     private function consumoMedioMensal(Material $material): float
     {
         $totalConsumido = $material->stockMovements()
-            ->where('type', StockMovement::TYPE_SAIDA_CONSUMO)
+            ->where('type', MaterialStockMovement::TYPE_SAIDA_CONSUMO)
             ->where('created_at', '>=', now()->subDays(self::JANELA_CONSUMO_DIAS))
             ->sum('quantity');
 
@@ -184,7 +184,7 @@ class StockAnalysisService
     {
         return $material->purchaseOrderItems()
             ->whereHas('purchaseOrder', fn ($q) => $q->whereIn('status', [
-                PurchaseOrder::STATUS_ABERTA,
+                PurchaseOrder::STATUS_ENVIADA_FORNECEDOR,
                 PurchaseOrder::STATUS_PARCIALMENTE_RECEBIDA,
             ]))
             ->exists();
@@ -202,7 +202,7 @@ class StockAnalysisService
         }
 
         return ! $material->stockMovements()
-            ->where('type', StockMovement::TYPE_SAIDA_CONSUMO)
+            ->where('type', MaterialStockMovement::TYPE_SAIDA_CONSUMO)
             ->where('created_at', '>=', now()->subDays(self::DIAS_PARA_ESTOQUE_PARADO))
             ->exists();
     }
@@ -210,7 +210,7 @@ class StockAnalysisService
     private function diasSemMovimentacao(Material $material): ?int
     {
         $ultimaSaida = $material->stockMovements()
-            ->where('type', StockMovement::TYPE_SAIDA_CONSUMO)
+            ->where('type', MaterialStockMovement::TYPE_SAIDA_CONSUMO)
             ->latest('created_at')
             ->first();
 

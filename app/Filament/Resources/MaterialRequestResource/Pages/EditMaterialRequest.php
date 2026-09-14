@@ -100,15 +100,31 @@ class EditMaterialRequest extends EditRecord
                             'material_request_id' => $this->record->id,
                             'material_request_quotation_id' => $quotation->id,
                             'supplier_id' => $quotation->supplier_id,
-                            'status' => PurchaseOrder::STATUS_ABERTA,
+                            // Nasce direto "aprovada": o gasto ja' foi
+                            // autorizado na aprovacao da Requisicao (acima),
+                            // nao faz sentido pedir aprovacao de novo aqui --
+                            // so' PO avulsa (CreatePurchaseOrder) passa pela
+                            // aprovacao propria da Ordem de Compra.
+                            'status' => PurchaseOrder::STATUS_APROVADA,
+                            'approved_by_user_id' => auth()->id(),
+                            'approved_at' => now(),
                             'expected_delivery_date' => $quotation->delivery_days ? now()->addDays($quotation->delivery_days) : null,
                             'created_by_user_id' => auth()->id(),
                         ]);
 
                         $total = 0;
+                        $quotationItemsByMaterial = $quotation->items()->get()->keyBy('material_id');
 
                         foreach ($this->record->items as $item) {
-                            $unitPrice = (float) ($item->cost_price ?? $item->material?->last_purchase_price ?? $item->material?->unit_cost ?? 0);
+                            // Preco por item da cotacao selecionada (Compras
+                            // Fase 3, MaterialRequestQuotationItem) tem
+                            // prioridade -- e' o preco de fato negociado com
+                            // este fornecedor. Cai pro preco do
+                            // MaterialRequestItem (cotacao antiga, nao
+                            // itemizada) so' quando a cotacao nao tem item
+                            // pra este material.
+                            $quotedUnitPrice = $quotationItemsByMaterial->get($item->material_id)?->unit_price;
+                            $unitPrice = (float) ($quotedUnitPrice ?? $item->cost_price ?? $item->material?->last_purchase_price ?? $item->material?->unit_cost ?? 0);
 
                             $purchaseOrder->items()->create([
                                 'tenant_id' => $this->record->tenant_id,

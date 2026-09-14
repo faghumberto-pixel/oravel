@@ -66,7 +66,7 @@ class MaterialStockServiceTest extends TestCase
         $this->assertSame(10, $stock->current_quantity);
         $this->assertSame(10, $material->fresh()->current_stock);
         $movement = MaterialStockMovement::where('material_id', $material->id)->sole();
-        $this->assertSame(MaterialStockMovement::TYPE_ENTRADA, $movement->type);
+        $this->assertSame(MaterialStockMovement::TYPE_ENTRADA_COMPRA, $movement->type);
         $this->assertEquals(10, $movement->quantity);
     }
 
@@ -81,7 +81,7 @@ class MaterialStockServiceTest extends TestCase
 
         $this->assertSame(12, $stock->current_quantity);
         $this->assertSame(12, $material->fresh()->current_stock);
-        $this->assertSame(1, MaterialStockMovement::where('material_id', $material->id)->where('type', MaterialStockMovement::TYPE_SAIDA)->count());
+        $this->assertSame(1, MaterialStockMovement::where('material_id', $material->id)->where('type', MaterialStockMovement::TYPE_SAIDA_CONSUMO)->count());
     }
 
     public function test_transfer_moves_stock_between_units_and_logs_both_sides(): void
@@ -96,9 +96,10 @@ class MaterialStockServiceTest extends TestCase
 
         $this->assertSame(9, $material->fresh()->locationStocks()->where('internal_unit_id', $unitA->id)->first()->current_quantity);
         $this->assertSame(6, $material->fresh()->locationStocks()->where('internal_unit_id', $unitB->id)->first()->current_quantity);
-        $types = MaterialStockMovement::where('material_id', $material->id)->pluck('type')->all();
-        $this->assertContains(MaterialStockMovement::TYPE_SAIDA, $types);
-        $this->assertContains(MaterialStockMovement::TYPE_ENTRADA, $types);
+        $movement = MaterialStockMovement::where('material_id', $material->id)
+            ->where('type', MaterialStockMovement::TYPE_TRANSFERENCIA)->sole();
+        $this->assertSame($unitA->id, $movement->from_location_id);
+        $this->assertSame($unitB->id, $movement->to_location_id);
     }
 
     public function test_adjust_sets_absolute_quantity_and_logs_ajuste_movement(): void
@@ -111,6 +112,6 @@ class MaterialStockServiceTest extends TestCase
         $stock = app(MaterialStockService::class)->adjust($material, $unit, 7);
 
         $this->assertSame(7, $stock->current_quantity);
-        $this->assertSame(1, MaterialStockMovement::where('material_id', $material->id)->where('type', MaterialStockMovement::TYPE_AJUSTE)->count());
+        $this->assertSame(1, MaterialStockMovement::where('material_id', $material->id)->where('type', MaterialStockMovement::TYPE_AJUSTE_MANUAL)->count());
     }
 }
