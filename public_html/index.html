@@ -15,7 +15,7 @@
       --navy: #0f172a; --navy-2: #1a2540;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: "Inter", "Segoe UI", system-ui, sans-serif; color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; }
+    body { font-family: "Inter", "Segoe UI", system-ui, sans-serif; color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; font-size: 15px; }
     h1, h2, h3 { font-family: "Manrope", "Inter", sans-serif; font-weight: 800; letter-spacing: -0.02em; text-wrap: balance; }
     p { margin: 0; }
     a { color: inherit; text-decoration: none; }
@@ -23,68 +23,68 @@
     
     header.inav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
     .inav-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; height: 72px; display: flex; align-items: center; justify-content: space-between; }
-    .inav-logo { display: flex; align-items: center; gap: 9px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 19px; color: var(--ink); }
-    .inav-logo-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--navy); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 15px; }
+    .inav-logo { display: flex; align-items: center; gap: 9px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 17px; color: var(--ink); }
+    .inav-logo-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--navy); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 13px; }
     .inav-logo-accent { color: var(--accent); }
     .inav-links { display: flex; align-items: center; gap: 34px; }
-    .inav-links a { color: var(--ink-soft); font-size: 14.5px; font-weight: 600; transition: color 0.2s; }
+    .inav-links a { color: var(--ink-soft); font-size: 13.5px; font-weight: 600; transition: color 0.2s; }
     .inav-links a:hover { color: var(--ink); }
-    .inav-cta { background: var(--accent); color: #fff; padding: 10px 20px; border-radius: 7px; font-weight: 700; font-size: 14px; transition: background 0.2s; }
+    .inav-cta { background: var(--accent); color: #fff; padding: 9px 18px; border-radius: 6px; font-weight: 700; font-size: 13px; transition: background 0.2s; }
     .inav-cta:hover { background: #ea580c; }
     @media (max-width: 860px) { .inav-links { display: none; } }
 
-    .hero { padding: 72px 0 56px; background: linear-gradient(180deg, #eef1f5 0%, #ffffff 100%); }
-    .hero h1 { font-size: clamp(30px, 4.2vw, 48px); line-height: 1.1; margin-top: 14px; }
-    .hero p { font-size: 17px; color: var(--ink-soft); line-height: 1.6; margin-top: 16px; max-width: 60ch; }
+    .hero { padding: 60px 0 48px; background: linear-gradient(180deg, #eef1f5 0%, #ffffff 100%); }
+    .hero h1 { font-size: clamp(26px, 3.5vw, 40px); line-height: 1.1; margin-top: 12px; }
+    .hero p { font-size: 15px; color: var(--ink-soft); line-height: 1.6; margin-top: 14px; max-width: 60ch; }
 
-    .section { padding: 20px 0 88px; }
-    .section-header { text-align: center; margin-bottom: 4rem; max-width: 800px; margin-left: auto; margin-right: auto; }
-    .section-header h2 { font-size: 2.8rem; margin-bottom: 1rem; }
-    .section-header p { font-size: 1.1rem; color: var(--ink-soft); }
+    .section { padding: 16px 0 72px; }
+    .section-header { text-align: center; margin-bottom: 3.5rem; max-width: 800px; margin-left: auto; margin-right: auto; }
+    .section-header h2 { font-size: 2rem; margin-bottom: 0.8rem; }
+    .section-header p { font-size: 15px; color: var(--ink-soft); }
 
-    .pillar-container { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; max-width: 1180px; margin: 0 auto; }
-    .pillar { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 30px 32px; }
-    .pillar-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
-    .pillar-icon { font-size: 3rem; min-width: 70px; }
-    .pillar-title { font-size: 1.8rem; font-weight: 800; }
-    .pillar-subtitle { font-size: 0.9rem; color: var(--ink-soft); font-weight: 500; }
-    .pillar-text { font-size: 1rem; color: var(--ink-soft); line-height: 1.8; margin-bottom: 2rem; }
+    .pillar-container { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; max-width: 1180px; margin: 0 auto; }
+    .pillar { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; }
+    .pillar-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+    .pillar-icon { font-size: 2rem; min-width: 50px; }
+    .pillar-title { font-size: 1.3rem; font-weight: 800; }
+    .pillar-subtitle { font-size: 0.8rem; color: var(--ink-soft); font-weight: 500; margin-top: 2px; }
+    .pillar-text { font-size: 0.95rem; color: var(--ink-soft); line-height: 1.7; margin-bottom: 1.5rem; }
 
-    .modules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
-    .module-card { background: var(--surface); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); transition: all 0.3s ease; cursor: pointer; }
-    .module-card:hover { border-color: var(--accent); background: #fff; box-shadow: 0 8px 16px rgba(249,115,22,0.1); transform: translateY(-4px); }
-    .module-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .module-desc { font-size: 0.85rem; color: var(--ink-soft); line-height: 1.5; }
+    .modules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 1.5rem; }
+    .module-card { background: var(--surface); padding: 1.2rem; border-radius: 12px; border: 1px solid var(--border); transition: all 0.3s ease; cursor: pointer; }
+    .module-card:hover { border-color: var(--accent); background: #fff; box-shadow: 0 8px 16px rgba(249,115,22,0.1); transform: translateY(-2px); }
+    .module-name { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .module-desc { font-size: 0.8rem; color: var(--ink-soft); line-height: 1.5; }
 
-    .why-us { background: var(--surface); padding: 6rem 2rem; }
-    .benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin: 3rem auto; max-width: 1180px; }
-    .benefit-item { padding: 2.8rem; background: #fff; border-radius: 16px; border: 1px solid var(--border); transition: all 0.3s ease; }
-    .benefit-item:hover { border-color: var(--accent); box-shadow: 0 15px 30px rgba(0,0,0,0.1); transform: translateY(-6px); }
-    .benefit-number { font-size: 3.5rem; font-weight: 900; color: var(--accent); opacity: 0.15; margin-bottom: -1rem; }
-    .benefit-item h3 { font-size: 1.4rem; margin-bottom: 1.2rem; }
-    .benefit-item p { color: var(--ink-soft); line-height: 1.85; font-size: 1rem; }
+    .why-us { background: var(--surface); padding: 5rem 2rem; }
+    .benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.8rem; margin: 2.5rem auto; max-width: 1180px; }
+    .benefit-item { padding: 2.2rem; background: #fff; border-radius: 16px; border: 1px solid var(--border); transition: all 0.3s ease; }
+    .benefit-item:hover { border-color: var(--accent); box-shadow: 0 15px 30px rgba(0,0,0,0.08); transform: translateY(-4px); }
+    .benefit-number { font-size: 2.8rem; font-weight: 900; color: var(--accent); opacity: 0.12; margin-bottom: -0.8rem; }
+    .benefit-item h3 { font-size: 1.1rem; margin-bottom: 0.9rem; }
+    .benefit-item p { color: var(--ink-soft); line-height: 1.7; font-size: 0.95rem; }
 
-    .cta { background: var(--navy); color: white; padding: 8rem 2rem; text-align: center; }
-    .cta h2 { color: white; margin-bottom: 1.5rem; font-size: 3rem; }
-    .cta p { font-size: 1.2rem; color: rgba(255,255,255,0.72); margin: 0 auto 3rem; max-width: 700px; }
-    .cta .btn { display: inline-block; padding: 14px 26px; border-radius: 8px; background: var(--accent); color: #fff; font-weight: 700; font-size: 15px; transition: background 0.2s; }
+    .cta { background: var(--navy); color: white; padding: 6rem 2rem; text-align: center; }
+    .cta h2 { color: white; margin-bottom: 1rem; font-size: 2rem; }
+    .cta p { font-size: 1rem; color: rgba(255,255,255,0.72); margin: 0 auto 2.5rem; max-width: 700px; }
+    .cta .btn { display: inline-block; padding: 12px 24px; border-radius: 6px; background: var(--accent); color: #fff; font-weight: 700; font-size: 14px; transition: background 0.2s; }
     .cta .btn:hover { background: #ea580c; }
 
-    footer { border-top: 1px solid var(--border); padding: 44px 0; }
+    footer { border-top: 1px solid var(--border); padding: 36px 0; }
     .footer-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-    .footer-logo { display: flex; align-items: center; gap: 9px; font-family: "Manrope", sans-serif; font-weight: 800; }
-    .footer-logo-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--navy); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 15px; }
-    .footer-links { display: flex; gap: 24px; font-size: 13.5px; color: var(--ink-soft); }
+    .footer-logo { display: flex; align-items: center; gap: 8px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 15px; }
+    .footer-logo-mark { width: 26px; height: 26px; border-radius: 6px; background: var(--navy); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; }
+    .footer-links { display: flex; gap: 20px; font-size: 12.5px; color: var(--ink-soft); }
     .footer-links a { transition: color 0.2s; }
     .footer-links a:hover { color: var(--ink); }
-    .footer-copy { font-size: 13px; color: var(--ink-faint); }
+    .footer-copy { font-size: 12px; color: var(--ink-faint); }
 
     @media (max-width: 768px) {
-      .pillar-container { grid-template-columns: 1fr; gap: 2rem; }
+      .pillar-container { grid-template-columns: 1fr; gap: 1.8rem; }
       .modules-grid { grid-template-columns: 1fr; }
-      .hero h1 { font-size: 2.2rem; }
-      .section-header h2 { font-size: 2rem; }
-      .cta h2 { font-size: 2rem; }
+      .hero h1 { font-size: 1.8rem; }
+      .section-header h2 { font-size: 1.6rem; }
+      .cta h2 { font-size: 1.6rem; }
     }
   </style>
 </head>
@@ -118,7 +118,7 @@
       <div class="pillar-container">
         <div class="pillar">
           <div class="pillar-header">
-            <div class="pillar-icon">⚙️</div>
+            <div class="pillar-icon">⚙</div>
             <div>
               <div class="pillar-title">ORAVEL OPERAÇÃO</div>
               <div class="pillar-subtitle">Para o dia a dia no campo</div>
@@ -126,9 +126,9 @@
           </div>
           <p class="pillar-text">Gestão de estoque, frota e ordem de serviço. Tudo sincronizado em tempo real. Seu técnico no campo tem acesso completo do celular.</p>
           <div class="modules-grid">
-            <a href="/wms.html"><div class="module-card"><div class="module-name">📦 WMS</div><div class="module-desc">Gestão de Estoque</div></div></a>
-            <a href="/frota.html"><div class="module-card"><div class="module-name">🚗 Frota</div><div class="module-desc">Rastreamento e Manutenção</div></div></a>
-            <a href="/os.html"><div class="module-card"><div class="module-name">✓ OS</div><div class="module-desc">Ordem de Serviço</div></div></a>
+            <a href="/wms.html"><div class="module-card"><div class="module-name">WMS</div><div class="module-desc">Gestão de Estoque</div></div></a>
+            <a href="/frota.html"><div class="module-card"><div class="module-name">Frota</div><div class="module-desc">Rastreamento e Manutenção</div></div></a>
+            <a href="/os.html"><div class="module-card"><div class="module-name">OS</div><div class="module-desc">Ordem de Serviço</div></div></a>
           </div>
         </div>
 
@@ -142,11 +142,11 @@
           </div>
           <p class="pillar-text">Gestão de pessoas, vendas, recebimentos e inteligência. Seu gestor tem visão 360 da empresa. Decisões baseadas em dados reais.</p>
           <div class="modules-grid">
-            <a href="/rh.html"><div class="module-card"><div class="module-name">👥 RH</div><div class="module-desc">Recursos Humanos</div></div></a>
-            <a href="/crm.html"><div class="module-card"><div class="module-name">💼 CRM</div><div class="module-desc">Gestão de Vendas</div></div></a>
-            <a href="/recebimentos.html"><div class="module-card"><div class="module-name">💰 Recebimentos</div><div class="module-desc">Contas a Receber</div></div></a>
-            <a href="/analytics.html"><div class="module-card"><div class="module-name">🧠 IA Analytics</div><div class="module-desc">Inteligência de Dados</div></div></a>
-            <div class="module-card"><div class="module-name">🔏 Assinatura Digital</div><div class="module-desc">Documentos assinados</div></div>
+            <a href="/rh.html"><div class="module-card"><div class="module-name">RH</div><div class="module-desc">Recursos Humanos</div></div></a>
+            <a href="/crm.html"><div class="module-card"><div class="module-name">CRM</div><div class="module-desc">Gestão de Vendas</div></div></a>
+            <a href="/recebimentos.html"><div class="module-card"><div class="module-name">Recebimentos</div><div class="module-desc">Contas a Receber</div></div></a>
+            <a href="/analytics.html"><div class="module-card"><div class="module-name">Analytics</div><div class="module-desc">Inteligência de Dados</div></div></a>
+            <div class="module-card"><div class="module-name">Assinatura Digital</div><div class="module-desc">Documentos assinados</div></div>
           </div>
         </div>
       </div>
