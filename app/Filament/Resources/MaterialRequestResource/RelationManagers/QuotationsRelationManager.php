@@ -26,17 +26,58 @@ class QuotationsRelationManager extends RelationManager
                 ->searchable()
                 ->preload()
                 ->required(),
-            Forms\Components\TextInput::make('total_value')
-                ->label('Valor Total Cotado')
-                ->numeric()
-                ->prefix('R$')
-                ->required(),
             Forms\Components\TextInput::make('delivery_days')
                 ->label('Prazo de Entrega (dias)')
                 ->numeric(),
             Forms\Components\TextInput::make('payment_terms')
                 ->label('Condição de Pagamento')
                 ->maxLength(255),
+
+            // Preco por item -- permite comparar fornecedor a fornecedor
+            // pra cada material da requisicao, nao so' o total agregado.
+            // total_value da cotacao (mostrado so' leitura abaixo) e'
+            // recalculado a partir daqui (ver
+            // MaterialRequestQuotationItemObserver).
+            Forms\Components\Repeater::make('items')
+                ->relationship()
+                ->label('Itens Cotados')
+                ->schema([
+                    Forms\Components\Select::make('material_id')
+                        ->label('Material')
+                        ->relationship('material', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
+                        ->searchable()
+                        ->preload()
+                        ->required(),
+                    Forms\Components\TextInput::make('quantity')
+                        ->label('Quantidade')
+                        ->numeric()
+                        ->required()
+                        ->default(1),
+                    Forms\Components\TextInput::make('unit_price')
+                        ->label('Preço Unitário')
+                        ->numeric()
+                        ->prefix('R$')
+                        ->required(),
+                ])
+                ->columns(3)
+                ->addActionLabel('Adicionar Item')
+                // Pre-preenche com os mesmos materiais/quantidades da
+                // requisicao -- o cotador so' precisa preencher o preco de
+                // cada um pra este fornecedor.
+                ->default(fn ($livewire) => $livewire->getOwnerRecord()->items->map(fn ($item) => [
+                    'material_id' => $item->material_id,
+                    'quantity' => $item->quantity,
+                    'unit_price' => 0,
+                ])->all())
+                ->columnSpanFull(),
+
+            Forms\Components\TextInput::make('total_value')
+                ->label('Valor Total Cotado')
+                ->numeric()
+                ->prefix('R$')
+                ->disabled()
+                ->dehydrated(false)
+                ->helperText('Calculado automaticamente a partir dos itens.'),
             Forms\Components\Textarea::make('notes')
                 ->label('Observações')
                 ->columnSpanFull(),

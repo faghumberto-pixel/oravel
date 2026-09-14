@@ -84,7 +84,7 @@ class StockMovementResource extends BaseResource
                         ->label('Data/Hora')
                         ->readOnly(),
 
-                    Forms\Components\TextInput::make('created_by_user.name')
+                    Forms\Components\TextInput::make('createdBy.name')
                         ->label('Registrado por')
                         ->readOnly(),
                 ])
@@ -106,12 +106,13 @@ class StockMovementResource extends BaseResource
                     ->label('Tipo')
                     ->badge()
                     ->color(fn (string $state) => match ($state) {
-                        'entrada' => 'success',
-                        'saída' => 'warning',
-                        'ajuste' => 'info',
+                        MaterialStockMovement::TYPE_ENTRADA_COMPRA => 'success',
+                        MaterialStockMovement::TYPE_SAIDA_CONSUMO => 'danger',
+                        MaterialStockMovement::TYPE_TRANSFERENCIA => 'info',
+                        MaterialStockMovement::TYPE_AJUSTE_MANUAL => 'warning',
                         default => 'gray',
                     })
-                    ->formatStateUsing(fn (string $state) => ucfirst($state))
+                    ->formatStateUsing(fn (string $state) => MaterialStockMovement::TYPES[$state] ?? ucfirst($state))
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('material.sku')
@@ -149,7 +150,7 @@ class StockMovementResource extends BaseResource
                     ->limit(20)
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('created_by_user.name')
+                Tables\Columns\TextColumn::make('createdBy.name')
                     ->label('Registrado por')
                     ->searchable()
                     ->sortable()
@@ -158,11 +159,7 @@ class StockMovementResource extends BaseResource
             ->filters([
                 Tables\Filters\SelectFilter::make('type')
                     ->label('Tipo')
-                    ->options([
-                        'entrada' => 'Entrada',
-                        'saída' => 'Saída',
-                        'ajuste' => 'Ajuste',
-                    ]),
+                    ->options(MaterialStockMovement::TYPES),
 
                 Tables\Filters\Filter::make('created_at')
                     ->form([

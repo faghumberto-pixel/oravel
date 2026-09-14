@@ -5,11 +5,11 @@ namespace Tests\Feature;
 use App\Filament\Pages\AnaliseEstoque;
 use App\Models\AIAnalysis;
 use App\Models\Material;
+use App\Models\MaterialStockMovement;
 use App\Models\Plan;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderItem;
 use App\Models\Role;
-use App\Models\StockMovement;
 use App\Models\Supplier;
 use App\Models\Tenant;
 use App\Models\User;
@@ -67,9 +67,9 @@ class StockAnalysisServiceTest extends TestCase
             'unit_cost' => 50, 'min_stock' => 5, 'max_stock' => 50, 'current_stock' => 20,
         ]);
 
-        StockMovement::create([
+        MaterialStockMovement::create([
             'tenant_id' => $tenant->id, 'material_id' => $material->id,
-            'type' => StockMovement::TYPE_SAIDA_CONSUMO, 'quantity' => 3, 'balance_after' => 20,
+            'type' => MaterialStockMovement::TYPE_SAIDA_CONSUMO, 'quantity' => 3, 'balance_after' => 20,
             'created_at' => now()->subDays(5),
         ]);
 
@@ -95,9 +95,9 @@ class StockAnalysisServiceTest extends TestCase
         // ~0.333/dia -> 5 / 0.333 = 15 dias estimados. created_at nao e'
         // fillable em StockMovement (ledger), por isso forceFill+save
         // depois de criar, em vez de passar no create().
-        StockMovement::create([
+        MaterialStockMovement::create([
             'tenant_id' => $tenant->id, 'material_id' => $critico->id,
-            'type' => StockMovement::TYPE_SAIDA_CONSUMO, 'quantity' => 30, 'balance_after' => 5,
+            'type' => MaterialStockMovement::TYPE_SAIDA_CONSUMO, 'quantity' => 30, 'balance_after' => 5,
         ])->forceFill(['created_at' => now()->subDays(10)])->save();
 
         $parado = Material::create([
@@ -107,9 +107,9 @@ class StockAnalysisServiceTest extends TestCase
 
         // Movimentacao antiga (fora da janela de 90 dias) -- ainda conta
         // como "parado" porque nao ha consumo RECENTE.
-        StockMovement::create([
+        MaterialStockMovement::create([
             'tenant_id' => $tenant->id, 'material_id' => $parado->id,
-            'type' => StockMovement::TYPE_SAIDA_CONSUMO, 'quantity' => 5, 'balance_after' => 20,
+            'type' => MaterialStockMovement::TYPE_SAIDA_CONSUMO, 'quantity' => 5, 'balance_after' => 20,
         ])->forceFill(['created_at' => now()->subDays(200)])->save();
 
         $this->fakeClaudeJsonResponse([
@@ -147,7 +147,7 @@ class StockAnalysisServiceTest extends TestCase
 
         $order = PurchaseOrder::create([
             'tenant_id' => $tenant->id, 'supplier_id' => $supplier->id,
-            'status' => PurchaseOrder::STATUS_ABERTA, 'total_value' => 300,
+            'status' => PurchaseOrder::STATUS_ENVIADA_FORNECEDOR, 'total_value' => 300,
             'created_by_user_id' => $admin->id,
         ]);
 

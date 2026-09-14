@@ -103,7 +103,7 @@ class DemoComprasSeeder extends Seeder
             'material_request_id' => $mrA->id,
             'material_request_quotation_id' => $quotA->id,
             'supplier_id' => $fornecedorA->id,
-            'status' => PurchaseOrder::STATUS_ABERTA,
+            'status' => PurchaseOrder::STATUS_ENVIADA_FORNECEDOR,
             'total_value' => $quotA->total_value,
             'expected_delivery_date' => now()->subDays(5),
             'created_by_user_id' => $admin->id,
@@ -169,7 +169,7 @@ class DemoComprasSeeder extends Seeder
             'material_request_id' => $mrB->id,
             'material_request_quotation_id' => $quotB->id,
             'supplier_id' => $fornecedorB->id,
-            'status' => PurchaseOrder::STATUS_ABERTA,
+            'status' => PurchaseOrder::STATUS_ENVIADA_FORNECEDOR,
             'total_value' => $quotB->total_value,
             'expected_delivery_date' => now()->addDays(2),
             'created_by_user_id' => $admin->id,
@@ -243,7 +243,7 @@ class DemoComprasSeeder extends Seeder
         $poAvulsa = PurchaseOrder::create([
             'tenant_id' => $tenantId,
             'supplier_id' => $fornecedorC->id,
-            'status' => PurchaseOrder::STATUS_ABERTA,
+            'status' => PurchaseOrder::STATUS_ENVIADA_FORNECEDOR,
             'total_value' => $itemsAvulsa->sum(fn ($m) => $m->unit_cost * 12),
             'expected_delivery_date' => now()->addDays(7),
             'created_by_user_id' => $admin->id,
@@ -307,6 +307,6 @@ class DemoComprasSeeder extends Seeder
         ]);
 
         $this->command?->info('Demo Compras: '
-            . $suppliers->count() . ' fornecedores, 4 requisições, 3 ordens de compra, 2 recebimentos, 4 solicitações de peças.');
+            .$suppliers->count().' fornecedores, 4 requisições, 3 ordens de compra, 2 recebimentos, 4 solicitações de peças.');
     }
 }

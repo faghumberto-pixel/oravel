@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\MaterialResource\Widgets;
 
 use App\Filament\Widgets\Charts\AreaChart;
-use App\Models\StockMovement;
+use App\Models\MaterialStockMovement;
 use App\Support\Tenancy;
 use Illuminate\Support\Carbon;
 
@@ -30,11 +30,11 @@ class StockEntriesVsExitsAreaWidget extends AreaChart
         $months = collect(range(5, 0))->map(fn ($i) => now()->subMonths($i)->startOfMonth());
         $labels = $months->map(fn (Carbon $m) => self::MESES_ABREV[$m->month])->all();
 
-        $entradas = $months->map(fn (Carbon $month) => StockMovement::where('type', StockMovement::TYPE_ENTRADA_COMPRA)
+        $entradas = $months->map(fn (Carbon $month) => MaterialStockMovement::where('type', MaterialStockMovement::TYPE_ENTRADA_COMPRA)
             ->whereBetween('created_at', [$month, $month->copy()->endOfMonth()])
             ->sum('quantity'))->all();
 
-        $saidas = $months->map(fn (Carbon $month) => StockMovement::where('type', StockMovement::TYPE_SAIDA_CONSUMO)
+        $saidas = $months->map(fn (Carbon $month) => MaterialStockMovement::where('type', MaterialStockMovement::TYPE_SAIDA_CONSUMO)
             ->whereBetween('created_at', [$month, $month->copy()->endOfMonth()])
             ->sum('quantity'))->all();
 

@@ -29,7 +29,7 @@ class AccountPayable extends Model
     protected $fillable = [
         'description', 'amount', 'due_date', 'payment_date',
         'status', 'tenant_id', 'bill_category_id',
-        'branch_id', 'cost_center_id', 'asset_id',
+        'branch_id', 'cost_center_id', 'asset_id', 'supplier_id', 'goods_receipt_id',
         'mes', 'ano',
     ];
 
@@ -73,5 +73,15 @@ class AccountPayable extends Model
     public function asset(): BelongsTo
     {
         return $this->belongsTo(Asset::class, 'asset_id');
+    }
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+
+    public function goodsReceipt(): BelongsTo
+    {
+        return $this->belongsTo(GoodsReceipt::class);
     }
 }

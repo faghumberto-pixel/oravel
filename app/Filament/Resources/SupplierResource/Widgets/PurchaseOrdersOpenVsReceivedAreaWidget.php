@@ -35,7 +35,7 @@ class PurchaseOrdersOpenVsReceivedAreaWidget extends AreaChart
         $months = collect(range(5, 0))->map(fn ($i) => now()->subMonths($i)->startOfMonth());
         $labels = $months->map(fn (Carbon $m) => self::MESES_ABREV[$m->month])->all();
 
-        $abertas = $months->map(fn (Carbon $month) => PurchaseOrder::where('status', PurchaseOrder::STATUS_ABERTA)
+        $abertas = $months->map(fn (Carbon $month) => PurchaseOrder::where('status', PurchaseOrder::STATUS_ENVIADA_FORNECEDOR)
             ->whereBetween('created_at', [$month, $month->copy()->endOfMonth()])
             ->count())->all();
 
