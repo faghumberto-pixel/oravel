@@ -4,8 +4,7 @@ use Illuminate\Support\Str;
 
 return [
 
-    // 🔥 ALTERAÇÃO AQUI: Força o fallback padrão para 'pgsql' caso o env() falhe no terminal
-    'default' => 'pgsql',
+    'default' => env('DB_CONNECTION', 'pgsql'),
     'connections' => [
 
         'sqlite' => [
