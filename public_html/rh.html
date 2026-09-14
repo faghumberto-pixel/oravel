@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oravel RH — Gestão de Recursos Humanos e Folha | Oravel</title>
+<meta name="description" content="Sistema completo de gestão de RH com folha de pagamento, controle de jornada, recrutamento e desenvolvimento de pessoas.">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Poppins", sans-serif; color: #1a1a1a; background: #fff; }
+  h1, h2, h3 { font-weight: 700; margin: 0; }
+  p { margin: 0; }
+  a { color: inherit; text-decoration: none; }
+  img, svg { max-width: 100%; }
+
+  .hero { background: linear-gradient(135deg, rgba(59, 130, 246, 0.85) 0%, rgba(59, 130, 246, 0.85) 100%), center/cover no-repeat; color: white; padding: 120px 28px; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+  .hero h1 { font-size: clamp(30px, 4vw, 46px); line-height: 1.12; margin: 0 0 20px 0; max-width: 50ch; }
+  .hero > div > p { font-size: 16.5px; line-height: 1.65; margin: 16px 0 32px 0; max-width: 50ch; opacity: 0.95; }
+  .cta-btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 26px; border-radius: 8px; font-weight: 700; font-size: 15px; background: white; color: #3b82f6; text-decoration: none; margin-right: 14px; transition: all 0.2s; }
+  .cta-btn-secondary { background: transparent; color: white; border: 2px solid white; }
+
+  .section { padding: 72px 28px; }
+  .section h2 { font-size: clamp(24px, 2.8vw, 32px); line-height: 1.18; margin-bottom: 46px; }
+  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 60px; }
+  .feature-card { padding: 30px; border: 1px solid #e5e5e5; border-radius: 12px; transition: all 0.3s; }
+  .feature-card:hover { border-color: #3b82f6; box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1); }
+  .feature-card h3 { font-size: 16px; margin-bottom: 12px; }
+  .feature-card p { font-size: 14px; color: #666; line-height: 1.55; }
+  .mockup-placeholder { height: 80px; width: 80px; background: linear-gradient(135deg, #f0f4ff 0%, #fafbfc 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px; margin-bottom: 16px; }
+
+  .pricing-section { padding: 72px 28px; background: #f9f9f9; }
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 40px; }
+  .plan-card { background: white; padding: 30px; border-radius: 12px; border: 1px solid #e5e5e5; transition: all 0.3s; }
+  .plan-card.featured { border-color: #3b82f6; box-shadow: 0 10px 30px rgba(59, 130, 246, 0.15); }
+  .plan-card h3 { font-size: 18px; margin-bottom: 10px; }
+  .plan-features { list-style: none; padding: 20px 0; border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; }
+  .plan-features li { padding: 8px 0; font-size: 14px; color: #666; }
+  .plan-card .cta-btn { display: block; text-align: center; margin-top: 20px; width: 100%; }
+
+  .testimonials { padding: 72px 28px; }
+  .testimonials h2 { margin-bottom: 46px; }
+  .testimonials-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
+  .testimonial-card { padding: 30px; background: #f9f9f9; border-radius: 12px; }
+  .stars { font-size: 16px; color: #fbbf24; margin-bottom: 12px; }
+  .testimonial-text { font-size: 15px; line-height: 1.6; margin-bottom: 16px; font-style: italic; }
+  .testimonial-author { font-weight: 600; font-size: 14px; }
+  .testimonial-role { font-size: 12px; color: #999; }
+
+  footer { border-top: 1px solid #e5e5e5; padding: 44px 28px; text-align: center; color: #666; font-size: 13px; }
+  footer a { color: #3b82f6; }
+
+  @media (max-width: 860px) {
+    .features-grid, .pricing-grid, .testimonials-grid { grid-template-columns: 1fr; }
+    .hero { padding: 80px 28px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="container">
+    <h1>Gestão Completa de Pessoas</h1>
+    <p>Folha de pagamento, jornada, recrutamento e desenvolvimento em um só lugar.</p>
+    <p>Gerencie colaboradores com eficiência, automatize processos administrativos e invista em desenvolvimento de equipes.</p>
+    <a href="https://oravel.com.br/contato.php" class="cta-btn">Solicitar Demo</a>
+    <a href="/" class="cta-btn cta-btn-secondary">Voltar à Home</a>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2>Funcionalidades Principais</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="mockup-placeholder">Mockup 1</div>
+        <h3>Cadastro de Colaboradores</h3>
+        <p>Base centralizada de dados pessoais, documentos, benefícios e histórico funcional.</p>
+      </div>
+      <div class="feature-card">
+        <div class="mockup-placeholder">Mockup 2</div>
+        <h3>Folha de Pagamento</h3>
+        <p>Cálculo automático, descontos, adicionais e integração contábil para simplificar processos.</p>
+      </div>
+      <div class="feature-card">
+        <div class="mockup-placeholder">Mockup 3</div>
+        <h3>Controle de Jornada</h3>
+        <p>Acompanhamento de frequência, ausências, férias e horas extras com alertas automáticos.</p>
+      </div>
+      <div class="feature-card">
+        <div class="mockup-placeholder">Mockup 4</div>
+        <h3>Recrutamento</h3>
+        <p>Gerenciamento de vagas, candidatos e entrevistas integrado com avaliações.</p>
+      </div>
+      <div class="feature-card">
+        <div class="mockup-placeholder">Mockup 5</div>
+        <h3>Desenvolvimento e Capacitação</h3>
+        <p>Trilhas de aprendizado, cursos e avaliações de desempenho de colaboradores.</p>
+      </div>
+      <div class="feature-card">
+        <div class="mockup-placeholder">Mockup 6</div>
+        <h3>Conformidade e Compliance</h3>
+        <p>Documentação legal, obrigações acessórias e relatórios para auditoria.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing-section">
+  <div class="container">
+    <h2>Planos Disponíveis</h2>
+    <div class="pricing-grid">
+      <div class="plan-card">
+        <h3>Básico</h3>
+        <p style="color: #666; margin: 10px 0;">Até 50 colaboradores</p>
+        <ul class="plan-features">
+          <li>Cadastro de pessoas</li>
+          <li>Folha básica</li>
+          <li>Controle de jornada</li>
+          <li>Relatórios simples</li>
+        </ul>
+        <a href="https://oravel.com.br/contato.php" class="cta-btn">Solicitar Info</a>
+      </div>
+      <div class="plan-card featured">
+        <h3>Professional</h3>
+        <p style="color: #666; margin: 10px 0;">Recomendado</p>
+        <ul class="plan-features">
+          <li>Colaboradores ilimitados</li>
+          <li>Folha avançada</li>
+          <li>Recrutamento integrado</li>
+          <li>Avaliações de desempenho</li>
+          <li>Suporte prioritário</li>
+        </ul>
+        <a href="https://oravel.com.br/contato.php" class="cta-btn">Solicitar Info</a>
+      </div>
+      <div class="plan-card">
+        <h3>Enterprise</h3>
+        <p style="color: #666; margin: 10px 0;">Soluções customizadas</p>
+        <ul class="plan-features">
+          <li>API completa</li>
+          <li>Customizações avançadas</li>
+          <li>Consultoria em RH</li>
+          <li>SLA garantido</li>
+        </ul>
+        <a href="https://oravel.com.br/contato.php" class="cta-btn">Solicitar Info</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials">
+  <div class="container">
+    <h2>O que Nossos Clientes Dizem</h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-text">"Simplificou muito nossas rotinas administrativas. A folha saiu de manual para automática."</div>
+        <div class="testimonial-author">Ana Silva</div>
+        <div class="testimonial-role">Gerente de RH</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-text">"Agora temos transparência total em custos com pessoal e desenvolvemos melhor nossos talentos."</div>
+        <div class="testimonial-author">Luiz Ferreira</div>
+        <div class="testimonial-role">Diretor de Operações</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2026 Oravel — RH | <a href="https://oravel.com.br/contato.php">Contato</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
