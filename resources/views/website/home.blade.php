@@ -14,7 +14,7 @@
             Uma plataforma integrada para quem opera equipamento, frota ou estoque no dia a dia. Gestão de verdade, feita por quem sentiu na pele a dor da operação.
         </p>
         <div class="flex gap-4 justify-center flex-wrap">
-            <a href="#demo" class="bg-accent text-white px-8 py-4 rounded-lg font-semibold hover:bg-orange-600 transition">
+            <a href="/contato" class="bg-accent text-white px-8 py-4 rounded-lg font-semibold hover:bg-orange-600 transition">
                 Solicitar Demonstração
             </a>
             <a href="https://oravel.com.br/segmentos/" class="border-2 border-accent text-accent px-8 py-4 rounded-lg font-semibold hover:bg-orange-50 transition">

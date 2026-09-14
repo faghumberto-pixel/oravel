@@ -60,6 +60,7 @@ Route::redirect('/admin/innova/categories', '/admin/innova/bill-categories');
 // Site institucional
 Route::get('/', fn () => view('website.home'))->name('home');
 Route::get('/sobre', fn () => view('website.sobre'))->name('about');
+Route::get('/contato', fn () => view('website.contato'))->name('contact');
 Route::get('/produtos/{slug}', fn ($slug) => view('website.placeholder', ['title' => 'Oravel ' . ucfirst(str_replace('-', ' ', $slug))]))->name('product');
 Route::get('/solucoes/{slug}', fn ($slug) => view('website.placeholder', ['title' => 'Oravel ' . ucfirst(str_replace('-', ' ', $slug))]))->name('solution');
 

@@ -72,7 +72,7 @@
                 <a href="/sobre" class="text-sm font-semibold text-ink-soft hover:text-ink transition">Sobre Nós</a>
             </div>
 
-            <a href="#demo" class="bg-accent text-white px-6 py-2 rounded-lg font-semibold text-sm hover:bg-orange-600 transition">
+            <a href="/contato" class="bg-accent text-white px-6 py-2 rounded-lg font-semibold text-sm hover:bg-orange-600 transition">
                 Solicitar Demonstração
             </a>
         </nav>
