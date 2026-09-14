@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM - Gestão de Vendas | Oravel</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@400;500;600;700&display=swap">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --color-bg: #0a0e27;
+            --color-accent: #0066ff;
+            --color-accent-light: #3399ff;
+            --color-text-primary: #ffffff;
+            --color-text-secondary: #b0b3c1;
+            --color-success: #00d084;
+            --color-danger: #ff4444;
+        }
+        body {
+            background: linear-gradient(135deg, var(--color-bg) 0%, #1a1f3a 100%);
+            color: var(--color-text-primary);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 102, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(30px); } }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; border-bottom: 1px solid rgba(0, 102, 255, 0.2); margin-bottom: 80px; }
+        .logo { font-size: 24px; font-weight: 700; font-family: 'Syne', sans-serif; background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .nav-back { font-size: 14px; color: var(--color-text-secondary); text-decoration: none; }
+        .nav-back:hover { color: var(--color-accent); }
+        .hero { margin-bottom: 120px; }
+        .hero h1 { font-family: 'Syne', sans-serif; font-size: clamp(40px, 10vw, 64px); font-weight: 700; line-height: 1.1; margin-bottom: 24px; background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-accent-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-subtitle { font-size: 20px; color: var(--color-text-secondary); max-width: 700px; margin-bottom: 40px; line-height: 1.6; }
+        .cta-button { display: inline-block; background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%); color: #000; padding: 16px 40px; border-radius: 8px; border: none; font-weight: 600; font-size: 16px; cursor: pointer; transition: all 0.3s; box-shadow: 0 0 20px rgba(0, 102, 255, 0.3); }
+        .cta-button:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0, 102, 255, 0.5); }
+        .pain-points { margin-bottom: 120px; padding: 48px; background: rgba(20, 24, 41, 0.6); border: 1px solid rgba(0, 102, 255, 0.2); border-radius: 12px; }
+        .section-title { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 600; margin-bottom: 48px; }
+        .pain-points-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; }
+        .pain-point { padding: 32px; background: rgba(10, 14, 39, 0.5); border-left: 3px solid var(--color-danger); border-radius: 8px; }
+        .pain-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 600; margin-bottom: 8px; color: var(--color-danger); }
+        .pain-desc { font-size: 14px; color: var(--color-text-secondary); line-height: 1.6; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; }
+        .feature-card { padding: 32px; background: linear-gradient(135deg, rgba(0, 102, 255, 0.05) 0%, rgba(0, 102, 255, 0.02) 100%); border: 1px solid rgba(0, 102, 255, 0.2); border-radius: 12px; transition: all 0.3s; }
+        .feature-card:hover { border-color: rgba(0, 102, 255, 0.5); box-shadow: 0 0 20px rgba(0, 102, 255, 0.2); transform: translateY(-4px); }
+        .feature-number { display: inline-flex; width: 40px; height: 40px; background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%); color: #000; border-radius: 50%; align-items: center; justify-content: center; font-weight: 600; margin-bottom: 16px; font-size: 18px; }
+        .feature-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 12px; }
+        .feature-desc { font-size: 14px; color: var(--color-text-secondary); line-height: 1.7; }
+        .results-section { margin-bottom: 120px; padding: 48px; background: rgba(0, 208, 132, 0.05); border: 1px solid rgba(0, 208, 132, 0.2); border-radius: 12px; }
+        .results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-top: 32px; }
+        .result-number { font-size: 40px; font-weight: 700; background: linear-gradient(135deg, var(--color-success) 0%, var(--color-accent-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px; }
+        .result-desc { font-size: 14px; color: var(--color-text-secondary); }
+        footer { border-top: 1px solid rgba(0, 102, 255, 0.2); padding: 40px 0; text-align: center; color: var(--color-text-secondary); font-size: 14px; margin-top: 120px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="./landingpages-hub.html" class="logo">Oravel</a>
+            <a href="./landingpages-hub.html" class="nav-back">← Voltar</a>
+        </nav>
+
+        <section class="hero">
+            <h1>Vendas Que Funcionam de Verdade</h1>
+            <p class="hero-subtitle">Pipeline visual. Leads que viram clientes. Propostas que são assinadas. Contrato que gera receita.</p>
+            <button class="cta-button">Agendar Demonstração</button>
+        </section>
+
+        <section class="pain-points">
+            <h2 class="section-title">Seus Problemas de Vendas</h2>
+            <div class="pain-points-grid">
+                <div class="pain-point">
+                    <div class="pain-title">Leads Desaparecem</div>
+                    <div class="pain-desc">Você não sabe em que estágio está cada prospect. Oportunidades de venda caem no esquecimento.</div>
+                </div>
+                <div class="pain-point">
+                    <div class="pain-title">Vendedor Não Sabe Priorizar</div>
+                    <div class="pain-desc">100 leads na cabeça do vendedor. Qual fechar primeiro? Qual está maduro? Ele não sabe.</div>
+                </div>
+                <div class="pain-point">
+                    <div class="pain-title">Proposta Não Vira Contrato</div>
+                    <div class="pain-desc">Propostas saem do sistema. Você não sabe se cliente recebeu, se leu, se vai aceitar.</div>
+                </div>
+                <div class="pain-point">
+                    <div class="pain-title">Sem Histórico do Cliente</div>
+                    <div class="pain-desc">Novo vendedor pega cliente. Não sabe o histórico de interações. Começa do zero.</div>
+                </div>
+                <div class="pain-point">
+                    <div class="pain-title">Relatórios Manuais</div>
+                    <div class="pain-desc">Cada semana, você pede ao vendedor status. Dados inconsistentes. Você não confia nos números.</div>
+                </div>
+                <div class="pain-point">
+                    <div class="pain-title">Comissão Disputada</div>
+                    <div class="pain-desc">Vendedor reclama que contagem de venda está errada. Sem sistema de verdade, você não consegue provar.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <h2 class="section-title">O Controle Completo</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-number">1</div>
+                    <div class="feature-title">Pipeline Visual</div>
+                    <div class="feature-desc">Quadro Kanban. Arraste prospect. Veja status em tempo real. Priorize o que fechar hoje.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">2</div>
+                    <div class="feature-title">Histórico Completo</div>
+                    <div class="feature-desc">Toda interação registrada. Email, call, reunião. Novo vendedor pega cliente e já sabe tudo.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">3</div>
+                    <div class="feature-title">Propostas Rastreadas</div>
+                    <div class="feature-desc">Proposta sai do sistema. Você sabe quando cliente abriu, quanto tempo leu, se vai aceitar.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">4</div>
+                    <div class="feature-title">Integração com Contratos</div>
+                    <div class="feature-desc">Proposta aceita vira contrato automaticamente. Contrato assinado gera fatura.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">5</div>
+                    <div class="feature-title">Relatórios Automáticos</div>
+                    <div class="feature-desc">Taxa de conversão, faturamento por vendedor, leads perdidos. Tudo em tempo real.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">6</div>
+                    <div class="feature-title">Comissão Calculada Automaticamente</div>
+                    <div class="feature-desc">Sistema de verdade. Sem discussão. Comissão está correta e o vendedor sabe por quê.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="results-section">
+            <h2 class="section-title">Resultados</h2>
+            <div class="results-grid">
+                <div>
+                    <div class="result-number">58%</div>
+                    <div class="result-desc">Aumento em taxa de conversão</div>
+                </div>
+                <div>
+                    <div class="result-number">34%</div>
+                    <div class="result-desc">Ciclo de venda mais curto</div>
+                </div>
+                <div>
+                    <div class="result-number">71%</div>
+                    <div class="result-desc">Menos leads perdidos</div>
+                </div>
+                <div>
+                    <div class="result-number">100%</div>
+                    <div class="result-desc">Visibilidade total da pipeline</div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 Oravel ERP. Vendas que crescem com inteligência.</p>
+        </footer>
+    </div>
+</body>
+</html>

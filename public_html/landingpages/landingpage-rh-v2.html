@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RH - Gestão de Pessoas | Oravel</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@400;500;600;700&display=swap">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --color-bg: #0a0e27; --color-accent: #0066ff; --color-accent-light: #3399ff; --color-text-primary: #ffffff; --color-text-secondary: #b0b3c1; --color-success: #00d084; --color-danger: #ff4444; }
+        body { background: linear-gradient(135deg, var(--color-bg) 0%, #1a1f3a 100%); color: var(--color-text-primary); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        body::before { content: ''; position: fixed; top: -50%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0, 102, 255, 0.1) 0%, transparent 70%); border-radius: 50%; animation: float 20s ease-in-out infinite; pointer-events: none; z-index: 1; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(30px); } }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; border-bottom: 1px solid rgba(0, 102, 255, 0.2); margin-bottom: 80px; }
+        .logo { font-size: 24px; font-weight: 700; font-family: 'Syne', sans-serif; background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .nav-back { font-size: 14px; color: var(--color-text-secondary); text-decoration: none; }
+        .nav-back:hover { color: var(--color-accent); }
+        .hero { margin-bottom: 120px; }
+        .hero h1 { font-family: 'Syne', sans-serif; font-size: clamp(40px, 10vw, 64px); font-weight: 700; line-height: 1.1; margin-bottom: 24px; background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-accent-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-subtitle { font-size: 20px; color: var(--color-text-secondary); max-width: 700px; margin-bottom: 40px; line-height: 1.6; }
+        .cta-button { display: inline-block; background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%); color: #000; padding: 16px 40px; border-radius: 8px; border: none; font-weight: 600; font-size: 16px; cursor: pointer; transition: all 0.3s; box-shadow: 0 0 20px rgba(0, 102, 255, 0.3); }
+        .cta-button:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0, 102, 255, 0.5); }
+        .pain-points { margin-bottom: 120px; padding: 48px; background: rgba(20, 24, 41, 0.6); border: 1px solid rgba(0, 102, 255, 0.2); border-radius: 12px; }
+        .section-title { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 600; margin-bottom: 48px; }
+        .pain-points-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; }
+        .pain-point { padding: 32px; background: rgba(10, 14, 39, 0.5); border-left: 3px solid var(--color-danger); border-radius: 8px; }
+        .pain-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 600; margin-bottom: 8px; color: var(--color-danger); }
+        .pain-desc { font-size: 14px; color: var(--color-text-secondary); line-height: 1.6; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; }
+        .feature-card { padding: 32px; background: linear-gradient(135deg, rgba(0, 102, 255, 0.05) 0%, rgba(0, 102, 255, 0.02) 100%); border: 1px solid rgba(0, 102, 255, 0.2); border-radius: 12px; transition: all 0.3s; }
+        .feature-card:hover { border-color: rgba(0, 102, 255, 0.5); box-shadow: 0 0 20px rgba(0, 102, 255, 0.2); transform: translateY(-4px); }
+        .feature-number { display: inline-flex; width: 40px; height: 40px; background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%); color: #000; border-radius: 50%; align-items: center; justify-content: center; font-weight: 600; margin-bottom: 16px; font-size: 18px; }
+        .feature-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 12px; }
+        .feature-desc { font-size: 14px; color: var(--color-text-secondary); line-height: 1.7; }
+        .results-section { margin-bottom: 120px; padding: 48px; background: rgba(0, 208, 132, 0.05); border: 1px solid rgba(0, 208, 132, 0.2); border-radius: 12px; }
+        .results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-top: 32px; }
+        .result-number { font-size: 40px; font-weight: 700; background: linear-gradient(135deg, var(--color-success) 0%, var(--color-accent-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px; }
+        .result-desc { font-size: 14px; color: var(--color-text-secondary); }
+        footer { border-top: 1px solid rgba(0, 102, 255, 0.2); padding: 40px 0; text-align: center; color: var(--color-text-secondary); font-size: 14px; margin-top: 120px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="./landingpages-hub.html" class="logo">Oravel</a>
+            <a href="./landingpages-hub.html" class="nav-back">← Voltar</a>
+        </nav>
+
+        <section class="hero">
+            <h1>Gestão de Pessoas Segura e Escalável</h1>
+            <p class="hero-subtitle">Controle de acesso por perfil. Dados protegidos. Colaboradores veem só o que precisam. LGPD compliant.</p>
+            <button class="cta-button">Agendar Demonstração</button>
+        </section>
+
+        <section class="pain-points">
+            <h2 class="section-title">Seus Riscos de Segurança</h2>
+            <div class="pain-points-grid">
+                <div class="pain-point">
+                    <div class="pain-title">Sem Controle de Acesso</div>
+                    <div class="pain-desc">Técnico vê dados de cliente do concorrente. Colaborador acessa informações que não deveria.</div>
+                </div>
+                <div class="pain-point">
+                    <div class="pain-title">Violação de LGPD</div>
+                    <div class="pain-desc">Dados pessoais expostos. Você não sabe quem acessou o quê. Multa regulatória pendente.</div>
+                </div>
+                <div class="pain-point">
+                    <div class="pain-title">Sem Auditoria de Acesso</div>
+                    <div class="pain-desc">Funcionário saiu da empresa. Você não sabe se deletou dados sensíveis. Pista de auditoria inexiste.</div>
+                </div>
+                <div class="pain-point">
+                    <div class="pain-title">Permissões Manuais e Confusas</div>
+                    <div class="pain-desc">Cada novo colaborador, você manualmente libera acessos. Erro humano comum. Alguém com acesso errado.</div>
+                </div>
+                <div class="pain-point">
+                    <div class="pain-title">Sem Segregação de Funções</div>
+                    <div class="pain-desc">Contador vê dados comerciais. Vendedor mexe em estoque. Sem limites claros.</div>
+                </div>
+                <div class="pain-point">
+                    <div class="pain-title">Desligamento Desordenado</div>
+                    <div class="pain-desc">Funcionário sai. Você esquece de desabilitar acesso. Ex-funcionário pode acessar por semanas.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <h2 class="section-title">Proteção e Conformidade</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-number">1</div>
+                    <div class="feature-title">Perfis Pré-Configurados</div>
+                    <div class="feature-desc">Admin, Gerente, Técnico, Contador. Cada perfil com permissões certas. Novo colaborador recebe perfil, pronto.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">2</div>
+                    <div class="feature-title">Controle Granular por Módulo</div>
+                    <div class="feature-desc">Técnico acessa OS e Frota, não CRM. Vendedor acessa CRM, não Estoque. Segregação perfeita.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">3</div>
+                    <div class="feature-title">Auditoria Completa</div>
+                    <div class="feature-desc">Log imutável. Quem acessou. Quando. O quê mudou. Prova de LGPD compliance.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">4</div>
+                    <div class="feature-title">Desligamento Automático</div>
+                    <div class="feature-desc">Funcionário sai. Você marca como inativo. Acesso cai instantaneamente em todos os sistemas.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">5</div>
+                    <div class="feature-title">Visibilidade por Departamento</div>
+                    <div class="feature-desc">Técnico de Brasília vê só clientes de Brasília. Gerente regional vê só sua região. Automático.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">6</div>
+                    <div class="feature-title">Alertas de Atividade Anômala</div>
+                    <div class="feature-desc">Acesso à noite? Múltiplos logins simultâneos? Sistema avisa. Você age preventivamente.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="results-section">
+            <h2 class="section-title">Impacto Mensurável</h2>
+            <div class="results-grid">
+                <div>
+                    <div class="result-number">100%</div>
+                    <div class="result-desc">Conformidade LGPD comprovada</div>
+                </div>
+                <div>
+                    <div class="result-number">0</div>
+                    <div class="result-desc">Acessos não autorizados</div>
+                </div>
+                <div>
+                    <div class="result-number">45 min</div>
+                    <div class="result-desc">Onboarding de novo colaborador</div>
+                </div>
+                <div>
+                    <div class="result-number">100%</div>
+                    <div class="result-desc">Rastreabilidade de ações</div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 Oravel ERP. Acesso seguro. Dados protegidos. Conformidade garantida.</p>
+        </footer>
+    </div>
+</body>
+</html>

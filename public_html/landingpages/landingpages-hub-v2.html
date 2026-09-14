@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oravel - Plataforma Completa para Locadoras</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@400;500;600;700&display=swap">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --color-bg: #0a0e27; --color-accent: #0066ff; --color-accent-light: #3399ff; --color-text-primary: #ffffff; --color-text-secondary: #b0b3c1; }
+        body { background: linear-gradient(135deg, var(--color-bg) 0%, #1a1f3a 100%); color: var(--color-text-primary); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        body::before { content: ''; position: fixed; top: -50%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0, 102, 255, 0.1) 0%, transparent 70%); border-radius: 50%; animation: float 20s ease-in-out infinite; pointer-events: none; z-index: 1; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(30px); } }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; border-bottom: 1px solid rgba(0, 102, 255, 0.2); margin-bottom: 80px; }
+        .logo { font-size: 28px; font-weight: 700; font-family: 'Syne', sans-serif; background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero { margin-bottom: 120px; text-align: center; }
+        .hero h1 { font-family: 'Syne', sans-serif; font-size: clamp(48px, 12vw, 72px); font-weight: 700; line-height: 1.1; margin-bottom: 24px; background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-accent-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-subtitle { font-size: 20px; color: var(--color-text-secondary); max-width: 700px; margin: 0 auto 40px; line-height: 1.6; }
+        .cta-button { display: inline-block; background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%); color: #000; padding: 16px 48px; border-radius: 8px; border: none; font-weight: 600; font-size: 16px; cursor: pointer; transition: all 0.3s; box-shadow: 0 0 20px rgba(0, 102, 255, 0.3); }
+        .cta-button:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0, 102, 255, 0.5); }
+        .section-title { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 600; margin-bottom: 60px; text-align: center; }
+        .modules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; margin-bottom: 120px; }
+        .module-card { padding: 40px; background: linear-gradient(135deg, rgba(0, 102, 255, 0.08) 0%, rgba(0, 102, 255, 0.02) 100%); border: 1px solid rgba(0, 102, 255, 0.25); border-radius: 12px; transition: all 0.3s; text-decoration: none; color: inherit; cursor: pointer; }
+        .module-card:hover { border-color: rgba(0, 102, 255, 0.6); box-shadow: 0 0 30px rgba(0, 102, 255, 0.2); transform: translateY(-8px); }
+        .module-icon { display: inline-flex; width: 56px; height: 56px; background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%); color: #000; border-radius: 12px; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 16px; }
+        .module-name { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 8px; }
+        .module-desc { font-size: 14px; color: var(--color-text-secondary); line-height: 1.6; margin-bottom: 20px; }
+        .module-link { font-size: 14px; font-weight: 600; color: var(--color-accent-light); display: flex; align-items: center; gap: 8px; transition: gap 0.2s; }
+        .module-card:hover .module-link { gap: 12px; }
+        .features { margin-bottom: 120px; text-align: center; }
+        .features-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+        .feature-item { text-align: left; padding: 24px; background: rgba(0, 102, 255, 0.05); border-radius: 8px; border-left: 2px solid var(--color-accent); }
+        .feature-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 600; margin-bottom: 8px; color: var(--color-accent-light); }
+        .feature-desc { font-size: 14px; color: var(--color-text-secondary); }
+        footer { border-top: 1px solid rgba(0, 102, 255, 0.2); padding: 40px 0; text-align: center; color: var(--color-text-secondary); font-size: 14px; margin-top: 120px; }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 40px; }
+            .section-title { font-size: 28px; }
+            .modules-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="#" class="logo">Oravel</a>
+        </nav>
+
+        <section class="hero">
+            <h1>Plataforma Completa para Locadoras</h1>
+            <p class="hero-subtitle">Gerencie frota, estoque, vendas, pessoas, dados. Tudo sincronizado em tempo real. Uma única plataforma que resolve tudo.</p>
+            <button class="cta-button">Começar Demonstração</button>
+        </section>
+
+        <section class="features">
+            <h2 class="section-title">Por Que Oravel</h2>
+            <div class="features-list">
+                <div class="feature-item">
+                    <div class="feature-title">Tudo em Um Lugar</div>
+                    <div class="feature-desc">Sem mais 5 sistemas diferentes. Dados sincronizados. Uma única plataforma que funciona.</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-title">Decisões em Tempo Real</div>
+                    <div class="feature-desc">Dashboards automáticos. Você sabe o que está acontecendo agora. Sem atrasos.</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-title">Técnico Produtivo</div>
+                    <div class="feature-desc">App no celular. OS digitais. Assinatura do cliente. Sem papelada. Sem atraso.</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-title">Conformidade Garantida</div>
+                    <div class="feature-desc">LGPD compliant. Auditoria completa. Segurança de dados. Legalmente válido.</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-title">Crescimento Escalável</div>
+                    <div class="feature-desc">Desde 1 até 1000 colaboradores. Sistema cresce com você. Sem barreiras.</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-title">Implementação Rápida</div>
+                    <div class="feature-desc">90 dias até estar rodando. Treinamento incluído. Suporte sempre pronto.</div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title">Explore os Módulos</h2>
+            <div class="modules-grid">
+                <a href="./landingpage-wms-v2.html" class="module-card">
+                    <div class="module-icon">B</div>
+                    <div class="module-name">WMS</div>
+                    <div class="module-desc">Gestão de estoque inteligente. Peças rastreadas. Sem desperdício.</div>
+                    <div class="module-link">Saiba mais →</div>
+                </a>
+
+                <a href="./landingpage-frota-v2.html" class="module-card">
+                    <div class="module-icon">V</div>
+                    <div class="module-name">Frota</div>
+                    <div class="module-desc">Rastreamento GPS. Manutenção preventiva. Custos controlados.</div>
+                    <div class="module-link">Saiba mais →</div>
+                </a>
+
+                <a href="./landingpage-os-v2.html" class="module-card">
+                    <div class="module-icon">O</div>
+                    <div class="module-name">OS</div>
+                    <div class="module-desc">Ordens digitais. Assinatura do cliente. Faturamento automático.</div>
+                    <div class="module-link">Saiba mais →</div>
+                </a>
+
+                <a href="./landingpage-crm-v2.html" class="module-card">
+                    <div class="module-icon">P</div>
+                    <div class="module-name">CRM</div>
+                    <div class="module-desc">Pipeline visual. Propostas rastreadas. Vendas que viram contrato.</div>
+                    <div class="module-link">Saiba mais →</div>
+                </a>
+
+                <a href="./landingpage-rh-v2.html" class="module-card">
+                    <div class="module-icon">R</div>
+                    <div class="module-name">RH</div>
+                    <div class="module-desc">Controle de acesso. LGPD compliant. Dados protegidos.</div>
+                    <div class="module-link">Saiba mais →</div>
+                </a>
+
+                <a href="./landingpage-recebimentos-v2.html" class="module-card">
+                    <div class="module-icon">F</div>
+                    <div class="module-name">Recebimentos</div>
+                    <div class="module-desc">Faturamento automático. Fluxo de caixa previsível. Sem atrasos.</div>
+                    <div class="module-link">Saiba mais →</div>
+                </a>
+
+                <a href="./landingpage-analytics-v2.html" class="module-card">
+                    <div class="module-icon">D</div>
+                    <div class="module-name">IA Analytics</div>
+                    <div class="module-desc">Dashboards em tempo real. Previsões com IA. Decisões inteligentes.</div>
+                    <div class="module-link">Saiba mais →</div>
+                </a>
+
+                <a href="./landingpage-assinatura-v2.html" class="module-card">
+                    <div class="module-icon">A</div>
+                    <div class="module-name">Assinatura Digital</div>
+                    <div class="module-desc">Documentos seguros. Legalmente válido. Rastreamento completo.</div>
+                    <div class="module-link">Saiba mais →</div>
+                </a>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 Oravel ERP. Uma plataforma. Infinitas possibilidades.</p>
+        </footer>
+    </div>
+</body>
+</html>

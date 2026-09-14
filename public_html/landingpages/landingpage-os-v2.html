@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OS - Ordens de Serviço Inteligentes | Oravel</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@400;500;600;700&display=swap">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --color-bg: #0a0e27;
+            --color-accent: #0066ff;
+            --color-accent-light: #3399ff;
+            --color-text-primary: #ffffff;
+            --color-text-secondary: #b0b3c1;
+            --color-success: #00d084;
+            --color-danger: #ff4444;
+            --font-display: 'Syne', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, var(--color-bg) 0%, #1a1f3a 100%);
+            color: var(--color-text-primary);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 102, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(30px); }
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 2;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 0;
+            border-bottom: 1px solid rgba(0, 102, 255, 0.2);
+            margin-bottom: 80px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            font-family: var(--font-display);
+            background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .nav-back {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .nav-back:hover {
+            color: var(--color-accent);
+        }
+        .hero {
+            margin-bottom: 120px;
+        }
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(40px, 10vw, 64px);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-accent-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--color-text-secondary);
+            max-width: 700px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+            color: #000;
+            padding: 16px 40px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            font-family: var(--font-body);
+            box-shadow: 0 0 20px rgba(0, 102, 255, 0.3);
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 102, 255, 0.5);
+        }
+        .pain-points {
+            margin-bottom: 120px;
+            padding: 48px;
+            background: rgba(20, 24, 41, 0.6);
+            border: 1px solid rgba(0, 102, 255, 0.2);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 48px;
+        }
+        .pain-points-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+        }
+        .pain-point {
+            padding: 32px;
+            background: rgba(10, 14, 39, 0.5);
+            border-left: 3px solid var(--color-danger);
+            border-radius: 8px;
+        }
+        .pain-title {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--color-danger);
+        }
+        .pain-desc {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+        .features-section {
+            margin-bottom: 120px;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+        }
+        .feature-card {
+            padding: 32px;
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.05) 0%, rgba(0, 102, 255, 0.02) 100%);
+            border: 1px solid rgba(0, 102, 255, 0.2);
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        .feature-card:hover {
+            border-color: rgba(0, 102, 255, 0.5);
+            box-shadow: 0 0 20px rgba(0, 102, 255, 0.2);
+            transform: translateY(-4px);
+        }
+        .feature-number {
+            display: inline-flex;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+            color: #000;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+        .feature-title {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: 12px;
+        }
+        .feature-desc {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            line-height: 1.7;
+        }
+        .results-section {
+            margin-bottom: 120px;
+            padding: 48px;
+            background: rgba(0, 208, 132, 0.05);
+            border: 1px solid rgba(0, 208, 132, 0.2);
+            border-radius: 12px;
+        }
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+        .result-number {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-success) 0%, var(--color-accent-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        .result-desc {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+        }
+        footer {
+            border-top: 1px solid rgba(0, 102, 255, 0.2);
+            padding: 40px 0;
+            text-align: center;
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            margin-top: 120px;
+        }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 36px; }
+            .section-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="./landingpages-hub.html" class="logo">Oravel</a>
+            <a href="./landingpages-hub.html" class="nav-back">← Voltar</a>
+        </nav>
+
+        <section class="hero">
+            <h1>Ordens de Serviço Que Funcionam</h1>
+            <p class="hero-subtitle">OS digitais rastreáveis. Técnico executa no celular. Cliente assina digitalmente. Tudo fechado e faturado automaticamente.</p>
+            <button class="cta-button">Agendar Demonstração</button>
+        </section>
+
+        <section class="pain-points">
+            <h2 class="section-title">Os Problemas Reais</h2>
+            <div class="pain-points-grid">
+                <div class="pain-point">
+                    <div class="pain-title">OS Atrasada, Cliente Insatisfeito</div>
+                    <div class="pain-desc">Você não sabe se a OS foi concluída. Técnico está em campo e comunicação é por WhatsApp. Cliente reclama.</div>
+                </div>
+                <div class="pain-point">
+                    <div class="pain-title">Sem Comprovação de Execução</div>
+                    <div class="pain-desc">Cliente reclama que o trabalho não foi feito. Você não tem prova. Discussão sem fim.</div>
+                </div>
+                <div class="pain-point">
+                    <div class="pain-title">Peças Desperdiçadas</div>
+                    <div class="pain-desc">Técnico leva 10 peças do estoque mas usa só 3. Resto desaparece. Você não controla.</div>
+                </div>
+                <div class="pain-point">
+                    <div class="pain-title">Faturamento Atrasado</div>
+                    <div class="pain-desc">OS concluída demora dias para virar fatura. Fluxo de caixa fica preso.</div>
+                </div>
+                <div class="pain-point">
+                    <div class="pain-title">Papelada sem Fim</div>
+                    <div class="pain-desc">Relatórios manuais. Assinatura em papel. Tudo escaneado depois. Caos administrativo.</div>
+                </div>
+                <div class="pain-point">
+                    <div class="pain-title">Sem Histórico do Equipamento</div>
+                    <div class="pain-desc">Próxima vez que o equipamento quebra, você não sabe o que foi feito antes. Serviço repetido.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <h2 class="section-title">A Solução Completa</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-number">1</div>
+                    <div class="feature-title">OS Digital no Celular</div>
+                    <div class="feature-desc">Técnico recebe OS no app. Tudo sincronizado. Status atualiza em tempo real para você.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">2</div>
+                    <div class="feature-title">Assinatura Digital do Cliente</div>
+                    <div class="feature-desc">Técnico coleta assinatura no app. Legalmente válida. Comprovação automática.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">3</div>
+                    <div class="feature-title">Consumo Automático de Peças</div>
+                    <div class="feature-desc">Técnico registra peças usadas. Saem automaticamente do estoque. Zero desperdício.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">4</div>
+                    <div class="feature-title">Fotos Anexadas Automaticamente</div>
+                    <div class="feature-desc">Antes, durante, depois. Todas as fotos ficam no sistema. Prova visual completa.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">5</div>
+                    <div class="feature-title">Faturamento Automático</div>
+                    <div class="feature-desc">OS concluída vira fatura instantaneamente. Integra com contas a receber.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">6</div>
+                    <div class="feature-title">Histórico Completo do Equipamento</div>
+                    <div class="feature-desc">Toda vez que técnico mexe no equipamento, fica registrado. Histórico total.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="results-section">
+            <h2 class="section-title">Resultados Mensuráveis</h2>
+            <div class="results-grid">
+                <div>
+                    <div class="result-number">89%</div>
+                    <div class="result-desc">Satisfação de clientes aumenta</div>
+                </div>
+                <div>
+                    <div class="result-number">52%</div>
+                    <div class="result-desc">Redução em atrasos de OS</div>
+                </div>
+                <div>
+                    <div class="result-number">72%</div>
+                    <div class="result-desc">Menos desperdício de peças</div>
+                </div>
+                <div>
+                    <div class="result-number">3 dias</div>
+                    <div class="result-desc">Aceleração no faturamento</div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 Oravel ERP. Ordens de serviço que geram confiança.</p>
+        </footer>
+    </div>
+</body>
+</html>
