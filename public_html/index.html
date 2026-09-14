@@ -1,1 +1,463 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Oravel - ERP para Locadoras</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@400;500;600;700&display=swap"><style>*{margin:0;padding:0;box-sizing:border-box}:root{--color-bg:#0a0e27;--color-accent:#0066ff;--color-accent-light:#3399ff;--color-text-primary:#ffffff;--color-text-secondary:#b0b3c1;--color-success:#00d084}html{scroll-behavior:smooth}body{background:linear-gradient(135deg,var(--color-bg) 0%,#1a1f3a 100%);color:var(--color-text-primary);font-family:'Inter',sans-serif;overflow-x:hidden}body::before{content:'';position:fixed;top:-50%;right:-10%;width:800px;height:800px;background:radial-gradient(circle,rgba(0,102,255,.08) 0%,transparent 70%);border-radius:50%;animation:float 25s ease-in-out infinite;pointer-events:none;z-index:1}@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(40px)}}.container{max-width:1400px;margin:0 auto;padding:0 24px;position:relative;z-index:2}nav{display:flex;justify-content:space-between;align-items:center;padding:28px 0;border-bottom:1px solid rgba(0,102,255,.15);position:sticky;top:0;z-index:50;background:linear-gradient(180deg,var(--color-bg) 80%,transparent)}.logo{font-size:32px;font-weight:800;font-family:'Syne',sans-serif;background:linear-gradient(135deg,var(--color-text-primary) 0%,var(--color-accent-light) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px}.nav-links{display:flex;gap:48px;list-style:none}.nav-links a{font-size:14px;color:var(--color-text-secondary);text-decoration:none;font-weight:500;transition:color .2s}.nav-links a:hover{color:var(--color-accent-light)}.cta-nav{background:linear-gradient(135deg,var(--color-accent) 0%,var(--color-accent-light) 100%);color:#000;padding:12px 32px;border-radius:8px;border:none;font-weight:600;font-size:14px;cursor:pointer;box-shadow:0 0 20px rgba(0,102,255,.3);transition:transform .2s}.cta-nav:hover{transform:translateY(-2px)}.hero{padding:100px 0 120px;text-align:center}.hero h1{font-family:'Syne',sans-serif;font-size:clamp(52px,12vw,88px);font-weight:800;line-height:1.1;margin-bottom:28px;background:linear-gradient(135deg,var(--color-text-primary) 0%,var(--color-accent-light) 50%,var(--color-text-primary) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-2px}.hero-subtitle{font-size:20px;color:var(--color-text-secondary);max-width:800px;margin:0 auto 48px;line-height:1.7}.hero-buttons{display:flex;gap:24px;justify-content:center;flex-wrap:wrap}.btn-primary{background:linear-gradient(135deg,var(--color-accent) 0%,var(--color-accent-light) 100%);color:#000;padding:18px 56px;border-radius:8px;border:none;font-weight:600;font-size:16px;cursor:pointer;box-shadow:0 0 30px rgba(0,102,255,.3);transition:transform .3s}.btn-primary:hover{transform:translateY(-3px)}.btn-secondary{background:0;color:var(--color-accent-light);padding:18px 56px;border-radius:8px;border:2px solid var(--color-accent);font-weight:600;font-size:16px;cursor:pointer;transition:all .3s}.btn-secondary:hover{background:rgba(0,102,255,.1);transform:translateY(-3px)}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:32px;margin-top:100px;padding-top:80px;border-top:1px solid rgba(0,102,255,.15)}.stat-number{font-size:48px;font-weight:800;background:linear-gradient(135deg,var(--color-success) 0%,var(--color-accent-light) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}.stat-label{font-size:14px;color:var(--color-text-secondary);font-weight:500}.features{margin-top:160px;padding:80px 0}.section-title{font-family:'Syne',sans-serif;font-size:clamp(40px,8vw,56px);font-weight:800;margin-bottom:72px;text-align:center}.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:40px}.feature-box{padding:48px;background:linear-gradient(135deg,rgba(0,102,255,.08) 0%,rgba(0,102,255,.02) 100%);border:1px solid rgba(0,102,255,.25);border-radius:16px;transition:all .3s}.feature-box:hover{border-color:rgba(0,102,255,.6);box-shadow:0 20px 40px rgba(0,102,255,.15);transform:translateY(-8px)}.feature-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;margin-bottom:16px}.feature-desc{font-size:15px;color:var(--color-text-secondary);line-height:1.8}.cta-section{margin-top:160px;padding:80px;background:linear-gradient(135deg,rgba(0,102,255,.12) 0%,rgba(0,102,255,.04) 100%);border:1px solid rgba(0,102,255,.25);border-radius:20px;text-align:center;margin-bottom:120px}.cta-title{font-family:'Syne',sans-serif;font-size:clamp(32px,6vw,48px);font-weight:800;margin-bottom:24px}.cta-subtitle{font-size:18px;color:var(--color-text-secondary);margin-bottom:40px;max-width:600px;margin-left:auto;margin-right:auto}footer{border-top:1px solid rgba(0,102,255,.15);padding:60px 0;text-align:center;color:var(--color-text-secondary);font-size:13px}.footer-links{display:flex;gap:32px;justify-content:center;margin-bottom:24px;flex-wrap:wrap}.footer-links a{color:var(--color-text-secondary);text-decoration:none;transition:color .2s}.footer-links a:hover{color:var(--color-accent-light)}@media(max-width:768px){.hero{padding:60px 0 80px}.hero h1{font-size:42px}.nav-links{gap:24px;font-size:12px}.features-grid{grid-template-columns:1fr}.cta-section{padding:48px 24px}.stats{margin-top:60px;padding-top:40px}}</style></head><body><div class="container"><nav><div class="logo">Oravel</div><ul class="nav-links"><li><a href="#features">Recursos</a></li><li><a href="landingpages/landingpages-hub-v2.html">Módulos</a></li></ul><button class="cta-nav" onclick="location.href='/admin'">Acessar</button></nav><section class="hero"><h1>ERP para Locadoras</h1><p class="hero-subtitle">Frota, estoque, vendas, dados. Uma plataforma que resolve tudo.</p><div class="hero-buttons"><button class="btn-primary" onclick="location.href='/admin'">Começar</button><button class="btn-secondary" onclick="alert('Demo em breve')">Demo</button></div><div class="stats"><div><div class="stat-number">500+</div><div class="stat-label">Empresas</div></div><div><div class="stat-number">50K+</div><div class="stat-label">Usuários</div></div><div><div class="stat-number">99.9%</div><div class="stat-label">Uptime</div></div><div><div class="stat-number">24/7</div><div class="stat-label">Suporte</div></div></div></section><section id="features" class="features"><h2 class="section-title">Controle Total</h2><div class="features-grid"><div class="feature-box"><div class="feature-title">Frota Rastreada</div><div class="feature-desc">GPS tempo real, manutenção preventiva, histórico. Reduza custos, evite quebras.</div></div><div class="feature-box"><div class="feature-title">Estoque Inteligente</div><div class="feature-desc">Peças rastreadas, consumo automático. Sem desperdício, sem surpresas.</div></div><div class="feature-box"><div class="feature-title">Vendas Estruturadas</div><div class="feature-desc">Pipeline visual, propostas rastreadas, faturamento automático.</div></div><div class="feature-box"><div class="feature-title">Decisões Tempo Real</div><div class="feature-desc">Dashboards automáticos, IA, previsões. Dados que fazem sentido.</div></div><div class="feature-box"><div class="feature-title">Segurança Garantida</div><div class="feature-desc">LGPD compliant, auditoria completa. Dados protegidos.</div></div><div class="feature-box"><div class="feature-title">Escalável</div><div class="feature-desc">De 1 a 1000 colaboradores. Cresce com você. Sem limites.</div></div></div></section><section class="cta-section"><h2 class="cta-title">Transforme Sua Locadora</h2><p class="cta-subtitle">90 dias implantação. Treinamento incluído. Suporte 24/7.</p><button class="btn-primary" onclick="location.href='/admin'">Começar</button></section></div><footer><div class="footer-links"><a href="landingpages/landingpages-hub-v2.html">Landing Pages</a><a href="#contact">Contato</a></div><p>&copy; 2026 Oravel. Tecnologia que faz crescer.</p></footer></body></html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oravel — Plataforma Completa de Gestão Empresarial</title>
+  <meta name="description" content="Oravel: plataforma integrada para gestão de operações e administração. WMS, Frota, OS, RH, CRM, Analytics, Recebimentos, Assinatura Digital.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #0066ff;
+      --primary-light: #3399ff;
+      --dark: #0a0e27;
+      --bg-dark: #1a1f3a;
+      --light: #f8fafc;
+      --gray: #b0b3c1;
+      --border: #2d3548;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--dark) 0%, var(--bg-dark) 100%);
+    }
+    header {
+      background: rgba(10, 14, 39, 0.95);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .header-content {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: #ffffff;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+    .logo-accent { color: var(--primary-light); }
+    nav { display: flex; gap: 3rem; }
+    nav a {
+      color: var(--gray);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    nav a:hover { color: var(--primary-light); }
+    .btn {
+      padding: 0.7rem 1.5rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: #000;
+      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+    }
+    .btn-primary:hover {
+      box-shadow: 0 6px 20px rgba(0, 102, 255, 0.5);
+      transform: translateY(-2px);
+    }
+    .hero {
+      background: linear-gradient(rgba(10, 14, 39, 0.9), rgba(10, 14, 39, 0.9));
+      position: relative;
+      padding: 8rem 2rem;
+      text-align: center;
+      min-height: 650px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+    }
+    .hero > * { position: relative; z-index: 1; }
+    .hero h1 {
+      font-size: 3.8rem;
+      font-weight: 900;
+      margin-bottom: 1.5rem;
+      line-height: 1.1;
+      color: #ffffff;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero > p {
+      font-size: 1.3rem;
+      color: var(--gray);
+      max-width: 700px;
+      margin: 0 auto 3rem;
+      line-height: 1.8;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    .hero-buttons {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+    .hero-buttons .btn {
+      padding: 1rem 2.5rem;
+      font-size: 1rem;
+    }
+    .section {
+      padding: 6rem 2rem;
+      width: 100%;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .section-header h2 {
+      font-size: 2.8rem;
+      font-weight: 900;
+      margin-bottom: 1rem;
+      color: #ffffff;
+    }
+    .section-header > p {
+      font-size: 1.1rem;
+      color: var(--gray);
+    }
+    .pillar-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+    .pillar {
+      background: rgba(45, 53, 72, 0.5);
+      border-radius: 20px;
+      padding: 3rem;
+      border: 2px solid var(--border);
+      backdrop-filter: blur(10px);
+    }
+    .pillar-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .pillar-icon {
+      font-size: 3rem;
+      min-width: 70px;
+    }
+    .pillar-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .pillar-subtitle {
+      font-size: 0.9rem;
+      color: var(--gray);
+      font-weight: 500;
+    }
+    .modules-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .module-card {
+      background: rgba(51, 153, 255, 0.08);
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 102, 255, 0.3);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .module-card:hover {
+      border-color: var(--primary-light);
+      background: rgba(0, 102, 255, 0.15);
+      box-shadow: 0 8px 16px rgba(0, 102, 255, 0.2);
+      transform: translateY(-4px);
+    }
+    .module-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+    }
+    .module-desc {
+      font-size: 0.85rem;
+      color: var(--gray);
+      line-height: 1.5;
+    }
+    .pillar-text {
+      font-size: 1rem;
+      color: var(--gray);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+    .why-us {
+      background: linear-gradient(135deg, rgba(10, 14, 39, 0.8) 0%, rgba(26, 31, 58, 0.8) 100%);
+      padding: 6rem 2rem;
+      width: 100%;
+    }
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin: 3rem auto;
+      max-width: 1280px;
+    }
+    .benefit-item {
+      padding: 2.8rem;
+      background: rgba(45, 53, 72, 0.5);
+      border-radius: 16px;
+      border: 2px solid var(--border);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+    .benefit-item:hover {
+      border-color: var(--primary-light);
+      box-shadow: 0 15px 30px rgba(0, 102, 255, 0.2);
+      transform: translateY(-6px);
+    }
+    .benefit-number {
+      font-size: 3.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      opacity: 0.3;
+      margin-bottom: -1rem;
+      position: relative;
+      z-index: 1;
+    }
+    .benefit-item h3 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 1.2rem;
+      color: #ffffff;
+      position: relative;
+      z-index: 2;
+    }
+    .benefit-item p {
+      color: var(--gray);
+      line-height: 1.85;
+      font-size: 1rem;
+      position: relative;
+      z-index: 2;
+    }
+    .cta {
+      background: linear-gradient(135deg, var(--dark) 0%, var(--bg-dark) 100%);
+      color: white;
+      padding: 8rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      border-top: 1px solid var(--border);
+    }
+    .cta > * {
+      position: relative;
+      z-index: 1;
+    }
+    .cta h2 {
+      color: white;
+      margin-bottom: 1.5rem;
+      font-size: 3rem;
+      font-weight: 900;
+    }
+    .cta p {
+      font-size: 1.2rem;
+      color: var(--gray);
+      max-width: 700px;
+      margin: 0 auto 3rem;
+      line-height: 1.8;
+    }
+    footer {
+      background: rgba(10, 14, 39, 0.95);
+      color: white;
+      padding: 4rem 2rem;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      width: 100%;
+    }
+    @media (max-width: 768px) {
+      nav { display: none; }
+      .hero h1 { font-size: 2.2rem; }
+      .section-header h2 { font-size: 2rem; }
+      .pillar-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .modules-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <a href="/" class="logo">O<span class="logo-accent">r</span>avel</a>
+      <nav>
+        <a href="#opcoes">Produtos</a>
+        <a href="#por-que">Por que Oravel</a>
+        <a href="/contato.php">Contato</a>
+      </nav>
+      <div>
+        <a href="/contato.php" class="btn btn-primary">Demonstração</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>Gestão Empresarial Completa e Integrada</h1>
+    <p>Uma plataforma para operação, administração e inteligência. Todos os módulos conversam entre si. Escolha o que sua empresa precisa.</p>
+    <div class="hero-buttons">
+      <a href="/contato.php" class="btn btn-primary">Agendar Demonstração</a>
+    </div>
+  </section>
+
+  <section class="section" id="opcoes">
+    <div class="section-header">
+      <h2>Escolha seus módulos</h2>
+      <p>Comece com o que você precisa hoje. Expanda amanhã. Tudo integrado.</p>
+    </div>
+    <div class="pillar-container">
+      <div class="pillar">
+        <div class="pillar-header">
+          <div class="pillar-icon">⚙️</div>
+          <div>
+            <div class="pillar-title">ORAVEL OPERAÇÃO</div>
+            <div class="pillar-subtitle">Para o dia a dia no campo</div>
+          </div>
+        </div>
+        <p class="pillar-text">Gestão de estoque, frota e ordem de serviço. Tudo sincronizado em tempo real. Seu técnico no campo tem acesso completo do celular.</p>
+        <div class="modules-grid">
+          <a href="/wms.html" style="text-decoration: none; color: inherit;">
+            <div class="module-card">
+              <div class="module-name">📦 WMS</div>
+              <div class="module-desc">Gestão de Estoque</div>
+            </div>
+          </a>
+          <a href="/frota.html" style="text-decoration: none; color: inherit;">
+            <div class="module-card">
+              <div class="module-name">🚗 Frota</div>
+              <div class="module-desc">Rastreamento e Manutenção</div>
+            </div>
+          </a>
+          <a href="/os.html" style="text-decoration: none; color: inherit;">
+            <div class="module-card">
+              <div class="module-name">✓ OS</div>
+              <div class="module-desc">Ordem de Serviço</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="pillar">
+        <div class="pillar-header">
+          <div class="pillar-icon">📊</div>
+          <div>
+            <div class="pillar-title">ORAVEL GESTÃO</div>
+            <div class="pillar-subtitle">Para administração e crescimento</div>
+          </div>
+        </div>
+        <p class="pillar-text">Gestão de pessoas, vendas, recebimentos e inteligência. Seu gestor tem visão 360 da empresa. Decisões baseadas em dados reais.</p>
+        <div class="modules-grid">
+          <a href="/rh.html" style="text-decoration: none; color: inherit;">
+            <div class="module-card">
+              <div class="module-name">👥 RH</div>
+              <div class="module-desc">Recursos Humanos</div>
+            </div>
+          </a>
+          <a href="/crm.html" style="text-decoration: none; color: inherit;">
+            <div class="module-card">
+              <div class="module-name">💼 CRM</div>
+              <div class="module-desc">Gestão de Vendas</div>
+            </div>
+          </a>
+          <a href="/recebimentos.html" style="text-decoration: none; color: inherit;">
+            <div class="module-card">
+              <div class="module-name">💰 Recebimentos</div>
+              <div class="module-desc">Contas a Receber</div>
+            </div>
+          </a>
+          <a href="/analytics.html" style="text-decoration: none; color: inherit;">
+            <div class="module-card">
+              <div class="module-name">🧠 IA Analytics</div>
+              <div class="module-desc">Inteligência de Dados</div>
+            </div>
+          </a>
+          <div class="module-card">
+            <div class="module-name">🔏 Assinatura Digital</div>
+            <div class="module-desc">Documentos assinados</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="why-us" id="por-que">
+    <div class="section-header">
+      <h2>Por que Oravel é Diferente</h2>
+      <p>Construída para empresas que querem crescer de verdade</p>
+    </div>
+    <div class="benefits-grid">
+      <div class="benefit-item">
+        <div class="benefit-number">01</div>
+        <h3>Começe Pequeno</h3>
+        <p>Escolha apenas os módulos que você precisa. Comece amanhã. Sem contratos longos. Expanda quando sua empresa crescer.</p>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-number">02</div>
+        <h3>Tudo Integrado</h3>
+        <p>Um dado entra uma vez, toda empresa acessa. Sem retrabalho. WMS fala com CRM, Frota com OS, tudo com Analytics.</p>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-number">03</div>
+        <h3>Mobile First</h3>
+        <p>Seu time inteiro na palma da mão. Celular, tablet, desktop. Sem instalar nada. Funciona online e offline.</p>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-number">04</div>
+        <h3>Dados que Geram Ação</h3>
+        <p>IA que aprende seu negócio. Sugestões automáticas. Alertas inteligentes. Decisões baseadas em dados, não em achismo.</p>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-number">05</div>
+        <h3>Deploy em Dias</h3>
+        <p>Começar em dias, não meses. Estrutura pré-configurada. Migração assistida. Seu time produtivo desde semana um.</p>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-number">06</div>
+        <h3>Suporte que Entende</h3>
+        <p>Especialista em operações, não call center. Disponível 24/7. Consultoria incluída. Sua empresa é nossa missão.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <h2>Sua empresa merece mais</h2>
+    <p>Centenas de empresas já usam Oravel para operar melhor, vender mais e crescer mais rápido. Não importa seu segmento.</p>
+    <a href="/contato.php" class="btn btn-primary">Agendar Demonstração Agora</a>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 Oravel Software. Todos os direitos reservados.</p>
+  </footer>
+</body>
+</html>
