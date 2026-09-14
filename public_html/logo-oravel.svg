@@ -1,0 +1,27 @@
+<svg viewBox="0 0 240 60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Mark: stylized "O" with movement lines -->
+  <circle cx="18" cy="30" r="14" fill="url(#grad1)"/>
+  <circle cx="18" cy="30" r="10" fill="none" stroke="#0f172a" stroke-width="2" opacity="0.15"/>
+
+  <!-- Movement lines (speed/efficiency) -->
+  <line x1="34" y1="22" x2="42" y2="20" stroke="#f97316" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <line x1="34" y1="30" x2="44" y2="30" stroke="#f97316" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+  <line x1="34" y1="38" x2="42" y2="40" stroke="#f97316" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- Wordmark: ORAVEL -->
+  <text x="58" y="38" font-family="Manrope, sans-serif" font-size="28" font-weight="800" letter-spacing="-0.5" fill="#0f172a">
+    ORAVEL
+  </text>
+
+  <!-- Tagline (optional, lighter) -->
+  <text x="58" y="50" font-family="Inter, sans-serif" font-size="10" font-weight="500" letter-spacing="0.5" fill="#8891a0" text-transform="uppercase">
+    Gestão Inteligente
+  </text>
+</svg>
