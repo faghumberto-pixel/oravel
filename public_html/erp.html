@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oravel ERP — Sistema Integrado para Locadoras | Oravel</title>
+<meta name="description" content="Oravel ERP: plataforma integrada que unifica gestão de frota, manutenção, estoque, financeiro e RH. Aumente lucratividade e reduza custos operacionais.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #ffffff; --surface: #f6f7f9; --ink: #0f172a; --ink-soft: #5b6472;
+    --ink-faint: #8891a0; --border: #e4e7ec; --accent: #f97316; --accent-soft: #fff1e4;
+    --navy: #0f172a; --navy-2: #1a2540;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Inter", "Segoe UI", system-ui, sans-serif; color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: "Manrope", "Inter", sans-serif; font-weight: 800; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  a { color: inherit; text-decoration: none; }
+  img, svg { max-width: 100%; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  .eyebrow { font-family: "Manrope", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+
+  .inav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+  .inav-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; height: 72px; display: flex; align-items: center; justify-content: space-between; }
+  .inav-logo { display: flex; align-items: center; gap: 9px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 19px; color: var(--ink); }
+  .inav-logo-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--navy); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 15px; }
+  .inav-links { display: flex; align-items: center; gap: 34px; }
+  .inav-links a { color: var(--ink-soft); font-size: 14.5px; font-weight: 600; transition: color 0.2s; }
+  .inav-links a:hover { color: var(--ink); }
+  .inav-cta { background: var(--navy); color: #fff; padding: 10px 20px; border-radius: 7px; font-weight: 700; font-size: 14px; transition: background 0.2s; }
+  .inav-cta:hover { background: var(--navy-2); }
+  @media (max-width: 860px) { .inav-links { display: none; } }
+
+  .status-pill { display: inline-flex; align-items: center; gap: 7px; background: rgba(16,185,129,0.15); color: #15803d; font-size: 12.5px; font-weight: 700; padding: 6px 13px; border-radius: 100px; font-family: "Manrope", sans-serif; }
+  .status-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; }
+
+  .hero { padding: 72px 0 60px; background: linear-gradient(180deg, #eef1f5 0%, #ffffff 100%); }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+  .hero h1 { font-size: clamp(30px, 4vw, 46px); line-height: 1.12; margin-top: 16px; font-weight: 800; }
+  .hero .slogan { font-size: 18px; color: var(--accent); font-weight: 700; margin-top: 14px; font-family: "Manrope", sans-serif; }
+  .hero .desc { font-size: 16.5px; color: var(--ink-soft); line-height: 1.65; margin-top: 16px; max-width: 50ch; font-weight: 500; }
+  .hero-actions { display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 26px; border-radius: 8px; font-weight: 700; font-size: 15px; border: 1px solid transparent; cursor: pointer; transition: all 0.2s; }
+  .btn-primary { background: var(--navy); color: #fff; }
+  .btn-primary:hover { background: var(--navy-2); }
+  .btn-ghost { border-color: var(--border); color: var(--ink); background: #fff; }
+  .btn-ghost:hover { border-color: var(--ink-faint); background: var(--surface); }
+
+  .hero-visual { background: linear-gradient(135deg, #f0f4ff 0%, #fafbfc 100%); border: 1px solid var(--border); border-radius: 18px; padding: 32px; display: flex; align-items: center; justify-content: center; min-height: 400px; color: var(--ink-faint); font-size: 14px; }
+
+  .section { padding: 72px 0; }
+  .section-surface { background: var(--surface); }
+  .section-head { max-width: 640px; margin: 0 0 46px; }
+  .section-head h2 { font-size: clamp(24px, 2.8vw, 32px); line-height: 1.18; margin-top: 10px; }
+  .section-head p { font-size: 16px; color: var(--ink-soft); line-height: 1.6; margin-top: 12px; }
+
+  .feat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .feat-item { background: #fff; padding: 28px 30px; display: flex; gap: 16px; }
+  .feat-item .ic { width: 40px; height: 40px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; flex: none; font-weight: 700; font-size: 18px; }
+  .feat-item h3 { font-size: 16px; }
+  .feat-item p { font-size: 14px; color: var(--ink-soft); margin-top: 8px; line-height: 1.55; }
+
+  .notify-cta { background: var(--navy); border-radius: 22px; padding: 56px; text-align: center; color: #fff; }
+  .notify-cta h2 { font-size: clamp(24px, 3vw, 32px); color: #fff; }
+  .notify-cta p { color: rgba(255,255,255,0.72); font-size: 15.5px; margin-top: 12px; max-width: 50ch; margin-left: auto; margin-right: auto; }
+  .notify-cta .hero-actions { justify-content: center; margin-top: 26px; }
+  .notify-cta .btn-primary { background: var(--accent); color: #fff; }
+  .notify-cta .btn-primary:hover { background: #ea580c; }
+  .notify-cta .btn-ghost { background: transparent; border-color: rgba(255,255,255,0.25); color: #fff; }
+
+  footer.ifoot { border-top: 1px solid var(--border); padding: 44px 0; }
+  .ifoot-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  .ifoot-links { display: flex; gap: 24px; font-size: 13.5px; color: var(--ink-soft); }
+  .ifoot-links a { transition: color 0.2s; }
+  .ifoot-links a:hover { color: var(--ink); }
+  .ifoot-copy { font-size: 13px; color: var(--ink-faint); }
+
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .feat-grid { grid-template-columns: 1fr; }
+    .section { padding: 52px 0; }
+    .hero-visual { min-height: 250px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="inav">
+  <div class="inav-wrap">
+    <a href="/" class="inav-logo"><span class="inav-logo-mark">O</span>Oravel</a>
+    <div class="inav-links">
+      <a href="/">Home</a>
+      <a href="https://oravel.com.br/contato.php" class="inav-cta">Contato</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="status-pill"><span class="dot"></span>Solução ERP Completa</div>
+        <h1>Gestão integrada que aumenta seus lucros</h1>
+        <p class="slogan">Unificar é lucrar</p>
+        <p class="desc">Uma única plataforma para controlar frota, manutenção, estoque, financeiro e RH. Elimine processos manuais, reduza custos e tome decisões baseadas em dados reais.</p>
+        <div class="hero-actions">
+          <a href="https://oravel.com.br/contato.php" class="btn btn-primary">Solicitar Demo</a>
+          <a href="#beneficios" class="btn btn-ghost">Conhecer Benefícios</a>
+        </div>
+      </div>
+      <div class="hero-visual">📊 Painel centralizado de gestão</div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-surface" id="beneficios">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Benefícios Comprovados</div>
+      <h2>Por que empresas líderes escolhem Oravel</h2>
+      <p>Reduzir custos, aumentar eficiência e escalar o negócio sem aumentar a equipe administrativa.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-item">
+        <div class="ic">📈</div>
+        <div>
+          <h3>Aumenta Margem de Lucro</h3>
+          <p>Visibilidade total dos custos operacionais elimina desperdícios e otimiza alocação de recursos.</p>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="ic">⚡</div>
+        <div>
+          <h3>Reduz Tempo Administrativo</h3>
+          <p>Automação de processos economiza até 20 horas/semana de trabalho manual em cada departamento.</p>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="ic">🎯</div>
+        <div>
+          <h3>Decisões em Tempo Real</h3>
+          <p>Dashboards que mostram exatamente o que está acontecendo na frota, estoque e financeiro agora.</p>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="ic">🔒</div>
+        <div>
+          <h3>Controle Total do Negócio</h3>
+          <p>Gestão centralizada elimina erros, duplicação de dados e perda de informações críticas.</p>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="ic">📱</div>
+        <div>
+          <h3>Acesso Anywhere</h3>
+          <p>Gerentes e técnicos podem acessar tudo de qualquer lugar — escritório, campo ou mobilidade.</p>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="ic">🚀</div>
+        <div>
+          <h3>Cresce Com Você</h3>
+          <p>De 10 a 1000+ equipamentos, a plataforma escala sem perder performance ou exigir migração.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Funcionalidades Principais</div>
+      <h2>Tudo que você precisa em um só lugar</h2>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-item">
+        <div class="ic">🚗</div>
+        <div>
+          <h3>Gestão de Frota</h3>
+          <p>Rastreamento GPS, manutenção preventiva, análise de combustível e custos por veículo.</p>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="ic">🔧</div>
+        <div>
+          <h3>Manutenção Inteligente</h3>
+          <p>Ordens de serviço automáticas, histórico completo de cada ativo e alertas de manutenção preventiva.</p>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="ic">📦</div>
+        <div>
+          <h3>Gestão de Estoque</h3>
+          <p>Controle em tempo real, reposição automática, movimentação de peças entre almoxarifados.</p>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="ic">💰</div>
+        <div>
+          <h3>Financeiro Integrado</h3>
+          <p>Contas a receber, a pagar, fluxo de caixa e rentabilidade por cliente ou equipamento.</p>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="ic">👥</div>
+        <div>
+          <h3>RH e Folha de Pagamento</h3>
+          <p>Gestão de colaboradores, alocação por projeto, horas extras e integração contábil.</p>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="ic">📊</div>
+        <div>
+          <h3>Relatórios e Analytics</h3>
+          <p>Dashboards customizáveis, análise de ROI por ativo, comparativos de lucratividade e tendências.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section notify-cta">
+  <div class="wrap">
+    <h2>Pronto para transformar sua gestão?</h2>
+    <p>Centenas de locadoras, construtoras e distribuidoras já aumentam sua margem com Oravel. Descubra como podemos ajudar seu negócio a crescer sem aumentar custos.</p>
+    <div class="hero-actions">
+      <a href="https://oravel.com.br/contato.php" class="btn btn-primary">Agendar Demonstração</a>
+      <a href="/" class="btn btn-ghost">Voltar à Home</a>
+    </div>
+  </div>
+</section>
+
+<footer class="ifoot">
+  <div class="ifoot-wrap">
+    <div class="ifoot-copy">© 2026 Oravel — Gestão Integrada para Locadoras</div>
+    <div class="ifoot-links">
+      <a href="/">Home</a>
+      <a href="https://oravel.com.br/contato.php">Contato</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
