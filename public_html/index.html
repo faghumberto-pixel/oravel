@@ -27,6 +27,14 @@
     .inav-logo-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--navy); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 13px; }
     .inav-logo-accent { color: var(--accent); }
     .inav-links { display: flex; align-items: center; gap: 34px; }
+    .inav-dropdown { position: relative; }
+    .inav-dropdown-btn { background: none; border: none; color: var(--ink-soft); font-size: 13.5px; font-weight: 600; cursor: pointer; padding: 0; transition: color 0.2s; }
+    .inav-dropdown-btn:hover { color: var(--ink); }
+    .inav-dropdown-menu { position: absolute; top: 100%; left: 0; background: white; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s; margin-top: 8px; min-width: 200px; z-index: 100; }
+    .inav-dropdown:hover .inav-dropdown-menu { opacity: 1; visibility: visible; }
+    .inav-dropdown-menu a { display: block; padding: 12px 16px; font-size: 13px; color: var(--ink-soft); border-bottom: 1px solid var(--border); transition: background-color 0.2s; }
+    .inav-dropdown-menu a:last-child { border-bottom: none; }
+    .inav-dropdown-menu a:hover { background-color: var(--surface); color: var(--ink); }
     .inav-links a { color: var(--ink-soft); font-size: 13.5px; font-weight: 600; transition: color 0.2s; }
     .inav-links a:hover { color: var(--ink); }
     .inav-cta { background: var(--accent); color: #fff; padding: 9px 18px; border-radius: 6px; font-weight: 700; font-size: 13px; transition: background 0.2s; }
@@ -93,11 +101,33 @@
     <div class="inav-wrap">
       <a href="/" class="inav-logo"><span class="inav-logo-mark">O</span><span class="inav-logo-accent">r</span>avel</a>
       <div class="inav-links">
-        <a href="#opcoes">Produtos</a>
-        <a href="#por-que">Por que Oravel</a>
-        <a href="/contato.php">Contato</a>
+        <!-- Dropdown Produtos -->
+        <div class="inav-dropdown">
+          <button class="inav-dropdown-btn">Produtos</button>
+          <div class="inav-dropdown-menu">
+            <a href="/produtos/erp">Oravel ERP</a>
+            <a href="/produtos/small">Oravel Small</a>
+          </div>
+        </div>
+
+        <!-- Dropdown Soluções -->
+        <div class="inav-dropdown">
+          <button class="inav-dropdown-btn">Soluções</button>
+          <div class="inav-dropdown-menu">
+            <a href="/solucoes/crm">Oravel CRM</a>
+            <a href="/solucoes/frota">Oravel Frota</a>
+            <a href="/solucoes/wms">Oravel WMS</a>
+            <a href="/solucoes/os">Oravel OS</a>
+            <a href="/solucoes/recebimentos">Oravel Recebimentos</a>
+            <a href="/solucoes/rh">Oravel RH</a>
+            <a href="/solucoes/analytics">Oravel Analytics</a>
+          </div>
+        </div>
+
+        <a href="https://oravel.com.br/segmentos/">Segmentos</a>
+        <a href="/sobre">Sobre Nós</a>
       </div>
-      <a href="/contato.php" class="inav-cta">Demonstração</a>
+      <a href="/contato" class="inav-cta">Solicitar Demonstração</a>
     </div>
   </header>
 
