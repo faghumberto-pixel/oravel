@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recebimentos - Contas a Receber | Oravel</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@400;500;600;700&display=swap">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-base: #0b0f0d;
+            --color-dark: #1a1a18;
+            --color-text-primary: #ffffff;
+            --color-text-secondary: #a8a8a8;
+            --color-border: #2a2a28;
+            --color-card-bg: #141312;
+            --color-accent: #666666;
+            --font-display: 'Syne', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root:not([data-theme="dark"]) {
+                --color-base: #f9f9f9;
+                --color-dark: #ffffff;
+                --color-text-primary: #1a1a1a;
+                --color-text-secondary: #666666;
+                --color-border: #e8e8e8;
+                --color-card-bg: #ffffff;
+            }
+        }
+
+        :root[data-theme="light"] {
+            --color-base: #f9f9f9;
+            --color-dark: #ffffff;
+            --color-text-primary: #1a1a1a;
+            --color-text-secondary: #666666;
+            --color-border: #e8e8e8;
+            --color-card-bg: #ffffff;
+        }
+
+        body {
+            background: var(--color-base);
+            color: var(--color-text-primary);
+            font-family: var(--font-body);
+            font-size: 16px;
+            line-height: 1.6;
+            padding: 0 16px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 60px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            font-family: var(--font-display);
+            color: var(--color-text-primary);
+            text-decoration: none;
+        }
+
+        .nav-back {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-back:hover {
+            color: var(--color-text-primary);
+        }
+
+        .hero {
+            margin-bottom: 80px;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(36px, 8vw, 52px);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            color: var(--color-text-primary);
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--color-text-secondary);
+            max-width: 700px;
+            margin-bottom: 40px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--color-text-primary);
+            color: var(--color-base);
+            padding: 14px 32px;
+            border-radius: 4px;
+            border: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            text-decoration: none;
+            font-family: var(--font-body);
+        }
+
+        .cta-button:hover {
+            opacity: 0.85;
+        }
+
+        .features-section {
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 48px;
+            color: var(--color-text-primary);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            margin-bottom: 80px;
+        }
+
+        .feature-card {
+            background: var(--color-card-bg);
+            border: 8px solid var(--color-dark);
+            border-radius: 4px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .feature-title {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+
+        .feature-desc {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+        }
+
+        .benefit-item {
+            padding: 24px;
+            border-left: 2px solid var(--color-accent);
+        }
+
+        .benefit-title {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--color-text-primary);
+        }
+
+        .benefit-desc {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+        }
+
+        footer {
+            border-top: 1px solid var(--color-border);
+            padding: 40px 0;
+            text-align: center;
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            margin-top: 80px;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .features-grid,
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="./landingpages-hub.html" class="logo">Oravel</a>
+        <a href="./landingpages-hub.html" class="nav-back">← Voltar aos módulos</a>
+    </nav>
+
+    <section class="hero">
+        <h1>Gestão de Contas a Receber</h1>
+        <p class="hero-subtitle">Faturamento automático, acompanhamento de recebimentos, conciliação bancária e relatórios financeiros em tempo real.</p>
+        <button class="cta-button">Solicitar Demonstração</button>
+    </section>
+
+    <section class="features-section">
+        <h2 class="section-title">Funcionalidades Principais</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-title">Faturamento Automático</div>
+                <div class="feature-desc">Ordens de serviço finalizadas geram faturas automaticamente com dados de cliente e serviços.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-title">Acompanhamento de Recebimentos</div>
+                <div class="feature-desc">Dashboard com faturas pendentes, vencidas e pagas. Alertas automáticos de atrasos.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-title">Conciliação Bancária</div>
+                <div class="feature-desc">Integração com extratos bancários. Reconcilie recebimentos automaticamente.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-title">Histórico de Pagamentos</div>
+                <div class="feature-desc">Registre pagamentos recebidos, descontos, juros e gere recibos automáticos.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-title">Relatórios Financeiros</div>
+                <div class="feature-desc">Fluxo de caixa previsto, análise de atraso por cliente e rentabilidade por contrato.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-title">Emissão de Boletos</div>
+                <div class="feature-desc">Gere boletos bancários com código de barras automático para cobrança.</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features-section">
+        <h2 class="section-title">Benefícios Financeiros</h2>
+        <div class="benefits-grid">
+            <div class="benefit-item">
+                <div class="benefit-title">Reduz Atrasos</div>
+                <div class="benefit-desc">Alertas automáticos e acompanhamento ativo reduzem inadimplência.</div>
+            </div>
+
+            <div class="benefit-item">
+                <div class="benefit-title">Melhora Fluxo de Caixa</div>
+                <div class="benefit-desc">Previsibilidade de recebimentos e controle de crédito liberado por cliente.</div>
+            </div>
+
+            <div class="benefit-item">
+                <div class="benefit-title">Automatiza Processos</div>
+                <div class="benefit-desc">Faturamento e conciliação sem digitação manual economizam tempo de back-office.</div>
+            </div>
+
+            <div class="benefit-item">
+                <div class="benefit-title">Relatórios Confiáveis</div>
+                <div class="benefit-desc">Dados em tempo real para decisões financeiras e análise de rentabilidade.</div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Oravel ERP. Gestão financeira simples e confiável.</p>
+    </footer>
+</body>
+</html>
