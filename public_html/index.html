@@ -5,406 +5,148 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Oravel — Plataforma Completa de Gestão Empresarial</title>
   <meta name="description" content="Oravel: plataforma integrada para gestão de operações e administração. WMS, Frota, OS, RH, CRM, Analytics, Recebimentos, Assinatura Digital.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
-      --primary: #0066ff;
-      --primary-light: #3399ff;
-      --dark: #0a0e27;
-      --bg-dark: #1a1f3a;
-      --light: #f8fafc;
-      --gray: #b0b3c1;
-      --border: #2d3548;
+      --paper: #ffffff; --surface: #f6f7f9; --ink: #0f172a; --ink-soft: #5b6472;
+      --ink-faint: #8891a0; --border: #e4e7ec; --accent: #f97316; --accent-soft: #fff1e4;
+      --navy: #0f172a; --navy-2: #1a2540;
     }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      line-height: 1.6;
-      color: #ffffff;
-      background: linear-gradient(135deg, var(--dark) 0%, var(--bg-dark) 100%);
-    }
-    header {
-      background: rgba(10, 14, 39, 0.95);
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-    .header-content {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 1.5rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .logo {
-      font-size: 1.8rem;
-      font-weight: 900;
-      color: #ffffff;
-      text-decoration: none;
-      letter-spacing: -0.5px;
-    }
-    .logo-accent { color: var(--primary-light); }
-    nav { display: flex; gap: 3rem; }
-    nav a {
-      color: var(--gray);
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s;
-    }
-    nav a:hover { color: var(--primary-light); }
-    .btn {
-      padding: 0.7rem 1.5rem;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s;
-      border: none;
-      cursor: pointer;
-      font-size: 0.95rem;
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-      color: #000;
-      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
-    }
-    .btn-primary:hover {
-      box-shadow: 0 6px 20px rgba(0, 102, 255, 0.5);
-      transform: translateY(-2px);
-    }
-    .hero {
-      background: linear-gradient(rgba(10, 14, 39, 0.9), rgba(10, 14, 39, 0.9));
-      position: relative;
-      padding: 8rem 2rem;
-      text-align: center;
-      min-height: 650px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      width: 100%;
-    }
-    .hero > * { position: relative; z-index: 1; }
-    .hero h1 {
-      font-size: 3.8rem;
-      font-weight: 900;
-      margin-bottom: 1.5rem;
-      line-height: 1.1;
-      color: #ffffff;
-      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-      max-width: 1000px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .hero > p {
-      font-size: 1.3rem;
-      color: var(--gray);
-      max-width: 700px;
-      margin: 0 auto 3rem;
-      line-height: 1.8;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-    .hero-buttons {
-      display: flex;
-      gap: 1.5rem;
-      justify-content: center;
-      margin-top: 2rem;
-    }
-    .hero-buttons .btn {
-      padding: 1rem 2.5rem;
-      font-size: 1rem;
-    }
-    .section {
-      padding: 6rem 2rem;
-      width: 100%;
-    }
-    .section-header {
-      text-align: center;
-      margin-bottom: 4rem;
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .section-header h2 {
-      font-size: 2.8rem;
-      font-weight: 900;
-      margin-bottom: 1rem;
-      color: #ffffff;
-    }
-    .section-header > p {
-      font-size: 1.1rem;
-      color: var(--gray);
-    }
-    .pillar-container {
-      max-width: 1280px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-    }
-    .pillar {
-      background: rgba(45, 53, 72, 0.5);
-      border-radius: 20px;
-      padding: 3rem;
-      border: 2px solid var(--border);
-      backdrop-filter: blur(10px);
-    }
-    .pillar-header {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .pillar-icon {
-      font-size: 3rem;
-      min-width: 70px;
-    }
-    .pillar-title {
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: #ffffff;
-    }
-    .pillar-subtitle {
-      font-size: 0.9rem;
-      color: var(--gray);
-      font-weight: 500;
-    }
-    .modules-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-    .module-card {
-      background: rgba(51, 153, 255, 0.08);
-      padding: 1.5rem;
-      border-radius: 12px;
-      border: 1px solid rgba(0, 102, 255, 0.3);
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-    .module-card:hover {
-      border-color: var(--primary-light);
-      background: rgba(0, 102, 255, 0.15);
-      box-shadow: 0 8px 16px rgba(0, 102, 255, 0.2);
-      transform: translateY(-4px);
-    }
-    .module-name {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 0.5rem;
-    }
-    .module-desc {
-      font-size: 0.85rem;
-      color: var(--gray);
-      line-height: 1.5;
-    }
-    .pillar-text {
-      font-size: 1rem;
-      color: var(--gray);
-      line-height: 1.8;
-      margin-bottom: 2rem;
-    }
-    .why-us {
-      background: linear-gradient(135deg, rgba(10, 14, 39, 0.8) 0%, rgba(26, 31, 58, 0.8) 100%);
-      padding: 6rem 2rem;
-      width: 100%;
-    }
-    .benefits-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-      margin: 3rem auto;
-      max-width: 1280px;
-    }
-    .benefit-item {
-      padding: 2.8rem;
-      background: rgba(45, 53, 72, 0.5);
-      border-radius: 16px;
-      border: 2px solid var(--border);
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      backdrop-filter: blur(10px);
-    }
-    .benefit-item:hover {
-      border-color: var(--primary-light);
-      box-shadow: 0 15px 30px rgba(0, 102, 255, 0.2);
-      transform: translateY(-6px);
-    }
-    .benefit-number {
-      font-size: 3.5rem;
-      font-weight: 900;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      opacity: 0.3;
-      margin-bottom: -1rem;
-      position: relative;
-      z-index: 1;
-    }
-    .benefit-item h3 {
-      font-size: 1.4rem;
-      font-weight: 800;
-      margin-bottom: 1.2rem;
-      color: #ffffff;
-      position: relative;
-      z-index: 2;
-    }
-    .benefit-item p {
-      color: var(--gray);
-      line-height: 1.85;
-      font-size: 1rem;
-      position: relative;
-      z-index: 2;
-    }
-    .cta {
-      background: linear-gradient(135deg, var(--dark) 0%, var(--bg-dark) 100%);
-      color: white;
-      padding: 8rem 2rem;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      width: 100%;
-      border-top: 1px solid var(--border);
-    }
-    .cta > * {
-      position: relative;
-      z-index: 1;
-    }
-    .cta h2 {
-      color: white;
-      margin-bottom: 1.5rem;
-      font-size: 3rem;
-      font-weight: 900;
-    }
-    .cta p {
-      font-size: 1.2rem;
-      color: var(--gray);
-      max-width: 700px;
-      margin: 0 auto 3rem;
-      line-height: 1.8;
-    }
-    footer {
-      background: rgba(10, 14, 39, 0.95);
-      color: white;
-      padding: 4rem 2rem;
-      text-align: center;
-      border-top: 1px solid var(--border);
-      width: 100%;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Inter", "Segoe UI", system-ui, sans-serif; color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; }
+    h1, h2, h3 { font-family: "Manrope", "Inter", sans-serif; font-weight: 800; letter-spacing: -0.02em; text-wrap: balance; }
+    p { margin: 0; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+    
+    header.inav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+    .inav-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; height: 72px; display: flex; align-items: center; justify-content: space-between; }
+    .inav-logo { display: flex; align-items: center; gap: 9px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 19px; color: var(--ink); }
+    .inav-logo-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--navy); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 15px; }
+    .inav-logo-accent { color: var(--accent); }
+    .inav-links { display: flex; align-items: center; gap: 34px; }
+    .inav-links a { color: var(--ink-soft); font-size: 14.5px; font-weight: 600; transition: color 0.2s; }
+    .inav-links a:hover { color: var(--ink); }
+    .inav-cta { background: var(--accent); color: #fff; padding: 10px 20px; border-radius: 7px; font-weight: 700; font-size: 14px; transition: background 0.2s; }
+    .inav-cta:hover { background: #ea580c; }
+    @media (max-width: 860px) { .inav-links { display: none; } }
+
+    .hero { padding: 72px 0 56px; background: linear-gradient(180deg, #eef1f5 0%, #ffffff 100%); }
+    .hero h1 { font-size: clamp(30px, 4.2vw, 48px); line-height: 1.1; margin-top: 14px; }
+    .hero p { font-size: 17px; color: var(--ink-soft); line-height: 1.6; margin-top: 16px; max-width: 60ch; }
+
+    .section { padding: 20px 0 88px; }
+    .section-header { text-align: center; margin-bottom: 4rem; max-width: 800px; margin-left: auto; margin-right: auto; }
+    .section-header h2 { font-size: 2.8rem; margin-bottom: 1rem; }
+    .section-header p { font-size: 1.1rem; color: var(--ink-soft); }
+
+    .pillar-container { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; max-width: 1180px; margin: 0 auto; }
+    .pillar { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 30px 32px; }
+    .pillar-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+    .pillar-icon { font-size: 3rem; min-width: 70px; }
+    .pillar-title { font-size: 1.8rem; font-weight: 800; }
+    .pillar-subtitle { font-size: 0.9rem; color: var(--ink-soft); font-weight: 500; }
+    .pillar-text { font-size: 1rem; color: var(--ink-soft); line-height: 1.8; margin-bottom: 2rem; }
+
+    .modules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+    .module-card { background: var(--surface); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); transition: all 0.3s ease; cursor: pointer; }
+    .module-card:hover { border-color: var(--accent); background: #fff; box-shadow: 0 8px 16px rgba(249,115,22,0.1); transform: translateY(-4px); }
+    .module-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .module-desc { font-size: 0.85rem; color: var(--ink-soft); line-height: 1.5; }
+
+    .why-us { background: var(--surface); padding: 6rem 2rem; }
+    .benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin: 3rem auto; max-width: 1180px; }
+    .benefit-item { padding: 2.8rem; background: #fff; border-radius: 16px; border: 1px solid var(--border); transition: all 0.3s ease; }
+    .benefit-item:hover { border-color: var(--accent); box-shadow: 0 15px 30px rgba(0,0,0,0.1); transform: translateY(-6px); }
+    .benefit-number { font-size: 3.5rem; font-weight: 900; color: var(--accent); opacity: 0.15; margin-bottom: -1rem; }
+    .benefit-item h3 { font-size: 1.4rem; margin-bottom: 1.2rem; }
+    .benefit-item p { color: var(--ink-soft); line-height: 1.85; font-size: 1rem; }
+
+    .cta { background: var(--navy); color: white; padding: 8rem 2rem; text-align: center; }
+    .cta h2 { color: white; margin-bottom: 1.5rem; font-size: 3rem; }
+    .cta p { font-size: 1.2rem; color: rgba(255,255,255,0.72); margin: 0 auto 3rem; max-width: 700px; }
+    .cta .btn { display: inline-block; padding: 14px 26px; border-radius: 8px; background: var(--accent); color: #fff; font-weight: 700; font-size: 15px; transition: background 0.2s; }
+    .cta .btn:hover { background: #ea580c; }
+
+    footer { border-top: 1px solid var(--border); padding: 44px 0; }
+    .footer-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .footer-logo { display: flex; align-items: center; gap: 9px; font-family: "Manrope", sans-serif; font-weight: 800; }
+    .footer-logo-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--navy); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 15px; }
+    .footer-links { display: flex; gap: 24px; font-size: 13.5px; color: var(--ink-soft); }
+    .footer-links a { transition: color 0.2s; }
+    .footer-links a:hover { color: var(--ink); }
+    .footer-copy { font-size: 13px; color: var(--ink-faint); }
+
     @media (max-width: 768px) {
-      nav { display: none; }
+      .pillar-container { grid-template-columns: 1fr; gap: 2rem; }
+      .modules-grid { grid-template-columns: 1fr; }
       .hero h1 { font-size: 2.2rem; }
       .section-header h2 { font-size: 2rem; }
-      .pillar-container {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-      }
-      .modules-grid {
-        grid-template-columns: 1fr;
-      }
+      .cta h2 { font-size: 2rem; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="header-content">
-      <a href="/" class="logo">O<span class="logo-accent">r</span>avel</a>
-      <nav>
+  <header class="inav">
+    <div class="inav-wrap">
+      <a href="/" class="inav-logo"><span class="inav-logo-mark">O</span><span class="inav-logo-accent">r</span>avel</a>
+      <div class="inav-links">
         <a href="#opcoes">Produtos</a>
         <a href="#por-que">Por que Oravel</a>
         <a href="/contato.php">Contato</a>
-      </nav>
-      <div>
-        <a href="/contato.php" class="btn btn-primary">Demonstração</a>
       </div>
+      <a href="/contato.php" class="inav-cta">Demonstração</a>
     </div>
   </header>
 
   <section class="hero">
-    <h1>Gestão Empresarial Completa e Integrada</h1>
-    <p>Uma plataforma para operação, administração e inteligência. Todos os módulos conversam entre si. Escolha o que sua empresa precisa.</p>
-    <div class="hero-buttons">
-      <a href="/contato.php" class="btn btn-primary">Agendar Demonstração</a>
+    <div class="wrap">
+      <h1>Gestão Empresarial Completa e Integrada</h1>
+      <p>Uma plataforma para operação, administração e inteligência. Todos os módulos conversam entre si. Escolha o que sua empresa precisa.</p>
     </div>
   </section>
 
   <section class="section" id="opcoes">
-    <div class="section-header">
-      <h2>Escolha seus módulos</h2>
-      <p>Comece com o que você precisa hoje. Expanda amanhã. Tudo integrado.</p>
-    </div>
-    <div class="pillar-container">
-      <div class="pillar">
-        <div class="pillar-header">
-          <div class="pillar-icon">⚙️</div>
-          <div>
-            <div class="pillar-title">ORAVEL OPERAÇÃO</div>
-            <div class="pillar-subtitle">Para o dia a dia no campo</div>
-          </div>
-        </div>
-        <p class="pillar-text">Gestão de estoque, frota e ordem de serviço. Tudo sincronizado em tempo real. Seu técnico no campo tem acesso completo do celular.</p>
-        <div class="modules-grid">
-          <a href="/wms.html" style="text-decoration: none; color: inherit;">
-            <div class="module-card">
-              <div class="module-name">📦 WMS</div>
-              <div class="module-desc">Gestão de Estoque</div>
-            </div>
-          </a>
-          <a href="/frota.html" style="text-decoration: none; color: inherit;">
-            <div class="module-card">
-              <div class="module-name">🚗 Frota</div>
-              <div class="module-desc">Rastreamento e Manutenção</div>
-            </div>
-          </a>
-          <a href="/os.html" style="text-decoration: none; color: inherit;">
-            <div class="module-card">
-              <div class="module-name">✓ OS</div>
-              <div class="module-desc">Ordem de Serviço</div>
-            </div>
-          </a>
-        </div>
+    <div class="wrap">
+      <div class="section-header">
+        <h2>Escolha seus módulos</h2>
+        <p>Comece com o que você precisa hoje. Expanda amanhã. Tudo integrado.</p>
       </div>
 
-      <div class="pillar">
-        <div class="pillar-header">
-          <div class="pillar-icon">📊</div>
-          <div>
-            <div class="pillar-title">ORAVEL GESTÃO</div>
-            <div class="pillar-subtitle">Para administração e crescimento</div>
+      <div class="pillar-container">
+        <div class="pillar">
+          <div class="pillar-header">
+            <div class="pillar-icon">⚙️</div>
+            <div>
+              <div class="pillar-title">ORAVEL OPERAÇÃO</div>
+              <div class="pillar-subtitle">Para o dia a dia no campo</div>
+            </div>
+          </div>
+          <p class="pillar-text">Gestão de estoque, frota e ordem de serviço. Tudo sincronizado em tempo real. Seu técnico no campo tem acesso completo do celular.</p>
+          <div class="modules-grid">
+            <a href="/wms.html"><div class="module-card"><div class="module-name">📦 WMS</div><div class="module-desc">Gestão de Estoque</div></div></a>
+            <a href="/frota.html"><div class="module-card"><div class="module-name">🚗 Frota</div><div class="module-desc">Rastreamento e Manutenção</div></div></a>
+            <a href="/os.html"><div class="module-card"><div class="module-name">✓ OS</div><div class="module-desc">Ordem de Serviço</div></div></a>
           </div>
         </div>
-        <p class="pillar-text">Gestão de pessoas, vendas, recebimentos e inteligência. Seu gestor tem visão 360 da empresa. Decisões baseadas em dados reais.</p>
-        <div class="modules-grid">
-          <a href="/rh.html" style="text-decoration: none; color: inherit;">
-            <div class="module-card">
-              <div class="module-name">👥 RH</div>
-              <div class="module-desc">Recursos Humanos</div>
+
+        <div class="pillar">
+          <div class="pillar-header">
+            <div class="pillar-icon">📊</div>
+            <div>
+              <div class="pillar-title">ORAVEL GESTÃO</div>
+              <div class="pillar-subtitle">Para administração e crescimento</div>
             </div>
-          </a>
-          <a href="/crm.html" style="text-decoration: none; color: inherit;">
-            <div class="module-card">
-              <div class="module-name">💼 CRM</div>
-              <div class="module-desc">Gestão de Vendas</div>
-            </div>
-          </a>
-          <a href="/recebimentos.html" style="text-decoration: none; color: inherit;">
-            <div class="module-card">
-              <div class="module-name">💰 Recebimentos</div>
-              <div class="module-desc">Contas a Receber</div>
-            </div>
-          </a>
-          <a href="/analytics.html" style="text-decoration: none; color: inherit;">
-            <div class="module-card">
-              <div class="module-name">🧠 IA Analytics</div>
-              <div class="module-desc">Inteligência de Dados</div>
-            </div>
-          </a>
-          <div class="module-card">
-            <div class="module-name">🔏 Assinatura Digital</div>
-            <div class="module-desc">Documentos assinados</div>
+          </div>
+          <p class="pillar-text">Gestão de pessoas, vendas, recebimentos e inteligência. Seu gestor tem visão 360 da empresa. Decisões baseadas em dados reais.</p>
+          <div class="modules-grid">
+            <a href="/rh.html"><div class="module-card"><div class="module-name">👥 RH</div><div class="module-desc">Recursos Humanos</div></div></a>
+            <a href="/crm.html"><div class="module-card"><div class="module-name">💼 CRM</div><div class="module-desc">Gestão de Vendas</div></div></a>
+            <a href="/recebimentos.html"><div class="module-card"><div class="module-name">💰 Recebimentos</div><div class="module-desc">Contas a Receber</div></div></a>
+            <a href="/analytics.html"><div class="module-card"><div class="module-name">🧠 IA Analytics</div><div class="module-desc">Inteligência de Dados</div></div></a>
+            <div class="module-card"><div class="module-name">🔏 Assinatura Digital</div><div class="module-desc">Documentos assinados</div></div>
           </div>
         </div>
       </div>
@@ -412,52 +154,65 @@
   </section>
 
   <section class="why-us" id="por-que">
-    <div class="section-header">
-      <h2>Por que Oravel é Diferente</h2>
-      <p>Construída para empresas que querem crescer de verdade</p>
-    </div>
-    <div class="benefits-grid">
-      <div class="benefit-item">
-        <div class="benefit-number">01</div>
-        <h3>Começe Pequeno</h3>
-        <p>Escolha apenas os módulos que você precisa. Comece amanhã. Sem contratos longos. Expanda quando sua empresa crescer.</p>
+    <div class="wrap">
+      <div class="section-header">
+        <h2>Por que Oravel é Diferente</h2>
+        <p>Construída para empresas que querem crescer de verdade</p>
       </div>
-      <div class="benefit-item">
-        <div class="benefit-number">02</div>
-        <h3>Tudo Integrado</h3>
-        <p>Um dado entra uma vez, toda empresa acessa. Sem retrabalho. WMS fala com CRM, Frota com OS, tudo com Analytics.</p>
-      </div>
-      <div class="benefit-item">
-        <div class="benefit-number">03</div>
-        <h3>Mobile First</h3>
-        <p>Seu time inteiro na palma da mão. Celular, tablet, desktop. Sem instalar nada. Funciona online e offline.</p>
-      </div>
-      <div class="benefit-item">
-        <div class="benefit-number">04</div>
-        <h3>Dados que Geram Ação</h3>
-        <p>IA que aprende seu negócio. Sugestões automáticas. Alertas inteligentes. Decisões baseadas em dados, não em achismo.</p>
-      </div>
-      <div class="benefit-item">
-        <div class="benefit-number">05</div>
-        <h3>Deploy em Dias</h3>
-        <p>Começar em dias, não meses. Estrutura pré-configurada. Migração assistida. Seu time produtivo desde semana um.</p>
-      </div>
-      <div class="benefit-item">
-        <div class="benefit-number">06</div>
-        <h3>Suporte que Entende</h3>
-        <p>Especialista em operações, não call center. Disponível 24/7. Consultoria incluída. Sua empresa é nossa missão.</p>
+
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <div class="benefit-number">01</div>
+          <h3>Começe Pequeno</h3>
+          <p>Escolha apenas os módulos que você precisa. Comece amanhã. Sem contratos longos. Expanda quando sua empresa crescer.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-number">02</div>
+          <h3>Tudo Integrado</h3>
+          <p>Um dado entra uma vez, toda empresa acessa. Sem retrabalho. WMS fala com CRM, Frota com OS, tudo com Analytics.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-number">03</div>
+          <h3>Mobile First</h3>
+          <p>Seu time inteiro na palma da mão. Celular, tablet, desktop. Sem instalar nada. Funciona online e offline.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-number">04</div>
+          <h3>Dados que Geram Ação</h3>
+          <p>IA que aprende seu negócio. Sugestões automáticas. Alertas inteligentes. Decisões baseadas em dados, não em achismo.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-number">05</div>
+          <h3>Deploy em Dias</h3>
+          <p>Começar em dias, não meses. Estrutura pré-configurada. Migração assistida. Seu time produtivo desde semana um.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-number">06</div>
+          <h3>Suporte que Entende</h3>
+          <p>Especialista em operações, não call center. Disponível 24/7. Consultoria incluída. Sua empresa é nossa missão.</p>
+        </div>
       </div>
     </div>
   </section>
 
   <section class="cta">
-    <h2>Sua empresa merece mais</h2>
-    <p>Centenas de empresas já usam Oravel para operar melhor, vender mais e crescer mais rápido. Não importa seu segmento.</p>
-    <a href="/contato.php" class="btn btn-primary">Agendar Demonstração Agora</a>
+    <div class="wrap">
+      <h2>Sua empresa merece mais</h2>
+      <p>Centenas de empresas já usam Oravel para operar melhor, vender mais e crescer mais rápido. Não importa seu segmento.</p>
+      <a href="/contato.php" class="btn">Agendar Demonstração Agora</a>
+    </div>
   </section>
 
   <footer>
-    <p>&copy; 2026 Oravel Software. Todos os direitos reservados.</p>
+    <div class="footer-wrap">
+      <a href="/" class="footer-logo"><span class="footer-logo-mark">O</span><span style="color: var(--accent);">r</span>avel</a>
+      <div class="footer-links">
+        <a href="/gestao-locadoras/">Produtos</a>
+        <a href="/sobre/">Sobre</a>
+        <a href="/contato.php">Contato</a>
+      </div>
+      <div class="footer-copy">© 2026 Oravel Software. Todos os direitos reservados.</div>
+    </div>
   </footer>
 </body>
 </html>
