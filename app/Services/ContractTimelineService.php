@@ -27,16 +27,18 @@ class ContractTimelineService
         // Manutenções durante o contrato
         $maintenanceOrders = MaintenanceOrder::where('asset_id', $contract->asset_id)
             ->whereBetween('created_at', [$startDate, $endDate])
+            ->with('reportedProblem')
             ->orderBy('created_at')
             ->get();
 
         // Formatar eventos de manutenção
         $maintenanceEvents = $maintenanceOrders->map(function ($mo) {
+            $type = $mo->type ?? 'manutenção';
             return [
                 'date' => $mo->created_at->format('d/m/Y'),
-                'type' => $mo->type ?? 'manutenção',
-                'description' => $mo->reported_problem?->name ?? $mo->description ?? 'Manutenção',
-                'color' => $this->getMaintenanceColor($mo->type),
+                'type' => $type,
+                'description' => $mo->reportedProblem?->name ?? $mo->description ?? 'Manutenção',
+                'color' => $this->getMaintenanceColor($type),
             ];
         })->toArray();
 
@@ -54,12 +56,17 @@ class ContractTimelineService
         ];
     }
 
-    private function getMaintenanceColor(string $type): string
+    private function getMaintenanceColor(?string $type): string
     {
+        $type = strtolower(trim($type ?? 'manutenção'));
         return match ($type) {
             'preventiva' => '#10b981',
             'corretiva' => '#ef4444',
             'inspeção' => '#f59e0b',
+            'preventive' => '#10b981',
+            'corrective' => '#ef4444',
+            'check-out' => '#3b82f6',
+            'check-in' => '#8b5cf6',
             default => '#6366f1',
         };
     }
