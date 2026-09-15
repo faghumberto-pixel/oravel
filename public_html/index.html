@@ -39,7 +39,7 @@
     .nav-links a:hover { color: var(--ink); }
     .cta-btn { background: var(--accent); color: white; padding: 10px 24px; border-radius: 6px; font-weight: 700; font-size: 14px; transition: background 0.2s; }
     .cta-btn:hover { background: #ea580c; }
-    @media (max-width: 768px) { .nav-links { display: none; } }
+    @media (max-width: 768px) { .nav-links { display: flex; flex-direction: column; gap: 12px; } .cta-btn { display: none; } }
 
     .hero { padding: 100px 0; background: linear-gradient(135deg, #0f172a 0%, #1a2540 100%); }
     .hero-content { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
