@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oravel Small — ERP Completo para Pequenas Locadoras | Oravel</title>
+<meta name="description" content="Solução ERP especial para pequenas locadoras. Sistema integrado de gestão com frota, estoque, financeiro e RH adaptado ao seu tamanho e orçamento.">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Poppins", sans-serif; color: #1a1a1a; background: #fff; }
+  h1, h2, h3 { font-weight: 700; margin: 0; }
+  p { margin: 0; }
+  a { color: inherit; text-decoration: none; }
+
+  header { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid #e4e7ec; }
+  nav { max-width: 1200px; margin: 0 auto; padding: 0 28px; height: 72px; display: flex; align-items: center; justify-content: space-between; }
+  
+  .hero { padding: 100px 0; background: linear-gradient(135deg, #fafbfc 0%, #f0f4ff 100%); }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+  .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .hero h1 { font-size: clamp(36px, 5vw, 52px); line-height: 1.1; margin-bottom: 16px; color: #1a1a1a; }
+  .hero p { font-size: 18px; color: #5b6472; line-height: 1.7; margin-bottom: 32px; max-width: 50ch; }
+  .cta-btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 26px; border-radius: 8px; font-weight: 700; font-size: 15px; background: #f97316; color: white; text-decoration: none; margin-right: 14px; transition: background 0.2s; }
+  .cta-btn:hover { background: #ea580c; }
+  .cta-btn-ghost { background: white; color: #1a1a1a; border: 1px solid #e4e7ec; }
+  .cta-btn-ghost:hover { background: #f9f9f9; }
+  .hero-visual { background: linear-gradient(135deg, #e4e7ec 0%, #d0d6df 100%); border-radius: 16px; height: 400px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 14px; }
+
+  .section { padding: 100px 0; }
+  .section-alt { background: #f9f9f9; }
+  .section h2 { font-size: clamp(28px, 3.5vw, 40px); line-height: 1.2; margin-bottom: 60px; text-align: center; }
+  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .feature { background: white; border: 1px solid #e4e7ec; border-radius: 12px; padding: 24px; }
+  .feature:hover { border-color: #f97316; box-shadow: 0 10px 30px rgba(249, 115, 22, 0.1); }
+  .feature h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .feature p { font-size: 14px; color: #666; line-height: 1.6; }
+
+  .highlight-section { padding: 100px 0; }
+  .highlight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .highlight-text h3 { font-size: 32px; margin-bottom: 20px; }
+  .highlight-text p { font-size: 16px; color: #666; line-height: 1.8; margin-bottom: 24px; }
+  .highlight-visual { background: linear-gradient(135deg, #e4e7ec 0%, #d0d6df 100%); border-radius: 16px; height: 400px; display: flex; align-items: center; justify-content: center; }
+
+  .cta-final { background: #0f172a; color: white; padding: 80px 0; text-align: center; }
+  .cta-final h2 { color: white; margin-bottom: 20px; }
+  .cta-final p { color: rgba(255,255,255,0.8); margin-bottom: 40px; }
+
+  footer { border-top: 1px solid #e4e7ec; padding: 48px 0; }
+  .footer-bottom { max-width: 1200px; margin: 0 auto; padding: 0 28px; display: flex; justify-content: space-between; font-size: 12px; color: #999; flex-wrap: wrap; gap: 20px; }
+
+  @media (max-width: 768px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .features-grid { grid-template-columns: 1fr; }
+    .highlight-grid { grid-template-columns: 1fr; gap: 40px; }
+    .hero-visual { height: 250px; }
+    .highlight-visual { height: 250px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="/" style="text-decoration: none;"><span style="color: #1a1a1a; font-size: 22px; font-weight: 900; font-family: 'Poppins', sans-serif;">O<span style="color: #f97316;">r</span>avel</span></a>
+    <div style="display: flex; align-items: center; gap: 32px;">
+      <a href="/" style="color: #5b6472; font-size: 14px; font-weight: 600;">Home</a>
+      <a href="https://oravel.com.br/contato.php" style="background: #f97316; color: white; padding: 10px 24px; border-radius: 6px; font-weight: 700; font-size: 14px;">Contato</a>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <h1>Oravel Small — Gestão Completa Para Pequenas Locadoras</h1>
+        <p>ERP feito especialmente para locadoras pequenas e médias. Tudo que você precisa para crescer, sem complexidade desnecessária.</p>
+        <div>
+          <a href="https://oravel.com.br/contato.php" class="cta-btn">Começar Agora</a>
+          <a href="#beneficios" class="cta-btn cta-btn-ghost">Conhecer Benefícios</a>
+        </div>
+      </div>
+      <div class="hero-visual">Gestão Simplificada para Seu Crescimento</div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <h2>Por Que Oravel Small?</h2>
+    <div class="features-grid">
+      <div class="feature">
+        <h4>⚡ Implementação Rápida</h4>
+        <p>Saia do zero para operacional em dias. Nossa solução é pronta para usar sem customizações complexas.</p>
+      </div>
+      <div class="feature">
+        <h4>💰 Investimento Acessível</h4>
+        <p>Preço justo para pequenas locadoras. Comece pequeno e cresça conforme sua empresa expande.</p>
+      </div>
+      <div class="feature">
+        <h4>📱 Interface Simples</h4>
+        <p>Sua equipe aprende rápido. Menos treinamento, mais produtividade desde o dia um.</p>
+      </div>
+      <div class="feature">
+        <h4>🔗 Totalmente Integrado</h4>
+        <p>Frota, manutenção, estoque, financeiro e RH — tudo conectado em um banco de dados único.</p>
+      </div>
+      <div class="feature">
+        <h4>📈 Escalável</h4>
+        <p>Comece simples. Quando sua locadora crescer, o Oravel cresce junto sem traumas.</p>
+      </div>
+      <div class="feature">
+        <h4>🤝 Suporte Dedicado</h4>
+        <p>Time que entende locadoras. Respostas rápidas e soluções práticas para seus problemas reais.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="highlight-section">
+  <div class="container">
+    <div class="highlight-grid">
+      <div class="highlight-text">
+        <h3>Reduz Custos, Aumenta Lucros</h3>
+        <p>Automatização de tarefas manuais economiza até 30% do tempo administrativo. Visibilidade total de custos por equipamento. Saiba exatamente quem está gerando lucro e quem não está.</p>
+        <a href="https://oravel.com.br/contato.php" class="cta-btn">Solicitar Demonstração</a>
+      </div>
+      <div class="highlight-visual">Análise de Lucratividade em Tempo Real</div>
+    </div>
+  </div>
+</section>
+
+<section class="highlight-section" id="beneficios">
+  <div class="container">
+    <div class="highlight-grid" style="grid-template-columns: 1fr 1fr;">
+      <div class="highlight-visual">Gestão Integrada de Frota</div>
+      <div class="highlight-text">
+        <h3>Gestão Completa de Frota</h3>
+        <p>Rastreamento de manutenção, histórico de cada equipamento, integração com fornecedores. Tudo centralizado. Seus clientes satisfeitos porque você nunca deixa equipamento quebrado sem solução.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-final">
+  <div class="container">
+    <h2>Transforme Sua Locadora Hoje</h2>
+    <p>Centenas de pequenas locadoras já crescem com Oravel Small. Comece agora e veja a diferença.</p>
+    <a href="https://oravel.com.br/contato.php" class="cta-btn" style="background: #f97316; color: white;">Agendar Demonstração Gratuita</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-bottom">
+    <p>© 2026 Oravel — Gestão Integrada para Locadoras</p>
+    <div style="display: flex; gap: 24px;">
+      <a href="/">Home</a>
+      <a href="https://oravel.com.br/contato.php">Contato</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
