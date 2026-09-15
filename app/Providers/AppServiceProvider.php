@@ -209,9 +209,7 @@ class AppServiceProvider extends ServiceProvider
         // App\Livewire\DatabaseNotifications transforma clearNotifications()/
         // removeNotification() em no-op, notificacao vira dado de auditoria
         // que ninguem apaga pela UI.
-        // TEMPORARIAMENTE DESABILITADO 2026-09-15: componente customizado
-        // estava causando problema de renderizacao. Usando padrao do Filament.
-        // Livewire::component('database-notifications', DatabaseNotifications::class);
+        Livewire::component('database-notifications', DatabaseNotifications::class);
     }
 
     /**
