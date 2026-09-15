@@ -4,13 +4,21 @@ namespace App\Filament\Resources\ContractResource\Pages;
 
 use App\Filament\Resources\ContractResource;
 use App\Filament\Resources\ContractResource\Widgets\ContractAIAnalysisWidget;
-use Filament\Resources\Pages\ViewRecord;
+use App\Models\Contract;
+use Filament\Resources\Pages\Page;
 
-class ViewContract extends ViewRecord
+class ViewContract extends Page
 {
     protected static string $resource = ContractResource::class;
 
     protected static string $view = 'filament.resources.contract-resource.pages.view-contract';
+
+    public ?Contract $record = null;
+
+    public function mount(Contract $record): void
+    {
+        $this->record = $record;
+    }
 
     public function getTitle(): string|\Illuminate\Contracts\Support\Htmlable
     {
