@@ -364,7 +364,6 @@ class ContractResource extends Resource
                     ->toggle(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make('👁️'),
                 Tables\Actions\EditAction::make(),
             ]);
     }
@@ -375,7 +374,6 @@ class ContractResource extends Resource
             'index' => Pages\ListContracts::route('/'),
             'create' => Pages\CreateContract::route('/create'),
             'edit' => Pages\EditContract::route('/{record}/edit'),
-            'view' => Pages\ViewContract::route('/{record}'),
             'timeline' => Pages\ViewContractTimeline::route('/{record}/timeline'),
         ];
     }
