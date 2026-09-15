@@ -4,18 +4,13 @@ namespace App\Filament\Resources\ContractResource\Pages;
 
 use App\Filament\Resources\ContractResource;
 use App\Filament\Resources\ContractResource\Widgets\ContractAIAnalysisWidget;
-use App\Models\Contract;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewContract extends ViewRecord
 {
     protected static string $resource = ContractResource::class;
 
-    public function mount($record): void
-    {
-        parent::mount($record);
-        $this->form->fill($this->record->attributesToArray());
-    }
+    protected static string $view = 'filament.resources.contract-resource.pages.view-contract';
 
     public function getTitle(): string|\Illuminate\Contracts\Support\Htmlable
     {
