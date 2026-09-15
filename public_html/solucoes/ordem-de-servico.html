@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oravel Ordem de Serviço — Gestão de Manutenção e Reparos | Oravel</title>
+<meta name="description" content="Sistema completo de ordem de serviço para gestão de manutenção, reparos e intervenções em equipamentos. Rastreamento, histórico e controle total da operação.">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Poppins", sans-serif; color: #1a1a1a; background: #fff; }
+  h1, h2, h3 { font-weight: 700; margin: 0; }
+  p { margin: 0; }
+  a { color: inherit; text-decoration: none; }
+  img, svg { max-width: 100%; }
+
+  .hero { background: linear-gradient(135deg, rgba(239, 68, 68, 0.85) 0%, rgba(239, 68, 68, 0.85) 100%), center/cover no-repeat; color: white; padding: 120px 28px; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+  .hero h1 { font-size: clamp(30px, 4vw, 46px); line-height: 1.12; margin: 0 0 20px 0; max-width: 50ch; }
+  .hero > div > p { font-size: 16.5px; line-height: 1.65; margin: 16px 0 32px 0; max-width: 50ch; opacity: 0.95; }
+  .cta-btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 26px; border-radius: 8px; font-weight: 700; font-size: 15px; background: white; color: #ef4444; text-decoration: none; margin-right: 14px; transition: all 0.2s; }
+  .cta-btn-secondary { background: transparent; color: white; border: 2px solid white; }
+
+  .section { padding: 72px 28px; }
+  .section h2 { font-size: clamp(24px, 2.8vw, 32px); line-height: 1.18; margin-bottom: 46px; }
+  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 60px; }
+  .feature-card { padding: 30px; border: 1px solid #e5e5e5; border-radius: 12px; transition: all 0.3s; }
+  .feature-card:hover { border-color: #ef4444; box-shadow: 0 10px 30px rgba(236, 72, 153, 0.1); }
+  .feature-card h3 { font-size: 16px; margin-bottom: 12px; }
+  .feature-card p { font-size: 14px; color: #666; line-height: 1.55; }
+  .mockup-placeholder { height: 80px; width: 80px; background: linear-gradient(135deg, #f0f4ff 0%, #fafbfc 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #ef4444; font-size: 12px; margin-bottom: 16px; }
+
+  .pricing-section { padding: 72px 28px; background: #f9f9f9; }
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 40px; }
+  .plan-card { background: white; padding: 30px; border-radius: 12px; border: 1px solid #e5e5e5; transition: all 0.3s; }
+  .plan-card.featured { border-color: #ef4444; box-shadow: 0 10px 30px rgba(236, 72, 153, 0.15); }
+  .plan-card h3 { font-size: 18px; margin-bottom: 10px; }
+  .plan-features { list-style: none; padding: 20px 0; border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; }
+  .plan-features li { padding: 8px 0; font-size: 14px; color: #666; }
+  .plan-card .cta-btn { display: block; text-align: center; margin-top: 20px; width: 100%; }
+
+  .testimonials { padding: 72px 28px; }
+  .testimonials h2 { margin-bottom: 46px; }
+  .testimonials-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
+  .testimonial-card { padding: 30px; background: #f9f9f9; border-radius: 12px; }
+  .stars { font-size: 16px; color: #fbbf24; margin-bottom: 12px; }
+  .testimonial-text { font-size: 15px; line-height: 1.6; margin-bottom: 16px; font-style: italic; }
+  .testimonial-author { font-weight: 600; font-size: 14px; }
+  .testimonial-role { font-size: 12px; color: #999; }
+
+  footer { border-top: 1px solid #e5e5e5; padding: 40px 28px; background: #1a1a1a; color: white; }
+  .footer-wrap { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+  .footer-copy { font-size: 13px; opacity: 0.7; }
+  .footer-links { display: flex; gap: 24px; font-size: 13px; }
+  .footer-links a { opacity: 0.7; transition: opacity 0.2s; }
+  .footer-links a:hover { opacity: 1; }
+
+  @media (max-width: 1024px) { .features-grid { grid-template-columns: repeat(2, 1fr); } .pricing-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 768px) { .features-grid { grid-template-columns: 1fr; } .pricing-grid { grid-template-columns: 1fr; } .testimonials-grid { grid-template-columns: 1fr; } .footer-wrap { flex-direction: column; align-items: flex-start; } }
+</style>
+</head>
+<body>
+
+<header style="position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid #e4e7ec;">
+  <nav style="max-width: 1200px; margin: 0 auto; padding: 0 28px; height: 72px; display: flex; align-items: center; justify-content: space-between;">
+    <a href="/" style="text-decoration: none;"><span style="color: #1a1a1a; font-size: 22px; font-weight: 900; font-family: 'Poppins', sans-serif;">O<span style="color: #f97316;">r</span>avel</span></a>
+    <div style="display: flex; align-items: center; gap: 32px;">
+      <a href="/" style="color: #5b6472; font-size: 14px; font-weight: 600; transition: color 0.2s;">Home</a>
+      <a href="https://oravel.com.br/contato.php" style="background: #f97316; color: white; padding: 10px 24px; border-radius: 6px; font-weight: 700; font-size: 14px; transition: background 0.2s;">Contato</a>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div style="max-width: 50ch;">
+      <h1>Gestão Completa de Ordem de Serviço</h1>
+      <p>Sistema integrado para gerenciar manutenção, reparos e intervenções em equipamentos com rastreamento total e histórico detalhado.</p>
+      <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+        <a href="https://oravel.com.br/contato.php" class="cta-btn">Solicitar Demo</a>
+        <a href="/" class="cta-btn cta-btn-secondary">Voltar à Home</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2>Funcionalidades Principais</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="mockup-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="13" x2="12" y2="19"/><line x1="9" y1="16" x2="15" y2="16"/></svg></div>
+        <h3>Criação de OS Automática</h3>
+        <p>Gere ordens de serviço instantaneamente com templates pré-configurados. Defina prioridades, prazos e responsáveis em segundos.</p>
+      </div>
+      <div class="feature-card">
+        <div class="mockup-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/><path d="M12 5v14M5 12h14"/></svg></div>
+        <h3>Rastreamento em Tempo Real</h3>
+        <p>Acompanhe o status de cada ordem — aberta, em progresso, concluída. Notifique automáticamente clientes e equipes sobre atualizações.</p>
+      </div>
+      <div class="feature-card">
+        <div class="mockup-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/><path d="M12 6v6l4 2"/></svg></div>
+        <h3>Histórico Completo</h3>
+        <p>Mantenha registro permanente de cada intervenção — datas, técnicos, peças usadas, custos. Fundamental para garantia e conformidade.</p>
+      </div>
+      <div class="feature-card">
+        <div class="mockup-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M7 15v2a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <h3>Gestão de Peças</h3>
+        <p>Controle de peças usadas em cada OS. Integração automática com estoque e compras para garantir disponibilidade e reduzir paradas.</p>
+      </div>
+      <div class="feature-card">
+        <div class="mockup-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+        <h3>Validação e Aprovação</h3>
+        <p>Fluxos de aprovação customizados antes da conclusão da OS. Garanta qualidade e conformidade em cada intervenção realizada.</p>
+      </div>
+      <div class="feature-card">
+        <div class="mockup-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="2" x2="12" y2="22"/><polyline points="18 15 22 11 18 7"/><polyline points="6 7 2 11 6 15"/></svg></div>
+        <h3>Faturamento Integrado</h3>
+        <p>Gere faturas automaticamente a partir da OS. Custos de mão de obra, peças e serviços já contabilizados e prontos para cobrança.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing-section">
+  <div class="container">
+    <h2>Planos de Ordem de Serviço</h2>
+    <div class="pricing-grid">
+      <div class="plan-card">
+        <h3>Básico</h3>
+        <ul class="plan-features">
+          <li>✓ Até 100 OS/mês</li>
+          <li>✓ Histórico de 6 meses</li>
+          <li>✓ Status básicos</li>
+          <li>✓ 1 equipe técnica</li>
+          <li>✓ Suporte por email</li>
+        </ul>
+        <a href="https://oravel.com.br/contato.php" class="cta-btn" style="color: #ef4444;">Solicitar Info</a>
+      </div>
+      <div class="plan-card featured">
+        <h3>Profissional</h3>
+        <ul class="plan-features">
+          <li>✓ OS ilimitadas</li>
+          <li>✓ Histórico completo</li>
+          <li>✓ Status customizados</li>
+          <li>✓ Múltiplas equipes</li>
+          <li>✓ Gestão de peças</li>
+          <li>✓ Faturamento integrado</li>
+          <li>✓ Suporte prioritário</li>
+        </ul>
+        <a href="https://oravel.com.br/contato.php" class="cta-btn" style="color: #ef4444;">Solicitar Info</a>
+      </div>
+      <div class="plan-card">
+        <h3>Enterprise</h3>
+        <ul class="plan-features">
+          <li>✓ Tudo do Profissional</li>
+          <li>✓ Fluxos customizados</li>
+          <li>✓ Aprovações multi-nível</li>
+          <li>✓ API de integração</li>
+          <li>✓ Relatórios avançados</li>
+          <li>✓ Suporte 24/7 dedicado</li>
+        </ul>
+        <a href="https://oravel.com.br/contato.php" class="cta-btn" style="color: #ef4444;">Solicitar Info</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials">
+  <div class="container">
+    <h2>O que Nossos Clientes Dizem</h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-text">"Com a ordem de serviço do Oravel, reduzimos o tempo de processamento em 60%. Agora temos visibilidade total de cada manutenção desde o início até o faturamento."</div>
+        <div class="testimonial-author">Felipe Gomes</div>
+        <div class="testimonial-role">Gerente de Manutenção, Equipamentos Brasil</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-text">"O histórico completo de cada equipamento nos salvou várias vezes em questões de garantia e reivindações. Investimento que se paga sozinho."</div>
+        <div class="testimonial-author">Juliana Costa</div>
+        <div class="testimonial-role">Diretora Administrativa, Locadora Central</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-wrap">
+    <div class="footer-copy">© 2026 Oravel — Gestão Integrada para Locadoras</div>
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="https://oravel.com.br/contato.php">Contato</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
