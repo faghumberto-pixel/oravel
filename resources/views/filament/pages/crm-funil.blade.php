@@ -81,5 +81,61 @@
                 <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">Fora do funil acima</p>
             </div>
         </div>
+
+        <!-- Lista de Leads do Estágio Selecionado -->
+        @if($this->selectedStage)
+            <div class="mt-8 max-w-4xl mx-auto">
+                <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+                    <div class="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 p-4 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+                                {{ $this->getSelectedStageLabel() }}
+                                <span class="ml-2 text-2xl font-black text-gray-600 dark:text-gray-400">({{ $this->getSelectedStageLeads()->count() }})</span>
+                            </h3>
+                            <button
+                                wire:click="selectStage('{{ $this->selectedStage }}')"
+                                class="text-sm font-semibold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                            >
+                                ✕ Fechar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                        @forelse($this->getSelectedStageLeads() as $lead)
+                            <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                                <div class="flex items-center justify-between gap-4">
+                                    <div class="flex-1 min-w-0">
+                                        <p class="font-semibold text-gray-900 dark:text-white truncate">{{ $lead->name }}</p>
+                                        @if($lead->company_name)
+                                            <p class="text-sm text-gray-600 dark:text-gray-400 truncate">{{ $lead->company_name }}</p>
+                                        @endif
+                                        @if($lead->phone)
+                                            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">{{ $lead->phone }}</p>
+                                        @endif
+                                    </div>
+                                    <div class="text-right flex-shrink-0">
+                                        @if($lead->estimated_value)
+                                            <p class="font-bold text-gray-900 dark:text-white">
+                                                R$ {{ number_format($lead->estimated_value, 0, ',', '.') }}
+                                            </p>
+                                        @else
+                                            <p class="font-bold text-gray-400 dark:text-gray-600">—</p>
+                                        @endif
+                                        <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                                            {{ $lead->created_at->format('d/m/Y') }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="p-8 text-center text-gray-500 dark:text-gray-400">
+                                <p>Nenhum lead neste estágio</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 </x-filament-panels::page>

@@ -88,6 +88,26 @@ class CrmFunil extends Page
         $this->selectedStage = $this->selectedStage === $stageId ? null : $stageId;
     }
 
+    public function getSelectedStageLeads(): Collection
+    {
+        if (!$this->selectedStage) {
+            return collect();
+        }
+
+        return CrmLead::where('stage', $this->selectedStage)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
+
+    public function getSelectedStageLabel(): ?string
+    {
+        if (!$this->selectedStage) {
+            return null;
+        }
+
+        return $this->getStages()[$this->selectedStage] ?? null;
+    }
+
     public function getLostCount(): int
     {
         return CrmLead::where('stage', CrmLead::STAGE_PERDIDO)->count();
