@@ -13,13 +13,14 @@ class ViewContractTimeline extends Page
 
     protected static string $view = 'filament.resources.contract-resource.pages.view-contract-timeline';
 
+    #[\Livewire\Attributes\Computed]
     public Contract $contract;
 
     public array $timelineData = [];
 
-    public function mount(): void
+    public function mount(Contract $record): void
     {
-        $this->contract = $this->resolveRecord();
+        $this->contract = $record;
 
         $service = new ContractTimelineService();
         $this->timelineData = $service->getTimelineData($this->contract);
