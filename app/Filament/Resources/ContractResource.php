@@ -364,6 +364,7 @@ class ContractResource extends Resource
                     ->toggle(),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make('👁️'),
                 Tables\Actions\EditAction::make(),
             ]);
     }
