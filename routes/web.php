@@ -57,12 +57,13 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 Route::redirect('/admin/innova/categories', '/admin/innova/bill-categories');
 
-// Site institucional
-Route::get('/', fn () => view('website.home'))->name('home');
-Route::get('/sobre', fn () => view('website.sobre'))->name('about');
-Route::get('/contato', fn () => view('website.contato'))->name('contact');
-Route::get('/produtos/{slug}', fn ($slug) => view('website.placeholder', ['title' => 'Oravel ' . ucfirst(str_replace('-', ' ', $slug))]))->name('product');
-Route::get('/solucoes/{slug}', fn ($slug) => view('website.placeholder', ['title' => 'Oravel ' . ucfirst(str_replace('-', ' ', $slug))]))->name('solution');
+// NOTA: app.oravel.com.br e' a aplicacao SaaS (Filament), nao o site
+// institucional (esse vive em oravel.com.br, HostGator, fora deste repo).
+// As rotas website.* abaixo foram adicionadas por engano em 2026-09-14 e
+// sobrescreviam a home da app com a home do site institucional -- revertido
+// no mesmo dia (incidente ~19h). Mantidas as demais rotas /sobre, /contato
+// etc. desativadas junto, ja que pertencem ao mesmo site institucional.
+Route::get('/', fn () => redirect()->to('/admin'))->name('home');
 
 // Publica, sem auth de proposito -- e' a portaria/guarita escaneando o QR
 // no celular dela, nao necessariamente logada no sistema.
