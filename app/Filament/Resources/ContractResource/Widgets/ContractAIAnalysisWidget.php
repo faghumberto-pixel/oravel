@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ContractResource\Widgets;
 
 use App\Models\Contract;
+use App\Models\ContractAnalysis;
 use Filament\Widgets\Widget;
 
 class ContractAIAnalysisWidget extends Widget
@@ -18,17 +19,40 @@ class ContractAIAnalysisWidget extends Widget
     public function mount(): void
     {
         if ($this->contract?->id) {
-            $this->loadAnalysis();
+            $this->loadAnalysisFromCache();
+        }
+    }
+
+    public function loadAnalysisFromCache(): void
+    {
+        if (!$this->contract?->id) {
+            return;
+        }
+
+        $cached = ContractAnalysis::where('contract_id', $this->contract->id)->first();
+        if ($cached) {
+            $this->analysis = $cached->analysis;
         }
     }
 
     public function loadAnalysis(): void
     {
+        if (!$this->contract?->id) {
+            return;
+        }
+
         $this->loading = true;
 
         try {
             $prompt = $this->buildAnalysisPrompt();
-            $this->analysis = $this->analyzeWithAI($prompt);
+            $analysisText = $this->analyzeWithAI($prompt);
+
+            ContractAnalysis::updateOrCreate(
+                ['contract_id' => $this->contract->id],
+                ['analysis' => $analysisText]
+            );
+
+            $this->analysis = $analysisText;
         } catch (\Exception $e) {
             $this->analysis = "Erro ao analisar contrato: " . $e->getMessage();
         } finally {
@@ -38,16 +62,22 @@ class ContractAIAnalysisWidget extends Widget
 
     private function buildAnalysisPrompt(): string
     {
+        $status = $this->contract->is_active ? 'Ativo' : 'Inativo';
+        $clientName = $this->contract->client?->name ?? 'N/A';
+        $assetName = $this->contract->asset?->name ?? 'N/A';
+        $startDate = $this->contract->start_date?->format('d/m/Y') ?? 'N/A';
+        $endDate = $this->contract->end_date?->format('d/m/Y') ?? 'N/A';
+
         return <<<PROMPT
 Analise o seguinte contrato e forneça um resumo executivo com insights importantes:
 
 **Número do Contrato:** {$this->contract->contract_number}
-**Cliente:** {$this->contract->client?->name}
-**Equipamento:** {$this->contract->asset?->name}
-**Data de Início:** {$this->contract->start_date?->format('d/m/Y')}
-**Data de Vencimento:** {$this->contract->end_date?->format('d/m/Y')}
+**Cliente:** {$clientName}
+**Equipamento:** {$assetName}
+**Data de Início:** {$startDate}
+**Data de Vencimento:** {$endDate}
 **Valor:** R$ {$this->contract->price}
-**Status:** {$this->contract->is_active ? 'Ativo' : 'Inativo'}
+**Status:** {$status}
 **Tipo de Faturamento:** {$this->contract->billing_type}
 
 Por favor, forneça:
@@ -65,8 +95,8 @@ PROMPT;
         $client = app('anthropic');
 
         $response = $client->messages()->create([
-            'model' => 'claude-opus-5',
-            'max_tokens' => 1024,
+            'model' => 'claude-sonnet-5',
+            'max_tokens' => 800,
             'messages' => [
                 [
                     'role' => 'user',

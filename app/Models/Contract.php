@@ -218,6 +218,11 @@ class Contract extends Model
         return $this->hasMany(EquipmentReplacement::class);
     }
 
+    public function analysis()
+    {
+        return $this->hasOne(ContractAnalysis::class);
+    }
+
     public function getIsExpiredAttribute(): bool
     {
         return $this->end_date && $this->end_date->isPast();
