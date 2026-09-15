@@ -11,6 +11,12 @@ class ViewContract extends ViewRecord
 {
     protected static string $resource = ContractResource::class;
 
+    public function mount($record): void
+    {
+        parent::mount($record);
+        $this->form->fill($this->record->attributesToArray());
+    }
+
     public function getTitle(): string|\Illuminate\Contracts\Support\Htmlable
     {
         return 'Contrato: ' . ($this->record->contract_number ?? 'N/A');
