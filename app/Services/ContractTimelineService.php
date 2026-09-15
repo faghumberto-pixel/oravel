@@ -42,6 +42,9 @@ class ContractTimelineService
             ];
         })->toArray();
 
+        // Calcular horas trabalhadas (estimativa: 4 horas por manutenção)
+        $totalMaintenanceHours = count($maintenanceEvents) * 4;
+
         return [
             'contract' => $contract,
             'startDate' => $startDate,
@@ -53,6 +56,7 @@ class ContractTimelineService
             'renewalSuggestedDate' => $renewalSuggestedDate,
             'maintenanceEvents' => $maintenanceEvents,
             'maintenanceCount' => count($maintenanceEvents),
+            'totalMaintenanceHours' => $totalMaintenanceHours,
         ];
     }
 

@@ -49,6 +49,7 @@
             :renewalSuggestedDate="$timelineData['renewalSuggestedDate']"
             :maintenanceEvents="$timelineData['maintenanceEvents']"
             :maintenanceCount="$timelineData['maintenanceCount']"
+            :totalMaintenanceHours="$timelineData['totalMaintenanceHours']"
         />
 
         <!-- Detalhes adicionais -->

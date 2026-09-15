@@ -31,14 +31,15 @@ class ViewContractTimeline extends Page
         return 'Timeline do Contrato #' . $this->contract->contract_number;
     }
 
-    protected function getDefaultHeaderActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             \Filament\Actions\Action::make('print')
                 ->label('🖨️ Imprimir')
                 ->icon('heroicon-o-printer')
+                ->color('primary')
                 ->action(fn () => null)
-                ->extraAttributes(['onclick' => 'window.print()']),
+                ->extraAttributes(['onclick' => 'window.print(); return false;', 'style' => 'cursor: pointer;']),
         ];
     }
 }

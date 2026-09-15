@@ -138,6 +138,14 @@
         <div class="stat-value" style="color: #000;">{{ $daysRemaining }}</div>
       </div>
     </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">⏱️</div>
+      <div class="stat-content">
+        <div class="stat-label">HORAS TRABALHADAS</div>
+        <div class="stat-value" style="color: #000;">{{ $totalMaintenanceHours }}</div>
+      </div>
+    </div>
   </div>
 </div>
 
