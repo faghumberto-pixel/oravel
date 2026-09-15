@@ -11,8 +11,6 @@ class ViewContract extends ViewRecord
 {
     protected static string $resource = ContractResource::class;
 
-    public ?Contract $record = null;
-
     protected function getFooterWidgets(): array
     {
         return [
