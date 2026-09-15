@@ -36,10 +36,7 @@ class CrmPalette
     public static function stage(?string $stage): array
     {
         return match ($stage) {
-            // Azul pra Prospecção -- pedido explicito do usuario 2026-08-05
-            // (era slate/cinza ate aqui). Contato Qualificado passou pra
-            // indigo pra nao colidir -- efeito colateral aceito pelo
-            // usuario: Kanban e Funil de Vendas tambem mudam, mesma fonte.
+            // SalesLead stages (Central panel)
             SalesLead::STAGE_PROSPECCAO => [
                 'filament' => 'crmBlue',
                 'bg' => 'bg-blue-600',
@@ -47,9 +44,6 @@ class CrmPalette
                 'text' => 'text-blue-600 dark:text-blue-400',
                 'soft' => 'bg-blue-50 dark:bg-blue-500/25',
                 'dot' => 'bg-blue-500',
-                // Classe literal (não montada em runtime) -- Tailwind JIT só
-                // compila o que aparece como texto exato num arquivo
-                // escaneado, então "ring-" . $cor . "-400" não funcionaria.
                 'ring' => 'ring-blue-400',
             ],
             SalesLead::STAGE_CONTATO_QUALIFICADO => [
@@ -89,6 +83,52 @@ class CrmPalette
                 'ring' => 'ring-emerald-400',
             ],
             SalesLead::STAGE_PERDIDO => [
+                'filament' => 'danger',
+                'bg' => 'bg-red-600',
+                'border' => 'border-red-600',
+                'text' => 'text-red-600 dark:text-red-400',
+                'soft' => 'bg-red-50 dark:bg-red-500/25',
+                'dot' => 'bg-red-500',
+                'ring' => 'ring-red-400',
+            ],
+            // CrmLead stages (Admin panel) - mapped to similar colors
+            'novo' => [
+                'filament' => 'crmBlue',
+                'bg' => 'bg-blue-600',
+                'border' => 'border-blue-600',
+                'text' => 'text-blue-600 dark:text-blue-400',
+                'soft' => 'bg-blue-50 dark:bg-blue-500/25',
+                'dot' => 'bg-blue-500',
+                'ring' => 'ring-blue-400',
+            ],
+            'contato_iniciado' => [
+                'filament' => 'crmIndigo',
+                'bg' => 'bg-indigo-600',
+                'border' => 'border-indigo-600',
+                'text' => 'text-indigo-600 dark:text-indigo-400',
+                'soft' => 'bg-indigo-50 dark:bg-indigo-500/25',
+                'dot' => 'bg-indigo-500',
+                'ring' => 'ring-indigo-400',
+            ],
+            'qualificado' => [
+                'filament' => 'crmOrange',
+                'bg' => 'bg-orange-500',
+                'border' => 'border-orange-500',
+                'text' => 'text-orange-600 dark:text-orange-400',
+                'soft' => 'bg-orange-50 dark:bg-orange-500/25',
+                'dot' => 'bg-orange-500',
+                'ring' => 'ring-orange-400',
+            ],
+            'convertido' => [
+                'filament' => 'crmEmerald',
+                'bg' => 'bg-emerald-600',
+                'border' => 'border-emerald-600',
+                'text' => 'text-emerald-600 dark:text-emerald-400',
+                'soft' => 'bg-emerald-50 dark:bg-emerald-500/25',
+                'dot' => 'bg-emerald-500',
+                'ring' => 'ring-emerald-400',
+            ],
+            'perdido' => [
                 'filament' => 'danger',
                 'bg' => 'bg-red-600',
                 'border' => 'border-red-600',
