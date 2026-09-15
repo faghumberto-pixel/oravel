@@ -33,6 +33,12 @@ class ViewContractTimeline extends Page
 
     protected function getDefaultHeaderActions(): array
     {
-        return [];
+        return [
+            \Filament\Actions\Action::make('print')
+                ->label('🖨️ Imprimir')
+                ->icon('heroicon-o-printer')
+                ->action(fn () => null)
+                ->extraAttributes(['onclick' => 'window.print()']),
+        ];
     }
 }

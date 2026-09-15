@@ -1,3 +1,31 @@
+<style>
+    @media print {
+        .filament-sidebar,
+        .filament-topbar,
+        button,
+        a[role="button"],
+        .fi-btn,
+        .print\:hidden {
+            display: none !important;
+        }
+
+        body {
+            background: white;
+            color: black;
+        }
+
+        .space-y-6 {
+            page-break-inside: avoid;
+        }
+
+        .bg-white,
+        .bg-blue-50 {
+            border: 1px solid #ccc;
+            page-break-inside: avoid;
+        }
+    }
+</style>
+
 <x-filament-panels::page>
     <div class="space-y-6">
         <!-- Timeline Component -->
