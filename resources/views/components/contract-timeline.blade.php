@@ -83,7 +83,7 @@
         <div class="event-details">
           <p class="event-year">{{ $endDate->format('Y') }}</p>
           <p class="event-countdown">
-            <strong style="font-size: 20px; color: #0066cc;">
+            <strong style="font-size: 20px; color: #000;">
               {{ $daysRemaining }}
             </strong><br>
             <span style="font-size: 12px; color: #666;">DIAS</span>
@@ -127,7 +127,7 @@
       <div class="stat-icon">📅</div>
       <div class="stat-content">
         <div class="stat-label">DIAS DECORRIDOS</div>
-        <div class="stat-value">{{ $daysElapsed }}</div>
+        <div class="stat-value" style="color: #000;">{{ $daysElapsed }}</div>
       </div>
     </div>
 
@@ -135,7 +135,7 @@
       <div class="stat-icon">⏰</div>
       <div class="stat-content">
         <div class="stat-label">DIAS RESTANTES</div>
-        <div class="stat-value" style="color: #0066cc;">{{ $daysRemaining }}</div>
+        <div class="stat-value" style="color: #000;">{{ $daysRemaining }}</div>
       </div>
     </div>
   </div>

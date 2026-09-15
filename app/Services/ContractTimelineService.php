@@ -16,9 +16,9 @@ class ContractTimelineService
         $now = now();
 
         // Cálculos
-        $daysElapsed = $startDate->diffInDays($now);
-        $totalDays = $startDate->diffInDays($endDate);
-        $daysRemaining = max(0, $now->diffInDays($endDate));
+        $daysElapsed = (int) $startDate->diffInDays($now);
+        $totalDays = (int) $startDate->diffInDays($endDate);
+        $daysRemaining = (int) max(0, $now->diffInDays($endDate));
         $progress = $totalDays > 0 ? round(($daysElapsed / $totalDays) * 100, 1) : 0;
 
         // Data sugerida para renovação (60 dias antes)

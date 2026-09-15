@@ -1,4 +1,13 @@
 <style>
+    .timeline-stat-value {
+        color: #000 !important;
+        font-weight: bold;
+    }
+
+    .contract-info-text {
+        color: #000 !important;
+    }
+
     @media print {
         .filament-sidebar,
         .filament-topbar,
@@ -50,23 +59,23 @@
                 <div class="space-y-3 text-sm">
                     <div class="flex justify-between">
                         <span class="text-gray-600">Número:</span>
-                        <span class="font-medium">{{ $contract->contract_number }}</span>
+                        <span class="font-medium contract-info-text">{{ $contract->contract_number }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-600">Cliente:</span>
-                        <span class="font-medium">{{ $contract->client->name }}</span>
+                        <span class="font-medium contract-info-text">{{ $contract->client->name }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-600">Equipamento:</span>
-                        <span class="font-medium">{{ $contract->asset->name }}</span>
+                        <span class="font-medium contract-info-text">{{ $contract->asset->name }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-600">Tipo de Faturamento:</span>
-                        <span class="font-medium">{{ $contract::billingTypeOptions()[$contract->billing_type] ?? 'N/A' }}</span>
+                        <span class="font-medium contract-info-text">{{ $contract::billingTypeOptions()[$contract->billing_type] ?? 'N/A' }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-600">Valor:</span>
-                        <span class="font-medium">R$ {{ number_format($contract->price, 2, ',', '.') }}</span>
+                        <span class="font-medium contract-info-text">R$ {{ number_format($contract->price, 2, ',', '.') }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-600">Status:</span>
@@ -83,15 +92,15 @@
                 <div class="space-y-3 text-sm">
                     <div class="flex justify-between">
                         <span class="text-blue-700">Data de Vencimento:</span>
-                        <span class="font-medium">{{ $timelineData['endDate']->format('d/m/Y') }}</span>
+                        <span class="font-medium contract-info-text">{{ $timelineData['endDate']->format('d/m/Y') }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-blue-700">Dias Restantes:</span>
-                        <span class="font-medium text-lg text-blue-600">{{ $timelineData['daysRemaining'] }} dias</span>
+                        <span class="font-medium text-lg timeline-stat-value">{{ $timelineData['daysRemaining'] }} dias</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-blue-700">Renovação Sugerida:</span>
-                        <span class="font-medium">{{ $timelineData['renewalSuggestedDate']->format('d/m/Y') }}</span>
+                        <span class="font-medium contract-info-text">{{ $timelineData['renewalSuggestedDate']->format('d/m/Y') }}</span>
                     </div>
                     <div class="pt-2 border-t border-blue-200">
                         @if($timelineData['daysRemaining'] <= 60 && $timelineData['daysRemaining'] > 0)
