@@ -374,6 +374,7 @@ class ContractResource extends Resource
             'index' => Pages\ListContracts::route('/'),
             'create' => Pages\CreateContract::route('/create'),
             'edit' => Pages\EditContract::route('/{record}/edit'),
+            'view' => Pages\ViewContract::route('/{record}'),
             'timeline' => Pages\ViewContractTimeline::route('/{record}/timeline'),
         ];
     }
