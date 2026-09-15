@@ -13,6 +13,11 @@ class EditContract extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('timeline')
+                ->label('📅 Timeline')
+                ->url(fn () => route('filament.admin.resources.contracts.timeline', ['record' => $this->getRecord()]))
+                ->button()
+                ->color('primary'),
             Actions\DeleteAction::make(),
         ];
     }
