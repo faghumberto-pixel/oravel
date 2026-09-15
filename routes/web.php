@@ -137,8 +137,6 @@ Route::post('/hour-meter/publico/{token}', [HourMeterPublicController::class, 's
 Route::middleware(['auth:client'])->group(function () {
     Route::get('/cliente/contratos/{contract}/pdf', [ContractPdfController::class, 'download'])
         ->name('cliente.contracts.pdf');
-    Route::get('/admin/contratos/{contract}/timeline-print', ContractTimelinePrintController::class)
-        ->name('admin.contracts.timeline-print');
     Route::get('/cliente/financeiro/{accountReceivable}/espelho', [ClientReceivableMirrorController::class, 'download'])
         ->name('cliente.receivable.mirror');
 });
@@ -205,6 +203,9 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/locacao/laudo-minimalista/{order}', [RentalDemoController::class, 'laudoMinimalista'])->name('rental-demo.laudo-minimalista');
+
+    Route::get('/admin/contratos/{contract}/timeline-print', ContractTimelinePrintController::class)
+        ->name('admin.contracts.timeline-print');
 
     Route::get('/admin/maintenance-orders/{record}/dossie-pdf', [MaintenanceOrderDossieController::class, 'download'])
         ->name('maintenance-orders.dossie.pdf');
