@@ -54,8 +54,28 @@ class CrmFunil extends Page
     {
         $stages = $this->getStages();
         unset($stages[CrmLead::STAGE_PERDIDO]);
+        $stageIds = array_keys($stages);
+        $totalStages = count($stageIds);
 
-        return $stages;
+        $counts = CrmLead::whereIn('stage', $stageIds)
+            ->where('tenant_id', Tenancy::current()?->id)
+            ->selectRaw('stage, count(*) as total')
+            ->groupBy('stage')
+            ->pluck('total', 'stage');
+
+        $rows = [];
+        foreach ($stageIds as $i => $stageId) {
+            $rows[] = [
+                'stage' => $stageId,
+                'label' => $stages[$stageId],
+                'count' => (int) ($counts[$stageId] ?? 0),
+                'topWidth' => round(100 * ($totalStages - $i) / $totalStages, 1),
+                'bottomWidth' => round(100 * ($totalStages - $i - 1) / $totalStages, 1),
+                'url' => '#', // Will be handled by Livewire selectStage
+            ];
+        }
+
+        return $rows;
     }
 
     public function canUseAI(): bool
@@ -66,6 +86,46 @@ class CrmFunil extends Page
     public function selectStage(string $stageId): void
     {
         $this->selectedStage = $this->selectedStage === $stageId ? null : $stageId;
+    }
+
+    public function getLostCount(): int
+    {
+        return CrmLead::where('stage', CrmLead::STAGE_PERDIDO)
+            ->where('tenant_id', Tenancy::current()?->id)
+            ->count();
+    }
+
+    public function getOpenPipelineValue(): float
+    {
+        return (float) CrmLead::whereNotIn('stage', [CrmLead::STAGE_CONVERTIDO, CrmLead::STAGE_PERDIDO])
+            ->where('tenant_id', Tenancy::current()?->id)
+            ->sum('estimated_value');
+    }
+
+    public function getAverageTicket(): ?float
+    {
+        $won = CrmLead::where('stage', CrmLead::STAGE_CONVERTIDO)
+            ->where('tenant_id', Tenancy::current()?->id)
+            ->whereNotNull('estimated_value')
+            ->get();
+
+        if ($won->isEmpty()) {
+            return null;
+        }
+
+        return (float) $won->avg('estimated_value');
+    }
+
+    public function getConversionRate(array $rows): ?float
+    {
+        $first = $rows[0]['count'] ?? 0;
+        $last = end($rows)['count'] ?? 0;
+
+        if ($first === 0) {
+            return null;
+        }
+
+        return round(($last / $first) * 100, 1);
     }
 
     /**

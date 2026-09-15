@@ -1,155 +1,85 @@
 <x-filament-panels::page>
     @php
-        $funnelStages = $this->getFunnelStages();
-        $grouped = $this->getLeadsByStage();
-        $widths = $this->getFunnelWidths();
-        $stageColors = [
-            'novo' => '#475569',
-            'contato_iniciado' => '#2563eb',
-            'qualificado' => '#f59e0b',
-            'convertido' => '#059669',
-        ];
-        $topCount = max(1, $grouped->get(array_key_first($funnelStages), collect())->count());
-        $perdidoLeads = $grouped->get(\App\Models\CrmLead::STAGE_PERDIDO, collect());
+        $rows = $this->getFunnelStages();
+        $lostCount = $this->getLostCount();
+        $conversionRate = $this->getConversionRate($rows);
+        $openPipelineValue = $this->getOpenPipelineValue();
+        $averageTicket = $this->getAverageTicket();
+        $conversionColorClass = match (true) {
+            $conversionRate === null => 'text-gray-400 dark:text-gray-500',
+            $conversionRate >= 20 => 'text-emerald-600 dark:text-emerald-400',
+            $conversionRate >= 10 => 'text-amber-600 dark:text-amber-400',
+            default => 'text-red-600 dark:text-red-400',
+        };
     @endphp
 
-    <div class="mb-4 flex flex-wrap items-center gap-3 justify-between">
-        <input
-            type="text"
-            wire:model.live.debounce.400ms="search"
-            placeholder="Buscar por nome ou empresa..."
-            class="fi-input max-w-sm rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white text-sm"
-        />
-
-        <div
-            wire:click="selectStage('{{ \App\Models\CrmLead::STAGE_PERDIDO }}')"
-            class="cursor-pointer rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-2 text-center hover:bg-red-500/20 transition-colors {{ $this->selectedStage === \App\Models\CrmLead::STAGE_PERDIDO ? 'ring-2 ring-red-500' : '' }}"
-        >
-            <p class="text-[10px] font-black uppercase tracking-widest text-red-400">Perdidos</p>
-            <p class="text-xs font-bold text-red-300">{{ $perdidoLeads->count() }} leads · R$ {{ number_format($this->getStageValue($perdidoLeads), 2, ',', '.') }}</p>
-        </div>
-    </div>
-
-    {{-- Funil (piramide invertida): cada faixa afunila da largura da faixa anterior ate a propria largura --}}
-    <div class="mx-auto w-full" style="max-width: 700px;">
-        @php $previousWidth = 100; @endphp
-        @foreach($funnelStages as $stageId => $stageLabel)
-            @php
-                $leads = $grouped->get($stageId, collect());
-                $width = $widths[$stageId] ?? 20;
-                $topLeft = (100 - $previousWidth) / 2;
-                $topRight = 100 - $topLeft;
-                $bottomLeft = (100 - $width) / 2;
-                $bottomRight = 100 - $bottomLeft;
-                $conversion = $topCount > 0 ? round(($leads->count() / $topCount) * 100) : 0;
-            @endphp
-
-            <div
-                wire:click="selectStage('{{ $stageId }}')"
-                wire:key="funnel-band-{{ $stageId }}"
-                class="relative flex flex-col items-center justify-center text-center cursor-pointer transition-opacity hover:opacity-90 {{ $this->selectedStage === $stageId ? 'ring-2 ring-white' : '' }}"
-                style="height: 84px; margin-bottom: 3px; background-color: {{ $stageColors[$stageId] }}; clip-path: polygon({{ $topLeft }}% 0, {{ $topRight }}% 0, {{ $bottomRight }}% 100%, {{ $bottomLeft }}% 100%);"
-            >
-                <span class="text-xs font-black uppercase tracking-widest text-white">{{ $stageLabel }}</span>
-                <span class="text-[11px] font-bold text-white/90 mt-0.5">
-                    {{ $leads->count() }} leads · R$ {{ number_format($this->getStageValue($leads), 2, ',', '.') }}
-                    @if(!$loop->first)
-                        · {{ $conversion }}% do topo
-                    @endif
-                </span>
-            </div>
-
-            @php $previousWidth = $width; @endphp
-        @endforeach
-    </div>
-
-    {{-- Lista do estagio selecionado --}}
-    @if($this->selectedStage)
-        @php
-            $selectedLabel = $this->getStages()[$this->selectedStage];
-            $selectedLeads = $grouped->get($this->selectedStage, collect());
-        @endphp
-
-        <div class="mt-6 rounded-xl border border-gray-800/50 bg-gray-900/40 backdrop-blur-sm">
-            <div class="p-3 border-b border-gray-800/50 flex items-center justify-between">
-                <h3 class="text-xs font-black uppercase tracking-widest text-gray-200">{{ $selectedLabel }} ({{ $selectedLeads->count() }})</h3>
-                <button wire:click="selectStage('{{ $this->selectedStage }}')" class="text-[10px] font-bold uppercase text-gray-500 hover:text-white">Fechar</button>
-            </div>
-
-            <div class="divide-y divide-gray-800/50">
-                @forelse($selectedLeads as $lead)
-                    <div wire:key="funnel-lead-{{ $lead->id }}" class="p-3 flex flex-wrap items-center gap-3 justify-between">
-                        <div class="min-w-[180px]">
-                            <p class="text-sm font-bold text-gray-100">{{ $lead->name }}</p>
-                            @if($lead->company_name)
-                                <p class="text-[10px] text-gray-500">{{ $lead->company_name }}</p>
-                            @endif
-                        </div>
-
-                        <span class="text-xs font-mono font-bold text-primary-400">
-                            @if($lead->estimated_value) R$ {{ number_format($lead->estimated_value, 2, ',', '.') }} @else -- @endif
-                        </span>
-
-                        <span class="text-[10px] text-gray-500 truncate max-w-[140px]">
-                            {{ $lead->assignedUser?->name ? explode(' ', $lead->assignedUser->name)[0] : 'Sem vendedor' }}
-                        </span>
-
-                        <div class="flex items-center gap-2">
-                            <select
-                                x-data
-                                x-on:change="
-                                    let stage = $event.target.value;
-                                    if (! stage) return;
-                                    if (stage === '{{ \App\Models\CrmLead::STAGE_PERDIDO }}') {
-                                        let motivo = prompt('Motivo da perda:');
-                                        if (! motivo) { $event.target.value = ''; return; }
-                                        $wire.moveStage('{{ $lead->id }}', stage, motivo);
-                                    } else {
-                                        $wire.moveStage('{{ $lead->id }}', stage);
-                                    }
-                                    $event.target.value = '';
-                                "
-                                class="fi-select rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white text-[11px] py-1"
-                            >
-                                <option value="">Mover para...</option>
-                                @foreach($this->getStages() as $stageId => $stageLabel)
-                                    @if($stageId !== $lead->stage)
-                                        <option value="{{ $stageId }}">{{ $stageLabel }}</option>
-                                    @endif
-                                @endforeach
-                            </select>
-
-                            @if($lead->stage === \App\Models\CrmLead::STAGE_CONVERTIDO)
-                                @if($lead->client_id)
-                                    <a href="{{ \App\Filament\Resources\ClientResource::getUrl('edit', ['record' => $lead->client_id]) }}" class="text-[10px] font-black uppercase text-success-400 hover:text-success-300 tracking-wider transition-colors shrink-0">Ver Cliente</a>
-                                @else
-                                    <button
-                                        wire:click="converterEmCliente('{{ $lead->id }}')"
-                                        wire:confirm="Criar um Cliente formal a partir deste Lead? Não cria nenhum Contrato -- isso continua manual."
-                                        class="text-[10px] font-black uppercase text-success-400 hover:text-success-300 tracking-wider transition-colors shrink-0"
-                                    >Converter em Cliente</button>
-                                @endif
-                            @endif
-
-                            @if($this->canUseAI() && $lead->isOpen())
-                                <button
-                                    wire:click="analisarComIA('{{ $lead->id }}')"
-                                    wire:loading.attr="disabled"
-                                    wire:target="analisarComIA('{{ $lead->id }}')"
-                                    class="text-[10px] font-black uppercase text-amber-400 hover:text-amber-300 tracking-wider transition-colors shrink-0 disabled:opacity-50"
-                                >
-                                    <span wire:loading.remove wire:target="analisarComIA('{{ $lead->id }}')">🤖 IA</span>
-                                    <span wire:loading wire:target="analisarComIA('{{ $lead->id }}')">Analisando…</span>
-                                </button>
-                            @endif
-
-                            <a href="{{ \App\Filament\Resources\CrmLeadResource::getUrl('edit', ['record' => $lead]) }}" class="text-[10px] font-black uppercase text-primary-400 hover:text-primary-300 tracking-wider transition-colors shrink-0">Abrir</a>
-                        </div>
+    <div class="max-w-5xl mx-auto">
+        <div class="flex flex-col items-center">
+            @foreach($rows as $row)
+                @php
+                    $top = $row['topWidth'];
+                    $bottom = $row['bottomWidth'];
+                    $clipPath = 'polygon('
+                        . (50 - $top / 2) . '% 0%, '
+                        . (50 + $top / 2) . '% 0%, '
+                        . (50 + $bottom / 2) . '% 100%, '
+                        . (50 - $bottom / 2) . '% 100%)';
+                    $bandColor = \App\Support\CrmPalette::stage($row['stage'])['bg'];
+                @endphp
+                <button
+                    wire:click="selectStage('{{ $row['stage'] }}')"
+                    class="relative block w-full h-[150px] -mt-px group {{ $bandColor }} hover:brightness-110 transition-[filter] border-none cursor-pointer"
+                    style="clip-path: {{ $clipPath }};"
+                    title="Ver leads em {{ $row['label'] }}"
+                >
+                    <div class="relative h-full flex flex-col items-center justify-center text-center pointer-events-none px-6">
+                        <span class="text-base font-black uppercase tracking-wide text-white leading-tight">{{ $row['label'] }}</span>
+                        <span class="text-4xl font-black text-white leading-tight mt-1">{{ $row['count'] }}</span>
+                        <span class="text-xs font-bold uppercase tracking-wide text-white/0 group-hover:text-white/80 transition-colors leading-tight mt-1">Ver leads →</span>
                     </div>
-                @empty
-                    <div class="p-6 text-center text-[10px] text-gray-700 uppercase font-bold italic tracking-wide">Sem leads neste estágio</div>
-                @endforelse
+                </button>
+            @endforeach
+        </div>
+
+        <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-center hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-center gap-1.5 mb-1">
+                    <x-heroicon-m-banknotes class="w-3.5 h-3.5 text-emerald-500" />
+                    <p class="text-[10px] font-black uppercase tracking-wide text-gray-400 dark:text-gray-500">Em Pipeline</p>
+                </div>
+                <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400">
+                    R$ {{ number_format($openPipelineValue, 0, ',', '.') }}
+                </p>
+                <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">Soma dos leads abertos</p>
+            </div>
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-center hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-center gap-1.5 mb-1">
+                    <x-heroicon-m-arrow-trending-up class="w-3.5 h-3.5 {{ $conversionColorClass }}" />
+                    <p class="text-[10px] font-black uppercase tracking-wide text-gray-400 dark:text-gray-500">Taxa de Conversão</p>
+                </div>
+                <p class="text-2xl font-black {{ $conversionColorClass }}">
+                    {{ $conversionRate !== null ? number_format($conversionRate, 1, ',', '.').'%' : '—' }}
+                </p>
+                <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">Prospecção até Convertido</p>
+            </div>
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-center hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-center gap-1.5 mb-1">
+                    <x-heroicon-m-calculator class="w-3.5 h-3.5 text-blue-500" />
+                    <p class="text-[10px] font-black uppercase tracking-wide text-gray-400 dark:text-gray-500">Ticket Médio</p>
+                </div>
+                <p class="text-2xl font-black text-blue-600 dark:text-blue-400">
+                    {{ $averageTicket !== null ? 'R$ '.number_format($averageTicket, 0, ',', '.') : '—' }}
+                </p>
+                <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">Média dos leads convertidos</p>
+            </div>
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-center hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-center gap-1.5 mb-1">
+                    <x-heroicon-m-x-circle class="w-3.5 h-3.5 text-red-500" />
+                    <p class="text-[10px] font-black uppercase tracking-wide text-gray-400 dark:text-gray-500">Perdidos</p>
+                </div>
+                <p class="text-2xl font-black text-red-600 dark:text-red-400">{{ $lostCount }}</p>
+                <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">Fora do funil acima</p>
             </div>
         </div>
-    @endif
+    </div>
 </x-filament-panels::page>
