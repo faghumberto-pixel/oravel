@@ -25,7 +25,7 @@ class ViewContractTimeline extends Page
         $this->timelineData = $service->getTimelineData($this->contract);
     }
 
-    protected function getTitle(): string
+    public function getTitle(): string
     {
         return 'Timeline do Contrato #' . $this->contract->contract_number;
     }
