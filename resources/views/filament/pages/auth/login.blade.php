@@ -45,15 +45,6 @@
                         <x-heroicon-o-bolt class="h-7 w-7 text-white" />
                     </div>
 
-                    <div class="mb-6 flex items-center justify-center gap-3 text-xs">
-                        <a href="https://cliente.oravel.com.br" target="_blank" rel="noopener" class="text-white/70 hover:text-white hover:underline">
-                            Painel do Cliente
-                        </a>
-                        <span class="text-white/30">|</span>
-                        <a href="https://academy.oravel.com.br/" target="_blank" rel="noopener" class="text-white/70 hover:text-white hover:underline">
-                            Oravel Academy
-                        </a>
-                    </div>
 
                     {{-- LOGIN: formulario real, autenticacao Filament sem alteracao --}}
                     <div x-show="mode === 'login'">
