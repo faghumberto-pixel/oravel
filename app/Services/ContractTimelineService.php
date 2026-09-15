@@ -11,8 +11,8 @@ class ContractTimelineService
     public function getTimelineData(Contract $contract): array
     {
         // Dados básicos do contrato
-        $startDate = $contract->start_date;
-        $endDate = $contract->end_date;
+        $startDate = $contract->start_date ?? now();
+        $endDate = $contract->end_date ?? now()->addDays(30);
         $now = now();
 
         // Cálculos
