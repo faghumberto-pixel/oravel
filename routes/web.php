@@ -10,6 +10,7 @@ use App\Http\Controllers\ClientMagicLinkController;
 use App\Http\Controllers\ClientManagementPrintController;
 use App\Http\Controllers\ClientReceivableMirrorController;
 use App\Http\Controllers\ContractPdfController;
+use App\Http\Controllers\ContractTimelinePrintController;
 use App\Http\Controllers\EquipmentDamageReportController;
 use App\Http\Controllers\GenericRecordPrintController;
 use App\Http\Controllers\HourMeterOfflineController;
@@ -136,6 +137,8 @@ Route::post('/hour-meter/publico/{token}', [HourMeterPublicController::class, 's
 Route::middleware(['auth:client'])->group(function () {
     Route::get('/cliente/contratos/{contract}/pdf', [ContractPdfController::class, 'download'])
         ->name('cliente.contracts.pdf');
+    Route::get('/admin/contratos/{contract}/timeline-print', ContractTimelinePrintController::class)
+        ->name('admin.contracts.timeline-print');
     Route::get('/cliente/financeiro/{accountReceivable}/espelho', [ClientReceivableMirrorController::class, 'download'])
         ->name('cliente.receivable.mirror');
 });

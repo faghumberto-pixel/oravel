@@ -35,11 +35,11 @@ class ViewContractTimeline extends Page
     {
         return [
             \Filament\Actions\Action::make('print')
-                ->label('🖨️ Imprimir')
+                ->label('Imprimir')
                 ->icon('heroicon-o-printer')
                 ->color('primary')
-                ->action(fn () => null)
-                ->extraAttributes(['onclick' => 'window.print(); return false;', 'style' => 'cursor: pointer;']),
+                ->url(fn () => route('admin.contracts.timeline-print', ['contract' => $this->contract]))
+                ->openUrlInNewTab(),
         ];
     }
 }
