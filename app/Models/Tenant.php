@@ -60,6 +60,7 @@ class Tenant extends Model
         'enabled_modules',
         'ui_customizations',
         'targets',
+        'signature_id',
     ];
 
     protected $casts = [
@@ -256,6 +257,11 @@ class Tenant extends Model
     public function plan(): BelongsTo
     {
         return $this->belongsTo(Plan::class, 'plan_id', 'id');
+    }
+
+    public function signature(): BelongsTo
+    {
+        return $this->belongsTo(Signature::class);
     }
 
     public function users(): BelongsToMany
