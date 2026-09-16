@@ -11,6 +11,7 @@ use App\Filament\Central\Pages\Programacao;
 use App\Filament\Central\Resources\LandingPageLeadResource;
 use App\Filament\Central\Resources\PlanResource;
 use App\Filament\Central\Resources\SignatureResource;
+use App\Filament\Central\Resources\TenantComplianceResource;
 use App\Filament\Central\Resources\SalesLeadResource\Widgets\InteractionChannelChart;
 use App\Filament\Central\Resources\SalesLeadResource\Widgets\InteractionChannelStats;
 use App\Filament\Central\Resources\SalesLeadResource\Widgets\LeadsByStageChart;
@@ -131,6 +132,7 @@ class CentralPanelProvider extends PanelProvider
                 LandingPageLeadResource::class,
                 PlanResource::class,
                 SignatureResource::class,
+                TenantComplianceResource::class,
                 RoleResource::class,
             ])
             ->discoverResources(in: app_path('Filament/Central/Resources'), for: 'App\\Filament\\Central\\Resources')
