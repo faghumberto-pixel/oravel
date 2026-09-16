@@ -4,8 +4,10 @@ namespace App\Filament\Central\Pages;
 
 use App\Filament\Central\Widgets\ArrChart;
 use App\Filament\Central\Widgets\ChurnChart;
+use App\Filament\Central\Widgets\RecentSignaturesWidget;
 use App\Filament\Central\Widgets\RevenueChart;
 use App\Filament\Central\Widgets\SaaSStatsOverview;
+use App\Filament\Central\Widgets\SignaturesStatsWidget;
 use Filament\Pages\Dashboard as BaseDashboard;
 
 /**
@@ -37,9 +39,11 @@ class DashboardSaaS extends BaseDashboard
     {
         return [
             SaaSStatsOverview::class,
+            SignaturesStatsWidget::class,
             RevenueChart::class,
             ChurnChart::class,
             ArrChart::class,
+            RecentSignaturesWidget::class,
         ];
     }
 }

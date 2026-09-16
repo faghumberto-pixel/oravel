@@ -10,6 +10,7 @@ use App\Filament\Central\Pages\Kanban;
 use App\Filament\Central\Pages\Programacao;
 use App\Filament\Central\Resources\LandingPageLeadResource;
 use App\Filament\Central\Resources\PlanResource;
+use App\Filament\Central\Resources\SignatureResource;
 use App\Filament\Central\Resources\SalesLeadResource\Widgets\InteractionChannelChart;
 use App\Filament\Central\Resources\SalesLeadResource\Widgets\InteractionChannelStats;
 use App\Filament\Central\Resources\SalesLeadResource\Widgets\LeadsByStageChart;
@@ -17,6 +18,7 @@ use App\Filament\Central\Resources\SalesLeadResource\Widgets\SalesLeadListStats;
 use App\Filament\Central\Widgets\AcquisitionChannelChart;
 use App\Filament\Central\Widgets\ArrChart;
 use App\Filament\Central\Widgets\ChurnChart;
+use App\Filament\Central\Widgets\SignaturesStatsWidget;
 use App\Filament\Central\Widgets\EngagementChart;
 use App\Filament\Central\Widgets\LeadsBySegmentChart;
 use App\Filament\Central\Widgets\LeadsBySourceChart;
@@ -128,6 +130,7 @@ class CentralPanelProvider extends PanelProvider
             ->resources([
                 LandingPageLeadResource::class,
                 PlanResource::class,
+                SignatureResource::class,
                 RoleResource::class,
             ])
             ->discoverResources(in: app_path('Filament/Central/Resources'), for: 'App\\Filament\\Central\\Resources')

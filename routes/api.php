@@ -57,3 +57,6 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
 
 // Landing page leads (sem auth - público)
 Route::post('/landing-page/leads', [\App\Http\Controllers\LandingPageLeadController::class, 'store']);
+
+// Assinatura eletrônica SLA + LGPD (sem auth - público)
+Route::post('/signatures', [\App\Http\Controllers\Api\SignatureController::class, 'store']);
