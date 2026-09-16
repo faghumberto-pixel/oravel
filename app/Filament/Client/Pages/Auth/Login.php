@@ -44,4 +44,9 @@ class Login extends BaseLogin
             'password' => $data['password'],
         ];
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return filament('portal-cliente')->getUrl();
+    }
 }
