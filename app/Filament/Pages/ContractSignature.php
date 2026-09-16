@@ -86,6 +86,12 @@ class ContractSignature extends Page implements HasForms
                         Forms\Components\Checkbox::make('agree_legal')
                             ->label('Confirmo que tenho autoridade legal para assinar este contrato')
                             ->required(),
+
+                        Forms\Components\Divider::make(),
+
+                        Forms\Components\Checkbox::make('hide_prompt')
+                            ->label('Não mostrar este aviso no próximo acesso')
+                            ->helperText('Você pode acessar o status de conformidade no seu perfil a qualquer momento'),
                     ]),
             ])
             ->statePath('data');
@@ -127,6 +133,10 @@ class ContractSignature extends Page implements HasForms
             );
 
             $signature->update(['email_sent' => true, 'email_sent_at' => now()]);
+
+            if ($data['hide_prompt'] ?? false) {
+                $tenant->update(['hide_signature_prompt' => true]);
+            }
 
             Notification::make()
                 ->title('✅ Contrato Assinado com Sucesso!')

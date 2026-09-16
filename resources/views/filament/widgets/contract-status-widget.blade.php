@@ -1,3 +1,6 @@
+@if ($hidden)
+    {{-- Widget oculto por escolha do tenant --}}
+@else
 <div class="fi-wi-stats-overview-stat relative rounded-lg border p-6 shadow-sm
     @if ($isOverdue)
         border-red-300 bg-red-50 dark:border-red-700 dark:bg-red-900
@@ -69,3 +72,4 @@
         </div>
     </div>
 </div>
+@endif
