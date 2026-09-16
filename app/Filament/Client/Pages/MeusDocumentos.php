@@ -19,7 +19,7 @@ class MeusDocumentos extends Page
 
     public function mount(): void
     {
-        $this->tenant = auth()->user()->tenant;
+        $this->tenant = auth('client')->user()?->tenant;
     }
 
     public function getViewData(): array
