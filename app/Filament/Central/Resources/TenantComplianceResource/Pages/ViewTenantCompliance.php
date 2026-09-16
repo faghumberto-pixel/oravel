@@ -18,7 +18,7 @@ class ViewTenantCompliance extends ViewRecord
         ];
     }
 
-    protected function getContentTabLabel(): ?string
+    public function getContentTabLabel(): ?string
     {
         return 'Visão Geral';
     }
