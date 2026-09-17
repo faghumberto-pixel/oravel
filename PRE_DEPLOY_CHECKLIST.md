@@ -45,6 +45,11 @@ Antes de fazer qualquer deploy, **OBRIGATÓRIO** passar por este checklist:
 - [ ] Celular carregado (deploy pode demorar)
 - [ ] **NOVO:** Sabe onde consultar logs (gcloud ssh)
 
+## 🖥️ Nova VM de produção (troca/migração de instância)
+- [ ] Tags de rede `http-server`/`https-server` habilitadas na instância (Console GCP → Compute Engine → instância → Editar → Firewalls → "Allow HTTP traffic" / "Allow HTTPS traffic", ou via `gcloud compute instances add-tags`)
+- [ ] Confirmar `curl metadata/v1/instance/tags?recursive=true` (rodado na própria VM) retorna as tags esperadas, **antes** de apontar DNS/Cloudflare para o novo IP
+- [ ] Ver incidente HTTP 522 de 17/09/2026 em `docs/incidentes.md` — VM sem essas tags fica com nginx/php-fpm rodando normalmente mas todo tráfego 80/443 bloqueado pelo firewall da VPC
+
 ---
 
 ## 🤖 Fluxo de segurança AUTOMÁTICO
