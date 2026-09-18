@@ -21,7 +21,7 @@ class PmocResource extends Resource
     protected static ?string $navigationLabel = 'PMOC';
     protected static ?string $modelLabel = 'PMOC';
     protected static ?string $pluralModelLabel = 'PMOCs';
-    protected static ?string $navigationGroup = 'FSM — Serviços Técnicos';
+    protected static ?string $navigationGroup = 'Equipe';
 
     public static function form(Form $form): Form
     {

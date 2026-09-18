@@ -18,6 +18,8 @@ class ContractSignature extends Page implements HasForms
 
     protected static ?string $navigationLabel = 'Assinar Contrato SLA + LGPD';
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static string $view = 'filament.pages.contract-signature';
 
     protected static ?string $title = 'Assinatura de Contrato de Serviço';
