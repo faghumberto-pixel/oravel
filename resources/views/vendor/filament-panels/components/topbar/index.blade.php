@@ -89,10 +89,80 @@
                 />
             @endif
 
-            {{-- Logo + Tenant Switcher + Avisos (consolidado no topbar único) --}}
-            <div class="hidden items-center gap-x-3 lg:flex">
-                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_START) }}
+            {{-- Avisos (2026-09-18, pedido do usuario): centralizados no
+                 topbar, independente de topNavigation()/sidebar -- flex-1 +
+                 justify-center nos dois lados (esse aqui e o bloco de
+                 icones com ms-auto logo abaixo) e' o que garante ficar no
+                 meio de verdade mesmo com os dois lados tendo larguras
+                 diferentes. --}}
+            <div class="flex flex-1 min-w-0 items-center justify-center">
+                @include('filament.topbar-announcements-ticker')
             </div>
+
+            {{-- Busca/notificacoes/e-mail/avatar/ajuda: no canto direito, o
+                 mais longe possivel da sidebar (2026-09-18, pedido do
+                 usuario -- primeira tentativa foi pro canto esquerdo, ficou
+                 perto demais da sidebar e foi revertida). "ms-auto" empurra
+                 esse bloco (+ o de ajuda logo abaixo) pro extremo oposto,
+                 ja' que a marca/tenant saiu do topbar (fica so' na sidebar)
+                 e nao sobra mais nada no meio do <nav> pra empurrar sozinho. --}}
+            <div
+                @if (filament()->hasTenancy())
+                    x-persist="topbar.end.panel-{{ filament()->getId() }}.tenant-{{ filament()->getTenant()?->getKey() }}"
+                @else
+                    x-persist="topbar.end.panel-{{ filament()->getId() }}"
+                @endif
+                class="flex items-center gap-x-6 ms-auto"
+            >
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_BEFORE) }}
+
+                @if (filament()->isGlobalSearchEnabled())
+                    @livewire(Filament\Livewire\GlobalSearch::class)
+                @endif
+
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_AFTER) }}
+
+                @if (filament()->auth()->check())
+                    @if (filament()->hasDatabaseNotifications())
+                        @livewire(Filament\Livewire\DatabaseNotifications::class, [
+                            'lazy' => filament()->hasLazyLoadedDatabaseNotifications(),
+                        ])
+                    @endif
+
+                    {{-- Caixa de E-mail: so' icone, depois do sino (pedido do
+                         usuario 2026-07-27) -- a Page tem
+                         shouldRegisterNavigation=false, entao nao aparece de
+                         novo no menu normal. Mesmo estilo do botao da lupa
+                         (livewire/screen-search.blade.php). --}}
+                    <a
+                        href="{{ \App\Filament\Pages\CaixaDeEmail::getUrl() }}"
+                        class="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition hover:bg-white/5 hover:text-gray-200"
+                        title="Caixa de E-mail"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                        </svg>
+                    </a>
+
+                    <x-filament-panels::user-menu />
+                @endif
+            </div>
+
+            <div class="flex items-center">
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_END) }}
+            </div>
+
+            {{-- Logo + Tenant Switcher + Avisos: so' faz sentido em modo
+                 topNavigation() (menu horizontal, sem sidebar). Em modo
+                 sidebar (atual, desde 2026-09-18) a marca/tenant ja aparece
+                 no cabecalho da propria sidebar via ->brandLogo() -- deixar
+                 isso aqui tambem duplicava o nome do tenant (reportado
+                 pelo usuario). --}}
+            @if (filament()->hasTopNavigation())
+                <div class="hidden items-center gap-x-3 lg:flex">
+                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_START) }}
+                </div>
+            @endif
 
             @if (filament()->hasTopNavigation() || (! filament()->hasNavigation()))
                 @if (filament()->hasNavigation())
@@ -238,52 +308,6 @@
                     </ul>
                 @endif
             @endif
-
-            <div
-                @if (filament()->hasTenancy())
-                    x-persist="topbar.end.panel-{{ filament()->getId() }}.tenant-{{ filament()->getTenant()?->getKey() }}"
-                @else
-                    x-persist="topbar.end.panel-{{ filament()->getId() }}"
-                @endif
-                class="flex items-center gap-x-6 lg:ms-6"
-            >
-                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_BEFORE) }}
-
-                @if (filament()->isGlobalSearchEnabled())
-                    @livewire(Filament\Livewire\GlobalSearch::class)
-                @endif
-
-                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_AFTER) }}
-
-                @if (filament()->auth()->check())
-                    @if (filament()->hasDatabaseNotifications())
-                        @livewire(Filament\Livewire\DatabaseNotifications::class, [
-                            'lazy' => filament()->hasLazyLoadedDatabaseNotifications(),
-                        ])
-                    @endif
-
-                    {{-- Caixa de E-mail: so' icone, depois do sino (pedido do
-                         usuario 2026-07-27) -- a Page tem
-                         shouldRegisterNavigation=false, entao nao aparece de
-                         novo no menu normal. Mesmo estilo do botao da lupa
-                         (livewire/screen-search.blade.php). --}}
-                    <a
-                        href="{{ \App\Filament\Pages\CaixaDeEmail::getUrl() }}"
-                        class="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition hover:bg-white/5 hover:text-gray-200"
-                        title="Caixa de E-mail"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-                        </svg>
-                    </a>
-
-                    <x-filament-panels::user-menu />
-                @endif
-            </div>
-
-            <div class="ms-2 flex items-center">
-                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_END) }}
-            </div>
         </nav>
     </div>
 @else

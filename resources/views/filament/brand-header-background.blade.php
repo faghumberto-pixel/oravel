@@ -3,10 +3,14 @@
        pro painel Filament. Mesma logica de :root[data-theme] usada nos
        artefatos, mas aqui seguindo o dark mode do proprio Filament (classe
        .dark na <html>, ver base.blade.php). */
+    /* Tema padrao (2026-09-18, pedido do usuario): cinza bem clarinho no
+       lugar do creme antigo -- so' afeta o FUNDO DO CONTEUDO (.fi-body).
+       Sidebar/topbar sao sempre azul-escuro, ver .fi-sidebar/.fi-topbar
+       mais abaixo, independente do modo claro/escuro ativo. */
     :root {
-        --oravel-bg: #faf7f2;
+        --oravel-bg: #f4f5f7;
         --oravel-surface: #ffffff;
-        --oravel-border: #e8e0d4;
+        --oravel-border: #e5e7eb;
     }
 
     html.dark {
@@ -47,6 +51,22 @@
 
     .fi-topbar .fi-icon-btn svg {
         color: #e5e7eb !important;
+    }
+
+    /* Sidebar sempre azul-escuro (2026-09-18, pedido do usuario), tanto no
+       tema claro quanto no escuro -- mesmo tom do topbar (gradiente
+       #0f172a -> #1a2438, ver topbar/index.blade.php). A classe "dark"
+       fixa no <aside> (ver override de sidebar/index.blade.php) ja cuida
+       de textos/icones ficarem na variante clara (text-gray-200 etc, que
+       sao dark:); aqui so' falta o FUNDO em si, que por padrao segue
+       .fi-body (transparente no desktop) e ficaria cinza-claro junto com
+       o resto do conteudo sem isso. */
+    .fi-sidebar {
+        background: linear-gradient(to bottom right, #0f172a, #1a2438) !important;
+    }
+
+    .fi-sidebar-header {
+        background: #0f172a !important;
     }
 
     /* Sem opcao de ocultar o topbar no desktop -- some com os botoes de

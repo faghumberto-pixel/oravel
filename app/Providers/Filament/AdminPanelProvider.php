@@ -39,6 +39,21 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(Login::class)
             ->sidebarCollapsibleOnDesktop()
+            // Modo escuro desabilitado (2026-09-18, pedido do usuario -- "padronizar
+            // tudo claro"): defaultThemeMode(Light) sozinho so' vale pra quem nunca
+            // escolheu tema (Filament persiste a escolha por navegador em
+            // localStorage) -- qualquer sessao que ja tinha marcado escuro antes
+            // continuava vendo TODAS as paginas com dark: aplicado, inclusive as que
+            // acabaram de virar tema-consciente (ex: painel-gestao.blade.php).
+            // darkMode(false) tira a opcao de vez: filament()->hasDarkMode() fica
+            // false, a classe "dark" nunca e' adicionada no <html>, entao nenhuma
+            // classe dark: (nativa do Filament ou custom) ativa em lugar nenhum do
+            // painel -- sem precisar variar arquivo por arquivo. Sidebar/topbar
+            // continuam azul-escuro de qualquer jeito (forcado via classe "dark"
+            // literal nos proprios elementos, ver overrides em
+            // resources/views/vendor/filament-panels/components/{topbar,sidebar}),
+            // independente disso.
+            ->darkMode(false)
             ->homeUrl(fn () => route('filament.admin.pages.painel-controle'))
             ->colors([
                 // Paleta do artefato "Central de Artefatos" (2026-07-25):
@@ -150,10 +165,6 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::BODY_END,
                 fn () => view('filament.oravel-gauge-chart-plugin'),
-            )
-            ->renderHook(
-                PanelsRenderHook::FOOTER,
-                fn () => view('filament.panel-footer'),
             )
             ->renderHook(
                 PanelsRenderHook::PAGE_START,
