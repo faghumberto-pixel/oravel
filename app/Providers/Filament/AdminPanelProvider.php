@@ -96,12 +96,12 @@ class AdminPanelProvider extends PanelProvider
                 NavigationItem::make('Fluxo de Caixa')
                     ->icon('heroicon-o-chart-bar')
                     ->group('Financeiro')
-                    ->url(fn () => CashflowPage::getUrl()),
+                    ->url('/admin/fluxo-de-caixa'),
 
                 NavigationItem::make('Conciliação Bancária')
                     ->icon('heroicon-o-arrow-path')
                     ->group('Financeiro')
-                    ->url(fn () => BancaryReconciliationPage::getUrl()),
+                    ->url('/admin/conciliacao-bancaria'),
             ])
             ->renderHook(
                 PanelsRenderHook::TOPBAR_START,
