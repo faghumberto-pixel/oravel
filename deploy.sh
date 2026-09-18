@@ -79,6 +79,7 @@ set -e
 cd $PROD_PATH
 
 echo "📥 Puxando código..."
+git config --global --add safe.directory $PROD_PATH
 git pull --rebase=false origin $BRANCH
 
 echo "🔍 Validando PHP..."
