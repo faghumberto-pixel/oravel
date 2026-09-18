@@ -77,10 +77,6 @@ echo "🔐 Corrigindo permissões..."
 sudo chown -R www-data:www-data $PROD_PATH/.git 2>/dev/null || true
 sudo chmod -R u+w $PROD_PATH/.git 2>/dev/null || true
 
-# Adicionar GitHub ao known_hosts (evita host key verification na VM)
-echo "🔑 Configurando GitHub SSH..."
-sudo -u www-data bash -c 'mkdir -p ~/.ssh && ssh-keyscan -H github.com >> ~/.ssh/known_hosts 2>/dev/null || true'
-
 # Resto roda como $APP_USER, dono de $PROD_PATH
 # HOME=/tmp: /var/www (HOME padrao de www-data) nao e gravavel por ele.
 sudo -u $APP_USER HOME=/tmp bash -c '
@@ -89,6 +85,7 @@ cd $PROD_PATH
 
 echo "📥 Puxando código..."
 git config --global --add safe.directory $PROD_PATH
+export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
 git pull --rebase=false origin $BRANCH
 
 echo "🔍 Validando PHP..."
