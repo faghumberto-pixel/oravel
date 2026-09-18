@@ -84,11 +84,9 @@
     font-weight: 600;
 }
 
-/* Background customizado do app */
-body {
-    background-image: url('/background.jpg') !important;
-    background-attachment: fixed !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-}
+/* Background customizado removido (2026-09-18): imagem escura pensada pro
+   tema dark antigo -- ficava escondida atras do fundo escuro em toda
+   pagina. Agora que o painel e' sempre claro (darkMode(false) no
+   AdminPanelProvider), essa imagem aparecia por cima do conteudo claro,
+   destoando. Fundo real da area de conteudo e' --oravel-bg (CSS puro em
+   brand-header-background.blade.php). */
