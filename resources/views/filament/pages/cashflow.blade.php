@@ -5,9 +5,9 @@
         />
     </div>
 
-    <div class="flex gap-6">
+    <div class="flex gap-6 w-full">
         @foreach ($this->getFooterWidgets() as $widget)
-            <div class="flex-1">
+            <div class="w-1/2">
                 @livewire($widget)
             </div>
         @endforeach
