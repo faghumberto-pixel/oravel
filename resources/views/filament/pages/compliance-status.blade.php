@@ -22,7 +22,7 @@
             <div>
                 <h1 class="text-2xl font-bold">{{ $overallStatus['label'] }}</h1>
                 <p class="text-sm text-gray-600 dark:text-gray-300">
-                    {{ $tenant->name }}
+                    {{ $tenant->name ?? 'Nenhum tenant selecionado' }}
                 </p>
             </div>
         </div>
