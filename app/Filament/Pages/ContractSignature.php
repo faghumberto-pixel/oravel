@@ -85,8 +85,6 @@ class ContractSignature extends Page implements HasForms
                             ->label('Confirmo que tenho autoridade legal para assinar este contrato')
                             ->required(),
 
-                        Forms\Components\Divider::make(),
-
                         Forms\Components\Checkbox::make('hide_prompt')
                             ->label('Não mostrar este aviso no próximo acesso')
                             ->helperText('Você pode acessar o status de conformidade no seu perfil a qualquer momento'),
