@@ -50,7 +50,7 @@
                             <p class="text-sm text-gray-600 dark:text-gray-300">
                                 {{ $check['details'] }}
                             </p>
-                            @if ($check['date'])
+                            @if ($check['date'] ?? null)
                                 <p class="mt-1 text-xs text-gray-500">
                                     {{ $check['date']->format('d/m/Y H:i') }}
                                 </p>
