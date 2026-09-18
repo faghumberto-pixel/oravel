@@ -106,6 +106,9 @@ php artisan config:cache
 echo "⚙️ Atualizando Filament (recursos e rotas)..."
 php artisan filament:upgrade
 
+echo "📋 Sincronizando módulos SaaS..."
+php artisan saas:sync-modules
+
 echo "🔄 Limpeza AGRESSIVA de cache..."
 rm -rf bootstrap/cache/* 2>/dev/null || true
 php artisan route:clear 2>/dev/null || true
