@@ -93,7 +93,34 @@
                  de largura total abaixo do topbar, mesmo padrao visual do
                  banner "Nenhum tenant selecionado" (pedido explicito do
                  usuario). Ver resources/views/filament/announcements-banner.blade.php,
-                 registrado via BODY_START em AdminPanelProvider. --}}
+                 registrado via BODY_START em AdminPanelProvider.
+
+                 Data/hora ao vivo (2026-09-18, pedido do usuario): ocupa o
+                 centro do topbar, que ficou vazio depois que o aviso saiu
+                 daqui. flex-1 nos dois lados (aqui e' o unico elemento
+                 "meio", o bloco de icones com ms-auto e' quem sobra pra
+                 direita) centraliza de verdade. Atualiza a cada segundo via
+                 setInterval, sem round-trip nenhum pro servidor. --}}
+            <div
+                x-data="{
+                    now: new Date(),
+                    init() {
+                        setInterval(() => { this.now = new Date() }, 1000)
+                    },
+                    get formatted() {
+                        return this.now.toLocaleString('pt-BR', {
+                            weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric',
+                            hour: '2-digit', minute: '2-digit', second: '2-digit',
+                        })
+                    },
+                }"
+                class="hidden flex-1 items-center justify-center min-w-0 lg:flex"
+            >
+                <span class="flex items-center gap-x-1.5 text-xs font-medium tabular-nums text-gray-300">
+                    <x-filament::icon icon="heroicon-o-clock" class="h-4 w-4 text-gray-500" />
+                    <span x-text="formatted"></span>
+                </span>
+            </div>
 
             {{-- Busca/notificacoes/e-mail/avatar/ajuda: no canto direito, o
                  mais longe possivel da sidebar (2026-09-18, pedido do
