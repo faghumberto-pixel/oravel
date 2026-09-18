@@ -28,13 +28,6 @@
         </a>
     </div>
 
-    {{-- Header Widgets (Stats) --}}
-    <div class="grid gap-6">
-        <x-filament-widgets::widgets
-            :widgets="$this->getHeaderWidgets()"
-        />
-    </div>
-
     {{-- Filters --}}
     <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
         <h3 class="text-lg font-semibold mb-4">Filtros</h3>
@@ -65,19 +58,6 @@
                 </select>
             </div>
         </form>
-    </div>
-
-    {{-- Chart --}}
-    <div class="w-full">
-        @livewire(\App\Filament\Widgets\CashflowAccumulatedChart::class,
-            [
-                'dateStart' => $this->dateStart,
-                'dateEnd' => $this->dateEnd,
-                'status' => $this->status,
-                'type' => $this->type,
-            ],
-            key('cashflow-chart-' . $this->dateStart . $this->dateEnd . $this->status . $this->type)
-        )
     </div>
 
     {{-- Detail Table --}}
