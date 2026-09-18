@@ -26,7 +26,7 @@ Route::get('/health', function () {
  * 'asaas-access-token' comparado no próprio controller (mecanismo real
  * do Asaas -- token estático, não HMAC).
  */
-Route::post('/webhooks/asaas', [AsaasWebhookController::class, 'handle']);
+Route::post('/webhooks/asaas', [AsaasWebhookController::class, 'handle'])->name('asaas.webhook');
 
 /*
  * Webhook do atendente virtual de WhatsApp (Meta Cloud API) -- atendimento
