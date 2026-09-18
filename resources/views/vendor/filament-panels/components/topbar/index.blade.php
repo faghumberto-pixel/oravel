@@ -89,15 +89,11 @@
                 />
             @endif
 
-            {{-- Avisos (2026-09-18, pedido do usuario): centralizados no
-                 topbar, independente de topNavigation()/sidebar -- flex-1 +
-                 justify-center nos dois lados (esse aqui e o bloco de
-                 icones com ms-auto logo abaixo) e' o que garante ficar no
-                 meio de verdade mesmo com os dois lados tendo larguras
-                 diferentes. --}}
-            <div class="flex flex-1 min-w-0 items-center justify-center">
-                @include('filament.topbar-announcements-ticker')
-            </div>
+            {{-- Avisos: nao ficam mais aqui (2026-09-18) -- viraram um banner
+                 de largura total abaixo do topbar, mesmo padrao visual do
+                 banner "Nenhum tenant selecionado" (pedido explicito do
+                 usuario). Ver resources/views/filament/announcements-banner.blade.php,
+                 registrado via BODY_START em AdminPanelProvider. --}}
 
             {{-- Busca/notificacoes/e-mail/avatar/ajuda: no canto direito, o
                  mais longe possivel da sidebar (2026-09-18, pedido do

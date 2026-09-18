@@ -143,6 +143,10 @@ class AdminPanelProvider extends PanelProvider
                 fn () => view('filament.acting-tenant-banner'),
             )
             ->renderHook(
+                PanelsRenderHook::BODY_START,
+                fn () => view('filament.announcements-banner'),
+            )
+            ->renderHook(
                 PanelsRenderHook::HEAD_END,
                 fn () => view('filament.login-background'),
             )
