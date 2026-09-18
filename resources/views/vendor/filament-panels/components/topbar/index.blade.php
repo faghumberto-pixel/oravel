@@ -53,29 +53,8 @@
             ])
         }}
     >
-        {{-- Linha 1: topbar de verdade -- fluxo normal da pagina (nao e'
-             sticky), some ao rolar pra baixo e volta ao rolar pra cima,
-             sem nenhum JS. Conteudo vem de
-             filament.topbar-brand-and-ticker via TOPBAR_START (logo+
-             tenant, relogio, avisos).
-
-             fi-oravel-topbar-row1: classe usada em CSS puro (ver
-             brand-header-background.blade.php) pro espacamento entre os
-             filhos -- classes novas do Tailwind tipo "gap-x-10"/"me-10"
-             NAO tem efeito aqui: o Vite nao builda neste ambiente (Node
-             desatualizado), entao o CSS compilado em public/build so'
-             contem as classes que ja existiam ANTES desta sessao. --}}
-        {{-- Transparente (pedido do usuario 2026-07-26): a barra de menu
-             (row2, logo abaixo) passou a levar o gradiente navy, entao o
-             topbar (row1) virou transparente pra nao competir com ele. --}}
-        <div class="fi-oravel-topbar-row1 hidden bg-transparent px-4 md:px-6 lg:flex lg:items-center lg:px-8">
-            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_START) }}
-        </div>
-
-        {{-- Linha 2: o menu de verdade -- sticky sozinho, sempre visivel.
-             Gradiente navy (2026-07-26, pedido do usuario): mesma cor da
-             barra de titulo da Central de Artefatos (#0f172a -> #1a2438),
-             pra manter a mesma identidade visual entre as duas telas. --}}
+        {{-- Topbar unificado (2026-09-18): logo, tenant switcher, avisos,
+             e menu integrados numa única linha com cor consistente. --}}
         <nav
             class="sticky top-0 z-20 flex h-16 items-center gap-x-4 bg-gradient-to-br from-[#0f172a] to-[#1a2438] px-4 shadow-sm ring-1 ring-white/10 md:px-6 lg:px-8"
         >
@@ -110,11 +89,12 @@
                 />
             @endif
 
-            @if (filament()->hasTopNavigation() || (! filament()->hasNavigation()))
-                @if (filament()->hasTenancy() && filament()->hasTenantMenu())
-                    <x-filament-panels::tenant-menu class="hidden lg:block" />
-                @endif
+            {{-- Logo + Tenant Switcher + Avisos (consolidado no topbar único) --}}
+            <div class="hidden items-center gap-x-3 lg:flex">
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_START) }}
+            </div>
 
+            @if (filament()->hasTopNavigation() || (! filament()->hasNavigation()))
                 @if (filament()->hasNavigation())
                     <ul class="me-4 hidden items-center gap-x-4 lg:flex">
                         @foreach ($navigation as $group)

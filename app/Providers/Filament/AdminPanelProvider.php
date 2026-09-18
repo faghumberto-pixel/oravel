@@ -38,7 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(Login::class)
-            ->topNavigation()
+            ->sidebarCollapsibleOnDesktop()
             ->homeUrl(fn () => route('filament.admin.pages.painel-controle'))
             ->colors([
                 // Paleta do artefato "Central de Artefatos" (2026-07-25):

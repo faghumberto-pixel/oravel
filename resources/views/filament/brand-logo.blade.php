@@ -9,20 +9,20 @@
         default => 'bg-gray-500',
     };
 @endphp
-<div class="flex flex-col leading-tight">
-    <div class="fi-oravel-brand-logo-row flex items-center gap-3">
-        {{-- Monograma "O" branco em quadrado preto (2026-09) --}}
-        <img src="{{ asset('images/oravel-logo-monograma-32.png') }}?v=1" alt="Oravel" class="h-8 w-8 shrink-0 rounded">
+{{-- Topbar unificado (2026-09-18): logo + tenant em linha horizontal única. --}}
+<div class="flex items-center gap-2 shrink-0">
+    {{-- Monograma "O" branco em quadrado preto (2026-09) --}}
+    <img src="{{ asset('images/oravel-logo-monograma-32.png') }}?v=1" alt="Oravel" class="h-8 w-8 shrink-0 rounded">
 
-        @if($tenant)
-            <span class="text-xs font-bold tracking-tight text-gray-300 truncate max-w-[16rem]">{{ $tenant->name }}</span>
-        @endif
-    </div>
-
-    @if($tenant && $segmentLabel)
-        <span class="flex items-center gap-1.5 text-[11px] font-medium tracking-wide text-gray-400 truncate max-w-[16rem]">
-            <span class="inline-block h-1.5 w-1.5 rounded-full {{ $segmentDotClass }} shrink-0"></span>
-            {{ $segmentLabel }}
-        </span>
+    @if($tenant)
+        <div class="flex flex-col leading-none">
+            <span class="text-xs font-bold tracking-tight text-gray-300 truncate max-w-[12rem]">{{ $tenant->name }}</span>
+            @if($segmentLabel)
+                <span class="flex items-center gap-1 text-[10px] font-medium tracking-wide text-gray-400 truncate max-w-[12rem]">
+                    <span class="inline-block h-1.5 w-1.5 rounded-full {{ $segmentDotClass }} shrink-0"></span>
+                    {{ $segmentLabel }}
+                </span>
+            @endif
+        </div>
     @endif
 </div>

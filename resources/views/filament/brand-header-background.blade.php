@@ -28,23 +28,9 @@
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
     }
 
-    /* Topbar (linha 1, some ao rolar) e menu (linha 2, sticky) agora sao
-       2 elementos HTML de verdade -- ver
-       resources/views/vendor/filament-panels/components/topbar/index.blade.php.
-       Cores/tamanhos deles ja estao no template; aqui so' fica o que
-       ainda precisa ser CSS mesmo (cores de texto/icone que nao tem
-       variante dark: propria, cards, etc). */
-
-    /* Espacamento de verdade entre Logo+Tenant / Relogio / Avisos --
-       precisa ser CSS puro (gap, nao classe Tailwind tipo "gap-x-10"):
-       o Vite nao builda neste ambiente, entao classes novas que nao
-       existiam no CSS compilado ANTES desta sessao nao tem efeito nenhum
-       -- essa era a causa real do "tudo colado" reportado varias vezes. */
-    .fi-oravel-topbar-row1 {
-        padding-top: 0.625rem;
-        padding-bottom: 0.625rem;
-        gap: 2.5rem;
-    }
+    /* Topbar unificado (2026-09-18): logo, tenant switcher, avisos e menu
+       consolidados numa única linha com cor consistente. Cores/tamanhos
+       estão no template topbar/index.blade.php. */
 
     /* Espaco entre "Oravel" e o nome do tenant, dentro do logo. */
     .fi-oravel-brand-logo-row {

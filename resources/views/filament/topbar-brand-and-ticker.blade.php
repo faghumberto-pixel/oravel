@@ -1,13 +1,6 @@
-{{-- Conteudo da linha 1 (topbar de verdade) -- o wrapper flex/sticky fica
-     no template que sobrescreve o topbar do Filament, ver
-     resources/views/vendor/filament-panels/components/topbar/index.blade.php.
-     Nao precisa de JS nem de wrapper proprio aqui: por nao ser sticky,
-     "some ao rolar pra baixo" e' scroll comum. So' logo + avisos agora
-     (relogio removido 2026-08, poluia o visual minimalista) --
-     espacamento vem do "gap" em CSS puro no .fi-oravel-topbar-row1
-     (brand-header-background.blade.php), nao de classes Tailwind tipo
-     "me-10" que nao existem no CSS compilado deste ambiente. --}}
-<a href="{{ filament()->getUrl() }}" class="flex items-center">
+{{-- Consolidado no topbar unificado (2026-09-18) -- logo + avisos em linha única
+     com o menu. --}}
+<a href="{{ filament()->getUrl() }}" class="flex items-center shrink-0">
     @include('filament.brand-logo')
 </a>
 
