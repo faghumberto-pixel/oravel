@@ -58,7 +58,10 @@ class CashflowExportController extends Controller
 
         $records = $ar->union($ap)->orderBy('date', 'desc')->get();
 
-        return view('prints.cashflow-print', compact('records', 'dateStart', 'dateEnd'));
+        $status = request('status');
+        $type = request('type');
+
+        return view('prints.cashflow-print', compact('records', 'dateStart', 'dateEnd', 'status', 'type'));
     }
 
     public function excel(): StreamedResponse
