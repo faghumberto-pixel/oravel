@@ -122,6 +122,13 @@ class MaintenanceOrderResource extends Resource
 
                 // --- ABA 1: DADOS GERAIS ---
                 Forms\Components\Tabs\Tab::make('Dados Gerais')->schema([
+                    // Separacao visual em cartoes (2026-09-18, pedido do usuario --
+                    // "muito branco, sessoes mais separadas"): cada Section:: ja tinha
+                    // o estilo de cartao (borda/sombra, ver .fi-section em
+                    // brand-header-background.blade.php), so' faltava aplicar nos
+                    // blocos que ainda eram lista solta.
+                    Forms\Components\Section::make('Identificação')
+                        ->schema([
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\Select::make('asset_id')
                             ->label('Ativo / QR Code')
@@ -165,6 +172,7 @@ class MaintenanceOrderResource extends Resource
                             ], fn ($key) => $key !== 'Emergência' || (Tenancy::current()?->hasModuleEnabled('sla_emergencia') ?? true), ARRAY_FILTER_USE_KEY))
                             ->required()->native(false)->live(),
                     ]),
+                        ]),
 
                     // "Registro de Avaria" como Tipo de Operacao -- ate aqui so' existiam
                     // 2 jeitos indiretos de criar uma EquipmentDamage (checklist mobile de
@@ -338,6 +346,8 @@ class MaintenanceOrderResource extends Resource
                         ->visible(fn (Get $get) => static::assetTemUrgenciaLocacao($get('asset_id')))
                         ->columnSpanFull(),
 
+                    Forms\Components\Section::make('Informações do Ativo')
+                        ->schema([
                     Forms\Components\Placeholder::make('grupo_display')
                         ->label('Grupo do Ativo')
                         ->content(function (Get $get) {
@@ -467,7 +477,10 @@ class MaintenanceOrderResource extends Resource
                                 .'</div>'
                             );
                         }),
+                        ]),
 
+                    Forms\Components\Section::make('Execução')
+                        ->schema([
                     Forms\Components\TextInput::make('service_type')->label('Natureza do Serviço')->disabled()->dehydrated(true),
                     Forms\Components\Grid::make(3)->schema([
                         Forms\Components\TextInput::make('horimetro_anterior')->label('Hor. Anterior')->numeric()->disabled()->dehydrated(false),
@@ -487,21 +500,27 @@ class MaintenanceOrderResource extends Resource
                     Forms\Components\Select::make('status')
                         ->label('Status da OS')->options(['Aberto' => 'Aberto', 'Pendente' => 'Pendente', 'Em Andamento' => 'Em Andamento', 'Concluída' => 'Concluída', 'Cancelada' => 'Cancelada'])
                         ->default('Aberto')->disabled()->dehydrated(true),
+                        ]),
                 ]),
 
                 // --- ABA 2: APONTAMENTOS ---
                 Forms\Components\Tabs\Tab::make('Apontamentos')->schema([
+                    Forms\Components\Section::make('Registro de Atendimento')
+                        ->schema([
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\DateTimePicker::make('started_at')->label('Início do Atendimento')->disabled()->dehydrated(true),
                         Forms\Components\DateTimePicker::make('finished_at')->label('Fim do Atendimento')->disabled()->dehydrated(true),
                     ]),
                     Forms\Components\Textarea::make('description')->label('Problema Relatado / Escopo do Serviço')->rows(3)->required()->hint(FormHelpers::voiceButton()),
                     Forms\Components\Textarea::make('technical_notes')->label('Notas Técnicas / Diagnóstico Executado')->rows(3)->hint(FormHelpers::voiceButton()),
+                        ]),
                 ]),
 
                 // --- ABA 3: VISTORIA / CHECKLIST ---
                 Forms\Components\Tabs\Tab::make('Vistoria / Checklist')
                     ->schema([
+                        Forms\Components\Section::make('Checklist do Ativo')
+                            ->schema([
                         Forms\Components\Repeater::make('checklists')
                             // Pedido do usuário 2026-08-27: itens do
                             // checklist organizados por seção (ex: "1.
@@ -511,7 +530,7 @@ class MaintenanceOrderResource extends Resource
                             // (section) e prefixa o rótulo de cada item.
                             ->relationship('checklists', modifyQueryUsing: fn (Builder $query) => $query->orderBy('section')->orderBy('id'))
                             ->label('Checklist do Ativo (básico do Grupo + itens extras)')
-                            ->itemLabel(fn (array $state): ?string => $state['section'] ? $state['section'].' — '.$state['item_name'] : $state['item_name'])
+                            ->itemLabel(fn (array $state): ?string => ($state['section'] ?? null) ? $state['section'].' — '.($state['item_name'] ?? '') : ($state['item_name'] ?? null))
                             ->schema([
                                 Forms\Components\TextInput::make('item_name')->label('Item de Inspeção')->disabled()->dehydrated(true),
                                 Forms\Components\ToggleButtons::make('status')
@@ -547,6 +566,7 @@ class MaintenanceOrderResource extends Resource
                                     ->imageResizeTargetHeight('1600')
                                     ->imageResizeUpscale(false),
                             ])->columns(3)->disableItemCreation()->disableItemDeletion(),
+                            ]),
                     ]),
 
                 // --- ABA PMP: itens de Plano de Manutenção Preventiva
@@ -558,6 +578,8 @@ class MaintenanceOrderResource extends Resource
                 Forms\Components\Tabs\Tab::make('PMP')
                     ->visible(fn (?MaintenanceOrder $record) => $record && $record->checklists()->where('checklist_type', 'pmp')->exists())
                     ->schema([
+                        Forms\Components\Section::make('Itens de Preventiva (PMP)')
+                            ->schema([
                         Forms\Components\Repeater::make('pmp_items')
                             ->relationship('checklists', modifyQueryUsing: fn (Builder $query) => $query->where('checklist_type', 'pmp'))
                             ->label('Planos de Manutenção Preventiva aplicáveis')
@@ -579,19 +601,25 @@ class MaintenanceOrderResource extends Resource
                                     ->imageResizeTargetHeight('1600')
                                     ->imageResizeUpscale(false),
                             ])->columns(3)->disableItemCreation()->disableItemDeletion(),
+                            ]),
                     ]),
 
                 // --- ABA 4: FOTOS ---
                 Forms\Components\Tabs\Tab::make('Fotos e Evidências')->schema([
+                    Forms\Components\Section::make('Fotos Antes / Depois')
+                        ->schema([
                     Forms\Components\Grid::make(2)->schema([
                         CameraCapture::make('photo_before')
                             ->label('Foto ANTES do Serviço (Estado Inicial)'),
                         CameraCapture::make('photo_after')
                             ->label('Foto DEPOIS do Serviço (Resultado Final)'),
                     ]),
+                        ]),
 
+                    Forms\Components\Section::make('Evidências Adicionais')
+                        ->schema([
                     Forms\Components\Repeater::make('extra_evidences')
-                        ->label('Evidências Adicionais')
+                        ->label('')
                         ->dehydrated()
                         ->addActionLabel('Adicionar Evidência')
                         ->schema([
@@ -639,16 +667,20 @@ class MaintenanceOrderResource extends Resource
                         ->columns(3)
                         ->defaultItems(0)
                         ->columnSpanFull(),
+                        ]),
                 ]),
 
                 // --- ABA 5: MATERIAIS ---
                 Forms\Components\Tabs\Tab::make('Materiais')->schema([
+                    Forms\Components\Section::make('Materiais Aplicados')
+                        ->schema([
                     Forms\Components\Repeater::make('materials')
                         ->relationship('materials')
                         ->schema([
                             Forms\Components\Select::make('material_id')->relationship('material', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))->required()->searchable(),
                             Forms\Components\TextInput::make('quantity')->label('Qtd')->numeric()->default(1)->required(),
                         ])->columns(2),
+                        ]),
                 ]),
 
                 // --- ABA 5B: CUSTOS ---
@@ -666,6 +698,8 @@ class MaintenanceOrderResource extends Resource
                 // explicito do usuario ("acredito que isso pro tecnico nao
                 // deve ser permitido").
                 Forms\Components\Tabs\Tab::make('Custos')->schema([
+                    Forms\Components\Section::make('Custos da O.S.')
+                        ->schema([
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\TextInput::make('labor_cost')
                             ->label('Mão de Obra (R$)')
@@ -698,11 +732,14 @@ class MaintenanceOrderResource extends Resource
                             ->disabled()
                             ->dehydrated(),
                     ]),
+                        ]),
                 ]),
 
                 // --- ABA 6: ASSINATURAS ---
                 Forms\Components\Tabs\Tab::make('Assinaturas Digitais')->schema([
-                    Forms\Components\Placeholder::make('info_sig')->content('Colete a assinatura na tela do dispositivo.'),
+                    Forms\Components\Section::make('Assinaturas')
+                        ->description('Colete a assinatura na tela do dispositivo.')
+                        ->schema([
                     Forms\Components\Grid::make(2)->schema([
                         SignaturePad::make('technician_signature')
                             ->label('Assinatura do Técnico')
@@ -711,6 +748,7 @@ class MaintenanceOrderResource extends Resource
                             ->label('Assinatura do Cliente')
                             ->loadStrategy('idle'),
                     ]),
+                        ]),
                 ]),
             ])->columnSpanFull(),
         ]);
