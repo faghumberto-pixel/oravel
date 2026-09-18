@@ -77,6 +77,11 @@ echo "🔐 Corrigindo permissões..."
 sudo chown -R www-data:www-data $PROD_PATH/.git 2>/dev/null || true
 sudo chmod -R u+w $PROD_PATH/.git 2>/dev/null || true
 
+# Adicionar GitHub ao known_hosts (evita host key verification na VM)
+echo "🔑 Configurando GitHub SSH..."
+sudo -u www-data mkdir -p /tmp/.ssh
+ssh-keyscan -H github.com >> /tmp/.ssh/known_hosts 2>/dev/null || true
+
 # Resto roda como $APP_USER, dono de $PROD_PATH
 # HOME=/tmp: /var/www (HOME padrao de www-data) nao e gravavel por ele.
 sudo -u $APP_USER HOME=/tmp bash -c '
