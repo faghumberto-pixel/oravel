@@ -33,13 +33,7 @@ class CashflowPage extends Page
 
     public static function canAccess(): bool
     {
-        $user = auth()->user();
-
-        if (!$user) {
-            return false;
-        }
-
-        return $user->isAdmin() || $user->can('ler_contas_receber') || $user->can('ler_contas_pagar');
+        return (bool) auth()->user();
     }
 
     public function getMaxContentWidth(): MaxWidth

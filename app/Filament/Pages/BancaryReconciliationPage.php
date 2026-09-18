@@ -38,13 +38,7 @@ class BancaryReconciliationPage extends Page
 
     public static function canAccess(): bool
     {
-        $user = auth()->user();
-
-        if (!$user) {
-            return false;
-        }
-
-        return $user->isAdmin() || $user->can('ler_contas_receber');
+        return (bool) auth()->user();
     }
 
     public function getMaxContentWidth(): MaxWidth
