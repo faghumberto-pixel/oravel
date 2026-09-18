@@ -7,17 +7,22 @@ use App\Models\AccountPayable;
 use App\Models\AccountReceivable;
 use App\Support\Tenancy;
 use Illuminate\Support\Carbon;
+use Livewire\Attributes\Reactive;
 
-/**
- * Gráfico de saldo acumulado ao longo do período projetado (próximos 90 dias).
- * Mostra duas linhas:
- * - "Projetado": entradas (pendente+atrasado) - saídas (pendente+atrasado)
- * - "Realizado": entradas (pago) - saídas (pago)
- *
- * Agrupa por due_date e acumula o saldo dia a dia.
- */
 class CashflowAccumulatedChart extends LineChartWithMarkers
 {
+    #[Reactive]
+    public ?string $dateStart = null;
+
+    #[Reactive]
+    public ?string $dateEnd = null;
+
+    #[Reactive]
+    public ?string $status = null;
+
+    #[Reactive]
+    public ?string $type = null;
+
     public function mount(
         array $labels = [],
         array $series = [],
@@ -31,12 +36,26 @@ class CashflowAccumulatedChart extends LineChartWithMarkers
             return;
         }
 
-        $hoje = Carbon::today();
-        $limite = now()->addDays(90);
+        $dateStart = $this->dateStart ? Carbon::parse($this->dateStart) : Carbon::today();
+        $dateEnd = $this->dateEnd ? Carbon::parse($this->dateEnd) : now()->addDays(90);
+
+        // Filter by status if specified
+        $statusFilter = [];
+        if ($this->status === 'pendente') {
+            $statusFilter = ['pendente'];
+        } elseif ($this->status === 'atrasado') {
+            $statusFilter = ['atrasado'];
+        } elseif ($this->status === 'pago') {
+            $statusFilter = ['pago'];
+        } else {
+            $statusFilter = ['pendente', 'atrasado', 'pago'];
+        }
 
         // Entradas (AccountReceivable) por due_date
         $entradas = AccountReceivable::where('tenant_id', $tenant->id)
-            ->whereBetween('due_date', [$hoje, $limite])
+            ->whereBetween('due_date', [$dateStart, $dateEnd])
+            ->when($this->status, fn ($q) => $q->whereIn('status', $statusFilter))
+            ->when($this->type && $this->type !== 'AR', fn ($q) => $q->where(false))
             ->selectRaw("due_date, sum(case when status in ('pendente', 'atrasado') then amount else 0 end) as projetado, sum(case when status = 'pago' then amount else 0 end) as realizado")
             ->groupBy('due_date')
             ->orderBy('due_date')
@@ -45,7 +64,9 @@ class CashflowAccumulatedChart extends LineChartWithMarkers
 
         // Saídas (AccountPayable) por due_date
         $saidas = AccountPayable::where('tenant_id', $tenant->id)
-            ->whereBetween('due_date', [$hoje, $limite])
+            ->whereBetween('due_date', [$dateStart, $dateEnd])
+            ->when($this->status, fn ($q) => $q->whereIn('status', $statusFilter))
+            ->when($this->type && $this->type !== 'AP', fn ($q) => $q->where(false))
             ->selectRaw("due_date, sum(case when status in ('pendente', 'atrasado') then amount else 0 end) as projetado, sum(case when status = 'pago' then amount else 0 end) as realizado")
             ->groupBy('due_date')
             ->orderBy('due_date')
@@ -94,7 +115,7 @@ class CashflowAccumulatedChart extends LineChartWithMarkers
                 ['name' => 'Projetado', 'color' => '#f59e0b', 'data' => $saldosProjetados],
                 ['name' => 'Realizado', 'color' => '#10b981', 'data' => $saldosRealizados],
             ],
-            chartTitle: 'Saldo Acumulado - Próximos 90 Dias',
+            chartTitle: 'Saldo Acumulado',
         );
     }
 }
