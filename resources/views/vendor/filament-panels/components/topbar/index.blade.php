@@ -95,7 +95,16 @@
                  usuario). Ver resources/views/filament/announcements-banner.blade.php,
                  registrado via BODY_START em AdminPanelProvider.
 
-                 Data/hora ao vivo (2026-09-18, pedido do usuario): ocupa o
+                 Wordmark "Oravel ERP" (2026-09-18, pedido do usuario): canto
+                 esquerdo do topbar, que ficou vazio depois que a marca
+                 passou a aparecer so' na sidebar. Mesmo padrao ja usado em
+                 panel-footer.blade.php/emails -- so' o "r" de "Oravel" em
+                 laranja (text-primary-500), resto no tom neutro do topbar. --}}
+            <div class="hidden shrink-0 items-center lg:flex">
+                <span class="text-sm font-bold tracking-tight text-gray-200">O<span class="text-primary-500">r</span>avel ERP</span>
+            </div>
+
+            {{-- Data/hora ao vivo (2026-09-18, pedido do usuario): ocupa o
                  centro do topbar, que ficou vazio depois que o aviso saiu
                  daqui. flex-1 nos dois lados (aqui e' o unico elemento
                  "meio", o bloco de icones com ms-auto e' quem sobra pra

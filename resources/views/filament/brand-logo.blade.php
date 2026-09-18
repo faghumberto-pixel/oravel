@@ -16,7 +16,7 @@
 
     @if($tenant)
         <div class="flex flex-col leading-none">
-            <span class="text-xs font-bold tracking-tight text-gray-300 truncate max-w-[12rem]">{{ $tenant->name }}</span>
+            <span class="text-xs font-bold tracking-tight text-orange-500 truncate max-w-[12rem]">{{ $tenant->name }}</span>
             @if($segmentLabel)
                 <span class="flex items-center gap-1 text-[10px] font-medium tracking-wide text-gray-400 truncate max-w-[12rem]">
                     <span class="inline-block h-1.5 w-1.5 rounded-full {{ $segmentDotClass }} shrink-0"></span>
