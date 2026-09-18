@@ -39,7 +39,7 @@
     </div>
 
     {{-- Chart --}}
-    <div class="grid gap-6">
+    <div class="w-full">
         @livewire(\App\Filament\Widgets\CashflowAccumulatedChart::class,
             [
                 'dateStart' => $this->dateStart,
