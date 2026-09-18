@@ -69,6 +69,32 @@
         background: #0f172a !important;
     }
 
+    /* Barra de rolagem do sidebar (2026-09-18, pedido do usuario): cinza
+       translucido em vez do padrao do navegador (que fica claro/destoante
+       em cima do fundo azul-escuro fixo). Firefox via scrollbar-color,
+       Chrome/Edge/Safari via os pseudo-elementos -webkit-scrollbar*. */
+    .fi-sidebar-nav {
+        scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+        scrollbar-width: thin;
+    }
+
+    .fi-sidebar-nav::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .fi-sidebar-nav::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .fi-sidebar-nav::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.18);
+        border-radius: 9999px;
+    }
+
+    .fi-sidebar-nav::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+
     /* Sem opcao de ocultar o topbar no desktop -- some com os botoes de
        abrir/fechar a sidebar (o menu de navegacao real e' o topo). So'
        desktop: no celular esses botoes ainda sao a unica forma de abrir
