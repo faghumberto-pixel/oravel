@@ -40,9 +40,11 @@ class BancaryReconciliationPage extends Page
     {
         $user = auth()->user();
 
-        return (bool) Tenancy::current()
-            && $user
-            && ($user->isAdmin() || $user->can('ler_contas_receber'));
+        if (!$user) {
+            return false;
+        }
+
+        return $user->isAdmin() || $user->can('ler_contas_receber');
     }
 
     public function getMaxContentWidth(): MaxWidth

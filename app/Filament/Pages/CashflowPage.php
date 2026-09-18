@@ -35,9 +35,11 @@ class CashflowPage extends Page
     {
         $user = auth()->user();
 
-        return (bool) Tenancy::current()
-            && $user
-            && ($user->isAdmin() || $user->can('ler_contas_receber') || $user->can('ler_contas_pagar'));
+        if (!$user) {
+            return false;
+        }
+
+        return $user->isAdmin() || $user->can('ler_contas_receber') || $user->can('ler_contas_pagar');
     }
 
     public function getMaxContentWidth(): MaxWidth
