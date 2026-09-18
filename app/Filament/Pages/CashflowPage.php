@@ -6,7 +6,6 @@ use App\Filament\Widgets\CashflowAccumulatedChart;
 use App\Filament\Widgets\FluxoDeCaixaProjetadoWidget;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
-use Livewire\Attributes\Reactive;
 
 class CashflowPage extends Page
 {
@@ -18,16 +17,12 @@ class CashflowPage extends Page
     protected static ?string $navigationGroup = 'Financeiro';
     protected static ?int $navigationSort = 10;
 
-    #[Reactive]
     public ?string $dateStart = null;
 
-    #[Reactive]
     public ?string $dateEnd = null;
 
-    #[Reactive]
     public ?string $status = null;
 
-    #[Reactive]
     public ?string $type = null;
 
     public function mount(): void

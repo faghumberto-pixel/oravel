@@ -7,20 +7,15 @@ use App\Models\AccountPayable;
 use App\Models\AccountReceivable;
 use App\Support\Tenancy;
 use Illuminate\Support\Carbon;
-use Livewire\Attributes\Reactive;
 
 class CashflowAccumulatedChart extends LineChartWithMarkers
 {
-    #[Reactive]
     public ?string $dateStart = null;
 
-    #[Reactive]
     public ?string $dateEnd = null;
 
-    #[Reactive]
     public ?string $status = null;
 
-    #[Reactive]
     public ?string $type = null;
 
     public function mount(
