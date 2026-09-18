@@ -5,9 +5,9 @@
         />
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="flex gap-6">
         @foreach ($this->getFooterWidgets() as $widget)
-            <div class="col-span-1">
+            <div class="flex-1">
                 @livewire($widget)
             </div>
         @endforeach
