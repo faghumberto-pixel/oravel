@@ -65,27 +65,31 @@ class EquipmentReplacementResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Select::make('original_asset_id')
-                ->label('Ativo Original')
-                ->relationship('originalAsset', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
-                ->getOptionLabelFromRecordUsing(fn (Asset $record) => "{$record->patrimonio} — {$record->name}")
-                ->searchable(['name', 'patrimonio'])
-                ->preload()
-                ->required(),
-            Forms\Components\Select::make('urgency')
-                ->label('Urgência')
-                ->options([
-                    EquipmentReplacement::URGENCY_NORMAL => 'Normal',
-                    EquipmentReplacement::URGENCY_URGENTE => 'Urgente',
-                    EquipmentReplacement::URGENCY_CRITICO => 'Crítico',
-                ])
-                ->default(EquipmentReplacement::URGENCY_NORMAL)
-                ->required()
-                ->native(false),
-            Forms\Components\Textarea::make('reason')
-                ->label('Motivo')
-                ->required()
-                ->columnSpanFull(),
+            Forms\Components\Section::make('Nova Requisição de Troca')
+                ->columns(2)
+                ->schema([
+                    Forms\Components\Select::make('original_asset_id')
+                        ->label('Ativo Original')
+                        ->relationship('originalAsset', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
+                        ->getOptionLabelFromRecordUsing(fn (Asset $record) => "{$record->patrimonio} — {$record->name}")
+                        ->searchable(['name', 'patrimonio'])
+                        ->preload()
+                        ->required(),
+                    Forms\Components\Select::make('urgency')
+                        ->label('Urgência')
+                        ->options([
+                            EquipmentReplacement::URGENCY_NORMAL => 'Normal',
+                            EquipmentReplacement::URGENCY_URGENTE => 'Urgente',
+                            EquipmentReplacement::URGENCY_CRITICO => 'Crítico',
+                        ])
+                        ->default(EquipmentReplacement::URGENCY_NORMAL)
+                        ->required()
+                        ->native(false),
+                    Forms\Components\Textarea::make('reason')
+                        ->label('Motivo')
+                        ->required()
+                        ->columnSpanFull(),
+                ]),
         ]);
     }
 

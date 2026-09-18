@@ -87,6 +87,7 @@ class AssetResource extends Resource
                     Tabs\Tab::make('Informações Gerais')
                         ->icon('heroicon-m-information-circle')
                         ->schema([
+                            Forms\Components\Section::make('Identificação')->schema([
                             Forms\Components\Grid::make(4)->schema([
                                 Forms\Components\TextInput::make('patrimonio')
                                     ->label('Nº Patrimônio')
@@ -159,6 +160,7 @@ class AssetResource extends Resource
                                 Forms\Components\TextInput::make('specification')
                                     ->label('Especificação Adicional')
                                     ->helperText('Texto livre — detalhes que não cabem em capacidade estruturada.'),
+                            ]),
                             ]),
 
                             Forms\Components\Section::make('Investimento e Depreciação')
@@ -270,6 +272,7 @@ class AssetResource extends Resource
                     Tabs\Tab::make('Localização')
                         ->icon('heroicon-m-map-pin')
                         ->schema([
+                            Forms\Components\Section::make('Localização do Ativo')->schema([
                             Forms\Components\Select::make('internal_unit_id')
                                 ->label('Unidade/Filial Base')
                                 ->relationship('internalUnit', 'name')
@@ -359,12 +362,14 @@ class AssetResource extends Resource
                                     return new HtmlString('<strong>'.e($unit->name).'</strong> (base) — '.e($endereco ?: 'endereço não preenchido'));
                                 })
                                 ->columnSpanFull(),
+                            ]),
                         ]),
 
                     // ABA 2: RASTREABILIDADE (QR CODE)
                     Tabs\Tab::make('Rastreabilidade e QR Code')
                         ->icon('heroicon-m-qr-code')
                         ->schema([
+                            Forms\Components\Section::make('Identificação Digital')->schema([
                             Forms\Components\Grid::make(2)->schema([
                                 Forms\Components\TextInput::make('tag')
                                     ->label('Asset Tag (Etiqueta)')
@@ -403,12 +408,14 @@ class AssetResource extends Resource
                                         </div>
                                     ");
                                 })->visible(fn ($record) => $record !== null),
+                            ]),
                         ]),
 
                     // ABA 3: HISTÓRICO DE TRABALHO
                     Tabs\Tab::make('Histórico de Trabalho')
                         ->icon('heroicon-m-clock')
                         ->schema([
+                            Forms\Components\Section::make('Operações e Manutenções')->schema([
                             Forms\Components\Repeater::make('maintenanceOrders')
                                 ->relationship('maintenanceOrders')
                                 ->label('Histórico de Operações e Manutenções')
@@ -438,10 +445,12 @@ class AssetResource extends Resource
                                     : null
                                 )
                                 ->columnSpanFull(),
+                            ]),
 
+                            Forms\Components\Section::make('Histórico de Locações')->schema([
                             Forms\Components\Repeater::make('contracts')
                                 ->relationship('contracts')
-                                ->label('Histórico de Locações')
+                                ->label('')
                                 ->schema([
                                     Forms\Components\Grid::make(4)->schema([
                                         Forms\Components\TextInput::make('contract_number')->label('Nº Contrato')->disabled(),
@@ -454,14 +463,18 @@ class AssetResource extends Resource
                                 ->deletable(false)
                                 ->reorderable(false)
                                 ->columnSpanFull(),
+                            ]),
 
+                            Forms\Components\Section::make('Histórico de Substituição de Equipamento')->schema([
                             Forms\Components\Placeholder::make('equipment_replacement_history')
-                                ->label('Histórico de Substituição de Equipamento')
+                                ->label('')
                                 ->content(fn (?Asset $record) => static::renderReplacementHistory($record))
                                 ->columnSpanFull(),
+                            ]),
 
+                            Forms\Components\Section::make('Resumo Financeiro')->schema([
                             Forms\Components\Placeholder::make('financial_summary')
-                                ->label('Resumo Financeiro')
+                                ->label('')
                                 ->content(function ($record) {
                                     if (! $record) {
                                         return new HtmlString('<span class="text-gray-400">Disponível após o primeiro salvamento.</span>');
@@ -488,6 +501,7 @@ class AssetResource extends Resource
                                     );
                                 })
                                 ->columnSpanFull(),
+                            ]),
                         ]),
 
                     // ABA 4: LOGS DE AUDITORIA (Rastreabilidade de Ações)
@@ -673,8 +687,9 @@ class AssetResource extends Resource
                     Tabs\Tab::make('Checklist de Verificação')
                         ->icon('heroicon-m-clipboard-document-check')
                         ->schema([
+                            Forms\Components\Section::make('Itens de Inspeção')->schema([
                             Forms\Components\Repeater::make('checklist')
-                                ->label('Itens de Inspeção')
+                                ->label('')
                                 ->schema([
                                     Forms\Components\TextInput::make('item')
                                         ->label('Descrição do Item')
@@ -688,6 +703,7 @@ class AssetResource extends Resource
                                 ->columns(4)
                                 ->createItemButtonLabel('Adicionar Item Extra')
                                 ->reorderable(true),
+                            ]),
                         ]),
                 ])->columnSpanFull(),
         ]);

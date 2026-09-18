@@ -63,7 +63,7 @@ class ClientResource extends Resource
                     Forms\Components\Tabs\Tab::make('Identificação e Faturamento')
                         ->icon('heroicon-o-identification')
                         ->schema([
-                            Forms\Components\Group::make()->schema([
+                            Forms\Components\Section::make('Identificação')->schema([
                                 Forms\Components\TextInput::make('name')->label('Razão Social')->required()->maxLength(255),
                                 Forms\Components\TextInput::make('fantasy_name')->label('Nome Fantasia')->maxLength(255),
                                 Forms\Components\TextInput::make('document')->label('CNPJ')->maxLength(20),
@@ -159,10 +159,12 @@ class ClientResource extends Resource
                     Forms\Components\Tabs\Tab::make('Análise de Risco')
                         ->icon('heroicon-o-shield-check')
                         ->schema([
-                            Forms\Components\Toggle::make('check_internal_fraud')->label('Consulta de CNPJ Vinculado'),
-                            Forms\Components\Toggle::make('check_blacklist')->label('Blacklist Interna'),
-                            Forms\Components\Toggle::make('check_credit_bureau')->label('Birôs de Crédito'),
-                            Forms\Components\TextInput::make('credit_score')->label('Score de Crédito PJ')->numeric(),
+                            Forms\Components\Section::make('Análise de Risco')->schema([
+                                Forms\Components\Toggle::make('check_internal_fraud')->label('Consulta de CNPJ Vinculado'),
+                                Forms\Components\Toggle::make('check_blacklist')->label('Blacklist Interna'),
+                                Forms\Components\Toggle::make('check_credit_bureau')->label('Birôs de Crédito'),
+                                Forms\Components\TextInput::make('credit_score')->label('Score de Crédito PJ')->numeric(),
+                            ])->columns(2),
                         ]),
                     Forms\Components\Tabs\Tab::make('Resumo Financeiro')
                         ->icon('heroicon-o-banknotes')
