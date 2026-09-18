@@ -4,8 +4,9 @@ set -e
 
 BRANCH=${1:-main}
 # oravel-prod (nome antigo) foi TERMINATED em 2026-08-19 apos o incidente do
-# rootkit; a VM ativa e oravel-prod-new, reprovisionada do zero.
-VM_INSTANCE="oravel-prod-new"
+# rootkit; oravel-prod-new também terminada; VM ativa agora é oravel-prod-v2
+# (ligada 2026-09-18 para recuperar de downtime).
+VM_INSTANCE="oravel-prod-v2"
 VM_ZONE="southamerica-east1-c"
 PROD_PATH="/var/www/oravel"
 BACKUP_DIR="/var/backups"
