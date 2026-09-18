@@ -5,6 +5,8 @@ use App\Filament\Pages\ConsultaClientePmp;
 use App\Http\Controllers\AIAnalysisPdfController;
 use App\Http\Controllers\AssetDossierPdfController;
 use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\BancaryReconciliationExportController;
+use App\Http\Controllers\CashflowExportController;
 use App\Http\Controllers\ChatHistoryPdfController;
 use App\Http\Controllers\ClientMagicLinkController;
 use App\Http\Controllers\ClientManagementPrintController;
@@ -438,6 +440,14 @@ Route::middleware(['auth'])->group(function () {
 
         return redirect()->route('filament.admin.pages.painel-controle', ['tenant' => $tenantSlug]);
     })->name('filament.admin.pages.technician-daily-tasks');
+
+    // Exportação de Fluxo de Caixa
+    Route::get('/admin/fluxo-de-caixa/exportar', [CashflowExportController::class, 'excel'])
+        ->name('cashflow.export-excel');
+
+    // Exportação de Conciliação Bancária
+    Route::get('/admin/conciliacao-bancaria/exportar', [BancaryReconciliationExportController::class, 'excel'])
+        ->name('bancary-reconciliation.export-excel');
 });
 
 // Dashboard simples dos leads da landing page
