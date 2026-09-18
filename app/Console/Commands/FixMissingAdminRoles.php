@@ -51,7 +51,7 @@ class FixMissingAdminRoles extends Command
             return 0;
         }
 
-        $this->line("<fg=yellow>Found " . count($affectedTenants) . ' tenant(s) with missing admin roles:</>");
+        $this->line("<fg=yellow>Found " . count($affectedTenants) . " tenant(s) with missing admin roles:</>");
         $this->line('');
 
         foreach ($affectedTenants as $item) {
