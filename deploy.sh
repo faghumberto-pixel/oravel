@@ -85,7 +85,7 @@ cd $PROD_PATH
 
 echo "📥 Puxando código..."
 git config --global --add safe.directory $PROD_PATH
-export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
+git config url."https://github.com/".insteadOf "git@github.com:"
 git pull --rebase=false origin $BRANCH
 
 echo "🔍 Validando PHP..."
