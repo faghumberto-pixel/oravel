@@ -101,7 +101,7 @@
                  panel-footer.blade.php/emails -- so' o "r" de "Oravel" em
                  laranja (text-primary-500), resto no tom neutro do topbar. --}}
             <div class="hidden shrink-0 items-center lg:flex">
-                <span class="text-sm font-bold tracking-tight text-gray-200">O<span class="text-primary-500">r</span>avel ERP</span>
+                <span class="text-sm font-bold tracking-tight text-gray-200">O<span class="text-primary-500">R</span>AVEL ERP</span>
             </div>
 
             {{-- Data/hora ao vivo (2026-09-18, pedido do usuario): ocupa o
