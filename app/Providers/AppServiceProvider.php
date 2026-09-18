@@ -6,6 +6,7 @@ use App\Filament\Central\Widgets\SalesAgendaWidget;
 use App\Livewire\DatabaseNotifications;
 use App\Models\AbcMatrix;
 use App\Models\AccountPayable;
+use App\Models\AccountReceivable;
 use App\Models\Announcement;
 use App\Models\Asset;
 use App\Models\BatteryCycleReading;
@@ -38,6 +39,7 @@ use App\Models\TechnicianAllocation;
 use App\Models\User;
 use App\Models\UserActivityLog;
 use App\Observers\AbcMatrixObserver;
+use App\Observers\AccountReceivableObserver;
 use App\Observers\AnnouncementObserver;
 use App\Observers\AssetObserver;
 use App\Observers\BatteryCycleReadingObserver;
@@ -118,6 +120,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // ATIVAÇÃO FORÇADA
+        AccountReceivable::observe(AccountReceivableObserver::class);
         Asset::observe(AssetObserver::class);
         Client::observe(ClientObserver::class);
         Contract::observe(ContractObserver::class);

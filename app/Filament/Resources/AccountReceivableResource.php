@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\AccountReceivableResource\Pages;
 use App\Models\AccountReceivable;
 use App\Support\Tenancy;
+use App\Services\AsaasService;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -84,6 +85,13 @@ class AccountReceivableResource extends Resource
                 Tables\Columns\TextColumn::make('status')->badge()->colors([
                     'warning' => 'pendente', 'success' => 'pago', 'danger' => 'atrasado',
                 ])->formatStateUsing(fn ($state) => ucfirst($state)),
+                Tables\Columns\IconColumn::make('asaas_payment_id')
+                    ->label('Asaas')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-exclamation-circle')
+                    ->trueColor('success')
+                    ->falseColor('warning'),
             ])
             ->actions([
                 // POP 4: o Financeiro precisa conseguir abrir o PDF do
@@ -122,6 +130,36 @@ class AccountReceivableResource extends Resource
                         $record->save();
 
                         Notification::make()->title('Recebimento registrado')->success()->send();
+                    }),
+                Tables\Actions\Action::make('sincronizarAsaas')
+                    ->label('Sincronizar Asaas')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('info')
+                    ->action(function (AccountReceivable $record) {
+                        try {
+                            $asaasService = new AsaasService();
+                            $paymentId = $asaasService->createPayment($record);
+
+                            if ($paymentId) {
+                                Notification::make()
+                                    ->title('Sincronizado com sucesso')
+                                    ->body("Cobrança criada no Asaas: {$paymentId}")
+                                    ->success()
+                                    ->send();
+                            } else {
+                                Notification::make()
+                                    ->title('Erro')
+                                    ->body('Falha ao sincronizar')
+                                    ->danger()
+                                    ->send();
+                            }
+                        } catch (\Throwable $e) {
+                            Notification::make()
+                                ->title('Erro')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
                     }),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
