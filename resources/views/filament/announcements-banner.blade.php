@@ -18,7 +18,10 @@
             [$borderClass, $bgClass, $textClass] = match ($announcement->level) {
                 \App\Models\Announcement::LEVEL_CRITICAL => ['border-danger-300 dark:border-danger-500/30', 'bg-danger-50 dark:bg-danger-500/10', 'text-danger-800 dark:text-danger-300'],
                 \App\Models\Announcement::LEVEL_WARNING => ['border-warning-300 dark:border-warning-500/30', 'bg-warning-50 dark:bg-warning-500/10', 'text-warning-800 dark:text-warning-300'],
-                default => ['border-info-300 dark:border-info-500/30', 'bg-info-50 dark:bg-info-500/10', 'text-info-800 dark:text-info-300'],
+                // "gray" do painel e' Color::Stone (AdminPanelProvider), nao azul --
+                // pedido do usuario 2026-09-18: nivel "info" com a mesma paleta
+                // neutra quente do resto do app em vez do azul padrao do Filament.
+                default => ['border-gray-300 dark:border-gray-500/30', 'bg-gray-100 dark:bg-gray-500/10', 'text-gray-700 dark:text-gray-300'],
             };
         @endphp
         <div
