@@ -55,8 +55,6 @@ class ContractSignature extends Page implements HasForms
                     ->schema([
                         Forms\Components\View::make('filament.components.sla-lgpd-summary'),
 
-                        Forms\Components\Divider::make(),
-
                         Forms\Components\TextInput::make('company')
                             ->label('Nome da Empresa')
                             ->required()
