@@ -8,7 +8,7 @@
     "name": "module.esm"
   },
   "resources/css/app.css": {
-    "file": "assets/app-Dn6zlyyZ.css",
+    "file": "assets/app-CSw2pS6S.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -21,7 +21,7 @@
     "src": "resources/css/filament/admin/theme.css"
   },
   "resources/css/filament/central/theme.css": {
-    "file": "assets/theme-DO1f2s9n.css",
+    "file": "assets/theme-gqBdQkfA.css",
     "src": "resources/css/filament/central/theme.css",
     "isEntry": true,
     "name": "theme",
@@ -46,7 +46,7 @@
     "isEntry": true
   },
   "resources/js/chat-app.js": {
-    "file": "assets/chat-app-BxcjpwjK.js",
+    "file": "assets/chat-app-B7BJ2AXy.js",
     "name": "chat-app",
     "src": "resources/js/chat-app.js",
     "isEntry": true,
@@ -54,7 +54,7 @@
       "_import-wrapper-prod-D0HhYmlZ.js"
     ],
     "css": [
-      "assets/app-Dn6zlyyZ.css"
+      "assets/app-CSw2pS6S.css"
     ]
   },
   "resources/js/hour-meter-offline.js": {
