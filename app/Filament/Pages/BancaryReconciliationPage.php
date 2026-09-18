@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\AccountReceivable;
 use App\Support\Tenancy;
+use Carbon\Carbon;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Collection;
@@ -36,6 +37,16 @@ class BancaryReconciliationPage extends Page
 
     protected static ?int $navigationSort = 11;
 
+    public ?string $dateStart = null;
+    public ?string $dateEnd = null;
+    public ?string $syncStatus = null;
+
+    public function mount(): void
+    {
+        $this->dateStart = now()->subDays(30)->format('Y-m-d');
+        $this->dateEnd = now()->format('Y-m-d');
+    }
+
     public static function canAccess(): bool
     {
         return (bool) auth()->user();
@@ -59,9 +70,12 @@ class BancaryReconciliationPage extends Page
             ];
         }
 
-        $automaticallySettled = $this->getAutomaticallySettled($tenant->id);
-        $pendingConfirmation = $this->getPendingConfirmation($tenant->id);
-        $manualSettlement = $this->getManualSettlement($tenant->id);
+        $dateStart = $this->dateStart ? Carbon::parse($this->dateStart) : now()->subDays(30);
+        $dateEnd = $this->dateEnd ? Carbon::parse($this->dateEnd) : now();
+
+        $automaticallySettled = $this->getAutomaticallySettled($tenant->id, $dateStart, $dateEnd);
+        $pendingConfirmation = $this->getPendingConfirmation($tenant->id, $dateStart, $dateEnd);
+        $manualSettlement = $this->getManualSettlement($tenant->id, $dateStart, $dateEnd);
 
         $summary = [
             'automaticallySettled' => count($automaticallySettled),
@@ -80,29 +94,44 @@ class BancaryReconciliationPage extends Page
         ];
     }
 
-    private function getAutomaticallySettled(string $tenantId): Collection
+    private function getAutomaticallySettled(string $tenantId, Carbon $dateStart, Carbon $dateEnd): Collection
     {
-        return AccountReceivable::where('tenant_id', $tenantId)
+        $query = AccountReceivable::where('tenant_id', $tenantId)
             ->whereNotNull('asaas_payment_id')
             ->where('status', 'pago')
-            ->orderBy('payment_date', 'desc')
-            ->get();
+            ->whereBetween('payment_date', [$dateStart, $dateEnd]);
+
+        if ($this->syncStatus && $this->syncStatus !== 'automatic') {
+            $query->where(false);
+        }
+
+        return $query->orderBy('payment_date', 'desc')->get();
     }
 
-    private function getPendingConfirmation(string $tenantId): Collection
+    private function getPendingConfirmation(string $tenantId, Carbon $dateStart, Carbon $dateEnd): Collection
     {
-        return AccountReceivable::where('tenant_id', $tenantId)
+        $query = AccountReceivable::where('tenant_id', $tenantId)
             ->whereNotNull('asaas_payment_id')
             ->whereIn('status', ['pendente', 'atrasado'])
-            ->orderBy('due_date', 'desc')
-            ->get();
+            ->whereBetween('due_date', [$dateStart, $dateEnd]);
+
+        if ($this->syncStatus && $this->syncStatus !== 'pending') {
+            $query->where(false);
+        }
+
+        return $query->orderBy('due_date', 'desc')->get();
     }
 
-    private function getManualSettlement(string $tenantId): Collection
+    private function getManualSettlement(string $tenantId, Carbon $dateStart, Carbon $dateEnd): Collection
     {
-        return AccountReceivable::where('tenant_id', $tenantId)
+        $query = AccountReceivable::where('tenant_id', $tenantId)
             ->whereNull('asaas_payment_id')
-            ->orderBy('due_date', 'desc')
-            ->get();
+            ->whereBetween('due_date', [$dateStart, $dateEnd]);
+
+        if ($this->syncStatus && $this->syncStatus !== 'manual') {
+            $query->where(false);
+        }
+
+        return $query->orderBy('due_date', 'desc')->get();
     }
 }

@@ -1,43 +1,83 @@
 <x-filament-panels::page>
     <div class="space-y-6">
-        {{-- Summary Stats --}}
+        {{-- Filtros --}}
+        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-semibold mb-4">Filtros</h3>
+            <form wire:submit="submit" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Data Inicial</label>
+                    <input type="date" wire:model="dateStart" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Data Final</label>
+                    <input type="date" wire:model="dateEnd" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Status de Sincronismo</label>
+                    <select wire:model="syncStatus" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700">
+                        <option value="">Todos</option>
+                        <option value="automatic">Automático</option>
+                        <option value="pending">Pendente</option>
+                        <option value="manual">Manual</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        {{-- Saldo Consolidado --}}
+        <div class="bg-gradient-to-r from-slate-900 to-slate-800 dark:from-slate-950 dark:to-slate-900 rounded-lg p-8 text-white shadow-lg">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <p class="text-sm font-medium text-slate-300 opacity-90">Saldo Baixado</p>
+                    <p class="mt-2 text-3xl font-bold">R$ {{ number_format($summary['automaticallySettledAmount'] ?? 0, 2, ',', '.') }}</p>
+                    <p class="mt-1 text-xs text-slate-400">{{ $summary['automaticallySettled'] ?? 0 }} operação(ões)</p>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-slate-300 opacity-90">Saldo Pendente</p>
+                    <p class="mt-2 text-3xl font-bold">R$ {{ number_format($summary['pendingConfirmationAmount'] ?? 0, 2, ',', '.') }}</p>
+                    <p class="mt-1 text-xs text-slate-400">{{ $summary['pendingConfirmation'] ?? 0 }} operação(ões)</p>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-slate-300 opacity-90">Saldo Manual</p>
+                    <p class="mt-2 text-3xl font-bold">R$ {{ number_format($summary['manualSettlementAmount'] ?? 0, 2, ',', '.') }}</p>
+                    <p class="mt-1 text-xs text-slate-400">{{ $summary['manualSettlement'] ?? 0 }} operação(ões)</p>
+                </div>
+            </div>
+            <div class="mt-6 pt-6 border-t border-slate-700">
+                <p class="text-sm font-medium text-slate-300">Saldo Total em Conciliação</p>
+                <p class="mt-2 text-4xl font-bold">R$ {{ number_format(($summary['automaticallySettledAmount'] ?? 0) + ($summary['pendingConfirmationAmount'] ?? 0) + ($summary['manualSettlementAmount'] ?? 0), 2, ',', '.') }}</p>
+            </div>
+        </div>
+
+        {{-- Summary Stats Cards --}}
         <div class="grid gap-4 md:grid-cols-3">
-            <div class="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+            <div class="rounded-lg border-2 border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20 p-4">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Baixadas Automaticamente</p>
-                        <p class="mt-2 text-2xl font-bold">{{ $summary['automaticallySettled'] ?? 0 }}</p>
-                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
-                            R$ {{ number_format($summary['automaticallySettledAmount'] ?? 0, 2, ',', '.') }}
-                        </p>
+                        <p class="text-sm font-medium text-green-700 dark:text-green-400">Baixadas Automaticamente</p>
+                        <p class="mt-2 text-2xl font-bold text-green-900 dark:text-green-300">{{ $summary['automaticallySettled'] ?? 0 }}</p>
                     </div>
-                    <div class="text-3xl text-green-500">✓</div>
+                    <div class="text-4xl">✓</div>
                 </div>
             </div>
 
-            <div class="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+            <div class="rounded-lg border-2 border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20 p-4">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Pendentes de Confirmação</p>
-                        <p class="mt-2 text-2xl font-bold">{{ $summary['pendingConfirmation'] ?? 0 }}</p>
-                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
-                            R$ {{ number_format($summary['pendingConfirmationAmount'] ?? 0, 2, ',', '.') }}
-                        </p>
+                        <p class="text-sm font-medium text-yellow-700 dark:text-yellow-400">Pendentes de Confirmação</p>
+                        <p class="mt-2 text-2xl font-bold text-yellow-900 dark:text-yellow-300">{{ $summary['pendingConfirmation'] ?? 0 }}</p>
                     </div>
-                    <div class="text-3xl text-yellow-500">⏳</div>
+                    <div class="text-4xl">⏳</div>
                 </div>
             </div>
 
-            <div class="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+            <div class="rounded-lg border-2 border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20 p-4">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Cobrança Manual</p>
-                        <p class="mt-2 text-2xl font-bold">{{ $summary['manualSettlement'] ?? 0 }}</p>
-                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
-                            R$ {{ number_format($summary['manualSettlementAmount'] ?? 0, 2, ',', '.') }}
-                        </p>
+                        <p class="text-sm font-medium text-blue-700 dark:text-blue-400">Cobrança Manual</p>
+                        <p class="mt-2 text-2xl font-bold text-blue-900 dark:text-blue-300">{{ $summary['manualSettlement'] ?? 0 }}</p>
                     </div>
-                    <div class="text-3xl text-blue-500">📋</div>
+                    <div class="text-4xl">📋</div>
                 </div>
             </div>
         </div>
