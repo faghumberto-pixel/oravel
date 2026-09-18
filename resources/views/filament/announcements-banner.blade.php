@@ -3,9 +3,11 @@
      "Nenhum tenant selecionado" (acting-tenant-banner.blade.php) -- antes
      apareciam como texto pequeno centralizado no topbar
      (topbar-announcements-ticker.blade.php, agora aposentado), pedido
-     explicito foi ficar "como a de cima" (o banner amarelo). Dispensa por
-     item fica em localStorage (Alpine $persist), nao reaparece ate expirar
-     ou um aviso novo ser criado. --}}
+     explicito foi ficar "como a de cima" (o banner amarelo). Dispensa
+     (2026-09-18, pedido do usuario) e' so' de estado local -- NAO usa
+     Alpine $persist/localStorage de proposito: precisa reaparecer a cada
+     refresh ou troca de tela, nao ficar escondida pra sempre depois do
+     primeiro "Dispensar". --}}
 @php
     $announcements = auth()->check()
         ? \App\Models\Announcement::activeFor(\App\Support\Tenancy::current()?->id)
@@ -25,9 +27,7 @@
             };
         @endphp
         <div
-            x-data="{
-                dismissed: $persist(false).as('announcement-dismissed-{{ $announcement->id }}'),
-            }"
+            x-data="{ dismissed: false }"
             x-show="! dismissed"
             class="fi-oravel-announcement-banner w-full border-b {{ $borderClass }} {{ $bgClass }} px-4 py-2 text-center text-sm {{ $textClass }}"
         >
