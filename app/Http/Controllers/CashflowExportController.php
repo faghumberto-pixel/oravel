@@ -34,16 +34,27 @@ class CashflowExportController extends Controller
             ->whereBetween('due_date', [$dateStart, $dateEnd])
             ->when(request('status'), fn ($q) => $q->whereIn('status', $statusFilter))
             ->when(request('type') && request('type') !== 'AR', fn ($q) => $q->where(false))
-            ->select('due_date as date', 'description', 'amount', 'status', 'client_id')
-            ->addSelect(\Illuminate\Support\Facades\DB::raw("'AR' as type"))
-            ->with('client');
+            ->select(
+                'due_date as date',
+                'description',
+                'amount',
+                'status',
+                'client_id',
+                \Illuminate\Support\Facades\DB::raw("'AR' as type")
+            );
 
         $ap = \App\Models\AccountPayable::where('tenant_id', $tenant)
             ->whereBetween('due_date', [$dateStart, $dateEnd])
             ->when(request('status'), fn ($q) => $q->whereIn('status', $statusFilter))
             ->when(request('type') && request('type') !== 'AP', fn ($q) => $q->where(false))
-            ->select('due_date as date', 'description', 'amount', 'status')
-            ->addSelect(\Illuminate\Support\Facades\DB::raw("'AP' as type"), \Illuminate\Support\Facades\DB::raw("null as client_id"));
+            ->select(
+                'due_date as date',
+                'description',
+                'amount',
+                'status',
+                \Illuminate\Support\Facades\DB::raw("null as client_id"),
+                \Illuminate\Support\Facades\DB::raw("'AP' as type")
+            );
 
         $records = $ar->union($ap)->orderBy('date', 'desc')->get();
 
