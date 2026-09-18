@@ -80,6 +80,7 @@ cd $PROD_PATH
 
 echo "📥 Puxando código..."
 git config --global --add safe.directory $PROD_PATH
+sudo chown -R www-data:www-data $PROD_PATH/.git 2>/dev/null || true
 git pull --rebase=false origin $BRANCH
 
 echo "🔍 Validando PHP..."
