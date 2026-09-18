@@ -444,10 +444,14 @@ Route::middleware(['auth'])->group(function () {
     // Exportação de Fluxo de Caixa
     Route::get('/admin/fluxo-de-caixa/exportar', [CashflowExportController::class, 'excel'])
         ->name('cashflow.export-excel');
+    Route::get('/admin/fluxo-de-caixa/imprimir', [CashflowExportController::class, 'print'])
+        ->name('cashflow.print');
 
     // Exportação de Conciliação Bancária
     Route::get('/admin/conciliacao-bancaria/exportar', [BancaryReconciliationExportController::class, 'excel'])
         ->name('bancary-reconciliation.export-excel');
+    Route::get('/admin/conciliacao-bancaria/imprimir', [BancaryReconciliationExportController::class, 'print'])
+        ->name('bancary-reconciliation.print');
 });
 
 // Dashboard simples dos leads da landing page

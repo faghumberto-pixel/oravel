@@ -9,6 +9,47 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CashflowExportController extends Controller
 {
+    public function print()
+    {
+        $tenant = auth()->user()?->tenant_id;
+        if (!$tenant) {
+            abort(403);
+        }
+
+        $dateStart = request('dateStart') ? \Carbon\Carbon::parse(request('dateStart')) : now()->subDays(90);
+        $dateEnd = request('dateEnd') ? \Carbon\Carbon::parse(request('dateEnd')) : now();
+
+        $statusFilter = [];
+        if (request('status') === 'pendente') {
+            $statusFilter = ['pendente'];
+        } elseif (request('status') === 'atrasado') {
+            $statusFilter = ['atrasado'];
+        } elseif (request('status') === 'pago') {
+            $statusFilter = ['pago'];
+        } else {
+            $statusFilter = ['pendente', 'atrasado', 'pago'];
+        }
+
+        $ar = \App\Models\AccountReceivable::where('tenant_id', $tenant)
+            ->whereBetween('due_date', [$dateStart, $dateEnd])
+            ->when(request('status'), fn ($q) => $q->whereIn('status', $statusFilter))
+            ->when(request('type') && request('type') !== 'AR', fn ($q) => $q->where(false))
+            ->select('due_date as date', 'description', 'amount', 'status', 'client_id')
+            ->addSelect(\Illuminate\Support\Facades\DB::raw("'AR' as type"))
+            ->with('client');
+
+        $ap = \App\Models\AccountPayable::where('tenant_id', $tenant)
+            ->whereBetween('due_date', [$dateStart, $dateEnd])
+            ->when(request('status'), fn ($q) => $q->whereIn('status', $statusFilter))
+            ->when(request('type') && request('type') !== 'AP', fn ($q) => $q->where(false))
+            ->select('due_date as date', 'description', 'amount', 'status')
+            ->addSelect(\Illuminate\Support\Facades\DB::raw("'AP' as type"), \Illuminate\Support\Facades\DB::raw("null as client_id"));
+
+        $records = $ar->union($ap)->orderBy('date', 'desc')->get();
+
+        return view('prints.cashflow-print', compact('records', 'dateStart', 'dateEnd'));
+    }
+
     public function excel(): StreamedResponse
     {
         $tenant = auth()->user()?->tenant_id;

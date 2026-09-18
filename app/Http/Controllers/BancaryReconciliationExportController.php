@@ -9,6 +9,42 @@ use Carbon\Carbon;
 
 class BancaryReconciliationExportController extends Controller
 {
+    public function print()
+    {
+        $tenant = auth()->user()?->tenant_id;
+        if (!$tenant) {
+            abort(403);
+        }
+
+        $dateStart = request('dateStart') ? Carbon::parse(request('dateStart')) : now()->subDays(30);
+        $dateEnd = request('dateEnd') ? Carbon::parse(request('dateEnd')) : now();
+
+        $syncStatus = request('syncStatus');
+
+        $automaticallySettled = $this->getAutomaticallySettled($tenant, $dateStart, $dateEnd, $syncStatus);
+        $pendingConfirmation = $this->getPendingConfirmation($tenant, $dateStart, $dateEnd, $syncStatus);
+        $manualSettlement = $this->getManualSettlement($tenant, $dateStart, $dateEnd, $syncStatus);
+
+        $summary = [
+            'automaticallySettled' => count($automaticallySettled),
+            'automaticallySettledAmount' => $automaticallySettled->sum('amount'),
+            'pendingConfirmation' => count($pendingConfirmation),
+            'pendingConfirmationAmount' => $pendingConfirmation->sum('amount'),
+            'manualSettlement' => count($manualSettlement),
+            'manualSettlementAmount' => $manualSettlement->sum('amount'),
+        ];
+
+        return view('prints.bancary-reconciliation-print', compact(
+            'automaticallySettled',
+            'pendingConfirmation',
+            'manualSettlement',
+            'summary',
+            'dateStart',
+            'dateEnd',
+            'syncStatus'
+        ));
+    }
+
     public function excel(): StreamedResponse
     {
         $tenant = auth()->user()?->tenant_id;
