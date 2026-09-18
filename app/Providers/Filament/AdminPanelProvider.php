@@ -160,6 +160,10 @@ class AdminPanelProvider extends PanelProvider
                 fn () => view('filament.breadcrumb'),
             )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
+            ->pages([
+                CashflowPage::class,
+                BancaryReconciliationPage::class,
+            ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
