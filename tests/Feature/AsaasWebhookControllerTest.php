@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\AccountReceivable;
 use App\Models\Plan;
 use App\Models\Tenant;
 use App\Models\User;
@@ -221,5 +222,225 @@ class AsaasWebhookControllerTest extends TestCase
         ])->assertOk();
 
         $this->assertFalse((bool) $admin->fresh()->is_approved);
+    }
+
+    // ========== Testes para AccountReceivable (contas a receber) ==========
+
+    public function test_account_receivable_payment_received_marks_as_pago(): void
+    {
+        config(['services.asaas.webhook_token' => 'token-correto']);
+
+        $tenant = $this->makeTenant('cus_abc');
+        $receivable = AccountReceivable::create([
+            'description' => 'Cobrança Cliente',
+            'amount' => 1000.00,
+            'due_date' => now()->subDays(5),
+            'status' => 'pendente',
+            'tenant_id' => $tenant->id,
+            'asaas_payment_id' => 'recv_123',
+        ]);
+
+        $response = $this->postJson('/api/webhooks/asaas', [
+            'event' => 'PAYMENT_RECEIVED',
+            'payment' => [
+                'id' => 'recv_123',
+                'customer' => 'cus_abc',
+                'paymentDate' => '2026-09-18',
+            ],
+        ], [
+            'asaas-access-token' => 'token-correto',
+        ]);
+
+        $response->assertOk();
+
+        $receivable->refresh();
+        $this->assertSame('pago', $receivable->status);
+        $this->assertNotNull($receivable->payment_date);
+    }
+
+    public function test_account_receivable_payment_confirmed_marks_as_pago(): void
+    {
+        config(['services.asaas.webhook_token' => 'token-correto']);
+
+        $tenant = $this->makeTenant('cus_abc');
+        $receivable = AccountReceivable::create([
+            'description' => 'Cobrança Cliente',
+            'amount' => 1000.00,
+            'due_date' => now()->subDays(5),
+            'status' => 'pendente',
+            'tenant_id' => $tenant->id,
+            'asaas_payment_id' => 'recv_456',
+        ]);
+
+        $this->postJson('/api/webhooks/asaas', [
+            'event' => 'PAYMENT_CONFIRMED',
+            'payment' => [
+                'id' => 'recv_456',
+                'customer' => 'cus_abc',
+                'paymentDate' => '2026-09-18',
+            ],
+        ], [
+            'asaas-access-token' => 'token-correto',
+        ])->assertOk();
+
+        $this->assertSame('pago', $receivable->fresh()->status);
+    }
+
+    public function test_account_receivable_payment_overdue_marks_as_atrasado(): void
+    {
+        config(['services.asaas.webhook_token' => 'token-correto']);
+
+        $tenant = $this->makeTenant('cus_abc');
+        $receivable = AccountReceivable::create([
+            'description' => 'Cobrança Cliente',
+            'amount' => 1000.00,
+            'due_date' => now()->subDays(5),
+            'status' => 'pendente',
+            'tenant_id' => $tenant->id,
+            'asaas_payment_id' => 'recv_789',
+        ]);
+
+        $this->postJson('/api/webhooks/asaas', [
+            'event' => 'PAYMENT_OVERDUE',
+            'payment' => [
+                'id' => 'recv_789',
+                'customer' => 'cus_abc',
+            ],
+        ], [
+            'asaas-access-token' => 'token-correto',
+        ])->assertOk();
+
+        $this->assertSame('atrasado', $receivable->fresh()->status);
+    }
+
+    public function test_account_receivable_payment_refunded_returns_to_pendente(): void
+    {
+        config(['services.asaas.webhook_token' => 'token-correto']);
+
+        $tenant = $this->makeTenant('cus_abc');
+        $receivable = AccountReceivable::create([
+            'description' => 'Cobrança Cliente',
+            'amount' => 1000.00,
+            'due_date' => now()->subDays(5),
+            'status' => 'pago',
+            'payment_date' => now(),
+            'tenant_id' => $tenant->id,
+            'asaas_payment_id' => 'recv_refund',
+        ]);
+
+        $this->postJson('/api/webhooks/asaas', [
+            'event' => 'PAYMENT_REFUNDED',
+            'payment' => [
+                'id' => 'recv_refund',
+                'customer' => 'cus_abc',
+            ],
+        ], [
+            'asaas-access-token' => 'token-correto',
+        ])->assertOk();
+
+        $receivable->refresh();
+        $this->assertSame('pendente', $receivable->status);
+        $this->assertNull($receivable->payment_date);
+    }
+
+    public function test_account_receivable_payment_deleted_returns_to_pendente(): void
+    {
+        config(['services.asaas.webhook_token' => 'token-correto']);
+
+        $tenant = $this->makeTenant('cus_abc');
+        $receivable = AccountReceivable::create([
+            'description' => 'Cobrança Cliente',
+            'amount' => 1000.00,
+            'due_date' => now()->subDays(5),
+            'status' => 'pago',
+            'payment_date' => now(),
+            'tenant_id' => $tenant->id,
+            'asaas_payment_id' => 'recv_delete',
+        ]);
+
+        $this->postJson('/api/webhooks/asaas', [
+            'event' => 'PAYMENT_DELETED',
+            'payment' => [
+                'id' => 'recv_delete',
+                'customer' => 'cus_abc',
+            ],
+        ], [
+            'asaas-access-token' => 'token-correto',
+        ])->assertOk();
+
+        $receivable->refresh();
+        $this->assertSame('pendente', $receivable->status);
+        $this->assertNull($receivable->payment_date);
+    }
+
+    public function test_account_receivable_idempotent_same_status(): void
+    {
+        config(['services.asaas.webhook_token' => 'token-correto']);
+
+        $tenant = $this->makeTenant('cus_abc');
+        $receivable = AccountReceivable::create([
+            'description' => 'Cobrança Cliente',
+            'amount' => 1000.00,
+            'due_date' => now()->subDays(5),
+            'status' => 'pago',
+            'payment_date' => now()->subDays(1),
+            'tenant_id' => $tenant->id,
+            'asaas_payment_id' => 'recv_idem',
+        ]);
+
+        $originalPaymentDate = $receivable->payment_date->toDateString();
+
+        $this->postJson('/api/webhooks/asaas', [
+            'event' => 'PAYMENT_RECEIVED',
+            'payment' => [
+                'id' => 'recv_idem',
+                'customer' => 'cus_abc',
+                'paymentDate' => now()->toDateString(),
+            ],
+        ], [
+            'asaas-access-token' => 'token-correto',
+        ])->assertOk();
+
+        $receivable->refresh();
+        $this->assertSame('pago', $receivable->status);
+        // payment_date não foi alterada porque já estava em status 'pago'
+        $this->assertSame($originalPaymentDate, $receivable->payment_date->toDateString());
+    }
+
+    public function test_account_receivable_isolates_from_tenant_subscription_flow(): void
+    {
+        config(['services.asaas.webhook_token' => 'token-correto']);
+
+        $tenant = $this->makeTenant('cus_abc');
+        $receivable = AccountReceivable::create([
+            'description' => 'Cobrança Cliente',
+            'amount' => 1000.00,
+            'due_date' => now()->subDays(5),
+            'status' => 'pendente',
+            'tenant_id' => $tenant->id,
+            'asaas_payment_id' => 'recv_isolation',
+        ]);
+
+        // Paymentamento com payment_id de AccountReceivable não deve alterar
+        // Tenant.asaas_payment_status, mesmo que trouxer um customer válido
+        $tenant->update(['asaas_payment_status' => Tenant::PAYMENT_STATUS_ATRASADO]);
+
+        $this->postJson('/api/webhooks/asaas', [
+            'event' => 'PAYMENT_RECEIVED',
+            'payment' => [
+                'id' => 'recv_isolation',
+                'customer' => 'cus_abc',
+                'paymentDate' => now()->toDateString(),
+            ],
+        ], [
+            'asaas-access-token' => 'token-correto',
+        ])->assertOk();
+
+        $receivable->refresh();
+        $this->assertSame('pago', $receivable->status);
+
+        $tenant->refresh();
+        // Tenant ainda está em ATRASADO porque o webhook foi de AccountReceivable
+        $this->assertSame(Tenant::PAYMENT_STATUS_ATRASADO, $tenant->asaas_payment_status);
     }
 }

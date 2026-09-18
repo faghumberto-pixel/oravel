@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccountReceivable;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -9,13 +10,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Recebe eventos de cobrança da Asaas (gateway de pagamento) sobre a
- * assinatura SaaS que cada Tenant paga pra Oravel -- não confundir com
- * AccountPayable (fornecedores da própria Oravel) nem AccountReceivable
- * (cada tenant cobrando os PRÓPRIOS clientes dele), nenhum dos dois tem
- * relação com esse fluxo. Atualiza Tenant.asaas_payment_status, campo
- * separado de asaas_status (que é sobre sincronização de CADASTRO
- * customer/subscription, não sobre status de pagamento da cobrança).
+ * Recebe eventos de cobrança da Asaas (gateway de pagamento). Trata dois fluxos:
+ *
+ * 1. Assinatura SaaS do Tenant (Tenant.asaas_customer_id) -- atualiza
+ *    Tenant.asaas_payment_status. Campo separado de asaas_status (que é sobre
+ *    sincronização de CADASTRO customer/subscription, não sobre status de
+ *    pagamento da cobrança).
+ *
+ * 2. Contas a Receber que o Tenant cobra dos seus próprios clientes
+ *    (AccountReceivable.asaas_payment_id) -- atualiza status de pagamento
+ *    automático via webhook.
+ *
+ * Não confundir com AccountPayable (fornecedores da própria Oravel).
  *
  * Autenticação: header 'asaas-access-token', comparado contra
  * config('services.asaas.webhook_token') -- mecanismo real do Asaas
@@ -75,6 +81,21 @@ class AsaasWebhookController extends Controller
         $customerId = $payment['customer'] ?? null;
         $paymentId = $payment['id'] ?? null;
 
+        if (blank($paymentId)) {
+            return;
+        }
+
+        // Prioridade: verificar se é um pagamento de AccountReceivable
+        // (cobrança que o Tenant faz dos seus clientes)
+        $receivable = AccountReceivable::where('asaas_payment_id', $paymentId)->first();
+
+        if ($receivable) {
+            $this->processReceivable($receivable, $event, $payment);
+
+            return;
+        }
+
+        // Caso contrário, trata como assinatura SaaS do Tenant
         if (blank($customerId)) {
             return;
         }
@@ -82,14 +103,19 @@ class AsaasWebhookController extends Controller
         $tenant = Tenant::where('asaas_customer_id', $customerId)->first();
 
         if (! $tenant) {
-            // Cobrança de um customer que não corresponde a nenhum tenant
-            // conhecido -- pode ser de outro fluxo na mesma conta Asaas,
-            // não é necessariamente um erro.
             Log::info('AsaasWebhookController: nenhum tenant encontrado para o customer.', ['customer' => $customerId]);
 
             return;
         }
 
+        $this->processTenantSubscription($tenant, $event, $paymentId);
+    }
+
+    /**
+     * Processa evento de pagamento da assinatura SaaS do Tenant.
+     */
+    private function processTenantSubscription(Tenant $tenant, string $event, string $paymentId): void
+    {
         $newStatus = match (true) {
             in_array($event, self::PAYMENT_OK_EVENTS, true) => Tenant::PAYMENT_STATUS_EM_DIA,
             in_array($event, self::PAYMENT_OVERDUE_EVENTS, true) => Tenant::PAYMENT_STATUS_ATRASADO,
@@ -98,9 +124,6 @@ class AsaasWebhookController extends Controller
         };
 
         if ($newStatus === null) {
-            // Evento reconhecido pela Asaas mas fora do escopo deste
-            // fluxo (ex: PAYMENT_CREATED, eventos de nota fiscal/
-            // transferência) -- não é erro, só não altera o status.
             return;
         }
 
@@ -110,17 +133,50 @@ class AsaasWebhookController extends Controller
             'asaas_payment_updated_at' => now(),
         ]);
 
-        // Fluxo de autoatendimento (AsaasCheckoutController) cria o admin
-        // com is_approved=false -- acesso só é liberado aqui, na primeira
-        // confirmação de pagamento. Não reverte a aprovação em atraso/
-        // cancelamento (não é o escopo deste fluxo bloquear acesso de
-        // quem já pagou uma vez, ver decisão registrada no checkout).
         if ($newStatus === Tenant::PAYMENT_STATUS_EM_DIA) {
-            // users() é a pivot tenant_user (multi-tenant do Filament),
-            // separada da coluna tenant_id direta que TenantProvisioner
-            // usa pra criar o admin -- por isso a query direta aqui em
-            // vez da relation.
             User::where('tenant_id', $tenant->id)->where('is_approved', false)->update(['is_approved' => true]);
         }
+    }
+
+    /**
+     * Processa evento de pagamento de AccountReceivable (cobrança do Tenant
+     * aos seus clientes).
+     *
+     * @param  array<string, mixed>  $payment
+     */
+    private function processReceivable(AccountReceivable $receivable, string $event, array $payment): void
+    {
+        $newStatus = match (true) {
+            in_array($event, self::PAYMENT_OK_EVENTS, true) => 'pago',
+            in_array($event, self::PAYMENT_OVERDUE_EVENTS, true) => 'atrasado',
+            in_array($event, self::PAYMENT_CANCELLED_EVENTS, true) => 'pendente',
+            default => null,
+        };
+
+        if ($newStatus === null) {
+            return;
+        }
+
+        // Idempotência: não reprocessa se já está no mesmo status
+        if ($receivable->status === $newStatus) {
+            return;
+        }
+
+        $updates = ['status' => $newStatus];
+
+        if ($newStatus === 'pago') {
+            $updates['payment_date'] = $payment['paymentDate'] ?? now();
+
+            // Calcula multa automaticamente se o módulo está habilitado
+            if ($receivable->tenant->hasModuleEnabled('contas_a_receber')) {
+                $receivable->multa_percentual ??= $receivable->contract?->multa_rescisoria;
+                $updates['multa_valor'] = $receivable->calculateLateFee();
+            }
+        } elseif ($newStatus === 'pendente') {
+            // Reembolso ou cancelamento: desfaz a baixa
+            $updates['payment_date'] = null;
+        }
+
+        $receivable->update($updates);
     }
 }
