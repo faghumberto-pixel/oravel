@@ -4,6 +4,8 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\ApontamentoHorimetro;
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\CashflowPage;
+use App\Filament\Pages\BancaryReconciliationPage;
 use App\Http\Middleware\LogUserActivity;
 use App\Http\Middleware\TrackSiteVisit;
 use App\Models\Asset;
@@ -89,6 +91,17 @@ class AdminPanelProvider extends PanelProvider
                     ->sort(-8)
                     ->url(fn () => route('time-clock.offline'))
                     ->visible(fn () => Employee::where('user_id', auth()->id())->exists()),
+
+                // 3 novas features financeiras
+                NavigationItem::make('Fluxo de Caixa')
+                    ->icon('heroicon-o-chart-bar')
+                    ->group('Financeiro')
+                    ->url(fn () => CashflowPage::getUrl()),
+
+                NavigationItem::make('Conciliação Bancária')
+                    ->icon('heroicon-o-arrow-path')
+                    ->group('Financeiro')
+                    ->url(fn () => BancaryReconciliationPage::getUrl()),
             ])
             ->renderHook(
                 PanelsRenderHook::TOPBAR_START,
