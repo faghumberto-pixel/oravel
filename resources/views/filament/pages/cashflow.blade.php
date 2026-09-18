@@ -72,6 +72,7 @@
                             <th class="px-4 py-3 text-left font-semibold">Tipo</th>
                             <th class="px-4 py-3 text-right font-semibold">Valor</th>
                             <th class="px-4 py-3 text-left font-semibold">Status</th>
+                            <th class="px-4 py-3 text-center font-semibold">Ações</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -109,6 +110,25 @@
                                     <span class="px-2 py-1 rounded text-xs font-semibold {{ $statusColor }}">
                                         {{ ucfirst($record->status) }}
                                     </span>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    @if($record->type === 'AR')
+                                        <a href="{{ route('filament.admin.resources.account-receivables.index') }}"
+                                           target="_blank"
+                                           class="inline-flex items-center justify-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-semibold transition">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                            </svg>
+                                        </a>
+                                    @elseif($record->type === 'AP')
+                                        <a href="{{ route('filament.admin.resources.account-payables.index') }}"
+                                           target="_blank"
+                                           class="inline-flex items-center justify-center px-3 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded text-xs font-semibold transition">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                            </svg>
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
