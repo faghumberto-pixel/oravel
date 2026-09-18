@@ -45,9 +45,5 @@
         />
     </div>
 
-    {{-- Detail Table --}}
-    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-        <h3 class="text-lg font-semibold mb-4">Detalhes</h3>
-        @livewire('tables.table', ['livewire' => $this])
-    </div>
+    {{-- Detail Table (Em desenvolvimento) --}}
 </x-filament-panels::page>
