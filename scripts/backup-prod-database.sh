@@ -35,6 +35,10 @@ log() {
 }
 
 mkdir -p "$BACKUP_DIR"
+# pg_dump roda como postgres (peer auth local, sem depender de senha) --
+# sem isso o diretorio fica dono de quem chamou o script (root, via cron)
+# e o postgres nao consegue escrever nele.
+chown postgres:postgres "$BACKUP_DIR"
 
 log "Iniciando backup de $DB_NAME..."
 
