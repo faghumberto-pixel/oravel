@@ -3,40 +3,39 @@
         $tenantName = \App\Support\Tenancy::current()?->name;
     @endphp
 
-    {{-- Cabeçalho/abas/aba "Painel de Gestão" seguem o tema claro padrão do
-         resto do app (2026-09-18, pedido do usuario -- "todos os quadros
-         padronizados"). A aba "Gestão à Vista" continua com wrapper .dark
-         forcado (ver mais abaixo, dentro do @else): os widgets dela
-         (App\Filament\Widgets\GestaoAVista\*) foram construidos so' pra
-         fundo escuro, sem verificacao visual segura pra reclarear agora. --}}
-    <div class="max-w-full flex flex-col gap-3 rounded-2xl bg-white dark:bg-gray-900 p-3 text-gray-950 dark:text-gray-100 ring-1 ring-gray-950/5 dark:ring-white/5">
+    {{-- Padrao "sala de controle" (2026-09-19, pedido do usuario -- todas as
+         dashboards no mesmo modo escuro fixo, nao seguem o toggle
+         claro/escuro do painel). Wrapper .dark escopado cobre a pagina
+         inteira, os 2 tabs. --}}
+    <div class="dark">
+    <div class="max-w-full flex flex-col gap-3 rounded-2xl bg-gray-900 p-3 text-gray-100 ring-1 ring-white/5">
 
         {{-- ===================== CABEÇALHO COMPACTO ===================== --}}
-        <div class="flex items-center justify-between gap-3 rounded-xl bg-gray-50 dark:bg-gray-800/60 backdrop-blur-sm px-4 py-2.5 ring-1 ring-gray-950/5 dark:ring-white/5">
+        <div class="flex items-center justify-between gap-3 rounded-xl bg-gray-800/60 backdrop-blur-sm px-4 py-2.5 ring-1 ring-white/5">
             <div class="min-w-0">
-                <p class="text-[11px] font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100 truncate">Painel de Controle</p>
-                <p class="text-[10px] text-gray-500 dark:text-gray-400 truncate">{{ $tenantName ?? 'Visão Geral' }}</p>
+                <p class="text-[11px] font-bold uppercase tracking-wider text-gray-100 truncate">Painel de Controle</p>
+                <p class="text-[10px] text-gray-400 truncate">{{ $tenantName ?? 'Visão Geral' }}</p>
             </div>
             <div class="flex items-center gap-2 shrink-0">
                 <span class="hidden sm:inline text-[10px] font-medium text-gray-500 tabular-nums">{{ now()->format('d/m/Y H:i') }}</span>
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-[10px] font-semibold uppercase tracking-wide text-emerald-600 dark:text-emerald-400">Ao vivo</span>
+                <span class="text-[10px] font-semibold uppercase tracking-wide text-emerald-400">Ao vivo</span>
             </div>
         </div>
 
         {{-- ===================== ABAS (segmented control compacto) ===================== --}}
-        <div class="inline-flex self-start gap-1 rounded-lg bg-gray-50 dark:bg-gray-800/60 backdrop-blur-sm ring-1 ring-gray-950/5 dark:ring-white/5 p-1">
+        <div class="inline-flex self-start gap-1 rounded-lg bg-gray-800/60 backdrop-blur-sm ring-1 ring-white/5 p-1">
             <button
                 type="button"
                 wire:click="selectTab('gestao')"
-                class="px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide rounded-md transition {{ $activeTab === 'gestao' ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200' }}"
+                class="px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide rounded-md transition {{ $activeTab === 'gestao' ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-400 hover:text-gray-200' }}"
             >
                 Painel de Gestão
             </button>
             <button
                 type="button"
                 wire:click="selectTab('comando')"
-                class="px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide rounded-md transition {{ $activeTab === 'comando' ? 'bg-amber-500 text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200' }}"
+                class="px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide rounded-md transition {{ $activeTab === 'comando' ? 'bg-amber-500 text-white shadow-sm' : 'text-gray-400 hover:text-gray-200' }}"
             >
                 Gestão à Vista
             </button>
@@ -88,38 +87,30 @@
                      usam :key com $gestaoRefreshTick pra reinstanciar (e rechamar
                      mount(), refazendo as queries) quando "ATUALIZAR DADOS" é clicado,
                      mesmo sem nenhuma propriedade pública do widget filho ter mudado
-                     sozinha.
-
-                     Wrapper escuro forcado removido (2026-09-18): painel inteiro
-                     agora e' sempre claro (Filament::darkMode(false) no
-                     AdminPanelProvider), widgets GestaoAVista\* sao componentes
-                     Filament padrao (StatsOverviewWidget/ChartWidget/etc.) com
-                     dark: bakeado mas light-mode nativo tambem -- rendem certo
-                     sem esse wrapper. --}}
-                <div class="flex flex-col gap-3 rounded-2xl bg-white p-3 text-gray-950 ring-1 ring-gray-950/5">
+                     sozinha. --}}
                 @php
                     $gestaoFiltros = $this->getGestaoFiltros();
                     $gestaoKeyBase = 'gav-'.$gestaoRefreshTick.'-'.md5(json_encode($gestaoFiltros));
                 @endphp
 
                 {{-- Cabeçalho + Filtros --}}
-                <div class="rounded-xl bg-gray-50 backdrop-blur-sm ring-1 ring-gray-950/5 p-3">
+                <div class="rounded-xl bg-gray-800/60 backdrop-blur-sm ring-1 ring-white/5 p-3">
                     <div class="mb-2">
-                        <p class="text-[13px] font-bold uppercase tracking-wide text-gray-900">Indicadores de Resultados – Manutenção</p>
+                        <p class="text-[13px] font-bold uppercase tracking-wide text-gray-100">Indicadores de Resultados – Manutenção</p>
                         <p class="text-[10px] uppercase tracking-wider text-gray-500">Dados que geram confiabilidade e resultados</p>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 items-end">
                         <div>
                             <label class="block text-[9px] font-semibold uppercase tracking-wider text-gray-500 mb-1">Data Início</label>
-                            <input type="date" wire:model="gestaoFrom" class="w-full rounded-lg bg-white border-gray-300 text-gray-900 text-[12px] py-1.5 focus:border-indigo-500 focus:ring-indigo-500" />
+                            <input type="date" wire:model="gestaoFrom" class="w-full rounded-lg bg-gray-900 border-gray-700 text-gray-100 text-[12px] py-1.5 focus:border-indigo-500 focus:ring-indigo-500" />
                         </div>
                         <div>
                             <label class="block text-[9px] font-semibold uppercase tracking-wider text-gray-500 mb-1">Data Fim</label>
-                            <input type="date" wire:model="gestaoUntil" class="w-full rounded-lg bg-white border-gray-300 text-gray-900 text-[12px] py-1.5 focus:border-indigo-500 focus:ring-indigo-500" />
+                            <input type="date" wire:model="gestaoUntil" class="w-full rounded-lg bg-gray-900 border-gray-700 text-gray-100 text-[12px] py-1.5 focus:border-indigo-500 focus:ring-indigo-500" />
                         </div>
                         <div>
                             <label class="block text-[9px] font-semibold uppercase tracking-wider text-gray-500 mb-1">Unidade</label>
-                            <select wire:model="gestaoBranchId" class="w-full rounded-lg bg-white border-gray-300 text-gray-900 text-[12px] py-1.5 focus:border-indigo-500 focus:ring-indigo-500">
+                            <select wire:model="gestaoBranchId" class="w-full rounded-lg bg-gray-900 border-gray-700 text-gray-100 text-[12px] py-1.5 focus:border-indigo-500 focus:ring-indigo-500">
                                 <option value="">Todas</option>
                                 @foreach ($this->getGestaoBranches() as $branch)
                                     <option value="{{ $branch->id }}">{{ $branch->name }}</option>
@@ -128,7 +119,7 @@
                         </div>
                         <div>
                             <label class="block text-[9px] font-semibold uppercase tracking-wider text-gray-500 mb-1">Equipamento</label>
-                            <select wire:model="gestaoAssetId" class="w-full rounded-lg bg-white border-gray-300 text-gray-900 text-[12px] py-1.5 focus:border-indigo-500 focus:ring-indigo-500">
+                            <select wire:model="gestaoAssetId" class="w-full rounded-lg bg-gray-900 border-gray-700 text-gray-100 text-[12px] py-1.5 focus:border-indigo-500 focus:ring-indigo-500">
                                 <option value="">Todos</option>
                                 @foreach ($this->getGestaoAssets() as $asset)
                                     <option value="{{ $asset->id }}">{{ $asset->name }}{{ $asset->patrimonio ? " ({$asset->patrimonio})" : '' }}</option>
@@ -186,14 +177,14 @@
                         </div>
 
                         {{-- BANNER DE RODAPÉ --}}
-                        <div class="rounded-xl bg-gradient-to-r from-indigo-50 via-white to-indigo-50 ring-1 ring-gray-950/5 p-4 text-center">
-                            <p class="text-[12px] font-bold uppercase tracking-wide text-gray-800">Dados não tomam decisões. Pessoas informadas, sim.</p>
-                            <p class="text-[10px] uppercase tracking-wider text-indigo-600 mt-1">Gestão à vista, decisão na hora, resultado todo dia.</p>
+                        <div class="rounded-xl bg-gradient-to-r from-indigo-950/60 via-gray-800/60 to-indigo-950/60 ring-1 ring-white/5 p-4 text-center">
+                            <p class="text-[12px] font-bold uppercase tracking-wide text-gray-200">Dados não tomam decisões. Pessoas informadas, sim.</p>
+                            <p class="text-[10px] uppercase tracking-wider text-indigo-300 mt-1">Gestão à vista, decisão na hora, resultado todo dia.</p>
                         </div>
                     </div>
                 </div>
-                </div>
             @endif
         </div>
+    </div>
     </div>
 </x-filament-panels::page>
