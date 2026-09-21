@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Software para Gestão de Frota e Logística | Oravel</title>
+<meta name="description" content="Software para gestão de frota e logística: mapa de equipamentos e transportes, agenda de motoristas e saída e retorno de veículos. Agende uma demonstração.">
+<link rel="canonical" href="https://oravel.com.br/software-gestao-frota-logistica/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="Oravel">
+<meta property="og:title" content="Software para Gestão de Frota e Logística | Oravel">
+<meta property="og:description" content="Software para gestão de frota e logística: mapa de equipamentos e transportes, agenda de motoristas e saída e retorno de veículos. Agende uma demonstração.">
+<meta property="og:url" content="https://oravel.com.br/software-gestao-frota-logistica/">
+<link rel="icon" type="image/svg+xml" href="/nova/assets/favicon.svg?v=6" />
+<link rel="icon" type="image/png" sizes="32x32" href="/nova/assets/favicon-32.png?v=6" />
+<link rel="icon" type="image/x-icon" href="/nova/assets/favicon.ico?v=6" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Software para Gestão de Frota e Logística | Oravel", "description": "Software para gestão de frota e logística: mapa de equipamentos e transportes, agenda de motoristas e saída e retorno de veículos. Agende uma demonstração.", "url": "https://oravel.com.br/software-gestao-frota-logistica/", "inLanguage": "pt-BR", "isPartOf": {"@type": "WebSite", "name": "Oravel", "url": "https://oravel.com.br/"}, "about": {"@type": "SoftwareApplication", "name": "Oravel", "applicationCategory": "BusinessApplication", "operatingSystem": "Web"}}</script>
+<style>
+:root {
+  --paper: #ffffff; --surface: #f6f7f9; --ink: #0f172a; --ink-soft: #5b6472;
+  --ink-faint: #8891a0; --border: #e4e7ec; --accent: #f97316; --accent-ink: #c2410c;
+  --accent-soft: #fff1e4; --navy: #0f172a; --navy-2: #1a2540;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: "Inter", "Segoe UI", system-ui, sans-serif; color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { font-family: "Manrope", "Inter", sans-serif; font-weight: 800; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+p, ul { margin: 0; }
+a { color: inherit; }
+img, svg { max-width: 100%; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.skip { position: absolute; left: -9999px; top: 0; background: var(--navy); color: #fff; padding: 10px 16px; z-index: 100; border-radius: 0 0 8px 0; }
+.skip:focus { left: 0; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+.eyebrow { font-family: "Manrope", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); }
+
+.inav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.94); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+.inav-wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.inav-logo { display: flex; align-items: center; gap: 9px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 19px; text-decoration: none; color: var(--ink); }
+.inav-logo-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--navy); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 15px; flex: none; }
+.inav-links { display: none; align-items: center; gap: 34px; }
+.inav-links a { text-decoration: none; color: var(--ink-soft); font-size: 14.5px; font-weight: 600; }
+.inav-links a:hover, .inav-links a[aria-current="page"] { color: var(--ink); }
+.inav-cta { background: var(--navy); color: #fff; padding: 10px 16px; border-radius: 7px; text-decoration: none; font-weight: 700; font-size: 13.5px; white-space: nowrap; }
+.inav-cta:hover { background: var(--navy-2); }
+
+.hero { padding: 48px 0 44px; background: linear-gradient(180deg, #eef1f5 0%, #ffffff 100%); }
+.hero h1 { font-size: clamp(28px, 6vw, 46px); line-height: 1.12; margin-top: 14px; max-width: 22ch; }
+.hero .sub { font-size: 17px; color: var(--ink-soft); line-height: 1.65; margin-top: 18px; max-width: 58ch; font-weight: 500; }
+.hero-actions { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 24px; border-radius: 8px; font-weight: 700; font-size: 15px; text-decoration: none; border: 1px solid transparent; cursor: pointer; font-family: inherit; min-height: 48px; }
+.btn-primary { background: var(--accent); color: var(--navy); }
+.btn-primary:hover { background: #ea580c; }
+.btn-ghost { border-color: var(--border); color: var(--ink); background: #fff; }
+.btn-ghost:hover { border-color: var(--ink-faint); }
+
+.section { padding: 56px 0; }
+.section-surface { background: var(--surface); }
+.section-head { max-width: 680px; margin: 0 0 34px; }
+.section-head h2 { font-size: clamp(24px, 4.4vw, 32px); line-height: 1.18; margin-top: 10px; }
+.section-head p { font-size: 16px; color: var(--ink-soft); line-height: 1.6; margin-top: 12px; }
+
+.pain-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+.pain { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
+.pain h3 { font-size: 17px; line-height: 1.3; }
+.pain .impact { font-size: 14.5px; color: var(--ink-soft); line-height: 1.6; margin-top: 10px; }
+.pain .tag { display: inline-block; font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 8px; }
+
+.solve { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: center; padding: 34px 0; border-top: 1px solid var(--border); }
+.solve:first-of-type { border-top: 0; padding-top: 0; }
+.solve h3 { font-size: clamp(21px, 3.6vw, 26px); line-height: 1.2; margin-top: 8px; }
+.solve p { font-size: 15.5px; color: var(--ink-soft); line-height: 1.65; margin-top: 12px; }
+.solve .result { color: var(--ink); font-weight: 600; }
+.solve ul { list-style: none; padding: 0; margin-top: 14px; display: grid; gap: 8px; }
+.solve li { font-size: 14.5px; color: var(--ink); padding-left: 22px; position: relative; line-height: 1.5; }
+.solve li::before { content: ""; position: absolute; left: 0; top: 7px; width: 10px; height: 10px; border-radius: 3px; background: var(--accent); }
+.mock { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 14px; }
+.mock svg { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--border); background: #fff; box-shadow: 0 24px 50px -30px rgba(15,23,42,0.3); }
+.mock figcaption { font-size: 12.5px; color: var(--ink-faint); margin-top: 10px; text-align: center; }
+.mock { margin: 0; }
+
+.mod-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.mod { background: #fff; padding: 22px 24px; display: flex; gap: 14px; }
+.mod .ic { width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); color: var(--accent-ink); display: flex; align-items: center; justify-content: center; flex: none; }
+.mod h3 { font-size: 15.5px; }
+.mod p { font-size: 13.5px; color: var(--ink-soft); margin-top: 6px; line-height: 1.5; }
+
+.who-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+.who { background: #fff; border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 10px; padding: 20px 22px; }
+.who h3 { font-size: 16px; }
+.who p { font-size: 14px; color: var(--ink-soft); margin-top: 6px; line-height: 1.55; }
+
+.cta-box { background: var(--navy); border-radius: 22px; padding: 32px 20px; color: #fff; display: grid; grid-template-columns: 1fr; gap: 30px; }
+.cta-box h2 { font-size: clamp(24px, 4.4vw, 32px); color: #fff; line-height: 1.18; }
+.cta-box .lead { color: rgba(255,255,255,0.78); font-size: 15.5px; line-height: 1.6; margin-top: 12px; }
+.cta-alt { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+.cta-alt .btn-ghost { background: transparent; border-color: rgba(255,255,255,0.35); color: #fff; }
+.cta-alt .btn-ghost:hover { border-color: #fff; }
+.form { background: #fff; border-radius: 16px; padding: 22px 18px; color: var(--ink); display: grid; gap: 14px; }
+.form label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.form input, .form select { width: 100%; font: inherit; font-size: 16px; padding: 12px 12px; border: 1px solid #c3c9d3; border-radius: 8px; background: #fff; color: var(--ink); min-height: 48px; }
+.form input[aria-invalid="true"], .form select[aria-invalid="true"] { border-color: #b91c1c; }
+.form .row { display: grid; grid-template-columns: 1fr; gap: 14px; }
+.form .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.form .fine { font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
+.form .btn { width: 100%; }
+.form-msg { border-radius: 8px; padding: 12px 14px; font-size: 14px; font-weight: 600; line-height: 1.45; }
+.form-msg[hidden] { display: none; }
+.form-msg.ok { background: #dcfce7; color: #14532d; }
+.form-msg.err { background: #fee2e2; color: #7f1d1d; }
+
+footer.ifoot { border-top: 1px solid var(--border); padding: 36px 0; }
+.ifoot-wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+.ifoot-links { display: flex; gap: 20px; flex-wrap: wrap; font-size: 13.5px; color: var(--ink-soft); }
+.ifoot-links a { text-decoration: none; }
+.ifoot-links a:hover { color: var(--ink); }
+.ifoot-copy { font-size: 13px; color: var(--ink-faint); }
+
+@media (min-width: 640px) {
+  .form .row { grid-template-columns: 1fr 1fr; }
+  .pain-grid { grid-template-columns: repeat(2, 1fr); }
+  .mod-grid { grid-template-columns: repeat(2, 1fr); }
+  .who-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 900px) {
+  .wrap, .inav-wrap, .ifoot-wrap { padding-left: 28px; padding-right: 28px; }
+  .inav-wrap { height: 72px; }
+  .inav-links { display: flex; }
+  .inav-cta { padding: 10px 20px; font-size: 14px; }
+  .hero { padding: 84px 0 72px; }
+  .section { padding: 76px 0; }
+  .pain-grid { grid-template-columns: repeat(4, 1fr); }
+  .solve { grid-template-columns: 1fr 1fr; gap: 56px; padding: 44px 0; }
+  .solve.rev .mock { order: -1; }
+  .mod-grid { grid-template-columns: repeat(3, 1fr); }
+  .who-grid { grid-template-columns: repeat(4, 1fr); }
+  .cta-box { grid-template-columns: 1fr 1fr; gap: 48px; padding: 52px; align-items: start; }
+  .form { padding: 28px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#conteudo">Ir para o conteúdo</a>
+
+<nav class="inav" aria-label="Principal">
+  <div class="inav-wrap">
+    <a href="/" class="inav-logo"><span class="inav-logo-mark" aria-hidden="true">O</span>Oravel</a>
+    <div class="inav-links">
+      <a href="/">Home</a>
+      <a href="/#produtos">Produtos</a>
+      <a href="/segmentos/" aria-current="page">Segmentos</a>
+      <a href="/#sobre">Sobre</a>
+      <a href="/contato.php">Contato</a>
+    </div>
+    <a href="#contato" class="inav-cta">Agende uma demonstração</a>
+  </div>
+</nav>
+
+<main id="conteudo">
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Logística e Transportes</div>
+    <h1>Software para gestão de frota e logística: cada veículo e cada saída sob controle.</h1>
+    <p class="sub">Saiba quem retirou cada veículo, para onde foi e quando voltou, com a agenda dos motoristas e o trajeto dos transportes em um só lugar.</p>
+    <div class="hero-actions">
+      <a href="#contato" class="btn btn-primary">Agende uma demonstração</a>
+      <a href="#como-resolve" class="btn btn-ghost">Ver como funciona na prática</a>
+    </div>
+  </div>
+</header>
+
+<section class="section" aria-labelledby="dores-t">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Dores do segmento</div>
+      <h2 id="dores-t">O que pesa na operação de frota e logística</h2>
+      <p>Veículos, motoristas e cargas em movimento o dia inteiro: sem registro, ninguém tem a resposta quando o cliente pergunta.</p>
+    </div>
+    <div class="pain-grid"><article class="pain"><span class="tag">Dor</span><h3>Saída de veículo sem registro</h3><p class="impact"><strong>Impacto:</strong> ninguém sabe quem retirou, quando e para onde, e fica difícil responsabilizar alguém por multas, danos ou uso indevido.</p></article><article class="pain"><span class="tag">Dor</span><h3>Motoristas e saídas combinados por telefone</h3><p class="impact"><strong>Impacto:</strong> a agenda vira conflito: veículo duplicado em dois destinos enquanto outro fica parado no pátio.</p></article><article class="pain"><span class="tag">Dor</span><h3>Transporte sem rastro do trajeto</h3><p class="impact"><strong>Impacto:</strong> o cliente pergunta onde está o equipamento e a resposta depende de ligar para o motorista.</p></article><article class="pain"><span class="tag">Dor</span><h3>Veículo parado por manutenção que ninguém acompanhou</h3><p class="impact"><strong>Impacto:</strong> a revisão vence sem aviso e o veículo some da operação justamente quando é necessário.</p></article></div>
+  </div>
+</section>
+
+<section class="section section-surface" id="como-resolve" aria-labelledby="solve-t">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Como a Oravel resolve</div>
+      <h2 id="solve-t">Sua frota e seus transportes, com registro de ponta a ponta</h2>
+      <p>A Oravel dá ao gestor a visão da operação e ao motorista um jeito simples de registrar cada saída.</p>
+    </div>
+    <div class="solve"><div><div class="eyebrow">Mapa</div><h3>Equipamentos e transportes no mapa</h3><p>Veja o pátio, os equipamentos nos clientes e o trajeto de cada transporte, com os checkpoints registrados no caminho.</p><p class="result">Resultado: você sabe onde está cada item e responde ao cliente na hora.</p><ul><li>Pátio, equipamentos e destinos no mesmo mapa</li><li>Trajeto do transporte com checkpoints</li><li>Último registro de cada veículo à vista</li></ul></div><figure class="mock"><svg viewBox="0 0 480 300" role="img" aria-label="Mapa com pátio, equipamentos e trajeto de um transporte com checkpoints"><title>Mapa com pátio, equipamentos e trajeto de um transporte com checkpoints</title><rect width="480" height="300" rx="10" fill="#ffffff"/><rect width="480" height="30" rx="10" fill="#0f172a"/><rect y="15" width="480" height="15" fill="#0f172a"/><circle cx="16" cy="15" r="4" fill="#ef4444"/><circle cx="30" cy="15" r="4" fill="#f59e0b"/><circle cx="44" cy="15" r="4" fill="#22c55e"/><text x="240" y="19" font-family="Inter" font-size="9" fill="#8a94a8" text-anchor="middle">app.oravel.com.br/mapa</text><text x="20" y="50" font-family="Manrope" font-size="11" fill="#0f172a" font-weight="800">Mapa de equipamentos e transportes</text><rect x="20" y="60" width="330" height="222" rx="8" fill="#eaf0ec" stroke="#e4e7ec"/><path d="M20 120 L350 96" stroke="#fff" stroke-width="7" fill="none"/><path d="M20 200 L350 170" stroke="#fff" stroke-width="7" fill="none"/><path d="M100 60 L140 282" stroke="#fff" stroke-width="7" fill="none"/><path d="M250 60 L210 282" stroke="#fff" stroke-width="7" fill="none"/><path d="M20 250 C120 230 200 250 350 220" stroke="#bcd3e6" stroke-width="10" fill="none" opacity="0.7"/><path d="M78 220 L142 170 L206 158 L286 108" stroke="#f97316" stroke-width="2.5" fill="none" stroke-dasharray="6 4"/><circle cx="142" cy="170" r="4.5" fill="#fff" stroke="#f97316" stroke-width="2"/><path d="M78 220 c-6-8-8-11-8-16 a8 8 0 0 1 16 0 c0 5-2 8-8 16z" fill="#0f172a" stroke="#fff" stroke-width="1.5"/><circle cx="78" cy="204" r="3" fill="#fff"/><text x="78" y="236" font-family="Inter" font-size="7.5" fill="#0f172a" font-weight="700" text-anchor="middle">Pátio</text><path d="M286 108 c-6-8-8-11-8-16 a8 8 0 0 1 16 0 c0 5-2 8-8 16z" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><circle cx="286" cy="92" r="3" fill="#fff"/><text x="286" y="124" font-family="Inter" font-size="7.5" fill="#0f172a" font-weight="700" text-anchor="middle">Local 02</text><circle cx="206" cy="158" r="11" fill="#f97316" stroke="#fff" stroke-width="2"/><path d="M200 158h8v-4h4l2 3v3h-14zM202 161a1.6 1.6 0 1 0 .01 0M210 161a1.6 1.6 0 1 0 .01 0" fill="#fff"/><path d="M60 108 c-6-8-8-11-8-16 a8 8 0 0 1 16 0 c0 5-2 8-8 16z" fill="#f59e0b" stroke="#fff" stroke-width="1.5"/><circle cx="60" cy="92" r="3" fill="#fff"/><path d="M318 214 c-6-8-8-11-8-16 a8 8 0 0 1 16 0 c0 5-2 8-8 16z" fill="#f59e0b" stroke="#fff" stroke-width="1.5"/><circle cx="318" cy="198" r="3" fill="#fff"/><path d="M170 246 c-6-8-8-11-8-16 a8 8 0 0 1 16 0 c0 5-2 8-8 16z" fill="#f59e0b" stroke="#fff" stroke-width="1.5"/><circle cx="170" cy="230" r="3" fill="#fff"/><text x="60" y="124" font-family="Inter" font-size="7" fill="#5b6472" font-weight="600" text-anchor="middle">Equip. 03</text><text x="318" y="230" font-family="Inter" font-size="7" fill="#5b6472" font-weight="600" text-anchor="middle">Equip. 05</text><text x="170" y="262" font-family="Inter" font-size="7" fill="#5b6472" font-weight="600" text-anchor="middle">Equip. 08</text><rect x="360" y="60" width="100" height="222" rx="8" fill="#f6f7f9" stroke="#e4e7ec"/><text x="370" y="78" font-family="Inter" font-size="8.5" fill="#5b6472" font-weight="700">Legenda</text><circle cx="376" cy="94" r="4" fill="#0f172a"/><text x="386" y="97" font-family="Inter" font-size="8" fill="#0f172a">Pátio</text><circle cx="376" cy="110" r="4" fill="#f59e0b"/><text x="386" y="113" font-family="Inter" font-size="8" fill="#0f172a">Equipamento</text><circle cx="376" cy="126" r="4" fill="#22c55e"/><text x="386" y="129" font-family="Inter" font-size="8" fill="#0f172a">Destino</text><circle cx="376" cy="142" r="4" fill="#f97316"/><text x="386" y="145" font-family="Inter" font-size="8" fill="#0f172a">Veículo</text><line x1="368" y1="160" x2="452" y2="160" stroke="#e4e7ec"/><text x="370" y="176" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="800">Transporte 12</text><text x="370" y="189" font-family="Inter" font-size="7.5" fill="#5b6472">Veículo 01</text><text x="370" y="203" font-family="Inter" font-size="7.5" fill="#5b6472">Motorista 1</text><rect x="370" y="212" width="80" height="15" rx="7.5" fill="#fff1e4"/><text x="410.0" y="222.5" font-family="Inter" font-size="7.5" fill="#b8560c" font-weight="700" text-anchor="middle">Em trânsito</text><text x="370" y="246" font-family="Inter" font-size="7" fill="#8891a0">Último checkpoint</text><text x="370" y="258" font-family="Inter" font-size="8" fill="#0f172a" font-weight="700">10:42 · Checkpoint 1</text></svg><figcaption>Mapa de equipamentos e transportes (dados fictícios)</figcaption></figure></div><div class="solve rev"><div><div class="eyebrow">Agenda de motoristas</div><h3>A semana de cada motorista, sem conflito</h3><p>Cada saída aparece na agenda do motorista, com dia, horário e destino, do agendamento ao retorno.</p><p class="result">Resultado: menos choque de agenda e menos veículo parado sem necessidade.</p><ul><li>Agenda semanal por motorista</li><li>Saídas, destinos e retornos no mesmo quadro</li><li>Situação de cada saída em cores</li></ul></div><figure class="mock"><svg viewBox="0 0 480 300" role="img" aria-label="Agenda semanal de motoristas com saídas, destinos e retornos"><title>Agenda semanal de motoristas com saídas, destinos e retornos</title><rect width="480" height="300" rx="10" fill="#ffffff"/><rect width="480" height="30" rx="10" fill="#0f172a"/><rect y="15" width="480" height="15" fill="#0f172a"/><circle cx="16" cy="15" r="4" fill="#ef4444"/><circle cx="30" cy="15" r="4" fill="#f59e0b"/><circle cx="44" cy="15" r="4" fill="#22c55e"/><text x="240" y="19" font-family="Inter" font-size="9" fill="#8a94a8" text-anchor="middle">app.oravel.com.br/agenda-logistica</text><text x="20" y="50" font-family="Manrope" font-size="11" fill="#0f172a" font-weight="800">Agenda de motoristas</text><text x="20" y="62" font-family="Inter" font-size="8" fill="#5b6472">Semana · saídas e destinos</text><rect x="92" y="72" width="70" height="18" rx="5" fill="#f6f7f9"/><text x="127.0" y="84" font-family="Inter" font-size="7.5" fill="#5b6472" font-weight="700" text-anchor="middle">Seg</text><rect x="166" y="72" width="70" height="18" rx="5" fill="#f6f7f9"/><text x="201.0" y="84" font-family="Inter" font-size="7.5" fill="#5b6472" font-weight="700" text-anchor="middle">Ter</text><rect x="240" y="72" width="70" height="18" rx="5" fill="#0f172a"/><text x="275.0" y="84" font-family="Inter" font-size="7.5" fill="#fff" font-weight="700" text-anchor="middle">Qua · hoje</text><rect x="314" y="72" width="70" height="18" rx="5" fill="#f6f7f9"/><text x="349.0" y="84" font-family="Inter" font-size="7.5" fill="#5b6472" font-weight="700" text-anchor="middle">Qui</text><rect x="388" y="72" width="70" height="18" rx="5" fill="#f6f7f9"/><text x="423.0" y="84" font-family="Inter" font-size="7.5" fill="#5b6472" font-weight="700" text-anchor="middle">Sex</text><rect x="20" y="96" width="68" height="40" rx="6" fill="#f6f7f9"/><text x="28" y="120" font-family="Inter" font-size="8" fill="#0f172a" font-weight="700">Motorista 1</text><rect x="92" y="96" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="95" y="99" width="64" height="34" rx="5" fill="#fff1e4" stroke="#f97316"/><text x="100" y="113" font-family="Inter" font-size="7.5" fill="#b8560c" font-weight="700">07:30 Saída</text><text x="100" y="124" font-family="Inter" font-size="7.5" fill="#0f172a">Local 01</text><rect x="166" y="96" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="240" y="96" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="243" y="99" width="64" height="34" rx="5" fill="#fff1e4" stroke="#f97316"/><text x="248" y="113" font-family="Inter" font-size="7.5" fill="#b8560c" font-weight="700">08:00 Saída</text><text x="248" y="124" font-family="Inter" font-size="7.5" fill="#0f172a">Local 02</text><rect x="314" y="96" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="388" y="96" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="391" y="99" width="64" height="34" rx="5" fill="#eff6ff" stroke="#93c5fd"/><text x="396" y="113" font-family="Inter" font-size="7.5" fill="#1e40af" font-weight="700">09:00 Saída</text><text x="396" y="124" font-family="Inter" font-size="7.5" fill="#0f172a">Local 04</text><rect x="20" y="141" width="68" height="40" rx="6" fill="#f6f7f9"/><text x="28" y="165" font-family="Inter" font-size="8" fill="#0f172a" font-weight="700">Motorista 2</text><rect x="92" y="141" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="166" y="141" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="169" y="144" width="64" height="34" rx="5" fill="#f0fdf4" stroke="#86efac"/><text x="174" y="158" font-family="Inter" font-size="7.5" fill="#15803d" font-weight="700">06:30 Saída</text><text x="174" y="169" font-family="Inter" font-size="7.5" fill="#0f172a">Local 03</text><rect x="240" y="141" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="243" y="144" width="64" height="34" rx="5" fill="#eff6ff" stroke="#93c5fd"/><text x="248" y="158" font-family="Inter" font-size="7.5" fill="#1e40af" font-weight="700">13:00 Retorno</text><text x="248" y="169" font-family="Inter" font-size="7.5" fill="#0f172a">Pátio</text><rect x="314" y="141" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="388" y="141" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="20" y="186" width="68" height="40" rx="6" fill="#f6f7f9"/><text x="28" y="210" font-family="Inter" font-size="8" fill="#0f172a" font-weight="700">Motorista 3</text><rect x="92" y="186" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="95" y="189" width="64" height="34" rx="5" fill="#f0fdf4" stroke="#86efac"/><text x="100" y="203" font-family="Inter" font-size="7.5" fill="#15803d" font-weight="700">08:00 Saída</text><text x="100" y="214" font-family="Inter" font-size="7.5" fill="#0f172a">Local 02</text><rect x="166" y="186" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="240" y="186" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="314" y="186" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="317" y="189" width="64" height="34" rx="5" fill="#eff6ff" stroke="#93c5fd"/><text x="322" y="203" font-family="Inter" font-size="7.5" fill="#1e40af" font-weight="700">07:00 Saída</text><text x="322" y="214" font-family="Inter" font-size="7.5" fill="#0f172a">Local 01</text><rect x="388" y="186" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="391" y="189" width="64" height="34" rx="5" fill="#eff6ff" stroke="#93c5fd"/><text x="396" y="203" font-family="Inter" font-size="7.5" fill="#1e40af" font-weight="700">10:30 Saída</text><text x="396" y="214" font-family="Inter" font-size="7.5" fill="#0f172a">Local 05</text><rect x="20" y="231" width="68" height="40" rx="6" fill="#f6f7f9"/><text x="28" y="255" font-family="Inter" font-size="8" fill="#0f172a" font-weight="700">Motorista 4</text><rect x="92" y="231" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="166" y="231" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="240" y="231" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="243" y="234" width="64" height="34" rx="5" fill="#fff1e4" stroke="#f97316"/><text x="248" y="248" font-family="Inter" font-size="7.5" fill="#b8560c" font-weight="700">08:30 Saída</text><text x="248" y="259" font-family="Inter" font-size="7.5" fill="#0f172a">Local 03</text><rect x="314" y="231" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><rect x="317" y="234" width="64" height="34" rx="5" fill="#eff6ff" stroke="#93c5fd"/><text x="322" y="248" font-family="Inter" font-size="7.5" fill="#1e40af" font-weight="700">14:00 Saída</text><text x="322" y="259" font-family="Inter" font-size="7.5" fill="#0f172a">Local 04</text><rect x="388" y="231" width="70" height="40" rx="6" fill="#fff" stroke="#eef1f5"/><circle cx="24" cy="284" r="3.5" fill="#f97316"/><text x="31" y="287" font-family="Inter" font-size="7.5" fill="#5b6472">Em andamento</text><circle cx="100" cy="284" r="3.5" fill="#93c5fd"/><text x="107" y="287" font-family="Inter" font-size="7.5" fill="#5b6472">Agendada</text><circle cx="164" cy="284" r="3.5" fill="#86efac"/><text x="171" y="287" font-family="Inter" font-size="7.5" fill="#5b6472">Concluída</text></svg><figcaption>Agenda semanal de motoristas (dados fictícios)</figcaption></figure></div><div class="solve"><div><div class="eyebrow">Entrada e saída</div><h3>Quem retirou, quando e para onde</h3><p>Toda saída e todo retorno de veículo ficam registrados com motorista, horário, destino e quilometragem.</p><p class="result">Resultado: responsável definido em cada uso e um histórico que resolve dúvidas sem discussão.</p><ul><li>Motorista responsável em cada saída</li><li>Horário e quilometragem na saída e no retorno</li><li>Histórico completo por veículo</li></ul></div><figure class="mock"><svg viewBox="0 0 480 300" role="img" aria-label="Registro de saída e retorno de veículos com motorista, horário, destino e quilometragem"><title>Registro de saída e retorno de veículos com motorista, horário, destino e quilometragem</title><rect width="480" height="300" rx="10" fill="#ffffff"/><rect width="480" height="30" rx="10" fill="#0f172a"/><rect y="15" width="480" height="15" fill="#0f172a"/><circle cx="16" cy="15" r="4" fill="#ef4444"/><circle cx="30" cy="15" r="4" fill="#f59e0b"/><circle cx="44" cy="15" r="4" fill="#22c55e"/><text x="240" y="19" font-family="Inter" font-size="9" fill="#8a94a8" text-anchor="middle">app.oravel.com.br/movimentacoes-veiculos</text><text x="20" y="50" font-family="Manrope" font-size="11" fill="#0f172a" font-weight="800">Entradas e saídas de veículos</text><rect x="20" y="60" width="52" height="16" rx="8" fill="#0f172a"/><text x="46" y="71" font-family="Inter" font-size="7.5" fill="#fff" font-weight="700" text-anchor="middle">Todas</text><rect x="78" y="60" width="52" height="16" rx="8" fill="#f6f7f9" stroke="#e4e7ec"/><text x="104" y="71" font-family="Inter" font-size="7.5" fill="#5b6472" font-weight="600" text-anchor="middle">Saídas</text><rect x="136" y="60" width="56" height="16" rx="8" fill="#f6f7f9" stroke="#e4e7ec"/><text x="164" y="71" font-family="Inter" font-size="7.5" fill="#5b6472" font-weight="600" text-anchor="middle">Retornos</text><rect x="20" y="86" width="440" height="18" rx="4" fill="#f6f7f9"/><text x="28" y="98" font-family="Inter" font-size="7" fill="#8891a0" font-weight="700">VEÍCULO</text><text x="92" y="98" font-family="Inter" font-size="7" fill="#8891a0" font-weight="700">RETIRADO POR</text><text x="172" y="98" font-family="Inter" font-size="7" fill="#8891a0" font-weight="700">SAÍDA</text><text x="252" y="98" font-family="Inter" font-size="7" fill="#8891a0" font-weight="700">DESTINO</text><text x="318" y="98" font-family="Inter" font-size="7" fill="#8891a0" font-weight="700">KM SAÍDA</text><text x="384" y="98" font-family="Inter" font-size="7" fill="#8891a0" font-weight="700">SITUAÇÃO</text><rect x="20" y="108" width="440" height="32" rx="6" fill="#fff1e4" stroke="#f97316"/><text x="28" y="128" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">Veículo 03</text><text x="92" y="128" font-family="Inter" font-size="8.5" fill="#0f172a">Motorista 4</text><text x="172" y="128" font-family="Inter" font-size="8.5" fill="#5b6472">23/09 · 08:30</text><text x="252" y="128" font-family="Inter" font-size="8.5" fill="#0f172a">Local 03</text><text x="318" y="128" font-family="Inter" font-size="8.5" fill="#5b6472">112.880</text><rect x="382" y="116.5" width="66" height="15" rx="7.5" fill="#fff1e4"/><text x="415.0" y="127.0" font-family="Inter" font-size="7.5" fill="#b8560c" font-weight="700" text-anchor="middle">Em trânsito</text><line x1="20" y1="174" x2="460" y2="174" stroke="#e4e7ec"/><text x="28" y="162" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">Veículo 01</text><text x="92" y="162" font-family="Inter" font-size="8.5" fill="#0f172a">Motorista 1</text><text x="172" y="162" font-family="Inter" font-size="8.5" fill="#5b6472">23/09 · 08:00</text><text x="252" y="162" font-family="Inter" font-size="8.5" fill="#0f172a">Local 02</text><text x="318" y="162" font-family="Inter" font-size="8.5" fill="#5b6472">45.210</text><rect x="382" y="150.5" width="66" height="15" rx="7.5" fill="#fff1e4"/><text x="415.0" y="161.0" font-family="Inter" font-size="7.5" fill="#b8560c" font-weight="700" text-anchor="middle">Em trânsito</text><line x1="20" y1="208" x2="460" y2="208" stroke="#e4e7ec"/><text x="28" y="196" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">Veículo 04</text><text x="92" y="196" font-family="Inter" font-size="8.5" fill="#0f172a">Motorista 2</text><text x="172" y="196" font-family="Inter" font-size="8.5" fill="#5b6472">22/09 · 06:30</text><text x="252" y="196" font-family="Inter" font-size="8.5" fill="#0f172a">Local 03</text><text x="318" y="196" font-family="Inter" font-size="8.5" fill="#5b6472">23.960</text><rect x="382" y="184.5" width="66" height="15" rx="7.5" fill="#dcfce7"/><text x="415.0" y="195.0" font-family="Inter" font-size="7.5" fill="#15803d" font-weight="700" text-anchor="middle">Retornou</text><line x1="20" y1="242" x2="460" y2="242" stroke="#e4e7ec"/><text x="28" y="230" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">Veículo 02</text><text x="92" y="230" font-family="Inter" font-size="8.5" fill="#0f172a">Motorista 3</text><text x="172" y="230" font-family="Inter" font-size="8.5" fill="#5b6472">21/09 · 08:00</text><text x="252" y="230" font-family="Inter" font-size="8.5" fill="#0f172a">Local 02</text><text x="318" y="230" font-family="Inter" font-size="8.5" fill="#5b6472">87.430</text><rect x="382" y="218.5" width="66" height="15" rx="7.5" fill="#dcfce7"/><text x="415.0" y="229.0" font-family="Inter" font-size="7.5" fill="#15803d" font-weight="700" text-anchor="middle">Retornou</text><line x1="20" y1="276" x2="460" y2="276" stroke="#e4e7ec"/><text x="28" y="264" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">Veículo 05</text><text x="92" y="264" font-family="Inter" font-size="8.5" fill="#0f172a">Motorista 1</text><text x="172" y="264" font-family="Inter" font-size="8.5" fill="#5b6472">21/09 · 07:30</text><text x="252" y="264" font-family="Inter" font-size="8.5" fill="#0f172a">Local 01</text><text x="318" y="264" font-family="Inter" font-size="8.5" fill="#5b6472">61.020</text><rect x="382" y="252.5" width="66" height="15" rx="7.5" fill="#dcfce7"/><text x="415.0" y="263.0" font-family="Inter" font-size="7.5" fill="#15803d" font-weight="700" text-anchor="middle">Retornou</text><text x="20" y="288" font-family="Inter" font-size="8" fill="#8891a0">Cada saída registra quem retirou, quando e para onde</text></svg><figcaption>Registro de entrada e saída de veículos (dados fictícios)</figcaption></figure></div>
+    <p style="font-size:12.5px;color:var(--ink-faint);margin-top:8px">Telas ilustrativas, com dados fictícios e recortes do sistema.</p>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="mod-t">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Módulos que sustentam</div>
+      <h2 id="mod-t">Os módulos que sustentam essa operação</h2>
+    </div>
+    <div class="mod-grid"><div class="mod"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg></div><div><h3>Frota</h3><p>Cadastro e situação de cada veículo.</p></div></div><div class="mod"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20c.8-3.5 3.2-5 6-5s5.2 1.5 6 5"/><path d="M16 5a3 3 0 010 6M18 15c1.6.6 2.6 2.2 3 5"/></svg></div><div><h3>Motoristas</h3><p>Quem dirige, o que já conduziu e para onde foi.</p></div></div><div class="mod"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6-5.6-6-10a6 6 0 0112 0c0 4.4-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg></div><div><h3>Mapa de Equipamentos</h3><p>Onde está cada equipamento e cada transporte.</p></div></div><div class="mod"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></div><div><h3>Agenda de Logística</h3><p>Saídas e retornos organizados por motorista.</p></div></div><div class="mod"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg></div><div><h3>Movimentação de Equipamentos</h3><p>Transporte de ida e volta com checkpoints.</p></div></div><div class="mod"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></div><div><h3>Manutenção da Frota</h3><p>Planos de revisão para nenhum veículo ser esquecido.</p></div></div></div>
+  </div>
+</section>
+
+<section class="section section-surface" aria-labelledby="who-t">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Para quem é</div>
+      <h2 id="who-t">Feito para quem vive de movimentar veículos e equipamentos</h2>
+    </div>
+    <div class="who-grid"><div class="who"><h3>Transportadoras e operadores logísticos</h3><p>Operações com vários veículos e motoristas saindo todos os dias.</p></div><div class="who"><h3>Empresas com frota própria de apoio</h3><p>Frotas que dão suporte a equipes e obras e precisam de controle de uso.</p></div><div class="who"><h3>Locadoras que entregam e recolhem equipamentos</h3><p>Quem leva e busca equipamento no cliente e precisa comprovar cada etapa.</p></div><div class="who"><h3>Operações com frota de veículos utilitários</h3><p>Times que dividem poucos veículos entre muitas demandas.</p></div></div>
+  </div>
+</section>
+
+<section class="section" id="contato" aria-labelledby="cta-t">
+  <div class="wrap">
+    <div class="cta-box">
+      <div>
+        <h2 id="cta-t">Veja a Oravel na rotina da sua frota</h2>
+        <p class="lead">Conte um pouco da sua operação e agende uma demonstração. Retornamos em horário comercial.</p>
+        <div class="cta-alt">
+          <a class="btn btn-ghost" href="https://wa.me/5519999332615?text=Ol%C3%A1%21%20Vim%20pela%20p%C3%A1gina%20de%20Log%C3%ADstica%20e%20Transportes%20e%20quero%20agendar%20uma%20demonstra%C3%A7%C3%A3o%20da%20Oravel." target="_blank" rel="noopener">WhatsApp (19) 99933-2615</a>
+          <a class="btn btn-ghost" href="mailto:contato@oravel.com.br">contato@oravel.com.br</a>
+        </div>
+      </div>
+      <form class="form" id="lead-form" method="post" action="/lead-segmento.php" novalidate>
+        <div id="form-msg" class="form-msg" role="status" aria-live="polite" hidden></div>
+        <input type="hidden" name="origem" value="logistica-transportes">
+        <div class="hp" aria-hidden="true"><label>Não preencha <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+        <div class="row">
+          <div><label for="f-nome">Nome *</label><input id="f-nome" name="name" type="text" autocomplete="name" required minlength="2" maxlength="120"></div>
+          <div><label for="f-empresa">Empresa *</label><input id="f-empresa" name="company" type="text" autocomplete="organization" required minlength="2" maxlength="120"></div>
+        </div>
+        <div class="row">
+          <div><label for="f-email">E-mail *</label><input id="f-email" name="email" type="email" autocomplete="email" required maxlength="160"></div>
+          <div><label for="f-tel">WhatsApp</label><input id="f-tel" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" placeholder="(19) 90000-0000"></div>
+        </div>
+        <div class="row">
+          <div><label for="f-seg">Segmento *</label><select id="f-seg" name="segmento" required><option value="locacao">Locação de Equipamentos</option><option value="manutencao-industrial">Manutenção Industrial</option><option value="montagem-industrial">Montagem Industrial</option><option value="logistica-transportes" selected>Logística e Transportes</option><option value="gestao-servicos">Gestão de Serviços</option><option value="distribuidor-atacadista">Distribuidor e Atacadista</option><option value="outro">Outro segmento</option></select></div>
+          <div><label for="f-porte">Nº de veículos *</label><select id="f-porte" name="porte" required><option value="">Selecione</option><option>1 a 5</option><option>6 a 15</option><option>16 a 50</option><option>Mais de 50</option></select></div>
+        </div>
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAAEUrIcrw2tIq9KEj"></div>
+        <button type="submit" class="btn btn-primary">Agende uma demonstração</button>
+        <p class="fine">Ao enviar, você concorda em ser contatado pela Oravel sobre a demonstração. Não compartilhamos seus dados.</p>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="ifoot">
+  <div class="ifoot-wrap">
+    <div class="ifoot-copy">© 2026 Oravel Desenvolvimento de Software</div>
+    <div class="ifoot-links">
+      <a href="/">Home</a>
+      <a href="/#produtos">Produtos</a>
+      <a href="/segmentos/">Segmentos</a>
+      <a href="/contato.php">Contato</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+(function () {
+  var f = document.getElementById('lead-form'), box = document.getElementById('form-msg');
+  if (!f) return;
+  var msgs = {
+    captcha: 'Não conseguimos confirmar que você não é um robô. Tente novamente.',
+    dados: 'Confira os campos obrigatórios e tente novamente.',
+    envio: 'Não foi possível enviar agora. Fale com a gente pelo WhatsApp ou e-mail abaixo.'
+  };
+  function show(cls, text) { box.className = 'form-msg ' + cls; box.textContent = text; box.hidden = false; }
+  var q = new URLSearchParams(location.search);
+  if (q.get('enviado') === '1') show('ok', 'Recebemos seu contato. Nossa equipe retorna em breve para agendar a demonstração.');
+  else if (q.get('erro')) show('err', msgs[q.get('erro')] || msgs.envio);
+  if (q.has('enviado') || q.has('erro')) history.replaceState(null, '', location.pathname + '#contato');
+  f.addEventListener('submit', function (ev) {
+    var bad = false;
+    Array.prototype.forEach.call(f.querySelectorAll('[required]'), function (el) {
+      var ok = el.checkValidity() && el.value.trim() !== '';
+      el.setAttribute('aria-invalid', ok ? 'false' : 'true');
+      if (!ok) bad = true;
+    });
+    if (bad) { ev.preventDefault(); show('err', msgs.dados); var first = f.querySelector('[aria-invalid="true"]'); if (first) first.focus(); return; }
+    var b = f.querySelector('button[type=submit]'); b.disabled = true; b.textContent = 'Enviando...';
+  });
+})();
+</script>
+
+<!-- Tailwind via CDN, so' pra este widget -- preflight desligado de proposito
+     pra nao resetar margin/padding/font do resto do site. -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    corePlugins: { preflight: false },
+  };
+</script>
+
+<div id="wa-widget" class="fixed bottom-6 right-6 z-[9999]" style="font-family: 'Inter', sans-serif;">
+    <!-- Janela de chat -->
+    <div
+        id="wa-chat-panel"
+        class="hidden mb-4 w-80 max-w-[calc(100vw-3rem)] origin-bottom-right flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10 sm:w-96"
+    >
+        <!-- Cabecalho -->
+        <div class="flex items-center gap-3 bg-emerald-600 px-4 py-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg font-extrabold" style="background:#101010;">
+                <span style="color:#ffffff">O</span><span style="color:#E8541A">r</span>
+            </div>
+            <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-semibold text-white">Oravel</p>
+                <p class="flex items-center gap-1.5 text-xs text-emerald-100">
+                    <span class="relative flex h-2 w-2">
+                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75"></span>
+                        <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-300"></span>
+                    </span>
+                    Online agora
+                </p>
+            </div>
+            <button
+                type="button"
+                onclick="waToggleChat(false)"
+                aria-label="Fechar chat"
+                class="shrink-0 rounded-full p-1 text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Corpo (mensagem de boas vindas) -->
+        <div class="flex-1 space-y-2 bg-[#e5ddd5] px-3 py-4" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect width=%2260%22 height=%2260%22 fill=%22%23e5ddd5%22/%3E%3C/svg%3E');">
+            <div class="max-w-[85%] rounded-lg rounded-tl-none bg-white px-3 py-2 shadow-sm">
+                <p class="text-sm text-gray-800">Olá! Como podemos ajudar você hoje?</p>
+                <p class="mt-1 text-right text-[10px] text-gray-400" id="wa-msg-time"></p>
+            </div>
+        </div>
+
+        <!-- Campo de entrada -->
+        <div class="flex items-center gap-2 border-t border-gray-200 bg-white p-2">
+            <input
+                type="text"
+                id="wa-input"
+                placeholder="Digite sua mensagem..."
+                class="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-800 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                style="background-color:#ffffff; color:#1f2937; color-scheme: light;"
+                onkeydown="if (event.key === 'Enter') { event.preventDefault(); waSendMessage(); }"
+            >
+            <button
+                type="button"
+                onclick="waSendMessage()"
+                aria-label="Enviar mensagem"
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white transition hover:bg-emerald-700"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+                    <path d="M3.4 20.6l17.45-8.5a1 1 0 000-1.8L3.4 1.8a1 1 0 00-1.44 1.1L4.3 11 1.96 18.9a1 1 0 001.44 1.1z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Botao flutuante -->
+    <button
+        type="button"
+        id="wa-fab"
+        onclick="waToggleChat()"
+        aria-label="Abrir chat do WhatsApp"
+        class="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg transition duration-200 ease-out hover:scale-110 hover:bg-emerald-600 active:scale-95"
+    >
+        <span class="absolute inline-flex h-16 w-16 animate-ping rounded-full bg-emerald-500 opacity-40" style="animation-duration: 2.5s;"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" class="relative h-8 w-8">
+            <path d="M16.001 3C9.107 3 3.5 8.607 3.5 15.5c0 2.42.687 4.68 1.878 6.598L3.2 28.8l6.876-2.14A12.44 12.44 0 0016 28c6.894 0 12.5-5.607 12.5-12.5S22.894 3 16.001 3zm0 22.7a10.15 10.15 0 01-5.44-1.573l-.39-.232-4.08 1.27 1.293-3.976-.253-.407A10.14 10.14 0 015.8 15.5c0-5.632 4.57-10.2 10.2-10.2 5.63 0 10.2 4.568 10.2 10.2 0 5.632-4.57 10.2-10.199 10.2zm5.58-7.64c-.306-.153-1.81-.893-2.09-.995-.28-.102-.484-.153-.688.153-.204.306-.789.995-.967 1.199-.178.204-.356.23-.662.077-.306-.153-1.293-.477-2.463-1.522-.91-.812-1.524-1.816-1.703-2.123-.178-.306-.019-.472.134-.624.137-.137.306-.357.459-.535.153-.178.204-.306.306-.51.102-.204.051-.383-.026-.535-.077-.153-.688-1.658-.943-2.27-.248-.596-.5-.516-.688-.526l-.586-.011c-.204 0-.535.077-.815.383-.28.306-1.069 1.044-1.069 2.549 0 1.505 1.094 2.958 1.247 3.163.153.204 2.153 3.286 5.216 4.608.729.315 1.297.503 1.74.644.731.232 1.396.2 1.922.121.586-.087 1.81-.74 2.065-1.454.255-.714.255-1.326.178-1.454-.076-.128-.28-.204-.586-.357z"/>
+        </svg>
+    </button>
+</div>
+
+<script>
+    (function () {
+        var WA_NUMERO = "5519999332615";
+        var WA_MENSAGEM_PADRAO = "Olá! Vim pelo site da Oravel e gostaria de mais informações.";
+
+        var timeEl = document.getElementById('wa-msg-time');
+        if (timeEl) {
+            var agora = new Date();
+            timeEl.textContent = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        window.waToggleChat = function (forceState) {
+            var panel = document.getElementById('wa-chat-panel');
+            var isHidden = panel.classList.contains('hidden');
+            var shouldOpen = (typeof forceState === 'boolean') ? forceState : isHidden;
+
+            if (shouldOpen) {
+                panel.classList.remove('hidden');
+                panel.classList.add('flex');
+                document.getElementById('wa-input').focus();
+            } else {
+                panel.classList.add('hidden');
+                panel.classList.remove('flex');
+            }
+        };
+
+        window.waSendMessage = function () {
+            var input = document.getElementById('wa-input');
+            var texto = (input.value || '').trim();
+
+            if (texto === '') {
+                texto = WA_MENSAGEM_PADRAO;
+            }
+
+            var url = 'https://wa.me/' + WA_NUMERO + '?text=' + encodeURIComponent(texto);
+            window.open(url, '_blank');
+            input.value = '';
+        };
+    })();
+</script>
+
+</body>
+</html>
