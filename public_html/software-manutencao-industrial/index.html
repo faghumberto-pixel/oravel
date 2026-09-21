@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Software para Manutenção Industrial | Oravel</title>
+<meta name="description" content="Software para manutenção industrial: ordens de serviço, preventivas com checklist e fotos, e histórico de cada equipamento. Agende uma demonstração.">
+<link rel="canonical" href="https://oravel.com.br/software-manutencao-industrial/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="Oravel">
+<meta property="og:title" content="Software para Manutenção Industrial | Oravel">
+<meta property="og:description" content="Software para manutenção industrial: ordens de serviço, preventivas com checklist e fotos, e histórico de cada equipamento. Agende uma demonstração.">
+<meta property="og:url" content="https://oravel.com.br/software-manutencao-industrial/">
+<link rel="icon" type="image/svg+xml" href="/nova/assets/favicon.svg?v=6" />
+<link rel="icon" type="image/png" sizes="32x32" href="/nova/assets/favicon-32.png?v=6" />
+<link rel="icon" type="image/x-icon" href="/nova/assets/favicon.ico?v=6" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Software para Manutenção Industrial | Oravel", "description": "Software para manutenção industrial: ordens de serviço, preventivas com checklist e fotos, e histórico de cada equipamento. Agende uma demonstração.", "url": "https://oravel.com.br/software-manutencao-industrial/", "inLanguage": "pt-BR", "isPartOf": {"@type": "WebSite", "name": "Oravel", "url": "https://oravel.com.br/"}, "about": {"@type": "SoftwareApplication", "name": "Oravel", "applicationCategory": "BusinessApplication", "operatingSystem": "Web"}}</script>
+<style>
+:root {
+  --paper: #ffffff; --surface: #f6f7f9; --ink: #0f172a; --ink-soft: #5b6472;
+  --ink-faint: #8891a0; --border: #e4e7ec; --accent: #f97316; --accent-ink: #c2410c;
+  --accent-soft: #fff1e4; --navy: #0f172a; --navy-2: #1a2540;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: "Inter", "Segoe UI", system-ui, sans-serif; color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { font-family: "Manrope", "Inter", sans-serif; font-weight: 800; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+p, ul { margin: 0; }
+a { color: inherit; }
+img, svg { max-width: 100%; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.skip { position: absolute; left: -9999px; top: 0; background: var(--navy); color: #fff; padding: 10px 16px; z-index: 100; border-radius: 0 0 8px 0; }
+.skip:focus { left: 0; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+.eyebrow { font-family: "Manrope", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); }
+
+.inav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.94); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+.inav-wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.inav-logo { display: flex; align-items: center; gap: 9px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 19px; text-decoration: none; color: var(--ink); }
+.inav-logo-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--navy); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 15px; flex: none; }
+.inav-links { display: none; align-items: center; gap: 34px; }
+.inav-links a { text-decoration: none; color: var(--ink-soft); font-size: 14.5px; font-weight: 600; }
+.inav-links a:hover, .inav-links a[aria-current="page"] { color: var(--ink); }
+.inav-cta { background: var(--navy); color: #fff; padding: 10px 16px; border-radius: 7px; text-decoration: none; font-weight: 700; font-size: 13.5px; white-space: nowrap; }
+.inav-cta:hover { background: var(--navy-2); }
+
+.hero { padding: 48px 0 44px; background: linear-gradient(180deg, #eef1f5 0%, #ffffff 100%); }
+.hero h1 { font-size: clamp(28px, 6vw, 46px); line-height: 1.12; margin-top: 14px; max-width: 22ch; }
+.hero .sub { font-size: 17px; color: var(--ink-soft); line-height: 1.65; margin-top: 18px; max-width: 58ch; font-weight: 500; }
+.hero-actions { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 24px; border-radius: 8px; font-weight: 700; font-size: 15px; text-decoration: none; border: 1px solid transparent; cursor: pointer; font-family: inherit; min-height: 48px; }
+.btn-primary { background: var(--accent); color: var(--navy); }
+.btn-primary:hover { background: #ea580c; }
+.btn-ghost { border-color: var(--border); color: var(--ink); background: #fff; }
+.btn-ghost:hover { border-color: var(--ink-faint); }
+
+.section { padding: 56px 0; }
+.section-surface { background: var(--surface); }
+.section-head { max-width: 680px; margin: 0 0 34px; }
+.section-head h2 { font-size: clamp(24px, 4.4vw, 32px); line-height: 1.18; margin-top: 10px; }
+.section-head p { font-size: 16px; color: var(--ink-soft); line-height: 1.6; margin-top: 12px; }
+
+.pain-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+.pain { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
+.pain h3 { font-size: 17px; line-height: 1.3; }
+.pain .impact { font-size: 14.5px; color: var(--ink-soft); line-height: 1.6; margin-top: 10px; }
+.pain .tag { display: inline-block; font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 8px; }
+
+.solve { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: center; padding: 34px 0; border-top: 1px solid var(--border); }
+.solve:first-of-type { border-top: 0; padding-top: 0; }
+.solve h3 { font-size: clamp(21px, 3.6vw, 26px); line-height: 1.2; margin-top: 8px; }
+.solve p { font-size: 15.5px; color: var(--ink-soft); line-height: 1.65; margin-top: 12px; }
+.solve .result { color: var(--ink); font-weight: 600; }
+.solve ul { list-style: none; padding: 0; margin-top: 14px; display: grid; gap: 8px; }
+.solve li { font-size: 14.5px; color: var(--ink); padding-left: 22px; position: relative; line-height: 1.5; }
+.solve li::before { content: ""; position: absolute; left: 0; top: 7px; width: 10px; height: 10px; border-radius: 3px; background: var(--accent); }
+.mock { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 14px; }
+.mock svg { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--border); background: #fff; box-shadow: 0 24px 50px -30px rgba(15,23,42,0.3); }
+.mock figcaption { font-size: 12.5px; color: var(--ink-faint); margin-top: 10px; text-align: center; }
+.mock { margin: 0; }
+
+.mod-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.mod { background: #fff; padding: 22px 24px; display: flex; gap: 14px; }
+.mod .ic { width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); color: var(--accent-ink); display: flex; align-items: center; justify-content: center; flex: none; }
+.mod h3 { font-size: 15.5px; }
+.mod p { font-size: 13.5px; color: var(--ink-soft); margin-top: 6px; line-height: 1.5; }
+
+.who-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+.who { background: #fff; border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 10px; padding: 20px 22px; }
+.who h3 { font-size: 16px; }
+.who p { font-size: 14px; color: var(--ink-soft); margin-top: 6px; line-height: 1.55; }
+
+.cta-box { background: var(--navy); border-radius: 22px; padding: 32px 20px; color: #fff; display: grid; grid-template-columns: 1fr; gap: 30px; }
+.cta-box h2 { font-size: clamp(24px, 4.4vw, 32px); color: #fff; line-height: 1.18; }
+.cta-box .lead { color: rgba(255,255,255,0.78); font-size: 15.5px; line-height: 1.6; margin-top: 12px; }
+.cta-alt { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+.cta-alt .btn-ghost { background: transparent; border-color: rgba(255,255,255,0.35); color: #fff; }
+.cta-alt .btn-ghost:hover { border-color: #fff; }
+.form { background: #fff; border-radius: 16px; padding: 22px 18px; color: var(--ink); display: grid; gap: 14px; }
+.form label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.form input, .form select { width: 100%; font: inherit; font-size: 16px; padding: 12px 12px; border: 1px solid #c3c9d3; border-radius: 8px; background: #fff; color: var(--ink); min-height: 48px; }
+.form input[aria-invalid="true"], .form select[aria-invalid="true"] { border-color: #b91c1c; }
+.form .row { display: grid; grid-template-columns: 1fr; gap: 14px; }
+.form .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.form .fine { font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
+.form .btn { width: 100%; }
+.form-msg { border-radius: 8px; padding: 12px 14px; font-size: 14px; font-weight: 600; line-height: 1.45; }
+.form-msg[hidden] { display: none; }
+.form-msg.ok { background: #dcfce7; color: #14532d; }
+.form-msg.err { background: #fee2e2; color: #7f1d1d; }
+
+footer.ifoot { border-top: 1px solid var(--border); padding: 36px 0; }
+.ifoot-wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+.ifoot-links { display: flex; gap: 20px; flex-wrap: wrap; font-size: 13.5px; color: var(--ink-soft); }
+.ifoot-links a { text-decoration: none; }
+.ifoot-links a:hover { color: var(--ink); }
+.ifoot-copy { font-size: 13px; color: var(--ink-faint); }
+
+@media (min-width: 640px) {
+  .form .row { grid-template-columns: 1fr 1fr; }
+  .pain-grid { grid-template-columns: repeat(2, 1fr); }
+  .mod-grid { grid-template-columns: repeat(2, 1fr); }
+  .who-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 900px) {
+  .wrap, .inav-wrap, .ifoot-wrap { padding-left: 28px; padding-right: 28px; }
+  .inav-wrap { height: 72px; }
+  .inav-links { display: flex; }
+  .inav-cta { padding: 10px 20px; font-size: 14px; }
+  .hero { padding: 84px 0 72px; }
+  .section { padding: 76px 0; }
+  .pain-grid { grid-template-columns: repeat(4, 1fr); }
+  .solve { grid-template-columns: 1fr 1fr; gap: 56px; padding: 44px 0; }
+  .solve.rev .mock { order: -1; }
+  .mod-grid { grid-template-columns: repeat(3, 1fr); }
+  .who-grid { grid-template-columns: repeat(4, 1fr); }
+  .cta-box { grid-template-columns: 1fr 1fr; gap: 48px; padding: 52px; align-items: start; }
+  .form { padding: 28px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#conteudo">Ir para o conteúdo</a>
+
+<nav class="inav" aria-label="Principal">
+  <div class="inav-wrap">
+    <a href="/" class="inav-logo"><span class="inav-logo-mark" aria-hidden="true">O</span>Oravel</a>
+    <div class="inav-links">
+      <a href="/">Home</a>
+      <a href="/#produtos">Produtos</a>
+      <a href="/segmentos/" aria-current="page">Segmentos</a>
+      <a href="/#sobre">Sobre</a>
+      <a href="/contato.php">Contato</a>
+    </div>
+    <a href="#contato" class="inav-cta">Agende uma demonstração</a>
+  </div>
+</nav>
+
+<main id="conteudo">
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Manutenção Industrial</div>
+    <h1>Software para manutenção industrial: cada ordem de serviço sob controle.</h1>
+    <p class="sub">Da ordem de serviço à preventiva assinada pelo cliente, sua equipe registra tudo em um só lugar e você enxerga a operação sem depender de papel, planilha ou mensagem.</p>
+    <div class="hero-actions">
+      <a href="#contato" class="btn btn-primary">Agende uma demonstração</a>
+      <a href="#como-resolve" class="btn btn-ghost">Ver como funciona na prática</a>
+    </div>
+  </div>
+</header>
+
+<section class="section" aria-labelledby="dores-t">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Dores do segmento</div>
+      <h2 id="dores-t">O que atrapalha a operação de manutenção no dia a dia</h2>
+      <p>Quem cuida de manutenção industrial e comercial convive com os mesmos problemas, seja em equipe interna ou como prestador de serviço.</p>
+    </div>
+    <div class="pain-grid"><article class="pain"><span class="tag">Dor</span><h3>Ordens de serviço espalhadas em papel e mensagens</h3><p class="impact"><strong>Impacto:</strong> ninguém sabe ao certo o que está aberto, quem está executando e há quanto tempo.</p></article><article class="pain"><span class="tag">Dor</span><h3>Preventiva que vence sem ninguém perceber</h3><p class="impact"><strong>Impacto:</strong> o equipamento para no pior momento e o custo da parada supera o da revisão que foi esquecida.</p></article><article class="pain"><span class="tag">Dor</span><h3>Serviço feito sem comprovação</h3><p class="impact"><strong>Impacto:</strong> qualquer questionamento do cliente vira discussão, retrabalho e desgaste do contrato.</p></article><article class="pain"><span class="tag">Dor</span><h3>Histórico que se perde</h3><p class="impact"><strong>Impacto:</strong> sem saber quanto cada equipamento já custou, fica difícil decidir entre consertar mais uma vez ou substituir.</p></article></div>
+  </div>
+</section>
+
+<section class="section section-surface" id="como-resolve" aria-labelledby="solve-t">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Como a Oravel resolve</div>
+      <h2 id="solve-t">Uma operação de manutenção que se enxerga inteira</h2>
+      <p>A Oravel organiza o trabalho da equipe e deixa o gestor com a visão que faltava.</p>
+    </div>
+    <div class="solve"><div><div class="eyebrow">Ordens de serviço</div><h3>Todas as ordens em um único painel</h3><p>Cada ordem aparece com status, técnico responsável e o tempo de execução correndo, em uma só tela.</p><p class="result">Resultado: você acompanha a operação sem precisar ligar para ninguém.</p><ul><li>Abertas, em execução e concluídas à vista</li><li>Responsável definido em cada ordem</li><li>Tempo de serviço registrado pelo próprio técnico</li></ul></div><figure class="mock"><svg viewBox="0 0 480 300" role="img" aria-label="Painel de ordens de serviço com status, técnico responsável e cronômetro em execução"><title>Painel de ordens de serviço com status, técnico responsável e cronômetro em execução</title><rect width="480" height="300" rx="10" fill="#ffffff"/><rect width="480" height="30" rx="10" fill="#0f172a"/><rect y="15" width="480" height="15" fill="#0f172a"/><circle cx="16" cy="15" r="4" fill="#ef4444"/><circle cx="30" cy="15" r="4" fill="#f59e0b"/><circle cx="44" cy="15" r="4" fill="#22c55e"/><text x="240" y="19" font-family="Inter" font-size="9" fill="#8a94a8" text-anchor="middle">app.oravel.com.br/ordens-de-servico</text><text x="20" y="52" font-family="Manrope" font-size="11" fill="#0f172a" font-weight="800">Ordens de Serviço</text><rect x="20" y="60" width="52" height="16" rx="8" fill="#0f172a"/><text x="46" y="71" font-family="Inter" font-size="7.5" fill="#fff" font-weight="700" text-anchor="middle">Todas</text><rect x="78" y="60" width="52" height="16" rx="8" fill="#f6f7f9" stroke="#e4e7ec"/><text x="104" y="71" font-family="Inter" font-size="7.5" fill="#5b6472" font-weight="600" text-anchor="middle">Abertas</text><rect x="136" y="60" width="66" height="16" rx="8" fill="#f6f7f9" stroke="#e4e7ec"/><text x="169" y="71" font-family="Inter" font-size="7.5" fill="#5b6472" font-weight="600" text-anchor="middle">Em execução</text><rect x="208" y="60" width="62" height="16" rx="8" fill="#f6f7f9" stroke="#e4e7ec"/><text x="239" y="71" font-family="Inter" font-size="7.5" fill="#5b6472" font-weight="600" text-anchor="middle">Concluídas</text><rect x="20" y="86" width="440" height="18" rx="4" fill="#f6f7f9"/><text x="28" y="98" font-family="Inter" font-size="7" fill="#8891a0" font-weight="700">OS</text><text x="86" y="98" font-family="Inter" font-size="7" fill="#8891a0" font-weight="700">EQUIPAMENTO</text><text x="186" y="98" font-family="Inter" font-size="7" fill="#8891a0" font-weight="700">TÉCNICO</text><text x="268" y="98" font-family="Inter" font-size="7" fill="#8891a0" font-weight="700">STATUS</text><text x="384" y="98" font-family="Inter" font-size="7" fill="#8891a0" font-weight="700">TEMPO</text><rect x="20" y="108" width="440" height="30" rx="6" fill="#fff1e4" stroke="#f97316"/><text x="28" y="127" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">OS-0142</text><text x="86" y="127" font-family="Inter" font-size="8.5" fill="#0f172a">Equipamento 01</text><text x="186" y="127" font-family="Inter" font-size="8.5" fill="#0f172a">Técnico 1</text><rect x="266" y="116" width="76" height="15" rx="7.5" fill="#fff1e4"/><text x="304.0" y="126.5" font-family="Inter" font-size="7.5" fill="#b8560c" font-weight="700" text-anchor="middle">Em execução</text><circle cx="388" cy="123" r="3.5" fill="#f97316"/><text x="397" y="127" font-family="Manrope" font-size="9" fill="#b8560c" font-weight="800">00:42:18</text><line x1="20" y1="170" x2="460" y2="170" stroke="#e4e7ec"/><text x="28" y="159" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">OS-0141</text><text x="86" y="159" font-family="Inter" font-size="8.5" fill="#0f172a">Equipamento 04</text><text x="186" y="159" font-family="Inter" font-size="8.5" fill="#0f172a">Técnico 2</text><rect x="266" y="148" width="76" height="15" rx="7.5" fill="#dbeafe"/><text x="304.0" y="158.5" font-family="Inter" font-size="7.5" fill="#1e40af" font-weight="700" text-anchor="middle">Aberta</text><text x="384" y="159" font-family="Inter" font-size="8.5" fill="#5b6472">—</text><line x1="20" y1="202" x2="460" y2="202" stroke="#e4e7ec"/><text x="28" y="191" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">OS-0140</text><text x="86" y="191" font-family="Inter" font-size="8.5" fill="#0f172a">Equipamento 02</text><text x="186" y="191" font-family="Inter" font-size="8.5" fill="#0f172a">Técnico 3</text><rect x="266" y="180" width="76" height="15" rx="7.5" fill="#dcfce7"/><text x="304.0" y="190.5" font-family="Inter" font-size="7.5" fill="#15803d" font-weight="700" text-anchor="middle">Concluída</text><text x="384" y="191" font-family="Inter" font-size="8.5" fill="#5b6472">01:20:05</text><line x1="20" y1="234" x2="460" y2="234" stroke="#e4e7ec"/><text x="28" y="223" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">OS-0139</text><text x="86" y="223" font-family="Inter" font-size="8.5" fill="#0f172a">Equipamento 07</text><text x="186" y="223" font-family="Inter" font-size="8.5" fill="#0f172a">Técnico 1</text><rect x="266" y="212" width="76" height="15" rx="7.5" fill="#dcfce7"/><text x="304.0" y="222.5" font-family="Inter" font-size="7.5" fill="#15803d" font-weight="700" text-anchor="middle">Concluída</text><text x="384" y="223" font-family="Inter" font-size="8.5" fill="#5b6472">00:55:40</text><line x1="20" y1="266" x2="460" y2="266" stroke="#e4e7ec"/><text x="28" y="255" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">OS-0138</text><text x="86" y="255" font-family="Inter" font-size="8.5" fill="#0f172a">Equipamento 03</text><text x="186" y="255" font-family="Inter" font-size="8.5" fill="#0f172a">Técnico 2</text><rect x="266" y="244" width="76" height="15" rx="7.5" fill="#dbeafe"/><text x="304.0" y="254.5" font-family="Inter" font-size="7.5" fill="#1e40af" font-weight="700" text-anchor="middle">Aberta</text><text x="384" y="255" font-family="Inter" font-size="8.5" fill="#5b6472">—</text><text x="20" y="284" font-family="Inter" font-size="8" fill="#8891a0">5 ordens listadas · 1 em execução agora</text></svg><figcaption>Painel de ordens de serviço (dados fictícios)</figcaption></figure></div><div class="solve rev"><div><div class="eyebrow">Preventivas</div><h3>Preventiva com checklist, fotos e assinatura</h3><p>O técnico segue o checklist, registra fotos do antes e do depois e colhe a assinatura de quem executou e de quem recebeu o serviço.</p><p class="result">Resultado: o serviço fica comprovado e pronto para mostrar ao cliente quando for preciso.</p><ul><li>Itens do checklist marcados no próprio serviço</li><li>Fotos antes e depois anexadas à ordem</li><li>Assinatura digital do técnico e do cliente</li></ul></div><figure class="mock"><svg viewBox="0 0 480 300" role="img" aria-label="Checklist de manutenção preventiva com itens marcados, fotos antes e depois e assinaturas"><title>Checklist de manutenção preventiva com itens marcados, fotos antes e depois e assinaturas</title><rect width="480" height="300" rx="10" fill="#ffffff"/><rect width="480" height="30" rx="10" fill="#0f172a"/><rect y="15" width="480" height="15" fill="#0f172a"/><circle cx="16" cy="15" r="4" fill="#ef4444"/><circle cx="30" cy="15" r="4" fill="#f59e0b"/><circle cx="44" cy="15" r="4" fill="#22c55e"/><text x="240" y="19" font-family="Inter" font-size="9" fill="#8a94a8" text-anchor="middle">app.oravel.com.br/checklists/preventiva</text><text x="20" y="50" font-family="Manrope" font-size="11" fill="#0f172a" font-weight="800">Checklist de preventiva</text><text x="20" y="62" font-family="Inter" font-size="8" fill="#5b6472">Equipamento 01 · OS-0142 · Técnico 1</text><rect x="20" y="74" width="236" height="20" rx="5" fill="#fff"/><rect x="28" y="78" width="12" height="12" rx="3" fill="#f97316"/><path d="M30.5 84.5 l3 3 5-6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="46" y="88" font-family="Inter" font-size="8.5" fill="#0f172a">Inspeção visual geral</text><rect x="20" y="98" width="236" height="20" rx="5" fill="#fff"/><rect x="28" y="102" width="12" height="12" rx="3" fill="#f97316"/><path d="M30.5 108.5 l3 3 5-6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="46" y="112" font-family="Inter" font-size="8.5" fill="#0f172a">Lubrificação dos pontos</text><rect x="20" y="122" width="236" height="20" rx="5" fill="#fff"/><rect x="28" y="126" width="12" height="12" rx="3" fill="#f97316"/><path d="M30.5 132.5 l3 3 5-6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="46" y="136" font-family="Inter" font-size="8.5" fill="#0f172a">Aperto de fixações</text><rect x="20" y="146" width="236" height="20" rx="5" fill="#fff"/><rect x="28" y="150" width="12" height="12" rx="3" fill="#f97316"/><path d="M30.5 156.5 l3 3 5-6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="46" y="160" font-family="Inter" font-size="8.5" fill="#0f172a">Teste de funcionamento</text><rect x="20" y="170" width="236" height="20" rx="5" fill="#fff1e4"/><rect x="28" y="174" width="12" height="12" rx="3" fill="#fff" stroke="#c3c9d3"/><text x="46" y="184" font-family="Inter" font-size="8.5" fill="#b8560c" font-weight="600">Limpeza final</text><rect x="266" y="44" width="100" height="84" rx="8" fill="#eef1f5" stroke="#e4e7ec"/><path d="M274 120 l22-26 16 18 12-12 26 30z" fill="#cbd5e1"/><circle cx="344" cy="66" r="6" fill="#f97316"/><rect x="272" y="50" width="46" height="14" rx="7" fill="#0f172a"/><text x="295" y="60" font-family="Inter" font-size="7" fill="#fff" font-weight="700" text-anchor="middle">ANTES</text><rect x="366" y="44" width="100" height="84" rx="8" fill="#fff" stroke="#e4e7ec"/><rect x="366" y="44" width="100" height="84" rx="8" fill="none" stroke="#f97316" stroke-dasharray="4 3"/><text x="416" y="90" font-family="Inter" font-size="7.5" fill="#b8560c" font-weight="700" text-anchor="middle">+ Adicionar foto</text><rect x="372" y="50" width="46" height="14" rx="7" fill="#0f172a"/><text x="395" y="60" font-family="Inter" font-size="7" fill="#fff" font-weight="700" text-anchor="middle">DEPOIS</text><text x="266" y="142" font-family="Inter" font-size="7.5" fill="#8891a0" font-weight="600">Fotos do serviço</text><rect x="16" y="204" width="220" height="62" rx="8" fill="#fff" stroke="#e4e7ec"/><line x1="30" y1="250" x2="222" y2="250" stroke="#c3c9d3"/><path d="M42 242 c10-22 16-22 20-4 s10 14 18-6 s14 10 24-2 s14-6 22 4" stroke="#0f172a" stroke-width="1.6" fill="none" stroke-linecap="round"/><text x="30" y="261" font-family="Inter" font-size="7.5" fill="#5b6472" font-weight="600">Técnico 1</text><rect x="244" y="204" width="220" height="62" rx="8" fill="#fff" stroke="#e4e7ec"/><line x1="258" y1="250" x2="450" y2="250" stroke="#c3c9d3"/><text x="354" y="238" font-family="Inter" font-size="8" fill="#8891a0" font-weight="500" text-anchor="middle">Aguardando assinatura</text><text x="258" y="261" font-family="Inter" font-size="7.5" fill="#5b6472" font-weight="600">Cliente A</text><text x="16" y="288" font-family="Inter" font-size="7.5" fill="#8891a0">Assinatura digital do técnico e do cliente ao concluir</text></svg><figcaption>Checklist de preventiva (dados fictícios)</figcaption></figure></div><div class="solve"><div><div class="eyebrow">Equipamentos</div><h3>O dossiê completo de cada equipamento</h3><p>Toda manutenção feita fica na linha do tempo do equipamento, com o custo acumulado e a data da próxima preventiva.</p><p class="result">Resultado: decisões de reparar ou substituir com base no que o equipamento realmente custou.</p><ul><li>Histórico de preventivas e corretivas</li><li>Custo acumulado por equipamento</li><li>Próxima preventiva sempre visível</li></ul></div><figure class="mock"><svg viewBox="0 0 480 300" role="img" aria-label="Dossiê do equipamento com linha do tempo de manutenções, custo acumulado e próxima preventiva"><title>Dossiê do equipamento com linha do tempo de manutenções, custo acumulado e próxima preventiva</title><rect width="480" height="300" rx="10" fill="#ffffff"/><rect width="480" height="30" rx="10" fill="#0f172a"/><rect y="15" width="480" height="15" fill="#0f172a"/><circle cx="16" cy="15" r="4" fill="#ef4444"/><circle cx="30" cy="15" r="4" fill="#f59e0b"/><circle cx="44" cy="15" r="4" fill="#22c55e"/><text x="240" y="19" font-family="Inter" font-size="9" fill="#8a94a8" text-anchor="middle">app.oravel.com.br/equipamentos/dossie</text><text x="20" y="50" font-family="Manrope" font-size="11" fill="#0f172a" font-weight="800">Equipamento 01 — Dossiê</text><rect x="20" y="60" width="140" height="46" rx="8" fill="#f6f7f9" stroke="#e4e7ec"/><text x="30" y="77" font-family="Inter" font-size="8" fill="#5b6472" font-weight="600">Custo acumulado</text><text x="30" y="98" font-family="Manrope" font-size="15" fill="#0f172a" font-weight="800">R$ 18.450</text><rect x="170" y="60" width="140" height="46" rx="8" fill="#f6f7f9" stroke="#e4e7ec"/><text x="180" y="77" font-family="Inter" font-size="8" fill="#5b6472" font-weight="600">Manutenções</text><text x="180" y="98" font-family="Manrope" font-size="15" fill="#0f172a" font-weight="800">12</text><rect x="320" y="60" width="140" height="46" rx="8" fill="#fff1e4" stroke="#f97316"/><text x="330" y="77" font-family="Inter" font-size="8" fill="#5b6472" font-weight="600">Próxima preventiva</text><text x="330" y="98" font-family="Manrope" font-size="15" fill="#b8560c" font-weight="800">15/10</text><text x="20" y="128" font-family="Inter" font-size="9" fill="#5b6472" font-weight="700">Linha do tempo</text><line x1="30" y1="140" x2="30" y2="262" stroke="#e4e7ec" stroke-width="2"/><circle cx="30" cy="152" r="5" fill="#22c55e" stroke="#fff" stroke-width="2"/><rect x="46" y="142" width="414" height="26" rx="6" fill="#f6f7f9"/><text x="56" y="159" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">12/09</text><text x="100" y="159" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="600">Preventiva</text><text x="200" y="159" font-family="Inter" font-size="8.5" fill="#5b6472">Técnico 1</text><text x="452" y="159" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700" text-anchor="end">R$ 850</text><circle cx="30" cy="182" r="5" fill="#ef4444" stroke="#fff" stroke-width="2"/><rect x="46" y="172" width="414" height="26" rx="6" fill="#f6f7f9"/><text x="56" y="189" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">28/07</text><text x="100" y="189" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="600">Corretiva</text><text x="200" y="189" font-family="Inter" font-size="8.5" fill="#5b6472">Técnico 2</text><text x="452" y="189" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700" text-anchor="end">R$ 2.300</text><circle cx="30" cy="212" r="5" fill="#22c55e" stroke="#fff" stroke-width="2"/><rect x="46" y="202" width="414" height="26" rx="6" fill="#f6f7f9"/><text x="56" y="219" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">10/06</text><text x="100" y="219" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="600">Preventiva</text><text x="200" y="219" font-family="Inter" font-size="8.5" fill="#5b6472">Técnico 1</text><text x="452" y="219" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700" text-anchor="end">R$ 780</text><circle cx="30" cy="242" r="5" fill="#ef4444" stroke="#fff" stroke-width="2"/><rect x="46" y="232" width="414" height="26" rx="6" fill="#f6f7f9"/><text x="56" y="249" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">02/04</text><text x="100" y="249" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="600">Corretiva</text><text x="200" y="249" font-family="Inter" font-size="8.5" fill="#5b6472">Técnico 3</text><text x="452" y="249" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700" text-anchor="end">R$ 3.150</text></svg><figcaption>Dossiê do equipamento (dados fictícios)</figcaption></figure></div>
+    <p style="font-size:12.5px;color:var(--ink-faint);margin-top:8px">Telas ilustrativas, com dados fictícios e recortes do sistema.</p>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="mod-t">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Módulos que sustentam</div>
+      <h2 id="mod-t">Os módulos que sustentam essa operação</h2>
+    </div>
+    <div class="mod-grid"><div class="mod"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div><div><h3>Ordens de Serviço</h3><p>Abertura, atribuição e acompanhamento de cada serviço.</p></div></div><div class="mod"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></div><div><h3>Manutenção Preventiva</h3><p>Planos de revisão por equipamento, sempre em dia.</p></div></div><div class="mod"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12l3 3 5-6"/></svg></div><div><h3>Checklists</h3><p>Roteiros padronizados com fotos antes e depois.</p></div></div><div class="mod"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17h16M6 17V9l6-4 6 4v8"/><path d="M10 17v-4h4v4"/></svg></div><div><h3>Equipamentos</h3><p>Cadastro e dossiê completo de cada ativo.</p></div></div><div class="mod"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5h4"/></svg></div><div><h3>Apontamento de horas</h3><p>Tempo de serviço registrado em cada ordem.</p></div></div><div class="mod"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17c3-6 5-6 6-2s3 3 4-1 3-2 6 0"/><path d="M4 21h16"/></svg></div><div><h3>Assinatura Eletrônica</h3><p>Aceite do técnico e do cliente direto na ordem.</p></div></div></div>
+  </div>
+</section>
+
+<section class="section section-surface" aria-labelledby="who-t">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Para quem é</div>
+      <h2 id="who-t">Feito para quem vive de manter equipamentos funcionando</h2>
+    </div>
+    <div class="who-grid"><div class="who"><h3>Prestadoras de manutenção industrial e comercial</h3><p>Equipes que atendem vários clientes e precisam comprovar cada serviço.</p></div><div class="who"><h3>Manutenção interna de fábricas e plantas</h3><p>Times responsáveis por manter a própria produção rodando.</p></div><div class="who"><h3>Prestadores com técnicos em campo</h3><p>Operações com atendimento externo e várias ordens abertas ao mesmo tempo.</p></div><div class="who"><h3>Contratos de manutenção recorrente</h3><p>Empresas que executam rotinas preventivas periódicas para seus clientes.</p></div></div>
+  </div>
+</section>
+
+<section class="section" id="contato" aria-labelledby="cta-t">
+  <div class="wrap">
+    <div class="cta-box">
+      <div>
+        <h2 id="cta-t">Veja a Oravel na rotina da sua manutenção</h2>
+        <p class="lead">Conte um pouco da sua operação e agende uma demonstração. Retornamos em horário comercial.</p>
+        <div class="cta-alt">
+          <a class="btn btn-ghost" href="https://wa.me/5519999332615?text=Ol%C3%A1%21%20Vim%20pela%20p%C3%A1gina%20de%20Manuten%C3%A7%C3%A3o%20Industrial%20e%20quero%20agendar%20uma%20demonstra%C3%A7%C3%A3o%20da%20Oravel." target="_blank" rel="noopener">WhatsApp (19) 99933-2615</a>
+          <a class="btn btn-ghost" href="mailto:contato@oravel.com.br">contato@oravel.com.br</a>
+        </div>
+      </div>
+      <form class="form" id="lead-form" method="post" action="/lead-segmento.php" novalidate>
+        <div id="form-msg" class="form-msg" role="status" aria-live="polite" hidden></div>
+        <input type="hidden" name="origem" value="manutencao-industrial">
+        <div class="hp" aria-hidden="true"><label>Não preencha <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+        <div class="row">
+          <div><label for="f-nome">Nome *</label><input id="f-nome" name="name" type="text" autocomplete="name" required minlength="2" maxlength="120"></div>
+          <div><label for="f-empresa">Empresa *</label><input id="f-empresa" name="company" type="text" autocomplete="organization" required minlength="2" maxlength="120"></div>
+        </div>
+        <div class="row">
+          <div><label for="f-email">E-mail *</label><input id="f-email" name="email" type="email" autocomplete="email" required maxlength="160"></div>
+          <div><label for="f-tel">WhatsApp</label><input id="f-tel" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" placeholder="(19) 90000-0000"></div>
+        </div>
+        <div class="row">
+          <div><label for="f-seg">Segmento *</label><select id="f-seg" name="segmento" required><option value="locacao">Locação de Equipamentos</option><option value="manutencao-industrial" selected>Manutenção Industrial</option><option value="montagem-industrial">Montagem Industrial</option><option value="logistica-transportes">Logística e Transportes</option><option value="gestao-servicos">Gestão de Serviços</option><option value="distribuidor-atacadista">Distribuidor e Atacadista</option><option value="outro">Outro segmento</option></select></div>
+          <div><label for="f-porte">Nº de técnicos *</label><select id="f-porte" name="porte" required><option value="">Selecione</option><option>1 a 5</option><option>6 a 15</option><option>16 a 50</option><option>Mais de 50</option></select></div>
+        </div>
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAAEUrIcrw2tIq9KEj"></div>
+        <button type="submit" class="btn btn-primary">Agende uma demonstração</button>
+        <p class="fine">Ao enviar, você concorda em ser contatado pela Oravel sobre a demonstração. Não compartilhamos seus dados.</p>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="ifoot">
+  <div class="ifoot-wrap">
+    <div class="ifoot-copy">© 2026 Oravel Desenvolvimento de Software</div>
+    <div class="ifoot-links">
+      <a href="/">Home</a>
+      <a href="/#produtos">Produtos</a>
+      <a href="/segmentos/">Segmentos</a>
+      <a href="/contato.php">Contato</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+(function () {
+  var f = document.getElementById('lead-form'), box = document.getElementById('form-msg');
+  if (!f) return;
+  var msgs = {
+    captcha: 'Não conseguimos confirmar que você não é um robô. Tente novamente.',
+    dados: 'Confira os campos obrigatórios e tente novamente.',
+    envio: 'Não foi possível enviar agora. Fale com a gente pelo WhatsApp ou e-mail abaixo.'
+  };
+  function show(cls, text) { box.className = 'form-msg ' + cls; box.textContent = text; box.hidden = false; }
+  var q = new URLSearchParams(location.search);
+  if (q.get('enviado') === '1') show('ok', 'Recebemos seu contato. Nossa equipe retorna em breve para agendar a demonstração.');
+  else if (q.get('erro')) show('err', msgs[q.get('erro')] || msgs.envio);
+  if (q.has('enviado') || q.has('erro')) history.replaceState(null, '', location.pathname + '#contato');
+  f.addEventListener('submit', function (ev) {
+    var bad = false;
+    Array.prototype.forEach.call(f.querySelectorAll('[required]'), function (el) {
+      var ok = el.checkValidity() && el.value.trim() !== '';
+      el.setAttribute('aria-invalid', ok ? 'false' : 'true');
+      if (!ok) bad = true;
+    });
+    if (bad) { ev.preventDefault(); show('err', msgs.dados); var first = f.querySelector('[aria-invalid="true"]'); if (first) first.focus(); return; }
+    var b = f.querySelector('button[type=submit]'); b.disabled = true; b.textContent = 'Enviando...';
+  });
+})();
+</script>
+
+<!-- Tailwind via CDN, so' pra este widget -- preflight desligado de proposito
+     pra nao resetar margin/padding/font do resto do site. -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    corePlugins: { preflight: false },
+  };
+</script>
+
+<div id="wa-widget" class="fixed bottom-6 right-6 z-[9999]" style="font-family: 'Inter', sans-serif;">
+    <!-- Janela de chat -->
+    <div
+        id="wa-chat-panel"
+        class="hidden mb-4 w-80 max-w-[calc(100vw-3rem)] origin-bottom-right flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10 sm:w-96"
+    >
+        <!-- Cabecalho -->
+        <div class="flex items-center gap-3 bg-emerald-600 px-4 py-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg font-extrabold" style="background:#101010;">
+                <span style="color:#ffffff">O</span><span style="color:#E8541A">r</span>
+            </div>
+            <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-semibold text-white">Oravel</p>
+                <p class="flex items-center gap-1.5 text-xs text-emerald-100">
+                    <span class="relative flex h-2 w-2">
+                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75"></span>
+                        <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-300"></span>
+                    </span>
+                    Online agora
+                </p>
+            </div>
+            <button
+                type="button"
+                onclick="waToggleChat(false)"
+                aria-label="Fechar chat"
+                class="shrink-0 rounded-full p-1 text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Corpo (mensagem de boas vindas) -->
+        <div class="flex-1 space-y-2 bg-[#e5ddd5] px-3 py-4" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect width=%2260%22 height=%2260%22 fill=%22%23e5ddd5%22/%3E%3C/svg%3E');">
+            <div class="max-w-[85%] rounded-lg rounded-tl-none bg-white px-3 py-2 shadow-sm">
+                <p class="text-sm text-gray-800">Olá! Como podemos ajudar você hoje?</p>
+                <p class="mt-1 text-right text-[10px] text-gray-400" id="wa-msg-time"></p>
+            </div>
+        </div>
+
+        <!-- Campo de entrada -->
+        <div class="flex items-center gap-2 border-t border-gray-200 bg-white p-2">
+            <input
+                type="text"
+                id="wa-input"
+                placeholder="Digite sua mensagem..."
+                class="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-800 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                style="background-color:#ffffff; color:#1f2937; color-scheme: light;"
+                onkeydown="if (event.key === 'Enter') { event.preventDefault(); waSendMessage(); }"
+            >
+            <button
+                type="button"
+                onclick="waSendMessage()"
+                aria-label="Enviar mensagem"
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white transition hover:bg-emerald-700"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+                    <path d="M3.4 20.6l17.45-8.5a1 1 0 000-1.8L3.4 1.8a1 1 0 00-1.44 1.1L4.3 11 1.96 18.9a1 1 0 001.44 1.1z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Botao flutuante -->
+    <button
+        type="button"
+        id="wa-fab"
+        onclick="waToggleChat()"
+        aria-label="Abrir chat do WhatsApp"
+        class="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg transition duration-200 ease-out hover:scale-110 hover:bg-emerald-600 active:scale-95"
+    >
+        <span class="absolute inline-flex h-16 w-16 animate-ping rounded-full bg-emerald-500 opacity-40" style="animation-duration: 2.5s;"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" class="relative h-8 w-8">
+            <path d="M16.001 3C9.107 3 3.5 8.607 3.5 15.5c0 2.42.687 4.68 1.878 6.598L3.2 28.8l6.876-2.14A12.44 12.44 0 0016 28c6.894 0 12.5-5.607 12.5-12.5S22.894 3 16.001 3zm0 22.7a10.15 10.15 0 01-5.44-1.573l-.39-.232-4.08 1.27 1.293-3.976-.253-.407A10.14 10.14 0 015.8 15.5c0-5.632 4.57-10.2 10.2-10.2 5.63 0 10.2 4.568 10.2 10.2 0 5.632-4.57 10.2-10.199 10.2zm5.58-7.64c-.306-.153-1.81-.893-2.09-.995-.28-.102-.484-.153-.688.153-.204.306-.789.995-.967 1.199-.178.204-.356.23-.662.077-.306-.153-1.293-.477-2.463-1.522-.91-.812-1.524-1.816-1.703-2.123-.178-.306-.019-.472.134-.624.137-.137.306-.357.459-.535.153-.178.204-.306.306-.51.102-.204.051-.383-.026-.535-.077-.153-.688-1.658-.943-2.27-.248-.596-.5-.516-.688-.526l-.586-.011c-.204 0-.535.077-.815.383-.28.306-1.069 1.044-1.069 2.549 0 1.505 1.094 2.958 1.247 3.163.153.204 2.153 3.286 5.216 4.608.729.315 1.297.503 1.74.644.731.232 1.396.2 1.922.121.586-.087 1.81-.74 2.065-1.454.255-.714.255-1.326.178-1.454-.076-.128-.28-.204-.586-.357z"/>
+        </svg>
+    </button>
+</div>
+
+<script>
+    (function () {
+        var WA_NUMERO = "5519999332615";
+        var WA_MENSAGEM_PADRAO = "Olá! Vim pelo site da Oravel e gostaria de mais informações.";
+
+        var timeEl = document.getElementById('wa-msg-time');
+        if (timeEl) {
+            var agora = new Date();
+            timeEl.textContent = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        window.waToggleChat = function (forceState) {
+            var panel = document.getElementById('wa-chat-panel');
+            var isHidden = panel.classList.contains('hidden');
+            var shouldOpen = (typeof forceState === 'boolean') ? forceState : isHidden;
+
+            if (shouldOpen) {
+                panel.classList.remove('hidden');
+                panel.classList.add('flex');
+                document.getElementById('wa-input').focus();
+            } else {
+                panel.classList.add('hidden');
+                panel.classList.remove('flex');
+            }
+        };
+
+        window.waSendMessage = function () {
+            var input = document.getElementById('wa-input');
+            var texto = (input.value || '').trim();
+
+            if (texto === '') {
+                texto = WA_MENSAGEM_PADRAO;
+            }
+
+            var url = 'https://wa.me/' + WA_NUMERO + '?text=' + encodeURIComponent(texto);
+            window.open(url, '_blank');
+            input.value = '';
+        };
+    })();
+</script>
+
+</body>
+</html>
