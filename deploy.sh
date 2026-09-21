@@ -71,6 +71,9 @@ echo "💾 Criando backup: \$BACKUP_FILE"
 set -o pipefail
 sudo mkdir -p \$BACKUP_FILE
 sudo tar -C $PROD_PATH --exclude=./storage/app/public --exclude=./storage/media-library --exclude=./node_modules -cf - . | sudo tar -C \$BACKUP_FILE -xpf -
+# tar -p restaura a data ANTIGA do diretório de origem; a retenção abaixo ordena por data (ls -dt) e apagaria
+# justamente os backups novos. touch = data de criação real.
+sudo touch \$BACKUP_FILE
 
 # Retenção: mantém só os 5 backups mais recentes (cada um é uma cópia completa
 # de $PROD_PATH — sem limpeza, isso já encheu o disco da VM uma vez, 2026-07).
