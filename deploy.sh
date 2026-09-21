@@ -65,7 +65,12 @@ set -e
 # Faz backup (root e dono de $BACKUP_DIR)
 BACKUP_FILE="$BACKUP_DIR/oravel_backup_\$(date +%Y%m%d_%H%M%S)"
 echo "💾 Criando backup: \$BACKUP_FILE"
-sudo cp -r $PROD_PATH \$BACKUP_FILE
+# Backup SÓ do código/config: uploads dos clientes (fotos, anexos) ficam de fora. Com 'cp -r' do app
+# inteiro, cada foto passava a ocupar até 6x no disco (5 backups + original), o mesmo mecanismo do
+# incidente de 12/07. Os uploads têm snapshot diário do disco no GCP. tar porque a VM não tem rsync.
+set -o pipefail
+sudo mkdir -p \$BACKUP_FILE
+sudo tar -C $PROD_PATH --exclude=./storage/app/public --exclude=./storage/media-library --exclude=./node_modules -cf - . | sudo tar -C \$BACKUP_FILE -xpf -
 
 # Retenção: mantém só os 5 backups mais recentes (cada um é uma cópia completa
 # de $PROD_PATH — sem limpeza, isso já encheu o disco da VM uma vez, 2026-07).
@@ -93,6 +98,8 @@ find app -name "*.php" -exec php -l {} +
 
 echo "📦 Instalando dependências do Composer..."
 composer install --no-dev --optimize-autoloader --no-interaction
+echo "🔗 Garantindo o link public/storage (o link versionado apontava para o caminho do DEV)..."
+php artisan storage:link --force
 
 if compgen -G "database/migrations/*.php" > /dev/null; then
     echo "🗄️ Rodando migrations..."

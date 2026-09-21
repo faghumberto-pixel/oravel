@@ -59,3 +59,7 @@ database/migrations_backup_*/
 
 # Vite dev server file (should never be in production)
 /public/hot
+
+# Link criado por 'php artisan storage:link' em cada ambiente. Versionado apontava para o caminho do DEV
+# (/home/oravel/oravel/...) e quebrava as fotos na PROD.
+/public/storage

@@ -206,6 +206,9 @@ server {
     root /var/www/oravel/public;
     index index.php;
 
+    # Fotos de campo têm 4-8 MB; o padrão do nginx (1 MB) barra o upload com 413.
+    client_max_body_size 32M;
+
     location / {
         try_files $uri $uri/ /index.php?$query_string;
     }
@@ -226,6 +229,13 @@ server {
     error_log /var/log/nginx/oravel_error.log;
 }
 NGINX_EOF
+
+# Limites de upload do PHP-FPM (padrão do pacote: 2M/8M). Drop-in, sem tocar no php.ini do pacote.
+cat > /etc/php/8.4/fpm/conf.d/99-oravel-uploads.ini << 'PHPINI_EOF'
+; Oravel: fotos de campo têm 4-8 MB
+upload_max_filesize = 32M
+post_max_size = 40M
+PHPINI_EOF
 
 # Habilitar vhost
 ln -sf /etc/nginx/sites-available/oravel /etc/nginx/sites-enabled/oravel
