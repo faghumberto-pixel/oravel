@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Software para Gestão de Serviços | Oravel</title>
+<meta name="description" content="Software para gestão de serviços: portal do cliente, custo de cada serviço e dashboard geral da operação. Agende uma demonstração.">
+<link rel="canonical" href="https://oravel.com.br/software-gestao-de-servicos/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="Oravel">
+<meta property="og:title" content="Software para Gestão de Serviços | Oravel">
+<meta property="og:description" content="Software para gestão de serviços: portal do cliente, custo de cada serviço e dashboard geral da operação. Agende uma demonstração.">
+<meta property="og:url" content="https://oravel.com.br/software-gestao-de-servicos/">
+<link rel="icon" type="image/svg+xml" href="/nova/assets/favicon.svg?v=6" />
+<link rel="icon" type="image/png" sizes="32x32" href="/nova/assets/favicon-32.png?v=6" />
+<link rel="icon" type="image/x-icon" href="/nova/assets/favicon.ico?v=6" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Software para Gestão de Serviços | Oravel", "description": "Software para gestão de serviços: portal do cliente, custo de cada serviço e dashboard geral da operação. Agende uma demonstração.", "url": "https://oravel.com.br/software-gestao-de-servicos/", "inLanguage": "pt-BR", "isPartOf": {"@type": "WebSite", "name": "Oravel", "url": "https://oravel.com.br/"}, "about": {"@type": "SoftwareApplication", "name": "Oravel", "applicationCategory": "BusinessApplication", "operatingSystem": "Web"}}</script>
+<style>
+:root {
+  --paper: #ffffff; --surface: #f6f7f9; --ink: #0f172a; --ink-soft: #5b6472;
+  --ink-faint: #8891a0; --border: #e4e7ec; --accent: #f97316; --accent-ink: #c2410c;
+  --accent-soft: #fff1e4; --navy: #0f172a; --navy-2: #1a2540;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: "Inter", "Segoe UI", system-ui, sans-serif; color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { font-family: "Manrope", "Inter", sans-serif; font-weight: 800; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+p, ul { margin: 0; }
+a { color: inherit; }
+img, svg { max-width: 100%; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.skip { position: absolute; left: -9999px; top: 0; background: var(--navy); color: #fff; padding: 10px 16px; z-index: 100; border-radius: 0 0 8px 0; }
+.skip:focus { left: 0; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+.eyebrow { font-family: "Manrope", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); }
+
+.inav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.94); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+.inav-wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.inav-logo { display: flex; align-items: center; gap: 9px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 19px; text-decoration: none; color: var(--ink); }
+.inav-logo-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--navy); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 15px; flex: none; }
+.inav-links { display: none; align-items: center; gap: 34px; }
+.inav-links a { text-decoration: none; color: var(--ink-soft); font-size: 14.5px; font-weight: 600; }
+.inav-links a:hover, .inav-links a[aria-current="page"] { color: var(--ink); }
+.inav-cta { background: var(--navy); color: #fff; padding: 10px 16px; border-radius: 7px; text-decoration: none; font-weight: 700; font-size: 13.5px; white-space: nowrap; }
+.inav-cta:hover { background: var(--navy-2); }
+
+.hero { padding: 48px 0 44px; background: linear-gradient(180deg, #eef1f5 0%, #ffffff 100%); }
+.hero h1 { font-size: clamp(28px, 6vw, 46px); line-height: 1.12; margin-top: 14px; max-width: 22ch; }
+.hero .sub { font-size: 17px; color: var(--ink-soft); line-height: 1.65; margin-top: 18px; max-width: 58ch; font-weight: 500; }
+.hero-actions { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 24px; border-radius: 8px; font-weight: 700; font-size: 15px; text-decoration: none; border: 1px solid transparent; cursor: pointer; font-family: inherit; min-height: 48px; }
+.btn-primary { background: var(--accent); color: var(--navy); }
+.btn-primary:hover { background: #ea580c; }
+.btn-ghost { border-color: var(--border); color: var(--ink); background: #fff; }
+.btn-ghost:hover { border-color: var(--ink-faint); }
+
+.section { padding: 56px 0; }
+.section-surface { background: var(--surface); }
+.section-head { max-width: 680px; margin: 0 0 34px; }
+.section-head h2 { font-size: clamp(24px, 4.4vw, 32px); line-height: 1.18; margin-top: 10px; }
+.section-head p { font-size: 16px; color: var(--ink-soft); line-height: 1.6; margin-top: 12px; }
+
+.pain-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+.pain { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
+.pain h3 { font-size: 17px; line-height: 1.3; }
+.pain .impact { font-size: 14.5px; color: var(--ink-soft); line-height: 1.6; margin-top: 10px; }
+.pain .tag { display: inline-block; font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 8px; }
+
+.solve { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: center; padding: 34px 0; border-top: 1px solid var(--border); }
+.solve:first-of-type { border-top: 0; padding-top: 0; }
+.solve h3 { font-size: clamp(21px, 3.6vw, 26px); line-height: 1.2; margin-top: 8px; }
+.solve p { font-size: 15.5px; color: var(--ink-soft); line-height: 1.65; margin-top: 12px; }
+.solve .result { color: var(--ink); font-weight: 600; }
+.solve ul { list-style: none; padding: 0; margin-top: 14px; display: grid; gap: 8px; }
+.solve li { font-size: 14.5px; color: var(--ink); padding-left: 22px; position: relative; line-height: 1.5; }
+.solve li::before { content: ""; position: absolute; left: 0; top: 7px; width: 10px; height: 10px; border-radius: 3px; background: var(--accent); }
+.mock { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 14px; }
+.mock svg { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--border); background: #fff; box-shadow: 0 24px 50px -30px rgba(15,23,42,0.3); }
+.mock figcaption { font-size: 12.5px; color: var(--ink-faint); margin-top: 10px; text-align: center; }
+.mock { margin: 0; }
+
+.mod-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.mod { background: #fff; padding: 22px 24px; display: flex; gap: 14px; }
+.mod .ic { width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); color: var(--accent-ink); display: flex; align-items: center; justify-content: center; flex: none; }
+.mod h3 { font-size: 15.5px; }
+.mod p { font-size: 13.5px; color: var(--ink-soft); margin-top: 6px; line-height: 1.5; }
+
+.who-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+.who { background: #fff; border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 10px; padding: 20px 22px; }
+.who h3 { font-size: 16px; }
+.who p { font-size: 14px; color: var(--ink-soft); margin-top: 6px; line-height: 1.55; }
+
+.cta-box { background: var(--navy); border-radius: 22px; padding: 32px 20px; color: #fff; display: grid; grid-template-columns: 1fr; gap: 30px; }
+.cta-box h2 { font-size: clamp(24px, 4.4vw, 32px); color: #fff; line-height: 1.18; }
+.cta-box .lead { color: rgba(255,255,255,0.78); font-size: 15.5px; line-height: 1.6; margin-top: 12px; }
+.cta-alt { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+.cta-alt .btn-ghost { background: transparent; border-color: rgba(255,255,255,0.35); color: #fff; }
+.cta-alt .btn-ghost:hover { border-color: #fff; }
+.form { background: #fff; border-radius: 16px; padding: 22px 18px; color: var(--ink); display: grid; gap: 14px; }
+.form label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.form input, .form select { width: 100%; font: inherit; font-size: 16px; padding: 12px 12px; border: 1px solid #c3c9d3; border-radius: 8px; background: #fff; color: var(--ink); min-height: 48px; }
+.form input[aria-invalid="true"], .form select[aria-invalid="true"] { border-color: #b91c1c; }
+.form .row { display: grid; grid-template-columns: 1fr; gap: 14px; }
+.form .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.form .fine { font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
+.form .btn { width: 100%; }
+.form-msg { border-radius: 8px; padding: 12px 14px; font-size: 14px; font-weight: 600; line-height: 1.45; }
+.form-msg[hidden] { display: none; }
+.form-msg.ok { background: #dcfce7; color: #14532d; }
+.form-msg.err { background: #fee2e2; color: #7f1d1d; }
+
+footer.ifoot { border-top: 1px solid var(--border); padding: 36px 0; }
+.ifoot-wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+.ifoot-links { display: flex; gap: 20px; flex-wrap: wrap; font-size: 13.5px; color: var(--ink-soft); }
+.ifoot-links a { text-decoration: none; }
+.ifoot-links a:hover { color: var(--ink); }
+.ifoot-copy { font-size: 13px; color: var(--ink-faint); }
+
+@media (min-width: 640px) {
+  .form .row { grid-template-columns: 1fr 1fr; }
+  .pain-grid { grid-template-columns: repeat(2, 1fr); }
+  .mod-grid { grid-template-columns: repeat(2, 1fr); }
+  .who-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 900px) {
+  .wrap, .inav-wrap, .ifoot-wrap { padding-left: 28px; padding-right: 28px; }
+  .inav-wrap { height: 72px; }
+  .inav-links { display: flex; }
+  .inav-cta { padding: 10px 20px; font-size: 14px; }
+  .hero { padding: 84px 0 72px; }
+  .section { padding: 76px 0; }
+  .pain-grid { grid-template-columns: repeat(4, 1fr); }
+  .solve { grid-template-columns: 1fr 1fr; gap: 56px; padding: 44px 0; }
+  .solve.rev .mock { order: -1; }
+  .mod-grid { grid-template-columns: repeat(3, 1fr); }
+  .who-grid { grid-template-columns: repeat(4, 1fr); }
+  .cta-box { grid-template-columns: 1fr 1fr; gap: 48px; padding: 52px; align-items: start; }
+  .form { padding: 28px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#conteudo">Ir para o conteúdo</a>
+
+<nav class="inav" aria-label="Principal">
+  <div class="inav-wrap">
+    <a href="/" class="inav-logo"><span class="inav-logo-mark" aria-hidden="true">O</span>Oravel</a>
+    <div class="inav-links">
+      <a href="/">Home</a>
+      <a href="/#produtos">Produtos</a>
+      <a href="/segmentos/" aria-current="page">Segmentos</a>
+      <a href="/#sobre">Sobre</a>
+      <a href="/contato.php">Contato</a>
+    </div>
+    <a href="#contato" class="inav-cta">Agende uma demonstração</a>
+  </div>
+</nav>
+
+<main id="conteudo">
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Gestão de Serviços</div>
+    <h1>Software para gestão de serviços: cliente informado e custo de cada serviço à vista.</h1>
+    <p class="sub">Seu cliente acompanha serviços, contratos e cobranças sem precisar ligar, e você sabe quanto cada serviço custou e como a operação está, tudo na mesma tela.</p>
+    <div class="hero-actions">
+      <a href="#contato" class="btn btn-primary">Agende uma demonstração</a>
+      <a href="#como-resolve" class="btn btn-ghost">Ver como funciona na prática</a>
+    </div>
+  </div>
+</header>
+
+<section class="section" aria-labelledby="dores-t">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Dores do segmento</div>
+      <h2 id="dores-t">O que atrapalha quem vive de prestar serviços</h2>
+      <p>Entre o cliente que quer saber do andamento e o gestor que quer saber da margem, a informação costuma estar em lugares diferentes.</p>
+    </div>
+    <div class="pain-grid"><article class="pain"><span class="tag">Dor</span><h3>Cliente sem visibilidade do que está acontecendo</h3><p class="impact"><strong>Impacto:</strong> ele liga toda hora para saber do andamento, o atendimento se sobrecarrega e a confiança no serviço cai.</p></article><article class="pain"><span class="tag">Dor</span><h3>Custo do serviço descoberto só no fim</h3><p class="impact"><strong>Impacto:</strong> a margem é apurada depois de tudo pronto, e um serviço que dá prejuízo passa despercebido.</p></article><article class="pain"><span class="tag">Dor</span><h3>Serviços, contratos e cobranças em lugares diferentes</h3><p class="impact"><strong>Impacto:</strong> cada área trabalha com uma versão, gerando retrabalho e cobrança com divergência.</p></article><article class="pain"><span class="tag">Dor</span><h3>Gestor decidindo por percepção</h3><p class="impact"><strong>Impacto:</strong> sem um quadro geral da operação, os problemas aparecem tarde e a reação também.</p></article></div>
+  </div>
+</section>
+
+<section class="section section-surface" id="como-resolve" aria-labelledby="solve-t">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Como a Oravel resolve</div>
+      <h2 id="solve-t">Transparência para o cliente, controle para o gestor</h2>
+      <p>A Oravel conecta o serviço executado ao que o cliente vê e ao que o gestor precisa decidir.</p>
+    </div>
+    <div class="solve"><div><div class="eyebrow">Portal do cliente</div><h3>O cliente acompanha tudo sem ligar para você</h3><p>Cada cliente acessa o próprio portal e vê os serviços em andamento, os contratos e as cobranças.</p><p class="result">Resultado: menos ligações para o atendimento e mais confiança na sua operação.</p><ul><li>Serviços em andamento e concluídos</li><li>Contratos disponíveis para consulta</li><li>Cobranças e boletos no mesmo lugar</li></ul></div><figure class="mock"><svg viewBox="0 0 480 300" role="img" aria-label="Portal do cliente com serviços em andamento, contrato e cobrança"><title>Portal do cliente com serviços em andamento, contrato e cobrança</title><rect width="480" height="300" rx="10" fill="#ffffff"/><rect width="480" height="30" rx="10" fill="#0f172a"/><rect y="15" width="480" height="15" fill="#0f172a"/><circle cx="16" cy="15" r="4" fill="#ef4444"/><circle cx="30" cy="15" r="4" fill="#f59e0b"/><circle cx="44" cy="15" r="4" fill="#22c55e"/><text x="240" y="19" font-family="Inter" font-size="9" fill="#8a94a8" text-anchor="middle">app.oravel.com.br/cliente</text><text x="20" y="52" font-family="Manrope" font-size="11" fill="#0f172a" font-weight="800">Portal do Cliente</text><text x="460" y="52" font-family="Inter" font-size="8.5" fill="#5b6472" font-weight="700" text-anchor="end">Cliente A</text><rect x="20" y="60" width="62" height="17" rx="8.5" fill="#0f172a" /><text x="51.0" y="71.5" font-family="Inter" font-size="7.5" fill="#fff" font-weight="700" text-anchor="middle">Minhas OS</text><rect x="86" y="60" width="58" height="17" rx="8.5" fill="#f6f7f9" stroke="#e4e7ec"/><text x="115.0" y="71.5" font-family="Inter" font-size="7.5" fill="#5b6472" font-weight="600" text-anchor="middle">Contratos</text><rect x="150" y="60" width="62" height="17" rx="8.5" fill="#f6f7f9" stroke="#e4e7ec"/><text x="181.0" y="71.5" font-family="Inter" font-size="7.5" fill="#5b6472" font-weight="600" text-anchor="middle">Financeiro</text><text x="20" y="98" font-family="Inter" font-size="9" fill="#5b6472" font-weight="700">Serviços em andamento</text><rect x="20" y="106" width="252" height="52" rx="8" fill="#fffaf5" stroke="#f97316"/><text x="30" y="126" font-family="Manrope" font-size="9.5" fill="#0f172a" font-weight="800">OS-0301</text><text x="30" y="140" font-family="Inter" font-size="8" fill="#5b6472">Equipamento 01</text><text x="30" y="151" font-family="Inter" font-size="7.5" fill="#8891a0">Preventiva</text><rect x="186" y="115" width="76" height="15" rx="7.5" fill="#fff1e4"/><text x="224.0" y="125.5" font-family="Inter" font-size="7.5" fill="#b8560c" font-weight="700" text-anchor="middle">Em execução</text><rect x="20" y="164" width="252" height="52" rx="8" fill="#fff" stroke="#e4e7ec"/><text x="30" y="184" font-family="Manrope" font-size="9.5" fill="#0f172a" font-weight="800">OS-0298</text><text x="30" y="198" font-family="Inter" font-size="8" fill="#5b6472">Equipamento 04</text><text x="30" y="209" font-family="Inter" font-size="7.5" fill="#8891a0">Corretiva</text><rect x="186" y="173" width="76" height="15" rx="7.5" fill="#dbeafe"/><text x="224.0" y="183.5" font-family="Inter" font-size="7.5" fill="#1e40af" font-weight="700" text-anchor="middle">Aberta</text><rect x="20" y="222" width="252" height="52" rx="8" fill="#fff" stroke="#e4e7ec"/><text x="30" y="242" font-family="Manrope" font-size="9.5" fill="#0f172a" font-weight="800">OS-0290</text><text x="30" y="256" font-family="Inter" font-size="8" fill="#5b6472">Equipamento 02</text><text x="30" y="267" font-family="Inter" font-size="7.5" fill="#8891a0">Preventiva</text><rect x="186" y="231" width="76" height="15" rx="7.5" fill="#dcfce7"/><text x="224.0" y="241.5" font-family="Inter" font-size="7.5" fill="#15803d" font-weight="700" text-anchor="middle">Concluída</text><rect x="284" y="90" width="176" height="70" rx="8" fill="#f6f7f9" stroke="#e4e7ec"/><text x="294" y="108" font-family="Manrope" font-size="9.5" fill="#0f172a" font-weight="800">Contrato 0012</text><rect x="294" y="116" width="50" height="15" rx="7.5" fill="#dcfce7"/><text x="319.0" y="126.5" font-family="Inter" font-size="7.5" fill="#15803d" font-weight="700" text-anchor="middle">Vigente</text><text x="294" y="146" font-family="Inter" font-size="8" fill="#5b6472">Válido até 30/11</text><text x="444" y="108" font-family="Inter" font-size="8" fill="#b8560c" font-weight="800" text-anchor="end">PDF</text><rect x="284" y="168" width="176" height="112" rx="8" fill="#fff" stroke="#e4e7ec"/><text x="294" y="186" font-family="Manrope" font-size="9.5" fill="#0f172a" font-weight="800">Financeiro</text><text x="294" y="204" font-family="Inter" font-size="8" fill="#5b6472">Boleto · vence 10/10</text><text x="294" y="219" font-family="Manrope" font-size="12" fill="#0f172a" font-weight="800">R$ 4.200,00</text><rect x="294" y="227" width="56" height="15" rx="7.5" fill="#fef3c7"/><text x="322.0" y="237.5" font-family="Inter" font-size="7.5" fill="#92400e" font-weight="700" text-anchor="middle">A vencer</text><rect x="360" y="227" width="90" height="15" rx="7.5" fill="#f97316"/><text x="405" y="237.5" font-family="Inter" font-size="7.5" fill="#0f172a" font-weight="800" text-anchor="middle">Ver boleto</text><line x1="294" y1="250" x2="450" y2="250" stroke="#e4e7ec"/><text x="294" y="267" font-family="Inter" font-size="8" fill="#5b6472">Boleto · 10/09</text><rect x="388" y="256" width="62" height="15" rx="7.5" fill="#dcfce7"/><text x="419.0" y="266.5" font-family="Inter" font-size="7.5" fill="#15803d" font-weight="700" text-anchor="middle">Pago</text></svg><figcaption>Portal do cliente (dados fictícios)</figcaption></figure></div><div class="solve rev"><div><div class="eyebrow">Custo por serviço</div><h3>Quanto cada serviço realmente custou</h3><p>Mão de obra, peças e logística são lançadas na própria ordem de serviço, com o total à vista.</p><p class="result">Resultado: você conhece o custo de cada serviço e passa a precificar com mais segurança.</p><ul><li>Mão de obra, peças e logística por ordem</li><li>Total do serviço sempre atualizado</li><li>Composição do custo em uma olhada</li></ul></div><figure class="mock"><svg viewBox="0 0 480 300" role="img" aria-label="Ordem de serviço com custos lançados de mão de obra, peças e logística e o total"><title>Ordem de serviço com custos lançados de mão de obra, peças e logística e o total</title><rect width="480" height="300" rx="10" fill="#ffffff"/><rect width="480" height="30" rx="10" fill="#0f172a"/><rect y="15" width="480" height="15" fill="#0f172a"/><circle cx="16" cy="15" r="4" fill="#ef4444"/><circle cx="30" cy="15" r="4" fill="#f59e0b"/><circle cx="44" cy="15" r="4" fill="#22c55e"/><text x="240" y="19" font-family="Inter" font-size="9" fill="#8a94a8" text-anchor="middle">app.oravel.com.br/ordens-de-servico/custos</text><text x="20" y="50" font-family="Manrope" font-size="11" fill="#0f172a" font-weight="800">OS-0301 — Custo do serviço</text><text x="20" y="62" font-family="Inter" font-size="8" fill="#5b6472">Equipamento 01 · Cliente A</text><rect x="20" y="72" width="270" height="18" rx="4" fill="#f6f7f9"/><text x="28" y="84" font-family="Inter" font-size="7" fill="#8891a0" font-weight="700">ITEM</text><text x="282" y="84" font-family="Inter" font-size="7" fill="#8891a0" font-weight="700" text-anchor="end">VALOR</text><rect x="20" y="94" width="4" height="26" rx="2" fill="#f97316"/><text x="32" y="105" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">Mão de obra</text><text x="32" y="116" font-family="Inter" font-size="7.5" fill="#5b6472">Técnico 1 · 6h</text><text x="282" y="110" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="600" text-anchor="end">R$ 720,00</text><line x1="20" y1="123" x2="290" y2="123" stroke="#eef1f5"/><rect x="20" y="126" width="4" height="26" rx="2" fill="#f97316"/><text x="32" y="137" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">Mão de obra</text><text x="32" y="148" font-family="Inter" font-size="7.5" fill="#5b6472">Técnico 2 · 4h</text><text x="282" y="142" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="600" text-anchor="end">R$ 480,00</text><line x1="20" y1="155" x2="290" y2="155" stroke="#eef1f5"/><rect x="20" y="158" width="4" height="26" rx="2" fill="#0f172a"/><text x="32" y="169" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">Peça</text><text x="32" y="180" font-family="Inter" font-size="7.5" fill="#5b6472">Peça A × 2</text><text x="282" y="174" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="600" text-anchor="end">R$ 340,00</text><line x1="20" y1="187" x2="290" y2="187" stroke="#eef1f5"/><rect x="20" y="190" width="4" height="26" rx="2" fill="#0f172a"/><text x="32" y="201" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">Peça</text><text x="32" y="212" font-family="Inter" font-size="7.5" fill="#5b6472">Peça B × 1</text><text x="282" y="206" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="600" text-anchor="end">R$ 185,00</text><line x1="20" y1="219" x2="290" y2="219" stroke="#eef1f5"/><rect x="20" y="222" width="4" height="26" rx="2" fill="#94a3b8"/><text x="32" y="233" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="700">Logística</text><text x="32" y="244" font-family="Inter" font-size="7.5" fill="#5b6472">Deslocamento</text><text x="282" y="238" font-family="Inter" font-size="8.5" fill="#0f172a" font-weight="600" text-anchor="end">R$ 120,00</text><line x1="20" y1="251" x2="290" y2="251" stroke="#eef1f5"/><rect x="20" y="256" width="270" height="28" rx="8" fill="#fff1e4" stroke="#f97316"/><text x="30" y="274" font-family="Inter" font-size="9" fill="#b8560c" font-weight="800">Total do serviço</text><text x="282" y="274" font-family="Manrope" font-size="11" fill="#0f172a" font-weight="800" text-anchor="end">R$ 1.845,00</text><rect x="304" y="72" width="156" height="212" rx="8" fill="#f6f7f9" stroke="#e4e7ec"/><text x="314" y="90" font-family="Inter" font-size="8.5" fill="#5b6472" font-weight="700">Composição do custo</text><text x="314" y="114" font-family="Inter" font-size="8" fill="#0f172a" font-weight="600">Mão de obra</text><text x="450" y="114" font-family="Inter" font-size="8" fill="#0f172a" font-weight="800" text-anchor="end">65%</text><rect x="314" y="120" width="136" height="8" rx="4" fill="#e4e7ec"/><rect x="314" y="120" width="88.4" height="8" rx="4" fill="#f97316"/><text x="314" y="152" font-family="Inter" font-size="8" fill="#0f172a" font-weight="600">Peças</text><text x="450" y="152" font-family="Inter" font-size="8" fill="#0f172a" font-weight="800" text-anchor="end">28%</text><rect x="314" y="158" width="136" height="8" rx="4" fill="#e4e7ec"/><rect x="314" y="158" width="38.08" height="8" rx="4" fill="#0f172a"/><text x="314" y="190" font-family="Inter" font-size="8" fill="#0f172a" font-weight="600">Logística</text><text x="450" y="190" font-family="Inter" font-size="8" fill="#0f172a" font-weight="800" text-anchor="end">7%</text><rect x="314" y="196" width="136" height="8" rx="4" fill="#e4e7ec"/><rect x="314" y="196" width="9.52" height="8" rx="4" fill="#94a3b8"/><line x1="314" y1="226" x2="450" y2="226" stroke="#e4e7ec"/><text x="314" y="244" font-family="Inter" font-size="7.5" fill="#5b6472">Mão de obra</text><text x="450" y="244" font-family="Inter" font-size="8" fill="#0f172a" font-weight="700" text-anchor="end">R$ 1.200,00</text><text x="314" y="258" font-family="Inter" font-size="7.5" fill="#5b6472">Peças</text><text x="450" y="258" font-family="Inter" font-size="8" fill="#0f172a" font-weight="700" text-anchor="end">R$ 525,00</text><text x="314" y="272" font-family="Inter" font-size="7.5" fill="#5b6472">Logística</text><text x="450" y="272" font-family="Inter" font-size="8" fill="#0f172a" font-weight="700" text-anchor="end">R$ 120,00</text></svg><figcaption>Custo por serviço (dados fictícios)</figcaption></figure></div><div class="solve"><div><div class="eyebrow">Dashboard geral</div><h3>A operação inteira em uma tela</h3><p>Indicadores de ordens abertas, em execução e concluídas, contratos vigentes e a evolução do trabalho semana a semana.</p><p class="result">Resultado: decisões tomadas com o quadro completo, sem depender de planilhas.</p><ul><li>Indicadores principais em cartões</li><li>Evolução das ordens em gráfico</li><li>Visão única para o gestor</li></ul></div><figure class="mock"><svg viewBox="0 0 480 300" role="img" aria-label="Dashboard geral com cartões de indicadores e gráfico de ordens de serviço concluídas por semana"><title>Dashboard geral com cartões de indicadores e gráfico de ordens de serviço concluídas por semana</title><rect width="480" height="300" rx="10" fill="#ffffff"/><rect width="480" height="30" rx="10" fill="#0f172a"/><rect y="15" width="480" height="15" fill="#0f172a"/><circle cx="16" cy="15" r="4" fill="#ef4444"/><circle cx="30" cy="15" r="4" fill="#f59e0b"/><circle cx="44" cy="15" r="4" fill="#22c55e"/><text x="240" y="19" font-family="Inter" font-size="9" fill="#8a94a8" text-anchor="middle">app.oravel.com.br/painel</text><text x="20" y="50" font-family="Manrope" font-size="11" fill="#0f172a" font-weight="800">Painel de Controle</text><rect x="20" y="60" width="104" height="50" rx="8" fill="#f6f7f9" stroke="#e4e7ec"/><text x="30" y="76" font-family="Inter" font-size="7.5" fill="#5b6472" font-weight="600">OS abertas</text><text x="30" y="99" font-family="Manrope" font-size="17" fill="#0f172a" font-weight="800">18</text><rect x="132" y="60" width="104" height="50" rx="8" fill="#fff1e4" stroke="#f97316"/><text x="142" y="76" font-family="Inter" font-size="7.5" fill="#5b6472" font-weight="600">Em execução</text><text x="142" y="99" font-family="Manrope" font-size="17" fill="#b8560c" font-weight="800">7</text><rect x="244" y="60" width="104" height="50" rx="8" fill="#f0fdf4" stroke="#86efac"/><text x="254" y="76" font-family="Inter" font-size="7.5" fill="#5b6472" font-weight="600">Concluídas na semana</text><text x="254" y="99" font-family="Manrope" font-size="17" fill="#15803d" font-weight="800">38</text><rect x="356" y="60" width="104" height="50" rx="8" fill="#f6f7f9" stroke="#e4e7ec"/><text x="366" y="76" font-family="Inter" font-size="7.5" fill="#5b6472" font-weight="600">Contratos vigentes</text><text x="366" y="99" font-family="Manrope" font-size="17" fill="#0f172a" font-weight="800">12</text><rect x="20" y="122" width="440" height="162" rx="8" fill="#fff" stroke="#e4e7ec"/><text x="32" y="140" font-family="Manrope" font-size="9" fill="#0f172a" font-weight="800">OS concluídas por semana</text><line x1="60" y1="156" x2="448" y2="156" stroke="#eef1f5"/><text x="52" y="159" font-family="Inter" font-size="7" fill="#8891a0" text-anchor="end">40</text><line x1="60" y1="182" x2="448" y2="182" stroke="#eef1f5"/><text x="52" y="185" font-family="Inter" font-size="7" fill="#8891a0" text-anchor="end">30</text><line x1="60" y1="208" x2="448" y2="208" stroke="#eef1f5"/><text x="52" y="211" font-family="Inter" font-size="7" fill="#8891a0" text-anchor="end">20</text><line x1="60" y1="234" x2="448" y2="234" stroke="#eef1f5"/><text x="52" y="237" font-family="Inter" font-size="7" fill="#8891a0" text-anchor="end">10</text><line x1="60" y1="260" x2="448" y2="260" stroke="#c3c9d3"/><rect x="76" y="202.8" width="36" height="57.2" rx="4" fill="#fdba74"/><text x="94" y="198.8" font-family="Inter" font-size="7.5" fill="#0f172a" font-weight="700" text-anchor="middle">22</text><text x="94" y="273" font-family="Inter" font-size="7.5" fill="#8891a0" text-anchor="middle">S1</text><rect x="138" y="187.2" width="36" height="72.8" rx="4" fill="#fdba74"/><text x="156" y="183.2" font-family="Inter" font-size="7.5" fill="#0f172a" font-weight="700" text-anchor="middle">28</text><text x="156" y="273" font-family="Inter" font-size="7.5" fill="#8891a0" text-anchor="middle">S2</text><rect x="200" y="195.0" width="36" height="65.0" rx="4" fill="#fdba74"/><text x="218" y="191.0" font-family="Inter" font-size="7.5" fill="#0f172a" font-weight="700" text-anchor="middle">25</text><text x="218" y="273" font-family="Inter" font-size="7.5" fill="#8891a0" text-anchor="middle">S3</text><rect x="262" y="171.60000000000002" width="36" height="88.39999999999999" rx="4" fill="#fdba74"/><text x="280" y="167.60000000000002" font-family="Inter" font-size="7.5" fill="#0f172a" font-weight="700" text-anchor="middle">34</text><text x="280" y="273" font-family="Inter" font-size="7.5" fill="#8891a0" text-anchor="middle">S4</text><rect x="324" y="179.39999999999998" width="36" height="80.60000000000001" rx="4" fill="#fdba74"/><text x="342" y="175.39999999999998" font-family="Inter" font-size="7.5" fill="#0f172a" font-weight="700" text-anchor="middle">31</text><text x="342" y="273" font-family="Inter" font-size="7.5" fill="#8891a0" text-anchor="middle">S5</text><rect x="386" y="161.2" width="36" height="98.8" rx="4" fill="#f97316"/><text x="404" y="157.2" font-family="Inter" font-size="7.5" fill="#0f172a" font-weight="700" text-anchor="middle">38</text><text x="404" y="273" font-family="Inter" font-size="7.5" fill="#8891a0" text-anchor="middle">S6</text></svg><figcaption>Dashboard geral (dados fictícios)</figcaption></figure></div>
+    <p style="font-size:12.5px;color:var(--ink-faint);margin-top:8px">Telas ilustrativas, com dados fictícios e recortes do sistema.</p>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="mod-t">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Módulos que sustentam</div>
+      <h2 id="mod-t">Os módulos que sustentam essa operação</h2>
+    </div>
+    <div class="mod-grid"><div class="mod"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><div><h3>Portal do Cliente</h3><p>Serviços, contratos e cobranças para cada cliente.</p></div></div><div class="mod"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div><div><h3>Ordens de Serviço</h3><p>Cada serviço com responsável, status e histórico.</p></div></div><div class="mod"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l3 3v15H6z"/><path d="M9 11h6M9 15h6"/></svg></div><div><h3>Contratos</h3><p>Contratos organizados e disponíveis para consulta.</p></div></div><div class="mod"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M14.5 9.5c-.5-1-1.5-1.5-2.5-1.5-1.5 0-2.5.8-2.5 2 0 3 5 1.5 5 4 0 1.2-1 2-2.5 2-1.2 0-2.2-.6-2.7-1.6M12 6.5V8m0 8v1.5"/></svg></div><div><h3>Contas a Receber</h3><p>Cobranças e boletos ligados a cada cliente.</p></div></div><div class="mod"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg></div><div><h3>Custos da Ordem de Serviço</h3><p>Mão de obra, peças e logística por serviço.</p></div></div><div class="mod"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V4M4 20h16"/><path d="M8 16v-4M12 16V8M16 16v-6"/></svg></div><div><h3>Painel de Controle</h3><p>Indicadores e gráficos da operação.</p></div></div></div>
+  </div>
+</section>
+
+<section class="section section-surface" aria-labelledby="who-t">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Para quem é</div>
+      <h2 id="who-t">Feito para quem presta serviços e precisa mostrar e medir o que entrega</h2>
+    </div>
+    <div class="who-grid"><div class="who"><h3>Prestadoras de serviços técnicos</h3><p>Empresas com vários serviços em andamento para clientes diferentes.</p></div><div class="who"><h3>Operações com contratos recorrentes</h3><p>Quem atende o mesmo cliente por meses e precisa manter tudo organizado.</p></div><div class="who"><h3>Empresas que querem dar transparência ao cliente</h3><p>Negócios em que o cliente cobra informação o tempo todo.</p></div><div class="who"><h3>Gestores que precisam saber o custo de cada serviço</h3><p>Quem quer decidir preço e prioridade com base em dados reais.</p></div></div>
+  </div>
+</section>
+
+<section class="section" id="contato" aria-labelledby="cta-t">
+  <div class="wrap">
+    <div class="cta-box">
+      <div>
+        <h2 id="cta-t">Veja a Oravel na gestão dos seus serviços</h2>
+        <p class="lead">Conte um pouco da sua operação e agende uma demonstração. Retornamos em horário comercial.</p>
+        <div class="cta-alt">
+          <a class="btn btn-ghost" href="https://wa.me/5519999332615?text=Ol%C3%A1%21%20Vim%20pela%20p%C3%A1gina%20de%20Gest%C3%A3o%20de%20Servi%C3%A7os%20e%20quero%20agendar%20uma%20demonstra%C3%A7%C3%A3o%20da%20Oravel." target="_blank" rel="noopener">WhatsApp (19) 99933-2615</a>
+          <a class="btn btn-ghost" href="mailto:contato@oravel.com.br">contato@oravel.com.br</a>
+        </div>
+      </div>
+      <form class="form" id="lead-form" method="post" action="/lead-segmento.php" novalidate>
+        <div id="form-msg" class="form-msg" role="status" aria-live="polite" hidden></div>
+        <input type="hidden" name="origem" value="gestao-servicos">
+        <div class="hp" aria-hidden="true"><label>Não preencha <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+        <div class="row">
+          <div><label for="f-nome">Nome *</label><input id="f-nome" name="name" type="text" autocomplete="name" required minlength="2" maxlength="120"></div>
+          <div><label for="f-empresa">Empresa *</label><input id="f-empresa" name="company" type="text" autocomplete="organization" required minlength="2" maxlength="120"></div>
+        </div>
+        <div class="row">
+          <div><label for="f-email">E-mail *</label><input id="f-email" name="email" type="email" autocomplete="email" required maxlength="160"></div>
+          <div><label for="f-tel">WhatsApp</label><input id="f-tel" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" placeholder="(19) 90000-0000"></div>
+        </div>
+        <div class="row">
+          <div><label for="f-seg">Segmento *</label><select id="f-seg" name="segmento" required><option value="locacao">Locação de Equipamentos</option><option value="manutencao-industrial">Manutenção Industrial</option><option value="montagem-industrial">Montagem Industrial</option><option value="logistica-transportes">Logística e Transportes</option><option value="gestao-servicos" selected>Gestão de Serviços</option><option value="distribuidor-atacadista">Distribuidor e Atacadista</option><option value="outro">Outro segmento</option></select></div>
+          <div><label for="f-porte">Nº de técnicos *</label><select id="f-porte" name="porte" required><option value="">Selecione</option><option>1 a 5</option><option>6 a 15</option><option>16 a 50</option><option>Mais de 50</option></select></div>
+        </div>
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAAEUrIcrw2tIq9KEj"></div>
+        <button type="submit" class="btn btn-primary">Agende uma demonstração</button>
+        <p class="fine">Ao enviar, você concorda em ser contatado pela Oravel sobre a demonstração. Não compartilhamos seus dados.</p>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="ifoot">
+  <div class="ifoot-wrap">
+    <div class="ifoot-copy">© 2026 Oravel Desenvolvimento de Software</div>
+    <div class="ifoot-links">
+      <a href="/">Home</a>
+      <a href="/#produtos">Produtos</a>
+      <a href="/segmentos/">Segmentos</a>
+      <a href="/contato.php">Contato</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+(function () {
+  var f = document.getElementById('lead-form'), box = document.getElementById('form-msg');
+  if (!f) return;
+  var msgs = {
+    captcha: 'Não conseguimos confirmar que você não é um robô. Tente novamente.',
+    dados: 'Confira os campos obrigatórios e tente novamente.',
+    envio: 'Não foi possível enviar agora. Fale com a gente pelo WhatsApp ou e-mail abaixo.'
+  };
+  function show(cls, text) { box.className = 'form-msg ' + cls; box.textContent = text; box.hidden = false; }
+  var q = new URLSearchParams(location.search);
+  if (q.get('enviado') === '1') show('ok', 'Recebemos seu contato. Nossa equipe retorna em breve para agendar a demonstração.');
+  else if (q.get('erro')) show('err', msgs[q.get('erro')] || msgs.envio);
+  if (q.has('enviado') || q.has('erro')) history.replaceState(null, '', location.pathname + '#contato');
+  f.addEventListener('submit', function (ev) {
+    var bad = false;
+    Array.prototype.forEach.call(f.querySelectorAll('[required]'), function (el) {
+      var ok = el.checkValidity() && el.value.trim() !== '';
+      el.setAttribute('aria-invalid', ok ? 'false' : 'true');
+      if (!ok) bad = true;
+    });
+    if (bad) { ev.preventDefault(); show('err', msgs.dados); var first = f.querySelector('[aria-invalid="true"]'); if (first) first.focus(); return; }
+    var b = f.querySelector('button[type=submit]'); b.disabled = true; b.textContent = 'Enviando...';
+  });
+})();
+</script>
+
+<!-- Tailwind via CDN, so' pra este widget -- preflight desligado de proposito
+     pra nao resetar margin/padding/font do resto do site. -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    corePlugins: { preflight: false },
+  };
+</script>
+
+<div id="wa-widget" class="fixed bottom-6 right-6 z-[9999]" style="font-family: 'Inter', sans-serif;">
+    <!-- Janela de chat -->
+    <div
+        id="wa-chat-panel"
+        class="hidden mb-4 w-80 max-w-[calc(100vw-3rem)] origin-bottom-right flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10 sm:w-96"
+    >
+        <!-- Cabecalho -->
+        <div class="flex items-center gap-3 bg-emerald-600 px-4 py-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg font-extrabold" style="background:#101010;">
+                <span style="color:#ffffff">O</span><span style="color:#E8541A">r</span>
+            </div>
+            <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-semibold text-white">Oravel</p>
+                <p class="flex items-center gap-1.5 text-xs text-emerald-100">
+                    <span class="relative flex h-2 w-2">
+                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75"></span>
+                        <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-300"></span>
+                    </span>
+                    Online agora
+                </p>
+            </div>
+            <button
+                type="button"
+                onclick="waToggleChat(false)"
+                aria-label="Fechar chat"
+                class="shrink-0 rounded-full p-1 text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Corpo (mensagem de boas vindas) -->
+        <div class="flex-1 space-y-2 bg-[#e5ddd5] px-3 py-4" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect width=%2260%22 height=%2260%22 fill=%22%23e5ddd5%22/%3E%3C/svg%3E');">
+            <div class="max-w-[85%] rounded-lg rounded-tl-none bg-white px-3 py-2 shadow-sm">
+                <p class="text-sm text-gray-800">Olá! Como podemos ajudar você hoje?</p>
+                <p class="mt-1 text-right text-[10px] text-gray-400" id="wa-msg-time"></p>
+            </div>
+        </div>
+
+        <!-- Campo de entrada -->
+        <div class="flex items-center gap-2 border-t border-gray-200 bg-white p-2">
+            <input
+                type="text"
+                id="wa-input"
+                placeholder="Digite sua mensagem..."
+                class="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-800 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                style="background-color:#ffffff; color:#1f2937; color-scheme: light;"
+                onkeydown="if (event.key === 'Enter') { event.preventDefault(); waSendMessage(); }"
+            >
+            <button
+                type="button"
+                onclick="waSendMessage()"
+                aria-label="Enviar mensagem"
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white transition hover:bg-emerald-700"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+                    <path d="M3.4 20.6l17.45-8.5a1 1 0 000-1.8L3.4 1.8a1 1 0 00-1.44 1.1L4.3 11 1.96 18.9a1 1 0 001.44 1.1z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Botao flutuante -->
+    <button
+        type="button"
+        id="wa-fab"
+        onclick="waToggleChat()"
+        aria-label="Abrir chat do WhatsApp"
+        class="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg transition duration-200 ease-out hover:scale-110 hover:bg-emerald-600 active:scale-95"
+    >
+        <span class="absolute inline-flex h-16 w-16 animate-ping rounded-full bg-emerald-500 opacity-40" style="animation-duration: 2.5s;"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" class="relative h-8 w-8">
+            <path d="M16.001 3C9.107 3 3.5 8.607 3.5 15.5c0 2.42.687 4.68 1.878 6.598L3.2 28.8l6.876-2.14A12.44 12.44 0 0016 28c6.894 0 12.5-5.607 12.5-12.5S22.894 3 16.001 3zm0 22.7a10.15 10.15 0 01-5.44-1.573l-.39-.232-4.08 1.27 1.293-3.976-.253-.407A10.14 10.14 0 015.8 15.5c0-5.632 4.57-10.2 10.2-10.2 5.63 0 10.2 4.568 10.2 10.2 0 5.632-4.57 10.2-10.199 10.2zm5.58-7.64c-.306-.153-1.81-.893-2.09-.995-.28-.102-.484-.153-.688.153-.204.306-.789.995-.967 1.199-.178.204-.356.23-.662.077-.306-.153-1.293-.477-2.463-1.522-.91-.812-1.524-1.816-1.703-2.123-.178-.306-.019-.472.134-.624.137-.137.306-.357.459-.535.153-.178.204-.306.306-.51.102-.204.051-.383-.026-.535-.077-.153-.688-1.658-.943-2.27-.248-.596-.5-.516-.688-.526l-.586-.011c-.204 0-.535.077-.815.383-.28.306-1.069 1.044-1.069 2.549 0 1.505 1.094 2.958 1.247 3.163.153.204 2.153 3.286 5.216 4.608.729.315 1.297.503 1.74.644.731.232 1.396.2 1.922.121.586-.087 1.81-.74 2.065-1.454.255-.714.255-1.326.178-1.454-.076-.128-.28-.204-.586-.357z"/>
+        </svg>
+    </button>
+</div>
+
+<script>
+    (function () {
+        var WA_NUMERO = "5519999332615";
+        var WA_MENSAGEM_PADRAO = "Olá! Vim pelo site da Oravel e gostaria de mais informações.";
+
+        var timeEl = document.getElementById('wa-msg-time');
+        if (timeEl) {
+            var agora = new Date();
+            timeEl.textContent = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        window.waToggleChat = function (forceState) {
+            var panel = document.getElementById('wa-chat-panel');
+            var isHidden = panel.classList.contains('hidden');
+            var shouldOpen = (typeof forceState === 'boolean') ? forceState : isHidden;
+
+            if (shouldOpen) {
+                panel.classList.remove('hidden');
+                panel.classList.add('flex');
+                document.getElementById('wa-input').focus();
+            } else {
+                panel.classList.add('hidden');
+                panel.classList.remove('flex');
+            }
+        };
+
+        window.waSendMessage = function () {
+            var input = document.getElementById('wa-input');
+            var texto = (input.value || '').trim();
+
+            if (texto === '') {
+                texto = WA_MENSAGEM_PADRAO;
+            }
+
+            var url = 'https://wa.me/' + WA_NUMERO + '?text=' + encodeURIComponent(texto);
+            window.open(url, '_blank');
+            input.value = '';
+        };
+    })();
+</script>
+
+</body>
+</html>
