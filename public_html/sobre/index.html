@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L79HHRE3ZC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-L79HHRE3ZC');
+</script>
+<!-- Microsoft Clarity -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "y52dp76ece");
+</script>
+<meta charset="utf-8" />
+<title>Sobre a Oravel — A tecnologia que nasceu da cicatriz, não da planilha</title>
+<meta name="description" content="A Oravel não nasceu de uma reunião de diretoria. Conheça a história por trás do ERP CMMS feito por quem já viveu a rotina de locação de máquinas." />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" type="image/png" sizes="32x32" href="/nova/assets/favicon-32.png?v=4" /><link rel="apple-touch-icon" href="/nova/assets/apple-touch-icon.png?v=4" />
+
+<style>
+  @font-face {
+    font-family: "Oravel Deck";
+    src: local("Archivo Black");
+    font-weight: 900;
+  }
+
+  :root {
+    --ink: #0b0f0d;
+    --ink-2: #121815;
+    --bone: #f4f2ea;
+    --bone-dim: #e8e4d6;
+    --steel: #d9d4c4;
+    --olive: #8a8f87;
+    --olive-dim: #565b52;
+    --petrol: #1f6f5c;
+    --petrol-bright: #2c9a7f;
+    --orange: #ff6a1a;
+    --orange-dim: #cc5514;
+
+    --bg: var(--bone);
+    --bg-raised: #ffffff;
+    --fg: var(--ink);
+    --fg-dim: var(--olive-dim);
+    --border: #d3cfc0;
+    --card-bg: #ffffff;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: var(--ink); --bg-raised: var(--ink-2); --fg: var(--bone);
+      --fg-dim: #9aa39c; --border: #263029; --card-bg: var(--ink-2);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: var(--ink); --bg-raised: var(--ink-2); --fg: var(--bone);
+    --fg-dim: #9aa39c; --border: #263029; --card-bg: var(--ink-2);
+    color-scheme: dark;
+  }
+  :root[data-theme="light"] {
+    --bg: var(--bone); --bg-raised: #ffffff; --fg: var(--ink);
+    --fg-dim: var(--olive-dim); --border: #d3cfc0; --card-bg: #ffffff;
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); overflow-x: hidden; }
+  body {
+    font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased;
+  }
+
+  /* Dificulta cópia casual (clique-direito, seleção, arrastar imagem) --
+     NÃO impede print screen do sistema operacional, foto de outra câmera,
+     nem alguém com DevTools/Leitor de página aberta. Ver aviso completo
+     no bloco de script no fim do arquivo. Formulários continuam
+     selecionáveis (usuário precisa digitar/revisar o que preencheu). */
+  body {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+  input, textarea, select {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    user-select: text;
+  }
+  img, svg {
+    -webkit-user-drag: none;
+    pointer-events: auto;
+  }
+
+  a { color: inherit; }
+  img, svg { max-width: 100%; display: block; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+  .wrap-read { max-width: 700px; margin: 0 auto; padding: 0 32px; }
+
+  .deck {
+    font-family: "Archivo Black", "Arial Narrow", "Oswald", sans-serif;
+    font-weight: 900; text-transform: uppercase; letter-spacing: -0.01em; text-wrap: balance;
+  }
+  .eyebrow {
+    font-family: "SF Mono", ui-monospace, monospace; text-transform: uppercase;
+    letter-spacing: 0.14em; font-size: 12px; font-weight: 600;
+  }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+  /* ================= NAV ================= */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--ink) 92%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(217, 212, 196, 0.14);
+  }
+  .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; color: var(--bone); font-family: "Archivo Black", sans-serif; font-size: 19px; letter-spacing: -0.01em; }
+  .nav-mark { height: 32px; width: auto; flex: none; }
+  .nav-links { display: flex; align-items: center; gap: 30px; color: #c9c5b6; font-size: 14.5px; }
+  .nav-links a { text-decoration: none; }
+  .nav-links a:hover { color: var(--bone); }
+  .nav-cta {
+    background: var(--orange); color: #1a0d05; padding: 9px 18px; border-radius: 3px;
+    font-weight: 700; font-size: 14px; text-decoration: none; letter-spacing: 0.01em;
+  }
+  .nav-cta:hover { background: #ff7d38; }
+  @media (max-width: 760px) { .nav-links a:not(.nav-cta) { display: none; } }
+
+  /* ================= HERO (manifesto) ================= */
+  .manifesto-hero {
+    background: var(--ink);
+    color: var(--bone);
+    padding: 88px 0 76px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+  .manifesto-hero::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(255,106,26,0.14) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .manifesto-hero-inner { position: relative; z-index: 1; }
+  .manifesto-eyebrow {
+    color: var(--orange); display: inline-flex; align-items: center; gap: 10px; margin-bottom: 24px;
+  }
+  .manifesto-eyebrow::before, .manifesto-eyebrow::after { content: ""; width: 26px; height: 2px; background: var(--orange); }
+  .manifesto-hero h1 {
+    font-size: clamp(28px, 4.2vw, 48px);
+    line-height: 1.16;
+    margin: 0 auto;
+    max-width: 18ch;
+  }
+  .manifesto-hero h1 em { font-style: normal; color: var(--orange); }
+
+  /* ================= CORPO DO TEXTO ================= */
+  .manifesto-body {
+    background: var(--bg);
+    padding: 88px 0 100px;
+  }
+  .manifesto-body p {
+    font-family: Charter, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    font-size: 19px;
+    line-height: 1.75;
+    color: var(--fg);
+    margin: 0 0 32px;
+  }
+  .manifesto-body p:first-of-type::first-letter {
+    font-family: "Archivo Black", sans-serif;
+    font-size: 64px;
+    float: left;
+    line-height: 0.85;
+    padding: 6px 10px 0 0;
+    color: var(--orange);
+  }
+  .manifesto-pullquote {
+    font-family: "Archivo Black", sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: clamp(20px, 2.6vw, 26px);
+    line-height: 1.4;
+    text-align: center;
+    color: var(--fg);
+    max-width: 42ch;
+    margin: 56px auto;
+    text-wrap: balance;
+  }
+  .manifesto-pullquote em { font-style: normal; color: var(--orange); }
+  .manifesto-rule {
+    width: 60px; height: 3px; background: var(--orange); margin: 56px auto; border-radius: 2px;
+  }
+  .manifesto-signoff {
+    font-family: "Archivo Black", sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: clamp(20px, 2.6vw, 26px);
+    line-height: 1.4;
+    text-align: center;
+    color: var(--fg);
+    margin: 64px 0 0;
+    text-wrap: balance;
+  }
+  .manifesto-signoff em { font-style: normal; color: var(--orange); }
+
+  /* ================= CTA FINAL ================= */
+  .final-cta { background: var(--ink); color: var(--bone); padding: 80px 0; text-align: center; }
+  .final-cta h2 { font-size: clamp(24px, 3.2vw, 34px); max-width: 22ch; margin: 0 auto 16px; line-height: 1.2; }
+  .final-cta p { color: #c9c5b6; font-size: 15.5px; margin: 0 auto 30px; max-width: 46ch; }
+  .final-cta .btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 16px 32px; border-radius: 4px;
+    font-weight: 700; font-size: 15.5px; text-decoration: none; background: var(--orange); color: #1a0d05;
+  }
+  .final-cta .btn:hover { background: #ff7d38; }
+
+  footer.site {
+    background: var(--ink); border-top: 1px solid rgba(244,242,234,0.12);
+    padding: 28px 0; color: #8a8577; font-size: 12.5px; text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ NAV -->
+<nav class="nav">
+  <div class="wrap">
+    <div class="nav-brand">
+      <img class="nav-mark" src="/nova/assets/oravel-wordmark-only.png?v=1" alt="Oravel" />
+    </div>
+    <div class="nav-links">
+      <a href="/#pilares">Como Funciona</a>
+      <a href="/#planos">Planos</a>
+      <a href="/sobre/">Sobre</a>
+      <a href="/#contato">Contato</a>
+      <a href="/#planos" class="nav-cta">Assinar agora</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============================================================ HERO -->
+<header class="manifesto-hero">
+  <div class="wrap-read manifesto-hero-inner">
+    <div class="manifesto-eyebrow eyebrow">Nossa história</div>
+    <h1 class="deck">A tecnologia que nasceu da <em>cicatriz</em>, não da planilha</h1>
+  </div>
+</header>
+
+<!-- ============================================================ CORPO -->
+<section class="manifesto-body">
+  <div class="wrap-read">
+    <p>Existe um abismo entre o software criado em um escritório ar-condicionado e a solução forjada no calor da operação. Enquanto a maioria das empresas de tecnologia "desenha" sistemas, nós vivenciamos cada obstáculo da locação de máquinas.</p>
+
+    <p>A Oravel não nasceu de uma reunião de diretoria; ela nasceu do silêncio angustiante de uma máquina parada no canteiro de obras, da urgência de um cliente que precisa de solução "para ontem" e da complexidade de gerenciar frotas que não param. Nós sabemos o peso de cada contrato, a incerteza de uma manutenção não planejada e a pressão de fazer o horímetro bater a meta.</p>
+
+    <p class="manifesto-pullquote">Transformar essa vivência em um sistema não foi uma escolha de mercado; foi uma <em>estratégia de sobrevivência</em>.</p>
+
+    <p>Sabemos que, no seu negócio, o erro de margem é zero. Por isso, a Oravel não é apenas uma ferramenta de gestão — é a transposição da nossa experiência para a sua tela. Cada linha de código do nosso sistema é uma resposta para uma dor que nós mesmos já sentimos. Quando você clica em um botão na Oravel, não está apenas executando um comando: você está utilizando a inteligência acumulada de quem entende que, na locação, a tecnologia precisa ter "cancha" de balcão.</p>
+
+    <p>Nós eliminamos o achismo porque o mercado não perdoa o amadorismo. Substituímos a improvisação por previsibilidade, transformando a complexidade do dia a dia em uma operação fluida, onde o controle absoluto não é um luxo, é a sua base de sustentação.</p>
+
+    <p>Não somos apenas fornecedores de software. Somos parceiros de trincheira. De quem já esteve do seu lado do balcão, para quem entende que a tecnologia é a única diferença entre apenas "operar" e "dominar" o mercado.</p>
+
+    <div class="manifesto-rule" aria-hidden="true"></div>
+
+    <p class="manifesto-signoff">Oravel: a tecnologia que fala a sua língua, porque conhece as suas <em>batalhas</em>.</p>
+  </div>
+</section>
+
+<!-- ============================================================ CTA FINAL -->
+<section class="final-cta">
+  <div class="wrap">
+    <h2 class="deck">Pronto para tirar sua operação da planilha?</h2>
+    <p>Agende uma demonstração gratuita e veja o Oravel funcionando com o cenário real da sua locadora.</p>
+    <a href="/#planos" class="btn">
+      Assinar agora
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">© 2026 Oravel — gestão de equipamentos e manutenção. oravel.com.br</div>
+</footer>
+
+<script>
+  /*
+    Medidas de dificultar-cópia-casual da página. IMPORTANTE, leia antes de
+    mexer ou de assumir que isso "protege" o conteúdo:
+
+    Nada rodando no navegador consegue bloquear print screen do sistema
+    operacional, uma foto tirada com outro celular, extensões de captura,
+    gravação de tela, o modo Leitor do navegador, ou alguém copiando via
+    DevTools/"Ver código-fonte" (Ctrl+U não é bloqueável por JS). Essas
+    técnicas só aumentam o atrito de um "selecionar tudo + copiar" casual
+    -- não são uma proteção de conteúdo de verdade. Se o objetivo é
+    realmente restringir acesso a preços/condições, a solução correta é
+    colocar esse conteúdo atrás de login, não bloqueio de clique no
+    front-end público.
+  */
+  (function () {
+    document.addEventListener('contextmenu', function (e) {
+      e.preventDefault();
+    });
+
+    document.addEventListener('copy', function (e) {
+      e.preventDefault();
+    });
+
+    document.addEventListener('cut', function (e) {
+      e.preventDefault();
+    });
+
+    document.addEventListener('dragstart', function (e) {
+      if (e.target.tagName === 'IMG') e.preventDefault();
+    });
+
+    // Ctrl/Cmd+C e Ctrl/Cmd+S (salvar página) -- não bloqueia dentro de
+    // input/textarea, pra não impedir o usuário de copiar o que ELE
+    // mesmo digitou num formulário.
+    document.addEventListener('keydown', function (e) {
+      var emCampoDeTexto = ['INPUT', 'TEXTAREA'].includes(e.target.tagName);
+      var ctrlOuCmd = e.ctrlKey || e.metaKey;
+
+      if (!emCampoDeTexto && ctrlOuCmd && ['c', 'x', 's', 'u'].includes(e.key.toLowerCase())) {
+        e.preventDefault();
+      }
+    });
+  })();
+</script>
+
+
+<!-- Tailwind via CDN, so' pra este widget -- preflight desligado de proposito
+     pra nao resetar margin/padding/font do resto do site. -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    corePlugins: { preflight: false },
+  };
+</script>
+
+<div id="wa-widget" class="fixed bottom-6 right-6 z-[9999]" style="font-family: 'Inter', sans-serif;">
+    <!-- Janela de chat -->
+    <div
+        id="wa-chat-panel"
+        class="hidden mb-4 w-80 max-w-[calc(100vw-3rem)] origin-bottom-right flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10 sm:w-96"
+    >
+        <!-- Cabecalho -->
+        <div class="flex items-center gap-3 bg-emerald-600 px-4 py-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg font-extrabold" style="background:#101010;">
+                <span style="color:#ffffff">O</span><span style="color:#E8541A">r</span>
+            </div>
+            <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-semibold text-white">Oravel</p>
+                <p class="flex items-center gap-1.5 text-xs text-emerald-100">
+                    <span class="relative flex h-2 w-2">
+                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75"></span>
+                        <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-300"></span>
+                    </span>
+                    Online agora
+                </p>
+            </div>
+            <button
+                type="button"
+                onclick="waToggleChat(false)"
+                aria-label="Fechar chat"
+                class="shrink-0 rounded-full p-1 text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Corpo (mensagem de boas vindas) -->
+        <div class="flex-1 space-y-2 bg-[#e5ddd5] px-3 py-4" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect width=%2260%22 height=%2260%22 fill=%22%23e5ddd5%22/%3E%3C/svg%3E');">
+            <div class="max-w-[85%] rounded-lg rounded-tl-none bg-white px-3 py-2 shadow-sm">
+                <p class="text-sm text-gray-800">Olá! Como podemos ajudar você hoje?</p>
+                <p class="mt-1 text-right text-[10px] text-gray-400" id="wa-msg-time"></p>
+            </div>
+        </div>
+
+        <!-- Campo de entrada -->
+        <div class="flex items-center gap-2 border-t border-gray-200 bg-white p-2">
+            <input
+                type="text"
+                id="wa-input"
+                placeholder="Digite sua mensagem..."
+                class="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-800 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                style="background-color:#ffffff; color:#1f2937; color-scheme: light;"
+                onkeydown="if (event.key === 'Enter') { event.preventDefault(); waSendMessage(); }"
+            >
+            <button
+                type="button"
+                onclick="waSendMessage()"
+                aria-label="Enviar mensagem"
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white transition hover:bg-emerald-700"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+                    <path d="M3.4 20.6l17.45-8.5a1 1 0 000-1.8L3.4 1.8a1 1 0 00-1.44 1.1L4.3 11 1.96 18.9a1 1 0 001.44 1.1z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Botao flutuante -->
+    <button
+        type="button"
+        id="wa-fab"
+        onclick="waToggleChat()"
+        aria-label="Abrir chat do WhatsApp"
+        class="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg transition duration-200 ease-out hover:scale-110 hover:bg-emerald-600 active:scale-95"
+    >
+        <span class="absolute inline-flex h-16 w-16 animate-ping rounded-full bg-emerald-500 opacity-40" style="animation-duration: 2.5s;"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" class="relative h-8 w-8">
+            <path d="M16.001 3C9.107 3 3.5 8.607 3.5 15.5c0 2.42.687 4.68 1.878 6.598L3.2 28.8l6.876-2.14A12.44 12.44 0 0016 28c6.894 0 12.5-5.607 12.5-12.5S22.894 3 16.001 3zm0 22.7a10.15 10.15 0 01-5.44-1.573l-.39-.232-4.08 1.27 1.293-3.976-.253-.407A10.14 10.14 0 015.8 15.5c0-5.632 4.57-10.2 10.2-10.2 5.63 0 10.2 4.568 10.2 10.2 0 5.632-4.57 10.2-10.199 10.2zm5.58-7.64c-.306-.153-1.81-.893-2.09-.995-.28-.102-.484-.153-.688.153-.204.306-.789.995-.967 1.199-.178.204-.356.23-.662.077-.306-.153-1.293-.477-2.463-1.522-.91-.812-1.524-1.816-1.703-2.123-.178-.306-.019-.472.134-.624.137-.137.306-.357.459-.535.153-.178.204-.306.306-.51.102-.204.051-.383-.026-.535-.077-.153-.688-1.658-.943-2.27-.248-.596-.5-.516-.688-.526l-.586-.011c-.204 0-.535.077-.815.383-.28.306-1.069 1.044-1.069 2.549 0 1.505 1.094 2.958 1.247 3.163.153.204 2.153 3.286 5.216 4.608.729.315 1.297.503 1.74.644.731.232 1.396.2 1.922.121.586-.087 1.81-.74 2.065-1.454.255-.714.255-1.326.178-1.454-.076-.128-.28-.204-.586-.357z"/>
+        </svg>
+    </button>
+</div>
+
+<script>
+    (function () {
+        var WA_NUMERO = "5519999332615";
+        var WA_MENSAGEM_PADRAO = "Olá! Vim pelo site da Oravel e gostaria de mais informações.";
+
+        var timeEl = document.getElementById('wa-msg-time');
+        if (timeEl) {
+            var agora = new Date();
+            timeEl.textContent = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        window.waToggleChat = function (forceState) {
+            var panel = document.getElementById('wa-chat-panel');
+            var isHidden = panel.classList.contains('hidden');
+            var shouldOpen = (typeof forceState === 'boolean') ? forceState : isHidden;
+
+            if (shouldOpen) {
+                panel.classList.remove('hidden');
+                panel.classList.add('flex');
+                document.getElementById('wa-input').focus();
+            } else {
+                panel.classList.add('hidden');
+                panel.classList.remove('flex');
+            }
+        };
+
+        window.waSendMessage = function () {
+            var input = document.getElementById('wa-input');
+            var texto = (input.value || '').trim();
+
+            if (texto === '') {
+                texto = WA_MENSAGEM_PADRAO;
+            }
+
+            var url = 'https://wa.me/' + WA_NUMERO + '?text=' + encodeURIComponent(texto);
+            window.open(url, '_blank');
+            input.value = '';
+        };
+    })();
+</script>
+
+</body>
+</html>
