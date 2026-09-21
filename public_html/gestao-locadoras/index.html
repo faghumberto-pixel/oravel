@@ -1,0 +1,2213 @@
+<!-- Cache-Busted: 1788233004 -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L79HHRE3ZC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-L79HHRE3ZC');
+</script>
+<!-- Microsoft Clarity -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "y52dp76ece");
+</script>
+<meta charset="utf-8" />
+<title>Oravel — ERP CMMS Oravel para locadoras e oficinas</title>
+<link rel="icon" type="image/svg+xml" href="/nova/assets/favicon.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="/nova/assets/favicon-32.png" />
+<link rel="icon" type="image/x-icon" href="/nova/assets/favicon.ico" />
+<link rel="apple-touch-icon" href="/nova/assets/apple-touch-icon.png" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="/assets/nav.css">
+<style>
+  /* ---------- fonts ---------- */
+  @font-face {
+    font-family: "Oravel Deck";
+    src: local("Archivo Black");
+    font-weight: 900;
+  }
+
+  :root {
+    --ink: #0a0e17;
+    --ink-2: #121826;
+    --bone: #f5f2ec;
+    --bone-dim: #e8e4d6;
+    --steel: #d9d4c4;
+    --olive: #8a8f87;
+    --olive-dim: #635c4d;
+    --petrol: #0f172a;
+    --petrol-bright: #223252;
+    --orange: #f97316;
+    --orange-dim: #9a3412;
+
+    --bg: var(--bone);
+    --bg-raised: #ffffff;
+    --fg: var(--ink);
+    --fg-dim: var(--olive-dim);
+    --border: #d3cfc0;
+    --card-bg: #ffffff;
+    --accent: var(--orange);
+    --accent-ink: #ffffff;
+
+    color-scheme: light;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0a0e17;
+      --bg-raised: var(--ink-2);
+      --fg: var(--bone);
+      --fg-dim: #b3ab97;
+      --border: #263029;
+      --card-bg: var(--ink-2);
+      --accent: var(--orange);
+      --accent-ink: #1a0d05;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0a0e17;
+    --bg-raised: var(--ink-2);
+    --fg: var(--bone);
+    --fg-dim: #b3ab97;
+    --border: #263029;
+    --card-bg: var(--ink-2);
+    --accent: var(--orange);
+    --accent-ink: #1a0d05;
+    color-scheme: dark;
+  }
+  :root[data-theme="light"] {
+    --bg: var(--bone);
+    --bg-raised: #ffffff;
+    --fg: var(--ink);
+    --fg-dim: var(--olive-dim);
+    --border: #d3cfc0;
+    --card-bg: #ffffff;
+    --accent: var(--orange);
+    --accent-ink: #ffffff;
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    overflow-x: hidden;
+  }
+  body {
+    font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+    font-family: Charter, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* Dificulta cópia casual (clique-direito, seleção, arrastar imagem) --
+     NÃO impede print screen do sistema operacional, foto de outra câmera,
+     nem alguém com DevTools/Leitor de página aberta. Ver aviso completo
+     no bloco de script no fim do arquivo. Formulários continuam
+     selecionáveis (usuário precisa digitar/revisar o que preencheu). */
+  body {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+  input, textarea, select {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    user-select: text;
+  }
+  img, svg {
+    -webkit-user-drag: none;
+    pointer-events: auto;
+  }
+
+  .deck {
+    font-family: "Archivo Black", "Arial Narrow", "Oswald", sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  .mono {
+    font-family: "SF Mono", "JetBrains Mono", "Roboto Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  a { color: inherit; }
+  img, svg { max-width: 100%; display: block; }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  .eyebrow {
+    font-family: "SF Mono", ui-monospace, monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  section { position: relative; }
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--orange);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+
+  /* ================= HERO ================= */
+  .hero {
+    background: var(--ink);
+    color: var(--bone);
+    position: relative;
+    padding: 88px 0 0;
+    overflow: hidden;
+  }
+  .hero-plate {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+  }
+  .hero-vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      linear-gradient(180deg, rgba(11,15,13,0.35) 0%, rgba(11,15,13,0.72) 55%, var(--ink) 96%),
+      linear-gradient(90deg, rgba(11,15,13,0.92) 0%, rgba(11,15,13,0.55) 42%, rgba(11,15,13,0.25) 68%, rgba(11,15,13,0.15) 100%);
+  }
+  .hero-inner {
+    position: relative;
+    z-index: 2;
+    padding-bottom: 120px;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 640px;
+    gap: 40px;
+    align-items: center;
+    padding-top: 40px;
+  }
+  .hero-eyebrow {
+    color: var(--orange);
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero-eyebrow::before {
+    content: "";
+    width: 26px; height: 2px;
+    background: var(--orange);
+  }
+  .hero h1 {
+    font-size: clamp(30px, 3.8vw, 46px);
+    line-height: 1.1;
+    margin: 0 0 22px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--orange);
+  }
+  .hero p.lede {
+    font-size: 18px;
+    color: #d6d2c4;
+    max-width: 46ch;
+    margin: 0 0 34px;
+    line-height: 1.62;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 42px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 15px 26px;
+    border-radius: 3px;
+    font-weight: 700;
+    font-size: 15.5px;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary {
+    background: var(--orange);
+    color: #1a0d05;
+  }
+  .btn-primary:hover { background: #ff7d38; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--bone);
+    border-color: rgba(244, 242, 234, 0.35);
+  }
+  .btn-ghost:hover { border-color: var(--bone); }
+
+  /* ---- triagem por segmento (Ads), pedido do usuário 2026-08-21: leva
+     direto pra /para-quem-tem-sistema.php ou /para-quem-nao-tem-sistema.php
+     -- discreta, abaixo do CTA principal, não compete com ele ---- */
+  .hero-triage {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    padding-top: 22px; border-top: 1px solid rgba(244, 242, 234, 0.14);
+  }
+  .hero-triage-label { font-size: 13px; color: #a39d92; }
+  .hero-triage-links { display: flex; gap: 10px; flex-wrap: wrap; }
+  .hero-triage-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13.5px; font-weight: 600; color: var(--bone);
+    text-decoration: none; padding: 7px 14px;
+    border: 1px solid rgba(244, 242, 234, 0.25); border-radius: 100px;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .hero-triage-link:hover { border-color: var(--orange); color: var(--orange); }
+
+  /* ---- nota Enterprise compacta, abaixo dos planos ---- */
+  .plan-enterprise-card {
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    margin-top: 18px; padding: 22px 26px;
+    background: var(--card-bg); border: 1px solid var(--orange);
+    border-radius: 8px; text-decoration: none;
+    transition: box-shadow 0.15s ease;
+  }
+  .plan-enterprise-card:hover { box-shadow: 0 8px 24px -12px rgba(224,123,26,0.4); }
+  @media (max-width: 700px) { .plan-enterprise-card { flex-direction: column; align-items: flex-start; } }
+  .plan-enterprise-card .pec-text { display: flex; align-items: center; gap: 14px; }
+  .plan-enterprise-card .pec-icon {
+    flex: none; width: 40px; height: 40px; border-radius: 8px;
+    background: rgba(224,123,26,0.15); display: flex; align-items: center; justify-content: center;
+    color: var(--orange);
+  }
+  .plan-enterprise-card strong { display: block; font-size: 15.5px; color: var(--ink); margin-bottom: 2px; }
+  .plan-enterprise-card .pec-sub { font-size: 13.5px; color: var(--fg-dim); }
+  .pec-cta {
+    flex: none; display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 20px; border-radius: 4px; font-weight: 700; font-size: 14px;
+    background: var(--orange); color: #1a0d05;
+  }
+
+  /* ================= ENTERPRISE BANNER ================= */
+  .ent-banner {
+    background: var(--ink); color: var(--bone);
+    padding: 56px 0;
+    border-top: 1px solid rgba(244,242,234,0.1);
+    border-bottom: 1px solid rgba(244,242,234,0.1);
+  }
+  .ent-banner-inner {
+    display: flex; align-items: center; justify-content: space-between; gap: 32px;
+  }
+  @media (max-width: 820px) { .ent-banner-inner { flex-direction: column; align-items: flex-start; } }
+  .ent-banner-eyebrow {
+    color: var(--orange); display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+    font-family: "SF Mono", ui-monospace, monospace; text-transform: uppercase; letter-spacing: 0.1em; font-size: 12px; font-weight: 600;
+  }
+  .ent-banner-eyebrow::before { content: ""; width: 22px; height: 2px; background: var(--orange); }
+  .ent-banner h2 { font-size: clamp(20px, 2.6vw, 27px); margin: 0 0 10px; line-height: 1.25; max-width: 34ch; }
+  .ent-banner p { font-size: 15px; color: #c9c5b6; margin: 0; max-width: 56ch; line-height: 1.55; }
+  .ent-banner .btn { white-space: nowrap; flex: none; }
+  .ent-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .ent-tag {
+    font-family: "SF Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: 0.04em;
+    color: #9aa39c; border: 1px solid rgba(244,242,234,0.2); border-radius: 3px; padding: 4px 9px;
+  }
+  .ent-support {
+    display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 18px;
+    padding-top: 18px; border-top: 1px solid rgba(244,242,234,0.1);
+  }
+  .ent-support-item {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 13px; color: #c9c5b6;
+  }
+  .ent-support-item svg { flex: none; color: var(--orange); }
+  .ent-support-item strong { color: var(--bone); font-weight: 600; }
+
+  .hero-proof {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+    padding-top: 26px;
+    border-top: 1px solid rgba(244, 242, 234, 0.16);
+  }
+  .hero-proof div { min-width: 120px; }
+  .hero-proof .num {
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--bone);
+    font-variant-numeric: tabular-nums;
+  }
+  .hero-proof .lbl {
+    font-size: 12.5px;
+    color: #a9a496;
+    margin-top: 2px;
+  }
+
+  .hero-visual { position: relative; }
+
+  /* ================= SECTION SCAFFOLDING ================= */
+  .section { padding: 92px 0; }
+  .section-bone { background: var(--bg); color: var(--fg); }
+  .section-petrol {
+    background: #0f172a;
+    color: var(--bone);
+  }
+  @media (prefers-color-scheme: dark) {
+    .section-petrol { background: #0c1424; }
+  }
+  :root[data-theme="dark"] .section-petrol { background: #0c1424; }
+  :root[data-theme="light"] .section-petrol { background: #0f172a; }
+
+  .section-head {
+    max-width: 640px;
+    margin: 0 0 56px;
+  }
+  .section-head .eyebrow { color: var(--accent); margin-bottom: 14px; }
+  .section-petrol .section-head .eyebrow { color: #7dd3fc; }
+  .section-head h2 {
+    font-size: clamp(26px, 3.2vw, 38px);
+    line-height: 1.12;
+    margin: 0 0 14px;
+  }
+  .section-head p {
+    font-size: 16.5px;
+    color: var(--fg-dim);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .section-petrol .section-head p { color: #b0c4de; }
+
+  /* ================= DORES / SOLUÇÕES ================= */
+  .pain-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .pain-item {
+    background: var(--card-bg);
+    padding: 32px 34px;
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 700px) {
+    .pain-item { grid-template-columns: 1fr; gap: 10px; padding: 26px 24px; }
+  }
+  .pain-num {
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .pain-item h3 {
+    font-size: 19px;
+    margin: 0 0 14px;
+    line-height: 1.3;
+  }
+  .pain-block { margin-bottom: 14px; }
+  .pain-block:last-child { margin-bottom: 0; }
+  .pain-label {
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .pain-label.is-problem { color: var(--olive); }
+  .pain-label.is-solution { color: var(--petrol-bright); }
+  .pain-item p {
+    font-size: 15px;
+    color: var(--fg-dim);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ================= DE PLANILHAS PARA AUTOMAÇÃO ================= */
+  .compare-grid { display: flex; flex-direction: column; gap: 18px; }
+  .compare-row {
+    display: grid;
+    grid-template-columns: 1fr 44px 1fr;
+    align-items: stretch;
+    gap: 0;
+  }
+  @media (max-width: 760px) {
+    .compare-row { grid-template-columns: 1fr; gap: 10px; }
+  }
+  .compare-card {
+    border-radius: 8px;
+    padding: 28px 30px;
+    background: rgba(244, 242, 234, 0.035);
+    border: 1px solid rgba(244, 242, 234, 0.1);
+  }
+  .compare-card.is-after {
+    background: rgba(249, 115, 22, 0.07);
+    border-color: rgba(249, 115, 22, 0.28);
+  }
+  .compare-tag {
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .compare-card.is-before .compare-tag { color: #8aa0c2; }
+  .compare-card.is-after .compare-tag { color: var(--orange); }
+  .compare-card h3 { font-size: 17px; margin: 0 0 8px; color: var(--bone); line-height: 1.3; }
+  .compare-card p { font-size: 14.5px; line-height: 1.6; color: #b0c4de; margin: 0; }
+  .compare-card strong { color: var(--bone); }
+  .compare-arrow {
+    display: flex; align-items: center; justify-content: center;
+    color: #5a6f8f; font-size: 18px;
+  }
+  @media (max-width: 760px) {
+    .compare-arrow { transform: rotate(90deg); padding: 2px 0; }
+  }
+
+  /* ================= SEGMENTOS ================= */
+  .segments {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 980px) {
+    .segments { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 560px) {
+    .segments { grid-template-columns: 1fr; }
+  }
+  .segment-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    overflow: hidden;
+  }
+  .segment-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    box-shadow: 0 14px 30px -16px rgba(0,0,0,0.4);
+  }
+  .segment-card .segment-photo {
+    position: relative;
+    height: 140px;
+    overflow: hidden;
+  }
+  .segment-card .segment-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  .segment-card:hover .segment-photo img { transform: scale(1.05); }
+  .segment-card .segment-photo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(11,15,13,0) 40%, rgba(11,15,13,0.55) 100%);
+  }
+  .segment-card .segment-body {
+    padding: 20px 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+  }
+  .segment-card h3 {
+    font-size: 16px;
+    margin: 0;
+    line-height: 1.3;
+  }
+  .segment-card .segment-arrow {
+    margin-top: auto;
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .segments-note {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    background: rgba(249, 115, 22, 0.06);
+    border: 1px solid rgba(249, 115, 22, 0.22);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin-bottom: 28px;
+  }
+  .segments-note svg { flex: none; margin-top: 2px; color: var(--accent); }
+  .segments-note p { font-size: 14.5px; line-height: 1.6; color: var(--fg-dim); margin: 0; }
+  .segments-note strong { color: var(--fg); }
+  .segments-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ================= GESTOR VS TECNICO ================= */
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid rgba(244,242,234,0.18);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  @media (max-width: 820px) {
+    .split { grid-template-columns: 1fr; }
+  }
+  .split-panel {
+    padding: 44px 38px;
+    position: relative;
+  }
+  .split-panel + .split-panel {
+    border-left: 1px solid rgba(244,242,234,0.18);
+  }
+  @media (max-width: 820px) {
+    .split-panel + .split-panel { border-left: none; border-top: 1px solid rgba(244,242,234,0.18); }
+  }
+  .split-panel.gestor { background: #0c1424; }
+  .split-panel.tecnico { background: #16233d; }
+  .split-role {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #7dd3fc;
+    margin-bottom: 18px;
+  }
+  .split-panel h3 {
+    font-size: 24px;
+    color: var(--bone);
+    margin: 0 0 12px;
+    line-height: 1.2;
+  }
+  .split-panel p.desc {
+    color: #b0c4de;
+    font-size: 15px;
+    line-height: 1.65;
+    margin: 0 0 26px;
+    max-width: 42ch;
+  }
+  .split-list {
+    list-style: none;
+    margin: 0 0 28px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .split-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14.5px;
+    color: #dbeafe;
+  }
+  .split-list li::before {
+    content: "";
+    width: 6px; height: 6px;
+    background: var(--orange);
+    margin-top: 7px;
+    flex: none;
+    border-radius: 1px;
+  }
+  .device-frame { border-radius: 6px; overflow: hidden; border: 1px solid rgba(244,242,234,0.2); }
+
+  /* ================= PRICING ================= */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 1080px;
+    margin: 0 auto;
+    align-items: stretch;
+  }
+  @media (max-width: 980px) {
+    .pricing-grid { grid-template-columns: 1fr; max-width: 420px; }
+  }
+  .plan {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .plan.featured {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 1px var(--orange);
+  }
+  .plan.enterprise {
+    background: #0f172a;
+    border-color: #1c463b;
+  }
+  .plan.enterprise .plan-name,
+  .plan.enterprise .plan-sub { color: #9aa39c; }
+  .plan.enterprise .plan-price .amount { color: var(--bone); font-size: 26px; }
+  .plan.enterprise .plan-feats li { color: #d6d2c4; }
+  .plan.enterprise .btn-ghost { border-color: rgba(244,242,234,0.35); color: var(--bone); }
+  .plan.enterprise .plan-support { border-color: #1c463b; }
+  .plan.enterprise .plan-support-item { color: #b9b4a6; }
+  .plan.enterprise .plan-support-item strong { color: var(--bone); }
+  .plan.enterprise .plan-support-item svg { color: var(--orange); }
+  .plan-addon {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    background: rgba(255,106,26,0.08);
+    border: 1px dashed var(--orange);
+    border-radius: 6px;
+    padding: 11px 13px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--fg);
+    margin: 0 0 22px;
+  }
+  .plan-addon strong { display: block; color: var(--fg); font-weight: 700; margin-bottom: 1px; }
+  .plan-addon .addon-price { color: var(--orange); font-weight: 700; }
+  .plan.enterprise .plan-addon { color: #d6d2c4; }
+  .plan.enterprise .plan-addon strong { color: var(--bone); }
+  .plan-badge {
+    position: absolute;
+    top: -13px;
+    left: 28px;
+    background: var(--orange);
+    color: #1a0d05;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 5px 12px;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+  .plan-name {
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 12.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    margin-bottom: 14px;
+  }
+  .plan-price {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .plan-price .amount {
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 40px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .plan-price .cur {
+    font-size: 16px;
+    color: var(--fg-dim);
+  }
+  .plan-price .period {
+    font-size: 14px;
+    color: var(--fg-dim);
+  }
+  .plan-sub {
+    font-size: 13.5px;
+    color: var(--fg-dim);
+    margin-bottom: 26px;
+  }
+  .plan-feats {
+    list-style: none;
+    margin: 0 0 30px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    flex: 1;
+  }
+  .plan-feats li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .plan-feats svg { flex: none; margin-top: 3px; }
+  .plan-feats .petrol-check { color: var(--petrol-bright); }
+  .plan .btn { width: 100%; justify-content: center; }
+  .plan-note {
+    text-align: center;
+    color: var(--fg-dim);
+    font-size: 13.5px;
+    margin-top: 36px;
+  }
+  .plan-support {
+    border-top: 1px solid var(--border);
+    margin: 4px 0 22px;
+    padding-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .plan-support-item {
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--fg-dim);
+  }
+  .plan-support-item span { min-width: 0; }
+  .plan-support-item svg { flex: none; margin-top: 2px; color: var(--petrol-bright); }
+  .plan-support-item strong { color: var(--fg); font-weight: 600; }
+  .plan-setup {
+    font-size: 12.5px;
+    color: var(--fg-dim);
+    margin-top: 2px;
+  }
+  .plan-setup strong { color: var(--fg); }
+  .pricing-legal {
+    text-align: center;
+    max-width: 640px;
+    margin: 22px auto 0;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--fg-dim);
+  }
+
+  /* ================= COMPARISON TABLE ================= */
+  .compare-wrap {
+    margin-top: 76px;
+  }
+  .compare-title {
+    text-align: center;
+    font-size: clamp(21px, 2.6vw, 28px);
+    margin: 0 0 36px;
+    line-height: 1.25;
+  }
+  .compare-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  table.compare {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: collapse;
+    background: var(--card-bg);
+    font-size: 13.5px;
+  }
+  table.compare th, table.compare td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  table.compare thead th {
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+  }
+  table.compare thead th:first-child { width: 38%; }
+  table.compare thead th.col-plan { text-align: center; color: var(--fg); font-size: 12.5px; }
+  table.compare thead th.col-plan.featured { color: var(--orange); }
+  table.compare td, table.compare th:not(:first-child) { text-align: center; }
+  table.compare td:first-child { text-align: left; color: var(--fg); }
+  table.compare tr.cat-row td {
+    background: var(--bg);
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    padding-top: 16px;
+    padding-bottom: 8px;
+  }
+  table.compare tr:last-child td { border-bottom: none; }
+  table.compare .yes { color: var(--petrol-bright); font-weight: 700; }
+  table.compare .no { color: var(--fg-dim); opacity: 0.5; }
+  table.compare .addon-tag {
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--orange);
+    border: 1px solid var(--orange);
+    border-radius: 3px;
+    padding: 2px 7px;
+    white-space: nowrap;
+  }
+  table.compare .muted { color: var(--fg-dim); font-size: 12.5px; }
+
+  /* ================= CONTATO ================= */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+    gap: 48px;
+    align-items: center;
+  }
+  @media (max-width: 860px) { .contact-grid { grid-template-columns: 1fr; } }
+  .contact-grid .section-head { margin: 0; text-align: left; max-width: 46ch; }
+  .contact-grid .section-head .eyebrow { justify-content: flex-start; }
+  .contact-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 26px 26px 22px;
+  }
+  .contact-card .field { margin-bottom: 12px; }
+  .contact-card .field label {
+    display: block; font-size: 11.5px; font-weight: 600; color: var(--fg);
+    margin-bottom: 5px;
+  }
+  .contact-card .field input {
+    width: 100%; padding: 9px 11px; border-radius: 5px;
+    border: 1px solid var(--border); background: #6b6d4a;
+    font-size: 13.5px; color: #14120f !important; font-family: inherit;
+    color-scheme: light;
+  }
+  .contact-card .field input:focus { border-color: var(--orange); background: #6b6d4a; outline: none; }
+  .contact-card .field input::placeholder { color: #2c2d1e; opacity: .7; }
+  .contact-card .field input:-webkit-autofill,
+  .contact-card .field input:-webkit-autofill:hover,
+  .contact-card .field input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #14120f;
+    -webkit-box-shadow: 0 0 0 1000px #6b6d4a inset;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+  .contact-card .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 480px) { .contact-card .field-row { grid-template-columns: 1fr; } }
+  .contact-hp { position: absolute; left: -9999px; top: -9999px; }
+  .contact-submit {
+    width: 100%; padding: 12px 18px; margin-top: 4px;
+    background: var(--orange); color: #1a0d05; border: none; border-radius: 5px;
+    font-weight: 700; font-size: 14px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .contact-submit:hover { background: #ff7d38; transform: translateY(-1px); }
+  .contact-submit:disabled { opacity: 0.6; cursor: wait; transform: none; }
+  .contact-legal { font-size: 11.5px; color: var(--fg-dim); text-align: center; margin-top: 12px; }
+  .contact-status {
+    display: none; padding: 13px 15px; border-radius: 6px; font-size: 13.5px; margin-bottom: 16px; line-height: 1.5;
+  }
+  .contact-status.ok { display: block; background: rgba(44,154,127,0.1); border: 1px solid var(--petrol-bright); color: #0e4636; }
+  .contact-status.err { display: block; background: rgba(255,106,26,0.08); border: 1px solid var(--orange); color: #7a3410; }
+
+  /* ================= FOOTER CTA ================= */
+  .final-cta {
+    background: var(--ink);
+    color: var(--bone);
+    padding: 84px 0;
+    text-align: center;
+  }
+  .final-cta h2 {
+    font-size: clamp(28px, 4vw, 42px);
+    max-width: 18ch;
+    margin: 0 auto 18px;
+    line-height: 1.12;
+  }
+  .final-cta p {
+    color: #c9c5b6;
+    font-size: 16px;
+    margin: 0 auto 34px;
+    max-width: 50ch;
+  }
+  .final-cta .btn { padding: 17px 34px; font-size: 16px; }
+
+  footer.site {
+    background: var(--ink);
+    border-top: 1px solid rgba(244,242,234,0.12);
+    padding: 36px 0;
+    color: #8a8577;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  /* Mockup internals */
+  .mock-topbar {
+    display: flex;
+    gap: 6px;
+    padding: 9px 12px;
+    background: #0a0d0b;
+  }
+  .mock-topbar span { width: 8px; height: 8px; border-radius: 50%; background: #2a332c; }
+
+  /* ======= LANGUAGE SWITCHER ======= */
+  .language-switcher {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 12px;
+    z-index: 9999;
+    background: rgba(11, 15, 13, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(244, 242, 234, 0.2);
+  }
+
+  .lang-btn {
+    font-size: 22px;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    line-height: 1;
+  }
+
+  .lang-btn:hover {
+    opacity: 0.9;
+    transform: scale(1.2);
+  }
+
+  .lang-btn.active {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+
+  @media (max-width: 768px) {
+    .language-switcher {
+      top: 12px;
+      right: 12px;
+      padding: 8px 10px;
+      gap: 10px;
+    }
+    .lang-btn {
+      font-size: 18px;
+    }
+  }
+
+</style>
+
+<!-- ============================================================ NAV
+     Menu único do site (pedido do usuário 2026-08-21) -- fonte real é
+     inc/nav-fragment.html, injetada aqui via inc/nav-loader.js. Antes esse
+     bloco era hardcoded aqui E duplicado em inc/nav.php, e ficou
+     desincronizado (FAQ foi adicionado só num dos dois). -->
+<div id="onav-mount"></div>
+<script src="/inc/nav-loader.js"></script>
+</script>
+
+<!-- ============================================================ HERO -->
+<header class="hero">
+  <img class="hero-plate" src="/img/hero-canteiro.jpg" alt="" role="presentation" aria-hidden="true" />
+  <div class="hero-vignette" aria-hidden="true"></div>
+
+  <div class="wrap hero-inner">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-eyebrow eyebrow">Software de gestão para locadoras</div>
+        <h1 class="deck">Controle total da sua locadora, feito por quem entende de locação.</h1>
+        <p class="lede">
+          Preparado para atender diversos segmentos de atuação e os mais variados tipos de equipamentos.
+          Contratos, manutenção, pátio e financeiro numa base só — sem depender de planilha, sem operação às cegas.
+        </p>
+        <div class="hero-actions">
+          <a href="/nova/enterprise/" class="btn btn-primary">
+            Conhecer o ERP Oravel
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#solucoes" class="btn btn-ghost">Ver como funciona</a>
+        </div>
+        <div class="hero-triage">
+          <span class="hero-triage-label">Sua situação hoje:</span>
+          <div class="hero-triage-links">
+            <a href="/para-quem-tem-sistema.php" class="hero-triage-link" data-track-cta="hero-triage" data-track-segment="A">Já uso um sistema</a>
+            <a href="/para-quem-nao-tem-sistema.php" class="hero-triage-link" data-track-cta="hero-triage" data-track-segment="B">Ainda uso planilha</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================ DORES / SOLUÇÕES -->
+<section class="section section-bone" id="solucoes">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Sua locadora tem algum desses desafios?</div>
+      <h2>Gerenciar uma locadora de equipamentos envolve equilibrar logística, disponibilidade de estoque, contratos dinâmicos e manutenção rigorosa.</h2>
+      <p>Quando esses processos rodam em planilhas dispersas ou ferramentas genéricas, a operação acumula gargalos que impactam diretamente a margem de lucro. A Oravel foi desenhada para resolver as dores operacionais e financeiras mais críticas do setor de locação e manutenção.</p>
+    </div>
+
+    <div class="pain-list">
+      <div class="pain-item">
+        <span class="pain-num">01</span>
+        <div>
+          <h3>Controle de Disponibilidade e Frotas em Tempo Real</h3>
+          <div class="pain-block">
+            <span class="pain-label is-problem">O desafio</span>
+            <p>Dificuldade em saber exatamente quais máquinas estão locadas, disponíveis no pátio, reservadas ou retidas em manutenção, gerando risco de overbooking ou ociosidade de ativos caros.</p>
+          </div>
+          <div class="pain-block">
+            <span class="pain-label is-solution">A solução</span>
+            <p>Visão centralizada e atualizada do inventário, permitindo alocação precisa, rastreamento do ciclo de vida de cada equipamento e resposta ágil a novos pedidos de clientes.</p>
+          </div>
+          <div style="margin-top: 16px; background: #f9f9f9; border-radius: 6px; padding: 12px; border: 1px solid #e0e0e0; font-size: 12px; font-family: monospace;">
+            <div style="font-weight: bold; color: #333; margin-bottom: 10px;">Dashboard de Equipamentos</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div style="background: #fff; padding: 8px; border-radius: 4px; border-left: 3px solid #28a745;">
+                <div style="color: #666; font-size: 10px;">Disponível</div>
+                <div style="font-weight: bold; color: #28a745;">12 máquinas</div>
+              </div>
+              <div style="background: #fff; padding: 8px; border-radius: 4px; border-left: 3px solid #ff6a1a;">
+                <div style="color: #666; font-size: 10px;">Em locação</div>
+                <div style="font-weight: bold; color: #ff6a1a;">8 máquinas</div>
+              </div>
+              <div style="background: #fff; padding: 8px; border-radius: 4px; border-left: 3px solid #ffc107;">
+                <div style="color: #666; font-size: 10px;">Em manutenção</div>
+                <div style="font-weight: bold; color: #ffc107;">3 máquinas</div>
+              </div>
+              <div style="background: #fff; padding: 8px; border-radius: 4px; border-left: 3px solid #6c757d;">
+                <div style="color: #666; font-size: 10px;">Reservado</div>
+                <div style="font-weight: bold; color: #6c757d;">2 máquinas</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pain-item">
+        <span class="pain-num">02</span>
+        <div>
+          <h3>Gestão Preventiva e Corretiva de Manutenções</h3>
+          <div class="pain-block">
+            <span class="pain-label is-problem">O desafio</span>
+            <p>Falhas imprevistas em campo, falta de histórico de revisões por equipamento e custos elevados com paradas não planejadas que desgastam a relação com o cliente.</p>
+          </div>
+          <div class="pain-block">
+            <span class="pain-label is-solution">A solução</span>
+            <p>Cronogramas automatizados de manutenção preventiva (por tempo de uso ou horímetro), abertura rápida de ordens de serviço corretivas e registro detalhado de peças e custos por máquina.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="pain-item">
+        <span class="pain-num">03</span>
+        <div>
+          <h3>Ciclo Contratual, Medições e Faturamento Flexível</h3>
+          <div class="pain-block">
+            <span class="pain-label is-problem">O desafio</span>
+            <p>Complexidade na gestão de contratos com diferentes modalidades de cobrança (diária, semanal, mensal), renovações automáticas, aditivos de troca de itens e conferência manual de devoluções.</p>
+          </div>
+          <div class="pain-block">
+            <span class="pain-label is-solution">A solução</span>
+            <p>Emissão e controle de contratos estruturados, integração com medições de uso e processos claros de checklist de entrada e saída (entrega técnica e devolução).</p>
+          </div>
+          <div style="margin-top: 16px; background: #f9f9f9; border-radius: 6px; padding: 12px; border: 1px solid #e0e0e0; font-size: 12px; font-family: monospace;">
+            <div style="font-weight: bold; color: #333; margin-bottom: 10px;">Logística & Pátio — QR Code Check-in/out</div>
+            <div style="background: #fff; padding: 12px; border-radius: 4px; text-align: center; margin-bottom: 8px;">
+              <div style="display: inline-block; width: 80px; height: 80px; background: linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000); background-size: 20px 20px; background-position: 0 0, 10px 10px; border-radius: 4px; margin-bottom: 8px;"></div>
+              <div style="font-size: 10px; color: #666; margin: 8px 0;">Scan QR Code</div>
+              <div style="background: #d4edda; color: #28a745; padding: 6px; border-radius: 3px; font-weight: bold; font-size: 11px;">Equipamento OK</div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+              <div style="background: #e7f3e7; padding: 6px; border-radius: 3px; font-size: 10px; text-align: center;">
+                <div style="color: #666;">Mobilização</div>
+                <div style="font-weight: bold; color: #28a745;">Concluído</div>
+              </div>
+              <div style="background: #fff3cd; padding: 6px; border-radius: 3px; font-size: 10px; text-align: center;">
+                <div style="color: #666;">Desmobilização</div>
+                <div style="font-weight: bold; color: #ffc107;">Pendente</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pain-item">
+        <span class="pain-num">04</span>
+        <div>
+          <h3>Visibilidade Financeira e Rentabilidade por Ativo</h3>
+          <div class="pain-block">
+            <span class="pain-label is-problem">O desafio</span>
+            <p>Ausência de métricas claras sobre o Retorno sobre o Investimento (ROI) de cada máquina, dificultando decisões sobre quando desmobilizar, reformar ou adquirir novos equipamentos.</p>
+          </div>
+          <div class="pain-block">
+            <span class="pain-label is-solution">A solução</span>
+            <p>Relatórios gerenciais que cruzam receita de locação versus custos operacionais e de manutenção por ativo, apontando a real lucratividade da frota.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ SEGMENTOS -->
+
+<!-- ============================================================ PROBLEMA/SOLUÇÃO 2 COLUNAS -->
+<section class="section section-petrol" id="problema-solucao">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">De planilhas para automação</div>
+      <h2>Os desafios mais comuns na operação — e como a Oravel resolve cada um</h2>
+      <p>Três pontos que corroem a margem de qualquer locadora que ainda opera no manual, e o que muda quando o processo é automatizado.</p>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-row">
+        <div class="compare-card is-before">
+          <span class="compare-tag">O desafio</span>
+          <h3>Faturamento manual por horímetro</h3>
+          <p><strong>5 a 8 horas por semana</strong> conferindo horímetro inicial e final na planilha, com <strong>5 a 8% de erro</strong> no valor faturado.</p>
+        </div>
+        <div class="compare-arrow" aria-hidden="true">→</div>
+        <div class="compare-card is-after">
+          <span class="compare-tag">Com a Oravel</span>
+          <h3>Fatura automática em 30 segundos</h3>
+          <p>Horímetro registrado direto na ordem de serviço. Fatura gerada com <strong>menos de 0,1% de erro</strong>, sem planilha paralela.</p>
+        </div>
+      </div>
+
+      <div class="compare-row">
+        <div class="compare-card is-before">
+          <span class="compare-tag">O desafio</span>
+          <h3>Manutenção reativa</h3>
+          <p>Equipamento quebra em campo sem aviso: <strong>aluguel perdido</strong> enquanto a máquina fica parada, mais o <strong>custo do reparo emergencial</strong>.</p>
+        </div>
+        <div class="compare-arrow" aria-hidden="true">→</div>
+        <div class="compare-card is-after">
+          <span class="compare-tag">Com a Oravel</span>
+          <h3>Manutenção preditiva</h3>
+          <p>Alertas automáticos por tempo de uso ou horímetro, <strong>uma semana antes</strong> do vencimento. Manutenção agendada, máquina nunca para de surpresa.</p>
+        </div>
+      </div>
+
+      <div class="compare-row">
+        <div class="compare-card is-before">
+          <span class="compare-tag">O desafio</span>
+          <h3>Uso de operador sem controle</h3>
+          <p>Cada operador registra um horário diferente, <strong>sem comprovação</strong>, resultando em faturas contestadas pelo cliente.</p>
+        </div>
+        <div class="compare-arrow" aria-hidden="true">→</div>
+        <div class="compare-card is-after">
+          <span class="compare-tag">Com a Oravel</span>
+          <h3>Uso rastreado</h3>
+          <p>Painel mostra <strong>quem operou, quando e por quanto tempo</strong>. Fatura exata, gerada em minutos.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ COMO FUNCIONA -->
+<section class="section section-bone" id="como-funciona">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Demonstração</div>
+      <h2>Como Funciona — 3 Principais Fluxos</h2>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 2px solid var(--border); flex-wrap: wrap;">
+      <button onclick="showTab('tab-faturamento')" style="padding: 12px 20px; border: none; background: none; border-bottom: 3px solid #ff6a1a; cursor: pointer; font-weight: bold; color: #ff6a1a;">📊 Faturamento</button>
+      <button onclick="showTab('tab-manutencao')" style="padding: 12px 20px; border: none; background: none; border-bottom: 2px solid transparent; cursor: pointer; font-weight: bold; color: var(--fg-dim);">🔧 Manutenção</button>
+      <button onclick="showTab('tab-operador')" style="padding: 12px 20px; border: none; background: none; border-bottom: 2px solid transparent; cursor: pointer; font-weight: bold; color: var(--fg-dim);">👨‍💼 Operador</button>
+    </div>
+
+    <div id="tab-faturamento" style="display: block; background: var(--card-bg); padding: 30px; border-radius: 8px; border: 1px solid var(--border);">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center;">
+        <div>
+          <h3>Faturamento Automático</h3>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;">
+            <li style="display: flex; gap: 10px;"><span style="color: #28a745; font-weight: bold;">✓</span> Horímetro sincronizado em tempo real</li>
+            <li style="display: flex; gap: 10px;"><span style="color: #28a745; font-weight: bold;">✓</span> Taxa/hora customizável por tipo</li>
+            <li style="display: flex; gap: 10px;"><span style="color: #28a745; font-weight: bold;">✓</span> Fatura gerada com 1 clique</li>
+            <li style="display: flex; gap: 10px;"><span style="color: #28a745; font-weight: bold;">✓</span> Histórico de medições automático</li>
+          </ul>
+        </div>
+        <div style="background: #f0f0f0; border-radius: 8px; padding: 20px; border: 1px solid #ddd; font-family: monospace; font-size: 12px; color: #333;">
+          <div style="background: #fff; border-radius: 4px; padding: 12px; margin-bottom: 8px; border-left: 4px solid #28a745;">
+            <div style="font-weight: bold; color: #000;">Equipamento: Guindaste XL-500</div>
+            <div style="font-size: 11px; color: #666; margin-top: 4px;">Horímetro Atual: 1.250h</div>
+            <div style="font-size: 11px; color: #666;">Taxa: R$ 450/h</div>
+            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; font-weight: bold; color: #28a745;">Valor total: R$ 562.500</div>
+          </div>
+          <button style="width: 100%; padding: 8px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Gerar Fatura</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-manutencao" style="display: none; background: var(--card-bg); padding: 30px; border-radius: 8px; border: 1px solid var(--border);">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center;">
+        <div>
+          <h3>Manutenção Preventiva</h3>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;">
+            <li style="display: flex; gap: 10px;"><span style="color: #28a745; font-weight: bold;">✓</span> Alertas 1 semana antes</li>
+            <li style="display: flex; gap: 10px;"><span style="color: #28a745; font-weight: bold;">✓</span> Planos por horímetro ou data</li>
+            <li style="display: flex; gap: 10px;"><span style="color: #28a745; font-weight: bold;">✓</span> Histórico completo de cada máquina</li>
+            <li style="display: flex; gap: 10px;"><span style="color: #28a745; font-weight: bold;">✓</span> Rastreamento de peças usadas</li>
+          </ul>
+        </div>
+        <div style="background: #f0f0f0; border-radius: 8px; padding: 20px; border: 1px solid #ddd;">
+          <div style="font-size: 12px; font-weight: bold; color: #333; margin-bottom: 12px;">Alertas de Manutenção</div>
+          <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; margin-bottom: 8px; border-radius: 4px; font-size: 12px;">
+            <div style="font-weight: bold; color: #000;">Empilhadeira BT-3</div>
+            <div style="color: #666; margin-top: 3px;">Revisão em 250h — prevista em 4 dias</div>
+          </div>
+          <div style="background: #d4edda; border-left: 4px solid #28a745; padding: 12px; margin-bottom: 8px; border-radius: 4px; font-size: 12px;">
+            <div style="font-weight: bold; color: #000;">Compressor AC-2000</div>
+            <div style="color: #666; margin-top: 3px;">Filtro OK — próxima em 120h (60 dias)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-operador" style="display: none; background: var(--card-bg); padding: 30px; border-radius: 8px; border: 1px solid var(--border);">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center;">
+        <div>
+          <h3>Rastreamento de Operador</h3>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;">
+            <li style="display: flex; gap: 10px;"><span style="color: #28a745; font-weight: bold;">✓</span> Vinculado a cada contrato</li>
+            <li style="display: flex; gap: 10px;"><span style="color: #28a745; font-weight: bold;">✓</span> Histórico de uso</li>
+            <li style="display: flex; gap: 10px;"><span style="color: #28a745; font-weight: bold;">✓</span> Faturamento preciso baseado em dados reais</li>
+            <li style="display: flex; gap: 10px;"><span style="color: #28a745; font-weight: bold;">✓</span> Dashboard em tempo real</li>
+          </ul>
+        </div>
+        <div style="background: #f0f0f0; border-radius: 8px; padding: 20px; border: 1px solid #ddd; font-family: monospace; font-size: 12px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+            <div style="background: #fff; padding: 10px; border-radius: 4px; border-left: 4px solid #ff6a1a;">
+              <div style="color: #666; font-size: 11px;">João Silva</div>
+              <div style="font-weight: bold; color: #000; margin-top: 3px;">7h 35min</div>
+              <div style="color: #666; font-size: 10px;">Hoje</div>
+            </div>
+            <div style="background: #fff; padding: 10px; border-radius: 4px; border-left: 4px solid #28a745;">
+              <div style="color: #666; font-size: 11px;">Maria Santos</div>
+              <div style="font-weight: bold; color: #000; margin-top: 3px;">6h 20min</div>
+              <div style="color: #666; font-size: 10px;">Hoje</div>
+            </div>
+          </div>
+          <div style="background: #fff; border-radius: 4px; padding: 10px; text-align: center;">
+            <div style="color: #666; font-size: 10px;">Total de horas faturáveis</div>
+            <div style="font-weight: bold; font-size: 16px; color: #28a745; margin-top: 4px;">13h 55min</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>function showTab(t){document.getElementById('tab-faturamento').style.display='none';document.getElementById('tab-manutencao').style.display='none';document.getElementById('tab-operador').style.display='none';document.getElementById(t).style.display='block';}</script>
+  </div>
+</section>
+
+<!-- ============================================================ PROVA SOCIAL -->
+<section class="section" id="depoimentos" style="background: #ffffff; color: var(--ink);">
+  <div class="wrap">
+    <div class="section-head" style="text-align: center; margin-bottom: 50px;">
+      <div class="eyebrow" style="justify-content: center;">Quem usa Oravel</div>
+      <h2 style="text-align: center;">Histórias de Clientes Reais</h2>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
+      <div style="background: var(--card-bg); padding: 30px; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+          <div style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #ff6a1a, #ff8c42); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 20px;">JP</div>
+          <div>
+            <div style="font-weight: bold; color: var(--fg); font-size: 14px;">João Paulo</div>
+            <div style="font-size: 11px; color: var(--fg-dim);">Gerente de Frota</div>
+          </div>
+        </div>
+        <p style="font-style: italic; color: var(--fg-dim); margin: 0 0 16px; flex: 1;">"Antes 5h/semana com planilhas. Agora 15 minutos. Oravel faz tudo automaticamente."</p>
+        <div style="background: #d4edda; padding: 12px; border-radius: 6px; border-left: 4px solid #28a745;">
+          <strong style="color: #28a745; display: block;">-94% tempo administrativo</strong>
+          <span style="font-size: 11px; color: var(--fg-dim);">Guindastes e Muncks</span>
+        </div>
+      </div>
+      <div style="background: var(--card-bg); padding: 30px; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+          <div style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #28a745, #52d273); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 20px;">MR</div>
+          <div>
+            <div style="font-weight: bold; color: var(--fg); font-size: 14px;">Marina R.</div>
+            <div style="font-size: 11px; color: var(--fg-dim);">Diretor Financeiro</div>
+          </div>
+        </div>
+        <p style="font-style: italic; color: var(--fg-dim); margin: 0 0 16px; flex: 1;">"Erros de faturamento caíram de 8% para 0.1%. Recuperamos R$45k/ano."</p>
+        <div style="background: #d4edda; padding: 12px; border-radius: 6px; border-left: 4px solid #28a745;">
+          <strong style="color: #28a745; display: block;">+R$45k/ano receita</strong>
+          <span style="font-size: 11px; color: var(--fg-dim);">Geradores Diesel</span>
+        </div>
+      </div>
+      <div style="background: var(--card-bg); padding: 30px; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+          <div style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #6c757d, #adb5bd); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 20px;">CS</div>
+          <div>
+            <div style="font-weight: bold; color: var(--fg); font-size: 14px;">Carlos S.</div>
+            <div style="font-size: 11px; color: var(--fg-dim);">Gerente Admin</div>
+          </div>
+        </div>
+        <p style="font-style: italic; color: var(--fg-dim); margin: 0 0 16px; flex: 1;">"Parei de ligar pra operador. Oravel tem tudo sincronizado em tempo real."</p>
+        <div style="background: #d4edda; padding: 12px; border-radius: 6px; border-left: 4px solid #28a745;">
+          <strong style="color: #28a745; display: block;">-100 ligações/mês</strong>
+          <span style="font-size: 11px; color: var(--fg-dim);">Multi-equipamento</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ ANTES VS DEPOIS -->
+<section class="section section-bone" id="antes-depois">
+  <div class="wrap">
+    <div class="section-head" style="text-align: center; margin-bottom: 50px;">
+      <div class="eyebrow" style="justify-content: center;">Transformação</div>
+      <h2 style="text-align: center;">O Impacto Real nos Números</h2>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+      <div style="background: var(--card-bg); padding: 25px; border-radius: 8px; text-align: center; border: 1px solid var(--border);">
+        <div style="font-size: 12px; color: var(--fg-dim); margin-bottom: 15px; text-transform: uppercase;">Tempo Faturamento</div>
+        <div style="font-size: 20px; font-weight: bold; color: #28a745; margin-bottom: 5px;">8h</div>
+        <div style="font-size: 12px; color: var(--fg-dim); margin-bottom: 15px;">Antes</div>
+        <div style="color: var(--fg-dim); margin-bottom: 15px;">↓</div>
+        <div style="font-size: 20px; font-weight: bold; color: #28a745; margin-bottom: 5px;">15min</div>
+        <div style="font-size: 12px; color: var(--fg-dim); margin-bottom: 15px;">Depois</div>
+        <div style="background: #d4edda; padding: 8px; border-radius: 4px; color: #28a745; font-weight: bold;">-94%</div>
+      </div>
+      <div style="background: var(--card-bg); padding: 25px; border-radius: 8px; text-align: center; border: 1px solid var(--border);">
+        <div style="font-size: 12px; color: var(--fg-dim); margin-bottom: 15px; text-transform: uppercase;">Taxa de Erro</div>
+        <div style="font-size: 20px; font-weight: bold; color: #28a745; margin-bottom: 5px;">5-8%</div>
+        <div style="font-size: 12px; color: var(--fg-dim); margin-bottom: 15px;">Antes</div>
+        <div style="color: var(--fg-dim); margin-bottom: 15px;">↓</div>
+        <div style="font-size: 20px; font-weight: bold; color: #28a745; margin-bottom: 5px;">&lt;0.1%</div>
+        <div style="font-size: 12px; color: var(--fg-dim); margin-bottom: 15px;">Depois</div>
+        <div style="background: #d4edda; padding: 8px; border-radius: 4px; color: #28a745; font-weight: bold;">-99%</div>
+      </div>
+      <div style="background: var(--card-bg); padding: 25px; border-radius: 8px; text-align: center; border: 1px solid var(--border);">
+        <div style="font-size: 12px; color: var(--fg-dim); margin-bottom: 15px; text-transform: uppercase;">Manutenção</div>
+        <div style="font-size: 28px; margin-bottom: 5px;">🔧</div>
+        <div style="font-size: 12px; color: var(--fg-dim); margin-bottom: 15px;">Reativa</div>
+        <div style="color: var(--fg-dim); margin-bottom: 15px;">↓</div>
+        <div style="font-size: 28px; margin-bottom: 5px;">⚡</div>
+        <div style="font-size: 12px; color: var(--fg-dim); margin-bottom: 15px;">Preditiva</div>
+        <div style="background: #d4edda; padding: 8px; border-radius: 4px; color: #28a745; font-weight: bold;">100%</div>
+      </div>
+      <div style="background: var(--card-bg); padding: 25px; border-radius: 8px; text-align: center; border: 1px solid var(--border);">
+        <div style="font-size: 12px; color: var(--fg-dim); margin-bottom: 15px; text-transform: uppercase;">ROI</div>
+        <div style="font-size: 20px; font-weight: bold; color: #28a745; margin-bottom: 5px;">-</div>
+        <div style="font-size: 12px; color: var(--fg-dim); margin-bottom: 15px;">Antes</div>
+        <div style="color: var(--fg-dim); margin-bottom: 15px;">↓</div>
+        <div style="font-size: 20px; font-weight: bold; color: #28a745; margin-bottom: 5px;">3-6m</div>
+        <div style="font-size: 12px; color: var(--fg-dim); margin-bottom: 15px;">Depois</div>
+        <div style="background: #d4edda; padding: 8px; border-radius: 4px; color: #28a745; font-weight: bold;">Payback</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-bone" id="segmentos" style="padding-top: 0;">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Módulos por segmento</div>
+      <h2>Preparado para qualquer segmento e processo de locação — os 5 abaixo são só o começo.</h2>
+      <p>Cada segmento tem regra própria — horímetro, telemetria, normas de segurança. O Oravel já vem ajustado para isso, e se adapta ao fluxo de qualquer tipo de locadora, do pátio ao contrato.</p>
+    </div>
+
+    <div class="segments">
+      <a class="segment-card" href="https://empilhadeira.oravel.com.br/">
+        <div class="segment-photo">
+          <img src="/img/segmento-empilhadeiras.jpg" alt="" loading="lazy" />
+        </div>
+        <div class="segment-body">
+          <h3>Empilhadeiras</h3>
+          <div class="segment-arrow">Ver módulo <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </a>
+      <a class="segment-card" href="https://gerador.oravel.com.br/">
+        <div class="segment-photo">
+          <img src="/img/segmento-geradores.jpg" alt="" loading="lazy" />
+        </div>
+        <div class="segment-body">
+          <h3>Geradores</h3>
+          <div class="segment-arrow">Ver módulo <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </a>
+      <a class="segment-card" href="https://compressor.oravel.com.br/">
+        <div class="segment-photo">
+          <img src="/img/segmento-compressores.jpg" alt="" loading="lazy" />
+        </div>
+        <div class="segment-body">
+          <h3>Compressores</h3>
+          <div class="segment-arrow">Ver módulo <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </a>
+      <a class="segment-card" href="https://plataforma.oravel.com.br/">
+        <div class="segment-photo">
+          <img src="/img/segmento-plataformas.jpg" alt="" loading="lazy" />
+        </div>
+        <div class="segment-body">
+          <h3>Plataformas Elevatórias</h3>
+          <div class="segment-arrow">Ver módulo <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </a>
+      <a class="segment-card" href="https://guindastes.oravel.com.br/">
+        <div class="segment-photo">
+          <img src="/img/segmento-guindastes-muncks.jpg" alt="" loading="lazy" />
+        </div>
+        <div class="segment-body">
+          <h3>Guindastes e Muncks</h3>
+          <div class="segment-arrow">Ver módulo <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </a>
+    </div>
+
+    <div class="segments-note">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8.5" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="6.3" r="1" fill="currentColor"/></svg>
+      <p><strong>Não achou seu equipamento na lista?</strong> A Oravel atende qualquer tipo de locadora — máquinas pesadas, ferramentas, eventos, mobiliário — e se adapta ao processo específico da sua operação, não só aos segmentos acima.</p>
+    </div>
+
+    <div class="segments-footer">
+      <a href="/nova/enterprise/solucoes/" class="btn btn-ghost">
+        Ver todos os módulos
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ ENTERPRISE BANNER -->
+<section class="ent-banner" style="background: #0f172a;">
+  <div class="wrap">
+    <div class="ent-banner-inner">
+      <div>
+        <div class="ent-banner-eyebrow">Sua empresa precisa de mais?</div>
+        <h2 class="deck">Precisa de ERP + FSM/CMMS completo, em larga escala?</h2>
+        <p>Se sua operação exige gestão financeira integrada, controle de equipes em campo e múltiplos pátios, conheça a configuração feita sob medida para grandes operações.</p>
+        <div class="ent-tags">
+          <span class="ent-tag">ERP</span>
+          <span class="ent-tag">FSM</span>
+          <span class="ent-tag">CMMS</span>
+          <span class="ent-tag">Multifilial</span>
+        </div>
+        <div class="ent-support">
+          <div class="ent-support-item">
+            <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5l1.8 3.7 4 .6-3 2.9.7 4-3.5-1.9-3.5 1.9.7-4-3-2.9 4-.6 1.8-3.7z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            <span><strong>Gerente de Conta Dedicado</strong> + Canal Exclusivo</span>
+          </div>
+          <div class="ent-support-item">
+            <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5a6 6 0 100 12 6 6 0 000-12zM7.5 4v3.5l2.5 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Resposta Crítica em <strong>até 2h</strong></span>
+          </div>
+          <div class="ent-support-item">
+            <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="2" y="3" width="11" height="9" rx="1.3" stroke="currentColor" stroke-width="1.2"/><path d="M2 4.5l5.5 4L13 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span><strong>Chamados Ilimitados</strong></span>
+          </div>
+          <div class="ent-support-item">
+            <span>Implantação: <strong>Sob Consulta / Sob Medida</strong></span>
+          </div>
+        </div>
+      </div>
+      <a href="/nova/enterprise/" class="btn btn-primary">Conhecer a Oravel Enterprise</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ PRICING -->
+<section class="section section-bone" id="planos">
+  <div class="wrap">
+    <div class="section-head" style="max-width:620px;">
+      <div class="eyebrow">Planos do ERP CMMS Oravel</div>
+      <h2 class="deck">Conheça a Oravel em uma apresentação sem compromisso</h2>
+      <p>Cada operação é única. Vamos entender suas necessidades específicas e mostrar como a Oravel resolve seus maiores gargalos — de gestão de manutenção pura até controle comercial completo de locação. Nossos consultores preparam uma demonstração customizada para seu segmento.</p>
+    </div>
+
+    <div class="pricing-grid">
+      <!-- plano 1: OPERACIONAL -->
+      <div class="plan">
+        <div class="plan-name">Operacional</div>
+        <div class="plan-sub" style="margin-bottom:18px;">Gestão completa de manutenção, PCM, ordens de serviço e equipe de campo.</div>
+        <div class="plan-price">
+          <span class="amount mono" style="font-size:22px; line-height:1.3;">Sob Consulta</span>
+        </div>
+        <div class="plan-sub">Até 15 Equipamentos / Máquinas</div>
+        <ul class="plan-feats">
+          <li><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-7" stroke="#1f6f5c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Ordens de Serviço (OS) ilimitadas</li>
+          <li><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-7" stroke="#1f6f5c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Módulo PCM &amp; Manutenção Preditiva/Preventiva</li>
+          <li><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-7" stroke="#1f6f5c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Aplicativo Móvel para Técnicos em Campo</li>
+          <li><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-7" stroke="#1f6f5c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Painel / Área do Cliente com Abertura de Chamados</li>
+          <li><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-7" stroke="#1f6f5c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Faturas e Recibos de Locação (PDF, sem valor fiscal)</li>
+          <li><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-7" stroke="#1f6f5c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Oravel Academy — trilha de treinamento e capacitação</li>
+        </ul>
+        <div class="plan-addon">
+          <span>🧩</span>
+          <span><strong>Add-on Módulo Fiscal (NFS-e / NF-e)</strong> — sob consulta (opcional)</span>
+        </div>
+        <div class="plan-support">
+          <div class="plan-support-item">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5a6 6 0 100 12 6 6 0 000-12zM7.5 4v3.5l2.5 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>🎧 <strong>Suporte Padrão</strong> — atendimento por Ticket/Chamado, resposta em <strong>até 24h</strong></span>
+          </div>
+        </div>
+        <a href="/proposta/?plano=operacional" class="btn btn-primary">Solicitar Proposta</a>
+      </div>
+
+      <!-- plano 2: GESTÃO -->
+      <div class="plan">
+        <div class="plan-name">Gestão</div>
+        <div class="plan-sub" style="margin-bottom:18px;">Controle comercial de locação, logística de pátio e faturamento avançado.</div>
+        <div class="plan-price">
+          <span class="amount mono" style="font-size:22px; line-height:1.3;">Sob Consulta</span>
+        </div>
+        <div class="plan-sub">Até 50 Equipamentos / Máquinas</div>
+        <ul class="plan-feats">
+          <li><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-7" stroke="#ff6a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Tudo do plano Operacional</li>
+          <li><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-7" stroke="#ff6a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Módulo Comercial Completo (Contratos, Medições e Franquia de Horas)</li>
+          <li><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-7" stroke="#ff6a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Logística &amp; Pátio (Mobilização, Desmobilização e QR Code)</li>
+          <li><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-7" stroke="#ff6a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Faturas e Recibos de Locação Ilimitados em PDF</li>
+          <li><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-7" stroke="#ff6a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Módulo Financeiro (Contas a Pagar/Receber e Custos por Cliente)</li>
+        </ul>
+        <div class="plan-addon">
+          <span>🧩</span>
+          <span><strong>Add-on Módulo Fiscal (NFS-e / NF-e)</strong> — sob consulta (opcional)</span>
+        </div>
+        <div class="plan-support">
+          <div class="plan-support-item">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5a6 6 0 100 12 6 6 0 000-12zM7.5 4v3.5l2.5 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>⚡ <strong>Suporte Prioritário</strong> — atendimento por Ticket e WhatsApp, resposta em <strong>até 12h</strong></span>
+          </div>
+        </div>
+        <a href="/proposta/?plano=gestao" class="btn btn-primary">Solicitar Proposta</a>
+      </div>
+
+      <!-- plano 3: ENTERPRISE -->
+      <div class="plan enterprise featured">
+        <div class="plan-badge">Mais escolhido</div>
+        <div class="plan-name">Enterprise</div>
+        <div class="plan-sub" style="margin-bottom:18px;">Solução customizada para grandes operações, múltiplos pátios e alta complexidade.</div>
+        <div class="plan-price">
+          <span class="amount mono" style="font-size:22px; line-height:1.3;">Fale com um Consultor</span>
+        </div>
+        <div class="plan-sub">Equipamentos / Máquinas Ilimitados</div>
+        <ul class="plan-feats">
+          <li><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-7" stroke="#ff6a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Tudo do plano Gestão</li>
+          <li><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-7" stroke="#ff6a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Módulo Fiscal Totalmente Integrado (Multi-CNPJ / NF-e / NFS-e)</li>
+          <li><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-7" stroke="#ff6a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Múltiplos Pátios, Filiais e Multi-tenant Avançado</li>
+          <li><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-7" stroke="#ff6a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Suprimentos &amp; Materiais (Estoque de Peças e Compras)</li>
+          <li><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-7" stroke="#ff6a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Agente de IA Oravel (Análise Preditiva e Relatórios Inteligentes)</li>
+          <li><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-7" stroke="#ff6a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Integrações via API/Webhooks e Conciliação Contábil</li>
+        </ul>
+        <div class="plan-support">
+          <div class="plan-support-item">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5a6 6 0 100 12 6 6 0 000-12zM7.5 4v3.5l2.5 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span><strong>Suporte Dedicado</strong> — Gerente de Conta Exclusivo, SLA Crítico em <strong>2h</strong> e Treinamento VIP</span>
+          </div>
+        </div>
+        <a href="/proposta/" class="btn btn-ghost">Solicitar Proposta Customizada</a>
+      </div>
+    </div>
+
+    <p class="pricing-legal">
+      Condição promocional de lançamento válida por 12 meses a partir da assinatura. Após esse período, o valor é reajustado para a tabela vigente.
+      Taxa de implantação única, cobrada à parte — consulte condições ao assinar.
+    </p>
+
+    <div class="compare-wrap">
+      <h3 class="compare-title deck">Compare todos os recursos, módulos e níveis de suporte da Oravel</h3>
+      <div class="compare-scroll">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th>Recurso / Módulo</th>
+              <th class="col-plan">Operacional</th>
+              <th class="col-plan featured">Gestão</th>
+              <th class="col-plan">Enterprise</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="cat-row"><td colspan="4">Atendimento, Treinamento &amp; Níveis de Serviço (SLA)</td></tr>
+            <tr>
+              <td>Canal de Atendimento</td>
+              <td>Ticket / Portal</td>
+              <td>Ticket + WhatsApp</td>
+              <td>Canal Exclusivo + Telefone</td>
+            </tr>
+            <tr>
+              <td>Tempo de Resposta (SLA)</td>
+              <td>Até 24h úteis</td>
+              <td>Até 12h úteis</td>
+              <td>Até 2h (crítico) / dedicado</td>
+            </tr>
+            <tr>
+              <td>Gerente de Conta / CS Dedicado</td>
+              <td><span class="no">✕</span></td>
+              <td><span class="no">✕</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+            <tr>
+              <td>Onboarding e Treinamento da Equipe</td>
+              <td>Oravel Academy</td>
+              <td>Oravel Academy + Sessão ao vivo</td>
+              <td>Treinamento VIP customizado</td>
+            </tr>
+
+            <tr class="cat-row"><td colspan="4">Gestão de Equipamentos, Máquinas &amp; PCM</td></tr>
+            <tr>
+              <td>Cadastro de Equipamentos/Máquinas e Histórico</td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+            <tr>
+              <td>Controle de Horímetro, Odômetro e Alertas</td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+            <tr>
+              <td>Planos de Manutenção Preventiva e Preditiva</td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+
+            <tr class="cat-row"><td colspan="4">Operacional &amp; Campo</td></tr>
+            <tr>
+              <td>App Celular para Técnicos (Android/iOS)</td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+            <tr>
+              <td>Apontamento de Horas e Peças na OS</td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+            <tr>
+              <td>Checklist Digital e Fotos no App</td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+
+            <tr class="cat-row"><td colspan="4">Logística &amp; Controle de Pátio</td></tr>
+            <tr>
+              <td>Rastreamento por QR Code na Máquina/Equipamento</td>
+              <td><span class="no">✕</span></td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+            <tr>
+              <td>Processo de Mobilização e Desmobilização de Frotas</td>
+              <td><span class="no">✕</span></td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+            <tr>
+              <td>Gestão de Múltiplos Pátios e Filiais</td>
+              <td><span class="no">✕</span></td>
+              <td><span class="no">✕</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+
+            <tr class="cat-row"><td colspan="4">Comercial &amp; Locação de Máquinas</td></tr>
+            <tr>
+              <td>Contratos de Locação e Franquia de Horas</td>
+              <td><span class="no">✕</span></td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+            <tr>
+              <td>Medição Periódica de Equipamentos em Campo</td>
+              <td><span class="no">✕</span></td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+            <tr>
+              <td>Gestão da Força de Vendas e CRM</td>
+              <td><span class="no">✕</span></td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+
+            <tr class="cat-row"><td colspan="4">Módulo Fiscal &amp; Financeiro</td></tr>
+            <tr>
+              <td>Faturas e Recibos de Locação (PDF, sem valor fiscal)</td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+            <tr>
+              <td>Emissão de NF-e (Remessa) e NFS-e (Serviços)</td>
+              <td><span class="addon-tag">Add-on</span></td>
+              <td><span class="addon-tag">Add-on</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+            <tr>
+              <td>Contas a Pagar, Receber e DRE Simplificada</td>
+              <td><span class="no">✕</span></td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+            <tr>
+              <td>Integração Contábil e Bancária</td>
+              <td><span class="no">✕</span></td>
+              <td><span class="no">✕</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+
+            <tr class="cat-row"><td colspan="4">Suprimentos, Peças &amp; RH</td></tr>
+            <tr>
+              <td>Controle de Estoque de Peças de Reposição</td>
+              <td>Básico</td>
+              <td>Avançado</td>
+              <td>Completo</td>
+            </tr>
+            <tr>
+              <td>Alocação de RH e Produtividade da Equipe Técnica</td>
+              <td><span class="no">✕</span></td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+
+            <tr class="cat-row"><td colspan="4">Inteligência, Relatórios &amp; Painel do Cliente</td></tr>
+            <tr>
+              <td>Painel do Cliente (Chamados e Solicitação de Manutenção)</td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+            <tr>
+              <td>Relatórios Analíticos de Custos e Disponibilidade</td>
+              <td>Básico</td>
+              <td>Avançado</td>
+              <td>Customizado</td>
+            </tr>
+            <tr>
+              <td>Agente de Inteligência Artificial para Análise Preditiva</td>
+              <td><span class="no">✕</span></td>
+              <td><span class="no">✕</span></td>
+              <td><span class="yes">✓</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ MISSÃO, VISÃO E VALORES -->
+<section class="section" id="proposito" style="background: #ffffff; color: var(--ink);">
+  <div class="wrap">
+    <div class="section-head" style="max-width: 640px; margin: 0 auto 48px; text-align: center;">
+      <div class="eyebrow" style="justify-content: center;">Quem somos</div>
+      <h2 class="deck">Missão, visão e valores</h2>
+      <p>A Oravel nasceu de pátio, não de escritório — e isso molda tudo que construímos.</p>
+    </div>
+
+    <div class="mvv-grid">
+      <div class="mvv-card">
+        <span class="mvv-icon">🎯</span>
+        <h3>Missão</h3>
+        <p>Transformar a operação de locadoras em um negócio previsível, rentável e escalável. Colocamos você no controle — desde o ativo que sai do pátio até o fechamento do contrato — para que você tome decisões baseadas em dados reais, não em achismo, e cresça com segurança.</p>
+      </div>
+      <div class="mvv-card">
+        <span class="mvv-icon">🧭</span>
+        <h3>Visão</h3>
+        <p>Ser o sistema de referência para locadoras de equipamentos no Brasil — a plataforma que qualquer operação, do pequeno negócio familiar à locadora regional consolidada, reconhece como construída por quem já esteve do outro lado do balcão.</p>
+      </div>
+      <div class="mvv-card">
+        <span class="mvv-icon">⚙️</span>
+        <h3>Valores</h3>
+        <ul class="mvv-list">
+          <li><strong>Vivência antes de opinião.</strong> Não desenhamos solução para um problema que não sentimos na pele.</li>
+          <li><strong>Previsibilidade é respeito.</strong> Erro de margem zero não é slogan, é o padrão que perseguimos em cada funcionalidade.</li>
+          <li><strong>Parceria, não fornecimento.</strong> Entramos na operação do cliente como quem também vai ficar de plantão quando a máquina parar.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .mvv-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  @media (max-width: 860px) { .mvv-grid { grid-template-columns: 1fr; } }
+  .mvv-card {
+    background: var(--card-bg, var(--surface));
+    border: 1px solid var(--border);
+    border-radius: var(--radius, 16px);
+    padding: 32px 28px;
+  }
+  .mvv-icon { font-size: 28px; display: block; margin-bottom: 16px; }
+  .mvv-card h3 {
+    font-family: "Archivo Black", "Arial Narrow", "Oswald", sans-serif;
+    font-weight: 900; text-transform: uppercase; font-size: 16px;
+    letter-spacing: 0.02em; margin: 0 0 12px; color: var(--fg);
+  }
+  .mvv-card p { font-size: 14.5px; line-height: 1.65; color: var(--fg-dim, var(--muted)); margin: 0; }
+  .mvv-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  .mvv-list li { font-size: 14px; line-height: 1.6; color: var(--fg-dim, var(--muted)); }
+  .mvv-list li strong { color: var(--fg); display: block; margin-bottom: 2px; }
+
+  /* ======= LANGUAGE SWITCHER ======= */
+  .language-switcher {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 12px;
+    z-index: 9999;
+    background: rgba(11, 15, 13, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(244, 242, 234, 0.2);
+  }
+
+  .lang-btn {
+    font-size: 22px;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    line-height: 1;
+  }
+
+  .lang-btn:hover {
+    opacity: 0.9;
+    transform: scale(1.2);
+  }
+
+  .lang-btn.active {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+
+  @media (max-width: 768px) {
+    .language-switcher {
+      top: 12px;
+      right: 12px;
+      padding: 8px 10px;
+      gap: 10px;
+    }
+    .lang-btn {
+      font-size: 18px;
+    }
+  }
+
+</style>
+
+<!-- ============================================================ FINAL CTA -->
+<section class="final-cta">
+  <div class="wrap">
+    <h2 class="deck">Sua próxima Ordem de Serviço pode começar em 5 minutos.</h2>
+    <p>Cadastre o primeiro ativo hoje. Se seu parque já está numa planilha ou em outro sistema, nossa equipe migra os dados para você durante a implantação.</p>
+    <a href="#planos" class="btn btn-primary">Começar agora</a>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; width:100%;">
+    <span>© 2026 Oravel — gestão de equipamentos e manutenção.</span>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <a href="https://www.linkedin.com/in/oravel-tecnologia/" target="_blank" rel="noopener" aria-label="Oravel no LinkedIn" style="display:inline-flex; color:inherit;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.446-2.136 2.94v5.666H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 11.001-4.125 2.062 2.062 0 01-.001 4.125zM7.114 20.452H3.56V9h3.554v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <span>oravel.com.br</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /*
+    Medidas de dificultar-cópia-casual da página. IMPORTANTE, leia antes de
+    mexer ou de assumir que isso "protege" o conteúdo:
+
+    Nada rodando no navegador consegue bloquear print screen do sistema
+    operacional, uma foto tirada com outro celular, extensões de captura,
+    gravação de tela, o modo Leitor do navegador, ou alguém copiando via
+    DevTools/"Ver código-fonte" (Ctrl+U não é bloqueável por JS). Essas
+    técnicas só aumentam o atrito de um "selecionar tudo + copiar" casual
+    -- não são uma proteção de conteúdo de verdade. Se o objetivo é
+    realmente restringir acesso a preços/condições, a solução correta é
+    colocar esse conteúdo atrás de login, não bloqueio de clique no
+    front-end público.
+  */
+  (function () {
+    document.addEventListener('contextmenu', function (e) {
+      e.preventDefault();
+    });
+
+    document.addEventListener('copy', function (e) {
+      e.preventDefault();
+    });
+
+    document.addEventListener('cut', function (e) {
+      e.preventDefault();
+    });
+
+    document.addEventListener('dragstart', function (e) {
+      if (e.target.tagName === 'IMG') e.preventDefault();
+    });
+
+    // Ctrl/Cmd+C e Ctrl/Cmd+S (salvar página) -- não bloqueia dentro de
+    // input/textarea, pra não impedir o usuário de copiar o que ELE
+    // mesmo digitou num formulário.
+    document.addEventListener('keydown', function (e) {
+      var emCampoDeTexto = ['INPUT', 'TEXTAREA'].includes(e.target.tagName);
+      var ctrlOuCmd = e.ctrlKey || e.metaKey;
+
+      if (!emCampoDeTexto && ctrlOuCmd && ['c', 'x', 's', 'u'].includes(e.key.toLowerCase())) {
+        e.preventDefault();
+      }
+    });
+  })();
+</script>
+
+<script>
+  (function () {
+    var form = document.getElementById('contact-form');
+    if (!form) return;
+
+    var statusBox = document.getElementById('contact-status');
+    var submitBtn = document.getElementById('contact-submit');
+
+    function showStatus(kind, message) {
+      statusBox.className = 'contact-status ' + kind;
+      statusBox.textContent = message;
+      statusBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // honeypot: se preenchido, é bot — finge sucesso e não envia nada
+      if (form.querySelector('#c-site').value.trim() !== '') {
+        showStatus('ok', 'Obrigado! Em breve nossa equipe entra em contato.');
+        form.reset();
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Enviando...';
+      statusBox.className = 'contact-status';
+
+      var formData = new FormData(form);
+
+      fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      })
+        .then(function (res) {
+          if (!res.ok) throw new Error('http-' + res.status);
+          return res.json();
+        })
+        .then(function (data) {
+          if (data && data.ok) {
+            showStatus('ok', 'Recebemos seus dados! Nossa equipe entra em contato em até 1 dia útil.');
+            form.reset();
+          } else {
+            throw new Error((data && data.error) || 'unknown');
+          }
+        })
+        .catch(function () {
+          showStatus('err', 'Não foi possível enviar agora. Tente novamente ou fale com a gente pelo WhatsApp/e-mail contato@oravel.com.br.');
+        })
+        .finally(function () {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Quero ser contatado';
+        });
+    });
+  })();
+</script>
+
+<!-- Tailwind via CDN, so' pra este widget -- preflight desligado de proposito
+     pra nao resetar margin/padding/font do resto do site. -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    corePlugins: { preflight: false },
+  };
+</script>
+
+<div id="wa-widget" class="fixed bottom-6 right-6 z-[9999]" style="font-family: 'Inter', sans-serif;">
+    <!-- Janela de chat -->
+    <div
+        id="wa-chat-panel"
+        class="hidden mb-4 w-80 max-w-[calc(100vw-3rem)] origin-bottom-right flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10 sm:w-96"
+    >
+        <!-- Cabecalho -->
+        <div class="flex items-center gap-3 bg-emerald-600 px-4 py-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg font-extrabold" style="background:#101010;">
+                <span style="color:#ffffff">O</span><span style="color:#E8541A">r</span>
+            </div>
+            <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-semibold text-white">Oravel</p>
+                <p class="flex items-center gap-1.5 text-xs text-emerald-100">
+                    <span class="relative flex h-2 w-2">
+                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75"></span>
+                        <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-300"></span>
+                    </span>
+                    Online agora
+                </p>
+            </div>
+            <button
+                type="button"
+                onclick="waToggleChat(false)"
+                aria-label="Fechar chat"
+                class="shrink-0 rounded-full p-1 text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Corpo (mensagem de boas vindas) -->
+        <div class="flex-1 space-y-2 bg-[#e5ddd5] px-3 py-4" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect width=%2260%22 height=%2260%22 fill=%22%23e5ddd5%22/%3E%3C/svg%3E');">
+            <div class="max-w-[85%] rounded-lg rounded-tl-none bg-white px-3 py-2 shadow-sm">
+                <p class="text-sm text-gray-800">Olá! Como podemos ajudar você hoje?</p>
+                <p class="mt-1 text-right text-[10px] text-gray-400" id="wa-msg-time"></p>
+            </div>
+        </div>
+
+        <!-- Campo de entrada -->
+        <div class="flex items-center gap-2 border-t border-gray-200 bg-white p-2">
+            <input
+                type="text"
+                id="wa-input"
+                placeholder="Digite sua mensagem..."
+                class="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-800 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                style="background-color:#ffffff; color:#1f2937; color-scheme: light;"
+                onkeydown="if (event.key === 'Enter') { event.preventDefault(); waSendMessage(); }"
+            >
+            <button
+                type="button"
+                onclick="waSendMessage()"
+                aria-label="Enviar mensagem"
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white transition hover:bg-emerald-700"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+                    <path d="M3.4 20.6l17.45-8.5a1 1 0 000-1.8L3.4 1.8a1 1 0 00-1.44 1.1L4.3 11 1.96 18.9a1 1 0 001.44 1.1z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Botao flutuante -->
+    <button
+        type="button"
+        id="wa-fab"
+        onclick="waToggleChat()"
+        aria-label="Abrir chat do WhatsApp"
+        class="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg transition duration-200 ease-out hover:scale-110 hover:bg-emerald-600 active:scale-95"
+    >
+        <span class="absolute inline-flex h-16 w-16 animate-ping rounded-full bg-emerald-500 opacity-40" style="animation-duration: 2.5s;"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" class="relative h-8 w-8">
+            <path d="M16.001 3C9.107 3 3.5 8.607 3.5 15.5c0 2.42.687 4.68 1.878 6.598L3.2 28.8l6.876-2.14A12.44 12.44 0 0016 28c6.894 0 12.5-5.607 12.5-12.5S22.894 3 16.001 3zm0 22.7a10.15 10.15 0 01-5.44-1.573l-.39-.232-4.08 1.27 1.293-3.976-.253-.407A10.14 10.14 0 015.8 15.5c0-5.632 4.57-10.2 10.2-10.2 5.63 0 10.2 4.568 10.2 10.2 0 5.632-4.57 10.2-10.199 10.2zm5.58-7.64c-.306-.153-1.81-.893-2.09-.995-.28-.102-.484-.153-.688.153-.204.306-.789.995-.967 1.199-.178.204-.356.23-.662.077-.306-.153-1.293-.477-2.463-1.522-.91-.812-1.524-1.816-1.703-2.123-.178-.306-.019-.472.134-.624.137-.137.306-.357.459-.535.153-.178.204-.306.306-.51.102-.204.051-.383-.026-.535-.077-.153-.688-1.658-.943-2.27-.248-.596-.5-.516-.688-.526l-.586-.011c-.204 0-.535.077-.815.383-.28.306-1.069 1.044-1.069 2.549 0 1.505 1.094 2.958 1.247 3.163.153.204 2.153 3.286 5.216 4.608.729.315 1.297.503 1.74.644.731.232 1.396.2 1.922.121.586-.087 1.81-.74 2.065-1.454.255-.714.255-1.326.178-1.454-.076-.128-.28-.204-.586-.357z"/>
+        </svg>
+    </button>
+</div>
+
+<script>
+    (function () {
+        var WA_NUMERO = "5519999332615";
+        var WA_MENSAGEM_PADRAO = "Olá! Vim pelo site da Oravel e gostaria de mais informações.";
+
+        var timeEl = document.getElementById('wa-msg-time');
+        if (timeEl) {
+            var agora = new Date();
+            timeEl.textContent = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        window.waToggleChat = function (forceState) {
+            var panel = document.getElementById('wa-chat-panel');
+            var isHidden = panel.classList.contains('hidden');
+            var shouldOpen = (typeof forceState === 'boolean') ? forceState : isHidden;
+
+            if (shouldOpen) {
+                panel.classList.remove('hidden');
+                panel.classList.add('flex');
+                document.getElementById('wa-input').focus();
+            } else {
+                panel.classList.add('hidden');
+                panel.classList.remove('flex');
+            }
+        };
+
+        window.waSendMessage = function () {
+            var input = document.getElementById('wa-input');
+            var texto = (input.value || '').trim();
+
+            if (texto === '') {
+                texto = WA_MENSAGEM_PADRAO;
+            }
+
+            var url = 'https://wa.me/' + WA_NUMERO + '?text=' + encodeURIComponent(texto);
+            window.open(url, '_blank');
+            input.value = '';
+        };
+    })();
+</script>
+
+<script>
+document.querySelectorAll('[data-track-cta]').forEach(function (el) {
+  el.addEventListener('click', function () {
+    if (typeof gtag === 'function') {
+      gtag('event', 'cta_click', {
+        segmento: el.getAttribute('data-track-segment'),
+        cta_posicao: el.getAttribute('data-track-cta'),
+        cta_texto: el.textContent.trim(),
+        pagina: 'home',
+      });
+    }
+  });
+});
+</script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2ebe3fb6f6fb695',t:'MTc4NzMzODkzMA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a369829b0d1fda2e',t:'MTc4ODY1NjE0Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
