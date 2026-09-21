@@ -130,6 +130,16 @@
     font-weight: 700; font-size: 14px; text-decoration: none; letter-spacing: 0.01em;
   }
   .nav-cta:hover { background: #ff7d38; }
+  .nav-dd { position: relative; padding: 24px 0; }
+  .nav-dd-menu {
+    position: absolute; top: 100%; left: 50%; transform: translate(-50%, -4px); min-width: 240px;
+    background: #121815; border: 1px solid rgba(244,242,234,0.14); border-radius: 6px; padding: 8px;
+    opacity: 0; visibility: hidden; transition: opacity .15s ease, transform .15s ease, visibility .15s;
+  }
+  .nav-dd:hover .nav-dd-menu, .nav-dd:focus-within .nav-dd-menu { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+  .nav-dd-menu a { display: block; padding: 9px 12px; border-radius: 4px; font-size: 14px; color: #d6d2c4; }
+  .nav-dd-menu a:hover { background: rgba(244,242,234,0.06); color: #f4f2ea; }
+  @media (max-width: 760px) { .nav-dd { display: none; } }
   @media (max-width: 760px) { .nav-links a:not(.nav-cta) { display: none; } }
 
   /* ================= HERO (manifesto) ================= */
@@ -236,6 +246,10 @@
     <div class="nav-links">
       <a href="/#pilares">Como Funciona</a>
       <a href="/#planos">Planos</a>
+      <div class="nav-dd">
+        <a href="/segmentos/" aria-haspopup="true">Segmentos</a>
+        <div class="nav-dd-menu"><a href="/erp-cmms/">Locação de Equipamentos</a><a href="/software-manutencao-industrial/">Manutenção Industrial</a><a href="/software-montagem-industrial/">Montagem Industrial</a><a href="/software-gestao-frota-logistica/">Logística e Transportes</a><a href="/software-gestao-de-servicos/">Gestão de Serviços</a><a href="/wms/">Distribuidor e Atacadista</a><a href="/crm/">Qualquer Segmento</a></div>
+      </div>
       <a href="/sobre/">Sobre</a>
       <a href="/#contato">Contato</a>
       <a href="/#planos" class="nav-cta">Assinar agora</a>
