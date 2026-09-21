@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oravel Frota — Gestão de Frotas e Veículos | Oravel</title>
+<meta name="description" content="Oravel Frota: controle de combustível, manutenção preventiva, gestão de documentos, análise de custos por veículo. Sistema integrado para frotas, locadoras e transportadoras.">
+<link rel="icon" type="image/svg+xml" href="/nova/assets/favicon.svg?v=6" />
+<link rel="icon" type="image/png" sizes="32x32" href="/nova/assets/favicon-32.png?v=6" />
+<link rel="icon" type="image/x-icon" href="/nova/assets/favicon.ico?v=6" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #ffffff; --surface: #f6f7f9; --ink: #0f172a; --ink-soft: #5b6472;
+    --ink-faint: #8891a0; --border: #e4e7ec; --accent: #f97316; --accent-soft: #fff1e4;
+    --navy: #0f172a; --navy-2: #1a2540;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Inter", "Segoe UI", system-ui, sans-serif; color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: "Manrope", "Inter", sans-serif; font-weight: 800; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  a { color: inherit; }
+  img, svg { max-width: 100%; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  .eyebrow { font-family: "Manrope", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+
+  .inav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+  .inav-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; height: 72px; display: flex; align-items: center; justify-content: space-between; }
+  .inav-logo { display: flex; align-items: center; gap: 9px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 19px; text-decoration: none; color: var(--ink); }
+  .inav-logo-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--navy); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 15px; flex: none; }
+  .inav-links { display: flex; align-items: center; gap: 34px; }
+  .inav-links a { text-decoration: none; color: var(--ink-soft); font-size: 14.5px; font-weight: 600; }
+  .inav-links a:hover { color: var(--ink); }
+  .inav-cta { background: var(--navy); color: #fff; padding: 10px 20px; border-radius: 7px; text-decoration: none; font-weight: 700; font-size: 14px; }
+  .inav-cta:hover { background: var(--navy-2); }
+  @media (max-width: 860px) { .inav-links { display: none; } }
+
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 7px; background: rgba(16,185,129,0.15); color: #15803d;
+    font-size: 12.5px; font-weight: 700; padding: 6px 13px; border-radius: 100px; width: fit-content;
+    font-family: "Manrope", sans-serif;
+  }
+  .status-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; }
+
+  .hero { padding: 72px 0 60px; background: linear-gradient(180deg, #eef1f5 0%, #ffffff 100%); }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+  .hero h1 { font-size: clamp(30px, 4vw, 46px); line-height: 1.12; margin-top: 16px; font-weight: 800; }
+  .hero .slogan { font-size: 18px; color: var(--accent); font-weight: 700; margin-top: 14px; font-family: "Manrope", sans-serif; }
+  .hero .desc { font-size: 16.5px; color: var(--ink-soft); line-height: 1.65; margin-top: 16px; max-width: 50ch; font-weight: 500; }
+  .hero-actions { display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 26px; border-radius: 8px; font-weight: 700; font-size: 15px; text-decoration: none; border: 1px solid transparent; }
+  .btn-primary { background: var(--navy); color: #fff; }
+  .btn-primary:hover { background: var(--navy-2); }
+  .btn-ghost { border-color: var(--border); color: var(--ink); background: #fff; }
+  .btn-ghost:hover { border-color: var(--ink-faint); }
+
+  .hero-visual { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 22px; }
+  .hero-visual svg { width: 100%; border-radius: 10px; border: 1px solid var(--border); background: #fff; box-shadow: 0 24px 50px -30px rgba(15,23,42,0.3); }
+
+  .section { padding: 72px 0; }
+  .section-surface { background: var(--surface); }
+  .section-head { max-width: 640px; margin: 0 0 46px; }
+  .section-head h2 { font-size: clamp(24px, 2.8vw, 32px); line-height: 1.18; margin-top: 10px; }
+  .section-head p { font-size: 16px; color: var(--ink-soft); line-height: 1.6; margin-top: 12px; }
+
+  .feat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .feat-item { background: #fff; padding: 28px 30px; display: flex; gap: 16px; }
+  .feat-item .ic { width: 40px; height: 40px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; flex: none; font-weight: 800; font-size: 18px; }
+  .feat-item h3 { font-size: 16px; }
+  .feat-item p { font-size: 14px; color: var(--ink-soft); margin-top: 8px; line-height: 1.55; }
+
+  .notify-cta { background: var(--navy); border-radius: 22px; padding: 56px; text-align: center; color: #fff; }
+  .notify-cta h2 { font-size: clamp(24px, 3vw, 32px); color: #fff; }
+  .notify-cta p { color: rgba(255,255,255,0.72); font-size: 15.5px; margin-top: 12px; max-width: 50ch; margin-left: auto; margin-right: auto; }
+  .notify-cta .hero-actions { justify-content: center; margin-top: 26px; }
+  .notify-cta .btn-primary { background: var(--accent); }
+  .notify-cta .btn-primary:hover { background: #ea580c; }
+  .notify-cta .btn-ghost { background: transparent; border-color: rgba(255,255,255,0.25); color: #fff; }
+
+  footer.ifoot { border-top: 1px solid var(--border); padding: 44px 0; }
+  .ifoot-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  .ifoot-links { display: flex; gap: 24px; font-size: 13.5px; color: var(--ink-soft); }
+  .ifoot-links a { text-decoration: none; }
+  .ifoot-links a:hover { color: var(--ink); }
+  .ifoot-copy { font-size: 13px; color: var(--ink-faint); }
+
+  .metric-card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 28px; text-align: center; }
+  .metric-card .num { font-size: 32px; font-weight: 800; color: var(--accent); font-family: "Manrope", sans-serif; }
+  .metric-card .label { font-size: 14px; color: var(--ink-soft); margin-top: 8px; line-height: 1.5; }
+
+  .workflow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 32px; }
+  .workflow-step { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center; }
+  .workflow-step .step-no { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-weight: 800; margin-bottom: 12px; }
+  .workflow-step h4 { font-size: 15px; margin-top: 8px; }
+  .workflow-step p { font-size: 13px; color: var(--ink-soft); margin-top: 6px; }
+
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .feat-grid { grid-template-columns: 1fr; }
+    .workflow { grid-template-columns: repeat(2, 1fr); }
+    .section { padding: 52px 0; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="inav">
+  <div class="inav-wrap">
+    <a href="/" class="inav-logo"><span class="inav-logo-mark">O</span>Oravel</a>
+    <div class="inav-links">
+      <a href="/">Home</a>
+      <a href="/#produtos">Produtos</a>
+      <a href="/#sobre">Sobre</a>
+      <a href="/contato.php">Contato</a>
+    </div>
+    <a href="/contato.php" class="inav-cta">Iniciar Conversa</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Gestão de Frota</div>
+      <h1>Frota descontrolada é dinheiro sumindo. <span style="color: var(--accent);">Controle total agora.</span></h1>
+      <div class="slogan">Combustível, manutenção, documentação e custos em um lugar.</div>
+      <p class="desc">
+        Sabe quanto custa realmente cada veículo? Sabe quando vai quebrar? Oravel Frota centraliza combustível, manutenção preventiva, multas, documentação e análise de custos por quilômetro. Sem planilha. Sem surpresa.
+      </p>
+      <div class="hero-actions">
+        <a href="/gestao-frota.html" class="btn btn-primary">Teste Grátis Agora</a>
+        <a href="/contato.php" class="btn btn-ghost">Solicitar Demonstração</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <svg viewBox="0 0 480 300" role="img" aria-label="Dashboard de gestão de frota com análise de custos e status de veículos">
+        <rect width="480" height="300" rx="10" fill="#ffffff"/>
+        <rect width="480" height="30" rx="10" fill="#0f172a"/>
+        <rect y="15" width="480" height="15" fill="#0f172a"/>
+        <circle cx="16" cy="15" r="4" fill="#ef4444"/>
+        <circle cx="30" cy="15" r="4" fill="#f59e0b"/>
+        <circle cx="44" cy="15" r="4" fill="#22c55e"/>
+        <text x="240" y="19" font-family="Inter" font-size="9" fill="#8a94a8" text-anchor="middle">app.oravel.com.br/frota</text>
+
+        <rect x="20" y="46" width="220" height="56" rx="8" fill="#fff1e4"/>
+        <text x="30" y="66" font-family="Inter" font-size="9.5" fill="#b8560c">Frota Ativa</text>
+        <text x="30" y="90" font-family="Manrope" font-weight="800" font-size="24" fill="#0f172a">12</text>
+
+        <rect x="250" y="46" width="210" height="56" rx="8" fill="#eef1f5"/>
+        <text x="260" y="66" font-family="Inter" font-size="9.5" fill="#5b6472">Custo/KM Médio</text>
+        <text x="260" y="90" font-family="Manrope" font-weight="800" font-size="24" fill="#0f172a">R$ 3,2</text>
+
+        <rect x="20" y="110" width="440" height="8" rx="4" fill="#eef1f5"/>
+        <rect x="20" y="110" width="220" height="8" rx="4" fill="#f97316"/>
+        <text x="20" y="128" font-family="Inter" font-size="8.5" fill="#5b6472">8 em rota | 2 manutenção | 2 docs vencidos</text>
+
+        <text x="20" y="158" font-family="Inter" font-size="10" fill="#5b6472">Alertas de Manutenção</text>
+        <rect x="20" y="166" width="440" height="100" rx="8" fill="#f6f7f9"/>
+        <rect x="30" y="176" width="180" height="24" rx="6" fill="#fff1e4" stroke="#f97316"/>
+        <text x="40" y="192" font-family="Inter" font-size="8.5" fill="#b8560c">VW Amarok — Revisão 50k km</text>
+
+        <rect x="220" y="176" width="240" height="24" rx="6" fill="#eafaf0" stroke="#22c55e"/>
+        <text x="230" y="192" font-family="Inter" font-size="8.5" fill="#166534">Ford Transit — CRLV vence em 15 dias</text>
+
+        <rect x="30" y="210" width="180" height="24" rx="6" fill="#eef1f5"/>
+        <text x="40" y="226" font-family="Inter" font-size="8.5" fill="#5b6472">Scania — Seguro vencido</text>
+
+        <rect x="220" y="210" width="240" height="24" rx="6" fill="#eef1f5"/>
+        <text x="230" y="226" font-family="Inter" font-size="8.5" fill="#5b6472">Mercedes — CNH de motorista vence 22 dias</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="section section-surface" id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Recursos Principais</div>
+      <h2>Tudo que uma frota precisa para não virar sobrecusto.</h2>
+    </div>
+
+    <div class="feat-grid">
+      <div class="feat-item">
+        <div class="ic">⛽</div>
+        <div>
+          <h3>Controle de Combustível & Custos</h3>
+          <p>Cada abastecimento registrado, custo por km calculado automaticamente. Detecta anomalias no consumo.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">🔧</div>
+        <div>
+          <h3>Manutenção Preventiva Agendada</h3>
+          <p>Preventiva por km ou data. Sistema avisa antes da quebra. Histórico completo com custos agregados.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">📋</div>
+        <div>
+          <h3>Gestão de Documentos & Motoristas</h3>
+          <p>CNH, CRLV, seguro, inspeção — tudo em um lugar. Alertas automáticos 30 dias antes do vencimento.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">💰</div>
+        <div>
+          <h3>Análise de Custos por Veículo</h3>
+          <p>Saiba a rentabilidade real de cada veículo. Identifique qual não está pagando sua conta.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Por que Oravel Frota</div>
+      <h2>Feito por quem conhece operação de frota.</h2>
+      <p>Não é software genérico. É especifico para quem trabalha todo dia com veículos.</p>
+    </div>
+
+    <div class="workflow">
+      <div class="workflow-step">
+        <div class="step-no">1</div>
+        <h4>Importe sua frota</h4>
+        <p>Em minutos, adicione todos os veículos e dados históricos.</p>
+      </div>
+
+      <div class="workflow-step">
+        <div class="step-no">2</div>
+        <h4>Registre operações</h4>
+        <p>Abastecimentos, manutenções e custos ficam centralizados.</p>
+      </div>
+
+      <div class="workflow-step">
+        <div class="step-no">3</div>
+        <h4>Acompanhe alertas</h4>
+        <p>Preventivas, docs vencendo, anomalias — sem nada passar batido.</p>
+      </div>
+
+      <div class="workflow-step">
+        <div class="step-no">4</div>
+        <h4>Analise resultados</h4>
+        <p>Relatórios de custo, eficiência e rentabilidade por veículo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-surface">
+  <div class="wrap">
+    <div class="notify-cta">
+      <h2>Controlar frota não pode ser complicado.</h2>
+      <p>Oravel Frota traz disciplina operacional e números reais para quem depende de veículos. Vamos conversar sobre como funciona na prática?</p>
+      <div class="hero-actions">
+        <a href="/gestao-frota.html" class="btn btn-primary">Teste Grátis Agora</a>
+        <a href="/contato.php" class="btn btn-ghost">Solicitar Demonstração</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="ifoot">
+  <div class="ifoot-wrap">
+    <div class="ifoot-copy">© 2026 Oravel Desenvolvimento de Software</div>
+    <div class="ifoot-links">
+      <a href="/">Home</a>
+      <a href="/#produtos">Produtos</a>
+      <a href="/contato.php">Contato</a>
+      <a href="/segmentos/">Segmentos</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Tailwind via CDN, só pra este widget -- preflight desligado de proposito -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    corePlugins: { preflight: false }
+  };
+</script>
+
+<!-- WhatsApp Widget -->
+<div id="wa-widget" class="fixed bottom-6 right-6 z-[9999]" style="font-family: 'Inter', sans-serif;">
+    <div id="wa-chat-panel" class="hidden mb-4 w-80 max-w-[calc(100vw-3rem)] origin-bottom-right flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10 sm:w-96">
+        <div class="flex items-center gap-3 bg-emerald-600 px-4 py-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg font-extrabold" style="background:#101010;">
+                <span style="color:#ffffff">O</span><span style="color:#E8541A">r</span>
+            </div>
+            <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-semibold text-white">Oravel</p>
+                <p class="flex items-center gap-1.5 text-xs text-emerald-100">
+                    <span class="relative flex h-2 w-2">
+                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75"></span>
+                        <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-300"></span>
+                    </span>
+                    Online agora
+                </p>
+            </div>
+        </div>
+        <div class="space-y-2 overflow-y-auto px-4 py-3 text-sm text-gray-700">
+            <p><strong>Oravel</strong></p>
+            <p>Oi! 👋 Temos dúvidas sobre Oravel Frota? Fale conosco no WhatsApp.</p>
+        </div>
+        <div class="border-t border-gray-200 px-4 py-3">
+            <a href="https://wa.me/5519999332615" target="_blank" class="block rounded-lg bg-emerald-600 py-2 text-center text-sm font-semibold text-white hover:bg-emerald-700">Abrir no WhatsApp</a>
+        </div>
+    </div>
+    <button id="wa-toggle" class="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-600 shadow-lg hover:bg-emerald-700" style="transition: all 0.3s;">
+        <svg class="h-7 w-7 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-9.746 9.798c0 2.734.732 5.41 2.123 7.728l-2.257 6.718 6.934-2.211a9.888 9.888 0 004.946 1.265h.005c5.461 0 9.946-4.487 9.946-9.998 0-2.668-.732-5.335-2.123-7.651a9.9 9.9 0 00-7.679-3.647zm0-2.08c3.046 0 6.033 1.185 8.227 3.304a11.985 11.985 0 013.004 8.304c0 6.635-5.41 12.005-12.045 12.005-2.066 0-4.101-.556-5.87-1.617l-6.645 2.127.675-2.008a11.952 11.952 0 01-1.732-6.507c0-6.635 5.41-12.004 12.045-12.004z"/></svg>
+    </button>
+</div>
+
+<script>
+document.getElementById('wa-toggle').addEventListener('click', function() {
+    document.getElementById('wa-chat-panel').classList.toggle('hidden');
+});
+</script>
+
+</body>
+</html>

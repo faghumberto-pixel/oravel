@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oravel OS — Gestão de Ordens de Serviço | Oravel</title>
+<meta name="description" content="Oravel OS: criação e despacho de ordens de serviço, histórico completo, controle de SLA, relatório de tempo e custo, integração com produtos Oravel.">
+<link rel="icon" type="image/svg+xml" href="/nova/assets/favicon.svg?v=6" />
+<link rel="icon" type="image/png" sizes="32x32" href="/nova/assets/favicon-32.png?v=6" />
+<link rel="icon" type="image/x-icon" href="/nova/assets/favicon.ico?v=6" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #ffffff; --surface: #f6f7f9; --ink: #0f172a; --ink-soft: #5b6472;
+    --ink-faint: #8891a0; --border: #e4e7ec; --accent: #f97316; --accent-soft: #fff1e4;
+    --navy: #0f172a; --navy-2: #1a2540; --green: #10b981;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Inter", "Segoe UI", system-ui, sans-serif; color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: "Manrope", "Inter", sans-serif; font-weight: 800; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  a { color: inherit; }
+  img, svg { max-width: 100%; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  .eyebrow { font-family: "Manrope", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+
+  .inav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+  .inav-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; height: 72px; display: flex; align-items: center; justify-content: space-between; }
+  .inav-logo { display: flex; align-items: center; gap: 9px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 19px; text-decoration: none; color: var(--ink); }
+  .inav-logo-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--navy); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 15px; flex: none; }
+  .inav-links { display: flex; align-items: center; gap: 34px; }
+  .inav-links a { text-decoration: none; color: var(--ink-soft); font-size: 14.5px; font-weight: 600; }
+  .inav-links a:hover { color: var(--ink); }
+  .inav-cta { background: var(--navy); color: #fff; padding: 10px 20px; border-radius: 7px; text-decoration: none; font-weight: 700; font-size: 14px; }
+  .inav-cta:hover { background: var(--navy-2); }
+  @media (max-width: 860px) { .inav-links { display: none; } }
+
+  .hero { padding: 72px 0 60px; background: linear-gradient(180deg, #d1fae5 0%, #ffffff 100%); }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+  .hero h1 { font-size: clamp(30px, 4vw, 46px); line-height: 1.12; margin-top: 16px; font-weight: 800; }
+  .hero .slogan { font-size: 18px; color: var(--accent); font-weight: 700; margin-top: 14px; font-family: "Manrope", sans-serif; }
+  .hero .desc { font-size: 16.5px; color: var(--ink-soft); line-height: 1.65; margin-top: 16px; max-width: 50ch; font-weight: 500; }
+  .hero-actions { display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 26px; border-radius: 8px; font-weight: 700; font-size: 15px; text-decoration: none; border: 1px solid transparent; }
+  .btn-primary { background: var(--navy); color: #fff; }
+  .btn-primary:hover { background: var(--navy-2); }
+  .btn-ghost { border-color: var(--border); color: var(--ink); background: #fff; }
+  .btn-ghost:hover { border-color: var(--ink-faint); }
+
+  .hero-visual { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 22px; }
+  .hero-visual svg { width: 100%; border-radius: 10px; border: 1px solid var(--border); background: #fff; box-shadow: 0 24px 50px -30px rgba(15,23,42,0.3); }
+
+  .section { padding: 72px 0; }
+  .section-surface { background: linear-gradient(135deg, #f6f7f9 0%, #fef5e7 50%, #f0f4f9 100%); }
+  .section-head { max-width: 640px; margin: 0 0 46px; }
+  .section-head h2 { font-size: clamp(24px, 2.8vw, 32px); line-height: 1.18; margin-top: 10px; }
+  .section-head p { font-size: 16px; color: var(--ink-soft); line-height: 1.6; margin-top: 12px; }
+
+  .feat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .feat-item { background: linear-gradient(135deg, #ffffff 0%, #fffbf7 100%); padding: 28px 30px; display: flex; gap: 16px; }
+  .feat-item .ic { width: 40px; height: 40px; border-radius: 10px; background: #d1fae5; color: var(--green); display: flex; align-items: center; justify-content: center; flex: none; font-weight: 800; font-size: 18px; }
+  .feat-item h3 { font-size: 16px; }
+  .feat-item p { font-size: 14px; color: var(--ink-soft); margin-top: 8px; line-height: 1.55; }
+
+  .notify-cta { background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 22px; padding: 56px; text-align: center; color: #fff; }
+  .notify-cta h2 { font-size: clamp(24px, 3vw, 32px); color: #fff; }
+  .notify-cta p { color: rgba(255,255,255,0.72); font-size: 15.5px; margin-top: 12px; max-width: 50ch; margin-left: auto; margin-right: auto; }
+  .notify-cta .hero-actions { justify-content: center; margin-top: 26px; }
+  .notify-cta .btn-primary { background: var(--accent); }
+  .notify-cta .btn-primary:hover { background: #ea580c; }
+  .notify-cta .btn-ghost { background: transparent; border-color: rgba(255,255,255,0.25); color: #fff; }
+
+  footer.ifoot { border-top: 1px solid var(--border); padding: 44px 0; }
+  .ifoot-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  .ifoot-links { display: flex; gap: 24px; font-size: 13.5px; color: var(--ink-soft); }
+  .ifoot-links a { text-decoration: none; }
+  .ifoot-links a:hover { color: var(--ink); }
+  .ifoot-copy { font-size: 13px; color: var(--ink-faint); }
+
+  .workflow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 32px; }
+  .workflow-step { background: linear-gradient(135deg, #ffffff 0%, #fffbf7 100%); border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center; }
+  .workflow-step .step-no { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: #d1fae5; color: var(--green); font-weight: 800; margin-bottom: 12px; }
+  .workflow-step h4 { font-size: 15px; margin-top: 8px; }
+  .workflow-step p { font-size: 13px; color: var(--ink-soft); margin-top: 6px; }
+
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .feat-grid { grid-template-columns: 1fr; }
+    .workflow { grid-template-columns: repeat(2, 1fr); }
+    .section { padding: 52px 0; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="inav">
+  <div class="inav-wrap">
+    <a href="/" class="inav-logo"><span class="inav-logo-mark">O</span>Oravel</a>
+    <div class="inav-links">
+      <a href="/">Home</a>
+      <a href="/#produtos">Produtos</a>
+      <a href="/#sobre">Sobre</a>
+      <a href="/contato.php">Contato</a>
+    </div>
+    <a href="/contato.php" class="inav-cta">Iniciar Conversa</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Gestão de Ordens de Serviço</div>
+      <h1>Ordem de Serviço sem burocracia. <span style="color: var(--accent);">Com rastreamento total.</span></h1>
+      <div class="slogan">Despacho, histórico e SLA em um lugar.</div>
+      <p class="desc">
+        Criar uma OS deveria levar segundos, não minutos. Histórico, prazos, custos e integração com cliente — tudo em um sistema. Sem planilha. Sem atraso na entrega.
+      </p>
+      <div class="hero-actions">
+        <a href="/os.html" class="btn btn-primary">Teste Grátis Agora</a>
+        <a href="/contato.php" class="btn btn-ghost">Solicitar Demonstração</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <svg viewBox="0 0 480 300" role="img" aria-label="Dashboard de Ordens de Serviço com histórico e status">
+        <rect width="480" height="300" rx="10" fill="#ffffff"/>
+        <rect width="480" height="30" rx="10" fill="#0f172a"/>
+        <rect y="15" width="480" height="15" fill="#0f172a"/>
+        <circle cx="16" cy="15" r="4" fill="#ef4444"/>
+        <circle cx="30" cy="15" r="4" fill="#f59e0b"/>
+        <circle cx="44" cy="15" r="4" fill="#22c55e"/>
+        <text x="240" y="19" font-family="Inter" font-size="9" fill="#8a94a8" text-anchor="middle">app.oravel.com.br/os</text>
+
+        <rect x="20" y="46" width="220" height="56" rx="8" fill="#d1fae5"/>
+        <text x="30" y="66" font-family="Inter" font-size="9.5" fill="#047857">OS Abertas Hoje</text>
+        <text x="30" y="90" font-family="Manrope" font-weight="800" font-size="24" fill="#0f172a">12</text>
+
+        <rect x="250" y="46" width="210" height="56" rx="8" fill="#fff1e4"/>
+        <text x="260" y="66" font-family="Inter" font-size="9.5" fill="#b8560c">SLA Cumprido</text>
+        <text x="260" y="90" font-family="Manrope" font-weight="800" font-size="24" fill="#0f172a">98%</text>
+
+        <text x="20" y="128" font-family="Inter" font-size="10" fill="#5b6472">OS em Execução</text>
+        <rect x="20" y="136" width="440" height="130" rx="8" fill="#f6f7f9"/>
+
+        <rect x="30" y="150" width="420" height="30" rx="6" fill="#d1fae5" stroke="#10b981"/>
+        <text x="40" y="166" font-family="Inter" font-size="9" fill="#047857">OS-2026-1234 — Cliente ABC — Manutenção Hidráulica</text>
+
+        <rect x="30" y="190" width="420" height="30" rx="6" fill="#fff1e4" stroke="#f97316"/>
+        <text x="40" y="206" font-family="Inter" font-size="9" fill="#b8560c">OS-2026-1235 — Empresa XYZ — Reparo Elétrico</text>
+
+        <rect x="30" y="230" width="420" height="24" rx="6" fill="#eef1f5"/>
+        <text x="40" y="246" font-family="Inter" font-size="9" fill="#5b6472">OS-2026-1236 — Serviços Norte — Instalação</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="section section-surface" id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Recursos Principais</div>
+      <h2>Tudo que uma OS precisa para fluir sem atrasos.</h2>
+    </div>
+
+    <div class="feat-grid">
+      <div class="feat-item">
+        <div class="ic">📋</div>
+        <div>
+          <h3>Criação & Despacho Rápido</h3>
+          <p>Abra uma OS em segundos. Atribua ao técnico correto. Sistema notifica instantaneamente.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">🕐</div>
+        <div>
+          <h3>Controle de SLA & Prazos</h3>
+          <p>Defina prazos por tipo de serviço. Sistema alerta quando a OS está prestes a vencer.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">📊</div>
+        <div>
+          <h3>Histórico Completo</h3>
+          <p>Cada mudança fica registrada: quem criou, quem despachou, quanto tempo levou, quanto custou.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">💰</div>
+        <div>
+          <h3>Tempo & Custo por OS</h3>
+          <p>Saiba exatamente quanto custou cada OS: horas de técnico, materiais, deslocamento, rentabilidade real.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Como Funciona</div>
+      <h2>Fluxo simples de OS, do começo ao fim.</h2>
+    </div>
+
+    <div class="workflow">
+      <div class="workflow-step">
+        <div class="step-no">1</div>
+        <h4>Criar OS</h4>
+        <p>Abra uma nova OS, defina cliente, tipo de serviço e prazo.</p>
+      </div>
+
+      <div class="workflow-step">
+        <div class="step-no">2</div>
+        <h4>Despachar</h4>
+        <p>Atribua ao técnico correto. Sistema notifica em tempo real.</p>
+      </div>
+
+      <div class="workflow-step">
+        <div class="step-no">3</div>
+        <h4>Acompanhar</h4>
+        <p>Acompanhe a execução, custos acumulados e SLA em real time.</p>
+      </div>
+
+      <div class="workflow-step">
+        <div class="step-no">4</div>
+        <h4>Fechar & Faturar</h4>
+        <p>Feche a OS, gere relatório e fature diretamente ao cliente.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-surface">
+  <div class="wrap">
+    <div class="notify-cta">
+      <h2>Ordem de Serviço sem atraso é receita garantida.</h2>
+      <p>Cada minuto gasto buscando uma OS em planilha é receita perdida. Cada SLA perdido é cliente insatisfeito. Oravel OS centraliza tudo — despacho até faturamento — em um lugar só. Fale conosco e veja na prática.</p>
+      <div class="hero-actions">
+        <a href="/os.html" class="btn btn-primary">Teste Grátis Agora</a>
+        <a href="/contato.php" class="btn btn-ghost">Solicitar Demonstração</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="ifoot">
+  <div class="ifoot-wrap">
+    <div class="ifoot-copy">© 2026 Oravel Desenvolvimento de Software</div>
+    <div class="ifoot-links">
+      <a href="/">Home</a>
+      <a href="/#produtos">Produtos</a>
+      <a href="/contato.php">Contato</a>
+      <a href="/segmentos/">Segmentos</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

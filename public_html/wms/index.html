@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oravel WMS — Gestão de Estoque e Warehouse | Oravel</title>
+<meta name="description" content="Oravel WMS: coletor de estoque, transferências automáticas, reposição inteligente, giro de estoque, múltiplos depósitos. Warehouse Management feito para operações reais.">
+<link rel="icon" type="image/svg+xml" href="/nova/assets/favicon.svg?v=6" />
+<link rel="icon" type="image/png" sizes="32x32" href="/nova/assets/favicon-32.png?v=6" />
+<link rel="icon" type="image/x-icon" href="/nova/assets/favicon.ico?v=6" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #ffffff; --surface: #f6f7f9; --ink: #0f172a; --ink-soft: #5b6472;
+    --ink-faint: #8891a0; --border: #e4e7ec; --accent: #f97316; --accent-soft: #fff1e4;
+    --navy: #0f172a; --navy-2: #1a2540;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Inter", "Segoe UI", system-ui, sans-serif; color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: "Manrope", "Inter", sans-serif; font-weight: 800; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  a { color: inherit; }
+  img, svg { max-width: 100%; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  .eyebrow { font-family: "Manrope", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+
+  .inav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+  .inav-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; height: 72px; display: flex; align-items: center; justify-content: space-between; }
+  .inav-logo { display: flex; align-items: center; gap: 9px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 19px; text-decoration: none; color: var(--ink); }
+  .inav-logo-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--navy); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 15px; flex: none; }
+  .inav-links { display: flex; align-items: center; gap: 34px; }
+  .inav-links a { text-decoration: none; color: var(--ink-soft); font-size: 14.5px; font-weight: 600; }
+  .inav-links a:hover { color: var(--ink); }
+  .inav-cta { background: var(--navy); color: #fff; padding: 10px 20px; border-radius: 7px; text-decoration: none; font-weight: 700; font-size: 14px; }
+  .inav-cta:hover { background: var(--navy-2); }
+  @media (max-width: 860px) { .inav-links { display: none; } }
+
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 7px; background: rgba(16,185,129,0.15); color: #15803d;
+    font-size: 12.5px; font-weight: 700; padding: 6px 13px; border-radius: 100px; width: fit-content;
+    font-family: "Manrope", sans-serif;
+  }
+  .status-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; }
+
+  .hero { padding: 72px 0 60px; background: linear-gradient(180deg, #eef1f5 0%, #ffffff 100%); }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+  .hero h1 { font-size: clamp(30px, 4vw, 46px); line-height: 1.12; margin-top: 16px; font-weight: 800; }
+  .hero .slogan { font-size: 18px; color: var(--accent); font-weight: 700; margin-top: 14px; font-family: "Manrope", sans-serif; }
+  .hero .desc { font-size: 16.5px; color: var(--ink-soft); line-height: 1.65; margin-top: 16px; max-width: 50ch; font-weight: 500; }
+  .hero-actions { display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 26px; border-radius: 8px; font-weight: 700; font-size: 15px; text-decoration: none; border: 1px solid transparent; }
+  .btn-primary { background: var(--navy); color: #fff; }
+  .btn-primary:hover { background: var(--navy-2); }
+  .btn-ghost { border-color: var(--border); color: var(--ink); background: #fff; }
+  .btn-ghost:hover { border-color: var(--ink-faint); }
+
+  .hero-visual { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 22px; }
+  .hero-visual svg { width: 100%; border-radius: 10px; border: 1px solid var(--border); background: #fff; box-shadow: 0 24px 50px -30px rgba(15,23,42,0.3); }
+
+  .section { padding: 72px 0; }
+  .section-surface { background: var(--surface); }
+  .section-head { max-width: 640px; margin: 0 0 46px; }
+  .section-head h2 { font-size: clamp(24px, 2.8vw, 32px); line-height: 1.18; margin-top: 10px; }
+  .section-head p { font-size: 16px; color: var(--ink-soft); line-height: 1.6; margin-top: 12px; }
+
+  .feat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .feat-item { background: #fff; padding: 28px 30px; display: flex; gap: 16px; }
+  .feat-item .ic { width: 40px; height: 40px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; flex: none; font-weight: 800; font-size: 18px; }
+  .feat-item h3 { font-size: 16px; }
+  .feat-item p { font-size: 14px; color: var(--ink-soft); margin-top: 8px; line-height: 1.55; }
+
+  .notify-cta { background: var(--navy); border-radius: 22px; padding: 56px; text-align: center; color: #fff; }
+  .notify-cta h2 { font-size: clamp(24px, 3vw, 32px); color: #fff; }
+  .notify-cta p { color: rgba(255,255,255,0.72); font-size: 15.5px; margin-top: 12px; max-width: 50ch; margin-left: auto; margin-right: auto; }
+  .notify-cta .hero-actions { justify-content: center; margin-top: 26px; }
+  .notify-cta .btn-primary { background: var(--accent); }
+  .notify-cta .btn-primary:hover { background: #ea580c; }
+  .notify-cta .btn-ghost { background: transparent; border-color: rgba(255,255,255,0.25); color: #fff; }
+
+  footer.ifoot { border-top: 1px solid var(--border); padding: 44px 0; }
+  .ifoot-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  .ifoot-links { display: flex; gap: 24px; font-size: 13.5px; color: var(--ink-soft); }
+  .ifoot-links a { text-decoration: none; }
+  .ifoot-links a:hover { color: var(--ink); }
+  .ifoot-copy { font-size: 13px; color: var(--ink-faint); }
+
+  .metric-card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 28px; text-align: center; }
+  .metric-card .num { font-size: 32px; font-weight: 800; color: var(--accent); font-family: "Manrope", sans-serif; }
+  .metric-card .label { font-size: 14px; color: var(--ink-soft); margin-top: 8px; line-height: 1.5; }
+
+  .warehouse-layout { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 32px; }
+  .warehouse-item { display: flex; gap: 20px; padding: 20px; background: var(--surface); border-radius: 10px; }
+  .warehouse-item .icon { width: 60px; height: 60px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 28px; flex: none; }
+  .warehouse-item h4 { font-size: 16px; margin-bottom: 6px; }
+  .warehouse-item p { font-size: 14px; color: var(--ink-soft); line-height: 1.5; }
+
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .feat-grid { grid-template-columns: 1fr; }
+    .section { padding: 52px 0; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="inav">
+  <div class="inav-wrap">
+    <a href="/" class="inav-logo"><span class="inav-logo-mark">O</span>Oravel</a>
+    <div class="inav-links">
+      <a href="/">Home</a>
+      <a href="/#produtos">Produtos</a>
+      <a href="/#sobre">Sobre</a>
+      <a href="/contato.php">Contato</a>
+    </div>
+    <a href="/contato.php" class="inav-cta">Iniciar Conversa</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Warehouse Management</div>
+      <h1>Estoque que fica desorganizado é lucro que desaparece.</h1>
+      <div class="slogan">Reposição automática, giro previsível, rupturas que você vê vindo.</div>
+      <p class="desc">
+        Coletor de estoque mobile, transferências inteligentes entre depósitos, rastreamento de giro por categoria, alertas de itens críticos. Para quem precisa de precisão no estoque.
+      </p>
+      <div class="hero-actions">
+        <a href="/contato.php" class="btn btn-primary">Agendar Demo</a>
+        <a href="#features" class="btn btn-ghost">Ver Features →</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <svg viewBox="0 0 480 300" role="img" aria-label="Painel do Oravel WMS com coletor de estoque e relatório de giro">
+        <rect width="480" height="300" rx="10" fill="#ffffff"/>
+        <rect width="480" height="30" rx="10" fill="#0f172a"/>
+        <rect y="15" width="480" height="15" fill="#0f172a"/>
+        <circle cx="16" cy="15" r="4" fill="#ef4444"/>
+        <circle cx="30" cy="15" r="4" fill="#f59e0b"/>
+        <circle cx="44" cy="15" r="4" fill="#22c55e"/>
+        <text x="240" y="19" font-family="Inter" font-size="9" fill="#8a94a8" text-anchor="middle">app.oravel.com.br/wms</text>
+
+        <rect x="164" y="14" width="152" height="272" rx="20" fill="#0f172a"/>
+        <rect x="174" y="34" width="132" height="232" rx="6" fill="#ffffff"/>
+        <rect x="174" y="34" width="132" height="26" rx="6" fill="#0f172a"/>
+        <text x="240" y="51" font-family="Inter" font-size="9" fill="#fff" text-anchor="middle">Coletor · Depósito Central</text>
+
+        <rect x="184" y="68" width="112" height="40" rx="6" fill="#fff1e4"/>
+        <text x="192" y="84" font-family="Inter" font-size="8.5" fill="#b8560c">Itens em ruptura</text>
+        <text x="192" y="100" font-family="Manrope" font-weight="800" font-size="16" fill="#0f172a">3</text>
+
+        <text x="184" y="126" font-family="Inter" font-size="8.5" fill="#8891a0">Estoque por depósito</text>
+        <rect x="184" y="132" width="112" height="8" rx="4" fill="#eef1f5"/>
+        <rect x="184" y="132" width="84" height="8" rx="4" fill="#f97316"/>
+        <rect x="184" y="146" width="112" height="8" rx="4" fill="#eef1f5"/>
+        <rect x="184" y="146" width="58" height="8" rx="4" fill="#0f172a"/>
+        <rect x="184" y="160" width="112" height="8" rx="4" fill="#eef1f5"/>
+        <rect x="184" y="160" width="100" height="8" rx="4" fill="#0f172a"/>
+
+        <text x="184" y="184" font-family="Inter" font-size="8.5" fill="#5b6472">Reposição automática</text>
+        <rect x="184" y="190" width="30" height="14" rx="7" fill="#22c55e"/>
+        <circle cx="207" cy="197" r="5" fill="#fff"/>
+
+        <circle cx="240" cy="230" r="26" fill="none" stroke="#eef1f5" stroke-width="9"/>
+        <circle cx="240" cy="230" r="26" fill="none" stroke="#0f172a" stroke-width="9" stroke-linecap="round" stroke-dasharray="98 66" transform="rotate(-90 240 230)"/>
+        <text x="240" y="227" font-family="Manrope" font-weight="800" font-size="13" fill="#0f172a" text-anchor="middle">60%</text>
+        <text x="240" y="238" font-family="Inter" font-size="7" fill="#8891a0" text-anchor="middle">giro/mês</text>
+
+        <text x="16" y="24" font-family="Inter" font-size="10" fill="#8891a0">Painel do gestor — resumo do dia</text>
+        <rect x="16" y="32" width="130" height="56" rx="8" fill="#eef1f5"/>
+        <text x="26" y="52" font-family="Inter" font-size="9.5" fill="#5b6472">Pedidos hoje</text>
+        <text x="26" y="74" font-family="Manrope" font-weight="800" font-size="20" fill="#0f172a">128</text>
+        <rect x="16" y="96" width="130" height="56" rx="8" fill="#fff1e4"/>
+        <text x="26" y="116" font-family="Inter" font-size="9.5" fill="#b8560c">Giro médio</text>
+        <text x="26" y="138" font-family="Manrope" font-weight="800" font-size="20" fill="#0f172a">4,2x</text>
+        <rect x="16" y="160" width="130" height="106" rx="8" fill="#f6f7f9"/>
+        <text x="26" y="180" font-family="Inter" font-size="9.5" fill="#5b6472">Relatório de ruptura</text>
+        <text x="26" y="198" font-family="Inter" font-size="8.5" fill="#8891a0">Semanal, por categoria</text>
+        <rect x="26" y="206" width="52" height="20" rx="5" fill="#0f172a"/>
+        <text x="52" y="220" font-family="Inter" font-size="8.5" fill="#fff" text-anchor="middle">Ver</text>
+
+        <text x="336" y="24" font-family="Inter" font-size="10" fill="#8891a0">Rota de entrega — hoje</text>
+        <rect x="336" y="32" width="128" height="234" rx="8" fill="#f6f7f9"/>
+        <text x="346" y="54" font-family="Inter" font-size="9" fill="#5b6472">14 paradas</text>
+        <text x="346" y="72" font-family="Inter" font-size="9" fill="#5b6472">3 veículos</text>
+        <rect x="346" y="88" width="108" height="8" rx="4" fill="#eef1f5"/>
+        <rect x="346" y="88" width="70" height="8" rx="4" fill="#f97316"/>
+        <text x="346" y="112" font-family="Inter" font-size="8" fill="#8891a0">9 de 14 entregues</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Funcionalidades</div>
+      <h2>Controle total do seu estoque — do coletor até o relatório executivo.</h2>
+      <p>Sem contagem manual, sem rupturas surpresa, sem estoque parado. Dados em tempo real que guiam decisões.</p>
+    </div>
+
+    <div class="feat-grid">
+      <div class="feat-item">
+        <div class="ic">📱</div>
+        <div>
+          <h3>Coletor de Estoque Mobile</h3>
+          <p>App completo para coleta, com código de barras ou QR code. Qualquer pessoa no estoque consegue operar.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">🔄</div>
+        <div>
+          <h3>Transferências Inteligentes</h3>
+          <p>Mova itens entre depósitos automaticamente. Sistema sugere o quê mover baseado em padrão de demanda.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">📊</div>
+        <div>
+          <h3>Giro de Estoque por Categoria</h3>
+          <p>Saiba qual produto é estrela (rápido), qual é cachorro (parado). Decida manter ou descartar com dados.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">🚨</div>
+        <div>
+          <h3>Alertas de Ruptura</h3>
+          <p>Itens críticos disparam notificações quando caem abaixo do mínimo. Ninguém fica sem estoque de surpresa.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">🏭</div>
+        <div>
+          <h3>Múltiplos Depósitos</h3>
+          <p>Gerencie quantos depósitos precisar (físicos ou volantes). Estoque centralizado, consulta distribuída.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">📈</div>
+        <div>
+          <h3>Reposição Automática</h3>
+          <p>Define mínimos e máximos por item. Sistema cuida de lembrar quando deve comprar e quanto.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">🔗</div>
+        <div>
+          <h3>Integração com Ordens de Serviço</h3>
+          <p>Consuma estoque diretamente das ordens de manutenção. Material vai para o técnico sem burocracia extra.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">📋</div>
+        <div>
+          <h3>Contagem Cíclica Programada</h3>
+          <p>Não precisa parar tudo para contar. Programa contagem contínua de grupos por dia. Precisão permanente.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-surface">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">A Diferença</div>
+      <h2>Warehouse Management que entende operação real.</h2>
+      <p>Você não quer apenas guardar itens — quer rastrear saída, prever falta, otimizar espaço e ter dados que justifiquem decisões de compra.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 32px;">
+      <div class="warehouse-item">
+        <div class="icon">🎯</div>
+        <div>
+          <h4>Precisão em Tempo Real</h4>
+          <p>Cada movimento no coletor atualiza o sistema al momento. Não há lag, não há discrepâncias entre sistema e físico.</p>
+        </div>
+      </div>
+      <div class="warehouse-item">
+        <div class="icon">📊</div>
+        <div>
+          <h4>Rastreabilidade Total</h4>
+          <p>Sabe exatamente que item foi pra qual ordem de serviço, em qual data, por qual depósito. Auditoria garantida.</p>
+        </div>
+      </div>
+      <div class="warehouse-item">
+        <div class="icon">🚀</div>
+        <div>
+          <h4>Velocidade de Saída</h4>
+          <p>Técnico chega na obra, pede material — WMS mostra exatamente o quê está disponível e onde. Sem demora.</p>
+        </div>
+      </div>
+      <div class="warehouse-item">
+        <div class="icon">💰</div>
+        <div>
+          <h4>Reduz Desperdício</h4>
+          <p>Você vê itens parados, vê rupturas que custam atraso. Dados que diminuem custo e aumentam margem.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Métricas que Importam</div>
+      <h2>Números que mostram o valor real do WMS.</h2>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 32px;">
+      <div class="metric-card">
+        <div class="num">73%</div>
+        <div class="label">redução em tempo de busca de material</div>
+      </div>
+      <div class="metric-card">
+        <div class="num">89%</div>
+        <div class="label">aumento na precisão de inventário</div>
+      </div>
+      <div class="metric-card">
+        <div class="num">45%</div>
+        <div class="label">menos rupturas ao ter previsão de demanda</div>
+      </div>
+      <div class="metric-card">
+        <div class="num">12h</div>
+        <div class="label">tempo de contagem cíclica para 5 mil itens</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-surface">
+  <div class="wrap">
+    <div class="notify-cta">
+      <h2>Seu estoque merece ser inteligente.</h2>
+      <p>Oravel WMS transforma dados desorganizados em decisões que aumentam margem e reduzem custo. Vamos conversar sobre como funciona na prática?</p>
+      <div class="hero-actions">
+        <a href="/lp.html?type=wms" class="btn btn-primary">Teste Grátis Agora</a>
+        <a href="/contato.php" class="btn btn-ghost">Solicitar Demonstração</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="ifoot">
+  <div class="ifoot-wrap">
+    <div class="ifoot-copy">© 2026 Oravel Desenvolvimento de Software</div>
+    <div class="ifoot-links">
+      <a href="/">Home</a>
+      <a href="/#produtos">Produtos</a>
+      <a href="/contato.php">Contato</a>
+      <a href="/segmentos/">Segmentos</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Tailwind via CDN, só pra este widget -- preflight desligado de proposito -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    corePlugins: { preflight: false }
+  };
+</script>
+
+<!-- WhatsApp Widget -->
+<div id="wa-widget" class="fixed bottom-6 right-6 z-[9999]" style="font-family: 'Inter', sans-serif;">
+    <div id="wa-chat-panel" class="hidden mb-4 w-80 max-w-[calc(100vw-3rem)] origin-bottom-right flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10 sm:w-96">
+        <div class="flex items-center gap-3 bg-emerald-600 px-4 py-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg font-extrabold" style="background:#101010;">
+                <span style="color:#ffffff">O</span><span style="color:#E8541A">r</span>
+            </div>
+            <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-semibold text-white">Oravel</p>
+                <p class="flex items-center gap-1.5 text-xs text-emerald-100">
+                    <span class="relative flex h-2 w-2">
+                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75"></span>
+                        <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-300"></span>
+                    </span>
+                    Online agora
+                </p>
+            </div>
+            <button type="button" onclick="waToggleChat(false)" aria-label="Fechar chat" class="shrink-0 rounded-full p-1 text-white/80 transition hover:bg-white/10 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div class="flex-1 space-y-2 bg-[#e5ddd5] px-3 py-4">
+            <div class="max-w-[85%] rounded-lg rounded-tl-none bg-white px-3 py-2 shadow-sm">
+                <p class="text-sm text-gray-800">Olá! Tem perguntas sobre o Oravel WMS?</p>
+                <p class="mt-1 text-right text-[10px] text-gray-400" id="wa-msg-time"></p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 border-t border-gray-200 bg-white p-2">
+            <input type="text" id="wa-input" placeholder="Digite sua mensagem..." class="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-800 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" style="background-color:#ffffff; color:#1f2937;" onkeydown="if (event.key === 'Enter') { event.preventDefault(); waSendMessage(); }">
+            <button type="button" onclick="waSendMessage()" aria-label="Enviar mensagem" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white transition hover:bg-emerald-700">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+                    <path d="M3.4 20.6l17.45-8.5a1 1 0 000-1.8L3.4 1.8a1 1 0 00-1.44 1.1L4.3 11 1.96 18.9a1 1 0 001.44 1.1z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <button type="button" id="wa-fab" onclick="waToggleChat()" aria-label="Abrir chat do WhatsApp" class="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg transition duration-200 ease-out hover:scale-110 hover:bg-emerald-600 active:scale-95">
+        <span class="absolute inline-flex h-16 w-16 animate-ping rounded-full bg-emerald-500 opacity-40" style="animation-duration: 2.5s;"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" class="relative h-8 w-8">
+            <path d="M16.001 3C9.107 3 3.5 8.607 3.5 15.5c0 2.42.687 4.68 1.878 6.598L3.2 28.8l6.876-2.14A12.44 12.44 0 0016 28c6.894 0 12.5-5.607 12.5-12.5S22.894 3 16.001 3zm0 22.7a10.15 10.15 0 01-5.44-1.573l-.39-.232-4.08 1.27 1.293-3.976-.253-.407A10.14 10.14 0 015.8 15.5c0-5.632 4.57-10.2 10.2-10.2 5.63 0 10.2 4.568 10.2 10.2 0 5.632-4.57 10.2-10.199 10.2zm5.58-7.64c-.306-.153-1.81-.893-2.09-.995-.28-.102-.484-.153-.688.153-.204.306-.789.995-.967 1.199-.178.204-.356.23-.662.077-.306-.153-1.293-.477-2.463-1.522-.91-.812-1.524-1.816-1.703-2.123-.178-.306-.019-.472.134-.624.137-.137.306-.357.459-.535.153-.178.204-.306.306-.51.102-.204.051-.383-.026-.535-.077-.153-.688-1.658-.943-2.27-.248-.596-.5-.516-.688-.526l-.586-.011c-.204 0-.535.077-.815.383-.28.306-1.069 1.044-1.069 2.549 0 1.505 1.094 2.958 1.247 3.163.153.204 2.153 3.286 5.216 4.608.729.315 1.297.503 1.74.644.731.232 1.396.2 1.922.121.586-.087 1.81-.74 2.065-1.454.255-.714.255-1.326.178-1.454-.076-.128-.28-.204-.586-.357z"/>
+        </svg>
+    </button>
+</div>
+
+<script>
+    (function () {
+        var WA_NUMERO = "5519999332615";
+        var WA_MENSAGEM_PADRAO = "Olá! Estou interessado em conhecer o Oravel WMS.";
+        var timeEl = document.getElementById('wa-msg-time');
+        if (timeEl) {
+            var agora = new Date();
+            timeEl.textContent = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+        window.waToggleChat = function (forceState) {
+            var panel = document.getElementById('wa-chat-panel');
+            var isHidden = panel.classList.contains('hidden');
+            var shouldOpen = (typeof forceState === 'boolean') ? forceState : isHidden;
+            if (shouldOpen) {
+                panel.classList.remove('hidden');
+                panel.classList.add('flex');
+                document.getElementById('wa-input').focus();
+            } else {
+                panel.classList.add('hidden');
+                panel.classList.remove('flex');
+            }
+        };
+        window.waSendMessage = function () {
+            var input = document.getElementById('wa-input');
+            var texto = (input.value || '').trim();
+            if (texto === '') {
+                texto = WA_MENSAGEM_PADRAO;
+            }
+            var url = 'https://wa.me/' + WA_NUMERO + '?text=' + encodeURIComponent(texto);
+            window.open(url, '_blank');
+            input.value = '';
+        };
+    })();
+</script>
+
+</body>
+</html>

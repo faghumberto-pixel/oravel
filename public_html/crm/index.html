@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oravel CRM — Gestão Comercial e Relacionamento | Oravel</title>
+<meta name="description" content="Oravel CRM: funil de vendas customizável, histórico completo de interações, automação de follow-up, integração com produtos Oravel. Feito para quem vende com sistema.">
+<link rel="icon" type="image/svg+xml" href="/nova/assets/favicon.svg?v=6" />
+<link rel="icon" type="image/png" sizes="32x32" href="/nova/assets/favicon-32.png?v=6" />
+<link rel="icon" type="image/x-icon" href="/nova/assets/favicon.ico?v=6" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #ffffff; --surface: #f6f7f9; --ink: #0f172a; --ink-soft: #5b6472;
+    --ink-faint: #8891a0; --border: #e4e7ec; --accent: #f97316; --accent-soft: #fff1e4;
+    --navy: #0f172a; --navy-2: #1a2540;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Inter", "Segoe UI", system-ui, sans-serif; color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: "Manrope", "Inter", sans-serif; font-weight: 800; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  a { color: inherit; }
+  img, svg { max-width: 100%; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  .eyebrow { font-family: "Manrope", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+
+  .inav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+  .inav-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; height: 72px; display: flex; align-items: center; justify-content: space-between; }
+  .inav-logo { display: flex; align-items: center; gap: 9px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 19px; text-decoration: none; color: var(--ink); }
+  .inav-logo-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--navy); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 15px; flex: none; }
+  .inav-links { display: flex; align-items: center; gap: 34px; }
+  .inav-links a { text-decoration: none; color: var(--ink-soft); font-size: 14.5px; font-weight: 600; }
+  .inav-links a:hover { color: var(--ink); }
+  .inav-cta { background: var(--navy); color: #fff; padding: 10px 20px; border-radius: 7px; text-decoration: none; font-weight: 700; font-size: 14px; }
+  .inav-cta:hover { background: var(--navy-2); }
+  @media (max-width: 860px) { .inav-links { display: none; } }
+
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 7px; background: rgba(16,185,129,0.15); color: #15803d;
+    font-size: 12.5px; font-weight: 700; padding: 6px 13px; border-radius: 100px; width: fit-content;
+    font-family: "Manrope", sans-serif;
+  }
+  .status-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; }
+
+  .hero { padding: 72px 0 60px; background: linear-gradient(180deg, #eef1f5 0%, #ffffff 100%); }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+  .hero h1 { font-size: clamp(30px, 4vw, 46px); line-height: 1.12; margin-top: 16px; font-weight: 800; }
+  .hero .slogan { font-size: 18px; color: var(--accent); font-weight: 700; margin-top: 14px; font-family: "Manrope", sans-serif; }
+  .hero .desc { font-size: 16.5px; color: var(--ink-soft); line-height: 1.65; margin-top: 16px; max-width: 50ch; font-weight: 500; }
+  .hero-actions { display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 26px; border-radius: 8px; font-weight: 700; font-size: 15px; text-decoration: none; border: 1px solid transparent; }
+  .btn-primary { background: var(--navy); color: #fff; }
+  .btn-primary:hover { background: var(--navy-2); }
+  .btn-ghost { border-color: var(--border); color: var(--ink); background: #fff; }
+  .btn-ghost:hover { border-color: var(--ink-faint); }
+
+  .hero-visual { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 22px; }
+  .hero-visual svg { width: 100%; border-radius: 10px; border: 1px solid var(--border); background: #fff; box-shadow: 0 24px 50px -30px rgba(15,23,42,0.3); }
+
+  .section { padding: 72px 0; }
+  .section-surface { background: var(--surface); }
+  .section-head { max-width: 640px; margin: 0 0 46px; }
+  .section-head h2 { font-size: clamp(24px, 2.8vw, 32px); line-height: 1.18; margin-top: 10px; }
+  .section-head p { font-size: 16px; color: var(--ink-soft); line-height: 1.6; margin-top: 12px; }
+
+  .feat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .feat-item { background: #fff; padding: 28px 30px; display: flex; gap: 16px; }
+  .feat-item .ic { width: 40px; height: 40px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; flex: none; font-weight: 800; font-size: 18px; }
+  .feat-item h3 { font-size: 16px; }
+  .feat-item p { font-size: 14px; color: var(--ink-soft); margin-top: 8px; line-height: 1.55; }
+
+  .notify-cta { background: var(--navy); border-radius: 22px; padding: 56px; text-align: center; color: #fff; }
+  .notify-cta h2 { font-size: clamp(24px, 3vw, 32px); color: #fff; }
+  .notify-cta p { color: rgba(255,255,255,0.72); font-size: 15.5px; margin-top: 12px; max-width: 50ch; margin-left: auto; margin-right: auto; }
+  .notify-cta .hero-actions { justify-content: center; margin-top: 26px; }
+  .notify-cta .btn-primary { background: var(--accent); }
+  .notify-cta .btn-primary:hover { background: #ea580c; }
+  .notify-cta .btn-ghost { background: transparent; border-color: rgba(255,255,255,0.25); color: #fff; }
+
+  footer.ifoot { border-top: 1px solid var(--border); padding: 44px 0; }
+  .ifoot-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  .ifoot-links { display: flex; gap: 24px; font-size: 13.5px; color: var(--ink-soft); }
+  .ifoot-links a { text-decoration: none; }
+  .ifoot-links a:hover { color: var(--ink); }
+  .ifoot-copy { font-size: 13px; color: var(--ink-faint); }
+
+  .metric-card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 28px; text-align: center; }
+  .metric-card .num { font-size: 32px; font-weight: 800; color: var(--accent); font-family: "Manrope", sans-serif; }
+  .metric-card .label { font-size: 14px; color: var(--ink-soft); margin-top: 8px; line-height: 1.5; }
+
+  .workflow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 32px; }
+  .workflow-step { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center; }
+  .workflow-step .step-no { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-weight: 800; margin-bottom: 12px; }
+  .workflow-step h4 { font-size: 15px; margin-top: 8px; }
+  .workflow-step p { font-size: 13px; color: var(--ink-soft); margin-top: 6px; }
+
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .feat-grid { grid-template-columns: 1fr; }
+    .workflow { grid-template-columns: repeat(2, 1fr); }
+    .section { padding: 52px 0; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="inav">
+  <div class="inav-wrap">
+    <a href="/" class="inav-logo"><span class="inav-logo-mark">O</span>Oravel</a>
+    <div class="inav-links">
+      <a href="/">Home</a>
+      <a href="/#produtos">Produtos</a>
+      <a href="/#sobre">Sobre</a>
+      <a href="/contato.php">Contato</a>
+    </div>
+    <a href="/contato.php" class="inav-cta">Iniciar Conversa</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Gestão Comercial</div>
+      <h1>Vendedor que trabalha sem controle perde mais negócio que fecha.</h1>
+      <div class="slogan">Lead esquecido em planilha é venda que o concorrente fecha primeiro.</div>
+      <p class="desc">
+        Funil de vendas customizável, histórico completo de cada cliente, automação de follow-up e relatórios que mostram exatamente onde o time está preso. Tudo integrado com seus demais produtos Oravel.
+      </p>
+      <div class="hero-actions">
+        <a href="/contato.php" class="btn btn-primary">Agendar Demo</a>
+        <a href="#features" class="btn btn-ghost">Ver Features →</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <svg viewBox="0 0 480 300" role="img" aria-label="Painel do Oravel CRM com funil de vendas e relatório de conversão">
+        <rect width="480" height="300" rx="10" fill="#ffffff"/>
+        <rect width="480" height="30" rx="10" fill="#0f172a"/>
+        <rect y="15" width="480" height="15" fill="#0f172a"/>
+        <circle cx="16" cy="15" r="4" fill="#ef4444"/>
+        <circle cx="30" cy="15" r="4" fill="#f59e0b"/>
+        <circle cx="44" cy="15" r="4" fill="#22c55e"/>
+        <text x="240" y="19" font-family="Inter" font-size="9" fill="#8a94a8" text-anchor="middle">app.oravel.com.br/crm</text>
+
+        <g font-family="Inter" font-size="10.5" fill="#8891a0">
+          <text x="20" y="52">Prospecção</text>
+          <text x="180" y="52">Negociação</text>
+          <text x="340" y="52">Fechado</text>
+        </g>
+        <rect x="20" y="60" width="140" height="34" rx="6" fill="#f6f7f9"/>
+        <rect x="20" y="100" width="140" height="34" rx="6" fill="#f6f7f9"/>
+        <rect x="180" y="60" width="140" height="34" rx="6" fill="#fff1e4" stroke="#f97316"/>
+        <rect x="340" y="60" width="120" height="34" rx="6" fill="#eafaf0" stroke="#22c55e"/>
+        <g font-family="Inter" font-size="9" fill="#5b6472">
+          <text x="30" y="80">Distribuidora ABC — R$4.200</text>
+          <text x="30" y="120">Locadora Sul — R$2.800</text>
+          <text x="190" y="80">Franquia XY — R$6.500</text>
+          <text x="350" y="80" fill="#166534">Oficina Prime — R$3.100</text>
+        </g>
+
+        <rect x="20" y="146" width="160" height="60" rx="8" fill="#eef1f5"/>
+        <text x="34" y="164" font-family="Inter" font-size="9.5" fill="#5b6472">Follow-up automático</text>
+        <rect x="34" y="174" width="34" height="16" rx="8" fill="#22c55e"/>
+        <circle cx="60" cy="182" r="6" fill="#fff"/>
+        <text x="74" y="186" font-family="Inter" font-size="9" fill="#15803d" font-weight="600">Ativado</text>
+
+        <circle cx="245" cy="176" r="34" fill="none" stroke="#eef1f5" stroke-width="10"/>
+        <circle cx="245" cy="176" r="34" fill="none" stroke="#f97316" stroke-width="10" stroke-linecap="round" stroke-dasharray="68 214" transform="rotate(-90 245 176)"/>
+        <text x="245" y="172" font-family="Manrope" font-weight="800" font-size="17" fill="#0f172a" text-anchor="middle">32%</text>
+        <text x="245" y="187" font-family="Inter" font-size="8" fill="#8891a0" text-anchor="middle">conversão</text>
+
+        <rect x="300" y="146" width="160" height="60" rx="8" fill="#f6f7f9"/>
+        <text x="314" y="164" font-family="Inter" font-size="9.5" fill="#5b6472">Relatório comercial</text>
+        <text x="314" y="182" font-family="Inter" font-size="8.5" fill="#8891a0">Fechamento do mês</text>
+        <rect x="314" y="188" width="52" height="20" rx="5" fill="#0f172a"/>
+        <text x="340" y="202" font-family="Inter" font-size="8.5" fill="#fff" text-anchor="middle">Ver</text>
+
+        <rect x="20" y="222" width="440" height="58" rx="8" fill="#f6f7f9"/>
+        <text x="34" y="242" font-family="Inter" font-size="10" fill="#5b6472">Histórico de interações — Distribuidora ABC</text>
+        <text x="34" y="260" font-family="Inter" font-size="9" fill="#8891a0">3 ligações, 1 proposta enviada, 1 reunião agendada</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Funcionalidades</div>
+      <h2>Controle total do seu funil comercial — do primeiro contato até o contrato assinado.</h2>
+      <p>Sem planilhas, sem lembretes em papel, sem leads perdidos. Tudo organizado, rastreável e automático.</p>
+    </div>
+
+    <div class="feat-grid">
+      <div class="feat-item">
+        <div class="ic">📋</div>
+        <div>
+          <h3>Funil de Vendas Customizável</h3>
+          <p>Defina seus próprios estágios. De "Prospectado" a "Proposta Enviada" a "Negociação" — organize do jeito que você vende.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">📞</div>
+        <div>
+          <h3>Histórico Completo de Interações</h3>
+          <p>Cada ligação, email, reunião, WhatsApp fica registrado e vinculado ao cliente. Ninguém repete informação.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">⏰</div>
+        <div>
+          <h3>Automação de Follow-up</h3>
+          <p>Defina tarefas automáticas. "Depois de 3 dias sem resposta, notifique o vendedor." Nada cai no esquecimento.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">🎯</div>
+        <div>
+          <h3>Atribuição Inteligente de Leads</h3>
+          <p>Distribua novos leads para o time automaticamente ou manualmente. Cada vendedor sabe exatamente o que é seu.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">📊</div>
+        <div>
+          <h3>Relatórios de Conversão em Tempo Real</h3>
+          <p>Saiba quantos leads você tem em cada estágio, taxa de conversão, ciclo de vendas médio. Dados que guiam decisões.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">🔗</div>
+        <div>
+          <h3>Integração Nativa com Oravel</h3>
+          <p>Converta leads em clientes do ERP/WMS automaticamente. Não é API —é integração profunda no produto.</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">💬</div>
+        <div>
+          <h3>Notas e Comentários em Tempo Real</h3>
+          <p>Deixe contexto para o time. "Cliente quer certa configuração" ou "Melhor ligar no horário das 14h".</p>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="ic">👥</div>
+        <div>
+          <h3>Gestão de Contatos por Cliente</h3>
+          <p>Registre múltiplos contatos por empresa. Saiba quem é decisor, quem é técnico, quem assina cheque.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-surface">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Fluxo de Vendas</div>
+      <h2>De Prospectado a Fechado — como o seu funil funciona.</h2>
+    </div>
+
+    <div class="workflow">
+      <div class="workflow-step">
+        <div class="step-no">1</div>
+        <h4>Prospectado</h4>
+        <p>Novo lead entra no sistema. Informações básicas capturadas, contatos organizados.</p>
+      </div>
+      <div class="workflow-step">
+        <div class="step-no">2</div>
+        <h4>Contato Iniciado</h4>
+        <p>Primeiro contato feito. Ligação, email ou WhatsApp registrado no histórico.</p>
+      </div>
+      <div class="workflow-step">
+        <div class="step-no">3</div>
+        <h4>Proposta Enviada</h4>
+        <p>Documentação preparada. Sistema lembra de acompanhar se não houver resposta.</p>
+      </div>
+      <div class="workflow-step">
+        <div class="step-no">4</div>
+        <h4>Negociação / Fechado</h4>
+        <p>Conversão para cliente — integra automático com ERP/WMS para onboarding.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Por que Oravel CRM é diferente</div>
+      <h2>Você não quer mais um CRM genérico — quer um que entende o seu segmento.</h2>
+      <p>
+        A maioria dos CRMs é feita para qualquer negócio. Aqui, o CRM foi feito pensando em quem vende serviços B2B complexos — locação, manutenção, suprimentos. Sua integração nativa com outros produtos Oravel significa que você não está preso a APIs frágeis — é um sistema só.
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; margin-top: 40px;">
+      <div class="metric-card">
+        <div class="num">4x</div>
+        <div class="label">mais rápido fechar um ciclo de vendas sem planilhas paralelas</div>
+      </div>
+      <div class="metric-card">
+        <div class="num">62%</div>
+        <div class="label">aumento médio na taxa de conversão quando os leads não são perdidos</div>
+      </div>
+      <div class="metric-card">
+        <div class="num">0</div>
+        <div class="label">leads deixados para depois — automação garante acompanhamento</div>
+      </div>
+      <div class="metric-card">
+        <div class="num">1</div>
+        <div class="label">base de dados única — sem replicação entre sistemas</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-surface">
+  <div class="wrap">
+    <div class="notify-cta">
+      <h2>Seu time de vendas merece mais que planilhas.</h2>
+      <p>Oravel CRM traz organização, controle e automação para quem vende sério. Comece uma conversa conosco hoje.</p>
+      <div class="hero-actions">
+        <a href="/lp.html?type=crm" class="btn btn-primary">Teste Grátis Agora</a>
+        <a href="/contato.php" class="btn btn-ghost">Solicitar Demonstração</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="ifoot">
+  <div class="ifoot-wrap">
+    <div class="ifoot-copy">© 2026 Oravel Desenvolvimento de Software</div>
+    <div class="ifoot-links">
+      <a href="/">Home</a>
+      <a href="/#produtos">Produtos</a>
+      <a href="/contato.php">Contato</a>
+      <a href="/segmentos/">Segmentos</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Tailwind via CDN, só pra este widget -- preflight desligado de proposito -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    corePlugins: { preflight: false }
+  };
+</script>
+
+<!-- WhatsApp Widget -->
+<div id="wa-widget" class="fixed bottom-6 right-6 z-[9999]" style="font-family: 'Inter', sans-serif;">
+    <div id="wa-chat-panel" class="hidden mb-4 w-80 max-w-[calc(100vw-3rem)] origin-bottom-right flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10 sm:w-96">
+        <div class="flex items-center gap-3 bg-emerald-600 px-4 py-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg font-extrabold" style="background:#101010;">
+                <span style="color:#ffffff">O</span><span style="color:#E8541A">r</span>
+            </div>
+            <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-semibold text-white">Oravel</p>
+                <p class="flex items-center gap-1.5 text-xs text-emerald-100">
+                    <span class="relative flex h-2 w-2">
+                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75"></span>
+                        <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-300"></span>
+                    </span>
+                    Online agora
+                </p>
+            </div>
+            <button type="button" onclick="waToggleChat(false)" aria-label="Fechar chat" class="shrink-0 rounded-full p-1 text-white/80 transition hover:bg-white/10 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div class="flex-1 space-y-2 bg-[#e5ddd5] px-3 py-4">
+            <div class="max-w-[85%] rounded-lg rounded-tl-none bg-white px-3 py-2 shadow-sm">
+                <p class="text-sm text-gray-800">Olá! Interesse em conhecer o Oravel CRM?</p>
+                <p class="mt-1 text-right text-[10px] text-gray-400" id="wa-msg-time"></p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 border-t border-gray-200 bg-white p-2">
+            <input type="text" id="wa-input" placeholder="Digite sua mensagem..." class="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-800 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" style="background-color:#ffffff; color:#1f2937;" onkeydown="if (event.key === 'Enter') { event.preventDefault(); waSendMessage(); }">
+            <button type="button" onclick="waSendMessage()" aria-label="Enviar mensagem" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white transition hover:bg-emerald-700">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+                    <path d="M3.4 20.6l17.45-8.5a1 1 0 000-1.8L3.4 1.8a1 1 0 00-1.44 1.1L4.3 11 1.96 18.9a1 1 0 001.44 1.1z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <button type="button" id="wa-fab" onclick="waToggleChat()" aria-label="Abrir chat do WhatsApp" class="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg transition duration-200 ease-out hover:scale-110 hover:bg-emerald-600 active:scale-95">
+        <span class="absolute inline-flex h-16 w-16 animate-ping rounded-full bg-emerald-500 opacity-40" style="animation-duration: 2.5s;"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" class="relative h-8 w-8">
+            <path d="M16.001 3C9.107 3 3.5 8.607 3.5 15.5c0 2.42.687 4.68 1.878 6.598L3.2 28.8l6.876-2.14A12.44 12.44 0 0016 28c6.894 0 12.5-5.607 12.5-12.5S22.894 3 16.001 3zm0 22.7a10.15 10.15 0 01-5.44-1.573l-.39-.232-4.08 1.27 1.293-3.976-.253-.407A10.14 10.14 0 015.8 15.5c0-5.632 4.57-10.2 10.2-10.2 5.63 0 10.2 4.568 10.2 10.2 0 5.632-4.57 10.2-10.199 10.2zm5.58-7.64c-.306-.153-1.81-.893-2.09-.995-.28-.102-.484-.153-.688.153-.204.306-.789.995-.967 1.199-.178.204-.356.23-.662.077-.306-.153-1.293-.477-2.463-1.522-.91-.812-1.524-1.816-1.703-2.123-.178-.306-.019-.472.134-.624.137-.137.306-.357.459-.535.153-.178.204-.306.306-.51.102-.204.051-.383-.026-.535-.077-.153-.688-1.658-.943-2.27-.248-.596-.5-.516-.688-.526l-.586-.011c-.204 0-.535.077-.815.383-.28.306-1.069 1.044-1.069 2.549 0 1.505 1.094 2.958 1.247 3.163.153.204 2.153 3.286 5.216 4.608.729.315 1.297.503 1.74.644.731.232 1.396.2 1.922.121.586-.087 1.81-.74 2.065-1.454.255-.714.255-1.326.178-1.454-.076-.128-.28-.204-.586-.357z"/>
+        </svg>
+    </button>
+</div>
+
+<script>
+    (function () {
+        var WA_NUMERO = "5519999332615";
+        var WA_MENSAGEM_PADRAO = "Olá! Vim pelo site e tenho interesse no Oravel CRM.";
+        var timeEl = document.getElementById('wa-msg-time');
+        if (timeEl) {
+            var agora = new Date();
+            timeEl.textContent = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+        window.waToggleChat = function (forceState) {
+            var panel = document.getElementById('wa-chat-panel');
+            var isHidden = panel.classList.contains('hidden');
+            var shouldOpen = (typeof forceState === 'boolean') ? forceState : isHidden;
+            if (shouldOpen) {
+                panel.classList.remove('hidden');
+                panel.classList.add('flex');
+                document.getElementById('wa-input').focus();
+            } else {
+                panel.classList.add('hidden');
+                panel.classList.remove('flex');
+            }
+        };
+        window.waSendMessage = function () {
+            var input = document.getElementById('wa-input');
+            var texto = (input.value || '').trim();
+            if (texto === '') {
+                texto = WA_MENSAGEM_PADRAO;
+            }
+            var url = 'https://wa.me/' + WA_NUMERO + '?text=' + encodeURIComponent(texto);
+            window.open(url, '_blank');
+            input.value = '';
+        };
+    })();
+</script>
+
+</body>
+</html>
