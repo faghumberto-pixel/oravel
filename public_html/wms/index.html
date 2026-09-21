@@ -35,6 +35,11 @@
   .inav-links a:hover { color: var(--ink); }
   .inav-cta { background: var(--navy); color: #fff; padding: 10px 20px; border-radius: 7px; text-decoration: none; font-weight: 700; font-size: 14px; }
   .inav-cta:hover { background: var(--navy-2); }
+  .inav-dd { position: relative; padding: 24px 0; }
+  .inav-dd-menu { position: absolute; top: 100%; left: -16px; min-width: 260px; background: #fff; border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 16px 36px -18px rgba(15,23,42,0.35); padding: 6px; opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity .15s, transform .15s, visibility .15s; z-index: 60; }
+  .inav-dd:hover .inav-dd-menu, .inav-dd:focus-within .inav-dd-menu { opacity: 1; visibility: visible; transform: none; }
+  .inav-dd-menu a { display: block; padding: 10px 12px; border-radius: 6px; font-size: 14px; }
+  .inav-dd-menu a:hover, .inav-dd-menu a[aria-current="page"] { background: var(--surface); color: var(--ink); }
   @media (max-width: 860px) { .inav-links { display: none; } }
 
   .status-pill {
@@ -111,6 +116,10 @@
     <div class="inav-links">
       <a href="/">Home</a>
       <a href="/#produtos">Produtos</a>
+      <div class="inav-dd">
+        <a href="/segmentos/" aria-haspopup="true">Segmentos</a>
+        <div class="inav-dd-menu"><a href="/erp-cmms/">Locação de Equipamentos</a><a href="/software-manutencao-industrial/">Manutenção Industrial</a><a href="/software-montagem-industrial/">Montagem Industrial</a><a href="/software-gestao-frota-logistica/">Logística e Transportes</a><a href="/software-gestao-de-servicos/">Gestão de Serviços</a><a href="/wms/" aria-current="page">Distribuidor e Atacadista</a><a href="/crm/">Qualquer Segmento</a></div>
+      </div>
       <a href="/#sobre">Sobre</a>
       <a href="/contato.php">Contato</a>
     </div>

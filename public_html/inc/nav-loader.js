@@ -22,11 +22,17 @@
     });
 
   function initNav() {
-    var dropdown = document.getElementById('onav-dropdown-modulos');
-    var trigger = dropdown.querySelector('.onav-dropdown-trigger');
+    var dropdowns = Array.prototype.slice.call(document.querySelectorAll('.onav-dropdown'));
     var burger = document.getElementById('onav-burger');
     var navLinks = document.getElementById('onav-links');
     var planosLink = document.querySelector('[data-nav-planos]');
+
+    function closeDropdown(dd) {
+      dd.classList.remove('is-open');
+      var t = dd.querySelector('.onav-dropdown-trigger');
+      if (t) t.setAttribute('aria-expanded', 'false');
+    }
+    function closeAll() { dropdowns.forEach(closeDropdown); }
 
     // Na própria home, "Planos" deve rolar suave (#planos) em vez de
     // recarregar a página inteira (/#planos) -- ver pergunta ao usuário.
@@ -34,26 +40,32 @@
       planosLink.setAttribute('href', '#planos');
     }
 
-    trigger.addEventListener('click', function (e) {
-      e.stopPropagation();
-      var isOpen = dropdown.classList.toggle('is-open');
-      trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    // Um dropdown aberto por vez (Módulos, Segmentos, ...).
+    dropdowns.forEach(function (dd) {
+      var trigger = dd.querySelector('.onav-dropdown-trigger');
+      trigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var willOpen = !dd.classList.contains('is-open');
+        closeAll();
+        if (willOpen) {
+          dd.classList.add('is-open');
+          trigger.setAttribute('aria-expanded', 'true');
+        }
+      });
     });
 
     document.addEventListener('click', function (e) {
-      if (!dropdown.contains(e.target)) {
-        dropdown.classList.remove('is-open');
-        trigger.setAttribute('aria-expanded', 'false');
-      }
+      dropdowns.forEach(function (dd) { if (!dd.contains(e.target)) closeDropdown(dd); });
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeAll();
     });
 
     burger.addEventListener('click', function () {
       var isOpen = navLinks.classList.toggle('is-open');
       burger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      if (!isOpen) {
-        dropdown.classList.remove('is-open');
-        trigger.setAttribute('aria-expanded', 'false');
-      }
+      if (!isOpen) closeAll();
     });
   }
 })();
