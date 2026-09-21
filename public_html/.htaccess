@@ -1,7 +1,7 @@
 <IfModule mod_rewrite.c>
 RewriteEngine On
 # Páginas antigas de FSM e PCM foram absorvidas por Manutenção Industrial
-RewriteRule ^(fsm|pcm)/?$ /software-manutencao-industrial/ [R=301,L]
+RewriteRule ^(fsm|pcm)/?$ https://oravel.com.br/software-manutencao-industrial/ [R=301,L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^solucoes/([a-z]+)$ solucoes/$1.html [L]
