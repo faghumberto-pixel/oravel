@@ -35,6 +35,23 @@
     .dropdown-menu a { display: block; padding: 12px 16px; font-size: 14px; color: var(--ink-soft); border-bottom: 1px solid var(--border); transition: background-color 0.2s; }
     .dropdown-menu a:last-child { border-bottom: none; }
     .dropdown-menu a:hover { background-color: var(--surface); color: var(--ink); }
+    .nav-dropdown:focus-within .dropdown-menu { opacity: 1; visibility: visible; pointer-events: auto; }
+    .nav-dropdown a.nav-dropdown-btn { display: inline-block; }
+    .frentes-section { padding: 72px 0; background: var(--surface); border-bottom: 1px solid var(--border); }
+    .frentes-eyebrow { font-family: "Manrope", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #c2410c; }
+    .frentes-section h2 { font-size: clamp(26px, 4vw, 34px); line-height: 1.15; margin-top: 10px; }
+    .frentes-lead { font-size: 16px; color: var(--ink-soft); line-height: 1.6; margin-top: 12px; max-width: 62ch; }
+    .frentes-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 36px; }
+    .frente-card { display: flex; flex-direction: column; gap: 10px; background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 24px; transition: border-color .15s, box-shadow .15s; }
+    .frente-card:hover, .frente-card:focus-visible { border-color: var(--accent); box-shadow: 0 20px 40px -30px rgba(15,23,42,0.3); outline: none; }
+    .frente-ic { width: 42px; height: 42px; border-radius: 10px; background: #fff1e4; color: #c2410c; display: flex; align-items: center; justify-content: center; }
+    .frente-card h3 { font-size: 18px; margin-top: 4px; }
+    .frente-card p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.55; flex: 1; }
+    .frente-go { font-size: 14px; font-weight: 700; color: var(--ink); margin-top: 4px; }
+    .frente-card:hover .frente-go { color: #c2410c; }
+    @media (min-width: 640px) { .frentes-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 960px) { .frentes-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 640px) { .frentes-section { padding: 52px 0; } }
     .nav-links a { color: var(--ink-soft); font-size: 14px; font-weight: 600; transition: color 0.2s; }
     .nav-links a:hover { color: var(--ink); }
     .cta-btn { background: var(--accent); color: white; padding: 10px 24px; border-radius: 6px; font-weight: 700; font-size: 14px; transition: background 0.2s; }
@@ -109,7 +126,18 @@
             <a href="https://oravel.com.br/solucoes/analytics">Analytics</a>
           </div>
         </div>
-        <a href="https://oravel.com.br/segmentos/" class="nav-segmentos">Segmentos</a>
+        <div class="nav-dropdown">
+          <a href="https://oravel.com.br/segmentos/" class="nav-dropdown-btn nav-segmentos" aria-haspopup="true">Segmentos</a>
+          <div class="dropdown-menu">
+            <a href="https://oravel.com.br/erp-cmms/">Locação de Equipamentos</a>
+            <a href="https://oravel.com.br/software-manutencao-industrial/">Manutenção Industrial</a>
+            <a href="https://oravel.com.br/software-montagem-industrial/">Montagem Industrial</a>
+            <a href="https://oravel.com.br/software-gestao-frota-logistica/">Logística e Transportes</a>
+            <a href="https://oravel.com.br/software-gestao-de-servicos/">Gestão de Serviços</a>
+            <a href="https://oravel.com.br/wms/">Distribuidor e Atacadista</a>
+            <a href="https://oravel.com.br/crm/">Qualquer Segmento</a>
+          </div>
+        </div>
         <a href="https://oravel.com.br/sobre-nos" class="nav-sobre">Sobre Nós</a>
         <a href="https://oravel.com.br/contato.php">Contato</a>
       </div>
@@ -131,6 +159,46 @@
     </div>
   </section>
 
+
+  <section class="frentes-section" id="frentes" aria-labelledby="frentes-t">
+    <div class="wrap">
+      <div class="frentes-eyebrow">Nossas frentes</div>
+      <h2 id="frentes-t">Uma plataforma para quem vive de equipamentos, equipes e serviços</h2>
+      <p class="frentes-lead">Cada frente tem as telas e os módulos que a operação realmente usa no dia a dia.</p>
+      <div class="frentes-grid">
+        <a class="frente-card" href="https://oravel.com.br/erp-cmms/">
+          <div class="frente-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 9h18M8 4v5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Locação de Equipamentos</h3>
+          <p>Contratos, medições, manutenção e avarias da sua locadora em uma base só.</p>
+          <span class="frente-go">Conhecer →</span>
+        </a>
+        <a class="frente-card" href="https://oravel.com.br/software-manutencao-industrial/">
+          <div class="frente-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.7 6.3a4 4 0 01-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 015.4-5.4l-2.3 2.3-2-2 2.3-2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Manutenção Industrial</h3>
+          <p>Ordens de serviço, preventivas com checklist e o dossiê de cada equipamento.</p>
+          <span class="frente-go">Conhecer →</span>
+        </a>
+        <a class="frente-card" href="https://oravel.com.br/software-montagem-industrial/">
+          <div class="frente-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 20c.8-3.5 3.2-5 6-5s5.2 1.5 6 5M16 5a3 3 0 010 6M18 15c1.6.6 2.6 2.2 3 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Montagem Industrial</h3>
+          <p>Frentes de serviço, horas por técnico e a entrada e saída de equipamentos em obra.</p>
+          <span class="frente-go">Conhecer →</span>
+        </a>
+        <a class="frente-card" href="https://oravel.com.br/software-gestao-frota-logistica/">
+          <div class="frente-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="17" r="2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17" cy="17" r="2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Logística e Transportes</h3>
+          <p>Agenda de motoristas, saídas de veículos e o trajeto de cada transporte.</p>
+          <span class="frente-go">Conhecer →</span>
+        </a>
+        <a class="frente-card" href="https://oravel.com.br/software-gestao-de-servicos/">
+          <div class="frente-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Gestão de Serviços</h3>
+          <p>Portal do cliente, custo por serviço e um painel geral da operação.</p>
+          <span class="frente-go">Conhecer →</span>
+        </a>
+      </div>
+    </div>
+  </section>
 
   <!-- Seção de Diferenciação: Soluções vs Segmentos vs Produtos -->
   <section class="diferenciacao-section">

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Segmentos — Onde a Oravel já desenvolveu soluções | Oravel</title>
+<meta name="description" content="Empilhadeiras, geradores, compressores, plataformas elevatórias e guindastes: conheça as dores de cada segmento onde o Oravel ERP CMMS já tem solução pronta.">
+<link rel="icon" type="image/svg+xml" href="/nova/assets/favicon.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="/nova/assets/favicon-32.png" />
+<link rel="icon" type="image/x-icon" href="/nova/assets/favicon.ico" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #ffffff; --surface: #f6f7f9; --ink: #0f172a; --ink-soft: #5b6472;
+    --ink-faint: #8891a0; --border: #e4e7ec; --accent: #f97316; --accent-soft: #fff1e4;
+    --navy: #0f172a; --navy-2: #1a2540;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Inter", "Segoe UI", system-ui, sans-serif; color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: "Manrope", "Inter", sans-serif; font-weight: 800; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  a { color: inherit; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  .eyebrow { font-family: "Manrope", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+
+  .inav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+  .inav-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; height: 72px; display: flex; align-items: center; justify-content: space-between; }
+  .inav-logo { display: flex; align-items: center; gap: 9px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 19px; text-decoration: none; color: var(--ink); }
+  .inav-logo-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--navy); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 15px; flex: none; }
+  .inav-links { display: flex; align-items: center; gap: 34px; }
+  .inav-links a { text-decoration: none; color: var(--ink-soft); font-size: 14.5px; font-weight: 600; }
+  .inav-links a:hover { color: var(--ink); }
+  .inav-cta { background: var(--navy); color: #fff; padding: 10px 20px; border-radius: 7px; text-decoration: none; font-weight: 700; font-size: 14px; }
+  .inav-cta:hover { background: var(--navy-2); }
+  .inav-dd { position: relative; padding: 24px 0; }
+  .inav-dd-menu { position: absolute; top: 100%; left: -16px; min-width: 260px; background: #fff; border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 16px 36px -18px rgba(15,23,42,0.35); padding: 6px; opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity .15s, transform .15s, visibility .15s; z-index: 60; }
+  .inav-dd:hover .inav-dd-menu, .inav-dd:focus-within .inav-dd-menu { opacity: 1; visibility: visible; transform: none; }
+  .inav-dd-menu a { display: block; padding: 10px 12px; border-radius: 6px; font-size: 14px; }
+  .inav-dd-menu a:hover { background: var(--surface); color: var(--ink); }
+  @media (max-width: 860px) { .inav-links { display: none; } }
+
+  .hero { padding: 72px 0 56px; background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); }
+  .hero h1 { font-size: clamp(30px, 4.2vw, 48px); line-height: 1.1; margin-top: 14px; }
+  .hero p { font-size: 17px; color: var(--ink-soft); line-height: 1.6; margin-top: 16px; max-width: 60ch; }
+
+  .section { padding: 20px 0 88px; }
+  .seg-grid { display: flex; flex-direction: column; gap: 20px; }
+  .seg-card {
+    display: grid; grid-template-columns: 240px 1fr auto; gap: 30px; align-items: center;
+    background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 30px 32px;
+    text-decoration: none; color: inherit; transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .seg-card:hover { border-color: var(--ink-faint); box-shadow: 0 20px 40px -30px rgba(15,23,42,0.25); }
+  .seg-card .seg-ic {
+    width: 56px; height: 56px; border-radius: 12px; background: var(--accent-soft); color: var(--accent);
+    display: flex; align-items: center; justify-content: center; flex: none;
+  }
+  .seg-card .seg-title { display: flex; align-items: center; gap: 14px; }
+  .seg-card h3 { font-size: 19px; }
+  .seg-card .product-tag {
+    display: inline-flex; align-items: center; gap: 6px; font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--ink-faint); margin-top: 4px;
+  }
+  .seg-card .product-tag .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--ink-faint); }
+  .seg-card.is-live .product-tag { color: #15803d; }
+  .seg-card.is-live .product-tag .dot { background: #22c55e; }
+  .seg-card .headline { font-size: 15px; color: var(--accent); font-weight: 700; margin-top: 6px; }
+  .seg-card .lede { font-size: 14px; color: var(--ink-soft); line-height: 1.55; margin-top: 10px; }
+  .seg-card .go {
+    font-size: 13.5px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 6px;
+    white-space: nowrap;
+  }
+  .seg-card:hover .go { color: var(--accent); }
+
+  @media (max-width: 760px) {
+    .seg-card { grid-template-columns: 1fr; text-align: left; }
+    .seg-card .go { justify-content: flex-start; }
+  }
+
+  .cta-strip { background: var(--navy); border-radius: 22px; padding: 56px; text-align: center; color: #fff; margin-top: 20px; }
+  .cta-strip h2 { font-size: clamp(24px, 3vw, 32px); color: #fff; }
+  .cta-strip p { color: rgba(255,255,255,0.72); font-size: 15.5px; margin-top: 12px; }
+  .cta-strip .btn { display: inline-flex; margin-top: 26px; padding: 14px 26px; border-radius: 8px; background: var(--accent); color: #fff; text-decoration: none; font-weight: 700; font-size: 15px; }
+  .cta-strip .btn:hover { background: #ea580c; }
+
+  .research-card {
+    display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 30px 32px; margin-top: 20px; text-decoration: none; color: inherit;
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .research-card:hover { border-color: var(--ink-faint); box-shadow: 0 20px 40px -30px rgba(15,23,42,0.25); }
+  .research-card h3 { font-size: 18px; }
+  .research-card p { font-size: 14px; color: var(--ink-soft); margin-top: 8px; max-width: 60ch; line-height: 1.55; }
+  .research-card .go {
+    font-size: 13.5px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 6px;
+    white-space: nowrap; flex: none;
+  }
+  .research-card:hover .go { color: var(--accent); }
+  @media (max-width: 760px) { .research-card { flex-direction: column; align-items: flex-start; } }
+
+  footer.ifoot { border-top: 1px solid var(--border); padding: 44px 0; }
+  .ifoot-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  .ifoot-links { display: flex; gap: 24px; font-size: 13.5px; color: var(--ink-soft); }
+  .ifoot-links a { text-decoration: none; }
+  .ifoot-links a:hover { color: var(--ink); }
+  .ifoot-copy { font-size: 13px; color: var(--ink-faint); }
+</style>
+</head>
+<body>
+
+<nav class="inav">
+  <div class="inav-wrap">
+    <a href="/" class="inav-logo"><span class="inav-logo-mark">O</span>Oravel</a>
+    <div class="inav-links">
+      <a href="/#produtos">Produtos</a>
+      <div class="inav-dd">
+        <a href="/segmentos/" aria-haspopup="true" aria-current="page">Segmentos</a>
+        <div class="inav-dd-menu"><a href="/erp-cmms/">Locação de Equipamentos</a><a href="/software-manutencao-industrial/">Manutenção Industrial</a><a href="/software-montagem-industrial/">Montagem Industrial</a><a href="/software-gestao-frota-logistica/">Logística e Transportes</a><a href="/software-gestao-de-servicos/">Gestão de Serviços</a><a href="/wms/">Distribuidor e Atacadista</a><a href="/crm/">Qualquer Segmento</a></div>
+      </div>
+      <a href="/#sobre">Sobre</a>
+      <a href="/contato.php">Contato</a>
+    </div>
+    <a href="/gestao-locadoras/" class="inav-cta">Conhecer o Oravel ERP CMMS</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Segmentos</div>
+
+    <h1 style="color: white;">Cada segmento de mercado tem sua própria dor — cada produto Oravel nasce de uma delas.</h1>
+    <p style="color: white; font-size: 15.5px; line-height: 1.6; border-left: 4px solid #ef4444; padding-left: 16px;">Não construímos módulos genéricos torcidos pra caber em qualquer negócio. Cada produto da Oravel nasce dentro de um segmento específico, resolvendo o que esse setor realmente sente no dia a dia.</p>
+  </div>
+</header>
+
+<section class="section">
+  <div class="wrap">
+    <div class="seg-grid">
+
+      <a class="seg-card" href="/erp-cmms/">
+        <div class="seg-title">
+          <div class="seg-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 9h18M8 4v5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div>
+            <h3>Locação de Equipamentos</h3>
+            <div class="product-tag">Oravel ERP CMMS</div>
+          </div>
+        </div>
+        <div>
+          <div class="headline">Controle total da sua locadora, feito por quem entende de locação.</div>
+          <p class="lede">Contratos, medições, manutenção preventiva, avarias com dossiê jurídico, suprimentos e RH — tudo em uma base só.</p>
+        </div>
+        <div class="go">Conhecer <span aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      </a>
+      <a class="seg-card" href="/software-manutencao-industrial/">
+        <div class="seg-title">
+          <div class="seg-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.7 6.3a4 4 0 01-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 015.4-5.4l-2.3 2.3-2-2 2.3-2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div>
+            <h3>Manutenção Industrial</h3>
+            <div class="product-tag">Ordens de serviço e preventivas</div>
+          </div>
+        </div>
+        <div>
+          <div class="headline">Serviço sem registro é serviço que você não consegue comprovar.</div>
+          <p class="lede">Ordens de serviço, preventivas com checklist e o dossiê de cada equipamento, do técnico ao gestor.</p>
+        </div>
+        <div class="go">Conhecer <span aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      </a>
+      <a class="seg-card" href="/software-montagem-industrial/">
+        <div class="seg-title">
+          <div class="seg-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 20c.8-3.5 3.2-5 6-5s5.2 1.5 6 5M16 5a3 3 0 010 6M18 15c1.6.6 2.6 2.2 3 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div>
+            <h3>Montagem Industrial</h3>
+            <div class="product-tag">Frentes, horas e mobilização</div>
+          </div>
+        </div>
+        <div>
+          <div class="headline">Equipe em várias frentes e ninguém sabe onde cada um está.</div>
+          <p class="lede">Frentes de serviço, horas por técnico e a entrada e saída de equipamentos em obra.</p>
+        </div>
+        <div class="go">Conhecer <span aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      </a>
+      <a class="seg-card" href="/software-gestao-frota-logistica/">
+        <div class="seg-title">
+          <div class="seg-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="17" r="2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17" cy="17" r="2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div>
+            <h3>Logística e Transportes</h3>
+            <div class="product-tag">Frota, motoristas e transportes</div>
+          </div>
+        </div>
+        <div>
+          <div class="headline">Veículo saiu, mas quem retirou e para onde?</div>
+          <p class="lede">Agenda de motoristas, registro de saídas e retornos e o trajeto de cada transporte.</p>
+        </div>
+        <div class="go">Conhecer <span aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      </a>
+      <a class="seg-card" href="/software-gestao-de-servicos/">
+        <div class="seg-title">
+          <div class="seg-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div>
+            <h3>Gestão de Serviços</h3>
+            <div class="product-tag">Portal do cliente e custos</div>
+          </div>
+        </div>
+        <div>
+          <div class="headline">Cliente ligando para saber do serviço e você sem saber quanto ele custou.</div>
+          <p class="lede">Portal do cliente, custo por serviço e um painel geral da operação.</p>
+        </div>
+        <div class="go">Conhecer <span aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      </a>
+      <a class="seg-card" href="/wms/">
+        <div class="seg-title">
+          <div class="seg-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 8l9-5 9 5-9 5-9-5z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 8v8l9 5 9-5V8M12 13v8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div>
+            <h3>Distribuidor e Atacadista</h3>
+            <div class="product-tag">Oravel WMS</div>
+          </div>
+        </div>
+        <div>
+          <div class="headline">Pare de perder margem por estoque que você não enxerga em tempo real.</div>
+          <p class="lede">Visibilidade completa do pedido à entrega, pra quem precisa girar volume com previsibilidade.</p>
+        </div>
+        <div class="go">Conhecer <span aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      </a>
+      <a class="seg-card" href="/crm/">
+        <div class="seg-title">
+          <div class="seg-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 20c1-3.8 4.2-6 7.5-6s6.5 2.2 7.5 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div>
+            <h3>Qualquer Segmento</h3>
+            <div class="product-tag">Oravel CRM</div>
+          </div>
+        </div>
+        <div>
+          <div class="headline">Lead esquecido em planilha é venda que o concorrente fecha primeiro.</div>
+          <p class="lede">Prospecção, negociação e pós-venda num fluxo só, com histórico completo de cada cliente — usado junto com qualquer outro produto Oravel.</p>
+        </div>
+        <div class="go">Conhecer <span aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      </a>
+
+    </div>
+
+    <a class="research-card" href="/contato.php">
+      <div>
+        <div class="eyebrow">Pesquisa de mercado</div>
+        <h3 style="margin-top:6px;">Como validamos cada segmento antes de construir</h3>
+        <p>Levantamento com dados de associações setoriais, IBGE e bases de CNPJ mostrando o tamanho real de cada mercado — a razão pela qual esses são os segmentos escolhidos, e não outros.</p>
+      </div>
+      <div class="go">Ver o estudo completo <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </a>
+
+    <div class="cta-strip">
+      <h2>Não achou seu segmento na lista?</h2>
+      <p>Conta pra gente sobre a sua operação — isso ajuda a decidir qual produto construir depois.</p>
+      <a href="/contato.php" class="btn">Falar com o nosso time</a>
+    </div>
+  </div>
+</section>
+
+<footer class="ifoot">
+  <div class="ifoot-wrap">
+    <a href="/" class="inav-logo"><span class="inav-logo-mark">O</span>Oravel</a>
+    <div class="ifoot-links">
+      <a href="/gestao-locadoras/">Oravel ERP CMMS</a>
+      <a href="/sobre/">Sobre</a>
+      <a href="/contato.php">Contato</a>
+    </div>
+    <div class="ifoot-copy">© <script>document.write(new Date().getFullYear())</script> Oravel Desenvolvimento de Software</div>
+  </div>
+</footer>
+
+<!-- Tailwind via CDN, so' pra este widget -- preflight desligado de proposito
+     pra nao resetar margin/padding/font do resto do site. -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    corePlugins: { preflight: false },
+  };
+</script>
+
+<div id="wa-widget" class="fixed bottom-6 right-6 z-[9999]" style="font-family: 'Inter', sans-serif;">
+    <!-- Janela de chat -->
+    <div
+        id="wa-chat-panel"
+        class="hidden mb-4 w-80 max-w-[calc(100vw-3rem)] origin-bottom-right flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10 sm:w-96"
+    >
+        <!-- Cabecalho -->
+        <div class="flex items-center gap-3 bg-emerald-600 px-4 py-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg font-extrabold" style="background:#101010;">
+                <span style="color:#ffffff">O</span><span style="color:#E8541A">r</span>
+            </div>
+            <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-semibold text-white">Oravel</p>
+                <p class="flex items-center gap-1.5 text-xs text-emerald-100">
+                    <span class="relative flex h-2 w-2">
+                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75"></span>
+                        <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-300"></span>
+                    </span>
+                    Online agora
+                </p>
+            </div>
+            <button
+                type="button"
+                onclick="waToggleChat(false)"
+                aria-label="Fechar chat"
+                class="shrink-0 rounded-full p-1 text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Corpo (mensagem de boas vindas) -->
+        <div class="flex-1 space-y-2 bg-[#e5ddd5] px-3 py-4" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect width=%2260%22 height=%2260%22 fill=%22%23e5ddd5%22/%3E%3C/svg%3E');">
+            <div class="max-w-[85%] rounded-lg rounded-tl-none bg-white px-3 py-2 shadow-sm">
+                <p class="text-sm text-gray-800">Olá! Como podemos ajudar você hoje?</p>
+                <p class="mt-1 text-right text-[10px] text-gray-400" id="wa-msg-time"></p>
+            </div>
+        </div>
+
+        <!-- Campo de entrada -->
+        <div class="flex items-center gap-2 border-t border-gray-200 bg-white p-2">
+            <input
+                type="text"
+                id="wa-input"
+                placeholder="Digite sua mensagem..."
+                class="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-800 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                style="background-color:#ffffff; color:#1f2937; color-scheme: light;"
+                onkeydown="if (event.key === 'Enter') { event.preventDefault(); waSendMessage(); }"
+            >
+            <button
+                type="button"
+                onclick="waSendMessage()"
+                aria-label="Enviar mensagem"
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white transition hover:bg-emerald-700"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+                    <path d="M3.4 20.6l17.45-8.5a1 1 0 000-1.8L3.4 1.8a1 1 0 00-1.44 1.1L4.3 11 1.96 18.9a1 1 0 001.44 1.1z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Botao flutuante -->
+    <button
+        type="button"
+        id="wa-fab"
+        onclick="waToggleChat()"
+        aria-label="Abrir chat do WhatsApp"
+        class="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg transition duration-200 ease-out hover:scale-110 hover:bg-emerald-600 active:scale-95"
+    >
+        <span class="absolute inline-flex h-16 w-16 animate-ping rounded-full bg-emerald-500 opacity-40" style="animation-duration: 2.5s;"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" class="relative h-8 w-8">
+            <path d="M16.001 3C9.107 3 3.5 8.607 3.5 15.5c0 2.42.687 4.68 1.878 6.598L3.2 28.8l6.876-2.14A12.44 12.44 0 0016 28c6.894 0 12.5-5.607 12.5-12.5S22.894 3 16.001 3zm0 22.7a10.15 10.15 0 01-5.44-1.573l-.39-.232-4.08 1.27 1.293-3.976-.253-.407A10.14 10.14 0 015.8 15.5c0-5.632 4.57-10.2 10.2-10.2 5.63 0 10.2 4.568 10.2 10.2 0 5.632-4.57 10.2-10.199 10.2zm5.58-7.64c-.306-.153-1.81-.893-2.09-.995-.28-.102-.484-.153-.688.153-.204.306-.789.995-.967 1.199-.178.204-.356.23-.662.077-.306-.153-1.293-.477-2.463-1.522-.91-.812-1.524-1.816-1.703-2.123-.178-.306-.019-.472.134-.624.137-.137.306-.357.459-.535.153-.178.204-.306.306-.51.102-.204.051-.383-.026-.535-.077-.153-.688-1.658-.943-2.27-.248-.596-.5-.516-.688-.526l-.586-.011c-.204 0-.535.077-.815.383-.28.306-1.069 1.044-1.069 2.549 0 1.505 1.094 2.958 1.247 3.163.153.204 2.153 3.286 5.216 4.608.729.315 1.297.503 1.74.644.731.232 1.396.2 1.922.121.586-.087 1.81-.74 2.065-1.454.255-.714.255-1.326.178-1.454-.076-.128-.28-.204-.586-.357z"/>
+        </svg>
+    </button>
+</div>
+
+<script>
+    (function () {
+        var WA_NUMERO = "5519999332615";
+        var WA_MENSAGEM_PADRAO = "Olá! Vim pelo site da Oravel e gostaria de mais informações.";
+
+        var timeEl = document.getElementById('wa-msg-time');
+        if (timeEl) {
+            var agora = new Date();
+            timeEl.textContent = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        window.waToggleChat = function (forceState) {
+            var panel = document.getElementById('wa-chat-panel');
+            var isHidden = panel.classList.contains('hidden');
+            var shouldOpen = (typeof forceState === 'boolean') ? forceState : isHidden;
+
+            if (shouldOpen) {
+                panel.classList.remove('hidden');
+                panel.classList.add('flex');
+                document.getElementById('wa-input').focus();
+            } else {
+                panel.classList.add('hidden');
+                panel.classList.remove('flex');
+            }
+        };
+
+        window.waSendMessage = function () {
+            var input = document.getElementById('wa-input');
+            var texto = (input.value || '').trim();
+
+            if (texto === '') {
+                texto = WA_MENSAGEM_PADRAO;
+            }
+
+            var url = 'https://wa.me/' + WA_NUMERO + '?text=' + encodeURIComponent(texto);
+            window.open(url, '_blank');
+            input.value = '';
+        };
+    })();
+</script>
+
+</body>
+</html>

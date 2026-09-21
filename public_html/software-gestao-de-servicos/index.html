@@ -45,6 +45,11 @@ img, svg { max-width: 100%; }
 .inav-links { display: none; align-items: center; gap: 34px; }
 .inav-links a { text-decoration: none; color: var(--ink-soft); font-size: 14.5px; font-weight: 600; }
 .inav-links a:hover, .inav-links a[aria-current="page"] { color: var(--ink); }
+.inav-dd { position: relative; padding: 24px 0; }
+.inav-dd-menu { position: absolute; top: 100%; left: -16px; min-width: 260px; background: #fff; border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 16px 36px -18px rgba(15,23,42,0.35); padding: 6px; opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity .15s, transform .15s, visibility .15s; z-index: 60; }
+.inav-dd:hover .inav-dd-menu, .inav-dd:focus-within .inav-dd-menu { opacity: 1; visibility: visible; transform: none; }
+.inav-dd-menu a { display: block; padding: 10px 12px; border-radius: 6px; font-size: 14px; }
+.inav-dd-menu a:hover, .inav-dd-menu a[aria-current="page"] { background: var(--surface); color: var(--ink); }
 .inav-cta { background: var(--navy); color: #fff; padding: 10px 16px; border-radius: 7px; text-decoration: none; font-weight: 700; font-size: 13.5px; white-space: nowrap; }
 .inav-cta:hover { background: var(--navy-2); }
 
@@ -153,7 +158,10 @@ footer.ifoot { border-top: 1px solid var(--border); padding: 36px 0; }
     <div class="inav-links">
       <a href="/">Home</a>
       <a href="/#produtos">Produtos</a>
-      <a href="/segmentos/" aria-current="page">Segmentos</a>
+      <div class="inav-dd">
+        <a href="/segmentos/" aria-haspopup="true">Segmentos</a>
+        <div class="inav-dd-menu"><a href="/erp-cmms/">Locação de Equipamentos</a><a href="/software-manutencao-industrial/">Manutenção Industrial</a><a href="/software-montagem-industrial/">Montagem Industrial</a><a href="/software-gestao-frota-logistica/">Logística e Transportes</a><a href="/software-gestao-de-servicos/" aria-current="page">Gestão de Serviços</a><a href="/wms/">Distribuidor e Atacadista</a><a href="/crm/">Qualquer Segmento</a></div>
+      </div>
       <a href="/#sobre">Sobre</a>
       <a href="/contato.php">Contato</a>
     </div>
