@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\HourMeterPreloadController;
 use App\Http\Controllers\Api\V1\HourMeterSyncController;
 use App\Http\Controllers\Api\V1\TimeClockSyncController;
 use App\Http\Controllers\AsaasWebhookController;
+use App\Http\Controllers\InboundLeadController;
 use App\Http\Controllers\WhatsAppWebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -54,6 +55,12 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::post('/hour-meters/sync', [HourMeterSyncController::class, 'sync']);
     Route::post('/time-clocks/sync', [TimeClockSyncController::class, 'sync']);
 });
+
+// Entrada de leads vindos de formulários externos (site do tenant), servidor a servidor. Sem sessão:
+// a barreira é o token do canal (X-Channel-Token, ver InboundLeadController) + throttle.
+Route::post('/inbound/leads', [InboundLeadController::class, 'store'])
+    ->middleware('throttle:30,1')
+    ->name('inbound.leads.store');
 
 // Landing page leads (sem auth - público)
 Route::post('/landing-page/leads', [\App\Http\Controllers\LandingPageLeadController::class, 'store']);

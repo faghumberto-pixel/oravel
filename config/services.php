@@ -63,4 +63,16 @@ return [
         'app_secret' => env('WHATSAPP_APP_SECRET'),
     ],
 
+    // Canais de entrada de leads (POST /api/inbound/leads): cada canal tem um token e pertence a UM
+    // tenant, que é resolvido só pelo token (nunca por dado enviado no corpo). Hoje há um canal, o do
+    // site da própria Oravel; outros tenants entram como novos canais. Token vazio = canal desligado.
+    'inbound' => [
+        'channels' => [
+            'site-oravel' => [
+                'token' => env('SITE_LEADS_SECRET'),
+                'tenant_slug' => env('SITE_LEADS_TENANT_SLUG', 'oravel'),
+            ],
+        ],
+    ],
+
 ];
