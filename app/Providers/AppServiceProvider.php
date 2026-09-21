@@ -49,6 +49,7 @@ use App\Observers\ClientObserver;
 use App\Observers\ContaPagarObserver;
 use App\Observers\ContractObserver;
 use App\Observers\CrmLeadInteractionObserver;
+use App\Listeners\DownscaleNonEvidenceMedia;
 use App\Observers\CrmLeadObserver;
 use App\Observers\DocumentSignatureObserver;
 use App\Observers\EquipmentDamageObserver;
@@ -77,6 +78,7 @@ use Illuminate\Auth\Events\Logout;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
+use Spatie\MediaLibrary\MediaCollections\Events\MediaHasBeenAddedEvent;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
@@ -230,6 +232,9 @@ class AppServiceProvider extends ServiceProvider
                 $this->logModelMutation($action, $payload[0] ?? null);
             });
         }
+
+        // Reduz fotos que NÃO são evidência (chat/anexos); ver config/uploads.php.
+        Event::listen(MediaHasBeenAddedEvent::class, DownscaleNonEvidenceMedia::class);
 
         Event::listen(Login::class, function (Login $event) {
             $this->logAuthEvent(UserActivityLog::ACTION_LOGIN, $event->user);

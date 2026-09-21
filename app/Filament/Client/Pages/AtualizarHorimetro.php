@@ -79,6 +79,10 @@ class AtualizarHorimetro extends Page implements HasForms
                 Forms\Components\FileUpload::make('photo')
                     ->label('Foto do Horímetro (opcional)')
                     ->image()
+                    ->imageResizeMode('contain')
+                    ->imageResizeTargetWidth('1600')
+                    ->imageResizeTargetHeight('1600')
+                    ->imageResizeUpscale(false)
                     ->directory('horimeter-readings-portal-cliente'),
             ])
             ->statePath('data');
