@@ -16,7 +16,8 @@ use Filament\Tables\Table;
 /**
  * De-para configurável (tipo_equipamento + categoria_risco -> meses), tenant-wide -- não
  * pertence a um Asset específico, por isso é um Resource próprio (single-page, mesmo padrão
- * de RentalHourFranchiseResource), não um RelationManager do AssetResource.
+ * de RentalHourFranchiseResource), não um RelationManager do AssetResource. Item do grupo de
+ * navegação EXCLUSIVO "Conformidade NR-13" (grupo plano, mesmo padrão do grupo "PMP").
  *
  * NÃO é uma tabela legal fixa -- ver docblock de Nr13InspectionPeriodicity.
  */
@@ -26,11 +27,11 @@ class Nr13InspectionPeriodicityResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
 
-    protected static ?string $navigationGroup = 'Manutenção';
-
-    protected static ?string $navigationParentItem = 'Conformidade NR-13';
+    protected static ?string $navigationGroup = 'Conformidade NR-13';
 
     protected static ?string $navigationLabel = 'Periodicidades';
+
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $modelLabel = 'Periodicidade NR-13';
 

@@ -7,18 +7,21 @@ use App\Models\Nr13Document;
 use Filament\Pages\Page;
 
 /**
- * Página-âncora do menu "Conformidade NR-13" (navigationParentItem de
- * Nr13InspectionPeriodicityResource aponta pra este navigationLabel, mesmo mecanismo de
- * App\Filament\Pages\GestaoComercial -- max 2 níveis, sem Clusters). Sem view customizada:
- * a view padrão do Filament já renderiza getHeaderWidgets() sozinha.
+ * Item do grupo de navegação EXCLUSIVO "Conformidade NR-13" (grupo plano, mesmo padrão do
+ * grupo "PMP": PainelPmp/MaintenancePlanResource/etc, todos irmãos com navigationSort, sem
+ * navigationParentItem -- ver CLAUDE.md, max 2 níveis via navigationParentItem, não Clusters;
+ * aqui nem precisa do 2º nível). Sem view customizada além do necessário pra widgets: a view
+ * padrão do Filament já renderiza getHeaderWidgets() sozinha.
  */
 class Nr13ComplianceDashboard extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-shield-exclamation';
 
-    protected static ?string $navigationGroup = 'Manutenção';
+    protected static ?string $navigationGroup = 'Conformidade NR-13';
 
-    protected static ?string $navigationLabel = 'Conformidade NR-13';
+    protected static ?string $navigationLabel = 'Dashboard';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $title = 'Conformidade NR-13';
 

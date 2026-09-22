@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Filament\Resources\AssetResource\Pages\EditAsset;
 use App\Filament\Resources\AssetResource\RelationManagers\Nr13DocumentsRelationManager;
 use App\Filament\Resources\AssetResource\RelationManagers\Nr13InspectionsRelationManager;
+use App\Filament\Resources\Nr13DocumentResource\Pages\ManageNr13Documents;
+use App\Filament\Resources\Nr13InspectionResource\Pages\ManageNr13Inspections;
 use App\Models\Asset;
 use App\Models\AssetNr13Specification;
 use App\Models\Nr13Document;
@@ -175,6 +177,64 @@ class Nr13FilamentUiTest extends TestCase
         $insp = Nr13Inspection::where('asset_id', $asset->id)->sole();
         $this->assertSame($tenant->id, $insp->tenant_id);
         $this->assertSame(Nr13Inspection::RESULTADO_APROVADO, $insp->resultado);
+    }
+
+    /**
+     * Nr13DocumentResource e Nr13InspectionResource (grupo de navegação exclusivo "Conformidade
+     * NR-13"): standalone, complementam as RelationManagers dentro do Asset -- mesmo model,
+     * mesma Policy, sem conflito. Só o create/asset_id muda (aqui o formulário escolhe o
+     * equipamento; na RelationManager ele já vem implícito do Asset aberto).
+     */
+    public function test_resource_standalone_de_documentos_cria_registro_com_o_asset_escolhido_no_form(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = $this->makeAsset($tenant);
+        $this->actingAs($admin);
+
+        Livewire::test(ManageNr13Documents::class)
+            ->callTableAction('create', data: [
+                'asset_id' => $asset->id,
+                'tipo' => Nr13Document::TIPO_PRONTUARIO,
+            ])
+            ->assertHasNoTableActionErrors();
+
+        $doc = Nr13Document::where('asset_id', $asset->id)->sole();
+        $this->assertSame($tenant->id, $doc->tenant_id);
+        $this->assertSame(Nr13Document::TIPO_PRONTUARIO, $doc->tipo);
+    }
+
+    public function test_resource_standalone_de_inspecoes_cria_registro_com_o_asset_escolhido_no_form(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = $this->makeAsset($tenant);
+        $this->actingAs($admin);
+
+        Livewire::test(ManageNr13Inspections::class)
+            ->callTableAction('create', data: [
+                'asset_id' => $asset->id,
+                'tipo' => Nr13Inspection::TIPO_HIDROSTATICA,
+                'data_inspecao' => now()->toDateString(),
+            ])
+            ->assertHasNoTableActionErrors();
+
+        $insp = Nr13Inspection::where('asset_id', $asset->id)->sole();
+        $this->assertSame($tenant->id, $insp->tenant_id);
+        $this->assertSame(Nr13Inspection::TIPO_HIDROSTATICA, $insp->tipo);
+    }
+
+    /** O select de equipamento no form dos Resources standalone só oferece ativos do PRÓPRIO tenant. */
+    public function test_resource_standalone_so_lista_ativos_do_proprio_tenant_no_select(): void
+    {
+        [$tenantA, $adminA] = $this->makeTenantAdmin();
+        $assetA = Asset::create(['tenant_id' => $tenantA->id, 'name' => 'Ativo Tenant A '.uniqid(), 'tag' => 'A-'.uniqid(), 'status' => Asset::STATUS_DISPONIVEL]);
+        [$tenantB] = $this->makeTenantAdmin();
+        $assetB = Asset::create(['tenant_id' => $tenantB->id, 'name' => 'Ativo Tenant B '.uniqid(), 'tag' => 'B-'.uniqid(), 'status' => Asset::STATUS_DISPONIVEL]);
+        $this->actingAs($adminA);
+
+        Livewire::test(ManageNr13Documents::class)
+            ->mountTableAction('create')
+            ->assertSee($assetA->name)
+            ->assertDontSee($assetB->name);
     }
 
     public function test_documentos_e_inspecoes_nao_vazam_entre_tenants_no_relation_manager(): void
