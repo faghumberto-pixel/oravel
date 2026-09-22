@@ -19,6 +19,8 @@
         <ul>
           <li><a href="/index.php#faq">Perguntas Frequentes</a></li>
           <li><a href="/contato.php">Contato</a></li>
+          <li><a href="/politica-de-privacidade/">Privacidade</a></li>
+          <li><a href="/termos-de-uso/">Termos de Uso</a></li>
         </ul>
       </div>
       <div class="foot-col">
