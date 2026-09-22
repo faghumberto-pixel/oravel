@@ -1,0 +1,30 @@
+{
+  "RAZAO_SOCIAL": "",
+  "CNPJ": "",
+  "ENDERECO": "",
+  "EMAIL_CONTATO": "contato@oravel.com.br",
+  "EMAIL_PRIVACIDADE": "",
+  "ENCARREGADO_NOME": "",
+  "WHATSAPP": "(19) 99933-2615",
+  "FORO_CIDADE": "",
+  "DATA_VIGENCIA": "",
+
+  "PRAZO_TRIAL": "",
+  "PRAZO_REAJUSTE": "",
+  "RETENCAO_LEADS": "",
+  "RETENCAO_CLIENTES": "",
+  "RETENCAO_POS_CONTRATO": "",
+  "RETENCAO_BACKUPS": "",
+  "SUPORTE_CANAIS_HORARIOS": "",
+  "LIMITE_RESPONSABILIDADE_MESES": "",
+  "CONDICAO_CANCELAMENTO": "",
+
+  "FLAGS": {
+    "TRIAL": true,
+    "ANALYTICS_GTM": true,
+    "ANALYTICS_CLARITY": true,
+    "IA_ANTHROPIC": true,
+    "COOKIE_BANNER": false,
+    "MARKETING_EMAILS": false
+  }
+}
