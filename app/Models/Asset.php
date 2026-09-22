@@ -122,6 +122,21 @@ class Asset extends Model
         return $this->hasOne(GeneratorSpecification::class);
     }
 
+    public function nr13Specification(): HasOne
+    {
+        return $this->hasOne(AssetNr13Specification::class);
+    }
+
+    public function nr13Documents(): HasMany
+    {
+        return $this->hasMany(Nr13Document::class);
+    }
+
+    public function nr13Inspections(): HasMany
+    {
+        return $this->hasMany(Nr13Inspection::class);
+    }
+
     /**
      * Contrato vigente deste ativo -- fonte de verdade de "onde ele esta
      * fisicamente instalado agora" quando locado (Contract::resolvedLocation()),
