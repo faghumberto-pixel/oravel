@@ -25,6 +25,7 @@ MENU = [('Locação de Equipamentos', '/erp-cmms/'), ('Manutenção Industrial',
         ('Gestão de Serviços', '/software-gestao-de-servicos/'), ('Distribuidor e Atacadista', '/wms/'),
         ('Qualquer Segmento', '/crm/')]
 PH = re.compile(r'\[\[([A-Z_]+)\]\]')
+ANTICOPY = "<script>\n(function () {\n  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });\n  document.addEventListener('copy', function (e) { e.preventDefault(); });\n  document.addEventListener('cut', function (e) { e.preventDefault(); });\n  document.addEventListener('selectstart', function (e) {\n    var t = e.target.tagName;\n    if (t !== 'INPUT' && t !== 'TEXTAREA') e.preventDefault();\n  });\n  document.addEventListener('dragstart', function (e) {\n    var t = e.target.tagName;\n    if (t === 'IMG' || t === 'svg' || t === 'SVG') e.preventDefault();\n  });\n  document.addEventListener('keydown', function (e) {\n    var k = (e.key || '').toLowerCase();\n    var mod = e.ctrlKey || e.metaKey;\n    if ((mod && ['c', 'x', 'u', 's'].indexOf(k) !== -1) || k === 'f12' || (mod && e.shiftKey && ['i', 'j', 'c'].indexOf(k) !== -1)) {\n      e.preventDefault();\n    }\n  });\n})();\n</script>"
 
 
 def conditionals(text, flags):
@@ -93,6 +94,7 @@ def page(slug, title, desc, body, data, preview, missing):
   <p class="meta">Última atualização: {when}</p>
 {body}
 </main>
+{ANTICOPY}
 <footer class="ifoot">
   <div class="ifoot-wrap">
     <div><div class="ifoot-copy">© {date.today().year} Oravel</div><div class="ifoot-co">{co}</div></div>

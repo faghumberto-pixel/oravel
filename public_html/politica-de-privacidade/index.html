@@ -153,6 +153,11 @@ footer.ifoot { border-top: 1px solid var(--border); padding: 36px 0; }
 .draft-banner { background: #fff1e4; border-bottom: 2px solid #f97316; color: #7c2d12; text-align: center; padding: 10px 16px; font-size: 14px; font-weight: 700; }
 mark.ph { background: #fde68a; color: #78350f; padding: 0 3px; border-radius: 3px; }
 .ifoot-co { font-size: 12.5px; color: var(--ink-faint); line-height: 1.6; margin-top: 4px; }
+
+/* Proteção básica contra cópia (dissuasão client-side, não impede DevTools/curl). */
+html { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+input, textarea, select, [contenteditable] { -webkit-user-select: text; -moz-user-select: text; user-select: text; }
+img, svg { -webkit-user-drag: none; user-drag: none; }
 </style>
 </head>
 <body>
@@ -258,6 +263,28 @@ mark.ph { background: #fde68a; color: #78350f; padding: 0 3px; border-radius: 3p
 <p>Oravel Desenvolvimento de Software Ltda · CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, conj. 1713, Pinheiros, São Paulo/SP, CEP 05424-150 · contato@oravel.com.br</p>
 
 </main>
+<script>
+(function () {
+  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  document.addEventListener('copy', function (e) { e.preventDefault(); });
+  document.addEventListener('cut', function (e) { e.preventDefault(); });
+  document.addEventListener('selectstart', function (e) {
+    var t = e.target.tagName;
+    if (t !== 'INPUT' && t !== 'TEXTAREA') e.preventDefault();
+  });
+  document.addEventListener('dragstart', function (e) {
+    var t = e.target.tagName;
+    if (t === 'IMG' || t === 'svg' || t === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('keydown', function (e) {
+    var k = (e.key || '').toLowerCase();
+    var mod = e.ctrlKey || e.metaKey;
+    if ((mod && ['c', 'x', 'u', 's'].indexOf(k) !== -1) || k === 'f12' || (mod && e.shiftKey && ['i', 'j', 'c'].indexOf(k) !== -1)) {
+      e.preventDefault();
+    }
+  });
+})();
+</script>
 <footer class="ifoot">
   <div class="ifoot-wrap">
     <div><div class="ifoot-copy">© 2026 Oravel</div><div class="ifoot-co">Oravel Desenvolvimento de Software Ltda · CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, conj. 1713, Pinheiros, São Paulo/SP, CEP 05424-150</div></div>
