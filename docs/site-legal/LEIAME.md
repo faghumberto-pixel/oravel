@@ -31,7 +31,7 @@ de sempre (SFTP com backup, md5 e verificação).
 
 | Flag | Estado hoje | Por quê |
 |---|---|---|
-| `ANALYTICS_GTM` / `ANALYTICS_CLARITY` | `true` | `/contato.php` carrega Google Tag Manager e Microsoft Clarity (grava sessões). |
+| `ANALYTICS_GA` / `ANALYTICS_CLARITY` | `true` | Google Analytics 4 (`G-L79HHRE3ZC`) e Microsoft Clarity (grava sessões) foram removidos do `/contato.php` em 21/09/2026, mas **continuam** em `/sobre/`, `/faq.php`, `/gestao-locadoras/`, `/locadoras/` e `/nova/`. Só desligue as flags depois de remover de todas. |
 | `IA_ANTHROPIC` | `true` | A produção tem `ANTHROPIC_API_KEY` e há serviços de análise por IA (`ai_analyses` ainda com 0 linhas). |
 | `COOKIE_BANNER` | `false` | **Não existe aviso de cookies.** Enquanto for `false` e Clarity/GTM estiverem ativos, há descompasso com a LGPD. |
 | `MARKETING_EMAILS` | `false` | Ligue só se for enviar newsletter/comercial. |
@@ -39,7 +39,7 @@ de sempre (SFTP com backup, md5 e verificação).
 
 ## Pendências fora destes textos
 
-1. **Aviso de cookies** ou tirar o Clarity/GTM do `/contato.php` (decida antes de publicar a política).
+1. **Aviso de cookies** (com consentimento) ou tirar o Clarity/Google Analytics das 5 páginas que ainda os carregam (decida antes de publicar a política).
 2. **Rodapé com razão social, CNPJ e endereço** em todas as páginas (o montador só cobre estas duas).
 3. **Link para a Política nos formulários** ("Ao enviar, você concorda com a Política de Privacidade") e no
    `/assinar` (o checkout já grava `terms_accepted_at`, mas hoje não há Termos publicados).

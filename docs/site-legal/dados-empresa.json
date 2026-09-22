@@ -21,7 +21,7 @@
 
   "FLAGS": {
     "TRIAL": true,
-    "ANALYTICS_GTM": true,
+    "ANALYTICS_GA": true,
     "ANALYTICS_CLARITY": true,
     "IA_ANTHROPIC": true,
     "COOKIE_BANNER": false,
