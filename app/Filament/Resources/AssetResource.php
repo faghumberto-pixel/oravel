@@ -674,6 +674,57 @@ class AssetResource extends Resource
                                 ]),
                         ]),
 
+                    // Aba SEMPRE visível (diferente das outras acima): tipo_equipamento
+                    // (caldeira/vaso_pressao/tubulacao/tanque) não é um valor fixo de
+                    // asset_category (esse campo é texto livre por tenant, ver AssetCategory) --
+                    // não dá pra amarrar a visibilidade da aba a um nome de categoria. O toggle
+                    // subject_to_nr13 dentro da própria Section::relationship() controla o resto.
+                    Tabs\Tab::make('NR-13')
+                        ->icon('heroicon-m-shield-exclamation')
+                        ->schema([
+                            Forms\Components\Section::make('Conformidade NR-13')
+                                ->relationship('nr13Specification')
+                                ->description('Caldeiras, vasos de pressão, tubulações e tanques sujeitos à NR-13. A periodicidade de inspeção é configurada em Conformidade NR-13 → Periodicidades; a decisão técnica final é sempre do responsável habilitado do tenant.')
+                                ->schema([
+                                    Forms\Components\Toggle::make('subject_to_nr13')
+                                        ->label('Sujeito à NR-13')
+                                        ->live()
+                                        ->columnSpanFull(),
+
+                                    Forms\Components\Grid::make(3)
+                                        // Caminho RELATIVO (sem prefixo 'nr13Specification.'), de propósito: dentro da
+                                        // MESMA Section::relationship('nr13Specification'), o Get já resolve a partir do
+                                        // container atual (generateRelativeStatePath, ver vendor/filament/forms/src/
+                                        // Components/Concerns/HasState.php). O caminho prefixado (copiado do padrão da
+                                        // aba Empilhadeira, que lê uma Section IRMÃ) até funciona pra visible() no
+                                        // render, mas quebra a desidratação no save() -- fica null mesmo com o toggle
+                                        // ligado. Testado via Livewire::test(EditAsset::class)->fillForm()->call('save')
+                                        // antes de trocar (ver tests/Feature/Nr13FilamentUiTest.php).
+                                        ->visible(fn (Get $get) => (bool) $get('subject_to_nr13'))
+                                        ->schema([
+                                            Forms\Components\Select::make('tipo_equipamento')
+                                                ->label('Tipo de Equipamento')
+                                                ->options(\App\Models\AssetNr13Specification::tipoEquipamentoLabels())
+                                                ->native(false)
+                                                ->required(fn (Get $get) => (bool) $get('subject_to_nr13')),
+
+                                            Forms\Components\TextInput::make('categoria_risco')
+                                                ->label('Categoria de Risco')
+                                                ->placeholder('Ex: A, B, C (caldeira) ou I..V (vaso)')
+                                                ->helperText('Livre, conforme a classificação do equipamento -- não validada pelo sistema.'),
+
+                                            Forms\Components\TextInput::make('tag_nr13')
+                                                ->label('TAG NR-13')
+                                                ->placeholder('Se diferente do TAG do ativo'),
+                                        ]),
+
+                                    Forms\Components\Textarea::make('observacoes')
+                                        ->label('Observações')
+                                        ->visible(fn (Get $get) => (bool) $get('subject_to_nr13'))
+                                        ->columnSpanFull(),
+                                ]),
+                        ]),
+
                     Tabs\Tab::make('Logs de Auditoria')
                         ->icon('heroicon-m-finger-print')
                         ->schema([
@@ -872,6 +923,8 @@ class AssetResource extends Resource
             AssetResource\RelationManagers\ChecklistItemsRelationManager::class,
             AssetResource\RelationManagers\PatioArrivalsRelationManager::class,
             AssetResource\RelationManagers\MaintenancePlansRelationManager::class,
+            AssetResource\RelationManagers\Nr13DocumentsRelationManager::class,
+            AssetResource\RelationManagers\Nr13InspectionsRelationManager::class,
         ];
     }
 
