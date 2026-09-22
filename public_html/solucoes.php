@@ -2,12 +2,12 @@
 // Oravel — Soluções (visão completa dos módulos, em linguagem comercial)
 
 $site_name    = "Oravel";
-$slogan       = "Gestão de Locadoras e Manutenção";
+$slogan       = "Gestão de Operações em Campo";
 $app_url      = "https://app.oravel.com.br";
 $contact_mail = "contato@oravel.com.br";
 
 $page_title       = "Soluções | $site_name";
-$page_description = "Tudo que a Oravel organiza pra sua locadora: ativos, manutenção, comercial, suprimentos, equipe e comunicação, numa plataforma só.";
+$page_description = "Tudo que a Oravel organiza pra sua operação: ativos, manutenção, comercial, suprimentos, equipe e comunicação, numa plataforma só.";
 $nav_active       = "solucoes";
 
 require __DIR__ . '/inc/journey.php';
@@ -16,12 +16,12 @@ $areas = [
   [
     "tag"   => "Ativos e Frota",
     "title" => "Cada equipamento, com etiqueta e histórico próprio",
-    "desc"  => "O cadastro central de cada máquina da sua locadora — geradores, plataformas, guindastes, compressores. Tudo mais no sistema gira em torno dele.",
+    "desc"  => "O cadastro central de cada equipamento da sua operação — geradores, plataformas, guindastes, compressores e demais equipamentos. Tudo mais no sistema gira em torno dele.",
     "items" => [
       "Cadastro completo — marca, patrimônio, número de série, status, horas trabalhadas",
       "QR Code próprio por equipamento, pra consulta instantânea em campo",
       "Grupos de equipamento — define o checklist básico e o plano de preventiva de cada tipo",
-      "Frota leve (veículos próprios) separada dos equipamentos de locação",
+      "Frota leve (veículos próprios) separada dos demais equipamentos",
     ],
     "mock" => "qr",
   ],
@@ -56,7 +56,7 @@ $areas = [
     "desc"  => "Acompanhe a negociação, feche o contrato e deixe o sistema avisar a oficina — sem depender de ninguém lembrar de repassar a informação.",
     "items" => [
       "Contratos — ao fechar, o equipamento trava sozinho como locado pro cliente certo",
-      "Clientes — carteira com histórico completo de locações",
+      "Clientes — carteira com histórico completo de contratos e serviços",
       "Funil de propostas — reserve um equipamento específico enquanto negocia",
       "Aviso automático pra oficina assim que uma proposta vira contrato",
     ],
@@ -191,7 +191,7 @@ $areas = [
     "title" => "E-mail integrado, sem sair do sistema pra negociar",
     "desc"  => "Caixa de entrada, enviados e rascunhos direto na plataforma — atendimento e negociação com cliente centralizados, sem depender de outra ferramenta aberta em paralelo.",
     "items" => [
-      "Recebidos, Enviados e Rascunhos integrados à gestão da locadora",
+      "Recebidos, Enviados e Rascunhos integrados à gestão da operação",
       "Histórico de e-mail ligado ao cliente e ao contrato, não solto numa caixa externa",
     ],
     "mock" => "inbox",
@@ -224,7 +224,7 @@ $areas = [
 <header class="page-header">
   <div class="page-header-inner">
     <span class="pill-badge">Soluções</span>
-    <h1>Tudo que sua locadora<br>precisa, num sistema só.</h1>
+    <h1>Tudo que sua operação<br>precisa, num sistema só.</h1>
     <p>Da etiqueta no equipamento até o contrato fechado — cada área da sua operação, organizada e conversando entre si.</p>
   </div>
 </header>

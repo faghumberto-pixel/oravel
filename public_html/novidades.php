@@ -2,7 +2,7 @@
 // Oravel — Novidades (changelog de produto em linguagem comercial)
 
 $site_name    = "Oravel";
-$slogan       = "Gestão de Locadoras e Manutenção";
+$slogan       = "Gestão de Operações em Campo";
 $app_url      = "https://app.oravel.com.br";
 $contact_mail = "contato@oravel.com.br";
 

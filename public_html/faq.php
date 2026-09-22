@@ -18,7 +18,7 @@
 // -- não prometer isso também.
 
 $site_name    = "Oravel";
-$slogan       = "Gestão de Locadoras e Manutenção";
+$slogan       = "Gestão de Operações em Campo";
 $app_url      = "https://app.oravel.com.br";
 $contact_mail = "contato@oravel.com.br";
 
@@ -29,9 +29,9 @@ $faq_grupos = [
   [
     "titulo" => "Sobre a Oravel",
     "itens"  => [
-      ["q" => "Pra quem é a Oravel?", "a" => "Pra locadoras de equipamentos — geradores, compressores, plataformas, empilhadeiras, guindastes — não importa se você já usa um sistema, controla por planilha, ou ainda não tem nenhum controle formal."],
+      ["q" => "Pra quem é a Oravel?", "a" => "Pra empresas que operam com equipamentos, equipes e serviços em campo: locação de equipamentos, manutenção industrial, montagem, logística e transportes, gestão de serviços e distribuição. Não importa se você já usa um sistema, controla por planilha, ou ainda não tem nenhum controle formal."],
       ["q" => "Que áreas da minha operação a Oravel controla?", "a" => "Ativos e manutenção (preventiva e corretiva), logística de saída e retorno, comercial e contratos, suprimentos e estoque, equipe e departamento pessoal (cadastro de colaboradores e ponto eletrônico), financeiro (contas a pagar e a receber) e relatórios."],
-      ["q" => "A Oravel emite nota fiscal ou faz contabilidade?", "a" => "Não. A Oravel organiza o financeiro operacional da sua locadora — contas a pagar, contas a receber, centro de custo — mas não substitui seu sistema fiscal ou sua contabilidade."],
+      ["q" => "A Oravel emite nota fiscal ou faz contabilidade?", "a" => "Não. A Oravel organiza o financeiro operacional da sua operação — contas a pagar, contas a receber, centro de custo — mas não substitui seu sistema fiscal ou sua contabilidade."],
       ["q" => "Dá pra usar pelo celular, em campo?", "a" => "Sim. A interface foi pensada pra quem está no pátio ou na obra, não só no escritório — checklist, foto e ponto eletrônico funcionam direto do celular, inclusive offline."],
     ],
   ],
@@ -40,7 +40,7 @@ $faq_grupos = [
     "itens"  => [
       ["q" => "A Oravel é cara?", "a" => "Você começa só com o que precisa — equipamentos e contratos — e ativa mais módulos conforme sua operação cresce. Não existe pacote único obrigatório caro demais pra quem está começando."],
       ["q" => "Quanto custa a Oravel?", "a" => "Depende do tamanho da sua operação e dos módulos que fizerem sentido pra você. Fale com nosso time e a gente monta uma proposta sob medida."],
-      ["q" => "É difícil de implantar?", "a" => "Não. O cadastro inicial é simples e sua equipe já opera com dados reais da sua locadora logo na primeira semana — sem curva de aprendizado de semanas."],
+      ["q" => "É difícil de implantar?", "a" => "Não. O cadastro inicial é simples e sua equipe já opera com dados reais da sua operação logo na primeira semana — sem curva de aprendizado de semanas."],
       ["q" => "Minha equipe não é boa com tecnologia, vai dar certo?", "a" => "A interface foi pensada pra quem está em campo, com o celular na mão — não é preciso ser \"da área de TI\" pra usar no dia a dia."],
       ["q" => "Preciso pagar por algo que talvez eu não use tudo?", "a" => "Não. Você começa com o básico e ativa o resto — preventiva, QR Code, relatórios — no seu ritmo, conforme sua operação cresce."],
       ["q" => "Tem contrato de fidelidade?", "a" => "Não. Você não fica preso a um contrato de permanência mínima — pode cancelar quando quiser."],
