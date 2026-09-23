@@ -27,6 +27,8 @@ class DesempenhoTecnico extends Page
 
     protected static ?string $navigationGroup = 'Relatórios';
 
+    protected static ?string $navigationParentItem = 'Análises';
+
     protected static ?string $navigationLabel = 'Desempenho & Retrabalho';
 
     protected static ?string $title = 'Desempenho e Retrabalho de Técnicos';

@@ -28,6 +28,8 @@ class EventosEFalhas extends Page
 
     protected static ?string $navigationGroup = 'Relatórios';
 
+    protected static ?string $navigationParentItem = 'Históricos & Logs';
+
     protected static ?string $navigationLabel = 'Eventos e Falhas';
 
     protected static ?string $title = 'Eventos e Falhas';

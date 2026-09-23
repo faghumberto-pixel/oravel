@@ -30,7 +30,11 @@ class ApontamentoHorimetro extends Page implements HasForms
     use InteractsWithForms;
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
+
     protected static ?string $navigationGroup = 'Manutenção';
+
+    protected static ?string $navigationParentItem = 'Operação';
+
     protected static ?string $navigationLabel = 'Apontamento de Horímetro';
 
     protected static ?string $title = 'Apontamento de Horímetro';

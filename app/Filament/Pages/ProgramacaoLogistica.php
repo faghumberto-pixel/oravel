@@ -15,6 +15,8 @@ class ProgramacaoLogistica extends Page
 
     protected static ?string $navigationGroup = 'Logística';
 
+    protected static ?string $navigationParentItem = 'Pátio';
+
     protected static ?string $navigationLabel = 'Programação';
 
     protected static ?string $title = 'Programação — Logística';

@@ -23,6 +23,8 @@ class EquipmentPickupRequestResource extends BaseResource
 
     protected static ?string $navigationGroup = 'Logística';
 
+    protected static ?string $navigationParentItem = 'Fretes & Transporte';
+
     protected static ?string $navigationLabel = 'Solicitações de Retirada';
 
     public static function form(Form $form): Form

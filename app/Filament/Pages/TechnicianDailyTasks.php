@@ -24,6 +24,8 @@ class TechnicianDailyTasks extends Page
 
     protected static ?string $navigationGroup = 'Manutenção';
 
+    protected static ?string $navigationParentItem = 'Operação';
+
     protected static ?string $title = 'Minhas Ordens de Serviço';
 
     protected static string $view = 'filament.pages.technician-daily-tasks';

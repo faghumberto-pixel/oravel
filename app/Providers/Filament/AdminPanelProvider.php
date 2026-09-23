@@ -4,8 +4,8 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\ApontamentoHorimetro;
 use App\Filament\Pages\Auth\Login;
-use App\Filament\Pages\CashflowPage;
 use App\Filament\Pages\BancaryReconciliationPage;
+use App\Filament\Pages\CashflowPage;
 use App\Http\Middleware\LogUserActivity;
 use App\Http\Middleware\TrackSiteVisit;
 use App\Models\Asset;
@@ -93,6 +93,11 @@ class AdminPanelProvider extends PanelProvider
                 NavigationItem::make('Registrar Horímetro')
                     ->icon('heroicon-o-clock')
                     ->group('Manutenção')
+                    // Subgrupo "Operação" (2026-09-23, reestruturação do menu lateral) --
+                    // mesmo padrão aplicado aos demais itens de Manutenção/Relatórios/
+                    // Logística via $navigationParentItem; aqui é ->parentItem() porque
+                    // este item não é uma Page/Resource, é um NavigationItem manual.
+                    ->parentItem('Operação')
                     ->sort(-8)
                     ->url(fn () => route('hour-meter.offline'))
                     ->visible(fn () => (bool) auth()->user()?->can('viewAny', Asset::class)),

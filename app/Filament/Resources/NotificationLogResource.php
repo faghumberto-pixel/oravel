@@ -30,6 +30,8 @@ class NotificationLogResource extends Resource
 
     protected static ?string $navigationGroup = 'Relatórios';
 
+    protected static ?string $navigationParentItem = 'Históricos & Logs';
+
     protected static ?string $navigationLabel = 'Notificações';
 
     protected static ?string $modelLabel = 'Notificação';

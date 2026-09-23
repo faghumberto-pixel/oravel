@@ -24,6 +24,17 @@ class ScreenSearch extends Component
 
     public bool $open = false;
 
+    // Índice destacado na navegação por teclado (Cmd/Ctrl+K, setas, Enter --
+    // pedido do usuario 2026-09-23: "command palette" de verdade, nao so'
+    // uma busca clicavel). Resetado a cada mudanca na query pra sempre
+    // comecar destacando o 1o resultado.
+    public int $activeIndex = 0;
+
+    public function updatedQuery(): void
+    {
+        $this->activeIndex = 0;
+    }
+
     /**
      * @return Collection<int, array{label: string, url: string}>
      */

@@ -37,6 +37,8 @@ class PatioChegadas extends Page
 
     protected static ?string $navigationGroup = 'Logística';
 
+    protected static ?string $navigationParentItem = 'Pátio';
+
     protected static string $view = 'filament.pages.patio-chegadas';
 
     public static function canAccess(): bool

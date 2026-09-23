@@ -18,6 +18,8 @@ class FreightCarrierResource extends Resource
 
     protected static ?string $navigationGroup = 'Logística';
 
+    protected static ?string $navigationParentItem = 'Fretes & Transporte';
+
     protected static ?string $navigationLabel = 'Transportadoras';
 
     public static function form(Form $form): Form

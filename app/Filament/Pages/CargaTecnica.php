@@ -36,6 +36,8 @@ class CargaTecnica extends Page
 
     protected static ?string $navigationGroup = 'Relatórios';
 
+    protected static ?string $navigationParentItem = 'Análises';
+
     protected static ?string $navigationLabel = 'Carga de Técnicos';
 
     protected static ?string $title = 'Carga de Técnicos';

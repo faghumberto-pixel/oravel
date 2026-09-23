@@ -31,6 +31,8 @@ class EquipmentMovementResource extends Resource
 
     protected static ?string $navigationGroup = 'Logística';
 
+    protected static ?string $navigationParentItem = 'Fretes & Transporte';
+
     protected static ?string $navigationLabel = 'Histórico de Movimentações';
 
     protected static ?string $modelLabel = 'Movimentação';

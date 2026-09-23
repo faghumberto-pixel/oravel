@@ -24,6 +24,8 @@ class AnaliseRetrabalho extends Page
 
     protected static ?string $navigationGroup = 'Manutenção';
 
+    protected static ?string $navigationParentItem = 'Análise (IA)';
+
     protected static ?string $navigationLabel = 'Análise de Retrabalho (IA)';
 
     protected static ?string $title = 'Análise de Retrabalho / Corretivas';

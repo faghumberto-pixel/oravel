@@ -17,7 +17,11 @@ use Illuminate\Support\Collection;
 class PainelSlaEmergencia extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-bolt';
+
     protected static ?string $navigationGroup = 'Relatórios';
+
+    protected static ?string $navigationParentItem = 'Painéis';
+
     protected static ?string $navigationLabel = 'Painel de SLA';
 
     protected static ?string $title = 'Painel de SLA de Emergência';

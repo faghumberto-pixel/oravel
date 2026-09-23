@@ -26,6 +26,8 @@ class MaintenanceStatusHistoryResource extends Resource
 
     protected static ?string $navigationGroup = 'Relatórios';
 
+    protected static ?string $navigationParentItem = 'Históricos & Logs';
+
     protected static ?string $navigationLabel = 'Histórico de Status de OS';
 
     protected static ?string $modelLabel = 'Histórico de Status';

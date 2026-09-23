@@ -28,6 +28,8 @@ class AnalisePlanoPreventivo extends Page
 
     protected static ?string $navigationGroup = 'Manutenção';
 
+    protected static ?string $navigationParentItem = 'Análise (IA)';
+
     protected static ?string $navigationLabel = 'Análise de Planos Preventivos (IA)';
 
     protected static ?string $title = 'Análise de Planos Preventivos';

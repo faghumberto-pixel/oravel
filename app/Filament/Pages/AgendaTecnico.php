@@ -2,7 +2,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\Appointment;
 use App\Models\User;
 use App\Support\Tenancy;
 use Filament\Pages\Page;
@@ -11,7 +10,11 @@ use Illuminate\Support\Collection;
 class AgendaTecnico extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
+
     protected static ?string $navigationGroup = 'Manutenção';
+
+    protected static ?string $navigationParentItem = 'Operação';
+
     protected static ?string $navigationLabel = 'Programação';
 
     protected static ?string $title = 'Programação';
