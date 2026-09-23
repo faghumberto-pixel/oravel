@@ -60,24 +60,24 @@
 /* Menu items selecionados em laranja (2026-09-04) */
 .fi-topbar-item.fi-active,
 .fi-sidebar-item.fi-active {
-    color: #ea580c !important;
+    color: var(--oravel-primary) !important;
 }
 
 .fi-topbar-item.fi-active::after,
 .fi-sidebar-item.fi-active::after {
-    background-color: #ea580c !important;
+    background-color: var(--oravel-primary) !important;
 }
 
 .fi-topbar-item[aria-current="page"],
 .fi-sidebar-item[aria-current="page"] {
-    color: #ea580c !important;
+    color: var(--oravel-primary) !important;
     font-weight: 600;
 }
 
 /* Menu dropdown/parent selecionado */
 .fi-topbar-item.fi-active > button,
 .fi-sidebar-item.fi-active > button {
-    color: #ea580c !important;
+    color: var(--oravel-primary) !important;
 }
 
 /* Menus com submenus (Almoxarifado) com background diferenciado */

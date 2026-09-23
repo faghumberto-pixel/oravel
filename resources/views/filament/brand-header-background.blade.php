@@ -11,6 +11,13 @@
         --oravel-bg: #f4f5f7;
         --oravel-surface: #ffffff;
         --oravel-border: #e5e7eb;
+        /* Fonte única (config('oravel.brand'), 2026-09-23): mesmos valores
+           usados pelo lado PHP (AdminPanelProvider::panel(), Color::hex())
+           -- antes eram hex crus repetidos aqui, em theme.css e no
+           provider, cada um por conta própria. */
+        --oravel-primary: {{ config('oravel.brand.primary') }};
+        --oravel-sidebar-from: {{ config('oravel.brand.sidebar_from') }};
+        --oravel-sidebar-to: {{ config('oravel.brand.sidebar_to') }};
     }
 
     html.dark {
@@ -62,11 +69,11 @@
        .fi-body (transparente no desktop) e ficaria cinza-claro junto com
        o resto do conteudo sem isso. */
     .fi-sidebar {
-        background: linear-gradient(to bottom right, #0f172a, #1a2438) !important;
+        background: linear-gradient(to bottom right, var(--oravel-sidebar-from), var(--oravel-sidebar-to)) !important;
     }
 
     .fi-sidebar-header {
-        background: #0f172a !important;
+        background: var(--oravel-sidebar-from) !important;
     }
 
     /* Barra de rolagem do sidebar (2026-09-18, pedido do usuario): cinza

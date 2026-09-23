@@ -59,7 +59,11 @@ class AdminPanelProvider extends PanelProvider
                 // Paleta do artefato "Central de Artefatos" (2026-07-25):
                 // laranja de destaque + neutros quentes (stone) no lugar do
                 // slate frio, pra bater com o fundo creme/bordas do tema novo.
-                'primary' => Color::hex('#ea580c'),
+                // Fonte única em config('oravel.brand.primary') (2026-09-23) -- o mesmo
+                // valor também alimenta os overrides em CSS (--oravel-primary, ver
+                // brand-header-background.blade.php + theme.css). Trocar a marca é
+                // editar um lugar só, não caçar hex em N arquivos.
+                'primary' => Color::hex(config('oravel.brand.primary')),
                 'gray' => Color::Stone,
                 // So' pro status "quarentena" do Ativo (Asset::statusColor()) --
                 // os 6 nomes padrao do Filament nao cobrem os 7 status reais.

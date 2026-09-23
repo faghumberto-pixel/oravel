@@ -27,4 +27,25 @@ return [
 
     'horimeter_jump_threshold' => env('HORIMETER_JUMP_THRESHOLD', 500),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Cores da marca (painel admin)
+    |--------------------------------------------------------------------------
+    | Fonte única pras cores que hoje se repetiam em hex cru em vários lugares
+    | (AdminPanelProvider.php via Color::hex(), theme.css e
+    | brand-header-background.blade.php): mudar aqui reflete em todos.
+    | Só o que de fato se repetia entra aqui -- não é um design system
+    | completo, é o achado concreto de "caça ao hex em N arquivos" (análise
+    | comparativa com outros SaaS, 2026-09-23). Lado PHP lê direto daqui
+    | (config('oravel.brand.primary')); lado CSS lê via --oravel-primary
+    | etc. (ver :root em brand-header-background.blade.php, que injeta
+    | esses mesmos valores).
+    */
+
+    'brand' => [
+        'primary' => '#ea580c',
+        'sidebar_from' => '#0f172a',
+        'sidebar_to' => '#1a2438',
+    ],
+
 ];
