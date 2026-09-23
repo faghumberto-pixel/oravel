@@ -84,6 +84,30 @@
     font-weight: 600;
 }
 
+/* Destaque dos menus-pai (grupos de navegação) contra os submenus filhos
+   (2026-09-23, pedido do usuario -- "confunde muito com os submenus").
+   Antes eram cinza-claro (text-gray-500), mesmo peso visual que os itens
+   filhos ativos em cinza escuro -- praticamente sem hierarquia nenhuma.
+   Maiusculas + negrito + letter-spacing + cinza mais escuro (nao laranja:
+   laranja ja' significa "item selecionado" no resto do painel, usar aqui
+   ia confundir com selecao). Divisor sutil entre grupos p/ reforcar. */
+.fi-sidebar-group-label {
+    font-weight: 700 !important;
+    font-size: 0.6875rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    /* Sidebar do painel e' escura (navy) -- cinza claro pra ter contraste
+       contra o fundo, mais apagado que o branco dos itens filhos e mais
+       neutro que o laranja (reservado pra "selecionado"). */
+    color: #cbd5e1 !important;
+}
+
+.fi-sidebar-group + .fi-sidebar-group {
+    margin-top: 0.375rem;
+    padding-top: 0.625rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
 /* Background customizado removido (2026-09-18): imagem escura pensada pro
    tema dark antigo -- ficava escondida atras do fundo escuro em toda
    pagina. Agora que o painel e' sempre claro (darkMode(false) no
