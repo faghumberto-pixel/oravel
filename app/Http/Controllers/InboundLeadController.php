@@ -51,6 +51,9 @@ class InboundLeadController extends Controller
             'porte' => ['required', 'string', 'max:30'],
             'porte_label' => ['nullable', 'string', 'max:40'],
             'origem_label' => ['nullable', 'string', 'max:80'],
+            // Texto livre opcional (ex.: /contato.php do site, que não tem segmento/porte pra
+            // escolher -- ver InboundLeadTest::test_mensagem_livre_opcional_entra_na_interacao).
+            'mensagem' => ['nullable', 'string', 'max:2000'],
         ]);
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
@@ -74,6 +77,13 @@ class InboundLeadController extends Controller
         $recipients = $this->recipients($tenant);
 
         $lead = DB::transaction(function () use ($tenant, $data, $rotuloPorte, $origemLabel, $recipients) {
+            $summary = 'Lead recebido pelo formulário do site. Segmento: '.$data['segmento']
+                .' | '.$rotuloPorte.': '.$data['porte']
+                .' | WhatsApp: '.($data['phone'] ?? 'não informado');
+            if (! empty($data['mensagem'])) {
+                $summary .= "\n\nMensagem do visitante:\n".$data['mensagem'];
+            }
+
             $lead = CrmLead::create([
                 'tenant_id' => $tenant->id,
                 'name' => $data['name'],
@@ -95,9 +105,7 @@ class InboundLeadController extends Controller
                     'user_id' => $author->id,
                     'channel' => 'Site — '.$origemLabel,
                     'contact_date' => now(),
-                    'summary' => 'Lead recebido pelo formulário do site. Segmento: '.$data['segmento']
-                        .' | '.$rotuloPorte.': '.$data['porte']
-                        .' | WhatsApp: '.($data['phone'] ?? 'não informado'),
+                    'summary' => $summary,
                     'stage_at_time' => CrmLead::STAGE_NOVO,
                 ]);
             }

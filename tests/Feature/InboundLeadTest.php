@@ -177,6 +177,37 @@ class InboundLeadTest extends TestCase
         $this->assertStringContainsString('Porte: 6 a 15', $interacao->summary);
     }
 
+    public function test_mensagem_livre_opcional_entra_na_interacao(): void
+    {
+        $this->makeUser($this->tenant, 'Admin', admin: true);
+
+        $payload = $this->payload(['mensagem' => 'Hoje controlamos tudo em planilha, queremos avaliar o sistema.']);
+        $this->send($payload)->assertStatus(201);
+
+        $interacao = CrmLeadInteraction::withoutGlobalScopes()->firstOrFail();
+        $this->assertStringContainsString('Mensagem do visitante:', $interacao->summary);
+        $this->assertStringContainsString('Hoje controlamos tudo em planilha, queremos avaliar o sistema.', $interacao->summary);
+    }
+
+    public function test_mensagem_ausente_nao_aparece_na_interacao(): void
+    {
+        $this->makeUser($this->tenant, 'Admin', admin: true);
+
+        $this->send($this->payload())->assertStatus(201);
+
+        $interacao = CrmLeadInteraction::withoutGlobalScopes()->firstOrFail();
+        $this->assertStringNotContainsString('Mensagem do visitante:', $interacao->summary);
+    }
+
+    public function test_mensagem_acima_do_limite_devolve_422_e_nao_grava(): void
+    {
+        $this->makeUser($this->tenant, 'Admin', admin: true);
+
+        $this->send($this->payload(['mensagem' => str_repeat('x', 2001)]))->assertStatus(422);
+
+        $this->assertSame(0, $this->leadsOf($this->tenant)->count());
+    }
+
     public function test_lead_sem_usuarios_no_tenant_ainda_e_salvo(): void
     {
         $this->send($this->payload())->assertStatus(201);
