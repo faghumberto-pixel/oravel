@@ -186,6 +186,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/trocar-senha', fn () => view('auth.trocar-senha'))->name('admin.trocar-senha');
     Route::post('/admin/trocar-senha', [PasswordController::class, 'update'])->name('admin.trocar-senha.update');
 
+    // Bloqueio real por inadimplência (2026-09-23) -- ver
+    // Tenant::isAccessBlockedForNonPayment() e
+    // App\Http\Middleware\EnsureTenantPaymentIsCurrent. Rota fora do
+    // roteamento do painel Filament de propósito (mesmo padrão de
+    // admin.trocar-senha acima): o middleware do painel redireciona pra
+    // cá, então esta tela não pode estar sujeita ao mesmo middleware
+    // (loop infinito).
+    Route::get('/admin/conta-bloqueada', fn () => view('checkout.blocked', [
+        'tenant' => auth()->user()?->tenant,
+    ]))->name('admin.conta-bloqueada');
+
     Route::get('/dashboard', function () {
         $user = auth()->user();
 

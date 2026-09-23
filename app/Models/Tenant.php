@@ -55,6 +55,8 @@ class Tenant extends Model
         'asaas_payment_status',
         'asaas_last_payment_id',
         'asaas_payment_updated_at',
+        'asaas_overdue_since',
+        'asaas_current_invoice_url',
         'segment',
         'equipment_types',
         'terms_accepted_at',
@@ -77,6 +79,7 @@ class Tenant extends Model
         'targets' => 'array',
         'asaas_synced_at' => 'datetime',
         'asaas_payment_updated_at' => 'datetime',
+        'asaas_overdue_since' => 'datetime',
     ];
 
     /**
@@ -165,6 +168,46 @@ class Tenant extends Model
         }
 
         return true;
+    }
+
+    /**
+     * Bloqueio real por inadimplência (pedido do usuário 2026-09-23):
+     * asaas_payment_status virava 'atrasado'/'cancelado' só como
+     * informação (dashboard da Central), sem travar nada de fato -- este
+     * é o gate de verdade, usado por
+     * App\Http\Middleware\EnsureTenantPaymentIsCurrent.
+     *
+     * Cancelamento (assinatura excluída/reembolsada na Asaas, ou checkout
+     * cancelado/expirado) bloqueia IMEDIATAMENTE, sem tolerância -- não
+     * tem "prazo" quando não existe mais cobrança nenhuma em aberto.
+     * Atraso (fatura pendente) só bloqueia depois de
+     * config('oravel.payment_grace_days') dias corridos desde que
+     * asaas_overdue_since foi setado (a TRANSIÇÃO pra atrasado, não o
+     * último webhook recebido -- ver a migration que criou esse campo).
+     *
+     * Super admin nunca é bloqueado (mesmo padrão de
+     * hasFeature()/hasModuleEnabled() acima); tenant sem
+     * asaas_payment_status definido (nunca sincronizado com a Asaas, ex:
+     * tenant provisionado manualmente na Central sem cobrança) também não
+     * é bloqueado -- ausência de status não é o mesmo que inadimplência.
+     */
+    public function isAccessBlockedForNonPayment(): bool
+    {
+        if (Auth::user()?->isSuperAdmin()) {
+            return false;
+        }
+
+        if ($this->asaas_payment_status === self::PAYMENT_STATUS_CANCELADO) {
+            return true;
+        }
+
+        if ($this->asaas_payment_status === self::PAYMENT_STATUS_ATRASADO && $this->asaas_overdue_since) {
+            $graceDays = (int) config('oravel.payment_grace_days', 5);
+
+            return $this->asaas_overdue_since->addDays($graceDays)->isPast();
+        }
+
+        return false;
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Filament\Pages\ApontamentoHorimetro;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\BancaryReconciliationPage;
 use App\Filament\Pages\CashflowPage;
+use App\Http\Middleware\EnsureTenantPaymentIsCurrent;
 use App\Http\Middleware\LogUserActivity;
 use App\Http\Middleware\TrackSiteVisit;
 use App\Models\Asset;
@@ -235,6 +236,11 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                // Bloqueio real por inadimplência (2026-09-23) -- precisa
+                // vir DEPOIS de Authenticate::class (senão auth()->user()
+                // ainda não existe) e antes de qualquer outra coisa que
+                // dependa do tenant já estar liberado.
+                EnsureTenantPaymentIsCurrent::class,
                 LogUserActivity::class,
             ]);
     }

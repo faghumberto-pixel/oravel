@@ -137,13 +137,15 @@ class AsaasWebhookController extends Controller
             return;
         }
 
-        $this->processTenantSubscription($tenant, $event, $paymentId);
+        $this->processTenantSubscription($tenant, $event, $payment);
     }
 
     /**
      * Processa evento de pagamento da assinatura SaaS do Tenant.
+     *
+     * @param  array<string, mixed>  $payment
      */
-    private function processTenantSubscription(Tenant $tenant, string $event, string $paymentId): void
+    private function processTenantSubscription(Tenant $tenant, string $event, array $payment): void
     {
         $newStatus = match (true) {
             in_array($event, self::PAYMENT_OK_EVENTS, true) => Tenant::PAYMENT_STATUS_EM_DIA,
@@ -156,11 +158,27 @@ class AsaasWebhookController extends Controller
             return;
         }
 
-        $tenant->update([
+        $updates = [
             'asaas_payment_status' => $newStatus,
-            'asaas_last_payment_id' => $paymentId,
+            'asaas_last_payment_id' => $payment['id'] ?? null,
             'asaas_payment_updated_at' => now(),
-        ]);
+        ];
+
+        // asaas_overdue_since marca a TRANSIÇÃO pra atrasado (pro prazo de
+        // tolerância em Tenant::isAccessBlockedForNonPayment() ser confiável
+        // mesmo se a Asaas reenviar o MESMO evento PAYMENT_OVERDUE) -- só
+        // seta se ainda não estava atrasado; qualquer outro status novo
+        // (em_dia, cancelado) limpa o campo.
+        if ($newStatus === Tenant::PAYMENT_STATUS_ATRASADO) {
+            $updates['asaas_overdue_since'] = $tenant->asaas_payment_status === Tenant::PAYMENT_STATUS_ATRASADO
+                ? $tenant->asaas_overdue_since
+                : now();
+            $updates['asaas_current_invoice_url'] = $payment['invoiceUrl'] ?? $tenant->asaas_current_invoice_url;
+        } else {
+            $updates['asaas_overdue_since'] = null;
+        }
+
+        $tenant->update($updates);
 
         if ($newStatus === Tenant::PAYMENT_STATUS_EM_DIA) {
             User::where('tenant_id', $tenant->id)->where('is_approved', false)->update(['is_approved' => true]);
@@ -213,6 +231,11 @@ class AsaasWebhookController extends Controller
         $updates = [
             'asaas_payment_status' => $newStatus,
             'asaas_payment_updated_at' => now(),
+            // CHECKOUT_PAID = pagamento em dia, sem prazo de tolerância
+            // rodando; CHECKOUT_CANCELED/EXPIRED já bloqueiam imediato
+            // (ver Tenant::isAccessBlockedForNonPayment()), esse campo é
+            // só pra contagem do prazo de 'atrasado', não se aplica aqui.
+            'asaas_overdue_since' => null,
         ];
 
         // Backfill: só sobrescreve se ainda não tinha um customer_id

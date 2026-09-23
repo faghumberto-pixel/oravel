@@ -560,4 +560,84 @@ class AsaasWebhookControllerTest extends TestCase
 
         $response->assertOk();
     }
+
+    /**
+     * asaas_overdue_since alimenta o prazo de tolerância do bloqueio real
+     * (Tenant::isAccessBlockedForNonPayment(), pedido do usuário
+     * 2026-09-23) -- precisa marcar a TRANSIÇÃO pra atrasado, não o último
+     * webhook recebido, senão a Asaas reenviando o MESMO evento resetaria o
+     * prazo pra sempre e o tenant nunca seria bloqueado.
+     */
+    public function test_payment_overdue_marca_overdue_since_na_primeira_vez(): void
+    {
+        config(['services.asaas.webhook_token' => 'token-correto']);
+
+        $tenant = $this->makeTenant('cus_abc');
+        $this->assertNull($tenant->asaas_overdue_since);
+
+        $this->postJson('/api/webhooks/asaas', $this->payload('PAYMENT_OVERDUE', 'cus_abc'), [
+            'asaas-access-token' => 'token-correto',
+        ])->assertOk();
+
+        $tenant->refresh();
+        $this->assertNotNull($tenant->asaas_overdue_since);
+        $this->assertTrue($tenant->asaas_overdue_since->isToday());
+    }
+
+    public function test_payment_overdue_repetido_nao_reseta_overdue_since(): void
+    {
+        config(['services.asaas.webhook_token' => 'token-correto']);
+
+        $tenant = $this->makeTenant('cus_abc');
+        $tenant->update([
+            'asaas_payment_status' => Tenant::PAYMENT_STATUS_ATRASADO,
+            'asaas_overdue_since' => now()->subDays(6),
+        ]);
+
+        // A Asaas pode reenviar o mesmo evento -- não pode resetar o relógio.
+        $this->postJson('/api/webhooks/asaas', $this->payload('PAYMENT_OVERDUE', 'cus_abc'), [
+            'asaas-access-token' => 'token-correto',
+        ])->assertOk();
+
+        $tenant->refresh();
+        $this->assertTrue($tenant->asaas_overdue_since->isBefore(now()->subDays(5)));
+    }
+
+    public function test_payment_received_limpa_overdue_since(): void
+    {
+        config(['services.asaas.webhook_token' => 'token-correto']);
+
+        $tenant = $this->makeTenant('cus_abc');
+        $tenant->update([
+            'asaas_payment_status' => Tenant::PAYMENT_STATUS_ATRASADO,
+            'asaas_overdue_since' => now()->subDays(3),
+        ]);
+
+        $this->postJson('/api/webhooks/asaas', $this->payload('PAYMENT_RECEIVED', 'cus_abc'), [
+            'asaas-access-token' => 'token-correto',
+        ])->assertOk();
+
+        $tenant->refresh();
+        $this->assertNull($tenant->asaas_overdue_since);
+    }
+
+    public function test_payment_overdue_captura_invoice_url_do_payload(): void
+    {
+        config(['services.asaas.webhook_token' => 'token-correto']);
+
+        $tenant = $this->makeTenant('cus_abc');
+
+        $this->postJson('/api/webhooks/asaas', [
+            'event' => 'PAYMENT_OVERDUE',
+            'payment' => [
+                'id' => 'pay_overdue', 'customer' => 'cus_abc',
+                'invoiceUrl' => 'https://sandbox.asaas.com/i/pay_overdue',
+            ],
+        ], [
+            'asaas-access-token' => 'token-correto',
+        ])->assertOk();
+
+        $tenant->refresh();
+        $this->assertSame('https://sandbox.asaas.com/i/pay_overdue', $tenant->asaas_current_invoice_url);
+    }
 }

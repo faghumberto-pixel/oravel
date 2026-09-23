@@ -48,4 +48,19 @@ return [
         'sidebar_to' => '#1a2438',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Bloqueio por inadimplência
+    |--------------------------------------------------------------------------
+    | Dias corridos de atraso (Tenant.asaas_overdue_since) tolerados antes de
+    | travar o acesso do tenant inteiro -- pedido do usuário 2026-09-23,
+    | evita bloquear por atraso de 1 dia (cartão recusado, tentando de novo)
+    | ou lentidão do próprio webhook. Cancelamento explícito
+    | (PAYMENT_DELETED/PAYMENT_REFUNDED/CHECKOUT_CANCELED/CHECKOUT_EXPIRED
+    | -> asaas_payment_status = 'cancelado') bloqueia IMEDIATAMENTE, sem
+    | tolerância -- ver Tenant::isAccessBlockedForNonPayment().
+    */
+
+    'payment_grace_days' => env('ASAAS_PAYMENT_GRACE_DAYS', 5),
+
 ];
