@@ -31,6 +31,8 @@ class HorimeterReadingResource extends Resource
 
     protected static ?string $navigationGroup = 'Relatórios';
 
+    protected static ?string $navigationParentItem = 'Históricos & Logs';
+
     protected static ?string $navigationLabel = 'Monitor de Horímetro';
 
     protected static ?string $modelLabel = 'Apontamento de Horímetro';

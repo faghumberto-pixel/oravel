@@ -27,6 +27,8 @@ class AssetDowntimeEventResource extends Resource
 
     protected static ?string $navigationGroup = 'Manutenção';
 
+    protected static ?string $navigationParentItem = 'Cadastros';
+
     protected static ?string $navigationLabel = 'Histórico de Paradas';
 
     protected static ?string $modelLabel = 'Parada';

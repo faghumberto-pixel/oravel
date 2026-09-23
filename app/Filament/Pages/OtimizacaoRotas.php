@@ -23,6 +23,8 @@ class OtimizacaoRotas extends Page
 
     protected static ?string $navigationGroup = 'Logística';
 
+    protected static ?string $navigationParentItem = 'Fretes & Transporte';
+
     protected static ?string $navigationLabel = 'Otimização de Rotas (IA)';
 
     protected static ?string $title = 'Otimização de Rotas';

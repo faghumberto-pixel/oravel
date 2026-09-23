@@ -19,6 +19,8 @@ class EquipmentDamageResource extends BaseResource
 
     protected static ?string $navigationGroup = 'Manutenção';
 
+    protected static ?string $navigationParentItem = 'Cadastros';
+
     protected static ?string $modelLabel = 'Avaria de Equipamento';
 
     protected static ?string $pluralModelLabel = 'Avarias de Equipamento';

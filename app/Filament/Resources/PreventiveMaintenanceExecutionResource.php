@@ -32,6 +32,8 @@ class PreventiveMaintenanceExecutionResource extends Resource
 
     protected static ?string $navigationGroup = 'Manutenção';
 
+    protected static ?string $navigationParentItem = 'Operação';
+
     protected static ?string $navigationLabel = 'Preventivas';
 
     protected static ?string $modelLabel = 'Manutenção Preventiva';

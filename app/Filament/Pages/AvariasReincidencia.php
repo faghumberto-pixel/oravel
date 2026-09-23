@@ -23,6 +23,8 @@ class AvariasReincidencia extends Page
 
     protected static ?string $navigationGroup = 'Relatórios';
 
+    protected static ?string $navigationParentItem = 'Análises';
+
     protected static ?string $navigationLabel = 'Avarias & Reincidência';
 
     protected static ?string $title = 'Avarias e Reincidência';

@@ -23,6 +23,8 @@ class FreightRecordResource extends Resource
 
     protected static ?string $navigationGroup = 'Logística';
 
+    protected static ?string $navigationParentItem = 'Fretes & Transporte';
+
     protected static ?string $navigationLabel = 'Fretes';
 
     public static function form(Form $form): Form

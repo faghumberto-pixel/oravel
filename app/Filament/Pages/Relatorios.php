@@ -11,6 +11,8 @@ class Relatorios extends Page
 
     protected static ?string $navigationGroup = 'Relatórios';
 
+    protected static ?string $navigationParentItem = 'Painéis';
+
     protected static ?string $navigationLabel = 'Relatórios';
 
     protected static ?string $title = 'Relatórios';

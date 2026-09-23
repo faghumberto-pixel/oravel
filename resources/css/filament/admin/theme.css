@@ -105,7 +105,14 @@
 .fi-sidebar-group + .fi-sidebar-group {
     margin-top: 0.375rem;
     padding-top: 0.625rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    /* Sub-relevo bem sutil (pedido do usuario 2026-09-23: "quase
+       imperceptivel") em vez de uma linha solida -- uma sombra escura
+       finissima seguida de um filete claro logo abaixo, como um sulco
+       gravado no fundo escuro da sidebar, nao uma borda desenhada. */
+    border-top: none;
+    box-shadow:
+        0 -1px 0 rgba(0, 0, 0, 0.35),
+        0 -2px 0 rgba(255, 255, 255, 0.04);
 }
 
 /* Background customizado removido (2026-09-18): imagem escura pensada pro

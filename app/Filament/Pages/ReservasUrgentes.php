@@ -29,7 +29,11 @@ use Illuminate\Support\Collection;
 class ReservasUrgentes extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-bell-alert';
+
     protected static ?string $navigationGroup = 'Manutenção';
+
+    protected static ?string $navigationParentItem = 'Operação';
+
     protected static ?string $navigationLabel = 'Reservas Urgentes';
 
     protected static ?string $title = 'Reservas Urgentes para Manutenção';

@@ -20,6 +20,8 @@ class FleetVehicleResource extends Resource
 
     protected static ?string $navigationGroup = 'Logística';
 
+    protected static ?string $navigationParentItem = 'Frota';
+
     protected static ?string $navigationLabel = 'Veículos da Frota';
 
     public static function form(Form $form): Form

@@ -32,7 +32,10 @@ class EquipmentReplacementResource extends Resource
     protected static ?string $pluralModelLabel = 'Trocas de Equipamento';
 
     protected static ?string $navigationIcon = 'heroicon-o-arrow-path';
+
     protected static ?string $navigationGroup = 'Manutenção';
+
+    protected static ?string $navigationParentItem = 'Cadastros';
 
     /**
      * Prazo por urgencia (horas ate' o substituto precisar estar

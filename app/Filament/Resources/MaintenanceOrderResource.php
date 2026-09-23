@@ -41,6 +41,8 @@ class MaintenanceOrderResource extends Resource
 
     protected static ?string $navigationGroup = 'Manutenção';
 
+    protected static ?string $navigationParentItem = 'Operação';
+
     protected static ?string $navigationLabel = 'Ordens de Serviço';
 
     protected static ?string $pluralModelLabel = 'Ordens de Serviço';
@@ -129,49 +131,49 @@ class MaintenanceOrderResource extends Resource
                     // blocos que ainda eram lista solta.
                     Forms\Components\Section::make('Identificação')
                         ->schema([
-                    Forms\Components\Grid::make(2)->schema([
-                        Forms\Components\Select::make('asset_id')
-                            ->label('Ativo / QR Code')
-                            ->placeholder('Bipe o código ou digite Pat/Série/Tag')
-                            ->required()->searchable()->preload()->live()
-                            ->getSearchResultsUsing(function (string $search) {
-                                $tenantId = Tenancy::current()?->id;
-                                if (! $tenantId) {
-                                    return [];
-                                }
+                            Forms\Components\Grid::make(2)->schema([
+                                Forms\Components\Select::make('asset_id')
+                                    ->label('Ativo / QR Code')
+                                    ->placeholder('Bipe o código ou digite Pat/Série/Tag')
+                                    ->required()->searchable()->preload()->live()
+                                    ->getSearchResultsUsing(function (string $search) {
+                                        $tenantId = Tenancy::current()?->id;
+                                        if (! $tenantId) {
+                                            return [];
+                                        }
 
-                                return Asset::where('tenant_id', $tenantId)
-                                    ->where(function ($q) use ($search) {
-                                        $q->where('name', 'like', "%{$search}%")->orWhere('patrimonio', 'like', "%{$search}%");
-                                    })->limit(50)->get()->mapWithKeys(fn ($asset) => [$asset->id => "{$asset->patrimonio} — {$asset->name}"]);
-                            })
-                            // Sem isso, ao ABRIR uma OS existente pra editar (nao
-                            // durante a busca ao vivo, que ja formata certo via
-                            // getSearchResultsUsing acima) o Select mostrava o UUID
-                            // cru do Ativo -- lia como "campo quebrado" pro usuario,
-                            // sendo justamente o campo mais importante da tela.
-                            ->getOptionLabelUsing(fn ($value) => ($asset = Asset::find($value)) ? "{$asset->patrimonio} — {$asset->name}" : null)
-                            ->afterStateUpdated(function ($state, Set $set) {
-                                if ($state) {
-                                    $asset = Asset::find($state);
-                                    if ($asset) {
-                                        $set('horimetro_anterior', $asset->last_horimetro ?? 0);
-                                    }
-                                }
-                            })->prefixIcon('heroicon-m-qr-code'),
-                        Forms\Components\Select::make('maintenance_type')
-                            ->label('Tipo de Operação')
-                            ->options(fn () => array_filter([
-                                'Check-in' => 'Check-in (Mobilização)',
-                                'Check-out' => 'Check-out (Desmobilização)',
-                                'Preventiva' => 'Manutenção Preventiva',
-                                'Corretiva' => 'Manutenção Corretiva',
-                                'Avaria' => 'Registro de Avaria',
-                                'Troca' => 'Troca de Equipamento',
-                                'Emergência' => 'Chamado de Emergência',
-                            ], fn ($key) => $key !== 'Emergência' || (Tenancy::current()?->hasModuleEnabled('sla_emergencia') ?? true), ARRAY_FILTER_USE_KEY))
-                            ->required()->native(false)->live(),
-                    ]),
+                                        return Asset::where('tenant_id', $tenantId)
+                                            ->where(function ($q) use ($search) {
+                                                $q->where('name', 'like', "%{$search}%")->orWhere('patrimonio', 'like', "%{$search}%");
+                                            })->limit(50)->get()->mapWithKeys(fn ($asset) => [$asset->id => "{$asset->patrimonio} — {$asset->name}"]);
+                                    })
+                                    // Sem isso, ao ABRIR uma OS existente pra editar (nao
+                                    // durante a busca ao vivo, que ja formata certo via
+                                    // getSearchResultsUsing acima) o Select mostrava o UUID
+                                    // cru do Ativo -- lia como "campo quebrado" pro usuario,
+                                    // sendo justamente o campo mais importante da tela.
+                                    ->getOptionLabelUsing(fn ($value) => ($asset = Asset::find($value)) ? "{$asset->patrimonio} — {$asset->name}" : null)
+                                    ->afterStateUpdated(function ($state, Set $set) {
+                                        if ($state) {
+                                            $asset = Asset::find($state);
+                                            if ($asset) {
+                                                $set('horimetro_anterior', $asset->last_horimetro ?? 0);
+                                            }
+                                        }
+                                    })->prefixIcon('heroicon-m-qr-code'),
+                                Forms\Components\Select::make('maintenance_type')
+                                    ->label('Tipo de Operação')
+                                    ->options(fn () => array_filter([
+                                        'Check-in' => 'Check-in (Mobilização)',
+                                        'Check-out' => 'Check-out (Desmobilização)',
+                                        'Preventiva' => 'Manutenção Preventiva',
+                                        'Corretiva' => 'Manutenção Corretiva',
+                                        'Avaria' => 'Registro de Avaria',
+                                        'Troca' => 'Troca de Equipamento',
+                                        'Emergência' => 'Chamado de Emergência',
+                                    ], fn ($key) => $key !== 'Emergência' || (Tenancy::current()?->hasModuleEnabled('sla_emergencia') ?? true), ARRAY_FILTER_USE_KEY))
+                                    ->required()->native(false)->live(),
+                            ]),
                         ]),
 
                     // "Registro de Avaria" como Tipo de Operacao -- ate aqui so' existiam
@@ -348,158 +350,158 @@ class MaintenanceOrderResource extends Resource
 
                     Forms\Components\Section::make('Informações do Ativo')
                         ->schema([
-                    Forms\Components\Placeholder::make('grupo_display')
-                        ->label('Grupo do Ativo')
-                        ->content(function (Get $get) {
-                            $asset = Asset::find($get('asset_id'));
+                            Forms\Components\Placeholder::make('grupo_display')
+                                ->label('Grupo do Ativo')
+                                ->content(function (Get $get) {
+                                    $asset = Asset::find($get('asset_id'));
 
-                            return $asset?->checklistGroup?->name ?? 'Sem grupo definido';
-                        }),
+                                    return $asset?->checklistGroup?->name ?? 'Sem grupo definido';
+                                }),
 
-                    Forms\Components\Placeholder::make('preventivas_pendentes')
-                        ->label('Preventivas Sugeridas (por Horímetro)')
-                        ->visible(fn (Get $get) => (bool) $get('asset_id'))
-                        ->content(function (Get $get) {
-                            $asset = Asset::find($get('asset_id'));
-
-                            if (! $asset) {
-                                return 'Selecione um ativo.';
-                            }
-
-                            $plans = MaintenancePlan::applicableFor($asset)->where('is_active', true);
-
-                            if ($plans->isEmpty()) {
-                                return $asset->checklist_group_id
-                                    ? 'Nenhum item de preventiva cadastrado para este grupo.'
-                                    : 'Ativo sem grupo definido — sem template de preventiva.';
-                            }
-
-                            $lines = $plans->map(function ($plan) use ($asset) {
-                                $status = $plan->dueStatusForAsset($asset);
-                                $situacao = $status['is_overdue']
-                                    ? 'VENCIDO há '.number_format($status['overdue_hours'], 0).'h'
-                                    : 'Próxima em '.number_format($status['due_at_hours'] - (float) $asset->horimetro_atual, 0).'h';
-
-                                return "{$plan->name}: trocado em {$status['last_service_hours']}h, horímetro atual {$asset->horimetro_atual}h, intervalo {$plan->interval_hours}h → {$situacao}";
-                            });
-
-                            return new HtmlString(
-                                $lines->map(fn ($line) => '<div>'.e($line).'</div>')->implode('')
-                            );
-                        }),
-
-                    // criticality_level_id (rotulado "Matriz ABC" mas era outra coisa --
-                    // tabela criticality_levels solta, sem tela de cadastro, e o unico
-                    // grafico que tentava agregar isso tinha um bug de comparacao de
-                    // tipo). A Matriz ABC de verdade vive em Asset::abcMatrix(), que ja
-                    // tem cadastro proprio (AbcMatrixResource) -- aqui so exibimos ela.
-                    Forms\Components\Placeholder::make('matriz_abc_ativo')
-                        ->key('matriz_abc_ativo_placeholder')
-                        ->label('Matriz ABC do Ativo')
-                        ->content(function (Get $get) {
-                            $asset = $get('asset_id') ? Asset::find($get('asset_id')) : null;
-                            $nivel = $asset?->abcMatrix?->nivel;
-
-                            return $nivel
-                                ? "Nível {$nivel}"
-                                : new HtmlString('<span class="text-gray-400">Ativo sem Matriz ABC cadastrada.</span>');
-                        })
-                        ->hintAction(
-                            // Matriz ABC continua sendo uma classificacao por ATIVO
-                            // (unique(tenant_id, asset_id) no banco), nao por OS -- isso
-                            // so' e' um atalho de criar/editar sem sair da tela da OS,
-                            // via updateOrCreate mesma chave unica do AbcMatrixResource.
-                            Forms\Components\Actions\Action::make('editar_matriz_abc')
-                                ->label('Editar')
-                                ->icon('heroicon-m-pencil-square')
+                            Forms\Components\Placeholder::make('preventivas_pendentes')
+                                ->label('Preventivas Sugeridas (por Horímetro)')
                                 ->visible(fn (Get $get) => (bool) $get('asset_id'))
-                                ->form(fn (Get $get) => [
-                                    Forms\Components\Select::make('nivel')
-                                        ->label('Nível')
-                                        ->options(fn () => CriticalityLevel::where('tenant_id', Tenancy::current()?->id)
-                                            ->orderBy('sort_order')
-                                            ->pluck('name', 'code'))
-                                        ->required()
-                                        ->default(fn () => Asset::find($get('asset_id'))?->abcMatrix?->nivel),
-                                    Forms\Components\Textarea::make('descricao')
-                                        ->label('Descrição')
-                                        ->required()
-                                        ->default(fn () => Asset::find($get('asset_id'))?->abcMatrix?->descricao),
-                                ])
-                                ->action(function (array $data, Get $get) {
-                                    $assetId = $get('asset_id');
-                                    if (! $assetId) {
-                                        return;
+                                ->content(function (Get $get) {
+                                    $asset = Asset::find($get('asset_id'));
+
+                                    if (! $asset) {
+                                        return 'Selecione um ativo.';
                                     }
 
-                                    AbcMatrix::updateOrCreate(
-                                        ['tenant_id' => Tenancy::current()?->id, 'asset_id' => $assetId],
-                                        ['nivel' => $data['nivel'], 'descricao' => $data['descricao']]
+                                    $plans = MaintenancePlan::applicableFor($asset)->where('is_active', true);
+
+                                    if ($plans->isEmpty()) {
+                                        return $asset->checklist_group_id
+                                            ? 'Nenhum item de preventiva cadastrado para este grupo.'
+                                            : 'Ativo sem grupo definido — sem template de preventiva.';
+                                    }
+
+                                    $lines = $plans->map(function ($plan) use ($asset) {
+                                        $status = $plan->dueStatusForAsset($asset);
+                                        $situacao = $status['is_overdue']
+                                            ? 'VENCIDO há '.number_format($status['overdue_hours'], 0).'h'
+                                            : 'Próxima em '.number_format($status['due_at_hours'] - (float) $asset->horimetro_atual, 0).'h';
+
+                                        return "{$plan->name}: trocado em {$status['last_service_hours']}h, horímetro atual {$asset->horimetro_atual}h, intervalo {$plan->interval_hours}h → {$situacao}";
+                                    });
+
+                                    return new HtmlString(
+                                        $lines->map(fn ($line) => '<div>'.e($line).'</div>')->implode('')
                                     );
+                                }),
 
-                                    Notification::make()->title('Matriz ABC atualizada')->success()->send();
+                            // criticality_level_id (rotulado "Matriz ABC" mas era outra coisa --
+                            // tabela criticality_levels solta, sem tela de cadastro, e o unico
+                            // grafico que tentava agregar isso tinha um bug de comparacao de
+                            // tipo). A Matriz ABC de verdade vive em Asset::abcMatrix(), que ja
+                            // tem cadastro proprio (AbcMatrixResource) -- aqui so exibimos ela.
+                            Forms\Components\Placeholder::make('matriz_abc_ativo')
+                                ->key('matriz_abc_ativo_placeholder')
+                                ->label('Matriz ABC do Ativo')
+                                ->content(function (Get $get) {
+                                    $asset = $get('asset_id') ? Asset::find($get('asset_id')) : null;
+                                    $nivel = $asset?->abcMatrix?->nivel;
+
+                                    return $nivel
+                                        ? "Nível {$nivel}"
+                                        : new HtmlString('<span class="text-gray-400">Ativo sem Matriz ABC cadastrada.</span>');
                                 })
-                        ),
+                                ->hintAction(
+                                    // Matriz ABC continua sendo uma classificacao por ATIVO
+                                    // (unique(tenant_id, asset_id) no banco), nao por OS -- isso
+                                    // so' e' um atalho de criar/editar sem sair da tela da OS,
+                                    // via updateOrCreate mesma chave unica do AbcMatrixResource.
+                                    Forms\Components\Actions\Action::make('editar_matriz_abc')
+                                        ->label('Editar')
+                                        ->icon('heroicon-m-pencil-square')
+                                        ->visible(fn (Get $get) => (bool) $get('asset_id'))
+                                        ->form(fn (Get $get) => [
+                                            Forms\Components\Select::make('nivel')
+                                                ->label('Nível')
+                                                ->options(fn () => CriticalityLevel::where('tenant_id', Tenancy::current()?->id)
+                                                    ->orderBy('sort_order')
+                                                    ->pluck('name', 'code'))
+                                                ->required()
+                                                ->default(fn () => Asset::find($get('asset_id'))?->abcMatrix?->nivel),
+                                            Forms\Components\Textarea::make('descricao')
+                                                ->label('Descrição')
+                                                ->required()
+                                                ->default(fn () => Asset::find($get('asset_id'))?->abcMatrix?->descricao),
+                                        ])
+                                        ->action(function (array $data, Get $get) {
+                                            $assetId = $get('asset_id');
+                                            if (! $assetId) {
+                                                return;
+                                            }
 
-                    // Localizacao "onde o ativo esta instalado agora" -- se
-                    // locado, vem do contrato vigente (Contract::resolvedLocation(),
-                    // mesmo dado usado no Dossie Operacional e no cadastro do
-                    // Ativo). Antes disso nao existia em lugar nenhum da OS.
-                    Forms\Components\Placeholder::make('localizacao_ativo')
-                        ->label('Localização do Ativo')
-                        ->columnSpanFull()
-                        ->content(function (Get $get) {
-                            $asset = $get('asset_id') ? Asset::find($get('asset_id')) : null;
+                                            AbcMatrix::updateOrCreate(
+                                                ['tenant_id' => Tenancy::current()?->id, 'asset_id' => $assetId],
+                                                ['nivel' => $data['nivel'], 'descricao' => $data['descricao']]
+                                            );
 
-                            if (! $asset) {
-                                return new HtmlString('<span class="text-gray-400">Selecione um ativo.</span>');
-                            }
+                                            Notification::make()->title('Matriz ABC atualizada')->success()->send();
+                                        })
+                                ),
 
-                            if ($asset->status !== Asset::STATUS_LOCADO) {
-                                return new HtmlString('<span class="text-gray-400">Ativo não está locado — sem localização de contrato associada.</span>');
-                            }
+                            // Localizacao "onde o ativo esta instalado agora" -- se
+                            // locado, vem do contrato vigente (Contract::resolvedLocation(),
+                            // mesmo dado usado no Dossie Operacional e no cadastro do
+                            // Ativo). Antes disso nao existia em lugar nenhum da OS.
+                            Forms\Components\Placeholder::make('localizacao_ativo')
+                                ->label('Localização do Ativo')
+                                ->columnSpanFull()
+                                ->content(function (Get $get) {
+                                    $asset = $get('asset_id') ? Asset::find($get('asset_id')) : null;
 
-                            $location = $asset->activeContract()?->resolvedLocation();
+                                    if (! $asset) {
+                                        return new HtmlString('<span class="text-gray-400">Selecione um ativo.</span>');
+                                    }
 
-                            if (! $location) {
-                                return new HtmlString('<span class="text-gray-400">Ativo locado, mas sem localização definida no contrato vigente.</span>');
-                            }
+                                    if ($asset->status !== Asset::STATUS_LOCADO) {
+                                        return new HtmlString('<span class="text-gray-400">Ativo não está locado — sem localização de contrato associada.</span>');
+                                    }
 
-                            $condicao = $asset->activeContract()->condicao_ambiente;
-                            $condicaoLabel = $condicao ? (Contract::condicaoOptions()[$condicao] ?? $condicao) : null;
+                                    $location = $asset->activeContract()?->resolvedLocation();
 
-                            $endereco = trim(($location['address'] ?? '').', '.($location['city'] ?? '').' - '.($location['uf'] ?? ''), ', -');
+                                    if (! $location) {
+                                        return new HtmlString('<span class="text-gray-400">Ativo locado, mas sem localização definida no contrato vigente.</span>');
+                                    }
 
-                            return new HtmlString(
-                                '<div class="text-sm text-gray-700 dark:text-gray-300">'
-                                .'<strong>'.e($location['label']).'</strong> — '.e($endereco ?: 'endereço não preenchido')
-                                .($condicaoLabel ? ' <span class="ml-2 inline-block rounded-full bg-amber-100 dark:bg-amber-900 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-300">'.e($condicaoLabel).'</span>' : '')
-                                .'</div>'
-                            );
-                        }),
+                                    $condicao = $asset->activeContract()->condicao_ambiente;
+                                    $condicaoLabel = $condicao ? (Contract::condicaoOptions()[$condicao] ?? $condicao) : null;
+
+                                    $endereco = trim(($location['address'] ?? '').', '.($location['city'] ?? '').' - '.($location['uf'] ?? ''), ', -');
+
+                                    return new HtmlString(
+                                        '<div class="text-sm text-gray-700 dark:text-gray-300">'
+                                        .'<strong>'.e($location['label']).'</strong> — '.e($endereco ?: 'endereço não preenchido')
+                                        .($condicaoLabel ? ' <span class="ml-2 inline-block rounded-full bg-amber-100 dark:bg-amber-900 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-300">'.e($condicaoLabel).'</span>' : '')
+                                        .'</div>'
+                                    );
+                                }),
                         ]),
 
                     Forms\Components\Section::make('Execução')
                         ->schema([
-                    Forms\Components\TextInput::make('service_type')->label('Natureza do Serviço')->disabled()->dehydrated(true),
-                    Forms\Components\Grid::make(3)->schema([
-                        Forms\Components\TextInput::make('horimetro_anterior')->label('Hor. Anterior')->numeric()->disabled()->dehydrated(false),
-                        Forms\Components\TextInput::make('horimetro_entry')->label('Horímetro Atual')->numeric()->default(0)->required()->prefixIcon('heroicon-m-clock'),
-                        Forms\Components\Select::make('fuel_level')->label('Nível Combustível')->options(['0' => 'Reserva', '25' => '1/4', '50' => '1/2', '75' => '3/4', '100' => 'Cheio'])->native(false),
-                    ]),
-                    Forms\Components\Grid::make(3)->schema([
-                        Forms\Components\Select::make('technician_id')
-                            ->label('Responsável Técnico')
-                            ->helperText('Ordenado do menos pro mais carregado agora (OS em Aberto/Pendente/Em Andamento) — sugestão, não obrigatório seguir.')
-                            ->options(fn () => static::technicianOptionsByWorkload())
-                            ->required()
-                            ->searchable(),
-                        Forms\Components\Select::make('client_id')->label('Cliente')->relationship('client', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))->searchable(),
-                        Forms\Components\DateTimePicker::make('scheduled_at')->label('Agendado para')->helperText('Aparece na Agenda Técnica.'),
-                    ]),
-                    Forms\Components\Select::make('status')
-                        ->label('Status da OS')->options(['Aberto' => 'Aberto', 'Pendente' => 'Pendente', 'Em Andamento' => 'Em Andamento', 'Concluída' => 'Concluída', 'Cancelada' => 'Cancelada'])
-                        ->default('Aberto')->disabled()->dehydrated(true),
+                            Forms\Components\TextInput::make('service_type')->label('Natureza do Serviço')->disabled()->dehydrated(true),
+                            Forms\Components\Grid::make(3)->schema([
+                                Forms\Components\TextInput::make('horimetro_anterior')->label('Hor. Anterior')->numeric()->disabled()->dehydrated(false),
+                                Forms\Components\TextInput::make('horimetro_entry')->label('Horímetro Atual')->numeric()->default(0)->required()->prefixIcon('heroicon-m-clock'),
+                                Forms\Components\Select::make('fuel_level')->label('Nível Combustível')->options(['0' => 'Reserva', '25' => '1/4', '50' => '1/2', '75' => '3/4', '100' => 'Cheio'])->native(false),
+                            ]),
+                            Forms\Components\Grid::make(3)->schema([
+                                Forms\Components\Select::make('technician_id')
+                                    ->label('Responsável Técnico')
+                                    ->helperText('Ordenado do menos pro mais carregado agora (OS em Aberto/Pendente/Em Andamento) — sugestão, não obrigatório seguir.')
+                                    ->options(fn () => static::technicianOptionsByWorkload())
+                                    ->required()
+                                    ->searchable(),
+                                Forms\Components\Select::make('client_id')->label('Cliente')->relationship('client', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))->searchable(),
+                                Forms\Components\DateTimePicker::make('scheduled_at')->label('Agendado para')->helperText('Aparece na Agenda Técnica.'),
+                            ]),
+                            Forms\Components\Select::make('status')
+                                ->label('Status da OS')->options(['Aberto' => 'Aberto', 'Pendente' => 'Pendente', 'Em Andamento' => 'Em Andamento', 'Concluída' => 'Concluída', 'Cancelada' => 'Cancelada'])
+                                ->default('Aberto')->disabled()->dehydrated(true),
                         ]),
                 ]),
 
@@ -507,12 +509,12 @@ class MaintenanceOrderResource extends Resource
                 Forms\Components\Tabs\Tab::make('Apontamentos')->schema([
                     Forms\Components\Section::make('Registro de Atendimento')
                         ->schema([
-                    Forms\Components\Grid::make(2)->schema([
-                        Forms\Components\DateTimePicker::make('started_at')->label('Início do Atendimento')->disabled()->dehydrated(true),
-                        Forms\Components\DateTimePicker::make('finished_at')->label('Fim do Atendimento')->disabled()->dehydrated(true),
-                    ]),
-                    Forms\Components\Textarea::make('description')->label('Problema Relatado / Escopo do Serviço')->rows(3)->required()->hint(FormHelpers::voiceButton()),
-                    Forms\Components\Textarea::make('technical_notes')->label('Notas Técnicas / Diagnóstico Executado')->rows(3)->hint(FormHelpers::voiceButton()),
+                            Forms\Components\Grid::make(2)->schema([
+                                Forms\Components\DateTimePicker::make('started_at')->label('Início do Atendimento')->disabled()->dehydrated(true),
+                                Forms\Components\DateTimePicker::make('finished_at')->label('Fim do Atendimento')->disabled()->dehydrated(true),
+                            ]),
+                            Forms\Components\Textarea::make('description')->label('Problema Relatado / Escopo do Serviço')->rows(3)->required()->hint(FormHelpers::voiceButton()),
+                            Forms\Components\Textarea::make('technical_notes')->label('Notas Técnicas / Diagnóstico Executado')->rows(3)->hint(FormHelpers::voiceButton()),
                         ]),
                 ]),
 
@@ -521,51 +523,51 @@ class MaintenanceOrderResource extends Resource
                     ->schema([
                         Forms\Components\Section::make('Checklist do Ativo')
                             ->schema([
-                        Forms\Components\Repeater::make('checklists')
-                            // Pedido do usuário 2026-08-27: itens do
-                            // checklist organizados por seção (ex: "1.
-                            // Estrutural & Pneus") em vez de lista solta --
-                            // sem reescrever o form pra Fieldset por seção,
-                            // só ordena pela coluna que já existia
-                            // (section) e prefixa o rótulo de cada item.
-                            ->relationship('checklists', modifyQueryUsing: fn (Builder $query) => $query->orderBy('section')->orderBy('id'))
-                            ->label('Checklist do Ativo (básico do Grupo + itens extras)')
-                            ->itemLabel(fn (array $state): ?string => ($state['section'] ?? null) ? $state['section'].' — '.($state['item_name'] ?? '') : ($state['item_name'] ?? null))
-                            ->schema([
-                                Forms\Components\TextInput::make('item_name')->label('Item de Inspeção')->disabled()->dehydrated(true),
-                                Forms\Components\ToggleButtons::make('status')
-                                    ->label('Conformidade')
-                                    ->options(['conforme' => 'Conforme', 'nao_conforme' => 'Não Conforme', 'nao_aplicavel' => 'N/A'])
-                                    ->colors(['conforme' => 'success', 'nao_conforme' => 'danger', 'nao_aplicavel' => 'gray'])
-                                    ->inline(),
-                                Forms\Components\TextInput::make('notes')->label('Observações / Evidência'),
-                                // Reproduzido no PROD 2026-07-29: tirar foto na vistoria
-                                // falhava com "The data.checklists.record-X.photos... failed
-                                // to upload". Recusa por TAMANHO, e o PROD tinha dois tetos --
-                                // client_max_body_size do nginx, que nem estava configurado e
-                                // portanto valia o default de 1MB (o mais apertado dos dois, e
-                                // o que corta antes de chegar no PHP), e upload_max_filesize=2M
-                                // do PHP. Os dois foram levantados no servidor, mas config de
-                                // servidor sozinha nao resolve: teria que ser refeita em todo
-                                // ambiente que hospeda o app, e subir 3-8MB por foto e'
-                                // desperdicio de banda/disco pra uma evidencia de vistoria.
-                                // Entao o FilePond tambem redimensiona no proprio navegador
-                                // antes de enviar: 'contain' + 1600x1600 = lado maior de 1600px
-                                // sem cortar nada (o default 'cover' do Filament CORTARIA a
-                                // foto pra preencher 1600x1600 exatos), e uma foto tipica de
-                                // 5MB sai em ~300-700KB. upscale(false) pra nao inflar foto
-                                // pequena. NAO adicionar ->maxSize() pequeno aqui: o FilePond
-                                // valida tamanho no arquivo ORIGINAL, antes do resize, e
-                                // rejeitaria justamente a foto que isso conserta.
-                                Forms\Components\SpatieMediaLibraryFileUpload::make('photos')
-                                    ->collection('photos')
-                                    ->label('Foto')
-                                    ->image()
-                                    ->imageResizeMode('contain')
-                                    ->imageResizeTargetWidth('1600')
-                                    ->imageResizeTargetHeight('1600')
-                                    ->imageResizeUpscale(false),
-                            ])->columns(3)->disableItemCreation()->disableItemDeletion(),
+                                Forms\Components\Repeater::make('checklists')
+                                    // Pedido do usuário 2026-08-27: itens do
+                                    // checklist organizados por seção (ex: "1.
+                                    // Estrutural & Pneus") em vez de lista solta --
+                                    // sem reescrever o form pra Fieldset por seção,
+                                    // só ordena pela coluna que já existia
+                                    // (section) e prefixa o rótulo de cada item.
+                                    ->relationship('checklists', modifyQueryUsing: fn (Builder $query) => $query->orderBy('section')->orderBy('id'))
+                                    ->label('Checklist do Ativo (básico do Grupo + itens extras)')
+                                    ->itemLabel(fn (array $state): ?string => ($state['section'] ?? null) ? $state['section'].' — '.($state['item_name'] ?? '') : ($state['item_name'] ?? null))
+                                    ->schema([
+                                        Forms\Components\TextInput::make('item_name')->label('Item de Inspeção')->disabled()->dehydrated(true),
+                                        Forms\Components\ToggleButtons::make('status')
+                                            ->label('Conformidade')
+                                            ->options(['conforme' => 'Conforme', 'nao_conforme' => 'Não Conforme', 'nao_aplicavel' => 'N/A'])
+                                            ->colors(['conforme' => 'success', 'nao_conforme' => 'danger', 'nao_aplicavel' => 'gray'])
+                                            ->inline(),
+                                        Forms\Components\TextInput::make('notes')->label('Observações / Evidência'),
+                                        // Reproduzido no PROD 2026-07-29: tirar foto na vistoria
+                                        // falhava com "The data.checklists.record-X.photos... failed
+                                        // to upload". Recusa por TAMANHO, e o PROD tinha dois tetos --
+                                        // client_max_body_size do nginx, que nem estava configurado e
+                                        // portanto valia o default de 1MB (o mais apertado dos dois, e
+                                        // o que corta antes de chegar no PHP), e upload_max_filesize=2M
+                                        // do PHP. Os dois foram levantados no servidor, mas config de
+                                        // servidor sozinha nao resolve: teria que ser refeita em todo
+                                        // ambiente que hospeda o app, e subir 3-8MB por foto e'
+                                        // desperdicio de banda/disco pra uma evidencia de vistoria.
+                                        // Entao o FilePond tambem redimensiona no proprio navegador
+                                        // antes de enviar: 'contain' + 1600x1600 = lado maior de 1600px
+                                        // sem cortar nada (o default 'cover' do Filament CORTARIA a
+                                        // foto pra preencher 1600x1600 exatos), e uma foto tipica de
+                                        // 5MB sai em ~300-700KB. upscale(false) pra nao inflar foto
+                                        // pequena. NAO adicionar ->maxSize() pequeno aqui: o FilePond
+                                        // valida tamanho no arquivo ORIGINAL, antes do resize, e
+                                        // rejeitaria justamente a foto que isso conserta.
+                                        Forms\Components\SpatieMediaLibraryFileUpload::make('photos')
+                                            ->collection('photos')
+                                            ->label('Foto')
+                                            ->image()
+                                            ->imageResizeMode('contain')
+                                            ->imageResizeTargetWidth('1600')
+                                            ->imageResizeTargetHeight('1600')
+                                            ->imageResizeUpscale(false),
+                                    ])->columns(3)->disableItemCreation()->disableItemDeletion(),
                             ]),
                     ]),
 
@@ -580,27 +582,27 @@ class MaintenanceOrderResource extends Resource
                     ->schema([
                         Forms\Components\Section::make('Itens de Preventiva (PMP)')
                             ->schema([
-                        Forms\Components\Repeater::make('pmp_items')
-                            ->relationship('checklists', modifyQueryUsing: fn (Builder $query) => $query->where('checklist_type', 'pmp'))
-                            ->label('Planos de Manutenção Preventiva aplicáveis')
-                            ->itemLabel(fn (array $state): ?string => $state['item_name'])
-                            ->schema([
-                                Forms\Components\TextInput::make('item_name')->label('Plano')->disabled()->dehydrated(true),
-                                Forms\Components\ToggleButtons::make('status')
-                                    ->label('Conformidade')
-                                    ->options(['conforme' => 'Conforme', 'nao_conforme' => 'Não Conforme', 'nao_aplicavel' => 'N/A'])
-                                    ->colors(['conforme' => 'success', 'nao_conforme' => 'danger', 'nao_aplicavel' => 'gray'])
-                                    ->inline(),
-                                Forms\Components\TextInput::make('notes')->label('Observações / Evidência'),
-                                Forms\Components\SpatieMediaLibraryFileUpload::make('photos')
-                                    ->collection('photos')
-                                    ->label('Foto')
-                                    ->image()
-                                    ->imageResizeMode('contain')
-                                    ->imageResizeTargetWidth('1600')
-                                    ->imageResizeTargetHeight('1600')
-                                    ->imageResizeUpscale(false),
-                            ])->columns(3)->disableItemCreation()->disableItemDeletion(),
+                                Forms\Components\Repeater::make('pmp_items')
+                                    ->relationship('checklists', modifyQueryUsing: fn (Builder $query) => $query->where('checklist_type', 'pmp'))
+                                    ->label('Planos de Manutenção Preventiva aplicáveis')
+                                    ->itemLabel(fn (array $state): ?string => $state['item_name'])
+                                    ->schema([
+                                        Forms\Components\TextInput::make('item_name')->label('Plano')->disabled()->dehydrated(true),
+                                        Forms\Components\ToggleButtons::make('status')
+                                            ->label('Conformidade')
+                                            ->options(['conforme' => 'Conforme', 'nao_conforme' => 'Não Conforme', 'nao_aplicavel' => 'N/A'])
+                                            ->colors(['conforme' => 'success', 'nao_conforme' => 'danger', 'nao_aplicavel' => 'gray'])
+                                            ->inline(),
+                                        Forms\Components\TextInput::make('notes')->label('Observações / Evidência'),
+                                        Forms\Components\SpatieMediaLibraryFileUpload::make('photos')
+                                            ->collection('photos')
+                                            ->label('Foto')
+                                            ->image()
+                                            ->imageResizeMode('contain')
+                                            ->imageResizeTargetWidth('1600')
+                                            ->imageResizeTargetHeight('1600')
+                                            ->imageResizeUpscale(false),
+                                    ])->columns(3)->disableItemCreation()->disableItemDeletion(),
                             ]),
                     ]),
 
@@ -608,65 +610,65 @@ class MaintenanceOrderResource extends Resource
                 Forms\Components\Tabs\Tab::make('Fotos e Evidências')->schema([
                     Forms\Components\Section::make('Fotos Antes / Depois')
                         ->schema([
-                    Forms\Components\Grid::make(2)->schema([
-                        CameraCapture::make('photo_before')
-                            ->label('Foto ANTES do Serviço (Estado Inicial)'),
-                        CameraCapture::make('photo_after')
-                            ->label('Foto DEPOIS do Serviço (Resultado Final)'),
-                    ]),
+                            Forms\Components\Grid::make(2)->schema([
+                                CameraCapture::make('photo_before')
+                                    ->label('Foto ANTES do Serviço (Estado Inicial)'),
+                                CameraCapture::make('photo_after')
+                                    ->label('Foto DEPOIS do Serviço (Resultado Final)'),
+                            ]),
                         ]),
 
                     Forms\Components\Section::make('Evidências Adicionais')
                         ->schema([
-                    Forms\Components\Repeater::make('extra_evidences')
-                        ->label('')
-                        ->dehydrated()
-                        ->addActionLabel('Adicionar Evidência')
-                        ->schema([
-                            CameraCapture::make('photo')
-                                ->label('Foto'),
-                            Forms\Components\TextInput::make('category')
-                                ->label('Categoria')
-                                ->datalist(['Painel/Horímetro', 'Estrutura Geral', 'Avaria', 'Mau Uso'])
-                                ->placeholder('Ex: Painel/Horímetro, Avaria: Esteira Esquerda'),
-                            Forms\Components\ToggleButtons::make('severity')
-                                ->label('Severidade')
-                                ->options(fn () => array_filter(
-                                    ['ok' => 'OK', 'avaria' => 'Avaria', 'mau_uso' => 'Mau Uso'],
-                                    fn ($key) => $key !== 'mau_uso' || (Tenancy::current()?->hasModuleEnabled('mau_uso') ?? true),
-                                    ARRAY_FILTER_USE_KEY
-                                ))
-                                ->colors(['ok' => 'success', 'avaria' => 'danger', 'mau_uso' => 'warning'])
-                                ->default('ok')->inline()->live(),
-                            // Marcar "Avaria" OU "Mau Uso" aqui ja cria um EquipmentDamage
-                            // de verdade (ver StoresPhotoEvidence::persistPhotoEvidences())
-                            // -- antes so' "avaria" fazia isso; "Mau Uso" (locadoras de
-                            // construcao civil, evidencia pra cobranca/contestacao com o
-                            // cliente da obra) reusa o mesmo fluxo, so' com severidade
-                            // diferente pra distinguir na listagem/comparativo Antes/Depois.
-                            Forms\Components\Select::make('damage_severity')
-                                ->label('Gravidade')
-                                ->options([
-                                    EquipmentDamage::SEVERITY_LEVE => 'Leve',
-                                    EquipmentDamage::SEVERITY_MODERADA => 'Moderada',
-                                    EquipmentDamage::SEVERITY_GRAVE => 'Grave / Perda Total',
+                            Forms\Components\Repeater::make('extra_evidences')
+                                ->label('')
+                                ->dehydrated()
+                                ->addActionLabel('Adicionar Evidência')
+                                ->schema([
+                                    CameraCapture::make('photo')
+                                        ->label('Foto'),
+                                    Forms\Components\TextInput::make('category')
+                                        ->label('Categoria')
+                                        ->datalist(['Painel/Horímetro', 'Estrutura Geral', 'Avaria', 'Mau Uso'])
+                                        ->placeholder('Ex: Painel/Horímetro, Avaria: Esteira Esquerda'),
+                                    Forms\Components\ToggleButtons::make('severity')
+                                        ->label('Severidade')
+                                        ->options(fn () => array_filter(
+                                            ['ok' => 'OK', 'avaria' => 'Avaria', 'mau_uso' => 'Mau Uso'],
+                                            fn ($key) => $key !== 'mau_uso' || (Tenancy::current()?->hasModuleEnabled('mau_uso') ?? true),
+                                            ARRAY_FILTER_USE_KEY
+                                        ))
+                                        ->colors(['ok' => 'success', 'avaria' => 'danger', 'mau_uso' => 'warning'])
+                                        ->default('ok')->inline()->live(),
+                                    // Marcar "Avaria" OU "Mau Uso" aqui ja cria um EquipmentDamage
+                                    // de verdade (ver StoresPhotoEvidence::persistPhotoEvidences())
+                                    // -- antes so' "avaria" fazia isso; "Mau Uso" (locadoras de
+                                    // construcao civil, evidencia pra cobranca/contestacao com o
+                                    // cliente da obra) reusa o mesmo fluxo, so' com severidade
+                                    // diferente pra distinguir na listagem/comparativo Antes/Depois.
+                                    Forms\Components\Select::make('damage_severity')
+                                        ->label('Gravidade')
+                                        ->options([
+                                            EquipmentDamage::SEVERITY_LEVE => 'Leve',
+                                            EquipmentDamage::SEVERITY_MODERADA => 'Moderada',
+                                            EquipmentDamage::SEVERITY_GRAVE => 'Grave / Perda Total',
+                                        ])
+                                        ->default(EquipmentDamage::SEVERITY_MODERADA)
+                                        ->required(fn (Get $get) => in_array($get('severity'), ['avaria', 'mau_uso'], true))
+                                        ->visible(fn (Get $get) => in_array($get('severity'), ['avaria', 'mau_uso'], true)),
+                                    Forms\Components\Select::make('damage_type')
+                                        ->label('Tipo')
+                                        ->options(EquipmentDamage::damageTypeLabels())
+                                        ->required(fn (Get $get) => in_array($get('severity'), ['avaria', 'mau_uso'], true))
+                                        ->visible(fn (Get $get) => in_array($get('severity'), ['avaria', 'mau_uso'], true)),
+                                    Forms\Components\Textarea::make('observation')
+                                        ->label('Observação')
+                                        ->rows(2)
+                                        ->columnSpanFull(),
                                 ])
-                                ->default(EquipmentDamage::SEVERITY_MODERADA)
-                                ->required(fn (Get $get) => in_array($get('severity'), ['avaria', 'mau_uso'], true))
-                                ->visible(fn (Get $get) => in_array($get('severity'), ['avaria', 'mau_uso'], true)),
-                            Forms\Components\Select::make('damage_type')
-                                ->label('Tipo')
-                                ->options(EquipmentDamage::damageTypeLabels())
-                                ->required(fn (Get $get) => in_array($get('severity'), ['avaria', 'mau_uso'], true))
-                                ->visible(fn (Get $get) => in_array($get('severity'), ['avaria', 'mau_uso'], true)),
-                            Forms\Components\Textarea::make('observation')
-                                ->label('Observação')
-                                ->rows(2)
+                                ->columns(3)
+                                ->defaultItems(0)
                                 ->columnSpanFull(),
-                        ])
-                        ->columns(3)
-                        ->defaultItems(0)
-                        ->columnSpanFull(),
                         ]),
                 ]),
 
@@ -674,12 +676,12 @@ class MaintenanceOrderResource extends Resource
                 Forms\Components\Tabs\Tab::make('Materiais')->schema([
                     Forms\Components\Section::make('Materiais Aplicados')
                         ->schema([
-                    Forms\Components\Repeater::make('materials')
-                        ->relationship('materials')
-                        ->schema([
-                            Forms\Components\Select::make('material_id')->relationship('material', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))->required()->searchable(),
-                            Forms\Components\TextInput::make('quantity')->label('Qtd')->numeric()->default(1)->required(),
-                        ])->columns(2),
+                            Forms\Components\Repeater::make('materials')
+                                ->relationship('materials')
+                                ->schema([
+                                    Forms\Components\Select::make('material_id')->relationship('material', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))->required()->searchable(),
+                                    Forms\Components\TextInput::make('quantity')->label('Qtd')->numeric()->default(1)->required(),
+                                ])->columns(2),
                         ]),
                 ]),
 
@@ -700,38 +702,38 @@ class MaintenanceOrderResource extends Resource
                 Forms\Components\Tabs\Tab::make('Custos')->schema([
                     Forms\Components\Section::make('Custos da O.S.')
                         ->schema([
-                    Forms\Components\Grid::make(2)->schema([
-                        Forms\Components\TextInput::make('labor_cost')
-                            ->label('Mão de Obra (R$)')
-                            ->numeric()
-                            ->prefix('R$')
-                            ->default(0)
-                            ->disabled(fn () => ! auth()->user()?->isAdmin())
-                            ->dehydrated(),
-                        Forms\Components\TextInput::make('material_cost')
-                            ->label('Material (R$)')
-                            ->helperText('Calculado automaticamente pelos materiais aplicados nesta O.S.')
-                            ->numeric()
-                            ->prefix('R$')
-                            ->default(0)
-                            ->disabled()
-                            ->dehydrated(),
-                        Forms\Components\TextInput::make('logistics_cost')
-                            ->label('Logística (R$)')
-                            ->numeric()
-                            ->prefix('R$')
-                            ->default(0)
-                            ->disabled(fn () => ! auth()->user()?->isAdmin())
-                            ->dehydrated(),
-                        Forms\Components\TextInput::make('total_order_cost')
-                            ->label('Custo Total (R$)')
-                            ->helperText('Mão de obra + Material + Logística, somados automaticamente.')
-                            ->numeric()
-                            ->prefix('R$')
-                            ->default(0)
-                            ->disabled()
-                            ->dehydrated(),
-                    ]),
+                            Forms\Components\Grid::make(2)->schema([
+                                Forms\Components\TextInput::make('labor_cost')
+                                    ->label('Mão de Obra (R$)')
+                                    ->numeric()
+                                    ->prefix('R$')
+                                    ->default(0)
+                                    ->disabled(fn () => ! auth()->user()?->isAdmin())
+                                    ->dehydrated(),
+                                Forms\Components\TextInput::make('material_cost')
+                                    ->label('Material (R$)')
+                                    ->helperText('Calculado automaticamente pelos materiais aplicados nesta O.S.')
+                                    ->numeric()
+                                    ->prefix('R$')
+                                    ->default(0)
+                                    ->disabled()
+                                    ->dehydrated(),
+                                Forms\Components\TextInput::make('logistics_cost')
+                                    ->label('Logística (R$)')
+                                    ->numeric()
+                                    ->prefix('R$')
+                                    ->default(0)
+                                    ->disabled(fn () => ! auth()->user()?->isAdmin())
+                                    ->dehydrated(),
+                                Forms\Components\TextInput::make('total_order_cost')
+                                    ->label('Custo Total (R$)')
+                                    ->helperText('Mão de obra + Material + Logística, somados automaticamente.')
+                                    ->numeric()
+                                    ->prefix('R$')
+                                    ->default(0)
+                                    ->disabled()
+                                    ->dehydrated(),
+                            ]),
                         ]),
                 ]),
 
@@ -740,14 +742,14 @@ class MaintenanceOrderResource extends Resource
                     Forms\Components\Section::make('Assinaturas')
                         ->description('Colete a assinatura na tela do dispositivo.')
                         ->schema([
-                    Forms\Components\Grid::make(2)->schema([
-                        SignaturePad::make('technician_signature')
-                            ->label('Assinatura do Técnico')
-                            ->loadStrategy('idle'),
-                        SignaturePad::make('client_signature')
-                            ->label('Assinatura do Cliente')
-                            ->loadStrategy('idle'),
-                    ]),
+                            Forms\Components\Grid::make(2)->schema([
+                                SignaturePad::make('technician_signature')
+                                    ->label('Assinatura do Técnico')
+                                    ->loadStrategy('idle'),
+                                SignaturePad::make('client_signature')
+                                    ->label('Assinatura do Cliente')
+                                    ->loadStrategy('idle'),
+                            ]),
                         ]),
                 ]),
             ])->columnSpanFull(),

@@ -24,6 +24,8 @@ class AbcMatrixHistoryResource extends Resource
 
     protected static ?string $navigationGroup = 'Relatórios';
 
+    protected static ?string $navigationParentItem = 'Históricos & Logs';
+
     protected static ?string $navigationLabel = 'Histórico de Matriz ABC';
 
     protected static ?string $modelLabel = 'Histórico de Matriz ABC';

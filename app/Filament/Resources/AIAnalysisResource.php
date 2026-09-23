@@ -28,6 +28,8 @@ class AIAnalysisResource extends BaseResource
     // relatorio do que de operacao diaria de PCM.
     protected static ?string $navigationGroup = 'Relatórios';
 
+    protected static ?string $navigationParentItem = 'Análises';
+
     protected static ?string $navigationLabel = 'Central de IA';
 
     protected static ?string $modelLabel = 'Análise de IA';

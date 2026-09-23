@@ -18,6 +18,8 @@ class ChecklistTemplateResource extends Resource
 
     protected static ?string $navigationGroup = 'Manutenção';
 
+    protected static ?string $navigationParentItem = 'Cadastros';
+
     protected static ?string $modelLabel = 'Checklist';
 
     protected static ?string $pluralModelLabel = 'Checklists';

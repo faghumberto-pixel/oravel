@@ -19,6 +19,8 @@ class FleetMaintenancePlanResource extends Resource
 
     protected static ?string $navigationGroup = 'Logística';
 
+    protected static ?string $navigationParentItem = 'Frota';
+
     protected static ?string $navigationLabel = 'Planos de Manutenção de Veículos';
 
     public static function form(Form $form): Form

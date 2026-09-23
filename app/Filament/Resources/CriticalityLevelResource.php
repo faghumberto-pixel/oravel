@@ -25,6 +25,8 @@ class CriticalityLevelResource extends Resource
 
     protected static ?string $navigationGroup = 'Manutenção';
 
+    protected static ?string $navigationParentItem = 'Cadastros';
+
     protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form

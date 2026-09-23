@@ -24,6 +24,8 @@ class DepotResource extends BaseResource
 
     protected static ?string $navigationGroup = 'Logística';
 
+    protected static ?string $navigationParentItem = 'Pátio';
+
     protected static ?string $navigationLabel = 'Pátios/Depósitos';
 
     protected static ?string $modelLabel = 'Pátio/Depósito';
