@@ -6,6 +6,7 @@ use App\Filament\Central\Resources\PlanResource\Pages;
 use App\Models\Plan;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -130,7 +131,32 @@ class PlanResource extends Resource
             Tables\Columns\TextColumn::make('base_price')->label('Preço Tabela')->money('BRL')->weight('bold'),
             Tables\Columns\IconColumn::make('is_active')->label('Ativo')->boolean(),
         ])
-            ->actions([Tables\Actions\EditAction::make()]);
+            ->actions([
+                // Pedido do usuário 2026-09-23: não existe mais plano padrão
+                // A/B/C -- cada cliente ganha um Plano próprio, negociado
+                // individualmente, e o vendedor manda o link de assinatura
+                // (/assinar?plano={id}, AsaasCheckoutController::create())
+                // direto pra esse cliente específico. Sem isso, não tinha
+                // como pegar esse link sem montar a URL na mão com o UUID
+                // do plano. Mesmo padrão de "Copiar Link" já usado em
+                // DocumentSignatureResource -- mostra o link pronto num
+                // toast, não depende de JS de clipboard.
+                Tables\Actions\Action::make('copy_signup_link')
+                    ->label('Copiar Link de Assinatura')
+                    ->icon('heroicon-o-link')
+                    ->color('info')
+                    ->action(function (Plan $record) {
+                        $link = route('checkout.create', ['plano' => $record->id]);
+
+                        Notification::make()
+                            ->title('Link de assinatura')
+                            ->body($link)
+                            ->success()
+                            ->persistent()
+                            ->send();
+                    }),
+                Tables\Actions\EditAction::make(),
+            ]);
     }
 
     public static function getPages(): array
