@@ -25,4 +25,10 @@ Route::middleware('guest')->group(function () {
     // ver AsaasWebhookController.
     Route::get('/assinar/sucesso', fn () => view('checkout.success'))->name('checkout.success');
     Route::get('/assinar/cancelado', fn () => view('checkout.cancelled'))->name('checkout.cancelled');
+
+    // Chamada só depois que o Contrato de Assinatura (assinatura
+    // eletrônica, /assinatura/{token}) foi confirmado -- é aqui que o
+    // Checkout de pagamento é de fato criado (2026-09-23, ver
+    // AsaasCheckoutController::continueAfterSignature()).
+    Route::get('/assinar/continuar/{token}', [AsaasCheckoutController::class, 'continueAfterSignature'])->name('checkout.continue');
 });

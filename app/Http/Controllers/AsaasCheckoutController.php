@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\DocumentSignature;
 use App\Models\Plan;
 use App\Models\Tenant;
 use App\Rules\CpfCnpj;
 use App\Services\AsaasService;
+use App\Services\SignatureService;
 use App\Services\TenantProvisioner;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,6 +29,15 @@ use Illuminate\View\View;
  * is_approved=false (canAccessPanel() em User já bloqueia por isso) e
  * só é aprovado quando o webhook da Asaas confirmar o primeiro
  * pagamento (ver AsaasWebhookController::process()).
+ *
+ * Contrato de Assinatura obrigatório (2026-09-23, pedido do usuário:
+ * "ele não pode pagar se não assinar o contrato"): desde então, store()
+ * NÃO manda mais direto pro Checkout -- manda primeiro pra assinatura
+ * eletrônica do contrato (mesmo mecanismo de Contract/MaintenanceOrder,
+ * ver Tenant::class use HasSignatures). O Checkout só é criado depois,
+ * em continueAfterSignature(), chamado pelo PublicSignatureController
+ * quando a assinatura é confirmada -- o link de pagamento literalmente
+ * não existe antes disso, não é uma etapa pulável.
  */
 class AsaasCheckoutController extends Controller
 {
@@ -78,7 +89,7 @@ class AsaasCheckoutController extends Controller
         'outro' => 'Outro',
     ];
 
-    public function store(Request $request, AsaasService $asaas): RedirectResponse
+    public function store(Request $request, AsaasService $asaas, SignatureService $signatureService): RedirectResponse
     {
         $data = $request->validate([
             'company_name' => ['required', 'string', 'max:255'],
@@ -131,15 +142,52 @@ class AsaasCheckoutController extends Controller
         // primeiro pagamento -- ver canAccessPanel() em User.
         $admin->forceFill(['is_approved' => false])->save();
 
-        // syncTenantCustomer() continua sendo chamado -- best-effort, grava
-        // tenant.asaas_customer_id o quanto antes (não depende de esperar o
-        // webhook do checkout, útil pro resto do sistema que já lê esse
-        // campo). O checkout em si não referencia esse customer id (ver
-        // AsaasService::createTenantCheckout()), então o webhook casa pelo
-        // externalReference (tenant->id), não só pelo customer id.
+        // syncTenantCustomer() continua sendo chamado aqui -- best-effort,
+        // grava tenant.asaas_customer_id o quanto antes (não depende de
+        // esperar o webhook, útil pro resto do sistema que já lê esse
+        // campo). O Checkout em si só é criado depois de assinar (ver
+        // continueAfterSignature() abaixo) -- ele não referencia esse
+        // customer id (AsaasService::createTenantCheckout()), então o
+        // webhook casa pelo externalReference (tenant->id), não só pelo
+        // customer id.
         $asaas->syncTenantCustomer($tenant);
-        $tenant->refresh();
 
+        // Contrato de Assinatura ANTES do pagamento -- o cliente só chega
+        // no Checkout depois de assinar (PublicSignatureController::store()
+        // redireciona pra continueAfterSignature() quando a assinatura é
+        // do tipo Tenant).
+        $signatureLink = $signatureService->generateSignatureLink($tenant, [
+            'name' => $data['admin_name'],
+            'email' => $data['admin_email'],
+        ]);
+
+        return redirect()->away($signatureLink);
+    }
+
+    /**
+     * Chamado só depois que a assinatura do Contrato de Assinatura foi
+     * confirmada (ver PublicSignatureController::store()) -- é aqui que o
+     * Checkout de pagamento é de fato criado. Verifica de novo se está
+     * mesmo assinado (não confia só em ter chegado nesta URL) antes de
+     * gerar qualquer link de pagamento.
+     */
+    public function continueAfterSignature(string $token, AsaasService $asaas): RedirectResponse
+    {
+        $signature = DocumentSignature::where('token', $token)
+            ->where('signable_type', Tenant::class)
+            ->first();
+
+        if (! $signature || ! $signature->is_signed) {
+            return redirect()->route('checkout.pending');
+        }
+
+        $tenant = $signature->signable;
+
+        if (! $tenant) {
+            return redirect()->route('checkout.pending');
+        }
+
+        $tenant->refresh();
         $checkoutUrl = $asaas->createTenantCheckout($tenant);
 
         if ($checkoutUrl) {
@@ -150,10 +198,9 @@ class AsaasCheckoutController extends Controller
             return redirect()->away($checkoutUrl);
         }
 
-        // Assinatura falhou ao sincronizar (Asaas fora do ar, etc) --
-        // sem link de fatura pra mandar o cliente, mas o cadastro em si
-        // foi criado. Mostra uma tela de confirmação em vez de tentar
-        // levar pro painel (que estaria bloqueado mesmo, is_approved=false).
+        // Assinou, mas o Checkout falhou ao criar (Asaas fora do ar etc)
+        // -- o cadastro e a assinatura já existem, mas sem link de
+        // pagamento pra mandar o cliente.
         return redirect()->route('checkout.pending');
     }
 

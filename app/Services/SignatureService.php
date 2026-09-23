@@ -2,10 +2,16 @@
 
 namespace App\Services;
 
+use App\Events\DocumentSigned;
+use App\Models\Contract;
 use App\Models\DocumentSignature;
+use App\Models\MaintenanceOrder;
+use App\Models\Tenant;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use setasign\Fpdi\Fpdi;
 use Throwable;
 
 class SignatureService
@@ -15,8 +21,8 @@ class SignatureService
     /**
      * Gera um link seguro de assinatura via token único.
      *
-     * @param Model $signable Contract ou MaintenanceOrder
-     * @param array $signerData {name, document?, email?, phone?}
+     * @param  Model  $signable  Contract ou MaintenanceOrder
+     * @param  array  $signerData  {name, document?, email?, phone?}
      * @return string URL de assinatura
      */
     public function generateSignatureLink(Model $signable, array $signerData): string
@@ -48,7 +54,7 @@ class SignatureService
             throw new \Exception('Assinatura expirou. Solicite um novo link.');
         }
 
-        if (!$signature->can_sign) {
+        if (! $signature->can_sign) {
             throw new \Exception('Esta assinatura não pode mais ser processada.');
         }
 
@@ -64,15 +70,15 @@ class SignatureService
      * - Marca como assinado
      * - Dispara eventos para finalização de PDF
      *
-     * @param string $token Token único de assinatura
-     * @param array $data {
-     *     signature_base64: string PNG em base64,
-     *     signer_name: string,
-     *     signer_document?: string,
-     *     ip_address?: string,
-     *     user_agent?: string,
-     *     geolocation?: array {lat, lng, accuracy}
-     * }
+     * @param  string  $token  Token único de assinatura
+     * @param  array  $data  {
+     *                       signature_base64: string PNG em base64,
+     *                       signer_name: string,
+     *                       signer_document?: string,
+     *                       ip_address?: string,
+     *                       user_agent?: string,
+     *                       geolocation?: array {lat, lng, accuracy}
+     *                       }
      */
     public function signDocument(string $token, array $data): bool
     {
@@ -85,7 +91,7 @@ class SignatureService
             }
 
             // Atualiza nome do signatário se fornecido
-            if (!empty($data['signer_name'])) {
+            if (! empty($data['signer_name'])) {
                 $signature->signer_name = $data['signer_name'];
             }
 
@@ -108,7 +114,7 @@ class SignatureService
             $signature->markAsSigned();
 
             // Dispara evento para finalizar PDF (observer ou job)
-            event(new \App\Events\DocumentSigned($signature));
+            event(new DocumentSigned($signature));
 
             return true;
         } catch (Throwable $e) {
@@ -163,7 +169,7 @@ class SignatureService
      * - Hash SHA-256 do documento
      * - URL de verificação (QR code opcional)
      *
-     * @param Model $signable Contract ou MaintenanceOrder
+     * @param  Model  $signable  Contract ou MaintenanceOrder
      */
     public function finalizeSignedPdf(Model $signable): ?string
     {
@@ -171,7 +177,7 @@ class SignatureService
             // Recupera assinatura do documento
             $signature = $signable->signedSignatures()->latest()->first();
 
-            if (!$signature) {
+            if (! $signature) {
                 return null;
             }
 
@@ -200,6 +206,7 @@ class SignatureService
                 'signable_id' => $signable->id,
                 'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
@@ -214,8 +221,11 @@ class SignatureService
         try {
             // Tenta usar view específica por tipo de documento
             $view = match ($signable::class) {
-                \App\Models\Contract::class => 'pdf.contract',
-                \App\Models\MaintenanceOrder::class => 'pdf.maintenance_order_dossie',
+                Contract::class => 'pdf.contract',
+                MaintenanceOrder::class => 'pdf.maintenance_order_dossie',
+                // Contrato de Assinatura (2026-09-23): Tenant como terceiro
+                // tipo de documento assinável, ver Tenant::class use HasSignatures.
+                Tenant::class => 'pdf.subscription-agreement',
                 default => null,
             };
 
@@ -223,7 +233,7 @@ class SignatureService
                 return Pdf::loadView($view, ['contract' => $signable])
                     ->output();
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             \Log::warning('Erro ao gerar PDF do documento', [
                 'type' => $signable::class,
                 'error' => $e->getMessage(),
@@ -260,10 +270,10 @@ class SignatureService
     private function mergePdfs(string $originalPdf, string $auditPdf): string
     {
         try {
-            $pdf = new \setasign\Fpdi\Fpdi();
+            $pdf = new Fpdi;
 
             // Importa páginas do PDF original
-            $originalPageCount = $pdf->setSourceFile(\Illuminate\Support\Facades\File::tempnam(
+            $originalPageCount = $pdf->setSourceFile(File::tempnam(
                 sys_get_temp_dir(),
                 'pdf'
             ));
@@ -336,11 +346,12 @@ class SignatureService
      */
     public function cancelSignature(DocumentSignature $signature): bool
     {
-        if (!$signature->is_pending) {
+        if (! $signature->is_pending) {
             throw new \Exception('Apenas assinaturas pendentes podem ser canceladas.');
         }
 
         $signature->markAsCanceled();
+
         return true;
     }
 
@@ -349,7 +360,7 @@ class SignatureService
      */
     public function renewSignatureToken(DocumentSignature $signature, int $daysToAdd = 30): bool
     {
-        if (!$signature->is_pending) {
+        if (! $signature->is_pending) {
             throw new \Exception('Apenas assinaturas pendentes podem ser renovadas.');
         }
 

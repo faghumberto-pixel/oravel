@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Client;
+use App\Models\DocumentSignature;
 use App\Models\Plan;
 use App\Models\Tenant;
 use App\Models\User;
@@ -85,12 +86,18 @@ class AsaasCheckoutControllerTest extends TestCase
         $this->assertStringNotContainsString('<select id="plan_id"', $response->getContent());
     }
 
-    public function test_submitting_checkout_creates_tenant_and_admin_without_logging_in(): void
+    /**
+     * Contrato de Assinatura obrigatório ANTES do pagamento (2026-09-23,
+     * pedido do usuário: "ele não pode pagar se não assinar o contrato") --
+     * store() agora manda pra assinatura eletrônica (/assinatura/{token}),
+     * NÃO mais direto pro Checkout da Asaas. O Checkout só nasce depois,
+     * em continueAfterSignature() -- ver os testes mais abaixo.
+     */
+    public function test_submitting_checkout_creates_tenant_and_redirects_to_contract_signature(): void
     {
         config(['services.asaas.api_key' => 'test-key']);
         Http::fake([
             'sandbox.asaas.com/*/customers' => Http::response(['id' => 'cus_checkout'], 200),
-            'sandbox.asaas.com/*/checkouts' => Http::response(['id' => 'che_checkout', 'link' => 'https://sandbox.asaas.com/checkoutSession/show/che_checkout'], 200),
         ]);
 
         $plan = $this->makePlan();
@@ -101,7 +108,6 @@ class AsaasCheckoutControllerTest extends TestCase
         $this->assertNotNull($tenant);
         $this->assertSame($plan->id, $tenant->plan_id);
         $this->assertSame('cus_checkout', $tenant->asaas_customer_id);
-        $this->assertSame('che_checkout', $tenant->asaas_checkout_id);
         $this->assertSame(Client::NICHE_CONSTRUCAO_CIVIL, $tenant->segment);
         $this->assertSame(['gerador', 'munk'], $tenant->equipment_types);
         $this->assertSame('Limeira', $tenant->cidade);
@@ -114,41 +120,109 @@ class AsaasCheckoutControllerTest extends TestCase
         $this->assertFalse((bool) $admin->is_approved, 'Acesso não pode ser liberado antes da confirmação de pagamento');
         $this->assertGuest();
 
-        $response->assertRedirect('https://sandbox.asaas.com/checkoutSession/show/che_checkout');
+        // Nenhum Checkout foi criado ainda -- só depois de assinar.
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), '/checkouts'));
 
-        // O checkout em si é criado com o tenant como externalReference
-        // (não referencia o customer_id já sincronizado -- ver
-        // AsaasService::createTenantCheckout()) e cobrança recorrente via
-        // cartão/Pix.
-        Http::assertSent(function ($request) use ($tenant) {
-            if (! str_contains($request->url(), '/checkouts')) {
-                return true;
-            }
+        $signature = DocumentSignature::where('signable_type', Tenant::class)
+            ->where('signable_id', $tenant->id)
+            ->first();
+        $this->assertNotNull($signature, 'Contrato de Assinatura deveria ter sido criado');
+        $this->assertSame($tenant->id, $signature->tenant_id, 'tenant_id do contrato é o próprio tenant (ver Tenant::getTenantIdAttribute())');
+        $this->assertSame('Admin Checkout', $signature->signer_name);
+        $this->assertFalse($signature->is_signed);
 
-            return $request['externalReference'] === $tenant->id
-                && $request['billingTypes'] === ['CREDIT_CARD', 'PIX']
-                && $request['chargeTypes'] === ['RECURRENT'];
-        });
+        $response->assertRedirect(route('signature.sign', ['token' => $signature->token]));
     }
 
-    public function test_checkout_redirects_to_pending_page_when_invoice_url_unavailable(): void
+    public function test_signing_the_subscription_contract_redirects_to_checkout_which_creates_the_payment_link(): void
     {
-        config(['services.asaas.api_key' => null]);
+        config(['services.asaas.api_key' => 'test-key']);
+        Http::fake([
+            'sandbox.asaas.com/*/customers' => Http::response(['id' => 'cus_signed'], 200),
+            'sandbox.asaas.com/*/checkouts' => Http::response(['id' => 'che_signed', 'link' => 'https://sandbox.asaas.com/checkoutSession/show/che_signed'], 200),
+        ]);
+
+        $plan = $this->makePlan();
+        $this->post('/assinar', $this->validPayload($plan, [
+            'company_name' => 'Empresa Assinou Contrato',
+            'admin_email' => 'admin-assinou-'.uniqid().'@oravel.com.br',
+        ]));
+
+        $tenant = Tenant::where('name', 'Empresa Assinou Contrato')->firstOrFail();
+        $signature = DocumentSignature::where('signable_id', $tenant->id)->firstOrFail();
+
+        // Assina o contrato via o mesmo endpoint público usado por
+        // Contract/MaintenanceOrder (PublicSignatureController::store()).
+        $signResponse = $this->postJson("/assinatura/{$signature->token}/assinar", [
+            'signature_base64' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+            'signer_name' => 'Admin Checkout',
+        ]);
+
+        $signResponse->assertOk();
+        $signResponse->assertJsonPath('redirect', route('checkout.continue', ['token' => $signature->token]));
+
+        $tenant->refresh();
+        $this->assertTrue($signature->fresh()->is_signed);
+        $this->assertNull($tenant->asaas_checkout_id, 'Checkout ainda não foi criado só de assinar -- precisa seguir pro continueAfterSignature()');
+
+        // Segue pro link que o JSON de cima devolveu -- é aqui que o
+        // Checkout de fato nasce.
+        $continueResponse = $this->get(route('checkout.continue', ['token' => $signature->token]));
+
+        $continueResponse->assertRedirect('https://sandbox.asaas.com/checkoutSession/show/che_signed');
+
+        $tenant->refresh();
+        $this->assertSame('che_signed', $tenant->asaas_checkout_id);
+    }
+
+    public function test_continue_after_signature_redirects_to_pending_if_not_actually_signed(): void
+    {
+        config(['services.asaas.api_key' => 'test-key']);
         Http::fake();
 
         $plan = $this->makePlan();
-
-        $response = $this->post('/assinar', $this->validPayload($plan, [
-            'company_name' => 'Empresa Sem Fatura',
-            'admin_email' => 'admin-sem-fatura-'.uniqid().'@oravel.com.br',
+        $this->post('/assinar', $this->validPayload($plan, [
+            'company_name' => 'Empresa Nao Assinou',
+            'admin_email' => 'admin-nao-assinou-'.uniqid().'@oravel.com.br',
         ]));
 
-        $tenant = Tenant::where('name', 'Empresa Sem Fatura')->first();
-        $this->assertNotNull($tenant, 'Tenant é criado mesmo sem conseguir sincronizar com a Asaas');
+        $tenant = Tenant::where('name', 'Empresa Nao Assinou')->firstOrFail();
+        $signature = DocumentSignature::where('signable_id', $tenant->id)->firstOrFail();
 
-        $admin = User::where('tenant_id', $tenant->id)->first();
-        $this->assertFalse((bool) $admin->is_approved);
-        $this->assertGuest();
+        // Tenta pular direto pro link de continuação sem ter assinado --
+        // não pode gerar Checkout nenhum (a trava real é aqui, não só na UI).
+        $response = $this->get(route('checkout.continue', ['token' => $signature->token]));
+
+        $response->assertRedirect(route('checkout.pending', absolute: false));
+
+        $tenant->refresh();
+        $this->assertNull($tenant->asaas_checkout_id);
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), '/checkouts'));
+    }
+
+    public function test_continue_after_signature_redirects_to_pending_when_checkout_creation_fails(): void
+    {
+        config(['services.asaas.api_key' => 'test-key']);
+        Http::fake([
+            'sandbox.asaas.com/*/customers' => Http::response(['id' => 'cus_falhou'], 200),
+            'sandbox.asaas.com/*/checkouts' => Http::response(['errors' => [['description' => 'Falha simulada']]], 400),
+        ]);
+
+        $plan = $this->makePlan();
+        $this->post('/assinar', $this->validPayload($plan, [
+            'company_name' => 'Empresa Checkout Falhou',
+            'admin_email' => 'admin-falhou-'.uniqid().'@oravel.com.br',
+        ]));
+
+        $tenant = Tenant::where('name', 'Empresa Checkout Falhou')->firstOrFail();
+        $signature = DocumentSignature::where('signable_id', $tenant->id)->firstOrFail();
+
+        $this->postJson("/assinatura/{$signature->token}/assinar", [
+            'signature_base64' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+            'signer_name' => 'Admin Checkout',
+        ])->assertOk();
+
+        $response = $this->get(route('checkout.continue', ['token' => $signature->token]));
 
         $response->assertRedirect(route('checkout.pending', absolute: false));
     }

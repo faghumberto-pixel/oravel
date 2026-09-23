@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSignatures;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +13,13 @@ use Illuminate\Support\Facades\Auth;
 
 class Tenant extends Model
 {
+    // Contrato de Assinatura (pedido do usuário 2026-09-23): assinatura
+    // eletrônica obrigatória do plano negociado ANTES do Checkout de
+    // pagamento -- mesmo mecanismo já usado em Contract/MaintenanceOrder
+    // (DocumentSignature + SignatureService), Tenant como terceiro tipo de
+    // documento assinável. Ver AsaasCheckoutController.
+    use HasSignatures;
+
     use HasUuids;
 
     protected $keyType = 'string';
@@ -81,6 +89,23 @@ class Tenant extends Model
         'asaas_payment_updated_at' => 'datetime',
         'asaas_overdue_since' => 'datetime',
     ];
+
+    /**
+     * Acessor virtual (não é coluna real) -- só existe pra satisfazer
+     * SignatureService::generateSignatureLink(), que grava
+     * DocumentSignature.tenant_id a partir de $signable->tenant_id assumindo
+     * que todo model assinável (Contract, MaintenanceOrder) tem essa
+     * coluna. Tenant é o próprio tenant, então "o tenant_id do contrato de
+     * assinatura de um Tenant" é logicamente o id dele mesmo -- sem isso,
+     * o registro nasceria com tenant_id NULL (BelongsToTenant de
+     * DocumentSignature só preenche via auth()->user(), que não existe
+     * nesse fluxo, autoatendimento sem login) e ficaria invisível nas
+     * telas do painel admin que filtram assinatura por tenant.
+     */
+    public function getTenantIdAttribute(): string
+    {
+        return $this->id;
+    }
 
     /**
      * Metas padrao dos KPIs de "Gestao a Vista" -- usadas quando o tenant

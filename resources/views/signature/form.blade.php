@@ -7,7 +7,11 @@
         <div class="signature-header">
             <h1 class="signature-title">Assinatura Eletrônica</h1>
             <p class="signature-subtitle">
-                {{ $document::class === 'App\\Models\\Contract' ? 'Contrato de Locação' : 'Ordem de Serviço' }}
+                {{ match ($document::class) {
+                    'App\\Models\\Contract' => 'Contrato de Locação',
+                    'App\\Models\\Tenant' => 'Contrato de Assinatura Oravel',
+                    default => 'Ordem de Serviço',
+                } }}
             </p>
         </div>
 
@@ -25,6 +29,35 @@
                 <div class="info-row">
                     <span class="info-label">Equipamento:</span>
                     <span class="info-value">{{ $document->asset?->name ?? 'N/A' }}</span>
+                </div>
+            @elseif ($document::class === 'App\\Models\\Tenant')
+                @php
+                    $allOptions = \App\Models\Plan::getAvailableFeaturesOptions();
+                    $planFeatures = collect($document->plan?->features ?? [])
+                        ->map(fn ($key) => str_replace('Tabela: ', '', $allOptions[$key] ?? $key))
+                        ->sort()
+                        ->values();
+                @endphp
+                <div class="info-row">
+                    <span class="info-label">Empresa:</span>
+                    <span class="info-value">{{ $document->name }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Plano:</span>
+                    <span class="info-value">{{ $document->plan?->name ?? 'N/A' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Valor:</span>
+                    <span class="info-value">R$ {{ number_format((float) ($document->mrr_value ?? $document->plan?->base_price ?? 0), 2, ',', '.') }} / {{ match ($document->plan?->billing_cycle) {
+                        'quarterly' => 'trimestre',
+                        'semiannual' => 'semestre',
+                        'annual' => 'ano',
+                        default => 'mês',
+                    } }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Módulos:</span>
+                    <span class="info-value">{{ $planFeatures->implode(', ') ?: 'A definir na proposta' }}</span>
                 </div>
             @else
                 <div class="info-row">
