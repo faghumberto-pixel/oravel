@@ -17,11 +17,11 @@
     ]
   },
   "resources/css/filament/admin/theme.css": {
-    "file": "assets/theme-DPlok7eL.css",
+    "file": "assets/theme-CdJQOsB6.css",
     "src": "resources/css/filament/admin/theme.css"
   },
   "resources/css/filament/central/theme.css": {
-    "file": "assets/theme-TnayU49x.css",
+    "file": "assets/theme-zNK27SZe.css",
     "src": "resources/css/filament/central/theme.css",
     "isEntry": true,
     "name": "theme",

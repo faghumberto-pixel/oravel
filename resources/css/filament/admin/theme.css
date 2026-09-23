@@ -95,6 +95,35 @@
     font-weight: 600;
 }
 
+/* Grupo inteiro com a FONTE (nao o fundo) em laranja clarinho quando tem
+   o item ativo dentro dele (2026-09-23, pedido do usuario -- "dá pra saber
+   em qual grupo está trabalhando"). :has() com seletor descendente (nao
+   "~" irmão, como as regras acima) pra cobrir os dois formatos de grupo:
+   os planos (PMP, Financeiro...) E os que tem subitem-pai (Manutenção >
+   Operação > filhos, onde o item ativo fica aninhado dentro de outro
+   .fi-sidebar-item, nao irmão dele). Cor mais clara = a marca misturada
+   com branco (nao um tom fixo solto, pra acompanhar se a marca mudar). */
+.fi-sidebar-group:has(.fi-sidebar-item.fi-active) .fi-sidebar-group-label,
+.fi-sidebar-group:has(.fi-sidebar-item[aria-current="page"]) .fi-sidebar-group-label,
+.fi-sidebar-group:has(.fi-sidebar-item.fi-active) .fi-sidebar-item-label,
+.fi-sidebar-group:has(.fi-sidebar-item[aria-current="page"]) .fi-sidebar-item-label,
+.fi-sidebar-group:has(.fi-sidebar-item.fi-active) .fi-sidebar-item-icon,
+.fi-sidebar-group:has(.fi-sidebar-item[aria-current="page"]) .fi-sidebar-item-icon {
+    color: color-mix(in srgb, var(--oravel-primary) 55%, white) !important;
+}
+
+/* O item de fato selecionado se destaca do resto do grupo: laranja da
+   marca cheio (mais escuro que o resto do grupo) + negrito, pra achar
+   rapido ONDE dentro do grupo voce esta' -- nao so' EM QUAL grupo. Mesma
+   especificidade da regra acima (4 classes) -- o ".fi-sidebar-group"
+   extra aqui e' de proposito, pra ganhar no empate por ordem (esta regra
+   vem depois no arquivo), nao só por acaso. */
+.fi-sidebar-group .fi-sidebar-item.fi-active .fi-sidebar-item-label,
+.fi-sidebar-group .fi-sidebar-item[aria-current="page"] .fi-sidebar-item-label {
+    color: var(--oravel-primary) !important;
+    font-weight: 700 !important;
+}
+
 /* Destaque dos menus-pai (grupos de navegação) contra os submenus filhos
    (2026-09-23, pedido do usuario -- "confunde muito com os submenus").
    Antes eram cinza-claro (text-gray-500), mesmo peso visual que os itens
