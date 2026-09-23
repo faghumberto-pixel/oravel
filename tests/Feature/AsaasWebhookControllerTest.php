@@ -7,6 +7,7 @@ use App\Models\Plan;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class AsaasWebhookControllerTest extends TestCase
@@ -442,5 +443,121 @@ class AsaasWebhookControllerTest extends TestCase
         $tenant->refresh();
         // Tenant ainda está em ATRASADO porque o webhook foi de AccountReceivable
         $this->assertSame(Tenant::PAYMENT_STATUS_ATRASADO, $tenant->asaas_payment_status);
+    }
+
+    /**
+     * Payload de checkout (POST /v3/checkouts) tem um shape diferente do
+     * de payment: objeto "checkout", com "externalReference" (= tenant->id
+     * na criação, ver AsaasService::createTenantCheckout()) e "customer"
+     * (pode ou não ser o mesmo asaas_customer_id já sincronizado).
+     */
+    private function checkoutPayload(string $event, string $externalReference, ?string $customerId = 'cus_checkout_evt', string $checkoutId = 'che_123'): array
+    {
+        return [
+            'event' => $event,
+            'checkout' => array_filter([
+                'id' => $checkoutId,
+                'externalReference' => $externalReference,
+                'customer' => $customerId,
+                'status' => 'PAID',
+            ], fn ($v) => $v !== null),
+        ];
+    }
+
+    public function test_checkout_paid_marks_tenant_as_em_dia_and_approves_admin(): void
+    {
+        config(['services.asaas.webhook_token' => 'token-correto']);
+
+        $tenant = $this->makeTenant('cus_abc');
+        $admin = User::create([
+            'name' => 'Admin Pendente', 'email' => 'admin-pendente-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('senha12345'), 'tenant_id' => $tenant->id, 'is_approved' => false,
+        ]);
+
+        $response = $this->postJson('/api/webhooks/asaas', $this->checkoutPayload('CHECKOUT_PAID', $tenant->id), [
+            'asaas-access-token' => 'token-correto',
+        ]);
+
+        $response->assertOk();
+
+        $tenant->refresh();
+        $this->assertSame(Tenant::PAYMENT_STATUS_EM_DIA, $tenant->asaas_payment_status);
+        $this->assertNotNull($tenant->asaas_payment_updated_at);
+
+        $admin->refresh();
+        $this->assertTrue((bool) $admin->is_approved);
+    }
+
+    public function test_checkout_paid_casa_pelo_external_reference_nao_pelo_customer_id_ja_sincronizado(): void
+    {
+        config(['services.asaas.webhook_token' => 'token-correto']);
+
+        // Customer sincronizado por syncTenantCustomer() é diferente do
+        // customer que o evento de checkout traz -- exatamente o cenário
+        // que motivou casar por externalReference (tenant->id), não só
+        // por asaas_customer_id.
+        $tenant = $this->makeTenant('cus_sincronizado_antes');
+
+        $response = $this->postJson('/api/webhooks/asaas', $this->checkoutPayload('CHECKOUT_PAID', $tenant->id, 'cus_diferente_no_checkout'), [
+            'asaas-access-token' => 'token-correto',
+        ]);
+
+        $response->assertOk();
+
+        $tenant->refresh();
+        $this->assertSame(Tenant::PAYMENT_STATUS_EM_DIA, $tenant->asaas_payment_status);
+        // asaas_customer_id já sincronizado antes NÃO é sobrescrito
+        // (backfill só acontece quando ainda estava vazio).
+        $this->assertSame('cus_sincronizado_antes', $tenant->asaas_customer_id);
+    }
+
+    public function test_checkout_paid_faz_backfill_do_customer_id_quando_ainda_vazio(): void
+    {
+        config(['services.asaas.webhook_token' => 'token-correto']);
+
+        $plan = Plan::create([
+            'name' => 'Plano Asaas '.uniqid(), 'price' => 100, 'base_price' => 100, 'level' => 1,
+            'billing_cycle' => 'monthly', 'is_active' => true, 'features' => [],
+        ]);
+        $tenant = Tenant::create([
+            'name' => 'Tenant Sem Customer '.uniqid(), 'slug' => 'tenant-sem-customer-'.uniqid(),
+            'plan_id' => $plan->id, 'status' => 'active',
+        ]);
+        $this->assertNull($tenant->asaas_customer_id);
+
+        $this->postJson('/api/webhooks/asaas', $this->checkoutPayload('CHECKOUT_PAID', $tenant->id, 'cus_veio_do_checkout'), [
+            'asaas-access-token' => 'token-correto',
+        ])->assertOk();
+
+        $tenant->refresh();
+        $this->assertSame('cus_veio_do_checkout', $tenant->asaas_customer_id);
+    }
+
+    public function test_checkout_canceled_e_expired_marcam_tenant_como_cancelado(): void
+    {
+        config(['services.asaas.webhook_token' => 'token-correto']);
+
+        foreach (['CHECKOUT_CANCELED', 'CHECKOUT_EXPIRED'] as $event) {
+            $tenant = $this->makeTenant('cus_'.uniqid());
+            $tenant->update(['asaas_payment_status' => Tenant::PAYMENT_STATUS_EM_DIA]);
+
+            $this->postJson('/api/webhooks/asaas', $this->checkoutPayload($event, $tenant->id), [
+                'asaas-access-token' => 'token-correto',
+            ])->assertOk();
+
+            $tenant->refresh();
+            $this->assertSame(Tenant::PAYMENT_STATUS_CANCELADO, $tenant->asaas_payment_status, "evento {$event} deveria marcar cancelado");
+        }
+    }
+
+    public function test_checkout_event_sem_tenant_correspondente_nao_quebra(): void
+    {
+        config(['services.asaas.webhook_token' => 'token-correto']);
+
+        $response = $this->postJson('/api/webhooks/asaas', $this->checkoutPayload('CHECKOUT_PAID', (string) Str::uuid()), [
+            'asaas-access-token' => 'token-correto',
+        ]);
+
+        $response->assertOk();
     }
 }

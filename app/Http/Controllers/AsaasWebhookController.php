@@ -42,6 +42,17 @@ class AsaasWebhookController extends Controller
 
     private const PAYMENT_CANCELLED_EVENTS = ['PAYMENT_DELETED', 'PAYMENT_REFUNDED'];
 
+    /**
+     * Eventos do Checkout (POST /v3/checkouts, ver
+     * AsaasService::createTenantCheckout()) -- payload tem um objeto
+     * "checkout", não "payment" como os eventos de payment tratados acima.
+     * CHECKOUT_PAID é quem de fato libera o acesso do Tenant (equivalente
+     * a PAYMENT_CONFIRMED/PAYMENT_RECEIVED pro fluxo antigo de assinatura).
+     */
+    private const CHECKOUT_OK_EVENTS = ['CHECKOUT_PAID'];
+
+    private const CHECKOUT_CANCELLED_EVENTS = ['CHECKOUT_CANCELED', 'CHECKOUT_EXPIRED'];
+
     public function handle(Request $request): JsonResponse
     {
         $expectedToken = config('services.asaas.webhook_token');
@@ -70,10 +81,28 @@ class AsaasWebhookController extends Controller
     private function process(array $payload): void
     {
         $event = $payload['event'] ?? null;
+
+        if (blank($event)) {
+            Log::info('AsaasWebhookController: payload sem event, ignorado.', ['payload' => $payload]);
+
+            return;
+        }
+
+        // Eventos de checkout (shape diferente: "checkout", não "payment")
+        // -- tratados à parte, antes de exigir "payment" abaixo.
+        if (in_array($event, [...self::CHECKOUT_OK_EVENTS, ...self::CHECKOUT_CANCELLED_EVENTS], true)) {
+            $checkout = $payload['checkout'] ?? null;
+            if (is_array($checkout)) {
+                $this->processTenantCheckout($checkout, $event);
+            }
+
+            return;
+        }
+
         $payment = $payload['payment'] ?? null;
 
-        if (blank($event) || ! is_array($payment)) {
-            Log::info('AsaasWebhookController: payload sem event/payment, ignorado.', ['payload' => $payload]);
+        if (! is_array($payment)) {
+            Log::info('AsaasWebhookController: payload sem payment, ignorado.', ['payload' => $payload]);
 
             return;
         }
@@ -132,6 +161,67 @@ class AsaasWebhookController extends Controller
             'asaas_last_payment_id' => $paymentId,
             'asaas_payment_updated_at' => now(),
         ]);
+
+        if ($newStatus === Tenant::PAYMENT_STATUS_EM_DIA) {
+            User::where('tenant_id', $tenant->id)->where('is_approved', false)->update(['is_approved' => true]);
+        }
+    }
+
+    /**
+     * Processa evento de checkout (assinatura via cartão/Pix, ver
+     * AsaasService::createTenantCheckout()). Casa o tenant pelo
+     * externalReference (= tenant->id, setado na criação do checkout)
+     * PRIMEIRO, não pelo asaas_customer_id -- o Checkout não referencia um
+     * customer já existente (só "customerData"), então o customer_id que
+     * a Asaas de fato usou pode não ser o mesmo que syncTenantCustomer()
+     * já tinha gravado. Faz fallback pra asaas_checkout_id só se o
+     * externalReference vier vazio (não deveria acontecer, é sempre
+     * mandado na criação, mas evita ficar cego se a Asaas omitir por
+     * algum motivo).
+     *
+     * @param  array<string, mixed>  $checkout
+     */
+    private function processTenantCheckout(array $checkout, string $event): void
+    {
+        $externalReference = $checkout['externalReference'] ?? null;
+        $checkoutId = $checkout['id'] ?? null;
+
+        $tenant = null;
+        if (filled($externalReference)) {
+            $tenant = Tenant::find($externalReference);
+        }
+        if (! $tenant && filled($checkoutId)) {
+            $tenant = Tenant::where('asaas_checkout_id', $checkoutId)->first();
+        }
+
+        if (! $tenant) {
+            Log::info('AsaasWebhookController: nenhum tenant encontrado para o checkout.', ['checkout_id' => $checkoutId, 'external_reference' => $externalReference]);
+
+            return;
+        }
+
+        $newStatus = match (true) {
+            in_array($event, self::CHECKOUT_OK_EVENTS, true) => Tenant::PAYMENT_STATUS_EM_DIA,
+            in_array($event, self::CHECKOUT_CANCELLED_EVENTS, true) => Tenant::PAYMENT_STATUS_CANCELADO,
+            default => null,
+        };
+
+        if ($newStatus === null) {
+            return;
+        }
+
+        $updates = [
+            'asaas_payment_status' => $newStatus,
+            'asaas_payment_updated_at' => now(),
+        ];
+
+        // Backfill: só sobrescreve se ainda não tinha um customer_id
+        // sincronizado (syncTenantCustomer() já pode ter gravado um antes).
+        if (blank($tenant->asaas_customer_id) && filled($checkout['customer'] ?? null)) {
+            $updates['asaas_customer_id'] = $checkout['customer'];
+        }
+
+        $tenant->update($updates);
 
         if ($newStatus === Tenant::PAYMENT_STATUS_EM_DIA) {
             User::where('tenant_id', $tenant->id)->where('is_approved', false)->update(['is_approved' => true]);

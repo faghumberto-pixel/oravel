@@ -90,8 +90,7 @@ class AsaasCheckoutControllerTest extends TestCase
         config(['services.asaas.api_key' => 'test-key']);
         Http::fake([
             'sandbox.asaas.com/*/customers' => Http::response(['id' => 'cus_checkout'], 200),
-            'sandbox.asaas.com/*/subscriptions' => Http::response(['id' => 'sub_checkout'], 200),
-            'sandbox.asaas.com/*/payments*' => Http::response(['data' => [['invoiceUrl' => 'https://www.asaas.com/i/pay_checkout']]], 200),
+            'sandbox.asaas.com/*/checkouts' => Http::response(['id' => 'che_checkout', 'link' => 'https://sandbox.asaas.com/checkoutSession/show/che_checkout'], 200),
         ]);
 
         $plan = $this->makePlan();
@@ -102,7 +101,7 @@ class AsaasCheckoutControllerTest extends TestCase
         $this->assertNotNull($tenant);
         $this->assertSame($plan->id, $tenant->plan_id);
         $this->assertSame('cus_checkout', $tenant->asaas_customer_id);
-        $this->assertSame('sub_checkout', $tenant->asaas_subscription_id);
+        $this->assertSame('che_checkout', $tenant->asaas_checkout_id);
         $this->assertSame(Client::NICHE_CONSTRUCAO_CIVIL, $tenant->segment);
         $this->assertSame(['gerador', 'munk'], $tenant->equipment_types);
         $this->assertSame('Limeira', $tenant->cidade);
@@ -115,7 +114,21 @@ class AsaasCheckoutControllerTest extends TestCase
         $this->assertFalse((bool) $admin->is_approved, 'Acesso não pode ser liberado antes da confirmação de pagamento');
         $this->assertGuest();
 
-        $response->assertRedirect('https://www.asaas.com/i/pay_checkout');
+        $response->assertRedirect('https://sandbox.asaas.com/checkoutSession/show/che_checkout');
+
+        // O checkout em si é criado com o tenant como externalReference
+        // (não referencia o customer_id já sincronizado -- ver
+        // AsaasService::createTenantCheckout()) e cobrança recorrente via
+        // cartão/Pix.
+        Http::assertSent(function ($request) use ($tenant) {
+            if (! str_contains($request->url(), '/checkouts')) {
+                return true;
+            }
+
+            return $request['externalReference'] === $tenant->id
+                && $request['billingTypes'] === ['CREDIT_CARD', 'PIX']
+                && $request['chargeTypes'] === ['RECURRENT'];
+        });
     }
 
     public function test_checkout_redirects_to_pending_page_when_invoice_url_unavailable(): void

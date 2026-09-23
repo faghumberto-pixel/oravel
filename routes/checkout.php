@@ -16,4 +16,13 @@ Route::middleware('guest')->group(function () {
     Route::get('/assinar', [AsaasCheckoutController::class, 'create'])->name('checkout.create');
     Route::post('/assinar', [AsaasCheckoutController::class, 'store'])->name('checkout.store');
     Route::get('/assinar/pendente', fn () => view('checkout.pending'))->name('checkout.pending');
+
+    // callback do Checkout da Asaas (POST /v3/checkouts, ver
+    // AsaasService::createTenantCheckout()) -- só controla a experiência
+    // do usuário, NUNCA confirma pagamento (a Asaas é explícita sobre
+    // isso: "não considere successUrl como confirmação financeira"). A
+    // liberação de acesso real acontece só via webhook (CHECKOUT_PAID),
+    // ver AsaasWebhookController.
+    Route::get('/assinar/sucesso', fn () => view('checkout.success'))->name('checkout.success');
+    Route::get('/assinar/cancelado', fn () => view('checkout.cancelled'))->name('checkout.cancelled');
 });

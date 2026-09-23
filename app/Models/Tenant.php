@@ -49,6 +49,7 @@ class Tenant extends Model
         'features',
         'asaas_customer_id',
         'asaas_subscription_id',
+        'asaas_checkout_id',
         'asaas_status',
         'asaas_synced_at',
         'asaas_payment_status',

@@ -131,18 +131,23 @@ class AsaasCheckoutController extends Controller
         // primeiro pagamento -- ver canAccessPanel() em User.
         $admin->forceFill(['is_approved' => false])->save();
 
+        // syncTenantCustomer() continua sendo chamado -- best-effort, grava
+        // tenant.asaas_customer_id o quanto antes (não depende de esperar o
+        // webhook do checkout, útil pro resto do sistema que já lê esse
+        // campo). O checkout em si não referencia esse customer id (ver
+        // AsaasService::createTenantCheckout()), então o webhook casa pelo
+        // externalReference (tenant->id), não só pelo customer id.
         $asaas->syncTenantCustomer($tenant);
         $tenant->refresh();
 
-        $invoiceUrl = $tenant->asaas_subscription_id
-            ? $asaas->getFirstInvoiceUrl($tenant->asaas_subscription_id)
-            : null;
+        $checkoutUrl = $asaas->createTenantCheckout($tenant);
 
-        if ($invoiceUrl) {
-            // Sem login algum -- a fatura abre fora do domínio Oravel,
-            // pro cliente pagar. O acesso ao painel só é liberado pelo
-            // webhook (AsaasWebhookController) quando o pagamento cair.
-            return redirect()->away($invoiceUrl);
+        if ($checkoutUrl) {
+            // Sem login algum -- o checkout abre fora do domínio Oravel,
+            // pro cliente pagar no cartão/Pix. O acesso ao painel só é
+            // liberado pelo webhook (AsaasWebhookController) quando o
+            // evento CHECKOUT_PAID chegar.
+            return redirect()->away($checkoutUrl);
         }
 
         // Assinatura falhou ao sincronizar (Asaas fora do ar, etc) --

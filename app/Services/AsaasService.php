@@ -118,6 +118,92 @@ class AsaasService
     }
 
     /**
+     * Cria a assinatura recorrente da Asaas via Checkout (cartão de crédito
+     * + Pix), no lugar do fluxo antigo (createSubscription() com
+     * billingType UNDEFINED + getFirstInvoiceUrl() abaixo, que ainda existe
+     * e continua funcionando pra quem já usa). Pedido do usuário
+     * 2026-09-23, ver https://docs.asaas.com/docs/checkout-para-cartao-de-credito.
+     * Devolve o link do checkout pronto pra redirecionar o cliente, ou null
+     * se falhar (sem API key, sem MRR definido, ou erro de API) -- mesmo
+     * tratamento defensivo de syncTenantCustomer()/syncTenantSubscription():
+     * nunca lança, só loga e marca 'error'.
+     *
+     * externalReference = tenant->id (não o customer id): o schema do
+     * Checkout (POST /v3/checkouts) não tem um campo pra referenciar um
+     * customer já existente -- só "customerData" (objeto com os dados, que
+     * a Asaas casa ou cria um customer por conta própria; não há garantia
+     * de que seja o MESMO customer_id que syncTenantCustomer() já gravou
+     * em tenant.asaas_customer_id). Por isso o webhook
+     * (AsaasWebhookController) casa o evento de checkout pelo
+     * externalReference primeiro, não só pelo asaas_customer_id.
+     */
+    public function createTenantCheckout(Tenant $tenant): ?string
+    {
+        if (blank($this->apiKey)) {
+            Log::warning('AsaasService: API key não configurada, checkout não criado.', ['tenant_id' => $tenant->id]);
+            $tenant->update(['asaas_status' => 'error']);
+
+            return null;
+        }
+
+        if (blank($tenant->cpf_cnpj)) {
+            Log::info('AsaasService: tenant sem CPF/CNPJ, checkout não criado.', ['tenant_id' => $tenant->id]);
+            $tenant->update(['asaas_status' => 'pending']);
+
+            return null;
+        }
+
+        if (blank($tenant->mrr_value) || (float) $tenant->mrr_value <= 0) {
+            Log::info('AsaasService: tenant sem MRR definido, checkout não criado.', ['tenant_id' => $tenant->id]);
+
+            return null;
+        }
+
+        $planName = $tenant->plan?->name ?? 'Oravel';
+
+        try {
+            $checkout = $this->createCheckout([
+                'billingTypes' => ['CREDIT_CARD', 'PIX'],
+                'chargeTypes' => ['RECURRENT'],
+                'minutesToExpire' => 60,
+                'externalReference' => $tenant->id,
+                'callback' => [
+                    'successUrl' => route('checkout.success'),
+                    'cancelUrl' => route('checkout.cancelled'),
+                    'expiredUrl' => route('checkout.cancelled'),
+                ],
+                'items' => [[
+                    'name' => "Assinatura Oravel — {$planName}",
+                    'description' => "Assinatura recorrente do plano {$planName}",
+                    'quantity' => 1,
+                    'value' => (float) $tenant->mrr_value,
+                ]],
+                'subscription' => [
+                    'cycle' => $this->mapBillingCycle($tenant->plan?->billing_cycle),
+                    'nextDueDate' => now()->addDays(7)->toDateString(),
+                ],
+                'customerData' => [
+                    'name' => $tenant->name,
+                    'cpfCnpj' => preg_replace('/\D/', '', $tenant->cpf_cnpj),
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            Log::warning('AsaasService: falha ao criar checkout.', ['tenant_id' => $tenant->id, 'error' => $e->getMessage()]);
+            $tenant->update(['asaas_status' => 'error']);
+
+            return null;
+        }
+
+        $tenant->update([
+            'asaas_checkout_id' => $checkout['id'] ?? null,
+            'asaas_status' => 'synced',
+            'asaas_synced_at' => now(),
+        ]);
+
+        return $checkout['link'] ?? null;
+    }
+
+    /**
      * URL da fatura da primeira cobrança gerada pela assinatura -- é pra
      * onde o cliente recém-cadastrado é redirecionado no fluxo de
      * autoatendimento (ver AsaasCheckoutController) pra efetivamente
@@ -206,6 +292,24 @@ class AsaasService
         $response = Http::withHeaders([
             'access_token' => $this->apiKey,
         ])->post("{$this->baseUrl}/payments", $data);
+
+        if ($response->failed()) {
+            throw new \Exception('ASAAS Error: '.$response->body());
+        }
+
+        return $response->json();
+    }
+
+    /**
+     * POST /checkouts -- checkout hospedado pela Asaas (cartão de crédito
+     * e/ou Pix), diferente de createPayment()/createSubscription(). Ver
+     * createTenantCheckout() acima pro uso real (assinatura do Tenant).
+     */
+    public function createCheckout(array $data): array
+    {
+        $response = Http::withHeaders([
+            'access_token' => $this->apiKey,
+        ])->post("{$this->baseUrl}/checkouts", $data);
 
         if ($response->failed()) {
             throw new \Exception('ASAAS Error: '.$response->body());
