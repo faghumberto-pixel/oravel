@@ -31,4 +31,11 @@ Route::middleware('guest')->group(function () {
     // Checkout de pagamento é de fato criado (2026-09-23, ver
     // AsaasCheckoutController::continueAfterSignature()).
     Route::get('/assinar/continuar/{token}', [AsaasCheckoutController::class, 'continueAfterSignature'])->name('checkout.continue');
+
+    // Recuperação de link pra quem assinou mas fechou a aba antes de
+    // pagar (2026-09-23, pedido do usuário). Sem token -- só o e-mail do
+    // cadastro, já que o link original não fica salvo em lugar nenhum
+    // acessível pelo cliente depois que a página fecha.
+    Route::get('/assinar/recuperar', [AsaasCheckoutController::class, 'recoverForm'])->name('checkout.recover');
+    Route::post('/assinar/recuperar', [AsaasCheckoutController::class, 'recoverSubmit'])->name('checkout.recover.submit');
 });

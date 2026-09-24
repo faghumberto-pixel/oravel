@@ -1138,13 +1138,29 @@
             }
 
             // Sucesso!
-            successDiv.textContent = result.message;
-            successDiv.style.display = 'block';
+            const isSubscriptionContract = @json($isSubscriptionContract);
 
-            // Redireciona após 2 segundos
-            setTimeout(() => {
-                window.location.href = result.redirect;
-            }, 2000);
+            if (isSubscriptionContract) {
+                // Contrato de Assinatura: NÃO redireciona sozinho -- deixa
+                // o link visível na tela, com botão manual (pedido do
+                // usuário 2026-09-23: "esse link de checkout tem que
+                // estar disponível na tela caso o cliente só faça o
+                // cadastro e deixe para pagar depois"). Um redirect
+                // automático silencioso faz o cliente perder o link se
+                // fechar a aba antes da página de pagamento carregar.
+                successDiv.innerHTML = result.message
+                    + '<br><br><a href="' + result.redirect + '" class="btn btn-primary btn-lg" style="display:inline-block;text-decoration:none;text-align:center;">Continuar para pagamento</a>'
+                    + '<br><br><small>Guarde este link -- ele leva direto pro pagamento. Se você fechar esta página antes de pagar, pode recuperá-lo em <a href="' + '{{ route('checkout.recover') }}' + '">' + '{{ url('/assinar/recuperar') }}' + '</a>.</small>';
+                successDiv.style.display = 'block';
+            } else {
+                successDiv.textContent = result.message;
+                successDiv.style.display = 'block';
+
+                // Redireciona após 2 segundos (Contract/OS -- comportamento original)
+                setTimeout(() => {
+                    window.location.href = result.redirect;
+                }, 2000);
+            }
 
         } catch (error) {
             errorDiv.textContent = error.message || 'Erro ao processar assinatura';

@@ -6,6 +6,7 @@ use App\Models\Client;
 use App\Models\DocumentSignature;
 use App\Models\Plan;
 use App\Models\Tenant;
+use App\Models\User;
 use App\Rules\CpfCnpj;
 use App\Services\AsaasService;
 use App\Services\SignatureService;
@@ -208,6 +209,69 @@ class AsaasCheckoutController extends Controller
         // -- o cadastro e a assinatura já existem, mas sem link de
         // pagamento pra mandar o cliente.
         return redirect()->route('checkout.pending');
+    }
+
+    /**
+     * Recuperação de link pra quem já se cadastrou e assinou, mas fechou
+     * a aba antes de pagar (pedido do usuário 2026-09-23: "caso o
+     * cliente só faça o cadastro e deixe para pagar depois, e nao tenha
+     * o link para o checkout"). Sem exigir token nenhum -- só o e-mail
+     * que usou no cadastro, já que o link de assinatura/pagamento em si
+     * não fica salvo em lugar nenhum acessível pelo cliente depois que a
+     * página fecha.
+     */
+    public function recoverForm(): View
+    {
+        return view('checkout.recover');
+    }
+
+    /**
+     * Uma vez que o pagamento é confirmado, esse fluxo de recuperação
+     * "pode sumir" (pedido do usuário) -- por isso verifica is_approved
+     * PRIMEIRO e manda pro login normal em vez de gerar mais um link de
+     * pagamento pra quem já está liberado.
+     */
+    public function recoverSubmit(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'email' => ['required', 'email'],
+        ]);
+
+        $admin = User::where('email', $data['email'])
+            ->where('role', 'admin')
+            ->whereNotNull('tenant_id')
+            ->first();
+
+        if (! $admin) {
+            return back()->withErrors(['email' => 'Não encontramos nenhum cadastro com esse e-mail.'])->withInput();
+        }
+
+        if ($admin->is_approved) {
+            return back()->withErrors(['email' => 'Esse cadastro já está liberado -- faça login normalmente em app.oravel.com.br/admin/login.'])->withInput();
+        }
+
+        $tenant = $admin->tenant;
+
+        if (! $tenant) {
+            return back()->withErrors(['email' => 'Não encontramos nenhum cadastro com esse e-mail.'])->withInput();
+        }
+
+        $signature = DocumentSignature::where('signable_type', Tenant::class)
+            ->where('signable_id', $tenant->id)
+            ->latest('created_at')
+            ->first();
+
+        if (! $signature) {
+            return back()->withErrors(['email' => 'Não encontramos nenhum contrato pendente pra esse e-mail. Entre em contato com o suporte.'])->withInput();
+        }
+
+        // Ainda não assinou o contrato -- manda pra etapa de assinatura,
+        // não direto pro pagamento (a trava continua valendo aqui).
+        if (! $signature->is_signed) {
+            return redirect()->route('signature.sign', ['token' => $signature->token]);
+        }
+
+        return redirect()->route('checkout.continue', ['token' => $signature->token]);
     }
 
     private function uniqueSlug(string $companyName): string
