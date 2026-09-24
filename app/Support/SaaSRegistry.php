@@ -26,28 +26,63 @@ class SaaSRegistry
 
         $modules = [];
 
-        foreach (glob(app_path('Models').'/*.php') as $file) {
-            $class = 'App\\Models\\'.basename($file, '.php');
+        foreach (static::modelDirectories() as $namespace => $dir) {
+            foreach (glob($dir.'/*.php') as $file) {
+                $class = $namespace.'\\'.basename($file, '.php');
 
-            if (! class_exists($class)) {
-                continue;
+                if (! class_exists($class)) {
+                    continue;
+                }
+
+                if (! method_exists($class, 'isSaaSModule') || ! $class::isSaaSModule()) {
+                    continue;
+                }
+
+                $modules[] = [
+                    'model' => $class,
+                    'slug' => $class::saasPermissionSlug(),
+                    'feature' => $class::saasFeatureKey(),
+                    'label' => $class::saasModuleLabel(),
+                ];
             }
-
-            if (! method_exists($class, 'isSaaSModule') || ! $class::isSaaSModule()) {
-                continue;
-            }
-
-            $modules[] = [
-                'model' => $class,
-                'slug' => $class::saasPermissionSlug(),
-                'feature' => $class::saasFeatureKey(),
-                'label' => $class::saasModuleLabel(),
-            ];
         }
 
         usort($modules, fn ($a, $b) => strcmp($a['label'] ?? '', $b['label'] ?? ''));
 
         return static::$cache = $modules;
+    }
+
+    /**
+     * Bug real achado 2026-09-24: o scan cobria só app/Models/*.php
+     * (namespace App\Models), então todo model dentro de
+     * app/Domain/{Dominio}/Models/ (ex: App\Domain\Fleet\Models --
+     * ContractMeasurement, RentalHourFranchise, RentalOverageCharge, as
+     * *Specification) ficava INVISÍVEL pro registro inteiro -- mesmo
+     * declarando HasSaaSMetadata e saasFeatureKey corretamente. Isso não
+     * só escondia esses módulos do checklist de Contratos/Planos (sem
+     * chave, não tinha como marcar/desmarcar), como fazia
+     * AbstractPolicy::getFeatureKeyFromModel() (via SaaSRegistry::forModel())
+     * retornar null pra eles -- e um featureKey null pula o gate de plano
+     * por inteiro, liberando o módulo pra QUALQUER contrato,
+     * independentemente do que foi marcado. Descoberta agora inclui
+     * qualquer app/Domain/{Dominio}/Models/ existente, sem precisar
+     * hardcodar "Fleet" -- novo domínio adicionado no futuro entra sozinho.
+     *
+     * @return array<string, string> namespace => diretório absoluto
+     */
+    protected static function modelDirectories(): array
+    {
+        $directories = ['App\\Models' => app_path('Models')];
+
+        foreach (glob(app_path('Domain').'/*', GLOB_ONLYDIR) ?: [] as $domainDir) {
+            $modelsDir = $domainDir.'/Models';
+
+            if (is_dir($modelsDir)) {
+                $directories['App\\Domain\\'.basename($domainDir).'\\Models'] = $modelsDir;
+            }
+        }
+
+        return $directories;
     }
 
     /**
