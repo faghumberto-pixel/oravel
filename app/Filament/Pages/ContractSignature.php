@@ -90,6 +90,11 @@ class ContractSignature extends Page implements HasForms
                             ->required()
                             ->helperText('Armazenamento em Brasil, encriptação, isolamento de dados, direitos do titular'),
 
+                        Forms\Components\Checkbox::make('agree_license')
+                            ->label('Concordo com a Licença de Uso do software')
+                            ->required()
+                            ->helperText('Uso liberado enquanto o Contrato de Assinatura estiver ativo e em dia; não transfere propriedade do software'),
+
                         Forms\Components\Checkbox::make('agree_legal')
                             ->label('Confirmo que tenho autoridade legal para assinar este contrato')
                             ->required(),
@@ -108,7 +113,7 @@ class ContractSignature extends Page implements HasForms
         $tenant = auth()->user()->tenant;
 
         try {
-            $timestamp = now()->toUtc()->format('Y-m-d\TH:i:s\Z');
+            $timestamp = now()->utc()->format('Y-m-d\TH:i:s\Z');
             $dataToSign = $data['company'].'|'.$data['email'].'|'.$data['name'].'|'.$timestamp;
 
             $hash = hash('sha256', $dataToSign);
@@ -124,6 +129,9 @@ class ContractSignature extends Page implements HasForms
                 'metadata' => [
                     'signed_by_user_id' => auth()->id(),
                     'signed_from' => 'admin_panel',
+                    'agree_sla' => (bool) ($data['agree_sla'] ?? false),
+                    'agree_lgpd' => (bool) ($data['agree_lgpd'] ?? false),
+                    'agree_license' => (bool) ($data['agree_license'] ?? false),
                 ],
             ]);
 

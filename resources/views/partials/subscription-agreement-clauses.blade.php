@@ -39,10 +39,12 @@
 </div>
 
 <div class="clause">
-    <span class="clause-title">4. Nível de serviço e proteção de dados (SLA/LGPD).</span>
-    A prestação do serviço observa os termos de disponibilidade, backup e conformidade com a
-    Lei Geral de Proteção de Dados (LGPD) descritos em www.oravel.com.br/sla, parte integrante
-    deste contrato independentemente de transcrição.
+    <span class="clause-title">4. Nível de serviço, proteção de dados e licença de uso (SLA/LGPD/Licença).</span>
+    A prestação do serviço observa os termos de disponibilidade, backup, conformidade com a Lei
+    Geral de Proteção de Dados (LGPD) e licenciamento de uso do software descritos,
+    respectivamente, em {{ url('/legal/sla') }}, {{ url('/legal/lgpd') }} e
+    {{ url('/legal/licenca-de-uso') }}, partes integrantes deste contrato independentemente de
+    transcrição.
 </div>
 
 <div class="clause">

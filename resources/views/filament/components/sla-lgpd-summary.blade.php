@@ -21,9 +21,21 @@
         </ul>
     </div>
 
+    <div>
+        <h3 class="font-semibold text-gray-900 dark:text-white">📄 Licença de Uso</h3>
+        <ul class="mt-2 space-y-1 text-sm text-gray-600 dark:text-gray-300">
+            <li>✅ Uso liberado enquanto o Contrato de Assinatura estiver ativo e em dia</li>
+            <li>✅ Não exclusiva, intransferível — só pra uso próprio do Contratante</li>
+            <li>✅ Seus dados continuam seus mesmo se a licença terminar</li>
+        </ul>
+    </div>
+
     <div class="rounded bg-blue-50 p-3 dark:bg-blue-900">
         <p class="text-xs text-blue-800 dark:text-blue-200">
-            <strong>📄 Documentos Completos:</strong> Acesse os PDFs do SLA e DPA em <code class="bg-blue-100 px-1 dark:bg-blue-800">www.oravel.com.br/sla</code>
+            <strong>📄 Documentos Completos:</strong>
+            <a href="{{ route('legal.sla') }}" target="_blank" class="underline">SLA</a>,
+            <a href="{{ route('legal.lgpd') }}" target="_blank" class="underline">LGPD</a> e
+            <a href="{{ route('legal.licenca-de-uso') }}" target="_blank" class="underline">Licença de Uso</a>
         </p>
     </div>
 </div>

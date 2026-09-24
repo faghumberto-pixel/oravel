@@ -68,6 +68,15 @@ Route::redirect('/admin/innova/categories', '/admin/innova/bill-categories');
 // etc. desativadas junto, ja que pertencem ao mesmo site institucional.
 Route::get('/', fn () => redirect()->to('/admin'))->name('home');
 
+// Documentos legais (SLA, LGPD, Licença de Uso) servidos DENTRO do app --
+// achado 2026-09-24: os links em ComplianceStatus/sla-lgpd-summary
+// apontavam pra www.oravel.com.br/sla e /lgpd, páginas que nunca existiram
+// no site institucional (404). Públicas, sem auth de propósito -- o
+// Contratante precisa poder ler antes mesmo de logar/assinar.
+Route::get('/legal/sla', fn () => view('legal.sla'))->name('legal.sla');
+Route::get('/legal/lgpd', fn () => view('legal.lgpd'))->name('legal.lgpd');
+Route::get('/legal/licenca-de-uso', fn () => view('legal.licenca-de-uso'))->name('legal.licenca-de-uso');
+
 // Publica, sem auth de proposito -- e' a portaria/guarita escaneando o QR
 // no celular dela, nao necessariamente logada no sistema.
 Route::get('/portaria/verificar/{token}', function (string $token) {

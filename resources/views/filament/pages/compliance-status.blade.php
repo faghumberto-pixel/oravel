@@ -92,13 +92,18 @@
         <h3 class="mb-4 font-semibold text-gray-900 dark:text-white">📚 Documentos e Links Úteis</h3>
         <ul class="space-y-2">
             <li>
-                <a href="https://www.oravel.com.br/sla" target="_blank" class="text-orange-600 hover:underline dark:text-orange-400">
-                    → Acordos de Nível de Serviço (SLA)
+                <a href="{{ route('legal.sla') }}" target="_blank" class="text-orange-600 hover:underline dark:text-orange-400">
+                    → Acordo de Nível de Serviço (SLA)
                 </a>
             </li>
             <li>
-                <a href="https://www.oravel.com.br/lgpd" target="_blank" class="text-orange-600 hover:underline dark:text-orange-400">
+                <a href="{{ route('legal.lgpd') }}" target="_blank" class="text-orange-600 hover:underline dark:text-orange-400">
                     → Conformidade LGPD
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('legal.licenca-de-uso') }}" target="_blank" class="text-orange-600 hover:underline dark:text-orange-400">
+                    → Contrato de Licença de Uso
                 </a>
             </li>
             <li>
