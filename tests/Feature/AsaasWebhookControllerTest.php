@@ -146,7 +146,11 @@ class AsaasWebhookControllerTest extends TestCase
         ]);
 
         $response->assertOk();
-        $this->assertSame(Tenant::PAYMENT_STATUS_EM_DIA, $tenant->fresh()->asaas_payment_status);
+        // Bug real corrigido 2026-09-23: a coluna tinha default('em_dia')
+        // NOT NULL, mascarando "nunca sincronizado" como "pago". Um
+        // tenant novo, nunca tocado por nenhum evento real, deve ficar
+        // NULL -- não 'em_dia'.
+        $this->assertNull($tenant->fresh()->asaas_payment_status);
     }
 
     public function test_event_for_unknown_customer_does_not_error(): void
@@ -184,7 +188,9 @@ class AsaasWebhookControllerTest extends TestCase
         ])->assertOk();
 
         $this->assertSame(Tenant::PAYMENT_STATUS_ATRASADO, $tenantA->fresh()->asaas_payment_status);
-        $this->assertSame(Tenant::PAYMENT_STATUS_EM_DIA, $tenantB->fresh()->asaas_payment_status);
+        // tenantB nunca recebeu evento nenhum -- fica NULL (default
+        // corrigido 2026-09-23), não 'em_dia'.
+        $this->assertNull($tenantB->fresh()->asaas_payment_status);
     }
 
     public function test_payment_confirmation_approves_pending_admin_from_checkout(): void

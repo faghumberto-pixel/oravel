@@ -7,7 +7,6 @@ use App\Models\Tenant;
 use Filament\Actions;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\BadgeEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -45,29 +44,38 @@ class ViewTenantCompliance extends ViewRecord
 
                 Section::make('Status de Conformidade')
                     ->schema([
-                        BadgeEntry::make('signature_status')
+                        TextEntry::make('signature_status')
                             ->label('Contrato SLA+LGPD')
+                            ->badge()
                             ->getStateUsing(function (Tenant $record) {
                                 if ($record->signature) {
-                                    return '✅ Assinado em ' . $record->signature->signed_at->format('d/m/Y');
+                                    return '✅ Assinado em '.$record->signature->signed_at->format('d/m/Y');
                                 }
                                 if ($record->signature_required_by && now()->isAfter($record->signature_required_by)) {
-                                    return '⚠️ VENCIDO desde ' . $record->signature_required_by->format('d/m/Y');
+                                    return '⚠️ VENCIDO desde '.$record->signature_required_by->format('d/m/Y');
                                 }
                                 if ($record->signature_required_by) {
                                     $days = now()->diffInDays($record->signature_required_by, false);
+
                                     return "⏳ Pendente ({$days} dias)";
                                 }
+
                                 return '❓ Sem prazo definido';
                             })
                             ->color(function (Tenant $record) {
-                                if ($record->signature) return 'success';
-                                if ($record->signature_required_by && now()->isAfter($record->signature_required_by)) return 'danger';
+                                if ($record->signature) {
+                                    return 'success';
+                                }
+                                if ($record->signature_required_by && now()->isAfter($record->signature_required_by)) {
+                                    return 'danger';
+                                }
+
                                 return 'warning';
                             }),
 
-                        BadgeEntry::make('payment_status')
+                        TextEntry::make('payment_status')
                             ->label('Pagamento')
+                            ->badge()
                             ->getStateUsing(fn (Tenant $record) => match ($record->asaas_payment_status) {
                                 'em_dia' => '✅ Em Dia',
                                 'atrasado' => '⚠️ Atrasado',
@@ -81,23 +89,27 @@ class ViewTenantCompliance extends ViewRecord
                                 };
                             }),
 
-                        BadgeEntry::make('documentation_status')
+                        TextEntry::make('documentation_status')
                             ->label('Documentação')
+                            ->badge()
                             ->getStateUsing(fn (Tenant $record) => $record->cpf_cnpj ? '✅ Completa' : '⏳ Incompleta')
                             ->color(fn (Tenant $record) => $record->cpf_cnpj ? 'success' : 'warning'),
 
-                        BadgeEntry::make('access_status')
+                        TextEntry::make('access_status')
                             ->label('Acesso')
+                            ->badge()
                             ->getStateUsing(function (Tenant $record) {
-                                if (!$record->signature_required_by || !now()->isAfter($record->signature_required_by)) {
+                                if (! $record->signature_required_by || ! now()->isAfter($record->signature_required_by)) {
                                     return '✅ Ativo';
                                 }
+
                                 return '⚠️ Suspenso (prazo vencido)';
                             })
                             ->color(function (Tenant $record) {
-                                if (!$record->signature_required_by || !now()->isAfter($record->signature_required_by)) {
+                                if (! $record->signature_required_by || ! now()->isAfter($record->signature_required_by)) {
                                     return 'success';
                                 }
+
                                 return 'danger';
                             }),
                     ])
