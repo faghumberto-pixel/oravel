@@ -214,11 +214,13 @@ class CentralPanelProvider extends PanelProvider
                     ->locale('pt-br')
             )
             ->plugin(
-                // central so e acessado por super admins (ver CLAUDE.md) -- forcar 2FA
-                // aqui equivale a forcar 2FA so pra eles, sem logica extra de role.
+                // 2FA obrigatorio (force: true) causou lockout do super admin
+                // duas vezes (perda do dispositivo autenticador, sem forma de
+                // entrar pra desativar) -- pedido do usuario 2026-09-24 pra
+                // tornar opcional, igual ja e' no painel admin.
                 BreezyCore::make()
                     ->myProfile()
-                    ->enableTwoFactorAuthentication(force: true)
+                    ->enableTwoFactorAuthentication()
             )
             ->userMenuItems([
                 // chave != 'account' de proposito -- ver comentario em AdminPanelProvider
