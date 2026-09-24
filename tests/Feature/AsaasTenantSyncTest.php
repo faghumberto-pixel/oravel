@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Central\Resources\TenantResource\Pages\CreateTenant;
 use App\Filament\Central\Resources\TenantResource\Pages\EditTenant;
+use App\Models\DocumentSignature;
 use App\Models\Plan;
 use App\Models\Tenant;
 use App\Models\User;
@@ -196,6 +197,118 @@ class AsaasTenantSyncTest extends TestCase
         $this->assertNotNull($tenant);
         $this->assertSame('cus_painel_central', $tenant->asaas_customer_id);
         $this->assertSame('synced', $tenant->asaas_status);
+    }
+
+    /**
+     * Contrato de Assinatura também no cadastro manual pela Central
+     * (2026-09-23, pedido do usuário) -- mesma trava do autoatendimento
+     * (/assinar), aplicada aqui: o admin nasce bloqueado, e um link de
+     * assinatura do contrato é gerado automaticamente pro operador copiar
+     * e enviar pro cliente.
+     */
+    public function test_creating_tenant_via_central_blocks_admin_and_generates_contract_signature_link(): void
+    {
+        config(['services.asaas.api_key' => 'test-key']);
+        Http::fake([
+            'sandbox.asaas.com/*/customers' => Http::response(['id' => 'cus_central_contrato'], 200),
+        ]);
+
+        $this->actingAs($this->superAdmin());
+        Filament::setCurrentPanel(Filament::getPanel('central'));
+
+        $plan = Plan::create([
+            'name' => 'Plano Central Contrato '.uniqid(), 'price' => 100, 'base_price' => 100, 'level' => 1,
+            'billing_cycle' => 'monthly', 'is_active' => true, 'features' => [],
+        ]);
+
+        $slug = 'tenant-central-contrato-'.uniqid();
+
+        Livewire::test(CreateTenant::class)
+            ->fillForm([
+                'name' => 'Empresa Central Contrato',
+                'slug' => $slug,
+                'plan_id' => $plan->id,
+                'status' => 'active',
+                'cpf_cnpj' => '123.456.789-01',
+                'mrr_value' => 350,
+                'admin_name' => 'Admin Central Contrato',
+                'admin_email' => 'admin-central-contrato-'.uniqid().'@oravel.com.br',
+                'admin_password' => 'senha12345',
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $tenant = Tenant::where('slug', $slug)->firstOrFail();
+        $admin = User::where('tenant_id', $tenant->id)->firstOrFail();
+
+        $this->assertFalse((bool) $admin->is_approved, 'Admin criado pela Central tambem nao pode ter acesso antes de assinar o contrato');
+
+        $signature = DocumentSignature::where('signable_type', Tenant::class)
+            ->where('signable_id', $tenant->id)
+            ->first();
+        $this->assertNotNull($signature, 'Link de assinatura do contrato deveria ter sido gerado ao criar o tenant pela Central');
+        $this->assertFalse($signature->is_signed);
+    }
+
+    /**
+     * A mesma assinatura de Tenant, gerada por QUALQUER caminho (Central
+     * manual ou autoatendimento), passa pelo MESMO redirecionamento
+     * genérico de PublicSignatureController::store() -- sem código
+     * duplicado, sem tratamento especial por origem.
+     */
+    public function test_signing_contract_created_via_central_also_redirects_to_checkout_continue(): void
+    {
+        config(['services.asaas.api_key' => 'test-key']);
+        Http::fake([
+            'sandbox.asaas.com/*/customers' => Http::response(['id' => 'cus_central_assina'], 200),
+            'sandbox.asaas.com/*/checkouts' => Http::response(['id' => 'che_central', 'link' => 'https://sandbox.asaas.com/checkoutSession/show/che_central'], 200),
+        ]);
+
+        $this->actingAs($this->superAdmin());
+        Filament::setCurrentPanel(Filament::getPanel('central'));
+
+        $plan = Plan::create([
+            'name' => 'Plano Central Assina '.uniqid(), 'price' => 100, 'base_price' => 100, 'level' => 1,
+            'billing_cycle' => 'monthly', 'is_active' => true, 'features' => [],
+        ]);
+
+        $slug = 'tenant-central-assina-'.uniqid();
+
+        Livewire::test(CreateTenant::class)
+            ->fillForm([
+                'name' => 'Empresa Central Assina',
+                'slug' => $slug,
+                'plan_id' => $plan->id,
+                'status' => 'active',
+                'cpf_cnpj' => '123.456.789-01',
+                'mrr_value' => 350,
+                'admin_name' => 'Admin Central Assina',
+                'admin_email' => 'admin-central-assina-'.uniqid().'@oravel.com.br',
+                'admin_password' => 'senha12345',
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $tenant = Tenant::where('slug', $slug)->firstOrFail();
+        $signature = DocumentSignature::where('signable_id', $tenant->id)->firstOrFail();
+
+        // Assina como convidado -- o operador da Central nao esta logado
+        // como o cliente, entao a assinatura em si continua sendo o mesmo
+        // endpoint publico sem sessao. As rotas de assinatura/checkout
+        // ficam sob middleware 'guest': sem deslogar aqui, a sessao do
+        // super admin usada pra criar o tenant faria o Laravel redirecionar
+        // pra /dashboard em vez de rodar o controller (achado real ao
+        // rodar este teste, nao um bug do app -- na vida real o cliente
+        // que assina nunca compartilha sessao com o operador da Central).
+        $this->post('/logout');
+
+        $this->postJson("/assinatura/{$signature->token}/assinar", [
+            'signature_base64' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+            'signer_name' => 'Admin Central Assina',
+        ])->assertOk()->assertJsonPath('redirect', route('checkout.continue', ['token' => $signature->token]));
+
+        $continueResponse = $this->get(route('checkout.continue', ['token' => $signature->token]));
+        $continueResponse->assertRedirect('https://sandbox.asaas.com/checkoutSession/show/che_central');
     }
 
     public function test_edit_tenant_sync_action_updates_asaas_status(): void
