@@ -9,20 +9,25 @@
         default => 'bg-gray-500',
     };
 @endphp
-{{-- Sidebar header: so' o nome do tenant (2026-09-18, pedido do usuario --
-     "retire o logotipo do lado do tenant"). Monograma removido daqui;
-     marca "ORAVEL ERP" continua no topbar (ver
-     vendor/filament-panels/components/topbar/index.blade.php). --}}
+{{-- Sidebar/topbar header: logotipo Oravel no lugar do nome do tenant
+     (2026-09-24, pedido do usuario -- "coloque o nome do tenant no em
+     branco e antes do nome coloque o nosso logotipo", depois estendido
+     pro painel Central e pra tela de login). Nome do tenant removido
+     daqui. Logo SEMPRE visivel (nao mais atras de @if($tenant)) -- no
+     painel Central, Tenancy::current() e' null pra super admin sem
+     "tenant atuante" selecionado (ver App\Support\Tenancy::current()),
+     entao o logo sumia por inteiro la' antes desta mudanca. Segmento
+     continua condicionado a ter tenant, ja' que e' um dado do tenant. --}}
 <div class="flex items-center gap-2 shrink-0">
-    @if($tenant)
-        <div class="flex flex-col leading-none">
-            <span class="text-base font-bold tracking-tight text-orange-500 truncate max-w-[12rem]">{{ $tenant->name }}</span>
-            @if($segmentLabel)
-                <span class="flex items-center gap-1 text-[10px] font-medium tracking-wide text-gray-400 truncate max-w-[12rem]">
-                    <span class="inline-block h-1.5 w-1.5 rounded-full {{ $segmentDotClass }} shrink-0"></span>
-                    {{ $segmentLabel }}
-                </span>
-            @endif
-        </div>
+    <img
+        src="{{ asset('images/oravel-logo-or.png') }}"
+        alt="Oravel"
+        class="h-7 w-auto shrink-0"
+    >
+    @if($tenant && $segmentLabel)
+        <span class="flex items-center gap-1 text-[10px] font-medium tracking-wide text-gray-400 truncate max-w-[12rem]">
+            <span class="inline-block h-1.5 w-1.5 rounded-full {{ $segmentDotClass }} shrink-0"></span>
+            {{ $segmentLabel }}
+        </span>
     @endif
 </div>

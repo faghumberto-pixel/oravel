@@ -42,7 +42,7 @@
             <div class="flex flex-1 items-center justify-center px-6 py-10 md:px-12">
                 <div class="oravel-glass-card w-full max-w-md rounded-3xl border border-white/25 bg-white/15 p-8 shadow-2xl backdrop-blur-xl sm:p-10">
                     <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-white/30 bg-white/10">
-                        <x-heroicon-o-bolt class="h-7 w-7 text-white" />
+                        <img src="{{ asset('images/oravel-logo-or.png') }}" alt="Oravel" class="h-9 w-9">
                     </div>
 
 
