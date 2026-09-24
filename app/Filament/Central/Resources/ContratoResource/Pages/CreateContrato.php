@@ -27,16 +27,40 @@ class CreateContrato extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['price'] = $data['base_price'] ?? 0;
-
-        $features = [];
-        foreach ($data as $key => $value) {
-            if (str_starts_with($key, 'features_group_') && is_array($value)) {
-                $features = array_merge($features, $value);
-            }
-        }
-        $data['features'] = array_values(array_unique($features));
+        $data['features'] = static::mergeGroupedFeatures($data);
 
         return array_filter($data, fn ($key) => ! str_starts_with($key, 'features_group_'), ARRAY_FILTER_USE_KEY);
+    }
+
+    /**
+     * Bug real achado 2026-09-24 simulando a primeira contratação: cada
+     * CheckboxList devolve uma lista SIMPLES das chaves marcadas
+     * (`['tabela_assets', ...]`), mas `Plan::hasFeature()` (e todo o resto
+     * do sistema) espera um MAPA (`['tabela_assets' => true, ...]`) --
+     * "funcionava" só pelo fallback `in_array()` de `Plan::hasFeature()`,
+     * até o fix do `saas:sync-modules` (mesmo dia) começar a adicionar
+     * `false` pra toda chave que "não existia" no array (usa
+     * `array_key_exists`, que não via as chaves numéricas da lista) --
+     * essas chaves falsas passaram a vencer a checagem antes do fallback,
+     * derrubando TODOS os módulos de um Contrato novo mesmo depois de
+     * pago. Convertido pra mapa aqui na origem, formato único e correto
+     * em todo o sistema.
+     */
+    public static function mergeGroupedFeatures(array $data): array
+    {
+        $selectedKeys = [];
+        foreach ($data as $key => $value) {
+            if (str_starts_with($key, 'features_group_') && is_array($value)) {
+                $selectedKeys = array_merge($selectedKeys, $value);
+            }
+        }
+
+        $features = [];
+        foreach (array_unique($selectedKeys) as $featureKey) {
+            $features[$featureKey] = true;
+        }
+
+        return $features;
     }
 
     /**
