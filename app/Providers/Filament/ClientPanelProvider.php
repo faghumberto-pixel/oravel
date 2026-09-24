@@ -36,6 +36,8 @@ class ClientPanelProvider extends PanelProvider
             ->path('cliente')
             ->authGuard('client')
             ->login(Login::class)
+            ->brandLogo(fn () => view('filament.client.brand-logo'))
+            ->brandLogoHeight('1.25rem')
             ->colors([
                 'primary' => Color::hex('#ea580c'),
                 'gray' => Color::Stone,
