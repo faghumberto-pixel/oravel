@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToTenant;
+use App\Models\Concerns\HasSaaSMetadata;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,6 +11,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Pmoc extends Model
 {
     use BelongsToTenant;
+    use HasSaaSMetadata;
+
+    /**
+     * Gap real achado 2026-09-23 (usuário testando a tela "Gerar Link de
+     * Assinatura"): PMOC tinha Resource no painel admin mas nenhum
+     * metadado SaaS -- ficava invisível pro gating de plano/permissão
+     * (SaaSRegistry, ver CLAUDE.md), então qualquer tenant enxergava o
+     * módulo independente do plano contratado.
+     */
+    protected static ?string $saasFeatureKey = 'tabela_pmocs';
+
+    protected static ?string $saasPermissionSlug = 'pmoc';
+
+    protected static ?string $saasModuleLabel = 'PMOC (Plano de Manutenção, Operação e Controle)';
 
     protected $fillable = [
         'tenant_id',

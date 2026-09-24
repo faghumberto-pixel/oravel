@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\RoleResource\Pages;
+use App\Models\Role;
 use App\Support\SaaSRegistry;
 use App\Support\Tenancy;
 use Filament\Forms;
@@ -12,10 +13,20 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class RoleResource extends Resource
 {
+    /**
+     * Corrigido 2026-09-23 (gap real achado pelo usuário testando a tela
+     * "Gerar Link de Assinatura"): $model apontava pra
+     * Spatie\Permission\Models\Role, não App\Models\Role -- uma classe PHP
+     * DIFERENTE do ponto de vista do Filament, mesmo App\Models\Role
+     * ESTENDENDO a classe do Spatie. App\Models\Role já tinha
+     * HasSaaSMetadata aplicado corretamente há tempos, mas ficava
+     * invisível pro SaaSRegistry/tenant:audit-saas-metadata porque quem
+     * o Filament via como "o model deste Resource" era a classe errada.
+     * Documentado como caveat conhecido no CLAUDE.md antes desta correção.
+     */
     protected static ?string $model = Role::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
@@ -159,7 +170,7 @@ class RoleResource extends Resource
                     Forms\Components\Select::make('hierarchy_level')
                         ->label('Nível hierárquico')
                         ->helperText('Opcional. Usado por telas que exigem um nível mínimo além de "Setor supervisionado" -- ex: aprovação no Pátio exige Supervisor ou acima no setor Logística. Deixe em branco pra um perfil sem nível definido.')
-                        ->options(\App\Models\Role::levelLabels())
+                        ->options(Role::levelLabels())
                         ->native(false),
 
                     Forms\Components\Toggle::make('sees_all_crm_leads')
