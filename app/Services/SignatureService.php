@@ -113,6 +113,32 @@ class SignatureService
             // Marca como assinado
             $signature->markAsSigned();
 
+            // Código de segurança disponível IMEDIATAMENTE após assinar --
+            // pedido do usuário 2026-09-24: "contar o status em cada
+            // contrato assinado como criptografado com dados da assinatura,
+            // usuário, data, hora, código de segurança". Antes, o único
+            // hash gerado (document_hash) só existia depois que alguém
+            // baixava o PDF final (finalizeSignedPdf(), sob demanda) -- na
+            // prática, ficava nulo pra toda assinatura que ninguém baixou.
+            // Este hash cobre os dados centrais da assinatura em si
+            // (id, documento, signatário, IP, timestamp); finalizeSignedPdf()
+            // continua recalculando e sobrescrevendo com o hash do PDF final
+            // completo quando o PDF é gerado, mais forte por cobrir o
+            // conteúdo do documento inteiro -- este aqui é a garantia mínima
+            // que já nasce junto com a assinatura, nunca fica nula.
+            $signature->update([
+                'document_hash' => hash('sha256', implode('|', [
+                    $signature->id,
+                    $signature->signable_type,
+                    $signature->signable_id,
+                    $signature->signer_name,
+                    $signature->signer_document,
+                    $signature->signer_email,
+                    $signature->ip_address,
+                    $signature->signed_at->toIso8601String(),
+                ])),
+            ]);
+
             // Dispara evento para finalizar PDF (observer ou job)
             event(new DocumentSigned($signature));
 

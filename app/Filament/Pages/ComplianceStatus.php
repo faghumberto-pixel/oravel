@@ -31,10 +31,12 @@ class ComplianceStatus extends Page
 
         $checks = [
             [
-                'name' => 'Contrato SLA + LGPD Assinado',
+                'name' => 'Contrato SLA + LGPD + Licença de Uso Assinado',
                 'status' => $signature ? 'completed' : 'pending',
                 'date' => $signature?->signed_at,
-                'details' => $signature ? "Assinado em {$signature->signed_at->format('d/m/Y')} por {$signature->name}" : "Prazo: {$requiredBy?->format('d/m/Y')}",
+                'details' => $signature
+                    ? "Assinado em {$signature->signed_at->format('d/m/Y H:i:s')} por {$signature->name} ({$signature->email}) -- IP {$signature->ip_origin} -- código de segurança ".mb_substr($signature->hash ?? '', 0, 16).'…'
+                    : "Prazo: {$requiredBy?->format('d/m/Y')}",
                 'icon' => $signature ? '✅' : '⏳',
             ],
             [

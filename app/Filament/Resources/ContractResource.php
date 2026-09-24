@@ -352,7 +352,7 @@ class ContractResource extends Resource
                 Tables\Columns\TextColumn::make('assinatura')
                     ->label('Assinatura')
                     ->badge()
-                    ->state(fn (Contract $record) => $record->signedSignatures()->exists() ? 'Contrato assinado' : 'Assinatura pendente')
+                    ->state(fn (Contract $record) => $record->signedSignatures()->exists() ? '🔒 Contrato assinado' : 'Assinatura pendente')
                     ->color(fn (Contract $record) => $record->signedSignatures()->exists() ? 'success' : 'warning'),
             ])
             ->filters([
@@ -373,7 +373,31 @@ class ContractResource extends Resource
                 Tables\Actions\EditAction::make(),
                 static::generateSignatureAction(),
                 static::copySignatureLinkAction(),
+                static::viewSignatureCertificateAction(),
             ]);
+    }
+
+    /**
+     * Certificado de assinatura (signatário, data/hora, IP, código de
+     * segurança/hash) -- pedido do usuário 2026-09-24: "contar o status em
+     * cada contrato assinado como criptografado com dados da assinatura,
+     * usuario, data, hora, codigo de seguranca". Só aparece depois de
+     * assinado; mesma partial reaproveitável por outros Resources que
+     * usam DocumentSignature (EpiDelivery, MaintenanceOrder).
+     */
+    public static function viewSignatureCertificateAction(): Tables\Actions\Action
+    {
+        return Tables\Actions\Action::make('view_signature_certificate')
+            ->label('Ver Certificado')
+            ->icon('heroicon-o-shield-check')
+            ->color('success')
+            ->visible(fn (Contract $record) => $record->signedSignatures()->exists())
+            ->modalHeading('Certificado de Assinatura Eletrônica')
+            ->modalContent(fn (Contract $record) => view('filament.components.document-signature-certificate', [
+                'signature' => $record->signedSignatures()->latest('signed_at')->first(),
+            ]))
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel('Fechar');
     }
 
     /**
