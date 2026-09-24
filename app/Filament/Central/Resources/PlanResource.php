@@ -26,6 +26,19 @@ class PlanResource extends Resource
 
     protected static bool $isScopedToTenant = false;
 
+    /**
+     * Removido do menu 2026-09-24 (decisão do usuário): não existe mais
+     * "plano padrão" reutilizável -- cada cliente tem seu próprio Contrato
+     * (ContratoResource, MESMO model Plan por baixo, ver comentário lá).
+     * Rota/CRUD continuam existindo (nada quebra pra quem já tinha link
+     * salvo ou pra TenantResource, que ainda referencia plan_id), só não
+     * aparece mais como opção no menu pra não incentivar o uso antigo.
+     */
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->withoutGlobalScopes();
