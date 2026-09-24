@@ -279,12 +279,8 @@ class AsaasWebhookController extends Controller
 
         if ($newStatus === 'pago') {
             $updates['payment_date'] = $payment['paymentDate'] ?? now();
-
-            // Calcula multa automaticamente se o módulo está habilitado
-            if ($receivable->tenant->hasModuleEnabled('contas_a_receber')) {
-                $receivable->multa_percentual ??= $receivable->contract?->multa_rescisoria;
-                $updates['multa_valor'] = $receivable->calculateLateFee();
-            }
+            $receivable->multa_percentual ??= $receivable->contract?->multa_rescisoria;
+            $updates['multa_valor'] = $receivable->calculateLateFee();
         } elseif ($newStatus === 'pendente') {
             // Reembolso ou cancelamento: desfaz a baixa
             $updates['payment_date'] = null;

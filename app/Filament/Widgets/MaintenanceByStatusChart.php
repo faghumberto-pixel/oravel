@@ -19,10 +19,8 @@ class MaintenanceByStatusChart extends ChartWidget
      * hexadecimais cruas do Kanban (Tailwind amber/orange/slate) nao
      * passam no validador de acessibilidade para esta superficie escura,
      * entao aqui usamos a paleta validada. Mapeada por chave de status (nao
-     * um array indexado) porque as colunas de MaintenanceKanban::statusMap()
-     * podem vir com 6 ou 8 entradas, dependendo de
-     * enabled_modules['kanban_oficina_extra'] do tenant -- indexar por
-     * posicao desalinharia as cores quando colunas do meio somem.
+     * um array indexado) por seguranca contra qualquer mudanca futura na
+     * ordem/quantidade de colunas de MaintenanceKanban::statusMap().
      */
     private const COLOR_MAP = [
         'aguardando_diagnostico' => '#3987e5',

@@ -30,8 +30,7 @@ class PainelSlaEmergencia extends Page
 
     public static function canAccess(): bool
     {
-        return (bool) auth()->user()?->can('viewAny', MaintenanceOrder::class)
-            && (Tenancy::current()?->hasModuleEnabled('sla_emergencia') ?? true);
+        return (bool) auth()->user()?->can('viewAny', MaintenanceOrder::class);
     }
 
     public function getChamadosProperty(): Collection

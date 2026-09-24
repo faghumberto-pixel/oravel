@@ -6,7 +6,6 @@ use App\Models\Asset;
 use App\Models\EquipmentMovement;
 use App\Models\EquipmentPatioArrival;
 use App\Models\EquipmentPatioArrivalItem;
-use App\Support\Tenancy;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -209,7 +208,7 @@ class EquipmentPatioArrivalMobile extends Component
         $this->patioArrival->update(['completed_at' => now()]);
 
         $foundDamage = $this->patioArrival->items()->where('has_damage', true)->exists();
-        $goToQuarantine = $foundDamage && (Tenancy::current()?->hasModuleEnabled('quarentena') ?? true);
+        $goToQuarantine = $foundDamage;
 
         $this->equipmentMovement->asset?->update([
             'status' => $goToQuarantine ? Asset::STATUS_QUARENTENA : Asset::STATUS_DISPONIVEL,

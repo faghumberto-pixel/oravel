@@ -233,16 +233,14 @@ class AssetResource extends Resource
                                             ->numeric()
                                             ->default(0)
                                             ->helperText('Permitido correção de erro de digitação na entrada.')
-                                            ->prefixIcon('heroicon-m-flag')
-                                            ->visible(fn () => Tenancy::current()?->hasModuleEnabled('horimetro_rigido') ?? true),
+                                            ->prefixIcon('heroicon-m-flag'),
 
                                         Forms\Components\TextInput::make('last_horimetro')
                                             ->label('Leitura Atual (Sistema)')
                                             ->numeric()
                                             ->readOnly() // Permite gravação pelo sistema, mas protege contra digitação acidental
                                             ->helperText('Sincronizado automaticamente pelas Ordens de Serviço.')
-                                            ->prefixIcon('heroicon-m-arrow-path')
-                                            ->visible(fn () => Tenancy::current()?->hasModuleEnabled('horimetro_rigido') ?? true),
+                                            ->prefixIcon('heroicon-m-arrow-path'),
 
                                         Forms\Components\Select::make('status')
                                             ->label('Status Operacional')

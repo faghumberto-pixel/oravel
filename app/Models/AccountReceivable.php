@@ -101,9 +101,9 @@ class AccountReceivable extends Model
 
     /**
      * Multa sugerida = Contract.multa_rescisoria (percentual ja existente no
-     * contrato) sobre o valor da conta -- so' aplicada quando a automacao de
-     * multas (enabled_modules['contas_a_receber']) esta ligada, ver
-     * AccountReceivableResource "Dar Baixa".
+     * contrato) sobre o valor da conta, ver AccountReceivableResource "Dar
+     * Baixa" e AsaasWebhookController (calculo automatico ao confirmar
+     * pagamento atrasado).
      */
     public function calculateLateFee(): ?float
     {

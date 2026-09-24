@@ -163,7 +163,7 @@ class MaintenanceOrderResource extends Resource
                                     })->prefixIcon('heroicon-m-qr-code'),
                                 Forms\Components\Select::make('maintenance_type')
                                     ->label('Tipo de Operação')
-                                    ->options(fn () => array_filter([
+                                    ->options([
                                         'Check-in' => 'Check-in (Mobilização)',
                                         'Check-out' => 'Check-out (Desmobilização)',
                                         'Preventiva' => 'Manutenção Preventiva',
@@ -171,7 +171,7 @@ class MaintenanceOrderResource extends Resource
                                         'Avaria' => 'Registro de Avaria',
                                         'Troca' => 'Troca de Equipamento',
                                         'Emergência' => 'Chamado de Emergência',
-                                    ], fn ($key) => $key !== 'Emergência' || (Tenancy::current()?->hasModuleEnabled('sla_emergencia') ?? true), ARRAY_FILTER_USE_KEY))
+                                    ])
                                     ->required()->native(false)->live(),
                             ]),
                         ]),
@@ -239,8 +239,7 @@ class MaintenanceOrderResource extends Resource
                             Forms\Components\Toggle::make('is_prazo_fatal')
                                 ->label('Esta O.S. tem prazo fatal')
                                 ->live()
-                                ->default(fn (Get $get) => Asset::find($get('asset_id'))?->client?->activity_type === Client::NICHE_EVENTOS)
-                                ->visible(fn () => Tenancy::current()?->hasModuleEnabled('prazo_fatal') ?? true),
+                                ->default(fn (Get $get) => Asset::find($get('asset_id'))?->client?->activity_type === Client::NICHE_EVENTOS),
                             Forms\Components\DateTimePicker::make('prazo_fatal_at')
                                 ->label('Prazo (data/hora limite)')
                                 ->required(fn (Get $get) => (bool) $get('is_prazo_fatal'))
@@ -306,8 +305,7 @@ class MaintenanceOrderResource extends Resource
                     // editavel, nunca trava a criacao da OS.
                     Forms\Components\Section::make('Chamado de Emergência')
                         ->description('SLA de atendimento contado a partir da abertura desta O.S.')
-                        ->visible(fn (Get $get) => $get('maintenance_type') === MaintenanceOrder::TYPE_EMERGENCIA
-                            && (Tenancy::current()?->hasModuleEnabled('sla_emergencia') ?? true))
+                        ->visible(fn (Get $get) => $get('maintenance_type') === MaintenanceOrder::TYPE_EMERGENCIA)
                         ->schema([
                             Forms\Components\TextInput::make('sla_target_minutes')
                                 ->label('Prazo de Atendimento (minutos)')
@@ -633,11 +631,7 @@ class MaintenanceOrderResource extends Resource
                                         ->placeholder('Ex: Painel/Horímetro, Avaria: Esteira Esquerda'),
                                     Forms\Components\ToggleButtons::make('severity')
                                         ->label('Severidade')
-                                        ->options(fn () => array_filter(
-                                            ['ok' => 'OK', 'avaria' => 'Avaria', 'mau_uso' => 'Mau Uso'],
-                                            fn ($key) => $key !== 'mau_uso' || (Tenancy::current()?->hasModuleEnabled('mau_uso') ?? true),
-                                            ARRAY_FILTER_USE_KEY
-                                        ))
+                                        ->options(['ok' => 'OK', 'avaria' => 'Avaria', 'mau_uso' => 'Mau Uso'])
                                         ->colors(['ok' => 'success', 'avaria' => 'danger', 'mau_uso' => 'warning'])
                                         ->default('ok')->inline()->live(),
                                     // Marcar "Avaria" OU "Mau Uso" aqui ja cria um EquipmentDamage
@@ -815,13 +809,13 @@ class MaintenanceOrderResource extends Resource
                 ]),
             Tables\Filters\SelectFilter::make('maintenance_type')
                 ->label('Tipo')
-                ->options(fn () => array_filter([
+                ->options([
                     'Corretiva' => 'Corretiva',
                     'Preventiva' => 'Preventiva',
                     'Avaria' => 'Registro de Avaria',
                     'Troca' => 'Troca de Equipamento',
                     'Emergência' => 'Chamado de Emergência',
-                ], fn ($key) => $key !== 'Emergência' || (Tenancy::current()?->hasModuleEnabled('sla_emergencia') ?? true), ARRAY_FILTER_USE_KEY)),
+                ]),
             Tables\Filters\SelectFilter::make('matriz_abc')
                 ->label('Matriz ABC')
                 ->options(fn () => CriticalityLevel::where('tenant_id', Tenancy::current()?->id)

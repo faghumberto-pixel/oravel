@@ -171,31 +171,6 @@ class Tenant extends Model
     }
 
     /**
-     * enabled_modules e' SUBTRATIVO (ao contrario de features/hasFeature(),
-     * que e' aditivo) -- o tenant desliga ruido de nicho que o proprio plano
-     * ja libera (Prazo Fatal, Quarentena, SLA/Emergencia etc). Chave ausente
-     * = true: todo tenant existente ja tinha esses comportamentos ligados
-     * incondicionalmente antes desta coluna existir, entao ausencia nao pode
-     * regredir ninguem -- so' false explicito desliga.
-     */
-    public function hasModuleEnabled(string $key): bool
-    {
-        if (Auth::user()?->isSuperAdmin()) {
-            return true;
-        }
-
-        $modules = $this->enabled_modules ?? [];
-
-        if (is_array($modules) && array_key_exists($key, $modules)) {
-            $value = $modules[$key];
-
-            return ! ($value === false || $value === 0 || $value === '0' || $value === 'false');
-        }
-
-        return true;
-    }
-
-    /**
      * Bloqueio real por inadimplência (pedido do usuário 2026-09-23):
      * asaas_payment_status virava 'atrasado'/'cancelado' só como
      * informação (dashboard da Central), sem travar nada de fato -- este
@@ -256,71 +231,6 @@ class Tenant extends Model
         }
 
         return true;
-    }
-
-    /**
-     * Predefinicao de enabled_modules por segmento -- usada SO pela tela de
-     * configuracoes ao trocar o segmento (acao explicita, com confirmacao).
-     * Funcao pura: nao grava nada sozinha, devolve o array pro caller
-     * decidir/persistir. Reaproveita as constantes de nicho ja existentes em
-     * Client (terminologia fixa, sem vocabulario paralelo).
-     *
-     * @return array<string, bool>
-     */
-    public static function applySegmentPreset(string $segment): array
-    {
-        return match ($segment) {
-            Client::NICHE_EVENTOS => [
-                'prazo_fatal' => true,
-                'banco_de_carga' => true,
-                'quarentena' => true,
-                'sla_emergencia' => false,
-                'kanban_oficina_extra' => false,
-                'mau_uso' => false,
-                'horimetro_rigido' => false,
-                'contas_a_receber' => true,
-            ],
-            Client::NICHE_INDUSTRIAL_HOSPITALAR => [
-                'sla_emergencia' => true,
-                'quarentena' => true,
-                'horimetro_rigido' => true,
-                'prazo_fatal' => false,
-                'banco_de_carga' => false,
-                'kanban_oficina_extra' => false,
-                'mau_uso' => false,
-                'contas_a_receber' => true,
-            ],
-            Client::NICHE_CONSTRUCAO_CIVIL => [
-                'kanban_oficina_extra' => true,
-                'mau_uso' => true,
-                'horimetro_rigido' => true,
-                'quarentena' => true,
-                'prazo_fatal' => false,
-                'banco_de_carga' => false,
-                'sla_emergencia' => false,
-                'contas_a_receber' => true,
-            ],
-            Client::NICHE_LOCACAO_EQUIPAMENTOS => [
-                'mau_uso' => true,
-                'horimetro_rigido' => true,
-                'quarentena' => true,
-                'kanban_oficina_extra' => true,
-                'prazo_fatal' => false,
-                'banco_de_carga' => false,
-                'sla_emergencia' => false,
-                'contas_a_receber' => true,
-            ],
-            default => [
-                'prazo_fatal' => true,
-                'sla_emergencia' => true,
-                'banco_de_carga' => true,
-                'quarentena' => true,
-                'kanban_oficina_extra' => true,
-                'mau_uso' => true,
-                'horimetro_rigido' => true,
-                'contas_a_receber' => true,
-            ],
-        };
     }
 
     public function plan(): BelongsTo

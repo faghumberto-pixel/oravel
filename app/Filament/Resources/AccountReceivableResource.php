@@ -114,18 +114,13 @@ class AccountReceivableResource extends Resource
                         TextInput::make('multa_percentual')
                             ->label('Multa Aplicada (%)')
                             ->numeric()
-                            ->default(fn () => $record->contract?->multa_rescisoria)
-                            ->visible(fn () => Tenancy::current()?->hasModuleEnabled('contas_a_receber') ?? true)
-                            ->disabled(fn () => ! (Tenancy::current()?->hasModuleEnabled('contas_a_receber') ?? true)),
+                            ->default(fn () => $record->contract?->multa_rescisoria),
                     ])
                     ->action(function (AccountReceivable $record, array $data) {
                         $record->payment_date = $data['payment_date'];
                         $record->status = 'pago';
-
-                        if (Tenancy::current()?->hasModuleEnabled('contas_a_receber')) {
-                            $record->multa_percentual = $data['multa_percentual'] ?? null;
-                            $record->multa_valor = $record->calculateLateFee();
-                        }
+                        $record->multa_percentual = $data['multa_percentual'] ?? null;
+                        $record->multa_valor = $record->calculateLateFee();
 
                         $record->save();
 

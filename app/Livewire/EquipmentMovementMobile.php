@@ -11,7 +11,6 @@ use App\Models\FleetVehicle;
 use App\Models\FreightRecord;
 use App\Models\HorimeterReading;
 use App\Models\MaintenanceOrder;
-use App\Support\Tenancy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Attributes\Layout;
@@ -143,10 +142,6 @@ class EquipmentMovementMobile extends Component
      */
     public function saveLoadBankTest(): void
     {
-        if (! (Tenancy::current()?->hasModuleEnabled('banco_de_carga') ?? true)) {
-            return;
-        }
-
         $this->validate([
             'loadBankTested' => 'boolean',
             'loadBankNotes' => 'nullable|string|max:2000',

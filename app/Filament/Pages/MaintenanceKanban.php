@@ -118,18 +118,13 @@ class MaintenanceKanban extends Page
             // Locadoras de construcao civil (giro de patio/oficina) --
             // 100% drag-and-drop manual, confirmado seguro:
             // MaintenanceOrderObserver::updated() so' automatiza
-            // em_manutencao/teste_qualidade, nunca mexe nessas 2. Ficam
-            // condicionadas a enabled_modules['kanban_oficina_extra'].
+            // em_manutencao/teste_qualidade, nunca mexe nessas 2.
             'aguardando_peca_canibalizado' => ['title' => 'Aguardando Peças / Canibalizado', 'color' => 'bg-amber-700', 'flag' => 'Gargalo'],
             'teste_qualidade' => ['title' => 'Teste de Qualidade', 'color' => 'bg-purple-600'],
             'pronto_giro' => ['title' => 'Pronto para Giro/Pátio', 'color' => 'bg-teal-600'],
             'pendencia' => ['title' => 'Pendência', 'color' => 'bg-orange-500'],
             'concluido' => ['title' => 'Concluído', 'color' => 'bg-emerald-600'],
         ];
-
-        if (! (Tenancy::current()?->hasModuleEnabled('kanban_oficina_extra') ?? true)) {
-            unset($map['aguardando_peca_canibalizado'], $map['pronto_giro']);
-        }
 
         return $map;
     }
