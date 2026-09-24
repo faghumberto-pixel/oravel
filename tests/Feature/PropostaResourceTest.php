@@ -39,12 +39,16 @@ class PropostaResourceTest extends TestCase
         $this->actingAs($this->superAdmin());
         Filament::setCurrentPanel(Filament::getPanel('central'));
 
+        // Módulos agora ficam divididos num CheckboxList por grupo de menu
+        // (2026-09-23, "as tabelas assim como os menus estejam agrupadas");
+        // 'tabela_clients' (Clientes) vive no grupo 'Comercial' -- ver
+        // PropostaResource::groupFieldName().
         Livewire::test(CreateProposta::class)
             ->fillForm([
                 'name' => 'Proposta Cliente Teste',
                 'base_price' => 480,
                 'billing_cycle' => 'monthly',
-                'features' => ['tabela_clients'],
+                'features_group_comercial' => ['tabela_clients'],
             ])
             ->call('create')
             ->assertHasNoFormErrors();

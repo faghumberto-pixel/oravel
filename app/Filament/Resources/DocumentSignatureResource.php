@@ -217,6 +217,11 @@ class DocumentSignatureResource extends Resource
                         'App\\Models\\Contract' => 'Contrato',
                         'App\\Models\\MaintenanceOrder' => 'Ordem de Serviço',
                         'App\\Models\\EpiDelivery' => 'Entrega de EPI',
+                        // Faltava -- Tenant virou um terceiro tipo assinável
+                        // em 2026-09-23 (Contrato de Assinatura) e nunca foi
+                        // adicionado aqui, então esses registros não tinham
+                        // como ser filtrados nesta tela.
+                        'App\\Models\\Tenant' => 'Contrato de Assinatura',
                     ]),
 
                 Tables\Filters\Filter::make('has_email')

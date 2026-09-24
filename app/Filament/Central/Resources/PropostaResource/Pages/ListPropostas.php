@@ -16,4 +16,11 @@ class ListPropostas extends ListRecords
             Actions\CreateAction::make()->label('Nova Proposta'),
         ];
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            PropostaResource\Widgets\PropostaFunnelStats::class,
+        ];
+    }
 }
