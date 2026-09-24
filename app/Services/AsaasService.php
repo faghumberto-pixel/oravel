@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class AsaasService
 {
@@ -197,7 +198,15 @@ class AsaasService
                     'expiredUrl' => route('checkout.cancelled'),
                 ],
                 'items' => [[
-                    'name' => "Assinatura Oravel — {$planName}",
+                    // Bug real achado em PROD 2026-09-24: a Asaas rejeita
+                    // 'name' com mais de 30 caracteres ("O campo name só
+                    // pode conter no máximo 30 caracteres"). Passou
+                    // despercebido enquanto só existiam nomes de plano
+                    // curtos (PREMIUM, BASIC); estourou assim que o
+                    // Contrato passou a usar identificação livre/longa
+                    // ("Nome do cliente ou da negociação"). 'description'
+                    // não tem esse limite documentado, mantido completo.
+                    'name' => Str::limit("Assinatura Oravel — {$planName}", 30, ''),
                     'description' => "Assinatura recorrente do plano {$planName}",
                     'quantity' => 1,
                     'value' => (float) $tenant->mrr_value,
