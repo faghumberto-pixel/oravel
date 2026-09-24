@@ -206,14 +206,23 @@ class AsaasService
                     'cycle' => $this->mapBillingCycle($tenant->plan?->billing_cycle),
                     'nextDueDate' => now()->addDays(7)->toDateString(),
                 ],
+                // Nomes de campo confirmados no schema oficial
+                // (CheckoutSessionCustomerDataDTO, docs.asaas.com/reference/
+                // criar-novo-checkout) -- achado real em PROD 2026-09-23: o
+                // campo é "phone", NÃO "phoneNumber" (a Asaas simplesmente
+                // ignora chave desconhecida e acusa "campo obrigatório" como
+                // se não tivesse sido enviado, o que mascarou o erro real).
+                // addressNumber é number, não string. postalCode mantém o
+                // formato como veio (com traço), sem "achatar" pra só
+                // dígitos -- foi isso que causava "postalCode é inválido".
                 'customerData' => [
                     'name' => $tenant->name,
                     'cpfCnpj' => preg_replace('/\D/', '', $tenant->cpf_cnpj),
                     'email' => $tenant->adminUser?->email,
-                    'phoneNumber' => preg_replace('/\D/', '', $tenant->telefone),
+                    'phone' => preg_replace('/\D/', '', $tenant->telefone),
                     'address' => $tenant->logradouro,
-                    'addressNumber' => $tenant->numero,
-                    'postalCode' => preg_replace('/\D/', '', $tenant->cep),
+                    'addressNumber' => (int) preg_replace('/\D/', '', $tenant->numero),
+                    'postalCode' => $tenant->cep,
                     'province' => $tenant->uf,
                 ],
             ]);

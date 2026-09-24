@@ -197,12 +197,18 @@ class AsaasCheckoutControllerTest extends TestCase
         // acima, a Asaas passou a rejeitar por outro motivo -- "O campo
         // phoneNumber/address/addressNumber/postalCode/province deve ser
         // informado". customerData só mandava name/cpfCnpj.
+        //
+        // Regressão real #3 (mesma sessão): o campo certo no schema da
+        // Asaas é "phone", não "phoneNumber" -- a Asaas ignora chave
+        // desconhecida e acusa "campo obrigatório" como se não tivesse
+        // sido enviado, mascarando o erro real. addressNumber é number,
+        // não string. postalCode mantém o formato como veio (com traço).
         Http::assertSent(fn ($request) => str_contains($request->url(), '/checkouts')
             && ! blank($request['customerData']['email'] ?? null)
-            && $request['customerData']['phoneNumber'] === '19999999999'
+            && $request['customerData']['phone'] === '19999999999'
             && $request['customerData']['address'] === 'Rua das Torres'
-            && $request['customerData']['addressNumber'] === '100'
-            && $request['customerData']['postalCode'] === '13480000'
+            && $request['customerData']['addressNumber'] === 100
+            && $request['customerData']['postalCode'] === '13480-000'
             && $request['customerData']['province'] === 'SP');
     }
 
