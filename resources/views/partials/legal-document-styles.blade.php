@@ -61,16 +61,6 @@
     .legal-doc-title { font-size: 14px; font-weight: bold; text-transform: uppercase; color: #111827; text-align: right; }
     .legal-doc-tag { font-family: 'Courier New', monospace; font-size: 13px; color: #E8541A; font-weight: bold; text-align: right; }
 
-    .legal-disclaimer {
-        background: #fff7ed;
-        border: 1px solid #fdba74;
-        border-radius: 8px;
-        padding: 12px 16px;
-        margin-bottom: 24px;
-        font-size: 12px;
-        color: #7c2d12;
-    }
-
     .clause { margin-bottom: 14px; text-align: justify; font-size: 13px; line-height: 1.6; color: #374151; }
     .clause-title { font-weight: bold; color: #111827; display: block; margin-bottom: 2px; }
 

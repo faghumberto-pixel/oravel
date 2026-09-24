@@ -22,13 +22,6 @@
             </div>
         </div>
 
-        <div class="legal-disclaimer">
-            Rascunho razoável de mercado, ainda não revisado por advogado especializado em
-            proteção de dados. Substitui a referência anterior a uma página externa
-            (www.oravel.com.br/lgpd) que não existia, causando erro 404 pra quem tentava consultar
-            o documento completo.
-        </div>
-
         <div class="clause">
             <span class="clause-title">1. Papéis das partes.</span>
             Para os fins da Lei nº 13.709/2018 (LGPD), a Oravel atua como Operadora dos dados

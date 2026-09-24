@@ -22,12 +22,6 @@
             </div>
         </div>
 
-        <div class="legal-disclaimer">
-            Rascunho razoável de mercado para SaaS de gestão, ainda não revisado por advogado.
-            Substitui a referência anterior a uma página externa (www.oravel.com.br/sla) que não
-            existia, causando erro 404 pra quem tentava consultar o documento completo.
-        </div>
-
         <div class="clause">
             <span class="clause-title">1. Objeto.</span>
             Este Anexo define os parâmetros de disponibilidade, continuidade e suporte da

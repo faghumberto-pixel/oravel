@@ -22,12 +22,6 @@
             </div>
         </div>
 
-        <div class="legal-disclaimer">
-            Rascunho razoável de mercado para SaaS, criado a pedido do usuário 2026-09-24 pra
-            deixar explícito que a licença de uso vale apenas enquanto o Contrato de Assinatura
-            estiver vigente e em dia. Ainda NÃO é uma minuta revisada por advogado.
-        </div>
-
         <div class="clause">
             <span class="clause-title">1. Concessão da licença.</span>
             A Oravel concede ao Contratante, exclusivamente pelo prazo de vigência do Contrato de
