@@ -95,29 +95,28 @@
     font-weight: 600;
 }
 
-/* Grupo inteiro com a FONTE (nao o fundo) em laranja clarinho quando tem
-   o item ativo dentro dele (2026-09-23, pedido do usuario -- "dá pra saber
-   em qual grupo está trabalhando"). :has() com seletor descendente (nao
-   "~" irmão, como as regras acima) pra cobrir os dois formatos de grupo:
-   os planos (PMP, Financeiro...) E os que tem subitem-pai (Manutenção >
-   Operação > filhos, onde o item ativo fica aninhado dentro de outro
-   .fi-sidebar-item, nao irmão dele). Cor mais clara = a marca misturada
-   com branco (nao um tom fixo solto, pra acompanhar se a marca mudar). */
-.fi-sidebar-group:has(.fi-sidebar-item.fi-active) .fi-sidebar-group-label,
-.fi-sidebar-group:has(.fi-sidebar-item[aria-current="page"]) .fi-sidebar-group-label,
-.fi-sidebar-group:has(.fi-sidebar-item.fi-active) .fi-sidebar-item-label,
-.fi-sidebar-group:has(.fi-sidebar-item[aria-current="page"]) .fi-sidebar-item-label,
-.fi-sidebar-group:has(.fi-sidebar-item.fi-active) .fi-sidebar-item-icon,
-.fi-sidebar-group:has(.fi-sidebar-item[aria-current="page"]) .fi-sidebar-item-icon {
-    color: color-mix(in srgb, var(--oravel-primary) 55%, white) !important;
+/* Grupo inteiro com um FUNDO sutil (nao cor de fonte) quando tem o item
+   ativo dentro dele (2026-09-24, pedido do usuario -- a versao anterior
+   pintava a fonte do grupo inteiro num laranja clarinho, e junto com o
+   item ativo em laranja cheio ficavam DUAS tonalidades da mesma cor
+   competindo, "parecendo jardim de infancia"). Fundo neutro (branco bem
+   transparente sobre o navy da sidebar) so' sinaliza "voce esta' aqui",
+   sem introduzir uma segunda cor -- o laranja continua reservado
+   exclusivamente pro item de fato selecionado (regra abaixo). Mesmo
+   :has() com seletor descendente de antes, pra cobrir tanto grupos
+   planos (PMP, Financeiro...) quanto os com subitem-pai (Manutencao >
+   Operacao > filhos). */
+.fi-sidebar-group:has(.fi-sidebar-item.fi-active),
+.fi-sidebar-group:has(.fi-sidebar-item[aria-current="page"]) {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 0.5rem;
+    padding-top: 0.375rem;
+    padding-bottom: 0.375rem;
 }
 
-/* O item de fato selecionado se destaca do resto do grupo: laranja da
-   marca cheio (mais escuro que o resto do grupo) + negrito, pra achar
-   rapido ONDE dentro do grupo voce esta' -- nao so' EM QUAL grupo. Mesma
-   especificidade da regra acima (4 classes) -- o ".fi-sidebar-group"
-   extra aqui e' de proposito, pra ganhar no empate por ordem (esta regra
-   vem depois no arquivo), nao só por acaso. */
+/* O item de fato selecionado se destaca do resto do grupo (que agora so'
+   ganha um fundo neutro, ver regra acima): laranja da marca cheio +
+   negrito, unica cor usada pra "selecionado" em toda a sidebar. */
 .fi-sidebar-group .fi-sidebar-item.fi-active .fi-sidebar-item-label,
 .fi-sidebar-group .fi-sidebar-item[aria-current="page"] .fi-sidebar-item-label {
     color: var(--oravel-primary) !important;

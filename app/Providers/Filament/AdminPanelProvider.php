@@ -181,6 +181,10 @@ class AdminPanelProvider extends PanelProvider
                 fn () => view('filament.oravel-gauge-chart-plugin'),
             )
             ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn () => view('filament.sidebar-accordion'),
+            )
+            ->renderHook(
                 PanelsRenderHook::PAGE_START,
                 fn () => view('filament.breadcrumb'),
             )
