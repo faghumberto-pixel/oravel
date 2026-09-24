@@ -29,7 +29,7 @@
 <div class="clause">
     <span class="clause-title">2. Vigência e cobrança.</span>
     A assinatura é renovada automaticamente a cada ciclo de cobrança indicado acima, cobrada
-    via Asaas (cartão de crédito ou Pix), até que o Contratante solicite o cancelamento.
+    via Asaas no cartão de crédito, até que o Contratante solicite o cancelamento.
 </div>
 
 <div class="clause">

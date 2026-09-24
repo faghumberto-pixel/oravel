@@ -173,6 +173,24 @@ class AsaasCheckoutControllerTest extends TestCase
 
         $tenant->refresh();
         $this->assertSame('che_signed', $tenant->asaas_checkout_id);
+
+        // Regressão real (PROD, 2026-09-23): a Asaas rejeita
+        // billingTypes=['CREDIT_CARD','PIX'] junto com chargeTypes
+        // RECURRENT ("O método de pagamento CREDIT_CARD é o único método
+        // de pagamento permitido para operações RECURRENT") -- o
+        // Http::fake genérico dos outros testes não pega isso porque
+        // devolve a resposta combinada independente do payload enviado.
+        // IMPORTANTE: sem o `str_contains` restrito só ao /checkouts, a
+        // closure teria que retornar true pra QUALQUER outra chamada
+        // (ex: /customers) pra não quebrar o assertSent -- e
+        // Http::assertSent() já passa se UMA ÚNICA requisição do
+        // histórico bater com a closure, então uma versão frouxa dessa
+        // asserção (a primeira tentativa, corrigida aqui) não pegava o
+        // bug de verdade: a chamada a /customers "cobria" a
+        // asserção mesmo com o /checkouts errado.
+        Http::assertSent(fn ($request) => str_contains($request->url(), '/checkouts')
+            && $request['billingTypes'] === ['CREDIT_CARD']
+            && $request['chargeTypes'] === ['RECURRENT']);
     }
 
     public function test_continue_after_signature_redirects_to_pending_if_not_actually_signed(): void

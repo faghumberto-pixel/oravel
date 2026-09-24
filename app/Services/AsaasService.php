@@ -163,7 +163,17 @@ class AsaasService
 
         try {
             $checkout = $this->createCheckout([
-                'billingTypes' => ['CREDIT_CARD', 'PIX'],
+                // A Asaas rejeita PIX combinado com chargeTypes RECURRENT
+                // ("O método de pagamento CREDIT_CARD é o único método de
+                // pagamento permitido para operações RECURRENT" -- erro
+                // real recebido em PROD 2026-09-23, checkout falhando
+                // 100% das vezes desde que a chave de API foi configurada
+                // de verdade). PIX recorrente exigiria chargeType DETACHED
+                // (cobrança avulsa, sem assinatura), o que não é o que
+                // este fluxo faz -- mantido só CREDIT_CARD até decidirmos
+                // se vale a pena um segundo fluxo de cobrança avulsa via
+                // Pix.
+                'billingTypes' => ['CREDIT_CARD'],
                 'chargeTypes' => ['RECURRENT'],
                 'minutesToExpire' => 60,
                 'externalReference' => $tenant->id,
