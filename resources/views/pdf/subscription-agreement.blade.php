@@ -127,37 +127,7 @@
     <div class="section">
         <div class="section-title">Termos e Condições</div>
 
-        <div class="clause">
-            <span class="clause-title">1. Objeto.</span>
-            A Oravel presta ao Contratante, mediante assinatura, acesso ao software de gestão Oravel
-            (SaaS) com os módulos listados na seção "Plano Contratado" acima, hospedado em nuvem e
-            acessível via internet.
-        </div>
-
-        <div class="clause">
-            <span class="clause-title">2. Vigência e cobrança.</span>
-            A assinatura é renovada automaticamente a cada ciclo de cobrança indicado acima, cobrada
-            via Asaas (cartão de crédito ou Pix), até que o Contratante solicite o cancelamento.
-        </div>
-
-        <div class="clause">
-            <span class="clause-title">3. Reajuste e mudança de escopo.</span>
-            O valor e os módulos contratados podem ser reajustados mediante acordo prévio entre as
-            partes, formalizado por aditivo a este contrato.
-        </div>
-
-        <div class="clause">
-            <span class="clause-title">4. Nível de serviço e proteção de dados (SLA/LGPD).</span>
-            A prestação do serviço observa os termos de disponibilidade, backup e conformidade com a
-            Lei Geral de Proteção de Dados (LGPD) descritos em www.oravel.com.br/sla, parte integrante
-            deste contrato independentemente de transcrição.
-        </div>
-
-        <div class="clause">
-            <span class="clause-title">5. Cancelamento.</span>
-            O Contratante pode solicitar o cancelamento a qualquer momento através do suporte Oravel,
-            encerrando a cobrança a partir do próximo ciclo.
-        </div>
+        @include('partials.subscription-agreement-clauses', ['contract' => $contract])
     </div>
 
     <div class="footer">

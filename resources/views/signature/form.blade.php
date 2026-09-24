@@ -1,11 +1,98 @@
 @extends('layouts.app-signature')
 
+@php
+    $isSubscriptionContract = $document::class === 'App\\Models\\Tenant';
+@endphp
+
 @section('content')
-<div class="signature-container">
+<div class="signature-container {{ $isSubscriptionContract ? 'contract-mode' : '' }}">
+    @if ($isSubscriptionContract)
+        {{--
+            Contrato de Assinatura cheio, legível, antes do formulário de
+            assinatura (pedido do usuário 2026-09-23: "o contrato tem que
+            preencher toda a tela, permitindo ler com cuidado" -- antes só
+            aparecia um resumo de 4 linhas, o texto do contrato em si nunca
+            era mostrado pra quem estava assinando). Mesmo conteúdo do PDF
+            final, via o parcial compartilhado, pra nunca ficar
+            dessincronizado.
+        --}}
+        @php
+            $allOptions = \App\Models\Plan::getAvailableFeaturesOptions();
+            $planFeatures = collect($document->plan?->features ?? [])
+                ->map(fn ($key) => str_replace('Tabela: ', '', $allOptions[$key] ?? $key))
+                ->sort()
+                ->values();
+        @endphp
+        <div class="contract-reading-panel" id="contractPrintArea">
+            <div class="contract-print-bar no-print">
+                <span class="contract-print-hint">Leia o contrato com atenção antes de assinar.</span>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="window.print()">
+                    🖨️ Imprimir contrato
+                </button>
+            </div>
+
+            <div class="contract-header">
+                <div class="contract-logo">O<span class="accent">r</span>avel</div>
+                <div class="contract-title-block">
+                    <div class="contract-doc-title">Contrato de Assinatura</div>
+                    <div class="contract-doc-tag">{{ now()->format('Y-m') }}-{{ mb_strtoupper(mb_substr($document->slug ?? $document->id, 0, 8)) }}</div>
+                </div>
+            </div>
+
+            <div class="contract-section">
+                <div class="contract-section-title">Contratante</div>
+                <div class="contract-data-grid">
+                    <div>
+                        <span class="contract-label">Empresa</span>
+                        <span class="contract-value">{{ $document->name }}</span>
+                    </div>
+                    <div>
+                        <span class="contract-label">CNPJ / CPF</span>
+                        <span class="contract-value">{{ $document->cpf_cnpj ?? '—' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contract-section">
+                <div class="contract-section-title">Plano Contratado</div>
+                <div class="contract-data-grid">
+                    <div>
+                        <span class="contract-label">Plano</span>
+                        <span class="contract-value">{{ $document->plan?->name ?? '—' }}</span>
+                    </div>
+                    <div>
+                        <span class="contract-label">Valor</span>
+                        <span class="contract-value">R$ {{ number_format((float) ($document->mrr_value ?? $document->plan?->base_price ?? 0), 2, ',', '.') }} / {{ match ($document->plan?->billing_cycle) {
+                            'quarterly' => 'trimestre',
+                            'semiannual' => 'semestre',
+                            'annual' => 'ano',
+                            default => 'mês',
+                        } }}</span>
+                    </div>
+                </div>
+                <div class="contract-modules">
+                    <span class="contract-label">Módulos incluídos</span>
+                    <ul>
+                        @forelse ($planFeatures as $moduleLabel)
+                            <li>{{ $moduleLabel }}</li>
+                        @empty
+                            <li>A definir junto com a proposta comercial</li>
+                        @endforelse
+                    </ul>
+                </div>
+            </div>
+
+            <div class="contract-section">
+                <div class="contract-section-title">Termos e Condições</div>
+                @include('partials.subscription-agreement-clauses', ['contract' => $document])
+            </div>
+        </div>
+    @endif
+
     <div class="signature-wrapper">
         <!-- Header -->
         <div class="signature-header">
-            <h1 class="signature-title">Assinatura Eletrônica</h1>
+            <h1 class="signature-title">{{ $isSubscriptionContract ? 'Assinar Contrato' : 'Assinatura Eletrônica' }}</h1>
             <p class="signature-subtitle">
                 {{ match ($document::class) {
                     'App\\Models\\Contract' => 'Contrato de Locação',
@@ -30,14 +117,8 @@
                     <span class="info-label">Equipamento:</span>
                     <span class="info-value">{{ $document->asset?->name ?? 'N/A' }}</span>
                 </div>
-            @elseif ($document::class === 'App\\Models\\Tenant')
-                @php
-                    $allOptions = \App\Models\Plan::getAvailableFeaturesOptions();
-                    $planFeatures = collect($document->plan?->features ?? [])
-                        ->map(fn ($key) => str_replace('Tabela: ', '', $allOptions[$key] ?? $key))
-                        ->sort()
-                        ->values();
-                @endphp
+            @elseif ($isSubscriptionContract)
+                {{-- Resumo já mostrado por completo no contrato acima --}}
                 <div class="info-row">
                     <span class="info-label">Empresa:</span>
                     <span class="info-value">{{ $document->name }}</span>
@@ -45,19 +126,6 @@
                 <div class="info-row">
                     <span class="info-label">Plano:</span>
                     <span class="info-value">{{ $document->plan?->name ?? 'N/A' }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Valor:</span>
-                    <span class="info-value">R$ {{ number_format((float) ($document->mrr_value ?? $document->plan?->base_price ?? 0), 2, ',', '.') }} / {{ match ($document->plan?->billing_cycle) {
-                        'quarterly' => 'trimestre',
-                        'semiannual' => 'semestre',
-                        'annual' => 'ano',
-                        default => 'mês',
-                    } }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Módulos:</span>
-                    <span class="info-value">{{ $planFeatures->implode(', ') ?: 'A definir na proposta' }}</span>
                 </div>
             @else
                 <div class="info-row">
@@ -268,17 +336,194 @@
 
     body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Fundo neutro em vez do degradê roxo original -- "esta com uma
+           tela lilas abaixo, com uma pagina que nao parece um contrato"
+           (pedido do usuario 2026-09-23). align-items: flex-start (nao
+           center) porque o painel do contrato e' alto -- centralizar
+           verticalmente cortaria o topo em telas menores. */
+        background: #eef0f3;
         min-height: 100vh;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: center;
-        padding: 20px;
+        padding: 40px 20px;
     }
 
     .signature-container {
         width: 100%;
         max-width: 600px;
+    }
+
+    /* Contrato de Assinatura (Tenant): ocupa a tela toda pra permitir ler
+       com cuidado, em vez do card estreito de 600px usado pra Ordem de
+       Servico/Contrato de locacao. */
+    .signature-container.contract-mode {
+        max-width: 900px;
+    }
+
+    .contract-reading-panel {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+        padding: 40px;
+        margin-bottom: 24px;
+    }
+
+    .contract-print-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .contract-print-hint {
+        font-size: 13px;
+        color: #666;
+    }
+
+    .contract-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-bottom: 2px solid #E8541A;
+        padding-bottom: 15px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .contract-logo {
+        font-size: 26px;
+        font-weight: 800;
+        color: #111827;
+        letter-spacing: -1px;
+    }
+
+    .contract-logo .accent {
+        color: #E8541A;
+    }
+
+    .contract-title-block {
+        text-align: right;
+    }
+
+    .contract-doc-title {
+        font-size: 14px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #111827;
+    }
+
+    .contract-doc-tag {
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        color: #E8541A;
+        font-weight: bold;
+    }
+
+    .contract-section {
+        margin-bottom: 24px;
+    }
+
+    .contract-section-title {
+        background: #f9fafb;
+        padding: 8px 14px;
+        font-weight: bold;
+        border-left: 4px solid #E8541A;
+        color: #374151;
+        text-transform: uppercase;
+        font-size: 11px;
+        margin-bottom: 14px;
+    }
+
+    .contract-data-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .contract-data-grid > div {
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 10px 12px;
+    }
+
+    .contract-label {
+        display: block;
+        font-weight: bold;
+        font-size: 10px;
+        text-transform: uppercase;
+        color: #6b7280;
+        margin-bottom: 2px;
+    }
+
+    .contract-value {
+        font-size: 14px;
+        color: #111827;
+        font-weight: 500;
+    }
+
+    .contract-modules {
+        margin-top: 12px;
+    }
+
+    .contract-modules ul {
+        margin: 8px 0 0;
+        padding-left: 20px;
+    }
+
+    .contract-modules li {
+        margin-bottom: 4px;
+        font-size: 13px;
+        color: #374151;
+    }
+
+    /* Cláusulas -- markup compartilhado com o PDF final via
+       partials/subscription-agreement-clauses.blade.php */
+    .clause {
+        margin-bottom: 14px;
+        text-align: justify;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #374151;
+    }
+
+    .clause-title {
+        font-weight: bold;
+        color: #111827;
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    @media (max-width: 640px) {
+        .contract-data-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .contract-reading-panel {
+            padding: 20px;
+        }
+    }
+
+    @media print {
+        .no-print,
+        .signature-wrapper {
+            display: none !important;
+        }
+
+        body {
+            background: white;
+            padding: 0;
+            display: block;
+        }
+
+        .contract-reading-panel {
+            box-shadow: none;
+            padding: 0;
+        }
     }
 
     .signature-wrapper {
