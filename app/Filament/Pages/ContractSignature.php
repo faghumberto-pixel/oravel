@@ -64,21 +64,30 @@ class ContractSignature extends Page implements HasForms
                     ->schema([
                         Forms\Components\View::make('filament.components.sla-lgpd-summary'),
 
+                        // ->dehydrated() é obrigatório aqui -- achado real em
+                        // PROD 2026-09-24 ("Undefined array key 'company'" no
+                        // submit()): por padrão, o Filament EXCLUI campos
+                        // ->disabled() de getState(), então os 3 campos
+                        // (só leitura de propósito, preenchidos no mount())
+                        // sumiam do $data inteiro na hora de salvar.
                         Forms\Components\TextInput::make('company')
                             ->label('Nome da Empresa')
                             ->required()
-                            ->disabled(),
+                            ->disabled()
+                            ->dehydrated(),
 
                         Forms\Components\TextInput::make('email')
                             ->label('Email do Responsável')
                             ->email()
                             ->required()
-                            ->disabled(),
+                            ->disabled()
+                            ->dehydrated(),
 
                         Forms\Components\TextInput::make('name')
                             ->label('Nome Completo do Responsável')
                             ->required()
-                            ->disabled(),
+                            ->disabled()
+                            ->dehydrated(),
 
                         Forms\Components\Checkbox::make('agree_sla')
                             ->label('Concordo com o SLA (Acordo de Nível de Serviço)')
