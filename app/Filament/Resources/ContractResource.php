@@ -9,6 +9,7 @@ use App\Models\Client;
 use App\Models\Contract;
 use App\Models\EquipmentReplacement;
 use App\Services\CepGeocodingService;
+use App\Services\SignatureService;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -348,6 +349,11 @@ class ContractResource extends Resource
                 Tables\Columns\TextColumn::make('asset.name')->label('Ativo'),
                 Tables\Columns\TextColumn::make('start_date')->date('d/m/Y'),
                 Tables\Columns\IconColumn::make('is_active')->boolean()->label('Ativo'),
+                Tables\Columns\TextColumn::make('assinatura')
+                    ->label('Assinatura')
+                    ->badge()
+                    ->state(fn (Contract $record) => $record->signedSignatures()->exists() ? 'Contrato assinado' : 'Assinatura pendente')
+                    ->color(fn (Contract $record) => $record->signedSignatures()->exists() ? 'success' : 'warning'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
@@ -365,7 +371,59 @@ class ContractResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                static::generateSignatureAction(),
+                static::copySignatureLinkAction(),
             ]);
+    }
+
+    /**
+     * Reaproveita o mecanismo generico de assinatura eletronica (mesmo do
+     * EpiDeliveryResource) -- so' aparece enquanto o contrato ainda nao
+     * tem nenhuma assinatura registrada. Some assim que uma DocumentSignature
+     * e' criada (mesmo pendente), dando lugar ao botao "Copiar Link".
+     */
+    public static function generateSignatureAction(): Tables\Actions\Action
+    {
+        return Tables\Actions\Action::make('generate_signature')
+            ->label('Gerar Link de Assinatura')
+            ->icon('heroicon-o-pencil-square')
+            ->color('info')
+            ->visible(fn (Contract $record) => ! $record->signatures()->exists())
+            ->action(function (Contract $record) {
+                $link = app(SignatureService::class)->generateSignatureLink($record, [
+                    'name' => $record->client?->name ?? 'Cliente',
+                    'document' => $record->client?->cpf_cnpj,
+                ]);
+
+                Notification::make()
+                    ->title('Link de assinatura gerado')
+                    ->body($link)
+                    ->success()
+                    ->send();
+            });
+    }
+
+    /**
+     * Copia o link do token ja gerado enquanto a assinatura ainda pode
+     * ser feita (can_sign). Depois de assinado, some -- a coluna
+     * "Assinatura" acima passa a mostrar "Contrato assinado" no lugar.
+     */
+    public static function copySignatureLinkAction(): Tables\Actions\Action
+    {
+        return Tables\Actions\Action::make('copy_signature_link')
+            ->label('Copiar Link de Assinatura')
+            ->icon('heroicon-o-document-duplicate')
+            ->color('info')
+            ->visible(fn (Contract $record) => $record->pendingSignatures()->notExpired()->exists())
+            ->action(function (Contract $record) {
+                $signature = $record->pendingSignatures()->notExpired()->latest()->first();
+
+                Notification::make()
+                    ->title('Link de assinatura')
+                    ->body(route('signature.sign', ['token' => $signature->token]))
+                    ->success()
+                    ->send();
+            });
     }
 
     public static function getPages(): array

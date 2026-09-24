@@ -51,6 +51,11 @@ class MeusContratos extends Page implements HasTable
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge(),
+                Tables\Columns\TextColumn::make('assinatura')
+                    ->label('Assinatura')
+                    ->badge()
+                    ->state(fn (Contract $record) => $record->signedSignatures()->exists() ? 'Assinado' : 'Aguardando assinatura')
+                    ->color(fn (Contract $record) => $record->signedSignatures()->exists() ? 'success' : 'warning'),
                 Tables\Columns\TextColumn::make('price')
                     ->label('Valor')
                     ->money('BRL'),
