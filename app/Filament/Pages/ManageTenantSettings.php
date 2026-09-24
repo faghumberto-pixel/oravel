@@ -68,16 +68,15 @@ class ManageTenantSettings extends Page implements HasForms
         'efetividade' => 85.0,
     ];
 
-    // DECISÃO EM ABERTO (2026-09-24, achado auditando gate de Pages): esta
-    // tela (dados cadastrais/metas do tenant) hoje é visível pra qualquer
-    // admin do tenant, plano à parte -- deliberadamente não gateada por
-    // feature porque não existe um módulo "Configurações" vendável no
-    // Contrato (é configuração básica de conta, não um recurso comercial).
-    // Se o usuário quiser que isso também dependa do Contrato, precisa
-    // primeiro decidir qual feature key representaria "Configurações".
+    // Decidido 2026-09-24: "Configurações" agora é um módulo como qualquer
+    // outro, selecionável por Contrato (feature key 'modulo_configuracoes',
+    // ver Plan::getAvailableFeaturesOptions() e ContratoResource::
+    // groupedFeatureOptions()) -- antes era sempre visível pra todo admin,
+    // sem gate nenhum.
     public static function canAccess(): bool
     {
-        return (bool) auth()->user()?->isAdmin();
+        return (bool) auth()->user()?->isAdmin()
+            && (bool) Tenancy::current()?->hasFeature('modulo_configuracoes');
     }
 
     public function mount(): void

@@ -86,6 +86,13 @@ class Plan extends Model
         // Dashboard sem querer; desmarcar aqui esconde so o Dashboard.
         $options['modulo_dashboard'] = 'Painel: Dashboard (Painel de Controle)';
 
+        // Mesma lógica: 'modulo_configuracoes' não tem Model/tabela por trás
+        // (é a página App\Filament\Pages\ManageTenantSettings) -- adicionado
+        // 2026-09-24 a pedido do usuário, que quer poder incluir/excluir
+        // "Configurações do Tenant" por Contrato como qualquer outro módulo
+        // (antes era sempre visível pra todo admin, sem gate nenhum).
+        $options['modulo_configuracoes'] = 'Painel: Configurações do Tenant';
+
         return $options;
     }
 

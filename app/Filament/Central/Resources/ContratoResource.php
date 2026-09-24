@@ -83,6 +83,7 @@ class ContratoResource extends Resource
         }
 
         $grouped['Outros']['modulo_dashboard'] = 'Painel: Dashboard (Painel de Controle)';
+        $grouped['Outros']['modulo_configuracoes'] = 'Painel: Configurações do Tenant';
         ksort($grouped);
 
         return $grouped;
