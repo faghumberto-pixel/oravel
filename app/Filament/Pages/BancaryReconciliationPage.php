@@ -38,7 +38,9 @@ class BancaryReconciliationPage extends Page
     protected static ?int $navigationSort = 11;
 
     public ?string $dateStart = null;
+
     public ?string $dateEnd = null;
+
     public ?string $syncStatus = null;
 
     public function mount(): void
@@ -47,9 +49,13 @@ class BancaryReconciliationPage extends Page
         $this->dateEnd = now()->format('Y-m-d');
     }
 
+    // Achado em simulação real 2026-09-24: o docblock da classe já dizia
+    // "restrito a admins ou usuários com permissão de leitura de contas a
+    // receber", mas o código nunca implementou isso -- qualquer usuário
+    // autenticado via qualquer tenant enxergava a tela, plano incluído ou não.
     public static function canAccess(): bool
     {
-        return (bool) auth()->user();
+        return (bool) auth()->user()?->can('viewAny', AccountReceivable::class);
     }
 
     public function getMaxContentWidth(): MaxWidth
@@ -61,7 +67,7 @@ class BancaryReconciliationPage extends Page
     {
         $tenant = Tenancy::current();
 
-        if (!$tenant) {
+        if (! $tenant) {
             return [
                 'automaticallySettled' => collect(),
                 'pendingConfirmation' => collect(),

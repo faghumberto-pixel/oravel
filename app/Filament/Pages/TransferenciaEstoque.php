@@ -36,6 +36,13 @@ class TransferenciaEstoque extends Page implements HasForms
 
     protected static string $view = 'filament.pages.transferencia-estoque';
 
+    // Achado em simulação real 2026-09-24: não tinha canAccess() nenhum --
+    // aparecia pra qualquer tenant independente do Contrato incluir Peças.
+    public static function canAccess(): bool
+    {
+        return (bool) auth()->user()?->can('viewAny', Part::class);
+    }
+
     public ?array $data = [];
 
     public function mount(): void

@@ -13,11 +13,19 @@ use Livewire\Attributes\Url;
 class MaintenanceOrderListPage extends Page
 {
     protected static string $view = 'filament.admin.pages.maintenance-order-list';
+
     protected static ?string $slug = 'maintenance-order-list';
 
     // Tela mobile de entrada direta (link/QR/redirect), não um item de menu --
     // "Ordens de Serviço" já existe em Manutenção via MaintenanceOrderResource.
     protected static bool $shouldRegisterNavigation = false;
+
+    // Defesa em profundidade (achado 2026-09-24 auditando gate de Pages):
+    // sem isso, acesso direto pela URL/QR ignoraria o Contrato do tenant.
+    public static function canAccess(): bool
+    {
+        return (bool) auth()->user()?->can('viewAny', MaintenanceOrder::class);
+    }
 
     #[Url]
     public string $search = '';
@@ -32,9 +40,9 @@ class MaintenanceOrderListPage extends Page
 
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('os_number', 'ilike', '%' . $this->search . '%')
-                    ->orWhereHas('client', fn ($q) => $q->where('name', 'ilike', '%' . $this->search . '%'))
-                    ->orWhereHas('client', fn ($q) => $q->where('document', 'ilike', '%' . $this->search . '%'));
+                $q->where('os_number', 'ilike', '%'.$this->search.'%')
+                    ->orWhereHas('client', fn ($q) => $q->where('name', 'ilike', '%'.$this->search.'%'))
+                    ->orWhereHas('client', fn ($q) => $q->where('document', 'ilike', '%'.$this->search.'%'));
             });
         }
 

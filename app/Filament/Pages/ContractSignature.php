@@ -2,14 +2,21 @@
 
 namespace App\Filament\Pages;
 
+use App\Mail\SignatureAcceptedMail;
 use App\Models\Signature;
+use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
-use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 
+/**
+ * Assinatura do contrato SLA/LGPD da própria Oravel (infra de onboarding,
+ * mesma família de ComplianceStatus) -- não é um módulo vendável, todo
+ * tenant tem que assinar isso independente do Contrato. Intencionalmente
+ * sem canAccess() por feature.
+ */
 class ContractSignature extends Page implements HasForms
 {
     use InteractsWithForms;
@@ -34,7 +41,7 @@ class ContractSignature extends Page implements HasForms
         if ($signature) {
             Notification::make()
                 ->title('Contrato já assinado')
-                ->body('Você já assinou o contrato de serviço em ' . $signature->signed_at->format('d/m/Y H:i'))
+                ->body('Você já assinou o contrato de serviço em '.$signature->signed_at->format('d/m/Y H:i'))
                 ->success()
                 ->send();
 
@@ -102,7 +109,7 @@ class ContractSignature extends Page implements HasForms
 
         try {
             $timestamp = now()->toUtc()->format('Y-m-d\TH:i:s\Z');
-            $dataToSign = $data['company'] . '|' . $data['email'] . '|' . $data['name'] . '|' . $timestamp;
+            $dataToSign = $data['company'].'|'.$data['email'].'|'.$data['name'].'|'.$timestamp;
 
             $hash = hash('sha256', $dataToSign);
 
@@ -123,11 +130,11 @@ class ContractSignature extends Page implements HasForms
             $tenant->update(['signature_id' => $signature->id]);
 
             \Mail::to('suporte@oravel.com.br')->send(
-                new \App\Mail\SignatureAcceptedMail($signature)
+                new SignatureAcceptedMail($signature)
             );
 
             \Mail::to($data['email'])->send(
-                new \App\Mail\SignatureAcceptedMail($signature)
+                new SignatureAcceptedMail($signature)
             );
 
             $signature->update(['email_sent' => true, 'email_sent_at' => now()]);

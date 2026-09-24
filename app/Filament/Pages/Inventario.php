@@ -28,6 +28,14 @@ class Inventario extends Page implements HasTable
 
     protected static ?int $navigationSort = 6;
 
+    // Achado em simulação real 2026-09-24: não tinha canAccess() nenhum --
+    // Filament libera Page sem override por padrão, então aparecia pra
+    // qualquer tenant independente do Contrato.
+    public static function canAccess(): bool
+    {
+        return (bool) auth()->user()?->can('viewAny', MaterialStockMovement::class);
+    }
+
     public function table(Table $table): Table
     {
         return $table

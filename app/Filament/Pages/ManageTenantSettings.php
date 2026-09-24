@@ -68,6 +68,13 @@ class ManageTenantSettings extends Page implements HasForms
         'efetividade' => 85.0,
     ];
 
+    // DECISÃO EM ABERTO (2026-09-24, achado auditando gate de Pages): esta
+    // tela (dados cadastrais/metas do tenant) hoje é visível pra qualquer
+    // admin do tenant, plano à parte -- deliberadamente não gateada por
+    // feature porque não existe um módulo "Configurações" vendável no
+    // Contrato (é configuração básica de conta, não um recurso comercial).
+    // Se o usuário quiser que isso também dependa do Contrato, precisa
+    // primeiro decidir qual feature key representaria "Configurações".
     public static function canAccess(): bool
     {
         return (bool) auth()->user()?->isAdmin();

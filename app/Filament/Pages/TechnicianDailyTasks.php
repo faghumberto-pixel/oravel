@@ -38,9 +38,11 @@ class TechnicianDailyTasks extends Page
     // podia acabar competindo e virando o destino de fato.
     protected static ?int $navigationSort = -9;
 
+    // Achado em simulação real 2026-09-24: só checava autenticação, não o
+    // Contrato -- "Minhas Ordens de Serviço" aparecia mesmo sem o módulo.
     public static function canAccess(): bool
     {
-        return (bool) auth()->user();
+        return (bool) auth()->user()?->can('viewAny', MaintenanceOrder::class);
     }
 
     public static function shouldRegisterNavigation(): bool

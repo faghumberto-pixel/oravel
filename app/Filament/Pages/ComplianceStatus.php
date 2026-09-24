@@ -4,6 +4,13 @@ namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
 
+/**
+ * Status de conformidade da PRÓPRIA assinatura Oravel (contrato SLA/LGPD
+ * assinado, pagamento em dia, etc) -- não é um módulo vendável do Contrato,
+ * é sobre a relação do tenant com a Oravel em si. Intencionalmente sem
+ * canAccess() por feature: todo tenant precisa ver isso, incluído no
+ * Contrato ou não.
+ */
 class ComplianceStatus extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
@@ -61,8 +68,13 @@ class ComplianceStatus extends Page
     private function getPaymentStatus($tenant)
     {
         $status = $tenant?->asaas_payment_status;
-        if ($status === 'em_dia') return 'completed';
-        if ($status === 'atrasado') return 'warning';
+        if ($status === 'em_dia') {
+            return 'completed';
+        }
+        if ($status === 'atrasado') {
+            return 'warning';
+        }
+
         return 'pending';
     }
 
@@ -96,13 +108,15 @@ class ComplianceStatus extends Page
 
     private function getAccessStatus($tenant, $signature)
     {
-        if (!$signature) {
+        if (! $signature) {
             $requiredBy = $tenant?->signature_required_by;
             if ($requiredBy && now()->isAfter($requiredBy)) {
                 return 'warning';
             }
+
             return 'pending';
         }
+
         return 'completed';
     }
 
@@ -115,25 +129,36 @@ class ComplianceStatus extends Page
         if ($requiredBy && now()->isAfter($requiredBy)) {
             return 'Acesso restrito: prazo de assinatura vencido';
         }
+
         return 'Acesso normal (assinatura pendente)';
     }
 
     private function getAccessIcon($tenant, $signature)
     {
-        if ($signature) return '✅';
+        if ($signature) {
+            return '✅';
+        }
         $requiredBy = $tenant?->signature_required_by;
-        if ($requiredBy && now()->isAfter($requiredBy)) return '⚠️';
+        if ($requiredBy && now()->isAfter($requiredBy)) {
+            return '⚠️';
+        }
+
         return '⏳';
     }
 
     private function getOverallStatus($checks)
     {
-        $completed = count(array_filter($checks, fn($c) => $c['status'] === 'completed'));
+        $completed = count(array_filter($checks, fn ($c) => $c['status'] === 'completed'));
         $total = count($checks);
         $percentage = (int) (($completed / $total) * 100);
 
-        if ($percentage === 100) return ['status' => 'completed', 'label' => 'Totalmente Conforme'];
-        if ($percentage >= 50) return ['status' => 'warning', 'label' => 'Parcialmente Conforme'];
+        if ($percentage === 100) {
+            return ['status' => 'completed', 'label' => 'Totalmente Conforme'];
+        }
+        if ($percentage >= 50) {
+            return ['status' => 'warning', 'label' => 'Parcialmente Conforme'];
+        }
+
         return ['status' => 'pending', 'label' => 'Ações Pendentes'];
     }
 }

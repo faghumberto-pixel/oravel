@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Support\Tenancy;
 use Filament\Pages\Page;
 
 /**
@@ -23,10 +24,15 @@ class ProgramacaoLogistica extends Page
 
     protected static string $view = 'filament.pages.programacao-logistica';
 
+    // Achado em simulação real 2026-09-24: checava só cargo/departamento,
+    // nunca o Contrato -- adicionado hasFeature() como condição extra, sem
+    // tirar a checagem de cargo que já existia.
     public static function canAccess(): bool
     {
         $user = auth()->user();
 
-        return (bool) $user && ($user->isAdmin() || ! empty($user->supervisedDepartmentIds()));
+        return (bool) $user
+            && ($user->isAdmin() || ! empty($user->supervisedDepartmentIds()))
+            && (bool) Tenancy::current()?->hasFeature('tabela_equipment_movements');
     }
 }

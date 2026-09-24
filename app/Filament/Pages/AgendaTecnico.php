@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\MaintenanceOrder;
 use App\Models\User;
 use App\Support\Tenancy;
 use Filament\Pages\Page;
@@ -33,9 +34,12 @@ class AgendaTecnico extends Page
 
     public string $technicianId = '';
 
+    // Achado em simulação real 2026-09-24: esta Page não checava o Contrato
+    // do tenant (só `auth()->user()`), diferente de todo o resto do painel
+    // que gateia via Policy -- ficava visível mesmo sem o módulo de OS.
     public static function canAccess(): bool
     {
-        return (bool) auth()->user();
+        return (bool) auth()->user()?->can('viewAny', MaintenanceOrder::class);
     }
 
     public static function shouldRegisterNavigation(): bool
