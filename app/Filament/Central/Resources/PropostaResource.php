@@ -239,7 +239,21 @@ class PropostaResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('features')
                     ->label('Módulos')
-                    ->formatStateUsing(fn (?array $state) => count($state ?? []).' selecionado(s)'),
+                    ->formatStateUsing(function ($state) {
+                        // Bug real achado em PROD 2026-09-23 (500 na lista
+                        // assim que existia uma Proposta de verdade): apesar
+                        // de Plan::features() ser um Attribute cast que
+                        // sempre devolve array, o Filament às vezes resolve
+                        // o estado desta coluna a partir do valor BRUTO da
+                        // coluna (string JSON), não do atributo já
+                        // acessado -- mesmo tratamento defensivo que o
+                        // próprio accessor do model já faz.
+                        if (is_string($state)) {
+                            $state = json_decode($state, true) ?? [];
+                        }
+
+                        return count($state ?? []).' selecionado(s)';
+                    }),
                 // Status do funil: cadastro -> contrato assinado -> pago
                 // (pedido do usuário 2026-09-23). Não é uma coluna real do
                 // Plan -- ->state() calcula na hora, olhando o Tenant que
