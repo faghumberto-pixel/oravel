@@ -80,9 +80,28 @@ abstract class AbstractPolicy
         if ($policyName === 'DynamicPolicy') {
             return null;
         }
-        $guess = 'App\\Models\\'.str_replace('Policy', '', $policyName);
+        $guessedBasename = str_replace('Policy', '', $policyName);
+        $guess = 'App\\Models\\'.$guessedBasename;
 
-        return class_exists($guess) ? $guess : null;
+        if (class_exists($guess)) {
+            return $guess;
+        }
+
+        // Bug real achado 2026-09-24: o guess acima so' cobria App\Models --
+        // modelos em app/Domain/{Dominio}/Models/ (ex: App\Domain\Fleet\Models
+        // \ContractMeasurement) nunca batiam, entao mesmo com uma Policy
+        // dedicada (ContractMeasurementPolicy) o viewAny/create (sem $record,
+        // Gate remove o argumento de classe) caia sempre em "sem model" ->
+        // pulava o gate de plano por inteiro. Procura no SaaSRegistry (que já
+        // conhece todos os namespaces de model, ver modelDirectories()) por
+        // um model cujo basename bata com o nome da Policy.
+        foreach (SaaSRegistry::modules() as $module) {
+            if (class_basename($module['model']) === $guessedBasename) {
+                return $module['model'];
+            }
+        }
+
+        return null;
     }
 
     protected function getFeatureKeyFromModel($model): ?string

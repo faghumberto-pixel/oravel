@@ -99,6 +99,16 @@ class ContratoResource extends Resource
         return 'features_group_'.Str::slug($groupName, '_');
     }
 
+    /**
+     * Total de módulos disponíveis pra marcar (soma de todos os grupos) --
+     * fonte única pra "X de Y selecionados", usada tanto no resumo do
+     * formulário quanto na coluna da listagem.
+     */
+    public static function totalAvailableModulesCount(): int
+    {
+        return collect(static::groupedFeatureOptions())->sum(fn ($options) => count($options));
+    }
+
     public static function form(Form $form): Form
     {
         $groupedOptions = static::groupedFeatureOptions();
@@ -159,9 +169,13 @@ class ContratoResource extends Resource
                         ->label('Resumo por grupo')
                         ->content(function (Get $get) use ($groupedOptions) {
                             $lines = [];
+                            $totalSelected = 0;
+                            $totalAvailable = static::totalAvailableModulesCount();
 
                             foreach ($groupedOptions as $groupName => $options) {
                                 $selected = $get(static::groupFieldName($groupName)) ?? [];
+                                $totalSelected += count($selected);
+
                                 if (empty($selected)) {
                                     continue;
                                 }
@@ -174,12 +188,21 @@ class ContratoResource extends Resource
                                 $lines[] = $groupName.' ('.$labels->count().'): '.$labels->implode(', ');
                             }
 
+                            // Total geral -- pedido do usuário 2026-09-24:
+                            // "preciso do resumo total de quantos módulos
+                            // estão selecionados na tela de Contratos". Antes
+                            // só existia a quebra por grupo, sem nenhum
+                            // número consolidado no topo.
+                            $total = '<p class="mb-2 font-semibold text-gray-900 dark:text-white">'
+                                .$totalSelected.' de '.$totalAvailable.' módulos selecionados</p>';
+
                             if (empty($lines)) {
-                                return new HtmlString('<span class="text-gray-500">Nenhum módulo selecionado ainda.</span>');
+                                return new HtmlString($total.'<span class="text-gray-500">Nenhum módulo selecionado ainda.</span>');
                             }
 
                             return new HtmlString(
-                                '<ul class="list-disc list-inside space-y-1 text-sm">'
+                                $total
+                                .'<ul class="list-disc list-inside space-y-1 text-sm">'
                                 .collect($lines)->map(fn ($line) => '<li>'.e($line).'</li>')->implode('')
                                 .'</ul>'
                             );
@@ -258,7 +281,14 @@ class ContratoResource extends Resource
                             $state = json_decode($state, true) ?? [];
                         }
 
-                        return count($state ?? []).' selecionado(s)';
+                        // Conta só os módulos de fato marcados -- desde que
+                        // saas:sync-modules passou a adicionar todo módulo
+                        // novo como 'false' (fix 2026-09-24), count($state)
+                        // sozinho contava também os desmarcados, inflando o
+                        // número (ex: 89 em vez dos 43 realmente incluídos).
+                        $selected = collect($state ?? [])->filter(fn ($v) => $v === true)->count();
+
+                        return "{$selected} de ".static::totalAvailableModulesCount().' selecionado(s)';
                     }),
                 // Status do funil: cadastro -> contrato assinado -> pago
                 // (pedido do usuário 2026-09-23). Não é uma coluna real do
