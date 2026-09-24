@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Central\Resources\PropostaResource\Widgets;
+namespace App\Filament\Central\Resources\ContratoResource\Widgets;
 
 use App\Filament\Central\Resources\TenantResource;
 use App\Models\DocumentSignature;
@@ -9,7 +9,7 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 /**
- * Cards de resumo no topo da tela de Propostas (pedido do usuário
+ * Cards de resumo no topo da tela de Contratos (pedido do usuário
  * 2026-09-23: "crie cards na parte superior com links para contratos
  * enviados, contratos assinados, contratos nao assinado, Pagos, Em
  * aberto"). Cada card é clicável e leva pra listagem já filtrada -- mesmo
@@ -24,7 +24,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
  * Resource, já que é um link pra outro painel (admin), não pra este
  * (central).
  */
-class PropostaFunnelStats extends BaseWidget
+class ContratoFunnelStats extends BaseWidget
 {
     protected function getStats(): array
     {

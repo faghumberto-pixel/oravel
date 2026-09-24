@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Central\Resources\PropostaResource\Pages;
+namespace App\Filament\Central\Resources\ContratoResource\Pages;
 
-use App\Filament\Central\Resources\PropostaResource;
+use App\Filament\Central\Resources\ContratoResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditProposta extends EditRecord
+class EditContrato extends EditRecord
 {
-    protected static string $resource = PropostaResource::class;
+    protected static string $resource = ContratoResource::class;
 
     protected function getHeaderActions(): array
     {
@@ -18,7 +18,7 @@ class EditProposta extends EditRecord
     }
 
     /**
-     * Espelho de CreateProposta::mutateFormDataBeforeCreate() -- mescla os
+     * Espelho de CreateContrato::mutateFormDataBeforeCreate() -- mescla os
      * campos por grupo de volta num único 'features' antes de salvar.
      */
     protected function mutateFormDataBeforeSave(array $data): array
@@ -37,7 +37,7 @@ class EditProposta extends EditRecord
     }
 
     /**
-     * Sentido contrário: ao abrir a proposta pra editar, distribui o
+     * Sentido contrário: ao abrir o contrato pra editar, distribui o
      * 'features' salvo (array único) de volta pros campos
      * 'features_group_{grupo}' que o formulário realmente usa -- sem
      * isso, os checkboxes por grupo sempre abririam todos desmarcados,
@@ -47,9 +47,9 @@ class EditProposta extends EditRecord
     {
         $selected = collect($data['features'] ?? []);
 
-        foreach (PropostaResource::groupedFeatureOptions() as $groupName => $options) {
+        foreach (ContratoResource::groupedFeatureOptions() as $groupName => $options) {
             $keys = array_keys($options);
-            $data[PropostaResource::groupFieldName($groupName)] = $selected->intersect($keys)->values()->all();
+            $data[ContratoResource::groupFieldName($groupName)] = $selected->intersect($keys)->values()->all();
         }
 
         return $data;

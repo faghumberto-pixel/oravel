@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Filament\Central\Resources\PropostaResource\Widgets\PropostaFunnelStats;
+use App\Filament\Central\Resources\ContratoResource\Widgets\ContratoFunnelStats;
 use App\Models\DocumentSignature;
 use App\Models\Plan;
 use App\Models\Tenant;
@@ -14,12 +14,12 @@ use Illuminate\Support\Str;
 use Tests\TestCase;
 
 /**
- * Cards de resumo no topo da tela de Propostas (pedido do usuário
+ * Cards de resumo no topo da tela de Contratos (pedido do usuário
  * 2026-09-23: "crie cards na parte superior com links para contratos
  * enviados, contratos assinados, contratos nao assinado, Pagos, Em
  * aberto").
  */
-class PropostaFunnelStatsTest extends TestCase
+class ContratoFunnelStatsTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -74,9 +74,9 @@ class PropostaFunnelStatsTest extends TestCase
         // criado direto no banco) -- ainda deve contar pra "Pagos".
         $this->makeTenant('Pago Direto', Tenant::PAYMENT_STATUS_EM_DIA);
 
-        $getStats = (new \ReflectionClass(PropostaFunnelStats::class))->getMethod('getStats');
+        $getStats = (new \ReflectionClass(ContratoFunnelStats::class))->getMethod('getStats');
         $getStats->setAccessible(true);
-        $result = $getStats->invoke(new PropostaFunnelStats);
+        $result = $getStats->invoke(new ContratoFunnelStats);
 
         $values = collect($result)->map(fn ($stat) => $stat->getValue())->values();
 

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Central\Resources;
 
-use App\Filament\Central\Resources\PropostaResource\Pages;
+use App\Filament\Central\Resources\ContratoResource\Pages;
 use App\Models\DocumentSignature;
 use App\Models\Plan;
 use App\Models\Tenant;
@@ -23,16 +23,21 @@ use Illuminate\Support\Str;
  * pedido do usuário: "quero uma tela nova, só pra gerar o link" --
  * ele não queria que esse fluxo continuasse vivendo dentro de "Planos",
  * já que não existe mais plano padrão de prateleira, cada cliente
- * negocia o próprio conjunto de módulos/valor).
+ * negocia o próprio conjunto de módulos/valor). Rebatizado de "Proposta"
+ * pra "Contrato" no mesmo dia (pedido do usuário: "o que é proposta é na
+ * verdade contrato, mude tudo em todos os lugares") -- ESCOPO
+ * CONFIRMADO: só esta tela nova da Central, não o módulo pré-existente
+ * "Proposta Comercial" (vendas pra clientes finais, painel admin), que é
+ * outra coisa e não foi tocado.
  *
  * Por baixo continua sendo o MESMO registro de Plan que PlanResource usa
  * (nenhuma tabela nova, nenhum dado duplicado) -- é só uma segunda porta
- * de entrada mais enxuta, focada só no essencial (nome da proposta, valor,
- * ciclo, módulos) e que já mostra o link assim que a proposta é criada. A
+ * de entrada mais enxuta, focada só no essencial (identificação, valor,
+ * ciclo, módulos) e que já mostra o link assim que o contrato é criado. A
  * tela de "Planos" continua existindo do jeito que estava (o usuário
  * pediu explicitamente pra manter as duas por enquanto).
  */
-class PropostaResource extends Resource
+class ContratoResource extends Resource
 {
     protected static ?string $model = Plan::class;
 
@@ -40,11 +45,11 @@ class PropostaResource extends Resource
 
     protected static ?string $navigationGroup = 'Gestão SaaS';
 
-    protected static ?string $navigationLabel = 'Propostas';
+    protected static ?string $navigationLabel = 'Contratos';
 
-    protected static ?string $modelLabel = 'Proposta';
+    protected static ?string $modelLabel = 'Contrato';
 
-    protected static ?string $pluralModelLabel = 'Propostas';
+    protected static ?string $pluralModelLabel = 'Contratos';
 
     protected static bool $isScopedToTenant = false;
 
@@ -86,7 +91,7 @@ class PropostaResource extends Resource
     /**
      * Nome do campo do formulário pra um grupo (cada grupo tem seu próprio
      * CheckboxList, todos mesclados em 'features' antes de salvar -- ver
-     * Pages\CreateProposta/EditProposta).
+     * Pages\CreateContrato/EditContrato).
      */
     public static function groupFieldName(string $groupName): string
     {
@@ -113,13 +118,13 @@ class PropostaResource extends Resource
         }
 
         return $form->schema([
-            Forms\Components\Section::make('Proposta')
+            Forms\Components\Section::make('Contrato')
                 ->description('Cada cliente tem o próprio conjunto de módulos e valor -- não existe mais plano padrão fechado.')
                 ->schema([
                     Forms\Components\TextInput::make('name')
-                        ->label('Identificação da proposta')
+                        ->label('Identificação do contrato')
                         ->placeholder('Ex: Nome do cliente ou da negociação')
-                        ->helperText('Uso interno -- não aparece pro cliente, só ajuda você a reconhecer essa proposta depois.')
+                        ->helperText('Uso interno -- não aparece pro cliente, só ajuda você a reconhecer esse contrato depois.')
                         ->required()
                         ->maxLength(255),
 
@@ -142,7 +147,7 @@ class PropostaResource extends Resource
                 ]),
 
             Forms\Components\Section::make('Módulos incluídos')
-                ->description('Selecione o que essa proposta específica libera pro cliente, agrupado pelos mesmos menus do painel.')
+                ->description('Selecione o que esse contrato específico libera pro cliente, agrupado pelos mesmos menus do painel.')
                 ->schema([
                     // Resumo ao vivo (pedido do usuário: "que sejam
                     // contados em um resumo na tela logo ao lado de
@@ -185,11 +190,11 @@ class PropostaResource extends Resource
     }
 
     /**
-     * Acha o Tenant que nasceu dessa proposta (se algum cliente já chegou
+     * Acha o Tenant que nasceu desse contrato (se algum cliente já chegou
      * a preencher o cadastro pelo link) e resume onde ele está no funil:
      * cadastro → contrato assinado → pago. Pedido do usuário 2026-09-23:
      * "uma forma de sabermos se foi assinado e pago". Pega o Tenant mais
-     * recente com esse plan_id -- na prática cada Proposta vira o plano de
+     * recente com esse plan_id -- na prática cada Contrato vira o plano de
      * um cliente só, então não deveria haver ambiguidade real.
      *
      * @return array{tenant: ?Tenant, signature: ?DocumentSignature, label: string, color: string}
@@ -227,7 +232,7 @@ class PropostaResource extends Resource
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('name')->label('Proposta')->weight('bold')->searchable(),
+                Tables\Columns\TextColumn::make('name')->label('Contrato')->weight('bold')->searchable(),
                 Tables\Columns\TextColumn::make('base_price')->label('Valor')->money('BRL')->weight('bold'),
                 Tables\Columns\TextColumn::make('billing_cycle')
                     ->label('Ciclo')
@@ -241,7 +246,7 @@ class PropostaResource extends Resource
                     ->label('Módulos')
                     ->formatStateUsing(function ($state) {
                         // Bug real achado em PROD 2026-09-23 (500 na lista
-                        // assim que existia uma Proposta de verdade): apesar
+                        // assim que existia um Contrato de verdade): apesar
                         // de Plan::features() ser um Attribute cast que
                         // sempre devolve array, o Filament às vezes resolve
                         // o estado desta coluna a partir do valor BRUTO da
@@ -263,33 +268,33 @@ class PropostaResource extends Resource
                     ->badge()
                     ->state(fn (Plan $record) => static::funnelStatusFor($record)['label'])
                     ->color(fn (Plan $record) => static::funnelStatusFor($record)['color']),
-                Tables\Columns\TextColumn::make('created_at')->label('Criada em')->dateTime('d/m/Y H:i')->sortable(),
+                Tables\Columns\TextColumn::make('created_at')->label('Criado em')->dateTime('d/m/Y H:i')->sortable(),
             ])
             ->actions([
                 Tables\Actions\Action::make('copy_signup_link')
-                    ->label('Copiar Link da Proposta')
+                    ->label('Copiar Link do Contrato')
                     ->icon('heroicon-o-link')
                     ->color('info')
                     ->action(function (Plan $record) {
                         $link = route('checkout.create', ['plano' => $record->id]);
 
                         Notification::make()
-                            ->title('Link da proposta')
+                            ->title('Link do contrato')
                             ->body("Leva o cliente pelo fluxo completo: cadastro → assinar contrato → pagar.\n\n{$link}")
                             ->success()
                             ->persistent()
                             ->send();
                     }),
                 // Só aparece depois que um Tenant já nasceu desse link e
-                // ainda não assinou -- pra reenviar SÓ o link do contrato,
-                // sem o cliente ter que preencher o cadastro de novo
-                // (pedido do usuário: "antes do link da cobrança, tenha
-                // link do contrato"). Depois de assinado, a própria tela
-                // de assinatura não aceita reprocessar (ver
+                // ainda não assinou -- pra reenviar SÓ a etapa de
+                // assinatura, sem o cliente ter que preencher o cadastro
+                // de novo (pedido do usuário: "antes do link da cobrança,
+                // tenha link do contrato"). Depois de assinado, a própria
+                // tela de assinatura não aceita reprocessar (ver
                 // SignatureService::getSignatureByToken() -- can_sign exige
                 // status 'pending'), então esconder faz sentido.
                 Tables\Actions\Action::make('copy_contract_link')
-                    ->label('Copiar Link do Contrato')
+                    ->label('Reenviar Link de Assinatura')
                     ->icon('heroicon-o-document-text')
                     ->color('warning')
                     ->visible(fn (Plan $record) => (bool) (static::funnelStatusFor($record)['signature']?->is_signed === false))
@@ -298,7 +303,7 @@ class PropostaResource extends Resource
                         $link = route('signature.sign', ['token' => $signature->token]);
 
                         Notification::make()
-                            ->title('Link do contrato')
+                            ->title('Link de assinatura')
                             ->body("Só a etapa de assinatura, pro cliente que já se cadastrou:\n\n{$link}")
                             ->warning()
                             ->persistent()
@@ -311,9 +316,9 @@ class PropostaResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPropostas::route('/'),
-            'create' => Pages\CreateProposta::route('/create'),
-            'edit' => Pages\EditProposta::route('/{record}/edit'),
+            'index' => Pages\ListContratos::route('/'),
+            'create' => Pages\CreateContrato::route('/create'),
+            'edit' => Pages\EditContrato::route('/{record}/edit'),
         ];
     }
 }

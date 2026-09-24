@@ -177,7 +177,7 @@ class TenantResource extends Resource
             ])->filters([
                 Tables\Filters\SelectFilter::make('status')->label('Status')->options(['active' => 'Ativo', 'trial' => 'Teste']),
                 Tables\Filters\SelectFilter::make('segment')->label('Segmento')->options(Client::nicheLabels()),
-                // Usado pelos cards de resumo em PropostaResource ("Pagos"
+                // Usado pelos cards de resumo em ContratoResource ("Pagos"
                 // / "Em Aberto", pedido do usuário 2026-09-23) pra linkar
                 // direto num Tenants já filtrado.
                 Tables\Filters\SelectFilter::make('asaas_payment_status')

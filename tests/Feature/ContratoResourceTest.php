@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Filament\Central\Resources\PropostaResource\Pages\CreateProposta;
+use App\Filament\Central\Resources\ContratoResource\Pages\CreateContrato;
 use App\Models\Plan;
 use App\Models\User;
 use Filament\Facades\Filament;
@@ -14,9 +14,10 @@ use Tests\TestCase;
  * Caminho dedicado de gerar link de assinatura, separado de "Planos"
  * (2026-09-23, pedido do usuário). Por baixo cria o mesmo tipo de
  * registro (Plan) que PlanResource, só numa tela mais enxuta que já
- * mostra o link assim que a proposta é criada.
+ * mostra o link assim que o contrato é criado. Rebatizada de "Proposta"
+ * pra "Contrato" no mesmo dia (pedido do usuário).
  */
-class PropostaResourceTest extends TestCase
+class ContratoResourceTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -34,7 +35,7 @@ class PropostaResourceTest extends TestCase
         return $super;
     }
 
-    public function test_creating_a_proposta_generates_a_working_signup_link(): void
+    public function test_creating_a_contrato_generates_a_working_signup_link(): void
     {
         $this->actingAs($this->superAdmin());
         Filament::setCurrentPanel(Filament::getPanel('central'));
@@ -42,10 +43,10 @@ class PropostaResourceTest extends TestCase
         // Módulos agora ficam divididos num CheckboxList por grupo de menu
         // (2026-09-23, "as tabelas assim como os menus estejam agrupadas");
         // 'tabela_clients' (Clientes) vive no grupo 'Comercial' -- ver
-        // PropostaResource::groupFieldName().
-        Livewire::test(CreateProposta::class)
+        // ContratoResource::groupFieldName().
+        Livewire::test(CreateContrato::class)
             ->fillForm([
-                'name' => 'Proposta Cliente Teste',
+                'name' => 'Contrato Cliente Teste',
                 'base_price' => 480,
                 'billing_cycle' => 'monthly',
                 'features_group_comercial' => ['tabela_clients'],
@@ -53,7 +54,7 @@ class PropostaResourceTest extends TestCase
             ->call('create')
             ->assertHasNoFormErrors();
 
-        $plan = Plan::where('name', 'Proposta Cliente Teste')->firstOrFail();
+        $plan = Plan::where('name', 'Contrato Cliente Teste')->firstOrFail();
 
         $this->assertSame('480.00', $plan->base_price);
         $this->assertSame('480.00', $plan->price, 'price deve acompanhar base_price mesmo nao aparecendo no formulario');
@@ -61,13 +62,13 @@ class PropostaResourceTest extends TestCase
         $this->assertSame(['tabela_clients'], $plan->features);
 
         // O link gerado precisa realmente funcionar -- ir na tela pública
-        // de cadastro pre-selecionando essa proposta. /assinar fica sob
+        // de cadastro pre-selecionando esse contrato. /assinar fica sob
         // middleware 'guest': sem deslogar aqui, a sessao do operador
         // faria redirecionar em vez de mostrar a tela (mesmo achado do
         // teste de assinatura da Central).
         $this->post('/logout');
         $response = $this->get(route('checkout.create', ['plano' => $plan->id]));
         $response->assertOk();
-        $response->assertSee('Proposta Cliente Teste');
+        $response->assertSee('Contrato Cliente Teste');
     }
 }

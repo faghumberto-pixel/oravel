@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Filament\Central\Resources\PropostaResource\Pages\ListPropostas;
+use App\Filament\Central\Resources\ContratoResource\Pages\ListContratos;
 use App\Models\Plan;
 use App\Models\User;
 use Filament\Facades\Filament;
@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
-class ListPropostasRenderTest extends TestCase
+class ListContratosRenderTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -33,6 +33,6 @@ class ListPropostasRenderTest extends TestCase
             'billing_cycle' => 'monthly', 'is_active' => true, 'features' => ['tabela_clients'],
         ]);
 
-        Livewire::test(ListPropostas::class)->assertOk();
+        Livewire::test(ListContratos::class)->assertOk();
     }
 }
