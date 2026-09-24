@@ -43,6 +43,7 @@ class AsaasCheckoutControllerTest extends TestCase
             'uf' => 'SP',
             'admin_name' => 'Admin Checkout',
             'admin_email' => 'admin-checkout-'.uniqid().'@oravel.com.br',
+            'telefone' => '(19) 99999-9999',
             'admin_password' => 'senha12345',
             'terms_accepted' => '1',
         ], $overrides);
@@ -191,6 +192,18 @@ class AsaasCheckoutControllerTest extends TestCase
         Http::assertSent(fn ($request) => str_contains($request->url(), '/checkouts')
             && $request['billingTypes'] === ['CREDIT_CARD']
             && $request['chargeTypes'] === ['RECURRENT']);
+
+        // Regressão real #2 (PROD, mesma sessão): depois de corrigir o bug
+        // acima, a Asaas passou a rejeitar por outro motivo -- "O campo
+        // phoneNumber/address/addressNumber/postalCode/province deve ser
+        // informado". customerData só mandava name/cpfCnpj.
+        Http::assertSent(fn ($request) => str_contains($request->url(), '/checkouts')
+            && ! blank($request['customerData']['email'] ?? null)
+            && $request['customerData']['phoneNumber'] === '19999999999'
+            && $request['customerData']['address'] === 'Rua das Torres'
+            && $request['customerData']['addressNumber'] === '100'
+            && $request['customerData']['postalCode'] === '13480000'
+            && $request['customerData']['province'] === 'SP');
     }
 
     public function test_continue_after_signature_redirects_to_pending_if_not_actually_signed(): void
@@ -271,7 +284,7 @@ class AsaasCheckoutControllerTest extends TestCase
         $response->assertSessionHasErrors([
             'company_name', 'admin_name', 'admin_email', 'admin_password', 'cpf_cnpj', 'plan_id',
             'segment', 'equipment_types', 'cep', 'logradouro', 'numero', 'bairro', 'cidade', 'uf',
-            'terms_accepted',
+            'telefone', 'terms_accepted',
         ]);
     }
 

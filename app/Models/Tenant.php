@@ -19,7 +19,6 @@ class Tenant extends Model
     // (DocumentSignature + SignatureService), Tenant como terceiro tipo de
     // documento assinável. Ver AsaasCheckoutController.
     use HasSignatures;
-
     use HasUuids;
 
     protected $keyType = 'string';
@@ -52,6 +51,7 @@ class Tenant extends Model
         'uf',
         'mrr_value',
         'cpf_cnpj',
+        'telefone',
         'plan_id',
         'onboarding_completed',
         'features',

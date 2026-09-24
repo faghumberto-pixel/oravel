@@ -45,8 +45,28 @@ class TenantResource extends Resource
                     ->label('CPF/CNPJ')
                     ->helperText('Exigido pra criar a cobrança recorrente na Asaas -- sem isso, a assinatura SaaS deste tenant não é sincronizada com o gateway de pagamento.')
                     ->maxLength(20),
+                Forms\Components\TextInput::make('telefone')
+                    ->label('Telefone')
+                    ->helperText('Também exigido pela Asaas pra gerar o Checkout de pagamento.')
+                    ->maxLength(20),
                 Forms\Components\Toggle::make('onboarding_completed')->label('Onboarding Completo')->default(false),
             ])->columns(2),
+
+            // CEP/logradouro/número/UF também são exigidos pela Asaas pra
+            // criar o Checkout de pagamento (achado real em PROD
+            // 2026-09-23) -- sem esta seção, um tenant criado manualmente
+            // pela Central nunca conseguia gerar o link de pagamento
+            // depois de assinar o contrato.
+            Forms\Components\Section::make('Endereço')
+                ->description('Exigido pela Asaas pra gerar o Checkout de pagamento.')
+                ->schema([
+                    Forms\Components\TextInput::make('cep')->label('CEP')->maxLength(9),
+                    Forms\Components\TextInput::make('logradouro')->label('Logradouro')->maxLength(255),
+                    Forms\Components\TextInput::make('numero')->label('Número')->maxLength(20),
+                    Forms\Components\TextInput::make('bairro')->label('Bairro')->maxLength(255),
+                    Forms\Components\TextInput::make('cidade')->label('Cidade')->maxLength(255),
+                    Forms\Components\TextInput::make('uf')->label('UF')->maxLength(2),
+                ])->columns(3),
 
             Forms\Components\Section::make('Administrador do Tenant')
                 ->description('Este usuário nasce com o papel "admin": acesso total a tudo que o plano contratado libera, e pode criar outros usuários e perfis de acesso personalizados dentro da própria empresa.')

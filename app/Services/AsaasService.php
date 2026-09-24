@@ -153,6 +153,20 @@ class AsaasService
             return null;
         }
 
+        // Exigidos pela Asaas na criação do Checkout (achado real em PROD
+        // 2026-09-23: "O campo phoneNumber/address/addressNumber/
+        // postalCode/province deve ser informado" -- só aparece depois de
+        // corrigir o bug PIX/RECURRENT acima, que mascarava esse erro).
+        // Tenants criados ANTES desta checagem existir podem não ter
+        // telefone preenchido -- mesmo tratamento "adia" do CPF/CNPJ
+        // acima, não é um erro do sistema, é dado faltando.
+        if (blank($tenant->telefone) || blank($tenant->logradouro) || blank($tenant->numero) || blank($tenant->cep) || blank($tenant->uf)) {
+            Log::info('AsaasService: tenant sem telefone/endereço completo, checkout não criado.', ['tenant_id' => $tenant->id]);
+            $tenant->update(['asaas_status' => 'pending']);
+
+            return null;
+        }
+
         if (blank($tenant->mrr_value) || (float) $tenant->mrr_value <= 0) {
             Log::info('AsaasService: tenant sem MRR definido, checkout não criado.', ['tenant_id' => $tenant->id]);
 
@@ -195,6 +209,12 @@ class AsaasService
                 'customerData' => [
                     'name' => $tenant->name,
                     'cpfCnpj' => preg_replace('/\D/', '', $tenant->cpf_cnpj),
+                    'email' => $tenant->adminUser?->email,
+                    'phoneNumber' => preg_replace('/\D/', '', $tenant->telefone),
+                    'address' => $tenant->logradouro,
+                    'addressNumber' => $tenant->numero,
+                    'postalCode' => preg_replace('/\D/', '', $tenant->cep),
+                    'province' => $tenant->uf,
                 ],
             ]);
         } catch (\Throwable $e) {

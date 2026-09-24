@@ -106,6 +106,11 @@ class AsaasCheckoutController extends Controller
             'uf' => ['required', 'string', 'size:2'],
             'admin_name' => ['required', 'string', 'max:255'],
             'admin_email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            // Exigido pela Asaas pra criar o Checkout de pagamento (achado
+            // real em PROD 2026-09-23: "O campo phoneNumber deve ser
+            // informado"). Sem regex de formato -- a Asaas já normaliza o
+            // que vier.
+            'telefone' => ['required', 'string', 'max:20'],
             'admin_password' => ['required', 'string', 'min:8'],
             'plan_id' => ['required', 'uuid', 'exists:plans,id'],
             'terms_accepted' => ['accepted'],
@@ -120,6 +125,7 @@ class AsaasCheckoutController extends Controller
             'status' => 'trial',
             'mrr_value' => $plan->price,
             'cpf_cnpj' => $data['cpf_cnpj'],
+            'telefone' => $data['telefone'],
             'segment' => $data['segment'],
             'equipment_types' => $data['equipment_types'],
             'cep' => $data['cep'],

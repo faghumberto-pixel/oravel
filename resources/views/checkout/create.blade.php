@@ -246,19 +246,32 @@
                                         <x-input-error :messages="$errors->get('admin_email')" class="oravel-auth-error" />
                                     </div>
 
-                                    <div x-data="{ show: false }">
-                                        <label class="oravel-auth-label">Senha</label>
+                                    {{-- Exigido pela Asaas pra criar o Checkout de pagamento
+                                         (achado real em PROD 2026-09-23: sem telefone/endereço
+                                         completo, a criação do Checkout falha). --}}
+                                    <div>
+                                        <label class="oravel-auth-label">Telefone</label>
                                         <div class="oravel-auth-field">
-                                            <x-heroicon-o-lock-closed class="oravel-auth-field-icon" />
-                                            <input :type="show ? 'text' : 'password'" name="admin_password" required
-                                                autocomplete="new-password" class="oravel-auth-input-raw">
-                                            <button type="button" @click="show = !show" class="flex-shrink-0 text-white/60">
-                                                <x-heroicon-o-eye x-show="!show" class="h-4 w-4" />
-                                                <x-heroicon-o-eye-slash x-show="show" x-cloak class="h-4 w-4" />
-                                            </button>
+                                            <x-heroicon-o-phone class="oravel-auth-field-icon" />
+                                            <input type="tel" name="telefone" value="{{ old('telefone') }}" required
+                                                placeholder="(00) 00000-0000" class="oravel-auth-input-raw">
                                         </div>
-                                        <x-input-error :messages="$errors->get('admin_password')" class="oravel-auth-error" />
+                                        <x-input-error :messages="$errors->get('telefone')" class="oravel-auth-error" />
                                     </div>
+                                </div>
+
+                                <div x-data="{ show: false }">
+                                    <label class="oravel-auth-label">Senha</label>
+                                    <div class="oravel-auth-field">
+                                        <x-heroicon-o-lock-closed class="oravel-auth-field-icon" />
+                                        <input :type="show ? 'text' : 'password'" name="admin_password" required
+                                            autocomplete="new-password" class="oravel-auth-input-raw">
+                                        <button type="button" @click="show = !show" class="flex-shrink-0 text-white/60">
+                                            <x-heroicon-o-eye x-show="!show" class="h-4 w-4" />
+                                            <x-heroicon-o-eye-slash x-show="show" x-cloak class="h-4 w-4" />
+                                        </button>
+                                    </div>
+                                    <x-input-error :messages="$errors->get('admin_password')" class="oravel-auth-error" />
                                 </div>
                             </div>
                         </div>
