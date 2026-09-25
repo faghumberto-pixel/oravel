@@ -38,6 +38,10 @@ class ClientPanelProvider extends PanelProvider
             ->login(Login::class)
             ->brandLogo(fn () => view('filament.client.brand-logo'))
             ->brandLogoHeight('1.25rem')
+            // Antes o painel abria na Dashboard padrão do Filament (sem
+            // nenhum widget registrado -- tela em branco). PainelCliente
+            // é a home de verdade agora (pedido do usuário 2026-09-25).
+            ->homeUrl(fn () => route('filament.portal-cliente.pages.inicio'))
             ->colors([
                 'primary' => Color::hex('#ea580c'),
                 'gray' => Color::Stone,
