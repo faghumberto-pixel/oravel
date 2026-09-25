@@ -14,10 +14,11 @@
     escuros demais e ilegiveis quando o tema ativo for claro.
 
     Esse componente e' compartilhado por TODOS os paineis Filament do app
-    (namespace filament-panels::), nao so' o admin -- por isso o
-    @if (filament()->getId() === 'admin') abaixo, mesmo criterio ja usado
-    no override do topbar: o painel `central` fica exatamente como o
-    Filament entrega, sem forcar tema nenhum.
+    (namespace filament-panels::), nao so' o admin -- por isso a condicional
+    abaixo (in_array, ampliada 2026-09-25 pra incluir 'portal-cliente',
+    que passou a ter sidebar navy tambem, mesmo criterio do admin): o
+    painel `central` fica exatamente como o Filament entrega, sem forcar
+    tema nenhum.
 
     Atencao: um update do pacote filament/filament que mude o arquivo
     original NAO vai refletir aqui automaticamente.
@@ -60,7 +61,7 @@
     {{
         $attributes->class([
             'fi-sidebar fixed inset-y-0 start-0 z-30 flex flex-col h-screen content-start bg-white transition-all dark:bg-gray-900 lg:z-0 lg:bg-transparent lg:shadow-none lg:ring-0 lg:transition-none dark:lg:bg-transparent',
-            'dark' => filament()->getId() === 'admin',
+            'dark' => in_array(filament()->getId(), ['admin', 'portal-cliente']),
             'lg:translate-x-0 rtl:lg:-translate-x-0' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
             'lg:-translate-x-full rtl:lg:translate-x-full' => filament()->hasTopNavigation(),
         ])

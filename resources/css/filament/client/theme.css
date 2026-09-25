@@ -61,7 +61,16 @@
 }
 
 /* Topbar (faixa superior fina, existe mesmo no modo sidebar -- menu do
-   usuário, alternância de tema, toggle mobile) na mesma cor do admin. */
+   usuário, alternância de tema, toggle mobile) na mesma cor do admin.
+   O override de topbar/index.blade.php (vendor/filament-panels) só
+   reestrutura o HTML pro painel 'admin' -- pro client, cai no branch
+   "else" (dark:bg-gray-900 puro), então o gradiente entra aqui via CSS
+   em vez de estender aquele branch bem mais complexo (2 elementos,
+   dropdown de item-pai etc) que não existe necessidade de replicar aqui. */
+.fi-topbar nav {
+    background: linear-gradient(to bottom right, var(--oravel-sidebar-from), var(--oravel-sidebar-to)) !important;
+}
+
 .fi-topbar-item {
     color: #e5e7eb !important;
 }
