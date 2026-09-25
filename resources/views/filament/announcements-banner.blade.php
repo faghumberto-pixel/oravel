@@ -21,12 +21,13 @@
 
     // Fundo cinza-escuro fixo (correção 2026-09-25: o pedido era só sobre a
     // COR DA FONTE, o fundo continua como estava desde 23/09, não ligado ao
-    // tema claro/escuro do painel). Cor do texto por severidade: VERDE pra
-    // Aviso/info, AMARELO pra Atenção/warning, VERMELHO pra Crítico.
+    // tema claro/escuro do painel). Cor do texto por severidade: BRANCO pra
+    // Aviso/info (verde testado e reprovado pelo usuário -- "nao ficou
+    // bom"), AMARELO pra Atenção/warning, VERMELHO pra Crítico.
     $levelClasses = [
         \App\Models\Announcement::LEVEL_CRITICAL => ['border-gray-700', 'bg-gray-800', 'text-red-400'],
         \App\Models\Announcement::LEVEL_WARNING => ['border-gray-700', 'bg-gray-800', 'text-yellow-400'],
-        \App\Models\Announcement::LEVEL_INFO => ['border-gray-700', 'bg-gray-800', 'text-green-400'],
+        \App\Models\Announcement::LEVEL_INFO => ['border-gray-700', 'bg-gray-800', 'text-white'],
     ];
 
     $items = $announcements->map(fn ($a) => [
