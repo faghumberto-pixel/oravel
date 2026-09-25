@@ -102,17 +102,25 @@
         background-color: rgba(255, 255, 255, 0.3);
     }
 
+    @if (filament()->getId() === 'admin')
     /* Sem opcao de ocultar o topbar no desktop -- some com os botoes de
        abrir/fechar a sidebar (o menu de navegacao real e' o topo). So'
        desktop: no celular esses botoes ainda sao a unica forma de abrir
        a gaveta com os grupos de navegacao (o menu horizontal e' lg:flex,
-       nao aparece no celular). */
+       nao aparece no celular). Restrito ao painel 'admin' (2026-09-25,
+       achado no portal-cliente que passou a reaproveitar esta partial):
+       o admin tem o menu horizontal no topbar como alternativa real ao
+       botao de abrir a sidebar, o portal-cliente NAO tem -- esconder o
+       botao la' deixava a sidebar sem NENHUM jeito de reabrir quando
+       fechada (inclusive por um estado "fechada" herdado do admin via
+       localStorage, compartilhado no mesmo dominio). */
     @media (min-width: 1024px) {
         .fi-topbar-open-sidebar-btn,
         .fi-topbar-close-sidebar-btn {
             display: none !important;
         }
     }
+    @endif
 
     /* Cards/paineis (Section do Filament, compartilhado por forms e
        infolists, + widgets e tabelas) -- borda e sombra suaves como nos
