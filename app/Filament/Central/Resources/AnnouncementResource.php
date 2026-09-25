@@ -104,7 +104,10 @@ class AnnouncementResource extends Resource
                     ->color(fn (string $state): string => match ($state) {
                         Announcement::LEVEL_WARNING => 'warning',
                         Announcement::LEVEL_CRITICAL => 'danger',
-                        default => 'info',
+                        // Verde (success), nao azul (info) -- pedido do
+                        // usuario 2026-09-25: "VERDE para avisos", pra bater
+                        // com a cor do banner real (announcements-banner.blade.php).
+                        default => 'success',
                     }),
 
                 Tables\Columns\TextColumn::make('targetTenant.name')
