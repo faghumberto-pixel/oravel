@@ -89,10 +89,13 @@ class PainelCliente extends Page
                 $daysRemaining = null;
 
                 if ($start && $end && $end->greaterThan($start)) {
-                    $totalDays = $start->diffInDays($end);
-                    $elapsedDays = min($totalDays, max(0, $start->diffInDays(now())));
+                    // diffInDays() devolve float (Carbon 3) -- arredondado
+                    // pra baixo em todo lugar aqui, pra nunca mostrar "17.4
+                    // dias restantes" na tela.
+                    $totalDays = (int) floor($start->diffInDays($end));
+                    $elapsedDays = min($totalDays, max(0, (int) floor($start->diffInDays(now()))));
                     $percent = $totalDays > 0 ? (int) round(($elapsedDays / $totalDays) * 100) : 0;
-                    $daysRemaining = max(0, now()->diffInDays($end, false) > 0 ? now()->diffInDays($end) : 0);
+                    $daysRemaining = max(0, (int) floor(now()->diffInDays($end, false)));
                 }
 
                 return [
