@@ -141,9 +141,18 @@
     color: #cbd5e1 !important;
 }
 
+/* Espaco entre os grupos do menu (pais) reduzido (pedido do usuario
+   2026-09-25: "no app, o espaco entre os menu pai seja menor") -- o
+   gap-y-7 (1.75rem = 28px) do <ul class="fi-sidebar-nav-groups"> vem do
+   proprio Filament (vendor/filament-panels/.../sidebar/index.blade.php),
+   sobrescrito aqui direto na classe Tailwind crua. */
+.fi-sidebar-nav-groups {
+    row-gap: 0.75rem !important;
+}
+
 .fi-sidebar-group + .fi-sidebar-group {
-    margin-top: 0.375rem;
-    padding-top: 0.625rem;
+    margin-top: 0.125rem;
+    padding-top: 0.375rem;
     /* Sub-relevo bem sutil (pedido do usuario 2026-09-23: "quase
        imperceptivel") em vez de uma linha solida -- uma sombra escura
        finissima seguida de um filete claro logo abaixo, como um sulco
