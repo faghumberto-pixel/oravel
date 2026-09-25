@@ -11,6 +11,7 @@ use App\Http\Middleware\LogUserActivity;
 use App\Http\Middleware\TrackSiteVisit;
 use App\Models\Asset;
 use App\Models\Employee;
+use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
@@ -40,21 +41,20 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(Login::class)
             ->sidebarCollapsibleOnDesktop()
-            // Modo escuro desabilitado (2026-09-18, pedido do usuario -- "padronizar
-            // tudo claro"): defaultThemeMode(Light) sozinho so' vale pra quem nunca
-            // escolheu tema (Filament persiste a escolha por navegador em
-            // localStorage) -- qualquer sessao que ja tinha marcado escuro antes
-            // continuava vendo TODAS as paginas com dark: aplicado, inclusive as que
-            // acabaram de virar tema-consciente (ex: painel-gestao.blade.php).
-            // darkMode(false) tira a opcao de vez: filament()->hasDarkMode() fica
-            // false, a classe "dark" nunca e' adicionada no <html>, entao nenhuma
-            // classe dark: (nativa do Filament ou custom) ativa em lugar nenhum do
-            // painel -- sem precisar variar arquivo por arquivo. Sidebar/topbar
-            // continuam azul-escuro de qualquer jeito (forcado via classe "dark"
-            // literal nos proprios elementos, ver overrides em
-            // resources/views/vendor/filament-panels/components/{topbar,sidebar}),
-            // independente disso.
-            ->darkMode(false)
+            // Modo escuro REATIVADO (2026-09-25, pedido do usuario -- reverte a
+            // decisao de 2026-09-18 "padronizar tudo claro", desta vez de proposito,
+            // nao mal-entendido). darkMode() (sem false) devolve o seletor
+            // claro/escuro nativo do Filament (icone sol/lua no menu do usuario).
+            // defaultThemeMode(Light) mantem o padrao claro pra quem nunca escolheu
+            // -- sem isso o default seria "System" (segue o SO), reintroduzindo a
+            // mesma surpresa que motivou o darkMode(false) original em paginas
+            // customizadas que ainda nao tem todas as variantes dark: cobertas
+            // (ex: painéis com HTML/CSS proprios, nao só componentes nativos do
+            // Filament). Sidebar/topbar continuam azul-escuro sempre, independente
+            // do tema escolhido (forcado via classe "dark" literal, ver overrides em
+            // resources/views/vendor/filament-panels/components/{topbar,sidebar}).
+            ->darkMode()
+            ->defaultThemeMode(ThemeMode::Light)
             ->homeUrl(fn () => route('filament.admin.pages.painel-controle'))
             ->colors([
                 // Paleta do artefato "Central de Artefatos" (2026-07-25):
