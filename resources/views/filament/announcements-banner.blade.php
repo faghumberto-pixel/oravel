@@ -19,15 +19,14 @@
         ? \App\Models\Announcement::activeFor(\App\Support\Tenancy::current()?->id)
         : collect();
 
-    // Cor de fundo por severidade (pedido do usuario 2026-09-25, revertendo
-    // a decisao de 23/09 de fundo cinza-escuro fixo pros 3 niveis): VERDE
-    // pra Aviso/info, AMARELO pra Atencao/warning, VERMELHO pra Critico --
-    // cores solidas (nao so' o texto), pra dar pra reconhecer a severidade
-    // so' de relance, sem precisar ler o titulo.
+    // Fundo cinza-escuro fixo (correção 2026-09-25: o pedido era só sobre a
+    // COR DA FONTE, o fundo continua como estava desde 23/09, não ligado ao
+    // tema claro/escuro do painel). Cor do texto por severidade: VERDE pra
+    // Aviso/info, AMARELO pra Atenção/warning, VERMELHO pra Crítico.
     $levelClasses = [
-        \App\Models\Announcement::LEVEL_CRITICAL => ['border-red-800', 'bg-red-600', 'text-white'],
-        \App\Models\Announcement::LEVEL_WARNING => ['border-yellow-600', 'bg-yellow-400', 'text-gray-900'],
-        \App\Models\Announcement::LEVEL_INFO => ['border-green-800', 'bg-green-600', 'text-white'],
+        \App\Models\Announcement::LEVEL_CRITICAL => ['border-gray-700', 'bg-gray-800', 'text-red-400'],
+        \App\Models\Announcement::LEVEL_WARNING => ['border-gray-700', 'bg-gray-800', 'text-yellow-400'],
+        \App\Models\Announcement::LEVEL_INFO => ['border-gray-700', 'bg-gray-800', 'text-green-400'],
     ];
 
     $items = $announcements->map(fn ($a) => [
