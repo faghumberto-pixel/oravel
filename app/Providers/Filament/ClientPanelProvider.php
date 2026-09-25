@@ -47,12 +47,26 @@ class ClientPanelProvider extends PanelProvider
                 'gray' => Color::Stone,
             ])
             ->favicon(asset('favicon.png').'?v=6')
+            ->viteTheme('resources/css/filament/client/theme.css')
             ->discoverResources(in: app_path('Filament/Client/Resources'), for: 'App\\Filament\\Client\\Resources')
             ->discoverPages(in: app_path('Filament/Client/Pages'), for: 'App\\Filament\\Client\\Pages')
             ->discoverWidgets(in: app_path('Filament/Client/Widgets'), for: 'App\\Filament\\Client\\Widgets')
             ->renderHook(
                 PanelsRenderHook::PAGE_START,
                 fn () => view('filament.breadcrumb'),
+            )
+            ->renderHook(
+                // Sidebar navy + variáveis de cor da marca, mesma partial
+                // do painel admin (CSS puro, sem acoplamento a tenant --
+                // pedido do usuário 2026-09-25: "top bar igual o app").
+                PanelsRenderHook::HEAD_END,
+                fn () => view('filament.brand-header-background'),
+            )
+            ->renderHook(
+                // Sanfona nos grupos do menu, mesmo comportamento do admin
+                // (2026-09-24) -- útil aqui também, o portal já tem ~10 itens.
+                PanelsRenderHook::BODY_END,
+                fn () => view('filament.sidebar-accordion'),
             )
             ->renderHook(
                 PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,

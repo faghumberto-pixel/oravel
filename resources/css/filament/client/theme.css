@@ -1,0 +1,89 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@config '../admin/tailwind.config.js';
+
+/* Portal do Cliente -- pedido do usuário 2026-09-25: "vamos fazer um
+   sidebar, bem moderno, com top bar igual o app". Reaproveita a MESMA
+   linguagem visual do painel admin (sidebar navy, topbar unificado,
+   destaque de menu ativo) em vez do tema claro genérico do Filament que
+   o portal usava até aqui -- só a paleta muda (Color::hex('#ea580c') já
+   configurado no ClientPanelProvider), o resto é idêntico de propósito. */
+
+/* Sidebar sempre azul-escuro, igual ao admin (--oravel-sidebar-from/-to
+   vêm de filament.brand-header-background, incluído via renderHook). */
+.fi-sidebar {
+    background: linear-gradient(to bottom right, var(--oravel-sidebar-from), var(--oravel-sidebar-to)) !important;
+}
+
+.fi-sidebar-header {
+    background: var(--oravel-sidebar-from) !important;
+}
+
+.fi-sidebar-nav {
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+    scrollbar-width: thin;
+}
+
+.fi-sidebar-nav::-webkit-scrollbar {
+    width: 6px;
+}
+
+.fi-sidebar-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.fi-sidebar-nav::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.18);
+    border-radius: 9999px;
+}
+
+.fi-sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Item de menu selecionado em laranja -- única cor pra "selecionado" em
+   toda a sidebar (mesmo padrão já corrigido no admin 2026-09-24, sem o
+   problema antigo de duas tonalidades competindo). */
+.fi-sidebar-item.fi-active,
+.fi-sidebar-item[aria-current="page"] {
+    color: var(--oravel-primary) !important;
+    font-weight: 600;
+}
+
+.fi-sidebar-item.fi-active::after {
+    background-color: var(--oravel-primary) !important;
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-label,
+.fi-sidebar-item[aria-current="page"] .fi-sidebar-item-label {
+    color: var(--oravel-primary) !important;
+    font-weight: 700 !important;
+}
+
+/* Topbar (faixa superior fina, existe mesmo no modo sidebar -- menu do
+   usuário, alternância de tema, toggle mobile) na mesma cor do admin. */
+.fi-topbar-item {
+    color: #e5e7eb !important;
+}
+
+.fi-topbar-item.fi-active {
+    color: #fff !important;
+}
+
+.fi-topbar .fi-icon-btn svg {
+    color: #e5e7eb !important;
+}
+
+/* Fundo do conteúdo mais claro (mesmo --oravel-bg do admin). */
+.fi-body {
+    background-color: var(--oravel-bg) !important;
+}
+
+/* Cards com a mesma borda/sombra suave usada em todo o painel admin. */
+.fi-section,
+.fi-wi-widget,
+.fi-ta-ctn {
+    border-color: var(--oravel-border) !important;
+    border-radius: 0.875rem !important;
+    box-shadow: 0 1px 2px rgba(28, 24, 21, 0.04), 0 16px 32px -12px rgba(28, 24, 21, 0.12) !important;
+}
