@@ -8,6 +8,7 @@ use App\Filament\Central\Pages\DashboardVisitantes;
 use App\Filament\Central\Pages\FunilVendas;
 use App\Filament\Central\Pages\Kanban;
 use App\Filament\Central\Pages\Programacao;
+use App\Filament\Central\Pages\RolesTree;
 use App\Filament\Central\Pages\TenantTree;
 use App\Filament\Central\Resources\LandingPageLeadResource;
 use App\Filament\Central\Resources\PlanResource;
@@ -147,6 +148,7 @@ class CentralPanelProvider extends PanelProvider
                 Kanban::class,
                 Programacao::class,
                 TenantTree::class,
+                RolesTree::class,
             ])
             ->widgets([
                 // Registro aqui (mesmo os que so' aparecem via getWidgets()
