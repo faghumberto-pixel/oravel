@@ -43,7 +43,7 @@ class FleetDriverResource extends Resource
                     Forms\Components\Select::make('employment_type')
                         ->label('Vínculo')
                         ->options([
-                            FleetDriver::EMPLOYMENT_PROPRIO => 'Funcionário Próprio',
+                            FleetDriver::EMPLOYMENT_PROPRIO => 'Colaborador Próprio',
                             FleetDriver::EMPLOYMENT_TERCEIRO => 'Terceiro (Transportadora)',
                         ])
                         ->default(FleetDriver::EMPLOYMENT_PROPRIO)

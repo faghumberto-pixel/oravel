@@ -29,7 +29,7 @@ class RoleResource extends Resource
     public static array $modules = [
         'Ordens de Serviço' => 'ordem_servico',
         'Checklists'        => 'checklist',
-        'Funcionários'      => 'funcionario',
+        'Colaboradores'     => 'funcionario',
         'Departamentos'     => 'departamento',
         'Clientes'          => 'cliente',
         'Materiais'         => 'material',

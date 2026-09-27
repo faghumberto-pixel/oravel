@@ -31,6 +31,13 @@ class JobRoleResource extends BaseResource
                 ->helperText('Ex: Vendedor, Técnico, Analista, Supervisor...')
                 ->required()
                 ->maxLength(191),
+            Forms\Components\Select::make('department_id')
+                ->label('Departamento')
+                ->helperText('Toda função pertence a um departamento (ex: Vendedor → Comercial, Técnico → Manutenção).')
+                ->relationship('department', 'name')
+                ->searchable()
+                ->preload()
+                ->required(),
         ]);
     }
 
@@ -39,12 +46,16 @@ class JobRoleResource extends BaseResource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')->label('Nome')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('department.name')->label('Departamento')->searchable()->sortable()->placeholder('—'),
                 Tables\Columns\TextColumn::make('employees_count')
                     ->label('Colaboradores')
                     ->counts('employees'),
                 Tables\Columns\TextColumn::make('created_at')->label('Criado em')->dateTime('d/m/Y H:i'),
             ])
             ->defaultSort('name')
+            ->filters([
+                Tables\Filters\SelectFilter::make('department_id')->label('Departamento')->relationship('department', 'name'),
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),

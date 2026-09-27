@@ -16,7 +16,7 @@ class DepartmentExporter extends Exporter
         return [
             ExportColumn::make('name')->label('Departamento'),
             ExportColumn::make('code')->label('Código'),
-            ExportColumn::make('users_count')->label('Funcionários')->getStateUsing(fn (Department $record) => $record->users()->count()),
+            ExportColumn::make('users_count')->label('Colaboradores')->getStateUsing(fn (Department $record) => $record->users()->count()),
         ];
     }
 

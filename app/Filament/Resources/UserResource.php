@@ -33,11 +33,11 @@ class UserResource extends Resource
 
     protected static ?string $navigationGroup = 'Equipe';
 
-    protected static ?string $navigationLabel = 'Funcionários';
+    protected static ?string $navigationLabel = 'Colaboradores';
 
-    protected static ?string $pluralModelLabel = 'Funcionários';
+    protected static ?string $pluralModelLabel = 'Colaboradores';
 
-    protected static ?string $modelLabel = 'Funcionário';
+    protected static ?string $modelLabel = 'Colaborador';
 
     protected static ?int $navigationSort = 3;
 
@@ -88,7 +88,7 @@ class UserResource extends Resource
                             ->disabled(fn (Forms\Get $get) => ! $get('department_id')),
 
                         Forms\Components\TextInput::make('name')
-                            ->label('Nome do Funcionário')
+                            ->label('Nome do Colaborador')
                             ->required(),
 
                         Forms\Components\TextInput::make('email')
@@ -118,11 +118,11 @@ class UserResource extends Resource
                             ->default(true),
                     ])->columns(2),
 
-                Forms\Components\Section::make('Vínculo com Departamento Pessoal')
-                    ->description('Ligue se este funcionário também bate ponto, é alocado a equipamentos ou precisa de controle de horas formal -- cria (ou reativa) o cadastro de Colaborador correspondente. Desligar não apaga o Colaborador já existente, só desvincula.')
+                Forms\Components\Section::make('Ficha de RH (opcional)')
+                    ->description('Ligue se este colaborador também bate ponto, é alocado a equipamentos ou precisa de controle de horas formal -- cria (ou reativa) a ficha de RH completa (CPF, cargo, certificações, EPI) correspondente. Desligar não apaga a ficha já existente, só desvincula.')
                     ->schema([
                         Forms\Components\Toggle::make('is_employee')
-                            ->label('Tornar Colaborador')
+                            ->label('Ativar ficha de RH')
                             ->live()
                             ->dehydrated(true),
                         Forms\Components\TextInput::make('employee_cpf')

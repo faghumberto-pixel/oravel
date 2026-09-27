@@ -20,9 +20,26 @@ class EmployeeResource extends BaseResource
 
     protected static ?string $navigationIcon = 'heroicon-o-identification';
 
-    protected static ?string $navigationGroup = 'Departamento Pessoal';
+    // Fundido com UserResource 27/09/2026 (pedido do usuário: "não quero
+    // funcionário, vamos usar colaborador e fundir") -- UserResource é
+    // agora A tela "Colaboradores" (login + ficha de RH via toggle "Ativar
+    // ficha de RH"). Este Resource continua existindo só pra editar a
+    // ficha de RH completa de quem NÃO tem login (ex: motorista/técnico
+    // sem acesso ao painel) -- por isso nasce como sub-item, não duplica
+    // o nome "Colaboradores" no menu.
+    protected static ?string $navigationGroup = 'Equipe';
 
-    protected static ?string $navigationLabel = 'Colaboradores';
+    protected static ?string $navigationParentItem = 'Colaboradores';
+
+    protected static ?string $navigationLabel = 'Ficha de RH (sem login)';
+
+    // Sem isso, o Filament deriva o rotulo do nome da classe (Employee) e
+    // toda tela/breadcrumb/botao aparece em ingles ("Employees", "Criar
+    // employee") -- exatamente a ambiguidade que gerou a duvida
+    // "colaborador != funcionario".
+    protected static ?string $modelLabel = 'Colaborador';
+
+    protected static ?string $pluralModelLabel = 'Colaboradores';
 
     public static function form(Form $form): Form
     {

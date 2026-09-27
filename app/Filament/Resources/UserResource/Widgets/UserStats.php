@@ -26,7 +26,7 @@ class UserStats extends BaseWidget
         $ativosNaSemana = (clone $base)->where('last_seen', '>=', now()->subDays(7))->count();
 
         return [
-            Stat::make('Total de Funcionários', $total)
+            Stat::make('Total de Colaboradores', $total)
                 ->description('Cadastrados no tenant')
                 ->color('gray'),
 

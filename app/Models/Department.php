@@ -91,7 +91,7 @@ class Department extends Model
     }
 
     /**
-     * Funcionários (Users) alocados neste departamento
+     * Colaboradores (Users) alocados neste departamento
      */
     public function users(): HasMany
     {

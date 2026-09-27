@@ -32,9 +32,13 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
 
     protected static ?string $saasFeatureKey = 'tabela_users';
 
+    // Slug interno mantido como 'funcionario' de propósito -- é usado pra
+    // montar nomes de Permission já concedidos (ler_funcionario etc, ver
+    // AbstractPolicy). Mudar quebraria permissões já atribuídas em perfis
+    // de acesso existentes. O texto exibido (label abaixo) é outra coisa.
     protected static ?string $saasPermissionSlug = 'funcionario';
 
-    protected static ?string $saasModuleLabel = 'Funcionarios';
+    protected static ?string $saasModuleLabel = 'Colaboradores';
 
     public $incrementing = false;
 
