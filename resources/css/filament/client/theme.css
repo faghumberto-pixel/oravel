@@ -41,6 +41,24 @@
     background-color: rgba(255, 255, 255, 0.3);
 }
 
+/* Fonte dos itens do menu em branco/cinza-claro (pedido do usuário
+   2026-09-27: "os menus sumiram" no Portal do Cliente -- a fonte contava
+   só com a classe "dark" forçada no <aside> (ver override de
+   sidebar/index.blade.php) pra herdar o dark:text-gray-200 nativo do
+   Filament, sem nenhuma cor explícita aqui (diferente do topbar, que já
+   tinha #e5e7eb fixo) -- confirmado com o usuário que o fundo navy está
+   ótimo, só a fonte precisava ficar clara). Especificidade menor que as
+   regras de item ativo abaixo, então o laranja de "selecionado" continua
+   funcionando normalmente por cima disto. */
+.fi-sidebar-item-label,
+.fi-sidebar-item-icon {
+    color: #e5e7eb !important;
+}
+
+.fi-sidebar-group-label {
+    color: #cbd5e1 !important;
+}
+
 /* Item de menu selecionado em laranja -- única cor pra "selecionado" em
    toda a sidebar (mesmo padrão já corrigido no admin 2026-09-24, sem o
    problema antigo de duas tonalidades competindo). */
