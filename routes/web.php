@@ -421,12 +421,12 @@ Route::middleware(['auth'])->group(function () {
 
     // Tela dedicada de registro de horimetro, offline-first (JS puro,
     // localStorage + fila de sync -- ver HourMeterOfflineController).
-    Route::get('/admin/hour-meter', [HourMeterOfflineController::class, 'show'])
+    Route::get('/admin/registrar-horimetro', [HourMeterOfflineController::class, 'show'])
         ->name('hour-meter.offline');
 
     // Tela dedicada de ponto eletrônico, offline-first -- mesmo padrão do
     // horímetro (ver TimeClockOfflineController).
-    Route::get('/admin/time-clock', [TimeClockOfflineController::class, 'show'])
+    Route::get('/admin/bater-ponto', [TimeClockOfflineController::class, 'show'])
         ->name('time-clock.offline');
 
     // --- ROTA UNIFICADA DE IMPRESSÃO (AJUSTADA) ---

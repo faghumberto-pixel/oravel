@@ -12,7 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * GET /admin/hour-meter (pagina Blade+Alpine offline-first) e
+ * GET /admin/registrar-horimetro (pagina Blade+Alpine offline-first) e
  * GET /api/v1/hour-meters/preload (dados que a pagina guarda em
  * localStorage pra busca funcionar sem rede).
  */
@@ -46,7 +46,7 @@ class HourMeterOfflinePageTest extends TestCase
 
     public function test_page_requires_authentication(): void
     {
-        $response = $this->get('/admin/hour-meter');
+        $response = $this->get('/admin/registrar-horimetro');
 
         $response->assertRedirect();
     }
@@ -56,7 +56,7 @@ class HourMeterOfflinePageTest extends TestCase
         [, $admin] = $this->makeTenantAdmin();
         $this->actingAs($admin);
 
-        $response = $this->get('/admin/hour-meter');
+        $response = $this->get('/admin/registrar-horimetro');
 
         $response->assertOk();
         $response->assertSee($admin->name);
@@ -68,7 +68,7 @@ class HourMeterOfflinePageTest extends TestCase
         [, $admin] = $this->makeTenantAdmin();
         $this->actingAs($admin);
 
-        $response = $this->get('/admin/hour-meter');
+        $response = $this->get('/admin/registrar-horimetro');
 
         $response->assertOk();
         $response->assertSee(route('filament.admin.pages.technician-daily-tasks'), false);
