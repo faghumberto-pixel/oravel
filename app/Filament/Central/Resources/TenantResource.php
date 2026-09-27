@@ -4,17 +4,14 @@ namespace App\Filament\Central\Resources;
 
 use App\Filament\Central\Resources\TenantResource\Pages;
 use App\Models\Client;
-use App\Models\Plan;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Support\CrmPalette;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\HtmlString;
 
 class TenantResource extends Resource
 {
@@ -94,48 +91,6 @@ class TenantResource extends Resource
                 ->visibleOn('create')
                 ->columns(3),
 
-            Forms\Components\Section::make('🔐 Recursos Adicionais')
-                ->description('Libere aqui módulos além do que o plano contratado já concede. Deixar desmarcado não bloqueia nada do plano — só o plano define o que é negado.')
-                ->schema([
-                    Forms\Components\CheckboxList::make('features')
-                        ->label('Módulos extras liberados para este tenant')
-                        ->options(Plan::getAvailableFeaturesOptions())
-                        ->live()
-                        ->columns(2),
-
-                    Forms\Components\Placeholder::make('overrides_warning')
-                        ->label('')
-                        ->content(function (Get $get) {
-                            $selected = $get('features') ?? [];
-                            if (empty($selected)) {
-                                return null;
-                            }
-
-                            $plan = ($planId = $get('plan_id')) ? Plan::find($planId) : null;
-
-                            $labels = Plan::getAvailableFeaturesOptions();
-                            $extra = collect($selected)
-                                ->filter(fn ($feature) => ! $plan?->hasFeature($feature))
-                                ->map(fn ($feature) => $labels[$feature] ?? $feature)
-                                ->values();
-
-                            if ($extra->isEmpty()) {
-                                return null;
-                            }
-
-                            $planPhrase = $plan
-                                ? 'além do que o plano "'.e($plan->name).'" concede'
-                                : 'sem nenhum plano selecionado ainda pra comparar';
-
-                            return new HtmlString(
-                                '<div class="rounded-lg bg-amber-50 dark:bg-amber-500/10 ring-1 ring-amber-600/20 dark:ring-amber-400/20 p-3 text-sm text-amber-800 dark:text-amber-300">'
-                                .'⚠️ Estes módulos estão liberados <strong>só por override deste tenant</strong>, '.$planPhrase.': '
-                                .e($extra->implode(', ')).'. '
-                                .'Se o plano for restringido depois, eles continuam liberados aqui até serem desmarcados manualmente.'
-                                .'</div>'
-                            );
-                        }),
-                ]),
         ]);
     }
 

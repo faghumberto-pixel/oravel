@@ -143,23 +143,22 @@ class Tenant extends Model
      * Nao da pra bloquear via tenant algo que o plano permite -- so o plano
      * define o que e negado. Ver App\Policies\AbstractPolicy::check().
      */
+    /**
+     * Removido 2026-09-27 (decisão do usuário): existia um override
+     * aditivo aqui, lendo $this->features (coluna própria do Tenant,
+     * diferente de Plan::features) pra liberar módulos extras além do
+     * Contrato -- editável em TenantResource ("🔐 Recursos Adicionais").
+     * Mesmo raciocínio já aplicado a Planos genéricos e a "Módulos por
+     * Nicho": uma segunda porta de entrada pra controlar acesso, fora do
+     * Contrato, era exatamente o tipo de dívida silenciosa que o usuário
+     * pediu pra eliminar (tenant podia acumular exceções que ninguém
+     * lembra depois). Confirmado antes de remover: nenhum tenant real
+     * tinha dado nessa coluna (null pros dois existentes em PROD).
+     */
     public function hasFeature(string $feature): bool
     {
         if (Auth::user()?->isSuperAdmin()) {
             return true;
-        }
-
-        $localFeatures = $this->features ?? [];
-
-        if (is_array($localFeatures)) {
-            if (array_key_exists($feature, $localFeatures)) {
-                $value = $localFeatures[$feature];
-                if ($value === true || $value === 1 || $value === '1' || $value === 'true') {
-                    return true;
-                }
-            } elseif (in_array($feature, $localFeatures, true)) {
-                return true;
-            }
         }
 
         return (bool) $this->plan?->hasFeature($feature);
