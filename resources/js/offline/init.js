@@ -19,9 +19,19 @@ export async function registerServiceWorker() {
     }
 
     try {
+        // Escopo restrito a /admin/ (2026-09-27, bug real encontrado: escopo
+        // '/' fazia esse SW interceptar TAMBÉM o Portal do Cliente e o
+        // Central, com estratégia cache-first pra CSS/JS -- qualquer
+        // navegador que já tivesse aberto o wizard de campo (mesmo em outra
+        // aba) passava a servir CSS antigo pra sempre pro Portal do Cliente,
+        // ignorando deploys novos, mesmo com hash de arquivo diferente e
+        // hard refresh -- só um fechar-tudo-e-reabrir sem nenhuma aba do
+        // wizard aberta "escapava" do problema. Ver service-worker.js pro
+        // código que desinstala automaticamente instalações antigas com
+        // escopo '/'.
         const registration = await navigator.serviceWorker.register(
             '/service-worker.js',
-            { scope: '/' }
+            { scope: '/admin/' }
         );
         console.log('[App] Service Worker registrado:', registration.scope);
 

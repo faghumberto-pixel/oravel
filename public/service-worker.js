@@ -23,8 +23,28 @@ self.addEventListener('install', event => {
     );
 });
 
-// Activate: limpa caches velhos
+// Kill-switch (2026-09-27): instalações antigas registradas com escopo '/'
+// (bug real -- ver resources/js/offline/init.js) interceptavam TODO o
+// domínio com cache-first pra CSS/JS, servindo assets antigos pra sempre
+// pro Portal do Cliente e pro Central, mesmo depois de deploys novos com
+// hash de arquivo diferente. Escopo correto agora é '/admin/', mas o
+// navegador NÃO migra sozinho o escopo de uma registration já existente --
+// só um self.registration.unregister() explícito resolve. Mesma técnica já
+// usada em public/sw.js pro SW antigo morto.
 self.addEventListener('activate', event => {
+    if (self.registration.scope === self.location.origin + '/') {
+        console.log('[SW] Escopo largo demais detectado -- desinstalando e recarregando abas.');
+        event.waitUntil(
+            self.registration.unregister().then(() => {
+                return self.clients.matchAll({ type: 'window' });
+            }).then(clients => {
+                clients.forEach(client => client.navigate(client.url));
+            })
+        );
+
+        return;
+    }
+
     console.log('[SW] Activating...');
     event.waitUntil(
         caches.keys().then(cacheNames => {
