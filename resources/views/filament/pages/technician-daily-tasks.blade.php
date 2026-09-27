@@ -69,6 +69,18 @@
                class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-slate-300 active:bg-slate-800">
                 🕐 Registrar Horímetro
             </a>
+            <a href="{{ route('time-clock.offline') }}"
+               class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-slate-300 active:bg-slate-800">
+                ⏱️ Bater Ponto
+            </a>
+            <a href="{{ route('filament.admin.pages.minhas-horas') }}"
+               class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-slate-300 active:bg-slate-800">
+                📊 Minhas Horas
+            </a>
+            <a href="{{ route('filament.admin.pages.minhas-faltas') }}"
+               class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-slate-300 active:bg-slate-800">
+                🗓️ Minhas Faltas
+            </a>
             <a href="{{ route('filament.admin.pages.my-profile') }}"
                class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-slate-300 active:bg-slate-800">
                 👤 Meu Perfil

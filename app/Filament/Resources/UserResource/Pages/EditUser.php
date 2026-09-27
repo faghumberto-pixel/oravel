@@ -33,6 +33,7 @@ class EditUser extends EditRecord
         $data['employee_cpf'] = $employee?->cpf;
         $data['employee_role_title'] = $employee?->role_title;
         $data['employee_admission_date'] = $employee?->admission_date?->toDateString();
+        $data['employee_daily_work_hours'] = $employee?->daily_work_hours ?? 8;
 
         return $data;
     }
@@ -44,8 +45,9 @@ class EditUser extends EditRecord
             'cpf' => $data['employee_cpf'] ?? null,
             'role_title' => $data['employee_role_title'] ?? null,
             'admission_date' => $data['employee_admission_date'] ?? null,
+            'daily_work_hours' => $data['employee_daily_work_hours'] ?? 8,
         ];
-        unset($data['is_employee'], $data['employee_cpf'], $data['employee_role_title'], $data['employee_admission_date']);
+        unset($data['is_employee'], $data['employee_cpf'], $data['employee_role_title'], $data['employee_admission_date'], $data['employee_daily_work_hours']);
 
         return $data;
     }
@@ -77,6 +79,7 @@ class EditUser extends EditRecord
                 'cpf' => blank($cpf) ? ($employee?->cpf ?? Employee::nextPlaceholderCpf($user->tenant_id)) : $cpf,
                 'role_title' => $this->employeeData['role_title'],
                 'admission_date' => $this->employeeData['admission_date'],
+                'daily_work_hours' => $this->employeeData['daily_work_hours'] ?? 8,
                 'status' => blank($cpf) ? ($employee?->status ?? Employee::STATUS_INCOMPLETO) : Employee::STATUS_ATIVO,
             ],
         );

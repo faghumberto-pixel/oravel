@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Domain\Fleet\Models\ContractMeasurement;
 use App\Filament\Pages\CoberturaPmp;
 use App\Filament\Resources\MaintenancePlanResource\Support\PlanStatus;
+use App\Models\Absence;
 use App\Models\AccountPayable;
 use App\Models\AccountReceivable;
 use App\Models\Asset;
@@ -253,8 +254,16 @@ class TablePrintController extends Controller
             Department::class => [[
                 ['label' => 'Departamento', 'value' => fn ($r) => $r->name],
                 ['label' => 'Código', 'value' => fn ($r) => $r->code],
-                ['label' => 'Funcionários', 'value' => fn ($r) => $r->users()->count()],
+                ['label' => 'Colaboradores', 'value' => fn ($r) => $r->users()->count()],
             ], []],
+
+            Absence::class => [[
+                ['label' => 'Colaborador', 'value' => fn ($r) => $r->employee?->name],
+                ['label' => 'De', 'value' => fn ($r) => optional($r->start_date)->format('d/m/Y')],
+                ['label' => 'Até', 'value' => fn ($r) => optional($r->end_date)->format('d/m/Y')],
+                ['label' => 'Motivo', 'value' => fn ($r) => $r->reason],
+                ['label' => 'Status', 'value' => fn ($r) => Absence::statusLabels()[$r->status] ?? $r->status],
+            ], ['employee']],
 
             UserActivityLog::class => [[
                 ['label' => 'Data/Hora', 'value' => fn ($r) => optional($r->created_at)->format('d/m/Y H:i:s')],

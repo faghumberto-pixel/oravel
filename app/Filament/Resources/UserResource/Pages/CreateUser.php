@@ -30,8 +30,9 @@ class CreateUser extends CreateRecord
             'cpf' => $data['employee_cpf'] ?? null,
             'role_title' => $data['employee_role_title'] ?? null,
             'admission_date' => $data['employee_admission_date'] ?? null,
+            'daily_work_hours' => $data['employee_daily_work_hours'] ?? 8,
         ];
-        unset($data['is_employee'], $data['employee_cpf'], $data['employee_role_title'], $data['employee_admission_date']);
+        unset($data['is_employee'], $data['employee_cpf'], $data['employee_role_title'], $data['employee_admission_date'], $data['employee_daily_work_hours']);
 
         $tenant = Tenancy::current();
 
@@ -85,6 +86,7 @@ class CreateUser extends CreateRecord
             'cpf' => blank($cpf) ? Employee::nextPlaceholderCpf($tenantId) : $cpf,
             'role_title' => $this->employeeData['role_title'],
             'admission_date' => $this->employeeData['admission_date'],
+            'daily_work_hours' => $this->employeeData['daily_work_hours'] ?? 8,
             'status' => blank($cpf) ? Employee::STATUS_INCOMPLETO : Employee::STATUS_ATIVO,
         ]);
     }

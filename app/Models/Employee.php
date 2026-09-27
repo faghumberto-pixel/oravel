@@ -45,10 +45,12 @@ class Employee extends Model
         'job_role_id',
         'status',
         'admission_date',
+        'daily_work_hours',
     ];
 
     protected $casts = [
         'admission_date' => 'date',
+        'daily_work_hours' => 'decimal:2',
     ];
 
     public static function statusLabels(): array

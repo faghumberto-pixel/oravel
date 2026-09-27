@@ -156,6 +156,14 @@ class UserResource extends Resource
                             ->label('Data de Admissão')
                             ->dehydrated(true)
                             ->visible(fn (Forms\Get $get) => $get('is_employee')),
+                        Forms\Components\TextInput::make('employee_daily_work_hours')
+                            ->label('Jornada diária (h)')
+                            ->helperText('Usado pra calcular horas extras em "Minhas Horas".')
+                            ->numeric()
+                            ->step(0.5)
+                            ->default(8)
+                            ->dehydrated(true)
+                            ->visible(fn (Forms\Get $get) => $get('is_employee')),
                     ])->columns(3),
             ]);
     }

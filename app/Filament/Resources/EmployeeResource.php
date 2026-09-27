@@ -82,6 +82,13 @@ class EmployeeResource extends BaseResource
                         ->native(false),
                     Forms\Components\DatePicker::make('admission_date')
                         ->label('Data de Admissão'),
+                    Forms\Components\TextInput::make('daily_work_hours')
+                        ->label('Jornada diária (h)')
+                        ->helperText('Usado pra calcular horas extras em "Minhas Horas".')
+                        ->numeric()
+                        ->step(0.5)
+                        ->default(8)
+                        ->required(),
                     Forms\Components\Select::make('user_id')
                         ->label('Usuário do painel vinculado')
                         ->helperText('Só preencher se este colaborador também faz login no Oravel.')

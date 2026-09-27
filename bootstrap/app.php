@@ -9,6 +9,7 @@ use Illuminate\Auth\AuthServiceProvider;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -18,6 +19,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Sem isso, `auth:sanctum` nas rotas de sync offline (time-clocks,
+        // hour-meters) nunca autentica via cookie de sessão do painel --
+        // só aceitaria um token Bearer de verdade, que o JS mobile nunca
+        // envia (ele reusa a sessao web). Achado 27/09/2026 testando o
+        // Ponto Eletronico: POST /api/v1/time-clocks/sync sempre 401.
+        $middleware->api(prepend: [
+            EnsureFrontendRequestsAreStateful::class,
+        ]);
+
         // 🟢 Mantém o seu rastreador de presença na pilha web padrão do Laravel 12
         $middleware->web(append: [
             UpdateUserLastSeen::class,

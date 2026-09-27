@@ -19,6 +19,7 @@
     <body class="font-sans antialiased bg-zinc-950 text-zinc-100 overscroll-none md:bg-zinc-900 md:flex md:min-h-screen md:items-center md:justify-center md:py-6">
     <div class="mx-auto flex min-h-screen max-w-md flex-col md:h-[844px] md:min-h-0 md:w-[390px] md:overflow-y-auto md:rounded-[2rem] md:border md:border-zinc-800 md:shadow-2xl" x-data="timeClockOffline('{{ $employee->id }}')" x-init="init()">
         <header class="flex items-center gap-3 px-5 pb-2 pt-6">
+            <a href="{{ route('filament.admin.pages.technician-daily-tasks') }}" class="text-zinc-400 text-lg leading-none">←</a>
             <div class="flex flex-1 items-center justify-between">
                 <h1 class="text-xs font-bold tracking-widest text-zinc-400">PONTO ELETRÔNICO</h1>
                 <span class="text-xs font-bold tracking-wide text-zinc-300">{{ strtoupper(config('app.name', 'ORAVEL')) }}</span>
@@ -71,20 +72,38 @@
                 >
                     Entrada
                 </button>
-                <button
-                    type="button"
-                    @click="register('inicio_intervalo')"
-                    class="min-h-[4rem] w-full rounded-2xl bg-amber-600 text-sm font-bold text-white active:bg-amber-700"
-                >
-                    Início do Intervalo
-                </button>
-                <button
-                    type="button"
-                    @click="register('fim_intervalo')"
-                    class="min-h-[4rem] w-full rounded-2xl bg-amber-600 text-sm font-bold text-white active:bg-amber-700"
-                >
-                    Fim do Intervalo
-                </button>
+                <div class="grid grid-cols-2 gap-3">
+                    <button
+                        type="button"
+                        @click="register('inicio_pausa')"
+                        class="min-h-[4rem] w-full rounded-2xl bg-amber-600 text-sm font-bold text-white active:bg-amber-700"
+                    >
+                        Início da Pausa
+                    </button>
+                    <button
+                        type="button"
+                        @click="register('fim_pausa')"
+                        class="min-h-[4rem] w-full rounded-2xl bg-amber-600 text-sm font-bold text-white active:bg-amber-700"
+                    >
+                        Fim da Pausa
+                    </button>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <button
+                        type="button"
+                        @click="register('inicio_almoco')"
+                        class="min-h-[4rem] w-full rounded-2xl bg-sky-600 text-sm font-bold text-white active:bg-sky-700"
+                    >
+                        Início do Almoço
+                    </button>
+                    <button
+                        type="button"
+                        @click="register('fim_almoco')"
+                        class="min-h-[4rem] w-full rounded-2xl bg-sky-600 text-sm font-bold text-white active:bg-sky-700"
+                    >
+                        Fim do Almoço
+                    </button>
+                </div>
                 <button
                     type="button"
                     @click="register('saida')"
