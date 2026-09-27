@@ -3,7 +3,10 @@
 namespace App\Filament\Central\Resources\ContratoResource\Pages;
 
 use App\Filament\Central\Resources\ContratoResource;
+use App\Models\Plan;
+use App\Models\Tenant;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 
 class EditContrato extends EditRecord
@@ -13,7 +16,32 @@ class EditContrato extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            // Bloqueio real (2026-09-27, achado em PROD): o Contrato da
+            // própria Oravel (PREMIUM, tenant "Oravel" sem plano nenhum
+            // pra vender) foi apagado por aqui sem nenhum aviso -- Tenant
+            // ficou com plan_id vazio e ZERO módulos até ser corrigido
+            // manualmente. Apagar um Contrato que um Tenant real usa
+            // sempre quebra o acesso dele por inteiro (Plan não tem
+            // SoftDeletes, é definitivo). Agora bloqueia com aviso
+            // explicando qual(is) tenant(s) seriam afetados, em vez de
+            // deixar apagar silenciosamente.
+            Actions\DeleteAction::make()
+                ->before(function (Plan $record, Actions\DeleteAction $action) {
+                    $tenants = Tenant::withoutGlobalScope('tenant')
+                        ->where('plan_id', $record->id)
+                        ->pluck('name');
+
+                    if ($tenants->isNotEmpty()) {
+                        Notification::make()
+                            ->title('Não é possível apagar este Contrato')
+                            ->body('Ele está em uso por: '.$tenants->implode(', ').'. Apagar removeria o acesso desses tenants por completo (sem como desfazer). Troque o Contrato deles pra outro antes, se realmente precisar apagar este.')
+                            ->danger()
+                            ->persistent()
+                            ->send();
+
+                        $action->cancel();
+                    }
+                }),
         ];
     }
 
