@@ -6,11 +6,13 @@ use App\Filament\Pages\ApontamentoHorimetro;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\BancaryReconciliationPage;
 use App\Filament\Pages\CashflowPage;
+use App\Filament\Pages\RastreamentoGps;
 use App\Http\Middleware\EnsureTenantPaymentIsCurrent;
 use App\Http\Middleware\LogUserActivity;
 use App\Http\Middleware\TrackSiteVisit;
 use App\Models\Asset;
 use App\Models\Employee;
+use App\Models\TraccarDevice;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -127,6 +129,17 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-arrow-path')
                     ->group('Financeiro')
                     ->url('/admin/conciliacao-bancaria'),
+
+                // Mesma pagina de Logística > Frota > Rastreamento GPS
+                // (App\Filament\Pages\RastreamentoGps) -- pedido do usuário
+                // 2026-09-27: vendedor é quem usa o rastreamento no dia a
+                // dia, então o atalho também precisa aparecer em Comercial,
+                // sem duplicar a página.
+                NavigationItem::make('Rastreamento GPS')
+                    ->icon('heroicon-o-map-pin')
+                    ->group('Comercial')
+                    ->url(fn () => RastreamentoGps::getUrl())
+                    ->visible(fn () => (bool) auth()->user()?->can('viewAny', TraccarDevice::class)),
             ])
             ->renderHook(
                 PanelsRenderHook::TOPBAR_START,
