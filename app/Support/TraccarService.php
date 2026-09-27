@@ -112,6 +112,34 @@ class TraccarService
         return round($totalMeters / 1000, 2);
     }
 
+    /**
+     * Busca o device pelo identificador (uniqueId/IMEI, o mesmo texto
+     * configurado no app Traccar Client no celular) -- resolve o ID
+     * numerico interno do Traccar, que o tenant nao tem como ver de outra
+     * forma (nao tem acesso ao painel do servidor). So encontra devices
+     * que ja mandaram pelo menos uma posicao (Traccar so cria o registro
+     * na primeira conexao).
+     */
+    public function findDeviceByIdentifier(string $identifier): ?array
+    {
+        if (blank($this->baseUrl) || blank($this->email)) {
+            return null;
+        }
+
+        $response = $this->client()->get('/api/devices', ['uniqueId' => $identifier]);
+
+        if ($response->failed()) {
+            Log::warning('TraccarService: falha ao buscar device por identificador.', [
+                'identifier' => $identifier,
+                'status' => $response->status(),
+            ]);
+
+            return null;
+        }
+
+        return $response->json()[0] ?? null;
+    }
+
     private function client()
     {
         return Http::baseUrl($this->baseUrl)
