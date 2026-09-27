@@ -18,7 +18,7 @@ class TimeClockOfflineController extends Controller
         $employee = Employee::where('user_id', auth()->id())->first();
 
         if (! $employee) {
-            abort(404, 'Nenhum colaborador do Departamento Pessoal está vinculado a este usuário.');
+            return view('time-clock-sem-ficha');
         }
 
         return view('time-clock-offline', [
