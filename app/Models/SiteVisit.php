@@ -24,6 +24,8 @@ class SiteVisit extends Model
         'visitor_token',
         'session_token',
         'ip_address',
+        'city',
+        'state',
         'user_agent',
         'device_type',
         'referrer_url',

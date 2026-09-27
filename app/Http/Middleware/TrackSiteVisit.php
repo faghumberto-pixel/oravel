@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\SiteVisit;
 use App\Models\User;
+use App\Services\IpGeolocationService;
 use App\Support\RequestNoiseFilter;
 use App\Support\SiteVisitTenantResolver;
 use App\Support\Tenancy;
@@ -94,6 +95,8 @@ class TrackSiteVisit
         $now = Carbon::now();
         $referrer = $request->headers->get('referer');
 
+        $geo = app(IpGeolocationService::class)->locate($request->ip());
+
         $visit = new SiteVisit;
         $visit->id = (string) Str::uuid();
         $visit->tenant_id = $this->resolveTenantId($request);
@@ -101,6 +104,8 @@ class TrackSiteVisit
         $visit->visitor_token = $request->cookie(self::VISITOR_COOKIE) ?: (string) Str::uuid();
         $visit->session_token = (string) Str::uuid();
         $visit->ip_address = $request->ip();
+        $visit->city = $geo['city'];
+        $visit->state = $geo['state'];
         $visit->user_agent = $request->userAgent();
         $visit->device_type = $this->resolveDeviceType($request->userAgent());
         $visit->referrer_url = $referrer;

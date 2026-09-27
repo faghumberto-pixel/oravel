@@ -3,14 +3,18 @@
 namespace App\Filament\Central\Resources;
 
 use App\Filament\Central\Resources\SiteVisitResource\Pages;
+use App\Models\BlockedIp;
 use App\Models\SiteVisit;
 use App\Models\Tenant;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * So' leitura -- e' dado de tracking (TrackSiteVisit), nao CRUD
@@ -126,7 +130,16 @@ class SiteVisitResource extends Resource
 
                 Tables\Columns\TextColumn::make('ip_address')
                     ->label('IP')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->copyable()
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('city')
+                    ->label('Cidade')
+                    ->placeholder('—'),
+
+                Tables\Columns\TextColumn::make('state')
+                    ->label('UF')
+                    ->placeholder('—'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('tenant_id')
@@ -157,6 +170,39 @@ class SiteVisitResource extends Resource
                         return $query
                             ->when($data['from'], fn (Builder $q, $date) => $q->whereDate('started_at', '>=', $date))
                             ->when($data['until'], fn (Builder $q, $date) => $q->whereDate('started_at', '<=', $date));
+                    }),
+            ])
+            ->actions([
+                // Bloqueio real de IP (2026-09-27, pedido do usuário) --
+                // enforcement de verdade em App\Http\Middleware\BlockBannedIps,
+                // registrado bem cedo na pilha global. Some assim que o IP já
+                // está bloqueado, pra não deixar bloquear 2x à toa.
+                Tables\Actions\Action::make('bloquearIp')
+                    ->label('Bloquear IP')
+                    ->icon('heroicon-o-no-symbol')
+                    ->color('danger')
+                    ->visible(fn (SiteVisit $record) => filled($record->ip_address)
+                        && ! BlockedIp::where('ip_address', $record->ip_address)->exists())
+                    ->requiresConfirmation()
+                    ->modalDescription(fn (SiteVisit $record) => "Bloqueia o IP {$record->ip_address} de acessar QUALQUER parte do sistema (admin, central, portal do cliente, site público) -- afeta todo mundo que usa esse IP, não só este visitante.")
+                    ->form([
+                        TextInput::make('reason')
+                            ->label('Motivo (opcional)')
+                            ->maxLength(255),
+                    ])
+                    ->action(function (SiteVisit $record, array $data) {
+                        BlockedIp::create([
+                            'ip_address' => $record->ip_address,
+                            'reason' => $data['reason'] ?? null,
+                            'blocked_by_user_id' => auth()->id(),
+                        ]);
+
+                        Cache::forget('blocked-ips-list');
+
+                        Notification::make()
+                            ->title("IP {$record->ip_address} bloqueado")
+                            ->success()
+                            ->send();
                     }),
             ])
             ->defaultSort('started_at', 'desc');

@@ -29,6 +29,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('financeiro:verificar-vencimentos')->daily();
         $schedule->command('financeiro:marcar-contas-atrasadas')->dailyAt('01:00');
         $schedule->command('site-visits:close-stale')->everyFiveMinutes();
+        // Mantém só os 50 acessos mais recentes (pedido do usuário 2026-09-27).
+        $schedule->command('site-visits:prune')->hourly();
         $schedule->command('employees:check-certification-expirations')->daily();
         $schedule->command('epi:check-ca-expirations')->daily();
         $schedule->command('epi:check-lifespan-expirations')->daily();

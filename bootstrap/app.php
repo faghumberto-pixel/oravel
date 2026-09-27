@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\BlockBannedIps;
 use App\Http\Middleware\RedirectGuestToChatLogin;
 use App\Http\Middleware\RedirectTechnicianFromDashboard;
 use App\Http\Middleware\TrackSiteVisit;
@@ -21,6 +22,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             UpdateUserLastSeen::class,
             TrackSiteVisit::class,
+        ]);
+
+        // Bloqueio de IP (pedido do usuário 2026-09-27) -- prepend pra
+        // rodar ANTES de tudo o mais na pilha web (rotas públicas, painéis).
+        $middleware->web(prepend: [
+            BlockBannedIps::class,
         ]);
 
         // 🔒 REGISTRO SUPREMO: Adiciona o apelido do novo middleware de segurança do Oravel
