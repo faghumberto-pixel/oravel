@@ -47,6 +47,16 @@ class EmployeeResource extends BaseResource
                     Forms\Components\TextInput::make('role_title')
                         ->label('Cargo')
                         ->maxLength(191),
+                    Forms\Components\Select::make('job_role_id')
+                        ->label('Tipo/Função')
+                        ->helperText('Usado pra filtrar e agrupar colaboradores (ex: vincular rastreamento GPS só a vendedores/técnicos). Gerencie em Equipe → Funções e Cargos.')
+                        ->relationship('jobRole', 'name')
+                        ->searchable()
+                        ->preload()
+                        ->createOptionForm([
+                            Forms\Components\TextInput::make('name')->label('Nome da função')->required()->maxLength(191),
+                        ])
+                        ->native(false),
                     Forms\Components\Select::make('status')
                         ->label('Status')
                         ->options(Employee::statusLabels())
@@ -82,6 +92,11 @@ class EmployeeResource extends BaseResource
                 Tables\Columns\TextColumn::make('cpf')->label('CPF')->searchable(),
                 Tables\Columns\TextColumn::make('department.name')->label('Setor')->searchable(),
                 Tables\Columns\TextColumn::make('role_title')->label('Cargo')->searchable(),
+                Tables\Columns\TextColumn::make('jobRole.name')
+                    ->label('Tipo/Função')
+                    ->badge()
+                    ->color('gray')
+                    ->placeholder('—'),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
@@ -121,6 +136,7 @@ class EmployeeResource extends BaseResource
                 Tables\Columns\TextColumn::make('admission_date')->label('Admissão')->date('d/m/Y')->sortable(),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('job_role_id')->label('Tipo/Função')->relationship('jobRole', 'name'),
                 Tables\Filters\SelectFilter::make('status')->label('Status')->options(Employee::statusLabels()),
                 Tables\Filters\SelectFilter::make('department_id')->label('Setor')->relationship('department', 'name'),
             ])

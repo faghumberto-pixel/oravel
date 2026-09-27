@@ -42,6 +42,7 @@ class Employee extends Model
         'name',
         'cpf',
         'role_title',
+        'job_role_id',
         'status',
         'admission_date',
     ];
@@ -91,6 +92,11 @@ class Employee extends Model
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);
+    }
+
+    public function jobRole(): BelongsTo
+    {
+        return $this->belongsTo(JobRole::class);
     }
 
     public function certifications(): HasMany
