@@ -133,6 +133,32 @@ class ReservasUrgentes extends Page
         ];
     }
 
+    /**
+     * Aviso informativo, NÃO bloqueante -- pedido explícito do usuário
+     * 28/09/2026 (confirmado via pergunta direta: "só um aviso
+     * informativo"). Lista SolicitacaoLocacao com status_comercial=
+     * proposta_em_andamento (nascida em PropostaComercial::aprovar(), antes
+     * do cliente aceitar), só pra Manutenção saber que existe uma proposta
+     * em curso -- não entra em assetIdsComReservaUrgente() nem em nenhum
+     * bloqueio (Kanban, criação de OS): essa lista continua sendo só a de
+     * reserva_manutencao, intocada.
+     *
+     * @return Collection<int, SolicitacaoLocacao>
+     */
+    public function getPropostasEmAndamento(): Collection
+    {
+        $tenant = Tenancy::current();
+        if (! $tenant) {
+            return collect();
+        }
+
+        return SolicitacaoLocacao::where('tenant_id', $tenant->id)
+            ->where('status_comercial', 'proposta_em_andamento')
+            ->with(['customer', 'category', 'propostaComercial'])
+            ->latest('created_at')
+            ->get();
+    }
+
     public function getKpis(): array
     {
         $reservas = $this->getReservas();

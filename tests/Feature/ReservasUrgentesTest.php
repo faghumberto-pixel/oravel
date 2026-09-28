@@ -235,6 +235,52 @@ class ReservasUrgentesTest extends TestCase
         $this->assertSame(1, MaintenanceOrder::where('asset_id', $asset->id)->count());
     }
 
+    /**
+     * Aviso informativo (pedido do usuário 28/09/2026, confirmado via
+     * pergunta direta: "só um aviso informativo") -- proposta_em_andamento
+     * NÃO entra na fila urgente/bloqueante (getReservas()), mas precisa
+     * aparecer em algum lugar visível pra Manutenção.
+     */
+    public function test_propostas_em_andamento_lists_separately_from_urgent_queue(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $this->actingAs($admin);
+
+        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Em Andamento']);
+        $category = AssetCategory::create(['tenant_id' => $tenant->id, 'name' => 'Geradores']);
+
+        SolicitacaoLocacao::create([
+            'tenant_id' => $tenant->id, 'user_id' => $admin->id, 'customer_id' => $client->id,
+            'category_id' => $category->id, 'data_saida_prevista' => now()->addWeek(),
+            'status_comercial' => 'proposta_em_andamento',
+        ]);
+
+        $page = new ReservasUrgentes;
+
+        $this->assertCount(0, $page->getReservas());
+        $this->assertCount(1, $page->getPropostasEmAndamento());
+        $this->assertSame('Cliente Em Andamento', $page->getPropostasEmAndamento()->first()->customer->name);
+    }
+
+    public function test_page_renders_propostas_em_andamento_section(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $this->actingAs($admin);
+
+        $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Aviso Renderiza']);
+        $category = AssetCategory::create(['tenant_id' => $tenant->id, 'name' => 'Geradores']);
+        SolicitacaoLocacao::create([
+            'tenant_id' => $tenant->id, 'user_id' => $admin->id, 'customer_id' => $client->id,
+            'category_id' => $category->id, 'data_saida_prevista' => now()->addWeek(),
+            'status_comercial' => 'proposta_em_andamento',
+        ]);
+
+        $this->get(ReservasUrgentes::getUrl())
+            ->assertOk()
+            ->assertSee('Cliente Aviso Renderiza')
+            ->assertSee('Aviso informativo');
+    }
+
     public function test_concluir_reserva_releases_asset_back_to_disponivel(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();

@@ -73,7 +73,7 @@ class PropostaComercialResourceTest extends TestCase
         return $proposta;
     }
 
-    public function test_comercial_aprova_via_action_muda_status_sem_criar_solicitacao(): void
+    public function test_comercial_aprova_via_action_muda_status_e_ja_cria_solicitacao(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();
         $client = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Teste', 'email' => 'cliente-'.uniqid().'@teste.com']);
@@ -87,12 +87,13 @@ class PropostaComercialResourceTest extends TestCase
 
         $proposta->refresh();
         $this->assertSame(PropostaComercial::STATUS_APROVADA_INTERNA, $proposta->status);
-        $this->assertNull($proposta->solicitacao_locacao_id);
-        $this->assertSame(0, SolicitacaoLocacao::count());
+        $this->assertNotNull($proposta->solicitacao_locacao_id);
+        $this->assertSame(1, SolicitacaoLocacao::count());
+        $solicitacaoIdAposAprovar = $proposta->solicitacao_locacao_id;
 
         $proposta->aceitarPeloCliente();
         $proposta->refresh();
-        $this->assertNotNull($proposta->solicitacao_locacao_id);
+        $this->assertSame($solicitacaoIdAposAprovar, $proposta->solicitacao_locacao_id);
         $this->assertSame(1, SolicitacaoLocacao::count());
     }
 

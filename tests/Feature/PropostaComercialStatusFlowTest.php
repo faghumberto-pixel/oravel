@@ -57,7 +57,7 @@ class PropostaComercialStatusFlowTest extends TestCase
         return $proposta->fresh();
     }
 
-    public function test_aprovar_muda_status_para_aprovada_interna_sem_criar_solicitacao(): void
+    public function test_aprovar_muda_status_para_aprovada_interna_e_ja_cria_solicitacao(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();
         $proposta = $this->makePropostaEnviada($tenant, $admin);
@@ -66,22 +66,23 @@ class PropostaComercialStatusFlowTest extends TestCase
         $proposta->refresh();
 
         $this->assertSame(PropostaComercial::STATUS_APROVADA_INTERNA, $proposta->status);
-        $this->assertNull($proposta->solicitacao_locacao_id);
+        $this->assertNotNull($proposta->solicitacao_locacao_id);
     }
 
-    public function test_aceitar_pelo_cliente_cria_solicitacao_locacao(): void
+    public function test_aceitar_pelo_cliente_mantem_a_mesma_solicitacao_criada_no_aprovar(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();
         $proposta = $this->makePropostaEnviada($tenant, $admin);
         $proposta->aprovar($admin);
         $proposta->refresh();
+        $solicitacaoIdAposAprovar = $proposta->solicitacao_locacao_id;
 
         $proposta->aceitarPeloCliente();
         $proposta->refresh();
 
         $this->assertSame(PropostaComercial::STATUS_ACEITA_PELO_CLIENTE, $proposta->status);
         $this->assertNotNull($proposta->client_responded_at);
-        $this->assertNotNull($proposta->solicitacao_locacao_id);
+        $this->assertSame($solicitacaoIdAposAprovar, $proposta->solicitacao_locacao_id);
     }
 
     public function test_aceitar_pelo_cliente_falha_se_nao_estiver_aprovada_interna(): void
@@ -93,19 +94,21 @@ class PropostaComercialStatusFlowTest extends TestCase
         $proposta->aceitarPeloCliente();
     }
 
-    public function test_recusar_pelo_cliente_registra_motivo_sem_criar_solicitacao(): void
+    public function test_recusar_pelo_cliente_registra_motivo_e_cancela_a_solicitacao_ja_criada(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();
         $proposta = $this->makePropostaEnviada($tenant, $admin);
         $proposta->aprovar($admin);
         $proposta->refresh();
+        $this->assertNotNull($proposta->solicitacao_locacao_id);
 
         $proposta->recusarPeloCliente('Preço acima do orçamento.');
         $proposta->refresh();
 
         $this->assertSame(PropostaComercial::STATUS_RECUSADA_PELO_CLIENTE, $proposta->status);
         $this->assertSame('Preço acima do orçamento.', $proposta->rejection_reason);
-        $this->assertNull($proposta->solicitacao_locacao_id);
+        $this->assertNotNull($proposta->solicitacao_locacao_id);
+        $this->assertSame('cancelado', $proposta->solicitacaoLocacao->fresh()->status_comercial);
     }
 
     public function test_reabrir_para_edicao_aceita_rejeitada_e_recusada_pelo_cliente(): void

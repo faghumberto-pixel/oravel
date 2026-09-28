@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
@@ -216,6 +217,17 @@ class SolicitacaoLocacao extends Model
     public function maintenanceOrders(): HasMany
     {
         return $this->hasMany(MaintenanceOrder::class);
+    }
+
+    /**
+     * Reverso de PropostaComercial::solicitacaoLocacao() -- desde
+     * 28/09/2026 a Solicitação já pode nascer no aprovar() da Proposta
+     * (antes do cliente responder), então a fila de Manutenção precisa
+     * conseguir voltar pra a Proposta de origem (ver ReservasUrgentes).
+     */
+    public function propostaComercial(): HasOne
+    {
+        return $this->hasOne(PropostaComercial::class);
     }
 
     /**

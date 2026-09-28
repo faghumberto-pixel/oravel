@@ -152,6 +152,11 @@ class PropostaComercial extends Model
         return $this->hasMany(PropostaComercialItem::class);
     }
 
+    public function interactions(): HasMany
+    {
+        return $this->hasMany(PropostaComercialInteraction::class)->latest('contact_date');
+    }
+
     /**
      * Soma dos itens -- chamado pelo PropostaComercialItemObserver toda vez
      * que um item é criado/editado/removido, mesmo padrão de
@@ -224,12 +229,21 @@ class PropostaComercial extends Model
 
     /**
      * Comercial aprova: aciona o equipamento/serviço criando uma
-     * SolicitacaoLocacao real, exceto quando a proposta é 100%-serviço
-     * (sem nenhum item "equipamento") -- nesse caso aprova normalmente,
-     * mas o acionamento fica bloqueado com aviso claro (resolvido de
-     * verdade só na Fase 2, ver plano). category_id de SolicitacaoLocacao
-     * é NOT NULL no banco, então não dá pra criar sem pelo menos 1 item de
-     * equipamento definindo a categoria.
+     * SolicitacaoLocacao real JÁ AQUI -- antes só nascia quando o cliente
+     * aceitava (aceitarPeloCliente()), o que deixava a janela entre
+     * "aprovada" e "cliente respondeu" sem nenhum registro visível pra
+     * Manutenção/Comercial de que o equipamento já tinha sido solicitado.
+     * Pedido explícito do usuário 28/09/2026. Exceto quando a proposta é
+     * 100%-serviço (sem nenhum item "equipamento") -- nesse caso aprova
+     * normalmente, mas o acionamento fica bloqueado com aviso claro
+     * (resolvido de verdade só na Fase 2, ver plano). category_id de
+     * SolicitacaoLocacao é NOT NULL no banco, então não dá pra criar sem
+     * pelo menos 1 item de equipamento definindo a categoria.
+     *
+     * O envio do PDF pro cliente passa pela Caixa de E-mail (EmailMessage)
+     * em vez de Mail::send() direto -- fica registrado/rastreável e
+     * vinculado (related) a esta proposta, em vez de poder se perder sem
+     * deixar rastro (outro pedido explícito do usuário).
      */
     public function aprovar(User $revisor): void
     {
@@ -248,20 +262,35 @@ class PropostaComercial extends Model
             'approval_token' => $this->approval_token ?? Str::random(48),
         ]);
 
+        $primeiroEquipamento = $this->items()->where('type', PropostaComercialItem::TYPE_EQUIPAMENTO)->first();
+
+        if ($primeiroEquipamento && ! $this->solicitacao_locacao_id) {
+            $solicitacao = $this->criarSolicitacaoLocacao($primeiroEquipamento);
+
+            $this->update(['solicitacao_locacao_id' => $solicitacao->id]);
+        }
+
         $pdf = Pdf::loadView('pdf.proposta-comercial', [
             'proposta' => $this->load(['items', 'client', 'sellerUser']),
             'generatedAt' => now()->format('d/m/Y H:i'),
         ])->output();
 
-        Mail::to($this->client->email)->send(new GenericPdfMail(
-            subjectLine: "Proposta comercial — {$this->client->name}",
-            greeting: "Olá, {$this->client->name}",
-            bodyText: 'Segue em anexo a proposta comercial. Para aceitar ou recusar, acesse: '
+        $email = EmailMessage::create([
+            'tenant_id' => $this->tenant_id,
+            'from_user_id' => $revisor->id,
+            'to_external' => [$this->client->email],
+            'subject' => "Proposta comercial — {$this->client->name}",
+            'body' => 'Segue em anexo a proposta comercial. Para aceitar ou recusar, acesse: '
                 .route('proposta-comercial.public-approval', $this->approval_token),
-            pdfContent: $pdf,
-            pdfFilename: "proposta-comercial-{$this->id}.pdf",
-            senderDisplayName: $this->tenant->name,
-        ));
+            'related_type' => self::class,
+            'related_id' => $this->id,
+        ]);
+
+        $email->addMediaFromString($pdf)
+            ->usingFileName("proposta-comercial-{$this->id}.pdf")
+            ->toMediaCollection('anexos');
+
+        $email->send();
     }
 
     /**
@@ -278,8 +307,10 @@ class PropostaComercial extends Model
     }
 
     /**
-     * Cliente aceita pelo link público -- SÓ AQUI a SolicitacaoLocacao é
-     * criada (antes era em aprovar(), que agora só marca aprovação interna).
+     * Cliente aceita pelo link público. A SolicitacaoLocacao já nasce em
+     * aprovar() (28/09/2026) -- aqui só cobre o caso legado de uma proposta
+     * aprovada antes dessa mudança (sem solicitacao_locacao_id ainda), pra
+     * não deixar pra trás quem já estava no meio do fluxo.
      */
     public function aceitarPeloCliente(): void
     {
@@ -292,6 +323,10 @@ class PropostaComercial extends Model
             'client_responded_at' => now(),
         ]);
 
+        if ($this->solicitacao_locacao_id) {
+            return;
+        }
+
         $primeiroEquipamento = $this->items()->where('type', PropostaComercialItem::TYPE_EQUIPAMENTO)->first();
 
         if (! $primeiroEquipamento) {
@@ -303,6 +338,13 @@ class PropostaComercial extends Model
         $this->update(['solicitacao_locacao_id' => $solicitacao->id]);
     }
 
+    /**
+     * Se aprovar() já tinha criado a SolicitacaoLocacao (equipamento
+     * "solicitado" antes da resposta), o cliente recusar precisa cancelar
+     * essa reserva informativa -- senão ela fica pra sempre em
+     * "proposta_em_andamento" e continua aparecendo pra Manutenção mesmo
+     * depois de morta.
+     */
     public function recusarPeloCliente(string $motivo): void
     {
         if ($this->status !== self::STATUS_APROVADA_INTERNA) {
@@ -314,6 +356,10 @@ class PropostaComercial extends Model
             'client_responded_at' => now(),
             'rejection_reason' => $motivo,
         ]);
+
+        if ($this->solicitacaoLocacao && $this->solicitacaoLocacao->status_comercial === 'proposta_em_andamento') {
+            $this->solicitacaoLocacao->update(['status_comercial' => 'cancelado']);
+        }
     }
 
     public function rejeitar(User $revisor, string $motivo): void

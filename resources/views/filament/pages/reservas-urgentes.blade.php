@@ -2,6 +2,7 @@
     @php
         $kpis = $this->getKpis();
         $reservas = $this->getReservas();
+        $propostasEmAndamento = $this->getPropostasEmAndamento();
     @endphp
 
     <div class="rounded-xl border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 p-4 mb-4">
@@ -145,4 +146,57 @@
             </div>
         @endif
     </div>
+
+    {{-- ===================== PROPOSTAS EM ANDAMENTO (informativo, não bloqueante) ===================== --}}
+    @if($propostasEmAndamento->isNotEmpty())
+        <div class="mt-6">
+            <div class="rounded-xl border border-sky-200 dark:border-sky-500/30 bg-sky-50 dark:bg-sky-500/10 p-4 mb-3">
+                <p class="text-sm text-sky-800 dark:text-sky-300">
+                    <strong>Aviso informativo</strong> -- estas Propostas Comerciais já foram aprovadas internamente e o
+                    equipamento já foi solicitado, mas o cliente ainda não respondeu. Isso <strong>não bloqueia</strong>
+                    nada na Manutenção (Kanban do Pátio, abertura de OS) -- é só um alerta antecipado pra você já saber
+                    que pode vir uma reserva de verdade em breve.
+                </p>
+            </div>
+
+            <div class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr class="text-[10px] uppercase text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-800">
+                                <th class="px-4 py-2 font-medium">Cliente</th>
+                                <th class="px-4 py-2 font-medium">Categoria</th>
+                                <th class="px-4 py-2 font-medium">Prazo</th>
+                                <th class="px-4 py-2 font-medium"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($propostasEmAndamento as $solicitacao)
+                                <tr class="border-b border-gray-100 dark:border-gray-800 last:border-0">
+                                    <td class="px-4 py-2.5 text-gray-700 dark:text-gray-300">{{ $solicitacao->customer?->name ?? '—' }}</td>
+                                    <td class="px-4 py-2.5 text-gray-700 dark:text-gray-300">{{ $solicitacao->category?->name ?? '—' }}</td>
+                                    <td class="px-4 py-2.5 text-gray-700 dark:text-gray-300">
+                                        {{ $solicitacao->data_saida_prevista?->format('d/m/Y') ?? 'Sem prazo' }}
+                                    </td>
+                                    <td class="px-4 py-2.5 text-right whitespace-nowrap">
+                                        @if($solicitacao->propostaComercial)
+                                            <a href="{{ \App\Filament\Resources\PropostaComercialResource::getUrl('view', ['record' => $solicitacao->propostaComercial]) }}"
+                                               class="text-[11px] font-medium text-primary-600 hover:underline dark:text-primary-400">
+                                                Ver Proposta
+                                            </a>
+                                            <span class="text-gray-300 dark:text-gray-700 mx-1">·</span>
+                                        @endif
+                                        <a href="{{ \App\Filament\Resources\SolicitacaoLocacaoResource::getUrl('edit', ['record' => $solicitacao]) }}"
+                                           class="text-[11px] font-medium text-primary-600 hover:underline dark:text-primary-400">
+                                            Ver Solicitação
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    @endif
 </x-filament-panels::page>

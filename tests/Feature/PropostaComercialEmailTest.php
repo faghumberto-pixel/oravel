@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Mail\GenericPdfMail;
 use App\Models\AssetCategory;
 use App\Models\Client;
+use App\Models\EmailMessage;
 use App\Models\EquipmentDamage;
 use App\Models\Plan;
 use App\Models\PropostaComercial;
@@ -87,7 +88,15 @@ class PropostaComercialEmailTest extends TestCase
         Mail::assertNothingSent();
     }
 
-    public function test_aprovar_envia_pdf_e_link_ao_cliente(): void
+    /**
+     * Desde 28/09/2026 o envio do PDF pro cliente passa pela Caixa de
+     * E-mail (EmailMessage::send()) em vez de Mail::send() direto -- fica
+     * registrado/rastreável e vinculado (related) a esta proposta, em vez
+     * de poder se perder sem deixar rastro (pedido explícito do usuário).
+     * O anexo agora viaja em extraAttachments (via media 'anexos'), não
+     * mais em pdfContent -- ver EmailMessage::send().
+     */
+    public function test_aprovar_envia_pdf_e_link_ao_cliente_pela_caixa_de_email(): void
     {
         Mail::fake();
         [$tenant, $seller] = $this->makeTenantAdmin();
@@ -96,11 +105,20 @@ class PropostaComercialEmailTest extends TestCase
         $proposta->enviarParaComercial();
         $proposta->refresh();
         $proposta->aprovar($seller);
+        $proposta->refresh();
 
         Mail::assertSent(GenericPdfMail::class, fn ($mail) => $mail->hasTo('cliente-real@example.com')
-            && str_contains($mail->bodyText, route('proposta-comercial.public-approval', $proposta->fresh()->approval_token))
-            && $mail->pdfContent !== null
+            && str_contains($mail->bodyText, route('proposta-comercial.public-approval', $proposta->approval_token))
+            && count($mail->extraAttachments) === 1
         );
+
+        $email = EmailMessage::where('related_type', PropostaComercial::class)
+            ->where('related_id', $proposta->id)
+            ->first();
+
+        $this->assertNotNull($email, 'O envio precisa ficar registrado na Caixa de E-mail.');
+        $this->assertSame(EmailMessage::STATUS_ENVIADO, $email->status);
+        $this->assertSame(['cliente-real@example.com'], $email->to_external);
     }
 
     public function test_aprovar_sem_email_de_cliente_lanca_excecao_e_nao_envia_nada(): void

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PropostaComercialResource\Pages;
+use App\Filament\Resources\PropostaComercialResource\RelationManagers\InteractionsRelationManager;
 use App\Models\AssetCategory;
 use App\Models\Client;
 use App\Models\PropostaComercial;
@@ -12,6 +13,8 @@ use App\Models\User;
 use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Actions\Action as InfolistAction;
+use Filament\Infolists\Components\Actions as InfolistActions;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -164,6 +167,35 @@ class PropostaComercialResource extends BaseResource
                     TextEntry::make('sent_at')->label('Enviada em')->dateTime('d/m/Y H:i')->placeholder('—'),
                 ]),
 
+            /**
+             * Antes disso só existia o botão "Ver Solicitação de Locação"
+             * (condicionalmente visível no header), fácil de passar
+             * despercebido -- pedido explícito do usuário 28/09/2026: a
+             * tela da proposta precisa deixar claro, de forma visível, que
+             * o equipamento já foi solicitado (mesmo antes do cliente
+             * aceitar, ver PropostaComercial::aprovar()).
+             */
+            Section::make('Equipamento Já Solicitado')
+                ->icon('heroicon-o-check-badge')
+                ->iconColor('success')
+                ->visible(fn (PropostaComercial $record) => filled($record->solicitacao_locacao_id))
+                ->schema([
+                    TextEntry::make('solicitacaoLocacao.status_comercial')
+                        ->label('Status da Solicitação')
+                        ->badge(),
+                    TextEntry::make('solicitacaoLocacao.data_saida_prevista')
+                        ->label('Saída Prevista')
+                        ->date('d/m/Y')
+                        ->placeholder('—'),
+                    InfolistActions::make([
+                        InfolistAction::make('abrir_solicitacao')
+                            ->label('Abrir Solicitação de Locação')
+                            ->icon('heroicon-o-arrow-top-right-on-square')
+                            ->url(fn (PropostaComercial $record) => SolicitacaoLocacaoResource::getUrl('edit', ['record' => $record->solicitacao_locacao_id])),
+                    ]),
+                ])
+                ->columns(2),
+
             Section::make('Itens')
                 ->schema([
                     RepeatableEntry::make('items')
@@ -275,6 +307,13 @@ class PropostaComercialResource extends BaseResource
             'index' => Pages\ListPropostaComerciais::route('/'),
             'create' => Pages\CreatePropostaComercial::route('/create'),
             'view' => Pages\ViewPropostaComercial::route('/{record}'),
+        ];
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            InteractionsRelationManager::class,
         ];
     }
 }

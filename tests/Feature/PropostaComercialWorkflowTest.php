@@ -111,11 +111,17 @@ class PropostaComercialWorkflowTest extends TestCase
         $this->assertSame(PropostaComercial::STATUS_APROVADA_INTERNA, $proposta->status);
         $this->assertNotNull($proposta->reviewed_at);
         $this->assertSame($admin->id, $proposta->reviewed_by_user_id);
-        $this->assertNull($proposta->solicitacao_locacao_id);
+        // Desde 28/09/2026 a Solicitação já nasce aqui, no aprovar() --
+        // não é mais preciso esperar o cliente aceitar pra Manutenção/
+        // Comercial saberem que o equipamento já foi solicitado.
+        $this->assertNotNull($proposta->solicitacao_locacao_id);
+        $solicitacaoIdAposAprovar = $proposta->solicitacao_locacao_id;
 
         $proposta->aceitarPeloCliente();
         $this->assertSame(PropostaComercial::STATUS_ACEITA_PELO_CLIENTE, $proposta->status);
-        $this->assertNotNull($proposta->solicitacao_locacao_id);
+        // Aceitar não cria uma segunda Solicitação -- reaproveita a mesma.
+        $this->assertSame($solicitacaoIdAposAprovar, $proposta->solicitacao_locacao_id);
+        $this->assertSame(1, SolicitacaoLocacao::count());
 
         $solicitacao = SolicitacaoLocacao::findOrFail($proposta->solicitacao_locacao_id);
         $this->assertSame($client->id, $solicitacao->customer_id);
