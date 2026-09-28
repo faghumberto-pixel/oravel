@@ -21,7 +21,7 @@ class GestaoEpi extends Page
 
     protected static string $view = 'filament.pages.gestao-epi';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 2;
 
     protected static bool $shouldRegisterNavigation = true;
 }

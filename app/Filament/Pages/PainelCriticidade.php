@@ -38,6 +38,8 @@ class PainelCriticidade extends Page
 
     protected static ?string $navigationLabel = 'Painel de Criticidade';
 
+    protected static ?int $navigationSort = 0;
+
     protected static ?string $title = 'Painel de Criticidade';
 
     protected static string $view = 'filament.pages.painel-criticidade';

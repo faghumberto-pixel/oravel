@@ -42,7 +42,7 @@ class CoberturaPmp extends Page implements HasTable
 
     protected static ?string $title = 'Cobertura de Manutenção Preventiva';
 
-    protected static ?int $navigationSort = 0;
+    protected static ?int $navigationSort = 1;
 
     protected static string $view = 'filament.pages.cobertura-pmp';
 

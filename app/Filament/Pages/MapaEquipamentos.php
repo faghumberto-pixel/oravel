@@ -24,6 +24,8 @@ class MapaEquipamentos extends Page
 
     protected static ?string $navigationLabel = 'Mapa de Equipamentos';
 
+    protected static ?int $navigationSort = 5;
+
     protected static ?string $title = 'Mapa de Equipamentos';
 
     protected static ?string $slug = 'mapa-equipamentos';

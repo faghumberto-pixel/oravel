@@ -23,6 +23,8 @@ class BranchResource extends Resource
 
     protected static ?string $navigationLabel = 'Filiais';
 
+    protected static ?int $navigationSort = 4;
+
     protected static ?string $modelLabel = 'Filial';
 
     protected static ?string $pluralModelLabel = 'Filiais';

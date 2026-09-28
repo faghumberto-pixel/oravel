@@ -24,7 +24,7 @@ class MaterialCategoryResource extends Resource
 
     protected static ?string $navigationParentItem = 'Gestão de Estoque';
 
-    protected static ?int $navigationSort = 11;
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $navigationLabel = 'Categorias de Materiais';
 

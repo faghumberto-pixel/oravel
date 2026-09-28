@@ -32,7 +32,7 @@ class AbcMatrixHistoryResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Histórico de Matriz ABC';
 
-    protected static ?int $navigationSort = 22;
+    protected static ?int $navigationSort = 1;
 
     public static function canViewAny(): bool
     {

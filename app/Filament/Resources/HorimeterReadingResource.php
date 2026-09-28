@@ -39,7 +39,7 @@ class HorimeterReadingResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Monitor de Horímetro';
 
-    protected static ?int $navigationSort = 23;
+    protected static ?int $navigationSort = 4;
 
     public static function canViewAny(): bool
     {

@@ -24,6 +24,8 @@ class BillCategoryResource extends Resource
 
     protected static ?string $navigationLabel = 'Categorias de Contas a Pagar';
 
+    protected static ?int $navigationSort = 0;
+
     protected static ?string $modelLabel = 'Categoria de Conta a Pagar';
 
     protected static ?string $pluralModelLabel = 'Categorias de Contas a Pagar';

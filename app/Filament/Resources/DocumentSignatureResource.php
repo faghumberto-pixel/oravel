@@ -30,7 +30,7 @@ class DocumentSignatureResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Assinaturas Eletrônicas';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 0;
 
     public static function form(Form $form): Form
     {

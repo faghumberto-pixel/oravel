@@ -24,6 +24,8 @@ class LocationResource extends Resource
 
     protected static ?string $navigationLabel = 'Localizações';
 
+    protected static ?int $navigationSort = 5;
+
     protected static ?string $modelLabel = 'Localização';
 
     protected static ?string $pluralModelLabel = 'Localizações';

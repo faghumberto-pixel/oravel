@@ -19,6 +19,8 @@ class JobRoleResource extends BaseResource
 
     protected static ?string $navigationLabel = 'Funções e Cargos';
 
+    protected static ?int $navigationSort = 3;
+
     protected static ?string $modelLabel = 'Função';
 
     protected static ?string $pluralModelLabel = 'Funções';

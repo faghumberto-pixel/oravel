@@ -32,6 +32,8 @@ class AIAnalysisResource extends BaseResource
 
     protected static ?string $navigationLabel = 'Central de IA';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $modelLabel = 'Análise de IA';
 
     protected static ?string $pluralModelLabel = 'Central de IA';

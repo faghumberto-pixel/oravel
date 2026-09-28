@@ -21,7 +21,7 @@ class PartResource extends BaseResource
 
     protected static ?string $navigationParentItem = 'Gestão de Estoque';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 6;
 
     protected static ?string $label = 'Peça/Insumo';
 

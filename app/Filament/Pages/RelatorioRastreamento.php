@@ -31,6 +31,8 @@ class RelatorioRastreamento extends Page implements HasForms
 
     protected static ?string $navigationLabel = 'Relatório de Rastreamento';
 
+    protected static ?int $navigationSort = 3;
+
     protected static ?string $title = 'Relatório de Rastreamento';
 
     protected static ?string $slug = 'relatorio-rastreamento';

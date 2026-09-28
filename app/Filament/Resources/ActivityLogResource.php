@@ -39,7 +39,7 @@ class ActivityLogResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Log de Alterações';
 
-    protected static ?int $navigationSort = 22;
+    protected static ?int $navigationSort = 3;
 
     private const SUBJECT_TYPES = [
         Asset::class => 'Ativo',

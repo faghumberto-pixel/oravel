@@ -28,6 +28,8 @@ class AnaliseRetrabalho extends Page
 
     protected static ?string $navigationLabel = 'Análise de Retrabalho (IA)';
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $title = 'Análise de Retrabalho / Corretivas';
 
     protected static string $view = 'filament.pages.analise-retrabalho';

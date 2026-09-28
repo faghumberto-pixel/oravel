@@ -38,7 +38,7 @@ class NotificationLogResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Notificações';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 5;
 
     private const CATEGORIES = [
         'success' => 'Sucesso',

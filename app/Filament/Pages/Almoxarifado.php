@@ -22,7 +22,7 @@ class Almoxarifado extends Page
 
     protected static string $view = 'filament.pages.almoxarifado';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 3;
 
     protected static bool $shouldRegisterNavigation = true;
 }

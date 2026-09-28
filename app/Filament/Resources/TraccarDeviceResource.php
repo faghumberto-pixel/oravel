@@ -32,6 +32,8 @@ class TraccarDeviceResource extends BaseResource
     // pra nao colidir no menu -- este e' so o CRUD de vinculo device<->usuario.
     protected static ?string $navigationLabel = 'Vínculos de Rastreamento';
 
+    protected static ?int $navigationSort = 5;
+
     protected static ?string $modelLabel = 'Device GPS';
 
     protected static ?string $pluralModelLabel = 'Devices GPS';

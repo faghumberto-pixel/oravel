@@ -24,7 +24,7 @@ class MaintenancaoCadastros extends Page
 
     protected static string $view = 'filament.pages.anchor-maintenancao-cadastros';
 
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 1;
 
     protected static bool $shouldRegisterNavigation = true;
 }

@@ -24,7 +24,7 @@ class MaintenancaoAnaliseIa extends Page
 
     protected static string $view = 'filament.pages.anchor-maintenancao-analise-ia';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 0;
 
     protected static bool $shouldRegisterNavigation = true;
 }

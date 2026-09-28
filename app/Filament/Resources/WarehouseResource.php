@@ -22,7 +22,7 @@ class WarehouseResource extends BaseResource
 
     protected static ?string $navigationParentItem = 'Gestão de Estoque';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 12;
 
     protected static ?string $label = 'Almoxarifado';
 

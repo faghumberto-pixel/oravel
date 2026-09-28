@@ -32,6 +32,8 @@ class AnalisePlanoPreventivo extends Page
 
     protected static ?string $navigationLabel = 'Análise de Planos Preventivos (IA)';
 
+    protected static ?int $navigationSort = 0;
+
     protected static ?string $title = 'Análise de Planos Preventivos';
 
     protected static string $view = 'filament.pages.analise-plano-preventivo';

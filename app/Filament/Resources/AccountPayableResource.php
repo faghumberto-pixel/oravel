@@ -27,6 +27,8 @@ class AccountPayableResource extends Resource
 
     protected static ?string $navigationLabel = 'Contas a Pagar';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $modelLabel = 'Conta a Pagar';
 
     protected static ?string $pluralModelLabel = 'Contas a Pagar';

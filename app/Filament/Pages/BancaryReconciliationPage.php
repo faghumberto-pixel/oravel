@@ -35,7 +35,7 @@ class BancaryReconciliationPage extends Page
 
     protected static ?string $navigationGroup = 'Financeiro';
 
-    protected static ?int $navigationSort = 11;
+    protected static ?int $navigationSort = 1;
 
     public ?string $dateStart = null;
 

@@ -20,7 +20,7 @@ class GestaoComercial extends Page
 
     protected static ?string $title = 'Gestão Comercial';
 
-    protected static ?int $navigationSort = -20;
+    protected static ?int $navigationSort = 0;
 
     protected static string $view = 'filament.pages.gestao-comercial';
 

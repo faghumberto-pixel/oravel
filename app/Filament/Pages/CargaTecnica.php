@@ -40,6 +40,8 @@ class CargaTecnica extends Page
 
     protected static ?string $navigationLabel = 'Carga de Técnicos';
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $title = 'Carga de Técnicos';
 
     protected static string $view = 'filament.pages.carga-tecnica';

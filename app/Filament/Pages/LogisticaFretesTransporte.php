@@ -24,7 +24,7 @@ class LogisticaFretesTransporte extends Page
 
     protected static string $view = 'filament.pages.anchor-logistica-fretes-transporte';
 
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 0;
 
     protected static bool $shouldRegisterNavigation = true;
 }

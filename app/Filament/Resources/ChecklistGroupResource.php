@@ -30,7 +30,7 @@ class ChecklistGroupResource extends Resource
     // Checklist" so cobria a primeira funcao.
     protected static ?string $navigationLabel = 'Grupos de Ativos';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {

@@ -21,7 +21,7 @@ class ComplianceStatus extends Page
 
     protected static ?string $navigationGroup = 'Configurações';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 7;
 
     public function getViewData(): array
     {

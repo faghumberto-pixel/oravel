@@ -20,6 +20,8 @@ class ProgramacaoLogistica extends Page
 
     protected static ?string $navigationLabel = 'Programação';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $title = 'Programação — Logística';
 
     protected static string $view = 'filament.pages.programacao-logistica';

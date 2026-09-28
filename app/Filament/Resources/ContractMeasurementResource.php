@@ -36,6 +36,8 @@ class ContractMeasurementResource extends Resource
 
     protected static ?string $navigationLabel = 'Medições de Contrato';
 
+    protected static ?int $navigationSort = 6;
+
     protected static ?string $modelLabel = 'Medição de Contrato';
 
     protected static ?string $pluralModelLabel = 'Medições de Contrato';

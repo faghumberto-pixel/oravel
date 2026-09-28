@@ -24,6 +24,8 @@ class RastreamentoGps extends Page
 
     protected static ?string $navigationLabel = 'Rastreamento GPS';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $title = 'Rastreamento GPS';
 
     protected static ?string $slug = 'rastreamento-gps';

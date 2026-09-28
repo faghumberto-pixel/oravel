@@ -24,7 +24,7 @@ class RelatoriosAnalises extends Page
 
     protected static string $view = 'filament.pages.anchor-relatorios-analises';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 0;
 
     protected static bool $shouldRegisterNavigation = true;
 }

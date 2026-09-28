@@ -31,6 +31,8 @@ class DepartmentResource extends Resource
 
     protected static ?string $navigationLabel = 'Departamentos';
 
+    protected static ?int $navigationSort = 2;
+
     public static function form(Form $form): Form
     {
         return $form->schema([

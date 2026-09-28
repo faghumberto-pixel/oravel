@@ -43,6 +43,8 @@ class HistoricoPatrimonio extends Page
 
     protected static ?string $navigationLabel = 'Histórico do Patrimônio';
 
+    protected static ?int $navigationSort = 4;
+
     protected static ?string $title = 'Histórico do Patrimônio';
 
     protected static ?string $slug = 'patrimonio/historico/{assetId?}';

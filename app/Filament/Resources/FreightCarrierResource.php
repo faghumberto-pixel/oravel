@@ -22,6 +22,8 @@ class FreightCarrierResource extends Resource
 
     protected static ?string $navigationLabel = 'Transportadoras';
 
+    protected static ?int $navigationSort = 4;
+
     public static function form(Form $form): Form
     {
         return $form->schema([

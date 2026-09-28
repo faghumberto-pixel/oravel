@@ -24,6 +24,8 @@ class PainelSlaEmergencia extends Page
 
     protected static ?string $navigationLabel = 'Painel de SLA';
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $title = 'Painel de SLA de Emergência';
 
     protected static string $view = 'filament.pages.painel-sla-emergencia';

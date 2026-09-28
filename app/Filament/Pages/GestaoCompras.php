@@ -21,7 +21,7 @@ class GestaoCompras extends Page
 
     protected static string $view = 'filament.pages.gestao-compras';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 1;
 
     protected static bool $shouldRegisterNavigation = true;
 }

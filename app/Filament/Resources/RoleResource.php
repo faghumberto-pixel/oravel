@@ -35,7 +35,7 @@ class RoleResource extends Resource
 
     protected static ?string $navigationLabel = 'Perfis de Acesso';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     protected static bool $isScopedToTenant = false;
 

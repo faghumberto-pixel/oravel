@@ -36,6 +36,8 @@ class MaterialStockTakeResource extends Resource
 
     protected static ?string $navigationParentItem = 'Gestão de Estoque';
 
+    protected static ?int $navigationSort = 3;
+
     public static function canEdit($record): bool
     {
         return $record->status === MaterialStockTake::STATUS_RASCUNHO

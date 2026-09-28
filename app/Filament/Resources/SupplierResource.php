@@ -20,7 +20,7 @@ class SupplierResource extends Resource
 
     protected static ?string $navigationParentItem = 'Gestão de Compras';
 
-    protected static ?int $navigationSort = 12;
+    protected static ?int $navigationSort = 0;
 
     protected static ?string $modelLabel = 'Fornecedor';
 

@@ -24,7 +24,7 @@ class LogisticaPatio extends Page
 
     protected static string $view = 'filament.pages.anchor-logistica-patio';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 2;
 
     protected static bool $shouldRegisterNavigation = true;
 }

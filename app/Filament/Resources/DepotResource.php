@@ -28,6 +28,8 @@ class DepotResource extends BaseResource
 
     protected static ?string $navigationLabel = 'Pátios/Depósitos';
 
+    protected static ?int $navigationSort = 3;
+
     protected static ?string $modelLabel = 'Pátio/Depósito';
 
     protected static ?string $pluralModelLabel = 'Pátios/Depósitos';

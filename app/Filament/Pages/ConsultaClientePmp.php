@@ -39,7 +39,7 @@ class ConsultaClientePmp extends Page
 
     protected static ?string $title = 'Manutenções por Cliente';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
 
     protected static string $view = 'filament.pages.consulta-cliente-pmp';
 

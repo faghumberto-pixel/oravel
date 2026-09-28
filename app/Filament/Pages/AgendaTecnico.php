@@ -28,7 +28,7 @@ class AgendaTecnico extends Page
     // (AgendaTecnicoMobile) que é otimizada para campo. Admins/supervisores
     // veem o calendário full com saade/filament-fullcalendar.
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 5;
 
     protected static string $view = 'filament.pages.agenda-tecnico';
 

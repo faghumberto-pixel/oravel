@@ -25,6 +25,8 @@ class PlantaBaixaAlmoxarifado extends Page
 
     protected static ?string $navigationLabel = 'Planta Baixa (Almoxarifado)';
 
+    protected static ?int $navigationSort = 8;
+
     protected static ?string $title = 'Planta Baixa — Almoxarifado';
 
     protected static ?string $slug = 'planta-baixa-almoxarifado';

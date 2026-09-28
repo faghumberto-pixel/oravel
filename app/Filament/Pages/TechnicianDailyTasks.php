@@ -37,7 +37,7 @@ class TechnicianDailyTasks extends Page
     // /admin pra primeira pagina navegavel por ordem de sort. Sem isso,
     // qualquer NavigationItem sem sort definido (ex: "Registrar Horímetro")
     // podia acabar competindo e virando o destino de fato.
-    protected static ?int $navigationSort = -9;
+    protected static ?int $navigationSort = 2;
 
     // Achado em simulação real 2026-09-24: só checava autenticação, não o
     // Contrato -- "Minhas Ordens de Serviço" aparecia mesmo sem o módulo.

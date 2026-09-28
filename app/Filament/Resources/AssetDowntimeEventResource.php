@@ -31,6 +31,8 @@ class AssetDowntimeEventResource extends Resource
 
     protected static ?string $navigationLabel = 'Histórico de Paradas';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $modelLabel = 'Parada';
 
     protected static ?string $pluralModelLabel = 'Paradas';

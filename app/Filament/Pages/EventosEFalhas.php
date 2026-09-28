@@ -36,7 +36,7 @@ class EventosEFalhas extends Page
 
     protected static string $view = 'filament.pages.eventos-e-falhas';
 
-    protected static ?int $navigationSort = 23;
+    protected static ?int $navigationSort = 0;
 
     public static function canAccess(): bool
     {

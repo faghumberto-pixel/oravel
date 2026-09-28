@@ -37,6 +37,8 @@ class ApontamentoHorimetro extends Page implements HasForms
 
     protected static ?string $navigationLabel = 'Apontamento de Horímetro';
 
+    protected static ?int $navigationSort = 0;
+
     protected static ?string $title = 'Apontamento de Horímetro';
 
     protected static string $view = 'filament.pages.apontamento-horimetro';

@@ -24,6 +24,8 @@ class FleetStatusResource extends Resource
 
     protected static ?string $navigationLabel = 'Status da Frota';
 
+    protected static ?int $navigationSort = 10;
+
     public static function getEloquentQuery(): Builder
     {
         $tenant = Tenancy::current();

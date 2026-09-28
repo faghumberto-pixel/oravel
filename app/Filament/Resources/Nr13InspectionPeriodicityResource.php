@@ -31,7 +31,7 @@ class Nr13InspectionPeriodicityResource extends Resource
 
     protected static ?string $navigationLabel = 'Periodicidades';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $modelLabel = 'Periodicidade NR-13';
 

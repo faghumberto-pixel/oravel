@@ -27,7 +27,7 @@ class AnaliseEstoque extends Page
 
     protected static ?string $title = 'Análise de Estoque';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 0;
 
     protected static string $view = 'filament.pages.analise-estoque';
 

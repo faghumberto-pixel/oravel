@@ -26,7 +26,7 @@ class Inventario extends Page implements HasTable
 
     protected static string $view = 'filament.pages.inventario';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 2;
 
     // Achado em simulação real 2026-09-24: não tinha canAccess() nenhum --
     // Filament libera Page sem override por padrão, então aparecia pra

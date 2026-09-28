@@ -22,6 +22,8 @@ class AbsenceResource extends BaseResource
 
     protected static ?string $navigationLabel = 'Faltas e Ausências';
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $modelLabel = 'Falta/Ausência';
 
     protected static ?string $pluralModelLabel = 'Faltas e Ausências';

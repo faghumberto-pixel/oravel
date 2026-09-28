@@ -23,6 +23,8 @@ class CostCenterResource extends Resource
 
     protected static ?string $navigationLabel = 'Centros de Custo';
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $modelLabel = 'Centro de Custo';
 
     public static function form(Form $form): Form

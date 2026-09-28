@@ -40,6 +40,8 @@ class PropostaComercialResource extends BaseResource
 
     protected static ?string $navigationParentItem = 'Gestão Comercial';
 
+    protected static ?int $navigationSort = 8;
+
     protected static ?string $modelLabel = 'Proposta Comercial';
 
     protected static ?string $pluralModelLabel = 'Propostas Comerciais';

@@ -33,6 +33,8 @@ class EpiComplianceReport extends Page implements HasTable
 
     protected static ?string $navigationLabel = 'Conformidade NR-6 (EPI)';
 
+    protected static ?int $navigationSort = 0;
+
     protected static ?string $title = 'Conformidade NR-6 — EPI por Colaborador';
 
     protected static string $view = 'filament.pages.epi-compliance-report';

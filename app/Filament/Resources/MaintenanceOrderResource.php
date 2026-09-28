@@ -45,6 +45,8 @@ class MaintenanceOrderResource extends Resource
 
     protected static ?string $navigationLabel = 'Ordens de Serviço';
 
+    protected static ?int $navigationSort = 3;
+
     protected static ?string $pluralModelLabel = 'Ordens de Serviço';
 
     public static function getNavigationBadge(): ?string

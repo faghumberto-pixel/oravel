@@ -49,7 +49,7 @@ class PainelPmp extends Page
 
     protected static ?string $title = 'Planejamento de Manutenção Preventiva';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 3;
 
     protected static string $view = 'filament.pages.painel-pmp';
 

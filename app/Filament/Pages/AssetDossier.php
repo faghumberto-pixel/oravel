@@ -27,6 +27,8 @@ class AssetDossier extends Page
 
     protected static ?string $navigationLabel = 'Dossiê Rápido (QR/Patrimônio)';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $title = 'Dossiê Rápido do Ativo';
 
     protected static ?string $slug = 'ativos/dossie/{assetId?}';

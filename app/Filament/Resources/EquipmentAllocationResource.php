@@ -26,6 +26,8 @@ class EquipmentAllocationResource extends BaseResource
 
     protected static ?string $navigationLabel = 'Alocação de Equipamento';
 
+    protected static ?int $navigationSort = 0;
+
     public static function form(Form $form): Form
     {
         return $form->schema([

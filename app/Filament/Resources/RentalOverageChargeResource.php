@@ -29,6 +29,8 @@ class RentalOverageChargeResource extends Resource
 
     protected static ?string $navigationLabel = 'Excedentes de Locação';
 
+    protected static ?int $navigationSort = 3;
+
     protected static ?string $modelLabel = 'Excedente de Locação';
 
     protected static ?string $pluralModelLabel = 'Excedentes de Locação';

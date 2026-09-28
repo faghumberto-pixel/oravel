@@ -27,6 +27,8 @@ class AvariasReincidencia extends Page
 
     protected static ?string $navigationLabel = 'Avarias & Reincidência';
 
+    protected static ?int $navigationSort = 0;
+
     protected static ?string $title = 'Avarias e Reincidência';
 
     protected static string $view = 'filament.pages.avarias-reincidencia';

@@ -6,18 +6,25 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+/**
+ * /login (GET e POST) sao scaffolding padrao do Breeze, nunca usados de
+ * verdade -- o login real deste app e' App\Filament\Pages\Auth\Login
+ * (mesmo raciocinio de RegistrationTest pro /register). Rota fechada
+ * (redireciona pro login do painel em vez de autenticar) -- pedido do
+ * usuario 2026-09-28.
+ */
 class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_login_screen_can_be_rendered(): void
+    public function test_login_screen_redirects_to_panel_login(): void
     {
         $response = $this->get('/login');
 
-        $response->assertStatus(200);
+        $response->assertRedirect(route('filament.admin.auth.login'));
     }
 
-    public function test_users_can_authenticate_using_the_login_screen(): void
+    public function test_posting_to_login_does_not_authenticate(): void
     {
         $user = User::factory()->create();
 
@@ -26,19 +33,7 @@ class AuthenticationTest extends TestCase
             'password' => 'password',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
-    }
-
-    public function test_users_can_not_authenticate_with_invalid_password(): void
-    {
-        $user = User::factory()->create();
-
-        $this->post('/login', [
-            'email' => $user->email,
-            'password' => 'wrong-password',
-        ]);
-
+        $response->assertRedirect(route('filament.admin.auth.login'));
         $this->assertGuest();
     }
 

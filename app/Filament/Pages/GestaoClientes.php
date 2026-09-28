@@ -39,6 +39,8 @@ class GestaoClientes extends Page implements HasForms
 
     protected static ?string $navigationLabel = 'Gestão de Clientes';
 
+    protected static ?int $navigationSort = 5;
+
     protected static string $view = 'filament.pages.gestao-clientes';
 
     public ?string $selectedClientId = null;

@@ -23,6 +23,8 @@ class PmocResource extends Resource
     protected static ?string $pluralModelLabel = 'PMOCs';
     protected static ?string $navigationGroup = 'Equipe';
 
+    protected static ?int $navigationSort = 5;
+
     public static function form(Form $form): Form
     {
         return $form

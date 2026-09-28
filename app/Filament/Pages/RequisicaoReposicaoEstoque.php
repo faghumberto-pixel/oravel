@@ -31,6 +31,8 @@ class RequisicaoReposicaoEstoque extends Page
 
     protected static ?string $navigationLabel = 'Reposição de Estoque';
 
+    protected static ?int $navigationSort = 3;
+
     protected static ?string $title = 'Reposição de Estoque';
 
     protected static ?string $slug = 'requisicao-reposicao-estoque';

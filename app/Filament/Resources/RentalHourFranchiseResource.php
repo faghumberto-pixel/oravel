@@ -33,6 +33,8 @@ class RentalHourFranchiseResource extends Resource
 
     protected static ?string $navigationLabel = 'Franquias de Horas';
 
+    protected static ?int $navigationSort = 4;
+
     protected static ?string $modelLabel = 'Franquia de Horas';
 
     protected static ?string $pluralModelLabel = 'Franquias de Horas';

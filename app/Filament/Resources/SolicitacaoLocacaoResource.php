@@ -34,6 +34,8 @@ class SolicitacaoLocacaoResource extends Resource
 
     protected static ?string $navigationParentItem = 'Gestão Comercial';
 
+    protected static ?int $navigationSort = 9;
+
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';
 
     public static function form(Form $form): Form

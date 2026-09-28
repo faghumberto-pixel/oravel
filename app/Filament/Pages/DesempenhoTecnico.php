@@ -31,6 +31,8 @@ class DesempenhoTecnico extends Page
 
     protected static ?string $navigationLabel = 'Desempenho & Retrabalho';
 
+    protected static ?int $navigationSort = 3;
+
     protected static ?string $title = 'Desempenho e Retrabalho de Técnicos';
 
     protected static string $view = 'filament.pages.desempenho-tecnico';

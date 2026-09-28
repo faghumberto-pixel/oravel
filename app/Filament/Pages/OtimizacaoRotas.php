@@ -27,6 +27,8 @@ class OtimizacaoRotas extends Page
 
     protected static ?string $navigationLabel = 'Otimização de Rotas (IA)';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $title = 'Otimização de Rotas';
 
     protected static string $view = 'filament.pages.otimizacao-rotas';

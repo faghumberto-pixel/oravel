@@ -26,6 +26,8 @@ class AccountReceivableResource extends Resource
 
     protected static ?string $navigationLabel = 'Contas a Receber';
 
+    protected static ?int $navigationSort = 3;
+
     protected static ?string $modelLabel = 'Conta a Receber';
 
     protected static ?string $pluralModelLabel = 'Contas a Receber';

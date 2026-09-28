@@ -26,7 +26,7 @@ class CashflowPage extends Page
 
     protected static ?string $navigationGroup = 'Financeiro';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 4;
 
     public ?string $dateStart = null;
 

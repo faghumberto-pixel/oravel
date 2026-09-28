@@ -22,6 +22,8 @@ class PlantaBaixaPatioAtivos extends Page
 
     protected static ?string $navigationLabel = 'Planta Baixa (Pátio de Ativos)';
 
+    protected static ?int $navigationSort = 6;
+
     protected static ?string $title = 'Planta Baixa — Pátio de Ativos';
 
     protected static ?string $slug = 'planta-baixa-patio-ativos';

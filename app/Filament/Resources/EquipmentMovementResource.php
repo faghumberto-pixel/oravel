@@ -35,6 +35,8 @@ class EquipmentMovementResource extends Resource
 
     protected static ?string $navigationLabel = 'Histórico de Movimentações';
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $modelLabel = 'Movimentação';
 
     protected static ?string $pluralModelLabel = 'Movimentações';

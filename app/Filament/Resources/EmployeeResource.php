@@ -33,6 +33,8 @@ class EmployeeResource extends BaseResource
 
     protected static ?string $navigationLabel = 'Ficha de RH (sem login)';
 
+    protected static ?int $navigationSort = 0;
+
     // Sem isso, o Filament deriva o rotulo do nome da classe (Employee) e
     // toda tela/breadcrumb/botao aparece em ingles ("Employees", "Criar
     // employee") -- exatamente a ambiguidade que gerou a duvida

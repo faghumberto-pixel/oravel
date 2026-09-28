@@ -24,6 +24,8 @@ class BillingPlanResource extends Resource
 
     protected static ?string $navigationLabel = 'Planos de Cobrança';
 
+    protected static ?int $navigationSort = 5;
+
     protected static ?string $modelLabel = 'Plano de Cobrança';
 
     protected static ?string $pluralModelLabel = 'Planos de Cobrança';

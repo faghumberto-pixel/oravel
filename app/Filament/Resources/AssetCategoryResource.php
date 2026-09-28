@@ -22,7 +22,7 @@ class AssetCategoryResource extends Resource
 
     protected static ?string $navigationParentItem = 'Gestão de Ativos';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $navigationLabel = 'Categorias de Ativos';
 

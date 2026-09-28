@@ -32,7 +32,7 @@ class AlocacaoTecnicosPmp extends Page
 
     protected static ?string $title = 'Alocação de Técnicos';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 0;
 
     protected static string $view = 'filament.pages.alocacao-tecnicos-pmp';
 

@@ -20,7 +20,7 @@ class GestaoCrm extends Page
 
     protected static ?string $title = 'Gestão CRM';
 
-    protected static ?int $navigationSort = -19;
+    protected static ?int $navigationSort = 1;
 
     protected static string $view = 'filament.pages.gestao-crm';
 

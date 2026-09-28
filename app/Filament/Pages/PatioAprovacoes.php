@@ -32,6 +32,8 @@ class PatioAprovacoes extends Page
 
     protected static ?string $navigationParentItem = 'Pátio';
 
+    protected static ?int $navigationSort = 0;
+
     protected static string $view = 'filament.pages.patio-aprovacoes';
 
     public ?string $reviewingId = null;

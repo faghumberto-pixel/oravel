@@ -24,6 +24,8 @@ class FleetVehicleResource extends Resource
 
     protected static ?string $navigationLabel = 'Veículos da Frota';
 
+    protected static ?int $navigationSort = 4;
+
     public static function form(Form $form): Form
     {
         return $form->schema([

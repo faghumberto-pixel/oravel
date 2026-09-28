@@ -31,6 +31,8 @@ class Chat extends Page
 
     protected static ?string $navigationLabel = 'Chat Interno';
 
+    protected static ?int $navigationSort = 0;
+
     protected static ?string $title = '';
 
     protected static string $view = 'filament.pages.chat';

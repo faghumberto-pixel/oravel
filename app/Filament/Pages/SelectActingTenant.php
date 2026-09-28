@@ -28,6 +28,8 @@ class SelectActingTenant extends Page implements HasForms
 
     protected static ?string $navigationLabel = 'Atuar como Tenant';
 
+    protected static ?int $navigationSort = 0;
+
     protected static ?string $title = 'Atuar como Tenant';
 
     protected static string $view = 'filament.pages.select-acting-tenant';

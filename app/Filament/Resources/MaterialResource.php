@@ -34,7 +34,7 @@ class MaterialResource extends Resource
 
     protected static ?string $navigationParentItem = 'Gestão de Estoque';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {

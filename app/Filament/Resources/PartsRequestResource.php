@@ -25,7 +25,7 @@ class PartsRequestResource extends Resource
 
     protected static ?string $navigationLabel = 'Solicitações de peças';
 
-    protected static ?int $navigationSort = 13;
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $tenantRelationshipName = 'partsRequests';
 

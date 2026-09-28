@@ -25,6 +25,8 @@ class CrmFunil extends Page
 
     protected static ?string $navigationParentItem = 'Gestão CRM';
 
+    protected static ?int $navigationSort = 1;
+
     protected static string $view = 'filament.pages.crm-funil';
 
     public string $search = '';

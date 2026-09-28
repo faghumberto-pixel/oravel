@@ -41,6 +41,8 @@ class ManageTenantSettings extends Page implements HasForms
 
     protected static ?string $navigationLabel = 'Configurações do Tenant';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $title = 'Configurações do Tenant';
 
     protected static string $view = 'filament.pages.manage-tenant-settings';

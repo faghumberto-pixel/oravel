@@ -35,6 +35,8 @@ class GoodsReceiptResource extends Resource
 
     protected static ?string $navigationParentItem = 'Gestão de Compras';
 
+    protected static ?int $navigationSort = 2;
+
     public static function form(Form $form): Form
     {
         return $form->schema([

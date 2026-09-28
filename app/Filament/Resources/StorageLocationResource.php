@@ -26,6 +26,8 @@ class StorageLocationResource extends BaseResource
 
     protected static ?string $navigationParentItem = 'Gestão de Estoque';
 
+    protected static ?int $navigationSort = 4;
+
     public static function form(Form $form): Form
     {
         return $form

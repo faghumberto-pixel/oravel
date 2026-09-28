@@ -32,6 +32,8 @@ class TransferenciaEstoque extends Page implements HasForms
 
     protected static ?string $navigationLabel = 'Transferência para Volante';
 
+    protected static ?int $navigationSort = 10;
+
     protected static ?string $title = 'Transferência para Almoxarifado Volante';
 
     protected static string $view = 'filament.pages.transferencia-estoque';

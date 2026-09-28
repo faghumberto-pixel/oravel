@@ -25,6 +25,8 @@ class FleetDriverResource extends Resource
 
     protected static ?string $navigationLabel = 'Motoristas';
 
+    protected static ?int $navigationSort = 0;
+
     public static function form(Form $form): Form
     {
         return $form->schema([

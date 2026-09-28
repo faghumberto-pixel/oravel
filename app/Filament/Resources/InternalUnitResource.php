@@ -34,6 +34,8 @@ class InternalUnitResource extends Resource
 
     protected static ?string $navigationParentItem = 'Gestão de Estoque';
 
+    protected static ?int $navigationSort = 11;
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where('tenant_id', Auth::user()->tenant_id);
