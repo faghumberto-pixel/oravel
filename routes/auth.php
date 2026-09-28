@@ -22,10 +22,16 @@ Route::middleware('guest')->group(function () {
 
     Route::post('register', fn () => redirect()->route('filament.admin.auth.login'));
 
-    Route::get('login', [AuthenticatedSessionController::class, 'create'])
+    // /login (GET e POST) sao scaffolding padrao do Breeze, nunca usados
+    // de verdade -- o login real do app e' App\Filament\Pages\Auth\Login
+    // (mesmo raciocinio do /register acima). Mantem o nome de rota
+    // 'login' (usado internamente pelo middleware 'auth' do Laravel pra
+    // redirecionar usuario nao autenticado -- ver Authenticate::redirectTo()),
+    // so troca o destino visivel. Pedido do usuario 2026-09-28.
+    Route::get('login', fn () => redirect()->route('filament.admin.auth.login'))
         ->name('login');
 
-    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+    Route::post('login', fn () => redirect()->route('filament.admin.auth.login'));
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
