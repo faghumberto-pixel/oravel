@@ -54,6 +54,7 @@ use App\Models\PreventiveMaintenanceExecution;
 use App\Models\User;
 use App\Support\Tenancy;
 use Filament\Facades\Filament;
+use Filament\Http\Controllers\RedirectToHomeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -219,6 +220,29 @@ Route::middleware(['auth'])->group(function () {
 
         return $tenantSlug ? redirect()->route('filament.admin.pages.painel-controle', ['tenant' => $tenantSlug]) : redirect()->to('/admin');
     })->name('dashboard');
+
+    // /admin puro (sem sub-path): o RedirectToHomeController nativo do
+    // Filament (vendor/filament/filament/src/Http/Controllers/
+    // RedirectToHomeController.php) resolve a home pelo PRIMEIRO item do
+    // PRIMEIRO grupo de navegação -- mas TechnicianDailyTasks tem
+    // navigationParentItem = 'Operação' (MaintenancaoOperacao), então ele
+    // vira filho de "Operação" dentro do grupo "Manutenção", e quem sai
+    // como "primeiro item" é o próprio "Operação" (pai), não o filho.
+    // PainelGestao (Dashboard) já bloqueia técnico puro via canAccess(),
+    // mas nada garante que o algoritmo genérico do Filament escolha
+    // TechnicianDailyTasks como próximo -- achado 28/09/2026 num teste
+    // (TechnicianDailyTasksTest::admin_panel_home_lands...). Mesmo
+    // critério do /dashboard acima, registrado aqui (não mexe em
+    // navigationParentItem, que afetaria o menu de todo mundo).
+    Route::get('/admin', function () {
+        $user = auth()->user();
+
+        if ($user && ! $user->isAdmin() && empty($user->supervisedDepartmentIds())) {
+            return redirect()->route('filament.admin.pages.technician-daily-tasks');
+        }
+
+        return app(RedirectToHomeController::class)();
+    });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
