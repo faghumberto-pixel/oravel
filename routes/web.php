@@ -209,11 +209,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
         $user = auth()->user();
 
-        // Técnicos vão direto para "Minhas Ordens de Serviço"
-        // [DESABILITADO 2026-09-02: módulo Tarefas travado com modal offline]
-        // if (! $user->isAdmin() && empty($user->supervisedDepartmentIds())) {
-        //     return redirect()->route('filament.admin.pages.technician-daily-tasks');
-        // }
+        // Técnicos vão direto para "Minhas Ordens de Serviço". Reativado
+        // 28/09/2026 -- ver App\Filament\Pages\TechnicianDailyTasks::canAccess().
+        if (! $user->isAdmin() && empty($user->supervisedDepartmentIds())) {
+            return redirect()->route('filament.admin.pages.technician-daily-tasks');
+        }
 
         $tenantSlug = $user->latest_tenant_slug ?? collect(Filament::getUserTenants($user))->first()?->slug ?? $user->tenant?->slug ?? $user->tenant_id;
 
@@ -452,14 +452,6 @@ Route::middleware(['auth'])->group(function () {
 
         return view('maintenance.chat-print', compact('room', 'messages'));
     })->name('maintenance.chat.print');
-
-    // [DESABILITADO 2026-09-02: módulo Tarefas travado com modal offline]
-    Route::get('/admin/technician-daily-tasks', function () {
-        $user = auth()->user();
-        $tenantSlug = $user->latest_tenant_slug ?? collect(Filament::getUserTenants($user))->first()?->slug ?? $user->tenant?->slug ?? $user->tenant_id;
-
-        return redirect()->route('filament.admin.pages.painel-controle', ['tenant' => $tenantSlug]);
-    })->name('filament.admin.pages.technician-daily-tasks');
 
     // Exportação de Fluxo de Caixa
     Route::get('/admin/fluxo-de-caixa/exportar', [CashflowExportController::class, 'excel'])

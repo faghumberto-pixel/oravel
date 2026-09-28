@@ -12,6 +12,24 @@
     </header>
 
     <main class="flex-1 space-y-3 px-5 py-5">
+        @if ($this->podeVerOrdens())
+            <a href="{{ route('filament.admin.pages.technician-daily-tasks') }}" class="flex items-center gap-4 rounded-2xl bg-slate-900 p-4 active:bg-slate-800">
+                <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-2xl">📋</span>
+                <div class="min-w-0">
+                    <p class="text-sm font-bold text-white">Minhas Ordens de Serviço</p>
+                    <p class="text-xs text-slate-500">Manutenções, mobilizações e desmobilizações do dia</p>
+                </div>
+            </a>
+        @endif
+
+        <a href="{{ route('chat.index') }}" class="flex items-center gap-4 rounded-2xl bg-slate-900 p-4 active:bg-slate-800">
+            <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-violet-500/15 text-2xl">💬</span>
+            <div class="min-w-0">
+                <p class="text-sm font-bold text-white">Chat Corporativo</p>
+                <p class="text-xs text-slate-500">Fale com a equipe e o RH</p>
+            </div>
+        </a>
+
         @if ($this->podeVerPonto())
             <a href="{{ route('time-clock.offline') }}" class="flex items-center gap-4 rounded-2xl bg-slate-900 p-4 active:bg-slate-800">
                 <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-2xl">⏱️</span>

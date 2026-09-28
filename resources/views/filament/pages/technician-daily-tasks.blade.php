@@ -115,22 +115,22 @@
     @if ($activeTab === 'aberta')
         <div class="sticky top-[6.5rem] z-30 border-b border-slate-800 bg-slate-900/95 px-4 py-2 overflow-x-auto flex gap-2">
             <button wire:click="$set('filterType', '')"
-                    :class="$filterType === '' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400'"
+                    :class="$wire.filterType === '' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400'"
                     class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95">
                 Todos
             </button>
             <button wire:click="$set('filterCriticality', 'A')"
-                    :class="$filterCriticality === 'A' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'"
+                    :class="$wire.filterCriticality === 'A' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'"
                     class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95">
                 🔴 Urgente
             </button>
             <button wire:click="$set('filterCriticality', 'B')"
-                    :class="$filterCriticality === 'B' ? 'bg-amber-600 text-white' : 'bg-slate-800 text-slate-400'"
+                    :class="$wire.filterCriticality === 'B' ? 'bg-amber-600 text-white' : 'bg-slate-800 text-slate-400'"
                     class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95">
                 🟡 Média
             </button>
             <button wire:click="$set('filterNature', 'external')"
-                    :class="$filterNature === 'external' ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-400'"
+                    :class="$wire.filterNature === 'external' ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-400'"
                     class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95">
                 🌐 Cliente
             </button>

@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\AssetMovement;
 use App\Models\MaintenanceOrder;
 use App\Models\TechnicianAllocation;
+use App\Support\Tenancy;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -40,9 +41,31 @@ class TechnicianDailyTasks extends Page
 
     // Achado em simulação real 2026-09-24: só checava autenticação, não o
     // Contrato -- "Minhas Ordens de Serviço" aparecia mesmo sem o módulo.
+    //
+    // Achado 28/09/2026 reativando a rota (ficou redirecionada pra
+    // painel-controle entre 02/09 e 27/09, ver routes/web.php e commit
+    // 0e54ecd -- "modal offline travado", diagnóstico vago de autoria
+    // Claude Haiku, já banido deste projeto): usar can('viewAny', ...)
+    // aqui checa a permissão GRANULAR "ler_ordem_servico" via
+    // AbstractPolicy, que um técnico raso não tem por padrão (só é
+    // liberado pra quem tem acesso à lista geral) -- mas esta página só
+    // mostra as ordens do PRÓPRIO técnico (where('technician_id', ...)
+    // em getTechnicianTasksProperty()), então exigir a permissão de ver
+    // TODAS as ordens é o gate errado. Isso batia direto no mesmo bug já
+    // documentado em tests/Feature/MaintenanceOrderFieldWizardTest.php
+    // ("technician_without_view_permission...", achado 2026-08-04): o
+    // técnico concluía a O.S. mas caía num 403 accessando esta página.
+    // Aqui valida só o Contrato (feature do plano), não a permissão
+    // individual.
     public static function canAccess(): bool
     {
-        return (bool) auth()->user()?->can('viewAny', MaintenanceOrder::class);
+        if (! auth()->check()) {
+            return false;
+        }
+
+        $feature = MaintenanceOrder::saasFeatureKey();
+
+        return ! $feature || (bool) Tenancy::current()?->hasFeature($feature);
     }
 
     public static function shouldRegisterNavigation(): bool
