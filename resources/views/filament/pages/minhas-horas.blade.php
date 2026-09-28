@@ -1,6 +1,6 @@
 <div class="absolute inset-0 mx-auto flex max-w-md flex-col overflow-y-auto bg-slate-950">
     <header class="sticky top-0 z-10 flex items-center gap-3 border-b border-slate-800 bg-slate-900/95 px-5 py-4 backdrop-blur">
-        <a href="{{ route('filament.admin.pages.app-colaborador') }}" class="text-slate-400 text-lg leading-none">←</a>
+        <a href="{{ route('filament.admin.pages.app-colaborador') }}" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-700 text-slate-300 active:bg-slate-800" aria-label="Voltar">←</a>
         <h1 class="text-lg font-black text-white">Minhas Horas</h1>
     </header>
 

@@ -45,7 +45,13 @@ class TechnicianDailyTasksTest extends TestCase
         return [$tenant, $technician];
     }
 
-    public function test_page_has_a_menu_drawer_with_technician_shortcuts(): void
+    /**
+     * O menu hamburguer duplicado (com Registrar Horimetro/Meu Perfil/Sair)
+     * foi removido 28/09/2026 -- os atalhos ja existem no hub
+     * App\Filament\Pages\AppColaborador, e a pagina so precisa linkar de
+     * volta pra ele.
+     */
+    public function test_page_links_back_to_app_colaborador(): void
     {
         [, $technician] = $this->makeTenantAndTechnician();
         $this->actingAs($technician);
@@ -53,9 +59,7 @@ class TechnicianDailyTasksTest extends TestCase
         $response = $this->get(route('filament.admin.pages.technician-daily-tasks'));
 
         $response->assertOk();
-        $response->assertSee(route('hour-meter.offline'), false);
-        $response->assertSee(route('filament.admin.pages.my-profile'), false);
-        $response->assertSee(route('filament.admin.auth.logout'), false);
+        $response->assertSee(route('filament.admin.pages.app-colaborador'), false);
     }
 
     public function test_pure_technician_is_redirected_here_instead_of_the_dashboard(): void

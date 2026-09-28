@@ -7,100 +7,25 @@
      e' a moldura de celular centralizada, entao esta tela deve preencher
      SO' essa moldura, nao a viewport inteira (fixed ignoraria o md:rounded/
      md:overflow-hidden do pai e vazaria por cima). --}}
-<div class="absolute inset-0 mx-auto flex max-w-md flex-col bg-slate-950" x-data="{ menuOpen: false }">
-    {{-- Header minimalista --}}
-    <header class="sticky top-0 z-40 border-b border-slate-800 bg-slate-900/95 backdrop-blur px-5 py-4">
-        <div class="flex items-center justify-between gap-3">
-            <button
-                type="button"
-                @click="menuOpen = true"
-                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-700 text-slate-300 active:bg-slate-800"
-                aria-label="Abrir menu"
-            >
-                ☰
-            </button>
-            <div class="flex-1">
-                <h1 class="text-3xl font-black text-white">Tarefas</h1>
-                <p class="text-sm text-slate-400 mt-1">{{ $this->pendingCount }} pendentes</p>
+<div class="absolute inset-0 mx-auto flex max-w-md flex-col bg-slate-950">
+    {{-- Header no mesmo padrao das outras telas do App do Colaborador
+         (Bater Ponto, Minhas Horas, Minhas Faltas, Registrar Horimetro)
+         -- pedido do usuario 28/09/2026: nao tinha o mesmo visual, e o
+         menu hamburguer duplicava os atalhos que ja existem no hub
+         App\Filament\Pages\AppColaborador. --}}
+    <header class="sticky top-0 z-40 flex items-center gap-3 border-b border-slate-800 bg-slate-900/95 px-5 py-4 backdrop-blur">
+        <a href="{{ route('filament.admin.pages.app-colaborador') }}" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-700 text-slate-300 active:bg-slate-800" aria-label="Voltar">←</a>
+        <div class="flex flex-1 items-center justify-between">
+            <div>
+                <h1 class="text-xs font-bold tracking-widest text-slate-400">MINHAS ORDENS DE SERVIÇO</h1>
+                <p class="text-[11px] text-slate-500 mt-0.5">{{ $this->pendingCount }} pendente(s)</p>
             </div>
-            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-lg font-bold text-white shadow-lg">
-                {{ strtoupper(mb_substr(Auth::user()?->name ?? '?', 0, 1)) }}
-            </div>
+            <span class="text-xs font-bold tracking-wide text-slate-300">{{ strtoupper(config('app.name', 'ORAVEL')) }}</span>
         </div>
     </header>
 
-    {{-- Drawer de menu -- atalhos do tecnico, nao o sidebar completo do
-         Filament (tem itens de admin que nao fazem sentido aqui). Layout
-         checklist-mobile (compartilhado com checklist/wizard/dossie) e'
-         minimalista de proposito, entao o menu fica so nesta tela. --}}
-    <div
-        x-show="menuOpen"
-        x-cloak
-        @click="menuOpen = false"
-        class="fixed inset-0 z-50 bg-black/60"
-    ></div>
-    <aside
-        x-show="menuOpen"
-        x-cloak
-        x-transition:enter="transition ease-out duration-200"
-        x-transition:enter-start="-translate-x-full"
-        x-transition:enter-end="translate-x-0"
-        x-transition:leave="transition ease-in duration-150"
-        x-transition:leave-start="translate-x-0"
-        x-transition:leave-end="-translate-x-full"
-        class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-slate-900 border-r border-slate-800 px-4 py-6"
-    >
-        <div class="mb-6 flex items-center gap-3 px-2">
-            <div class="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-base font-bold text-white">
-                {{ strtoupper(mb_substr(Auth::user()?->name ?? '?', 0, 1)) }}
-            </div>
-            <div class="min-w-0">
-                <p class="truncate text-sm font-semibold text-white">{{ Auth::user()?->name }}</p>
-                <p class="truncate text-xs text-slate-500">{{ Auth::user()?->email }}</p>
-            </div>
-        </div>
-
-        <nav class="flex-1 space-y-1">
-            <a href="{{ route('filament.admin.pages.technician-daily-tasks') }}"
-               class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-white bg-slate-800">
-                📋 Minhas Ordens de Serviço
-            </a>
-            <a href="{{ route('hour-meter.offline') }}"
-               class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-slate-300 active:bg-slate-800">
-                🕐 Registrar Horímetro
-            </a>
-            <a href="{{ route('time-clock.offline') }}"
-               class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-slate-300 active:bg-slate-800">
-                ⏱️ Bater Ponto
-            </a>
-            <a href="{{ route('filament.admin.pages.minhas-horas') }}"
-               class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-slate-300 active:bg-slate-800">
-                📊 Minhas Horas
-            </a>
-            <a href="{{ route('filament.admin.pages.minhas-faltas') }}"
-               class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-slate-300 active:bg-slate-800">
-                🗓️ Minhas Faltas
-            </a>
-            <a href="{{ route('filament.admin.pages.my-profile') }}"
-               class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-slate-300 active:bg-slate-800">
-                👤 Meu Perfil
-            </a>
-            <button onclick="window.location.href = '/admin'; return false;"
-               class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-blue-400 active:bg-slate-800 w-full text-left">
-                🏠 Dashboard
-            </button>
-        </nav>
-
-        <form method="POST" action="{{ route('filament.admin.auth.logout') }}">
-            @csrf
-            <button type="submit" class="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-red-400 active:bg-slate-800">
-                🚪 Sair
-            </button>
-        </form>
-    </aside>
-
     {{-- Abertas / Encerradas --}}
-    <div class="sticky top-16 z-30 flex border-b border-slate-800 bg-slate-900/95">
+    <div class="sticky top-[4.25rem] z-30 flex border-b border-slate-800 bg-slate-900/95">
         <button wire:click="$set('activeTab', 'aberta')"
                 class="flex-1 border-b-2 py-3 text-sm font-bold transition {{ $activeTab === 'aberta' ? 'border-emerald-500 text-white' : 'border-transparent text-slate-500' }}">
             Abertas ({{ $this->pendingCount }})

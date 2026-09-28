@@ -29,7 +29,22 @@ class TechnicianDailyTasks extends Page
 
     protected static ?string $title = 'Minhas Ordens de Serviço';
 
+    // URL em português, dentro do App do Colaborador -- pedido do
+    // usuario 28/09/2026.
+    protected static ?string $slug = 'minhas-ordens-de-servico';
+
     protected static string $view = 'filament.pages.technician-daily-tasks';
+
+    // Filament deriva o NOME da rota a partir do slug por padrao (ver
+    // HasRoutes::getRelativeRouteName()) -- sem isso, trocar o slug
+    // acima quebraria toda chamada route('filament.admin.pages.
+    // technician-daily-tasks') ja espalhada pelo app (routes/web.php,
+    // Login.php, os links de volta das outras telas do App do
+    // Colaborador). Mantem o nome interno fixo, so' a URL visivel muda.
+    public static function getRelativeRouteName(): string
+    {
+        return 'technician-daily-tasks';
+    }
 
     // Sort baixo (mesmo estilo de PainelGestao::$navigationSort = -10) --
     // e' o destino padrao do tecnico (redirect de /dashboard, ver
