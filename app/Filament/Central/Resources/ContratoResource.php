@@ -83,7 +83,14 @@ class ContratoResource extends Resource
         }
 
         $grouped['Outros']['modulo_dashboard'] = 'Painel: Dashboard (Painel de Controle)';
-        $grouped['Outros']['modulo_configuracoes'] = 'Painel: Configurações do Tenant';
+
+        // modulo_configuracoes vai pro grupo "Configurações" de verdade (já
+        // existe, é onde ficam Centro de Custo/Empresas/Filiais/Locais/Logs)
+        // em vez de "Outros" -- usuário relatou 29/09/2026 que procurou e não
+        // achou nessa seção, já que semanticamente é exatamente onde esse
+        // toggle (liga a página App\Filament\Pages\ManageTenantSettings)
+        // deveria estar.
+        $grouped['Configurações']['modulo_configuracoes'] = 'Painel: Configurações do Tenant';
         ksort($grouped);
 
         return $grouped;
