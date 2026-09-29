@@ -9,6 +9,7 @@ use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\AssetResource\Pages;
 use App\Models\Asset;
 use App\Models\AssetCategory;
+use App\Models\AssetNr13Specification;
 use App\Models\CriticalityLevel;
 use App\Models\EquipmentReplacement;
 use App\Models\StorageLocation;
@@ -88,79 +89,93 @@ class AssetResource extends Resource
                         ->icon('heroicon-m-information-circle')
                         ->schema([
                             Forms\Components\Section::make('Identificação')->schema([
-                            Forms\Components\Grid::make(4)->schema([
-                                Forms\Components\TextInput::make('patrimonio')
-                                    ->label('Nº Patrimônio')
-                                    ->required()
-                                    ->unique(ignoreRecord: true)
-                                    ->prefixIcon('heroicon-m-hashtag'),
+                                Forms\Components\Grid::make(4)->schema([
+                                    Forms\Components\TextInput::make('patrimonio')
+                                        ->label('Nº Patrimônio')
+                                        ->required()
+                                        ->unique(ignoreRecord: true)
+                                        ->prefixIcon('heroicon-m-hashtag')
+                                        // Numeração automática é opt-in por tenant (Configurações
+                                        // do Tenant, Tenant::auto_generate_patrimonio) -- padrão
+                                        // continua sendo digitação livre, já que cada locadora
+                                        // cliente pode ter seu próprio critério de numeração.
+                                        // ->default() só se aplica na criação (Filament não reroda
+                                        // em edição), e o campo continua editável mesmo com a opção
+                                        // ligada, caso o usuário queira ajustar antes de salvar.
+                                        ->default(fn () => Tenancy::current()?->auto_generate_patrimonio
+                                            ? Asset::nextPatrimonio(Tenancy::current()->id)
+                                            : null),
 
-                                // asset_category_id (2026-07-24): FK real pra AssetCategory --
-                                // asset_category (texto) é mantido em paralelo só por
-                                // compatibilidade com telas antigas que ainda leem o texto
-                                // (coluna/filtro da tabela, exports, AssetDossier). Sem essa
-                                // sincronia, a busca de disponibilidade por categoria em
-                                // SolicitacaoLocacaoResource não teria como funcionar.
-                                Forms\Components\Select::make('asset_category_id')
-                                    ->label('Categoria e Tipo')
-                                    // Não-obrigatório de propósito: o backfill da migration
-                                    // 2026_07_24_143615 deixou boa parte dos ativos existentes
-                                    // sem match seguro (nome do texto livre não batia com
-                                    // nenhuma AssetCategory) -- exigir aqui travaria a edição
-                                    // de qualquer campo desses ativos até alguém reclassificar.
-                                    ->relationship('category', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
-                                    ->searchable()
-                                    ->native(false)
-                                    ->live()
-                                    ->afterStateUpdated(function ($state, callable $set) {
-                                        $categoryName = $state ? AssetCategory::find($state)?->name : null;
-                                        $set('asset_category', $categoryName);
-                                        $set('checklist', Asset::getDefaultChecklist($categoryName));
-                                    }),
+                                    Forms\Components\TextInput::make('fabricante')
+                                        ->label('Fabricante')
+                                        ->maxLength(191),
 
-                                Forms\Components\Hidden::make('asset_category'),
+                                    // asset_category_id (2026-07-24): FK real pra AssetCategory --
+                                    // asset_category (texto) é mantido em paralelo só por
+                                    // compatibilidade com telas antigas que ainda leem o texto
+                                    // (coluna/filtro da tabela, exports, AssetDossier). Sem essa
+                                    // sincronia, a busca de disponibilidade por categoria em
+                                    // SolicitacaoLocacaoResource não teria como funcionar.
+                                    Forms\Components\Select::make('asset_category_id')
+                                        ->label('Categoria e Tipo')
+                                        // Não-obrigatório de propósito: o backfill da migration
+                                        // 2026_07_24_143615 deixou boa parte dos ativos existentes
+                                        // sem match seguro (nome do texto livre não batia com
+                                        // nenhuma AssetCategory) -- exigir aqui travaria a edição
+                                        // de qualquer campo desses ativos até alguém reclassificar.
+                                        ->relationship('category', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
+                                        ->searchable()
+                                        ->native(false)
+                                        ->live()
+                                        ->afterStateUpdated(function ($state, callable $set) {
+                                            $categoryName = $state ? AssetCategory::find($state)?->name : null;
+                                            $set('asset_category', $categoryName);
+                                            $set('checklist', Asset::getDefaultChecklist($categoryName));
+                                        }),
 
-                                Forms\Components\Select::make('checklist_group_id')
-                                    ->label('Grupo')
-                                    ->helperText('Define o checklist básico aplicado às OS deste ativo e o template de manutenção preventiva herdado (aba "Planos de Manutenção").')
-                                    ->relationship('checklistGroup', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
-                                    ->searchable()
-                                    ->preload()
-                                    ->createOptionForm([
-                                        Forms\Components\TextInput::make('name')->label('Nome do Grupo')->required(),
-                                        Forms\Components\Textarea::make('description')->label('Objetivo')->rows(2),
-                                    ]),
+                                    Forms\Components\Hidden::make('asset_category'),
 
-                                Forms\Components\TextInput::make('name')
-                                    ->label('Nome/Modelo')
-                                    ->required(),
-                            ]),
+                                    Forms\Components\Select::make('checklist_group_id')
+                                        ->label('Grupo')
+                                        ->helperText('Define o checklist básico aplicado às OS deste ativo e o template de manutenção preventiva herdado (aba "Planos de Manutenção").')
+                                        ->relationship('checklistGroup', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
+                                        ->searchable()
+                                        ->preload()
+                                        ->createOptionForm([
+                                            Forms\Components\TextInput::make('name')->label('Nome do Grupo')->required(),
+                                            Forms\Components\Textarea::make('description')->label('Objetivo')->rows(2),
+                                        ]),
 
-                            Forms\Components\Grid::make(3)->schema([
-                                Forms\Components\TextInput::make('capacity_value')
-                                    ->label('Capacidade')
-                                    ->numeric()
-                                    ->helperText('Ex: 250 para um gerador de 250 kVA.'),
+                                    Forms\Components\TextInput::make('name')
+                                        ->label('Nome/Modelo')
+                                        ->required(),
+                                ]),
 
-                                Forms\Components\Select::make('capacity_unit')
-                                    ->label('Unidade')
-                                    ->options([
-                                        'kVA' => 'kVA',
-                                        'HP' => 'HP',
-                                        'A' => 'Ampères (A)',
-                                        'toneladas' => 'toneladas',
-                                        'kg' => 'kg',
-                                        'm³' => 'm³',
-                                        'PCM' => 'PCM',
-                                        'L' => 'L',
-                                        'outro' => 'outro',
-                                    ])
-                                    ->native(false),
+                                Forms\Components\Grid::make(3)->schema([
+                                    Forms\Components\TextInput::make('capacity_value')
+                                        ->label('Capacidade')
+                                        ->numeric()
+                                        ->helperText('Ex: 250 para um gerador de 250 kVA.'),
 
-                                Forms\Components\TextInput::make('specification')
-                                    ->label('Especificação Adicional')
-                                    ->helperText('Texto livre — detalhes que não cabem em capacidade estruturada.'),
-                            ]),
+                                    Forms\Components\Select::make('capacity_unit')
+                                        ->label('Unidade')
+                                        ->options([
+                                            'kVA' => 'kVA',
+                                            'HP' => 'HP',
+                                            'A' => 'Ampères (A)',
+                                            'toneladas' => 'toneladas',
+                                            'kg' => 'kg',
+                                            'm³' => 'm³',
+                                            'PCM' => 'PCM',
+                                            'L' => 'L',
+                                            'outro' => 'outro',
+                                        ])
+                                        ->native(false),
+
+                                    Forms\Components\TextInput::make('specification')
+                                        ->label('Especificação Adicional')
+                                        ->helperText('Texto livre — detalhes que não cabem em capacidade estruturada.'),
+                                ]),
                             ]),
 
                             Forms\Components\Section::make('Investimento e Depreciação')
@@ -172,13 +187,11 @@ class AssetResource extends Resource
                                             ->label('Valor de Aquisição')
                                             ->numeric()
                                             ->prefix('R$')
-                                            ->live()
-                                            ->required(),
+                                            ->live(),
 
                                         Forms\Components\DatePicker::make('acquisition_date')
                                             ->label('Data de Aquisição')
-                                            ->live()
-                                            ->required(),
+                                            ->live(),
 
                                         Forms\Components\TextInput::make('residual_value')
                                             ->label('Valor Residual')
@@ -238,6 +251,13 @@ class AssetResource extends Resource
                                         Forms\Components\TextInput::make('last_horimetro')
                                             ->label('Leitura Atual (Sistema)')
                                             ->numeric()
+                                            ->default(0)
+                                            // Sem default() aqui, o campo readOnly submetia null no
+                                            // create e quebrava com "not null constraint violation"
+                                            // (a coluna tem default 0 no banco, mas o INSERT do
+                                            // Eloquent inclui a chave explicitamente com null,
+                                            // sobrescrevendo o default do banco) -- achado 29/09/2026
+                                            // testando o formulário de criação de Ativo pela primeira vez.
                                             ->readOnly() // Permite gravação pelo sistema, mas protege contra digitação acidental
                                             ->helperText('Sincronizado automaticamente pelas Ordens de Serviço.')
                                             ->prefixIcon('heroicon-m-arrow-path'),
@@ -271,95 +291,99 @@ class AssetResource extends Resource
                         ->icon('heroicon-m-map-pin')
                         ->schema([
                             Forms\Components\Section::make('Localização do Ativo')->schema([
-                            Forms\Components\Select::make('internal_unit_id')
-                                ->label('Unidade/Filial Base')
-                                ->relationship('internalUnit', 'name')
-                                ->helperText('Onde o ativo fica baseado quando NÃO está locado (pátio/matriz/filial).')
-                                ->searchable()
-                                ->preload()
-                                ->live(),
+                                Forms\Components\Select::make('internal_unit_id')
+                                    ->label('Unidade/Filial Base')
+                                    ->relationship('internalUnit', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
+                                    ->helperText('Onde o ativo fica baseado quando NÃO está locado (pátio/matriz/filial).')
+                                    ->searchable()
+                                    ->preload()
+                                    ->live()
+                                    ->createOptionForm([
+                                        Forms\Components\TextInput::make('name')->label('Nome da Unidade')->required(),
+                                        Forms\Components\TextInput::make('code')->label('Código'),
+                                    ]),
 
-                            Forms\Components\Select::make('storage_location_id')
-                                ->label('Posição no Pátio (Planta Baixa)')
-                                ->relationship(
-                                    'storageLocation',
-                                    'code',
-                                    fn ($query, Get $get) => $query
-                                        ->where('context', StorageLocation::CONTEXT_PATIO_ATIVOS)
-                                        ->when($get('internal_unit_id'), fn ($q, $unitId) => $q->where('internal_unit_id', $unitId))
-                                )
-                                ->searchable()
-                                ->preload(),
+                                Forms\Components\Select::make('storage_location_id')
+                                    ->label('Posição no Pátio (Planta Baixa)')
+                                    ->relationship(
+                                        'storageLocation',
+                                        'code',
+                                        fn ($query, Get $get) => $query
+                                            ->where('context', StorageLocation::CONTEXT_PATIO_ATIVOS)
+                                            ->when($get('internal_unit_id'), fn ($q, $unitId) => $q->where('internal_unit_id', $unitId))
+                                    )
+                                    ->searchable()
+                                    ->preload(),
 
-                            Forms\Components\TextInput::make('cep')
-                                ->label('CEP do Equipamento')
-                                ->placeholder('00000-000')
-                                ->live(onBlur: true)
-                                ->helperText('Usado pra plotar este equipamento no Mapa de Equipamentos.')
-                                ->afterStateUpdated(function (Set $set, ?string $state) {
-                                    if (! $state) {
-                                        return;
-                                    }
-
-                                    $service = app(CepGeocodingService::class);
-                                    $endereco = $service->lookupCep($state);
-
-                                    if (! $endereco) {
-                                        Notification::make()->title('CEP não encontrado.')->warning()->send();
-
-                                        return;
-                                    }
-
-                                    $fullAddress = trim($endereco['address'].', '.$endereco['city'].' - '.$endereco['uf']);
-                                    $set('endereco', $fullAddress);
-                                    $coords = $service->geocodeAddress($fullAddress);
-
-                                    if ($coords) {
-                                        $set('latitude', $coords['latitude']);
-                                        $set('longitude', $coords['longitude']);
-                                        Notification::make()->title('Equipamento localizado no mapa.')->success()->send();
-                                    } else {
-                                        $set('latitude', null);
-                                        $set('longitude', null);
-                                        Notification::make()->title('CEP encontrado, mas não foi possível localizar no mapa automaticamente.')->warning()->send();
-                                    }
-                                }),
-                            Forms\Components\Hidden::make('endereco'),
-                            Forms\Components\Hidden::make('latitude'),
-                            Forms\Components\Hidden::make('longitude'),
-
-                            Forms\Components\Placeholder::make('localizacao_atual_display')
-                                ->label('Localização Atual')
-                                ->content(function (?Asset $record) {
-                                    if (! $record) {
-                                        return new HtmlString('<span class="text-gray-400">Disponível após o primeiro salvamento.</span>');
-                                    }
-
-                                    $activeContract = $record->activeContract();
-
-                                    if ($activeContract) {
-                                        $location = $activeContract->resolvedLocation();
-
-                                        if (! $location) {
-                                            return new HtmlString('<span class="text-gray-400">Ativo com contrato vigente, mas sem localização definida nele.</span>');
+                                Forms\Components\TextInput::make('cep')
+                                    ->label('CEP do Equipamento')
+                                    ->placeholder('00000-000')
+                                    ->live(onBlur: true)
+                                    ->helperText('Usado pra plotar este equipamento no Mapa de Equipamentos.')
+                                    ->afterStateUpdated(function (Set $set, ?string $state) {
+                                        if (! $state) {
+                                            return;
                                         }
 
-                                        $endereco = trim(($location['address'] ?? '').', '.($location['city'] ?? '').' - '.($location['uf'] ?? ''), ', -');
+                                        $service = app(CepGeocodingService::class);
+                                        $endereco = $service->lookupCep($state);
 
-                                        return new HtmlString('<strong>'.e($location['label']).'</strong> (via contrato) — '.e($endereco ?: 'endereço não preenchido'));
-                                    }
+                                        if (! $endereco) {
+                                            Notification::make()->title('CEP não encontrado.')->warning()->send();
 
-                                    $unit = $record->internalUnit;
+                                            return;
+                                        }
 
-                                    if (! $unit) {
-                                        return new HtmlString('<span class="text-gray-400">Ativo não locado e sem unidade base definida acima.</span>');
-                                    }
+                                        $fullAddress = trim($endereco['address'].', '.$endereco['city'].' - '.$endereco['uf']);
+                                        $set('endereco', $fullAddress);
+                                        $coords = $service->geocodeAddress($fullAddress);
 
-                                    $endereco = trim(($unit->address ?? '').', '.($unit->city ?? '').' - '.($unit->state ?? ''), ', -');
+                                        if ($coords) {
+                                            $set('latitude', $coords['latitude']);
+                                            $set('longitude', $coords['longitude']);
+                                            Notification::make()->title('Equipamento localizado no mapa.')->success()->send();
+                                        } else {
+                                            $set('latitude', null);
+                                            $set('longitude', null);
+                                            Notification::make()->title('CEP encontrado, mas não foi possível localizar no mapa automaticamente.')->warning()->send();
+                                        }
+                                    }),
+                                Forms\Components\Hidden::make('endereco'),
+                                Forms\Components\Hidden::make('latitude'),
+                                Forms\Components\Hidden::make('longitude'),
 
-                                    return new HtmlString('<strong>'.e($unit->name).'</strong> (base) — '.e($endereco ?: 'endereço não preenchido'));
-                                })
-                                ->columnSpanFull(),
+                                Forms\Components\Placeholder::make('localizacao_atual_display')
+                                    ->label('Localização Atual')
+                                    ->content(function (?Asset $record) {
+                                        if (! $record) {
+                                            return new HtmlString('<span class="text-gray-400">Disponível após o primeiro salvamento.</span>');
+                                        }
+
+                                        $activeContract = $record->activeContract();
+
+                                        if ($activeContract) {
+                                            $location = $activeContract->resolvedLocation();
+
+                                            if (! $location) {
+                                                return new HtmlString('<span class="text-gray-400">Ativo com contrato vigente, mas sem localização definida nele.</span>');
+                                            }
+
+                                            $endereco = trim(($location['address'] ?? '').', '.($location['city'] ?? '').' - '.($location['uf'] ?? ''), ', -');
+
+                                            return new HtmlString('<strong>'.e($location['label']).'</strong> (via contrato) — '.e($endereco ?: 'endereço não preenchido'));
+                                        }
+
+                                        $unit = $record->internalUnit;
+
+                                        if (! $unit) {
+                                            return new HtmlString('<span class="text-gray-400">Ativo não locado e sem unidade base definida acima.</span>');
+                                        }
+
+                                        $endereco = trim(($unit->address ?? '').', '.($unit->city ?? '').' - '.($unit->state ?? ''), ', -');
+
+                                        return new HtmlString('<strong>'.e($unit->name).'</strong> (base) — '.e($endereco ?: 'endereço não preenchido'));
+                                    })
+                                    ->columnSpanFull(),
                             ]),
                         ]),
 
@@ -368,34 +392,34 @@ class AssetResource extends Resource
                         ->icon('heroicon-m-qr-code')
                         ->schema([
                             Forms\Components\Section::make('Identificação Digital')->schema([
-                            Forms\Components\Grid::make(2)->schema([
-                                Forms\Components\TextInput::make('tag')
-                                    ->label('Asset Tag (Etiqueta)')
-                                    ->placeholder('TAG-0000')
-                                    ->prefixIcon('heroicon-m-tag'),
+                                Forms\Components\Grid::make(2)->schema([
+                                    Forms\Components\TextInput::make('tag')
+                                        ->label('Asset Tag (Etiqueta)')
+                                        ->placeholder('TAG-0000')
+                                        ->prefixIcon('heroicon-m-tag'),
 
-                                Forms\Components\TextInput::make('serial_number')
-                                    ->label('Número de Série')
-                                    ->placeholder('S/N do Fabricante')
-                                    ->prefixIcon('heroicon-m-identification'),
-                            ]),
+                                    Forms\Components\TextInput::make('serial_number')
+                                        ->label('Número de Série')
+                                        ->placeholder('S/N do Fabricante')
+                                        ->prefixIcon('heroicon-m-identification'),
+                                ]),
 
-                            Forms\Components\Placeholder::make('qr_code_display')
-                                ->label('Identificação Digital (Bipe no Campo)')
-                                ->content(function ($record) {
-                                    if (! $record) {
-                                        return 'O QR Code será gerado após o primeiro salvamento.';
-                                    }
-                                    // Antes apontava pra /admin/assets/{id} sem /edit -- rota
-                                    // que nunca existiu (sempre dava 404 ao escanear). Agora
-                                    // aponta pra versao mobile do dossie (celular no campo/patio,
-                                    // uso mais comum de quem escaneia), nao a tela de edicao.
-                                    $url = route('assets.dossier.mobile', ['assetId' => $record->id]);
+                                Forms\Components\Placeholder::make('qr_code_display')
+                                    ->label('Identificação Digital (Bipe no Campo)')
+                                    ->content(function ($record) {
+                                        if (! $record) {
+                                            return 'O QR Code será gerado após o primeiro salvamento.';
+                                        }
+                                        // Antes apontava pra /admin/assets/{id} sem /edit -- rota
+                                        // que nunca existiu (sempre dava 404 ao escanear). Agora
+                                        // aponta pra versao mobile do dossie (celular no campo/patio,
+                                        // uso mais comum de quem escaneia), nao a tela de edicao.
+                                        $url = route('assets.dossier.mobile', ['assetId' => $record->id]);
 
-                                    $name = e($record->name);
-                                    $patrimonio = e($record->patrimonio);
+                                        $name = e($record->name);
+                                        $patrimonio = e($record->patrimonio);
 
-                                    return new HtmlString("
+                                        return new HtmlString("
                                         <div class='flex flex-col items-center p-4 bg-white border border-gray-200 rounded-xl shadow-sm w-fit'>
                                             <div class='bg-white p-2'>
                                                 <img src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={$url}' alt='QR Code' />
@@ -405,7 +429,7 @@ class AssetResource extends Resource
                                             <span class='text-xs font-bold text-primary-600'>{$patrimonio}</span>
                                         </div>
                                     ");
-                                })->visible(fn ($record) => $record !== null),
+                                    })->visible(fn ($record) => $record !== null),
                             ]),
                         ]),
 
@@ -414,91 +438,91 @@ class AssetResource extends Resource
                         ->icon('heroicon-m-clock')
                         ->schema([
                             Forms\Components\Section::make('Operações e Manutenções')->schema([
-                            Forms\Components\Repeater::make('maintenanceOrders')
-                                ->relationship('maintenanceOrders')
-                                ->label('Histórico de Operações e Manutenções')
-                                ->schema([
-                                    Forms\Components\Grid::make(4)->schema([
-                                        Forms\Components\TextInput::make('os_number')->label('Nº OS')->disabled(),
-                                        Forms\Components\TextInput::make('maintenance_type')->label('Tipo')->disabled(),
-                                        Forms\Components\TextInput::make('horimetro_entry')->label('Horímetro')->disabled(),
-                                        Forms\Components\TextInput::make('status')->label('Status')->disabled(),
-                                    ]),
-                                    Forms\Components\Grid::make(4)->schema([
-                                        Forms\Components\TextInput::make('labor_cost')->label('Mão de Obra (R$)')->prefix('R$')->disabled(),
-                                        Forms\Components\TextInput::make('material_cost')->label('Material (R$)')->prefix('R$')->disabled(),
-                                        Forms\Components\TextInput::make('logistics_cost')->label('Logística (R$)')->prefix('R$')->disabled(),
-                                        Forms\Components\TextInput::make('total_order_cost')->label('Custo Total (R$)')->prefix('R$')->disabled(),
-                                    ]),
-                                    Forms\Components\Textarea::make('technical_notes')
-                                        ->label('Laudo/Notas Técnicas')
-                                        ->disabled()
-                                        ->rows(2),
-                                ])
-                                ->addable(false)
-                                ->deletable(false)
-                                ->reorderable(false)
-                                ->itemLabel(fn (array $state): ?string => isset($state['created_at'])
-                                    ? 'Registro de '.Carbon::parse($state['created_at'])->format('d/m/Y H:i')
-                                    : null
-                                )
-                                ->columnSpanFull(),
+                                Forms\Components\Repeater::make('maintenanceOrders')
+                                    ->relationship('maintenanceOrders')
+                                    ->label('Histórico de Operações e Manutenções')
+                                    ->schema([
+                                        Forms\Components\Grid::make(4)->schema([
+                                            Forms\Components\TextInput::make('os_number')->label('Nº OS')->disabled(),
+                                            Forms\Components\TextInput::make('maintenance_type')->label('Tipo')->disabled(),
+                                            Forms\Components\TextInput::make('horimetro_entry')->label('Horímetro')->disabled(),
+                                            Forms\Components\TextInput::make('status')->label('Status')->disabled(),
+                                        ]),
+                                        Forms\Components\Grid::make(4)->schema([
+                                            Forms\Components\TextInput::make('labor_cost')->label('Mão de Obra (R$)')->prefix('R$')->disabled(),
+                                            Forms\Components\TextInput::make('material_cost')->label('Material (R$)')->prefix('R$')->disabled(),
+                                            Forms\Components\TextInput::make('logistics_cost')->label('Logística (R$)')->prefix('R$')->disabled(),
+                                            Forms\Components\TextInput::make('total_order_cost')->label('Custo Total (R$)')->prefix('R$')->disabled(),
+                                        ]),
+                                        Forms\Components\Textarea::make('technical_notes')
+                                            ->label('Laudo/Notas Técnicas')
+                                            ->disabled()
+                                            ->rows(2),
+                                    ])
+                                    ->addable(false)
+                                    ->deletable(false)
+                                    ->reorderable(false)
+                                    ->itemLabel(fn (array $state): ?string => isset($state['created_at'])
+                                        ? 'Registro de '.Carbon::parse($state['created_at'])->format('d/m/Y H:i')
+                                        : null
+                                    )
+                                    ->columnSpanFull(),
                             ]),
 
                             Forms\Components\Section::make('Histórico de Locações')->schema([
-                            Forms\Components\Repeater::make('contracts')
-                                ->relationship('contracts')
-                                ->label('')
-                                ->schema([
-                                    Forms\Components\Grid::make(4)->schema([
-                                        Forms\Components\TextInput::make('contract_number')->label('Nº Contrato')->disabled(),
-                                        Forms\Components\TextInput::make('start_date')->label('Início')->disabled(),
-                                        Forms\Components\TextInput::make('end_date')->label('Fim')->disabled(),
-                                        Forms\Components\TextInput::make('price')->label('Valor (R$)')->prefix('R$')->disabled(),
-                                    ]),
-                                ])
-                                ->addable(false)
-                                ->deletable(false)
-                                ->reorderable(false)
-                                ->columnSpanFull(),
+                                Forms\Components\Repeater::make('contracts')
+                                    ->relationship('contracts')
+                                    ->label('')
+                                    ->schema([
+                                        Forms\Components\Grid::make(4)->schema([
+                                            Forms\Components\TextInput::make('contract_number')->label('Nº Contrato')->disabled(),
+                                            Forms\Components\TextInput::make('start_date')->label('Início')->disabled(),
+                                            Forms\Components\TextInput::make('end_date')->label('Fim')->disabled(),
+                                            Forms\Components\TextInput::make('price')->label('Valor (R$)')->prefix('R$')->disabled(),
+                                        ]),
+                                    ])
+                                    ->addable(false)
+                                    ->deletable(false)
+                                    ->reorderable(false)
+                                    ->columnSpanFull(),
                             ]),
 
                             Forms\Components\Section::make('Histórico de Substituição de Equipamento')->schema([
-                            Forms\Components\Placeholder::make('equipment_replacement_history')
-                                ->label('')
-                                ->content(fn (?Asset $record) => static::renderReplacementHistory($record))
-                                ->columnSpanFull(),
+                                Forms\Components\Placeholder::make('equipment_replacement_history')
+                                    ->label('')
+                                    ->content(fn (?Asset $record) => static::renderReplacementHistory($record))
+                                    ->columnSpanFull(),
                             ]),
 
                             Forms\Components\Section::make('Resumo Financeiro')->schema([
-                            Forms\Components\Placeholder::make('financial_summary')
-                                ->label('')
-                                ->content(function ($record) {
-                                    if (! $record) {
-                                        return new HtmlString('<span class="text-gray-400">Disponível após o primeiro salvamento.</span>');
-                                    }
-                                    $s = $record->getFinancialSummary();
-                                    $resultColor = $s['result'] >= 0 ? '#16a34a' : '#dc2626';
-                                    $fmt = fn ($v) => number_format($v, 2, ',', '.');
+                                Forms\Components\Placeholder::make('financial_summary')
+                                    ->label('')
+                                    ->content(function ($record) {
+                                        if (! $record) {
+                                            return new HtmlString('<span class="text-gray-400">Disponível após o primeiro salvamento.</span>');
+                                        }
+                                        $s = $record->getFinancialSummary();
+                                        $resultColor = $s['result'] >= 0 ? '#16a34a' : '#dc2626';
+                                        $fmt = fn ($v) => number_format($v, 2, ',', '.');
 
-                                    return new HtmlString(
-                                        "<div class='grid grid-cols-3 gap-4 text-sm p-3 bg-gray-50 dark:bg-gray-800 rounded-lg'>".
-                                        "<div><span class='text-gray-400'>Valor de Aquisição:</span><br><b>R\$ {$fmt($s['acquisition_value'])}</b></div>".
-                                        "<div><span class='text-gray-400'>Valor Atual (Depreciado):</span><br><b>R\$ {$fmt($s['current_value'])}</b></div>".
-                                        "<div><span class='text-gray-400'>Depreciação Acumulada:</span><br><b>R\$ {$fmt($s['accumulated_depreciation'])} ({$s['depreciation_percentage']}%)</b></div>".
-                                        "<div><span class='text-gray-400'>Custo Mão de Obra:</span><br><b>R\$ {$fmt($s['total_labor_cost'])}</b></div>".
-                                        "<div><span class='text-gray-400'>Custo Material:</span><br><b>R\$ {$fmt($s['total_material_cost'])}</b></div>".
-                                        "<div><span class='text-gray-400'>Custo Logística:</span><br><b>R\$ {$fmt($s['total_logistics_cost'])}</b></div>".
-                                        "<div><span class='text-gray-400'>Custo Total Manutenção:</span><br><b>R\$ {$fmt($s['total_maintenance_cost'])}</b></div>".
-                                        "<div><span class='text-gray-400'>Receita de Locações:</span><br><b>R\$ {$fmt($s['total_rental_revenue'])}</b></div>".
-                                        "<div><span class='text-gray-400'>Receita de Excedente de Franquia:</span><br><b>R\$ {$fmt($s['total_overage_revenue'])}</b></div>".
-                                        "<div><span class='text-gray-400'>Receita de Avaria Cobrada:</span><br><b>R\$ {$fmt($s['total_damage_revenue'])}</b></div>".
-                                        "<div><span class='text-gray-400'>Receita Total:</span><br><b>R\$ {$fmt($s['total_revenue'])}</b></div>".
-                                        "<div><span class='text-gray-400'>Resultado (após depreciação):</span><br><b style='color: {$resultColor}'>R\$ {$fmt($s['result'])}</b></div>".
-                                        '</div>'
-                                    );
-                                })
-                                ->columnSpanFull(),
+                                        return new HtmlString(
+                                            "<div class='grid grid-cols-3 gap-4 text-sm p-3 bg-gray-50 dark:bg-gray-800 rounded-lg'>".
+                                            "<div><span class='text-gray-400'>Valor de Aquisição:</span><br><b>R\$ {$fmt($s['acquisition_value'])}</b></div>".
+                                            "<div><span class='text-gray-400'>Valor Atual (Depreciado):</span><br><b>R\$ {$fmt($s['current_value'])}</b></div>".
+                                            "<div><span class='text-gray-400'>Depreciação Acumulada:</span><br><b>R\$ {$fmt($s['accumulated_depreciation'])} ({$s['depreciation_percentage']}%)</b></div>".
+                                            "<div><span class='text-gray-400'>Custo Mão de Obra:</span><br><b>R\$ {$fmt($s['total_labor_cost'])}</b></div>".
+                                            "<div><span class='text-gray-400'>Custo Material:</span><br><b>R\$ {$fmt($s['total_material_cost'])}</b></div>".
+                                            "<div><span class='text-gray-400'>Custo Logística:</span><br><b>R\$ {$fmt($s['total_logistics_cost'])}</b></div>".
+                                            "<div><span class='text-gray-400'>Custo Total Manutenção:</span><br><b>R\$ {$fmt($s['total_maintenance_cost'])}</b></div>".
+                                            "<div><span class='text-gray-400'>Receita de Locações:</span><br><b>R\$ {$fmt($s['total_rental_revenue'])}</b></div>".
+                                            "<div><span class='text-gray-400'>Receita de Excedente de Franquia:</span><br><b>R\$ {$fmt($s['total_overage_revenue'])}</b></div>".
+                                            "<div><span class='text-gray-400'>Receita de Avaria Cobrada:</span><br><b>R\$ {$fmt($s['total_damage_revenue'])}</b></div>".
+                                            "<div><span class='text-gray-400'>Receita Total:</span><br><b>R\$ {$fmt($s['total_revenue'])}</b></div>".
+                                            "<div><span class='text-gray-400'>Resultado (após depreciação):</span><br><b style='color: {$resultColor}'>R\$ {$fmt($s['result'])}</b></div>".
+                                            '</div>'
+                                        );
+                                    })
+                                    ->columnSpanFull(),
                             ]),
                         ]),
 
@@ -702,7 +726,7 @@ class AssetResource extends Resource
                                         ->schema([
                                             Forms\Components\Select::make('tipo_equipamento')
                                                 ->label('Tipo de Equipamento')
-                                                ->options(\App\Models\AssetNr13Specification::tipoEquipamentoLabels())
+                                                ->options(AssetNr13Specification::tipoEquipamentoLabels())
                                                 ->native(false)
                                                 ->required(fn (Get $get) => (bool) $get('subject_to_nr13')),
 
@@ -737,21 +761,21 @@ class AssetResource extends Resource
                         ->icon('heroicon-m-clipboard-document-check')
                         ->schema([
                             Forms\Components\Section::make('Itens de Inspeção')->schema([
-                            Forms\Components\Repeater::make('checklist')
-                                ->label('')
-                                ->schema([
-                                    Forms\Components\TextInput::make('item')
-                                        ->label('Descrição do Item')
-                                        ->required()
-                                        ->columnSpan(3),
-                                    Forms\Components\Toggle::make('status')
-                                        ->label('OK')
-                                        ->default(true)
-                                        ->columnSpan(1),
-                                ])
-                                ->columns(4)
-                                ->createItemButtonLabel('Adicionar Item Extra')
-                                ->reorderable(true),
+                                Forms\Components\Repeater::make('checklist')
+                                    ->label('')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('item')
+                                            ->label('Descrição do Item')
+                                            ->required()
+                                            ->columnSpan(3),
+                                        Forms\Components\Toggle::make('status')
+                                            ->label('OK')
+                                            ->default(true)
+                                            ->columnSpan(1),
+                                    ])
+                                    ->columns(4)
+                                    ->createItemButtonLabel('Adicionar Item Extra')
+                                    ->reorderable(true),
                             ]),
                         ]),
                 ])->columnSpanFull(),

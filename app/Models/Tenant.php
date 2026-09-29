@@ -72,6 +72,7 @@ class Tenant extends Model
         'ui_customizations',
         'targets',
         'signature_id',
+        'auto_generate_patrimonio',
     ];
 
     protected $casts = [
@@ -81,6 +82,7 @@ class Tenant extends Model
         'equipment_types' => 'array',
         'terms_accepted_at' => 'datetime',
         'onboarding_completed' => 'boolean',
+        'auto_generate_patrimonio' => 'boolean',
         'mrr_value' => 'decimal:2',
         'enabled_modules' => 'array',
         'ui_customizations' => 'array',

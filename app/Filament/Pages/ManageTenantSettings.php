@@ -8,6 +8,7 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -82,6 +83,7 @@ class ManageTenantSettings extends Page implements HasForms
 
         $this->form->fill([
             'segment' => $tenant?->segment,
+            'auto_generate_patrimonio' => (bool) $tenant?->auto_generate_patrimonio,
             'targets' => array_merge(self::TARGET_DEFAULTS, array_intersect_key($targets, self::TARGET_DEFAULTS)),
             'ui_customizations' => array_keys(array_filter(array_merge(
                 array_fill_keys(self::FIELD_VISIBILITY_KEYS, true),
@@ -117,6 +119,13 @@ class ManageTenantSettings extends Page implements HasForms
                             'comercial' => 'Comercial (Giro)',
                         ])
                         ->native(false),
+                ]),
+
+            Section::make('Ativos')
+                ->schema([
+                    Toggle::make('auto_generate_patrimonio')
+                        ->label('Gerar número de patrimônio automaticamente')
+                        ->helperText('Desligado (padrão): o número de patrimônio é digitado na hora de cadastrar o ativo, seguindo o critério que sua empresa já usa. Ligado: a Oravel preenche um número sequencial sozinha, mas ainda dá pra editar antes de salvar.'),
                 ]),
 
             Section::make('Metas de Manutenção')
@@ -163,6 +172,7 @@ class ManageTenantSettings extends Page implements HasForms
             'segment' => $state['segment'] ?? null,
             'ui_customizations' => $uiCustomizations,
             'targets' => $targets,
+            'auto_generate_patrimonio' => (bool) ($state['auto_generate_patrimonio'] ?? false),
         ]);
 
         Notification::make()

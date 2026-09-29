@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Domain\Fleet\Models\ForkliftSpecification;
 use App\Domain\Fleet\Models\GeneratorSpecification;
 use App\Domain\Fleet\Models\PlatformSpecification;
+use App\Domain\Fleet\Models\RentalOverageCharge;
 use App\Models\Concerns\HasSaaSMetadata;
 use App\Models\Traits\BelongsToTenant;
 use Carbon\Carbon;
@@ -76,6 +77,50 @@ class Asset extends Model
         'useful_life_years' => 'integer',
         'checklist' => 'array',
     ];
+
+    /**
+     * Auto-numeração de patrimônio é opt-in por tenant (Tenant::auto_generate_patrimonio,
+     * configurável em Configurações do Tenant) -- por padrão o campo continua
+     * livre pra digitação manual, porque cada locadora cliente já pode ter o
+     * próprio critério de numeração de patrimônio. Só preenche se o campo
+     * vier vazio, pra nunca sobrescrever um valor digitado à mão.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (Asset $asset) {
+            if (! blank($asset->patrimonio)) {
+                return;
+            }
+
+            $tenant = Tenant::find($asset->tenant_id);
+
+            if (! $tenant?->auto_generate_patrimonio) {
+                return;
+            }
+
+            $asset->patrimonio = static::nextPatrimonio($asset->tenant_id);
+        });
+    }
+
+    /**
+     * Sequencial simples por tenant, 6 dígitos. Calculado em PHP (não
+     * ORDER BY string) pelo mesmo motivo documentado em
+     * MaintenanceOrder::booted() -- comparação lexicográfica de string
+     * quebra quando sequências de tamanhos diferentes coexistem.
+     */
+    public static function nextPatrimonio(string $tenantId): string
+    {
+        $maxSequence = static::withoutGlobalScopes()
+            ->where('tenant_id', $tenantId)
+            ->whereNotNull('patrimonio')
+            ->pluck('patrimonio')
+            ->map(fn ($value) => ctype_digit((string) $value) ? (int) $value : 0)
+            ->max();
+
+        $nextSequence = $maxSequence ? $maxSequence + 1 : 1;
+
+        return str_pad((string) $nextSequence, 6, '0', STR_PAD_LEFT);
+    }
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -499,16 +544,16 @@ class Asset extends Model
         $totalLogisticsCost = (float) $this->maintenanceOrders()->sum('logistics_cost')
             + (float) $this->rentalRequests()->sum('logistics_cost');
         $totalRentalRevenue = (float) $this->contracts()->sum('price');
-        $totalOverageRevenue = (float) \App\Domain\Fleet\Models\RentalOverageCharge::query()
+        $totalOverageRevenue = (float) RentalOverageCharge::query()
             ->where('asset_id', $this->id)
-            ->where('status', \App\Domain\Fleet\Models\RentalOverageCharge::STATUS_INVOICED)
+            ->where('status', RentalOverageCharge::STATUS_INVOICED)
             ->sum('amount');
-        $totalDamageRevenue = (float) \App\Models\Quote::query()
+        $totalDamageRevenue = (float) Quote::query()
             ->whereHasMorph('quotable', [EquipmentDamage::class], function ($query) {
                 $query->where('asset_id', $this->id)
                     ->whereIn('cause', [EquipmentDamage::CAUSE_MAU_USO, EquipmentDamage::CAUSE_DANO_CLIENTE]);
             })
-            ->whereIn('status', [\App\Models\Quote::STATUS_APROVADO, \App\Models\Quote::STATUS_CONCLUIDO])
+            ->whereIn('status', [Quote::STATUS_APROVADO, Quote::STATUS_CONCLUIDO])
             ->sum('total_value');
 
         $totalRevenue = $totalRentalRevenue + $totalOverageRevenue + $totalDamageRevenue;
