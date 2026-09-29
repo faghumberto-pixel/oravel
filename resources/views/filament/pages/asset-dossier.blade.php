@@ -38,6 +38,11 @@
             @endif
         </x-filament::section>
     @else
+        @php
+            $worked = $this->workedHoursSummary;
+            $paymentStatus = $this->paymentStatus;
+        @endphp
+
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
                 <h2 class="text-xl font-bold text-gray-950 dark:text-white">{{ $asset->name }}</h2>
@@ -59,81 +64,88 @@
             </div>
         </div>
 
-        <x-filament::section heading="Dados Gerais">
+        {{-- Pedido do usuário 29/09/2026: dossiê mais minimalista, "como um
+             relatório mesmo" -- uma seção de resumo só, com contrato/cliente
+             clicáveis e a situação de pagamento em uma linha (em dia/atrasado),
+             sem listar fatura por fatura (isso é assunto de Contas a Receber). --}}
+        <x-filament::section heading="Resumo">
             <div class="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
                 <div><span class="text-gray-400">Categoria</span><br><b>{{ $asset->asset_category ?? '—' }}</b></div>
-                <div><span class="text-gray-400">Especificação</span><br><b>{{ $asset->specification ?? '—' }}</b></div>
                 <div><span class="text-gray-400">Status</span><br><b>{{ ucfirst($asset->status ?? '—') }}</b></div>
-                <div><span class="text-gray-400">Criticidade</span><br><b>{{ $asset->criticality_level ?? $asset->criticality ?? '—' }}</b></div>
-            </div>
-        </x-filament::section>
 
-        <x-filament::section heading="Cliente Atual">
-            @if ($asset->client)
-                <p class="text-sm">Com o cliente: <b>{{ $asset->client->name }}</b></p>
-            @else
-                <p class="text-sm text-gray-400">Disponível — sem cliente vinculado no momento.</p>
-            @endif
-        </x-filament::section>
-
-        <x-filament::section heading="Contrato Vigente">
-            @if ($this->currentContract)
-                <div class="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
-                    <div><span class="text-gray-400">Nº Contrato</span><br><b>{{ $this->currentContract->contract_number }}</b></div>
-                    <div><span class="text-gray-400">Cliente</span><br><b>{{ $this->currentContract->client?->name ?? '—' }}</b></div>
-                    <div><span class="text-gray-400">Início</span><br><b>{{ optional($this->currentContract->start_date)->format('d/m/Y') ?? '—' }}</b></div>
-                    <div><span class="text-gray-400">Valor Mensal</span><br><b>R$ {{ number_format((float) $this->currentContract->price, 2, ',', '.') }}</b></div>
+                <div>
+                    <span class="text-gray-400">Cliente</span><br>
+                    @if ($asset->client)
+                        <a href="{{ \App\Filament\Resources\ClientResource::getUrl('edit', ['record' => $asset->client]) }}" class="font-bold text-primary-600 hover:underline dark:text-primary-400">
+                            {{ $asset->client->name }}
+                        </a>
+                    @else
+                        <b class="text-gray-400">Disponível</b>
+                    @endif
                 </div>
-            @else
-                <p class="text-sm text-gray-400">Nenhum contrato ativo pra este ativo.</p>
+
+                <div>
+                    <span class="text-gray-400">Contrato</span><br>
+                    @if ($this->currentContract)
+                        <a href="{{ \App\Filament\Resources\ContractResource::getUrl('edit', ['record' => $this->currentContract]) }}" class="font-bold text-primary-600 hover:underline dark:text-primary-400">
+                            {{ $this->currentContract->contract_number }}
+                        </a>
+                    @else
+                        <b class="text-gray-400">—</b>
+                    @endif
+                </div>
+            </div>
+
+            @if ($paymentStatus)
+                <div class="mt-4">
+                    <x-filament::badge :color="$paymentStatus === 'em_dia' ? 'success' : 'danger'">
+                        {{ $paymentStatus === 'em_dia' ? '✓ Cliente em dia com os pagamentos' : '⚠ Cliente com pagamento em atraso' }}
+                    </x-filament::badge>
+                </div>
             @endif
         </x-filament::section>
 
         <x-filament::section heading="Horas Trabalhadas">
-            <div class="grid grid-cols-2 gap-4 text-sm md:grid-cols-3">
-                <div><span class="text-gray-400">Horímetro Atual</span><br><b>{{ number_format((float) $asset->horimetro_atual, 2, ',', '.') }} h</b></div>
-                <div><span class="text-gray-400">Horímetro Inicial</span><br><b>{{ number_format((float) $asset->horimetro_inicial, 2, ',', '.') }} h</b></div>
+            <div class="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
+                <div><span class="text-gray-400">Horímetro Atual</span><br><b>{{ number_format($worked['horimetro_atual'], 2, ',', '.') }} h</b></div>
+
+                @if ($worked['dias_locado'] !== null)
+                    <div><span class="text-gray-400">Trabalhado na Locação</span><br><b>{{ number_format($worked['horas_trabalhadas'], 2, ',', '.') }} h</b></div>
+                    <div><span class="text-gray-400">Dias de Locação</span><br><b>{{ $worked['dias_locado'] }} dia(s)</b></div>
+                    <div><span class="text-gray-400">Média Diária</span><br><b>{{ number_format($worked['media_diaria'], 2, ',', '.') }} h/dia</b></div>
+                @else
+                    <div class="md:col-span-3"><span class="text-gray-400">{{ $this->currentContract ? 'Sem histórico de horímetro suficiente pra calcular horas trabalhadas nesta locação.' : 'Sem contrato ativo pra calcular horas trabalhadas na locação.' }}</span></div>
+                @endif
+
                 @if ($asset->is_vehicle)
                     <div><span class="text-gray-400">Odômetro Atual</span><br><b>{{ number_format((float) $asset->odometro_atual, 2, ',', '.') }} km</b></div>
                 @endif
             </div>
         </x-filament::section>
 
-        <x-filament::section heading="Matriz ABC">
-            @if ($asset->abcMatrix)
-                <x-filament::badge :color="match ($asset->abcMatrix->nivel) {
-                    'A' => 'danger',
-                    'B' => 'warning',
-                    default => 'success',
-                }">
-                    Nível {{ $asset->abcMatrix->nivel }} — {{ $asset->abcMatrix->descricao }}
+        {{-- Alertas condensados: só contagens, sem listar item por item
+             (era 3 seções verbosas -- Matriz ABC, Avarias Recentes, OS Abertas
+             -- agora é uma linha de sinalização). --}}
+        <x-filament::section heading="Alertas">
+            <div class="flex flex-wrap items-center gap-3 text-sm">
+                @if ($asset->abcMatrix)
+                    <x-filament::badge :color="match ($asset->abcMatrix->nivel) {
+                        'A' => 'danger',
+                        'B' => 'warning',
+                        default => 'success',
+                    }">
+                        Criticidade {{ $asset->abcMatrix->nivel }}
+                    </x-filament::badge>
+                @endif
+
+                <x-filament::badge :color="$this->recentDamages->isNotEmpty() ? 'danger' : 'success'">
+                    {{ $this->recentDamages->count() }} avaria(s) recente(s)
                 </x-filament::badge>
-            @else
-                <p class="text-sm text-gray-400">Sem classificação ABC cadastrada.</p>
-            @endif
-        </x-filament::section>
 
-        <x-filament::section heading="Avarias Recentes">
-            @forelse ($this->recentDamages as $damage)
-                <div class="border-t border-gray-100 py-2 text-sm first:border-t-0 first:pt-0 dark:border-gray-700">
-                    <p><b>{{ ucfirst($damage->severity) }}</b> — {{ $damage->description }}</p>
-                    <p class="text-xs text-gray-400">{{ $damage->created_at->format('d/m/Y H:i') }} · Status: {{ $damage->status }}</p>
-                </div>
-            @empty
-                <p class="text-sm text-gray-400">Nenhuma avaria registrada.</p>
-            @endforelse
-        </x-filament::section>
-
-        <x-filament::section heading="Ordens de Serviço Abertas">
-            @forelse ($this->openOrders as $order)
-                <div class="border-t border-gray-100 py-2 text-sm first:border-t-0 first:pt-0 dark:border-gray-700">
-                    <p><b>OS {{ $order->os_number }}</b> — {{ $order->status }}</p>
-                    <p class="text-xs text-gray-400">Técnico: {{ $order->technician?->name ?? 'Não atribuído' }}</p>
-                    <p class="text-xs text-gray-400">Problema relatado: {{ $order->reportedProblem?->description ?? $order->description ?? '—' }}</p>
-                </div>
-            @empty
-                <p class="text-sm text-gray-400">Nenhuma OS em aberto.</p>
-            @endforelse
+                <x-filament::badge :color="$this->openOrders->isNotEmpty() ? 'warning' : 'success'">
+                    {{ $this->openOrders->count() }} OS em aberto
+                </x-filament::badge>
+            </div>
         </x-filament::section>
     @endif
 </x-filament-panels::page>

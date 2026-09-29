@@ -3,12 +3,16 @@
 namespace Tests\Feature;
 
 use App\Filament\Pages\AssetDossier;
+use App\Filament\Resources\ClientResource;
+use App\Filament\Resources\ContractResource;
 use App\Models\AbcMatrix;
+use App\Models\AccountReceivable;
 use App\Models\Asset;
 use App\Models\Client;
 use App\Models\Contract;
 use App\Models\EquipmentDamage;
 use App\Models\EquipmentMovement;
+use App\Models\HorimeterReading;
 use App\Models\MaintenanceOrder;
 use App\Models\Plan;
 use App\Models\ReportedProblem;
@@ -109,9 +113,100 @@ class AssetDossierTest extends TestCase
         $response->assertSee('PAT-DOSSIE-001');
         $response->assertSee('Cliente Dossiê');
         $response->assertSee('CT-DOSSIE-001');
-        $response->assertSee('Nível A');
-        $response->assertSee('Vazamento hidráulico na lança.');
-        $response->assertSee('Ruído anormal no motor');
+        $response->assertSee('Criticidade A');
+        // Dossiê é minimalista (pedido 29/09/2026) -- não lista mais avaria/OS
+        // por item, só contagem. Descrição/técnico de cada uma não aparecem.
+        $response->assertDontSee('Vazamento hidráulico na lança.');
+        $response->assertDontSee('Ruído anormal no motor');
+        $response->assertSee('1 avaria(s) recente(s)');
+        $response->assertSee('OS em aberto');
+    }
+
+    public function test_client_and_contract_are_clickable_links(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = $this->makeFullAsset($tenant, $admin);
+        $client = $asset->client;
+        $contract = $asset->activeContract();
+
+        $this->actingAs($admin);
+
+        $response = $this->get(AssetDossier::getUrl(['assetId' => $asset->id]));
+
+        $response->assertOk();
+        $response->assertSee(ClientResource::getUrl('edit', ['record' => $client]), false);
+        $response->assertSee(ContractResource::getUrl('edit', ['record' => $contract]), false);
+    }
+
+    public function test_worked_hours_are_calculated_from_contract_start_not_asset_lifetime(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = $this->makeFullAsset($tenant, $admin);
+        $contract = $asset->activeContract();
+
+        // Leitura de antes do contrato -- não pode contar pro cálculo.
+        HorimeterReading::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id,
+            'reading' => 100, 'recorded_at' => $contract->start_date->copy()->subDays(10),
+            'source' => HorimeterReading::SOURCE_MANUAL,
+        ]);
+        // Leitura no início da locação (a que deve ser usada como base).
+        HorimeterReading::create([
+            'tenant_id' => $tenant->id, 'asset_id' => $asset->id,
+            'reading' => 350, 'recorded_at' => $contract->start_date->copy()->addDay(),
+            'source' => HorimeterReading::SOURCE_MANUAL,
+        ]);
+
+        $asset->update(['horimetro_atual' => 590]); // 240h trabalhadas desde a locação
+
+        $this->actingAs($admin);
+
+        $page = Livewire::test(AssetDossier::class, ['assetId' => $asset->id]);
+        $summary = $page->instance()->workedHoursSummary;
+
+        $this->assertSame(350.0, $summary['horimetro_inicio_locacao']);
+        $this->assertSame(240.0, $summary['horas_trabalhadas']);
+        $this->assertNotNull($summary['dias_locado']);
+        $this->assertEqualsWithDelta($summary['horas_trabalhadas'] / $summary['dias_locado'], $summary['media_diaria'], 0.01);
+    }
+
+    public function test_payment_status_shows_atrasado_when_client_has_overdue_receivable(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = $this->makeFullAsset($tenant, $admin);
+        $contract = $asset->activeContract();
+
+        AccountReceivable::create([
+            'tenant_id' => $tenant->id, 'client_id' => $contract->client_id, 'contract_id' => $contract->id,
+            'description' => 'Fatura vencida', 'amount' => 500, 'due_date' => now()->subDays(5), 'status' => 'atrasado',
+        ]);
+
+        $this->actingAs($admin);
+
+        $response = $this->get(AssetDossier::getUrl(['assetId' => $asset->id]));
+
+        $response->assertOk();
+        $response->assertSee('Cliente com pagamento em atraso');
+    }
+
+    public function test_payment_status_shows_em_dia_when_no_overdue_receivable(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $asset = $this->makeFullAsset($tenant, $admin);
+        $contract = $asset->activeContract();
+
+        AccountReceivable::create([
+            'tenant_id' => $tenant->id, 'client_id' => $contract->client_id, 'contract_id' => $contract->id,
+            'description' => 'Fatura paga', 'amount' => 500, 'due_date' => now()->subDays(5),
+            'payment_date' => now()->subDays(6), 'status' => 'pago',
+        ]);
+
+        $this->actingAs($admin);
+
+        $response = $this->get(AssetDossier::getUrl(['assetId' => $asset->id]));
+
+        $response->assertOk();
+        $response->assertSee('Cliente em dia com os pagamentos');
     }
 
     public function test_searching_by_exact_patrimonio_redirects_to_the_dossier(): void
