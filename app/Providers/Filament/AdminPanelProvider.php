@@ -76,17 +76,21 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(fn () => view('filament.brand-logo'))
             ->brandLogoHeight('1.25rem')
             ->favicon(asset('favicon.png').'?v=6')
+            // Ordem alfabética dos menus-pai, pedido explícito do usuário
+            // 29/09/2026 -- "Ativos e Materiais" já cai em primeiro por
+            // conta própria nessa ordenação (começa com A), não é uma
+            // exceção manual.
             ->navigationGroups([
-                NavigationGroup::make('PMP'),
-                NavigationGroup::make('Manutenção'),
-                NavigationGroup::make('Logística'),
                 NavigationGroup::make('Ativos e Materiais'),
-                NavigationGroup::make('Equipe'),
-                NavigationGroup::make('Departamento Pessoal'),
                 NavigationGroup::make('Comercial'),
-                NavigationGroup::make('Financeiro'),
-                NavigationGroup::make('Relatórios'),
                 NavigationGroup::make('Configurações'),
+                NavigationGroup::make('Departamento Pessoal'),
+                NavigationGroup::make('Equipe'),
+                NavigationGroup::make('Financeiro'),
+                NavigationGroup::make('Logística'),
+                NavigationGroup::make('Manutenção'),
+                NavigationGroup::make('PMP'),
+                NavigationGroup::make('Relatórios'),
             ])
             ->navigationItems([
                 // Tela dedicada de registro de horimetro (offline-first, JS
