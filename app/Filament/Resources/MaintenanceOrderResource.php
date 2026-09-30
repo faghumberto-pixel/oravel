@@ -17,6 +17,7 @@ use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
 use App\Models\SolicitacaoLocacao;
 use App\Models\User;
+use App\Services\OsPhotoOcrService;
 use App\Support\FormHelpers;
 use App\Support\Tenancy;
 use Filament\Forms;
@@ -119,6 +120,58 @@ class MaintenanceOrderResource extends Resource
             ->all();
     }
 
+    /**
+     * Teste pedido pelo usuario 29/09/2026: le a foto anexada em
+     * 'photo_import' via OsPhotoOcrService (Claude, visao) e tenta
+     * preencher os campos do form a partir do JSON extraido. Campos que sao
+     * FK (asset_id/client_id/technician_id) so' vem como texto livre da IA
+     * ("como escrito no papel") -- aqui tentamos casar por LIKE contra o
+     * cadastro do tenant; o que nao casar fica de fora, sinalizado na
+     * notificacao, pro usuario preencher manualmente.
+     */
+    private static function preencherViaFotoIA(Get $get, Set $set): void
+    {
+        $photo = $get('photo_import');
+
+        if (! $photo) {
+            Notification::make()->title('Anexe uma foto primeiro.')->warning()->send();
+
+            return;
+        }
+
+        $result = app(OsPhotoOcrService::class)->extract($photo);
+
+        if (! $result['ok']) {
+            Notification::make()
+                ->title('Não foi possível ler a foto.')
+                ->body($result['error'])
+                ->danger()
+                ->send();
+
+            return;
+        }
+
+        $tenantId = Tenancy::current()?->id;
+        $resolved = app(OsPhotoOcrService::class)->resolveFields(
+            $result['data'],
+            $tenantId,
+            static::technicianOptionsByWorkload(),
+        );
+
+        foreach ($resolved['fields'] as $field => $value) {
+            $set($field, $value);
+        }
+
+        Notification::make()
+            ->title('Foto lida pela IA.')
+            ->body(collect([
+                $resolved['matched'] ? 'Preenchido: '.implode(', ', $resolved['matched']) : 'Nada reconhecido com confiança na foto.',
+                $resolved['notFound'] ? 'Revisar manualmente: '.implode(', ', $resolved['notFound']) : null,
+            ])->filter()->implode(' — '))
+            ->success()
+            ->send();
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -126,6 +179,29 @@ class MaintenanceOrderResource extends Resource
 
                 // --- ABA 1: DADOS GERAIS ---
                 Forms\Components\Tabs\Tab::make('Dados Gerais')->schema([
+                    // Teste pedido pelo usuario 29/09/2026: preencher a OS a partir
+                    // da foto de uma OS em papel (de terceiros, layout variavel),
+                    // via IA com visao (App\Services\OsPhotoOcrService). So' na
+                    // criacao -- numa OS ja existente os campos abaixo ja tem dado
+                    // real, nao faz sentido sobrescrever por foto.
+                    Forms\Components\Section::make('Preencher via Foto (IA) — teste')
+                        ->description('Anexe a foto de uma O.S. em papel (impressa ou manuscrita, de qualquer layout) e a IA tenta preencher os campos abaixo. Revise tudo antes de salvar -- é um teste, pode errar leitura de nomes/valores.')
+                        ->icon('heroicon-o-sparkles')
+                        ->visible(fn (string $operation) => $operation === 'create')
+                        ->collapsible()
+                        ->schema([
+                            CameraCapture::make('photo_import')
+                                ->label('Foto da O.S.')
+                                ->dehydrated(false),
+                            Forms\Components\Actions::make([
+                                Forms\Components\Actions\Action::make('extrairComIA')
+                                    ->label('Preencher com IA')
+                                    ->icon('heroicon-o-sparkles')
+                                    ->action(function (Get $get, Set $set) {
+                                        static::preencherViaFotoIA($get, $set);
+                                    }),
+                            ]),
+                        ]),
                     // Separacao visual em cartoes (2026-09-18, pedido do usuario --
                     // "muito branco, sessoes mais separadas"): cada Section:: ja tinha
                     // o estilo de cartao (borda/sombra, ver .fi-section em
