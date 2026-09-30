@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\Asset;
 use App\Models\Client;
 use App\Models\MaintenanceOrder;
+use App\Models\Material;
+use Illuminate\Support\Str;
 
 /**
  * Teste pedido pelo usuário 29/09/2026: ler a foto de uma Ordem de Serviço em
@@ -76,9 +78,9 @@ class OsPhotoOcrService
 
             foreach ($this->words($termo) as $word) {
                 $query->where(function ($q) use ($word) {
-                    $q->where('name', 'like', "%{$word}%")
-                        ->orWhere('patrimonio', 'like', "%{$word}%")
-                        ->orWhere('tag', 'like', "%{$word}%");
+                    $q->whereRaw('LOWER(name) LIKE ?', [$this->like($word)])
+                        ->orWhereRaw('LOWER(patrimonio) LIKE ?', [$this->like($word)])
+                        ->orWhereRaw('LOWER(tag) LIKE ?', [$this->like($word)]);
                 });
             }
 
@@ -98,7 +100,7 @@ class OsPhotoOcrService
             $query = Client::where('tenant_id', $tenantId);
 
             foreach ($this->words($termo) as $word) {
-                $query->where('name', 'like', "%{$word}%");
+                $query->whereRaw('LOWER(name) LIKE ?', [$this->like($word)]);
             }
 
             $client = $query->first();
@@ -162,6 +164,14 @@ class OsPhotoOcrService
             $matched[] = 'Custo de material';
         }
 
+        $materials = $this->resolveParts($data['parts'] ?? [], $tenantId);
+
+        if ($materials) {
+            $fields['materials'] = $materials;
+            $livres = collect($materials)->whereNull('material_id')->count();
+            $matched[] = 'Peças/Materiais: '.count($materials).($livres ? " ({$livres} sem cadastro, como texto livre -- revisar)" : '');
+        }
+
         if (! empty($data['checklist_notes'])) {
             $fields['technical_notes'] = $data['checklist_notes'];
             $matched[] = 'Notas técnicas';
@@ -188,6 +198,68 @@ class OsPhotoOcrService
     private function words(string $text): array
     {
         return array_values(array_filter(preg_split('/\s+/', trim($text)) ?: []));
+    }
+
+    /**
+     * Tabela de peças/materiais do papel -> linhas do repeater 'materials'
+     * (MaintenanceOrderMaterial). Casa contra o catálogo Material do tenant
+     * por palavra; o que não casar entra como linha de texto livre (name, sem
+     * material_id -- a coluna é nullable, mesmo formato do histórico legado),
+     * pra não perder o dado lido. Materiais que exigem nº de série ficam como
+     * texto livre: o form não tem campo de série e a gravação estouraria.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    private function resolveParts(mixed $parts, ?string $tenantId): array
+    {
+        if (! is_array($parts)) {
+            return [];
+        }
+
+        $lines = [];
+
+        foreach ($parts as $part) {
+            $description = is_array($part) ? trim((string) ($part['description'] ?? '')) : '';
+
+            if ($description === '') {
+                continue;
+            }
+
+            $quantity = isset($part['quantity']) && is_numeric($part['quantity']) && $part['quantity'] > 0 ? $part['quantity'] : 1;
+            $unitPrice = isset($part['unit_price']) && is_numeric($part['unit_price']) ? $part['unit_price'] : null;
+
+            $material = null;
+
+            if ($tenantId) {
+                $query = Material::where('tenant_id', $tenantId)
+                    ->where(fn ($q) => $q->where('requires_serial_number', false)->orWhereNull('requires_serial_number'));
+
+                foreach ($this->words($description) as $word) {
+                    $query->whereRaw('LOWER(name) LIKE ?', [$this->like($word)]);
+                }
+
+                $material = $query->first();
+            }
+
+            $lines[(string) Str::uuid()] = [
+                'material_id' => $material?->id,
+                'name' => $material ? null : $description,
+                'quantity' => $quantity,
+                'unit_price' => $unitPrice,
+            ];
+        }
+
+        return $lines;
+    }
+
+    /**
+     * LIKE sem diferenciar maiúsculas/minúsculas (Postgres: LIKE puro diferencia,
+     * e texto lido na foto raramente bate a caixa do cadastro -- "óleo" vs "Óleo").
+     * Lowercase feito em PHP (mb_) pra acentos não dependerem do locale do banco.
+     */
+    private function like(string $word): string
+    {
+        return '%'.mb_strtolower($word).'%';
     }
 
     /**
@@ -235,6 +307,7 @@ class OsPhotoOcrService
               "finished_at": "AAAA-MM-DD ou null",
               "labor_cost": number ou null,
               "material_cost": number ou null,
+              "parts": [ {"description": "string (peça/material como escrito)", "quantity": number, "unit_price": number ou null} ] ou [] (tabela de peças/materiais aplicados, uma linha por item),
               "has_client_signature": true ou false,
               "checklist_notes": "string (itens de checklist/inspeção anotados no papel) ou null",
               "asset_text": "string (texto que identifica o ativo/equipamento/patrimônio, exatamente como escrito) ou null",

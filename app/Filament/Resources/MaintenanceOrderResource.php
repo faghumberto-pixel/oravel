@@ -751,9 +751,11 @@ class MaintenanceOrderResource extends Resource
                             Forms\Components\Repeater::make('materials')
                                 ->relationship('materials')
                                 ->schema([
-                                    Forms\Components\Select::make('material_id')->relationship('material', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))->required()->searchable(),
+                                    Forms\Components\Select::make('material_id')->relationship('material', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))->required(fn (Get $get) => blank($get('name')))->searchable(),
+                                    Forms\Components\TextInput::make('name')->label('Descrição (se não cadastrado)')->maxLength(255),
                                     Forms\Components\TextInput::make('quantity')->label('Qtd')->numeric()->default(1)->required(),
-                                ])->columns(2),
+                                    Forms\Components\TextInput::make('unit_price')->label('Valor unit. (R$)')->numeric()->prefix('R$')->helperText('Vazio = custo do cadastro do material.'),
+                                ])->columns(4),
                         ]),
                 ]),
 

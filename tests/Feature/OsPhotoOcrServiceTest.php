@@ -7,6 +7,7 @@ use App\Models\Asset;
 use App\Models\AssetCategory;
 use App\Models\Client;
 use App\Models\MaintenanceOrder;
+use App\Models\Material;
 use App\Models\Plan;
 use App\Models\Role;
 use App\Models\Tenant;
@@ -195,5 +196,32 @@ class OsPhotoOcrServiceTest extends TestCase
 
         $this->assertArrayNotHasKey('started_at', $impossible['fields']);
         $this->assertCount(1, $impossible['notFound']);
+    }
+
+    public function test_resolve_fields_turns_parts_table_into_material_lines(): void
+    {
+        [$tenant] = $this->makeTenantAdmin();
+
+        $material = Material::create(['tenant_id' => $tenant->id, 'sku' => 'FLT-1', 'name' => 'Filtro de Óleo Hidráulico', 'unit_cost' => 90]);
+        Material::create(['tenant_id' => $tenant->id, 'sku' => 'ROL-1', 'name' => 'Rolamento Especial', 'unit_cost' => 50, 'requires_serial_number' => true]);
+
+        $resolved = app(OsPhotoOcrService::class)->resolveFields(['parts' => [
+            ['description' => 'Filtro óleo hidráulico', 'quantity' => 2, 'unit_price' => 180],
+            ['description' => 'Rolamento especial', 'quantity' => 1, 'unit_price' => 220],
+            ['description' => 'Óleo 15W40', 'quantity' => '40', 'unit_price' => null],
+            ['description' => '  ', 'quantity' => 1],
+        ]], $tenant->id, []);
+
+        $lines = array_values($resolved['fields']['materials']);
+
+        $this->assertCount(3, $lines);
+        $this->assertSame($material->id, $lines[0]['material_id']);
+        $this->assertNull($lines[0]['name']);
+        $this->assertEquals(180, $lines[0]['unit_price']);
+        $this->assertNull($lines[1]['material_id']);
+        $this->assertSame('Rolamento especial', $lines[1]['name']);
+        $this->assertNull($lines[2]['material_id']);
+        $this->assertSame('Óleo 15W40', $lines[2]['name']);
+        $this->assertEquals(40, $lines[2]['quantity']);
     }
 }
