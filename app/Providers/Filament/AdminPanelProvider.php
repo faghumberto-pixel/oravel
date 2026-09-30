@@ -202,6 +202,10 @@ class AdminPanelProvider extends PanelProvider
                 fn () => view('filament.sidebar-accordion'),
             )
             ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn () => view('filament.sidebar-resizer'),
+            )
+            ->renderHook(
                 PanelsRenderHook::PAGE_START,
                 fn () => view('filament.breadcrumb'),
             )
