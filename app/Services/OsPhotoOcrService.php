@@ -25,6 +25,21 @@ class OsPhotoOcrService
     public function __construct(private AnthropicApiClient $client) {}
 
     /**
+     * O estado do CameraCapture no form é um array ({image: data URL,
+     * latitude, ...}), não a string em si -- passar direto pra extract()
+     * dava TypeError, que o Livewire em produção disfarça de 419 "página
+     * expirada". Aceita o array ou uma data URL pura.
+     */
+    public function dataUrlFromState(mixed $state): ?string
+    {
+        if (is_array($state)) {
+            $state = $state['image'] ?? null;
+        }
+
+        return is_string($state) && $state !== '' ? $state : null;
+    }
+
+    /**
      * @return array{ok: bool, data: ?array<string, mixed>, error: ?string}
      */
     public function extract(string $photoDataUrl): array

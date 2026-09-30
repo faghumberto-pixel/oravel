@@ -224,4 +224,14 @@ class OsPhotoOcrServiceTest extends TestCase
         $this->assertSame('Óleo 15W40', $lines[2]['name']);
         $this->assertEquals(40, $lines[2]['quantity']);
     }
+
+    public function test_data_url_from_state_accepts_camera_capture_array_and_plain_string(): void
+    {
+        $service = app(OsPhotoOcrService::class);
+
+        $this->assertSame(self::FAKE_PHOTO, $service->dataUrlFromState(['image' => self::FAKE_PHOTO, 'latitude' => -22.9]));
+        $this->assertSame(self::FAKE_PHOTO, $service->dataUrlFromState(self::FAKE_PHOTO));
+        $this->assertNull($service->dataUrlFromState(null));
+        $this->assertNull($service->dataUrlFromState(['latitude' => -22.9]));
+    }
 }

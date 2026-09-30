@@ -131,7 +131,7 @@ class MaintenanceOrderResource extends Resource
      */
     private static function preencherViaFotoIA(Get $get, Set $set): void
     {
-        $photo = $get('photo_import');
+        $photo = app(OsPhotoOcrService::class)->dataUrlFromState($get('photo_import'));
 
         if (! $photo) {
             Notification::make()->title('Anexe uma foto primeiro.')->warning()->send();
