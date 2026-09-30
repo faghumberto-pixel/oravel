@@ -142,12 +142,14 @@ class OsPhotoOcrService
             $matched[] = 'Descrição';
         }
 
-        if (! empty($data['started_at'])) {
-            $fields['started_at'] = $data['started_at'];
-        }
+        foreach (['started_at', 'finished_at'] as $dateField) {
+            $date = $this->validDate($data[$dateField] ?? null);
 
-        if (! empty($data['finished_at'])) {
-            $fields['finished_at'] = $data['finished_at'];
+            if ($date) {
+                $fields[$dateField] = $date;
+            } elseif (! empty($data[$dateField])) {
+                $notFound[] = "Data (lida: \"{$data[$dateField]}\")";
+            }
         }
 
         if (isset($data['labor_cost']) && is_numeric($data['labor_cost'])) {
@@ -186,6 +188,20 @@ class OsPhotoOcrService
     private function words(string $text): array
     {
         return array_values(array_filter(preg_split('/\s+/', trim($text)) ?: []));
+    }
+
+    /**
+     * Aceita só AAAA-MM-DD de data real (rejeita "2026-02-31", "30/09/2026", etc.).
+     */
+    private function validDate(mixed $value): ?string
+    {
+        if (! is_string($value)) {
+            return null;
+        }
+
+        $date = \DateTimeImmutable::createFromFormat('!Y-m-d', $value);
+
+        return $date && $date->format('Y-m-d') === $value ? $value : null;
     }
 
     /**

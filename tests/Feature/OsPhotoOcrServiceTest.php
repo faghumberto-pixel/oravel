@@ -179,4 +179,21 @@ class OsPhotoOcrServiceTest extends TestCase
         $this->assertArrayNotHasKey('technician_id', $resolved['fields']);
         $this->assertCount(3, $resolved['notFound']);
     }
+
+    public function test_resolve_fields_rejects_malformed_or_impossible_dates(): void
+    {
+        $resolved = app(OsPhotoOcrService::class)->resolveFields([
+            'started_at' => '2026-09-28',
+            'finished_at' => '30/09/2026',
+        ], null, []);
+
+        $this->assertSame('2026-09-28', $resolved['fields']['started_at']);
+        $this->assertArrayNotHasKey('finished_at', $resolved['fields']);
+        $this->assertSame(['Data (lida: "30/09/2026")'], $resolved['notFound']);
+
+        $impossible = app(OsPhotoOcrService::class)->resolveFields(['started_at' => '2026-02-31'], null, []);
+
+        $this->assertArrayNotHasKey('started_at', $impossible['fields']);
+        $this->assertCount(1, $impossible['notFound']);
+    }
 }
