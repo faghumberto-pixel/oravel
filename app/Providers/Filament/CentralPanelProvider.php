@@ -203,6 +203,10 @@ class CentralPanelProvider extends PanelProvider
                 fn () => view('filament.central.sidebar-footer'),
             )
             ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn () => view('filament.sidebar-resizer'),
+            )
+            ->renderHook(
                 PanelsRenderHook::PAGE_START,
                 fn () => view('filament.breadcrumb'),
             )
