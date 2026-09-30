@@ -64,7 +64,12 @@
             },
         }'
         x-show="active"
+        class="oravel-announcements"
     >
+        {{-- Pedido do usuario 30/09/2026: avisos da Central nao aparecem no
+             mobile (ocupam a tela toda em tela pequena). CSS puro em vez de
+             classe Tailwind pra nao depender de rebuild do Vite. --}}
+        <style>@media (max-width: 767px) { .oravel-announcements { display: none !important; } }</style>
         <template x-if="active">
             <div
                 x-transition:enter="transition ease-out duration-300"
