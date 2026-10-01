@@ -10,6 +10,10 @@
 (function () {
   'use strict';
 
+  // Trava contra o script rodar duas vezes na mesma página (tag duplicada no site): contaria 2 visualizações.
+  if (window.__oravelTracking) { return; }
+  window.__oravelTracking = true;
+
   var ENDPOINT = 'https://app.oravel.com.br/api/site-track';
   var SESSION_TTL = 30 * 60 * 1000; // nova visita após 30 min parado
   var PING_EVERY = 15000;
