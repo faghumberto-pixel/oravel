@@ -54,6 +54,10 @@ class CreateTenant extends CreateRecord
 
         app(AsaasService::class)->syncTenantCustomer($this->record);
 
+        // Taxa de implantação prevista no contrato: cobrança única na Asaas
+        // (precisa do customer recém-sincronizado). Sem valor, não faz nada.
+        app(AsaasService::class)->chargeTenantImplementation($this->record->refresh());
+
         $signatureLink = app(SignatureService::class)->generateSignatureLink($this->record, [
             'name' => $this->adminData['name'],
             'email' => $this->adminData['email'],

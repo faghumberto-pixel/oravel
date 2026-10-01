@@ -14,7 +14,7 @@ class Plan extends Model
     protected $table = 'plans';
 
     protected $fillable = [
-        'name', 'price', 'level', 'base_price', 'discount_value', 'discount_type', 'final_price', 'billing_cycle', 'campaign_tag', 'features', 'is_active',
+        'name', 'price', 'level', 'base_price', 'discount_value', 'discount_type', 'final_price', 'implementation_fee', 'implementation_installments', 'billing_cycle', 'campaign_tag', 'features', 'is_active',
     ];
 
     protected $casts = [
@@ -22,6 +22,8 @@ class Plan extends Model
         'base_price' => 'decimal:2',
         'discount_value' => 'decimal:2',
         'final_price' => 'decimal:2',
+        'implementation_fee' => 'decimal:2',
+        'implementation_installments' => 'integer',
         'is_active' => 'boolean',
         'level' => 'integer',
     ];

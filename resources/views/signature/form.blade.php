@@ -69,6 +69,12 @@
                             default => 'mês',
                         } }}</span>
                     </div>
+                    @if ($document->implementationAmount() > 0)
+                        <div>
+                            <span class="contract-label">Taxa de implantação (cobrança única)</span>
+                            <span class="contract-value">R$ {{ number_format($document->implementationAmount(), 2, ',', '.') }}{{ $document->implementationInstallments() > 1 ? ' em '.$document->implementationInstallments().'x' : ' à vista' }}</span>
+                        </div>
+                    @endif
                 </div>
                 <div class="contract-modules">
                     <span class="contract-label">Módulos incluídos</span>

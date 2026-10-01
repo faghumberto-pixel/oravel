@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AccountReceivable;
+use App\Models\ImplementationCharge;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -124,6 +125,18 @@ class AsaasWebhookController extends Controller
             return;
         }
 
+        // Cobrança única de implantação do Tenant (AsaasService::
+        // chargeTenantImplementation()) -- identificada pelo id da cobrança,
+        // ANTES do caso de assinatura: senão um atraso/pagamento da
+        // implantação mexeria no status da mensalidade e no bloqueio de acesso.
+        $implementationCharge = ImplementationCharge::withoutGlobalScopes()->where('asaas_payment_id', $paymentId)->first();
+
+        if ($implementationCharge) {
+            $this->processImplementationCharge($implementationCharge, $event, $payment);
+
+            return;
+        }
+
         // Caso contrário, trata como assinatura SaaS do Tenant
         if (blank($customerId)) {
             return;
@@ -138,6 +151,33 @@ class AsaasWebhookController extends Controller
         }
 
         $this->processTenantSubscription($tenant, $event, $payment);
+    }
+
+    /**
+     * Processa evento de uma parcela da cobrança única de implantação. Só
+     * atualiza a própria parcela: não libera acesso nem altera
+     * asaas_payment_status (isso é papel da assinatura).
+     *
+     * @param  array<string, mixed>  $payment
+     */
+    private function processImplementationCharge(ImplementationCharge $charge, string $event, array $payment): void
+    {
+        $newStatus = match (true) {
+            in_array($event, self::PAYMENT_OK_EVENTS, true) => ImplementationCharge::PAGO,
+            in_array($event, self::PAYMENT_OVERDUE_EVENTS, true) => ImplementationCharge::ATRASADO,
+            in_array($event, self::PAYMENT_CANCELLED_EVENTS, true) => ImplementationCharge::CANCELADO,
+            default => null,
+        };
+
+        if ($newStatus === null) {
+            return;
+        }
+
+        $charge->update([
+            'status' => $newStatus,
+            'invoice_url' => $payment['invoiceUrl'] ?? $charge->invoice_url,
+            'paid_at' => $newStatus === ImplementationCharge::PAGO ? now() : null,
+        ]);
     }
 
     /**

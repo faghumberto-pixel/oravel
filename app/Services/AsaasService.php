@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\ImplementationCharge;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -278,6 +279,86 @@ class AsaasService
 
             return null;
         }
+    }
+
+    /**
+     * Cobrança ÚNICA de implantação, em 1 ou 2 parcelas (POST /payments, uma
+     * cobrança avulsa por parcela -- cada uma com seu link e vencimento,
+     * sem depender do parcelamento nativo da Asaas). A 1ª vence em 7 dias e
+     * a 2ª 30 dias depois da 1ª. billingType UNDEFINED: o cliente escolhe
+     * boleto/cartão/Pix no link. Idempotente: parcelas já criadas (não
+     * canceladas) são puladas, então chamar de novo só completa o que
+     * faltou (ex.: 1ª criada e 2ª falhou). Nunca lança, só loga. Devolve os
+     * links das parcelas não pagas (lista vazia se nada foi cobrado).
+     *
+     * @return array<int, string>
+     */
+    public function chargeTenantImplementation(Tenant $tenant): array
+    {
+        $amount = $tenant->implementationAmount();
+
+        if ($amount <= 0 || blank($this->apiKey) || blank($tenant->asaas_customer_id)) {
+            Log::info('AsaasService: implantação não cobrada (sem valor, API key ou customer).', ['tenant_id' => $tenant->id]);
+
+            return [];
+        }
+
+        $amounts = $tenant->implementationInstallmentAmounts();
+        $total = count($amounts);
+        $firstDue = now()->addDays(7);
+
+        foreach ($amounts as $index => $installmentAmount) {
+            $number = $index + 1;
+
+            $existing = ImplementationCharge::withoutGlobalScopes()
+                ->where('tenant_id', $tenant->id)->where('installment_number', $number)->first();
+
+            if ($existing && $existing->status !== ImplementationCharge::CANCELADO) {
+                continue;
+            }
+
+            $dueDate = $number === 1 ? $firstDue->toDateString() : $firstDue->copy()->addDays(30 * ($number - 1))->toDateString();
+            $label = $total > 1 ? " ({$number}/{$total})" : '';
+
+            try {
+                $payment = $this->createPayment([
+                    'customer' => $tenant->asaas_customer_id,
+                    'billingType' => 'UNDEFINED',
+                    'value' => $installmentAmount,
+                    'dueDate' => $dueDate,
+                    'description' => "Implantação Oravel{$label} -- {$tenant->name}",
+                    'externalReference' => "implantacao:{$tenant->id}:{$number}",
+                ]);
+            } catch (\Throwable $e) {
+                Log::warning('AsaasService: falha ao criar cobrança de implantação.', ['tenant_id' => $tenant->id, 'parcela' => $number, 'error' => $e->getMessage()]);
+
+                break;
+            }
+
+            ImplementationCharge::withoutGlobalScopes()->updateOrCreate(
+                ['tenant_id' => $tenant->id, 'installment_number' => $number],
+                [
+                    'installments_total' => $total,
+                    'amount' => $installmentAmount,
+                    'due_date' => $dueDate,
+                    'asaas_payment_id' => $payment['id'] ?? null,
+                    'status' => ImplementationCharge::PENDENTE,
+                    'invoice_url' => $payment['invoiceUrl'] ?? null,
+                    'paid_at' => null,
+                ]
+            );
+        }
+
+        $tenant->update(['implementation_fee' => $amount, 'implementation_installments' => $total]);
+
+        return ImplementationCharge::withoutGlobalScopes()
+            ->where('tenant_id', $tenant->id)
+            ->whereIn('status', [ImplementationCharge::PENDENTE, ImplementationCharge::ATRASADO])
+            ->orderBy('installment_number')
+            ->pluck('invoice_url')
+            ->filter()
+            ->values()
+            ->all();
     }
 
     /**

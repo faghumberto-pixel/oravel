@@ -12,6 +12,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\HtmlString;
 
 class TenantResource extends Resource
 {
@@ -38,6 +39,28 @@ class TenantResource extends Resource
                 Forms\Components\Select::make('plan_id')->label('Plano')->relationship('plan', 'name')->searchable()->preload()->live(),
                 Forms\Components\Select::make('status')->label('Status')->options(['active' => 'Ativo', 'trial' => 'Teste', 'suspended' => 'Suspenso', 'canceled' => 'Cancelado'])->default('trial')->required(),
                 Forms\Components\TextInput::make('mrr_value')->label('MRR (R$)')->numeric()->step(0.01)->default(0),
+                Forms\Components\TextInput::make('implementation_fee')
+                    ->label('Taxa de Implantação (R$)')
+                    ->helperText('Cobrança única via Asaas. Vazio = usa o valor do contrato. Depois de gerada a cobrança, alterar aqui não muda a cobrança já emitida.')
+                    ->numeric()->step(0.01)->minValue(0),
+                Forms\Components\Select::make('implementation_installments')
+                    ->label('Parcelas da Implantação')
+                    ->options([1 => 'À vista (1x)', 2 => 'Em 2 vezes'])
+                    ->placeholder('Usar o do contrato')
+                    ->native(false),
+                Forms\Components\Placeholder::make('implementation_status_info')
+                    ->label('Cobranças de implantação')
+                    ->content(function (?Tenant $record) {
+                        $charges = $record?->implementationCharges()->get() ?? collect();
+
+                        if ($charges->isEmpty()) {
+                            return 'Ainda não cobrada';
+                        }
+
+                        return new HtmlString($charges->map(fn ($c) => e("{$c->installment_number}/{$c->installments_total} — R$ ".number_format((float) $c->amount, 2, ',', '.').' — vence '.$c->due_date->format('d/m/Y').' — '.ucfirst($c->status))
+                            .($c->invoice_url ? ' — <a href="'.e($c->invoice_url).'" target="_blank" class="underline">link</a>' : ''))->implode('<br>'));
+                    })
+                    ->visibleOn('edit'),
                 Forms\Components\TextInput::make('cpf_cnpj')
                     ->label('CPF/CNPJ')
                     ->helperText('Exigido pra criar a cobrança recorrente na Asaas -- sem isso, a assinatura SaaS deste tenant não é sincronizada com o gateway de pagamento.')

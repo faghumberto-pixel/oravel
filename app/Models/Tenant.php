@@ -65,6 +65,8 @@ class Tenant extends Model
         'asaas_payment_updated_at',
         'asaas_overdue_since',
         'asaas_current_invoice_url',
+        'implementation_fee',
+        'implementation_installments',
         'segment',
         'equipment_types',
         'terms_accepted_at',
@@ -88,6 +90,8 @@ class Tenant extends Model
         'ui_customizations' => 'array',
         'targets' => 'array',
         'asaas_synced_at' => 'datetime',
+        'implementation_fee' => 'decimal:2',
+        'implementation_installments' => 'integer',
         'asaas_payment_updated_at' => 'datetime',
         'asaas_overdue_since' => 'datetime',
     ];
@@ -267,5 +271,48 @@ class Tenant extends Model
     public function materials(): HasMany
     {
         return $this->hasMany(Material::class);
+    }
+
+    /**
+     * Valor da taxa de implantação (cobrança única): o valor negociado no
+     * próprio tenant, ou o do contrato (Plan) quando não houver override.
+     */
+    public function implementationAmount(): float
+    {
+        return (float) ($this->implementation_fee ?? $this->plan?->implementation_fee ?? 0);
+    }
+
+    /** Parcelas da implantação (1 ou 2): override do tenant, senão o contrato. */
+    public function implementationInstallments(): int
+    {
+        return max(1, min(2, (int) ($this->implementation_installments ?? $this->plan?->implementation_installments ?? 1)));
+    }
+
+    /**
+     * Valores das parcelas em centavos exatos: a 1ª leva o arredondamento,
+     * a última fecha a conta (soma sempre = total).
+     *
+     * @return array<int, float>
+     */
+    public function implementationInstallmentAmounts(): array
+    {
+        $total = $this->implementationAmount();
+        $count = $this->implementationInstallments();
+        $base = round($total / $count, 2);
+        $amounts = array_fill(0, $count, $base);
+        $amounts[$count - 1] = round($total - $base * ($count - 1), 2);
+
+        return $amounts;
+    }
+
+    public function implementationCharges(): HasMany
+    {
+        return $this->hasMany(ImplementationCharge::class)->orderBy('installment_number');
+    }
+
+    /** Já existe alguma parcela de implantação não cancelada? */
+    public function hasActiveImplementationCharge(): bool
+    {
+        return $this->implementationCharges()->where('status', '!=', ImplementationCharge::CANCELADO)->exists();
     }
 }

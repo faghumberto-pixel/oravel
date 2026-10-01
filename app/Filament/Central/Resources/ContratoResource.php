@@ -152,6 +152,19 @@ class ContratoResource extends Resource
                         ->prefix('R$')
                         ->required(),
 
+                    Forms\Components\TextInput::make('implementation_fee')
+                        ->label('Taxa de Implantação (cobrança única)')
+                        ->helperText('Cobrada uma única vez, via Asaas, quando o cliente é cadastrado. Deixe vazio se não houver.')
+                        ->numeric()
+                        ->minValue(0)
+                        ->prefix('R$'),
+
+                    Forms\Components\Select::make('implementation_installments')
+                        ->label('Parcelas da Implantação')
+                        ->options([1 => 'À vista (1x)', 2 => 'Em 2 vezes'])
+                        ->default(1)
+                        ->native(false),
+
                     Forms\Components\Select::make('billing_cycle')
                         ->label('Ciclo de Cobrança')
                         ->options([

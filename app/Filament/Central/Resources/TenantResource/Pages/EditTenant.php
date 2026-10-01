@@ -29,6 +29,21 @@ class EditTenant extends EditRecord
                         default => Notification::make()->title('Falha ao sincronizar com a Asaas')->body('Veja os logs da aplicação para detalhes.')->danger()->send(),
                     };
                 }),
+            Actions\Action::make('charge_implementation')
+                ->label('Cobrar implantação')
+                ->icon('heroicon-o-banknotes')
+                ->color('warning')
+                ->visible(fn () => $this->record->implementationAmount() > 0 && ! $this->record->hasActiveImplementationCharge())
+                ->requiresConfirmation()
+                ->modalDescription(fn () => 'Gera '.($this->record->implementationInstallments() === 1 ? 'uma cobrança única' : $this->record->implementationInstallments().' cobranças (parcelas)').' de implantação na Asaas para '.$this->record->name.', totalizando R$ '.number_format($this->record->implementationAmount(), 2, ',', '.').'.')
+                ->action(function () {
+                    $urls = app(AsaasService::class)->chargeTenantImplementation($this->record);
+                    $this->record->refresh();
+
+                    $urls
+                        ? Notification::make()->title('Cobrança de implantação gerada')->body(implode("\n", $urls))->success()->persistent()->send()
+                        : Notification::make()->title('Não foi possível gerar a cobrança')->body('Confira se o tenant está sincronizado com a Asaas (CPF/CNPJ) e se há valor de implantação. Veja os logs para detalhes.')->danger()->send();
+                }),
             Actions\DeleteAction::make(),
         ];
     }

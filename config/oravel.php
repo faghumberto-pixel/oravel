@@ -50,6 +50,25 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Dados da Oravel como CONTRATADA (Contrato de Assinatura)
+    |--------------------------------------------------------------------------
+    | Qualificação da Oravel nas cláusulas do contrato (razão social, CNPJ e
+    | endereço da sede). Definidos via .env pra não ficarem escritos no código;
+    | enquanto vazios, o contrato sai só com o nome "Oravel" e um aviso de
+    | preenchimento pendente no preâmbulo -- NUNCA inventar esses dados.
+    | 'data_export_days' = prazo, após o término do contrato, em que o
+    | Contratante ainda pode solicitar a exportação dos seus dados.
+    */
+
+    'company' => [
+        'legal_name' => env('ORAVEL_LEGAL_NAME'),
+        'cnpj' => env('ORAVEL_CNPJ'),
+        'address' => env('ORAVEL_ADDRESS'),
+        'data_export_days' => (int) env('ORAVEL_DATA_EXPORT_DAYS', 30),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Bloqueio por inadimplência
     |--------------------------------------------------------------------------
     | Dias corridos de atraso (Tenant.asaas_overdue_since) tolerados antes de

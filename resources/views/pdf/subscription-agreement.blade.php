@@ -103,6 +103,14 @@
                     } }}</span>
                 </td>
             </tr>
+            @if ($contract->implementationAmount() > 0)
+                <tr>
+                    <td colspan="2">
+                        <span class="label">Taxa de implantação (cobrança única)</span>
+                        <span class="value">R$ {{ number_format($contract->implementationAmount(), 2, ',', '.') }}{{ $contract->implementationInstallments() > 1 ? ' em '.$contract->implementationInstallments().'x' : ' à vista' }}</span>
+                    </td>
+                </tr>
+            @endif
         </table>
 
         <div style="margin-top:12px;">
