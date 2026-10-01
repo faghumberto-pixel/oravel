@@ -67,9 +67,12 @@
 <div class="clause">
     <span class="clause-title">2. Vigência, preço e forma de pagamento.</span>
     O contrato vigora por prazo indeterminado e a assinatura é renovada automaticamente a
-    cada ciclo de cobrança indicado acima, até que o Contratante solicite o cancelamento. A
-    cobrança é emitida via Asaas, pelos meios de pagamento por ela disponibilizados (cartão de
-    crédito, Pix ou boleto, conforme o caso).
+    cada ciclo de cobrança indicado acima, até que o Contratante solicite o cancelamento. @if ($contract->paymentMethod() === 'boleto_pix')
+        A cobrança é emitida todo mês via Asaas, por boleto ou Pix à escolha do Contratante, e enviada ao e-mail de contato
+        cadastrado.
+    @else
+        A cobrança é recorrente e automática, no cartão de crédito, via Asaas.
+    @endif
     @if ($contract->isImplementationSummed())
         Além da mensalidade, será cobrada uma taxa única de implantação de
         {{ $moneyFmt($contract->implementationAmount()) }}, não recorrente, somada às primeiras

@@ -583,6 +583,86 @@ class AsaasService
     }
 
     /**
+     * Mensalidade por BOLETO/PIX (forma de pagamento "boleto_pix" do contrato): cria a
+     * assinatura mensal no Asaas (billingType UNDEFINED = o cliente escolhe boleto, Pix ou
+     * cartão no link; o Asaas manda cada cobrança por e-mail) e devolve o link da 1ª
+     * cobrança. Substitui o checkout de cartão, que não aceita Pix nem boleto. Idempotente
+     * (o link de recuperação reaproveita a assinatura). Nunca lança.
+     */
+    public function createTenantBoletoPixSubscription(Tenant $tenant): ?string
+    {
+        if (blank($this->apiKey) || blank($tenant->cpf_cnpj) || (float) $tenant->mrr_value <= 0) {
+            Log::info('AsaasService: assinatura boleto/Pix não criada (sem chave, CPF/CNPJ ou MRR).', ['tenant_id' => $tenant->id]);
+
+            return null;
+        }
+
+        if (filled($tenant->asaas_subscription_id)) {
+            return $this->firstInvoiceUrlWithRetry($tenant->asaas_subscription_id);
+        }
+
+        if (blank($tenant->asaas_customer_id)) {
+            $this->syncTenantCustomer($tenant);
+            $tenant->refresh();
+        }
+
+        if (blank($tenant->asaas_customer_id)) {
+            return null;
+        }
+
+        $summed = $tenant->isImplementationSummed();
+        $value = $summed ? $tenant->summedCycleAmounts()[0] : (float) $tenant->mrr_value;
+        $dueDate = now()->addDays((int) config('oravel.boleto_first_due_days', 3))->toDateString();
+
+        try {
+            $subscription = $this->createSubscription([
+                'customer' => $tenant->asaas_customer_id,
+                'billingType' => 'UNDEFINED',
+                'value' => $value,
+                'nextDueDate' => $dueDate,
+                'cycle' => $this->mapBillingCycle($tenant->plan?->billing_cycle),
+                'description' => 'Assinatura Oravel — '.($tenant->nome_fantasia ?: $tenant->name).($summed ? ' (com implantação 1/'.$tenant->implementationInstallments().')' : ''),
+                'externalReference' => 'assinatura-boleto-pix:'.$tenant->id,
+            ]);
+        } catch (\Throwable $e) {
+            Log::warning('AsaasService: falha ao criar assinatura boleto/Pix.', ['tenant_id' => $tenant->id, 'error' => $e->getMessage()]);
+
+            return null;
+        }
+
+        $tenant->update(['asaas_subscription_id' => $subscription['id'] ?? null, 'asaas_status' => 'synced', 'asaas_synced_at' => now()]);
+
+        if ($summed) {
+            $this->planSummedImplementationInstallments($tenant);
+        }
+
+        TenantTimeline::record(
+            $tenant,
+            TenantEvent::ASSINATURA_CRIADA,
+            'Assinatura mensal criada (boleto/Pix)',
+            'R$ '.number_format($value, 2, ',', '.').' por mês; 1ª cobrança vence em '.Carbon::parse($dueDate)->format('d/m/Y').'. O cliente escolhe boleto, Pix ou cartão.',
+            ['subscription_id' => $subscription['id'] ?? null],
+            'assinatura-criada:'.($subscription['id'] ?? uniqid()),
+        );
+
+        return $this->firstInvoiceUrlWithRetry((string) ($subscription['id'] ?? ''));
+    }
+
+    /** A 1ª cobrança da assinatura é gerada de forma assíncrona: tenta algumas vezes antes de desistir. */
+    private function firstInvoiceUrlWithRetry(string $subscriptionId): ?string
+    {
+        for ($attempt = 0; $attempt < 3; $attempt++) {
+            if ($url = $this->getFirstInvoiceUrl($subscriptionId)) {
+                return $url;
+            }
+
+            usleep(600000);
+        }
+
+        return null;
+    }
+
+    /**
      * Plan.billing_cycle é string livre no banco (sem enum), sempre visto
      * como 'monthly' nos dados existentes -- a Asaas exige um dos valores
      * fixos em maiúsculo (WEEKLY/BIWEEKLY/MONTHLY/BIMONTHLY/QUARTERLY/

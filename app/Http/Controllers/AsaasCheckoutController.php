@@ -195,7 +195,11 @@ class AsaasCheckoutController extends Controller
         }
 
         $tenant->refresh();
-        $checkoutUrl = $asaas->createTenantCheckout($tenant);
+        // Forma de pagamento definida no contrato: cartão = checkout recorrente automático;
+        // boleto/Pix = assinatura mensal (cliente escolhe boleto, Pix ou cartão no link).
+        $checkoutUrl = $tenant->paymentMethod() === 'boleto_pix'
+            ? $asaas->createTenantBoletoPixSubscription($tenant)
+            : $asaas->createTenantCheckout($tenant);
 
         if ($checkoutUrl) {
             // Sem login algum -- o checkout abre fora do domínio Oravel,

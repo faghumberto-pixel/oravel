@@ -105,4 +105,17 @@ class SiteTrackingCollectorTest extends TestCase
         $this->assertSame(0, WebVisit::count());
         $this->assertSame(0, WebPageview::count());
     }
+
+    public function test_prune_removes_only_visits_older_than_thirteen_months(): void
+    {
+        $old = WebVisit::create(['visitor_token' => 'v-old', 'session_token' => 's-old', 'started_at' => now()->subMonths(14), 'page_views' => 1]);
+        WebPageview::create(['web_visit_id' => $old->id, 'page_token' => 'p-old', 'path' => '/', 'entered_at' => now()->subMonths(14)]);
+        $recent = WebVisit::create(['visitor_token' => 'v-new', 'session_token' => 's-new', 'started_at' => now()->subMonths(2), 'page_views' => 1]);
+
+        $this->artisan('web-analytics:prune')->assertSuccessful();
+
+        $this->assertNull(WebVisit::find($old->id));
+        $this->assertSame(0, WebPageview::where('page_token', 'p-old')->count());
+        $this->assertNotNull(WebVisit::find($recent->id));
+    }
 }

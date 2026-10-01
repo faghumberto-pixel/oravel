@@ -55,6 +55,11 @@ class TenantResource extends Resource
                     ->options(['separada' => 'Cobrança separada (avulsa)', 'somada' => 'Somada à mensalidade'])
                     ->placeholder('Usar o do contrato')
                     ->native(false),
+                Forms\Components\Select::make('payment_method')
+                    ->label('Forma de pagamento da mensalidade')
+                    ->options(['cartao' => 'Cartão de crédito (recorrente automático)', 'boleto_pix' => 'Boleto ou Pix todo mês (enviado por e-mail)'])
+                    ->placeholder('Usar a do contrato')
+                    ->native(false),
                 Forms\Components\Placeholder::make('implementation_status_info')
                     ->label('Cobranças de implantação')
                     ->content(function (?Tenant $record) {

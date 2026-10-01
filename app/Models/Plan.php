@@ -14,7 +14,7 @@ class Plan extends Model
     protected $table = 'plans';
 
     protected $fillable = [
-        'name', 'price', 'level', 'base_price', 'discount_value', 'discount_type', 'final_price', 'implementation_fee', 'implementation_installments', 'implementation_billing_mode', 'billing_cycle', 'campaign_tag', 'features', 'is_active',
+        'name', 'price', 'level', 'base_price', 'discount_value', 'discount_type', 'final_price', 'implementation_fee', 'implementation_installments', 'implementation_billing_mode', 'payment_method', 'billing_cycle', 'campaign_tag', 'features', 'is_active',
     ];
 
     protected $casts = [

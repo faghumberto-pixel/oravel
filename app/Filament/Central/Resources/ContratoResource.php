@@ -172,6 +172,12 @@ class ContratoResource extends Resource
                         ->default('separada')
                         ->native(false),
 
+                    Forms\Components\Select::make('payment_method')
+                        ->label('Forma de pagamento da mensalidade')
+                        ->options(['cartao' => 'Cartão de crédito (recorrente automático)', 'boleto_pix' => 'Boleto ou Pix todo mês (enviado por e-mail)'])
+                        ->default('cartao')
+                        ->native(false),
+
                     Forms\Components\Select::make('billing_cycle')
                         ->label('Ciclo de Cobrança')
                         ->options([

@@ -116,6 +116,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Mensalidade por boleto/Pix
+    |--------------------------------------------------------------------------
+    | Dias entre a assinatura do contrato e o vencimento da 1ª cobrança (boleto/Pix).
+    */
+
+    'boleto_first_due_days' => (int) env('ORAVEL_BOLETO_FIRST_DUE_DAYS', 3),
+
+    /*
+    |--------------------------------------------------------------------------
     | Bloqueio por inadimplência
     |--------------------------------------------------------------------------
     | Dias corridos de atraso (Tenant.asaas_overdue_since) tolerados antes de

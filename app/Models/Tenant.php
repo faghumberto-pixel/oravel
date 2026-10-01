@@ -102,6 +102,7 @@ class Tenant extends Model
         'implementation_fee',
         'implementation_installments',
         'implementation_billing_mode',
+        'payment_method',
         'subscription_reverted_to_base_at',
         'razao_social',
         'nome_fantasia',
@@ -379,6 +380,12 @@ class Tenant extends Model
         $amounts[$count - 1] = round($total - $base * ($count - 1), 2);
 
         return $amounts;
+    }
+
+    /** 'cartao' (checkout recorrente automático) ou 'boleto_pix' (assinatura mensal por boleto/Pix). */
+    public function paymentMethod(): string
+    {
+        return ($this->payment_method ?? $this->plan?->payment_method ?? 'cartao') === 'boleto_pix' ? 'boleto_pix' : 'cartao';
     }
 
     /** 'separada' (cobranças avulsas) ou 'somada' (parcelas somadas às primeiras mensalidades). */
