@@ -5,10 +5,12 @@ use App\Http\Middleware\RedirectGuestToChatLogin;
 use App\Http\Middleware\RedirectTechnicianFromDashboard;
 use App\Http\Middleware\TrackSiteVisit;
 use App\Http\Middleware\UpdateUserLastSeen;
+use App\Support\CloudflareProxies;
 use Illuminate\Auth\AuthServiceProvider;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -19,6 +21,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // IP real do visitante atrás do Cloudflare: só confia no X-Forwarded-For
+        // quando a conexão vem de uma faixa do Cloudflare (ver CloudflareProxies).
+        // Só o cabeçalho FOR é confiado, de propósito: esquema/host/porta ficam
+        // como estavam, sem mudar a geração de URLs.
+        $middleware->trustProxies(
+            at: CloudflareProxies::RANGES,
+            headers: Request::HEADER_X_FORWARDED_FOR,
+        );
+
         // Sem isso, `auth:sanctum` nas rotas de sync offline (time-clocks,
         // hour-meters) nunca autentica via cookie de sessão do painel --
         // só aceitaria um token Bearer de verdade, que o JS mobile nunca
