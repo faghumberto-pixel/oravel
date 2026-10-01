@@ -344,6 +344,19 @@ class AsaasWebhookController extends Controller
             return;
         }
 
+        // Checkout cancelado/expirado NÃO pode derrubar quem já tem outra forma de pagamento ativa
+        // (assinatura boleto/Pix) ou cujo checkout atual é outro: o Asaas guarda esse
+        // aviso e entrega tarde (incidente Topmixx, 02/10/2026: bloqueou o acesso de quem tinha pago).
+        if ($newStatus === Tenant::PAYMENT_STATUS_CANCELADO) {
+            $currentCheckout = filled($tenant->asaas_checkout_id) && filled($checkoutId) && $tenant->asaas_checkout_id !== $checkoutId;
+
+            if (filled($tenant->asaas_subscription_id) || $currentCheckout) {
+                TenantTimeline::record($tenant, TenantEvent::CHECKOUT_CANCELADO, 'Checkout antigo expirou (sem efeito)', 'O cliente já tem outra forma de pagamento; o status de pagamento e o acesso não foram alterados.', ['checkout_id' => $checkoutId, 'event' => $event], 'checkout-antigo:'.$checkoutId.':'.$event);
+
+                return;
+            }
+        }
+
         $updates = [
             'asaas_payment_status' => $newStatus,
             'asaas_payment_updated_at' => now(),
@@ -362,7 +375,7 @@ class AsaasWebhookController extends Controller
 
         $tenant->update($updates);
 
-        $checkoutId = (string) ($checkout['id'] ?? uniqid());
+        $checkoutId = (string) ($checkoutId ?? uniqid());
 
         // Checkout pago por quem JÁ tem outra assinatura mensal = mensalidade em dobro: alerta alto.
         if ($newStatus === Tenant::PAYMENT_STATUS_EM_DIA && filled($tenant->asaas_subscription_id) && ($checkout['subscription'] ?? null) !== $tenant->asaas_subscription_id) {

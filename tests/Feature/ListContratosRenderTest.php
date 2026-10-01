@@ -34,5 +34,9 @@ class ListContratosRenderTest extends TestCase
         ]);
 
         Livewire::test(ListContratos::class)->assertOk();
+
+        // Coluna de módulos conta os ligados (era sempre "0 de N").
+        Plan::create(['name' => 'Plano Dois Modulos', 'price' => 1, 'base_price' => 1, 'level' => 1, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => ['tabela_assets' => true, 'tabela_clients' => true, 'tabela_suppliers' => false]]);
+        Livewire::test(ListContratos::class)->assertSee('2 de');
     }
 }

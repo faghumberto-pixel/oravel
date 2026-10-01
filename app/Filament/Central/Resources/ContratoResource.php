@@ -301,25 +301,12 @@ class ContratoResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('features')
                     ->label('Módulos')
-                    ->formatStateUsing(function ($state) {
-                        // Bug real achado em PROD 2026-09-23 (500 na lista
-                        // assim que existia um Contrato de verdade): apesar
-                        // de Plan::features() ser um Attribute cast que
-                        // sempre devolve array, o Filament às vezes resolve
-                        // o estado desta coluna a partir do valor BRUTO da
-                        // coluna (string JSON), não do atributo já
-                        // acessado -- mesmo tratamento defensivo que o
-                        // próprio accessor do model já faz.
-                        if (is_string($state)) {
-                            $state = json_decode($state, true) ?? [];
-                        }
-
-                        // Conta só os módulos de fato marcados -- desde que
-                        // saas:sync-modules passou a adicionar todo módulo
-                        // novo como 'false' (fix 2026-09-24), count($state)
-                        // sozinho contava também os desmarcados, inflando o
-                        // número (ex: 89 em vez dos 43 realmente incluídos).
-                        $selected = collect($state ?? [])->filter(fn ($v) => $v === true)->count();
+                    // Calculado pelo registro: o estado que o Filament entrega a esta coluna (array)
+                    // chegava sem os booleanos e mostrava sempre "0 de N" (visto em PROD, 02/10/2026).
+                    ->getStateUsing(function (Plan $record) {
+                        $selected = collect($record->features ?? [])
+                            ->filter(fn ($v) => $v === true || $v === 1 || $v === '1' || $v === 'true')
+                            ->count();
 
                         return "{$selected} de ".static::totalAvailableModulesCount().' selecionado(s)';
                     }),

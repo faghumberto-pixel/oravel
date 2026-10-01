@@ -133,4 +133,31 @@ class BoletoPixPaymentMethodTest extends TestCase
         $this->assertTrue(app(AsaasService::class)->cancelCheckout('chk_x'));
         Http::assertSent(fn (Request $r) => $r->method() === 'POST' && str_ends_with($r->url(), '/checkouts/chk_x/cancel'));
     }
+
+    public function test_an_expired_old_checkout_never_blocks_a_tenant_that_has_another_payment_route(): void
+    {
+        // Incidente Topmixx (02/10/2026): o CHECKOUT_EXPIRED do checkout antigo chegou horas depois e
+        // marcou "cancelado", bloqueando o acesso de quem já tinha pago e tinha assinatura boleto/Pix.
+        config(['services.asaas.webhook_token' => 'tok']);
+        $tenant = $this->tenant('boleto_pix');
+        $tenant->update(['asaas_subscription_id' => 'sub_pm', 'asaas_checkout_id' => 'chk_antigo']);
+
+        $this->postJson('/api/webhooks/asaas', ['event' => 'CHECKOUT_EXPIRED', 'checkout' => ['id' => 'chk_antigo', 'externalReference' => $tenant->id]], ['asaas-access-token' => 'tok'])->assertOk();
+
+        $tenant->refresh();
+        $this->assertNull($tenant->asaas_payment_status);
+        $this->assertFalse($tenant->isAccessBlockedForNonPayment());
+        $this->assertTrue(TenantEvent::withoutGlobalScopes()->where('tenant_id', $tenant->id)->where('title', 'Checkout antigo expirou (sem efeito)')->exists());
+    }
+
+    public function test_an_expired_checkout_still_cancels_a_card_tenant_with_no_other_route(): void
+    {
+        config(['services.asaas.webhook_token' => 'tok']);
+        $tenant = $this->tenant('cartao');
+        $tenant->update(['asaas_checkout_id' => 'chk_unico']);
+
+        $this->postJson('/api/webhooks/asaas', ['event' => 'CHECKOUT_EXPIRED', 'checkout' => ['id' => 'chk_unico', 'externalReference' => $tenant->id]], ['asaas-access-token' => 'tok'])->assertOk();
+
+        $this->assertSame('cancelado', $tenant->refresh()->asaas_payment_status);
+    }
 }
