@@ -150,7 +150,7 @@ class TenantImplementationChargeTest extends TestCase
 
         app(AsaasService::class)->syncTenantCustomer($tenant->refresh());
 
-        Http::assertSent(fn ($r) => str_contains($r->url(), '/customers')
+        Http::assertSent(fn ($r) => $r->method() === 'POST' && str_ends_with($r->url(), '/customers')
             && $r['name'] === 'Topmixx Auto Pecas LTDA' && $r['email'] === 'cliente@topmixx.com.br');
         $this->assertSame('cus_novo', $tenant->refresh()->asaas_customer_id);
     }

@@ -22,7 +22,7 @@ class LivewireSessionRecoveryTest extends TestCase
         foreach (['/admin/login', '/central/login'] as $url) {
             $this->get($url)->assertOk()
                 ->assertSee("window.Livewire.hook('request'", false)
-                ->assertSee('Sua sessão expirou', false);
+                ->assertSee('A página perdeu a conexão', false);
         }
     }
 

@@ -27,7 +27,7 @@
                     window.location.reload();
                 } else if (!window.__oravelSessionWarned) {
                     window.__oravelSessionWarned = true;
-                    alert('Sua sessão expirou ou foi encerrada em outra aba. Entre novamente para continuar.');
+                    alert('A página perdeu a conexão com o servidor (sessão encerrada ou erro). Recarregue a página; se repetir, avise o suporte.');
                 }
             });
         });

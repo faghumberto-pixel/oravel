@@ -101,6 +101,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Analytics do site institucional
+    |--------------------------------------------------------------------------
+    | Domínios (host) de onde o coletor /api/site-track aceita eventos -- o
+    | próprio site institucional. Qualquer outra origem é ignorada em silêncio.
+    */
+
+    'site_tracking' => [
+        'allowed_hosts' => array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) env('SITE_TRACKING_HOSTS', 'oravel.com.br,www.oravel.com.br'))
+        ))),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Bloqueio por inadimplência
     |--------------------------------------------------------------------------
     | Dias corridos de atraso (Tenant.asaas_overdue_since) tolerados antes de

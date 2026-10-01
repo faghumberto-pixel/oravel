@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\HourMeterSyncController;
 use App\Http\Controllers\Api\V1\TimeClockSyncController;
 use App\Http\Controllers\AsaasWebhookController;
 use App\Http\Controllers\InboundLeadController;
+use App\Http\Controllers\SiteTrackingController;
 use App\Http\Controllers\WhatsAppWebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,16 @@ Route::get('/health', function () {
  * do Asaas -- token estático, não HMAC).
  */
 Route::post('/webhooks/asaas', [AsaasWebhookController::class, 'handle'])->name('asaas.webhook');
+
+/*
+ * Analytics do site institucional (oravel.com.br): recebe os eventos do script
+ * public/t.js. Público de propósito (quem chama é o navegador do visitante do
+ * site); só aceita Origin do próprio site e responde sempre 204 (ver
+ * SiteTrackingController). Limite por IP contra abuso.
+ */
+Route::post('/site-track', [SiteTrackingController::class, 'collect'])
+    ->middleware('throttle:240,1')
+    ->name('site-track');
 
 /*
  * Webhook do atendente virtual de WhatsApp (Meta Cloud API) -- atendimento

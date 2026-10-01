@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\ImplementationCharge;
 use App\Models\Tenant;
 use App\Models\TenantEvent;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -58,6 +59,7 @@ class AsaasService
         if (filled($tenant->asaas_customer_id)) {
             Log::info('AsaasService: tenant já tem customer na Asaas, reaproveitado.', ['tenant_id' => $tenant->id, 'customer' => $tenant->asaas_customer_id]);
             $tenant->update(['asaas_status' => 'synced']);
+            $this->syncCustomerContact($tenant);
 
             return;
         }
@@ -80,6 +82,10 @@ class AsaasService
             'asaas_status' => 'synced',
             'asaas_synced_at' => now(),
         ]);
+
+        // Cliente criado com e-mail: já liga os avisos por e-mail (o Asaas cria os
+        // avisos DESLIGADOS e colocar o e-mail depois não os liga sozinho).
+        $this->enableCustomerEmailNotifications((string) ($customer['id'] ?? ''), $tenant->email_contato);
 
         // NÃO cria assinatura aqui: a mensalidade é criada pelo Checkout
         // (createTenantCheckout(), depois que o cliente assina o contrato).
@@ -397,7 +403,7 @@ class AsaasService
                 $tenant,
                 TenantEvent::IMPLANTACAO_COBRADA,
                 "Implantação cobrada{$label}",
-                'R$ '.number_format($installmentAmount, 2, ',', '.').' com vencimento em '.\Carbon\Carbon::parse($dueDate)->format('d/m/Y').'.',
+                'R$ '.number_format($installmentAmount, 2, ',', '.').' com vencimento em '.Carbon::parse($dueDate)->format('d/m/Y').'.',
                 properties: ['payment_id' => $payment['id'] ?? null, 'invoice_url' => $payment['invoiceUrl'] ?? null],
                 dedupeKey: 'implantacao-cobrada:'.($payment['id'] ?? uniqid()),
             );
@@ -508,6 +514,72 @@ class AsaasService
 
             return false;
         }
+    }
+
+    /** Eventos de aviso por e-mail ao cliente que o sistema liga (PAYMENT_UPDATED fica de fora de propósito: ruído). */
+    private const CUSTOMER_EMAIL_EVENTS = ['PAYMENT_CREATED', 'PAYMENT_OVERDUE', 'PAYMENT_RECEIVED', 'SEND_LINHA_DIGITAVEL'];
+
+    /**
+     * Liga os avisos por e-mail ao CLIENTE no Asaas (cobrança criada, vencida,
+     * recebida e linha digitável). Sem e-mail não há o que ligar. Nunca lança.
+     */
+    public function enableCustomerEmailNotifications(string $customerId, ?string $email): bool
+    {
+        if (blank($this->apiKey) || blank($customerId) || blank($email)) {
+            return false;
+        }
+
+        try {
+            $http = Http::withHeaders(['access_token' => $this->apiKey]);
+            $list = $http->get("{$this->baseUrl}/customers/{$customerId}/notifications");
+
+            if ($list->failed()) {
+                return false;
+            }
+
+            foreach ($list->json('data') ?? [] as $notification) {
+                if (! in_array($notification['event'] ?? null, self::CUSTOMER_EMAIL_EVENTS, true) || ($notification['emailEnabledForCustomer'] ?? false) === true) {
+                    continue;
+                }
+
+                $http->put("{$this->baseUrl}/notifications/{$notification['id']}", [
+                    'enabled' => true,
+                    'emailEnabledForCustomer' => true,
+                    'smsEnabledForCustomer' => false,
+                    'phoneCallEnabledForCustomer' => false,
+                    'whatsappEnabledForCustomer' => false,
+                ]);
+            }
+
+            return true;
+        } catch (\Throwable $e) {
+            Log::warning('AsaasService: falha ao ligar avisos por e-mail do cliente.', ['customer' => $customerId, 'error' => $e->getMessage()]);
+
+            return false;
+        }
+    }
+
+    /**
+     * Mantém o e-mail do cliente no Asaas igual ao e-mail de contato da empresa
+     * e garante os avisos por e-mail ligados. Chamado ao sincronizar e quando o
+     * e-mail de contato muda. Nunca lança.
+     */
+    public function syncCustomerContact(Tenant $tenant): void
+    {
+        if (blank($this->apiKey) || blank($tenant->asaas_customer_id) || blank($tenant->email_contato)) {
+            return;
+        }
+
+        try {
+            Http::withHeaders(['access_token' => $this->apiKey])
+                ->put("{$this->baseUrl}/customers/{$tenant->asaas_customer_id}", ['email' => $tenant->email_contato]);
+        } catch (\Throwable $e) {
+            Log::warning('AsaasService: falha ao atualizar e-mail do cliente.', ['tenant_id' => $tenant->id, 'error' => $e->getMessage()]);
+
+            return;
+        }
+
+        $this->enableCustomerEmailNotifications($tenant->asaas_customer_id, $tenant->email_contato);
     }
 
     /**

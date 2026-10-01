@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Central\Pages\DashboardCrm;
 use App\Filament\Central\Pages\DashboardSaaS;
+use App\Filament\Central\Pages\DashboardSiteInstitucional;
 use App\Filament\Central\Pages\DashboardVisitantes;
 use App\Filament\Central\Pages\FunilVendas;
 use App\Filament\Central\Pages\Kanban;
@@ -19,6 +20,12 @@ use App\Filament\Central\Resources\SalesLeadResource\Widgets\SalesLeadListStats;
 use App\Filament\Central\Resources\SignatureResource;
 use App\Filament\Central\Resources\TenantComplianceResource;
 use App\Filament\Central\Widgets\AcquisitionChannelChart;
+use App\Filament\Central\Widgets\ImplementationStats;
+use App\Filament\Central\Widgets\Site\SiteClicksTable;
+use App\Filament\Central\Widgets\Site\SiteSourcesTable;
+use App\Filament\Central\Widgets\Site\SiteStatsOverview;
+use App\Filament\Central\Widgets\Site\SiteTopPagesTable;
+use App\Filament\Central\Widgets\Site\SiteVisitsChart;
 use App\Filament\Central\Widgets\ArrChart;
 use App\Filament\Central\Widgets\ChurnChart;
 use App\Filament\Central\Widgets\EngagementChart;
@@ -143,6 +150,7 @@ class CentralPanelProvider extends PanelProvider
                 // comercial numa pagina so'.
                 DashboardSaaS::class,
                 DashboardVisitantes::class,
+                DashboardSiteInstitucional::class,
                 DashboardCrm::class,
                 FunilVendas::class,
                 Kanban::class,
@@ -176,6 +184,16 @@ class CentralPanelProvider extends PanelProvider
                 EngagementChart::class,
                 TopReferrersChart::class,
                 AcquisitionChannelChart::class,
+                // Registrar AQUI é o que dá alias Livewire correto ao widget: sem isso,
+                // todo pedido do Livewire a ele falha (ComponentNotFoundException
+                // disfarçada de "page expired"/419) -- foi a causa da janela
+                // "This page has expired" em Implantações (2026-10-01).
+                ImplementationStats::class,
+                SiteStatsOverview::class,
+                SiteVisitsChart::class,
+                SiteTopPagesTable::class,
+                SiteSourcesTable::class,
+                SiteClicksTable::class,
             ])
             ->databaseNotifications()
             ->databaseNotificationsPolling('8s')

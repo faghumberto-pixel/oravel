@@ -43,6 +43,8 @@ class TenantEvent extends Model
 
     public const ACESSO_LIBERADO = 'acesso_liberado';
 
+    public const ASSINATURA_CRIADA = 'assinatura_criada';
+
     public const ANOTACAO = 'anotacao';
 
     protected $fillable = [
@@ -70,6 +72,7 @@ class TenantEvent extends Model
             self::IMPLANTACAO_ATRASADA => ['label' => 'Implantação atrasada', 'color' => 'danger'],
             self::IMPLANTACAO_CANCELADA => ['label' => 'Implantação cancelada', 'color' => 'gray'],
             self::ACESSO_LIBERADO => ['label' => 'Acesso liberado', 'color' => 'success'],
+            self::ASSINATURA_CRIADA => ['label' => 'Assinatura mensal criada', 'color' => 'info'],
             self::ANOTACAO => ['label' => 'Anotação', 'color' => 'warning'],
         ];
     }

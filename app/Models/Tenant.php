@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasSignatures;
+use App\Services\AsaasService;
+use App\Services\TenantTimeline;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -35,9 +37,9 @@ class Tenant extends Model
     {
         // Histórico do cliente (linha do tempo da Central).
         static::created(function (Tenant $tenant) {
-            \App\Services\TenantTimeline::record(
+            TenantTimeline::record(
                 $tenant,
-                \App\Models\TenantEvent::CLIENTE_CADASTRADO,
+                TenantEvent::CLIENTE_CADASTRADO,
                 'Cliente cadastrado',
                 $tenant->name.($tenant->cpf_cnpj ? ' — '.$tenant->cpf_cnpj : ''),
                 dedupeKey: 'cadastro',
@@ -45,13 +47,17 @@ class Tenant extends Model
         });
 
         static::updated(function (Tenant $tenant) {
+            if ($tenant->wasChanged('email_contato') && filled($tenant->asaas_customer_id)) {
+                app(AsaasService::class)->syncCustomerContact($tenant);
+            }
+
             if ($tenant->wasChanged('plan_id')) {
                 $old = Plan::withoutGlobalScopes()->find($tenant->getOriginal('plan_id'))?->name ?? '—';
                 $new = $tenant->plan?->name ?? '—';
 
-                \App\Services\TenantTimeline::record(
+                TenantTimeline::record(
                     $tenant,
-                    \App\Models\TenantEvent::CONTRATO_ALTERADO,
+                    TenantEvent::CONTRATO_ALTERADO,
                     'Contrato alterado',
                     "De \"{$old}\" para \"{$new}\".",
                 );
