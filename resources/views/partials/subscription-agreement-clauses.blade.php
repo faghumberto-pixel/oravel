@@ -89,7 +89,9 @@
         @if ($contract->implementationInstallments() > 1)
             dividida em {{ $contract->implementationInstallments() }} parcelas
             ({{ collect($contract->implementationInstallmentAmounts())->map($moneyFmt)->implode(' e ') }}),
-            a primeira com vencimento em 7 dias e a segunda 30 dias após a primeira,
+            a primeira com vencimento imediato (na data da emissão) e a segunda 30 dias após a primeira,
+        @else
+            com vencimento imediato (na data da emissão),
         @endif
         emitida via Asaas (boleto, cartão ou Pix, à escolha do Contratante), referente à
         configuração inicial, parametrização e treinamento, conforme o Anexo I (Plano de Implantação) deste contrato. A taxa de implantação não é

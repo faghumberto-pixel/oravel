@@ -51,11 +51,22 @@ class AsaasService
             return;
         }
 
+        // Já tem cliente na Asaas: reaproveita. Criar de novo gerava um SEGUNDO
+        // cliente com o mesmo CNPJ e deixava as cobranças em outro cadastro
+        // (achado em PROD 2026-10-01, ao clicar "Sincronizar com Asaas" de novo).
+        if (filled($tenant->asaas_customer_id)) {
+            Log::info('AsaasService: tenant já tem customer na Asaas, reaproveitado.', ['tenant_id' => $tenant->id, 'customer' => $tenant->asaas_customer_id]);
+            $tenant->update(['asaas_status' => 'synced']);
+
+            return;
+        }
+
         try {
-            $customer = $this->createCustomer([
-                'name' => $tenant->name,
+            $customer = $this->createCustomer(array_filter([
+                'name' => $tenant->razao_social ?: $tenant->name,
                 'cpfCnpj' => preg_replace('/\D/', '', $tenant->cpf_cnpj),
-            ]);
+                'email' => $tenant->email_contato,
+            ], fn ($v) => filled($v)));
         } catch (\Throwable $e) {
             Log::warning('AsaasService: falha ao criar customer.', ['tenant_id' => $tenant->id, 'error' => $e->getMessage()]);
             $tenant->update(['asaas_status' => 'error']);
@@ -340,7 +351,9 @@ class AsaasService
 
         $amounts = $tenant->implementationInstallmentAmounts();
         $total = count($amounts);
-        $firstDue = now()->addDays(7);
+        // Vencimento IMEDIATO da 1ª parcela (pedido do dono do produto em
+        // 2026-10-01); a 2ª vence 30 dias depois da 1ª.
+        $firstDue = now();
 
         foreach ($amounts as $index => $installmentAmount) {
             $number = $index + 1;

@@ -57,6 +57,8 @@ class TenantImplementationChargeTest extends TestCase
         $this->assertCount(2, $charges);
         $this->assertSame(['500.00', '500.00'], $charges->pluck('amount')->all());
         $this->assertEquals(30, $charges[0]->due_date->diffInDays($charges[1]->due_date));
+        // Vencimento IMEDIATO: a 1ª parcela vence na data da emissão.
+        $this->assertSame(now()->toDateString(), $charges[0]->due_date->toDateString());
         Http::assertSent(fn ($r) => str_contains($r->url(), '/payments')
             && $r['customer'] === 'cus_impl' && str_contains($r['description'], '(1/2)'));
 
@@ -108,6 +110,7 @@ class TenantImplementationChargeTest extends TestCase
         $this->assertStringContainsString('taxa única de implantação de', $html);
         $this->assertStringContainsString('R$ 1.000,00', $html);
         $this->assertStringContainsString('dividida em 2 parcelas', $html);
+        $this->assertStringContainsString('a primeira com vencimento imediato', $html);
         $this->assertStringContainsString('R$ 500,00 e R$ 500,00', $html);
         $this->assertStringContainsString('Oravel Desenvolvimento de Software Ltda', $html);
         $this->assertStringContainsString('65.707.953/0001-30', $html);
@@ -117,5 +120,38 @@ class TenantImplementationChargeTest extends TestCase
 
         $semTaxa = view('partials.subscription-agreement-clauses', ['contract' => $this->makeTenant(null)])->render();
         $this->assertStringNotContainsString('taxa única de implantação', $semTaxa);
+    }
+
+    public function test_resyncing_a_tenant_that_already_has_an_asaas_customer_does_not_create_another(): void
+    {
+        config(['services.asaas.api_key' => 'test-key']);
+        Http::fake(['sandbox.asaas.com/*' => Http::response(['id' => 'cus_duplicado'], 200)]);
+
+        $tenant = $this->makeTenant(900);
+        $tenant->update(['cpf_cnpj' => '12.925.998/0001-14']); // asaas_customer_id = cus_impl (do makeTenant)
+
+        app(AsaasService::class)->syncTenantCustomer($tenant->refresh());
+
+        Http::assertNothingSent();
+        $this->assertSame('cus_impl', $tenant->refresh()->asaas_customer_id);
+        $this->assertSame('synced', $tenant->asaas_status);
+    }
+
+    public function test_new_asaas_customer_carries_legal_name_and_contact_email(): void
+    {
+        config(['services.asaas.api_key' => 'test-key']);
+        Http::fake(['sandbox.asaas.com/*' => Http::response(['id' => 'cus_novo'], 200)]);
+
+        $tenant = $this->makeTenant(900);
+        $tenant->update([
+            'asaas_customer_id' => null, 'cpf_cnpj' => '12.925.998/0001-14',
+            'razao_social' => 'Topmixx Auto Pecas LTDA', 'email_contato' => 'cliente@topmixx.com.br',
+        ]);
+
+        app(AsaasService::class)->syncTenantCustomer($tenant->refresh());
+
+        Http::assertSent(fn ($r) => str_contains($r->url(), '/customers')
+            && $r['name'] === 'Topmixx Auto Pecas LTDA' && $r['email'] === 'cliente@topmixx.com.br');
+        $this->assertSame('cus_novo', $tenant->refresh()->asaas_customer_id);
     }
 }
