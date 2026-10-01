@@ -11,10 +11,12 @@
     propriedade intelectual, limitação de responsabilidade, assinatura
     eletrônica e disposições gerais. Continua sendo uma minuta de apoio, NÃO
     substitui a revisão de advogado inscrito na OAB -- sinalizado nas duas
-    telas que usam este parcial. Itens de decisão COMERCIAL embutidos (e que
-    o dono do produto deve confirmar): multa de 2% + juros de 1% a.m., reajuste
-    anual pelo IPCA, teto de responsabilidade = 12 meses de mensalidade, prazo
-    de exportação de dados (config('oravel.company.data_export_days')).
+    telas que usam este parcial. Itens de decisão COMERCIAL embutidos, todos
+    CONFIRMADOS pelo dono do produto em 2026-10-01: multa de 2% + juros de 1%
+    a.m., reajuste anual pelo IPCA, teto de responsabilidade = 12 meses de
+    mensalidade, prazo de exportação de dados de 30 dias
+    (config('oravel.company.data_export_days')). Mudar qualquer um exige nova
+    confirmação dele.
     Cláusula 6 (Inadimplência) reflete o comportamento REAL do sistema (ver
     App\Models\Tenant::isAccessBlockedForNonPayment() e
     App\Http\Middleware\EnsureTenantPaymentIsCurrent) -- se o prazo de
