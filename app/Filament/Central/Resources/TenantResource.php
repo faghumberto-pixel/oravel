@@ -7,7 +7,9 @@ use App\Models\Client;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Support\CrmPalette;
+use App\Services\CnpjLookupService;
 use Filament\Forms;
+use Filament\Notifications\Notification;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -64,7 +66,37 @@ class TenantResource extends Resource
                 Forms\Components\TextInput::make('cpf_cnpj')
                     ->label('CPF/CNPJ')
                     ->helperText('Exigido pra criar a cobrança recorrente na Asaas -- sem isso, a assinatura SaaS deste tenant não é sincronizada com o gateway de pagamento.')
-                    ->maxLength(20),
+                    ->maxLength(20)
+                    ->suffixAction(
+                        Forms\Components\Actions\Action::make('lookup_cnpj')
+                            ->label('Buscar dados pelo CNPJ')
+                            ->icon('heroicon-o-magnifying-glass')
+                            ->action(function (Forms\Get $get, Forms\Set $set) {
+                                $data = app(CnpjLookupService::class)->lookup((string) $get('cpf_cnpj'));
+
+                                if (! $data) {
+                                    Notification::make()->title('CNPJ não encontrado')->body('Confira o número (14 dígitos) e tente de novo.')->warning()->send();
+
+                                    return;
+                                }
+
+                                foreach ($data as $field => $value) {
+                                    if (filled($value)) {
+                                        $set($field, $value);
+                                    }
+                                }
+
+                                Notification::make()->title('Dados preenchidos pelo CNPJ')->body('Revise antes de salvar.')->success()->send();
+                            })
+                    ),
+                Forms\Components\TextInput::make('razao_social')->label('Razão social')->maxLength(255),
+                Forms\Components\TextInput::make('nome_fantasia')->label('Nome fantasia')->maxLength(255),
+                Forms\Components\TextInput::make('natureza_juridica')->label('Natureza jurídica')->maxLength(255),
+                Forms\Components\TextInput::make('inscricao_estadual')->label('Inscrição estadual')->maxLength(30),
+                Forms\Components\TextInput::make('email_contato')->label('E-mail de contato da empresa')->email()->maxLength(255),
+                Forms\Components\TextInput::make('representante_nome')->label('Representante legal')->maxLength(255),
+                Forms\Components\TextInput::make('representante_cpf')->label('CPF do representante')->maxLength(20),
+                Forms\Components\TextInput::make('representante_cargo')->label('Cargo do representante')->maxLength(255),
                 Forms\Components\TextInput::make('telefone')
                     ->label('Telefone')
                     ->helperText('Também exigido pela Asaas pra gerar o Checkout de pagamento.')
@@ -83,6 +115,7 @@ class TenantResource extends Resource
                     Forms\Components\TextInput::make('cep')->label('CEP')->maxLength(9),
                     Forms\Components\TextInput::make('logradouro')->label('Logradouro')->maxLength(255),
                     Forms\Components\TextInput::make('numero')->label('Número')->maxLength(20),
+                    Forms\Components\TextInput::make('complemento')->label('Complemento')->maxLength(255),
                     Forms\Components\TextInput::make('bairro')->label('Bairro')->maxLength(255),
                     Forms\Components\TextInput::make('cidade')->label('Cidade')->maxLength(255),
                     Forms\Components\TextInput::make('uf')->label('UF')->maxLength(2),

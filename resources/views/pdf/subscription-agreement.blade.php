@@ -66,22 +66,16 @@
     <div class="section">
         <div class="section-title">Contratante</div>
         <table class="data-grid">
-            <tr>
-                <td style="width: 50%;">
-                    <span class="label">Empresa</span>
-                    <span class="value">{{ $contract->name }}</span>
-                </td>
-                <td style="width: 50%;">
-                    <span class="label">CNPJ / CPF</span>
-                    <span class="value">{{ $contract->cpf_cnpj ?? '—' }}</span>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <span class="label">Endereço</span>
-                    <span class="value">{{ trim(($contract->logradouro ?? '').', '.($contract->numero ?? '').' — '.($contract->bairro ?? '').', '.($contract->cidade ?? '').'/'.($contract->uf ?? ''), ', —/') ?: '—' }}</span>
-                </td>
-            </tr>
+            @foreach (collect($contract->contractPartyDetails())->chunk(2) as $row)
+                <tr>
+                    @foreach ($row as $label => $value)
+                        <td style="width: 50%;" @if ($row->count() === 1) colspan="2" @endif>
+                            <span class="label">{{ $label }}</span>
+                            <span class="value">{{ $value }}</span>
+                        </td>
+                    @endforeach
+                </tr>
+            @endforeach
         </table>
     </div>
 

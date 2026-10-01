@@ -42,14 +42,12 @@
             <div class="contract-section">
                 <div class="contract-section-title">Contratante</div>
                 <div class="contract-data-grid">
-                    <div>
-                        <span class="contract-label">Empresa</span>
-                        <span class="contract-value">{{ $document->name }}</span>
-                    </div>
-                    <div>
-                        <span class="contract-label">CNPJ / CPF</span>
-                        <span class="contract-value">{{ $document->cpf_cnpj ?? '—' }}</span>
-                    </div>
+                    @foreach ($document->contractPartyDetails() as $label => $value)
+                        <div>
+                            <span class="contract-label">{{ $label }}</span>
+                            <span class="contract-value">{{ $value }}</span>
+                        </div>
+                    @endforeach
                 </div>
             </div>
 

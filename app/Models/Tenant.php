@@ -67,6 +67,14 @@ class Tenant extends Model
         'asaas_current_invoice_url',
         'implementation_fee',
         'implementation_installments',
+        'razao_social',
+        'nome_fantasia',
+        'natureza_juridica',
+        'inscricao_estadual',
+        'email_contato',
+        'representante_nome',
+        'representante_cpf',
+        'representante_cargo',
         'segment',
         'equipment_types',
         'terms_accepted_at',
@@ -271,6 +279,37 @@ class Tenant extends Model
     public function materials(): HasMany
     {
         return $this->hasMany(Material::class);
+    }
+
+    /**
+     * Dados da empresa Contratante exibidos no Contrato de Assinatura
+     * (rótulo => valor), só os preenchidos -- usado pelo PDF e pela tela de
+     * assinatura pra nunca divergirem.
+     *
+     * @return array<string, string>
+     */
+    public function contractPartyDetails(): array
+    {
+        $address = collect([
+            trim(($this->logradouro ?? '').(filled($this->numero) ? ', '.$this->numero : '')),
+            $this->complemento,
+            $this->bairro,
+            collect([$this->cidade, $this->uf])->filter()->implode('/'),
+            filled($this->cep) ? 'CEP '.$this->cep : null,
+        ])->filter(fn ($part) => filled($part))->implode(' — ');
+
+        return array_filter([
+            'Razão social' => $this->razao_social ?: $this->name,
+            'Nome fantasia' => $this->nome_fantasia,
+            'CNPJ / CPF' => $this->cpf_cnpj,
+            'Natureza jurídica' => $this->natureza_juridica,
+            'Inscrição estadual' => $this->inscricao_estadual,
+            'Endereço' => $address,
+            'Telefone' => $this->telefone,
+            'E-mail' => $this->email_contato,
+            'Representante legal' => collect([$this->representante_nome, $this->representante_cargo])->filter()->implode(', '),
+            'CPF do representante' => $this->representante_cpf,
+        ], fn ($value) => filled($value));
     }
 
     /**
