@@ -363,6 +363,12 @@ class AsaasWebhookController extends Controller
         $tenant->update($updates);
 
         $checkoutId = (string) ($checkout['id'] ?? uniqid());
+
+        // Checkout pago por quem JÁ tem outra assinatura mensal = mensalidade em dobro: alerta alto.
+        if ($newStatus === Tenant::PAYMENT_STATUS_EM_DIA && filled($tenant->asaas_subscription_id) && ($checkout['subscription'] ?? null) !== $tenant->asaas_subscription_id) {
+            TenantTimeline::record($tenant, TenantEvent::ANOTACAO, 'ALERTA: possível cobrança em dobro', 'Um checkout de cartão foi pago, mas o cliente já tem a assinatura '.$tenant->asaas_subscription_id.'. Cancele uma delas no Asaas e estorne o excedente.', ['checkout_id' => $checkoutId], 'alerta-dobro:'.$checkoutId, true, 'danger');
+        }
+
         if ($newStatus === Tenant::PAYMENT_STATUS_EM_DIA) {
             TenantTimeline::record($tenant, TenantEvent::CHECKOUT_PAGO, 'Checkout pago', 'Pagamento da mensalidade no cartão confirmado.', ['checkout_id' => $checkoutId], 'checkout-pago:'.$checkoutId, true, 'success');
         } else {

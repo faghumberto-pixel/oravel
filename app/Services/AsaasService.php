@@ -208,6 +208,14 @@ class AsaasService
             return null;
         }
 
+        // Trava anti-cobrança em dobro: quem já tem uma assinatura mensal (ex.: boleto/Pix) não
+        // pode ganhar um 2º checkout recorrente de cartão (incidente Topmixx, 02/10/2026).
+        if (filled($tenant->asaas_subscription_id)) {
+            Log::warning('AsaasService: tenant já tem assinatura, checkout de cartão NÃO criado (evita cobrança em dobro).', ['tenant_id' => $tenant->id]);
+
+            return null;
+        }
+
         $planName = $tenant->plan?->name ?? 'Oravel';
 
         // Implantação somada à mensalidade: o 1º ciclo (cobrado no próprio
@@ -610,6 +618,11 @@ class AsaasService
             return null;
         }
 
+        // Havia um checkout de cartão pendente? Cancela antes, para o cliente não poder pagar pelos dois.
+        if (filled($tenant->asaas_checkout_id)) {
+            $this->cancelCheckout($tenant->asaas_checkout_id);
+        }
+
         $summed = $tenant->isImplementationSummed();
         $value = $summed ? $tenant->summedCycleAmounts()[0] : (float) $tenant->mrr_value;
         $dueDate = now()->addDays((int) config('oravel.boleto_first_due_days', 3))->toDateString();
@@ -646,6 +659,21 @@ class AsaasService
         );
 
         return $this->firstInvoiceUrlWithRetry((string) ($subscription['id'] ?? ''));
+    }
+
+    /**
+     * Cancela um checkout ainda ativo (POST /checkouts/{id}/cancel). Checkout já expirado/cancelado
+     * responde 400 "não está ativo" -- nesse caso não há o que cancelar. Nunca lança.
+     */
+    public function cancelCheckout(string $checkoutId): bool
+    {
+        try {
+            return Http::withHeaders(['access_token' => $this->apiKey])->post("{$this->baseUrl}/checkouts/{$checkoutId}/cancel")->successful();
+        } catch (\Throwable $e) {
+            Log::warning('AsaasService: falha ao cancelar checkout.', ['checkout_id' => $checkoutId, 'error' => $e->getMessage()]);
+
+            return false;
+        }
     }
 
     /** A 1ª cobrança da assinatura é gerada de forma assíncrona: tenta algumas vezes antes de desistir. */

@@ -197,7 +197,9 @@ class AsaasCheckoutController extends Controller
         $tenant->refresh();
         // Forma de pagamento definida no contrato: cartão = checkout recorrente automático;
         // boleto/Pix = assinatura mensal (cliente escolhe boleto, Pix ou cartão no link).
-        $checkoutUrl = $tenant->paymentMethod() === 'boleto_pix'
+        // Quem já tem assinatura mensal volta para a fatura dela (createTenantBoletoPixSubscription
+        // é idempotente) -- nunca ganha um checkout de cartão novo (cobraria a mensalidade em dobro).
+        $checkoutUrl = ($tenant->paymentMethod() === 'boleto_pix' || filled($tenant->asaas_subscription_id))
             ? $asaas->createTenantBoletoPixSubscription($tenant)
             : $asaas->createTenantCheckout($tenant);
 

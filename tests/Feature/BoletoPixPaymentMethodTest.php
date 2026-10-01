@@ -94,4 +94,43 @@ class BoletoPixPaymentMethodTest extends TestCase
         $this->assertStringNotContainsString('no cartão de crédito', $boleto);
         $this->assertStringContainsString('recorrente e automática, no cartão de crédito', $card);
     }
+
+    public function test_a_tenant_with_a_subscription_never_gets_a_second_card_checkout(): void
+    {
+        // Incidente Topmixx (02/10/2026): contrato "cartão" + assinatura boleto/Pix criada à mão;
+        // o link de recuperação criaria um checkout novo e cobraria a mensalidade em dobro.
+        $this->fakeAsaas();
+        $tenant = $this->tenant('cartao');
+        $tenant->update(['asaas_subscription_id' => 'sub_pm', 'telefone' => '7391230020', 'logradouro' => 'Av', 'numero' => '1', 'cep' => '45345-000', 'uf' => 'BA']);
+
+        $this->assertNull(app(AsaasService::class)->createTenantCheckout($tenant->refresh()));
+        Http::assertNotSent(fn (Request $r) => str_ends_with($r->url(), '/checkouts'));
+
+        $signature = DocumentSignature::create(['tenant_id' => $tenant->id, 'signable_type' => Tenant::class, 'signable_id' => $tenant->id, 'signer_name' => 'C', 'signer_email' => 'c@x.com']);
+        $signature->markAsSigned();
+
+        // Mesmo com contrato "cartão", vai para a fatura da assinatura que já existe.
+        $this->get(route('checkout.continue', ['token' => $signature->token]))->assertRedirect('https://asaas.test/i/primeira');
+        Http::assertNotSent(fn (Request $r) => str_ends_with($r->url(), '/checkouts'));
+    }
+
+    public function test_paying_a_checkout_for_a_tenant_with_another_subscription_raises_an_alert(): void
+    {
+        config(['services.asaas.webhook_token' => 'tok']);
+        $tenant = $this->tenant('cartao');
+        $tenant->update(['asaas_subscription_id' => 'sub_pm']);
+
+        $this->postJson('/api/webhooks/asaas', ['event' => 'CHECKOUT_PAID', 'checkout' => ['id' => 'chk_dobro', 'externalReference' => $tenant->id]], ['asaas-access-token' => 'tok'])->assertOk();
+
+        $this->assertTrue(TenantEvent::withoutGlobalScopes()->where('tenant_id', $tenant->id)->where('title', 'like', 'ALERTA: possível cobrança em dobro%')->exists());
+    }
+
+    public function test_cancel_checkout_calls_the_cancel_endpoint(): void
+    {
+        config(['services.asaas.api_key' => 'k']);
+        Http::fake(['*' => Http::response(['id' => 'chk_x'], 200)]);
+
+        $this->assertTrue(app(AsaasService::class)->cancelCheckout('chk_x'));
+        Http::assertSent(fn (Request $r) => $r->method() === 'POST' && str_ends_with($r->url(), '/checkouts/chk_x/cancel'));
+    }
 }
