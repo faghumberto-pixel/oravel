@@ -58,6 +58,25 @@ class DatabaseBackupResource extends Resource
                     ->formatStateUsing(fn (string $state) => $state === DatabaseBackup::STATUS_COMPLETED ? 'Concluído' : 'Falhou')
                     ->color(fn (string $state) => $state === DatabaseBackup::STATUS_COMPLETED ? 'success' : 'danger'),
 
+                Tables\Columns\TextColumn::make('kind')
+                    ->label('Tipo')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state) => match ($state) {
+                        DatabaseBackup::KIND_TENANT => 'Cliente',
+                        DatabaseBackup::KIND_PLATFORM => 'Plataforma',
+                        default => 'Geral (antigo)',
+                    })
+                    ->color(fn (?string $state) => match ($state) {
+                        DatabaseBackup::KIND_TENANT => 'success',
+                        DatabaseBackup::KIND_PLATFORM => 'info',
+                        default => 'gray',
+                    }),
+
+                Tables\Columns\TextColumn::make('rows_count')
+                    ->label('Linhas')
+                    ->formatStateUsing(fn ($state) => $state ? number_format((int) $state, 0, ',', '.') : '—')
+                    ->toggleable(),
+
                 Tables\Columns\TextColumn::make('filename')
                     ->label('Arquivo')
                     ->searchable()
@@ -70,7 +89,16 @@ class DatabaseBackupResource extends Resource
                 Tables\Columns\TextColumn::make('tenant_count')
                     ->label('Tenants Incluídos')
                     ->badge()
-                    ->color('gray'),
+                    ->color('gray')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('sha256')
+                    ->label('SHA-256')
+                    ->limit(14)
+                    ->tooltip(fn (DatabaseBackup $r) => $r->sha256)
+                    ->placeholder('—')
+                    ->copyable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('path')
                     ->label('Caminho no Servidor')
@@ -96,6 +124,14 @@ class DatabaseBackupResource extends Resource
                         );
                     }),
 
+                Tables\Filters\SelectFilter::make('kind')
+                    ->label('Tipo')
+                    ->options([
+                        DatabaseBackup::KIND_TENANT => 'Cliente',
+                        DatabaseBackup::KIND_PLATFORM => 'Plataforma',
+                        DatabaseBackup::KIND_FULL => 'Geral (antigo)',
+                    ]),
+
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Status')
                     ->options([
@@ -114,7 +150,18 @@ class DatabaseBackupResource extends Resource
                             ->when($data['until'], fn (Builder $q, $date) => $q->whereDate('created_at', '<=', $date));
                     }),
             ])
-            ->defaultSort('created_at', 'desc');
+            // Tela organizada por cliente: cada cliente é um bloco recolhível, com os backups mais novos primeiro.
+            ->groups([
+                Tables\Grouping\Group::make('client_label')
+                    ->label('Cliente')
+                    ->collapsible()
+                    ->titlePrefixedWithLabel(false)
+                    ->getTitleFromRecordUsing(fn (DatabaseBackup $r) => $r->client_label ?: 'Sem cliente definido'),
+            ])
+            ->defaultGroup('client_label')
+            ->groupingSettingsHidden()
+            ->defaultSort('created_at', 'desc')
+            ->paginated([25, 50, 100]);
     }
 
     public static function getPages(): array

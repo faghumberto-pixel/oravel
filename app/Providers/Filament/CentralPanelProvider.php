@@ -20,6 +20,7 @@ use App\Filament\Central\Resources\SalesLeadResource\Widgets\SalesLeadListStats;
 use App\Filament\Central\Resources\SignatureResource;
 use App\Filament\Central\Resources\TenantComplianceResource;
 use App\Filament\Central\Widgets\AcquisitionChannelChart;
+use App\Filament\Central\Widgets\BackupStatsOverview;
 use App\Filament\Central\Widgets\ImplementationStats;
 use App\Filament\Central\Widgets\Site\SiteClicksTable;
 use App\Filament\Central\Widgets\Site\SiteSourcesTable;
@@ -189,6 +190,7 @@ class CentralPanelProvider extends PanelProvider
                 // disfarçada de "page expired"/419) -- foi a causa da janela
                 // "This page has expired" em Implantações (2026-10-01).
                 ImplementationStats::class,
+                BackupStatsOverview::class,
                 SiteStatsOverview::class,
                 SiteVisitsChart::class,
                 SiteTopPagesTable::class,

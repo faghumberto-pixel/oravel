@@ -125,6 +125,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Backups por cliente (tenant)
+    |--------------------------------------------------------------------------
+    | Um arquivo por cliente (isolado) + um da plataforma, gerados por `backup:tenants`.
+    | 'dir' precisa ser gravável pelo usuário do PHP (www-data); 'days' = retenção.
+    */
+
+    'backups' => [
+        'dir' => env('ORAVEL_BACKUP_DIR', '/var/backups/oravel-tenants'),
+        'days' => (int) env('ORAVEL_BACKUP_DAYS', 30),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Bloqueio por inadimplência
     |--------------------------------------------------------------------------
     | Dias corridos de atraso (Tenant.asaas_overdue_since) tolerados antes de

@@ -17,7 +17,18 @@ class DatabaseBackup extends Model
 
     public const STATUS_FAILED = 'failed';
 
+    public const KIND_TENANT = 'tenant';
+
+    public const KIND_PLATFORM = 'platform';
+
+    public const KIND_FULL = 'full';
+
     protected $fillable = [
+        'client_label',
+        'tenant_id',
+        'kind',
+        'rows_count',
+        'sha256',
         'filename',
         'path',
         'size_bytes',
@@ -31,6 +42,7 @@ class DatabaseBackup extends Model
         'tenant_names' => 'array',
         'size_bytes' => 'integer',
         'tenant_count' => 'integer',
+        'rows_count' => 'integer',
     ];
 
     public function includesTenant(string $tenantName): bool
