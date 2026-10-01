@@ -54,12 +54,14 @@ class AsaasTenantSyncTest extends TestCase
             && $request['cpfCnpj'] === '12345678901');
     }
 
-    public function test_sync_customer_also_creates_subscription_when_mrr_is_set(): void
+    public function test_sync_customer_does_not_create_a_standalone_subscription(): void
     {
+        // Regressao: o cadastro criava uma assinatura avulsa E o Checkout depois
+        // criava outra -- mensalidade cobrada em duplicidade (2026-10-01).
         config(['services.asaas.api_key' => 'test-key']);
         Http::fake([
             'sandbox.asaas.com/*/customers' => Http::response(['id' => 'cus_com_mrr'], 200),
-            'sandbox.asaas.com/*/subscriptions' => Http::response(['id' => 'sub_novo456'], 200),
+            'sandbox.asaas.com/*/subscriptions' => Http::response(['id' => 'sub_nao_deveria'], 200),
         ]);
 
         $plan = Plan::create([
@@ -76,13 +78,23 @@ class AsaasTenantSyncTest extends TestCase
         app(AsaasService::class)->syncTenantCustomer($tenant);
         $tenant->refresh();
 
-        $this->assertSame('sub_novo456', $tenant->asaas_subscription_id);
+        $this->assertSame('cus_com_mrr', $tenant->asaas_customer_id);
+        $this->assertNull($tenant->asaas_subscription_id);
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), '/subscriptions'));
+    }
 
-        Http::assertSent(fn ($request) => str_contains($request->url(), '/subscriptions')
-            && $request['customer'] === 'cus_com_mrr'
-            && $request['value'] === 297.0
-            && $request['cycle'] === 'MONTHLY'
-            && $request['billingType'] === 'UNDEFINED');
+    public function test_standalone_subscription_is_refused_when_checkout_already_exists(): void
+    {
+        config(['services.asaas.api_key' => 'test-key']);
+        Http::fake(['sandbox.asaas.com/*' => Http::response(['id' => 'sub_x'], 200)]);
+
+        $tenant = $this->makeTenant('123.456.789-01');
+        $tenant->update(['mrr_value' => 297, 'asaas_customer_id' => 'cus_1', 'asaas_checkout_id' => 'chk_1']);
+
+        app(AsaasService::class)->syncTenantSubscription($tenant->refresh());
+
+        Http::assertNothingSent();
+        $this->assertNull($tenant->refresh()->asaas_subscription_id);
     }
 
     public function test_sync_subscription_is_skipped_without_mrr(): void

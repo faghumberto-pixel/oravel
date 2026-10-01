@@ -69,7 +69,13 @@ class AsaasService
             'asaas_synced_at' => now(),
         ]);
 
-        $this->syncTenantSubscription($tenant);
+        // NÃO cria assinatura aqui: a mensalidade é criada pelo Checkout
+        // (createTenantCheckout(), depois que o cliente assina o contrato).
+        // Criar também uma assinatura avulsa neste ponto gerava DUAS
+        // assinaturas para o mesmo cliente e cobrança em duplicidade da
+        // mensalidade (achado 2026-10-01, ao apontar a produção pro Asaas
+        // real). syncTenantSubscription() continua disponível, mas só roda
+        // se chamado explicitamente e se ainda não houver assinatura/checkout.
     }
 
     /**
@@ -89,6 +95,15 @@ class AsaasService
             // Sem customer sincronizado ainda, não faz sentido tentar
             // criar assinatura -- syncTenantCustomer() já cobre esse caso
             // (chama esta função só depois de confirmar o customer).
+            return;
+        }
+
+        // Trava anti-duplicidade: já tem assinatura avulsa ou Checkout (que
+        // também cria uma assinatura recorrente) -- criar outra cobraria a
+        // mensalidade duas vezes.
+        if (filled($tenant->asaas_subscription_id) || filled($tenant->asaas_checkout_id)) {
+            Log::warning('AsaasService: tenant já tem assinatura/checkout, nova assinatura não criada.', ['tenant_id' => $tenant->id]);
+
             return;
         }
 
