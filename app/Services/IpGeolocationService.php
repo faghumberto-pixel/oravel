@@ -58,7 +58,9 @@ class IpGeolocationService
 
             $result = [
                 'city' => $data['city'] ?? null,
-                'state' => $data['region'] ?? null,
+                // Limite = tamanho da coluna site_visits.state; um código
+                // maior que isso nunca pode derrubar a gravação da visita.
+                'state' => isset($data['region']) ? mb_substr((string) $data['region'], 0, 10) : null,
             ];
 
             Cache::forever($cacheKey, $result);
