@@ -55,6 +55,7 @@ class NotifyCentralOfSignedDocument
                 ->body(sprintf('%s assinou em %s.', $signature->signer_name ?: 'O signatário', $when->format('d/m/Y H:i')))
                 ->icon('heroicon-o-check-badge')
                 ->iconColor('success')
+                ->viewData(['scope' => 'central'])
                 ->success();
 
             $recipients = User::withoutGlobalScopes()

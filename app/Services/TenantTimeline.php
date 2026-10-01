@@ -90,6 +90,7 @@ class TenantTimeline
                 default => 'heroicon-o-bell',
             })
             ->iconColor($level)
+            ->viewData(['scope' => 'central']) // só aparece no sino da Central (ver ScopedDatabaseNotifications)
             ->actions([
                 Action::make('open')->label('Abrir empresa')->url(TenantResource::getUrl('edit', ['record' => $tenant], panel: 'central')),
             ]);

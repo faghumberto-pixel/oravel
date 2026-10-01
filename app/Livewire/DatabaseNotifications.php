@@ -2,7 +2,10 @@
 
 namespace App\Livewire;
 
+use Filament\Facades\Filament;
 use Filament\Notifications\Livewire\DatabaseNotifications as BaseDatabaseNotifications;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\Attributes\On;
 
 /**
@@ -21,6 +24,26 @@ use Livewire\Attributes\On;
  */
 class DatabaseNotifications extends BaseDatabaseNotifications
 {
+    /**
+     * Escopo por painel: avisos da operação (pagamento, assinatura, atraso, acesso liberado de
+     * clientes) são só da CENTRAL. O super admin também usa o app, e lá o sino não pode mostrar
+     * esses avisos (pedido do dono, 02/10/2026). Vale também para avisos antigos, sem a marca:
+     * qualquer um com link para /central/ some do app. Na Central aparece tudo.
+     */
+    public function getNotificationsQuery(): Builder|Relation
+    {
+        $query = parent::getNotificationsQuery();
+
+        if (Filament::getCurrentPanel()?->getId() === 'central') {
+            return $query;
+        }
+
+        return $query
+            ->whereRaw("coalesce(data::json->'viewData'->>'scope', '') <> 'central'")
+            ->whereRaw('data::text not like ?', ['%/central/%'])
+            ->whereRaw('data::text not like ?', ['%\\/central\\/%']);
+    }
+
     // PHP nao herda atributos em metodo sobrescrito -- precisa redeclarar
     // #[On(...)] aqui, senao o listener do evento nem fica registrado
     // nessa subclasse.
