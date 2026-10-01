@@ -27,6 +27,16 @@ class DocumentSignatureObserver
             \Log::warning('LogActivity não disponível para DocumentSignature', ['error' => $e->getMessage()]);
         }
 
+        if ($signature->signable_type === \App\Models\Tenant::class) {
+            \App\Services\TenantTimeline::record(
+                $signature->signable_id,
+                \App\Models\TenantEvent::CONTRATO_LINK,
+                'Link do contrato de assinatura gerado',
+                'Válido até '.$signature->expires_at?->format('d/m/Y H:i').'. Signatário: '.($signature->signer_name ?: '—').'.',
+                dedupeKey: 'contrato-link:'.$signature->id,
+            );
+        }
+
         // Dispara notificações por e-mail e/ou WhatsApp
         $this->notifySignatories($signature);
     }

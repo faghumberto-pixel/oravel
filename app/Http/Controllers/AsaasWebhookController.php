@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\AccountReceivable;
 use App\Models\ImplementationCharge;
 use App\Models\Tenant;
+use App\Models\TenantEvent;
 use App\Models\User;
 use App\Services\ImplementationBillingService;
+use App\Services\TenantTimeline;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -166,6 +168,28 @@ class AsaasWebhookController extends Controller
         $this->processTenantSubscription($tenant, $event, $payment);
     }
 
+    /** Linha do tempo: parcela da implantação paga, atrasada ou cancelada. */
+    private function recordImplementationHistory(ImplementationCharge $charge, string $newStatus): void
+    {
+        [$type, $title, $level] = match ($newStatus) {
+            ImplementationCharge::PAGO => [TenantEvent::IMPLANTACAO_PAGA, 'Implantação paga', 'success'],
+            ImplementationCharge::ATRASADO => [TenantEvent::IMPLANTACAO_ATRASADA, 'Implantação em atraso', 'danger'],
+            default => [TenantEvent::IMPLANTACAO_CANCELADA, 'Implantação cancelada', 'info'],
+        };
+        $label = $charge->installments_total > 1 ? " (parcela {$charge->installment_number}/{$charge->installments_total})" : '';
+
+        TenantTimeline::record(
+            $charge->tenant_id,
+            $type,
+            $title.$label,
+            'R$ '.number_format((float) $charge->amount, 2, ',', '.').'.',
+            ['charge_id' => $charge->id, 'payment_id' => $charge->asaas_payment_id],
+            'implantacao-'.$newStatus.':'.$charge->id,
+            $newStatus !== ImplementationCharge::CANCELADO,
+            $level,
+        );
+    }
+
     /**
      * Processa evento de uma parcela da cobrança única de implantação. Só
      * atualiza a própria parcela: não libera acesso nem altera
@@ -191,6 +215,27 @@ class AsaasWebhookController extends Controller
             'invoice_url' => $payment['invoiceUrl'] ?? $charge->invoice_url,
             'paid_at' => $newStatus === ImplementationCharge::PAGO ? now() : null,
         ]);
+
+        $this->recordImplementationHistory($charge, $newStatus);
+    }
+
+    /**
+     * Registra na linha do tempo do cliente o pagamento/atraso/cancelamento da
+     * mensalidade (CONFIRMED e RECEIVED do mesmo pagamento viram um fato só).
+     *
+     * @param  array<string, mixed>  $payment
+     */
+    private function recordSubscriptionPaymentHistory(Tenant $tenant, string $newStatus, array $payment): void
+    {
+        $id = $payment['id'] ?? uniqid();
+        $value = isset($payment['value']) ? 'R$ '.number_format((float) $payment['value'], 2, ',', '.') : '';
+        $props = ['payment_id' => $payment['id'] ?? null, 'value' => $payment['value'] ?? null, 'invoice_url' => $payment['invoiceUrl'] ?? null];
+
+        match ($newStatus) {
+            Tenant::PAYMENT_STATUS_EM_DIA => TenantTimeline::record($tenant, TenantEvent::MENSALIDADE_PAGA, 'Mensalidade paga', trim("Pagamento de {$value} confirmado pelo Asaas."), $props, 'mensalidade-paga:'.$id, true, 'success'),
+            Tenant::PAYMENT_STATUS_ATRASADO => TenantTimeline::record($tenant, TenantEvent::MENSALIDADE_ATRASADA, 'Mensalidade em atraso', trim("Cobrança de {$value} vencida e não paga."), $props, 'mensalidade-atrasada:'.$id, true, 'danger'),
+            default => TenantTimeline::record($tenant, TenantEvent::PAGAMENTO_CANCELADO, 'Pagamento cancelado/estornado', trim("Cobrança de {$value} cancelada ou estornada."), $props, 'pagamento-cancelado:'.$id, true, 'danger'),
+        };
     }
 
     /**
@@ -233,8 +278,22 @@ class AsaasWebhookController extends Controller
 
         $tenant->update($updates);
 
+        $this->recordSubscriptionPaymentHistory($tenant, $newStatus, $payment);
+
         if ($newStatus === Tenant::PAYMENT_STATUS_EM_DIA) {
-            User::where('tenant_id', $tenant->id)->where('is_approved', false)->update(['is_approved' => true]);
+            $released = User::where('tenant_id', $tenant->id)->where('is_approved', false)->update(['is_approved' => true]);
+
+            if ($released > 0) {
+                TenantTimeline::record(
+                    $tenant,
+                    TenantEvent::ACESSO_LIBERADO,
+                    'Acesso liberado',
+                    $released.' usuário(s) liberado(s) após a confirmação do pagamento.',
+                    dedupeKey: 'acesso-liberado:'.($payment['id'] ?? uniqid()),
+                    notify: true,
+                    level: 'success',
+                );
+            }
 
             // Implantação somada à mensalidade: conta a parcela paga e, na
             // última, devolve a assinatura ao valor normal.
@@ -303,8 +362,19 @@ class AsaasWebhookController extends Controller
 
         $tenant->update($updates);
 
+        $checkoutId = (string) ($checkout['id'] ?? uniqid());
         if ($newStatus === Tenant::PAYMENT_STATUS_EM_DIA) {
-            User::where('tenant_id', $tenant->id)->where('is_approved', false)->update(['is_approved' => true]);
+            TenantTimeline::record($tenant, TenantEvent::CHECKOUT_PAGO, 'Checkout pago', 'Pagamento da mensalidade no cartão confirmado.', ['checkout_id' => $checkoutId], 'checkout-pago:'.$checkoutId, true, 'success');
+        } else {
+            TenantTimeline::record($tenant, TenantEvent::CHECKOUT_CANCELADO, 'Checkout cancelado ou expirado', 'O cliente não concluiu o pagamento no checkout.', ['checkout_id' => $checkoutId, 'event' => $event], 'checkout-cancelado:'.$checkoutId.':'.$event, true, 'danger');
+        }
+
+        if ($newStatus === Tenant::PAYMENT_STATUS_EM_DIA) {
+            $released = User::where('tenant_id', $tenant->id)->where('is_approved', false)->update(['is_approved' => true]);
+
+            if ($released > 0) {
+                TenantTimeline::record($tenant, TenantEvent::ACESSO_LIBERADO, 'Acesso liberado', $released.' usuário(s) liberado(s) após o pagamento no checkout.', dedupeKey: 'acesso-liberado-checkout:'.$checkoutId, notify: true, level: 'success');
+            }
         }
     }
 

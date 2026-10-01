@@ -3,23 +3,22 @@
 namespace App\Listeners;
 
 use App\Events\DocumentSigned;
-use App\Filament\Central\Resources\TenantResource;
 use App\Models\Tenant;
+use App\Models\TenantEvent;
 use App\Models\User;
-use Filament\Notifications\Actions\Action;
+use App\Services\TenantTimeline;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification as NotificationFacade;
 
 /**
- * Avisa a Central (super admins, sino de notificações do painel /central)
- * quando um documento é assinado -- principalmente o Contrato de Assinatura
- * de um cliente novo, que o operador fica esperando antes de seguir pro
- * pagamento. Método chamado notify() (não handle()) de propósito: o projeto
- * registra listeners explicitamente em AppServiceProvider, e um método
- * "handle" também seria registrado de novo pela descoberta automática do
- * Laravel, avisando em duplicidade.
+ * Quando um documento é assinado: se é o Contrato de Assinatura de um cliente,
+ * registra na linha do tempo do cliente e avisa a Central (sino dos super
+ * admins); outros documentos só avisam a Central. Método chamado notify() (não
+ * handle()) de propósito: o projeto registra listeners explicitamente em
+ * AppServiceProvider, e um "handle" também seria registrado pela descoberta
+ * automática do Laravel, duplicando o aviso.
  */
 class NotifyCentralOfSignedDocument
 {
@@ -28,43 +27,46 @@ class NotifyCentralOfSignedDocument
         try {
             $signature = $event->signature->refresh();
             $signable = $signature->signable;
+            $when = ($signature->signed_at ?? now());
 
-            $isTenantContract = $signable instanceof Tenant;
-            $subject = $isTenantContract
-                ? $signable->name
-                : class_basename((string) $signature->signable_type);
+            if ($signable instanceof Tenant) {
+                TenantTimeline::record(
+                    $signable,
+                    TenantEvent::CONTRATO_ASSINADO,
+                    'Contrato assinado: '.$signable->name,
+                    sprintf(
+                        '%s assinou em %s (IP %s). O cliente segue para o pagamento da mensalidade.',
+                        $signature->signer_name ?: 'O signatário',
+                        $when->format('d/m/Y H:i'),
+                        $signature->ip_address ?: '—'
+                    ),
+                    properties: ['signature_id' => $signature->id, 'document_hash' => $signature->document_hash],
+                    dedupeKey: 'contrato-assinado:'.$signature->id,
+                    notify: true,
+                    level: 'success',
+                    at: $when,
+                );
+
+                return;
+            }
 
             $notification = Notification::make()
-                ->title(($isTenantContract ? 'Contrato assinado: ' : 'Documento assinado: ').$subject)
-                ->body(sprintf(
-                    '%s assinou em %s%s.',
-                    $signature->signer_name ?: 'O signatário',
-                    ($signature->signed_at ?? now())->format('d/m/Y H:i'),
-                    $isTenantContract ? ' — o cliente segue para o pagamento da mensalidade' : ''
-                ))
+                ->title('Documento assinado: '.class_basename((string) $signature->signable_type))
+                ->body(sprintf('%s assinou em %s.', $signature->signer_name ?: 'O signatário', $when->format('d/m/Y H:i')))
                 ->icon('heroicon-o-check-badge')
                 ->iconColor('success')
                 ->success();
-
-            if ($isTenantContract) {
-                $notification->actions([
-                    Action::make('open')
-                        ->label('Abrir empresa')
-                        ->url(TenantResource::getUrl('edit', ['record' => $signable], panel: 'central')),
-                ]);
-            }
 
             $recipients = User::withoutGlobalScopes()
                 ->whereIn(DB::raw('lower(email)'), array_map('strtolower', config('oravel.super_admins', [])))
                 ->get();
 
             foreach ($recipients as $recipient) {
-                // sendNow: não depende de worker de fila (mesmo cuidado de UserResource).
                 NotificationFacade::sendNow($recipient, $notification->toDatabase());
             }
         } catch (\Throwable $e) {
-            // Nunca derruba a assinatura por causa do aviso.
-            Log::warning('NotifyCentralOfSignedDocument: falha ao avisar a central.', ['error' => $e->getMessage()]);
+            // Nunca derruba a assinatura por causa do aviso/histórico.
+            Log::warning('NotifyCentralOfSignedDocument: falha.', ['error' => $e->getMessage()]);
         }
     }
 }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\ImplementationCharge;
 use App\Models\Tenant;
+use App\Models\TenantEvent;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -283,6 +284,15 @@ class AsaasService
             $this->planSummedImplementationInstallments($tenant);
         }
 
+        TenantTimeline::record(
+            $tenant,
+            TenantEvent::CHECKOUT_CRIADO,
+            'Checkout de pagamento criado',
+            'Mensalidade '.($summed ? 'com implantação somada ' : '').'de R$ '.number_format($checkoutValue, 2, ',', '.').' (cartão).',
+            properties: ['checkout_id' => $checkout['id'] ?? null],
+            dedupeKey: 'checkout-criado:'.($checkout['id'] ?? uniqid()),
+        );
+
         $tenant->update([
             'asaas_checkout_id' => $checkout['id'] ?? null,
             'asaas_status' => 'synced',
@@ -382,6 +392,15 @@ class AsaasService
 
                 break;
             }
+
+            TenantTimeline::record(
+                $tenant,
+                TenantEvent::IMPLANTACAO_COBRADA,
+                "Implantação cobrada{$label}",
+                'R$ '.number_format($installmentAmount, 2, ',', '.').' com vencimento em '.\Carbon\Carbon::parse($dueDate)->format('d/m/Y').'.',
+                properties: ['payment_id' => $payment['id'] ?? null, 'invoice_url' => $payment['invoiceUrl'] ?? null],
+                dedupeKey: 'implantacao-cobrada:'.($payment['id'] ?? uniqid()),
+            );
 
             ImplementationCharge::withoutGlobalScopes()->updateOrCreate(
                 ['tenant_id' => $tenant->id, 'installment_number' => $number],

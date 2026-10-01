@@ -31,6 +31,34 @@ class Tenant extends Model
      * asaas_status, que é sobre sincronização de CADASTRO (customer/
      * subscription criados na Asaas), não sobre a cobrança em si.
      */
+    protected static function booted(): void
+    {
+        // Histórico do cliente (linha do tempo da Central).
+        static::created(function (Tenant $tenant) {
+            \App\Services\TenantTimeline::record(
+                $tenant,
+                \App\Models\TenantEvent::CLIENTE_CADASTRADO,
+                'Cliente cadastrado',
+                $tenant->name.($tenant->cpf_cnpj ? ' — '.$tenant->cpf_cnpj : ''),
+                dedupeKey: 'cadastro',
+            );
+        });
+
+        static::updated(function (Tenant $tenant) {
+            if ($tenant->wasChanged('plan_id')) {
+                $old = Plan::withoutGlobalScopes()->find($tenant->getOriginal('plan_id'))?->name ?? '—';
+                $new = $tenant->plan?->name ?? '—';
+
+                \App\Services\TenantTimeline::record(
+                    $tenant,
+                    \App\Models\TenantEvent::CONTRATO_ALTERADO,
+                    'Contrato alterado',
+                    "De \"{$old}\" para \"{$new}\".",
+                );
+            }
+        });
+    }
+
     public const PAYMENT_STATUS_EM_DIA = 'em_dia';
 
     public const PAYMENT_STATUS_ATRASADO = 'atrasado';
@@ -395,6 +423,11 @@ class Tenant extends Model
             $charges->contains(fn ($c) => $c->status === ImplementationCharge::PAGO) => ['label' => 'Parcialmente paga', 'color' => 'warning'],
             default => ['label' => 'Pendente', 'color' => 'warning'],
         };
+    }
+
+    public function events(): HasMany
+    {
+        return $this->hasMany(TenantEvent::class)->orderByDesc('occurred_at');
     }
 
     public function implementationCharges(): HasMany

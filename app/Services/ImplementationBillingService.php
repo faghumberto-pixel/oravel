@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\ImplementationCharge;
 use App\Models\Tenant;
+use App\Models\TenantEvent;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -48,6 +49,16 @@ class ImplementationBillingService
             if ($next) {
                 $next->update(['status' => ImplementationCharge::PAGO, 'asaas_payment_id' => $paymentId, 'paid_at' => now()]);
                 $rows = $rows->fresh();
+
+                // Sem aviso no sino: a mensalidade paga (mesmo pagamento) já avisa.
+                TenantTimeline::record(
+                    $tenant,
+                    TenantEvent::IMPLANTACAO_PAGA,
+                    "Implantação paga (parcela {$next->installment_number}/{$next->installments_total}, somada à mensalidade)",
+                    'R$ '.number_format((float) $next->amount, 2, ',', '.').' dentro do pagamento da mensalidade.',
+                    ['charge_id' => $next->id, 'payment_id' => $paymentId],
+                    'implantacao-paga:'.$next->id,
+                );
             }
         }
 
