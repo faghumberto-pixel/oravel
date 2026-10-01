@@ -180,7 +180,7 @@ class AsaasCheckoutController extends Controller
      */
     public function continueAfterSignature(string $token, AsaasService $asaas): RedirectResponse
     {
-        $signature = DocumentSignature::where('token', $token)
+        $signature = DocumentSignature::withoutGlobalScope('tenant')->where('token', $token)
             ->where('signable_type', Tenant::class)
             ->first();
 

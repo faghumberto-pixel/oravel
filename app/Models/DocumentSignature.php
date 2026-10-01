@@ -20,7 +20,9 @@ class DocumentSignature extends Model
     use LogsActivity;
 
     protected static ?string $saasFeatureKey = 'assinatura_eletronica';
+
     protected static ?string $saasPermissionSlug = 'assinatura';
+
     protected static ?string $saasModuleLabel = 'Assinatura Eletrônica';
 
     protected $fillable = [
@@ -60,9 +62,9 @@ class DocumentSignature extends Model
                 $model->token = bin2hex(random_bytes(32));
             }
 
-            // Define expiração padrão em 30 dias
+            // Expiração padrão: config('oravel.signature_validity_days') (5 dias)
             if (empty($model->expires_at)) {
-                $model->expires_at = now()->addDays(30);
+                $model->expires_at = now()->addDays((int) config('oravel.signature_validity_days', 5));
             }
         });
     }
@@ -125,7 +127,7 @@ class DocumentSignature extends Model
 
     public function getCanSignAttribute(): bool
     {
-        return $this->is_pending && !$this->is_expired;
+        return $this->is_pending && ! $this->is_expired;
     }
 
     // ========== MÉTODOS AUXILIARES ==========

@@ -7,9 +7,9 @@ use Illuminate\Console\Command;
 
 class SetSignatureDeadlineForExistingTenants extends Command
 {
-    protected $signature = 'tenant:set-signature-deadline {days=30 : Dias até o prazo (padrão 30)}';
+    protected $signature = 'tenant:set-signature-deadline {days=5 : Dias até o prazo (padrão 5)}';
 
-    protected $description = 'Define prazo de 30 dias para tenants existentes assinarem SLA + LGPD';
+    protected $description = 'Define prazo (padrão 5 dias) para tenants existentes assinarem SLA + LGPD';
 
     public function handle()
     {

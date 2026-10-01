@@ -302,6 +302,7 @@ class DocumentSignatureResource extends Resource
                             Forms\Components\Select::make('days')
                                 ->label('Prorrogar por')
                                 ->options([
+                                    5 => '5 dias',
                                     7 => '7 dias',
                                     14 => '14 dias',
                                     30 => '30 dias',

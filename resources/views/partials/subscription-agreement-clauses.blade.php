@@ -53,6 +53,15 @@
     do próprio Contratante. É vedado ao Contratante sublicenciar, revender, ceder ou
     disponibilizar o sistema a terceiros, realizar engenharia reversa, copiar ou tentar
     acessar o código-fonte, ou utilizar o sistema para fins ilícitos.
+
+    <br><br>
+    <strong>Natureza modular do ERP.</strong> O sistema Oravel integra um ERP completo, um ecossistema que cobre
+    as diversas áreas da empresa (como ativos e frota, manutenção, logística, suprimentos e estoque, comercial,
+    financeiro, pessoas e segurança do trabalho), disponibilizado de forma <strong>modular</strong>. A contratação
+    dos módulos listados em "Plano Contratado" não representa a contratação nem o uso integral do ERP como um todo
+    e não confere direito a módulos ou funcionalidades não listados, ainda que estejam visíveis, integrados ou
+    tecnicamente acessíveis. <strong>Cada módulo e cada funcionalidade possui preço individual</strong>, e o valor da
+    mensalidade corresponde exclusivamente aos módulos contratados.
 </div>
 
 <div class="clause">
@@ -96,6 +105,8 @@
     substitua), sem prejuízo de reajustes adicionais acordados entre as partes. A inclusão,
     exclusão ou alteração de módulos e de valores fora do reajuste anual depende de acordo
     prévio, formalizado por aditivo a este contrato ou por aceite eletrônico do Contratante.
+    Módulos e funcionalidades adicionais serão contratados e precificados individualmente, conforme a tabela
+    vigente da Oravel à época da contratação.
 </div>
 
 <div class="clause">

@@ -62,4 +62,18 @@ class ContractModulesListTest extends TestCase
         $response->assertDontSee('<li>1</li>', false);
         $response->assertSee('Módulos incluídos');
     }
+
+    public function test_contract_states_the_erp_is_modular_with_individual_prices(): void
+    {
+        $tenant = $this->tenantWithFeatures(['tabela_assets' => true]);
+
+        $html = view('partials.subscription-agreement-clauses', ['contract' => $tenant])->render();
+
+        $this->assertStringContainsString('Natureza modular do ERP', $html);
+        $this->assertStringContainsString('ERP completo', $html);
+        $this->assertStringContainsString('ecossistema', $html);
+        $this->assertStringContainsString('não representa a contratação nem o uso integral do ERP', $html);
+        $this->assertStringContainsString('Cada módulo e cada funcionalidade possui preço individual', $html);
+        $this->assertStringContainsString('precificados individualmente', $html);
+    }
 }

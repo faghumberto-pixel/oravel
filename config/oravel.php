@@ -89,6 +89,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Validade do link de assinatura
+    |--------------------------------------------------------------------------
+    | Dias de validade de QUALQUER link de assinatura eletrônica (contrato de
+    | assinatura, contratos de locação, etc.) a partir da criação. Definido pelo
+    | dono do produto em 2026-10-01: 5 dias (antes era 30). Link vencido pode ser
+    | renovado em Assinaturas > Renovar Token.
+    */
+
+    'signature_validity_days' => (int) env('ORAVEL_SIGNATURE_VALIDITY_DAYS', 5),
+
+    /*
+    |--------------------------------------------------------------------------
     | Bloqueio por inadimplência
     |--------------------------------------------------------------------------
     | Dias corridos de atraso (Tenant.asaas_overdue_since) tolerados antes de

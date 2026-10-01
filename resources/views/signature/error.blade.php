@@ -162,7 +162,7 @@
         <div class="help-text">
             <h3>Possíveis Causas:</h3>
             <ul>
-                <li><strong>Token expirado:</strong> Sua assinatura pode ter expirado após 30 dias. Solicite um novo link.</li>
+                <li><strong>Token expirado:</strong> Sua assinatura pode ter expirado após {{ (int) config('oravel.signature_validity_days', 5) }} dias. Solicite um novo link.</li>
                 <li><strong>Documento já assinado:</strong> Este documento já foi assinado anteriormente.</li>
                 <li><strong>Assinatura cancelada:</strong> O administrador cancelou esta assinatura.</li>
                 <li><strong>Erro técnico:</strong> Tente novamente ou use outro navegador.</li>

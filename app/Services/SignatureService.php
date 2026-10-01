@@ -47,7 +47,10 @@ class SignatureService
      */
     public function getSignatureByToken(string $token): DocumentSignature
     {
-        $signature = DocumentSignature::byToken($token)->firstOrFail();
+        // O token é a credencial do link PÚBLICO de assinatura: sem o escopo de
+        // tenant, senão um usuário logado de OUTRA empresa (ex.: o operador da
+        // Oravel testando o link do cliente) via "No query results".
+        $signature = DocumentSignature::withoutGlobalScope('tenant')->byToken($token)->firstOrFail();
 
         if ($signature->is_expired) {
             $signature->markAsExpired();
