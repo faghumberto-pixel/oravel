@@ -5,7 +5,14 @@ namespace Tests\Feature;
 use App\Filament\Resources\AggregateItemResource\Pages\CreateAggregateItem;
 use App\Filament\Resources\AggregateItemResource\Pages\ListAggregateItems;
 use App\Models\AggregateItem;
+use App\Models\AggregateItemEntry;
+use App\Models\AggregateItemExit;
 use App\Models\AggregateItemType;
+use App\Models\Asset;
+use App\Models\EpiEntry;
+use App\Models\InternalUnit;
+use App\Models\Material;
+use App\Models\MaterialLocationStock;
 use App\Models\Plan;
 use App\Models\Role;
 use App\Models\Tenant;
@@ -82,5 +89,74 @@ class AggregateItemTest extends TestCase
         Livewire::test(ListAggregateItems::class)
             ->assertSuccessful()
             ->assertCanSeeTableRecords(AggregateItem::all());
+    }
+
+    public function test_balance_is_entries_minus_exits_plus_ok_returns(): void
+    {
+        [, $admin] = $this->makeTenantAdmin();
+        $this->actingAs($admin);
+
+        $type = AggregateItemType::create(['name' => 'Mangueira']);
+        $entry = AggregateItemEntry::create([
+            'aggregate_item_type_id' => $type->id, 'entry_date' => now(), 'unit_price' => 25.5, 'quantity' => 10,
+        ]);
+        $this->assertSame('255.00', $entry->total);
+
+        $asset = Asset::create(['name' => 'Gerador 1', 'patrimonio' => 'G-1', 'status' => Asset::STATUS_DISPONIVEL]);
+        $exit = AggregateItemExit::create([
+            'aggregate_item_type_id' => $type->id, 'asset_id' => $asset->id, 'exit_date' => now(),
+            'quantity' => 4, 'reason' => AggregateItemExit::REASON_LOCACAO,
+        ]);
+        $this->assertSame(6, $type->balance());
+
+        $exit->registerReturn(AggregateItemExit::CONDITION_OK);
+        $this->assertSame(10, $type->balance());
+
+        $exit2 = AggregateItemExit::create([
+            'aggregate_item_type_id' => $type->id, 'asset_id' => $asset->id, 'exit_date' => now(),
+            'quantity' => 2, 'reason' => AggregateItemExit::REASON_REPOSICAO,
+        ]);
+        $exit2->registerReturn(AggregateItemExit::CONDITION_NOK);
+        $this->assertSame(8, $type->balance());
+    }
+
+    public function test_exit_of_a_specific_unit_links_it_to_the_asset_and_return_frees_it(): void
+    {
+        [, $admin] = $this->makeTenantAdmin();
+        $this->actingAs($admin);
+
+        $type = AggregateItemType::create(['name' => 'Bandeja']);
+        $unit = AggregateItem::create(['aggregate_item_type_id' => $type->id, 'code' => 'BD-9']);
+        $asset = Asset::create(['name' => 'Gerador 2', 'patrimonio' => 'G-2', 'status' => Asset::STATUS_DISPONIVEL]);
+
+        $exit = AggregateItemExit::create([
+            'aggregate_item_type_id' => $type->id, 'aggregate_item_id' => $unit->id, 'asset_id' => $asset->id,
+            'exit_date' => now(), 'quantity' => 1, 'reason' => AggregateItemExit::REASON_LOCACAO,
+        ]);
+        $unit->refresh();
+        $this->assertSame(AggregateItem::STATUS_LOCADO, $unit->status);
+        $this->assertSame($asset->id, $unit->asset_id);
+
+        $exit->registerReturn(AggregateItemExit::CONDITION_NOK);
+        $unit->refresh();
+        $this->assertSame(AggregateItem::STATUS_MANUTENCAO, $unit->status);
+        $this->assertNull($unit->asset_id);
+    }
+
+    public function test_epi_entry_credits_material_stock_in_the_branch(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $this->actingAs($admin);
+
+        $material = Material::create(['tenant_id' => $tenant->id, 'name' => 'Luva', 'sku' => 'EPI-L1', 'unit_cost' => 10]);
+        $unit = InternalUnit::create(['tenant_id' => $tenant->id, 'name' => 'Matriz']);
+
+        $entry = EpiEntry::create([
+            'material_id' => $material->id, 'internal_unit_id' => $unit->id,
+            'entry_date' => now(), 'unit_price' => 10, 'quantity' => 30,
+        ]);
+
+        $this->assertSame('300.00', $entry->total);
+        $this->assertEquals(30, MaterialLocationStock::where('material_id', $material->id)->where('internal_unit_id', $unit->id)->value('current_quantity'));
     }
 }

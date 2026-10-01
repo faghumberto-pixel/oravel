@@ -54,6 +54,9 @@ class AggregateItemTypeResource extends BaseResource
             ->columns([
                 Tables\Columns\TextColumn::make('name')->label('Nome')->searchable()->sortable()->weight('bold'),
                 Tables\Columns\TextColumn::make('inspection_interval_days')->label('Inspeção a cada')->suffix(' dias')->placeholder('—'),
+                Tables\Columns\TextColumn::make('saldo')->label('Saldo em estoque')->badge()
+                    ->getStateUsing(fn (AggregateItemType $record) => $record->balance())
+                    ->color(fn ($state) => $state > 0 ? 'success' : 'danger'),
                 Tables\Columns\TextColumn::make('items_count')->label('Unidades')->counts('items')->badge()->color('gray'),
             ])
             ->actions([

@@ -26,6 +26,25 @@ class AggregateItemType extends Model
 
     protected $casts = ['inspection_interval_days' => 'integer'];
 
+    public function entries(): HasMany
+    {
+        return $this->hasMany(AggregateItemEntry::class);
+    }
+
+    public function exits(): HasMany
+    {
+        return $this->hasMany(AggregateItemExit::class);
+    }
+
+    /** Saldo do inventário: entradas - saídas + devolvidas em estado OK. */
+    public function balance(): int
+    {
+        return (int) $this->entries()->sum('quantity')
+            - (int) $this->exits()->sum('quantity')
+            + (int) $this->exits()->where('returned', true)
+                ->where('returned_condition', AggregateItemExit::CONDITION_OK)->sum('quantity');
+    }
+
     public function items(): HasMany
     {
         return $this->hasMany(AggregateItem::class);

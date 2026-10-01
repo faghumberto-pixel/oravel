@@ -170,6 +170,26 @@ class EpiDeliveryResource extends BaseResource
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('quantity')
+                    ->label('Qtd.'),
+
+                Tables\Columns\IconColumn::make('devolvido')
+                    ->label('Devolvido')
+                    ->boolean()
+                    ->getStateUsing(fn (EpiDelivery $record) => $record->returned_at !== null),
+
+                Tables\Columns\TextColumn::make('returned_at')
+                    ->label('Data devolução')
+                    ->date('d/m/Y')
+                    ->placeholder('—'),
+
+                Tables\Columns\TextColumn::make('returned_condition')
+                    ->label('Estado')
+                    ->badge()
+                    ->placeholder('—')
+                    ->formatStateUsing(fn (?string $state) => $state ? (EpiDelivery::returnedConditionLabels()[$state] ?? $state) : null)
+                    ->color(fn (?string $state) => $state === EpiDelivery::RETURNED_CONDITION_BOA ? 'success' : 'danger'),
+
                 Tables\Columns\TextColumn::make('expected_return_at')
                     ->label('Devolução Prevista')
                     ->date('d/m/Y')
