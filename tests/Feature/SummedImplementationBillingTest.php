@@ -127,4 +127,27 @@ class SummedImplementationBillingTest extends TestCase
         $this->assertStringContainsString('voltando a cobrança ao valor normal da mensalidade', $html);
         $this->assertStringNotContainsString('dividida em 2 parcelas', $html);
     }
+
+    public function test_contract_has_the_implementation_plan_annex_with_period_and_steps(): void
+    {
+        $tenant = $this->makeTenant(2);
+
+        $html = view('partials.subscription-agreement-implementation', ['contract' => $tenant])->render();
+
+        $this->assertStringContainsString('ANEXO I', $html);
+        $this->assertStringContainsString('30 dias corridos', $html);
+        foreach (['Etapa 1', 'Etapa 2', 'Etapa 3', 'Etapa 4', 'Etapa 5'] as $etapa) {
+            $this->assertStringContainsString($etapa, $html);
+        }
+        $this->assertStringContainsString('Fora do escopo', $html);
+        $this->assertStringContainsString('8 horas', $html);
+
+        // Sem taxa de implantação no contrato, o anexo não aparece.
+        $semTaxa = $this->makeTenant(2);
+        $semTaxa->plan->update(['implementation_fee' => null]);
+        $this->assertStringNotContainsString('ANEXO I', view('partials.subscription-agreement-implementation', ['contract' => $semTaxa->refresh()])->render());
+
+        $clauses = view('partials.subscription-agreement-clauses', ['contract' => $tenant])->render();
+        $this->assertStringContainsString('Anexo I (Plano de Implantação)', $clauses);
+    }
 }

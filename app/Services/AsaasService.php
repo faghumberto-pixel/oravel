@@ -454,6 +454,31 @@ class AsaasService
     }
 
     /**
+     * Cancela (exclui) uma cobrança avulsa pendente na Asaas (DELETE
+     * /payments/{id}). Devolve false (sem lançar) se a Asaas recusar, por
+     * exemplo cobrança já paga -- quem chama não deve marcar como cancelada.
+     */
+    public function cancelPayment(string $paymentId): bool
+    {
+        try {
+            $response = Http::withHeaders(['access_token' => $this->apiKey])
+                ->delete("{$this->baseUrl}/payments/{$paymentId}");
+
+            if ($response->failed() || $response->json('deleted') === false) {
+                Log::warning('AsaasService: Asaas recusou cancelar a cobrança.', ['payment_id' => $paymentId, 'body' => $response->body()]);
+
+                return false;
+            }
+
+            return true;
+        } catch (\Throwable $e) {
+            Log::warning('AsaasService: erro ao cancelar cobrança.', ['payment_id' => $paymentId, 'error' => $e->getMessage()]);
+
+            return false;
+        }
+    }
+
+    /**
      * Plan.billing_cycle é string livre no banco (sem enum), sempre visto
      * como 'monthly' nos dados existentes -- a Asaas exige um dos valores
      * fixos em maiúsculo (WEEKLY/BIWEEKLY/MONTHLY/BIMONTHLY/QUARTERLY/

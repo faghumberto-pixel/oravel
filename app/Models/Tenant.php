@@ -375,6 +375,28 @@ class Tenant extends Model
         return array_map(fn (float $installment) => round($mrr + $installment, 2), $this->implementationInstallmentAmounts());
     }
 
+    /**
+     * Situação da implantação do cliente para a Central: rótulo + cor do badge.
+     *
+     * @return array{label: string, color: string}
+     */
+    public function implementationSummary(): array
+    {
+        if ($this->implementationAmount() <= 0) {
+            return ['label' => 'Sem implantação', 'color' => 'gray'];
+        }
+
+        $charges = $this->implementationCharges()->where('status', '!=', ImplementationCharge::CANCELADO)->get();
+
+        return match (true) {
+            $charges->isEmpty() => ['label' => 'Não cobrada', 'color' => 'gray'],
+            $charges->every(fn ($c) => $c->status === ImplementationCharge::PAGO) => ['label' => 'Paga', 'color' => 'success'],
+            $charges->contains(fn ($c) => $c->status === ImplementationCharge::ATRASADO) => ['label' => 'Atrasada', 'color' => 'danger'],
+            $charges->contains(fn ($c) => $c->status === ImplementationCharge::PAGO) => ['label' => 'Parcialmente paga', 'color' => 'warning'],
+            default => ['label' => 'Pendente', 'color' => 'warning'],
+        };
+    }
+
     public function implementationCharges(): HasMany
     {
         return $this->hasMany(ImplementationCharge::class)->orderBy('installment_number');

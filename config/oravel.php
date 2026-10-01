@@ -72,6 +72,23 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Implantação (Anexo I do Contrato de Assinatura)
+    |--------------------------------------------------------------------------
+    | Prazo e limites do plano de implantação que o contrato promete ao cliente
+    | (resources/views/partials/subscription-agreement-implementation.blade.php).
+    | Valores padrão propostos em 2026-10-01 -- decisão comercial do dono do
+    | produto, ajustáveis por .env sem mexer no texto do contrato.
+    */
+
+    'implementation' => [
+        'days' => (int) env('ORAVEL_IMPLEMENTATION_DAYS', 30),
+        'training_hours' => (int) env('ORAVEL_IMPLEMENTATION_TRAINING_HOURS', 8),
+        'assisted_days' => (int) env('ORAVEL_IMPLEMENTATION_ASSISTED_DAYS', 15),
+        'data_deadline_business_days' => (int) env('ORAVEL_IMPLEMENTATION_DATA_DEADLINE_DAYS', 5),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Bloqueio por inadimplência
     |--------------------------------------------------------------------------
     | Dias corridos de atraso (Tenant.asaas_overdue_since) tolerados antes de

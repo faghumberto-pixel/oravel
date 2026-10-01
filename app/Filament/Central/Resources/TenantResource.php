@@ -6,11 +6,11 @@ use App\Filament\Central\Resources\TenantResource\Pages;
 use App\Models\Client;
 use App\Models\Tenant;
 use App\Models\User;
-use App\Support\CrmPalette;
 use App\Services\CnpjLookupService;
+use App\Support\CrmPalette;
 use Filament\Forms;
-use Filament\Notifications\Notification;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -189,6 +189,11 @@ class TenantResource extends Resource
                     ->label('Status')
                     ->icons(['heroicon-o-check-circle' => 'active', 'heroicon-o-clock' => 'trial', 'heroicon-o-exclamation-triangle' => 'suspended', 'heroicon-o-x-circle' => 'canceled'])
                     ->colors(['success' => 'active', 'warning' => 'trial', 'danger' => 'suspended', 'gray' => 'canceled']),
+                Tables\Columns\TextColumn::make('implementation_summary')
+                    ->label('Implantação')
+                    ->badge()
+                    ->state(fn (Tenant $record) => $record->implementationSummary()['label'])
+                    ->color(fn (Tenant $record) => $record->implementationSummary()['color']),
                 Tables\Columns\TextColumn::make('created_at')->label('Criado em')->dateTime('d/m/Y H:i')->sortable(),
             ])->filters([
                 Tables\Filters\SelectFilter::make('status')->label('Status')->options(['active' => 'Ativo', 'trial' => 'Teste']),

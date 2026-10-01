@@ -71,7 +71,7 @@
             {{ $moneyFmt($contract->summedCycleAmounts()[$i]) }} naquele mês{{ $loop->last ? '' : ';' }}
         @endforeach
         , voltando a cobrança ao valor normal da mensalidade a partir da mensalidade seguinte.
-        Cada mês é emitido em uma única cobrança via Asaas. A taxa de implantação não é
+        Cada mês é emitido em uma única cobrança via Asaas. A implantação segue o Anexo I (Plano de Implantação) deste contrato. A taxa de implantação não é
         reembolsável após o início dos serviços de implantação, e o atraso em qualquer cobrança
         sujeita-se aos encargos da cláusula 6.
     @elseif ($contract->implementationAmount() > 0)
@@ -83,7 +83,7 @@
             a primeira com vencimento em 7 dias e a segunda 30 dias após a primeira,
         @endif
         emitida via Asaas (boleto, cartão ou Pix, à escolha do Contratante), referente à
-        configuração inicial, parametrização e treinamento. A taxa de implantação não é
+        configuração inicial, parametrização e treinamento, conforme o Anexo I (Plano de Implantação) deste contrato. A taxa de implantação não é
         reembolsável após o início dos serviços de implantação, e o atraso em qualquer parcela
         sujeita-se aos encargos da cláusula 6.
     @endif

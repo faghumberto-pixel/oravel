@@ -89,6 +89,7 @@
             <div class="contract-section">
                 <div class="contract-section-title">Termos e Condições</div>
                 @include('partials.subscription-agreement-clauses', ['contract' => $document])
+                @include('partials.subscription-agreement-implementation', ['contract' => $document])
             </div>
         </div>
     @endif
