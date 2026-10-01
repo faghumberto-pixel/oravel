@@ -110,15 +110,9 @@
         <div style="margin-top:12px;">
             <span class="label">Módulos incluídos</span>
             <ul class="module-list">
-                @php
-                    $allOptions = \App\Models\Plan::getAvailableFeaturesOptions();
-                    $planFeatures = collect($contract->plan?->features ?? [])
-                        ->map(fn ($key) => str_replace('Tabela: ', '', $allOptions[$key] ?? $key))
-                        ->sort()
-                        ->values();
-                @endphp
-                @forelse ($planFeatures as $moduleLabel)
-                    <li>{{ $moduleLabel }}</li>
+                @php($moduleGroups = \App\Support\ContractModules::grouped($contract->plan))
+                @forelse ($moduleGroups as $groupName => $moduleLabels)
+                    <li><strong>{{ $groupName }}:</strong> {{ implode(', ', $moduleLabels) }}</li>
                 @empty
                     <li>A definir junto com a proposta comercial</li>
                 @endforelse

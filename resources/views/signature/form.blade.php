@@ -16,13 +16,7 @@
             final, via o parcial compartilhado, pra nunca ficar
             dessincronizado.
         --}}
-        @php
-            $allOptions = \App\Models\Plan::getAvailableFeaturesOptions();
-            $planFeatures = collect($document->plan?->features ?? [])
-                ->map(fn ($key) => str_replace('Tabela: ', '', $allOptions[$key] ?? $key))
-                ->sort()
-                ->values();
-        @endphp
+        @php($moduleGroups = \App\Support\ContractModules::grouped($document->plan))
         <div class="contract-reading-panel" id="contractPrintArea">
             <div class="contract-print-bar no-print">
                 <span class="contract-print-hint">Leia o contrato com atenção antes de assinar.</span>
@@ -77,8 +71,8 @@
                 <div class="contract-modules">
                     <span class="contract-label">Módulos incluídos</span>
                     <ul>
-                        @forelse ($planFeatures as $moduleLabel)
-                            <li>{{ $moduleLabel }}</li>
+                        @forelse ($moduleGroups as $groupName => $moduleLabels)
+                            <li><strong>{{ $groupName }}:</strong> {{ implode(', ', $moduleLabels) }}</li>
                         @empty
                             <li>A definir junto com a proposta comercial</li>
                         @endforelse
