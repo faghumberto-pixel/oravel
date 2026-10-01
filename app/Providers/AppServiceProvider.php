@@ -236,6 +236,9 @@ class AppServiceProvider extends ServiceProvider
         // Reduz fotos que NÃO são evidência (chat/anexos); ver config/uploads.php.
         Event::listen(MediaHasBeenAddedEvent::class, DownscaleNonEvidenceMedia::class);
 
+        // Assinatura concluída -> aviso no sino da Central (super admins).
+        Event::listen(\App\Events\DocumentSigned::class, [\App\Listeners\NotifyCentralOfSignedDocument::class, 'notify']);
+
         Event::listen(Login::class, function (Login $event) {
             $this->logAuthEvent(UserActivityLog::ACTION_LOGIN, $event->user);
         });
