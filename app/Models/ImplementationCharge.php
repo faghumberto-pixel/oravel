@@ -23,13 +23,14 @@ class ImplementationCharge extends Model
 
     protected $fillable = [
         'tenant_id', 'installment_number', 'installments_total', 'amount', 'due_date',
-        'asaas_payment_id', 'status', 'invoice_url', 'paid_at',
+        'asaas_payment_id', 'status', 'invoice_url', 'paid_at', 'included_in_subscription',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'due_date' => 'date',
         'paid_at' => 'datetime',
+        'included_in_subscription' => 'boolean',
     ];
 
     public function tenant(): BelongsTo

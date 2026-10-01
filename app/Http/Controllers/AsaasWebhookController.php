@@ -6,6 +6,7 @@ use App\Models\AccountReceivable;
 use App\Models\ImplementationCharge;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Services\ImplementationBillingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -129,7 +130,12 @@ class AsaasWebhookController extends Controller
         // chargeTenantImplementation()) -- identificada pelo id da cobrança,
         // ANTES do caso de assinatura: senão um atraso/pagamento da
         // implantação mexeria no status da mensalidade e no bloqueio de acesso.
-        $implementationCharge = ImplementationCharge::withoutGlobalScopes()->where('asaas_payment_id', $paymentId)->first();
+        $implementationCharge = ImplementationCharge::withoutGlobalScopes()
+            ->where('asaas_payment_id', $paymentId)
+            // Parcelas somadas à mensalidade guardam o id do pagamento da ASSINATURA;
+            // esses eventos seguem o fluxo da assinatura, não o da cobrança avulsa.
+            ->where('included_in_subscription', false)
+            ->first();
 
         if ($implementationCharge) {
             $this->processImplementationCharge($implementationCharge, $event, $payment);
@@ -138,11 +144,18 @@ class AsaasWebhookController extends Controller
         }
 
         // Caso contrário, trata como assinatura SaaS do Tenant
-        if (blank($customerId)) {
+        $subscriptionId = $payment['subscription'] ?? null;
+
+        if (blank($customerId) && blank($subscriptionId)) {
             return;
         }
 
-        $tenant = Tenant::where('asaas_customer_id', $customerId)->first();
+        // Customer primeiro; fallback pela assinatura (o Checkout pode usar um
+        // customer diferente do gravado em asaas_customer_id).
+        $tenant = filled($customerId) ? Tenant::where('asaas_customer_id', $customerId)->first() : null;
+        if (! $tenant && filled($subscriptionId)) {
+            $tenant = Tenant::where('asaas_subscription_id', $subscriptionId)->first();
+        }
 
         if (! $tenant) {
             Log::info('AsaasWebhookController: nenhum tenant encontrado para o customer.', ['customer' => $customerId]);
@@ -222,6 +235,10 @@ class AsaasWebhookController extends Controller
 
         if ($newStatus === Tenant::PAYMENT_STATUS_EM_DIA) {
             User::where('tenant_id', $tenant->id)->where('is_approved', false)->update(['is_approved' => true]);
+
+            // Implantação somada à mensalidade: conta a parcela paga e, na
+            // última, devolve a assinatura ao valor normal.
+            app(ImplementationBillingService::class)->onSubscriptionPaymentConfirmed($tenant->refresh(), $payment);
         }
     }
 

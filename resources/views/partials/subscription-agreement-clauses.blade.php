@@ -61,7 +61,20 @@
     cada ciclo de cobrança indicado acima, até que o Contratante solicite o cancelamento. A
     cobrança é emitida via Asaas, pelos meios de pagamento por ela disponibilizados (cartão de
     crédito, Pix ou boleto, conforme o caso).
-    @if ($contract->implementationAmount() > 0)
+    @if ($contract->isImplementationSummed())
+        Além da mensalidade, será cobrada uma taxa única de implantação de
+        {{ $moneyFmt($contract->implementationAmount()) }}, não recorrente, somada às primeiras
+        mensalidades e dividida em {{ $contract->implementationInstallments() }}
+        {{ $contract->implementationInstallments() === 1 ? 'parcela' : 'parcelas' }}:
+        @foreach ($contract->implementationInstallmentAmounts() as $i => $installment)
+            na {{ $i + 1 }}ª mensalidade, {{ $moneyFmt($installment) }} de implantação, totalizando
+            {{ $moneyFmt($contract->summedCycleAmounts()[$i]) }} naquele mês{{ $loop->last ? '' : ';' }}
+        @endforeach
+        , voltando a cobrança ao valor normal da mensalidade a partir da mensalidade seguinte.
+        Cada mês é emitido em uma única cobrança via Asaas. A taxa de implantação não é
+        reembolsável após o início dos serviços de implantação, e o atraso em qualquer cobrança
+        sujeita-se aos encargos da cláusula 6.
+    @elseif ($contract->implementationAmount() > 0)
         Além da mensalidade, será cobrada uma taxa única de implantação de
         {{ $moneyFmt($contract->implementationAmount()) }}, não recorrente,
         @if ($contract->implementationInstallments() > 1)

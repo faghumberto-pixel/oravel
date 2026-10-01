@@ -165,6 +165,13 @@ class ContratoResource extends Resource
                         ->default(1)
                         ->native(false),
 
+                    Forms\Components\Select::make('implementation_billing_mode')
+                        ->label('Como cobrar a Implantação')
+                        ->options(['separada' => 'Cobrança separada (avulsa)', 'somada' => 'Somada à mensalidade'])
+                        ->helperText('Somada: as parcelas vão dentro das primeiras mensalidades (ex.: 600 + 450, 600 + 450, depois só 600), numa única cobrança por mês.')
+                        ->default('separada')
+                        ->native(false),
+
                     Forms\Components\Select::make('billing_cycle')
                         ->label('Ciclo de Cobrança')
                         ->options([

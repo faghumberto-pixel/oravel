@@ -67,6 +67,8 @@ class Tenant extends Model
         'asaas_current_invoice_url',
         'implementation_fee',
         'implementation_installments',
+        'implementation_billing_mode',
+        'subscription_reverted_to_base_at',
         'razao_social',
         'nome_fantasia',
         'natureza_juridica',
@@ -100,6 +102,7 @@ class Tenant extends Model
         'asaas_synced_at' => 'datetime',
         'implementation_fee' => 'decimal:2',
         'implementation_installments' => 'integer',
+        'subscription_reverted_to_base_at' => 'datetime',
         'asaas_payment_updated_at' => 'datetime',
         'asaas_overdue_since' => 'datetime',
     ];
@@ -342,6 +345,34 @@ class Tenant extends Model
         $amounts[$count - 1] = round($total - $base * ($count - 1), 2);
 
         return $amounts;
+    }
+
+    /** 'separada' (cobranças avulsas) ou 'somada' (parcelas somadas às primeiras mensalidades). */
+    public function implementationBillingMode(): string
+    {
+        $mode = $this->implementation_billing_mode ?? $this->plan?->implementation_billing_mode ?? 'separada';
+
+        return $mode === 'somada' ? 'somada' : 'separada';
+    }
+
+    /** Há implantação a cobrar E ela vai somada à mensalidade? */
+    public function isImplementationSummed(): bool
+    {
+        return $this->implementationAmount() > 0 && $this->implementationBillingMode() === 'somada';
+    }
+
+    /**
+     * Valor de cada cobrança da assinatura nos primeiros ciclos no modo somado:
+     * mensalidade + parcela da implantação daquele ciclo (índice 0 = 1º ciclo).
+     * Depois das parcelas, volta a ser só a mensalidade.
+     *
+     * @return array<int, float>
+     */
+    public function summedCycleAmounts(): array
+    {
+        $mrr = (float) $this->mrr_value;
+
+        return array_map(fn (float $installment) => round($mrr + $installment, 2), $this->implementationInstallmentAmounts());
     }
 
     public function implementationCharges(): HasMany

@@ -192,6 +192,14 @@ class AsaasService
 
         $planName = $tenant->plan?->name ?? 'Oravel';
 
+        // Implantação somada à mensalidade: o 1º ciclo (cobrado no próprio
+        // Checkout) já leva mensalidade + 1ª parcela. O valor da assinatura
+        // volta ao normal depois da última parcela (ver
+        // ImplementationBillingService, acionado pelo webhook de pagamento).
+        $summed = $tenant->isImplementationSummed();
+        $checkoutValue = $summed ? $tenant->summedCycleAmounts()[0] : (float) $tenant->mrr_value;
+        $itemName = $summed ? 'Assinatura + Implantação 1/'.$tenant->implementationInstallments() : "Assinatura Oravel — {$planName}";
+
         try {
             $checkout = $this->createCheckout([
                 // A Asaas rejeita PIX combinado com chargeTypes RECURRENT
@@ -222,10 +230,12 @@ class AsaasService
                     // Contrato passou a usar identificação livre/longa
                     // ("Nome do cliente ou da negociação"). 'description'
                     // não tem esse limite documentado, mantido completo.
-                    'name' => Str::limit("Assinatura Oravel — {$planName}", 30, ''),
-                    'description' => "Assinatura recorrente do plano {$planName}",
+                    'name' => Str::limit($itemName, 30, ''),
+                    'description' => $summed
+                        ? "Assinatura recorrente do plano {$planName} com taxa de implantação em {$tenant->implementationInstallments()}x somada às primeiras mensalidades"
+                        : "Assinatura recorrente do plano {$planName}",
                     'quantity' => 1,
-                    'value' => (float) $tenant->mrr_value,
+                    'value' => $checkoutValue,
                 ]],
                 'subscription' => [
                     'cycle' => $this->mapBillingCycle($tenant->plan?->billing_cycle),
@@ -256,6 +266,10 @@ class AsaasService
             $tenant->update(['asaas_status' => 'error']);
 
             return null;
+        }
+
+        if ($summed) {
+            $this->planSummedImplementationInstallments($tenant);
         }
 
         $tenant->update([
@@ -311,6 +325,12 @@ class AsaasService
     public function chargeTenantImplementation(Tenant $tenant): array
     {
         $amount = $tenant->implementationAmount();
+
+        if ($tenant->isImplementationSummed()) {
+            Log::info('AsaasService: implantação somada à mensalidade, sem cobrança avulsa.', ['tenant_id' => $tenant->id]);
+
+            return [];
+        }
 
         if ($amount <= 0 || blank($this->apiKey) || blank($tenant->asaas_customer_id)) {
             Log::info('AsaasService: implantação não cobrada (sem valor, API key ou customer).', ['tenant_id' => $tenant->id]);
@@ -374,6 +394,63 @@ class AsaasService
             ->filter()
             ->values()
             ->all();
+    }
+
+    /**
+     * Registra as parcelas da implantação que vão somadas às primeiras
+     * mensalidades (sem cobrança avulsa própria). Idempotente: o Checkout pode
+     * ser recriado (fluxo de recuperação de link) sem duplicar nem resetar
+     * parcelas já pagas. due_date é só a previsão (cada ciclo mensal).
+     */
+    public function planSummedImplementationInstallments(Tenant $tenant): void
+    {
+        $amounts = $tenant->implementationInstallmentAmounts();
+        $total = count($amounts);
+
+        foreach ($amounts as $index => $amount) {
+            ImplementationCharge::withoutGlobalScopes()->firstOrCreate(
+                ['tenant_id' => $tenant->id, 'installment_number' => $index + 1],
+                [
+                    'installments_total' => $total,
+                    'amount' => $amount,
+                    'due_date' => now()->addMonths($index)->toDateString(),
+                    'status' => ImplementationCharge::PENDENTE,
+                    'included_in_subscription' => true,
+                ]
+            );
+        }
+
+        $tenant->update(['implementation_fee' => $tenant->implementationAmount(), 'implementation_installments' => $total]);
+    }
+
+    /**
+     * Muda o valor de uma assinatura existente (PUT /subscriptions/{id}) e
+     * também das cobranças pendentes já geradas -- confirmado em teste no
+     * sandbox 2026-10-01 (a documentação pública omite o campo value, mas a
+     * API aceita). Devolve false (sem lançar) se falhar, pra quem chama tentar
+     * de novo no próximo evento.
+     */
+    public function updateSubscriptionValue(string $subscriptionId, float $value): bool
+    {
+        try {
+            $response = Http::withHeaders(['access_token' => $this->apiKey])
+                ->put("{$this->baseUrl}/subscriptions/{$subscriptionId}", [
+                    'value' => $value,
+                    'updatePendingPayments' => true,
+                ]);
+
+            if ($response->failed()) {
+                Log::warning('AsaasService: falha ao atualizar valor da assinatura.', ['subscription_id' => $subscriptionId, 'body' => $response->body()]);
+
+                return false;
+            }
+
+            return true;
+        } catch (\Throwable $e) {
+            Log::warning('AsaasService: erro ao atualizar valor da assinatura.', ['subscription_id' => $subscriptionId, 'error' => $e->getMessage()]);
+
+            return false;
+        }
     }
 
     /**

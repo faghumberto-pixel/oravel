@@ -33,7 +33,7 @@ class EditTenant extends EditRecord
                 ->label('Cobrar implantação')
                 ->icon('heroicon-o-banknotes')
                 ->color('warning')
-                ->visible(fn () => $this->record->implementationAmount() > 0 && ! $this->record->hasActiveImplementationCharge())
+                ->visible(fn () => $this->record->implementationAmount() > 0 && $this->record->implementationBillingMode() === 'separada' && ! $this->record->hasActiveImplementationCharge())
                 ->requiresConfirmation()
                 ->modalDescription(fn () => 'Gera '.($this->record->implementationInstallments() === 1 ? 'uma cobrança única' : $this->record->implementationInstallments().' cobranças (parcelas)').' de implantação na Asaas para '.$this->record->name.', totalizando R$ '.number_format($this->record->implementationAmount(), 2, ',', '.').'.')
                 ->action(function () {

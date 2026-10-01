@@ -50,6 +50,11 @@ class TenantResource extends Resource
                     ->options([1 => 'À vista (1x)', 2 => 'Em 2 vezes'])
                     ->placeholder('Usar o do contrato')
                     ->native(false),
+                Forms\Components\Select::make('implementation_billing_mode')
+                    ->label('Como cobrar a Implantação')
+                    ->options(['separada' => 'Cobrança separada (avulsa)', 'somada' => 'Somada à mensalidade'])
+                    ->placeholder('Usar o do contrato')
+                    ->native(false),
                 Forms\Components\Placeholder::make('implementation_status_info')
                     ->label('Cobranças de implantação')
                     ->content(function (?Tenant $record) {
@@ -59,7 +64,7 @@ class TenantResource extends Resource
                             return 'Ainda não cobrada';
                         }
 
-                        return new HtmlString($charges->map(fn ($c) => e("{$c->installment_number}/{$c->installments_total} — R$ ".number_format((float) $c->amount, 2, ',', '.').' — vence '.$c->due_date->format('d/m/Y').' — '.ucfirst($c->status))
+                        return new HtmlString($charges->map(fn ($c) => e("{$c->installment_number}/{$c->installments_total} — R$ ".number_format((float) $c->amount, 2, ',', '.').($c->included_in_subscription ? ' (somada à mensalidade)' : ' — vence '.$c->due_date->format('d/m/Y')).' — '.ucfirst($c->status))
                             .($c->invoice_url ? ' — <a href="'.e($c->invoice_url).'" target="_blank" class="underline">link</a>' : ''))->implode('<br>'));
                     })
                     ->visibleOn('edit'),
