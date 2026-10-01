@@ -11,6 +11,10 @@ class ImplementationStats extends StatsOverviewWidget
 {
     protected static bool $isDiscovered = false;
 
+    // Carrega junto com a página: o modo lazy faz um pedido extra do Livewire, que se
+    // falhar (ex.: sessão expirada) deixava a faixa de resumo em branco.
+    protected static bool $isLazy = false;
+
     protected function getStats(): array
     {
         $sum = fn (array $statuses) => (float) ImplementationCharge::withoutGlobalScopes()->whereIn('status', $statuses)->sum('amount');
