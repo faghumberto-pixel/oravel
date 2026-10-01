@@ -29,7 +29,7 @@ class EpiDeliveryResource extends BaseResource
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
 
-    protected static ?string $navigationGroup = 'Materiais e Peças';
+    protected static ?string $navigationGroup = 'EPI';
 
     protected static ?string $navigationParentItem = 'Gestão de EPI';
 

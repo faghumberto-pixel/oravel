@@ -27,6 +27,7 @@
         'Ativos' => 'heroicon-o-truck',
         'Materiais e Peças' => 'heroicon-o-cube',
         'Itens Agregados' => 'heroicon-o-link',
+        'EPI' => 'heroicon-o-shield-check',
         'Equipe' => 'heroicon-o-users',
         'Departamento Pessoal' => 'heroicon-o-identification',
         'Comercial' => 'heroicon-o-briefcase',

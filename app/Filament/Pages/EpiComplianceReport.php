@@ -27,7 +27,7 @@ class EpiComplianceReport extends Page implements HasTable
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $navigationGroup = 'Materiais e Peças';
+    protected static ?string $navigationGroup = 'EPI';
 
     protected static ?string $navigationParentItem = 'Gestão de EPI';
 

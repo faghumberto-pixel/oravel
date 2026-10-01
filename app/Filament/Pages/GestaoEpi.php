@@ -13,7 +13,7 @@ class GestaoEpi extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
 
-    protected static ?string $navigationGroup = 'Materiais e Peças';
+    protected static ?string $navigationGroup = 'EPI';
 
     protected static ?string $navigationLabel = 'Gestão de EPI';
 
