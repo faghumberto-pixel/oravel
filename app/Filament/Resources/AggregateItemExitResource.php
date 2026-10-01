@@ -12,6 +12,7 @@ use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class AggregateItemExitResource extends BaseResource
 {
@@ -21,7 +22,7 @@ class AggregateItemExitResource extends BaseResource
 
     protected static ?string $navigationGroup = 'Itens Agregados';
 
-    protected static ?string $navigationParentItem = 'Gestão de Itens Agregados';
+    protected static ?string $navigationParentItem = 'Acessórios e Componentes';
 
     protected static ?int $navigationSort = 4;
 
@@ -31,18 +32,27 @@ class AggregateItemExitResource extends BaseResource
 
     protected static ?string $pluralModelLabel = 'Saídas de Itens Agregados';
 
+    /** Categoria de Itens Agregados que esta tela controla (acessorio|insumo). */
+    protected static string $category = 'acessorio';
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->whereHas('type', fn ($q) => $q->where('category', static::$category));
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
             Forms\Components\DatePicker::make('exit_date')->label('Data de saída')->default(now())->required(),
             Forms\Components\Select::make('aggregate_item_type_id')->label('Tipo de item')
-                ->relationship('type', 'name')->searchable()->preload()->required()->live(),
+                ->relationship('type', 'name', fn ($query) => $query->where('category', static::$category))->searchable()->preload()->required()->live(),
             Forms\Components\Select::make('aggregate_item_id')->label('Unidade específica (opcional)')
                 ->helperText('Escolha se este item é controlado unidade a unidade.')
                 ->relationship('item', 'code', fn ($query, Get $get) => $query
                     ->where('aggregate_item_type_id', $get('aggregate_item_type_id'))
                     ->where('status', AggregateItem::STATUS_DISPONIVEL))
-                ->searchable()->preload(),
+                ->searchable()->preload()
+                ->visible(fn () => static::$category === 'acessorio'),
             Forms\Components\TextInput::make('quantity')->label('Quantidade')->numeric()->integer()
                 ->default(1)->minValue(1)->required()
                 ->rules([
@@ -86,7 +96,7 @@ class AggregateItemExitResource extends BaseResource
             ->defaultSort('exit_date', 'desc')
             ->filters([
                 Tables\Filters\TernaryFilter::make('returned')->label('Devolvido'),
-                Tables\Filters\SelectFilter::make('aggregate_item_type_id')->label('Item')->relationship('type', 'name'),
+                Tables\Filters\SelectFilter::make('aggregate_item_type_id')->label('Item')->relationship('type', 'name', fn ($query) => $query->where('category', static::$category)),
             ])
             ->actions([
                 Tables\Actions\Action::make('register_return')

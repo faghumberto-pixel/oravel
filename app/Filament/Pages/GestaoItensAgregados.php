@@ -14,9 +14,9 @@ class GestaoItensAgregados extends Page
 
     protected static ?string $navigationGroup = 'Itens Agregados';
 
-    protected static ?string $navigationLabel = 'Gestão de Itens Agregados';
+    protected static ?string $navigationLabel = 'Acessórios e Componentes';
 
-    protected static ?string $title = 'Gestão de Itens Agregados';
+    protected static ?string $title = 'Acessórios e Componentes';
 
     protected static string $view = 'filament.pages.gestao-itens-agregados';
 

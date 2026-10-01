@@ -87,6 +87,11 @@ class Contract extends Model
         'is_active',
         'status',
         'observations',
+        'includes_insumos',
+        'includes_acessorios',
+        'includes_mao_de_obra',
+        'includes_seguranca_docs',
+        'aggregate_items_notes',
     ];
 
     protected $casts = [
@@ -97,6 +102,10 @@ class Contract extends Model
         'initial_odometer' => 'decimal:2',
         'prohibit_sublease' => 'boolean',
         'frete_incluso' => 'boolean',
+        'includes_insumos' => 'boolean',
+        'includes_acessorios' => 'boolean',
+        'includes_mao_de_obra' => 'boolean',
+        'includes_seguranca_docs' => 'boolean',
         'is_active' => 'boolean',
     ];
 

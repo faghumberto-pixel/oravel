@@ -201,6 +201,29 @@ class ContractResource extends Resource
                         ->columnSpanFull(),
                 ]),
 
+            Forms\Components\Section::make('Itens Agregados da Locação')
+                ->description('O cliente vai querer algum destes itens junto com o equipamento?')
+                ->schema([
+                    Forms\Components\Grid::make(2)->schema([
+                        Forms\Components\Toggle::make('includes_insumos')
+                            ->label('Insumos e Consumíveis')
+                            ->helperText('Combustível, Arla 32, kits de manutenção preventiva.'),
+                        Forms\Components\Toggle::make('includes_acessorios')
+                            ->label('Acessórios e Componentes')
+                            ->helperText('Cabos, mangueiras, bandeja de contenção, patolas, cintas...'),
+                        Forms\Components\Toggle::make('includes_mao_de_obra')
+                            ->label('Mão de Obra Especializada')
+                            ->helperText('Operador, plano de içamento, mobilização e desmobilização.'),
+                        Forms\Components\Toggle::make('includes_seguranca_docs')
+                            ->label('Segurança e Documentação')
+                            ->helperText('ART, laudos, certificados de calibração, seguro RETA/Riscos Diversos.'),
+                    ]),
+                    Forms\Components\Textarea::make('aggregate_items_notes')
+                        ->label('Detalhes do que foi combinado')
+                        ->rows(2)
+                        ->columnSpanFull(),
+                ]),
+
             Forms\Components\Section::make('4. Responsabilidades e Rescisão')
                 ->schema([
                     Forms\Components\Grid::make(2)->schema([

@@ -8,6 +8,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class AggregateItemResource extends BaseResource
 {
@@ -17,7 +18,7 @@ class AggregateItemResource extends BaseResource
 
     protected static ?string $navigationGroup = 'Itens Agregados';
 
-    protected static ?string $navigationParentItem = 'Gestão de Itens Agregados';
+    protected static ?string $navigationParentItem = 'Acessórios e Componentes';
 
     protected static ?int $navigationSort = 1;
 
@@ -27,13 +28,18 @@ class AggregateItemResource extends BaseResource
 
     protected static ?string $pluralModelLabel = 'Itens Agregados';
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->whereHas('type', fn ($q) => $q->where('category', 'acessorio'));
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
             Forms\Components\Section::make('Identificação')->schema([
                 Forms\Components\Select::make('aggregate_item_type_id')
                     ->label('Tipo')
-                    ->relationship('type', 'name')
+                    ->relationship('type', 'name', fn ($query) => $query->where('category', 'acessorio'))
                     ->searchable()->preload()->required(),
                 Forms\Components\TextInput::make('code')
                     ->label('Código / Patrimônio')
@@ -97,7 +103,7 @@ class AggregateItemResource extends BaseResource
             ->defaultSort('code')
             ->filters([
                 Tables\Filters\SelectFilter::make('status')->label('Status')->options(AggregateItem::statusLabels()),
-                Tables\Filters\SelectFilter::make('aggregate_item_type_id')->label('Tipo')->relationship('type', 'name'),
+                Tables\Filters\SelectFilter::make('aggregate_item_type_id')->label('Tipo')->relationship('type', 'name', fn ($query) => $query->where('category', 'acessorio')),
                 Tables\Filters\Filter::make('vencidos')->label('Vencidos')
                     ->query(fn ($query) => $query->whereDate('next_inspection_date', '<', now())),
             ])

@@ -22,7 +22,11 @@ class AggregateItemType extends Model
 
     protected static ?string $saasModuleLabel = 'Tipos de Item Agregado';
 
-    protected $fillable = ['tenant_id', 'name', 'description', 'inspection_interval_days'];
+    protected $fillable = ['tenant_id', 'category', 'name', 'unit_of_measure', 'description', 'inspection_interval_days'];
+
+    public const CATEGORY_ACESSORIO = 'acessorio';
+
+    public const CATEGORY_INSUMO = 'insumo';
 
     protected $casts = ['inspection_interval_days' => 'integer'];
 

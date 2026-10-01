@@ -4,17 +4,25 @@ namespace Tests\Feature;
 
 use App\Filament\Resources\AggregateItemResource\Pages\CreateAggregateItem;
 use App\Filament\Resources\AggregateItemResource\Pages\ListAggregateItems;
+use App\Filament\Resources\AggregateItemTypeResource;
+use App\Filament\Resources\ComplianceDocumentResource\Pages\ManageComplianceDocuments;
+use App\Filament\Resources\InsumoTypeResource;
+use App\Filament\Resources\InsumoTypeResource\Pages\ManageInsumoTypes;
+use App\Filament\Resources\SpecializedServiceResource\Pages\ManageSpecializedServices;
 use App\Models\AggregateItem;
 use App\Models\AggregateItemEntry;
 use App\Models\AggregateItemExit;
 use App\Models\AggregateItemType;
 use App\Models\Asset;
+use App\Models\ComplianceDocument;
+use App\Models\Contract;
 use App\Models\EpiEntry;
 use App\Models\InternalUnit;
 use App\Models\Material;
 use App\Models\MaterialLocationStock;
 use App\Models\Plan;
 use App\Models\Role;
+use App\Models\SpecializedService;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -34,7 +42,7 @@ class AggregateItemTest extends TestCase
         $plan = Plan::create([
             'name' => 'Plano Agregados '.uniqid(), 'price' => 100, 'base_price' => 100, 'level' => 1,
             'billing_cycle' => 'monthly', 'is_active' => true,
-            'features' => ['tabela_aggregate_items', 'tabela_aggregate_item_types'],
+            'features' => ['tabela_aggregate_items', 'tabela_aggregate_item_types', 'tabela_specialized_services', 'tabela_compliance_documents'],
         ]);
         $tenant = Tenant::create([
             'name' => 'Tenant Agregados '.uniqid(), 'slug' => 'tenant-agregados-'.uniqid(),
@@ -158,5 +166,46 @@ class AggregateItemTest extends TestCase
 
         $this->assertSame('300.00', $entry->total);
         $this->assertEquals(30, MaterialLocationStock::where('material_id', $material->id)->where('internal_unit_id', $unit->id)->value('current_quantity'));
+    }
+
+    public function test_insumo_and_acessorio_screens_are_separated_by_category(): void
+    {
+        [, $admin] = $this->makeTenantAdmin();
+        $this->actingAs($admin);
+
+        Livewire::test(ManageInsumoTypes::class)
+            ->callAction('create', ['name' => 'Arla 32', 'unit_of_measure' => 'L', 'category' => 'insumo'])
+            ->assertHasNoActionErrors();
+
+        AggregateItemType::create(['name' => 'Cabo de potência']);
+
+        $this->assertSame('insumo', AggregateItemType::where('name', 'Arla 32')->value('category'));
+        $this->assertSame(['Arla 32'], InsumoTypeResource::getEloquentQuery()->pluck('name')->all());
+        $this->assertSame(['Cabo de potência'], AggregateItemTypeResource::getEloquentQuery()->pluck('name')->all());
+    }
+
+    public function test_specialized_services_and_compliance_documents_pages_work(): void
+    {
+        [, $admin] = $this->makeTenantAdmin();
+        $this->actingAs($admin);
+
+        Livewire::test(ManageSpecializedServices::class)
+            ->callAction('create', ['service_type' => 'operador', 'title' => 'Operador de guindaste', 'status' => 'planejado'])
+            ->assertHasNoActionErrors();
+        Livewire::test(ManageComplianceDocuments::class)
+            ->callAction('create', ['document_type' => 'art', 'number' => 'ART-123', 'expires_at' => now()->addDays(10)->toDateString()])
+            ->assertHasNoActionErrors();
+
+        $this->assertSame(1, SpecializedService::count());
+        $this->assertSame('ART-123', ComplianceDocument::sole()->number);
+    }
+
+    public function test_contract_records_which_aggregate_item_categories_the_client_wants(): void
+    {
+        $contract = new Contract(['includes_insumos' => true, 'includes_mao_de_obra' => 1, 'aggregate_items_notes' => 'Operador 8h']);
+
+        $this->assertTrue($contract->includes_insumos);
+        $this->assertTrue($contract->includes_mao_de_obra);
+        $this->assertFalse((bool) $contract->includes_acessorios);
     }
 }

@@ -10,6 +10,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class AggregateItemEntryResource extends BaseResource
 {
@@ -19,7 +20,7 @@ class AggregateItemEntryResource extends BaseResource
 
     protected static ?string $navigationGroup = 'Itens Agregados';
 
-    protected static ?string $navigationParentItem = 'Gestão de Itens Agregados';
+    protected static ?string $navigationParentItem = 'Acessórios e Componentes';
 
     protected static ?int $navigationSort = 3;
 
@@ -29,6 +30,14 @@ class AggregateItemEntryResource extends BaseResource
 
     protected static ?string $pluralModelLabel = 'Entradas de Itens Agregados';
 
+    /** Categoria de Itens Agregados que esta tela controla (acessorio|insumo). */
+    protected static string $category = 'acessorio';
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->whereHas('type', fn ($q) => $q->where('category', static::$category));
+    }
+
     public static function form(Form $form): Form
     {
         $total = fn (Get $get, Set $set) => $set('total', number_format((float) $get('unit_price') * (int) $get('quantity'), 2, '.', ''));
@@ -36,7 +45,7 @@ class AggregateItemEntryResource extends BaseResource
         return $form->schema([
             Forms\Components\DatePicker::make('entry_date')->label('Data de entrada')->default(now())->required(),
             Forms\Components\Select::make('aggregate_item_type_id')->label('Tipo de item')
-                ->relationship('type', 'name')->searchable()->preload()->required(),
+                ->relationship('type', 'name', fn ($query) => $query->where('category', static::$category))->searchable()->preload()->required(),
             Forms\Components\Select::make('supplier_id')->label('Fornecedor')
                 ->relationship('supplier', 'name')->searchable()->preload(),
             Forms\Components\TextInput::make('invoice_number')->label('Nota fiscal')->maxLength(100),
@@ -64,7 +73,7 @@ class AggregateItemEntryResource extends BaseResource
             ])
             ->defaultSort('entry_date', 'desc')
             ->filters([
-                Tables\Filters\SelectFilter::make('aggregate_item_type_id')->label('Item')->relationship('type', 'name'),
+                Tables\Filters\SelectFilter::make('aggregate_item_type_id')->label('Item')->relationship('type', 'name', fn ($query) => $query->where('category', static::$category)),
             ])
             ->actions([Tables\Actions\EditAction::make(), Tables\Actions\DeleteAction::make()]);
     }
