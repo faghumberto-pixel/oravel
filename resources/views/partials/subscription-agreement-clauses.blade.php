@@ -204,6 +204,6 @@
 <div class="clause">
     <span class="clause-title">15. Foro e legislação aplicável.</span>
     Este contrato é regido pelas leis da República Federativa do Brasil. Fica eleito o foro da
-    comarca de domicílio da Oravel para dirimir quaisquer controvérsias oriundas deste
+    comarca de {{ $company['forum'] ?? 'domicílio da Oravel' }}, domicílio da Oravel, para dirimir quaisquer controvérsias oriundas deste
     contrato, com renúncia a qualquer outro, por mais privilegiado que seja.
 </div>

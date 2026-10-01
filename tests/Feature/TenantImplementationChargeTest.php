@@ -109,6 +109,9 @@ class TenantImplementationChargeTest extends TestCase
         $this->assertStringContainsString('R$ 1.000,00', $html);
         $this->assertStringContainsString('dividida em 2 parcelas', $html);
         $this->assertStringContainsString('R$ 500,00 e R$ 500,00', $html);
+        $this->assertStringContainsString('Oravel Desenvolvimento de Software Ltda', $html);
+        $this->assertStringContainsString('65.707.953/0001-30', $html);
+        $this->assertStringContainsString('comarca de São Paulo/SP', $html);
         $this->assertStringContainsString('Limitação de responsabilidade', $html);
         $this->assertStringContainsString('Inadimplência e bloqueio de acesso', $html);
 

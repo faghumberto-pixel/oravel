@@ -56,14 +56,17 @@ return [
     | endereço da sede). Definidos via .env pra não ficarem escritos no código;
     | enquanto vazios, o contrato sai só com o nome "Oravel" e um aviso de
     | preenchimento pendente no preâmbulo -- NUNCA inventar esses dados.
+    | Padrões = dados do rodapé do site institucional (oravel.com.br),
+    | conferidos em 2026-10-01.
     | 'data_export_days' = prazo, após o término do contrato, em que o
     | Contratante ainda pode solicitar a exportação dos seus dados.
     */
 
     'company' => [
-        'legal_name' => env('ORAVEL_LEGAL_NAME'),
-        'cnpj' => env('ORAVEL_CNPJ'),
-        'address' => env('ORAVEL_ADDRESS'),
+        'legal_name' => env('ORAVEL_LEGAL_NAME', 'Oravel Desenvolvimento de Software Ltda'),
+        'cnpj' => env('ORAVEL_CNPJ', '65.707.953/0001-30'),
+        'address' => env('ORAVEL_ADDRESS', 'Rua Pais Leme, 215, conj. 1713, Pinheiros, São Paulo/SP, CEP 05424-150'),
+        'forum' => env('ORAVEL_FORUM', 'São Paulo/SP'),
         'data_export_days' => (int) env('ORAVEL_DATA_EXPORT_DAYS', 30),
     ],
 
