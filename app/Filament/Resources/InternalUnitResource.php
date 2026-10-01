@@ -30,7 +30,7 @@ class InternalUnitResource extends Resource
 
     protected static ?string $navigationLabel = 'Unidades Internas';
 
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $navigationGroup = 'Materiais e Peças';
 
     protected static ?string $navigationParentItem = 'Gestão de Estoque';
 

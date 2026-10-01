@@ -18,7 +18,7 @@ class FilamentNavigationHierarchyTest extends TestCase
      */
     public function test_almoxarifado_page_has_navigation_group()
     {
-        $this->assertEquals('Ativos e Materiais', Almoxarifado::getNavigationGroup());
+        $this->assertEquals('Materiais e Peças', Almoxarifado::getNavigationGroup());
     }
 
     public function test_almoxarifado_page_should_register_navigation()
@@ -32,36 +32,36 @@ class FilamentNavigationHierarchyTest extends TestCase
     public function test_material_resource_has_parent_and_group()
     {
         $this->assertEquals('Gestão de Estoque', MaterialResource::getNavigationParentItem());
-        $this->assertEquals('Ativos e Materiais', MaterialResource::getNavigationGroup());
+        $this->assertEquals('Materiais e Peças', MaterialResource::getNavigationGroup());
     }
 
     public function test_part_resource_has_parent_and_group()
     {
         $this->assertEquals('Gestão de Estoque', PartResource::getNavigationParentItem());
-        $this->assertEquals('Ativos e Materiais', PartResource::getNavigationGroup());
+        $this->assertEquals('Materiais e Peças', PartResource::getNavigationGroup());
     }
 
     public function test_material_location_stock_has_parent_and_group()
     {
         $this->assertEquals('Gestão de Estoque', MaterialLocationStockResource::getNavigationParentItem());
-        $this->assertEquals('Ativos e Materiais', MaterialLocationStockResource::getNavigationGroup());
+        $this->assertEquals('Materiais e Peças', MaterialLocationStockResource::getNavigationGroup());
     }
 
     public function test_part_category_has_parent_and_group()
     {
         $this->assertEquals('Gestão de Estoque', PartCategoryResource::getNavigationParentItem());
-        $this->assertEquals('Ativos e Materiais', PartCategoryResource::getNavigationGroup());
+        $this->assertEquals('Materiais e Peças', PartCategoryResource::getNavigationGroup());
     }
 
     public function test_analise_estoque_page_has_parent_and_group()
     {
         $this->assertEquals('Gestão de Estoque', AnaliseEstoque::getNavigationParentItem());
-        $this->assertEquals('Ativos e Materiais', AnaliseEstoque::getNavigationGroup());
+        $this->assertEquals('Materiais e Peças', AnaliseEstoque::getNavigationGroup());
     }
 
     public function test_inventario_page_has_parent_and_group()
     {
         $this->assertEquals('Gestão de Estoque', Inventario::getNavigationParentItem());
-        $this->assertEquals('Ativos e Materiais', Inventario::getNavigationGroup());
+        $this->assertEquals('Materiais e Peças', Inventario::getNavigationGroup());
     }
 }

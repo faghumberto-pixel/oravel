@@ -16,7 +16,7 @@ class PlantaBaixaPatioAtivos extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
 
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $navigationGroup = 'Ativos';
 
     protected static ?string $navigationParentItem = 'Gestão de Ativos';
 

@@ -26,7 +26,7 @@ class TransferenciaEstoque extends Page implements HasForms
 
     protected static ?string $navigationIcon = 'heroicon-o-arrows-right-left';
 
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $navigationGroup = 'Materiais e Peças';
 
     protected static ?string $navigationParentItem = 'Gestão de Estoque';
 

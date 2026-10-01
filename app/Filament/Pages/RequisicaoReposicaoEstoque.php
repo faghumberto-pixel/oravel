@@ -25,7 +25,7 @@ class RequisicaoReposicaoEstoque extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
 
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $navigationGroup = 'Materiais e Peças';
 
     protected static ?string $navigationParentItem = 'Gestão de Compras';
 

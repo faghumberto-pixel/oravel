@@ -21,7 +21,7 @@ class AssetDossier extends Page
 
     protected static ?string $navigationIcon = 'heroicon-o-qr-code';
 
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $navigationGroup = 'Ativos';
 
     protected static ?string $navigationParentItem = 'Gestão de Ativos';
 

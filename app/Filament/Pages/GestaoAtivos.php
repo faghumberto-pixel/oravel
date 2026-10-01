@@ -14,7 +14,7 @@ class GestaoAtivos extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-cube-transparent';
 
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $navigationGroup = 'Ativos';
 
     protected static ?string $navigationLabel = 'Gestão de Ativos';
 

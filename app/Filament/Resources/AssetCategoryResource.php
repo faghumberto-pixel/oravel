@@ -18,7 +18,7 @@ class AssetCategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $navigationGroup = 'Ativos';
 
     protected static ?string $navigationParentItem = 'Gestão de Ativos';
 

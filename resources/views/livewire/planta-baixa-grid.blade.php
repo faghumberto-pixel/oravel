@@ -51,7 +51,7 @@
 
     @if ($this->locations->isEmpty())
         <div class="rounded-xl border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500 dark:border-gray-700 dark:text-gray-400">
-            Nenhuma posição cadastrada nesta unidade ainda. Cadastre em Ativos e Materiais → Localizações (Planta Baixa).
+            Nenhuma posição cadastrada nesta unidade ainda. Cadastre em Materiais e Peças → Localizações (Planta Baixa).
         </div>
     @else
         @php

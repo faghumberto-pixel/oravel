@@ -18,7 +18,7 @@ class MapaEquipamentos extends Page
 
     // Movido de PCM pra Ativos e Materiais (pedido do usuario 2026-07-26) --
     // e' um mapa de Ativos, mais proximo desse menu do que de PCM.
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $navigationGroup = 'Ativos';
 
     protected static ?string $navigationParentItem = 'Gestão de Ativos';
 

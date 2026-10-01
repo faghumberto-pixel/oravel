@@ -41,7 +41,7 @@ class AssetResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Ativos';
 
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $navigationGroup = 'Ativos';
 
     protected static ?string $navigationParentItem = 'Gestão de Ativos';
 

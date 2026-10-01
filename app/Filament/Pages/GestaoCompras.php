@@ -13,7 +13,7 @@ class GestaoCompras extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
 
-    protected static ?string $navigationGroup = 'Ativos e Materiais';
+    protected static ?string $navigationGroup = 'Materiais e Peças';
 
     protected static ?string $navigationLabel = 'Gestão de Compras';
 

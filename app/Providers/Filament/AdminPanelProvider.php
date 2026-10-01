@@ -80,8 +80,15 @@ class AdminPanelProvider extends PanelProvider
             // 29/09/2026 -- "Ativos e Materiais" já cai em primeiro por
             // conta própria nessa ordenação (começa com A), não é uma
             // exceção manual.
+            // 01/10/2026 -- "Ativos e Materiais" foi dividido em 3 menus
+            // com processos próprios (estoque, compras, vencimento): Ativos
+            // (máquinas/equipamentos), Materiais e Peças (consumo e reposição)
+            // e Itens Agregados (acessórios que vão junto na locação). Ficam
+            // juntos no topo, fora da ordem alfabética, de propósito.
             ->navigationGroups([
-                NavigationGroup::make('Ativos e Materiais'),
+                NavigationGroup::make('Ativos'),
+                NavigationGroup::make('Materiais e Peças'),
+                NavigationGroup::make('Itens Agregados'),
                 NavigationGroup::make('Comercial'),
                 NavigationGroup::make('Configurações'),
                 NavigationGroup::make('Departamento Pessoal'),
