@@ -29,7 +29,7 @@
         {{-- Colaborador --}}
         <div class="px-5 pb-2">
             <div class="flex items-center gap-2 rounded-xl bg-zinc-900 px-3 py-2">
-                <span class="flex h-7 w-7 items-center justify-center rounded-full bg-orange-500/20 text-xs font-bold text-orange-400">
+                <span class="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500/20 text-xs font-bold text-blue-400">
                     {{ strtoupper(substr($employee->name, 0, 1)) }}
                 </span>
                 <div class="min-w-0">

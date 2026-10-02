@@ -16,7 +16,7 @@
                         type="text"
                         wire:model="query"
                         placeholder="Ex: PAT-0001, Guindaste..."
-                        class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-base text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-orange-500"
+                        class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-base text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-blue-500"
                         autofocus
                     />
                     @error('query')
@@ -25,7 +25,7 @@
 
                     <button
                         type="submit"
-                        class="min-h-[3rem] w-full rounded-xl bg-orange-500 text-sm font-bold text-white active:bg-orange-600"
+                        class="min-h-[3rem] w-full rounded-xl bg-blue-500 text-sm font-bold text-white active:bg-blue-600"
                     >
                         Buscar
                     </button>
@@ -191,7 +191,7 @@
                             min="0"
                             wire:model.live="horimeterReading"
                             placeholder="Leitura atual (horas)"
-                            class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-orange-500"
+                            class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-blue-500"
                         />
                         @error('horimeterReading')
                             <p class="mt-1 text-[11px] text-red-400">{{ $message }}</p>
@@ -237,7 +237,7 @@
                         wire:model="horimeterNotes"
                         rows="2"
                         placeholder="Observações (opcional)"
-                        class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-orange-500"
+                        class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-blue-500"
                     ></textarea>
 
                     <button
@@ -245,7 +245,7 @@
                         wire:click="saveHorimeterReading"
                         wire:loading.attr="disabled"
                         wire:target="saveHorimeterReading"
-                        class="min-h-[3rem] w-full rounded-xl bg-orange-500 text-sm font-bold text-white active:bg-orange-600 disabled:opacity-50"
+                        class="min-h-[3rem] w-full rounded-xl bg-blue-500 text-sm font-bold text-white active:bg-blue-600 disabled:opacity-50"
                     >
                         Salvar Apontamento
                     </button>

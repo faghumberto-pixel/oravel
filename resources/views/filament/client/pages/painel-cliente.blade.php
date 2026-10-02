@@ -12,9 +12,9 @@
             <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Equipamentos Locados</p>
             <p class="mt-2 text-2xl font-extrabold text-gray-900 dark:text-white">{{ $stats['equipamentos'] }}</p>
         </div>
-        <div class="rounded-xl border border-orange-200 bg-orange-50 p-4 dark:border-orange-800 dark:bg-orange-900/30">
-            <p class="text-xs font-semibold uppercase tracking-wide text-orange-700 dark:text-orange-300">Contratos Vigentes</p>
-            <p class="mt-2 text-2xl font-extrabold text-orange-700 dark:text-orange-300">{{ $stats['contratos_vigentes'] }}</p>
+        <div class="rounded-xl border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/30">
+            <p class="text-xs font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-300">Contratos Vigentes</p>
+            <p class="mt-2 text-2xl font-extrabold text-blue-700 dark:text-blue-300">{{ $stats['contratos_vigentes'] }}</p>
         </div>
         <div class="rounded-xl border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/30">
             <p class="text-xs font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-300">OS em Andamento</p>
@@ -35,7 +35,7 @@
     <div class="rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
         <div class="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700">
             <h3 class="font-semibold text-gray-900 dark:text-white">📦 Meus Equipamentos &amp; Contratos em Andamento</h3>
-            <a href="{{ \App\Filament\Client\Pages\MeusContratos::getUrl(panel: 'portal-cliente') }}" class="text-xs font-semibold text-orange-600 hover:underline dark:text-orange-400">Ver todos →</a>
+            <a href="{{ \App\Filament\Client\Pages\MeusContratos::getUrl(panel: 'portal-cliente') }}" class="text-xs font-semibold text-blue-600 hover:underline dark:text-blue-400">Ver todos →</a>
         </div>
 
         @forelse ($equipmentTimelines as $item)
@@ -72,7 +72,7 @@
                             <span>Fim: {{ $contract->end_date->format('d/m/Y') }}</span>
                         </div>
                         <div class="mt-1.5 h-2.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
-                            <div class="h-full rounded-full bg-gradient-to-r from-orange-400 to-orange-600" style="width: {{ $percent }}%"></div>
+                            <div class="h-full rounded-full bg-gradient-to-r from-blue-400 to-blue-600" style="width: {{ $percent }}%"></div>
                         </div>
                         <p class="mt-1 text-right text-[11px] text-gray-400">{{ $percent }}% do prazo decorrido</p>
                     </div>
@@ -95,7 +95,7 @@
         <div class="rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
             <div class="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700">
                 <h3 class="font-semibold text-gray-900 dark:text-white">🔧 Manutenções no Equipamento</h3>
-                <a href="{{ \App\Filament\Client\Pages\MinhasOS::getUrl(panel: 'portal-cliente') }}" class="text-xs font-semibold text-orange-600 hover:underline dark:text-orange-400">Ver todas →</a>
+                <a href="{{ \App\Filament\Client\Pages\MinhasOS::getUrl(panel: 'portal-cliente') }}" class="text-xs font-semibold text-blue-600 hover:underline dark:text-blue-400">Ver todas →</a>
             </div>
             <ul class="divide-y divide-gray-100 dark:divide-gray-700">
                 @forelse ($recentOrders as $order)
@@ -128,7 +128,7 @@
         <div class="rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
             <div class="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700">
                 <h3 class="font-semibold text-gray-900 dark:text-white">💳 Financeiro</h3>
-                <a href="{{ \App\Filament\Client\Pages\MeuFinanceiro::getUrl(panel: 'portal-cliente') }}" class="text-xs font-semibold text-orange-600 hover:underline dark:text-orange-400">Ver tudo →</a>
+                <a href="{{ \App\Filament\Client\Pages\MeuFinanceiro::getUrl(panel: 'portal-cliente') }}" class="text-xs font-semibold text-blue-600 hover:underline dark:text-blue-400">Ver tudo →</a>
             </div>
             <div class="flex gap-3 border-b border-gray-100 p-4 dark:border-gray-700">
                 <div class="flex-1 rounded-lg bg-green-50 p-3 text-center dark:bg-green-900/30">

@@ -6,7 +6,7 @@
    sidebar, bem moderno, com top bar igual o app". Reaproveita a MESMA
    linguagem visual do painel admin (sidebar navy, topbar unificado,
    destaque de menu ativo) em vez do tema claro genérico do Filament que
-   o portal usava até aqui -- só a paleta muda (Color::hex('#ea580c') já
+   o portal usava até aqui -- só a paleta muda (Color::hex('#2563eb') já
    configurado no ClientPanelProvider), o resto é idêntico de propósito. */
 
 /* Sidebar sempre azul-escuro, igual ao admin (--oravel-sidebar-from/-to

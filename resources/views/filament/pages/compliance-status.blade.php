@@ -78,7 +78,7 @@
                 @if ($check['name'] === 'Contrato SLA + LGPD Assinado' && !$signature)
                     <div class="mt-4">
                         <a href="{{ route('filament.admin.pages.contract-signature') }}"
-                           class="inline-block rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700 transition">
+                           class="inline-block rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition">
                             🔏 Assinar Agora
                         </a>
                     </div>
@@ -92,22 +92,22 @@
         <h3 class="mb-4 font-semibold text-gray-900 dark:text-white">📚 Documentos e Links Úteis</h3>
         <ul class="space-y-2">
             <li>
-                <a href="{{ route('legal.sla') }}" target="_blank" class="text-orange-600 hover:underline dark:text-orange-400">
+                <a href="{{ route('legal.sla') }}" target="_blank" class="text-blue-600 hover:underline dark:text-blue-400">
                     → Acordo de Nível de Serviço (SLA)
                 </a>
             </li>
             <li>
-                <a href="{{ route('legal.lgpd') }}" target="_blank" class="text-orange-600 hover:underline dark:text-orange-400">
+                <a href="{{ route('legal.lgpd') }}" target="_blank" class="text-blue-600 hover:underline dark:text-blue-400">
                     → Conformidade LGPD
                 </a>
             </li>
             <li>
-                <a href="{{ route('legal.licenca-de-uso') }}" target="_blank" class="text-orange-600 hover:underline dark:text-orange-400">
+                <a href="{{ route('legal.licenca-de-uso') }}" target="_blank" class="text-blue-600 hover:underline dark:text-blue-400">
                     → Contrato de Licença de Uso
                 </a>
             </li>
             <li>
-                <a href="mailto:suporte@oravel.com.br" class="text-orange-600 hover:underline dark:text-orange-400">
+                <a href="mailto:suporte@oravel.com.br" class="text-blue-600 hover:underline dark:text-blue-400">
                     → Contatar Suporte
                 </a>
             </li>

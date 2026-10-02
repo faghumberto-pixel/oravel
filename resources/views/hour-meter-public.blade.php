@@ -76,7 +76,7 @@
                             type="text"
                             x-model="name"
                             placeholder="Nome de quem está registrando"
-                            class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-base text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-orange-500"
+                            class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-base text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-blue-500"
                         />
                         <p class="mt-1 text-[10px] text-zinc-600">Fica registrado como responsável por este apontamento.</p>
                     </div>
@@ -89,7 +89,7 @@
                             min="0"
                             x-model="reading"
                             placeholder="Ex: 1234.50"
-                            class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-base text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-orange-500"
+                            class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-base text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
 
@@ -141,7 +141,7 @@
                             x-model="notes"
                             rows="2"
                             placeholder="Observações (opcional)"
-                            class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-orange-500"
+                            class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-blue-500"
                         ></textarea>
                     </div>
                 </div>
@@ -153,7 +153,7 @@
                 type="button"
                 @click="submit()"
                 :disabled="submitting"
-                class="min-h-[3.25rem] w-full rounded-xl bg-orange-500 text-sm font-bold text-white active:bg-orange-600 disabled:opacity-50"
+                class="min-h-[3.25rem] w-full rounded-xl bg-blue-500 text-sm font-bold text-white active:bg-blue-600 disabled:opacity-50"
             >
                 <span x-show="!submitting">Salvar Apontamento</span>
                 <span x-show="submitting">Enviando...</span>

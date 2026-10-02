@@ -43,7 +43,7 @@ class ClientPanelProvider extends PanelProvider
             // é a home de verdade agora (pedido do usuário 2026-09-25).
             ->homeUrl(fn () => route('filament.portal-cliente.pages.inicio'))
             ->colors([
-                'primary' => Color::hex('#ea580c'),
+                'primary' => Color::hex('#2563eb'),
                 'gray' => Color::Stone,
             ])
             ->favicon(asset('favicon.png').'?v=6')

@@ -59,7 +59,7 @@
         @endif
 
         <a href="{{ route('hour-meter.offline') }}" class="flex items-center gap-4 rounded-2xl bg-slate-900 p-4 active:bg-slate-800">
-            <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-500/15 text-2xl">🔧</span>
+            <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-500/15 text-2xl">🔧</span>
             <div class="min-w-0">
                 <p class="text-sm font-bold text-white">Registrar Horímetro</p>
                 <p class="text-xs text-slate-500">Leitura de horas do equipamento</p>

@@ -14,14 +14,14 @@
                     @if($avatarUrl = auth()->user()?->getFilamentAvatarUrl())
                         <img src="{{ $avatarUrl }}" class="w-10 h-10 rounded-full object-cover shadow" alt="">
                     @else
-                        <div class="w-10 h-10 bg-orange-500 text-white flex items-center justify-center text-sm font-bold shadow" style="border-radius:9999px;">
+                        <div class="w-10 h-10 bg-blue-500 text-white flex items-center justify-center text-sm font-bold shadow" style="border-radius:9999px;">
                             {{ Str::upper(Str::substr(auth()->user()?->name ?? '?', 0, 1)) }}
                         </div>
                     @endif
                 </div>
                 <div class="mt-1.5 flex items-center justify-between gap-2">
                     <p class="text-xs font-medium text-gray-500 min-w-0 truncate">
-                        Você: <span class="font-bold text-orange-600">{{ auth()->user()?->name }}</span>
+                        Você: <span class="font-bold text-blue-600">{{ auth()->user()?->name }}</span>
                     </p>
                     {{-- Só existe rota chat.logout no chat standalone (/chat) --
                          este mesmo Blade é reaproveitado como <livewire:global-chat/>
@@ -41,7 +41,7 @@
                 <div class="relative">
                     <x-heroicon-m-magnifying-glass class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input type="text" x-model="search" placeholder="Pesquisar conversa..."
-                        class="w-full bg-gray-100 text-sm text-gray-900 placeholder-gray-400 pl-9 pr-3 py-2.5 border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition" style="border-radius:9999px;">
+                        class="w-full bg-gray-100 text-sm text-gray-900 placeholder-gray-400 pl-9 pr-3 py-2.5 border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" style="border-radius:9999px;">
                 </div>
             </div>
 
@@ -54,7 +54,7 @@
                         x-show="search === '' || @js(Str::lower(data_get($user, 'name', '') ?? '')).includes(search.toLowerCase())"
                         @class([
                             'px-4 py-3 cursor-pointer flex items-center gap-3 transition-colors border-l-2',
-                            'bg-orange-50 border-orange-500' => $this->selectedUserId === data_get($user, 'id'),
+                            'bg-blue-50 border-blue-500' => $this->selectedUserId === data_get($user, 'id'),
                             'border-transparent hover:bg-gray-50' => $this->selectedUserId !== data_get($user, 'id'),
                         ])
                     >
@@ -62,7 +62,7 @@
                             @if(data_get($user, 'avatar_url'))
                                 <img src="{{ data_get($user, 'avatar_url') }}" class="w-11 h-11 rounded-full object-cover" alt="">
                             @else
-                                <div class="w-11 h-11 bg-orange-100 text-orange-700 flex items-center justify-center text-base font-bold" style="border-radius:9999px;">
+                                <div class="w-11 h-11 bg-blue-100 text-blue-700 flex items-center justify-center text-base font-bold" style="border-radius:9999px;">
                                     {{ Str::upper(Str::substr(data_get($user, 'name', '?'), 0, 1)) }}
                                 </div>
                             @endif
@@ -91,10 +91,10 @@
                 @endphp
                 <div x-show="openDept" x-cloak class="mb-2 max-h-44 overflow-y-auto chat-scroll space-y-1">
                     <button type="button" wire:click="filterDepartment" @click="openDept = false"
-                        @class(['w-full text-left px-3 py-2 text-sm font-medium transition','bg-orange-500 text-white' => blank($this->selectedDepartmentId),'text-gray-600 hover:bg-gray-100' => filled($this->selectedDepartmentId)]) style="border-radius:0.5rem;">Todos</button>
+                        @class(['w-full text-left px-3 py-2 text-sm font-medium transition','bg-blue-500 text-white' => blank($this->selectedDepartmentId),'text-gray-600 hover:bg-gray-100' => filled($this->selectedDepartmentId)]) style="border-radius:0.5rem;">Todos</button>
                     @forelse($this->departments as $dep)
                         <button type="button" wire:click="filterDepartment('{{ $dep->id }}')" @click="openDept = false"
-                            @class(['w-full text-left px-3 py-2 text-sm font-medium transition','bg-orange-500 text-white' => (string) $this->selectedDepartmentId === (string) $dep->id,'text-gray-600 hover:bg-gray-100' => (string) $this->selectedDepartmentId !== (string) $dep->id]) style="border-radius:0.5rem;">{{ $dep->name }}</button>
+                            @class(['w-full text-left px-3 py-2 text-sm font-medium transition','bg-blue-500 text-white' => (string) $this->selectedDepartmentId === (string) $dep->id,'text-gray-600 hover:bg-gray-100' => (string) $this->selectedDepartmentId !== (string) $dep->id]) style="border-radius:0.5rem;">{{ $dep->name }}</button>
                     @empty
                         <p class="px-3 py-2 text-xs text-gray-500">Nenhum departamento cadastrado.</p>
                     @endforelse
@@ -102,8 +102,8 @@
                 <button type="button" @click="openDept = !openDept"
                     class="w-full flex items-center justify-between gap-2 px-3 py-2.5 bg-white border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-100 transition" style="border-radius:0.75rem;">
                     <span class="flex items-center gap-2 truncate">
-                        <x-heroicon-o-building-office-2 class="w-5 h-5 text-orange-600 shrink-0" />
-                        <span class="truncate">Departamento: <span class="text-orange-600">{{ $activeDep ?? 'Todos' }}</span></span>
+                        <x-heroicon-o-building-office-2 class="w-5 h-5 text-blue-600 shrink-0" />
+                        <span class="truncate">Departamento: <span class="text-blue-600">{{ $activeDep ?? 'Todos' }}</span></span>
                     </span>
                     <x-heroicon-m-chevron-up-down class="w-4 h-4 shrink-0" />
                 </button>
@@ -121,7 +121,7 @@
                         @if(data_get($this->selectedUser, 'avatar_url'))
                             <img src="{{ data_get($this->selectedUser, 'avatar_url') }}" class="w-10 h-10 rounded-full object-cover" alt="">
                         @else
-                            <div class="w-10 h-10 bg-orange-100 text-orange-700 flex items-center justify-center text-base font-bold" style="border-radius:9999px;">
+                            <div class="w-10 h-10 bg-blue-100 text-blue-700 flex items-center justify-center text-base font-bold" style="border-radius:9999px;">
                                 {{ Str::upper(Str::substr(data_get($this->selectedUser, 'name', '?'), 0, 1)) }}
                             </div>
                         @endif
@@ -134,7 +134,7 @@
                     @if($this->chatRoom)
                         <a href="{{ route('chat.history.pdf', ['room' => $this->chatRoom->id]) }}" target="_blank"
                            title="Exportar conversa em PDF"
-                           class="flex items-center justify-center w-9 h-9 text-gray-500 hover:text-orange-600 hover:bg-gray-200 transition shrink-0" style="border-radius:9999px;">
+                           class="flex items-center justify-center w-9 h-9 text-gray-500 hover:text-blue-600 hover:bg-gray-200 transition shrink-0" style="border-radius:9999px;">
                             <x-heroicon-o-arrow-down-tray class="w-5 h-5" />
                         </a>
                     @endif
@@ -146,12 +146,12 @@
                             <div
                                 @class([
                                     'max-w-[78%] lg:max-w-md px-4 py-2.5 shadow-sm text-sm font-medium',
-                                    'bg-orange-600 text-white' => data_get($msg, 'is_mine'),
+                                    'bg-blue-600 text-white' => data_get($msg, 'is_mine'),
                                     'bg-white text-gray-800 border border-gray-200' => ! data_get($msg, 'is_mine'),
                                 ])
                                 style="border-radius: {{ data_get($msg, 'is_mine') ? '18px 18px 4px 18px' : '18px 18px 18px 4px' }};"
                             >
-                                <p @class(['text-xs font-bold mb-0.5','text-white/90' => data_get($msg, 'is_mine'),'text-orange-600' => ! data_get($msg, 'is_mine')])>
+                                <p @class(['text-xs font-bold mb-0.5','text-white/90' => data_get($msg, 'is_mine'),'text-blue-600' => ! data_get($msg, 'is_mine')])>
                                     {{ data_get($msg, 'is_mine') ? 'Eu' : data_get($this->selectedUser, 'name', 'Contato') }}
                                 </p>
 
@@ -243,27 +243,27 @@
 
                 <div class="p-3 sm:p-4 border-t border-gray-200 shrink-0 bg-gray-50">
                     <div class="flex items-center gap-2">
-                        <div class="flex-1 min-w-0 flex items-center gap-0.5 bg-white border border-gray-300 px-2 py-1 focus-within:ring-2 focus-within:ring-orange-500 focus-within:border-orange-500 transition" style="border-radius:9999px;">
+                        <div class="flex-1 min-w-0 flex items-center gap-0.5 bg-white border border-gray-300 px-2 py-1 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition" style="border-radius:9999px;">
                             <span class="hidden sm:flex items-center justify-center w-9 h-9 text-lg leading-none select-none shrink-0">😊</span>
                             <input type="text" x-model="draftMessage" x-on:input="hasText = $event.target.value.trim().length > 0" @keydown.enter="sendOrQueue()" :disabled="isRecording"
                                 class="flex-1 min-w-0 bg-transparent text-gray-900 placeholder-gray-400 px-2 py-2 outline-none border-0 focus:ring-0 text-sm font-medium" placeholder="Digite uma mensagem...">
-                            <label title="Anexar imagem" class="flex items-center justify-center w-9 h-9 cursor-pointer text-gray-500 hover:text-orange-600 hover:bg-gray-100 transition shrink-0" style="border-radius:9999px;">
+                            <label title="Anexar imagem" class="flex items-center justify-center w-9 h-9 cursor-pointer text-gray-500 hover:text-blue-600 hover:bg-gray-100 transition shrink-0" style="border-radius:9999px;">
                                 <input type="file" wire:model="temporaryImage" accept="image/*" class="hidden">
-                                <div wire:loading wire:target="temporaryImage" class="animate-spin h-5 w-5 border-2 border-orange-500 border-t-transparent" style="border-radius:9999px;"></div>
+                                <div wire:loading wire:target="temporaryImage" class="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent" style="border-radius:9999px;"></div>
                                 <x-heroicon-s-paper-clip class="w-5 h-5" wire:loading.remove wire:target="temporaryImage" />
                             </label>
-                            <label title="Tirar foto" class="flex items-center justify-center w-9 h-9 cursor-pointer text-gray-500 hover:text-orange-600 hover:bg-gray-100 transition shrink-0" style="border-radius:9999px;">
+                            <label title="Tirar foto" class="flex items-center justify-center w-9 h-9 cursor-pointer text-gray-500 hover:text-blue-600 hover:bg-gray-100 transition shrink-0" style="border-radius:9999px;">
                                 <input type="file" wire:model="temporaryImage" accept="image/*" capture="environment" class="hidden">
                                 <x-heroicon-s-camera class="w-5 h-5" />
                             </label>
-                            <label title="Anexar documento" class="flex items-center justify-center w-9 h-9 cursor-pointer text-gray-500 hover:text-orange-600 hover:bg-gray-100 transition shrink-0" style="border-radius:9999px;">
+                            <label title="Anexar documento" class="flex items-center justify-center w-9 h-9 cursor-pointer text-gray-500 hover:text-blue-600 hover:bg-gray-100 transition shrink-0" style="border-radius:9999px;">
                                 <input type="file" wire:model="temporaryDocument" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.csv" class="hidden">
-                                <div wire:loading wire:target="temporaryDocument" class="animate-spin h-5 w-5 border-2 border-orange-500 border-t-transparent" style="border-radius:9999px;"></div>
+                                <div wire:loading wire:target="temporaryDocument" class="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent" style="border-radius:9999px;"></div>
                                 <x-heroicon-s-document-text class="w-5 h-5" wire:loading.remove wire:target="temporaryDocument" />
                             </label>
                         </div>
                         <button type="button" x-show="hasText && !isRecording" @click="sendOrQueue()"
-                            class="flex items-center justify-center w-12 h-12 bg-orange-600 hover:bg-orange-700 text-white shadow-lg transition shrink-0" style="border-radius:9999px;" title="Enviar">
+                            class="flex items-center justify-center w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white shadow-lg transition shrink-0" style="border-radius:9999px;" title="Enviar">
                             <x-heroicon-s-paper-airplane class="w-5 h-5" />
                         </button>
                         {{-- Ícones sempre presentes no DOM (SVG, não x-text) --
@@ -274,8 +274,8 @@
                              Alpine popular o texto, diferente de x-show que
                              ao menos deixa o elemento visível por padrão). --}}
                         <button type="button" x-show="!hasText || isRecording" @click="toggleRecording()"
-                            :class="isRecording ? 'bg-red-600 hover:bg-red-700' : 'bg-orange-600 hover:bg-orange-700'"
-                            class="flex items-center justify-center w-12 h-12 bg-orange-600 hover:bg-orange-700 text-white shadow-lg transition shrink-0" style="border-radius:9999px;" title="Gravar áudio">
+                            :class="isRecording ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'"
+                            class="flex items-center justify-center w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white shadow-lg transition shrink-0" style="border-radius:9999px;" title="Gravar áudio">
                             <x-heroicon-s-stop class="w-5 h-5" x-show="isRecording" x-cloak />
                             <x-heroicon-s-microphone class="w-5 h-5" x-show="!isRecording" />
                         </button>

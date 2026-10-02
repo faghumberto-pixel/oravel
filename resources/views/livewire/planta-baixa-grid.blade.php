@@ -73,7 +73,7 @@
                         'danger' => 'bg-red-500/80 hover:bg-red-500 text-white',
                         'warning' => 'bg-amber-500/80 hover:bg-amber-500 text-white',
                         'info' => 'bg-blue-500/80 hover:bg-blue-500 text-white',
-                        'primary' => 'bg-orange-600/80 hover:bg-orange-600 text-white',
+                        'primary' => 'bg-blue-600/80 hover:bg-blue-600 text-white',
                         'purple' => 'bg-purple-500/80 hover:bg-purple-500 text-white',
                         'criticidade' => '',
                         default => 'bg-gray-200 hover:bg-gray-300 text-gray-500 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300',

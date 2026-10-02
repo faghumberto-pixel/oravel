@@ -8,7 +8,7 @@
     <header class="flex items-center justify-between px-5 pb-2 pt-6">
         <h1 class="text-xs font-bold tracking-widest text-zinc-400">NOVA PROPOSTA COMERCIAL</h1>
         <div class="flex items-center gap-2">
-            <span class="flex h-7 w-7 items-center justify-center rounded-full bg-orange-500/15 text-orange-400">
+            <span class="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500/15 text-blue-400">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
@@ -20,7 +20,7 @@
     {{-- Passos --}}
     <div class="flex gap-1.5 px-5 pb-4">
         @foreach ([1 => 'Cliente', 2 => 'Itens', 3 => 'Termos', 4 => 'Revisão'] as $n => $label)
-            <div class="flex-1 rounded-full {{ $step >= $n ? 'bg-orange-500' : 'bg-zinc-800' }} h-1.5"></div>
+            <div class="flex-1 rounded-full {{ $step >= $n ? 'bg-blue-500' : 'bg-zinc-800' }} h-1.5"></div>
         @endforeach
     </div>
 
@@ -41,7 +41,7 @@
                 @error('clientId') <p class="mt-1 text-[11px] text-red-400">{{ $message }}</p> @enderror
 
                 <button type="button" wire:click="saveClient"
-                        class="mt-4 min-h-[2.75rem] w-full rounded-xl bg-orange-500 text-xs font-bold text-zinc-950">
+                        class="mt-4 min-h-[2.75rem] w-full rounded-xl bg-blue-500 text-xs font-bold text-zinc-950">
                     PRÓXIMO — ITENS
                 </button>
             </div>
@@ -66,7 +66,7 @@
                     </div>
                     <div class="mt-3 flex items-center justify-between border-t border-zinc-800 pt-3">
                         <span class="text-[11px] font-bold uppercase text-zinc-400">Total</span>
-                        <span class="text-sm font-bold text-orange-400">R$ {{ number_format($proposta->total_value, 2, ',', '.') }}</span>
+                        <span class="text-sm font-bold text-blue-400">R$ {{ number_format($proposta->total_value, 2, ',', '.') }}</span>
                     </div>
                 @endif
 
@@ -74,7 +74,7 @@
                     <div class="flex gap-2">
                         @foreach ($itemTypeLabels as $value => $label)
                             <button type="button" wire:click="$set('itemType', '{{ $value }}')"
-                                    class="min-h-[2.5rem] flex-1 rounded-xl border text-[11px] font-bold {{ $itemType === $value ? 'border-orange-500 bg-orange-500/15 text-orange-400' : 'border-zinc-700 text-zinc-400' }}">
+                                    class="min-h-[2.5rem] flex-1 rounded-xl border text-[11px] font-bold {{ $itemType === $value ? 'border-blue-500 bg-blue-500/15 text-blue-400' : 'border-zinc-700 text-zinc-400' }}">
                                 {{ strtoupper($label) }}
                             </button>
                         @endforeach
@@ -125,13 +125,13 @@
                               class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500"></textarea>
 
                     <button type="button" wire:click="addItem"
-                            class="min-h-[2.75rem] w-full rounded-xl bg-zinc-800 border border-orange-500/40 text-xs font-bold text-orange-400">
+                            class="min-h-[2.75rem] w-full rounded-xl bg-zinc-800 border border-blue-500/40 text-xs font-bold text-blue-400">
                         + ADICIONAR ITEM
                     </button>
                 </div>
 
                 <button type="button" wire:click="goToStep(3)"
-                        class="mt-4 min-h-[2.75rem] w-full rounded-xl bg-orange-500 text-xs font-bold text-zinc-950">
+                        class="mt-4 min-h-[2.75rem] w-full rounded-xl bg-blue-500 text-xs font-bold text-zinc-950">
                     PRÓXIMO — TERMOS
                 </button>
             </div>
@@ -161,7 +161,7 @@
                 </div>
 
                 <button type="button" wire:click="saveTerms"
-                        class="mt-4 min-h-[2.75rem] w-full rounded-xl bg-orange-500 text-xs font-bold text-zinc-950">
+                        class="mt-4 min-h-[2.75rem] w-full rounded-xl bg-blue-500 text-xs font-bold text-zinc-950">
                     PRÓXIMO — REVISÃO
                 </button>
             </div>
@@ -180,20 +180,20 @@
                                     <p class="text-xs font-bold text-zinc-100">{{ $item->description }}</p>
                                     <p class="text-[10px] text-zinc-500">{{ $itemTypeLabels[$item->type] }} · {{ $item->quantity }}x R$ {{ number_format($item->unit_price, 2, ',', '.') }}</p>
                                 </div>
-                                <span class="text-xs font-bold text-orange-400">R$ {{ number_format($item->subtotal, 2, ',', '.') }}</span>
+                                <span class="text-xs font-bold text-blue-400">R$ {{ number_format($item->subtotal, 2, ',', '.') }}</span>
                             </div>
                         @endforeach
                     </div>
 
                     <div class="mt-3 flex items-center justify-between border-t border-zinc-800 pt-3">
                         <span class="text-[11px] font-bold uppercase text-zinc-400">Total</span>
-                        <span class="text-sm font-bold text-orange-400">R$ {{ number_format($proposta->total_value, 2, ',', '.') }}</span>
+                        <span class="text-sm font-bold text-blue-400">R$ {{ number_format($proposta->total_value, 2, ',', '.') }}</span>
                     </div>
 
                     @error('enviar') <p class="mt-3 text-[11px] text-red-400">{{ $message }}</p> @enderror
 
                     <button type="button" wire:click="enviar"
-                            class="mt-4 min-h-[3rem] w-full rounded-xl bg-orange-500 text-sm font-bold text-zinc-950">
+                            class="mt-4 min-h-[3rem] w-full rounded-xl bg-blue-500 text-sm font-bold text-zinc-950">
                         ENVIAR PARA O COMERCIAL
                     </button>
                 </div>

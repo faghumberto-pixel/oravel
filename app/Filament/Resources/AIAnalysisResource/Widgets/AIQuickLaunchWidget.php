@@ -63,7 +63,7 @@ class AIQuickLaunchWidget extends Widget
                 'label' => 'Retrabalho / Corretivas',
                 'description' => 'Verifica ativos que voltaram pra oficina em corretiva mais de uma vez, e receba as causas prováveis.',
                 'icon' => 'heroicon-o-arrow-path',
-                'color' => '#ea580c',
+                'color' => '#2563eb',
                 'url' => AnaliseRetrabalho::getUrl(),
                 'visible' => $hasFeature,
             ],

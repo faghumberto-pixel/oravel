@@ -29,7 +29,7 @@
                     Cancelar
                 </a>
                 <button type="submit"
-                        class="rounded-lg bg-orange-600 px-6 py-2 font-medium text-white hover:bg-orange-700 transition">
+                        class="rounded-lg bg-blue-600 px-6 py-2 font-medium text-white hover:bg-blue-700 transition">
                     🔏 Assinar Eletronicamente
                 </button>
             </div>

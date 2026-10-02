@@ -86,7 +86,7 @@
 
                     if (route.length) {
                         const latlngs = route.map((p) => [p.lat, p.lng]);
-                        this.line = L.polyline(latlngs, { color: '#f97316' }).addTo(this.map);
+                        this.line = L.polyline(latlngs, { color: '#3b82f6' }).addTo(this.map);
                         this.map.fitBounds(this.line.getBounds());
                     }
 

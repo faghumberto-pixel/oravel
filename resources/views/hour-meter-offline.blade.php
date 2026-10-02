@@ -35,7 +35,7 @@
         {{-- Técnico autenticado --}}
         <div class="px-5 pb-2">
             <div class="flex items-center gap-2 rounded-xl bg-zinc-900 px-3 py-2">
-                <span class="flex h-7 w-7 items-center justify-center rounded-full bg-orange-500/20 text-xs font-bold text-orange-400">
+                <span class="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500/20 text-xs font-bold text-blue-400">
                     {{ strtoupper(substr($technicianName, 0, 1)) }}
                 </span>
                 <div class="min-w-0">
@@ -74,7 +74,7 @@
                             x-model="query"
                             @input="search()"
                             placeholder="Ex: PAT-0001, Guindaste..."
-                            class="mt-3 w-full rounded-xl border-0 bg-zinc-800 p-3 text-base text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-orange-500"
+                            class="mt-3 w-full rounded-xl border-0 bg-zinc-800 p-3 text-base text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-blue-500"
                             autofocus
                         />
 
@@ -163,7 +163,7 @@
                                     min="0"
                                     x-model="reading"
                                     placeholder="Ex: 1234.50"
-                                    class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-base text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-orange-500"
+                                    class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-base text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-blue-500"
                                 />
                             </div>
 
@@ -215,7 +215,7 @@
                                     x-model="notes"
                                     rows="2"
                                     placeholder="Observações (opcional)"
-                                    class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-orange-500"
+                                    class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-blue-500"
                                 ></textarea>
                             </div>
                         </div>
@@ -229,7 +229,7 @@
                 <button
                     type="button"
                     @click="save()"
-                    class="min-h-[3.25rem] w-full rounded-xl bg-orange-500 text-sm font-bold text-white active:bg-orange-600"
+                    class="min-h-[3.25rem] w-full rounded-xl bg-blue-500 text-sm font-bold text-white active:bg-blue-600"
                 >
                     Salvar Apontamento
                 </button>

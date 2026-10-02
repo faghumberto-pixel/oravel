@@ -20,7 +20,7 @@
                         <h2 class="text-sm font-bold text-zinc-100">{{ $warehouse->name }}</h2>
                         <p class="text-[11px] text-zinc-500">Placa {{ $warehouse->vehicle_plate ?? '—' }}</p>
                     </div>
-                    <span class="rounded-full bg-orange-500/15 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-orange-400">
+                    <span class="rounded-full bg-blue-500/15 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-blue-400">
                         Volante
                     </span>
                 </div>
@@ -32,7 +32,7 @@
                     type="text"
                     wire:model.live.debounce.300ms="search"
                     placeholder="Buscar peça por nome ou SKU..."
-                    class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-base text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-orange-500"
+                    class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-base text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-blue-500"
                 />
             </div>
 
