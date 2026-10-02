@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Central\Pages\AcessosClientes;
 use App\Filament\Central\Pages\DashboardCrm;
 use App\Filament\Central\Pages\DashboardSaaS;
 use App\Filament\Central\Pages\DashboardSiteInstitucional;
@@ -20,16 +21,11 @@ use App\Filament\Central\Resources\SalesLeadResource\Widgets\SalesLeadListStats;
 use App\Filament\Central\Resources\SignatureResource;
 use App\Filament\Central\Resources\TenantComplianceResource;
 use App\Filament\Central\Widgets\AcquisitionChannelChart;
-use App\Filament\Central\Widgets\BackupStatsOverview;
-use App\Filament\Central\Widgets\ImplementationStats;
-use App\Filament\Central\Widgets\Site\SiteClicksTable;
-use App\Filament\Central\Widgets\Site\SiteSourcesTable;
-use App\Filament\Central\Widgets\Site\SiteStatsOverview;
-use App\Filament\Central\Widgets\Site\SiteTopPagesTable;
-use App\Filament\Central\Widgets\Site\SiteVisitsChart;
 use App\Filament\Central\Widgets\ArrChart;
+use App\Filament\Central\Widgets\BackupStatsOverview;
 use App\Filament\Central\Widgets\ChurnChart;
 use App\Filament\Central\Widgets\EngagementChart;
+use App\Filament\Central\Widgets\ImplementationStats;
 use App\Filament\Central\Widgets\LeadsBySegmentChart;
 use App\Filament\Central\Widgets\LeadsBySourceChart;
 use App\Filament\Central\Widgets\LeadsCreatedTrendChart;
@@ -38,6 +34,11 @@ use App\Filament\Central\Widgets\RevenueChart;
 use App\Filament\Central\Widgets\SaaSStatsOverview;
 use App\Filament\Central\Widgets\SalesCrmStatsWidget;
 use App\Filament\Central\Widgets\SalesLeadMapWidget;
+use App\Filament\Central\Widgets\Site\SiteClicksTable;
+use App\Filament\Central\Widgets\Site\SiteSourcesTable;
+use App\Filament\Central\Widgets\Site\SiteStatsOverview;
+use App\Filament\Central\Widgets\Site\SiteTopPagesTable;
+use App\Filament\Central\Widgets\Site\SiteVisitsChart;
 use App\Filament\Central\Widgets\SiteVisitsStatsOverview;
 use App\Filament\Central\Widgets\TopReferrersChart;
 use App\Filament\Central\Widgets\WonLostTrendChart;
@@ -157,6 +158,7 @@ class CentralPanelProvider extends PanelProvider
                 Kanban::class,
                 Programacao::class,
                 TenantTree::class,
+                AcessosClientes::class,
                 RolesTree::class,
             ])
             ->widgets([

@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Models\UserActivityLog;
 use App\Services\AcademyUsage;
 use App\Services\AccessAnalytics;
+use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
 use Livewire\Livewire;
@@ -105,5 +106,10 @@ class AcessosClientesTest extends TestCase
 
         $l = AcademyUsage::lessons($u->id, now()->subDay(), $t->id)->first();
         $this->assertSame(['Suprimentos', 'Compras', 420, '8/10 acertos'], [$l['course'], $l['lesson'], $l['seconds'], $l['quiz']]);
+    }
+
+    public function test_pagina_esta_registrada_no_painel_central(): void
+    {
+        $this->assertContains(AcessosClientes::class, Filament::getPanel('central')->getPages());
     }
 }
