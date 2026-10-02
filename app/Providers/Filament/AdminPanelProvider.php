@@ -73,7 +73,7 @@ class AdminPanelProvider extends PanelProvider
                 'purple' => Color::Purple,
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->brandLogo(fn () => view('filament.brand-logo'))
+            ->brandLogo(fn () => view('filament.admin.brand-logo'))
             ->brandLogoHeight('1.25rem')
             ->favicon(asset('favicon.png').'?v=6')
             // Ordem alfabética dos menus-pai, pedido explícito do usuário

@@ -56,7 +56,8 @@
         {{-- Topbar unificado (2026-09-18): logo, tenant switcher, avisos,
              e menu integrados numa única linha com cor consistente. --}}
         <nav
-            class="sticky top-0 z-20 flex h-16 items-center gap-x-4 bg-gradient-to-br from-[#0f172a] to-[#1a2438] px-4 shadow-sm ring-1 ring-white/10 md:px-6 lg:px-8"
+            class="fi-topbar-bar sticky top-0 z-20 flex h-16 items-center gap-x-4 px-4 shadow-sm md:px-6 lg:px-8"
+            
         >
             @if (filament()->hasNavigation())
                 <x-filament::icon-button
@@ -100,9 +101,7 @@
                  passou a aparecer so' na sidebar. Mesmo padrao ja usado em
                  panel-footer.blade.php/emails -- so' o "r" de "Oravel" em
                  laranja (text-primary-500), resto no tom neutro do topbar. --}}
-            <div class="hidden shrink-0 items-center lg:flex">
-                <span class="text-sm font-bold tracking-tight text-gray-200">O<span class="text-primary-500">R</span>AVEL ERP</span>
-            </div>
+            
 
             {{-- Data/hora ao vivo (2026-09-18, pedido do usuario): ocupa o
                  centro do topbar, que ficou vazio depois que o aviso saiu

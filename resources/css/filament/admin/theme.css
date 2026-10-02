@@ -8,9 +8,8 @@
    cabecalho: botoes de acao (Nova Ordem de Servico, Exportar, filtros etc.)
    ficam no mesmo <header>, ao lado do h1, e continuam funcionando
    normalmente. Breadcrumb tambem mantido. */
-.fi-header-heading {
-    display: none;
-}
+/* (02/10/2026: o titulo voltou, agora dentro do hero em gradiente da
+   Academia -- ver bloco "Hero" no fim deste arquivo.) */
 
 /* Reduz espaçamento geral entre header e conteúdo (2026-08-31) */
 .fi-page-header {
@@ -83,7 +82,7 @@
 /* Menus com submenus (Almoxarifado) com background diferenciado */
 .fi-topbar-item:has(~ .fi-topbar-item[aria-current]),
 .fi-sidebar-item:has(~ .fi-sidebar-item[aria-current]) {
-    background-color: rgba(234, 88, 12, 0.08) !important;
+    background-color: rgba(37, 99, 235, 0.08) !important;
     border-radius: 0.375rem;
     padding: 0.25rem 0.5rem;
 }
@@ -91,7 +90,7 @@
 /* Background mais forte quando selecionado */
 .fi-topbar-item.fi-active:has(~ .fi-topbar-item[aria-current]),
 .fi-sidebar-item.fi-active:has(~ .fi-sidebar-item[aria-current]) {
-    background-color: rgba(234, 88, 12, 0.12) !important;
+    background-color: rgba(37, 99, 235, 0.12) !important;
     font-weight: 600;
 }
 
@@ -108,7 +107,7 @@
    Operacao > filhos). */
 .fi-sidebar-group:has(.fi-sidebar-item.fi-active),
 .fi-sidebar-group:has(.fi-sidebar-item[aria-current="page"]) {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: transparent;
     border-radius: 0.5rem;
     padding-top: 0.375rem;
     padding-bottom: 0.375rem;
@@ -138,7 +137,7 @@
     /* Sidebar do painel e' escura (navy) -- cinza claro pra ter contraste
        contra o fundo, mais apagado que o branco dos itens filhos e mais
        neutro que o laranja (reservado pra "selecionado"). */
-    color: #cbd5e1 !important;
+    color: #64748b !important;
 }
 
 /* Espaco entre os grupos do menu (pais) reduzido (pedido do usuario
@@ -158,9 +157,7 @@
        finissima seguida de um filete claro logo abaixo, como um sulco
        gravado no fundo escuro da sidebar, nao uma borda desenhada. */
     border-top: none;
-    box-shadow:
-        0 -1px 0 rgba(0, 0, 0, 0.35),
-        0 -2px 0 rgba(255, 255, 255, 0.04);
+    box-shadow: 0 -1px 0 #e4e8f0;
 }
 
 /* Background customizado removido (2026-09-18): imagem escura pensada pro
@@ -169,3 +166,45 @@
    AdminPanelProvider), essa imagem aparecia por cima do conteudo claro,
    destoando. Fundo real da area de conteudo e' --oravel-bg (CSS puro em
    brand-header-background.blade.php). */
+
+/* Sidebar branca (Academia): item ativo azul claro com texto azul. */
+.fi-sidebar-item.fi-active > a,
+.fi-sidebar-item > a[aria-current="page"] {
+    background-color: #e8efff !important;
+    border-radius: 0.625rem;
+}
+html.dark .fi-sidebar-item.fi-active > a {
+    background-color: rgba(37, 99, 235, 0.2) !important;
+}
+.fi-sidebar-item.fi-active .fi-sidebar-item-icon {
+    color: var(--oravel-primary) !important;
+}
+.fi-sidebar-item:not(.fi-active) > a:hover {
+    background-color: #f1f5ff;
+}
+html.dark .fi-sidebar-group-label { color: #94a3b8 !important; }
+html.dark .fi-sidebar-group + .fi-sidebar-group { box-shadow: 0 -1px 0 #232c40; }
+
+/* Hero: faixa de titulo em gradiente (igual ao .ac-hero.sm da Academia).
+   Texto sempre claro sobre o gradiente. */
+.fi-page-header,
+.fi-header {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.25rem;
+    padding: 1.25rem 1.625rem;
+    margin-bottom: 1rem;
+    color: #fff;
+    background: linear-gradient(135deg, #0b1f3a 0%, #174a9c 55%, #1d6fd8 100%);
+    box-shadow: 0 10px 30px rgba(11, 31, 58, 0.18);
+}
+.fi-header-heading {
+    color: #fff !important;
+    font-size: 1.4375rem !important;
+    line-height: 1.15;
+    letter-spacing: -0.3px;
+}
+.fi-header-subheading { color: rgba(255, 255, 255, 0.88) !important; font-size: 0.9375rem !important; }
+.fi-header .fi-breadcrumbs a,
+.fi-header .fi-breadcrumbs span,
+.fi-header .fi-breadcrumbs svg { color: rgba(255, 255, 255, 0.8) !important; }

@@ -36,7 +36,7 @@
        tailwind.config.js) porque o Vite nao builda aqui (Node 18 instalado,
        Vite 7 exige 20.19+/22.12+ -- ver memoria do projeto sobre isso). */
     .fi-body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+        font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
     }
 
     /* Topbar unificado (2026-09-18): logo, tenant switcher, avisos e menu
@@ -48,6 +48,29 @@
         gap: 1rem;
     }
 
+    @if (filament()->getId() === 'admin')
+    /* Paleta da Academia (02/10/2026): faixa superior (cabecalho da sidebar
+       + topbar) no MESMO gradiente navy, contínuo (background-attachment:
+       fixed => os dois mostram a mesma fatia de um gradiente só). Corpo da
+       sidebar branco, claro; no modo escuro vira cinza-escuro. */
+    :root { --oravel-bg: #f3f6fb; --oravel-border: #e4e8f0; }
+    .fi-topbar-bar,
+    .fi-sidebar-header {
+        background: linear-gradient(90deg, var(--oravel-sidebar-from), var(--oravel-sidebar-to)) fixed !important;
+        border: 0 !important;
+        box-shadow: 0 1px 0 rgba(255,255,255,.08) inset !important;
+        --tw-ring-shadow: 0 0 #0000 !important;
+    }
+    .fi-topbar-item { color: #dbe7ff !important; }
+    .fi-topbar-item.fi-active { color: #fff !important; }
+    .fi-topbar .fi-icon-btn svg { color: #dbe7ff !important; }
+    .fi-sidebar { background: #fff !important; border-right: 1px solid var(--oravel-border); }
+    html.dark .fi-sidebar { background: #0f172a !important; border-right-color: #232c40; }
+    .fi-sidebar-nav { scrollbar-color: #cbd5e1 transparent; scrollbar-width: thin; }
+    .fi-sidebar-nav::-webkit-scrollbar { width: 6px; }
+    .fi-sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+    .fi-sidebar-nav::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 9999px; }
+    @else
     .fi-topbar-item {
         color: #e5e7eb !important;
     }
@@ -101,6 +124,7 @@
     .fi-sidebar-nav::-webkit-scrollbar-thumb:hover {
         background-color: rgba(255, 255, 255, 0.3);
     }
+    @endif
 
     @if (filament()->getId() === 'admin')
     /* Sem opcao de ocultar o topbar no desktop -- some com os botoes de
