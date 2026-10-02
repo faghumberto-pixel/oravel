@@ -115,9 +115,13 @@ class AssetImportColumns
     }
 
     /** Gera o modelo .xlsx (aba "Ativos" vazia pra preencher + aba "Instruções") no caminho ou stream informado. */
-    public static function writeTemplate(string $target): void
+    /**
+     * @param  list<array<string, mixed>>|null  $cols  padrão: colunas de ativos (o importador de clientes reaproveita este gerador)
+     * @param  list<string>|null  $intro  linhas da aba Instruções (a primeira é o título)
+     */
+    public static function writeTemplate(string $target, ?array $cols = null, string $sheetName = self::SHEET, ?array $intro = null): void
     {
-        $cols = self::all();
+        $cols ??= self::all();
 
         $options = new Options;
         $options->setColumnWidth(26, ...range(1, count($cols)));
@@ -129,7 +133,7 @@ class AssetImportColumns
         $grp = (new Style)->setFontBold()->setBackgroundColor('E8EFFF')->setFontColor('0B1F3A');
         $wrap = (new Style)->setShouldWrapText(true);
 
-        $writer->getCurrentSheet()->setName(self::SHEET);
+        $writer->getCurrentSheet()->setName($sheetName);
         $writer->addRow(Row::fromValues(array_column($cols, 'group'), $grp));
         $writer->addRow(new Row(array_map(
             fn (array $c) => Cell::fromValue($c['title'].($c['required'] ? ' *' : ''), $c['required'] ? $req : $head),
@@ -138,7 +142,7 @@ class AssetImportColumns
 
         $sheet = $writer->addNewSheetAndMakeItCurrent();
         $sheet->setName('Instruções');
-        foreach ([
+        foreach ($intro ?? [
             'Modelo de cadastro de ativos - Oravel',
             'Preencha a aba "Ativos" a partir da linha 3, uma linha por equipamento. Não altere os títulos das colunas.',
             'Colunas com * são obrigatórias. Campos sem informação podem ficar em branco.',

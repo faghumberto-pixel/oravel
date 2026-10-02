@@ -12,8 +12,8 @@ use App\Models\InternalUnit;
 use App\Models\StorageLocation;
 use App\Models\Tenant;
 use App\Support\AssetImport\AssetImportColumns as Cols;
+use App\Support\ExcelImport\XlsxReader;
 use Illuminate\Support\Facades\DB;
-use OpenSpout\Reader\XLSX\Reader;
 
 /**
  * Importa ativos de uma planilha .xlsx no formato do modelo (AssetImportColumns).
@@ -44,7 +44,7 @@ class AssetExcelImporter
             $byTitle[Cols::normalize($col['title'])] = $col;
         }
 
-        $rows = $this->readRows($path);
+        $rows = XlsxReader::rows($path, Cols::SHEET);
         $header = null;
         $map = [];
         $dataRows = [];
@@ -298,29 +298,5 @@ class AssetExcelImporter
         }
 
         return $loc->id;
-    }
-
-    /** @return array<int, list<mixed>> linha (1-based) => células */
-    private function readRows(string $path): array
-    {
-        $reader = new Reader;
-        $reader->open($path);
-        $picked = null;
-        foreach ($reader->getSheetIterator() as $sheet) {
-            $picked ??= $sheet;
-            if ($sheet->getName() === Cols::SHEET) {
-                $picked = $sheet;
-                break;
-            }
-        }
-        $rows = [];
-        $line = 0;
-        foreach ($picked?->getRowIterator() ?? [] as $row) {
-            $line++;
-            $rows[$line] = array_map(fn ($c) => $c->getValue(), $row->getCells());
-        }
-        $reader->close();
-
-        return $rows;
     }
 }
