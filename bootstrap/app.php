@@ -55,6 +55,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'redirecionar.tecnico' => RedirectTechnicianFromDashboard::class,
             'chat.auth' => RedirectGuestToChatLogin::class,
+            'academy.access' => \App\Http\Middleware\EnsureAcademyAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

@@ -74,6 +74,15 @@ Route::get('/', fn () => redirect()->to('/admin'))->name('home');
 // apontavam pra www.oravel.com.br/sla e /lgpd, páginas que nunca existiram
 // no site institucional (404). Públicas, sem auth de propósito -- o
 // Contratante precisa poder ler antes mesmo de logar/assinar.
+// Academia Oravel: pagina propria (fora do painel Filament), com login, bloqueio por
+// inadimplencia e a regra do modulo/permissao (ver EnsureAcademyAccess).
+Route::middleware(['web', 'academy.access'])->prefix('academia')->group(function () {
+    Route::get('/', \App\Livewire\Academy\Home::class)->name('academy.home');
+    Route::get('/curso/{slug}', \App\Livewire\Academy\CoursePage::class)->name('academy.course');
+    Route::get('/ranking', \App\Livewire\Academy\RankingPage::class)->name('academy.ranking');
+    Route::get('/equipe', \App\Livewire\Academy\TeamPage::class)->name('academy.team');
+});
+
 // Consulta publica de autenticidade de certificado da Academia (so' le nome/curso/data; sem login).
 Route::get('/certificado/{code}', function (string $code) {
     return view('academy.certificate-verify', [

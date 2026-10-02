@@ -38,6 +38,12 @@ class CourseResource extends BaseResource
             ->withCount(['lessons' => fn (Builder $q) => $q->available()]);
     }
 
+    /** O menu leva pra pagina propria da Academia (/academia), nao pra lista do Filament. */
+    public static function getNavigationUrl(): string
+    {
+        return url('/academia');
+    }
+
     public static function canCreate(): bool
     {
         return false;

@@ -147,6 +147,8 @@ return [
         'time_per_minute' => (int) env('ORAVEL_ACADEMY_POINTS_TIME', 1),
         'time_cap' => (int) env('ORAVEL_ACADEMY_POINTS_TIME_CAP', 10),
         'course_bonus' => (int) env('ORAVEL_ACADEMY_POINTS_COURSE', 50),
+        // Visual da pagina da Academia: aurora | planta | ondas
+        'theme' => env('ORAVEL_ACADEMY_THEME', 'aurora'),
     ],
 
     'backups' => [
