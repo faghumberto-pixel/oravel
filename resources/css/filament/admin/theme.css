@@ -208,3 +208,27 @@ html.dark .fi-sidebar-group + .fi-sidebar-group { box-shadow: 0 -1px 0 #232c40; 
 .fi-header .fi-breadcrumbs a,
 .fi-header .fi-breadcrumbs span,
 .fi-header .fi-breadcrumbs svg { color: rgba(255, 255, 255, 0.8) !important; }
+
+/* Menu: item selecionado em PRETO + negrito (sem azul); hover escurece
+   um tom o fundo para mostrar onde esta o mouse. */
+.fi-sidebar-item.fi-active .fi-sidebar-item-label,
+.fi-sidebar-item[aria-current="page"] .fi-sidebar-item-label,
+.fi-sidebar-group .fi-sidebar-item.fi-active .fi-sidebar-item-label,
+.fi-sidebar-group .fi-sidebar-item[aria-current="page"] .fi-sidebar-item-label,
+.fi-sidebar-item.fi-active .fi-sidebar-item-icon,
+.fi-sidebar-item.fi-active > a {
+    color: #0b0f19 !important;
+    font-weight: 700 !important;
+}
+.fi-sidebar-item.fi-active > a,
+.fi-sidebar-item > a[aria-current="page"] {
+    background-color: #e9edf4 !important;
+}
+.fi-sidebar-item > a { transition: background-color 0.12s; }
+.fi-sidebar-item:not(.fi-active) > a:hover { background-color: #dde3ee !important; }
+.fi-sidebar-item.fi-active > a:hover { background-color: #d3dae8 !important; }
+html.dark .fi-sidebar-item.fi-active .fi-sidebar-item-label,
+html.dark .fi-sidebar-item.fi-active .fi-sidebar-item-icon,
+html.dark .fi-sidebar-item.fi-active > a { color: #fff !important; }
+html.dark .fi-sidebar-item.fi-active > a { background-color: rgba(255, 255, 255, 0.12) !important; }
+html.dark .fi-sidebar-item:not(.fi-active) > a:hover { background-color: rgba(255, 255, 255, 0.08) !important; }

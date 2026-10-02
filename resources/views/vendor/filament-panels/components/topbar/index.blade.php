@@ -111,23 +111,25 @@
                  setInterval, sem round-trip nenhum pro servidor. --}}
             <div
                 x-data="{
-                    now: new Date(),
-                    init() {
-                        setInterval(() => { this.now = new Date() }, 1000)
+                    agora: new Date(),
+                    dias: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'],
+                    meses: ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'],
+                    init() { setInterval(() => { this.agora = new Date() }, 1000) },
+                    get dataFormatada() {
+                        return this.dias[this.agora.getDay()] + ', ' + this.agora.getDate() + ' de ' + this.meses[this.agora.getMonth()]
                     },
-                    get formatted() {
-                        return this.now.toLocaleString('pt-BR', {
-                            weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric',
-                            hour: '2-digit', minute: '2-digit', second: '2-digit',
-                        })
+                    get horaFormatada() {
+                        return this.agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
                     },
                 }"
-                class="hidden flex-1 items-center justify-center min-w-0 lg:flex"
+                class="hidden items-center text-xs font-medium text-gray-300 md:flex"
             >
-                <span class="flex items-center gap-x-1.5 text-xs font-medium tabular-nums text-gray-300">
-                    <x-filament::icon icon="heroicon-o-clock" class="h-4 w-4 text-gray-500" />
-                    <span x-text="formatted"></span>
-                </span>
+                {{-- Mesmo relogio do painel Central (data + hora em 2 linhas),
+                     sem o contador de compromissos (so' existe no Central). --}}
+                <div class="flex flex-col items-start leading-tight">
+                    <span x-text="dataFormatada" class="capitalize"></span>
+                    <span x-text="horaFormatada" class="font-mono text-sm tabular-nums text-gray-100"></span>
+                </div>
             </div>
 
             {{-- Busca/notificacoes/e-mail/avatar/ajuda: no canto direito, o
