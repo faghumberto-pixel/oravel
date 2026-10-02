@@ -300,4 +300,43 @@ JS);
         $this->assertTrue($mapa->fresh()->hasFeature('tabela_courses'));
         $this->assertFalse($recusou->fresh()->hasFeature('tabela_courses')); // escolha explícita preservada
     }
+
+    public function test_import_fills_descriptions_summaries_and_publishes_only_the_chosen_courses(): void
+    {
+        $dir = sys_get_temp_dir().'/acad'.uniqid();
+        mkdir($dir.'/guias', 0777, true);
+        file_put_contents($dir.'/guias/abrir-os.html', '<html><head><meta name="description" content="Passo a passo pra abrir uma OS." /></head></html>');
+        $nav = $dir.'/nav.js';
+        file_put_contents($nav, <<<'JS'
+const NAV = [
+  {
+    group: "Guias Práticos",
+    items: [
+      { title: "Como abrir uma OS", href: "/guias/abrir-os.html" },
+    ],
+  },
+  {
+    group: "Comercial",
+    items: [
+      { title: "Contratos", href: "/modulos/contratos.html" },
+    ],
+  },
+];
+JS);
+
+        $this->artisan('academy:import', ['path' => $nav, '--site' => $dir, '--publish-only' => 'Guias Práticos'])->assertExitCode(0);
+
+        $guias = Course::where('title', 'Guias Práticos')->first();
+        $this->assertTrue($guias->is_published);
+        $this->assertSame('Passo a passo para as tarefas mais comuns do dia a dia.', $guias->description);
+        $this->assertSame('Passo a passo pra abrir uma OS.', $guias->lessons()->first()->summary);
+        $this->assertFalse(Course::where('title', 'Comercial')->first()->is_published);
+
+        // texto escrito na Central não é sobrescrito numa nova importação
+        $guias->update(['description' => 'Meu texto']);
+        $guias->lessons()->first()->update(['summary' => 'Resumo meu']);
+        $this->artisan('academy:import', ['path' => $nav, '--site' => $dir])->assertExitCode(0);
+        $this->assertSame('Meu texto', $guias->fresh()->description);
+        $this->assertSame('Resumo meu', $guias->lessons()->first()->summary);
+    }
 }

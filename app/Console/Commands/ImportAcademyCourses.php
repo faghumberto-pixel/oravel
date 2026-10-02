@@ -20,6 +20,8 @@ class ImportAcademyCourses extends Command
         {path=/home/oravel/oravel-academy/assets/js/nav-data.js : Caminho do nav-data.js}
         {--base=https://academy.oravel.com.br : URL base do site}
         {--publish : Publica os cursos NOVOS (padrão: rascunho)}
+        {--publish-only= : Títulos (separados por vírgula) dos cursos a PUBLICAR, novos ou já existentes}
+        {--site= : Pasta do site (oravel-academy) para ler o resumo de cada aula (meta description)}
         {--dry-run : Só mostra o que seria importado}';
 
     /** Grupos internos da Oravel: nao entram na Academia dos clientes. */
@@ -76,6 +78,26 @@ class ImportAcademyCourses extends Command
         '/guias/usar-qrcode.html' => 'tabela_assets',
     ];
 
+    /** Descricao de cada curso (a partir dos textos da home da Academy). So' preenche se estiver vazia. */
+    private const DESCRIPTIONS = [
+        'Comece Aqui' => 'Entenda como a Oravel funciona e como os dados de cada empresa ficam isolados.',
+        'Painel Admin' => 'O painel do dia a dia: dashboard, quadro do pátio e agenda dos técnicos.',
+        'Ativos e Frota' => 'Cadastre e acompanhe equipamentos, grupos de checklist e o dossiê rápido por QR Code.',
+        'Manutenção' => 'Ordens de serviço, preventiva, checklist de inspeção, mobilização, avarias e substituição de equipamento.',
+        'Processo de Manutenção' => 'Da abertura da OS ao equipamento de volta: como a manutenção funciona de ponta a ponta.',
+        'Logística' => 'Frota leve, motoristas e chegadas no pátio.',
+        'Processo Logístico' => 'Como funciona a logística: frota, motoristas, disponibilidade em tempo real e chegadas no pátio.',
+        'Comercial' => 'Contratos, clientes, solicitações de locação e CRM (leads, funil de vendas, agenda e mapa).',
+        'Processo Comercial' => 'Da prospecção do lead ao contrato fechado: funil, proposta, pedido de locação e cliente.',
+        'Suprimentos' => 'Materiais, peças, fornecedores e solicitações de compra.',
+        'Processo de Suprimentos' => 'Do pedido de peça à requisição, ordem de compra e recebimento.',
+        'Gestão e Equipe' => 'Departamentos, perfis de acesso, usuários e chat interno.',
+        'Processo Financeiro e Administrativo' => 'Contas a pagar e a receber, fluxo de caixa projetado, estoque, departamentos e equipe.',
+        'Ferramentas' => 'Impressão e exportação para Excel.',
+        'Comunicação' => 'Fotos, evidências e descrição em áudio: como a equipe registra e troca informação em campo.',
+        'Guias Práticos' => 'Passo a passo para as tarefas mais comuns do dia a dia.',
+    ];
+
     public function handle(): int
     {
         $path = (string) $this->argument('path');
@@ -95,6 +117,8 @@ class ImportAcademyCourses extends Command
         $base = rtrim((string) $this->option('base'), '/');
         $dry = (bool) $this->option('dry-run');
         $position = 0;
+        $publishOnly = array_filter(array_map('trim', explode(',', (string) $this->option('publish-only'))));
+        $site = $this->option('site') ? rtrim((string) $this->option('site'), '/') : null;
 
         foreach ($groups as $group) {
             if (in_array($group['title'], self::SKIP_GROUPS, true)) {
@@ -117,6 +141,14 @@ class ImportAcademyCourses extends Command
                 ['slug' => Str::slug($group['title'])],
                 ['title' => $group['title'], 'position' => $position, 'is_published' => (bool) $this->option('publish')],
             );
+            // so' preenche a descricao se estiver vazia: nao desfaz texto escrito na Central
+            if (blank($course->description) && isset(self::DESCRIPTIONS[$group['title']])) {
+                $course->description = self::DESCRIPTIONS[$group['title']];
+            }
+            if (in_array($group['title'], $publishOnly, true)) {
+                $course->is_published = true;
+            }
+            $course->save();
 
             foreach ($group['items'] as $i => $item) {
                 $lesson = Lesson::firstOrNew(['course_id' => $course->id, 'page_url' => $base.$item['href']]);
@@ -126,6 +158,9 @@ class ImportAcademyCourses extends Command
                 }
                 // so' preenche o modulo se ainda estiver vazio: nao desfaz ajuste feito na Central
                 $lesson->feature_key ??= self::FEATURES[$item['href']] ?? null;
+                if (blank($lesson->summary) && $site) {
+                    $lesson->summary = $this->summaryOf($site.$item['href']);
+                }
                 $lesson->save();
             }
         }
@@ -134,6 +169,18 @@ class ImportAcademyCourses extends Command
         $this->info($dry ? 'Simulação concluída (nada gravado).' : 'Importação concluída.');
 
         return self::SUCCESS;
+    }
+
+    /** Resumo = meta description da pagina (texto que a propria Academy ja mantem). */
+    private function summaryOf(string $file): ?string
+    {
+        if (! is_file($file)) {
+            return null;
+        }
+
+        return preg_match('/<meta name="description" content="([^"]+)"/', (string) file_get_contents($file), $m)
+            ? html_entity_decode($m[1], ENT_QUOTES)
+            : null;
     }
 
     private function count(array $items): int
