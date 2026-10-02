@@ -53,6 +53,7 @@
                     <th class="px-4 py-2 text-right font-medium">Sessões</th>
                     <th class="px-4 py-2 text-right font-medium">Tempo total</th>
                     <th class="px-4 py-2 text-left font-medium">Tela com mais tempo</th>
+                    <th class="px-4 py-2 text-left font-medium">Academia</th>
                     <th class="px-4 py-2"></th>
                 </tr>
             </thead>
@@ -86,6 +87,15 @@
                         <td class="px-4 py-2 text-right tabular-nums">{{ $s['sessions'] }}</td>
                         <td class="px-4 py-2 text-right font-semibold tabular-nums">{{ $fmt($s['seconds']) }}</td>
                         <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ $s['top_screen'] ?? '—' }}</td>
+                        @php $ac = $r['academy']; @endphp
+                        <td class="px-4 py-2 text-xs text-gray-700 dark:text-gray-300">
+                            @if ($ac['visits'] || $ac['seconds'] || $ac['lessons'] || $ac['quizzes'])
+                                <div>{{ $ac['visits'] }} {{ $ac['visits'] === 1 ? 'entrada' : 'entradas' }} · {{ $fmt($ac['seconds']) }} de estudo</div>
+                                <div>{{ $ac['lessons'] }} {{ $ac['lessons'] === 1 ? 'aula lida' : 'aulas lidas' }} · {{ $ac['quizzes'] }} {{ $ac['quizzes'] === 1 ? 'prova' : 'provas' }}{{ $ac['questions'] ? ' ('.round($ac['correct'] / $ac['questions'] * 100).'% de acerto)' : '' }}</div>
+                            @else
+                                <span class="text-gray-400">Não acessou</span>
+                            @endif
+                        </td>
                         <td class="px-4 py-2 text-right">
                             <button type="button" wire:click="select('{{ $r['user_id'] }}')" class="text-xs font-semibold text-primary-600 hover:underline dark:text-primary-400">
                                 {{ $this->selectedUserId === $r['user_id'] ? 'Fechar' : 'Ver detalhes' }}
@@ -93,7 +103,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="8" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">Nenhum acesso registrado neste período.</td></tr>
+                    <tr><td colspan="9" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">Nenhum acesso registrado neste período.</td></tr>
                 @endforelse
             </tbody>
         </table>
@@ -121,6 +131,36 @@
                     @endforeach
                 </div>
             @endif
+
+            <div class="fi-section rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                <div class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Academia Oravel — o que estudou neste período</div>
+                @if ($detail['academy_lessons']->isEmpty())
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Não estudou nenhuma aula neste período.</p>
+                @else
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="text-xs uppercase text-gray-500 dark:text-gray-400">
+                                <th class="py-1 text-left font-medium">Curso</th>
+                                <th class="py-1 text-left font-medium">Aula</th>
+                                <th class="py-1 text-right font-medium">Tempo</th>
+                                <th class="py-1 text-left font-medium pl-4">Leitura</th>
+                                <th class="py-1 text-left font-medium">Prova</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                            @foreach ($detail['academy_lessons'] as $l)
+                                <tr>
+                                    <td class="py-1.5 text-gray-700 dark:text-gray-300">{{ $l['course'] }}</td>
+                                    <td class="py-1.5 text-gray-950 dark:text-white">{{ $l['lesson'] }}</td>
+                                    <td class="py-1.5 text-right tabular-nums">{{ $fmt($l['seconds']) }}</td>
+                                    <td class="py-1.5 pl-4 text-gray-700 dark:text-gray-300">{{ $l['read_at'] ? 'Concluída em '.$l['read_at']->format('d/m H:i') : 'Em andamento' }}</td>
+                                    <td class="py-1.5 text-gray-700 dark:text-gray-300">{{ $l['quiz'] ? $l['quiz'].' ('.$l['quiz_at']->format('d/m H:i').')' : '—' }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
+            </div>
 
             @foreach ($detail['sessions'] as $i => $session)
                 <div class="fi-section rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800" x-data="{ open: {{ $i === 0 ? 'true' : 'false' }} }">

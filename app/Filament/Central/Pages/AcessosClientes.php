@@ -5,6 +5,7 @@ namespace App\Filament\Central\Pages;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Models\UserActivityLog;
+use App\Services\AcademyUsage;
 use App\Services\AccessAnalytics;
 use Filament\Pages\Page;
 use Illuminate\Support\Carbon;
@@ -81,7 +82,9 @@ class AcessosClientes extends Page
         $users = User::withoutGlobalScopes()->whereIn('id', $logs->keys())->with('tenant:id,name')->get()->keyBy('id');
         $staff = array_map('strtolower', (array) config('oravel.super_admins'));
 
-        return $logs->map(function ($userLogs, $userId) use ($users, $staff) {
+        $academy = AcademyUsage::summary($logs->keys()->all(), $this->since(), $this->tenantId);
+
+        return $logs->map(function ($userLogs, $userId) use ($users, $staff, $academy) {
             $user = $users[$userId] ?? null;
             $isStaff = $user && in_array(strtolower((string) $user->email), $staff, true);
             $sessions = AccessAnalytics::sessions(AccessAnalytics::fromLogs($userLogs));
@@ -94,6 +97,7 @@ class AcessosClientes extends Page
                 'staff' => $isStaff,
                 'online' => (bool) $user?->isOnline(),
                 'summary' => AccessAnalytics::summary($sessions),
+                'academy' => $academy[$userId],
             ];
         })
             ->reject(fn ($r) => $r['staff'] && ! $this->showStaff)
@@ -109,6 +113,10 @@ class AcessosClientes extends Page
         }
         $sessions = AccessAnalytics::sessions(AccessAnalytics::fromLogs($this->logs($this->selectedUserId)));
 
-        return ['sessions' => $sessions, 'summary' => AccessAnalytics::summary($sessions)];
+        return [
+            'sessions' => $sessions,
+            'summary' => AccessAnalytics::summary($sessions),
+            'academy_lessons' => AcademyUsage::lessons($this->selectedUserId, $this->since(), $this->tenantId),
+        ];
     }
 }
