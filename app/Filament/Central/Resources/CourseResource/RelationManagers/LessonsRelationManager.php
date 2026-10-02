@@ -44,6 +44,31 @@ class LessonsRelationManager extends RelationManager
                 ->placeholder('Todos os clientes com a Academia')
                 ->helperText('O cliente só vê a aula se o contrato dele incluir esse módulo. Vazio = aparece para todos.')
                 ->columnSpanFull(),
+            Forms\Components\Repeater::make('questions')
+                ->label('Perguntas do quiz (opcional)')
+                ->relationship('questions')
+                ->orderColumn('position')
+                ->collapsible()
+                ->collapsed()
+                ->itemLabel(fn (array $state) => $state['question'] ?? 'Nova pergunta')
+                ->addActionLabel('Adicionar pergunta')
+                ->schema([
+                    Forms\Components\Textarea::make('question')->label('Pergunta')->required()->rows(2),
+                    Forms\Components\Repeater::make('options')
+                        ->label('Alternativas')
+                        ->schema([Forms\Components\TextInput::make('text')->label('Alternativa')->required()])
+                        ->minItems(2)->maxItems(6)->defaultItems(2)->live()
+                        ->addActionLabel('Adicionar alternativa'),
+                    Forms\Components\Select::make('correct_index')
+                        ->label('Alternativa correta')
+                        ->required()
+                        ->options(fn (Forms\Get $get) => collect($get('options') ?? [])
+                            ->values()
+                            ->mapWithKeys(fn ($o, $i) => [$i => ($i + 1).'. '.($o['text'] ?? '')])
+                            ->all()),
+                    Forms\Components\Textarea::make('explanation')->label('Explicação (aparece ao acertar)')->rows(2),
+                ])
+                ->columnSpanFull(),
             Forms\Components\TextInput::make('position')->label('Ordem')->numeric()->default(0),
         ])->columns(2);
     }

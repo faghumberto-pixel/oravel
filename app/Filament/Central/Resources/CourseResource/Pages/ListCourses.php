@@ -12,6 +12,13 @@ class ListCourses extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [Actions\CreateAction::make()];
+        return [
+            Actions\Action::make('pontos')
+                ->label('Participação dos clientes')
+                ->icon('heroicon-o-star')
+                ->color('gray')
+                ->url(CourseResource::getUrl('pontos')),
+            Actions\CreateAction::make(),
+        ];
     }
 }

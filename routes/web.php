@@ -74,6 +74,13 @@ Route::get('/', fn () => redirect()->to('/admin'))->name('home');
 // apontavam pra www.oravel.com.br/sla e /lgpd, páginas que nunca existiram
 // no site institucional (404). Públicas, sem auth de propósito -- o
 // Contratante precisa poder ler antes mesmo de logar/assinar.
+// Consulta publica de autenticidade de certificado da Academia (so' le nome/curso/data; sem login).
+Route::get('/certificado/{code}', function (string $code) {
+    return view('academy.certificate-verify', [
+        'certificate' => \App\Models\AcademyCertificate::withoutGlobalScopes()->where('code', strtoupper($code))->first(),
+    ]);
+})->middleware('throttle:30,1')->name('academy.certificate.verify');
+
 Route::get('/legal/sla', fn () => view('legal.sla'))->name('legal.sla');
 Route::get('/legal/lgpd', fn () => view('legal.lgpd'))->name('legal.lgpd');
 Route::get('/legal/licenca-de-uso', fn () => view('legal.licenca-de-uso'))->name('legal.licenca-de-uso');

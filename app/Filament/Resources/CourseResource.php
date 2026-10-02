@@ -89,6 +89,8 @@ class CourseResource extends BaseResource
     {
         return [
             'index' => Pages\ListCourses::route('/'),
+            'ranking' => Pages\Ranking::route('/ranking'),
+            'equipe' => Pages\Team::route('/equipe'),
             'view' => Pages\ViewCourse::route('/{record}'),
         ];
     }

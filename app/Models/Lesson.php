@@ -43,6 +43,11 @@ class Lesson extends Model
         return $this->belongsTo(Course::class);
     }
 
+    public function questions(): HasMany
+    {
+        return $this->hasMany(LessonQuestion::class)->orderBy('position');
+    }
+
     public function progress(): HasMany
     {
         return $this->hasMany(LessonProgress::class);

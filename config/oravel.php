@@ -131,6 +131,24 @@ return [
     | 'dir' precisa ser gravável pelo usuário do PHP (www-data); 'days' = retenção.
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Academia Oravel: pontuação
+    |--------------------------------------------------------------------------
+    | 'read' = concluir a leitura de uma aula; 'quiz' = cada pergunta respondida certo (só
+    | na primeira vez que acerta); 'time_per_minute'/'time_cap' = minuto ativo na aula e teto
+    | por aula; 'course_bonus' = concluir todas as aulas liberadas de um curso. Cada ação
+    | pontua UMA vez por usuário (rever/refazer não infla o total).
+    */
+
+    'academy' => [
+        'read' => (int) env('ORAVEL_ACADEMY_POINTS_READ', 10),
+        'quiz' => (int) env('ORAVEL_ACADEMY_POINTS_QUIZ', 10),
+        'time_per_minute' => (int) env('ORAVEL_ACADEMY_POINTS_TIME', 1),
+        'time_cap' => (int) env('ORAVEL_ACADEMY_POINTS_TIME_CAP', 10),
+        'course_bonus' => (int) env('ORAVEL_ACADEMY_POINTS_COURSE', 50),
+    ],
+
     'backups' => [
         'dir' => env('ORAVEL_BACKUP_DIR', '/var/backups/oravel-tenants'),
         'days' => (int) env('ORAVEL_BACKUP_DAYS', 30),
