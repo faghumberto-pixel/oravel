@@ -584,5 +584,3829 @@
     "why": "As telas de compras ficam em Gestão de Compras."
    }
   ]
+ },
+ {
+  "page": "/index.html",
+  "questions": [
+   {
+    "q": "Na Academia, em que ordem você precisa estudar os módulos?",
+    "options": [
+     "Na ordem do menu, do primeiro ao último",
+     "Primeiro Ativos, depois Manutenção, depois os demais",
+     "Em nenhuma: todos estão no menu lateral e você faz só os que precisa, quando quiser",
+     "Só depois de concluir o curso anterior"
+    ],
+    "correct": 2,
+    "why": "Não há ordem obrigatória."
+   },
+   {
+    "q": "O que acontece ao entregar uma prova?",
+    "options": [
+     "O gabarito aparece na hora e cada acerto vale pontos",
+     "A prova só é corrigida no dia seguinte",
+     "Você recebe a nota por e-mail, sem ver o gabarito",
+     "Você pode refazer quantas vezes quiser"
+    ],
+    "correct": 0,
+    "why": "A prova é entregue de uma vez e o gabarito é mostrado na hora."
+   },
+   {
+    "q": "Quanto vale uma questão deixada em branco na prova?",
+    "options": [
+     "Metade dos pontos",
+     "Zero",
+     "Um ponto de participação",
+     "A prova não pode ser entregue com questão em branco"
+    ],
+    "correct": 1,
+    "why": "Questão em branco vale zero."
+   },
+   {
+    "q": "O que é preciso para receber o certificado de um curso?",
+    "options": [
+     "Apenas abrir todas as aulas",
+     "Concluir as aulas, entregar as provas e atingir a nota mínima",
+     "Apenas entregar a prova da última aula",
+     "Ter o maior número de pontos da empresa"
+    ],
+    "correct": 1,
+    "why": "Aulas concluídas, provas entregues e nota mínima."
+   },
+   {
+    "q": "No menu lateral do sistema, qual atalho encontra qualquer tela digitando o nome?",
+    "options": [
+     "A busca (⌘K)",
+     "O botão de ajuda",
+     "O ícone de notificações",
+     "O menu do perfil"
+    ],
+    "correct": 0,
+    "why": "A busca ⌘K abre qualquer tela pelo nome."
+   }
+  ]
+ },
+ {
+  "page": "/visao-geral.html",
+  "questions": [
+   {
+    "q": "Em torno de qual peça central a Oravel organiza o dia a dia de uma locadora?",
+    "options": [
+     "O Contrato",
+     "O Cliente",
+     "O Ativo (equipamento)",
+     "A Ordem de Serviço"
+    ],
+    "correct": 2,
+    "why": "Tudo gira em torno do Ativo."
+   },
+   {
+    "q": "Um contrato é fechado para um cliente. O que acontece com o Ativo do contrato?",
+    "options": [
+     "Continua Disponível até o cliente retirar",
+     "Trava automaticamente como Locado para o cliente daquele contrato",
+     "Vai para Aguardando Triagem",
+     "Entra em manutenção preventiva"
+    ],
+    "correct": 1,
+    "why": "O Ativo vira Locado sozinho."
+   },
+   {
+    "q": "O equipamento voltou da obra e ficou Aguardando Triagem. Quando volta a Disponível?",
+    "options": [
+     "Só depois que o pátio confirma a chegada de verdade",
+     "Assim que o cliente assina o checklist de retorno",
+     "Assim que o contrato é encerrado",
+     "Assim que a preventiva termina"
+    ],
+    "correct": 0,
+    "why": "A confirmação do pátio libera o ativo."
+   },
+   {
+    "q": "Qual é a ordem correta do ciclo de vida do equipamento?",
+    "options": [
+     "Cadastrado, Disponível, Contrato fechado (Locado), Em campo, Desmobilização, confirmação do pátio",
+     "Cadastrado, Em campo, Contrato fechado, Disponível, Desmobilização",
+     "Disponível, Cadastrado, Locado, Desmobilização, Em campo",
+     "Contrato fechado, Cadastrado, Disponível, Em campo, Triagem"
+    ],
+    "correct": 0,
+    "why": "Cadastro, pátio, contrato, campo, retorno e confirmação."
+   },
+   {
+    "q": "Qual área do sistema cobre frota leve própria, motoristas e chegadas no pátio?",
+    "options": [
+     "Manutenção",
+     "Suprimentos",
+     "Comercial",
+     "Logística"
+    ],
+    "correct": 3,
+    "why": "Logística reúne frota, motoristas e pátio."
+   },
+   {
+    "q": "Qual área cobre contratos, clientes e CRM?",
+    "options": [
+     "Ativos e Frota",
+     "Gestão e Equipe",
+     "Suprimentos",
+     "Comercial"
+    ],
+    "correct": 3,
+    "why": "Comercial: clientes, contratos, solicitações, CRM."
+   },
+   {
+    "q": "Onde a preventiva por horímetro ou corretiva é sempre registrada?",
+    "options": [
+     "No cadastro do cliente",
+     "No contrato",
+     "Numa Ordem de Serviço",
+     "No dossiê do ativo"
+    ],
+    "correct": 2,
+    "why": "Toda manutenção passa por uma OS."
+   }
+  ]
+ },
+ {
+  "page": "/painel-admin/index.html",
+  "questions": [
+   {
+    "q": "Qual é o endereço do Painel Admin da sua empresa?",
+    "options": [
+     "app.oravel.com.br/admin",
+     "app.oravel.com.br/painel",
+     "admin.oravel.com.br",
+     "app.oravel.com.br/dashboard"
+    ],
+    "correct": 0,
+    "why": "O endereço é app.oravel.com.br/admin."
+   },
+   {
+    "q": "Um cliente pediu um equipamento para locação. Qual é o primeiro registro?",
+    "options": [
+     "Criar um Contrato direto",
+     "Criar uma Solicitação de Locação",
+     "Abrir uma OS de check-out",
+     "Registrar uma Mobilização"
+    ],
+    "correct": 1,
+    "why": "A Solicitação de Locação é o funil antes do contrato."
+   },
+   {
+    "q": "Uma máquina está perto do horímetro de revisão. O que fazer?",
+    "options": [
+     "Registrar uma Avaria",
+     "Abrir uma Ordem de Serviço Preventiva",
+     "Criar uma Solicitação de Locação",
+     "Atualizar o Contrato"
+    ],
+    "correct": 1,
+    "why": "Revisão por horímetro pede uma OS Preventiva."
+   },
+   {
+    "q": "O equipamento voltou com dano. O que registrar?",
+    "options": [
+     "Um novo Contrato",
+     "Apenas a Desmobilização",
+     "Uma Avaria e gerar o laudo",
+     "Uma Solicitação de Peças"
+    ],
+    "correct": 2,
+    "why": "Dano: registrar Avaria e gerar o laudo."
+   },
+   {
+    "q": "Fechou um novo aluguel. O que fazer?",
+    "options": [
+     "Abrir uma OS Preventiva",
+     "Registrar a Desmobilização",
+     "Criar ou atualizar o Contrato",
+     "Criar uma Avaria"
+    ],
+    "correct": 2,
+    "why": "Aluguel novo pede contrato."
+   },
+   {
+    "q": "Em qual área do menu ficam departamentos, perfis de acesso, usuários e chat interno?",
+    "options": [
+     "Manutenção",
+     "Gestão e Equipe",
+     "Suprimentos",
+     "Comercial"
+    ],
+    "correct": 1,
+    "why": "Gestão e Equipe."
+   },
+   {
+    "q": "O que decide o que cada pessoa vê e pode fazer no painel?",
+    "options": [
+     "O departamento",
+     "O horário de acesso",
+     "O cargo no RH",
+     "O Perfil de Acesso dela"
+    ],
+    "correct": 3,
+    "why": "Depende do Perfil de Acesso."
+   },
+   {
+    "q": "Qual é a área com mais telas, usada no dia a dia do técnico e do supervisor?",
+    "options": [
+     "Comercial",
+     "Suprimentos",
+     "Logística",
+     "Manutenção"
+    ],
+    "correct": 3,
+    "why": "Manutenção é a maior."
+   }
+  ]
+ },
+ {
+  "page": "/painel-admin/dashboard.html",
+  "questions": [
+   {
+    "q": "O Radar Operacional mostra o quê?",
+    "options": [
+     "Contas a pagar da semana",
+     "Leads por estágio",
+     "Pontos batidos no dia",
+     "Ativos por status: Disponível, Locado, Em Operação e Em Manutenção"
+    ],
+    "correct": 3,
+    "why": "Radar Operacional = ativos por status."
+   },
+   {
+    "q": "A partir de quando uma manutenção entra em “Manutenção em Atraso”?",
+    "options": [
+     "OS abertas há mais de 24 horas",
+     "OS abertas há mais de 7 dias",
+     "OS abertas há mais de 3 dias",
+     "OS sem técnico"
+    ],
+    "correct": 2,
+    "why": "Mais de 3 dias."
+   },
+   {
+    "q": "O cartão “Minhas Ordens” é voltado a quem?",
+    "options": [
+     "Comercial: propostas abertas",
+     "Supervisores: todas as OS",
+     "Técnicos: as próprias OS abertas, pendentes e executadas",
+     "Financeiro: OS com custo alto"
+    ],
+    "correct": 2,
+    "why": "Visão do técnico."
+   },
+   {
+    "q": "O gráfico de Custo de Manutenção cobre qual período?",
+    "options": [
+     "Por dia, no último mês",
+     "Por ano, nos últimos 3 anos",
+     "Por semana, no último ano",
+     "Por mês, nos últimos 6 meses"
+    ],
+    "correct": 3,
+    "why": "Últimos 6 meses."
+   },
+   {
+    "q": "A tabela “Top Clientes” ranqueia por quê?",
+    "options": [
+     "Valor faturado",
+     "Número de avarias",
+     "Número de contratos",
+     "Horas de uso"
+    ],
+    "correct": 2,
+    "why": "Ranking por nº de contratos."
+   },
+   {
+    "q": "Quem pode ver os indicadores gerais do Dashboard?",
+    "options": [
+     "Só administradores",
+     "Só supervisores",
+     "Todo usuário do painel, sem restrição por perfil",
+     "Só quem tem permissão de OS"
+    ],
+    "correct": 2,
+    "why": "Sem restrição por perfil."
+   },
+   {
+    "q": "Quais são os itens do Radar de Urgência?",
+    "options": [
+     "Avarias graves, contratos vencendo e estoque baixo",
+     "OS concluídas, leads e propostas",
+     "Ativos locados, em operação e parados",
+     "Manutenção em Atraso, Preventiva Próxima, Disponível no Pátio (e Retrabalho)"
+    ],
+    "correct": 3,
+    "why": "Radar de Urgência."
+   },
+   {
+    "q": "O medidor “Taxa de Disponibilidade da Frota” mostra o quê?",
+    "options": [
+     "Qual porcentagem da frota está disponível agora, comparada a uma meta",
+     "O faturamento da frota",
+     "O número de OS por técnico",
+     "O custo de manutenção por ativo"
+    ],
+    "correct": 0,
+    "why": "É um gauge da disponibilidade."
+   }
+  ]
+ },
+ {
+  "page": "/painel-admin/kanban.html",
+  "questions": [
+   {
+    "q": "No Kanban do Pátio, o que representa cada cartão?",
+    "options": [
+     "Um contrato",
+     "Um técnico",
+     "Um cliente",
+     "Uma Ordem de Serviço"
+    ],
+    "correct": 3,
+    "why": "Cada cartão é uma OS."
+   },
+   {
+    "q": "O que acontece ao arrastar um cartão para outra coluna?",
+    "options": [
+     "Nada: o quadro é só leitura",
+     "Abre uma nova OS",
+     "O cartão volta para a coluna original",
+     "O status da OS é atualizado na hora e registrado no histórico"
+    ],
+    "correct": 3,
+    "why": "Arrastar muda o status e registra o histórico."
+   },
+   {
+    "q": "Qual é a ordem das colunas do Fluxo de Oficina?",
+    "options": [
+     "Em Manutenção, Aguardando Diagnóstico, Teste de Qualidade, Aguardando Peça, Concluído, Pendência",
+     "Aguardando Peça, Aguardando Diagnóstico, Em Manutenção, Concluído, Teste de Qualidade, Pendência",
+     "Aguardando Diagnóstico, Aguardando Peça, Em Manutenção, Pendência, Concluído, Teste de Qualidade",
+     "Aguardando Diagnóstico, Em Manutenção, Aguardando Peça, Teste de Qualidade, Pendência, Concluído"
+    ],
+    "correct": 3,
+    "why": "Ordem do fluxo de oficina."
+   },
+   {
+    "q": "Qual coluna é marcada como “Gargalo”?",
+    "options": [
+     "Aguardando Peça",
+     "Aguardando Diagnóstico",
+     "Teste de Qualidade",
+     "Pendência"
+    ],
+    "correct": 0,
+    "why": "Aguardando Peça é o gargalo."
+   },
+   {
+    "q": "Quais são as colunas do modo Painel Comercial?",
+    "options": [
+     "Rascunho, Aprovado e Entregue",
+     "Solicitado, Cotado e Recebido",
+     "Disponível no Pátio, Em Obra/Locado e Retido/Oficina",
+     "Disponível, Locado e Aguardando Triagem"
+    ],
+    "correct": 2,
+    "why": "Painel Comercial."
+   },
+   {
+    "q": "Um cartão aparece com borda vermelha e o aviso “Locação Urgente Aguardando Este Ativo”. O que significa?",
+    "options": [
+     "A OS está atrasada",
+     "O ativo teve avaria grave",
+     "O equipamento está reservado numa Solicitação marcada como “Reservar para Manutenção (Urgente)”",
+     "O cliente cancelou"
+    ],
+    "correct": 2,
+    "why": "Reserva urgente do comercial."
+   },
+   {
+    "q": "Quais filtros o quadro oferece?",
+    "options": [
+     "Por técnico, busca por nº/descrição/ativo e ocultar colunas",
+     "Por cliente e valor",
+     "Só por status",
+     "Por departamento"
+    ],
+    "correct": 0,
+    "why": "Filtros do Kanban."
+   },
+   {
+    "q": "O que gera o botão de impressão do Kanban?",
+    "options": [
+     "Uma imagem do quadro",
+     "Uma planilha Excel",
+     "Uma versão em lista da mesma visão aplicada",
+     "Um relatório de custos"
+    ],
+    "correct": 2,
+    "why": "Versão em lista."
+   }
+  ]
+ },
+ {
+  "page": "/painel-admin/agenda-tecnica.html",
+  "questions": [
+   {
+    "q": "Quais são as duas fontes de compromissos da Agenda Técnica?",
+    "options": [
+     "Contratos e propostas",
+     "Preventivas e avarias",
+     "Compromissos avulsos e Ordens de Serviço com data agendada",
+     "Leads e follow-ups"
+    ],
+    "correct": 2,
+    "why": "Compromissos e OS agendadas."
+   },
+   {
+    "q": "Uma OS aparece em amarelo no calendário. Qual o status?",
+    "options": [
+     "Em progresso",
+     "Agendada",
+     "Pendente",
+     "Concluída"
+    ],
+    "correct": 0,
+    "why": "Amarela = em progresso."
+   },
+   {
+    "q": "Qual a cor de um compromisso avulso urgente?",
+    "options": [
+     "Roxo",
+     "Verde",
+     "Laranja",
+     "Vermelho"
+    ],
+    "correct": 3,
+    "why": "Urgente é vermelho."
+   },
+   {
+    "q": "Como mudar a data de uma OS agendada?",
+    "options": [
+     "No campo “Agendado para” do cadastro da própria OS",
+     "Arrastando no calendário",
+     "Na Agenda Comercial",
+     "No Kanban"
+    ],
+    "correct": 0,
+    "why": "A data não é editada pelo calendário."
+   },
+   {
+    "q": "Quem vê o quê na Agenda Técnica?",
+    "options": [
+     "O técnico vê só a própria; o gestor/admin usa filtro por técnico",
+     "Todos veem todas",
+     "Só administradores veem",
+     "O técnico escolhe qualquer agenda"
+    ],
+    "correct": 0,
+    "why": "Técnico: própria; gestor: filtro."
+   },
+   {
+    "q": "O que acontece ao clicar numa OS agendada?",
+    "options": [
+     "Abre a tela daquela OS",
+     "Abre o formulário de data",
+     "Cria um compromisso",
+     "Exclui o agendamento"
+    ],
+    "correct": 0,
+    "why": "Leva à OS."
+   },
+   {
+    "q": "Qual a diferença entre a Agenda Técnica e a Agenda Comercial?",
+    "options": [
+     "São a mesma tela",
+     "A técnica é só de preventivas",
+     "A técnica trata de técnicos e OS; a comercial, de follow-ups de vendas",
+     "A comercial fica dentro da técnica"
+    ],
+    "correct": 2,
+    "why": "Telas diferentes."
+   },
+   {
+    "q": "Em qual caminho do menu fica a Agenda Técnica?",
+    "options": [
+     "Manutenção → Operação → Programação",
+     "Comercial → Agenda",
+     "Gestão e Equipe → Calendário",
+     "Ativos → Programação"
+    ],
+    "correct": 0,
+    "why": "Programação."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/ativos.html",
+  "questions": [
+   {
+    "q": "Qual campo realmente conecta o ativo ao checklist básico e ao plano de preventiva?",
+    "options": [
+     "Categoria e Tipo",
+     "Nome/Modelo",
+     "Grupo",
+     "Status"
+    ],
+    "correct": 2,
+    "why": "Categoria é só texto; o Grupo liga checklist e preventiva."
+   },
+   {
+    "q": "Preencheram a Categoria mas não o Grupo. Efeito na preventiva?",
+    "options": [
+     "É ativada pela categoria",
+     "O sistema cria o grupo",
+     "O ativo fica bloqueado",
+     "A preventiva automática não é ativada"
+    ],
+    "correct": 3,
+    "why": "É preciso escolher o Grupo."
+   },
+   {
+    "q": "Qual status indica um gerador ligado e funcionando em campo?",
+    "options": [
+     "Disponível",
+     "Aguardando Triagem",
+     "Em Operação",
+     "Em Manutenção"
+    ],
+    "correct": 2,
+    "why": "Em Operação = operando ativamente."
+   },
+   {
+    "q": "Qual status indica equipamento na oficina com OS em aberto?",
+    "options": [
+     "Aguardando Triagem",
+     "Em Manutenção",
+     "Locado",
+     "Em Operação"
+    ],
+    "correct": 1,
+    "why": "Em Manutenção."
+   },
+   {
+    "q": "O que significa Aguardando Triagem?",
+    "options": [
+     "Livre no pátio",
+     "Em obra com contrato",
+     "Acabou de voltar de uma obra e ainda não passou pela revisão de retorno",
+     "Preventiva agendada"
+    ],
+    "correct": 2,
+    "why": "Retorno ainda sem revisão."
+   },
+   {
+    "q": "Um lote de 20 máquinas idênticas saiu para a mesma obra. Qual recurso muda o status de todas?",
+    "options": [
+     "Importação de contratos",
+     "Ação em massa “Alterar Status em Massa”",
+     "Kanban do Pátio",
+     "Dossiê Rápido"
+    ],
+    "correct": 1,
+    "why": "Selecione as linhas e use a ação em massa."
+   },
+   {
+    "q": "Quais campos alimentam a depreciação automática?",
+    "options": [
+     "Horímetro e status",
+     "Patrimônio e tag",
+     "Categoria e grupo",
+     "Valor de aquisição, valor residual e vida útil"
+    ],
+    "correct": 3,
+    "why": "Depreciação vem da aquisição, residual e vida útil."
+   },
+   {
+    "q": "O que o Resumo Financeiro do ativo soma como receita?",
+    "options": [
+     "Só os contratos",
+     "Só avarias",
+     "Locação, excedente de franquia aprovado e avaria cobrável aprovada",
+     "O valor de aquisição"
+    ],
+    "correct": 2,
+    "why": "Receita de locação, excedente aprovado e avaria cobrável."
+   },
+   {
+    "q": "Qual é o caminho do menu para o cadastro de Ativos?",
+    "options": [
+     "Manutenção → Operação → Ativos",
+     "Ativos → Gestão de Ativos → Ativos",
+     "Comercial → Ativos",
+     "Equipe → Ativos"
+    ],
+    "correct": 1,
+    "why": "Menu de Ativos."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/grupos-checklist.html",
+  "questions": [
+   {
+    "q": "O que o Grupo de Checklist define para todos os ativos do tipo?",
+    "options": [
+     "O valor da locação",
+     "A lista de clientes",
+     "O técnico responsável",
+     "O checklist básico de inspeção e o plano de preventiva"
+    ],
+    "correct": 3,
+    "why": "Checklist básico e preventiva."
+   },
+   {
+    "q": "Quando uma OS é aberta, o que acontece com os itens do modelo do Grupo?",
+    "options": [
+     "São copiados automaticamente para o checklist real da OS",
+     "A OS compartilha o checklist do grupo ao vivo",
+     "O técnico recria à mão",
+     "São copiados ao concluir a OS"
+    ],
+    "correct": 0,
+    "why": "É sempre uma cópia."
+   },
+   {
+    "q": "Você edita o modelo do Grupo hoje. O que acontece com checklists de OS já criadas?",
+    "options": [
+     "Todas são atualizadas",
+     "Só as em andamento",
+     "Nada, continuam como foram geradas",
+     "Cria-se uma nova OS"
+    ],
+    "correct": 2,
+    "why": "Editar não muda o que já existe."
+   },
+   {
+    "q": "Quais campos tem o cadastro de um Grupo?",
+    "options": [
+     "Nome do Grupo e Objetivo",
+     "Nome, CNPJ e endereço",
+     "Categoria, tipo e horímetro",
+     "Nome, valor e vida útil"
+    ],
+    "correct": 0,
+    "why": "Nome e Objetivo."
+   },
+   {
+    "q": "Além do Ativo, onde o Grupo aparece?",
+    "options": [
+     "Contratos e Clientes",
+     "Em planos de Manutenção Preventiva e na compatibilidade de Materiais",
+     "Departamentos e Perfis",
+     "Só no Dashboard"
+    ],
+    "correct": 1,
+    "why": "Preventiva e Materiais."
+   },
+   {
+    "q": "Para que serve marcar uma peça como compatível com um Grupo?",
+    "options": [
+     "Bloquear outras peças",
+     "Sugerir as peças certas na hora da preventiva",
+     "Calcular depreciação",
+     "Vincular a um contrato"
+    ],
+    "correct": 1,
+    "why": "Alimenta as sugestões."
+   },
+   {
+    "q": "Quem normalmente configura os Grupos?",
+    "options": [
+     "O cliente final",
+     "O motorista",
+     "O comercial",
+     "Administrativo ou supervisor de manutenção"
+    ],
+    "correct": 3,
+    "why": "Configuração de quem estrutura a frota."
+   },
+   {
+    "q": "Qual é o caminho do menu para os Grupos?",
+    "options": [
+     "Manutenção → Cadastros → Grupos",
+     "Comercial → Grupos",
+     "Equipe → Grupos",
+     "Ativos → Gestão de Ativos → Grupos de Ativos"
+    ],
+    "correct": 3,
+    "why": "Grupos de Ativos."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/dossie-ativo.html",
+  "questions": [
+   {
+    "q": "O que abre ao escanear o QR Code do equipamento?",
+    "options": [
+     "A OS em aberto",
+     "O Painel Admin completo",
+     "O Dossiê Rápido do equipamento, sem login no painel completo",
+     "O contrato em PDF"
+    ],
+    "correct": 2,
+    "why": "Tela otimizada para celular."
+   },
+   {
+    "q": "Quais informações de contrato o dossiê mostra?",
+    "options": [
+     "Cliente atual e contrato vigente (nº, início e valor mensal)",
+     "Todos os contratos antigos",
+     "Só o nome do cliente",
+     "Contas a receber"
+    ],
+    "correct": 0,
+    "why": "Cliente e contrato vigente."
+   },
+   {
+    "q": "Quantas avarias recentes o dossiê exibe?",
+    "options": [
+     "As últimas 10",
+     "Todas do ano",
+     "As últimas 5",
+     "Só a mais recente"
+    ],
+    "correct": 2,
+    "why": "Últimas 5."
+   },
+   {
+    "q": "Que horas o dossiê mostra para um veículo?",
+    "options": [
+     "Só horímetro",
+     "Só odômetro",
+     "Horímetro e também odômetro",
+     "Horas de ponto"
+    ],
+    "correct": 2,
+    "why": "Horímetro e odômetro."
+   },
+   {
+    "q": "Onde fica o botão que gera a etiqueta com o QR Code?",
+    "options": [
+     "No contrato",
+     "No Dashboard",
+     "Na tela de edição do Ativo, em Imprimir Etiqueta",
+     "No chat da OS"
+    ],
+    "correct": 2,
+    "why": "Imprimir Etiqueta."
+   },
+   {
+    "q": "Sem o QR Code, como abrir o dossiê pelo computador?",
+    "options": [
+     "Só com o nº de série completo",
+     "Buscando por nome, tag, patrimônio ou nº de série, mesmo parcial",
+     "Só pelo celular",
+     "Só pelo administrador"
+    ],
+    "correct": 1,
+    "why": "A busca aceita termos parciais."
+   },
+   {
+    "q": "Quais dados gerais o dossiê traz?",
+    "options": [
+     "Valor de aquisição e depreciação",
+     "Fornecedor e nota fiscal",
+     "Custo de manutenção e lucro",
+     "Categoria, status, especificação e criticidade (Matriz ABC)"
+    ],
+    "correct": 3,
+    "why": "Dados gerais."
+   },
+   {
+    "q": "O dossiê existe no computador também?",
+    "options": [
+     "Não, só celular",
+     "Sim, só para administradores",
+     "Sim, há versão desktop para quem tem acesso a Ativos",
+     "Só para administradores"
+    ],
+    "correct": 2,
+    "why": "Existe versão desktop."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/ordens-servico.html",
+  "questions": [
+   {
+    "q": "Qual é o formato do número de uma OS?",
+    "options": [
+     "OS-NNNNN-AAAA",
+     "OS-AAAAMM-NNNNN (ano, mês e sequência)",
+     "Apenas um número sequencial",
+     "AAAA-OS-MM"
+    ],
+    "correct": 1,
+    "why": "Gerado automaticamente."
+   },
+   {
+    "q": "O campo Tipo de Serviço (Interno/Externo) é definido como?",
+    "options": [
+     "Escolhido pelo técnico",
+     "Escolhido pelo cliente",
+     "Calculado pelo sistema, conforme exista ou não contrato ativo para o ativo",
+     "Definido pelo supervisor"
+    ],
+    "correct": 2,
+    "why": "É automático."
+   },
+   {
+    "q": "O que o botão “Iniciar Serviço” faz?",
+    "options": [
+     "Gera o checklist",
+     "Coleta as assinaturas",
+     "Baixa o estoque",
+     "Liga o cronômetro do atendimento"
+    ],
+    "correct": 3,
+    "why": "Liga o cronômetro."
+   },
+   {
+    "q": "O que o “Pausar” faz com o tempo?",
+    "options": [
+     "O tempo continua",
+     "O tempo parado não conta",
+     "Zera o cronômetro",
+     "Conclui a OS"
+    ],
+    "correct": 1,
+    "why": "Pausa o cronômetro."
+   },
+   {
+    "q": "Quais ações exigem informar um motivo?",
+    "options": [
+     "Reprogramar e Cancelar",
+     "Iniciar e Pausar",
+     "Concluir e Imprimir",
+     "Transferir e Pausar"
+    ],
+    "correct": 0,
+    "why": "Reprogramar e Cancelar pedem motivo."
+   },
+   {
+    "q": "O que a ação Transferir faz?",
+    "options": [
+     "Passa a OS para outro cliente",
+     "Passa a OS para outro técnico, com notificação automática",
+     "Cancela a OS",
+     "Muda o ativo"
+    ],
+    "correct": 1,
+    "why": "Transferência com aviso."
+   },
+   {
+    "q": "Em qual aba a OS registra as peças usadas?",
+    "options": [
+     "Apontamentos",
+     "Materiais",
+     "Custos",
+     "Dados Gerais"
+    ],
+    "correct": 1,
+    "why": "Aba Materiais."
+   },
+   {
+    "q": "Quando aparecem os botões “Preventiva (Celular)” e “Imprimir Preventiva”?",
+    "options": [
+     "Só se o ativo tiver um Grupo de Checklist configurado",
+     "Sempre",
+     "Só para administradores",
+     "Só em OS concluída"
+    ],
+    "correct": 0,
+    "why": "Dependem do Grupo."
+   },
+   {
+    "q": "A lista de OS se atualiza como?",
+    "options": [
+     "Só ao recarregar",
+     "A cada hora",
+     "Uma vez por dia",
+     "Sozinha, a cada 10 segundos"
+    ],
+    "correct": 3,
+    "why": "Atualização automática."
+   },
+   {
+    "q": "Qual é o caminho do menu para as Ordens de Serviço?",
+    "options": [
+     "Manutenção → Cadastros → Ordens",
+     "Manutenção → Operação → Ordens de Serviço",
+     "Comercial → OS",
+     "PMP → Ordens"
+    ],
+    "correct": 1,
+    "why": "Menu de OS."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/modo-campo.html",
+  "questions": [
+   {
+    "q": "Quantas etapas tem o Modo Campo?",
+    "options": [
+     "5",
+     "3",
+     "4",
+     "7"
+    ],
+    "correct": 0,
+    "why": "Cinco etapas."
+   },
+   {
+    "q": "Quais são as etapas do Modo Campo, em ordem?",
+    "options": [
+     "Checklist, Equipamento, Materiais, Avarias, Assinatura",
+     "Equipamento, Avarias, Checklist, Assinatura, Materiais",
+     "Assinatura, Equipamento, Checklist, Avarias, Materiais",
+     "Equipamento, Checklist, Avarias, Materiais, Assinatura"
+    ],
+    "correct": 3,
+    "why": "Ordem do wizard."
+   },
+   {
+    "q": "O que faz o botão “Salvar e Pausar” na etapa de Avarias?",
+    "options": [
+     "Conclui a OS",
+     "Cancela a avaria",
+     "Envia a avaria ao comercial",
+     "Grava o texto digitado até ali e muda a OS para Pausada"
+    ],
+    "correct": 3,
+    "why": "Salva o texto e pausa."
+   },
+   {
+    "q": "O Modo Campo funciona offline?",
+    "options": [
+     "Sim, salva tudo localmente",
+     "Só a etapa de assinatura",
+     "Só em tablets",
+     "Não: cada etapa depende de conexão para salvar"
+    ],
+    "correct": 3,
+    "why": "Sem persistência local."
+   },
+   {
+    "q": "Se a conexão cair no meio de uma etapa, o que fazer?",
+    "options": [
+     "Salvar o que já foi feito assim que a conexão voltar",
+     "Continuar preenchendo offline por horas",
+     "Recomeçar a OS",
+     "Fechar o app"
+    ],
+    "correct": 0,
+    "why": "Salvar ao voltar a conexão."
+   },
+   {
+    "q": "Como acessar o Modo Campo?",
+    "options": [
+     "Pelo celular, ao abrir uma OS atribuída (botão “Modo Campo (Celular)”)",
+     "Só pelo administrador",
+     "Pelo menu Comercial",
+     "Só por QR Code"
+    ],
+    "correct": 0,
+    "why": "Pela OS."
+   },
+   {
+    "q": "Mobilização e Desmobilização fazem parte do wizard de 5 etapas?",
+    "options": [
+     "Não: são fluxos próprios e separados",
+     "Sim, são a etapa 1",
+     "Sim, são a etapa 5",
+     "Só a mobilização"
+    ],
+    "correct": 0,
+    "why": "Fluxos separados."
+   },
+   {
+    "q": "Por que a tela de campo aparece numa moldura de celular no computador?",
+    "options": [
+     "Porque só funciona no celular",
+     "Porque há um erro",
+     "Porque o plano é limitado",
+     "É só visual, para demonstrar o app em telas grandes"
+    ],
+    "correct": 3,
+    "why": "Efeito visual."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/manutencao-preventiva.html",
+  "questions": [
+   {
+    "q": "A preventiva dispara por qual critério?",
+    "options": [
+     "Horas trabalhadas (horímetro)",
+     "Só por data",
+     "Só por quilometragem",
+     "Só por contrato"
+    ],
+    "correct": 0,
+    "why": "Por horímetro."
+   },
+   {
+    "q": "Um plano pode ser cadastrado para quais alvos?",
+    "options": [
+     "Um Ativo específico OU um Grupo de Ativo (nunca os dois)",
+     "Os dois ao mesmo tempo",
+     "Só um cliente",
+     "Só um contrato"
+    ],
+    "correct": 0,
+    "why": "Um dos dois."
+   },
+   {
+    "q": "Último serviço com horímetro 2.000 h, intervalo 500 h, horímetro atual 2.490 h. Situação?",
+    "options": [
+     "Venceu",
+     "Venceu em 2.490 h",
+     "Venceu em 2.000 h",
+     "Ainda não venceu: vence em 2.500 h"
+    ],
+    "correct": 3,
+    "why": "Vencimento = último + intervalo."
+   },
+   {
+    "q": "Último serviço em 1.000 h, intervalo 250 h, atual 1.280 h. Situação?",
+    "options": [
+     "Em dia",
+     "Vencida: o vencimento era 1.250 h",
+     "Vence em 1.500 h",
+     "Vencida desde 1.000 h"
+    ],
+    "correct": 1,
+    "why": "1.280 passou de 1.250."
+   },
+   {
+    "q": "O que acontece ao marcar um item na tela mobile?",
+    "options": [
+     "Nada até concluir a OS",
+     "Cria uma nova OS",
+     "Registra a execução e avança o horímetro oficial do ativo",
+     "Cancela o plano"
+    ],
+    "correct": 2,
+    "why": "Marcar registra e avança o horímetro."
+   },
+   {
+    "q": "O que acontece ao desmarcar um item?",
+    "options": [
+     "Nada",
+     "O item é duplicado",
+     "O registro de execução é apagado",
+     "O plano é cancelado"
+    ],
+    "correct": 2,
+    "why": "Desmarcar apaga."
+   },
+   {
+    "q": "Qual é o caminho do menu para os Planos Preventivos?",
+    "options": [
+     "Manutenção → Operação → Planos",
+     "Ativos → Planos",
+     "PMP → Planos Preventivos",
+     "Comercial → Planos"
+    ],
+    "correct": 2,
+    "why": "Grupo PMP."
+   },
+   {
+    "q": "“Planos de Manutenção de Veículos” é o quê?",
+    "options": [
+     "O mesmo módulo de Planos Preventivos",
+     "Um relatório",
+     "Um módulo separado, só para a frota própria",
+     "Um tipo de OS"
+    ],
+    "correct": 2,
+    "why": "Não confundir."
+   },
+   {
+    "q": "Se o horímetro informado na execução for maior que o atual, o que o sistema faz?",
+    "options": [
+     "Ignora",
+     "Atualiza o horímetro oficial do ativo",
+     "Bloqueia o registro",
+     "Cria um alerta"
+    ],
+    "correct": 1,
+    "why": "Atualiza automaticamente."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/checklist-inspecao.html",
+  "questions": [
+   {
+    "q": "De onde vem o checklist de vistoria de uma OS?",
+    "options": [
+     "Montado à mão pelo técnico",
+     "Gerado sozinho ao criar a OS, copiando os itens do Grupo mais os extras do ativo",
+     "Copiado da última OS do cliente",
+     "Gerado ao concluir a OS"
+    ],
+    "correct": 1,
+    "why": "Cópia automática."
+   },
+   {
+    "q": "Quais são os três status de cada item?",
+    "options": [
+     "Aprovado, Reprovado e Pendente",
+     "Conforme, Não Conforme e Não Aplicável",
+     "OK, Falha e Pular",
+     "Feito, Parcial e Não feito"
+    ],
+    "correct": 1,
+    "why": "Três status."
+   },
+   {
+    "q": "Um item Não Conforme conta como concluído?",
+    "options": [
+     "Sim",
+     "Não",
+     "Só se tiver foto",
+     "Só se tiver observação"
+    ],
+    "correct": 1,
+    "why": "Não conforme não conta."
+   },
+   {
+    "q": "Você edita o modelo do Grupo hoje. O que muda?",
+    "options": [
+     "Só as OS novas; as já criadas não mudam",
+     "Todas as OS",
+     "Só as em andamento",
+     "Nenhuma OS futura"
+    ],
+    "correct": 0,
+    "why": "É cópia."
+   },
+   {
+    "q": "No celular, quando o botão “Finalizar” libera?",
+    "options": [
+     "Sempre",
+     "Com 50%",
+     "Só com foto em todos",
+     "Quando o checklist chega a 100%"
+    ],
+    "correct": 3,
+    "why": "Libera em 100%."
+   },
+   {
+    "q": "Quem cadastra os itens padrão e quem preenche?",
+    "options": [
+     "O técnico cadastra e o cliente preenche",
+     "O comercial cadastra",
+     "O supervisor cadastra os itens padrão; o técnico preenche na OS",
+     "O financeiro preenche"
+    ],
+    "correct": 2,
+    "why": "Papéis do checklist."
+   },
+   {
+    "q": "O cadastro genérico “Checklists” do menu de Manutenção tem relação com a vistoria da OS?",
+    "options": [
+     "Não: é solto, sem ligação com ativo, grupo ou OS",
+     "Sim, é o modelo da OS",
+     "Sim, é o checklist do Grupo",
+     "Sim, alimenta o celular"
+    ],
+    "correct": 0,
+    "why": "Não confundir."
+   },
+   {
+    "q": "Foto e observação em cada item são…",
+    "options": [
+     "Opcionais",
+     "Obrigatórias",
+     "Proibidas",
+     "Só obrigatórias em Não Conforme"
+    ],
+    "correct": 0,
+    "why": "Opcionais por item."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/mobilizacao.html",
+  "questions": [
+   {
+    "q": "O que é mobilização e o que é desmobilização?",
+    "options": [
+     "Mobilização é a saída para o cliente; desmobilização, a volta ao pátio",
+     "Mobilização é a volta; desmobilização, a saída",
+     "As duas são a saída",
+     "As duas são a volta"
+    ],
+    "correct": 0,
+    "why": "Saída e volta."
+   },
+   {
+    "q": "Ao iniciar uma desmobilização pelo celular, o que acontece com o ativo?",
+    "options": [
+     "Entra automaticamente em Aguardando Triagem",
+     "Vira Disponível",
+     "Vira Locado",
+     "Vira Em Manutenção"
+    ],
+    "correct": 0,
+    "why": "Aguardando Triagem."
+   },
+   {
+    "q": "Finalizar o checklist de desmobilização com 100% libera o ativo?",
+    "options": [
+     "Sim, na hora",
+     "Só se tiver foto",
+     "Só se o cliente assinar",
+     "Não: falta a confirmação formal de chegada no pátio"
+    ],
+    "correct": 3,
+    "why": "Precisa da confirmação."
+   },
+   {
+    "q": "Quais veículos aparecem na escolha do checklist?",
+    "options": [
+     "Só os Disponíveis naquele momento",
+     "Todos os veículos",
+     "Só os em manutenção",
+     "Só os de terceiros"
+    ],
+    "correct": 0,
+    "why": "Evita escalar o mesmo veículo duas vezes."
+   },
+   {
+    "q": "O que acontece com o veículo ao ser atribuído à movimentação?",
+    "options": [
+     "Continua Disponível",
+     "Vira Inativo",
+     "Vira Em Rota sozinho e volta a Disponível ao concluir",
+     "Vira Manutenção"
+    ],
+    "correct": 2,
+    "why": "Status automático."
+   },
+   {
+    "q": "O rastreamento do trajeto é feito como?",
+    "options": [
+     "Por GPS contínuo do veículo",
+     "Manualmente pelo operador, registrando pontos-chave com a localização do celular",
+     "Pelo motorista terceirizado",
+     "Por satélite"
+    ],
+    "correct": 1,
+    "why": "Não é contínuo."
+   },
+   {
+    "q": "Itens marcados como “exige foto” só deixam marcar quando…",
+    "options": [
+     "Há ao menos uma imagem anexada",
+     "O cliente assina",
+     "O supervisor aprova",
+     "O veículo está em rota"
+    ],
+    "correct": 0,
+    "why": "Exigem foto."
+   },
+   {
+    "q": "Se nenhum veículo próprio estiver livre, o que fazer?",
+    "options": [
+     "Esperar",
+     "Cancelar a mobilização",
+     "Usar um veículo em rota",
+     "Acionar um frete terceirizado (transportadora)"
+    ],
+    "correct": 3,
+    "why": "Frete terceirizado."
+   },
+   {
+    "q": "Em uma Troca de Equipamento, quem decide o status final do ativo?",
+    "options": [
+     "O próprio fluxo de troca",
+     "A confirmação do pátio",
+     "O motorista",
+     "O comercial"
+    ],
+    "correct": 0,
+    "why": "Exceção documentada."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/avarias.html",
+  "questions": [
+   {
+    "q": "De onde sempre nasce uma avaria?",
+    "options": [
+     "De um item de checklist de mobilização/desmobilização (ou de uma foto marcada como Avaria na OS)",
+     "Do contrato",
+     "Do cadastro do cliente",
+     "Do Dashboard"
+    ],
+    "correct": 0,
+    "why": "Nasce de um item/foto."
+   },
+   {
+    "q": "Quais são as gravidades?",
+    "options": [
+     "Baixa, Média, Alta",
+     "Pequena, Grande",
+     "Normal, Urgente, Crítico",
+     "Leve, Moderada e Grave"
+    ],
+    "correct": 3,
+    "why": "Três gravidades."
+   },
+   {
+    "q": "Qual gravidade indica equipamento comprometido, geralmente com troca?",
+    "options": [
+     "Grave",
+     "Leve",
+     "Moderada",
+     "Nenhuma"
+    ],
+    "correct": 0,
+    "why": "Grave."
+   },
+   {
+    "q": "Qual é a ordem do fluxo da avaria?",
+    "options": [
+     "Aguardando Comercial, Aguardando Supervisor, Em Cobrança, Resolvido",
+     "Em Cobrança, Aguardando Supervisor, Resolvido",
+     "Aguardando Assinatura do Cliente, Aguardando Supervisor, Aguardando Comercial, Em Cobrança, Resolvido/Cancelado",
+     "Aguardando Supervisor, Aguardando Assinatura, Aguardando Comercial, Resolvido"
+    ],
+    "correct": 2,
+    "why": "Ordem do fluxo."
+   },
+   {
+    "q": "Quando a assinatura do cliente é liberada?",
+    "options": [
+     "Antes de qualquer foto",
+     "Depois de anexar ao menos uma foto",
+     "Só depois do supervisor",
+     "Só depois do comercial"
+    ],
+    "correct": 1,
+    "why": "Foto obrigatória."
+   },
+   {
+    "q": "Depois de assinada, a avaria…",
+    "options": [
+     "Pode ser editada pelo técnico",
+     "Pode ser editada pelo comercial",
+     "Fica travada contra edição",
+     "Pode ser editada em 24 horas"
+    ],
+    "correct": 2,
+    "why": "Travada."
+   },
+   {
+    "q": "Quem é avisado ao entrar em “Aguardando Supervisor”?",
+    "options": [
+     "O Comercial",
+     "O Supervisor de Manutenção",
+     "O cliente",
+     "O motorista"
+    ],
+    "correct": 1,
+    "why": "Aviso automático."
+   },
+   {
+    "q": "A avaria cria uma OS nova sozinha?",
+    "options": [
+     "Sim, sempre",
+     "Só se for grave",
+     "Não: ela pertence à OS de onde nasceu",
+     "Só se tiver cobrança"
+    ],
+    "correct": 2,
+    "why": "Não abre OS nova."
+   },
+   {
+    "q": "O que o laudo em PDF mostra?",
+    "options": [
+     "Só a foto",
+     "Causa atribuída, se é cobrável, severidade, status e valor aprovado do orçamento indenizatório",
+     "Só o nome do técnico",
+     "Só o contrato"
+    ],
+    "correct": 1,
+    "why": "Documento para cobrança ou disputa."
+   },
+   {
+    "q": "A reincidência por Cliente conta quais avarias?",
+    "options": [
+     "Todas",
+     "Só as graves",
+     "Só as leves",
+     "Só as de causa cobrável (mau uso ou dano do cliente)"
+    ],
+    "correct": 3,
+    "why": "Cobráveis."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/substituicao-equipamento.html",
+  "questions": [
+   {
+    "q": "Quais são os três jeitos de iniciar uma troca?",
+    "options": [
+     "Só pelo contrato",
+     "Só pelo motorista",
+     "Botão “Nova Requisição de Troca”, a partir de uma OS de troca e a partir de uma Avaria grave",
+     "Só pelo botão"
+    ],
+    "correct": 2,
+    "why": "Três formas."
+   },
+   {
+    "q": "Quais são as etapas de uma troca, em ordem?",
+    "options": [
+     "Concluído, Solicitado, Mobilização",
+     "Solicitado, Substituto Identificado, Desmobilização, Mobilização, Concluído",
+     "Mobilização, Desmobilização, Solicitado",
+     "Solicitado, Concluído, Substituto"
+    ],
+    "correct": 1,
+    "why": "Estágios da troca."
+   },
+   {
+    "q": "Qual o prazo (SLA) para identificar o substituto em urgência Crítica?",
+    "options": [
+     "8 horas",
+     "2 horas",
+     "24 horas",
+     "48 horas"
+    ],
+    "correct": 1,
+    "why": "Crítico = 2 h."
+   },
+   {
+    "q": "E para urgência Urgente e Normal?",
+    "options": [
+     "2 e 8 horas",
+     "8 horas e 48 horas",
+     "24 e 72 horas",
+     "4 e 24 horas"
+    ],
+    "correct": 1,
+    "why": "Urgente 8 h; Normal 48 h."
+   },
+   {
+    "q": "O SLA bloqueia alguma ação?",
+    "options": [
+     "Sim, bloqueia a OS",
+     "Não: é só um indicador visual",
+     "Sim, bloqueia o contrato",
+     "Sim, cancela a troca"
+    ],
+    "correct": 1,
+    "why": "Indicador."
+   },
+   {
+    "q": "Quando a troca é considerada Concluída?",
+    "options": [
+     "Quando o substituto é identificado",
+     "Quando o original é desmobilizado",
+     "Quando o comercial aprova",
+     "Só depois que o cliente assina o recebimento do substituto"
+    ],
+    "correct": 3,
+    "why": "Assinatura do cliente."
+   },
+   {
+    "q": "O que acontece com os ativos ao concluir, havendo contrato ativo?",
+    "options": [
+     "O original volta a Disponível e o substituto vira Locado para o mesmo cliente",
+     "Os dois ficam Locados",
+     "Os dois ficam Disponíveis",
+     "Nada muda"
+    ],
+    "correct": 0,
+    "why": "Troca automática no contrato."
+   },
+   {
+    "q": "Onde aparece o histórico das trocas?",
+    "options": [
+     "Na tela do Ativo (como original ou substituto) e na do Contrato",
+     "Só no Dashboard",
+     "Só na Agenda",
+     "Só no chat"
+    ],
+    "correct": 0,
+    "why": "Ativo e Contrato."
+   },
+   {
+    "q": "Qual é o caminho do menu para as trocas?",
+    "options": [
+     "Manutenção → Operação → Trocas",
+     "Comercial → Trocas",
+     "Ativos → Trocas",
+     "Manutenção → Cadastros → Trocas De Equipamento"
+    ],
+    "correct": 3,
+    "why": "Menu de trocas."
+   }
+  ]
+ },
+ {
+  "page": "/manutencao/processo-manutencao.html",
+  "questions": [
+   {
+    "q": "Qual é a ordem da jornada de um atendimento?",
+    "options": [
+     "Problema relatado, técnico inicia, checklist e fotos, conclui e assina, acompanhamento, fica registrado",
+     "Conclui, inicia, checklist, relatório",
+     "Checklist, problema, assinatura, início",
+     "Assina, inicia, conclui, checklist"
+    ],
+    "correct": 0,
+    "why": "A jornada completa."
+   },
+   {
+    "q": "O que é a Matriz ABC?",
+    "options": [
+     "Uma tabela de preços",
+     "Um relatório de custos",
+     "Um tipo de checklist",
+     "Uma classificação A, B ou C da importância de cada equipamento para o negócio"
+    ],
+    "correct": 3,
+    "why": "Define prioridade."
+   },
+   {
+    "q": "Um equipamento A e um C com o mesmo problema: qual atender primeiro?",
+    "options": [
+     "O C",
+     "O mais antigo",
+     "O A, por ser mais importante",
+     "O de menor custo"
+    ],
+    "correct": 2,
+    "why": "Matriz ABC."
+   },
+   {
+    "q": "O Relatório Analítico de Manutenção mostra o quê?",
+    "options": [
+     "Só custos",
+     "Só avarias",
+     "Só técnicos",
+     "As OS agrupadas por etapa, com quantos dias cada uma está parada"
+    ],
+    "correct": 3,
+    "why": "Enxerga gargalos."
+   },
+   {
+    "q": "Para que serve o Histórico de Status?",
+    "options": [
+     "Calcular custos",
+     "Planejar agenda",
+     "Auditoria: toda mudança de status de toda OS, com quem mudou e quando",
+     "Cobrar clientes"
+    ],
+    "correct": 2,
+    "why": "Auditoria."
+   },
+   {
+    "q": "O que a Carga de Técnicos mostra?",
+    "options": [
+     "Quanto cada um ganha",
+     "As avarias de cada técnico",
+     "As horas de ponto",
+     "Quantas OS cada técnico tem agora, marcando “Livre agora” quem não tem nenhuma"
+    ],
+    "correct": 3,
+    "why": "Distribui melhor as OS."
+   },
+   {
+    "q": "Por quantos dias o mesmo alerta de manutenção vencida não se repete?",
+    "options": [
+     "1 dia",
+     "7 dias",
+     "3 dias",
+     "30 dias"
+    ],
+    "correct": 1,
+    "why": "Sete dias."
+   },
+   {
+    "q": "O alerta de manutenção vencida avisa quando?",
+    "options": [
+     "Quando a manutenção já venceu (não com antecedência configurável)",
+     "Antes de vencer, com antecedência configurável",
+     "Só uma vez por mês",
+     "Só por e-mail"
+    ],
+    "correct": 0,
+    "why": "É reativo."
+   },
+   {
+    "q": "Por que um aviso automático pode não chegar a alguém?",
+    "options": [
+     "Porque está de férias",
+     "Porque a pessoa não tem o cargo certo cadastrado em Configurações → Papéis",
+     "Porque o e-mail é antigo",
+     "Porque o plano não permite"
+    ],
+    "correct": 1,
+    "why": "Depende do cargo."
+   },
+   {
+    "q": "Ao marcar uma foto como “Avaria” na OS, o que acontece?",
+    "options": [
+     "Nada",
+     "Só muda a cor da foto",
+     "Já cria o registro de avaria, que segue para o fluxo de aprovação",
+     "Cancela a OS"
+    ],
+    "correct": 2,
+    "why": "Gera avaria de verdade."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/conformidade-nr13.html",
+  "questions": [
+   {
+    "q": "Sem a marcação “Sujeito à NR-13”, o que acontece com o ativo?",
+    "options": [
+     "Ele não aparece em nenhum lugar do módulo NR-13",
+     "Aparece com aviso",
+     "Aparece só no Dashboard",
+     "É bloqueado"
+    ],
+    "correct": 0,
+    "why": "A marcação é obrigatória."
+   },
+   {
+    "q": "Quais tipos de equipamento a NR-13 abrange no cadastro?",
+    "options": [
+     "Gerador, Compressor e Guindaste",
+     "Empilhadeira e Plataforma",
+     "Caldeira, Vaso de Pressão, Tubulação e Tanque",
+     "Só vasos de pressão"
+    ],
+    "correct": 2,
+    "why": "Quatro tipos."
+   },
+   {
+    "q": "Quais são os documentos obrigatórios?",
+    "options": [
+     "Só o Laudo",
+     "Prontuário, Projeto, PMOC (quando aplicável), Certificado de Inspeção e Laudo",
+     "Contrato e Nota Fiscal",
+     "Apenas o Certificado"
+    ],
+    "correct": 1,
+    "why": "Cinco tipos."
+   },
+   {
+    "q": "Quais tipos de inspeção podem ser registrados?",
+    "options": [
+     "Só interna",
+     "Interna, externa, de segurança e hidrostática",
+     "Mensal e anual",
+     "Rápida e completa"
+    ],
+    "correct": 1,
+    "why": "Quatro tipos."
+   },
+   {
+    "q": "Quais resultados uma inspeção pode ter?",
+    "options": [
+     "Ok e Falha",
+     "Conforme e Não conforme",
+     "Pendente e Concluído",
+     "Aprovado, reprovado ou com ressalva"
+    ],
+    "correct": 3,
+    "why": "Três resultados."
+   },
+   {
+    "q": "As periodicidades de reinspeção são…",
+    "options": [
+     "Fixas, travadas no sistema",
+     "Sempre 12 meses",
+     "Definidas pelo cliente",
+     "Configuráveis (em meses) por tipo de equipamento e categoria de risco, usadas como sugestão"
+    ],
+    "correct": 3,
+    "why": "O engenheiro decide."
+   },
+   {
+    "q": "No Dashboard, o que conta como “A vencer”?",
+    "options": [
+     "Vencem nos próximos 30 dias",
+     "Vencem em 7 dias",
+     "Já venceram",
+     "Vencem em 1 ano"
+    ],
+    "correct": 0,
+    "why": "30 dias."
+   },
+   {
+    "q": "Com quanta antecedência o sistema avisa o vencimento?",
+    "options": [
+     "Só no dia",
+     "Só 30 dias antes",
+     "30, 15 e 7 dias antes (e continua após vencido)",
+     "60 e 90 dias antes"
+    ],
+    "correct": 2,
+    "why": "Alertas por sino e e-mail."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/conformidade-nr6-epi.html",
+  "questions": [
+   {
+    "q": "O que o sistema faz se o CA do EPI já venceu na hora da entrega?",
+    "options": [
+     "Só avisa",
+     "Entrega e cobra depois",
+     "Pede aprovação do gestor",
+     "Bloqueia a entrega automaticamente"
+    ],
+    "correct": 3,
+    "why": "Bloqueio automático."
+   },
+   {
+    "q": "Por que cada entrega é um ciclo novo?",
+    "options": [
+     "Para economizar estoque",
+     "Para facilitar a compra",
+     "Para gerar nota fiscal",
+     "Para responder com certeza “quais EPIs este colaborador tinha e desde quando”"
+    ],
+    "correct": 3,
+    "why": "Rastreabilidade."
+   },
+   {
+    "q": "O que a entrega pede?",
+    "options": [
+     "Só o colaborador",
+     "Só o EPI",
+     "Colaborador, EPI, filial, quantidade e motivo",
+     "Contrato e cliente"
+    ],
+    "correct": 2,
+    "why": "Campos da entrega."
+   },
+   {
+    "q": "“Vida Útil Estourada” indica o quê?",
+    "options": [
+     "O CA venceu",
+     "A devolução atrasou",
+     "O estoque acabou",
+     "O tempo de uso recomendado já passou, sugerindo troca"
+    ],
+    "correct": 3,
+    "why": "Sugere troca."
+   },
+   {
+    "q": "“EPIs em Uso com CA Vencido” indica o quê?",
+    "options": [
+     "EPIs sem estoque",
+     "EPIs perdidos",
+     "Colaboradores usando um EPI cujo CA venceu depois da entrega",
+     "EPIs sem tamanho"
+    ],
+    "correct": 2,
+    "why": "CA venceu depois."
+   },
+   {
+    "q": "Tamanhos diferentes do mesmo EPI (luva P/M/G) são…",
+    "options": [
+     "O mesmo material",
+     "Um só cadastro com variações",
+     "Cadastrados só no contrato",
+     "Materiais separados, cada um com sua própria linha"
+    ],
+    "correct": 3,
+    "why": "Cada tamanho é um material."
+   },
+   {
+    "q": "De onde sai o estoque da entrega de EPI?",
+    "options": [
+     "Da filial escolhida, com baixa automática",
+     "Do fornecedor",
+     "Do cliente",
+     "Sem baixa"
+    ],
+    "correct": 0,
+    "why": "Baixa automática."
+   },
+   {
+    "q": "A ficha de entrega registra o quê, além da entrega?",
+    "options": [
+     "A foto do EPI",
+     "A assinatura digital do colaborador",
+     "O CNPJ do fornecedor",
+     "O nº da OS"
+    ],
+    "correct": 1,
+    "why": "Assinatura digital."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/pmoc.html",
+  "questions": [
+   {
+    "q": "O PMOC controla o plano de manutenção de qual tipo de sistema?",
+    "options": [
+     "Elétrico",
+     "Hidráulico",
+     "Frota de veículos",
+     "Climatização (ar-condicionado)"
+    ],
+    "correct": 3,
+    "why": "Climatização."
+   },
+   {
+    "q": "Quais tipos de sistema o cadastro aceita?",
+    "options": [
+     "Split, Central, Janela, Piso-Teto, Cassete ou Outro",
+     "Só Split",
+     "Gerador e Compressor",
+     "Caldeira e Tanque"
+    ],
+    "correct": 0,
+    "why": "Seis opções."
+   },
+   {
+    "q": "Qual data de vigência é obrigatória?",
+    "options": [
+     "A data de fim",
+     "A data de início",
+     "As duas",
+     "Nenhuma"
+    ],
+    "correct": 1,
+    "why": "Início obrigatório; fim opcional."
+   },
+   {
+    "q": "O que é a “frequência de manutenção”?",
+    "options": [
+     "De quanto em quanto tempo (em dias) o sistema precisa ser mantido conforme o plano",
+     "A quantidade de técnicos",
+     "O valor mensal",
+     "O nº de filtros"
+    ],
+    "correct": 0,
+    "why": "Frequência em dias."
+   },
+   {
+    "q": "Quais são os quatro procedimentos documentados?",
+    "options": [
+     "Instalação, venda, troca e descarte",
+     "Limpeza, pintura, solda e teste",
+     "Inspeção, orçamento, compra e entrega",
+     "Limpeza, filtros, inspeção e medição"
+    ],
+    "correct": 3,
+    "why": "Quatro textos livres."
+   },
+   {
+    "q": "Quais são os status de um PMOC?",
+    "options": [
+     "Aberto e Fechado",
+     "Ativo, Em Revisão e Inativo",
+     "Rascunho e Final",
+     "Novo, Usado, Vencido"
+    ],
+    "correct": 1,
+    "why": "Três status."
+   },
+   {
+    "q": "Quem normalmente usa o módulo?",
+    "options": [
+     "O motorista",
+     "O vendedor",
+     "O responsável técnico pela climatização (interno ou terceirizado)",
+     "O almoxarifado"
+    ],
+    "correct": 2,
+    "why": "Responsável técnico."
+   },
+   {
+    "q": "Que parâmetros de qualidade do ar o plano registra?",
+    "options": [
+     "Só temperatura",
+     "Só o tipo de filtro",
+     "O consumo de energia",
+     "Faixa ideal de temperatura (°C) e umidade (%), além de parâmetros livres"
+    ],
+    "correct": 3,
+    "why": "Faixas ideais."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/frota-leve.html",
+  "questions": [
+   {
+    "q": "Os veículos da Frota Leve são os mesmos Ativos de locação?",
+    "options": [
+     "Sim, são os mesmos",
+     "Sim, mas só caminhões",
+     "Só se estiverem locados",
+     "Não: é um cadastro separado, só para veículos de logística da empresa"
+    ],
+    "correct": 3,
+    "why": "Cadastro separado."
+   },
+   {
+    "q": "Quais status um veículo pode ter?",
+    "options": [
+     "Locado e Disponível",
+     "Aberto e Fechado",
+     "Disponível, Em Rota, Manutenção ou Inativo",
+     "Novo e Usado"
+    ],
+    "correct": 2,
+    "why": "Quatro status."
+   },
+   {
+    "q": "Quais status mudam automaticamente?",
+    "options": [
+     "Disponível e Em Rota, conforme a movimentação",
+     "Manutenção e Inativo",
+     "Todos",
+     "Nenhum"
+    ],
+    "correct": 0,
+    "why": "Os demais são manuais."
+   },
+   {
+    "q": "O que a coluna “Alertas” soma?",
+    "options": [
+     "Só multas",
+     "Só pedágios",
+     "Só abastecimentos",
+     "Documentos vencidos/perto de vencer e planos de manutenção vencidos do veículo"
+    ],
+    "correct": 3,
+    "why": "Indicador único."
+   },
+   {
+    "q": "O que a coluna “Movimentação Atual” mostra?",
+    "options": [
+     "O último abastecimento",
+     "O motorista",
+     "Para veículos Em Rota, qual movimentação e qual ativo estão levando, com link para a OS",
+     "O valor do frete"
+    ],
+    "correct": 2,
+    "why": "Link direto."
+   },
+   {
+    "q": "Qual campo é único e obrigatório no cadastro do veículo?",
+    "options": [
+     "Modelo",
+     "Km atual",
+     "Tag Sem Parar",
+     "Placa"
+    ],
+    "correct": 3,
+    "why": "Placa."
+   },
+   {
+    "q": "O que o veículo controla além dos dados básicos?",
+    "options": [
+     "Documentos, planos de manutenção, histórico, pedágios e abastecimentos",
+     "Só documentos",
+     "Só abastecimentos",
+     "Só o motorista"
+    ],
+    "correct": 0,
+    "why": "Várias abas."
+   },
+   {
+    "q": "Qual é o caminho do menu para os veículos?",
+    "options": [
+     "Logística → Frota → Veículos da Frota",
+     "Ativos → Frota",
+     "Manutenção → Frota",
+     "Comercial → Frota"
+    ],
+    "correct": 0,
+    "why": "Menu."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/motoristas.html",
+  "questions": [
+   {
+    "q": "Quais são os vínculos possíveis de um motorista?",
+    "options": [
+     "Só próprio",
+     "Próprio (funcionário) ou Terceiro (ligado a uma transportadora)",
+     "Cliente ou fornecedor",
+     "Ativo ou inativo"
+    ],
+    "correct": 1,
+    "why": "Dois vínculos."
+   },
+   {
+    "q": "O que a validade da CNH alimenta?",
+    "options": [
+     "O contrato",
+     "O alerta de vencimento",
+     "O custo do frete",
+     "O status do veículo"
+    ],
+    "correct": 1,
+    "why": "Alerta de CNH."
+   },
+   {
+    "q": "“CNH vencendo” aparece quando?",
+    "options": [
+     "Vence em 7 dias",
+     "Já venceu",
+     "Vence nos próximos 30 dias",
+     "Vence em 90 dias"
+    ],
+    "correct": 2,
+    "why": "30 dias."
+   },
+   {
+    "q": "Que outros documentos o motorista pode ter?",
+    "options": [
+     "Só CNH",
+     "Só RG",
+     "Só CPF",
+     "MOPP, certificado de operador etc., com emissão, vencimento e arquivo"
+    ],
+    "correct": 3,
+    "why": "Documentação adicional."
+   },
+   {
+    "q": "Onde o motorista é escolhido para uma viagem?",
+    "options": [
+     "No checklist de Mobilização/Desmobilização",
+     "No cadastro do motorista",
+     "No contrato",
+     "Na OS comum"
+    ],
+    "correct": 0,
+    "why": "Atribuição no checklist."
+   },
+   {
+    "q": "O que desligar o campo “Ativo” do motorista faz?",
+    "options": [
+     "Apaga o motorista",
+     "Bloqueia o veículo",
+     "Tira da lista de escolha no checklist, sem apagar o histórico",
+     "Cancela as viagens"
+    ],
+    "correct": 2,
+    "why": "Mantém o histórico."
+   },
+   {
+    "q": "Para que serve a lista de “Veículos habilitados”?",
+    "options": [
+     "Listar multas",
+     "Calcular frete",
+     "Definir quais veículos da frota o motorista pode dirigir",
+     "Registrar abastecimentos"
+    ],
+    "correct": 2,
+    "why": "Habilitação por veículo."
+   },
+   {
+    "q": "O histórico do motorista lista o quê?",
+    "options": [
+     "Suas folgas",
+     "Suas multas",
+     "Suas horas de ponto",
+     "As movimentações em que ele foi o responsável, com status e duração"
+    ],
+    "correct": 3,
+    "why": "Histórico de movimentações."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/chegada-patio.html",
+  "questions": [
+   {
+    "q": "A confirmação de chegada no pátio é automática?",
+    "options": [
+     "Sim",
+     "Não: precisa de um responsável do pátio confirmando",
+     "Só em urgência",
+     "Só para veículos"
+    ],
+    "correct": 1,
+    "why": "É manual."
+   },
+   {
+    "q": "Enquanto ninguém confirma a chegada, em que status o ativo fica?",
+    "options": [
+     "Disponível",
+     "Aguardando Triagem",
+     "Locado",
+     "Em Operação"
+    ],
+    "correct": 1,
+    "why": "Fora do pool de disponíveis."
+   },
+   {
+    "q": "Que lista a tela mostra?",
+    "options": [
+     "Todas as OS",
+     "Só OS atrasadas",
+     "Toda desmobilização com checklist 100% concluído ainda sem chegada confirmada",
+     "Só contratos vencendo"
+    ],
+    "correct": 2,
+    "why": "Pendências de chegada."
+   },
+   {
+    "q": "O que o responsável registra na vistoria de entrada?",
+    "options": [
+     "Observações rápidas sobre a condição inicial do equipamento",
+     "O checklist completo com fotos",
+     "O valor do frete",
+     "A assinatura do cliente"
+    ],
+    "correct": 0,
+    "why": "Vistoria rápida."
+   },
+   {
+    "q": "Por que essa etapa existe?",
+    "options": [
+     "Para cobrar do cliente",
+     "O checklist é feito na coleta, no cliente; concluí-lo não significa que o equipamento voltou",
+     "Por exigência fiscal",
+     "Para calcular depreciação"
+    ],
+    "correct": 1,
+    "why": "Evita liberar antes da hora."
+   },
+   {
+    "q": "O que fica registrado no histórico por ativo?",
+    "options": [
+     "Quando saiu, para qual cliente, quando voltou e quanto tempo ficou fora",
+     "Só a data de chegada",
+     "O valor da locação",
+     "Os dados do motorista"
+    ],
+    "correct": 0,
+    "why": "Útil em disputas de prazo."
+   },
+   {
+    "q": "A vistoria de entrada substitui o checklist detalhado?",
+    "options": [
+     "Sim",
+     "Só para avarias",
+     "Só para veículos",
+     "Não: só registra a condição inicial; o detalhado foi feito na coleta"
+    ],
+    "correct": 3,
+    "why": "Complementar."
+   },
+   {
+    "q": "Qual é o caminho do menu para as chegadas?",
+    "options": [
+     "Manutenção → Chegadas",
+     "Ativos → Pátio",
+     "Logística → Pátio → Chegadas no Pátio",
+     "Comercial → Pátio"
+    ],
+    "correct": 2,
+    "why": "Menu."
+   }
+  ]
+ },
+ {
+  "page": "/logistica/processo-logistico.html",
+  "questions": [
+   {
+    "q": "Qual é a ordem da jornada de um equipamento?",
+    "options": [
+     "Checklist de retorno, pedido, saída",
+     "Em uso, pedido, retorno",
+     "Pedido ou OS, checklist de saída, em uso, checklist de retorno, conferência no pátio, disponível",
+     "Conferência, saída, pedido"
+    ],
+    "correct": 2,
+    "why": "Jornada."
+   },
+   {
+    "q": "Quem libera o equipamento para novo uso?",
+    "options": [
+     "O checklist de retorno sozinho",
+     "A conferência feita no pátio, e não só o checklist do cliente",
+     "O cliente",
+     "O motorista"
+    ],
+    "correct": 1,
+    "why": "Conferência no pátio."
+   },
+   {
+    "q": "Quando existe a “Aprovação de Saída”?",
+    "options": [
+     "Em toda saída",
+     "Só em avaria",
+     "Só quando o equipamento é despachado direto para um pedido de locação",
+     "Só em preventiva"
+    ],
+    "correct": 2,
+    "why": "Trava extra da locação."
+   },
+   {
+    "q": "Como o gestor aprova a saída?",
+    "options": [
+     "Só clicando",
+     "Por e-mail",
+     "Por assinatura do cliente",
+     "Digitando a própria senha (ou recusando com motivo)"
+    ],
+    "correct": 3,
+    "why": "Senha do gestor."
+   },
+   {
+    "q": "Como o custo do frete é criado?",
+    "options": [
+     "Sempre à mão",
+     "Pelo cliente",
+     "Sozinho, ao fim do checklist, se o veículo tem taxa por km; frete de terceiro é lançado à mão",
+     "Pelo comercial"
+    ],
+    "correct": 2,
+    "why": "Cálculo automático."
+   },
+   {
+    "q": "Para onde vai o custo da viagem?",
+    "options": [
+     "Só para a OS",
+     "Só para o contrato",
+     "Para a OS, para o pedido de locação e para a ficha financeira do equipamento",
+     "Só para o veículo"
+    ],
+    "correct": 2,
+    "why": "Soma automática."
+   },
+   {
+    "q": "Onde se informa o local de instalação do equipamento alugado?",
+    "options": [
+     "No veículo",
+     "No cliente",
+     "Na OS",
+     "No Contrato, na seção Local de Instalação do Equipamento"
+    ],
+    "correct": 3,
+    "why": "No contrato."
+   },
+   {
+    "q": "Se o local de instalação mudar com contrato ativo, o que acontece?",
+    "options": [
+     "Nada",
+     "O contrato é cancelado",
+     "O gestor de logística é avisado para conferir o equipamento",
+     "O ativo é bloqueado"
+    ],
+    "correct": 2,
+    "why": "Aviso automático."
+   },
+   {
+    "q": "Ao lançar o serviço no histórico de manutenção do veículo, o plano…",
+    "options": [
+     "Precisa ser editado à mão",
+     "É cancelado",
+     "Duplica",
+     "Se atualiza sozinho"
+    ],
+    "correct": 3,
+    "why": "Atualização automática."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/contratos.html",
+  "questions": [
+   {
+    "q": "Um contrato é criado. O que acontece com o ativo?",
+    "options": [
+     "Fica Disponível",
+     "Vira Locado, ganha o cliente e a localização da obra",
+     "Vai para triagem",
+     "Vai para manutenção"
+    ],
+    "correct": 1,
+    "why": "Reflexo automático do contrato."
+   },
+   {
+    "q": "O contrato é encerrado. O que acontece?",
+    "options": [
+     "Continua Locado",
+     "Fica Aguardando Triagem",
+     "É excluído",
+     "O ativo volta a Disponível e perde o vínculo com o cliente"
+    ],
+    "correct": 3,
+    "why": "Libera o ativo."
+   },
+   {
+    "q": "Trocou o equipamento do mesmo contrato. O que acontece?",
+    "options": [
+     "Os dois ficam locados",
+     "Nada muda",
+     "O contrato é cancelado",
+     "O ativo antigo é liberado e o novo é travado no lugar"
+    ],
+    "correct": 3,
+    "why": "Troca automática."
+   },
+   {
+    "q": "Quais são os status de um contrato?",
+    "options": [
+     "Aberto e Fechado",
+     "Rascunho, Ativo e Encerrado",
+     "Novo, Em uso, Vencido",
+     "Pendente e Pago"
+    ],
+    "correct": 1,
+    "why": "Três status."
+   },
+   {
+    "q": "Qual filtro mostra contratos que logo terminam?",
+    "options": [
+     "Vence hoje",
+     "Vence em 1 ano",
+     "Atrasados",
+     "Vence em 30 dias"
+    ],
+    "correct": 3,
+    "why": "Planeja renovação."
+   },
+   {
+    "q": "Quais campos essenciais tem o cadastro?",
+    "options": [
+     "Cliente, nº do contrato, equipamento, início da vigência e valor mensal",
+     "Só cliente",
+     "Só valor",
+     "Cliente e CNPJ"
+    ],
+    "correct": 0,
+    "why": "Campos essenciais."
+   },
+   {
+    "q": "O que o cartão “Valor Mensal Contratado” soma?",
+    "options": [
+     "A receita mensal dos contratos ativos",
+     "O valor de todas as OS",
+     "O custo de manutenção",
+     "O valor dos ativos"
+    ],
+    "correct": 0,
+    "why": "Receita mensal."
+   },
+   {
+    "q": "Qual é o caminho do menu para os contratos?",
+    "options": [
+     "Comercial → Contratos",
+     "Comercial → Gestão Comercial → Contratos",
+     "Ativos → Contratos",
+     "Equipe → Contratos"
+    ],
+    "correct": 1,
+    "why": "Menu."
+   },
+   {
+    "q": "Excluir o contrato faz o ativo…",
+    "options": [
+     "Ficar Locado",
+     "Ir para Manutenção",
+     "Voltar a Disponível",
+     "Ser excluído"
+    ],
+    "correct": 2,
+    "why": "Libera o ativo."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/clientes.html",
+  "questions": [
+   {
+    "q": "A partir de qual cadastro se criam contratos e solicitações de locação?",
+    "options": [
+     "Lead",
+     "Ativo",
+     "Fornecedor",
+     "Cliente"
+    ],
+    "correct": 3,
+    "why": "Tudo parte do cliente."
+   },
+   {
+    "q": "Quais são as abas da ficha do cliente?",
+    "options": [
+     "Só Identificação",
+     "Identificação e Faturamento, Entrega e Contatos, Legal e Documentação, Análise de Risco e Resumo Financeiro",
+     "Dados e Contratos",
+     "Financeiro e Logística"
+    ],
+    "correct": 1,
+    "why": "Cinco abas."
+   },
+   {
+    "q": "Quais filtros a lista de clientes oferece?",
+    "options": [
+     "Por valor",
+     "Por UF e por “Com Contrato Ativo”",
+     "Por vendedor",
+     "Por tipo de OS"
+    ],
+    "correct": 1,
+    "why": "Filtros."
+   },
+   {
+    "q": "O que mostra o cartão “Sem Nenhum Contrato”?",
+    "options": [
+     "Clientes ainda sem contrato — oportunidade comercial",
+     "Clientes inativos",
+     "Clientes bloqueados",
+     "Clientes com dívida"
+    ],
+    "correct": 0,
+    "why": "Oportunidade."
+   },
+   {
+    "q": "O que é o ranking Top Clientes?",
+    "options": [
+     "Os 10 que mais pagam",
+     "Os 3 mais antigos",
+     "Os 5 maiores devedores",
+     "Os 5 clientes com mais contratos"
+    ],
+    "correct": 3,
+    "why": "Top 5."
+   },
+   {
+    "q": "O que soma o Resumo Financeiro do cliente?",
+    "options": [
+     "Receita (contratos, excedente aprovado, avaria cobrada) menos custo de manutenção das OS dele",
+     "Só os contratos",
+     "Só as avarias",
+     "Só o custo"
+    ],
+    "correct": 0,
+    "why": "Resultado real do cliente."
+   },
+   {
+    "q": "Quem normalmente cadastra clientes?",
+    "options": [
+     "O técnico",
+     "O motorista",
+     "O perfil comercial (o admin tem acesso total)",
+     "O almoxarifado"
+    ],
+    "correct": 2,
+    "why": "Comercial."
+   },
+   {
+    "q": "Qual é o caminho do menu para os clientes?",
+    "options": [
+     "Comercial → Clientes",
+     "Equipe → Clientes",
+     "Ativos → Clientes",
+     "Comercial → Gestão Comercial → Clientes"
+    ],
+    "correct": 3,
+    "why": "Menu."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/proposta-comercial.html",
+  "questions": [
+   {
+    "q": "Quem monta a proposta e onde?",
+    "options": [
+     "O comercial, só no desktop",
+     "O cliente, pelo link",
+     "O vendedor, pelo celular, na frente do cliente",
+     "O técnico, na OS"
+    ],
+    "correct": 2,
+    "why": "App do vendedor."
+   },
+   {
+    "q": "Quem aprova a proposta?",
+    "options": [
+     "O vendedor",
+     "O cliente",
+     "O financeiro",
+     "O time Comercial; o vendedor nunca aprova a própria"
+    ],
+    "correct": 3,
+    "why": "Revisão independente."
+   },
+   {
+    "q": "Quais são os tipos de item?",
+    "options": [
+     "Equipamento (categoria + prazo) ou Serviço (descrição livre)",
+     "Só equipamento",
+     "Contrato ou Orçamento",
+     "Peça ou Ferramenta"
+    ],
+    "correct": 0,
+    "why": "Dois tipos."
+   },
+   {
+    "q": "Quais são os passos do assistente de proposta?",
+    "options": [
+     "Cliente, Itens, Termos e Revisão/Envio",
+     "Itens, Cliente, Envio",
+     "Termos, Cliente, Itens",
+     "Envio, Itens, Termos"
+    ],
+    "correct": 0,
+    "why": "Quatro passos."
+   },
+   {
+    "q": "O que acontece ao aprovar uma proposta com ao menos um item de Equipamento?",
+    "options": [
+     "Cria sozinha a Solicitação de Locação com cliente e categoria",
+     "Cria o contrato",
+     "Nada",
+     "Cria uma OS"
+    ],
+    "correct": 0,
+    "why": "Aprovação = acionamento."
+   },
+   {
+    "q": "E uma proposta só de serviço?",
+    "options": [
+     "É aprovada, mas o Comercial precisa abrir a operacionalização manualmente",
+     "Cria solicitação sozinha",
+     "É recusada",
+     "Vira contrato"
+    ],
+    "correct": 0,
+    "why": "Sem equipamento não cria a solicitação."
+   },
+   {
+    "q": "O que a rejeição exige?",
+    "options": [
+     "Um motivo; o vendedor pode reabrir, corrigir e reenviar",
+     "Nada",
+     "A exclusão da proposta",
+     "A aprovação do cliente"
+    ],
+    "correct": 0,
+    "why": "Motivo obrigatório."
+   },
+   {
+    "q": "Você edita o template de termos hoje. As propostas já criadas…",
+    "options": [
+     "Não mudam: cada uma guarda sua cópia do texto",
+     "Mudam todas",
+     "Mudam as em rascunho",
+     "São apagadas"
+    ],
+    "correct": 0,
+    "why": "Cópia no momento da criação."
+   },
+   {
+    "q": "Quem recebe aviso quando uma proposta é enviada?",
+    "options": [
+     "Todos os usuários com o perfil Comercial",
+     "O vendedor",
+     "O cliente",
+     "O motorista"
+    ],
+    "correct": 0,
+    "why": "Notificação automática."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/solicitacoes-locacao.html",
+  "questions": [
+   {
+    "q": "Qual é o status inicial da solicitação?",
+    "options": [
+     "Contrato Fechado",
+     "Proposta em Andamento",
+     "Cancelado",
+     "Reservar para Manutenção"
+    ],
+    "correct": 1,
+    "why": "Negociação em curso."
+   },
+   {
+    "q": "O que faz o status “Reservar para Manutenção (Urgente)”?",
+    "options": [
+     "Cancela a solicitação",
+     "Fecha o contrato",
+     "Bloqueia o ativo",
+     "Reserva o ativo escolhido e o destaca com urgência no Kanban de Manutenção"
+    ],
+    "correct": 3,
+    "why": "Avisa a oficina."
+   },
+   {
+    "q": "O que acontece ao mudar para “Contrato Fechado”?",
+    "options": [
+     "Todos os usuários com perfil de Oficina são notificados automaticamente",
+     "Nada",
+     "Só o gerente é avisado",
+     "O cliente é avisado"
+    ],
+    "correct": 0,
+    "why": "Ponte entre venda e oficina."
+   },
+   {
+    "q": "O que o status “Cancelado” exige?",
+    "options": [
+     "Nada",
+     "Selecionar um motivo de cancelamento",
+     "Aprovação do gerente",
+     "A devolução do ativo"
+    ],
+    "correct": 1,
+    "why": "Motivo obrigatório."
+   },
+   {
+    "q": "Qual campo é obrigatório na criação?",
+    "options": [
+     "Categoria do Equipamento",
+     "Equipamento específico",
+     "Combo",
+     "Finalidade"
+    ],
+    "correct": 0,
+    "why": "Categoria obrigatória."
+   },
+   {
+    "q": "Quando a coluna “Kit Completo” fica marcada?",
+    "options": [
+     "Quando algum está disponível",
+     "Quando o contrato fecha",
+     "Quando todos os equipamentos do combo estão Disponíveis ao mesmo tempo",
+     "Quando o cliente aprova"
+    ],
+    "correct": 2,
+    "why": "Só com todos disponíveis."
+   },
+   {
+    "q": "O cliente pode ser criado na própria tela da solicitação?",
+    "options": [
+     "Não",
+     "Só o administrador",
+     "Sim, na hora, sem sair da tela",
+     "Só depois do contrato"
+    ],
+    "correct": 2,
+    "why": "Criação inline."
+   },
+   {
+    "q": "A tela de Solicitações permite exportar para Excel?",
+    "options": [
+     "Sim",
+     "Só o administrador",
+     "Só as fechadas",
+     "Não: só há o botão Imprimir"
+    ],
+    "correct": 3,
+    "why": "Sem exportação."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/orcamentos.html",
+  "questions": [
+   {
+    "q": "Quais são os três tipos de orçamento?",
+    "options": [
+     "Aberto, Fechado e Pago",
+     "Interno, A Terceiro e Indenizatório",
+     "Rascunho, Enviado e Aprovado",
+     "Mensal, Anual e Avulso"
+    ],
+    "correct": 1,
+    "why": "Três tipos."
+   },
+   {
+    "q": "O orçamento Indenizatório nasce de quê?",
+    "options": [
+     "De uma OS interna",
+     "De um contrato",
+     "De uma Avaria de Equipamento: o valor a cobrar do cliente pelo dano",
+     "De um lead"
+    ],
+    "correct": 2,
+    "why": "Vinculado à avaria."
+   },
+   {
+    "q": "Como o cliente aprova o orçamento?",
+    "options": [
+     "Por um link único, sem login e sem cadastro no Oravel",
+     "Entrando no sistema",
+     "Por telefone",
+     "Assinando no pátio"
+    ],
+    "correct": 0,
+    "why": "Link de aprovação."
+   },
+   {
+    "q": "Quais são os status do orçamento?",
+    "options": [
+     "Aberto e Fechado",
+     "Novo, Pago",
+     "Rascunho, Enviado, Aprovado, Reprovado e Concluído",
+     "Pendente e Aprovado"
+    ],
+    "correct": 2,
+    "why": "Cinco status."
+   },
+   {
+    "q": "O orçamento “A Terceiro” é…",
+    "options": [
+     "Ligado a uma OS interna",
+     "Ligado a uma avaria",
+     "Ligado a um contrato",
+     "Comercial solto, não ligado a uma OS ou avaria"
+    ],
+    "correct": 3,
+    "why": "Solto."
+   },
+   {
+    "q": "O orçamento “Interno” é…",
+    "options": [
+     "Ligado a uma OS interna, sem repasse ao cliente",
+     "Cobrado do cliente",
+     "Solto",
+     "Ligado a uma avaria"
+    ],
+    "correct": 0,
+    "why": "Interno."
+   },
+   {
+    "q": "Como exportar o orçamento?",
+    "options": [
+     "Em PDF, pela listagem",
+     "Só em Excel",
+     "Só impresso",
+     "Não exporta"
+    ],
+    "correct": 0,
+    "why": "PDF."
+   },
+   {
+    "q": "A decisão do cliente fica…",
+    "options": [
+     "Perdida",
+     "Só no e-mail",
+     "Registrada automaticamente no orçamento, no painel",
+     "Só no WhatsApp"
+    ],
+    "correct": 2,
+    "why": "Registro automático."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/leads.html",
+  "questions": [
+   {
+    "q": "Quais são os estágios do lead, em ordem?",
+    "options": [
+     "Convertido, Novo, Qualificado",
+     "Qualificado, Novo, Perdido",
+     "Novo, Contato Iniciado, Qualificado e Convertido (e Perdido, à parte)",
+     "Novo, Perdido, Convertido"
+    ],
+    "correct": 2,
+    "why": "Fluxo fixo."
+   },
+   {
+    "q": "O que o estágio “Perdido” exige?",
+    "options": [
+     "Nada",
+     "Aprovação do gerente",
+     "A exclusão do lead",
+     "Um motivo da perda"
+    ],
+    "correct": 3,
+    "why": "Motivo obrigatório."
+   },
+   {
+    "q": "O que o CEP faz no cadastro do lead?",
+    "options": [
+     "Só valida o CEP",
+     "Preenche rua, cidade e UF e geolocaliza o endereço, colocando o lead no mapa",
+     "Calcula o frete",
+     "Cria o contrato"
+    ],
+    "correct": 1,
+    "why": "Endereço automático."
+   },
+   {
+    "q": "Quem aparece em vermelho na lista?",
+    "options": [
+     "Quem foi perdido",
+     "Quem está sem follow-up agendado",
+     "Quem tem valor alto",
+     "Quem é novo"
+    ],
+    "correct": 1,
+    "why": "Alerta visual."
+   },
+   {
+    "q": "O que a aba Interações registra?",
+    "options": [
+     "Só ligações",
+     "Só e-mails",
+     "Contatos por telefone, e-mail, WhatsApp ou presencial, com resumo, próxima ação e data do follow-up",
+     "Só visitas"
+    ],
+    "correct": 2,
+    "why": "Histórico de contato."
+   },
+   {
+    "q": "A data do próximo follow-up alimenta o quê?",
+    "options": [
+     "O contrato",
+     "A Agenda Comercial",
+     "O funil apenas",
+     "O mapa"
+    ],
+    "correct": 1,
+    "why": "Agenda."
+   },
+   {
+    "q": "Quem vê cada lead?",
+    "options": [
+     "Todos veem todos",
+     "Cada vendedor vê só a própria carteira; o admin vê todos",
+     "Só o admin",
+     "Só o gerente"
+    ],
+    "correct": 1,
+    "why": "Carteira própria."
+   },
+   {
+    "q": "Quais cartões a lista traz?",
+    "options": [
+     "Receita e custo",
+     "Vendas e metas",
+     "Leads por vendedor",
+     "Total, Em Andamento, Convertidos e Perdidos"
+    ],
+    "correct": 3,
+    "why": "Quatro cartões."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/funil-vendas.html",
+  "questions": [
+   {
+    "q": "Qual é o formato do Funil de Vendas?",
+    "options": [
+     "Gráfico de pizza",
+     "Pirâmide invertida, uma faixa por estágio",
+     "Tabela simples",
+     "Linha do tempo"
+    ],
+    "correct": 1,
+    "why": "Pirâmide."
+   },
+   {
+    "q": "O que cada faixa mostra?",
+    "options": [
+     "Quantidade de leads, valor total estimado e taxa de conversão em relação ao topo",
+     "Só a quantidade",
+     "Só o valor",
+     "O nome dos vendedores"
+    ],
+    "correct": 0,
+    "why": "Três números."
+   },
+   {
+    "q": "Onde ficam os leads Perdidos?",
+    "options": [
+     "Na base da pirâmide",
+     "No topo",
+     "Num quadro/chip separado, fora da pirâmide",
+     "Não aparecem"
+    ],
+    "correct": 2,
+    "why": "Separado."
+   },
+   {
+    "q": "Como mover um lead de estágio sem abrir o cadastro?",
+    "options": [
+     "Clicando na faixa e usando o atalho “Mover para…”",
+     "Só abrindo o lead",
+     "Arrastando no mapa",
+     "Pela agenda"
+    ],
+    "correct": 0,
+    "why": "Atalho no funil."
+   },
+   {
+    "q": "O que pede mover um lead para Perdido?",
+    "options": [
+     "O motivo da perda",
+     "Nada",
+     "A aprovação do gerente",
+     "A data de devolução"
+    ],
+    "correct": 0,
+    "why": "Motivo."
+   },
+   {
+    "q": "O que faz o campo de busca do funil?",
+    "options": [
+     "Filtra a pirâmide por nome ou empresa, mantendo a proporção",
+     "Abre o cadastro",
+     "Exporta para Excel",
+     "Muda o estágio"
+    ],
+    "correct": 0,
+    "why": "Busca."
+   },
+   {
+    "q": "Marcar um lead como Convertido cria o contrato?",
+    "options": [
+     "Não: é só a marcação; cliente e contrato são feitos nas telas próprias",
+     "Sim",
+     "Cria só o cliente",
+     "Cria só a OS"
+    ],
+    "correct": 0,
+    "why": "Marcação do negócio ganho."
+   },
+   {
+    "q": "Quem vê a carteira completa?",
+    "options": [
+     "Todos os vendedores",
+     "O motorista",
+     "O administrador",
+     "O técnico"
+    ],
+    "correct": 2,
+    "why": "Vendedores veem só a própria."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/agenda-comercial.html",
+  "questions": [
+   {
+    "q": "O que a Agenda Comercial mostra no calendário?",
+    "options": [
+     "A data em que o contato aconteceu",
+     "A data do próximo follow-up combinado em cada interação",
+     "As OS agendadas",
+     "As entregas de contrato"
+    ],
+    "correct": 1,
+    "why": "Follow-ups."
+   },
+   {
+    "q": "Qual cor indica follow-up atrasado?",
+    "options": [
+     "Âmbar",
+     "Laranja",
+     "Vermelho",
+     "Verde"
+    ],
+    "correct": 2,
+    "why": "Vermelho."
+   },
+   {
+    "q": "Qual cor indica follow-up de hoje?",
+    "options": [
+     "Vermelho",
+     "Laranja",
+     "Azul",
+     "Âmbar"
+    ],
+    "correct": 3,
+    "why": "Âmbar."
+   },
+   {
+    "q": "E o de uma data futura?",
+    "options": [
+     "Laranja",
+     "Vermelho",
+     "Âmbar",
+     "Roxo"
+    ],
+    "correct": 0,
+    "why": "Laranja."
+   },
+   {
+    "q": "O que acontece ao clicar num dia da agenda?",
+    "options": [
+     "Abre o contrato",
+     "Cria uma OS",
+     "Nada",
+     "Abre o formulário de nova interação, sem abrir o cadastro do lead"
+    ],
+    "correct": 3,
+    "why": "Registro rápido."
+   },
+   {
+    "q": "Quais visualizações existem?",
+    "options": [
+     "Só mês",
+     "Mês, semana, dia e lista",
+     "Só lista",
+     "Ano e trimestre"
+    ],
+    "correct": 1,
+    "why": "Quatro visões."
+   },
+   {
+    "q": "Quem vê a agenda completa?",
+    "options": [
+     "O administrador; cada vendedor vê só os próprios follow-ups",
+     "Todos",
+     "Só o gerente",
+     "Só o técnico"
+    ],
+    "correct": 0,
+    "why": "Carteira própria."
+   },
+   {
+    "q": "Qual é o caminho do menu da agenda?",
+    "options": [
+     "Manutenção → Programação",
+     "Comercial → Gestão CRM → Agenda Comercial",
+     "Comercial → Agenda",
+     "Equipe → Agenda"
+    ],
+    "correct": 1,
+    "why": "Menu."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/mapa-leads.html",
+  "questions": [
+   {
+    "q": "O que aparece no Mapa Comercial?",
+    "options": [
+     "Só clientes",
+     "Só leads",
+     "Clientes e leads com endereço geolocalizado, em cores diferentes",
+     "Só ativos"
+    ],
+    "correct": 2,
+    "why": "Clientes e leads juntos."
+   },
+   {
+    "q": "Como um registro ganha ponto no mapa?",
+    "options": [
+     "Digitando latitude e longitude",
+     "Pelo celular do vendedor",
+     "Preenchendo o CEP no cadastro: a geolocalização é automática",
+     "Pelo contrato"
+    ],
+    "correct": 2,
+    "why": "CEP."
+   },
+   {
+    "q": "O que o marcador mostra ao clicar?",
+    "options": [
+     "Só o nome",
+     "O contrato",
+     "As OS",
+     "Nome, empresa e (no lead) o estágio, com link para o cadastro"
+    ],
+    "correct": 3,
+    "why": "Resumo e link."
+   },
+   {
+    "q": "Qual serviço de mapa é usado?",
+    "options": [
+     "Google Maps",
+     "Waze",
+     "Mapbox pago",
+     "OpenStreetMap, sem chave de API do Google nem custo por uso"
+    ],
+    "correct": 3,
+    "why": "Sem custo."
+   },
+   {
+    "q": "Quem vê todos os pontos?",
+    "options": [
+     "O administrador; vendedores veem só os próprios leads/clientes",
+     "Todos",
+     "Só o técnico",
+     "Só o motorista"
+    ],
+    "correct": 0,
+    "why": "Carteira própria."
+   },
+   {
+    "q": "Para que serve o mapa?",
+    "options": [
+     "Calcular frete",
+     "Rastrear veículos",
+     "Medir horímetro",
+     "Ver onde a carteira está concentrada para planejar visitas por região"
+    ],
+    "correct": 3,
+    "why": "Planejamento de visitas."
+   },
+   {
+    "q": "Registros sem endereço geolocalizado…",
+    "options": [
+     "Aparecem no centro",
+     "Não aparecem no mapa",
+     "Aparecem em cinza",
+     "Aparecem com alerta"
+    ],
+    "correct": 1,
+    "why": "Só os geolocalizados."
+   },
+   {
+    "q": "Qual é o caminho do menu do mapa?",
+    "options": [
+     "Comercial → Mapa",
+     "Logística → Mapa",
+     "Comercial → Gestão CRM → Mapa Comercial",
+     "Ativos → Mapa"
+    ],
+    "correct": 2,
+    "why": "Menu."
+   }
+  ]
+ },
+ {
+  "page": "/comercial/processo-comercial.html",
+  "questions": [
+   {
+    "q": "Qual é a ordem do processo comercial?",
+    "options": [
+     "Contrato, lead, proposta",
+     "Proposta, lead, contrato",
+     "Lead, negociação, proposta pelo celular, aprovação do Comercial, pedido de locação, contrato fechado, uso, fim do contrato",
+     "Pedido, lead, proposta"
+    ],
+    "correct": 2,
+    "why": "Da prospecção ao fim do contrato."
+   },
+   {
+    "q": "O que o sistema faz se tentarem fechar um pedido com equipamento indisponível?",
+    "options": [
+     "Não deixa fechar (por exemplo, se estiver em manutenção)",
+     "Fecha mesmo assim",
+     "Fecha e avisa depois",
+     "Cancela o pedido"
+    ],
+    "correct": 0,
+    "why": "Valida a disponibilidade."
+   },
+   {
+    "q": "O prazo da reserva é obrigatório quando…",
+    "options": [
+     "Sempre",
+     "Nunca",
+     "Só em combo",
+     "Ainda não há contrato fechado"
+    ],
+    "correct": 3,
+    "why": "Reserva sem contrato exige prazo."
+   },
+   {
+    "q": "Quando o excedente de franquia é calculado?",
+    "options": [
+     "Todo dia",
+     "Todo dia 1º do mês, pelo horímetro do período",
+     "No fim do contrato",
+     "Quando o cliente pede"
+    ],
+    "correct": 1,
+    "why": "Rotina mensal."
+   },
+   {
+    "q": "O que o Financeiro faz com o excedente calculado?",
+    "options": [
+     "Revisa e aprova, gerando uma Conta a Receber",
+     "Nada",
+     "Cobra direto",
+     "Cancela"
+    ],
+    "correct": 0,
+    "why": "Aprovar e Gerar Cobrança."
+   },
+   {
+    "q": "O que significa um excedente marcado como “Conflito”?",
+    "options": [
+     "Pagamento atrasado",
+     "Contrato vencido",
+     "Cliente bloqueado",
+     "Contratos sobrepostos no mesmo ativo ou leitura de horímetro insuficiente: precisa de revisão manual"
+    ],
+    "correct": 3,
+    "why": "Não gera valor errado."
+   },
+   {
+    "q": "Quem é avisado quando um pedido vira “Contrato Fechado”?",
+    "options": [
+     "O vendedor",
+     "O cliente",
+     "O técnico",
+     "O Gerente de Logística"
+    ],
+    "correct": 3,
+    "why": "Organiza a saída."
+   },
+   {
+    "q": "Por que o aviso automático pode não sair para alguém?",
+    "options": [
+     "Porque é fim de semana",
+     "Porque não tem e-mail",
+     "Porque o plano é básico",
+     "Porque a pessoa não tem o cargo certo cadastrado em Configurações → Papéis"
+    ],
+    "correct": 3,
+    "why": "Depende do cargo."
+   },
+   {
+    "q": "Quando a proposta rejeitada pode ser reaberta?",
+    "options": [
+     "O vendedor reabre, volta a Rascunho, corrige e reenvia",
+     "Nunca",
+     "Só o administrador",
+     "Só o cliente"
+    ],
+    "correct": 0,
+    "why": "Reabertura."
+   },
+   {
+    "q": "O que é a Reserva Urgente para Manutenção?",
+    "options": [
+     "Um tipo de contrato",
+     "Status para quando o cliente espera um equipamento ainda em manutenção; o cartão fica destacado no quadro",
+     "Um desconto",
+     "Uma avaria"
+    ],
+    "correct": 1,
+    "why": "Avisa a oficina."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/impressao-exportacao.html",
+  "questions": [
+   {
+    "q": "O que o botão Imprimir faz?",
+    "options": [
+     "Gera PDF por serviço externo",
+     "Baixa Excel",
+     "Imprime direto",
+     "Abre nova aba com os registros da tela e um botão para acionar a impressão do navegador"
+    ],
+    "correct": 3,
+    "why": "Não é um PDF externo."
+   },
+   {
+    "q": "Você ocultou colunas na tela e clicou em Imprimir. O que sai?",
+    "options": [
+     "Um conjunto fixo de colunas definido para aquele tipo de registro",
+     "Só as colunas visíveis",
+     "As colunas na ordem que você deixou",
+     "O sistema pergunta"
+    ],
+    "correct": 0,
+    "why": "Colunas fixas."
+   },
+   {
+    "q": "Quais formatos o Exportar oferece?",
+    "options": [
+     "PDF e DOC",
+     "XML e JSON",
+     "CSV e XLSX",
+     "Só CSV"
+    ],
+    "correct": 2,
+    "why": "CSV ou XLSX."
+   },
+   {
+    "q": "Antes de confirmar o Exportar, o que se pode fazer?",
+    "options": [
+     "Escolher a impressora",
+     "Desmarcar colunas que não quer no arquivo",
+     "Editar filtros",
+     "Enviar ao cliente"
+    ],
+    "correct": 1,
+    "why": "Escolher colunas."
+   },
+   {
+    "q": "O Exportar respeita filtros e busca?",
+    "options": [
+     "Não",
+     "Só a busca",
+     "Sim, exporta só o que está filtrado",
+     "Só os filtros"
+    ],
+    "correct": 2,
+    "why": "Respeita ambos."
+   },
+   {
+    "q": "Qual destas telas tem Imprimir e Exportar Excel?",
+    "options": [
+     "Usuários",
+     "Fornecedores",
+     "Avarias de Equipamento",
+     "Contratos"
+    ],
+    "correct": 3,
+    "why": "Imprimir + Exportar."
+   },
+   {
+    "q": "Qual destas tem só Imprimir?",
+    "options": [
+     "Ordens de Serviço",
+     "Clientes",
+     "Solicitações de Locação",
+     "Planos Preventivos"
+    ],
+    "correct": 2,
+    "why": "Só imprimir."
+   }
+  ]
+ },
+ {
+  "page": "/comunicacao/fotos-evidencias.html",
+  "questions": [
+   {
+    "q": "Fotos e Evidências é um módulo com menu próprio?",
+    "options": [
+     "Não: é um recurso transversal em checklist, avaria, mobilização e OS",
+     "Sim, em Manutenção",
+     "Sim, em Equipe",
+     "Só no celular"
+    ],
+    "correct": 0,
+    "why": "Recurso transversal."
+   },
+   {
+    "q": "No Checklist de Inspeção, a foto de cada item é…",
+    "options": [
+     "Obrigatória",
+     "Proibida",
+     "Obrigatória só em Não Conforme",
+     "Opcional"
+    ],
+    "correct": 3,
+    "why": "Opcional."
+   },
+   {
+    "q": "Na mobilização, quando a foto de um item é obrigatória?",
+    "options": [
+     "Sempre",
+     "Nunca",
+     "Só em Não Conforme",
+     "Quando o item está marcado como “exige foto”"
+    ],
+    "correct": 3,
+    "why": "Item que exige foto."
+   },
+   {
+    "q": "Que informação extra é gravada nas fotos de mobilização/desmobilização?",
+    "options": [
+     "A geolocalização",
+     "O nome do cliente",
+     "O horímetro",
+     "O valor"
+    ],
+    "correct": 0,
+    "why": "Confirma o local da vistoria."
+   },
+   {
+    "q": "Em Avarias, qual o papel da foto?",
+    "options": [
+     "Pelo menos uma foto é pré-requisito para liberar a assinatura do cliente",
+     "Opcional",
+     "Só após a assinatura",
+     "Só para grave"
+    ],
+    "correct": 0,
+    "why": "Pré-requisito."
+   },
+   {
+    "q": "O que se registra na aba “Fotos e Evidências” da OS?",
+    "options": [
+     "Antes/depois e evidências extras com categoria e severidade (OK/Avaria)",
+     "Só assinaturas",
+     "Só a capa",
+     "Notas fiscais"
+    ],
+    "correct": 0,
+    "why": "Antes, depois e extras."
+   }
+  ]
+ },
+ {
+  "page": "/comunicacao/descricao-audio.html",
+  "questions": [
+   {
+    "q": "Onde o Chat Interno aceita mensagens de voz?",
+    "options": [
+     "Só na OS",
+     "Só 1-a-1",
+     "Só no celular",
+     "Na conversa 1-a-1 e no chat de uma Ordem de Serviço"
+    ],
+    "correct": 3,
+    "why": "Os dois lugares."
+   },
+   {
+    "q": "Qual o limite de tamanho de um anexo de áudio em arquivo no chat da OS?",
+    "options": [
+     "5 MB",
+     "50 MB",
+     "100 MB",
+     "20 MB"
+    ],
+    "correct": 3,
+    "why": "Até 20 MB."
+   },
+   {
+    "q": "Quando o áudio é especialmente útil?",
+    "options": [
+     "No campo, com as mãos ocupadas ou de luva",
+     "Para contratos longos",
+     "Para registrar horímetro",
+     "Para substituir assinatura"
+    ],
+    "correct": 0,
+    "why": "Mais prático que digitar."
+   },
+   {
+    "q": "Quem usa a descrição em áudio?",
+    "options": [
+     "Só técnicos",
+     "Só administradores",
+     "Qualquer usuário no chat geral e quem participa do chat de uma OS",
+     "Só supervisores"
+    ],
+    "correct": 2,
+    "why": "Qualquer usuário."
+   },
+   {
+    "q": "O chat da OS serve para quê?",
+    "options": [
+     "Cobrar o cliente",
+     "Planejar agenda",
+     "Explicar um detalhe do atendimento para quem acompanha aquela OS",
+     "Registrar horímetro"
+    ],
+    "correct": 2,
+    "why": "Contexto da OS."
+   },
+   {
+    "q": "Qual é o caminho do menu do Chat Interno?",
+    "options": [
+     "Manutenção → Chat",
+     "Equipe → Chat Interno",
+     "Comercial → Chat",
+     "Ativos → Chat"
+    ],
+    "correct": 1,
+    "why": "Menu."
+   }
+  ]
+ },
+ {
+  "page": "/guias/abrir-os.html",
+  "questions": [
+   {
+    "q": "Ao escolher o ativo na aba Dados Gerais, o que aparece sozinho?",
+    "options": [
+     "O histórico financeiro",
+     "O Grupo do ativo e as preventivas sugeridas por horímetro",
+     "A lista de peças",
+     "O contrato"
+    ],
+    "correct": 1,
+    "why": "Sugestões automáticas."
+   },
+   {
+    "q": "De onde vem o checklist e quando é gerado?",
+    "options": [
+     "Sozinho, ao salvar, copiado do Grupo de Checklist do ativo",
+     "Montado depois de Iniciar",
+     "Gerado ao Concluir",
+     "Copiado da última OS"
+    ],
+    "correct": 0,
+    "why": "Gerado ao salvar."
+   },
+   {
+    "q": "O que faz “Iniciar Serviço”?",
+    "options": [
+     "Gera o checklist",
+     "Coleta assinaturas",
+     "Liga o cronômetro da OS",
+     "Baixa o estoque"
+    ],
+    "correct": 2,
+    "why": "Cronômetro."
+   },
+   {
+    "q": "Qual é a ordem do fechamento?",
+    "options": [
+     "Concluir e depois assinar",
+     "Preencher checklist, materiais e fotos, coletar assinaturas e só então Concluir",
+     "Assinar e depois iniciar",
+     "Fotos, concluir, materiais"
+    ],
+    "correct": 1,
+    "why": "Registra, assina, conclui."
+   },
+   {
+    "q": "Como é definida a Criticidade da OS?",
+    "options": [
+     "Pelo valor do contrato",
+     "Pelo tempo parado",
+     "Pela Matriz ABC",
+     "Pelas peças usadas"
+    ],
+    "correct": 2,
+    "why": "Matriz ABC."
+   },
+   {
+    "q": "Quais tipos de manutenção a OS permite?",
+    "options": [
+     "Só corretiva",
+     "Compra e venda",
+     "Check-in, Check-out, Preventiva e Corretiva",
+     "Mensal e anual"
+    ],
+    "correct": 2,
+    "why": "Quatro tipos."
+   },
+   {
+    "q": "Que botão usar para a preventiva pelo celular?",
+    "options": [
+     "Modo Campo",
+     "Imprimir",
+     "Preventiva (Celular), dentro da OS",
+     "Transferir"
+    ],
+    "correct": 2,
+    "why": "Se o ativo tem Grupo."
+   }
+  ]
+ },
+ {
+  "page": "/guias/registrar-avaria.html",
+  "questions": [
+   {
+    "q": "Que opção marcar se o dano inutiliza o equipamento?",
+    "options": [
+     "Gravidade Leve",
+     "Cobrar do cliente",
+     "Encerrar checklist",
+     "Exige Substituição"
+    ],
+    "correct": 3,
+    "why": "Exige substituição."
+   },
+   {
+    "q": "O que é obrigatório antes da assinatura do cliente?",
+    "options": [
+     "Ao menos uma foto do dano",
+     "A aprovação do supervisor",
+     "O valor do reparo",
+     "O nº da OS de reparo"
+    ],
+    "correct": 0,
+    "why": "Foto."
+   },
+   {
+    "q": "Depois de assinada, a avaria…",
+    "options": [
+     "Pode ser editada pelo técnico",
+     "Pelo comercial",
+     "Fica travada e não pode mais ser editada",
+     "Até o supervisor confirmar"
+    ],
+    "correct": 2,
+    "why": "Travada."
+   },
+   {
+    "q": "Quem recebe a avaria depois, em que ordem?",
+    "options": [
+     "Comercial e depois Supervisor",
+     "Supervisor de Manutenção (diagnóstico) e depois Comercial (cobrança)",
+     "Só o Comercial",
+     "O técnico avisa à mão"
+    ],
+    "correct": 1,
+    "why": "Ordem do fluxo."
+   },
+   {
+    "q": "Quais são as gravidades?",
+    "options": [
+     "Baixa e Alta",
+     "Normal e Urgente",
+     "Pequena e Grande",
+     "Leve, Moderada ou Grave"
+    ],
+    "correct": 3,
+    "why": "Três gravidades."
+   },
+   {
+    "q": "Onde o técnico registra a avaria?",
+    "options": [
+     "No contrato",
+     "No Dashboard",
+     "No item do checklist de mobilização/desmobilização, pelo celular",
+     "No cadastro do cliente"
+    ],
+    "correct": 2,
+    "why": "Pelo item do checklist."
+   },
+   {
+    "q": "Quem precisa ser avisado manualmente?",
+    "options": [
+     "Ninguém: o sistema notifica cada responsável na hora certa",
+     "O supervisor",
+     "O comercial",
+     "O cliente"
+    ],
+    "correct": 0,
+    "why": "Avisos automáticos."
+   }
+  ]
+ },
+ {
+  "page": "/guias/configurar-preventiva.html",
+  "questions": [
+   {
+    "q": "Qual a vantagem do plano por Grupo de Ativo?",
+    "options": [
+     "Vale de uma vez para todo equipamento do grupo",
+     "O intervalo passa a ser em dias",
+     "Dispensa o Grupo de Checklist",
+     "Zera o horímetro"
+    ],
+    "correct": 0,
+    "why": "Opção recomendada."
+   },
+   {
+    "q": "Qual é o horímetro de vencimento?",
+    "options": [
+     "Horímetro do último serviço + intervalo do plano",
+     "Só o intervalo",
+     "O horímetro atual",
+     "O horímetro de aquisição"
+    ],
+    "correct": 0,
+    "why": "Fórmula de vencimento."
+   },
+   {
+    "q": "Último serviço em 1.000 h, intervalo 250 h, atual 1.280 h. Situação?",
+    "options": [
+     "Em dia",
+     "Vencida",
+     "Vence em 1.500 h",
+     "Vence em 1.000 h"
+    ],
+    "correct": 1,
+    "why": "1.250 já passou."
+   },
+   {
+    "q": "O que precisa existir antes de criar um plano por grupo?",
+    "options": [
+     "Um Grupo de Checklist para o tipo de equipamento",
+     "Uma OS concluída",
+     "Um contrato",
+     "Um horímetro por ativo"
+    ],
+    "correct": 0,
+    "why": "Passo 1 da Opção A."
+   },
+   {
+    "q": "O que acontece com o horímetro ao marcar cada item na preventiva pelo celular?",
+    "options": [
+     "Nada",
+     "Cada item marcado já avança o horímetro oficial",
+     "Só ao concluir a OS",
+     "Volta a zero"
+    ],
+    "correct": 1,
+    "why": "Avança o horímetro."
+   },
+   {
+    "q": "Onde a preventiva vencida aparece?",
+    "options": [
+     "Só no contrato",
+     "Só no chat",
+     "Só no relatório",
+     "Na tela da OS e no Dashboard"
+    ],
+    "correct": 3,
+    "why": "Destaque de vencida."
+   },
+   {
+    "q": "Qual é o caminho do menu para criar o plano?",
+    "options": [
+     "Manutenção → Planos",
+     "Ativos → Planos",
+     "PMP → Planos Preventivos → Criar",
+     "Comercial → Planos"
+    ],
+    "correct": 2,
+    "why": "Menu PMP."
+   }
+  ]
+ },
+ {
+  "page": "/guias/usar-qrcode.html",
+  "questions": [
+   {
+    "q": "Quando se gera e cola a etiqueta do QR Code?",
+    "options": [
+     "A cada locação",
+     "A cada OS",
+     "Uma vez por equipamento: Imprimir Etiqueta no cadastro do ativo e colar em local visível",
+     "Uma vez por cliente"
+    ],
+    "correct": 2,
+    "why": "Uma vez por equipamento."
+   },
+   {
+    "q": "O que abre ao apontar a câmera para o QR Code?",
+    "options": [
+     "A OS em aberto",
+     "O Dossiê Rápido, sem login nas telas do painel completo",
+     "O Painel Admin completo",
+     "O contrato"
+    ],
+    "correct": 1,
+    "why": "Dossiê Rápido."
+   },
+   {
+    "q": "Que informações o dossiê mostra no campo?",
+    "options": [
+     "Dados gerais, cliente/contrato atual, horas trabalhadas, avarias recentes e OS em aberto",
+     "Contas a pagar",
+     "Propostas comerciais",
+     "Folha de pagamento"
+    ],
+    "correct": 0,
+    "why": "Resumo do equipamento."
+   },
+   {
+    "q": "Sem o QR Code, como abrir o dossiê pelo computador?",
+    "options": [
+     "Só com a série completa",
+     "Buscando por nome, tag, patrimônio ou série, sem valor exato",
+     "Só pelo administrador",
+     "Não é possível"
+    ],
+    "correct": 1,
+    "why": "Busca parcial."
+   },
+   {
+    "q": "Onde fica o botão de gerar a etiqueta?",
+    "options": [
+     "No contrato",
+     "Na OS",
+     "No Kanban",
+     "No cadastro (edição) do Ativo"
+    ],
+    "correct": 3,
+    "why": "Imprimir Etiqueta."
+   },
+   {
+    "q": "A etiqueta é impressa e colada…",
+    "options": [
+     "No contrato",
+     "No equipamento físico, em local visível",
+     "Na OS",
+     "No veículo"
+    ],
+    "correct": 1,
+    "why": "No equipamento."
+   }
+  ]
  }
 ]

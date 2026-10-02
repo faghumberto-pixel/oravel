@@ -226,6 +226,12 @@
         /* ---------- figuras: telas reais com destaques numerados ---------- */
         .mk-fig { margin: 18px 0 22px; border: 1px solid #cfd8ea; border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 8px 24px rgba(15,39,66,.10); }
         .mk-fig img { display: block; width: 100%; height: auto; }
+        .mk-phones { display: flex; gap: 22px; justify-content: center; flex-wrap: wrap; margin: 18px 0 22px; align-items: flex-start; }
+        .mk-phonefig { width: 250px; max-width: 100%; text-align: center; margin: 0; }
+        .mk-phoneframe { border: 8px solid #0b1f3a; border-radius: 30px; overflow: hidden; box-shadow: 0 12px 30px rgba(15,39,66,.25); background: #0b1f3a; }
+        .mk-phoneframe img { display: block; width: 100%; height: auto; }
+        .mk-phonefig figcaption { margin-top: 10px; font-size: 12.5px; color: #475569; line-height: 1.4; }
+        .mk-phonefig figcaption b { display: block; color: #0b1f3a; font-size: 13px; margin-bottom: 2px; }
         .mk-fig.narrow { max-width: 420px; margin-left: auto; margin-right: auto; }
         .mk-fig figcaption { padding: 12px 16px 14px; background: #f8faff; border-top: 1px solid #e3e9f6; font-size: 13.5px; color: #334155; }
         .mk-fig figcaption > b { display: block; color: #0b1f3a; margin-bottom: 6px; font-size: 14px; }

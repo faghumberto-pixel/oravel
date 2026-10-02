@@ -38,6 +38,8 @@ class BuildAcademyContent extends Command
     /** Trechos do texto original que o sistema real desmente: o bloco que contem a frase e' descartado. */
     private const DROP_BLOCKS = [
         '/modulos/ciclo-compras.html' => ['O estoque só entra pelo Recebimento', 'Ativos e Materiais'],
+        '/modulos/contratos.html' => ['bug conhecido', 'Não existe botão pra mudar o status', 'time técnico'],
+        '/modulos/clientes.html' => ['bug conhecido', 'ficha completa de integração ERP'],
         '/modulos/materiais.html' => ['Ativos e Materiais'],
         '/modulos/fornecedores.html' => ['Ativos e Materiais'],
         '/modulos/solicitacao-pecas.html' => ['Ativos e Materiais'],
@@ -45,8 +47,10 @@ class BuildAcademyContent extends Command
 
     /** Palavras internas trocadas por um equivalente de cliente ANTES da limpeza (evita perder o trecho inteiro). */
     private const REWORD = [
+        '/o time técnico conduz o processo/u' => 'a equipe de manutenção conduz o processo', '/pelo time técnico\/via sistema/u' => 'pela equipe ou pelo sistema',
         '/\bdo seu tenant\b/iu' => 'da sua empresa', '/\bdo tenant\b/iu' => 'da empresa', '/\bno tenant\b/iu' => 'na empresa',
         '/\bseu tenant\b/iu' => 'sua empresa', '/\bo tenant\b/iu' => 'a empresa',
+        '/as 4 abas: Identificação e Faturamento, Entrega e Contatos, Legal e Documentação, e Análise de Risco/u' => 'as abas: Identificação e Faturamento, Entrega e Contatos, Legal e Documentação, Análise de Risco e Resumo Financeiro',
     ];
 
     private const DESCRIPTIONS = [
