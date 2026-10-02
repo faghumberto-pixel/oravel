@@ -8,8 +8,9 @@
             @php
                 $tenant = $node['tenant'];
                 $clients = $node['clients'];
-                $ativos = $clients->where('ativo', true)->count();
-                $totalEquipamentos = $clients->sum('equipamentos');
+                $comContrato = $clients->where('ativo', true)->count();
+                $alocados = $clients->sum('equipamentos');
+                $totalAtivos = $node['assets_total'];
             @endphp
 
             <div class="fi-section rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
@@ -25,9 +26,10 @@
                             <div class="text-xs text-gray-500 dark:text-gray-400">
                                 {{ $clients->count() }} {{ $clients->count() === 1 ? 'cliente' : 'clientes' }}
                                 &middot;
-                                {{ $ativos }} {{ $ativos === 1 ? 'ativo' : 'ativos' }}
+                                {{ $comContrato }} com contrato vigente
                                 &middot;
-                                {{ $totalEquipamentos }} {{ $totalEquipamentos === 1 ? 'equipamento' : 'equipamentos' }}
+                                {{ $totalAtivos }} {{ $totalAtivos === 1 ? 'equipamento cadastrado' : 'equipamentos cadastrados' }}
+                                ({{ $alocados }} vinculados a clientes)
                             </div>
                         </div>
                     </div>

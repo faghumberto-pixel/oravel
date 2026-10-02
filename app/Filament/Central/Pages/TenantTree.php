@@ -31,7 +31,7 @@ class TenantTree extends Page
     protected static string $view = 'filament.central.pages.tenant-tree';
 
     /**
-     * @return Collection<int, array{tenant: Tenant, clients: Collection}>
+     * @return Collection<int, array{tenant: Tenant, clients: Collection, assets_total: int}>
      */
     public function getTenantTree(): Collection
     {
@@ -40,6 +40,13 @@ class TenantTree extends Page
             ->whereNotNull('client_id')
             ->groupBy('client_id')
             ->pluck('total', 'client_id');
+
+        // Total de ativos da empresa (com ou sem cliente) -- a Árvore antes só somava os
+        // vinculados a cliente e mostrava "0" pra empresa com a frota inteira já cadastrada.
+        $assetTotals = Asset::withoutGlobalScopes()
+            ->selectRaw('tenant_id, count(*) as total')
+            ->groupBy('tenant_id')
+            ->pluck('total', 'tenant_id');
 
         $activeClientIds = Contract::withoutGlobalScopes()
             ->where('status', 'Ativo')
@@ -51,7 +58,7 @@ class TenantTree extends Page
         return Tenant::query()
             ->orderBy('name')
             ->get()
-            ->map(function (Tenant $tenant) use ($assetCounts, $activeClientIds) {
+            ->map(function (Tenant $tenant) use ($assetCounts, $assetTotals, $activeClientIds) {
                 $clients = Client::withoutGlobalScopes()
                     ->where('tenant_id', $tenant->id)
                     ->orderBy('name')
@@ -68,6 +75,7 @@ class TenantTree extends Page
                 return [
                     'tenant' => $tenant,
                     'clients' => $clients,
+                    'assets_total' => (int) ($assetTotals[$tenant->id] ?? 0),
                 ];
             });
     }
