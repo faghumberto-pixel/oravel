@@ -3,6 +3,11 @@
  * Sem cookies: usa localStorage para identificar o visitante e a sessão.
  * Envia pequenos eventos para app.oravel.com.br/api/site-track:
  *   pv = abriu a página | ping = tempo ativo (a cada 15 s) | leave = saiu | click = clicou num CTA/link externo
+ * Campanhas (02/10/2026): guarda gclid/utm (localStorage, 90 dias) e os põe em campos ocultos dos formulários,
+ * para o lead chegar ao CRM com a origem do anúncio; mostra o aviso de cookies; carrega o
+ * Google Analytics (GA4) por padrão (salvo "Recusar") e dispara generate_lead / whatsapp_click / contact_click.
+ * Páginas com formulário por fetch chamam window.oravelLead('nome') quando o envio dá certo; páginas com redirecionamento
+ * (?enviado=1) ou com .form-success (contato.php) são detectadas aqui mesmo.
  * Não coleta nada se o navegador pede "Do Not Track" ou se o aparelho foi marcado
  * (abrir qualquer página do site com ?notrack liga a marca; ?track a remove) --
  * assim a equipe pode navegar sem contar nas próprias estatísticas.
@@ -123,6 +128,118 @@
       else if (/^https?:\/\//i.test(href) && href.indexOf(location.host) === -1) { label = 'Link externo: ' + href.replace(/^https?:\/\//, '').slice(0, 100); }
       else if (/assinar|plano=|\/contato|solicitar|proposta|agendar|demonstra/i.test(href)) { label = 'CTA: ' + href.replace(/^https?:\/\/[^/]+/, '').slice(0, 100); }
     }
-    if (label) { send({ t: 'click', label: label, path: location.pathname }); }
+    if (label) {
+      send({ t: 'click', label: label, path: location.pathname });
+      if (label === 'WhatsApp') { ga('whatsapp_click', { link_url: href.slice(0, 200), page_path: location.pathname }); }
+      else if (label === 'Telefone' || label === 'E-mail') { ga('contact_click', { method: label, page_path: location.pathname }); }
+    }
   }, true);
+
+  // ---- Campanhas: gclid/utm, aviso de cookies, Google (GA4) após consentimento, lead enviado ----
+  var GA_ID = 'G-L79HHRE3ZC';
+  var ATTR_TTL = 90 * 24 * 3600 * 1000;
+  var ATTR_KEYS = ['gclid', 'gbraid', 'wbraid', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+
+  function param(name) {
+    try { return utm(name); } catch (e) { return null; }
+  }
+
+  function readAttr() {
+    try {
+      var a = JSON.parse(store('ov_attr') || 'null');
+      if (a && a.ts && Date.now() - a.ts < ATTR_TTL) { return a; }
+    } catch (e) { /* ignora */ }
+    return null;
+  }
+
+  // Parâmetros de campanha da URL. Só sobrescreve o que está guardado quando a URL traz algum (o último clique vale).
+  (function captureAttr() {
+    var found = {}; var any = false;
+    ATTR_KEYS.forEach(function (k) { var v = param(k); if (v) { found[k] = v.slice(0, 200); any = true; } });
+    if (any) { found.landing = location.pathname; found.ts = Date.now(); store('ov_attr', JSON.stringify(found)); }
+  })();
+
+  // Põe a origem do anúncio em todo formulário POST da página (o servidor repassa ao CRM).
+  function fillForms() {
+    var a = readAttr() || {};
+    var fields = { landing_url: a.landing ? location.origin + a.landing : location.href };
+    ATTR_KEYS.forEach(function (k) { if (a[k]) { fields[k] = a[k]; } });
+    var forms = document.querySelectorAll('form');
+    for (var i = 0; i < forms.length; i++) {
+      var f = forms[i];
+      if ((f.getAttribute('method') || 'get').toLowerCase() !== 'post') { continue; }
+      Object.keys(fields).forEach(function (k) {
+        var el = f.querySelector('input[name="' + k + '"]');
+        if (!el) { el = document.createElement('input'); el.type = 'hidden'; el.name = k; f.appendChild(el); }
+        el.value = fields[k];
+      });
+    }
+  }
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', fillForms); } else { fillForms(); }
+  document.addEventListener('submit', fillForms, true);
+
+  // Google Analytics: só depois do aceite.
+  function loadGa() {
+    if (window.__ovGa) { return; }
+    window.__ovGa = true;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+    window.gtag('consent', 'default', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' });
+    window.gtag('js', new Date());
+    window.gtag('config', GA_ID);
+    var s = document.createElement('script');
+    s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(s);
+  }
+
+  function ga(name, params) {
+    if (store('ov_consent') !== 'denied' && window.gtag) { try { window.gtag('event', name, params || {}); } catch (e) { /* ignora */ } }
+  }
+
+  function showBanner() {
+    if (document.getElementById('ov-cookie-banner')) { return; }
+    var box = document.createElement('div');
+    box.id = 'ov-cookie-banner';
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-label', 'Aviso de cookies');
+    box.style.cssText = 'position:fixed;left:16px;bottom:16px;right:16px;max-width:460px;z-index:2147483000;background:#0b1f3a;color:#fff;border-radius:12px;padding:16px 18px;box-shadow:0 10px 30px rgba(0,0,0,.35);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif';
+    box.innerHTML = '<div style="margin-bottom:12px">Usamos cookies do Google (Analytics e Ads) para medir o site e nossos anúncios. Você pode recusar a qualquer momento. <a href="/politica-de-privacidade/" style="color:#9cc2ff;text-decoration:underline">Saiba mais</a>.</div>'
+      + '<div style="display:flex;gap:10px;flex-wrap:wrap">'
+      + '<button type="button" data-ov="granted" style="background:#2563eb;color:#fff;border:0;border-radius:8px;padding:9px 18px;font-weight:600;cursor:pointer">Entendi</button>'
+      + '<button type="button" data-ov="denied" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.45);border-radius:8px;padding:9px 18px;font-weight:600;cursor:pointer">Recusar</button>'
+      + '</div>';
+    box.addEventListener('click', function (e) {
+      var v = e.target && e.target.getAttribute ? e.target.getAttribute('data-ov') : null;
+      if (!v) { return; }
+      store('ov_consent', v);
+      box.parentNode.removeChild(box);
+      if (v === 'granted') { loadGa(); }
+    });
+    (document.body || document.documentElement).appendChild(box);
+  }
+
+  // Permite ao visitante rever a escolha (ex.: link "Preferências de cookies" no rodapé: onclick="oravelCookies()").
+  window.oravelCookies = function () { try { localStorage.removeItem('ov_consent'); } catch (e) { /* ignora */ } showBanner(); };
+
+  // GA4 carrega por padrão; só deixa de carregar se o visitante recusou. O aviso aparece até ele escolher.
+  var choice = store('ov_consent');
+  if (choice !== 'denied') { loadGa(); }
+  if (!choice) {
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', showBanner); } else { showBanner(); }
+  }
+
+  // Lead enviado com sucesso (uma vez por página/sessão, para F5 não contar de novo).
+  function leadOnce(label) {
+    var key = 'ov_lead_' + label + '_' + location.pathname;
+    try { if (sessionStorage.getItem(key)) { return; } sessionStorage.setItem(key, '1'); } catch (e) { /* sem sessionStorage: segue */ }
+    send({ t: 'click', label: 'Lead enviado: ' + label, path: location.pathname });
+    ga('generate_lead', { lead_source: label, page_path: location.pathname });
+  }
+  window.oravelLead = leadOnce;
+
+  function detectLead() {
+    if (/[?&]enviado=1(&|#|$)/.test(location.search)) { leadOnce('formulario'); }
+    else if (document.querySelector('.form-success')) { leadOnce('contato'); }
+  }
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', detectLead); } else { detectLead(); }
 })();

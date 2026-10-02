@@ -109,6 +109,16 @@ class CrmLead extends Model
         'company_size',
         'estimated_revenue',
         'equipment_interest',
+        // Origem do anúncio (preenchida pelo canal de leads do site)
+        'gclid',
+        'gbraid',
+        'wbraid',
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
+        'utm_term',
+        'utm_content',
+        'landing_url',
     ];
 
     protected $casts = [

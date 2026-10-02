@@ -278,4 +278,59 @@ class InboundLeadTest extends TestCase
         $this->assertSame(1, $this->leadsOf($this->tenant)->count());
         $this->assertSame(1, $this->leadsOf($outro)->count());
     }
+
+    public function test_origem_do_anuncio_e_gravada_no_lead(): void
+    {
+        $this->makeUser($this->tenant, 'Admin', admin: true);
+
+        $this->send($this->payload([
+            'gclid' => 'Cj0KCQjw_ABC-123',
+            'utm_source' => 'google',
+            'utm_medium' => 'cpc',
+            'utm_campaign' => 'oravel-search',
+            'utm_term' => 'sistema para locadora',
+            'landing_url' => 'https://oravel.com.br/locadoras/',
+        ]))->assertStatus(201);
+
+        $lead = $this->leadsOf($this->tenant)->firstOrFail();
+        $this->assertSame('Cj0KCQjw_ABC-123', $lead->gclid);
+        $this->assertSame('google', $lead->utm_source);
+        $this->assertSame('oravel-search', $lead->utm_campaign);
+        $this->assertSame('sistema para locadora', $lead->utm_term);
+        $this->assertSame('https://oravel.com.br/locadoras/', $lead->landing_url);
+
+        $interacao = CrmLeadInteraction::withoutGlobalScopes()->where('crm_lead_id', $lead->id)->firstOrFail();
+        $this->assertStringContainsString('Origem do anúncio: google / oravel-search', $interacao->summary);
+    }
+
+    public function test_lead_sem_origem_de_anuncio_continua_valido_e_gclid_invalido_e_recusado(): void
+    {
+        $this->send($this->payload())->assertStatus(201);
+        $lead = $this->leadsOf($this->tenant)->firstOrFail();
+        $this->assertNull($lead->gclid);
+        $this->assertNull($lead->utm_campaign);
+
+        $this->send($this->payload(['gclid' => '<script>x</script>']))->assertStatus(422);
+        $this->send($this->payload(['utm_campaign' => str_repeat('x', 201)]))->assertStatus(422);
+        $this->assertSame(1, $this->leadsOf($this->tenant)->count());
+    }
+
+    public function test_payloads_enviados_pelo_site_em_locadoras_e_contato_passam_na_validacao(): void
+    {
+        // Mesmos formatos montados por locadoras/enviar-lead.php e contato.php (HostGator).
+        $this->send([
+            'lead_id' => bin2hex(random_bytes(6)), 'origem' => 'landing-locadoras', 'origem_label' => 'Landing page /locadoras (Google Ads)',
+            'name' => 'Maria Silva', 'company' => 'Locadora Teste', 'email' => 'maria@teste.com.br', 'phone' => '(19) 99999-1111',
+            'segmento' => 'Locação de Equipamentos', 'porte' => 'Mais de 150 equipamentos', 'porte_label' => 'Tamanho do parque',
+            'gclid' => 'Cj0K-abc_123', 'utm_source' => 'google', 'utm_campaign' => 'oravel-search', 'landing_url' => 'https://oravel.com.br/locadoras/',
+        ])->assertStatus(201);
+
+        $this->send([
+            'lead_id' => bin2hex(random_bytes(6)), 'origem' => 'contato-segmento-b-planilha', 'origem_label' => 'Contato pelo site (segmento-b-planilha)',
+            'name' => 'Paula', 'company' => 'Não informada', 'email' => 'p@x.com.br', 'segmento' => 'Não informado', 'porte' => 'Não informado',
+            'porte_label' => 'Porte', 'mensagem' => 'Quero uma demonstração',
+        ])->assertStatus(201);
+
+        $this->assertSame(2, $this->leadsOf($this->tenant)->count());
+    }
 }

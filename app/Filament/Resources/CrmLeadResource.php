@@ -101,6 +101,21 @@ class CrmLeadResource extends BaseResource
                         ->columnSpanFull(),
                 ]),
 
+            Forms\Components\Section::make('Origem do anúncio')
+                ->description('Preenchido automaticamente quando o lead chega do site por um anúncio.')
+                ->columns(3)
+                ->collapsed()
+                ->visible(fn (?CrmLead $record) => $record && ($record->gclid || $record->utm_campaign || $record->utm_source))
+                ->schema([
+                    Forms\Components\TextInput::make('utm_source')->label('Fonte')->disabled()->dehydrated(false),
+                    Forms\Components\TextInput::make('utm_medium')->label('Mídia')->disabled()->dehydrated(false),
+                    Forms\Components\TextInput::make('utm_campaign')->label('Campanha')->disabled()->dehydrated(false),
+                    Forms\Components\TextInput::make('utm_term')->label('Palavra-chave')->disabled()->dehydrated(false),
+                    Forms\Components\TextInput::make('utm_content')->label('Anúncio')->disabled()->dehydrated(false),
+                    Forms\Components\TextInput::make('gclid')->label('Google Click ID (gclid)')->disabled()->dehydrated(false),
+                    Forms\Components\TextInput::make('landing_url')->label('Página de entrada')->disabled()->dehydrated(false)->columnSpanFull(),
+                ]),
+
             Forms\Components\Section::make('Funil')
                 ->columns(3)
                 ->schema([

@@ -54,6 +54,16 @@ class InboundLeadController extends Controller
             // Texto livre opcional (ex.: /contato.php do site, que não tem segmento/porte pra
             // escolher -- ver InboundLeadTest::test_mensagem_livre_opcional_entra_na_interacao).
             'mensagem' => ['nullable', 'string', 'max:2000'],
+            // Origem do anúncio (o site repassa o que o visitante trouxe do Google Ads). Tudo opcional.
+            'gclid' => ['nullable', 'string', 'max:200', 'regex:/^[A-Za-z0-9_\-]+$/'],
+            'gbraid' => ['nullable', 'string', 'max:200', 'regex:/^[A-Za-z0-9_\-]+$/'],
+            'wbraid' => ['nullable', 'string', 'max:200', 'regex:/^[A-Za-z0-9_\-]+$/'],
+            'utm_source' => ['nullable', 'string', 'max:200'],
+            'utm_medium' => ['nullable', 'string', 'max:200'],
+            'utm_campaign' => ['nullable', 'string', 'max:200'],
+            'utm_term' => ['nullable', 'string', 'max:200'],
+            'utm_content' => ['nullable', 'string', 'max:200'],
+            'landing_url' => ['nullable', 'string', 'max:255'],
         ]);
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
@@ -83,6 +93,9 @@ class InboundLeadController extends Controller
             if (! empty($data['mensagem'])) {
                 $summary .= "\n\nMensagem do visitante:\n".$data['mensagem'];
             }
+            if (! empty($data['utm_campaign']) || ! empty($data['gclid'])) {
+                $summary .= "\n\nOrigem do anúncio: ".($data['utm_source'] ?? 'google').' / '.($data['utm_campaign'] ?? 'sem campanha');
+            }
 
             $lead = CrmLead::create([
                 'tenant_id' => $tenant->id,
@@ -95,6 +108,15 @@ class InboundLeadController extends Controller
                 'stage' => CrmLead::STAGE_NOVO,
                 'segment' => $data['segmento'],
                 'company_size' => $data['porte'],
+                'gclid' => $data['gclid'] ?? null,
+                'gbraid' => $data['gbraid'] ?? null,
+                'wbraid' => $data['wbraid'] ?? null,
+                'utm_source' => $data['utm_source'] ?? null,
+                'utm_medium' => $data['utm_medium'] ?? null,
+                'utm_campaign' => $data['utm_campaign'] ?? null,
+                'utm_term' => $data['utm_term'] ?? null,
+                'utm_content' => $data['utm_content'] ?? null,
+                'landing_url' => $data['landing_url'] ?? null,
             ]);
 
             // A interação exige um usuário; sem nenhum no tenant o lead ainda é salvo.
