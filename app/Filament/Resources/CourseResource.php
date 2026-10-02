@@ -24,9 +24,11 @@ class CourseResource extends BaseResource
 
     protected static ?string $pluralModelLabel = 'Academia Oravel';
 
-    protected static ?string $navigationGroup = 'Treinamento';
-
     protected static ?int $navigationSort = 99;
+
+    // O atalho "Academia Oravel" fica fixo no topo da sidebar, abaixo de "Início"
+    // (vendor/filament-panels/components/sidebar/index.blade.php), sem grupo no menu.
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static bool $isScopedToTenant = false;
 

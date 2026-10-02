@@ -124,8 +124,9 @@
 
     {{-- "Início" fixo acima da rolagem do menu (02/10/2026): o Filament rola a
          sidebar até o grupo ativo e o item sumia por cima. Só no admin. --}}
-    @if (filament()->getId() === 'admin' && \App\Filament\Pages\PainelGestao::canAccess())
-        <ul class="fi-sidebar-pinned px-6 pb-2 pt-4" style="border-bottom: 1px solid var(--oravel-border);">
+    @if (filament()->getId() === 'admin')
+        <ul class="fi-sidebar-pinned flex flex-col gap-y-1 px-6 pb-2 pt-4" style="border-bottom: 1px solid var(--oravel-border);">
+            @if (\App\Filament\Pages\PainelGestao::canAccess())
             <x-filament-panels::sidebar.item
                 :active="request()->routeIs('filament.admin.pages.painel-controle')"
                 icon="heroicon-o-home"
@@ -136,6 +137,18 @@
             >
                 Início
             </x-filament-panels::sidebar.item>
+            @endif
+            @if (\App\Filament\Resources\CourseResource::canViewAny())
+            <x-filament-panels::sidebar.item
+                :active="false"
+                icon="heroicon-o-academic-cap"
+                :url="url('/academia')"
+                :sidebar-collapsible="false"
+                class="-mx-2"
+            >
+                Academia Oravel
+            </x-filament-panels::sidebar.item>
+            @endif
         </ul>
     @endif
 
