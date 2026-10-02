@@ -158,7 +158,7 @@
                         @php $tone = $tones[$col['tone']]; @endphp
                         {{-- Mesmo idioma visual do Kanban do Pátio (MaintenanceKanban):
                              cabeçalho em bloco de cor sólida + cards com borda esquerda colorida. --}}
-                        <div class="min-w-0 rounded-lg bg-gray-800/40 ring-1 ring-gray-950/5 dark:ring-white/5 flex flex-col overflow-hidden shadow-sm">
+                        <div class="min-w-0 rounded-lg bg-gray-800/55 dark:bg-gray-800/40 ring-1 ring-gray-950/5 dark:ring-white/5 flex flex-col overflow-hidden shadow-sm">
                             <div class="{{ $tone['headerBg'] }} px-2.5 py-2 shrink-0">
                                 <h4 class="text-[10px] font-black uppercase tracking-wide text-white leading-tight truncate">{{ $col['title'] }}</h4>
                                 <span class="text-[10px] text-white/90 font-bold">{{ $col['cards']->count() }} OS</span>

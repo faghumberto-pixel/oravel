@@ -8,7 +8,7 @@
     "name": "module.esm"
   },
   "resources/css/app.css": {
-    "file": "assets/app-DI1RiQb9.css",
+    "file": "assets/app-DegKjmdG.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -17,15 +17,15 @@
     ]
   },
   "resources/css/filament/admin/theme.css": {
-    "file": "assets/theme-CoMBpzP5.css",
+    "file": "assets/theme-DxOIowXn.css",
     "src": "resources/css/filament/admin/theme.css"
   },
   "resources/css/filament/central/theme.css": {
-    "file": "assets/theme-CnYmKKLr.css",
+    "file": "assets/theme-D8Wbj5C4.css",
     "src": "resources/css/filament/central/theme.css"
   },
   "resources/css/filament/client/theme.css": {
-    "file": "assets/theme-BV4-m5Z3.css",
+    "file": "assets/theme-C6pCGujL.css",
     "src": "resources/css/filament/client/theme.css",
     "isEntry": true,
     "name": "theme",
@@ -50,7 +50,7 @@
     "isEntry": true
   },
   "resources/js/chat-app.js": {
-    "file": "assets/chat-app-Bp8jHZIj.js",
+    "file": "assets/chat-app-C2VrsZom.js",
     "name": "chat-app",
     "src": "resources/js/chat-app.js",
     "isEntry": true,
@@ -58,7 +58,7 @@
       "_import-wrapper-prod-D0HhYmlZ.js"
     ],
     "css": [
-      "assets/app-DI1RiQb9.css"
+      "assets/app-DegKjmdG.css"
     ]
   },
   "resources/js/hour-meter-offline.js": {

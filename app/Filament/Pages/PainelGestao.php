@@ -24,6 +24,10 @@ class PainelGestao extends Page
 
     protected static ?int $navigationSort = -10;
 
+    // "Início" agora fica fixo no topo da sidebar (vendor/filament-panels/
+    // components/sidebar/index.blade.php), fora da área que rola.
+    protected static bool $shouldRegisterNavigation = false;
+
     public static function canAccess(): bool
     {
         $user = auth()->user();
