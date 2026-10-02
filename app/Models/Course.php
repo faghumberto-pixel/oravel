@@ -35,7 +35,24 @@ class Course extends Model
     /** Curso publicado que ainda tem ao menos uma aula liberada pro contrato do cliente logado. */
     public function scopeAvailable(Builder $query): Builder
     {
+        if (auth()->user()?->isSuperAdmin()) {
+            return $query;
+        }
+
         return $query->whereHas('lessons', fn (Builder $q) => $q->available());
+    }
+
+    /**
+     * Cursos que a pessoa logada pode estudar: publicados e liberados no contrato dela.
+     * O super admin (SUPER_ADMINS) consulta TODOS, inclusive rascunhos e modulos fora de contrato.
+     */
+    public function scopeVisibleToUser(Builder $query): Builder
+    {
+        if (auth()->user()?->isSuperAdmin()) {
+            return $query;
+        }
+
+        return $query->published()->available();
     }
 
     public function scopePublished(Builder $query): Builder

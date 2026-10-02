@@ -6,7 +6,7 @@ use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\LessonAnswer;
 use App\Models\LessonProgress;
-use App\Models\LessonQuestion;
+use App\Models\LessonQuizSubmission;
 use App\Services\AcademyCertificates;
 use App\Services\AcademyOverview;
 use App\Services\AcademyPoints;
@@ -30,9 +30,6 @@ class CoursePage extends Component
     /** @var array<string, int> */
     public array $selected = [];
 
-    /** @var array<string, array{correct: bool, gained: int}> */
-    public array $feedback = [];
-
     public ?string $toast = null;
 
     public function mount(string $slug): void
@@ -49,7 +46,7 @@ class CoursePage extends Component
 
     private function course(): Course
     {
-        return Course::published()->available()->where('slug', $this->slug)->firstOrFail();
+        return Course::visibleToUser()->where('slug', $this->slug)->firstOrFail();
     }
 
     private function lesson(string $id): Lesson
@@ -61,6 +58,7 @@ class CoursePage extends Component
     {
         $this->lessonId = $this->lesson($id)->id;
         $this->toast = null;
+        $this->dispatch('academy-lesson', slug: $this->slug, lessonId: $this->lessonId);
     }
 
     public function toggleDone(string $id): void
@@ -87,23 +85,31 @@ class CoursePage extends Component
         $this->dispatch('academy-updated');
     }
 
-    public function answer(string $questionId): void
+    /**
+     * Entrega a prova da aula aberta: corrige tudo de uma vez (em branco vale zero), mostra o
+     * gabarito e nao deixa refazer.
+     */
+    public function deliverQuiz(string $lessonId): void
     {
         $user = auth()->user();
-        $question = LessonQuestion::whereIn('lesson_id', $this->course()->lessons()->available()->pluck('id'))->findOrFail($questionId);
+        $lesson = $this->lesson($lessonId);
 
         if (! $user->tenant_id) {
-            $this->toast = 'Entre com um usuário de cliente para responder.';
+            $this->toast = 'Entre com um usuário de cliente para entregar a prova.';
 
             return;
         }
-        if (! isset($this->selected[$questionId])) {
+        if ($lesson->questions()->doesntExist()) {
             return;
         }
 
-        [$correct, $gained] = app(AcademyPoints::class)->answer($user, $question, (int) $this->selected[$questionId]);
-        $this->feedback[$questionId] = ['correct' => $correct, 'gained' => $gained];
-        $this->toast = $correct && $gained ? "+{$gained} pontos" : null;
+        $result = app(AcademyPoints::class)->deliver($user, $lesson, $this->selected);
+        if ($result['already']) {
+            return;
+        }
+
+        $s = $result['submission'];
+        $this->toast = "Prova entregue: {$s->correct_answers} de {$s->total_questions} (nota ".number_format($s->grade(), 1, ',', '').')'.($result['gained'] ? " · +{$result['gained']} pontos" : '');
         $this->issueCertificate();
         $this->dispatch('academy-updated');
     }
@@ -145,7 +151,8 @@ class CoursePage extends Component
         $course = $this->course();
         $lessons = $course->lessons()->available()->with('questions')->get();
         $done = LessonProgress::where('user_id', $user->id)->whereIn('lesson_id', $lessons->pluck('id'))->pluck('completed_at', 'lesson_id');
-        $answered = LessonAnswer::where('user_id', $user->id)->pluck('is_correct', 'question_id');
+        $submissions = LessonQuizSubmission::where('user_id', $user->id)->whereIn('lesson_id', $lessons->pluck('id'))->get()->keyBy('lesson_id');
+        $answers = LessonAnswer::where('user_id', $user->id)->whereIn('question_id', $lessons->flatMap(fn ($l) => $l->questions->pluck('id')))->get()->keyBy('question_id');
         $summary = app(AcademyOverview::class)->courses($user)->firstWhere('slug', $this->slug);
         $current = $lessons->firstWhere('id', $this->lessonId) ?? $lessons->first();
         $index = $lessons->search(fn ($l) => $l->id === $current?->id);
@@ -154,7 +161,8 @@ class CoursePage extends Component
             'course' => $course,
             'lessons' => $lessons,
             'done' => $done,
-            'answered' => $answered,
+            'submissions' => $submissions,
+            'answers' => $answers,
             'summary' => $summary,
             'current' => $current,
             'previous' => $index > 0 ? $lessons[$index - 1] : null,

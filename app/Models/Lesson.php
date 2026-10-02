@@ -24,6 +24,11 @@ class Lesson extends Model
      */
     public function scopeAvailable(Builder $query): Builder
     {
+        // super admin (SUPER_ADMINS) consulta tudo, sem filtro de contrato
+        if (auth()->user()?->isSuperAdmin()) {
+            return $query;
+        }
+
         $tenant = Tenancy::current();
 
         if (! $tenant) {

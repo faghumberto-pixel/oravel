@@ -9,9 +9,9 @@ use App\Livewire\Academy\Sidebar;
 use App\Livewire\Academy\TeamPage;
 use App\Models\Course;
 use App\Models\Lesson;
-use App\Models\LessonAnswer;
 use App\Models\LessonProgress;
 use App\Models\LessonQuestion;
+use App\Models\LessonQuizSubmission;
 use App\Models\Plan;
 use App\Models\Role;
 use App\Models\Tenant;
@@ -68,17 +68,15 @@ class AcademyPageTest extends TestCase
         }
     }
 
-    public function test_guests_are_sent_to_login_and_access_follows_contract_and_permission(): void
+    public function test_guests_are_sent_to_login_and_access_follows_the_contract_not_a_specific_permission(): void
     {
-        $this->get('/academia')->assertRedirect('/admin/login');
+        $this->get('/academia/inicio')->assertRedirect('/admin/login');
 
         $semModulo = $this->user($this->tenant('Sem Modulo', []), 'Aluno');
         $semPermissao = $this->user($this->tenant('Sem Permissao'), 'Aluno', permission: false);
-        $ok = $this->user($this->tenant('Com Tudo'), 'Aluno');
 
-        $this->actingAs($semModulo)->get('/academia')->assertForbidden();
-        $this->actingAs($semPermissao)->get('/academia')->assertForbidden();
-        $this->actingAs($ok)->get('/academia')->assertOk()->assertSee('Oravel')->assertSee('Voltar');
+        $this->actingAs($semModulo)->get('/academia/inicio')->assertForbidden();
+        $this->actingAs($semPermissao)->get('/academia/inicio')->assertOk()->assertSee('Oravel')->assertSee('Voltar'); // basta ter cadastro + módulo no contrato
     }
 
     public function test_overview_status_and_grade_follow_the_rules(): void
@@ -90,12 +88,12 @@ class AcademyPageTest extends TestCase
         $this->finish($user, $meio, 1);
         $this->finish($user, $fim, 2);
 
-        $q1 = LessonQuestion::create(['lesson_id' => $fim->lessons()->first()->id, 'question' => 'P1', 'options' => [['text' => 'a'], ['text' => 'b']], 'correct_index' => 0]);
-        $q2 = LessonQuestion::create(['lesson_id' => $fim->lessons()->first()->id, 'question' => 'P2', 'options' => [['text' => 'a'], ['text' => 'b']], 'correct_index' => 1]);
-        $q3 = LessonQuestion::create(['lesson_id' => $fim->lessons()->first()->id, 'question' => 'P3', 'options' => [['text' => 'a'], ['text' => 'b']], 'correct_index' => 0]);
-        LessonAnswer::create(['tenant_id' => $user->tenant_id, 'user_id' => $user->id, 'question_id' => $q1->id, 'selected_index' => 0, 'is_correct' => true]);
-        LessonAnswer::create(['tenant_id' => $user->tenant_id, 'user_id' => $user->id, 'question_id' => $q2->id, 'selected_index' => 1, 'is_correct' => true]);
-        LessonAnswer::create(['tenant_id' => $user->tenant_id, 'user_id' => $user->id, 'question_id' => $q3->id, 'selected_index' => 1, 'is_correct' => false]);
+        $primeira = $fim->lessons()->first();
+        foreach ([0, 1, 0] as $i => $correct) {
+            LessonQuestion::create(['lesson_id' => $primeira->id, 'question' => 'P'.($i + 1), 'options' => [['text' => 'a'], ['text' => 'b']], 'correct_index' => $correct]);
+        }
+        // prova entregue: 2 certas de 3 (a errada e a em branco valem zero) -> nota 6,7, abaixo da mínima
+        LessonQuizSubmission::create(['tenant_id' => $user->tenant_id, 'user_id' => $user->id, 'lesson_id' => $primeira->id, 'total_questions' => 3, 'correct_answers' => 2, 'delivered_at' => now()]);
 
         $svc = app(AcademyOverview::class);
         $courses = $svc->courses($user)->keyBy('title');
@@ -106,7 +104,7 @@ class AcademyPageTest extends TestCase
         $this->assertSame('done', $courses['Curso fim']['status']);
         $this->assertSame(6.7, $courses['Curso fim']['nota']);      // 2 certas de 3 = 6,7
         $this->assertNull($courses['Curso novo']['nota']);          // sem quiz
-        $this->assertNull($courses['Curso fim']['certificate']);    // acertou 2 de 3: ainda sem certificado
+        $this->assertNull($courses['Curso fim']['certificate']);    // nota abaixo da mínima: sem certificado
 
         $totals = $svc->totals($user, $courses->values());
         $this->assertSame(1, $totals['courses_done']);
@@ -168,12 +166,13 @@ class AcademyPageTest extends TestCase
             ->call('selectLesson', $l2->id)->assertSet('lessonId', $l2->id)
             ->call('toggleDone', $l2->id);
 
-        $this->assertNull(app(AcademyCertificates::class)->find($user, $course)); // falta o quiz
+        $this->assertNull(app(AcademyCertificates::class)->find($user, $course)); // falta entregar a prova
 
         $page->call('selectLesson', $l1->id)
-            ->set("selected.{$q->id}", 1)->call('answer', $q->id)
-            ->assertSee('Correto!')->assertSee('Certificado emitido')
-            ->assertSee('Baixar certificado')
+            ->assertSee('Entregar prova')->assertDontSee('Gabarito da prova') // antes de entregar não há gabarito
+            ->set("selected.{$q->id}", 1)->call('deliverQuiz', $l1->id)
+            ->assertSee('Gabarito da prova')->assertSee('resposta certa')->assertSee('Porque b.')
+            ->assertSee('Certificado emitido')->assertSee('Baixar certificado')
             ->call('downloadCertificate')->assertFileDownloaded();
 
         $this->assertNotNull(app(AcademyCertificates::class)->find($user, $course));
@@ -238,32 +237,35 @@ class AcademyPageTest extends TestCase
 
         foreach (['aurora', 'planta', 'ondas'] as $theme) {
             config(['oravel.academy.theme' => $theme]);
-            $this->actingAs($user)->get('/academia')->assertOk()->assertSee("ac-theme-{$theme}", false);
+            $this->actingAs($user)->get('/academia/inicio')->assertOk()->assertSee("ac-theme-{$theme}", false);
         }
 
         config(['oravel.academy.theme' => '"><script>alert(1)</script>']);
-        $this->actingAs($user)->get('/academia')->assertOk()->assertSee('ac-theme-aurora', false)->assertDontSee('<script>alert(1)</script>', false);
+        $this->actingAs($user)->get('/academia/inicio')->assertOk()->assertSee('ac-theme-aurora', false)->assertDontSee('<script>alert(1)</script>', false);
     }
 
-    public function test_grade_is_null_until_a_quiz_question_is_answered_and_uses_answered_questions(): void
+    public function test_grade_is_null_until_the_exam_is_delivered_and_blank_answers_count_as_zero(): void
     {
         $user = $this->user($this->tenant('Cliente A'), 'Aluno');
-        $course = $this->course('Curso com quiz', 1);
+        $course = $this->course('Curso com prova', 1);
         $lesson = $course->lessons()->first();
         $q1 = LessonQuestion::create(['lesson_id' => $lesson->id, 'question' => 'P1', 'options' => [['text' => 'a'], ['text' => 'b']], 'correct_index' => 0]);
         LessonQuestion::create(['lesson_id' => $lesson->id, 'question' => 'P2', 'options' => [['text' => 'a'], ['text' => 'b']], 'correct_index' => 0]);
 
         $svc = app(AcademyOverview::class);
         $c = $svc->courses($user)->first();
-        $this->assertNull($c['nota']);                 // nada respondido: sem nota (não vira "0,0")
-        $this->assertSame(2, $c['quiz_total']);
+        $this->assertNull($c['nota']);                 // prova não entregue: sem nota (não vira "0,0")
+        $this->assertSame(1, $c['quizzes_total']);
+        $this->assertSame(0, $c['quizzes_delivered']);
 
-        Livewire::actingAs($user)->test(Home::class)->assertSee('Quiz pendente');
+        Livewire::actingAs($user)->test(Home::class)->assertSee('Prova pendente');
 
-        app(AcademyPoints::class)->answer($user, $q1, 0); // acertou 1 de 1 respondida
+        // acerta a P1 e deixa a P2 em branco: 1 de 2 = nota 5,0 (a em branco vale zero)
+        app(AcademyPoints::class)->deliver($user, $lesson, [$q1->id => 0]);
         $c = $svc->courses($user)->first();
-        $this->assertSame(10.0, $c['nota']);
-        $this->assertSame(1, $c['quiz_answered']);
+        $this->assertSame(5.0, $c['nota']);
+        $this->assertSame(1, $c['quizzes_delivered']);
+        $this->assertSame(2, $c['quiz_graded']);
     }
 
     public function test_lessons_without_a_video_show_the_in_production_notice(): void

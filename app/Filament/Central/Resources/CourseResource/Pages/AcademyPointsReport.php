@@ -3,14 +3,15 @@
 namespace App\Filament\Central\Resources\CourseResource\Pages;
 
 use App\Filament\Central\Resources\CourseResource;
-use App\Filament\Resources\CourseResource\Pages\Team;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\AcademyParticipation;
 use Filament\Resources\Pages\Page;
+use Filament\Tables;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 /**
@@ -68,9 +69,48 @@ class AcademyPointsReport extends Page implements HasTable
                 app(AcademyParticipation::class)->usersQuery($this->tenant(), $this->since()), 'users'
             ))
             ->defaultSort('points', 'desc')
-            ->columns(Team::columns(true))
-            ->filters(Team::filters())
+            ->columns(self::columns(true))
+            ->filters(self::filters())
             ->paginated([25, 50, 100])
             ->emptyStateHeading('Nenhum colaborador encontrado');
+    }
+
+    /** Colunas compartilhadas com a tela da Central (la com a coluna de cliente). */
+    public static function columns(bool $withTenant): array
+    {
+        return array_values(array_filter([
+            Tables\Columns\TextColumn::make('name')->label('Colaborador')->searchable()->sortable()->weight('bold'),
+            $withTenant ? Tables\Columns\TextColumn::make('tenant_name')->label('Cliente')->searchable()->sortable() : null,
+            Tables\Columns\ViewColumn::make('completion')->label('Conteúdo concluído')->view('filament.academy.columns.completion')
+                ->sortable(query: fn ($query, string $direction) => $query->orderByRaw('(case when lessons_available > 0 then lessons_done_all::float / lessons_available else 0 end) '.$direction)),
+            Tables\Columns\ViewColumn::make('quiz_rate')->label('Acerto no quiz')->view('filament.academy.columns.quiz')
+                ->sortable(query: fn ($query, string $direction) => $query->orderByRaw('(case when quiz_total > 0 then quiz_correct::float / quiz_total else -1 end) '.$direction)),
+            Tables\Columns\TextColumn::make('points')->label('Pontos')->numeric()->sortable()->alignEnd(),
+            Tables\Columns\TextColumn::make('certificates')->label('Certificados')->numeric()->sortable()->alignEnd(),
+            Tables\Columns\TextColumn::make('minutes')->label('Tempo de estudo')->sortable()->alignEnd()
+                ->formatStateUsing(fn ($state) => (int) round($state) >= 60 ? intdiv((int) round($state), 60).' h '.((int) round($state) % 60).' min' : (int) round($state).' min'),
+            Tables\Columns\TextColumn::make('last_activity')->label('Última atividade')->sortable()
+                ->formatStateUsing(fn ($state) => $state ? Carbon::parse($state)->diffForHumans() : 'Nunca')
+                ->color(fn ($state) => $state ? null : 'danger'),
+        ]));
+    }
+
+    public static function filters(): array
+    {
+        return [
+            Tables\Filters\SelectFilter::make('situacao')
+                ->label('Situação')
+                ->options([
+                    'ativos' => 'Estudando (com atividade no período)',
+                    'inativos' => 'Sem atividade no período',
+                    'certificados' => 'Já têm certificado',
+                ])
+                ->query(fn ($query, array $data) => match ($data['value'] ?? null) {
+                    'ativos' => $query->where(fn ($q) => $q->where('points', '>', 0)->orWhere('lessons_done', '>', 0)),
+                    'inativos' => $query->where('points', 0)->where('lessons_done', 0),
+                    'certificados' => $query->where('certificates', '>', 0),
+                    default => $query,
+                }),
+        ];
     }
 }

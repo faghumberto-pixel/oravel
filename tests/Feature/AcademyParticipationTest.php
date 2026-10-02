@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Central\Resources\CourseResource\Pages\AcademyPointsReport;
-use App\Filament\Resources\CourseResource\Pages\Team;
+use App\Livewire\Academy\TeamPage;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\LessonProgress;
@@ -80,7 +80,7 @@ class AcademyParticipationTest extends TestCase
 
         $this->asApp($admin);
 
-        Livewire::test(Team::class)
+        Livewire::test(TeamPage::class)
             ->assertSee('Maria Colaboradora')
             ->assertSee('Gestora Ana')
             ->assertDontSee('Joao De Outra Empresa')
@@ -94,7 +94,7 @@ class AcademyParticipationTest extends TestCase
 
         $this->asApp($comum);
 
-        Livewire::test(Team::class)->assertForbidden();
+        Livewire::test(TeamPage::class)->assertForbidden();
     }
 
     public function test_summary_numbers_and_completion_percentage_follow_the_contract(): void
@@ -145,7 +145,7 @@ class AcademyParticipationTest extends TestCase
 
         $this->asApp($admin);
 
-        $html = Livewire::test(Team::class)->set('period', 'all')->html();
+        $html = Livewire::test(TeamPage::class)->set('period', 'all')->html();
 
         $this->assertStringContainsString('#16a34a', $html);  // verde (>= 70%)
         $this->assertStringContainsString('#dc2626', $html);  // vermelho (< 40%)
@@ -165,9 +165,9 @@ class AcademyParticipationTest extends TestCase
 
         $this->asApp($admin);
 
-        Livewire::test(Team::class)
+        Livewire::test(TeamPage::class)
             ->set('period', 'all')
-            ->filterTable('situacao', 'inativos')
+            ->set('status', 'inativos')
             ->assertSee('Pedro Parado')
             ->assertDontSee('Aluna Ativa');
     }

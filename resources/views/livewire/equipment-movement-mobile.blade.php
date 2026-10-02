@@ -158,7 +158,8 @@
     </section>
 
     {{-- Banco de Carga (locadoras de evento/gerador) -- so' na mobilizacao --}}
-    @if($equipmentMovement->type === \App\Models\EquipmentMovement::TYPE_MOBILIZACAO && (\App\Support\Tenancy::current()?->hasModuleEnabled('banco_de_carga') ?? true))
+    {{-- O gate por tenant (Tenant::hasModuleEnabled) foi removido junto com o sistema "Módulos por Nicho" (84c5e1a); o padrão dele era "ligado pra todos", então o bloco segue sempre visível na mobilização. --}}
+    @if($equipmentMovement->type === \App\Models\EquipmentMovement::TYPE_MOBILIZACAO)
         <section class="px-5 pb-4">
             <div class="rounded-2xl bg-zinc-900 p-4">
                 <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">Teste em Banco de Carga</h3>

@@ -76,8 +76,9 @@ Route::get('/', fn () => redirect()->to('/admin'))->name('home');
 // Contratante precisa poder ler antes mesmo de logar/assinar.
 // Academia Oravel: pagina propria (fora do painel Filament), com login, bloqueio por
 // inadimplencia e a regra do modulo/permissao (ver EnsureAcademyAccess).
+Route::get('/academia', \App\Livewire\Academy\Landing::class)->name('academy.landing'); // entrada PUBLICA (so' a URL, sem login)
 Route::middleware(['web', 'academy.access'])->prefix('academia')->group(function () {
-    Route::get('/', \App\Livewire\Academy\Home::class)->name('academy.home');
+    Route::get('/inicio', \App\Livewire\Academy\Home::class)->name('academy.home');
     Route::get('/curso/{slug}', \App\Livewire\Academy\CoursePage::class)->name('academy.course');
     Route::get('/ranking', \App\Livewire\Academy\RankingPage::class)->name('academy.ranking');
     Route::get('/equipe', \App\Livewire\Academy\TeamPage::class)->name('academy.team');

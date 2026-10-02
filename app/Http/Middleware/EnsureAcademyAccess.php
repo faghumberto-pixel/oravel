@@ -2,16 +2,16 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Course;
+use App\Filament\Resources\CourseResource;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Porta de entrada das telas /academia (fora do painel Filament, entao nao herda o middleware
- * dele): exige login, respeita o bloqueio por inadimplencia e a mesma regra do menu antigo
- * (modulo Academia no contrato + permissao via Perfis de Acesso).
+ * dele). Quem tem cadastro no app entra: exige login (e cadastro aprovado), respeita o bloqueio
+ * por inadimplencia e o modulo Academia ligado no contrato. NAO exige permissao especifica em
+ * Perfis de Acesso -- a Academia e' pra toda a equipe.
  */
 class EnsureAcademyAccess
 {
@@ -23,11 +23,11 @@ class EnsureAcademyAccess
             return redirect()->guest('/admin/login');
         }
 
-        if ($user->tenant?->isAccessBlockedForNonPayment()) {
+        abort_unless(CourseResource::canViewAny(), 403);
+
+        if (! $user->isSuperAdmin() && $user->tenant?->isAccessBlockedForNonPayment()) {
             return redirect()->route('admin.conta-bloqueada');
         }
-
-        abort_unless(Gate::forUser($user)->allows('viewAny', Course::class), 403);
 
         return $next($request);
     }

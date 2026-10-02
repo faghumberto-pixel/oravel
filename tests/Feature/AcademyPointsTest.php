@@ -3,9 +3,6 @@
 namespace Tests\Feature;
 
 use App\Filament\Central\Resources\CourseResource\Pages\AcademyPointsReport;
-use App\Filament\Resources\CourseResource\Pages\Ranking;
-use App\Filament\Resources\CourseResource\Pages\ViewCourse;
-use App\Models\AcademyCertificate;
 use App\Models\AcademyPoint;
 use App\Models\Course;
 use App\Models\Lesson;
@@ -78,42 +75,6 @@ class AcademyPointsTest extends TestCase
         return app(AcademyPoints::class)->total($user);
     }
 
-    public function test_reading_a_lesson_gives_points_once_even_if_unchecked_and_checked_again(): void
-    {
-        $user = $this->tenantUser('Cliente A');
-        $course = $this->course(3);
-        $lesson = $course->lessons()->first();
-        $this->asApp($user);
-
-        $page = Livewire::test(ViewCourse::class, ['record' => $course->getKey()]);
-        $page->call('toggleDone', $lesson->id);
-        $this->assertSame(10, $this->points($user));
-
-        $page->call('toggleDone', $lesson->id)->call('toggleDone', $lesson->id); // desmarca e marca de novo
-        $this->assertSame(10, $this->points($user));
-    }
-
-    public function test_quiz_pays_only_the_first_correct_answer_and_wrong_ones_cost_nothing(): void
-    {
-        $user = $this->tenantUser('Cliente A');
-        $q = $this->question($this->course()->lessons()->first(), correct: 1);
-        $svc = app(AcademyPoints::class);
-
-        [$ok, $gained] = $svc->answer($user, $q, 0);
-        $this->assertFalse($ok);
-        $this->assertSame(0, $gained);
-
-        [$ok, $gained] = $svc->answer($user, $q, 1);
-        $this->assertTrue($ok);
-        $this->assertSame(10, $gained);
-
-        [, $again] = $svc->answer($user, $q, 1);   // acertar de novo não paga
-        $svc->answer($user, $q, 2);                // errar depois não tira nem "desacerta"
-        $this->assertSame(0, $again);
-        $this->assertSame(10, $this->points($user));
-        $this->assertTrue(LessonAnswer::where('user_id', $user->id)->first()->is_correct);
-    }
-
     public function test_active_time_gives_a_point_per_minute_with_a_cap_and_ignores_spam_and_pauses(): void
     {
         $user = $this->tenantUser('Cliente A');
@@ -173,6 +134,115 @@ class AcademyPointsTest extends TestCase
         $this->assertSame(60, app(AcademyPoints::class)->awardRead($user, $liberada)); // 10 + bônus, mesmo com 1 aula fechada
     }
 
+    private function finish(User $user, Course $course, int $howMany): void
+    {
+        foreach ($course->lessons()->limit($howMany)->get() as $lesson) {
+            LessonProgress::firstOrCreate(['user_id' => $user->id, 'lesson_id' => $lesson->id], ['tenant_id' => $user->tenant_id, 'completed_at' => now()]);
+            app(AcademyPoints::class)->awardRead($user, $lesson);
+        }
+    }
+
+    private function questions(Lesson $lesson, int $n = 3): array
+    {
+        return collect(range(1, $n))->map(fn ($i) => LessonQuestion::create([
+            'lesson_id' => $lesson->id, 'question' => "Pergunta $i?",
+            'options' => [['text' => 'a'], ['text' => 'b'], ['text' => 'c']], 'correct_index' => 1, 'explanation' => 'Porque b.',
+        ]))->all();
+    }
+
+    public function test_reading_a_lesson_gives_points_once(): void
+    {
+        $user = $this->tenantUser('Cliente A');
+        $lesson = $this->course(3)->lessons()->first();
+        $svc = app(AcademyPoints::class);
+
+        $this->assertSame(10, $svc->awardRead($user, $lesson));
+        $this->assertSame(0, $svc->awardRead($user, $lesson)); // desmarcar e marcar de novo não paga de novo
+        $this->assertSame(10, $this->points($user));
+    }
+
+    public function test_delivering_the_quiz_grades_everything_at_once_blank_answers_are_zero_and_it_cannot_be_redone(): void
+    {
+        $user = $this->tenantUser('Cliente A');
+        $lesson = $this->course()->lessons()->first();
+        [$q1, $q2, $q3] = $this->questions($lesson);
+        $svc = app(AcademyPoints::class);
+
+        // acerta a 1ª (índice 1), erra a 2ª (índice 0) e deixa a 3ª em branco
+        $r = $svc->deliver($user, $lesson, [$q1->id => 1, $q2->id => 0]);
+
+        $this->assertFalse($r['already']);
+        $this->assertSame(1, $r['submission']->correct_answers);
+        $this->assertSame(3, $r['submission']->total_questions);
+        $this->assertSame(3.3, $r['submission']->grade());      // 1 de 3: a em branco vale zero
+        $this->assertSame(10, $r['gained']);                    // só o acerto pontua
+        $this->assertSame(10, $this->points($user));
+        $this->assertNull(LessonAnswer::where('question_id', $q3->id)->first()->selected_index);
+
+        // não refaz: nova entrega devolve a mesma e não pontua mais nada
+        $again = $svc->deliver($user, $lesson, [$q1->id => 1, $q2->id => 1, $q3->id => 1]);
+        $this->assertTrue($again['already']);
+        $this->assertSame(0, $again['gained']);
+        $this->assertSame(1, $again['submission']->correct_answers);
+        $this->assertSame(10, $this->points($user));
+    }
+
+    public function test_an_out_of_range_choice_counts_as_blank(): void
+    {
+        $user = $this->tenantUser('Cliente A');
+        $lesson = $this->course()->lessons()->first();
+        [$q1] = $this->questions($lesson, 1);
+
+        $r = app(AcademyPoints::class)->deliver($user, $lesson, [$q1->id => 99]);
+
+        $this->assertSame(0, $r['submission']->correct_answers);
+        $this->assertNull(LessonAnswer::where('question_id', $q1->id)->first()->selected_index);
+    }
+
+    public function test_the_certificate_needs_all_lessons_all_exams_delivered_and_the_minimum_grade(): void
+    {
+        $user = $this->tenantUser('Cliente A');
+        $course = $this->course(2);
+        [$l1, $l2] = $course->lessons;
+        [$q1, $q2] = $this->questions($l1, 2);
+        $certs = app(AcademyCertificates::class);
+        $svc = app(AcademyPoints::class);
+
+        $this->finish($user, $course, 2);
+        $this->assertNull($certs->issueIfEligible($user, $course), 'aulas concluídas mas prova não entregue');
+
+        // 1 de 2 certas = nota 5,0, abaixo da mínima (7,0)
+        $svc->deliver($user, $l1, [$q1->id => 1, $q2->id => 0]);
+        $this->assertNull($certs->issueIfEligible($user, $course), 'nota abaixo da mínima');
+
+        // outra pessoa tira 10 e recebe o certificado; o código é único e a emissão não duplica
+        $outra = $this->tenantUser('Cliente B');
+        $this->finish($outra, $course, 2);
+        $svc->deliver($outra, $l1, [$q1->id => 1, $q2->id => 1]);
+        $cert = $certs->issueIfEligible($outra, $course);
+        $this->assertNotNull($cert);
+        $this->assertMatchesRegularExpression('/^OA-[A-Z0-9]{4}-[A-Z0-9]{4}$/', $cert->code);
+        $this->assertSame($cert->id, $certs->issueIfEligible($outra, $course)->id);
+
+        // a nota mínima é configurável
+        config(['oravel.academy.passing_grade' => 5.0]);
+        $this->assertNotNull($certs->issueIfEligible($user, $course), 'nota 5,0 passa com mínima 5,0');
+    }
+
+    public function test_the_certificate_pdf_is_generated_and_the_public_page_confirms_authenticity(): void
+    {
+        $user = $this->tenantUser('Cliente A');
+        $course = $this->course(1);
+        $this->finish($user, $course, 1);
+        $cert = app(AcademyCertificates::class)->issueIfEligible($user, $course);
+        $this->assertNotNull($cert);
+
+        $this->assertStringStartsWith('%PDF', app(AcademyCertificates::class)->pdf($cert));
+        $this->get('/certificado/'.strtolower($cert->code))->assertOk()
+            ->assertSee('Certificado autêntico')->assertSee('Aluno Cliente A')->assertSee('Primeiros passos');
+        $this->get('/certificado/OA-XXXX-0000')->assertOk()->assertSee('Certificado não encontrado');
+    }
+
     public function test_the_ranking_only_shows_people_from_the_own_company(): void
     {
         $a1 = $this->tenantUser('Empresa A');
@@ -185,93 +255,6 @@ class AcademyPointsTest extends TestCase
         $ranking = $svc->ranking($a1);
         $this->assertCount(1, $ranking);
         $this->assertSame($a1->id, $ranking->first()->user_id);
-
-        $this->asApp($a1);
-        Livewire::test(Ranking::class)->assertSee('Aluno Empresa A')->assertDontSee('Aluno Empresa B');
-    }
-
-    public function test_answering_through_the_course_page_updates_points_and_shows_feedback(): void
-    {
-        $user = $this->tenantUser('Cliente A');
-        $course = $this->course();
-        $lesson = $course->lessons()->first();
-        $q = $this->question($lesson, correct: 2);
-        $this->asApp($user);
-
-        Livewire::test(ViewCourse::class, ['record' => $course->getKey()])
-            ->call('open', $lesson->id)
-            ->assertSee('Qual é a certa?')
-            ->set("selected.{$q->id}", 0)->call('answerQuestion', $q->id)
-            ->assertSee('Não foi dessa vez')
-            ->set("selected.{$q->id}", 2)->call('answerQuestion', $q->id)
-            ->assertSee('Correto!')->assertSee('+10 pontos')->assertSee('Porque sim.');
-
-        $this->assertSame(10, $this->points($user));
-    }
-
-    public function test_certificate_requires_all_lessons_and_all_quiz_answers_and_is_issued_once(): void
-    {
-        $user = $this->tenantUser('Cliente A');
-        $course = $this->course(2);
-        $q = $this->question($course->lessons()->first(), correct: 1);
-        $this->asApp($user);
-        $certs = app(AcademyCertificates::class);
-
-        $page = Livewire::test(ViewCourse::class, ['record' => $course->getKey()]);
-        foreach ($course->lessons as $lesson) {
-            $page->call('toggleDone', $lesson->id);
-        }
-        $this->assertNull($certs->find($user, $course), 'aulas concluídas mas o quiz não foi acertado');
-
-        $page->set("selected.{$q->id}", 0)->call('answerQuestion', $q->id);
-        $this->assertNull($certs->find($user, $course), 'resposta errada não libera');
-
-        $page->set("selected.{$q->id}", 1)->call('answerQuestion', $q->id);
-        $cert = $certs->find($user, $course);
-        $this->assertNotNull($cert);
-        $this->assertMatchesRegularExpression('/^OA-[A-Z0-9]{4}-[A-Z0-9]{4}$/', $cert->code);
-        $this->assertSame('Primeiros passos', $cert->course_title);
-        $page->assertSee($cert->code);
-
-        $certs->issueIfEligible($user, $course); // não duplica
-        $this->assertSame(1, AcademyCertificate::withoutGlobalScopes()->count());
-
-        // desmarcar uma aula depois não retira o certificado
-        $page->call('toggleDone', $course->lessons->first()->id);
-        $this->assertNotNull($certs->find($user, $course));
-    }
-
-    public function test_certificate_pdf_downloads_and_the_public_page_confirms_authenticity(): void
-    {
-        $user = $this->tenantUser('Cliente A');
-        $course = $this->course(1);
-        $this->asApp($user);
-        $page = Livewire::test(ViewCourse::class, ['record' => $course->getKey()])->call('toggleDone', $course->lessons->first()->id);
-        $cert = AcademyCertificate::withoutGlobalScopes()->first();
-        $this->assertNotNull($cert);
-
-        $page->call('downloadCertificate')->assertFileDownloaded();
-        $this->assertStringStartsWith('%PDF', app(AcademyCertificates::class)->pdf($cert));
-
-        auth()->logout(); // consulta pública, sem login
-        $this->get('/certificado/'.strtolower($cert->code))->assertOk()
-            ->assertSee('Certificado autêntico')->assertSee('Aluno Cliente A')->assertSee('Primeiros passos');
-        $this->get('/certificado/OA-XXXX-0000')->assertOk()->assertSee('Certificado não encontrado');
-    }
-
-    public function test_another_user_never_downloads_someone_elses_certificate(): void
-    {
-        $a = $this->tenantUser('Empresa A');
-        $b = $this->tenantUser('Empresa B');
-        $course = $this->course(1);
-        $this->asApp($a);
-        Livewire::test(ViewCourse::class, ['record' => $course->getKey()])->call('toggleDone', $course->lessons->first()->id);
-
-        $this->asApp($b);
-        Livewire::test(ViewCourse::class, ['record' => $course->getKey()])
-            ->assertDontSee('Baixar certificado')
-            ->call('downloadCertificate')
-            ->assertStatus(404);
     }
 
     public function test_central_report_lists_points_by_company(): void

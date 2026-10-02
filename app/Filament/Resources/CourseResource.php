@@ -4,15 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CourseResource\Pages;
 use App\Models\Course;
-use App\Models\LessonProgress;
-use Filament\Tables;
-use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * Academia Oravel no app do cliente: so' leitura. Mostra os cursos PUBLICADOS
- * (conteudo global, cadastrado na Central) e o progresso do proprio usuario.
- * Ligado por contrato (HasSaaSMetadata em Course).
+ * Entrada da Academia Oravel no menu do app. A Academia em si e' uma pagina propria
+ * (/academia, ver App\Livewire\Academy\*); este Resource existe so' para o menu e para a
+ * autorizacao padrao do sistema (modulo no contrato via HasSaaSMetadata + permissao em Perfis
+ * de Acesso, ver CoursePolicy). Conteudo global, cadastrado na Central.
  */
 class CourseResource extends BaseResource
 {
@@ -34,14 +32,28 @@ class CourseResource extends BaseResource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->published()->available()
-            ->withCount(['lessons' => fn (Builder $q) => $q->available()]);
+        return parent::getEloquentQuery()->visibleToUser();
     }
 
-    /** O menu leva pra pagina propria da Academia (/academia), nao pra lista do Filament. */
+    /** O menu leva direto pra pagina propria da Academia. */
     public static function getNavigationUrl(): string
     {
         return url('/academia');
+    }
+
+    /**
+     * Quem tem cadastro no app acessa a Academia: so' depende do modulo estar ligado no contrato
+     * (super admin sempre). Nao usa a permissao de Perfis de Acesso, de proposito.
+     */
+    public static function canViewAny(): bool
+    {
+        $user = auth()->user();
+
+        if (! $user) {
+            return false;
+        }
+
+        return $user->isSuperAdmin() || (bool) $user->tenant?->hasFeature(Course::saasFeatureKey());
     }
 
     public static function canCreate(): bool
@@ -59,45 +71,10 @@ class CourseResource extends BaseResource
         return false;
     }
 
-    /** Quantas aulas do curso o usuario logado ja concluiu. */
-    public static function completedBy(?string $userId, Course $course): int
-    {
-        if (! $userId) {
-            return 0;
-        }
-
-        return LessonProgress::where('user_id', $userId)
-            ->whereIn('lesson_id', $course->lessons()->available()->pluck('id'))
-            ->count();
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->defaultSort('position')
-            ->columns([
-                Tables\Columns\TextColumn::make('title')->label('Curso')->weight('bold')->searchable()
-                    ->description(fn (Course $record) => $record->description),
-                Tables\Columns\TextColumn::make('lessons_count')->label('Aulas')->alignCenter(),
-                Tables\Columns\TextColumn::make('progresso')
-                    ->label('Seu progresso')
-                    ->alignCenter()
-                    ->getStateUsing(fn (Course $record) => self::completedBy(auth()->id(), $record).' de '.$record->lessons_count)
-                    ->badge()
-                    ->color(fn (Course $record) => $record->lessons_count > 0 && self::completedBy(auth()->id(), $record) >= $record->lessons_count ? 'success' : 'gray'),
-            ])
-            ->recordUrl(fn (Course $record) => static::getUrl('view', ['record' => $record]))
-            ->actions([Tables\Actions\ViewAction::make()->label(fn (Course $record) => $record->lessons_count > 0 && self::completedBy(auth()->id(), $record) >= $record->lessons_count ? 'Rever' : 'Abrir')])
-            ->bulkActions([]);
-    }
-
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListCourses::route('/'),
-            'ranking' => Pages\Ranking::route('/ranking'),
-            'equipe' => Pages\Team::route('/equipe'),
-            'view' => Pages\ViewCourse::route('/{record}'),
         ];
     }
 }

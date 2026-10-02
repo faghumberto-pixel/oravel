@@ -36,8 +36,8 @@
         <div class="ac-kpi"><small>Pontos</small><strong>{{ number_format($totals['points'], 0, ',', '.') }}</strong><em>leitura, quiz e tempo de estudo</em></div>
         <div class="ac-kpi"><small>Cursos concluídos</small><strong>{{ $totals['courses_done'] }} de {{ $totals['courses'] }}</strong>
             <x-academy.bar :percent="$totals['courses'] ? $totals['courses_done'] / $totals['courses'] * 100 : 0" style="width:100%" /></div>
-        <div class="ac-kpi"><small>Nota média nos quizzes</small><strong>{{ $nota($totals['nota']) }}</strong>
-            @if (! is_null($totals['nota'])) <x-academy.bar :percent="$totals['nota'] * 10" style="width:100%" /> @else <em>nenhum quiz respondido</em> @endif</div>
+        <div class="ac-kpi"><small>Nota média nas provas</small><strong>{{ $nota($totals['nota']) }}</strong>
+            @if (! is_null($totals['nota'])) <x-academy.bar :percent="$totals['nota'] * 10" style="width:100%" /> @else <em>nenhuma prova entregue</em> @endif</div>
         <div class="ac-kpi"><small>Em andamento · A fazer</small><strong>{{ $totals['courses_progress'] }} · {{ $totals['courses_todo'] }}</strong><em>cursos</em></div>
         <div class="ac-kpi"><small>Tempo de estudo</small><strong>{{ $fmtTime($totals['minutes']) }}</strong><em>tempo ativo nas aulas</em></div>
         <div class="ac-kpi"><small>Certificados</small><strong>{{ $totals['certificates'] }}</strong><em>conquistados</em></div>
@@ -55,13 +55,14 @@
             <a class="ac-card ac-course-card" href="{{ url('/academia/curso/'.$c['slug']).'?aula='.$c['next_lesson_id'] }}" wire:key="card-{{ $c['id'] }}">
                 <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
                     <h3>{{ $c['title'] }}</h3>
+                    @unless ($c['published'])<span class="ac-badge" style="background:#ede9fe;color:#5b21b6">Rascunho · só você vê</span>@endunless
                     <span class="ac-badge {{ $c['status'] }}">{{ ['todo' => 'A fazer', 'progress' => 'Em andamento', 'done' => 'Concluído'][$c['status']] }}</span>
                 </div>
                 @if ($c['description']) <p>{{ $c['description'] }}</p> @endif
                 <x-academy.bar :percent="$c['percent']" :label="$c['lessons_done'].' de '.$c['lessons_total'].' aulas'" style="width:100%" :height="9" />
                 <div class="ac-meta">
-                    <span>@if (! is_null($c['nota'])) Nota <b style="color:{{ $c['nota'] >= 7 ? '#16a34a' : ($c['nota'] >= 5 ? '#d97706' : '#dc2626') }}">{{ $nota($c['nota']) }}</b> @elseif ($c['quiz_total']) Quiz pendente @else Sem quiz @endif</span>
-                    <span>{{ $c['certificate'] ? '🎓 Certificado' : ($c['status'] === 'done' ? '⏳ Falta acertar o quiz' : '') }}</span>
+                    <span>@if (! is_null($c['nota'])) Nota <b style="color:{{ $c['nota'] >= 7 ? '#16a34a' : ($c['nota'] >= 5 ? '#d97706' : '#dc2626') }}">{{ $nota($c['nota']) }}</b> @elseif ($c['quizzes_total']) Prova pendente @else Sem prova @endif</span>
+                    <span>{{ $c['certificate'] ? '🎓 Certificado' : ($c['status'] === 'done' ? '⏳ Falta a prova ou a nota mínima' : '') }}</span>
                 </div>
             </a>
         @empty
@@ -73,14 +74,14 @@
         <h2>Estatísticas por curso</h2>
         <div class="ac-table-wrap">
             <table class="ac-table" data-testid="course-stats">
-                <thead><tr><th>Curso</th><th style="min-width:150px">Aulas</th><th>Nota</th><th>Acertos (respondidas)</th><th>Tempo</th><th>Pontos</th><th>Certificado</th></tr></thead>
+                <thead><tr><th>Curso</th><th style="min-width:150px">Aulas</th><th>Nota</th><th>Acertos · provas</th><th>Tempo</th><th>Pontos</th><th>Certificado</th></tr></thead>
                 <tbody>
                 @forelse ($all as $c)
                     <tr wire:key="row-{{ $c['id'] }}">
                         <td><a href="{{ url('/academia/curso/'.$c['slug']) }}"><b>{{ $c['title'] }}</b></a></td>
                         <td><x-academy.bar :percent="$c['percent']" :label="$c['lessons_done'].'/'.$c['lessons_total']" style="width:100%" /></td>
                         <td>@if (! is_null($c['nota'])) <x-academy.bar :percent="$c['nota'] * 10" :label="$nota($c['nota'])" style="min-width:90px" /> @else — @endif</td>
-                        <td>{{ $c['quiz_total'] ? $c['quiz_correct'].' de '.$c['quiz_answered'].' (de '.$c['quiz_total'].')' : '—' }}</td>
+                        <td>{{ $c['quizzes_total'] ? $c['quiz_correct'].' de '.$c['quiz_graded'].' · provas '.$c['quizzes_delivered'].'/'.$c['quizzes_total'] : '—' }}</td>
                         <td>{{ $fmtTime($c['minutes']) }}</td>
                         <td>{{ $c['points'] }}</td>
                         <td>{{ $c['certificate'] ? '🎓 '.$c['certificate']->code : '—' }}</td>

@@ -5,17 +5,18 @@ namespace App\Services;
 use App\Models\AcademyCertificate;
 use App\Models\AcademyPoint;
 use App\Models\Course;
-use App\Models\LessonAnswer;
 use App\Models\LessonProgress;
 use App\Models\LessonQuestion;
+use App\Models\LessonQuizSubmission;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
 
 /**
- * Certificado de conclusao: emitido quando o usuario conclui TODAS as aulas liberadas pro contrato
- * dele naquele curso E acerta todas as perguntas do quiz dessas aulas. Uma vez emitido, vale
- * (nao e' retirado se ele desmarcar uma aula depois).
+ * Certificado de conclusao: emitido quando o usuario (1) conclui TODAS as aulas liberadas pro contrato
+ * dele naquele curso, (2) ENTREGA a prova de todas as aulas que tem perguntas e (3) atinge a nota
+ * minima (config oravel.academy.passing_grade) no conjunto das provas. Questao em branco vale zero.
+ * Uma vez emitido, vale (nao e' retirado se ele desmarcar uma aula depois).
  */
 class AcademyCertificates
 {
@@ -31,12 +32,20 @@ class AcademyCertificates
             return false;
         }
 
-        $questionIds = LessonQuestion::whereIn('lesson_id', $lessonIds)->pluck('id');
-        if ($questionIds->isEmpty()) {
+        $quizLessonIds = LessonQuestion::whereIn('lesson_id', $lessonIds)->distinct()->pluck('lesson_id');
+        if ($quizLessonIds->isEmpty()) {
             return true;
         }
 
-        return LessonAnswer::where('user_id', $user->id)->whereIn('question_id', $questionIds)->where('is_correct', true)->count() >= $questionIds->count();
+        $submissions = LessonQuizSubmission::where('user_id', $user->id)->whereIn('lesson_id', $quizLessonIds)->get();
+        if ($submissions->count() < $quizLessonIds->count()) {
+            return false; // falta entregar alguma prova
+        }
+
+        $total = (int) $submissions->sum('total_questions');
+        $grade = $total ? $submissions->sum('correct_answers') / $total * 10 : 0;
+
+        return $grade + 1e-9 >= (float) config('oravel.academy.passing_grade');
     }
 
     public function find(User $user, Course $course): ?AcademyCertificate

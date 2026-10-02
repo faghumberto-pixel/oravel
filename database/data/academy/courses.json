@@ -1,0 +1,488 @@
+[
+    {
+        "title": "Comece Aqui",
+        "description": "Entenda como a Oravel funciona e como as peças do sistema se encaixam.",
+        "lessons": [
+            {
+                "title": "Bem-vindo à Oravel",
+                "href": "/index.html",
+                "slug": "index",
+                "summary": "Tutorial completo do sistema Oravel: cada painel, cada módulo, como usar, para quem é e quando usar.",
+                "feature": null
+            },
+            {
+                "title": "Visão Geral do Sistema",
+                "href": "/visao-geral.html",
+                "slug": "visao-geral",
+                "summary": "Como as peças da Oravel se encaixam: Ativos, Contratos, Ordens de Serviço e Manutenção Preventiva.",
+                "feature": null
+            }
+        ]
+    },
+    {
+        "title": "Painel Admin",
+        "description": "O painel do dia a dia: dashboard, quadro do pátio e agenda dos técnicos.",
+        "lessons": [
+            {
+                "title": "Visão Geral do Painel Admin",
+                "href": "/painel-admin/index.html",
+                "slug": "painel-admin__index",
+                "summary": "O que é o Painel Admin da Oravel, quem deve usar e como ele é organizado.",
+                "feature": null
+            },
+            {
+                "title": "Dashboard",
+                "href": "/painel-admin/dashboard.html",
+                "slug": "painel-admin__dashboard",
+                "summary": "Os indicadores e gráficos que aparecem na tela inicial do Painel Admin.",
+                "feature": "modulo_dashboard"
+            },
+            {
+                "title": "Kanban de Manutenção (Pátio)",
+                "href": "/painel-admin/kanban.html",
+                "slug": "painel-admin__kanban",
+                "summary": "O board de arrastar-e-soltar do pátio de manutenção, com destaque automático de urgência comercial.",
+                "feature": "tabela_maintenance_orders"
+            },
+            {
+                "title": "Agenda Técnica",
+                "href": "/painel-admin/agenda-tecnica.html",
+                "slug": "painel-admin__agenda-tecnica",
+                "summary": "Calendário por técnico juntando compromissos avulsos e Ordens de Serviço com data agendada.",
+                "feature": "tabela_maintenance_orders"
+            }
+        ]
+    },
+    {
+        "title": "Ativos e Frota",
+        "description": "Cadastre e acompanhe equipamentos, grupos de checklist e o dossiê rápido por QR Code.",
+        "lessons": [
+            {
+                "title": "Ativos (Equipamentos)",
+                "href": "/modulos/ativos.html",
+                "slug": "modulos__ativos",
+                "summary": "Como cadastrar, acompanhar e controlar o status de cada equipamento na Oravel.",
+                "feature": "tabela_assets"
+            },
+            {
+                "title": "Categorias e Grupos de Checklist",
+                "href": "/modulos/grupos-checklist.html",
+                "slug": "modulos__grupos-checklist",
+                "summary": "Como o Grupo de Checklist conecta o Ativo ao checklist básico e ao plano de manutenção preventiva.",
+                "feature": "tabela_checklist_groups"
+            },
+            {
+                "title": "Dossiê Rápido do Ativo (QR Code)",
+                "href": "/modulos/dossie-ativo.html",
+                "slug": "modulos__dossie-ativo",
+                "summary": "A tela mobile que aparece ao escanear o QR Code impresso na etiqueta de um Ativo.",
+                "feature": "tabela_assets"
+            }
+        ]
+    },
+    {
+        "title": "Manutenção",
+        "description": "Ordens de serviço, modo campo, preventiva, checklist, mobilização, avarias e substituição de equipamento.",
+        "lessons": [
+            {
+                "title": "Ordens de Serviço",
+                "href": "/modulos/ordens-servico.html",
+                "slug": "modulos__ordens-servico",
+                "summary": "O coração operacional da Oravel: como abrir, acompanhar e concluir uma Ordem de Serviço.",
+                "feature": "tabela_maintenance_orders"
+            },
+            {
+                "title": "Modo Campo (Wizard Mobile)",
+                "href": "/modulos/modo-campo.html",
+                "slug": "modulos__modo-campo",
+                "summary": "O passo a passo que o técnico usa no celular pra executar uma Ordem de Serviço em campo, do equipamento até a assinatura.",
+                "feature": "tabela_maintenance_orders"
+            },
+            {
+                "title": "Manutenção Preventiva",
+                "href": "/modulos/manutencao-preventiva.html",
+                "slug": "modulos__manutencao-preventiva",
+                "summary": "Como configurar planos de manutenção preventiva por horímetro, individual ou por Grupo de Ativo, e executá-los pelo celular.",
+                "feature": "tabela_preventive_maintenance_executions"
+            },
+            {
+                "title": "Checklist de Inspeção",
+                "href": "/modulos/checklist-inspecao.html",
+                "slug": "modulos__checklist-inspecao",
+                "summary": "Como o checklist básico do Grupo de Ativo vira um checklist real dentro de cada Ordem de Serviço.",
+                "feature": "tabela_checklist_templates"
+            },
+            {
+                "title": "Mobilização e Desmobilização",
+                "href": "/modulos/mobilizacao.html",
+                "slug": "modulos__mobilizacao",
+                "summary": "O checklist mobile de saída e retorno de um equipamento, com atribuição de veículo/motorista, foto, geolocalização, rastreamento e assinatura.",
+                "feature": "tabela_equipment_movements"
+            },
+            {
+                "title": "Avarias de Equipamento",
+                "href": "/modulos/avarias.html",
+                "slug": "modulos__avarias",
+                "summary": "Como registrar uma avaria em campo e o fluxo de diagnóstico e cobrança até a resolução.",
+                "feature": "tabela_equipment_damages"
+            },
+            {
+                "title": "Substituição de Equipamento",
+                "href": "/modulos/substituicao-equipamento.html",
+                "slug": "modulos__substituicao-equipamento",
+                "summary": "Como funciona a troca de um equipamento locado por outro, do pedido até a assinatura do cliente.",
+                "feature": "tabela_equipment_replacements"
+            }
+        ]
+    },
+    {
+        "title": "Processo de Manutenção",
+        "description": "Da abertura da OS ao equipamento de volta: como a manutenção funciona de ponta a ponta.",
+        "lessons": [
+            {
+                "title": "Como Funciona a Manutenção",
+                "href": "/manutencao/processo-manutencao.html",
+                "slug": "manutencao__processo-manutencao",
+                "summary": "Guia completo do processo de manutenção da Oravel: Ordens de Serviço, checklist, preventiva, quadro de acompanhamento, relatórios e avisos automáticos.",
+                "feature": "tabela_maintenance_orders"
+            }
+        ]
+    },
+    {
+        "title": "Conformidade",
+        "description": "NR-13, NR-6 (EPI) e PMOC: documentos, inspeções e alertas de vencimento.",
+        "lessons": [
+            {
+                "title": "Conformidade NR-13",
+                "href": "/modulos/conformidade-nr13.html",
+                "slug": "modulos__conformidade-nr13",
+                "summary": "Como a Oravel controla documentos e inspeções de caldeiras, vasos de pressão, tubulações e tanques conforme a NR-13.",
+                "feature": "tabela_asset_nr13_specifications"
+            },
+            {
+                "title": "Conformidade NR-6 (EPI)",
+                "href": "/modulos/conformidade-nr6-epi.html",
+                "slug": "modulos__conformidade-nr6-epi",
+                "summary": "Como a Oravel controla entrega, CA e vida útil de Equipamentos de Proteção Individual (EPI) conforme a NR-6.",
+                "feature": "tabela_epi_deliveries"
+            },
+            {
+                "title": "PMOC",
+                "href": "/modulos/pmoc.html",
+                "slug": "modulos__pmoc",
+                "summary": "Plano de Manutenção, Operação e Controle de sistemas de climatização — cadastro, vigência e parâmetros de qualidade do ar.",
+                "feature": "tabela_pmocs"
+            }
+        ]
+    },
+    {
+        "title": "Logística",
+        "description": "Frota leve, motoristas e chegadas no pátio.",
+        "lessons": [
+            {
+                "title": "Frota Leve (Veículos)",
+                "href": "/modulos/frota-leve.html",
+                "slug": "modulos__frota-leve",
+                "summary": "Gestão dos veículos próprios da empresa (não os equipamentos de locação): documentos, manutenção, pedágio e combustível.",
+                "feature": "tabela_fleet_vehicles"
+            },
+            {
+                "title": "Motoristas",
+                "href": "/modulos/motoristas.html",
+                "slug": "modulos__motoristas",
+                "summary": "Cadastro de motoristas próprios e terceiros, com CNH, documentação e veículos habilitados.",
+                "feature": "tabela_fleet_drivers"
+            },
+            {
+                "title": "Chegadas no Pátio",
+                "href": "/modulos/chegada-patio.html",
+                "slug": "modulos__chegada-patio",
+                "summary": "Confirmação formal de que um equipamento voltou ao pátio, com histórico permanente por Ativo.",
+                "feature": "tabela_fleet_statuses"
+            }
+        ]
+    },
+    {
+        "title": "Processo Logístico",
+        "description": "Como funciona a logística: frota, motoristas, disponibilidade em tempo real e chegadas no pátio.",
+        "lessons": [
+            {
+                "title": "Como Funciona a Logística",
+                "href": "/logistica/processo-logistico.html",
+                "slug": "logistica__processo-logistico",
+                "summary": "Guia completo do processo logístico da Oravel: a jornada do equipamento, checklists de saída e retorno, veículos e motoristas, custo de viagem, locação e avarias.",
+                "feature": "tabela_fleet_vehicles"
+            }
+        ]
+    },
+    {
+        "title": "Comercial",
+        "description": "Contratos, clientes, propostas, orçamentos, solicitações de locação e CRM (leads, funil, agenda e mapa).",
+        "lessons": [
+            {
+                "title": "Contratos",
+                "href": "/modulos/contratos.html",
+                "slug": "modulos__contratos",
+                "summary": "Como cadastrar um contrato de locação na Oravel e o que acontece automaticamente com o Ativo vinculado.",
+                "feature": "tabela_contracts"
+            },
+            {
+                "title": "Clientes",
+                "href": "/modulos/clientes.html",
+                "slug": "modulos__clientes",
+                "summary": "Como cadastrar clientes na Oravel e quais campos da ficha ERP realmente são salvos hoje.",
+                "feature": "tabela_clients"
+            },
+            {
+                "title": "Proposta Comercial",
+                "href": "/modulos/proposta-comercial.html",
+                "slug": "modulos__proposta-comercial",
+                "summary": "Como o vendedor de campo monta uma proposta comercial pelo celular, item a item, com termos personalizados, e como o time Comercial aprova e aciona o equipamento ou serviço.",
+                "feature": "tabela_proposta_comercial"
+            },
+            {
+                "title": "Solicitações de Locação",
+                "href": "/modulos/solicitacoes-locacao.html",
+                "slug": "modulos__solicitacoes-locacao",
+                "summary": "Como acompanhar uma proposta comercial de locação, da negociação até o fechamento do contrato.",
+                "feature": "tabela_solicitacao_locacao"
+            },
+            {
+                "title": "Orçamentos",
+                "href": "/modulos/orcamentos.html",
+                "slug": "modulos__orcamentos",
+                "summary": "Como gerar um orçamento a partir de uma manutenção ou de uma avaria, e como o cliente aprova pelo link sem precisar logar no sistema.",
+                "feature": "tabela_quotes"
+            },
+            {
+                "title": "CRM: Leads",
+                "href": "/modulos/leads.html",
+                "slug": "modulos__leads",
+                "summary": "Cadastro de leads comerciais, estágios do funil de venda e histórico de interações.",
+                "feature": "tabela_crm_leads"
+            },
+            {
+                "title": "Funil de Vendas",
+                "href": "/modulos/funil-vendas.html",
+                "slug": "modulos__funil-vendas",
+                "summary": "Visão em pirâmide da carteira de leads por estágio, com conversão e valor estimado.",
+                "feature": "tabela_crm_leads"
+            },
+            {
+                "title": "Agenda Comercial",
+                "href": "/modulos/agenda-comercial.html",
+                "slug": "modulos__agenda-comercial",
+                "summary": "Calendário de follow-ups comerciais, gerado a partir das interações registradas em cada Lead.",
+                "feature": "tabela_crm_leads"
+            },
+            {
+                "title": "Mapa Comercial",
+                "href": "/modulos/mapa-leads.html",
+                "slug": "modulos__mapa-leads",
+                "summary": "Mapa geográfico unificando Clientes e Leads, a partir do endereço geolocalizado de cada um.",
+                "feature": "tabela_crm_leads"
+            }
+        ]
+    },
+    {
+        "title": "Processo Comercial",
+        "description": "Da prospecção do lead ao contrato fechado: funil, proposta, pedido de locação e cliente.",
+        "lessons": [
+            {
+                "title": "Como Funciona a Locação e o Comercial",
+                "href": "/comercial/processo-comercial.html",
+                "slug": "comercial__processo-comercial",
+                "summary": "Guia completo do processo comercial da Oravel: prospecção de leads, funil de vendas, pedidos de locação, contratos e cadastro de clientes.",
+                "feature": "tabela_contracts"
+            }
+        ]
+    },
+    {
+        "title": "Suprimentos",
+        "description": "Materiais, peças, fornecedores, solicitações de compra e o ciclo de compras.",
+        "lessons": [
+            {
+                "title": "Materiais e Peças",
+                "href": "/modulos/materiais.html",
+                "slug": "modulos__materiais",
+                "summary": "Cadastro de materiais/peças, controle de estoque e como o consumo numa OS dispara compra automática.",
+                "feature": "tabela_materials"
+            },
+            {
+                "title": "Fornecedores",
+                "href": "/modulos/fornecedores.html",
+                "slug": "modulos__fornecedores",
+                "summary": "Cadastro de fornecedores homologados na Oravel: dados, critérios de compliance e vínculo com Materiais.",
+                "feature": "tabela_suppliers"
+            },
+            {
+                "title": "Solicitação de Peças (Compras)",
+                "href": "/modulos/solicitacao-pecas.html",
+                "slug": "modulos__solicitacao-pecas",
+                "summary": "Como funciona a fila de compra de peças gerada automaticamente quando o estoque de um material fica baixo.",
+                "feature": "tabela_parts_requests"
+            },
+            {
+                "title": "Ciclo de Compras (Requisição → OC → Recebimento)",
+                "href": "/modulos/ciclo-compras.html",
+                "slug": "modulos__ciclo-compras",
+                "summary": "O fluxo completo de compras: da Requisição de Peças até o Recebimento, com entrada automática no estoque.",
+                "feature": "tabela_purchase_orders"
+            }
+        ]
+    },
+    {
+        "title": "Processo de Suprimentos",
+        "description": "Do pedido de peça à requisição, ordem de compra e recebimento.",
+        "lessons": [
+            {
+                "title": "Suprimentos, Materiais e Peças",
+                "href": "/suprimentos/processo-suprimentos.html",
+                "slug": "suprimentos__processo-suprimentos",
+                "summary": "Como o ciclo de compras de Suprimentos funciona: requisição, cotação, ordem de compra, recebimento e estoque.",
+                "feature": "tabela_material_requests"
+            }
+        ]
+    },
+    {
+        "title": "Gestão e Equipe",
+        "description": "Departamentos, perfis de acesso, usuários e chat interno.",
+        "lessons": [
+            {
+                "title": "Departamentos (Equipes)",
+                "href": "/modulos/departamentos.html",
+                "slug": "modulos__departamentos",
+                "summary": "Como agrupar funcionários por departamento na Oravel.",
+                "feature": "tabela_departments"
+            },
+            {
+                "title": "Perfis de Acesso",
+                "href": "/modulos/perfis-acesso.html",
+                "slug": "modulos__perfis-acesso",
+                "summary": "Como criar perfis de acesso na Oravel e controlar o que cada cargo pode ver, criar, editar e excluir, módulo por módulo.",
+                "feature": "tabela_roles"
+            },
+            {
+                "title": "Usuários / Funcionários",
+                "href": "/modulos/usuarios.html",
+                "slug": "modulos__usuarios",
+                "summary": "Como cadastrar funcionários na Oravel, atribuir departamento, perfil de acesso e valor da hora.",
+                "feature": "tabela_users"
+            },
+            {
+                "title": "Chat Interno",
+                "href": "/modulos/chat.html",
+                "slug": "modulos__chat",
+                "summary": "Como funciona o chat interno da Oravel: widget flutuante, tela cheia, chat da Ordem de Serviço, app instalável (PWA) e Caixa de E-mail.",
+                "feature": "modulo_chat"
+            }
+        ]
+    },
+    {
+        "title": "Departamento Pessoal",
+        "description": "Colaboradores, certificações, alocação de equipamento e ponto eletrônico.",
+        "lessons": [
+            {
+                "title": "Colaboradores",
+                "href": "/modulos/colaboradores.html",
+                "slug": "modulos__colaboradores",
+                "summary": "O cadastro de Colaborador (Departamento Pessoal): certificação NR, admissão, e como ele se conecta ao Usuário do painel.",
+                "feature": "tabela_employees"
+            },
+            {
+                "title": "Alocação de Equipamento",
+                "href": "/modulos/alocacao-equipamento.html",
+                "slug": "modulos__alocacao-equipamento",
+                "summary": "Como alocar um Colaborador a um Ativo — e por que a certificação NR vencida bloqueia essa alocação.",
+                "feature": "tabela_equipment_allocations"
+            },
+            {
+                "title": "Ponto Eletrônico",
+                "href": "/modulos/ponto-eletronico.html",
+                "slug": "modulos__ponto-eletronico",
+                "summary": "Como o colaborador bate ponto pelo celular, mesmo sem internet, com geolocalização.",
+                "feature": "tabela_time_clocks"
+            }
+        ]
+    },
+    {
+        "title": "Processo Financeiro e Administrativo",
+        "description": "Contas a pagar e a receber, fluxo de caixa projetado, estoque, departamentos e equipe.",
+        "lessons": [
+            {
+                "title": "Como Funciona o Financeiro e o Administrativo",
+                "href": "/financeiro/processo-financeiro.html",
+                "slug": "financeiro__processo-financeiro",
+                "summary": "Guia completo do financeiro e administrativo da Oravel: departamentos, perfis de acesso, funcionários, contas a pagar, estoque de peças e auditoria.",
+                "feature": "tabela_account_payables"
+            }
+        ]
+    },
+    {
+        "title": "Ferramentas",
+        "description": "Impressão e exportação para Excel.",
+        "lessons": [
+            {
+                "title": "Impressão e Exportação (Excel)",
+                "href": "/modulos/impressao-exportacao.html",
+                "slug": "modulos__impressao-exportacao",
+                "summary": "Como funcionam os botões Imprimir e Exportar que aparecem nas principais listagens da Oravel.",
+                "feature": null
+            }
+        ]
+    },
+    {
+        "title": "Comunicação",
+        "description": "Fotos, evidências e descrição em áudio: como a equipe registra e troca informação em campo.",
+        "lessons": [
+            {
+                "title": "Fotos e Evidências",
+                "href": "/comunicacao/fotos-evidencias.html",
+                "slug": "comunicacao__fotos-evidencias",
+                "summary": "Onde e como anexar fotos como evidência na Oravel: checklist, avarias, mobilização e ordens de serviço.",
+                "feature": null
+            },
+            {
+                "title": "Descrição em Áudio",
+                "href": "/comunicacao/descricao-audio.html",
+                "slug": "comunicacao__descricao-audio",
+                "summary": "Como enviar e ouvir mensagens de áudio no Chat Interno da Oravel.",
+                "feature": null
+            }
+        ]
+    },
+    {
+        "title": "Guias Práticos",
+        "description": "Passo a passo para as tarefas mais comuns do dia a dia.",
+        "lessons": [
+            {
+                "title": "Como abrir uma Ordem de Serviço",
+                "href": "/guias/abrir-os.html",
+                "slug": "guias__abrir-os",
+                "summary": "Passo a passo pra abrir e apontar uma Ordem de Serviço na Oravel.",
+                "feature": "tabela_maintenance_orders"
+            },
+            {
+                "title": "Como registrar uma Avaria",
+                "href": "/guias/registrar-avaria.html",
+                "slug": "guias__registrar-avaria",
+                "summary": "Passo a passo pra registrar uma avaria de equipamento pelo celular durante mobilização ou desmobilização.",
+                "feature": "tabela_equipment_damages"
+            },
+            {
+                "title": "Como configurar Preventiva por Horímetro",
+                "href": "/guias/configurar-preventiva.html",
+                "slug": "guias__configurar-preventiva",
+                "summary": "Passo a passo pra criar um plano de manutenção preventiva por horas trabalhadas, individual ou por Grupo de Ativo.",
+                "feature": "tabela_preventive_maintenance_executions"
+            },
+            {
+                "title": "Como usar o QR Code no campo",
+                "href": "/guias/usar-qrcode.html",
+                "slug": "guias__usar-qrcode",
+                "summary": "Passo a passo pra consultar o Dossiê Rápido de um equipamento escaneando o QR Code da etiqueta.",
+                "feature": "tabela_assets"
+            }
+        ]
+    }
+]

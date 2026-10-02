@@ -3,28 +3,20 @@
 namespace App\Filament\Resources\CourseResource\Pages;
 
 use App\Filament\Resources\CourseResource;
-use App\Services\AcademyPoints;
-use Filament\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
 
+/**
+ * A Academia tem pagina propria (/academia). Esta entrada do Filament so' existe para o menu e
+ * a autorizacao (modulo no contrato + permissao): quem chegar aqui e' levado para a Academia.
+ */
 class ListCourses extends ListRecords
 {
     protected static string $resource = CourseResource::class;
 
-    protected function getHeaderActions(): array
+    public function mount(): void
     {
-        $points = auth()->user() ? app(AcademyPoints::class)->total(auth()->user()) : 0;
+        parent::mount();
 
-        return [
-            Action::make('equipe')
-                ->label('Participação da equipe')
-                ->icon('heroicon-o-chart-bar')
-                ->visible(fn () => (bool) auth()->user()?->isAdmin() && auth()->user()->tenant_id)
-                ->url(CourseResource::getUrl('equipe')),
-            Action::make('ranking')
-                ->label('⭐ '.number_format($points, 0, ',', '.').' pontos · Ranking')
-                ->color('gray')
-                ->url(CourseResource::getUrl('ranking')),
-        ];
+        $this->redirect(url('/academia'));
     }
 }

@@ -1,0 +1,588 @@
+[
+ {
+  "page": "/modulos/materiais.html",
+  "questions": [
+   {
+    "q": "Uma peça tem estoque atual 7 e estoque mínimo 4. O técnico lança o uso de 5 unidades numa Ordem de Serviço. O que acontece?",
+    "options": [
+     "O estoque cai para 2 sozinho e, como ficou abaixo do mínimo, o sistema cria uma Solicitação de Peças pendente",
+     "O estoque continua 7 até o almoxarifado conferir a OS",
+     "O estoque cai para 2 e o sistema só envia um aviso, sem criar nenhuma solicitação",
+     "O sistema bloqueia o lançamento porque o consumo deixaria o estoque abaixo do mínimo"
+    ],
+    "correct": 0,
+    "why": "A baixa é automática e, se o saldo ficar abaixo do mínimo, a Solicitação de Peças nasce sozinha."
+   },
+   {
+    "q": "Qual é a quantidade sugerida na Solicitação de Peças criada automaticamente?",
+    "options": [
+     "Sempre 1 unidade",
+     "Pelo menos o necessário para chegar ao estoque máximo configurado",
+     "Exatamente o estoque mínimo configurado",
+     "Somente a quantidade que foi consumida na OS"
+    ],
+    "correct": 1,
+    "why": "A quantidade sugerida cobre pelo menos até o estoque máximo configurado."
+   },
+   {
+    "q": "Qual campo do cadastro obriga o técnico a informar o número de série da peça antes de salvar o uso numa OS?",
+    "options": [
+     "Dias de garantia",
+     "Exige número de série ao aplicar",
+     "Part Number (fabricante)",
+     "Código de barras (EAN)"
+    ],
+    "correct": 1,
+    "why": "Com “exige número de série” ligado, o técnico é obrigado a informar o nº de série antes de salvar o uso."
+   },
+   {
+    "q": "Em que situação o alerta de garantia é disparado para os administradores?",
+    "options": [
+     "Todo dia em que a garantia da peça vence",
+     "Quando uma peça com garantia e que exige nº de série é usada de novo com o mesmo número de série dentro do prazo",
+     "Quando o estoque da peça fica abaixo do mínimo",
+     "Quando o fornecedor homologado da peça é trocado"
+    ],
+    "correct": 1,
+    "why": "Mesma peça, mesmo nº de série, falhando dentro da garantia: sinal de defeito e de possível acionamento do fornecedor."
+   },
+   {
+    "q": "Para que serve o campo “Grupos de Ativo Compatíveis” no cadastro da peça?",
+    "options": [
+     "Calcular a depreciação da peça",
+     "Impedir que a peça seja usada em outros equipamentos",
+     "Indicar quais tipos de equipamento usam a peça, alimentando as sugestões na Manutenção Preventiva",
+     "Definir qual fornecedor entrega a peça"
+    ],
+    "correct": 2,
+    "why": "A compatibilidade com os grupos de ativos é o que permite sugerir as peças certas na preventiva."
+   },
+   {
+    "q": "O que o cartão “Sem Fornecedor Homologado” mostra?",
+    "options": [
+     "Quantos materiais ainda não têm fornecedor homologado vinculado (pendência de cadastro)",
+     "Quantas peças estão com o estoque zerado",
+     "Quantos fornecedores estão sem certidão",
+     "Quantas solicitações de peças estão sem fornecedor"
+    ],
+    "correct": 0,
+    "why": "É uma pendência de homologação: o material está sem fornecedor homologado."
+   },
+   {
+    "q": "O cartão “Abaixo do Mínimo” aparece em vermelho. O que ele indica?",
+    "options": [
+     "Peças com garantia vencida",
+     "Peças com preço acima do custo",
+     "Peças sem número de série cadastrado",
+     "Risco de ruptura: peças que podem faltar na próxima Ordem de Serviço"
+    ],
+    "correct": 3,
+    "why": "Abaixo do mínimo significa risco de ruptura de estoque."
+   },
+   {
+    "q": "Como é formado o campo “Estoque Atual” do cadastro do material?",
+    "options": [
+     "É digitado manualmente no cadastro, a cada compra",
+     "É a média dos últimos recebimentos",
+     "É calculado: soma automática do saldo de cada filial, não é digitado no cadastro",
+     "É sempre igual ao estoque máximo configurado"
+    ],
+    "correct": 2,
+    "why": "O estoque total é somado automaticamente a partir do saldo por filial."
+   },
+   {
+    "q": "Qual identificador é obrigatório e único no cadastro de um material?",
+    "options": [
+     "SKU / Código",
+     "Part Number do fabricante",
+     "NCM",
+     "Código de barras (EAN)"
+    ],
+    "correct": 0,
+    "why": "O SKU é o código único e obrigatório do item."
+   },
+   {
+    "q": "Qual é o caminho do menu para o catálogo de Materiais e Peças?",
+    "options": [
+     "Ativos → Gestão de Ativos → Materiais",
+     "Materiais e Peças → Gestão de Estoque → Materiais/Peças",
+     "Materiais e Peças → Gestão de Compras → Materiais",
+     "Manutenção → Operação → Materiais"
+    ],
+    "correct": 1,
+    "why": "O catálogo fica em Gestão de Estoque, dentro do grupo Materiais e Peças."
+   },
+   {
+    "q": "Quem normalmente cadastra e mantém o catálogo, e o que os técnicos costumam ver?",
+    "options": [
+     "Os técnicos cadastram; compras só consulta",
+     "Somente o administrador da empresa; técnicos não enxergam o catálogo",
+     "O fornecedor mantém o catálogo e a oficina só confere",
+     "Compras/logística cadastra e mantém; técnicos consultam o catálogo em modo leitura ao lançar consumo numa OS"
+    ],
+    "correct": 3,
+    "why": "O catálogo é mantido por compras/logística; o técnico apenas consulta ao lançar consumo."
+   },
+   {
+    "q": "Você exporta a lista de materiais depois de filtrar por “Abaixo do Estoque Mínimo”. O que sai no arquivo?",
+    "options": [
+     "Todos os materiais, ignorando o filtro",
+     "Somente a primeira página da tabela, em PDF",
+     "Somente os materiais filtrados, em Excel ou CSV",
+     "Somente as colunas visíveis na tela, sem opção de escolha"
+    ],
+    "correct": 2,
+    "why": "Imprimir e Exportar respeitam os filtros aplicados na tela; a exportação é em Excel/CSV."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/fornecedores.html",
+  "questions": [
+   {
+    "q": "Quando um fornecedor aparece como “Compliance Completo” nos indicadores?",
+    "options": [
+     "Quando os três critérios de regularidade estão em dia (CEIS/CNEP, Lista de Trabalho Escravo e LGPD)",
+     "Quando todas as certidões foram enviadas como arquivo",
+     "Quando já recebeu pelo menos uma Ordem de Compra",
+     "Quando tem conta bancária ou chave PIX cadastrada"
+    ],
+    "correct": 0,
+    "why": "Compliance completo = os 3 critérios de regularidade em dia."
+   },
+   {
+    "q": "Como as certidões do fornecedor (CND Federal, CRF FGTS, CNDT etc.) são guardadas?",
+    "options": [
+     "Como arquivo PDF enviado ao sistema",
+     "O sistema baixa automaticamente dos órgãos oficiais",
+     "Como link ou referência, sem upload de arquivo",
+     "Não são guardadas: só se marca se existem"
+    ],
+    "correct": 2,
+    "why": "As certidões ficam como link/referência; o sistema não faz upload de arquivo."
+   },
+   {
+    "q": "O que acontece se um fornecedor estiver com uma certidão vencida ou faltando?",
+    "options": [
+     "O sistema impede qualquer compra desse fornecedor",
+     "Nada é bloqueado: o checklist é informativo e a decisão é do time de compras",
+     "O sistema consulta o órgão e atualiza a certidão sozinho",
+     "A Ordem de Compra é cancelada automaticamente"
+    ],
+    "correct": 1,
+    "why": "Os campos são preenchidos manualmente; o sistema não consulta órgãos externos nem bloqueia."
+   },
+   {
+    "q": "O que mostra o indicador “Pendentes de Certidão”?",
+    "options": [
+     "Fornecedores que ainda não têm nenhum material vinculado",
+     "Fornecedores com alguma certidão faltando, como CND Federal, FGTS ou CNDT",
+     "Ordens de compra aguardando recebimento",
+     "Fornecedores sem chave PIX cadastrada"
+    ],
+    "correct": 1,
+    "why": "É a contagem de fornecedores com alguma certidão pendente."
+   },
+   {
+    "q": "Qual destes itens NÃO faz parte das certidões e arquivos da ficha do fornecedor?",
+    "options": [
+     "Cartão CNPJ",
+     "Alvará de funcionamento",
+     "Contrato Social",
+     "CNDT"
+    ],
+    "correct": 1,
+    "why": "A ficha prevê Cartão CNPJ, Contrato Social, CND Federal, CRF FGTS e CNDT."
+   },
+   {
+    "q": "O que o indicador “Materiais Vinculados” representa?",
+    "options": [
+     "Quantos materiais já foram comprados no mês",
+     "Quantas peças o fornecedor tem em estoque",
+     "Quantas ordens de compra estão abertas",
+     "Quantos materiais do catálogo apontam para fornecedores homologados"
+    ],
+    "correct": 3,
+    "why": "Mostra materiais homologados para compra, ligados aos fornecedores."
+   },
+   {
+    "q": "Qual é o caminho do menu para a tela de Fornecedores?",
+    "options": [
+     "Materiais e Peças → Gestão de Estoque → Fornecedores",
+     "Materiais e Peças → Gestão de Compras → Fornecedores",
+     "Comercial → Clientes → Fornecedores",
+     "Configurações → Empresas → Fornecedores"
+    ],
+    "correct": 1,
+    "why": "Fornecedores fica dentro de Gestão de Compras."
+   },
+   {
+    "q": "Na lista de Fornecedores, quais botões de saída existem?",
+    "options": [
+     "Somente Imprimir (não há exportação para Excel)",
+     "Imprimir e Exportar para Excel",
+     "Somente Exportar para Excel",
+     "Nenhum: a lista não pode ser impressa"
+    ],
+    "correct": 0,
+    "why": "A listagem de fornecedores tem o botão Imprimir, com os filtros aplicados."
+   },
+   {
+    "q": "Quem normalmente cadastra e homologa os fornecedores?",
+    "options": [
+     "O técnico de campo",
+     "A equipe de compras/logística",
+     "O time comercial",
+     "O próprio fornecedor, por um link"
+    ],
+    "correct": 1,
+    "why": "Compras/logística cadastra e homologa."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/solicitacao-pecas.html",
+  "questions": [
+   {
+    "q": "Como uma Solicitação de Peças é criada?",
+    "options": [
+     "O técnico clica em “Nova Solicitação”",
+     "O gestor cria no fim do mês com base no relatório",
+     "O fornecedor envia a solicitação pelo portal",
+     "Sozinha, quando o consumo numa OS ou preventiva deixa o estoque abaixo do mínimo"
+    ],
+    "correct": 3,
+    "why": "A solicitação nasce automaticamente do consumo; não existe botão de criação manual."
+   },
+   {
+    "q": "Um material já tem uma solicitação em aberto e o consumo continua deixando o estoque baixo. O que o sistema faz?",
+    "options": [
+     "Cria uma solicitação nova a cada consumo",
+     "Cancela a solicitação antiga e cria outra",
+     "Não cria outra: só gera solicitação quando ainda não existe uma em aberto para aquele material",
+     "Soma a quantidade na solicitação já entregue"
+    ],
+    "correct": 2,
+    "why": "A criação só acontece se ainda não houver solicitação em aberto para o material."
+   },
+   {
+    "q": "Quais campos da Solicitação de Peças podem ser editados na tela?",
+    "options": [
+     "Todos os campos, até a quantidade",
+     "Somente a quantidade",
+     "Nenhum campo, nem o status",
+     "Somente o status da logística; OS, material e quantidade ficam travados"
+    ],
+    "correct": 3,
+    "why": "OS, Material e Quantidade vêm do consumo real e ficam travados."
+   },
+   {
+    "q": "Quais são os três status de uma Solicitação de Peças?",
+    "options": [
+     "Rascunho, Aprovada e Recebida",
+     "Aberta, Cotada e Encerrada",
+     "Pendente, Em Trânsito e Cancelada",
+     "Pendente, Peça Comprada/Pedida e Entregue"
+    ],
+    "correct": 3,
+    "why": "Pendente → Peça Comprada/Pedida → Entregue."
+   },
+   {
+    "q": "O cartão “Custo em Peças no Mês” soma o quê?",
+    "options": [
+     "O custo das solicitações marcadas como entregues no mês",
+     "O custo de todas as solicitações pendentes",
+     "O valor do estoque atual",
+     "O custo das ordens de compra abertas"
+    ],
+    "correct": 0,
+    "why": "Soma o que foi marcado como entregue."
+   },
+   {
+    "q": "Por que não existe o botão “Nova Solicitação”?",
+    "options": [
+     "Porque o recurso ainda está em desenvolvimento",
+     "Porque só o administrador pode criar solicitações",
+     "De propósito: a fila deve refletir só o que foi realmente consumido, sem pedidos manuais soltos",
+     "Porque as solicitações são criadas pelo fornecedor"
+    ],
+    "correct": 2,
+    "why": "A ausência é intencional."
+   },
+   {
+    "q": "A tela de Solicitação de Peças permite exportar para Excel?",
+    "options": [
+     "Sim, em CSV e XLSX",
+     "Não: só há o botão Imprimir",
+     "Sim, mas só o administrador",
+     "Sim, somente as solicitações entregues"
+    ],
+    "correct": 1,
+    "why": "Não há exportação Excel para este módulo."
+   },
+   {
+    "q": "Qual é a função do botão “Converter em Requisição”?",
+    "options": [
+     "Cancelar a solicitação e devolver o estoque",
+     "Marcar a solicitação como entregue",
+     "Enviar a solicitação por e-mail ao fornecedor",
+     "Levar a solicitação para o ciclo formal de compras (cotação, ordem de compra e recebimento)"
+    ],
+    "correct": 3,
+    "why": "Liga a fila automática ao ciclo de Requisição de Compra."
+   },
+   {
+    "q": "Qual é o caminho do menu para a fila de Solicitações de peças?",
+    "options": [
+     "Manutenção → Operação → Solicitações",
+     "Materiais e Peças → Gestão de Estoque → Solicitações de peças",
+     "Materiais e Peças → Gestão de Compras → Solicitações de peças",
+     "Comercial → Solicitações de peças"
+    ],
+    "correct": 2,
+    "why": "Fica em Gestão de Compras."
+   },
+   {
+    "q": "No cartão de resumo, o que acontece com “Pendentes” quando há alguma solicitação pendente?",
+    "options": [
+     "Fica destacado, porque há peça faltando para alguma OS",
+     "Some da tela até alguém atualizar",
+     "Vira o total de solicitações entregues",
+     "Passa a mostrar apenas o custo"
+    ],
+    "correct": 0,
+    "why": "Pendente é destacado para chamar atenção da equipe de compras."
+   }
+  ]
+ },
+ {
+  "page": "/modulos/ciclo-compras.html",
+  "questions": [
+   {
+    "q": "Qual é a sequência correta do ciclo de compras?",
+    "options": [
+     "Cotação, Requisição, Recebimento, Ordem de Compra",
+     "Ordem de Compra, Requisição, Cotação, Recebimento",
+     "Requisição, Cotação, Ordem de Compra, Recebimento (e o estoque sobe)",
+     "Requisição, Recebimento, Cotação, Ordem de Compra"
+    ],
+    "correct": 2,
+    "why": "Alguém pede, compras cota, gera a ordem de compra e, na chegada, o recebimento atualiza o estoque."
+   },
+   {
+    "q": "É possível criar uma Ordem de Compra sem uma Requisição prévia?",
+    "options": [
+     "Não: toda Ordem de Compra exige uma Requisição aprovada",
+     "Sim: a Ordem de Compra Avulsa serve para reposição geral ou compras que não vêm de uma OS",
+     "Sim, mas só se o valor for menor que o estoque mínimo",
+     "Não: só o fornecedor pode abrir a ordem"
+    ],
+    "correct": 1,
+    "why": "A compra avulsa dispensa a requisição."
+   },
+   {
+    "q": "Uma requisição recebeu cotações de dois fornecedores. O que define qual vira Ordem de Compra?",
+    "options": [
+     "Sempre a de menor prazo de entrega",
+     "A primeira cotação registrada",
+     "A cotação marcada como vencedora (selecionada)",
+     "O sistema escolhe sozinho pelo menor valor"
+    ],
+    "correct": 2,
+    "why": "A cotação marcada como vencedora gera a Ordem de Compra."
+   },
+   {
+    "q": "O fornecedor entregou só parte do pedido. Como registrar?",
+    "options": [
+     "Fazer um Recebimento para essa remessa: a ordem fica Parcialmente recebida até tudo chegar",
+     "Esperar a entrega completa para registrar um único recebimento",
+     "Cancelar a ordem e abrir outra com a quantidade recebida",
+     "Editar o estoque do material na mão"
+    ],
+    "correct": 0,
+    "why": "Recebimentos parciais são aceitos; a ordem muda para Recebida quando tudo chegar."
+   },
+   {
+    "q": "Qual destes NÃO é um status de Ordem de Compra?",
+    "options": [
+     "Em cotação",
+     "Aberta",
+     "Parcialmente recebida",
+     "Cancelada"
+    ],
+    "correct": 0,
+    "why": "Os status são Aberta, Parcialmente recebida, Recebida e Cancelada."
+   },
+   {
+    "q": "Uma peça que “exige número de série” chega no recebimento sem o nº de série informado. O que acontece?",
+    "options": [
+     "O recebimento é aceito e o nº de série é cobrado depois",
+     "O sistema não deixa receber sem informar o número de série",
+     "O sistema gera um número de série aleatório",
+     "A ordem de compra é cancelada"
+    ],
+    "correct": 1,
+    "why": "Para materiais que exigem nº de série, o recebimento é bloqueado se ele não for informado."
+   },
+   {
+    "q": "Quais são as prioridades possíveis de uma Requisição de Compra?",
+    "options": [
+     "Baixa, Média e Alta",
+     "Rascunho, Urgente e Cancelada",
+     "Normal e Urgente, apenas",
+     "Normal, Urgente e Crítico"
+    ],
+    "correct": 3,
+    "why": "As prioridades são Normal, Urgente e Crítico."
+   },
+   {
+    "q": "O que fica registrado quando uma Requisição de Compra é aprovada?",
+    "options": [
+     "Apenas a data de entrega prevista",
+     "O fornecedor escolhido",
+     "Nada: a aprovação não deixa registro",
+     "Quem aprovou e quando"
+    ],
+    "correct": 3,
+    "why": "A aprovação registra o aprovador e a data/hora."
+   },
+   {
+    "q": "Quem faz cada parte do ciclo?",
+    "options": [
+     "Técnico ou supervisor abre a Requisição; Compras cota e gera a Ordem; o almoxarifado confirma o Recebimento",
+     "O técnico cota e gera a Ordem; Compras confirma o Recebimento",
+     "O almoxarifado abre a Requisição e o técnico confirma o Recebimento",
+     "Só o administrador executa todas as etapas"
+    ],
+    "correct": 0,
+    "why": "Cada papel cuida de uma etapa do ciclo."
+   },
+   {
+    "q": "Ao confirmar um Recebimento, o que acontece com o estoque do material?",
+    "options": [
+     "A quantidade recebida é somada automaticamente ao estoque",
+     "Nada: o estoque só muda quando o gestor ajusta",
+     "O estoque é zerado e recontado",
+     "A quantidade recebida é subtraída do estoque"
+    ],
+    "correct": 0,
+    "why": "O recebimento soma a quantidade recebida ao estoque."
+   },
+   {
+    "q": "Uma Requisição foi recusada. O que acompanha essa decisão?",
+    "options": [
+     "Uma nova cotação automática",
+     "O motivo da recusa",
+     "Uma Ordem de Compra avulsa",
+     "A exclusão do pedido do histórico"
+    ],
+    "correct": 1,
+    "why": "A requisição recusada é registrada com o motivo."
+   },
+   {
+    "q": "Qual é a ordem dos estados de uma Requisição de Compra do começo ao fim?",
+    "options": [
+     "Rascunho, aguardando aprovação, aprovada (ou recusada), cotada, a caminho, entregue",
+     "Rascunho, cotada, aprovada, entregue, a caminho",
+     "Aguardando aprovação, rascunho, a caminho, cotada, entregue",
+     "Aprovada, rascunho, cotada, entregue, a caminho"
+    ],
+    "correct": 0,
+    "why": "Rascunho → aguardando aprovação → aprovada/recusada → cotada → a caminho → entregue."
+   }
+  ]
+ },
+ {
+  "page": "/suprimentos/processo-suprimentos.html",
+  "questions": [
+   {
+    "q": "Qual é a diferença entre Solicitação de Peças e Requisição de Compra?",
+    "options": [
+     "São o mesmo documento com nomes diferentes",
+     "A Solicitação é manual e a Requisição é automática",
+     "A Requisição só existe para peças com garantia",
+     "A Solicitação nasce sozinha do consumo e só tem o status acompanhado; a Requisição é aberta à mão (ou convertida) e segue aprovação, cotação e ordem de compra"
+    ],
+    "correct": 3,
+    "why": "Solicitação = fila automática da oficina; Requisição = pedido formal do ciclo de compras."
+   },
+   {
+    "q": "Em quais situações o estoque de uma peça diminui?",
+    "options": [
+     "Quando a peça é lançada como usada numa Ordem de Serviço ou numa execução de preventiva",
+     "Quando a Solicitação de Peças é criada",
+     "Quando a Ordem de Compra é emitida",
+     "Quando a cotação é escolhida"
+    ],
+    "correct": 0,
+    "why": "A baixa é automática no consumo."
+   },
+   {
+    "q": "O que acontece ao finalizar um Inventário com diferenças?",
+    "options": [
+     "Nada: o inventário é só um relatório",
+     "O estoque é zerado e a compra é refeita",
+     "Cada diferença vira um ajuste e corrige o saldo da peça",
+     "As diferenças são enviadas como novas solicitações de peças"
+    ],
+    "correct": 2,
+    "why": "A contagem física vira ajuste automático quando diverge do saldo do sistema."
+   },
+   {
+    "q": "O que o Histórico de Movimentação mostra?",
+    "options": [
+     "Somente as compras recebidas no mês",
+     "Somente as peças abaixo do mínimo",
+     "Toda entrada, saída e ajuste de estoque, com o saldo que sobrou",
+     "As cotações recusadas"
+    ],
+    "correct": 2,
+    "why": "É o extrato do almoxarifado."
+   },
+   {
+    "q": "Quem confirma o recebimento da peça e faz o inventário?",
+    "options": [
+     "O técnico que pediu a peça",
+     "O fornecedor",
+     "O almoxarifado",
+     "O time comercial"
+    ],
+    "correct": 2,
+    "why": "Almoxarifado confirma o Recebimento e faz o Inventário."
+   },
+   {
+    "q": "Qual é a sequência completa, da peça usada até o estoque atualizado?",
+    "options": [
+     "Ordem de compra, peça usada, recebimento, requisição, alerta",
+     "Peça usada, alerta de mínimo (Solicitação), requisição e cotação, ordem de compra, recebimento",
+     "Recebimento, requisição, peça usada, cotação, ordem de compra",
+     "Requisição, peça usada, alerta, recebimento, ordem de compra"
+    ],
+    "correct": 1,
+    "why": "O ciclo começa no consumo e termina no recebimento."
+   },
+   {
+    "q": "Onde se corrige manualmente o saldo de uma peça em uma filial?",
+    "options": [
+     "Em “Saldo de Materiais por Filial” (ou fazendo um Inventário)",
+     "Editando o campo Estoque Atual do cadastro do material",
+     "Criando uma Solicitação de Peças",
+     "Alterando o status da Ordem de Compra"
+    ],
+    "correct": 0,
+    "why": "O saldo por filial é ajustado nessa tela; o Inventário corrige diferenças da contagem física."
+   },
+   {
+    "q": "Qual área do menu reúne Requisições, Ordens de Compra, Recebimentos, Solicitações e Fornecedores?",
+    "options": [
+     "Materiais e Peças → Gestão de Estoque",
+     "Manutenção → Operação",
+     "Materiais e Peças → Gestão de Compras",
+     "Comercial → Gestão Comercial"
+    ],
+    "correct": 2,
+    "why": "As telas de compras ficam em Gestão de Compras."
+   }
+  ]
+ }
+]

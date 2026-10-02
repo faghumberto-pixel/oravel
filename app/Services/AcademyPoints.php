@@ -7,7 +7,7 @@ use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\LessonAnswer;
 use App\Models\LessonProgress;
-use App\Models\LessonQuestion;
+use App\Models\LessonQuizSubmission;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -55,26 +55,57 @@ class AcademyPoints
     }
 
     /**
-     * Responde uma pergunta. Pontua so' na primeira vez que ACERTA; erros nao tiram pontos e
-     * podem ser refeitos. Devolve [acertou, pontosGanhos].
+     * Entrega a prova (quiz) de uma aula, de uma vez. Questao em branco vale zero. Cada acerto
+     * pontua (uma vez por pergunta). Depois de entregue NAO refaz -- o gabarito passa a ser
+     * mostrado, entao uma segunda tentativa nao mediria mais o conhecimento. Idempotente: se ja
+     * foi entregue, devolve a entrega existente sem mexer em nada.
      *
-     * @return array{0:bool,1:int}
+     * @param  array<string, int|string|null>  $selected  alternativa escolhida por id de pergunta
+     * @return array{submission: LessonQuizSubmission, gained: int, already: bool}
      */
-    public function answer(User $user, LessonQuestion $question, int $selected): array
+    public function deliver(User $user, Lesson $lesson, array $selected): array
     {
-        $correct = $selected === (int) $question->correct_index;
+        $existing = LessonQuizSubmission::where('user_id', $user->id)->where('lesson_id', $lesson->id)->first();
+        if ($existing) {
+            return ['submission' => $existing, 'gained' => 0, 'already' => true];
+        }
 
-        $answer = LessonAnswer::firstOrNew(['user_id' => $user->id, 'question_id' => $question->id]);
-        $answer->tenant_id ??= $user->tenant_id;
-        $answer->attempts = $answer->exists ? $answer->attempts + 1 : 1;
-        // quem ja acertou nao "desacerta" ao refazer
-        $answer->is_correct = $answer->is_correct || $correct;
-        $answer->selected_index = $selected;
-        $answer->save();
+        return DB::transaction(function () use ($user, $lesson, $selected) {
+            $questions = $lesson->questions()->get();
+            $correct = 0;
+            $gained = 0;
 
-        $gained = $correct ? $this->award($user, AcademyPoint::QUIZ, $question->id, (int) config('oravel.academy.quiz')) : 0;
+            foreach ($questions as $question) {
+                $choice = $selected[$question->id] ?? null;
+                $choice = is_numeric($choice) && (int) $choice >= 0 && (int) $choice < count($question->optionTexts()) ? (int) $choice : null;
+                $isCorrect = $choice !== null && $choice === (int) $question->correct_index;
 
-        return [$correct, $gained];
+                LessonAnswer::create([
+                    'tenant_id' => $user->tenant_id,
+                    'user_id' => $user->id,
+                    'question_id' => $question->id,
+                    'selected_index' => $choice,
+                    'is_correct' => $isCorrect,
+                    'attempts' => 1,
+                ]);
+
+                if ($isCorrect) {
+                    $correct++;
+                    $gained += $this->award($user, AcademyPoint::QUIZ, $question->id, (int) config('oravel.academy.quiz'));
+                }
+            }
+
+            $submission = LessonQuizSubmission::create([
+                'tenant_id' => $user->tenant_id,
+                'user_id' => $user->id,
+                'lesson_id' => $lesson->id,
+                'total_questions' => $questions->count(),
+                'correct_answers' => $correct,
+                'delivered_at' => now(),
+            ]);
+
+            return ['submission' => $submission, 'gained' => $gained, 'already' => false];
+        });
     }
 
     /**

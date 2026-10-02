@@ -6,9 +6,9 @@ use App\Models\AcademyCertificate;
 use App\Models\AcademyPoint;
 use App\Models\Course;
 use App\Models\Lesson;
-use App\Models\LessonAnswer;
 use App\Models\LessonProgress;
 use App\Models\LessonQuestion;
+use App\Models\LessonQuizSubmission;
 use App\Models\User;
 use Illuminate\Support\Collection;
 
@@ -17,8 +17,9 @@ use Illuminate\Support\Collection;
  * do quiz, o tempo, os pontos e o certificado -- fonte unica da barra lateral, do inicio e da
  * tela do curso. Poucas consultas no total (nao uma por curso).
  *
- * Nota = respostas certas / perguntas JA RESPONDIDAS x 10 (null se o curso nao tem quiz ou ainda nao respondeu nenhuma).
- * Pra tirar certificado, porem, tem que acertar TODAS as perguntas (ver AcademyCertificates).
+ * Provas: cada aula com perguntas e' uma prova entregue de uma vez (questao em branco vale zero).
+ * Nota do curso = acertos / total de perguntas das provas JA ENTREGUES x 10 (null se nenhuma entregue).
+ * O certificado exige todas as provas entregues e nota minima (ver AcademyCertificates).
  * Status: 'todo' (nenhuma aula), 'progress' (algumas), 'done' (todas as aulas liberadas).
  */
 class AcademyOverview
@@ -34,7 +35,7 @@ class AcademyOverview
      */
     public function courses(User $user): Collection
     {
-        $courses = Course::published()->available()->orderBy('position')->get();
+        $courses = Course::visibleToUser()->orderBy('position')->get();
         if ($courses->isEmpty()) {
             return collect();
         }
@@ -44,11 +45,11 @@ class AcademyOverview
 
         $done = LessonProgress::where('user_id', $user->id)->whereIn('lesson_id', $lessonIds)->pluck('completed_at', 'lesson_id');
         $questions = LessonQuestion::whereIn('lesson_id', $lessonIds)->get(['id', 'lesson_id'])->groupBy('lesson_id');
-        $answers = LessonAnswer::where('user_id', $user->id)->get(['question_id', 'is_correct'])->keyBy('question_id');
+        $submissions = LessonQuizSubmission::where('user_id', $user->id)->whereIn('lesson_id', $lessonIds)->get()->keyBy('lesson_id');
         $points = AcademyPoint::where('user_id', $user->id)->get();
         $certificates = AcademyCertificate::where('user_id', $user->id)->get()->keyBy('course_id');
 
-        return $courses->map(function (Course $course) use ($lessons, $done, $questions, $answers, $points, $certificates) {
+        return $courses->map(function (Course $course) use ($lessons, $done, $questions, $submissions, $points, $certificates) {
             $courseLessons = $lessons->get($course->id, collect());
             $ids = $courseLessons->pluck('id');
             $total = $ids->count();
@@ -56,8 +57,10 @@ class AcademyOverview
 
             $questionIds = $ids->flatMap(fn ($id) => ($questions->get($id) ?? collect())->pluck('id'));
             $quizTotal = $questionIds->count();
-            $quizAnswered = $questionIds->filter(fn ($qid) => $answers->has($qid))->count();
-            $quizCorrect = $questionIds->filter(fn ($qid) => $answers->get($qid)?->is_correct)->count();
+            $quizLessons = $ids->filter(fn ($id) => $questions->has($id));
+            $delivered = $quizLessons->filter(fn ($id) => $submissions->has($id));
+            $quizGraded = (int) $delivered->sum(fn ($id) => $submissions->get($id)->total_questions);
+            $quizCorrect = (int) $delivered->sum(fn ($id) => $submissions->get($id)->correct_answers);
 
             $refs = $ids->merge($questionIds)->push($course->id)->flip();
             $courseRows = $points->filter(fn ($p) => $refs->has($p->ref_id));
@@ -70,18 +73,28 @@ class AcademyOverview
                 'slug' => $course->slug,
                 'title' => $course->title,
                 'description' => $course->description,
+                'published' => (bool) $course->is_published,
                 'lessons_total' => $total,
                 'lessons_done' => $doneCount,
                 'percent' => $total ? (int) round($doneCount / $total * 100) : 0,
                 'status' => $doneCount === 0 ? self::STATUS_TODO : ($doneCount >= $total ? self::STATUS_DONE : self::STATUS_PROGRESS),
                 'quiz_total' => $quizTotal,
-                'quiz_answered' => $quizAnswered,
+                'quizzes_total' => $quizLessons->count(),
+                'quizzes_delivered' => $delivered->count(),
+                'quiz_graded' => $quizGraded,
                 'quiz_correct' => $quizCorrect,
-                'nota' => $quizAnswered ? round($quizCorrect / $quizAnswered * 10, 1) : null,
+                'nota' => $quizGraded ? round($quizCorrect / $quizGraded * 10, 1) : null,
                 'minutes' => intdiv($seconds, 60),
                 'points' => (int) $courseRows->sum('points'),
                 'certificate' => $certificates->get($course->id),
                 'last_activity' => $last,
+                'lessons' => $courseLessons->map(fn ($l) => [
+                    'id' => $l->id,
+                    'title' => $l->title,
+                    'done' => $done->has($l->id),
+                    'quiz' => $questions->has($l->id),
+                    'delivered' => $submissions->has($l->id),
+                ])->values()->all(),
                 'next_lesson_id' => $courseLessons->first(fn ($l) => ! $done->has($l->id))?->id ?? $courseLessons->first()?->id,
             ];
         })->values();
@@ -95,7 +108,7 @@ class AcademyOverview
      */
     public function totals(User $user, Collection $courses): array
     {
-        $quizAnswered = (int) $courses->sum('quiz_answered');
+        $quizGraded = (int) $courses->sum('quiz_graded');
         $minutes = (int) $courses->sum('minutes');
 
         return [
@@ -106,7 +119,7 @@ class AcademyOverview
             'courses_todo' => $courses->where('status', self::STATUS_TODO)->count(),
             'lessons_done' => (int) $courses->sum('lessons_done'),
             'lessons_total' => (int) $courses->sum('lessons_total'),
-            'nota' => $quizAnswered ? round($courses->sum('quiz_correct') / $quizAnswered * 10, 1) : null,
+            'nota' => $quizGraded ? round($courses->sum('quiz_correct') / $quizGraded * 10, 1) : null,
             'minutes' => $minutes,
             'certificates' => $courses->filter(fn ($c) => $c['certificate'])->count(),
             'overall_percent' => $courses->sum('lessons_total') ? (int) round($courses->sum('lessons_done') / $courses->sum('lessons_total') * 100) : 0,
