@@ -1,11 +1,11 @@
 <x-filament-widgets::widget>
     @php($m = $this->getMetrica())
-    <div class="rounded-xl bg-gray-800/60 backdrop-blur-sm ring-1 ring-white/5 p-3 h-full">
-        <h2 class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
+    <div class="rounded-xl bg-gray-100 dark:bg-gray-800/60 backdrop-blur-sm ring-1 ring-gray-950/5 dark:ring-white/5 p-3 h-full">
+        <h2 class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
             <x-dynamic-component :component="$m['icone']" class="w-3.5 h-3.5" />
             {{ $m['titulo'] }}
         </h2>
-        <p class="text-xl font-bold text-gray-100 tabular-nums">{{ $m['valor_formatado'] }}</p>
+        <p class="text-xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ $m['valor_formatado'] }}</p>
         @if ($m['variacao_percentual'] !== null)
             @php($subiu = $m['variacao_percentual'] >= 0)
             @php($ehBoa = $subiu === $m['variacao_e_boa_se_subir'])

@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
 
 class PainelGestao extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
+    protected static ?string $navigationIcon = 'heroicon-o-home';
 
     protected static string $view = 'filament.pages.painel-gestao';
 
@@ -20,7 +20,7 @@ class PainelGestao extends Page
 
     protected static ?string $title = 'Painel de Controle';
 
-    protected static ?string $navigationLabel = 'Dashboard';
+    protected static ?string $navigationLabel = 'Início';
 
     protected static ?int $navigationSort = -10;
 

@@ -1,11 +1,11 @@
 <x-filament-widgets::widget>
     @php($custo = $this->getCusto())
-    <div class="rounded-xl bg-gray-800/60 backdrop-blur-sm ring-1 ring-white/5 p-3">
-        <h2 class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
+    <div class="rounded-xl bg-gray-100 dark:bg-gray-800/60 backdrop-blur-sm ring-1 ring-gray-950/5 dark:ring-white/5 p-3">
+        <h2 class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
             <x-heroicon-o-banknotes class="w-3.5 h-3.5" />
             Custo Total de Manutenção
         </h2>
-        <p class="text-2xl font-bold text-gray-100 tabular-nums">{{ $custo['valor_formatado'] }}</p>
+        <p class="text-2xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ $custo['valor_formatado'] }}</p>
         @if ($custo['variacao_percentual'] !== null)
             @php($subiu = $custo['variacao_percentual'] >= 0)
             <p class="mt-1 flex items-center gap-1 text-[11px] font-semibold {{ $subiu ? 'text-rose-400' : 'text-emerald-400' }}">
