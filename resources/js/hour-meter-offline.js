@@ -10,6 +10,7 @@
  * porque Livewire/Filament já chamam isso lá).
  */
 import Alpine from 'alpinejs';
+import { registerOfflineShell } from './offline/register-sw';
 
 window.Alpine = Alpine;
 
@@ -345,3 +346,5 @@ window.hourMeterOffline = function () {
 };
 
 Alpine.start();
+
+registerOfflineShell();

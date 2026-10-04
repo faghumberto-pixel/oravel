@@ -7,8 +7,12 @@
     "file": "assets/module.esm-BGY0KsAM.js",
     "name": "module.esm"
   },
+  "_register-sw-C7fnc1v_.js": {
+    "file": "assets/register-sw-C7fnc1v_.js",
+    "name": "register-sw"
+  },
   "resources/css/app.css": {
-    "file": "assets/app-DegKjmdG.css",
+    "file": "assets/app-svFipTGi.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -17,15 +21,15 @@
     ]
   },
   "resources/css/filament/admin/theme.css": {
-    "file": "assets/theme-DxOIowXn.css",
+    "file": "assets/theme-BVhhHr-t.css",
     "src": "resources/css/filament/admin/theme.css"
   },
   "resources/css/filament/central/theme.css": {
-    "file": "assets/theme-D8Wbj5C4.css",
+    "file": "assets/theme-ZL3Yvf9c.css",
     "src": "resources/css/filament/central/theme.css"
   },
   "resources/css/filament/client/theme.css": {
-    "file": "assets/theme-C6pCGujL.css",
+    "file": "assets/theme-faq7-WWY.css",
     "src": "resources/css/filament/client/theme.css",
     "isEntry": true,
     "name": "theme",
@@ -50,7 +54,7 @@
     "isEntry": true
   },
   "resources/js/chat-app.js": {
-    "file": "assets/chat-app-C2VrsZom.js",
+    "file": "assets/chat-app-C6B_7Lw5.js",
     "name": "chat-app",
     "src": "resources/js/chat-app.js",
     "isEntry": true,
@@ -58,16 +62,17 @@
       "_import-wrapper-prod-D0HhYmlZ.js"
     ],
     "css": [
-      "assets/app-DegKjmdG.css"
+      "assets/app-svFipTGi.css"
     ]
   },
   "resources/js/hour-meter-offline.js": {
-    "file": "assets/hour-meter-offline-D-AL_oZ8.js",
+    "file": "assets/hour-meter-offline-5CucbD4Z.js",
     "name": "hour-meter-offline",
     "src": "resources/js/hour-meter-offline.js",
     "isEntry": true,
     "imports": [
-      "_module.esm-BGY0KsAM.js"
+      "_module.esm-BGY0KsAM.js",
+      "_register-sw-C7fnc1v_.js"
     ]
   },
   "resources/js/hour-meter-public.js": {
@@ -80,12 +85,13 @@
     ]
   },
   "resources/js/time-clock-offline.js": {
-    "file": "assets/time-clock-offline-CA8CnRgi.js",
+    "file": "assets/time-clock-offline-B6nxMe9Y.js",
     "name": "time-clock-offline",
     "src": "resources/js/time-clock-offline.js",
     "isEntry": true,
     "imports": [
-      "_module.esm-BGY0KsAM.js"
+      "_module.esm-BGY0KsAM.js",
+      "_register-sw-C7fnc1v_.js"
     ]
   }
 }

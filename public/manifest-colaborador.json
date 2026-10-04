@@ -1,0 +1,23 @@
+{
+  "id": "/app/colaborador",
+  "name": "Oravel Colaborador",
+  "short_name": "Oravel Colab.",
+  "description": "Ponto, horas, faltas e chat",
+  "start_url": "/app/colaborador",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

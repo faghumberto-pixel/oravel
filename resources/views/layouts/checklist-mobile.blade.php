@@ -11,6 +11,7 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
 
+        @include('partials.app-manifest')
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     {{-- Desenhado mobile-first (max-w-md nas telas internas) -- em telas

@@ -34,6 +34,11 @@ use App\Http\Controllers\QuoteReportController;
 use App\Http\Controllers\RentalDemoController;
 use App\Http\Controllers\TablePrintController;
 use App\Http\Controllers\TimeClockOfflineController;
+use App\Livewire\Academy\CoursePage;
+use App\Livewire\Academy\Home;
+use App\Livewire\Academy\Landing;
+use App\Livewire\Academy\RankingPage;
+use App\Livewire\Academy\TeamPage;
 use App\Livewire\AssetDossierMobile;
 use App\Livewire\EquipmentDamageMobile;
 use App\Livewire\EquipmentMovementMobile;
@@ -43,15 +48,18 @@ use App\Livewire\MaintenanceOrderFieldWizard;
 use App\Livewire\PreventiveMaintenanceMobile;
 use App\Livewire\PropostaComercialMobile;
 use App\Livewire\RentalDispatchChecklistMobile;
+use App\Models\AcademyCertificate;
 use App\Models\Asset;
 use App\Models\ChatMessage;
 use App\Models\ChatRoom;
 use App\Models\Client;
 use App\Models\EquipmentMovement;
+use App\Models\LandingPageLead;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
 use App\Models\PreventiveMaintenanceExecution;
 use App\Models\User;
+use App\Support\AppProfile;
 use App\Support\Tenancy;
 use Filament\Facades\Filament;
 use Filament\Http\Controllers\RedirectToHomeController;
@@ -76,18 +84,18 @@ Route::get('/', fn () => redirect()->to('/admin'))->name('home');
 // Contratante precisa poder ler antes mesmo de logar/assinar.
 // Academia Oravel: pagina propria (fora do painel Filament), com login, bloqueio por
 // inadimplencia e a regra do modulo/permissao (ver EnsureAcademyAccess).
-Route::get('/academia', \App\Livewire\Academy\Landing::class)->name('academy.landing'); // entrada PUBLICA (so' a URL, sem login)
+Route::get('/academia', Landing::class)->name('academy.landing'); // entrada PUBLICA (so' a URL, sem login)
 Route::middleware(['web', 'academy.access'])->prefix('academia')->group(function () {
-    Route::get('/inicio', \App\Livewire\Academy\Home::class)->name('academy.home');
-    Route::get('/curso/{slug}', \App\Livewire\Academy\CoursePage::class)->name('academy.course');
-    Route::get('/ranking', \App\Livewire\Academy\RankingPage::class)->name('academy.ranking');
-    Route::get('/equipe', \App\Livewire\Academy\TeamPage::class)->name('academy.team');
+    Route::get('/inicio', Home::class)->name('academy.home');
+    Route::get('/curso/{slug}', CoursePage::class)->name('academy.course');
+    Route::get('/ranking', RankingPage::class)->name('academy.ranking');
+    Route::get('/equipe', TeamPage::class)->name('academy.team');
 });
 
 // Consulta publica de autenticidade de certificado da Academia (so' le nome/curso/data; sem login).
 Route::get('/certificado/{code}', function (string $code) {
     return view('academy.certificate-verify', [
-        'certificate' => \App\Models\AcademyCertificate::withoutGlobalScopes()->where('code', strtoupper($code))->first(),
+        'certificate' => AcademyCertificate::withoutGlobalScopes()->where('code', strtoupper($code))->first(),
     ]);
 })->middleware('throttle:30,1')->name('academy.certificate.verify');
 
@@ -210,6 +218,15 @@ Route::get('/admin/pmp/5w2h/{feature}/print', [Pmp5w2hController::class, 'printS
     ->middleware(['auth']);
 
 Route::middleware(['auth'])->group(function () {
+    // start_url dos 3 apps instalaveis (manifest-{perfil}.json). Nunca leva
+    // a um app acima do perfil do usuario -- ver App\Support\AppProfile.
+    Route::get('/app/{perfil}', function (string $perfil) {
+        $user = auth()->user();
+        $perfil = $perfil === 'administrador' ? AppProfile::ADMIN : $perfil;
+
+        return redirect()->to(AppProfile::homeUrl($user, AppProfile::resolve($user, $perfil)));
+    })->whereIn('perfil', [...AppProfile::ALL, 'administrador'])->name('app.entrada');
+
     Route::get('/admin/trocar-senha', fn () => view('auth.trocar-senha'))->name('admin.trocar-senha');
     Route::post('/admin/trocar-senha', [PasswordController::class, 'update'])->name('admin.trocar-senha.update');
 
@@ -509,7 +526,8 @@ Route::middleware(['auth'])->group(function () {
 
 // Dashboard simples dos leads da landing page
 Route::get('/leads', function () {
-    $leads = \App\Models\LandingPageLead::orderBy('created_at', 'desc')->get();
+    $leads = LandingPageLead::orderBy('created_at', 'desc')->get();
+
     return view('leads-manager', compact('leads'));
 });
 

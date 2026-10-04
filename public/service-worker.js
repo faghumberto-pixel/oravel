@@ -3,10 +3,9 @@
  * Estratégia: cache-first para assets, network-first com fallback para dados
  */
 
-const CACHE_NAME = 'oravel-tech-v1';
+const CACHE_NAME = 'oravel-tech-v2';
 const API_CACHE = 'oravel-api-v1';
 const STATIC_ASSETS = [
-    '/',
     '/manifest.json',
     '/offline.html',
 ];
@@ -123,8 +122,8 @@ function cacheFirstStrategy(request) {
  */
 function networkFirstStrategy(request) {
     return fetch(request).then(response => {
-        // Cache de sucesso em API_CACHE
-        if (response && response.status === 200) {
+        // Cache de sucesso em API_CACHE (so GET -- cache.put rejeita POST)
+        if (response && response.status === 200 && request.method === 'GET') {
             const responseToCache = response.clone();
             caches.open(API_CACHE).then(cache => {
                 cache.put(request, responseToCache);
@@ -138,6 +137,11 @@ function networkFirstStrategy(request) {
             if (cachedResponse) {
                 console.log('[SW] Returning cached response');
                 return cachedResponse;
+            }
+            // Navegacao sem cache: mostra a pagina offline em vez de "Offline" cru
+            if (request.mode === 'navigate') {
+                return caches.match('/offline.html').then(page =>
+                    page || new Response('Offline', { status: 503 }));
             }
             return new Response('Offline', { status: 503 });
         });

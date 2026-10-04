@@ -194,6 +194,10 @@ class AdminPanelProvider extends PanelProvider
                 fn () => view('filament.bfcache-reload'),
             )
             ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn () => view('partials.app-manifest'),
+            )
+            ->renderHook(
                 PanelsRenderHook::BODY_END,
                 fn () => view('filament.chat-widget-mount'),
             )

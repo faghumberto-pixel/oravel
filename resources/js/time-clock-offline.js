@@ -4,6 +4,7 @@
  * sincronizada via fetch quando a rede volta.
  */
 import Alpine from 'alpinejs';
+import { registerOfflineShell } from './offline/register-sw';
 
 window.Alpine = Alpine;
 
@@ -151,3 +152,5 @@ window.timeClockOffline = function (employeeId) {
 };
 
 Alpine.start();
+
+registerOfflineShell();
