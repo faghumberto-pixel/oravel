@@ -135,6 +135,19 @@
     }
   }, true);
 
+  // Widget flutuante de WhatsApp das páginas do site: não é <a>, abre o chat com window.open('https://wa.me/...') ao
+  // enviar a mensagem. O listener de clique acima não o enxerga, então contamos a abertura aqui (1 por envio).
+  var nativeOpen = window.open;
+  window.open = function (url) {
+    try {
+      if (typeof url === 'string' && /wa\.me|api\.whatsapp\.com|whatsapp\.com\/send/i.test(url)) {
+        send({ t: 'click', label: 'WhatsApp', path: location.pathname });
+        ga('whatsapp_click', { link_url: url.slice(0, 200), page_path: location.pathname });
+      }
+    } catch (e) { /* medir nunca pode impedir o chat de abrir */ }
+    return nativeOpen.apply(this, arguments);
+  };
+
   // ---- Campanhas: gclid/utm, aviso de cookies, Google (GA4) após consentimento, lead enviado ----
   var GA_ID = 'G-L79HHRE3ZC';
   var ATTR_TTL = 90 * 24 * 3600 * 1000;
