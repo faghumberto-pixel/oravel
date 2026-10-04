@@ -22,12 +22,24 @@
     App\Http\Middleware\EnsureTenantPaymentIsCurrent) -- se o prazo de
     tolerância mudar em config('oravel.payment_grace_days'), o texto aqui
     acompanha automaticamente.
+    VERSÕES (2026-10-04, decisão comercial do dono do produto): prazo mínimo de
+    12 meses, multa de 50% das mensalidades vincendas e desconto de implantação
+    condicionado à permanência. Contratos ASSINADOS antes de 2026-10-04 mantêm o
+    texto antigo (prazo indeterminado, cancelamento sem multa) -- o PDF assinado
+    é regerado sob demanda a partir deste parcial, então sem esse corte o contrato
+    já assinado passaria a exibir cláusulas que o Contratante não aceitou. Não
+    alterar o texto "legado" abaixo.
 --}}
 @php
     $graceDays = (int) config('oravel.payment_grace_days', 5);
     $exportDays = (int) config('oravel.company.data_export_days', 30);
     $company = config('oravel.company');
     $moneyFmt = fn ($v) => 'R$ '.number_format((float) $v, 2, ',', '.');
+    // Contrato já assinado antes do corte de 2026-10-04 => cláusulas 2 (vigência) e 7 (cancelamento) legadas.
+    $firstSignedAt = method_exists($contract, 'signedSignatures')
+        ? $contract->signedSignatures()->oldest('signed_at')->value('signed_at')
+        : null;
+    $legacyTerms = $firstSignedAt && \Illuminate\Support\Carbon::parse($firstSignedAt)->lt(\Illuminate\Support\Carbon::parse('2026-10-04'));
 @endphp
 
 <div class="clause">
@@ -66,8 +78,16 @@
 
 <div class="clause">
     <span class="clause-title">2. Vigência, preço e forma de pagamento.</span>
-    O contrato vigora por prazo indeterminado e a assinatura é renovada automaticamente a
-    cada ciclo de cobrança indicado acima, até que o Contratante solicite o cancelamento. @if ($contract->paymentMethod() === 'boleto_pix')
+    @if ($legacyTerms)
+        O contrato vigora por prazo indeterminado e a assinatura é renovada automaticamente a
+        cada ciclo de cobrança indicado acima, até que o Contratante solicite o cancelamento.
+    @else
+        O contrato vigora por prazo inicial de 12 (doze) meses, contados da assinatura, e se renova
+        automaticamente por períodos sucessivos de 12 (doze) meses, salvo se o Contratante ou a Oravel
+        comunicar à outra parte a não renovação, por escrito, com antecedência mínima de 60 (sessenta)
+        dias do término do período em curso. A cobrança segue os ciclos indicados acima durante todo o prazo.
+    @endif
+    @if ($contract->paymentMethod() === 'boleto_pix')
         A cobrança é emitida todo mês via Asaas, por boleto ou Pix à escolha do Contratante, e enviada ao e-mail de contato
         cadastrado.
     @else
@@ -152,12 +172,42 @@
 </div>
 
 <div class="clause">
+    @if ($legacyTerms)
     <span class="clause-title">7. Cancelamento.</span>
     O Contratante pode solicitar o cancelamento a qualquer momento através do suporte Oravel,
     encerrando a cobrança a partir do próximo ciclo; valores de ciclos já iniciados ou pagos
     não são reembolsáveis, salvo disposição legal em contrário. A Oravel poderá rescindir o
     contrato mediante aviso prévio de 30 (trinta) dias e, de imediato, em caso de violação
     das cláusulas 1 ou 5, uso ilícito do sistema ou fraude.
+    @else
+    <span class="clause-title">7. Cancelamento, prazo mínimo e multa.</span>
+    <strong>7.1.</strong> O Contratante compromete-se a manter a assinatura pelo prazo inicial de 12 (doze)
+    meses e por cada período de renovação, em contrapartida das condições comerciais concedidas{{ $contract->implementationAmount() > 0 ? ', inclusive o desconto na taxa de implantação' : '' }}.
+    <br><br>
+    <strong>7.2.</strong> O Contratante pode solicitar o cancelamento a qualquer momento através do suporte
+    Oravel, encerrando a cobrança ao término do ciclo em curso. Se o cancelamento, ou o encerramento
+    da assinatura por inadimplência (cláusula 6) ou por violação das cláusulas 1 ou 5, uso ilícito ou fraude,
+    ocorrer antes do término do período em curso, será devida multa compensatória equivalente a 50%
+    (cinquenta por cento) do valor das mensalidades vincendas até o término desse período, calculada sobre
+    a mensalidade vigente na data do pedido, sem prejuízo das mensalidades já vencidas. Como a multa incide
+    sobre o período restante, ela diminui na medida em que o prazo é cumprido.
+    @if ($contract->implementationAmount() > 0)
+        <br><br>
+        <strong>7.3.</strong> O desconto concedido sobre a taxa de implantação, correspondente à diferença entre o
+        valor de tabela da implantação informado na proposta comercial aceita e o valor efetivamente contratado,
+        está condicionado à permanência pelo prazo inicial de 12 (doze) meses. Em caso de cancelamento antes
+        desse prazo, o Contratante pagará, além da multa do item 7.2, o valor desse desconto, proporcional ao
+        tempo que faltar para completar o prazo inicial.
+    @endif
+    <br><br>
+    <strong>{{ $contract->implementationAmount() > 0 ? '7.4' : '7.3' }}.</strong> A não renovação comunicada com antecedência mínima de 60 (sessenta) dias do término do
+    período em curso não gera multa. Valores de ciclos já iniciados ou pagos não são reembolsáveis,
+    salvo disposição legal em contrário.
+    <br><br>
+    <strong>{{ $contract->implementationAmount() > 0 ? '7.5' : '7.4' }}.</strong> A Oravel poderá rescindir o contrato mediante aviso prévio de 30 (trinta) dias, caso em que não
+    se aplica multa ao Contratante, e, de imediato, em caso de violação das cláusulas 1 ou 5, uso ilícito
+    do sistema ou fraude, hipótese em que se aplica o item 7.2.
+    @endif
 </div>
 
 <div class="clause">
