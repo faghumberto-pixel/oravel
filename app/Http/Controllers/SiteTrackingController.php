@@ -110,6 +110,14 @@ class SiteTrackingController extends Controller
             $ua = (string) $request->userAgent();
             $agent = UserAgentInfo::parse($ua);
             $place = $geo->locate($request->ip());
+
+            // IP de datacenter/nuvem (Google Cloud, AWS, Meta...) = robo ou
+            // pre-visualizacao de link que executa JS e escapa do filtro por
+            // User-Agent. Sem visita criada, os pings/cliques seguintes da
+            // mesma sessao tambem sao ignorados (exigem a visita).
+            if ($place['hosting'] ?? false) {
+                return;
+            }
             $referrer = $this->text($data['ref'] ?? null, 1000);
 
             try {

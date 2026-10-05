@@ -21,11 +21,15 @@ use Illuminate\Support\Facades\Log;
 class IpGeolocationService
 {
     /**
-     * @return array{city: ?string, state: ?string}
+     * `hosting` = o IP e' de datacenter/nuvem (AWS, Google Cloud, Meta...),
+     * ou seja, robo/crawler e nao pessoa -- usado pelo coletor do site
+     * institucional pra descartar a visita (SiteTrackingController).
+     *
+     * @return array{city: ?string, state: ?string, hosting: bool}
      */
     public function locate(?string $ip): array
     {
-        $empty = ['city' => null, 'state' => null];
+        $empty = ['city' => null, 'state' => null, 'hosting' => false];
 
         if (blank($ip) || $this->isPrivateOrLocal($ip)) {
             return $empty;
@@ -34,13 +38,15 @@ class IpGeolocationService
         $cacheKey = "ip-geo:{$ip}";
         $cached = Cache::get($cacheKey);
 
-        if ($cached !== null) {
+        // Entradas antigas do cache (antes do campo `hosting`) sao consultadas
+        // de novo: senao um IP de robo ja cacheado nunca seria reconhecido.
+        if (is_array($cached) && array_key_exists('hosting', $cached)) {
             return $cached;
         }
 
         try {
             $response = Http::timeout(2)->get("http://ip-api.com/json/{$ip}", [
-                'fields' => 'status,city,region',
+                'fields' => 'status,city,region,hosting',
             ]);
 
             $data = $response->ok() ? $response->json() : [];
@@ -61,6 +67,7 @@ class IpGeolocationService
                 // Limite = tamanho da coluna site_visits.state; um código
                 // maior que isso nunca pode derrubar a gravação da visita.
                 'state' => isset($data['region']) ? mb_substr((string) $data['region'], 0, 10) : null,
+                'hosting' => (bool) ($data['hosting'] ?? false),
             ];
 
             Cache::forever($cacheKey, $result);

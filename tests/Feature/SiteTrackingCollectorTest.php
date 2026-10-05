@@ -8,6 +8,7 @@ use App\Models\WebPageview;
 use App\Models\WebVisit;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 /** Coletor do analytics do site institucional: separado do tracking do app (site_visits). */
@@ -17,9 +18,9 @@ class SiteTrackingCollectorTest extends TestCase
 
     private const UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6.1 Mobile/15E148 Safari/604.1';
 
-    private function track(array $payload, string $origin = 'https://oravel.com.br', string $ua = self::UA, string $ip = '201.27.224.130')
+    private function track(array $payload, string $origin = 'https://oravel.com.br', string $ua = self::UA, string $ip = '201.27.224.130', array $place = ['city' => 'Campinas', 'state' => 'SP', 'hosting' => false])
     {
-        Cache::put("ip-geo:{$ip}", ['city' => 'Campinas', 'state' => 'SP']);
+        Cache::put("ip-geo:{$ip}", $place);
 
         return $this->call(
             'POST', '/api/site-track', [], [], [],
@@ -117,5 +118,49 @@ class SiteTrackingCollectorTest extends TestCase
         $this->assertNull(WebVisit::find($old->id));
         $this->assertSame(0, WebPageview::where('page_token', 'p-old')->count());
         $this->assertNotNull(WebVisit::find($recent->id));
+    }
+
+    public function test_datacenter_ip_is_ignored_and_its_followup_events_too(): void
+    {
+        $ip = '34.128.4.35';
+        $dallas = ['city' => 'Dallas', 'state' => 'TX', 'hosting' => true];
+
+        $this->track($this->pv(['s' => 'session-bot', 'p' => 'page-bot']), ip: $ip, place: $dallas)->assertNoContent();
+        $this->track(['t' => 'click', 'v' => 'visitor-0001', 's' => 'session-bot', 'label' => 'WhatsApp'], ip: $ip, place: $dallas)->assertNoContent();
+
+        $this->assertSame(0, WebVisit::where('session_token', 'session-bot')->count());
+        $this->assertSame(0, WebEvent::count());
+    }
+
+    public function test_old_cache_entry_without_hosting_flag_is_looked_up_again(): void
+    {
+        $ip = '104.197.69.115';
+        Cache::put("ip-geo:{$ip}", ['city' => 'Council Bluffs', 'state' => 'IA']); // formato antigo
+        Http::fake(['ip-api.com/*' => Http::response(['status' => 'success', 'city' => 'Council Bluffs', 'region' => 'IA', 'hosting' => true])]);
+
+        $this->call(
+            'POST', '/api/site-track', [], [], [],
+            ['HTTP_ORIGIN' => 'https://oravel.com.br', 'HTTP_USER_AGENT' => self::UA, 'REMOTE_ADDR' => $ip, 'CONTENT_TYPE' => 'text/plain;charset=UTF-8'],
+            json_encode($this->pv(['s' => 'session-old', 'p' => 'page-old']))
+        )->assertNoContent();
+
+        $this->assertSame(0, WebVisit::where('session_token', 'session-old')->count());
+    }
+
+    public function test_purge_bots_lists_by_default_and_deletes_only_datacenter_visits_with_apply(): void
+    {
+        Cache::put('ip-geo:34.128.4.35', ['city' => 'Dallas', 'state' => 'TX', 'hosting' => true]);
+        Cache::put('ip-geo:201.27.224.130', ['city' => 'Campinas', 'state' => 'SP', 'hosting' => false]);
+        $bot = WebVisit::create(['visitor_token' => 'v-bot', 'session_token' => 's-bot', 'ip_address' => '34.128.4.35', 'started_at' => now(), 'page_views' => 1]);
+        $human = WebVisit::create(['visitor_token' => 'v-hum', 'session_token' => 's-hum', 'ip_address' => '201.27.224.130', 'started_at' => now(), 'page_views' => 1]);
+        WebPageview::create(['web_visit_id' => $bot->id, 'page_token' => 'p-bot', 'path' => '/', 'entered_at' => now()]);
+
+        $this->artisan('web-analytics:purge-bots')->assertSuccessful();
+        $this->assertNotNull(WebVisit::find($bot->id)); // dry-run não apaga
+
+        $this->artisan('web-analytics:purge-bots', ['--apply' => true])->assertSuccessful();
+        $this->assertNull(WebVisit::find($bot->id));
+        $this->assertSame(0, WebPageview::where('page_token', 'p-bot')->count());
+        $this->assertNotNull(WebVisit::find($human->id));
     }
 }
