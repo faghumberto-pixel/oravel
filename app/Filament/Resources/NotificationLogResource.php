@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\NotificationLogResource\Pages;
 use App\Models\NotificationLog;
 use App\Models\User;
+use App\Support\CentralNotifications;
+use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -73,7 +75,16 @@ class NotificationLogResource extends Resource
 
         $user = Auth::user();
 
+        // Avisos da operação do SaaS (implantação, checkout, assinatura...) são só da Central:
+        // nunca aparecem aqui, nem para o super admin atuando como um tenant.
+        $query = CentralNotifications::exclude($query);
+
         if (! $user || $user->isSuperAdmin()) {
+            // Super admin com tenant escolhido vê as notificações dos usuários daquele tenant.
+            if ($actingTenantId = Tenancy::actingReadScopeTenantId()) {
+                return $query->whereIn('notifiable_id', User::withoutGlobalScopes()->where('tenant_id', $actingTenantId)->pluck('id'));
+            }
+
             return $query;
         }
 

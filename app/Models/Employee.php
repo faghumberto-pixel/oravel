@@ -101,6 +101,36 @@ class Employee extends Model
         return $this->belongsTo(JobRole::class);
     }
 
+    public function timeClocks(): HasMany
+    {
+        return $this->hasMany(TimeClock::class);
+    }
+
+    public function absences(): HasMany
+    {
+        return $this->hasMany(Absence::class);
+    }
+
+    /**
+     * Já tem registro de ponto, falta, certificação, alocação ou EPI? Nesse caso o
+     * colaborador NÃO pode ser excluído (o banco apagaria o histórico em cascata) --
+     * o caminho é o status "Desligado".
+     */
+    public function hasHistory(): bool
+    {
+        return $this->timeClocks()->exists()
+            || $this->absences()->exists()
+            || $this->certifications()->exists()
+            || $this->allocations()->exists()
+            || $this->epiDeliveries()->exists();
+    }
+
+    protected static function booted(): void
+    {
+        // Rede de segurança (UI, tinker, jobs): excluir com histórico é cancelado.
+        static::deleting(fn (self $employee) => $employee->hasHistory() ? false : null);
+    }
+
     public function certifications(): HasMany
     {
         return $this->hasMany(EmployeeCertification::class);

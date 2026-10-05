@@ -40,11 +40,9 @@ class VerificarVencimentosCommand extends Command
         $totalNotificados = 0;
 
         foreach ($contas as $conta) {
-            $usuariosDoTenant = User::where('tenant_id', $conta->tenant_id)->get();
-
-            if ($usuariosDoTenant->isEmpty()) {
-                continue;
-            }
+            // Avisos financeiros: só quem o tenant marcou (ou a regra antiga) -- ver
+            // User::financialNotificationRecipients().
+            $usuariosDoTenant = User::financialNotificationRecipients($conta->tenant_id);
 
             $dueDate = Carbon::parse($conta->due_date);
             if ($dueDate->isToday()) {
@@ -55,8 +53,11 @@ class VerificarVencimentosCommand extends Command
                 $tipo = 'vencendo_breve';
             }
 
-            Notification::send($usuariosDoTenant, new $notificationClass($conta, $tipo));
-            $totalNotificados += $usuariosDoTenant->count();
+            // Sem destinatário financeiro no tenant, só o aviso ao cliente do portal (abaixo) segue.
+            if ($usuariosDoTenant->isNotEmpty()) {
+                Notification::send($usuariosDoTenant, new $notificationClass($conta, $tipo));
+                $totalNotificados += $usuariosDoTenant->count();
+            }
 
             if ($modelClass === AccountReceivable::class && $tipo === 'atrasada'
                 && $conta->client_id && $conta->client?->portal_access_enabled_at) {

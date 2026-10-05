@@ -11,6 +11,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use App\Notifications\ContaPagarNotification;
 use App\Notifications\ContaReceberNotification;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
@@ -64,7 +65,7 @@ class FluxoDeCaixaConsolidadoTest extends TestCase
             'amount' => 1200, 'due_date' => now()->addDays(10), 'status' => 'atrasado',
         ]);
 
-        $widget = new FluxoDeCaixaProjetadoWidget();
+        $widget = new FluxoDeCaixaProjetadoWidget;
         $stats = $this->invokeGetStats($widget);
 
         $this->assertSame('R$ 14.999,00', $stats[0]->getValue()); // A Receber (só pendente/atrasado)
@@ -110,6 +111,13 @@ class FluxoDeCaixaConsolidadoTest extends TestCase
         $user = User::create([
             'name' => 'Financeiro', 'email' => 'financeiro-'.uniqid().'@oravel.com.br',
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'is_approved' => true,
+            // Avisos financeiros vao so para quem o tenant marcou (ver
+            // User::financialNotificationRecipients) -- aqui, o funcionario que paga.
+            'receives_financial_notifications' => true,
+        ]);
+        $notChosen = User::create([
+            'name' => 'Outro', 'email' => 'outro-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id, 'is_approved' => true, 'role' => 'admin',
         ]);
 
         $payable = AccountPayable::create([
@@ -125,9 +133,11 @@ class FluxoDeCaixaConsolidadoTest extends TestCase
 
         Notification::assertSentTo($user, ContaPagarNotification::class);
         Notification::assertSentTo($user, ContaReceberNotification::class);
+        Notification::assertNotSentTo($notChosen, ContaPagarNotification::class);
+        Notification::assertNotSentTo($notChosen, ContaReceberNotification::class);
     }
 
-    /** @return \Filament\Widgets\StatsOverviewWidget\Stat[] */
+    /** @return Stat[] */
     private function invokeGetStats(FluxoDeCaixaProjetadoWidget $widget): array
     {
         $method = new \ReflectionMethod($widget, 'getStats');

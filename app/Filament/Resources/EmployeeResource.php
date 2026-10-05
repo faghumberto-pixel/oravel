@@ -5,12 +5,15 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\EmployeeResource\Pages;
 use App\Filament\Resources\EmployeeResource\RelationManagers;
 use App\Models\Employee;
+use App\Support\Cpf;
 use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class EmployeeResource extends BaseResource
 {
@@ -56,8 +59,10 @@ class EmployeeResource extends BaseResource
                     Forms\Components\TextInput::make('cpf')
                         ->label('CPF')
                         ->required()
-                        ->length(11)
-                        ->numeric(),
+                        ->mask('999.999.999-99')
+                        ->placeholder('000.000.000-00')
+                        ->dehydrateStateUsing(fn ($state) => Cpf::digits($state))
+                        ->rule(fn (?Employee $record) => Cpf::rule(Tenancy::current()?->id ?? $record?->tenant_id, $record?->id, $record?->cpf)),
                     Forms\Components\Select::make('department_id')
                         ->label('Setor')
                         ->relationship('department', 'name')
@@ -89,6 +94,8 @@ class EmployeeResource extends BaseResource
                         ->helperText('Usado pra calcular horas extras em "Minhas Horas".')
                         ->numeric()
                         ->step(0.5)
+                        ->minValue(1)
+                        ->maxValue(24)
                         ->default(8)
                         ->required(),
                     Forms\Components\Select::make('user_id')
@@ -113,6 +120,7 @@ class EmployeeResource extends BaseResource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->with('certifications')) // evita 1 consulta por linha
             ->columns([
                 Tables\Columns\TextColumn::make('name')->label('Nome')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('cpf')->label('CPF')->searchable(),
@@ -136,29 +144,9 @@ class EmployeeResource extends BaseResource
                     }),
                 Tables\Columns\TextColumn::make('certificacoes_alerta')
                     ->label('Certificações')
-                    ->state(function (Employee $record) {
-                        $vencidas = $record->certifications()->get()->filter(fn ($c) => $c->isVencida())->count();
-                        $proximas = $record->certifications()->get()->filter(fn ($c) => $c->isProximoVencimento())->count();
-
-                        if ($vencidas) {
-                            return "{$vencidas} vencida(s)";
-                        }
-                        if ($proximas) {
-                            return "{$proximas} vencendo";
-                        }
-
-                        return 'Em dia';
-                    })
+                    ->state(fn (Employee $record) => self::certificationSummary($record)[0])
                     ->badge()
-                    ->color(function (Employee $record) {
-                        $vencidas = $record->certifications()->get()->filter(fn ($c) => $c->isVencida())->count();
-                        if ($vencidas) {
-                            return 'danger';
-                        }
-                        $proximas = $record->certifications()->get()->filter(fn ($c) => $c->isProximoVencimento())->count();
-
-                        return $proximas ? 'warning' : 'success';
-                    }),
+                    ->color(fn (Employee $record) => self::certificationSummary($record)[1]),
                 Tables\Columns\TextColumn::make('admission_date')->label('Admissão')->date('d/m/Y')->sortable(),
             ])
             ->filters([
@@ -168,12 +156,50 @@ class EmployeeResource extends BaseResource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn (Employee $record) => ! $record->hasHistory())
+                    ->modalDescription('Só é possível excluir quem nunca teve ponto, falta, certificação, alocação ou EPI. Para os demais, use o status "Desligado".'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('delete_without_history')
+                        ->label('Excluir (só quem não tem histórico)')
+                        ->icon('heroicon-o-trash')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->modalDescription('Colaboradores com ponto, falta, certificação, alocação ou EPI não são excluídos -- marque-os como "Desligado".')
+                        ->action(function (Collection $records) {
+                            $deleted = 0;
+                            $kept = 0;
+
+                            foreach ($records as $employee) {
+                                $employee->hasHistory() ? $kept++ : ($employee->delete() ? $deleted++ : $kept++);
+                            }
+
+                            Notification::make()
+                                ->title("{$deleted} excluído(s)".($kept ? ", {$kept} mantido(s) por terem histórico (use \"Desligado\")" : ''))
+                                ->{$kept ? 'warning' : 'success'}()
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
                 ]),
             ]);
+    }
+
+    /**
+     * @return array{0: string, 1: string} [texto, cor] -- usa as certificações já carregadas (with).
+     */
+    private static function certificationSummary(Employee $record): array
+    {
+        $vencidas = $record->certifications->filter(fn ($c) => $c->isVencida())->count();
+
+        if ($vencidas) {
+            return ["{$vencidas} vencida(s)", 'danger'];
+        }
+
+        $proximas = $record->certifications->filter(fn ($c) => $c->isProximoVencimento())->count();
+
+        return $proximas ? ["{$proximas} vencendo", 'warning'] : ['Em dia', 'success'];
     }
 
     public static function getRelations(): array

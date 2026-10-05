@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Support\CentralNotifications;
 use Filament\Facades\Filament;
 use Filament\Notifications\Livewire\DatabaseNotifications as BaseDatabaseNotifications;
 use Illuminate\Database\Eloquent\Builder;
@@ -38,10 +39,7 @@ class DatabaseNotifications extends BaseDatabaseNotifications
             return $query;
         }
 
-        return $query
-            ->whereRaw("coalesce(data::json->'viewData'->>'scope', '') <> 'central'")
-            ->whereRaw('data::text not like ?', ['%/central/%'])
-            ->whereRaw('data::text not like ?', ['%\\/central\\/%']);
+        return CentralNotifications::exclude($query);
     }
 
     // PHP nao herda atributos em metodo sobrescrito -- precisa redeclarar

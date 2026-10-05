@@ -103,16 +103,7 @@ class CalculateContractOverage extends Command
      */
     private function notifyFinanceiro(Tenant $tenant, int $pendentes, int $conflitos, Carbon $periodStart): void
     {
-        $role = Role::where('name', 'admin')
-            ->where('guard_name', 'web')
-            ->where('tenant_id', $tenant->id)
-            ->first();
-
-        if (! $role) {
-            return;
-        }
-
-        $recipients = User::role($role)->where('tenant_id', $tenant->id)->get();
+        $recipients = User::financialNotificationRecipients($tenant->id);
 
         foreach ($recipients as $recipient) {
             $recipient->notify(new ContractOverageCalculatedNotification($pendentes, $conflitos, $periodStart));

@@ -11,9 +11,7 @@ class ContaPagarObserver
 {
     public function created(AccountPayable $accountPayable): void
     {
-        $usuariosFinanceiro = User::where('tenant_id', $accountPayable->tenant_id)
-            ->get()
-            ->filter(fn (User $user) => $user->podeReceberFinancas());
+        $usuariosFinanceiro = User::financialNotificationRecipients($accountPayable->tenant_id);
 
         Notification::send($usuariosFinanceiro, new ContaPagarNotification($accountPayable, 'lancamento'));
     }

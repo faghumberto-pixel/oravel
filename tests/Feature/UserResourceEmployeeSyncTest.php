@@ -87,7 +87,7 @@ class UserResourceEmployeeSyncTest extends TestCase
                 'hourly_rate' => 10,
                 'password' => 'senha12345',
                 'is_approved' => true,
-                'employee_cpf' => '12345678901',
+                'employee_cpf' => '52998224725',
                 'employee_role_title' => 'Tecnico de Campo',
             ])
             ->call('create')
@@ -97,7 +97,7 @@ class UserResourceEmployeeSyncTest extends TestCase
 
         $employee = Employee::where('user_id', $user->id)->first();
         $this->assertNotNull($employee, 'Employee deveria ter sido criado junto com o User.');
-        $this->assertSame('12345678901', $employee->cpf);
+        $this->assertSame('52998224725', $employee->cpf);
         $this->assertSame('Tecnico de Campo', $employee->role_title);
         $this->assertSame($tenant->id, $employee->tenant_id);
     }
@@ -161,7 +161,7 @@ class UserResourceEmployeeSyncTest extends TestCase
         ]);
         Employee::create([
             'tenant_id' => $tenant->id, 'user_id' => $existingUser->id,
-            'name' => $existingUser->name, 'cpf' => '11122233344', 'status' => Employee::STATUS_ATIVO,
+            'name' => $existingUser->name, 'cpf' => '11144477735', 'status' => Employee::STATUS_ATIVO,
         ]);
 
         $this->actingAs($admin);
@@ -176,7 +176,7 @@ class UserResourceEmployeeSyncTest extends TestCase
                 'hourly_rate' => 10,
                 'password' => 'senha12345',
                 'is_approved' => true,
-                'employee_cpf' => '11122233344',
+                'employee_cpf' => '11144477735',
             ])
             ->call('create')
             ->assertHasFormErrors(['employee_cpf']);

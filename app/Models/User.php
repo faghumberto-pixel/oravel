@@ -54,6 +54,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
         'role',
         'last_seen',
         'is_approved',
+        'receives_financial_notifications',
         'job_title',
         'avatar_url',
     ];
@@ -66,6 +67,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'receives_financial_notifications' => 'boolean',
         'hourly_rate' => 'decimal:2',
         'last_seen' => 'datetime',
     ];
@@ -82,6 +84,27 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
     public function routeNotificationForDatabase($notification)
     {
         return $this->notifications();
+    }
+
+    /**
+     * Quem recebe os avisos FINANCEIROS do tenant (contas a pagar/receber,
+     * excedente de contrato). O gestor do tenant marca, em Colaboradores,
+     * quem deve receber (pode ser um funcionário que faz os pagamentos, não
+     * só administrador). Enquanto ninguém estiver marcado, vale a regra
+     * antiga (podeReceberFinancas) para não deixar o tenant sem aviso.
+     *
+     * @return Collection<int, User>
+     */
+    public static function financialNotificationRecipients(?string $tenantId): Collection
+    {
+        if (blank($tenantId)) {
+            return collect();
+        }
+
+        $users = static::withoutGlobalScopes()->where('tenant_id', $tenantId)->get();
+        $chosen = $users->filter(fn (User $u) => $u->receives_financial_notifications);
+
+        return $chosen->isNotEmpty() ? $chosen->values() : $users->filter(fn (User $u) => $u->podeReceberFinancas())->values();
     }
 
     public function podeReceberFinancas(): bool

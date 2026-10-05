@@ -6,6 +6,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\Employee;
 use App\Models\User;
+use App\Support\Cpf;
 use App\Support\Tenancy;
 use Filament\Facades\Filament;
 use Filament\Forms;
@@ -116,6 +117,11 @@ class UserResource extends Resource
                             ->label('Aprovado')
                             ->helperText('Usuários vindos do auto-cadastro nascem pendentes -- só conseguem logar depois de aprovados aqui.')
                             ->default(true),
+
+                        Forms\Components\Toggle::make('receives_financial_notifications')
+                            ->label('Recebe avisos financeiros')
+                            ->helperText('Contas a pagar/receber vencendo e excedente de contrato. Marque só quem resolve o financeiro (pode ser um funcionário, não só administrador). Se ninguém for marcado, os avisos seguem a regra antiga (administradores, gerentes e financeiro).')
+                            ->default(false),
                     ])->columns(2),
 
                 Forms\Components\Section::make('Ficha de RH (opcional)')
@@ -127,25 +133,16 @@ class UserResource extends Resource
                             ->dehydrated(true),
                         Forms\Components\TextInput::make('employee_cpf')
                             ->label('CPF')
-                            ->length(11)
-                            ->numeric()
+                            ->mask('999.999.999-99')
+                            ->placeholder('000.000.000-00')
+                            ->dehydrateStateUsing(fn ($state) => Cpf::digits($state))
                             ->dehydrated(true)
                             ->visible(fn (Forms\Get $get) => $get('is_employee'))
                             ->helperText('Deixe em branco para preencher depois -- o Colaborador nasce com status "Incompleto".')
                             ->rule(function (?User $record) {
-                                return function (string $attribute, $value, \Closure $fail) use ($record) {
-                                    $tenant = Tenancy::current();
-                                    if (! $tenant || blank($value)) {
-                                        return;
-                                    }
-                                    $query = Employee::where('tenant_id', $tenant->id)->where('cpf', $value);
-                                    if ($record) {
-                                        $query->where('user_id', '!=', $record->id);
-                                    }
-                                    if ($query->exists()) {
-                                        $fail('Já existe um Colaborador com este CPF neste tenant.');
-                                    }
-                                };
+                                $employee = $record ? Employee::withoutGlobalScopes()->where('user_id', $record->id)->first() : null;
+
+                                return Cpf::rule(Tenancy::current()?->id ?? $record?->tenant_id, $employee?->id, $employee?->cpf);
                             }),
                         Forms\Components\TextInput::make('employee_role_title')
                             ->label('Cargo')
@@ -161,6 +158,8 @@ class UserResource extends Resource
                             ->helperText('Usado pra calcular horas extras em "Minhas Horas".')
                             ->numeric()
                             ->step(0.5)
+                            ->minValue(1)
+                            ->maxValue(24)
                             ->default(8)
                             ->dehydrated(true)
                             ->visible(fn (Forms\Get $get) => $get('is_employee')),
