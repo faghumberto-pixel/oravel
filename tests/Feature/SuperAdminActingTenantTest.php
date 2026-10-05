@@ -11,6 +11,7 @@ use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Support\Tenancy;
+use Filament\Facades\Filament;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -103,7 +104,13 @@ class SuperAdminActingTenantTest extends TestCase
         $this->assertEquals($tenant->id, $group->tenant_id);
     }
 
-    public function test_super_admin_read_scope_never_restricted_by_acting_tenant(): void
+    /**
+     * Regra ATUALIZADA 05/10/2026 (pedido do usuario): antes o super admin via
+     * todos os tenants mesmo com um tenant atuante escolhido. Agora, no painel
+     * de cliente (admin), a escolha filtra a leitura; na Central e sem usuario
+     * logado (console, jobs) continua vendo tudo. Ver ActingTenantReadScopeTest.
+     */
+    public function test_super_admin_read_scope_is_filtered_by_acting_tenant_only_in_the_admin_panel(): void
     {
         $plan = $this->makePlan();
         $tenantA = $this->makeTenant($plan, 'Tenant A');
@@ -114,7 +121,14 @@ class SuperAdminActingTenantTest extends TestCase
         $this->actingAs($this->makeSuperAdmin());
         session(['acting_tenant_id' => $tenantA->id]);
 
+        // Central: sem filtro.
+        Filament::setCurrentPanel(Filament::getPanel('central'));
         $this->assertEquals(2, ChecklistGroup::count());
+
+        // Painel de cliente: ve so o tenant escolhido.
+        Filament::setCurrentPanel(Filament::getPanel('admin'));
+        $this->assertEquals(1, ChecklistGroup::count());
+        $this->assertEquals($tenantA->id, ChecklistGroup::first()->tenant_id);
     }
 
     public function test_select_acting_tenant_page_accessible_only_to_super_admin(): void

@@ -269,8 +269,13 @@ class UserResource extends Resource
 
         $user = Auth::user();
 
-        // Console/seeder (sem usuário) ou super admin → sem filtro
+        // Console/seeder (sem usuário) ou super admin → sem filtro, exceto quando o super
+        // admin escolheu um tenant atuante no painel de cliente (ve como aquele tenant).
         if (! $user || $user->isSuperAdmin()) {
+            if ($actingTenantId = Tenancy::actingReadScopeTenantId()) {
+                return $query->where('users.tenant_id', $actingTenantId);
+            }
+
             return $query;
         }
 

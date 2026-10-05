@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Tenant;
+use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Auth;
 
 class Tenancy
@@ -18,6 +19,9 @@ class Tenancy
      * acting_tenant_id, via SelectActingTenant) para fins de CRIACAO de
      * registros -- isso nao afeta o bypass de LEITURA (super admin sempre
      * ve tudo, em qualquer tenant, com ou sem essa escolha).
+     *
+     * ATUALIZADO 05/10/2026 (pedido do usuario): no painel de cliente (admin)
+     * a escolha tambem FILTRA a leitura -- ver actingReadScopeTenantId().
      */
     public static function current(): ?Tenant
     {
@@ -34,5 +38,29 @@ class Tenancy
         }
 
         return $user->tenant;
+    }
+
+    /**
+     * Tenant pelo qual a LEITURA do super admin deve ser filtrada: so quando
+     * ele escolheu um tenant atuante E esta no painel de cliente (admin).
+     * Sem escolha ("ver todos") ou no painel Central devolve null = sem
+     * filtro (console/jobs nao tem usuario logado, entao nem chegam aqui). Para qualquer outro
+     * usuario devolve null (o filtro deles e' o proprio tenant_id).
+     */
+    public static function actingReadScopeTenantId(): ?string
+    {
+        $user = Auth::user();
+
+        if (! $user || ! method_exists($user, 'isSuperAdmin') || ! $user->isSuperAdmin()) {
+            return null;
+        }
+
+        $actingTenantId = session('acting_tenant_id');
+
+        if (blank($actingTenantId) || Filament::getCurrentPanel()?->getId() !== 'admin') {
+            return null;
+        }
+
+        return (string) $actingTenantId;
     }
 }

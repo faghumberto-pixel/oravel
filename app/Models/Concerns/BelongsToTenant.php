@@ -22,8 +22,14 @@ trait BelongsToTenant
                 return;
             }
 
-            // Super admin enxerga tudo.
+            // Super admin enxerga tudo -- EXCETO no painel de cliente quando ele
+            // escolheu um tenant atuante: ai ve como aquele tenant (pedido do
+            // usuario 05/10/2026; antes via os registros de todos misturados).
             if (method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) {
+                if ($actingTenantId = Tenancy::actingReadScopeTenantId()) {
+                    $builder->where($builder->getModel()->qualifyColumn('tenant_id'), $actingTenantId);
+                }
+
                 return;
             }
 

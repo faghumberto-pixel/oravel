@@ -16,7 +16,8 @@ use Filament\Pages\Page;
  * escolher "em nome de qual tenant" ele esta cadastrando agora. Essa
  * escolha fica na sessao (acting_tenant_id) e e lida por
  * App\Support\Tenancy::current() -- nao afeta a leitura (super admin
- * sempre ve todos os tenants, com ou sem essa escolha).
+ * sempre ve todos os tenants, com ou sem essa escolha). ATUALIZADO
+ * 05/10/2026: no painel de cliente a escolha tambem filtra a leitura.
  */
 class SelectActingTenant extends Page implements HasForms
 {
@@ -58,7 +59,7 @@ class SelectActingTenant extends Page implements HasForms
         return $form->schema([
             Select::make('acting_tenant_id')
                 ->label('Tenant em que vou cadastrar registros')
-                ->helperText('Enquanto nenhum tenant for escolhido, você não consegue criar Ativos, Clientes, Grupos de Checklist etc. — só visualizar. A visualização de todos os tenants nunca é afetada por essa escolha.')
+                ->helperText('Ao escolher um tenant, o painel passa a mostrar só os dados dele (como se você fosse um usuário dele) e os novos cadastros ficam nele. Sem escolher nenhum, você vê os dados de todos os tenants misturados e não consegue criar Ativos, Clientes, Grupos de Checklist etc. A Central sempre mostra todos.')
                 ->options(Tenant::orderBy('name')->pluck('name', 'id'))
                 ->searchable()
                 ->native(false),
