@@ -10,6 +10,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
 /**
@@ -41,6 +42,9 @@ class TechnicianDailyTasksTest extends TestCase
             'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
         ]);
         $technician->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
+        // Tecnico = quem pode ver Ordens de Servico (App\Support\AppProfile); sem isso
+        // o usuario e' colaborador e cai no App do Colaborador.
+        $technician->givePermissionTo(Permission::firstOrCreate(['name' => 'ler_ordem_servico', 'guard_name' => 'web']));
 
         return [$tenant, $technician];
     }
@@ -89,6 +93,32 @@ class TechnicianDailyTasksTest extends TestCase
             route('filament.admin.pages.technician-daily-tasks'),
             $response->headers->get('Location')
         );
+    }
+
+    public function test_collaborator_without_order_permission_lands_on_app_colaborador_not_on_technician_page(): void
+    {
+        [$tenant] = $this->makeTenantAndTechnician();
+        $collaborator = User::create([
+            'name' => 'Colaborador', 'email' => 'colab-'.uniqid().'@oravel.com.br',
+            'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id,
+        ]);
+        $collaborator->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
+        $this->actingAs($collaborator);
+
+        $this->get('/dashboard')->assertRedirect(route('filament.admin.pages.app-colaborador'));
+        $this->assertSame(route('filament.admin.pages.app-colaborador'), $this->get('/admin')->headers->get('Location'));
+        $this->get('/app/tecnico')->assertRedirect(route('filament.admin.pages.app-colaborador'));
+        $this->get('/app/administrador')->assertRedirect(route('filament.admin.pages.app-colaborador'));
+    }
+
+    public function test_technician_app_entry_lands_on_orders_and_cannot_reach_the_admin_app(): void
+    {
+        [, $technician] = $this->makeTenantAndTechnician();
+        $this->actingAs($technician);
+
+        $this->get('/app/tecnico')->assertRedirect(route('filament.admin.pages.technician-daily-tasks'));
+        $this->get('/app/administrador')->assertRedirect(route('filament.admin.pages.technician-daily-tasks'));
+        $this->get('/app/colaborador')->assertRedirect(route('filament.admin.pages.app-colaborador'));
     }
 
     public function test_open_tab_shows_pending_maintenance_orders_only(): void

@@ -5,6 +5,7 @@ namespace App\Filament\Pages\Auth;
 use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Support\AppProfile;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -173,8 +174,10 @@ class Login extends BaseLogin
         // o valor de retorno da action nunca vira navegacao, so alimenta o effect "returns" do
         // $wire.call() -- daí o retorno aqui tem que ser null (compativel com ?LoginResponse).
         // Reativado 28/09/2026 -- ver App\Filament\Pages\TechnicianDailyTasks::canAccess().
-        if ($user instanceof User && ! $user->isAdmin() && empty($user->supervisedDepartmentIds())) {
-            $this->redirect(route('filament.admin.pages.technician-daily-tasks'));
+        // Tecnico -> Minhas Ordens de Servico; colaborador (sem acesso a OS) -> App do
+        // Colaborador (AppProfile; antes todo nao-admin caia na tela do tecnico).
+        if ($user instanceof User && AppProfile::for($user) !== AppProfile::ADMIN) {
+            $this->redirect(AppProfile::homeUrl($user, AppProfile::for($user)));
 
             return null;
         }

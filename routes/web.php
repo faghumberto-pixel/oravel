@@ -246,8 +246,8 @@ Route::middleware(['auth'])->group(function () {
 
         // Técnicos vão direto para "Minhas Ordens de Serviço". Reativado
         // 28/09/2026 -- ver App\Filament\Pages\TechnicianDailyTasks::canAccess().
-        if (! $user->isAdmin() && empty($user->supervisedDepartmentIds())) {
-            return redirect()->route('filament.admin.pages.technician-daily-tasks');
+        if (AppProfile::for($user) !== AppProfile::ADMIN) {
+            return redirect()->to(AppProfile::homeUrl($user, AppProfile::for($user)));
         }
 
         $tenantSlug = $user->latest_tenant_slug ?? collect(Filament::getUserTenants($user))->first()?->slug ?? $user->tenant?->slug ?? $user->tenant_id;
@@ -271,8 +271,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin', function () {
         $user = auth()->user();
 
-        if ($user && ! $user->isAdmin() && empty($user->supervisedDepartmentIds())) {
-            return redirect()->route('filament.admin.pages.technician-daily-tasks');
+        if ($user && AppProfile::for($user) !== AppProfile::ADMIN) {
+            return redirect()->to(AppProfile::homeUrl($user, AppProfile::for($user)));
         }
 
         return app(RedirectToHomeController::class)();
