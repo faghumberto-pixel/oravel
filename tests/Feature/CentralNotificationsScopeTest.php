@@ -54,7 +54,8 @@ class CentralNotificationsScopeTest extends TestCase
         [$super] = $this->superAdminOfATenant();
         $this->seedNotifications($super);
 
-        $this->assertSame(['Aviso do app'], $this->titlesIn('admin', $super));
+        // Regra de 05/10/2026: o sino do super admin e' o da Central -- no app fica vazio.
+        $this->assertSame([], $this->titlesIn('admin', $super));
         $this->assertSame(['Aviso do app', 'Contrato assinado antigo', 'Mensalidade paga'], $this->titlesIn('central', $super));
     }
 
@@ -65,7 +66,7 @@ class CentralNotificationsScopeTest extends TestCase
         $this->actingAs($super);
         Filament::setCurrentPanel(Filament::getPanel('admin'));
 
-        $this->assertSame(1, Livewire::test('database-notifications')->instance()->getUnreadNotificationsCount());
+        $this->assertSame(0, Livewire::test('database-notifications')->instance()->getUnreadNotificationsCount());
     }
 
     public function test_the_bell_still_never_deletes_notifications(): void

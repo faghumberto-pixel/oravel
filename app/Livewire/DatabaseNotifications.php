@@ -39,6 +39,13 @@ class DatabaseNotifications extends BaseDatabaseNotifications
             return $query;
         }
 
+        // O sino do super admin (dono do SaaS, tenant Oravel) é o da CENTRAL: no app -- principalmente
+        // quando ele atua como outro tenant -- não aparece nenhum aviso pessoal dele (pedido do
+        // usuário 05/10/2026: "o sino do tenant Oravel na Central").
+        if (Filament::auth()->user()?->isSuperAdmin()) {
+            return $query->whereRaw('1 = 0');
+        }
+
         return CentralNotifications::exclude($query);
     }
 

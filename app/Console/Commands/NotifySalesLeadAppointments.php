@@ -54,6 +54,7 @@ class NotifySalesLeadAppointments extends Command
                     ))
                     ->icon('heroicon-o-calendar-days')
                     ->iconColor($isOverdue ? 'danger' : 'warning')
+                    ->viewData(['scope' => 'central']) // vendas da Oravel (Central): só no sino da Central
                     ->sendToDatabase($recipient);
             }
 

@@ -185,13 +185,27 @@ class InboundLeadController extends Controller
             $url = null;
         }
 
+        // Tenant da própria operação do SaaS (Oravel): o aviso é só do sino da CENTRAL, para os
+        // super admins -- nunca no sino do app (pedido do usuário 05/10/2026). Canais de outros
+        // tenants seguem avisando os admins do tenant, como antes.
+        $superEmails = array_map('strtolower', config('oravel.super_admins', []));
+        $isOperatorTenant = $recipients->contains(fn (User $user) => in_array(strtolower((string) $user->email), $superEmails, true));
+
         foreach ($recipients as $recipient) {
+            if ($isOperatorTenant && ! in_array(strtolower((string) $recipient->email), $superEmails, true)) {
+                continue;
+            }
+
             try {
                 $notification = Notification::make()
                     ->title('Novo lead do site')
                     ->body($lead->company_name.' ('.$lead->name.') — '.$lead->segment.' · '.$rotuloPorte.': '.$lead->company_size)
                     ->icon('heroicon-o-user-plus')
                     ->iconColor('success');
+
+                if ($isOperatorTenant) {
+                    $notification->viewData(['scope' => 'central']);
+                }
 
                 if ($url) {
                     $notification->actions([

@@ -125,6 +125,32 @@ class InboundLeadTest extends TestCase
         $this->assertSame(0, $this->leadsOf($this->tenant)->count());
     }
 
+    public function test_lead_do_tenant_da_operacao_avisa_so_o_sino_da_central(): void
+    {
+        $super = $this->makeUser($this->tenant, 'Dono', admin: true);
+        $outroAdmin = $this->makeUser($this->tenant, 'OutroAdmin');
+        $outroAdmin->assignRole(Role::where('name', 'admin')->where('tenant_id', $this->tenant->id)->firstOrFail());
+        config(['oravel.super_admins' => [$super->email]]);
+
+        $this->send($this->payload())->assertStatus(201);
+
+        $this->assertSame(1, $super->notifications()->count());
+        $this->assertSame('central', $super->notifications()->first()->data['viewData']['scope']);
+        // O outro admin do tenant não recebe: o aviso é da operação do SaaS.
+        $this->assertSame(0, $outroAdmin->notifications()->count());
+    }
+
+    public function test_lead_de_outro_tenant_continua_avisando_os_admins_sem_marca_da_central(): void
+    {
+        $admin = $this->makeUser($this->tenant, 'Admin', admin: true);
+        config(['oravel.super_admins' => ['ninguem@oravel.test']]);
+
+        $this->send($this->payload())->assertStatus(201);
+
+        $this->assertSame(1, $admin->notifications()->count());
+        $this->assertArrayNotHasKey('scope', $admin->notifications()->first()->data['viewData'] ?? []);
+    }
+
     public function test_lead_valido_cria_crm_lead_interacao_e_notifica_os_admins(): void
     {
         $admin = $this->makeUser($this->tenant, 'Admin', admin: true);
