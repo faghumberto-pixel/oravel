@@ -145,6 +145,19 @@ class RoleResource extends Resource
                 ]);
         }
 
+        // Permissão especial da Gestão de Frota (não é CRUD de módulo): quem pode liberar um veículo bloqueado pelo checklist.
+        if (! $tenant || $tenant->hasFeature('tabela_frota_checklists')) {
+            Permission::firstOrCreate(['name' => 'liberar_checklist_frota', 'guard_name' => 'web']);
+            $sections[] = Forms\Components\Section::make('Gestão de Frota — permissões especiais')
+                ->collapsible()->collapsed()
+                ->schema([
+                    Forms\Components\Toggle::make('perm_liberar_checklist_frota')
+                        ->label('Liberar veículo bloqueado pelo checklist')
+                        ->helperText('Quem tiver este perfil pode liberar o veículo, informando o motivo. O administrador já pode.')
+                        ->onColor('success')->offColor('danger')->dehydrated(false),
+                ]);
+        }
+
         return $form->schema([
             Forms\Components\Section::make('Configuração Geral')->schema([
                 Forms\Components\Grid::make(1)->schema([

@@ -72,6 +72,19 @@
                 @endif
                 <h2 class="text-xl font-extrabold leading-tight text-white">{{ $asset->name }}</h2>
                 @if ($asset->isVehicle())
+                    @php
+                        $pendenciasFrota = app(\App\Services\Frota\PendenciasFrotaService::class)->doVeiculo($asset);
+                    @endphp
+                    @if ($pendenciasFrota->isNotEmpty())
+                        <div class="mt-2 rounded-lg bg-amber-500/10 px-3 py-2">
+                            <p class="text-xs font-bold text-amber-400">⚠ {{ $pendenciasFrota->count() }} pendência(s) da frota</p>
+                            <ul class="mt-1 list-disc pl-4 text-xs text-zinc-300">
+                                @foreach ($pendenciasFrota->take(5) as $pf)
+                                    <li>{{ $pf['mensagem'] }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     @if ($bloqueioFrota = $asset->bloqueioChecklistFrota())
                         <p class="mt-2 rounded-lg bg-red-500/15 px-3 py-2 text-xs font-bold text-red-400">🚫 Veículo BLOQUEADO pelo checklist ({{ $bloqueioFrota->concluido_em?->format('d/m H:i') }}). Não pode sair até ser liberado.</p>
                     @endif

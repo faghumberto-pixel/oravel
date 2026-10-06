@@ -59,3 +59,12 @@ Prioridade baixa: lavagem/limpeza; Arla (já em Itens Agregados); baixa/venda do
 **Auditoria/testes:** `tenant:audit --strict` = as mesmas 3 violações antigas, nenhuma da Frota; metadados SaaS OK; 14 testes novos (47 no conjunto Frota); teste de baixa verificado (falha sem o código). Banco descartável; DEV intacto (5 clientes, 13 usuários).
 **Manual:** `php artisan migrate` (já rodado no DEV; PROD no deploy). Nada de push/deploy.
 **Limites conhecidos:** pneus/baterias cadastrados ANTES desta fase não têm item vinculado (nada muda neles); recapagem concluída não gera entrada (o pneu nunca saiu do saldo ao ir p/ recapagem); alerta de estoque mínimo da frota fica para a Fase 5.
+
+## FASE 5 — Pendências da Frota, Gerar OS e permissão (06/10/2026) — pronta no DEV, aguardando confirmação
+
+**Criado:** `PendenciasFrotaService` (tudo calculado ao vivo, nada gravado), página **Pendências da Frota** (1º item do grupo Gestão de Frota, com contador no menu — vermelho se houver crítica), filtros por categoria/gravidade/veículo, botão **Gerar OS**, bloco de pendências do veículo no Dossiê do celular, e a permissão **"Liberar veículo bloqueado pelo checklist"** como opção em Perfis de Acesso (seção "Gestão de Frota — permissões especiais").
+**Fontes das pendências:** checklist (bloqueio = crítica; sem completo há 7+ dias = atenção), pneus e baterias montados (alertas das Fases 2–3), óleo (vencida = crítica, próxima/consumo anormal = atenção), documentos do veículo (licenciamento, IPVA, seguro, tacógrafo: vencido = crítica, até 30 dias = atenção) e estoque das 4 categorias da frota abaixo do mínimo (zerado = crítica).
+**Gerar OS:** abre OS (corretiva; preventiva para óleo) com a chave da pendência na descrição; enquanto essa OS estiver aberta não abre outra (mostra "OS xxx aberta"); pendência de estoque não gera OS de veículo (é caso de solicitação de material).
+**Auditoria/testes:** `tenant:audit --strict` = as mesmas 3 violações antigas; metadados SaaS OK; 9 testes novos (75 no conjunto Frota+Perfis, todos passam); teste de duplicidade verificado (falha sem o código). Banco descartável; DEV intacto (5 clientes, 13 usuários).
+**Manual:** nenhuma migration nova nesta fase. Nada de push/deploy.
+**NÃO feito (decisão pendente):** bloqueio de saída na mobilização (módulo antigo usa `fleet_vehicles`, sem ligação com o ativo); exigiria `fleet_vehicles.asset_id`. CNH de motorista, multas, sinistros, abastecimento e custo total por veículo (itens da lista de prioridade da Fase 0) ficam como próximas fases.
