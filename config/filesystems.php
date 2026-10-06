@@ -38,6 +38,20 @@ return [
             'report' => false,
         ],
 
+        // Documentos sensiveis (laudos, notas fiscais...): NAO publicos -- so abrem por link assinado
+        // temporario, gerado na tela para quem tem acesso. Fica em storage/media-library/ de proposito:
+        // esse caminho ja esta fora do backup do deploy.sh (uploads nao entram no backup de codigo).
+        'media_private' => [
+            'driver' => 'local',
+            'root' => storage_path('media-library/private'),
+            // Prefixo PROPRIO: sem 'url', este disco e o 'local' serviriam em /storage/{path} e o segundo
+            // cadastrado sobrescreveria a rota do primeiro.
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/arquivos-privados',
+            'serve' => true,
+            'throw' => false,
+            'report' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

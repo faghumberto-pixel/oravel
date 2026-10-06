@@ -27,6 +27,11 @@ class ViewAsset extends ViewRecord
                 // Aba de Identificação
                 Infolists\Components\Section::make('Dados do Ativo')
                     ->schema([
+                        Infolists\Components\SpatieMediaLibraryImageEntry::make('fotos')
+                            ->label('Fotos')
+                            ->collection('fotos')
+                            ->height(140)
+                            ->columnSpanFull(),
                         Infolists\Components\TextEntry::make('name')->label('Descrição'),
                         Infolists\Components\TextEntry::make('tag')->label('TAG/Código'),
                         Infolists\Components\TextEntry::make('patrimonio')->label('Nº Patrimônio'),

@@ -88,6 +88,24 @@ class AssetResource extends Resource
                     Tabs\Tab::make('Informações Gerais')
                         ->icon('heroicon-m-information-circle')
                         ->schema([
+                            Forms\Components\Section::make('Fotos do equipamento')
+                                ->description('Até 3 fotos (JPG, PNG ou WebP, máx. 10 MB cada). A primeira é a foto principal, que aparece na lista.')
+                                ->collapsible()
+                                ->schema([
+                                    Forms\Components\SpatieMediaLibraryFileUpload::make('fotos')
+                                        ->label('Fotos')
+                                        ->collection('fotos')
+                                        ->conversion('thumb')
+                                        ->multiple()
+                                        ->maxFiles(Asset::MAX_PHOTOS)
+                                        ->maxSize(10240)
+                                        ->image()
+                                        ->reorderable()
+                                        ->panelLayout('grid')
+                                        ->openable()
+                                        ->downloadable()
+                                        ->columnSpanFull(),
+                                ]),
                             Forms\Components\Section::make('Identificação')->schema([
                                 Forms\Components\Grid::make(4)->schema([
                                     Forms\Components\TextInput::make('patrimonio')
@@ -788,6 +806,15 @@ class AssetResource extends Resource
             ->columns([
                 static::tenantColumn(),
 
+                Tables\Columns\SpatieMediaLibraryImageColumn::make('fotos')
+                    ->label('Foto')
+                    ->collection('fotos')
+                    ->conversion('thumb')
+                    ->limit(1)
+                    ->square()
+                    ->size(56)
+                    ->defaultImageUrl(fn () => null),
+
                 Tables\Columns\TextColumn::make('patrimonio')
                     ->label('Patrimônio')
                     ->searchable()
@@ -942,6 +969,7 @@ class AssetResource extends Resource
     public static function getRelations(): array
     {
         return [
+            AssetResource\RelationManagers\DocumentsRelationManager::class,
             AssetResource\RelationManagers\ChecklistItemsRelationManager::class,
             AssetResource\RelationManagers\PatioArrivalsRelationManager::class,
             AssetResource\RelationManagers\MaintenancePlansRelationManager::class,

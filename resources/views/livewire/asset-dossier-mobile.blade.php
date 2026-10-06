@@ -54,6 +54,22 @@
         @else
             {{-- Cabeçalho do ativo --}}
             <div class="rounded-2xl bg-zinc-900 p-4">
+                {{-- Fotos do equipamento (até 3; a 1ª é a principal) --}}
+                @php
+                    $fotos = $asset->getMedia('fotos');
+                @endphp
+                @if ($fotos->isNotEmpty())
+                    <div class="-mx-4 -mt-4 mb-3 overflow-hidden rounded-t-2xl">
+                        <img src="{{ $fotos->first()->getUrl() }}" alt="Foto de {{ $asset->name }}" class="h-48 w-full object-cover" loading="lazy">
+                        @if ($fotos->count() > 1)
+                            <div class="flex gap-1 bg-zinc-950 p-1">
+                                @foreach ($fotos->slice(1) as $foto)
+                                    <img src="{{ $foto->hasGeneratedConversion('thumb') ? $foto->getUrl('thumb') : $foto->getUrl() }}" alt="" class="h-16 w-16 rounded object-cover" loading="lazy">
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                @endif
                 <h2 class="text-xl font-extrabold leading-tight text-white">{{ $asset->name }}</h2>
                 <p class="mt-1 text-sm font-medium text-zinc-400">
                     PAT: {{ $asset->patrimonio ?? '—' }} · TAG: {{ $asset->tag ?? '—' }}

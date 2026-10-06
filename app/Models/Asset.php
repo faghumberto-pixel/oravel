@@ -21,13 +21,18 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
+use Spatie\Image\Enums\Fit;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Asset extends Model
+class Asset extends Model implements HasMedia
 {
     use BelongsToTenant;
     use HasFactory;
     use HasSaaSMetadata;
     use HasUuids;
+    use InteractsWithMedia;
     use LogsActivity;
 
     protected $keyType = 'string';
@@ -654,5 +659,28 @@ class Asset extends Model
             'daily_average' => round($dailyAverage, 2),
             'monthly_average' => round($dailyAverage * 30, 2),
         ];
+    }
+
+    /** Quantas fotos o ativo aceita (a primeira é a principal). */
+    public const MAX_PHOTOS = 3;
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('fotos')
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp']);
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        // Miniatura para a lista de ativos (foto de celular pesa vários MB). nonQueued: não depende
+        // de worker de fila.
+        $this->addMediaConversion('thumb')
+            ->fit(Fit::Crop, 160, 160)
+            ->nonQueued();
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(AssetDocument::class);
     }
 }
