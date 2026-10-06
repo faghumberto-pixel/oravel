@@ -746,4 +746,49 @@ class Asset extends Model implements HasMedia
             }
         };
     }
+
+    // --- Gestão de Frota (veículos): checklist de saída e retorno ---
+
+    public function checklistsFrota(): HasMany
+    {
+        return $this->hasMany(FrotaChecklist::class, 'ativo_id');
+    }
+
+    /** Último checklist de SAÍDA concluído. */
+    public function ultimaSaidaFrota(): ?FrotaChecklist
+    {
+        return $this->checklistsFrota()->where('tipo', FrotaChecklist::TIPO_SAIDA)->whereNotNull('concluido_em')->latest('concluido_em')->first();
+    }
+
+    /** Checklist de saída que está bloqueando o veículo (null = nada bloqueando). */
+    public function bloqueioChecklistFrota(): ?FrotaChecklist
+    {
+        $saida = $this->ultimaSaidaFrota();
+
+        return $saida && $saida->estaBloqueado() ? $saida : null;
+    }
+
+    /** O veículo pode sair? Não, enquanto a última saída estiver bloqueada e não liberada. */
+    public function podeSair(): bool
+    {
+        return $this->bloqueioChecklistFrota() === null;
+    }
+
+    /** Último checklist COMPLETO concluído. */
+    public function ultimoChecklistCompleto(): ?FrotaChecklist
+    {
+        return $this->checklistsFrota()
+            ->whereNotNull('concluido_em')
+            ->whereHas('modelo', fn ($q) => $q->where('tipo', FrotaModeloChecklist::TIPO_COMPLETO))
+            ->latest('concluido_em')
+            ->first();
+    }
+
+    /** Pendência: sem checklist completo, ou o último tem mais de 7 dias. */
+    public function checklistCompletoVencido(): bool
+    {
+        $ultimo = $this->ultimoChecklistCompleto();
+
+        return ! $ultimo || $ultimo->concluido_em->lt(now()->subDays(FrotaChecklist::DIAS_CHECKLIST_COMPLETO));
+    }
 }

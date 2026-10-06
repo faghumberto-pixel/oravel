@@ -40,6 +40,7 @@ use App\Livewire\Academy\Landing;
 use App\Livewire\Academy\RankingPage;
 use App\Livewire\Academy\TeamPage;
 use App\Livewire\AssetDossierMobile;
+use App\Livewire\ChecklistFrotaMobile;
 use App\Livewire\EquipmentDamageMobile;
 use App\Livewire\EquipmentMovementMobile;
 use App\Livewire\EquipmentPatioArrivalMobile;
@@ -474,6 +475,10 @@ Route::middleware(['auth'])->group(function () {
 
     // Versao pro campo/patio (celular do tecnico) do Dossie Rapido -- destino
     // do QR code do ativo, ver AssetResource::qr_code_display.
+    // Checklist de saida/retorno do veiculo (Gestao de Frota), pelo celular -- botao no Dossie do ativo.
+    Route::get('/admin/frota/checklist/{assetId}', ChecklistFrotaMobile::class)
+        ->name('frota.checklist.mobile');
+
     Route::get('/admin/assets/dossie-mobile/{assetId?}', AssetDossierMobile::class)
         ->name('assets.dossier.mobile');
 

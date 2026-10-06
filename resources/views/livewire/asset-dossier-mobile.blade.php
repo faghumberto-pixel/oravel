@@ -71,6 +71,12 @@
                     </div>
                 @endif
                 <h2 class="text-xl font-extrabold leading-tight text-white">{{ $asset->name }}</h2>
+                @if ($asset->isVehicle())
+                    @if ($bloqueioFrota = $asset->bloqueioChecklistFrota())
+                        <p class="mt-2 rounded-lg bg-red-500/15 px-3 py-2 text-xs font-bold text-red-400">🚫 Veículo BLOQUEADO pelo checklist ({{ $bloqueioFrota->concluido_em?->format('d/m H:i') }}). Não pode sair até ser liberado.</p>
+                    @endif
+                    <a href="{{ route('frota.checklist.mobile', ['assetId' => $asset->id]) }}" class="mt-3 flex min-h-[3rem] items-center justify-center rounded-xl bg-emerald-500 text-sm font-bold text-zinc-950 active:bg-emerald-600">📋 CHECKLIST DE SAÍDA / RETORNO</a>
+                @endif
                 <p class="mt-1 text-sm font-medium text-zinc-400">
                     PAT: {{ $asset->patrimonio ?? '—' }} · TAG: {{ $asset->tag ?? '—' }}
                 </p>
