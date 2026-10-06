@@ -1200,6 +1200,127 @@
     ],
     "correct": 1,
     "why": "Menu de Ativos."
+   },
+   {
+    "q": "Ao escolher “Veículo” em “Este ativo é”, o que acontece com os campos Capacidade e Unidade?",
+    "options": [
+     "Continuam iguais, o veículo também tem capacidade em kVA ou kg",
+     "A Capacidade some e a Unidade fica sempre em Km, automaticamente",
+     "A Capacidade vira obrigatória e a Unidade passa a aceitar litros",
+     "Somente a Unidade some; a Capacidade continua para o veículo preencher"
+    ],
+    "correct": 1,
+    "why": "Veículo não tem capacidade: o campo some e a unidade fica fixa em Km."
+   },
+   {
+    "q": "Qual campo só aparece quando o veículo é marcado como “pesado”?",
+    "options": [
+     "Renavam",
+     "Vencimento do IPVA",
+     "Tacógrafo: número e vencimento da aferição",
+     "Vencimento do seguro"
+    ],
+    "correct": 2,
+    "why": "O tacógrafo (número e vencimento da aferição) é exclusivo de veículo pesado; leve não tem."
+   },
+   {
+    "q": "Qual destas placas o sistema aceita?",
+    "options": [
+     "ABC-12",
+     "ABC1D23",
+     "1234ABC",
+     "AB1C23D"
+    ],
+    "correct": 1,
+    "why": "São aceitos o formato antigo (ABC1234) e o Mercosul (ABC1D23). O sistema deixa em maiúsculas e não repete a placa."
+   },
+   {
+    "q": "Qual destes chassis de veículo o sistema recusa?",
+    "options": [
+     "9BWZZZ377VT004251",
+     "9BWZZZ377VT00425I",
+     "9bwzzz377vt004251 (em minúsculas)",
+     "1HGBH41JXMN109186"
+    ],
+    "correct": 1,
+    "why": "O chassi tem 17 caracteres e não pode ter as letras I, O e Q; a versão com “I” é recusada (minúsculas são aceitas e viram maiúsculas)."
+   },
+   {
+    "q": "Quantas fotos cada ativo aceita, e qual aparece na lista de Ativos?",
+    "options": [
+     "Quantas quiser; aparece a última enviada",
+     "Até 3; aparece a primeira, que é a foto principal",
+     "Apenas 1 foto, sem escolha",
+     "Até 10; aparecem todas lado a lado na lista"
+    ],
+    "correct": 1,
+    "why": "O limite é de 3 fotos e a primeira é a principal, mostrada na lista, na visualização e no Dossiê do celular."
+   },
+   {
+    "q": "Um laudo foi anexado na aba Documentos de um ativo. Como outra pessoa da empresa o abre?",
+    "options": [
+     "Pelo endereço do arquivo, que pode ser copiado e enviado a qualquer pessoa",
+     "Pelo botão “Abrir”, que gera um link temporário de 10 minutos",
+     "Só baixando o arquivo direto do servidor",
+     "Qualquer pessoa da internet consegue abrir, pois o arquivo é público"
+    ],
+    "correct": 1,
+    "why": "Os documentos são privados: o botão Abrir gera um link temporário que expira em 10 minutos."
+   },
+   {
+    "q": "Na tela “Vencimento de veículos”, um documento vence daqui a 20 dias. Que cor ele tem e em que aba aparece?",
+    "options": [
+     "Verde, na aba “Todos”",
+     "Laranja, e aparece nas abas de “até 30”, “até 60” e “até 90 dias” (além de “Todos”)",
+     "Vermelho, na aba “Vencidos”",
+     "Cinza, na aba “Sem data cadastrada”"
+    ],
+    "correct": 1,
+    "why": "Até 30 dias é laranja; 20 dias está dentro de 30, 60 e 90, então o veículo aparece nas três abas (e em Todos)."
+   },
+   {
+    "q": "Um veículo leve aparece na tela de vencimentos. O que mostra a coluna do Tacógrafo?",
+    "options": [
+     "A data de aferição em vermelho",
+     "“n/a” (só veículo pesado tem tacógrafo)",
+     "Uma data em branco, a preencher",
+     "O vencimento do seguro"
+    ],
+    "correct": 1,
+    "why": "Tacógrafo só se aplica a veículo pesado; nos demais aparece n/a."
+   },
+   {
+    "q": "Para que serve o botão “+” ao lado do campo Modelo?",
+    "options": [
+     "Duplicar o ativo atual",
+     "Cadastrar um modelo novo na lista padronizada, sem repetir os que já existem",
+     "Somar a capacidade de dois modelos",
+     "Importar modelos de um arquivo Excel"
+    ],
+    "correct": 1,
+    "why": "O + cadastra o modelo na lista da empresa (espaços arrumados, sem repetição), padronizando a escrita."
+   },
+   {
+    "q": "O que acontece com os ativos que já estavam cadastrados antes da escolha “Máquina ou Veículo”?",
+    "options": [
+     "Todos viram veículos",
+     "Todos ficam como Máquina / Equipamento e podem ser trocados para Veículo",
+     "São apagados e precisam ser recadastrados",
+     "Ficam sem tipo e não aparecem na lista"
+    ],
+    "correct": 1,
+    "why": "Os ativos antigos ficam como Máquina / Equipamento; se algum for veículo, basta abrir e trocar o tipo."
+   },
+   {
+    "q": "Quais documentos do veículo a tela “Vencimento de veículos” acompanha?",
+    "options": [
+     "Somente o seguro",
+     "Seguro, IPVA, Licenciamento e, nos pesados, o Tacógrafo",
+     "Somente IPVA e Licenciamento",
+     "CNH do motorista e multas"
+    ],
+    "correct": 1,
+    "why": "A tela acompanha seguro, IPVA, licenciamento e, em veículo pesado, o tacógrafo."
    }
   ]
  },

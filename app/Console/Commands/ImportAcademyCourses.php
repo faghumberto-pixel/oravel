@@ -26,6 +26,7 @@ class ImportAcademyCourses extends Command
         {--publish : Publica os cursos NOVOS (padrão: rascunho)}
         {--publish-only= : Títulos (separados por vírgula) dos cursos a PUBLICAR, novos ou já existentes}
         {--refresh-content : Reaplica resumo e corpo das aulas a partir dos arquivos (sobrescreve)}
+        {--only-lessons= : Com --refresh-content, só as aulas com estes slugs (separados por vírgula), ex.: modulos__ativos}
         {--no-quiz : Não importa as perguntas (quiz.json)}
         {--dry-run : Só mostra o que seria importado}';
 
@@ -45,6 +46,7 @@ class ImportAcademyCourses extends Command
         $base = rtrim((string) $this->option('base'), '/');
         $dry = (bool) $this->option('dry-run');
         $refresh = (bool) $this->option('refresh-content');
+        $onlyLessons = array_filter(array_map('trim', explode(',', (string) $this->option('only-lessons'))));
         $publishOnly = array_filter(array_map('trim', explode(',', (string) $this->option('publish-only'))));
 
         if (! $dry) {
@@ -64,7 +66,7 @@ class ImportAcademyCourses extends Command
                 ['slug' => Str::slug($c['title'])],
                 ['title' => $c['title'], 'position' => $i + 1, 'is_published' => (bool) $this->option('publish')],
             );
-            if (! empty($c['description']) && (blank($course->description) || $refresh)) {
+            if (! empty($c['description']) && (blank($course->description) || ($refresh && ! $onlyLessons))) {
                 $course->description = $c['description'];
             }
             if (in_array($c['title'], $publishOnly, true)) {
@@ -81,10 +83,12 @@ class ImportAcademyCourses extends Command
                 $lesson->feature_key ??= $l['feature'] ?? null;
 
                 $file = "{$dir}/lessons/{$l['slug']}.html";
-                if ($refresh || blank($lesson->summary)) {
+                // --only-lessons limita o --refresh-content às aulas listadas (as demais não são sobrescritas).
+                $refreshThis = $refresh && (! $onlyLessons || in_array($l['slug'], $onlyLessons, true));
+                if ($refreshThis || blank($lesson->summary)) {
                     $lesson->summary = $l['summary'] ?? $lesson->summary;
                 }
-                if (($refresh || blank($lesson->body)) && is_file($file)) {
+                if (($refreshThis || blank($lesson->body)) && is_file($file)) {
                     $lesson->body = (string) file_get_contents($file) ?: null;
                 }
                 $lesson->save();

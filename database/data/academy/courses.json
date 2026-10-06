@@ -61,7 +61,7 @@
                 "title": "Ativos (Equipamentos)",
                 "href": "/modulos/ativos.html",
                 "slug": "modulos__ativos",
-                "summary": "Como cadastrar, acompanhar e controlar o status de cada equipamento na Oravel.",
+                "summary": "Como cadastrar máquinas e veículos, com fotos, documentos, modelo padronizado e o controle de vencimentos (seguro, IPVA, licenciamento).",
                 "feature": "tabela_assets"
             },
             {
