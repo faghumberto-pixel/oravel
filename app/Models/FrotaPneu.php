@@ -54,6 +54,7 @@ class FrotaPneu extends Model
     protected $attributes = ['situacao' => self::ESTOQUE, 'vida' => self::VIDA_NOVO];
 
     protected $fillable = [
+        'peca_id', 'almoxarifado_id',
         'tenant_id', 'numero_fogo', 'marca', 'modelo', 'medida', 'dot', 'vida', 'sulco_inicial_mm', 'custo',
         'pressao_min_psi', 'pressao_max_psi', 'situacao',
     ];

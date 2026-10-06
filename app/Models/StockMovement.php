@@ -58,6 +58,7 @@ class StockMovement extends Model
         'exit_work_order' => 'Saída - Ordem de Serviço',
         'exit_adjustment' => 'Saída - Ajuste',
         'exit_loss' => 'Saída - Perda/Quebra',
+        'exit_fleet' => 'Saída - Gestão de Frota',
         'transfer_out' => 'Transferência - Saída',
         'transfer_in' => 'Transferência - Entrada',
     ];

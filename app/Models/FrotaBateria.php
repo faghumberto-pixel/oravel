@@ -44,7 +44,8 @@ class FrotaBateria extends Model
 
     protected $attributes = ['situacao' => self::ESTOQUE];
 
-    protected $fillable = ['tenant_id', 'marca', 'modelo', 'amperagem_ah', 'cca', 'numero_serie', 'comprada_em', 'garantia_ate', 'custo', 'situacao'];
+    protected $fillable = [
+        'peca_id', 'almoxarifado_id', 'tenant_id', 'marca', 'modelo', 'amperagem_ah', 'cca', 'numero_serie', 'comprada_em', 'garantia_ate', 'custo', 'situacao'];
 
     protected $casts = ['comprada_em' => 'date', 'garantia_ate' => 'date', 'custo' => 'decimal:2'];
 

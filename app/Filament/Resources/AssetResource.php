@@ -1149,6 +1149,7 @@ class AssetResource extends Resource
             AssetResource\RelationManagers\DocumentsRelationManager::class,
             AssetResource\RelationManagers\PneusRelationManager::class,
             AssetResource\RelationManagers\BateriasRelationManager::class,
+            AssetResource\RelationManagers\OleoRelationManager::class,
             AssetResource\RelationManagers\ChecklistItemsRelationManager::class,
             AssetResource\RelationManagers\PatioArrivalsRelationManager::class,
             AssetResource\RelationManagers\MaintenancePlansRelationManager::class,

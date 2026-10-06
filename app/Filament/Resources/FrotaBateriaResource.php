@@ -45,6 +45,15 @@ class FrotaBateriaResource extends BaseResource
                 Forms\Components\DatePicker::make('comprada_em')->label('Data da compra')->maxDate(now()),
                 Forms\Components\DatePicker::make('garantia_ate')->label('Garantia até'),
             ]),
+            Forms\Components\Section::make('Almoxarifado (opcional)')->columns(2)->schema([
+                Forms\Components\Select::make('peca_id')->label('Item no estoque')->searchable()->native(false)->live()
+                    ->options(fn () => \App\Services\Frota\EstoqueFrotaService::opcoesPecas())
+                    ->helperText('Escolha a peça cadastrada em Peças e Insumos. Ao salvar, entra 1 unidade no almoxarifado; ao montar, sai; ao devolver, volta.'),
+                Forms\Components\Select::make('almoxarifado_id')->label('Almoxarifado')->searchable()->native(false)
+                    ->options(fn () => \App\Services\Frota\EstoqueFrotaService::opcoesAlmoxarifados())
+                    ->required(fn (Forms\Get $get) => filled($get('peca_id')))
+                    ->disabledOn('edit'),
+            ]),
             Forms\Components\Placeholder::make('situacao_info')->label('Situação')->visibleOn('edit')
                 ->content(fn (?FrotaBateria $record) => FrotaBateria::situacaoLabels()[$record?->situacao] ?? '—')
                 ->helperText('A situação muda pelas ações da lista: Instalar e Remover.'),

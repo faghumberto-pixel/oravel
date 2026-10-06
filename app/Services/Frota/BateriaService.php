@@ -38,6 +38,7 @@ class BateriaService
 
             FrotaLeituraOdometro::registrar($ativo, $odometro, 'bateria', $instalacao->id, null, $usuario?->id);
             $bateria->update(['situacao' => FrotaBateria::MONTADA]);
+            app(EstoqueFrotaService::class)->saida($bateria, 1, 'Bateria '.$bateria->rotulo().' instalada em '.($ativo->placa ?: $ativo->name), 'bateria');
 
             return $instalacao;
         });
@@ -66,6 +67,9 @@ class BateriaService
             $aberta->update(['removido_em' => now(), 'odometro_remocao' => $odometro, 'motivo_remocao' => $motivo]);
             FrotaLeituraOdometro::registrar($aberta->ativo, $odometro, 'bateria', $aberta->id, null, $usuario?->id);
             $bateria->update(['situacao' => in_array($motivo, ['desgaste', 'descarte'], true) ? FrotaBateria::SUCATEADA : FrotaBateria::ESTOQUE]);
+            if ($bateria->situacao === FrotaBateria::ESTOQUE) {
+                app(EstoqueFrotaService::class)->entrada($bateria, 1, 'entry_return', 'Bateria '.$bateria->rotulo().' devolvida ao estoque');
+            }
 
             return $bateria;
         });

@@ -825,4 +825,23 @@ class Asset extends Model implements HasMedia
     {
         return $this->hasMany(FrotaInstalacaoComponente::class, 'ativo_id')->where('componente_type', 'bateria');
     }
+
+    // --- Gestão de Frota: óleo ---
+
+    public function trocasOleo(): HasMany
+    {
+        return $this->hasMany(FrotaTrocaOleo::class, 'ativo_id')->orderByDesc('realizado_em');
+    }
+
+    public function planoOleoAtivo(): ?FrotaPlanoOleo
+    {
+        return FrotaPlanoOleo::where('ativo_id', $this->id)->where('ativo', true)->first();
+    }
+
+    /** @return array<string, string> id => "PLACA — nome" dos veículos do cliente (para listas de escolha). */
+    public static function opcoesVeiculos(): array
+    {
+        return static::query()->where('grupo', self::GRUPO_VEICULO)->orderBy('placa')->get()
+            ->mapWithKeys(fn (self $a) => [$a->id => trim(($a->placa ? $a->placa.' — ' : '').$a->name)])->all();
+    }
 }

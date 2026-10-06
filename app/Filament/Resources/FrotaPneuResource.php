@@ -52,6 +52,15 @@ class FrotaPneuResource extends BaseResource
                     ->regex('/^(0[1-9]|[1-4]\d|5[0-3])\d{2}$/')->validationMessages(['regex' => 'Use semana (01 a 53) e ano, com 4 dígitos. Ex.: 3524.']),
                 Forms\Components\Select::make('vida')->label('Vida')->options(FrotaPneu::vidaLabels())->default(FrotaPneu::VIDA_NOVO)->required()->native(false),
             ]),
+            Forms\Components\Section::make('Almoxarifado (opcional)')->columns(2)->schema([
+                Forms\Components\Select::make('peca_id')->label('Item no estoque')->searchable()->native(false)->live()
+                    ->options(fn () => \App\Services\Frota\EstoqueFrotaService::opcoesPecas())
+                    ->helperText('Escolha a peça cadastrada em Peças e Insumos. Ao salvar, entra 1 unidade no almoxarifado; ao montar, sai; ao devolver, volta.'),
+                Forms\Components\Select::make('almoxarifado_id')->label('Almoxarifado')->searchable()->native(false)
+                    ->options(fn () => \App\Services\Frota\EstoqueFrotaService::opcoesAlmoxarifados())
+                    ->required(fn (Forms\Get $get) => filled($get('peca_id')))
+                    ->disabledOn('edit'),
+            ]),
             Forms\Components\Section::make('Medidas e custo')->columns(4)->schema([
                 Forms\Components\TextInput::make('sulco_inicial_mm')->label('Sulco inicial (mm)')->numeric()->minValue(0)->maxValue(40),
                 Forms\Components\TextInput::make('custo')->label('Custo (R$)')->numeric()->minValue(0)->prefix('R$'),

@@ -36,6 +36,7 @@ class PneuService
             $instalacao = $this->abrir($pneu, $ativo, $posicao, $odometro, $usuario);
             FrotaLeituraOdometro::registrar($ativo, $odometro, 'pneu', $instalacao->id, null, $usuario?->id);
             $pneu->update(['situacao' => FrotaPneu::MONTADO]);
+            app(EstoqueFrotaService::class)->saida($pneu, 1, 'Pneu '.$pneu->numero_fogo.' montado em '.($ativo->placa ?: $ativo->name), 'pneu');
 
             return $instalacao;
         });
@@ -62,6 +63,9 @@ class PneuService
                 'descarte' => FrotaPneu::SUCATEADO,
                 default => FrotaPneu::ESTOQUE,
             }]);
+            if ($pneu->situacao === FrotaPneu::ESTOQUE) {
+                app(EstoqueFrotaService::class)->entrada($pneu, 1, 'entry_return', 'Pneu '.$pneu->numero_fogo.' devolvido ao estoque');
+            }
 
             return $pneu;
         });

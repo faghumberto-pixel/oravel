@@ -41,6 +41,7 @@ use App\Livewire\Academy\RankingPage;
 use App\Livewire\Academy\TeamPage;
 use App\Livewire\AssetDossierMobile;
 use App\Livewire\ChecklistFrotaMobile;
+use App\Livewire\OleoFrotaMobile;
 use App\Livewire\EquipmentDamageMobile;
 use App\Livewire\EquipmentMovementMobile;
 use App\Livewire\EquipmentPatioArrivalMobile;
@@ -478,6 +479,10 @@ Route::middleware(['auth'])->group(function () {
     // Checklist de saida/retorno do veiculo (Gestao de Frota), pelo celular -- botao no Dossie do ativo.
     Route::get('/admin/frota/checklist/{assetId}', ChecklistFrotaMobile::class)
         ->name('frota.checklist.mobile');
+
+    // Óleo da frota (troca/reposição) pelo celular.
+    Route::get('/admin/frota/oleo/{assetId}', OleoFrotaMobile::class)
+        ->name('frota.oleo.mobile');
 
     Route::get('/admin/assets/dossie-mobile/{assetId?}', AssetDossierMobile::class)
         ->name('assets.dossier.mobile');
