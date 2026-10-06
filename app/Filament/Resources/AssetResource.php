@@ -15,6 +15,7 @@ use App\Models\EquipmentReplacement;
 use App\Models\StorageLocation;
 use App\Services\CepGeocodingService;
 use App\Support\Tenancy;
+use App\Support\VehicleExpirations;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\Tabs;
@@ -26,6 +27,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 
@@ -88,6 +90,24 @@ class AssetResource extends Resource
                     Tabs\Tab::make('Informações Gerais')
                         ->icon('heroicon-m-information-circle')
                         ->schema([
+                            Forms\Components\Section::make('Tipo de ativo')
+                                ->description('Escolha se é uma máquina/equipamento ou um veículo: os campos abaixo mudam conforme a escolha.')
+                                ->schema([
+                                    Forms\Components\Radio::make('grupo')
+                                        ->label('Este ativo é')
+                                        ->options(Asset::grupoLabels())
+                                        ->default(Asset::GRUPO_MAQUINA)
+                                        ->inline()
+                                        ->inlineLabel(false)
+                                        ->live()
+                                        ->required(),
+                                    Forms\Components\Toggle::make('veiculo_pesado')
+                                        ->label('Veículo pesado (caminhão, ônibus, carreta...)')
+                                        ->helperText('Veículos pesados têm o campo do tacógrafo.')
+                                        ->live()
+                                        ->visible(fn (Get $get) => $get('grupo') === Asset::GRUPO_VEICULO),
+                                ]),
+
                             Forms\Components\Section::make('Fotos do equipamento')
                                 ->description('Até 3 fotos (JPG, PNG ou WebP, máx. 10 MB cada). A primeira é a foto principal, que aparece na lista.')
                                 ->collapsible()
@@ -125,7 +145,7 @@ class AssetResource extends Resource
                                             : null),
 
                                     Forms\Components\TextInput::make('fabricante')
-                                        ->label('Fabricante')
+                                        ->label('Marca / Fabricante')
                                         ->maxLength(191),
 
                                     // asset_category_id (2026-07-24): FK real pra AssetCategory --
@@ -254,12 +274,64 @@ class AssetResource extends Resource
                                         }),
                                 ]),
 
+                            Forms\Components\Section::make('Dados do equipamento')
+                                ->description('Marca/fabricante fica em Identificação, acima. Horímetro: em "Controle de Vida Útil", abaixo.')
+                                ->visible(fn (Get $get) => $get('grupo') !== Asset::GRUPO_VEICULO)
+                                ->columns(4)
+                                ->schema([
+                                    Forms\Components\TextInput::make('modelo')->label('Modelo')->maxLength(191),
+                                    Forms\Components\TextInput::make('manufacturing_year')->label('Ano')->numeric()->minValue(1950)->maxValue((int) date('Y') + 1),
+                                    Forms\Components\TextInput::make('cor')->label('Cor')->maxLength(60),
+                                    Forms\Components\TextInput::make('chassi')->label('Chassi')->maxLength(30),
+                                ]),
+
+                            Forms\Components\Section::make('Dados do veículo')
+                                ->description('Marca/fabricante fica em Identificação, acima.')
+                                ->visible(fn (Get $get) => $get('grupo') === Asset::GRUPO_VEICULO)
+                                ->columns(4)
+                                ->schema([
+                                    Forms\Components\TextInput::make('modelo')->label('Modelo')->maxLength(191),
+                                    Forms\Components\TextInput::make('cor')->label('Cor')->maxLength(60),
+                                    Forms\Components\TextInput::make('placa')
+                                        ->label('Placa')
+                                        ->placeholder('ABC1D23')
+                                        ->maxLength(8)
+                                        ->dehydrateStateUsing(fn ($state) => filled($state) ? strtoupper(preg_replace('/[^A-Za-z0-9]/', '', (string) $state)) : null)
+                                        ->rule(fn (?Asset $record) => Asset::plateRule(Tenancy::current()?->id ?? $record?->tenant_id, $record?->id)),
+                                    Forms\Components\TextInput::make('renavam')
+                                        ->label('Renavam')
+                                        ->numeric()
+                                        ->minLength(9)
+                                        ->maxLength(11),
+                                    Forms\Components\TextInput::make('chassi')
+                                        ->label('Chassi')
+                                        ->maxLength(17)
+                                        ->dehydrateStateUsing(fn ($state) => filled($state) ? strtoupper(trim((string) $state)) : null)
+                                        ->rule(fn () => Asset::chassiRule()),
+                                    Forms\Components\TextInput::make('manufacturing_year')->label('Ano de fabricação')->numeric()->minValue(1950)->maxValue((int) date('Y') + 1),
+                                    Forms\Components\TextInput::make('ano_modelo')->label('Ano do modelo')->numeric()->minValue(1950)->maxValue((int) date('Y') + 2),
+                                    Forms\Components\TextInput::make('odometro_atual')->label('Odômetro (km)')->numeric()->minValue(0)->suffix('km'),
+                                    Forms\Components\DatePicker::make('licenciamento_vencimento')->label('Vencimento do licenciamento (emplacamento)'),
+                                    Forms\Components\DatePicker::make('ipva_vencimento')->label('Vencimento do IPVA'),
+                                    Forms\Components\TextInput::make('seguro_seguradora')->label('Seguro — seguradora')->maxLength(191),
+                                    Forms\Components\TextInput::make('seguro_apolice')->label('Seguro — nº da apólice')->maxLength(191),
+                                    Forms\Components\DatePicker::make('seguro_vencimento')->label('Vencimento do seguro'),
+                                    Forms\Components\TextInput::make('tacografo_numero')
+                                        ->label('Tacógrafo — nº')
+                                        ->maxLength(191)
+                                        ->visible(fn (Get $get) => (bool) $get('veiculo_pesado')),
+                                    Forms\Components\DatePicker::make('tacografo_vencimento')
+                                        ->label('Vencimento da aferição do tacógrafo')
+                                        ->visible(fn (Get $get) => (bool) $get('veiculo_pesado')),
+                                ]),
+
                             Forms\Components\Section::make('Controle de Vida Útil e ROI')
                                 ->description('Ajustes manuais nestes campos ficam registrados nos Logs de Auditoria.')
                                 ->compact()
                                 ->schema([
                                     Forms\Components\Grid::make(3)->schema([
                                         Forms\Components\TextInput::make('horimetro_inicial')
+                                            ->visible(fn (Get $get) => $get('grupo') !== Asset::GRUPO_VEICULO)
                                             ->label('Horímetro de Aquisição')
                                             ->numeric()
                                             ->default(0)
@@ -267,6 +339,7 @@ class AssetResource extends Resource
                                             ->prefixIcon('heroicon-m-flag'),
 
                                         Forms\Components\TextInput::make('last_horimetro')
+                                            ->visible(fn (Get $get) => $get('grupo') !== Asset::GRUPO_VEICULO)
                                             ->label('Leitura Atual (Sistema)')
                                             ->numeric()
                                             ->default(0)
@@ -826,6 +899,49 @@ class AssetResource extends Resource
                     ->searchable()
                     ->description(fn (Asset $record): string => 'Tag: '.($record->tag ?? '---')),
 
+                Tables\Columns\TextColumn::make('grupo')
+                    ->label('Tipo')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state) => Asset::grupoLabels()[$state] ?? 'Máquina / Equipamento')
+                    ->color(fn (?string $state) => $state === Asset::GRUPO_VEICULO ? 'info' : 'gray')
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('placa')
+                    ->label('Placa')
+                    ->searchable()
+                    ->placeholder('—')
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('seguro_vencimento')
+                    ->label('Seguro')
+                    ->date('d/m/Y')
+                    ->badge()
+                    ->color(fn (Asset $record) => VehicleExpirations::status($record->seguro_vencimento)[1])
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('ipva_vencimento')
+                    ->label('IPVA')
+                    ->date('d/m/Y')
+                    ->badge()
+                    ->color(fn (Asset $record) => VehicleExpirations::status($record->ipva_vencimento)[1])
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('licenciamento_vencimento')
+                    ->label('Licenciamento')
+                    ->date('d/m/Y')
+                    ->badge()
+                    ->color(fn (Asset $record) => VehicleExpirations::status($record->licenciamento_vencimento)[1])
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('chassi')
+                    ->label('Chassi')
+                    ->searchable()
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('last_horimetro')
                     ->label('Horímetro Atual')
                     ->numeric(decimalPlaces: 1)
@@ -864,6 +980,24 @@ class AssetResource extends Resource
                     ->placeholder('Não definida'),
             ])
             ->filters([
+                Tables\Filters\Filter::make('vencimentos')
+                    ->label('Vencimentos (seguro, IPVA, licenciamento)')
+                    ->form([
+                        Forms\Components\Select::make('documento')->label('Documento')->options(VehicleExpirations::documents())->placeholder('Qualquer'),
+                        Forms\Components\Select::make('situacao')->label('Situação')->options(VehicleExpirations::situations())->placeholder('Qualquer'),
+                    ])
+                    ->query(fn (Builder $query, array $data) => filled($data['situacao'] ?? null) || filled($data['documento'] ?? null)
+                        ? VehicleExpirations::apply($query->where('assets.grupo', Asset::GRUPO_VEICULO), $data['documento'] ?? null, $data['situacao'] ?? null)
+                        : $query)
+                    ->indicateUsing(fn (array $data) => array_filter([
+                        filled($data['documento'] ?? null) ? 'Documento: '.(VehicleExpirations::documents()[$data['documento']] ?? '') : null,
+                        filled($data['situacao'] ?? null) ? 'Situação: '.(VehicleExpirations::situations()[$data['situacao']] ?? '') : null,
+                    ])),
+
+                Tables\Filters\SelectFilter::make('grupo')
+                    ->label('Tipo de ativo')
+                    ->options(Asset::grupoLabels()),
+
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Status')
                     ->options([

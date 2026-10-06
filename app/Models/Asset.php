@@ -76,6 +76,11 @@ class Asset extends Model implements HasMedia
     protected $guarded = [];
 
     protected $casts = [
+        'veiculo_pesado' => 'boolean',
+        'licenciamento_vencimento' => 'date',
+        'ipva_vencimento' => 'date',
+        'seguro_vencimento' => 'date',
+        'tacografo_vencimento' => 'date',
         'acquisition_date' => 'date',
         'acquisition_value' => 'decimal:2',
         'residual_value' => 'decimal:2',
@@ -664,6 +669,24 @@ class Asset extends Model implements HasMedia
     /** Quantas fotos o ativo aceita (a primeira é a principal). */
     public const MAX_PHOTOS = 3;
 
+    public const GRUPO_MAQUINA = 'maquina';
+
+    public const GRUPO_VEICULO = 'veiculo';
+
+    /** @return array<string, string> */
+    public static function grupoLabels(): array
+    {
+        return [
+            self::GRUPO_MAQUINA => 'Máquina / Equipamento',
+            self::GRUPO_VEICULO => 'Veículo',
+        ];
+    }
+
+    public function isVehicle(): bool
+    {
+        return $this->grupo === self::GRUPO_VEICULO;
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('fotos')
@@ -682,5 +705,45 @@ class Asset extends Model implements HasMedia
     public function documents(): HasMany
     {
         return $this->hasMany(AssetDocument::class);
+    }
+
+    /** Placa (padrão antigo ABC1234 ou Mercosul ABC1D23) e única por tenant. */
+    public static function plateRule(?string $tenantId, ?string $ignoreId = null): \Closure
+    {
+        return function (string $attribute, $value, \Closure $fail) use ($tenantId, $ignoreId) {
+            if (blank($value)) {
+                return;
+            }
+
+            $plate = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', (string) $value));
+
+            if (! preg_match('/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/', $plate)) {
+                $fail('Placa inválida. Use o formato ABC1234 ou ABC1D23.');
+
+                return;
+            }
+
+            if ($tenantId && static::withoutGlobalScopes()
+                ->where('tenant_id', $tenantId)
+                ->where('placa', $plate)
+                ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
+                ->exists()) {
+                $fail('Já existe um ativo com esta placa.');
+            }
+        };
+    }
+
+    /** Chassi de veículo: 17 caracteres, sem as letras I, O e Q. */
+    public static function chassiRule(): \Closure
+    {
+        return function (string $attribute, $value, \Closure $fail) {
+            if (blank($value)) {
+                return;
+            }
+
+            if (! preg_match('/^[A-HJ-NPR-Z0-9]{17}$/i', trim((string) $value))) {
+                $fail('Chassi inválido: são 17 caracteres (letras e números, sem I, O e Q).');
+            }
+        };
     }
 }
