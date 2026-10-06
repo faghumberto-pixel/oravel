@@ -65,10 +65,9 @@ class FrotaSaidaVeiculoResource extends BaseResource
                 ->options(fn () => Asset::opcoesVeiculos())
                 ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('odometro', $state ? (int) floor((float) Asset::find($state)?->odometro_atual) : null)),
             Forms\Components\Select::make('finalidade')->label('Finalidade')->options(FrotaSaidaVeiculo::finalidadeLabels())->required()->native(false),
-            Forms\Components\Select::make('motorista_id')->label('Motorista')->searchable()->native(false)
+            Forms\Components\Select::make('motorista_id')->label('Motorista')->required()->searchable()->native(false)
                 ->options(fn () => FleetDriver::query()->where('active', true)->orderBy('name')->pluck('name', 'id')->all())
-                ->helperText('Ou escreva o nome abaixo, se não for motorista cadastrado.'),
-            Forms\Components\TextInput::make('condutor_nome')->label('Nome de quem levou (se não cadastrado)')->maxLength(191),
+                ->helperText('Só motoristas cadastrados em Logística → Frota → Motoristas.'),
             Forms\Components\DateTimePicker::make('saida_em')->label('Data e hora da saída')->seconds(false)->default(now())->maxDate(now()->addMinutes(5))->required(),
             Forms\Components\TextInput::make('destino')->label('Destino')->required()->maxLength(191),
             Forms\Components\Textarea::make('motivo')->label('Motivo da saída')->required()->rows(2)->columnSpanFull(),

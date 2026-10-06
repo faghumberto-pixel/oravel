@@ -16,7 +16,7 @@ use Illuminate\Validation\ValidationException;
 class SaidaVeiculoService
 {
     /**
-     * @param  array{finalidade: string, motivo: string, saida_em?: ?string, motorista_id?: ?string, condutor_nome?: ?string, destino?: ?string, cliente_id?: ?string, ordem_servico_id?: ?string, odometro: int|string, combustivel?: ?string, observacoes?: ?string, justificativa_odometro?: ?string}  $dados
+     * @param  array{finalidade: string, motivo: string, saida_em?: ?string, motorista_id: string, destino?: ?string, cliente_id?: ?string, ordem_servico_id?: ?string, odometro: int|string, combustivel?: ?string, observacoes?: ?string, justificativa_odometro?: ?string}  $dados
      *
      * @throws ValidationException
      */
@@ -35,8 +35,8 @@ class SaidaVeiculoService
             $this->erro('motivo', 'Informe o motivo da saída.');
         }
         $saidaEm = $this->dataHora($dados['saida_em'] ?? null, 'saida_em');
-        if (blank($dados['motorista_id'] ?? null) && blank(trim((string) ($dados['condutor_nome'] ?? '')))) {
-            $this->erro('motorista_id', 'Informe quem está levando o veículo.');
+        if (blank($dados['motorista_id'] ?? null)) {
+            $this->erro('motorista_id', 'Escolha o motorista (cadastrado em Logística → Frota → Motoristas).');
         }
         if ($fora = FrotaSaidaVeiculo::fora()->where('ativo_id', $ativo->id)->first()) {
             $this->erro('ativo', 'Este veículo já está fora desde '.$fora->saida_em->format('d/m H:i').' (com '.$fora->condutor().'). Registre a entrada antes.');
@@ -59,7 +59,7 @@ class SaidaVeiculoService
                 'tenant_id' => $ativo->tenant_id,
                 'ativo_id' => $ativo->id,
                 'motorista_id' => $motorista?->id,
-                'condutor_nome' => $motorista ? null : trim((string) $dados['condutor_nome']),
+                'condutor_nome' => null,
                 'finalidade' => $dados['finalidade'],
                 'destino' => trim($dados['destino']),
                 'motivo' => trim($dados['motivo']),

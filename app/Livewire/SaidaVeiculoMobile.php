@@ -12,7 +12,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 /** Entrada e saída de veículos pelo celular (Logística): lista os veículos, registra a saída e a volta. */
-#[Layout('layouts.checklist-mobile')]
+#[Layout('layouts.logistica-mobile')]
 class SaidaVeiculoMobile extends Component
 {
     /** Veículo escolhido (null = lista). */
@@ -21,8 +21,6 @@ class SaidaVeiculoMobile extends Component
     public string $finalidade = 'visita_tecnica';
 
     public ?string $motoristaId = null;
-
-    public string $condutorNome = '';
 
     public string $destino = '';
 
@@ -67,7 +65,7 @@ class SaidaVeiculoMobile extends Component
 
     private function reiniciarCampos(): void
     {
-        $this->reset(['finalidade', 'motoristaId', 'condutorNome', 'destino', 'motivo', 'combustivel', 'observacoes', 'justificativaOdometro', 'erro']);
+        $this->reset(['finalidade', 'motoristaId', 'destino', 'motivo', 'combustivel', 'observacoes', 'justificativaOdometro', 'erro']);
         $this->dataHora = now()->format('Y-m-d\TH:i');
     }
 
@@ -76,7 +74,7 @@ class SaidaVeiculoMobile extends Component
         Gate::authorize('create', FrotaSaidaVeiculo::class);
         $this->executar(function (Asset $ativo) {
             app(SaidaVeiculoService::class)->registrarSaida($ativo, [
-                'finalidade' => $this->finalidade, 'motorista_id' => $this->motoristaId ?: null, 'condutor_nome' => $this->condutorNome,
+                'finalidade' => $this->finalidade, 'motorista_id' => $this->motoristaId ?: null,
                 'destino' => $this->destino, 'motivo' => $this->motivo, 'saida_em' => $this->dataHora ?: null, 'odometro' => (int) $this->odometro,
                 'combustivel' => $this->combustivel ?: null, 'observacoes' => $this->observacoes, 'justificativa_odometro' => $this->justificativaOdometro ?: null,
             ], auth()->user());

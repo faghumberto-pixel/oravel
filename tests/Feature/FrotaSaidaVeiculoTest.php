@@ -27,6 +27,8 @@ class FrotaSaidaVeiculoTest extends TestCase
 
     private SaidaVeiculoService $servico;
 
+    private FleetDriver $motorista;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -42,6 +44,8 @@ class FrotaSaidaVeiculoTest extends TestCase
         $admin->forceFill(['email_verified_at' => now()])->save();
         $admin->assignRole(Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web', 'tenant_id' => $tenant->id]));
 
+        $this->motorista = FleetDriver::create(['tenant_id' => $tenant->id, 'name' => 'João', 'cnh_expiry_date' => now()->addYear(), 'active' => true]);
+
         return [$tenant, $admin];
     }
 
@@ -53,7 +57,7 @@ class FrotaSaidaVeiculoTest extends TestCase
 
     private function dados(array $extra = []): array
     {
-        return array_merge(['finalidade' => 'visita_tecnica', 'condutor_nome' => 'João', 'destino' => 'Cliente X', 'motivo' => 'Visita ao cliente', 'odometro' => 10000], $extra);
+        return array_merge(['finalidade' => 'visita_tecnica', 'motorista_id' => $this->motorista->id, 'destino' => 'Cliente X', 'motivo' => 'Visita ao cliente', 'odometro' => 10000], $extra);
     }
 
     private function erroEm(callable $fn, string $campo): void
@@ -124,10 +128,10 @@ class FrotaSaidaVeiculoTest extends TestCase
         $vencido = FleetDriver::create(['tenant_id' => $tenant->id, 'name' => 'Pedro', 'cnh_expiry_date' => now()->subDay(), 'active' => true]);
         $ok = FleetDriver::create(['tenant_id' => $tenant->id, 'name' => 'Ana', 'cnh_expiry_date' => now()->addYear(), 'active' => true]);
 
-        $this->erroEm(fn () => $this->servico->registrarSaida($v, $this->dados(['condutor_nome' => null, 'motorista_id' => $vencido->id])), 'motorista_id');
-        $this->erroEm(fn () => $this->servico->registrarSaida($v, $this->dados(['condutor_nome' => null])), 'motorista_id');
+        $this->erroEm(fn () => $this->servico->registrarSaida($v, $this->dados(['motorista_id' => $vencido->id])), 'motorista_id');
+        $this->erroEm(fn () => $this->servico->registrarSaida($v, $this->dados(['motorista_id' => null])), 'motorista_id');
         $this->erroEm(fn () => $this->servico->registrarSaida($v, $this->dados(['finalidade' => 'passeio'])), 'finalidade');
-        $this->assertSame('Ana', $this->servico->registrarSaida($v, $this->dados(['condutor_nome' => null, 'motorista_id' => $ok->id]))->condutor());
+        $this->assertSame('Ana', $this->servico->registrarSaida($v, $this->dados(['motorista_id' => $ok->id]))->condutor());
     }
 
     public function test_odometro_menor_so_com_justificativa_e_nada_grava_se_recusar(): void
@@ -202,7 +206,7 @@ class FrotaSaidaVeiculoTest extends TestCase
         $v = $this->veiculo($tenant);
 
         Livewire::test(ListFrotaSaidasVeiculo::class)
-            ->callTableAction('registrar_saida', data: ['ativo_id' => $v->id, 'finalidade' => 'diretoria', 'condutor_nome' => 'Diretor', 'destino' => 'Reunião', 'motivo' => 'Reunião externa', 'odometro' => 10000])
+            ->callTableAction('registrar_saida', data: ['ativo_id' => $v->id, 'finalidade' => 'diretoria', 'motorista_id' => $this->motorista->id, 'destino' => 'Reunião', 'motivo' => 'Reunião externa', 'odometro' => 10000])
             ->assertHasNoTableActionErrors();
         $saida = FrotaSaidaVeiculo::where('ativo_id', $v->id)->sole();
         $this->assertSame('diretoria', $saida->finalidade);
@@ -221,7 +225,7 @@ class FrotaSaidaVeiculoTest extends TestCase
         $tela = Livewire::test(SaidaVeiculoMobile::class)
             ->assertSee($v->placa)->assertSee('NA BASE')
             ->call('escolher', $v->id)
-            ->set('condutorNome', 'Maria')->set('destino', 'Obra Y')->set('motivo', '')
+            ->set('motoristaId', $this->motorista->id)->set('destino', 'Obra Y')->set('motivo', '')
             ->call('saida')
             ->assertSet('ativoId', $v->id);
         $this->assertStringContainsString('motivo', mb_strtolower($tela->get('erro')));
@@ -233,6 +237,21 @@ class FrotaSaidaVeiculoTest extends TestCase
             ->assertSee('Entrega de peça')
             ->set('odometro', '10040')->call('entrada')->assertSet('mensagem', 'Entrada registrada.');
         $this->assertSame(40, FrotaSaidaVeiculo::where('ativo_id', $v->id)->first()->kmRodado());
+    }
+
+    public function test_celular_exige_motorista_cadastrado_e_usa_a_moldura_da_logistica(): void
+    {
+        [$tenant, $admin] = $this->cliente();
+        $this->actingAs($admin);
+        $v = $this->veiculo($tenant);
+
+        $tela = Livewire::test(SaidaVeiculoMobile::class)
+            ->call('escolher', $v->id)
+            ->set('destino', 'Obra')->set('motivo', 'Entrega')->call('saida');
+        $this->assertStringContainsString('motorista', mb_strtolower($tela->get('erro')));
+        $this->assertSame(0, FrotaSaidaVeiculo::count());
+
+        $this->get(route('frota.saida.mobile'))->assertOk()->assertSee('Logística - ', false)->assertDontSee('Checklist Digital');
     }
 
     public function test_celular_nao_abre_para_quem_nao_tem_permissao_e_so_para_veiculo(): void
