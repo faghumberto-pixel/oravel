@@ -68,3 +68,14 @@ Prioridade baixa: lavagem/limpeza; Arla (já em Itens Agregados); baixa/venda do
 **Auditoria/testes:** `tenant:audit --strict` = as mesmas 3 violações antigas; metadados SaaS OK; 9 testes novos (75 no conjunto Frota+Perfis, todos passam); teste de duplicidade verificado (falha sem o código). Banco descartável; DEV intacto (5 clientes, 13 usuários).
 **Manual:** nenhuma migration nova nesta fase. Nada de push/deploy.
 **NÃO feito (decisão pendente):** bloqueio de saída na mobilização (módulo antigo usa `fleet_vehicles`, sem ligação com o ativo); exigiria `fleet_vehicles.asset_id`. CNH de motorista, multas, sinistros, abastecimento e custo total por veículo (itens da lista de prioridade da Fase 0) ficam como próximas fases.
+
+## FASE 6 — Entrada e Saída de Veículos (Logística) (06/10/2026) — pronta no DEV, aguardando confirmação
+
+**O que é:** registro de entrada e saída dos veículos cadastrados (visita técnica, administrativo, diretoria, cliente, locação, manutenção, outro). É coisa NOVA, separada da mobilização/desmobilização da OS (que é de equipamentos e não foi tocada). Fica no menu **Logística** (não em Ativos nem em Gestão de Frota), com contador de veículos fora agora.
+**Criado:** migration `frota_saidas_veiculo` (índice único: um veículo só fica fora uma vez por vez), model `FrotaSaidaVeiculo`, `FrotaSaidaVeiculoPolicy`, `SaidaVeiculoService`, tela **Entrada e saída de veículos** (ações Registrar saída / Registrar entrada; filtros: só fora agora, veículo, finalidade). Nada foi colocado na tela de Ativos.
+**Cada registro guarda:** veículo, data e hora da saída (padrão agora, pode informar; não aceita futuro), motorista cadastrado OU nome de quem levou, finalidade, destino (obrigatório), motivo (obrigatório), cliente (opcional), km e combustível na saída; e na entrada: data e hora, km, combustível, observações (avarias/ocorrências), km rodado.
+**Travas na saída:** veículo já fora; veículo BLOQUEADO pelo checklist (até um responsável liberar); CNH do motorista vencida; só ativos do tipo Veículo; km menor que o último só com justificativa (nada grava se recusar); entrada não pode ser antes da saída. Saída e entrada geram leitura de odômetro (origens 'saida_veiculo' e 'entrada_veiculo').
+**Pendências da Frota:** veículo fora há 24 h ou mais vira pendência (atenção).
+**Auditoria/testes:** `tenant:audit --strict` = as mesmas 3 violações antigas; metadados SaaS OK; 11 testes novos (86 no conjunto Frota+Perfis); trava do checklist verificada (falha sem o código). DEV intacto (5 clientes, 13 usuários).
+**Manual:** `php artisan migrate` (já rodado no DEV; PROD no deploy). Nada de push/deploy.
+**Não feito:** página de celular e botão no Dossiê (você pediu para não mexer em Ativos); ligação com `fleet_vehicles` (não é mais necessária); a saída não exige checklist de saída (só respeita o bloqueio) — dá para passar a exigir se quiser.

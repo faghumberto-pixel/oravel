@@ -844,4 +844,17 @@ class Asset extends Model implements HasMedia
         return static::query()->where('grupo', self::GRUPO_VEICULO)->orderBy('placa')->get()
             ->mapWithKeys(fn (self $a) => [$a->id => trim(($a->placa ? $a->placa.' — ' : '').$a->name)])->all();
     }
+
+    // --- Gestão de Frota: entrada e saída ---
+
+    public function saidasVeiculo(): HasMany
+    {
+        return $this->hasMany(FrotaSaidaVeiculo::class, 'ativo_id')->orderByDesc('saida_em');
+    }
+
+    /** Saída em aberto (o veículo está fora), se houver. */
+    public function saidaAberta(): ?FrotaSaidaVeiculo
+    {
+        return FrotaSaidaVeiculo::fora()->where('ativo_id', $this->id)->first();
+    }
 }

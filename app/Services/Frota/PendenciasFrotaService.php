@@ -3,6 +3,7 @@
 namespace App\Services\Frota;
 
 use App\Models\Asset;
+use App\Models\FrotaSaidaVeiculo;
 use App\Models\MaintenanceOrder;
 use App\Models\Part;
 use App\Models\PartCategory;
@@ -25,7 +26,7 @@ class PendenciasFrotaService
     /** @return array<string, string> */
     public static function categorias(): array
     {
-        return ['checklist' => 'Checklist', 'pneu' => 'Pneus', 'bateria' => 'Baterias', 'oleo' => 'Óleo', 'documento' => 'Documentos', 'estoque' => 'Estoque'];
+        return ['checklist' => 'Checklist', 'pneu' => 'Pneus', 'bateria' => 'Baterias', 'oleo' => 'Óleo', 'saida' => 'Entrada e saída', 'documento' => 'Documentos', 'estoque' => 'Estoque'];
     }
 
     /**
@@ -83,6 +84,13 @@ class PendenciasFrotaService
         foreach ($v->bateriasMontadas()->with('componente.testes')->get() as $i) {
             foreach ($i->componente?->alertas() ?? [] as $a) {
                 $add('bateria', $a['gravidade'], $i->componente->id.$a['mensagem'], 'Bateria '.$i->componente->rotulo().': '.$a['mensagem']);
+            }
+        }
+
+        if ($saida = $v->saidaAberta()) {
+            $horas = (int) $saida->saida_em->diffInHours(now());
+            if ($horas >= FrotaSaidaVeiculo::AVISO_FORA_HORAS) {
+                $add('saida', self::ATENCAO, 'fora', 'Veículo fora há '.($horas >= 48 ? intdiv($horas, 24).' dias' : $horas.' horas').' ('.FrotaSaidaVeiculo::finalidadeLabels()[$saida->finalidade].', com '.$saida->condutor().').');
             }
         }
 
