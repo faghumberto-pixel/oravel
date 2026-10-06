@@ -3,6 +3,8 @@
 namespace App\Services\Frota;
 
 use App\Models\Asset;
+use App\Models\FleetDriver;
+use App\Models\FrotaMulta;
 use App\Models\FrotaSaidaVeiculo;
 use App\Models\MaintenanceOrder;
 use App\Models\Part;
@@ -26,7 +28,7 @@ class PendenciasFrotaService
     /** @return array<string, string> */
     public static function categorias(): array
     {
-        return ['checklist' => 'Checklist', 'pneu' => 'Pneus', 'bateria' => 'Baterias', 'oleo' => 'Óleo', 'saida' => 'Entrada e saída', 'documento' => 'Documentos', 'estoque' => 'Estoque'];
+        return ['checklist' => 'Checklist', 'pneu' => 'Pneus', 'bateria' => 'Baterias', 'oleo' => 'Óleo', 'saida' => 'Entrada e saída', 'multa' => 'Multas', 'cnh' => 'CNH e pontos', 'documento' => 'Documentos', 'estoque' => 'Estoque'];
     }
 
     /**
@@ -41,7 +43,7 @@ class PendenciasFrotaService
             $lista = $lista->concat($this->doVeiculo($v));
         }
         if (! $so) {
-            $lista = $lista->concat($this->estoqueBaixo());
+            $lista = $lista->concat($this->estoqueBaixo())->concat($this->motoristas());
         }
 
         return $lista->sortBy(fn (array $p) => ($p['gravidade'] === self::CRITICA ? '0' : '1').$p['placa'])->values();
@@ -94,6 +96,20 @@ class PendenciasFrotaService
             }
         }
 
+        foreach (FrotaMulta::emAberto()->where('ativo_id', $v->id)->with('motorista')->get() as $m) {
+            $dias = (int) now()->startOfDay()->diffInDays($m->vencimento->copy()->startOfDay(), false);
+            $rotulo = 'Multa '.$m->numero_auto.' (R$ '.number_format((float) $m->valor, 2, ',', '.').')';
+            if ($dias < 0) {
+                $add('multa', self::CRITICA, $m->id.'venc', "{$rotulo} vencida há ".abs($dias).' dia(s).');
+            } elseif ($dias <= FrotaMulta::AVISO_VENCIMENTO_DIAS) {
+                $add('multa', self::ATENCAO, $m->id.'venc', "{$rotulo} vence em {$dias} dia(s).");
+            }
+            if (! $m->motorista_id) {
+                $prazo = $m->prazo_indicacao && $m->prazo_indicacao->lt(now()->startOfDay());
+                $add('multa', $prazo ? self::CRITICA : self::ATENCAO, $m->id.'cond', "{$rotulo}: condutor não indicado".($m->prazo_indicacao ? ' (prazo '.$m->prazo_indicacao->format('d/m/Y').')' : '').'.');
+            }
+        }
+
         $oleo = OleoStatus::para($v);
         if (in_array($oleo['situacao'], [OleoStatus::VENCIDA, OleoStatus::PROXIMA], true)) {
             $add('oleo', $oleo['situacao'] === OleoStatus::VENCIDA ? self::CRITICA : self::ATENCAO, 'troca', $oleo['mensagem']);
@@ -118,6 +134,34 @@ class PendenciasFrotaService
         return $p;
     }
 
+    /** CNH vencida/vencendo (30 dias) e pontos do motorista nos últimos 12 meses. */
+    public function motoristas(): Collection
+    {
+        $p = collect();
+        foreach (FleetDriver::query()->where('active', true)->get() as $m) {
+            $add = fn (string $gravidade, string $detalhe, string $mensagem) => $p->push([
+                'chave' => md5('cnh|'.$m->id.'|'.$detalhe), 'categoria' => 'cnh', 'gravidade' => $gravidade, 'ativo_id' => null,
+                'placa' => null, 'veiculo' => null, 'mensagem' => $m->name.': '.$mensagem,
+            ]);
+            if ($m->cnh_expiry_date) {
+                $dias = (int) now()->startOfDay()->diffInDays($m->cnh_expiry_date->copy()->startOfDay(), false);
+                if ($dias < 0) {
+                    $add(self::CRITICA, 'cnh', 'CNH vencida há '.abs($dias).' dia(s) ('.$m->cnh_expiry_date->format('d/m/Y').'). Não pode conduzir.');
+                } elseif ($dias <= self::AVISO_DOCUMENTO_DIAS) {
+                    $add(self::ATENCAO, 'cnh', "CNH vence em {$dias} dia(s) (".$m->cnh_expiry_date->format('d/m/Y').').');
+                }
+            }
+            $pontos = MultaService::pontosDoMotorista($m);
+            if ($pontos >= FrotaMulta::PONTOS_CRITICO) {
+                $add(self::CRITICA, 'pontos', "{$pontos} pontos na CNH nos últimos 12 meses (risco de suspensão).");
+            } elseif ($pontos >= FrotaMulta::PONTOS_ATENCAO) {
+                $add(self::ATENCAO, 'pontos', "{$pontos} pontos na CNH nos últimos 12 meses.");
+            }
+        }
+
+        return $p;
+    }
+
     /** Itens das categorias da frota com saldo total abaixo do mínimo. */
     public function estoqueBaixo(): Collection
     {
@@ -133,6 +177,12 @@ class PendenciasFrotaService
                 'gravidade' => (float) $p->saldo <= 0 ? self::CRITICA : self::ATENCAO,
                 'mensagem' => $p->name.' abaixo do mínimo: saldo '.(float) $p->saldo.' '.$p->unit_of_measure.', mínimo '.(float) $p->minimum_stock.'.',
             ])->values();
+    }
+
+    /** Só pendência de manutenção do veículo pode virar OS. */
+    public function permiteOs(array $pendencia): bool
+    {
+        return filled($pendencia['ativo_id'] ?? null) && ! in_array($pendencia['categoria'], ['multa', 'saida', 'cnh', 'estoque'], true);
     }
 
     /** OS aberta para esta pendência, se já existir (a descrição leva a chave). */
@@ -151,6 +201,9 @@ class PendenciasFrotaService
      */
     public function gerarOs(array $pendencia): MaintenanceOrder
     {
+        if (! $this->permiteOs($pendencia)) {
+            throw ValidationException::withMessages(['os' => 'Este tipo de pendência (multa, saída, CNH ou estoque) não gera OS de manutenção.']);
+        }
         $ativo = $pendencia['ativo_id'] ? Asset::find($pendencia['ativo_id']) : null;
         if (! $ativo) {
             throw ValidationException::withMessages(['os' => 'Esta pendência não é de um veículo; use a compra/solicitação de material.']);

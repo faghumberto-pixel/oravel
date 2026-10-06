@@ -32,7 +32,7 @@
         <div class="divide-y divide-gray-200 overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-gray-900 dark:ring-white/10">
             @foreach ($lista as $p)
                 @php
-                    $os = $p['ativo_id'] ? $servico->osAberta($p['chave']) : null;
+                    $os = $servico->permiteOs($p) ? $servico->osAberta($p['chave']) : null;
                 @endphp
                 <div class="flex flex-wrap items-center justify-between gap-3 p-4" wire:key="{{ $p['chave'] }}">
                     <div class="min-w-0 flex-1">
@@ -49,7 +49,7 @@
                     </div>
                     @if ($os)
                         <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">OS {{ $os->os_number }} aberta</span>
-                    @elseif ($p['ativo_id'])
+                    @elseif ($servico->permiteOs($p))
                         <x-filament::button size="sm" color="gray" wire:click="gerarOs('{{ $p['chave'] }}')" wire:confirm="Abrir uma OS para esta pendência?">Gerar OS</x-filament::button>
                     @endif
                 </div>
