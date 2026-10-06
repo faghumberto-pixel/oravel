@@ -94,3 +94,13 @@ Prioridade baixa: lavagem/limpeza; Arla (já em Itens Agregados); baixa/venda do
 **Auditoria/testes:** `tenant:audit --strict` = as mesmas 3 violações antigas; metadados SaaS OK; 9 testes novos (a sugestão do condutor foi verificada: o teste falha sem ela). DEV intacto (5 clientes, 13 usuários).
 **Manual:** `php artisan migrate` (já rodado no DEV; PROD no deploy). Nada de push/deploy.
 **Não feito:** anexo do auto de infração (PDF/foto) — exigiria o mesmo link assinado dos documentos do ativo; desconto em folha quando "quem paga" = motorista; integração com o financeiro (contas a pagar).
+
+## FASE 8 — Sinistros e ocorrências (06/10/2026) — pronta no DEV, aguardando confirmação
+
+**Escolha:** a Fase 8 não estava definida; fiz o próximo item da lista de prioridade alta (sinistros e ocorrências). Ficam para depois: abastecimento e consumo, custo total por veículo.
+**Criado:** migration `frota_sinistros`, model `FrotaSinistro` (com fotos e documentos pela biblioteca de mídia) + `FrotaSinistroPolicy`, `SinistroService`, tela **Sinistros e ocorrências** (Gestão de Frota, contador dos em aberto) com cadastro/edição completos (veículo, tipo, data e hora, motorista, local, culpa, vítima, B.O., seguradora, apólice, nº na seguradora, orçamento, franquia, veículo parado, fotos, documentos) e ações: Gerar OS de reparo, Registrar orçamento, Voltou a rodar, Encerrar, Cancelar (motivo).
+**Regras:** tipos colisão/avaria/furto-roubo/incêndio/alagamento/outro; motorista sugerido pela Entrada e Saída de Veículos (quem estava com o veículo na hora); dias parado = da parada até "voltou a rodar" (ou hoje); **veículo parado por sinistro NÃO pode registrar saída** (trava na Entrada e Saída) até "voltou a rodar"; não encerra com veículo parado; uma OS de reparo por sinistro (situação vira "Em reparo"); orçamento muda para "Em orçamento"; não se apaga, cancela-se (cancelado não trava a saída).
+**Pendências da Frota (categoria Sinistros):** veículo parado (atenção; crítica a partir de 15 dias), falta B.O. (furto/roubo ou com vítima) e sem orçamento há mais de 7 dias. Não geram OS pela página de pendências (a OS sai pelo próprio sinistro).
+**Auditoria/testes:** `tenant:audit --strict` = as mesmas 3 violações antigas; metadados SaaS OK; 8 testes novos; a trava de saída foi verificada (falha sem o código). DEV intacto (5 clientes, 13 usuários).
+**Manual:** `php artisan migrate` (já rodado no DEV; PROD no deploy). Nada de push/deploy.
+**Atenção/limites:** as fotos e documentos usam o disco padrão da biblioteca de mídia (mesmo das fotos do checklist), não o disco privado com link assinado dos documentos do ativo; sem tela de celular para registrar sinistro; sem ligação com o financeiro (franquia/orçamento).

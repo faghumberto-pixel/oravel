@@ -7,6 +7,7 @@ use App\Models\FleetDriver;
 use App\Models\FrotaChecklist;
 use App\Models\FrotaLeituraOdometro;
 use App\Models\FrotaSaidaVeiculo;
+use App\Models\FrotaSinistro;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -40,6 +41,9 @@ class SaidaVeiculoService
         }
         if ($fora = FrotaSaidaVeiculo::fora()->where('ativo_id', $ativo->id)->first()) {
             $this->erro('ativo', 'Este veículo já está fora desde '.$fora->saida_em->format('d/m H:i').' (com '.$fora->condutor().'). Registre a entrada antes.');
+        }
+        if ($parado = SinistroService::paradoPorSinistro($ativo)) {
+            $this->erro('ativo', 'Veículo parado por sinistro ('.FrotaSinistro::tipoLabels()[$parado->tipo].' em '.$parado->ocorrido_em->format('d/m/Y').'). Registre "voltou a rodar" antes de sair.');
         }
         if ($bloqueio = $ativo->bloqueioChecklistFrota()) {
             $this->erro('ativo', 'Veículo bloqueado pelo checklist desde '.$bloqueio->concluido_em?->format('d/m H:i').'. Um responsável precisa liberá-lo antes da saída.');

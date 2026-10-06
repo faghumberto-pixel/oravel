@@ -6,6 +6,7 @@ use App\Models\Asset;
 use App\Models\FleetDriver;
 use App\Models\FrotaMulta;
 use App\Models\FrotaSaidaVeiculo;
+use App\Models\FrotaSinistro;
 use App\Models\MaintenanceOrder;
 use App\Models\Part;
 use App\Models\PartCategory;
@@ -28,7 +29,7 @@ class PendenciasFrotaService
     /** @return array<string, string> */
     public static function categorias(): array
     {
-        return ['checklist' => 'Checklist', 'pneu' => 'Pneus', 'bateria' => 'Baterias', 'oleo' => 'Óleo', 'saida' => 'Entrada e saída', 'multa' => 'Multas', 'cnh' => 'CNH e pontos', 'documento' => 'Documentos', 'estoque' => 'Estoque'];
+        return ['checklist' => 'Checklist', 'pneu' => 'Pneus', 'bateria' => 'Baterias', 'oleo' => 'Óleo', 'saida' => 'Entrada e saída', 'multa' => 'Multas', 'sinistro' => 'Sinistros', 'cnh' => 'CNH e pontos', 'documento' => 'Documentos', 'estoque' => 'Estoque'];
     }
 
     /**
@@ -110,6 +111,20 @@ class PendenciasFrotaService
             }
         }
 
+        foreach (FrotaSinistro::where('ativo_id', $v->id)->whereNotIn('situacao', [FrotaSinistro::ENCERRADO, FrotaSinistro::CANCELADO])->get() as $s) {
+            $rotulo = FrotaSinistro::tipoLabels()[$s->tipo].' de '.$s->ocorrido_em->format('d/m/Y');
+            if ($s->parado()) {
+                $dias = (int) $s->diasParado();
+                $add('sinistro', $dias >= FrotaSinistro::PARADO_CRITICO_DIAS ? self::CRITICA : self::ATENCAO, $s->id.'parado', "{$rotulo}: veículo parado há {$dias} dia(s).");
+            }
+            if (($s->tipo === 'furto_roubo' || $s->houve_vitima) && blank($s->bo_numero)) {
+                $add('sinistro', self::ATENCAO, $s->id.'bo', "{$rotulo}: falta o número do B.O.");
+            }
+            if (! $s->valor_orcamento && $s->ocorrido_em->lt(now()->subDays(FrotaSinistro::SEM_ORCAMENTO_DIAS))) {
+                $add('sinistro', self::ATENCAO, $s->id.'orc', "{$rotulo}: sem orçamento há mais de ".FrotaSinistro::SEM_ORCAMENTO_DIAS.' dias.');
+            }
+        }
+
         $oleo = OleoStatus::para($v);
         if (in_array($oleo['situacao'], [OleoStatus::VENCIDA, OleoStatus::PROXIMA], true)) {
             $add('oleo', $oleo['situacao'] === OleoStatus::VENCIDA ? self::CRITICA : self::ATENCAO, 'troca', $oleo['mensagem']);
@@ -182,7 +197,7 @@ class PendenciasFrotaService
     /** Só pendência de manutenção do veículo pode virar OS. */
     public function permiteOs(array $pendencia): bool
     {
-        return filled($pendencia['ativo_id'] ?? null) && ! in_array($pendencia['categoria'], ['multa', 'saida', 'cnh', 'estoque'], true);
+        return filled($pendencia['ativo_id'] ?? null) && ! in_array($pendencia['categoria'], ['multa', 'saida', 'cnh', 'estoque', 'sinistro'], true);
     }
 
     /** OS aberta para esta pendência, se já existir (a descrição leva a chave). */
