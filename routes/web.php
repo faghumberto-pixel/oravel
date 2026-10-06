@@ -42,6 +42,7 @@ use App\Livewire\Academy\TeamPage;
 use App\Livewire\AssetDossierMobile;
 use App\Livewire\ChecklistFrotaMobile;
 use App\Livewire\OleoFrotaMobile;
+use App\Livewire\SaidaVeiculoMobile;
 use App\Livewire\EquipmentDamageMobile;
 use App\Livewire\EquipmentMovementMobile;
 use App\Livewire\EquipmentPatioArrivalMobile;
@@ -483,6 +484,10 @@ Route::middleware(['auth'])->group(function () {
     // Óleo da frota (troca/reposição) pelo celular.
     Route::get('/admin/frota/oleo/{assetId}', OleoFrotaMobile::class)
         ->name('frota.oleo.mobile');
+
+    // Entrada e saída de veículos (Logística), pelo celular.
+    Route::get('/admin/logistica/saida-veiculos/{assetId?}', SaidaVeiculoMobile::class)
+        ->name('frota.saida.mobile');
 
     Route::get('/admin/assets/dossie-mobile/{assetId?}', AssetDossierMobile::class)
         ->name('assets.dossier.mobile');

@@ -12,6 +12,7 @@ use App\Http\Middleware\LogUserActivity;
 use App\Http\Middleware\TrackSiteVisit;
 use App\Models\Asset;
 use App\Models\Employee;
+use App\Models\FrotaSaidaVeiculo;
 use App\Models\TraccarDevice;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
@@ -124,6 +125,14 @@ class AdminPanelProvider extends PanelProvider
                 // Mesmo padrão -- so' aparece pra quem tem Employee vinculado
                 // ao próprio User (TimeClockOfflineController::show() aborta
                 // 404 sem isso, o link nem precisa aparecer nesse caso).
+                // Entrada e saída de veículos pelo celular (Logística) -- não é uma Page/Resource, então entra por NavigationItem.
+                NavigationItem::make('Entrada e Saída (celular)')
+                    ->icon('heroicon-o-device-phone-mobile')
+                    ->group('Logística')
+                    ->sort(1)
+                    ->url(fn () => route('frota.saida.mobile'))
+                    ->visible(fn () => (bool) auth()->user()?->can('viewAny', FrotaSaidaVeiculo::class)),
+
                 NavigationItem::make('Bater Ponto')
                     ->icon('heroicon-o-finger-print')
                     ->group('Departamento Pessoal')

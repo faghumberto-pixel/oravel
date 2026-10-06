@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\FrotaSaidaVeiculoResource\Pages\ListFrotaSaidasVeiculo;
+use App\Livewire\SaidaVeiculoMobile;
 use App\Models\Asset;
 use App\Models\FleetDriver;
 use App\Models\FrotaChecklist;
@@ -209,5 +210,40 @@ class FrotaSaidaVeiculoTest extends TestCase
         Livewire::test(ListFrotaSaidasVeiculo::class)
             ->callTableAction('registrar_entrada', $saida, data: ['odometro' => 10050]);
         $this->assertFalse($saida->fresh()->estaFora());
+    }
+
+    public function test_celular_registra_saida_mostra_erro_e_registra_entrada(): void
+    {
+        [$tenant, $admin] = $this->cliente();
+        $this->actingAs($admin);
+        $v = $this->veiculo($tenant);
+
+        $tela = Livewire::test(SaidaVeiculoMobile::class)
+            ->assertSee($v->placa)->assertSee('NA BASE')
+            ->call('escolher', $v->id)
+            ->set('condutorNome', 'Maria')->set('destino', 'Obra Y')->set('motivo', '')
+            ->call('saida')
+            ->assertSet('ativoId', $v->id);
+        $this->assertStringContainsString('motivo', mb_strtolower($tela->get('erro')));
+
+        $tela->set('motivo', 'Entrega de peça')->call('saida')->assertSet('mensagem', 'Saída registrada.')->assertSet('ativoId', null);
+        $this->assertSame('Obra Y', FrotaSaidaVeiculo::where('ativo_id', $v->id)->value('destino'));
+
+        Livewire::test(SaidaVeiculoMobile::class, ['assetId' => $v->id])
+            ->assertSee('Entrega de peça')
+            ->set('odometro', '10040')->call('entrada')->assertSet('mensagem', 'Entrada registrada.');
+        $this->assertSame(40, FrotaSaidaVeiculo::where('ativo_id', $v->id)->first()->kmRodado());
+    }
+
+    public function test_celular_nao_abre_para_quem_nao_tem_permissao_e_so_para_veiculo(): void
+    {
+        [$tenant, $admin] = $this->cliente();
+        $semPermissao = User::create(['name' => 'Op', 'email' => uniqid().'@oravel.test', 'password' => bcrypt('x'), 'tenant_id' => $tenant->id, 'is_approved' => true]);
+        $this->actingAs($semPermissao);
+        Livewire::test(SaidaVeiculoMobile::class)->assertForbidden();
+
+        $this->actingAs($admin);
+        $maquina = $this->veiculo($tenant, ['grupo' => Asset::GRUPO_MAQUINA]);
+        Livewire::test(SaidaVeiculoMobile::class)->call('escolher', $maquina->id)->assertNotFound();
     }
 }
