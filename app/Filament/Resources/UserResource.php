@@ -120,7 +120,7 @@ class UserResource extends Resource
 
                         Forms\Components\Toggle::make('receives_financial_notifications')
                             ->label('Recebe avisos financeiros')
-                            ->helperText('Contas a pagar/receber vencendo e excedente de contrato. Marque só quem resolve o financeiro (pode ser um funcionário, não só administrador). Se ninguém for marcado, os avisos seguem a regra antiga (administradores, gerentes e financeiro).')
+                            ->helperText('Contas a pagar/receber vencendo e excedente de contrato. Ninguém recebe até você marcar quem resolve o financeiro (pode ser um funcionário que faz os pagamentos, não só administrador).')
                             ->default(false),
                     ])->columns(2),
 

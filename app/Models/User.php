@@ -88,10 +88,10 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
 
     /**
      * Quem recebe os avisos FINANCEIROS do tenant (contas a pagar/receber,
-     * excedente de contrato). O gestor do tenant marca, em Colaboradores,
-     * quem deve receber (pode ser um funcionário que faz os pagamentos, não
-     * só administrador). Enquanto ninguém estiver marcado, vale a regra
-     * antiga (podeReceberFinancas) para não deixar o tenant sem aviso.
+     * excedente de contrato). Desde 06/10/2026 NINGUÉM recebe por padrão: só quem o
+     * gestor do tenant marcar em Colaboradores ("Recebe avisos financeiros" -- pode ser
+     * um funcionário que faz os pagamentos, não só administrador). Sem ninguém marcado,
+     * a lista é vazia e nenhum aviso financeiro é enviado (pedido do usuário).
      *
      * @return Collection<int, User>
      */
@@ -101,10 +101,10 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
             return collect();
         }
 
-        $users = static::withoutGlobalScopes()->where('tenant_id', $tenantId)->get();
-        $chosen = $users->filter(fn (User $u) => $u->receives_financial_notifications);
-
-        return $chosen->isNotEmpty() ? $chosen->values() : $users->filter(fn (User $u) => $u->podeReceberFinancas())->values();
+        return static::withoutGlobalScopes()
+            ->where('tenant_id', $tenantId)
+            ->where('receives_financial_notifications', true)
+            ->get();
     }
 
     public function podeReceberFinancas(): bool

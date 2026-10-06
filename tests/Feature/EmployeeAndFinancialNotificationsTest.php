@@ -95,26 +95,25 @@ class EmployeeAndFinancialNotificationsTest extends TestCase
 
     // ---- avisos financeiros ----
 
-    public function test_financial_recipients_are_only_the_chosen_ones_otherwise_the_legacy_rule(): void
+    public function test_financial_notices_go_to_nobody_until_the_manager_marks_someone(): void
     {
         $tenant = $this->makeTenant('D');
         $admin1 = $this->makeUser($tenant, ['role' => 'admin']);
         $admin2 = $this->makeUser($tenant, ['role' => 'admin']);
         $payer = $this->makeUser($tenant, ['role' => 'user']); // funcionario que paga
-        $other = $this->makeUser($tenant, ['role' => 'user']);
+        $this->makeUser($tenant, ['role' => 'user']);
 
-        // Ninguem marcado: regra antiga (admins).
-        $legacy = User::financialNotificationRecipients($tenant->id)->pluck('id')->all();
-        $this->assertEqualsCanonicalizing([$admin1->id, $admin2->id], $legacy);
+        // Ninguem marcado: ninguem recebe (nem os administradores).
+        $this->assertSame([], User::financialNotificationRecipients($tenant->id)->all());
 
         // Marca o funcionario que faz os pagamentos: so ele recebe.
         $payer->forceFill(['receives_financial_notifications' => true])->save();
         $chosen = User::financialNotificationRecipients($tenant->id)->pluck('id')->all();
         $this->assertSame([$payer->id], $chosen);
         $this->assertNotContains($admin1->id, $chosen);
-        $this->assertNotContains($other->id, $chosen);
+        $this->assertNotContains($admin2->id, $chosen);
 
-        // Outro tenant nao e afetado.
+        // Sem tenant: vazio.
         $this->assertSame([], User::financialNotificationRecipients(null)->all());
     }
 

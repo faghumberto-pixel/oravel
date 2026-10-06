@@ -96,8 +96,7 @@ class AccountPayableResource extends Resource
             ->title("Conta {$action}")
             ->body("A conta '{$record->description}' foi {$action} com sucesso.")
             ->success()
-            ->sendToDatabase(auth()->user())
-            ->send();
+            ->send(); // só o aviso na tela; avisos financeiros no sino dependem de User::financialNotificationRecipients()
     }
 
     public static function getPages(): array
