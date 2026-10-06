@@ -84,6 +84,8 @@ class SalesLead extends Model
         'longitude',
         'last_interaction_at',
         'next_followup_date',
+        'inbound_message',
+        'inbound_details',
     ];
 
     protected $casts = [
@@ -93,6 +95,7 @@ class SalesLead extends Model
         'last_interaction_at' => 'datetime',
         'next_followup_date' => 'date',
         'decision_makers' => 'array',
+        'inbound_details' => 'array',
         'additional_segments' => 'array',
         'additional_sources' => 'array',
     ];

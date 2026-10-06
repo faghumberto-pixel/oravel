@@ -21,6 +21,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\HtmlString;
 
 class SalesLeadResource extends Resource
 {
@@ -124,6 +125,35 @@ class SalesLeadResource extends Resource
                         ->label('Rascunho do E-mail de Prospecção (D3)')
                         ->helperText('Texto personalizado pronto pra copiar e enviar -- fica salvo aqui pra não se perder numa conversa avulsa, e sai junto na exportação.')
                         ->rows(6)
+                        ->columnSpanFull(),
+                ]),
+
+            Forms\Components\Section::make('Recebido pelo formulário do site')
+                ->description('Mensagem do visitante e de onde ele veio. Preenchido automaticamente; só leitura.')
+                ->visible(fn (?SalesLead $record) => filled($record?->inbound_message) || filled($record?->inbound_details))
+                ->columns(2)
+                ->schema([
+                    Forms\Components\Placeholder::make('received_at')
+                        ->label('Recebido em')
+                        ->content(fn (?SalesLead $record) => $record?->created_at?->format('d/m/Y H:i')),
+                    Forms\Components\Placeholder::make('visitor_place')
+                        ->label('Cidade / Estado do visitante')
+                        ->content(fn (?SalesLead $record) => collect([$record?->city, $record?->uf])->filter()->implode(' / ') ?: 'Não identificado'),
+                    Forms\Components\Placeholder::make('came_from')
+                        ->label('Por onde veio')
+                        ->content(fn (?SalesLead $record) => $record?->inbound_details['veio_de'] ?? 'Não identificado'),
+                    Forms\Components\Placeholder::make('contact_email')
+                        ->label('E-mail e telefone')
+                        ->content(fn (?SalesLead $record) => collect([$record?->email, $record?->phone])->filter()->implode(' · ') ?: '—'),
+                    Forms\Components\Placeholder::make('inbound_message_view')
+                        ->label('Mensagem do visitante')
+                        ->content(fn (?SalesLead $record) => $record?->inbound_message ?: '—')
+                        ->columnSpanFull(),
+                    Forms\Components\Placeholder::make('inbound_details_view')
+                        ->label('Origem (página, anúncio, campanha)')
+                        ->content(fn (?SalesLead $record) => new HtmlString(
+                            collect($record?->inbound_details ?? [])->map(fn ($v, $k) => '<div><strong>'.e(str_replace('_', ' ', (string) $k)).':</strong> '.e((string) $v).'</div>')->implode('')
+                        ))
                         ->columnSpanFull(),
                 ]),
 
@@ -267,6 +297,16 @@ class SalesLeadResource extends Resource
                     ->label('Responsável')
                     ->options(fn () => User::whereIn('email', config('oravel.super_admins', []))->pluck('name', 'id'))
                     ->placeholder('—'),
+                Tables\Columns\TextColumn::make('city')
+                    ->label('Cidade / UF')
+                    ->formatStateUsing(fn ($state, SalesLead $record) => collect([$record->city, $record->uf])->filter()->implode(' / ') ?: null)
+                    ->placeholder('—')
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Recebido em')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('last_interaction_at')
                     ->label('Última Interação')
                     ->dateTime('d/m/Y H:i')

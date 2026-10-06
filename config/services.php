@@ -77,6 +77,9 @@ return [
             'site-oravel' => [
                 'token' => env('SITE_LEADS_SECRET'),
                 'tenant_slug' => env('SITE_LEADS_TENANT_SLUG', 'oravel'),
+                // 'central' = o lead entra no funil de VENDAS da Oravel (Central), invisivel para qualquer
+                // tenant. Canais sem esta chave (outros tenants) criam CrmLead no CRM do proprio tenant.
+                'destination' => 'central',
             ],
         ],
     ],

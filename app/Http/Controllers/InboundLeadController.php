@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Filament\Central\Resources\SalesLeadResource;
 use App\Filament\Resources\CrmLeadResource;
+use App\Models\Client;
 use App\Models\CrmLead;
 use App\Models\CrmLeadInteraction;
+use App\Models\SalesLead;
+use App\Models\SalesLeadInteraction;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Support\SiteVisitMatcher;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Http\JsonResponse;
@@ -14,6 +19,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification as NotificationFacade;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -84,6 +90,11 @@ class InboundLeadController extends Controller
 
         $rotuloPorte = $data['porte_label'] ?? 'Porte';
         $origemLabel = $data['origem_label'] ?? $data['origem'];
+
+        if (($channel['destination'] ?? 'crm') === 'central') {
+            return $this->storeInCentral($data, $rotuloPorte, $origemLabel);
+        }
+
         $recipients = $this->recipients($tenant);
 
         $lead = DB::transaction(function () use ($tenant, $data, $rotuloPorte, $origemLabel, $recipients) {
@@ -156,11 +167,122 @@ class InboundLeadController extends Controller
         foreach ((array) config('services.inbound.channels', []) as $name => $channel) {
             $expected = (string) ($channel['token'] ?? '');
             if ($expected !== '' && hash_equals($expected, $token)) {
-                $found = ['name' => (string) $name, 'tenant_slug' => (string) ($channel['tenant_slug'] ?? '')];
+                $found = ['name' => (string) $name, 'tenant_slug' => (string) ($channel['tenant_slug'] ?? ''), 'destination' => (string) ($channel['destination'] ?? 'crm')];
             }
         }
 
         return $found;
+    }
+
+    /**
+     * Lead do site da PRÓPRIA Oravel: entra no funil de vendas da Central (SalesLead), com a mensagem
+     * do visitante e a origem (página, anúncio, utm), e avisa só os super admins. Nunca cria nada num
+     * tenant -- pedido do usuário 06/10/2026 ("não seja visível a nenhum tenant").
+     */
+    private function storeInCentral(array $data, string $rotuloPorte, string $origemLabel): JsonResponse
+    {
+        $superEmails = array_map('strtolower', config('oravel.super_admins', []));
+        $author = User::withoutGlobalScopes()->whereIn(DB::raw('lower(email)'), $superEmails)->orderBy('created_at')->first();
+
+        $niche = collect(Client::nicheLabels())->search(fn ($label, $key) => mb_strtolower($label) === mb_strtolower((string) $data['segmento']) || $key === $data['segmento']);
+
+        $details = array_filter([
+            'origem' => $data['origem'] ?? null,
+            'origem_label' => $origemLabel,
+            'segmento_informado' => $data['segmento'] ?? null,
+            'porte_label' => $rotuloPorte,
+            'porte' => $data['porte'] ?? null,
+            'landing_url' => $data['landing_url'] ?? null,
+            'utm_source' => $data['utm_source'] ?? null,
+            'utm_medium' => $data['utm_medium'] ?? null,
+            'utm_campaign' => $data['utm_campaign'] ?? null,
+            'utm_term' => $data['utm_term'] ?? null,
+            'utm_content' => $data['utm_content'] ?? null,
+            'gclid' => $data['gclid'] ?? null,
+            'gbraid' => $data['gbraid'] ?? null,
+            'wbraid' => $data['wbraid'] ?? null,
+            'recebido_em' => now()->format('d/m/Y H:i'),
+        ], fn ($v) => filled($v));
+
+        // Quem foi o visitante: a visita ativa no site no instante do envio (cidade/estado, de onde veio...).
+        $visit = SiteVisitMatcher::forMoment(now());
+        $details = $visit
+            ? array_merge($details, SiteVisitMatcher::details($visit, $data))
+            : array_merge($details, array_filter(['veio_de' => ! empty($data['gclid']) || ! empty($data['utm_campaign']) ? 'Anúncio do Google'.(! empty($data['utm_campaign']) ? " (campanha {$data['utm_campaign']})" : '') : null]));
+
+        $lead = DB::transaction(function () use ($data, $details, $niche, $author, $rotuloPorte, $origemLabel, $visit) {
+            $lead = SalesLead::create([
+                'city' => $visit?->city,
+                'uf' => $visit?->state,
+                'company_name' => $data['company'],
+                'email' => $data['email'],
+                'phone' => $data['phone'] ?? null,
+                'source' => SalesLead::SOURCE_SITE,
+                'segment' => $niche === false ? null : $niche,
+                'pipeline_stage' => SalesLead::STAGE_PROSPECCAO,
+                'decision_makers' => [['name' => $data['name'], 'role' => null]],
+                'inbound_message' => $data['mensagem'] ?? null,
+                'inbound_details' => $details,
+            ]);
+
+            if ($author) {
+                $summary = 'Lead recebido pelo formulário do site. Segmento: '.$data['segmento']
+                    .' | '.$rotuloPorte.': '.$data['porte']
+                    .' | WhatsApp: '.($data['phone'] ?? 'não informado');
+                if (! empty($data['mensagem'])) {
+                    $summary .= "\n\nMensagem do visitante:\n".$data['mensagem'];
+                }
+                if (! empty($data['utm_campaign']) || ! empty($data['gclid'])) {
+                    $summary .= "\n\nOrigem do anúncio: ".($data['utm_source'] ?? 'google').' / '.($data['utm_campaign'] ?? 'sem campanha');
+                }
+
+                SalesLeadInteraction::create([
+                    'sales_lead_id' => $lead->id,
+                    'user_id' => $author->id,
+                    'channel' => 'Site — '.$origemLabel,
+                    'contact_date' => now(),
+                    'summary' => $summary,
+                    'stage_at_time' => SalesLead::STAGE_PROSPECCAO,
+                ]);
+            }
+
+            return $lead;
+        });
+
+        $this->notifyCentral($lead, $rotuloPorte, $superEmails);
+
+        return response()->json(['success' => true, 'id' => $lead->id], 201);
+    }
+
+    /** Melhor esforço: o lead já está gravado. Só o sino da Central, só para super admins. */
+    private function notifyCentral(SalesLead $lead, string $rotuloPorte, array $superEmails): void
+    {
+        try {
+            $url = SalesLeadResource::getUrl('edit', ['record' => $lead], panel: 'central');
+        } catch (\Throwable $e) {
+            $url = null;
+        }
+
+        $recipients = User::withoutGlobalScopes()->whereIn(DB::raw('lower(email)'), $superEmails)->get();
+
+        foreach ($recipients as $recipient) {
+            try {
+                $notification = Notification::make()
+                    ->title('Novo lead do site')
+                    ->body($lead->company_name.' — '.collect($lead->decision_makers)->pluck('name')->first().($lead->inbound_details['porte'] ?? null ? ' · '.$rotuloPorte.': '.$lead->inbound_details['porte'] : ''))
+                    ->icon('heroicon-o-user-plus')
+                    ->iconColor('success')
+                    ->viewData(['scope' => 'central']);
+
+                if ($url) {
+                    $notification->actions([Action::make('abrir')->label('Abrir lead')->url($url)->markAsRead()]);
+                }
+
+                NotificationFacade::sendNow($recipient, $notification->toDatabase());
+            } catch (\Throwable $e) {
+                Log::warning('InboundLead: falha ao avisar a Central', ['user' => $recipient->id, 'erro' => $e->getMessage()]);
+            }
+        }
     }
 
     /** Quem recebe o aviso: administradores aprovados do tenant (ou, se não houver, os aprovados). */
