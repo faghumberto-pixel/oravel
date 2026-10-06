@@ -17,6 +17,7 @@ use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 
 class CrmLeadResource extends BaseResource
@@ -58,6 +59,23 @@ class CrmLeadResource extends BaseResource
         }
 
         return $query;
+    }
+
+    /**
+     * Link do sino da Central ("Novo lead do site"): o super admin precisa abrir o lead de QUALQUER
+     * tenant mesmo estando atuando como outro (antes o filtro por tenant escondia o lead e dava
+     * 404 -- 06/10/2026). Só a resolução do registro pela URL é liberada; listas continuam
+     * filtradas pelo tenant atuante.
+     */
+    public static function resolveRecordRouteBinding(int|string $key): ?Model
+    {
+        if (auth()->user()?->isSuperAdmin()) {
+            return app(static::getModel())
+                ->resolveRouteBindingQuery(static::getEloquentQuery()->withoutGlobalScope('tenant'), $key, static::getRecordRouteKeyName())
+                ->first();
+        }
+
+        return parent::resolveRecordRouteBinding($key);
     }
 
     public static function form(Form $form): Form

@@ -16,6 +16,19 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditCrmLead extends EditRecord
 {
+    public function mount(int|string $record): void
+    {
+        parent::mount($record);
+
+        // Super admin abrindo o lead pelo sino: passa a atuar como o tenant dono do lead, para a
+        // tela (interações, funil etc.) enxergar os dados dele e não os do tenant anterior.
+        $tenantId = $this->getRecord()->tenant_id;
+
+        if ($tenantId && auth()->user()?->isSuperAdmin() && session('acting_tenant_id') !== $tenantId) {
+            session(['acting_tenant_id' => $tenantId]);
+        }
+    }
+
     protected static string $resource = CrmLeadResource::class;
 
     protected function getHeaderActions(): array
