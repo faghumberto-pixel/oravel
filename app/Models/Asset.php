@@ -791,4 +791,18 @@ class Asset extends Model implements HasMedia
 
         return ! $ultimo || $ultimo->concluido_em->lt(now()->subDays(FrotaChecklist::DIAS_CHECKLIST_COMPLETO));
     }
+
+    /** Pneus montados agora neste veículo (instalações abertas). */
+    public function pneusMontados(): HasMany
+    {
+        return $this->hasMany(FrotaInstalacaoComponente::class, 'ativo_id')->where('componente_type', 'pneu')->whereNull('removido_em');
+    }
+
+    /** Menor sulco medido mais recente do veículo (checklist completo ou inspeção de pneu). */
+    public function ultimoSulcoMm(): ?float
+    {
+        $v = FrotaInspecaoPneu::where('ativo_id', $this->id)->whereNotNull('sulco_mm')->orderByDesc('inspecionado_em')->value('sulco_mm');
+
+        return $v !== null ? (float) $v : null;
+    }
 }

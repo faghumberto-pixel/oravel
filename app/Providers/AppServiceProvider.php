@@ -28,6 +28,7 @@ use App\Models\EquipmentReplacement;
 use App\Models\FleetMaintenanceHistory;
 use App\Models\FleetTollRecord;
 use App\Models\FreightRecord;
+use App\Models\FrotaPneu;
 use App\Models\GoodsReceiptItem;
 use App\Models\HorimeterReading;
 use App\Models\MaintenanceOrder;
@@ -78,6 +79,7 @@ use App\Support\Tenancy;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
@@ -103,6 +105,10 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Componentes da frota (pneu, bateria) em frota_instalacoes_componente: grava 'pneu' em vez do nome da classe.
+        // Sem enforce: os demais relacionamentos polimórficos do sistema continuam gravando o nome da classe.
+        Relation::morphMap(['pneu' => FrotaPneu::class], merge: true);
+
         Schema::defaultStringLength(191);
 
         // php artisan serve/nginx nao terminam TLS -- quando ha' um proxy

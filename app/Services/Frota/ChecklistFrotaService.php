@@ -4,6 +4,7 @@ namespace App\Services\Frota;
 
 use App\Models\Asset;
 use App\Models\FrotaChecklist;
+use App\Models\FrotaInspecaoPneu;
 use App\Models\FrotaItemModeloChecklist as Item;
 use App\Models\FrotaLeituraOdometro;
 use App\Models\FrotaModeloChecklist;
@@ -102,6 +103,21 @@ class ChecklistFrotaService
 
             foreach ($respostasLinhas as $linha) {
                 $checklist->respostas()->create($linha);
+            }
+
+            // Sulco medido no checklist completo vira inspeção de pneu do VEÍCULO (menor sulco medido; sem pneu específico).
+            foreach ($respostasLinhas as $linha) {
+                if (($linha['categoria_registrada'] ?? null) === 'pneus' && ($linha['unidade'] ?? null) === 'mm' && $linha['valor_numerico'] !== null && $linha['resultado'] !== Resposta::NAO_SE_APLICA) {
+                    FrotaInspecaoPneu::create([
+                        'pneu_id' => null,
+                        'ativo_id' => $ativo->id,
+                        'checklist_id' => $checklist->id,
+                        'sulco_mm' => $linha['valor_numerico'],
+                        'odometro' => (int) $dados['odometro'],
+                        'inspecionado_em' => now(),
+                        'observacao' => 'Menor sulco medido no checklist',
+                    ]);
+                }
             }
 
             return $checklist;
