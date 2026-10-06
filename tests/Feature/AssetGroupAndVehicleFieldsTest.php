@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Resources\AssetResource\Pages\EditAsset;
 use App\Models\Asset;
+use App\Models\AssetModel;
 use App\Models\Plan;
 use App\Models\Role;
 use App\Models\Tenant;
@@ -124,5 +125,50 @@ class AssetGroupAndVehicleFieldsTest extends TestCase
         $page(['placa' => 'QWE1R23'])->assertHasNoFormErrors();                    // outro tenant pode ter
         $page(['chassi' => '123'])->assertHasFormErrors(['chassi']);
         $page(['chassi' => '9BWZZZ377VT00425I'])->assertHasFormErrors(['chassi']); // letra I não vale
+    }
+
+    public function test_vehicle_has_no_capacity_and_its_unit_is_always_km(): void
+    {
+        [$tenant, $admin] = $this->tenantWithAdmin();
+        $this->actingAs($admin);
+        // Ativo antigo com capacidade de máquina; ao virar veículo a unidade passa a Km.
+        $asset = $this->asset($tenant, ['capacity_value' => 250, 'capacity_unit' => 'kVA']);
+
+        $page = Livewire::test(EditAsset::class, ['record' => $asset->getRouteKey()]);
+        $fields = fn () => array_keys($page->instance()->form->getFlatFields());
+
+        $page->fillForm(['grupo' => Asset::GRUPO_MAQUINA]);
+        $this->assertContains('capacity_value', $fields());
+        $this->assertContains('capacity_unit', $fields());
+
+        $page->fillForm(['patrimonio' => 'PAT-'.uniqid(), 'grupo' => Asset::GRUPO_VEICULO, 'capacity_unit' => 'kVA']);
+        $this->assertNotContains('capacity_value', $fields(), 'Veículo não tem capacidade.');
+
+        $page->call('save')->assertHasNoFormErrors();
+        $this->assertSame('km', $asset->fresh()->capacity_unit);
+    }
+
+    public function test_model_field_uses_a_standardized_catalog_with_a_plus_button(): void
+    {
+        [$tenant, $admin] = $this->tenantWithAdmin();
+        [$other, $otherAdmin] = $this->tenantWithAdmin();
+        AssetModel::create(['tenant_id' => $tenant->id, 'name' => 'Actros 2651']);
+        AssetModel::create(['tenant_id' => $other->id, 'name' => 'Modelo do outro cliente']);
+        $this->actingAs($admin);
+        $asset = $this->asset($tenant, ['grupo' => Asset::GRUPO_VEICULO, 'modelo' => 'texto antigo livre']);
+
+        $page = Livewire::test(EditAsset::class, ['record' => $asset->getRouteKey()]);
+        $field = $page->instance()->form->getFlatFields()['modelo'];
+
+        $options = $field->getOptions();
+        $this->assertArrayHasKey('Actros 2651', $options);
+        $this->assertArrayHasKey('texto antigo livre', $options);          // modelo antigo continua aparecendo
+        $this->assertArrayNotHasKey('Modelo do outro cliente', $options);   // catálogo é por cliente
+        $this->assertTrue($field->hasCreateOptionActionFormSchema(), 'Falta o "+" para cadastrar modelo.');
+
+        // "+": cadastra já padronizado (espaços) e não aceita repetido.
+        $created = $field->evaluate($field->getCreateOptionUsing(), ['data' => ['name' => '  Volvo   FH 540 ', 'fabricante' => 'Volvo']]);
+        $this->assertSame('Volvo FH 540', $created);
+        $this->assertSame(1, AssetModel::where('name', 'Volvo FH 540')->count());
     }
 }

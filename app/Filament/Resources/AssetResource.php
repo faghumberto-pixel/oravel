@@ -9,6 +9,7 @@ use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\AssetResource\Pages;
 use App\Models\Asset;
 use App\Models\AssetCategory;
+use App\Models\AssetModel;
 use App\Models\AssetNr13Specification;
 use App\Models\CriticalityLevel;
 use App\Models\EquipmentReplacement;
@@ -81,6 +82,42 @@ class AssetResource extends Resource
         return (bool) auth()->user()?->can('delete', $record);
     }
 
+    /** Campo Modelo: lista padronizada do tenant, com "+" para cadastrar um modelo novo. */
+    protected static function modeloSelect(): Forms\Components\Select
+    {
+        return Forms\Components\Select::make('modelo')
+            ->label('Modelo')
+            ->searchable()
+            ->options(function (?Asset $record) {
+                $options = AssetModel::query()->orderBy('name')->pluck('name', 'name')->all();
+
+                // Modelo antigo (texto livre) que ainda não está no catálogo continua aparecendo.
+                return $record?->modelo ? $options + [$record->modelo => $record->modelo] : $options;
+            })
+            ->getOptionLabelUsing(fn ($value) => $value)
+            ->createOptionForm([
+                Forms\Components\TextInput::make('name')
+                    ->label('Modelo')
+                    ->placeholder('Ex.: Actros 2651')
+                    ->required()
+                    ->maxLength(191)
+                    ->rule(fn () => function (string $attribute, $value, \Closure $fail) {
+                        if (AssetModel::query()->whereRaw('lower(name) = ?', [mb_strtolower(AssetModel::clean((string) $value))])->exists()) {
+                            $fail('Este modelo já está cadastrado.');
+                        }
+                    }),
+                Forms\Components\TextInput::make('fabricante')->label('Marca / fabricante (opcional)')->maxLength(191),
+            ])
+            ->createOptionUsing(function (array $data): string {
+                $model = AssetModel::create([
+                    'name' => AssetModel::clean($data['name']),
+                    'fabricante' => filled($data['fabricante'] ?? null) ? trim($data['fabricante']) : null,
+                ]);
+
+                return $model->name;
+            });
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -100,6 +137,7 @@ class AssetResource extends Resource
                                         ->inline()
                                         ->inlineLabel(false)
                                         ->live()
+                                        ->afterStateUpdated(fn ($state, Set $set) => $set('capacity_unit', $state === Asset::GRUPO_VEICULO ? 'km' : null))
                                         ->required(),
                                     Forms\Components\Toggle::make('veiculo_pesado')
                                         ->label('Veículo pesado (caminhão, ônibus, carreta...)')
@@ -193,11 +231,16 @@ class AssetResource extends Resource
                                     Forms\Components\TextInput::make('capacity_value')
                                         ->label('Capacidade')
                                         ->numeric()
+                                        ->visible(fn (Get $get) => $get('grupo') !== Asset::GRUPO_VEICULO)
                                         ->helperText('Ex: 250 para um gerador de 250 kVA.'),
 
                                     Forms\Components\Select::make('capacity_unit')
                                         ->label('Unidade')
-                                        ->options([
+                                        // Veículo: a unidade é sempre Km (automático), sem capacidade.
+                                        ->disabled(fn (Get $get) => $get('grupo') === Asset::GRUPO_VEICULO)
+                                        ->dehydrated()
+                                        ->dehydrateStateUsing(fn ($state, Get $get) => $get('grupo') === Asset::GRUPO_VEICULO ? 'km' : $state)
+                                        ->options(fn (Get $get) => $get('grupo') === Asset::GRUPO_VEICULO ? ['km' => 'Km'] : [
                                             'kVA' => 'kVA',
                                             'HP' => 'HP',
                                             'A' => 'Ampères (A)',
@@ -279,7 +322,7 @@ class AssetResource extends Resource
                                 ->visible(fn (Get $get) => $get('grupo') !== Asset::GRUPO_VEICULO)
                                 ->columns(4)
                                 ->schema([
-                                    Forms\Components\TextInput::make('modelo')->label('Modelo')->maxLength(191),
+                                    static::modeloSelect(),
                                     Forms\Components\TextInput::make('manufacturing_year')->label('Ano')->numeric()->minValue(1950)->maxValue((int) date('Y') + 1),
                                     Forms\Components\TextInput::make('cor')->label('Cor')->maxLength(60),
                                     Forms\Components\TextInput::make('chassi')->label('Chassi')->maxLength(30),
@@ -290,7 +333,7 @@ class AssetResource extends Resource
                                 ->visible(fn (Get $get) => $get('grupo') === Asset::GRUPO_VEICULO)
                                 ->columns(4)
                                 ->schema([
-                                    Forms\Components\TextInput::make('modelo')->label('Modelo')->maxLength(191),
+                                    static::modeloSelect(),
                                     Forms\Components\TextInput::make('cor')->label('Cor')->maxLength(60),
                                     Forms\Components\TextInput::make('placa')
                                         ->label('Placa')
