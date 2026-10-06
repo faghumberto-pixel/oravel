@@ -88,7 +88,7 @@ class PendenciasFrotaService
         }
 
         if ($saida = $v->saidaAberta()) {
-            $horas = (int) $saida->saida_em->diffInHours(now());
+            $horas = intdiv(max(0, now()->timestamp - $saida->saida_em->timestamp), 3600);
             if ($horas >= FrotaSaidaVeiculo::AVISO_FORA_HORAS) {
                 $add('saida', self::ATENCAO, 'fora', 'Veículo fora há '.($horas >= 48 ? intdiv($horas, 24).' dias' : $horas.' horas').' ('.FrotaSaidaVeiculo::finalidadeLabels()[$saida->finalidade].', com '.$saida->condutor().').');
             }
