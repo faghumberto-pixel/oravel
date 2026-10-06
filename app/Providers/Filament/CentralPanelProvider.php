@@ -35,6 +35,7 @@ use App\Filament\Central\Widgets\SaaSStatsOverview;
 use App\Filament\Central\Widgets\SalesCrmStatsWidget;
 use App\Filament\Central\Widgets\SalesLeadMapWidget;
 use App\Filament\Central\Widgets\Site\SiteClicksTable;
+use App\Filament\Central\Widgets\Site\SiteDiscardsTable;
 use App\Filament\Central\Widgets\Site\SiteSourcesTable;
 use App\Filament\Central\Widgets\Site\SiteStatsOverview;
 use App\Filament\Central\Widgets\Site\SiteTopPagesTable;
@@ -198,6 +199,7 @@ class CentralPanelProvider extends PanelProvider
                 SiteTopPagesTable::class,
                 SiteSourcesTable::class,
                 SiteClicksTable::class,
+                SiteDiscardsTable::class,
             ])
             ->databaseNotifications()
             ->databaseNotificationsPolling('8s')

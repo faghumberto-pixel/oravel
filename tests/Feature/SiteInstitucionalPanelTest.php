@@ -6,12 +6,14 @@ use App\Filament\Central\Pages\DashboardSiteInstitucional;
 use App\Filament\Central\Resources\WebVisitResource\Pages\ListWebVisits;
 use App\Filament\Central\Widgets\ImplementationStats;
 use App\Filament\Central\Widgets\Site\SiteClicksTable;
+use App\Filament\Central\Widgets\Site\SiteDiscardsTable;
 use App\Filament\Central\Widgets\Site\SiteSourcesTable;
 use App\Filament\Central\Widgets\Site\SiteStatsOverview;
 use App\Filament\Central\Widgets\Site\SiteTopPagesTable;
 use App\Filament\Central\Widgets\Site\SiteVisitsChart;
 use App\Models\SiteVisit;
 use App\Models\User;
+use App\Models\WebDiscard;
 use App\Models\WebEvent;
 use App\Models\WebPageview;
 use App\Models\WebVisit;
@@ -74,6 +76,8 @@ class SiteInstitucionalPanelTest extends TestCase
         Livewire::test(SiteTopPagesTable::class)->assertSee('/locadoras/')->assertSee('/contato');
         Livewire::test(SiteSourcesTable::class)->assertSee('google')->assertSee('instagram.com');
         Livewire::test(SiteClicksTable::class)->assertSee('WhatsApp');
+        WebDiscard::create(['day' => now()->toDateString(), 'reason' => WebDiscard::REASON_DATACENTER, 'hits' => 7, 'sessions' => 3]);
+        Livewire::test(SiteDiscardsTable::class)->assertSee('IP de servidor')->assertSee('Descartados pelo filtro');
         Livewire::test(SiteVisitsChart::class)->assertSuccessful();
     }
 

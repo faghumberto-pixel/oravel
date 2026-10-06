@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\SiteVisit;
+use App\Models\WebDiscard;
 use App\Models\WebEvent;
 use App\Models\WebPageview;
 use App\Models\WebVisit;
@@ -130,6 +131,30 @@ class SiteTrackingCollectorTest extends TestCase
 
         $this->assertSame(0, WebVisit::where('session_token', 'session-bot')->count());
         $this->assertSame(0, WebEvent::count());
+    }
+
+    public function test_discards_are_counted_per_reason_without_creating_visits(): void
+    {
+        $dallas = ['city' => 'Dallas', 'state' => 'TX', 'hosting' => true];
+        $ip = '34.128.4.35';
+
+        // 2 paginas abertas da mesma sessao de servidor + 1 de outra sessao.
+        $this->track($this->pv(['s' => 'session-cloud-1', 'p' => 'page-cloud-1']), ip: $ip, place: $dallas)->assertNoContent();
+        $this->track($this->pv(['s' => 'session-cloud-1', 'p' => 'page-cloud-2']), ip: $ip, place: $dallas)->assertNoContent();
+        $this->track($this->pv(['s' => 'session-cloud-2', 'p' => 'page-cloud-3']), ip: $ip, place: $dallas)->assertNoContent();
+
+        // Robo pelo navegador: so conta pv, ping nao.
+        $this->track($this->pv(['s' => 'session-bot-1', 'p' => 'page-bot-1']), ua: 'Googlebot/2.1')->assertNoContent();
+        $this->track(['t' => 'ping', 'v' => 'visitor-0001', 's' => 'session-bot-1', 'p' => 'page-bot-1', 'ms' => 1000], ua: 'Googlebot/2.1')->assertNoContent();
+
+        // Origem nao autorizada.
+        $this->track($this->pv(['s' => 'session-evil-1', 'p' => 'page-evil-1']), origin: 'https://evil.example')->assertNoContent();
+
+        $cloud = WebDiscard::where('reason', WebDiscard::REASON_DATACENTER)->sole();
+        $this->assertSame([3, 2], [$cloud->hits, $cloud->sessions]);
+        $this->assertSame(1, WebDiscard::where('reason', WebDiscard::REASON_ROBOT)->sole()->hits);
+        $this->assertSame(1, WebDiscard::where('reason', WebDiscard::REASON_ORIGIN)->sole()->hits);
+        $this->assertSame(0, WebVisit::where('session_token', 'like', 'session-%')->count());
     }
 
     public function test_old_cache_entry_without_hosting_flag_is_looked_up_again(): void

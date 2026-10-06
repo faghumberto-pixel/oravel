@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\WebDiscard;
 use App\Models\WebEvent;
 use App\Models\WebPageview;
 use App\Models\WebVisit;
@@ -31,6 +32,8 @@ class SiteTrackingController extends Controller
         $response = response()->noContent();
 
         if ($origin === null) {
+            $this->discard(WebDiscard::REASON_ORIGIN, null);
+
             return $response;
         }
 
@@ -41,7 +44,15 @@ class SiteTrackingController extends Controller
             $raw = $request->getContent();
             $data = strlen($raw) <= 4096 ? json_decode($raw, true) : null;
 
-            if (! is_array($data) || UserAgentInfo::isBot($request->userAgent())) {
+            if (! is_array($data)) {
+                return $response;
+            }
+
+            if (UserAgentInfo::isBot($request->userAgent())) {
+                if (($data['t'] ?? null) === 'pv') {
+                    $this->discard(WebDiscard::REASON_ROBOT, $this->token($data['s'] ?? null));
+                }
+
                 return $response;
             }
 
@@ -64,6 +75,16 @@ class SiteTrackingController extends Controller
         }
 
         return $response;
+    }
+
+    /** Contador de descartes (melhor esforço: nunca pode derrubar o coletor). */
+    private function discard(string $reason, ?string $session): void
+    {
+        try {
+            WebDiscard::record($reason, $session);
+        } catch (\Throwable $e) {
+            Log::warning('SiteTrackingController: falha ao contar descarte.', ['error' => $e->getMessage()]);
+        }
     }
 
     /** Só aceita eventos vindos do próprio site (Origin, ou Referer na falta dele). */
@@ -116,6 +137,8 @@ class SiteTrackingController extends Controller
             // User-Agent. Sem visita criada, os pings/cliques seguintes da
             // mesma sessao tambem sao ignorados (exigem a visita).
             if ($place['hosting'] ?? false) {
+                $this->discard(WebDiscard::REASON_DATACENTER, $session);
+
                 return;
             }
             $referrer = $this->text($data['ref'] ?? null, 1000);

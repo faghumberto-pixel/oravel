@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\WebVisit;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 /** Apaga as estatísticas do site institucional mais antigas que N meses (a política de privacidade promete 13). */
 class PruneWebAnalytics extends Command
@@ -17,6 +18,7 @@ class PruneWebAnalytics extends Command
         $cutoff = now()->subMonths(max(1, (int) $this->option('months')));
         $deleted = WebVisit::where('started_at', '<', $cutoff)->delete(); // cascata: pageviews e eventos
 
+        DB::table('web_discards')->where('day', '<', $cutoff->toDateString())->delete();
         $this->info("{$deleted} visita(s) anterior(es) a {$cutoff->format('d/m/Y')} apagada(s).");
 
         return self::SUCCESS;

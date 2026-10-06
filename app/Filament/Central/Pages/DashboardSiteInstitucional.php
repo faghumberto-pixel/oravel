@@ -3,6 +3,7 @@
 namespace App\Filament\Central\Pages;
 
 use App\Filament\Central\Widgets\Site\SiteClicksTable;
+use App\Filament\Central\Widgets\Site\SiteDiscardsTable;
 use App\Filament\Central\Widgets\Site\SiteSourcesTable;
 use App\Filament\Central\Widgets\Site\SiteStatsOverview;
 use App\Filament\Central\Widgets\Site\SiteTopPagesTable;
@@ -49,6 +50,7 @@ class DashboardSiteInstitucional extends BaseDashboard
             SiteTopPagesTable::class,
             SiteSourcesTable::class,
             SiteClicksTable::class,
+            SiteDiscardsTable::class,
         ];
     }
 
