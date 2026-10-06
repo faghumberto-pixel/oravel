@@ -9,6 +9,7 @@ use App\Models\FrotaItemModeloChecklist as Item;
 use App\Models\FrotaLeituraOdometro;
 use App\Models\FrotaModeloChecklist;
 use App\Models\FrotaRespostaChecklist as Resposta;
+use App\Models\FrotaTesteBateria;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
@@ -103,6 +104,22 @@ class ChecklistFrotaService
 
             foreach ($respostasLinhas as $linha) {
                 $checklist->respostas()->create($linha);
+            }
+
+            // Tensão medida no checklist completo vira teste de bateria: se o veículo tem UMA bateria montada, é dela;
+            // com 0 ou 2+ não dá para saber qual, então fica no veículo (bateria_id nulo).
+            foreach ($respostasLinhas as $linha) {
+                if (($linha['unidade'] ?? null) === 'V' && $linha['valor_numerico'] !== null && $linha['resultado'] !== Resposta::NAO_SE_APLICA) {
+                    $montadas = $ativo->bateriasMontadas()->pluck('componente_id');
+                    FrotaTesteBateria::create([
+                        'bateria_id' => $montadas->count() === 1 ? $montadas->first() : null,
+                        'ativo_id' => $ativo->id,
+                        'checklist_id' => $checklist->id,
+                        'tensao' => $linha['valor_numerico'],
+                        'odometro' => (int) $dados['odometro'],
+                        'testado_em' => now(),
+                    ]);
+                }
             }
 
             // Sulco medido no checklist completo vira inspeção de pneu do VEÍCULO (menor sulco medido; sem pneu específico).

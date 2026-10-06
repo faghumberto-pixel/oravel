@@ -28,6 +28,7 @@ use App\Models\EquipmentReplacement;
 use App\Models\FleetMaintenanceHistory;
 use App\Models\FleetTollRecord;
 use App\Models\FreightRecord;
+use App\Models\FrotaBateria;
 use App\Models\FrotaPneu;
 use App\Models\GoodsReceiptItem;
 use App\Models\HorimeterReading;
@@ -107,7 +108,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Componentes da frota (pneu, bateria) em frota_instalacoes_componente: grava 'pneu' em vez do nome da classe.
         // Sem enforce: os demais relacionamentos polimórficos do sistema continuam gravando o nome da classe.
-        Relation::morphMap(['pneu' => FrotaPneu::class], merge: true);
+        Relation::morphMap(['pneu' => FrotaPneu::class, 'bateria' => FrotaBateria::class], merge: true);
 
         Schema::defaultStringLength(191);
 

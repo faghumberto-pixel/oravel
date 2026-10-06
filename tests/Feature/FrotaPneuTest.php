@@ -256,6 +256,18 @@ class FrotaPneuTest extends TestCase
         $this->assertNull($this->pneu($tenant, ['dot' => '9999'])->idadeAnos());
     }
 
+    public function test_a_tire_in_stock_can_be_measured_without_a_vehicle(): void
+    {
+        [$tenant] = $this->cliente();
+        $pneu = $this->pneu($tenant, ['pressao_min_psi' => 100, 'pressao_max_psi' => 120]);
+
+        $inspecao = $this->servico->registrarInspecao($pneu, 9.0, 110.0);
+
+        $this->assertNull($inspecao->ativo_id);
+        $this->assertSame('9.0', (string) $inspecao->sulco_mm);
+        $this->assertSame([], FrotaPneu::find($pneu->id)->alertas());
+    }
+
     public function test_the_tread_from_a_full_checklist_becomes_a_vehicle_inspection(): void
     {
         [$tenant, $admin] = $this->cliente();

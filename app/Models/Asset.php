@@ -805,4 +805,24 @@ class Asset extends Model implements HasMedia
 
         return $v !== null ? (float) $v : null;
     }
+
+    /** Baterias montadas agora neste veículo (instalações abertas). */
+    public function bateriasMontadas(): HasMany
+    {
+        return $this->hasMany(FrotaInstalacaoComponente::class, 'ativo_id')->where('componente_type', 'bateria')->whereNull('removido_em');
+    }
+
+    /** Última tensão testada do veículo (checklist completo ou teste de bateria), em volts. */
+    public function ultimaTensaoV(): ?float
+    {
+        $v = FrotaTesteBateria::where('ativo_id', $this->id)->orderByDesc('testado_em')->value('tensao');
+
+        return $v !== null ? (float) $v : null;
+    }
+
+    /** Todas as instalações de bateria do veículo (abertas e antigas). */
+    public function instalacoesBateria(): HasMany
+    {
+        return $this->hasMany(FrotaInstalacaoComponente::class, 'ativo_id')->where('componente_type', 'bateria');
+    }
 }

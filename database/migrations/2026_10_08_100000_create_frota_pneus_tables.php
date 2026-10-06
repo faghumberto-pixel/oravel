@@ -55,7 +55,7 @@ return new class extends Migration
         Schema::create('frota_inspecoes_pneu', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('pneu_id')->nullable()->constrained('frota_pneus')->cascadeOnDelete();
-            $table->foreignUuid('ativo_id')->constrained('assets')->cascadeOnDelete();
+            $table->foreignUuid('ativo_id')->nullable()->constrained('assets')->cascadeOnDelete();   // nulo = pneu medido em estoque
             $table->foreignUuid('checklist_id')->nullable()->constrained('frota_checklists')->nullOnDelete();
             $table->decimal('sulco_mm', 5, 1)->nullable();
             $table->decimal('pressao_psi', 5, 1)->nullable();
