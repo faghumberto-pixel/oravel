@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Events\DocumentSigned;
 use App\Filament\Central\Widgets\SalesAgendaWidget;
+use App\Listeners\DownscaleNonEvidenceMedia;
+use App\Listeners\NotifyCentralOfSignedDocument;
 use App\Livewire\DatabaseNotifications;
 use App\Models\AbcMatrix;
 use App\Models\AccountPayable;
@@ -12,10 +15,10 @@ use App\Models\Asset;
 use App\Models\BatteryCycleReading;
 use App\Models\Client;
 use App\Models\ClientMessage;
-use App\Models\Contract;
+use App\Models\Contract; // Importante
 use App\Models\CrmLead;
 use App\Models\CrmLeadInteraction;
-use App\Models\Department; // Importante
+use App\Models\Department;
 use App\Models\DocumentSignature;
 use App\Models\EquipmentDamage;
 use App\Models\EquipmentMovement;
@@ -49,7 +52,6 @@ use App\Observers\ClientObserver;
 use App\Observers\ContaPagarObserver;
 use App\Observers\ContractObserver;
 use App\Observers\CrmLeadInteractionObserver;
-use App\Listeners\DownscaleNonEvidenceMedia;
 use App\Observers\CrmLeadObserver;
 use App\Observers\DocumentSignatureObserver;
 use App\Observers\EquipmentDamageObserver;
@@ -78,7 +80,6 @@ use Illuminate\Auth\Events\Logout;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
-use Spatie\MediaLibrary\MediaCollections\Events\MediaHasBeenAddedEvent;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
@@ -87,6 +88,7 @@ use Jeffgreco13\FilamentBreezy\Livewire\PersonalInfo;
 use Jeffgreco13\FilamentBreezy\Livewire\TwoFactorAuthentication;
 use Jeffgreco13\FilamentBreezy\Livewire\UpdatePassword;
 use Livewire\Livewire;
+use Spatie\MediaLibrary\MediaCollections\Events\MediaHasBeenAddedEvent;
 use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -110,6 +112,12 @@ class AppServiceProvider extends ServiceProvider
         // como mixed content numa pagina https (CSS/JS somem em silencio).
         // X-Forwarded-Proto e' o header padrao que esses proxies mandam.
         if (request()->header('X-Forwarded-Proto') === 'https') {
+            URL::forceScheme('https');
+        }
+
+        // Comandos/jobs em producao (sem request) montam links a partir de APP_URL, que la' e' http://:
+        // o aviso "Novo lead do site" abria a Central por http (06/10/2026). Em producao tudo e' https.
+        if ($this->app->runningInConsole() && $this->app->environment('production')) {
             URL::forceScheme('https');
         }
 
@@ -237,7 +245,7 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(MediaHasBeenAddedEvent::class, DownscaleNonEvidenceMedia::class);
 
         // Assinatura concluída -> aviso no sino da Central (super admins).
-        Event::listen(\App\Events\DocumentSigned::class, [\App\Listeners\NotifyCentralOfSignedDocument::class, 'notify']);
+        Event::listen(DocumentSigned::class, [NotifyCentralOfSignedDocument::class, 'notify']);
 
         Event::listen(Login::class, function (Login $event) {
             $this->logAuthEvent(UserActivityLog::ACTION_LOGIN, $event->user);
