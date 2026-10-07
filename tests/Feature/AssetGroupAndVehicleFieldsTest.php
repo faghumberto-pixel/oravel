@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\AssetResource\Pages\EditAsset;
+use App\Filament\Resources\AssetResource\Pages\ListAssets;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Plan;
@@ -67,12 +68,12 @@ class AssetGroupAndVehicleFieldsTest extends TestCase
             $this->assertNotContains($name, $fields(), "Máquina não deveria mostrar {$name}.");
         }
 
-        // Veículo leve: placa, renavam, odômetro, emplacamento, seguro; sem horímetro nem tacógrafo.
+        // Veículo leve: placa, renavam, odômetro, km de aquisição (mesma coluna do horímetro de aquisição), emplacamento, seguro; sem leitura de horímetro nem tacógrafo.
         $page->fillForm(['grupo' => Asset::GRUPO_VEICULO, 'veiculo_pesado' => false]);
-        foreach (['modelo', 'cor', 'placa', 'renavam', 'chassi', 'manufacturing_year', 'ano_modelo', 'odometro_atual', 'licenciamento_vencimento', 'ipva_vencimento', 'seguro_seguradora', 'seguro_apolice', 'seguro_vencimento'] as $name) {
+        foreach (['modelo', 'cor', 'placa', 'renavam', 'chassi', 'manufacturing_year', 'ano_modelo', 'odometro_atual', 'horimetro_inicial', 'licenciamento_vencimento', 'ipva_vencimento', 'seguro_seguradora', 'seguro_apolice', 'seguro_vencimento'] as $name) {
             $this->assertContains($name, $fields(), "Veículo deveria mostrar {$name}.");
         }
-        foreach (['horimetro_inicial', 'last_horimetro', 'tacografo_numero', 'tacografo_vencimento'] as $name) {
+        foreach (['last_horimetro', 'tacografo_numero', 'tacografo_vencimento'] as $name) {
             $this->assertNotContains($name, $fields(), "Veículo leve não deveria mostrar {$name}.");
         }
 
@@ -170,5 +171,43 @@ class AssetGroupAndVehicleFieldsTest extends TestCase
         $created = $field->evaluate($field->getCreateOptionUsing(), ['data' => ['name' => '  Volvo   FH 540 ', 'fabricante' => 'Volvo']]);
         $this->assertSame('Volvo FH 540', $created);
         $this->assertSame(1, AssetModel::where('name', 'Volvo FH 540')->count());
+    }
+
+    public function test_acquisition_field_is_km_for_vehicles_and_hours_for_machines(): void
+    {
+        [$tenant, $admin] = $this->tenantWithAdmin();
+        $this->actingAs($admin);
+        $asset = $this->asset($tenant);
+
+        $page = Livewire::test(EditAsset::class, ['record' => $asset->getRouteKey()]);
+        $campo = fn () => $page->instance()->form->getFlatFields()['horimetro_inicial'];
+
+        $page->fillForm(['grupo' => Asset::GRUPO_MAQUINA]);
+        $this->assertSame('Horímetro de Aquisição', $campo()->getLabel());
+        $this->assertSame('h', $campo()->getSuffixLabel());
+
+        $page->fillForm(['grupo' => Asset::GRUPO_VEICULO]);
+        $this->assertSame('Km de Aquisição', $campo()->getLabel());
+        $this->assertSame('km', $campo()->getSuffixLabel());
+    }
+
+    public function test_vehicle_saves_acquisition_km_and_list_shows_plate_and_odometer(): void
+    {
+        [$tenant, $admin] = $this->tenantWithAdmin();
+        $this->actingAs($admin);
+        $asset = $this->asset($tenant);
+
+        Livewire::test(EditAsset::class, ['record' => $asset->getRouteKey()])
+            ->fillForm(['patrimonio' => 'PAT-'.uniqid(), 'grupo' => Asset::GRUPO_VEICULO, 'placa' => 'kmx-1a23', 'horimetro_inicial' => 85000, 'odometro_atual' => 91500])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $asset->refresh();
+        $this->assertSame('KMX1A23', $asset->placa);
+        $this->assertSame(85000.0, (float) $asset->horimetro_inicial);
+
+        Livewire::test(ListAssets::class)
+            ->assertSee('Placa: KMX1A23')
+            ->assertSee('91.500 km');
     }
 }

@@ -94,16 +94,28 @@
         @endif
     </div>
 
+    @if ($asset->is_vehicle)
+    <div class="section">
+        <div class="section-title">Quilometragem</div>
+        <table class="data-grid">
+            <tr>
+                <td><span class="label">Odômetro Atual</span><span class="value">{{ number_format((float) $asset->odometro_atual, 0, ',', '.') }} km</span></td>
+                <td><span class="label">Km de Aquisição</span><span class="value">{{ number_format((float) $asset->horimetro_inicial, 0, ',', '.') }} km</span></td>
+                <td><span class="label">Km rodados na frota</span><span class="value">{{ number_format(max(0, (float) $asset->odometro_atual - (float) $asset->horimetro_inicial), 0, ',', '.') }} km</span></td>
+            </tr>
+        </table>
+    </div>
+    @else
     <div class="section">
         <div class="section-title">Horas Trabalhadas</div>
         <table class="data-grid">
             <tr>
                 <td><span class="label">Horímetro Atual</span><span class="value">{{ number_format((float) $asset->horimetro_atual, 2, ',', '.') }} h</span></td>
-                <td><span class="label">Horímetro Inicial</span><span class="value">{{ number_format((float) $asset->horimetro_inicial, 2, ',', '.') }} h</span></td>
-                <td><span class="label">Odômetro Atual</span><span class="value">{{ $asset->is_vehicle ? number_format((float) $asset->odometro_atual, 2, ',', '.').' km' : '—' }}</span></td>
+                <td><span class="label">Horímetro de Aquisição</span><span class="value">{{ number_format((float) $asset->horimetro_inicial, 2, ',', '.') }} h</span></td>
             </tr>
         </table>
     </div>
+    @endif
 
     <div class="section">
         <div class="section-title">Avarias Recentes</div>

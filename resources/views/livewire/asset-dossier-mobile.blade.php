@@ -146,15 +146,20 @@
                 @endif
             </div>
 
-            {{-- Horas trabalhadas --}}
+            {{-- Horas trabalhadas (máquina) ou quilometragem (veículo) --}}
             <div class="rounded-2xl bg-zinc-900 p-4">
-                <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">Horas Trabalhadas</h3>
-                <div class="mt-3 grid grid-cols-2 gap-3 text-sm">
-                    <div><span class="block text-[11px] text-zinc-500">Horímetro Atual</span><span class="font-semibold text-zinc-100">{{ number_format((float) $asset->horimetro_atual, 2, ',', '.') }} h</span></div>
-                    @if ($asset->is_vehicle)
-                        <div><span class="block text-[11px] text-zinc-500">Odômetro Atual</span><span class="font-semibold text-zinc-100">{{ number_format((float) $asset->odometro_atual, 2, ',', '.') }} km</span></div>
-                    @endif
-                </div>
+                @if ($asset->is_vehicle)
+                    <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">Quilometragem</h3>
+                    <div class="mt-3 grid grid-cols-2 gap-3 text-sm">
+                        <div><span class="block text-[11px] text-zinc-500">Odômetro Atual</span><span class="font-semibold text-zinc-100">{{ number_format((float) $asset->odometro_atual, 0, ',', '.') }} km</span></div>
+                        <div><span class="block text-[11px] text-zinc-500">Km de Aquisição</span><span class="font-semibold text-zinc-100">{{ number_format((float) $asset->horimetro_inicial, 0, ',', '.') }} km</span></div>
+                    </div>
+                @else
+                    <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">Horas Trabalhadas</h3>
+                    <div class="mt-3 grid grid-cols-2 gap-3 text-sm">
+                        <div><span class="block text-[11px] text-zinc-500">Horímetro Atual</span><span class="font-semibold text-zinc-100">{{ number_format((float) $asset->horimetro_atual, 2, ',', '.') }} h</span></div>
+                    </div>
+                @endif
             </div>
 
             {{-- Link publico pro cliente locatario registrar o horimetro

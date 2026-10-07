@@ -182,6 +182,14 @@ class AssetResource extends Resource
                                             ? Asset::nextPatrimonio(Tenancy::current()->id)
                                             : null),
 
+                                    Forms\Components\TextInput::make('placa')
+                                        ->label('Placa')
+                                        ->placeholder('ABC1D23')
+                                        ->maxLength(8)
+                                        ->visible(fn (Get $get) => $get('grupo') === Asset::GRUPO_VEICULO)
+                                        ->dehydrateStateUsing(fn ($state) => filled($state) ? strtoupper(preg_replace('/[^A-Za-z0-9]/', '', (string) $state)) : null)
+                                        ->rule(fn (?Asset $record) => Asset::plateRule(Tenancy::current()?->id ?? $record?->tenant_id, $record?->id)),
+
                                     Forms\Components\TextInput::make('fabricante')
                                         ->label('Marca / Fabricante')
                                         ->maxLength(191),
@@ -335,12 +343,6 @@ class AssetResource extends Resource
                                 ->schema([
                                     static::modeloSelect(),
                                     Forms\Components\TextInput::make('cor')->label('Cor')->maxLength(60),
-                                    Forms\Components\TextInput::make('placa')
-                                        ->label('Placa')
-                                        ->placeholder('ABC1D23')
-                                        ->maxLength(8)
-                                        ->dehydrateStateUsing(fn ($state) => filled($state) ? strtoupper(preg_replace('/[^A-Za-z0-9]/', '', (string) $state)) : null)
-                                        ->rule(fn (?Asset $record) => Asset::plateRule(Tenancy::current()?->id ?? $record?->tenant_id, $record?->id)),
                                     Forms\Components\TextInput::make('renavam')
                                         ->label('Renavam')
                                         ->numeric()
@@ -353,7 +355,6 @@ class AssetResource extends Resource
                                         ->rule(fn () => Asset::chassiRule()),
                                     Forms\Components\TextInput::make('manufacturing_year')->label('Ano de fabricação')->numeric()->minValue(1950)->maxValue((int) date('Y') + 1),
                                     Forms\Components\TextInput::make('ano_modelo')->label('Ano do modelo')->numeric()->minValue(1950)->maxValue((int) date('Y') + 2),
-                                    Forms\Components\TextInput::make('odometro_atual')->label('Odômetro (km)')->numeric()->minValue(0)->suffix('km'),
                                     Forms\Components\DatePicker::make('licenciamento_vencimento')->label('Vencimento do licenciamento (emplacamento)'),
                                     Forms\Components\DatePicker::make('ipva_vencimento')->label('Vencimento do IPVA'),
                                     Forms\Components\TextInput::make('seguro_seguradora')->label('Seguro — seguradora')->maxLength(191),
@@ -374,12 +375,25 @@ class AssetResource extends Resource
                                 ->schema([
                                     Forms\Components\Grid::make(3)->schema([
                                         Forms\Components\TextInput::make('horimetro_inicial')
-                                            ->visible(fn (Get $get) => $get('grupo') !== Asset::GRUPO_VEICULO)
-                                            ->label('Horímetro de Aquisição')
+                                            // Mesma coluna, outro rótulo: no veículo é o km de aquisição (odômetro quando entrou na frota).
+                                            ->label(fn (Get $get) => $get('grupo') === Asset::GRUPO_VEICULO ? 'Km de Aquisição' : 'Horímetro de Aquisição')
+                                            ->suffix(fn (Get $get) => $get('grupo') === Asset::GRUPO_VEICULO ? 'km' : 'h')
                                             ->numeric()
                                             ->default(0)
-                                            ->helperText('Permitido correção de erro de digitação na entrada.')
+                                            ->minValue(0)
+                                            ->helperText(fn (Get $get) => $get('grupo') === Asset::GRUPO_VEICULO
+                                                ? 'Km que o veículo tinha quando entrou na frota. Permitido correção de erro de digitação na entrada.'
+                                                : 'Permitido correção de erro de digitação na entrada.')
                                             ->prefixIcon('heroicon-m-flag'),
+
+                                        Forms\Components\TextInput::make('odometro_atual')
+                                            ->visible(fn (Get $get) => $get('grupo') === Asset::GRUPO_VEICULO)
+                                            ->label('Odômetro Atual (km)')
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->suffix('km')
+                                            ->helperText('Também é atualizado pelo sistema (checklist, abastecimento, entrada e saída, GPS).')
+                                            ->prefixIcon('heroicon-m-arrow-path'),
 
                                         Forms\Components\TextInput::make('last_horimetro')
                                             ->visible(fn (Get $get) => $get('grupo') !== Asset::GRUPO_VEICULO)
@@ -940,7 +954,7 @@ class AssetResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Equipamento')
                     ->searchable()
-                    ->description(fn (Asset $record): string => 'Tag: '.($record->tag ?? '---')),
+                    ->description(fn (Asset $record): string => ($record->isVehicle() && $record->placa ? 'Placa: '.$record->placa.' · ' : '').'Tag: '.($record->tag ?? '---')),
 
                 Tables\Columns\TextColumn::make('grupo')
                     ->label('Tipo')
@@ -985,10 +999,12 @@ class AssetResource extends Resource
                     ->placeholder('—')
                     ->toggleable(isToggledHiddenByDefault: true),
 
+                // Máquina: horímetro (h). Veículo: odômetro (km).
                 Tables\Columns\TextColumn::make('last_horimetro')
-                    ->label('Horímetro Atual')
-                    ->numeric(decimalPlaces: 1)
-                    ->sortable()
+                    ->label('Horímetro / Odômetro')
+                    ->state(fn (Asset $record) => $record->isVehicle() ? (float) $record->odometro_atual : (float) $record->last_horimetro)
+                    ->formatStateUsing(fn ($state, Asset $record) => number_format((float) $state, $record->isVehicle() ? 0 : 1, ',', '.').($record->isVehicle() ? ' km' : ' h'))
+                    ->sortable(query: fn (Builder $query, string $direction) => $query->orderByRaw("CASE WHEN assets.grupo = 'veiculo' THEN assets.odometro_atual ELSE assets.last_horimetro END {$direction}"))
                     ->alignEnd(),
 
                 Tables\Columns\TextColumn::make('asset_category')

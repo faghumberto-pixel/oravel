@@ -67,7 +67,7 @@ class AssetImportColumns
             $c($G2, 'Status Operacional', 'asset', 'status', 'enum', 'Disponível, Locado, Em Manutenção, Em Operação ou Aguardando Triagem. Se vazio: Disponível.', 'Disponível', false, $status),
             $c($G2, 'Criticidade', 'asset', 'criticality', 'enum', 'Baixa, Média ou Alta. Se vazio: Média.', 'Média', false, $crit),
             $c($G2, 'É veículo?', 'asset', 'is_vehicle', 'bool', $yn.' Veículos usam odômetro.', 'Não'),
-            $c($G2, 'Horímetro de Aquisição', 'asset', 'horimetro_inicial', 'decimal', 'Horas do equipamento quando entrou na frota (número).', '0'),
+            $c($G2, 'Horímetro de Aquisição', 'asset', 'horimetro_inicial', 'decimal', 'Horas do equipamento quando entrou na frota (número). Para veículo, informe o km de aquisição.', '0'),
             $c($G2, 'Horímetro Atual', 'asset', 'horimetro_atual', 'decimal', 'Leitura atual do horímetro, em horas.', '1250'),
             $c($G2, 'Odômetro Atual (km)', 'asset', 'odometro_atual', 'decimal', 'Só para veículos, em km.'),
             $c($G2, 'Ciclos de Bateria Atual', 'asset', 'battery_cycles_atual', 'int', 'Ciclos de carga já realizados (equipamentos elétricos).'),
