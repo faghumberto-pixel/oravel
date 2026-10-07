@@ -965,7 +965,10 @@ class AssetResource extends Resource
 
                 Tables\Columns\TextColumn::make('placa')
                     ->label('Placa')
-                    ->searchable()
+                    // Quem digita "kmx-1a23" acha "KMX1A23": a placa é gravada sem hífen e em maiúsculas.
+                    ->searchable(query: fn (Builder $query, string $search): Builder => Asset::normalizarCodigo($search) !== ''
+                        ? $query->where('assets.placa', 'ilike', '%'.Asset::normalizarCodigo($search).'%')
+                        : $query->whereRaw('1 = 0'))
                     ->placeholder('—')
                     ->toggleable(),
 
@@ -1039,6 +1042,17 @@ class AssetResource extends Resource
                     ->placeholder('Não definida'),
             ])
             ->filters([
+                Tables\Filters\Filter::make('placa')
+                    ->label('Placa')
+                    ->form([
+                        Forms\Components\TextInput::make('placa')->label('Placa')->placeholder('ABC1D23 ou ABC-1D23')->maxLength(10),
+                    ])
+                    ->query(fn (Builder $query, array $data): Builder => $query->when(
+                        filled($data['placa'] ?? null) && Asset::normalizarCodigo((string) $data['placa']) !== '',
+                        fn (Builder $q) => $q->where('assets.placa', 'ilike', '%'.Asset::normalizarCodigo((string) $data['placa']).'%')
+                    ))
+                    ->indicateUsing(fn (array $data): ?string => filled($data['placa'] ?? null) ? 'Placa: '.strtoupper((string) $data['placa']) : null),
+
                 Tables\Filters\Filter::make('vencimentos')
                     ->label('Vencimentos (seguro, IPVA, licenciamento)')
                     ->form([

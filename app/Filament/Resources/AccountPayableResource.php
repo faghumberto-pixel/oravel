@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\AccountPayableResource\Pages;
 use App\Models\AccountPayable;
+use App\Models\Asset;
 use App\Support\Tenancy;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
@@ -59,7 +60,9 @@ class AccountPayableResource extends Resource
                     Select::make('asset_id')
                         ->label('Ativo/Equipamento')
                         ->relationship('asset', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
-                        ->searchable()->preload(),
+                        ->searchable()
+                        ->getSearchResultsUsing(fn (string $search): array => Asset::opcoesPesquisa($search))
+                        ->getOptionLabelFromRecordUsing(fn (Asset $a) => $a->selectLabel())->preload(),
                 ])->columns(3),
         ]);
     }

@@ -6,6 +6,7 @@ use App\Filament\Resources\AggregateItemExitResource\Pages;
 use App\Models\AggregateItem;
 use App\Models\AggregateItemExit;
 use App\Models\AggregateItemType;
+use App\Models\Asset;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -65,7 +66,9 @@ class AggregateItemExitResource extends BaseResource
                     },
                 ]),
             Forms\Components\Select::make('asset_id')->label('Equipamento de destino')
-                ->relationship('asset', 'name')->searchable()->preload()->required(),
+                ->relationship('asset', 'name')->searchable()
+                ->getSearchResultsUsing(fn (string $search): array => Asset::opcoesPesquisa($search))
+                ->getOptionLabelFromRecordUsing(fn (Asset $a) => $a->selectLabel())->preload()->required(),
             Forms\Components\Select::make('reason')->label('Motivo')
                 ->options(AggregateItemExit::reasonLabels())->default(AggregateItemExit::REASON_LOCACAO)
                 ->native(false)->required(),

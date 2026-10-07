@@ -3,24 +3,26 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PmocResource\Pages;
-use App\Filament\Resources\PmocResource\RelationManagers;
+use App\Models\Asset;
 use App\Models\Pmoc;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PmocResource extends Resource
 {
     protected static ?string $model = Pmoc::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
     protected static ?string $navigationLabel = 'PMOC';
+
     protected static ?string $modelLabel = 'PMOC';
+
     protected static ?string $pluralModelLabel = 'PMOCs';
+
     protected static ?string $navigationGroup = 'Equipe';
 
     protected static ?int $navigationSort = 5;
@@ -51,7 +53,9 @@ class PmocResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('asset_id')
                             ->relationship('asset', 'name')
-                            ->searchable(),
+                            ->searchable()
+                            ->getSearchResultsUsing(fn (string $search): array => Asset::opcoesPesquisa($search))
+                            ->getOptionLabelFromRecordUsing(fn (Asset $a) => $a->selectLabel()),
                     ])->columns(2),
 
                 Forms\Components\Section::make('Responsável')

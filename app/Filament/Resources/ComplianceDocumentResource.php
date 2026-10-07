@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ComplianceDocumentResource\Pages;
+use App\Models\Asset;
 use App\Models\ComplianceDocument;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -35,7 +36,9 @@ class ComplianceDocumentResource extends BaseResource
             Forms\Components\TextInput::make('issuer')->label('Emissor / seguradora')->maxLength(255),
             Forms\Components\TextInput::make('responsible')->label('Responsável técnico')->maxLength(255),
             Forms\Components\Select::make('asset_id')->label('Equipamento')
-                ->relationship('asset', 'name')->searchable()->preload(),
+                ->relationship('asset', 'name')->searchable()
+                ->getSearchResultsUsing(fn (string $search): array => Asset::opcoesPesquisa($search))
+                ->getOptionLabelFromRecordUsing(fn (Asset $a) => $a->selectLabel())->preload(),
             Forms\Components\Select::make('contract_id')->label('Contrato de locação')
                 ->relationship('contract', 'contract_number')->searchable()->preload(),
             Forms\Components\DatePicker::make('issue_date')->label('Emissão / início da vigência'),

@@ -50,6 +50,8 @@ class PreventiveMaintenanceExecutionResource extends Resource
                     ->label('Ativo')
                     ->relationship('asset', 'name', fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))
                     ->searchable()
+                    ->getSearchResultsUsing(fn (string $search): array => Asset::opcoesPesquisa($search))
+                    ->getOptionLabelFromRecordUsing(fn (Asset $a) => $a->selectLabel())
                     ->preload()
                     ->live()
                     ->required(),

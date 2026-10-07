@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\MaintenancePlanResource\Pages;
 use App\Filament\Resources\MaintenancePlanResource\Support\PlanStatus;
+use App\Models\Asset;
 use App\Models\ChecklistGroup;
 use App\Models\MaintenancePlan;
 use App\Support\Tenancy;
@@ -48,6 +49,8 @@ class MaintenancePlanResource extends Resource
                     ->relationship('asset', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
                     ->requiredWithout('checklist_group_id')
                     ->searchable()
+                    ->getSearchResultsUsing(fn (string $search): array => Asset::opcoesPesquisa($search))
+                    ->getOptionLabelFromRecordUsing(fn (Asset $a) => $a->selectLabel())
                     ->preload(),
                 Forms\Components\Select::make('checklist_group_id')
                     ->label('Grupo de Ativo (template do grupo)')

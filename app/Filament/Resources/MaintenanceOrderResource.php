@@ -212,25 +212,16 @@ class MaintenanceOrderResource extends Resource
                             Forms\Components\Grid::make(2)->schema([
                                 Forms\Components\Select::make('asset_id')
                                     ->label('Ativo / QR Code')
-                                    ->placeholder('Bipe o código ou digite Pat/Série/Tag')
+                                    ->placeholder('Bipe o código ou digite Pat/Série/Tag/Placa')
                                     ->required()->searchable()->preload()->live()
-                                    ->getSearchResultsUsing(function (string $search) {
-                                        $tenantId = Tenancy::current()?->id;
-                                        if (! $tenantId) {
-                                            return [];
-                                        }
-
-                                        return Asset::where('tenant_id', $tenantId)
-                                            ->where(function ($q) use ($search) {
-                                                $q->where('name', 'like', "%{$search}%")->orWhere('patrimonio', 'like', "%{$search}%");
-                                            })->limit(50)->get()->mapWithKeys(fn ($asset) => [$asset->id => "{$asset->patrimonio} — {$asset->name}"]);
-                                    })
+                                    // Busca por nome, patrimônio, tag, série, placa e chassi (placa sem hífen/maiúsculas).
+                                    ->getSearchResultsUsing(fn (string $search): array => Tenancy::current()?->id ? Asset::opcoesPesquisa($search) : [])
                                     // Sem isso, ao ABRIR uma OS existente pra editar (nao
                                     // durante a busca ao vivo, que ja formata certo via
                                     // getSearchResultsUsing acima) o Select mostrava o UUID
                                     // cru do Ativo -- lia como "campo quebrado" pro usuario,
                                     // sendo justamente o campo mais importante da tela.
-                                    ->getOptionLabelUsing(fn ($value) => ($asset = Asset::find($value)) ? "{$asset->patrimonio} — {$asset->name}" : null)
+                                    ->getOptionLabelUsing(fn ($value) => ($asset = Asset::find($value)) ? $asset->selectLabel() : null)
                                     ->afterStateUpdated(function ($state, Set $set) {
                                         if ($state) {
                                             $asset = Asset::find($state);

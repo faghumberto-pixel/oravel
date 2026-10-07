@@ -319,7 +319,40 @@ class Asset extends Model implements HasMedia
      */
     public function selectLabel(): string
     {
-        return ($this->patrimonio ? "{$this->patrimonio} — " : '').$this->name;
+        return ($this->patrimonio ? "{$this->patrimonio} — " : '').$this->name.($this->placa ? " ({$this->placa})" : '');
+    }
+
+    /** Placa/chassi como estão gravados: maiúsculas, sem hífen nem espaço. */
+    public static function normalizarCodigo(string $texto): string
+    {
+        return strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $texto));
+    }
+
+    /**
+     * Busca de ativo para campos de pesquisa e filtros: nome, patrimônio, tag, nº de série, placa e chassi.
+     * Placa e chassi ignoram hífen, espaço e maiúsculas (quem digita "kmx-1a23" acha "KMX1A23").
+     */
+    public function scopePesquisar(Builder $query, string $busca): Builder
+    {
+        $busca = trim($busca);
+        $codigo = self::normalizarCodigo($busca);
+
+        return $query->where(function ($q) use ($busca, $codigo) {
+            $q->where('assets.name', 'ilike', "%{$busca}%")
+                ->orWhere('assets.patrimonio', 'ilike', "%{$busca}%")
+                ->orWhere('assets.tag', 'ilike', "%{$busca}%")
+                ->orWhere('assets.serial_number', 'ilike', "%{$busca}%");
+            if ($codigo !== '') {
+                $q->orWhere('assets.placa', 'ilike', "%{$codigo}%")->orWhere('assets.chassi', 'ilike', "%{$codigo}%");
+            }
+        });
+    }
+
+    /** @return array<string, string> id => rótulo, para o resultado da busca dos campos de ativo */
+    public static function opcoesPesquisa(string $busca, int $limite = 50): array
+    {
+        return static::query()->pesquisar($busca)->orderBy('name')->limit($limite)->get()
+            ->mapWithKeys(fn (self $a) => [$a->id => $a->selectLabel()])->all();
     }
 
     /**

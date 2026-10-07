@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\Nr13InspectionResource\Pages;
+use App\Models\Asset;
 use App\Models\Nr13Inspection;
 use App\Support\Tenancy;
 use Filament\Forms\Components\DatePicker;
@@ -46,6 +47,8 @@ class Nr13InspectionResource extends Resource
                 ->label('Equipamento')
                 ->relationship('asset', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
                 ->searchable()
+                ->getSearchResultsUsing(fn (string $search): array => Asset::opcoesPesquisa($search))
+                ->getOptionLabelFromRecordUsing(fn (Asset $a) => $a->selectLabel())
                 ->preload()
                 ->required(),
 

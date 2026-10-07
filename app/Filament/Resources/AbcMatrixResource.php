@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\AbcMatrixResource\Pages;
 use App\Models\AbcMatrix;
+use App\Models\Asset;
 use App\Models\CriticalityLevel;
 use App\Support\Tenancy;
 use Filament\Forms;
@@ -39,6 +40,8 @@ class AbcMatrixResource extends Resource
                     ->label('Ativo')
                     ->relationship('asset', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
                     ->searchable()
+                    ->getSearchResultsUsing(fn (string $search): array => Asset::opcoesPesquisa($search))
+                    ->getOptionLabelFromRecordUsing(fn (Asset $a) => $a->selectLabel())
                     ->preload()
                     ->required(),
                 Forms\Components\Select::make('nivel')

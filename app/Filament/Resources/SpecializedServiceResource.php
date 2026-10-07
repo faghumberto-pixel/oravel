@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SpecializedServiceResource\Pages;
+use App\Models\Asset;
 use App\Models\SpecializedService;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -38,7 +39,9 @@ class SpecializedServiceResource extends BaseResource
             Forms\Components\Select::make('supplier_id')->label('Fornecedor (terceirizado)')
                 ->relationship('supplier', 'name')->searchable()->preload(),
             Forms\Components\Select::make('asset_id')->label('Equipamento')
-                ->relationship('asset', 'name')->searchable()->preload(),
+                ->relationship('asset', 'name')->searchable()
+                ->getSearchResultsUsing(fn (string $search): array => Asset::opcoesPesquisa($search))
+                ->getOptionLabelFromRecordUsing(fn (Asset $a) => $a->selectLabel())->preload(),
             Forms\Components\Select::make('contract_id')->label('Contrato de locação')
                 ->relationship('contract', 'contract_number')->searchable()->preload(),
             Forms\Components\DatePicker::make('start_date')->label('Início'),

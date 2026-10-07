@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\EquipmentAllocationResource\Pages;
+use App\Models\Asset;
 use App\Models\EquipmentAllocation;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -41,6 +42,8 @@ class EquipmentAllocationResource extends BaseResource
                 ->label('Ativo')
                 ->relationship('asset', 'name')
                 ->searchable()
+                ->getSearchResultsUsing(fn (string $search): array => Asset::opcoesPesquisa($search))
+                ->getOptionLabelFromRecordUsing(fn (Asset $a) => $a->selectLabel())
                 ->preload()
                 ->required(),
             Forms\Components\DateTimePicker::make('starts_at')->label('Início'),

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\AggregateItemResource\Pages;
 use App\Models\AggregateItem;
+use App\Models\Asset;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Tables;
@@ -60,7 +61,9 @@ class AggregateItemResource extends BaseResource
                     ->label('Acompanhando o equipamento')
                     ->helperText('Equipamento ao qual este item está vinculado agora. Vazio = avulso/em estoque.')
                     ->relationship('asset', 'name')
-                    ->searchable()->preload(),
+                    ->searchable()
+                    ->getSearchResultsUsing(fn (string $search): array => Asset::opcoesPesquisa($search))
+                    ->getOptionLabelFromRecordUsing(fn (Asset $a) => $a->selectLabel())->preload(),
             ])->columns(3),
 
             Forms\Components\Section::make('Compra e vencimento')->schema([
