@@ -32,7 +32,7 @@ class FrotaDisponibilidadeTest extends TestCase
     private function cliente(): array
     {
         $plano = Plan::create(['name' => 'P '.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1, 'billing_cycle' => 'monthly', 'is_active' => true,
-            'features' => ['tabela_assets', 'tabela_asset_downtime_events']]);
+            'features' => ['tabela_assets', 'tabela_asset_downtime_events', 'tabela_frota_multas']]);
         $tenant = Tenant::create(['name' => 'T '.uniqid(), 'slug' => 't-'.uniqid(), 'plan_id' => $plano->id, 'status' => 'active']);
         $admin = User::create(['name' => 'Admin', 'email' => uniqid().'@oravel.test', 'password' => bcrypt('x'), 'tenant_id' => $tenant->id, 'is_approved' => true]);
         $admin->forceFill(['email_verified_at' => now()])->save();
