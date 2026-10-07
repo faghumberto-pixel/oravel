@@ -40,6 +40,9 @@ class Kernel extends ConsoleKernel
         // acima em vez de recalcular (ver ContractMeasurementService).
         $schedule->command('contracts:generate-measurements')->monthlyOn(1, '03:30');
 
+        // GPS (Traccar) alimentando o odômetro dos veículos da frota. Em PROD este comando também precisa de uma linha própria no cron.
+        $schedule->command('frota:sincronizar-gps')->hourly();
+
         // Sincroniza status de pagamentos com Asaas a cada 30 minutos
         $schedule->command('asaas:sync-payment-status')->everyThirtyMinutes();
     }

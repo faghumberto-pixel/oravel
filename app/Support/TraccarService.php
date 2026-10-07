@@ -113,6 +113,31 @@ class TraccarService
     }
 
     /**
+     * Igual a calculateDistanceKm(), mas devolve null quando o Traccar não respondeu (não configurado, erro ou fora do ar),
+     * para quem soma a distância (odômetro) não confundir "falhou" com "0 km".
+     */
+    public function distanciaKmOuNulo(int $deviceId, Carbon $from, Carbon $to): ?float
+    {
+        if (blank($this->baseUrl) || blank($this->email)) {
+            return null;
+        }
+
+        $response = $this->client()->get('/api/reports/summary', [
+            'deviceId' => $deviceId,
+            'from' => $from->clone()->utc()->format('Y-m-d\TH:i:s\Z'),
+            'to' => $to->clone()->utc()->format('Y-m-d\TH:i:s\Z'),
+        ]);
+
+        if ($response->failed()) {
+            Log::warning('TraccarService: falha ao buscar resumo de distancia.', ['device_id' => $deviceId, 'status' => $response->status()]);
+
+            return null;
+        }
+
+        return round(collect($response->json() ?? [])->sum(fn (array $day) => $day['distance'] ?? 0) / 1000, 3);
+    }
+
+    /**
      * Busca o device pelo identificador (uniqueId/IMEI, o mesmo texto
      * configurado no app Traccar Client no celular) -- resolve o ID
      * numerico interno do Traccar, que o tenant nao tem como ver de outra

@@ -16,6 +16,7 @@ use App\Models\FrotaPneu;
 use App\Models\FrotaSaidaVeiculo;
 use App\Models\FrotaSinistro;
 use App\Models\FrotaTrocaOleo;
+use App\Models\FrotaVinculoGps;
 use App\Models\MaintenanceOrder;
 use App\Models\Part;
 use App\Models\PartCategory;
@@ -40,7 +41,7 @@ class PendenciasFrotaService
     public const MODULOS = [
         'checklist' => FrotaChecklist::class, 'pneu' => FrotaPneu::class, 'bateria' => FrotaBateria::class, 'oleo' => FrotaTrocaOleo::class,
         'saida' => FrotaSaidaVeiculo::class, 'multa' => FrotaMulta::class, 'sinistro' => FrotaSinistro::class, 'consumo' => FrotaAbastecimento::class,
-        'revisao' => FrotaPlanoRevisao::class, 'kit' => FrotaItemSeguranca::class, 'chave' => FrotaChave::class, 'lavagem' => FrotaLavagem::class,
+        'revisao' => FrotaPlanoRevisao::class, 'kit' => FrotaItemSeguranca::class, 'chave' => FrotaChave::class, 'lavagem' => FrotaLavagem::class, 'gps' => FrotaVinculoGps::class,
     ];
 
     /** Categorias que vêm de módulos que já existiam antes da Gestão de Frota (vencimentos do ativo, CNH dos motoristas, estoque). */
@@ -87,7 +88,7 @@ class PendenciasFrotaService
     /** @return array<string, string> */
     public static function categorias(): array
     {
-        return ['checklist' => 'Checklist', 'pneu' => 'Pneus', 'bateria' => 'Baterias', 'oleo' => 'Óleo', 'saida' => 'Entrada e saída', 'multa' => 'Multas', 'sinistro' => 'Sinistros', 'consumo' => 'Consumo', 'revisao' => 'Revisões', 'kit' => 'Kit de segurança', 'chave' => 'Chaves', 'lavagem' => 'Lavagem', 'cnh' => 'CNH e pontos', 'documento' => 'Documentos', 'estoque' => 'Estoque'];
+        return ['checklist' => 'Checklist', 'pneu' => 'Pneus', 'bateria' => 'Baterias', 'oleo' => 'Óleo', 'saida' => 'Entrada e saída', 'multa' => 'Multas', 'sinistro' => 'Sinistros', 'consumo' => 'Consumo', 'revisao' => 'Revisões', 'kit' => 'Kit de segurança', 'chave' => 'Chaves', 'lavagem' => 'Lavagem', 'gps' => 'GPS', 'cnh' => 'CNH e pontos', 'documento' => 'Documentos', 'estoque' => 'Estoque'];
     }
 
     /**
@@ -215,6 +216,12 @@ class PendenciasFrotaService
             }
         }
 
+        foreach (FrotaVinculoGps::where('ativo_id', $v->id)->where('ativo', true)->get() as $gps) {
+            if (($horas = GpsOdometroService::horasSemSincronizar($gps)) !== null) {
+                $add('gps', self::ATENCAO, $gps->id, 'GPS sem sincronizar há '.($horas >= 48 ? intdiv($horas, 24).' dia(s)' : "{$horas} hora(s)").'. O odômetro pode estar desatualizado.');
+            }
+        }
+
         if (($atraso = LavagemService::diasAtrasada($v)) !== null) {
             $add('lavagem', self::ATENCAO, 'agenda', "Lavagem atrasada há {$atraso} dia(s).");
         }
@@ -291,7 +298,7 @@ class PendenciasFrotaService
     /** Só pendência de manutenção do veículo pode virar OS. */
     public function permiteOs(array $pendencia): bool
     {
-        return filled($pendencia['ativo_id'] ?? null) && ! in_array($pendencia['categoria'], ['multa', 'saida', 'cnh', 'estoque', 'sinistro', 'consumo', 'kit', 'chave', 'lavagem'], true);
+        return filled($pendencia['ativo_id'] ?? null) && ! in_array($pendencia['categoria'], ['multa', 'saida', 'cnh', 'estoque', 'sinistro', 'consumo', 'kit', 'chave', 'lavagem', 'gps'], true);
     }
 
     /** OS aberta para esta pendência, se já existir (a descrição leva a chave). */
