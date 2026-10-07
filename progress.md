@@ -146,3 +146,12 @@ Prioridade baixa: lavagem/limpeza; Arla (já em Itens Agregados); baixa/venda do
 **Auditoria/testes:** `tenant:audit --strict` = as mesmas 3 violações antigas; metadados SaaS OK; 7 testes novos (a diferença obrigatório/não obrigatório foi verificada: falha sem ela). DEV intacto (5 clientes, 13 usuários).
 **Manual:** `php artisan migrate` (já rodado no DEV; PROD no deploy). **Não subiu para PROD.** Depois do deploy a chave `tabela_frota_itens_seguranca` vem desligada nos contratos (ligar na Central).
 **Limites:** sem histórico das conferências (só a última); sem celular; sem reposição pelo estoque.
+
+## FASE 13 — Disponibilidade da frota (06/10/2026) — pronta no DEV, aguardando confirmação (Fase 12 e esta ainda NÃO estão em PROD)
+
+**Escolha:** a Fase 13 não estava definida; "GPS alimentando o odômetro" ficou de fora porque o Traccar do sistema liga dispositivos a USUÁRIOS (não a ativos) e busca a posição ao vivo — exigiria nova integração. Fiz **disponibilidade**, que usa dados que já existem. Sem tabela nova, sem migration.
+**Criado:** `DisponibilidadeFrotaService` e a tela **Disponibilidade** (Gestão de Frota): período 1/3/6/12 meses cheios; disponibilidade média da frota; por veículo (do menos disponível ao mais): % de disponibilidade, horas parado, nº de paradas, principal causa e horas fora (em uso).
+**Regras:** parado = paradas do ativo (Histórico de Paradas: quebra, manutenção preventiva/corretiva, aguardando peça, outro; **"ocioso/sem uso" não conta**) + sinistros com veículo parado (cancelados não contam). Períodos que se sobrepõem são **unidos** (nada conta duas vezes); parada em aberto vai até agora; parada antiga é recortada ao período; veículo cadastrado no meio do período conta só a partir do cadastro. "Horas fora" (saídas registradas) é uso e NÃO reduz a disponibilidade. Faixas: ≥ 95% boa (verde), de 90% a 95% atenção, abaixo de 90% crítica (constantes na classe; meta e mínimo são sugestões minhas).
+**Auditoria/testes:** `tenant:audit --strict` = as mesmas 3 violações antigas; metadados SaaS OK; 7 testes novos (a união das sobreposições foi verificada: falha sem ela). DEV intacto (5 clientes, 13 usuários).
+**Manual:** nenhuma migration nova. Usa a permissão/plano do Histórico de Paradas (`tabela_asset_downtime_events`). **Não subiu para PROD.**
+**Limites:** depende de as paradas estarem lançadas no Histórico de Paradas (as OS fechadas já geram o fim da parada); sem gráfico; sem meta por cliente.
