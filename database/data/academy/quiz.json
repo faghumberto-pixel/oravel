@@ -4529,5 +4529,285 @@
     "why": "No equipamento."
    }
   ]
+ },
+ {
+  "page": "/modulos/gestao-frota.html",
+  "questions": [
+   {
+    "q": "O motorista faz a conferência de saída e marca um item CRÍTICO com problema. O que acontece com o veículo?",
+    "options": [
+     "Ele segue normalmente, e o problema fica só registrado",
+     "Ele fica Bloqueado por 24 horas e libera sozinho",
+     "Ele fica Bloqueado e não pode sair até um administrador, ou quem tem a permissão de liberar, informar o motivo da liberação",
+     "A conferência é descartada e o motorista precisa refazer"
+    ],
+    "correct": 2,
+    "why": "Item crítico com problema bloqueia o veículo. Só quem é administrador ou tem a permissão de liberar pode liberar, e precisa escrever o motivo."
+   },
+   {
+    "q": "Na conferência de RETORNO, o sistema destaca como “problemas novos”:",
+    "options": [
+     "Os itens que estavam OK na saída e agora têm problema",
+     "Todos os itens marcados como Problema na volta",
+     "Os itens que o motorista não conferiu",
+     "Apenas os itens críticos"
+    ],
+    "correct": 0,
+    "why": "O retorno é pareado com a saída: aparecem os problemas que não existiam quando o veículo saiu, o que indica dano ocorrido com aquele motorista."
+   },
+   {
+    "q": "Um veículo está parado por um acidente (sinistro) com “Veículo parado” marcado. O que acontece ao tentar registrar a saída dele?",
+    "options": [
+     "A saída é aceita, com um aviso",
+     "A saída é aceita se o motorista for o titular",
+     "A saída só é recusada se houver B.O. registrado",
+     "A saída é recusada até alguém marcar “Voltou a rodar”"
+    ],
+    "correct": 3,
+    "why": "Veículo parado por sinistro não registra saída até voltar a rodar. O sinistro também não pode ser encerrado com o veículo parado."
+   },
+   {
+    "q": "Qual destas situações NÃO impede o registro de uma saída?",
+    "options": [
+     "O motorista está com a CNH vencida",
+     "O motorista escolhido não é o titular do veículo",
+     "O veículo já está fora desde ontem",
+     "O veículo está bloqueado pelo checklist"
+    ],
+    "correct": 1,
+    "why": "O titular é informativo: qualquer motorista com CNH em dia pode levar o veículo. As outras três situações impedem a saída."
+   },
+   {
+    "q": "Um pneu mede 3 mm de sulco. Qual é o aviso?",
+    "options": [
+     "Nenhum aviso: o limite legal é 1,6 mm",
+     "Aviso só se a pressão também estiver fora da faixa",
+     "Crítico imediatamente",
+     "Atenção: com 3 mm ou menos já há aviso, e fica crítico com 1,6 mm ou menos"
+    ],
+    "correct": 3,
+    "why": "Sulco de 3 mm ou menos é atenção; 1,6 mm ou menos é crítico."
+   },
+   {
+    "q": "No rodízio, o pneu A vai para uma posição que já está ocupada pelo pneu B. O que o sistema faz?",
+    "options": [
+     "Troca os dois pneus de lugar",
+     "Remove o pneu B para o estoque",
+     "Recusa, pois a posição está ocupada",
+     "Coloca o pneu B no estepe automaticamente"
+    ],
+    "correct": 0,
+    "why": "Se a posição de destino está ocupada, os dois pneus trocam de lugar."
+   },
+   {
+    "q": "Um pneu é removido do veículo com o motivo “descarte”. Qual é a situação dele e o efeito no estoque?",
+    "options": [
+     "Volta ao estoque, e o saldo sobe 1",
+     "Fica “Em recapagem”",
+     "Fica “Sucateado”, e o saldo do estoque não volta",
+     "Fica “Montado”, até o descarte ser aprovado"
+    ],
+    "correct": 2,
+    "why": "Descarte sucateia o pneu e não devolve a unidade ao estoque. Remoção por outros motivos devolve ao estoque; recapagem leva para “Em recapagem”."
+   },
+   {
+    "q": "Um veículo teve uma TROCA de óleo aos 50.000 km e, aos 52.000 km, uma REPOSIÇÃO de 1 litro. O plano é de 10.000 km. Quando vence a próxima troca?",
+    "options": [
+     "Aos 62.000 km, pois a reposição recomeça a contagem",
+     "Aos 60.000 km, pois a reposição não zera a contagem",
+     "Aos 61.000 km",
+     "Aos 60.000 km, mas só se a reposição for maior que 5 litros"
+    ],
+    "correct": 1,
+    "why": "Só a troca zera a contagem e calcula a próxima. A reposição (completar o nível) não zera."
+   },
+   {
+    "q": "O plano de óleo é “a cada 10.000 km ou 180 dias”. Passam 200 dias e o veículo rodou 4.000 km. Qual é a situação?",
+    "options": [
+     "Vencida, porque vence o que chegar primeiro",
+     "Em dia, porque faltam 6.000 km",
+     "Próxima, pois só o prazo de dias é considerado",
+     "Em dia, pois o km tem prioridade sobre os dias"
+    ],
+    "correct": 0,
+    "why": "Com dois limites, vence o que ocorrer primeiro: passaram 200 dias, então a troca está vencida."
+   },
+   {
+    "q": "Uma bateria foi instalada, e o relatório “Baterias por veículo” mostra 3 trocas no mesmo veículo em 6 meses. Qual é a interpretação sugerida?",
+    "options": [
+     "As baterias compradas são de má qualidade",
+     "Nada: três trocas em 6 meses é normal",
+     "O veículo foi pouco usado",
+     "Pode haver problema no alternador ou no sistema de carga do veículo"
+    ],
+    "correct": 3,
+    "why": "Várias trocas em pouco tempo costumam indicar problema no alternador ou na carga, e não na bateria."
+   },
+   {
+    "q": "Ao instalar uma bateria cadastrada com item e almoxarifado, o que acontece no estoque?",
+    "options": [
+     "Nada: o estoque só muda por compras",
+     "Sai 1 unidade do almoxarifado, e se não houver saldo a operação é recusada",
+     "Sai 1 unidade, mas o saldo pode ficar negativo",
+     "Entra 1 unidade, pois a bateria foi instalada"
+    ],
+    "correct": 1,
+    "why": "Montar ou instalar dá saída de 1 unidade. Saldo insuficiente recusa a operação inteira."
+   },
+   {
+    "q": "Um abastecimento foi feito sem completar o tanque (parcial) entre dois tanques cheios. Como o consumo em km/l é calculado no segundo tanque cheio?",
+    "options": [
+     "Ignora o abastecimento parcial",
+     "Km rodados divididos só pelos litros do segundo tanque cheio",
+     "Km rodados desde o primeiro tanque cheio divididos pelos litros do parcial mais os litros do segundo tanque cheio",
+     "Média simples dos dois abastecimentos"
+    ],
+    "correct": 2,
+    "why": "O método do tanque cheio soma os litros de tudo que foi abastecido desde o último tanque cheio, incluindo os parciais do meio."
+   },
+   {
+    "q": "O consumo médio recente de um veículo é 5,0 km/l. Um novo tanque cheio dá 3,5 km/l (70% da média). Qual é o aviso?",
+    "options": [
+     "Nenhum: o limite é 50%",
+     "Atenção só se houver menos de 5 consumos anteriores",
+     "Crítico, pois está abaixo de 85%",
+     "Atenção: abaixo de 85% da média; passa a crítico abaixo de 70%"
+    ],
+    "correct": 3,
+    "why": "Abaixo de 85% da média dos 5 consumos anteriores é atenção; abaixo de 70% é crítico. 3,5 km/l é exatamente 70%, ou seja, ainda atenção. É preciso ter pelo menos 3 consumos anteriores para comparar."
+   },
+   {
+    "q": "Uma multa gravíssima e uma grave são lançadas para o mesmo motorista no mês passado. Quantos pontos entram nos 12 meses dele?",
+    "options": [
+     "10",
+     "12",
+     "15",
+     "8"
+    ],
+    "correct": 1,
+    "why": "Gravíssima vale 7 pontos e grave vale 5, somando 12. Com 15 pontos há aviso de atenção; com 20, crítico."
+   },
+   {
+    "q": "O sistema sugere o condutor ao registrar uma multa. De onde vem essa sugestão?",
+    "options": [
+     "Da Entrada e saída: quem estava com o veículo na data e hora da infração",
+     "Do último motorista que fez o checklist",
+     "Do motorista titular do veículo",
+     "Do motorista que registrou a multa"
+    ],
+    "correct": 0,
+    "why": "Se o veículo estava numa saída registrada na hora da infração, o motorista dessa saída é sugerido."
+   },
+   {
+    "q": "Como entram no custo do veículo as multas e os sinistros?",
+    "options": [
+     "Todas as multas, inclusive as canceladas, e o orçamento inteiro do sinistro",
+     "Só as multas pagas; os sinistros não entram",
+     "Só as multas que a empresa paga e não estão canceladas; do sinistro, a franquia (ou o orçamento, se não há franquia nem OS ligada)",
+     "Multas e sinistros ficam fora e só aparecem em relatórios próprios"
+    ],
+    "correct": 2,
+    "why": "Multas canceladas e as pagas pelo motorista não entram. No sinistro, vale a franquia; sem franquia e sem OS ligada, o orçamento, para não contar o reparo duas vezes."
+   },
+   {
+    "q": "Um seguro anual de R$ 1.200 foi cadastrado em “Seguro, IPVA e outros custos” com rateio em 12 meses, pago no início de agosto. Quanto ele pesa no custo de agosto a outubro (3 meses)?",
+    "options": [
+     "R$ 1.200",
+     "R$ 300",
+     "R$ 100",
+     "R$ 400"
+    ],
+    "correct": 1,
+    "why": "O valor é dividido em 12 partes de R$ 100, uma por mês a partir do mês do pagamento. Três meses somam R$ 300."
+   },
+   {
+    "q": "O veículo teve uma parada de 10 horas por quebra e, sobreposta, uma parada de 6 horas aguardando peça dentro das mesmas 10 horas. Quantas horas de indisponibilidade entram na disponibilidade?",
+    "options": [
+     "16 horas",
+     "8 horas",
+     "6 horas",
+     "10 horas, porque períodos que se sobrepõem são unidos"
+    ],
+    "correct": 3,
+    "why": "Paradas sobrepostas são unidas e nada conta duas vezes. O tempo em saída registrada é uso e não reduz a disponibilidade."
+   },
+   {
+    "q": "Um extintor foi cadastrado pelo “Aplicar kit sugerido” e ninguém o conferiu ainda. O que aparece?",
+    "options": [
+     "Nada: itens novos ficam em dia por 180 dias",
+     "Uma pendência crítica de item ausente",
+     "Uma pendência: o kit sugerido nasce sem conferência e sem validade, para ninguém achar que está tudo certo sem ter visto",
+     "Nada, mas o extintor não aparece na lista"
+    ],
+    "correct": 2,
+    "why": "Itens do kit sugerido nascem sem conferência, e os que têm validade nascem sem data: aparecem como pendência até serem conferidos."
+   },
+   {
+    "q": "O GPS está vinculado ao veículo. O motorista informa o odômetro (10.400 km) num abastecimento às 14h. A sincronização das 15h consulta o GPS a partir de:",
+    "options": [
+     "14h, a hora da leitura informada pelo motorista",
+     "A última sincronização das 13h",
+     "O início do dia",
+     "O momento do vínculo"
+    ],
+    "correct": 0,
+    "why": "O GPS só soma o trecho depois da última leitura que não veio do GPS, para não contar duas vezes o km que o motorista já informou."
+   },
+   {
+    "q": "O servidor do GPS ficou fora do ar por 5 horas. O que acontece com os quilômetros desse período?",
+    "options": [
+     "Perdem-se, pois a sincronização falhou",
+     "Não são somados na hora, mas a data da última sincronização não avança, então entram na próxima sincronização bem-sucedida",
+     "São estimados pela média do veículo",
+     "São somados como zero e depois corrigidos pelo administrador"
+    ],
+    "correct": 1,
+    "why": "Quando o servidor não responde, nada é somado e a data não avança, então nenhum quilômetro se perde. Uma distância absurda (acima de 2.000 km numa vez) é ignorada."
+   },
+   {
+    "q": "Você tenta dar baixa em um veículo que tem uma chave retirada por um mecânico. O que acontece?",
+    "options": [
+     "A baixa é feita, e a chave é desativada junto",
+     "A baixa é feita se o tipo for sucata",
+     "A baixa é feita, mas a chave fica pendente",
+     "A baixa é recusada até a chave ser devolvida"
+    ],
+    "correct": 3,
+    "why": "Não se dá baixa com o veículo fora ou com chave retirada. Na baixa, o titular é encerrado e as chaves são desativadas."
+   },
+   {
+    "q": "Um veículo foi baixado por engano e a baixa foi revertida. O que NÃO volta sozinho?",
+    "options": [
+     "O motorista titular e as chaves, que precisam ser cadastrados de novo",
+     "O veículo nas pendências",
+     "O veículo nas listas de escolha",
+     "O histórico de custos"
+    ],
+    "correct": 0,
+    "why": "Reverter a baixa devolve o veículo às listas e às pendências, mas o titular encerrado e as chaves desativadas não voltam sozinhos."
+   },
+   {
+    "q": "Na lista de Ativos você digita “kmx-1a23” na pesquisa. Qual é o resultado?",
+    "options": [
+     "Nenhum: a placa só é encontrada digitada exatamente como está gravada",
+     "Só aparece se o campo for o filtro Placa",
+     "O veículo de placa KMX1A23 aparece, pois a busca ignora hífen, espaço e maiúsculas",
+     "Aparecem todos os veículos que começam com K"
+    ],
+    "correct": 2,
+    "why": "A placa é gravada em maiúsculas e sem hífen, e a busca (e o filtro Placa) ignoram hífen, espaço e maiúsculas. O mesmo vale nos campos de escolher o ativo."
+   },
+   {
+    "q": "Qual é a diferença entre “Frota Leve” (Logística → Frota) e “Gestão de Frota”?",
+    "options": [
+     "São o mesmo módulo, com nomes diferentes",
+     "Frota Leve é só para caminhões e Gestão de Frota só para carros",
+     "Gestão de Frota substitui a mobilização de equipamentos",
+     "Frota Leve cuida dos veículos de transporte usados na mobilização; Gestão de Frota cuida dos veículos cadastrados em Ativos"
+    ],
+    "correct": 3,
+    "why": "A Gestão de Frota usa os veículos cadastrados em Ativos (tipo Veículo) e não substitui a mobilização e a desmobilização de equipamentos, que continuam como antes."
+   }
+  ]
  }
 ]

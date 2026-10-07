@@ -55,7 +55,7 @@
     },
     {
         "title": "Ativos e Frota",
-        "description": "Cadastre e acompanhe equipamentos, grupos de checklist e o dossiê rápido por QR Code.",
+        "description": "Cadastre e acompanhe equipamentos e veículos, grupos de checklist, o dossiê rápido por QR Code e a Gestão de Frota.",
         "lessons": [
             {
                 "title": "Ativos (Equipamentos)",
@@ -77,6 +77,13 @@
                 "slug": "modulos__dossie-ativo",
                 "summary": "A tela mobile que aparece ao escanear o QR Code impresso na etiqueta de um Ativo.",
                 "feature": "tabela_assets"
+            },
+            {
+                "title": "Gestão de Frota",
+                "href": "/modulos/gestao-frota.html",
+                "slug": "modulos__gestao-frota",
+                "summary": "Do checklist de saída ao custo por veículo: entrada e saída, pneus, baterias, óleo, revisões, multas, acidentes, abastecimento, GPS e baixa.",
+                "feature": "tabela_frota_checklists"
             }
         ]
     },
