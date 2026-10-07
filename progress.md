@@ -115,3 +115,13 @@ Prioridade baixa: lavagem/limpeza; Arla (já em Itens Agregados); baixa/venda do
 **Auditoria/testes:** `tenant:audit --strict` = as mesmas 3 violações antigas; metadados SaaS OK; 9 testes novos (a conta com abastecimento parcial foi verificada: falha sem o código). DEV intacto (5 clientes, 13 usuários).
 **Manual:** `php artisan migrate` (já rodado no DEV; PROD no deploy). Nada de push/deploy.
 **Não feito:** tela de celular para o motorista abastecer; leitura do cartão de combustível/importação de planilha; litros no "Itens Agregados" (usei Peças/Almoxarifados, como no óleo).
+
+## FASE 10 — Custo total por veículo (06/10/2026) — pronta no DEV, aguardando confirmação
+
+**Escolha:** a Fase 10 não estava definida; fiz o último item da lista de prioridade alta (custo total por veículo). A lista da Fase 0 ainda tem os itens de prioridade média/baixa (revisões por km/tempo, kit de segurança, pedágio/tag, GPS alimentando o odômetro, disponibilidade, chaves).
+**Criado:** migration `frota_custos_avulsos`, model `FrotaCustoAvulso` + policy, `CustoFrotaService`, tela **Seguro, IPVA e outros custos** (cadastro de custo avulso: seguro, IPVA, licenciamento, tacógrafo, pedágio, lavagem, estacionamento, outro; com **rateio em meses**, ex.: seguro anual = 12) e relatório **Custo por veículo** (período 1/3/6/12 meses cheios, contando o mês atual; do mais caro ao mais barato; totais da frota).
+**O que entra no custo (por veículo):** combustível (abastecimentos), manutenção (custo total das OS abertas no período), pneus e baterias (custo de compra, quando instalados no período), óleo (custo informado nas trocas/reposições), multas (só as da empresa, sem canceladas), sinistros (franquia; sem franquia, o orçamento, mas só se não há OS ligada, para não contar o reparo duas vezes) e custos avulsos (rateados por mês). **Custo por km** = total ÷ km do período (leituras de odômetro: última menos a base). Nada é gravado: tudo calculado na hora.
+**Por que a tabela nova:** seguro/IPVA/licenciamento só tinham a data de vencimento no ativo, sem valor.
+**Auditoria/testes:** `tenant:audit --strict` = as mesmas 3 violações antigas; metadados SaaS OK; 5 testes novos (o rateio foi verificado: falha sem a divisão). DEV intacto (5 clientes, 13 usuários).
+**Manual:** `php artisan migrate` (já rodado no DEV; PROD no deploy). Nada de push/deploy.
+**Limites:** manutenção entra pela data de abertura da OS, não da conclusão; pneu/bateria entram pelo valor cheio na instalação (sem depreciar por km); sem lançamento automático no financeiro; sem gráfico.
