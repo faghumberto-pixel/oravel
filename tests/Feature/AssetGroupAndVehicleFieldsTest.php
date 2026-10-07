@@ -64,13 +64,13 @@ class AssetGroupAndVehicleFieldsTest extends TestCase
         foreach (['modelo', 'cor', 'chassi', 'manufacturing_year', 'horimetro_inicial'] as $name) {
             $this->assertContains($name, $fields(), "Máquina deveria mostrar {$name}.");
         }
-        foreach (['placa', 'renavam', 'odometro_atual', 'licenciamento_vencimento', 'ipva_vencimento', 'seguro_seguradora', 'seguro_vencimento', 'tacografo_numero'] as $name) {
+        foreach (['placa', 'renavam', 'odometro_atual', 'licenciamento_vencimento', 'ipva_vencimento', 'seguro_seguradora', 'seguro_vencimento', 'seguro_franquia_colisao', 'seguro_valor_cobertura', 'tacografo_numero'] as $name) {
             $this->assertNotContains($name, $fields(), "Máquina não deveria mostrar {$name}.");
         }
 
         // Veículo leve: placa, renavam, odômetro, km de aquisição (mesma coluna do horímetro de aquisição), emplacamento, seguro; sem leitura de horímetro nem tacógrafo.
         $page->fillForm(['grupo' => Asset::GRUPO_VEICULO, 'veiculo_pesado' => false]);
-        foreach (['modelo', 'cor', 'placa', 'renavam', 'chassi', 'manufacturing_year', 'ano_modelo', 'odometro_atual', 'horimetro_inicial', 'licenciamento_vencimento', 'ipva_vencimento', 'seguro_seguradora', 'seguro_apolice', 'seguro_vencimento'] as $name) {
+        foreach (['modelo', 'cor', 'placa', 'renavam', 'chassi', 'manufacturing_year', 'ano_modelo', 'odometro_atual', 'horimetro_inicial', 'licenciamento_vencimento', 'ipva_vencimento', 'seguro_seguradora', 'seguro_apolice', 'seguro_vencimento', 'seguro_valor_cobertura', 'seguro_cobertura_terceiros', 'seguro_franquia_colisao', 'seguro_franquia_vidros'] as $name) {
             $this->assertContains($name, $fields(), "Veículo deveria mostrar {$name}.");
         }
         foreach (['last_horimetro', 'tacografo_numero', 'tacografo_vencimento'] as $name) {
@@ -209,5 +209,31 @@ class AssetGroupAndVehicleFieldsTest extends TestCase
         Livewire::test(ListAssets::class)
             ->assertSee('Placa: KMX1A23')
             ->assertSee('91.500 km');
+    }
+
+    public function test_vehicle_saves_insurance_values(): void
+    {
+        [$tenant, $admin] = $this->tenantWithAdmin();
+        $this->actingAs($admin);
+        $asset = $this->asset($tenant);
+
+        Livewire::test(EditAsset::class, ['record' => $asset->getRouteKey()])
+            ->fillForm([
+                'patrimonio' => 'PAT-'.uniqid(), 'grupo' => Asset::GRUPO_VEICULO, 'seguro_seguradora' => 'Porto', 'seguro_apolice' => 'AP-9',
+                'seguro_valor_cobertura' => 85000.5, 'seguro_cobertura_terceiros' => 300000, 'seguro_franquia_colisao' => 4200, 'seguro_franquia_vidros' => 650.75,
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $asset->refresh();
+        $this->assertSame('85000.50', $asset->seguro_valor_cobertura);
+        $this->assertSame('300000.00', $asset->seguro_cobertura_terceiros);
+        $this->assertSame('4200.00', $asset->seguro_franquia_colisao);
+        $this->assertSame('650.75', $asset->seguro_franquia_vidros);
+
+        Livewire::test(EditAsset::class, ['record' => $asset->getRouteKey()])
+            ->fillForm(['seguro_franquia_colisao' => -10])
+            ->call('save')
+            ->assertHasFormErrors(['seguro_franquia_colisao']);
     }
 }

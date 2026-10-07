@@ -360,6 +360,10 @@ class AssetResource extends Resource
                                     Forms\Components\TextInput::make('seguro_seguradora')->label('Seguro — seguradora')->maxLength(191),
                                     Forms\Components\TextInput::make('seguro_apolice')->label('Seguro — nº da apólice')->maxLength(191),
                                     Forms\Components\DatePicker::make('seguro_vencimento')->label('Vencimento do seguro'),
+                                    Forms\Components\TextInput::make('seguro_valor_cobertura')->label('Seguro — valor de cobertura')->numeric()->minValue(0)->prefix('R$'),
+                                    Forms\Components\TextInput::make('seguro_cobertura_terceiros')->label('Seguro — cobertura de terceiros')->numeric()->minValue(0)->prefix('R$'),
+                                    Forms\Components\TextInput::make('seguro_franquia_colisao')->label('Seguro — franquia de colisão')->numeric()->minValue(0)->prefix('R$'),
+                                    Forms\Components\TextInput::make('seguro_franquia_vidros')->label('Seguro — franquia de vidros')->numeric()->minValue(0)->prefix('R$'),
                                     Forms\Components\TextInput::make('tacografo_numero')
                                         ->label('Tacógrafo — nº')
                                         ->maxLength(191)
