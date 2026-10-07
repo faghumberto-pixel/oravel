@@ -125,3 +125,14 @@ Prioridade baixa: lavagem/limpeza; Arla (já em Itens Agregados); baixa/venda do
 **Auditoria/testes:** `tenant:audit --strict` = as mesmas 3 violações antigas; metadados SaaS OK; 5 testes novos (o rateio foi verificado: falha sem a divisão). DEV intacto (5 clientes, 13 usuários).
 **Manual:** `php artisan migrate` (já rodado no DEV; PROD no deploy). Nada de push/deploy.
 **Limites:** manutenção entra pela data de abertura da OS, não da conclusão; pneu/bateria entram pelo valor cheio na instalação (sem depreciar por km); sem lançamento automático no financeiro; sem gráfico.
+
+## FASE 11 — Revisões por km e tempo (06/10/2026) — pronta no DEV, aguardando confirmação
+
+**Escolha:** a Fase 11 não estava definida; fiz o primeiro item da lista de prioridade média (revisões por km/tempo). Restam: kit de segurança, pedágio/tag, GPS alimentando o odômetro, disponibilidade, chaves, lavagem, baixa/venda.
+**Criado:** migration `frota_planos_revisao` (índice único: um item ativo por nome em cada veículo) e `frota_revisoes_realizadas`; models `FrotaPlanoRevisao` + policy e `FrotaRevisaoRealizada` (histórico: não se edita nem se apaga); `RevisaoService`; tela **Revisões** (Gestão de Frota): situação, placa, item, "a cada", última, próxima; ações **Novo item de revisão**, **Aplicar itens sugeridos** (freios 30.000 km/12 meses, filtro de ar e de combustível 20.000 km/12 meses, correia 60.000 km/36 meses, alinhamento 10.000 km/6 meses, fluido de freio 40.000 km/24 meses — SUGESTÕES editáveis, não são regra do fabricante), **Registrar revisão feita** e **Desativar** (o histórico fica).
+**Regras:** o item vence por km, por dias ou pelo que ocorrer primeiro, contando da última revisão feita; sem revisão registrada = "Sem registro"; próxima = até 1.000 km ou 30 dias; registrar gera leitura de odômetro (origem 'revisao') e recusa km menor sem justificativa e data futura; custo não pode ser negativo.
+**Pendências da Frota (categoria Revisões):** vencida = crítica; próxima = atenção; "Gerar OS" abre OS **preventiva**. **Custo por veículo:** revisão feita sem OS ligada entra em Manutenção (com OS, o custo já está na própria OS).
+**Bug achado e corrigido nos testes:** criar item só com km (ou só com dias) quebrava por índice ausente — corrigido.
+**Auditoria/testes:** `tenant:audit --strict` = as mesmas 3 violações antigas; metadados SaaS OK; 8 testes novos (a regra "vence pelo que ocorrer primeiro" foi verificada: falha sem a parte dos dias). DEV intacto (5 clientes, 13 usuários).
+**Manual:** `php artisan migrate` (já rodado no DEV; PROD no deploy). Nada de push/deploy.
+**Limites:** sem tela de histórico das revisões feitas (a última aparece na lista); sem celular; não usa o módulo antigo de planos (PMP/`fleet_maintenance_plans`) — é separado, como o resto da Gestão de Frota.

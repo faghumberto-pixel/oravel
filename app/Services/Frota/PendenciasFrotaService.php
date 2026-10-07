@@ -6,6 +6,7 @@ use App\Models\Asset;
 use App\Models\FleetDriver;
 use App\Models\FrotaAbastecimento;
 use App\Models\FrotaMulta;
+use App\Models\FrotaPlanoRevisao;
 use App\Models\FrotaSaidaVeiculo;
 use App\Models\FrotaSinistro;
 use App\Models\MaintenanceOrder;
@@ -30,7 +31,7 @@ class PendenciasFrotaService
     /** @return array<string, string> */
     public static function categorias(): array
     {
-        return ['checklist' => 'Checklist', 'pneu' => 'Pneus', 'bateria' => 'Baterias', 'oleo' => 'Óleo', 'saida' => 'Entrada e saída', 'multa' => 'Multas', 'sinistro' => 'Sinistros', 'consumo' => 'Consumo', 'cnh' => 'CNH e pontos', 'documento' => 'Documentos', 'estoque' => 'Estoque'];
+        return ['checklist' => 'Checklist', 'pneu' => 'Pneus', 'bateria' => 'Baterias', 'oleo' => 'Óleo', 'saida' => 'Entrada e saída', 'multa' => 'Multas', 'sinistro' => 'Sinistros', 'consumo' => 'Consumo', 'revisao' => 'Revisões', 'cnh' => 'CNH e pontos', 'documento' => 'Documentos', 'estoque' => 'Estoque'];
     }
 
     /**
@@ -132,6 +133,13 @@ class PendenciasFrotaService
             if (in_array($d['situacao'], ['atencao', 'critica'], true)) {
                 $add('consumo', $d['situacao'] === 'critica' ? self::CRITICA : self::ATENCAO, $ultimoConsumo->id, 'Consumo de '.number_format((float) $ultimoConsumo->consumo_km_l, 2, ',', '.').' km/l em '.$ultimoConsumo->abastecido_em->format('d/m')
                     .', abaixo do habitual ('.number_format($d['media'], 2, ',', '.').' km/l). Verifique o veículo.');
+            }
+        }
+
+        foreach (FrotaPlanoRevisao::where('ativo_id', $v->id)->where('ativo', true)->get() as $plano) {
+            $r = RevisaoService::situacao($plano);
+            if (in_array($r['situacao'], [RevisaoService::VENCIDA, RevisaoService::PROXIMA], true)) {
+                $add('revisao', $r['situacao'] === RevisaoService::VENCIDA ? self::CRITICA : self::ATENCAO, $plano->id, $r['mensagem']);
             }
         }
 
@@ -241,7 +249,7 @@ class PendenciasFrotaService
             'tenant_id' => $ativo->tenant_id,
             'asset_id' => $ativo->id,
             'client_id' => $ativo->client_id,
-            'maintenance_type' => $pendencia['categoria'] === 'oleo' ? MaintenanceOrder::TYPE_PREVENTIVE : MaintenanceOrder::TYPE_CORRECTIVE,
+            'maintenance_type' => in_array($pendencia['categoria'], ['oleo', 'revisao'], true) ? MaintenanceOrder::TYPE_PREVENTIVE : MaintenanceOrder::TYPE_CORRECTIVE,
             'status' => 'Aberto',
             'internal_status' => 'aguardando_diagnostico',
             'scheduled_at' => now(),

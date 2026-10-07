@@ -8,6 +8,7 @@ use App\Models\FrotaCustoAvulso;
 use App\Models\FrotaInstalacaoComponente;
 use App\Models\FrotaLeituraOdometro;
 use App\Models\FrotaMulta;
+use App\Models\FrotaRevisaoRealizada;
 use App\Models\FrotaSinistro;
 use App\Models\FrotaTrocaOleo;
 use App\Models\MaintenanceOrder;
@@ -42,7 +43,9 @@ class CustoFrotaService
 
         $c = [
             'combustivel' => (float) FrotaAbastecimento::where('ativo_id', $v->id)->whereBetween('abastecido_em', [$ini, $fim])->sum('valor_total'),
-            'manutencao' => (float) MaintenanceOrder::where('asset_id', $v->id)->whereBetween('created_at', [$ini, $fim])->sum('total_order_cost'),
+            // OS do período + revisões feitas sem OS ligada (com OS, o custo já está na própria OS).
+            'manutencao' => (float) MaintenanceOrder::where('asset_id', $v->id)->whereBetween('created_at', [$ini, $fim])->sum('total_order_cost')
+                + (float) FrotaRevisaoRealizada::where('ativo_id', $v->id)->whereNull('ordem_servico_id')->whereBetween('realizada_em', [$ini->toDateString(), $fim->toDateString()])->sum('custo'),
             'pneus' => $this->instalados($v, 'pneu', $ini, $fim),
             'baterias' => $this->instalados($v, 'bateria', $ini, $fim),
             'oleo' => (float) FrotaTrocaOleo::where('ativo_id', $v->id)->whereBetween('realizado_em', [$ini, $fim])->sum('custo'),
