@@ -5,6 +5,7 @@ namespace App\Services\Frota;
 use App\Models\Asset;
 use App\Models\FleetDriver;
 use App\Models\FrotaAbastecimento;
+use App\Models\FrotaChave;
 use App\Models\FrotaItemSeguranca;
 use App\Models\FrotaMulta;
 use App\Models\FrotaPlanoRevisao;
@@ -32,7 +33,7 @@ class PendenciasFrotaService
     /** @return array<string, string> */
     public static function categorias(): array
     {
-        return ['checklist' => 'Checklist', 'pneu' => 'Pneus', 'bateria' => 'Baterias', 'oleo' => 'Óleo', 'saida' => 'Entrada e saída', 'multa' => 'Multas', 'sinistro' => 'Sinistros', 'consumo' => 'Consumo', 'revisao' => 'Revisões', 'kit' => 'Kit de segurança', 'cnh' => 'CNH e pontos', 'documento' => 'Documentos', 'estoque' => 'Estoque'];
+        return ['checklist' => 'Checklist', 'pneu' => 'Pneus', 'bateria' => 'Baterias', 'oleo' => 'Óleo', 'saida' => 'Entrada e saída', 'multa' => 'Multas', 'sinistro' => 'Sinistros', 'consumo' => 'Consumo', 'revisao' => 'Revisões', 'kit' => 'Kit de segurança', 'chave' => 'Chaves', 'cnh' => 'CNH e pontos', 'documento' => 'Documentos', 'estoque' => 'Estoque'];
     }
 
     /**
@@ -150,6 +151,16 @@ class PendenciasFrotaService
             }
         }
 
+        foreach (FrotaChave::where('ativo_id', $v->id)->where('ativo', true)->get() as $chave) {
+            $e = $chave->entregaAberta();
+            if ($e) {
+                $dias = intdiv(max(0, now()->timestamp - $e->entregue_em->timestamp), 86400);
+                if ($dias >= FrotaChave::AVISO_DIAS) {
+                    $add('chave', self::ATENCAO, $chave->id, "Chave \"{$chave->identificacao}\" está com {$e->responsavel()} há {$dias} dia(s) ({$e->motivo}).");
+                }
+            }
+        }
+
         $oleo = OleoStatus::para($v);
         if (in_array($oleo['situacao'], [OleoStatus::VENCIDA, OleoStatus::PROXIMA], true)) {
             $add('oleo', $oleo['situacao'] === OleoStatus::VENCIDA ? self::CRITICA : self::ATENCAO, 'troca', $oleo['mensagem']);
@@ -222,7 +233,7 @@ class PendenciasFrotaService
     /** Só pendência de manutenção do veículo pode virar OS. */
     public function permiteOs(array $pendencia): bool
     {
-        return filled($pendencia['ativo_id'] ?? null) && ! in_array($pendencia['categoria'], ['multa', 'saida', 'cnh', 'estoque', 'sinistro', 'consumo', 'kit'], true);
+        return filled($pendencia['ativo_id'] ?? null) && ! in_array($pendencia['categoria'], ['multa', 'saida', 'cnh', 'estoque', 'sinistro', 'consumo', 'kit', 'chave'], true);
     }
 
     /** OS aberta para esta pendência, se já existir (a descrição leva a chave). */

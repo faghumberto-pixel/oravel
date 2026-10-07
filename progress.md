@@ -155,3 +155,15 @@ Prioridade baixa: lavagem/limpeza; Arla (já em Itens Agregados); baixa/venda do
 **Auditoria/testes:** `tenant:audit --strict` = as mesmas 3 violações antigas; metadados SaaS OK; 7 testes novos (a união das sobreposições foi verificada: falha sem ela). DEV intacto (5 clientes, 13 usuários).
 **Manual:** nenhuma migration nova. Usa a permissão/plano do Histórico de Paradas (`tabela_asset_downtime_events`). **Não subiu para PROD.**
 **Limites:** depende de as paradas estarem lançadas no Histórico de Paradas (as OS fechadas já geram o fim da parada); sem gráfico; sem meta por cliente.
+
+## FASE 14 — Motorista titular, chaves e ranking de motoristas (06/10/2026) — pronta no DEV, aguardando confirmação (Fases 12, 13 e esta ainda NÃO estão em PROD)
+
+**Criado:** migration com 3 tabelas (`frota_vinculos_motorista`, `frota_chaves`, `frota_entregas_chave`); models `FrotaVinculoMotorista`, `FrotaChave`, `FrotaEntregaChave` (histórico de retiradas: não se edita nem se apaga) + policies; `VinculoMotoristaService`, `ChaveService`, `IndicadoresMotoristaService`; telas **Motorista titular**, **Chaves** e **Ranking de motoristas** (Gestão de Frota).
+**Motorista titular:** definir titular encerra o anterior na data de início do novo (histórico fica); um veículo só tem um titular vigente (serviço + índice único no banco); recusa CNH vencida, motorista inativo, início no futuro ou antes do titular atual, e o mesmo motorista de novo.
+**Chaves:** cadastro por veículo (principal, reserva, controle...); **entregar** (motorista cadastrado OU nome livre, para mecânico/terceiro; motivo obrigatório; data/hora) e **devolver** (não antes da retirada); uma chave só está com uma pessoa por vez (serviço + índice único); histórico por chave na tela; não desativa chave que está fora. Chave fora há 7 dias ou mais = pendência (atenção) em Pendências da Frota.
+**Ranking de motoristas:** período 1/3/6/12 meses e ordenação à escolha: saídas, km rodado (saídas encerradas), multas, pontos (período e 12 meses), sinistros (e de culpa própria), consumo médio (km/l, tanque cheio) e **ocorrências por 1.000 km** (multas + sinistros). Só motoristas ativos com movimento. A tela avisa que são indicadores para conversar com o motorista, não uma nota (rota, carga e veículo pesam).
+**Bug achado e corrigido nos testes:** entregar chave só com o nome do responsável quebrava (chave `motorista_id` ausente) — corrigido.
+**Auditoria/testes:** `tenant:audit --strict` = as mesmas 3 violações antigas; metadados SaaS OK; 8 testes novos (o encerramento do titular anterior foi verificado: falha sem ele). DEV intacto (5 clientes, 13 usuários).
+**Manual:** `php artisan migrate` (já rodado no DEV; PROD no deploy). **Não subiu para PROD.** As chaves `tabela_frota_vinculos_motorista` e `tabela_frota_chaves` vêm desligadas nos contratos depois do deploy; o ranking usa a permissão de Multas.
+**Limites:** o titular não bloqueia nada (é informativo; a saída continua aceitando qualquer motorista com CNH em dia); entrega de chave não é ligada à saída do veículo; sem celular; ranking sem exportação.
+**Ordem combinada com o usuário:** GPS (Traccar → odômetro) fica por último.
