@@ -4,6 +4,7 @@ namespace App\Services\Frota;
 
 use App\Models\Asset;
 use App\Models\FleetDriver;
+use App\Models\FrotaAbastecimento;
 use App\Models\FrotaMulta;
 use App\Models\FrotaSaidaVeiculo;
 use App\Models\FrotaSinistro;
@@ -29,7 +30,7 @@ class PendenciasFrotaService
     /** @return array<string, string> */
     public static function categorias(): array
     {
-        return ['checklist' => 'Checklist', 'pneu' => 'Pneus', 'bateria' => 'Baterias', 'oleo' => 'Óleo', 'saida' => 'Entrada e saída', 'multa' => 'Multas', 'sinistro' => 'Sinistros', 'cnh' => 'CNH e pontos', 'documento' => 'Documentos', 'estoque' => 'Estoque'];
+        return ['checklist' => 'Checklist', 'pneu' => 'Pneus', 'bateria' => 'Baterias', 'oleo' => 'Óleo', 'saida' => 'Entrada e saída', 'multa' => 'Multas', 'sinistro' => 'Sinistros', 'consumo' => 'Consumo', 'cnh' => 'CNH e pontos', 'documento' => 'Documentos', 'estoque' => 'Estoque'];
     }
 
     /**
@@ -125,6 +126,15 @@ class PendenciasFrotaService
             }
         }
 
+        $ultimoConsumo = FrotaAbastecimento::where('ativo_id', $v->id)->whereNotNull('consumo_km_l')->latest('abastecido_em')->first();
+        if ($ultimoConsumo && $ultimoConsumo->abastecido_em->gte(now()->subDays(30))) {
+            $d = AbastecimentoService::desvio($ultimoConsumo);
+            if (in_array($d['situacao'], ['atencao', 'critica'], true)) {
+                $add('consumo', $d['situacao'] === 'critica' ? self::CRITICA : self::ATENCAO, $ultimoConsumo->id, 'Consumo de '.number_format((float) $ultimoConsumo->consumo_km_l, 2, ',', '.').' km/l em '.$ultimoConsumo->abastecido_em->format('d/m')
+                    .', abaixo do habitual ('.number_format($d['media'], 2, ',', '.').' km/l). Verifique o veículo.');
+            }
+        }
+
         $oleo = OleoStatus::para($v);
         if (in_array($oleo['situacao'], [OleoStatus::VENCIDA, OleoStatus::PROXIMA], true)) {
             $add('oleo', $oleo['situacao'] === OleoStatus::VENCIDA ? self::CRITICA : self::ATENCAO, 'troca', $oleo['mensagem']);
@@ -197,7 +207,7 @@ class PendenciasFrotaService
     /** Só pendência de manutenção do veículo pode virar OS. */
     public function permiteOs(array $pendencia): bool
     {
-        return filled($pendencia['ativo_id'] ?? null) && ! in_array($pendencia['categoria'], ['multa', 'saida', 'cnh', 'estoque', 'sinistro'], true);
+        return filled($pendencia['ativo_id'] ?? null) && ! in_array($pendencia['categoria'], ['multa', 'saida', 'cnh', 'estoque', 'sinistro', 'consumo'], true);
     }
 
     /** OS aberta para esta pendência, se já existir (a descrição leva a chave). */

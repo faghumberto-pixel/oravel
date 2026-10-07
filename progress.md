@@ -104,3 +104,14 @@ Prioridade baixa: lavagem/limpeza; Arla (já em Itens Agregados); baixa/venda do
 **Auditoria/testes:** `tenant:audit --strict` = as mesmas 3 violações antigas; metadados SaaS OK; 8 testes novos; a trava de saída foi verificada (falha sem o código). DEV intacto (5 clientes, 13 usuários).
 **Manual:** `php artisan migrate` (já rodado no DEV; PROD no deploy). Nada de push/deploy.
 **Atenção/limites:** as fotos e documentos usam o disco padrão da biblioteca de mídia (mesmo das fotos do checklist), não o disco privado com link assinado dos documentos do ativo; sem tela de celular para registrar sinistro; sem ligação com o financeiro (franquia/orçamento).
+
+## FASE 9 — Abastecimento e consumo (06/10/2026) — pronta no DEV, aguardando confirmação
+
+**Escolha:** a Fase 9 não estava definida; fiz o item seguinte da lista de prioridade alta (abastecimento e consumo). Falta, na lista: **custo total por veículo**.
+**Criado:** migration `frota_abastecimentos`, model `FrotaAbastecimento` + `FrotaAbastecimentoPolicy`, `AbastecimentoService`, tela **Abastecimentos** (ação Registrar abastecimento; filtros por veículo/combustível/origem; totais de litros e valor) e relatório **Consumo por veículo** (período 1/3/6/12 meses: abastecimentos, litros, gasto, km, km/l médio, custo por km, último consumo comparado ao habitual).
+**Regras:** consumo pelo **método do tanque cheio** — km desde o último tanque cheio ÷ litros abastecidos desde então (parciais no meio entram na conta); o primeiro tanque cheio não tem consumo; valor por litro e valor total: informa um e o outro é calculado; km menor que o último só com justificativa (nada grava se recusar); registro em ordem cronológica; histórico não se edita nem se apaga. Gera leitura de odômetro (origem 'abastecimento'). **Tanque próprio** com item e almoxarifado: os litros (decimais) saem do estoque; saldo insuficiente recusa o registro inteiro; posto externo ignora o vínculo. O custo por km só usa os trechos de tanque cheio.
+**Desvio:** consumo abaixo de 85% da média dos 5 anteriores = atenção; abaixo de 70% = crítica; precisa de 3 consumos anteriores. A tela avisa na hora de registrar e a coluna km/l muda de cor.
+**Pendências da Frota (categoria Consumo):** último consumo (até 30 dias) com desvio atenção/crítica.
+**Auditoria/testes:** `tenant:audit --strict` = as mesmas 3 violações antigas; metadados SaaS OK; 9 testes novos (a conta com abastecimento parcial foi verificada: falha sem o código). DEV intacto (5 clientes, 13 usuários).
+**Manual:** `php artisan migrate` (já rodado no DEV; PROD no deploy). Nada de push/deploy.
+**Não feito:** tela de celular para o motorista abastecer; leitura do cartão de combustível/importação de planilha; litros no "Itens Agregados" (usei Peças/Almoxarifados, como no óleo).

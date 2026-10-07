@@ -30,7 +30,7 @@ class EstoqueFrotaService
     }
 
     /** Saída do almoxarifado (montagem, instalação, litros de óleo aplicados). */
-    public function saida(?Model $item, int $quantidade, string $documento, string $campo = 'estoque'): ?StockMovement
+    public function saida(?Model $item, int|float $quantidade, string $documento, string $campo = 'estoque'): ?StockMovement
     {
         if (! $this->vinculado($item)) {
             return null;
