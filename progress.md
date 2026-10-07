@@ -136,3 +136,13 @@ Prioridade baixa: lavagem/limpeza; Arla (já em Itens Agregados); baixa/venda do
 **Auditoria/testes:** `tenant:audit --strict` = as mesmas 3 violações antigas; metadados SaaS OK; 8 testes novos (a regra "vence pelo que ocorrer primeiro" foi verificada: falha sem a parte dos dias). DEV intacto (5 clientes, 13 usuários).
 **Manual:** `php artisan migrate` (já rodado no DEV; PROD no deploy). Nada de push/deploy.
 **Limites:** sem tela de histórico das revisões feitas (a última aparece na lista); sem celular; não usa o módulo antigo de planos (PMP/`fleet_maintenance_plans`) — é separado, como o resto da Gestão de Frota.
+
+## FASE 12 — Kit de segurança (06/10/2026) — pronta no DEV, aguardando confirmação (fases 1–11 já estão em PROD)
+
+**Escolha:** a Fase 12 não estava definida (o usuário respondeu só "12"); fiz o primeiro item que sobrava da lista média (kit de segurança). Restam: pedágio/tag, GPS alimentando o odômetro, disponibilidade, chaves, lavagem, baixa/venda.
+**Criado:** migration `frota_itens_seguranca` (índice único: um item ativo por nome em cada veículo), model `FrotaItemSeguranca` + policy, `KitSegurancaService`, tela **Kit de segurança** (Gestão de Frota): situação, placa, item (com série/lacre), obrigatório, presente, validade, conferido em, alertas; ações **Novo item**, **Aplicar kit sugerido** (extintor, triângulo, macaco e chave de roda = obrigatórios; kit de primeiros socorros e colete = não obrigatórios), **Conferir** (presente/ausente, validade, série/lacre, data, observações) e **Desativar**.
+**Regras/alertas (ao vivo):** ausente + obrigatório = crítica; ausente + não obrigatório = atenção; validade vencida = crítica; vence em até 30 dias = atenção; item com validade sem data = atenção; sem conferência há mais de 180 dias (ou nunca) = atenção. Item ausente não gera os outros alertas. Conferir não aceita data futura e exige validade nos itens que têm. Os itens do kit sugerido nascem SEM conferência: aparecem como pendência até serem conferidos (de propósito, para ninguém assumir que está tudo certo).
+**Pendências da Frota:** nova categoria "Kit de segurança"; não gera OS de manutenção.
+**Auditoria/testes:** `tenant:audit --strict` = as mesmas 3 violações antigas; metadados SaaS OK; 7 testes novos (a diferença obrigatório/não obrigatório foi verificada: falha sem ela). DEV intacto (5 clientes, 13 usuários).
+**Manual:** `php artisan migrate` (já rodado no DEV; PROD no deploy). **Não subiu para PROD.** Depois do deploy a chave `tabela_frota_itens_seguranca` vem desligada nos contratos (ligar na Central).
+**Limites:** sem histórico das conferências (só a última); sem celular; sem reposição pelo estoque.

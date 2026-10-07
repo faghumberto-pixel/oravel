@@ -5,6 +5,7 @@ namespace App\Services\Frota;
 use App\Models\Asset;
 use App\Models\FleetDriver;
 use App\Models\FrotaAbastecimento;
+use App\Models\FrotaItemSeguranca;
 use App\Models\FrotaMulta;
 use App\Models\FrotaPlanoRevisao;
 use App\Models\FrotaSaidaVeiculo;
@@ -31,7 +32,7 @@ class PendenciasFrotaService
     /** @return array<string, string> */
     public static function categorias(): array
     {
-        return ['checklist' => 'Checklist', 'pneu' => 'Pneus', 'bateria' => 'Baterias', 'oleo' => 'Óleo', 'saida' => 'Entrada e saída', 'multa' => 'Multas', 'sinistro' => 'Sinistros', 'consumo' => 'Consumo', 'revisao' => 'Revisões', 'cnh' => 'CNH e pontos', 'documento' => 'Documentos', 'estoque' => 'Estoque'];
+        return ['checklist' => 'Checklist', 'pneu' => 'Pneus', 'bateria' => 'Baterias', 'oleo' => 'Óleo', 'saida' => 'Entrada e saída', 'multa' => 'Multas', 'sinistro' => 'Sinistros', 'consumo' => 'Consumo', 'revisao' => 'Revisões', 'kit' => 'Kit de segurança', 'cnh' => 'CNH e pontos', 'documento' => 'Documentos', 'estoque' => 'Estoque'];
     }
 
     /**
@@ -143,6 +144,12 @@ class PendenciasFrotaService
             }
         }
 
+        foreach (FrotaItemSeguranca::where('ativo_id', $v->id)->where('ativo', true)->get() as $item) {
+            foreach (KitSegurancaService::alertas($item) as $a) {
+                $add('kit', $a['gravidade'], $item->id.$a['mensagem'], $a['mensagem']);
+            }
+        }
+
         $oleo = OleoStatus::para($v);
         if (in_array($oleo['situacao'], [OleoStatus::VENCIDA, OleoStatus::PROXIMA], true)) {
             $add('oleo', $oleo['situacao'] === OleoStatus::VENCIDA ? self::CRITICA : self::ATENCAO, 'troca', $oleo['mensagem']);
@@ -215,7 +222,7 @@ class PendenciasFrotaService
     /** Só pendência de manutenção do veículo pode virar OS. */
     public function permiteOs(array $pendencia): bool
     {
-        return filled($pendencia['ativo_id'] ?? null) && ! in_array($pendencia['categoria'], ['multa', 'saida', 'cnh', 'estoque', 'sinistro', 'consumo'], true);
+        return filled($pendencia['ativo_id'] ?? null) && ! in_array($pendencia['categoria'], ['multa', 'saida', 'cnh', 'estoque', 'sinistro', 'consumo', 'kit'], true);
     }
 
     /** OS aberta para esta pendência, se já existir (a descrição leva a chave). */
