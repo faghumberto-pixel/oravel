@@ -6,8 +6,10 @@ use App\Models\Asset;
 use App\Models\FrotaAbastecimento;
 use App\Models\FrotaCustoAvulso;
 use App\Models\FrotaInstalacaoComponente;
+use App\Models\FrotaLavagem;
 use App\Models\FrotaLeituraOdometro;
 use App\Models\FrotaMulta;
+use App\Models\FrotaPedagio;
 use App\Models\FrotaRevisaoRealizada;
 use App\Models\FrotaSinistro;
 use App\Models\FrotaTrocaOleo;
@@ -25,7 +27,7 @@ class CustoFrotaService
     public static function componentes(): array
     {
         return ['combustivel' => 'Combustível', 'manutencao' => 'Manutenção', 'pneus' => 'Pneus', 'baterias' => 'Baterias', 'oleo' => 'Óleo',
-            'multas' => 'Multas', 'sinistros' => 'Sinistros', 'avulsos' => 'Seguro, IPVA e outros'];
+            'multas' => 'Multas', 'sinistros' => 'Sinistros', 'pedagios' => 'Pedágios', 'lavagens' => 'Lavagens', 'avulsos' => 'Seguro, IPVA e outros'];
     }
 
     /** @return array{0: Carbon, 1: Carbon} início (1º dia do mês) e fim (agora) de um período de N meses cheios, contando o mês atual. */
@@ -52,6 +54,8 @@ class CustoFrotaService
             'multas' => (float) FrotaMulta::where('ativo_id', $v->id)->whereBetween('infracao_em', [$ini, $fim])
                 ->where('situacao', '!=', FrotaMulta::CANCELADA)->where('quem_paga', 'empresa')->sum('valor'),
             'sinistros' => $this->sinistros($v, $ini, $fim),
+            'pedagios' => (float) FrotaPedagio::where('ativo_id', $v->id)->whereBetween('passou_em', [$ini, $fim])->sum('valor'),
+            'lavagens' => (float) FrotaLavagem::where('ativo_id', $v->id)->whereBetween('realizada_em', [$ini->toDateString(), $fim->toDateString()])->sum('valor'),
             'avulsos' => round((float) FrotaCustoAvulso::where('ativo_id', $v->id)->where('data', '<=', $fim)
                 ->get()->sum(fn (FrotaCustoAvulso $x) => $x->parteNoPeriodo($ini, $fim)), 2),
         ];

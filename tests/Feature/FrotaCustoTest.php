@@ -73,11 +73,11 @@ class FrotaCustoTest extends TestCase
         (new MultaService)->registrar($v, ['numero_auto' => 'A1', 'infracao_em' => now()->subDay()->toDateTimeString(), 'descricao' => 'x', 'gravidade' => 'leve', 'valor' => 130, 'vencimento' => now()->addMonth()->toDateString()]);
         (new MultaService)->registrar($v, ['numero_auto' => 'A2', 'infracao_em' => now()->subDay()->toDateTimeString(), 'descricao' => 'x', 'gravidade' => 'leve', 'valor' => 999, 'vencimento' => now()->addMonth()->toDateString(), 'quem_paga' => 'motorista']);
         (new SinistroService)->registrar($v, ['tipo' => 'avaria', 'ocorrido_em' => now()->subDay()->toDateTimeString(), 'descricao' => 'x', 'valor_franquia' => 500, 'valor_orcamento' => 9000]);
-        FrotaCustoAvulso::create(['tenant_id' => $tenant->id, 'ativo_id' => $v->id, 'tipo' => 'pedagio', 'data' => now()->toDateString(), 'valor' => 70]);
+        FrotaCustoAvulso::create(['tenant_id' => $tenant->id, 'ativo_id' => $v->id, 'tipo' => 'estacionamento', 'data' => now()->toDateString(), 'valor' => 70]);
 
         $r = $this->servico->veiculo($v->fresh(), 3);
 
-        $this->assertSame(['combustivel' => 600.0, 'manutencao' => 1000.0, 'pneus' => 2000.0, 'baterias' => 800.0, 'oleo' => 300.0, 'multas' => 130.0, 'sinistros' => 500.0, 'avulsos' => 70.0], $r['componentes']);
+        $this->assertSame(['combustivel' => 600.0, 'manutencao' => 1000.0, 'pneus' => 2000.0, 'baterias' => 800.0, 'oleo' => 300.0, 'multas' => 130.0, 'sinistros' => 500.0, 'pedagios' => 0.0, 'lavagens' => 0.0, 'avulsos' => 70.0], $r['componentes']);
         $this->assertSame(5400.0, $r['total']);
         $this->assertSame(300, $r['km']);
         $this->assertSame(18.0, $r['custo_km']);

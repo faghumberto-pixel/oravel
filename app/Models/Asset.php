@@ -9,6 +9,7 @@ use App\Domain\Fleet\Models\RentalOverageCharge;
 use App\Models\Concerns\HasSaaSMetadata;
 use App\Models\Traits\BelongsToTenant;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -841,7 +842,7 @@ class Asset extends Model implements HasMedia
     /** @return array<string, string> id => "PLACA — nome" dos veículos do cliente (para listas de escolha). */
     public static function opcoesVeiculos(): array
     {
-        return static::query()->where('grupo', self::GRUPO_VEICULO)->orderBy('placa')->get()
+        return static::query()->where('grupo', self::GRUPO_VEICULO)->naoBaixado()->orderBy('placa')->get()
             ->mapWithKeys(fn (self $a) => [$a->id => trim(($a->placa ? $a->placa.' — ' : '').$a->name)])->all();
     }
 
@@ -856,5 +857,16 @@ class Asset extends Model implements HasMedia
     public function saidaAberta(): ?FrotaSaidaVeiculo
     {
         return FrotaSaidaVeiculo::fora()->where('ativo_id', $this->id)->first();
+    }
+
+    /** Veículos que não têm baixa vigente (vendido, sucateado...). Os baixados saem das listas de escolha e das pendências. */
+    public function scopeNaoBaixado(Builder $query): Builder
+    {
+        return $query->whereNotExists(fn ($q) => $q->selectRaw('1')->from('frota_baixas')->whereColumn('frota_baixas.ativo_id', 'assets.id')->whereNull('frota_baixas.revertida_em'));
+    }
+
+    public function baixaVigente(): ?FrotaBaixa
+    {
+        return FrotaBaixa::where('ativo_id', $this->id)->whereNull('revertida_em')->first();
     }
 }

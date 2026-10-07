@@ -26,6 +26,9 @@ class SaidaVeiculoService
         if (! $ativo->isVehicle()) {
             $this->erro('ativo', 'Só veículos têm entrada e saída registradas aqui.');
         }
+        if ($ativo->baixaVigente()) {
+            $this->erro('ativo', 'Este veículo foi baixado e não pode registrar saída.');
+        }
         if (! array_key_exists($dados['finalidade'] ?? '', FrotaSaidaVeiculo::finalidadeLabels())) {
             $this->erro('finalidade', 'Escolha a finalidade da saída.');
         }

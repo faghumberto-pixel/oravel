@@ -35,7 +35,7 @@ class FrotaCustoAvulso extends Model
     {
         return [
             'seguro' => 'Seguro', 'ipva' => 'IPVA', 'licenciamento' => 'Licenciamento', 'tacografo' => 'Tacógrafo',
-            'pedagio' => 'Pedágio', 'lavagem' => 'Lavagem', 'estacionamento' => 'Estacionamento', 'outro' => 'Outro',
+            'estacionamento' => 'Estacionamento', 'outro' => 'Outro',
         ];
     }
 
