@@ -178,3 +178,10 @@ Prioridade baixa: lavagem/limpeza; Arla (já em Itens Agregados); baixa/venda do
 **Manual:** `php artisan migrate` (já rodado no DEV; PROD no deploy). **Não subiu para PROD.** Chaves novas desligadas nos contratos depois do deploy: `tabela_frota_tags`, `tabela_frota_pedagios`, `tabela_frota_lavagens`, `tabela_frota_baixas`.
 **Limites:** relatórios de custo por veículo, disponibilidade, consumo e ranking continuam mostrando veículos baixados no período em que rodaram; sem importação de extrato de pedágio; sem aprovação da baixa.
 **Falta da lista:** só o GPS (Traccar → odômetro), por último e se o usuário quiser. Acabamentos pendentes: celular para sinistro/abastecimento/revisão/kit, anexo do auto de multa, histórico de revisões/conferências.
+
+## CORREÇÃO — visibilidade da Pendências da Frota (07/10/2026) — pronta no DEV, aguardando "pode subir"
+
+**Problema (achado ao revisar o deploy das Fases 12–15):** a página Pendências da Frota (e a Disponibilidade) usava só a permissão de ativos/paradas; por isso aparecia no menu, com contador calculado em toda tela, para clientes que NÃO têm nenhum módulo da frota ligado (todos os 3 contratos de PROD hoje). Os dados eram do próprio cliente e corretos, mas o menu confundia e o contador pesava.
+**Correção:** (1) as duas páginas só aparecem para quem tem **ao menos um módulo da Gestão de Frota liberado** (plano + permissão); (2) cada categoria de pendência só aparece se o usuário pode ver o módulo dela (ex.: cliente só com Multas não vê pendências de kit, revisão etc.); vencimentos de documentos, CNH e estoque seguem os módulos que já existiam (ativos, motoristas, peças); (3) "Gerar OS" só para pendências visíveis; (4) o contador do menu usa o mesmo filtro e fica em cache de 60 s por usuário.
+**Testes:** 4 novos em `FrotaVisibilidadeTest` (a trava da página foi verificada: falha sem ela); frota e perfis seguem passando. Auditorias: as mesmas 3 violações antigas; metadados SaaS OK. DEV intacto.
+**Efeito em PROD depois do deploy:** hoje, com os módulos desligados, a página some do menu; ao ligar um módulo na Central, ela aparece só com o que o cliente contratou. Não precisa de migration.

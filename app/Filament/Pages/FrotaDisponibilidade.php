@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\Asset;
 use App\Models\AssetDowntimeEvent;
 use App\Services\Frota\DisponibilidadeFrotaService;
+use App\Services\Frota\PendenciasFrotaService;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 
@@ -29,7 +30,9 @@ class FrotaDisponibilidade extends Page
 
     public static function canAccess(): bool
     {
-        return (bool) auth()->user()?->can('viewAny', AssetDowntimeEvent::class);
+        $usuario = auth()->user();
+
+        return (bool) ($usuario?->can('viewAny', AssetDowntimeEvent::class) && app(PendenciasFrotaService::class)->temModuloFrota($usuario));
     }
 
     public static function shouldRegisterNavigation(): bool

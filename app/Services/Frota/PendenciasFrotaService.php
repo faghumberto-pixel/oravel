@@ -5,15 +5,21 @@ namespace App\Services\Frota;
 use App\Models\Asset;
 use App\Models\FleetDriver;
 use App\Models\FrotaAbastecimento;
+use App\Models\FrotaBateria;
 use App\Models\FrotaChave;
+use App\Models\FrotaChecklist;
 use App\Models\FrotaItemSeguranca;
+use App\Models\FrotaLavagem;
 use App\Models\FrotaMulta;
 use App\Models\FrotaPlanoRevisao;
+use App\Models\FrotaPneu;
 use App\Models\FrotaSaidaVeiculo;
 use App\Models\FrotaSinistro;
+use App\Models\FrotaTrocaOleo;
 use App\Models\MaintenanceOrder;
 use App\Models\Part;
 use App\Models\PartCategory;
+use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 
@@ -29,6 +35,54 @@ class PendenciasFrotaService
 
     /** Documento vence em até N dias = atenção; já vencido = crítica. */
     public const AVISO_DOCUMENTO_DIAS = 30;
+
+    /** Cada categoria de pendência pertence a um módulo; só vê quem pode ver o módulo (plano contratado + permissão). */
+    public const MODULOS = [
+        'checklist' => FrotaChecklist::class, 'pneu' => FrotaPneu::class, 'bateria' => FrotaBateria::class, 'oleo' => FrotaTrocaOleo::class,
+        'saida' => FrotaSaidaVeiculo::class, 'multa' => FrotaMulta::class, 'sinistro' => FrotaSinistro::class, 'consumo' => FrotaAbastecimento::class,
+        'revisao' => FrotaPlanoRevisao::class, 'kit' => FrotaItemSeguranca::class, 'chave' => FrotaChave::class, 'lavagem' => FrotaLavagem::class,
+    ];
+
+    /** Categorias que vêm de módulos que já existiam antes da Gestão de Frota (vencimentos do ativo, CNH dos motoristas, estoque). */
+    public const MODULOS_BASE = ['documento' => Asset::class, 'cnh' => FleetDriver::class, 'estoque' => Part::class];
+
+    /** @var array<string, array<int, string>> memória por usuário durante a requisição */
+    private static array $permitidas = [];
+
+    /**
+     * Categorias de pendência que o usuário pode ver.
+     *
+     * @return array<int, string>
+     */
+    public function categoriasPermitidas(?User $usuario): array
+    {
+        if (! $usuario) {
+            return [];
+        }
+
+        return self::$permitidas[$usuario->id] ??= collect(self::MODULOS + self::MODULOS_BASE)
+            ->filter(fn (string $modelo) => $usuario->can('viewAny', $modelo))->keys()->all();
+    }
+
+    /** O usuário tem algum módulo da Gestão de Frota liberado? (sem isso, as telas da frota nem aparecem no menu) */
+    public function temModuloFrota(?User $usuario): bool
+    {
+        return count(array_intersect($this->categoriasPermitidas($usuario), array_keys(self::MODULOS))) > 0;
+    }
+
+    /** Pendências filtradas pelo que o usuário pode ver. */
+    public function todasPermitidas(?User $usuario): Collection
+    {
+        $categorias = $this->categoriasPermitidas($usuario);
+
+        return $this->todas()->whereIn('categoria', $categorias)->values();
+    }
+
+    /** Esquece a memória (testes e troca de contrato). */
+    public static function esquecerPermissoes(): void
+    {
+        self::$permitidas = [];
+    }
 
     /** @return array<string, string> */
     public static function categorias(): array

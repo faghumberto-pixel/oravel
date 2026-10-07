@@ -8,6 +8,7 @@ use App\Services\Frota\PendenciasFrotaService;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 
@@ -36,7 +37,9 @@ class PendenciasFrota extends Page
 
     public static function canAccess(): bool
     {
-        return (bool) auth()->user()?->can('viewAny', Asset::class);
+        $usuario = auth()->user();
+
+        return (bool) ($usuario?->can('viewAny', Asset::class) && app(PendenciasFrotaService::class)->temModuloFrota($usuario));
     }
 
     public static function shouldRegisterNavigation(): bool
@@ -49,20 +52,40 @@ class PendenciasFrota extends Page
         if (! static::canAccess()) {
             return null;
         }
-        $n = app(PendenciasFrotaService::class)->contar();
+        [$n] = static::contagem();
 
         return $n > 0 ? (string) $n : null;
     }
 
     public static function getNavigationBadgeColor(): ?string
     {
-        return app(PendenciasFrotaService::class)->criticas() > 0 ? 'danger' : 'warning';
+        return (static::contagem()[1] ?? 0) > 0 ? 'danger' : 'warning';
+    }
+
+    /**
+     * Total e críticas do contador do menu, guardados por 60 s por usuário (o cálculo percorre todos os veículos
+     * e roda em toda tela do painel).
+     *
+     * @return array{0: int, 1: int}
+     */
+    protected static function contagem(): array
+    {
+        $usuario = auth()->user();
+        if (! $usuario) {
+            return [0, 0];
+        }
+
+        return Cache::remember('frota-pendencias-contagem:'.$usuario->id, 60, function () use ($usuario) {
+            $lista = app(PendenciasFrotaService::class)->todasPermitidas($usuario);
+
+            return [$lista->count(), $lista->where('gravidade', PendenciasFrotaService::CRITICA)->count()];
+        });
     }
 
     /** @return Collection<int, array<string, mixed>> */
     public function pendencias(): Collection
     {
-        return app(PendenciasFrotaService::class)->todas()
+        return app(PendenciasFrotaService::class)->todasPermitidas(auth()->user())
             ->when($this->filtroCategoria, fn ($c) => $c->where('categoria', $this->filtroCategoria))
             ->when($this->filtroGravidade, fn ($c) => $c->where('gravidade', $this->filtroGravidade))
             ->when($this->filtroVeiculo, fn ($c) => $c->where('ativo_id', $this->filtroVeiculo))
@@ -78,7 +101,7 @@ class PendenciasFrota extends Page
     public function gerarOs(string $chave): void
     {
         Gate::authorize('create', MaintenanceOrder::class);
-        $pendencia = app(PendenciasFrotaService::class)->todas()->firstWhere('chave', $chave);
+        $pendencia = app(PendenciasFrotaService::class)->todasPermitidas(auth()->user())->firstWhere('chave', $chave);
 
         if (! $pendencia) {
             Notification::make()->title('Esta pendência já foi resolvida.')->warning()->send();
