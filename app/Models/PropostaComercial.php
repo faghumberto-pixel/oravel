@@ -74,6 +74,8 @@ class PropostaComercial extends Model
         'status',
         'valid_until',
         'terms',
+        'cabecalho',
+        'campos',
         'rejection_reason',
         'total_value',
         'sent_at',
@@ -88,6 +90,7 @@ class PropostaComercial extends Model
 
     protected $casts = [
         'valid_until' => 'date',
+        'campos' => 'array',
         'total_value' => 'decimal:2',
         'sent_at' => 'datetime',
         'reviewed_at' => 'datetime',
@@ -184,6 +187,8 @@ class PropostaComercial extends Model
         }
 
         $this->terms = $template->default_terms;
+        $this->cabecalho = $template->cabecalho;
+        $this->campos = $template->campos;
 
         if ($template->default_valid_days && ! $this->valid_until) {
             $this->valid_until = now()->addDays($template->default_valid_days);

@@ -2,8 +2,12 @@
     <table>
         <tr>
             <td class="logo-area">
-                <div class="logo-text">O<span class="accent">r</span>avel</div>
-                <div class="logo-subtext">Asset Intelligence &amp; Maintenance Systems</div>
+                @if(filled($proposta->cabecalho))
+                    <div class="logo-subtext" style="font-size:12px;line-height:1.5;">{!! nl2br(e($proposta->cabecalho)) !!}</div>
+                @else
+                    <div class="logo-text">O<span class="accent">r</span>avel</div>
+                    <div class="logo-subtext">Asset Intelligence &amp; Maintenance Systems</div>
+                @endif
             </td>
             <td class="title-area">
                 <div class="title">Proposta Comercial</div>
@@ -60,3 +64,12 @@
         <p>{{ $proposta->terms }}</p>
     </div>
 @endif
+
+@foreach(($proposta->campos ?? []) as $campo)
+    @if(filled($campo['titulo'] ?? null) && filled($campo['texto'] ?? null))
+        <div class="section">
+            <div class="section-title">{{ $campo['titulo'] }}</div>
+            <p>{!! nl2br(e($campo['texto'])) !!}</p>
+        </div>
+    @endif
+@endforeach

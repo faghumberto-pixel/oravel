@@ -36,12 +36,16 @@ class PropostaComercialTemplate extends Model
         'is_default',
         'default_terms',
         'default_valid_days',
+        'cabecalho',
+        'campos',
+        'imagem_referencia',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'is_default' => 'boolean',
         'default_valid_days' => 'integer',
+        'campos' => 'array',
     ];
 
     public function tenant(): BelongsTo

@@ -219,7 +219,14 @@ class PropostaComercialMobile extends Component
 
         Gate::authorize('update', $this->proposta);
 
-        $this->proposta->update(['terms' => $this->terms, 'valid_until' => $this->validUntil]);
+        $dados = ['terms' => $this->terms, 'valid_until' => $this->validUntil];
+
+        if ($this->templateId && $template = PropostaComercialTemplate::find($this->templateId)) {
+            $dados['cabecalho'] = $template->cabecalho;
+            $dados['campos'] = $template->campos;
+        }
+
+        $this->proposta->update($dados);
         $this->step = 4;
     }
 

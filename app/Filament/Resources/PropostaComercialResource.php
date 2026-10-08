@@ -141,6 +141,8 @@ class PropostaComercialResource extends BaseResource
 
                             $template = PropostaComercialTemplate::find($state);
                             $set('terms', $template?->default_terms);
+                            $set('cabecalho', $template?->cabecalho);
+                            $set('campos', $template?->campos ?? []);
 
                             if ($template?->default_valid_days) {
                                 $set('valid_until', now()->addDays($template->default_valid_days)->toDateString());
@@ -153,6 +155,22 @@ class PropostaComercialResource extends BaseResource
                         ->label('Termos')
                         ->columnSpanFull()
                         ->rows(4),
+                    Forms\Components\Textarea::make('cabecalho')
+                        ->label('Cabeçalho da empresa')
+                        ->helperText('Aparece no topo da proposta enviada ao cliente. Vem do template.')
+                        ->columnSpanFull()
+                        ->rows(3),
+                    Forms\Components\Repeater::make('campos')
+                        ->label('Campos da proposta')
+                        ->helperText('Seções que o cliente vê na proposta (condições de pagamento, prazo, garantia...). Vêm do template e podem ser ajustadas aqui.')
+                        ->schema([
+                            Forms\Components\TextInput::make('titulo')->label('Título')->required(),
+                            Forms\Components\Textarea::make('texto')->label('Texto')->rows(3),
+                        ])
+                        ->defaultItems(0)
+                        ->addActionLabel('Adicionar campo')
+                        ->collapsible()
+                        ->columnSpanFull(),
                 ]),
         ]);
     }
@@ -223,6 +241,19 @@ class PropostaComercialResource extends BaseResource
             Section::make('Termos')
                 ->schema([
                     TextEntry::make('terms')->label('')->placeholder('Sem termos definidos.')->columnSpanFull(),
+                ]),
+
+            Section::make('Campos da proposta')
+                ->visible(fn (PropostaComercial $record) => ! empty($record->campos))
+                ->schema([
+                    \Filament\Infolists\Components\RepeatableEntry::make('campos')
+                        ->label('')
+                        ->schema([
+                            TextEntry::make('titulo')->label('Título')->weight('bold'),
+                            TextEntry::make('texto')->label('Texto')->placeholder('—'),
+                        ])
+                        ->columns(2)
+                        ->columnSpanFull(),
                 ]),
 
             Section::make('Revisão')
