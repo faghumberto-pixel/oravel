@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PropostaComercial;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Support\DocumentoPagina;
 
 class PropostaComercialReportController extends Controller
 {
@@ -11,12 +11,10 @@ class PropostaComercialReportController extends Controller
     {
         $proposta = $record->load(['client', 'sellerUser', 'items']);
 
-        $pdf = Pdf::loadView('pdf.proposta-comercial', [
+        return DocumentoPagina::responder('Proposta comercial', 'pdf.proposta-comercial', [
             'proposta' => $proposta,
             'generatedAt' => now()->format('d/m/Y H:i'),
         ]);
-
-        return $pdf->download("proposta-comercial-{$proposta->id}.pdf");
     }
 
     public function print(PropostaComercial $record)

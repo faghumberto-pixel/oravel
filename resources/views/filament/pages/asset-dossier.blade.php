@@ -56,7 +56,7 @@
                     icon="heroicon-o-printer"
                     color="gray"
                 >
-                    Imprimir / PDF
+                    Ver e imprimir
                 </x-filament::button>
                 <x-filament::button wire:click="clear" color="gray" icon="heroicon-o-magnifying-glass">
                     Nova busca

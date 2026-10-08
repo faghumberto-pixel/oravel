@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Asset;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Support\DocumentoPagina;
 use Illuminate\Http\Request;
 
 class AssetReportController extends Controller
@@ -25,8 +25,6 @@ class AssetReportController extends Controller
         ];
 
         // Gera o PDF baseado em uma View que criaremos
-        $pdf = Pdf::loadView('reports.asset_summary', $data);
-
-        return $pdf->download('Relatorio_Ativo_' . $asset->tag . '.pdf');
+        return DocumentoPagina::responder('Relatório do ativo', 'reports.asset_summary', $data);
     }
 }

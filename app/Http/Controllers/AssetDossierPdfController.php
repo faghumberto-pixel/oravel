@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Asset;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Support\DocumentoPagina;
 
 class AssetDossierPdfController extends Controller
 {
@@ -25,12 +25,10 @@ class AssetDossierPdfController extends Controller
             'maintenanceOrders.reportedProblem',
         ]);
 
-        $pdf = Pdf::loadView('pdf.asset_dossier', [
+        return DocumentoPagina::responder('Dossiê do ativo', 'pdf.asset_dossier', [
             'asset' => $asset,
             'currentContract' => $asset->contracts->first(),
             'generatedAt' => now()->format('d/m/Y H:i'),
         ]);
-
-        return $pdf->download("dossie-ativo-{$asset->patrimonio}.pdf");
     }
 }

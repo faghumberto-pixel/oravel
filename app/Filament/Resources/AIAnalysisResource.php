@@ -116,7 +116,7 @@ class AIAnalysisResource extends BaseResource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\Action::make('imprimir')
-                    ->label('Imprimir (PDF)')
+                    ->label('Ver e imprimir')
                     ->icon('heroicon-o-printer')
                     ->color('gray')
                     ->visible(fn (AIAnalysis $record) => $record->status === AIAnalysis::STATUS_CONCLUIDA)

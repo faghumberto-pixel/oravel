@@ -168,7 +168,7 @@ class QuoteResource extends BaseResource
             ->defaultSort('created_at', 'desc')
             ->actions([
                 Tables\Actions\Action::make('baixar_pdf')
-                    ->label('PDF')
+                    ->label('Ver e imprimir')
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('gray')
                     ->url(fn (Quote $record) => route('quotes.pdf', $record))

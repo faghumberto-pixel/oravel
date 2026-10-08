@@ -215,7 +215,7 @@ class ViewEquipmentDamage extends ViewRecord
                 }),
 
             Actions\Action::make('baixar_laudo')
-                ->label('Baixar Laudo Jurídico (PDF)')
+                ->label('Ver e imprimir laudo')
                 ->color('gray')
                 ->icon('heroicon-o-document-arrow-down')
                 ->url(fn () => route('equipment-damages.laudo.pdf', $this->record))

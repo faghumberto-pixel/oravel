@@ -101,7 +101,7 @@ class AccountReceivableResource extends Resource
                 // sem sair da fila -- só existe quando a conta veio de
                 // Quote::forwardToFinanceiro() (item 9 da auditoria).
                 Tables\Actions\Action::make('baixarOrcamento')
-                    ->label('PDF do Orçamento')
+                    ->label('Orçamento (ver e imprimir)')
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('gray')
                     ->visible(fn (AccountReceivable $record) => $record->quote_id !== null)

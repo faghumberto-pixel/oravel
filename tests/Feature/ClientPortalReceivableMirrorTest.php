@@ -48,7 +48,7 @@ class ClientPortalReceivableMirrorTest extends TestCase
         return [$tenant, $client, $receivable];
     }
 
-    public function test_client_can_download_own_receivable_mirror(): void
+    public function test_client_can_view_own_receivable_mirror_page(): void
     {
         [, $client, $receivable] = $this->makeTenantWithClientAndReceivable('A');
 
@@ -56,7 +56,8 @@ class ClientPortalReceivableMirrorTest extends TestCase
             ->get(route('cliente.receivable.mirror', ['accountReceivable' => $receivable->id]));
 
         $response->assertOk();
-        $response->assertHeader('content-type', 'application/pdf');
+        $this->assertStringContainsString('text/html', $response->headers->get('Content-Type'));
+        $response->assertSee('Imprimir');
     }
 
     public function test_client_cannot_download_other_client_receivable_mirror(): void

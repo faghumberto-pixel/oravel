@@ -142,7 +142,7 @@ class QuoteResourceTest extends TestCase
         $this->assertSame('Valor muito alto.', $quote->rejection_reason);
     }
 
-    public function test_pdf_download_route_returns_a_real_pdf(): void
+    public function test_quote_page_for_printing_is_shown(): void
     {
         [$tenant, $client, $admin] = $this->makeTenantWithClient();
         $this->actingAs($admin);
@@ -156,6 +156,7 @@ class QuoteResourceTest extends TestCase
         $response = $this->get(route('quotes.pdf', $quote));
 
         $response->assertOk();
-        $response->assertHeader('content-type', 'application/pdf');
+        $this->assertStringContainsString('text/html', $response->headers->get('Content-Type'));
+        $response->assertSee('Imprimir');
     }
 }

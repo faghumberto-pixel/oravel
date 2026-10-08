@@ -100,7 +100,7 @@
                         target="_blank"
                         class="flex min-h-[2.75rem] flex-1 items-center justify-center rounded-xl border border-zinc-700 text-xs font-bold text-zinc-200 active:bg-zinc-800"
                     >
-                        Imprimir / PDF
+                        Ver e imprimir
                     </a>
                     <button
                         type="button"

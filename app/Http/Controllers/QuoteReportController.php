@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Quote;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Support\DocumentoPagina;
 
 class QuoteReportController extends Controller
 {
@@ -20,11 +20,9 @@ class QuoteReportController extends Controller
             'quotable',
         ]);
 
-        $pdf = Pdf::loadView('pdf.quote', [
+        return DocumentoPagina::responder('Orçamento', 'pdf.quote', [
             'quote' => $quote,
             'generatedAt' => now()->format('d/m/Y H:i'),
         ]);
-
-        return $pdf->download("orcamento-{$quote->id}.pdf");
     }
 }

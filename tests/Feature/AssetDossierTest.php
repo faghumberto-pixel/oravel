@@ -287,7 +287,7 @@ class AssetDossierTest extends TestCase
         $response->assertDontSee('PAT-DOSSIE-001');
     }
 
-    public function test_pdf_download_returns_a_pdf_response(): void
+    public function test_dossier_page_for_printing_is_shown(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();
         $asset = $this->makeFullAsset($tenant, $admin);
@@ -297,6 +297,7 @@ class AssetDossierTest extends TestCase
         $response = $this->get(route('assets.dossier.pdf', $asset));
 
         $response->assertOk();
-        $response->assertHeader('content-type', 'application/pdf');
+        $this->assertStringContainsString('text/html', $response->headers->get('Content-Type'));
+        $response->assertSee('Imprimir');
     }
 }

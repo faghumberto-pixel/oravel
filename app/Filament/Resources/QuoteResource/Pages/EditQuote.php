@@ -24,7 +24,7 @@ class EditQuote extends EditRecord
 
         return [
             Actions\Action::make('baixar_pdf')
-                ->label('Baixar PDF')
+                ->label('Ver e imprimir')
                 ->icon('heroicon-o-document-arrow-down')
                 ->color('gray')
                 ->url(fn () => route('quotes.pdf', $record))

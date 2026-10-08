@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AccountReceivable;
 use App\Models\Client;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Support\DocumentoPagina;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -28,11 +28,9 @@ class ClientReceivableMirrorController extends Controller
 
         $record->load(['contract.asset', 'billCategory']);
 
-        $pdf = Pdf::loadView('pdf.receivable-mirror', [
+        return DocumentoPagina::responder('Espelho de medição', 'pdf.receivable-mirror', [
             'receivable' => $record,
             'generatedAt' => now()->format('d/m/Y H:i'),
         ]);
-
-        return $pdf->download("espelho-medicao-{$record->id}.pdf");
     }
 }

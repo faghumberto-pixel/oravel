@@ -133,7 +133,7 @@
                     </div>
                     @if($this->chatRoom)
                         <a href="{{ route('chat.history.pdf', ['room' => $this->chatRoom->id]) }}" target="_blank"
-                           title="Exportar conversa em PDF"
+                           title="Ver e imprimir a conversa"
                            class="flex items-center justify-center w-9 h-9 text-gray-500 hover:text-blue-600 hover:bg-gray-200 transition shrink-0" style="border-radius:9999px;">
                             <x-heroicon-o-arrow-down-tray class="w-5 h-5" />
                         </a>

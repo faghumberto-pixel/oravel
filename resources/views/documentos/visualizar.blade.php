@@ -30,7 +30,7 @@
 </head>
 <body>
     <div class="barra">
-        <h1>{{ $titulo }}<small>{{ $subtitulo ?? 'Documento e comprovante de assinatura. Use Imprimir para papel ou para salvar em PDF pelo navegador.' }}</small></h1>
+        <h1>{{ $titulo }}<small>{{ $subtitulo ?? 'Use Imprimir para papel ou para salvar em PDF pelo navegador.' }}</small></h1>
         <a href="{{ $voltar }}">Voltar</a>
         <a class="principal" href="#" onclick="window.print(); return false;">Imprimir</a>
     </div>
@@ -43,7 +43,7 @@
 
     @foreach($secoes as $secao)
         <div class="folha {{ !empty($secao['nova_pagina']) ? 'nova-pagina' : '' }}">
-            <h2>{{ $secao['titulo'] }}</h2>
+            @if(filled($secao['titulo']))<h2>{{ $secao['titulo'] }}</h2>@endif
             <iframe srcdoc="{{ $secao['html'] }}" title="{{ $secao['titulo'] }}"></iframe>
         </div>
     @endforeach

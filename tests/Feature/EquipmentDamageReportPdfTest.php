@@ -79,7 +79,8 @@ class EquipmentDamageReportPdfTest extends TestCase
         $response = $this->actingAs($admin)->get(route('equipment-damages.laudo.pdf', $damage));
 
         $response->assertOk();
-        $response->assertHeader('content-type', 'application/pdf');
+        $this->assertStringContainsString('text/html', $response->headers->get('Content-Type'));
+        $response->assertSee('Imprimir');
 
         // Renderiza a mesma view isoladamente pra confirmar que a causa e o
         // valor do orçamento aprovado aparecem no HTML fonte do laudo --

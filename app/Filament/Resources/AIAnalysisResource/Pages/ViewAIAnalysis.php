@@ -18,7 +18,7 @@ class ViewAIAnalysis extends ViewRecord
     {
         return [
             Actions\Action::make('imprimir')
-                ->label('Imprimir (PDF)')
+                ->label('Ver e imprimir')
                 ->icon('heroicon-o-printer')
                 ->color('gray')
                 ->visible(fn () => $this->record->status === AIAnalysis::STATUS_CONCLUIDA)

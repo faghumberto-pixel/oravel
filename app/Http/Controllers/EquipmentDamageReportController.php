@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\EquipmentDamage;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Support\DocumentoPagina;
 
 class EquipmentDamageReportController extends Controller
 {
@@ -24,11 +24,9 @@ class EquipmentDamageReportController extends Controller
             'quotes',
         ]);
 
-        $pdf = Pdf::loadView('pdf.equipment_damage_report', [
+        return DocumentoPagina::responder('Laudo técnico de avaria', 'pdf.equipment_damage_report', [
             'damage' => $damage,
             'generatedAt' => now()->format('d/m/Y H:i'),
         ]);
-
-        return $pdf->download("laudo-avaria-{$damage->maintenanceOrder->os_number}.pdf");
     }
 }

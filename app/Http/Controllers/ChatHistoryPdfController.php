@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChatRoom;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Support\DocumentoPagina;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,13 +24,11 @@ class ChatHistoryPdfController extends Controller
 
         $otherUser = $room->users()->where('users.id', '!=', Auth::id())->first();
 
-        $pdf = Pdf::loadView('pdf.chat_history', [
+        return DocumentoPagina::responder('Histórico de conversa', 'pdf.chat_history', [
             'room' => $room,
             'messages' => $messages,
             'otherUser' => $otherUser,
             'generatedAt' => now()->format('d/m/Y H:i'),
         ]);
-
-        return $pdf->download('conversa-'.($otherUser?->name ?? $room->id).'.pdf');
     }
 }

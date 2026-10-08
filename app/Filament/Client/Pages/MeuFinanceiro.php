@@ -110,7 +110,7 @@ class MeuFinanceiro extends Page implements HasTable
                             ->send();
                     }),
                 Tables\Actions\Action::make('espelho')
-                    ->label('Baixar Espelho')
+                    ->label('Ver e imprimir espelho')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('gray')
                     ->url(fn (AccountReceivable $record) => route('cliente.receivable.mirror', $record))
