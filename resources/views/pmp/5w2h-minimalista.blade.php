@@ -223,6 +223,7 @@
     </style>
 </head>
 <body>
+@include('partials.relatorio-cabecalho')
 
     <div class="no-print toolbar">
         <div class="toolbar-text">
@@ -282,7 +283,7 @@
 
         <!-- Rodapé -->
         <div class="doc-footer">
-            ORAVEL ERP — Planejamento de Manutenção Preventiva
+            {{ \App\Support\Relatorio::emissor() }} · Planejamento de Manutenção Preventiva · Oravel
         </div>
     </div>
 

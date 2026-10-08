@@ -130,6 +130,11 @@ class PropostaComercial extends Model
         return $this->belongsTo(CrmLead::class);
     }
 
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);

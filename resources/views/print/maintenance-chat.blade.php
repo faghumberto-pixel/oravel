@@ -10,6 +10,7 @@
     </style>
 </head>
 <body class="bg-white p-10">
+@include('partials.relatorio-cabecalho')
     <div class="no-print flex justify-end mb-8">
         <button onclick="window.print()" class="bg-primary-600 text-white px-6 py-2 rounded-lg font-bold shadow-md hover:bg-primary-700 transition">
             🖨️ IMPRIMIR AGORA
@@ -18,7 +19,7 @@
 
     <div class="border-b-4 border-black pb-4 mb-8 flex justify-between items-end">
         <div>
-            <h1 class="text-2xl font-black uppercase tracking-tighter">ORAVEL - DOSSIÊ TÉCNICO</h1>
+            <h1 class="text-2xl font-black uppercase tracking-tighter">{{ \App\Support\Relatorio::emissor() }} - DOSSIÊ TÉCNICO</h1>
             <p class="text-sm font-bold text-gray-600">Histórico de Comunicação e Evidências</p>
         </div>
         <div class="text-right">
@@ -72,5 +73,6 @@
             @endforelse
         </tbody>
     </table>
+@include('partials.relatorio-rodape')
 </body>
 </html>

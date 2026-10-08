@@ -13,6 +13,7 @@
     </style>
 </head>
 <body>
+@include('partials.relatorio-cabecalho')
     <div class="header">
         <h1>Relatório Executivo: {{ $asset->name }}</h1>
         <p>TAG: {{ $asset->tag }} | Data: {{ $date }}</p>
@@ -39,5 +40,6 @@
         </tr>
         @endforeach
     </table>
+@include('partials.relatorio-rodape')
 </body>
 </html>

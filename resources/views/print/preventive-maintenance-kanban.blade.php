@@ -165,6 +165,7 @@
     </style>
 </head>
 <body>
+@include('partials.relatorio-cabecalho')
     <div class="print-header">
         <div class="print-header-text">
             <strong>→ Visualização PHP Minimalista — Kanban de Execuções Preventivas</strong>
@@ -222,5 +223,6 @@
             Total de execuções: {{ collect($records)->flatten()->count() }}
         </div>
     </div>
+@include('partials.relatorio-rodape')
 </body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Espelho de Medição - Oravel</title>
+    <title>Espelho de Medição - {{ \App\Support\Relatorio::emissor() }}</title>
     <style>
         @page { margin: 1.5cm; }
         body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 11px; color: #1f2937; line-height: 1.5; margin: 0; padding: 0; }
@@ -36,6 +36,7 @@
     </style>
 </head>
 <body>
+@include('partials.relatorio-cabecalho')
     <div class="header">
         <table>
             <tr>
@@ -94,7 +95,7 @@
     </div>
 
     <div class="footer">
-        Documento gerado em {{ $generatedAt }} — Oravel Gestão de Locadoras
+        {{ \App\Support\Relatorio::emissor() }} · gerado em {{ now()->format('d/m/Y H:i') }} · Oravel
     </div>
 </body>
 </html>

@@ -15,6 +15,7 @@
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased font-sans p-4 sm:p-8">
+@include('partials.relatorio-cabecalho')
 
     <div class="max-w-4xl mx-auto mb-6 flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm no-print">
         <span class="text-sm text-gray-500 font-medium">
@@ -110,7 +111,7 @@
 
         <!-- Rodapé -->
         <div class="mt-8 pt-6 border-t border-gray-200 text-center text-xs text-gray-400">
-            <p>Oravel ERP — Módulo de Planejamento de Manutenção Preventiva (PMP)</p>
+            <p>{{ \App\Support\Relatorio::emissor() }} · Planejamento de Manutenção Preventiva (PMP) · Oravel</p>
         </div>
 
     </div>

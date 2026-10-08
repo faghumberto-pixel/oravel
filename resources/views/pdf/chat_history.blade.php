@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Histórico de Conversa - Oravel</title>
+    <title>Histórico de Conversa - {{ \App\Support\Relatorio::emissor() }}</title>
     <style>
         body { font-family: sans-serif; color: #333; margin: 30px; font-size: 12px; }
         .header { border-bottom: 2px solid #E8541A; padding-bottom: 10px; margin-bottom: 20px; }
@@ -18,9 +18,10 @@
     </style>
 </head>
 <body>
+@include('partials.relatorio-cabecalho')
     <div class="header">
         <h1>Histórico de Conversa</h1>
-        <p>Oravel Chat Interno &middot; Conversa com {{ $otherUser?->name ?? 'Contato' }} &middot; Emitido em {{ $generatedAt }}</p>
+        <p>{{ \App\Support\Relatorio::emissor() }} &middot; Chat interno &middot; Conversa com {{ $otherUser?->name ?? 'Contato' }} &middot; Emitido em {{ $generatedAt }}</p>
     </div>
 
     <table>
@@ -62,5 +63,6 @@
             @endforelse
         </tbody>
     </table>
+@include('partials.relatorio-rodape')
 </body>
 </html>

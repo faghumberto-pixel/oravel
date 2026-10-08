@@ -33,6 +33,6 @@
 </head>
 <body>
     @include('proposta-comercial._conteudo', ['proposta' => $proposta])
-    <div class="footer">Gerado em {{ $generatedAt }} — Oravel Sistemas</div>
+    <div class="footer">{{ $proposta->tenant?->nome_fantasia ?: ($proposta->tenant?->name ?? "Oravel") }} — gerado em {{ $generatedAt }}</div>
 </body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Histórico de Transmissões - Oravel</title>
+    <title>Histórico de Transmissões - {{ \App\Support\Relatorio::emissor() }}</title>
     <style>
         body { font-family: sans-serif; color: #333; margin: 30px; font-size: 13px; }
         .header { border-bottom: 2px solid #d97706; padding-bottom: 10px; margin-bottom: 20px; }
@@ -20,11 +20,12 @@
     </style>
 </head>
 <body>
+@include('partials.relatorio-cabecalho')
 
     <div class="header">
         <button onclick="window.print()" style="float: right; padding: 6px 12px; background-color: #d97706; border: none; color: white; font-weight: bold; border-radius: 4px; cursor: pointer;">Imprimir Relatório</button>
         <h1>Relatório de Comunicação Interna</h1>
-        <p>Sistema de Gestão de Ativos Oravel | Emitido em: {{ now()->format('d/m/Y H:i') }}</p>
+        <p>{{ \App\Support\Relatorio::emissor() }} | Emitido em: {{ now()->format('d/m/Y H:i') }}</p>
     </div>
 
     <table>
@@ -50,5 +51,6 @@
         </tbody>
     </table>
 
+@include('partials.relatorio-rodape')
 </body>
 </html>

@@ -174,6 +174,7 @@
     </style>
 </head>
 <body>
+@include('partials.relatorio-cabecalho')
     <div class="container">
         <button class="print-button" onclick="window.print()">Imprimir / PDF</button>
 
@@ -247,7 +248,7 @@
 
             <div class="footer">
                 <p>Relatório gerado em {{ now()->format('d/m/Y H:i') }}</p>
-                <p>Oravel © 2026</p>
+                <p>{{ \App\Support\Relatorio::emissor() }} · gerado via Oravel</p>
             </div>
         @endif
     </div>

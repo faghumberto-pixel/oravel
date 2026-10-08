@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dossiê OS #{{ $order->os_number }} - ORAVEL</title>
+    <title>Dossiê OS #{{ $order->os_number }} - {{ \App\Support\Relatorio::emissor() }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @media print {
@@ -14,6 +14,7 @@
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased font-sans p-4 sm:p-8">
+@include('partials.relatorio-cabecalho')
 
     @php
         $isCheckout = $order->maintenance_type === \App\Models\MaintenanceOrder::TYPE_CHECKOUT;
@@ -109,5 +110,6 @@
         </div>
 
     </div>
+@include('partials.relatorio-rodape')
 </body>
 </html>

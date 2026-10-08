@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Dossiê de Auditoria Patrimonial - Oravel</title>
+    <title>Dossiê de Auditoria Patrimonial - {{ \App\Support\Relatorio::emissor() }}</title>
     <style>
         @page { margin: 1.5cm; }
         body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 11px; color: #1f2937; line-height: 1.5; margin: 0; padding: 0; }
@@ -52,8 +52,8 @@
         <table>
             <tr>
                 <td class="logo-area">
-                    <div class="logo-text">ORAVEL</div>
-                    <div class="logo-subtext">Asset Intelligence & Maintenance Systems</div>
+                    <div class="logo-text">{{ \App\Support\Relatorio::emissor() }}</div>
+                    <div class="logo-subtext">{{ \App\Support\Relatorio::detalhe() }}</div>
                 </td>
                 <td class="title-area">
                     <div class="title">
@@ -154,7 +154,7 @@
                     <div class="signature-placeholder"></div>
                     <div class="signature-line"></div>
                     <span class="value">{{ $order->technician->name ?? 'Técnico Responsável' }}</span><br>
-                    <span class="label" style="text-align: center;">Vistoriador / Oravel System</span>
+                    <span class="label" style="text-align: center;">Vistoriador responsável</span>
                 </td>
                 <td class="signature-box">
                     <div class="signature-placeholder">
@@ -171,7 +171,7 @@
     </div>
 
     <div class="footer">
-        Este documento é parte integrante do sistema de gestão <strong>Oravel</strong>. 
+        Este documento é parte integrante do sistema de gestão Oravel. 
         Gerado em {{ $generatedAt }}. 
         A autenticidade deste laudo técnico é garantida pela integração de metadados geográficos e assinatura digital.
     </div>

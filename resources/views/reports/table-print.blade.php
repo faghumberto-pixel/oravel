@@ -12,6 +12,7 @@
     </style>
 </head>
 <body class="bg-white text-black p-8 font-sans">
+@include('partials.relatorio-cabecalho')
     <button onclick="window.print()" class="no-print bg-gray-800 text-white px-4 py-2 rounded mb-4 font-bold uppercase text-xs">
         Imprimir
     </button>
@@ -66,5 +67,6 @@
     </table>
 
     <p class="text-xs text-gray-400 mt-6">Total de registros: {{ count($records) }}</p>
+@include('partials.relatorio-rodape')
 </body>
 </html>

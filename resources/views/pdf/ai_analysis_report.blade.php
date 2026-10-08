@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Análise por IA - Oravel</title>
+    <title>Análise por IA - {{ \App\Support\Relatorio::emissor() }}</title>
     <style>
         @page { margin: 1.5cm; }
         body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 11px; color: #1f2937; line-height: 1.5; margin: 0; padding: 0; }
@@ -38,8 +38,8 @@
         <table>
             <tr>
                 <td class="logo-area">
-                    <div class="logo-text">ORAVEL</div>
-                    <div class="logo-subtext">Asset Intelligence & Maintenance Systems</div>
+                    <div class="logo-text">{{ \App\Support\Relatorio::emissor() }}</div>
+                    <div class="logo-subtext">{{ \App\Support\Relatorio::detalhe() }}</div>
                 </td>
                 <td class="title-area">
                     <div class="title">{{ $typeLabel }}</div>
@@ -280,7 +280,7 @@
         Análise gerada por inteligência artificial (Claude, Anthropic) a partir dos dados cadastrados no sistema — é uma sugestão de apoio à decisão, não um laudo técnico definitivo. Deve ser validada por um responsável antes de qualquer ação.
     </div>
 
-    <div class="footer">Oravel — documento gerado eletronicamente em {{ $generatedAt }}</div>
+    <div class="footer">{{ \App\Support\Relatorio::emissor() }} · gerado em {{ now()->format('d/m/Y H:i') }} · Oravel</div>
 
 </body>
 </html>

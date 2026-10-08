@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OS #{{ $order->os_number }} - ORAVEL</title>
+    <title>OS #{{ $order->os_number }} - {{ \App\Support\Relatorio::emissor() }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* 🖨️ CONTROLE DE IMPRESSÃO MINIMALISTA CORES PURAS */
@@ -15,6 +15,7 @@
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased font-sans p-4 sm:p-8">
+@include('partials.relatorio-cabecalho')
 
     <div class="max-w-4xl mx-auto mb-6 flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm no-print">
         <span class="text-sm text-gray-500 font-medium">➔ <strong>Visualização PHP Minimalista</strong> (O conteúdo abaixo reflete a folha oficial de pátio)</span>
@@ -29,7 +30,6 @@
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-200 pb-6 mb-6 gap-4">
             <div>
                 <h1 class="text-2xl font-black tracking-tight"><span class="text-amber-500">O</span>ravel ERP</h1>
-                <p class="text-xs text-gray-500 font-mono mt-1">Tenant ID: {{ $order->tenant_id }}</p>
             </div>
             <div class="text-left sm:text-right">
                 <h2 class="text-xl font-bold text-gray-900">ORDEM DE SERVIÇO</h2>
@@ -197,7 +197,7 @@
         </div>
 
         <div class="mt-16 pt-8 border-t border-gray-200 text-center text-[10px] text-gray-400 font-mono">
-            Documento emitido eletronicamente via Central ORAVEL.<br>
+            Documento emitido eletronicamente por {{ \App\Support\Relatorio::emissor() }} · Oravel.<br>
             Visualizado em: {{ now()->format('d/m/Y') }} às {{ now()->format('H:i:s') }} (Horário de Brasília)
         </div>
     </div>

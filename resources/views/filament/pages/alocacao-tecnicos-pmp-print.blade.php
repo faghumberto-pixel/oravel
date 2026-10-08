@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alocação de Técnicos - ORAVEL</title>
+    <title>Alocação de Técnicos - {{ \App\Support\Relatorio::emissor() }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @media print {
@@ -14,6 +14,7 @@
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased font-sans p-4 sm:p-8">
+@include('partials.relatorio-cabecalho')
 
     <div class="max-w-5xl mx-auto mb-6 flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm no-print">
         <span class="text-sm text-gray-500 font-medium">➔ <strong>Visualização PHP Minimalista</strong> — Alocação de Técnicos</span>
@@ -156,7 +157,7 @@
         </div>
 
         <div class="mt-16 pt-8 border-t border-gray-200 text-center text-[10px] text-gray-400 font-mono">
-            Documento emitido eletronicamente via Central ORAVEL.<br>
+            Documento emitido eletronicamente por {{ \App\Support\Relatorio::emissor() }} · Oravel.<br>
             Visualizado em: {{ now()->format('d/m/Y') }} às {{ now()->format('H:i:s') }} (Horário de Brasília)
         </div>
     </div>

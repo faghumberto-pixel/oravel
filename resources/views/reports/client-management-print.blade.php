@@ -12,6 +12,7 @@
     </style>
 </head>
 <body class="bg-white text-black p-8 font-sans">
+@include('partials.relatorio-cabecalho')
     <button onclick="window.print()" class="no-print bg-gray-800 text-white px-4 py-2 rounded mb-4 font-bold uppercase text-xs">Imprimir</button>
 
     <h1 class="text-2xl font-black uppercase mb-2">{{ $client->name }}</h1>
@@ -67,5 +68,6 @@
             </tbody>
         </table>
     </section>
+@include('partials.relatorio-rodape')
 </body>
 </html>

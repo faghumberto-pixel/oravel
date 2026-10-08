@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Contrato - Oravel</title>
+    <title>Contrato - {{ \App\Support\Relatorio::emissor() }}</title>
     <style>
         @page { margin: 1.5cm; }
         body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 11px; color: #1f2937; line-height: 1.5; margin: 0; padding: 0; }
@@ -29,13 +29,14 @@
     </style>
 </head>
 <body>
+@include('partials.relatorio-cabecalho')
 
     <div class="header">
         <table>
             <tr>
                 <td class="logo-area">
                     <div class="logo-text">O<span class="accent">r</span>avel</div>
-                    <div class="logo-subtext">Asset Intelligence &amp; Maintenance Systems</div>
+                    <div class="logo-subtext">{{ \App\Support\Relatorio::detalhe() }}</div>
                 </td>
                 <td class="title-area">
                     <div class="title">Contrato de Locação</div>
@@ -116,7 +117,7 @@
     </div>
 
     <div class="footer">
-        Gerado em {{ $generatedAt }} pelo sistema Oravel.
+        {{ \App\Support\Relatorio::emissor() }} · gerado em {{ now()->format('d/m/Y H:i') }} · Oravel
     </div>
 
 </body>

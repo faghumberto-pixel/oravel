@@ -37,8 +37,8 @@
         <table>
             <tr>
                 <td style="width: 60%;">
-                    <div class="logo-text">Oravel</div>
-                    <div class="logo-subtext">Gestão de Frota e Manutenção</div>
+                    <div class="logo-text">{{ \App\Support\Relatorio::emissor() }}</div>
+                    <div class="logo-subtext">{{ \App\Support\Relatorio::detalhe() }}</div>
                 </td>
                 <td class="title-area">
                     <div class="title">Dossiê do Ativo</div>
@@ -181,7 +181,7 @@
     </div>
 
     <div class="footer">
-        Gerado em {{ $generatedAt }} · Oravel — Gestão de Frota e Manutenção
+        {{ \App\Support\Relatorio::emissor() }} · gerado em {{ now()->format('d/m/Y H:i') }} · Oravel
     </div>
 
 </body>

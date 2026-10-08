@@ -188,6 +188,7 @@
     </style>
 </head>
 <body>
+@include('partials.relatorio-cabecalho')
     <div class="container">
         <!-- Header -->
         <div class="header">
@@ -317,7 +318,7 @@
         <!-- Footer -->
         <div class="footer">
             <p>Relatório gerado em {{ now()->format('d/m/Y H:i') }}</p>
-            <p>Oravel - Sistema de Gestão de Contratos</p>
+            <p>{{ \App\Support\Relatorio::emissor() }} · Gestão de Contratos · Oravel</p>
         </div>
     </div>
 
