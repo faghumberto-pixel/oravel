@@ -18,19 +18,28 @@ class TenantSwitcher extends Component
 {
     public ?string $actingTenantId = null;
 
+    /** Só o administrador da plataforma (lista SUPER_ADMINS) pode atuar como outro cliente. */
+    private function exigirSuperAdmin(): void
+    {
+        abort_unless(auth()->user()?->isSuperAdmin(), 403, 'Apenas o administrador da plataforma pode atuar como outro cliente.');
+    }
+
     public function mount(): void
     {
-        $this->actingTenantId = session('acting_tenant_id');
+        $this->actingTenantId = auth()->user()?->isSuperAdmin() ? session('acting_tenant_id') : null;
     }
 
     #[On('acting-tenant-changed')]
     public function refreshSelection(): void
     {
-        $this->actingTenantId = session('acting_tenant_id');
+        $this->actingTenantId = auth()->user()?->isSuperAdmin() ? session('acting_tenant_id') : null;
     }
 
     public function updatedActingTenantId(?string $value): void
     {
+        // A tela esconde o seletor de quem não é administrador da plataforma, mas a ação em si também confere no servidor.
+        $this->exigirSuperAdmin();
+
         if ($value) {
             session(['acting_tenant_id' => $value]);
         } else {

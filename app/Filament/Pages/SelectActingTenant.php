@@ -68,6 +68,8 @@ class SelectActingTenant extends Page implements HasForms
 
     public function save(): void
     {
+        abort_unless(auth()->user()?->isSuperAdmin(), 403, 'Apenas o administrador da plataforma pode atuar como outro cliente.');
+
         $tenantId = $this->form->getState()['acting_tenant_id'] ?? null;
 
         if ($tenantId) {

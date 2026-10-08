@@ -212,4 +212,23 @@ class SuperAdminActingTenantTest extends TestCase
         $this->assertArrayHasKey('xjs', $effects);
         $this->assertSame('window.location.reload()', $effects['xjs'][0]['expression']);
     }
+
+    /** Cliente (não administrador da plataforma) não pode atuar como outro cliente, nem forçando a chamada. */
+    public function test_a_client_user_cannot_switch_tenant_even_by_forcing_the_call(): void
+    {
+        $plan = $this->makePlan();
+        $meu = $this->makeTenant($plan, 'Meu Cliente');
+        $outro = $this->makeTenant($plan, 'Outro Cliente');
+        $this->actingAs($this->makeTenantAdmin($meu));
+
+        Livewire::test(TenantSwitcher::class)
+            ->assertDontSee('Outro Cliente')                     // a lista nem aparece para cliente
+            ->set('actingTenantId', $outro->id)
+            ->assertForbidden();
+        $this->assertNull(session('acting_tenant_id'));
+
+        Livewire::test(SelectActingTenant::class)->assertForbidden();   // a página também recusa
+        $this->assertNull(session('acting_tenant_id'));
+        $this->assertEquals($meu->id, Tenancy::current()?->id);          // continua sendo o próprio cliente
+    }
 }

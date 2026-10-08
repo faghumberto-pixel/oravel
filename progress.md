@@ -235,3 +235,9 @@ Prioridade baixa: lavagem/limpeza; Arla (já em Itens Agregados); baixa/venda do
 **BUG ACHADO E CORRIGIDO (já estava em PROD):** os dossiês (PDF, celular e tela) decidiam "é veículo?" pela marca antiga `is_vehicle` e não pelo tipo "Veículo" (`grupo`) do cadastro novo. Resultado: o bloco "Quilometragem" que entrou em 07/10 (odômetro, Km de Aquisição) e o rótulo "Placa" **nunca apareciam para veículos cadastrados com o tipo novo**. Corrigido na raiz: `Asset::is_vehicle` agora vale para a marca antiga OU o tipo Veículo.
 **Testes:** campos só para pesado (leve esconde), gravação, recusa de eixos 0 e 13 e de tipo inexistente, dossiê de celular mostra carroceria e eixos, `is_vehicle` do veículo novo. Achado de teste: o seletor aceitava tipo fora da lista; travado com `in()`.
 **Manual:** 1 migration nova. **Não subiu para PROD.**
+
+## "ATUAR COMO TENANT" SÓ PARA O ADMINISTRADOR DA PLATAFORMA (08/10/2026) — pronto no DEV, aguardando "pode subir"
+
+**Pedido:** o menu/recurso "Atuar como Tenant" não pode estar disponível para nenhum cliente.
+**Verificação:** em PRODUÇÃO a lista de administradores da plataforma (`SUPER_ADMINS`) tem 1 e-mail, `humberto@oravel.com.br` (empresa Oravel); nenhum usuário de cliente (Topmixx, Locação Silva) está nela. Em DEV, administrador de cliente: não vê o menu nem o seletor do topo, é redirecionado ao abrir a página pelo endereço e leva 403 na Central. A escolha gravada na sessão só vale para administrador da plataforma (`Tenancy`), então não havia vazamento de dados.
+**Ponto fraco fechado:** a ação do seletor rápido do topo (`TenantSwitcher::updatedActingTenantId`) e o `save()` da página aceitavam a chamada de qualquer usuário logado (sem efeito prático). Agora os dois recusam com 403 quem não é administrador da plataforma, e o seletor nem lê a sessão para cliente. Teste novo (`a_client_user_cannot_switch_tenant_even_by_forcing_the_call`; verificado: falha sem a trava). 16 testes do tema passam. Sem migration.
