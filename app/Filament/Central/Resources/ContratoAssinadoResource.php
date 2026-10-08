@@ -11,8 +11,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * Contratos de assinatura (Oravel x cada cliente) já assinados: visualizar
- * no navegador e baixar o PDF com a página de auditoria.
+ * Contratos de assinatura (Oravel x cada cliente) já assinados: ver como
+ * página (sem PDF) e, se quiser, baixar o PDF com a página de auditoria.
  */
 class ContratoAssinadoResource extends Resource
 {
@@ -65,7 +65,7 @@ class ContratoAssinadoResource extends Resource
                 Tables\Actions\Action::make('ver')
                     ->label('Ver contrato')
                     ->icon('heroicon-o-eye')
-                    ->url(fn (DocumentSignature $r) => route('central.contrato-assinado', $r->id), shouldOpenInNewTab: true),
+                    ->url(fn (DocumentSignature $r) => route('central.contrato-assinado.ver', $r->id), shouldOpenInNewTab: true),
                 Tables\Actions\Action::make('baixar')
                     ->label('Baixar PDF')
                     ->icon('heroicon-o-arrow-down-tray')

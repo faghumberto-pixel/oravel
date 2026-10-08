@@ -13,18 +13,47 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Contrato de assinatura (Oravel x cliente) já assinado, para a Central
- * visualizar no navegador ou baixar. Só administrador da plataforma.
+ * visualizar como página ou baixar o PDF. Só administrador da plataforma.
  */
 class ContratoAssinadoController extends Controller
 {
+    /** Mostra o contrato assinado como página, antes de abrir ou baixar o PDF. */
+    public function ver(Request $request, string $signature): Response
+    {
+        abort_unless($request->user()?->isSuperAdmin(), 403);
+
+        $assinatura = $this->assinatura($signature);
+        $tenant = Tenant::withoutGlobalScopes()->findOrFail($assinatura->signable_id);
+
+        $contrato = view('pdf.subscription-agreement', ['contract' => $tenant])->render();
+        $auditoria = view('documents.signature-audit-page', [
+            'signature' => $assinatura,
+            'signerLocation' => $assinatura->geolocation
+                ? sprintf('Latitude: %s, Longitude: %s', $assinatura->geolocation['lat'] ?? 'N/A', $assinatura->geolocation['lng'] ?? 'N/A')
+                : 'Não capturada',
+        ])->render();
+
+        return response()->view('central.contrato-assinado', [
+            'assinatura' => $assinatura,
+            'cliente' => $tenant,
+            'contrato' => $contrato,
+            'auditoria' => $auditoria,
+        ]);
+    }
+
+    private function assinatura(string $id): DocumentSignature
+    {
+        return DocumentSignature::withoutGlobalScopes()
+            ->where('signable_type', Tenant::class)
+            ->where('status', 'signed')
+            ->findOrFail($id);
+    }
+
     public function __invoke(Request $request, string $signature, SignatureService $service): Response
     {
         abort_unless($request->user()?->isSuperAdmin(), 403);
 
-        $assinatura = DocumentSignature::withoutGlobalScopes()
-            ->where('signable_type', Tenant::class)
-            ->where('status', 'signed')
-            ->findOrFail($signature);
+        $assinatura = $this->assinatura($signature);
 
         $path = $service->ensureSignedPdf($assinatura);
         $cliente = Str::slug(Tenant::withoutGlobalScopes()->find($assinatura->signable_id)?->name ?? 'cliente');

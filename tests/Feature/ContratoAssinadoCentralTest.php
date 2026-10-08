@@ -49,6 +49,21 @@ class ContratoAssinadoCentralTest extends TestCase
         $this->assertSame($conteudo, Storage::disk('local')->get($path), 'o arquivo guardado nao pode mudar');
     }
 
+    public function test_super_admin_ve_o_contrato_como_pagina_sem_baixar_pdf(): void
+    {
+        config(['oravel.super_admins' => ['admin-teste@oravel.test']]);
+        $assinatura = $this->assinatura();
+        $admin = User::factory()->create(['email' => 'admin-teste@oravel.test']);
+
+        $resposta = $this->actingAs($admin)->get(route('central.contrato-assinado.ver', $assinatura->id));
+
+        $resposta->assertOk();
+        $this->assertStringContainsString('text/html', $resposta->headers->get('Content-Type'));
+        $resposta->assertSee('Cliente Teste PDF');
+        $resposta->assertSee('Fulano de Tal');
+        $resposta->assertSee('Baixar PDF');
+    }
+
     public function test_so_super_admin_ve_e_baixa(): void
     {
         Storage::fake('local');
@@ -56,5 +71,6 @@ class ContratoAssinadoCentralTest extends TestCase
         $comum = User::factory()->create();
 
         $this->actingAs($comum)->get(route('central.contrato-assinado', $assinatura->id))->assertForbidden();
+        $this->actingAs($comum)->get(route('central.contrato-assinado.ver', $assinatura->id))->assertForbidden();
     }
 }
