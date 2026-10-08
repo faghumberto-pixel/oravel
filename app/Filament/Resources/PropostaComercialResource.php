@@ -19,6 +19,7 @@ use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Collection;
@@ -48,6 +49,12 @@ class PropostaComercialResource extends BaseResource
     protected static ?string $modelLabel = 'Proposta Comercial';
 
     protected static ?string $pluralModelLabel = 'Propostas Comerciais';
+
+    /** Só o rascunho pode ser editado; depois de enviada ao Comercial a proposta fica travada. */
+    public static function canEdit($record): bool
+    {
+        return $record->status === PropostaComercial::STATUS_RASCUNHO && parent::canEdit($record);
+    }
 
     public static function form(Form $form): Form
     {
@@ -287,6 +294,24 @@ class PropostaComercialResource extends BaseResource
             ->defaultSort('created_at', 'desc')
             ->actions([
                 Tables\Actions\ViewAction::make(),
+                Tables\Actions\Action::make('enviar_comercial')
+                    ->label('Enviar ao Comercial')
+                    ->icon('heroicon-o-paper-airplane')
+                    ->color('success')
+                    ->visible(fn (PropostaComercial $record) => $record->status === PropostaComercial::STATUS_RASCUNHO && auth()->user()?->can('update', $record))
+                    ->requiresConfirmation()
+                    ->modalHeading('Enviar proposta ao Comercial?')
+                    ->modalDescription('O Comercial recebe um aviso por e-mail para revisar. Depois de enviada, a proposta não pode mais ser editada.')
+                    ->action(function (PropostaComercial $record) {
+                        abort_unless(auth()->user()?->can('update', $record), 403);
+
+                        try {
+                            $record->enviarParaComercial();
+                            Notification::make()->title('Proposta enviada ao Comercial')->success()->send();
+                        } catch (\RuntimeException $e) {
+                            Notification::make()->title('Não foi possível enviar')->body($e->getMessage())->warning()->send();
+                        }
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkAction::make('imprimir_selecionadas')
@@ -307,6 +332,7 @@ class PropostaComercialResource extends BaseResource
             'index' => Pages\ListPropostaComerciais::route('/'),
             'create' => Pages\CreatePropostaComercial::route('/create'),
             'view' => Pages\ViewPropostaComercial::route('/{record}'),
+            'edit' => Pages\EditPropostaComercial::route('/{record}/editar'),
         ];
     }
 

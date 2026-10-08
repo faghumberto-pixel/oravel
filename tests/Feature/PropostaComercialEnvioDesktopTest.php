@@ -1,0 +1,163 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Filament\Pages\PropostaComercialKanban;
+use App\Filament\Resources\PropostaComercialResource\Pages\EditPropostaComercial;
+use App\Filament\Resources\PropostaComercialResource\Pages\ListPropostaComerciais;
+use App\Filament\Resources\PropostaComercialResource\Pages\ViewPropostaComercial;
+use App\Mail\GenericPdfMail;
+use App\Models\AssetCategory;
+use App\Models\Client;
+use App\Models\EquipmentDamage;
+use App\Models\Plan;
+use App\Models\PropostaComercial;
+use App\Models\PropostaComercialItem;
+use App\Models\Role;
+use App\Models\Tenant;
+use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Mail;
+use Livewire\Livewire;
+use Tests\TestCase;
+
+/** Enviar a proposta ao Comercial pelo computador (antes só o app de celular fazia isso). */
+class PropostaComercialEnvioDesktopTest extends TestCase
+{
+    use DatabaseTransactions;
+
+    private function cliente(): array
+    {
+        $plano = Plan::create(['name' => 'P '.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1, 'billing_cycle' => 'monthly', 'is_active' => true,
+            'features' => ['tabela_proposta_comercial', 'tabela_solicitacao_locacao']]);
+        $tenant = Tenant::create(['name' => 'T '.uniqid(), 'slug' => 't-'.uniqid(), 'plan_id' => $plano->id, 'status' => 'active']);
+        $admin = User::create(['name' => 'Admin', 'email' => uniqid().'@oravel.test', 'password' => bcrypt('x'), 'tenant_id' => $tenant->id, 'is_approved' => true]);
+        $admin->forceFill(['email_verified_at' => now()])->save();
+        $admin->assignRole(Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web', 'tenant_id' => $tenant->id]));
+
+        return [$tenant, $admin];
+    }
+
+    private function rascunho(Tenant $tenant, User $vendedor, bool $comCliente = true, bool $comItem = true): PropostaComercial
+    {
+        $cliente = $comCliente ? Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente '.uniqid(), 'email' => uniqid().'@cliente.test']) : null;
+        $proposta = PropostaComercial::create(['tenant_id' => $tenant->id, 'client_id' => $cliente?->id, 'seller_user_id' => $vendedor->id]);
+        if ($comItem) {
+            $categoria = AssetCategory::create(['tenant_id' => $tenant->id, 'name' => 'Gerador '.uniqid()]);
+            $proposta->items()->create(['tenant_id' => $tenant->id, 'type' => PropostaComercialItem::TYPE_EQUIPAMENTO, 'asset_category_id' => $categoria->id,
+                'description' => 'Gerador 180 kVA', 'quantity' => 1, 'unit_price' => 5000]);
+        }
+
+        return $proposta;
+    }
+
+    public function test_rascunho_e_enviado_ao_comercial_pela_tela_de_detalhe_e_avisa_o_comercial(): void
+    {
+        Mail::fake();
+        [$tenant, $admin] = $this->cliente();
+        $comercial = User::create(['name' => 'Comercial', 'email' => uniqid().'@oravel.test', 'password' => bcrypt('x'), 'tenant_id' => $tenant->id, 'is_approved' => true]);
+        $comercial->assignRole(Role::firstOrCreate(['name' => EquipmentDamage::ROLE_COMERCIAL, 'guard_name' => 'web', 'tenant_id' => $tenant->id]));
+        $proposta = $this->rascunho($tenant, $admin);
+        $this->actingAs($admin);
+
+        Livewire::test(ViewPropostaComercial::class, ['record' => $proposta->getRouteKey()])
+            ->assertActionVisible('enviar_comercial')
+            ->callAction('enviar_comercial')
+            ->assertNotified('Proposta enviada ao Comercial');
+
+        $proposta->refresh();
+        $this->assertSame(PropostaComercial::STATUS_ENVIADA_PARA_COMERCIAL, $proposta->status);
+        $this->assertNotNull($proposta->sent_at);
+        Mail::assertSent(GenericPdfMail::class, fn ($m) => $m->hasTo($comercial->email));
+
+        // Depois de enviada, o botão e a edição somem.
+        Livewire::test(ViewPropostaComercial::class, ['record' => $proposta->getRouteKey()])->assertActionHidden('enviar_comercial')->assertActionHidden('editar_rascunho');
+    }
+
+    public function test_sem_cliente_ou_sem_item_o_envio_e_recusado_com_aviso_e_continua_rascunho(): void
+    {
+        Mail::fake();
+        [$tenant, $admin] = $this->cliente();
+        $this->actingAs($admin);
+
+        $semCliente = $this->rascunho($tenant, $admin, comCliente: false);
+        Livewire::test(ViewPropostaComercial::class, ['record' => $semCliente->getRouteKey()])->callAction('enviar_comercial')->assertNotified('Não foi possível enviar');
+        $semItem = $this->rascunho($tenant, $admin, comItem: false);
+        Livewire::test(ViewPropostaComercial::class, ['record' => $semItem->getRouteKey()])->callAction('enviar_comercial')->assertNotified('Não foi possível enviar');
+
+        $this->assertSame(PropostaComercial::STATUS_RASCUNHO, $semCliente->fresh()->status);
+        $this->assertSame(PropostaComercial::STATUS_RASCUNHO, $semItem->fresh()->status);
+    }
+
+    public function test_a_lista_tem_o_botao_so_para_rascunho(): void
+    {
+        Mail::fake();
+        [$tenant, $admin] = $this->cliente();
+        $this->actingAs($admin);
+        $rascunho = $this->rascunho($tenant, $admin);
+        $enviada = $this->rascunho($tenant, $admin);
+        $enviada->enviarParaComercial();
+
+        Livewire::test(ListPropostaComerciais::class)
+            ->assertTableActionVisible('enviar_comercial', $rascunho)
+            ->assertTableActionHidden('enviar_comercial', $enviada)
+            ->callTableAction('enviar_comercial', $rascunho);
+
+        $this->assertSame(PropostaComercial::STATUS_ENVIADA_PARA_COMERCIAL, $rascunho->fresh()->status);
+    }
+
+    public function test_rascunho_pode_ser_editado_e_enviado_pelo_computador_e_enviada_fica_travada(): void
+    {
+        Mail::fake();
+        [$tenant, $admin] = $this->cliente();
+        $this->actingAs($admin);
+        $proposta = $this->rascunho($tenant, $admin, comCliente: false);
+        $cliente = Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Novo', 'email' => 'novo@cliente.test']);
+
+        Livewire::test(EditPropostaComercial::class, ['record' => $proposta->getRouteKey()])
+            ->fillForm(['client_id' => $cliente->id])
+            ->callAction('salvar_e_enviar')
+            ->assertHasNoFormErrors();
+
+        $proposta->refresh();
+        $this->assertSame($cliente->id, $proposta->client_id);
+        $this->assertSame(PropostaComercial::STATUS_ENVIADA_PARA_COMERCIAL, $proposta->status);
+
+        Livewire::test(EditPropostaComercial::class, ['record' => $proposta->getRouteKey()])->assertForbidden();
+    }
+
+    public function test_quem_nao_pode_editar_nao_envia_e_o_envio_e_do_proprio_cliente(): void
+    {
+        Mail::fake();
+        [$tenant, $admin] = $this->cliente();
+        [, $outroAdmin] = $this->cliente();
+        $proposta = $this->rascunho($tenant, $admin);
+
+        $this->actingAs($outroAdmin);
+        $this->assertSame(0, PropostaComercial::count());   // proposta de outro cliente nem é enxergada
+        try {
+            Livewire::test(ViewPropostaComercial::class, ['record' => $proposta->getRouteKey()]);
+            $this->fail('A proposta de outro cliente não deveria ser encontrada.');
+        } catch (ModelNotFoundException) {
+            $this->assertTrue(true);
+        }
+        $this->assertSame(PropostaComercial::STATUS_RASCUNHO, PropostaComercial::withoutGlobalScopes()->find($proposta->id)->status);
+    }
+
+    public function test_o_kanban_do_comercial_acompanha_a_proposta_depois_do_envio_pelo_computador(): void
+    {
+        Mail::fake();
+        [$tenant, $admin] = $this->cliente();
+        $this->actingAs($admin);
+        $proposta = $this->rascunho($tenant, $admin);
+        $kanban = fn () => (new PropostaComercialKanban)->getRecords();
+
+        $this->assertTrue($kanban()->get(PropostaComercial::STATUS_RASCUNHO)->contains('id', $proposta->id));
+
+        Livewire::test(ViewPropostaComercial::class, ['record' => $proposta->getRouteKey()])->callAction('enviar_comercial');
+
+        $this->assertNull($kanban()->get(PropostaComercial::STATUS_RASCUNHO));
+        $this->assertTrue($kanban()->get(PropostaComercial::STATUS_ENVIADA_PARA_COMERCIAL)->contains('id', $proposta->id));
+    }
+}

@@ -27,6 +27,34 @@ class ViewPropostaComercial extends ViewRecord
         $record = $this->getRecord();
 
         return [
+            // Enviar o rascunho ao Comercial pelo computador (antes só o app de celular fazia isso).
+            Actions\Action::make('enviar_comercial')
+                ->label('Enviar ao Comercial')
+                ->icon('heroicon-o-paper-airplane')
+                ->color('success')
+                ->visible(fn () => $record->status === PropostaComercial::STATUS_RASCUNHO && auth()->user()?->can('update', $record))
+                ->requiresConfirmation()
+                ->modalHeading('Enviar proposta ao Comercial?')
+                ->modalDescription('O Comercial recebe um aviso por e-mail para revisar. Depois de enviada, a proposta não pode mais ser editada.')
+                ->action(function () use ($record) {
+                    abort_unless(auth()->user()?->can('update', $record), 403);
+
+                    try {
+                        $record->refresh()->enviarParaComercial();
+                        $this->refreshFormData(['status', 'sent_at']);
+                        Notification::make()->title('Proposta enviada ao Comercial')->success()->send();
+                    } catch (\RuntimeException $e) {
+                        Notification::make()->title('Não foi possível enviar')->body($e->getMessage())->warning()->send();
+                    }
+                }),
+
+            Actions\Action::make('editar_rascunho')
+                ->label('Editar')
+                ->icon('heroicon-o-pencil-square')
+                ->color('gray')
+                ->visible(fn () => PropostaComercialResource::canEdit($record))
+                ->url(fn () => PropostaComercialResource::getUrl('edit', ['record' => $record])),
+
             Actions\Action::make('aprovar')
                 ->label('Aprovar')
                 ->icon('heroicon-o-check-circle')
