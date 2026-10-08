@@ -161,7 +161,8 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-map-pin')
                     ->group('Comercial')
                     ->url(fn () => RastreamentoGps::getUrl())
-                    ->visible(fn () => (bool) auth()->user()?->can('viewAny', TraccarDevice::class)),
+                    ->visible(fn () => (bool) auth()->user()?->can('viewAny', TraccarDevice::class)
+                        && (\App\Support\Tenancy::current()?->hasFeature('menu_rastreamento_gps') ?? true)),
             ])
             ->renderHook(
                 PanelsRenderHook::TOPBAR_START,

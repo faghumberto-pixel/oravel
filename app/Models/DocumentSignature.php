@@ -42,6 +42,7 @@ class DocumentSignature extends Model
         'status',
         'expires_at',
         'document_hash',
+        'signed_pdf_path',
     ];
 
     protected $casts = [

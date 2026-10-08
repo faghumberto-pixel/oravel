@@ -549,3 +549,8 @@ Route::get('/leads', function () {
 require __DIR__.'/auth.php';
 require __DIR__.'/chat.php';
 require __DIR__.'/checkout.php';
+
+// Central: ver/baixar o contrato assinado de cada cliente (só administrador da plataforma).
+Route::middleware(['web', 'auth'])
+    ->get('/central/contratos-assinados/{signature}/pdf', \App\Http\Controllers\Central\ContratoAssinadoController::class)
+    ->name('central.contrato-assinado');
