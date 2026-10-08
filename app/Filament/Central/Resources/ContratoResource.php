@@ -82,6 +82,18 @@ class ContratoResource extends Resource
             }
         }
 
+        // Models que compartilham a mesma chave de módulo (ex.: Proposta
+        // Comercial e Template de Proposta) se sobrescreviam: só o último
+        // nome aparecia e o módulo "Propostas Comerciais" ficava invisível
+        // na tela de Contratos. Mostra todos os nomes da chave juntos.
+        foreach (static::labelsByFeature() as $feature => $labels) {
+            foreach ($grouped as $groupName => $options) {
+                if (isset($options[$feature]) && count($labels) > 1) {
+                    $grouped[$groupName][$feature] = implode(' / ', $labels);
+                }
+            }
+        }
+
         $grouped['Outros']['modulo_dashboard'] = 'Painel: Dashboard (Painel de Controle)';
 
         // modulo_configuracoes vai pro grupo "Configurações" de verdade (já
@@ -94,6 +106,21 @@ class ContratoResource extends Resource
         ksort($grouped);
 
         return $grouped;
+    }
+
+    /**
+     * @return array<string, array<int, string>> feature_key => nomes distintos dos módulos que a usam
+     */
+    protected static function labelsByFeature(): array
+    {
+        $map = [];
+        foreach (SaaSRegistry::modules() as $module) {
+            if ($module['feature']) {
+                $map[$module['feature']][] = $module['label'] ?? $module['slug'];
+            }
+        }
+
+        return array_map(fn ($labels) => array_values(array_unique($labels)), $map);
     }
 
     /**
