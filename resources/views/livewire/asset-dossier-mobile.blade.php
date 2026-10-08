@@ -156,6 +156,10 @@
                     <div class="mt-3 grid grid-cols-2 gap-3 text-sm">
                         <div><span class="block text-[11px] text-zinc-500">Odômetro Atual</span><span class="font-semibold text-zinc-100">{{ number_format((float) $asset->odometro_atual, 0, ',', '.') }} km</span></div>
                         <div><span class="block text-[11px] text-zinc-500">Km de Aquisição</span><span class="font-semibold text-zinc-100">{{ number_format((float) $asset->horimetro_inicial, 0, ',', '.') }} km</span></div>
+                        @if ($asset->carroceria_tipo || $asset->quantidade_eixos)
+                            <div><span class="block text-[11px] text-zinc-500">Carroceria</span><span class="font-semibold text-zinc-100">{{ \App\Models\Asset::carroceriaLabels()[$asset->carroceria_tipo] ?? '—' }}{{ $asset->carroceria_detalhe ? ' · '.$asset->carroceria_detalhe : '' }}</span></div>
+                            <div><span class="block text-[11px] text-zinc-500">Eixos</span><span class="font-semibold text-zinc-100">{{ $asset->quantidade_eixos ?? '—' }}</span></div>
+                        @endif
                     </div>
                 @else
                     <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">Horas Trabalhadas</h3>

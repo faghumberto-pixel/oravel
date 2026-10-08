@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Resources\AssetResource\Pages\EditAsset;
 use App\Filament\Resources\AssetResource\Pages\ListAssets;
+use App\Livewire\AssetDossierMobile;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Plan;
@@ -64,7 +65,7 @@ class AssetGroupAndVehicleFieldsTest extends TestCase
         foreach (['modelo', 'cor', 'chassi', 'manufacturing_year', 'horimetro_inicial', 'placa'] as $name) {
             $this->assertContains($name, $fields(), "Máquina deveria mostrar {$name}.");
         }
-        foreach (['renavam', 'odometro_atual', 'licenciamento_vencimento', 'ipva_vencimento', 'seguro_seguradora', 'seguro_vencimento', 'seguro_franquia_colisao', 'seguro_valor_cobertura', 'tacografo_numero'] as $name) {
+        foreach (['renavam', 'carroceria_tipo', 'quantidade_eixos', 'odometro_atual', 'licenciamento_vencimento', 'ipva_vencimento', 'seguro_seguradora', 'seguro_vencimento', 'seguro_franquia_colisao', 'seguro_valor_cobertura', 'tacografo_numero'] as $name) {
             $this->assertNotContains($name, $fields(), "Máquina não deveria mostrar {$name}.");
         }
 
@@ -73,7 +74,7 @@ class AssetGroupAndVehicleFieldsTest extends TestCase
         foreach (['modelo', 'cor', 'placa', 'renavam', 'chassi', 'manufacturing_year', 'ano_modelo', 'odometro_atual', 'horimetro_inicial', 'licenciamento_vencimento', 'ipva_vencimento', 'seguro_seguradora', 'seguro_apolice', 'seguro_vencimento', 'seguro_valor_cobertura', 'seguro_cobertura_terceiros', 'seguro_franquia_colisao', 'seguro_franquia_vidros'] as $name) {
             $this->assertContains($name, $fields(), "Veículo deveria mostrar {$name}.");
         }
-        foreach (['last_horimetro', 'tacografo_numero', 'tacografo_vencimento'] as $name) {
+        foreach (['last_horimetro', 'tacografo_numero', 'tacografo_vencimento', 'carroceria_tipo', 'carroceria_detalhe', 'quantidade_eixos'] as $name) {
             $this->assertNotContains($name, $fields(), "Veículo leve não deveria mostrar {$name}.");
         }
 
@@ -81,6 +82,10 @@ class AssetGroupAndVehicleFieldsTest extends TestCase
         $page->fillForm(['grupo' => Asset::GRUPO_VEICULO, 'veiculo_pesado' => true]);
         $this->assertContains('tacografo_numero', $fields());
         $this->assertContains('tacografo_vencimento', $fields());
+        // Carroceria e eixos são de caminhão: só aparecem para veículo pesado.
+        foreach (['carroceria_tipo', 'carroceria_detalhe', 'quantidade_eixos'] as $name) {
+            $this->assertContains($name, $fields(), "Veículo pesado deveria mostrar {$name}.");
+        }
     }
 
     public function test_vehicle_saves_normalized_plate_and_valid_chassis(): void
@@ -286,5 +291,40 @@ class AssetGroupAndVehicleFieldsTest extends TestCase
         $salvar(str_repeat('A', 22))->assertHasFormErrors(['placa']);       // longa demais
         $salvar('PLQ-888')->assertHasNoFormErrors();
         $this->assertSame('PLQ888', $asset->fresh()->placa);
+    }
+
+    public function test_truck_saves_body_type_detail_and_axle_count_and_shows_them_in_the_dossier(): void
+    {
+        [$tenant, $admin] = $this->tenantWithAdmin();
+        $this->actingAs($admin);
+        $asset = $this->asset($tenant);
+
+        $this->assertArrayHasKey('bau', Asset::carroceriaLabels());
+        $this->assertArrayHasKey('carga_aberta', Asset::carroceriaLabels());
+        $this->assertArrayHasKey('implemento', Asset::carroceriaLabels());
+
+        Livewire::test(EditAsset::class, ['record' => $asset->getRouteKey()])
+            ->fillForm(['patrimonio' => 'PAT-'.uniqid(), 'grupo' => Asset::GRUPO_VEICULO, 'veiculo_pesado' => true,
+                'carroceria_tipo' => 'bau', 'carroceria_detalhe' => 'Baú de 8 m', 'quantidade_eixos' => 3])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $asset->refresh();
+        $this->assertSame('bau', $asset->carroceria_tipo);
+        $this->assertSame('Baú de 8 m', $asset->carroceria_detalhe);
+        $this->assertSame(3, $asset->quantidade_eixos);
+
+        // Valores fora do que existe são recusados.
+        $tentar = fn (array $dados) => Livewire::test(EditAsset::class, ['record' => $asset->getRouteKey()])->fillForm($dados)->call('save');
+        $tentar(['quantidade_eixos' => 0])->assertHasFormErrors(['quantidade_eixos']);
+        $tentar(['quantidade_eixos' => 13])->assertHasFormErrors(['quantidade_eixos']);
+        $tentar(['carroceria_tipo' => 'nao-existe'])->assertHasFormErrors(['carroceria_tipo']);
+
+        // O dossiê enxerga o ativo do tipo Veículo como veículo (antes só valia a marca antiga is_vehicle).
+        $this->assertTrue($asset->fresh()->is_vehicle);
+        $this->assertFalse($this->asset($tenant, ['grupo' => Asset::GRUPO_MAQUINA])->is_vehicle);
+
+        // Dossiê do celular mostra a carroceria e os eixos.
+        Livewire::test(AssetDossierMobile::class, ['assetId' => $asset->id])->assertSee('Baú · Baú de 8 m')->assertSee('Eixos');
     }
 }

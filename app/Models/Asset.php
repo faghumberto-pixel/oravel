@@ -85,6 +85,7 @@ class Asset extends Model implements HasMedia
         'seguro_franquia_vidros' => 'decimal:2',
         'seguro_valor_cobertura' => 'decimal:2',
         'seguro_cobertura_terceiros' => 'decimal:2',
+        'quantidade_eixos' => 'integer',
         'tacografo_vencimento' => 'date',
         'acquisition_date' => 'date',
         'acquisition_value' => 'decimal:2',
@@ -324,6 +325,16 @@ class Asset extends Model implements HasMedia
     public function selectLabel(): string
     {
         return ($this->patrimonio ? "{$this->patrimonio} — " : '').$this->name.($this->placa ? " ({$this->placa})" : '');
+    }
+
+    /** @return array<string, string> tipos de carroceria/implemento do veículo (caminhão) */
+    public static function carroceriaLabels(): array
+    {
+        return [
+            'bau' => 'Baú', 'bau_refrigerado' => 'Baú refrigerado (frigorífico)', 'carga_aberta' => 'Carga aberta', 'graneleiro' => 'Graneleiro',
+            'sider' => 'Sider (lona lateral)', 'tanque' => 'Tanque', 'cacamba' => 'Caçamba basculante', 'plataforma' => 'Plataforma / prancha',
+            'cegonha' => 'Cegonha', 'munck' => 'Guindauto (Munck)', 'betoneira' => 'Betoneira', 'implemento' => 'Implemento rodoviário (carreta)', 'outro' => 'Outro',
+        ];
     }
 
     /** Placa/chassi como estão gravados: maiúsculas, sem hífen nem espaço. */
@@ -723,6 +734,15 @@ class Asset extends Model implements HasMedia
     public function isVehicle(): bool
     {
         return $this->grupo === self::GRUPO_VEICULO;
+    }
+
+    /**
+     * `is_vehicle` é uma marca antiga (importação de planilha, dossiê). Hoje o tipo do ativo é `grupo`:
+     * vale como veículo quem tem a marca antiga OU o tipo Veículo.
+     */
+    public function getIsVehicleAttribute($value): bool
+    {
+        return (bool) $value || $this->grupo === self::GRUPO_VEICULO;
     }
 
     public function registerMediaCollections(): void

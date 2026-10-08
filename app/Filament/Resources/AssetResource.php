@@ -359,6 +359,16 @@ class AssetResource extends Resource
                                     Forms\Components\TextInput::make('ano_modelo')->label('Ano do modelo')->numeric()->minValue(1950)->maxValue((int) date('Y') + 2),
                                     Forms\Components\DatePicker::make('licenciamento_vencimento')->label('Vencimento do licenciamento (emplacamento)'),
                                     Forms\Components\DatePicker::make('ipva_vencimento')->label('Vencimento do IPVA'),
+                                    Forms\Components\Select::make('carroceria_tipo')->visible(fn (Get $get) => $get('grupo') === Asset::GRUPO_VEICULO && (bool) $get('veiculo_pesado'))
+                                        ->label('Tipo de carroceria')
+                                        ->options(Asset::carroceriaLabels())->in(array_keys(Asset::carroceriaLabels()))->native(false)->searchable()
+                                        ->placeholder('Baú, carga aberta, implemento...'),
+                                    Forms\Components\TextInput::make('carroceria_detalhe')->visible(fn (Get $get) => $get('grupo') === Asset::GRUPO_VEICULO && (bool) $get('veiculo_pesado'))
+                                        ->label('Detalhe da carroceria / implemento')
+                                        ->placeholder('Ex.: baú de 8 m, carreta 3 eixos')->maxLength(191),
+                                    Forms\Components\TextInput::make('quantidade_eixos')->visible(fn (Get $get) => $get('grupo') === Asset::GRUPO_VEICULO && (bool) $get('veiculo_pesado'))
+                                        ->label('Quantidade de eixos')
+                                        ->numeric()->integer()->minValue(1)->maxValue(12),
                                     Forms\Components\TextInput::make('seguro_seguradora')->label('Seguro — seguradora')->maxLength(191),
                                     Forms\Components\TextInput::make('seguro_apolice')->label('Seguro — nº da apólice')->maxLength(191),
                                     Forms\Components\DatePicker::make('seguro_vencimento')->label('Vencimento do seguro'),
@@ -999,6 +1009,17 @@ class AssetResource extends Resource
                     ->date('d/m/Y')
                     ->badge()
                     ->color(fn (Asset $record) => VehicleExpirations::status($record->licenciamento_vencimento)[1])
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('carroceria_tipo')
+                    ->label('Carroceria')
+                    ->formatStateUsing(fn (?string $state) => Asset::carroceriaLabels()[$state] ?? $state)
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('quantidade_eixos')
+                    ->label('Eixos')
                     ->placeholder('—')
                     ->toggleable(isToggledHiddenByDefault: true),
 

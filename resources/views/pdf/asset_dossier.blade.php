@@ -103,6 +103,13 @@
                 <td><span class="label">Km de Aquisição</span><span class="value">{{ number_format((float) $asset->horimetro_inicial, 0, ',', '.') }} km</span></td>
                 <td><span class="label">Km rodados na frota</span><span class="value">{{ number_format(max(0, (float) $asset->odometro_atual - (float) $asset->horimetro_inicial), 0, ',', '.') }} km</span></td>
             </tr>
+            @if ($asset->carroceria_tipo || $asset->quantidade_eixos)
+            <tr>
+                <td><span class="label">Carroceria</span><span class="value">{{ \App\Models\Asset::carroceriaLabels()[$asset->carroceria_tipo] ?? '—' }}{{ $asset->carroceria_detalhe ? ' · '.$asset->carroceria_detalhe : '' }}</span></td>
+                <td><span class="label">Eixos</span><span class="value">{{ $asset->quantidade_eixos ?? '—' }}</span></td>
+                <td></td>
+            </tr>
+            @endif
         </table>
     </div>
     @else
