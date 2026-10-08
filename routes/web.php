@@ -11,7 +11,6 @@ use App\Http\Controllers\ChatHistoryPdfController;
 use App\Http\Controllers\ClientMagicLinkController;
 use App\Http\Controllers\ClientManagementPrintController;
 use App\Http\Controllers\ClientReceivableMirrorController;
-use App\Http\Controllers\ContractPdfController;
 use App\Http\Controllers\ContractTimelinePrintController;
 use App\Http\Controllers\EquipmentDamageReportController;
 use App\Http\Controllers\GenericRecordPrintController;
@@ -171,12 +170,12 @@ Route::post('/hour-meter/publico/{token}', [HourMeterPublicController::class, 's
 // (removed manual routes - Filament auto-discovers the Resource)
 
 // Guard 'client' (Portal do Cliente), não 'web' -- fora do grupo auth
-// abaixo. ContractPdfController já filtra tenant_id+client_id na query,
+// abaixo. ContratoVisualizarController já filtra tenant_id+client_id na query,
 // o middleware aqui é defesa em profundidade (401 limpo pra quem nem
 // logou, em vez do controller ter que checar Auth::guard() manualmente).
 Route::middleware(['auth:client'])->group(function () {
-    Route::get('/cliente/contratos/{contract}/pdf', [ContractPdfController::class, 'download'])
-        ->name('cliente.contracts.pdf');
+    Route::get('/cliente/contratos/{contract}', [\App\Http\Controllers\ContratoVisualizarController::class, 'portal'])
+        ->name('cliente.contracts.ver');
     Route::get('/cliente/financeiro/{accountReceivable}/espelho', [ClientReceivableMirrorController::class, 'download'])
         ->name('cliente.receivable.mirror');
 });
@@ -243,6 +242,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/conta-bloqueada', fn () => view('checkout.blocked', [
         'tenant' => auth()->user()?->tenant,
     ]))->name('admin.conta-bloqueada');
+
+    Route::get('/contratos/{contract}/visualizar', [\App\Http\Controllers\ContratoVisualizarController::class, 'painel'])
+        ->name('contratos.visualizar');
 
     Route::get('/dashboard', function () {
         $user = auth()->user();

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Contrato assinado - {{ $cliente->name }}</title>
+    <title>{{ $titulo }}</title>
     <style>
         * { box-sizing: border-box; }
         body { margin: 0; background: #f1f2f4; color: #1f2937; font-family: 'Helvetica', 'Arial', sans-serif; }
@@ -30,28 +30,23 @@
 </head>
 <body>
     <div class="barra">
-        <h1>Contrato assinado — {{ $cliente->name }}<small>Documento e comprovante de assinatura. Use Imprimir para papel ou para salvar em PDF pelo navegador.</small></h1>
-        <a href="{{ \App\Filament\Central\Resources\ContratoAssinadoResource::getUrl('index', panel: 'central') }}">Voltar</a>
+        <h1>{{ $titulo }}<small>{{ $subtitulo ?? 'Documento e comprovante de assinatura. Use Imprimir para papel ou para salvar em PDF pelo navegador.' }}</small></h1>
+        <a href="{{ $voltar }}">Voltar</a>
         <a class="principal" href="#" onclick="window.print(); return false;">Imprimir</a>
     </div>
 
     <div class="resumo">
-        <div><b>Assinado por</b>{{ $assinatura->signer_name }}</div>
-        <div><b>CPF/CNPJ</b>{{ $assinatura->signer_document ?: '—' }}</div>
-        <div><b>E-mail</b>{{ $assinatura->signer_email ?: '—' }}</div>
-        <div><b>Assinado em</b>{{ $assinatura->signed_at?->format('d/m/Y H:i') }}</div>
-        <div><b>IP</b>{{ $assinatura->ip_address ?: '—' }}</div>
-        <div><b>Código de segurança</b>{{ $assinatura->document_hash ? substr($assinatura->document_hash, 0, 24).'…' : '—' }}</div>
+        @foreach($resumo as $rotulo => $valor)
+            <div><b>{{ $rotulo }}</b>{{ $valor }}</div>
+        @endforeach
     </div>
 
-    <div class="folha">
-        <h2>Contrato</h2>
-        <iframe srcdoc="{{ $contrato }}" title="Contrato"></iframe>
-    </div>
-    <div class="folha nova-pagina">
-        <h2>Comprovante de assinatura</h2>
-        <iframe srcdoc="{{ $auditoria }}" title="Comprovante de assinatura"></iframe>
-    </div>
+    @foreach($secoes as $secao)
+        <div class="folha {{ !empty($secao['nova_pagina']) ? 'nova-pagina' : '' }}">
+            <h2>{{ $secao['titulo'] }}</h2>
+            <iframe srcdoc="{{ $secao['html'] }}" title="{{ $secao['titulo'] }}"></iframe>
+        </div>
+    @endforeach
     <script>
         // Cada documento aparece inteiro (sem barra de rolagem interna), para
         // a impressão sair com todas as páginas.

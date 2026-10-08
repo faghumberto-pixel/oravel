@@ -49,33 +49,35 @@ class ClientPortalContractPdfTest extends TestCase
         return [$tenant, $client, $contract];
     }
 
-    public function test_client_can_download_own_contract_pdf(): void
+    public function test_client_can_view_own_contract_page_to_print(): void
     {
         [, $client, $contract] = $this->makeTenantWithClientAndContract('A');
 
         $response = $this->actingAs($client, 'client')
-            ->get(route('cliente.contracts.pdf', ['contract' => $contract->id]));
+            ->get(route('cliente.contracts.ver', ['contract' => $contract->id]));
 
         $response->assertOk();
-        $response->assertHeader('content-type', 'application/pdf');
+        $this->assertStringContainsString('text/html', $response->headers->get('Content-Type'));
+        $response->assertSee('Imprimir');
+        $response->assertSee($contract->contract_number);
     }
 
-    public function test_client_cannot_download_other_client_contract_pdf(): void
+    public function test_client_cannot_view_other_client_contract_page(): void
     {
         [, $clientA] = $this->makeTenantWithClientAndContract('A');
         [, , $contractB] = $this->makeTenantWithClientAndContract('B');
 
         $response = $this->actingAs($clientA, 'client')
-            ->get(route('cliente.contracts.pdf', ['contract' => $contractB->id]));
+            ->get(route('cliente.contracts.ver', ['contract' => $contractB->id]));
 
         $response->assertNotFound();
     }
 
-    public function test_guest_cannot_download_contract_pdf(): void
+    public function test_guest_cannot_view_contract_page(): void
     {
         [, , $contract] = $this->makeTenantWithClientAndContract('A');
 
-        $response = $this->get(route('cliente.contracts.pdf', ['contract' => $contract->id]));
+        $response = $this->get(route('cliente.contracts.ver', ['contract' => $contract->id]));
 
         $response->assertRedirect();
     }

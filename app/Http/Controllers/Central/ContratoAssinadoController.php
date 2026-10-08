@@ -30,11 +30,21 @@ class ContratoAssinadoController extends Controller
                 : 'Não capturada',
         ])->render();
 
-        return response()->view('central.contrato-assinado', [
-            'assinatura' => $assinatura,
-            'cliente' => $tenant,
-            'contrato' => $contrato,
-            'auditoria' => $auditoria,
+        return response()->view('documentos.visualizar', [
+            'titulo' => "Contrato assinado — {$tenant->name}",
+            'voltar' => \App\Filament\Central\Resources\ContratoAssinadoResource::getUrl('index', panel: 'central'),
+            'resumo' => [
+                'Assinado por' => $assinatura->signer_name,
+                'CPF/CNPJ' => $assinatura->signer_document ?: '—',
+                'E-mail' => $assinatura->signer_email ?: '—',
+                'Assinado em' => $assinatura->signed_at?->format('d/m/Y H:i'),
+                'IP' => $assinatura->ip_address ?: '—',
+                'Código de segurança' => $assinatura->document_hash ? substr($assinatura->document_hash, 0, 24).'…' : '—',
+            ],
+            'secoes' => [
+                ['titulo' => 'Contrato', 'html' => $contrato],
+                ['titulo' => 'Comprovante de assinatura', 'html' => $auditoria, 'nova_pagina' => true],
+            ],
         ]);
     }
 

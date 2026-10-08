@@ -396,6 +396,11 @@ class ContractResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('ver_imprimir')
+                    ->label('Ver e imprimir')
+                    ->icon('heroicon-o-printer')
+                    ->url(fn (Contract $record) => route('contratos.visualizar', ['contract' => $record->id]))
+                    ->openUrlInNewTab(),
                 static::generateSignatureAction(),
                 static::copySignatureLinkAction(),
                 static::viewSignatureCertificateAction(),
