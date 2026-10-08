@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Módulos de MENU: cada menu pai (Relatórios > Análises, Gestão de Estoque...) e página
- * sem tabela própria vira uma chave de contrato, para a Central poder ligar/desligar
- * o menu inteiro. `herda` lista os módulos que já liberavam esse menu antes de ele ter
- * chave própria: a migração liga a chave nos contratos que tinham algum deles (ou em
- * todos, quando a lista é vazia), para ninguém perder menu ao publicar.
+ * Módulos de MENU: cada menu pai (Relatórios > Análises, Gestão de Estoque...) e cada tela
+ * avulsa (PMP, Relatórios, Pátio...) vira uma chave de contrato, para a Central poder
+ * ligar/desligar o menu inteiro. `herda` lista os módulos que já liberavam a tela antes
+ * de ela ter chave própria: a migração liga a chave nos contratos que tinham algum deles
+ * (ou em todos, quando a lista é vazia), para ninguém perder menu ao publicar.
  */
 return [
     'menu_almoxarifado' => [
@@ -15,12 +15,89 @@ return [
         'slug' => 'almoxarifado',
         'herda' => ['tabela_internal_units', 'tabela_material_categories', 'tabela_material_location_stock', 'tabela_materials', 'tabela_material_stock_takes', 'tabela_parts', 'tabela_storage_locations', 'tabela_warehouses', 'ia_diagnostico_avarias', 'tabela_material_stock_movements'],
     ],
+    'menu_alocacao_tecnicos_pmp' => [
+        'label' => 'Tela: PMP → Alocação de Técnicos',
+        'grupo' => 'PMP',
+        'menu' => 'Alocação de Técnicos',
+        'slug' => 'alocacao-tecnicos-pmp',
+        'herda' => ['tabela_maintenance_plans'],
+    ],
+    'menu_apontamento_horimetro' => [
+        'label' => 'Tela: Manutenção → Apontamento de Horímetro',
+        'grupo' => 'Manutenção',
+        'menu' => 'Apontamento de Horímetro',
+        'slug' => 'apontamento-horimetro',
+        'herda' => ['tabela_horimeter_readings'],
+    ],
+    'menu_avarias_reincidencia' => [
+        'label' => 'Tela: Relatórios → Avarias & Reincidência',
+        'grupo' => 'Relatórios',
+        'menu' => 'Avarias & Reincidência',
+        'slug' => 'avarias-reincidencia',
+        'herda' => ['tabela_equipment_damages'],
+    ],
+    'menu_carga_tecnica' => [
+        'label' => 'Tela: Relatórios → Carga de Técnicos',
+        'grupo' => 'Relatórios',
+        'menu' => 'Carga de Técnicos',
+        'slug' => 'carga-tecnica',
+        'herda' => ['tabela_maintenance_orders'],
+    ],
+    'menu_cobertura_pmp' => [
+        'label' => 'Tela: PMP → Cobertura de PMP',
+        'grupo' => 'PMP',
+        'menu' => 'Cobertura de PMP',
+        'slug' => 'cobertura-pmp',
+        'herda' => ['tabela_maintenance_plans'],
+    ],
     'menu_compliance_status' => [
-        'label' => 'Página: Status de Conformidade',
+        'label' => 'Tela: Configurações → Status de Conformidade',
         'grupo' => 'Configurações',
         'menu' => 'Status de Conformidade',
         'slug' => 'compliance-status',
         'herda' => [],
+    ],
+    'menu_consulta_cliente_pmp' => [
+        'label' => 'Tela: PMP → Consulta por Cliente',
+        'grupo' => 'PMP',
+        'menu' => 'Consulta por Cliente',
+        'slug' => 'consulta-cliente-pmp',
+        'herda' => ['tabela_maintenance_plans'],
+    ],
+    'menu_crm_agenda' => [
+        'label' => 'Tela: Comercial → Agenda Comercial',
+        'grupo' => 'Comercial',
+        'menu' => 'Agenda Comercial',
+        'slug' => 'crm-agenda',
+        'herda' => ['tabela_crm_leads'],
+    ],
+    'menu_crm_mapa' => [
+        'label' => 'Tela: Comercial → Mapa Comercial',
+        'grupo' => 'Comercial',
+        'menu' => 'Mapa Comercial',
+        'slug' => 'crm-mapa',
+        'herda' => ['tabela_crm_leads'],
+    ],
+    'menu_desempenho_tecnico' => [
+        'label' => 'Tela: Relatórios → Desempenho & Retrabalho',
+        'grupo' => 'Relatórios',
+        'menu' => 'Desempenho & Retrabalho',
+        'slug' => 'desempenho-tecnico',
+        'herda' => ['tabela_maintenance_orders'],
+    ],
+    'menu_epi_compliance_report' => [
+        'label' => 'Tela: EPI → Conformidade NR-6 (EPI)',
+        'grupo' => 'EPI',
+        'menu' => 'Conformidade NR-6 (EPI)',
+        'slug' => 'epi-compliance-report',
+        'herda' => ['tabela_epi_deliveries'],
+    ],
+    'menu_eventos_e_falhas' => [
+        'label' => 'Tela: Relatórios → Eventos e Falhas',
+        'grupo' => 'Relatórios',
+        'menu' => 'Eventos e Falhas',
+        'slug' => 'eventos-e-falhas',
+        'herda' => ['tabela_equipment_damages', 'tabela_activity_log_entries'],
     ],
     'menu_gestao_ativos' => [
         'label' => 'Menu: Ativos → Gestão de Ativos',
@@ -28,6 +105,13 @@ return [
         'menu' => 'Gestão de Ativos',
         'slug' => 'gestao-ativos',
         'herda' => ['tabela_asset_categories', 'tabela_assets', 'tabela_checklist_groups'],
+    ],
+    'menu_gestao_clientes' => [
+        'label' => 'Tela: Comercial → Gestão de Clientes',
+        'grupo' => 'Comercial',
+        'menu' => 'Gestão de Clientes',
+        'slug' => 'gestao-clientes',
+        'herda' => ['tabela_clients'],
     ],
     'menu_gestao_comercial' => [
         'label' => 'Menu: Comercial → Gestão Comercial',
@@ -113,6 +197,104 @@ return [
         'slug' => 'maintenancao-operacao',
         'herda' => ['tabela_maintenance_orders', 'tabela_preventive_maintenance_executions', 'tabela_horimeter_readings'],
     ],
+    'menu_maintenance_kanban' => [
+        'label' => 'Tela: Manutenção → Kanban do Pátio',
+        'grupo' => 'Manutenção',
+        'menu' => 'Kanban do Pátio',
+        'slug' => 'maintenance-kanban',
+        'herda' => ['tabela_maintenance_orders'],
+    ],
+    'menu_mapa_equipamentos' => [
+        'label' => 'Tela: Ativos → Mapa de Equipamentos',
+        'grupo' => 'Ativos',
+        'menu' => 'Mapa de Equipamentos',
+        'slug' => 'mapa-equipamentos',
+        'herda' => ['tabela_assets'],
+    ],
+    'menu_nr13_compliance_dashboard' => [
+        'label' => 'Tela: Conformidade NR-13 → Dashboard',
+        'grupo' => 'Conformidade NR-13',
+        'menu' => 'Dashboard',
+        'slug' => 'nr13-compliance-dashboard',
+        'herda' => ['tabela_nr13_documents'],
+    ],
+    'menu_painel_criticidade' => [
+        'label' => 'Tela: Relatórios → Painel de Criticidade',
+        'grupo' => 'Relatórios',
+        'menu' => 'Painel de Criticidade',
+        'slug' => 'painel-criticidade',
+        'herda' => ['tabela_assets'],
+    ],
+    'menu_painel_pmp' => [
+        'label' => 'Tela: PMP → Dashboard PMP',
+        'grupo' => 'PMP',
+        'menu' => 'Dashboard PMP',
+        'slug' => 'painel-pmp',
+        'herda' => ['tabela_maintenance_plans'],
+    ],
+    'menu_painel_sla_emergencia' => [
+        'label' => 'Tela: Relatórios → Painel de SLA',
+        'grupo' => 'Relatórios',
+        'menu' => 'Painel de SLA',
+        'slug' => 'painel-sla-emergencia',
+        'herda' => ['tabela_maintenance_orders'],
+    ],
+    'menu_patio_aprovacoes' => [
+        'label' => 'Tela: Logística → Aprovações do Pátio',
+        'grupo' => 'Logística',
+        'menu' => 'Aprovações do Pátio',
+        'slug' => 'patio-aprovacoes',
+        'herda' => ['tabela_equipment_movements'],
+    ],
+    'menu_patio_chegadas' => [
+        'label' => 'Tela: Logística → Chegadas no Pátio',
+        'grupo' => 'Logística',
+        'menu' => 'Chegadas no Pátio',
+        'slug' => 'patio-chegadas',
+        'herda' => ['tabela_equipment_movements'],
+    ],
+    'menu_planta_baixa_patio_ativos' => [
+        'label' => 'Tela: Ativos → Planta Baixa (Pátio de Ativos)',
+        'grupo' => 'Ativos',
+        'menu' => 'Planta Baixa (Pátio de Ativos)',
+        'slug' => 'planta-baixa-patio-ativos',
+        'herda' => ['tabela_assets'],
+    ],
+    'menu_preventive_maintenance_kanban' => [
+        'label' => 'Tela: PMP → Kanban Preventivas',
+        'grupo' => 'PMP',
+        'menu' => 'Kanban Preventivas',
+        'slug' => 'preventive-maintenance-kanban',
+        'herda' => ['tabela_maintenance_plans'],
+    ],
+    'menu_proposta_comercial_kanban' => [
+        'label' => 'Tela: Comercial → Kanban Comercial',
+        'grupo' => 'Comercial',
+        'menu' => 'Kanban Comercial',
+        'slug' => 'proposta-comercial-kanban',
+        'herda' => ['tabela_proposta_comercial'],
+    ],
+    'menu_rastreamento_gps' => [
+        'label' => 'Tela: Logística → Rastreamento GPS',
+        'grupo' => 'Logística',
+        'menu' => 'Rastreamento GPS',
+        'slug' => 'rastreamento-gps',
+        'herda' => ['tabela_traccar_devices'],
+    ],
+    'menu_relatorio_rastreamento' => [
+        'label' => 'Tela: Logística → Relatório de Rastreamento',
+        'grupo' => 'Logística',
+        'menu' => 'Relatório de Rastreamento',
+        'slug' => 'relatorio-rastreamento',
+        'herda' => ['tabela_traccar_devices'],
+    ],
+    'menu_relatorios' => [
+        'label' => 'Tela: Relatórios → Relatórios',
+        'grupo' => 'Relatórios',
+        'menu' => 'Relatórios',
+        'slug' => 'relatorios',
+        'herda' => ['tabela_maintenance_orders'],
+    ],
     'menu_relatorios_analises' => [
         'label' => 'Menu: Relatórios → Análises',
         'grupo' => 'Relatórios',
@@ -133,5 +315,26 @@ return [
         'menu' => 'Painéis',
         'slug' => 'relatorios-paineis',
         'herda' => ['tabela_assets', 'tabela_maintenance_orders'],
+    ],
+    'menu_requisicao_reposicao_estoque' => [
+        'label' => 'Tela: Materiais e Peças → Reposição de Estoque',
+        'grupo' => 'Materiais e Peças',
+        'menu' => 'Reposição de Estoque',
+        'slug' => 'requisicao-reposicao-estoque',
+        'herda' => ['tabela_material_requests'],
+    ],
+    'menu_reservas_urgentes' => [
+        'label' => 'Tela: Manutenção → Reservas Urgentes',
+        'grupo' => 'Manutenção',
+        'menu' => 'Reservas Urgentes',
+        'slug' => 'reservas-urgentes',
+        'herda' => ['tabela_maintenance_orders'],
+    ],
+    'menu_transferencia_estoque' => [
+        'label' => 'Tela: Materiais e Peças → Transferência para Volante',
+        'grupo' => 'Materiais e Peças',
+        'menu' => 'Transferência para Volante',
+        'slug' => 'transferencia-estoque',
+        'herda' => ['tabela_parts'],
     ],
 ];
