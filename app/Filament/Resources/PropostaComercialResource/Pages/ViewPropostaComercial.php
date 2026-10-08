@@ -55,6 +55,33 @@ class ViewPropostaComercial extends ViewRecord
                 ->visible(fn () => PropostaComercialResource::canEdit($record))
                 ->url(fn () => PropostaComercialResource::getUrl('edit', ['record' => $record])),
 
+            // Envio da proposta APROVADA ao cliente, pelo computador.
+            Actions\Action::make('reenviar_cliente')
+                ->label('Reenviar ao cliente (e-mail)')
+                ->icon('heroicon-o-envelope')
+                ->color('info')
+                ->visible(fn () => $record->status === PropostaComercial::STATUS_APROVADA_INTERNA && auth()->user()?->can('update', $record))
+                ->requiresConfirmation()
+                ->modalDescription('Envia de novo o PDF e o link para o cliente aceitar ou recusar, para o e-mail cadastrado dele.')
+                ->action(function () use ($record) {
+                    abort_unless(auth()->user()?->can('update', $record), 403);
+
+                    try {
+                        $record->refresh()->reenviarAoCliente(auth()->user());
+                        Notification::make()->title('Proposta reenviada ao cliente')->success()->send();
+                    } catch (\RuntimeException $e) {
+                        Notification::make()->title('Não foi possível reenviar')->body($e->getMessage())->warning()->send();
+                    }
+                }),
+
+            Actions\Action::make('whatsapp_cliente')
+                ->label('Enviar por WhatsApp')
+                ->icon('heroicon-o-chat-bubble-left-right')
+                ->color('success')
+                ->visible(fn () => filled($record->linkWhatsapp()))
+                ->url(fn () => $record->linkWhatsapp())
+                ->openUrlInNewTab(),
+
             Actions\Action::make('aprovar')
                 ->label('Aprovar')
                 ->icon('heroicon-o-check-circle')

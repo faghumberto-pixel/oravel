@@ -9,6 +9,7 @@ use App\Filament\Resources\PropostaComercialResource\Pages\ViewPropostaComercial
 use App\Mail\GenericPdfMail;
 use App\Models\AssetCategory;
 use App\Models\Client;
+use App\Models\EmailMessage;
 use App\Models\EquipmentDamage;
 use App\Models\Plan;
 use App\Models\PropostaComercial;
@@ -159,5 +160,88 @@ class PropostaComercialEnvioDesktopTest extends TestCase
 
         $this->assertNull($kanban()->get(PropostaComercial::STATUS_RASCUNHO));
         $this->assertTrue($kanban()->get(PropostaComercial::STATUS_ENVIADA_PARA_COMERCIAL)->contains('id', $proposta->id));
+    }
+
+    private function aprovada(Tenant $tenant, User $admin, array $cliente = []): PropostaComercial
+    {
+        $proposta = $this->rascunho($tenant, $admin);
+        $proposta->client->update(array_merge(['email' => 'cliente@teste.com', 'name' => 'Cliente Exemplo'], $cliente));
+        $proposta->enviarParaComercial();
+        $proposta->aprovar($admin);
+
+        return $proposta->fresh();
+    }
+
+    public function test_enviar_pelo_cartao_do_kanban_move_o_cartao_e_recusa_quem_nao_pode(): void
+    {
+        Mail::fake();
+        [$tenant, $admin] = $this->cliente();
+        $this->actingAs($admin);
+        $proposta = $this->rascunho($tenant, $admin);
+
+        Livewire::test(PropostaComercialKanban::class)
+            ->assertSee('Enviar ao Comercial')
+            ->call('enviar', $proposta->id)
+            ->assertNotified('Proposta enviada ao Comercial')
+            ->assertDontSee('wire:click="enviar(');
+
+        $this->assertSame(PropostaComercial::STATUS_ENVIADA_PARA_COMERCIAL, $proposta->fresh()->status);
+
+        $semItem = $this->rascunho($tenant, $admin, comItem: false);
+        Livewire::test(PropostaComercialKanban::class)->call('enviar', $semItem->id)->assertNotified('Não foi possível enviar');
+        $this->assertSame(PropostaComercial::STATUS_RASCUNHO, $semItem->fresh()->status);
+
+        [, $outroAdmin] = $this->cliente();
+        $this->actingAs($outroAdmin);
+        $this->expectException(ModelNotFoundException::class);
+        Livewire::test(PropostaComercialKanban::class)->call('enviar', $semItem->id);
+    }
+
+    public function test_reenviar_ao_cliente_manda_de_novo_o_pdf_pela_caixa_de_email_so_quando_aguarda_o_cliente(): void
+    {
+        Mail::fake();
+        [$tenant, $admin] = $this->cliente();
+        $this->actingAs($admin);
+        $proposta = $this->aprovada($tenant, $admin);
+        $emails = fn () => EmailMessage::where('related_type', PropostaComercial::class)->where('related_id', $proposta->id)->count();
+        $this->assertSame(1, $emails());   // o da aprovação
+
+        Livewire::test(ViewPropostaComercial::class, ['record' => $proposta->getRouteKey()])
+            ->assertActionVisible('reenviar_cliente')
+            ->callAction('reenviar_cliente')
+            ->assertNotified('Proposta reenviada ao cliente');
+        $this->assertSame(2, $emails());
+
+        // Sem e-mail do cliente ou fora do estado "aguardando cliente": recusa.
+        $proposta->client->update(['email' => null]);
+        Livewire::test(ViewPropostaComercial::class, ['record' => $proposta->getRouteKey()])->callAction('reenviar_cliente')->assertNotified('Não foi possível reenviar');
+        $this->assertSame(2, $emails());
+        $rascunho = $this->rascunho($tenant, $admin);
+        Livewire::test(ViewPropostaComercial::class, ['record' => $rascunho->getRouteKey()])->assertActionHidden('reenviar_cliente')->assertActionHidden('whatsapp_cliente');
+    }
+
+    public function test_link_do_whatsapp_leva_o_numero_a_mensagem_e_o_link_de_aceite(): void
+    {
+        Mail::fake();
+        [$tenant, $admin] = $this->cliente();
+        $this->actingAs($admin);
+        $proposta = $this->aprovada($tenant, $admin, ['whatsapp' => '(19) 99933-2615']);
+
+        $link = $proposta->linkWhatsapp();
+        $this->assertStringStartsWith('https://wa.me/5519999332615?text=', $link);
+        $texto = urldecode(substr($link, strlen('https://wa.me/5519999332615?text=')));
+        $this->assertStringContainsString('Cliente Exemplo', $texto);
+        $this->assertStringContainsString(route('proposta-comercial.public-approval', $proposta->approval_token), $texto);
+
+        // Usa o telefone quando não há WhatsApp; número já com 55 não é duplicado; número curto não gera link.
+        $proposta->client->update(['whatsapp' => null, 'phone' => '5511988887777']);
+        $this->assertStringStartsWith('https://wa.me/5511988887777?text=', $proposta->fresh()->linkWhatsapp());
+        $proposta->client->update(['phone' => '1234']);
+        $this->assertNull($proposta->fresh()->linkWhatsapp());
+
+        Livewire::test(ViewPropostaComercial::class, ['record' => $proposta->getRouteKey()])->assertActionHidden('whatsapp_cliente');
+        $proposta->client->update(['whatsapp' => '19999332615']);
+        Livewire::test(ViewPropostaComercial::class, ['record' => $proposta->getRouteKey()])->assertActionVisible('whatsapp_cliente');
+        Livewire::test(PropostaComercialKanban::class)->assertSee('Enviar por WhatsApp');
     }
 }

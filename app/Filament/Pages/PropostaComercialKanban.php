@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\PropostaComercial;
 use App\Support\Tenancy;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Collection;
@@ -40,6 +41,20 @@ class PropostaComercialKanban extends Page
     public static function canAccess(): bool
     {
         return (bool) auth()->user()?->can('viewAny', PropostaComercial::class);
+    }
+
+    /** Envia o rascunho ao Comercial direto do cartão (mesma regra do botão na tela da proposta). */
+    public function enviar(string $propostaId): void
+    {
+        $proposta = PropostaComercial::where('tenant_id', Tenancy::current()?->id)->findOrFail($propostaId);
+        abort_unless(auth()->user()?->can('update', $proposta), 403);
+
+        try {
+            $proposta->enviarParaComercial();
+            Notification::make()->title('Proposta enviada ao Comercial')->success()->send();
+        } catch (\RuntimeException $e) {
+            Notification::make()->title('Não foi possível enviar')->body($e->getMessage())->warning()->send();
+        }
     }
 
     public function getMaxContentWidth(): MaxWidth

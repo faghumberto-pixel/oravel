@@ -270,6 +270,15 @@ class PropostaComercial extends Model
             $this->update(['solicitacao_locacao_id' => $solicitacao->id]);
         }
 
+        $this->enviarPdfAoCliente($revisor);
+    }
+
+    /**
+     * Gera o PDF e envia ao cliente pela Caixa de E-mail (fica registrado e ligado a esta proposta).
+     * Usado na aprovação e no reenvio.
+     */
+    private function enviarPdfAoCliente(User $por): void
+    {
         $pdf = Pdf::loadView('pdf.proposta-comercial', [
             'proposta' => $this->load(['items', 'client', 'sellerUser']),
             'generatedAt' => now()->format('d/m/Y H:i'),
@@ -277,7 +286,7 @@ class PropostaComercial extends Model
 
         $email = EmailMessage::create([
             'tenant_id' => $this->tenant_id,
-            'from_user_id' => $revisor->id,
+            'from_user_id' => $por->id,
             'to_external' => [$this->client->email],
             'subject' => "Proposta comercial — {$this->client->name}",
             'body' => 'Segue em anexo a proposta comercial. Para aceitar ou recusar, acesse: '
@@ -291,6 +300,47 @@ class PropostaComercial extends Model
             ->toMediaCollection('anexos');
 
         $email->send();
+    }
+
+    /**
+     * Reenvia o PDF e o link de aceite ao cliente (e-mail perdido, endereço corrigido, cliente pediu de novo).
+     * Só enquanto a proposta aguarda a resposta do cliente.
+     */
+    public function reenviarAoCliente(User $por): void
+    {
+        if ($this->status !== self::STATUS_APROVADA_INTERNA) {
+            throw new \RuntimeException('Só é possível reenviar uma proposta aprovada que aguarda o cliente.');
+        }
+
+        if (blank($this->client?->email)) {
+            throw new \RuntimeException('Defina o e-mail do cliente antes de reenviar.');
+        }
+
+        $this->enviarPdfAoCliente($por);
+    }
+
+    /**
+     * Link do WhatsApp (clicar para conversar) com a mensagem e o link de aceite já escritos. Sem integração: o vendedor
+     * só aperta enviar no próprio WhatsApp. null quando a proposta não aguarda o cliente ou o cliente não tem número.
+     */
+    public function linkWhatsapp(): ?string
+    {
+        if ($this->status !== self::STATUS_APROVADA_INTERNA || blank($this->approval_token)) {
+            return null;
+        }
+
+        $numero = preg_replace('/\D+/', '', (string) ($this->client?->whatsapp ?: $this->client?->phone));
+        if (strlen($numero) < 10) {
+            return null;
+        }
+        if (strlen($numero) <= 11) {
+            $numero = '55'.$numero;   // número brasileiro sem o código do país
+        }
+
+        $texto = "Olá, {$this->client?->name}! Segue a nossa proposta comercial. Para ver e responder (aceitar ou recusar), acesse: "
+            .route('proposta-comercial.public-approval', $this->approval_token);
+
+        return 'https://wa.me/'.$numero.'?text='.rawurlencode($texto);
     }
 
     /**
