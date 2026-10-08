@@ -45,13 +45,20 @@ class TenantNavigationManager extends NavigationManager
         // Para cada módulo, derivamos o segmento de URL do Resource (kebab do nome do model).
         $regras = $this->montarRegras();
 
+        $menusPai = $this->rotulosDeMenuPai();
+        $paginasBloqueadas = $this->paginasBloqueadas();
+
         $arvoreFiltrada = [];
 
         foreach ($navigationTree as $elemento) {
             if ($elemento instanceof NavigationGroup) {
                 $itensFiltrados = [];
                 foreach ($elemento->getItems() as $item) {
-                    if ($this->permitidoAcessar($item, $regras, $featuresPermitidas, $user, $isAdmin)) {
+                    $this->filtrarFilhos($item, $paginasBloqueadas);
+
+                    if (! isset($paginasBloqueadas[$item->getUrl()])
+                        && $this->permitidoAcessar($item, $regras, $featuresPermitidas, $user, $isAdmin)
+                        && ! $this->menuPaiVazio($item, $menusPai)) {
                         $itensFiltrados[] = $item;
                     }
                 }
@@ -68,6 +75,81 @@ class TenantNavigationManager extends NavigationManager
         }
 
         return $arvoreFiltrada;
+    }
+
+    /**
+     * Rótulos de "menu pai" (Relatórios, Análises, Painéis, Históricos & Logs,
+     * Gestão Comercial...): páginas-índice que só existem para agrupar outros
+     * itens via navigationParentItem. Não pertencem a nenhum módulo do plano,
+     * então o filtro por URL as deixava sempre visíveis, mesmo quando todos
+     * os filhos estavam bloqueados pelo contrato ou pelas permissões.
+     *
+     * @return array<string, true>
+     */
+    protected function rotulosDeMenuPai(): array
+    {
+        $rotulos = [];
+        $painel = Filament::getCurrentPanel();
+
+        foreach (array_merge($painel?->getResources() ?? [], $painel?->getPages() ?? []) as $classe) {
+            if (method_exists($classe, 'getNavigationParentItem') && $pai = $classe::getNavigationParentItem()) {
+                $rotulos[$pai] = true;
+            }
+        }
+
+        return $rotulos;
+    }
+
+    /**
+     * O Filament só usa canAccess() de uma Page para bloquear a ROTA; o item
+     * continua aparecendo no menu. Por isso Fluxo de Caixa, Conciliação
+     * Bancária e outras páginas fora do plano do cliente apareciam mesmo
+     * dando "acesso negado" ao clicar. Aqui o menu passa a respeitar o mesmo
+     * canAccess() que protege a rota.
+     *
+     * @return array<string, true> url => true
+     */
+    protected function paginasBloqueadas(): array
+    {
+        $bloqueadas = [];
+        $painel = Filament::getCurrentPanel();
+
+        foreach ($painel?->getPages() ?? [] as $pagina) {
+            try {
+                if (! $pagina::canAccess()) {
+                    $bloqueadas[$pagina::getUrl()] = true;
+                }
+            } catch (\Throwable) {
+                // Página que precisa de parâmetro de rota para gerar a URL: não entra no menu.
+            }
+        }
+
+        return $bloqueadas;
+    }
+
+    /**
+     * Remove dos filhos de um menu pai as páginas bloqueadas por canAccess().
+     *
+     * @param  array<string, true>  $paginasBloqueadas
+     */
+    protected function filtrarFilhos(NavigationItem $item, array $paginasBloqueadas): void
+    {
+        $filhos = collect($item->getChildItems())
+            ->reject(fn (NavigationItem $filho) => isset($paginasBloqueadas[$filho->getUrl()]))
+            ->values()
+            ->all();
+
+        $item->childItems($filhos);
+    }
+
+    /**
+     * Menu pai sem nenhum filho visível some do menu.
+     *
+     * @param  array<string, true>  $menusPai
+     */
+    protected function menuPaiVazio(NavigationItem $item, array $menusPai): bool
+    {
+        return isset($menusPai[$item->getLabel()]) && blank($item->getChildItems());
     }
 
     /**
