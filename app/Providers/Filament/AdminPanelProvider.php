@@ -164,6 +164,13 @@ class AdminPanelProvider extends PanelProvider
                     ->visible(fn () => (bool) auth()->user()?->can('viewAny', TraccarDevice::class)
                         && (\App\Support\Tenancy::current()?->hasFeature('menu_rastreamento_gps') ?? true)),
             ])
+            // Todo acesso novo (aba/navegador novo) abre no tema claro, mesmo que
+            // alguém tenha deixado o escuro guardado antes. Dentro da sessão, quem
+            // troca para o escuro continua com ele até fechar o navegador.
+            ->renderHook(
+                PanelsRenderHook::HEAD_START,
+                fn () => new \Illuminate\Support\HtmlString("<script>try{if(!sessionStorage.getItem('oravel_tema_inicial')){localStorage.setItem('theme','light');sessionStorage.setItem('oravel_tema_inicial','1');}}catch(e){}</script>"),
+            )
             ->renderHook(
                 PanelsRenderHook::TOPBAR_START,
                 fn () => view('filament.topbar-brand-and-ticker'),

@@ -278,6 +278,13 @@ Route::middleware(['auth'])->group(function () {
             return redirect()->to(AppProfile::homeUrl($user, AppProfile::for($user)));
         }
 
+        // Quem entra em /admin cai sempre na tela de Início (Painel de
+        // Controle), e não no primeiro item do menu (Gestão de Ativos...).
+        // Sem acesso ao Início, usa a regra padrão do Filament.
+        if ($user && \App\Filament\Pages\PainelGestao::canAccess()) {
+            return redirect()->to(AppProfile::homeUrl($user, AppProfile::ADMIN));
+        }
+
         return app(RedirectToHomeController::class)();
     });
 
