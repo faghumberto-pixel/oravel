@@ -232,3 +232,36 @@ html.dark .fi-sidebar-item.fi-active .fi-sidebar-item-icon,
 html.dark .fi-sidebar-item.fi-active > a { color: #fff !important; }
 html.dark .fi-sidebar-item.fi-active > a { background-color: rgba(255, 255, 255, 0.12) !important; }
 html.dark .fi-sidebar-item:not(.fi-active) > a:hover { background-color: rgba(255, 255, 255, 0.08) !important; }
+
+/* Menu lateral cinza claro e cabecalho de tabela cinza (padrao do material
+   de treinamento, pedido do usuario 2026-10-08). O item ativo continua com
+   o tom azulado acima, que contrasta com o cinza. */
+.fi-sidebar,
+.fi-sidebar-nav,
+.fi-sidebar-header {
+    background-color: #f1f2f4 !important;
+}
+.fi-ta-table thead tr,
+.fi-ta-header-cell {
+    background-color: #f1f3f6 !important;
+}
+.fi-ta-header-cell,
+.fi-ta-header-cell button,
+.fi-ta-header-cell span {
+    color: #1f2937;
+    font-weight: 700;
+}
+html.dark .fi-sidebar,
+html.dark .fi-sidebar-nav,
+html.dark .fi-sidebar-header {
+    background-color: transparent !important;
+}
+html.dark .fi-ta-table thead tr,
+html.dark .fi-ta-header-cell {
+    background-color: rgba(255, 255, 255, 0.06) !important;
+}
+html.dark .fi-ta-header-cell,
+html.dark .fi-ta-header-cell button,
+html.dark .fi-ta-header-cell span {
+    color: #e5e7eb;
+}
