@@ -145,15 +145,6 @@ class SignatureService
             // Dispara evento para finalizar PDF (observer ou job)
             event(new DocumentSigned($signature));
 
-            // Guarda o PDF assinado (documento + página de auditoria) no
-            // momento da assinatura, para a Central poder ver e baixar.
-            // Falha aqui não desfaz a assinatura: o PDF é gerado sob demanda.
-            try {
-                $this->ensureSignedPdf($signature);
-            } catch (Throwable $e) {
-                \Log::warning('PDF assinado não gerado no ato da assinatura', ['signature' => $signature->id, 'error' => $e->getMessage()]);
-            }
-
             return true;
         } catch (Throwable $e) {
             \Log::error('Erro ao assinar documento', [
@@ -247,40 +238,6 @@ class SignatureService
 
             return null;
         }
-    }
-
-    /**
-     * Devolve o caminho do PDF assinado desta assinatura, gerando e
-     * guardando na primeira vez. Depois disso o mesmo arquivo é servido
-     * sempre (evidência não muda). Para assinaturas feitas antes desta
-     * rotina existir, o PDF é montado na primeira consulta com o modelo de
-     * documento vigente nesse momento, mais a página de auditoria real.
-     */
-    public function ensureSignedPdf(DocumentSignature $signature): string
-    {
-        $disk = Storage::disk(self::SIGNATURE_DISK);
-
-        if ($signature->signed_pdf_path && $disk->exists($signature->signed_pdf_path)) {
-            return $signature->signed_pdf_path;
-        }
-
-        $signable = $signature->signable()->withoutGlobalScopes()->firstOrFail();
-
-        $pdf = $this->mergePdfs($this->generateDocumentPdf($signable), $this->generateAuditPage($signature));
-
-        $path = sprintf(
-            'signed-documents/%s/%s_%s_%s.pdf',
-            $signature->tenant_id ?? $signable->tenant_id ?? $signable->id,
-            class_basename($signable),
-            $signable->id,
-            $signature->id
-        );
-
-        $disk->put($path, $pdf);
-
-        $signature->forceFill(['signed_pdf_path' => $path, 'document_hash' => hash('sha256', $pdf)])->save();
-
-        return $path;
     }
 
     /**

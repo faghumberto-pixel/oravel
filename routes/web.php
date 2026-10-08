@@ -562,6 +562,4 @@ Route::middleware(['web', 'auth'])
     ->group(function () {
         Route::get('/central/contratos-assinados/{signature}', [\App\Http\Controllers\Central\ContratoAssinadoController::class, 'ver'])
             ->name('central.contrato-assinado.ver');
-        Route::get('/central/contratos-assinados/{signature}/pdf', \App\Http\Controllers\Central\ContratoAssinadoController::class)
-            ->name('central.contrato-assinado');
     });

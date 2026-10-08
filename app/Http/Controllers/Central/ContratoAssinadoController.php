@@ -5,19 +5,16 @@ namespace App\Http\Controllers\Central;
 use App\Http\Controllers\Controller;
 use App\Models\DocumentSignature;
 use App\Models\Tenant;
-use App\Services\SignatureService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Contrato de assinatura (Oravel x cliente) já assinado, para a Central
- * visualizar como página ou baixar o PDF. Só administrador da plataforma.
+ * visualizar como página e imprimir. Só administrador da plataforma.
  */
 class ContratoAssinadoController extends Controller
 {
-    /** Mostra o contrato assinado como página, antes de abrir ou baixar o PDF. */
+    /** Mostra o contrato assinado como página. */
     public function ver(Request $request, string $signature): Response
     {
         abort_unless($request->user()?->isSuperAdmin(), 403);
@@ -47,21 +44,5 @@ class ContratoAssinadoController extends Controller
             ->where('signable_type', Tenant::class)
             ->where('status', 'signed')
             ->findOrFail($id);
-    }
-
-    public function __invoke(Request $request, string $signature, SignatureService $service): Response
-    {
-        abort_unless($request->user()?->isSuperAdmin(), 403);
-
-        $assinatura = $this->assinatura($signature);
-
-        $path = $service->ensureSignedPdf($assinatura);
-        $cliente = Str::slug(Tenant::withoutGlobalScopes()->find($assinatura->signable_id)?->name ?? 'cliente');
-        $nome = "contrato-assinado-{$cliente}.pdf";
-        $disk = Storage::disk('local');
-
-        return $request->boolean('baixar')
-            ? $disk->download($path, $nome, ['Content-Type' => 'application/pdf'])
-            : response($disk->get($path), 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => "inline; filename=\"{$nome}\""]);
     }
 }

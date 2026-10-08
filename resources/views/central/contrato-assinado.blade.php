@@ -16,15 +16,23 @@
         .resumo b { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #6b7280; }
         .folha { max-width: 900px; margin: 14px auto 28px; padding: 0 16px; }
         .folha h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: #4b5563; margin: 0 0 6px; }
-        iframe { width: 100%; height: 1100px; border: 1px solid #d1d5db; background: #fff; border-radius: 6px; }
-        iframe.curta { height: 760px; }
+        iframe { width: 100%; height: 1100px; border: 1px solid #d1d5db; background: #fff; border-radius: 6px; display: block; }
+        @page { margin: 12mm; }
+        @media print {
+            body { background: #fff; }
+            .barra { display: none; }
+            .resumo, .folha { max-width: none; padding: 0; margin-left: 0; margin-right: 0; }
+            .folha { margin-bottom: 10px; }
+            iframe { border: 0; border-radius: 0; }
+            .folha.nova-pagina { break-before: page; }
+        }
     </style>
 </head>
 <body>
     <div class="barra">
-        <h1>Contrato assinado — {{ $cliente->name }}<small>Documento e comprovante de assinatura. Nada é baixado ao abrir esta página.</small></h1>
+        <h1>Contrato assinado — {{ $cliente->name }}<small>Documento e comprovante de assinatura. Use Imprimir para papel ou para salvar em PDF pelo navegador.</small></h1>
         <a href="{{ \App\Filament\Central\Resources\ContratoAssinadoResource::getUrl('index', panel: 'central') }}">Voltar</a>
-        <a class="principal" href="{{ route('central.contrato-assinado', ['signature' => $assinatura->id, 'baixar' => 1]) }}">Baixar PDF</a>
+        <a class="principal" href="#" onclick="window.print(); return false;">Imprimir</a>
     </div>
 
     <div class="resumo">
@@ -40,9 +48,21 @@
         <h2>Contrato</h2>
         <iframe srcdoc="{{ $contrato }}" title="Contrato"></iframe>
     </div>
-    <div class="folha">
+    <div class="folha nova-pagina">
         <h2>Comprovante de assinatura</h2>
-        <iframe class="curta" srcdoc="{{ $auditoria }}" title="Comprovante de assinatura"></iframe>
+        <iframe srcdoc="{{ $auditoria }}" title="Comprovante de assinatura"></iframe>
     </div>
+    <script>
+        // Cada documento aparece inteiro (sem barra de rolagem interna), para
+        // a impressão sair com todas as páginas.
+        function ajustar(f) {
+            try { f.style.height = (f.contentDocument.documentElement.scrollHeight + 4) + 'px'; } catch (e) {}
+        }
+        document.querySelectorAll('iframe').forEach(function (f) {
+            f.addEventListener('load', function () { ajustar(f); });
+            ajustar(f);
+        });
+        window.addEventListener('beforeprint', function () { document.querySelectorAll('iframe').forEach(ajustar); });
+    </script>
 </body>
 </html>

@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Contratos de assinatura (Oravel x cada cliente) já assinados: ver como
- * página (sem PDF) e, se quiser, baixar o PDF com a página de auditoria.
+ * página e imprimir (documento + comprovante de assinatura).
  */
 class ContratoAssinadoResource extends Resource
 {
@@ -63,13 +63,9 @@ class ContratoAssinadoResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('ver')
-                    ->label('Ver contrato')
+                    ->label('Ver e imprimir')
                     ->icon('heroicon-o-eye')
                     ->url(fn (DocumentSignature $r) => route('central.contrato-assinado.ver', $r->id), shouldOpenInNewTab: true),
-                Tables\Actions\Action::make('baixar')
-                    ->label('Baixar PDF')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->url(fn (DocumentSignature $r) => route('central.contrato-assinado', ['signature' => $r->id, 'baixar' => 1])),
             ]);
     }
 

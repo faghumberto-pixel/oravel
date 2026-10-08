@@ -5,9 +5,7 @@ namespace Tests\Feature;
 use App\Models\DocumentSignature;
 use App\Models\Tenant;
 use App\Models\User;
-use App\Services\SignatureService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ContratoAssinadoCentralTest extends TestCase
@@ -16,7 +14,7 @@ class ContratoAssinadoCentralTest extends TestCase
 
     private function assinatura(): DocumentSignature
     {
-        $tenant = Tenant::withoutGlobalScopes()->create(['name' => 'Cliente Teste PDF', 'slug' => 'cliente-teste-pdf-'.uniqid()]);
+        $tenant = Tenant::withoutGlobalScopes()->create(['name' => 'Cliente Teste Pagina', 'slug' => 'cliente-teste-pagina-'.uniqid()]);
 
         return DocumentSignature::withoutGlobalScopes()->create([
             'tenant_id' => $tenant->id,
@@ -33,23 +31,7 @@ class ContratoAssinadoCentralTest extends TestCase
         ]);
     }
 
-    public function test_gera_guarda_e_reaproveita_o_pdf_assinado(): void
-    {
-        Storage::fake('local');
-        $assinatura = $this->assinatura();
-
-        $path = app(SignatureService::class)->ensureSignedPdf($assinatura);
-
-        $this->assertTrue(Storage::disk('local')->exists($path));
-        $this->assertStringStartsWith('%PDF', Storage::disk('local')->get($path));
-        $this->assertSame($path, $assinatura->fresh()->signed_pdf_path);
-
-        $conteudo = Storage::disk('local')->get($path);
-        $this->assertSame($path, app(SignatureService::class)->ensureSignedPdf($assinatura->fresh()));
-        $this->assertSame($conteudo, Storage::disk('local')->get($path), 'o arquivo guardado nao pode mudar');
-    }
-
-    public function test_super_admin_ve_o_contrato_como_pagina_sem_baixar_pdf(): void
+    public function test_super_admin_ve_o_contrato_como_pagina_para_imprimir(): void
     {
         config(['oravel.super_admins' => ['admin-teste@oravel.test']]);
         $assinatura = $this->assinatura();
@@ -59,18 +41,18 @@ class ContratoAssinadoCentralTest extends TestCase
 
         $resposta->assertOk();
         $this->assertStringContainsString('text/html', $resposta->headers->get('Content-Type'));
-        $resposta->assertSee('Cliente Teste PDF');
+        $resposta->assertSee('Cliente Teste Pagina');
         $resposta->assertSee('Fulano de Tal');
-        $resposta->assertSee('Baixar PDF');
+        $resposta->assertSee('Comprovante de assinatura');
+        $resposta->assertSee('Imprimir');
+        $resposta->assertDontSee('Baixar PDF');
     }
 
-    public function test_so_super_admin_ve_e_baixa(): void
+    public function test_so_super_admin_ve(): void
     {
-        Storage::fake('local');
         $assinatura = $this->assinatura();
         $comum = User::factory()->create();
 
-        $this->actingAs($comum)->get(route('central.contrato-assinado', $assinatura->id))->assertForbidden();
         $this->actingAs($comum)->get(route('central.contrato-assinado.ver', $assinatura->id))->assertForbidden();
     }
 }
