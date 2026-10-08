@@ -96,7 +96,7 @@ class TenantNavigationManager extends NavigationManager
         foreach (Filament::getCurrentPanel()?->getPages() ?? [] as $pagina) {
             try {
                 if (! $pagina::canAccess()) {
-                    $bloqueadas[$pagina::getUrl()] = true;
+                    $bloqueadas[$pagina::getUrl([], false)] = true;
                 }
             } catch (\Throwable) {
                 // Página que precisa de parâmetro de rota para gerar a URL: fora desta regra.
