@@ -116,6 +116,9 @@
             <div class="rounded-2xl bg-zinc-900 p-4">
                 <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">Dados Gerais</h3>
                 <div class="mt-3 grid grid-cols-2 gap-3 text-sm">
+                    @if ($asset->placa)
+                        <div><span class="block text-[11px] text-zinc-500">{{ $asset->is_vehicle ? 'Placa' : 'Placa do equipamento' }}</span><span class="font-semibold text-zinc-100">{{ $asset->placa }}</span></div>
+                    @endif
                     <div><span class="block text-[11px] text-zinc-500">Categoria</span><span class="font-semibold text-zinc-100">{{ $asset->asset_category ?? '—' }}</span></div>
                     <div><span class="block text-[11px] text-zinc-500">Status</span><span class="font-semibold text-zinc-100">{{ ucfirst($asset->status ?? '—') }}</span></div>
                     <div><span class="block text-[11px] text-zinc-500">Especificação</span><span class="font-semibold text-zinc-100">{{ $asset->specification ?? '—' }}</span></div>

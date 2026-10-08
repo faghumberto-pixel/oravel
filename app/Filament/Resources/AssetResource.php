@@ -182,13 +182,15 @@ class AssetResource extends Resource
                                             ? Asset::nextPatrimonio(Tenancy::current()->id)
                                             : null),
 
+                                    // Veículo: placa no formato ABC1234/ABC1D23. Máquina/equipamento: placa (plaqueta) de identificação, formato livre.
                                     Forms\Components\TextInput::make('placa')
-                                        ->label('Placa')
-                                        ->placeholder('ABC1D23')
-                                        ->maxLength(8)
-                                        ->visible(fn (Get $get) => $get('grupo') === Asset::GRUPO_VEICULO)
+                                        ->label(fn (Get $get) => $get('grupo') === Asset::GRUPO_VEICULO ? 'Placa' : 'Placa do equipamento')
+                                        ->placeholder(fn (Get $get) => $get('grupo') === Asset::GRUPO_VEICULO ? 'ABC1D23' : 'Número da plaqueta')
+                                        ->maxLength(fn (Get $get) => $get('grupo') === Asset::GRUPO_VEICULO ? 8 : 24)
                                         ->dehydrateStateUsing(fn ($state) => filled($state) ? strtoupper(preg_replace('/[^A-Za-z0-9]/', '', (string) $state)) : null)
-                                        ->rule(fn (?Asset $record) => Asset::plateRule(Tenancy::current()?->id ?? $record?->tenant_id, $record?->id)),
+                                        ->rule(fn (Get $get, ?Asset $record) => $get('grupo') === Asset::GRUPO_VEICULO
+                                            ? Asset::plateRule(Tenancy::current()?->id ?? $record?->tenant_id, $record?->id)
+                                            : Asset::placaEquipamentoRule(Tenancy::current()?->id ?? $record?->tenant_id, $record?->id)),
 
                                     Forms\Components\TextInput::make('fabricante')
                                         ->label('Marca / Fabricante')
@@ -958,7 +960,7 @@ class AssetResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Equipamento')
                     ->searchable()
-                    ->description(fn (Asset $record): string => ($record->isVehicle() && $record->placa ? 'Placa: '.$record->placa.' · ' : '').'Tag: '.($record->tag ?? '---')),
+                    ->description(fn (Asset $record): string => ($record->placa ? 'Placa: '.$record->placa.' · ' : '').'Tag: '.($record->tag ?? '---')),
 
                 Tables\Columns\TextColumn::make('grupo')
                     ->label('Tipo')

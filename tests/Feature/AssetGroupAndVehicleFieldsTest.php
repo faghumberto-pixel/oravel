@@ -61,10 +61,10 @@ class AssetGroupAndVehicleFieldsTest extends TestCase
 
         // Máquina: sem placa/renavam/odômetro/seguro; com horímetro.
         $page->fillForm(['grupo' => Asset::GRUPO_MAQUINA]);
-        foreach (['modelo', 'cor', 'chassi', 'manufacturing_year', 'horimetro_inicial'] as $name) {
+        foreach (['modelo', 'cor', 'chassi', 'manufacturing_year', 'horimetro_inicial', 'placa'] as $name) {
             $this->assertContains($name, $fields(), "Máquina deveria mostrar {$name}.");
         }
-        foreach (['placa', 'renavam', 'odometro_atual', 'licenciamento_vencimento', 'ipva_vencimento', 'seguro_seguradora', 'seguro_vencimento', 'seguro_franquia_colisao', 'seguro_valor_cobertura', 'tacografo_numero'] as $name) {
+        foreach (['renavam', 'odometro_atual', 'licenciamento_vencimento', 'ipva_vencimento', 'seguro_seguradora', 'seguro_vencimento', 'seguro_franquia_colisao', 'seguro_valor_cobertura', 'tacografo_numero'] as $name) {
             $this->assertNotContains($name, $fields(), "Máquina não deveria mostrar {$name}.");
         }
 
@@ -235,5 +235,56 @@ class AssetGroupAndVehicleFieldsTest extends TestCase
             ->fillForm(['seguro_franquia_colisao' => -10])
             ->call('save')
             ->assertHasFormErrors(['seguro_franquia_colisao']);
+    }
+
+    public function test_machine_has_a_free_format_plate_that_is_searchable_like_vehicle_plates(): void
+    {
+        [$tenant, $admin] = $this->tenantWithAdmin();
+        [$other] = $this->tenantWithAdmin();
+        $this->actingAs($admin);
+        $this->asset($other, ['placa' => 'PLQ-9988']);   // placa igual em outra empresa não atrapalha (gravada como veio)
+        $asset = $this->asset($tenant);
+
+        $page = Livewire::test(EditAsset::class, ['record' => $asset->getRouteKey()]);
+        $campo = fn () => $page->instance()->form->getFlatFields()['placa'];
+        $page->fillForm(['grupo' => Asset::GRUPO_MAQUINA]);
+        $this->assertSame('Placa do equipamento', $campo()->getLabel());
+        $page->fillForm(['grupo' => Asset::GRUPO_VEICULO]);
+        $this->assertSame('Placa', $campo()->getLabel());
+
+        // Máquina aceita formato livre (não precisa ser ABC1234) e grava normalizada.
+        Livewire::test(EditAsset::class, ['record' => $asset->getRouteKey()])
+            ->fillForm(['patrimonio' => 'PAT-'.uniqid(), 'grupo' => Asset::GRUPO_MAQUINA, 'placa' => 'plq-9988/a'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+        $this->assertSame('PLQ9988A', $asset->fresh()->placa);
+
+        // Achada pela pesquisa, pelo filtro e pelo campo de escolher o ativo, com ou sem hífen.
+        $this->assertArrayHasKey($asset->id, Asset::opcoesPesquisa('plq-9988'));
+        $this->assertStringContainsString('(PLQ9988A)', Asset::opcoesPesquisa('PLQ9988A')[$asset->id]);
+        $outra = $this->asset($tenant, ['name' => 'Outra máquina']);
+        Livewire::test(ListAssets::class)->searchTable('plq 9988-a')->assertCanSeeTableRecords([$asset])->assertCanNotSeeTableRecords([$outra]);
+        Livewire::test(ListAssets::class)->filterTable('placa', ['placa' => 'plq-99'])->assertCanSeeTableRecords([$asset])->assertCanNotSeeTableRecords([$outra]);
+        Livewire::test(ListAssets::class)->assertSee('Placa: PLQ9988A');
+    }
+
+    public function test_machine_plate_must_be_unique_in_the_company_and_have_a_valid_size(): void
+    {
+        [$tenant, $admin] = $this->tenantWithAdmin();
+        $this->actingAs($admin);
+        $this->asset($tenant, ['placa' => 'ABC1D23', 'grupo' => Asset::GRUPO_VEICULO]);
+        $this->asset($tenant, ['placa' => 'PLQ777']);
+        $asset = $this->asset($tenant);
+
+        $salvar = fn (string $placa) => Livewire::test(EditAsset::class, ['record' => $asset->getRouteKey()])
+            ->fillForm(['patrimonio' => 'PAT-'.uniqid(), 'grupo' => Asset::GRUPO_MAQUINA, 'placa' => $placa])
+            ->call('save');
+
+        $salvar('plq-777')->assertHasFormErrors(['placa']);                 // já existe (outra máquina)
+        $salvar('abc1d23')->assertHasFormErrors(['placa']);                 // já existe (um veículo)
+        $salvar('x')->assertHasFormErrors(['placa']);                       // curta demais
+        $salvar(str_repeat('A', 22))->assertHasFormErrors(['placa']);       // longa demais
+        $salvar('PLQ-888')->assertHasNoFormErrors();
+        $this->assertSame('PLQ888', $asset->fresh()->placa);
     }
 }

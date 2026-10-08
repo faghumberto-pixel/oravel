@@ -746,6 +746,34 @@ class Asset extends Model implements HasMedia
     }
 
     /** Placa (padrão antigo ABC1234 ou Mercosul ABC1D23) e única por tenant. */
+    /**
+     * Placa (plaqueta de identificação) de MÁQUINA/EQUIPAMENTO: formato livre (letras e números, até 20), única por empresa.
+     */
+    public static function placaEquipamentoRule(?string $tenantId, ?string $ignoreId = null): \Closure
+    {
+        return function (string $attribute, $value, \Closure $fail) use ($tenantId, $ignoreId) {
+            if (blank($value)) {
+                return;
+            }
+
+            $placa = self::normalizarCodigo((string) $value);
+
+            if (strlen($placa) < 2 || strlen($placa) > 20) {
+                $fail('Placa inválida. Use de 2 a 20 letras e números (o hífen e o espaço são ignorados).');
+
+                return;
+            }
+
+            if ($tenantId && static::withoutGlobalScopes()
+                ->where('tenant_id', $tenantId)
+                ->where('placa', $placa)
+                ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
+                ->exists()) {
+                $fail('Já existe um ativo com esta placa.');
+            }
+        };
+    }
+
     public static function plateRule(?string $tenantId, ?string $ignoreId = null): \Closure
     {
         return function (string $attribute, $value, \Closure $fail) use ($tenantId, $ignoreId) {
