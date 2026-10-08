@@ -7,6 +7,7 @@ use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\BancaryReconciliationPage;
 use App\Filament\Pages\CashflowPage;
 use App\Filament\Pages\RastreamentoGps;
+use App\Http\Middleware\EnsureMenuModuleEnabled;
 use App\Http\Middleware\EnsureTenantPaymentIsCurrent;
 use App\Http\Middleware\LogUserActivity;
 use App\Http\Middleware\TrackSiteVisit;
@@ -291,6 +292,7 @@ class AdminPanelProvider extends PanelProvider
                 // ainda não existe) e antes de qualquer outra coisa que
                 // dependa do tenant já estar liberado.
                 EnsureTenantPaymentIsCurrent::class,
+                EnsureMenuModuleEnabled::class,
                 LogUserActivity::class,
             ]);
     }

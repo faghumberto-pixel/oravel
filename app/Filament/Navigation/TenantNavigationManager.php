@@ -5,6 +5,8 @@ namespace App\Filament\Navigation;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use App\Support\MenuModules;
+use App\Support\Tenancy;
 use Filament\Navigation\NavigationManager;
 
 /**
@@ -44,6 +46,10 @@ class TenantNavigationManager extends NavigationManager
             foreach ($grupo->getItems() as $item) {
                 $this->removerFilhosBloqueados($item, $bloqueadas);
 
+                if (! $this->menuLiberadoNoContrato($grupo->getLabel(), $item)) {
+                    continue;
+                }
+
                 if (isset($bloqueadas[$item->getUrl()])) {
                     continue;
                 }
@@ -61,6 +67,23 @@ class TenantNavigationManager extends NavigationManager
         }
 
         return $resultado;
+    }
+
+    /**
+     * Menus pai e páginas com módulo próprio (config/menu_modules.php) só
+     * aparecem quando o contrato do cliente libera a chave. Sem cliente
+     * atuante (super admin na Central) ou para super admin, tudo aparece.
+     */
+    protected function menuLiberadoNoContrato(?string $grupo, NavigationItem $item): bool
+    {
+        $chave = MenuModules::keyForItem($grupo, $item->getLabel());
+        $tenant = Tenancy::current();
+
+        if (! $chave || ! $tenant) {
+            return true;
+        }
+
+        return $tenant->hasFeature($chave);
     }
 
     /**

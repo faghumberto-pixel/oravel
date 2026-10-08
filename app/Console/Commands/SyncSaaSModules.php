@@ -23,6 +23,8 @@ class SyncSaaSModules extends Command
             }
         }
 
+        $knownFeatures = array_merge($knownFeatures, array_keys(\App\Support\MenuModules::all()));
+
         $planId = $this->option('plan');
         $query = Plan::query();
 

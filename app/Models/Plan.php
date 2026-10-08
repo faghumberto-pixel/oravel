@@ -95,6 +95,10 @@ class Plan extends Model
         // (antes era sempre visível pra todo admin, sem gate nenhum).
         $options['modulo_configuracoes'] = 'Painel: Configurações do Tenant';
 
+        foreach (\App\Support\MenuModules::options() as $chave => $rotulo) {
+            $options[$chave] = $rotulo;
+        }
+
         return $options;
     }
 

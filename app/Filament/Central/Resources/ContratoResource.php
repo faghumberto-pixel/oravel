@@ -6,6 +6,7 @@ use App\Filament\Central\Resources\ContratoResource\Pages;
 use App\Models\DocumentSignature;
 use App\Models\Plan;
 use App\Models\Tenant;
+use App\Support\MenuModules;
 use App\Support\SaaSRegistry;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -96,6 +97,23 @@ class ContratoResource extends Resource
 
         $grouped['Outros']['modulo_dashboard'] = 'Painel: Dashboard (Painel de Controle)';
 
+        foreach (MenuModules::all() as $chave => $menu) {
+            $grouped[$menu['grupo']][$chave] = $menu['label'];
+        }
+
+        // Nenhum módulo fica solto em "Outros": quem não é de um menu próprio
+        // vai para o grupo do assunto dele.
+        foreach (static::gruposPadrao() as $chave => $destino) {
+            if (isset($grouped['Outros'][$chave])) {
+                $grouped[$destino][$chave] = $grouped['Outros'][$chave];
+                unset($grouped['Outros'][$chave]);
+            }
+        }
+
+        if (empty($grouped['Outros'])) {
+            unset($grouped['Outros']);
+        }
+
         // modulo_configuracoes vai pro grupo "Configurações" de verdade (já
         // existe, é onde ficam Centro de Custo/Empresas/Filiais/Locais/Logs)
         // em vez de "Outros" -- usuário relatou 29/09/2026 que procurou e não
@@ -121,6 +139,36 @@ class ContratoResource extends Resource
         }
 
         return array_map(fn ($labels) => array_values(array_unique($labels)), $map);
+    }
+
+    /**
+     * Grupo de cada módulo que não tem Resource (e por isso caía em "Outros").
+     *
+     * @return array<string, string> feature_key => grupo
+     */
+    public static function gruposPadrao(): array
+    {
+        return [
+            'tabela_courses' => 'Academia e Comunicação',
+            'caixa_email' => 'Academia e Comunicação',
+            'tabela_client_messages' => 'Comercial',
+            'landing_page_leads' => 'Comercial',
+            'tabela_battery_cycle_readings' => 'Manutenção',
+            'tabela_equipment_hour_meters' => 'Manutenção',
+            'modulo_chat' => 'Equipe',
+            'tabela_time_clocks' => 'Departamento Pessoal',
+            'tabela_asset_nr13_specifications' => 'Conformidade NR-13',
+            'tabela_epi_specifications' => 'EPI',
+            'tabela_asset_forklift_specifications' => 'Ativos',
+            'tabela_asset_generator_specifications' => 'Ativos',
+            'tabela_asset_platform_specifications' => 'Ativos',
+            'tabela_material_stock_movements' => 'Materiais e Peças',
+            'tabela_stock_movements' => 'Materiais e Peças',
+            'tabela_cashflow_report' => 'Financeiro',
+            'tabela_bank_reconciliation' => 'Financeiro',
+            'tabela_asaas_sync' => 'Financeiro',
+            'modulo_dashboard' => 'Painel Inicial',
+        ];
     }
 
     /**
