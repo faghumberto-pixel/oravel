@@ -24,6 +24,7 @@
         'Conformidade NR-13' => 'heroicon-o-shield-exclamation',
         'Manutenção' => 'heroicon-o-wrench-screwdriver',
         'Logística' => 'heroicon-o-truck',
+        'Gestão de Frota' => 'heroicon-o-map',
         'Ativos' => 'heroicon-o-truck',
         'Materiais e Peças' => 'heroicon-o-cube',
         'Itens Agregados' => 'heroicon-o-link',
