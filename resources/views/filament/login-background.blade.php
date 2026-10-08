@@ -1,7 +1,7 @@
 <style>
     /* So afeta paginas "simples" (login, esqueci senha, etc.) -- nunca o painel autenticado. */
     .fi-simple-layout {
-        background-image: linear-gradient(180deg, rgba(15, 15, 15, 0.55) 0%, rgba(15, 15, 15, 0.75) 100%), url('{{ asset('images/login-bg.jpg') }}');
+        background-image: linear-gradient(180deg, rgba(15, 15, 15, 0.55) 0%, rgba(15, 15, 15, 0.75) 100%), url('{{ asset('images/login-bg.jpg').'?v=3' }}');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;

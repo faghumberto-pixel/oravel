@@ -50,7 +50,7 @@
     <body class="font-sans antialiased">
         <div
             class="relative min-h-screen w-full overflow-hidden bg-slate-950"
-            style="background-image: linear-gradient(to bottom right, rgba(0,0,0,0.8), rgba(0,0,0,0.55), rgba(67,20,7,0.3)), url('{{ asset('images/login-bg.jpg') }}'); background-size: cover; background-position: center;"
+            style="background-image: linear-gradient(to bottom right, rgba(0,0,0,0.8), rgba(0,0,0,0.55), rgba(67,20,7,0.3)), url('{{ asset('images/login-bg.jpg').'?v=3' }}'); background-size: cover; background-position: center;"
         >
             <div class="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 py-12">
                 <a href="https://oravel.com.br" class="mb-6 flex items-center gap-3">

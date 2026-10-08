@@ -5,7 +5,7 @@
     >
         <div
             class="absolute inset-0 bg-cover bg-center"
-            style="background-image: url('{{ asset('images/login-bg.jpg') }}')"
+            style="background-image: url('{{ asset('images/login-bg.jpg').'?v=3' }}')"
         ></div>
         <div class="absolute inset-0 bg-gradient-to-br from-black/80 via-black/55 to-orange-950/30"></div>
 
