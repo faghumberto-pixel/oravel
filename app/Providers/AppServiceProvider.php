@@ -101,6 +101,9 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        // Menu do painel admin: filtra páginas bloqueadas e menus pai vazios (ver a classe).
+        $this->app->scoped(\Filament\Navigation\NavigationManager::class, fn () => new \App\Filament\Navigation\TenantNavigationManager);
+
         //
     }
 
