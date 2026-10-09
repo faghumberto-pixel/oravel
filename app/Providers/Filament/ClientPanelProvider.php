@@ -47,6 +47,10 @@ class ClientPanelProvider extends PanelProvider
                 'gray' => Color::Stone,
             ])
             ->favicon(asset('favicon.png').'?v=6')
+            // Portal sempre no tema claro: as cores do painel (menu #1d2133, centro #fbfbfb,
+            // cards brancos) foram desenhadas só para o claro. No escuro os cards ficavam pretos
+            // e os títulos sumiam.
+            ->darkMode(false)
             ->viteTheme('resources/css/filament/client/theme.css')
             ->discoverResources(in: app_path('Filament/Client/Resources'), for: 'App\\Filament\\Client\\Resources')
             ->discoverPages(in: app_path('Filament/Client/Pages'), for: 'App\\Filament\\Client\\Pages')
@@ -65,6 +69,12 @@ class ClientPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
                 fn () => view('filament.client.cores-painel'),
+            )
+            // Menu sumia para quem já tinha um grupo "vazio" gravado no navegador pela sanfona
+            // do admin (mesmo domínio): limpa antes de o Alpine ler.
+            ->renderHook(
+                PanelsRenderHook::HEAD_START,
+                fn () => new \Illuminate\Support\HtmlString("<script>try{var g=JSON.parse(localStorage.getItem('collapsedGroups')||'[]');if(Array.isArray(g)){var f=g.filter(function(x){return x&&x!=='null'});if(f.length!==g.length)localStorage.setItem('collapsedGroups',JSON.stringify(f));}}catch(e){}</script>"),
             )
             ->renderHook(
                 // Sanfona nos grupos do menu, mesmo comportamento do admin

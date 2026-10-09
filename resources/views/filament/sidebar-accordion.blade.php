@@ -19,8 +19,11 @@
         }
 
         function allGroupLabels() {
+            // Grupo sem nome (itens soltos, como no Portal do Cliente) nunca entra
+            // na sanfona: recolhê-lo fazia o menu inteiro sumir.
             return Array.from(document.querySelectorAll('[data-group-label]'))
-                .map((el) => el.getAttribute('data-group-label'));
+                .map((el) => el.getAttribute('data-group-label'))
+                .filter((label) => label);
         }
 
         function activeGroupLabel() {
@@ -29,7 +32,7 @@
             );
             const group = activeItem?.closest('[data-group-label]');
 
-            return group?.getAttribute('data-group-label') ?? null;
+            return group?.getAttribute('data-group-label') || null;
         }
 
         function collapseAllExcept(keepOpenLabel) {
@@ -45,6 +48,10 @@
 
             sidebar.collapsedGroups = Array.from(collapsed);
         }
+
+        // Limpa grupos vazios que versões anteriores gravaram no navegador
+        // e que escondiam o menu do portal.
+        sidebar.collapsedGroups = (sidebar.collapsedGroups ?? []).filter((label) => label && label !== 'null');
 
         const originalToggle = sidebar.toggleCollapsedGroup.bind(sidebar);
 

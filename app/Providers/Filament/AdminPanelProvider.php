@@ -169,7 +169,7 @@ class AdminPanelProvider extends PanelProvider
             // troca para o escuro continua com ele até fechar o navegador.
             ->renderHook(
                 PanelsRenderHook::HEAD_START,
-                fn () => new \Illuminate\Support\HtmlString("<script>try{if(!sessionStorage.getItem('oravel_tema_inicial')){localStorage.setItem('theme','light');sessionStorage.setItem('oravel_tema_inicial','1');}}catch(e){}</script>"),
+                fn () => new \Illuminate\Support\HtmlString("<script>try{if(!sessionStorage.getItem('oravel_tema_inicial')){localStorage.setItem('theme','light');sessionStorage.setItem('oravel_tema_inicial','1');}}catch(e){}try{var g=JSON.parse(localStorage.getItem('collapsedGroups')||'[]');if(Array.isArray(g)){var f=g.filter(function(x){return x&&x!=='null'});if(f.length!==g.length)localStorage.setItem('collapsedGroups',JSON.stringify(f));}}catch(e){}</script>"),
             )
             ->renderHook(
                 PanelsRenderHook::TOPBAR_START,
