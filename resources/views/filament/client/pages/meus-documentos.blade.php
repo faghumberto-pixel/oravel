@@ -1,6 +1,4 @@
-@extends('filament-panels::page')
-
-@section('content')
+<x-filament-panels::page>
 <div class="space-y-6">
     <div>
         <h2 class="text-2xl font-bold">Documentos</h2>
@@ -140,4 +138,4 @@
         </div>
     @endif
 </div>
-@endsection
+</x-filament-panels::page>

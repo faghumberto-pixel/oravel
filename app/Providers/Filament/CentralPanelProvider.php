@@ -104,9 +104,10 @@ class CentralPanelProvider extends PanelProvider
                 'crmAmber' => Color::Amber,
                 'crmTeal' => Color::Teal,
             ])
-            // Tema escuro fixo (nao alternavel) -- reforca a mesma
-            // referencia visual acima.
-            ->darkMode(true, isForced: true)
+            // Claro e escuro, com botão para alternar (pedido do usuário 2026-10-08).
+            // Começa no claro, como o app; quem escolhe o escuro mantém a escolha.
+            ->darkMode()
+            ->defaultThemeMode(\Filament\Enums\ThemeMode::Light)
             ->viteTheme('resources/css/filament/central/theme.css')
             // Central nunca teve isso (so' o Admin) -- caia no texto padrao
             // do Filament em vez do wordmark "Oravel" com o "r" laranja.
