@@ -12,7 +12,7 @@ class BancaryReconciliationExportController extends Controller
     public function print()
     {
         $tenant = auth()->user()?->tenant_id;
-        if (!$tenant) {
+        if (!$tenant || ! \App\Filament\Pages\BancaryReconciliationPage::canAccess()) {
             abort(403);
         }
 
@@ -48,7 +48,7 @@ class BancaryReconciliationExportController extends Controller
     public function excel(): StreamedResponse
     {
         $tenant = auth()->user()?->tenant_id;
-        if (!$tenant) {
+        if (!$tenant || ! \App\Filament\Pages\BancaryReconciliationPage::canAccess()) {
             abort(403);
         }
 

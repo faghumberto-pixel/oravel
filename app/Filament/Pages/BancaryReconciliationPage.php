@@ -55,7 +55,10 @@ class BancaryReconciliationPage extends Page
     // autenticado via qualquer tenant enxergava a tela, plano incluído ou não.
     public static function canAccess(): bool
     {
-        return (bool) auth()->user()?->can('viewAny', AccountReceivable::class);
+        // O módulo "Reconciliação Bancária" do contrato libera esta tela (antes só a permissão de contas a
+        // receber era conferida, e a tela aparecia mesmo sem o módulo).
+        return (bool) \App\Support\Tenancy::current()?->hasFeature('tabela_bank_reconciliation')
+            && auth()->user()?->can('viewAny', AccountReceivable::class);
     }
 
     public function getMaxContentWidth(): MaxWidth

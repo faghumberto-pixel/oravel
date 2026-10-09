@@ -44,7 +44,7 @@ class TenantNavigationManager extends NavigationManager
             $itens = [];
 
             foreach ($grupo->getItems() as $item) {
-                $this->removerFilhosBloqueados($item, $bloqueadas);
+                $this->removerFilhosBloqueados($item, $bloqueadas, $grupo->getLabel());
 
                 if (! $this->menuLiberadoNoContrato($grupo->getLabel(), $item)) {
                     continue;
@@ -126,12 +126,16 @@ class TenantNavigationManager extends NavigationManager
     }
 
     /**
+     * Tira dos filhos de um menu pai as páginas bloqueadas por canAccess() e as que o contrato do cliente
+     * não liberou (módulo "Tela: ..." da Central). Antes só os menus pai respeitavam o contrato, então uma
+     * tela solta dentro de um menu liberado continuava aparecendo no menu mesmo desmarcada.
+     *
      * @param  array<string, true>  $bloqueadas
      */
-    protected function removerFilhosBloqueados(NavigationItem $item, array $bloqueadas): void
+    protected function removerFilhosBloqueados(NavigationItem $item, array $bloqueadas, ?string $grupo = null): void
     {
         $filhos = collect($item->getChildItems())
-            ->reject(fn (NavigationItem $filho) => isset($bloqueadas[$filho->getUrl()]))
+            ->reject(fn (NavigationItem $filho) => isset($bloqueadas[$filho->getUrl()]) || ! $this->menuLiberadoNoContrato($grupo, $filho))
             ->values()
             ->all();
 
