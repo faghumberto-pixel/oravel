@@ -351,18 +351,14 @@ return [
         'slug' => 'email-da-empresa',
         'herda' => [],
     ],
-    'menu_whatsapp_da_empresa' => [
-        'label' => 'Tela: Configurações → WhatsApp da Empresa',
-        'grupo' => 'Configurações',
-        'menu' => 'WhatsApp da Empresa',
-        'slug' => 'whatsapp-da-empresa',
-        'herda' => [],
-    ],
-    'menu_whatsapp' => [
-        'label' => 'Tela: Comercial → WhatsApp',
+    // Recurso (não é uma tela): liga/desliga o WhatsApp inteiro da empresa -- telas, envio, recebimento,
+    // avisos automáticos e o botão da proposta. Nasce DESLIGADO para todos os contratos.
+    'modulo_whatsapp' => [
+        'label' => 'WhatsApp: enviar e receber mensagens, conversas, avisos automáticos',
         'grupo' => 'Comercial',
-        'menu' => 'WhatsApp',
-        'slug' => 'whatsapp',
-        'herda' => [],
+        'menu' => 'WhatsApp (módulo)',
+        'slug' => 'modulo-whatsapp-sem-rota',
+        'recurso' => true,
+        'herda' => ['__nunca__'],
     ],
 ];

@@ -31,7 +31,7 @@ class PropostaComercialEnvioDesktopTest extends TestCase
     private function cliente(): array
     {
         $plano = Plan::create(['name' => 'P '.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1, 'billing_cycle' => 'monthly', 'is_active' => true,
-            'features' => ['tabela_proposta_comercial', 'tabela_solicitacao_locacao']]);
+            'features' => ['tabela_proposta_comercial', 'tabela_solicitacao_locacao', 'modulo_whatsapp']]);
         $tenant = Tenant::create(['name' => 'T '.uniqid(), 'slug' => 't-'.uniqid(), 'plan_id' => $plano->id, 'status' => 'active']);
         $admin = User::create(['name' => 'Admin', 'email' => uniqid().'@oravel.test', 'password' => bcrypt('x'), 'tenant_id' => $tenant->id, 'is_approved' => true]);
         $admin->forceFill(['email_verified_at' => now()])->save();

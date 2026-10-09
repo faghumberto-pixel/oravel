@@ -26,7 +26,7 @@ class WhatsAppEmpresaWebhookController extends Controller
     {
         $config = TenantWhatsappSetting::withoutGlobalScopes()->where('tenant_id', $tenant)->first();
 
-        if ($config && $request->query('hub_mode') === 'subscribe' && hash_equals($config->verify_token, (string) $request->query('hub_verify_token'))) {
+        if ($config && WhatsAppEmpresaService::moduloLiberado($tenant) && $request->query('hub_mode') === 'subscribe' && hash_equals($config->verify_token, (string) $request->query('hub_verify_token'))) {
             return response((string) $request->query('hub_challenge'), 200);
         }
 
@@ -37,7 +37,7 @@ class WhatsAppEmpresaWebhookController extends Controller
     {
         $config = TenantWhatsappSetting::withoutGlobalScopes()->where('tenant_id', $tenant)->first();
 
-        if (! $config || ! $this->assinaturaValida($request, (string) $config->app_secret)) {
+        if (! $config || ! WhatsAppEmpresaService::moduloLiberado($tenant) || ! $this->assinaturaValida($request, (string) $config->app_secret)) {
             return response()->json(['status' => 'forbidden'], 403);
         }
 

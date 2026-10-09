@@ -24,10 +24,20 @@ class WhatsAppEmpresaService
 {
     public function __construct(private TenantWhatsappSetting $config, private WhatsappNumero $numero) {}
 
+    /** O WhatsApp é um módulo do contrato (liberado pela Central): sem ele nada envia, recebe ou avisa. */
+    public static function moduloLiberado(?string $tenantId): bool
+    {
+        if (blank($tenantId)) {
+            return false;
+        }
+
+        return (bool) \App\Models\Tenant::withoutGlobalScopes()->with('plan')->find($tenantId)?->plan?->hasFeature('modulo_whatsapp');
+    }
+
     /** Serviço do número informado, ou null se a empresa não ligou o WhatsApp. */
     public static function paraNumero(?WhatsappNumero $numero): ?self
     {
-        if (! $numero || ! $numero->enabled) {
+        if (! $numero || ! $numero->enabled || ! static::moduloLiberado($numero->tenant_id)) {
             return null;
         }
 

@@ -137,7 +137,7 @@ class ClientResource extends Resource
                                     ->helperText('Usado como destinatário padrão em envios (ex: orçamentos). Também é o usuário de login do Portal do Cliente.'),
                                     Forms\Components\TextInput::make('phone')->label('Telefone')->tel()->maxLength(30)->rules([static::regraDuplicidade('phone')]),
                                     Forms\Components\TextInput::make('whatsapp')->label('Celular / WhatsApp')->tel()->maxLength(30)->rules([static::regraDuplicidade('whatsapp')]),
-                                    Forms\Components\Toggle::make('aceita_avisos_whatsapp')->label('Aceita receber avisos por WhatsApp')->helperText('Marque só se o cliente autorizou. Cobranças e avisos de ordem de serviço automáticos só vão para quem aceitou.'),
+                                    Forms\Components\Toggle::make('aceita_avisos_whatsapp')->label('Aceita receber avisos por WhatsApp')->visible(fn () => \App\Services\WhatsAppEmpresaService::moduloLiberado(Tenancy::current()?->id))->helperText('Marque só se o cliente autorizou. Cobranças e avisos de ordem de serviço automáticos só vão para quem aceitou.'),
                                 ])->columns(2),
                             Forms\Components\Section::make('Site e redes sociais')
                                 ->schema([

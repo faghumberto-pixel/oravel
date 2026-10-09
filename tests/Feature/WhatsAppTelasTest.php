@@ -23,7 +23,7 @@ class WhatsAppTelasTest extends TestCase
 
     private function empresa(): array
     {
-        $plan = Plan::create(['name' => 'P'.uniqid(), 'price' => 0, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => []]);
+        $plan = Plan::create(['name' => 'P'.uniqid(), 'price' => 0, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => ['modulo_whatsapp' => true]]);
         $tenant = Tenant::create(['name' => 'E'.uniqid(), 'slug' => 'e-'.uniqid(), 'plan_id' => $plan->id, 'status' => 'active']);
         $admin = $this->usuario($tenant, 'Admin', admin: true);
 

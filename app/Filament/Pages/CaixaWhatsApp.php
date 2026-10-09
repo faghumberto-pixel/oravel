@@ -47,7 +47,7 @@ class CaixaWhatsApp extends Page
 
     public static function canAccess(): bool
     {
-        return (bool) auth()->user() && TenantWhatsappSetting::withoutGlobalScopes()->where('tenant_id', Tenancy::current()?->id)->where('enabled', true)->exists();
+        return (bool) auth()->user() && WhatsAppEmpresaService::moduloLiberado(Tenancy::current()?->id) && TenantWhatsappSetting::withoutGlobalScopes()->where('tenant_id', Tenancy::current()?->id)->where('enabled', true)->exists();
     }
 
     public static function shouldRegisterNavigation(): bool

@@ -22,7 +22,7 @@ class WhatsAppEmpresaTest extends TestCase
 
     private function empresa(string $nome = 'Locadora'): Tenant
     {
-        $plan = Plan::create(['name' => 'P'.uniqid(), 'price' => 0, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => []]);
+        $plan = Plan::create(['name' => 'P'.uniqid(), 'price' => 0, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => ['modulo_whatsapp' => true]]);
 
         return Tenant::create(['name' => $nome.uniqid(), 'slug' => 'e-'.uniqid(), 'plan_id' => $plan->id, 'status' => 'active']);
     }

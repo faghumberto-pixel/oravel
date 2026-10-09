@@ -21,7 +21,7 @@ class MenuModulesTest extends TestCase
         $conhecidas = collect(SaaSRegistry::modules())->pluck('feature')->filter()->all();
 
         foreach (MenuModules::all() as $chave => $menu) {
-            foreach ($menu['herda'] as $herdada) {
+            foreach (array_diff($menu['herda'], ['__nunca__']) as $herdada) { // __nunca__ = recurso que nasce desligado
                 $this->assertContains($herdada, $conhecidas, "{$chave} herda {$herdada}, que nao existe no registro");
             }
         }

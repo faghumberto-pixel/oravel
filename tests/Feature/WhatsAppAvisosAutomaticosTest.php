@@ -27,7 +27,7 @@ class WhatsAppAvisosAutomaticosTest extends TestCase
     {
         parent::setUp();
         Http::fake(['graph.facebook.com/*' => fn () => Http::response(['messages' => [['id' => 'wamid.'.uniqid('', true)]]], 200)]);
-        $plan = Plan::create(['name' => 'P'.uniqid(), 'price' => 0, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => []]);
+        $plan = Plan::create(['name' => 'P'.uniqid(), 'price' => 0, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => ['modulo_whatsapp' => true]]);
         $this->tenant = Tenant::create(['name' => 'E'.uniqid(), 'slug' => 'e-'.uniqid(), 'plan_id' => $plan->id, 'status' => 'active']);
         $this->config = TenantWhatsappSetting::withoutGlobalScopes()->create([
             'tenant_id' => $this->tenant->id, 'enabled' => true, 'access_token' => 'T', 'app_secret' => 'S', 'verify_token' => 'V',

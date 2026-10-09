@@ -48,7 +48,7 @@ class WhatsAppDaEmpresa extends Page implements HasForms
 
     public static function canAccess(): bool
     {
-        return (bool) auth()->user()?->isAdmin();
+        return (bool) auth()->user()?->isAdmin() && WhatsAppEmpresaService::moduloLiberado(Tenancy::current()?->id);
     }
 
     public function mount(): void

@@ -21,7 +21,7 @@ class MenuModules
     public static function keyForItem(?string $grupo, ?string $rotulo): ?string
     {
         foreach (static::all() as $key => $m) {
-            if ($m['menu'] === $rotulo && $m['grupo'] === $grupo) {
+            if (empty($m['recurso']) && $m['menu'] === $rotulo && $m['grupo'] === $grupo) {
                 return $key;
             }
         }
@@ -33,7 +33,7 @@ class MenuModules
     public static function keyForSlug(?string $slug): ?string
     {
         foreach (static::all() as $key => $m) {
-            if ($m['slug'] === $slug) {
+            if (empty($m['recurso']) && $m['slug'] === $slug) {
                 return $key;
             }
         }

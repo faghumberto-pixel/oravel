@@ -22,7 +22,7 @@ class AvisosWhatsApp
     /** Lembretes de vencimento (X dias antes) e de atraso (1 dia depois) de uma empresa. Devolve quantos foram enviados. */
     public static function cobrancas(TenantWhatsappSetting $config, ?\Illuminate\Support\Carbon $hoje = null): int
     {
-        if (! $config->enabled || ! $config->aviso_cobranca || blank($config->template_cobranca)) {
+        if (! $config->enabled || ! $config->aviso_cobranca || blank($config->template_cobranca) || ! WhatsAppEmpresaService::moduloLiberado($config->tenant_id)) {
             return 0;
         }
 
@@ -64,7 +64,7 @@ class AvisosWhatsApp
     {
         $config = TenantWhatsappSetting::withoutGlobalScopes()->where('tenant_id', $ordem->tenant_id)->first();
 
-        if (! $config || ! $config->enabled || ! $config->aviso_os || blank($config->template_os_concluida) || ! $ordem->client_id) {
+        if (! $config || ! $config->enabled || ! $config->aviso_os || blank($config->template_os_concluida) || ! $ordem->client_id || ! WhatsAppEmpresaService::moduloLiberado($ordem->tenant_id)) {
             return false;
         }
 
