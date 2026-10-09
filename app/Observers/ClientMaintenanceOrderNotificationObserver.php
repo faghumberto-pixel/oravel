@@ -26,6 +26,15 @@ class ClientMaintenanceOrderNotificationObserver
             return;
         }
 
+        // Aviso de OS concluída pelo WhatsApp da empresa (independe do acesso ao portal); falha dele nunca derruba a OS.
+        if (in_array($order->status, ['Concluída', 'Completado'], true)) {
+            try {
+                \App\Services\AvisosWhatsApp::osConcluida($order);
+            } catch (\Throwable $e) {
+                \Log::warning('Aviso de OS por WhatsApp falhou.', ['os' => $order->id, 'erro' => $e->getMessage()]);
+            }
+        }
+
         $client = $order->client;
         if (! $client?->portal_access_enabled_at) {
             return;

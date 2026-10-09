@@ -20,7 +20,7 @@ class WhatsappMensagem extends Model
 
     protected $fillable = [
         'tenant_id', 'conversa_id', 'direcao', 'tipo', 'corpo', 'wa_id', 'status', 'erro',
-        'enviada_por_user_id', 'related_type', 'related_id',
+        'enviada_por_user_id', 'related_type', 'related_id', 'evento',
     ];
 
     public function conversa(): BelongsTo

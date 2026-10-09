@@ -28,6 +28,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('sales:notify-appointments')->everyFiveMinutes();
         $schedule->command('financeiro:verificar-vencimentos')->daily();
         $schedule->command('financeiro:marcar-contas-atrasadas')->dailyAt('01:00');
+        // Lembretes de cobrança por WhatsApp (só empresas que ligaram o aviso). Em PROD precisa de schedule:run no cron.
+        $schedule->command('whatsapp:avisos-cobranca')->dailyAt('09:00');
         $schedule->command('site-visits:close-stale')->everyFiveMinutes();
         // Mantém só os 50 acessos mais recentes (pedido do usuário 2026-09-27).
         $schedule->command('site-visits:prune')->hourly();
