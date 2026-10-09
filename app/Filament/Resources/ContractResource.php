@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Actions\FaturarContratoAction;
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\ContractResource\Pages;
 use App\Models\Asset;
@@ -401,6 +402,7 @@ class ContractResource extends Resource
                     ->icon('heroicon-o-printer')
                     ->url(fn (Contract $record) => route('contratos.visualizar', ['contract' => $record->id]))
                     ->openUrlInNewTab(),
+                FaturarContratoAction::table(),
                 static::generateSignatureAction(),
                 static::copySignatureLinkAction(),
                 static::viewSignatureCertificateAction(),

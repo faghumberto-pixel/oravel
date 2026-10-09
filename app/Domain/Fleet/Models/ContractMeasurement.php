@@ -155,6 +155,8 @@ class ContractMeasurement extends Model
             throw new \RuntimeException('Só é possível enviar para aprovação uma medição em rascunho.');
         }
 
+        $this->assertOverageNotBilledSeparately();
+
         $this->update(['status' => self::STATUS_AWAITING_APPROVAL]);
     }
 
@@ -211,6 +213,8 @@ class ContractMeasurement extends Model
             throw new \RuntimeException('Não há valor a cobrar nesta medição.');
         }
 
+        $this->assertOverageNotBilledSeparately();
+
         $receivable = AccountReceivable::create([
             'tenant_id' => $this->tenant_id,
             'client_id' => $this->contract->client_id,
@@ -232,6 +236,32 @@ class ContractMeasurement extends Model
             'account_receivable_id' => $receivable->id,
         ]);
 
+        // O excedente de franquia foi cobrado junto com a medição: marca-o
+        // como faturado na mesma conta a receber pra não ser cobrado de novo.
+        $overage = $this->rentalOverageCharge;
+        if ($overage && $overage->status === RentalOverageCharge::STATUS_PENDING) {
+            $overage->update([
+                'status' => RentalOverageCharge::STATUS_INVOICED,
+                'account_receivable_id' => $receivable->id,
+            ]);
+        }
+
         return $receivable;
+    }
+
+    /**
+     * Se o excedente desta medição já foi faturado por fora (pela tela de
+     * Excedentes), o valor dele ainda está no total da medição -- seguir
+     * cobraria as mesmas horas duas vezes.
+     */
+    private function assertOverageNotBilledSeparately(): void
+    {
+        $overage = $this->rentalOverageCharge;
+
+        if ($overage
+            && $overage->status === RentalOverageCharge::STATUS_INVOICED
+            && (float) $this->total_excess_hours_amount > 0) {
+            throw new \RuntimeException('O excedente de franquia desta medição já foi cobrado separadamente. Descarte esta medição e gere outra para o período.');
+        }
     }
 }

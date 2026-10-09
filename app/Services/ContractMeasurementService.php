@@ -7,6 +7,7 @@ use App\Domain\Fleet\Models\RentalHourFranchise;
 use App\Domain\Fleet\Models\RentalOverageCharge;
 use App\Models\Contract;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Gera a medição mensal consolidada de um contrato: valor base
@@ -36,6 +37,57 @@ class ContractMeasurementService
             return $existing;
         }
 
+        $calc = $this->compute($contract, $periodStart, $periodEnd);
+
+        return ContractMeasurement::create([
+            'tenant_id' => $contract->tenant_id,
+            'contract_id' => $contract->id,
+            'reference_period_start' => $periodStart,
+            'reference_period_end' => $periodEnd,
+            'total_days_in_period' => $calc['total_days_in_period'],
+            'prorated_days' => $calc['prorated_days'],
+            'total_base_amount' => $calc['base_amount'],
+            'total_excess_hours_amount' => $calc['excess_hours_amount'],
+            'total_extras_amount' => 0,
+            'total_amount' => $calc['total_amount'],
+            'rental_overage_charge_id' => $calc['overage_charge']?->id,
+            'status' => ContractMeasurement::STATUS_DRAFT,
+        ]);
+    }
+
+    /**
+     * Prévia do valor de um período SEM gravar nada (nem a medição, nem o
+     * RentalOverageCharge que o ContractOverageCalculator cria): roda o
+     * mesmo cálculo de generateForPeriod() dentro de uma transação que é
+     * sempre desfeita. Usado pela ação "Faturar" do Contrato pra mostrar o
+     * valor antes de confirmar.
+     *
+     * @return array{prorated_days: int, total_days_in_period: int, base_amount: float, excess_hours_amount: float, total_amount: float, overage_conflict: ?string}
+     */
+    public function calculateForPeriod(Contract $contract, Carbon $periodStart, Carbon $periodEnd): array
+    {
+        DB::beginTransaction();
+
+        try {
+            $calc = $this->compute($contract, $periodStart, $periodEnd);
+        } finally {
+            DB::rollBack();
+        }
+
+        return [
+            'prorated_days' => $calc['prorated_days'],
+            'total_days_in_period' => $calc['total_days_in_period'],
+            'base_amount' => $calc['base_amount'],
+            'excess_hours_amount' => $calc['excess_hours_amount'],
+            'total_amount' => $calc['total_amount'],
+            'overage_conflict' => $calc['overage_charge']?->status === RentalOverageCharge::STATUS_CONFLICT
+                ? $calc['overage_charge']->conflict_reason
+                : null,
+        ];
+    }
+
+    private function compute(Contract $contract, Carbon $periodStart, Carbon $periodEnd): array
+    {
         [$proratedDays, $totalDaysInPeriod] = $this->calculateProratedDays($contract, $periodStart, $periodEnd);
 
         $baseAmount = $this->calculateBaseAmount($contract, $proratedDays, $totalDaysInPeriod);
@@ -45,22 +97,14 @@ class ContractMeasurementService
             ? (float) $overageCharge->amount
             : 0.0;
 
-        $totalAmount = round($baseAmount + $excessHoursAmount, 2);
-
-        return ContractMeasurement::create([
-            'tenant_id' => $contract->tenant_id,
-            'contract_id' => $contract->id,
-            'reference_period_start' => $periodStart,
-            'reference_period_end' => $periodEnd,
-            'total_days_in_period' => $totalDaysInPeriod,
+        return [
             'prorated_days' => $proratedDays,
-            'total_base_amount' => $baseAmount,
-            'total_excess_hours_amount' => $excessHoursAmount,
-            'total_extras_amount' => 0,
-            'total_amount' => $totalAmount,
-            'rental_overage_charge_id' => $overageCharge?->id,
-            'status' => ContractMeasurement::STATUS_DRAFT,
-        ]);
+            'total_days_in_period' => $totalDaysInPeriod,
+            'base_amount' => $baseAmount,
+            'excess_hours_amount' => $excessHoursAmount,
+            'total_amount' => round($baseAmount + $excessHoursAmount, 2),
+            'overage_charge' => $overageCharge,
+        ];
     }
 
     /**

@@ -109,6 +109,14 @@ class RentalOverageCharge extends Model
             throw new \RuntimeException('Não há valor a cobrar neste excedente.');
         }
 
+        // O excedente já faz parte do total de uma medição de contrato:
+        // cobrar aqui também faturaria as mesmas horas duas vezes.
+        if (ContractMeasurement::where('rental_overage_charge_id', $this->id)
+            ->where('status', '!=', ContractMeasurement::STATUS_REJECTED)
+            ->exists()) {
+            throw new \RuntimeException('Este excedente já está incluído em uma medição de contrato; ele será cobrado junto com a medição.');
+        }
+
         $receivable = AccountReceivable::create([
             'tenant_id' => $this->tenant_id,
             'client_id' => $this->contract->client_id,
