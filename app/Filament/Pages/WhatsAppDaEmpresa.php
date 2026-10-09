@@ -1,0 +1,228 @@
+<?php
+
+namespace App\Filament\Pages;
+
+use App\Models\TenantWhatsappSetting;
+use App\Models\User;
+use App\Models\WhatsappNumero;
+use App\Services\WhatsAppEmpresaService;
+use App\Support\Tenancy;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
+
+/**
+ * A empresa liga o WhatsApp (API oficial da Meta): credenciais da empresa + o número de
+ * cada usuário (e, se quiser, um número da empresa). Ligado, cada pessoa envia e recebe
+ * pelo próprio número, na tela Comercial → WhatsApp.
+ */
+class WhatsAppDaEmpresa extends Page implements HasForms
+{
+    use InteractsWithForms;
+
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+
+    protected static ?string $navigationGroup = 'Configurações';
+
+    protected static ?string $navigationLabel = 'WhatsApp da Empresa';
+
+    protected static ?int $navigationSort = 5;
+
+    protected static ?string $title = 'WhatsApp da Empresa';
+
+    protected static ?string $slug = 'whatsapp-da-empresa';
+
+    protected static string $view = 'filament.pages.whatsapp-da-empresa';
+
+    public ?array $data = [];
+
+    public static function canAccess(): bool
+    {
+        return (bool) auth()->user()?->isAdmin();
+    }
+
+    public function mount(): void
+    {
+        $c = $this->config();
+
+        $this->form->fill(array_merge(
+            $c ? $c->only(['waba_id', 'template_abertura', 'template_proposta', 'template_language']) : ['template_language' => 'pt_BR'],
+            ['numeros' => $this->numeros()->map(fn (WhatsappNumero $n) => ['user_id' => $n->user_id, 'phone_number_id' => $n->phone_number_id, 'rotulo' => $n->rotulo])->all()],
+        ));
+    }
+
+    public function config(): ?TenantWhatsappSetting
+    {
+        return TenantWhatsappSetting::withoutGlobalScopes()->where('tenant_id', Tenancy::current()?->id)->first();
+    }
+
+    public function numeros()
+    {
+        return WhatsappNumero::withoutGlobalScopes()->where('tenant_id', Tenancy::current()?->id)->with('user')->orderBy('created_at')->get();
+    }
+
+    public function urlDoWebhook(): string
+    {
+        return url('/api/webhooks/whatsapp-empresa/'.Tenancy::current()?->id);
+    }
+
+    public function form(Form $form): Form
+    {
+        $usuarios = User::withoutGlobalScopes()->where('tenant_id', Tenancy::current()?->id)->where('is_approved', true)->orderBy('name')->pluck('name', 'id')->all();
+
+        return $form->statePath('data')->schema([
+            Placeholder::make('situacao')->label('')->content(fn () => $this->situacao()),
+            Section::make('Dados da empresa na Meta')
+                ->description('Valem para todos os números. Você encontra na conta da Meta (WhatsApp Business Platform).')
+                ->schema([
+                    TextInput::make('waba_id')->label('ID da conta do WhatsApp Business (opcional)')->maxLength(60),
+                    TextInput::make('access_token')->label('Token de acesso permanente')->password()->revealable()->autocomplete('new-password')
+                        ->required(fn () => ! $this->config())
+                        ->helperText(fn () => $this->config() ? 'Deixe em branco para manter o atual. Fica guardado criptografado.' : 'Fica guardado criptografado e nunca é mostrado de novo.'),
+                    TextInput::make('app_secret')->label('Segredo do app da Meta')->password()->revealable()->autocomplete('new-password')
+                        ->required(fn () => ! $this->config())
+                        ->helperText('Serve para conferir que as mensagens recebidas vêm mesmo da Meta.'),
+                ])->columns(3),
+            Section::make('Números')
+                ->description('Um número por pessoa: cada usuário envia e recebe pelo dele. Deixe o campo "Usuário" vazio para cadastrar um número da empresa, usado por quem não tem número próprio. Cada número precisa estar cadastrado na API oficial da Meta.')
+                ->schema([
+                    Repeater::make('numeros')->label('')->addActionLabel('Adicionar número')->defaultItems(0)->schema([
+                        Select::make('user_id')->label('Usuário')->options($usuarios)->searchable()->placeholder('Número da empresa'),
+                        TextInput::make('phone_number_id')->label('ID do número de telefone (na Meta)')->required()->maxLength(60),
+                        TextInput::make('rotulo')->label('Nome (opcional)')->maxLength(60),
+                    ])->columns(3),
+                ]),
+            Section::make('Modelos de mensagem aprovados')
+                ->description('Para iniciar uma conversa, ou responder depois de 24 horas, o WhatsApp só aceita modelos aprovados pela Meta. Informe o nome exato de cada um.')
+                ->schema([
+                    TextInput::make('template_abertura')->label('Modelo para iniciar conversa')->helperText('Uma variável: o nome do cliente ({{1}}).')->maxLength(120),
+                    TextInput::make('template_proposta')->label('Modelo para enviar proposta')->helperText('Duas variáveis: nome do cliente ({{1}}) e link da proposta ({{2}}).')->maxLength(120),
+                    TextInput::make('template_language')->label('Idioma dos modelos')->default('pt_BR')->required()->maxLength(10),
+                ])->columns(3),
+        ]);
+    }
+
+    private function situacao(): HtmlString
+    {
+        $c = $this->config();
+
+        if (! $c) {
+            return new HtmlString('<b>WhatsApp ainda não ligado.</b> Enquanto isso, os botões de WhatsApp do sistema só abrem o aplicativo com a mensagem pronta.');
+        }
+
+        if ($c->enabled) {
+            $ok = $this->numeros()->where('last_test_ok', true)->count();
+
+            return new HtmlString('<b style="color:#16a34a">Ligado.</b> '.$ok.' número(s) funcionando. Veja as conversas em <b>Comercial → WhatsApp</b>.');
+        }
+
+        return new HtmlString('<b>Cadastrado, mas desligado.</b>'.($c->last_test_ok === false ? ' O último teste falhou: '.e((string) $c->last_error) : ' Faça o teste para ligar.'));
+    }
+
+    public function salvar(): void
+    {
+        $this->gravar();
+
+        Notification::make()->title('Dados salvos')->body('Falta cadastrar o webhook na Meta e fazer o teste de conexão.')->success()->send();
+    }
+
+    /** Testa cada número na Meta (sem enviar nada); liga se pelo menos um funcionar. */
+    public function testarEAtivar(): void
+    {
+        $config = $this->gravar();
+        $funcionando = 0;
+        $problemas = [];
+
+        foreach ($this->numeros() as $numero) {
+            try {
+                $info = (new WhatsAppEmpresaService($config, $numero))->testarConexao();
+                $numero->update(['display_phone' => $info['display_phone_number'] ?? null, 'last_test_at' => now(), 'last_test_ok' => true, 'last_error' => null]);
+                $funcionando++;
+            } catch (\Throwable $e) {
+                $numero->update(['last_test_at' => now(), 'last_test_ok' => false, 'last_error' => mb_substr($e->getMessage(), 0, 300)]);
+                $problemas[] = $numero->nome();
+            }
+        }
+
+        $config->update(['enabled' => $funcionando > 0, 'last_test_at' => now(), 'last_test_ok' => $funcionando > 0, 'last_error' => $funcionando > 0 ? null : 'Nenhum número foi aceito pela Meta.']);
+
+        if ($funcionando === 0) {
+            Notification::make()->title('A Meta recusou os dados')->body('Confira o token e o ID de cada número. Nada foi ligado.')->danger()->persistent()->send();
+
+            return;
+        }
+
+        Notification::make()->title('WhatsApp ligado')
+            ->body($funcionando.' número(s) funcionando.'.($problemas ? ' Com problema: '.implode(', ', $problemas).'.' : '').' Agora cadastre o webhook na Meta para receber as respostas.')
+            ->success()->persistent()->send();
+    }
+
+    public function desligar(): void
+    {
+        $this->config()?->update(['enabled' => false]);
+
+        Notification::make()->title('WhatsApp desligado')->success()->send();
+    }
+
+    private function gravar(): TenantWhatsappSetting
+    {
+        $tenantId = Tenancy::current()?->id;
+        abort_unless($tenantId, 403);
+
+        $d = $this->form->getState();
+        $atual = $this->config();
+
+        $campos = [
+            'waba_id' => $d['waba_id'] ?? null, 'template_abertura' => $d['template_abertura'] ?? null,
+            'template_proposta' => $d['template_proposta'] ?? null, 'template_language' => $d['template_language'] ?: 'pt_BR',
+        ];
+
+        foreach (['access_token', 'app_secret'] as $segredo) {
+            if (filled($d[$segredo] ?? null)) {
+                $campos[$segredo] = $d[$segredo];
+            }
+        }
+
+        if (isset($campos['access_token'])) {
+            $campos['enabled'] = false;
+        }
+
+        $config = $atual
+            ? tap($atual)->update($campos)->refresh()
+            : TenantWhatsappSetting::withoutGlobalScopes()->create($campos + ['tenant_id' => $tenantId, 'enabled' => false, 'verify_token' => Str::random(32)]);
+
+        $this->sincronizarNumeros($tenantId, (array) ($d['numeros'] ?? []));
+
+        return $config;
+    }
+
+    private function sincronizarNumeros(string $tenantId, array $itens): void
+    {
+        $validos = User::withoutGlobalScopes()->where('tenant_id', $tenantId)->pluck('id')->all();
+        $manter = [];
+
+        foreach ($itens as $item) {
+            $userId = $item['user_id'] ?? null;
+            if ($userId && ! in_array($userId, $validos, true)) {
+                continue;
+            }
+
+            $numero = WhatsappNumero::withoutGlobalScopes()->updateOrCreate(
+                ['tenant_id' => $tenantId, 'phone_number_id' => trim($item['phone_number_id'])],
+                ['user_id' => $userId ?: null, 'rotulo' => $item['rotulo'] ?? null, 'enabled' => true],
+            );
+            $manter[] = $numero->id;
+        }
+
+        WhatsappNumero::withoutGlobalScopes()->where('tenant_id', $tenantId)->whereNotIn('id', $manter)->delete();
+    }
+}

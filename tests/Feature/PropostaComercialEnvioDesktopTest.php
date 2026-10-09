@@ -245,4 +245,36 @@ class PropostaComercialEnvioDesktopTest extends TestCase
         Livewire::test(ViewPropostaComercial::class, ['record' => $proposta->getRouteKey()])->assertActionVisible('whatsapp_cliente');
         Livewire::test(PropostaComercialKanban::class)->assertSee('Enviar por WhatsApp');
     }
+
+    public function test_proposta_aprovada_vai_pelo_whatsapp_do_sistema_com_o_numero_de_quem_envia(): void
+    {
+        \Illuminate\Support\Facades\Http::fake(['graph.facebook.com/*' => \Illuminate\Support\Facades\Http::response(['messages' => [['id' => 'wamid.P1']]], 200)]);
+        Mail::fake();
+        [$tenant, $admin] = $this->cliente();
+        $this->actingAs($admin);
+        $proposta = $this->aprovada($tenant, $admin);
+        $proposta->client->update(['whatsapp' => '(19) 99933-2615']);
+
+        // sem WhatsApp ligado: o botão do sistema não aparece (só o link manual)
+        Livewire::test(ViewPropostaComercial::class, ['record' => $proposta->getRouteKey()])->assertActionHidden('whatsapp_sistema')->assertActionVisible('whatsapp_cliente');
+        $this->assertNull($proposta->fresh()->enviarPorWhatsApp($admin));
+
+        \App\Models\TenantWhatsappSetting::withoutGlobalScopes()->create(['tenant_id' => $tenant->id, 'enabled' => true, 'access_token' => 'TOK', 'app_secret' => 'S', 'verify_token' => 'V', 'template_proposta' => 'proposta_enviada']);
+        \App\Models\WhatsappNumero::withoutGlobalScopes()->create(['tenant_id' => $tenant->id, 'user_id' => $admin->id, 'phone_number_id' => 'N-ADMIN']);
+
+        Livewire::test(ViewPropostaComercial::class, ['record' => $proposta->getRouteKey()])
+            ->assertActionVisible('whatsapp_sistema')
+            ->callAction('whatsapp_sistema')
+            ->assertNotified('Proposta enviada pelo WhatsApp');
+
+        $link = route('proposta-comercial.public-approval', $proposta->fresh()->approval_token);
+        \Illuminate\Support\Facades\Http::assertSent(fn ($r) => str_contains($r->url(), '/N-ADMIN/messages')
+            && $r['to'] === '5519999332615' && $r['template']['name'] === 'proposta_enviada'
+            && $r['template']['components'][0]['parameters'][1]['text'] === $link);
+
+        $mensagem = \App\Models\WhatsappMensagem::withoutGlobalScopes()->where('tenant_id', $tenant->id)->firstOrFail();
+        $this->assertSame('enviada', $mensagem->status);
+        $this->assertSame($proposta->id, $mensagem->related_id);
+        $this->assertSame($admin->id, $mensagem->enviada_por_user_id);
+    }
 }

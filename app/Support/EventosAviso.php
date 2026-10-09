@@ -31,6 +31,7 @@ class EventosAviso
             'contrato_local_mudou' => ['label' => 'Local de instalação do contrato mudou', 'ajuda' => 'O cliente informou outro local para o equipamento.', 'papeis' => ['Gerente de Logística']],
             'contrato_fechado_logistica' => ['label' => 'Contrato fechado, despacho a organizar', 'ajuda' => 'Nova locação fechada que a logística precisa despachar.', 'papeis' => ['Gerente de Logística']],
             'reserva_revogada' => ['label' => 'Reserva de equipamento revogada', 'ajuda' => 'Uma reserva para manutenção foi desfeita automaticamente.', 'papeis' => ['Gerente de Manutenção']],
+            'whatsapp_recebido' => ['label' => 'Mensagem de WhatsApp recebida', 'ajuda' => 'Cliente mandou mensagem para o WhatsApp da empresa e a conversa ainda não tem responsável.', 'papeis' => ['admin']],
             'manutencao_vencendo' => ['label' => 'Manutenção preventiva vencendo', 'ajuda' => 'Plano de manutenção de um ativo perto de vencer.', 'papeis' => ['admin']],
         ];
     }

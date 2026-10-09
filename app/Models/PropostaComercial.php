@@ -385,6 +385,31 @@ class PropostaComercial extends Model
     }
 
     /**
+     * Envia a proposta aprovada pelo WhatsApp do sistema, usando o número de quem está enviando (ou o da
+     * empresa). Usa o modelo aprovado de proposta: nome do cliente e link de aceite. Devolve a mensagem
+     * registrada (status enviada ou falhou); null se não houver WhatsApp ligado, modelo ou número do cliente.
+     */
+    public function enviarPorWhatsApp(User $por): ?\App\Models\WhatsappMensagem
+    {
+        $servico = \App\Services\WhatsAppEmpresaService::paraUsuario($por);
+        $config = \App\Models\TenantWhatsappSetting::withoutGlobalScopes()->where('tenant_id', $this->tenant_id)->first();
+        $telefone = (string) ($this->client?->whatsapp ?: $this->client?->phone);
+
+        if (! $servico || blank($config?->template_proposta) || strlen(preg_replace('/\D+/', '', $telefone)) < 10
+            || $this->status !== self::STATUS_APROVADA_INTERNA || blank($this->approval_token)) {
+            return null;
+        }
+
+        $conversa = $servico->conversa($telefone, $this->client?->name);
+        $link = route('proposta-comercial.public-approval', $this->approval_token);
+
+        return $servico->enviarModelo(
+            $conversa, $config->template_proposta, [(string) $this->client?->name, $link], $por, $this,
+            "Proposta comercial enviada: {$link}",
+        );
+    }
+
+    /**
      * Chamado quando o cliente abre o link público de aprovação -- só
      * registra a PRIMEIRA visualização, mesmo padrão de Quote::markViewedByClient().
      */

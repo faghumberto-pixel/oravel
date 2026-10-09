@@ -82,8 +82,34 @@ class ViewPropostaComercial extends ViewRecord
                     }
                 }),
 
+            // Pelo WhatsApp do sistema (número de quem envia): fica registrado na conversa e mostra entregue/lido.
+            Actions\Action::make('whatsapp_sistema')
+                ->label('Enviar pelo WhatsApp do sistema')
+                ->icon('heroicon-o-paper-airplane')
+                ->color('success')
+                ->visible(fn () => $record->status === PropostaComercial::STATUS_APROVADA_INTERNA
+                    && \App\Services\WhatsAppEmpresaService::paraUsuario(auth()->user()) !== null
+                    && filled(\App\Models\TenantWhatsappSetting::withoutGlobalScopes()->where('tenant_id', $record->tenant_id)->value('template_proposta'))
+                    && filled($record->client?->whatsapp ?: $record->client?->phone))
+                ->requiresConfirmation()
+                ->modalHeading('Enviar a proposta pelo WhatsApp?')
+                ->modalDescription('O cliente recebe a mensagem com o link para ver e responder a proposta, pelo seu número de WhatsApp.')
+                ->action(function () use ($record) {
+                    $mensagem = $record->refresh()->enviarPorWhatsApp(auth()->user());
+
+                    if (! $mensagem) {
+                        Notification::make()->title('Não foi possível enviar')->body('Confira o WhatsApp da empresa, o modelo de proposta e o número do cliente.')->warning()->send();
+
+                        return;
+                    }
+
+                    $mensagem->status === 'falhou'
+                        ? Notification::make()->title('O WhatsApp não aceitou')->body((string) $mensagem->erro)->danger()->send()
+                        : Notification::make()->title('Proposta enviada pelo WhatsApp')->success()->send();
+                }),
+
             Actions\Action::make('whatsapp_cliente')
-                ->label('Enviar por WhatsApp')
+                ->label('Abrir no meu WhatsApp (manual)')
                 ->icon('heroicon-o-chat-bubble-left-right')
                 ->color('success')
                 ->visible(fn () => filled($record->linkWhatsapp()))

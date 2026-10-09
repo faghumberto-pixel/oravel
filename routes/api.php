@@ -50,6 +50,10 @@ Route::post('/site-track', [SiteTrackingController::class, 'collect'])
 Route::get('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'verify']);
 Route::post('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'handle']);
 
+// WhatsApp de CADA empresa (número próprio, API oficial da Meta): a empresa vai na URL.
+Route::get('/webhooks/whatsapp-empresa/{tenant}', [\App\Http\Controllers\WhatsAppEmpresaWebhookController::class, 'verify']);
+Route::post('/webhooks/whatsapp-empresa/{tenant}', [\App\Http\Controllers\WhatsAppEmpresaWebhookController::class, 'handle'])->middleware('throttle:600,1');
+
 // Technician offline field app
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/technician/tasks-of-day', 'App\Http\Controllers\Api\TechnicianTasksController@tasksOfDay');

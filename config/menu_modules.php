@@ -351,4 +351,18 @@ return [
         'slug' => 'email-da-empresa',
         'herda' => [],
     ],
+    'menu_whatsapp_da_empresa' => [
+        'label' => 'Tela: Configurações → WhatsApp da Empresa',
+        'grupo' => 'Configurações',
+        'menu' => 'WhatsApp da Empresa',
+        'slug' => 'whatsapp-da-empresa',
+        'herda' => [],
+    ],
+    'menu_whatsapp' => [
+        'label' => 'Tela: Comercial → WhatsApp',
+        'grupo' => 'Comercial',
+        'menu' => 'WhatsApp',
+        'slug' => 'whatsapp',
+        'herda' => [],
+    ],
 ];
