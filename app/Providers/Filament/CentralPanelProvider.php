@@ -80,39 +80,13 @@ class CentralPanelProvider extends PanelProvider
                 // 2026-08-10: "cor do sistema da central da mesma cor dos
                 // artefatos, tudo da mesma coisa". accent = --accent daqueles
                 // artefatos (#a0aec0), nao mais o azul padrao do Filament.
-                'primary' => [
-                    50 => '246, 247, 249',
-                    100 => '234, 237, 241',
-                    200 => '209, 216, 224',
-                    300 => '181, 192, 206',
-                    400 => '157, 171, 190',
-                    500 => '132, 150, 174',
-                    600 => '102, 124, 153',
-                    700 => '81, 99, 123',
-                    800 => '61, 75, 92',
-                    900 => '45, 55, 67',
-                    950 => '31, 37, 46',
-                ],
-                // Substitui a escala slate azulada anterior pela mesma
-                // familia marrom-creme dos artefatos (--bg/--surface/
-                // --surface-2/--line dos tokens dark). 950 (fundo, mais
-                // escuro) < 900 (sidebar/topbar, = --surface-2) < 800
-                // (cards de conteudo, = --surface, mais claro = "mais perto
-                // do usuario") -- mesma hierarquia de 3 degraus de antes,
-                // valores agora vindos direto do artefato em vez de
-                // inventados.
+                // Mesmo padrão do app (2026-10-08): laranja da marca como cor primária e
+                // cinza neutro nos tons escuros da imagem de referência (cards #202128,
+                // fundo #15161b). Substitui a paleta "Convertico" (cinza-azulado + creme).
+                'primary' => Color::hex('#f86c24'),
                 'gray' => [
-                    50 => '246, 245, 243',
-                    100 => '237, 235, 232',
-                    200 => '222, 218, 211',
-                    300 => '194, 186, 174',
-                    400 => '156, 144, 124',
-                    500 => '122, 111, 92',
-                    600 => '87, 79, 66',
-                    700 => '55, 47, 34',
-                    800 => '33, 28, 21',
-                    900 => '28, 24, 16',
-                    950 => '23, 20, 15',
+                    50 => '#fafafa', 100 => '#f4f4f5', 200 => '#e4e4e7', 300 => '#d4d4d8', 400 => '#a1a1aa',
+                    500 => '#71717a', 600 => '#52525b', 700 => '#3f3f46', 800 => '#2a2c35', 900 => '#202128', 950 => '#15161b',
                 ],
                 // Cores por estágio/segmento do CRM (App\Support\CrmPalette
                 // é a fonte única -- mudar lá já reflete aqui e no Kanban/
@@ -203,6 +177,10 @@ class CentralPanelProvider extends PanelProvider
             ])
             ->databaseNotifications()
             ->databaseNotificationsPolling('8s')
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn () => view('filament.central.cores-painel'),
+            )
             ->renderHook(
                 // Central nunca teve esse hook (so' o admin tinha) -- pagina
                 // restaurada do bfcache do navegador carrega com token CSRF
