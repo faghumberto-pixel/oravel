@@ -182,6 +182,14 @@ class Login extends BaseLogin
             return null;
         }
 
+        // Administrador: abre no Início (Painel de Controle) em vez do primeiro item do menu,
+        // a não ser que ele tenha vindo de um link específico (url.intended).
+        if ($user instanceof User && \App\Filament\Pages\PainelGestao::canAccess()) {
+            $this->redirect(session()->pull('url.intended', AppProfile::homeUrl($user, AppProfile::ADMIN)));
+
+            return null;
+        }
+
         return app(LoginResponse::class);
     }
 

@@ -69,7 +69,12 @@ class AdminPanelProvider extends PanelProvider
                 // brand-header-background.blade.php + theme.css). Trocar a marca é
                 // editar um lugar só, não caçar hex em N arquivos.
                 'primary' => Color::hex(config('oravel.brand.primary')),
-                'gray' => Color::Stone,
+                // Cinza neutro (sem o tom quente do Stone), com os três tons mais escuros
+                // afinados pela imagem de referência do tema escuro: cards #202128, fundo #15161b.
+                'gray' => [
+                    50 => '#fafafa', 100 => '#f4f4f5', 200 => '#e4e4e7', 300 => '#d4d4d8', 400 => '#a1a1aa',
+                    500 => '#71717a', 600 => '#52525b', 700 => '#3f3f46', 800 => '#2a2c35', 900 => '#202128', 950 => '#15161b',
+                ],
                 // So' pro status "quarentena" do Ativo (Asset::statusColor()) --
                 // os 6 nomes padrao do Filament nao cobrem os 7 status reais.
                 'purple' => Color::Purple,
