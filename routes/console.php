@@ -37,4 +37,6 @@ Schedule::command('contracts:generate-measurements')->monthlyOn(1, '03:30')->wit
 Schedule::command('frota:sincronizar-gps')->hourly()->withoutOverlapping();
 // Sincroniza status de pagamentos com o Asaas a cada 30 minutos.
 Schedule::command('asaas:sync-payment-status')->everyThirtyMinutes()->withoutOverlapping();
+// Limpeza semanal de notificações e registros automáticos antigos (domingo de madrugada).
+Schedule::command('registros:limpar')->weeklyOn(0, '04:00')->withoutOverlapping();
 
