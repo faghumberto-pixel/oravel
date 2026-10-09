@@ -326,19 +326,27 @@ class PropostaComercialResource extends BaseResource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\Action::make('enviar_comercial')
-                    ->label('Enviar ao Comercial')
+                    ->label('Enviar para revisão')
                     ->icon('heroicon-o-paper-airplane')
                     ->color('success')
                     ->visible(fn (PropostaComercial $record) => $record->status === PropostaComercial::STATUS_RASCUNHO && auth()->user()?->can('update', $record))
-                    ->requiresConfirmation()
-                    ->modalHeading('Enviar proposta ao Comercial?')
-                    ->modalDescription('O Comercial recebe um aviso por e-mail para revisar. Depois de enviada, a proposta não pode mais ser editada.')
-                    ->action(function (PropostaComercial $record) {
+                    ->modalHeading('Enviar proposta para revisão?')
+                    ->modalDescription('Escolha quem vai revisar. Depois de enviada, a proposta não pode mais ser editada.')
+                    ->form([
+                        Forms\Components\Select::make('destinatario')
+                            ->label('Enviar para')
+                            ->options(fn () => PropostaComercial::opcoesDestinatarios())
+                            ->default(fn () => PropostaComercial::destinatarioPadrao())
+                            ->searchable()
+                            ->required()
+                            ->helperText('A pessoa escolhida recebe o aviso para revisar a proposta.'),
+                    ])
+                    ->action(function (PropostaComercial $record, array $data) {
                         abort_unless(auth()->user()?->can('update', $record), 403);
 
                         try {
-                            $record->enviarParaComercial();
-                            Notification::make()->title('Proposta enviada ao Comercial')->success()->send();
+                            $record->enviarParaComercial($data['destinatario'] ?? null);
+                            Notification::make()->title('Proposta enviada para revisão')->success()->send();
                         } catch (\RuntimeException $e) {
                             Notification::make()->title('Não foi possível enviar')->body($e->getMessage())->warning()->send();
                         }

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\PropostaComercialResource\Pages;
 
+use App\Models\PropostaComercial;
+use Filament\Forms;
 use App\Filament\Resources\PropostaComercialResource;
 use Filament\Actions;
 use Filament\Notifications\Notification;
@@ -25,24 +27,32 @@ class EditPropostaComercial extends EditRecord
         return [
             $this->getSaveFormAction(),
             Actions\Action::make('salvar_e_enviar')
-                ->label('Salvar e enviar ao Comercial')
+                ->label('Salvar e enviar para revisão')
                 ->icon('heroicon-o-paper-airplane')
                 ->color('success')
-                ->requiresConfirmation()
-                ->modalHeading('Salvar e enviar ao Comercial?')
-                ->modalDescription('O Comercial recebe um aviso por e-mail para revisar. Depois de enviada, a proposta não pode mais ser editada.')
-                ->action(function () {
+                ->modalHeading('Salvar e enviar para revisão?')
+                ->modalDescription('Escolha quem vai revisar. Depois de enviada, a proposta não pode mais ser editada.')
+                ->form([
+                    Forms\Components\Select::make('destinatario')
+                        ->label('Enviar para')
+                        ->options(fn () => PropostaComercial::opcoesDestinatarios())
+                        ->default(fn () => PropostaComercial::destinatarioPadrao())
+                        ->searchable()
+                        ->required()
+                        ->helperText('A pessoa escolhida recebe o aviso para revisar a proposta.'),
+                ])
+                ->action(function (array $data) {
                     $this->save(shouldRedirect: false, shouldSendSavedNotification: false);
 
                     try {
-                        $this->getRecord()->refresh()->enviarParaComercial();
+                        $this->getRecord()->refresh()->enviarParaComercial($data['destinatario'] ?? null);
                     } catch (\RuntimeException $e) {
                         Notification::make()->title('Salvo, mas não foi possível enviar')->body($e->getMessage())->warning()->send();
 
                         return;
                     }
 
-                    Notification::make()->title('Proposta enviada ao Comercial')->success()->send();
+                    Notification::make()->title('Proposta enviada para revisão')->success()->send();
                     $this->redirect($this->getRedirectUrl());
                 }),
             $this->getCancelFormAction(),

@@ -50,7 +50,7 @@ class PropostaComercialReportControllerTest extends TestCase
         return [$admin, $proposta->fresh()];
     }
 
-    public function test_download_gera_pdf_autenticado(): void
+    public function test_download_abre_pagina_para_imprimir_autenticado(): void
     {
         [$admin, $proposta] = $this->makePropostaComItem();
         $this->actingAs($admin);
@@ -58,7 +58,8 @@ class PropostaComercialReportControllerTest extends TestCase
         $response = $this->get(route('proposta-comercial.pdf', $proposta));
 
         $response->assertOk();
-        $response->assertHeader('content-type', 'application/pdf');
+        $this->assertStringContainsString('text/html', $response->headers->get('Content-Type'));
+        $response->assertSee('Imprimir');
     }
 
     public function test_print_individual_mostra_conteudo_da_proposta(): void

@@ -43,7 +43,7 @@ class PropostaComercialKanban extends Page
         return (bool) auth()->user()?->can('viewAny', PropostaComercial::class);
     }
 
-    /** Envia o rascunho ao Comercial direto do cartão (mesma regra do botão na tela da proposta). */
+    /** Envia o rascunho para revisão direto do cartão (o aviso vai para os responsáveis configurados) (mesma regra do botão na tela da proposta). */
     public function enviar(string $propostaId): void
     {
         $proposta = PropostaComercial::where('tenant_id', Tenancy::current()?->id)->findOrFail($propostaId);
@@ -51,7 +51,7 @@ class PropostaComercialKanban extends Page
 
         try {
             $proposta->enviarParaComercial();
-            Notification::make()->title('Proposta enviada ao Comercial')->success()->send();
+            Notification::make()->title('Proposta enviada para revisão')->success()->send();
         } catch (\RuntimeException $e) {
             Notification::make()->title('Não foi possível enviar')->body($e->getMessage())->warning()->send();
         }

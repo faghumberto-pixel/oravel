@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\MaterialRequestResource\Pages;
 
+use App\Services\DestinatariosAvisos;
 use App\Filament\Resources\MaterialRequestResource;
 use App\Filament\Resources\PurchaseOrderResource;
 use App\Models\MaterialRequest;
@@ -149,22 +150,12 @@ class EditMaterialRequest extends EditRecord
     {
         $tenantId = Tenancy::current()?->id;
 
-        $this->notifyRole($tenantId, 'admin', $title);
-        $this->notifyRole($tenantId, MaterialRequest::ROLE_GESTOR_SUPRIMENTOS, $title);
+        $this->notifyRole($tenantId, $title);
     }
 
-    private function notifyRole(?string $tenantId, string $roleName, string $title): void
+    private function notifyRole(?string $tenantId, string $title): void
     {
-        $role = Role::where('name', $roleName)
-            ->where('guard_name', 'web')
-            ->where('tenant_id', $tenantId)
-            ->first();
-
-        if (! $role) {
-            return;
-        }
-
-        $recipients = User::role($role)->where('tenant_id', $tenantId)->get();
+        $recipients = DestinatariosAvisos::para($tenantId, 'requisicao_material');
 
         foreach ($recipients as $recipient) {
             Notification::make()

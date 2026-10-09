@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Services\DestinatariosAvisos;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenanceOrderPart;
 use App\Models\Part;
@@ -233,16 +234,7 @@ class StockTransferService
      */
     private function alertNegativeStock(Warehouse $warehouse, Part $part, float $balanceAfter): void
     {
-        $role = Role::where('name', 'admin')
-            ->where('guard_name', 'web')
-            ->where('tenant_id', $warehouse->tenant_id)
-            ->first();
-
-        if (! $role) {
-            return;
-        }
-
-        $recipients = User::role($role)->where('tenant_id', $warehouse->tenant_id)->get();
+        $recipients = DestinatariosAvisos::para($warehouse->tenant_id, 'saldo_negativo_volante');
 
         foreach ($recipients as $recipient) {
             Notification::make()

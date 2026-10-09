@@ -29,7 +29,7 @@ class PropostaComercialKanbanTest extends TestCase
         $plan = Plan::create([
             'name' => 'Plano Kanban Proposta '.uniqid(), 'price' => 100, 'base_price' => 100, 'level' => 1,
             'billing_cycle' => 'monthly', 'is_active' => true,
-            'features' => ['tabela_proposta_comercial', 'tabela_solicitacao_locacao'],
+            'features' => ['tabela_proposta_comercial', 'tabela_solicitacao_locacao', 'menu_proposta_comercial_kanban'],
         ]);
         $tenant = Tenant::create([
             'name' => 'Tenant Kanban Proposta '.uniqid(), 'slug' => 'tenant-kanban-proposta-'.uniqid(),

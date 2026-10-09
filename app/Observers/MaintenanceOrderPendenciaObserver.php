@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Services\DestinatariosAvisos;
 use App\Models\EquipmentDamage;
 use App\Models\MaintenanceOrderPendencia;
 use App\Models\Role;
@@ -13,13 +14,7 @@ class MaintenanceOrderPendenciaObserver
 {
     public function created(MaintenanceOrderPendencia $pendencia): void
     {
-        foreach ([
-            EquipmentDamage::ROLE_SUPERVISOR_MANUTENCAO,
-            EquipmentDamage::ROLE_GERENTE_MANUTENCAO,
-            EquipmentDamage::ROLE_ANALISTA_MANUTENCAO,
-        ] as $roleName) {
-            $this->notifyRole($pendencia, $roleName);
-        }
+        $this->notifyRole($pendencia);
     }
 
     /**
@@ -28,20 +23,9 @@ class MaintenanceOrderPendenciaObserver
      * globalmente (ignora tenant_id) e falha silenciosamente pra qualquer
      * tenant que nao seja o primeiro a ter um papel com aquele nome.
      */
-    private function notifyRole(MaintenanceOrderPendencia $pendencia, string $roleName): void
+    private function notifyRole(MaintenanceOrderPendencia $pendencia): void
     {
-        $role = Role::where('name', $roleName)
-            ->where('guard_name', 'web')
-            ->where('tenant_id', $pendencia->tenant_id)
-            ->first();
-
-        if (! $role) {
-            return;
-        }
-
-        $recipients = User::role($role)
-            ->where('tenant_id', $pendencia->tenant_id)
-            ->get();
+        $recipients = DestinatariosAvisos::para($pendencia->tenant_id, 'pendencia_os');
 
         $osNumber = $pendencia->maintenanceOrder?->os_number ?? '—';
         $assetName = $pendencia->maintenanceOrder?->asset?->name ?? '—';

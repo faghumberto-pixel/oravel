@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Services\DestinatariosAvisos;
 use App\Filament\Resources\SolicitacaoLocacaoResource;
 use App\Models\Asset;
 use App\Models\EquipmentDamage;
@@ -96,16 +97,7 @@ class SolicitacaoLocacaoObserver
 
     private function notifyManutencaoReservaRevogada(SolicitacaoLocacao $solicitacao, MaintenanceOrder $ordem): void
     {
-        $role = Role::where('name', EquipmentDamage::ROLE_GERENTE_MANUTENCAO)
-            ->where('guard_name', 'web')
-            ->where('tenant_id', $solicitacao->tenant_id)
-            ->first();
-
-        if (! $role) {
-            return;
-        }
-
-        $recipients = User::role($role)->where('tenant_id', $solicitacao->tenant_id)->get();
+        $recipients = DestinatariosAvisos::para($solicitacao->tenant_id, 'reserva_revogada');
 
         foreach ($recipients as $recipient) {
             Notification::make()
@@ -123,18 +115,7 @@ class SolicitacaoLocacaoObserver
 
     private function notifyLogisticaContratoFechado(SolicitacaoLocacao $solicitacao): void
     {
-        $role = Role::where('name', EquipmentReplacement::ROLE_LOGISTICA)
-            ->where('guard_name', 'web')
-            ->where('tenant_id', $solicitacao->tenant_id)
-            ->first();
-
-        if (! $role) {
-            return;
-        }
-
-        $recipients = User::role($role)
-            ->where('tenant_id', $solicitacao->tenant_id)
-            ->get();
+        $recipients = DestinatariosAvisos::para($solicitacao->tenant_id, 'contrato_fechado_logistica');
 
         $saida = $solicitacao->data_saida_prevista?->format('d/m/Y') ?? 'a combinar';
 

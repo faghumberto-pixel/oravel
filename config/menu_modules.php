@@ -337,4 +337,11 @@ return [
         'slug' => 'transferencia-estoque',
         'herda' => ['tabela_parts'],
     ],
+    'menu_responsaveis_avisos' => [
+        'label' => 'Tela: Configurações → Responsáveis pelos Avisos',
+        'grupo' => 'Configurações',
+        'menu' => 'Responsáveis pelos Avisos',
+        'slug' => 'responsaveis-avisos',
+        'herda' => [],
+    ],
 ];

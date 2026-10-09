@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Services\DestinatariosAvisos;
 use App\Models\Asset;
 use App\Models\Role;
 use App\Models\User;
@@ -51,14 +52,7 @@ class AssetObserver
             // sempre resolveria pro primeiro criado no banco inteiro e
             // notificaria (ou deixaria de notificar) o tenant errado. Ver
             // EquipmentReplacementObserver::notifyRole() pro mesmo bug.
-            $oficinaRole = Role::where('name', 'oficina')
-                ->where('guard_name', 'web')
-                ->where('tenant_id', $asset->tenant_id)
-                ->first();
-
-            $recipients = $oficinaRole
-                ? User::role($oficinaRole)->where('tenant_id', $asset->tenant_id)->get()
-                : collect();
+            $recipients = DestinatariosAvisos::para($asset->tenant_id, 'ativo_critico_manutencao');
 
             foreach ($recipients as $recipient) {
                 Notification::make()

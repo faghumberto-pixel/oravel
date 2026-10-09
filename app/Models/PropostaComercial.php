@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Support\Tenancy;
+use App\Services\DestinatariosAvisos;
 use App\Mail\GenericPdfMail;
 use App\Models\Concerns\BelongsToTenant;
 use App\Models\Concerns\HasSaaSMetadata;
@@ -76,6 +78,7 @@ class PropostaComercial extends Model
         'terms',
         'cabecalho',
         'campos',
+        'enviada_para_user_id',
         'rejection_reason',
         'total_value',
         'sent_at',
@@ -205,7 +208,34 @@ class PropostaComercial extends Model
      * cliente definido (aqui sim vira obrigatório, diferente do create) e
      * pelo menos 1 item, senão não há o que o Comercial avaliar.
      */
-    public function enviarParaComercial(): void
+    /**
+     * Pessoas que podem receber a proposta para revisão (nome do usuário, não departamento --
+     * nem toda empresa tem um setor Comercial).
+     *
+     * @return array<string, string> id => nome
+     */
+    public static function opcoesDestinatarios(): array
+    {
+        return User::withoutGlobalScopes()
+            ->where('tenant_id', Tenancy::current()?->id)
+            ->where('is_approved', true)
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->all();
+    }
+
+    /** Sugestão: o primeiro responsável configurado para revisar propostas (ver Responsáveis pelos Avisos). */
+    public static function destinatarioPadrao(): ?string
+    {
+        return DestinatariosAvisos::para(Tenancy::current()?->id, 'proposta_para_revisao')->first()?->id;
+    }
+
+    public function enviadaParaUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'enviada_para_user_id');
+    }
+
+    public function enviarParaComercial(?string $paraUserId = null): void
     {
         if ($this->status !== self::STATUS_RASCUNHO) {
             throw new \RuntimeException('Só é possível enviar uma proposta em rascunho.');
@@ -222,6 +252,7 @@ class PropostaComercial extends Model
         $this->update([
             'status' => self::STATUS_ENVIADA_PARA_COMERCIAL,
             'sent_at' => now(),
+            'enviada_para_user_id' => $paraUserId ?: null,
         ]);
 
         $comerciais = User::where('tenant_id', $this->tenant_id)

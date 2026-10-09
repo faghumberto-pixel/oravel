@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Services\DestinatariosAvisos;
 use App\Models\EquipmentDamage;
 use App\Models\EquipmentReplacement;
 use App\Models\Role;
@@ -63,18 +64,8 @@ class EquipmentReplacementObserver
      */
     private function notifyRole(EquipmentReplacement $equipmentReplacement, string $roleName, string $title, string $method): void
     {
-        $role = Role::where('name', $roleName)
-            ->where('guard_name', 'web')
-            ->where('tenant_id', $equipmentReplacement->tenant_id)
-            ->first();
-
-        if (! $role) {
-            return;
-        }
-
-        $recipients = User::role($role)
-            ->where('tenant_id', $equipmentReplacement->tenant_id)
-            ->get();
+        $evento = $roleName === EquipmentReplacement::ROLE_LOGISTICA ? 'troca_equipamento_logistica' : 'troca_equipamento_solicitada';
+        $recipients = DestinatariosAvisos::para($equipmentReplacement->tenant_id, $evento);
 
         foreach ($recipients as $recipient) {
             Notification::make()

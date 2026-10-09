@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\DestinatariosAvisos;
 use App\Models\Asset;
 use App\Models\MaintenanceDueAlert;
 use App\Models\MaintenanceOrder;
@@ -180,16 +181,7 @@ class CheckMaintenanceDueAlerts extends Command
      */
     private function notifyAdmins(Tenant $tenant, Asset $asset, MaintenancePlan $plano, array $status): void
     {
-        $role = Role::where('name', 'admin')
-            ->where('guard_name', 'web')
-            ->where('tenant_id', $tenant->id)
-            ->first();
-
-        if (! $role) {
-            return;
-        }
-
-        $recipients = User::role($role)->where('tenant_id', $tenant->id)->get();
+        $recipients = DestinatariosAvisos::para($tenant->id, 'manutencao_vencendo');
 
         foreach ($recipients as $recipient) {
             $recipient->notify(new MaintenanceDueNotification($asset, $status));

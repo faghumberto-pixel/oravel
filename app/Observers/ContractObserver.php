@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Services\DestinatariosAvisos;
 use App\Models\Asset;
 use App\Models\Contract;
 use App\Models\EquipmentReplacement;
@@ -102,18 +103,7 @@ class ContractObserver
      */
     private function notifyLocationChanged(Contract $contract): void
     {
-        $role = Role::where('name', EquipmentReplacement::ROLE_LOGISTICA)
-            ->where('guard_name', 'web')
-            ->where('tenant_id', $contract->tenant_id)
-            ->first();
-
-        if (! $role) {
-            return;
-        }
-
-        $recipients = User::role($role)
-            ->where('tenant_id', $contract->tenant_id)
-            ->get();
+        $recipients = DestinatariosAvisos::para($contract->tenant_id, 'contrato_local_mudou');
 
         $novoLocal = $contract->resolvedLocation()['label'] ?? 'local não resolvido';
 

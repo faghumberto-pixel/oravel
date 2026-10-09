@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Services\DestinatariosAvisos;
 use App\Models\InternalUnit;
 use App\Models\MaintenanceOrderMaterial;
 use App\Models\Material;
@@ -111,16 +112,7 @@ class MaterialConsumptionService
      */
     private function notifyAdmins(Material $material, string $title, string $body): void
     {
-        $role = Role::where('name', 'admin')
-            ->where('guard_name', 'web')
-            ->where('tenant_id', $material->tenant_id)
-            ->first();
-
-        if (! $role) {
-            return;
-        }
-
-        $recipients = User::role($role)->where('tenant_id', $material->tenant_id)->get();
+        $recipients = DestinatariosAvisos::para($material->tenant_id, 'consumo_material');
 
         foreach ($recipients as $recipient) {
             Notification::make()

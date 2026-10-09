@@ -53,9 +53,9 @@
                             </div>
                         </a>
                             @if($proposta->status === \App\Models\PropostaComercial::STATUS_RASCUNHO && auth()->user()?->can('update', $proposta))
-                                <button type="button" wire:click="enviar('{{ $proposta->id }}')" wire:confirm="Enviar esta proposta ao Comercial?"
+                                <button type="button" wire:click="enviar('{{ $proposta->id }}')" wire:confirm="Enviar esta proposta para revisão?"
                                         class="mt-2 w-full rounded-md bg-emerald-600 px-2 py-1.5 text-[11px] font-black uppercase tracking-wide text-white hover:bg-emerald-700">
-                                    Enviar ao Comercial
+                                    Enviar para revisão
                                 </button>
                             @endif
                             @if($proposta->status === \App\Models\PropostaComercial::STATUS_APROVADA_INTERNA && ($whatsapp = $proposta->linkWhatsapp()))

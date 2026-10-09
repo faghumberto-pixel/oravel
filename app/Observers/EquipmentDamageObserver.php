@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Services\DestinatariosAvisos;
 use App\Models\EquipmentDamage;
 use App\Models\Role;
 use App\Models\User;
@@ -75,18 +76,8 @@ class EquipmentDamageObserver
      */
     private function notifyRole(EquipmentDamage $equipmentDamage, string $roleName, string $title): void
     {
-        $role = Role::where('name', $roleName)
-            ->where('guard_name', 'web')
-            ->where('tenant_id', $equipmentDamage->tenant_id)
-            ->first();
-
-        if (! $role) {
-            return;
-        }
-
-        $recipients = User::role($role)
-            ->where('tenant_id', $equipmentDamage->tenant_id)
-            ->get();
+        $evento = $roleName === EquipmentDamage::ROLE_COMERCIAL ? 'avaria_comercial' : 'avaria_supervisor';
+        $recipients = DestinatariosAvisos::para($equipmentDamage->tenant_id, $evento);
 
         foreach ($recipients as $recipient) {
             Notification::make()

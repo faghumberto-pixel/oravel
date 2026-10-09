@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Services\DestinatariosAvisos;
 use App\Models\EquipmentDamage;
 use App\Models\PropostaComercial;
 use App\Models\Role;
@@ -30,18 +31,9 @@ class PropostaComercialObserver
 
     private function notifyRole(PropostaComercial $proposta): void
     {
-        $role = Role::where('name', EquipmentDamage::ROLE_COMERCIAL)
-            ->where('guard_name', 'web')
-            ->where('tenant_id', $proposta->tenant_id)
-            ->first();
-
-        if (! $role) {
-            return;
-        }
-
-        $recipients = User::role($role)
-            ->where('tenant_id', $proposta->tenant_id)
-            ->get();
+        $recipients = $proposta->enviada_para_user_id
+            ? User::withoutGlobalScopes()->where('tenant_id', $proposta->tenant_id)->whereKey($proposta->enviada_para_user_id)->get()
+            : DestinatariosAvisos::para($proposta->tenant_id, 'proposta_para_revisao');
 
         foreach ($recipients as $recipient) {
             Notification::make()

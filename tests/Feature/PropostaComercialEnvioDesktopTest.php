@@ -64,12 +64,13 @@ class PropostaComercialEnvioDesktopTest extends TestCase
 
         Livewire::test(ViewPropostaComercial::class, ['record' => $proposta->getRouteKey()])
             ->assertActionVisible('enviar_comercial')
-            ->callAction('enviar_comercial')
-            ->assertNotified('Proposta enviada ao Comercial');
+            ->callAction('enviar_comercial', ['destinatario' => $comercial->id])
+            ->assertNotified('Proposta enviada para revisão');
 
         $proposta->refresh();
         $this->assertSame(PropostaComercial::STATUS_ENVIADA_PARA_COMERCIAL, $proposta->status);
         $this->assertNotNull($proposta->sent_at);
+        $this->assertSame($comercial->id, $proposta->enviada_para_user_id);
         Mail::assertSent(GenericPdfMail::class, fn ($m) => $m->hasTo($comercial->email));
 
         // Depois de enviada, o botão e a edição somem.
@@ -83,9 +84,9 @@ class PropostaComercialEnvioDesktopTest extends TestCase
         $this->actingAs($admin);
 
         $semCliente = $this->rascunho($tenant, $admin, comCliente: false);
-        Livewire::test(ViewPropostaComercial::class, ['record' => $semCliente->getRouteKey()])->callAction('enviar_comercial')->assertNotified('Não foi possível enviar');
+        Livewire::test(ViewPropostaComercial::class, ['record' => $semCliente->getRouteKey()])->callAction('enviar_comercial', ['destinatario' => $admin->id])->assertNotified('Não foi possível enviar');
         $semItem = $this->rascunho($tenant, $admin, comItem: false);
-        Livewire::test(ViewPropostaComercial::class, ['record' => $semItem->getRouteKey()])->callAction('enviar_comercial')->assertNotified('Não foi possível enviar');
+        Livewire::test(ViewPropostaComercial::class, ['record' => $semItem->getRouteKey()])->callAction('enviar_comercial', ['destinatario' => $admin->id])->assertNotified('Não foi possível enviar');
 
         $this->assertSame(PropostaComercial::STATUS_RASCUNHO, $semCliente->fresh()->status);
         $this->assertSame(PropostaComercial::STATUS_RASCUNHO, $semItem->fresh()->status);
@@ -103,7 +104,7 @@ class PropostaComercialEnvioDesktopTest extends TestCase
         Livewire::test(ListPropostaComerciais::class)
             ->assertTableActionVisible('enviar_comercial', $rascunho)
             ->assertTableActionHidden('enviar_comercial', $enviada)
-            ->callTableAction('enviar_comercial', $rascunho);
+            ->callTableAction('enviar_comercial', $rascunho, ['destinatario' => $admin->id]);
 
         $this->assertSame(PropostaComercial::STATUS_ENVIADA_PARA_COMERCIAL, $rascunho->fresh()->status);
     }
@@ -118,7 +119,7 @@ class PropostaComercialEnvioDesktopTest extends TestCase
 
         Livewire::test(EditPropostaComercial::class, ['record' => $proposta->getRouteKey()])
             ->fillForm(['client_id' => $cliente->id])
-            ->callAction('salvar_e_enviar')
+            ->callAction('salvar_e_enviar', ['destinatario' => $admin->id])
             ->assertHasNoFormErrors();
 
         $proposta->refresh();
@@ -156,7 +157,7 @@ class PropostaComercialEnvioDesktopTest extends TestCase
 
         $this->assertTrue($kanban()->get(PropostaComercial::STATUS_RASCUNHO)->contains('id', $proposta->id));
 
-        Livewire::test(ViewPropostaComercial::class, ['record' => $proposta->getRouteKey()])->callAction('enviar_comercial');
+        Livewire::test(ViewPropostaComercial::class, ['record' => $proposta->getRouteKey()])->callAction('enviar_comercial', ['destinatario' => $admin->id]);
 
         $this->assertNull($kanban()->get(PropostaComercial::STATUS_RASCUNHO));
         $this->assertTrue($kanban()->get(PropostaComercial::STATUS_ENVIADA_PARA_COMERCIAL)->contains('id', $proposta->id));
@@ -180,9 +181,9 @@ class PropostaComercialEnvioDesktopTest extends TestCase
         $proposta = $this->rascunho($tenant, $admin);
 
         Livewire::test(PropostaComercialKanban::class)
-            ->assertSee('Enviar ao Comercial')
+            ->assertSee('Enviar para revisão')
             ->call('enviar', $proposta->id)
-            ->assertNotified('Proposta enviada ao Comercial')
+            ->assertNotified('Proposta enviada para revisão')
             ->assertDontSee('wire:click="enviar(');
 
         $this->assertSame(PropostaComercial::STATUS_ENVIADA_PARA_COMERCIAL, $proposta->fresh()->status);

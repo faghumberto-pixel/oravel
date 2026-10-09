@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Services\DestinatariosAvisos;
 use App\Filament\Resources\MaterialRequestResource;
 use App\Models\InternalUnit;
 use App\Models\Material;
@@ -203,19 +204,10 @@ class MaterialStockService
             return;
         }
 
-        $role = Role::where('name', Material::ROLE_GESTOR_SUPRIMENTOS)
-            ->where('guard_name', 'web')
-            ->where('tenant_id', $stock->tenant_id)
-            ->first();
-
-        if (! $role) {
-            return;
-        }
-
         $material = $stock->material ?? Material::find($stock->material_id);
         $unit = $stock->internalUnit ?? InternalUnit::find($stock->internal_unit_id);
 
-        $recipients = User::role($role)->where('tenant_id', $stock->tenant_id)->get();
+        $recipients = DestinatariosAvisos::para($stock->tenant_id, 'estoque_minimo');
 
         // Nao cria Pedido de Compra sozinho (material_requests nao tem de
         // onde tirar uma OS obrigatoria pra virar PartsRequest, e criar
