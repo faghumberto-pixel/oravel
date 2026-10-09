@@ -132,7 +132,27 @@ class ClientResource extends Resource
                                 Forms\Components\TextInput::make('email')
                                     ->label('E-mail de Contato (Principal)')
                                     ->email()
-                                    ->helperText('Usado como destinatário padrão em envios (ex: orçamentos), quando os e-mails setoriais abaixo não se aplicam.'),
+                                    ->required(fn (Forms\Get $get) => (bool) $get('portal_access_enabled_at'))
+                                    ->rules([
+                                        fn (Forms\Get $get, ?Client $record) => function (string $attribute, $value, \Closure $fail) use ($get, $record) {
+                                            // O e-mail é o usuário de login do portal: não pode repetir em outro
+                                            // cliente com acesso ativo (nem de outra empresa), senão o login ficaria ambíguo.
+                                            if (! $get('portal_access_enabled_at') || blank($value)) {
+                                                return;
+                                            }
+
+                                            $repetido = Client::withoutGlobalScopes()
+                                                ->where('email', $value)
+                                                ->whereNotNull('portal_access_enabled_at')
+                                                ->when($record, fn ($q) => $q->where('id', '!=', $record->id))
+                                                ->exists();
+
+                                            if ($repetido) {
+                                                $fail('Este e-mail já é usuário do portal de outro cliente. Use outro e-mail.');
+                                            }
+                                        },
+                                    ])
+                                    ->helperText('Usado como destinatário padrão em envios (ex: orçamentos). Também é o usuário de login do Portal do Cliente.'),
                                 Forms\Components\TextInput::make('phone')->label('Telefone Comercial')->tel(),
                                 Forms\Components\TextInput::make('whatsapp')->label('WhatsApp')->tel(),
                                 Forms\Components\TextInput::make('email_financial')->label('E-mail Financeiro')->email(),
@@ -167,6 +187,32 @@ class ClientResource extends Resource
                                 Forms\Components\Toggle::make('check_credit_bureau')->label('Birôs de Crédito'),
                                 Forms\Components\TextInput::make('credit_score')->label('Score de Crédito PJ')->numeric(),
                             ])->columns(2),
+                        ]),
+                    Forms\Components\Tabs\Tab::make('Acesso ao Portal')
+                        ->icon('heroicon-o-key')
+                        ->schema([
+                            Forms\Components\Section::make('Login do cliente no Portal')
+                                ->description('O cliente entra em app.oravel.com.br/cliente com o e-mail de contato (aba Entrega e Contatos) e a senha definida aqui.')
+                                ->schema([
+                                    Forms\Components\Toggle::make('portal_access_enabled_at')
+                                        ->label('Acesso ao portal ativo')
+                                        ->live()
+                                        ->formatStateUsing(fn ($state) => (bool) $state)
+                                        ->dehydrateStateUsing(fn ($state, ?Client $record) => $state ? ($record?->portal_access_enabled_at ?? now()) : null),
+                                    Forms\Components\TextInput::make('password')
+                                        ->label('Senha do portal')
+                                        ->password()
+                                        ->revealable()
+                                        ->autocomplete('new-password')
+                                        ->afterStateHydrated(fn (Forms\Components\TextInput $component) => $component->state(null))
+                                        ->minLength(8)
+                                        ->required(fn (Forms\Get $get, ?Client $record) => (bool) $get('portal_access_enabled_at') && ! $record?->password)
+                                        ->dehydrated(fn ($state) => filled($state))
+                                        ->helperText(fn (?Client $record) => $record?->password
+                                            ? 'Deixe em branco para manter a senha atual. Preencha para trocar.'
+                                            : 'Mínimo de 8 caracteres. Passe a senha ao cliente por um canal seguro.'),
+                                ])
+                                ->columns(2),
                         ]),
                     Forms\Components\Tabs\Tab::make('Resumo Financeiro')
                         ->icon('heroicon-o-banknotes')
@@ -232,7 +278,7 @@ class ClientResource extends Resource
                     ->icon('heroicon-o-key')
                     ->visible(fn (Client $record) => filled($record->email))
                     ->requiresConfirmation()
-                    ->modalDescription('Uma senha temporária será gerada e enviada por e-mail ao cliente.')
+                    ->modalDescription('Uma senha temporária será gerada, enviada por e-mail ao cliente e mostrada aqui na tela. Para escolher a senha, use a aba "Acesso ao Portal" ao editar o cliente.')
                     ->action(function (Client $record) {
                         $temporaryPassword = Str::password(12);
 
@@ -250,6 +296,8 @@ class ClientResource extends Resource
 
                             Notification::make()
                                 ->title('Acesso ao portal enviado')
+                                ->body("Usuário: {$record->email}\nSenha temporária: {$temporaryPassword}\n(guarde agora: ela não aparece de novo)")
+                                ->persistent()
                                 ->success()
                                 ->send();
                         } catch (Throwable $e) {
@@ -259,7 +307,8 @@ class ClientResource extends Resource
 
                             Notification::make()
                                 ->title('Acesso concedido, mas o e-mail não pôde ser enviado')
-                                ->body('Verifique a configuração de e-mail do sistema. A senha temporária foi gerada e o acesso já está ativo.')
+                                ->body("O acesso já está ativo. Passe ao cliente: usuário {$record->email}, senha temporária {$temporaryPassword}. (guarde agora: ela não aparece de novo)")
+                                ->persistent()
                                 ->warning()
                                 ->send();
                         }
