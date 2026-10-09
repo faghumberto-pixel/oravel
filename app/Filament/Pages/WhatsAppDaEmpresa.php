@@ -55,7 +55,7 @@ class WhatsAppDaEmpresa extends Page implements HasForms
         $c = $this->config();
 
         $this->form->fill(array_merge(
-            $c ? $c->only(['waba_id', 'template_abertura', 'template_proposta', 'template_language']) : ['template_language' => 'pt_BR'],
+            $c ? $c->only(['waba_id', 'template_abertura', 'template_proposta', 'template_language', 'distribuicao', 'atendentes']) : ['template_language' => 'pt_BR'],
             ['numeros' => $this->numeros()->map(fn (WhatsappNumero $n) => ['user_id' => $n->user_id, 'phone_number_id' => $n->phone_number_id, 'rotulo' => $n->rotulo])->all()],
         ));
     }
@@ -101,6 +101,14 @@ class WhatsAppDaEmpresa extends Page implements HasForms
                         TextInput::make('rotulo')->label('Nome (opcional)')->maxLength(60),
                     ])->columns(3),
                 ]),
+            Section::make('Número da empresa: quem atende')
+                ->description('Vale para as conversas que chegam num número sem usuário (o número da empresa). Se a conversa já tem alguém ligado a ela (responsável do lead ou quem já atendeu esse telefone), continua com a mesma pessoa.')
+                ->schema([
+                    Select::make('distribuicao')->label('Como distribuir')->native(false)->required()
+                        ->options(['fila' => 'Fila: quem atende assume a conversa', 'rodizio' => 'Rodízio: cada nova conversa vai para o próximo atendente'])->default('fila'),
+                    Select::make('atendentes')->label('Atendentes')->multiple()->searchable()->options($usuarios)
+                        ->helperText('Quem pode ver e assumir a fila e entra no rodízio. Sem ninguém escolhido, atende quem não tem número próprio.'),
+                ])->columns(2),
             Section::make('Modelos de mensagem aprovados')
                 ->description('Para iniciar uma conversa, ou responder depois de 24 horas, o WhatsApp só aceita modelos aprovados pela Meta. Informe o nome exato de cada um.')
                 ->schema([
@@ -184,6 +192,7 @@ class WhatsAppDaEmpresa extends Page implements HasForms
         $campos = [
             'waba_id' => $d['waba_id'] ?? null, 'template_abertura' => $d['template_abertura'] ?? null,
             'template_proposta' => $d['template_proposta'] ?? null, 'template_language' => $d['template_language'] ?: 'pt_BR',
+            'distribuicao' => $d['distribuicao'] ?? 'fila', 'atendentes' => array_values((array) ($d['atendentes'] ?? [])),
         ];
 
         foreach (['access_token', 'app_secret'] as $segredo) {

@@ -53,7 +53,7 @@ class WhatsAppTelasTest extends TestCase
         $this->actingAs($admin);
 
         Livewire::test(WhatsAppDaEmpresa::class)
-            ->fillForm(['access_token' => 'TOKEN-1', 'app_secret' => 'SEGREDO-1', 'template_language' => 'pt_BR', 'numeros' => [
+            ->fillForm(['access_token' => 'TOKEN-1', 'app_secret' => 'SEGREDO-1', 'template_language' => 'pt_BR', 'distribuicao' => 'fila', 'numeros' => [
                 ['user_id' => $ana->id, 'phone_number_id' => 'N-ANA', 'rotulo' => null],
                 ['user_id' => null, 'phone_number_id' => 'N-EMP', 'rotulo' => 'Recepção'],
             ]])
@@ -76,7 +76,7 @@ class WhatsAppTelasTest extends TestCase
         $this->actingAs($admin);
 
         Livewire::test(WhatsAppDaEmpresa::class)
-            ->fillForm(['access_token' => 'RUIM', 'app_secret' => 'S', 'template_language' => 'pt_BR', 'numeros' => [['user_id' => null, 'phone_number_id' => 'N-1']]])
+            ->fillForm(['access_token' => 'RUIM', 'app_secret' => 'S', 'template_language' => 'pt_BR', 'distribuicao' => 'fila', 'numeros' => [['user_id' => null, 'phone_number_id' => 'N-1']]])
             ->call('testarEAtivar');
 
         $this->assertFalse(TenantWhatsappSetting::withoutGlobalScopes()->where('tenant_id', $tenant->id)->firstOrFail()->enabled);

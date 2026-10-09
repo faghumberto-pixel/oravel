@@ -41,7 +41,7 @@
                                 <span class="shrink-0 text-[10px] text-gray-400">{{ $c->ultima_mensagem_em?->format('d/m H:i') }}</span>
                             </div>
                             <div class="flex items-center justify-between text-[11px] text-gray-500">
-                                <span class="truncate">+{{ $c->telefone }}@if($verTodas && $c->responsavel) · {{ $c->responsavel->name }}@endif</span>
+                                <span class="truncate">+{{ $c->telefone }}@if($c->responsavel && ($verTodas || $c->numero?->user_id === null)) · {{ $c->responsavel->name }}@endif@if(! $c->responsavel_user_id) · <strong class="text-amber-600">Na fila</strong>@endif</span>
                                 @if($c->nao_lidas)<span class="rounded-full bg-primary-600 px-1.5 text-[10px] font-bold text-white">{{ $c->nao_lidas }}</span>@endif
                             </div>
                         </button>
@@ -73,7 +73,28 @@
             <div class="wa-conversa rounded-xl border border-gray-200 bg-white dark:border-white/10 dark:bg-gray-900">
                 @if($ativa)
                     <div class="border-b border-gray-100 px-4 py-3 dark:border-white/5">
-                        <h2 class="text-sm font-bold">{{ $ativa->titulo() }}</h2>
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <h2 class="text-sm font-bold">{{ $ativa->titulo() }}</h2>
+                            <div class="flex flex-wrap items-center gap-2 text-xs">
+                                @if(! $ativa->responsavel_user_id)
+                                    <span class="rounded-full bg-amber-100 px-2 py-0.5 font-bold uppercase text-amber-700">Na fila</span>
+                                    <x-filament::button size="xs" wire:click="assumir('{{ $ativa->id }}')">Assumir esta conversa</x-filament::button>
+                                @else
+                                    <span class="text-gray-500">Atendendo: <strong>{{ $ativa->responsavel?->name }}</strong></span>
+                                    @if(auth()->user()->isAdmin() || $ativa->responsavel_user_id === auth()->id())
+                                        <select class="rounded-lg border-gray-300 py-1 text-xs dark:border-white/10 dark:bg-gray-900" x-on:change="if ($event.target.value) { $wire.transferir('{{ $ativa->id }}', $event.target.value); $event.target.value = '' }">
+                                            <option value="">Transferir para…</option>
+                                            @foreach($this->colegas() as $id => $nome)
+                                                <option value="{{ $id }}">{{ $nome }}</option>
+                                            @endforeach
+                                        </select>
+                                        @if($ativa->numero?->user_id === null)
+                                            <x-filament::button size="xs" color="gray" wire:click="devolverFila('{{ $ativa->id }}')">Devolver à fila</x-filament::button>
+                                        @endif
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
                         <p class="text-xs text-gray-500">
                             +{{ $ativa->telefone }}
                             @if($ativa->client) · Cliente: <a class="text-primary-600 underline" href="{{ \App\Filament\Resources\ClientResource::getUrl('edit', ['record' => $ativa->client]) }}">{{ $ativa->client->name }}</a>@endif

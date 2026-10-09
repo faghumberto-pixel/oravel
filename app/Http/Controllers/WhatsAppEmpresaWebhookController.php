@@ -7,6 +7,7 @@ use App\Models\WhatsappConversa;
 use App\Models\WhatsappNumero;
 use App\Models\WhatsappMensagem;
 use App\Services\DestinatariosAvisos;
+use App\Services\DistribuicaoWhatsApp;
 use App\Services\WhatsAppEmpresaService;
 use Filament\Notifications\Notification;
 use Illuminate\Http\JsonResponse;
@@ -102,7 +103,10 @@ class WhatsAppEmpresaWebhookController extends Controller
 
         $conversa->update(['ultima_mensagem_em' => now(), 'ultima_recebida_em' => now(), 'nao_lidas' => $conversa->nao_lidas + 1]);
 
-        $this->avisar($conversa->refresh(), $corpo);
+        // Número da empresa: decide quem atende (continuidade, rodízio ou fila).
+        DistribuicaoWhatsApp::atribuir($conversa->load(['lead', 'numero']), $config->refresh());
+
+        $this->avisar($conversa->refresh(), $corpo, $config);
     }
 
     private function atualizarStatus(TenantWhatsappSetting $config, array $status): void
@@ -125,16 +129,21 @@ class WhatsAppEmpresaWebhookController extends Controller
         }
     }
 
-    /** Avisa quem cuida da conversa; sem responsável, quem a empresa escolheu para esse aviso. */
-    private function avisar(WhatsappConversa $conversa, string $corpo): void
+    /** Avisa quem cuida da conversa; na fila, os atendentes escolhidos (ou, sem eles, quem a empresa definiu para esse aviso). */
+    private function avisar(WhatsappConversa $conversa, string $corpo, TenantWhatsappSetting $config): void
     {
-        $destinatarios = $conversa->responsavel
-            ? collect([$conversa->responsavel])
-            : DestinatariosAvisos::para($conversa->tenant_id, 'whatsapp_recebido');
+        $naFila = ! $conversa->responsavel_user_id;
+
+        if ($conversa->responsavel) {
+            $destinatarios = collect([$conversa->responsavel]);
+        } else {
+            $atendentes = \App\Models\User::withoutGlobalScopes()->where('tenant_id', $conversa->tenant_id)->where('is_approved', true)->whereIn('id', (array) $config->atendentes)->get();
+            $destinatarios = $atendentes->isNotEmpty() ? $atendentes : DestinatariosAvisos::para($conversa->tenant_id, 'whatsapp_recebido');
+        }
 
         foreach ($destinatarios as $usuario) {
             Notification::make()
-                ->title('Nova mensagem de WhatsApp')
+                ->title($naFila ? 'Nova conversa de WhatsApp na fila' : 'Nova mensagem de WhatsApp')
                 ->body($conversa->titulo().': '.mb_substr($corpo, 0, 120))
                 ->info()
                 ->sendToDatabase($usuario);

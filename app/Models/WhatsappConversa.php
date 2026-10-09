@@ -18,10 +18,10 @@ class WhatsappConversa extends Model
 
     protected $fillable = [
         'tenant_id', 'numero_id', 'telefone', 'nome', 'client_id', 'crm_lead_id', 'responsavel_user_id',
-        'ultima_mensagem_em', 'ultima_recebida_em', 'nao_lidas',
+        'ultima_mensagem_em', 'ultima_recebida_em', 'nao_lidas', 'atribuida_em',
     ];
 
-    protected $casts = ['ultima_mensagem_em' => 'datetime', 'ultima_recebida_em' => 'datetime', 'nao_lidas' => 'integer'];
+    protected $casts = ['ultima_mensagem_em' => 'datetime', 'ultima_recebida_em' => 'datetime', 'atribuida_em' => 'datetime', 'nao_lidas' => 'integer'];
 
     public function mensagens(): HasMany
     {

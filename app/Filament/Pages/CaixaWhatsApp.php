@@ -55,19 +55,37 @@ class CaixaWhatsApp extends Page
         return static::canAccess();
     }
 
+    /** Quem atende a fila do número da empresa: os atendentes escolhidos; sem escolha, quem não tem número próprio. */
+    private function atendeAFila(): bool
+    {
+        $usuario = auth()->user();
+        $config = TenantWhatsappSetting::withoutGlobalScopes()->where('tenant_id', $usuario->tenant_id)->first();
+        $atendentes = (array) ($config?->atendentes ?? []);
+
+        if ($atendentes !== []) {
+            return in_array($usuario->id, $atendentes, true);
+        }
+
+        return ! WhatsappNumero::withoutGlobalScopes()->where('tenant_id', $usuario->tenant_id)->where('user_id', $usuario->id)->exists();
+    }
+
+    /**
+     * Conversas que a pessoa pode ver: as dela, e a fila do número da empresa (sem responsável) quando ela é
+     * atendente. Conversas atribuídas a outra pessoa só o administrador vê, com "Ver as conversas de todos".
+     */
     private function consulta(): Builder
     {
         $usuario = auth()->user();
-        $semNumeroProprio = ! WhatsappNumero::withoutGlobalScopes()->where('tenant_id', $usuario->tenant_id)->where('user_id', $usuario->id)->exists();
+        $fila = $this->atendeAFila();
 
         return WhatsappConversa::withoutGlobalScopes()
             ->where('tenant_id', $usuario->tenant_id)
-            ->when(! ($this->verTodas && $usuario->isAdmin()), function (Builder $q) use ($usuario, $semNumeroProprio) {
-                $q->where(function (Builder $q) use ($usuario, $semNumeroProprio) {
+            ->when(! ($this->verTodas && $usuario->isAdmin()), function (Builder $q) use ($usuario, $fila) {
+                $q->where(function (Builder $q) use ($usuario, $fila) {
                     $q->where('responsavel_user_id', $usuario->id);
 
-                    if ($semNumeroProprio) {
-                        $q->orWhereHas('numero', fn (Builder $n) => $n->whereNull('user_id'));
+                    if ($fila || $usuario->isAdmin()) {
+                        $q->orWhere(fn (Builder $f) => $f->whereNull('responsavel_user_id')->whereHas('numero', fn (Builder $n) => $n->whereNull('user_id')));
                     }
                 });
             });
@@ -77,7 +95,7 @@ class CaixaWhatsApp extends Page
     public function conversas(): Collection
     {
         return $this->consulta()
-            ->with(['client', 'lead', 'responsavel'])
+            ->with(['client', 'lead', 'responsavel', 'numero'])
             ->when(filled($this->busca), function (Builder $q) {
                 $b = '%'.mb_strtolower(trim($this->busca)).'%';
                 $q->where(fn (Builder $q) => $q->whereRaw('lower(nome) like ?', [$b])->orWhere('telefone', 'like', '%'.preg_replace('/\D+/', '', $this->busca).'%'));
@@ -154,6 +172,68 @@ class CaixaWhatsApp extends Page
         if ($mensagem->status === 'falhou') {
             Notification::make()->title('Não foi enviada')->body((string) $mensagem->erro)->danger()->send();
         }
+    }
+
+    /** Pega uma conversa da fila para si. */
+    public function assumir(string $id): void
+    {
+        $conversa = $this->consulta()->whereNull('responsavel_user_id')->find($id);
+
+        if (! $conversa) {
+            Notification::make()->title('Esta conversa já tem responsável')->warning()->send();
+
+            return;
+        }
+
+        $conversa->update(['responsavel_user_id' => auth()->id(), 'atribuida_em' => now(), 'nao_lidas' => 0]);
+        Notification::make()->title('Conversa sua agora')->success()->send();
+    }
+
+    /** Passa a conversa para outra pessoa (quem atende a conversa ou o administrador). */
+    public function transferir(string $id, string $paraUserId): void
+    {
+        $usuario = auth()->user();
+        $conversa = $this->consulta()->find($id);
+        $destino = \App\Models\User::withoutGlobalScopes()->where('tenant_id', $usuario->tenant_id)->where('is_approved', true)->find($paraUserId);
+
+        if (! $conversa || ! $destino || ! ($usuario->isAdmin() || $conversa->responsavel_user_id === $usuario->id)) {
+            Notification::make()->title('Não foi possível transferir')->warning()->send();
+
+            return;
+        }
+
+        $conversa->update(['responsavel_user_id' => $destino->id, 'atribuida_em' => now()]);
+
+        Notification::make()->title('Nova conversa de WhatsApp para você')
+            ->body($conversa->titulo().' foi passada por '.$usuario->name.'.')->info()->sendToDatabase($destino);
+        Notification::make()->title('Conversa transferida para '.$destino->name)->success()->send();
+
+        if (! $this->verTodas && ! $usuario->isAdmin()) {
+            $this->conversaId = null;
+        }
+    }
+
+    /** Devolve ao número da empresa sem responsável (só conversas do número da empresa). */
+    public function devolverFila(string $id): void
+    {
+        $usuario = auth()->user();
+        $conversa = $this->consulta()->with('numero')->find($id);
+
+        if (! $conversa || $conversa->numero?->user_id || ! ($usuario->isAdmin() || $conversa->responsavel_user_id === $usuario->id)) {
+            Notification::make()->title('Não foi possível devolver à fila')->warning()->send();
+
+            return;
+        }
+
+        $conversa->update(['responsavel_user_id' => null, 'atribuida_em' => null]);
+        $this->conversaId = null;
+        Notification::make()->title('Conversa devolvida à fila')->success()->send();
+    }
+
+    /** @return array<string, string> pessoas para quem dá para transferir */
+    public function colegas(): array
+    {
+        return \App\Models\User::withoutGlobalScopes()->where('tenant_id', auth()->user()->tenant_id)->where('is_approved', true)->where('id', '!=', auth()->id())->orderBy('name')->pluck('name', 'id')->all();
     }
 
     public function novaConversa(): void

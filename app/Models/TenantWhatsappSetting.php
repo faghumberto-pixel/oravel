@@ -14,7 +14,7 @@ class TenantWhatsappSetting extends Model
 
     protected $fillable = [
         'tenant_id', 'enabled', 'waba_id', 'access_token', 'app_secret', 'verify_token',
-        'template_abertura', 'template_proposta', 'template_language',
+        'template_abertura', 'template_proposta', 'template_language', 'distribuicao', 'atendentes', 'ultimo_atendente_id',
         'last_test_at', 'last_test_ok', 'last_error',
     ];
 
@@ -22,6 +22,7 @@ class TenantWhatsappSetting extends Model
 
     protected $casts = [
         'enabled' => 'boolean',
+        'atendentes' => 'array',
         'access_token' => 'encrypted',
         'app_secret' => 'encrypted',
         'last_test_at' => 'datetime',
