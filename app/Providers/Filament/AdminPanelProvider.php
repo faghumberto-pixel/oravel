@@ -209,6 +209,10 @@ class AdminPanelProvider extends PanelProvider
             )
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
+                fn () => view('filament.admin.cores-painel'),
+            )
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
                 fn () => view('filament.bfcache-reload'),
             )
             ->renderHook(

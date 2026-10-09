@@ -43,9 +43,9 @@ return [
     */
 
     'brand' => [
-        'primary' => '#2563eb',
-        'sidebar_from' => '#0b1f3a',
-        'sidebar_to' => '#12305a',
+        'primary' => '#f86c24',
+        'sidebar_from' => '#1d2133',
+        'sidebar_to' => '#1d2133',
     ],
 
     /*
