@@ -68,7 +68,11 @@ class AggregateItemExitResource extends BaseResource
             Forms\Components\Select::make('asset_id')->label('Equipamento de destino')
                 ->relationship('asset', 'name')->searchable()
                 ->getSearchResultsUsing(fn (string $search): array => Asset::opcoesPesquisa($search))
-                ->getOptionLabelFromRecordUsing(fn (Asset $a) => $a->selectLabel())->preload()->required(),
+                ->getOptionLabelFromRecordUsing(fn (Asset $a) => $a->selectLabel())->preload()
+                ->required(fn (Get $get) => blank($get('contract_id'))),
+            Forms\Components\Select::make('contract_id')->label('Contrato (custo)')
+                ->helperText('Opcional. Em branco, usa o contrato ativo do equipamento de destino. O custo desta saída entra no custo do contrato.')
+                ->relationship('contract', 'contract_number')->searchable()->preload()->live(),
             Forms\Components\Select::make('reason')->label('Motivo')
                 ->options(AggregateItemExit::reasonLabels())->default(AggregateItemExit::REASON_LOCACAO)
                 ->native(false)->required(),

@@ -10,11 +10,13 @@ use App\Filament\Resources\ContractResource\Pages\EditContract;
 use App\Filament\Resources\ContractResource\Pages\ListContracts;
 use App\Models\AccountReceivable;
 use App\Models\Asset;
+use App\Models\AssetCategory;
 use App\Models\Client;
 use App\Models\Contract;
 use App\Models\HorimeterReading;
 use App\Models\Plan;
 use App\Models\Role;
+use App\Models\SolicitacaoLocacao;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\ContractMeasurementService;
@@ -259,5 +261,57 @@ class ContractInvoiceActionTest extends TestCase
 
         $this->assertSame(0, ContractMeasurement::where('contract_id', $contract->id)->count());
         $this->assertSame(0, AccountReceivable::where('contract_id', $contract->id)->count());
+    }
+
+    private function comServicosVinculados(Tenant $tenant, User $user): array
+    {
+        $categoria = AssetCategory::create(['tenant_id' => $tenant->id, 'name' => 'Cat '.uniqid()]);
+        $contract = $this->makeContract($tenant);
+        $solicitacao = SolicitacaoLocacao::create([
+            'tenant_id' => $tenant->id, 'user_id' => $user->id, 'customer_id' => $contract->client_id,
+            'category_id' => $categoria->id, 'purpose' => 'teste', 'data_saida_prevista' => now(),
+            'status_comercial' => 'proposta_em_andamento',
+        ]);
+        $contract->update(['solicitacao_locacao_id' => $solicitacao->id]);
+
+        $servico = fn (string $cat, float $preco, array $extra = []) => Contract::create(array_merge([
+            'tenant_id' => $tenant->id, 'client_id' => $contract->client_id, 'solicitacao_locacao_id' => $solicitacao->id,
+            'service_category' => $cat, 'contract_number' => 'SV-'.uniqid(), 'start_date' => now()->subMonths(6),
+            'billing_type' => Contract::BILLING_MENSAL_FIXO, 'price' => $preco, 'status' => 'Ativo',
+        ], $extra));
+
+        return [$contract, $servico('mao_de_obra', 8000), $servico('insumo', 500), $servico];
+    }
+
+    public function test_faturar_includes_linked_services_as_separate_receivables(): void
+    {
+        [$tenant, $user] = $this->makeTenantUser();
+        [$contract, $mo, $insumo, $fabrica] = $this->comServicosVinculados($tenant, $user);
+        // serviço que só começa depois do período: não entra, e o aviso explica.
+        $futuro = $fabrica('acessorio', 100, ['start_date' => now()->addMonth()]);
+        $this->actingAs($user);
+
+        Livewire::test(ListContracts::class)
+            ->callTableAction('faturar', $contract, $this->formData(['incluir_servicos' => true]));
+
+        $this->assertEqualsWithDelta(3000.0, (float) AccountReceivable::where('contract_id', $contract->id)->sole()->amount, 0.01);
+        $recMo = AccountReceivable::where('contract_id', $mo->id)->sole();
+        $this->assertEqualsWithDelta(8000.0, (float) $recMo->amount, 0.01);
+        $this->assertStringContainsString('Mão de obra especializada', $recMo->description);
+        $this->assertSame(1, AccountReceivable::where('contract_id', $insumo->id)->count());
+        $this->assertSame(0, AccountReceivable::where('contract_id', $futuro->id)->count());
+    }
+
+    public function test_faturar_without_toggle_bills_only_the_rental(): void
+    {
+        [$tenant, $user] = $this->makeTenantUser();
+        [$contract, $mo] = $this->comServicosVinculados($tenant, $user);
+        $this->actingAs($user);
+
+        Livewire::test(ListContracts::class)
+            ->callTableAction('faturar', $contract, $this->formData(['incluir_servicos' => false]));
+
+        $this->assertSame(1, AccountReceivable::where('contract_id', $contract->id)->count());
+        $this->assertSame(0, AccountReceivable::where('contract_id', $mo->id)->count());
     }
 }

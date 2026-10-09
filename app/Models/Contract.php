@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
@@ -45,6 +46,15 @@ class Contract extends Model
 
     public const CONDICAO_OUTRO = 'outro';
 
+    /** @return array<string, string> Categoria do contrato quando vendido separado da locação. */
+    public static function serviceCategoryLabels(): array
+    {
+        return Arr::only(
+            PropostaComercialItem::typeLabels(),
+            PropostaComercialItem::serviceCategories()
+        );
+    }
+
     public const BILLING_MENSAL_FIXO = 'mensal_fixo';
 
     public const BILLING_POR_HORA = 'por_hora';
@@ -58,6 +68,8 @@ class Contract extends Model
         'client_id',
         'asset_id',
         'solicitacao_locacao_id',
+        'service_category',
+        'proposta_comercial_id',
         'contract_number',
         'start_date',
         'end_date',

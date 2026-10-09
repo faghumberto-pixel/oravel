@@ -65,7 +65,7 @@ class ContractResource extends Resource
                         Forms\Components\Select::make('asset_id')
                             ->relationship('asset', 'name')
                             ->label('Equipamento (Marca/Série)')
-                            ->required()
+                            ->required(fn (?Contract $record) => blank($record?->service_category))
                             ->live()
                             // Bloqueio automatico por PMP critico vencido (pedido
                             // do usuario 2026-08-27, CheckMaintenanceDueAlerts
@@ -370,6 +370,10 @@ class ContractResource extends Resource
             ->columns([
                 static::tenantColumn(),
                 Tables\Columns\TextColumn::make('contract_number')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('service_category')
+                    ->label('Tipo de venda')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state) => $state ? (Contract::serviceCategoryLabels()[$state] ?? $state) : 'Locação'),
                 Tables\Columns\TextColumn::make('client.name')->label('Cliente'),
                 Tables\Columns\TextColumn::make('asset.patrimonio')->label('Patrimônio'),
                 Tables\Columns\TextColumn::make('asset.name')->label('Ativo'),
@@ -382,6 +386,10 @@ class ContractResource extends Resource
                     ->color(fn (Contract $record) => $record->signedSignatures()->exists() ? 'success' : 'warning'),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('service_category')
+                    ->label('Tipo de venda')
+                    ->options(Contract::serviceCategoryLabels())
+                    ->query(fn ($query, array $data) => filled($data['value'] ?? null) ? $query->where('service_category', $data['value']) : $query),
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
                         'Draft' => 'Rascunho',
@@ -403,6 +411,7 @@ class ContractResource extends Resource
                     ->url(fn (Contract $record) => route('contratos.visualizar', ['contract' => $record->id]))
                     ->openUrlInNewTab(),
                 FaturarContratoAction::table(),
+                FaturarContratoAction::custoMargem(),
                 static::generateSignatureAction(),
                 static::copySignatureLinkAction(),
                 static::viewSignatureCertificateAction(),

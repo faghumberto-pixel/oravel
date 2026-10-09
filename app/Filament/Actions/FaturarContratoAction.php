@@ -4,8 +4,10 @@ namespace App\Filament\Actions;
 
 use App\Domain\Fleet\Models\ContractMeasurement;
 use App\Filament\Resources\AccountReceivableResource;
+use App\Models\AccountReceivable;
 use App\Models\Contract;
 use App\Models\User;
+use App\Services\ContractCostService;
 use App\Services\ContractMeasurementService;
 use Carbon\Carbon;
 use Filament\Actions\Action;
@@ -14,6 +16,7 @@ use Filament\Forms\Components\Component;
 use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Tables;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -89,6 +92,13 @@ class FaturarContratoAction
                 ->label('Vencimento')
                 ->default(now()->addDays(15)->toDateString())
                 ->required(),
+            Forms\Components\Toggle::make('incluir_servicos')
+                ->label('Faturar também os serviços vinculados')
+                ->helperText(fn () => 'Cada serviço gera a própria cobrança: '.static::servicosVinculados($contract)
+                    ->map(fn (Contract $c) => (Contract::serviceCategoryLabels()[$c->service_category] ?? $c->service_category).' (#'.$c->contract_number.')')
+                    ->implode(', ').'.')
+                ->default(true)
+                ->visible(fn () => static::servicosVinculados($contract)->isNotEmpty()),
             $manual
                 ? Forms\Components\TextInput::make('valor_manual')
                     ->label('Valor a cobrar (R$)')
@@ -156,28 +166,24 @@ class FaturarContratoAction
             return;
         }
 
+        $contratos = collect([$contract]);
+        $pulados = [];
+
+        if (! empty($data['incluir_servicos'])) {
+            foreach (static::servicosVinculados($contract) as $servico) {
+                if ($motivo = static::validarPeriodo($servico, $inicio, $fim)) {
+                    $pulados[] = '#'.$servico->contract_number.': '.$motivo;
+                } else {
+                    $contratos->push($servico);
+                }
+            }
+        }
+
         try {
-            $receivable = DB::transaction(function () use ($contract, $inicio, $fim, $vencimento, $manual, $data, $user) {
-                $measurement = $manual
-                    ? static::criarMedicaoManual($contract, $inicio, $fim, (float) $data['valor_manual'])
-                    : app(ContractMeasurementService::class)->generateForPeriod($contract, $inicio, $fim);
-
-                $measurement->submit();
-                $measurement->approve($user);
-                $receivable = $measurement->markInvoiced($vencimento);
-
-                activity()
-                    ->performedOn($contract)
-                    ->causedBy($user)
-                    ->withProperties([
-                        'measurement_id' => $measurement->id,
-                        'account_receivable_id' => $receivable->id,
-                        'periodo' => $inicio->toDateString().' a '.$fim->toDateString(),
-                        'valor' => (float) $receivable->amount,
-                    ])
-                    ->log('Contrato faturado');
-
-                return $receivable;
+            $recebiveis = DB::transaction(function () use ($contratos, $inicio, $fim, $vencimento, $manual, $data, $user) {
+                return $contratos->map(fn (Contract $c) => static::faturarUm(
+                    $c, $inicio, $fim, $vencimento, $c->is($contratos->first()) && $manual, (float) ($data['valor_manual'] ?? 0), $user
+                ));
             });
         } catch (\RuntimeException $e) {
             static::erro($e->getMessage());
@@ -185,9 +191,17 @@ class FaturarContratoAction
             return;
         }
 
+        $corpo = $recebiveis->count() > 1
+            ? sprintf('%d cobranças, total R$ %s, a vencer em %s.', $recebiveis->count(), number_format((float) $recebiveis->sum('amount'), 2, ',', '.'), $vencimento->format('d/m/Y'))
+            : sprintf('R$ %s a vencer em %s.', number_format((float) $recebiveis->first()->amount, 2, ',', '.'), $vencimento->format('d/m/Y'));
+
+        if ($pulados) {
+            $corpo .= ' Não incluídos: '.implode(' | ', $pulados);
+        }
+
         Notification::make()
             ->title('Cobrança gerada')
-            ->body(sprintf('R$ %s a vencer em %s.', number_format((float) $receivable->amount, 2, ',', '.'), $vencimento->format('d/m/Y')))
+            ->body($corpo)
             ->success()
             ->actions([
                 NotificationAction::make('ver')
@@ -196,6 +210,50 @@ class FaturarContratoAction
                     ->button(),
             ])
             ->send();
+    }
+
+    /**
+     * Contratos de serviço (mão de obra, segurança, acessórios, insumos) vendidos junto com esta
+     * locação (mesma solicitação) e já ativos. Vazio para um contrato que já é de serviço.
+     *
+     * @return Collection<int, Contract>
+     */
+    protected static function servicosVinculados(Contract $contract): Collection
+    {
+        if ($contract->service_category || ! $contract->solicitacao_locacao_id) {
+            return collect();
+        }
+
+        return Contract::where('solicitacao_locacao_id', $contract->solicitacao_locacao_id)
+            ->where('id', '!=', $contract->id)
+            ->whereNotNull('service_category')
+            ->where('status', 'Ativo')
+            ->orderBy('service_category')
+            ->get();
+    }
+
+    protected static function faturarUm(Contract $contract, Carbon $inicio, Carbon $fim, Carbon $vencimento, bool $manual, float $valorManual, User $user): AccountReceivable
+    {
+        $measurement = $manual
+            ? static::criarMedicaoManual($contract, $inicio, $fim, $valorManual)
+            : app(ContractMeasurementService::class)->generateForPeriod($contract, $inicio, $fim);
+
+        $measurement->submit();
+        $measurement->approve($user);
+        $receivable = $measurement->markInvoiced($vencimento);
+
+        activity()
+            ->performedOn($contract)
+            ->causedBy($user)
+            ->withProperties([
+                'measurement_id' => $measurement->id,
+                'account_receivable_id' => $receivable->id,
+                'periodo' => $inicio->toDateString().' a '.$fim->toDateString(),
+                'valor' => (float) $receivable->amount,
+            ])
+            ->log('Contrato faturado');
+
+        return $receivable;
     }
 
     protected static function validarPeriodo(Contract $contract, Carbon $inicio, Carbon $fim): ?string
@@ -251,5 +309,21 @@ class FaturarContratoAction
     protected static function erro(string $mensagem): void
     {
         Notification::make()->title('Não foi possível faturar')->body($mensagem)->danger()->send();
+    }
+
+    public static function custoMargem(bool $header = false)
+    {
+        $action = $header ? Action::make('custo_margem') : Tables\Actions\Action::make('custo_margem');
+
+        return $action
+            ->label('Custo e margem')
+            ->icon('heroicon-o-calculator')
+            ->color('gray')
+            ->modalHeading('Custo e margem do contrato')
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel('Fechar')
+            ->modalContent(fn (Contract $record) => view('filament.contracts.custo-margem', [
+                'summary' => app(ContractCostService::class)->summary($record),
+            ]));
     }
 }

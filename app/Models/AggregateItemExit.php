@@ -41,7 +41,7 @@ class AggregateItemExit extends Model
     protected static ?string $saasModuleLabel = 'Saídas de Itens Agregados';
 
     protected $fillable = [
-        'tenant_id', 'aggregate_item_type_id', 'aggregate_item_id', 'asset_id', 'maintenance_order_id',
+        'tenant_id', 'aggregate_item_type_id', 'aggregate_item_id', 'asset_id', 'contract_id', 'unit_cost', 'maintenance_order_id',
         'exit_date', 'quantity', 'reason', 'returned', 'returned_at', 'returned_condition', 'notes',
     ];
 
@@ -50,6 +50,7 @@ class AggregateItemExit extends Model
         'returned_at' => 'date',
         'returned' => 'boolean',
         'quantity' => 'integer',
+        'unit_cost' => 'decimal:2',
     ];
 
     /** @return array<string, string> */
@@ -72,6 +73,23 @@ class AggregateItemExit extends Model
 
     protected static function booted(): void
     {
+        // Custo unitário congelado na saída: valor de compra da unidade específica ou, no estoque
+        // por quantidade, o preço médio das entradas do tipo. Contrato: o ativo vigente do destino.
+        static::creating(function (AggregateItemExit $exit) {
+            if ($exit->unit_cost === null) {
+                $exit->unit_cost = $exit->item?->purchase_value
+                    ?? AggregateItemEntry::where('aggregate_item_type_id', $exit->aggregate_item_type_id)
+                        ->where('quantity', '>', 0)
+                        ->selectRaw('SUM(unit_price * quantity) / SUM(quantity) as avg_cost')
+                        ->value('avg_cost');
+            }
+
+            if (blank($exit->contract_id) && $exit->asset_id) {
+                $exit->contract_id = Contract::where('asset_id', $exit->asset_id)
+                    ->where('status', 'Ativo')->latest('start_date')->value('id');
+            }
+        });
+
         // Saída de uma unidade específica: ela passa a acompanhar o equipamento.
         static::created(function (AggregateItemExit $exit) {
             $exit->item?->update([
@@ -95,6 +113,11 @@ class AggregateItemExit extends Model
             'status' => $condition === self::CONDITION_OK ? AggregateItem::STATUS_DISPONIVEL : AggregateItem::STATUS_MANUTENCAO,
             'asset_id' => null,
         ]);
+    }
+
+    public function contract(): BelongsTo
+    {
+        return $this->belongsTo(Contract::class);
     }
 
     public function type(): BelongsTo

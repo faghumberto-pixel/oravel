@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PropostaComercialResource\Pages;
 use App\Filament\Resources\PropostaComercialResource\RelationManagers\InteractionsRelationManager;
+use App\Models\AggregateItemType;
 use App\Models\AssetCategory;
 use App\Models\Client;
 use App\Models\PropostaComercial;
@@ -93,6 +94,15 @@ class PropostaComercialResource extends BaseResource
                                 ->searchable()
                                 ->visible(fn (Forms\Get $get) => $get('type') === PropostaComercialItem::TYPE_EQUIPAMENTO)
                                 ->required(fn (Forms\Get $get) => $get('type') === PropostaComercialItem::TYPE_EQUIPAMENTO),
+                            Forms\Components\Select::make('aggregate_item_type_id')
+                                ->label('Tipo do catálogo (opcional)')
+                                ->options(fn (Forms\Get $get) => AggregateItemType::query()
+                                    ->where('tenant_id', Tenancy::current()?->id)
+                                    ->where('category', $get('type'))
+                                    ->orderBy('name')->pluck('name', 'id'))
+                                ->searchable()
+                                ->helperText('Liga a venda ao cadastro de Itens Agregados, para o custo entrar no contrato.')
+                                ->visible(fn (Forms\Get $get) => in_array($get('type'), [PropostaComercialItem::TYPE_ACESSORIO, PropostaComercialItem::TYPE_INSUMO], true)),
                             Forms\Components\TextInput::make('description')
                                 ->label('Descrição')
                                 ->required()
@@ -246,7 +256,7 @@ class PropostaComercialResource extends BaseResource
             Section::make('Campos da proposta')
                 ->visible(fn (PropostaComercial $record) => ! empty($record->campos))
                 ->schema([
-                    \Filament\Infolists\Components\RepeatableEntry::make('campos')
+                    RepeatableEntry::make('campos')
                         ->label('')
                         ->schema([
                             TextEntry::make('titulo')->label('Título')->weight('bold'),

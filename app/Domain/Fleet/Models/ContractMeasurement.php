@@ -220,7 +220,10 @@ class ContractMeasurement extends Model
             'client_id' => $this->contract->client_id,
             'contract_id' => $this->contract_id,
             'description' => sprintf(
-                'Medição de contrato #%s — %s a %s',
+                '%s #%s — %s a %s',
+                $this->contract->service_category
+                    ? (Contract::serviceCategoryLabels()[$this->contract->service_category] ?? 'Serviço')
+                    : 'Medição de contrato',
                 $this->contract->contract_number ?? $this->contract_id,
                 $this->reference_period_start->format('d/m/Y'),
                 $this->reference_period_end->format('d/m/Y')

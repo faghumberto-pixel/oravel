@@ -28,10 +28,19 @@ class PropostaComercialItem extends Model
 
     public const TYPE_SERVICO = 'servico';
 
+    public const TYPE_MAO_DE_OBRA = 'mao_de_obra';
+
+    public const TYPE_SEGURANCA_DOCUMENTACAO = 'seguranca_documentacao';
+
+    public const TYPE_ACESSORIO = 'acessorio';
+
+    public const TYPE_INSUMO = 'insumo';
+
     protected $fillable = [
         'tenant_id',
         'proposta_comercial_id',
         'asset_category_id',
+        'aggregate_item_type_id',
         'type',
         'description',
         'quantity',
@@ -57,8 +66,28 @@ class PropostaComercialItem extends Model
     public static function typeLabels(): array
     {
         return [
-            self::TYPE_EQUIPAMENTO => 'Equipamento',
-            self::TYPE_SERVICO => 'Serviço',
+            self::TYPE_EQUIPAMENTO => 'Locação de equipamento',
+            self::TYPE_MAO_DE_OBRA => 'Mão de obra especializada',
+            self::TYPE_SEGURANCA_DOCUMENTACAO => 'Segurança e documentação',
+            self::TYPE_ACESSORIO => 'Acessórios e componentes',
+            self::TYPE_INSUMO => 'Insumos e consumíveis',
+            self::TYPE_SERVICO => 'Serviço (outros)',
+        ];
+    }
+
+    /**
+     * Categorias vendidas separadas da locação: cada uma vira um contrato
+     * próprio quando o cliente aceita a proposta.
+     *
+     * @return array<int, string>
+     */
+    public static function serviceCategories(): array
+    {
+        return [
+            self::TYPE_MAO_DE_OBRA,
+            self::TYPE_SEGURANCA_DOCUMENTACAO,
+            self::TYPE_ACESSORIO,
+            self::TYPE_INSUMO,
         ];
     }
 
@@ -83,6 +112,11 @@ class PropostaComercialItem extends Model
         static::saving(function (PropostaComercialItem $item) {
             $item->subtotal = round($item->quantity * $item->unit_price, 2);
         });
+    }
+
+    public function aggregateItemType(): BelongsTo
+    {
+        return $this->belongsTo(AggregateItemType::class);
     }
 
     public function propostaComercial(): BelongsTo

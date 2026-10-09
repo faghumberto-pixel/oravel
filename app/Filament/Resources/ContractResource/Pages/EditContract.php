@@ -20,6 +20,7 @@ class EditContract extends EditRecord
                 ->button()
                 ->color('primary'),
             FaturarContratoAction::header()->record($this->getRecord()),
+            FaturarContratoAction::custoMargem(true)->record($this->getRecord()),
             Actions\DeleteAction::make(),
         ];
     }

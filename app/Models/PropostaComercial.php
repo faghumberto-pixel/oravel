@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
-use App\Support\Tenancy;
-use App\Services\DestinatariosAvisos;
 use App\Mail\GenericPdfMail;
 use App\Models\Concerns\BelongsToTenant;
 use App\Models\Concerns\HasSaaSMetadata;
+use App\Services\DestinatariosAvisos;
+use App\Services\WhatsAppEmpresaService;
+use App\Support\Tenancy;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -389,10 +390,10 @@ class PropostaComercial extends Model
      * empresa). Usa o modelo aprovado de proposta: nome do cliente e link de aceite. Devolve a mensagem
      * registrada (status enviada ou falhou); null se não houver WhatsApp ligado, modelo ou número do cliente.
      */
-    public function enviarPorWhatsApp(User $por): ?\App\Models\WhatsappMensagem
+    public function enviarPorWhatsApp(User $por): ?WhatsappMensagem
     {
-        $servico = \App\Services\WhatsAppEmpresaService::paraUsuario($por);
-        $config = \App\Models\TenantWhatsappSetting::withoutGlobalScopes()->where('tenant_id', $this->tenant_id)->first();
+        $servico = WhatsAppEmpresaService::paraUsuario($por);
+        $config = TenantWhatsappSetting::withoutGlobalScopes()->where('tenant_id', $this->tenant_id)->first();
         $telefone = (string) ($this->client?->whatsapp ?: $this->client?->phone);
 
         if (! $servico || blank($config?->template_proposta) || strlen(preg_replace('/\D+/', '', $telefone)) < 10
@@ -438,6 +439,8 @@ class PropostaComercial extends Model
             'status' => self::STATUS_ACEITA_PELO_CLIENTE,
             'client_responded_at' => now(),
         ]);
+
+        $this->gerarContratosDeServicos();
 
         if ($this->solicitacao_locacao_id) {
             return;
@@ -508,6 +511,52 @@ class PropostaComercial extends Model
             'reviewed_by_user_id' => null,
             'reviewed_at' => null,
         ]);
+    }
+
+    /**
+     * Cada categoria vendida separada da locação (mão de obra, segurança e
+     * documentação, acessórios, insumos) vira um contrato próprio em
+     * rascunho, pra que o cliente possa contratar uma sem as outras (e sem
+     * equipamento). Valor = soma dos itens da categoria; prazo = menor
+     * início e maior fim dos itens. Idempotente por proposta+categoria.
+     * O contrato fica em Draft: o Comercial revisa e ativa (só Ativo fatura).
+     *
+     * @return array<int, Contract>
+     */
+    public function gerarContratosDeServicos(): array
+    {
+        $criados = [];
+
+        foreach (PropostaComercialItem::serviceCategories() as $categoria) {
+            $itens = $this->items()->where('type', $categoria)->get();
+
+            if ($itens->isEmpty()) {
+                continue;
+            }
+
+            if (Contract::where('proposta_comercial_id', $this->id)->where('service_category', $categoria)->exists()) {
+                continue;
+            }
+
+            $rotulo = PropostaComercialItem::typeLabels()[$categoria];
+
+            $criados[] = Contract::create([
+                'tenant_id' => $this->tenant_id,
+                'client_id' => $this->client_id,
+                'solicitacao_locacao_id' => $this->solicitacao_locacao_id,
+                'proposta_comercial_id' => $this->id,
+                'service_category' => $categoria,
+                'contract_number' => 'SV-'.now()->format('Ym').'-'.strtoupper(Str::random(5)),
+                'start_date' => $itens->whereNotNull('start_date')->min('start_date') ?? now(),
+                'end_date' => $itens->whereNotNull('end_date')->max('end_date'),
+                'price' => $itens->sum('subtotal'),
+                'billing_type' => Contract::BILLING_MENSAL_FIXO,
+                'status' => 'Draft',
+                'observations' => "{$rotulo} — gerado da proposta comercial aceita pelo cliente. Itens: ".$itens->pluck('description')->implode('; '),
+            ]);
+        }
+
+        return $criados;
     }
 
     private function criarSolicitacaoLocacao(PropostaComercialItem $primeiroEquipamento): SolicitacaoLocacao
