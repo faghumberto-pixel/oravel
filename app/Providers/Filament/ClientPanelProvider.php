@@ -63,6 +63,10 @@ class ClientPanelProvider extends PanelProvider
                 fn () => view('filament.brand-header-background'),
             )
             ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn () => view('filament.client.cores-painel'),
+            )
+            ->renderHook(
                 // Sanfona nos grupos do menu, mesmo comportamento do admin
                 // (2026-09-24) -- útil aqui também, o portal já tem ~10 itens.
                 PanelsRenderHook::BODY_END,
