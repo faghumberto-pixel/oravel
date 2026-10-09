@@ -344,4 +344,11 @@ return [
         'slug' => 'responsaveis-avisos',
         'herda' => [],
     ],
+    'menu_email_da_empresa' => [
+        'label' => 'Tela: Configurações → E-mail da Empresa',
+        'grupo' => 'Configurações',
+        'menu' => 'E-mail da Empresa',
+        'slug' => 'email-da-empresa',
+        'herda' => [],
+    ],
 ];

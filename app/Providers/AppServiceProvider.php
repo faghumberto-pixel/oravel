@@ -256,6 +256,15 @@ class AppServiceProvider extends ServiceProvider
 
         // Assinatura concluída -> aviso no sino da Central (super admins).
         Event::listen(DocumentSigned::class, [NotifyCentralOfSignedDocument::class, 'notify']);
+        // E-mail por empresa: se a empresa cadastrou a caixa dela, envia por ela; senão usa a da Oravel.
+        \Illuminate\Support\Facades\Mail::extend('oravel', fn () => new \App\Mail\TenantAwareTransport(
+            \Illuminate\Support\Facades\Mail::mailer('smtp')->getSymfonyTransport()
+        ));
+
+        if (config('mail.default') === 'smtp') {
+            config(['mail.mailers.oravel' => ['transport' => 'oravel'], 'mail.default' => 'oravel']);
+        }
+
         Event::listen(\Illuminate\Mail\Events\MessageSending::class, [\App\Listeners\RegistrarEnvioDeEmail::class, 'sending']);
         Event::listen(\Illuminate\Mail\Events\MessageSent::class, [\App\Listeners\RegistrarEnvioDeEmail::class, 'sent']);
 
