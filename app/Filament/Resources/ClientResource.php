@@ -20,6 +20,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Log;
+use App\Support\ClientDuplicidade;
+use App\Support\Tenancy;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Throwable;
@@ -56,6 +58,32 @@ class ClientResource extends Resource
         return 'gray';
     }
 
+    /**
+     * Regra de cadastro único: nenhum dado de identificação do cliente pode se
+     * repetir dentro da mesma empresa (ver App\Support\ClientDuplicidade).
+     */
+    public static function regraDuplicidade(string $campo): \Closure
+    {
+        return fn (Forms\Get $get, ?Client $record) => function (string $attribute, $value, \Closure $fail) use ($get, $record, $campo) {
+            $tenantId = $record?->tenant_id ?? Tenancy::current()?->id;
+
+            if (! $tenantId) {
+                return;
+            }
+
+            $dados = [];
+            foreach (['name', 'fantasy_name', 'document', 'state_registration', 'municipal_registration', 'email', 'phone', 'whatsapp', 'address', 'address_complement', 'city', 'state'] as $c) {
+                $dados[$c] = $get($c);
+            }
+
+            $conflitos = ClientDuplicidade::conflitos($dados, $tenantId, $record?->id);
+
+            if (isset($conflitos[$campo])) {
+                $fail($conflitos[$campo]);
+            }
+        };
+    }
+
     public static function form(Form $form): Form
     {
         // (SEU CÓDIGO ORIGINAL DE TABS FOI MANTIDO INTEGRALMENTE)
@@ -66,11 +94,11 @@ class ClientResource extends Resource
                         ->icon('heroicon-o-identification')
                         ->schema([
                             Forms\Components\Section::make('Identificação')->schema([
-                                Forms\Components\TextInput::make('name')->label('Razão Social')->required()->maxLength(255),
-                                Forms\Components\TextInput::make('fantasy_name')->label('Nome Fantasia')->maxLength(255),
-                                Forms\Components\TextInput::make('document')->label('CNPJ')->maxLength(20),
-                                Forms\Components\TextInput::make('state_registration')->label('Inscrição Estadual')->maxLength(50),
-                                Forms\Components\TextInput::make('municipal_registration')->label('Inscrição Municipal')->maxLength(50),
+                                Forms\Components\TextInput::make('name')->label('Razão Social')->required()->maxLength(255)->rules([static::regraDuplicidade('name')]),
+                                Forms\Components\TextInput::make('fantasy_name')->label('Nome Fantasia')->maxLength(255)->rules([static::regraDuplicidade('fantasy_name')]),
+                                Forms\Components\TextInput::make('document')->label('CNPJ')->maxLength(20)->rules([static::regraDuplicidade('document')]),
+                                Forms\Components\TextInput::make('state_registration')->label('Inscrição Estadual')->maxLength(50)->rules([static::regraDuplicidade('state_registration')]),
+                                Forms\Components\TextInput::make('municipal_registration')->label('Inscrição Municipal')->maxLength(50)->rules([static::regraDuplicidade('municipal_registration')]),
                                 Forms\Components\TextInput::make('tax_regime')->label('Regime Tributário')->placeholder('Ex: Simples Nacional, Lucro Presumido...')->maxLength(100),
                                 Forms\Components\Select::make('activity_type')
                                     ->label('Nicho')
@@ -78,8 +106,47 @@ class ClientResource extends Resource
                                     ->native(false)
                                     ->helperText('Usado pra sugerir campos relevantes nas Ordens de Serviço deste cliente (Prazo Fatal, Chamado de Emergência, etc).'),
                             ])->columns(2),
+                            Forms\Components\Section::make('Contato')
+                                ->description('Como falar com o cliente. O e-mail também é o usuário de login do Portal do Cliente.')
+                                ->schema([
+                                    Forms\Components\TextInput::make('contact_name')->label('Nome do contato')->maxLength(255),
+                                Forms\Components\TextInput::make('email')
+                                    ->label('E-mail')
+                                    ->email()
+                                    ->required(fn (Forms\Get $get) => (bool) $get('portal_access_enabled_at'))
+                                    ->rules([
+                                        static::regraDuplicidade('email'),
+                                        fn (Forms\Get $get, ?Client $record) => function (string $attribute, $value, \Closure $fail) use ($get, $record) {
+                                            // O e-mail é o usuário de login do portal: não pode repetir em outro
+                                            // cliente com acesso ativo (nem de outra empresa), senão o login ficaria ambíguo.
+                                            if (! $get('portal_access_enabled_at') || blank($value)) {
+                                                return;
+                                            }
+
+                                            $repetido = Client::withoutGlobalScopes()
+                                                ->where('email', $value)
+                                                ->whereNotNull('portal_access_enabled_at')
+                                                ->when($record, fn ($q) => $q->where('id', '!=', $record->id))
+                                                ->exists();
+
+                                            if ($repetido) {
+                                                $fail('Este e-mail já é usuário do portal de outro cliente. Use outro e-mail.');
+                                            }
+                                        },
+                                    ])
+                                    ->helperText('Usado como destinatário padrão em envios (ex: orçamentos). Também é o usuário de login do Portal do Cliente.'),
+                                    Forms\Components\TextInput::make('phone')->label('Telefone')->tel()->maxLength(30)->rules([static::regraDuplicidade('phone')]),
+                                    Forms\Components\TextInput::make('whatsapp')->label('Celular / WhatsApp')->tel()->maxLength(30)->rules([static::regraDuplicidade('whatsapp')]),
+                                ])->columns(2),
+                            Forms\Components\Section::make('Site e redes sociais')
+                                ->schema([
+                                    Forms\Components\TextInput::make('website')->label('Site')->url()->placeholder('https://')->maxLength(255),
+                                    Forms\Components\TextInput::make('instagram')->label('Instagram')->placeholder('@usuario ou link')->maxLength(255),
+                                    Forms\Components\TextInput::make('facebook')->label('Facebook')->placeholder('Link ou nome da página')->maxLength(255),
+                                    Forms\Components\TextInput::make('linkedin')->label('LinkedIn')->placeholder('Link do perfil ou da empresa')->maxLength(255),
+                                ])->columns(2)->collapsible(),
                             Forms\Components\Section::make('Endereço de Faturamento')->schema([
-                                Forms\Components\TextInput::make('address')->label('Logradouro e Nº')->maxLength(255),
+                                Forms\Components\TextInput::make('address')->label('Logradouro e Nº')->maxLength(255)->rules([static::regraDuplicidade('address')]),
                                 Forms\Components\TextInput::make('address_complement')->label('Complemento')->maxLength(255),
                                 Forms\Components\TextInput::make('neighborhood')->label('Bairro')->maxLength(100),
                                 Forms\Components\TextInput::make('city')->label('Cidade')->maxLength(100),
@@ -128,33 +195,7 @@ class ClientResource extends Resource
                                 Forms\Components\TextInput::make('site_manager')->label('Nome do Responsável na Obra')->maxLength(255),
                                 Forms\Components\TextInput::make('site_phone')->label('Telefone do Canteiro')->tel(),
                             ])->columns(2),
-                            Forms\Components\Section::make('Contatos e Setores (Campos ERP)')->schema([
-                                Forms\Components\TextInput::make('email')
-                                    ->label('E-mail de Contato (Principal)')
-                                    ->email()
-                                    ->required(fn (Forms\Get $get) => (bool) $get('portal_access_enabled_at'))
-                                    ->rules([
-                                        fn (Forms\Get $get, ?Client $record) => function (string $attribute, $value, \Closure $fail) use ($get, $record) {
-                                            // O e-mail é o usuário de login do portal: não pode repetir em outro
-                                            // cliente com acesso ativo (nem de outra empresa), senão o login ficaria ambíguo.
-                                            if (! $get('portal_access_enabled_at') || blank($value)) {
-                                                return;
-                                            }
-
-                                            $repetido = Client::withoutGlobalScopes()
-                                                ->where('email', $value)
-                                                ->whereNotNull('portal_access_enabled_at')
-                                                ->when($record, fn ($q) => $q->where('id', '!=', $record->id))
-                                                ->exists();
-
-                                            if ($repetido) {
-                                                $fail('Este e-mail já é usuário do portal de outro cliente. Use outro e-mail.');
-                                            }
-                                        },
-                                    ])
-                                    ->helperText('Usado como destinatário padrão em envios (ex: orçamentos). Também é o usuário de login do Portal do Cliente.'),
-                                Forms\Components\TextInput::make('phone')->label('Telefone Comercial')->tel(),
-                                Forms\Components\TextInput::make('whatsapp')->label('WhatsApp')->tel(),
+                            Forms\Components\Section::make('Setores (Campos ERP)')->schema([
                                 Forms\Components\TextInput::make('email_financial')->label('E-mail Financeiro')->email(),
                                 Forms\Components\TextInput::make('email_purchasing')->label('E-mail Suprimentos')->email(),
                             ])->columns(2),
@@ -250,6 +291,9 @@ class ClientResource extends Resource
                 static::tenantColumn(),
                 Tables\Columns\TextColumn::make('name')->label('Razão Social')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('document')->label('CNPJ')->searchable(),
+                Tables\Columns\TextColumn::make('email')->label('E-mail')->searchable()->toggleable(),
+                Tables\Columns\TextColumn::make('phone')->label('Telefone')->searchable()->toggleable(),
+                Tables\Columns\TextColumn::make('whatsapp')->label('Celular / WhatsApp')->searchable()->toggleable(),
                 Tables\Columns\TextColumn::make('city')->label('Cidade')->sortable(),
                 Tables\Columns\TextColumn::make('state')->label('UF'),
                 Tables\Columns\TextColumn::make('activity_type')

@@ -7,6 +7,7 @@ use App\Models\Tenant;
 use App\Support\AssetImport\AssetImportColumns as Norm;
 use App\Support\ClientImport\ClientImportColumns as Cols;
 use App\Support\ExcelImport\XlsxReader;
+use App\Support\ClientDuplicidade;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -93,6 +94,11 @@ class ClientExcelImporter
                         $result['skipped']++;
 
                         continue;
+                    }
+
+                    $conflitos = ClientDuplicidade::conflitos($data, $tenant->id, $found?->id);
+                    if ($conflitos !== []) {
+                        throw new \DomainException('Duplicado: '.implode(' ', array_values($conflitos)));
                     }
 
                     if ($found) {

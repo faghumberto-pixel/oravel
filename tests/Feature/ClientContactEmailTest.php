@@ -121,4 +121,24 @@ class ClientContactEmailTest extends TestCase
             ->mountAction('enviar')
             ->assertActionDataSet(['client_email' => 'financeiro@clienteteste.com.br']);
     }
+
+    public function test_contato_telefone_celular_e_redes_sociais_sao_salvos_pelo_formulario(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $this->actingAs($admin);
+
+        Livewire::test(CreateClient::class)
+            ->fillForm([
+                'name' => 'Cliente Redes Sociais', 'contact_name' => 'Maria Compras', 'email' => 'maria@clienteredes.com.br',
+                'phone' => '(19) 3333-4444', 'whatsapp' => '(19) 99999-8888', 'website' => 'https://clienteredes.com.br',
+                'instagram' => '@clienteredes', 'facebook' => 'facebook.com/clienteredes', 'linkedin' => 'linkedin.com/company/clienteredes',
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $client = Client::where('name', 'Cliente Redes Sociais')->firstOrFail();
+        $this->assertSame('(19) 99999-8888', $client->whatsapp);
+        $this->assertSame('@clienteredes', $client->instagram);
+        $this->assertSame('https://clienteredes.com.br', $client->website);
+    }
 }
