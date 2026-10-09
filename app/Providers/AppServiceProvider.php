@@ -256,6 +256,8 @@ class AppServiceProvider extends ServiceProvider
 
         // Assinatura concluída -> aviso no sino da Central (super admins).
         Event::listen(DocumentSigned::class, [NotifyCentralOfSignedDocument::class, 'notify']);
+        Event::listen(\Illuminate\Mail\Events\MessageSending::class, [\App\Listeners\RegistrarEnvioDeEmail::class, 'sending']);
+        Event::listen(\Illuminate\Mail\Events\MessageSent::class, [\App\Listeners\RegistrarEnvioDeEmail::class, 'sent']);
 
         Event::listen(Login::class, function (Login $event) {
             $this->logAuthEvent(UserActivityLog::ACTION_LOGIN, $event->user);

@@ -126,6 +126,10 @@ class CaixaDeEmail extends Page implements HasForms
 
         return match ($this->folder) {
             'enviados' => $query->where('from_user_id', $userId)->where('status', '!=', EmailMessage::STATUS_RASCUNHO)->latest(),
+            // Tudo que o sistema enviou sozinho para esta empresa -- só administradores (não é correspondência pessoal).
+            'automaticos' => auth()->user()?->isAdmin()
+                ? $query->where('origem', 'sistema')->latest()
+                : $query->whereRaw('1 = 0'),
             'rascunhos' => $query->where('from_user_id', $userId)->where('status', EmailMessage::STATUS_RASCUNHO)->latest(),
             default => $query->whereHas('recipients', fn ($q) => $q->where('users.id', $userId))->where('status', '!=', EmailMessage::STATUS_RASCUNHO)->latest(),
         };
@@ -143,7 +147,8 @@ class CaixaDeEmail extends Page implements HasForms
         $userId = auth()->id();
 
         return $message->from_user_id === $userId
-            || $message->recipients->contains('id', $userId);
+            || $message->recipients->contains('id', $userId)
+            || ($message->origem === 'sistema' && auth()->user()?->isAdmin());
     }
 
     public function selectMessage(string $id): void

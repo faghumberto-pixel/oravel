@@ -50,6 +50,9 @@ class EmailMessage extends Model implements HasMedia
 
     protected static ?string $saasModuleLabel = 'Caixa de E-mail';
 
+    /** Enquanto o próprio módulo envia, o registro automático de e-mails do sistema não duplica. */
+    public static bool $enviandoPeloModulo = false;
+
     protected $attributes = [
         'status' => self::STATUS_RASCUNHO,
     ];
@@ -65,6 +68,8 @@ class EmailMessage extends Model implements HasMedia
         'error',
         'related_type',
         'related_id',
+        'origem',
+        'tipo',
     ];
 
     protected $casts = [
@@ -142,6 +147,7 @@ class EmailMessage extends Model implements HasMedia
         ])->all();
 
         try {
+            static::$enviandoPeloModulo = true;
             Mail::to($this->to_external)->send(new GenericPdfMail(
                 subjectLine: $this->subject,
                 greeting: 'Olá!',
@@ -156,6 +162,8 @@ class EmailMessage extends Model implements HasMedia
             $this->update(['status' => self::STATUS_FALHOU, 'error' => $e->getMessage()]);
 
             throw $e;
+        } finally {
+            static::$enviandoPeloModulo = false;
         }
     }
 

@@ -7,6 +7,11 @@
             'enviados' => ['label' => 'Enviados', 'icon' => 'M3.4 20.6l17.45-8.5a1 1 0 000-1.8L3.4 1.8a1 1 0 00-1.44 1.1L4.3 11 1.96 18.9a1 1 0 001.44 1.1z'],
             'rascunhos' => ['label' => 'Rascunhos', 'icon' => 'M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10'],
         ];
+
+        // Registro de tudo que o sistema enviou sozinho (avisos, acessos, links): só administradores.
+        if (auth()->user()?->isAdmin()) {
+            $folders['automaticos'] = ['label' => 'Automáticos', 'icon' => 'M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z'];
+        }
     @endphp
 
     <div class="grid grid-cols-1 gap-3 lg:grid-cols-[200px_300px_1fr]">
@@ -41,7 +46,7 @@
             @forelse($messages as $message)
                 @php
                     $isUnread = $this->folder === 'recebidos' && optional($message->recipients->firstWhere('id', auth()->id()))->pivot?->read_at === null;
-                    $counterpart = $this->folder === 'enviados'
+                    $counterpart = in_array($this->folder, ['enviados', 'automaticos'], true)
                         ? ($message->recipients->pluck('name')->implode(', ') ?: collect($message->to_external ?? [])->implode(', '))
                         : $message->fromUser?->name;
                 @endphp
@@ -55,7 +60,9 @@
                         <span class="truncate {{ $isUnread ? 'font-bold text-gray-950 dark:text-white' : 'font-medium text-gray-700 dark:text-gray-300' }}">
                             {{ $counterpart ?: 'Sem destinatário' }}
                         </span>
-                        <span class="shrink-0 text-[10px] text-gray-400">{{ $message->created_at->format('d/m H:i') }}</span>
+                        <span class="shrink-0 text-[10px] text-gray-400">
+                            @if($message->status === \App\Models\EmailMessage::STATUS_FALHOU)<span class="mr-1 font-bold uppercase text-danger-600">Falhou</span>@endif{{ $message->created_at->format('d/m H:i') }}
+                        </span>
                     </div>
                     <p class="truncate text-xs {{ $isUnread ? 'font-semibold text-gray-700 dark:text-gray-200' : 'text-gray-500' }}">
                         {{ $message->subject ?: '(sem assunto)' }}
@@ -98,7 +105,7 @@
                         <div>
                             <h2 class="text-base font-bold text-gray-950 dark:text-white">{{ $active->subject ?: '(sem assunto)' }}</h2>
                             <p class="text-xs text-gray-500">
-                                De: <strong>{{ $active->fromUser?->name }}</strong>
+                                De: <strong>{{ $active->fromUser?->name ?? 'Sistema Oravel' }}</strong>
                                 @if($active->recipients->isNotEmpty())
                                     · Para: {{ $active->recipients->pluck('name')->implode(', ') }}
                                 @endif
@@ -112,12 +119,18 @@
                         <div class="flex shrink-0 items-center gap-2">
                             @if($active->status === \App\Models\EmailMessage::STATUS_FALHOU)
                                 <span class="rounded-full bg-danger-50 px-2 py-1 text-[10px] font-bold uppercase text-danger-600 dark:bg-danger-500/10 dark:text-danger-400">Falhou</span>
+                            @elseif($active->status === \App\Models\EmailMessage::STATUS_ENVIADO)
+                                <span class="rounded-full bg-success-50 px-2 py-1 text-[10px] font-bold uppercase text-success-600 dark:bg-success-500/10 dark:text-success-400">Enviado{{ $active->sent_at ? ' '.$active->sent_at->format('d/m H:i') : '' }}</span>
                             @endif
                             <x-filament::button size="sm" color="gray" wire:click="replyTo('{{ $active->id }}')" icon="heroicon-o-arrow-uturn-left">
                                 Responder
                             </x-filament::button>
                         </div>
                     </div>
+
+                    @if($active->status === \App\Models\EmailMessage::STATUS_FALHOU && filled($active->error))
+                        <p class="rounded-lg bg-danger-50 p-3 text-xs text-danger-700 dark:bg-danger-500/10 dark:text-danger-300">Não foi entregue: {{ $active->error }}</p>
+                    @endif
 
                     <p class="whitespace-pre-line text-sm text-gray-700 dark:text-gray-300">{{ $active->body }}</p>
 
