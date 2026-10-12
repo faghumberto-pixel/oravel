@@ -143,6 +143,10 @@ class AppColaboradorTest extends TestCase
         // jsQR embutido (muitos Androids não têm BarcodeDetector) e mensagem só para quem não tem câmera.
         $this->assertStringContainsString('/vendor/jsqr.js', $html);
         $this->assertStringContainsString('jsQR(', $html);
+        // Esta página não carrega Alpine/Livewire: nada de x-data/@click/x-show, senão o botão fica parado (bug de 12/10).
+        $this->assertStringNotContainsString('x-data', $html);
+        $this->assertStringNotContainsString('x-show', $html);
+        $this->assertStringContainsString("getElementById('qr-abrir')", $html);
         $this->assertStringNotContainsString('não lê QR por aqui', $html);
         $this->assertFileExists(public_path('vendor/jsqr.js'));
         $this->assertGreaterThan(100000, filesize(public_path('vendor/jsqr.js')));
