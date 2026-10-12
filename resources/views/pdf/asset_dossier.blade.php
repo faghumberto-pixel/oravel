@@ -33,20 +33,7 @@
 </head>
 <body>
 
-    <div class="header">
-        <table>
-            <tr>
-                <td style="width: 60%;">
-                    <div class="logo-text">{{ \App\Support\Relatorio::emissor() }}</div>
-                    <div class="logo-subtext">{{ \App\Support\Relatorio::detalhe() }}</div>
-                </td>
-                <td class="title-area">
-                    <div class="title">Dossiê do Ativo</div>
-                    <div class="patrimonio-tag">{{ $asset->patrimonio ?? '—' }}</div>
-                </td>
-            </tr>
-        </table>
-    </div>
+@include('partials.relatorio-cabecalho', ['tituloRelatorio' => 'Dossiê do Ativo', 'filtrosRelatorio' => ['Ativo: '.$asset->name, $asset->patrimonio ? 'Patrimônio: '.$asset->patrimonio : null]])
 
     <div class="section">
         <div class="section-title">Dados Gerais</div>
@@ -181,7 +168,7 @@
     </div>
 
     <div class="footer">
-        {{ \App\Support\Relatorio::emissor() }} · gerado em {{ now()->format('d/m/Y H:i') }} · Oravel
+        <strong style="color: #111827;">Oravel</strong> · {{ \App\Support\Relatorio::emissor() }} · gerado em {{ now()->format('d/m/Y H:i') }}
     </div>
 
 </body>
