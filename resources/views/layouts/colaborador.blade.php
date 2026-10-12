@@ -6,6 +6,7 @@
     <meta name="theme-color" content="#09090b">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('titulo', 'Oravel Colaborador')</title>
+    <meta name="colab-base" content="{{ rtrim(route('colab.home', [], false), '/') }}">
     <link rel="manifest" href="{{ route('colab.manifest') }}">
     <link rel="apple-touch-icon" href="{{ asset('icon.png') }}">
     <meta name="mobile-web-app-capable" content="yes">
@@ -16,6 +17,8 @@
     <main class="mx-auto flex min-h-screen w-full max-w-md flex-col p-5">
         @yield('conteudo')
     </main>
+    {{-- Trabalho offline: pacote de dados, fila de envio e telas de consulta/execução (versão no endereço = cache novo a cada mudança) --}}
+    <script src="/js/colab-offline.js?v={{ @filemtime(public_path('js/colab-offline.js')) }}" defer></script>
     <script>
         // App aberto sem internet: o service worker guarda as telas visitadas (ver App\Support\Colaborador\ServiceWorker).
         if ('serviceWorker' in navigator) {

@@ -11,7 +11,7 @@ namespace App\Support\Colaborador;
  */
 class ServiceWorker
 {
-    public const VERSAO = 'v1';
+    public const VERSAO = 'v2';
 
     public static function js(): string
     {

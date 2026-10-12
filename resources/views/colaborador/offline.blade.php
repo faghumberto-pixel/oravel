@@ -1,7 +1,9 @@
 @extends('layouts.colaborador')
 @section('titulo', 'Sem conexão - Oravel Colaborador')
 @section('conteudo')
-    <div class="my-auto text-center">
+    @php $modo = $modo ?? 'fallback'; @endphp
+    <div id="colab-app"></div>
+    <div id="colab-estatico" class="my-auto text-center" @if($modo === 'app') style="display:none" @endif>
         <div class="text-5xl">📡</div>
         <h1 class="mt-4 text-xl font-bold">Sem conexão</h1>
         <p class="mt-2 text-sm text-zinc-400">Esta tela ainda não foi aberta neste aparelho. O app abre sem internet as telas que você já visitou, e o registro de ponto continua funcionando e sincroniza quando a conexão voltar.</p>

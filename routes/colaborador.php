@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ColaboradorController;
 use App\Http\Controllers\ColaboradorNotificacoesController;
+use App\Http\Controllers\ColaboradorOfflineController;
 use App\Http\Controllers\ColaboradorOsController;
 use App\Livewire\AssetDossierMobile;
 use App\Livewire\MaintenanceOrderFieldWizard;
@@ -27,6 +28,12 @@ $grupo->middleware(['web', 'colab.mobile'])->name('colab.')->group(function () {
         Route::get('/', [ColaboradorController::class, 'home'])->name('home');
         Route::post('/sair', [ColaboradorController::class, 'logout'])->name('logout');
         Route::get('/dossie/{assetId?}', AssetDossierMobile::class)->name('dossie');
+        // Trabalho sem internet: o celular baixa o pacote e envia a fila (caminhos com /api/ nunca passam pelo cache do SW).
+        Route::get('/api/pacote', [ColaboradorOfflineController::class, 'pacote'])->name('api.pacote');
+        Route::get('/api/csrf', [ColaboradorOfflineController::class, 'csrf'])->name('api.csrf');
+        Route::post('/api/fila', [ColaboradorOfflineController::class, 'fila'])->name('api.fila');
+        Route::get('/os/{id}/offline', [ColaboradorOfflineController::class, 'executarOffline'])->name('os.offline');
+
         Route::get('/minhas-os', [ColaboradorOsController::class, 'minhas'])->name('minhas-os');
         Route::get('/os', [ColaboradorOsController::class, 'buscar'])->name('os.buscar');
         Route::get('/os/{maintenanceOrder}/executar', MaintenanceOrderFieldWizard::class)->name('os.executar');
