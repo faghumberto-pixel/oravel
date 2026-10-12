@@ -14,7 +14,9 @@ class ColaboradorAutenticado
         $user = $request->user();
 
         if (! $user) {
-            return redirect()->route('colab.login');
+            return $request->expectsJson()
+                ? response()->json(['erro' => 'nao_autenticado'], 401)
+                : redirect()->route('colab.login');
         }
 
         // Contrato sem o app (ou desligado depois do login): sai na hora.

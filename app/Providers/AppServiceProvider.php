@@ -268,7 +268,9 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(\Illuminate\Mail\Events\MessageSending::class, [\App\Listeners\RegistrarEnvioDeEmail::class, 'sending']);
         Event::listen(\Illuminate\Mail\Events\MessageSent::class, [\App\Listeners\RegistrarEnvioDeEmail::class, 'sent']);
 
-        Event::listen(\Illuminate\Notifications\Events\NotificationSending::class, \App\Listeners\SkipMutedNotification::class);
+        Event::listen(\Illuminate\Notifications\Events\NotificationSending::class, [\App\Listeners\SkipMutedNotification::class, 'avaliar']);
+        Event::listen(\Illuminate\Notifications\Events\NotificationSent::class, [\App\Listeners\EnviarPushDoAviso::class, 'enviar']);
+        $this->app->bind(\App\Services\Push\PushSender::class, \App\Services\Push\WebPushSender::class);
         Event::listen(Login::class, function (Login $event) {
             $this->logAuthEvent(UserActivityLog::ACTION_LOGIN, $event->user);
         });

@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ColaboradorController;
+use App\Http\Controllers\ColaboradorNotificacoesController;
+use App\Http\Controllers\ColaboradorOsController;
 use App\Livewire\AssetDossierMobile;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +16,7 @@ $grupo = $host ? Route::domain($host) : Route::prefix('colaborador');
 
 $grupo->middleware(['web', 'colab.mobile'])->name('colab.')->group(function () {
     Route::get('/manifest.webmanifest', [ColaboradorController::class, 'manifest'])->name('manifest');
+    Route::get('/sw.js', [ColaboradorNotificacoesController::class, 'serviceWorker'])->name('sw');
     Route::get('/entrar', [ColaboradorController::class, 'loginForm'])->name('login');
     Route::post('/entrar', [ColaboradorController::class, 'login'])->name('login.post');
 
@@ -21,7 +24,14 @@ $grupo->middleware(['web', 'colab.mobile'])->name('colab.')->group(function () {
         Route::get('/', [ColaboradorController::class, 'home'])->name('home');
         Route::post('/sair', [ColaboradorController::class, 'logout'])->name('logout');
         Route::get('/dossie/{assetId?}', AssetDossierMobile::class)->name('dossie');
+        Route::get('/os', [ColaboradorOsController::class, 'buscar'])->name('os.buscar');
+        Route::get('/os/{id}', [ColaboradorOsController::class, 'mostrar'])->name('os');
         Route::get('/escanear', [ColaboradorController::class, 'escanear'])->name('escanear');
         Route::get('/ponto', [ColaboradorController::class, 'ponto'])->name('ponto');
+
+        Route::get('/notificacoes', [ColaboradorNotificacoesController::class, 'index'])->name('notificacoes');
+        Route::post('/notificacoes/limpar', [ColaboradorNotificacoesController::class, 'limpar'])->name('notificacoes.limpar');
+        Route::post('/push/assinar', [ColaboradorNotificacoesController::class, 'assinar'])->name('push.assinar');
+        Route::post('/push/cancelar', [ColaboradorNotificacoesController::class, 'cancelar'])->name('push.cancelar');
     });
 });

@@ -61,6 +61,13 @@ return [
         'key' => env('ANTHROPIC_API_KEY'),
     ],
 
+    // Push do app do colaborador (Web Push): chaves geradas por `php artisan colaborador:gerar-chaves-push`.
+    'webpush' => [
+        'public' => env('VAPID_PUBLIC_KEY'),
+        'private' => env('VAPID_PRIVATE_KEY'),
+        'subject' => env('VAPID_SUBJECT', 'mailto:contato@oravel.com.br'),
+    ],
+
     'whatsapp' => [
         'token' => env('WHATSAPP_API_TOKEN'),
         'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),

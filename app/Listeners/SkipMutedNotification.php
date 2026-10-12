@@ -13,7 +13,8 @@ use Illuminate\Notifications\Events\NotificationSending;
  */
 class SkipMutedNotification
 {
-    public function handle(NotificationSending $event): ?bool
+    // Não se chama handle() de propósito (ver EnviarPushDoAviso): evita registro duplicado por descoberta automática.
+    public function avaliar(NotificationSending $event): ?bool
     {
         if ($event->channel !== 'database' || ! $event->notifiable instanceof User) {
             return null;

@@ -96,6 +96,27 @@
                 <p class="mt-1 text-sm font-medium text-zinc-400">
                     PAT: {{ $asset->patrimonio ?? '—' }} · TAG: {{ $asset->tag ?? '—' }}
                 </p>
+                @php
+                    $situacao = \App\Support\Colaborador\SituacaoOs::doAtivo($asset);
+                @endphp
+                <div class="mt-3 rounded-xl bg-zinc-950/60 p-3">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-[11px] font-bold uppercase tracking-wide text-zinc-500">Situação</span>
+                        <span class="rounded-full px-3 py-1 text-xs font-bold {{ \App\Support\Colaborador\SituacaoOs::classes($situacao['cor']) }}">{{ $situacao['rotulo'] }}</span>
+                    </div>
+                    @foreach ($situacao['abertas'] as $os)
+                        @php $abrir = $modoApp ? route('colab.os', ['id' => $os['id']]) : null; @endphp
+                        <div class="relative mt-2 rounded-lg border border-zinc-800 p-3 {{ $abrir ? 'active:bg-zinc-800' : '' }}">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-sm font-bold text-white">OS {{ $os['numero'] }}</span>
+                                <span class="rounded-full px-2 py-0.5 text-[10px] font-bold {{ \App\Support\Colaborador\SituacaoOs::classes($os['situacao']['cor']) }}">{{ $os['situacao']['rotulo'] }}</span>
+                            </div>
+                            <p class="mt-1 text-xs text-zinc-400">Aberta em {{ $os['aberta_em']->format('d/m/Y') }} · <strong class="text-zinc-200">{{ $os['dias'] }} {{ $os['dias'] === 1 ? 'dia' : 'dias' }}</strong> em aberto</p>
+                            <p class="text-xs text-zinc-400">Técnico: {{ $os['tecnico'] ?? 'não definido' }}</p>
+                            @if ($abrir)<a href="{{ $abrir }}" class="mt-1 block text-[11px] font-bold text-orange-400 after:absolute after:inset-0">Ver dossiê da OS →</a>@endif
+                        </div>
+                    @endforeach
+                </div>
                 <div class="mt-3 flex gap-2">
 @unless ($modoApp)
                     <a

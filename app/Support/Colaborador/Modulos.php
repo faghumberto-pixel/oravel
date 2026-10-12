@@ -3,6 +3,7 @@
 namespace App\Support\Colaborador;
 
 use App\Models\Asset;
+use App\Models\MaintenanceOrder;
 use App\Models\TimeClock;
 use App\Models\User;
 use App\Support\AppProfile;
@@ -43,6 +44,15 @@ class Modulos
                 'icone' => '🔎',
                 'rota' => 'colab.dossie',
                 'pode' => fn (User $u) => $u->can('viewAny', Asset::class),
+            ],
+            [
+                'chave' => 'os',
+                'perfil' => AppProfile::TECNICO,
+                'titulo' => 'Dossiê da OS',
+                'descricao' => 'Situação, dias em aberto e técnico da ordem',
+                'icone' => '🛠️',
+                'rota' => 'colab.os.buscar',
+                'pode' => fn (User $u) => $u->can('viewAny', MaintenanceOrder::class),
             ],
             [
                 'chave' => 'ponto',

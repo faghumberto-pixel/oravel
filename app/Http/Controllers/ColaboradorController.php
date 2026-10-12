@@ -71,7 +71,7 @@ class ColaboradorController extends BaseController
 
     public function home(Request $request): View
     {
-        return view('colaborador.home', ['grupos' => Modulos::agrupados($request->user())]);
+        return view('colaborador.home', ['grupos' => Modulos::agrupados($request->user()), 'naoLidas' => app(ColaboradorNotificacoesController::class)->contarNaoLidas($request)]);
     }
 
     public function escanear(): View
