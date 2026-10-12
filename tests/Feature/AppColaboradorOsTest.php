@@ -10,6 +10,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use App\Support\Colaborador\SituacaoOs;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
 /** App do colaborador: situação do ativo (liberado / em manutenção / aguardando peça), OS em aberto e dossiê da OS. */
@@ -149,5 +150,48 @@ class AppColaboradorOsTest extends TestCase
         $os = $this->os($u, $a, ['status' => 'Concluída', 'internal_status' => 'concluido', 'finished_at' => now()->subDays(2)]);
 
         $this->assertSame(3, SituacaoOs::diasEmAberto($os));
+    }
+
+    private function tecnico(User $gestor): User
+    {
+        $tec = User::create(['name' => 'Tecnico App', 'email' => 'tec-app-'.uniqid().'@oravel.com.br', 'password' => bcrypt('x'), 'tenant_id' => $gestor->tenant_id]);
+        $tec->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
+        $perm = Permission::firstOrCreate(['name' => 'ler_ordem_servico', 'guard_name' => 'web']);
+        $role = Role::firstOrCreate(['name' => 'tecnico-app', 'guard_name' => 'web', 'tenant_id' => $gestor->tenant_id]);
+        $role->givePermissionTo($perm);
+        $tec->assignRole($role);
+
+        return $tec->refresh();
+    }
+
+    public function test_tecnico_ve_so_as_proprias_os_com_contador_e_abas(): void
+    {
+        $gestor = $this->gestor();
+        $tec = $this->tecnico($gestor);
+        $a = Asset::create(['tenant_id' => $gestor->tenant_id, 'name' => 'Guindaste do Carlos', 'patrimonio' => 'PAT-T1', 'placa' => 'TEC1A23', 'status' => 'manutencao']);
+        $outroAtivo = Asset::create(['tenant_id' => $gestor->tenant_id, 'name' => 'Ativo de outro tecnico', 'status' => 'manutencao']);
+
+        $minha = $this->os($gestor, $a, ['technician_id' => $tec->id, 'os_number' => 'OS-MINHA-1']);
+        $this->os($gestor, $a, ['technician_id' => $tec->id, 'os_number' => 'OS-MINHA-FECHADA', 'status' => 'Concluída', 'internal_status' => 'concluido', 'finished_at' => now()->subDay()]);
+        $this->os($gestor, $outroAtivo, ['os_number' => 'OS-DE-OUTRO']);
+
+        $this->celular()->actingAs($tec)->get('/colaborador')->assertOk()->assertSee('Minhas ordens de serviço');
+
+        $this->celular()->actingAs($tec)->get('/colaborador/minhas-os')->assertOk()
+            ->assertSee('Em aberto (1)')->assertSee('OS-MINHA-1')->assertSee('Guindaste do Carlos')->assertSee('TEC1A23')->assertSee('5 dias')
+            ->assertSee(route('colab.os', ['id' => $minha->id]), false)
+            ->assertDontSee('OS-DE-OUTRO')->assertDontSee('OS-MINHA-FECHADA');
+
+        $this->celular()->actingAs($tec)->get('/colaborador/minhas-os?aba=concluidas')->assertOk()
+            ->assertSee('OS-MINHA-FECHADA')->assertDontSee('OS-MINHA-1')->assertDontSee('OS-DE-OUTRO');
+    }
+
+    public function test_quem_nao_e_tecnico_nao_ve_minhas_os(): void
+    {
+        $gestor = $this->gestor();
+        $comum = User::create(['name' => 'Comum', 'email' => 'comum-'.uniqid().'@oravel.com.br', 'password' => bcrypt('x'), 'tenant_id' => $gestor->tenant_id]);
+        $comum->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
+
+        $this->celular()->actingAs($comum)->get('/colaborador')->assertOk()->assertDontSee('Minhas ordens de serviço');
     }
 }

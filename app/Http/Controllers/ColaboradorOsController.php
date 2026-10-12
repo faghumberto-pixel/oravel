@@ -16,6 +16,37 @@ use Illuminate\View\View;
  */
 class ColaboradorOsController extends Controller
 {
+    /** Minhas OS: as do técnico logado (technician_id), em aberto ou concluídas. */
+    public function minhas(Request $request): View
+    {
+        $aba = $request->query('aba') === 'concluidas' ? 'concluidas' : 'abertas';
+        $base = fn () => MaintenanceOrder::query()->where('technician_id', $request->user()->id);
+
+        $query = $base()->with('asset');
+        $aba === 'abertas'
+            ? $query->whereNotIn('status', SituacaoOs::FECHADAS)->orderByRaw('is_prazo_fatal desc nulls last')->orderByRaw('scheduled_at asc nulls last')->orderBy('created_at')
+            : $query->whereIn('status', SituacaoOs::FECHADAS)->orderByDesc('updated_at')->limit(20);
+
+        $ordens = $query->get()->filter(fn ($os) => Gate::allows('view', $os))->values()->map(fn (MaintenanceOrder $os) => [
+            'id' => $os->id,
+            'numero' => $os->os_number,
+            'equipamento' => $os->asset?->name,
+            'identificacao' => collect([$os->asset?->patrimonio ? 'PAT '.$os->asset->patrimonio : null, $os->asset?->placa ? 'Placa '.$os->asset->placa : null])->filter()->implode(' · '),
+            'situacao' => SituacaoOs::daOs($os),
+            'aberta_em' => $os->created_at,
+            'dias' => SituacaoOs::diasEmAberto($os),
+            'agendada' => $os->scheduled_at,
+            'prazo_fatal' => (bool) $os->is_prazo_fatal,
+            'problema' => $os->description,
+        ]);
+
+        return view('colaborador.os-minhas', [
+            'aba' => $aba,
+            'ordens' => $ordens,
+            'totalAbertas' => $base()->whereNotIn('status', SituacaoOs::FECHADAS)->count(),
+        ]);
+    }
+
     /** Busca do equipamento. Um só resultado vai direto para as OS dele. */
     public function buscar(Request $request): View|RedirectResponse
     {

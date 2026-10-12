@@ -62,10 +62,12 @@
                 @foreach($modulos as $m)
                     <a href="{{ route($m['rota']) }}" class="flex items-center gap-4 rounded-2xl bg-zinc-900 p-4 active:bg-zinc-800">
                         <span class="text-3xl">{{ $m['icone'] }}</span>
-                        <span>
+                        <span class="flex-1">
                             <span class="block text-base font-bold">{{ $m['titulo'] }}</span>
                             <span class="block text-xs text-zinc-400">{{ $m['descricao'] }}</span>
                         </span>
+                        @php $selo = isset($m['selo']) ? ($m['selo'])(auth()->user()) : 0; @endphp
+                        @if($selo > 0)<span class="min-w-[1.5rem] rounded-full bg-orange-500 px-2 py-0.5 text-center text-xs font-bold text-white">{{ $selo }}</span>@endif
                     </a>
                 @endforeach
             </div>

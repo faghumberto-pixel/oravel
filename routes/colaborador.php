@@ -24,6 +24,7 @@ $grupo->middleware(['web', 'colab.mobile'])->name('colab.')->group(function () {
         Route::get('/', [ColaboradorController::class, 'home'])->name('home');
         Route::post('/sair', [ColaboradorController::class, 'logout'])->name('logout');
         Route::get('/dossie/{assetId?}', AssetDossierMobile::class)->name('dossie');
+        Route::get('/minhas-os', [ColaboradorOsController::class, 'minhas'])->name('minhas-os');
         Route::get('/os', [ColaboradorOsController::class, 'buscar'])->name('os.buscar');
         Route::get('/os/ativo/{id}', [ColaboradorOsController::class, 'doAtivo'])->name('os.ativo');
         Route::get('/os/{id}', [ColaboradorOsController::class, 'mostrar'])->name('os');

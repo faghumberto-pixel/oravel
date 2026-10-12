@@ -28,6 +28,16 @@ class Modulos
     {
         return [
             [
+                'chave' => 'minhas_os',
+                'perfil' => AppProfile::TECNICO,
+                'titulo' => 'Minhas ordens de serviço',
+                'descricao' => 'As OS atribuídas a você',
+                'icone' => '🧰',
+                'rota' => 'colab.minhas-os',
+                'pode' => fn (User $u) => $u->can('viewAny', MaintenanceOrder::class),
+                'selo' => fn (User $u) => MaintenanceOrder::query()->where('technician_id', $u->id)->whereNotIn('status', SituacaoOs::FECHADAS)->count(),
+            ],
+            [
                 'chave' => 'escanear',
                 'perfil' => AppProfile::TECNICO,
                 'titulo' => 'Ler QR do equipamento',
