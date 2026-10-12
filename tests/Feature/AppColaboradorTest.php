@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Central\Resources\ContratoResource;
 use App\Models\Asset;
 use App\Models\Plan;
 use App\Models\Role;
@@ -20,9 +21,9 @@ class AppColaboradorTest extends TestCase
 
     private const DESKTOP = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36';
 
-    private function usuario(bool $admin, array $extra = []): User
+    private function usuario(bool $admin, array $extra = [], array $features = ['tabela_assets', 'tabela_time_clocks', 'modulo_app_colaborador']): User
     {
-        $plan = Plan::create(['name' => 'Plano Colab '.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => ['tabela_assets', 'tabela_time_clocks']]);
+        $plan = Plan::create(['name' => 'Plano Colab '.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => $features]);
         $tenant = Tenant::create(['name' => 'Locadora Colab', 'slug' => 'colab-'.uniqid(), 'plan_id' => $plan->id, 'status' => 'active']);
         $user = User::create(['name' => 'Joana', 'email' => 'colab-'.uniqid().'@oravel.com.br', 'password' => bcrypt('segredo123'), 'tenant_id' => $tenant->id]);
         $user->forceFill(array_merge(['email_verified_at' => now(), 'is_approved' => true], $extra))->save();
@@ -95,5 +96,19 @@ class AppColaboradorTest extends TestCase
         $this->assertStringNotContainsString('/dossie-pdf', $html);
 
         $this->celular()->actingAs($user)->get('/colaborador/dossie?busca=PAT-APP-1')->assertOk()->assertSee('Guindaste App');
+    }
+
+    public function test_contrato_sem_o_app_nao_entra_e_aparece_na_central(): void
+    {
+        $semApp = $this->usuario(true, [], ['tabela_assets', 'tabela_time_clocks']);
+
+        $this->celular()->post('/colaborador/entrar', ['email' => $semApp->email, 'password' => 'segredo123'])->assertSessionHasErrors('email');
+        $this->assertGuest();
+
+        // Já logado e o contrato perde o app: a próxima tela expulsa.
+        $this->celular()->actingAs($semApp)->get('/colaborador')->assertRedirect(route('colab.login'));
+
+        $this->assertArrayHasKey(Modulos::FEATURE, Plan::getAvailableFeaturesOptions());
+        $this->assertContains('App do Colaborador (celular)', ContratoResource::groupedFeatureOptions()['Configurações']);
     }
 }

@@ -19,6 +19,9 @@ class VehicleExpirationResource extends BaseResource
 {
     protected static ?string $model = Asset::class;
 
+    /** Só reaproveita o model Asset: não decide o grupo do módulo "Ativos / Frota" no Contrato (ver SaaSRegistry). */
+    protected static bool $saasIgnoraGrupo = true;
+
     protected static ?string $slug = 'vencimentos-veiculos';
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';

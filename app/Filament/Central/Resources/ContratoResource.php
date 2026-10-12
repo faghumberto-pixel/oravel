@@ -121,6 +121,7 @@ class ContratoResource extends Resource
         // toggle (liga a página App\Filament\Pages\ManageTenantSettings)
         // deveria estar.
         $grouped['Configurações']['modulo_configuracoes'] = 'Painel: Configurações do Tenant';
+        $grouped['Configurações'][\App\Support\Colaborador\Modulos::FEATURE] = 'App do Colaborador (celular)';
         ksort($grouped);
 
         return $grouped;

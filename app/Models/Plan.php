@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Support\Colaborador\Modulos;
+use App\Support\MenuModules;
 use App\Support\SaaSRegistry;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -95,7 +97,11 @@ class Plan extends Model
         // (antes era sempre visível pra todo admin, sem gate nenhum).
         $options['modulo_configuracoes'] = 'Painel: Configurações do Tenant';
 
-        foreach (\App\Support\MenuModules::options() as $chave => $rotulo) {
+        // 'modulo_app_colaborador': interruptor por Contrato do App do Colaborador (celular, link próprio) --
+        // sem Model/tabela por trás; checado em App\Http\Controllers\ColaboradorController e no middleware do app.
+        $options[Modulos::FEATURE] = 'App do Colaborador (celular)';
+
+        foreach (MenuModules::options() as $chave => $rotulo) {
             $options[$chave] = $rotulo;
         }
 

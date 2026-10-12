@@ -41,6 +41,7 @@ class ColaboradorController extends BaseController
 
         $motivo = match (true) {
             ! $user->is_approved => 'Sua conta ainda está aguardando aprovação do administrador da sua empresa.',
+            ! Modulos::liberadoPara($user) => 'O App do Colaborador não está liberado para a sua empresa. Fale com o administrador.',
             ! $user->canAccessPanel(Filament::getPanel('admin')) => 'Este usuário não tem acesso ao sistema.',
             // O app não pede o código de dois fatores: quem tem 2FA ligado entra pelo painel, para não burlar a proteção.
             method_exists($user, 'hasEnabledTwoFactor') && $user->hasEnabledTwoFactor() => 'Seu usuário usa verificação em duas etapas. Entre pelo painel do sistema.',

@@ -14,6 +14,14 @@ use App\Support\AppProfile;
  */
 class Modulos
 {
+    /** Chave do Contrato que libera o app inteiro para a empresa (Central > Contratos > Configurações). */
+    public const FEATURE = 'modulo_app_colaborador';
+
+    public static function liberadoPara(User $user): bool
+    {
+        return $user->isSuperAdmin() || (bool) $user->tenant?->hasFeature(self::FEATURE);
+    }
+
     /** @return array<int, array{chave: string, perfil: string, titulo: string, descricao: string, icone: string, rota: string, pode: callable}> */
     public static function todos(): array
     {

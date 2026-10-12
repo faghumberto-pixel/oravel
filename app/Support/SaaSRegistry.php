@@ -159,6 +159,12 @@ class SaaSRegistry
 
             $reflection = new \ReflectionClass($className);
 
+            // Resource "satélite" que só reaproveita o model de outro (ex.: Vencimento de veículos usa Asset):
+            // não pode decidir o grupo do módulo na tela de Contratos, senão mover a tela de menu move o módulo.
+            if ($reflection->hasProperty('saasIgnoraGrupo')) {
+                continue;
+            }
+
             $modelProperty = $reflection->getProperty('model');
             $modelProperty->setAccessible(true);
             $modelClass = $modelProperty->getValue();
