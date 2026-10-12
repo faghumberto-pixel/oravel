@@ -11,6 +11,7 @@ use App\Services\ImplementationBillingService;
 use App\Services\TenantTimeline;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -239,12 +240,44 @@ class AsaasWebhookController extends Controller
     }
 
     /**
+     * Vencimento da cobrança que deixou o Tenant em atraso foi remarcado pra uma data futura
+     * (cobrança ainda PENDENTE): a carência de bloqueio passa a contar a partir do novo
+     * vencimento, em vez de seguir contando do vencimento antigo. Se não pagar até lá, o
+     * PAYMENT_OVERDUE seguinte bloqueia normalmente. Só mexe em Tenant atrasado, e só pra frente.
+     *
+     * @param  array<string, mixed>  $payment
+     */
+    private function processTenantDueDateChange(Tenant $tenant, array $payment): void
+    {
+        if ($tenant->asaas_payment_status !== Tenant::PAYMENT_STATUS_ATRASADO
+            || ($payment['id'] ?? null) !== $tenant->asaas_last_payment_id
+            || ($payment['status'] ?? null) !== 'PENDING'
+            || blank($payment['dueDate'] ?? null)) {
+            return;
+        }
+
+        $novoVencimento = Carbon::parse($payment['dueDate'])->startOfDay();
+
+        if ($novoVencimento->isPast() || ($tenant->asaas_overdue_since && $novoVencimento->lte($tenant->asaas_overdue_since))) {
+            return;
+        }
+
+        $tenant->update(['asaas_overdue_since' => $novoVencimento]);
+    }
+
+    /**
      * Processa evento de pagamento da assinatura SaaS do Tenant.
      *
      * @param  array<string, mixed>  $payment
      */
     private function processTenantSubscription(Tenant $tenant, string $event, array $payment): void
     {
+        if ($event === 'PAYMENT_UPDATED') {
+            $this->processTenantDueDateChange($tenant, $payment);
+
+            return;
+        }
+
         $newStatus = match (true) {
             in_array($event, self::PAYMENT_OK_EVENTS, true) => Tenant::PAYMENT_STATUS_EM_DIA,
             in_array($event, self::PAYMENT_OVERDUE_EVENTS, true) => Tenant::PAYMENT_STATUS_ATRASADO,

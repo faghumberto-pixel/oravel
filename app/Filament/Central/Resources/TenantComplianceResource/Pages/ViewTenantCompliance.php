@@ -55,7 +55,7 @@ class ViewTenantCompliance extends ViewRecord
                                     return '⚠️ VENCIDO desde '.$record->signature_required_by->format('d/m/Y');
                                 }
                                 if ($record->signature_required_by) {
-                                    $days = now()->diffInDays($record->signature_required_by, false);
+                                    $days = (int) now()->diffInDays($record->signature_required_by, false);
 
                                     return "⏳ Pendente ({$days} dias)";
                                 }

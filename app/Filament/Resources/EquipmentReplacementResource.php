@@ -58,7 +58,7 @@ class EquipmentReplacementResource extends Resource
         }
 
         $limiteHoras = self::SLA_HOURS[$record->urgency] ?? self::SLA_HOURS[EquipmentReplacement::URGENCY_NORMAL];
-        $horasDecorridas = $record->created_at->diffInHours(now());
+        $horasDecorridas = (int) $record->created_at->diffInHours(now());
 
         return match (true) {
             $horasDecorridas >= $limiteHoras => 'danger',

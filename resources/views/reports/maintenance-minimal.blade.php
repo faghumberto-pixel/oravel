@@ -39,7 +39,7 @@
                             <td class="py-2">
                                 @php
                                     $last = $order->statusHistories()->where('new_status', $status)->latest('created_at')->first();
-                                    echo $last ? $last->created_at->diffInDays(now()) : 0;
+                                    echo $last ? (int) $last->created_at->diffInDays(now()) : 0;
                                 @endphp
                             </td>
                         </tr>

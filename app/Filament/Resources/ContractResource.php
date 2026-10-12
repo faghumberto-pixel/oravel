@@ -257,7 +257,7 @@ class ContractResource extends Resource
                                     return new HtmlString('<span class="text-gray-400">Preencha início e fim da vigência.</span>');
                                 }
 
-                                $dias = Carbon::parse($start)->diffInDays(Carbon::parse($end)) + 1;
+                                $dias = (int) Carbon::parse($start)->diffInDays(Carbon::parse($end)) + 1;
 
                                 if ($dias <= 0) {
                                     return new HtmlString('<span class="text-danger-500">Data de fim deve ser após o início.</span>');

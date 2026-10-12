@@ -3,15 +3,17 @@
 namespace App\Filament\Central\Resources;
 
 use App\Filament\Central\Resources\TenantComplianceResource\Pages;
+use App\Mail\SignatureReminderMail;
 use App\Models\Tenant;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
 class TenantComplianceResource extends Resource
@@ -83,14 +85,21 @@ class TenantComplianceResource extends Resource
                             return '⚠️ Vencido';
                         }
                         if ($record->signature_required_by) {
-                            $days = now()->diffInDays($record->signature_required_by, false);
+                            $days = (int) now()->diffInDays($record->signature_required_by, false);
+
                             return "⏳ {$days}d";
                         }
+
                         return '❓ Sem prazo';
                     })
                     ->color(function (Tenant $record) {
-                        if ($record->signature) return 'success';
-                        if ($record->signature_required_by && now()->isAfter($record->signature_required_by)) return 'danger';
+                        if ($record->signature) {
+                            return 'success';
+                        }
+                        if ($record->signature_required_by && now()->isAfter($record->signature_required_by)) {
+                            return 'danger';
+                        }
+
                         return 'warning';
                     }),
 
@@ -169,17 +178,17 @@ class TenantComplianceResource extends Resource
                     ->label('Enviar Lembrete')
                     ->icon('heroicon-o-envelope')
                     ->action(function (Tenant $record) {
-                        if (!$record->signature && $record->signature_required_by) {
+                        if (! $record->signature && $record->signature_required_by) {
                             $adminUser = $record->users()
-                                ->whereHas('roles', fn($q) => $q->where('name', 'admin'))
+                                ->whereHas('roles', fn ($q) => $q->where('name', 'admin'))
                                 ->first();
 
                             if ($adminUser) {
                                 \Mail::to($adminUser->email)->send(
-                                    new \App\Mail\SignatureReminderMail($record)
+                                    new SignatureReminderMail($record)
                                 );
 
-                                \Filament\Notifications\Notification::make()
+                                Notification::make()
                                     ->title('Lembrete Enviado')
                                     ->body("Email enviado para {$adminUser->email}")
                                     ->success()
@@ -187,7 +196,7 @@ class TenantComplianceResource extends Resource
                             }
                         }
                     })
-                    ->visible(fn (Tenant $record) => !$record->signature && $record->signature_required_by),
+                    ->visible(fn (Tenant $record) => ! $record->signature && $record->signature_required_by),
             ])
             ->defaultSort('signature_required_by', 'asc');
     }

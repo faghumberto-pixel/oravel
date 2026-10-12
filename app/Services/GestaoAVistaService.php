@@ -30,9 +30,7 @@ class GestaoAVistaService
 
     private const STATUS_CONCLUIDA = ['Concluída', 'Completado'];
 
-    public function __construct(private readonly string $tenantId)
-    {
-    }
+    public function __construct(private readonly string $tenantId) {}
 
     /**
      * @param  array{from: ?string, until: ?string, branchId: ?string, assetId: ?string}  $filtros
@@ -63,7 +61,7 @@ class GestaoAVistaService
 
         $from = Carbon::parse($filtros['from'])->startOfDay();
         $until = Carbon::parse($filtros['until'])->endOfDay();
-        $dias = $from->diffInDays($until) + 1;
+        $dias = (int) $from->diffInDays($until) + 1;
 
         return [
             'from' => $from->copy()->subDays($dias)->toDateString(),

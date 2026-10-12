@@ -14,7 +14,7 @@
     <body class="font-sans antialiased">
         @php
             $isCancelado = $tenant?->asaas_payment_status === \App\Models\Tenant::PAYMENT_STATUS_CANCELADO;
-            $diasAtraso = $tenant?->asaas_overdue_since?->diffInDays(now());
+            $diasAtraso = (int) $tenant?->asaas_overdue_since?->diffInDays(now());
         @endphp
         <div
             class="relative min-h-screen w-full overflow-hidden bg-slate-950"

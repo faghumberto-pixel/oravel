@@ -238,7 +238,7 @@ class MaintenanceOrderFieldWizard extends Component
             return null;
         }
 
-        $minutesElapsed = $this->maintenanceOrder->created_at->diffInMinutes(now());
+        $minutesElapsed = (int) $this->maintenanceOrder->created_at->diffInMinutes(now());
         $minutesRemaining = $this->maintenanceOrder->sla_target_minutes - $minutesElapsed;
 
         if ($minutesRemaining <= 0) {

@@ -77,6 +77,6 @@ class TimeEntriesRelationManager extends RelationManager
             return 'Em andamento...';
         }
 
-        return Carbon::parse($record->started_at)->diffInMinutes($record->stopped_at).' min';
+        return (int) Carbon::parse($record->started_at)->diffInMinutes($record->stopped_at).' min';
     }
 }

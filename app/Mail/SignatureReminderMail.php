@@ -13,9 +13,7 @@ class SignatureReminderMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public Tenant $tenant)
-    {
-    }
+    public function __construct(public Tenant $tenant) {}
 
     public function envelope(): Envelope
     {
@@ -30,7 +28,7 @@ class SignatureReminderMail extends Mailable
             view: 'mails.signature-reminder',
             with: [
                 'tenant' => $this->tenant,
-                'daysLeft' => $this->tenant->signature_required_by ? now()->diffInDays($this->tenant->signature_required_by) : 0,
+                'daysLeft' => $this->tenant->signature_required_by ? (int) now()->diffInDays($this->tenant->signature_required_by) : 0,
             ],
         );
     }

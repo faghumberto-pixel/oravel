@@ -51,7 +51,7 @@ class PainelSlaEmergencia extends Page
             ->get()
             ->map(fn (MaintenanceOrder $order) => [
                 'order' => $order,
-                'minutos_decorridos' => $order->started_at ? null : $order->created_at->diffInMinutes(now()),
+                'minutos_decorridos' => $order->started_at ? null : (int) $order->created_at->diffInMinutes(now()),
                 'cor' => $order->slaColor(),
             ])
             ->sortBy(fn ($linha) => match ($linha['cor']) {

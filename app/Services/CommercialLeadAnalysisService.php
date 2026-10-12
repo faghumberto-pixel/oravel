@@ -84,8 +84,8 @@ class CommercialLeadAnalysisService
     {
         $lastInteraction = $lead->interactions()->latest('contact_date')->first();
 
-        $diasNoEstagio = $lead->updated_at ? now()->diffInDays($lead->updated_at) : null;
-        $diasSemContato = $lastInteraction?->contact_date ? now()->diffInDays($lastInteraction->contact_date) : null;
+        $diasNoEstagio = $lead->updated_at ? (int) now()->diffInDays($lead->updated_at) : null;
+        $diasSemContato = $lastInteraction?->contact_date ? (int) now()->diffInDays($lastInteraction->contact_date) : null;
 
         // updated_at como aproximacao de "quando entrou no estagio atual" --
         // nao existe converted_at/stage_changed_at dedicado no model hoje.

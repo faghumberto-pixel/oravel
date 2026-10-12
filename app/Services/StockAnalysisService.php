@@ -214,6 +214,6 @@ class StockAnalysisService
             ->latest('created_at')
             ->first();
 
-        return $ultimaSaida ? now()->diffInDays($ultimaSaida->created_at) : null;
+        return $ultimaSaida ? (int) now()->diffInDays($ultimaSaida->created_at) : null;
     }
 }

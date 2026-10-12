@@ -195,7 +195,7 @@ class Contract extends Model
             return null;
         }
 
-        $dias = $this->start_date->diffInDays($this->end_date) + 1;
+        $dias = (int) $this->start_date->diffInDays($this->end_date) + 1;
 
         if ($dias <= 0) {
             return null;

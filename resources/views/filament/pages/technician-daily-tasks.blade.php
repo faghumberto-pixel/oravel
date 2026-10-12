@@ -190,7 +190,7 @@
                     {{-- SLA Alert --}}
                     @if ($task['sla_target_minutes'])
                         @php
-                            $minutesElapsed = $task['created_at']->diffInMinutes(now());
+                            $minutesElapsed = (int) $task['created_at']->diffInMinutes(now());
                             $minutesRemaining = $task['sla_target_minutes'] - $minutesElapsed;
                         @endphp
                         @if ($minutesRemaining <= 0)
