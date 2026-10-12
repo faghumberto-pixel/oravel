@@ -20,7 +20,7 @@
                 Sua conta ainda não tem uma Ficha de RH ativada, então não é possível bater ponto.
                 Peça pro RH ativar em <strong>Colaboradores → Ativar ficha de RH</strong>.
             </p>
-            <a href="{{ route('filament.admin.pages.app-colaborador') }}" class="mt-6 rounded-xl bg-zinc-800 px-5 py-3 text-sm font-bold text-white active:bg-zinc-700">
+            <a href="{{ request()->attributes->get('colab') ? route('colab.home') : route('filament.admin.pages.app-colaborador') }}" class="mt-6 rounded-xl bg-zinc-800 px-5 py-3 text-sm font-bold text-white active:bg-zinc-700">
                 ← Voltar
             </a>
         </div>

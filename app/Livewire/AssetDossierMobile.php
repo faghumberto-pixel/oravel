@@ -51,8 +51,20 @@ class AssetDossierMobile extends Component
 
     public bool $horimeterSaved = false;
 
+    /** Aberto pelo app do colaborador (outro endereço): esconde os atalhos que levam ao painel. */
+    public bool $modoApp = false;
+
     public function mount(?string $assetId = null): void
     {
+        $this->modoApp = (bool) request()->attributes->get('colab');
+
+        if (! $assetId && filled(request('busca'))) {
+            $this->query = (string) request('busca');
+            $this->search();
+
+            return;
+        }
+
         if ($assetId) {
             $this->asset = Asset::find($assetId);
             if ($this->asset) {

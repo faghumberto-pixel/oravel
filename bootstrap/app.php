@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Middleware\BlockBannedIps;
+use App\Http\Middleware\ColaboradorAutenticado;
+use App\Http\Middleware\ColaboradorSomenteCelular;
+use App\Http\Middleware\EnsureAcademyAccess;
 use App\Http\Middleware\RedirectGuestToChatLogin;
 use App\Http\Middleware\RedirectTechnicianFromDashboard;
 use App\Http\Middleware\TrackSiteVisit;
@@ -11,6 +14,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -19,6 +23,12 @@ return Application::configure(basePath: dirname(__DIR__))
         api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
+        then: function () {
+            // App do colaborador: subdomínio próprio quando COLABORADOR_HOST existe; senão /colaborador (DEV).
+            $host = config('colaborador.host');
+            $grupo = $host ? Route::domain($host) : Route::prefix('colaborador');
+            $grupo->group(base_path('routes/colaborador.php'));
+        },
     )
     ->withMiddleware(function (Middleware $middleware) {
         // IP real do visitante atrás do Cloudflare: só confia no X-Forwarded-For
@@ -55,7 +65,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'redirecionar.tecnico' => RedirectTechnicianFromDashboard::class,
             'chat.auth' => RedirectGuestToChatLogin::class,
-            'academy.access' => \App\Http\Middleware\EnsureAcademyAccess::class,
+            'academy.access' => EnsureAcademyAccess::class,
+            'colab.mobile' => ColaboradorSomenteCelular::class,
+            'colab.auth' => ColaboradorAutenticado::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
