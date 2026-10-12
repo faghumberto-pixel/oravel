@@ -355,7 +355,7 @@ return [
     // avisos automáticos e o botão da proposta. Nasce DESLIGADO para todos os contratos.
     'modulo_whatsapp' => [
         'label' => 'WhatsApp: enviar e receber mensagens, conversas, avisos automáticos',
-        'grupo' => 'Comercial',
+        'grupo' => 'Configurações',
         'menu' => 'WhatsApp (módulo)',
         'slug' => 'modulo-whatsapp-sem-rota',
         'recurso' => true,

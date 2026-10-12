@@ -15,4 +15,13 @@ class ContratoModulosAposMudancaDeMenuTest extends TestCase
         $this->assertArrayHasKey('tabela_assets', $grupos['Ativos'] ?? [], 'Ativos / Frota deve ficar em "Ativos".');
         $this->assertArrayNotHasKey('tabela_assets', $grupos['Logística'] ?? [], 'Ativos / Frota não pode ir para "Logística".');
     }
+
+    public function test_whatsapp_e_app_do_colaborador_ficam_em_configuracoes(): void
+    {
+        $grupos = ContratoResource::groupedFeatureOptions();
+
+        $this->assertArrayHasKey('modulo_whatsapp', $grupos['Configurações'] ?? []);
+        $this->assertArrayHasKey('modulo_app_colaborador', $grupos['Configurações'] ?? []);
+        $this->assertArrayNotHasKey('modulo_whatsapp', $grupos['Comercial'] ?? []);
+    }
 }
