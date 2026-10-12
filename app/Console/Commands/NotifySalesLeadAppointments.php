@@ -12,7 +12,7 @@ use Illuminate\Console\Command;
  * pedido explicito do usuario) avisando sobre compromissos do CRM
  * comercial (tela "Programacao") que estao vencidos ou proximos e ainda
  * nao foram concluidos. Dedupe via last_alerted_at no proprio compromisso
- * (nao repete alerta antes de 15 min), mesmo espirito de
+ * (1 aviso "em breve" e 1 "vencido"), mesmo espirito de
  * CheckMaintenanceDueAlerts::MaintenanceDueAlert, sem precisar de tabela
  * separada aqui.
  */
@@ -31,10 +31,14 @@ class NotifySalesLeadAppointments extends Command
                 SalesLeadAppointment::STATUS_EM_ANDAMENTO,
             ])
             ->where('scheduled_at', '<=', now()->addMinutes(30))
+            // Cada compromisso avisa no máximo 2x: "em breve" (1ª vez) e "vencido" (1x, quando passa
+            // da hora). Antes repetia "vencido" a cada 15 min sem parar (504 avisos em PROD, 12/10/2026).
+            // Reagendar para depois do último aviso volta a avisar.
             ->where(fn ($q) => $q->whereNull('last_alerted_at')
-                ->orWhere('last_alerted_at', '<=', now()->subMinutes(15)))
+                ->orWhereColumn('last_alerted_at', '<', 'scheduled_at'))
             ->with('lead', 'assignedUser')
-            ->get();
+            ->get()
+            ->filter(fn ($a) => $a->last_alerted_at === null || $a->scheduled_at->isPast());
 
         foreach ($appointments as $appointment) {
             $isOverdue = $appointment->scheduled_at->isPast();

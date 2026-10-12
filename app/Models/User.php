@@ -55,6 +55,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
         'last_seen',
         'is_approved',
         'receives_financial_notifications',
+        'muted_notification_categories',
         'job_title',
         'avatar_url',
     ];
@@ -68,6 +69,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'receives_financial_notifications' => 'boolean',
+        'muted_notification_categories' => 'array',
         'hourly_rate' => 'decimal:2',
         'last_seen' => 'datetime',
     ];

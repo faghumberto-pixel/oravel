@@ -69,7 +69,7 @@ class CentralNotificationsScopeTest extends TestCase
         $this->assertSame(0, Livewire::test('database-notifications')->instance()->getUnreadNotificationsCount());
     }
 
-    public function test_the_bell_still_never_deletes_notifications(): void
+    public function test_the_central_bell_can_clear_the_users_own_notifications(): void
     {
         [$super] = $this->superAdminOfATenant();
         $this->seedNotifications($super);
@@ -79,9 +79,9 @@ class CentralNotificationsScopeTest extends TestCase
         $bell = Livewire::test('database-notifications');
         $this->assertInstanceOf(DatabaseNotifications::class, $bell->instance());
 
-        // Auditoria: o sino não apaga (comportamento que já existia e não pode mudar).
+        // Mudou em 12/10/2026 (pedido do dono): o sino agora apaga os avisos da própria pessoa.
         $bell->call('clearNotifications');
-        $this->assertSame(3, $super->notifications()->count());
+        $this->assertSame(0, $super->notifications()->count());
     }
 
     public function test_notices_sent_by_the_timeline_carry_the_central_scope(): void

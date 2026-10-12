@@ -288,6 +288,10 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Minha Conta')
                     ->icon('heroicon-o-user-circle')
                     ->url(fn () => MyProfilePage::getUrl()),
+                'minhas_notificacoes' => MenuItem::make()
+                    ->label('Minhas notificações')
+                    ->icon('heroicon-o-bell-slash')
+                    ->url(fn () => \App\Filament\Pages\MinhasNotificacoes::getUrl()),
             ])
             ->middleware([
                 EncryptCookies::class,

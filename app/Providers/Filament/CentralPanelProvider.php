@@ -133,6 +133,7 @@ class CentralPanelProvider extends PanelProvider
                 FunilVendas::class,
                 Kanban::class,
                 Programacao::class,
+                \App\Filament\Central\Pages\MinhasNotificacoes::class,
                 TenantTree::class,
                 AcessosClientes::class,
                 RolesTree::class,
@@ -242,6 +243,10 @@ class CentralPanelProvider extends PanelProvider
                     ->label('Minha Conta')
                     ->icon('heroicon-o-user-circle')
                     ->url(fn () => MyProfilePage::getUrl(panel: 'central')),
+                'minhas_notificacoes' => MenuItem::make()
+                    ->label('Minhas notificações')
+                    ->icon('heroicon-o-bell-slash')
+                    ->url(fn () => \App\Filament\Central\Pages\MinhasNotificacoes::getUrl()),
             ])
             ->middleware([
                 EncryptCookies::class,
