@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\TenantWhatsappSetting;
+use App\Models\User;
 use App\Models\WhatsappConversa;
-use App\Models\WhatsappNumero;
 use App\Models\WhatsappMensagem;
+use App\Models\WhatsappNumero;
 use App\Services\DestinatariosAvisos;
 use App\Services\DistribuicaoWhatsApp;
 use App\Services\WhatsAppEmpresaService;
@@ -37,20 +38,65 @@ class WhatsAppEmpresaWebhookController extends Controller
     {
         $config = TenantWhatsappSetting::withoutGlobalScopes()->where('tenant_id', $tenant)->first();
 
-        if (! $config || ! WhatsAppEmpresaService::moduloLiberado($tenant) || ! $this->assinaturaValida($request, (string) $config->app_secret)) {
+        // Segredo da própria empresa (cadastro manual) ou, sem ele, o do app da Oravel (cadastro incorporado).
+        $segredo = (string) ($config?->app_secret ?: config('services.whatsapp.app_secret'));
+
+        if (! $config || ! WhatsAppEmpresaService::moduloLiberado($tenant) || ! $this->assinaturaValida($request, $segredo)) {
             return response()->json(['status' => 'forbidden'], 403);
         }
 
-        foreach ((array) $request->input('entry', []) as $entrada) {
+        $this->processar((array) $request->input('entry', []), $config);
+
+        return response()->json(['status' => 'received']);
+    }
+
+    /** Conferência do webhook ÚNICO da Oravel (um endereço no app da Meta para todas as empresas). */
+    public function verifyPlataforma(Request $request): Response
+    {
+        $esperado = config('services.whatsapp.webhook_token');
+
+        if (filled($esperado) && $request->query('hub_mode') === 'subscribe' && hash_equals((string) $esperado, (string) $request->query('hub_verify_token'))) {
+            return response((string) $request->query('hub_challenge'), 200);
+        }
+
+        return response('Forbidden', 403);
+    }
+
+    /** Webhook ÚNICO: a empresa é descoberta pelo número que recebeu o evento (metadata.phone_number_id). */
+    public function handlePlataforma(Request $request): JsonResponse
+    {
+        if (! $this->assinaturaValida($request, (string) config('services.whatsapp.app_secret'))) {
+            return response()->json(['status' => 'forbidden'], 403);
+        }
+
+        $this->processar((array) $request->input('entry', []), null);
+
+        return response()->json(['status' => 'received']);
+    }
+
+    /**
+     * @param  array<int, mixed>  $entradas
+     * @param  TenantWhatsappSetting|null  $configFixa  empresa já conhecida (URL por empresa); null = descobrir pelo número
+     */
+    private function processar(array $entradas, ?TenantWhatsappSetting $configFixa): void
+    {
+        foreach ($entradas as $entrada) {
             foreach ((array) ($entrada['changes'] ?? []) as $mudanca) {
                 $valor = $mudanca['value'] ?? [];
                 $nomes = collect($valor['contacts'] ?? [])->mapWithKeys(fn ($c) => [($c['wa_id'] ?? '') => $c['profile']['name'] ?? null]);
 
-                // A mesma URL recebe os eventos de todos os números da empresa: o número vem em metadata.
-                $numero = WhatsappNumero::withoutGlobalScopes()
-                    ->where('tenant_id', $config->tenant_id)
-                    ->where('phone_number_id', (string) ($valor['metadata']['phone_number_id'] ?? ''))
-                    ->first();
+                // A mesma URL recebe os eventos de todos os números: o número vem em metadata.
+                $consulta = WhatsappNumero::withoutGlobalScopes()->where('phone_number_id', (string) ($valor['metadata']['phone_number_id'] ?? ''));
+                if ($configFixa) {
+                    $consulta->where('tenant_id', $configFixa->tenant_id);
+                }
+                $numero = $consulta->first();
+
+                $config = $configFixa ?? ($numero ? TenantWhatsappSetting::withoutGlobalScopes()->where('tenant_id', $numero->tenant_id)->first() : null);
+
+                if (! $config || ! WhatsAppEmpresaService::moduloLiberado($config->tenant_id)) {
+                    continue;
+                }
 
                 foreach ((array) ($valor['messages'] ?? []) as $mensagem) {
                     if ($numero) {
@@ -63,8 +109,6 @@ class WhatsAppEmpresaWebhookController extends Controller
                 }
             }
         }
-
-        return response()->json(['status' => 'received']);
     }
 
     private function receber(TenantWhatsappSetting $config, WhatsappNumero $numero, array $dados, ?string $nome): void
@@ -137,7 +181,7 @@ class WhatsAppEmpresaWebhookController extends Controller
         if ($conversa->responsavel) {
             $destinatarios = collect([$conversa->responsavel]);
         } else {
-            $atendentes = \App\Models\User::withoutGlobalScopes()->where('tenant_id', $conversa->tenant_id)->where('is_approved', true)->whereIn('id', (array) $config->atendentes)->get();
+            $atendentes = User::withoutGlobalScopes()->where('tenant_id', $conversa->tenant_id)->where('is_approved', true)->whereIn('id', (array) $config->atendentes)->get();
             $destinatarios = $atendentes->isNotEmpty() ? $atendentes : DestinatariosAvisos::para($conversa->tenant_id, 'whatsapp_recebido');
         }
 

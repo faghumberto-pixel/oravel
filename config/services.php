@@ -67,6 +67,9 @@ return [
         'base_url' => env('WHATSAPP_BASE_URL', 'https://graph.facebook.com/v20.0'),
         'webhook_token' => env('WHATSAPP_WEBHOOK_TOKEN'),
         'app_secret' => env('WHATSAPP_APP_SECRET'),
+        // App da Oravel na Meta (Tech Provider): permite o "Conectar WhatsApp" (cadastro incorporado) dos clientes.
+        'app_id' => env('WHATSAPP_APP_ID'),
+        'embedded_config_id' => env('WHATSAPP_EMBEDDED_CONFIG_ID'),
     ],
 
     // Canais de entrada de leads (POST /api/inbound/leads): cada canal tem um token e pertence a UM

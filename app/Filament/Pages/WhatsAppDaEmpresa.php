@@ -5,14 +5,15 @@ namespace App\Filament\Pages;
 use App\Models\TenantWhatsappSetting;
 use App\Models\User;
 use App\Models\WhatsappNumero;
+use App\Services\WhatsAppCadastroMeta;
 use App\Services\WhatsAppEmpresaService;
 use App\Support\Tenancy;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -69,6 +70,31 @@ class WhatsAppDaEmpresa extends Page implements HasForms
     public function numeros()
     {
         return WhatsappNumero::withoutGlobalScopes()->where('tenant_id', Tenancy::current()?->id)->with('user')->orderBy('created_at')->get();
+    }
+
+    public function conexaoAutomaticaDisponivel(): bool
+    {
+        return WhatsAppCadastroMeta::disponivel();
+    }
+
+    /** Chamado pelo navegador quando a janela da Meta termina: código + conta + número do cliente. */
+    public function concluirCadastroMeta(string $codigo, string $wabaId, string $phoneNumberId): void
+    {
+        $tenantId = Tenancy::current()?->id;
+        abort_unless($tenantId && auth()->user()?->isAdmin(), 403);
+
+        try {
+            $numero = app(WhatsAppCadastroMeta::class)->concluir($tenantId, $codigo, $wabaId, $phoneNumberId);
+        } catch (\Throwable $e) {
+            report($e);
+            Notification::make()->title('Não foi possível conectar')->body($e instanceof \RuntimeException ? $e->getMessage() : 'Erro inesperado ao falar com a Meta.')->danger()->persistent()->send();
+
+            return;
+        }
+
+        $this->mount();
+
+        Notification::make()->title('WhatsApp conectado')->body('Número '.($numero->display_phone ?: $numero->phone_number_id).' funcionando. Atribua os números aos usuários abaixo, se quiser.')->success()->persistent()->send();
     }
 
     public function urlDoWebhook(): string

@@ -51,6 +51,9 @@ Route::get('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'verify']);
 Route::post('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'handle']);
 
 // WhatsApp de CADA empresa (número próprio, API oficial da Meta): a empresa vai na URL.
+// Webhook único do app da Oravel na Meta: serve todas as empresas (a empresa vem do número que recebeu).
+Route::get('/webhooks/whatsapp-meta', [\App\Http\Controllers\WhatsAppEmpresaWebhookController::class, 'verifyPlataforma']);
+Route::post('/webhooks/whatsapp-meta', [\App\Http\Controllers\WhatsAppEmpresaWebhookController::class, 'handlePlataforma'])->middleware('throttle:600,1');
 Route::get('/webhooks/whatsapp-empresa/{tenant}', [\App\Http\Controllers\WhatsAppEmpresaWebhookController::class, 'verify']);
 Route::post('/webhooks/whatsapp-empresa/{tenant}', [\App\Http\Controllers\WhatsAppEmpresaWebhookController::class, 'handle'])->middleware('throttle:600,1');
 
