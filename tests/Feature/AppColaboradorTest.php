@@ -133,4 +133,18 @@ class AppColaboradorTest extends TestCase
         $this->celular()->actingAs($user)->post('/colaborador/entrar', ['email' => $user->email, 'password' => 'x'])
             ->assertRedirect(route('colab.home'));
     }
+
+    public function test_leitor_de_qr_tem_alternativa_para_navegadores_sem_leitor_nativo(): void
+    {
+        $user = $this->usuario(true);
+
+        $html = $this->celular()->actingAs($user)->get('/colaborador/escanear')->assertOk()->getContent();
+
+        // jsQR embutido (muitos Androids não têm BarcodeDetector) e mensagem só para quem não tem câmera.
+        $this->assertStringContainsString('/vendor/jsqr.js', $html);
+        $this->assertStringContainsString('jsQR(', $html);
+        $this->assertStringNotContainsString('não lê QR por aqui', $html);
+        $this->assertFileExists(public_path('vendor/jsqr.js'));
+        $this->assertGreaterThan(100000, filesize(public_path('vendor/jsqr.js')));
+    }
 }
