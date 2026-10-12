@@ -7,7 +7,7 @@
     <div x-data="leitorQr('{{ route('colab.dossie') }}')" class="mt-4">
         <video x-ref="video" playsinline muted class="aspect-square w-full rounded-2xl bg-black object-cover" x-show="ativo"></video>
         <button x-show="!ativo && suportado" @click="iniciar()" type="button" class="min-h-[3rem] w-full rounded-xl bg-orange-500 text-base font-bold text-white">Abrir câmera</button>
-        <p x-show="!suportado" x-cloak class="rounded-lg bg-zinc-900 p-3 text-sm text-zinc-300">Este navegador não liberou a câmera. Abra o link no Chrome (Android) ou no Safari (iPhone), ou digite o patrimônio abaixo.</p>
+        <p x-show="!suportado" x-cloak class="rounded-lg bg-zinc-900 p-3 text-sm text-zinc-300" x-text="window.isSecureContext ? 'Este navegador não liberou a câmera. Abra o link no Chrome (Android) ou no Safari (iPhone), ou digite o patrimônio ou a placa abaixo.' : 'A câmera só funciona em página segura (https). Abra o endereço começando com https:// ou digite o patrimônio ou a placa abaixo.'"></p>
         <p x-text="erro" x-show="erro" class="mt-2 text-sm text-red-400"></p>
 
         <form method="GET" action="{{ route('colab.dossie') }}" class="mt-6" onsubmit="event.preventDefault(); const v = this.q.value.trim(); if (v) window.location = this.action + '?busca=' + encodeURIComponent(v);">

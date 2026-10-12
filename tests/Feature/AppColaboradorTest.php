@@ -147,4 +147,20 @@ class AppColaboradorTest extends TestCase
         $this->assertFileExists(public_path('vendor/jsqr.js'));
         $this->assertGreaterThan(100000, filesize(public_path('vendor/jsqr.js')));
     }
+
+    public function test_app_forca_https_atras_do_cloudflare_para_a_camera_funcionar(): void
+    {
+        // Sem cabeçalho do Cloudflare (DEV/local) nada muda.
+        $this->celular()->get('/colaborador/entrar')->assertOk();
+
+        // Visitante chegou por http: vai para https (câmera e push exigem página segura).
+        $this->celular()->withHeaders(['CF-Visitor' => '{"scheme":"http"}'])->get('/colaborador/entrar')
+            ->assertStatus(301)->assertRedirect('https://localhost/colaborador/entrar');
+
+        // Visitante em https: links e redirecionamentos saem em https (antes saíam http e a câmera sumia).
+        $user = $this->usuario(true);
+        $this->celular()->withHeaders(['CF-Visitor' => '{"scheme":"https"}'])
+            ->post('/colaborador/entrar', ['email' => $user->email, 'password' => 'segredo123'])
+            ->assertRedirect('https://localhost/colaborador');
+    }
 }
