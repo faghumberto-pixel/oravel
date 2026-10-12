@@ -12,6 +12,10 @@ class FuelRecordsRelationManager extends RelationManager
 {
     protected static string $relationship = 'fuelRecords';
 
+    protected static ?string $modelLabel = 'Abastecimento';
+
+    protected static ?string $pluralModelLabel = 'Abastecimentos';
+
     protected static ?string $title = 'Abastecimentos';
 
     public function form(Form $form): Form

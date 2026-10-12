@@ -24,6 +24,10 @@ class FleetVehicleResource extends Resource
 
     protected static ?string $navigationLabel = 'Veículos da Frota';
 
+    protected static ?string $modelLabel = 'Veículo da Frota';
+
+    protected static ?string $pluralModelLabel = 'Veículos da Frota';
+
     protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form

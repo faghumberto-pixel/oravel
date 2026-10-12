@@ -13,6 +13,10 @@ class MaintenancePlansRelationManager extends RelationManager
 {
     protected static string $relationship = 'maintenancePlans';
 
+    protected static ?string $modelLabel = 'Plano de Preventiva';
+
+    protected static ?string $pluralModelLabel = 'Planos de Preventiva';
+
     protected static ?string $title = 'Planos de Manutenção Preventiva';
 
     public function form(Form $form): Form

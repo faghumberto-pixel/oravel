@@ -12,6 +12,10 @@ class TollRecordsRelationManager extends RelationManager
 {
     protected static string $relationship = 'tollRecords';
 
+    protected static ?string $modelLabel = 'Pedágio';
+
+    protected static ?string $pluralModelLabel = 'Pedágios';
+
     protected static ?string $title = 'Pedágio (Sem Parar)';
 
     public function form(Form $form): Form

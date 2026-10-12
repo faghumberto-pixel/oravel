@@ -13,6 +13,10 @@ class DocumentsRelationManager extends RelationManager
 {
     protected static string $relationship = 'documents';
 
+    protected static ?string $modelLabel = 'Documento';
+
+    protected static ?string $pluralModelLabel = 'Documentos';
+
     protected static ?string $title = 'Documentação';
 
     public function form(Form $form): Form

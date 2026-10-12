@@ -13,6 +13,10 @@ class MaintenanceHistoryRelationManager extends RelationManager
 {
     protected static string $relationship = 'maintenanceHistory';
 
+    protected static ?string $modelLabel = 'Manutenção Realizada';
+
+    protected static ?string $pluralModelLabel = 'Manutenções Realizadas';
+
     protected static ?string $title = 'Histórico de Manutenção Realizada';
 
     public function form(Form $form): Form

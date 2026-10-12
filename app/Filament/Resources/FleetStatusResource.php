@@ -24,6 +24,10 @@ class FleetStatusResource extends Resource
 
     protected static ?string $navigationLabel = 'Status da Frota';
 
+    protected static ?string $modelLabel = 'Status da Frota';
+
+    protected static ?string $pluralModelLabel = 'Status da Frota';
+
     protected static ?int $navigationSort = 10;
 
     public static function getEloquentQuery(): Builder

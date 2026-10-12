@@ -23,6 +23,10 @@ class FleetMaintenancePlanResource extends Resource
 
     protected static ?string $navigationLabel = 'Planos de Manutenção de Veículos';
 
+    protected static ?string $modelLabel = 'Plano de Manutenção de Veículo';
+
+    protected static ?string $pluralModelLabel = 'Planos de Manutenção de Veículos';
+
     protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
