@@ -86,6 +86,12 @@ class ColaboradorController extends BaseController
         return $employee ? view('time-clock-offline', ['employee' => $employee]) : view('time-clock-sem-ficha');
     }
 
+    /** Tela mostrada pelo service worker quando não há internet e a página pedida nunca foi aberta. */
+    public function offline(): View
+    {
+        return view('colaborador.offline');
+    }
+
     public function manifest(): JsonResponse
     {
         return response()->json([

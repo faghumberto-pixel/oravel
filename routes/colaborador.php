@@ -4,6 +4,7 @@ use App\Http\Controllers\ColaboradorController;
 use App\Http\Controllers\ColaboradorNotificacoesController;
 use App\Http\Controllers\ColaboradorOsController;
 use App\Livewire\AssetDossierMobile;
+use App\Livewire\MaintenanceOrderFieldWizard;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,6 +17,7 @@ $grupo = $host ? Route::domain($host) : Route::prefix('colaborador');
 
 $grupo->middleware(['web', 'colab.mobile'])->name('colab.')->group(function () {
     Route::get('/manifest.webmanifest', [ColaboradorController::class, 'manifest'])->name('manifest');
+    Route::get('/offline', [ColaboradorController::class, 'offline'])->name('offline');
     Route::get('/sw.js', [ColaboradorNotificacoesController::class, 'serviceWorker'])->name('sw');
     Route::get('/entrar', [ColaboradorController::class, 'loginForm'])->name('login');
     Route::post('/entrar', [ColaboradorController::class, 'login'])->name('login.post');
@@ -26,6 +28,7 @@ $grupo->middleware(['web', 'colab.mobile'])->name('colab.')->group(function () {
         Route::get('/dossie/{assetId?}', AssetDossierMobile::class)->name('dossie');
         Route::get('/minhas-os', [ColaboradorOsController::class, 'minhas'])->name('minhas-os');
         Route::get('/os', [ColaboradorOsController::class, 'buscar'])->name('os.buscar');
+        Route::get('/os/{maintenanceOrder}/executar', MaintenanceOrderFieldWizard::class)->name('os.executar');
         Route::get('/os/ativo/{id}', [ColaboradorOsController::class, 'doAtivo'])->name('os.ativo');
         Route::get('/os/{id}', [ColaboradorOsController::class, 'mostrar'])->name('os');
         Route::get('/escanear', [ColaboradorController::class, 'escanear'])->name('escanear');

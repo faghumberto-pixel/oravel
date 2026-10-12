@@ -11,6 +11,10 @@
         <span class="rounded-full px-3 py-1 text-xs font-bold {{ \App\Support\Colaborador\SituacaoOs::classes($situacao['cor']) }}">{{ $situacao['rotulo'] }}</span>
     </div>
 
+    @if($podeExecutar)
+        <a href="{{ route('colab.os.executar', ['maintenanceOrder' => $os->id]) }}" class="mt-4 flex min-h-[3rem] items-center justify-center rounded-xl bg-orange-500 text-base font-bold text-white active:bg-orange-600">Abrir OS</a>
+    @endif
+
     <div class="mt-4 grid grid-cols-2 gap-3">
         <div class="rounded-2xl bg-zinc-900 p-3">
             <p class="text-[11px] uppercase text-zinc-500">Aberta em</p>

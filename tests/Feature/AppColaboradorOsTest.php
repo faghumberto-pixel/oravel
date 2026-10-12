@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Livewire\MaintenanceOrderFieldWizard;
 use App\Models\Asset;
 use App\Models\MaintenanceOrder;
 use App\Models\Plan;
@@ -193,5 +194,39 @@ class AppColaboradorOsTest extends TestCase
         $comum->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
 
         $this->celular()->actingAs($comum)->get('/colaborador')->assertOk()->assertDontSee('Minhas ordens de serviço');
+    }
+
+    public function test_tecnico_abre_a_os_em_aberto_pelo_app_e_nao_a_de_outro(): void
+    {
+        $gestor = $this->gestor();
+        $tec = $this->tecnico($gestor);
+        $outroTec = $this->tecnico($gestor);
+        $a = Asset::create(['tenant_id' => $gestor->tenant_id, 'name' => 'Guindaste X', 'patrimonio' => 'PAT-X1', 'status' => 'manutencao']);
+        $minha = $this->os($gestor, $a, ['technician_id' => $tec->id, 'os_number' => 'OS-EXEC-1']);
+        $fechada = $this->os($gestor, $a, ['technician_id' => $tec->id, 'os_number' => 'OS-EXEC-FECHADA', 'status' => 'Concluída', 'internal_status' => 'concluido']);
+        $executar = route('colab.os.executar', ['maintenanceOrder' => $minha->id]);
+
+        // O botão "Abrir OS" aparece na lista e no dossiê, só para a OS em aberto.
+        $lista = $this->celular()->actingAs($tec)->get('/colaborador/minhas-os')->assertOk()->assertSee($executar, false)->getContent();
+        $this->assertStringNotContainsString(route('colab.os.executar', ['maintenanceOrder' => $fechada->id]), $lista);
+        $this->celular()->actingAs($tec)->get('/colaborador/os/'.$minha->id)->assertOk()->assertSee($executar, false)->assertSee('Abrir OS');
+        $this->celular()->actingAs($tec)->get('/colaborador/os/'.$fechada->id)->assertOk()->assertDontSee('Abrir OS');
+
+        // A execução abre dentro do app (mesma tela do modo campo do painel).
+        $this->celular()->actingAs($tec)->get('/colaborador/os/'.$minha->id.'/executar')->assertOk();
+
+        // Outro técnico não executa a OS alheia.
+        $this->celular()->actingAs($outroTec)->get('/colaborador/os/'.$minha->id.'/executar')->assertForbidden();
+    }
+
+    public function test_ao_sair_da_execucao_no_app_volta_para_minhas_os_e_nao_para_o_painel(): void
+    {
+        $wizard = (new \ReflectionClass(MaintenanceOrderFieldWizard::class))->newInstanceWithoutConstructor();
+        $saida = new \ReflectionMethod($wizard, 'urlDeSaida');
+
+        $this->assertSame(route('filament.admin.pages.technician-daily-tasks'), $saida->invoke($wizard));
+
+        $wizard->modoApp = true;
+        $this->assertSame(route('colab.minhas-os'), $saida->invoke($wizard));
     }
 }

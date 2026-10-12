@@ -103,8 +103,18 @@ class MaintenanceOrderFieldWizard extends Component
      */
     public string $saveState = 'idle';
 
+    /** Aberto pelo app do colaborador (outro endereço): ao sair, volta para "Minhas OS" do app, não para o painel. */
+    public bool $modoApp = false;
+
+    private function urlDeSaida(): string
+    {
+        return $this->modoApp ? route('colab.minhas-os') : route('filament.admin.pages.technician-daily-tasks');
+    }
+
     public function mount(MaintenanceOrder $maintenanceOrder): void
     {
+        $this->modoApp = (bool) request()->attributes->get('colab');
+
         Gate::authorize('update', $maintenanceOrder);
 
         $this->maintenanceOrder = $maintenanceOrder;
@@ -302,7 +312,7 @@ class MaintenanceOrderFieldWizard extends Component
         }
 
         // Reativado 28/09/2026 -- ver completeOrder() acima pro motivo.
-        $this->redirectRoute('filament.admin.pages.technician-daily-tasks', navigate: false);
+        $this->redirect($this->urlDeSaida(), navigate: false);
     }
 
     /**
@@ -332,7 +342,7 @@ class MaintenanceOrderFieldWizard extends Component
         }
 
         // Reativado 28/09/2026 -- ver completeOrder() acima pro motivo.
-        $this->redirectRoute('filament.admin.pages.technician-daily-tasks', navigate: false);
+        $this->redirect($this->urlDeSaida(), navigate: false);
     }
 
     private function startService(): void
@@ -743,7 +753,7 @@ class MaintenanceOrderFieldWizard extends Component
         // 28/09/2026: a causa raiz de verdade era TechnicianDailyTasks::
         // canAccess() exigir a permissao granular de ver TODAS as ordens
         // em vez de so' checar o Contrato -- corrigido la', nao aqui.
-        $this->redirectRoute('filament.admin.pages.technician-daily-tasks', navigate: false);
+        $this->redirect($this->urlDeSaida(), navigate: false);
     }
 
     public function render()

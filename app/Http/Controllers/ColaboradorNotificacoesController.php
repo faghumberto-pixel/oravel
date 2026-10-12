@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PushSubscription;
 use App\Support\CentralNotifications;
+use App\Support\Colaborador\ServiceWorker;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -86,30 +87,10 @@ class ColaboradorNotificacoesController extends Controller
         return response()->json(['ok' => true]);
     }
 
-    /** Service worker do app: mostra o push e abre o app ao tocar na notificação. */
+    /** Service worker do app: push + app aberto sem internet (ver App\Support\Colaborador\ServiceWorker). */
     public function serviceWorker(): Response
     {
-        $js = <<<'JS'
-self.addEventListener('install', () => self.skipWaiting());
-self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
-self.addEventListener('push', (event) => {
-    let d = {};
-    try { d = event.data ? event.data.json() : {}; } catch (e) { d = { title: 'Oravel', body: event.data ? event.data.text() : '' }; }
-    event.waitUntil(self.registration.showNotification(d.title || 'Oravel', {
-        body: d.body || '', icon: '/icon.png', badge: '/icon.png', data: { url: d.url || '/' },
-    }));
-});
-self.addEventListener('notificationclick', (event) => {
-    event.notification.close();
-    const url = (event.notification.data && event.notification.data.url) || '/';
-    event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((lista) => {
-        for (const c of lista) { if ('focus' in c) { c.navigate(url); return c.focus(); } }
-        return self.clients.openWindow(url);
-    }));
-});
-JS;
-
-        return response($js, 200, [
+        return response(ServiceWorker::js(), 200, [
             'Content-Type' => 'application/javascript; charset=utf-8',
             'Service-Worker-Allowed' => '/',
             'Cache-Control' => 'no-cache',

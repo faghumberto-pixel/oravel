@@ -16,5 +16,11 @@
     <main class="mx-auto flex min-h-screen w-full max-w-md flex-col p-5">
         @yield('conteudo')
     </main>
+    <script>
+        // App aberto sem internet: o service worker guarda as telas visitadas (ver App\Support\Colaborador\ServiceWorker).
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => navigator.serviceWorker.register(@json(route('colab.sw', [], false))).catch(() => {}));
+        }
+    </script>
 </body>
 </html>

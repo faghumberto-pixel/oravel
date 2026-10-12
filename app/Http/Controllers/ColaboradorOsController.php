@@ -37,6 +37,7 @@ class ColaboradorOsController extends Controller
             'dias' => SituacaoOs::diasEmAberto($os),
             'agendada' => $os->scheduled_at,
             'prazo_fatal' => (bool) $os->is_prazo_fatal,
+            'pode_executar' => ! in_array($os->status, SituacaoOs::FECHADAS, true) && Gate::allows('update', $os),
             'problema' => $os->description,
         ]);
 
@@ -111,6 +112,7 @@ class ColaboradorOsController extends Controller
             'situacao' => SituacaoOs::daOs($os),
             'dias' => SituacaoOs::diasEmAberto($os),
             'fechada' => in_array($os->status, SituacaoOs::FECHADAS, true),
+            'podeExecutar' => ! in_array($os->status, SituacaoOs::FECHADAS, true) && Gate::allows('update', $os),
         ]);
     }
 }

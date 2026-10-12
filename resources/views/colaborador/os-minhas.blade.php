@@ -11,7 +11,8 @@
 
     <div class="mt-4 space-y-2">
         @forelse($ordens as $os)
-            <a href="{{ route('colab.os', ['id' => $os['id']]) }}" class="block rounded-xl bg-zinc-900 p-3 active:bg-zinc-800">
+            <div class="rounded-xl bg-zinc-900 p-3">
+            <a href="{{ route('colab.os', ['id' => $os['id']]) }}" class="block active:opacity-70">
                 <div class="flex items-center justify-between gap-2">
                     <span class="text-sm font-bold">OS {{ $os['numero'] }}@if($os['prazo_fatal']) <span class="ml-1 rounded bg-red-500/20 px-1.5 py-0.5 text-[10px] font-bold text-red-400">PRAZO FATAL</span>@endif</span>
                     <span class="rounded-full px-2 py-0.5 text-[10px] font-bold {{ \App\Support\Colaborador\SituacaoOs::classes($os['situacao']['cor']) }}">{{ $os['situacao']['rotulo'] }}</span>
@@ -24,6 +25,10 @@
                 </p>
                 @if(filled($os['problema']))<p class="mt-1 line-clamp-2 text-xs text-zinc-500">{{ $os['problema'] }}</p>@endif
             </a>
+            @if($os['pode_executar'])
+                <a href="{{ route('colab.os.executar', ['maintenanceOrder' => $os['id']]) }}" class="mt-3 flex min-h-[3rem] items-center justify-center rounded-xl bg-orange-500 text-sm font-bold text-white active:bg-orange-600">Abrir OS</a>
+            @endif
+            </div>
         @empty
             <p class="rounded-xl bg-zinc-900 p-4 text-sm text-zinc-400">{{ $aba === 'abertas' ? 'Você não tem ordens de serviço em aberto.' : 'Nenhuma ordem concluída ainda.' }}</p>
         @endforelse

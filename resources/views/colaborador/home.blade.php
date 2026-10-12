@@ -9,7 +9,7 @@
         <a href="{{ route('colab.notificacoes') }}" class="relative rounded-lg border border-zinc-700 px-3 py-2 text-base active:bg-zinc-800" aria-label="Notificações">🔔
             @if($naoLidas > 0)<span class="absolute -right-1 -top-1 min-w-[1.1rem] rounded-full bg-orange-500 px-1 text-center text-[10px] font-bold text-white">{{ $naoLidas }}</span>@endif
         </a>
-        <form method="POST" action="{{ route('colab.logout') }}">
+        <form method="POST" action="{{ route('colab.logout') }}" onsubmit="event.preventDefault(); const f = this; Promise.resolve(window.caches ? caches.keys().then((n) => Promise.all(n.filter((x) => x.startsWith('oravel-colab-paginas-')).map((x) => caches.delete(x)))) : null).catch(() => {}).finally(() => f.submit());">
             @csrf
             <button type="submit" class="rounded-lg border border-zinc-700 px-3 py-2 text-xs font-bold text-zinc-300 active:bg-zinc-800">Sair</button>
         </form>
@@ -75,4 +75,17 @@
     @empty
         <p class="mt-10 rounded-xl bg-zinc-900 p-4 text-sm text-zinc-400">Nenhuma função disponível para o seu perfil. Fale com o administrador da sua empresa.</p>
     @endforelse
+
+    @php
+        $telasParaGuardar = collect($grupos)->flatten(1)->map(fn ($m) => route($m['rota'], [], false))
+            ->push(route('colab.notificacoes', [], false))->push(route('colab.offline', [], false))->values()->all();
+    @endphp
+    <script>
+        // Deixa as telas do app guardadas no aparelho para abrirem sem internet (o service worker faz o cache).
+        window.addEventListener('load', () => {
+            if (!navigator.onLine || !('serviceWorker' in navigator)) { return; }
+            const telas = @json($telasParaGuardar);
+            navigator.serviceWorker.ready.then(() => setTimeout(() => telas.forEach((u) => fetch(u, { credentials: 'same-origin', headers: { 'Accept': 'text/html' } }).catch(() => {})), 1500));
+        });
+    </script>
 @endsection

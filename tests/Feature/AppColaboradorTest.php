@@ -167,4 +167,27 @@ class AppColaboradorTest extends TestCase
             ->post('/colaborador/entrar', ['email' => $user->email, 'password' => 'segredo123'])
             ->assertRedirect('https://localhost/colaborador');
     }
+
+    public function test_app_abre_sem_internet_service_worker_tela_offline_e_cache_por_tela(): void
+    {
+        $user = $this->usuario(true);
+
+        // A tela "sem conexão" abre sem login (o service worker a guarda na instalação).
+        $this->celular()->get('/colaborador/offline')->assertOk()->assertSee('Sem conexão')->assertSee('registro de ponto continua funcionando', false);
+
+        // Todas as telas do app registram o service worker.
+        $this->celular()->get('/colaborador/entrar')->assertOk()->assertSee('serviceWorker.register', false);
+        $inicio = $this->celular()->actingAs($user)->get('/colaborador')->assertOk()->getContent();
+        $this->assertStringContainsString('serviceWorker.register', $inicio);
+        // O início guarda as outras telas no aparelho e limpa tudo ao sair da conta.
+        $this->assertStringContainsString('navigator.serviceWorker.ready', $inicio);
+        $this->assertStringContainsString('/colaborador/ponto', $inicio);
+        $this->assertStringContainsString('oravel-colab-paginas-', $inicio);
+
+        // O service worker: páginas rede-primeiro com cópia local, nunca mexe em POST/livewire/api, e mantém o push.
+        $sw = $this->celular()->get('/colaborador/sw.js')->assertOk()->getContent();
+        foreach (['caches.open(PAGINAS)', "req.method !== 'GET'", 'livewire', 'OFFLINE', "addEventListener('push'", 'showNotification', "event.data === 'limpar'"] as $trecho) {
+            $this->assertStringContainsString($trecho, $sw, $trecho);
+        }
+    }
 }
