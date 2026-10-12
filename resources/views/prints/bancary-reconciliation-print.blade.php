@@ -219,12 +219,11 @@
     </style>
 </head>
 <body>
-@include('partials.relatorio-cabecalho')
+@include('partials.relatorio-cabecalho', ['tituloRelatorio' => 'Conciliação Bancária', 'filtrosRelatorio' => []])
     <div class="container">
         <button class="print-button" onclick="window.print()">Imprimir / PDF</button>
 
         <div class="header">
-            <h1>🏦 Conciliação Bancária</h1>
             <p>Relatório de Sincronismo Asaas</p>
         </div>
 
@@ -381,5 +380,6 @@
             <p>{{ \App\Support\Relatorio::emissor() }} · gerado via Oravel</p>
         </div>
     </div>
+@include('partials.relatorio-rodape')
 </body>
 </html>

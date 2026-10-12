@@ -16,8 +16,7 @@
     </style>
 </head>
 <body onload="window.print()">
-    <h1>Cadastro do Ativo</h1>
-    <div class="sub">{{ $asset->name }} @if($asset->patrimonio) — Patrimônio {{ $asset->patrimonio }} @endif</div>
+    @include('partials.relatorio-cabecalho', ['tituloRelatorio' => 'Cadastro do Ativo', 'filtrosRelatorio' => ['Ativo: '.$asset->name.($asset->patrimonio ? ' — Patrimônio '.$asset->patrimonio : '')]])
 
     @foreach($secoes as $titulo => $linhas)
         <h2>{{ $titulo }}</h2>
@@ -33,6 +32,6 @@
         <div class="obs">{{ $descricao }}</div>
     @endif
 
-    <div class="sub" style="margin-top:24px">Impresso em {{ now()->format('d/m/Y H:i') }}</div>
+    @include('partials.relatorio-rodape')
 </body>
 </html>

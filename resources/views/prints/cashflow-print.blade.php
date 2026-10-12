@@ -174,12 +174,11 @@
     </style>
 </head>
 <body>
-@include('partials.relatorio-cabecalho')
+@include('partials.relatorio-cabecalho', ['tituloRelatorio' => 'Fluxo de Caixa', 'filtrosRelatorio' => ['Período: '.(filled($dateStart ?? null) ? \Illuminate\Support\Carbon::parse($dateStart)->format('d/m/Y') : 'início').' a '.(filled($dateEnd ?? null) ? \Illuminate\Support\Carbon::parse($dateEnd)->format('d/m/Y') : 'hoje'), filled($status ?? null) ? 'Status: '.$status : null, filled($type ?? null) ? 'Tipo: '.$type : null]])
     <div class="container">
         <button class="print-button" onclick="window.print()">Imprimir / PDF</button>
 
         <div class="header">
-            <h1>📊 Fluxo de Caixa</h1>
             <p>Relatório de Contas a Receber e a Pagar</p>
         </div>
 
@@ -252,5 +251,6 @@
             </div>
         @endif
     </div>
+@include('partials.relatorio-rodape')
 </body>
 </html>

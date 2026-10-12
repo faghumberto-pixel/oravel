@@ -188,11 +188,10 @@
     </style>
 </head>
 <body>
-@include('partials.relatorio-cabecalho')
+@include('partials.relatorio-cabecalho', ['tituloRelatorio' => 'Timeline do Contrato', 'filtrosRelatorio' => ['Contrato: '.$contract->contract_number]])
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>📋 TIMELINE DO CONTRATO</h1>
             <p>Contrato #{{ $contract->contract_number }}</p>
         </div>
 
@@ -327,5 +326,6 @@
             window.print();
         };
     </script>
+@include('partials.relatorio-rodape')
 </body>
 </html>

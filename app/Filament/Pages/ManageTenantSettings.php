@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\Client;
 use App\Support\Tenancy;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -82,6 +83,7 @@ class ManageTenantSettings extends Page implements HasForms
         $targets = is_array($tenant?->targets) ? $tenant->targets : [];
 
         $this->form->fill([
+            'logo_path' => $tenant?->logo_path,
             'segment' => $tenant?->segment,
             'auto_generate_patrimonio' => (bool) $tenant?->auto_generate_patrimonio,
             'targets' => array_merge(self::TARGET_DEFAULTS, array_intersect_key($targets, self::TARGET_DEFAULTS)),
@@ -96,6 +98,18 @@ class ManageTenantSettings extends Page implements HasForms
     public function form(Form $form): Form
     {
         return $form->schema([
+            Section::make('Logotipo da empresa')
+                ->description('Aparece no topo de todos os relatórios impressos.')
+                ->schema([
+                    FileUpload::make('logo_path')
+                        ->label('Logotipo')
+                        ->image()
+                        ->disk('public')
+                        ->directory('tenant-logos')
+                        ->maxSize(2048)
+                        ->imagePreviewHeight('80'),
+                ]),
+
             Section::make('Segmento')
                 ->schema([
                     Select::make('segment')
@@ -169,6 +183,7 @@ class ManageTenantSettings extends Page implements HasForms
         }
 
         $tenant->update([
+            'logo_path' => $state['logo_path'] ?? null,
             'segment' => $state['segment'] ?? null,
             'ui_customizations' => $uiCustomizations,
             'targets' => $targets,

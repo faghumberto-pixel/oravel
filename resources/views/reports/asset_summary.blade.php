@@ -13,7 +13,7 @@
     </style>
 </head>
 <body>
-@include('partials.relatorio-cabecalho')
+@include('partials.relatorio-cabecalho', ['tituloRelatorio' => 'Relatório do Ativo', 'filtrosRelatorio' => ['Ativo: '.$asset->name]])
     <div class="header">
         <h1>Relatório Executivo: {{ $asset->name }}</h1>
         <p>TAG: {{ $asset->tag }} | Data: {{ $date }}</p>

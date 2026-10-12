@@ -72,6 +72,7 @@ class Tenant extends Model
     public const PAYMENT_STATUS_CANCELADO = 'cancelado';
 
     protected $fillable = [
+        'logo_path',
         'name',
         'slug',
         'status',

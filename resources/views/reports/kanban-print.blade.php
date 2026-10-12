@@ -13,7 +13,7 @@
     </style>
 </head>
 <body class="bg-white text-black p-8 font-sans">
-@include('partials.relatorio-cabecalho')
+@include('partials.relatorio-cabecalho', ['tituloRelatorio' => 'Kanban do Pátio', 'filtrosRelatorio' => [isset($technicianName) && $technicianName ? 'Técnico: '.$technicianName : null]])
     <button onclick="window.print()" class="no-print bg-gray-800 text-white px-4 py-2 rounded mb-4 font-bold uppercase text-xs">
         Imprimir
     </button>

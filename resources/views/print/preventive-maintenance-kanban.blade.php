@@ -165,7 +165,7 @@
     </style>
 </head>
 <body>
-@include('partials.relatorio-cabecalho')
+@include('partials.relatorio-cabecalho', ['tituloRelatorio' => 'Kanban de Execuções Preventivas', 'filtrosRelatorio' => []])
     <div class="print-header">
         <div class="print-header-text">
             <strong>→ Visualização PHP Minimalista — Kanban de Execuções Preventivas</strong>

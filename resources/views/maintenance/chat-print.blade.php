@@ -20,7 +20,7 @@
     </style>
 </head>
 <body>
-@include('partials.relatorio-cabecalho')
+@include('partials.relatorio-cabecalho', ['tituloRelatorio' => 'Histórico de Transmissões', 'filtrosRelatorio' => []])
 
     <div class="header">
         <button onclick="window.print()" style="float: right; padding: 6px 12px; background-color: #d97706; border: none; color: white; font-weight: bold; border-radius: 4px; cursor: pointer;">Imprimir Relatório</button>
