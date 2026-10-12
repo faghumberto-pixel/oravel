@@ -29,7 +29,7 @@
     </style>
 </head>
 <body>
-@include('partials.relatorio-cabecalho')
+@include('partials.relatorio-cabecalho', ['tituloRelatorio' => 'Contrato', 'filtrosRelatorio' => ['Contrato Nº '.$contract->contract_number]])
 
     <div class="header">
         <table>

@@ -49,7 +49,7 @@
     </style>
 </head>
 <body>
-@include('partials.relatorio-cabecalho')
+@include('partials.relatorio-cabecalho', ['tituloRelatorio' => 'Orçamento', 'filtrosRelatorio' => ['Orçamento #'.substr($quote->id, 0, 8), 'Cliente: '.($quote->client->name ?? '—')]])
 
     <div class="header">
         <table>
