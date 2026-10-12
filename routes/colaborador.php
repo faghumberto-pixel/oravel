@@ -8,7 +8,11 @@ use Illuminate\Support\Facades\Route;
 | App do colaborador: link próprio (subdomínio em PROD, /colaborador em DEV), só no celular, login com o mesmo
 | usuário do sistema. Novas funções entram em App\Support\Colaborador\Modulos + uma rota aqui.
 */
-Route::middleware(['web', 'colab.mobile'])->name('colab.')->group(function () {
+// Subdomínio próprio quando COLABORADOR_HOST existe; senão /colaborador (DEV).
+$host = config('colaborador.host');
+$grupo = $host ? Route::domain($host) : Route::prefix('colaborador');
+
+$grupo->middleware(['web', 'colab.mobile'])->name('colab.')->group(function () {
     Route::get('/manifest.webmanifest', [ColaboradorController::class, 'manifest'])->name('manifest');
     Route::get('/entrar', [ColaboradorController::class, 'loginForm'])->name('login');
     Route::post('/entrar', [ColaboradorController::class, 'login'])->name('login.post');

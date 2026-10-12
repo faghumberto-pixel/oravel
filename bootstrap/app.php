@@ -14,21 +14,16 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
+        // colaborador.php vem ANTES de web.php de propósito: o Laravel casa rotas por ordem de registro, e a rota
+        // '/' do site principal (qualquer host) capturaria o subdomínio do app do colaborador.
+        web: [__DIR__.'/../routes/colaborador.php', __DIR__.'/../routes/web.php'],
         api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
-        then: function () {
-            // App do colaborador: subdomínio próprio quando COLABORADOR_HOST existe; senão /colaborador (DEV).
-            $host = config('colaborador.host');
-            $grupo = $host ? Route::domain($host) : Route::prefix('colaborador');
-            $grupo->group(base_path('routes/colaborador.php'));
-        },
     )
     ->withMiddleware(function (Middleware $middleware) {
         // IP real do visitante atrás do Cloudflare: só confia no X-Forwarded-For
