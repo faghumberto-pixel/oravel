@@ -9,6 +9,7 @@ use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Support\Colaborador\Modulos;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -110,5 +111,26 @@ class AppColaboradorTest extends TestCase
 
         $this->assertArrayHasKey(Modulos::FEATURE, Plan::getAvailableFeaturesOptions());
         $this->assertContains('App do Colaborador (celular)', ContratoResource::groupedFeatureOptions()['Configurações']);
+    }
+
+    public function test_419_na_tela_de_entrada_nao_mostra_pagina_expirada(): void
+    {
+        // Liga a checagem real de CSRF (nos testes ela vem desligada).
+        $this->app->bind(ValidateCsrfToken::class, fn ($app) => new class($app, $app['encrypter']) extends ValidateCsrfToken
+        {
+            protected function runningUnitTests()
+            {
+                return false;
+            }
+        });
+
+        // Visitante com token velho: volta para a entrada com aviso.
+        $this->celular()->post('/colaborador/entrar', ['email' => 'a@b.com', 'password' => 'x'])
+            ->assertRedirect(route('colab.login'))->assertSessionHasErrors('email');
+
+        // Já logado (1º toque funcionou) e o 2º chegou com token velho: vai para o início, sem erro.
+        $user = $this->usuario(true);
+        $this->celular()->actingAs($user)->post('/colaborador/entrar', ['email' => $user->email, 'password' => 'x'])
+            ->assertRedirect(route('colab.home'));
     }
 }

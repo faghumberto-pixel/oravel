@@ -5,7 +5,8 @@
         <div class="text-3xl font-black">O<span class="text-orange-500">r</span>avel</div>
         <p class="mt-1 text-sm text-zinc-400">Entre com o seu usuário do sistema.</p>
 
-        <form method="POST" action="{{ route('colab.login.post') }}" class="mt-8 space-y-4">
+        <form method="POST" action="{{ route('colab.login.post') }}" class="mt-8 space-y-4"
+              onsubmit="if (this.dataset.enviando) { return false; } this.dataset.enviando = '1'; const b = this.querySelector('button[type=submit]'); b.disabled = true; b.textContent = 'Entrando…';">
             @csrf
             <div>
                 <label class="mb-1 block text-xs font-semibold uppercase text-zinc-400" for="email">E-mail</label>

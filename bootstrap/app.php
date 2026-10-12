@@ -15,6 +15,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -66,7 +67,18 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        // App do colaborador: um 419 (token velho) quase sempre é toque duplo no "Entrar" -- o 1º envio já logou
+        // e renovou a sessão. Em vez de mostrar "Página expirada", leva ao início (se logado) ou à tela de entrada.
+        $exceptions->render(function (HttpException $e, Request $request) {
+            // O Laravel já converteu o TokenMismatchException em HttpException 419 neste ponto.
+            if ($e->getStatusCode() !== 419 || ! $request->routeIs('colab.*')) {
+                return null;
+            }
+
+            return $request->user()
+                ? redirect()->route('colab.home')
+                : redirect()->route('colab.login')->withErrors(['email' => 'A página expirou. Tente entrar de novo.']);
+        });
     })
     // Força o carregamento dos provedores essenciais e das novas amarras de segurança
     ->registered(function ($app) {
