@@ -60,6 +60,19 @@ class ClientPortalReceivableMirrorTest extends TestCase
         $response->assertSee('Imprimir');
     }
 
+    public function test_mirror_header_shows_the_locadora_title_and_who_issued_it(): void
+    {
+        [$tenant, $client, $receivable] = $this->makeTenantWithClientAndReceivable('A');
+
+        $html = $this->actingAs($client, 'client')
+            ->get(route('cliente.receivable.mirror', ['accountReceivable' => $receivable->id]))
+            ->assertOk()->getContent();
+
+        $this->assertStringContainsString($tenant->name, $html);          // emissor = locadora, não "Oravel"
+        $this->assertStringContainsString('ESPELHO DE MEDIÇÃO', mb_strtoupper($html));
+        $this->assertStringContainsString('Emitido por Cliente Espelho A', $html);
+    }
+
     public function test_client_cannot_download_other_client_receivable_mirror(): void
     {
         [, $clientA] = $this->makeTenantWithClientAndReceivable('A');

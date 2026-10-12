@@ -36,7 +36,7 @@
     </style>
 </head>
 <body>
-@include('partials.relatorio-cabecalho')
+@include('partials.relatorio-cabecalho', ['tituloRelatorio' => 'Espelho de Medição', 'filtrosRelatorio' => ['Medição #'.str_pad($receivable->id, 6, '0', STR_PAD_LEFT), $receivable->contract?->contract_number ? 'Contrato: '.$receivable->contract->contract_number : null]])
     <div class="header">
         <table>
             <tr>

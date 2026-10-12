@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use App\Models\Tenant;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -10,9 +12,15 @@ use Illuminate\Support\Facades\Storage;
  */
 class Relatorio
 {
+    /** Tenant do relatório: o do usuário do painel ou, no portal do cliente (outro guard), o do cliente logado. */
+    private static function tenant(): ?Tenant
+    {
+        return Tenancy::current() ?? Auth::guard('client')->user()?->tenant;
+    }
+
     public static function emissor(): string
     {
-        $tenant = Tenancy::current();
+        $tenant = self::tenant();
 
         return $tenant?->nome_fantasia ?: ($tenant?->name ?: 'Oravel');
     }
@@ -20,7 +28,7 @@ class Relatorio
     /** Linha de apoio sob o nome: CNPJ/CPF e cidade, quando cadastrados. */
     public static function detalhe(): string
     {
-        $tenant = Tenancy::current();
+        $tenant = self::tenant();
 
         if (! $tenant) {
             return '';
@@ -36,7 +44,7 @@ class Relatorio
     /** Logotipo do tenant embutido (data URI): funciona em tela, impressão e PDF sem depender de URL/storage:link. */
     public static function logo(): ?string
     {
-        $path = Tenancy::current()?->logo_path;
+        $path = self::tenant()?->logo_path;
 
         if (! $path || ! Storage::disk('public')->exists($path)) {
             return null;
@@ -49,7 +57,7 @@ class Relatorio
 
     public static function usuario(): string
     {
-        return (string) (auth()->user()?->name ?? '');
+        return (string) (auth()->user()?->name ?? Auth::guard('client')->user()?->name ?? '');
     }
 
     /** Aceita array ou texto; devolve só os filtros preenchidos. @return array<int, string> */
