@@ -14,7 +14,7 @@
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased font-sans p-4 sm:p-8">
-@include('partials.relatorio-cabecalho')
+@include('partials.relatorio-cabecalho', ['tituloRelatorio' => 'Laudo Técnico', 'filtrosRelatorio' => ['OS Nº '.$order->os_number]])
 
     @php
         $isCheckout = $order->maintenance_type === \App\Models\MaintenanceOrder::TYPE_CHECKOUT;

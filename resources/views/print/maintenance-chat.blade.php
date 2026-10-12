@@ -10,7 +10,7 @@
     </style>
 </head>
 <body class="bg-white p-10">
-@include('partials.relatorio-cabecalho')
+@include('partials.relatorio-cabecalho', ['tituloRelatorio' => 'Dossiê Técnico', 'filtrosRelatorio' => ['OS Nº '.$os->os_number]])
     <div class="no-print flex justify-end mb-8">
         <button onclick="window.print()" class="bg-primary-600 text-white px-6 py-2 rounded-lg font-bold shadow-md hover:bg-primary-700 transition">
             🖨️ IMPRIMIR AGORA
