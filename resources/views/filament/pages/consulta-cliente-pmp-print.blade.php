@@ -14,7 +14,7 @@
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased font-sans p-4 sm:p-8">
-@include('partials.relatorio-cabecalho')
+@include('partials.relatorio-cabecalho', ['tituloRelatorio' => 'Manutenções por Cliente (PMP)', 'filtrosRelatorio' => ['Cliente: '.($clientName ?? 'Todos')]])
 
     @php
         $categoryMeta = [

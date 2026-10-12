@@ -223,7 +223,7 @@
     </style>
 </head>
 <body>
-@include('partials.relatorio-cabecalho')
+@include('partials.relatorio-cabecalho', ['tituloRelatorio' => $data['title'].' — 5W2H', 'filtrosRelatorio' => []])
 
     <div class="no-print toolbar">
         <div class="toolbar-text">

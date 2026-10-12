@@ -14,7 +14,7 @@
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased font-sans p-4 sm:p-8">
-@include('partials.relatorio-cabecalho')
+@include('partials.relatorio-cabecalho', ['tituloRelatorio' => 'Alocação de Técnicos (PMP)', 'filtrosRelatorio' => ['Visão: '.(['day' => 'Dia', 'week' => 'Semana', 'month' => 'Mês'][$page->viewMode] ?? 'Semana'), 'Cliente: '.($clientName ?? 'Todos'), 'Técnico: '.($technicianName ?? 'Todos'), 'Patrimônio: '.($patrimonioFilter ?: 'Todos')]])
 
     <div class="max-w-5xl mx-auto mb-6 flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm no-print">
         <span class="text-sm text-gray-500 font-medium">➔ <strong>Visualização PHP Minimalista</strong> — Alocação de Técnicos</span>
