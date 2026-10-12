@@ -133,6 +133,6 @@ class AppColaboradorPushTest extends TestCase
 
     public function test_service_worker_so_para_celular_e_com_tipo_certo(): void
     {
-        $this->celular()->get('/colaborador/sw.js')->assertOk()->assertHeader('Content-Type', 'application/javascript; charset=utf-8')->assertSee('showNotification', false);
+        $this->celular()->get('/colaborador/colaborador-sw.js')->assertOk()->assertHeader('Content-Type', 'application/javascript; charset=utf-8')->assertSee('showNotification', false);
     }
 }

@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Support\Colaborador\Modulos;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 /** App do colaborador: link próprio, só celular, login com o usuário do sistema, funções por perfil. */
@@ -185,9 +186,27 @@ class AppColaboradorTest extends TestCase
         $this->assertStringContainsString('oravel-colab-paginas-', $inicio);
 
         // O service worker: páginas rede-primeiro com cópia local, nunca mexe em POST/livewire/api, e mantém o push.
-        $sw = $this->celular()->get('/colaborador/sw.js')->assertOk()->getContent();
+        $sw = $this->celular()->get('/colaborador/colaborador-sw.js')->assertOk()->getContent();
         foreach (['caches.open(PAGINAS)', "req.method !== 'GET'", 'livewire', 'OFFLINE', "addEventListener('push'", 'showNotification', "event.data === 'limpar'"] as $trecho) {
             $this->assertStringContainsString($trecho, $sw, $trecho);
         }
+    }
+
+    public function test_nenhuma_rota_do_app_colide_com_arquivo_fisico_da_pasta_public(): void
+    {
+        // No subdomínio as rotas ficam na raiz: se existir public/<mesmo caminho>, o nginx serve o arquivo e o Laravel
+        // nem é chamado (foi o que aconteceu com /sw.js em 12/10). Em DEV elas ficam sob /colaborador.
+        $colisoes = [];
+        foreach (Route::getRoutes() as $rota) {
+            if (! str_starts_with((string) $rota->getName(), 'colab.')) {
+                continue;
+            }
+            $caminho = trim(preg_replace('#^colaborador(/|$)#', '', $rota->uri()), '/');
+            if ($caminho !== '' && ! str_contains($caminho, '{') && file_exists(public_path($caminho))) {
+                $colisoes[] = $caminho;
+            }
+        }
+
+        $this->assertSame([], $colisoes, 'Rotas do app colidem com arquivos de public/: '.implode(', ', $colisoes));
     }
 }

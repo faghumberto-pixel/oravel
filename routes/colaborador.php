@@ -18,7 +18,8 @@ $grupo = $host ? Route::domain($host) : Route::prefix('colaborador');
 $grupo->middleware(['web', 'colab.mobile'])->name('colab.')->group(function () {
     Route::get('/manifest.webmanifest', [ColaboradorController::class, 'manifest'])->name('manifest');
     Route::get('/offline', [ColaboradorController::class, 'offline'])->name('offline');
-    Route::get('/sw.js', [ColaboradorNotificacoesController::class, 'serviceWorker'])->name('sw');
+    // Não pode se chamar /sw.js: existe public/sw.js (outro app) e o nginx serve o arquivo físico antes do Laravel.
+    Route::get('/colaborador-sw.js', [ColaboradorNotificacoesController::class, 'serviceWorker'])->name('sw');
     Route::get('/entrar', [ColaboradorController::class, 'loginForm'])->name('login');
     Route::post('/entrar', [ColaboradorController::class, 'login'])->name('login.post');
 

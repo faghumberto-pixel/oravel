@@ -23,7 +23,7 @@ const PAGINAS = 'oravel-colab-paginas-' + VERSAO;
 const ESTATICOS = 'oravel-colab-estaticos-' + VERSAO;
 const BASE = new URL('./', self.registration.scope).pathname;           // '/' em produção, '/colaborador/' no DEV
 const OFFLINE = BASE + 'offline';
-const NUNCA = [/\\/livewire\\//, /\\/api\\//, /\\/push\\//, /\\/sw\\.js$/];
+const NUNCA = [/\\/livewire\\//, /\\/api\\//, /\\/push\\//, /\\/colaborador-sw\\.js$/];
 
 self.addEventListener('install', (event) => {
     event.waitUntil(Promise.allSettled([
