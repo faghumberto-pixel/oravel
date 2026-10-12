@@ -11,7 +11,7 @@
         <p x-text="erro" x-show="erro" class="mt-2 text-sm text-red-400"></p>
 
         <form method="GET" action="{{ route('colab.dossie') }}" class="mt-6" onsubmit="event.preventDefault(); const v = this.q.value.trim(); if (v) window.location = this.action + '?busca=' + encodeURIComponent(v);">
-            <label class="mb-1 block text-xs font-semibold uppercase text-zinc-400" for="q">Ou digite o patrimônio</label>
+            <label class="mb-1 block text-xs font-semibold uppercase text-zinc-400" for="q">Ou digite o patrimônio ou a placa</label>
             <input id="q" name="q" class="min-h-[3rem] w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 text-base text-white" autocomplete="off">
             <button type="submit" class="mt-3 min-h-[3rem] w-full rounded-xl bg-zinc-800 text-base font-bold text-white">Buscar</button>
         </form>

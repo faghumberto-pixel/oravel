@@ -9,13 +9,13 @@
             {{-- Busca --}}
             <div class="rounded-2xl bg-zinc-900 p-4">
                 <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">Buscar Ativo</h3>
-                <p class="mt-1 text-[11px] text-zinc-500">Patrimônio, nome, tag ou nº de série — não precisa ser exato.</p>
+                <p class="mt-1 text-[11px] text-zinc-500">Patrimônio, placa, nome, tag ou nº de série — não precisa ser exato.</p>
 
                 <form wire:submit="search" class="mt-3 space-y-2">
                     <input
                         type="text"
                         wire:model="query"
-                        placeholder="Ex: PAT-0001, Guindaste..."
+                        placeholder="Ex: PAT-0001, ABC1D23, Guindaste..."
                         class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-base text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-blue-500"
                         autofocus
                     />
@@ -116,6 +116,9 @@
                             @if ($abrir)<a href="{{ $abrir }}" class="mt-1 block text-[11px] font-bold text-orange-400 after:absolute after:inset-0">Ver dossiê da OS →</a>@endif
                         </div>
                     @endforeach
+                    @if ($modoApp)
+                        <a href="{{ route('colab.os.ativo', ['id' => $asset->id]) }}" class="mt-3 block text-xs font-bold text-orange-400">Ver todas as OS deste equipamento →</a>
+                    @endif
                 </div>
                 <div class="mt-3 flex gap-2">
 @unless ($modoApp)

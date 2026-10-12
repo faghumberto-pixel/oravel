@@ -535,14 +535,23 @@ class Asset extends Model implements HasMedia
             return new Collection;
         }
 
+        // Placa sem hífen/espaço/caixa: "abc-1d23" acha "ABC1D23" e "ABC-1234" (só vale com 3+ caracteres).
+        $placa = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $term));
+
         return static::query()
-            ->where(function ($query) use ($term) {
+            ->where(function ($query) use ($term, $placa) {
                 $query->where('patrimonio', 'ilike', "%{$term}%")
                     ->orWhere('tag', 'ilike', "%{$term}%")
                     ->orWhere('name', 'ilike', "%{$term}%")
-                    ->orWhere('serial_number', 'ilike', "%{$term}%");
+                    ->orWhere('serial_number', 'ilike', "%{$term}%")
+                    ->orWhere('placa', 'ilike', "%{$term}%");
+
+                if (strlen($placa) >= 3) {
+                    $query->orWhereRaw("regexp_replace(upper(coalesce(placa, '')), '[^A-Z0-9]', '', 'g') like ?", ["%{$placa}%"]);
+                }
             })
             ->orderByRaw('(patrimonio ilike ?) desc', ["{$term}%"])
+            ->orderByRaw("(regexp_replace(upper(coalesce(placa, '')), '[^A-Z0-9]', '', 'g') = ?) desc", [$placa])
             ->orderBy('name')
             ->limit(20)
             ->get();

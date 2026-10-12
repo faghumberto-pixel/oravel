@@ -83,7 +83,7 @@ class AppColaboradorOsTest extends TestCase
         $this->assertCount(2, $situacao['abertas']);
     }
 
-    public function test_dossie_da_os_abre_por_id_e_por_numero_e_respeita_o_tenant(): void
+    public function test_dossie_da_os_abre_pela_lista_do_equipamento_e_respeita_o_tenant(): void
     {
         $u = $this->gestor();
         $a = Asset::create(['tenant_id' => $u->tenant_id, 'name' => 'Plataforma', 'patrimonio' => 'PAT-D1', 'status' => 'manutencao']);
@@ -92,11 +92,54 @@ class AppColaboradorOsTest extends TestCase
         $this->celular()->actingAs($u)->get('/colaborador/os/'.$os->id)->assertOk()
             ->assertSee('OS '.$os->os_number)->assertSee('Plataforma')->assertSee('Carlos Técnico')->assertSee('5 dias')->assertSee('Vazamento no cilindro');
 
-        $this->celular()->actingAs($u)->get('/colaborador/os?numero='.$os->os_number)->assertRedirect(route('colab.os', ['id' => $os->id]));
-        $this->celular()->actingAs($u)->get('/colaborador/os?numero=NAO-EXISTE-999')->assertOk()->assertSee('Nenhuma ordem de serviço encontrada');
-
         $outro = $this->gestor();
         $this->celular()->actingAs($outro)->get('/colaborador/os/'.$os->id)->assertNotFound();
+        $this->celular()->actingAs($outro)->get('/colaborador/os/ativo/'.$a->id)->assertNotFound();
+    }
+
+    public function test_os_parte_do_equipamento_por_patrimonio_ou_placa_sem_digitar_numero_de_os(): void
+    {
+        $u = $this->gestor();
+        $a = Asset::create(['tenant_id' => $u->tenant_id, 'name' => 'Caminhão Munck', 'patrimonio' => 'PAT-V1', 'placa' => 'ABC1D23', 'status' => 'manutencao']);
+        $aberta = $this->os($u, $a);
+        $fechada = $this->os($u, $a, ['status' => 'Concluída', 'internal_status' => 'concluido', 'finished_at' => now()->subDay()]);
+
+        // A tela de busca pede o equipamento, não o número da OS.
+        $this->celular()->actingAs($u)->get('/colaborador/os')->assertOk()->assertSee('Ler QR do equipamento')->assertDontSee('Número da ordem de serviço');
+
+        foreach (['PAT-V1', 'abc1d23', 'abc-1d23', 'Munck'] as $termo) {
+            $this->celular()->actingAs($u)->get('/colaborador/os?q='.urlencode($termo))->assertRedirect(route('colab.os.ativo', ['id' => $a->id]));
+        }
+
+        // QR (?busca=) usa o mesmo caminho.
+        $this->celular()->actingAs($u)->get('/colaborador/os?busca=PAT-V1')->assertRedirect(route('colab.os.ativo', ['id' => $a->id]));
+
+        $this->celular()->actingAs($u)->get('/colaborador/os/ativo/'.$a->id)->assertOk()
+            ->assertSee('Em aberto (1)')->assertSee('Concluídas recentemente (1)')->assertSee($aberta->os_number)->assertSee($fechada->os_number)
+            ->assertSee(route('colab.os', ['id' => $aberta->id]), false)->assertSee('ABC1D23');
+
+        $this->celular()->actingAs($u)->get('/colaborador/os?q=NAO-EXISTE-XYZ')->assertOk()->assertSee('Nenhum equipamento encontrado');
+    }
+
+    public function test_equipamento_sem_os_diz_que_nao_tem_e_dossie_leva_a_lista(): void
+    {
+        $u = $this->gestor();
+        $a = Asset::create(['tenant_id' => $u->tenant_id, 'name' => 'Gerador', 'patrimonio' => 'PAT-G1', 'status' => 'disponivel']);
+
+        $this->celular()->actingAs($u)->get('/colaborador/os/ativo/'.$a->id)->assertOk()->assertSee('não tem nenhuma ordem de serviço')->assertSee('Liberado');
+        $this->celular()->actingAs($u)->get('/colaborador/dossie/'.$a->id)->assertOk()->assertSee(route('colab.os.ativo', ['id' => $a->id]), false);
+    }
+
+    public function test_busca_de_ativo_acha_por_placa_com_ou_sem_hifen(): void
+    {
+        $u = $this->gestor();
+        $this->actingAs($u);
+        $a = Asset::create(['tenant_id' => $u->tenant_id, 'name' => 'Carreta', 'placa' => 'ABC-1234', 'status' => 'disponivel']);
+
+        foreach (['ABC-1234', 'abc1234', 'ABC 1234', 'c123'] as $termo) {
+            $this->assertTrue(Asset::search($termo)->contains('id', $a->id), $termo);
+        }
+        $this->assertFalse(Asset::search('ZZZ9999')->contains('id', $a->id));
     }
 
     public function test_dias_em_aberto_de_os_concluida_contam_ate_a_conclusao(): void

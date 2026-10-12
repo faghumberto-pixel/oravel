@@ -48,8 +48,8 @@ class Modulos
             [
                 'chave' => 'os',
                 'perfil' => AppProfile::TECNICO,
-                'titulo' => 'Dossiê da OS',
-                'descricao' => 'Situação, dias em aberto e técnico da ordem',
+                'titulo' => 'OS do equipamento',
+                'descricao' => 'Veja e abra as OS pelo QR, patrimônio ou placa',
                 'icone' => '🛠️',
                 'rota' => 'colab.os.buscar',
                 'pode' => fn (User $u) => $u->can('viewAny', MaintenanceOrder::class),

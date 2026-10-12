@@ -3,7 +3,7 @@
         <x-filament::section>
             <form wire:submit="search" class="flex items-end gap-x-3">
                 <div class="flex-1">
-                    <label for="query" class="text-sm font-medium text-gray-950 dark:text-white">Patrimônio, nome, tag ou nº de série</label>
+                    <label for="query" class="text-sm font-medium text-gray-950 dark:text-white">Patrimônio, placa, nome, tag ou nº de série</label>
                     <input
                         type="text"
                         wire:model="query"

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Asset;
 use App\Models\MaintenanceOrder;
 use App\Support\Colaborador\SituacaoOs;
 use Illuminate\Http\RedirectResponse;
@@ -9,28 +10,62 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
-/** Dossiê da OS no app do colaborador (par do dossiê do ativo): busca pelo número e tela da ordem. */
+/**
+ * OS no app do colaborador. O caminho é sempre PELO EQUIPAMENTO (QR, patrimônio, placa, TAG ou nome): acha o ativo,
+ * lista as OS dele (abertas primeiro) e abre o dossiê da OS dali. Não se digita número de OS.
+ */
 class ColaboradorOsController extends Controller
 {
+    /** Busca do equipamento. Um só resultado vai direto para as OS dele. */
     public function buscar(Request $request): View|RedirectResponse
     {
-        $numero = trim((string) $request->query('numero'));
+        $termo = trim((string) ($request->query('q') ?? $request->query('busca')));
 
-        if ($numero === '') {
-            return view('colaborador.os-buscar', ['erro' => null, 'resultados' => collect()]);
+        if ($termo === '') {
+            return view('colaborador.os-buscar', ['erro' => null, 'ativos' => collect(), 'termo' => '']);
         }
 
-        // Busca flexível ("123" acha "OS-2026-00123"); BelongsToTenant já limita ao tenant do usuário.
-        $achadas = MaintenanceOrder::query()->where('os_number', 'ilike', '%'.$numero.'%')->orderByDesc('created_at')->limit(15)->get()
-            ->filter(fn ($os) => Gate::allows('view', $os))->values();
+        $ativos = Asset::search($termo)->filter(fn (Asset $a) => Gate::allows('view', $a))->values();
 
-        if ($achadas->count() === 1) {
-            return redirect()->route('colab.os', ['id' => $achadas->first()->id]);
+        if ($ativos->count() === 1) {
+            return redirect()->route('colab.os.ativo', ['id' => $ativos->first()->id]);
         }
 
         return view('colaborador.os-buscar', [
-            'erro' => $achadas->isEmpty() ? 'Nenhuma ordem de serviço encontrada.' : null,
-            'resultados' => $achadas,
+            'erro' => $ativos->isEmpty() ? 'Nenhum equipamento encontrado. Confira o patrimônio ou a placa.' : null,
+            'ativos' => $ativos,
+            'termo' => $termo,
+        ]);
+    }
+
+    /** OS do equipamento: situação geral, as abertas e as últimas concluídas. */
+    public function doAtivo(string $id): View
+    {
+        $ativo = Asset::query()->findOrFail($id);
+
+        Gate::authorize('view', $ativo);
+
+        $ordens = MaintenanceOrder::query()->where('asset_id', $ativo->id)->with('technician')->orderByDesc('created_at')->limit(30)->get()
+            ->filter(fn ($os) => Gate::allows('view', $os))->values();
+
+        $linha = fn (MaintenanceOrder $os) => [
+            'id' => $os->id,
+            'numero' => $os->os_number,
+            'situacao' => SituacaoOs::daOs($os),
+            'aberta_em' => $os->created_at,
+            'dias' => SituacaoOs::diasEmAberto($os),
+            'tecnico' => $os->technician?->name,
+            'problema' => $os->description,
+        ];
+
+        $abertas = $ordens->reject(fn ($os) => in_array($os->status, SituacaoOs::FECHADAS, true))->sortBy('created_at')->map($linha)->values();
+        $fechadas = $ordens->filter(fn ($os) => in_array($os->status, SituacaoOs::FECHADAS, true))->take(10)->map($linha)->values();
+
+        return view('colaborador.os-ativo', [
+            'ativo' => $ativo,
+            'situacao' => SituacaoOs::doAtivo($ativo),
+            'abertas' => $abertas,
+            'fechadas' => $fechadas,
         ]);
     }
 
