@@ -313,6 +313,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/print/registro/{resource}/{record}', [GenericRecordPrintController::class, 'show'])
         ->name('generic-record.print');
 
+    // Ficha de cadastro completa do Ativo (botão "Imprimir cadastro" em ver/editar Ativo).
+    Route::get('/admin/print/ativo/{asset}/cadastro', [\App\Http\Controllers\AssetCadastroPrintController::class, 'show'])
+        ->name('asset.print-cadastro');
+
     Route::get('/admin/proposta-comercial/{record}/pdf', [PropostaComercialReportController::class, 'download'])
         ->name('proposta-comercial.pdf');
 

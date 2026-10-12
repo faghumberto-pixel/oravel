@@ -23,9 +23,9 @@ class VehicleExpirationResource extends BaseResource
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
 
-    protected static ?string $navigationGroup = 'Ativos';
+    protected static ?string $navigationGroup = 'Logística';
 
-    protected static ?string $navigationParentItem = 'Gestão de Ativos';
+    protected static ?string $navigationParentItem = 'Frota';
 
     protected static ?string $navigationLabel = 'Vencimento de veículos';
 

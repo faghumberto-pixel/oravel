@@ -17,6 +17,13 @@ class EditAsset extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('printCadastro')
+                ->label('Imprimir cadastro')
+                ->icon('heroicon-o-document-text')
+                ->color('gray')
+                ->url(fn ($record): string => route('asset.print-cadastro', ['asset' => $record->id]))
+                ->openUrlInNewTab(),
+
             Actions\Action::make('printQr')
                 ->label('Imprimir Etiqueta')
                 ->icon('heroicon-o-printer')

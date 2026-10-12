@@ -2,21 +2,26 @@
 
 namespace App\Filament\Resources\AssetResource\Pages;
 
-use App\Filament\Concerns\HasRecordPrintAction;
 use App\Filament\Resources\AssetResource;
+use Filament\Actions\Action;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewAsset extends ViewRecord
 {
-    use HasRecordPrintAction;
-
     protected static string $resource = AssetResource::class;
 
     protected function getHeaderActions(): array
     {
-        return [$this->printAction()];
+        return [
+            Action::make('imprimir')
+                ->label('Imprimir cadastro')
+                ->icon('heroicon-o-printer')
+                ->color('gray')
+                ->url(fn () => route('asset.print-cadastro', ['asset' => $this->record->getKey()]))
+                ->openUrlInNewTab(),
+        ];
     }
 
     // Esta função define o layout de visualização do ativo
