@@ -31,7 +31,7 @@ class TechnicianTasksController extends Controller
             ->where('technician_id', $userId)
             ->where('tenant_id', $tenantId)
             ->whereNotIn('status', ['Concluída', 'Cancelada'])
-            ->with(['asset', 'asset.criticalityLevel', 'client', 'checklists'])
+            ->with(['asset', 'asset.abcMatrix', 'client', 'checklists'])
             ->get();
 
         // 2. Mobilizações pendentes
@@ -40,7 +40,7 @@ class TechnicianTasksController extends Controller
             ->where('tenant_id', $tenantId)
             ->where('movement_type', 'mobilization')
             ->whereNotIn('sync_status', ['synced'])
-            ->with(['asset', 'contract', 'contract.client'])
+            ->with(['asset', 'asset.abcMatrix', 'contract', 'contract.client'])
             ->get();
 
         // 3. Desmobilizações pendentes
@@ -49,7 +49,7 @@ class TechnicianTasksController extends Controller
             ->where('tenant_id', $tenantId)
             ->where('movement_type', 'demobilization')
             ->whereNotIn('sync_status', ['synced'])
-            ->with(['asset', 'contract', 'contract.client'])
+            ->with(['asset', 'asset.abcMatrix', 'contract', 'contract.client'])
             ->get();
 
         // Coletar todos os asset IDs únicos
@@ -63,7 +63,7 @@ class TechnicianTasksController extends Controller
         $assets = Asset::query()
             ->whereIn('id', $assetIds)
             ->where('tenant_id', $tenantId)
-            ->with(['criticalityLevel', 'group', 'internalUnit', 'client'])
+            ->with(['abcMatrix', 'category', 'internalUnit', 'client'])
             ->get();
 
         // 5. Carregar contratos relacionados
@@ -96,7 +96,7 @@ class TechnicianTasksController extends Controller
                 'patrimonio' => $o->asset?->patrimonio,
                 'client_id' => $o->client_id,
                 'client_name' => $o->client?->name,
-                'criticality' => $o->asset?->criticalityLevel?->letter ?? 'C',
+                'criticality' => $o->asset?->abcMatrix?->nivel ?? 'C',
                 'nature' => $o->natureza_do_servico ?? 'Interno',
                 'cep' => $o->asset?->cep,
                 'status' => $o->status,
@@ -112,7 +112,7 @@ class TechnicianTasksController extends Controller
                 'patrimonio' => $m->asset?->patrimonio,
                 'client_id' => $m->contract?->client_id,
                 'client_name' => $m->contract?->client?->name,
-                'criticality' => $m->asset?->criticalityLevel?->letter ?? 'C',
+                'criticality' => $m->asset?->abcMatrix?->nivel ?? 'C',
                 'nature' => 'Externo',
                 'cep' => $m->contract?->client?->cep,
                 'status' => $m->sync_status,
@@ -128,7 +128,7 @@ class TechnicianTasksController extends Controller
                 'patrimonio' => $d->asset?->patrimonio,
                 'client_id' => $d->contract?->client_id,
                 'client_name' => $d->contract?->client?->name,
-                'criticality' => $d->asset?->criticalityLevel?->letter ?? 'C',
+                'criticality' => $d->asset?->abcMatrix?->nivel ?? 'C',
                 'nature' => 'Retorno',
                 'cep' => $d->contract?->client?->cep,
                 'status' => $d->sync_status,
@@ -142,16 +142,18 @@ class TechnicianTasksController extends Controller
                 'name' => $a->name,
                 'patrimonio' => $a->patrimonio,
                 'cep' => $a->cep,
-                'criticality' => $a->criticalityLevel?->letter,
-                'group_id' => $a->group_id,
-                'group_name' => $a->group?->name,
-                'capacity' => $a->capacity,
+                'criticality' => $a->abcMatrix?->nivel,
+                // Asset nao tem group/group_id/capacity (o endpoint foi escrito contra um modelo antigo):
+                // o agrupamento real e' a Categoria do ativo; capacity segue na resposta, sempre nula.
+                'group_id' => $a->asset_category_id,
+                'group_name' => $a->category?->name,
+                'capacity' => null,
                 'capacity_unit' => $a->capacity_unit,
                 'last_horimetro' => $a->last_horimetro,
             ]),
             'contracts' => $contracts->map(fn ($c) => [
                 'id' => $c->id,
-                'number' => $c->number,
+                'number' => $c->contract_number,
                 'client_id' => $c->client_id,
                 'client_name' => $c->client?->name,
                 'client_cep' => $c->client?->cep,
@@ -171,4 +173,3 @@ class TechnicianTasksController extends Controller
         return response()->noContent();
     }
 }
-
