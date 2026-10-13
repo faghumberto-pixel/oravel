@@ -1,7 +1,93 @@
-<p>Cadastro das empresas que locam equipamentos com você. É a partir do <strong>Cliente</strong> que se criam Contratos e Solicitações de Locação e se calcula quem é o “Top Cliente” nos indicadores.</p>
+<p>Cadastro das empresas que locam equipamentos com você. É a partir do <strong>Cliente</strong> que se criam Contratos, Solicitações de Locação, Ordens de Serviço e cobranças, e é com ele que o cliente entra no <strong>Portal do Cliente</strong>.</p>
 <div class="mk-menu">📍 Comercial → Gestão Comercial → Clientes</div>
-<figure class="mk-fig"><img src="/academy/img/clientes-lista.jpg" alt="Lista de Clientes"><figcaption><b>Lista de Clientes</b><ol class="mk-legend"><li><strong>Criar client</strong> — novo cliente.</li><li><strong>Cartões</strong> — Total, Com Contrato Ativo, Novos no Mês e Sem Nenhum Contrato.</li><li><strong>Razão Social</strong> — a identificação do cliente na lista.</li></ol></figcaption></figure>
-<figure class="mk-fig"><img src="/academy/img/cliente-novo.jpg" alt="Ficha do cliente"><figcaption><b>Ficha do cliente</b><ol class="mk-legend"><li><strong>Abas</strong> — Identificação e Faturamento, Entrega e Contatos, Legal e Documentação, Análise de Risco e Resumo Financeiro.</li><li><strong>Identificação</strong> — razão social, CNPJ, inscrições e endereço.</li></ol></figcaption></figure>
-<div class="mk-cols"><div class="mk-card2 blue"><h4>Filtros</h4>Por UF e por “Com Contrato Ativo”.</div><div class="mk-card2 green"><h4>Top Clientes</h4>Ranking dos 5 clientes com mais contratos.</div><div class="mk-card2 amber"><h4>Resumo Financeiro</h4>Receita (contratos, excedente aprovado, avaria cobrada) menos custo de manutenção.</div></div>
-<div class="mk-note tip"><strong>💡 Oportunidade</strong><p>Clientes <strong>sem nenhum contrato</strong> são oportunidade comercial: o cartão mostra quantos são.</p></div>
-<div class="mk-note who"> <strong>👤 Quem usa</strong> <p>Perfil comercial cadastra e mantém a carteira de clientes; admin da empresa tem acesso total.</p> </div> <h2>Quando usar</h2> <ul> <li>Ao fechar negócio com uma empresa nova.</li> <li>Pra consultar dados de contato antes de uma visita ou ligação.</li> <li>Pra ver quantos contratos ativos um cliente tem.</li> </ul> <h2>Filtros e indicadores</h2> <p>Na listagem de Clientes você tem:</p> <ul> <li>Filtro por <strong>UF</strong> e por <strong>"Com Contrato Ativo"</strong>.</li> <li>Cartões de resumo: Total, Com Contrato Ativo, Novos no Mês, Sem Nenhum Contrato.</li> <li>Ranking dos 5 clientes com mais contratos (Top Clientes).</li> </ul> <h2>Imprimir e Exportar</h2> <p> A listagem tem os botões <strong>Imprimir</strong> e <strong>Exportar</strong> (Excel/CSV, com nome/CNPJ/cidade/UF) respeitando os filtros aplicados. </p> <p>→ Veja mais em Impressão e Exportação.</p>
+<figure class="mk-fig"><img src="/academy/img/clientes-lista.jpg" alt="Lista de Clientes"><figcaption><b>Lista de Clientes</b><ol class="mk-legend"><li><strong>Novo Cliente</strong> — cadastra um cliente.</li><li><strong>Cartões</strong> — Total de Clientes, Com Contrato Ativo, Novos no Mês e Sem Nenhum Contrato.</li><li><strong>Razão Social</strong> — a identificação do cliente na lista.</li><li><strong>Importar Excel</strong> e <strong>Modelo de importação (Excel)</strong> — cadastro em massa.</li></ol></figcaption></figure>
+<figure class="mk-fig"><img src="/academy/img/cliente-novo.jpg" alt="Ficha do cliente"><figcaption><b>Ficha do cliente</b><ol class="mk-legend"><li><strong>Abas</strong> — Identificação e Faturamento, Entrega e Contatos, Legal e Documentação, Análise de Risco, Acesso ao Portal e Resumo Financeiro.</li><li><strong>Identificação</strong> — razão social, CNPJ, inscrições, nicho, contato e endereço de faturamento.</li></ol></figcaption></figure>
+<div class="mk-note who"><strong>👤 Quem usa</strong><p>O perfil comercial cadastra e mantém a carteira de clientes; o administrador da empresa tem acesso total.</p></div>
+<h2>Quando usar</h2>
+<ul>
+<li>Ao fechar negócio com uma empresa nova.</li>
+<li>Para consultar dados de contato antes de uma visita ou ligação.</li>
+<li>Para ver quantos contratos ativos um cliente tem.</li>
+<li>Para liberar o acesso do cliente ao Portal do Cliente.</li>
+</ul>
+
+<h2>A lista de clientes</h2>
+<p>No alto da lista ficam os botões <strong>Novo Cliente</strong>, <strong>Imprimir</strong>, <strong>Exportar</strong>, <strong>Importar Excel</strong> e <strong>Modelo de importação (Excel)</strong>. Imprimir e Exportar respeitam os filtros aplicados.</p>
+<div class="mk-cols">
+<div class="mk-card2 blue"><h4>Cartões</h4>Total de Clientes, Com Contrato Ativo, Novos no Mês e Sem Nenhum Contrato.</div>
+<div class="mk-card2 green"><h4>Gráficos</h4>Contratos ativos, tendência de novos clientes, contratos iniciados e encerrados por mês e <strong>Clientes por Nicho</strong>.</div>
+<div class="mk-card2 amber"><h4>Filtros</h4><strong>Nicho</strong>, <strong>UF</strong>, <strong>Com Contrato Ativo</strong> e <strong>Lixeira</strong> (clientes apagados).</div>
+</div>
+<div class="mk-note tip"><strong>💡 Oportunidade</strong><p>Clientes <strong>sem nenhum contrato</strong> são oportunidade comercial: o cartão <em>Sem Nenhum Contrato</em> mostra quantos são.</p></div>
+<p>As colunas da lista são Razão Social, CNPJ, E-mail, Telefone, Celular / WhatsApp, Cidade, UF e Nicho. E-mail, telefone e WhatsApp podem ser ocultados no botão de colunas da tabela.</p>
+
+<h2>Cadastrando um cliente</h2>
+<p>Clique em <strong>Novo Cliente</strong>. A ficha tem seis abas; só a <strong>Razão Social</strong> é obrigatória para salvar (e o e-mail, se o acesso ao portal estiver ligado).</p>
+<table><thead><tr><th>Aba</th><th>O que preencher</th></tr></thead><tbody>
+<tr><td><strong>Identificação e Faturamento</strong></td><td><strong>Razão Social</strong> (obrigatória), Nome Fantasia, CNPJ, Inscrição Estadual e Municipal, Regime Tributário e <strong>Nicho</strong>. Em <strong>Contato</strong>: nome do contato, <strong>E-mail</strong>, Telefone e Celular / WhatsApp. Em <strong>Endereço de Faturamento</strong>: logradouro e nº, complemento, bairro, cidade, UF e CEP.</td></tr>
+<tr><td><strong>Entrega e Contatos</strong></td><td>Local de Entrega / Canteiro de Obras: endereço completo da obra, nome do responsável na obra e telefone do canteiro. Em <strong>Setores</strong>: E-mail Financeiro e E-mail Suprimentos.</td></tr>
+<tr><td><strong>Legal e Documentação</strong></td><td>Representante legal (nome, CPF, RG e cargo) e o <strong>checklist de documentos anexados</strong>: Cartão CNPJ, Contrato Social, RG/CNH do sócio, Procuração, Comprovante de endereço, ART/CREA e Ficha de Cadastro.</td></tr>
+<tr><td><strong>Análise de Risco</strong></td><td>Consulta de CNPJ vinculado, Blacklist interna, Birôs de crédito e Score de Crédito PJ.</td></tr>
+<tr><td><strong>Acesso ao Portal</strong></td><td>Liga o login do cliente no Portal do Cliente. Veja a seção abaixo.</td></tr>
+<tr><td><strong>Resumo Financeiro</strong></td><td>Receita (contratos, excedente aprovado, avaria cobrada) menos custo de manutenção. Só leitura.</td></tr>
+</tbody></table>
+<div class="mk-note tip"><strong>💡 Para que serve o Nicho</strong><p>O Nicho (Eventos, Industrial / Hospitalar, Construção Civil, Locação de Equipamentos ou Outro) sugere campos relevantes nas Ordens de Serviço do cliente, como Prazo Fatal e Chamado de Emergência. Também alimenta o gráfico <em>Clientes por Nicho</em>.</p></div>
+<div class="mk-note tip"><strong>💡 Endereço e mapa</strong><p>O CEP, junto com logradouro, cidade e UF do faturamento, é usado para plotar o cliente no <strong>Mapa de Equipamentos</strong>.</p></div>
+
+<h2>Cliente duplicado: o sistema avisa</h2>
+<p>Dentro da mesma empresa, o sistema <strong>não deixa cadastrar o mesmo cliente duas vezes</strong>. Ao digitar, ele compara estes dados com os clientes já existentes e mostra o aviso no próprio campo:</p>
+<ul>
+<li><strong>Razão Social</strong> e <strong>Nome Fantasia</strong> (um não pode coincidir com o outro de outro cliente);</li>
+<li><strong>CNPJ</strong>, <strong>Inscrição Estadual</strong> e <strong>Inscrição Municipal</strong>;</li>
+<li><strong>E-mail</strong>;</li>
+<li><strong>Telefone</strong> e <strong>Celular / WhatsApp</strong> (números com pelo menos 8 dígitos; vale o número em qualquer um dos dois campos);</li>
+<li><strong>Endereço</strong> de faturamento (logradouro, complemento, cidade e UF juntos).</li>
+</ul>
+<p>A comparação ignora maiúsculas, acentos, pontuação e espaços: <code>12.345.678/0001-90</code> e <code>12345678000190</code> são o mesmo CNPJ. Valores como “isento” ou “não tem” não contam como duplicidade, porque vários clientes podem ser isentos. Clientes que estão na <strong>Lixeira</strong> também entram na comparação, para não recriar um cadastro que poderia ser restaurado.</p>
+<div class="mk-note warn"><strong>⚠️ Achou um aviso de duplicidade?</strong><p>Antes de mudar o dado para “driblar” o aviso, procure o cliente na lista (inclusive na Lixeira). Quase sempre ele já existe: edite o cadastro dele em vez de criar outro.</p></div>
+
+<h2>Acesso ao Portal do Cliente</h2>
+<p>O cliente acompanha contratos, chamados, faturas e abre solicitações pelo <strong>Portal do Cliente</strong>, no endereço do sistema seguido de <code>/cliente</code>. Quem libera o acesso é a locadora, de dois jeitos:</p>
+<ol>
+<li><strong>Aba Acesso ao Portal:</strong> ligue <strong>Acesso ao portal ativo</strong> e digite a <strong>Senha do portal</strong> (mínimo de 8 caracteres). Você escolhe a senha e a passa ao cliente por um canal seguro. Ao editar depois, deixe a senha em branco para manter a atual.</li>
+<li><strong>Na lista, ação “Conceder acesso ao portal”</strong> (ou <strong>Reenviar acesso</strong>, se já estiver liberado): o sistema gera uma <strong>senha temporária</strong>, envia por e-mail ao cliente e a mostra na tela <strong>uma única vez</strong>. Anote na hora: ela não aparece de novo. A ação só aparece para clientes que têm e-mail.</li>
+</ol>
+<div class="mk-note warn"><strong>⚠️ O e-mail é o login</strong><p>O <strong>E-mail</strong> da aba Identificação e Faturamento é o usuário de login do cliente no portal. Com o acesso ligado ele passa a ser obrigatório, e não pode ser o mesmo e-mail de outro cliente com acesso ao portal.</p></div>
+<p>O cliente também pode entrar <strong>sem senha</strong>, por um link enviado ao e-mail dele, válido por 15 minutos e de uso único.</p>
+
+<h2>Cadastro em massa: importar clientes por Excel</h2>
+<p>Para trazer a carteira inteira de uma vez, use a planilha. Na lista de Clientes:</p>
+<ol>
+<li><strong>Modelo de importação (Excel)</strong> — baixa a planilha em branco. A aba <strong>Clientes</strong> tem os títulos das colunas, e a aba <strong>Instruções</strong> explica cada uma.</li>
+<li><strong>Importar Excel</strong> — envia a planilha preenchida, com duas opções:
+<ul>
+<li><strong>Apenas validar (não grava nada)</strong> — mostra o resultado e os erros sem criar nem alterar clientes. Use sempre na primeira vez.</li>
+<li><strong>Atualizar clientes já cadastrados (mesmo CNPJ/CPF)</strong> — desligada, quem já existe é ignorado; ligada, só as colunas preenchidas são atualizadas.</li>
+</ul></li>
+</ol>
+<p>Preencha a partir da <strong>linha 3</strong>, uma linha por cliente, sem mudar os títulos. Só a <strong>Razão Social</strong> é obrigatória. A coluna do documento aceita CNPJ (14 dígitos) ou CPF (11), com ou sem pontuação.</p>
+<h3>O que acontece com cada linha</h3>
+<ul>
+<li><strong>Cliente já cadastrado:</strong> é reconhecido pelo CNPJ/CPF (só os dígitos). Sem documento na linha, pela Razão Social.</li>
+<li><strong>Erro na linha</strong> (sem Razão Social, e-mail inválido, UF com mais de 2 letras, documento sem 11 ou 14 dígitos, valor de Nicho fora da lista, cliente repetido na planilha ou dado duplicado de outro cliente) é <strong>pulada e listada</strong> com o número da linha e o motivo. As demais gravam normalmente.</li>
+<li>A importação <strong>não cria acesso ao portal</strong>: isso é feito depois, cliente a cliente.</li>
+<li>Latitude e longitude ficam vazias até você editar o CEP no cadastro.</li>
+</ul>
+<div class="mk-note warn"><strong>⚠️ Fluxo seguro</strong><p>1) Importe com <strong>Apenas validar</strong> ligado e corrija os erros na planilha. 2) Desligue “Apenas validar” e importe de verdade.</p></div>
+
+<h2>Gestão de Clientes: a caixa de entrada do portal</h2>
+<div class="mk-menu">📍 Comercial → Gestão Comercial → Gestão de Clientes</div>
+<p>Tela para acompanhar o que os clientes pedem pelo portal. À esquerda, a lista de clientes com busca, e um selo de <strong>pendência</strong> ou <strong>Em dia</strong> em cada um. Ao escolher um cliente, aparecem:</p>
+<ul>
+<li><strong>Solicitações Pendentes:</strong> pedidos de equipamento, chamados (OS) e pedidos de retirada que ele abriu no portal.</li>
+<li><strong>Mensagens:</strong> a conversa com o cliente, onde você responde e pode encaminhar a mensagem.</li>
+<li><strong>Imprimir:</strong> a ficha do cliente.</li>
+</ul>
+
+<h2>Voz do Cliente: reclamações, sugestões e elogios</h2>
+<div class="mk-menu">📍 Comercial → Gestão Comercial → Voz do Cliente</div>
+<p>Quando o cliente registra uma reclamação, sugestão ou elogio na tela <strong>Fale Conosco</strong> do portal, o registro chega aqui com um <strong>protocolo</strong> (formato FB-AAMMDD-XXXX) e os administradores recebem um aviso no sino. Abra o registro, mude a <strong>Situação</strong> (Recebido, Em análise ou Concluído) e escreva a <strong>resposta ao cliente</strong>: ele a lê no portal.</p>
+
+<h2>Imprimir e Exportar</h2>
+<p>A listagem tem os botões <strong>Imprimir</strong> e <strong>Exportar</strong> (Excel/CSV), respeitando os filtros aplicados.</p>
+<p>→ Veja mais em Impressão e Exportação.</p>

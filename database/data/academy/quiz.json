@@ -3225,23 +3225,23 @@
     "q": "Quais são as abas da ficha do cliente?",
     "options": [
      "Só Identificação",
-     "Identificação e Faturamento, Entrega e Contatos, Legal e Documentação, Análise de Risco e Resumo Financeiro",
+     "Identificação e Faturamento, Entrega e Contatos, Legal e Documentação, Análise de Risco, Acesso ao Portal e Resumo Financeiro",
      "Dados e Contratos",
      "Financeiro e Logística"
     ],
     "correct": 1,
-    "why": "Cinco abas."
+    "why": "Seis abas, incluindo Acesso ao Portal."
    },
    {
     "q": "Quais filtros a lista de clientes oferece?",
     "options": [
      "Por valor",
-     "Por UF e por “Com Contrato Ativo”",
+     "Por Nicho, por UF, por “Com Contrato Ativo” e pela Lixeira",
      "Por vendedor",
      "Por tipo de OS"
     ],
     "correct": 1,
-    "why": "Filtros."
+    "why": "Além de UF e Com Contrato Ativo, há o filtro de Nicho e o da Lixeira (clientes apagados)."
    },
    {
     "q": "O que mostra o cartão “Sem Nenhum Contrato”?",
@@ -3255,15 +3255,15 @@
     "why": "Oportunidade."
    },
    {
-    "q": "O que é o ranking Top Clientes?",
+    "q": "O que mostra o gráfico “Clientes por Nicho” acima da lista de clientes?",
     "options": [
-     "Os 10 que mais pagam",
-     "Os 3 mais antigos",
-     "Os 5 maiores devedores",
-     "Os 5 clientes com mais contratos"
+     "Quantos clientes existem em cada nicho de atividade (Eventos, Construção Civil, etc.)",
+     "Os 5 clientes que mais pagam",
+     "Os clientes com contrato vencido",
+     "Os clientes por vendedor"
     ],
-    "correct": 3,
-    "why": "Top 5."
+    "correct": 0,
+    "why": "O nicho é um campo da ficha do cliente e alimenta esse gráfico."
    },
    {
     "q": "O que soma o Resumo Financeiro do cliente?",
@@ -3297,6 +3297,171 @@
     ],
     "correct": 3,
     "why": "Menu."
+   },
+   {
+    "q": "Qual é o único campo obrigatório para salvar um cliente novo (com o acesso ao portal desligado)?",
+    "options": [
+     "CNPJ",
+     "Razão Social",
+     "E-mail",
+     "Telefone"
+    ],
+    "correct": 1,
+    "why": "Só a Razão Social. O e-mail passa a ser obrigatório quando o acesso ao portal é ligado."
+   },
+   {
+    "q": "O cliente A tem o CNPJ 12.345.678/0001-90. Ao cadastrar o cliente B com 12345678000190, o que acontece?",
+    "options": [
+     "Os dois cadastros são aceitos, porque a escrita é diferente",
+     "O sistema avisa duplicidade, porque ignora pontuação e espaços na comparação",
+     "O sistema aceita e junta os dois automaticamente",
+     "O sistema só avisa na hora de gerar o contrato"
+    ],
+    "correct": 1,
+    "why": "A comparação ignora maiúsculas, acentos, pontuação e espaços."
+   },
+   {
+    "q": "Um cliente foi apagado e está na Lixeira. Alguém tenta cadastrar de novo o mesmo CNPJ. O que acontece?",
+    "options": [
+     "O cadastro é aceito, porque o antigo foi apagado",
+     "O sistema avisa duplicidade, porque clientes na Lixeira também entram na comparação",
+     "O cliente da Lixeira é restaurado sozinho",
+     "O sistema apaga o cliente antigo de vez"
+    ],
+    "correct": 1,
+    "why": "Clientes na Lixeira entram na comparação, para não recriar um cadastro que poderia ser restaurado."
+   },
+   {
+    "q": "Dois clientes escrevem “isento” na Inscrição Estadual. O sistema recusa o segundo cadastro?",
+    "options": [
+     "Sim, porque o valor se repete",
+     "Não, valores como “isento” não contam como duplicidade",
+     "Só recusa se o CNPJ também for igual",
+     "Sim, mas só se for do mesmo nicho"
+    ],
+    "correct": 1,
+    "why": "Vários clientes podem ser isentos; “isento” e similares são ignorados na comparação."
+   },
+   {
+    "q": "O número (19) 3333-4444 já está no campo Telefone do cliente A. Ao cadastrar o cliente B com esse número no campo Celular / WhatsApp, o que acontece?",
+    "options": [
+     "Aceita, porque são campos diferentes",
+     "O sistema avisa que o número já está cadastrado em outro cliente",
+     "Aceita, mas pede confirmação",
+     "Troca o número do cliente A"
+    ],
+    "correct": 1,
+    "why": "Telefone e Celular / WhatsApp são comparados entre si: o número vale em qualquer um dos dois campos."
+   },
+   {
+    "q": "Para que serve o campo Nicho do cliente?",
+    "options": [
+     "Define o desconto do contrato",
+     "Sugere campos relevantes nas Ordens de Serviço do cliente (como Prazo Fatal e Chamado de Emergência) e alimenta o gráfico Clientes por Nicho",
+     "Define quem pode ver o cliente",
+     "Calcula o Score de Crédito"
+    ],
+    "correct": 1,
+    "why": "É usado para sugerir campos nas OS e aparece no gráfico por nicho."
+   },
+   {
+    "q": "Qual é o tamanho mínimo da Senha do portal digitada na aba Acesso ao Portal?",
+    "options": [
+     "4 caracteres",
+     "6 caracteres",
+     "8 caracteres",
+     "12 caracteres"
+    ],
+    "correct": 2,
+    "why": "Mínimo de 8 caracteres. Passe a senha ao cliente por um canal seguro."
+   },
+   {
+    "q": "Ao ligar o “Acesso ao portal ativo” de um cliente, o que muda no campo E-mail?",
+    "options": [
+     "Nada",
+     "Ele passa a ser obrigatório e vira o usuário de login do cliente no portal",
+     "Ele deixa de poder ser editado",
+     "Ele é apagado"
+    ],
+    "correct": 1,
+    "why": "O e-mail é o login do portal e não pode repetir o de outro cliente com acesso."
+   },
+   {
+    "q": "Na lista de clientes, a ação “Conceder acesso ao portal” faz o quê?",
+    "options": [
+     "Cria o cliente no portal sem senha",
+     "Gera uma senha temporária, envia por e-mail ao cliente e a mostra na tela uma única vez",
+     "Envia o contrato para assinatura",
+     "Apaga a senha atual"
+    ],
+    "correct": 1,
+    "why": "A senha temporária não aparece de novo: é preciso anotá-la na hora."
+   },
+   {
+    "q": "Qual é a única coluna obrigatória na planilha de importação de clientes?",
+    "options": [
+     "CNPJ",
+     "Razão Social",
+     "E-mail Principal",
+     "Nicho"
+    ],
+    "correct": 1,
+    "why": "Só a Razão Social é obrigatória; as demais podem ficar em branco."
+   },
+   {
+    "q": "Como a importação reconhece que um cliente da planilha já existe no sistema?",
+    "options": [
+     "Pelo e-mail",
+     "Pelo CNPJ/CPF (só os dígitos); sem documento na linha, pela Razão Social",
+     "Pelo telefone",
+     "Pela cidade e UF"
+    ],
+    "correct": 1,
+    "why": "O documento é a chave principal; sem ele, vale a Razão Social."
+   },
+   {
+    "q": "Na planilha, a linha 4 e a linha 9 têm o mesmo CNPJ. Importando de verdade, o que acontece?",
+    "options": [
+     "As duas são gravadas",
+     "A linha 4 é gravada e a 9 vira erro (“Cliente repetido na planilha”)",
+     "As duas viram erro",
+     "A linha 9 substitui a 4"
+    ],
+    "correct": 1,
+    "why": "A repetição dentro da mesma planilha é erro; a primeira ocorrência grava normalmente."
+   },
+   {
+    "q": "A importação por Excel libera o acesso ao portal dos clientes importados?",
+    "options": [
+     "Sim, com senha igual ao CNPJ",
+     "Sim, com um link por e-mail",
+     "Não: o acesso é concedido depois, cliente a cliente",
+     "Só para os que têm e-mail"
+    ],
+    "correct": 2,
+    "why": "O acesso ao portal não faz parte da importação."
+   },
+   {
+    "q": "Onde a equipe acompanha as solicitações e as mensagens que o cliente envia pelo portal?",
+    "options": [
+     "Em Contratos",
+     "Em Gestão de Clientes",
+     "Em Contas a Receber",
+     "Em Relatórios"
+    ],
+    "correct": 1,
+    "why": "A tela Gestão de Clientes mostra, por cliente, as solicitações pendentes e a conversa de mensagens."
+   },
+   {
+    "q": "O cliente registra um elogio na tela Fale Conosco do portal. Onde a equipe da locadora responde, e como o registro é identificado?",
+    "options": [
+     "Em Mensagens, sem número de identificação",
+     "Em Voz do Cliente, por um protocolo (formato FB-AAMMDD-XXXX)",
+     "Em Contas a Receber, pelo número da fatura",
+     "Em Ordens de Serviço, pelo número da OS"
+    ],
+    "correct": 1,
+    "why": "Os registros do Fale Conosco chegam à tela Voz do Cliente com protocolo, situação e resposta."
    }
   ]
  },

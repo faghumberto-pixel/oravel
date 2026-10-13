@@ -24,7 +24,7 @@ class ListClients extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->label('Novo Cliente'),
             $this->printAction(),
             Actions\ExportAction::make()->exporter(ClientExporter::class),
             $this->importExcelAction(),

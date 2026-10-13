@@ -27,7 +27,7 @@ class UserStats extends BaseWidget
 
         return [
             Stat::make('Total de Colaboradores', $total)
-                ->description('Cadastrados no tenant')
+                ->description('Cadastrados na empresa')
                 ->color('gray'),
 
             Stat::make('Técnicos', $tecnicos)

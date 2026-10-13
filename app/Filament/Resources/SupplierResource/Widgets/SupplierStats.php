@@ -31,7 +31,7 @@ class SupplierStats extends BaseWidget
 
         return [
             Stat::make('Total de Fornecedores', $total)
-                ->description('Cadastrados no tenant')
+                ->description('Cadastrados na empresa')
                 ->color('gray'),
 
             Stat::make('Compliance Completo', $complianceCompleto)

@@ -26,7 +26,7 @@ class ClientStats extends BaseWidget
 
         return [
             Stat::make('Total de Clientes', $total)
-                ->description('Cadastrados no tenant')
+                ->description('Cadastrados na empresa')
                 ->color('gray'),
 
             Stat::make('Com Contrato Ativo', $comContratoAtivo)

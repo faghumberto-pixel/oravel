@@ -40,6 +40,10 @@ class ClientResource extends Resource
 
     protected static ?string $navigationLabel = 'Clientes';
 
+    protected static ?string $modelLabel = 'cliente';
+
+    protected static ?string $pluralModelLabel = 'clientes';
+
     protected static ?string $navigationGroup = 'Comercial';
 
     protected static ?string $navigationParentItem = 'Gestão Comercial';
