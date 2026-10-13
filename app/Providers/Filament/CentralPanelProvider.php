@@ -9,6 +9,7 @@ use App\Filament\Central\Pages\DashboardSiteInstitucional;
 use App\Filament\Central\Pages\DashboardVisitantes;
 use App\Filament\Central\Pages\FunilVendas;
 use App\Filament\Central\Pages\Kanban;
+use App\Filament\Central\Pages\MinhasNotificacoes;
 use App\Filament\Central\Pages\Programacao;
 use App\Filament\Central\Pages\RolesTree;
 use App\Filament\Central\Pages\TenantTree;
@@ -45,15 +46,16 @@ use App\Filament\Central\Widgets\TopReferrersChart;
 use App\Filament\Central\Widgets\WonLostTrendChart;
 use App\Filament\Resources\RoleResource;
 use App\Http\Middleware\TrackSiteVisit;
+use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
 use Filament\Panel;
+// Importações corretas dos seus arquivos
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-// Importações corretas dos seus arquivos
 use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -107,7 +109,7 @@ class CentralPanelProvider extends PanelProvider
             // Claro e escuro, com botão para alternar (pedido do usuário 2026-10-08).
             // Começa no claro, como o app; quem escolhe o escuro mantém a escolha.
             ->darkMode()
-            ->defaultThemeMode(\Filament\Enums\ThemeMode::Light)
+            ->defaultThemeMode(ThemeMode::Light)
             ->viteTheme('resources/css/filament/central/theme.css')
             // Central nunca teve isso (so' o Admin) -- caia no texto padrao
             // do Filament em vez do wordmark "Oravel" com o "r" laranja.
@@ -133,7 +135,7 @@ class CentralPanelProvider extends PanelProvider
                 FunilVendas::class,
                 Kanban::class,
                 Programacao::class,
-                \App\Filament\Central\Pages\MinhasNotificacoes::class,
+                MinhasNotificacoes::class,
                 TenantTree::class,
                 AcessosClientes::class,
                 RolesTree::class,
@@ -193,6 +195,14 @@ class CentralPanelProvider extends PanelProvider
                 fn () => view('filament.bfcache-reload'),
             )
             ->renderHook(
+                // Busca de tela/menu (Ctrl+K), a mesma do painel admin -- o
+                // global search nativo do Filament so' aparece quando algum
+                // Resource declara atributos pesquisaveis, entao a lupa nativa
+                // nunca renderiza. Ver App\Livewire\ScreenSearch.
+                PanelsRenderHook::GLOBAL_SEARCH_AFTER,
+                fn () => view('filament.screen-search-mount'),
+            )
+            ->renderHook(
                 // Relogio ao vivo (dia/hora/mes) + total de compromissos de
                 // hoje no topbar -- pedido explicito do usuario.
                 PanelsRenderHook::TOPBAR_START,
@@ -246,7 +256,7 @@ class CentralPanelProvider extends PanelProvider
                 'minhas_notificacoes' => MenuItem::make()
                     ->label('Minhas notificações')
                     ->icon('heroicon-o-bell-slash')
-                    ->url(fn () => \App\Filament\Central\Pages\MinhasNotificacoes::getUrl()),
+                    ->url(fn () => MinhasNotificacoes::getUrl()),
             ])
             ->middleware([
                 EncryptCookies::class,
