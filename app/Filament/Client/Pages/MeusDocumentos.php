@@ -13,6 +13,8 @@ class MeusDocumentos extends Page
 
     protected static ?string $navigationLabel = 'Documentos';
 
+    protected static ?string $title = 'Documentos';
+
     protected static ?int $navigationSort = 4;
 
     public ?Tenant $tenant = null;

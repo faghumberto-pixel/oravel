@@ -28,6 +28,8 @@ class MinhasMensagens extends Page implements HasForms
 
     protected static ?string $navigationLabel = 'Mensagens';
 
+    protected static ?string $title = 'Mensagens';
+
     protected static string $view = 'filament.client.pages.minhas-mensagens';
 
     public ?array $data = [];

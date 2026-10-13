@@ -25,6 +25,11 @@ class MinhasOS extends Page implements HasTable
 
     protected static ?string $navigationLabel = 'Minhas OS';
 
+    protected static ?string $title = 'Minhas OS';
+
+    // O slug automático sairia "minhas-o-s".
+    protected static ?string $slug = 'minhas-os';
+
     protected static string $view = 'filament.client.pages.minhas-os';
 
     public function table(Table $table): Table

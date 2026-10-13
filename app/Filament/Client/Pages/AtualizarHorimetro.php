@@ -32,6 +32,8 @@ class AtualizarHorimetro extends Page implements HasForms
 
     protected static ?string $navigationLabel = 'Atualizar Horímetro';
 
+    protected static ?string $title = 'Atualizar Horímetro';
+
     protected static string $view = 'filament.client.pages.atualizar-horimetro';
 
     public ?array $data = [];

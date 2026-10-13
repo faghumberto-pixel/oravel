@@ -28,6 +28,8 @@ class PainelCliente extends Page
 
     protected static ?int $navigationSort = -10;
 
+    protected static ?string $title = 'Início';
+
     protected static ?string $slug = 'inicio';
 
     protected static string $view = 'filament.client.pages.painel-cliente';
