@@ -3,7 +3,7 @@
         @if ($ativo)
             <button type="button" wire:click="voltar" class="text-xs font-bold tracking-widest text-slate-400">← VOLTAR</button>
         @else
-            <a href="/admin" class="text-xs font-bold tracking-widest text-slate-400">← INÍCIO</a>
+            <a href="{{ $modoApp ? route('colab.logistica') : '/admin' }}" class="text-xs font-bold tracking-widest text-slate-400">← {{ $modoApp ? 'LOGÍSTICA' : 'INÍCIO' }}</a>
         @endif
         <h1 class="text-xs font-bold tracking-widest text-slate-400">ENTRADA E SAÍDA</h1>
     </header>
@@ -27,10 +27,12 @@
                         <span class="block text-base font-extrabold text-white">{{ $v->placa ?? $v->name }}</span>
                         <span class="block text-xs text-slate-400">{{ $v->name }}</span>
                         @if ($saidaAberta)
-                            <span class="mt-1 block text-xs text-amber-400">Fora desde {{ $saidaAberta->saida_em->format('d/m H:i') }} · {{ $saidaAberta->condutor() }} · {{ $saidaAberta->destino }}</span>
+                            <span class="mt-1 block text-xs text-amber-400">Em trânsito desde {{ $saidaAberta->saida_em->format('d/m H:i') }} · {{ $saidaAberta->condutor() }} · {{ $saidaAberta->trecho() }}@if ($saidaAberta->equipamento) · levando {{ $saidaAberta->equipamento->name }}@endif</span>
+                        @elseif (isset($noLocal[$v->id]))
+                            <span class="mt-1 block text-xs text-sky-300">📍 em {{ $noLocal[$v->id]->destino }} desde {{ $noLocal[$v->id]->retorno_em->format('d/m H:i') }}</span>
                         @endif
                     </span>
-                    <span class="rounded-full px-3 py-1 text-xs font-bold {{ $saidaAberta ? 'bg-amber-500/20 text-amber-400' : 'bg-emerald-500/20 text-emerald-400' }}">{{ $saidaAberta ? 'FORA' : 'NA BASE' }}</span>
+                    <span class="rounded-full px-3 py-1 text-xs font-bold {{ $saidaAberta ? 'bg-amber-500/20 text-amber-400' : (isset($noLocal[$v->id]) ? 'bg-sky-500/20 text-sky-300' : 'bg-emerald-500/20 text-emerald-400') }}">{{ $saidaAberta ? 'EM TRÂNSITO' : (isset($noLocal[$v->id]) ? 'NO CLIENTE' : 'NA BASE') }}</span>
                 </button>
             @empty
                 <p class="rounded-2xl bg-slate-900 p-4 text-sm text-slate-400">Nenhum veículo cadastrado.</p>
@@ -48,8 +50,12 @@
                 <div class="rounded-2xl bg-amber-500/10 p-4 text-sm text-slate-200">
                     <p class="font-bold text-amber-400">Saiu em {{ $aberta->saida_em->format('d/m/Y H:i') }}</p>
                     <p class="mt-1">{{ $aberta->condutor() }} · {{ $finalidades[$aberta->finalidade] ?? $aberta->finalidade }}</p>
-                    <p>Destino: {{ $aberta->destino }}</p>
+                    <p>Trecho: <strong>{{ $aberta->trecho() }}</strong></p>
+                    @if ($aberta->percurso)<p>Percurso: {{ $aberta->percurso->nome }}</p>@endif
                     <p>Motivo: {{ $aberta->motivo }}</p>
+                    @if ($aberta->equipamento)
+                        <p>Equipamento levado: <strong>{{ $aberta->equipamento->name }}</strong>{{ $aberta->equipamento->patrimonio ? ' · PAT '.$aberta->equipamento->patrimonio : '' }}</p>
+                    @endif
                     <p>Km na saída: {{ number_format($aberta->odometro_saida, 0, ',', '.') }}</p>
                 </div>
 
@@ -82,12 +88,61 @@
                     @if (count($motoristas) === 0)
                         <p class="text-xs text-amber-400">Nenhum motorista cadastrado. Cadastre em Logística → Frota → Motoristas.</p>
                     @endif
-                    <label class="block text-xs font-bold tracking-wider text-slate-400">DESTINO
-                        <input type="text" wire:model="destino" class="mt-1 min-h-[3rem] w-full rounded-xl bg-slate-800 px-3 text-base text-white">
-                    </label>
+                    @if ($localAtual && $localAtual['tipo'] !== 'empresa')
+                        <p class="rounded-xl bg-sky-500/10 px-3 py-2 text-xs font-bold text-sky-300">📍 Veículo está em: {{ $localAtual['rotulo'] }}</p>
+                    @endif
+                    @foreach ([['origem', 'SAINDO DE', 'origemTipo', 'origemClienteId', 'origemTexto'], ['destino', 'INDO PARA', 'destinoTipo', 'destinoClienteId', 'destino']] as [$prefixo, $rotuloTrecho, $propTipo, $propCliente, $propTexto])
+                        <div class="rounded-xl bg-slate-800/60 p-3">
+                            <p class="text-xs font-bold tracking-wider text-slate-400">{{ $rotuloTrecho }}</p>
+                            <select wire:model.live="{{ $propTipo }}" class="mt-2 min-h-[3rem] w-full rounded-xl bg-slate-800 px-3 text-base text-white">
+                                <option value="empresa">Empresa</option>
+                                <option value="cliente">Cliente</option>
+                                <option value="outro">Outro local</option>
+                            </select>
+                            @if ($this->{$propTipo} === 'cliente')
+                                <select wire:model.live="{{ $propCliente }}" class="mt-2 min-h-[3rem] w-full rounded-xl bg-slate-800 px-3 text-base text-white">
+                                    <option value="">Escolha o cliente</option>
+                                    @foreach ($clientes as $idCliente => $nomeCliente)<option value="{{ $idCliente }}">{{ $nomeCliente }}</option>@endforeach
+                                </select>
+                            @elseif ($this->{$propTipo} === 'outro')
+                                <input type="text" wire:model.live.debounce.400ms="{{ $propTexto }}" placeholder="Nome do local" class="mt-2 min-h-[3rem] w-full rounded-xl bg-slate-800 px-3 text-base text-white">
+                            @endif
+                        </div>
+                    @endforeach
+                    @if ($percursosCompativeis->isNotEmpty())
+                        <label class="block text-xs font-bold tracking-wider text-slate-400">PERCURSO (RECEBE O KM DA VIAGEM)
+                            <select wire:model="percursoId" class="mt-1 min-h-[3rem] w-full rounded-xl bg-slate-800 px-3 text-base text-white">
+                                <option value="">{{ $percursosCompativeis->count() === 1 ? 'Automático: '.$percursosCompativeis->first()->nome : 'Escolha o percurso' }}</option>
+                                @foreach ($percursosCompativeis as $p)<option value="{{ $p->id }}">{{ $p->nome }}{{ $p->km_previsto ? ' · previsto '.rtrim(rtrim(number_format((float) $p->km_previsto, 1, ',', '.'), '0'), ',').' km' : '' }}</option>@endforeach
+                            </select>
+                        </label>
+                    @endif
                     <label class="block text-xs font-bold tracking-wider text-slate-400">MOTIVO
                         <textarea wire:model="motivo" rows="2" class="mt-1 w-full rounded-xl bg-slate-800 px-3 py-2 text-base text-white"></textarea>
                     </label>
+                    <div class="rounded-xl bg-slate-800/60 p-3">
+                        <p class="text-xs font-bold tracking-wider text-slate-400">EQUIPAMENTO QUE VAI NO VEÍCULO (SE FOR)</p>
+                        @if ($equipamentoSelecionado)
+                            <div class="mt-2 flex items-center justify-between gap-3 rounded-xl bg-slate-900 p-3">
+                                <span>
+                                    <span class="block text-sm font-bold text-white">{{ $equipamentoSelecionado->name }}</span>
+                                    <span class="block text-xs text-slate-400">PAT {{ $equipamentoSelecionado->patrimonio ?? '—' }}@if ($equipamentoSelecionado->placa) · Placa {{ $equipamentoSelecionado->placa }}@endif</span>
+                                </span>
+                                <button type="button" wire:click="limparEquipamento" class="rounded-lg border border-slate-600 px-3 py-2 text-xs font-bold text-slate-300">Remover</button>
+                            </div>
+                        @else
+                            <input type="text" wire:model.live.debounce.400ms="buscaEquipamento" placeholder="Patrimônio, placa ou nome (deixe vazio se não levar)" class="mt-2 min-h-[3rem] w-full rounded-xl bg-slate-800 px-3 text-base text-white placeholder:text-slate-500">
+                            @foreach ($equipamentos as $eq)
+                                <button type="button" wire:click="escolherEquipamento('{{ $eq->id }}')" class="mt-2 block w-full rounded-xl bg-slate-900 p-3 text-left active:bg-slate-800">
+                                    <span class="block text-sm font-bold text-white">{{ $eq->name }}</span>
+                                    <span class="block text-xs text-slate-400">PAT {{ $eq->patrimonio ?? '—' }}@if ($eq->placa) · Placa {{ $eq->placa }}@endif</span>
+                                </button>
+                            @endforeach
+                            @if (mb_strlen(trim($buscaEquipamento)) >= 2 && $equipamentos->isEmpty())
+                                <p class="mt-2 text-xs text-amber-400">Nenhum equipamento encontrado.</p>
+                            @endif
+                        @endif
+                    </div>
                     @include('livewire.partials.saida-veiculo-campos-comuns', ['rotuloData' => 'DATA E HORA DA SAÍDA', 'rotuloKm' => 'ODÔMETRO NA SAÍDA (KM)'])
                     <button type="submit" class="flex min-h-[3.25rem] w-full items-center justify-center rounded-xl bg-emerald-500 text-sm font-bold text-slate-950 active:bg-emerald-600">REGISTRAR SAÍDA</button>
                 </form>

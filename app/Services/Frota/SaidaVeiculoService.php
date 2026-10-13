@@ -3,9 +3,11 @@
 namespace App\Services\Frota;
 
 use App\Models\Asset;
+use App\Models\Client;
 use App\Models\FleetDriver;
 use App\Models\FrotaChecklist;
 use App\Models\FrotaLeituraOdometro;
+use App\Models\FrotaPercurso;
 use App\Models\FrotaSaidaVeiculo;
 use App\Models\FrotaSinistro;
 use App\Models\User;
@@ -32,9 +34,9 @@ class SaidaVeiculoService
         if (! array_key_exists($dados['finalidade'] ?? '', FrotaSaidaVeiculo::finalidadeLabels())) {
             $this->erro('finalidade', 'Escolha a finalidade da saída.');
         }
-        if (blank(trim((string) ($dados['destino'] ?? '')))) {
-            $this->erro('destino', 'Informe o destino.');
-        }
+        [$origemTipo, $origemClienteId, $origemTexto] = $this->local($dados, 'origem', 'empresa');
+        [$destinoTipo, $destinoClienteId, $destinoTexto] = $this->local($dados, 'destino', 'outro', 'cliente_id');
+        $percurso = $this->percursoDoTrecho($dados, [$origemTipo, $origemClienteId, $origemTexto], [$destinoTipo, $destinoClienteId, $destinoTexto]);
         if (blank(trim((string) ($dados['motivo'] ?? '')))) {
             $this->erro('motivo', 'Informe o motivo da saída.');
         }
@@ -59,18 +61,39 @@ class SaidaVeiculoService
             $this->erro('motorista_id', 'A CNH de '.$motorista->name.' venceu em '.$motorista->cnh_expiry_date->format('d/m/Y').'. Não pode conduzir o veículo.');
         }
 
-        return DB::transaction(function () use ($ativo, $dados, $usuario, $motorista, $saidaEm) {
+        // Equipamento levado (opcional): tem que existir, não ser o próprio veículo e não estar em outra saída aberta.
+        $equipamento = null;
+        if (filled($dados['equipamento_id'] ?? null)) {
+            $equipamento = Asset::query()->find($dados['equipamento_id']);
+            if (! $equipamento) {
+                $this->erro('equipamento_id', 'Equipamento não encontrado.');
+            }
+            if ($equipamento->id === $ativo->id) {
+                $this->erro('equipamento_id', 'O veículo não pode levar a si mesmo.');
+            }
+            if ($levando = FrotaSaidaVeiculo::fora()->where('equipamento_id', $equipamento->id)->with('veiculo')->first()) {
+                $this->erro('equipamento_id', 'O equipamento '.($equipamento->patrimonio ?? $equipamento->name).' já está sendo levado pelo veículo '.($levando->veiculo?->placa ?? $levando->veiculo?->name).' desde '.$levando->saida_em->format('d/m H:i').'.');
+            }
+        }
+
+        return DB::transaction(function () use ($ativo, $dados, $usuario, $motorista, $saidaEm, $equipamento, $origemTipo, $origemClienteId, $origemTexto, $destinoTipo, $destinoClienteId, $destinoTexto, $percurso) {
             $odometro = (int) $dados['odometro'];
 
             $saida = FrotaSaidaVeiculo::create([
                 'tenant_id' => $ativo->tenant_id,
                 'ativo_id' => $ativo->id,
+                'equipamento_id' => $equipamento?->id,
                 'motorista_id' => $motorista?->id,
                 'condutor_nome' => null,
                 'finalidade' => $dados['finalidade'],
-                'destino' => trim($dados['destino']),
+                'origem_tipo' => $origemTipo,
+                'origem_cliente_id' => $origemClienteId,
+                'origem' => $origemTexto,
+                'destino_tipo' => $destinoTipo,
+                'percurso_id' => $percurso?->id,
+                'destino' => $destinoTexto,
                 'motivo' => trim($dados['motivo']),
-                'cliente_id' => $dados['cliente_id'] ?? null,
+                'cliente_id' => $destinoTipo === 'cliente' ? $destinoClienteId : ($dados['cliente_id'] ?? null),
                 'ordem_servico_id' => $dados['ordem_servico_id'] ?? null,
                 'saida_em' => $saidaEm,
                 'odometro_saida' => $odometro,
@@ -84,6 +107,65 @@ class SaidaVeiculoService
 
             return $saida;
         });
+    }
+
+    /**
+     * Local (origem ou destino) do trecho: empresa, cliente ou outro. Sem tipo informado vale o padrão da chamada
+     * (compatível com quem só manda o texto do destino). Devolve [tipo, cliente_id, texto para exibir].
+     *
+     * @return array{0: string, 1: ?string, 2: string}
+     */
+    private function local(array $dados, string $campo, string $tipoPadrao, ?string $campoCliente = null): array
+    {
+        $tipo = $dados[$campo.'_tipo'] ?? (filled($dados[$campo] ?? null) || $campo === 'origem' ? $tipoPadrao : null);
+        $campoCliente ??= $campo.'_cliente_id';
+        $rotulo = $campo === 'origem' ? 'a origem' : 'o destino';
+
+        if (! array_key_exists((string) $tipo, FrotaPercurso::TIPOS)) {
+            $this->erro($campo, 'Informe '.$rotulo.'.');
+        }
+
+        if ($tipo === 'empresa') {
+            return ['empresa', null, 'Empresa'];
+        }
+
+        if ($tipo === 'cliente') {
+            $cliente = filled($dados[$campoCliente] ?? null) ? Client::query()->find($dados[$campoCliente]) : null;
+            if (! $cliente) {
+                $this->erro($campo, 'Escolha o cliente d'.($campo === 'origem' ? 'a origem' : 'o destino').'.');
+            }
+
+            return ['cliente', $cliente->id, $cliente->name];
+        }
+
+        $texto = trim((string) ($dados[$campo] ?? ''));
+        if ($texto === '') {
+            $this->erro($campo, 'Informe '.$rotulo.'.');
+        }
+
+        return ['outro', null, $texto];
+    }
+
+    /** Percurso escolhido (tem que ligar origem e destino) ou o único percurso ativo que liga os dois locais. */
+    private function percursoDoTrecho(array $dados, array $origem, array $destino): ?FrotaPercurso
+    {
+        $liga = fn (FrotaPercurso $p) => $p->liga($origem[0], $origem[1], $origem[0] === 'outro' ? $origem[2] : null, $destino[0], $destino[1], $destino[0] === 'outro' ? $destino[2] : null);
+
+        if (filled($dados['percurso_id'] ?? null)) {
+            $p = FrotaPercurso::query()->find($dados['percurso_id']);
+            if (! $p || ! $p->ativo) {
+                $this->erro('percurso_id', 'Percurso não encontrado ou inativo.');
+            }
+            if (! $liga($p)) {
+                $this->erro('percurso_id', 'O percurso "'.$p->nome.'" não liga '.$origem[2].' a '.$destino[2].'.');
+            }
+
+            return $p;
+        }
+
+        $candidatos = FrotaPercurso::query()->where('ativo', true)->get()->filter($liga)->values();
+
+        return $candidatos->count() === 1 ? $candidatos->first() : null;
     }
 
     /**

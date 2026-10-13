@@ -28,7 +28,7 @@ class FrotaSaidaVeiculo extends Model
     public const AVISO_FORA_HORAS = 24;
 
     protected $fillable = [
-        'tenant_id', 'ativo_id', 'motorista_id', 'condutor_nome', 'finalidade', 'destino', 'motivo', 'cliente_id', 'ordem_servico_id',
+        'tenant_id', 'ativo_id', 'equipamento_id', 'origem_tipo', 'origem_cliente_id', 'origem', 'destino_tipo', 'percurso_id', 'motorista_id', 'condutor_nome', 'finalidade', 'destino', 'motivo', 'cliente_id', 'ordem_servico_id',
         'saida_em', 'odometro_saida', 'combustivel_saida', 'checklist_saida_id', 'observacoes_saida', 'registrado_por',
         'retorno_em', 'odometro_retorno', 'combustivel_retorno', 'checklist_retorno_id', 'observacoes_retorno', 'retorno_registrado_por',
     ];
@@ -67,6 +67,29 @@ class FrotaSaidaVeiculo extends Model
     public function veiculo(): BelongsTo
     {
         return $this->belongsTo(Asset::class, 'ativo_id');
+    }
+
+    /** Percurso (trajeto A ↔ B) que recebe o km real deste trecho. */
+    public function percurso(): BelongsTo
+    {
+        return $this->belongsTo(FrotaPercurso::class, 'percurso_id');
+    }
+
+    public function origemCliente(): BelongsTo
+    {
+        return $this->belongsTo(Client::class, 'origem_cliente_id');
+    }
+
+    /** "Empresa → Cliente X" */
+    public function trecho(): string
+    {
+        return ($this->origem ?: 'Empresa').' → '.$this->destino;
+    }
+
+    /** Equipamento que o veículo levou nesta saída (opcional). */
+    public function equipamento(): BelongsTo
+    {
+        return $this->belongsTo(Asset::class, 'equipamento_id');
     }
 
     public function motorista(): BelongsTo

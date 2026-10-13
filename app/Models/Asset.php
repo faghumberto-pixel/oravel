@@ -948,6 +948,28 @@ class Asset extends Model implements HasMedia
     }
 
     /** Saída em aberto (o veículo está fora), se houver. */
+    /**
+     * Onde o veículo está agora (pelo último trecho concluído): na empresa, no cliente ou em outro local.
+     * Veículo sem nenhum trecho concluído está na empresa.
+     *
+     * @return array{tipo: string, cliente_id: ?string, rotulo: string, texto: ?string}
+     */
+    public function localAtual(): array
+    {
+        $ultimo = FrotaSaidaVeiculo::query()->where('ativo_id', $this->id)->whereNotNull('retorno_em')->latest('retorno_em')->first();
+
+        if (! $ultimo || $ultimo->destino_tipo === 'empresa') {
+            return ['tipo' => 'empresa', 'cliente_id' => null, 'rotulo' => 'Empresa', 'texto' => null];
+        }
+
+        return [
+            'tipo' => $ultimo->destino_tipo,
+            'cliente_id' => $ultimo->destino_tipo === 'cliente' ? $ultimo->cliente_id : null,
+            'rotulo' => $ultimo->destino,
+            'texto' => $ultimo->destino_tipo === 'outro' ? $ultimo->destino : null,
+        ];
+    }
+
     public function saidaAberta(): ?FrotaSaidaVeiculo
     {
         return FrotaSaidaVeiculo::fora()->where('ativo_id', $this->id)->first();

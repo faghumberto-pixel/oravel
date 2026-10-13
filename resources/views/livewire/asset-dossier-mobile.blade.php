@@ -92,6 +92,15 @@
                     <a href="{{ route('frota.checklist.mobile', ['assetId' => $asset->id]) }}" class="mt-3 flex min-h-[3rem] items-center justify-center rounded-xl bg-emerald-500 text-sm font-bold text-zinc-950 active:bg-emerald-600">📋 CHECKLIST DE SAÍDA / RETORNO</a>
                     <a href="{{ route('frota.oleo.mobile', ['assetId' => $asset->id]) }}" class="mt-2 flex min-h-[3rem] items-center justify-center rounded-xl bg-zinc-800 text-sm font-bold text-white active:bg-zinc-700">🛢️ ÓLEO (TROCA / REPOSIÇÃO)</a>
 @endunless
+                    @if ($modoApp)
+                        <div class="mt-3 grid grid-cols-2 gap-2">
+                            @foreach ([['colab.logistica.saida', \App\Models\FrotaSaidaVeiculo::class, '🚚 Entrada / saída'], ['colab.logistica.abastecimento', \App\Models\FrotaAbastecimento::class, '⛽ Abastecer'], ['colab.logistica.km', \App\Models\FrotaSaidaVeiculo::class, '🔢 Marcar km'], ['colab.logistica.motorista', \App\Models\FrotaVinculoMotorista::class, '🧑‍✈️ Motorista']] as [$rotaLog, $modeloLog, $rotuloLog])
+                                @can('viewAny', $modeloLog)
+                                    <a href="{{ route($rotaLog, ['assetId' => $asset->id]) }}" class="flex min-h-[3rem] items-center justify-center rounded-xl bg-blue-500 text-xs font-bold text-white active:bg-blue-600">{{ $rotuloLog }}</a>
+                                @endcan
+                            @endforeach
+                        </div>
+                    @endif
                 @endif
                 <p class="mt-1 text-sm font-medium text-zinc-400">
                     PAT: {{ $asset->patrimonio ?? '—' }} · TAG: {{ $asset->tag ?? '—' }}

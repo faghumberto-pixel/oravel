@@ -658,6 +658,13 @@ class AssetResource extends Resource
                                     ->columnSpanFull(),
                             ]),
 
+                            Forms\Components\Section::make('Km rodado')->description('Histórico de odômetro do veículo e o que as viagens somaram nos percursos.')
+                                ->visible(fn (?Asset $record) => $record?->isVehicle())
+                                ->schema([
+                                    Forms\Components\Placeholder::make('km_rodado_resumo')->label('')
+                                        ->content(fn (?Asset $record) => $record ? new \Illuminate\Support\HtmlString(view('filament.partials.asset-km-rodado', ['ativo' => $record])->render()) : null),
+                                ]),
+
                             Forms\Components\Section::make('Resumo Financeiro')->schema([
                                 Forms\Components\Placeholder::make('financial_summary')
                                     ->label('')

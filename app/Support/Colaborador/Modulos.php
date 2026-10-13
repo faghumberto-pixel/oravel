@@ -3,6 +3,7 @@
 namespace App\Support\Colaborador;
 
 use App\Models\Asset;
+use App\Models\FrotaSaidaVeiculo;
 use App\Models\MaintenanceOrder;
 use App\Models\TimeClock;
 use App\Models\User;
@@ -27,6 +28,16 @@ class Modulos
     public static function todos(): array
     {
         return [
+            [
+                'chave' => 'logistica',
+                'perfil' => AppProfile::COLABORADOR,
+                'titulo' => 'Logística',
+                'descricao' => 'Entrada e saída de veículos, com motivo e equipamento levado',
+                'icone' => '🚚',
+                'rota' => 'colab.logistica',
+                'pode' => fn (User $u) => $u->can('viewAny', FrotaSaidaVeiculo::class),
+                'selo' => fn (User $u) => FrotaSaidaVeiculo::fora()->count(),
+            ],
             [
                 'chave' => 'minhas_os',
                 'perfil' => AppProfile::TECNICO,

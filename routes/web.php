@@ -313,6 +313,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/print/registro/{resource}/{record}', [GenericRecordPrintController::class, 'show'])
         ->name('generic-record.print');
 
+    // Km rodado da frota (por veículo e por percurso) no padrão de impressão dos relatórios.
+    Route::get('/admin/print/km-rodado', [\App\Http\Controllers\KmRodadoPrintController::class, 'show'])
+        ->name('km-rodado.print');
+
     // Ficha de cadastro completa do Ativo (botão "Imprimir cadastro" em ver/editar Ativo).
     Route::get('/admin/print/ativo/{asset}/cadastro', [\App\Http\Controllers\AssetCadastroPrintController::class, 'show'])
         ->name('asset.print-cadastro');

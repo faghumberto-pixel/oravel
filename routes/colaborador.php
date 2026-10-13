@@ -1,11 +1,16 @@
 <?php
 
 use App\Http\Controllers\ColaboradorController;
+use App\Http\Controllers\ColaboradorLogisticaController;
 use App\Http\Controllers\ColaboradorNotificacoesController;
 use App\Http\Controllers\ColaboradorOfflineController;
 use App\Http\Controllers\ColaboradorOsController;
+use App\Livewire\AbastecimentoMobile;
 use App\Livewire\AssetDossierMobile;
 use App\Livewire\MaintenanceOrderFieldWizard;
+use App\Livewire\MarcarKmMobile;
+use App\Livewire\MotoristaVeiculoMobile;
+use App\Livewire\SaidaVeiculoMobile;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,6 +39,14 @@ $grupo->middleware(['web', 'colab.mobile'])->name('colab.')->group(function () {
         Route::post('/api/fila', [ColaboradorOfflineController::class, 'fila'])->name('api.fila');
         Route::get('/os/{id}/offline', [ColaboradorOfflineController::class, 'executarOffline'])->name('os.offline');
 
+        // Logística: início com as funções e uma tela por função (todas aceitam o veículo direto pelo QR: .../{assetId}).
+        Route::get('/logistica', [ColaboradorLogisticaController::class, 'hub'])->name('logistica');
+        Route::get('/logistica/km-rodado', [ColaboradorLogisticaController::class, 'kmRodado'])->name('logistica.km-rodado');
+        Route::get('/logistica/vencimentos', [ColaboradorLogisticaController::class, 'vencimentos'])->name('logistica.vencimentos');
+        Route::get('/logistica/saida/{assetId?}', SaidaVeiculoMobile::class)->name('logistica.saida');
+        Route::get('/logistica/abastecimento/{assetId?}', AbastecimentoMobile::class)->name('logistica.abastecimento');
+        Route::get('/logistica/km/{assetId?}', MarcarKmMobile::class)->name('logistica.km');
+        Route::get('/logistica/motorista/{assetId?}', MotoristaVeiculoMobile::class)->name('logistica.motorista');
         Route::get('/minhas-os', [ColaboradorOsController::class, 'minhas'])->name('minhas-os');
         Route::get('/os', [ColaboradorOsController::class, 'buscar'])->name('os.buscar');
         Route::get('/os/{maintenanceOrder}/executar', MaintenanceOrderFieldWizard::class)->name('os.executar');
