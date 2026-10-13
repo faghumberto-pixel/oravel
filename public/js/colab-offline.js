@@ -133,12 +133,12 @@
     }
     function enviarUma(acao, token) {
         var corpo = { uuid: acao.uuid, tipo: acao.tipo, dados: acao.dados, criado_em: acao.criado_em };
-        var pronta = acao.tipo === 'os_foto'
+        var pronta = (acao.tipo === 'os_foto' || acao.tipo === 'ausencia_anexo')
             ? dbGet('fotos', acao.uuid).then(function (f) {
                 if (!f) { return { erroLocal: 'Foto não está mais no aparelho.' }; }
                 var fd = new FormData();
                 fd.append('acao', JSON.stringify(corpo));
-                fd.append('arquivo', f.blob, 'foto.jpg');
+                fd.append('arquivo', f.blob, f.nome || 'foto.jpg');
                 return { init: { method: 'POST', credentials: 'same-origin', headers: { Accept: 'application/json', 'X-CSRF-TOKEN': token }, body: fd } };
             })
             : Promise.resolve({ init: { method: 'POST', credentials: 'same-origin', headers: { Accept: 'application/json', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token }, body: JSON.stringify({ acoes: [corpo] }) } });
@@ -619,6 +619,75 @@
         });
     }
 
+
+    /* ---------- Faltas e ausências offline (registro + fotos do atestado) ---------- */
+    var AUS_TIPOS = { atestado_medico: 'Atestado médico', consulta_exame: 'Consulta ou exame', falta_justificada: 'Falta justificada', falta_injustificada: 'Falta sem justificativa', acompanhamento_familiar: 'Acompanhamento de familiar', licenca: 'Licença', outro: 'Outro' };
+
+    /* Reduz a foto (lado maior 1600px, JPEG) para caber na fila e subir rápido; se o navegador não decodificar (ex.: HEIC), segue o original. */
+    function reduzirFoto(arq) {
+        if (!/^image\//.test(arq.type)) { return Promise.resolve({ blob: arq, nome: arq.name || 'documento.pdf' }); }
+        return new Promise(function (ok) {
+            var url = URL.createObjectURL(arq), img = new Image();
+            img.onload = function () {
+                var k = Math.min(1, 1600 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+                c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+                c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+                c.toBlob(function (b) { URL.revokeObjectURL(url); ok(b ? { blob: b, nome: 'atestado.jpg' } : { blob: arq, nome: arq.name || 'foto.jpg' }); }, 'image/jpeg', 0.82);
+            };
+            img.onerror = function () { URL.revokeObjectURL(url); ok({ blob: arq, nome: arq.name || 'foto.jpg' }); };
+            img.src = url;
+        });
+    }
+    function validaAusencia(d) {
+        var hoje = agoraLocal().slice(0, 10);
+        if (!d.reason) { return 'Informe o motivo.'; }
+        if (!d.start_date || !d.end_date) { return 'Informe o período.'; }
+        if (d.start_date > hoje) { return 'A data de início não pode estar no futuro.'; }
+        if (d.end_date < d.start_date) { return 'A data final não pode ser antes da inicial.'; }
+        if (d.cid_code && !/^[A-Za-z]\d{2}(\.?\w{1,2})?$/.test(d.cid_code)) { return 'CID inválido. Exemplo: J11 ou M54.5.'; }
+        return null;
+    }
+    /* Guarda a ausência na fila: 1 ação com o texto (o UUID dela vira o id da ausência) + 1 ação por foto, que só sobe depois. */
+    function enfileirarAusencia(dados, arquivos) {
+        var id = uuid();
+        return enfileirar('ausencia_registrar', dados, id).then(function () {
+            return arquivos.slice(0, 5).reduce(function (p, arq) {
+                return p.then(function () { return reduzirFoto(arq); }).then(function (r) {
+                    var aid = uuid();
+                    return dbPut('fotos', { uuid: aid, blob: r.blob, nome: r.nome }).then(function () { return enfileirar('ausencia_anexo', { ausencia_id: id }, aid); });
+                });
+            }, Promise.resolve());
+        });
+    }
+    function ligarAusencias() {
+        var form = document.querySelector('form[data-colab-ausencia]');
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                if (navigator.onLine) { return; }
+                e.preventDefault();
+                var fd = new FormData(form), d = {};
+                ['type', 'start_date', 'end_date', 'reason', 'cid_code', 'details'].forEach(function (k) { d[k] = String(fd.get(k) || '').trim(); });
+                var erro = validaAusencia(d), caixa = document.getElementById('aus-erro');
+                if (erro) { caixa.textContent = erro; caixa.hidden = false; var b = form.querySelector('button[type=submit]'); b.disabled = false; return; }
+                var arqs = fd.getAll('anexos[]').filter(function (a) { return a && a.size; });
+                form.querySelector('button[type=submit]').disabled = true;
+                enfileirarAusencia(d, arqs).then(function () {
+                    form.outerHTML = '<div class="co-card"><b>✔ Ausência salva neste aparelho</b><span class="co-sub">Ela será enviada ao RH sozinha quando houver internet.</span></div><a class="co-btn" href="' + BASE + 'ausencias">Ver minhas ausências</a>';
+                });
+            });
+        }
+        var lista = document.getElementById('aus-fila');
+        if (lista) {
+            dbAll('fila').then(function (f) {
+                var pend = f.filter(function (a) { return a.tipo === 'ausencia_registrar' && a.estado !== 'erro'; });
+                lista.innerHTML = pend.map(function (a) {
+                    var d = a.dados;
+                    return '<div class="co-card"><b>' + dataBR(d.start_date + 'T12:00') + (d.end_date !== d.start_date ? ' – ' + dataBR(d.end_date + 'T12:00') : '') + ' ' + badge('Aguardando envio', 'amber') + '</b><span class="co-sub">' + esc(AUS_TIPOS[d.type] || d.type) + (d.cid_code ? ' · CID ' + esc(d.cid_code.toUpperCase()) : '') + '</span><br><span>' + esc(d.reason) + '</span></div>';
+                }).join('');
+            });
+        }
+    }
+
     /* ---------- roteamento da tela offline ---------- */
     function renderizarOffline(root) {
         var rel = location.pathname.indexOf(BASE) === 0 ? location.pathname.slice(BASE.length) : location.pathname.replace(/^\//, '');
@@ -672,6 +741,7 @@
         if (app) { renderizarOffline(app).catch(function () {}); }
         atualizarBarra();
         marcarConcluidas();
+        ligarAusencias();
         window.addEventListener('online', function () { atualizarBarra(); enviarFila().then(function () { return sincronizar(true); }); });
         window.addEventListener('offline', atualizarBarra);
         if (navigator.onLine) { enviarFila().then(function () { return sincronizar(false); }); }

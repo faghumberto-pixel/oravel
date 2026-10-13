@@ -11,7 +11,8 @@
     @else
         @if($errors->any())<div class="mt-4 rounded-2xl bg-red-500/15 p-4 text-sm font-bold text-red-400">@foreach($errors->all() as $e)<p>{{ $e }}</p>@endforeach</div>@endif
 
-        <form method="POST" action="{{ route('colab.ausencias.salvar') }}" enctype="multipart/form-data" class="mt-4 space-y-3 rounded-2xl bg-zinc-900 p-4" onsubmit="this.querySelector('button[type=submit]').disabled = true">
+        <p id="aus-erro" hidden class="mt-4 rounded-2xl bg-red-500/15 p-4 text-sm font-bold text-red-400"></p>
+        <form method="POST" action="{{ route('colab.ausencias.salvar') }}" enctype="multipart/form-data" class="mt-4 space-y-3 rounded-2xl bg-zinc-900 p-4" data-colab-ausencia onsubmit="this.querySelector('button[type=submit]').disabled = true">
             @csrf
             <label class="block text-xs font-bold tracking-wider text-zinc-400">TIPO
                 <select name="type" id="aus-tipo" class="mt-1 min-h-[3rem] w-full rounded-xl bg-zinc-800 px-3 text-base text-white">

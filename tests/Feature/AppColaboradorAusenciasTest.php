@@ -12,6 +12,7 @@ use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 /** Faltas e ausências no app do colaborador: foto do atestado, CID, explicação e histórico. */
@@ -93,5 +94,69 @@ class AppColaboradorAusenciasTest extends TestCase
     public function test_aparece_no_inicio_sob_departamento_pessoal(): void
     {
         $this->celular()->actingAs($this->usuario())->get('/colaborador')->assertOk()->assertSee('Faltas e ausências');
+    }
+
+    private function acao(string $tipo, array $dados, ?string $uuid = null): array
+    {
+        return ['uuid' => $uuid ?? (string) Str::uuid(), 'tipo' => $tipo, 'dados' => $dados, 'criado_em' => now()->toDateTimeString()];
+    }
+
+    public function test_fila_offline_registra_ausencia_uma_vez_e_anexa_a_foto(): void
+    {
+        Storage::fake('local');
+        $u = $this->usuario();
+        $id = (string) Str::uuid();
+        $dados = ['type' => 'atestado_medico', 'start_date' => now()->subDay()->toDateString(), 'end_date' => now()->toDateString(), 'reason' => 'Dor nas costas', 'cid_code' => 'M54.5', 'details' => 'Ficou sem andar.'];
+
+        $envia = fn (array $acao, $arquivo = null) => $this->celular()->actingAs($u)->post('/colaborador/api/fila', $arquivo ? ['acao' => json_encode($acao), 'arquivo' => $arquivo] : ['acoes' => [$acao]], ['Accept' => 'application/json']);
+
+        $envia($this->acao('ausencia_registrar', $dados, $id))->assertOk()->assertJsonPath('resultados.0.status', 'ok');
+        $envia($this->acao('ausencia_registrar', $dados, $id))->assertOk()->assertJsonPath('resultados.0.status', 'ok'); // reenvio
+        $envia($this->acao('ausencia_anexo', ['ausencia_id' => $id]), UploadedFile::fake()->image('atestado.jpg'))->assertJsonPath('resultados.0.status', 'ok');
+
+        $this->assertSame(1, Absence::count());
+        $a = Absence::findOrFail($id);
+        $this->assertSame(['M545', 'pendente', 2], [$a->cid_code, $a->status, $a->days]);
+        $this->assertCount(1, $a->attachments);
+        Storage::disk('local')->assertExists($a->attachments[0]);
+    }
+
+    public function test_fila_offline_recusa_ausencia_invalida_e_anexo_de_ausencia_inexistente(): void
+    {
+        Storage::fake('local');
+        $u = $this->usuario();
+
+        $r = $this->celular()->actingAs($u)->postJson('/colaborador/api/fila', ['acoes' => [
+            $this->acao('ausencia_registrar', ['type' => 'atestado_medico', 'start_date' => now()->toDateString(), 'end_date' => now()->toDateString(), 'reason' => 'x', 'cid_code' => 'zzz']),
+        ]])->assertOk();
+        $this->assertSame('erro', $r->json('resultados.0.status'));
+        $this->assertStringContainsString('CID inválido', $r->json('resultados.0.mensagem'));
+
+        $r = $this->celular()->actingAs($u)->post('/colaborador/api/fila', ['acao' => json_encode($this->acao('ausencia_anexo', ['ausencia_id' => (string) Str::uuid()])), 'arquivo' => UploadedFile::fake()->image('a.jpg')], ['Accept' => 'application/json'])->assertOk();
+        $this->assertSame('erro', $r->json('resultados.0.status'));
+        $this->assertSame(0, Absence::count());
+    }
+
+    public function test_anexo_offline_nao_vai_para_ausencia_de_outro_colaborador(): void
+    {
+        Storage::fake('local');
+        $u = $this->usuario();
+        $outro = $this->usuario($u->tenant, 'Marcos');
+        $alheia = Absence::create(['tenant_id' => $u->tenant_id, 'employee_id' => Employee::where('user_id', $outro->id)->value('id'), 'type' => 'outro', 'start_date' => now(), 'end_date' => now(), 'reason' => 'x']);
+
+        $r = $this->celular()->actingAs($u)->post('/colaborador/api/fila', ['acao' => json_encode($this->acao('ausencia_anexo', ['ausencia_id' => $alheia->id])), 'arquivo' => UploadedFile::fake()->image('a.jpg')], ['Accept' => 'application/json']);
+        $this->assertSame('erro', $r->json('resultados.0.status'));
+        $this->assertNull($alheia->fresh()->attachments);
+    }
+
+    public function test_telas_oferecem_o_envio_offline_e_o_js_conhece_os_tipos(): void
+    {
+        $u = $this->usuario();
+        $this->celular()->actingAs($u)->get('/colaborador/ausencias/nova')->assertOk()->assertSee('data-colab-ausencia', false)->assertSee('aus-erro', false);
+        $this->celular()->actingAs($u)->get('/colaborador/ausencias')->assertOk()->assertSee('aus-fila', false);
+        $this->celular()->actingAs($u)->get('/colaborador')->assertOk()->assertSee('ausencias\/nova', false);
+        $js = file_get_contents(public_path('js/colab-offline.js'));
+        $this->assertStringContainsString("'ausencia_registrar'", $js);
+        $this->assertStringContainsString("'ausencia_anexo'", $js);
     }
 }

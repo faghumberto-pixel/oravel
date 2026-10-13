@@ -79,6 +79,7 @@
     @php
         $telasParaGuardar = collect($grupos)->flatten(1)->map(fn ($m) => route($m['rota'], [], false))
             ->push(route('colab.notificacoes', [], false))->push(route('colab.offline', [], false))
+            ->when(collect($grupos)->flatten(1)->contains('chave', 'ausencias'), fn ($c) => $c->push(route('colab.ausencias.nova', [], false)))
             ->when(collect($grupos)->flatten(1)->contains('chave', 'logistica'), fn ($c) => $c->push(route('colab.logistica.vencimentos', [], false))->push(route('colab.logistica.km-rodado', [], false)))
             ->values()->all();
     @endphp

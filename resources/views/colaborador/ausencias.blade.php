@@ -18,6 +18,7 @@
         <p class="mt-4 text-xs text-zinc-500">Dias de ausência em {{ now()->year }} (sem contar as rejeitadas): <span class="font-bold text-zinc-300">{{ $diasNoAno }}</span></p>
 
         <section class="mt-4 space-y-3">
+            <div id="aus-fila"></div>
             @forelse($faltas as $f)
                 @php $cor = match($f->status) { 'aprovado' => 'text-emerald-400 bg-emerald-500/15', 'rejeitado' => 'text-red-400 bg-red-500/15', default => 'text-amber-400 bg-amber-500/15' }; @endphp
                 <div class="rounded-2xl bg-zinc-900 p-4">

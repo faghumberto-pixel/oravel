@@ -2,8 +2,10 @@
 
 namespace App\Services\Colaborador;
 
+use App\Models\Absence;
 use App\Models\Asset;
 use App\Models\ColabFilaProcessada;
+use App\Models\Employee;
 use App\Models\FrotaAbastecimento;
 use App\Models\FrotaLeituraOdometro;
 use App\Models\FrotaSaidaVeiculo;
@@ -32,6 +34,9 @@ class FilaOffline
     /** Ações de Logística (por veículo, em vez de por OS). */
     private const TIPOS_FROTA = ['veiculo_saida', 'veiculo_entrada', 'abastecimento', 'km_marcar'];
 
+    /** Faltas/ausências: o registro (texto) e cada foto do atestado vão como ações separadas, na ordem. */
+    private const TIPOS_AUSENCIA = ['ausencia_registrar', 'ausencia_anexo'];
+
     private const NIVEIS_COMBUSTIVEL = ['0', '25', '50', '75', '100'];
 
     /** @return array{uuid: string, status: string, mensagem: ?string} */
@@ -49,7 +54,7 @@ class FilaOffline
         }
 
         try {
-            [$status, $mensagem] = DB::transaction(fn () => $this->aplicar($user, $tipo, (array) ($acao['dados'] ?? []), $arquivo, $acao['criado_em'] ?? null));
+            [$status, $mensagem] = DB::transaction(fn () => $this->aplicar($user, $tipo, (array) ($acao['dados'] ?? []), $arquivo, $acao['criado_em'] ?? null, $uuid));
         } catch (\Throwable $e) {
             report($e);
             [$status, $mensagem] = ['erro', 'Falha ao aplicar no servidor.'];
@@ -64,8 +69,12 @@ class FilaOffline
     }
 
     /** @return array{0: string, 1: ?string} [status ok|ignorada|erro, mensagem] */
-    private function aplicar(User $user, string $tipo, array $d, ?UploadedFile $arquivo, ?string $criadoEm): array
+    private function aplicar(User $user, string $tipo, array $d, ?UploadedFile $arquivo, ?string $criadoEm, string $acaoUuid = ''): array
     {
+        if (in_array($tipo, self::TIPOS_AUSENCIA, true)) {
+            return $this->aplicarAusencia($user, $tipo, $d, $arquivo, $acaoUuid);
+        }
+
         if (in_array($tipo, self::TIPOS_FROTA, true)) {
             return $this->aplicarFrota($user, $tipo, $d);
         }
@@ -147,6 +156,49 @@ class FilaOffline
         }
 
         FrotaLeituraOdometro::registrar($ativo, (int) $d['odometro'], 'manual', null, $d['justificativa'] ?? null, $user->id, $lidoEm);
+
+        return ['ok', null];
+    }
+
+    /** @return array{0: string, 1: ?string} */
+    private function aplicarAusencia(User $user, string $tipo, array $d, ?UploadedFile $arquivo, string $acaoUuid): array
+    {
+        if (! Gate::forUser($user)->allows('create', Absence::class)) {
+            return ['erro', 'Sem permissão para registrar faltas.'];
+        }
+
+        $colaborador = Employee::where('user_id', $user->id)->first();
+        if (! $colaborador) {
+            return ['erro', 'Nenhum colaborador do Departamento Pessoal vinculado a este usuário.'];
+        }
+
+        $servico = app(AusenciaService::class);
+
+        if ($tipo === 'ausencia_registrar') {
+            try {
+                $servico->registrar($colaborador, $d, [], $acaoUuid);
+            } catch (ValidationException $e) {
+                return ['erro', collect($e->errors())->flatten()->first()];
+            }
+
+            return ['ok', null];
+        }
+
+        $falta = Absence::where('employee_id', $colaborador->id)->find($d['ausencia_id'] ?? null);
+        if (! $falta) {
+            return ['erro', 'A ausência deste anexo não foi registrada.'];
+        }
+
+        $mime = (string) $arquivo?->getMimeType();
+        if (! $arquivo || ! $arquivo->isValid() || ! (str_starts_with($mime, 'image/') || $mime === 'application/pdf') || $arquivo->getSize() > 8 * 1024 * 1024) {
+            return ['erro', 'Arquivo do atestado inválido.'];
+        }
+
+        if (count($falta->attachmentPaths()) >= AusenciaService::MAX_ANEXOS) {
+            return ['erro', 'Limite de anexos da ausência atingido.'];
+        }
+
+        $servico->anexar($falta, $arquivo);
 
         return ['ok', null];
     }
