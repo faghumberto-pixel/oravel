@@ -2,6 +2,7 @@
 
 namespace App\Support\Colaborador;
 
+use App\Models\Absence;
 use App\Models\Asset;
 use App\Models\FrotaSaidaVeiculo;
 use App\Models\MaintenanceOrder;
@@ -89,6 +90,16 @@ class Modulos
                 'icone' => '⏱️',
                 'rota' => 'colab.ponto',
                 'pode' => fn (User $u) => $u->can('viewAny', TimeClock::class),
+            ],
+            [
+                'chave' => 'ausencias',
+                'area' => 'Departamento Pessoal',
+                'perfil' => AppProfile::COLABORADOR,
+                'titulo' => 'Faltas e ausências',
+                'descricao' => 'Comunique uma falta com foto do atestado e CID',
+                'icone' => '🩺',
+                'rota' => 'colab.ausencias',
+                'pode' => fn (User $u) => $u->can('viewAny', Absence::class),
             ],
         ];
     }

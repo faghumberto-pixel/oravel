@@ -10,7 +10,6 @@ use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class AbsenceResource extends BaseResource
 {
@@ -37,9 +36,12 @@ class AbsenceResource extends BaseResource
                 ->searchable()
                 ->preload()
                 ->required(),
+            Forms\Components\Select::make('type')->label('Tipo')->options(Absence::typeLabels())->required()->native(false),
+            Forms\Components\TextInput::make('cid_code')->label('CID')->maxLength(10)->placeholder('Ex.: J11'),
             Forms\Components\DatePicker::make('start_date')->label('De')->required()->native(false),
             Forms\Components\DatePicker::make('end_date')->label('Até')->required()->native(false),
             Forms\Components\TextInput::make('reason')->label('Motivo')->required()->maxLength(191)->columnSpanFull(),
+            Forms\Components\Textarea::make('details')->label('Explicação do colaborador')->rows(3)->columnSpanFull(),
             Forms\Components\Select::make('status')
                 ->label('Status')
                 ->options(Absence::statusLabels())
@@ -54,13 +56,16 @@ class AbsenceResource extends BaseResource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('employee.name')->label('Colaborador')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('type')->label('Tipo')->formatStateUsing(fn (string $state) => Absence::typeLabels()[$state] ?? $state)->toggleable(),
                 Tables\Columns\TextColumn::make('start_date')->label('De')->date('d/m/Y')->sortable(),
                 Tables\Columns\TextColumn::make('end_date')->label('Até')->date('d/m/Y'),
-                Tables\Columns\TextColumn::make('reason')->label('Motivo')->limit(40),
+                Tables\Columns\TextColumn::make('days')->label('Dias')->state(fn (Absence $r) => $r->days),
+                Tables\Columns\TextColumn::make('cid_code')->label('CID')->placeholder('—')->searchable(),
+                Tables\Columns\TextColumn::make('reason')->label('Motivo')->limit(40)->tooltip(fn (Absence $r) => $r->details),
                 Tables\Columns\IconColumn::make('attachment_path')
                     ->label('Atestado')
                     ->boolean()
-                    ->state(fn (Absence $record) => filled($record->attachment_path)),
+                    ->state(fn (Absence $record) => $record->attachmentPaths() !== []),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
@@ -75,15 +80,17 @@ class AbsenceResource extends BaseResource
             ->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('status')->label('Status')->options(Absence::statusLabels()),
+                Tables\Filters\SelectFilter::make('type')->label('Tipo')->options(Absence::typeLabels()),
+                Tables\Filters\SelectFilter::make('employee_id')->label('Colaborador')->relationship('employee', 'name')->searchable()->preload(),
             ])
             ->actions([
-                Tables\Actions\Action::make('baixarAtestado')
-                    ->label('Ver atestado')
+                Tables\Actions\ActionGroup::make(collect(range(0, 4))->map(fn (int $i) => Tables\Actions\Action::make("anexo{$i}")
+                    ->label('Ver anexo '.($i + 1))
                     ->icon('heroicon-o-paper-clip')
-                    ->color('gray')
-                    ->visible(fn (Absence $record) => filled($record->attachment_path))
-                    ->url(fn (Absence $record) => Storage::disk('local')->url($record->attachment_path))
-                    ->openUrlInNewTab(),
+                    ->visible(fn (Absence $record) => isset($record->attachmentPaths()[$i]))
+                    ->url(fn (Absence $record) => route('ausencias.anexo', [$record->id, $i]))
+                    ->openUrlInNewTab())->all())->label('Atestado')->icon('heroicon-o-paper-clip')->color('gray')->button()
+                    ->visible(fn (Absence $record) => $record->attachmentPaths() !== []),
                 Tables\Actions\Action::make('aprovar')
                     ->label('Aprovar')
                     ->icon('heroicon-o-check-circle')

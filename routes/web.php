@@ -25,6 +25,7 @@ use App\Http\Controllers\PreventiveMaintenanceKanbanPrintController;
 use App\Http\Controllers\PrintQrController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropostaComercialApprovalController;
+use App\Http\Controllers\ColaboradorAusenciasController;
 use App\Http\Controllers\PropostaComercialBatchPrintController;
 use App\Http\Controllers\PropostaComercialReportController;
 use App\Http\Controllers\PublicSignatureController;
@@ -199,6 +200,12 @@ Route::get('/cliente/login-magico/{token}', [ClientMagicLinkController::class, '
 // travava ate' o proprio super admin (humberto@oravel.com.br, sem
 // email_verified_at em PROD) fora do relatorio, "erro pedindo verificar
 // email" -- reportado pelo usuario, achado em PROD.
+// Anexo de ausencia (atestado) para o RH no painel: so quem pode editar faltas ou o proprio colaborador.
+Route::get('/admin/ausencias/{id}/anexo/{indice}', [ColaboradorAusenciasController::class, 'anexo'])
+    ->whereNumber('indice')
+    ->name('ausencias.anexo')
+    ->middleware(['auth']);
+
 Route::get('/admin/app/maintenance-report', [MaintenanceReportController::class, 'show'])
     ->name('maintenance.report')
     ->middleware(['auth']);

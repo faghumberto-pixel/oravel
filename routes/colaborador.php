@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ColaboradorAusenciasController;
 use App\Http\Controllers\ColaboradorController;
 use App\Http\Controllers\ColaboradorLogisticaController;
 use App\Http\Controllers\ColaboradorNotificacoesController;
@@ -54,6 +55,12 @@ $grupo->middleware(['web', 'colab.mobile'])->name('colab.')->group(function () {
         Route::get('/os/{id}', [ColaboradorOsController::class, 'mostrar'])->name('os');
         Route::get('/escanear', [ColaboradorController::class, 'escanear'])->name('escanear');
         Route::get('/ponto', [ColaboradorController::class, 'ponto'])->name('ponto');
+
+        // Faltas e ausências: comunicar (foto do atestado, CID, explicação) e ver o próprio histórico.
+        Route::get('/ausencias', [ColaboradorAusenciasController::class, 'index'])->name('ausencias');
+        Route::get('/ausencias/nova', [ColaboradorAusenciasController::class, 'nova'])->name('ausencias.nova');
+        Route::post('/ausencias', [ColaboradorAusenciasController::class, 'salvar'])->name('ausencias.salvar');
+        Route::get('/ausencias/{id}/anexo/{indice}', [ColaboradorAusenciasController::class, 'anexo'])->whereNumber('indice')->name('ausencias.anexo');
 
         Route::get('/notificacoes', [ColaboradorNotificacoesController::class, 'index'])->name('notificacoes');
         Route::post('/notificacoes/limpar', [ColaboradorNotificacoesController::class, 'limpar'])->name('notificacoes.limpar');
