@@ -6,6 +6,7 @@ use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -43,7 +44,7 @@ class FrotaLeituraOdometro extends Model
      *
      * @throws ValidationException
      */
-    public static function registrar(Asset $ativo, int $odometro, string $origem = 'manual', ?string $origemId = null, ?string $justificativa = null, ?string $usuarioId = null): self
+    public static function registrar(Asset $ativo, int $odometro, string $origem = 'manual', ?string $origemId = null, ?string $justificativa = null, ?string $usuarioId = null, ?Carbon $lidoEm = null): self
     {
         $anterior = (int) floor((float) $ativo->odometro_atual);
 
@@ -61,7 +62,8 @@ class FrotaLeituraOdometro extends Model
             'origem_id' => $origemId,
             'justificativa' => $odometro < $anterior ? $justificativa : null,
             'registrado_por' => $usuarioId ?? auth()->id(),
-            'lido_em' => now(),
+            // Quem registra offline informa a hora em que leu o painel (a hora do envio embaralharia a ordem das leituras).
+            'lido_em' => $lidoEm ?? now(),
         ]);
 
         // Atualiza o ativo em memória sem sujá-lo (o banco já foi atualizado no evento created).

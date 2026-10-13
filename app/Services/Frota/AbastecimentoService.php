@@ -65,7 +65,7 @@ class AbastecimentoService
             ]);
 
             // Km menor que o último só com justificativa (recusa desfaz tudo); depois baixa o combustível do tanque próprio.
-            FrotaLeituraOdometro::registrar($ativo, $odometro, 'abastecimento', $registro->id, $dados['justificativa_odometro'] ?? null, $usuario?->id);
+            FrotaLeituraOdometro::registrar($ativo, $odometro, 'abastecimento', $registro->id, $dados['justificativa_odometro'] ?? null, $usuario?->id, $quando);
             app(EstoqueFrotaService::class)->saida($registro, $litros, 'Abastecimento — '.($ativo->placa ?: $ativo->name), 'litros');
 
             return $registro;

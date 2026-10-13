@@ -2,15 +2,23 @@
 
 namespace App\Services\Colaborador;
 
+use App\Models\Asset;
 use App\Models\ColabFilaProcessada;
+use App\Models\FrotaAbastecimento;
+use App\Models\FrotaLeituraOdometro;
+use App\Models\FrotaSaidaVeiculo;
 use App\Models\MaintenanceOrder;
 use App\Models\User;
+use App\Services\Frota\AbastecimentoService;
+use App\Services\Frota\SaidaVeiculoService;
 use App\Support\Colaborador\SituacaoOs;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 /**
  * Aplica no servidor as ações que o celular juntou offline. Cada ação tem um UUID criado no aparelho: reenviar a mesma
@@ -20,6 +28,9 @@ use Illuminate\Support\Str;
 class FilaOffline
 {
     private const STATUS_CHECKLIST = ['conforme', 'nao_conforme', 'nao_aplicavel'];
+
+    /** Ações de Logística (por veículo, em vez de por OS). */
+    private const TIPOS_FROTA = ['veiculo_saida', 'veiculo_entrada', 'abastecimento', 'km_marcar'];
 
     private const NIVEIS_COMBUSTIVEL = ['0', '25', '50', '75', '100'];
 
@@ -54,6 +65,93 @@ class FilaOffline
 
     /** @return array{0: string, 1: ?string} [status ok|ignorada|erro, mensagem] */
     private function aplicar(User $user, string $tipo, array $d, ?UploadedFile $arquivo, ?string $criadoEm): array
+    {
+        if (in_array($tipo, self::TIPOS_FROTA, true)) {
+            return $this->aplicarFrota($user, $tipo, $d);
+        }
+
+        return $this->aplicarOs($user, $tipo, $d, $arquivo, $criadoEm);
+    }
+
+    /**
+     * Logística: entrada/saída, abastecimento e marcar km vindos do celular. Usa os mesmos serviços das telas online (mesmas regras);
+     * a data/hora é a do evento no aparelho (não a do envio), para a ordem dos km e dos abastecimentos ficar certa.
+     *
+     * @return array{0: string, 1: ?string}
+     */
+    private function aplicarFrota(User $user, string $tipo, array $d): array
+    {
+        $ativo = Asset::query()->find($d['ativo_id'] ?? null);
+        if (! $ativo || ! $ativo->isVehicle()) {
+            return ['erro', 'Veículo não encontrado.'];
+        }
+
+        $modelo = $tipo === 'abastecimento' ? FrotaAbastecimento::class : FrotaSaidaVeiculo::class;
+        if (! Gate::forUser($user)->allows('create', $modelo)) {
+            return ['erro', 'Sem permissão para esta função de Logística.'];
+        }
+
+        try {
+            return match ($tipo) {
+                'veiculo_saida' => $this->frotaSaida($user, $ativo, $d),
+                'veiculo_entrada' => $this->frotaEntrada($user, $ativo, $d),
+                'abastecimento' => $this->frotaAbastecimento($user, $ativo, $d),
+                default => $this->frotaKm($user, $ativo, $d),
+            };
+        } catch (ValidationException $e) {
+            return ['erro', collect($e->errors())->flatten()->first()];
+        }
+    }
+
+    private function frotaSaida(User $user, Asset $ativo, array $d): array
+    {
+        app(SaidaVeiculoService::class)->registrarSaida($ativo, Arr::only($d, [
+            'finalidade', 'motorista_id', 'equipamento_id', 'origem_tipo', 'origem_cliente_id', 'origem', 'destino_tipo', 'cliente_id', 'destino',
+            'percurso_id', 'motivo', 'saida_em', 'odometro', 'combustivel', 'observacoes', 'justificativa_odometro',
+        ]), $user);
+
+        return ['ok', null];
+    }
+
+    private function frotaEntrada(User $user, Asset $ativo, array $d): array
+    {
+        $aberta = $ativo->saidaAberta();
+        if (! $aberta) {
+            return ['ignorada', 'Este veículo não estava fora: a entrada já tinha sido registrada.'];
+        }
+
+        app(SaidaVeiculoService::class)->registrarEntrada($aberta, Arr::only($d, ['retorno_em', 'odometro', 'combustivel', 'observacoes', 'justificativa_odometro']), $user);
+
+        return ['ok', null];
+    }
+
+    private function frotaAbastecimento(User $user, Asset $ativo, array $d): array
+    {
+        app(AbastecimentoService::class)->registrar($ativo, Arr::only($d, [
+            'abastecido_em', 'odometro', 'combustivel', 'litros', 'valor_total', 'tanque_cheio', 'origem', 'posto', 'nota_fiscal', 'motorista_id',
+            'observacoes', 'justificativa_odometro',
+        ]), $user);
+
+        return ['ok', null];
+    }
+
+    private function frotaKm(User $user, Asset $ativo, array $d): array
+    {
+        if (! is_numeric($d['odometro'] ?? null) || (int) $d['odometro'] < 0) {
+            return ['erro', 'Km inválido.'];
+        }
+
+        $lidoEm = filled($d['lido_em'] ?? null) ? Carbon::parse($d['lido_em']) : null;
+        if ($lidoEm && $lidoEm->gt(now()->addMinutes(5))) {
+            return ['erro', 'A data da leitura não pode estar no futuro.'];
+        }
+
+        FrotaLeituraOdometro::registrar($ativo, (int) $d['odometro'], 'manual', null, $d['justificativa'] ?? null, $user->id, $lidoEm);
+
+        return ['ok', null];
+    }
+
+    private function aplicarOs(User $user, string $tipo, array $d, ?UploadedFile $arquivo, ?string $criadoEm): array
     {
         $os = MaintenanceOrder::query()->find($d['os_id'] ?? null);
 

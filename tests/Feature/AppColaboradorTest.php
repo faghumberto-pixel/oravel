@@ -209,4 +209,18 @@ class AppColaboradorTest extends TestCase
 
         $this->assertSame([], $colisoes, 'Rotas do app colidem com arquivos de public/: '.implode(', ', $colisoes));
     }
+
+    public function test_inicio_separa_as_funcoes_por_area_na_ordem_departamento_pessoal_logistica_manutencao_ativos(): void
+    {
+        $user = $this->usuario(true, [], ['tabela_assets', 'tabela_time_clocks', 'tabela_maintenance_orders', 'tabela_frota_saidas_veiculo', 'modulo_app_colaborador']);
+
+        $html = $this->celular()->actingAs($user)->get('/colaborador')->assertOk()->getContent();
+
+        $posicoes = collect(['Departamento Pessoal', 'Logística', 'Manutenção', 'Ativos'])->map(fn ($area) => mb_stripos($html, '>'.$area.'<'));
+        $this->assertNotContains(false, $posicoes->all(), 'todas as áreas aparecem como título');
+        $this->assertSame($posicoes->sort()->values()->all(), $posicoes->values()->all(), 'ordem das áreas no início');
+        $this->assertGreaterThan(mb_stripos($html, '>Departamento Pessoal<'), mb_stripos($html, 'Registro de ponto'), 'o ponto fica sob Departamento Pessoal');
+        $this->assertLessThan(mb_stripos($html, '>Logística<'), mb_stripos($html, 'Registro de ponto'));
+        $this->assertStringNotContainsString('>Geral<', $html);
+    }
 }

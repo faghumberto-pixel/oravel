@@ -78,7 +78,7 @@
             if (!forcar && em && Date.now() - em < 10 * 60 * 1000) { return false; }
             return fetch(BASE + 'api/pacote', { credentials: 'same-origin', headers: { Accept: 'application/json' } }).then(function (r) {
                 if (!r.ok) { return false; }
-                return r.json().then(function (p) { return guardarPacote(p).then(function () { return true; }); });
+                return r.json().then(function (p) { return guardarPacote(p).then(reaplicarFrota).then(function () { return true; }); });
             });
         }).catch(function () { return false; }).then(function (r) { sincronizando = false; if (r) { window.dispatchEvent(new CustomEvent('colab:pacote')); } return r; });
     }
@@ -92,6 +92,7 @@
                 (p.minhas || []).forEach(function (o) { t.objectStore('minhas').put(o); });
                 t.objectStore('kv').put({ k: 'pacote_em', v: Date.now() });
                 t.objectStore('kv').put({ k: 'usuario_id', v: p.usuario_id });
+                t.objectStore('kv').put({ k: 'frota', v: p.frota || null });
                 t.oncomplete = ok; t.onerror = function () { erro(t.error); }; t.onabort = function () { erro(t.error); };
             });
         });
@@ -399,6 +400,225 @@
         });
     }
 
+    /* ---------- Logística offline (entrada/saída, abastecimento, marcar km) ---------- */
+    var FROTA_TIPOS = ['veiculo_saida', 'veiculo_entrada', 'abastecimento', 'km_marcar'];
+    var COMBUSTIVEL_NIVEL = [['', '—'], ['vazio', 'Reserva'], ['1/4', '1/4'], ['1/2', '1/2'], ['3/4', '3/4'], ['cheio', 'Cheio']];
+    var frotaGet = function () { return kvGet('frota'); };
+    var frotaSet = function (f) { return kvSet('frota', f); };
+
+    function mesmoLocal(x, y) {
+        if (x.tipo !== y.tipo) { return false; }
+        if (x.tipo === 'empresa') { return true; }
+        if (x.tipo === 'cliente') { return !!x.cliente_id && x.cliente_id === y.cliente_id; }
+        return !!x.texto && String(x.texto).trim().toLowerCase() === String(y.texto || '').trim().toLowerCase();
+    }
+    function percursoLiga(p, o, d) { return (mesmoLocal(p.a, o) && mesmoLocal(p.b, d)) || (mesmoLocal(p.b, o) && mesmoLocal(p.a, d)); }
+
+    /* O que o aparelho mostra DEPOIS de registrar offline (e de novo após cada download do pacote, enquanto a ação estiver na fila). */
+    function aplicarLocalFrota(f, acao) {
+        var d = acao.dados, ui = d.ui || {}, v = (f.veiculos || []).filter(function (x) { return x.id === d.ativo_id; })[0];
+        if (!v) { return; }
+        if (acao.tipo === 'veiculo_saida') {
+            v.aberta = { id: 'local-' + acao.uuid, saida_em: d.saida_em, trecho: ui.origem_rotulo + ' → ' + ui.destino_rotulo, destino: ui.destino_rotulo, destino_tipo: d.destino_tipo, cliente_id: d.cliente_id || null, condutor: ui.motorista_nome, motivo: d.motivo, odo_saida: Number(d.odometro), equipamento: ui.equipamento_nome || null };
+            v.odo = Number(d.odometro);
+        } else if (acao.tipo === 'veiculo_entrada') {
+            if (v.aberta) { v.local = { tipo: v.aberta.destino_tipo, cliente_id: v.aberta.cliente_id || null, rotulo: v.aberta.destino, texto: v.aberta.destino_tipo === 'outro' ? v.aberta.destino : null }; }
+            v.aberta = null; v.odo = Number(d.odometro);
+        } else { v.odo = Number(d.odometro); }
+    }
+    function reaplicarFrota() {
+        return Promise.all([frotaGet(), dbAll('fila')]).then(function (r) {
+            var f = r[0]; if (!f) { return; }
+            r[1].filter(function (a) { return a.estado === 'pendente' && FROTA_TIPOS.indexOf(a.tipo) >= 0; }).sort(function (a, b) { return a.seq - b.seq; }).forEach(function (a) { aplicarLocalFrota(f, a); });
+            return frotaSet(f);
+        });
+    }
+    function enfileirarFrota(tipo, dados) {
+        return frotaGet().then(function (f) {
+            var id = uuid();
+            if (f) { aplicarLocalFrota(f, { uuid: id, tipo: tipo, dados: dados }); }
+            return (f ? frotaSet(f) : Promise.resolve()).then(function () { return enfileirar(tipo, dados, id); });
+        });
+    }
+
+    function opts(pares, atual, vazio) {
+        return (vazio ? '<option value="">' + esc(vazio) + '</option>' : '') + pares.map(function (p) { return '<option value="' + esc(p[0]) + '"' + (String(atual) === String(p[0]) ? ' selected' : '') + '>' + esc(p[1]) + '</option>'; }).join('');
+    }
+    function mapaPares(m) { return Object.keys(m || {}).map(function (k) { return [k, m[k]]; }); }
+    function campo(rotulo, corpo) { return '<label class="co-lbl">' + rotulo + '</label>' + corpo; }
+    function dataLocalInput() { return agoraLocal().slice(0, 16).replace(' ', 'T'); }
+    function statusVeiculo(v) {
+        if (v.aberta) { return { txt: 'EM TRÂNSITO', cor: 'amber', sub: 'Em trânsito: ' + v.aberta.trecho }; }
+        if (v.local && v.local.tipo !== 'empresa') { return { txt: 'NO CLIENTE', cor: 'sky', sub: '📍 em ' + v.local.rotulo }; }
+        return { txt: 'NA BASE', cor: 'green', sub: '' };
+    }
+    function sucessoFrota(root, titulo, tipo) {
+        root.innerHTML = '<div class="co-wrap"><h1 class="co-h1">✔ ' + esc(titulo) + '</h1><p class="co-sub">Salvo neste aparelho. O envio ao servidor acontece sozinho quando houver internet.</p><a class="co-btn" href="' + BASE + 'logistica/' + tipo + '">Voltar</a><a class="co-btn alt" href="' + BASE + 'logistica">Logística</a></div><div class="co-pad"></div>';
+    }
+    function cabecalhoFrota(titulo, voltar) { return '<a class="co-sub" href="' + voltar + '">← Voltar</a><p class="co-sub" style="margin-top:.6rem">LOGÍSTICA · OFFLINE</p><h1 class="co-h1">' + esc(titulo) + '</h1>'; }
+
+    function telaFrotaLista(root, tipo, titulo) {
+        return frotaGet().then(function (f) {
+            if (!f || !f.veiculos) { root.innerHTML = semPacote(); return; }
+            function lista(q) {
+                var t = String(q || '').trim().toLowerCase(), p = normPlaca(q);
+                return f.veiculos.filter(function (v) { return !t || [v.pl, v.p, v.n].some(function (x) { return x && String(x).toLowerCase().indexOf(t) >= 0; }) || (p.length >= 3 && normPlaca(v.pl).indexOf(p) >= 0); }).slice(0, 40);
+            }
+            function pinta(q) {
+                root.querySelector('#fl-itens').innerHTML = lista(q).map(function (v) {
+                    var s = statusVeiculo(v);
+                    return '<a class="co-card" href="' + BASE + 'logistica/' + tipo + '/' + v.id + '"><b>' + esc(v.pl || v.n) + ' ' + badge(s.txt, s.cor) + '</b><span class="co-sub">' + esc(v.n) + (v.p ? ' · PAT ' + esc(v.p) : '') + ' · ' + Number(v.odo).toLocaleString('pt-BR') + ' km</span>' + (s.sub ? '<br><span class="co-sub">' + esc(s.sub) + '</span>' : '') + '</a>';
+                }).join('') || '<p class="co-sub" style="margin-top:.7rem">Nenhum veículo encontrado.</p>';
+            }
+            root.innerHTML = '<div class="co-wrap">' + cabecalhoFrota(titulo, BASE + 'logistica') + '<input class="co-in" id="fl-q" placeholder="Buscar por placa, patrimônio ou nome"><div id="fl-itens"></div></div><div class="co-pad"></div>';
+            root.querySelector('#fl-q').addEventListener('input', function (e) { pinta(e.target.value); });
+            pinta('');
+        });
+    }
+
+    function veiculoDe(f, id) { return (f.veiculos || []).filter(function (v) { return v.id === id; })[0]; }
+    function validaOdo(root, v, odo, just) {
+        if (odo === '' || isNaN(Number(odo)) || Number(odo) < 0) { return 'Informe o km do painel.'; }
+        if (Number(odo) < v.odo && !String(just || '').trim()) { return 'O km informado (' + odo + ') é menor que o último (' + v.odo + '). Confira ou informe a justificativa.'; }
+        return null;
+    }
+
+    function telaSaidaEntrada(root, id) {
+        return Promise.all([frotaGet(), dbAll('ativos')]).then(function (r) {
+            var f = r[0], ativos = r[1], v = f && veiculoDe(f, id);
+            if (!v) { root.innerHTML = semPacote(); return; }
+            var $ = function (i) { return root.querySelector('#' + i); }, msg = function (t) { $('x-msg').textContent = t || ''; };
+            var cab = '<div class="co-wrap">' + cabecalhoFrota('Entrada e saída', BASE + 'logistica/saida') + '<div class="co-card"><b>' + esc(v.pl || v.n) + '</b><span class="co-sub">' + esc(v.n) + ' · ' + Number(v.odo).toLocaleString('pt-BR') + ' km</span></div>';
+
+            if (v.aberta) {   /* ---- ENTRADA (chegada) ---- */
+                root.innerHTML = cab + '<div class="co-card"><b>Em trânsito desde ' + dataBR(v.aberta.saida_em) + '</b><span class="co-sub">Trecho: ' + esc(v.aberta.trecho) + '<br>' + esc(v.aberta.condutor || '') + ' · ' + esc(v.aberta.motivo || '') + (v.aberta.equipamento ? '<br>Equipamento levado: ' + esc(v.aberta.equipamento) : '') + '</span></div>' +
+                    campo('Data e hora da chegada', '<input class="co-in" id="e-data" type="datetime-local" value="' + dataLocalInput() + '">') +
+                    campo('Odômetro na chegada (km)', '<input class="co-in" id="e-odo" type="number" inputmode="numeric" value="' + v.odo + '">') +
+                    campo('Justificativa (só se o km for menor)', '<input class="co-in" id="e-just">') +
+                    campo('Combustível', '<select class="co-in" id="e-comb">' + opts(COMBUSTIVEL_NIVEL, '') + '</select>') +
+                    campo('Observações (avarias, ocorrências)', '<textarea class="co-in" id="e-obs"></textarea>') +
+                    '<button class="co-btn ok" id="e-ok">REGISTRAR ENTRADA</button><p class="co-sub" id="x-msg" style="color:#f87171;margin-top:.6rem"></p></div><div class="co-pad"></div>';
+                $('e-ok').addEventListener('click', function () {
+                    var odo = $('e-odo').value, erro = validaOdo(root, v, odo, $('e-just').value);
+                    if (erro) { msg(erro); return; }
+                    if (!$('e-data').value) { msg('Informe a data e a hora.'); return; }
+                    $('e-ok').disabled = true;
+                    enfileirarFrota('veiculo_entrada', { ativo_id: v.id, retorno_em: $('e-data').value, odometro: odo, combustivel: $('e-comb').value, observacoes: $('e-obs').value, justificativa_odometro: $('e-just').value }).then(function () { sucessoFrota(root, 'Entrada registrada', 'saida'); });
+                });
+                return;
+            }
+
+            /* ---- SAÍDA ---- */
+            var motoristas = (f.motoristas || []).map(function (m) { return [m.id, m.nome + (m.cnh_vencida ? ' (CNH vencida)' : '')]; });
+            var clientes = (f.clientes || []).map(function (c) { return [c.id, c.nome]; });
+            var local = v.local || { tipo: 'empresa' };
+            var tipos = [['empresa', 'Empresa'], ['cliente', 'Cliente'], ['outro', 'Outro local']];
+            var st = { eq: null };
+            function bloco(pref, titulo, tipo, cliente, texto) {
+                return '<div class="co-card"><b style="font-size:.75rem">' + titulo + '</b><select class="co-in" id="s-' + pref + 't" style="margin-top:.5rem">' + opts(tipos, tipo) + '</select>' +
+                    '<select class="co-in" id="s-' + pref + 'c" style="margin-top:.5rem">' + opts(clientes, cliente, 'Escolha o cliente') + '</select>' +
+                    '<input class="co-in" id="s-' + pref + 'x" placeholder="Nome do local" style="margin-top:.5rem" value="' + esc(texto || '') + '"></div>';
+            }
+            root.innerHTML = cab + (local.tipo !== 'empresa' ? '<p class="co-sub" style="margin-top:.7rem;color:#38bdf8">📍 Veículo está em: ' + esc(local.rotulo) + '</p>' : '') +
+                campo('Finalidade', '<select class="co-in" id="s-fin">' + opts(mapaPares(f.rotulos && f.rotulos.finalidades), 'visita_tecnica') + '</select>') +
+                campo('Motorista', '<select class="co-in" id="s-mot">' + opts(motoristas, v.titular ? v.titular.motorista_id : '', 'Escolha o motorista') + '</select>') +
+                bloco('o', 'SAINDO DE', local.tipo, local.cliente_id, local.texto) + bloco('d', 'INDO PARA', local.tipo === 'empresa' ? 'cliente' : 'empresa', '', '') +
+                '<div id="s-percbox"></div>' +
+                campo('Motivo', '<textarea class="co-in" id="s-motivo"></textarea>') +
+                campo('Equipamento que vai no veículo (se for)', '<div id="s-eq"></div>') +
+                campo('Data e hora da saída', '<input class="co-in" id="s-data" type="datetime-local" value="' + dataLocalInput() + '">') +
+                campo('Odômetro na saída (km)', '<input class="co-in" id="s-odo" type="number" inputmode="numeric" value="' + v.odo + '">') +
+                campo('Justificativa (só se o km for menor)', '<input class="co-in" id="s-just">') +
+                campo('Combustível', '<select class="co-in" id="s-comb">' + opts(COMBUSTIVEL_NIVEL, '') + '</select>') +
+                campo('Observações', '<textarea class="co-in" id="s-obs"></textarea>') +
+                '<button class="co-btn ok" id="s-ok">REGISTRAR SAÍDA</button><p class="co-sub" id="x-msg" style="color:#f87171;margin-top:.6rem"></p></div><div class="co-pad"></div>';
+
+            function lugar(pref) { var t = $('s-' + pref + 't').value; return { tipo: t, cliente_id: t === 'cliente' ? $('s-' + pref + 'c').value : null, texto: t === 'outro' ? $('s-' + pref + 'x').value : null }; }
+            function rotuloLugar(l) { return l.tipo === 'empresa' ? 'Empresa' : (l.tipo === 'cliente' ? ((clientes.filter(function (c) { return c[0] === l.cliente_id; })[0] || [0, 'Cliente'])[1]) : (l.texto || '')); }
+            function visivel() {
+                ['o', 'd'].forEach(function (p) { var t = $('s-' + p + 't').value; $('s-' + p + 'c').style.display = t === 'cliente' ? '' : 'none'; $('s-' + p + 'x').style.display = t === 'outro' ? '' : 'none'; });
+                var compat = (f.percursos || []).filter(function (p) { return percursoLiga(p, lugar('o'), lugar('d')); });
+                $('s-percbox').innerHTML = compat.length ? campo('Percurso (recebe o km da viagem)', '<select class="co-in" id="s-perc">' + opts(compat.map(function (p) { return [p.id, p.nome + (p.previsto ? ' · previsto ' + p.previsto + ' km' : '')]; }), '', compat.length === 1 ? 'Automático: ' + compat[0].nome : 'Escolha o percurso') + '</select>') : '';
+            }
+            function pintaEquip(lista) {
+                var eq = st.eq;
+                $('s-eq').innerHTML = eq ? '<div class="co-card" style="margin:0"><b>' + esc(eq.n) + '</b><span class="co-sub">PAT ' + esc(eq.p || '—') + '</span><button type="button" class="co-seg" id="s-eq-x" style="margin-top:.5rem">Remover</button></div>'
+                    : '<input class="co-in" id="s-eq-q" placeholder="Patrimônio, placa ou nome (vazio se não levar)">' + (lista || []).map(function (a) { return '<a class="co-card" href="#" data-eq="' + a.id + '"><b>' + esc(a.n) + '</b><span class="co-sub">PAT ' + esc(a.p || '—') + '</span></a>'; }).join('');
+                var x = $('s-eq-x'); if (x) { x.addEventListener('click', function () { st.eq = null; pintaEquip(); }); }
+                var q = $('s-eq-q'); if (q) { q.addEventListener('input', function (e) { buscarAtivos(e.target.value).then(function (r2) { var t = q.value; pintaEquip(r2.filter(function (a) { return !a.v && a.id !== v.id; }).slice(0, 6)); var q2 = $('s-eq-q'); q2.value = t; q2.focus(); }); }); }
+                root.querySelectorAll('[data-eq]').forEach(function (a) { a.addEventListener('click', function (ev) { ev.preventDefault(); st.eq = ativos.filter(function (x) { return x.id === a.getAttribute('data-eq'); })[0]; pintaEquip(); }); });
+            }
+            ['o', 'd'].forEach(function (p) { ['t', 'c', 'x'].forEach(function (s) { $('s-' + p + s).addEventListener('change', visivel); $('s-' + p + s).addEventListener('input', function () { if (s === 'x') { visivel(); } }); }); });
+            visivel(); pintaEquip();
+
+            $('s-ok').addEventListener('click', function () {
+                var o = lugar('o'), d = lugar('d'), odo = $('s-odo').value;
+                if (!$('s-mot').value) { msg('Escolha o motorista.'); return; }
+                if ((o.tipo === 'cliente' && !o.cliente_id) || (d.tipo === 'cliente' && !d.cliente_id)) { msg('Escolha o cliente.'); return; }
+                if ((o.tipo === 'outro' && !String(o.texto).trim()) || (d.tipo === 'outro' && !String(d.texto).trim())) { msg('Informe o nome do local.'); return; }
+                if (!$('s-motivo').value.trim()) { msg('Informe o motivo da saída.'); return; }
+                if (!$('s-data').value) { msg('Informe a data e a hora.'); return; }
+                var erro = validaOdo(root, v, odo, $('s-just').value); if (erro) { msg(erro); return; }
+                var perc = $('s-perc') ? $('s-perc').value : '', mot = motoristas.filter(function (m) { return m[0] === $('s-mot').value; })[0];
+                $('s-ok').disabled = true;
+                enfileirarFrota('veiculo_saida', {
+                    ativo_id: v.id, finalidade: $('s-fin').value, motorista_id: $('s-mot').value, equipamento_id: st.eq ? st.eq.id : null,
+                    origem_tipo: o.tipo, origem_cliente_id: o.cliente_id, origem: o.texto || '', destino_tipo: d.tipo, cliente_id: d.cliente_id, destino: d.texto || '',
+                    percurso_id: perc || null, motivo: $('s-motivo').value, saida_em: $('s-data').value, odometro: odo, combustivel: $('s-comb').value,
+                    observacoes: $('s-obs').value, justificativa_odometro: $('s-just').value,
+                    ui: { origem_rotulo: rotuloLugar(o), destino_rotulo: rotuloLugar(d), motorista_nome: mot ? mot[1] : '', equipamento_nome: st.eq ? st.eq.n : null },
+                }).then(function () { sucessoFrota(root, 'Saída registrada', 'saida'); });
+            });
+        });
+    }
+
+    function telaAbastecimento(root, id) {
+        return frotaGet().then(function (f) {
+            var v = f && veiculoDe(f, id); if (!v) { root.innerHTML = semPacote(); return; }
+            var $ = function (i) { return root.querySelector('#' + i); }, msg = function (t) { $('x-msg').textContent = t || ''; };
+            var motoristas = (f.motoristas || []).map(function (m) { return [m.id, m.nome]; });
+            var r = f.rotulos || {};
+            root.innerHTML = '<div class="co-wrap">' + cabecalhoFrota('Abastecimento', BASE + 'logistica/abastecimento') + '<div class="co-card"><b>' + esc(v.pl || v.n) + '</b><span class="co-sub">' + esc(v.n) + ' · ' + Number(v.odo).toLocaleString('pt-BR') + ' km</span></div>' +
+                campo('Data e hora', '<input class="co-in" id="a-data" type="datetime-local" value="' + dataLocalInput() + '">') +
+                campo('Odômetro no abastecimento (km)', '<input class="co-in" id="a-odo" type="number" inputmode="numeric" value="' + v.odo + '">') +
+                campo('Justificativa (só se o km for menor)', '<input class="co-in" id="a-just">') +
+                campo('Combustível', '<select class="co-in" id="a-comb">' + opts(mapaPares(r.combustiveis), 'diesel_s10') + '</select>') +
+                campo('Litros', '<input class="co-in" id="a-lit" type="number" inputmode="decimal" step="0.01">') +
+                campo('Valor total (R$)', '<input class="co-in" id="a-val" type="number" inputmode="decimal" step="0.01">') +
+                '<label class="co-lbl" style="display:flex;gap:.6rem;align-items:center"><input type="checkbox" id="a-cheio" checked style="width:1.2rem;height:1.2rem"> Encheu o tanque</label>' +
+                campo('Origem', '<select class="co-in" id="a-ori">' + opts(mapaPares(r.origens), 'externo') + '</select>') +
+                campo('Posto', '<input class="co-in" id="a-posto">') + campo('Nota fiscal / cupom', '<input class="co-in" id="a-nf">') +
+                campo('Motorista', '<select class="co-in" id="a-mot">' + opts(motoristas, v.titular ? v.titular.motorista_id : '', 'Não informar') + '</select>') +
+                campo('Observações', '<textarea class="co-in" id="a-obs"></textarea>') +
+                '<button class="co-btn ok" id="a-ok">REGISTRAR ABASTECIMENTO</button><p class="co-sub" id="x-msg" style="color:#f87171;margin-top:.6rem"></p></div><div class="co-pad"></div>';
+            $('a-ok').addEventListener('click', function () {
+                var erro = validaOdo(root, v, $('a-odo').value, $('a-just').value); if (erro) { msg(erro); return; }
+                if (!(Number($('a-lit').value) > 0)) { msg('Informe os litros abastecidos.'); return; }
+                if (!(Number($('a-val').value) > 0)) { msg('Informe o valor total.'); return; }
+                if (!$('a-data').value) { msg('Informe a data e a hora.'); return; }
+                $('a-ok').disabled = true;
+                enfileirarFrota('abastecimento', { ativo_id: v.id, abastecido_em: $('a-data').value, odometro: $('a-odo').value, combustivel: $('a-comb').value, litros: $('a-lit').value, valor_total: $('a-val').value, tanque_cheio: $('a-cheio').checked, origem: $('a-ori').value, posto: $('a-posto').value, nota_fiscal: $('a-nf').value, motorista_id: $('a-mot').value || null, observacoes: $('a-obs').value, justificativa_odometro: $('a-just').value })
+                    .then(function () { sucessoFrota(root, 'Abastecimento registrado', 'abastecimento'); });
+            });
+        });
+    }
+
+    function telaMarcarKm(root, id) {
+        return frotaGet().then(function (f) {
+            var v = f && veiculoDe(f, id); if (!v) { root.innerHTML = semPacote(); return; }
+            var $ = function (i) { return root.querySelector('#' + i); }, msg = function (t) { $('x-msg').textContent = t || ''; };
+            root.innerHTML = '<div class="co-wrap">' + cabecalhoFrota('Marcar km', BASE + 'logistica/km') + '<div class="co-card"><b>' + esc(v.pl || v.n) + '</b><span class="co-sub">' + esc(v.n) + ' · último km: ' + Number(v.odo).toLocaleString('pt-BR') + '</span></div>' +
+                campo('Km no painel agora', '<input class="co-in" id="k-odo" type="number" inputmode="numeric" value="' + v.odo + '" style="font-size:1.2rem;font-weight:700">') +
+                campo('Justificativa (só se o km for menor, ex.: painel trocado)', '<input class="co-in" id="k-just">') +
+                '<button class="co-btn ok" id="k-ok">MARCAR KM</button><p class="co-sub" id="x-msg" style="color:#f87171;margin-top:.6rem"></p></div><div class="co-pad"></div>';
+            $('k-ok').addEventListener('click', function () {
+                var erro = validaOdo(root, v, $('k-odo').value, $('k-just').value); if (erro) { msg(erro); return; }
+                $('k-ok').disabled = true;
+                enfileirarFrota('km_marcar', { ativo_id: v.id, odometro: $('k-odo').value, justificativa: $('k-just').value, lido_em: agoraLocal() }).then(function () { sucessoFrota(root, 'Km marcado', 'km'); });
+            });
+        });
+    }
+
     /* ---------- roteamento da tela offline ---------- */
     function renderizarOffline(root) {
         var rel = location.pathname.indexOf(BASE) === 0 ? location.pathname.slice(BASE.length) : location.pathname.replace(/^\//, '');
@@ -406,6 +626,13 @@
         var q = new URLSearchParams(location.search), m;
         var pintar = function (p) { return p.then(function (html) { if (html) { var est = document.getElementById('colab-estatico'); if (est) { est.style.display = 'none'; } root.innerHTML = html; } }); };
 
+        if ((m = rel.match(/^logistica\/(saida|abastecimento|km)(?:\/([^/]+))?$/))) {
+            var estatico = document.getElementById('colab-estatico'); if (estatico) { estatico.style.display = 'none'; }
+            var nomes = { saida: 'Entrada e saída', abastecimento: 'Abastecimento', km: 'Marcar km' };
+            if (!m[2]) { return telaFrotaLista(root, m[1], nomes[m[1]]); }
+            if (!UUID.test(m[2])) { return Promise.resolve(); }
+            return m[1] === 'saida' ? telaSaidaEntrada(root, m[2]) : (m[1] === 'abastecimento' ? telaAbastecimento(root, m[2]) : telaMarcarKm(root, m[2]));
+        }
         if ((m = rel.match(/^os\/([^/]+)\/executar$/)) && UUID.test(m[1])) { location.replace(BASE + 'os/' + m[1] + '/offline'); return Promise.resolve(); }
         if ((m = rel.match(/^os\/([^/]+)\/offline$/)) && UUID.test(m[1])) { var est = document.getElementById('colab-estatico'); if (est) { est.style.display = 'none'; } return telaExecucao(root, m[1]); }
         if ((m = rel.match(/^dossie\/([^/]+)$/)) && UUID.test(m[1])) { return pintar(telaDossie(m[1])); }

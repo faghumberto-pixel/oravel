@@ -24,12 +24,13 @@ class Modulos
         return $user->isSuperAdmin() || (bool) $user->tenant?->hasFeature(self::FEATURE);
     }
 
-    /** @return array<int, array{chave: string, perfil: string, titulo: string, descricao: string, icone: string, rota: string, pode: callable}> */
+    /** @return array<int, array{chave: string, area: string, perfil: string, titulo: string, descricao: string, icone: string, rota: string, pode: callable}> */
     public static function todos(): array
     {
         return [
             [
                 'chave' => 'logistica',
+                'area' => 'Logística',
                 'perfil' => AppProfile::COLABORADOR,
                 'titulo' => 'Logística',
                 'descricao' => 'Entrada e saída de veículos, com motivo e equipamento levado',
@@ -40,6 +41,7 @@ class Modulos
             ],
             [
                 'chave' => 'minhas_os',
+                'area' => 'Manutenção',
                 'perfil' => AppProfile::TECNICO,
                 'titulo' => 'Minhas ordens de serviço',
                 'descricao' => 'As OS atribuídas a você',
@@ -50,6 +52,7 @@ class Modulos
             ],
             [
                 'chave' => 'escanear',
+                'area' => 'Ativos',
                 'perfil' => AppProfile::TECNICO,
                 'titulo' => 'Ler QR do equipamento',
                 'descricao' => 'Aponte a câmera para a etiqueta do ativo',
@@ -59,6 +62,7 @@ class Modulos
             ],
             [
                 'chave' => 'dossie',
+                'area' => 'Ativos',
                 'perfil' => AppProfile::TECNICO,
                 'titulo' => 'Dossiê do equipamento',
                 'descricao' => 'Busque pelo patrimônio, TAG ou nome',
@@ -68,6 +72,7 @@ class Modulos
             ],
             [
                 'chave' => 'os',
+                'area' => 'Manutenção',
                 'perfil' => AppProfile::TECNICO,
                 'titulo' => 'OS do equipamento',
                 'descricao' => 'Veja e abra as OS pelo QR, patrimônio ou placa',
@@ -77,6 +82,7 @@ class Modulos
             ],
             [
                 'chave' => 'ponto',
+                'area' => 'Departamento Pessoal',
                 'perfil' => AppProfile::COLABORADOR,
                 'titulo' => 'Registro de ponto',
                 'descricao' => 'Entrada, saída e intervalos',
@@ -89,7 +95,8 @@ class Modulos
 
     private const NIVEL = [AppProfile::COLABORADOR => 0, AppProfile::TECNICO => 1, AppProfile::ADMIN => 2];
 
-    public const GRUPOS = [AppProfile::COLABORADOR => 'Geral', AppProfile::TECNICO => 'Técnico', AppProfile::ADMIN => 'Gestão'];
+    /** Seções da tela inicial do app, na ordem em que aparecem (a mesma ideia dos menus do painel). */
+    public const AREAS = ['Departamento Pessoal', 'Logística', 'Manutenção', 'Ativos'];
 
     /** @return array<int, array<string, mixed>> só o que o perfil do usuário alcança e a permissão dele permite */
     public static function para(User $user): array
@@ -102,14 +109,15 @@ class Modulos
         ));
     }
 
-    /** @return array<string, array<int, array<string, mixed>>> módulos agrupados por seção (Geral / Técnico / Gestão) */
+    /** @return array<string, array<int, array<string, mixed>>> funções agrupadas por área (Departamento Pessoal, Logística, Manutenção, Ativos) */
     public static function agrupados(User $user): array
     {
-        $grupos = [];
+        $porArea = [];
         foreach (self::para($user) as $modulo) {
-            $grupos[self::GRUPOS[$modulo['perfil']]][] = $modulo;
+            $porArea[$modulo['area']][] = $modulo;
         }
 
-        return $grupos;
+        // Na ordem das áreas; quem não tem nenhuma função numa área não vê o título dela.
+        return collect(self::AREAS)->filter(fn ($a) => isset($porArea[$a]))->mapWithKeys(fn ($a) => [$a => $porArea[$a]])->all();
     }
 }

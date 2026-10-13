@@ -11,7 +11,7 @@ namespace App\Support\Colaborador;
  */
 class ServiceWorker
 {
-    public const VERSAO = 'v2';
+    public const VERSAO = 'v3';
 
     public static function js(): string
     {
@@ -23,6 +23,9 @@ const PAGINAS = 'oravel-colab-paginas-' + VERSAO;
 const ESTATICOS = 'oravel-colab-estaticos-' + VERSAO;
 const BASE = new URL('./', self.registration.scope).pathname;           // '/' em produção, '/colaborador/' no DEV
 const OFFLINE = BASE + 'offline';
+// Telas que dependem do servidor (Livewire): nunca servir cópia guardada sem internet -- o formulário não funcionaria. No lugar
+// delas o app monta a versão offline (public/js/colab-offline.js).
+const SO_ONLINE = [/\\/logistica\\/(saida|abastecimento|km|motorista)(\\/|$)/, /\\/os\\/[^/]+\\/executar$/];
 const NUNCA = [/\\/livewire\\//, /\\/api\\//, /\\/push\\//, /\\/colaborador-sw\\.js$/];
 
 self.addEventListener('install', (event) => {
@@ -44,12 +47,13 @@ function comTimeout(promessa, ms) {
 
 async function pagina(req) {
     const cache = await caches.open(PAGINAS);
+    const soOnline = SO_ONLINE.some((r) => r.test(new URL(req.url).pathname));
     try {
         const resp = await comTimeout(fetch(req), 6000);
-        if (resp.ok && resp.type === 'basic' && !resp.redirected) { cache.put(req.url, resp.clone()); }
+        if (!soOnline && resp.ok && resp.type === 'basic' && !resp.redirected) { cache.put(req.url, resp.clone()); }
         return resp;
     } catch (e) {
-        const guardada = await cache.match(req.url);
+        const guardada = soOnline ? null : await cache.match(req.url);
         if (guardada) { return guardada; }
         if (req.mode === 'navigate') {
             const off = await caches.match(OFFLINE);

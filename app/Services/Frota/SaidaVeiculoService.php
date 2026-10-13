@@ -103,7 +103,7 @@ class SaidaVeiculoService
                 'registrado_por' => $usuario?->id ?? auth()->id(),
             ]);
             // Recusa (km menor sem justificativa) desfaz a saída inteira.
-            FrotaLeituraOdometro::registrar($ativo, $odometro, 'saida_veiculo', $saida->id, $dados['justificativa_odometro'] ?? null, $usuario?->id);
+            FrotaLeituraOdometro::registrar($ativo, $odometro, 'saida_veiculo', $saida->id, $dados['justificativa_odometro'] ?? null, $usuario?->id, $saidaEm);
 
             return $saida;
         });
@@ -189,7 +189,7 @@ class SaidaVeiculoService
 
         return DB::transaction(function () use ($saida, $dados, $usuario, $odometro, $retornoEm) {
             $ativo = $saida->veiculo;
-            FrotaLeituraOdometro::registrar($ativo, $odometro, 'entrada_veiculo', $saida->id, $dados['justificativa_odometro'] ?? null, $usuario?->id);
+            FrotaLeituraOdometro::registrar($ativo, $odometro, 'entrada_veiculo', $saida->id, $dados['justificativa_odometro'] ?? null, $usuario?->id, $retornoEm);
 
             $saida->update([
                 'retorno_em' => $retornoEm,
