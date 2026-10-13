@@ -170,4 +170,18 @@ class AssetExcelImportTest extends TestCase
 
         $this->assertSame($tenant->id, Asset::withoutGlobalScopes()->where('patrimonio', 'UI-1')->value('tenant_id'));
     }
+
+    public function test_linha_com_erro_que_criaria_categoria_nova_nao_derruba_a_proxima_com_a_mesma_categoria(): void
+    {
+        $tenant = $this->tenant();
+
+        $r = app(AssetExcelImporter::class)->import($this->sheet([
+            ['Nº Patrimônio' => 'CAT-1', 'Nome/Modelo' => '', 'Categoria e Tipo' => 'Compressor'],
+            ['Nº Patrimônio' => 'CAT-2', 'Nome/Modelo' => 'Compressor 750 PCM', 'Categoria e Tipo' => 'Compressor'],
+        ]), $tenant);
+
+        $this->assertSame(1, $r['created'], json_encode($r['errors'], JSON_UNESCAPED_UNICODE));
+        $this->assertCount(1, $r['errors']);
+        $this->assertSame('Compressor', Asset::withoutGlobalScopes()->where('patrimonio', 'CAT-2')->first()?->category?->name);
+    }
 }

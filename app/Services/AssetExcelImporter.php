@@ -107,6 +107,9 @@ class AssetExcelImporter
                     $result[$outcome]++;
                 } catch (\Throwable $e) {
                     DB::rollBack();
+                    // A categoria criada por esta linha foi desfeita junto: sem limpar o cache, a próxima linha com a mesma
+                    // categoria nova apontaria para um id que não existe mais (erro de chave estrangeira).
+                    $this->categoryCache = [];
                     $result['errors'][] = ['line' => $line, 'patrimonio' => $patr, 'message' => $e instanceof \DomainException ? $e->getMessage() : 'Erro inesperado: '.$e->getMessage()];
                 }
             }

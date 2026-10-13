@@ -1111,7 +1111,7 @@
      "Status"
     ],
     "correct": 2,
-    "why": "Categoria é só texto; o Grupo liga checklist e preventiva."
+    "why": "O Grupo liga o ativo ao checklist e à preventiva. A Categoria classifica o equipamento e define as abas técnicas, mas não ativa a preventiva."
    },
    {
     "q": "Preencheram a Categoria mas não o Grupo. Efeito na preventiva?",
@@ -1321,6 +1321,94 @@
     ],
     "correct": 1,
     "why": "A tela acompanha seguro, IPVA, licenciamento e, em veículo pesado, o tacógrafo."
+   },
+   {
+    "q": "Para que serve o campo “Categoria e Tipo” do cadastro do ativo?",
+    "options": [
+     "Só para exibição, sem efeito em nenhuma outra tela",
+     "Classifica o equipamento a partir da lista de Categorias de Ativos, alimenta a busca de disponibilidade das Solicitações de Locação e define quais abas técnicas aparecem",
+     "Liga o ativo ao plano de manutenção preventiva",
+     "Define o status operacional do equipamento"
+    ],
+    "correct": 1,
+    "why": "É uma lista de Categorias de Ativos, não um texto solto. Ela também define as abas técnicas; quem liga o ativo à preventiva é o Grupo."
+   },
+   {
+    "q": "Um ativo foi cadastrado como “Empilhadeira Elétrica” e a aba Empilhadeira não aparece. Qual é a causa mais provável?",
+    "options": [
+     "A aba só aparece depois do primeiro salvamento",
+     "O ativo está marcado como Veículo",
+     "A aba só aparece quando a Categoria e Tipo é exatamente “Empilhadeira”",
+     "É preciso ligar a aba nas configurações da empresa"
+    ],
+    "correct": 2,
+    "why": "As abas técnicas dependem do nome exato da categoria: Empilhadeira, Gerador, Plataforma Elevatória Articulada ou Tesoura."
+   },
+   {
+    "q": "Na importação por Excel, quais colunas são obrigatórias?",
+    "options": [
+     "Nº Patrimônio e Nome/Modelo",
+     "Nº Patrimônio, Nome/Modelo e Categoria e Tipo",
+     "Nome/Modelo e Fabricante",
+     "Todas as colunas da aba Ativos"
+    ],
+    "correct": 0,
+    "why": "Só Nº Patrimônio e Nome/Modelo são obrigatórias; as demais podem ficar em branco."
+   },
+   {
+    "q": "O que faz a opção “Apenas validar (não grava nada)” na janela Importar Excel?",
+    "options": [
+     "Grava só as linhas sem erro",
+     "Roda toda a importação e mostra o resultado e os erros, sem criar nem alterar nenhum ativo",
+     "Apaga os ativos que não estão na planilha",
+     "Baixa o modelo da planilha"
+    ],
+    "correct": 1,
+    "why": "Serve para conferir a planilha antes de gravar. Recomendado na primeira vez."
+   },
+   {
+    "q": "Numa planilha de 10 linhas, a linha 5 está sem Nome/Modelo e a linha 8 repete o Nº Patrimônio da linha 2. Importando de verdade (sem “Apenas validar”), o que acontece?",
+    "options": [
+     "Nada é gravado, porque há erros",
+     "As 8 linhas corretas são gravadas e as 2 com erro são puladas e listadas com o motivo",
+     "As 10 linhas são gravadas, com os erros corrigidos automaticamente",
+     "Só as linhas anteriores ao primeiro erro são gravadas"
+    ],
+    "correct": 1,
+    "why": "Linhas com erro são puladas e listadas; as demais gravam."
+   },
+   {
+    "q": "Um ativo com o mesmo Nº Patrimônio já existe no sistema e a planilha traz esse patrimônio com a capacidade preenchida. Com “Atualizar ativos já cadastrados” DESLIGADO, o que acontece com essa linha?",
+    "options": [
+     "O ativo existente é atualizado",
+     "Um segundo ativo é criado",
+     "O ativo existente é ignorado e nada é alterado",
+     "A importação inteira é cancelada"
+    ],
+    "correct": 2,
+    "why": "Desligada, a opção ignora ativos que já existem. Ligada, atualiza só as colunas preenchidas."
+   },
+   {
+    "q": "Com “Atualizar ativos já cadastrados” LIGADO, uma célula em branco na planilha faz o quê no ativo existente?",
+    "options": [
+     "Apaga o valor atual do campo",
+     "Mantém o valor atual do campo",
+     "Troca o valor por zero",
+     "Gera erro na linha"
+    ],
+    "correct": 1,
+    "why": "Células em branco não apagam nada; só as colunas preenchidas são atualizadas."
+   },
+   {
+    "q": "Na planilha de importação, a Categoria e Tipo informada ainda não existe, mas a Unidade/Filial Base informada também não existe. O que acontece?",
+    "options": [
+     "As duas são criadas",
+     "Nenhuma é criada e a linha é gravada sem esses campos",
+     "A Categoria é criada, mas a linha dá erro por causa da Unidade/Filial Base",
+     "A linha é gravada e a Unidade/Filial Base é ignorada"
+    ],
+    "correct": 2,
+    "why": "Categoria inexistente é criada; Unidade/Filial Base e Posição no Pátio precisam existir, senão a linha dá erro."
    }
   ]
  },
