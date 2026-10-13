@@ -14,6 +14,7 @@ use App\Models\Announcement;
 use App\Models\Asset;
 use App\Models\BatteryCycleReading;
 use App\Models\Client;
+use App\Models\ClientFeedback;
 use App\Models\ClientMessage;
 use App\Models\Contract; // Importante
 use App\Models\CrmLead;
@@ -49,6 +50,7 @@ use App\Observers\AnnouncementObserver;
 use App\Observers\AssetObserver;
 use App\Observers\BatteryCycleReadingObserver;
 use App\Observers\ClientMaintenanceOrderNotificationObserver;
+use App\Observers\ClientFeedbackObserver;
 use App\Observers\ClientMessageObserver;
 use App\Observers\ClientObserver;
 use App\Observers\ContaPagarObserver;
@@ -158,6 +160,7 @@ class AppServiceProvider extends ServiceProvider
         MaintenanceOrderMaterial::observe(MaintenanceOrderMaterialObserver::class);
         EquipmentPickupRequest::observe(EquipmentPickupRequestObserver::class);
         ClientMessage::observe(ClientMessageObserver::class);
+        ClientFeedback::observe(ClientFeedbackObserver::class);
         Announcement::observe(AnnouncementObserver::class);
         CrmLeadInteraction::observe(CrmLeadInteractionObserver::class);
         CrmLead::observe(CrmLeadObserver::class);

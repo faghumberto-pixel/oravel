@@ -15,11 +15,13 @@ return new class extends Migration
         foreach (DB::table('plans')->whereIn('id', $emUso)->get() as $plan) {
             $features = json_decode($plan->features ?? '[]', true) ?? [];
 
-            if (in_array(self::FEATURE, $features, true)) {
+            // O Contrato guarda os módulos como mapa chave => true (é o que a Central grava e lê).
+            if (($features[self::FEATURE] ?? false) === true) {
                 continue;
             }
 
-            DB::table('plans')->where('id', $plan->id)->update(['features' => json_encode([...$features, self::FEATURE])]);
+            $features[self::FEATURE] = true;
+            DB::table('plans')->where('id', $plan->id)->update(['features' => json_encode($features)]);
         }
     }
 

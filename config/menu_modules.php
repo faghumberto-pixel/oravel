@@ -118,7 +118,7 @@ return [
         'grupo' => 'Comercial',
         'menu' => 'Gestão Comercial',
         'slug' => 'gestao-comercial',
-        'herda' => ['tabela_clients', 'tabela_contract_measurements', 'tabela_contracts', 'assinatura_eletronica', 'tabela_fleet_statuses', 'tabela_proposta_comercial', 'tabela_quotes', 'tabela_rental_hour_franchises', 'tabela_rental_overage_charges', 'tabela_solicitacao_locacao'],
+        'herda' => ['tabela_client_feedbacks', 'tabela_clients', 'tabela_contract_measurements', 'tabela_contracts', 'assinatura_eletronica', 'tabela_fleet_statuses', 'tabela_proposta_comercial', 'tabela_quotes', 'tabela_rental_hour_franchises', 'tabela_rental_overage_charges', 'tabela_solicitacao_locacao'],
     ],
     'menu_gestao_compras' => [
         'label' => 'Menu: Materiais e Peças → Gestão de Compras',
