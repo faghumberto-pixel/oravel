@@ -33,34 +33,34 @@ $grupo->middleware(['web', 'colab.mobile'])->name('colab.')->group(function () {
     Route::middleware('colab.auth')->group(function () {
         Route::get('/', [ColaboradorController::class, 'home'])->name('home');
         Route::post('/sair', [ColaboradorController::class, 'logout'])->name('logout');
-        Route::get('/dossie/{assetId?}', AssetDossierMobile::class)->name('dossie');
+        Route::get('/dossie/{assetId?}', AssetDossierMobile::class)->name('dossie')->middleware('colab.modulo:dossie');
         // Trabalho sem internet: o celular baixa o pacote e envia a fila (caminhos com /api/ nunca passam pelo cache do SW).
         Route::get('/api/pacote', [ColaboradorOfflineController::class, 'pacote'])->name('api.pacote');
         Route::get('/api/csrf', [ColaboradorOfflineController::class, 'csrf'])->name('api.csrf');
         Route::post('/api/fila', [ColaboradorOfflineController::class, 'fila'])->name('api.fila');
-        Route::get('/os/{id}/offline', [ColaboradorOfflineController::class, 'executarOffline'])->name('os.offline');
+        Route::get('/os/{id}/offline', [ColaboradorOfflineController::class, 'executarOffline'])->name('os.offline')->middleware('colab.modulo:os|minhas_os');
 
         // Logística: início com as funções e uma tela por função (todas aceitam o veículo direto pelo QR: .../{assetId}).
-        Route::get('/logistica', [ColaboradorLogisticaController::class, 'hub'])->name('logistica');
-        Route::get('/logistica/km-rodado', [ColaboradorLogisticaController::class, 'kmRodado'])->name('logistica.km-rodado');
-        Route::get('/logistica/vencimentos', [ColaboradorLogisticaController::class, 'vencimentos'])->name('logistica.vencimentos');
-        Route::get('/logistica/saida/{assetId?}', SaidaVeiculoMobile::class)->name('logistica.saida');
-        Route::get('/logistica/abastecimento/{assetId?}', AbastecimentoMobile::class)->name('logistica.abastecimento');
-        Route::get('/logistica/km/{assetId?}', MarcarKmMobile::class)->name('logistica.km');
-        Route::get('/logistica/motorista/{assetId?}', MotoristaVeiculoMobile::class)->name('logistica.motorista');
-        Route::get('/minhas-os', [ColaboradorOsController::class, 'minhas'])->name('minhas-os');
-        Route::get('/os', [ColaboradorOsController::class, 'buscar'])->name('os.buscar');
-        Route::get('/os/{maintenanceOrder}/executar', MaintenanceOrderFieldWizard::class)->name('os.executar');
-        Route::get('/os/ativo/{id}', [ColaboradorOsController::class, 'doAtivo'])->name('os.ativo');
-        Route::get('/os/{id}', [ColaboradorOsController::class, 'mostrar'])->name('os');
-        Route::get('/escanear', [ColaboradorController::class, 'escanear'])->name('escanear');
-        Route::get('/ponto', [ColaboradorController::class, 'ponto'])->name('ponto');
+        Route::get('/logistica', [ColaboradorLogisticaController::class, 'hub'])->name('logistica')->middleware('colab.modulo:logistica');
+        Route::get('/logistica/km-rodado', [ColaboradorLogisticaController::class, 'kmRodado'])->name('logistica.km-rodado')->middleware('colab.modulo:logistica,km-rodado');
+        Route::get('/logistica/vencimentos', [ColaboradorLogisticaController::class, 'vencimentos'])->name('logistica.vencimentos')->middleware('colab.modulo:logistica,vencimentos');
+        Route::get('/logistica/saida/{assetId?}', SaidaVeiculoMobile::class)->name('logistica.saida')->middleware('colab.modulo:logistica,saida');
+        Route::get('/logistica/abastecimento/{assetId?}', AbastecimentoMobile::class)->name('logistica.abastecimento')->middleware('colab.modulo:logistica,abastecimento');
+        Route::get('/logistica/km/{assetId?}', MarcarKmMobile::class)->name('logistica.km')->middleware('colab.modulo:logistica,km');
+        Route::get('/logistica/motorista/{assetId?}', MotoristaVeiculoMobile::class)->name('logistica.motorista')->middleware('colab.modulo:logistica,motorista');
+        Route::get('/minhas-os', [ColaboradorOsController::class, 'minhas'])->name('minhas-os')->middleware('colab.modulo:minhas_os');
+        Route::get('/os', [ColaboradorOsController::class, 'buscar'])->name('os.buscar')->middleware('colab.modulo:os');
+        Route::get('/os/{maintenanceOrder}/executar', MaintenanceOrderFieldWizard::class)->name('os.executar')->middleware('colab.modulo:os|minhas_os');
+        Route::get('/os/ativo/{id}', [ColaboradorOsController::class, 'doAtivo'])->name('os.ativo')->middleware('colab.modulo:os');
+        Route::get('/os/{id}', [ColaboradorOsController::class, 'mostrar'])->name('os')->middleware('colab.modulo:os|minhas_os');
+        Route::get('/escanear', [ColaboradorController::class, 'escanear'])->name('escanear')->middleware('colab.modulo:escanear');
+        Route::get('/ponto', [ColaboradorController::class, 'ponto'])->name('ponto')->middleware('colab.modulo:ponto');
 
         // Faltas e ausências: comunicar (foto do atestado, CID, explicação) e ver o próprio histórico.
-        Route::get('/ausencias', [ColaboradorAusenciasController::class, 'index'])->name('ausencias');
-        Route::get('/ausencias/nova', [ColaboradorAusenciasController::class, 'nova'])->name('ausencias.nova');
-        Route::post('/ausencias', [ColaboradorAusenciasController::class, 'salvar'])->name('ausencias.salvar');
-        Route::get('/ausencias/{id}/anexo/{indice}', [ColaboradorAusenciasController::class, 'anexo'])->whereNumber('indice')->name('ausencias.anexo');
+        Route::get('/ausencias', [ColaboradorAusenciasController::class, 'index'])->name('ausencias')->middleware('colab.modulo:ausencias');
+        Route::get('/ausencias/nova', [ColaboradorAusenciasController::class, 'nova'])->name('ausencias.nova')->middleware('colab.modulo:ausencias');
+        Route::post('/ausencias', [ColaboradorAusenciasController::class, 'salvar'])->name('ausencias.salvar')->middleware('colab.modulo:ausencias');
+        Route::get('/ausencias/{id}/anexo/{indice}', [ColaboradorAusenciasController::class, 'anexo'])->whereNumber('indice')->name('ausencias.anexo')->middleware('colab.modulo:ausencias');
 
         Route::get('/notificacoes', [ColaboradorNotificacoesController::class, 'index'])->name('notificacoes');
         Route::post('/notificacoes/limpar', [ColaboradorNotificacoesController::class, 'limpar'])->name('notificacoes.limpar');

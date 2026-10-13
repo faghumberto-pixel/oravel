@@ -11,6 +11,7 @@ use App\Models\FrotaSaidaVeiculo;
 use App\Models\FrotaVinculoMotorista;
 use App\Models\MaintenanceOrder;
 use App\Models\User;
+use App\Support\Colaborador\Modulos;
 use App\Support\Colaborador\SituacaoOs;
 use Illuminate\Support\Facades\Gate;
 
@@ -31,7 +32,7 @@ class PacoteOffline
             return $pacote;
         }
 
-        if (Gate::forUser($user)->allows('viewAny', Asset::class)) {
+        if (Gate::forUser($user)->allows('viewAny', Asset::class) && Modulos::acessoAlgum($user, ['dossie', 'escanear', 'os', 'minhas_os', 'logistica'])) {
             $pacote['ativos'] = Asset::query()->select('id', 'name', 'patrimonio', 'placa', 'tag', 'serial_number', 'status', 'grupo')
                 ->orderBy('name')->limit(20000)->get()
                 ->map(fn (Asset $a) => [
@@ -40,7 +41,7 @@ class PacoteOffline
                 ])->all();
         }
 
-        if (Gate::forUser($user)->allows('viewAny', MaintenanceOrder::class)) {
+        if (Gate::forUser($user)->allows('viewAny', MaintenanceOrder::class) && Modulos::acessoAlgum($user, ['os', 'minhas_os'])) {
             $campos = ['id', 'os_number', 'asset_id', 'status', 'internal_status', 'created_at', 'updated_at', 'finished_at', 'scheduled_at', 'description', 'technician_id'];
 
             $abertas = MaintenanceOrder::query()->whereNotIn('status', SituacaoOs::FECHADAS)->with('technician:id,name')->get($campos);
@@ -78,7 +79,7 @@ class PacoteOffline
                 ])->values()->all();
         }
 
-        if (Gate::forUser($user)->allows('viewAny', FrotaSaidaVeiculo::class) || Gate::forUser($user)->allows('viewAny', FrotaAbastecimento::class)) {
+        if (Modulos::acesso($user, 'logistica') && (Gate::forUser($user)->allows('viewAny', FrotaSaidaVeiculo::class) || Gate::forUser($user)->allows('viewAny', FrotaAbastecimento::class))) {
             $pacote['frota'] = $this->frota($user);
         }
 
@@ -111,8 +112,8 @@ class PacoteOffline
 
         return [
             'perm' => [
-                'saida' => Gate::forUser($user)->allows('create', FrotaSaidaVeiculo::class),
-                'abastecimento' => Gate::forUser($user)->allows('create', FrotaAbastecimento::class),
+                'saida' => Modulos::acesso($user, 'logistica', 'saida') && Gate::forUser($user)->allows('create', FrotaSaidaVeiculo::class),
+                'abastecimento' => Modulos::acesso($user, 'logistica', 'abastecimento') && Gate::forUser($user)->allows('create', FrotaAbastecimento::class),
             ],
             'veiculos' => $veiculos,
             'motoristas' => FleetDriver::query()->where('active', true)->orderBy('name')->get()->map(fn (FleetDriver $m) => [

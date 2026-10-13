@@ -7,6 +7,7 @@ use App\Models\FrotaAbastecimento;
 use App\Models\FrotaSaidaVeiculo;
 use App\Models\FrotaVinculoMotorista;
 use App\Services\Frota\KmRodadoService;
+use App\Support\Colaborador\Modulos;
 use App\Support\Colaborador\VencimentosVeiculos;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -20,13 +21,15 @@ class ColaboradorLogisticaController extends Controller
         $pode = fn (string $modelo) => Gate::allows('viewAny', $modelo);
         $resumo = $pode(Asset::class) ? VencimentosVeiculos::resumo() : ['vencidos' => 0, 'atencao' => 0];
 
+        $libera = fn (string $recurso) => Modulos::acesso($request->user(), 'logistica', $recurso);
+
         $funcoes = array_values(array_filter([
-            $pode(FrotaSaidaVeiculo::class) ? ['rota' => 'colab.logistica.saida', 'icone' => '🚚', 'titulo' => 'Entrada e saída de veículos', 'texto' => 'Motivo, destino e equipamento levado', 'selo' => FrotaSaidaVeiculo::fora()->count(), 'selo_texto' => 'fora'] : null,
-            $pode(FrotaAbastecimento::class) ? ['rota' => 'colab.logistica.abastecimento', 'icone' => '⛽', 'titulo' => 'Abastecimento', 'texto' => 'Litros, valor e km do veículo', 'selo' => 0, 'selo_texto' => ''] : null,
-            $pode(FrotaSaidaVeiculo::class) ? ['rota' => 'colab.logistica.km', 'icone' => '🔢', 'titulo' => 'Marcar km', 'texto' => 'Leitura do painel do veículo', 'selo' => 0, 'selo_texto' => ''] : null,
-            $pode(FrotaVinculoMotorista::class) ? ['rota' => 'colab.logistica.motorista', 'icone' => '🧑‍✈️', 'titulo' => 'Motorista do veículo', 'texto' => 'Incluir ou substituir o titular', 'selo' => 0, 'selo_texto' => ''] : null,
-            $pode(FrotaSaidaVeiculo::class) ? ['rota' => 'colab.logistica.km-rodado', 'icone' => '🗺️', 'titulo' => 'Km rodado e percursos', 'texto' => 'Total por veículo e por percurso', 'selo' => 0, 'selo_texto' => ''] : null,
-            $pode(Asset::class) ? ['rota' => 'colab.logistica.vencimentos', 'icone' => '📅', 'titulo' => 'Vencimentos da documentação', 'texto' => 'Seguro, IPVA, licenciamento e tacógrafo', 'selo' => $resumo['vencidos'] + $resumo['atencao'], 'selo_texto' => 'atenção'] : null,
+            $pode(FrotaSaidaVeiculo::class) && $libera('saida') ? ['rota' => 'colab.logistica.saida', 'icone' => '🚚', 'titulo' => 'Entrada e saída de veículos', 'texto' => 'Motivo, destino e equipamento levado', 'selo' => FrotaSaidaVeiculo::fora()->count(), 'selo_texto' => 'fora'] : null,
+            $pode(FrotaAbastecimento::class) && $libera('abastecimento') ? ['rota' => 'colab.logistica.abastecimento', 'icone' => '⛽', 'titulo' => 'Abastecimento', 'texto' => 'Litros, valor e km do veículo', 'selo' => 0, 'selo_texto' => ''] : null,
+            $pode(FrotaSaidaVeiculo::class) && $libera('km') ? ['rota' => 'colab.logistica.km', 'icone' => '🔢', 'titulo' => 'Marcar km', 'texto' => 'Leitura do painel do veículo', 'selo' => 0, 'selo_texto' => ''] : null,
+            $pode(FrotaVinculoMotorista::class) && $libera('motorista') ? ['rota' => 'colab.logistica.motorista', 'icone' => '🧑‍✈️', 'titulo' => 'Motorista do veículo', 'texto' => 'Incluir ou substituir o titular', 'selo' => 0, 'selo_texto' => ''] : null,
+            $pode(FrotaSaidaVeiculo::class) && $libera('km-rodado') ? ['rota' => 'colab.logistica.km-rodado', 'icone' => '🗺️', 'titulo' => 'Km rodado e percursos', 'texto' => 'Total por veículo e por percurso', 'selo' => 0, 'selo_texto' => ''] : null,
+            $pode(Asset::class) && $libera('vencimentos') ? ['rota' => 'colab.logistica.vencimentos', 'icone' => '📅', 'titulo' => 'Vencimentos da documentação', 'texto' => 'Seguro, IPVA, licenciamento e tacógrafo', 'selo' => $resumo['vencidos'] + $resumo['atencao'], 'selo_texto' => 'atenção'] : null,
         ]));
 
         return view('colaborador.logistica', ['funcoes' => $funcoes, 'resumo' => $resumo]);

@@ -13,6 +13,7 @@ use App\Models\MaintenanceOrder;
 use App\Models\User;
 use App\Services\Frota\AbastecimentoService;
 use App\Services\Frota\SaidaVeiculoService;
+use App\Support\Colaborador\Modulos;
 use App\Support\Colaborador\SituacaoOs;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
@@ -71,6 +72,10 @@ class FilaOffline
     /** @return array{0: string, 1: ?string} [status ok|ignorada|erro, mensagem] */
     private function aplicar(User $user, string $tipo, array $d, ?UploadedFile $arquivo, ?string $criadoEm, string $acaoUuid = ''): array
     {
+        if (! $this->liberado($user, $tipo)) {
+            return ['erro', 'Seu usuário não tem acesso a esta função do app.'];
+        }
+
         if (in_array($tipo, self::TIPOS_AUSENCIA, true)) {
             return $this->aplicarAusencia($user, $tipo, $d, $arquivo, $acaoUuid);
         }
@@ -158,6 +163,18 @@ class FilaOffline
         FrotaLeituraOdometro::registrar($ativo, (int) $d['odometro'], 'manual', null, $d['justificativa'] ?? null, $user->id, $lidoEm);
 
         return ['ok', null];
+    }
+
+    /** O administrador da empresa pode ter tirado a função do usuário depois que a ação foi guardada no celular. */
+    private function liberado(User $user, string $tipo): bool
+    {
+        return match (true) {
+            in_array($tipo, self::TIPOS_AUSENCIA, true) => Modulos::acesso($user, 'ausencias'),
+            in_array($tipo, ['veiculo_saida', 'veiculo_entrada'], true) => Modulos::acesso($user, 'logistica', 'saida'),
+            $tipo === 'abastecimento' => Modulos::acesso($user, 'logistica', 'abastecimento'),
+            $tipo === 'km_marcar' => Modulos::acesso($user, 'logistica', 'km'),
+            default => Modulos::acessoAlgum($user, ['os', 'minhas_os']),
+        };
     }
 
     /** @return array{0: string, 1: ?string} */

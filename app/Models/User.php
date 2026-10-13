@@ -70,6 +70,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
         'password' => 'hashed',
         'receives_financial_notifications' => 'boolean',
         'muted_notification_categories' => 'array',
+        'app_access' => 'array',
         'hourly_rate' => 'decimal:2',
         'last_seen' => 'datetime',
     ];

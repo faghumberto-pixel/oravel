@@ -64,6 +64,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'academy.access' => EnsureAcademyAccess::class,
             'colab.mobile' => ColaboradorSomenteCelular::class,
             'colab.auth' => ColaboradorAutenticado::class,
+            'colab.modulo' => \App\Http\Middleware\ColaboradorModulo::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
