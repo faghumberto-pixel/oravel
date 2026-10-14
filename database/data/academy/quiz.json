@@ -1602,15 +1602,15 @@
   "page": "/modulos/ordens-servico.html",
   "questions": [
    {
-    "q": "Qual é o formato do número de uma OS?",
+    "q": "Qual é o formato real do número de uma OS criada pelo formulário?",
     "options": [
-     "OS-NNNNN-AAAA",
-     "OS-AAAAMM-NNNNN (ano, mês e sequência)",
-     "Apenas um número sequencial",
-     "AAAA-OS-MM"
+     "OS-AAAAMM-NNNNN, com 5 dígitos",
+     "OS-AAAAMM-NNNN, com 4 dígitos, reiniciando a cada mês",
+     "Só um número sequencial",
+     "OS-NNNN-AAAA"
     ],
     "correct": 1,
-    "why": "Gerado automaticamente."
+    "why": "O formulário gera ano+mês e uma sequência de 4 dígitos que recomeça todo mês. Nunca se digita."
    },
    {
     "q": "O campo Tipo de Serviço (Interno/Externo) é definido como?",
@@ -1648,13 +1648,13 @@
    {
     "q": "Quais ações exigem informar um motivo?",
     "options": [
-     "Reprogramar e Cancelar",
-     "Iniciar e Pausar",
-     "Concluir e Imprimir",
-     "Transferir e Pausar"
+     "Só Cancelar",
+     "Reprogramar, Transferir e Cancelar",
+     "Apenas Concluir",
+     "Nenhuma"
     ],
-    "correct": 0,
-    "why": "Reprogramar e Cancelar pedem motivo."
+    "correct": 1,
+    "why": "As três pedem um motivo. Concluir pede só confirmação."
    },
    {
     "q": "O que a ação Transferir faz?",
@@ -1710,6 +1710,259 @@
     ],
     "correct": 1,
     "why": "Menu de OS."
+   },
+   {
+    "q": "Quantos tipos de operação uma OS pode ter?",
+    "options": [
+     "4: check-in, check-out, preventiva e corretiva",
+     "5",
+     "7: inclui avaria, troca e emergência",
+     "Só 2: interna e externa"
+    ],
+    "correct": 2,
+    "why": "Check-in, check-out, preventiva, corretiva, registro de avaria, troca de equipamento e chamado de emergência."
+   },
+   {
+    "q": "O que muda ao escolher o tipo Corretiva?",
+    "options": [
+     "Nada",
+     "Aparece a Categoria de Falha e o sistema abre o período de parada do ativo",
+     "A OS é concluída sozinha",
+     "Some a aba Materiais"
+    ],
+    "correct": 1,
+    "why": "A categoria alimenta os indicadores de Gestão à Vista; a parada do ativo fecha ao concluir a OS."
+   },
+   {
+    "q": "No Chamado de Emergência, qual prazo de atendimento o sistema sugere?",
+    "options": [
+     "Sempre 24 horas",
+     "60 minutos se a criticidade do ativo for urgente, senão 240; pode ajustar",
+     "Nenhum, é obrigatório digitar",
+     "30 minutos fixos"
+    ],
+    "correct": 1,
+    "why": "Vem da Matriz ABC do ativo (nível marcado como urgente). O campo é editável."
+   },
+   {
+    "q": "Como aparece a lista de técnicos ao abrir uma OS?",
+    "options": [
+     "Em ordem alfabética, sem informação",
+     "Do menos carregado para o mais carregado, com “(livre)” ou “(N em aberto)”",
+     "Só técnicos livres",
+     "O sistema já escolhe e trava um técnico"
+    ],
+    "correct": 1,
+    "why": "É uma sugestão: a escolha continua sendo sua."
+   },
+   {
+    "q": "Em qual situação criar uma OS exige a senha do Supervisor de Manutenção?",
+    "options": [
+     "Sempre que o tipo for Emergência",
+     "Quando o ativo está reservado por uma Locação urgente",
+     "Quando a OS é Externa",
+     "Quando o técnico tem mais de 5 OS"
+    ],
+    "correct": 1,
+    "why": "Aparece um aviso vermelho e, sem a senha, a criação é bloqueada. Editar uma OS já existente não é."
+   },
+   {
+    "q": "O que o recurso “Preencher via Foto (IA)” faz?",
+    "options": [
+     "Cria e salva a OS sozinho",
+     "Lê a foto de uma OS em papel e tenta preencher os campos; você revisa antes de salvar",
+     "Só anexa a foto à OS",
+     "Substitui a assinatura"
+    ],
+    "correct": 1,
+    "why": "É um recurso em teste, só disponível na criação. Pode errar nomes e valores."
+   },
+   {
+    "q": "Quando o botão Iniciar Serviço funciona?",
+    "options": [
+     "Em qualquer status",
+     "Com a OS Aberta, Pendente, Pausada ou Reprogramada",
+     "Só com a OS Concluída",
+     "Só depois das assinaturas"
+    ],
+    "correct": 1,
+    "why": "Depois do primeiro início, o botão vira Continuar Serviço."
+   },
+   {
+    "q": "O que acontece com o botão Pausar?",
+    "options": [
+     "Cancela a OS",
+     "Soma o tempo trabalhado até ali e para o relógio; só funciona com a OS Em Andamento",
+     "Reprograma a OS",
+     "Conclui a OS"
+    ],
+    "correct": 1,
+    "why": "O tempo parado não conta no total."
+   },
+   {
+    "q": "O sistema impede concluir uma OS sem checklist, fotos ou assinaturas?",
+    "options": [
+     "Sim, as três são obrigatórias",
+     "Sim, só a assinatura",
+     "Não: concluir exige apenas que a OS esteja Em Andamento ou Pausada",
+     "Só impede nas OS Externas"
+    ],
+    "correct": 2,
+    "why": "O sistema não confere esses itens. A conferência é da equipe."
+   },
+   {
+    "q": "Além de totalizar o tempo, o que Concluir faz numa OS corretiva?",
+    "options": [
+     "Gera a nota fiscal",
+     "Grava o fim do atendimento e fecha o período de parada do ativo",
+     "Zera o horímetro",
+     "Apaga o checklist"
+    ],
+    "correct": 1,
+    "why": "Início e Fim ficam bloqueados na aba Apontamentos: quem os escreve são os botões."
+   },
+   {
+    "q": "Qual é o efeito de Reprogramar?",
+    "options": [
+     "Cancela a OS",
+     "Pede nova data e hora e um motivo, e a OS passa a Reprogramado",
+     "Transfere a OS para outro técnico",
+     "Apaga a data de abertura"
+    ],
+    "correct": 1,
+    "why": "Reprogramar, Transferir e Cancelar exigem motivo."
+   },
+   {
+    "q": "Quem pode editar Mão de Obra e Logística na aba Custos?",
+    "options": [
+     "Qualquer usuário",
+     "Somente administradores; o técnico não altera",
+     "Só o cliente",
+     "Ninguém, são calculados"
+    ],
+    "correct": 1,
+    "why": "Já Material (R$) e Custo Total são calculados e ficam sempre bloqueados."
+   },
+   {
+    "q": "Como o Custo Total da OS é calculado?",
+    "options": [
+     "Digitado pelo técnico",
+     "Mão de obra + material + logística, somados automaticamente",
+     "Só o valor das peças",
+     "Só o tempo × valor hora"
+    ],
+    "correct": 1,
+    "why": "O material é a soma de quantidade × valor unitário dos materiais aplicados."
+   },
+   {
+    "q": "Ao lançar um material cadastrado na OS, o que acontece?",
+    "options": [
+     "Nada, é só informativo",
+     "Dá baixa no estoque da filial do ativo (ou da filial padrão) e, se o estoque ficar baixo, abre solicitação de peças",
+     "Compra a peça automaticamente",
+     "Bloqueia a OS"
+    ],
+    "correct": 1,
+    "why": "A solicitação só é aberta se ainda não houver uma em aberto para aquele material."
+   },
+   {
+    "q": "O que acontece se o valor unitário do material ficar vazio?",
+    "options": [
+     "Dá erro",
+     "Vale o custo do cadastro do material",
+     "Entra como R$ 0,00",
+     "A OS não salva"
+    ],
+    "correct": 1,
+    "why": "Peça sem cadastro (só descrição) também pode ser lançada, mas não baixa estoque."
+   },
+   {
+    "q": "Quando uma OS conta como “em atraso” na lista?",
+    "options": [
+     "Passou da data agendada",
+     "Está Aberta, Pendente ou Em Andamento há mais de 3 dias desde a criação",
+     "Foi reprogramada",
+     "Não tem técnico"
+    ],
+    "correct": 1,
+    "why": "É o mesmo critério do cartão OS em Atraso e do filtro Em atraso."
+   },
+   {
+    "q": "O que significa a marca “PMP Automática” na coluna Origem?",
+    "options": [
+     "A OS foi criada por IA",
+     "A OS foi criada sozinha pelo plano de manutenção preventiva",
+     "A OS é de emergência",
+     "A OS é um retrabalho"
+    ],
+    "correct": 1,
+    "why": "Há o filtro “Só PMP automática”."
+   },
+   {
+    "q": "Ao marcar uma OS como Retrabalho, o que é obrigatório?",
+    "options": [
+     "A assinatura do cliente",
+     "Escolher a OS original",
+     "Anexar três fotos",
+     "A senha do supervisor"
+    ],
+    "correct": 1,
+    "why": "A lista ganha a marca Retrabalho e o filtro Só retrabalho."
+   },
+   {
+    "q": "Para que serve o Prazo Fatal?",
+    "options": [
+     "Para cancelar a OS vencida",
+     "Para OS ligada a um compromisso com data/hora que não pode atrasar; ao ligar, a data limite é obrigatória e o Kanban mostra a contagem regressiva",
+     "Para definir o custo",
+     "Para bloquear o técnico"
+    ],
+    "correct": 1,
+    "why": "Já vem ligado quando o cliente do ativo é do nicho de eventos."
+   },
+   {
+    "q": "Ao salvar uma OS nova com técnico escolhido, o que ele recebe?",
+    "options": [
+     "Nada",
+     "Notificação “Nova OS atribuída a você” com botão Ver OS",
+     "Um e-mail com a fatura",
+     "A OS já concluída"
+    ],
+    "correct": 1,
+    "why": "Na transferência, o novo técnico também é notificado."
+   },
+   {
+    "q": "Para um registro que precisa ser mantido no histórico, o melhor é:",
+    "options": [
+     "Excluir a OS",
+     "Cancelar a OS, informando o motivo",
+     "Reprogramar para 2099",
+     "Trocar o ativo"
+    ],
+    "correct": 1,
+    "why": "Cancelar preserva o histórico e o log de auditoria."
+   },
+   {
+    "q": "Onde fica o histórico de quem mudou o quê na OS?",
+    "options": [
+     "Na aba Custos",
+     "No Log de Auditoria, abaixo do formulário",
+     "No Kanban",
+     "Não existe"
+    ],
+    "correct": 1,
+    "why": "Abaixo do formulário também ficam Pendências, Checklist de Inspeção, Materiais Utilizados, Apontamentos de Mão de Obra e Comunicações."
+   },
+   {
+    "q": "Ao informar um Horímetro Atual menor que o do ativo, o que acontece?",
+    "options": [
+     "O horímetro do ativo diminui",
+     "O horímetro do ativo não regride; só atualiza quando o valor é maior ou igual",
+     "A OS é bloqueada",
+     "O ativo vira inativo"
+    ],
+    "correct": 1,
+    "why": "A leitura enviada na OS também entra no histórico de horímetros."
    }
   ]
  },
