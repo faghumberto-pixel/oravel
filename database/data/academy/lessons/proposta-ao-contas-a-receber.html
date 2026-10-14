@@ -1,0 +1,22 @@
+<p>Depois da proposta aceita e do contrato <strong>Ativo</strong>, a cobrança nasce do próprio contrato. Esta aula mostra o caminho do contrato até o <strong>Contas a Receber</strong> e como conferir cada etapa.</p>
+<div class="mk-menu">📍 Comercial → Gestão Comercial → Contratos · Financeiro → Contas a Receber</div>
+<div class="mk-flow"><div class="mk-step "><span class="n">1</span><b>Proposta aceita</b><span class="t">Solicitação e contratos de serviço.</span></div><div class="mk-step amber"><span class="n">2</span><b>Contrato Ativo</b><span class="t">Só contrato Ativo pode ser faturado.</span></div><div class="mk-step purple"><span class="n">3</span><b>Faturar</b><span class="t">Medição, aprovação e cobrança em um passo.</span></div><div class="mk-step green"><span class="n">4</span><b>Contas a Receber</b><span class="t">Acompanhar e dar baixa.</span></div></div>
+<h2>O botão Faturar</h2>
+<p>No contrato, <strong>Faturar</strong> abre uma janela com o <strong>período</strong>, o <strong>vencimento</strong> (sugere 15 dias) e a <strong>prévia do valor</strong>. Ao confirmar, o sistema, <strong>em um passo</strong>: gera a <strong>medição</strong> do período, <strong>aprova</strong> a medição e <strong>cria a cobrança</strong> em Contas a Receber. O botão só aparece para contrato com situação <strong>Ativo</strong> e para quem tem permissão em Medições.</p>
+<ul>
+<li>O período precisa estar <strong>dentro da vigência</strong> do contrato e <strong>não pode se sobrepor</strong> a um período já faturado.</li>
+<li>Contrato por hora não tem cálculo automático: você informa o valor do período.</li>
+<li>Se há serviços ativos vinculados (os contratos SV da mesma proposta), dá para faturá-los junto, cada um com a sua cobrança.</li>
+</ul>
+<div class="mk-note warn"><strong>⚠️ Contrato de serviço em Rascunho não fatura</strong><p>Os contratos de serviço nascem em Rascunho. Antes de faturar, mude a situação para Ativo.</p></div>
+<h2>A tela Contas a Receber</h2>
+<table><thead><tr><th>Status</th><th>Significado</th></tr></thead><tbody>
+<tr><td><span class="mk-chip amber">Pendente</span></td><td>Cobrança emitida, ainda não recebida</td></tr>
+<tr><td><span class="mk-chip green">Recebido</span></td><td>O recebimento foi registrado</td></tr>
+<tr><td><span class="mk-chip red">Atrasado</span></td><td>Passou do vencimento sem receber</td></tr>
+</tbody></table>
+<p>As colunas mostram descrição, cliente, valor, vencimento, multa e status. A coluna <strong>Asaas</strong> é um ícone: <strong>verde</strong> quando a cobrança já existe no Asaas (o provedor de cobrança) e <strong>amarelo</strong> quando ainda não foi criada lá; a ação <strong>Sincronizar Asaas</strong> cria a cobrança.</p>
+<h2>Dar Baixa</h2>
+<p>Quando o cliente pagou, use <strong>Dar Baixa</strong> na linha da conta: informe a <strong>data de recebimento</strong> (e a multa aplicada em %, que já vem do contrato) e confirme. A conta passa a <strong>Recebido</strong>. A ação não aparece em conta que já está recebida.</p>
+<h2>Como conferir a cadeia inteira</h2>
+<ol><li><strong>Proposta:</strong> status Aceita pelo Cliente e a Solicitação ligada.</li><li><strong>Contrato:</strong> situação Ativo, vigência e valor corretos.</li><li><strong>Cobrança:</strong> em Contas a Receber, a conta com o valor do período e o vencimento certos (no contrato, “Ver no Contas a Receber” na notificação leva direto).</li></ol>

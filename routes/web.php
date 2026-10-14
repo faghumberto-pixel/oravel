@@ -23,6 +23,7 @@ use App\Http\Controllers\MaintenanceReportController;
 use App\Http\Controllers\Pmp5w2hController;
 use App\Http\Controllers\PreventiveMaintenanceKanbanPrintController;
 use App\Http\Controllers\PrintQrController;
+use App\Http\Controllers\TreinamentoTesteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropostaComercialApprovalController;
 use App\Http\Controllers\ColaboradorAusenciasController;
@@ -93,6 +94,15 @@ Route::middleware(['web', 'academy.access'])->prefix('academia')->group(function
     Route::get('/curso/{slug}', CoursePage::class)->name('academy.course');
     Route::get('/ranking', RankingPage::class)->name('academy.ranking');
     Route::get('/equipe', TeamPage::class)->name('academy.team');
+});
+
+// Teste publico do treinamento "Cadastros, Propostas e Contas a Receber": sem login, fora da
+// Academia. Correcao no servidor; resultado gravado e enviado por e-mail a Oravel.
+Route::prefix('treinamento/cadastros-propostas-receber')->group(function () {
+    Route::get('/', [TreinamentoTesteController::class, 'show'])->name('treinamento.teste');
+    Route::post('/', [TreinamentoTesteController::class, 'enviar'])->name('treinamento.enviar');
+    Route::get('/resultado', [TreinamentoTesteController::class, 'resultado'])->name('treinamento.resultado');
+    Route::get('/pdf', [TreinamentoTesteController::class, 'pdf'])->name('treinamento.pdf');
 });
 
 // Consulta publica de autenticidade de certificado da Academia (so' le nome/curso/data; sem login).

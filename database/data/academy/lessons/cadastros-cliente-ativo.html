@@ -1,0 +1,17 @@
+<p>Antes de qualquer proposta, contrato ou ordem de serviço, o cliente e o equipamento precisam estar corretamente cadastrados. Esta aula mostra os pontos que mais geram retrabalho: o <strong>Nº Patrimônio</strong>, a <strong>placa</strong>, o <strong>chassi</strong> e a <strong>duplicidade de cliente</strong>.</p>
+<div class="mk-menu">📍 Ativos → Gestão de Ativos → Ativos · Comercial → Gestão Comercial → Clientes</div>
+<h2>Cadastrar o ativo</h2>
+<div class="mk-flow"><div class="mk-step "><span class="n">1</span><b>Identificação</b><span class="t">Nome, Nº Patrimônio e placa.</span></div><div class="mk-step amber"><span class="n">2</span><b>Tipo</b><span class="t">Máquina/equipamento ou veículo.</span></div><div class="mk-step purple"><span class="n">3</span><b>Dados do tipo</b><span class="t">Equipamento ou veículo têm campos próprios.</span></div><div class="mk-step green"><span class="n">4</span><b>Salvar</b><span class="t">O sistema valida tudo antes de gravar.</span></div></div>
+<table><thead><tr><th>Campo</th><th>Regra</th></tr></thead><tbody>
+<tr><td><strong>Nº Patrimônio</strong></td><td>Obrigatório e <strong>único</strong>: o sistema barra um segundo ativo com o mesmo número. É a identidade do equipamento. A empresa pode ligar a numeração automática em Configurações; mesmo assim o campo continua editável antes de salvar</td></tr>
+<tr><td><strong>Placa (veículo)</strong></td><td>Formato ABC1D23 ou ABC-1234; o sistema guarda em maiúsculas e sem hífen. Não pode repetir na empresa</td></tr>
+<tr><td><strong>Placa do equipamento (máquina)</strong></td><td>É a plaqueta de identificação, formato livre, de 2 a 20 letras e números (hífen e espaço são ignorados). Também não pode repetir</td></tr>
+<tr><td><strong>Chassi (veículo)</strong></td><td>17 caracteres, letras e números, <strong>sem as letras I, O e Q</strong>. Se estiver errado, o sistema avisa antes de salvar</td></tr>
+<tr><td><strong>Chassi (máquina)</strong></td><td>Campo livre, até 30 caracteres, sem a regra dos 17</td></tr>
+</tbody></table>
+<div class="mk-note warn"><strong>⚠️ Patrimônio repetido</strong><p>Ao tentar cadastrar um ativo com um Nº Patrimônio que já existe, o sistema <strong>não deixa salvar</strong> e mostra o aviso no campo. Confira se o equipamento já está cadastrado (busque pelo patrimônio) antes de criar outro.</p></div>
+<h2>Cadastrar o cliente e evitar duplicidade</h2>
+<p>Em Comercial → Gestão Comercial → Clientes, o cadastro só exige a <strong>Razão Social</strong> para salvar (o e-mail passa a ser obrigatório se o acesso ao portal estiver ligado). Antes de criar, <strong>procure</strong>: o sistema barra o cadastro repetido comparando <strong>nome, CNPJ, inscrições, e-mail, telefone e endereço</strong>, e também confere a <strong>Lixeira</strong>, para você não recriar um cliente que foi excluído.</p>
+<div class="mk-note tip"><strong>💡 Por que o e-mail importa</strong><p>Mais adiante, o Comercial só consegue <strong>aprovar uma proposta</strong> se o cliente tiver e-mail cadastrado, porque é por e-mail que a proposta chega até ele. Cadastre o e-mail do cliente desde o início.</p></div>
+<h2>Conferência rápida</h2>
+<ul><li>O Nº Patrimônio é único e identifica o equipamento.</li><li>Placa e chassi de veículo seguem as regras acima; o sistema ignora hífen e espaço na placa.</li><li>Cliente: procure antes de criar, e cadastre o e-mail.</li></ul>

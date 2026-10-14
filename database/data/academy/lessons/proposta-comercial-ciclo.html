@@ -1,0 +1,21 @@
+<p>A proposta comercial leva o vendedor do primeiro contato até o aceite do cliente, com uma revisão interna no meio. Esta aula percorre o ciclo e as regras que o sistema aplica em cada passo.</p>
+<div class="mk-menu">📍 Comercial → Gestão Comercial → Propostas Comerciais · Kanban Comercial</div>
+<h2>Os status da proposta</h2>
+<div><span class="mk-chip gray">Rascunho</span><span class="mk-chip amber">Enviada para o Comercial</span><span class="mk-chip blue">Aprovada — Aguardando Cliente</span><span class="mk-chip green">Aceita pelo Cliente</span><span class="mk-chip red">Recusada pelo Cliente</span><span class="mk-chip red">Rejeitada</span></div>
+<div class="mk-flow"><div class="mk-step "><span class="n">1</span><b>Rascunho</b><span class="t">O vendedor monta cliente, itens e termos.</span></div><div class="mk-step amber"><span class="n">2</span><b>Enviada</b><span class="t">Vai para revisão; o vendedor não edita mais.</span></div><div class="mk-step purple"><span class="n">3</span><b>Aprovada</b><span class="t">O Comercial aprova e o cliente recebe e-mail.</span></div><div class="mk-step green"><span class="n">4</span><b>Aceita ou Recusada</b><span class="t">O cliente responde pelo link.</span></div></div>
+<h2>As regras</h2>
+<ul>
+<li><strong>E-mail do cliente é obrigatório para aprovar.</strong> Sem ele o sistema avisa e não aprova, porque a proposta é enviada por e-mail.</li>
+<li><strong>O vendedor nunca aprova a própria proposta.</strong> Só quem revisa decide; a única exceção é o administrador da empresa, para não travar quem vende e revisa sozinho.</li>
+<li><strong>Rejeitar exige um motivo</strong>, que fica registrado. A proposta rejeitada (ou recusada pelo cliente) pode ser reaberta para edição: volta a Rascunho e o motivo anterior é apagado.</li>
+</ul>
+<h2>O que a aprovação e o aceite acionam</h2>
+<table><thead><tr><th>Momento</th><th>O que o sistema faz</th></tr></thead><tbody>
+<tr><td>Aprovação, com <strong>ao menos um item de locação de equipamento</strong></td><td>Cria a <strong>Solicitação de Locação</strong>, com o cliente e a categoria do equipamento, e envia a proposta ao cliente em PDF, com o link para aceitar ou recusar</td></tr>
+<tr><td>Aceite do cliente, com itens de serviço</td><td>Cada categoria de serviço (mão de obra, segurança e documentação, acessórios, insumos) vira um <strong>contrato próprio</strong>, em <strong>Rascunho</strong>, com número no formato <code>SV-AAAAMM-XXXXX</code>. O Comercial recebe o aviso para ativá-los</td></tr>
+<tr><td>Recusa do cliente</td><td>A proposta fica Recusada pelo Cliente, com o motivo; a Solicitação ligada, se ainda estiver em andamento, é cancelada</td></tr>
+</tbody></table>
+<div class="mk-note warn"><strong>⚠️ Proposta só de serviço</strong><p>Se a proposta tem <strong>apenas itens de serviço</strong>, não existe Solicitação de Locação: ela <strong>não nasce sozinha</strong> e o Comercial precisa abrir a Solicitação <strong>à mão</strong>. O sistema avisa isso na aprovação. Os contratos de serviço, porém, são criados quando o cliente aceita.</p></div>
+<h2>Tipos de item</h2>
+<p>Locação de equipamento (escolhe-se a <strong>categoria</strong>; o patrimônio exato se define depois), Serviço (outros), Mão de obra especializada, Segurança e documentação, Acessórios e componentes e Insumos e consumíveis. No celular o vendedor tem Locação de equipamento e Serviço; os demais tipos de serviço são lançados pelo computador.</p>
+<div class="mk-note tip"><strong>🔎 Como conferir</strong><p>Abra a proposta: o painel “Equipamento Já Solicitado” leva à Solicitação de Locação criada. Em Contratos, os contratos de serviço aparecem com o tipo de venda da categoria e a situação Rascunho.</p></div>

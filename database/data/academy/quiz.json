@@ -6305,5 +6305,205 @@
     "why": "A Gestão de Frota usa os veículos cadastrados em Ativos (tipo Veículo) e não substitui a mobilização e a desmobilização de equipamentos, que continuam como antes."
    }
   ]
+ },
+ {
+  "page": "/treinamento/cadastros-cliente-ativo.html",
+  "questions": [
+   {
+    "n": 1,
+    "q": "O que acontece se você tentar cadastrar um ativo com um Nº Patrimônio que já existe?",
+    "options": [
+     "O sistema aceita e cria um segundo registro",
+     "O sistema barra: o Nº Patrimônio é obrigatório e único",
+     "O sistema troca o patrimônio do ativo antigo",
+     "O sistema aceita se o nome for diferente"
+    ],
+    "correct": 1,
+    "why": "O Nº Patrimônio é a identidade do ativo e é único."
+   },
+   {
+    "n": 7,
+    "q": "O que o sistema faz ao cadastrar um cliente já existente?",
+    "options": [
+     "Permite sem aviso",
+     "Só barra se o CNPJ for idêntico, com pontos",
+     "Barra a duplicidade por nome, CNPJ, inscrições, e-mail, telefone e endereço, inclusive na Lixeira",
+     "Apaga o cadastro antigo"
+    ],
+    "correct": 2,
+    "why": "A trava compara vários dados e também olha a Lixeira, para você não recriar um cliente excluído."
+   }
+  ]
+ },
+ {
+  "page": "/treinamento/qrcode-consulta-campo.html",
+  "questions": [
+   {
+    "n": 2,
+    "q": "Qual busca encontra o veículo cadastrado com a placa ABC1D23?",
+    "options": [
+     "ABC-1D23, abc1d23 ou ABC 1D23",
+     "Somente ABC1D23, exatamente igual",
+     "Somente com o hífen",
+     "Nenhuma, a busca é só por patrimônio"
+    ],
+    "correct": 0,
+    "why": "A busca ignora hífen, espaço e maiúsculas (a comparação por placa vale a partir de 3 caracteres)."
+   },
+   {
+    "n": 3,
+    "q": "Qual a diferença entre a etiqueta do cadastro (Imprimir Etiqueta) e o QR do Pátio?",
+    "options": [
+     "Não há diferença",
+     "O QR do Pátio abre o Dossiê completo com login",
+     "A etiqueta só funciona em computador",
+     "A etiqueta abre o Dossiê Rápido para a equipe; o QR do Pátio abre uma página pública de status, sem login"
+    ],
+    "correct": 3,
+    "why": "São dois QR Codes com usos diferentes: o Dossiê é para a equipe; o do Pátio é público e só mostra o status."
+   },
+   {
+    "n": 4,
+    "q": "Quando você deve gerar e colar a etiqueta com QR Code?",
+    "options": [
+     "Toda semana",
+     "Só quando o equipamento quebrar",
+     "Uma vez por equipamento, em local visível",
+     "Somente em máquinas, nunca em veículos"
+    ],
+    "correct": 2,
+    "why": "A etiqueta é feita uma vez por equipamento e fica colada nele."
+   },
+   {
+    "n": 5,
+    "q": "Um veículo aparece BLOQUEADO pelo checklist no Dossiê. O que isso significa?",
+    "options": [
+     "Pode sair normalmente",
+     "Não pode sair até ser liberado",
+     "Só pode sair com motorista novo",
+     "O cadastro foi apagado"
+    ],
+    "correct": 1,
+    "why": "Enquanto a liberação não acontecer, o veículo não sai."
+   },
+   {
+    "n": 6,
+    "q": "O QR da etiqueta está apagado. Como consultar o veículo em campo?",
+    "options": [
+     "Não é possível",
+     "Ligar para o cliente",
+     "Cadastrar o veículo de novo",
+     "Buscar no Dossiê Rápido por patrimônio ou placa"
+    ],
+    "correct": 3,
+    "why": "O Dossiê Rápido tem busca por patrimônio, placa, tag, nome e nº de série."
+   }
+  ]
+ },
+ {
+  "page": "/treinamento/proposta-comercial-ciclo.html",
+  "questions": [
+   {
+    "n": 8,
+    "q": "Qual dado do cliente é obrigatório para o Comercial conseguir aprovar a proposta?",
+    "options": [
+     "O e-mail do cliente",
+     "Inscrição Municipal",
+     "A foto do cliente",
+     "O nome do vendedor do cliente"
+    ],
+    "correct": 0,
+    "why": "A proposta é enviada ao cliente por e-mail ao ser aprovada."
+   },
+   {
+    "n": 9,
+    "q": "Quem aprova uma proposta enviada para revisão?",
+    "options": [
+     "O próprio vendedor",
+     "O cliente, antes de ela ser enviada",
+     "Quem tem o perfil Comercial; o vendedor nunca aprova a própria proposta",
+     "O Financeiro"
+    ],
+    "correct": 2,
+    "why": "A revisão é interna; só o administrador da empresa pode revisar a própria proposta."
+   },
+   {
+    "n": 10,
+    "q": "O que é obrigatório ao rejeitar uma proposta?",
+    "options": [
+     "Nada, basta clicar em Rejeitar",
+     "Informar o motivo da rejeição",
+     "Apagar a proposta",
+     "Avisar o cliente por telefone"
+    ],
+    "correct": 1,
+    "why": "O motivo fica registrado na proposta."
+   },
+   {
+    "n": 11,
+    "q": "O Comercial aprova uma proposta com um item de Locação de equipamento. O que o sistema cria?",
+    "options": [
+     "Um contrato fechado",
+     "Uma conta a receber",
+     "Nada, é preciso criar à mão",
+     "Uma Solicitação de Locação, com cliente e categoria"
+    ],
+    "correct": 3,
+    "why": "A Solicitação nasce na aprovação e segue o fluxo comercial."
+   },
+   {
+    "n": 12,
+    "q": "O cliente aceita uma proposta com itens de Mão de obra e Insumos. O que acontece?",
+    "options": [
+     "Cada categoria de serviço vira um contrato próprio (SV-AAAAMM-XXXXX), em rascunho",
+     "Nada",
+     "A proposta é apagada",
+     "O Financeiro recebe um boleto automaticamente"
+    ],
+    "correct": 0,
+    "why": "O Comercial recebe o aviso para ativar os contratos de serviço."
+   },
+   {
+    "n": 13,
+    "q": "A proposta tem só itens de serviço. O que muda na aprovação?",
+    "options": [
+     "Nada muda",
+     "A proposta é rejeitada",
+     "A Solicitação de Locação não nasce sozinha e o Comercial abre à mão",
+     "O cliente paga na hora"
+    ],
+    "correct": 2,
+    "why": "Sem item de equipamento não há Solicitação automática."
+   }
+  ]
+ },
+ {
+  "page": "/treinamento/proposta-ao-contas-a-receber.html",
+  "questions": [
+   {
+    "n": 14,
+    "q": "O que o botão Faturar do contrato faz?",
+    "options": [
+     "Só imprime o contrato",
+     "Gera a medição, aprova e cria a cobrança em Contas a Receber, em um passo",
+     "Cancela o contrato",
+     "Envia um e-mail ao cliente"
+    ],
+    "correct": 1,
+    "why": "Só aparece para contrato Ativo e para quem tem permissão em Medições."
+   },
+   {
+    "n": 15,
+    "q": "O cliente pagou. Como registrar em Contas a Receber?",
+    "options": [
+     "Apagar a conta",
+     "Criar uma conta nova",
+     "Mudar o nome do cliente",
+     "Usar Dar Baixa e informar a data de recebimento"
+    ],
+    "correct": 3,
+    "why": "A conta passa a Recebido."
+   }
+  ]
  }
 ]

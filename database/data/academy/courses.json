@@ -491,5 +491,39 @@
                 "feature": "tabela_assets"
             }
         ]
+    },
+    {
+        "title": "Cadastros, Propostas e Contas a Receber",
+        "description": "Do cadastro de clientes e ativos (com QR Code, patrimônio e placa) até a proposta comercial, o contrato e a cobrança no Contas a Receber.",
+        "lessons": [
+            {
+                "title": "Cadastrar cliente e ativo",
+                "href": "/treinamento/cadastros-cliente-ativo.html",
+                "slug": "cadastros-cliente-ativo",
+                "summary": "Nº Patrimônio único, placa, chassi de 17 caracteres e a trava de cliente duplicado.",
+                "feature": "tabela_assets"
+            },
+            {
+                "title": "QR Code e consulta em campo",
+                "href": "/treinamento/qrcode-consulta-campo.html",
+                "slug": "qrcode-consulta-campo",
+                "summary": "Etiqueta com Dossiê Rápido, QR do Pátio público, busca por patrimônio ou placa e veículo bloqueado pelo checklist.",
+                "feature": "tabela_assets"
+            },
+            {
+                "title": "Proposta comercial: do rascunho ao aceite",
+                "href": "/treinamento/proposta-comercial-ciclo.html",
+                "slug": "proposta-comercial-ciclo",
+                "summary": "Os 6 status, as regras de aprovação e o que o aceite aciona: Solicitação de Locação e contratos de serviço.",
+                "feature": "tabela_proposta_comercial"
+            },
+            {
+                "title": "Do contrato ao Contas a Receber",
+                "href": "/treinamento/proposta-ao-contas-a-receber.html",
+                "slug": "proposta-ao-contas-a-receber",
+                "summary": "Faturar gera medição, aprovação e cobrança; status do Contas a Receber, Dar Baixa e a coluna Asaas.",
+                "feature": "tabela_account_receivables"
+            }
+        ]
     }
 ]

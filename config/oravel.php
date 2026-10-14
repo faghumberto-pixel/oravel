@@ -153,6 +153,14 @@ return [
         'theme' => env('ORAVEL_ACADEMY_THEME', 'aurora'),
     ],
 
+    // Teste público de treinamento (página sem login, /treinamento/...).
+    'treinamento' => [
+        // Para onde vai o e-mail de cada resultado enviado.
+        'email' => env('ORAVEL_TREINAMENTO_EMAIL', 'contato@oravel.com.br'),
+        // Envios por IP por hora.
+        'limite_por_hora' => (int) env('ORAVEL_TREINAMENTO_LIMITE_HORA', 5),
+    ],
+
     'backups' => [
         'dir' => env('ORAVEL_BACKUP_DIR', '/var/backups/oravel-tenants'),
         'days' => (int) env('ORAVEL_BACKUP_DAYS', 30),
