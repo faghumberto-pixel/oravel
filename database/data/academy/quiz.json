@@ -3808,7 +3808,7 @@
      "O ativo volta a Disponível e perde o vínculo com o cliente"
     ],
     "correct": 3,
-    "why": "Libera o ativo."
+    "why": "Encerrar = situação Encerrado; não basta a data de fim passar."
    },
    {
     "q": "Trocou o equipamento do mesmo contrato. O que acontece?",
@@ -3846,16 +3846,16 @@
    {
     "q": "Quais campos essenciais tem o cadastro?",
     "options": [
-     "Cliente, nº do contrato, equipamento, início da vigência e valor mensal",
-     "Só cliente",
-     "Só valor",
-     "Cliente e CNPJ"
+     "Cliente, nº do contrato, situação, equipamento, início da vigência e valor",
+     "Só cliente e valor",
+     "Cliente e CNPJ",
+     "Equipamento e local"
     ],
     "correct": 0,
-    "why": "Campos essenciais."
+    "why": "O fim da vigência só é obrigatório na cobrança por diária."
    },
    {
-    "q": "O que o cartão “Valor Mensal Contratado” soma?",
+    "q": "O que o cartão “Valor em Contratos Ativos” soma?",
     "options": [
      "A receita mensal dos contratos ativos",
      "O valor de todas as OS",
@@ -3863,7 +3863,7 @@
      "O valor dos ativos"
     ],
     "correct": 0,
-    "why": "Receita mensal."
+    "why": "Só contratos com situação Ativo."
    },
    {
     "q": "Qual é o caminho do menu para os contratos?",
@@ -3886,6 +3886,193 @@
     ],
     "correct": 2,
     "why": "Libera o ativo."
+   },
+   {
+    "q": "Qual afirmação sobre um contrato em Rascunho é verdadeira?",
+    "options": [
+     "Ele não pode ser faturado e não conta nos cartões de Contratos Ativos",
+     "O ativo ainda não é afetado",
+     "Ele aparece como contrato ativo do ativo",
+     "Ele já define o Interno/Externo da OS"
+    ],
+    "correct": 0,
+    "why": "Mas o ativo já fica Locado desde a criação do contrato."
+   },
+   {
+    "q": "Como encerrar uma locação e devolver o equipamento ao pátio?",
+    "options": [
+     "Esperar o fim da vigência passar",
+     "Mudar a situação do contrato para Encerrado",
+     "Editar o ativo para Disponível",
+     "Excluir o cliente"
+    ],
+    "correct": 1,
+    "why": "O vencimento da data sozinho não encerra nada. Encerrado libera o ativo e tira o contrato dos indicadores."
+   },
+   {
+    "q": "Um contrato Encerrado é reaberto (volta a Ativo). O que acontece com o ativo?",
+    "options": [
+     "Nada",
+     "Volta a ficar Locado, com o cliente e o local do contrato",
+     "Fica Em Manutenção",
+     "É excluído"
+    ],
+    "correct": 1,
+    "why": "O equipamento acompanha a situação do contrato."
+   },
+   {
+    "q": "O que só um contrato com situação Ativo permite?",
+    "options": [
+     "Ser listado",
+     "Ser faturado, contar nos cartões e definir o Interno/Externo da OS",
+     "Ser impresso",
+     "Ser assinado"
+    ],
+    "correct": 1,
+    "why": "Por isso a situação importa mesmo que o contrato exista."
+   },
+   {
+    "q": "Que situação vem escolhida por padrão ao criar um contrato pela tela?",
+    "options": [
+     "Rascunho",
+     "Ativo",
+     "Encerrado",
+     "Nenhuma, é obrigatório escolher"
+    ],
+    "correct": 1,
+    "why": "Os contratos de serviço gerados por proposta aceita é que nascem em Rascunho."
+   },
+   {
+    "q": "Em qual modalidade o fim da vigência é obrigatório?",
+    "options": [
+     "Mensal Fixo",
+     "Por Hora",
+     "Diária",
+     "Franquia + Excedente"
+    ],
+    "correct": 2,
+    "why": "Na diária o sistema calcula o total: dias (contando o primeiro e o último) × valor da diária."
+   },
+   {
+    "q": "Contrato por diária: início 01/10, fim 05/10, diária R$ 200. Qual o total calculado?",
+    "options": [
+     "R$ 800",
+     "R$ 1.000",
+     "R$ 600",
+     "R$ 1.200"
+    ],
+    "correct": 1,
+    "why": "São 5 dias contando o primeiro e o último: 5 × 200."
+   },
+   {
+    "q": "No faturamento de um contrato Por Hora, o que o sistema pede?",
+    "options": [
+     "Nada, calcula sozinho",
+     "O valor do período, porque não há cálculo automático",
+     "O CNPJ",
+     "A assinatura do cliente"
+    ],
+    "correct": 1,
+    "why": "Nas demais modalidades a prévia do valor é calculada."
+   },
+   {
+    "q": "Por que o sistema pode recusar um equipamento ao criar um contrato?",
+    "options": [
+     "Porque o cliente não tem CNPJ",
+     "Porque o ativo tem manutenção preventiva crítica vencida",
+     "Porque o ativo é novo",
+     "Porque o contrato é de serviço"
+    ],
+    "correct": 1,
+    "why": "É a trava que protege de locar um equipamento que precisa de manutenção."
+   },
+   {
+    "q": "Quais são as opções de Local de Instalação?",
+    "options": [
+     "Só o endereço do cliente",
+     "Sede da empresa (unidade/filial), endereço do cliente ou outro local",
+     "Só o CEP",
+     "Só o mapa"
+    ],
+    "correct": 1,
+    "why": "No outro local, o CEP preenche endereço, cidade e UF e o sistema tenta localizar no mapa."
+   },
+   {
+    "q": "Para que serve a seção “Histórico de Substituição de Equipamento”?",
+    "options": [
+     "Para trocar o equipamento",
+     "Para mostrar cada troca feita no contrato, com substituto, OS, técnico, status e entrega",
+     "Para cadastrar peças",
+     "Para imprimir"
+    ],
+    "correct": 1,
+    "why": "Só aparece depois que o contrato é salvo."
+   },
+   {
+    "q": "A proposta comercial é aceita pelo cliente. O que acontece com os serviços vendidos (mão de obra, insumos…)?",
+    "options": [
+     "Nada",
+     "Cada categoria de serviço vira um contrato próprio, em Rascunho, com número SV-AAAAMM-XXXXX",
+     "Entram no contrato da locação",
+     "O ativo é locado"
+    ],
+    "correct": 1,
+    "why": "Para um contrato de serviço, o equipamento não é obrigatório."
+   },
+   {
+    "q": "Ao faturar um contrato, o que o sistema gera?",
+    "options": [
+     "Só um PDF",
+     "Uma medição aprovada e a cobrança no Contas a Receber",
+     "Um novo contrato",
+     "Uma OS"
+    ],
+    "correct": 1,
+    "why": "O período precisa estar dentro da vigência e não pode se sobrepor a outro já faturado."
+   },
+   {
+    "q": "Ao faturar a locação, o que dá para incluir junto?",
+    "options": [
+     "Os contratos de outros clientes",
+     "Os serviços ativos vinculados à mesma solicitação, cada um com a própria cobrança",
+     "Só as multas",
+     "Nada"
+    ],
+    "correct": 1,
+    "why": "A opção aparece quando existem serviços ativos vinculados."
+   },
+   {
+    "q": "Que informação aparece na coluna Assinatura da lista?",
+    "options": [
+     "O valor",
+     "“Contrato assinado” ou “Assinatura pendente”",
+     "O nome do vendedor",
+     "A data de vencimento"
+    ],
+    "correct": 1,
+    "why": "Depois de assinado, a ação Ver Certificado fica disponível."
+   },
+   {
+    "q": "Mudou o local de instalação de um contrato Ativo. O que acontece?",
+    "options": [
+     "Nada",
+     "A localização do ativo é atualizada e os responsáveis pelo aviso são notificados para conferir",
+     "O contrato é encerrado",
+     "O ativo é bloqueado"
+    ],
+    "correct": 1,
+    "why": "O aviso é “Local de instalação do contrato mudou”, configurado em Responsáveis pelos Avisos."
+   },
+   {
+    "q": "O cartão “A Vencer em 30 dias” conta quais contratos?",
+    "options": [
+     "Todos com vigência terminando",
+     "Só os de situação Ativo com fim de vigência nos próximos 30 dias",
+     "Só os Rascunhos",
+     "Os encerrados"
+    ],
+    "correct": 1,
+    "why": "É o mesmo critério do filtro Vence em 30 dias."
    }
   ]
  },

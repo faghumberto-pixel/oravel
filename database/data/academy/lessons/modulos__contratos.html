@@ -1,10 +1,62 @@
 <p>O <strong>contrato</strong> formaliza a locação de um Ativo para um Cliente: preço mensal, vigência e condições de uso. Criar ou encerrar um contrato também move o Ativo automaticamente entre “Disponível” e “Locado”.</p>
 <div class="mk-menu">📍 Comercial → Gestão Comercial → Contratos</div>
-<figure class="mk-fig"><img src="/academy/img/contratos-lista.jpg" alt="Lista de Contratos"><figcaption><b>Lista de Contratos</b><ol class="mk-legend"><li><strong>Criar contract</strong> — novo contrato.</li><li><strong>Cartões</strong> — total, ativos, a vencer em 30 dias e valor mensal contratado.</li><li><strong>Cliente</strong> — quem está locando.</li><li><strong>Assinatura</strong> — situação da assinatura.</li></ol></figcaption></figure>
-<figure class="mk-fig"><img src="/academy/img/contrato-novo.jpg" alt="Cadastro do contrato"><figcaption><b>Cadastro do contrato</b><ol class="mk-legend"><li><strong>1. Qualificação das Partes</strong> — CNPJ e cliente.</li><li><strong>2. Objeto e Prazos</strong> — número, equipamento, início da vigência e fim.</li></ol></figcaption></figure>
+<figure class="mk-fig"><img src="/academy/img/contratos-lista.jpg" alt="Lista de Contratos"><figcaption><b>Lista de Contratos</b><ol class="mk-legend"><li><strong>Criar</strong> — novo contrato. Ao lado: Imprimir e Exportar.</li><li><strong>Cartões</strong> — Total de Contratos, Contratos Ativos, A Vencer em 30 dias e Valor em Contratos Ativos.</li><li><strong>Tipo de venda</strong> — Locação ou o serviço vendido junto.</li><li><strong>Assinatura</strong> — “Contrato assinado” ou “Assinatura pendente”.</li></ol></figcaption></figure>
+<figure class="mk-fig"><img src="/academy/img/contrato-novo.jpg" alt="Cadastro do contrato"><figcaption><b>Cadastro do contrato</b><ol class="mk-legend"><li><strong>1. Qualificação das Partes</strong> — CNPJ e cliente.</li><li><strong>2. Objeto e Prazos</strong> — número, situação, equipamento, início e fim da vigência.</li></ol></figcaption></figure>
 <figure class="mk-fig"><img src="/academy/img/contrato-timeline.jpg" alt="Linha do tempo do contrato"><figcaption><b>Linha do tempo do contrato</b><ol class="mk-legend"><li><strong>Ciclo de vida do contrato</strong> — da contratação ao vencimento, com os marcos do período.</li></ol></figcaption></figure>
 <h2>O que acontece com o Ativo</h2>
-<table><thead><tr><th>Quando…</th><th>O Ativo…</th></tr></thead><tbody><tr><td>O contrato é criado</td><td>vira <strong>Locado</strong>, ganha o cliente e a localização da obra</td></tr><tr><td>O contrato é encerrado</td><td>volta a <strong>Disponível</strong> e perde o vínculo com o cliente</td></tr><tr><td>Troca o equipamento do contrato</td><td>o antigo é liberado e o novo é travado</td></tr><tr><td>O contrato é excluído</td><td>volta a <strong>Disponível</strong></td></tr></tbody></table>
+<table><thead><tr><th>Quando…</th><th>O Ativo…</th></tr></thead><tbody><tr><td>O contrato é criado</td><td>vira <strong>Locado</strong>, ganha o cliente e a localização da obra</td></tr><tr><td>O contrato é encerrado (situação <strong>Encerrado</strong>)</td><td>volta a <strong>Disponível</strong> e perde o vínculo com o cliente</td></tr><tr><td>Um contrato encerrado é reaberto</td><td>volta a <strong>Locado</strong>, com o cliente e o local do contrato</td></tr><tr><td>Troca o equipamento do contrato</td><td>o antigo é liberado e o novo é travado</td></tr><tr><td>O contrato é excluído</td><td>volta a <strong>Disponível</strong></td></tr></tbody></table>
 <div><span class="mk-chip gray">Rascunho</span><span class="mk-chip green">Ativo · locação em vigor</span><span class="mk-chip red">Encerrado</span></div>
 <div class="mk-note tip"><strong>💡 Contratos vencendo</strong><p>Use o filtro <strong>“Vence em 30 dias”</strong> para planejar renovação ou devolução.</p></div>
-<div class="mk-note who"> <strong>👤 Quem usa</strong> <p> Perfil comercial/vendas cadastra e mantém os contratos. O sistema usa o contrato pra decidir se um Ativo está locado ou disponível — por isso o cadastro correto aqui afeta o que Ativos, Ordens de Serviço e o Dossiê do Ativo mostram. </p> </div> <h2>Quando usar</h2> <ul> <li>Ao fechar uma locação nova com um Cliente.</li> <li>Pra consultar o valor mensal, vigência ou equipamento de um contrato existente.</li> <li>Pra encerrar uma locação e devolver o Ativo ao pátio.</li> </ul> <h2>Cadastrando um Contrato</h2> <p>Os campos essenciais do formulário:</p> <table> <thead><tr><th>Campo</th><th>Pra que serve</th></tr></thead> <tbody> <tr><td><strong>Cliente</strong></td><td>Empresa que está locando o equipamento</td></tr> <tr><td><strong>Nº do Contrato</strong></td><td>Identificador do contrato</td></tr> <tr><td><strong>Equipamento (Ativo)</strong></td><td>O Ativo específico locado — buscável por nome/marca/série</td></tr> <tr><td><strong>Início da Vigência</strong></td><td>Data em que a locação passa a valer</td></tr> <tr><td><strong>Valor Mensal</strong></td><td>Valor cobrado do cliente por mês (R$)</td></tr> </tbody> </table> <h2>Status do Contrato</h2> <p> Um contrato pode estar em <strong>Rascunho</strong> (recém-criado), <strong>Ativo</strong> (locação em vigor — é esse status que faz o Ativo aparecer como "Locado" e conta pros indicadores comerciais) ou <strong>Encerrado</strong>. </p> <h2>O que acontece automaticamente com o Ativo</h2> <p>Ao trabalhar com um Contrato, o Ativo vinculado muda de status sozinho:</p> <ul> <li><strong>Ao criar o contrato</strong>: o Ativo vira <strong>Locado</strong>, ganha o Cliente do contrato e a localização da obra.</li> <li><strong>Ao encerrar o contrato</strong> (marcar como inativo): o Ativo volta pra <strong>Disponível</strong> e perde o vínculo com o cliente.</li> <li><strong>Ao trocar o Equipamento do mesmo contrato</strong>: o Ativo antigo é liberado e o novo é travado no lugar dele automaticamente.</li> <li><strong>Ao excluir o contrato</strong>: o Ativo volta a Disponível.</li> </ul> <p>Ou seja: normalmente <strong>não é preciso editar o Ativo manualmente</strong> ao locar ou devolver — isso é reflexo do Contrato.</p> <h2>Contratos vencendo</h2> <p> A listagem tem um filtro <strong>"Vence em 30 dias"</strong>, que mostra contratos Ativos cuja vigência termina no próximo mês — útil pra planejar renovação ou devolução do equipamento. </p> <h2>Imprimir e Exportar</h2> <p> A listagem tem os botões <strong>Imprimir</strong> e <strong>Exportar</strong> (Excel/CSV) com os filtros aplicados. </p> <p>→ Veja mais em Impressão e Exportação.</p>
+<div class="mk-note who"><strong>👤 Quem usa</strong><p>O perfil comercial/vendas cadastra e mantém os contratos. O sistema usa o contrato para decidir se um ativo está locado ou disponível. Por isso o cadastro correto aqui afeta o que Ativos, Ordens de Serviço e o Dossiê do Ativo mostram.</p></div>
+<h2>Quando usar</h2>
+<ul><li>Ao fechar uma locação nova com um cliente.</li><li>Para consultar valor, vigência ou equipamento de um contrato existente.</li><li>Para encerrar uma locação e devolver o ativo ao pátio.</li><li>Para faturar o período e acompanhar custo e margem.</li></ul>
+<h2>Situação do contrato</h2>
+<table><thead><tr><th>Situação</th><th>Efeito</th></tr></thead><tbody>
+<tr><td><strong>Rascunho</strong></td><td>Ainda não vale. Contratos de serviço gerados por uma proposta aceita nascem assim. <strong>Não</strong> aparece como contrato ativo do ativo, não conta nos cartões e <strong>não pode ser faturado</strong></td></tr>
+<tr><td><strong>Ativo</strong> (locação em vigor)</td><td>É o que vale: conta nos cartões, define o <strong>Interno/Externo</strong> da OS do ativo, aparece no Dossiê e permite faturar. Já vem escolhido ao criar um contrato pela tela</td></tr>
+<tr><td><strong>Encerrado</strong></td><td>Libera o equipamento e tira o contrato dos indicadores</td></tr>
+</tbody></table>
+<div class="mk-note warn"><strong>⚠️ Criar já trava o ativo</strong><p>Mesmo em Rascunho, o ativo vira <strong>Locado</strong> assim que o contrato é criado. Para encerrar a locação, mude a situação para <strong>Encerrado</strong>; não basta deixar o contrato vencer.</p></div>
+<h2>Os campos do formulário</h2>
+<table><thead><tr><th>Seção</th><th>O que pede</th></tr></thead><tbody>
+<tr><td>1. Qualificação das Partes</td><td>CNPJ do cliente e Cliente (obrigatórios)</td></tr>
+<tr><td>2. Objeto e Prazos</td><td>Número do Contrato, Situação, Equipamento, Início da Vigência (obrigatórios); Fim da Vigência (obrigatório só na cobrança por diária)</td></tr>
+<tr><td>Local de Instalação</td><td>Sede da empresa (escolhe a unidade/filial), endereço já cadastrado do cliente, ou outro local (CEP, endereço, cidade e UF; o sistema procura o endereço pelo CEP e tenta localizar no mapa). Também pede as <strong>Condições do Ambiente</strong> (normal, exposto ao tempo, área de construção, ambiente agressivo, litorâneo, outro)</td></tr>
+<tr><td>3. Manutenção, Logística e Riscos</td><td>Responsável pela manutenção (Locadora ou Locatário), frete de ida/volta incluso e normas de uso e segurança (NRs)</td></tr>
+<tr><td>Itens Agregados da Locação</td><td>Insumos, acessórios, mão de obra especializada, segurança e documentação, e o detalhe do que foi combinado</td></tr>
+<tr><td>4. Responsabilidades e Rescisão</td><td>Modalidade de cobrança, multa rescisória (%), valor e laudo de vistoria de entrega (PDF ou imagem)</td></tr>
+<tr><td>5. Histórico de Substituição</td><td>Aparece depois de salvar: cada troca de equipamento, com o substituto, o diagnóstico, a OS, o técnico, o status e a entrega ao cliente</td></tr>
+</tbody></table>
+<h2>Modalidade de cobrança</h2>
+<table><thead><tr><th>Modalidade</th><th>Como o valor é tratado</th></tr></thead><tbody>
+<tr><td>Mensal Fixo</td><td>Valor mensal; no faturamento, proporcional aos dias do período</td></tr>
+<tr><td>Por Hora</td><td>Sem cálculo automático: você informa o valor do período ao faturar</td></tr>
+<tr><td>Franquia de Horas + Excedente</td><td>Valor mensal mais o excedente de horas calculado pelo uso</td></tr>
+<tr><td>Diária</td><td>O campo vira “Valor da Diária” e o sistema mostra o total calculado: dias de vigência (contando o primeiro e o último) × diária</td></tr>
+</tbody></table>
+<h2>Trava de manutenção crítica</h2>
+<p>Ao criar um contrato, o sistema recusa um equipamento com <strong>manutenção preventiva crítica vencida</strong> (o ativo fica bloqueado para locação). Regularize a preventiva antes. Veja Manutenção Preventiva.</p>
+<h2>O que acontece automaticamente com o ativo</h2>
+<ul>
+<li><strong>Ao criar o contrato:</strong> o ativo vira <strong>Locado</strong>, ganha o cliente do contrato e a localização.</li>
+<li><strong>Ao encerrar o contrato:</strong> o ativo volta a <strong>Disponível</strong> e perde o vínculo com o cliente.</li>
+<li><strong>Ao reabrir um contrato encerrado:</strong> o ativo volta a Locado.</li>
+<li><strong>Ao trocar o equipamento do mesmo contrato:</strong> o antigo é liberado e o novo é travado.</li>
+<li><strong>Ao mudar o local de instalação:</strong> a localização do ativo é atualizada e, se o contrato estava Ativo, os responsáveis pelo aviso “Local de instalação do contrato mudou” (em geral a logística) são avisados para conferir.</li>
+<li><strong>Ao excluir o contrato:</strong> o ativo volta a Disponível.</li>
+</ul>
+<p>Normalmente <strong>não é preciso editar o ativo</strong> ao locar ou devolver: isso é reflexo do contrato.</p>
+<h2>Assinatura eletrônica, imprimir e faturar</h2>
+<ul>
+<li><strong>Gerar Link de Assinatura / Copiar Link:</strong> cria o link para o cliente assinar; depois de assinado, a coluna mostra “🔒 Contrato assinado” e dá para <strong>Ver Certificado</strong>.</li>
+<li><strong>Ver e imprimir:</strong> abre o contrato pronto para impressão, em nova aba.</li>
+<li><strong>Faturar</strong> (só contrato Ativo e para quem tem permissão em Medições): escolha o período, o vencimento e veja a prévia do valor. O sistema cria a medição, aprova e gera a cobrança no <strong>Contas a Receber</strong>. O período precisa estar dentro da vigência e não pode se sobrepor a outro já faturado. Se há serviços ativos vinculados (mão de obra, acessórios…), dá para faturá-los juntos, cada um com a própria cobrança.</li>
+<li><strong>Custo e margem:</strong> mostra o custo e a margem do contrato.</li>
+<li><strong>Timeline:</strong> na tela de edição, a linha do tempo do contrato, com opção de impressão.</li>
+</ul>
+<h2>Tipo de venda: locação e serviços</h2>
+<p>A coluna <strong>Tipo de venda</strong> mostra “Locação” ou a categoria de serviço (mão de obra especializada, segurança e documentação, acessórios e componentes, insumos e consumíveis). Quando o cliente aceita uma <strong>proposta comercial</strong>, cada categoria de serviço vira um contrato próprio, em Rascunho, com número no formato <code>SV-AAAAMM-XXXXX</code>. Para um contrato de serviço, o equipamento não é obrigatório. Veja Proposta Comercial.</p>
+<h2>Contratos vencendo</h2>
+<p>O filtro <strong>“Vence em 30 dias”</strong> mostra contratos <strong>Ativos</strong> cujo fim da vigência cai nos próximos 30 dias, para planejar renovação ou devolução. Existem também os filtros Situação e Tipo de venda.</p>
+<h2>Imprimir e Exportar</h2>
+<p>A lista tem <strong>Imprimir</strong> e <strong>Exportar</strong> (Excel/CSV) com os filtros aplicados. Veja Impressão e Exportação.</p>

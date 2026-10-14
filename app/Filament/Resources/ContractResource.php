@@ -62,6 +62,13 @@ class ContractResource extends Resource
                         Forms\Components\TextInput::make('contract_number')
                             ->label('Número do Contrato')
                             ->required(),
+                        Forms\Components\Select::make('status')
+                            ->label('Situação do Contrato')
+                            ->options(Contract::statusOptions())
+                            ->default('Ativo')
+                            ->native(false)
+                            ->required()
+                            ->helperText('Só contrato Ativo conta nos indicadores, na OS (Interno/Externo) e pode ser faturado. Encerrado libera o equipamento.'),
                         Forms\Components\Select::make('asset_id')
                             ->relationship('asset', 'name')
                             ->label('Equipamento (Marca/Série)')

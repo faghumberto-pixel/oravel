@@ -128,11 +128,34 @@ class Contract extends Model
                 $model->tenant_id = Auth::user()->tenant_id;
             }
         });
+
+        // "Encerrado" e is_active andam juntos: é o is_active que o
+        // ContractObserver usa para devolver o equipamento ao pátio.
+        static::saving(function (Contract $contract) {
+            if ($contract->isDirty('status')) {
+                $contract->is_active = $contract->status !== 'Encerrado';
+            }
+        });
     }
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logOnlyDirty();
+    }
+
+    /**
+     * Situações do contrato (valor gravado => rótulo). 'Draft' é o valor
+     * histórico do banco para Rascunho.
+     *
+     * @return array<string, string>
+     */
+    public static function statusOptions(): array
+    {
+        return [
+            'Draft' => 'Rascunho',
+            'Ativo' => 'Ativo (locação em vigor)',
+            'Encerrado' => 'Encerrado',
+        ];
     }
 
     public static function localTipoOptions(): array

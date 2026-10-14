@@ -47,6 +47,12 @@ class ContractObserver
         // Troca de ativo dentro do mesmo contrato (ex: processo de Troca de
         // Equipamento) -- libera o ativo antigo e trava o novo no cliente
         // do contrato, mesmo efeito de created()/deleted() acima.
+        // Contrato reaberto (Encerrado -> Ativo/Rascunho): o equipamento volta a
+        // ficar Locado, com o cliente e o local do contrato.
+        if ($contract->isDirty('is_active') && $contract->is_active && $contract->asset && ! $contract->wasChanged('asset_id')) {
+            $this->syncAssetLocation($contract);
+        }
+
         if ($contract->wasChanged('asset_id')) {
             $originalAssetId = $contract->getOriginal('asset_id');
 
