@@ -33,7 +33,7 @@
     $items = $announcements->map(fn ($a) => [
         'id' => $a->id,
         'title' => $a->title,
-        'message' => $a->message,
+        'message' => strip_tags($a->message, '<a>'),
         'classes' => implode(' ', $levelClasses[$a->level] ?? $levelClasses[\App\Models\Announcement::LEVEL_INFO]),
     ])->values();
 @endphp
@@ -79,7 +79,7 @@
                 class="fi-oravel-announcement-banner w-full border-b px-4 py-2 text-center text-sm"
             >
                 <strong x-text="active.title"></strong>
-                <span x-text="active.message"></span>
+                <span x-html="active.message"></span>
                 <button
                     type="button"
                     x-on:click="dismiss(active.id)"
