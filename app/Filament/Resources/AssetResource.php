@@ -169,7 +169,15 @@ class AssetResource extends Resource
                                     Forms\Components\TextInput::make('patrimonio')
                                         ->label('Nº Patrimônio')
                                         ->required()
-                                        ->unique(ignoreRecord: true)
+                                        // Único DENTRO da empresa: o unique() puro consulta a tabela
+                                        // inteira (sem o escopo de tenant) e barrava o mesmo número em
+                                        // empresas diferentes.
+                                        ->unique(
+                                            ignoreRecord: true,
+                                            modifyRuleUsing: fn (\Illuminate\Validation\Rules\Unique $rule, ?Asset $record) => ($tenantId = $record?->tenant_id ?? Tenancy::current()?->id)
+                                                ? $rule->where('tenant_id', $tenantId)
+                                                : $rule,
+                                        )
                                         ->prefixIcon('heroicon-m-hashtag')
                                         // Numeração automática é opt-in por tenant (Configurações
                                         // do Tenant, Tenant::auto_generate_patrimonio) -- padrão

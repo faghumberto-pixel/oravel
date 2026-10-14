@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Asset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class AssetController extends Controller
 {
@@ -27,7 +28,8 @@ class AssetController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'patrimonio' => 'required|string|unique:assets',
+            // Único dentro da empresa (sem o where, barrava o mesmo número em outra empresa).
+            'patrimonio' => ['required', 'string', Rule::unique('assets', 'patrimonio')->where('tenant_id', $request->user()?->tenant_id)],
             'status' => 'required|string',
         ]);
 

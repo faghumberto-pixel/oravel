@@ -6319,7 +6319,7 @@
      "O sistema aceita se o nome for diferente"
     ],
     "correct": 1,
-    "why": "O Nº Patrimônio é a identidade do ativo e é único."
+    "why": "O Nº Patrimônio é a identidade do ativo e é único dentro da empresa."
    },
    {
     "n": 7,
