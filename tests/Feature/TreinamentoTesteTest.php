@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Filament\Central\Resources\TreinamentoResultadoResource;
 use App\Mail\TreinamentoResultadoMail;
 use App\Models\Course;
+use App\Models\Plan;
+use App\Models\Tenant;
 use App\Models\TreinamentoResultado;
 use App\Models\User;
 use App\Support\TreinamentoTeste;
@@ -61,6 +63,7 @@ class TreinamentoTesteTest extends TestCase
         return $this->post(route('treinamento.enviar'), array_merge([
             'nome' => 'Maria da Silva',
             'funcao' => 'Vendedora',
+            'empresa' => 'Locadora Teste',
             'r' => $respostas,
         ], $extra));
     }
@@ -266,5 +269,47 @@ class TreinamentoTesteTest extends TestCase
         $this->assertFalse(TreinamentoResultadoResource::canCreate());
         $this->assertFalse(TreinamentoResultadoResource::canEdit(new TreinamentoResultado));
         $this->assertFalse(TreinamentoResultadoResource::canDelete(new TreinamentoResultado));
+    }
+
+    public function test_company_is_required_and_limited_to_120(): void
+    {
+        Mail::fake();
+
+        $this->enviar([], ['empresa' => ''])->assertSessionHasErrors('empresa');
+        $this->enviar([], ['empresa' => str_repeat('a', 121)])->assertSessionHasErrors('empresa');
+
+        $this->assertSame(0, TreinamentoResultado::count());
+    }
+
+    public function test_company_is_linked_to_the_registered_client_by_name(): void
+    {
+        Mail::fake();
+        $plan = Plan::create([
+            'name' => 'Plano Emp '.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1,
+            'billing_cycle' => 'monthly', 'is_active' => true, 'features' => [],
+        ]);
+        $cliente = Tenant::create(['name' => 'Locadora Horizonte', 'slug' => 'locadora-horizonte-'.uniqid(), 'plan_id' => $plan->id, 'status' => 'active']);
+
+        $this->enviar($this->respostas(15), ['empresa' => '  locadora HORIZONTE '])->assertRedirect();
+        $this->enviar($this->respostas(15), ['empresa' => 'Empresa que nao e cliente'])->assertRedirect();
+
+        $this->assertSame($cliente->id, TreinamentoResultado::where('empresa', 'locadora HORIZONTE')->value('tenant_id'));
+        $this->assertNull(TreinamentoResultado::where('empresa', 'Empresa que nao e cliente')->value('tenant_id'));
+    }
+
+    public function test_company_with_two_matching_clients_is_not_linked(): void
+    {
+        Mail::fake();
+        $plan = Plan::create([
+            'name' => 'Plano Emp2 '.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1,
+            'billing_cycle' => 'monthly', 'is_active' => true, 'features' => [],
+        ]);
+        foreach ([1, 2] as $i) {
+            Tenant::create(['name' => 'Mesmo Nome', 'slug' => 'mesmo-nome-'.$i.uniqid(), 'plan_id' => $plan->id, 'status' => 'active']);
+        }
+
+        $this->enviar($this->respostas(15), ['empresa' => 'Mesmo Nome'])->assertRedirect();
+
+        $this->assertNull(TreinamentoResultado::where('empresa', 'Mesmo Nome')->value('tenant_id'));
     }
 }

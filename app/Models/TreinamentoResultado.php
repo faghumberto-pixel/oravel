@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Um envio do teste público de treinamento. Global de propósito (sem tenant):
@@ -19,6 +20,8 @@ class TreinamentoResultado extends Model
         'treinamento',
         'nome',
         'funcao',
+        'empresa',
+        'tenant_id',
         'acertos',
         'total',
         'nota',
@@ -27,6 +30,11 @@ class TreinamentoResultado extends Model
         'ip',
         'user_agent',
     ];
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class)->withoutGlobalScopes();
+    }
 
     protected $casts = [
         'nota' => 'decimal:1',

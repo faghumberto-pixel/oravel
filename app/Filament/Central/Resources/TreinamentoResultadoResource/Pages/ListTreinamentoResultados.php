@@ -19,12 +19,12 @@ class ListTreinamentoResultados extends ListRecords
                 ->icon('heroicon-o-arrow-down-tray')
                 ->color('gray')
                 ->action(function () {
-                    $registros = $this->getFilteredSortedTableQuery()->get();
+                    $registros = $this->getFilteredSortedTableQuery()->with('tenant')->get();
 
                     return response()->streamDownload(function () use ($registros) {
                         $saida = fopen('php://output', 'w');
                         fwrite($saida, "\xEF\xBB\xBF"); // BOM para o Excel abrir em UTF-8
-                        fputcsv($saida, ['Data', 'Nome', 'Função', 'Nota', 'Acertos', 'Total', 'Situação', 'Treinamento'], ';');
+                        fputcsv($saida, ['Data', 'Nome', 'Função', 'Empresa', 'Cliente cadastrado', 'Nota', 'Acertos', 'Total', 'Situação', 'Treinamento'], ';');
 
                         /** @var TreinamentoResultado $r */
                         foreach ($registros as $r) {
@@ -32,6 +32,8 @@ class ListTreinamentoResultados extends ListRecords
                                 $r->created_at->timezone('America/Sao_Paulo')->format('d/m/Y H:i'),
                                 $r->nome,
                                 $r->funcao,
+                                $r->empresa,
+                                $r->tenant?->name,
                                 number_format((float) $r->nota, 1, ',', ''),
                                 $r->acertos,
                                 $r->total,

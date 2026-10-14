@@ -64,6 +64,12 @@ class TreinamentoResultadoResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('nome')->label('Nome')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('funcao')->label('Função')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('empresa')
+                    ->label('Empresa')
+                    ->searchable()
+                    ->sortable()
+                    ->description(fn (TreinamentoResultado $record) => $record->tenant ? 'Cliente: '.$record->tenant->name : null)
+                    ->placeholder('—'),
                 Tables\Columns\TextColumn::make('nota')
                     ->label('Nota')
                     ->formatStateUsing(fn ($state) => number_format((float) $state, 1, ',', ''))

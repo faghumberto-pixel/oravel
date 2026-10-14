@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\TreinamentoResultadoMail;
+use App\Models\Tenant;
 use App\Models\TreinamentoResultado;
 use App\Support\TreinamentoTeste;
 use Illuminate\Http\RedirectResponse;
@@ -67,14 +68,15 @@ class TreinamentoTesteController extends Controller
         $dados = $request->validate([
             'nome' => ['required', 'string', 'max:120'],
             'funcao' => ['required', 'string', 'max:120'],
+            'empresa' => ['required', 'string', 'max:120'],
             'r' => ['nullable', 'array'],
             'r.*' => ['nullable', 'integer', 'between:0,3'],
-        ], [], ['nome' => 'nome completo', 'funcao' => 'função']);
+        ], [], ['nome' => 'nome completo', 'funcao' => 'função', 'empresa' => 'empresa']);
 
         $ordem = session(self::SESSAO_ORDEM);
 
         if (! is_array($ordem)) {
-            return back()->withInput($request->only('nome', 'funcao'))->withErrors([
+            return back()->withInput($request->only('nome', 'funcao', 'empresa'))->withErrors([
                 'sessao' => 'A página expirou. Atualize e responda de novo.',
             ]);
         }
@@ -87,6 +89,8 @@ class TreinamentoTesteController extends Controller
             'treinamento' => TreinamentoTeste::SLUG,
             'nome' => trim($dados['nome']),
             'funcao' => trim($dados['funcao']),
+            'empresa' => trim($dados['empresa']),
+            'tenant_id' => $this->clientePorNome(trim($dados['empresa'])),
             'acertos' => $correcao['acertos'],
             'total' => $correcao['total'],
             'nota' => $correcao['nota'],
@@ -135,6 +139,20 @@ class TreinamentoTesteController extends Controller
             'revisao' => $revisao,
             'notaMinima' => (float) config('oravel.academy.passing_grade', 7.0),
         ]);
+    }
+
+    /**
+     * Liga a empresa informada ao cliente cadastrado quando o nome bate com um
+     * único cliente (sem diferenciar maiúsculas); senão fica sem ligação.
+     */
+    private function clientePorNome(string $empresa): ?string
+    {
+        $ids = Tenant::withoutGlobalScopes()
+            ->whereRaw('lower(trim(name)) = ?', [mb_strtolower($empresa)])
+            ->limit(2)
+            ->pluck('id');
+
+        return $ids->count() === 1 ? $ids->first() : null;
     }
 
     public function pdf(): BinaryFileResponse

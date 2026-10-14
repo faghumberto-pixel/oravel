@@ -23,3 +23,8 @@ Nunca sobrescreve texto editado na Central, exceto com `--refresh-content`.
 ## Regras
 - Prova entregue de uma vez; questão em branco vale zero; não refaz. Nota mínima do certificado: `oravel.academy.passing_grade` (7,0).
 - Pontos: leitura 10, acerto 10, 1/min de estudo (teto 10 por aula), bônus de curso 50 (ver `config/oravel.php`).
+
+## Acompanhamento na Central (por cliente)
+- **Gestão SaaS → Participação no Treinamento** (`ParticipacaoTreinamento`, números em `App\Services\AcademyClientReport`): por cliente, acessos (telas da Academia abertas, `user_activity_logs`), dias com acesso, cursos concluídos (todas as aulas liberadas no contrato), aulas, exercícios (perguntas respondidas e certas) e provas (acertos/total e nota). Séries: acessos mês a mês (12 meses) e dia a dia (30 dias). Ao clicar num cliente, aparecem os colaboradores. A equipe Oravel (SUPER_ADMINS) não entra na conta.
+- O quadro também resume o **teste público de treinamento** por empresa (`/treinamento/cadastros-propostas-receber`). O teste pergunta a Empresa e liga ao cliente quando o nome bate com um único cliente (`treinamento_resultados.tenant_id`).
+- As respostas individuais do teste público ficam em **Gestão SaaS → Resultados de Treinamento** (exporta CSV).

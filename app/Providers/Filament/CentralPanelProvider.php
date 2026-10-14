@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Central\Pages\AcessosClientes;
+use App\Filament\Central\Pages\ParticipacaoTreinamento;
 use App\Filament\Central\Pages\DashboardCrm;
 use App\Filament\Central\Pages\DashboardSaaS;
 use App\Filament\Central\Pages\DashboardSiteInstitucional;
@@ -138,6 +139,7 @@ class CentralPanelProvider extends PanelProvider
                 MinhasNotificacoes::class,
                 TenantTree::class,
                 AcessosClientes::class,
+                ParticipacaoTreinamento::class,
                 RolesTree::class,
             ])
             ->widgets([

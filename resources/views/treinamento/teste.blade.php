@@ -27,6 +27,9 @@
 
             <label for="funcao">Função</label>
             <input type="text" id="funcao" name="funcao" value="{{ old('funcao') }}" maxlength="120" required>
+
+            <label for="empresa">Empresa</label>
+            <input type="text" id="empresa" name="empresa" value="{{ old('empresa') }}" maxlength="120" required>
         </div>
 
         {{-- Honeypot: invisível para pessoas; robôs costumam preencher. --}}

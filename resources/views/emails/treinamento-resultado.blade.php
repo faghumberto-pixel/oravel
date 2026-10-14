@@ -5,6 +5,7 @@
     <table cellpadding="6" style="border-collapse:collapse;">
         <tr><td><strong>Nome</strong></td><td>{{ $resultado->nome }}</td></tr>
         <tr><td><strong>Função</strong></td><td>{{ $resultado->funcao }}</td></tr>
+        <tr><td><strong>Empresa</strong></td><td>{{ $resultado->empresa }}@if ($resultado->tenant) (cliente cadastrado: {{ $resultado->tenant->name }})@endif</td></tr>
         <tr><td><strong>Data e hora</strong></td><td>{{ $quando }} (Brasília)</td></tr>
         <tr><td><strong>Nota</strong></td><td>{{ number_format((float) $resultado->nota, 1, ',', '') }}</td></tr>
         <tr><td><strong>Acertos</strong></td><td>{{ $resultado->acertos }} de {{ $resultado->total }}</td></tr>

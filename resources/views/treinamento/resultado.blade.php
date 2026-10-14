@@ -4,7 +4,7 @@
 
 @section('conteudo')
     <h1>Resultado</h1>
-    <p class="suave">{{ $resultado->nome }} · {{ $resultado->funcao }}</p>
+    <p class="suave">{{ $resultado->nome }} · {{ $resultado->funcao }}@if ($resultado->empresa) · {{ $resultado->empresa }}@endif</p>
 
     <div class="card">
         <p class="nota">{{ number_format((float) $resultado->nota, 1, ',', '') }}</p>
