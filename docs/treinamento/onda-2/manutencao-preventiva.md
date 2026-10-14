@@ -32,7 +32,7 @@ Testes: `tests/Feature/PreventiveMaintenanceGapsTest.php` (6; 4 falham sem a cor
 
 ### Ainda em aberto
 
-- **Dashboard PMP quebra no Postgres:** o gráfico `PmpByEquipmentTypeChart` (linha 35) faz `group by "grupo"` com `COALESCE(checklist_groups.name, ...)` e o Postgres rejeita (`column "checklist_groups.name" must appear in the GROUP BY clause`). Os 6 testes de `PainelPmpTest` falham por isso. Existia antes desta mudança.
+- **Dashboard PMP quebrava no Postgres** (corrigido em 14/10/2026): o gráfico `PmpByEquipmentTypeChart` agrupava pelo alias `grupo`, e o Postgres preferia a coluna de mesmo nome; agora agrupa pela expressão `COALESCE(...)`. Dos 6 testes de `PainelPmpTest`, 5 voltaram a passar; o de renderização da página dá 403 porque os testes ainda montam o acesso pelo Plano, não pelo Contrato (mesma causa da falha de `PatioChegadasTest`).
 - **Imagens:** `planos-lista.jpg`, `planos-novo.jpg`, `m-preventiva.jpg` e `preventiva-kanban.jpg` não foram conferidas; faltam prints do Importar Template, da Cobertura de PMP e do Dashboard PMP.
 - **Guia relacionado** `guias__configurar-preventiva` repete o conteúdo antigo ("só por horas").
 

@@ -29,7 +29,9 @@ class PmpByEquipmentTypeChart extends ChartWidget
             ->join('assets', 'assets.id', '=', 'maintenance_orders.asset_id')
             ->leftJoin('checklist_groups', 'checklist_groups.id', '=', 'assets.checklist_group_id')
             ->selectRaw("COALESCE(checklist_groups.name, 'Sem Grupo') as grupo, count(*) as total")
-            ->groupBy('grupo')
+            // Agrupa pela expressão, não pelo alias: "grupo" também é nome de
+            // coluna em tabelas do join, e o Postgres prefere a coluna ao alias.
+            ->groupByRaw("COALESCE(checklist_groups.name, 'Sem Grupo')")
             ->orderByDesc('total')
             ->limit(8)
             ->pluck('total', 'grupo');
