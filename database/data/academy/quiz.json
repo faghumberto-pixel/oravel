@@ -4395,13 +4395,13 @@
    {
     "q": "Quem aprova a proposta?",
     "options": [
+     "Quem revisa no Comercial; o vendedor não revisa a própria (só o administrador da empresa pode)",
      "O vendedor",
      "O cliente",
-     "O financeiro",
-     "O time Comercial; o vendedor nunca aprova a própria"
+     "O financeiro"
     ],
-    "correct": 3,
-    "why": "Revisão independente."
+    "correct": 0,
+    "why": "A aprovação interna é diferente do aceite do cliente."
    },
    {
     "q": "Quais são os tipos de item?",
@@ -4423,18 +4423,18 @@
      "Envio, Itens, Termos"
     ],
     "correct": 0,
-    "why": "Quatro passos."
+    "why": "O template padrão já vem aplicado nos termos."
    },
    {
     "q": "O que acontece ao aprovar uma proposta com ao menos um item de Equipamento?",
     "options": [
-     "Cria sozinha a Solicitação de Locação com cliente e categoria",
+     "Cria a Solicitação de Locação com cliente e categoria e envia a proposta ao cliente por e-mail",
      "Cria o contrato",
-     "Nada",
-     "Cria uma OS"
+     "Tranca o ativo como Locado",
+     "Nada"
     ],
     "correct": 0,
-    "why": "Aprovação = acionamento."
+    "why": "O cliente responde pelo link; o aceite gera os contratos de serviço."
    },
    {
     "q": "E uma proposta só de serviço?",
@@ -4456,7 +4456,7 @@
      "A aprovação do cliente"
     ],
     "correct": 0,
-    "why": "Motivo obrigatório."
+    "why": "Reabrir para edição volta a proposta a Rascunho e apaga o motivo."
    },
    {
     "q": "Você edita o template de termos hoje. As propostas já criadas…",
@@ -4472,13 +4472,211 @@
    {
     "q": "Quem recebe aviso quando uma proposta é enviada?",
     "options": [
-     "Todos os usuários com o perfil Comercial",
-     "O vendedor",
-     "O cliente",
-     "O motorista"
+     "A pessoa escolhida no envio (aviso no sistema) e quem tem o perfil Comercial (e-mail)",
+     "Só o cliente",
+     "Ninguém",
+     "Todos os usuários"
     ],
     "correct": 0,
-    "why": "Notificação automática."
+    "why": "Se ninguém for escolhido, vale a configuração de Responsáveis pelos Avisos."
+   },
+   {
+    "q": "Quantos status tem uma proposta comercial?",
+    "options": [
+     "4",
+     "6: Rascunho, Enviada para o Comercial, Aprovada (aguardando cliente), Aceita, Recusada pelo Cliente e Rejeitada",
+     "3",
+     "2"
+    ],
+    "correct": 1,
+    "why": "Rejeitada é a recusa interna; Recusada pelo Cliente é a resposta do cliente."
+   },
+   {
+    "q": "O que o Comercial precisa ter para conseguir aprovar uma proposta?",
+    "options": [
+     "Nada",
+     "O cliente com e-mail cadastrado",
+     "Um contrato ativo",
+     "Uma OS aberta"
+    ],
+    "correct": 1,
+    "why": "Ao aprovar, a proposta em PDF é enviada ao cliente por e-mail."
+   },
+   {
+    "q": "O que acontece quando o Comercial aprova a proposta?",
+    "options": [
+     "Os contratos são criados",
+     "O sistema cria a Solicitação de Locação (se há item de equipamento) e envia o PDF com o link ao cliente",
+     "O ativo é locado",
+     "Nada, o vendedor envia depois"
+    ],
+    "correct": 1,
+    "why": "Os contratos de serviço só nascem quando o cliente aceita."
+   },
+   {
+    "q": "O vendedor tenta aprovar a própria proposta. O que o sistema faz?",
+    "options": [
+     "Aprova normalmente",
+     "Recusa; só o administrador da empresa pode revisar a própria proposta",
+     "Pede a senha do gerente",
+     "Cancela a proposta"
+    ],
+    "correct": 1,
+    "why": "A exceção do administrador evita travar empresa pequena em que a mesma pessoa faz tudo."
+   },
+   {
+    "q": "Como o cliente responde à proposta?",
+    "options": [
+     "Entrando no Oravel",
+     "Por um link público, sem login, aceitando ou recusando (a recusa pede motivo)",
+     "Por telefone, e alguém registra",
+     "Assinando no celular do vendedor"
+    ],
+    "correct": 1,
+    "why": "O sistema anota quando o cliente visualizou a proposta."
+   },
+   {
+    "q": "O cliente aceita a proposta. O que isso aciona?",
+    "options": [
+     "Só um aviso",
+     "Cada categoria de serviço vira um contrato próprio em Rascunho e o Comercial é avisado para ativá-los",
+     "O ativo é locado",
+     "A proposta é apagada"
+    ],
+    "correct": 1,
+    "why": "A Solicitação de Locação já foi criada na aprovação."
+   },
+   {
+    "q": "O cliente recusa a proposta. O que acontece com a Solicitação de Locação ligada?",
+    "options": [
+     "Nada",
+     "Se ainda estiver “proposta em andamento”, é cancelada",
+     "É aprovada",
+     "Vira contrato"
+    ],
+    "correct": 1,
+    "why": "A proposta fica Recusada pelo Cliente, com o motivo."
+   },
+   {
+    "q": "Uma proposta Rejeitada ou Recusada pelo Cliente pode voltar a ser editada?",
+    "options": [
+     "Não, é preciso criar outra",
+     "Sim, pelo botão Reabrir para edição: volta a Rascunho e o motivo anterior é apagado",
+     "Só o administrador do sistema",
+     "Só dentro de 24 horas"
+    ],
+    "correct": 1,
+    "why": "O vendedor corrige e envia de novo."
+   },
+   {
+    "q": "Quais tipos de item existem só no computador, não no celular?",
+    "options": [
+     "Equipamento e Serviço",
+     "Mão de obra, Segurança e documentação, Acessórios e Insumos",
+     "Nenhum",
+     "Só Equipamento"
+    ],
+    "correct": 1,
+    "why": "No celular o vendedor tem Locação de equipamento e Serviço."
+   },
+   {
+    "q": "O que é obrigatório num item de locação de equipamento?",
+    "options": [
+     "O patrimônio exato",
+     "A categoria do equipamento",
+     "O contrato",
+     "A OS"
+    ],
+    "correct": 1,
+    "why": "O patrimônio específico se resolve depois, no fluxo comercial."
+   },
+   {
+    "q": "O template marcado como Padrão e ativo faz o quê?",
+    "options": [
+     "Nada, só serve de modelo",
+     "É aplicado sozinho a toda proposta nova que nasce sem termos",
+     "Substitui todas as propostas",
+     "Bloqueia outros templates"
+    ],
+    "correct": 1,
+    "why": "É sempre uma cópia: editar o template depois não altera propostas já criadas."
+   },
+   {
+    "q": "O que o template guarda além dos termos?",
+    "options": [
+     "Só a validade",
+     "Cabeçalho da empresa, campos da proposta (pagamento, prazo, garantia…) e validade padrão em dias",
+     "O preço",
+     "Os itens"
+    ],
+    "correct": 1,
+    "why": "Cabeçalho e campos aparecem para o cliente na proposta enviada."
+   },
+   {
+    "q": "Para que serve “Ler imagem e preencher” no template?",
+    "options": [
+     "Para anexar a proposta à OS",
+     "Para o sistema ler a foto de uma proposta que a empresa já usa e preencher nome, cabeçalho, termos, validade e campos, que você revisa",
+     "Para ler o contrato",
+     "Para assinar"
+    ],
+    "correct": 1,
+    "why": "Revise tudo antes de salvar."
+   },
+   {
+    "q": "O que faz o botão “Avaliar com IA”?",
+    "options": [
+     "Aprova a proposta",
+     "Gera uma avaliação com nota e comentário de risco/coerência, qualidade/clareza e probabilidade de fechamento",
+     "Envia ao cliente",
+     "Calcula o contrato"
+    ],
+    "correct": 1,
+    "why": "É um apoio; quem decide é quem revisa."
+   },
+   {
+    "q": "Quem recebe o aviso de que uma proposta foi enviada para revisão?",
+    "options": [
+     "Ninguém",
+     "A pessoa escolhida no envio (aviso no sistema); quem tem o perfil Comercial também recebe e-mail",
+     "Só o cliente",
+     "Só o vendedor"
+    ],
+    "correct": 1,
+    "why": "Se ninguém for escolhido, vale a configuração de Responsáveis pelos Avisos."
+   },
+   {
+    "q": "Uma proposta só de serviço é aprovada. O que o sistema avisa?",
+    "options": [
+     "Nada",
+     "Que não há Solicitação de Locação e a operacionalização é manual",
+     "Que o cliente recusou",
+     "Que o contrato foi ativado"
+    ],
+    "correct": 1,
+    "why": "Os contratos de serviço nascem quando o cliente aceita."
+   },
+   {
+    "q": "Para que servem as Interações da proposta?",
+    "options": [
+     "Para trocar mensagens com a equipe",
+     "Para registrar contatos com o cliente: data, canal, resumo, próxima ação e follow-up",
+     "Para imprimir",
+     "Para aprovar"
+    ],
+    "correct": 1,
+    "why": "É o acompanhamento comercial da proposta."
+   },
+   {
+    "q": "Como reenviar a proposta aprovada ao cliente?",
+    "options": [
+     "Não dá",
+     "Por e-mail (Reenviar ao cliente), pelo WhatsApp do sistema (se configurado) ou abrindo o WhatsApp manual com o link pronto",
+     "Só por correio",
+     "Criando outra proposta"
+    ],
+    "correct": 1,
+    "why": "O WhatsApp do sistema exige o WhatsApp da empresa e o modelo de proposta configurados."
    }
   ]
  },
@@ -4598,7 +4796,7 @@
      "De um lead"
     ],
     "correct": 2,
-    "why": "Vinculado à avaria."
+    "why": "Só com causa mau uso ou dano do cliente e ativo com cliente."
    },
    {
     "q": "Como o cliente aprova o orçamento?",
@@ -4625,35 +4823,35 @@
    {
     "q": "O orçamento “A Terceiro” é…",
     "options": [
-     "Ligado a uma OS interna",
-     "Ligado a uma avaria",
-     "Ligado a um contrato",
-     "Comercial solto, não ligado a uma OS ou avaria"
+     "Um orçamento de serviço feito por fornecedor externo, com laudo técnico prévio",
+     "Um orçamento de peça",
+     "Um contrato",
+     "Uma avaria"
     ],
-    "correct": 3,
-    "why": "Solto."
+    "correct": 0,
+    "why": "Exige fornecedor e laudo; não fica ligado a OS pelo formulário."
    },
    {
     "q": "O orçamento “Interno” é…",
     "options": [
-     "Ligado a uma OS interna, sem repasse ao cliente",
-     "Cobrado do cliente",
-     "Solto",
-     "Ligado a uma avaria"
+     "Um orçamento de uso interno, sem repasse a terceiros (o tipo que já vem escolhido)",
+     "Sempre ligado a uma OS",
+     "Um contrato",
+     "Uma proposta"
     ],
     "correct": 0,
-    "why": "Interno."
+    "why": "O formulário não tem vínculo com OS."
    },
    {
     "q": "Como exportar o orçamento?",
     "options": [
-     "Em PDF, pela listagem",
-     "Só em Excel",
-     "Só impresso",
-     "Não exporta"
+     "Pelo botão Ver e imprimir, que abre o PDF",
+     "Só por e-mail",
+     "Não dá",
+     "Pelo Financeiro"
     ],
     "correct": 0,
-    "why": "PDF."
+    "why": "Também sai por e-mail em Enviar ao Cliente."
    },
    {
     "q": "A decisão do cliente fica…",
@@ -4665,6 +4863,116 @@
     ],
     "correct": 2,
     "why": "Registro automático."
+   },
+   {
+    "q": "O que o orçamento do tipo Indenizatório representa?",
+    "options": [
+     "Uma compra de peças",
+     "O valor a cobrar do cliente por um dano; nasce de uma Avaria",
+     "Um orçamento interno",
+     "Um contrato"
+    ],
+    "correct": 1,
+    "why": "A ação “Gerar Orçamento Indenizatório” só aparece com causa mau uso ou dano do cliente."
+   },
+   {
+    "q": "O que o orçamento A Terceiro exige além de cliente e itens?",
+    "options": [
+     "Nada",
+     "O Responsável Externo (fornecedor) e o Laudo Técnico Prévio",
+     "A assinatura do cliente",
+     "Uma OS"
+    ],
+    "correct": 1,
+    "why": "O laudo é a avaliação do técnico antes de montar o orçamento."
+   },
+   {
+    "q": "Os orçamentos Interno e A Terceiro criados pela tela ficam ligados a uma OS?",
+    "options": [
+     "Sim, sempre",
+     "Não: o formulário não tem vínculo com OS; só o Indenizatório fica ligado à avaria",
+     "Só o Interno",
+     "Só o A Terceiro"
+    ],
+    "correct": 1,
+    "why": "É uma limitação atual do formulário."
+   },
+   {
+    "q": "Que tipos de item o orçamento aceita?",
+    "options": [
+     "Equipamento e Serviço",
+     "Peça e Serviço; na peça dá para escolher o material do almoxarifado",
+     "Só Peça",
+     "Só Serviço"
+    ],
+    "correct": 1,
+    "why": "É preciso ao menos um item para enviar."
+   },
+   {
+    "q": "O que o botão Enviar ao Cliente faz?",
+    "options": [
+     "Só muda o status",
+     "Pede o e-mail (já vem do cadastro), passa a Enviado e envia o PDF com o link de aprovação",
+     "Cria o contrato",
+     "Apaga o rascunho"
+    ],
+    "correct": 1,
+    "why": "Só aparece com o orçamento em Rascunho."
+   },
+   {
+    "q": "O cliente respondeu por telefone. Como registrar?",
+    "options": [
+     "Não dá",
+     "Com Marcar como Aprovado ou Marcar como Reprovado (este pede o motivo)",
+     "Editando o valor",
+     "Criando outro orçamento"
+    ],
+    "correct": 1,
+    "why": "As duas ações só aparecem com o orçamento Enviado."
+   },
+   {
+    "q": "O que faz Encaminhar ao Financeiro?",
+    "options": [
+     "Envia um e-mail",
+     "Cria a Conta a Receber do valor, com vencimento escolhido (padrão 30 dias), na fila do Financeiro, com o PDF do orçamento",
+     "Conclui o orçamento",
+     "Gera nota fiscal"
+    ],
+    "correct": 1,
+    "why": "Só aparece com o orçamento Aprovado e dá para fazer uma vez."
+   },
+   {
+    "q": "Quando Concluir Processo aparece?",
+    "options": [
+     "Com o orçamento em Rascunho",
+     "Com o orçamento Aprovado",
+     "Só depois de Reprovado",
+     "Sempre"
+    ],
+    "correct": 1,
+    "why": "Passa o orçamento a Concluído."
+   },
+   {
+    "q": "Que orçamentos podem ser excluídos?",
+    "options": [
+     "Todos",
+     "Só os em Rascunho",
+     "Só os Concluídos",
+     "Nenhum"
+    ],
+    "correct": 1,
+    "why": "Depois de enviado, o orçamento fica como registro."
+   },
+   {
+    "q": "O que o cartão “Aprovados” conta?",
+    "options": [
+     "Só os Aprovados",
+     "Os Aprovados e os Concluídos",
+     "Os Enviados",
+     "Os Reprovados"
+    ],
+    "correct": 1,
+    "why": "Já “Aguardando Aprovação” conta os Enviados ao cliente."
    }
   ]
  },

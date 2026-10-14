@@ -84,6 +84,11 @@ class PropostaComercialMobile extends Component
             'crm_lead_id' => $this->leadId,
         ]);
 
+        // O template padrão (se houver) já foi aplicado na criação: mostra o
+        // texto e a validade na etapa de termos em vez de sobrescrevê-los.
+        $this->terms = $this->proposta->terms;
+        $this->validUntil = $this->proposta->valid_until?->toDateString();
+
         if ($this->leadId) {
             $lead = CrmLead::find($this->leadId);
             if ($lead?->client_id) {

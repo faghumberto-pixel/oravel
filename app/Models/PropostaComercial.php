@@ -107,6 +107,19 @@ class PropostaComercial extends Model
     /**
      * @return array<string, string>
      */
+    protected static function booted(): void
+    {
+        // Proposta nova sem termos/cabeçalho/campos já nasce com o template
+        // marcado como Padrão (se existir): o texto do template diz "usado
+        // automaticamente quando o vendedor não escolher um", mas nada chamava
+        // fillFromTemplate().
+        static::creating(function (PropostaComercial $proposta) {
+            if (blank($proposta->terms) && blank($proposta->cabecalho) && empty($proposta->campos) && $proposta->tenant_id) {
+                $proposta->fillFromTemplate();
+            }
+        });
+    }
+
     public static function statusLabels(): array
     {
         return [
