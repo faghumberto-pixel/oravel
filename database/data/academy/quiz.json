@@ -2160,6 +2160,182 @@
     ],
     "correct": 1,
     "why": "Atualiza automaticamente."
+   },
+   {
+    "q": "Além das horas trabalhadas, que outros intervalos um plano aceita?",
+    "options": [
+     "Só dias",
+     "Dias e ciclos de bateria; vence pelo que chegar primeiro",
+     "Só km rodados",
+     "Nenhum outro"
+    ],
+    "correct": 1,
+    "why": "É obrigatório preencher ao menos um dos três intervalos."
+   },
+   {
+    "q": "O que são os ciclos de bateria?",
+    "options": [
+     "Intervalo para equipamentos elétricos, como empilhadeira e plataforma",
+     "Horas de carga do gerador",
+     "O tempo de garantia",
+     "Um tipo de checklist"
+    ],
+    "correct": 0,
+    "why": "O vencimento compara os ciclos do último serviço + intervalo com os ciclos atuais do ativo."
+   },
+   {
+    "q": "Um compressor tem plano por Grupo. Como o vencimento é contado?",
+    "options": [
+     "Pelo histórico do grupo inteiro",
+     "Pela última execução de cada ativo, que tem o seu próprio histórico",
+     "Pela data de cadastro do plano",
+     "Sempre a partir do horímetro do ativo mais novo"
+    ],
+    "correct": 1,
+    "why": "Se o ativo nunca executou o item, a contagem parte de zero."
+   },
+   {
+    "q": "Um ativo tem plano próprio com o mesmo nome de um plano do seu grupo. Qual vale?",
+    "options": [
+     "O do grupo",
+     "Os dois, somados",
+     "O do ativo; o do grupo é ignorado para ele",
+     "Nenhum, dá conflito"
+    ],
+    "correct": 2,
+    "why": "A comparação é pelo nome do plano."
+   },
+   {
+    "q": "O que faz o botão Importar Template PMP?",
+    "options": [
+     "Liga a lista de planos a um catálogo ao vivo",
+     "Copia itens de manutenção e checklist de uma família de equipamento para um Grupo seu",
+     "Apaga os planos do grupo",
+     "Cria ativos novos"
+    ],
+    "correct": 1,
+    "why": "É cópia pontual, não vínculo: depois você edita ou exclui. Itens com o mesmo nome não duplicam."
+   },
+   {
+    "q": "Quando um plano aparece como “A Vencer”?",
+    "options": [
+     "Quando faltam 30 dias, sempre",
+     "Quando ainda não venceu, mas a previsão cai dentro do mês",
+     "Quando está desativado",
+     "Quando é crítico"
+    ],
+    "correct": 1,
+    "why": "Para horas, a previsão usa a média diária de uso do ativo."
+   },
+   {
+    "q": "Com “Gerar O.S. automaticamente” desligado (padrão), o que acontece quando o plano vence?",
+    "options": [
+     "Uma OS é aberta",
+     "O sistema só avisa; alguém precisa abrir a OS",
+     "O ativo é excluído",
+     "Nada"
+    ],
+    "correct": 1,
+    "why": "Ligada, uma OS Preventiva com origem PMP Automática é aberta sozinha."
+   },
+   {
+    "q": "Com que frequência o sistema confere as preventivas vencidas e quando repete o aviso do mesmo plano e ativo?",
+    "options": [
+     "De hora em hora; sempre",
+     "Diariamente; só depois de 7 dias",
+     "Semanalmente; nunca repete",
+     "Só quando alguém abre a tela"
+    ],
+    "correct": 1,
+    "why": "Se a preventiva é executada, o aviso zera e um novo ciclo pode avisar de novo."
+   },
+   {
+    "q": "O que acontece com um ativo que tem item CRÍTICO vencido?",
+    "options": [
+     "Nada",
+     "Passa para o status Manutenção e não pode ser locado, até o item deixar de estar vencido",
+     "É excluído",
+     "Vira Externo"
+    ],
+    "correct": 1,
+    "why": "Ele volta ao status que tinha antes. Se já estava em Manutenção por decisão manual, o sistema não mexe."
+   },
+   {
+    "q": "Como começa a descrição de uma OS automática de plano de grupo?",
+    "options": [
+     "“Corretiva ·”",
+     "“PMP · nome do grupo —”",
+     "“Emergência ·”",
+     "Fica em branco"
+    ],
+    "correct": 1,
+    "why": "A origem “PMP Automática” também permite o filtro na lista de OS."
+   },
+   {
+    "q": "Na tela da preventiva no celular, quais planos aparecem?",
+    "options": [
+     "Todos do tenant",
+     "Os planos ativos do Grupo de Checklist do ativo; um plano só de ativo não aparece",
+     "Só os vencidos",
+     "Só os críticos"
+    ],
+    "correct": 1,
+    "why": "A tela só abre se o ativo tem Grupo de Checklist."
+   },
+   {
+    "q": "A que a execução marcada no celular fica ligada?",
+    "options": [
+     "Só ao ativo",
+     "À OS de onde a tela foi aberta, com o técnico logado e o horímetro informado",
+     "Ao contrato",
+     "A nenhuma OS"
+    ],
+    "correct": 1,
+    "why": "A previsão da próxima = horímetro + intervalo em horas."
+   },
+   {
+    "q": "Qual é a função do Dashboard PMP?",
+    "options": [
+     "Cadastrar planos",
+     "Quadro de planejamento com 5 colunas: A fazer, Planejado, Em andamento, Em revisão e Concluído",
+     "Importar Excel",
+     "Imprimir etiquetas"
+    ],
+    "correct": 1,
+    "why": "Já a Cobertura de PMP lista cada ativo com Em Dia, Vencendo, Vencido ou Sem Grupo."
+   },
+   {
+    "q": "Na Cobertura de PMP, o que dá para fazer com um ativo?",
+    "options": [
+     "Excluí-lo",
+     "Abrir direto uma OS preventiva para ele",
+     "Trocar o grupo",
+     "Gerar contrato"
+    ],
+    "correct": 1,
+    "why": "A OS nasce Aberta, agendada para agora, com a descrição “Planejada via Cobertura de PMP.”"
+   },
+   {
+    "q": "O que significa “Copiado do Grupo” na coluna Origem?",
+    "options": [
+     "O plano veio de um template importado",
+     "O plano foi duplicado por engano",
+     "O plano é crítico",
+     "O plano é de outro cliente"
+    ],
+    "correct": 0,
+    "why": "“Manual” é o plano criado à mão."
+   },
+   {
+    "q": "Quem recebe o aviso de preventiva vencida?",
+    "options": [
+     "Todos os usuários",
+     "Quem foi marcado para receber os avisos de manutenção vencendo",
+     "Só o cliente",
+     "Só o técnico da última OS"
+    ],
+    "correct": 1,
+    "why": "Configurado em Configurações → Responsáveis pelos Avisos, no evento “Manutenção preventiva vencendo”."
    }
   ]
  },

@@ -1,13 +1,67 @@
-<p>A <strong>Manutenção Preventiva</strong> dispara a manutenção por <strong>horas trabalhadas</strong> (horímetro), não por data. Um plano pode valer para um ativo específico ou como modelo para <strong>todo um Grupo de Ativos</strong>.</p>
+<p>A <strong>Manutenção Preventiva</strong> dispara a manutenção pelo que chegar primeiro: <strong>horas trabalhadas</strong> (horímetro), <strong>dias</strong> ou <strong>ciclos de bateria</strong>. Um plano pode valer para um ativo específico ou como modelo para <strong>todo um Grupo de Ativos</strong>.</p>
 <div class="mk-menu">📍 PMP → Planos Preventivos</div>
-<figure class="mk-fig"><img src="/academy/img/planos-lista.jpg" alt="Lista de Planos Preventivos"><figcaption><b>Lista de Planos Preventivos</b><ol class="mk-legend"><li><strong>Criar maintenance plan</strong> — novo plano.</li><li><strong>Cartões</strong> — Vencidos, A Vencer e Dentro do Prazo.</li><li><strong>Filtros</strong> — por status, plano, ativo e grupo.</li><li><strong>Intervalo (h)</strong> — de quantas em quantas horas o item se repete.</li></ol></figcaption></figure>
-<figure class="mk-fig"><img src="/academy/img/planos-novo.jpg" alt="Criando um plano"><figcaption><b>Criando um plano</b><ol class="mk-legend"><li><strong>Ativo (regra individual)</strong> — plano para uma máquina só.</li><li><strong>Grupo de Ativo (template do grupo)</strong> — o mesmo plano vale para todo equipamento do grupo.</li><li><strong>Intervalo (Horas)</strong> — também há intervalo em dias e em ciclos de bateria.</li></ol></figcaption></figure>
+<figure class="mk-fig"><img src="/academy/img/planos-lista.jpg" alt="Lista de Planos Preventivos"><figcaption><b>Lista de Planos Preventivos</b><ol class="mk-legend"><li><strong>Criar</strong> — novo plano. Ao lado: Importar Template PMP, Imprimir e Exportar.</li><li><strong>Cartões</strong> — Vencidos, A Vencer (vence dentro do mês) e Dentro do Prazo; clicar filtra a lista.</li><li><strong>Filtros</strong> — por status, plano, ativo e grupo.</li><li><strong>Intervalo (h)</strong> — de quantas em quantas horas o item se repete.</li></ol></figcaption></figure>
+<figure class="mk-fig"><img src="/academy/img/planos-novo.jpg" alt="Criando um plano"><figcaption><b>Criando um plano</b><ol class="mk-legend"><li><strong>Ativo (regra individual)</strong> — plano para uma máquina só.</li><li><strong>Grupo de Ativo (template do grupo)</strong> — o mesmo plano vale para todo equipamento do grupo.</li><li><strong>Intervalo (Horas / Dias / Ciclos de Bateria)</strong> — preencha ao menos um; vence pelo que chegar primeiro.</li></ol></figcaption></figure>
 <div class="mk-note warn"><strong>⚠️ Atenção</strong><p>Escolha <strong>um dos dois</strong>: Ativo específico <em>ou</em> Grupo, nunca os dois.</p></div>
-<h2>Como o sistema calcula o vencimento</h2>
-<div class="mk-flow"><div class="mk-step "><span class="n">1</span><b>Último serviço</b><span class="t">Horímetro em que a preventiva foi feita.</span></div><div class="mk-step amber"><span class="n">2</span><b>+ Intervalo do plano</b><span class="t">Ex.: a cada 250 h.</span></div><div class="mk-step purple"><span class="n">3</span><b>= Horímetro de vencimento</b><span class="t">Quando a próxima vence.</span></div><div class="mk-step red"><span class="n">4</span><b>Horímetro atual ≥ vencimento</b><span class="t">A preventiva fica <strong>vencida</strong>, em vermelho.</span></div></div>
+<h2>Como o sistema calcula o vencimento (por horas)</h2>
+<div class="mk-flow"><div class="mk-step "><span class="n">1</span><b>Último serviço</b><span class="t">Horímetro em que a preventiva foi feita.</span></div><div class="mk-step amber"><span class="n">2</span><b>+ Intervalo do plano</b><span class="t">Ex.: a cada 250 h.</span></div><div class="mk-step purple"><span class="n">3</span><b>= Horímetro de vencimento</b><span class="t">Quando a próxima vence.</span></div><div class="mk-step red"><span class="n">4</span><b>Horímetro atual ≥ vencimento</b><span class="t">A preventiva fica <strong>vencida</strong>, em vermelho. O mesmo vale para dias e ciclos.</span></div></div>
 <h2>Executando pelo celular</h2>
 <div class="mk-phones"><figure class="mk-phonefig"><div class="mk-phoneframe"><img src="/academy/img/m-preventiva.jpg" alt="Preventiva no celular"></div><figcaption><b>Preventiva no celular</b>Horímetro atual no topo e os itens do plano, cada um com uma caixinha de marcar. Itens vencidos aparecem em vermelho.</figcaption></figure></div>
 <div class="mk-note tip"><strong>⏱️ Registrar avança o horímetro</strong><p>Se o horímetro informado na execução for maior que o atual, o sistema atualiza o horímetro oficial do ativo. Desmarcar um item apaga o registro.</p></div>
-<figure class="mk-fig"><img src="/academy/img/preventiva-kanban.jpg" alt="Kanban de Preventivas"><figcaption><b>Kanban de Preventivas</b><ol class="mk-legend"><li><strong>Análise de Preventivas</strong> — acompanha as execuções por etapa.</li></ol></figcaption></figure>
-<div class="mk-note who"><strong>🚛 Não confunda</strong><p>Existe um módulo parecido, de nome “Planos de Manutenção de Veículos”, só para a frota própria (óleo, pneu, revisão). É separado deste.</p></div>
-<div class="mk-note who"> <strong>👤 Quem usa</strong> <p>Gestão de manutenção cadastra os planos (desktop); o técnico executa a preventiva em campo, normalmente pelo celular.</p> </div> <h2>Quando usar</h2> <ul> <li>Ao configurar um plano de troca de óleo/filtro por horas trabalhadas.</li> <li>Pra ver se um Ativo está com preventiva vencida antes de liberar pra locação.</li> <li>Pra registrar que uma preventiva foi executada no pátio ou em campo.</li> </ul> <h2>Plano por Ativo x Plano por Grupo</h2> <table> <thead><tr><th>Tipo</th><th>Quando usar</th></tr></thead> <tbody> <tr><td><strong>Por Ativo</strong></td><td>Regra específica pra uma máquina só</td></tr> <tr><td><strong>Por Grupo de Ativo</strong></td><td>Mesmo plano vale pra todo equipamento daquele Grupo de Checklist (ex: todo Compressor) — cada Ativo do grupo mantém seu próprio histórico de execuções</td></tr> </tbody> </table> <p>Ao cadastrar um plano, você escolhe exatamente um dos dois — Ativo específico <strong>ou</strong> Grupo, nunca os dois.</p> <h2>Como o sistema calcula o vencimento</h2> <p>A lógica é simples e aparece tanto na Ordem de Serviço quanto na tela mobile:</p> <table> <thead><tr><th>Cálculo</th><th>Resultado</th></tr></thead> <tbody> <tr><td>Horímetro do último serviço + intervalo do plano</td><td>Horímetro em que a próxima preventiva vence</td></tr> <tr><td>Horímetro atual do Ativo ≥ horímetro de vencimento</td><td>Preventiva vencida (destacada)</td></tr> </tbody> </table> <h2>Executando pelo celular</h2> <p> Na tela mobile, o técnico vê o horímetro atual e uma lista de itens do plano do Grupo, cada um com uma simples caixinha de marcar: marcar registra a execução da preventiva (e avança o horímetro oficial do Ativo); desmarcar apaga o registro. Só fica disponível se o Ativo tiver um Grupo de Checklist configurado. Também existe versão de impressão. </p> <div class="mk-note tip"> <strong>💡 Registrar a preventiva avança o horímetro do Ativo</strong> <p>Se o horímetro informado na execução for maior que o horímetro atual do Ativo, o sistema atualiza o horímetro oficial automaticamente.</p> </div> <div class="mk-note warn"> <strong>⚠️ Não confundir com "Planos de Manutenção" da Frota Leve</strong> <p>Existe um módulo parecido só de nome pra veículos da frota própria (troca de óleo, pneu, revisão) — é separado deste, não tem relação com Grupo de Checklist. Veja Frota Leve.</p> </div> <h2>Imprimir e Exportar</h2> <p>A listagem de planos tem os botões <strong>Imprimir</strong> e <strong>Exportar</strong> (Excel/CSV).</p>
+<figure class="mk-fig"><img src="/academy/img/preventiva-kanban.jpg" alt="Kanban de Preventivas"><figcaption><b>Kanban de Preventivas</b><ol class="mk-legend"><li><strong>Kanban Preventivas</strong> — acompanha as execuções por etapa.</li></ol></figcaption></figure>
+<h2>Os campos do plano</h2>
+<table><thead><tr><th>Campo</th><th>Para que serve</th></tr></thead><tbody>
+<tr><td>Nome do Item</td><td>Obrigatório. Ex.: Troca de óleo do motor</td></tr>
+<tr><td>Intervalo (Horas, Dias, Ciclos de Bateria)</td><td>Ao menos um é obrigatório. Ciclos de bateria são para equipamento elétrico (empilhadeira, plataforma). Vence pelo que chegar primeiro</td></tr>
+<tr><td>Observação</td><td>Ex.: Obrigatório NR-13</td></tr>
+<tr><td>Item crítico</td><td>Marca como prioridade máxima. Vencido, <strong>bloqueia o ativo</strong> (veja abaixo)</td></tr>
+<tr><td>Plano Ativo</td><td>Desligado, o plano sai dos cartões e da tela do celular</td></tr>
+<tr><td>Gerar O.S. automaticamente quando vencer</td><td>Veja abaixo</td></tr>
+</tbody></table>
+<h2>Plano por Ativo × plano por Grupo</h2>
+<ul>
+<li><strong>Por Ativo:</strong> regra só para uma máquina. O último serviço fica guardado no próprio plano.</li>
+<li><strong>Por Grupo:</strong> vale para todo ativo do Grupo de Checklist (ex.: todo compressor). <strong>Cada ativo tem o seu histórico</strong>: o vencimento é contado a partir da última execução daquele ativo (se nunca executou, conta a partir de zero).</li>
+<li>Se um ativo tem um plano próprio com o <strong>mesmo nome</strong> de um plano do grupo, o do ativo vale e o do grupo é ignorado para ele.</li>
+<li>Na lista, a coluna <strong>Origem</strong> mostra “Manual” ou “Copiado do Grupo” (veio de template).</li>
+</ul>
+<h2>Importar Template PMP</h2>
+<p>Na lista de planos, <strong>Importar Template PMP</strong> copia um catálogo pronto de itens de manutenção e de checklist por <strong>família de equipamento</strong> (catálogo mantido pela Oravel) para um Grupo seu, que pode ser criado na hora. É uma <strong>cópia</strong>: depois de importada, você edita ou exclui à vontade, e importar de novo não duplica itens que já existem com o mesmo nome.</p>
+<h2>Vencimento por dias e por ciclos</h2>
+<ul>
+<li><strong>Dias:</strong> data do último serviço + intervalo. Vence quando a data chega.</li>
+<li><strong>Ciclos de bateria:</strong> ciclos do último serviço + intervalo, comparado aos ciclos atuais do ativo.</li>
+<li><strong>A Vencer:</strong> não venceu ainda, mas a previsão cai neste mês. Para horas, a previsão usa a média diária de uso do ativo; sem histórico de uso, não há previsão.</li>
+</ul>
+<h2>Alerta diário, OS automática e bloqueio</h2>
+<p>Todo dia o sistema confere todos os ativos. Para cada preventiva <strong>vencida</strong>:</p>
+<ul>
+<li><strong>Avisa</strong> quem foi marcado para receber o aviso “Manutenção preventiva vencendo”, em Configurações → Responsáveis pelos Avisos (por padrão, o papel admin). O mesmo ativo e plano só é avisado de novo depois de 7 dias; se for executada, o aviso zera.</li>
+<li>Se o plano tem <strong>Gerar O.S. automaticamente</strong>, abre uma OS Preventiva, com origem “PMP Automática” (para plano de grupo, a descrição começa com “PMP · nome do grupo”).</li>
+<li>Se o item é <strong>crítico</strong> e está vencido, o ativo passa para o status <strong>Manutenção</strong> e não pode ser locado. Quando nenhum item crítico estiver vencido, ele volta ao status que tinha antes. Se o ativo já estava em Manutenção por decisão manual, o sistema não mexe.</li>
+</ul>
+<div class="mk-note warn"><strong>⚠️ Sem a OS automática, ninguém abre a OS por você</strong><p>Com a opção desligada (padrão), o sistema só avisa. Alguém precisa abrir a OS Preventiva.</p></div>
+<h2>Executando pelo celular: os detalhes</h2>
+<ul>
+<li>A tela é aberta a partir da OS (<strong>Preventiva (Celular)</strong>, em Mais Ações) e só existe se o ativo tem Grupo de Checklist.</li>
+<li>Ela lista os planos <strong>ativos do Grupo</strong>, em ordem alfabética, com uma barra de progresso (itens marcados ÷ total).</li>
+<li>Para marcar, informe o <strong>horímetro</strong> (já vem o atual do ativo). Cada item marcado grava a execução ligada àquela OS, com você como técnico e a previsão da próxima = horímetro + intervalo em horas.</li>
+<li>Ao expandir um item já marcado, dá para anotar observação e anexar foto.</li>
+<li>Também há a execução manual (Preventivas, escondida do menu), que pede Ativo, Item, OS vinculada e Horímetro.</li>
+</ul>
+<div class="mk-note warn"><strong>⚠️ Limites de hoje</strong><p>Na tela do celular e no formulário manual só aparecem planos <strong>de Grupo</strong>. Um plano criado só para um ativo específico entra nos cálculos e nos alertas, mas não aparece para marcar. A “próxima previsão” da execução também só considera o intervalo em horas.</p></div>
+<h2>As outras telas do grupo PMP</h2>
+<table><thead><tr><th>Tela</th><th>Para que serve</th></tr></thead><tbody>
+<tr><td>Planos Preventivos</td><td>Cadastro e cartões de situação</td></tr>
+<tr><td>Dashboard PMP</td><td>Quadro de planejamento em 5 colunas: A fazer, Planejado, Em andamento, Em revisão e Concluído</td></tr>
+<tr><td>Cobertura de PMP</td><td>Lista cada ativo com o Status PMP (Em Dia, Vencendo, Vencido ou Sem Grupo); dá para abrir a OS preventiva direto dali</td></tr>
+<tr><td>Consulta por Cliente</td><td>As manutenções agrupadas por cliente</td></tr>
+<tr><td>Alocação de Técnicos</td><td>Distribuir os técnicos nas OS</td></tr>
+<tr><td>Kanban Preventivas</td><td>Execuções por etapa</td></tr>
+</tbody></table>
+<div class="mk-note who"><strong>🚛 Não confunda</strong><p>Existe um módulo parecido, de nome “Planos de Manutenção de Veículos”, só para a frota própria (óleo, pneu, revisão). É separado deste. Veja Frota Leve.</p></div>
+<div class="mk-note who"><strong>👤 Quem usa</strong><p>Gestão de manutenção cadastra os planos (desktop); o técnico executa a preventiva em campo, normalmente pelo celular.</p></div>
+<h2>Quando usar</h2>
+<ul><li>Ao configurar a troca de óleo/filtro por horas trabalhadas, ou uma inspeção por dias.</li><li>Para ver se um ativo está com preventiva vencida antes de liberar para locação.</li><li>Para registrar que uma preventiva foi executada no pátio ou em campo.</li></ul>
+<h2>Imprimir e Exportar</h2>
+<p>A lista de planos tem <strong>Imprimir</strong> (com o Status do Plano e os filtros aplicados) e <strong>Exportar</strong> (Excel/CSV). A OS também tem <strong>Imprimir Preventiva</strong>.</p>
