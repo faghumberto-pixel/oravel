@@ -403,6 +403,12 @@ class ContractResource extends Resource
                         'Ativo' => 'Ativo',
                         'Encerrado' => 'Encerrado',
                     ]),
+                Tables\Filters\Filter::make('vigencia_vencida')
+                    ->label('Vigência vencida (ainda Ativo)')
+                    ->query(fn ($query) => $query->where('status', 'Ativo')
+                        ->whereNotNull('end_date')
+                        ->whereDate('end_date', '<', today()))
+                    ->toggle(),
                 Tables\Filters\Filter::make('vence_em_30_dias')
                     ->label('Vence em 30 dias')
                     ->query(fn ($query) => $query->where('status', 'Ativo')

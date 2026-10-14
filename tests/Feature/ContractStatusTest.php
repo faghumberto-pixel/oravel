@@ -114,4 +114,81 @@ class ContractStatusTest extends TestCase
 
         $this->assertSame($contract->id, $asset->fresh()->activeContract()?->id);
     }
+
+    public function test_draft_contract_does_not_lock_the_asset(): void
+    {
+        [$tenant, $user, $client, $asset] = $this->setUpTenant();
+
+        $this->contract($tenant, $client, $asset, ['status' => 'Draft']);
+
+        $this->assertSame('disponivel', $asset->fresh()->status);
+        $this->assertNull($asset->fresh()->client_id);
+    }
+
+    public function test_activating_a_draft_locks_the_asset(): void
+    {
+        [$tenant, $user, $client, $asset] = $this->setUpTenant();
+        $contract = $this->contract($tenant, $client, $asset, ['status' => 'Draft']);
+
+        $contract->update(['status' => 'Ativo']);
+
+        $this->assertSame('locado', $asset->fresh()->status);
+        $this->assertSame($client->id, $asset->fresh()->client_id);
+    }
+
+    public function test_deleting_a_draft_does_not_free_an_asset_held_by_another_contract(): void
+    {
+        [$tenant, $user, $client, $asset] = $this->setUpTenant();
+        $this->contract($tenant, $client, $asset);
+        $rascunho = $this->contract($tenant, $client, $asset, ['status' => 'Draft']);
+
+        $rascunho->delete();
+
+        $this->assertSame('locado', $asset->fresh()->status);
+    }
+
+    public function test_closing_one_contract_keeps_the_asset_locked_if_another_is_active(): void
+    {
+        [$tenant, $user, $client, $asset] = $this->setUpTenant();
+        $a = $this->contract($tenant, $client, $asset);
+        $this->contract($tenant, $client, $asset);
+
+        $a->update(['status' => 'Encerrado']);
+
+        $this->assertSame('locado', $asset->fresh()->status);
+    }
+
+    public function test_swapping_the_asset_of_a_draft_does_not_free_the_old_one(): void
+    {
+        [$tenant, $user, $client, $asset] = $this->setUpTenant();
+        $outro = Asset::create([
+            'tenant_id' => $tenant->id, 'name' => 'Outro', 'tag' => 'AST-'.uniqid(),
+            'patrimonio' => 'PAT-'.uniqid(), 'status' => 'disponivel',
+        ]);
+        $this->contract($tenant, $client, $asset); // segura $asset
+        $rascunho = $this->contract($tenant, $client, $outro, ['status' => 'Draft']);
+
+        $rascunho->update(['asset_id' => $asset->id]);
+
+        $this->assertSame('locado', $asset->fresh()->status);
+        $this->assertSame('disponivel', $outro->fresh()->status);
+    }
+
+    public function test_legacy_draft_in_force_still_frees_and_moves_the_asset_on_swap(): void
+    {
+        // Contratos criados pela tela antes do campo Situacao ficaram em
+        // Rascunho, mas ja tinham travado o ativo.
+        [$tenant, $user, $client, $asset] = $this->setUpTenant();
+        $novo = Asset::create([
+            'tenant_id' => $tenant->id, 'name' => 'Substituto', 'tag' => 'AST-'.uniqid(),
+            'patrimonio' => 'PAT-'.uniqid(), 'status' => 'disponivel',
+        ]);
+        $contract = $this->contract($tenant, $client, $asset, ['status' => 'Draft']);
+        $asset->update(['status' => 'locado', 'client_id' => $client->id]);
+
+        $contract->update(['asset_id' => $novo->id]);
+
+        $this->assertSame('disponivel', $asset->fresh()->status);
+        $this->assertSame('locado', $novo->fresh()->status);
+    }
 }

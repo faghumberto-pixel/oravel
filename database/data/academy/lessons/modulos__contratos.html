@@ -12,11 +12,11 @@
 <ul><li>Ao fechar uma locação nova com um cliente.</li><li>Para consultar valor, vigência ou equipamento de um contrato existente.</li><li>Para encerrar uma locação e devolver o ativo ao pátio.</li><li>Para faturar o período e acompanhar custo e margem.</li></ul>
 <h2>Situação do contrato</h2>
 <table><thead><tr><th>Situação</th><th>Efeito</th></tr></thead><tbody>
-<tr><td><strong>Rascunho</strong></td><td>Ainda não vale. Contratos de serviço gerados por uma proposta aceita nascem assim. <strong>Não</strong> aparece como contrato ativo do ativo, não conta nos cartões e <strong>não pode ser faturado</strong></td></tr>
+<tr><td><strong>Rascunho</strong></td><td>Ainda não vale. Contratos de serviço gerados por uma proposta aceita nascem assim. <strong>Não</strong> trava o equipamento, não aparece como contrato ativo do ativo, não conta nos cartões e <strong>não pode ser faturado</strong></td></tr>
 <tr><td><strong>Ativo</strong> (locação em vigor)</td><td>É o que vale: conta nos cartões, define o <strong>Interno/Externo</strong> da OS do ativo, aparece no Dossiê e permite faturar. Já vem escolhido ao criar um contrato pela tela</td></tr>
 <tr><td><strong>Encerrado</strong></td><td>Libera o equipamento e tira o contrato dos indicadores</td></tr>
 </tbody></table>
-<div class="mk-note warn"><strong>⚠️ Criar já trava o ativo</strong><p>Mesmo em Rascunho, o ativo vira <strong>Locado</strong> assim que o contrato é criado. Para encerrar a locação, mude a situação para <strong>Encerrado</strong>; não basta deixar o contrato vencer.</p></div>
+<div class="mk-note warn"><strong>⚠️ Só contrato Ativo segura o equipamento</strong><p>O ativo vira <strong>Locado</strong> quando o contrato está <strong>Ativo</strong>; Rascunho não trava nada. Para encerrar a locação, mude a situação para <strong>Encerrado</strong>. <strong>Deixar a data de fim passar não encerra</strong>: o equipamento continua Locado até alguém encerrar ou renovar (veja “Vigência vencida”).</p></div>
 <h2>Os campos do formulário</h2>
 <table><thead><tr><th>Seção</th><th>O que pede</th></tr></thead><tbody>
 <tr><td>1. Qualificação das Partes</td><td>CNPJ do cliente e Cliente (obrigatórios)</td></tr>
@@ -38,12 +38,12 @@
 <p>Ao criar um contrato, o sistema recusa um equipamento com <strong>manutenção preventiva crítica vencida</strong> (o ativo fica bloqueado para locação). Regularize a preventiva antes. Veja Manutenção Preventiva.</p>
 <h2>O que acontece automaticamente com o ativo</h2>
 <ul>
-<li><strong>Ao criar o contrato:</strong> o ativo vira <strong>Locado</strong>, ganha o cliente do contrato e a localização.</li>
-<li><strong>Ao encerrar o contrato:</strong> o ativo volta a <strong>Disponível</strong> e perde o vínculo com o cliente.</li>
+<li><strong>Ao criar um contrato Ativo</strong> (ou ativar um Rascunho): o ativo vira <strong>Locado</strong>, ganha o cliente do contrato e a localização.</li>
+<li><strong>Ao encerrar o contrato</strong> (ou voltá-lo a Rascunho): o ativo volta a <strong>Disponível</strong> e perde o vínculo com o cliente, <strong>a não ser que outro contrato Ativo ainda o segure</strong>.</li>
 <li><strong>Ao reabrir um contrato encerrado:</strong> o ativo volta a Locado.</li>
 <li><strong>Ao trocar o equipamento do mesmo contrato:</strong> o antigo é liberado e o novo é travado.</li>
 <li><strong>Ao mudar o local de instalação:</strong> a localização do ativo é atualizada e, se o contrato estava Ativo, os responsáveis pelo aviso “Local de instalação do contrato mudou” (em geral a logística) são avisados para conferir.</li>
-<li><strong>Ao excluir o contrato:</strong> o ativo volta a Disponível.</li>
+<li><strong>Ao excluir um contrato Ativo:</strong> o ativo volta a Disponível (excluir um Rascunho não mexe no ativo).</li>
 </ul>
 <p>Normalmente <strong>não é preciso editar o ativo</strong> ao locar ou devolver: isso é reflexo do contrato.</p>
 <h2>Assinatura eletrônica, imprimir e faturar</h2>
@@ -55,7 +55,9 @@
 <li><strong>Timeline:</strong> na tela de edição, a linha do tempo do contrato, com opção de impressão.</li>
 </ul>
 <h2>Tipo de venda: locação e serviços</h2>
-<p>A coluna <strong>Tipo de venda</strong> mostra “Locação” ou a categoria de serviço (mão de obra especializada, segurança e documentação, acessórios e componentes, insumos e consumíveis). Quando o cliente aceita uma <strong>proposta comercial</strong>, cada categoria de serviço vira um contrato próprio, em Rascunho, com número no formato <code>SV-AAAAMM-XXXXX</code>. Para um contrato de serviço, o equipamento não é obrigatório. Veja Proposta Comercial.</p>
+<p>A coluna <strong>Tipo de venda</strong> mostra “Locação” ou a categoria de serviço (mão de obra especializada, segurança e documentação, acessórios e componentes, insumos e consumíveis). Quando o cliente aceita uma <strong>proposta comercial</strong>, cada categoria de serviço vira um contrato próprio, em Rascunho, com número no formato <code>SV-AAAAMM-XXXXX</code>, e o Comercial recebe o aviso <strong>“Contratos de serviço para ativar”</strong> (quem recebe é configurado em Responsáveis pelos Avisos). Revise e mude a situação para Ativo para poder faturar. Para um contrato de serviço, o equipamento não é obrigatório. Veja Proposta Comercial.</p>
+<h2>Vigência vencida</h2>
+<p>Todo dia às 8h o sistema confere os contratos <strong>Ativos</strong> cuja data de fim já passou. O Comercial recebe o aviso <strong>“Contratos com a vigência vencida”</strong> no <strong>1º dia de atraso</strong> e de novo a cada <strong>7 dias</strong>, enquanto o contrato continuar Ativo. O sistema <strong>não encerra sozinho</strong>: o equipamento pode ainda estar no cliente e a cobrança continuar. Use o filtro <strong>“Vigência vencida (ainda Ativo)”</strong> para ver quais são, e encerre ou renove.</p>
 <h2>Contratos vencendo</h2>
 <p>O filtro <strong>“Vence em 30 dias”</strong> mostra contratos <strong>Ativos</strong> cujo fim da vigência cai nos próximos 30 dias, para planejar renovação ou devolução. Existem também os filtros Situação e Tipo de venda.</p>
 <h2>Imprimir e Exportar</h2>

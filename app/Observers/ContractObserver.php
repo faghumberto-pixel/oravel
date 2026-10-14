@@ -21,11 +21,55 @@ class ContractObserver
      */
     private const LOCATION_FIELDS = ['local_tipo', 'internal_unit_id', 'cep_obra', 'condicao_ambiente'];
 
+    /**
+     * Segura o equipamento = contrato Ativo e em vigor. É o que TRAVA o ativo
+     * (Locado): Rascunho não trava nada nem aparece como contrato ativo.
+     */
+    private function holdsAsset(Contract $contract): bool
+    {
+        return $contract->status === 'Ativo' && $contract->is_active;
+    }
+
+    /**
+     * Contrato em andamento, qualquer situação menos Encerrado. Serve só para
+     * LIBERAR: antes de 14/10/2026 o formulário não tinha campo de situação e
+     * todo contrato criado pela tela ficou em Rascunho, mas já tinha travado o
+     * ativo -- esses contratos antigos continuam liberando o equipamento ao
+     * serem trocados, encerrados ou excluídos.
+     */
+    private function isOpen(Contract $contract): bool
+    {
+        return $contract->status !== 'Encerrado' && $contract->is_active;
+    }
+
+    private function releaseAsset(?string $assetId, ?Contract $except = null): void
+    {
+        if (! $assetId) {
+            return;
+        }
+
+        // Outro contrato Ativo no mesmo ativo continua segurando o equipamento.
+        $outroAtivo = Contract::where('asset_id', $assetId)
+            ->where('status', 'Ativo')
+            ->where('is_active', true)
+            ->when($except, fn ($q) => $q->where('id', '!=', $except->id))
+            ->exists();
+
+        if ($outroAtivo) {
+            return;
+        }
+
+        Asset::find($assetId)?->update([
+            'status' => 'disponivel',
+            'client_id' => null,
+        ]);
+    }
+
     public function created(Contract $contract): void
     {
         Log::info('Oravel: Observer de Contrato disparado: '.$contract->contract_number);
 
-        if ($contract->asset) {
+        if ($contract->asset && $this->holdsAsset($contract)) {
             $this->syncAssetLocation($contract);
 
             Log::info('Oravel: Ativo '.$contract->asset->name.' mobilizado com sucesso.');
@@ -34,58 +78,58 @@ class ContractObserver
 
     public function updated(Contract $contract): void
     {
-        // Se o contrato for inativado, faz a demobilização automática
-        if ($contract->isDirty('is_active') && ! $contract->is_active) {
-            if ($contract->asset) {
-                $contract->asset->update([
-                    'status' => 'disponivel',
-                    'client_id' => null,
-                ]);
-            }
-        }
-
-        // Troca de ativo dentro do mesmo contrato (ex: processo de Troca de
-        // Equipamento) -- libera o ativo antigo e trava o novo no cliente
-        // do contrato, mesmo efeito de created()/deleted() acima.
-        // Contrato reaberto (Encerrado -> Ativo/Rascunho): o equipamento volta a
-        // ficar Locado, com o cliente e o local do contrato.
-        if ($contract->isDirty('is_active') && $contract->is_active && $contract->asset && ! $contract->wasChanged('asset_id')) {
-            $this->syncAssetLocation($contract);
-        }
+        $wasOpen = $contract->getOriginal('status') !== 'Encerrado' && (bool) $contract->getOriginal('is_active');
+        $wasHeld = $contract->getOriginal('status') === 'Ativo' && (bool) $contract->getOriginal('is_active');
+        $isOpen = $this->isOpen($contract);
+        $holds = $this->holdsAsset($contract);
 
         if ($contract->wasChanged('asset_id')) {
-            $originalAssetId = $contract->getOriginal('asset_id');
+            $oldAssetId = $contract->getOriginal('asset_id');
+            $oldAsset = $oldAssetId ? Asset::find($oldAssetId) : null;
 
-            if ($originalAssetId) {
-                Asset::whereKey($originalAssetId)->update([
-                    'status' => 'disponivel',
-                    'client_id' => null,
-                ]);
+            // Contrato antigo ainda em Rascunho, mas que na prática segurava o
+            // equipamento (ativo Locado para o mesmo cliente): a troca leva o
+            // novo equipamento junto.
+            $emVigorLegado = $wasOpen && ! $wasHeld
+                && $oldAsset?->status === 'locado'
+                && $oldAsset->client_id === $contract->client_id;
+
+            if ($wasOpen) {
+                $this->releaseAsset($oldAssetId, $contract);
             }
 
-            if ($contract->asset) {
+            if ($contract->asset && ($holds || $emVigorLegado)) {
                 $this->syncAssetLocation($contract);
             }
-        } elseif ($contract->wasChanged(self::LOCATION_FIELDS) && $contract->asset) {
-            // Mesmo ativo, so' o local mudou -- ressincroniza lat/lng e avisa
-            // quem cuida da logistica que precisa conferir/atualizar o ativo
-            // fisicamente (a trilha de "quem mudou o que" fica automatica via
-            // Contract::LogsActivity, consultavel no relatorio de atividades).
+
+            return;
+        }
+
+        if (($wasOpen && ! $isOpen) || ($wasHeld && ! $holds)) {
+            // Encerrado (ou voltou a Rascunho): devolve o equipamento ao pátio.
+            $this->releaseAsset($contract->asset_id, $contract);
+
+            return;
+        }
+
+        if (! $wasHeld && $holds && $contract->asset) {
+            // Rascunho virou Ativo, ou contrato encerrado foi reaberto.
             $this->syncAssetLocation($contract);
 
-            if ($contract->getOriginal('status') === 'Ativo') {
-                $this->notifyLocationChanged($contract);
-            }
+            return;
+        }
+
+        if ($holds && $contract->asset && $contract->wasChanged(self::LOCATION_FIELDS)) {
+            $this->syncAssetLocation($contract);
+
+            $this->notifyLocationChanged($contract);
         }
     }
 
     public function deleted(Contract $contract): void
     {
-        if ($contract->asset) {
-            $contract->asset->update([
-                'status' => 'disponivel',
-                'client_id' => null,
-            ]);
+        if ($this->isOpen($contract)) {
+            $this->releaseAsset($contract->asset_id, $contract);
         }
     }
 
@@ -93,7 +137,11 @@ class ContractObserver
     {
         $location = $contract->resolvedLocation();
 
-        $contract->asset->update([
+        // Relê o ativo: o que está em memória pode estar velho (ex.: liberado
+        // por outro passo) e um update sem mudança aparente não gravaria nada.
+        $asset = Asset::find($contract->asset_id);
+
+        $asset?->update([
             'status' => 'locado',
             'client_id' => $contract->client_id,
             'latitude' => $location['latitude'] ?? null,

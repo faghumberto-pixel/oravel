@@ -28,6 +28,8 @@ class EventosAviso
             'consumo_material' => ['label' => 'Alertas de consumo de material', 'ajuda' => 'Consumo acima do esperado ou outros desvios de material.', 'papeis' => ['admin']],
             'saldo_negativo_volante' => ['label' => 'Saldo negativo no almoxarifado volante', 'ajuda' => 'Veículo ficou com saldo negativo de peça.', 'papeis' => ['admin']],
             'ativo_critico_manutencao' => ['label' => 'Ativo crítico entrou em manutenção', 'ajuda' => 'Equipamento de alta prioridade parou para manutenção.', 'papeis' => ['oficina']],
+            'contrato_servico_rascunho' => ['label' => 'Contratos de serviço para ativar', 'ajuda' => 'Proposta aceita gerou contratos de serviço em Rascunho; só contrato Ativo pode ser faturado.', 'papeis' => ['Comercial']],
+            'contrato_vencido' => ['label' => 'Contrato com a vigência vencida', 'ajuda' => 'A data de fim passou e o contrato continua Ativo (o equipamento segue Locado até alguém encerrar ou renovar).', 'papeis' => ['Comercial']],
             'contrato_local_mudou' => ['label' => 'Local de instalação do contrato mudou', 'ajuda' => 'O cliente informou outro local para o equipamento.', 'papeis' => ['Gerente de Logística']],
             'contrato_fechado_logistica' => ['label' => 'Contrato fechado, despacho a organizar', 'ajuda' => 'Nova locação fechada que a logística precisa despachar.', 'papeis' => ['Gerente de Logística']],
             'reserva_revogada' => ['label' => 'Reserva de equipamento revogada', 'ajuda' => 'Uma reserva para manutenção foi desfeita automaticamente.', 'papeis' => ['Gerente de Manutenção']],

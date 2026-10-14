@@ -18,7 +18,7 @@ Fonte conferida: `ContractResource` (+ páginas, `ContractStats`), `Contract`, `
 | 8 | "Encerrado (marcar como inativo)" | Encerrar = situação Encerrado (que desliga `is_active`) | Corrigido |
 | 9 | Texto duplicado (versão antiga colada embaixo) | — | Removida a duplicata |
 
-Prova: de 9 para 26 perguntas.
+Prova: de 9 para 30 perguntas.
 
 ### Correção feita no sistema (14/10/2026)
 
@@ -27,13 +27,18 @@ Prova: de 9 para 26 perguntas.
 - `ContractObserver::updated`: reabrir um contrato encerrado trava o equipamento de novo (Locado, cliente e local).
 - Testes: `tests/Feature/ContractStatusTest.php` (5; 3 falham sem a correção).
 
-### Achados que continuam em aberto
+### Achados 1 a 3 — corrigidos em 14/10/2026
 
-1. **Contratos de serviço gerados por proposta nascem em Rascunho**, e agora têm como ser ativados, mas nada avisa o comercial disso. Vale um aviso ou ativar junto com a proposta.
-2. **Criar já trava o ativo mesmo em Rascunho** (o observer só olha a criação, não a situação).
-3. **Contrato vencido não encerra sozinho**: a data de fim passa e o ativo continua Locado até alguém marcar Encerrado. Falta aviso ou rotina.
-4. **Os contratos do DEV** (3) foram gravados direto no banco, então podem não refletir o fluxo da tela.
-5. **Imagens:** `contratos-lista.jpg`, `contrato-novo.jpg`, `contrato-timeline.jpg` não foram conferidas; o formulário mudou (campo Situação, seções novas).
+1. **Contratos de serviço em Rascunho sem aviso** → novo aviso `contrato_servico_rascunho` ("Contratos de serviço para ativar"), enviado ao Comercial (configurável em Responsáveis pelos Avisos) quando a proposta aceita gera os contratos; idempotente.
+2. **Rascunho travava o ativo** → `ContractObserver` reescrito: só contrato **Ativo** segura o equipamento (travar ao criar/ativar/reabrir; liberar ao encerrar ou voltar a Rascunho); o ativo só é liberado se **nenhum outro contrato Ativo** o segura; excluir Rascunho não mexe no ativo. O ativo é relido antes de gravar (cache velho impedia a reabertura de travar). **Contratos legados:** os criados pela tela antes do campo Situação ficaram em Rascunho mas já tinham travado o ativo; para eles, trocar o equipamento, encerrar ou excluir continua liberando (e levando) o equipamento. **Em PROD vale conferir** quais contratos estão em Rascunho com o ativo Locado e decidir se devem virar Ativo (hoje não faturam); isso é decisão de dados e não foi feito.
+3. **Contrato vencido não encerrava nem avisava** → comando `contracts:check-expired` (todo dia às 8h) avisa no 1º dia de atraso e a cada 7 dias (`contrato_vencido`); filtro "Vigência vencida (ainda Ativo)" na lista. **Não encerra sozinho** de propósito: o equipamento pode estar no cliente e a cobrança continua.
+
+Testes: `ContractStatusTest` (11) e `ContractAvisosTest` (3).
+
+### Ainda em aberto
+
+4. **Os contratos do DEV** (3) foram gravados direto no banco; podem não refletir o fluxo da tela.
+5. **Imagens:** `contratos-lista.jpg`, `contrato-novo.jpg`, `contrato-timeline.jpg` não foram conferidas; faltam prints do campo Situação e do novo filtro.
 6. **Falha antiga:** 5 testes de assinatura (`DocumentSignatureTest`) falham por `Tenant::factory()` inexistente.
 
 ## 2. Roteiro de aula (35 a 45 min)
@@ -58,7 +63,7 @@ Prova: de 9 para 26 perguntas.
 ## 4. Guia rápido (1 página)
 
 **Situação:** Rascunho (não vale), Ativo (vale), Encerrado (libera o ativo). Só Ativo fatura e conta.
-**Criar já trava o ativo.** Encerrar = situação Encerrado; a data de fim passar não basta.
+**Só Ativo trava o ativo.** Encerrar = situação Encerrado; a data de fim passar não basta (o sistema avisa no 1º dia de atraso e a cada 7).
 **Cobrança:** mensal fixo, por hora (valor manual), franquia + excedente, diária (fim obrigatório).
 **Faturar:** período dentro da vigência, sem sobrepor outro; gera medição e cobrança no Contas a Receber.
 **Proposta aceita:** serviços viram contratos próprios em Rascunho.

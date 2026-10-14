@@ -556,7 +556,36 @@ class PropostaComercial extends Model
             ]);
         }
 
+        if ($criados) {
+            $this->avisarContratosDeServicoEmRascunho($criados);
+        }
+
         return $criados;
+    }
+
+    /**
+     * Contratos de serviço nascem em Rascunho (o Comercial revisa antes) e só
+     * Ativo fatura -- sem este aviso ninguém ficava sabendo que existem.
+     *
+     * @param  array<int, Contract>  $contratos
+     */
+    private function avisarContratosDeServicoEmRascunho(array $contratos): void
+    {
+        $numeros = collect($contratos)->pluck('contract_number')->implode(', ');
+
+        foreach (DestinatariosAvisos::para($this->tenant_id, 'contrato_servico_rascunho') as $destinatario) {
+            \Filament\Notifications\Notification::make()
+                ->title('Contratos de serviço para ativar')
+                ->body('A proposta aceita gerou '.count($contratos).' contrato(s) em Rascunho ('.$numeros.'). Revise e mude a situação para Ativo para poder faturar.')
+                ->warning()
+                ->actions([
+                    \Filament\Notifications\Actions\Action::make('ver')
+                        ->label('Ver contratos')
+                        ->url(route('filament.admin.resources.contracts.index'))
+                        ->button(),
+                ])
+                ->sendToDatabase($destinatario);
+        }
     }
 
     private function criarSolicitacaoLocacao(PropostaComercialItem $primeiroEquipamento): SolicitacaoLocacao

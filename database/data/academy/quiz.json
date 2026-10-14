@@ -3890,13 +3890,13 @@
    {
     "q": "Qual afirmação sobre um contrato em Rascunho é verdadeira?",
     "options": [
-     "Ele não pode ser faturado e não conta nos cartões de Contratos Ativos",
-     "O ativo ainda não é afetado",
+     "Ele não pode ser faturado, não conta nos cartões e não trava o equipamento",
+     "Ele já trava o equipamento",
      "Ele aparece como contrato ativo do ativo",
      "Ele já define o Interno/Externo da OS"
     ],
     "correct": 0,
-    "why": "Mas o ativo já fica Locado desde a criação do contrato."
+    "why": "Rascunho é só um contrato ainda sem valor: nada acontece com o ativo."
    },
    {
     "q": "Como encerrar uma locação e devolver o equipamento ao pátio?",
@@ -4073,6 +4073,50 @@
     ],
     "correct": 1,
     "why": "É o mesmo critério do filtro Vence em 30 dias."
+   },
+   {
+    "q": "Um contrato Ativo passou da data de fim e ninguém o encerrou. O que acontece?",
+    "options": [
+     "O sistema o encerra sozinho",
+     "O equipamento continua Locado e o Comercial é avisado no 1º dia de atraso e a cada 7 dias",
+     "O contrato é excluído",
+     "Nada, nem aviso"
+    ],
+    "correct": 1,
+    "why": "O sistema não encerra sozinho porque o equipamento pode ainda estar no cliente."
+   },
+   {
+    "q": "Dois contratos Ativos seguram o mesmo equipamento e um deles é encerrado. O que acontece com o ativo?",
+    "options": [
+     "Volta a Disponível",
+     "Continua Locado, porque o outro contrato Ativo ainda o segura",
+     "É bloqueado",
+     "É excluído"
+    ],
+    "correct": 1,
+    "why": "O equipamento só é liberado quando nenhum contrato Ativo o segura."
+   },
+   {
+    "q": "Uma proposta aceita gerou contratos de serviço. O que o Comercial deve fazer?",
+    "options": [
+     "Nada, já estão ativos",
+     "Revisar e mudar a situação para Ativo, para poder faturar",
+     "Excluir e recriar",
+     "Encerrar"
+    ],
+    "correct": 1,
+    "why": "O aviso “Contratos de serviço para ativar” lembra disso."
+   },
+   {
+    "q": "Para ver os contratos que passaram do fim e ainda estão Ativos, você usa…",
+    "options": [
+     "O filtro Vence em 30 dias",
+     "O filtro Vigência vencida (ainda Ativo)",
+     "O cartão Total de Contratos",
+     "O filtro Situação = Rascunho"
+    ],
+    "correct": 1,
+    "why": "“Vence em 30 dias” mostra os que ainda vão vencer."
    }
   ]
  },
