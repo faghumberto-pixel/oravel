@@ -287,11 +287,25 @@ class PropostaComercial extends Model
      * vinculado (related) a esta proposta, em vez de poder se perder sem
      * deixar rastro (outro pedido explícito do usuário).
      */
+    /**
+     * O vendedor não revisa a própria proposta (aprovar ou rejeitar). Só o
+     * administrador da empresa pode, para não travar empresa pequena em que a
+     * mesma pessoa vende e revisa.
+     */
+    private function garantirRevisorDiferenteDoVendedor(User $revisor): void
+    {
+        if ($this->seller_user_id && $this->seller_user_id === $revisor->id && ! $revisor->isAdmin()) {
+            throw new \RuntimeException('O vendedor não pode revisar a própria proposta. Peça a outra pessoa do Comercial.');
+        }
+    }
+
     public function aprovar(User $revisor): void
     {
         if ($this->status !== self::STATUS_ENVIADA_PARA_COMERCIAL) {
             throw new \RuntimeException('Só é possível aprovar uma proposta enviada ao Comercial.');
         }
+
+        $this->garantirRevisorDiferenteDoVendedor($revisor);
 
         if (blank($this->client?->email)) {
             throw new \RuntimeException('Defina o e-mail do cliente antes de aprovar.');
@@ -486,6 +500,8 @@ class PropostaComercial extends Model
         if ($this->status !== self::STATUS_ENVIADA_PARA_COMERCIAL) {
             throw new \RuntimeException('Só é possível rejeitar uma proposta enviada ao Comercial.');
         }
+
+        $this->garantirRevisorDiferenteDoVendedor($revisor);
 
         $this->update([
             'status' => self::STATUS_REJEITADA,

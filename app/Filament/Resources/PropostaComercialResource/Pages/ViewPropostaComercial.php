@@ -56,6 +56,26 @@ class ViewPropostaComercial extends ViewRecord
                     }
                 }),
 
+            Actions\Action::make('reabrir')
+                ->label('Reabrir para edição')
+                ->icon('heroicon-o-arrow-path')
+                ->color('warning')
+                ->visible(fn () => in_array($record->status, [PropostaComercial::STATUS_REJEITADA, PropostaComercial::STATUS_RECUSADA_PELO_CLIENTE], true)
+                    && auth()->user()?->can('update', $record))
+                ->requiresConfirmation()
+                ->modalHeading('Reabrir a proposta?')
+                ->modalDescription('A proposta volta a Rascunho e o motivo anterior é apagado, para você corrigir e enviar de novo.')
+                ->action(function () use ($record) {
+                    abort_unless(auth()->user()?->can('update', $record), 403);
+
+                    try {
+                        $record->reabrirParaEdicao();
+                        Notification::make()->title('Proposta reaberta como rascunho')->success()->send();
+                    } catch (\RuntimeException $e) {
+                        Notification::make()->title('Não foi possível reabrir')->body($e->getMessage())->warning()->send();
+                    }
+                }),
+
             Actions\Action::make('editar_rascunho')
                 ->label('Editar')
                 ->icon('heroicon-o-pencil-square')
