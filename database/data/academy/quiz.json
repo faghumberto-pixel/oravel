@@ -1502,6 +1502,116 @@
     ],
     "correct": 3,
     "why": "Grupos de Ativos."
+   },
+   {
+    "q": "Quais dados o cadastro de um Grupo de Checklist pede?",
+    "options": [
+     "Nome do Grupo (obrigatório) e Objetivo (texto livre)",
+     "Nome, valor e vida útil",
+     "Nome e lista de técnicos",
+     "Só o nome do cliente"
+    ],
+    "correct": 0,
+    "why": "Os pontos de inspeção são cadastrados na seção Checklist Básico, ao editar o grupo já salvo."
+   },
+   {
+    "q": "Onde se cadastram os itens do checklist básico?",
+    "options": [
+     "No cadastro da OS",
+     "Na tela de edição do Grupo, na seção Checklist Básico do Grupo (Item, Categoria/Seção e Instruções)",
+     "Em Materiais",
+     "No contrato"
+    ],
+    "correct": 1,
+    "why": "Só o campo Item é obrigatório."
+   },
+   {
+    "q": "Quando o sistema copia os itens do modelo para a OS?",
+    "options": [
+     "Quando a OS é concluída",
+     "Quando a OS é criada, para qualquer tipo de OS",
+     "Só em OS corretiva",
+     "Todo dia às 3h"
+    ],
+    "correct": 1,
+    "why": "O tipo da OS fica registrado em cada item copiado."
+   },
+   {
+    "q": "Um ativo sem Grupo de Checklist abre uma OS. O que entra no checklist?",
+    "options": [
+     "Nada, a OS não pode ser criada",
+     "Só os Itens Extras do Manual cadastrados no próprio ativo",
+     "Os itens de todos os grupos",
+     "Os itens do ativo mais antigo"
+    ],
+    "correct": 1,
+    "why": "O grupo é só uma das duas fontes do checklist."
+   },
+   {
+    "q": "Para que servem os Itens Extras do Manual (deste ativo)?",
+    "options": [
+     "Para trocar o grupo do ativo",
+     "Para pontos de inspeção que valem só para aquela máquina, somados aos do grupo",
+     "Para cadastrar peças",
+     "Para registrar avarias"
+    ],
+    "correct": 1,
+    "why": "Eles se somam ao checklist quando a OS é criada, sem alterar o modelo do grupo."
+   },
+   {
+    "q": "Você apagou um item do checklist básico do grupo. O que acontece com as OS já criadas?",
+    "options": [
+     "O item some delas",
+     "Nada: continuam com a cópia que já tinham",
+     "As OS são canceladas",
+     "As OS são recriadas"
+    ],
+    "correct": 1,
+    "why": "A cópia é um retrato do momento da criação da OS."
+   },
+   {
+    "q": "Qual é a diferença entre Categoria do Ativo e Grupo de Checklist?",
+    "options": [
+     "Não há diferença",
+     "A categoria classifica o ativo e define abas técnicas do cadastro; o grupo liga o ativo ao checklist básico e aos planos de grupo",
+     "A categoria define o checklist e o grupo define o preço",
+     "Só o grupo aparece no cadastro do ativo"
+    ],
+    "correct": 1,
+    "why": "Dois cadastros separados, cada um com sua função."
+   },
+   {
+    "q": "O que a lista de Grupos mostra além do nome e do objetivo?",
+    "options": [
+     "O valor dos ativos",
+     "Quantos ativos estão vinculados e quantos itens de checklist básico o grupo tem",
+     "O saldo de estoque",
+     "As OS abertas"
+    ],
+    "correct": 1,
+    "why": "As colunas são Ativos Vinculados e Itens do Checklist Básico."
+   },
+   {
+    "q": "O que o Importar Template PMP traz para o grupo escolhido?",
+    "options": [
+     "Só ativos",
+     "Itens de manutenção e itens de checklist da família de equipamento, sem duplicar nomes que já existem",
+     "Só materiais",
+     "Contratos"
+    ],
+    "correct": 1,
+    "why": "Está em PMP → Planos Preventivos."
+   },
+   {
+    "q": "Onde o Grupo também é usado, além do checklist?",
+    "options": [
+     "Só no checklist",
+     "Em planos preventivos de grupo, na compatibilidade de materiais e em filtros de listas e painéis",
+     "Só na impressão",
+     "Só em contratos"
+    ],
+    "correct": 1,
+    "why": "Por isso o grupo deve ser definido antes de cadastrar os ativos."
    }
   ]
  },
@@ -2398,15 +2508,15 @@
     "why": "É cópia."
    },
    {
-    "q": "No celular, quando o botão “Finalizar” libera?",
+    "q": "Na tela simples “checklist digital”, quando o botão Finalizar libera?",
     "options": [
      "Sempre",
-     "Com 50%",
-     "Só com foto em todos",
-     "Quando o checklist chega a 100%"
+     "Quando o progresso chega a 100% (itens concluídos)",
+     "Só com assinatura",
+     "Nunca"
     ],
-    "correct": 3,
-    "why": "Libera em 100%."
+    "correct": 1,
+    "why": "Mas essa tela só abre pelo endereço; o fluxo ensinado é o Modo Campo."
    },
    {
     "q": "Quem cadastra os itens padrão e quem preenche?",
@@ -2431,15 +2541,125 @@
     "why": "Não confundir."
    },
    {
-    "q": "Foto e observação em cada item são…",
+    "q": "Foto e observação em cada item do checklist são…",
     "options": [
-     "Opcionais",
-     "Obrigatórias",
+     "Sempre obrigatórias",
+     "Opcionais, exceto para Não Conforme no Modo Campo, que exige as duas",
      "Proibidas",
-     "Só obrigatórias em Não Conforme"
+     "Obrigatórias só para N/A"
     ],
-    "correct": 0,
-    "why": "Opcionais por item."
+    "correct": 1,
+    "why": "O sistema recusa um Não Conforme sem observação e foto no Modo Campo."
+   },
+   {
+    "q": "Um item do checklist da OS está Conforme ou Não Aplicável. Como o sistema o trata?",
+    "options": [
+     "Como pendente",
+     "Como concluído",
+     "Como Não Conforme",
+     "Como cancelado"
+    ],
+    "correct": 1,
+    "why": "Só o Não Conforme fica fora da conta de concluídos."
+   },
+   {
+    "q": "Na etapa 2 do Modo Campo, o que o sistema exige ao marcar um item como Não Conforme?",
+    "options": [
+     "Nada",
+     "Observação e foto",
+     "Só a assinatura do cliente",
+     "A senha do supervisor"
+    ],
+    "correct": 1,
+    "why": "Sem as duas, o sistema recusa e avisa."
+   },
+   {
+    "q": "O técnico marca um item como Não Conforme. O que o sistema faz sozinho?",
+    "options": [
+     "Abre uma avaria",
+     "Abre uma pendência",
+     "Nada além de registrar o status; avaria e pendência são registradas à parte",
+     "Cancela a OS"
+    ],
+    "correct": 2,
+    "why": "A equipe precisa registrar a avaria ou a pendência."
+   },
+   {
+    "q": "Uma OS pode ser concluída com itens do checklist ainda em branco?",
+    "options": [
+     "Não, o sistema bloqueia",
+     "Sim: o sistema não exige o checklist completo para concluir",
+     "Só se for Externa",
+     "Só com senha"
+    ],
+    "correct": 1,
+    "why": "A conferência é da equipe; por isso o treinamento insiste no preenchimento."
+   },
+   {
+    "q": "O que são os itens “PMP” que aparecem numa OS nova?",
+    "options": [
+     "Peças compradas",
+     "Planos preventivos ativos do ativo que estão vencidos ou vencem no mês, copiados como itens",
+     "Fotos antes e depois",
+     "Itens do grupo de outro cliente"
+    ],
+    "correct": 1,
+    "why": "Ficam na aba PMP da OS, que só existe quando há itens assim."
+   },
+   {
+    "q": "Em que momento os itens PMP são gerados?",
+    "options": [
+     "Quando a OS é concluída",
+     "Quando a OS é criada",
+     "A cada hora",
+     "Quando o técnico abre o celular"
+    ],
+    "correct": 1,
+    "why": "Se o plano vencer depois da criação da OS, o item não entra nela."
+   },
+   {
+    "q": "O técnico consegue renomear um item do checklist dentro da OS?",
+    "options": [
+     "Sim",
+     "Não: o nome fica travado; ele só preenche status, observação e foto",
+     "Só o administrador",
+     "Só no celular"
+    ],
+    "correct": 1,
+    "why": "Quem define o nome é o modelo do grupo ou do ativo."
+   },
+   {
+    "q": "Qual é a tela que o técnico deve usar para preencher o checklist no celular?",
+    "options": [
+     "O cadastro Checklists em Manutenção → Cadastros",
+     "O Modo Campo (etapa 2), aberto pelo botão Modo Campo (Celular) da OS",
+     "A tela de Materiais",
+     "O portal do cliente"
+    ],
+    "correct": 1,
+    "why": "A tela “checklist digital” mais simples só abre digitando o endereço e não tem os três status."
+   },
+   {
+    "q": "O cadastro “Checklists” em Manutenção → Cadastros alimenta a vistoria da OS?",
+    "options": [
+     "Sim, é o modelo oficial",
+     "Não: é solto, só com nome e descrição, sem ligação com ativo, grupo ou OS",
+     "Só nas OS externas",
+     "Só nas emergências"
+    ],
+    "correct": 1,
+    "why": "O modelo real é o Checklist Básico do Grupo mais os Itens Extras do ativo."
+   },
+   {
+    "q": "Na barra de progresso do checklist no celular, o que conta?",
+    "options": [
+     "Todos os itens, mesmo em branco",
+     "Só os itens concluídos (Conforme e Não Aplicável)",
+     "Só os Não Conformes",
+     "Só os itens com foto"
+    ],
+    "correct": 1,
+    "why": "Um Não Conforme não entra na conta de concluídos."
    }
   ]
  },
@@ -5121,34 +5341,56 @@
     "q": "O que acontece com o horímetro ao marcar cada item na preventiva pelo celular?",
     "options": [
      "Nada",
-     "Cada item marcado já avança o horímetro oficial",
-     "Só ao concluir a OS",
-     "Volta a zero"
+     "Se o horímetro informado for maior que o atual, o oficial avança",
+     "Sempre diminui",
+     "Zera"
     ],
     "correct": 1,
-    "why": "Avança o horímetro."
+    "why": "Nunca regride."
    },
    {
     "q": "Onde a preventiva vencida aparece?",
     "options": [
-     "Só no contrato",
-     "Só no chat",
-     "Só no relatório",
-     "Na tela da OS e no Dashboard"
+     "Só no Dashboard",
+     "Na tela da OS, nos cartões e na lista de Planos Preventivos e na Cobertura de PMP",
+     "Só no e-mail",
+     "Em lugar nenhum"
     ],
-    "correct": 3,
-    "why": "Destaque de vencida."
+    "correct": 1,
+    "why": "Além disso, o aviso diário chega a quem é responsável pelo evento."
    },
    {
     "q": "Qual é o caminho do menu para criar o plano?",
     "options": [
-     "Manutenção → Planos",
-     "Ativos → Planos",
+     "Manutenção → Planos Preventivos → Criar",
      "PMP → Planos Preventivos → Criar",
-     "Comercial → Planos"
+     "Ativos → Planos → Criar",
+     "Configurações → PMP"
     ],
-    "correct": 2,
-    "why": "Menu PMP."
+    "correct": 1,
+    "why": "O grupo do menu é PMP."
+   },
+   {
+    "q": "Para que serve marcar “Item crítico” no plano?",
+    "options": [
+     "Só para destacar na lista",
+     "Quando vencido, o ativo vai para Manutenção e não pode ser locado",
+     "Para cancelar a OS",
+     "Para trocar o grupo"
+    ],
+    "correct": 1,
+    "why": "O ativo volta ao status anterior quando nenhum item crítico estiver vencido."
+   },
+   {
+    "q": "O botão Preventiva (Celular) da OS aparece quando…",
+    "options": [
+     "O ativo tem Grupo de Checklist",
+     "O ativo tem algum plano ativo, do próprio ativo ou do seu grupo",
+     "A OS é de emergência",
+     "O contrato é externo"
+    ],
+    "correct": 1,
+    "why": "Ele fica em Mais Ações."
    }
   ]
  },
