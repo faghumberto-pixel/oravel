@@ -20,15 +20,21 @@ Fonte conferida: `MaintenancePlanResource` (+ `PlanStatus`, stats, lista), `Main
 | 10 | Não citava as demais telas do grupo PMP | Dashboard PMP (5 colunas), Cobertura de PMP, Consulta por Cliente, Alocação de Técnicos, Kanban Preventivas | Tabela nova + 2 perguntas |
 | 11 | Legenda da imagem do Kanban "Análise de Preventivas" | Item de menu é **Kanban Preventivas** | Corrigido |
 
-Prova: de 9 para 24 perguntas.
+Prova: de 9 para 26 perguntas.
 
-### Achados no sistema (não corrigidos — decisão sua)
+### Achados no sistema — corrigidos em 14/10/2026
 
-1. **Plano só de ativo não aparece para marcar.** A tela do celular e o formulário de execução manual listam apenas planos de Grupo (`checklist_group_id`). Plano individual entra nos alertas e na tela de planos, mas o técnico não consegue registrar a execução. A aula avisa o limite; o certo é corrigir.
-2. **Previsão da próxima execução ignora dias e ciclos.** `next_due_horimetro = horímetro + interval_hours`; com plano só por dias, `interval_hours` é nulo e a "próxima previsão" fica igual ao horímetro executado. Também há risco de erro no formulário manual (`number_format` com intervalo nulo).
-3. **Plano desativado continua alertando.** A verificação diária (`CheckMaintenanceDueAlerts`) não filtra `is_active`; só os cartões e a tela do celular filtram. Um plano desligado ainda avisa, abre OS automática e pode bloquear ativo crítico.
-4. **Imagens:** `planos-lista.jpg`, `planos-novo.jpg`, `m-preventiva.jpg` e `preventiva-kanban.jpg` não foram conferidas; faltam prints do Importar Template, da Cobertura de PMP e do Dashboard PMP.
-5. **Guias relacionados** (`guias__configurar-preventiva`) repetem o conteúdo antigo ("só por horas"); revisar na 2.3 ou antes.
+1. **Plano só de ativo não aparecia para marcar** → celular, impressão e formulário manual usam `MaintenancePlan::activeApplicableFor()` (planos ativos do ativo + do grupo, o do ativo vence o de mesmo nome). Como nada zerava o vencimento de plano individual (só o de grupo olhava as execuções), `dueStatusForAsset()` agora considera a última execução nos dois casos.
+2. **Previsão ignorava dias e ciclos** → `next_due_horimetro` só é calculado com intervalo em horas, senão fica vazio; o celular e o formulário manual não mostram previsão nesse caso.
+3. **Plano desativado continuava alertando** → `maintenance:check-due-alerts` só considera planos ativos.
+
+Testes: `tests/Feature/PreventiveMaintenanceGapsTest.php` (6; 4 falham sem a correção).
+
+### Ainda em aberto
+
+- **Dashboard PMP quebra no Postgres:** o gráfico `PmpByEquipmentTypeChart` (linha 35) faz `group by "grupo"` com `COALESCE(checklist_groups.name, ...)` e o Postgres rejeita (`column "checklist_groups.name" must appear in the GROUP BY clause`). Os 6 testes de `PainelPmpTest` falham por isso. Existia antes desta mudança.
+- **Imagens:** `planos-lista.jpg`, `planos-novo.jpg`, `m-preventiva.jpg` e `preventiva-kanban.jpg` não foram conferidas; faltam prints do Importar Template, da Cobertura de PMP e do Dashboard PMP.
+- **Guia relacionado** `guias__configurar-preventiva` repete o conteúdo antigo ("só por horas").
 
 ## 2. Roteiro de aula (35 a 45 min)
 
@@ -56,7 +62,7 @@ Pré-requisito: um Grupo de Checklist "Compressor" com 2 ativos (horímetros 1.0
 **Ativo ou Grupo:** nunca os dois; grupo = histórico separado por ativo; mesmo nome no ativo vence o do grupo.
 **Template:** Importar Template PMP copia itens por família; não duplica.
 **Diário:** aviso a quem é responsável (7 dias sem repetir); OS só nasce sozinha se a opção estiver ligada; item crítico vencido põe o ativo em Manutenção.
-**Celular:** a partir da OS; só planos de Grupo; informe o horímetro; marcar grava, desmarcar apaga.
+**Celular:** a partir da OS; planos do ativo e do Grupo; informe o horímetro; marcar grava, desmarcar apaga.
 **Telas:** Planos, Dashboard, Cobertura, Consulta por Cliente, Alocação, Kanban.
 
 ## 5. Capturas e vídeos a produzir

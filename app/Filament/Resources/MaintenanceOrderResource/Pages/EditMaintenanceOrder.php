@@ -9,6 +9,7 @@ use App\Filament\Resources\MaintenanceOrderResource\Concerns\CreatesReplacementF
 use App\Filament\Resources\MaintenanceOrderResource\Concerns\StoresPhotoEvidence;
 use App\Models\EquipmentMovement;
 use App\Models\MaintenanceOrder;
+use App\Models\MaintenancePlan;
 use App\Models\User;
 use App\Support\Tenancy;
 use Filament\Actions;
@@ -142,19 +143,19 @@ class EditMaintenanceOrder extends EditRecord
                     ->url(fn () => DossieOperacional::getUrl(['record' => $this->record]))
                     ->openUrlInNewTab(),
 
-                // Preventiva (celular) so aparece se o ativo tiver Grupo
-                // definido, ja que o template de preventiva e por Grupo.
+                // Preventiva (celular) so aparece se o ativo tiver algum plano
+                // ativo aplicavel (do proprio ativo ou do Grupo dele).
                 Actions\Action::make('preventiva')
                     ->label('Preventiva (Celular)')
                     ->icon('heroicon-o-wrench')
-                    ->visible(fn () => (bool) $this->record->asset?->checklist_group_id)
+                    ->visible(fn () => $this->record->asset && MaintenancePlan::activeApplicableFor($this->record->asset)->isNotEmpty())
                     ->url(fn () => route('maintenance-orders.preventiva-mobile', $this->record))
                     ->openUrlInNewTab(),
 
                 Actions\Action::make('preventiva_print')
                     ->label('Imprimir Preventiva')
                     ->icon('heroicon-o-printer')
-                    ->visible(fn () => (bool) $this->record->asset?->checklist_group_id)
+                    ->visible(fn () => $this->record->asset && MaintenancePlan::activeApplicableFor($this->record->asset)->isNotEmpty())
                     ->url(fn () => route('maintenance-orders.preventiva.print', $this->record))
                     ->openUrlInNewTab(),
 

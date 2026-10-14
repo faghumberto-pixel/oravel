@@ -183,14 +183,20 @@ class MaintenancePlan extends Model
         $lastServiceDate = $this->last_service_date;
         $lastServiceBatteryCycles = (int) $this->last_service_battery_cycles;
 
-        if ($this->isGroupTemplate()) {
-            $lastExecution = $this->executions()
-                ->where('asset_id', $asset->id)
-                ->orderByDesc('horimetro_at_execution')
-                ->first();
+        $lastExecution = $this->executions()
+            ->where('asset_id', $asset->id)
+            ->orderByDesc('horimetro_at_execution')
+            ->first();
 
+        if ($this->isGroupTemplate()) {
             $lastServiceHours = $lastExecution ? (float) $lastExecution->horimetro_at_execution : 0.0;
             $lastServiceDate = $lastExecution?->created_at?->toDateString() ?? $lastServiceDate;
+        } elseif ($lastExecution) {
+            // Plano individual: o registro manual (last_service_*) vale até a
+            // primeira execução feita pelo celular/formulário; depois dela, a
+            // execução manda -- senão marcar o item nunca tiraria o "vencido".
+            $lastServiceHours = (float) $lastExecution->horimetro_at_execution;
+            $lastServiceDate = $lastExecution->created_at?->toDateString() ?? $lastServiceDate;
         }
 
         $overdueByHours = false;
@@ -319,6 +325,19 @@ class MaintenancePlan extends Model
      * @param  ?Collection<int, MaintenancePlan>  $allPlans
      * @return Collection<int, MaintenancePlan>
      */
+    /**
+     * Planos ativos que valem para o ativo (do próprio ativo e do grupo, com o
+     * plano do ativo vencendo o do grupo de mesmo nome), em ordem alfabética.
+     * Usado pela tela de execução (celular, impressão e formulário manual).
+     */
+    public static function activeApplicableFor(Asset $asset): Collection
+    {
+        return static::applicableFor($asset)
+            ->where('is_active', true)
+            ->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE)
+            ->values();
+    }
+
     public static function applicableFor(Asset $asset, ?Collection $allPlans = null): Collection
     {
         if ($allPlans === null) {

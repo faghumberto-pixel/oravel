@@ -15,7 +15,7 @@
 <tr><td>Intervalo (Horas, Dias, Ciclos de Bateria)</td><td>Ao menos um é obrigatório. Ciclos de bateria são para equipamento elétrico (empilhadeira, plataforma). Vence pelo que chegar primeiro</td></tr>
 <tr><td>Observação</td><td>Ex.: Obrigatório NR-13</td></tr>
 <tr><td>Item crítico</td><td>Marca como prioridade máxima. Vencido, <strong>bloqueia o ativo</strong> (veja abaixo)</td></tr>
-<tr><td>Plano Ativo</td><td>Desligado, o plano sai dos cartões e da tela do celular</td></tr>
+<tr><td>Plano Ativo</td><td>Desligado, o plano para de valer: sai dos cartões, da tela do celular e da verificação diária (sem aviso, sem OS automática e sem bloqueio)</td></tr>
 <tr><td>Gerar O.S. automaticamente quando vencer</td><td>Veja abaixo</td></tr>
 </tbody></table>
 <h2>Plano por Ativo × plano por Grupo</h2>
@@ -43,13 +43,13 @@
 <div class="mk-note warn"><strong>⚠️ Sem a OS automática, ninguém abre a OS por você</strong><p>Com a opção desligada (padrão), o sistema só avisa. Alguém precisa abrir a OS Preventiva.</p></div>
 <h2>Executando pelo celular: os detalhes</h2>
 <ul>
-<li>A tela é aberta a partir da OS (<strong>Preventiva (Celular)</strong>, em Mais Ações) e só existe se o ativo tem Grupo de Checklist.</li>
-<li>Ela lista os planos <strong>ativos do Grupo</strong>, em ordem alfabética, com uma barra de progresso (itens marcados ÷ total).</li>
-<li>Para marcar, informe o <strong>horímetro</strong> (já vem o atual do ativo). Cada item marcado grava a execução ligada àquela OS, com você como técnico e a previsão da próxima = horímetro + intervalo em horas.</li>
+<li>A tela é aberta a partir da OS (<strong>Preventiva (Celular)</strong>, em Mais Ações) e só aparece se o ativo tem algum plano ativo, do próprio ativo ou do Grupo de Checklist.</li>
+<li>Ela lista os planos <strong>ativos do ativo e do Grupo</strong> (se há um plano do ativo com o mesmo nome de um do grupo, vale o do ativo), em ordem alfabética, com uma barra de progresso (itens marcados ÷ total).</li>
+<li>Para marcar, informe o <strong>horímetro</strong> (já vem o atual do ativo). Cada item marcado grava a execução ligada àquela OS, com você como técnico. Se o plano tem intervalo em horas, mostra a previsão da próxima (horímetro + intervalo); plano só por dias ou ciclos não tem previsão em horímetro.</li>
 <li>Ao expandir um item já marcado, dá para anotar observação e anexar foto.</li>
+<li>Executar um plano do próprio ativo zera o vencimento dele, como acontece no plano de grupo.</li>
 <li>Também há a execução manual (Preventivas, escondida do menu), que pede Ativo, Item, OS vinculada e Horímetro.</li>
 </ul>
-<div class="mk-note warn"><strong>⚠️ Limites de hoje</strong><p>Na tela do celular e no formulário manual só aparecem planos <strong>de Grupo</strong>. Um plano criado só para um ativo específico entra nos cálculos e nos alertas, mas não aparece para marcar. A “próxima previsão” da execução também só considera o intervalo em horas.</p></div>
 <h2>As outras telas do grupo PMP</h2>
 <table><thead><tr><th>Tela</th><th>Para que serve</th></tr></thead><tbody>
 <tr><td>Planos Preventivos</td><td>Cadastro e cartões de situação</td></tr>

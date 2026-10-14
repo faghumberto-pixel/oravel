@@ -74,7 +74,7 @@
                 @if($expandedPlanId === $plan->id && $execution)
                     <div class="space-y-3 border-t border-zinc-800 px-4 py-4">
                         <p class="text-[11px] text-zinc-500">
-                            Executado a {{ $execution->horimetro_at_execution }}h · próxima previsão {{ $execution->next_due_horimetro }}h
+                            Executado a {{ $execution->horimetro_at_execution }}h@if($execution->next_due_horimetro) · próxima previsão {{ $execution->next_due_horimetro }}h@endif
                         </p>
 
                         <textarea wire:model="newObservation" rows="3" placeholder="Estado da máquina / observações..."

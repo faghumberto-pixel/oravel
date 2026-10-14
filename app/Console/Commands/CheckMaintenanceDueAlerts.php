@@ -45,7 +45,7 @@ class CheckMaintenanceDueAlerts extends Command
                 continue;
             }
 
-            $planos = MaintenancePlan::where('tenant_id', $tenant->id)->get();
+            $planos = MaintenancePlan::where('tenant_id', $tenant->id)->where('is_active', true)->get();
             $planosPorAsset = $planos->whereNotNull('asset_id')->groupBy('asset_id');
             $planosPorGrupo = $planos->whereNotNull('checklist_group_id')->groupBy('checklist_group_id');
 

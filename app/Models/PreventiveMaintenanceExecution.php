@@ -53,9 +53,12 @@ class PreventiveMaintenanceExecution extends Model implements HasMedia
     protected static function booted(): void
     {
         static::saving(function (PreventiveMaintenanceExecution $execution) {
-            if ($execution->maintenancePlan) {
-                $execution->next_due_horimetro = $execution->horimetro_at_execution + $execution->maintenancePlan->interval_hours;
-            }
+            // Só há "próximo horímetro" se o plano tem intervalo em horas;
+            // plano só por dias/ciclos não tem previsão em horímetro.
+            $interval = $execution->maintenancePlan?->interval_hours;
+            $execution->next_due_horimetro = $interval
+                ? $execution->horimetro_at_execution + $interval
+                : null;
         });
 
         static::saved(function (PreventiveMaintenanceExecution $execution) {

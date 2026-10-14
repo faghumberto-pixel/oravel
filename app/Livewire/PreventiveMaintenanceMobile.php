@@ -37,7 +37,7 @@ class PreventiveMaintenanceMobile extends Component
     {
         Gate::authorize('view', $maintenanceOrder);
 
-        abort_unless((bool) $maintenanceOrder->asset?->checklist_group_id, 404);
+        abort_unless($maintenanceOrder->asset && MaintenancePlan::activeApplicableFor($maintenanceOrder->asset)->isNotEmpty(), 404);
 
         $this->maintenanceOrder = $maintenanceOrder;
         $this->horimetro = (float) $maintenanceOrder->asset->horimetro_atual;
@@ -63,10 +63,7 @@ class PreventiveMaintenanceMobile extends Component
         $asset = $this->asset;
         $executions = $this->executions;
 
-        return MaintenancePlan::where('checklist_group_id', $asset->checklist_group_id)
-            ->where('is_active', true)
-            ->orderBy('name')
-            ->get()
+        return MaintenancePlan::activeApplicableFor($asset)
             ->map(fn (MaintenancePlan $plan) => [
                 'plan' => $plan,
                 'execution' => $executions->get($plan->id),

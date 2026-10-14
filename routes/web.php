@@ -461,17 +461,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/maintenance-orders/{maintenanceOrder}/preventiva/print', function (MaintenanceOrder $maintenanceOrder) {
         $order = $maintenanceOrder;
         $asset = $order->asset;
-        abort_unless($asset?->checklist_group_id, 404);
+        abort_unless($asset && MaintenancePlan::activeApplicableFor($asset)->isNotEmpty(), 404);
 
         $executions = PreventiveMaintenanceExecution::where('maintenance_order_id', $order->id)
             ->with('technician')
             ->get()
             ->keyBy('maintenance_plan_id');
 
-        $items = MaintenancePlan::where('checklist_group_id', $asset->checklist_group_id)
-            ->where('is_active', true)
-            ->orderBy('name')
-            ->get()
+        $items = MaintenancePlan::activeApplicableFor($asset)
             ->map(fn (MaintenancePlan $plan) => [
                 'plan' => $plan,
                 'execution' => $executions->get($plan->id),

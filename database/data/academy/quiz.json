@@ -2275,12 +2275,12 @@
     "q": "Na tela da preventiva no celular, quais planos aparecem?",
     "options": [
      "Todos do tenant",
-     "Os planos ativos do Grupo de Checklist do ativo; um plano só de ativo não aparece",
+     "Os planos ativos do ativo e do seu Grupo de Checklist; se o nome repete, vale o do ativo",
      "Só os vencidos",
      "Só os críticos"
     ],
     "correct": 1,
-    "why": "A tela só abre se o ativo tem Grupo de Checklist."
+    "why": "A tela só aparece na OS se o ativo tem algum plano ativo aplicável."
    },
    {
     "q": "A que a execução marcada no celular fica ligada?",
@@ -2291,7 +2291,7 @@
      "A nenhuma OS"
     ],
     "correct": 1,
-    "why": "A previsão da próxima = horímetro + intervalo em horas."
+    "why": "Se o plano tem intervalo em horas, a previsão da próxima = horímetro + intervalo; plano só por dias ou ciclos não tem previsão em horímetro."
    },
    {
     "q": "Qual é a função do Dashboard PMP?",
@@ -2336,6 +2336,17 @@
     ],
     "correct": 1,
     "why": "Configurado em Configurações → Responsáveis pelos Avisos, no evento “Manutenção preventiva vencendo”."
+   },
+   {
+    "q": "Um plano está desativado (Plano Ativo desligado). O que acontece na verificação diária?",
+    "options": [
+     "Continua avisando e abrindo OS",
+     "Ele é ignorado: não avisa, não abre OS e não bloqueia o ativo",
+     "Vira crítico",
+     "É excluído"
+    ],
+    "correct": 1,
+    "why": "Desativar o plano é a forma de pausá-lo sem apagar o histórico."
    }
   ]
  },

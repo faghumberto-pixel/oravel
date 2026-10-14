@@ -61,13 +61,11 @@ class PreventiveMaintenanceExecutionResource extends Resource
                     ->options(function (Get $get) {
                         $asset = Asset::find($get('asset_id'));
 
-                        if (! $asset || ! $asset->checklist_group_id) {
+                        if (! $asset) {
                             return [];
                         }
 
-                        return MaintenancePlan::where('checklist_group_id', $asset->checklist_group_id)
-                            ->where('is_active', true)
-                            ->pluck('name', 'id');
+                        return MaintenancePlan::activeApplicableFor($asset)->pluck('name', 'id');
                     })
                     ->disabled(fn (Get $get) => blank($get('asset_id')))
                     ->live()
@@ -104,7 +102,7 @@ class PreventiveMaintenanceExecutionResource extends Resource
                         $plan = MaintenancePlan::find($get('maintenance_plan_id'));
                         $horimetro = (float) ($get('horimetro_at_execution') ?? 0);
 
-                        if (! $plan || ! $horimetro) {
+                        if (! $plan || ! $horimetro || ! $plan->interval_hours) {
                             return '—';
                         }
 
