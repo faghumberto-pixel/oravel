@@ -20,15 +20,21 @@ Fonte conferida: `ChecklistGroupResource` (+ `TemplateItemsRelationManager`), `C
 | 10 | Não citava Importar Template PMP no checklist | Também copia itens de checklist por família | Seção nova + pergunta |
 | 11 | Guia de preventiva: "contando pelas horas", caminho "Manutenção → Planos Preventivos" | Horas, dias ou ciclos; menu é **PMP** → Planos Preventivos; opções crítico e OS automática | Guia reescrito + 2 perguntas |
 
-Provas: Grupos de 8 para 18; Checklist de Inspeção de 8 para 18; guia de 7 para 9.
+Provas: Grupos de 8 para 18; Checklist de Inspeção de 8 para 20; guia de 7 para 9.
 
-### Achados no sistema (não corrigidos — decisão sua)
+### Achados no sistema — 1 a 3 corrigidos em 14/10/2026
 
-1. **Item Não Conforme trava a barra de progresso.** `is_completed` só é verdadeiro para Conforme e N/A; na tela simples, "Finalizar" só libera com 100%, então uma OS com defeito nunca finaliza ali. No Modo Campo a etapa 2 não bloqueia o avanço, mas o progresso mostrado nunca chega a 100%.
-2. **Não Conforme não gera nada.** Não abre avaria nem pendência; depende do técnico registrar. Vale decidir se deve oferecer um atalho "registrar avaria deste item".
-3. **Itens PMP aparecem duas vezes na OS.** O repetidor da aba "Vistoria / Checklist" usa a relação `checklists` sem filtrar o tipo, então os itens `pmp` também aparecem ali, além da aba PMP.
-4. **Tela "checklist digital" órfã** (`MaintenanceChecklistMobile`, rota `maintenance-orders.checklist-mobile`): sem link, sem os três status e com regra diferente da do Modo Campo. Remover ou religar.
-5. **Imagens:** `grupos-lista.jpg`, `grupo-edit.jpg`, `categorias.jpg`, `os-checklist.jpg` não foram conferidas; faltam prints da aba Itens Extras do manual e da aba PMP da OS.
+1. **Item Não Conforme travava o progresso** → o progresso (e o botão Finalizar da tela simples) agora conta itens **respondidos** (`MaintenanceOrderChecklist::isAnswered()`); `is_completed` não mudou: Não Conforme continua sem contar como concluído.
+2. **Não Conforme não gerava nada** → o item abre uma **Pendência** na OS (uma por item, sem duplicar; "aberta por" = quem mexeu, ou o técnico da OS) e dispara o aviso `pendencia_os` já existente. Avaria continua manual.
+3. **Itens PMP apareciam duas vezes** → a aba "Vistoria / Checklist" exclui `checklist_type = 'pmp'`.
+
+Testes: `tests/Feature/ChecklistNaoConformeTest.php` (5; 3 falham sem a correção).
+
+### Ainda em aberto
+
+4. **Tela "checklist digital" órfã** (`MaintenanceChecklistMobile`, rota `maintenance-orders.checklist-mobile`): sem link, sem os três status e com regra diferente do Modo Campo. Remover ou religar.
+5. **Teste do wizard de campo:** `step three can clear damage photos` chama `clearDamagePhotoBefore`, método que não existe no componente (falha antes e depois desta mudança).
+6. **Imagens:** `grupos-lista.jpg`, `grupo-edit.jpg`, `categorias.jpg`, `os-checklist.jpg` não foram conferidas; faltam prints dos Itens Extras do Manual e da aba PMP da OS.
 
 ## 2. Roteiro de aula (30 a 40 min)
 
@@ -45,7 +51,7 @@ Provas: Grupos de 8 para 18; Checklist de Inspeção de 8 para 18; guia de 7 par
 **Parte B — ativos.** Vincular 2 compressores ao grupo. Ao segundo, acrescentar 1 item extra do manual.
 **Parte C — cópia.** Abrir uma OS Corretiva no segundo ativo. Esperado: 6 itens. Abrir outra no primeiro: 5 itens.
 **Parte D — modelo × cópia.** Apagar 1 item do grupo e abrir nova OS: 4 itens (+ extras). Conferir que a OS da parte C continua com todos.
-**Parte E — Modo Campo.** Marcar um item Não Conforme sem foto (esperado: recusa); anexar foto e observação e repetir. Marcar um N/A. Conferir o progresso.
+**Parte E — Modo Campo.** Marcar um item Não Conforme sem foto (esperado: recusa); anexar foto e observação e repetir. Conferir a Pendência aberta na OS. Marcar um N/A e conferir que o progresso chega a 100%.
 **Parte F — PMP.** Criar um plano de grupo vencido, abrir uma OS e achar o item na aba PMP.
 **Parte G — pergunta final.** Concluir a OS com itens em branco. O sistema deixa? (Sim.) O que a equipe precisa fazer?
 
@@ -55,7 +61,7 @@ Provas: Grupos de 8 para 18; Checklist de Inspeção de 8 para 18; guia de 7 par
 **Cópia:** na **criação** da OS, qualquer tipo; grupo + itens extras do ativo (+ itens PMP vencidos ou vencendo no mês). Nunca muda OS antiga.
 **Status:** Conforme e N/A = concluído; Não Conforme = não.
 **Modo Campo:** Não Conforme exige observação e foto.
-**Não existe:** bloqueio de conclusão por checklist, nem abertura automática de avaria.
+**Não Conforme:** abre uma Pendência (uma por item) e conta como respondido no progresso. **Não existe:** bloqueio de conclusão por checklist, nem abertura automática de avaria.
 **Não confundir:** Categoria do Ativo (abas técnicas) × Grupo (checklist e planos); cadastro "Checklists" solto.
 
 ## 5. Capturas e vídeos a produzir

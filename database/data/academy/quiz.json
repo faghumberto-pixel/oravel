@@ -2576,13 +2576,13 @@
    {
     "q": "O técnico marca um item como Não Conforme. O que o sistema faz sozinho?",
     "options": [
+     "Cancela a OS",
+     "Abre sozinho uma Pendência na OS (uma por item) e avisa os responsáveis",
      "Abre uma avaria",
-     "Abre uma pendência",
-     "Nada além de registrar o status; avaria e pendência são registradas à parte",
-     "Cancela a OS"
+     "Nada"
     ],
-    "correct": 2,
-    "why": "A equipe precisa registrar a avaria ou a pendência."
+    "correct": 1,
+    "why": "A avaria continua sendo registrada à parte, se houver dano ao equipamento."
    },
    {
     "q": "Uma OS pode ser concluída com itens do checklist ainda em branco?",
@@ -2654,12 +2654,34 @@
     "q": "Na barra de progresso do checklist no celular, o que conta?",
     "options": [
      "Todos os itens, mesmo em branco",
-     "Só os itens concluídos (Conforme e Não Aplicável)",
-     "Só os Não Conformes",
+     "Os itens respondidos: Conforme, Não Conforme ou Não Aplicável",
+     "Só os Conformes",
      "Só os itens com foto"
     ],
     "correct": 1,
-    "why": "Um Não Conforme não entra na conta de concluídos."
+    "why": "Um Não Conforme continua sem contar como concluído, mas conta como respondido."
+   },
+   {
+    "q": "Um item Não Conforme é corrigido, volta a Conforme e depois falha de novo. Quantas pendências existem para ele?",
+    "options": [
+     "Uma por vez que falhou",
+     "Uma só: o sistema não abre outra igual",
+     "Nenhuma",
+     "Três"
+    ],
+    "correct": 1,
+    "why": "A pendência é única por item e por OS."
+   },
+   {
+    "q": "Onde aparecem os itens PMP gerados na criação da OS?",
+    "options": [
+     "Nas abas Vistoria / Checklist e PMP",
+     "Somente na aba PMP",
+     "Só no celular",
+     "Só na impressão"
+    ],
+    "correct": 1,
+    "why": "A aba PMP só existe quando a OS tem esses itens."
    }
   ]
  },

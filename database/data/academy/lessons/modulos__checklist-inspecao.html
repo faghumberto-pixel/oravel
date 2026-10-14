@@ -13,15 +13,17 @@
 <ul>
 <li><strong>Não Conforme exige observação e foto.</strong> Sem as duas, o sistema recusa e avisa: “Itens ‘Não Conforme’ exigem observação e foto.”.</li>
 <li>Para conforme e N/A, observação e foto são opcionais.</li>
-<li>A barra de progresso conta só os itens <strong>concluídos</strong> (Conforme e N/A). Um item Não Conforme fica fora da conta.</li>
+<li>A barra de progresso conta os itens <strong>respondidos</strong>: Conforme, Não Conforme ou N/A. Assim, uma OS com defeito encontrado também chega a 100%.</li><li>Um item Não Conforme continua <strong>não</strong> contando como concluído; só a barra considera que ele foi respondido.</li>
 </ul>
 <div class="mk-note warn"><strong>⚠️ Existem outras telas parecidas</strong><p>Há uma tela mais simples, “checklist digital” (só marca e desmarca cada item, sem os três status), que só abre digitando o endereço; nenhuma tela do sistema leva até ela. O fluxo para ensinar é o Modo Campo. E o cadastro genérico <em>Checklists</em> (Manutenção → Cadastros) é solto: só tem nome e descrição, sem ligação com ativo, grupo ou OS.</p></div>
+<h2>Não Conforme abre uma Pendência</h2>
+<p>Quando um item passa a Não Conforme, o sistema abre sozinho uma <strong>Pendência</strong> na OS, com o texto “Checklist — item não conforme: nome do item” (e a observação, se houver) e avisa os responsáveis pelo aviso “Nova pendência em ordem de serviço”. É <strong>uma pendência por item</strong>: se o item for corrigido e voltar a Não Conforme, não abre outra igual. Resolver a pendência é feito em Eventos e Falhas.</p>
 <h2>Itens PMP dentro da OS</h2>
-<p>Ao criar a OS, cada plano preventivo ativo do ativo que está <strong>vencido ou vence no mês</strong> vira um item do tipo PMP. Eles aparecem na aba <strong>PMP</strong> da OS (que só existe quando há itens assim), com o mesmo preenchimento: Conforme, Não Conforme ou N/A, observação e foto. A observação do plano vira a instrução do item.</p>
+<p>Ao criar a OS, cada plano preventivo ativo do ativo que está <strong>vencido ou vence no mês</strong> vira um item do tipo PMP. Eles aparecem <strong>somente</strong> na aba <strong>PMP</strong> da OS (que só existe quando há itens assim; não se repetem na aba Vistoria / Checklist), com o mesmo preenchimento: Conforme, Não Conforme ou N/A, observação e foto. A observação do plano vira a instrução do item.</p>
 <h2>O que o sistema não faz</h2>
 <ul>
 <li>Concluir a OS <strong>não exige</strong> checklist completo. A cobrança é da equipe.</li>
-<li>Marcar um item como Não Conforme <strong>não abre</strong> avaria nem pendência sozinho. Para isso, registre uma Avaria (veja Avarias) ou uma Pendência na OS.</li>
+<li>Marcar um item como Não Conforme <strong>não abre</strong> uma avaria sozinho. Se o defeito danificou o equipamento, registre a Avaria (veja Avarias).</li>
 <li>Os itens ficam travados no nome: o técnico preenche status, observação e foto, mas não renomeia o item na OS.</li>
 </ul>
 <div class="mk-note who"><strong>👤 Quem usa</strong><p>O supervisor de manutenção cadastra os itens padrão (no Grupo e, se for específico, no ativo); o técnico preenche o checklist real dentro da OS, normalmente pelo celular.</p></div>

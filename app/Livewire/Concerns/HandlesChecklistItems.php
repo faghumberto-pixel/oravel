@@ -38,7 +38,9 @@ trait HandlesChecklistItems
             return 0;
         }
 
-        return (int) round($items->where('is_completed', true)->count() / $items->count() * 100);
+        // Progresso = itens respondidos (Conforme, Não Conforme ou N/A), não só os
+        // concluídos: senão um item Não Conforme travava a barra abaixo de 100%.
+        return (int) round($items->filter(fn ($item) => $item->isAnswered())->count() / $items->count() * 100);
     }
 
     /**

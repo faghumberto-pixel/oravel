@@ -597,7 +597,10 @@ class MaintenanceOrderResource extends Resource
                                     // sem reescrever o form pra Fieldset por seção,
                                     // só ordena pela coluna que já existia
                                     // (section) e prefixa o rótulo de cada item.
-                                    ->relationship('checklists', modifyQueryUsing: fn (Builder $query) => $query->orderBy('section')->orderBy('id'))
+                                    ->relationship('checklists', modifyQueryUsing: fn (Builder $query) => $query
+                                        // Itens 'pmp' têm aba própria (PMP); aqui só a vistoria.
+                                        ->where(fn (Builder $q) => $q->whereNull('checklist_type')->orWhere('checklist_type', '!=', 'pmp'))
+                                        ->orderBy('section')->orderBy('id'))
                                     ->label('Checklist do Ativo (básico do Grupo + itens extras)')
                                     ->itemLabel(fn (array $state): ?string => ($state['section'] ?? null) ? $state['section'].' — '.($state['item_name'] ?? '') : ($state['item_name'] ?? null))
                                     ->schema([
