@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Crm;
 
 use App\Http\Controllers\Controller;
-use App\Models\Client;
+use App\Models\CrmConta;
 use App\Models\CrmEtapa;
 use App\Models\CrmLead;
 use App\Models\CrmLeadInteraction;
@@ -151,19 +151,17 @@ class LeadController extends Controller
 
     // ------------------------------------------------------------------ helpers
 
-    /** 409 quando já existe lead (mesmo documento ou telefone) ou cliente (mesmo documento). */
+    /** 409 quando já existe lead (mesmo documento ou telefone) ou conta (mesmo documento). */
     private function duplicado(User $user, array $d): ?JsonResponse
     {
         $doc = Cnpj::limpar($d['documento'] ?? null);
         $final = strlen($tel = preg_replace('/\D/', '', ($d['telefone'] ?? '').($d['whatsapp'] ?? ''))) >= 8 ? substr($tel, -8) : null;
 
-        if ($doc !== '' && Gate::forUser($user)->allows('viewAny', Client::class)) {
-            $cliente = Client::query()
-                ->whereRaw("regexp_replace(coalesce(document, ''), '\\D', '', 'g') = ?", [$doc])
-                ->orWhereRaw("regexp_replace(coalesce(cpf_cnpj, ''), '\\D', '', 'g') = ?", [$doc])->first();
+        if ($doc !== '' && Gate::forUser($user)->allows('viewAny', CrmConta::class)) {
+            $conta = CrmApiPresenter::contasVisiveis($user)->where('documento_digitos', $doc)->first();
 
-            if ($cliente) {
-                return $this->erro('ja_e_cliente', 'Já existe um cliente com este CNPJ/CPF.', 409, ['existente' => CrmApiPresenter::cliente($cliente)]);
+            if ($conta) {
+                return $this->erro('ja_e_conta', 'Já existe uma conta (cliente) com este CNPJ/CPF.', 409, ['existente' => CrmApiPresenter::conta($conta)]);
             }
         }
 

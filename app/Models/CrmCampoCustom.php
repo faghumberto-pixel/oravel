@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\BelongsToTenant;
 use App\Models\Concerns\HasSaaSMetadata;
 use App\Support\CrmCamposCustom;
+use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
@@ -20,6 +21,8 @@ class CrmCampoCustom extends Model
     public const ENTIDADE_LEAD = 'lead';
 
     public const ENTIDADE_CLIENTE = 'cliente';
+
+    public const ENTIDADE_CONTA = 'conta';
 
     public const TIPO_TEXTO = 'texto';
 
@@ -64,7 +67,19 @@ class CrmCampoCustom extends Model
 
     public static function entidadeLabels(): array
     {
-        return [self::ENTIDADE_LEAD => 'Leads', self::ENTIDADE_CLIENTE => 'Clientes'];
+        return [self::ENTIDADE_LEAD => 'Leads', self::ENTIDADE_CONTA => 'Contas (clientes do CRM)', self::ENTIDADE_CLIENTE => 'Clientes do ERP'];
+    }
+
+    /** Entidades que o tenant pode personalizar: Leads e Contas sempre; Clientes do ERP só com o módulo. */
+    public static function entidadesDisponiveis(): array
+    {
+        $todas = self::entidadeLabels();
+
+        if (! Tenancy::current()?->hasFeature('tabela_clients')) {
+            unset($todas[self::ENTIDADE_CLIENTE]);
+        }
+
+        return $todas;
     }
 
     public static function tipoLabels(): array
@@ -116,7 +131,11 @@ class CrmCampoCustom extends Model
     /** Quantos registros (leads ou clientes) já têm esse campo preenchido. */
     public function emUso(): int
     {
-        $model = $this->entidade === self::ENTIDADE_LEAD ? CrmLead::class : Client::class;
+        $model = match ($this->entidade) {
+            self::ENTIDADE_LEAD => CrmLead::class,
+            self::ENTIDADE_CONTA => CrmConta::class,
+            default => Client::class,
+        };
 
         return $model::withoutGlobalScopes()
             ->where('tenant_id', $this->tenant_id)

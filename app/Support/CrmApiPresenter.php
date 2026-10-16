@@ -2,10 +2,10 @@
 
 namespace App\Support;
 
-use App\Filament\Resources\ClientResource;
+use App\Filament\Resources\CrmContaResource;
 use App\Filament\Resources\CrmLeadResource;
 use App\Filament\Resources\PropostaComercialResource;
-use App\Models\Client;
+use App\Models\CrmConta;
 use App\Models\CrmLead;
 use App\Models\CrmLeadInteraction;
 use App\Models\PropostaComercial;
@@ -22,6 +22,19 @@ class CrmApiPresenter
 
         if (! $user->canSeeAllCrmLeads()) {
             $query->where('assigned_user_id', $user->id);
+        }
+
+        return $query;
+    }
+
+    /** Contas que o usuário pode ver: todas (admin/"ver todos") ou as dele (responsável ou com negócio dele). */
+    public static function contasVisiveis(User $user): Builder
+    {
+        $query = CrmConta::query();
+
+        if (! $user->canSeeAllCrmLeads()) {
+            $query->where(fn ($q) => $q->where('responsavel_user_id', $user->id)
+                ->orWhereIn('id', CrmLead::query()->where('assigned_user_id', $user->id)->whereNotNull('crm_conta_id')->select('crm_conta_id')));
         }
 
         return $query;
@@ -66,17 +79,19 @@ class CrmApiPresenter
         ];
     }
 
-    public static function cliente(Client $cliente): array
+    public static function conta(CrmConta $conta): array
     {
         return [
-            'tipo' => 'cliente',
-            'id' => $cliente->id,
-            'nome' => $cliente->name,
-            'documento' => $cliente->document ?: $cliente->cpf_cnpj,
-            'telefone' => $cliente->phone,
-            'whatsapp' => $cliente->whatsapp,
-            'email' => $cliente->email,
-            'url' => ClientResource::getUrl('edit', ['record' => $cliente->id], panel: 'admin'),
+            'tipo' => 'conta',
+            'id' => $conta->id,
+            'nome' => $conta->nome,
+            'documento' => $conta->documento,
+            'telefone' => $conta->telefone,
+            'whatsapp' => $conta->whatsapp,
+            'email' => $conta->email,
+            'cidade' => $conta->cidade,
+            'uf' => $conta->uf,
+            'url' => CrmContaResource::getUrl('edit', ['record' => $conta->id], panel: 'admin'),
         ];
     }
 

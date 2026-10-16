@@ -348,14 +348,14 @@ class CrmFunil extends Page
      * Mesma trava de moveStage(): nao-admin so' converte lead atribuido a
      * ele mesmo. So' cria o Cliente (sem Contract, ver CrmLead::convertToClient()).
      */
-    public function converterEmCliente(string $leadId): void
+    public function enviarParaErp(string $leadId): void
     {
         $tenant = Tenancy::current();
         $user = auth()->user();
 
         $lead = CrmLead::where('tenant_id', $tenant?->id)->find($leadId);
 
-        if (! $lead || ! $lead->isWon() || $lead->client_id) {
+        if (! $lead || ! $lead->isWon() || $lead->client_id || ! $tenant->hasFeature('tabela_clients')) {
             return;
         }
 
@@ -363,9 +363,9 @@ class CrmFunil extends Page
             return;
         }
 
-        $lead->convertToClient();
+        $lead->enviarParaErp();
 
-        Notification::make()->title('Cliente criado a partir do Lead.')->success()->send();
+        Notification::make()->title('Cliente criado no ERP a partir da conta.')->success()->send();
     }
 
     /**

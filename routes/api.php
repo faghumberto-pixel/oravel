@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AssetController;
 use App\Http\Controllers\Api\Crm\CnpjController;
 use App\Http\Controllers\Api\Crm\ConfiguracaoController;
+use App\Http\Controllers\Api\Crm\ContaController;
 use App\Http\Controllers\Api\Crm\ContatoController;
 use App\Http\Controllers\Api\Crm\EuController;
 use App\Http\Controllers\Api\Crm\InteracaoController;
@@ -108,6 +109,8 @@ Route::prefix('crm/v1')->middleware('auth:sanctum')->group(function () {
         Route::get('/contatos/{tipo}/{id}/oportunidades', [ContatoController::class, 'oportunidades']);
         Route::get('/cnpj/{cnpj}', CnpjController::class);
         Route::get('/leads/{id}', [LeadController::class, 'show']);
+        Route::get('/contas/{id}', [ContaController::class, 'show']);
+        Route::get('/produtos', [ContaController::class, 'produtos']);
     });
 
     Route::middleware(['crm.api:crm:write', 'throttle:crm-api-escrita'])->group(function () {

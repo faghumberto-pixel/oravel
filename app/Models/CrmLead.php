@@ -103,6 +103,7 @@ class CrmLead extends Model
         'estimated_value',
         'previsao_fechamento',
         'client_id',
+        'crm_conta_id',
         'solicitacao_locacao_id',
         'address',
         'city',
@@ -146,6 +147,12 @@ class CrmLead extends Model
     {
         static::creating(fn (CrmLead $lead) => $lead->resolverEtapa(true));
         static::updating(fn (CrmLead $lead) => $lead->resolverEtapa(false));
+        // Ganhou: o processo termina no CRM, com a conta criada (ou reaproveitada pelo CNPJ/CPF).
+        static::saved(function (CrmLead $lead) {
+            if (! $lead->crm_conta_id && $lead->etapa_id && $lead->isWon()) {
+                $lead->garantirConta();
+            }
+        });
         static::saving(function (CrmLead $lead) {
             if ($lead->isDirty('custom') || ! $lead->exists) {
                 $lead->custom = CrmCamposCustom::normalizar('lead', $lead->custom, $lead->tenant_id);
@@ -209,6 +216,83 @@ class CrmLead extends Model
 
         return collect((array) $this->custom)
             ->filter(fn ($valor, $chave) => $doCliente->has($chave) && $doLead->has($chave) && $doCliente[$chave]->tipo === $doLead[$chave]->tipo)
+            ->all();
+    }
+
+    public function conta(): BelongsTo
+    {
+        return $this->belongsTo(CrmConta::class, 'crm_conta_id');
+    }
+
+    public function itens(): HasMany
+    {
+        return $this->hasMany(CrmLeadItem::class, 'crm_lead_id');
+    }
+
+    /**
+     * Conta (cliente do CRM) deste lead: a que já está ligada, a do tenant com o mesmo CNPJ/CPF, ou uma nova
+     * criada a partir dos dados do lead (com os contatos). Idempotente. É o fim do processo no CRM.
+     */
+    public function garantirConta(): CrmConta
+    {
+        if ($this->crm_conta_id && $this->conta) {
+            return $this->conta;
+        }
+
+        $conta = CrmConta::porDocumento((string) $this->tenant_id, $this->document);
+
+        if (! $conta) {
+            $conta = CrmConta::create([
+                'tenant_id' => $this->tenant_id,
+                'nome' => $this->company_name ?: $this->name,
+                'documento' => $this->document,
+                'email' => $this->email,
+                'telefone' => $this->phone,
+                'whatsapp' => $this->whatsapp,
+                'segmento' => self::segmentLabels()[$this->segment] ?? $this->segment,
+                'cep' => $this->cep,
+                'endereco' => $this->address,
+                'cidade' => $this->city,
+                'uf' => $this->uf,
+                'latitude' => $this->latitude,
+                'longitude' => $this->longitude,
+                'responsavel_user_id' => $this->assigned_user_id,
+                'origem' => $this->source,
+                'custom' => $this->customParaConta(),
+            ]);
+
+            foreach ($this->contacts()->get() as $contato) {
+                CrmContaContato::create([
+                    'tenant_id' => $this->tenant_id, 'crm_conta_id' => $conta->id, 'name' => $contato->name,
+                    'role_title' => $contato->role_title, 'phone' => $contato->phone, 'email' => $contato->email,
+                    'is_primary' => $contato->is_primary,
+                ]);
+            }
+        }
+
+        $this->forceFill(['crm_conta_id' => $conta->id])->saveQuietly();
+        $this->setRelation('conta', $conta);
+
+        return $conta;
+    }
+
+    /** Opcional: envia a conta deste lead para o cadastro de Clientes do ERP (só existe para quem tem o módulo). */
+    public function enviarParaErp(): Client
+    {
+        $client = $this->garantirConta()->enviarParaErp();
+        $this->forceFill(['client_id' => $client->id])->saveQuietly();
+
+        return $client;
+    }
+
+    /** Valores `custom` do lead que têm campo de conta com a mesma chave e o mesmo tipo. */
+    private function customParaConta(): array
+    {
+        $daConta = CrmCamposCustom::campos('conta', false, (string) $this->tenant_id)->keyBy('chave');
+        $doLead = CrmCamposCustom::campos('lead', false, (string) $this->tenant_id)->keyBy('chave');
+
+        return collect((array) $this->custom)
+            ->filter(fn ($v, $chave) => $daConta->has($chave) && $doLead->has($chave) && $daConta[$chave]->tipo === $doLead[$chave]->tipo)
             ->all();
     }
 

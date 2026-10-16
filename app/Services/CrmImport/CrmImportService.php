@@ -2,29 +2,29 @@
 
 namespace App\Services\CrmImport;
 
-use App\Models\Client;
-use App\Models\ClientContact;
+use App\Models\CrmConta;
+use App\Models\CrmContaContato;
 use App\Models\CrmEtapa;
 use App\Models\CrmLead;
 use App\Models\CrmLeadContact;
 use App\Models\CrmOrigem;
 use App\Models\CrmPipeline;
+use App\Models\CrmProduto;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Rules\CpfCnpj;
 use App\Services\CrmFunilPadrao;
-use App\Support\ClientDuplicidade;
 use App\Support\CrmCamposCustom;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 /**
- * Importa leads, clientes e contatos de uma planilha já lida (CrmImportLeitor)
+ * Importa leads, contas, contatos e produtos/serviços de uma planilha já lida (CrmImportLeitor)
  * com o mapeamento escolhido na tela. Cada linha roda num savepoint: erro numa
  * linha não derruba as outras. `$simular` faz tudo e desfaz no fim.
  *
- * Opções: se_existir = ignorar | completar | sobrescrever; pai = cliente | lead (contatos).
+ * Opções: se_existir = ignorar | completar | sobrescrever; pai = conta | lead (contatos).
  */
 class CrmImportService
 {
@@ -49,7 +49,7 @@ class CrmImportService
     {
         $this->tenant = $tenant;
         $this->destino = $destino;
-        $this->opcoes = $opcoes + ['se_existir' => 'ignorar', 'pai' => 'cliente'];
+        $this->opcoes = $opcoes + ['se_existir' => 'ignorar', 'pai' => 'conta'];
         $this->campos = CrmImportDestinos::campos($destino, (string) $tenant->id);
         $this->vistos = [];
 
@@ -72,7 +72,8 @@ class CrmImportService
                 try {
                     [$acao, $nome, $mensagem] = match ($destino) {
                         CrmImportDestinos::LEAD => $this->linhaLead($numero, $dados, $indices),
-                        CrmImportDestinos::CLIENTE => $this->linhaCliente($numero, $dados, $indices),
+                        CrmImportDestinos::CONTA => $this->linhaConta($numero, $dados, $indices),
+                        CrmImportDestinos::PRODUTO => $this->linhaProduto($numero, $dados),
                         default => $this->linhaContato($numero, $dados, $indices),
                     };
 
@@ -82,7 +83,7 @@ class CrmImportService
                 } catch (\Throwable $e) {
                     DB::rollBack();
                     $mensagem = $e instanceof \DomainException ? $e->getMessage() : 'Erro inesperado: '.$e->getMessage();
-                    $relatorio->adicionar($numero, RelatorioImportacao::ERRO, (string) ($dados['name'] ?? $dados['company_name'] ?? ''), $mensagem);
+                    $relatorio->adicionar($numero, RelatorioImportacao::ERRO, (string) ($dados['name'] ?? $dados['company_name'] ?? $dados['nome'] ?? ''), $mensagem);
                 }
             }
 
@@ -246,7 +247,7 @@ class CrmImportService
     {
         $t = $this->tenant->id;
 
-        $indices = ['leadPorDoc' => [], 'leadPorEmail' => [], 'clientePorDoc' => [], 'clientePorNome' => [], 'etapas' => [], 'origens' => [], 'usuarios' => []];
+        $indices = ['leadPorDoc' => [], 'leadPorEmail' => [], 'contaPorDoc' => [], 'contaPorNome' => [], 'etapas' => [], 'origens' => [], 'usuarios' => []];
 
         if ($this->destino === CrmImportDestinos::LEAD) {
             // Garante funil padrão, origens e motivos do tenant (idempotente).
@@ -268,21 +269,21 @@ class CrmImportService
             foreach (CrmOrigem::withoutGlobalScopes()->where('tenant_id', $t)->get() as $o) {
                 $indices['origens'][CrmImportDestinos::normalizar($o->nome)] = $o->slug;
             }
+        }
+
+        if (in_array($this->destino, [CrmImportDestinos::LEAD, CrmImportDestinos::CONTA], true)) {
             foreach (User::withoutGlobalScopes()->where('tenant_id', $t)->get(['id', 'email']) as $u) {
                 $indices['usuarios'][mb_strtolower($u->email)] = $u->id;
             }
         }
 
-        // Clientes: dedup do cliente e checagem "lead que já é cliente".
-        if (in_array($this->destino, [CrmImportDestinos::LEAD, CrmImportDestinos::CLIENTE], true)
-            || ($this->destino === CrmImportDestinos::CONTATO && ($this->opcoes['pai'] ?? 'cliente') === 'cliente')) {
-            foreach (Client::withoutGlobalScopes()->where('tenant_id', $t)->get(['id', 'name', 'document', 'cpf_cnpj']) as $c) {
-                foreach ([$c->document, $c->cpf_cnpj] as $doc) {
-                    if ($this->digitos($doc) !== '') {
-                        $indices['clientePorDoc'][$this->digitos($doc)] = $c->id;
-                    }
+        // Contas: dedup da conta e checagem "lead que já é cliente".
+        if (in_array($this->destino, [CrmImportDestinos::LEAD, CrmImportDestinos::CONTA], true)) {
+            foreach (CrmConta::withoutGlobalScopes()->where('tenant_id', $t)->get(['id', 'nome', 'documento_digitos']) as $c) {
+                if ($c->documento_digitos) {
+                    $indices['contaPorDoc'][$c->documento_digitos] = $c->id;
                 }
-                $indices['clientePorNome'][CrmImportDestinos::normalizar($c->name)] = $c->id;
+                $indices['contaPorNome'][CrmImportDestinos::normalizar($c->nome)] = $c->id;
             }
         }
 
@@ -329,7 +330,7 @@ class CrmImportService
             return [RelatorioImportacao::IGNORADO, $rotuloLinha, $e->getMessage()];
         }
 
-        if ($doc !== '' && isset($ix['clientePorDoc'][$doc])) {
+        if ($doc !== '' && isset($ix['contaPorDoc'][$doc])) {
             return [RelatorioImportacao::IGNORADO, $rotuloLinha, 'Já é cliente (mesmo CNPJ/CPF).'];
         }
 
@@ -373,24 +374,24 @@ class CrmImportService
         return [RelatorioImportacao::CRIADO, $rotuloLinha, ''];
     }
 
-    // ---------------------------------------------------------------- cliente
+    // ---------------------------------------------------------------- conta
 
-    private function linhaCliente(int $linha, array $bruto, array &$ix): array
+    private function linhaConta(int $linha, array $bruto, array &$ix): array
     {
         $dados = [];
         foreach ($bruto as $campo => $valor) {
-            if ($campo === 'activity_type' || str_starts_with($campo, 'custom.')) {
+            if ($campo === 'responsavel' || str_starts_with($campo, 'custom.')) {
                 continue;
             }
             $dados[$campo] = $this->converter($campo, $valor);
         }
 
-        if (blank($dados['name'] ?? null)) {
-            throw new \DomainException('Razão social é obrigatória.');
+        if (blank($dados['nome'] ?? null)) {
+            throw new \DomainException('Nome/razão social é obrigatório.');
         }
 
-        $nome = (string) $dados['name'];
-        $doc = $this->digitos($dados['document'] ?? null);
+        $nome = (string) $dados['nome'];
+        $doc = $this->digitos($dados['documento'] ?? null);
         $chave = $doc !== '' ? 'd'.$doc : 'n'.CrmImportDestinos::normalizar($nome);
 
         try {
@@ -399,23 +400,16 @@ class CrmImportService
             return [RelatorioImportacao::IGNORADO, $nome, $e->getMessage()];
         }
 
-        if (isset($bruto['activity_type'])) {
-            $slug = CrmImportDestinos::nichos()[$bruto['activity_type']] ?? collect(CrmImportDestinos::nichos())->first(fn ($s, $r) => CrmImportDestinos::normalizar($r) === CrmImportDestinos::normalizar($bruto['activity_type']));
-            $slug ? $dados['activity_type'] = $slug : $this->avisosLinha[] = "Nicho \"{$bruto['activity_type']}\" não reconhecido.";
+        if (isset($bruto['responsavel'])) {
+            $uid = $ix['usuarios'][mb_strtolower($bruto['responsavel'])] ?? null;
+            $uid ? $dados['responsavel_user_id'] = $uid : $this->avisosLinha[] = "Responsável \"{$bruto['responsavel']}\" não encontrado; ficou sem responsável.";
         }
-        $custom = $this->extrairCustom('cliente', $bruto);
+        $custom = $this->extrairCustom('conta', $bruto);
 
-        $existenteId = $doc !== '' ? ($ix['clientePorDoc'][$doc] ?? null) : ($ix['clientePorNome'][CrmImportDestinos::normalizar($nome)] ?? null);
-
-        $conflitos = ClientDuplicidade::conflitos($dados, (string) $this->tenant->id, $existenteId);
-        if ($conflitos !== []) {
-            throw new \DomainException('Duplicado: '.implode(' ', array_values($conflitos)));
-        }
+        $existenteId = $doc !== '' ? ($ix['contaPorDoc'][$doc] ?? null) : ($ix['contaPorNome'][CrmImportDestinos::normalizar($nome)] ?? null);
 
         if ($existenteId) {
-            $existente = Client::withoutGlobalScopes()->findOrFail($existenteId);
-
-            return $this->aplicarExistente($existente, $dados, $custom, $nome);
+            return $this->aplicarExistente(CrmConta::withoutGlobalScopes()->findOrFail($existenteId), $dados, $custom, $nome);
         }
 
         $dados['tenant_id'] = $this->tenant->id;
@@ -423,11 +417,69 @@ class CrmImportService
             $dados['custom'] = $custom;
         }
 
-        $cliente = new Client($dados);
-        $cliente->tenant_id = $this->tenant->id;
-        $cliente->save();
-        $doc !== '' && $ix['clientePorDoc'][$doc] = $cliente->id;
-        $ix['clientePorNome'][CrmImportDestinos::normalizar($nome)] = $cliente->id;
+        $conta = CrmConta::create($dados);
+        $doc !== '' && $ix['contaPorDoc'][$doc] = $conta->id;
+        $ix['contaPorNome'][CrmImportDestinos::normalizar($nome)] = $conta->id;
+
+        return [RelatorioImportacao::CRIADO, $nome, ''];
+    }
+
+    // ---------------------------------------------------------------- produto
+
+    private function linhaProduto(int $linha, array $bruto): array
+    {
+        $nome = trim((string) ($bruto['nome'] ?? ''));
+
+        if ($nome === '') {
+            throw new \DomainException('Nome é obrigatório.');
+        }
+
+        $dados = ['nome' => $nome];
+
+        foreach (['codigo', 'descricao'] as $campo) {
+            if (isset($bruto[$campo])) {
+                $dados[$campo] = $bruto[$campo];
+            }
+        }
+
+        if (isset($bruto['preco'])) {
+            $preco = $this->numero($bruto['preco']);
+            if ($preco === null || $preco < 0) {
+                throw new \DomainException("Preço: \"{$bruto['preco']}\" não é um valor válido.");
+            }
+            $dados['preco'] = $preco;
+        }
+
+        if (isset($bruto['tipo'])) {
+            $alvo = CrmImportDestinos::normalizar($bruto['tipo']);
+            $tipo = collect(CrmProduto::tipoLabels())->search(fn ($rotulo, $slug) => in_array($alvo, [CrmImportDestinos::normalizar($rotulo), $slug], true));
+            $tipo !== false ? $dados['tipo'] = $tipo : $this->avisosLinha[] = "Tipo \"{$bruto['tipo']}\" não reconhecido; ficou como Serviço.";
+        }
+
+        if (isset($bruto['unidade'])) {
+            $alvo = CrmImportDestinos::normalizar($bruto['unidade']);
+            $un = collect(CrmProduto::unidadeLabels())->search(fn ($rotulo, $slug) => in_array($alvo, [CrmImportDestinos::normalizar($rotulo), $slug], true));
+            $un !== false ? $dados['unidade'] = $un : $this->avisosLinha[] = "Unidade \"{$bruto['unidade']}\" não reconhecida; ficou como Unidade.";
+        }
+
+        $chave = isset($dados['codigo']) ? 'c'.mb_strtolower($dados['codigo']) : 'n'.CrmImportDestinos::normalizar($nome);
+
+        try {
+            $this->marcarVisto($chave, $linha);
+        } catch (RepetidoNoArquivo $e) {
+            return [RelatorioImportacao::IGNORADO, $nome, $e->getMessage()];
+        }
+
+        $existente = CrmProduto::withoutGlobalScopes()->where('tenant_id', $this->tenant->id)->get()
+            ->first(fn ($p) => isset($dados['codigo'])
+                ? mb_strtolower((string) $p->codigo) === mb_strtolower($dados['codigo'])
+                : CrmImportDestinos::normalizar($p->nome) === CrmImportDestinos::normalizar($nome));
+
+        if ($existente) {
+            return $this->aplicarExistente($existente, $dados, [], $nome);
+        }
+
+        CrmProduto::create($dados + ['tenant_id' => $this->tenant->id]);
 
         return [RelatorioImportacao::CRIADO, $nome, ''];
     }
@@ -449,7 +501,7 @@ class CrmImportService
         }
 
         $nome = (string) $dados['name'];
-        $paiTipo = $this->opcoes['pai'] === 'lead' ? 'lead' : 'cliente';
+        $paiTipo = $this->opcoes['pai'] === 'lead' ? 'lead' : 'conta';
         $pai = $this->acharPai($paiTipo, $bruto);
 
         $chaveContato = isset($dados['email']) ? 'e'.mb_strtolower($dados['email']) : 'n'.CrmImportDestinos::normalizar($nome);
@@ -460,8 +512,8 @@ class CrmImportService
             return [RelatorioImportacao::IGNORADO, $nome, $e->getMessage()];
         }
 
-        $modelo = $paiTipo === 'lead' ? CrmLeadContact::class : ClientContact::class;
-        $fk = $paiTipo === 'lead' ? 'crm_lead_id' : 'client_id';
+        $modelo = $paiTipo === 'lead' ? CrmLeadContact::class : CrmContaContato::class;
+        $fk = $paiTipo === 'lead' ? 'crm_lead_id' : 'crm_conta_id';
 
         $existente = $modelo::withoutGlobalScopes()->where('tenant_id', $this->tenant->id)->where($fk, $pai->id)
             ->get()->first(fn ($c) => isset($dados['email'])
@@ -477,7 +529,7 @@ class CrmImportService
         return [RelatorioImportacao::CRIADO, $nome, ''];
     }
 
-    private function acharPai(string $tipo, array $bruto): Client|CrmLead
+    private function acharPai(string $tipo, array $bruto): CrmConta|CrmLead
     {
         $doc = $this->digitos($bruto['pai_documento'] ?? null);
         $nome = CrmImportDestinos::normalizar($bruto['pai_nome'] ?? null);
@@ -486,15 +538,17 @@ class CrmImportService
             throw new \DomainException('Informe o CNPJ/CPF ou o nome do '.$tipo.' a que o contato pertence.');
         }
 
-        $modelo = $tipo === 'lead' ? CrmLead::class : Client::class;
+        $modelo = $tipo === 'lead' ? CrmLead::class : CrmConta::class;
         $candidatos = $modelo::withoutGlobalScopes()->where('tenant_id', $this->tenant->id)->get();
 
         $achado = $candidatos->first(function ($r) use ($doc, $nome, $tipo) {
             if ($doc !== '') {
-                return in_array($doc, [$this->digitos($r->document), $this->digitos($r->cpf_cnpj ?? null)], true);
+                return $this->digitos($tipo === 'lead' ? $r->document : $r->documento) === $doc;
             }
 
-            return in_array($nome, [CrmImportDestinos::normalizar($r->name), CrmImportDestinos::normalizar($tipo === 'lead' ? $r->company_name : $r->fantasy_name)], true);
+            return $tipo === 'lead'
+                ? in_array($nome, [CrmImportDestinos::normalizar($r->name), CrmImportDestinos::normalizar($r->company_name)], true)
+                : in_array($nome, [CrmImportDestinos::normalizar($r->nome), CrmImportDestinos::normalizar($r->nome_fantasia)], true);
         });
 
         if (! $achado) {

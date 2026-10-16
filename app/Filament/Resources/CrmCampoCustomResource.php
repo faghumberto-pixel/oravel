@@ -36,7 +36,7 @@ class CrmCampoCustomResource extends BaseResource
             Forms\Components\TextInput::make('nome')->label('Nome do campo')->required()->maxLength(80),
             Forms\Components\Select::make('entidade')
                 ->label('Aparece em')
-                ->options(CrmCampoCustom::entidadeLabels())
+                ->options(fn () => CrmCampoCustom::entidadesDisponiveis())
                 ->required()
                 ->disabled(fn (?CrmCampoCustom $record) => (bool) $record)
                 ->dehydrated(),

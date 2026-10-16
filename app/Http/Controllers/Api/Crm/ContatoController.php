@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Crm;
 
 use App\Http\Controllers\Controller;
-use App\Models\Client;
-use App\Models\ClientContact;
+use App\Models\CrmConta;
+use App\Models\CrmContaContato;
 use App\Models\CrmLead;
 use App\Models\CrmLeadContact;
 use App\Models\PropostaComercial;
@@ -19,7 +19,7 @@ class ContatoController extends Controller
 {
     use RespondeCrmApi;
 
-    /** Acha lead/cliente/contato pelo telefone (só dígitos; compara pelos 8 últimos, então tolera +55, DDD e 9º dígito). */
+    /** Acha lead/conta/contato pelo telefone (só dígitos; compara pelos 8 últimos, então tolera +55, DDD e 9º dígito). */
     public function buscar(Request $request): JsonResponse
     {
         $request->validate(['telefone' => ['required', 'string', 'max:40']]);
@@ -48,15 +48,15 @@ class ContatoController extends Controller
             $achados[] = CrmApiPresenter::lead($lead);
         }
 
-        if (Gate::forUser($user)->allows('viewAny', Client::class)) {
-            $clientes = Client::query()->where(function (Builder $q) use ($igual) {
-                $igual($q, 'phone');
+        if (Gate::forUser($user)->allows('viewAny', CrmConta::class)) {
+            $contas = CrmApiPresenter::contasVisiveis($user)->where(function (Builder $q) use ($igual) {
+                $igual($q, 'telefone');
                 $igual($q, 'whatsapp');
-                $q->orWhereIn('id', ClientContact::query()->where(fn ($c) => $igual($c, 'phone'))->select('client_id'));
+                $q->orWhereIn('id', CrmContaContato::query()->where(fn ($c) => $igual($c, 'phone'))->select('crm_conta_id'));
             })->get();
 
-            foreach ($clientes as $cliente) {
-                $achados[] = CrmApiPresenter::cliente($cliente);
+            foreach ($contas as $conta) {
+                $achados[] = CrmApiPresenter::conta($conta);
             }
         }
 
@@ -66,8 +66,8 @@ class ContatoController extends Controller
             if ($conversa->crm_lead_id && ($lead = $leadsVisiveis()->find($conversa->crm_lead_id))) {
                 $achados[] = CrmApiPresenter::lead($lead);
             }
-            if ($conversa->client_id && Gate::forUser($user)->allows('viewAny', Client::class) && ($cliente = Client::find($conversa->client_id))) {
-                $achados[] = CrmApiPresenter::cliente($cliente);
+            if ($conversa->crm_conta_id && Gate::forUser($user)->allows('viewAny', CrmConta::class) && ($conta = CrmApiPresenter::contasVisiveis($user)->find($conversa->crm_conta_id))) {
+                $achados[] = CrmApiPresenter::conta($conta);
             }
         }
 
@@ -76,13 +76,13 @@ class ContatoController extends Controller
         return $this->ok($unicos);
     }
 
-    /** Leads abertos e propostas em andamento de um lead ou cliente. */
+    /** Leads abertos e propostas em andamento de um lead ou conta. */
     public function oportunidades(Request $request, string $tipo, string $id): JsonResponse
     {
         $user = $request->user();
 
-        if (! in_array($tipo, ['lead', 'cliente'], true)) {
-            return $this->erro('tipo_invalido', 'Use "lead" ou "cliente".', 422);
+        if (! in_array($tipo, ['lead', 'conta'], true)) {
+            return $this->erro('tipo_invalido', 'Use "lead" ou "conta".', 422);
         }
 
         if ($tipo === 'lead') {
@@ -95,14 +95,19 @@ class ContatoController extends Controller
             $leadsQuery = CrmApiPresenter::leadsVisiveis($user)->whereKey($lead->id);
             $propostasQuery = PropostaComercial::query()->where('crm_lead_id', $lead->id);
         } else {
-            Gate::forUser($user)->authorize('viewAny', Client::class);
+            Gate::forUser($user)->authorize('viewAny', CrmConta::class);
 
-            if (! Client::find($id)) {
-                return $this->erro('nao_encontrado', 'Cliente não encontrado.', 404);
+            $conta = CrmApiPresenter::contasVisiveis($user)->find($id);
+
+            if (! $conta) {
+                return $this->erro('nao_encontrado', 'Conta não encontrada.', 404);
             }
 
-            $leadsQuery = CrmApiPresenter::leadsVisiveis($user)->where('client_id', $id);
-            $propostasQuery = PropostaComercial::query()->where('client_id', $id);
+            $leadsQuery = CrmApiPresenter::leadsVisiveis($user)->where('crm_conta_id', $conta->id);
+            // Propostas dos leads desta conta e, se ela foi enviada ao ERP, as do Cliente vinculado.
+            $propostasQuery = PropostaComercial::query()->where(fn ($q) => $q
+                ->whereIn('crm_lead_id', CrmLead::query()->where('crm_conta_id', $conta->id)->select('id'))
+                ->when($conta->client_id, fn ($qq) => $qq->orWhere('client_id', $conta->client_id)));
         }
 
         $leads = $leadsQuery->get()->filter(fn (CrmLead $l) => $l->isOpen())->map(fn ($l) => CrmApiPresenter::lead($l))->values()->all();

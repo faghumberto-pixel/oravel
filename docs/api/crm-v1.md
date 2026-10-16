@@ -37,26 +37,32 @@ Erro: `{ "erro": { "codigo": "…", "mensagem": "…", "campos": { … } } }`.
 | 403 | `usuario_nao_aprovado`, `sem_empresa`, `conta_bloqueada`, `modulo_desligado` | usuário/empresa não pode usar o CRM |
 | 403 | `sem_permissao`, `movimento_negado` | o perfil do usuário não permite a ação |
 | 404 | `nao_encontrado` | registro inexistente **ou de outra empresa/vendedor** |
-| 409 | `duplicado`, `ja_e_cliente` | já existe lead (documento/telefone) ou cliente (documento); envie `forcar=true` para criar mesmo assim |
+| 409 | `duplicado`, `ja_e_conta` | já existe lead (documento/telefone) ou conta/cliente do CRM (documento); envie `forcar=true` para criar mesmo assim |
 | 422 | `dados_invalidos` | validação (`campos` traz o detalhe), `cnpj_invalido` |
 | 429 | `muitas_requisicoes` | limite por minuto |
 
 ## Endpoints
 
 ### `GET /eu` — valida o token
-Devolve `usuario`, `empresa`, `ve_todos_os_leads`, `permissoes` (`criar_lead`, `editar_lead`, `ver_clientes`, `ver_propostas`) e `token` (`habilidades`, `expira_em`).
+Devolve `usuario`, `empresa`, `ve_todos_os_leads`, `permissoes` (`criar_lead`, `editar_lead`, `ver_contas`, `ver_produtos`, `ver_propostas`) e `token` (`habilidades`, `expira_em`).
 
 ### `GET /configuracao` — listas para os seletores
-`funis[]` (com `etapas[]`: `id`, `nome`, `tipo` = aberta|ganho|perdido, `probabilidade`), `origens[]`, `motivos_perda[]` (`exige_detalhe`), `responsaveis[]`, `campos_personalizados[]` (do lead), `canais`.
+`funis[]` (com `etapas[]`: `id`, `nome`, `tipo` = aberta|ganho|perdido, `probabilidade`), `origens[]`, `motivos_perda[]` (`exige_detalhe`), `responsaveis[]`, `campos_personalizados[]` (do lead), `canais`. O catálogo de produtos e serviços vem em `GET /produtos`.
 
 ### `GET /contatos/buscar?telefone=` — acha quem é o contato aberto no WhatsApp
-Procura em leads, contatos de leads, clientes, contatos de clientes e conversas de WhatsApp da empresa. Compara pelos **8 últimos dígitos** (tolera +55, DDD e 9º dígito). Devolve até 20 itens `{ tipo: "lead"|"cliente", id, nome, … , url }`. Vendedor só recebe os leads dele.
+Procura em leads, contatos de leads, **contas** (clientes do CRM), contatos de contas e conversas de WhatsApp da empresa. Compara pelos **8 últimos dígitos** (tolera +55, DDD e 9º dígito). Devolve até 20 itens `{ tipo: "lead"|"conta", id, nome, … , url }`. Vendedor só recebe os leads e as contas dele.
 
 ### `GET /contatos/{tipo}/{id}/oportunidades` — o que está em andamento
-`tipo` = `lead` ou `cliente`. Devolve `leads_abertos[]` e `propostas_em_andamento[]` (rascunho, enviada ao comercial, aguardando o cliente).
+`tipo` = `lead` ou `conta`. Devolve `leads_abertos[]` e `propostas_em_andamento[]` (rascunho, enviada ao comercial, aguardando o cliente).
 
 ### `GET /cnpj/{cnpj}` — dados da Receita
 `{ documento, dados: { company_name, address, city, uf, cep, phone, email }, duplicidade }` (`duplicidade` é um aviso em texto quando já existe lead ou cliente com esse CNPJ). `422 cnpj_invalido` / `404 cnpj_nao_encontrado`.
+
+### `GET /contas/{id}` — ficha da conta (cliente do CRM)
+Dados, `contatos[]` e `negocios[]` (leads ligados). A conta nasce sozinha quando um lead é ganho, ou é cadastrada à mão/importada.
+
+### `GET /produtos` — catálogo de produtos e serviços
+Itens ativos: `id`, `codigo`, `nome`, `tipo` (produto|servico), `unidade`, `preco`.
 
 ### `GET /leads/{id}` — ficha
 Dados do lead, `contatos[]`, `interacoes[]` (últimas 10) e `propostas_em_andamento[]`.

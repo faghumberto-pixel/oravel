@@ -2,7 +2,6 @@
 
 namespace App\Services\CrmImport;
 
-use App\Models\Client;
 use App\Models\CrmLead;
 use App\Support\CrmCamposCustom;
 use Illuminate\Support\Str;
@@ -12,13 +11,15 @@ class CrmImportDestinos
 {
     public const LEAD = 'lead';
 
-    public const CLIENTE = 'cliente';
+    public const CONTA = 'conta';
+
+    public const PRODUTO = 'produto';
 
     public const CONTATO = 'contato';
 
     public static function rotulos(): array
     {
-        return [self::LEAD => 'Leads', self::CLIENTE => 'Clientes', self::CONTATO => 'Contatos (de clientes ou leads)'];
+        return [self::LEAD => 'Leads', self::CONTA => 'Contas (clientes do CRM)', self::CONTATO => 'Contatos (de contas ou leads)', self::PRODUTO => 'Produtos e serviços'];
     }
 
     /**
@@ -49,27 +50,28 @@ class CrmImportDestinos
                 'responsavel' => $c('Responsável (e-mail)', 'usuario', ['responsavel', 'vendedor', 'e-mail do responsavel', 'email do vendedor']),
                 'equipment_interest' => $c('Equipamento de interesse', 'texto', ['equipamento', 'interesse', 'equipamento de interesse', 'observacao', 'observacoes']),
             ],
-            self::CLIENTE => [
-                'name' => $c('Razão social', 'texto', ['razao social', 'nome', 'cliente', 'empresa'], true),
-                'fantasy_name' => $c('Nome fantasia', 'texto', ['nome fantasia', 'fantasia']),
-                'document' => $c('CNPJ/CPF', 'doc', ['cnpj', 'cpf', 'cnpj/cpf', 'documento', 'cpf/cnpj']),
-                'state_registration' => $c('Inscrição estadual', 'texto', ['inscricao estadual', 'ie']),
-                'municipal_registration' => $c('Inscrição municipal', 'texto', ['inscricao municipal', 'im']),
-                'tax_regime' => $c('Regime tributário', 'texto', ['regime tributario', 'regime']),
-                'activity_type' => $c('Nicho', 'nicho', ['nicho', 'segmento', 'ramo']),
-                'contact_name' => $c('Pessoa de contato', 'texto', ['contato', 'pessoa de contato', 'nome do contato']),
+            self::CONTA => [
+                'nome' => $c('Nome / Razão social', 'texto', ['razao social', 'nome', 'cliente', 'empresa', 'conta'], true),
+                'nome_fantasia' => $c('Nome fantasia', 'texto', ['nome fantasia', 'fantasia']),
+                'documento' => $c('CNPJ/CPF', 'doc', ['cnpj', 'cpf', 'cnpj/cpf', 'documento', 'cpf/cnpj']),
+                'segmento' => $c('Segmento', 'texto', ['segmento', 'ramo', 'setor', 'nicho']),
                 'email' => $c('E-mail', 'email', ['email', 'e-mail', 'e mail']),
-                'phone' => $c('Telefone', 'texto', ['telefone', 'fone', 'tel']),
+                'telefone' => $c('Telefone', 'texto', ['telefone', 'fone', 'tel']),
                 'whatsapp' => $c('WhatsApp', 'texto', ['whatsapp', 'celular', 'whats']),
-                'email_financial' => $c('E-mail financeiro', 'email', ['email financeiro', 'e-mail financeiro']),
-                'email_purchasing' => $c('E-mail suprimentos', 'email', ['email suprimentos', 'e-mail compras', 'email compras']),
-                'address' => $c('Endereço', 'texto', ['endereco', 'logradouro', 'rua']),
-                'address_complement' => $c('Complemento', 'texto', ['complemento']),
-                'neighborhood' => $c('Bairro', 'texto', ['bairro']),
-                'city' => $c('Cidade', 'texto', ['cidade', 'municipio']),
-                'state' => $c('UF', 'uf', ['uf', 'estado']),
-                'zip_code' => $c('CEP', 'texto', ['cep']),
-                'delivery_address' => $c('Endereço da obra', 'texto', ['endereco da obra', 'local de entrega', 'obra']),
+                'cep' => $c('CEP', 'texto', ['cep']),
+                'endereco' => $c('Endereço', 'texto', ['endereco', 'logradouro', 'rua']),
+                'cidade' => $c('Cidade', 'texto', ['cidade', 'municipio']),
+                'uf' => $c('UF', 'uf', ['uf', 'estado']),
+                'responsavel' => $c('Responsável (e-mail)', 'usuario', ['responsavel', 'vendedor', 'e-mail do responsavel']),
+                'observacoes' => $c('Observações', 'texto', ['observacoes', 'observacao', 'obs']),
+            ],
+            self::PRODUTO => [
+                'nome' => $c('Nome', 'texto', ['nome', 'produto', 'servico', 'descricao do produto', 'item'], true),
+                'codigo' => $c('Código', 'texto', ['codigo', 'cod', 'sku', 'referencia']),
+                'tipo' => $c('Tipo (produto/serviço)', 'tipo_produto', ['tipo', 'categoria']),
+                'unidade' => $c('Unidade', 'unidade', ['unidade', 'un', 'und']),
+                'preco' => $c('Preço', 'dinheiro', ['preco', 'valor', 'preco unitario', 'valor unitario']),
+                'descricao' => $c('Descrição', 'texto', ['descricao', 'detalhes']),
             ],
             default => [
                 'name' => $c('Nome do contato', 'texto', ['nome', 'contato', 'nome do contato'], true),
@@ -82,8 +84,8 @@ class CrmImportDestinos
             ],
         };
 
-        if ($destino !== self::CONTATO) {
-            foreach (CrmCamposCustom::campos($destino === self::LEAD ? 'lead' : 'cliente', true, $tenantId) as $campo) {
+        if (in_array($destino, [self::LEAD, self::CONTA], true)) {
+            foreach (CrmCamposCustom::campos($destino === self::LEAD ? 'lead' : 'conta', true, $tenantId) as $campo) {
                 $campos['custom.'.$campo->chave] = $c($campo->nome.' (personalizado)', 'personalizado', [$campo->nome]);
             }
         }
@@ -95,12 +97,6 @@ class CrmImportDestinos
     public static function segmentos(): array
     {
         return array_flip(CrmLead::segmentLabels());
-    }
-
-    /** @return array<string, string> nicho: rótulo => slug (para o cliente). */
-    public static function nichos(): array
-    {
-        return array_flip(Client::nicheLabels());
     }
 
     public static function normalizar(?string $texto): string
@@ -148,7 +144,7 @@ class CrmImportDestinos
             'name' => 'Maria Souza', 'company_name' => 'Construtora Exemplo Ltda', 'document' => '11.222.333/0001-81',
             'email' => 'maria@exemplo.com.br', 'phone' => '(19) 3333-4444', 'whatsapp' => '(19) 99999-8888',
             'city' => 'Campinas', 'uf' => 'SP', 'cep' => '13010-000', 'estimated_value' => '15000,00',
-            'fantasy_name' => 'Exemplo Construções', 'state' => 'SP', 'zip_code' => '13010-000',
+            'nome_fantasia' => 'Exemplo Construções', 'documento' => '11.222.333/0001-81', 'telefone' => '(19) 3333-4444', 'cidade' => 'Campinas', 'preco' => '1500,00', 'unidade' => 'dia', 'tipo' => 'serviço', 'codigo' => 'SRV-001',
             'role_title' => 'Gerente de compras', 'is_primary' => 'sim', 'pai_documento' => '11.222.333/0001-81',
         ];
 

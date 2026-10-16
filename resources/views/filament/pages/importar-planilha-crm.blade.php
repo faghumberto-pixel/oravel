@@ -94,7 +94,7 @@
                     <div>
                         <label class="block text-sm font-semibold mb-1">Os contatos pertencem a</label>
                         <select wire:model.live="opcoes.pai" class="text-sm rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 w-full">
-                            <option value="cliente">Clientes</option>
+                            <option value="conta">Contas</option>
                             <option value="lead">Leads</option>
                         </select>
                     </div>

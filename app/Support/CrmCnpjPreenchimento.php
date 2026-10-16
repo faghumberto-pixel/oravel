@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Client;
+use App\Models\CrmConta;
 use App\Models\CrmLead;
 use App\Services\CepGeocodingService;
 use App\Services\CnpjLookupService;
@@ -22,12 +23,16 @@ class CrmCnpjPreenchimento
 
     public const ENTIDADE_CLIENTE = 'cliente';
 
+    public const ENTIDADE_CONTA = 'conta';
+
     /** Rótulos para a notificação "o que foi preenchido". */
     private const ROTULOS = [
         'company_name' => 'Empresa', 'name' => 'Razão social', 'fantasy_name' => 'Nome fantasia',
         'address' => 'Endereço', 'address_complement' => 'Complemento', 'neighborhood' => 'Bairro',
         'city' => 'Cidade', 'uf' => 'UF', 'state' => 'UF', 'cep' => 'CEP', 'zip_code' => 'CEP',
         'phone' => 'Telefone', 'email' => 'E-mail',
+        'nome' => 'Nome', 'nome_fantasia' => 'Nome fantasia', 'endereco' => 'Endereço', 'cidade' => 'Cidade',
+        'telefone' => 'Telefone',
     ];
 
     /**
@@ -39,6 +44,19 @@ class CrmCnpjPreenchimento
     public static function mapear(string $entidade, array $d): array
     {
         $endereco = trim(implode(', ', array_filter([$d['logradouro'] ?? null, $d['numero'] ?? null]))) ?: null;
+
+        if ($entidade === self::ENTIDADE_CONTA) {
+            return [
+                'nome' => $d['razao_social'] ?? null,
+                'nome_fantasia' => $d['nome_fantasia'] ?? null,
+                'endereco' => $endereco,
+                'cidade' => $d['cidade'] ?? null,
+                'uf' => $d['uf'] ?? null,
+                'cep' => $d['cep'] ?? null,
+                'telefone' => $d['telefone'] ?? null,
+                'email' => $d['email_contato'] ?? null,
+            ];
+        }
 
         if ($entidade === self::ENTIDADE_LEAD) {
             return [
@@ -88,19 +106,29 @@ class CrmCnpjPreenchimento
         return $preenchidos;
     }
 
-    /** Já existe lead ou cliente deste tenant com o mesmo CNPJ? (só para avisar, nunca bloqueia) */
-    public static function duplicidade(string $cnpj, ?string $ignorarLeadId = null, ?string $ignorarClienteId = null): ?string
+    /** Já existe conta, cliente do ERP (se o tenant tem o módulo) ou lead deste tenant com o mesmo CNPJ? (só avisa, nunca bloqueia) */
+    public static function duplicidade(string $cnpj, ?string $ignorarLeadId = null, ?string $ignorarClienteId = null, ?string $ignorarContaId = null): ?string
     {
         $digitos = Cnpj::limpar($cnpj);
         $mesmo = "regexp_replace(coalesce(%s, ''), '\\D', '', 'g') = ?";
 
-        $cliente = Client::query()
-            ->when($ignorarClienteId, fn ($q) => $q->whereKeyNot($ignorarClienteId))
-            ->where(fn ($q) => $q->whereRaw(sprintf($mesmo, 'document'), [$digitos])->orWhereRaw(sprintf($mesmo, 'cpf_cnpj'), [$digitos]))
-            ->first();
+        $conta = CrmConta::query()
+            ->when($ignorarContaId, fn ($q) => $q->whereKeyNot($ignorarContaId))
+            ->where('documento_digitos', $digitos)->first();
 
-        if ($cliente) {
-            return "Já existe o cliente \"{$cliente->name}\" com este CNPJ.";
+        if ($conta) {
+            return "Já existe a conta \"{$conta->nome}\" com este CNPJ.";
+        }
+
+        if (Tenancy::current()?->hasFeature('tabela_clients')) {
+            $cliente = Client::query()
+                ->when($ignorarClienteId, fn ($q) => $q->whereKeyNot($ignorarClienteId))
+                ->where(fn ($q) => $q->whereRaw(sprintf($mesmo, 'document'), [$digitos])->orWhereRaw(sprintf($mesmo, 'cpf_cnpj'), [$digitos]))
+                ->first();
+
+            if ($cliente) {
+                return "Já existe o cliente \"{$cliente->name}\" com este CNPJ.";
+            }
         }
 
         $lead = CrmLead::query()
@@ -118,7 +146,7 @@ class CrmCnpjPreenchimento
             ->label('Buscar dados pelo CNPJ')
             ->icon('heroicon-o-magnifying-glass')
             ->action(function (Get $get, Set $set, $livewire) use ($entidade) {
-                $documento = (string) $get('document');
+                $documento = (string) $get($entidade === self::ENTIDADE_CONTA ? 'documento' : 'document');
                 $digitos = Cnpj::limpar($documento);
 
                 if (strlen($digitos) === 11) {
@@ -155,6 +183,7 @@ class CrmCnpjPreenchimento
                     $digitos,
                     $entidade === self::ENTIDADE_LEAD ? $record?->getKey() : null,
                     $entidade === self::ENTIDADE_CLIENTE ? $record?->getKey() : null,
+                    $entidade === self::ENTIDADE_CONTA ? $record?->getKey() : null,
                 );
 
                 if ($aviso) {
@@ -170,8 +199,12 @@ class CrmCnpjPreenchimento
             return;
         }
 
-        $uf = $entidade === self::ENTIDADE_LEAD ? $get('uf') : $get('state');
-        $completo = trim(implode(', ', array_filter([$get('address'), $get('city'), $uf])));
+        [$campoEndereco, $campoCidade, $campoUf] = match ($entidade) {
+            self::ENTIDADE_CONTA => ['endereco', 'cidade', 'uf'],
+            self::ENTIDADE_LEAD => ['address', 'city', 'uf'],
+            default => ['address', 'city', 'state'],
+        };
+        $completo = trim(implode(', ', array_filter([$get($campoEndereco), $get($campoCidade), $get($campoUf)])));
 
         if (! $completo) {
             return;

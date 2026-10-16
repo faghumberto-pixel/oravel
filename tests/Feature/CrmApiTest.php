@@ -4,12 +4,14 @@ namespace Tests\Feature;
 
 use App\Filament\Pages\TokensApiCrm;
 use App\Models\Client;
-use App\Models\ClientContact;
+use App\Models\CrmConta;
+use App\Models\CrmContaContato;
 use App\Models\CrmEtapa;
 use App\Models\CrmLead;
 use App\Models\CrmLeadContact;
 use App\Models\CrmLeadInteraction;
 use App\Models\CrmPipeline;
+use App\Models\CrmProduto;
 use App\Models\Plan;
 use App\Models\PropostaComercial;
 use App\Models\Role;
@@ -56,7 +58,7 @@ class CrmApiTest extends TestCase
         $plan = Plan::create([
             'name' => 'Plano API '.uniqid(), 'price' => 100, 'base_price' => 100, 'level' => 1,
             'billing_cycle' => 'monthly', 'is_active' => true,
-            'features' => $features ?? ['tabela_crm_leads' => true, 'tabela_clients' => true, 'tabela_proposta_comercial' => true],
+            'features' => $features ?? ['tabela_crm_leads' => true, 'tabela_crm_contas' => true, 'tabela_crm_produtos' => true, 'tabela_proposta_comercial' => true],
         ]);
 
         return Tenant::create(['name' => 'T '.uniqid(), 'slug' => 't-'.uniqid(), 'plan_id' => $plan->id, 'status' => 'active']);
@@ -77,7 +79,7 @@ class CrmApiTest extends TestCase
         $u = User::create(['name' => 'Vendedor '.uniqid(), 'email' => 'v-'.uniqid().'@oravel.com.br', 'password' => bcrypt('x'), 'tenant_id' => $t->id]);
         $u->forceFill(['email_verified_at' => now(), 'is_approved' => true])->save();
         $u->assignRole(Role::firstOrCreate(['name' => 'comercial', 'guard_name' => 'web', 'tenant_id' => $t->id]));
-        foreach (['ler_crm_lead', 'criar_crm_lead', 'editar_crm_lead', 'ler_cliente', 'ler_proposta_comercial'] as $p) {
+        foreach (['ler_crm_lead', 'criar_crm_lead', 'editar_crm_lead', 'ler_crm_conta', 'ler_crm_produto', 'ler_proposta_comercial'] as $p) {
             Permission::firstOrCreate(['name' => $p, 'guard_name' => 'web']);
             $u->givePermissionTo($p);
         }
@@ -178,9 +180,8 @@ class CrmApiTest extends TestCase
         $alheio = CrmLead::create(['tenant_id' => $t->id, 'name' => 'Lead do Admin', 'whatsapp' => '+55 19 98888-1111', 'assigned_user_id' => $admin->id]);
         $viaContato = CrmLead::create(['tenant_id' => $t->id, 'name' => 'Lead por contato', 'assigned_user_id' => $vendedor->id]);
         CrmLeadContact::create(['tenant_id' => $t->id, 'crm_lead_id' => $viaContato->id, 'name' => 'Fulano', 'phone' => '19 97777-2222']);
-        $cliente = Client::create(['tenant_id' => $t->id, 'name' => 'Cliente S/A', 'phone' => '1933334444', 'whatsapp' => '19966665555']);
-        $viaConversa = Client::create(['tenant_id' => $t->id, 'name' => 'Cliente da Conversa']);
-        DB::table('whatsapp_numeros')->exists(); // tabela existe; conversa sem número é permitida abaixo
+        $cliente = CrmConta::create(['tenant_id' => $t->id, 'nome' => 'Conta S/A', 'telefone' => '1933334444', 'whatsapp' => '19966665555', 'responsavel_user_id' => $vendedor->id]);
+        $viaConversa = CrmConta::create(['tenant_id' => $t->id, 'nome' => 'Conta da Conversa', 'responsavel_user_id' => $vendedor->id]);
         CrmLead::create(['tenant_id' => $outro->id, 'name' => 'Lead de outro tenant', 'phone' => '19999990000']);
 
         $buscar = fn (User $u, string $tel) => collect($this->api($u)->getJson(self::BASE.'/contatos/buscar?telefone='.urlencode($tel))->assertOk()->json('data'));
@@ -190,10 +191,11 @@ class CrmApiTest extends TestCase
         $this->assertSame([], $buscar($vendedor, '19988881111')->all(), 'vendedor não vê lead do admin');
         $this->assertSame(['Lead do Admin'], $buscar($admin, '5519988881111')->pluck('nome')->all());
         $this->assertSame(['Lead por contato'], $buscar($vendedor, '19977772222')->pluck('nome')->all(), 'telefone do contato do lead');
-        $this->assertSame('cliente', $buscar($vendedor, '19966665555')->first()['tipo']);
+        $this->assertSame('conta', $buscar($vendedor, '19966665555')->first()['tipo']);
         $this->assertSame([], $buscar($vendedor, '123')->all(), 'curto demais');
         $this->assertSame(1, $buscar($admin, '19999990000')->count(), 'o lead do outro tenant nunca aparece');
         $this->assertNotNull($viaConversa);
+        $this->assertSame([], $buscar($vendedor, '19966665555')->where('tipo', 'cliente')->all(), 'a API não devolve mais clientes do ERP');
     }
 
     // ---------------------------------------------------------------- CNPJ
@@ -202,7 +204,7 @@ class CrmApiTest extends TestCase
     {
         $t = $this->tenant();
         $u = $this->admin($t);
-        Client::create(['tenant_id' => $t->id, 'name' => 'Já cliente', 'document' => self::CNPJ]);
+        CrmConta::create(['tenant_id' => $t->id, 'nome' => 'Já cliente', 'documento' => self::CNPJ]);
 
         $this->api($u)->getJson(self::BASE.'/cnpj/11222333000182')->assertStatus(422)->assertJsonPath('erro.codigo', 'cnpj_invalido');
 
@@ -265,19 +267,19 @@ class CrmApiTest extends TestCase
         $this->api($v)->getJson(self::BASE.'/leads/'.$r->json('data.id'))->assertOk();
     }
 
-    public function test_duplicates_by_document_phone_and_existing_client_return_409_unless_forced(): void
+    public function test_duplicates_by_document_phone_and_existing_account_return_409_unless_forced(): void
     {
         $t = $this->tenant();
         $u = $this->admin($t);
         $outroVendedor = $this->vendedor($t);
         $existente = CrmLead::create(['tenant_id' => $t->id, 'name' => 'Existente', 'document' => self::CNPJ, 'phone' => '(19) 99999-0000', 'assigned_user_id' => $u->id]);
-        Client::create(['tenant_id' => $t->id, 'name' => 'Cliente', 'document' => '45.723.174/0001-10']);
+        CrmConta::create(['tenant_id' => $t->id, 'nome' => 'Cliente', 'documento' => '45.723.174/0001-10']);
 
         $r = $this->api($u)->postJson(self::BASE.'/leads', ['nome' => 'Dup', 'documento' => '11222333000181'])->assertStatus(409)->assertJsonPath('erro.codigo', 'duplicado');
         $r->assertJsonPath('erro.existente.id', $existente->id);
 
         $this->api($u)->postJson(self::BASE.'/leads', ['nome' => 'Dup tel', 'telefone' => '+55 19 99999-0000'])->assertStatus(409);
-        $this->api($u)->postJson(self::BASE.'/leads', ['nome' => 'Cli', 'documento' => '45723174000110'])->assertStatus(409)->assertJsonPath('erro.codigo', 'ja_e_cliente');
+        $this->api($u)->postJson(self::BASE.'/leads', ['nome' => 'Cli', 'documento' => '45723174000110'])->assertStatus(409)->assertJsonPath('erro.codigo', 'ja_e_conta');
 
         // Vendedor sabe que existe, mas não recebe os dados do lead do colega.
         $this->api($outroVendedor)->postJson(self::BASE.'/leads', ['nome' => 'Dup', 'documento' => '11222333000181'])
@@ -356,22 +358,48 @@ class CrmApiTest extends TestCase
     {
         $t = $this->tenant();
         $u = $this->admin($t);
-        $cliente = Client::create(['tenant_id' => $t->id, 'name' => 'Cliente']);
-        $aberto = CrmLead::create(['tenant_id' => $t->id, 'name' => 'Aberto', 'client_id' => $cliente->id, 'stage' => 'qualificado']);
-        CrmLead::create(['tenant_id' => $t->id, 'name' => 'Ganho', 'client_id' => $cliente->id, 'stage' => 'convertido']);
+        $conta = CrmConta::create(['tenant_id' => $t->id, 'nome' => 'Conta']);
+        $aberto = CrmLead::create(['tenant_id' => $t->id, 'name' => 'Aberto', 'crm_conta_id' => $conta->id, 'stage' => 'qualificado']);
+        $ganho = CrmLead::create(['tenant_id' => $t->id, 'name' => 'Ganho', 'crm_conta_id' => $conta->id, 'stage' => 'convertido']);
+        $cliente = Client::create(['tenant_id' => $t->id, 'name' => 'Cliente ERP']);
+        $conta->forceFill(['client_id' => $cliente->id])->save();
         $mk = fn ($status, $extra = []) => PropostaComercial::create(['tenant_id' => $t->id, 'client_id' => $cliente->id, 'seller_user_id' => $u->id, 'status' => $status] + $extra);
         $mk(PropostaComercial::STATUS_APROVADA_INTERNA);
         $mk(PropostaComercial::STATUS_RASCUNHO);
         $mk(PropostaComercial::STATUS_ACEITA_PELO_CLIENTE);
         $mk(PropostaComercial::STATUS_RECUSADA_PELO_CLIENTE);
 
-        $r = $this->api($u)->getJson(self::BASE."/contatos/cliente/{$cliente->id}/oportunidades")->assertOk();
+        $r = $this->api($u)->getJson(self::BASE."/contatos/conta/{$conta->id}/oportunidades")->assertOk();
         $this->assertSame([$aberto->id], collect($r->json('data.leads_abertos'))->pluck('id')->all());
         $this->assertCount(2, $r->json('data.propostas_em_andamento'));
+        $this->assertNotNull($ganho);
 
-        $this->api($u)->getJson(self::BASE.'/contatos/fornecedor/x/oportunidades')->assertStatus(422);
-        $this->api($u)->getJson(self::BASE.'/contatos/cliente/'.Str::uuid().'/oportunidades')->assertStatus(404);
-        $this->api($this->admin($this->tenant()))->getJson(self::BASE."/contatos/cliente/{$cliente->id}/oportunidades")->assertStatus(404);
+        $this->api($u)->getJson(self::BASE.'/contatos/cliente/x/oportunidades')->assertStatus(422);
+        $this->api($u)->getJson(self::BASE.'/contatos/conta/'.Str::uuid().'/oportunidades')->assertStatus(404);
+        $this->api($this->admin($this->tenant()))->getJson(self::BASE."/contatos/conta/{$conta->id}/oportunidades")->assertStatus(404);
+    }
+
+    public function test_account_sheet_and_catalog_endpoints_respect_tenant_and_visibility(): void
+    {
+        $t = $this->tenant();
+        $admin = $this->admin($t);
+        $v = $this->vendedor($t);
+        $outro = $this->tenant();
+        $minha = CrmConta::create(['tenant_id' => $t->id, 'nome' => 'Minha', 'responsavel_user_id' => $v->id]);
+        $alheia = CrmConta::create(['tenant_id' => $t->id, 'nome' => 'Do admin', 'responsavel_user_id' => $admin->id]);
+        $deOutro = CrmConta::create(['tenant_id' => $outro->id, 'nome' => 'Outro tenant']);
+        CrmContaContato::create(['tenant_id' => $t->id, 'crm_conta_id' => $minha->id, 'name' => 'Maria', 'is_primary' => true]);
+        CrmProduto::create(['tenant_id' => $t->id, 'nome' => 'Serviço A', 'preco' => 100]);
+        CrmProduto::create(['tenant_id' => $t->id, 'nome' => 'Inativo', 'ativo' => false]);
+        CrmProduto::create(['tenant_id' => $outro->id, 'nome' => 'Produto alheio']);
+
+        $this->api($v)->getJson(self::BASE."/contas/{$minha->id}")->assertOk()->assertJsonPath('data.contatos.0.nome', 'Maria');
+        $this->api($v)->getJson(self::BASE."/contas/{$alheia->id}")->assertStatus(404);
+        $this->api($admin)->getJson(self::BASE."/contas/{$alheia->id}")->assertOk();
+        $this->api($admin)->getJson(self::BASE."/contas/{$deOutro->id}")->assertStatus(404);
+
+        $nomes = collect($this->api($v)->getJson(self::BASE.'/produtos')->assertOk()->json('data'))->pluck('nome')->all();
+        $this->assertSame(['Serviço A'], $nomes);
     }
 
     public function test_lead_sheet_never_leaks_across_tenants(): void
@@ -446,7 +474,6 @@ class CrmApiTest extends TestCase
         $this->assertTrue(Schema::hasColumn('crm_lead_interactions', 'transcricao'));
         $u = $this->admin($this->tenant());
         $this->assertNotEmpty($u->createToken('uuid-ok', ['crm:read'])->plainTextToken, 'tokenable_id aceita uuid');
-        $this->assertNotNull(ClientContact::class);
         $this->assertNotNull(WhatsappConversa::class);
         $this->assertNotNull(CrmPipeline::class);
     }

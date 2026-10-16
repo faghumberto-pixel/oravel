@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Api\Crm;
 
 use App\Http\Controllers\Controller;
-use App\Models\Client;
+use App\Models\CrmConta;
 use App\Models\CrmLead;
+use App\Models\CrmProduto;
 use App\Models\PropostaComercial;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -27,7 +28,8 @@ class EuController extends Controller
             'permissoes' => [
                 'criar_lead' => Gate::forUser($user)->allows('create', CrmLead::class),
                 'editar_lead' => Gate::forUser($user)->allows('update', new CrmLead(['tenant_id' => $user->tenant_id])),
-                'ver_clientes' => Gate::forUser($user)->allows('viewAny', Client::class),
+                'ver_contas' => Gate::forUser($user)->allows('viewAny', CrmConta::class),
+                'ver_produtos' => Gate::forUser($user)->allows('viewAny', CrmProduto::class),
                 'ver_propostas' => Gate::forUser($user)->allows('viewAny', PropostaComercial::class),
             ],
             'token' => [

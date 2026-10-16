@@ -2,9 +2,10 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\Client;
+use App\Models\CrmConta;
 use App\Models\CrmImportacao;
 use App\Models\CrmLead;
+use App\Models\CrmProduto;
 use App\Services\CrmImport\CrmImportDestinos;
 use App\Services\CrmImport\CrmImportLeitor;
 use App\Services\CrmImport\CrmImportService;
@@ -61,7 +62,7 @@ class ImportarPlanilhaCrm extends Page
     /** campo => índice da coluna (ou null) */
     public array $mapeamento = [];
 
-    public array $opcoes = ['se_existir' => 'ignorar', 'pai' => 'cliente'];
+    public array $opcoes = ['se_existir' => 'ignorar', 'pai' => 'conta'];
 
     public ?array $simulacao = null;
 
@@ -75,7 +76,7 @@ class ImportarPlanilhaCrm extends Page
     {
         $user = auth()->user();
 
-        return (bool) ($user?->can('viewAny', CrmLead::class) || $user?->can('viewAny', Client::class));
+        return (bool) ($user?->can('viewAny', CrmLead::class) || $user?->can('viewAny', CrmConta::class) || $user?->can('viewAny', CrmProduto::class));
     }
 
     /** @return array<string, string> destinos que o usuário pode alimentar */
@@ -83,12 +84,14 @@ class ImportarPlanilhaCrm extends Page
     {
         $user = auth()->user();
         $podeLead = (bool) $user?->can('create', CrmLead::class);
-        $podeCliente = (bool) $user?->can('create', Client::class);
+        $podeConta = (bool) $user?->can('create', CrmConta::class);
+        $podeProduto = (bool) $user?->can('create', CrmProduto::class);
 
         return collect(CrmImportDestinos::rotulos())->filter(fn ($r, $d) => match ($d) {
             CrmImportDestinos::LEAD => $podeLead,
-            CrmImportDestinos::CLIENTE => $podeCliente,
-            default => $podeLead || $podeCliente,
+            CrmImportDestinos::CONTA => $podeConta,
+            CrmImportDestinos::PRODUTO => $podeProduto,
+            default => $podeLead || $podeConta,
         })->all();
     }
 
@@ -213,7 +216,7 @@ class ImportarPlanilhaCrm extends Page
         $this->apagarArquivos();
         $destino = $this->destino;
         $this->reset(['passo', 'planilha', 'caminho', 'nomeArquivo', 'cabecalhos', 'previa', 'totalLinhas', 'mapeamento', 'simulacao', 'hashSimulado', 'resultado']);
-        $this->opcoes = ['se_existir' => 'ignorar', 'pai' => 'cliente'];
+        $this->opcoes = ['se_existir' => 'ignorar', 'pai' => 'conta'];
         $this->destino = $manterDestino ? $destino : CrmImportDestinos::LEAD;
     }
 
@@ -264,7 +267,7 @@ class ImportarPlanilhaCrm extends Page
         }
 
         if ($this->destino === CrmImportDestinos::CONTATO && ($this->mapeamento['pai_documento'] ?? null) === null && ($this->mapeamento['pai_nome'] ?? null) === null) {
-            Notification::make()->title('Mapeie o CNPJ/CPF ou o nome do cliente (ou lead) a que cada contato pertence.')->warning()->send();
+            Notification::make()->title('Mapeie o CNPJ/CPF ou o nome da conta (ou lead) a que cada contato pertence.')->warning()->send();
 
             return null;
         }

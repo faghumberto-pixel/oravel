@@ -3,12 +3,13 @@
 namespace Tests\Feature;
 
 use App\Filament\Pages\ImportarPlanilhaCrm;
-use App\Models\Client;
-use App\Models\ClientContact;
 use App\Models\CrmCampoCustom;
+use App\Models\CrmConta;
+use App\Models\CrmContaContato;
 use App\Models\CrmImportacao;
 use App\Models\CrmLead;
 use App\Models\CrmLeadContact;
+use App\Models\CrmProduto;
 use App\Models\Plan;
 use App\Models\Role;
 use App\Models\Tenant;
@@ -126,14 +127,14 @@ class CrmImportTest extends TestCase
 
     public function test_mapping_suggestion_uses_synonyms_ignoring_accents(): void
     {
-        $mapa = CrmImportDestinos::sugerirMapeamento(['Razão Social', 'CNPJ', 'Celular', 'E-mail', 'Estado'], 'cliente');
+        $mapa = CrmImportDestinos::sugerirMapeamento(['Razão Social', 'CNPJ', 'Celular', 'E-mail', 'Estado'], 'conta');
 
-        $this->assertSame(0, $mapa['name']);
-        $this->assertSame(1, $mapa['document']);
+        $this->assertSame(0, $mapa['nome']);
+        $this->assertSame(1, $mapa['documento']);
         $this->assertSame(2, $mapa['whatsapp']);
         $this->assertSame(3, $mapa['email']);
-        $this->assertSame(4, $mapa['state']);
-        $this->assertNull($mapa['fantasy_name']);
+        $this->assertSame(4, $mapa['uf']);
+        $this->assertNull($mapa['nome_fantasia']);
     }
 
     // ------------------------------------------------------------ leads
@@ -187,7 +188,7 @@ class CrmImportTest extends TestCase
         [$outro] = $this->makeTenantAdmin();
         CrmLead::create(['tenant_id' => $outro->id, 'name' => 'Lead do outro', 'document' => self::CNPJ_A]);
         CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'Já existe', 'document' => self::CNPJ_B]);
-        Client::create(['tenant_id' => $tenant->id, 'name' => 'Cliente Velho', 'document' => '12.345.678/0001-95']);
+        CrmConta::create(['tenant_id' => $tenant->id, 'nome' => 'Cliente Velho', 'documento' => '12.345.678/0001-95']);
 
         $csv = "Nome;CNPJ;E-mail\n"
             ."Novo A;11222333000181;a@x.com\n"            // mesmo CNPJ de outro tenant: cria
@@ -246,27 +247,45 @@ class CrmImportTest extends TestCase
 
     // ------------------------------------------------------------ clientes e contatos
 
-    public function test_clients_created_updated_and_duplicates_respected(): void
+    public function test_accounts_created_updated_and_duplicates_respected(): void
     {
         [$tenant] = $this->makeTenantAdmin();
-        $csv = "Razão Social;CNPJ;Cidade;UF;Nicho\nAcme Ltda;".self::CNPJ_A.";Campinas;SP;Construção Civil\nBeta SA;".self::CNPJ_B.";Jundiaí;SP;\n";
+        $csv = "Razão Social;CNPJ;Cidade;UF;Segmento\nAcme Ltda;".self::CNPJ_A.";Campinas;SP;Construção\nBeta SA;".self::CNPJ_B.";Jundiaí;SP;\n";
 
-        $r = $this->importar('cliente', $csv, $tenant);
+        $r = $this->importar('conta', $csv, $tenant);
         $this->assertSame(2, $r->criados);
-        $acme = Client::withoutGlobalScopes()->where('tenant_id', $tenant->id)->where('name', 'Acme Ltda')->firstOrFail();
-        $this->assertSame('construcao_civil', $acme->activity_type);
+        $acme = CrmConta::withoutGlobalScopes()->where('tenant_id', $tenant->id)->where('nome', 'Acme Ltda')->firstOrFail();
+        $this->assertSame('Construção', $acme->segmento);
+        $this->assertSame('11222333000181', $acme->documento_digitos);
 
-        $this->assertSame(2, $this->importar('cliente', $csv, $tenant)->ignorados, 'mesmo arquivo de novo: tudo ignorado');
+        $this->assertSame(2, $this->importar('conta', $csv, $tenant)->ignorados, 'mesmo arquivo de novo: tudo ignorado');
 
-        $r3 = $this->importar('cliente', "Razão Social;CNPJ;Cidade\nAcme Ltda;".self::CNPJ_A.";Valinhos\n", $tenant, ['se_existir' => 'sobrescrever']);
+        $r3 = $this->importar('conta', "Razão Social;CNPJ;Cidade\nAcme Ltda;".self::CNPJ_A.";Valinhos\n", $tenant, ['se_existir' => 'sobrescrever']);
         $this->assertSame(1, $r3->atualizados);
-        $this->assertSame('Valinhos', $acme->fresh()->city);
+        $this->assertSame('Valinhos', $acme->fresh()->cidade);
+    }
+
+    public function test_products_and_services_import_with_type_unit_price_and_code_dedup(): void
+    {
+        [$tenant] = $this->makeTenantAdmin();
+        $csv = "Nome;Código;Tipo;Unidade;Preço\nGerador 100kVA;GER-100;Serviço;Dia;R\$ 1.500,00\nTreinamento;TRE-1;Produto;Hora;300\nDuplicado;GER-100;;;10\nSem preço ok;;;;\nPreço ruim;PR-1;;;abc\n";
+
+        $r = $this->importar('produto', $csv, $tenant);
+
+        $this->assertSame(3, $r->criados);
+        $this->assertSame(1, $r->ignorados, 'código repetido no arquivo');
+        $this->assertSame(1, $r->erros, 'preço inválido');
+        $gerador = CrmProduto::withoutGlobalScopes()->where('tenant_id', $tenant->id)->where('codigo', 'GER-100')->firstOrFail();
+        $this->assertEquals(1500.0, $gerador->preco);
+        $this->assertSame('servico', $gerador->tipo);
+        $this->assertSame('dia', $gerador->unidade);
+        $this->assertSame(0, $this->importar('produto', $csv, $tenant)->criados, 'repetir o arquivo não cria nada');
     }
 
     public function test_contacts_link_by_document_or_name_and_fail_without_parent(): void
     {
         [$tenant] = $this->makeTenantAdmin();
-        $cliente = Client::create(['tenant_id' => $tenant->id, 'name' => 'Acme Ltda', 'document' => self::CNPJ_A]);
+        $conta = CrmConta::create(['tenant_id' => $tenant->id, 'nome' => 'Acme Ltda', 'documento' => self::CNPJ_A]);
         $lead = CrmLead::create(['tenant_id' => $tenant->id, 'name' => 'Fulano', 'company_name' => 'Beta SA']);
 
         $csv = "Nome;Cargo;E-mail;Principal;CNPJ do cliente;Cliente\n"
@@ -275,13 +294,13 @@ class CrmImportTest extends TestCase
             ."Perdido;X;p@x.com;;;Empresa Inexistente\n"
             .'Maria 2;Compras;m@acme.com;;'.self::CNPJ_A.";\n";          // mesmo e-mail: ignorado
 
-        $r = $this->importar('contato', $csv, $tenant, ['pai' => 'cliente']);
+        $r = $this->importar('contato', $csv, $tenant, ['pai' => 'conta']);
 
         $this->assertSame(2, $r->criados);
         $this->assertSame(1, $r->erros);
         $this->assertSame(1, $r->ignorados);
-        $this->assertSame(['João', 'Maria'], ClientContact::where('client_id', $cliente->id)->orderBy('name')->pluck('name')->all());
-        $this->assertTrue((bool) ClientContact::where('name', 'Maria')->value('is_primary'));
+        $this->assertSame(['João', 'Maria'], CrmContaContato::where('crm_conta_id', $conta->id)->orderBy('name')->pluck('name')->all());
+        $this->assertTrue((bool) CrmContaContato::where('name', 'Maria')->value('is_primary'));
 
         $r2 = $this->importar('contato', "Nome;Telefone;Cliente\nSicrano;1;Beta SA\n", $tenant, ['pai' => 'lead']);
         $this->assertSame(1, $r2->criados);
@@ -292,12 +311,12 @@ class CrmImportTest extends TestCase
     {
         [$tenant] = $this->makeTenantAdmin();
         [$outro] = $this->makeTenantAdmin();
-        Client::create(['tenant_id' => $outro->id, 'name' => 'Cliente Alheio', 'document' => self::CNPJ_B]);
+        CrmConta::create(['tenant_id' => $outro->id, 'nome' => 'Cliente Alheio', 'documento' => self::CNPJ_B]);
 
         $r = $this->importar('contato', "Nome;CNPJ\nIntruso;".self::CNPJ_B."\n", $tenant);
 
         $this->assertSame(1, $r->erros);
-        $this->assertSame(0, ClientContact::withoutGlobalScopes()->count());
+        $this->assertSame(0, CrmContaContato::withoutGlobalScopes()->count());
     }
 
     // ------------------------------------------------------------ página

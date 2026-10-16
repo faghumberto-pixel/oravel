@@ -7,6 +7,7 @@ use App\Filament\Resources\CrmLeadResource\Pages;
 use App\Filament\Resources\CrmLeadResource\RelationManagers\AssignmentsRelationManager;
 use App\Filament\Resources\CrmLeadResource\RelationManagers\ContactsRelationManager;
 use App\Filament\Resources\CrmLeadResource\RelationManagers\InteractionsRelationManager;
+use App\Filament\Resources\CrmLeadResource\RelationManagers\ItensRelationManager;
 use App\Models\CrmEtapa;
 use App\Models\CrmLead;
 use App\Models\CrmMotivoPerda;
@@ -151,6 +152,12 @@ class CrmLeadResource extends BaseResource
                         ->default(fn () => static::etapaInicialId())
                         ->live()
                         ->required(),
+                    Forms\Components\Select::make('crm_conta_id')
+                        ->label('Conta (cliente)')
+                        ->relationship('conta', 'nome')
+                        ->searchable()
+                        ->preload()
+                        ->helperText('Criada sozinha quando o lead é ganho. Escolha uma existente para ligar este lead a ela.'),
                     Forms\Components\Select::make('assigned_user_id')
                         ->label('Vendedor Responsável')
                         ->options(fn () => User::where('tenant_id', Tenancy::current()?->id)->pluck('name', 'id'))
@@ -253,12 +260,11 @@ class CrmLeadResource extends BaseResource
                     ->placeholder(fn (CrmLead $record) => $record->etapaNome())
                     ->color(fn (CrmLead $record) => CrmPalette::etapa($record->etapa)['filament']),
 
-                Tables\Columns\TextColumn::make('client_id')
-                    ->label('Cliente')
+                Tables\Columns\TextColumn::make('conta.nome')
+                    ->label('Conta')
                     ->badge()
                     ->color('success')
-                    ->formatStateUsing(fn () => 'Convertido')
-                    ->url(fn (CrmLead $record) => $record->client_id ? ClientResource::getUrl('edit', ['record' => $record->client_id]) : null)
+                    ->url(fn (CrmLead $record) => $record->crm_conta_id ? CrmContaResource::getUrl('edit', ['record' => $record->crm_conta_id]) : null)
                     ->placeholder('—'),
 
                 Tables\Columns\TextColumn::make('assignedUser.name')
@@ -316,20 +322,17 @@ class CrmLeadResource extends BaseResource
             ->defaultSort('created_at', 'desc')
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('converter_em_cliente')
-                    ->label('Converter em Cliente')
-                    ->icon('heroicon-o-user-plus')
-                    ->color('success')
+                Tables\Actions\Action::make('enviar_para_erp')
+                    ->label('Enviar para Clientes do ERP')
+                    ->icon('heroicon-o-arrow-up-on-square')
+                    ->color('gray')
                     ->requiresConfirmation()
-                    ->modalDescription('Cria um Cliente formal com o endereço e contato já cadastrados neste Lead. Não cria nenhum Contrato -- isso continua sendo feito manualmente quando a locação acontecer.')
-                    ->visible(fn (CrmLead $record) => $record->isWon() && ! $record->client_id)
+                    ->modalDescription('Cria o Cliente no cadastro do sistema principal (ERP) a partir da conta deste lead. É opcional: o processo comercial já termina no CRM quando o lead é ganho.')
+                    ->visible(fn (CrmLead $record) => $record->isWon() && ! $record->client_id && static::temErp())
                     ->action(function (CrmLead $record) {
-                        $client = $record->convertToClient();
+                        $client = $record->enviarParaErp();
 
-                        Notification::make()
-                            ->title('Cliente criado a partir do Lead.')
-                            ->success()
-                            ->send();
+                        Notification::make()->title('Cliente criado no ERP a partir da conta.')->success()->send();
 
                         return redirect(ClientResource::getUrl('edit', ['record' => $client->id]));
                     }),
@@ -337,6 +340,12 @@ class CrmLeadResource extends BaseResource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
+    }
+
+    /** O contrato inclui o cadastro de Clientes do ERP? Só então "enviar para o ERP" faz sentido. */
+    public static function temErp(): bool
+    {
+        return (bool) Tenancy::current()?->hasFeature('tabela_clients');
     }
 
     /** Etapas dos funis ativos do tenant; com mais de um funil, o rótulo leva o nome do funil. */
@@ -387,6 +396,7 @@ class CrmLeadResource extends BaseResource
     {
         return [
             ContactsRelationManager::class,
+            ItensRelationManager::class,
             InteractionsRelationManager::class,
             AssignmentsRelationManager::class,
         ];
