@@ -52,12 +52,12 @@ class CrmLeadMapWidget extends Widget
             $query->where('assigned_user_id', $user->id);
         }
 
-        return $query->get(['id', 'name', 'company_name', 'stage', 'latitude', 'longitude'])
+        return $query->with('etapa')->get(['id', 'name', 'company_name', 'stage', 'etapa_id', 'latitude', 'longitude'])
             ->map(fn (CrmLead $lead) => [
                 'id' => $lead->id,
                 'name' => $lead->name,
                 'company_name' => $lead->company_name,
-                'stage_label' => CrmLead::stageLabels()[$lead->stage] ?? $lead->stage,
+                'stage_label' => $lead->etapaNome(),
                 'latitude' => $lead->latitude,
                 'longitude' => $lead->longitude,
                 'url' => CrmLeadResource::getUrl('edit', ['record' => $lead]),

@@ -45,6 +45,9 @@ class TenantProvisioner
         // ajustar -- ver App\Services\OrganizationalStructureSeeder.
         OrganizationalStructureSeeder::seed($tenant);
 
+        // Funil de vendas padrão, motivos de perda e origens do CRM.
+        CrmFunilPadrao::garantir((string) $tenant->id);
+
         return $user;
     }
 }

@@ -107,7 +107,7 @@ class CommercialLeadAnalysisService
                 'empresa' => $lead->company_name,
                 'segmento' => $lead->segment,
                 'origem' => $lead->source,
-                'estagio_atual' => CrmLead::stageLabels()[$lead->stage] ?? $lead->stage,
+                'estagio_atual' => $lead->etapaNome(),
                 'dias_no_estagio_atual_aprox' => $diasNoEstagio,
                 'valor_estimado' => $lead->estimated_value,
                 'equipamento_interesse' => $lead->equipment_interest,

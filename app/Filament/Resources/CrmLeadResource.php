@@ -7,9 +7,14 @@ use App\Filament\Resources\CrmLeadResource\Pages;
 use App\Filament\Resources\CrmLeadResource\RelationManagers\AssignmentsRelationManager;
 use App\Filament\Resources\CrmLeadResource\RelationManagers\ContactsRelationManager;
 use App\Filament\Resources\CrmLeadResource\RelationManagers\InteractionsRelationManager;
+use App\Models\CrmEtapa;
 use App\Models\CrmLead;
+use App\Models\CrmMotivoPerda;
+use App\Models\CrmOrigem;
 use App\Models\User;
 use App\Services\CepGeocodingService;
+use App\Services\CrmFunilPadrao;
+use App\Support\CrmPalette;
 use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -91,7 +96,7 @@ class CrmLeadResource extends BaseResource
                         ->label('Empresa'),
                     Forms\Components\Select::make('source')
                         ->label('Origem')
-                        ->options(CrmLead::sourceLabels()),
+                        ->options(fn () => CrmOrigem::opcoes() ?: CrmLead::sourceLabels()),
                     Forms\Components\TextInput::make('phone')
                         ->label('Telefone')
                         ->tel(),
@@ -137,10 +142,10 @@ class CrmLeadResource extends BaseResource
             Forms\Components\Section::make('Funil')
                 ->columns(3)
                 ->schema([
-                    Forms\Components\Select::make('stage')
-                        ->label('Estágio')
-                        ->options(CrmLead::stageLabels())
-                        ->default(CrmLead::STAGE_NOVO)
+                    Forms\Components\Select::make('etapa_id')
+                        ->label('Etapa')
+                        ->options(fn () => static::etapaOptions())
+                        ->default(fn () => static::etapaInicialId())
                         ->live()
                         ->required(),
                     Forms\Components\Select::make('assigned_user_id')
@@ -154,19 +159,19 @@ class CrmLeadResource extends BaseResource
                         ->prefix('R$'),
                     Forms\Components\Select::make('lost_reason_category')
                         ->label('Motivo da Perda')
-                        ->options(CrmLead::lostReasonCategoryLabels())
+                        ->options(fn () => CrmMotivoPerda::opcoes() ?: CrmLead::lostReasonCategoryLabels())
                         ->live()
-                        ->visible(fn (Forms\Get $get) => $get('stage') === CrmLead::STAGE_PERDIDO)
-                        ->required(fn (Forms\Get $get) => $get('stage') === CrmLead::STAGE_PERDIDO),
+                        ->visible(fn (Forms\Get $get) => static::etapaTipo($get('etapa_id')) === CrmEtapa::TIPO_PERDIDO)
+                        ->required(fn (Forms\Get $get) => static::etapaTipo($get('etapa_id')) === CrmEtapa::TIPO_PERDIDO),
                     Forms\Components\Textarea::make('lost_reason')
                         ->label(fn (Forms\Get $get) => $get('lost_reason_category') === CrmLead::LOST_REASON_CONCORRENCIA ? 'Qual concorrente?' : 'Detalhe do Motivo')
-                        ->visible(fn (Forms\Get $get) => $get('stage') === CrmLead::STAGE_PERDIDO)
-                        ->required(fn (Forms\Get $get) => $get('stage') === CrmLead::STAGE_PERDIDO
-                            && in_array($get('lost_reason_category'), CrmLead::lostReasonCategoriesRequiringDetail(), true))
+                        ->visible(fn (Forms\Get $get) => static::etapaTipo($get('etapa_id')) === CrmEtapa::TIPO_PERDIDO)
+                        ->required(fn (Forms\Get $get) => static::etapaTipo($get('etapa_id')) === CrmEtapa::TIPO_PERDIDO
+                            && static::motivoExigeDetalhe($get('lost_reason_category')))
                         ->columnSpanFull(),
                     Forms\Components\Textarea::make('won_notes')
                         ->label('Notas de Fechamento')
-                        ->visible(fn (Forms\Get $get) => $get('stage') === CrmLead::STAGE_CONVERTIDO)
+                        ->visible(fn (Forms\Get $get) => static::etapaTipo($get('etapa_id')) === CrmEtapa::TIPO_GANHO)
                         ->columnSpanFull(),
                 ]),
 
@@ -236,16 +241,11 @@ class CrmLeadResource extends BaseResource
                     ->searchable()
                     ->description(fn (CrmLead $record): ?string => $record->company_name),
 
-                Tables\Columns\TextColumn::make('stage')
-                    ->label('Estágio')
+                Tables\Columns\TextColumn::make('etapa.nome')
+                    ->label('Etapa')
                     ->badge()
-                    ->formatStateUsing(fn (string $state) => CrmLead::stageLabels()[$state] ?? $state)
-                    ->color(fn (string $state) => match ($state) {
-                        CrmLead::STAGE_CONVERTIDO => 'success',
-                        CrmLead::STAGE_PERDIDO => 'danger',
-                        CrmLead::STAGE_QUALIFICADO => 'warning',
-                        default => 'gray',
-                    }),
+                    ->placeholder(fn (CrmLead $record) => $record->etapaNome())
+                    ->color(fn (CrmLead $record) => CrmPalette::etapa($record->etapa)['filament']),
 
                 Tables\Columns\TextColumn::make('client_id')
                     ->label('Cliente')
@@ -277,9 +277,9 @@ class CrmLeadResource extends BaseResource
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('stage')
-                    ->label('Estágio')
-                    ->options(CrmLead::stageLabels()),
+                Tables\Filters\SelectFilter::make('etapa_id')
+                    ->label('Etapa')
+                    ->options(fn () => static::etapaOptions()),
                 Tables\Filters\SelectFilter::make('assigned_user_id')
                     ->label('Vendedor')
                     ->relationship(
@@ -307,7 +307,7 @@ class CrmLeadResource extends BaseResource
                     ->color('success')
                     ->requiresConfirmation()
                     ->modalDescription('Cria um Cliente formal com o endereço e contato já cadastrados neste Lead. Não cria nenhum Contrato -- isso continua sendo feito manualmente quando a locação acontecer.')
-                    ->visible(fn (CrmLead $record) => $record->stage === CrmLead::STAGE_CONVERTIDO && ! $record->client_id)
+                    ->visible(fn (CrmLead $record) => $record->isWon() && ! $record->client_id)
                     ->action(function (CrmLead $record) {
                         $client = $record->convertToClient();
 
@@ -322,6 +322,50 @@ class CrmLeadResource extends BaseResource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
+    }
+
+    /** Etapas dos funis ativos do tenant; com mais de um funil, o rótulo leva o nome do funil. */
+    public static function etapaOptions(): array
+    {
+        $etapas = CrmEtapa::query()
+            ->whereHas('funil', fn (Builder $q) => $q->where('ativo', true))
+            ->with('funil')
+            ->orderBy('crm_funil_id')->orderBy('ordem')
+            ->get();
+
+        $multiplos = $etapas->pluck('crm_funil_id')->unique()->count() > 1;
+
+        return $etapas->mapWithKeys(fn (CrmEtapa $e) => [$e->id => $multiplos ? $e->funil->nome.' — '.$e->nome : $e->nome])->all();
+    }
+
+    /** Primeira etapa aberta do funil padrão (cria o funil padrão se o tenant ainda não tem). */
+    public static function etapaInicialId(): ?string
+    {
+        $tenant = Tenancy::current();
+
+        if (! $tenant) {
+            return null;
+        }
+
+        $funilId = CrmFunilPadrao::garantir((string) $tenant->id);
+
+        return CrmEtapa::where('crm_funil_id', $funilId)->where('tipo', CrmEtapa::TIPO_ABERTA)->orderBy('ordem')->value('id');
+    }
+
+    public static function etapaTipo(?string $etapaId): ?string
+    {
+        return $etapaId ? CrmEtapa::whereKey($etapaId)->value('tipo') : null;
+    }
+
+    public static function motivoExigeDetalhe(?string $slug): bool
+    {
+        if (! $slug) {
+            return false;
+        }
+
+        $motivo = CrmMotivoPerda::where('slug', $slug)->first();
+
+        return $motivo ? $motivo->exige_detalhe : in_array($slug, CrmLead::lostReasonCategoriesRequiringDetail(), true);
     }
 
     public static function getRelations(): array

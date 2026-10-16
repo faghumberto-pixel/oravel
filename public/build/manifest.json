@@ -11,8 +11,12 @@
     "file": "assets/register-sw-C7fnc1v_.js",
     "name": "register-sw"
   },
+  "_sortable.esm-BzJVkfZx.js": {
+    "file": "assets/sortable.esm-BzJVkfZx.js",
+    "name": "sortable.esm"
+  },
   "resources/css/app.css": {
-    "file": "assets/app-DHBtZu72.css",
+    "file": "assets/app-CjUzr2IN.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -21,15 +25,15 @@
     ]
   },
   "resources/css/filament/admin/theme.css": {
-    "file": "assets/theme-BDnvMtIl.css",
+    "file": "assets/theme-l6sDcehn.css",
     "src": "resources/css/filament/admin/theme.css"
   },
   "resources/css/filament/central/theme.css": {
-    "file": "assets/theme-DrhpPZc7.css",
+    "file": "assets/theme-LxIMV2Lw.css",
     "src": "resources/css/filament/central/theme.css"
   },
   "resources/css/filament/client/theme.css": {
-    "file": "assets/theme-CPnEw-JZ.css",
+    "file": "assets/theme-7ZH81bGl.css",
     "src": "resources/css/filament/client/theme.css",
     "isEntry": true,
     "name": "theme",
@@ -48,13 +52,16 @@
     ]
   },
   "resources/js/central-kanban.js": {
-    "file": "assets/central-kanban-DQlIL_fo.js",
+    "file": "assets/central-kanban-CzWLppc6.js",
     "name": "central-kanban",
     "src": "resources/js/central-kanban.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "_sortable.esm-BzJVkfZx.js"
+    ]
   },
   "resources/js/chat-app.js": {
-    "file": "assets/chat-app-Dtnz7Kkw.js",
+    "file": "assets/chat-app-BTHns6ge.js",
     "name": "chat-app",
     "src": "resources/js/chat-app.js",
     "isEntry": true,
@@ -62,7 +69,16 @@
       "_import-wrapper-prod-D0HhYmlZ.js"
     ],
     "css": [
-      "assets/app-DHBtZu72.css"
+      "assets/app-CjUzr2IN.css"
+    ]
+  },
+  "resources/js/crm-kanban.js": {
+    "file": "assets/crm-kanban-CwC9mDLJ.js",
+    "name": "crm-kanban",
+    "src": "resources/js/crm-kanban.js",
+    "isEntry": true,
+    "imports": [
+      "_sortable.esm-BzJVkfZx.js"
     ]
   },
   "resources/js/hour-meter-offline.js": {

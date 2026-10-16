@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BelongsToTenant;
 use App\Models\Concerns\HasSaaSMetadata;
+use App\Services\CrmFunilPadrao;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -92,6 +93,7 @@ class CrmLead extends Model
         'document',
         'source',
         'stage',
+        'etapa_id',
         'lost_reason',
         'lost_reason_category',
         'won_notes',
@@ -129,6 +131,86 @@ class CrmLead extends Model
         'last_contacted_at' => 'datetime',
         'next_followup_date' => 'date',
     ];
+
+    /**
+     * Etapa do funil configurável (crm_etapas). `stage` continua gravado como
+     * espelho legado: o slug da etapa aberta, ou 'convertido'/'perdido' para
+     * etapas finais, para que leitores e dados antigos sigam coerentes.
+     */
+    protected static function booted(): void
+    {
+        static::creating(fn (CrmLead $lead) => $lead->resolverEtapa(true));
+        static::updating(fn (CrmLead $lead) => $lead->resolverEtapa(false));
+    }
+
+    private function resolverEtapa(bool $novo): void
+    {
+        if (! $this->tenant_id) {
+            return;
+        }
+
+        if ($this->etapa_id && ($novo || $this->isDirty('etapa_id'))) {
+            $etapa = CrmEtapa::withoutGlobalScopes()->find($this->etapa_id);
+
+            if (! $etapa || (string) $etapa->tenant_id !== (string) $this->tenant_id) {
+                throw new \InvalidArgumentException('Etapa não pertence ao tenant do lead.');
+            }
+        } elseif ($novo || $this->isDirty('stage')) {
+            $etapa = $this->etapaPorStage($this->stage ?: self::STAGE_NOVO);
+        } else {
+            return;
+        }
+
+        $this->etapa_id = $etapa->id;
+        $this->setRelation('etapa', $etapa);
+        $this->stage = match ($etapa->tipo) {
+            CrmEtapa::TIPO_GANHO => self::STAGE_CONVERTIDO,
+            CrmEtapa::TIPO_PERDIDO => self::STAGE_PERDIDO,
+            default => $etapa->slug,
+        };
+    }
+
+    /** Resolve um valor legado de stage na etapa do funil padrão do tenant ('prospecção' e outros desconhecidos caem na 1ª etapa aberta). */
+    private function etapaPorStage(string $stage): CrmEtapa
+    {
+        $etapas = fn () => CrmEtapa::withoutGlobalScopes()
+            ->where('tenant_id', $this->tenant_id)
+            ->whereIn('crm_funil_id', CrmPipeline::withoutGlobalScopes()->where('tenant_id', $this->tenant_id)->where('padrao', true)->select('id'))
+            ->orderBy('ordem')->get();
+
+        $lista = $etapas();
+        if ($lista->isEmpty()) {
+            CrmFunilPadrao::garantir((string) $this->tenant_id);
+            $lista = $etapas();
+        }
+
+        return match ($stage) {
+            self::STAGE_CONVERTIDO => $lista->firstWhere('tipo', CrmEtapa::TIPO_GANHO),
+            self::STAGE_PERDIDO => $lista->firstWhere('tipo', CrmEtapa::TIPO_PERDIDO),
+            default => $lista->firstWhere('slug', $stage),
+        } ?? $lista->firstWhere('tipo', CrmEtapa::TIPO_ABERTA) ?? $lista->first();
+    }
+
+    public function etapa(): BelongsTo
+    {
+        return $this->belongsTo(CrmEtapa::class, 'etapa_id');
+    }
+
+    /** Nome da etapa para exibição (cai no rótulo legado se o lead ainda não tiver etapa). */
+    public function etapaNome(): string
+    {
+        return $this->etapa?->nome ?? (self::stageLabels()[$this->stage] ?? (string) $this->stage);
+    }
+
+    public function isWon(): bool
+    {
+        return $this->etapa ? $this->etapa->isGanho() : $this->stage === self::STAGE_CONVERTIDO;
+    }
+
+    public function isLost(): bool
+    {
+        return $this->etapa ? $this->etapa->isPerdido() : $this->stage === self::STAGE_PERDIDO;
+    }
 
     public static function stageLabels(): array
     {
@@ -256,7 +338,7 @@ class CrmLead extends Model
 
     public function isOpen(): bool
     {
-        return ! in_array($this->stage, [self::STAGE_CONVERTIDO, self::STAGE_PERDIDO], true);
+        return ! $this->isWon() && ! $this->isLost();
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Pages\CrmFunil;
+use App\Models\CrmEtapa;
 use App\Models\CrmLead;
 use App\Models\Plan;
 use App\Models\Role;
@@ -41,6 +42,11 @@ class CrmFunilTest extends TestCase
         return [$tenant, $admin];
     }
 
+    private function etapaId(Tenant $tenant, string $slug): string
+    {
+        return CrmEtapa::withoutGlobalScopes()->where('tenant_id', $tenant->id)->where('slug', $slug)->value('id');
+    }
+
     public function test_page_loads_and_groups_leads_by_stage(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();
@@ -55,8 +61,8 @@ class CrmFunilTest extends TestCase
         $component = Livewire::test(CrmFunil::class);
         $grouped = $component->instance()->getLeadsByStage();
 
-        $this->assertCount(1, $grouped->get(CrmLead::STAGE_NOVO));
-        $this->assertCount(1, $grouped->get(CrmLead::STAGE_QUALIFICADO));
+        $this->assertCount(1, $grouped->get($this->etapaId($tenant, CrmLead::STAGE_NOVO)));
+        $this->assertCount(1, $grouped->get($this->etapaId($tenant, CrmLead::STAGE_QUALIFICADO)));
     }
 
     public function test_selecting_a_stage_renders_its_lead_list(): void
@@ -68,15 +74,17 @@ class CrmFunilTest extends TestCase
 
         $this->actingAs($admin);
 
-        Livewire::test(CrmFunil::class)
-            ->call('selectStage', CrmLead::STAGE_QUALIFICADO)
-            ->assertSee('Lead Qualificado')
-            ->call('selectStage', CrmLead::STAGE_QUALIFICADO)
-            ->assertSet('selectedStage', null);
+        $qualificado = $this->etapaId($tenant, CrmLead::STAGE_QUALIFICADO);
 
         Livewire::test(CrmFunil::class)
-            ->call('selectStage', CrmLead::STAGE_PERDIDO)
-            ->assertSee('Lead Perdido');
+            ->call('setVisao', 'piramide')
+            ->call('selectStage', $qualificado)
+            ->assertSee('Lead Qualificado')
+            ->call('selectStage', $qualificado)
+            ->assertSet('selectedStage', null);
+
+        // Kanban (visão padrão) mostra o lead perdido na coluna Perdido.
+        Livewire::test(CrmFunil::class)->assertSee('Lead Perdido');
     }
 
     public function test_funnel_widths_always_taper_regardless_of_lead_counts(): void
@@ -112,13 +120,24 @@ class CrmFunilTest extends TestCase
 
         $this->actingAs($admin);
 
-        Livewire::test(CrmFunil::class)->call('moveStage', $lead->id, CrmLead::STAGE_PERDIDO);
+        $perdido = $this->etapaId($tenant, CrmLead::STAGE_PERDIDO);
+
+        // Soltar em "Perdido" só abre o modal; sem motivo, confirmar não move.
+        Livewire::test(CrmFunil::class)
+            ->call('moverLead', $lead->id, $perdido)
+            ->assertSet('mostrarPerda', true)
+            ->call('confirmarPerda');
         $this->assertSame(CrmLead::STAGE_NOVO, $lead->fresh()->stage);
 
-        Livewire::test(CrmFunil::class)->call('moveStage', $lead->id, CrmLead::STAGE_PERDIDO, 'Sem orçamento');
+        Livewire::test(CrmFunil::class)
+            ->call('moverLead', $lead->id, $perdido)
+            ->set('perdaMotivo', 'sem_orcamento')
+            ->call('confirmarPerda')
+            ->assertSet('mostrarPerda', false);
         $lead->refresh();
         $this->assertSame(CrmLead::STAGE_PERDIDO, $lead->stage);
-        $this->assertSame('Sem orçamento', $lead->lost_reason);
+        $this->assertSame('sem_orcamento', $lead->lost_reason_category);
+        $this->assertTrue($lead->isLost());
     }
 
     public function test_non_admin_cannot_move_lead_not_assigned_to_them(): void
@@ -139,7 +158,7 @@ class CrmFunilTest extends TestCase
 
         $this->actingAs($vendor);
 
-        Livewire::test(CrmFunil::class)->call('moveStage', $lead->id, CrmLead::STAGE_QUALIFICADO);
+        Livewire::test(CrmFunil::class)->call('moverLead', $lead->id, $this->etapaId($tenant, CrmLead::STAGE_QUALIFICADO));
 
         $this->assertSame(CrmLead::STAGE_NOVO, $lead->fresh()->stage);
     }

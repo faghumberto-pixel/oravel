@@ -265,3 +265,16 @@ html.dark .fi-ta-header-cell button,
 html.dark .fi-ta-header-cell span {
     color: #e5e7eb;
 }
+
+/* Feedback visual do drag-and-drop do Kanban do CRM (SortableJS, ver
+   resources/js/crm-kanban.js). Classes puras, não dependem do scan do JIT. */
+.kanban-card-ghost {
+    opacity: 0.35;
+}
+.kanban-card-chosen {
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+    transform: rotate(1.5deg) scale(1.02);
+}
+.kanban-card-drag {
+    cursor: grabbing !important;
+}

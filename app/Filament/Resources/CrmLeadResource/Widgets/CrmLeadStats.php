@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CrmLeadResource\Widgets;
 
+use App\Models\CrmEtapa;
 use App\Models\CrmLead;
 use App\Support\Tenancy;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -23,10 +24,8 @@ class CrmLeadStats extends BaseWidget
     {
         $total = CrmLead::count();
 
-        $emAndamento = CrmLead::whereIn('stage', [
-            CrmLead::STAGE_CONTATO_INICIADO,
-            CrmLead::STAGE_QUALIFICADO,
-        ])->count();
+        // Em andamento = etapas abertas depois da primeira do funil (a primeira é a entrada, "Novo").
+        $emAndamento = CrmLead::whereHas('etapa', fn ($q) => $q->where('tipo', CrmEtapa::TIPO_ABERTA)->where('ordem', '>', 0))->count();
 
         $convertidos = CrmLead::where('stage', CrmLead::STAGE_CONVERTIDO)->count();
 
@@ -38,7 +37,7 @@ class CrmLeadStats extends BaseWidget
                 ->color('gray'),
 
             Stat::make('Em Andamento', $emAndamento)
-                ->description('Contato iniciado ou qualificado')
+                ->description('Já em contato, antes de fechar')
                 ->color('info'),
 
             Stat::make('Convertidos', $convertidos)

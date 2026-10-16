@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Client;
+use App\Models\CrmEtapa;
 use App\Models\SalesLead;
 
 /**
@@ -147,6 +148,43 @@ class CrmPalette
                 'ring' => 'ring-gray-400',
             ],
         };
+    }
+
+    /**
+     * Cor de uma etapa configurável do CRM (crm_etapas). `cor` é um nome da
+     * paleta ('blue', 'indigo', ...); sem cor definida, usa o tipo
+     * (ganho = verde, perdido = vermelho, aberta = azul). As classes ficam
+     * literais aqui para o Tailwind compilá-las.
+     *
+     * @return array{filament: string, bg: string, border: string, text: string, soft: string, dot: string, ring: string}
+     */
+    public static function etapa(?CrmEtapa $etapa): array
+    {
+        $cor = $etapa?->cor ?: match ($etapa?->tipo) {
+            CrmEtapa::TIPO_GANHO => 'emerald',
+            CrmEtapa::TIPO_PERDIDO => 'red',
+            default => 'blue',
+        };
+
+        return match ($cor) {
+            'indigo' => self::stage('contato_iniciado'),
+            'orange' => self::stage('qualificado'),
+            'emerald' => self::stage('convertido'),
+            'red' => self::stage('perdido'),
+            'purple' => self::stage(SalesLead::STAGE_DEMONSTRACAO_REALIZADA),
+            'gray' => self::stage('__cinza'),
+            'teal' => ['filament' => 'crmTeal', 'bg' => 'bg-teal-600', 'border' => 'border-teal-600', 'text' => 'text-teal-600 dark:text-teal-400', 'soft' => 'bg-teal-50 dark:bg-teal-500/25', 'dot' => 'bg-teal-500', 'ring' => 'ring-teal-400'],
+            'pink' => ['filament' => 'crmPink', 'bg' => 'bg-pink-600', 'border' => 'border-pink-600', 'text' => 'text-pink-600 dark:text-pink-400', 'soft' => 'bg-pink-50 dark:bg-pink-500/25', 'dot' => 'bg-pink-500', 'ring' => 'ring-pink-400'],
+            'amber' => ['filament' => 'crmAmber', 'bg' => 'bg-amber-600', 'border' => 'border-amber-600', 'text' => 'text-amber-600 dark:text-amber-400', 'soft' => 'bg-amber-50 dark:bg-amber-500/25', 'dot' => 'bg-amber-500', 'ring' => 'ring-amber-400'],
+            'cyan' => ['filament' => 'crmCyan', 'bg' => 'bg-cyan-600', 'border' => 'border-cyan-600', 'text' => 'text-cyan-600 dark:text-cyan-400', 'soft' => 'bg-cyan-50 dark:bg-cyan-500/25', 'dot' => 'bg-cyan-500', 'ring' => 'ring-cyan-400'],
+            default => self::stage('novo'),
+        };
+    }
+
+    /** Opções do seletor de cor da etapa (nome da paleta => rótulo). */
+    public static function etapaCores(): array
+    {
+        return ['blue' => 'Azul', 'indigo' => 'Índigo', 'purple' => 'Roxo', 'orange' => 'Laranja', 'amber' => 'Âmbar', 'emerald' => 'Verde', 'teal' => 'Verde-água', 'cyan' => 'Ciano', 'pink' => 'Rosa', 'red' => 'Vermelho', 'gray' => 'Cinza'];
     }
 
     /**

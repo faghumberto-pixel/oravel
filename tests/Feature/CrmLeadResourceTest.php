@@ -7,12 +7,14 @@ use App\Filament\Resources\CrmLeadResource\Pages\EditCrmLead;
 use App\Filament\Resources\CrmLeadResource\Pages\ListCrmLeads;
 use App\Filament\Resources\CrmLeadResource\RelationManagers\InteractionsRelationManager;
 use App\Filament\Resources\CrmLeadResource\Widgets\CrmLeadStats;
+use App\Models\CrmEtapa;
 use App\Models\CrmLead;
 use App\Models\CrmLeadInteraction;
 use App\Models\Plan;
 use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Services\CrmFunilPadrao;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -54,7 +56,7 @@ class CrmLeadResourceTest extends TestCase
             ->fillForm([
                 'name' => 'João da Silva',
                 'company_name' => 'Construtora Alfa',
-                'stage' => CrmLead::STAGE_NOVO,
+                'etapa_id' => $this->etapaId($tenant, 'novo'),
             ])
             ->call('create')
             ->assertHasNoFormErrors();
@@ -73,6 +75,13 @@ class CrmLeadResourceTest extends TestCase
      * quando perdido; o detalhe so' e' obrigatorio pras categorias que
      * precisam de mais contexto (concorrencia/outro).
      */
+    private function etapaId(Tenant $tenant, string $slug): string
+    {
+        CrmFunilPadrao::garantir($tenant->id);
+
+        return CrmEtapa::withoutGlobalScopes()->where('tenant_id', $tenant->id)->where('slug', $slug)->value('id');
+    }
+
     public function test_lost_reason_category_is_required_when_stage_is_perdido(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();
@@ -81,7 +90,7 @@ class CrmLeadResourceTest extends TestCase
         Livewire::test(CrmLeadResource\Pages\CreateCrmLead::class)
             ->fillForm([
                 'name' => 'Lead Perdido',
-                'stage' => CrmLead::STAGE_PERDIDO,
+                'etapa_id' => $this->etapaId($tenant, 'perdido'),
                 'lost_reason_category' => null,
             ])
             ->call('create')
@@ -96,7 +105,7 @@ class CrmLeadResourceTest extends TestCase
         Livewire::test(CrmLeadResource\Pages\CreateCrmLead::class)
             ->fillForm([
                 'name' => 'Lead Perdido Sem Orçamento',
-                'stage' => CrmLead::STAGE_PERDIDO,
+                'etapa_id' => $this->etapaId($tenant, 'perdido'),
                 'lost_reason_category' => CrmLead::LOST_REASON_SEM_ORCAMENTO,
             ])
             ->call('create')
@@ -105,7 +114,7 @@ class CrmLeadResourceTest extends TestCase
         Livewire::test(CrmLeadResource\Pages\CreateCrmLead::class)
             ->fillForm([
                 'name' => 'Lead Perdido Pra Concorrente',
-                'stage' => CrmLead::STAGE_PERDIDO,
+                'etapa_id' => $this->etapaId($tenant, 'perdido'),
                 'lost_reason_category' => CrmLead::LOST_REASON_CONCORRENCIA,
                 'lost_reason' => null,
             ])

@@ -315,7 +315,7 @@ class TablePrintController extends Controller
             CrmLead::class => [[
                 ['label' => 'Lead', 'value' => fn ($r) => $r->name],
                 ['label' => 'Empresa', 'value' => fn ($r) => $r->company_name],
-                ['label' => 'Estágio', 'value' => fn ($r) => CrmLead::stageLabels()[$r->stage] ?? $r->stage],
+                ['label' => 'Estágio', 'value' => fn ($r) => $r->etapaNome()],
                 ['label' => 'Vendedor', 'value' => fn ($r) => $r->assignedUser?->name],
                 ['label' => 'Valor Estimado', 'value' => fn ($r) => $r->estimated_value ? 'R$ '.number_format((float) $r->estimated_value, 2, ',', '.') : null],
             ], ['assignedUser']],

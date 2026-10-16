@@ -4,14 +4,20 @@ namespace App\Filament\Pages;
 
 use App\Filament\Resources\AIAnalysisResource;
 use App\Models\AIAnalysis;
+use App\Models\CrmEtapa;
 use App\Models\CrmLead;
+use App\Models\CrmMotivoPerda;
+use App\Models\CrmPipeline;
 use App\Services\CommercialLeadAnalysisService;
+use App\Services\CrmFunilPadrao;
+use App\Services\CrmFunilService;
 use App\Support\Tenancy;
 use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
 
 class CrmFunil extends Page
 {
@@ -31,7 +37,24 @@ class CrmFunil extends Page
 
     public string $search = '';
 
+    /** 'kanban' (padrão, arrastável) ou 'piramide' (contagem por etapa). */
+    public string $visao = 'kanban';
+
+    public ?string $funilId = null;
+
+    /** Etapa aberta na lista da visão pirâmide. */
     public ?string $selectedStage = null;
+
+    // Modal de motivo da perda (aberto ao soltar/mover um lead para uma etapa "Perdido").
+    public bool $mostrarPerda = false;
+
+    public ?string $perdaLeadId = null;
+
+    public ?string $perdaEtapaId = null;
+
+    public ?string $perdaMotivo = null;
+
+    public ?string $perdaDetalhe = null;
 
     public static function canAccess(): bool
     {
@@ -43,41 +66,73 @@ class CrmFunil extends Page
         return MaxWidth::Full;
     }
 
-    public function getStages(): array
+    public function mount(): void
     {
-        return CrmLead::stageLabels();
+        if ($tenant = Tenancy::current()) {
+            CrmFunilPadrao::garantir((string) $tenant->id);
+        }
+
+        $this->funilId = $this->getFunilAtual()?->id;
+    }
+
+    /** @return Collection<int, CrmPipeline> */
+    public function getFunis(): Collection
+    {
+        return CrmPipeline::where('ativo', true)->orderByDesc('padrao')->orderBy('nome')->get();
+    }
+
+    public function getFunilAtual(): ?CrmPipeline
+    {
+        $funis = $this->getFunis();
+
+        return $funis->firstWhere('id', $this->funilId) ?? $funis->first();
+    }
+
+    /** @return Collection<int, CrmEtapa> */
+    public function getEtapas(): Collection
+    {
+        $funil = $this->getFunilAtual();
+
+        return $funil ? $funil->etapas()->get() : collect();
+    }
+
+    public function trocarFunil(string $funilId): void
+    {
+        $this->funilId = $funilId;
+        $this->selectedStage = null;
+    }
+
+    public function setVisao(string $visao): void
+    {
+        $this->visao = $visao === 'piramide' ? 'piramide' : 'kanban';
+    }
+
+    public function getMotivosPerda(): array
+    {
+        return CrmMotivoPerda::opcoes() ?: CrmLead::lostReasonCategoryLabels();
     }
 
     /**
-     * Estagios que formam o corpo da piramide (fluxo de progressao).
-     * "Perdido" fica fora -- e uma saida, nao um degrau do funil.
+     * Pirâmide: etapas abertas e ganho em sequência ("Perdido" fica fora, é saída
+     * e não degrau). Cada faixa estreita por posição, não pela contagem.
      */
     public function getFunnelStages(): array
     {
-        $stages = $this->getStages();
-        unset($stages[CrmLead::STAGE_PERDIDO]);
-        $stageIds = array_keys($stages);
-        $totalStages = count($stageIds);
+        $etapas = $this->getEtapas()->reject(fn (CrmEtapa $e) => $e->isPerdido())->values();
+        $total = max($etapas->count(), 1);
 
-        // Global scope already filters by tenant - no need to add tenant_id filter
-        $counts = CrmLead::whereIn('stage', $stageIds)
-            ->selectRaw('stage, count(*) as total')
-            ->groupBy('stage')
-            ->pluck('total', 'stage');
+        $counts = CrmLead::whereIn('etapa_id', $etapas->pluck('id'))
+            ->selectRaw('etapa_id, count(*) as total')->groupBy('etapa_id')->pluck('total', 'etapa_id');
 
-        $rows = [];
-        foreach ($stageIds as $i => $stageId) {
-            $rows[] = [
-                'stage' => $stageId,
-                'label' => $stages[$stageId],
-                'count' => (int) ($counts[$stageId] ?? 0),
-                'topWidth' => round(100 * ($totalStages - $i) / $totalStages, 1),
-                'bottomWidth' => round(100 * ($totalStages - $i - 1) / $totalStages, 1),
-                'url' => '#',
-            ];
-        }
-
-        return $rows;
+        return $etapas->map(fn (CrmEtapa $e, int $i) => [
+            'stage' => $e->id,
+            'etapa' => $e,
+            'label' => $e->nome,
+            'count' => (int) ($counts[$e->id] ?? 0),
+            'topWidth' => round(100 * ($total - $i) / $total, 1),
+            'bottomWidth' => round(100 * ($total - $i - 1) / $total, 1),
+            'url' => '#',
+        ])->all();
     }
 
     public function canUseAI(): bool
@@ -85,128 +140,113 @@ class CrmFunil extends Page
         return (bool) Tenancy::current()?->hasFeature('ia_diagnostico_avarias');
     }
 
-    public function selectStage(string $stageId): void
+    public function selectStage(string $etapaId): void
     {
-        $this->selectedStage = $this->selectedStage === $stageId ? null : $stageId;
+        $this->selectedStage = $this->selectedStage === $etapaId ? null : $etapaId;
     }
 
     public function getSelectedStageLeads(): Collection
     {
-        if (!$this->selectedStage) {
+        if (! $this->selectedStage) {
             return collect();
         }
 
-        return CrmLead::where('stage', $this->selectedStage)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        return $this->leadsQuery()->where('etapa_id', $this->selectedStage)->get();
     }
 
     public function getSelectedStageLabel(): ?string
     {
-        if (!$this->selectedStage) {
-            return null;
-        }
-
-        return $this->getStages()[$this->selectedStage] ?? null;
+        return $this->selectedStage ? $this->getEtapas()->firstWhere('id', $this->selectedStage)?->nome : null;
     }
 
     public function getLostCount(): int
     {
-        return CrmLead::where('stage', CrmLead::STAGE_PERDIDO)->count();
+        return $this->leadsQuery(false)->whereIn('etapa_id', $this->getEtapas()->filter->isPerdido()->pluck('id'))->count();
     }
 
     public function getOpenPipelineValue(): float
     {
-        return (float) CrmLead::whereNotIn('stage', [CrmLead::STAGE_CONVERTIDO, CrmLead::STAGE_PERDIDO])
-            ->sum('estimated_value');
+        return (float) $this->leadsQuery(false)->whereIn('etapa_id', $this->getEtapas()->filter->isAberta()->pluck('id'))->sum('estimated_value');
+    }
+
+    /** Σ valor × probabilidade da etapa, só etapas abertas (mesma ideia da projeção ponderada do Central). */
+    public function getWeightedPipelineValue(): float
+    {
+        return $this->getColunas()->filter(fn (array $c) => $c['etapa']->isAberta())->sum('ponderado');
     }
 
     public function getAverageTicket(): ?float
     {
-        $won = CrmLead::where('stage', CrmLead::STAGE_CONVERTIDO)
-            ->whereNotNull('estimated_value')
-            ->get();
+        $won = $this->leadsQuery(false)->whereIn('etapa_id', $this->getEtapas()->filter->isGanho()->pluck('id'))
+            ->whereNotNull('estimated_value')->get();
 
-        if ($won->isEmpty()) {
-            return null;
-        }
-
-        return (float) $won->avg('estimated_value');
+        return $won->isEmpty() ? null : (float) $won->avg('estimated_value');
     }
 
-    public function getConversionRate(array $rows): ?float
+    /** Ganhos ÷ todos os leads do funil. */
+    public function getConversionRate(array $rows = []): ?float
     {
-        $first = $rows[0]['count'] ?? 0;
-        $last = end($rows)['count'] ?? 0;
+        $total = $this->leadsQuery(false)->whereIn('etapa_id', $this->getEtapas()->pluck('id'))->count();
 
-        if ($first === 0) {
+        if ($total === 0) {
             return null;
         }
 
-        return round(($last / $first) * 100, 1);
+        $ganhos = $this->leadsQuery(false)->whereIn('etapa_id', $this->getEtapas()->filter->isGanho()->pluck('id'))->count();
+
+        return round(($ganhos / $total) * 100, 1);
     }
 
     /**
-     * Largura de cada faixa (%), afunilando por posicao no funil (base larga
-     * no topo, ponta estreita embaixo) -- nao pela quantidade de leads.
-     * Contagem de leads por estagio raramente decresce estagio a estagio
-     * num CRM real (lead pode entrar direto em "qualificado", por exemplo),
-     * entao largura proporcional a contagem virava um bloco quadrado
-     * sempre que os numeros nao caiam em ordem. O numero real de leads e
-     * valor continuam exibidos como texto em cada faixa, so a largura que
-     * e' fixa por posicao.
+     * Largura de cada faixa (%), afunilando por posição (base larga no topo,
+     * ponta estreita embaixo), nunca pela contagem de leads.
      */
     public function getFunnelWidths(): array
     {
-        $stages = array_keys($this->getFunnelStages());
-        $total = count($stages);
-
+        $ids = array_column($this->getFunnelStages(), 'stage');
+        $total = count($ids);
         $topWidth = 100;
         $bottomWidth = 34;
 
         if ($total <= 1) {
-            return collect($stages)->mapWithKeys(fn ($stage) => [$stage => $topWidth])->all();
+            return collect($ids)->mapWithKeys(fn ($id) => [$id => $topWidth])->all();
         }
 
-        return collect($stages)->mapWithKeys(function ($stage, $index) use ($total, $topWidth, $bottomWidth) {
+        return collect($ids)->mapWithKeys(function ($id, $index) use ($total, $topWidth, $bottomWidth) {
             $ratio = $index / ($total - 1);
-            $width = $topWidth - ($ratio * ($topWidth - $bottomWidth));
 
-            return [$stage => (int) round($width)];
+            return [$id => (int) round($topWidth - ($ratio * ($topWidth - $bottomWidth)))];
         })->all();
     }
 
-    /**
-     * Leads do tenant agrupados por estagio. Nao-admin ve so os leads
-     * atribuidos a ele mesmo -- mesmo criterio usado no CrmAgendaWidget.
-     */
-    public function getLeadsByStage(): Collection
+    /** Leads do tenant (não-admin só vê os atribuídos a ele), com a busca aplicada. */
+    private function leadsQuery(bool $comBusca = true)
     {
         $tenant = Tenancy::current();
-        if (! $tenant) {
-            return collect();
-        }
-
         $user = auth()->user();
 
-        $query = CrmLead::where('tenant_id', $tenant->id)
-            ->with('assignedUser');
+        $query = CrmLead::where('tenant_id', $tenant?->id)->with('assignedUser')->orderByDesc('created_at');
 
-        if (! $user->canSeeAllCrmLeads()) {
+        if ($user && ! $user->canSeeAllCrmLeads()) {
             $query->where('assigned_user_id', $user->id);
         }
 
-        if (trim($this->search) !== '') {
+        if ($comBusca && trim($this->search) !== '') {
             $term = '%'.trim($this->search).'%';
-            $query->where(function ($q) use ($term) {
-                $q->where('name', 'ilike', $term)
-                    ->orWhere('company_name', 'ilike', $term);
-            });
+            $query->where(fn ($q) => $q->where('name', 'ilike', $term)->orWhere('company_name', 'ilike', $term));
         }
 
-        $leads = $query->orderByDesc('created_at')->get();
+        return $query;
+    }
 
-        return $leads->groupBy(fn (CrmLead $lead) => array_key_exists($lead->stage, $this->getStages()) ? $lead->stage : CrmLead::STAGE_NOVO);
+    /** Leads do funil atual agrupados por id da etapa. */
+    public function getLeadsByStage(): Collection
+    {
+        if (! Tenancy::current()) {
+            return collect();
+        }
+
+        return $this->leadsQuery()->whereIn('etapa_id', $this->getEtapas()->pluck('id'))->get()->groupBy('etapa_id');
     }
 
     public function getStageValue(Collection $leads): float
@@ -215,42 +255,93 @@ class CrmFunil extends Page
     }
 
     /**
-     * Chamado pelo select de estagio na lista do estagio selecionado.
-     * Nao-admin so pode mover leads atribuidos a ele mesmo. Mover para
-     * "perdido" exige o motivo (coletado via prompt() no JS antes de
-     * chamar isso).
+     * Colunas do Kanban: etapa, leads, contagem, valor total e valor
+     * ponderado (valor × probabilidade) de cada uma.
+     *
+     * @return Collection<int, array{etapa: CrmEtapa, leads: Collection, count: int, total: float, ponderado: float}>
      */
-    public function moveStage(string $leadId, string $newStage, ?string $lostReason = null): void
+    public function getColunas(): Collection
     {
-        if (! array_key_exists($newStage, $this->getStages())) {
+        $porEtapa = $this->getLeadsByStage();
+
+        return $this->getEtapas()->map(function (CrmEtapa $etapa) use ($porEtapa) {
+            $leads = $porEtapa->get($etapa->id, collect());
+            $total = $this->getStageValue($leads);
+
+            return [
+                'etapa' => $etapa,
+                'leads' => $leads,
+                'count' => $leads->count(),
+                'total' => $total,
+                'ponderado' => $etapa->isAberta() ? round($total * $etapa->probabilidade / 100, 2) : ($etapa->isGanho() ? $total : 0.0),
+            ];
+        });
+    }
+
+    /**
+     * Chamado ao soltar um card (Sortable) ou pelo seletor de fallback. Soltar
+     * numa etapa "Perdido" abre o modal de motivo em vez de mover direto.
+     */
+    public function moverLead(string $leadId, string $etapaId): void
+    {
+        $lead = CrmLead::where('tenant_id', Tenancy::current()?->id)->find($leadId);
+        $etapa = CrmEtapa::where('tenant_id', Tenancy::current()?->id)->find($etapaId);
+
+        if (! $lead || ! $etapa) {
             return;
         }
 
-        $tenant = Tenancy::current();
-        $user = auth()->user();
-
-        $lead = CrmLead::where('tenant_id', $tenant?->id)->find($leadId);
-
-        if (! $lead) {
-            return;
-        }
-
-        if (! $user->canSeeAllCrmLeads() && $lead->assigned_user_id !== $user->id) {
-            return;
-        }
-
-        if ($newStage === CrmLead::STAGE_PERDIDO && trim((string) $lostReason) === '') {
-            Notification::make()->title('Informe o motivo da perda.')->danger()->send();
+        if ($etapa->isPerdido()) {
+            $this->perdaLeadId = $lead->id;
+            $this->perdaEtapaId = $etapa->id;
+            $this->perdaMotivo = null;
+            $this->perdaDetalhe = null;
+            $this->mostrarPerda = true;
 
             return;
         }
 
-        $lead->update([
-            'stage' => $newStage,
-            'lost_reason' => $newStage === CrmLead::STAGE_PERDIDO ? $lostReason : $lead->lost_reason,
-        ]);
+        $this->aplicarMovimento($lead, $etapa);
+    }
 
-        Notification::make()->title('Lead movido para '.$this->getStages()[$newStage].'.')->success()->send();
+    public function confirmarPerda(): void
+    {
+        $lead = CrmLead::where('tenant_id', Tenancy::current()?->id)->find($this->perdaLeadId);
+        $etapa = CrmEtapa::where('tenant_id', Tenancy::current()?->id)->find($this->perdaEtapaId);
+
+        if (! $lead || ! $etapa) {
+            $this->cancelarPerda();
+
+            return;
+        }
+
+        if ($this->aplicarMovimento($lead, $etapa, $this->perdaMotivo, $this->perdaDetalhe)) {
+            $this->cancelarPerda();
+        }
+    }
+
+    public function cancelarPerda(): void
+    {
+        $this->reset(['mostrarPerda', 'perdaLeadId', 'perdaEtapaId', 'perdaMotivo', 'perdaDetalhe']);
+    }
+
+    private function aplicarMovimento(CrmLead $lead, CrmEtapa $etapa, ?string $motivo = null, ?string $detalhe = null): bool
+    {
+        try {
+            app(CrmFunilService::class)->moverLead($lead, $etapa, auth()->user(), $motivo, $detalhe);
+        } catch (ValidationException $e) {
+            Notification::make()->title(collect($e->errors())->flatten()->first())->danger()->send();
+
+            return false;
+        } catch (\InvalidArgumentException $e) {
+            Notification::make()->title($e->getMessage())->danger()->send();
+
+            return false;
+        }
+
+        Notification::make()->title('Lead movido para '.$etapa->nome.'.')->success()->send();
+
+        return true;
     }
 
     /**
@@ -264,7 +355,7 @@ class CrmFunil extends Page
 
         $lead = CrmLead::where('tenant_id', $tenant?->id)->find($leadId);
 
-        if (! $lead || $lead->stage !== CrmLead::STAGE_CONVERTIDO || $lead->client_id) {
+        if (! $lead || ! $lead->isWon() || $lead->client_id) {
             return;
         }
 
