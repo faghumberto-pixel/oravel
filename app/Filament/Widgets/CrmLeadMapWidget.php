@@ -3,9 +3,12 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Resources\ClientResource;
+use App\Filament\Resources\CrmContaResource;
 use App\Filament\Resources\CrmLeadResource;
 use App\Models\Client;
+use App\Models\CrmConta;
 use App\Models\CrmLead;
+use App\Support\CrmApiPresenter;
 use App\Support\Tenancy;
 use Filament\Widgets\Widget;
 
@@ -66,10 +69,8 @@ class CrmLeadMapWidget extends Widget
     }
 
     /**
-     * Clientes com coordenadas cadastradas (marcador azul no mapa). Client
-     * ja tem latitude/longitude geocodificadas a partir do CEP (mesmo
-     * pipeline do Mapa de Equipamentos) -- respeita a trava comercial:
-     * se o plano do tenant nao inclui Clientes, nao mostra nenhum aqui.
+     * "Clientes" do mapa (marcador azul): as Contas do CRM com coordenadas e, só para quem tem o módulo
+     * de Clientes do ERP, os Clientes que ainda não estão ligados a uma conta.
      */
     public function getClients(): array
     {
@@ -78,23 +79,34 @@ class CrmLeadMapWidget extends Widget
             return [];
         }
 
-        if (! auth()->user()->can('viewAny', Client::class)) {
-            return [];
+        $user = auth()->user();
+        $itens = [];
+        $clientesJaNoMapa = [];
+
+        if ($user->can('viewAny', CrmConta::class)) {
+            foreach (CrmApiPresenter::contasVisiveis($user)->whereNotNull('latitude')->whereNotNull('longitude')->get() as $conta) {
+                $itens[] = [
+                    'id' => $conta->id, 'name' => $conta->nome, 'city' => $conta->cidade, 'uf' => $conta->uf,
+                    'latitude' => $conta->latitude, 'longitude' => $conta->longitude,
+                    'url' => CrmContaResource::getUrl('edit', ['record' => $conta]),
+                ];
+                $conta->client_id && $clientesJaNoMapa[] = $conta->client_id;
+            }
         }
 
-        return Client::where('tenant_id', $tenant->id)
-            ->whereNotNull('latitude')
-            ->whereNotNull('longitude')
-            ->get(['id', 'name', 'city', 'uf', 'latitude', 'longitude'])
-            ->map(fn (Client $client) => [
-                'id' => $client->id,
-                'name' => $client->name,
-                'city' => $client->city,
-                'uf' => $client->uf,
-                'latitude' => $client->latitude,
-                'longitude' => $client->longitude,
-                'url' => ClientResource::getUrl('edit', ['record' => $client]),
-            ])
-            ->all();
+        if ($tenant->hasFeature('tabela_clients') && $user->can('viewAny', Client::class)) {
+            $clientes = Client::where('tenant_id', $tenant->id)->whereNotNull('latitude')->whereNotNull('longitude')
+                ->whereNotIn('id', $clientesJaNoMapa)->get(['id', 'name', 'city', 'uf', 'latitude', 'longitude']);
+
+            foreach ($clientes as $client) {
+                $itens[] = [
+                    'id' => $client->id, 'name' => $client->name, 'city' => $client->city, 'uf' => $client->uf,
+                    'latitude' => $client->latitude, 'longitude' => $client->longitude,
+                    'url' => ClientResource::getUrl('edit', ['record' => $client]),
+                ];
+            }
+        }
+
+        return $itens;
     }
 }

@@ -251,7 +251,10 @@ class CrmContasCatalogoTest extends TestCase
     public function test_migration_is_reversible(): void
     {
         $migration = require base_path('database/migrations/2026_11_17_100000_create_crm_contas_produtos_e_itens.php');
+        // A 6B (visitas) depende de crm_contas: sai antes e volta depois.
+        $campo = require base_path('database/migrations/2026_11_18_100000_create_crm_veiculos_visitas_despesas.php');
 
+        $campo->down();
         $migration->down();
         foreach (['crm_contas', 'crm_conta_contatos', 'crm_produtos', 'crm_lead_itens'] as $tabela) {
             $this->assertFalse(Schema::hasTable($tabela));
@@ -259,6 +262,7 @@ class CrmContasCatalogoTest extends TestCase
         $this->assertFalse(Schema::hasColumn('crm_leads', 'crm_conta_id'));
 
         $migration->up();
+        $campo->up();
         $this->assertTrue(Schema::hasTable('crm_contas'));
         $this->assertTrue(Schema::hasColumn('whatsapp_conversas', 'crm_conta_id'));
         $this->assertSame(0, DB::table('crm_contas')->count());

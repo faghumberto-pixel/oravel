@@ -2,8 +2,10 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\CrmVisitaResource;
 use App\Models\CrmLead;
 use App\Models\CrmLeadInteraction;
+use App\Models\CrmVisita;
 use App\Support\Tenancy;
 use Carbon\Carbon;
 use Filament\Actions\Action;
@@ -50,7 +52,7 @@ class CrmAgendaWidget extends FullCalendarWidget
             $query->whereHas('lead', fn ($q) => $q->where('assigned_user_id', $user->id));
         }
 
-        return $query->get()
+        $followups = $query->get()
             ->filter(fn (CrmLeadInteraction $interaction) => $interaction->lead !== null)
             ->map(function (CrmLeadInteraction $interaction) {
                 $isPast = $interaction->next_followup_date->isPast();
@@ -74,6 +76,36 @@ class CrmAgendaWidget extends FullCalendarWidget
             // desenha nada. Mesmo bug encontrado e corrigido em
             // AgendaTecnicoWidget::fetchEvents().
             ->toArray();
+
+        return array_merge($followups, $this->eventosDeVisitas($fetchInfo));
+    }
+
+    /** Visitas de campo (com hora e cor por status). Vendedor vê só as dele. */
+    private function eventosDeVisitas(array $fetchInfo): array
+    {
+        $user = auth()->user();
+
+        if (! $user || ! $user->can('viewAny', CrmVisita::class)) {
+            return [];
+        }
+
+        return CrmVisitaResource::getEloquentQuery()
+            ->whereBetween('agendada_para', [Carbon::parse($fetchInfo['start']), Carbon::parse($fetchInfo['end'])])
+            ->with(['lead', 'conta', 'vendedor'])
+            ->get()
+            ->map(fn (CrmVisita $v) => EventData::make()
+                ->id('visita-'.$v->id)
+                ->title('Visita: '.$v->alvoNome().($user->canSeeAllCrmLeads() && $v->vendedor ? ' ('.$v->vendedor->name.')' : ''))
+                ->start($v->agendada_para->toIso8601String())
+                ->allDay(false)
+                ->backgroundColor(match ($v->status) {
+                    CrmVisita::STATUS_REALIZADA => '#16a34a',
+                    CrmVisita::STATUS_EM_ANDAMENTO => '#f59e0b',
+                    CrmVisita::STATUS_CANCELADA, CrmVisita::STATUS_NAO_ENCONTROU => '#6b7280',
+                    default => '#2563eb',
+                })
+                ->toArray())
+            ->all();
     }
 
     protected function headerActions(): array

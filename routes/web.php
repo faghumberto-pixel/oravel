@@ -2,20 +2,27 @@
 
 use App\Filament\Pages\AlocacaoTecnicosPmp;
 use App\Filament\Pages\ConsultaClientePmp;
+use App\Filament\Pages\PainelGestao;
 use App\Http\Controllers\AIAnalysisPdfController;
+use App\Http\Controllers\AssetCadastroPrintController;
 use App\Http\Controllers\AssetDossierPdfController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\BancaryReconciliationExportController;
 use App\Http\Controllers\CashflowExportController;
+use App\Http\Controllers\Central\ContratoAssinadoController;
 use App\Http\Controllers\ChatHistoryPdfController;
 use App\Http\Controllers\ClientMagicLinkController;
 use App\Http\Controllers\ClientManagementPrintController;
 use App\Http\Controllers\ClientReceivableMirrorController;
+use App\Http\Controllers\ColaboradorAusenciasController;
 use App\Http\Controllers\ContractTimelinePrintController;
+use App\Http\Controllers\ContratoVisualizarController;
+use App\Http\Controllers\CrmDespesasPdfController;
 use App\Http\Controllers\EquipmentDamageReportController;
 use App\Http\Controllers\GenericRecordPrintController;
 use App\Http\Controllers\HourMeterOfflineController;
 use App\Http\Controllers\HourMeterPublicController;
+use App\Http\Controllers\KmRodadoPrintController;
 use App\Http\Controllers\MaintenanceKanbanPrintController;
 use App\Http\Controllers\MaintenanceOrderController;
 use App\Http\Controllers\MaintenanceOrderDossieController;
@@ -23,10 +30,8 @@ use App\Http\Controllers\MaintenanceReportController;
 use App\Http\Controllers\Pmp5w2hController;
 use App\Http\Controllers\PreventiveMaintenanceKanbanPrintController;
 use App\Http\Controllers\PrintQrController;
-use App\Http\Controllers\TreinamentoTesteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropostaComercialApprovalController;
-use App\Http\Controllers\ColaboradorAusenciasController;
 use App\Http\Controllers\PropostaComercialBatchPrintController;
 use App\Http\Controllers\PropostaComercialReportController;
 use App\Http\Controllers\PublicSignatureController;
@@ -35,6 +40,7 @@ use App\Http\Controllers\QuoteReportController;
 use App\Http\Controllers\RentalDemoController;
 use App\Http\Controllers\TablePrintController;
 use App\Http\Controllers\TimeClockOfflineController;
+use App\Http\Controllers\TreinamentoTesteController;
 use App\Livewire\Academy\CoursePage;
 use App\Livewire\Academy\Home;
 use App\Livewire\Academy\Landing;
@@ -42,16 +48,17 @@ use App\Livewire\Academy\RankingPage;
 use App\Livewire\Academy\TeamPage;
 use App\Livewire\AssetDossierMobile;
 use App\Livewire\ChecklistFrotaMobile;
-use App\Livewire\OleoFrotaMobile;
-use App\Livewire\SaidaVeiculoMobile;
+use App\Livewire\CrmVisitasMobile;
 use App\Livewire\EquipmentDamageMobile;
 use App\Livewire\EquipmentMovementMobile;
 use App\Livewire\EquipmentPatioArrivalMobile;
 use App\Livewire\MaintenanceChecklistMobile;
 use App\Livewire\MaintenanceOrderFieldWizard;
+use App\Livewire\OleoFrotaMobile;
 use App\Livewire\PreventiveMaintenanceMobile;
 use App\Livewire\PropostaComercialMobile;
 use App\Livewire\RentalDispatchChecklistMobile;
+use App\Livewire\SaidaVeiculoMobile;
 use App\Models\AcademyCertificate;
 use App\Models\Asset;
 use App\Models\ChatMessage;
@@ -185,7 +192,7 @@ Route::post('/hour-meter/publico/{token}', [HourMeterPublicController::class, 's
 // o middleware aqui é defesa em profundidade (401 limpo pra quem nem
 // logou, em vez do controller ter que checar Auth::guard() manualmente).
 Route::middleware(['auth:client'])->group(function () {
-    Route::get('/cliente/contratos/{contract}', [\App\Http\Controllers\ContratoVisualizarController::class, 'portal'])
+    Route::get('/cliente/contratos/{contract}', [ContratoVisualizarController::class, 'portal'])
         ->name('cliente.contracts.ver');
     Route::get('/cliente/financeiro/{accountReceivable}/espelho', [ClientReceivableMirrorController::class, 'download'])
         ->name('cliente.receivable.mirror');
@@ -260,7 +267,7 @@ Route::middleware(['auth'])->group(function () {
         'tenant' => auth()->user()?->tenant,
     ]))->name('admin.conta-bloqueada');
 
-    Route::get('/contratos/{contract}/visualizar', [\App\Http\Controllers\ContratoVisualizarController::class, 'painel'])
+    Route::get('/contratos/{contract}/visualizar', [ContratoVisualizarController::class, 'painel'])
         ->name('contratos.visualizar');
 
     Route::get('/dashboard', function () {
@@ -300,7 +307,7 @@ Route::middleware(['auth'])->group(function () {
         // Quem entra em /admin cai sempre na tela de Início (Painel de
         // Controle), e não no primeiro item do menu (Gestão de Ativos...).
         // Sem acesso ao Início, usa a regra padrão do Filament.
-        if ($user && \App\Filament\Pages\PainelGestao::canAccess()) {
+        if ($user && PainelGestao::canAccess()) {
             return redirect()->to(AppProfile::homeUrl($user, AppProfile::ADMIN));
         }
 
@@ -331,11 +338,11 @@ Route::middleware(['auth'])->group(function () {
         ->name('generic-record.print');
 
     // Km rodado da frota (por veículo e por percurso) no padrão de impressão dos relatórios.
-    Route::get('/admin/print/km-rodado', [\App\Http\Controllers\KmRodadoPrintController::class, 'show'])
+    Route::get('/admin/print/km-rodado', [KmRodadoPrintController::class, 'show'])
         ->name('km-rodado.print');
 
     // Ficha de cadastro completa do Ativo (botão "Imprimir cadastro" em ver/editar Ativo).
-    Route::get('/admin/print/ativo/{asset}/cadastro', [\App\Http\Controllers\AssetCadastroPrintController::class, 'show'])
+    Route::get('/admin/print/ativo/{asset}/cadastro', [AssetCadastroPrintController::class, 'show'])
         ->name('asset.print-cadastro');
 
     Route::get('/admin/proposta-comercial/{record}/pdf', [PropostaComercialReportController::class, 'download'])
@@ -494,6 +501,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/propostas-comerciais/nova', PropostaComercialMobile::class)
         ->name('proposta-comercial.mobile.create');
 
+    Route::get('/admin/crm/visitas/mobile', CrmVisitasMobile::class)
+        ->name('crm.visitas.mobile');
+
+    Route::get('/admin/crm/despesas/pdf', CrmDespesasPdfController::class)
+        ->name('crm.despesas.pdf');
+
     Route::get('/admin/equipment-damages/{record}/laudo-pdf', [EquipmentDamageReportController::class, 'download'])
         ->name('equipment-damages.laudo.pdf');
 
@@ -584,6 +597,6 @@ require __DIR__.'/checkout.php';
 // Central: ver/baixar o contrato assinado de cada cliente (só administrador da plataforma).
 Route::middleware(['web', 'auth'])
     ->group(function () {
-        Route::get('/central/contratos-assinados/{signature}', [\App\Http\Controllers\Central\ContratoAssinadoController::class, 'ver'])
+        Route::get('/central/contratos-assinados/{signature}', [ContratoAssinadoController::class, 'ver'])
             ->name('central.contrato-assinado.ver');
     });
