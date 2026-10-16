@@ -24,6 +24,7 @@ class ListCrmLeads extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return [
+            CrmLeadResource\Widgets\CrmMinhasMetasStats::class,
             CrmLeadResource\Widgets\CrmLeadStats::class,
             CrmLeadResource\Widgets\CrmLeadsCreatedTrendWidget::class,
             CrmLeadResource\Widgets\ConversionRateGaugeWidget::class,

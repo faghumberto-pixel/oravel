@@ -98,6 +98,9 @@ class CrmLead extends Model
         'custom',
         'lost_reason',
         'lost_reason_category',
+        'fechado_em',
+        'valor_fechado',
+        'vendedor_fechamento_id',
         'won_notes',
         'assigned_user_id',
         'estimated_value',
@@ -135,6 +138,8 @@ class CrmLead extends Model
         'last_contacted_at' => 'datetime',
         'next_followup_date' => 'date',
         'previsao_fechamento' => 'date',
+        'fechado_em' => 'datetime',
+        'valor_fechado' => 'decimal:2',
         'custom' => 'array',
     ];
 
@@ -180,11 +185,33 @@ class CrmLead extends Model
 
         $this->etapa_id = $etapa->id;
         $this->setRelation('etapa', $etapa);
+        $this->registrarFechamento($etapa, $novo);
         $this->stage = match ($etapa->tipo) {
             CrmEtapa::TIPO_GANHO => self::STAGE_CONVERTIDO,
             CrmEtapa::TIPO_PERDIDO => self::STAGE_PERDIDO,
             default => $etapa->slug,
         };
+    }
+
+    /**
+     * Fechamento datado (base das metas): ao entrar numa etapa final guarda quando, o valor (só ganho) e o
+     * responsável da hora; ao voltar para uma etapa aberta limpa tudo. Editar o valor depois não muda o fechado.
+     */
+    private function registrarFechamento(CrmEtapa $etapa, bool $novo): void
+    {
+        if ($etapa->isAberta()) {
+            $this->fechado_em = null;
+            $this->valor_fechado = null;
+            $this->vendedor_fechamento_id = null;
+
+            return;
+        }
+
+        if ($novo || $this->isDirty('etapa_id') || ! $this->fechado_em) {
+            $this->fechado_em = now();
+            $this->valor_fechado = $etapa->isGanho() ? $this->estimated_value : null;
+            $this->vendedor_fechamento_id = $this->assigned_user_id;
+        }
     }
 
     /** Resolve um valor legado de stage na etapa do funil padrão do tenant ('prospecção' e outros desconhecidos caem na 1ª etapa aberta). */
