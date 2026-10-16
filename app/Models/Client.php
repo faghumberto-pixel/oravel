@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Domain\Fleet\Models\RentalOverageCharge;
 use App\Models\Concerns\HasSaaSMetadata;
 use App\Models\Traits\BelongsToTenant;
+use App\Support\CrmCamposCustom;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Auth\Authenticatable;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 
@@ -128,6 +130,8 @@ class Client extends Model implements AuthenticatableContract, FilamentUser
         'check_blacklist',
         'check_credit_bureau',
         'credit_score',
+        // Campos personalizados do CRM (ver App\Support\CrmCamposCustom).
+        'custom',
     ];
 
     protected $hidden = [
@@ -152,7 +156,17 @@ class Client extends Model implements AuthenticatableContract, FilamentUser
         'check_internal_fraud' => 'boolean',
         'check_blacklist' => 'boolean',
         'check_credit_bureau' => 'boolean',
+        'custom' => 'array',
     ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (Client $client) {
+            if ($client->isDirty('custom') || ! $client->exists) {
+                $client->custom = CrmCamposCustom::normalizar('cliente', $client->custom, $client->tenant_id);
+            }
+        });
+    }
 
     /**
      * Filament\Http\Middleware\Authenticate::authenticate() aborta com 403
@@ -195,7 +209,7 @@ class Client extends Model implements AuthenticatableContract, FilamentUser
         return $this->hasMany(Asset::class, 'client_id');
     }
 
-    public function preventiveMaintenanceExecutions(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    public function preventiveMaintenanceExecutions(): HasManyThrough
     {
         return $this->hasManyThrough(
             PreventiveMaintenanceExecution::class,

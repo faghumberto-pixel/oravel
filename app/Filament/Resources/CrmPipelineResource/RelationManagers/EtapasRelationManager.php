@@ -48,7 +48,7 @@ class EtapasRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('nome')->label('Etapa')->badge()
                     ->color(fn (CrmEtapa $r) => CrmPalette::etapa($r)['filament']),
-                Tables\Columns\TextColumn::make('tipo')->label('Tipo')->formatStateUsing(fn ($s) => CrmEtapa::tipoLabels()[$s] ?? $s),
+                Tables\Columns\TextColumn::make('tipo')->label('Tipo')->formatStateUsing(fn ($state) => CrmEtapa::tipoLabels()[$state] ?? $state),
                 Tables\Columns\TextColumn::make('probabilidade')->label('Probabilidade')->suffix('%'),
                 Tables\Columns\TextColumn::make('leads_count')->label('Leads')->counts('leads'),
             ])

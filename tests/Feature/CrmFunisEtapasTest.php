@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\Filament\Pages\CrmFunil;
+use App\Filament\Resources\CrmPipelineResource\Pages\EditCrmPipeline;
 use App\Filament\Resources\CrmPipelineResource\Pages\ListCrmPipelines;
+use App\Filament\Resources\CrmPipelineResource\RelationManagers\EtapasRelationManager;
 use App\Models\CrmEtapa;
 use App\Models\CrmLead;
 use App\Models\CrmMotivoPerda;
@@ -237,5 +239,17 @@ class CrmFunisEtapasTest extends TestCase
         $linha = DB::table('crm_leads')->join('crm_etapas', 'crm_etapas.id', '=', 'crm_leads.etapa_id')
             ->where('crm_leads.id', $lead->id)->value('crm_etapas.slug');
         $this->assertSame('qualificado', $linha, 'up refaz o vínculo pelo stage');
+    }
+
+    public function test_stages_relation_manager_renders_with_labels(): void
+    {
+        [$tenant, $admin] = $this->makeTenantAdmin();
+        $funil = CrmPipeline::withoutGlobalScopes()->findOrFail(CrmFunilPadrao::garantir($tenant->id));
+        $this->actingAs($admin);
+
+        Livewire::test(EtapasRelationManager::class, [
+            'ownerRecord' => $funil,
+            'pageClass' => EditCrmPipeline::class,
+        ])->assertSee('Qualificado')->assertSee('Final — Ganho');
     }
 }

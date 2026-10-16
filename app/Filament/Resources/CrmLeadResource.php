@@ -14,6 +14,7 @@ use App\Models\CrmOrigem;
 use App\Models\User;
 use App\Services\CepGeocodingService;
 use App\Services\CrmFunilPadrao;
+use App\Support\CrmCamposCustom;
 use App\Support\CrmPalette;
 use App\Support\Tenancy;
 use Filament\Forms;
@@ -227,6 +228,7 @@ class CrmLeadResource extends BaseResource
                     Forms\Components\Hidden::make('latitude'),
                     Forms\Components\Hidden::make('longitude'),
                 ]),
+            ...array_filter([CrmCamposCustom::secao('lead')]),
         ]);
     }
 
@@ -275,6 +277,8 @@ class CrmLeadResource extends BaseResource
                     ->label('Criado em')
                     ->date('d/m/Y')
                     ->sortable(),
+
+                ...CrmCamposCustom::colunas('lead'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('etapa_id')

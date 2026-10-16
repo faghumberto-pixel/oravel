@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\BelongsToTenant;
 use App\Models\Concerns\HasSaaSMetadata;
 use App\Services\CrmFunilPadrao;
+use App\Support\CrmCamposCustom;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -94,6 +95,7 @@ class CrmLead extends Model
         'source',
         'stage',
         'etapa_id',
+        'custom',
         'lost_reason',
         'lost_reason_category',
         'won_notes',
@@ -130,6 +132,7 @@ class CrmLead extends Model
         'longitude' => 'decimal:8',
         'last_contacted_at' => 'datetime',
         'next_followup_date' => 'date',
+        'custom' => 'array',
     ];
 
     /**
@@ -141,6 +144,11 @@ class CrmLead extends Model
     {
         static::creating(fn (CrmLead $lead) => $lead->resolverEtapa(true));
         static::updating(fn (CrmLead $lead) => $lead->resolverEtapa(false));
+        static::saving(function (CrmLead $lead) {
+            if ($lead->isDirty('custom') || ! $lead->exists) {
+                $lead->custom = CrmCamposCustom::normalizar('lead', $lead->custom, $lead->tenant_id);
+            }
+        });
     }
 
     private function resolverEtapa(bool $novo): void
@@ -189,6 +197,17 @@ class CrmLead extends Model
             self::STAGE_PERDIDO => $lista->firstWhere('tipo', CrmEtapa::TIPO_PERDIDO),
             default => $lista->firstWhere('slug', $stage),
         } ?? $lista->firstWhere('tipo', CrmEtapa::TIPO_ABERTA) ?? $lista->first();
+    }
+
+    /** Valores dos campos personalizados do lead que têm campo de cliente com a mesma chave e o mesmo tipo. */
+    private function customParaCliente(): array
+    {
+        $doCliente = CrmCamposCustom::campos('cliente', false, (string) $this->tenant_id)->keyBy('chave');
+        $doLead = CrmCamposCustom::campos('lead', false, (string) $this->tenant_id)->keyBy('chave');
+
+        return collect((array) $this->custom)
+            ->filter(fn ($valor, $chave) => $doCliente->has($chave) && $doLead->has($chave) && $doCliente[$chave]->tipo === $doLead[$chave]->tipo)
+            ->all();
     }
 
     public function etapa(): BelongsTo
@@ -379,6 +398,8 @@ class CrmLead extends Model
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
         ]);
+
+        $client->update(['custom' => $this->customParaCliente()]);
 
         $this->update(['client_id' => $client->id]);
 

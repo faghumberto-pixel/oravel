@@ -7,21 +7,23 @@ use App\Filament\Resources\ClientResource\Pages;
 use App\Models\Client;
 use App\Notifications\ClientPortalAccessGranted;
 use App\Services\CepGeocodingService;
+use App\Services\WhatsAppEmpresaService;
+use App\Support\ClientDuplicidade;
+use App\Support\CrmCamposCustom;
+use App\Support\Tenancy;
 use App\Traits\HasPlanAuthorization;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+// Adicionado para identificar o Tenant
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-// Adicionado para identificar o Tenant
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Log;
-use App\Support\ClientDuplicidade;
-use App\Support\Tenancy;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Throwable;
@@ -68,7 +70,7 @@ class ClientResource extends Resource
      */
     public static function regraDuplicidade(string $campo): \Closure
     {
-        return fn (Forms\Get $get, ?Client $record) => function (string $attribute, $value, \Closure $fail) use ($get, $record, $campo) {
+        return fn (Get $get, ?Client $record) => function (string $attribute, $value, \Closure $fail) use ($get, $record, $campo) {
             $tenantId = $record?->tenant_id ?? Tenancy::current()?->id;
 
             if (! $tenantId) {
@@ -114,34 +116,34 @@ class ClientResource extends Resource
                                 ->description('Como falar com o cliente. O e-mail também é o usuário de login do Portal do Cliente.')
                                 ->schema([
                                     Forms\Components\TextInput::make('contact_name')->label('Nome do contato')->maxLength(255),
-                                Forms\Components\TextInput::make('email')
-                                    ->label('E-mail')
-                                    ->email()
-                                    ->required(fn (Forms\Get $get) => (bool) $get('portal_access_enabled_at'))
-                                    ->rules([
-                                        static::regraDuplicidade('email'),
-                                        fn (Forms\Get $get, ?Client $record) => function (string $attribute, $value, \Closure $fail) use ($get, $record) {
-                                            // O e-mail é o usuário de login do portal: não pode repetir em outro
-                                            // cliente com acesso ativo (nem de outra empresa), senão o login ficaria ambíguo.
-                                            if (! $get('portal_access_enabled_at') || blank($value)) {
-                                                return;
-                                            }
+                                    Forms\Components\TextInput::make('email')
+                                        ->label('E-mail')
+                                        ->email()
+                                        ->required(fn (Get $get) => (bool) $get('portal_access_enabled_at'))
+                                        ->rules([
+                                            static::regraDuplicidade('email'),
+                                            fn (Get $get, ?Client $record) => function (string $attribute, $value, \Closure $fail) use ($get, $record) {
+                                                // O e-mail é o usuário de login do portal: não pode repetir em outro
+                                                // cliente com acesso ativo (nem de outra empresa), senão o login ficaria ambíguo.
+                                                if (! $get('portal_access_enabled_at') || blank($value)) {
+                                                    return;
+                                                }
 
-                                            $repetido = Client::withoutGlobalScopes()
-                                                ->where('email', $value)
-                                                ->whereNotNull('portal_access_enabled_at')
-                                                ->when($record, fn ($q) => $q->where('id', '!=', $record->id))
-                                                ->exists();
+                                                $repetido = Client::withoutGlobalScopes()
+                                                    ->where('email', $value)
+                                                    ->whereNotNull('portal_access_enabled_at')
+                                                    ->when($record, fn ($q) => $q->where('id', '!=', $record->id))
+                                                    ->exists();
 
-                                            if ($repetido) {
-                                                $fail('Este e-mail já é usuário do portal de outro cliente. Use outro e-mail.');
-                                            }
-                                        },
-                                    ])
-                                    ->helperText('Usado como destinatário padrão em envios (ex: orçamentos). Também é o usuário de login do Portal do Cliente.'),
+                                                if ($repetido) {
+                                                    $fail('Este e-mail já é usuário do portal de outro cliente. Use outro e-mail.');
+                                                }
+                                            },
+                                        ])
+                                        ->helperText('Usado como destinatário padrão em envios (ex: orçamentos). Também é o usuário de login do Portal do Cliente.'),
                                     Forms\Components\TextInput::make('phone')->label('Telefone')->tel()->maxLength(30)->rules([static::regraDuplicidade('phone')]),
                                     Forms\Components\TextInput::make('whatsapp')->label('Celular / WhatsApp')->tel()->maxLength(30)->rules([static::regraDuplicidade('whatsapp')]),
-                                    Forms\Components\Toggle::make('aceita_avisos_whatsapp')->label('Aceita receber avisos por WhatsApp')->visible(fn () => \App\Services\WhatsAppEmpresaService::moduloLiberado(Tenancy::current()?->id))->helperText('Marque só se o cliente autorizou. Cobranças e avisos de ordem de serviço automáticos só vão para quem aceitou.'),
+                                    Forms\Components\Toggle::make('aceita_avisos_whatsapp')->label('Aceita receber avisos por WhatsApp')->visible(fn () => WhatsAppEmpresaService::moduloLiberado(Tenancy::current()?->id))->helperText('Marque só se o cliente autorizou. Cobranças e avisos de ordem de serviço automáticos só vão para quem aceitou.'),
                                 ])->columns(2),
                             Forms\Components\Section::make('Site e redes sociais')
                                 ->schema([
@@ -252,7 +254,7 @@ class ClientResource extends Resource
                                         ->autocomplete('new-password')
                                         ->afterStateHydrated(fn (Forms\Components\TextInput $component) => $component->state(null))
                                         ->minLength(8)
-                                        ->required(fn (Forms\Get $get, ?Client $record) => (bool) $get('portal_access_enabled_at') && ! $record?->password)
+                                        ->required(fn (Get $get, ?Client $record) => (bool) $get('portal_access_enabled_at') && ! $record?->password)
                                         ->dehydrated(fn ($state) => filled($state))
                                         ->helperText(fn (?Client $record) => $record?->password
                                             ? 'Deixe em branco para manter a senha atual. Preencha para trocar.'
@@ -260,6 +262,9 @@ class ClientResource extends Resource
                                 ])
                                 ->columns(2),
                         ]),
+                    ...(($custom = CrmCamposCustom::secao('cliente'))
+                        ? [Forms\Components\Tabs\Tab::make('Campos Personalizados')->icon('heroicon-o-adjustments-horizontal')->schema([$custom])]
+                        : []),
                     Forms\Components\Tabs\Tab::make('Resumo Financeiro')
                         ->icon('heroicon-o-banknotes')
                         ->schema([
@@ -306,6 +311,8 @@ class ClientResource extends Resource
                     ->badge()
                     ->formatStateUsing(fn (?string $state) => $state ? (Client::nicheLabels()[$state] ?? $state) : null)
                     ->placeholder('—'),
+
+                ...CrmCamposCustom::colunas('cliente'),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
