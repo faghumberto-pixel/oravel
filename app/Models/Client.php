@@ -159,6 +159,11 @@ class Client extends Model implements AuthenticatableContract, FilamentUser
         'custom' => 'array',
     ];
 
+    public function contacts(): HasMany
+    {
+        return $this->hasMany(ClientContact::class)->orderByDesc('is_primary')->orderBy('name');
+    }
+
     protected static function booted(): void
     {
         static::saving(function (Client $client) {

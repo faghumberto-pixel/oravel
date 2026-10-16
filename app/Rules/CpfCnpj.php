@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use App\Support\Cnpj;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
@@ -58,28 +59,6 @@ class CpfCnpj implements ValidationRule
 
     private function isValidCnpj(string $cnpj): bool
     {
-        if (preg_match('/^(\d)\1{13}$/', $cnpj)) {
-            return false;
-        }
-
-        $calcDigit = function (string $base) {
-            $weights = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-            $weights = array_slice($weights, -strlen($base));
-
-            $sum = 0;
-            foreach (str_split($base) as $i => $digit) {
-                $sum += (int) $digit * $weights[$i];
-            }
-
-            $rest = $sum % 11;
-
-            return $rest < 2 ? 0 : 11 - $rest;
-        };
-
-        $base = substr($cnpj, 0, 12);
-        $digit1 = $calcDigit($base);
-        $digit2 = $calcDigit($base.$digit1);
-
-        return $cnpj === $base.$digit1.$digit2;
+        return Cnpj::valido($cnpj);
     }
 }

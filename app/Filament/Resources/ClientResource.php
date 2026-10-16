@@ -10,13 +10,14 @@ use App\Services\CepGeocodingService;
 use App\Services\WhatsAppEmpresaService;
 use App\Support\ClientDuplicidade;
 use App\Support\CrmCamposCustom;
+use App\Support\CrmCnpjPreenchimento;
 use App\Support\Tenancy;
 use App\Traits\HasPlanAuthorization;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Forms\Set;
 // Adicionado para identificar o Tenant
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -102,7 +103,7 @@ class ClientResource extends Resource
                             Forms\Components\Section::make('Identificação')->schema([
                                 Forms\Components\TextInput::make('name')->label('Razão Social')->required()->maxLength(255)->rules([static::regraDuplicidade('name')]),
                                 Forms\Components\TextInput::make('fantasy_name')->label('Nome Fantasia')->maxLength(255)->rules([static::regraDuplicidade('fantasy_name')]),
-                                Forms\Components\TextInput::make('document')->label('CNPJ')->maxLength(20)->rules([static::regraDuplicidade('document')]),
+                                Forms\Components\TextInput::make('document')->label('CNPJ')->maxLength(20)->rules([static::regraDuplicidade('document')])->suffixAction(CrmCnpjPreenchimento::action('cliente')),
                                 Forms\Components\TextInput::make('state_registration')->label('Inscrição Estadual')->maxLength(50)->rules([static::regraDuplicidade('state_registration')]),
                                 Forms\Components\TextInput::make('municipal_registration')->label('Inscrição Municipal')->maxLength(50)->rules([static::regraDuplicidade('municipal_registration')]),
                                 Forms\Components\TextInput::make('tax_regime')->label('Regime Tributário')->placeholder('Ex: Simples Nacional, Lucro Presumido...')->maxLength(100),
@@ -371,6 +372,13 @@ class ClientResource extends Resource
                     }),
             ])
             ->bulkActions([Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()])]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            ClientResource\RelationManagers\ClientContactsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Services\CepGeocodingService;
 use App\Services\CrmFunilPadrao;
 use App\Support\CrmCamposCustom;
+use App\Support\CrmCnpjPreenchimento;
 use App\Support\CrmPalette;
 use App\Support\Tenancy;
 use Filament\Forms;
@@ -108,7 +109,8 @@ class CrmLeadResource extends BaseResource
                         ->label('E-mail')
                         ->email(),
                     Forms\Components\TextInput::make('document')
-                        ->label('CNPJ/CPF'),
+                        ->label('CNPJ/CPF')
+                        ->suffixAction(CrmCnpjPreenchimento::action('lead')),
                     Forms\Components\Select::make('segment')
                         ->label('Segmento')
                         ->options(CrmLead::segmentLabels()),

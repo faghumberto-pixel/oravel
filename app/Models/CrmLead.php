@@ -401,6 +401,18 @@ class CrmLead extends Model
 
         $client->update(['custom' => $this->customParaCliente()]);
 
+        foreach ($this->contacts()->get() as $contato) {
+            ClientContact::create([
+                'tenant_id' => $this->tenant_id,
+                'client_id' => $client->id,
+                'name' => $contato->name,
+                'role_title' => $contato->role_title,
+                'phone' => $contato->phone,
+                'email' => $contato->email,
+                'is_primary' => $contato->is_primary,
+            ]);
+        }
+
         $this->update(['client_id' => $client->id]);
 
         return $client;

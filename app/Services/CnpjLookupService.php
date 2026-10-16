@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Support\Cnpj;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -18,12 +20,19 @@ class CnpjLookupService
      */
     public function lookup(string $cnpj): ?array
     {
-        $digits = preg_replace('/\D/', '', $cnpj);
+        $digits = Cnpj::limpar($cnpj);
 
-        if (strlen($digits) !== 14) {
+        // CNPJ com dígito verificador errado nem vai para a API.
+        if (! Cnpj::valido($digits)) {
             return null;
         }
 
+        // Só resposta bem-sucedida fica em cache (24 h): poupa o limite público da BrasilAPI.
+        return Cache::remember("cnpj_lookup:{$digits}", now()->addDay(), fn () => $this->consultar($digits)) ?: null;
+    }
+
+    private function consultar(string $digits): ?array
+    {
         try {
             $response = Http::timeout(10)->acceptJson()->get("https://brasilapi.com.br/api/cnpj/v1/{$digits}");
         } catch (\Throwable $e) {
