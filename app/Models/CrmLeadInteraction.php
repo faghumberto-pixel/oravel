@@ -7,17 +7,20 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * Registro manual de interacao com um Lead (ligacao, e-mail, whatsapp,
  * presencial). Integracao automatica de e-mail/WhatsApp foi descartada
  * nesta rodada -- so registro manual, mesmo padrao de EquipmentDamageFollowUp.
  */
-class CrmLeadInteraction extends Model
+class CrmLeadInteraction extends Model implements HasMedia
 {
     use BelongsToTenant;
     use HasFactory;
     use HasUuids;
+    use InteractsWithMedia;
 
     public const CHANNEL_TELEFONE = 'telefone';
 
@@ -34,8 +37,10 @@ class CrmLeadInteraction extends Model
         'crm_lead_id',
         'user_id',
         'channel',
+        'direcao',
         'contact_date',
         'summary',
+        'transcricao',
         'next_action',
         'next_followup_date',
         'stage_at_time',
@@ -45,6 +50,20 @@ class CrmLeadInteraction extends Model
         'contact_date' => 'datetime',
         'next_followup_date' => 'date',
     ];
+
+    /** Áudio da conversa (WhatsApp) em disco privado: só abre por link assinado temporário. */
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('audio')
+            ->useDisk('media_private')
+            ->singleFile()
+            ->acceptsMimeTypes(['audio/ogg', 'audio/opus', 'audio/mpeg', 'audio/mp4', 'audio/x-m4a', 'audio/webm', 'video/webm', 'audio/wav', 'audio/x-wav']);
+    }
+
+    public static function direcaoLabels(): array
+    {
+        return ['entrada' => 'Recebida', 'saida' => 'Enviada'];
+    }
 
     public static function channelLabels(): array
     {

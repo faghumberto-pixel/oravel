@@ -48,6 +48,8 @@ class InteractionsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('contact_date')->label('Data')->dateTime('d/m/Y H:i')->sortable(),
                 Tables\Columns\TextColumn::make('channel')->label('Canal')->badge()
                     ->formatStateUsing(fn (string $state) => CrmLeadInteraction::channelLabels()[$state] ?? $state),
+                Tables\Columns\TextColumn::make('direcao')->label('Sentido')->placeholder('—')
+                    ->formatStateUsing(fn (?string $state) => CrmLeadInteraction::direcaoLabels()[$state] ?? $state),
                 Tables\Columns\TextColumn::make('user.name')->label('Registrado por'),
                 Tables\Columns\TextColumn::make('summary')->label('Resumo')->limit(50),
                 Tables\Columns\TextColumn::make('next_followup_date')->label('Próximo Follow-up')->date('d/m/Y')->placeholder('—'),
@@ -64,6 +66,12 @@ class InteractionsRelationManager extends RelationManager
                     }),
             ])
             ->actions([
+                Tables\Actions\Action::make('ouvir')
+                    ->label('Ouvir áudio')
+                    ->icon('heroicon-o-speaker-wave')
+                    ->visible(fn (CrmLeadInteraction $record) => $record->hasMedia('audio'))
+                    ->url(fn (CrmLeadInteraction $record) => $record->getFirstMedia('audio')?->getTemporaryUrl(now()->addMinutes(10)))
+                    ->openUrlInNewTab(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ]);

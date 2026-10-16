@@ -160,6 +160,8 @@ class CrmLeadResource extends BaseResource
                         ->label('Valor Estimado')
                         ->numeric()
                         ->prefix('R$'),
+                    Forms\Components\DatePicker::make('previsao_fechamento')
+                        ->label('Previsão de Fechamento'),
                     Forms\Components\Select::make('lost_reason_category')
                         ->label('Motivo da Perda')
                         ->options(fn () => CrmMotivoPerda::opcoes() ?: CrmLead::lostReasonCategoryLabels())
@@ -279,6 +281,13 @@ class CrmLeadResource extends BaseResource
                     ->label('Criado em')
                     ->date('d/m/Y')
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('previsao_fechamento')
+                    ->label('Previsão de Fechamento')
+                    ->date('d/m/Y')
+                    ->placeholder('—')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 ...CrmCamposCustom::colunas('lead'),
             ])

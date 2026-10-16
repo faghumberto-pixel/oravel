@@ -1,12 +1,21 @@
 <?php
 
 use App\Http\Controllers\Api\AssetController;
+use App\Http\Controllers\Api\Crm\CnpjController;
+use App\Http\Controllers\Api\Crm\ConfiguracaoController;
+use App\Http\Controllers\Api\Crm\ContatoController;
+use App\Http\Controllers\Api\Crm\EuController;
+use App\Http\Controllers\Api\Crm\InteracaoController;
+use App\Http\Controllers\Api\Crm\LeadController;
+use App\Http\Controllers\Api\SignatureController;
 use App\Http\Controllers\Api\V1\HourMeterPreloadController;
 use App\Http\Controllers\Api\V1\HourMeterSyncController;
 use App\Http\Controllers\Api\V1\TimeClockSyncController;
 use App\Http\Controllers\AsaasWebhookController;
 use App\Http\Controllers\InboundLeadController;
+use App\Http\Controllers\LandingPageLeadController;
 use App\Http\Controllers\SiteTrackingController;
+use App\Http\Controllers\WhatsAppEmpresaWebhookController;
 use App\Http\Controllers\WhatsAppWebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -52,10 +61,10 @@ Route::post('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'handle']);
 
 // WhatsApp de CADA empresa (número próprio, API oficial da Meta): a empresa vai na URL.
 // Webhook único do app da Oravel na Meta: serve todas as empresas (a empresa vem do número que recebeu).
-Route::get('/webhooks/whatsapp-meta', [\App\Http\Controllers\WhatsAppEmpresaWebhookController::class, 'verifyPlataforma']);
-Route::post('/webhooks/whatsapp-meta', [\App\Http\Controllers\WhatsAppEmpresaWebhookController::class, 'handlePlataforma'])->middleware('throttle:600,1');
-Route::get('/webhooks/whatsapp-empresa/{tenant}', [\App\Http\Controllers\WhatsAppEmpresaWebhookController::class, 'verify']);
-Route::post('/webhooks/whatsapp-empresa/{tenant}', [\App\Http\Controllers\WhatsAppEmpresaWebhookController::class, 'handle'])->middleware('throttle:600,1');
+Route::get('/webhooks/whatsapp-meta', [WhatsAppEmpresaWebhookController::class, 'verifyPlataforma']);
+Route::post('/webhooks/whatsapp-meta', [WhatsAppEmpresaWebhookController::class, 'handlePlataforma'])->middleware('throttle:600,1');
+Route::get('/webhooks/whatsapp-empresa/{tenant}', [WhatsAppEmpresaWebhookController::class, 'verify']);
+Route::post('/webhooks/whatsapp-empresa/{tenant}', [WhatsAppEmpresaWebhookController::class, 'handle'])->middleware('throttle:600,1');
 
 // Technician offline field app
 Route::middleware('auth:sanctum')->group(function () {
@@ -81,7 +90,29 @@ Route::post('/inbound/leads', [InboundLeadController::class, 'store'])
     ->name('inbound.leads.store');
 
 // Landing page leads (sem auth - público)
-Route::post('/landing-page/leads', [\App\Http\Controllers\LandingPageLeadController::class, 'store']);
+Route::post('/landing-page/leads', [LandingPageLeadController::class, 'store']);
 
 // Assinatura eletrônica SLA + LGPD (sem auth - público)
-Route::post('/signatures', [\App\Http\Controllers\Api\SignatureController::class, 'store']);
+Route::post('/signatures', [SignatureController::class, 'store']);
+
+/*
+ * API do CRM por token pessoal (extensão do WhatsApp e integrações) -- ver docs/api/crm-v1.md.
+ * Token emitido só dentro do painel (Comercial > Gestão CRM > Integração / API), sem login por senha.
+ * crm.api: habilidade do token, usuário aprovado, conta em dia e módulo de CRM liberado.
+ */
+Route::prefix('crm/v1')->middleware('auth:sanctum')->group(function () {
+    Route::middleware(['crm.api:crm:read', 'throttle:crm-api-leitura'])->group(function () {
+        Route::get('/eu', EuController::class);
+        Route::get('/configuracao', ConfiguracaoController::class);
+        Route::get('/contatos/buscar', [ContatoController::class, 'buscar']);
+        Route::get('/contatos/{tipo}/{id}/oportunidades', [ContatoController::class, 'oportunidades']);
+        Route::get('/cnpj/{cnpj}', CnpjController::class);
+        Route::get('/leads/{id}', [LeadController::class, 'show']);
+    });
+
+    Route::middleware(['crm.api:crm:write', 'throttle:crm-api-escrita'])->group(function () {
+        Route::post('/leads', [LeadController::class, 'store']);
+        Route::patch('/leads/{id}/etapa', [LeadController::class, 'etapa']);
+        Route::post('/leads/{id}/interacoes', [InteracaoController::class, 'store']);
+    });
+});

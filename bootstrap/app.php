@@ -2,20 +2,27 @@
 
 use App\Http\Middleware\BlockBannedIps;
 use App\Http\Middleware\ColaboradorAutenticado;
+use App\Http\Middleware\ColaboradorModulo;
 use App\Http\Middleware\ColaboradorSomenteCelular;
+use App\Http\Middleware\CrmApiAccess;
 use App\Http\Middleware\EnsureAcademyAccess;
 use App\Http\Middleware\RedirectGuestToChatLogin;
 use App\Http\Middleware\RedirectTechnicianFromDashboard;
 use App\Http\Middleware\TrackSiteVisit;
 use App\Http\Middleware\UpdateUserLastSeen;
 use App\Support\CloudflareProxies;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\AuthServiceProvider;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -64,10 +71,31 @@ return Application::configure(basePath: dirname(__DIR__))
             'academy.access' => EnsureAcademyAccess::class,
             'colab.mobile' => ColaboradorSomenteCelular::class,
             'colab.auth' => ColaboradorAutenticado::class,
-            'colab.modulo' => \App\Http\Middleware\ColaboradorModulo::class,
+            'colab.modulo' => ColaboradorModulo::class,
+            'crm.api' => CrmApiAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
+        // API do CRM: toda falha sai como {erro: {codigo, mensagem, campos?}} em JSON.
+        $apiCrm = fn (Request $request) => $request->is('api/crm/*');
+
+        $exceptions->shouldRenderJsonWhen(fn (Request $request, Throwable $e) => $apiCrm($request) || $request->expectsJson());
+        $exceptions->render(function (AuthenticationException $e, Request $request) use ($apiCrm) {
+            return $apiCrm($request) ? response()->json(['erro' => ['codigo' => 'nao_autenticado', 'mensagem' => 'Token ausente, inválido, expirado ou revogado.']], 401) : null;
+        });
+        $exceptions->render(function (AuthorizationException $e, Request $request) use ($apiCrm) {
+            return $apiCrm($request) ? response()->json(['erro' => ['codigo' => 'sem_permissao', 'mensagem' => 'Seu perfil não tem permissão para esta ação.']], 403) : null;
+        });
+        $exceptions->render(function (ValidationException $e, Request $request) use ($apiCrm) {
+            return $apiCrm($request) ? response()->json(['erro' => ['codigo' => 'dados_invalidos', 'mensagem' => 'Confira os campos enviados.', 'campos' => $e->errors()]], 422) : null;
+        });
+        $exceptions->render(function (NotFoundHttpException $e, Request $request) use ($apiCrm) {
+            return $apiCrm($request) ? response()->json(['erro' => ['codigo' => 'nao_encontrado', 'mensagem' => 'Registro ou rota não encontrada.']], 404) : null;
+        });
+        $exceptions->render(function (ThrottleRequestsException $e, Request $request) use ($apiCrm) {
+            return $apiCrm($request) ? response()->json(['erro' => ['codigo' => 'muitas_requisicoes', 'mensagem' => 'Limite de requisições por minuto atingido. Aguarde um instante.']], 429) : null;
+        });
+
         // App do colaborador: um 419 (token velho) quase sempre é toque duplo no "Entrar" -- o 1º envio já logou
         // e renovou a sessão. Em vez de mostrar "Página expirada", leva ao início (se logado) ou à tela de entrada.
         $exceptions->render(function (HttpException $e, Request $request) {

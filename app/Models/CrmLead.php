@@ -101,6 +101,7 @@ class CrmLead extends Model
         'won_notes',
         'assigned_user_id',
         'estimated_value',
+        'previsao_fechamento',
         'client_id',
         'solicitacao_locacao_id',
         'address',
@@ -132,6 +133,7 @@ class CrmLead extends Model
         'longitude' => 'decimal:8',
         'last_contacted_at' => 'datetime',
         'next_followup_date' => 'date',
+        'previsao_fechamento' => 'date',
         'custom' => 'array',
     ];
 

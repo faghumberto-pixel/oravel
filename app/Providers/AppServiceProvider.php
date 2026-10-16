@@ -4,19 +4,24 @@ namespace App\Providers;
 
 use App\Events\DocumentSigned;
 use App\Filament\Central\Widgets\SalesAgendaWidget;
+use App\Filament\Navigation\TenantNavigationManager;
 use App\Listeners\DownscaleNonEvidenceMedia;
+use App\Listeners\EnviarPushDoAviso;
 use App\Listeners\NotifyCentralOfSignedDocument;
+use App\Listeners\RegistrarEnvioDeEmail;
+use App\Listeners\SkipMutedNotification;
 use App\Livewire\DatabaseNotifications;
+use App\Mail\TenantAwareTransport;
 use App\Models\AbcMatrix;
 use App\Models\AccountPayable;
 use App\Models\AccountReceivable;
 use App\Models\Announcement;
-use App\Models\Asset;
+use App\Models\Asset; // Importante
 use App\Models\BatteryCycleReading;
 use App\Models\Client;
 use App\Models\ClientFeedback;
 use App\Models\ClientMessage;
-use App\Models\Contract; // Importante
+use App\Models\Contract;
 use App\Models\CrmLead;
 use App\Models\CrmLeadInteraction;
 use App\Models\Department;
@@ -49,8 +54,8 @@ use App\Observers\AccountReceivableObserver;
 use App\Observers\AnnouncementObserver;
 use App\Observers\AssetObserver;
 use App\Observers\BatteryCycleReadingObserver;
-use App\Observers\ClientMaintenanceOrderNotificationObserver;
 use App\Observers\ClientFeedbackObserver;
+use App\Observers\ClientMaintenanceOrderNotificationObserver;
 use App\Observers\ClientMessageObserver;
 use App\Observers\ClientObserver;
 use App\Observers\ContaPagarObserver;
@@ -78,14 +83,25 @@ use App\Observers\SalesLeadInteractionObserver;
 use App\Observers\SolicitacaoLocacaoObserver;
 use App\Observers\TechnicianAllocationObserver;
 use App\Policies\DynamicPolicy;
+use App\Services\Push\PushSender;
+use App\Services\Push\WebPushSender;
 use App\Support\Tenancy;
+use Filament\Navigation\NavigationManager;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Request;
+use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Mail\Events\MessageSent;
+use Illuminate\Notifications\Events\NotificationSending;
+use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -104,13 +120,17 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Menu do painel admin: filtra páginas bloqueadas e menus pai vazios (ver a classe).
-        $this->app->scoped(\Filament\Navigation\NavigationManager::class, fn () => new \App\Filament\Navigation\TenantNavigationManager);
+        $this->app->scoped(NavigationManager::class, fn () => new TenantNavigationManager);
 
         //
     }
 
     public function boot(): void
     {
+        // API do CRM (/api/crm/v1): limite por token (leitura 120/min, escrita 30/min).
+        RateLimiter::for('crm-api-leitura', fn (Request $r) => Limit::perMinute(120)->by('crm-r|'.($r->user()?->currentAccessToken()?->id ?? $r->ip())));
+        RateLimiter::for('crm-api-escrita', fn (Request $r) => Limit::perMinute(30)->by('crm-w|'.($r->user()?->currentAccessToken()?->id ?? $r->ip())));
+
         // Componentes da frota (pneu, bateria) em frota_instalacoes_componente: grava 'pneu' em vez do nome da classe.
         // Sem enforce: os demais relacionamentos polimórficos do sistema continuam gravando o nome da classe.
         Relation::morphMap(['pneu' => FrotaPneu::class, 'bateria' => FrotaBateria::class], merge: true);
@@ -260,20 +280,20 @@ class AppServiceProvider extends ServiceProvider
         // Assinatura concluída -> aviso no sino da Central (super admins).
         Event::listen(DocumentSigned::class, [NotifyCentralOfSignedDocument::class, 'notify']);
         // E-mail por empresa: se a empresa cadastrou a caixa dela, envia por ela; senão usa a da Oravel.
-        \Illuminate\Support\Facades\Mail::extend('oravel', fn () => new \App\Mail\TenantAwareTransport(
-            \Illuminate\Support\Facades\Mail::mailer('smtp')->getSymfonyTransport()
+        Mail::extend('oravel', fn () => new TenantAwareTransport(
+            Mail::mailer('smtp')->getSymfonyTransport()
         ));
 
         if (config('mail.default') === 'smtp') {
             config(['mail.mailers.oravel' => ['transport' => 'oravel'], 'mail.default' => 'oravel']);
         }
 
-        Event::listen(\Illuminate\Mail\Events\MessageSending::class, [\App\Listeners\RegistrarEnvioDeEmail::class, 'sending']);
-        Event::listen(\Illuminate\Mail\Events\MessageSent::class, [\App\Listeners\RegistrarEnvioDeEmail::class, 'sent']);
+        Event::listen(MessageSending::class, [RegistrarEnvioDeEmail::class, 'sending']);
+        Event::listen(MessageSent::class, [RegistrarEnvioDeEmail::class, 'sent']);
 
-        Event::listen(\Illuminate\Notifications\Events\NotificationSending::class, [\App\Listeners\SkipMutedNotification::class, 'avaliar']);
-        Event::listen(\Illuminate\Notifications\Events\NotificationSent::class, [\App\Listeners\EnviarPushDoAviso::class, 'enviar']);
-        $this->app->bind(\App\Services\Push\PushSender::class, \App\Services\Push\WebPushSender::class);
+        Event::listen(NotificationSending::class, [SkipMutedNotification::class, 'avaliar']);
+        Event::listen(NotificationSent::class, [EnviarPushDoAviso::class, 'enviar']);
+        $this->app->bind(PushSender::class, WebPushSender::class);
         Event::listen(Login::class, function (Login $event) {
             $this->logAuthEvent(UserActivityLog::ACTION_LOGIN, $event->user);
         });
