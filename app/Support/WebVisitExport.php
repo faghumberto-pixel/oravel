@@ -10,7 +10,7 @@ use OpenSpout\Writer\XLSX\Writer;
 /** Exportação (Excel e PDF) das Visitas do Site, com todos os campos da visita. */
 class WebVisitExport
 {
-    public const PDF_LIMIT = 1500;
+    public const PDF_LIMIT = 300;
 
     public static function headings(): array
     {

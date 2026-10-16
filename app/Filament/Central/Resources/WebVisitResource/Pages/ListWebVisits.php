@@ -30,6 +30,10 @@ class ListWebVisits extends ListRecords
                 ->icon('heroicon-o-document-arrow-down')
                 ->color('gray')
                 ->action(function () {
+                    // dompdf gasta ~1 MB por visita (limite do PHP em PROD: 128M).
+                    @ini_set('memory_limit', '512M');
+                    @set_time_limit(120);
+
                     [$visitas, $total] = WebVisitExport::pdfData($this->getFilteredSortedTableQuery());
                     $pdf = Pdf::loadView('pdf.visitas-site', compact('visitas', 'total'))->setPaper('a3', 'landscape');
 
