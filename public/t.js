@@ -191,9 +191,21 @@
   if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', fillForms); } else { fillForms(); }
   document.addEventListener('submit', fillForms, true);
 
+  // Ignorar o Google Analytics neste navegador: ?ga_ignore=1 liga, ?ga_ignore=0 desliga (localStorage ga_ignore).
+  try {
+    var gaQs = location.search.match(/[?&]ga_ignore=([01])(?:&|$)/);
+    if (gaQs) {
+      if (gaQs[1] === '1') { localStorage.setItem('ga_ignore', '1'); } else { localStorage.removeItem('ga_ignore'); }
+    }
+  } catch (e) { /* sem localStorage: segue sem persistência */ }
+
+  function gaIgnored() {
+    try { return localStorage.getItem('ga_ignore') === '1'; } catch (e) { return false; }
+  }
+
   // Google Analytics: só depois do aceite.
   function loadGa() {
-    if (window.__ovGa) { return; }
+    if (window.__ovGa || gaIgnored()) { return; }
     window.__ovGa = true;
     window.dataLayer = window.dataLayer || [];
     window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
