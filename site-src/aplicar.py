@@ -122,7 +122,7 @@ def footer_inav():
         '<div class="ifoot-wrap">'
         '<div class="ifoot-copy">© 2026 Oravel Desenvolvimento de Software'
         '<div class="ifoot-legal">CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, conj. 1713, Pinheiros, São Paulo/SP · CEP 05424-150</div></div>'
-        '<div class="ifoot-links"><a href="/">Home</a><a href="/solucoes/">Soluções</a><a href="/planos/">Planos</a><a href="/contato.php">Contato</a><a href="/faq.php">FAQ</a><a href="/central-de-conhecimento/">Ajuda</a>'
+        '<div class="ifoot-links"><a href="/">Home</a><a href="/solucoes/">Soluções</a><a href="/planos/">Planos</a><a href="/academia/">Academia</a><a href="/contato.php">Contato</a><a href="/faq.php">FAQ</a><a href="/central-de-conhecimento/">Ajuda</a>'
         '<a href="/politica-de-privacidade/">Privacidade</a><a href="/termos-de-uso/">Termos</a></div>'
         '</div></footer>'
     )
@@ -390,6 +390,82 @@ def pagina_planos():
     return pagina_base('Planos | Oravel', 'Compare as soluções Oravel e contrate online: ERP Locadoras, Manutenção, Serviços, Logística, Estoque e Vendas.', corpo, '/planos/')
 
 
+
+# ---------------------------------------------------------------- Academia Oravel + apps por solução (home e /academia/)
+
+CSS_ACADEMIA = """<style data-site="academia-css">
+  .ac-sec { padding: 80px 0; } .ac-dark { background: linear-gradient(160deg, #0f172a 0%, #1a2540 100%); color: #fff; }
+  .ac-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  .ac-eyebrow { font-family: Manrope, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #f97316; }
+  .ac-sec h2 { font-family: Manrope, sans-serif; font-weight: 800; font-size: clamp(28px, 4vw, 44px); letter-spacing: -.02em; line-height: 1.1; margin: 10px 0 0; }
+  .ac-lead { font-size: 17px; line-height: 1.65; margin-top: 14px; max-width: 58ch; color: rgba(255,255,255,.78); }
+  .ac-hero { display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px; align-items: center; }
+  .ac-hero svg, .ac-shots svg { width: 100%; height: auto; display: block; border-radius: 12px; box-shadow: 0 30px 60px -28px rgba(0,0,0,.7); }
+  .ac-chips { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 26px; }
+  .ac-chip { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); border-radius: 12px; padding: 14px 16px; }
+  .ac-chip b { display: block; font-family: Manrope, sans-serif; font-size: 15px; } .ac-chip span { font-size: 13px; color: rgba(255,255,255,.7); line-height: 1.5; }
+  .ac-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+  .ac-btn { display: inline-flex; padding: 13px 24px; border-radius: 8px; font-weight: 700; font-size: 15px; text-decoration: none; border: 1px solid rgba(255,255,255,.35); color: #fff; }
+  .ac-btn.p { background: #f97316; border-color: #f97316; } .ac-btn.d { color: #0f172a; border-color: #e4e7ec; }
+  .ac-shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 56px; }
+  .ac-shots figure { margin: 0; } .ac-shots figcaption { margin-top: 12px; font-size: 14px; color: rgba(255,255,255,.85); line-height: 1.5; } .ac-shots figcaption b { display: block; color: #fff; font-family: Manrope, sans-serif; }
+  .ac-light { background: var(--surface, #f6f7f9); color: var(--ink, #0f172a); } .ac-light .ac-lead { color: var(--ink-soft, #5b6472); }
+  .ac-phones { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; margin-top: 44px; }
+  .ac-phone { text-align: center; text-decoration: none; color: inherit; } .ac-phone svg { width: 100%; max-width: 190px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0 22px 24px rgba(15,23,42,.28)); transition: transform .2s; }
+  .ac-phone:hover svg { transform: translateY(-6px); } .ac-phone b { display: block; margin-top: 12px; font-family: Manrope, sans-serif; font-size: 15px; } .ac-phone span { font-size: 12.5px; color: var(--ink-soft, #5b6472); }
+  @media (max-width: 980px) { .ac-hero { grid-template-columns: 1fr; } .ac-phones { grid-template-columns: repeat(3, 1fr); } .ac-shots { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .ac-phones { grid-template-columns: repeat(2, 1fr); } .ac-chips { grid-template-columns: 1fr; } .ac-sec { padding: 56px 0; } }
+</style>"""
+
+
+def bloco_academia():
+    chips = [('Cursos do seu plano', 'Cada solução abre só os cursos que você contratou: nada de conteúdo que não serve para a sua operação.'),
+             ('Aulas passo a passo', 'Telas reais do sistema, caminhos de menu e dicas de quem usa no dia a dia.'),
+             ('Provas e certificado', 'Prova a cada aula e certificado de conclusão para a sua equipe.'),
+             ('Configure sozinho', 'Treinamentos de WhatsApp, e-mail, cobrança automática e notas fiscais, sem depender de ninguém.')]
+    chips_html = ''.join(f'<div class="ac-chip"><b>{t}</b><span>{d}</span></div>' for t, d in chips)
+    return (
+        '<!-- site:academia -->'
+        f'<section class="ac-sec ac-dark" id="academia" data-site="academia"><div class="ac-wrap"><div class="ac-hero"><div>'
+        '<div class="ac-eyebrow">Academia Oravel</div><h2>Aprendizado que transforma a sua operação</h2>'
+        '<p class="ac-lead">Sua equipe aprende a usar o sistema dentro do próprio sistema: aulas curtas, provas e certificado. Mais de 60 aulas, organizadas por solução, para quem está começando e para quem já domina.</p>'
+        f'<div class="ac-chips">{chips_html}</div>'
+        '<div class="ac-btns"><a class="ac-btn p" href="/solucoes/">Escolher a minha solução</a><a class="ac-btn" href="/contato.php">Falar com um especialista</a></div></div>'
+        f'<div>{mockups.academia_catalogo()}</div></div>'
+        '<div class="ac-shots">'
+        f'<figure>{mockups.academia_aula()}<figcaption><b>Aula passo a passo</b>Do caminho do menu até o resultado, com dicas e alertas.</figcaption></figure>'
+        f'<figure>{mockups.academia_prova()}<figcaption><b>Prova a cada aula</b>Perguntas de múltipla escolha para fixar o que foi aprendido.</figcaption></figure>'
+        f'<figure>{mockups.academia_certificado()}<figcaption><b>Certificado de conclusão</b>Com código de verificação, para cada pessoa que conclui o curso.</figcaption></figure>'
+        '</div></div></section><!-- /site:academia -->'
+    )
+
+
+def bloco_apps():
+    cards = ''.join(
+        f'<a class="ac-phone" href="{p["pagina"]}#app">{mockups.app_celular(*dados.APPS[p["codigo"]])}<b>{dados.APPS[p["codigo"]][0]}</b><span>Abre em {dados.APPS[p["codigo"]][2]}</span></a>'
+        for p in PACOTES)
+    return (
+        '<!-- site:apps -->'
+        '<section class="ac-sec ac-light" id="apps" data-site="apps"><div class="ac-wrap"><div class="ac-eyebrow">App incluído em todas as soluções</div>'
+        '<h2>Cada solução tem o seu próprio app no celular</h2>'
+        '<p class="ac-lead">Instale pelo navegador, sem loja de aplicativos. O app leva o nome da sua solução e abre direto na tela que você mais usa. Gestor, técnico e colaborador entram no mesmo app e veem só o que o perfil de cada um permite.</p>'
+        f'<div class="ac-phones">{cards}</div></div></section><!-- /site:apps -->'
+    )
+
+
+def blocos_academia_e_apps():
+    return CSS_ACADEMIA + bloco_academia() + bloco_apps()
+
+
+def pagina_academia():
+    corpo = blocos_academia_e_apps() + (
+        '<section class="ac-sec"><div class="ac-wrap" style="text-align:center"><div class="ac-eyebrow">Pronto para começar?</div>'
+        '<h2 style="color:var(--ink)">A Academia vem com a sua solução</h2>'
+        '<div class="ac-btns" style="justify-content:center"><a class="ac-btn p" href="/planos/">Ver os planos</a><a class="ac-btn d" href="/contato.php">Falar com um especialista</a></div></div></section>')
+    return pagina_base('Academia Oravel — aprendizado que transforma | Oravel',
+                       'A Academia Oravel ensina a sua equipe a usar o sistema: aulas passo a passo, provas e certificado, organizadas por solução. Cada solução tem ainda o seu app no celular.', corpo, '/academia/')
+
+
 # ---------------------------------------------------------------- menu "onav" (nav-fragment.html, usado por .php e gestao-locadoras)
 
 def nav_fragment():
@@ -420,7 +496,10 @@ def aplicar_home():
              '      <p class="frentes-lead">Seis soluções, cada uma com as telas e os módulos que o dia a dia realmente usa. Contrate só o que precisa.</p>\n'
              '      <style>.sp-mini{margin:-4px -4px 14px;border-radius:10px;overflow:hidden;background:#f6f7f9}.sp-mini svg{width:100%;height:auto;display:block}</style>\n'
              f'      <div class="frentes-grid">{cards}</div>\n    </div>\n  </section>')
-    t = trocar(t, r'<section class="frentes-section".*?</section>', secao, 'seção frentes da home')
+    t = re.sub(r'\s*<style data-site="academia-css">.*?</style>', '', t, flags=re.S)
+    t = re.sub(r'\s*<!-- site:academia -->.*?<!-- /site:academia -->', '', t, flags=re.S)
+    t = re.sub(r'\s*<!-- site:apps -->.*?<!-- /site:apps -->', '', t, flags=re.S)
+    t = trocar(t, r'<section class="frentes-section".*?</section>', secao + '\n  ' + blocos_academia_e_apps(), 'seção frentes da home')
 
     passos = [
         ('1', '#f97316', 'Escolha a solução', 'ERP Locadoras, Manutenção, Serviços, Logística, Estoque ou Vendas: veja as telas e o que cada uma inclui.'),
@@ -570,6 +649,7 @@ def main():
         aplicar_pagina_inav(rel)
     gravar('solucoes/index.html', pagina_solucoes())
     gravar('planos/index.html', pagina_planos())
+    gravar('academia/index.html', pagina_academia())
     gravar('inc/nav-fragment.html', nav_fragment())
     gravar('inc/precos.js', JS_PRECOS)
     aplicar_sobre()

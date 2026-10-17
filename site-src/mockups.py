@@ -183,3 +183,70 @@ def app_celular(nome, cor, tela, itens):
     out.append(f'<rect x="40" y="304" width="140" height="30" rx="15" fill="{cor}"/><text x="110" y="323" font-family="Inter" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">Adicionar à tela inicial</text>')
     out.append('</svg>')
     return ''.join(out)
+
+
+# ---------------------------------------------------------------- Academia Oravel (telas de exemplo, dados fictícios)
+
+def _barra(x, y, w, pct, cor=ACCENT):
+    return (f'<rect x="{x}" y="{y}" width="{w}" height="5" rx="2.5" fill="{LINE}"/>'
+            f'<rect x="{x}" y="{y}" width="{w * pct / 100:.0f}" height="5" rx="2.5" fill="{cor}"/>')
+
+
+def academia_catalogo():
+    cursos = [('Manutenção', '7 aulas', 86, '#ea580c'), ('Comercial', '9 aulas', 55, '#db2777'), ('Suprimentos', '4 aulas', 100, '#7c3aed'),
+              ('Logística', '3 aulas', 34, '#0d9488'), ('Ativos e Frota', '4 aulas', 70, '#2563eb'), ('Configurações', '5 aulas', 20, '#0f172a')]
+    out = [f'<text x="20" y="72" font-family="Inter" font-size="9" fill="{SOFT}">Cursos do seu plano · 1 certificado disponível</text>']
+    for i, (nome, aulas, pct, cor) in enumerate(cursos):
+        x, y = 20 + (i % 3) * 148, 84 + (i // 3) * 98
+        out.append(f'<rect x="{x}" y="{y}" width="140" height="90" rx="8" fill="#fff" stroke="{LINE}"/><rect x="{x}" y="{y}" width="140" height="30" rx="8" fill="{cor}"/><rect x="{x}" y="{y + 20}" width="140" height="10" fill="{cor}"/>')
+        out.append(f'<text x="{x + 10}" y="{y + 20}" font-family="Manrope" font-size="10" font-weight="800" fill="#fff">{esc(nome)}</text>')
+        out.append(f'<text x="{x + 10}" y="{y + 50}" font-family="Inter" font-size="8" fill="{SOFT}">{aulas} · {pct}% concluído</text>')
+        out.append(_barra(x + 10, y + 58, 120, pct, cor))
+        out.append(_pill(x + 10, y + 70, 'Certificado' if pct == 100 else 'Continuar', 'ok' if pct == 100 else 'info', 62))
+    return _chrome('academia', 'Academia Oravel', ''.join(out), 'Catálogo de cursos da Academia Oravel')
+
+
+def academia_aula():
+    passos = ['Abra Ativos → Gestão de Ativos', 'Clique em Criar e preencha o patrimônio', 'Anexe as 3 fotos do equipamento', 'Salve e gere o QR Code']
+    out = [f'<rect x="20" y="62" width="150" height="226" rx="6" fill="{SURF}"/><text x="30" y="80" font-family="Inter" font-size="8.5" font-weight="700" fill="{SOFT}">AULAS DO CURSO</text>']
+    for i, (t, ok) in enumerate([('Cadastrar um ativo', True), ('Grupos de checklist', True), ('QR Code de consulta', False), ('Gestão de frota', False)]):
+        y = 90 + i * 30
+        out.append(f'<rect x="28" y="{y}" width="134" height="24" rx="5" fill="{"#fff" if ok else SURF}" stroke="{LINE}"/><circle cx="40" cy="{y + 12}" r="5" fill="{TONS["ok"] if ok else TONS["mudo"]}"/>')
+        out.append(f'<text x="52" y="{y + 15}" font-family="Inter" font-size="8" fill="{INK}">{esc(t)}</text>')
+    out.append(f'<text x="186" y="80" font-family="Manrope" font-size="13" font-weight="800" fill="{INK}">Cadastrar um ativo</text>')
+    for i, t in enumerate(passos):
+        y = 96 + i * 34
+        out.append(f'<circle cx="198" cy="{y + 8}" r="8" fill="{ACCENT}"/><text x="198" y="{y + 11}" font-family="Inter" font-size="9" font-weight="700" fill="#fff" text-anchor="middle">{i + 1}</text>')
+        out.append(f'<text x="214" y="{y + 12}" font-family="Inter" font-size="9" fill="{INK}">{esc(t)}</text>')
+    out.append(f'<rect x="186" y="236" width="270" height="34" rx="6" fill="{SURF}" stroke="{LINE}"/><text x="198" y="257" font-family="Inter" font-size="8.5" fill="{SOFT}">Dica: o Nº do patrimônio é único dentro da sua empresa.</text>')
+    out.append(f'<rect x="346" y="274" width="110" height="18" rx="9" fill="{ACCENT}"/><text x="401" y="286" font-family="Inter" font-size="8.5" font-weight="700" fill="#fff" text-anchor="middle">Marcar como concluída</text>')
+    return _chrome('academia/aula', 'Aula · passo a passo', ''.join(out), 'Aula da Academia com passo a passo')
+
+
+def academia_prova():
+    opcoes = ['O estoque cai sozinho e nasce uma solicitação de peças', 'O estoque só muda depois da conferência', 'O sistema bloqueia o lançamento', 'Nada acontece até o fim do mês']
+    out = [f'<text x="20" y="72" font-family="Inter" font-size="8.5" font-weight="700" fill="{SOFT}">PERGUNTA 4 DE 12</text>', _barra(20, 80, 440, 33),
+           f'<text x="20" y="108" font-family="Manrope" font-size="11" font-weight="800" fill="{INK}">Uma peça fica abaixo do estoque mínimo após o uso na OS.</text>',
+           f'<text x="20" y="123" font-family="Manrope" font-size="11" font-weight="800" fill="{INK}">O que acontece?</text>']
+    for i, t in enumerate(opcoes):
+        y = 136 + i * 34
+        sel = i == 0
+        out.append(f'<rect x="20" y="{y}" width="440" height="28" rx="6" fill="{"#fff7ed" if sel else "#fff"}" stroke="{ACCENT if sel else LINE}" stroke-width="{1.5 if sel else 1}"/>')
+        out.append(f'<circle cx="36" cy="{y + 14}" r="6" fill="none" stroke="{ACCENT if sel else "#cbd5e1"}" stroke-width="1.5"/>')
+        if sel:
+            out.append(f'<circle cx="36" cy="{y + 14}" r="3" fill="{ACCENT}"/>')
+        out.append(f'<text x="52" y="{y + 17}" font-family="Inter" font-size="9" fill="{INK}">{esc(t)}</text>')
+    out.append(f'<rect x="370" y="274" width="90" height="18" rx="9" fill="{NAVY}"/><text x="415" y="286" font-family="Inter" font-size="8.5" font-weight="700" fill="#fff" text-anchor="middle">Próxima</text>')
+    return _chrome('academia/prova', 'Prova da aula', ''.join(out), 'Prova com perguntas de múltipla escolha')
+
+
+def academia_certificado():
+    out = [f'<rect x="24" y="64" width="432" height="224" rx="8" fill="#fffdf8" stroke="{ACCENT}" stroke-width="2"/><rect x="32" y="72" width="416" height="208" rx="5" fill="none" stroke="#fcd9b6"/>',
+           f'<text x="240" y="106" font-family="Manrope" font-size="9" font-weight="800" fill="{ACCENT}" text-anchor="middle" letter-spacing="2">ACADEMIA ORAVEL</text>',
+           f'<text x="240" y="140" font-family="Manrope" font-size="20" font-weight="800" fill="{INK}" text-anchor="middle">Certificado de conclusão</text>',
+           f'<text x="240" y="170" font-family="Inter" font-size="9.5" fill="{SOFT}" text-anchor="middle">Certificamos que</text>',
+           f'<text x="240" y="194" font-family="Manrope" font-size="15" font-weight="800" fill="{INK}" text-anchor="middle">Mariana Souza</text>',
+           f'<text x="240" y="216" font-family="Inter" font-size="9.5" fill="{SOFT}" text-anchor="middle">concluiu o curso Manutenção, com aproveitamento de 92%.</text>',
+           f'<line x1="170" y1="250" x2="310" y2="250" stroke="{LINE}"/><text x="240" y="264" font-family="Inter" font-size="8" fill="{SOFT}" text-anchor="middle">Código de verificação · OR-7F3A91C2</text>',
+           f'<circle cx="420" cy="252" r="16" fill="{ACCENT}" opacity=".15"/><text x="420" y="256" font-family="Manrope" font-size="12" font-weight="800" fill="{ACCENT}" text-anchor="middle">✓</text>']
+    return _chrome('academia/certificado', 'Certificado', ''.join(out), 'Certificado de conclusão da Academia Oravel')
