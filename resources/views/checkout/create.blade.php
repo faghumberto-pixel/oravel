@@ -102,7 +102,11 @@
                             <div class="oravel-auth-field">
                                 <x-heroicon-o-check-badge class="oravel-auth-field-icon" />
                                 <span class="oravel-auth-input-raw py-0.5">
-                                    {{ $selectedPlan->name }} -- R$ {{ number_format($selectedPlan->price, 2, ',', '.') }}/{{ $selectedPlan->billing_cycle === 'monthly' ? 'mês' : $selectedPlan->billing_cycle }}
+                                    @if ($vitrine)
+                                        {{ $selectedPlan->name }}
+                                    @else
+                                        {{ $selectedPlan->name }} -- R$ {{ number_format($selectedPlan->price, 2, ',', '.') }}/{{ $selectedPlan->billing_cycle === 'monthly' ? 'mês' : $selectedPlan->billing_cycle }}
+                                    @endif
                                 </span>
                             </div>
                             @if (! empty($pacoteDescricao))
@@ -110,6 +114,57 @@
                             @endif
                             <x-input-error :messages="$errors->get('plan_id')" class="oravel-auth-error" />
                         </div>
+
+                        @if ($vitrine)
+                            <div>
+                                <span class="oravel-auth-label">Como pagar a mensalidade</span>
+                                <div class="mt-2 grid gap-3 sm:grid-cols-2" data-testid="forma-pagamento">
+                                    <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-white/25 bg-white/10 p-4">
+                                        <input type="radio" name="forma_pagamento" value="cartao" class="mt-1" @checked(old('forma_pagamento', 'cartao') === 'cartao') />
+                                        <span class="text-sm text-white">
+                                            <strong class="block">Cartão de crédito recorrente</strong>
+                                            <span class="block text-lg font-bold">R$ {{ number_format($valorRecorrente, 2, ',', '.') }}/mês</span>
+                                            <span class="block text-xs text-white/70"><s>R$ {{ number_format($valorCheio, 2, ',', '.') }}</s> · {{ rtrim(rtrim(number_format($descontoPercentual, 2, ',', ''), '0'), ',') }}% de desconto pela recorrência</span>
+                                        </span>
+                                    </label>
+                                    <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-white/25 bg-white/10 p-4">
+                                        <input type="radio" name="forma_pagamento" value="boleto_pix" class="mt-1" @checked(old('forma_pagamento') === 'boleto_pix') />
+                                        <span class="text-sm text-white">
+                                            <strong class="block">Boleto ou Pix todo mês</strong>
+                                            <span class="block text-lg font-bold">R$ {{ number_format($valorCheio, 2, ',', '.') }}/mês</span>
+                                            <span class="block text-xs text-white/70">Valor cheio, sem compromisso. Cada pagamento libera 30 dias de acesso; sem novo pagamento, o sistema bloqueia até você pagar.</span>
+                                        </span>
+                                    </label>
+                                </div>
+                                <x-input-error :messages="$errors->get('forma_pagamento')" class="oravel-auth-error" />
+                            </div>
+
+                            @if ($implantacaoValor > 0)
+                                <div>
+                                    <span class="oravel-auth-label">Implantação (treinamento e configuração inicial)</span>
+                                    <div class="mt-2 grid gap-3 sm:grid-cols-2" data-testid="implantacao">
+                                        <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-white/25 bg-white/10 p-4">
+                                            <input type="radio" name="implantacao" value="contratar" class="mt-1" @checked(old('implantacao', 'contratar') === 'contratar') />
+                                            <span class="text-sm text-white">
+                                                <strong class="block">Contratar implantação</strong>
+                                                <span class="block text-lg font-bold">R$ {{ number_format($implantacaoValor, 2, ',', '.') }}</span>
+                                                <span class="block text-xs text-white/70">{{ $implantacaoParcelas > 1 ? 'À vista ou em até '.$implantacaoParcelas.'x' : 'À vista' }}</span>
+                                            </span>
+                                        </label>
+                                        @if ($selectedPlan->implantacao_opcional)
+                                            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-white/25 bg-white/10 p-4">
+                                                <input type="radio" name="implantacao" value="nao_contratar" class="mt-1" @checked(old('implantacao') === 'nao_contratar') />
+                                                <span class="text-sm text-white">
+                                                    <strong class="block">Não contratar agora</strong>
+                                                    <span class="block text-xs text-white/70">Você pode contratar depois com a nossa equipe.</span>
+                                                </span>
+                                            </label>
+                                        @endif
+                                    </div>
+                                    <x-input-error :messages="$errors->get('implantacao')" class="oravel-auth-error" />
+                                </div>
+                            @endif
+                        @endif
 
                         <div class="grid gap-5 sm:grid-cols-2">
                             <div>

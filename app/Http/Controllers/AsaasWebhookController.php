@@ -313,6 +313,10 @@ class AsaasWebhookController extends Controller
 
         $this->recordSubscriptionPaymentHistory($tenant, $newStatus, $payment);
 
+        if ($newStatus === Tenant::PAYMENT_STATUS_EM_DIA && $tenant->estenderAcessoPorPagamento($payment['id'] ?? null)) {
+            TenantTimeline::record($tenant, TenantEvent::ANOTACAO, 'Acesso liberado por 30 dias', 'Pagamento confirmado: acesso até '.$tenant->acesso_ate->format('d/m/Y').'. Sem novo pagamento, o sistema bloqueia sozinho.', dedupeKey: 'acesso-periodo:'.($payment['id'] ?? uniqid()));
+        }
+
         if ($newStatus === Tenant::PAYMENT_STATUS_EM_DIA) {
             $released = User::where('tenant_id', $tenant->id)->where('is_approved', false)->update(['is_approved' => true]);
 

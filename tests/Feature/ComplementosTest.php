@@ -86,7 +86,7 @@ class ComplementosTest extends TestCase
         $cliente = $this->tenant($vitrine);
         $outro = $this->tenant($vitrine);
 
-        $c = $this->servico()->contratar($cliente, self::FEATURE, 120);
+        $c = $this->servico()->contratar($cliente, self::FEATURE, 200);
 
         $cliente->refresh();
         $this->assertNotSame($vitrine->id, $cliente->plan_id, 'contrato próprio, copiado da vitrine');
@@ -122,7 +122,7 @@ class ComplementosTest extends TestCase
         $semAssinatura = $this->tenant($this->plano(), ['asaas_subscription_id' => null]);
 
         $casos = [
-            'valor zero' => [fn () => $this->servico()->contratar($cliente, self::FEATURE, 0), 'valor mensal'],
+            'valor zero' => [fn () => $this->servico()->contratar($cliente, self::FEATURE, 0), 'valor cheio'],
             'complemento desconhecido' => [fn () => $this->servico()->contratar($cliente, 'modulo_inexistente', 10), 'desconhecido'],
             'sem assinatura recorrente' => [fn () => $this->servico()->contratar($semAssinatura, self::FEATURE, 10), 'assinatura recorrente'],
         ];
@@ -145,7 +145,7 @@ class ComplementosTest extends TestCase
     {
         Carbon::setTestNow('2026-01-10');
         $cliente = $this->tenant($this->plano());
-        $c = $this->servico()->contratar($cliente, self::FEATURE, 120);
+        $c = $this->servico()->contratar($cliente, self::FEATURE, 200);
 
         try {
             $this->servico()->cancelar($c);
@@ -176,7 +176,7 @@ class ComplementosTest extends TestCase
     public function test_early_termination_is_super_admin_only_needs_a_reason_and_charges_nothing(): void
     {
         $cliente = $this->tenant($this->plano());
-        $c = $this->servico()->contratar($cliente, self::FEATURE, 120);
+        $c = $this->servico()->contratar($cliente, self::FEATURE, 200);
         $comum = User::create(['name' => 'Comum', 'email' => 'c-'.uniqid().'@x.com', 'password' => bcrypt('x'), 'is_approved' => true]);
         $super = $this->superAdmin();
 
@@ -206,7 +206,7 @@ class ComplementosTest extends TestCase
     {
         $cliente = $this->tenant($this->plano(), ['implementation_fee' => 900, 'implementation_installments' => 3, 'implementation_billing_mode' => 'somada']);
 
-        $this->servico()->contratar($cliente, self::FEATURE, 120);
+        $this->servico()->contratar($cliente, self::FEATURE, 200);
 
         $cliente->refresh();
         $this->assertTrue($cliente->mrr_pendente_sincronizar);
@@ -226,7 +226,7 @@ class ComplementosTest extends TestCase
         $this->asaasFalhando = true;
         $cliente = $this->tenant($this->plano());
 
-        $this->servico()->contratar($cliente, self::FEATURE, 120);
+        $this->servico()->contratar($cliente, self::FEATURE, 200);
         $this->assertTrue($cliente->fresh()->mrr_pendente_sincronizar);
 
         $this->assertSame(1, $this->servico()->rotinaDiaria()['pendentes']);
@@ -243,7 +243,7 @@ class ComplementosTest extends TestCase
     public function test_editing_the_total_by_hand_keeps_the_complements_on_top(): void
     {
         $cliente = $this->tenant($this->plano());
-        $this->servico()->contratar($cliente, self::FEATURE, 120);
+        $this->servico()->contratar($cliente, self::FEATURE, 200);
 
         $cliente->refresh()->update(['mrr_value' => 700]);
 
@@ -258,7 +258,7 @@ class ComplementosTest extends TestCase
     {
         Carbon::setTestNow('2026-01-10');
         $cliente = $this->tenant($this->plano());
-        $this->servico()->contratar($cliente, self::FEATURE, 120);
+        $this->servico()->contratar($cliente, self::FEATURE, 200);
 
         $this->assertSame(0, $this->servico()->rotinaDiaria()['avisos']);
         $this->assertSame(1, $this->servico()->rotinaDiaria(Carbon::parse('2026-12-20'))['avisos']);
@@ -307,7 +307,8 @@ class ComplementosTest extends TestCase
             ->callTableAction('contratar', data: ['feature' => self::FEATURE, 'valor' => 150]);
 
         $c = TenantComplemento::withoutGlobalScopes()->where('tenant_id', $cliente->id)->firstOrFail();
-        $this->assertEquals(150, $c->valor_mensal);
+        $this->assertEquals(150, $c->valor_cheio);
+        $this->assertEquals(90, $c->valor_mensal, 'cobrado = cheio com 40% de desconto');
         $tela->assertCanSeeTableRecords([$c])->callTableAction('cancelar', $c)->assertNotified('Não foi possível');
         $this->assertSame('ativo', $c->fresh()->status);
 

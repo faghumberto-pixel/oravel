@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\PlanosPublicosController;
 use App\Support\Colaborador\Modulos;
 use App\Support\MenuModules;
 use App\Support\SaaSRegistry;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Plan extends Model
 {
@@ -16,7 +18,7 @@ class Plan extends Model
     protected $table = 'plans';
 
     protected $fillable = [
-        'name', 'pacote', 'price', 'level', 'base_price', 'discount_value', 'discount_type', 'final_price', 'implementation_fee', 'implementation_installments', 'implementation_billing_mode', 'payment_method', 'billing_cycle', 'campaign_tag', 'features', 'is_active',
+        'name', 'pacote', 'price', 'level', 'base_price', 'discount_value', 'discount_type', 'final_price', 'implementation_fee', 'implementation_installments', 'implementation_billing_mode', 'implantacao_opcional', 'payment_method', 'billing_cycle', 'campaign_tag', 'features', 'is_active',
     ];
 
     protected $casts = [
@@ -27,8 +29,16 @@ class Plan extends Model
         'implementation_fee' => 'decimal:2',
         'implementation_installments' => 'integer',
         'is_active' => 'boolean',
+        'implantacao_opcional' => 'boolean',
         'level' => 'integer',
     ];
+
+    protected static function booted(): void
+    {
+        // Preços públicos (site) vêm da vitrine: qualquer mudança nela limpa o cache da API.
+        static::saved(fn (Plan $p) => Cache::forget(PlanosPublicosController::CACHE_KEY));
+        static::deleted(fn (Plan $p) => Cache::forget(PlanosPublicosController::CACHE_KEY));
+    }
 
     /**
      * Validador estruturado para checagem de dicionário booleano obtido do pgsql

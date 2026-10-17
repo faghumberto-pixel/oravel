@@ -64,6 +64,9 @@ Route::post('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'handle']);
 // Webhook único do app da Oravel na Meta: serve todas as empresas (a empresa vem do número que recebeu).
 Route::get('/webhooks/whatsapp-meta', [WhatsAppEmpresaWebhookController::class, 'verifyPlataforma']);
 Route::post('/webhooks/whatsapp-meta', [WhatsAppEmpresaWebhookController::class, 'handlePlataforma'])->middleware('throttle:600,1');
+// Preços das soluções para o site institucional (lidos da Central, sem dados de clientes).
+Route::get('/public/planos', \App\Http\Controllers\PlanosPublicosController::class)->middleware('throttle:60,1')->name('planos.publicos');
+
 // Asaas da EMPRESA cliente (cobrança automática dos clientes dela): empresa na URL, token por empresa no cabeçalho.
 Route::post('/webhooks/asaas-empresa/{tenant}', [\App\Http\Controllers\AsaasEmpresaWebhookController::class, 'handle'])->middleware('throttle:600,1')->name('asaas.empresa.webhook');
 Route::get('/webhooks/whatsapp-empresa/{tenant}', [WhatsAppEmpresaWebhookController::class, 'verify']);

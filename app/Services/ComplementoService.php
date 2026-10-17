@@ -8,6 +8,7 @@ use App\Models\TenantComplemento;
 use App\Models\TenantEvent;
 use App\Models\User;
 use App\Support\Pacotes;
+use App\Support\Precos;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -41,6 +42,7 @@ class ComplementoService
 
     // ------------------------------------------------------------------ contratar
 
+    /** $valor é o VALOR CHEIO mensal; o cliente paga o valor com desconto da recorrência (o complemento é sempre recorrente). */
     public function contratar(Tenant $tenant, string $feature, float $valor, ?User $por = null, ?CarbonInterface $inicio = null): TenantComplemento
     {
         if (! array_key_exists($feature, static::catalogo())) {
@@ -48,7 +50,7 @@ class ComplementoService
         }
 
         if ($valor <= 0) {
-            throw new ComplementoException('Informe o valor mensal do complemento (maior que zero).');
+            throw new ComplementoException('Informe o valor cheio mensal do complemento (maior que zero).');
         }
 
         if (blank($tenant->asaas_subscription_id) && blank($tenant->asaas_checkout_id)) {
@@ -66,7 +68,7 @@ class ComplementoService
             $plano->update(['features' => array_merge($plano->features, [$feature => true])]);
 
             return TenantComplemento::withoutGlobalScopes()->create([
-                'tenant_id' => $tenant->id, 'feature' => $feature, 'valor_mensal' => round($valor, 2), 'contratado_em' => $inicio,
+                'tenant_id' => $tenant->id, 'feature' => $feature, 'valor_cheio' => round($valor, 2), 'valor_mensal' => Precos::recorrente($valor), 'contratado_em' => $inicio,
                 'fidelidade_meses' => static::fidelidadeMeses(), 'fidelidade_ate' => $inicio->copy()->addMonthsNoOverflow(static::fidelidadeMeses()), 'status' => TenantComplemento::ATIVO,
             ]);
         });
@@ -76,8 +78,8 @@ class ComplementoService
 
         TenantTimeline::record(
             $tenant, TenantEvent::COMPLEMENTO_CONTRATADO, 'Complemento contratado: '.$complemento->nome(),
-            'R$ '.number_format($valor, 2, ',', '.').'/mês na assinatura recorrente, fidelidade até '.$complemento->fidelidade_ate->format('d/m/Y').'.',
-            ['complemento_id' => $complemento->id, 'feature' => $feature, 'valor' => $valor], notify: true, level: 'success',
+            Precos::brl((float) $complemento->valor_mensal).'/mês na assinatura recorrente (valor cheio '.Precos::brl($valor).' com '.Precos::descontoPercentual().'% de desconto), fidelidade até '.$complemento->fidelidade_ate->format('d/m/Y').'.',
+            ['complemento_id' => $complemento->id, 'feature' => $feature, 'valor_cheio' => $valor, 'valor' => (float) $complemento->valor_mensal], notify: true, level: 'success',
         );
 
         return $complemento;

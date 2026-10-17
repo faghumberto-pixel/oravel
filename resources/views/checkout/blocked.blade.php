@@ -15,6 +15,7 @@
         @php
             $isCancelado = $tenant?->asaas_payment_status === \App\Models\Tenant::PAYMENT_STATUS_CANCELADO;
             $diasAtraso = (int) $tenant?->asaas_overdue_since?->diffInDays(now());
+            $periodoVencido = (bool) ($tenant?->acesso_por_periodo && $tenant->acesso_ate?->lt(today()));
         @endphp
         <div
             class="relative min-h-screen w-full overflow-hidden bg-slate-950"
@@ -31,7 +32,13 @@
                 <div class="w-full max-w-md rounded-3xl border border-white/25 bg-white/15 p-8 text-center shadow-2xl backdrop-blur-xl sm:p-10">
                     <h1 class="text-xl font-bold text-white">Acesso temporariamente bloqueado</h1>
 
-                    @if ($isCancelado)
+                    @if ($periodoVencido && ! $isCancelado)
+                        <p class="mt-3 text-sm text-white/75" data-testid="periodo-vencido">
+                            Os 30 dias de acesso da <strong>{{ $tenant->name }}</strong> terminaram em
+                            {{ $tenant->acesso_ate->format('d/m/Y') }}. Pague a próxima mensalidade (boleto ou Pix) para liberar o acesso de novo --
+                            assim que o pagamento for confirmado, o sistema volta sozinho.
+                        </p>
+                    @elseif ($isCancelado)
                         <p class="mt-3 text-sm text-white/75">
                             A assinatura da <strong>{{ $tenant->name }}</strong> foi cancelada. Pra voltar a
                             usar o Oravel, é preciso reativar a assinatura.

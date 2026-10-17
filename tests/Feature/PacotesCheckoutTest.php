@@ -27,9 +27,9 @@ class PacotesCheckoutTest extends TestCase
         return $plano->fresh();
     }
 
-    private function payload(Plan $plan): array
+    private function payload(Plan $plan, array $extra = []): array
     {
-        return [
+        return $extra + [
             'plan_id' => $plan->id, 'company_name' => 'Empresa Pacote '.uniqid(), 'segment' => Client::NICHE_CONSTRUCAO_CIVIL,
             'equipment_types' => ['gerador'], 'cpf_cnpj' => '123.456.789-09', 'cep' => '13480-000', 'logradouro' => 'Rua A', 'numero' => '1',
             'bairro' => 'Centro', 'cidade' => 'Limeira', 'uf' => 'SP', 'admin_name' => 'Admin', 'admin_email' => 'adm-'.uniqid().'@oravel.com.br',
@@ -112,14 +112,14 @@ class PacotesCheckoutTest extends TestCase
 
         foreach (array_keys(Pacotes::opcoes()) as $codigo) {
             $plano = $this->aVenda($codigo);
-            $dados = $this->payload($plano);
+            $dados = $this->payload($plano, ['forma_pagamento' => 'cartao', 'implantacao' => 'nao_contratar']);
 
             $this->post('/assinar', $dados)->assertRedirect();
 
             $tenant = Tenant::where('name', $dados['company_name'])->firstOrFail();
             $this->assertSame($plano->id, $tenant->plan_id);
             $this->assertSame($codigo, $tenant->pacote());
-            $this->assertEquals(300, $tenant->mrr_value);
+            $this->assertEquals(180, $tenant->mrr_value, 'valor cheio 300 no cartão recorrente: 40% de desconto');
             $this->assertTrue($tenant->plan->hasFeature('modulo_dashboard'), "{$codigo}: base comum");
         }
     }

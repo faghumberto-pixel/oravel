@@ -149,6 +149,10 @@ class Tenant extends Model
         'implementation_fee',
         'implementation_installments',
         'implementation_billing_mode',
+        'implantacao_contratada',
+        'acesso_por_periodo',
+        'acesso_ate',
+        'acesso_pagamento_id',
         'payment_method',
         'subscription_reverted_to_base_at',
         'razao_social',
@@ -186,6 +190,9 @@ class Tenant extends Model
         'implementation_installments' => 'integer',
         'subscription_reverted_to_base_at' => 'datetime',
         'mrr_pendente_desde' => 'datetime',
+        'implantacao_contratada' => 'boolean',
+        'acesso_por_periodo' => 'boolean',
+        'acesso_ate' => 'date',
         'mrr_pendente_sincronizar' => 'boolean',
         'asaas_payment_updated_at' => 'datetime',
         'asaas_overdue_since' => 'datetime',
@@ -291,6 +298,23 @@ class Tenant extends Model
      * tenant provisionado manualmente na Central sem cobrança) também não
      * é bloqueado -- ausência de status não é o mesmo que inadimplência.
      */
+    /** Dias de acesso que cada pagamento libera para quem paga mensal sem compromisso. */
+    public const DIAS_ACESSO_POR_PAGAMENTO = 30;
+
+    /** Libera mais 30 dias de acesso (a partir do dia, ou do fim do período se ainda estiver vigente). Uma vez por pagamento. */
+    public function estenderAcessoPorPagamento(?string $pagamentoId = null): bool
+    {
+        if (! $this->acesso_por_periodo || ($pagamentoId && $this->acesso_pagamento_id === $pagamentoId)) {
+            return false;
+        }
+
+        $base = $this->acesso_ate && $this->acesso_ate->gte(today()) ? $this->acesso_ate->copy() : today();
+
+        $this->forceFill(['acesso_ate' => $base->addDays(self::DIAS_ACESSO_POR_PAGAMENTO), 'acesso_pagamento_id' => $pagamentoId ?: $this->acesso_pagamento_id])->save();
+
+        return true;
+    }
+
     public function isAccessBlockedForNonPayment(): bool
     {
         if (Auth::user()?->isSuperAdmin()) {
@@ -298,6 +322,12 @@ class Tenant extends Model
         }
 
         if ($this->asaas_payment_status === self::PAYMENT_STATUS_CANCELADO) {
+            return true;
+        }
+
+        // "Mensal sem compromisso": cada pagamento libera 30 dias e, passado o último dia, bloqueia na hora (sem tolerância)
+        // até o próximo pagamento. Antes do primeiro pagamento o acesso já nasce pendente de aprovação.
+        if ($this->acesso_por_periodo && $this->acesso_ate && $this->acesso_ate->lt(today())) {
             return true;
         }
 
@@ -478,6 +508,10 @@ class Tenant extends Model
      */
     public function implementationSummary(): array
     {
+        if ($this->implantacao_contratada === false) {
+            return ['label' => 'Dispensada pelo cliente', 'color' => 'gray'];
+        }
+
         if ($this->implementationAmount() <= 0) {
             return ['label' => 'Sem implantação', 'color' => 'gray'];
         }

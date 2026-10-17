@@ -8,9 +8,11 @@ use App\Filament\Central\Resources\TenantResource\RelationManagers\EventsRelatio
 use App\Models\Client;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Services\AsaasService;
 use App\Services\CnpjLookupService;
 use App\Support\CrmPalette;
 use App\Support\Pacotes;
+use App\Support\Precos;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -216,6 +218,10 @@ class TenantResource extends Resource
                     ->badge()
                     ->state(fn (Tenant $record) => $record->implementationSummary()['label'])
                     ->color(fn (Tenant $record) => $record->implementationSummary()['color']),
+                Tables\Columns\TextColumn::make('acesso_ate')->label('Acesso até')->date('d/m/Y')->placeholder('—')
+                    ->description(fn (Tenant $r) => $r->acesso_por_periodo ? 'Mensal sem compromisso' : null)
+                    ->color(fn (Tenant $r) => $r->acesso_por_periodo && $r->acesso_ate?->lt(today()) ? 'danger' : null)
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')->label('Criado em')->dateTime('d/m/Y H:i')->sortable(),
             ])->filters([
                 Tables\Filters\SelectFilter::make('pacote')->label('Pacote')
@@ -224,6 +230,13 @@ class TenantResource extends Resource
                         null, '' => $query,
                         'personalizado' => $query->whereHas('plan', fn ($q) => $q->whereNull('pacote')),
                         default => $query->whereHas('plan', fn ($q) => $q->where('pacote', $data['value'])),
+                    }),
+                Tables\Filters\SelectFilter::make('implantacao')->label('Implantação')
+                    ->options(['contratada' => 'Contratada', 'dispensada' => 'Dispensada pelo cliente'])
+                    ->query(fn (Builder $query, array $data) => match ($data['value'] ?? null) {
+                        'contratada' => $query->where('implantacao_contratada', true),
+                        'dispensada' => $query->where('implantacao_contratada', false),
+                        default => $query,
                     }),
                 Tables\Filters\SelectFilter::make('status')->label('Status')->options(['active' => 'Ativo', 'trial' => 'Teste']),
                 Tables\Filters\SelectFilter::make('segment')->label('Segmento')->options(Client::nicheLabels()),
@@ -238,6 +251,19 @@ class TenantResource extends Resource
                         Tenant::PAYMENT_STATUS_CANCELADO => 'Cancelado',
                     ]),
             ])->actions([
+                Tables\Actions\Action::make('contratarImplantacao')
+                    ->label('Contratar implantação')->icon('heroicon-o-academic-cap')->color('success')
+                    ->visible(fn (Tenant $r) => $r->implantacao_contratada === false && (float) ($r->plan?->implementation_fee ?? 0) > 0)
+                    ->requiresConfirmation()
+                    ->modalDescription(fn (Tenant $r) => 'Gera a cobrança da implantação ('.Precos::brl((float) $r->plan->implementation_fee).') em cobrança separada, no Asaas, e marca como contratada.')
+                    ->action(function (Tenant $r) {
+                        $r->forceFill(['implementation_fee' => null, 'implementation_billing_mode' => 'separada', 'implantacao_contratada' => true])->save();
+                        $links = app(AsaasService::class)->chargeTenantImplementation($r->refresh());
+
+                        Notification::make()->title('Implantação contratada')
+                            ->body($links ? 'Cobrança gerada.' : 'Marcada como contratada; a cobrança não pôde ser gerada agora (confira o cadastro no Asaas).')
+                            ->success()->send();
+                    }),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])->bulkActions([

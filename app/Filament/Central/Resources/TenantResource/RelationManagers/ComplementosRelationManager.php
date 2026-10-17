@@ -5,6 +5,7 @@ namespace App\Filament\Central\Resources\TenantResource\RelationManagers;
 use App\Models\TenantComplemento;
 use App\Services\ComplementoException;
 use App\Services\ComplementoService;
+use App\Support\Precos;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -36,7 +37,8 @@ class ComplementosRelationManager extends RelationManager
             ->defaultSort('contratado_em', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('feature')->label('Complemento')->formatStateUsing(fn ($state) => ComplementoService::catalogo()[$state] ?? $state)->weight('bold'),
-                Tables\Columns\TextColumn::make('valor_mensal')->label('Valor mensal')->money('BRL'),
+                Tables\Columns\TextColumn::make('valor_cheio')->label('Valor cheio')->money('BRL')->placeholder('—'),
+                Tables\Columns\TextColumn::make('valor_mensal')->label('Cobrado por mês')->money('BRL')->description(fn (TenantComplemento $r) => '-'.Precos::descontoPercentual().'% pela recorrência'),
                 Tables\Columns\TextColumn::make('contratado_em')->label('Desde')->date('d/m/Y'),
                 Tables\Columns\TextColumn::make('fidelidade_ate')->label('Fidelidade até')->date('d/m/Y')
                     ->description(fn (TenantComplemento $r) => $r->vigente() ? ($r->emFidelidade() ? 'Em fidelidade' : 'Fidelidade cumprida') : null),
@@ -56,8 +58,8 @@ class ComplementosRelationManager extends RelationManager
                     ->form([
                         Forms\Components\Select::make('feature')->label('Complemento')->native(false)->required()
                             ->options(fn () => collect(ComplementoService::catalogo())->reject(fn ($n, $k) => $this->getOwnerRecord()->complementos()->withoutGlobalScopes()->where('feature', $k)->whereIn('status', [TenantComplemento::ATIVO, TenantComplemento::ENCERRANDO])->exists())->all()),
-                        Forms\Components\TextInput::make('valor')->label('Valor mensal (R$)')->numeric()->minValue(0.01)->required()->step(0.01),
-                        Forms\Components\Placeholder::make('aviso')->label('')->content('Cobrado dentro da assinatura recorrente do cliente, com fidelidade de '.ComplementoService::fidelidadeMeses().' meses. O cliente não cancela antes disso.'),
+                        Forms\Components\TextInput::make('valor')->label('Valor cheio mensal (R$)')->numeric()->minValue(0.01)->required()->step(0.01)->live(onBlur: true),
+                        Forms\Components\Placeholder::make('aviso')->label('')->content(fn (Forms\Get $get) => 'O cliente paga '.Precos::brl(Precos::recorrente((float) $get('valor'))).'/mês ('.Precos::descontoPercentual().'% de desconto pela recorrência), dentro da assinatura recorrente, com fidelidade de '.ComplementoService::fidelidadeMeses().' meses. O cliente não cancela antes disso.'),
                     ])
                     ->action(fn (array $data) => $this->executar(
                         fn () => app(ComplementoService::class)->contratar($this->getOwnerRecord(), $data['feature'], (float) $data['valor'], auth()->user()),

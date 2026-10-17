@@ -127,6 +127,7 @@ class Pacotes
                 'billing_cycle' => 'monthly',
                 'features' => array_fill_keys(self::features($codigo), true),
                 'is_active' => false,
+                'implantacao_opcional' => true,
             ]);
         }
 

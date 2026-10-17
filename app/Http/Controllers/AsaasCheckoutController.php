@@ -12,6 +12,7 @@ use App\Services\AsaasService;
 use App\Services\SignatureService;
 use App\Services\TenantProvisioner;
 use App\Support\Pacotes;
+use App\Support\Precos;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -91,6 +92,12 @@ class AsaasCheckoutController extends Controller
     {
         return view('checkout.create', [
             'selectedPlan' => $selectedPlan,
+            'vitrine' => $selectedPlan->campaign_tag === Pacotes::TAG_VITRINE,
+            'valorCheio' => (float) $selectedPlan->base_price,
+            'valorRecorrente' => Precos::recorrente((float) $selectedPlan->base_price),
+            'descontoPercentual' => Precos::descontoPercentual(),
+            'implantacaoValor' => (float) $selectedPlan->implementation_fee,
+            'implantacaoParcelas' => max(1, min(2, (int) $selectedPlan->implementation_installments)),
             'pacoteDescricao' => Pacotes::todos()[$selectedPlan->pacote ?? '']['descricao'] ?? null,
             'segments' => Client::nicheLabels(),
             'equipmentTypes' => self::EQUIPMENT_TYPES,
@@ -136,10 +143,38 @@ class AsaasCheckoutController extends Controller
             'telefone' => ['required', 'string', 'max:20'],
             'admin_password' => ['required', 'string', 'min:8'],
             'plan_id' => ['required', 'uuid', 'exists:plans,id'],
+            'forma_pagamento' => ['nullable', Rule::in(['cartao', 'boleto_pix'])],
+            'implantacao' => ['nullable', Rule::in(['contratar', 'nao_contratar'])],
             'terms_accepted' => ['accepted'],
         ]);
 
         $plan = Plan::where('is_active', true)->findOrFail($data['plan_id']);
+
+        // Planos de vitrine têm valor cheio (a escolha de como pagar define o valor) e implantação opcional.
+        // Contratos comuns (link direto) seguem como sempre: valor cobrado fixo e implantação do contrato.
+        $vitrine = $plan->campaign_tag === Pacotes::TAG_VITRINE;
+        $comercial = [];
+
+        if ($vitrine) {
+            $forma = $data['forma_pagamento'] ?? null;
+            $temImplantacao = (float) $plan->implementation_fee > 0;
+
+            $request->validate([
+                'forma_pagamento' => ['required'],
+                'implantacao' => [$temImplantacao ? 'required' : 'nullable'],
+            ], ['forma_pagamento.required' => 'Escolha como pagar a mensalidade.', 'implantacao.required' => 'Informe se quer contratar a implantação.']);
+
+            $comercial = ['payment_method' => $forma, 'mrr_value' => Precos::paraForma((float) $plan->base_price, $forma), 'acesso_por_periodo' => $forma === 'boleto_pix'];
+
+            if ($temImplantacao) {
+                $contratar = ($data['implantacao'] ?? 'contratar') === 'contratar' || ! $plan->implantacao_opcional;
+                $comercial['implantacao_contratada'] = $contratar;
+
+                if (! $contratar) {
+                    $comercial['implementation_fee'] = 0;   // 0 (e não nulo) = dispensada; nulo cairia no valor do contrato
+                }
+            }
+        }
 
         $tenant = Tenant::create([
             'name' => $data['company_name'],
@@ -147,6 +182,7 @@ class AsaasCheckoutController extends Controller
             'plan_id' => $plan->id,
             'status' => 'trial',
             'mrr_value' => $plan->price,
+            ...$comercial,
             'cpf_cnpj' => $data['cpf_cnpj'],
             'telefone' => $data['telefone'],
             'segment' => $data['segment'],

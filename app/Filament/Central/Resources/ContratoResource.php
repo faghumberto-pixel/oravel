@@ -9,6 +9,7 @@ use App\Models\Tenant;
 use App\Support\Colaborador\Modulos;
 use App\Support\MenuModules;
 use App\Support\Pacotes;
+use App\Support\Precos;
 use App\Support\SaaSRegistry;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -273,7 +274,17 @@ class ContratoResource extends Resource
                     ])->key('acoesPacote'),
 
                     Forms\Components\TextInput::make('base_price')
-                        ->label('Valor Mensal')
+                        ->label(fn (?Plan $record) => $record?->campaign_tag === Pacotes::TAG_VITRINE ? 'Valor cheio mensal' : 'Valor Mensal')
+                        ->helperText(function (?Plan $record, Get $get) {
+                            if ($record?->campaign_tag !== Pacotes::TAG_VITRINE) {
+                                return null;
+                            }
+
+                            $cheio = (float) $get('base_price');
+
+                            return 'Boleto/Pix todo mês: '.Precos::brl($cheio).' · Cartão recorrente (com '.Precos::descontoPercentual().'% de desconto): '.Precos::brl(Precos::recorrente($cheio)).'. O site e o checkout mostram os dois.';
+                        })
+                        ->live(onBlur: true)
                         ->numeric()
                         ->prefix('R$')
                         ->required(),
@@ -317,6 +328,11 @@ class ContratoResource extends Resource
 
                     // Só no contrato de vitrine (o que o site vende em /assinar/{pacote}): o preço acima e este
                     // interruptor são o que libera a venda. Contratos de cliente seguem sempre ativos.
+                    Forms\Components\Toggle::make('implantacao_opcional')
+                        ->label('Implantação é opcional para o cliente')
+                        ->helperText('Ligado: no checkout e no site o cliente escolhe contratar ou não a implantação. Vale quando há valor de implantação acima.')
+                        ->visible(fn (?Plan $record) => $record?->campaign_tag === Pacotes::TAG_VITRINE),
+
                     Forms\Components\Toggle::make('is_active')
                         ->label('À venda no site (checkout)')
                         ->helperText('Só vende se o Valor Mensal estiver preenchido. Desligado, o botão Assinar do site não leva ao checkout.')

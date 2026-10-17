@@ -20,11 +20,12 @@ class TenantComplemento extends Model
     public const ENCERRADO = 'encerrado';
 
     protected $fillable = [
-        'tenant_id', 'feature', 'valor_mensal', 'contratado_em', 'fidelidade_meses', 'fidelidade_ate', 'status', 'encerra_em',
+        'tenant_id', 'feature', 'valor_cheio', 'valor_mensal', 'contratado_em', 'fidelidade_meses', 'fidelidade_ate', 'status', 'encerra_em',
         'encerrado_em', 'encerrado_por', 'motivo_encerramento', 'encerramento_antecipado', 'aviso_fidelidade_em',
     ];
 
     protected $casts = [
+        'valor_cheio' => 'decimal:2',
         'valor_mensal' => 'decimal:2',
         'contratado_em' => 'date',
         'fidelidade_ate' => 'date',
