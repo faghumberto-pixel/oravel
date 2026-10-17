@@ -20,6 +20,40 @@
         ]
     },
     {
+        "title": "Configurações da Empresa",
+        "description": "Configure sozinho o WhatsApp, o e-mail, a cobrança automática e importe seus cadastros, sem depender de ninguém.",
+        "lessons": [
+            {
+                "title": "Conectar o WhatsApp da empresa",
+                "href": "/configuracoes/whatsapp.html",
+                "slug": "configuracoes__whatsapp",
+                "summary": "Ligar o número da empresa (API oficial da Meta), cadastrar modelos e ativar os avisos automáticos de cobrança e de ordem de serviço.",
+                "feature": "modulo_whatsapp"
+            },
+            {
+                "title": "Configurar o e-mail da empresa",
+                "href": "/configuracoes/email-empresa.html",
+                "slug": "configuracoes__email-empresa",
+                "summary": "Cadastrar a caixa de e-mail da empresa (SMTP), testar a conexão e enviar propostas e avisos com o seu endereço.",
+                "feature": "menu_email_da_empresa"
+            },
+            {
+                "title": "Configurar a cobrança automática",
+                "href": "/configuracoes/cobranca-automatica.html",
+                "slug": "configuracoes__cobranca-automatica",
+                "summary": "Conta Asaas da empresa, webhook, planos de cobrança, automação diária e painel de cobranças.",
+                "feature": "modulo_cobranca_automatica"
+            },
+            {
+                "title": "Migração de dados: importar planilhas",
+                "href": "/configuracoes/migracao-dados.html",
+                "slug": "configuracoes__migracao-dados",
+                "summary": "Importar clientes, ativos e leads de planilhas com simulação antes de gravar.",
+                "feature": null
+            }
+        ]
+    },
+    {
         "title": "Painel Admin",
         "description": "O painel do dia a dia: dashboard, quadro do pátio e agenda dos técnicos.",
         "lessons": [

@@ -19,7 +19,8 @@ return [
 
     'base' => [
         'grupos' => ['Configurações', 'Equipe'],
-        'features' => ['modulo_dashboard'],
+        // Academia Oravel em todos os pacotes: cada cliente só vê as aulas dos módulos do próprio pacote (Lesson::scopeAvailable).
+        'features' => ['modulo_dashboard', 'tabela_courses'],
     ],
 
     'pacotes' => [

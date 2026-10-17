@@ -49,6 +49,9 @@ class TenantResource extends Resource
                 Forms\Components\Select::make('status')->label('Status')->options(['active' => 'Ativo', 'trial' => 'Teste', 'suspended' => 'Suspenso', 'canceled' => 'Cancelado'])->default('trial')->required(),
                 Forms\Components\TextInput::make('mrr_value')->label('MRR (R$)')->numeric()->step(0.01)->default(0)
                     ->helperText('Total cobrado por mês na assinatura (base + complementos). Os complementos contratados continuam somados se você mudar o total.'),
+                Forms\Components\Placeholder::make('academia_do_plano')->label('Academia deste plano')
+                    ->visible(fn (?Tenant $record) => $record?->exists === true)
+                    ->content(fn (?Tenant $record) => \App\Support\AcademiaDoPlano::texto($record?->plan)),
                 Forms\Components\Placeholder::make('composicao_mrr')->label('Composição da mensalidade')
                     ->visible(fn (?Tenant $record) => $record?->exists === true)
                     ->content(function (?Tenant $record) {

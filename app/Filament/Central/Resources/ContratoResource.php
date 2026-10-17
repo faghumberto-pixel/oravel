@@ -342,6 +342,10 @@ class ContratoResource extends Resource
             Forms\Components\Section::make('Módulos incluídos')
                 ->description('Selecione o que esse contrato específico libera pro cliente, agrupado pelos mesmos menus do painel.')
                 ->schema([
+                    Forms\Components\Placeholder::make('academia_do_plano')->label('Academia deste contrato')
+                        ->content(fn (?Plan $record) => \App\Support\AcademiaDoPlano::texto($record))
+                        ->helperText('A Academia faz parte de todos os pacotes e mostra só as aulas dos módulos marcados abaixo.'),
+
                     // Resumo ao vivo (pedido do usuário: "que sejam
                     // contados em um resumo na tela logo ao lado de
                     // módulos incluidos por grupo, exemplo: Manutenção -

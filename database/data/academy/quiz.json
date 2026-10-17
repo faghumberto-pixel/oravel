@@ -6505,5 +6505,212 @@
     "why": "A conta passa a Recebido."
    }
   ]
+ },
+ {
+  "page": "/configuracoes/whatsapp.html",
+  "questions": [
+   {
+    "q": "Um cliente respondeu há 3 dias e você quer mandar uma nova mensagem pelo WhatsApp do sistema. O que o WhatsApp permite?",
+    "options": [
+     "Só um modelo de mensagem aprovado pela Meta, porque o texto livre vale até 24 horas depois da última mensagem do cliente",
+     "Texto livre, porque a conversa já existe",
+     "Texto livre, desde que seja enviado antes das 18h",
+     "Nada: o WhatsApp bloqueia qualquer envio depois de 24 horas"
+    ],
+    "correct": 0,
+    "why": "Fora da janela de 24 horas desde a última mensagem do cliente, só vale modelo aprovado pela Meta."
+   },
+   {
+    "q": "Para quem o aviso automático de cobrança por WhatsApp é enviado?",
+    "options": [
+     "Só para clientes que aceitaram receber avisos por WhatsApp, uma única vez por cobrança",
+     "Para todos os clientes com cobrança em aberto, todos os dias",
+     "Para qualquer contato que já mandou mensagem",
+     "Só para clientes com contrato assinado"
+    ],
+    "correct": 0,
+    "why": "O envio exige o aceite do cliente no cadastro e acontece uma vez por cobrança ou ordem de serviço."
+   },
+   {
+    "q": "O que é preciso para o aviso de cobrança levar o link de pagamento?",
+    "options": [
+     "Ligar a opção do link e usar um modelo de 5 variáveis (a quinta é o link), com a cobrança automática ligada",
+     "Nada: o link vai em todo modelo",
+     "Cadastrar o link manualmente em cada cliente",
+     "Usar texto livre no lugar do modelo"
+    ],
+    "correct": 0,
+    "why": "O modelo de cobrança tem 4 variáveis; com link passa a ter 5, e o sistema gera a cobrança se ainda não existir."
+   },
+   {
+    "q": "O teste de conexão do WhatsApp falhou. O que acontece com a configuração?",
+    "options": [
+     "Nada é ligado até o teste passar; confira token, ID do número e se o número está ativo na Meta",
+     "O WhatsApp liga mesmo assim e tenta de novo depois",
+     "Os avisos saem pelo número da Oravel",
+     "O token é apagado e é preciso cadastrar de novo"
+    ],
+    "correct": 0,
+    "why": "O sistema só liga se pelo menos um número for aceito pela Meta; senão mantém tudo desligado."
+   }
+  ]
+ },
+ {
+  "page": "/configuracoes/email-empresa.html",
+  "questions": [
+   {
+    "q": "Você ainda não cadastrou o e-mail da empresa. Por qual caixa o sistema envia as mensagens?",
+    "options": [
+     "Pela caixa da Oravel, em nome da sua empresa \"via Oravel\"",
+     "Não envia nada",
+     "Pelo e-mail pessoal do administrador",
+     "Pelo Gmail de cada usuário"
+    ],
+    "correct": 0,
+    "why": "Sem cadastro (ou desativado), continua valendo a caixa da Oravel."
+   },
+   {
+    "q": "O que o botão \"Testar conexão e ativar\" faz?",
+    "options": [
+     "Entra na caixa para conferir os dados, sem enviar e-mail, e só ativa se der certo",
+     "Envia um e-mail de teste a todos os clientes",
+     "Apaga a senha antiga",
+     "Troca o provedor automaticamente"
+    ],
+    "correct": 0,
+    "why": "O teste valida o login no servidor; se falhar nada é ativado."
+   },
+   {
+    "q": "Seu provedor pede uma \"senha de aplicativo\". Onde ela entra no cadastro?",
+    "options": [
+     "No campo Senha, no lugar da senha normal da caixa",
+     "No campo Servidor",
+     "No campo E-mail do remetente",
+     "Não entra: o sistema gera sozinho"
+    ],
+    "correct": 0,
+    "why": "Alguns provedores só aceitam senha de aplicativo para conexões de outros programas."
+   },
+   {
+    "q": "Como a senha do e-mail fica guardada?",
+    "options": [
+     "Criptografada, e nunca é mostrada de novo",
+     "Em texto aberto, visível aos administradores",
+     "No navegador de quem cadastrou",
+     "Em uma planilha da Oravel"
+    ],
+    "correct": 0,
+    "why": "A senha é criptografada; para manter a atual basta deixar o campo em branco ao salvar."
+   }
+  ]
+ },
+ {
+  "page": "/configuracoes/cobranca-automatica.html",
+  "questions": [
+   {
+    "q": "Onde o dinheiro das cobranças geradas pela cobrança automática cai?",
+    "options": [
+     "Direto na conta Asaas da sua empresa",
+     "Na conta da Oravel, que repassa depois",
+     "Na conta do cliente",
+     "Em uma conta digital do Oravel"
+    ],
+    "correct": 0,
+    "why": "A cobrança é criada na conta Asaas da própria empresa; a Oravel só gera e acompanha."
+   },
+   {
+    "q": "O que o webhook do Asaas faz?",
+    "options": [
+     "Avisa o sistema quando um pagamento é confirmado, vence ou é estornado, para a conta a receber atualizar sozinha",
+     "Cria as cobranças todos os dias",
+     "Envia o e-mail de cobrança ao cliente",
+     "Troca a chave de API"
+    ],
+    "correct": 0,
+    "why": "O webhook traz os eventos de pagamento; a URL e o token estão na tela de Cobrança automática."
+   },
+   {
+    "q": "Quando o cliente não tem CPF ou CNPJ válido, o que acontece com a cobrança?",
+    "options": [
+     "Não é gerada; a conta mostra o motivo e o sistema tenta de novo nos dias seguintes, até 5 vezes",
+     "É gerada sem documento",
+     "É gerada no CPF do administrador",
+     "É cancelada e apagada"
+    ],
+    "correct": 0,
+    "why": "O Asaas exige documento do cliente; a falha fica registrada na conta e os administradores são avisados ao chegar no limite."
+   },
+   {
+    "q": "Antes de usar a chave de produção, o que você deve fazer?",
+    "options": [
+     "Testar no ambiente sandbox: gerar uma cobrança, pagar e conferir que a conta ficou Recebida",
+     "Ligar direto a produção",
+     "Pedir ao cliente para pagar de verdade",
+     "Desligar o webhook"
+    ],
+    "correct": 0,
+    "why": "No sandbox nada é cobrado de verdade; confirma que chave, webhook e baixa automática funcionam."
+   },
+   {
+    "q": "Os Planos de Cobrança são usados para quê?",
+    "options": [
+     "Para definir valor, frequência e dia de vencimento de cada contrato, de onde o sistema gera as contas a receber",
+     "Para cadastrar as contas bancárias",
+     "Para escolher o modelo de WhatsApp",
+     "Para cancelar cobranças"
+    ],
+    "correct": 0,
+    "why": "Cada plano gera a conta do período (mensal, trimestral ou anual) sem repetir, e a cobrança sai no Asaas."
+   }
+  ]
+ },
+ {
+  "page": "/configuracoes/migracao-dados.html",
+  "questions": [
+   {
+    "q": "Por que deixar \"Apenas validar (não grava nada)\" ligado na primeira importação?",
+    "options": [
+     "Para ver o que seria criado e os erros, corrigir a planilha e só depois gravar",
+     "Para a importação ser mais rápida",
+     "Para o sistema apagar os cadastros antigos",
+     "Porque a gravação só funciona depois de validar três vezes"
+    ],
+    "correct": 0,
+    "why": "A simulação mostra criados, atualizados, ignorados e erros sem mexer em nada."
+   },
+   {
+    "q": "Uma linha da planilha tem erro. O que acontece quando você importa de verdade?",
+    "options": [
+     "A linha é pulada e listada no final; as demais são gravadas",
+     "A importação inteira é cancelada",
+     "A linha é gravada com o erro",
+     "O sistema corrige sozinho a linha"
+    ],
+    "correct": 0,
+    "why": "Linhas com erro são puladas e listadas; corrija e importe de novo."
+   },
+   {
+    "q": "Cliente que já existe (mesmo CNPJ/CPF) aparece na planilha e \"Atualizar\" está desligado. O que acontece?",
+    "options": [
+     "O cliente é ignorado e nada muda nele",
+     "O cliente é duplicado",
+     "O cadastro antigo é apagado",
+     "Os dados são sobrescritos"
+    ],
+    "correct": 0,
+    "why": "Com a atualização desligada, quem já existe é ignorado; ligada, só as colunas preenchidas são atualizadas."
+   },
+   {
+    "q": "Qual a melhor ordem para importar os dados?",
+    "options": [
+     "Clientes primeiro, depois ativos, e só então contratos e históricos",
+     "Contratos primeiro, depois clientes",
+     "Tudo de uma vez numa planilha só",
+     "Ativos primeiro, sem clientes"
+    ],
+    "correct": 0,
+    "why": "Assim os vínculos entre eles já existem quando você precisar."
+   }
+  ]
  }
 ]
