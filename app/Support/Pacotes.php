@@ -6,7 +6,7 @@ use App\Filament\Central\Resources\ContratoResource;
 use App\Models\Tenant;
 
 /**
- * Pacotes de contrato (Locadora, CRM, Estoque, Logística): quais módulos cada um liga, nome para exibir e a
+ * Pacotes de contrato (Locadora, Vendas, Manutenção, Serviços, Estoque, Logística): quais módulos cada um liga, nome para exibir e a
  * tela inicial de quem entra no painel. A fonte é config/pacotes.php; as chaves vêm dos grupos de menu reais.
  */
 class Pacotes
@@ -23,8 +23,16 @@ class Pacotes
         return array_map(fn ($p) => $p['nome'], self::todos());
     }
 
+    /** Converte códigos antigos (ex.: "crm") para o atual ("vendas"). */
+    public static function normalizar(?string $codigo): ?string
+    {
+        return $codigo ? (config('pacotes.aliases', [])[$codigo] ?? $codigo) : null;
+    }
+
     public static function nome(?string $codigo): string
     {
+        $codigo = self::normalizar($codigo);
+
         return $codigo ? (self::opcoes()[$codigo] ?? $codigo) : 'Personalizado';
     }
 
@@ -35,7 +43,7 @@ class Pacotes
      */
     public static function features(string $codigo): array
     {
-        $pacote = self::todos()[$codigo] ?? null;
+        $pacote = self::todos()[self::normalizar($codigo)] ?? null;
 
         if (! $pacote) {
             return [];
@@ -58,6 +66,7 @@ class Pacotes
             ->flatMap(fn ($g) => array_keys($porGrupo[$g] ?? []))
             ->merge($base['features'] ?? [])
             ->merge($pacote['features'] ?? [])
+            ->reject(fn ($chave) => in_array($chave, $pacote['excluir'] ?? [], true))
             ->unique()->values()->all();
     }
 
@@ -72,7 +81,7 @@ class Pacotes
     /** Pacote do contrato do tenant (nulo = personalizado). */
     public static function doTenant(?Tenant $tenant): ?string
     {
-        return $tenant?->plan?->pacote;
+        return self::normalizar($tenant?->plan?->pacote);
     }
 
     /**

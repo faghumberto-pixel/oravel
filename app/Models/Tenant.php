@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\HasSignatures;
 use App\Services\AsaasService;
 use App\Services\TenantTimeline;
+use App\Support\Pacotes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -285,10 +286,10 @@ class Tenant extends Model
         return true;
     }
 
-    /** Pacote do contrato (locadora, crm, estoque, logistica) ou null = personalizado. */
+    /** Pacote do contrato (locadora, vendas, manutencao, servicos, estoque, logistica) ou null = personalizado. */
     public function pacote(): ?string
     {
-        return $this->plan?->pacote;
+        return Pacotes::normalizar($this->plan?->pacote);
     }
 
     public function plan(): BelongsTo

@@ -59,7 +59,7 @@ class CrmPacotesTest extends TestCase
 
     public function test_crm_package_is_independent_of_the_erp(): void
     {
-        $crm = Pacotes::features('crm');
+        $crm = Pacotes::features('vendas');
 
         $this->assertContains('tabela_crm_leads', $crm);
         $this->assertContains('tabela_crm_contas', $crm);
@@ -90,7 +90,7 @@ class CrmPacotesTest extends TestCase
     {
         $locadora = Pacotes::features('locadora');
 
-        foreach (['crm', 'estoque', 'logistica'] as $outro) {
+        foreach (['vendas', 'estoque', 'logistica'] as $outro) {
             $this->assertEmpty(array_diff(Pacotes::features($outro), $locadora), "locadora deve conter {$outro}");
         }
 
@@ -104,28 +104,28 @@ class CrmPacotesTest extends TestCase
     {
         $porGrupo = [];
         foreach (array_keys(ContratoResource::groupedFeatureOptions()) as $grupo) {
-            $porGrupo[$grupo] = Pacotes::featuresDoGrupo('crm', $grupo);
+            $porGrupo[$grupo] = Pacotes::featuresDoGrupo('vendas', $grupo);
         }
 
-        $this->assertSame([], array_diff(collect($porGrupo)->flatten()->all(), Pacotes::features('crm')));
+        $this->assertSame([], array_diff(collect($porGrupo)->flatten()->all(), Pacotes::features('vendas')));
         $this->assertContains('tabela_crm_leads', $porGrupo['Comercial']);
         $this->assertSame([], $porGrupo['Manutenção'] ?? []);
     }
 
     public function test_crm_only_tenant_sees_crm_but_not_the_erp(): void
     {
-        $t = $this->tenantComPacote('crm');
+        $t = $this->tenantComPacote('vendas');
         $this->actingAs($this->admin($t));
 
         $this->assertTrue(CrmLeadResource::canViewAny());
         $this->assertFalse(ClientResource::canViewAny(), 'sem o módulo de Clientes do ERP');
-        $this->assertSame('crm', $t->fresh()->pacote());
-        $this->assertSame('crm', Pacotes::doTenant($t->fresh()));
+        $this->assertSame('vendas', $t->fresh()->pacote());
+        $this->assertSame('vendas', Pacotes::doTenant($t->fresh()));
     }
 
     public function test_home_goes_to_the_package_screen_and_locadora_keeps_the_default(): void
     {
-        $crm = $this->tenantComPacote('crm');
+        $crm = $this->tenantComPacote('vendas');
         $this->actingAs($this->admin($crm));
         $this->assertSame(CrmFunil::getUrl(), Pacotes::urlInicial($crm));
         $this->assertStringContainsString('crm-funil', AppProfile::homeUrl(auth()->user(), AppProfile::ADMIN));
@@ -143,7 +143,7 @@ class CrmPacotesTest extends TestCase
 
     public function test_admin_route_sends_a_crm_contract_straight_to_the_funnel(): void
     {
-        $t = $this->tenantComPacote('crm');
+        $t = $this->tenantComPacote('vendas');
         $admin = $this->admin($t);
 
         $this->actingAs($admin)->get('/admin')->assertRedirect(CrmFunil::getUrl());
@@ -156,30 +156,30 @@ class CrmPacotesTest extends TestCase
         Filament::setCurrentPanel(Filament::getPanel('central'));
 
         Livewire::test(ContratoResource\Pages\CreateContrato::class)
-            ->fillForm(['name' => 'Cliente só CRM', 'pacote' => 'crm', 'base_price' => 199, 'billing_cycle' => 'monthly'])
+            ->fillForm(['name' => 'Cliente só CRM', 'pacote' => 'vendas', 'base_price' => 199, 'billing_cycle' => 'monthly'])
             ->call('create')->assertHasNoFormErrors();
 
         // "Aplicar módulos do pacote" marca os grupos certos e não desmarca o que já estava marcado.
         $estado = [ContratoResource::groupFieldName('Manutenção') => ['tabela_equipment_damages']];
-        ContratoResource::aplicarPacote('crm', fn ($c) => $estado[$c] ?? null, function ($c, $v) use (&$estado) {
+        ContratoResource::aplicarPacote('vendas', fn ($c) => $estado[$c] ?? null, function ($c, $v) use (&$estado) {
             $estado[$c] = $v;
         });
         $this->assertContains('tabela_crm_leads', $estado[ContratoResource::groupFieldName('Comercial')]);
         $this->assertSame(['tabela_equipment_damages'], $estado[ContratoResource::groupFieldName('Manutenção')], 'não desmarca nem acrescenta ERP');
 
         $plan = Plan::where('name', 'Cliente só CRM')->firstOrFail();
-        $this->assertSame('crm', $plan->pacote);
+        $this->assertSame('vendas', $plan->pacote);
 
         $this->tenantComPacote('estoque');
         $this->tenantComPacote(null);
         $crmTenant = Tenant::create(['name' => 'Cliente CRM', 'slug' => 'c-'.uniqid(), 'plan_id' => $plan->id, 'status' => 'active']);
 
         Livewire::test(ContratoResource\Pages\ListContratos::class)->assertSuccessful()
-            ->filterTable('pacote', 'crm')->assertCanSeeTableRecords([$plan])
+            ->filterTable('pacote', 'vendas')->assertCanSeeTableRecords([$plan])
             ->filterTable('pacote', 'estoque')->assertCanNotSeeTableRecords([$plan]);
 
         $stats = Livewire::test(ClientesPorPacoteStats::class)->assertSuccessful();
-        $stats->assertSee('Clientes — CRM')->assertSee('Clientes — Estoque')->assertSee('Clientes — Personalizado');
+        $stats->assertSee('Clientes — Vendas')->assertSee('Clientes — Estoque')->assertSee('Clientes — Personalizado');
         $this->assertNotNull($crmTenant);
     }
 

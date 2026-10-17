@@ -2,6 +2,7 @@
 
 use App\Filament\Pages\Almoxarifado;
 use App\Filament\Pages\CrmFunil;
+use App\Filament\Pages\MaintenanceKanban;
 use App\Filament\Pages\ProgramacaoLogistica;
 
 /**
@@ -10,6 +11,9 @@ use App\Filament\Pages\ProgramacaoLogistica;
  * `grupos` = '*' liga todos os grupos (ERP completo). A "base" entra em todos os pacotes.
  */
 return [
+    // Códigos antigos de pacote → código atual (o pacote "CRM" passou a se chamar "Vendas").
+    'aliases' => ['crm' => 'vendas'],
+
     'base' => [
         'grupos' => ['Configurações', 'Equipe'],
         'features' => ['modulo_dashboard'],
@@ -24,8 +28,8 @@ return [
             'inicio' => null, // painel inicial de sempre
         ],
 
-        'crm' => [
-            'nome' => 'CRM',
+        'vendas' => [
+            'nome' => 'Vendas',
             'descricao' => 'CRM de vendas independente do ERP: leads, funil, contas, catálogo, visitas, veículos, despesas, metas e propostas.',
             'grupos' => [],
             'features' => [
@@ -35,6 +39,27 @@ return [
                 'tabela_crm_veiculos', 'tabela_crm_despesas', 'tabela_crm_metas', 'tabela_crm_propostas',
             ],
             'inicio' => CrmFunil::class,
+        ],
+
+        'manutencao' => [
+            'nome' => 'Manutenção',
+            'descricao' => 'Manutenção de equipamentos: ativos, ordens de serviço, preventiva (PMP), checklists e itens agregados — sem contratos, financeiro nem comercial.',
+            'grupos' => ['Ativos', 'Manutenção', 'PMP', 'Itens Agregados'],
+            // Clientes simples para a OS; avarias e substituição de equipamento são de locação.
+            'features' => ['tabela_clients'],
+            'excluir' => ['tabela_equipment_damages', 'tabela_equipment_replacements'],
+            'inicio' => MaintenanceKanban::class,
+        ],
+
+        'servicos' => [
+            'nome' => 'Serviços',
+            'descricao' => 'Prestação de serviços: clientes, orçamentos, propostas, ordens de serviço, contratos de serviço e financeiro — sem locação de equipamentos.',
+            'grupos' => ['Ativos', 'Manutenção', 'Financeiro'],
+            'features' => [
+                'tabela_clients', 'tabela_quotes', 'tabela_proposta_comercial', 'tabela_contracts', 'assinatura_eletronica', 'tabela_client_feedbacks',
+            ],
+            'excluir' => ['tabela_equipment_damages', 'tabela_equipment_replacements'],
+            'inicio' => MaintenanceKanban::class,
         ],
 
         'estoque' => [
