@@ -11,6 +11,7 @@ use App\Rules\CpfCnpj;
 use App\Services\AsaasService;
 use App\Services\SignatureService;
 use App\Services\TenantProvisioner;
+use App\Support\Pacotes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -70,6 +71,7 @@ class AsaasCheckoutController extends Controller
 
         return view('checkout.create', [
             'selectedPlan' => $selectedPlan,
+            'pacoteDescricao' => Pacotes::todos()[$selectedPlan->pacote ?? '']['descricao'] ?? null,
             'segments' => Client::nicheLabels(),
             'equipmentTypes' => self::EQUIPMENT_TYPES,
         ]);
@@ -117,7 +119,7 @@ class AsaasCheckoutController extends Controller
             'terms_accepted' => ['accepted'],
         ]);
 
-        $plan = Plan::findOrFail($data['plan_id']);
+        $plan = Plan::where('is_active', true)->findOrFail($data['plan_id']);
 
         $tenant = Tenant::create([
             'name' => $data['company_name'],

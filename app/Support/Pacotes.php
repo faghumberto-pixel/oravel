@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Filament\Central\Resources\ContratoResource;
+use App\Models\Plan;
 use App\Models\Tenant;
 
 /**
@@ -89,6 +90,34 @@ class Pacotes
     public static function cicloSugerido(?string $codigo): string
     {
         return self::todos()[self::normalizar($codigo)]['ciclo'] ?? 'monthly';
+    }
+
+    public const TAG_VITRINE = 'vitrine';
+
+    /**
+     * Plano de vitrine do pacote: o `Plan` que o site/checkout vende (um por pacote, identificado por pacote + tag).
+     * Idempotente. Sem preço definido no config o plano fica INATIVO: o checkout não vende pacote a R$ 0.
+     */
+    public static function planoDeVitrine(string $codigo): Plan
+    {
+        $codigo = self::normalizar($codigo);
+        $pacote = self::todos()[$codigo] ?? throw new \InvalidArgumentException("Pacote desconhecido: {$codigo}");
+        $preco = self::precoSugerido($codigo);
+
+        $plano = Plan::where('pacote', $codigo)->where('campaign_tag', self::TAG_VITRINE)->first() ?? new Plan;
+        $plano->forceFill([
+            'name' => 'Oravel '.$pacote['nome'],
+            'pacote' => $codigo,
+            'campaign_tag' => self::TAG_VITRINE,
+            'level' => $plano->level ?? 1,
+            'price' => $preco ?? 0,
+            'base_price' => $preco ?? 0,
+            'billing_cycle' => self::cicloSugerido($codigo),
+            'features' => array_fill_keys(self::features($codigo), true),
+            'is_active' => $preco !== null && $preco > 0,
+        ])->save();
+
+        return $plano;
     }
 
     /** Pacote do contrato do tenant (nulo = personalizado). */
