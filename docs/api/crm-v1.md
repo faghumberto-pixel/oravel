@@ -53,7 +53,7 @@ Devolve `usuario`, `empresa`, `ve_todos_os_leads`, `permissoes` (`criar_lead`, `
 Procura em leads, contatos de leads, **contas** (clientes do CRM), contatos de contas e conversas de WhatsApp da empresa. Compara pelos **8 últimos dígitos** (tolera +55, DDD e 9º dígito). Devolve até 20 itens `{ tipo: "lead"|"conta", id, nome, … , url }`. Vendedor só recebe os leads e as contas dele.
 
 ### `GET /contatos/{tipo}/{id}/oportunidades` — o que está em andamento
-`tipo` = `lead` ou `conta`. Devolve `leads_abertos[]` e `propostas_em_andamento[]` (rascunho, enviada ao comercial, aguardando o cliente).
+`tipo` = `lead` ou `conta`. Devolve `leads_abertos[]` e `propostas_em_andamento[]`. Cada proposta traz `origem`: `erp` (proposta comercial do ERP: rascunho, enviada ao comercial, aprovada internamente) ou `crm` (proposta do próprio CRM: rascunho ou enviada, com `numero` e `titulo`). O mesmo vale para `propostas_em_andamento` da ficha do lead.
 
 ### `GET /cnpj/{cnpj}` — dados da Receita
 `{ documento, dados: { company_name, address, city, uf, cep, phone, email }, duplicidade }` (`duplicidade` é um aviso em texto quando já existe lead ou cliente com esse CNPJ). `422 cnpj_invalido` / `404 cnpj_nao_encontrado`.

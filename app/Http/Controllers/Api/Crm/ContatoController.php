@@ -7,6 +7,7 @@ use App\Models\CrmConta;
 use App\Models\CrmContaContato;
 use App\Models\CrmLead;
 use App\Models\CrmLeadContact;
+use App\Models\CrmProposta;
 use App\Models\PropostaComercial;
 use App\Models\WhatsappConversa;
 use App\Support\CrmApiPresenter;
@@ -94,6 +95,7 @@ class ContatoController extends Controller
 
             $leadsQuery = CrmApiPresenter::leadsVisiveis($user)->whereKey($lead->id);
             $propostasQuery = PropostaComercial::query()->where('crm_lead_id', $lead->id);
+            $propostasCrmQuery = CrmProposta::query()->where('crm_lead_id', $lead->id);
         } else {
             Gate::forUser($user)->authorize('viewAny', CrmConta::class);
 
@@ -108,6 +110,7 @@ class ContatoController extends Controller
             $propostasQuery = PropostaComercial::query()->where(fn ($q) => $q
                 ->whereIn('crm_lead_id', CrmLead::query()->where('crm_conta_id', $conta->id)->select('id'))
                 ->when($conta->client_id, fn ($qq) => $qq->orWhere('client_id', $conta->client_id)));
+            $propostasCrmQuery = CrmProposta::query()->where('crm_conta_id', $conta->id);
         }
 
         $leads = $leadsQuery->get()->filter(fn (CrmLead $l) => $l->isOpen())->map(fn ($l) => CrmApiPresenter::lead($l))->values()->all();
@@ -120,6 +123,16 @@ class ContatoController extends Controller
 
             $propostas = $propostasQuery->whereIn('status', CrmApiPresenter::statusAbertos())->get()
                 ->map(fn ($p) => CrmApiPresenter::proposta($p))->values()->all();
+        }
+
+        // Propostas próprias do CRM (pacote Vendas, sem ERP). Vendedor só vê as dele, como no painel.
+        if (Gate::forUser($user)->allows('viewAny', CrmProposta::class)) {
+            if (! $user->canSeeAllCrmLeads()) {
+                $propostasCrmQuery->where('vendedor_user_id', $user->id);
+            }
+
+            $propostas = array_merge($propostas, $propostasCrmQuery->whereIn('status', CrmApiPresenter::statusCrmAbertos())->get()
+                ->map(fn ($p) => CrmApiPresenter::propostaCrm($p))->values()->all());
         }
 
         return $this->ok(['leads_abertos' => $leads, 'propostas_em_andamento' => $propostas]);

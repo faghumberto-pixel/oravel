@@ -16,6 +16,25 @@
         </x-filament::section>
     @endif
 
+    <x-filament::section heading="Extensão do WhatsApp (Chrome)" description="Mostra no WhatsApp Web quem é o contato no CRM e deixa criar lead e registrar a conversa com um clique.">
+        <div class="space-y-3 text-sm">
+            <ol class="list-decimal pl-5 space-y-1">
+                <li>Gere um token abaixo (com “Consultar” e “Criar e registrar”) e copie.</li>
+                <li>Baixe o pacote, descompacte e, em <code>chrome://extensions</code>, ative o “Modo do desenvolvedor” e use “Carregar sem compactação”.</li>
+                <li>Nas opções da extensão, informe o endereço do sistema e cole o token.</li>
+            </ol>
+            <p class="text-xs text-gray-500">
+                Privacidade: a extensão só lê o contato aberto e só envia algo ao CRM quando você clica. Nada é enviado ou lido em massa, e o texto das mensagens passa por você antes de ser salvo.
+                O WhatsApp não autoriza automação do WhatsApp Web; por isso a extensão é assistida e não envia mensagens por você.
+            </p>
+            @if(\App\Http\Controllers\CrmExtensaoDownloadController::arquivo())
+                <a href="{{ route('crm.extensao.download') }}" class="{{ $btnPrimario }} inline-block">Baixar extensão (.zip)</a>
+            @else
+                <p class="text-xs text-gray-500">O pacote da extensão ainda não foi gerado neste ambiente.</p>
+            @endif
+        </div>
+    </x-filament::section>
+
     <x-filament::section heading="Novo token">
         <div class="grid gap-3 md:grid-cols-3 items-end">
             <div>

@@ -523,6 +523,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/crm/propostas/{id}/pdf', CrmPropostaPdfController::class)
         ->name('crm.propostas.pdf');
 
+    Route::get('/admin/crm/extensao-whatsapp/baixar', \App\Http\Controllers\CrmExtensaoDownloadController::class)
+        ->name('crm.extensao.download');
+
     Route::get('/admin/crm/despesas/pdf', CrmDespesasPdfController::class)
         ->name('crm.despesas.pdf');
 

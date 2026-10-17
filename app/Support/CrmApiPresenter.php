@@ -4,10 +4,12 @@ namespace App\Support;
 
 use App\Filament\Resources\CrmContaResource;
 use App\Filament\Resources\CrmLeadResource;
+use App\Filament\Resources\CrmPropostaResource;
 use App\Filament\Resources\PropostaComercialResource;
 use App\Models\CrmConta;
 use App\Models\CrmLead;
 use App\Models\CrmLeadInteraction;
+use App\Models\CrmProposta;
 use App\Models\PropostaComercial;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -73,9 +75,14 @@ class CrmApiPresenter
             'custom' => (object) ($lead->custom ?? []),
             'contatos' => $lead->contacts->map(fn ($c) => ['id' => $c->id, 'nome' => $c->name, 'cargo' => $c->role_title, 'telefone' => $c->phone, 'email' => $c->email, 'principal' => (bool) $c->is_primary])->values()->all(),
             'interacoes' => $lead->interactions()->limit(10)->get()->map(fn ($i) => self::interacao($i))->values()->all(),
-            'propostas_em_andamento' => PropostaComercial::query()
-                ->where('crm_lead_id', $lead->id)->whereIn('status', self::statusAbertos())
-                ->get()->map(fn ($p) => self::proposta($p))->values()->all(),
+            'propostas_em_andamento' => array_merge(
+                PropostaComercial::query()
+                    ->where('crm_lead_id', $lead->id)->whereIn('status', self::statusAbertos())
+                    ->get()->map(fn ($p) => self::proposta($p))->values()->all(),
+                CrmProposta::query()
+                    ->where('crm_lead_id', $lead->id)->whereIn('status', self::statusCrmAbertos())
+                    ->get()->map(fn ($p) => self::propostaCrm($p))->values()->all(),
+            ),
         ];
     }
 
@@ -114,12 +121,34 @@ class CrmApiPresenter
     public static function proposta(PropostaComercial $p): array
     {
         return [
+            'origem' => 'erp',
             'id' => $p->id,
             'status' => $p->status,
             'status_rotulo' => PropostaComercial::statusLabels()[$p->status] ?? $p->status,
             'valor' => (float) $p->total_value,
             'url' => PropostaComercialResource::getUrl('edit', ['record' => $p->id], panel: 'admin'),
         ];
+    }
+
+    /** Proposta do CRM (pacote Vendas, sem ERP): mesmo formato, com número e título. */
+    public static function propostaCrm(CrmProposta $p): array
+    {
+        return [
+            'origem' => 'crm',
+            'id' => $p->id,
+            'numero' => $p->numero,
+            'titulo' => $p->titulo,
+            'status' => $p->status,
+            'status_rotulo' => CrmProposta::statusLabels()[$p->status] ?? $p->status,
+            'valor' => (float) $p->total,
+            'url' => CrmPropostaResource::getUrl('edit', ['record' => $p->id], panel: 'admin'),
+        ];
+    }
+
+    /** Propostas do CRM "em andamento": rascunho ou enviada (aguardando o cliente). */
+    public static function statusCrmAbertos(): array
+    {
+        return [CrmProposta::STATUS_RASCUNHO, CrmProposta::STATUS_ENVIADA];
     }
 
     /** Propostas "em andamento": ainda sem resposta final do cliente. */
