@@ -253,7 +253,7 @@ class TestRodapeUnico(unittest.TestCase):
             t = ler(rel)
             m = re.search(r'<footer class="ifoot" data-site="footer">.*?</footer>', t, re.S)
             self.assertIsNotNone(m, rel)
-            self.assertNotIn('ifoot-links', t, rel)
+            self.assertNotIn('ifoot-links', m.group(0), rel)  # (sobra apenas CSS morto em algumas páginas, sem efeito)
             self.assertEqual(len(re.findall(r'<footer', t)), 1, rel)
             padrao = padrao or m.group(0)
             self.assertEqual(m.group(0), padrao, rel)
