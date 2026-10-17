@@ -179,6 +179,16 @@ REDIRECTS = {
 }
 
 # Comparativo da página /planos/: (linha, {pacote: bool}). Sem valores.
+# App instalável próprio de cada solução (espelha config/pacotes.php do sistema): nome, cor e a tela em que o app abre.
+APPS = {
+    'locadora': ('Oravel Locadoras', '#0f172a', 'Painel da locadora', [('Ativos locados', 'info'), ('Contratos a vencer', 'warn'), ('Avarias em análise', 'bad'), ('Medições do mês', 'ok')]),
+    'vendas': ('Oravel Vendas', '#db2777', 'Funil de vendas', [('Novos contatos', 'info'), ('Proposta enviada', 'warn'), ('Visita amanhã', 'info'), ('Fechado no mês', 'ok')]),
+    'manutencao': ('Oravel Manutenção', '#ea580c', 'Ordens de serviço', [('OS-2041 Gerador', 'bad'), ('OS-2044 Empilhadeira', 'warn'), ('OS-2038 Plataforma', 'info'), ('OS-2025 Preventiva', 'ok')]),
+    'servicos': ('Oravel Serviços', '#2563eb', 'Ordens de serviço', [('OS-310 Instalação', 'info'), ('OS-308 Visita técnica', 'warn'), ('OS-301 Montagem', 'ok'), ('Orçamento 118', 'mudo')]),
+    'estoque': ('Oravel Estoque', '#7c3aed', 'Almoxarifado', [('Filtro de óleo', 'warn'), ('Correia dentada', 'ok'), ('Bateria 12V', 'bad'), ('Recebimento NF 4471', 'info')]),
+    'logistica': ('Oravel Logística', '#0d9488', 'Programação', [('Entrega Construtora Alfa', 'info'), ('Retirada Obras Beta', 'warn'), ('Veículo VAN-02', 'ok'), ('Coleta Delta Log', 'info')]),
+}
+
 MATRIZ = [
     ('Cadastro de ativos e equipamentos', {'locadora', 'manutencao', 'servicos'}),
     ('Ordens de serviço e checklists', {'locadora', 'manutencao', 'servicos'}),
@@ -191,5 +201,7 @@ MATRIZ = [
     ('Estoque: materiais, peças e almoxarifado', {'locadora', 'estoque'}),
     ('Logística, frota e rastreamento', {'locadora', 'logistica'}),
     ('CRM de vendas: funil, contas, visitas e metas', {'locadora', 'vendas'}),
+    ('App instalável próprio da solução (celular)', {'locadora', 'manutencao', 'servicos', 'logistica', 'estoque', 'vendas'}),
+    ('Academia Oravel: treinamento do seu pacote', {'locadora', 'manutencao', 'servicos', 'logistica', 'estoque', 'vendas'}),
     ('Usuários, perfis de acesso e app do colaborador', {'locadora', 'manutencao', 'servicos', 'logistica', 'estoque', 'vendas'}),
 ]

@@ -119,7 +119,7 @@ class TestPacotes(unittest.TestCase):
 
     def test_site_sem_precos(self):
         for rel in ('solucoes/index.html', 'planos/index.html', 'index.html', 'sobre/index.html'):
-            fora_dos_mockups = re.sub(r'<svg.*?</svg>', '', ler(rel), flags=re.S)   # valores dentro das telas são dados fictícios do sistema
+            fora_dos_mockups = re.sub(r'<svg.*?</svg>|<figcaption>.*?</figcaption>', '', ler(rel), flags=re.S)   # valores dentro das telas são dados fictícios do sistema
             self.assertNotRegex(fora_dos_mockups, r'R\$\s?\d', rel)
 
 
@@ -200,6 +200,45 @@ class TestContatoESobre(unittest.TestCase):
 
     def test_sobre_nos_redireciona_para_sobre(self):
         self.assertIn(r'RewriteRule ^sobre-nos(\.html)?/?$ https://oravel.com.br/sobre/ [R=301,L]', ler('.htaccess'))
+
+
+class TestPrecosEApp(unittest.TestCase):
+    def test_nenhum_valor_em_reais_nas_paginas_de_preco(self):
+        for rel in ['planos/index.html', 'solucoes/index.html'] + [p['pagina'].strip('/') + '/index.html' for p in dados.PACOTES]:
+            sem_telas = re.sub(r'<svg.*?</svg>|<figcaption>.*?</figcaption>', '', ler(rel), flags=re.S)  # as telas de exemplo trazem valores fictícios
+            self.assertNotIn('R$', sem_telas, rel)
+
+    def test_paginas_de_pacote_tem_bloco_de_preco_app_e_script(self):
+        for p in dados.PACOTES:
+            t = ler(p['pagina'].strip('/') + '/index.html')
+            self.assertIn('id="app"', t, p['codigo'])
+            self.assertIn('/inc/precos.js', t, p['codigo'])
+            self.assertEqual('data-preco="%s"' % p['codigo'] in t, dados.venda_online(p['codigo']), p['codigo'])
+
+    def test_script_le_a_api_publica_e_nao_usa_innerhtml(self):
+        js = ler('inc/precos.js')
+        self.assertIn('/api/public/planos', js)
+        self.assertNotIn('innerHTML', js)
+
+    def test_planos_lista_app_e_academia_no_comparativo(self):
+        t = ler('planos/index.html')
+        self.assertIn('App instalável próprio', t)
+        self.assertIn('Academia Oravel', t)
+
+
+class TestCabecalhoUnico(unittest.TestCase):
+    def test_faixa_preta_e_menu_iguais_da_home_em_todas_as_paginas(self):
+        menus = set()
+        for p in paginas():
+            t = p.read_text(encoding='utf-8')
+            m = re.search(r'<nav class="inav" data-site="nav".*?</nav>', t, re.S)
+            if m:
+                self.assertIn('class="tb"', t, p)
+                self.assertIn('Falar com um Especialista', m.group(0), p)
+                menus.add(re.sub(r' aria-current="page"', '', m.group(0)))
+        self.assertEqual(len(menus), 1)
+        self.assertIn('class="tb"', ler('inc/nav-fragment.html'))
+        self.assertIn('Veja os planos', ler('index.html'))
 
 
 class TestIdempotencia(unittest.TestCase):

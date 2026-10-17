@@ -163,3 +163,23 @@ def gerar(spec):
     def tup(x):
         return tuple(tup(i) for i in x) if isinstance(x, list) else x
     return fn(**{k: tup(v) for k, v in args.items()})
+
+
+def app_celular(nome, cor, tela, itens):
+    """Celular com a tela inicial do app da solução (ícone, nome e a primeira tela), em SVG."""
+    out = [f'<svg viewBox="0 0 220 380" role="img" aria-label="App {esc(nome)} no celular" xmlns="http://www.w3.org/2000/svg">',
+           f'<rect x="10" y="6" width="200" height="368" rx="28" fill="{NAVY}"/>',
+           '<rect x="20" y="22" width="180" height="336" rx="18" fill="#fff"/>',
+           f'<rect x="20" y="22" width="180" height="58" rx="18" fill="{cor}"/><rect x="20" y="60" width="180" height="20" fill="{cor}"/>',
+           f'<rect x="32" y="36" width="26" height="26" rx="7" fill="#fff" opacity=".22"/><text x="45" y="55" font-family="Manrope" font-size="15" font-weight="800" fill="#fff" text-anchor="middle">O</text>',
+           f'<text x="66" y="47" font-family="Manrope" font-size="11" font-weight="800" fill="#fff">{esc(nome)}</text>',
+           f'<text x="66" y="61" font-family="Inter" font-size="8.5" fill="#fff" opacity=".85">{esc(tela)}</text>']
+    for i, (txt, tom) in enumerate(itens[:4]):
+        y = 94 + i * 46
+        c = TONS.get(tom, TONS['mudo'])
+        out.append(f'<rect x="30" y="{y}" width="160" height="38" rx="8" fill="{SURF}"/><rect x="30" y="{y}" width="4" height="38" rx="2" fill="{c}"/>')
+        out.append(f'<text x="44" y="{y + 17}" font-family="Inter" font-size="9" font-weight="700" fill="{INK}">{esc(txt)}</text>')
+        out.append(f'<text x="44" y="{y + 30}" font-family="Inter" font-size="7.5" fill="{SOFT}">Toque para abrir</text>')
+    out.append(f'<rect x="40" y="304" width="140" height="30" rx="15" fill="{cor}"/><text x="110" y="323" font-family="Inter" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">Adicionar à tela inicial</text>')
+    out.append('</svg>')
+    return ''.join(out)

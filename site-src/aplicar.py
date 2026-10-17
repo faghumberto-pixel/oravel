@@ -67,23 +67,49 @@ CSS_NAV = '''<style data-site="nav-css">
 </style>'''
 
 
+TOPBAR_CSS = (
+    '.tb { background: #000; color: #e5e7eb; font-size: 12px; font-weight: 600; } '
+    '.tb-in { max-width: 1180px; margin: 0 auto; padding: 0 28px; min-height: 36px; display: flex; align-items: center; justify-content: space-between; gap: 24px; } '
+    '.tb a { color: #e5e7eb; text-decoration: none; white-space: nowrap; } .tb a:hover { color: #f97316; } '
+    '.tb-msg a { color: #f97316; font-weight: 700; margin-left: 6px; } .tb-msg b { color: #fff; } '
+    '@media (max-width: 760px) { .tb-in { padding: 6px 16px; } .tb-wa { display: none; } }'
+)
+MSG_PLANOS = ('<span class="tb-msg"><b>Contrate online:</b> no cartão recorrente você paga menos que o valor cheio. Sem compromisso, no boleto ou Pix. '
+              '<a href="/planos/">Veja os planos →</a></span>')
+WA_TOPO = '<a class="tb-wa" href="https://wa.me/5519999332615" target="_blank" rel="noopener noreferrer">WhatsApp (19) 99933-2615</a>'
+CSS_NAV = CSS_NAV.replace('</style>', '  ' + TOPBAR_CSS + '\n</style>')
+TOPBAR = f'<div class="tb" data-site="topbar"><div class="tb-in">{MSG_PLANOS}{WA_TOPO}</div></div>'
+
+
+CSS_HDR = (
+    'nav.inav { position:sticky; top:0; z-index:50; background:rgba(255,255,255,.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--border,#e4e7ec); } '
+    '.hd-wrap { max-width:1180px; margin:0 auto; padding:0 28px; height:72px; display:flex; align-items:center; justify-content:space-between; } '
+    '.hd-logo { text-decoration:none; color:#0f172a; font-size:22px; font-weight:900; font-family:Manrope,sans-serif; } .hd-logo i { color:#f97316; font-style:normal; } '
+    '.hd-links { display:flex; align-items:center; gap:32px; } .hd-links a { color:var(--ink-soft,#5b6472); font-size:14px; font-weight:600; text-decoration:none; transition:color .2s; } '
+    '.hd-links a:hover, .hd-links a[aria-current="page"] { color:var(--ink,#0f172a); } '
+    '.hd-dd { position:relative; padding-bottom:8px; } .hd-dd::after { content:""; position:absolute; top:100%; left:0; right:0; height:8px; z-index:99; } '
+    '.hd-dd > a { display:inline-block; padding:8px 0; } '
+    '.hd-menu { position:absolute; top:calc(100% + 8px); left:0; background:#fff; border:1px solid var(--border,#e4e7ec); border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,.1); opacity:0; visibility:hidden; transition:opacity .2s ease, visibility .2s ease; min-width:220px; z-index:100; pointer-events:none; } '
+    '.hd-dd:hover .hd-menu, .hd-dd:focus-within .hd-menu { opacity:1; visibility:visible; pointer-events:auto; } '
+    '.hd-menu a { display:block; padding:12px 16px; font-size:14px; border-bottom:1px solid var(--border,#e4e7ec); } .hd-menu a:last-child { border-bottom:none; } .hd-menu a:hover { background:var(--surface,#f6f7f9); } '
+    '.hd-cta { background:#f97316; color:#fff !important; padding:10px 24px; border-radius:6px; font-weight:700; font-size:14px; text-decoration:none; transition:background .2s; } .hd-cta:hover { background:#ea580c; } '
+    '@media (max-width:768px) { .hd-wrap { flex-direction:column; height:auto; gap:16px; padding:16px 28px; } .hd-links { flex-wrap:wrap; justify-content:center; gap:16px; } .hd-cta, .hd-sobre { display:none; } }'
+)
+CSS_NAV = CSS_NAV.replace('</style>', '  ' + CSS_HDR + '\n</style>')
+
+
 def nav_inav(atual=None):
-    """Menu padrão (páginas com o bloco .inav). `atual` = caminho da página, para marcar o item."""
+    """Cabeçalho único do site: faixa preta + menu idêntico ao da home, em todas as páginas. `atual` marca o item da página."""
     itens_dd = ''.join(
         f'<a href="{p["pagina"]}"{" aria-current=\"page\"" if atual == p["pagina"] or dados.PAGINA_PACOTE.get(atual) == p["codigo"] else ""}>{p["nome"]}</a>'
         for p in PACOTES)
     cur = lambda href: ' aria-current="page"' if atual == href else ''  # noqa: E731
-    links = [('/planos/', 'Planos'), ('/sobre/', 'Sobre'), ('/faq.php', 'FAQ'), ('/central-de-conhecimento/', 'Ajuda'), ('/contato.php', 'Contato')]
-    desk = ''.join(f'<a href="{h}"{cur(h)}>{t}</a>' for h, t in links)
-    mob = ''.join(f'<a href="{p["pagina"]}">{p["nome"]}</a>' for p in PACOTES) + '<hr>' + ''.join(f'<a href="{h}">{t}</a>' for h, t in links)
     return (
-        '<nav class="inav" data-site="nav" aria-label="Principal"><div class="inav-wrap">'
-        '<a href="/" class="inav-logo"><span class="inav-logo-mark">O</span>Oravel</a>'
-        '<div class="inav-links">'
-        f'<div class="inav-dd"><a href="/solucoes/" aria-haspopup="true">Soluções</a><div class="inav-dd-menu">{itens_dd}</div></div>'
-        f'{desk}</div>'
-        f'<details class="inav-m"><summary>Menu</summary><div class="inav-m-list"><a href="/solucoes/">Todas as soluções</a>{mob}</div></details>'
-        '<a href="/contato.php" class="inav-cta">Agendar demonstração</a>'
+        TOPBAR + '<nav class="inav" data-site="nav" aria-label="Principal"><div class="hd-wrap">'
+        '<a href="/" class="hd-logo">O<i>r</i>avel</a>'
+        f'<div class="hd-links"><div class="hd-dd"><a href="/solucoes/" aria-haspopup="true">Soluções</a><div class="hd-menu">{itens_dd}</div></div>'
+        f'<a href="/planos/"{cur("/planos/")}>Planos</a><a href="/sobre/" class="hd-sobre"{cur("/sobre/")}>Sobre Nós</a><a href="/contato.php"{cur("/contato.php")}>Contato</a></div>'
+        '<a href="/contato.php" class="hd-cta">Falar com um Especialista</a>'
         '</div></nav>'
     )
 
@@ -96,9 +122,96 @@ def footer_inav():
         '<div class="ifoot-wrap">'
         '<div class="ifoot-copy">© 2026 Oravel Desenvolvimento de Software'
         '<div class="ifoot-legal">CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, conj. 1713, Pinheiros, São Paulo/SP · CEP 05424-150</div></div>'
-        '<div class="ifoot-links"><a href="/">Home</a><a href="/solucoes/">Soluções</a><a href="/planos/">Planos</a><a href="/contato.php">Contato</a>'
+        '<div class="ifoot-links"><a href="/">Home</a><a href="/solucoes/">Soluções</a><a href="/planos/">Planos</a><a href="/contato.php">Contato</a><a href="/faq.php">FAQ</a><a href="/central-de-conhecimento/">Ajuda</a>'
         '<a href="/politica-de-privacidade/">Privacidade</a><a href="/termos-de-uso/">Termos</a></div>'
         '</div></footer>'
+    )
+
+
+JS_PRECOS = r'''(function () {
+  var API = 'https://app.oravel.com.br/api/public/planos';
+  var CICLOS = { monthly: 'mês', mensal: 'mês', yearly: 'ano', anual: 'ano' };
+  function brl(v) { return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+
+  function preco(box, p) {
+    var un = CICLOS[p.ciclo] || 'mês';
+    var rec = el('div', 'pv-rec');
+    var cheio = el('s', 'pv-cheio', brl(p.valor_cheio));
+    rec.appendChild(cheio);
+    rec.appendChild(el('b', 'pv-valor', ' ' + brl(p.valor_recorrente)));
+    rec.appendChild(el('span', 'pv-un', '/' + un));
+    box.appendChild(rec);
+    box.appendChild(el('div', 'pv-linha', 'No cartão recorrente (' + p.desconto_percentual + '% de desconto sobre o valor cheio).'));
+    box.appendChild(el('div', 'pv-linha', 'Ou ' + brl(p.valor_cheio) + '/' + un + ' no boleto ou Pix, sem compromisso: 30 dias de acesso a cada pagamento.'));
+    if (p.implantacao) {
+      var i = p.implantacao;
+      var t = (i.opcional ? 'Implantação opcional: ' : 'Implantação: ') + brl(i.valor) + (i.parcelas_max > 1 ? ' (à vista ou em até ' + i.parcelas_max + 'x)' : '');
+      box.appendChild(el('div', 'pv-linha', t));
+    }
+    box.hidden = false;
+  }
+
+  function taxas(box, lista) {
+    if (!lista.length) return;
+    box.appendChild(el('h3', 'pv-tit', 'Taxas de configuração (opcionais, pagamento único)'));
+    var ul = el('ul', 'pv-taxas');
+    lista.forEach(function (t) {
+      var li = el('li');
+      li.appendChild(el('b', null, t.nome + ' · ' + brl(t.valor)));
+      if (t.descricao) li.appendChild(el('span', null, ' ' + t.descricao));
+      ul.appendChild(li);
+    });
+    box.appendChild(ul);
+    box.appendChild(el('p', 'pv-linha', 'Prefere configurar sozinho? Veja o treinamento na Academia Oravel.'));
+    box.hidden = false;
+  }
+
+  function iniciar() {
+    var caixas = document.querySelectorAll('[data-preco], [data-taxas]');
+    if (!caixas.length || !window.fetch) return;
+    fetch(API, { headers: { Accept: 'application/json' } }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+      if (!j) return;
+      var porCodigo = {};
+      (j.data || []).forEach(function (p) { porCodigo[p.codigo] = p; });
+      caixas.forEach(function (box) {
+        if (box.hasAttribute('data-taxas')) { taxas(box, j.taxas || []); return; }
+        var p = porCodigo[box.getAttribute('data-preco')];
+        if (p) preco(box, p);
+      });
+    }).catch(function () { /* sem a API o bloco continua oculto e os botões seguem funcionando */ });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();
+})();
+'''
+
+CSS_PRECO = '''<style data-site="preco-css">
+  .pv { margin:14px 0 4px; padding:14px 16px; border:1px solid var(--border, #e4e7ec); border-radius:12px; background:var(--surface, #f6f7f9); }
+  .pv[hidden] { display:none; } .pv-cheio { color:var(--ink-faint, #8891a0); font-size:15px; } .pv-valor { font-family:Manrope, sans-serif; font-size:26px; letter-spacing:-.02em; }
+  .pv-un { color:var(--ink-soft, #5b6472); } .pv-linha { font-size:13.5px; line-height:1.5; color:var(--ink-soft, #5b6472); margin-top:6px; }
+  .pv-tit { font-size:16px; margin-bottom:8px; } .pv-taxas { margin:0; padding-left:18px; font-size:14px; line-height:1.6; }
+  .sp-app { display:grid; grid-template-columns:230px 1fr; gap:36px; align-items:center; margin-top:28px; } .sp-app svg { width:100%; height:auto; display:block; }
+  .sp-app ol { padding-left:20px; line-height:1.7; } @media (max-width:760px) { .sp-app { grid-template-columns:1fr; max-width:260px; } }
+</style>'''
+
+
+def caixa_preco(codigo):
+    """Marcador preenchido por /inc/precos.js com os valores lidos da Central (nenhum valor fica no HTML)."""
+    return f'<div class="pv" data-preco="{codigo}" hidden></div>' if dados.venda_online(codigo) else ''
+
+
+SCRIPT_PRECOS = '<script src="/inc/precos.js" defer></script>'
+
+
+def bloco_app(codigo):
+    nome, cor, tela, itens = dados.APPS[codigo]
+    return (
+        f'<section class="sp-sec alt" id="app"><div class="sp-wrap"><div class="sp-eyebrow">App incluído</div><h2>App {nome} no seu celular</h2>'
+        f'<p class="sp-lead">Cada solução tem o seu próprio app, que abre direto em <strong>{tela}</strong>. Sem baixar em loja: instale pelo navegador.</p>'
+        f'<div class="sp-app">{mockups.app_celular(nome, cor, tela, itens)}<div><h3>Como instalar</h3><ol>'
+        '<li>Abra o sistema no navegador do celular e entre com o seu usuário.</li><li>Toque em <strong>Adicionar à tela inicial</strong> (menu do navegador).</li>'
+        '<li>Pronto: o ícone fica ao lado dos seus outros apps.</li></ol>'
+        '<p class="sp-lead">Gestor, técnico em campo e colaborador usam o mesmo app, cada um com as telas do seu perfil de acesso.</p></div></div></div></section>'
     )
 
 
@@ -139,23 +252,23 @@ def bloco_pacote(codigo, extra_vertical=None):
         texto_cta = 'Cada locadora tem uma operação diferente. Fale com um especialista para montarmos a proposta sob medida para a sua.'
         extra_btn = ''
     partes = [
-        '<!-- site:pacote -->', CSS_PACOTE,
+        '<!-- site:pacote -->', CSS_PACOTE, CSS_PRECO,
         f'<section class="sp-sec" id="incluido"><div class="sp-wrap"><div class="sp-eyebrow">Solução {p["nome"]}</div>',
         f'<h2>O que está incluído</h2><p class="sp-lead">{p["descricao"]}{vert}</p>',
         f'<div class="sp-inclui">{inclui}</div><p class="sp-base">Em todas as soluções: {dados.BASE_COMUM}.</p></div></section>',
         '<section class="sp-sec alt" id="telas"><div class="sp-wrap"><div class="sp-eyebrow">O sistema por dentro</div>',
         f'<h2>Veja as telas da solução {p["nome"]}</h2><p class="sp-lead">Exemplos de telas, com dados fictícios.</p>',
-        f'<div class="sp-galeria">{figs}</div></div></section>',
-        f'<section class="sp-sec" id="contratar"><div class="sp-wrap"><div class="sp-cta"><h2>Comece com a solução {p["nome"]}</h2><p>{texto_cta}</p>',
+        f'<div class="sp-galeria">{figs}</div></div></section>', bloco_app(codigo),
+        f'<section class="sp-sec" id="contratar"><div class="sp-wrap"><div class="sp-cta"><h2>Comece com a solução {p["nome"]}</h2><p>{texto_cta}</p>{caixa_preco(codigo)}{"<div class=\"pv\" data-taxas hidden></div>" if dados.venda_online(codigo) else ""}',
         f'<div class="sp-cta-btns"><a class="sp-btn p" href="{href}">{rotulo}</a><a class="sp-btn" href="/planos/#{codigo}">Comparar planos</a>{extra_btn}</div>',
-        '</div></div></section>', '<!-- /site:pacote -->',
+        '</div></div></section>', SCRIPT_PRECOS, '<!-- /site:pacote -->',
     ]
     return ''.join(partes)
 
 
 def nav_e_rodape(texto, atual, rel):
     """Troca o menu .inav e o rodapé .ifoot pelo padrão e (re)aplica o CSS do menu."""
-    texto = trocar(texto, r'<nav class="inav"[^>]*>.*?</nav>', nav_inav(atual), f'nav inav em {rel}')
+    texto = trocar(texto, r'(?:<div class="tb" data-site="topbar">.*?</div></div>\s*)?<nav class="inav"[^>]*>.*?</nav>', nav_inav(atual), f'nav inav em {rel}')
     texto = trocar(texto, r'<footer class="ifoot"[^>]*>.*?</footer>', footer_inav(), f'footer ifoot em {rel}')
     texto = re.sub(r'<style data-site="nav-css">.*?</style>\s*', '', texto, flags=re.S)
     return texto.replace('</head>', CSS_NAV + '\n</head>', 1)
@@ -232,7 +345,7 @@ def pagina_base(titulo, descricao, corpo, atual):
         '<link rel="icon" type="image/svg+xml" href="/nova/assets/favicon.svg?v=6" />\n'
         '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
         '<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">\n'
-        f'{CSS_HUB}\n{CSS_NAV}\n</head>\n<body>\n{nav_inav(atual)}\n{corpo}\n{footer_inav()}\n</body>\n</html>\n'
+        f'{CSS_HUB}\n{CSS_PRECO}\n{CSS_NAV}\n</head>\n<body>\n{nav_inav(atual)}\n{corpo}\n{footer_inav()}\n{SCRIPT_PRECOS}\n</body>\n</html>\n'
     )
 
 
@@ -243,7 +356,7 @@ def cards_pacotes(com_shot=True):
         lis = ''.join(f'<li>{t}</li>' for t, _ in p['inclui'][:5])
         out.append(
             f'<article class="plan" id="{p["codigo"]}">{shot}<div class="plan-body"><h3>{p["nome"]}</h3><p class="plan-desc">{p["frase"]} {p["descricao"]}</p>'
-            f'<ul>{lis}</ul><div class="plan-actions"><a class="btn btn-primary" href="{cta(p["codigo"])[0]}" data-pacote="{p["codigo"]}">{cta(p["codigo"])[1]}</a>'
+            f'<ul>{lis}</ul>{caixa_preco(p["codigo"])}<div class="plan-actions"><a class="btn btn-primary" href="{cta(p["codigo"])[0]}" data-pacote="{p["codigo"]}">{cta(p["codigo"])[1]}</a>'
             f'<a class="btn btn-ghost" href="{p["pagina"]}">Conhecer a solução</a></div></div></article>')
     return ''.join(out)
 
@@ -280,36 +393,7 @@ def pagina_planos():
 # ---------------------------------------------------------------- menu "onav" (nav-fragment.html, usado por .php e gestao-locadoras)
 
 def nav_fragment():
-    dd = ''.join(f'<a href="{p["pagina"]}">{p["nome"]}</a>' for p in PACOTES)
-    return f'''<nav class="onav" data-site="nav">
-  <div class="onav-wrap">
-    <a href="/" class="onav-brand">
-      <img class="onav-mark" src="/nova/assets/oravel-wordmark-only.png?v=1" alt="Oravel" />
-    </a>
-    <button type="button" class="onav-burger" id="onav-burger" aria-label="Abrir menu" aria-expanded="false">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-    </button>
-    <div class="onav-links" id="onav-links">
-      <div class="onav-dropdown" id="onav-dropdown-solucoes">
-        <button type="button" class="onav-dropdown-trigger" aria-expanded="false">
-          Soluções
-          <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="onav-dropdown-menu">
-          {dd}
-          <a href="/solucoes/" class="onav-dropdown-all">Ver todas as soluções</a>
-        </div>
-      </div>
-      <a href="/planos/" data-nav-planos>Planos</a>
-      <a href="/sobre/">Sobre</a>
-      <a href="/faq.php">FAQ</a>
-      <a href="/central-de-conhecimento/">Ajuda</a>
-      <a href="/contato.php">Contato</a>
-      <a href="/contato.php" class="onav-cta">Agendar Demonstração</a>
-    </div>
-  </div>
-</nav>
-'''
+    return f'<style>{TOPBAR_CSS}{CSS_HDR}</style>' + nav_inav(None) + '\n'
 
 
 def aplicar_home():
@@ -317,6 +401,11 @@ def aplicar_home():
     t = ler(rel)
     # Faixa preta: fica só o WhatsApp (a fileira de "frentes/segmentos" sai; o menu Soluções a substitui)
     t = trocar(t, r'\s*<div class="topbar-seg".*?</div>', '', 'fileira de frentes do topbar', obrigatorio=False)
+    # Mesma mensagem dos planos na faixa preta da home (que tem CSS próprio: .topbar-in)
+    t = re.sub(r'<span class="tb-msg"[^>]*>.*?</span>\s*', '', t, flags=re.S)
+    msg = MSG_PLANOS.replace('href="/planos/"', 'href="https://oravel.com.br/planos/"').replace('class="tb-msg"', 'class="tb-msg" style="font-size:12px"')
+    t = trocar(t, r'<div class="topbar-in">\s*', '<div class="topbar-in">\n      ' + msg + '\n      ', 'topbar da home')
+    t = t.replace('.topbar-wa {', '.tb-msg a { color:#f97316; font-weight:700; margin-left:6px; } .tb-msg b { color:#fff; } @media (max-width:760px) { .topbar-wa { display:none !important; } .topbar-in { height:auto !important; padding:6px 16px !important; } }\n    .topbar-wa {', 1) if '.tb-msg a {' not in t else t
     dd = ''.join(f'<a href="https://oravel.com.br{p["pagina"]}">{p["nome"]}</a>' for p in PACOTES)
     nav = (f'<div class="nav-links" data-site="nav">\n        <div class="nav-dropdown">\n          <a href="https://oravel.com.br/solucoes/" class="nav-dropdown-btn" aria-haspopup="true">Soluções</a>\n'
            f'          <div class="dropdown-menu">{dd}</div>\n        </div>\n        <a href="https://oravel.com.br/planos/">Planos</a>\n'
@@ -482,6 +571,7 @@ def main():
     gravar('solucoes/index.html', pagina_solucoes())
     gravar('planos/index.html', pagina_planos())
     gravar('inc/nav-fragment.html', nav_fragment())
+    gravar('inc/precos.js', JS_PRECOS)
     aplicar_sobre()
     aplicar_home()
     aplicar_contato()
