@@ -246,6 +246,20 @@ class TestCabecalhoUnico(unittest.TestCase):
         self.assertIn('Veja os planos', ler('index.html'))
 
 
+class TestRodapeUnico(unittest.TestCase):
+    def test_todos_os_rodapes_sao_o_padrao_sem_menu_antigo(self):
+        padrao = None
+        for rel in ['index.html', 'gestao-locadoras/index.html', 'inc/footer.php', 'proposta/index.php', 'nova/enterprise/index.php', 'contato.php', 'planos/index.html', 'sobre/index.html']:
+            t = ler(rel)
+            m = re.search(r'<footer class="ifoot" data-site="footer">.*?</footer>', t, re.S)
+            self.assertIsNotNone(m, rel)
+            self.assertNotIn('ifoot-links', t, rel)
+            self.assertEqual(len(re.findall(r'<footer', t)), 1, rel)
+            padrao = padrao or m.group(0)
+            self.assertEqual(m.group(0), padrao, rel)
+        self.assertNotIn('Perguntas Frequentes', padrao)
+
+
 class TestIdempotencia(unittest.TestCase):
     def test_rodar_de_novo_nao_muda_nada(self):
         antes = {str(p): p.read_bytes() for p in RAIZ.rglob('*') if p.is_file()}

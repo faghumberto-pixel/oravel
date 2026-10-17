@@ -115,18 +115,51 @@ def nav_inav(atual=None):
     )
 
 
+CSS_FT = (
+    # Rodapé único do site (o mesmo da home): marca, soluções, empresa e legal. Sem links de menu antigos.
+    'footer.ifoot[data-site="footer"] { display:block !important; background:#fff !important; border-top:1px solid #e4e7ec !important; padding:48px 0 !important; margin:0 !important; font-family:Inter,"Segoe UI",system-ui,sans-serif !important; color:#0f172a; } '
+    'footer.ifoot .ft-wrap { max-width:1180px !important; margin:0 auto !important; padding:0 28px !important; box-sizing:border-box; } '
+    'footer.ifoot .ft-grid { display:grid !important; grid-template-columns:1.3fr 1.2fr 1fr 1fr; gap:32px; margin-bottom:32px; } '
+    'footer.ifoot .ft-col h4 { font-size:14px !important; font-weight:700 !important; margin:0 0 16px !important; color:#0f172a !important; } '
+    'footer.ifoot .ft-col a { display:block !important; font-size:13px !important; color:#5b6472 !important; line-height:1.8 !important; text-decoration:none !important; transition:color .2s; } footer.ifoot .ft-col a:hover { color:#0f172a !important; } '
+    'footer.ifoot .ft-brand { font-weight:800; font-size:20px; margin-bottom:12px; font-family:Manrope,sans-serif; } footer.ifoot .ft-brand i { color:#f97316; font-style:normal; } '
+    'footer.ifoot .ft-col p { font-size:13px !important; color:#5b6472 !important; line-height:1.6 !important; margin:0 !important; } '
+    'footer.ifoot .ft-bottom { border-top:1px solid #e4e7ec; padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px 24px; font-size:12px; color:#8891a0; } footer.ifoot .ft-bottom p { margin:0 !important; font-size:12px !important; color:#8891a0 !important; } '
+    'footer.ifoot .ft-legal { width:100%; margin-top:6px !important; font-size:11.5px !important; } '
+    '@media (max-width:768px) { footer.ifoot .ft-grid { grid-template-columns:1fr; } }'
+)
+CSS_NAV = CSS_NAV.replace('</style>', '  ' + CSS_FT + '\n</style>')
+
+
 def footer_inav():
+    """Rodapé padrão (igual ao da home). Mantém data-site="footer" e a classe ifoot: o gerador localiza o rodapé por eles."""
     sol = ''.join(f'<a href="{p["pagina"]}">{p["nome"]}</a>' for p in PACOTES)
     return (
-        '<footer class="ifoot" data-site="footer">'
-        f'<div class="ifoot-sol"><b>Soluções</b>{sol}</div>'
-        '<div class="ifoot-wrap">'
-        '<div class="ifoot-copy">© 2026 Oravel Desenvolvimento de Software'
-        '<div class="ifoot-legal">CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, conj. 1713, Pinheiros, São Paulo/SP · CEP 05424-150</div></div>'
-        '<div class="ifoot-links"><a href="/">Home</a><a href="/solucoes/">Soluções</a><a href="/planos/">Planos</a><a href="/inteligencia-artificial/">IA</a><a href="/academia/">Academia</a><a href="/contato.php">Contato</a><a href="/faq.php">FAQ</a><a href="/central-de-conhecimento/">Ajuda</a>'
-        '<a href="/politica-de-privacidade/">Privacidade</a><a href="/termos-de-uso/">Termos</a></div>'
-        '</div></footer>'
+        '<footer class="ifoot" data-site="footer"><div class="ft-wrap"><div class="ft-grid">'
+        '<div class="ft-col"><div class="ft-brand">O<i>r</i>avel</div><p>Plataforma de gestão com inteligência artificial para locação, manutenção, serviços, vendas (CRM), logística e estoque em todo o Brasil.</p></div>'
+        f'<div class="ft-col"><h4>Soluções</h4>{sol}</div>'
+        '<div class="ft-col"><h4>Empresa</h4><a href="/planos/">Planos</a><a href="/inteligencia-artificial/">Inteligência artificial</a><a href="/academia/">Academia</a><a href="/sobre/">Sobre</a><a href="/contato.php">Contato</a></div>'
+        '<div class="ft-col"><h4>Legal</h4><a href="/politica-de-privacidade/">Privacidade</a><a href="/termos-de-uso/">Termos de Uso</a></div>'
+        '</div><div class="ft-bottom"><p>© 2026 Oravel Software. Todos os direitos reservados.</p><p>Feito por quem entende de operação em campo</p>'
+        '<p class="ft-legal">Oravel Desenvolvimento de Software Ltda · CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, conj. 1713, Pinheiros, São Paulo/SP · CEP 05424-150</p></div></div></footer>'
     )
+
+
+def footer_completo():
+    """Rodapé padrão com o próprio CSS, para páginas que não carregam o CSS do cabeçalho."""
+    return '<style data-site="footer-css">' + CSS_FT + '</style>' + footer_inav()
+
+
+# Páginas com rodapé próprio (antigo): recebem o rodapé padrão.
+PAGINAS_RODAPE = ['gestao-locadoras/index.html', 'inc/footer.php', 'index.html', 'nova/enterprise/index.php', 'nova/enterprise/solucoes/index.php', 'nova/enterprise/novidades/index.php', 'proposta/index.php']
+
+
+def aplicar_rodapes():
+    for rel in PAGINAS_RODAPE:
+        t = ler(rel)
+        t = re.sub(r'<style data-site="footer-css">.*?</style>\s*', '', t, flags=re.S)
+        t = trocar(t, r'<footer(?: class="(?:site|ifoot)")?(?: data-site="footer")?>.*?</footer>', footer_completo(), f'rodapé em {rel}')
+        gravar(rel, t)
 
 
 JS_PRECOS = r'''(function () {
@@ -850,6 +883,7 @@ def main():
     aplicar_home()
     aplicar_contato()
     aplicar_legado()
+    aplicar_rodapes()
     varrer_links()
     gravar('.htaccess', htaccess())
     print('ok')
