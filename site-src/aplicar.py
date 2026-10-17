@@ -140,7 +140,7 @@ def footer_inav():
         f'<div class="ft-col"><h4>Soluções</h4>{sol}</div>'
         '<div class="ft-col"><h4>Empresa</h4><a href="/planos/">Planos</a><a href="/inteligencia-artificial/">Inteligência artificial</a><a href="/academia/">Academia</a><a href="/sobre/">Sobre</a><a href="/contato.php">Contato</a></div>'
         '<div class="ft-col"><h4>Legal</h4><a href="/politica-de-privacidade/">Privacidade</a><a href="/termos-de-uso/">Termos de Uso</a></div>'
-        '</div><div class="ft-bottom"><p>© 2026 Oravel Software. Todos os direitos reservados.</p><p>Feito por quem entende de operação em campo</p>'
+        '</div><div class="ft-bottom"><p>© 2026 Oravel Software. Todos os direitos reservados.</p>'
         '<p class="ft-legal">Oravel Desenvolvimento de Software Ltda · CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, conj. 1713, Pinheiros, São Paulo/SP · CEP 05424-150</p></div></div></footer>'
     )
 
