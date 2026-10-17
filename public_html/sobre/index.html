@@ -36,6 +36,7 @@
   .plan ul { list-style:none; padding:0; margin:18px 0 22px; display:grid; gap:9px; flex:1; } .plan li { font-size:14.5px; line-height:1.45; padding-left:24px; position:relative; }
   .plan li::before { content:"✓"; position:absolute; left:0; color:var(--accent); font-weight:800; }
   .plan-actions { display:grid; gap:10px; }
+  @media (min-width:981px) { .plans > .plan:last-child:nth-child(3n+1) { grid-column:2; } }
   .btn { display:inline-flex; justify-content:center; padding:13px 22px; border-radius:8px; font-weight:700; font-size:15px; text-decoration:none; border:1px solid transparent; }
   .btn-primary { background:var(--navy); color:#fff; } .btn-primary:hover { background:var(--navy-2); } .btn-ghost { border-color:var(--border); color:var(--ink); } .btn-ghost:hover { background:var(--surface); }
   .comp { overflow-x:auto; margin:8px 0 56px; } .comp table { width:100%; border-collapse:collapse; min-width:760px; font-size:14px; }
