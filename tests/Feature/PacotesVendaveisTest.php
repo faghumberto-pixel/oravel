@@ -5,9 +5,12 @@ namespace Tests\Feature;
 use App\Filament\Central\Resources\ContratoResource;
 use App\Models\Plan;
 use App\Models\Tenant;
+use App\Models\User;
 use App\Support\Pacotes;
+use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 /** Pacotes vendáveis separadamente: Locadora, Vendas, Manutenção, Serviços, Estoque e Logística. */
@@ -121,5 +124,35 @@ class PacotesVendaveisTest extends TestCase
 
         $migration->down();
         $this->assertSame('crm', DB::table('plans')->where('id', $crm->id)->value('pacote'));
+    }
+
+    public function test_price_suggestion_is_null_until_defined_and_reads_the_config(): void
+    {
+        $this->assertNull(Pacotes::precoSugerido('manutencao'));
+        $this->assertSame('monthly', Pacotes::cicloSugerido('manutencao'));
+
+        config(['pacotes.pacotes.manutencao.preco_base' => 490, 'pacotes.pacotes.manutencao.ciclo' => 'annual']);
+
+        $this->assertSame(490.0, Pacotes::precoSugerido('manutencao'));
+        $this->assertSame('annual', Pacotes::cicloSugerido('manutencao'));
+        $this->assertSame(490.0, Pacotes::precoSugerido('manutencao'));
+    }
+
+    public function test_choosing_a_package_suggests_price_only_when_the_field_is_empty(): void
+    {
+        config(['pacotes.pacotes.servicos.preco_base' => 790, 'pacotes.pacotes.servicos.ciclo' => 'quarterly']);
+        $super = User::create(['name' => 'Super', 'email' => (config('oravel.super_admins')[0] ?? 'faghumberto@gmail.com'), 'password' => bcrypt('x'), 'is_approved' => true]);
+        $this->actingAs($super);
+        Filament::setCurrentPanel(Filament::getPanel('central'));
+
+        Livewire::test(ContratoResource\Pages\CreateContrato::class)
+            ->fillForm(['pacote' => 'servicos'])
+            ->assertFormSet(['base_price' => 790, 'billing_cycle' => 'quarterly']);
+
+        // Valor já digitado nunca é sobrescrito.
+        Livewire::test(ContratoResource\Pages\CreateContrato::class)
+            ->fillForm(['base_price' => 1000])
+            ->fillForm(['pacote' => 'servicos'])
+            ->assertFormSet(['base_price' => 1000]);
     }
 }

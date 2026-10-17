@@ -78,6 +78,19 @@ class Pacotes
         return array_values(array_intersect(self::features($codigo), $doGrupo));
     }
 
+    /** Valor mensal sugerido do pacote (R$) ou null quando ainda não foi definido. */
+    public static function precoSugerido(?string $codigo): ?float
+    {
+        $preco = self::todos()[self::normalizar($codigo)]['preco_base'] ?? null;
+
+        return $preco === null ? null : (float) $preco;
+    }
+
+    public static function cicloSugerido(?string $codigo): string
+    {
+        return self::todos()[self::normalizar($codigo)]['ciclo'] ?? 'monthly';
+    }
+
     /** Pacote do contrato do tenant (nulo = personalizado). */
     public static function doTenant(?Tenant $tenant): ?string
     {

@@ -240,7 +240,20 @@ class ContratoResource extends Resource
                         ->options(Pacotes::opcoes())
                         ->placeholder('Personalizado (módulos montados à mão)')
                         ->live()
-                        ->helperText('Identifica o produto vendido (Locadora, CRM, Estoque, Logística). Depois de escolher, use "Aplicar módulos do pacote" e ajuste os extras abaixo.'),
+                        // Sugere valor e ciclo do pacote, mas só onde o campo ainda está vazio: nunca sobrescreve o que foi digitado.
+                        ->afterStateUpdated(function (?string $state, Get $get, Set $set) {
+                            if (blank($get('base_price')) && ($preco = Pacotes::precoSugerido($state)) !== null) {
+                                $set('base_price', $preco);
+                                $set('billing_cycle', Pacotes::cicloSugerido($state));
+                            }
+                        })
+                        ->helperText(function (Get $get) {
+                            $preco = Pacotes::precoSugerido($get('pacote'));
+
+                            return $preco === null
+                                ? 'Identifica o produto vendido. Depois de escolher, use "Aplicar módulos do pacote" e ajuste os extras abaixo.'
+                                : 'Valor sugerido do pacote: R$ '.number_format($preco, 2, ',', '.').'. Depois de escolher, use "Aplicar módulos do pacote" e ajuste os extras abaixo.';
+                        }),
 
                     Forms\Components\Actions::make([
                         Forms\Components\Actions\Action::make('aplicarPacote')
