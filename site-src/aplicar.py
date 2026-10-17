@@ -561,6 +561,8 @@ CSS_TECH_INTERNAS = (
     '.hero .hero-visual { background:rgba(255,255,255,.06) !important; border-color:rgba(255,255,255,.14) !important; box-shadow:0 30px 70px -30px rgba(99,102,241,.7); } '
     '.hero .status-pill { background:rgba(34,197,94,.16) !important; color:#86efac !important; }'
 )
+# A página de contato usa .chero no lugar de .hero: mesmo visual escuro.
+CSS_TECH_INTERNAS += ' ' + CSS_TECH_INTERNAS.replace('.hero', '.chero') + ' .chero p { color:rgba(226,232,240,.82) !important; }'
 CSS_NAV = CSS_NAV.replace('</style>', '  ' + CSS_TECH_INTERNAS + '\n</style>')
 
 CSS_TECH_HOME = """<style data-site="hero-tech-css">
@@ -798,10 +800,18 @@ RewriteEngine On
 {regras}
 # Páginas antigas de FSM e PCM foram absorvidas por Manutenção Industrial
 RewriteRule ^(fsm|pcm)/?$ https://oravel.com.br/software-manutencao-industrial/ [R=301,L]
+# Página antiga solta no servidor: aponta para a atual
+RewriteRule ^sobre\\.html$ https://oravel.com.br/sobre/ [R=301,L]
 RewriteRule ^(.+)\\.html$ - [L]
 RewriteCond %{{REQUEST_FILENAME}} !-f
 RewriteCond %{{REQUEST_FILENAME}} !-d
 RewriteRule ^(.*)$ $1.html [L]
+</IfModule>
+# Páginas (HTML/PHP) sempre revalidadas: o navegador não guarda a versão antiga do menu e dos textos
+<IfModule mod_headers.c>
+<FilesMatch "\\.(html|php)$">
+Header set Cache-Control "no-cache, must-revalidate"
+</FilesMatch>
 </IfModule>
 """
 

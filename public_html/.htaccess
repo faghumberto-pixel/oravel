@@ -13,8 +13,16 @@ RewriteRule ^solucoes\.php/?$ https://oravel.com.br/solucoes/ [R=301,L]
 RewriteRule ^sobre-nos(\.html)?/?$ https://oravel.com.br/sobre/ [R=301,L]
 # Páginas antigas de FSM e PCM foram absorvidas por Manutenção Industrial
 RewriteRule ^(fsm|pcm)/?$ https://oravel.com.br/software-manutencao-industrial/ [R=301,L]
+# Página antiga solta no servidor: aponta para a atual
+RewriteRule ^sobre\.html$ https://oravel.com.br/sobre/ [R=301,L]
 RewriteRule ^(.+)\.html$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ $1.html [L]
+</IfModule>
+# Páginas (HTML/PHP) sempre revalidadas: o navegador não guarda a versão antiga do menu e dos textos
+<IfModule mod_headers.c>
+<FilesMatch "\.(html|php)$">
+Header set Cache-Control "no-cache, must-revalidate"
+</FilesMatch>
 </IfModule>
