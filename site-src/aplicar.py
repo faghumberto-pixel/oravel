@@ -638,7 +638,17 @@ def aplicar_home():
              '      <p class="frentes-lead">Sete soluções, cada uma com as telas e os módulos que o dia a dia realmente usa. Contrate só o que precisa.</p>\n'
              '      <style>.sp-mini{margin:-4px -4px 14px;border-radius:10px;overflow:hidden;background:#f6f7f9}.sp-mini svg{width:100%;height:auto;display:block}</style>\n'
              f'      <div class="frentes-grid">{cards}</div>\n    </div>\n  </section>')
-    # Primeira dobra de tecnologia: o texto de boas-vindas é o mesmo de sempre (preservado, só muda de lugar).
+    # Texto de boas-vindas amplo: cobre locação, manutenção, prestadores de serviço e gestão de vendas (CRM).
+    ANTIGO = ('A plataforma de gestão para quem opera com equipamentos, equipes e serviços em campo: locação, manutenção industrial, montagem, logística e transportes, '
+              'gestão de serviços e distribuição. Contratos, ordens de serviço, frota, estoque, comercial e financeiro em uma só base. Acesse sua conta e domine sua operação.')
+    NOVO = ('A plataforma de gestão para empresas que operam com equipamentos e equipes em campo, prestam serviços ou precisam organizar as vendas: locação, manutenção industrial, '
+            'montagem, logística e transportes, prestação de serviços, distribuição e gestão de vendas (CRM). Contratos, ordens de serviço, frota, estoque, comercial, financeiro e equipe '
+            'em uma só base, com inteligência artificial. Escolha só o que a sua operação precisa. Acesse sua conta e domine o seu negócio.')
+    t = t.replace(ANTIGO, NOVO)
+    t = t.replace('<title>Oravel — Software de Gestão para Locação, Manutenção e Logística</title>', '<title>Oravel — Plataforma de gestão com IA para serviços, vendas, manutenção e locação</title>')
+    t = t.replace('content="Oravel: plataforma de gestão para locação, manutenção industrial, montagem, logística e transportes e gestão de serviços. Agende uma demonstração."',
+                  'content="Oravel: plataforma de gestão com inteligência artificial para prestadores de serviço, gestão de vendas (CRM), manutenção, locação, logística e estoque. Agende uma demonstração."')
+    # Primeira dobra de tecnologia: o texto de boas-vindas segue o da home (só muda de lugar).
     m = re.search(r'<section class="hero hero-intro">.*?<div class="hero-text">(.*?)</div>\s*</div>\s*</section>', t, re.S) or re.search(r'<!-- hero-text -->(.*?)<!-- /hero-text -->', t, re.S)
     texto_hero = re.sub(r'<h1 class="sr-only-h1">.*?</h1>', '', m.group(1), flags=re.S).strip()
     h1_oculto = (re.search(r'<h1 class="sr-only-h1">.*?</h1>', m.group(1), re.S) or re.search(r'<h1 class="sr-only-h1">.*?</h1>', t, re.S)).group(0)
