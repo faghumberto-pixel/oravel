@@ -19,7 +19,7 @@ class TenantAsaasSetting extends Model
     public const FEATURE = 'modulo_cobranca_automatica';
 
     protected $fillable = [
-        'tenant_id', 'enabled', 'ambiente', 'api_key', 'webhook_token', 'forma_padrao', 'multa_percentual', 'juros_mensal',
+        'tenant_id', 'enabled', 'ambiente', 'api_key', 'webhook_token', 'forma_padrao', 'multa_percentual', 'juros_mensal', 'gerar_recorrentes', 'cobrar_automaticamente', 'dias_antecedencia',
         'last_test_at', 'last_test_ok', 'last_error',
     ];
 
@@ -27,6 +27,9 @@ class TenantAsaasSetting extends Model
 
     protected $casts = [
         'enabled' => 'boolean',
+        'gerar_recorrentes' => 'boolean',
+        'cobrar_automaticamente' => 'boolean',
+        'dias_antecedencia' => 'integer',
         'api_key' => 'encrypted',
         'multa_percentual' => 'decimal:2',
         'juros_mensal' => 'decimal:2',

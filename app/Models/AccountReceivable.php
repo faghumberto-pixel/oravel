@@ -32,13 +32,14 @@ class AccountReceivable extends Model
         'branch_id', 'cost_center_id', 'client_id', 'contract_id',
         'billing_plan_id', 'quote_id', 'multa_percentual', 'multa_valor',
         'mes', 'ano',
-        'asaas_payment_id', 'asaas_invoice_url', 'asaas_boleto_url', 'asaas_status',
+        'asaas_payment_id', 'asaas_invoice_url', 'asaas_boleto_url', 'asaas_status', 'cobranca_tentativas', 'cobranca_erro', 'cobranca_ultima_tentativa_em',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'due_date' => 'date',
         'payment_date' => 'date',
+        'cobranca_ultima_tentativa_em' => 'datetime',
         'multa_percentual' => 'decimal:2',
         'multa_valor' => 'decimal:2',
     ];

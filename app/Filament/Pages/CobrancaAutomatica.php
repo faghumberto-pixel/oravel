@@ -10,6 +10,7 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -51,7 +52,7 @@ class CobrancaAutomatica extends Page implements HasForms
     {
         $c = $this->config();
 
-        $this->form->fill($c ? $c->only(['ambiente', 'forma_padrao', 'multa_percentual', 'juros_mensal']) : ['ambiente' => 'sandbox', 'forma_padrao' => 'UNDEFINED']);
+        $this->form->fill($c ? $c->only(['ambiente', 'forma_padrao', 'multa_percentual', 'juros_mensal', 'gerar_recorrentes', 'cobrar_automaticamente', 'dias_antecedencia']) : ['ambiente' => 'sandbox', 'forma_padrao' => 'UNDEFINED', 'gerar_recorrentes' => false, 'cobrar_automaticamente' => false, 'dias_antecedencia' => 10]);
     }
 
     public function config(): ?TenantAsaasSetting
@@ -78,6 +79,15 @@ class CobrancaAutomatica extends Page implements HasForms
                         ->options(['UNDEFINED' => 'O cliente escolhe (boleto, Pix ou cartão)', 'BOLETO' => 'Boleto', 'PIX' => 'Pix', 'CREDIT_CARD' => 'Cartão de crédito']),
                     TextInput::make('multa_percentual')->label('Multa por atraso (%)')->numeric()->minValue(0)->maxValue(20)->helperText('Vazio = usa a multa do contrato, se houver.'),
                     TextInput::make('juros_mensal')->label('Juros ao mês (%)')->numeric()->minValue(0)->maxValue(20),
+                ])->columns(3),
+            Section::make('Automação diária')
+                ->description('Todos os dias às 6h o sistema confere as contas da sua empresa. Comece desligado e ligue depois de testar a conexão.')
+                ->schema([
+                    Toggle::make('gerar_recorrentes')->label('Criar as contas a receber dos Planos de Cobrança')
+                        ->helperText('Uma conta por período de cada plano ativo (mensal, trimestral ou anual), sem repetir.'),
+                    Toggle::make('cobrar_automaticamente')->label('Gerar a cobrança no Asaas sozinho')
+                        ->helperText('Vale para contas novas sem cobrança: planos, medições faturadas e lançamentos manuais com cliente.'),
+                    TextInput::make('dias_antecedencia')->label('Gerar com quantos dias de antecedência do vencimento')->numeric()->minValue(0)->maxValue(45)->default(10)->required(),
                 ])->columns(3),
         ]);
     }
@@ -153,6 +163,8 @@ class CobrancaAutomatica extends Page implements HasForms
         $campos = [
             'ambiente' => $d['ambiente'] ?? 'sandbox', 'forma_padrao' => $d['forma_padrao'] ?? 'UNDEFINED',
             'multa_percentual' => $d['multa_percentual'] ?: null, 'juros_mensal' => $d['juros_mensal'] ?: null,
+            'gerar_recorrentes' => (bool) ($d['gerar_recorrentes'] ?? false), 'cobrar_automaticamente' => (bool) ($d['cobrar_automaticamente'] ?? false),
+            'dias_antecedencia' => (int) ($d['dias_antecedencia'] ?? 10),
         ];
 
         $atual = $this->config();

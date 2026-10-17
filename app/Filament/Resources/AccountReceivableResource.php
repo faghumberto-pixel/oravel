@@ -96,6 +96,7 @@ class AccountReceivableResource extends Resource
                     ->color(fn ($state) => match ($state) {
                         'RECEIVED', 'CONFIRMED', 'RECEIVED_IN_CASH' => 'success', 'OVERDUE' => 'danger', 'PENDING' => 'warning', default => 'gray',
                     }),
+                Tables\Columns\TextColumn::make('cobranca_erro')->label('Falha na cobrança')->limit(40)->tooltip(fn ($state) => $state)->color('danger')->placeholder('—')->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\IconColumn::make('asaas_payment_id')
                     ->label('Asaas')
                     ->boolean()
@@ -103,6 +104,9 @@ class AccountReceivableResource extends Resource
                     ->falseIcon('heroicon-o-exclamation-circle')
                     ->trueColor('success')
                     ->falseColor('warning'),
+            ])
+            ->filters([
+                Tables\Filters\Filter::make('falha_cobranca')->label('Com falha na cobrança automática')->query(fn ($query) => $query->whereNotNull('cobranca_erro')->whereNull('asaas_payment_id')),
             ])
             ->actions([
                 // POP 4: o Financeiro precisa conseguir abrir o PDF do

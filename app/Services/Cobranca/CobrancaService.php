@@ -74,7 +74,7 @@ class CobrancaService
             throw new CobrancaException('O Asaas não devolveu o identificador da cobrança.');
         }
 
-        $conta->forceFill(['asaas_payment_id' => $payment['id']]);
+        $conta->forceFill(['asaas_payment_id' => $payment['id'], 'cobranca_tentativas' => 0, 'cobranca_erro' => null]);
 
         return StatusPagamento::aplicar($conta, $payment + ['status' => 'PENDING']);
     }
