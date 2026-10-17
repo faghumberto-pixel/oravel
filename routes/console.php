@@ -31,6 +31,7 @@ Schedule::command('epi:check-ca-expirations')->daily()->withoutOverlapping();
 Schedule::command('epi:check-lifespan-expirations')->daily()->withoutOverlapping();
 Schedule::command('nr13:check-expirations')->daily()->withoutOverlapping();
 Schedule::command('contracts:check-expired')->dailyAt('08:00')->withoutOverlapping();
+Schedule::command('crm:expirar-propostas')->dailyAt('00:30')->withoutOverlapping();
 Schedule::command('contracts:calculate-overage')->monthlyOn(1, '03:00')->withoutOverlapping();
 // 30 min depois de propósito: reaproveita o excedente já calculado (ver ContractMeasurementService).
 Schedule::command('contracts:generate-measurements')->monthlyOn(1, '03:30')->withoutOverlapping();
@@ -40,4 +41,3 @@ Schedule::command('frota:sincronizar-gps')->hourly()->withoutOverlapping();
 Schedule::command('asaas:sync-payment-status')->everyThirtyMinutes()->withoutOverlapping();
 // Limpeza semanal de notificações e registros automáticos antigos (domingo de madrugada).
 Schedule::command('registros:limpar')->weeklyOn(0, '04:00')->withoutOverlapping();
-

@@ -254,6 +254,10 @@ class CrmContasCatalogoTest extends TestCase
         // A 6B (visitas) depende de crm_contas: sai antes e volta depois.
         $campo = require base_path('database/migrations/2026_11_18_100000_create_crm_veiculos_visitas_despesas.php');
 
+        // A 6D-2 (propostas) depende de contas e do catálogo: também sai antes e volta depois.
+        $propostas = require base_path('database/migrations/2026_11_21_100000_create_crm_propostas.php');
+
+        $propostas->down();
         $campo->down();
         $migration->down();
         foreach (['crm_contas', 'crm_conta_contatos', 'crm_produtos', 'crm_lead_itens'] as $tabela) {
@@ -263,6 +267,7 @@ class CrmContasCatalogoTest extends TestCase
 
         $migration->up();
         $campo->up();
+        $propostas->up();
         $this->assertTrue(Schema::hasTable('crm_contas'));
         $this->assertTrue(Schema::hasColumn('whatsapp_conversas', 'crm_conta_id'));
         $this->assertSame(0, DB::table('crm_contas')->count());

@@ -18,6 +18,8 @@ use App\Http\Controllers\ColaboradorAusenciasController;
 use App\Http\Controllers\ContractTimelinePrintController;
 use App\Http\Controllers\ContratoVisualizarController;
 use App\Http\Controllers\CrmDespesasPdfController;
+use App\Http\Controllers\CrmPropostaPdfController;
+use App\Http\Controllers\CrmPropostaPublicaController;
 use App\Http\Controllers\EquipmentDamageReportController;
 use App\Http\Controllers\GenericRecordPrintController;
 use App\Http\Controllers\HourMeterOfflineController;
@@ -164,6 +166,14 @@ Route::post('/proposta-comercial/{token}/aceitar', [PropostaComercialApprovalCon
     ->name('proposta-comercial.public-accept');
 Route::post('/proposta-comercial/{token}/recusar', [PropostaComercialApprovalController::class, 'reject'])
     ->name('proposta-comercial.public-reject');
+
+// Publica, sem auth de proposito -- cliente final vendo/aceitando/recusando a proposta do CRM pelo link recebido.
+// Limite por IP contra tentativa de adivinhar token ou aceitar em massa.
+Route::middleware('throttle:30,1')->group(function () {
+    Route::get('/crm-proposta/{token}', [CrmPropostaPublicaController::class, 'show'])->name('crm.proposta.publica');
+    Route::post('/crm-proposta/{token}/aceitar', [CrmPropostaPublicaController::class, 'aceitar'])->name('crm.proposta.aceitar');
+    Route::post('/crm-proposta/{token}/recusar', [CrmPropostaPublicaController::class, 'recusar'])->name('crm.proposta.recusar');
+});
 
 // Publica, sem auth de proposito -- cliente/signatário assinando contrato
 // ou ordem de serviço via link seguro (token único), sem conta no sistema.
@@ -509,6 +519,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/admin/crm/visitas/mobile', CrmVisitasMobile::class)
         ->name('crm.visitas.mobile');
+
+    Route::get('/admin/crm/propostas/{id}/pdf', CrmPropostaPdfController::class)
+        ->name('crm.propostas.pdf');
 
     Route::get('/admin/crm/despesas/pdf', CrmDespesasPdfController::class)
         ->name('crm.despesas.pdf');

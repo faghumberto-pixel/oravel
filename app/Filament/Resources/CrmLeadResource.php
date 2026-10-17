@@ -12,6 +12,7 @@ use App\Models\CrmEtapa;
 use App\Models\CrmLead;
 use App\Models\CrmMotivoPerda;
 use App\Models\CrmOrigem;
+use App\Models\CrmProposta;
 use App\Models\User;
 use App\Services\CepGeocodingService;
 use App\Services\CrmFunilPadrao;
@@ -322,6 +323,16 @@ class CrmLeadResource extends BaseResource
             ->defaultSort('created_at', 'desc')
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('nova_proposta')
+                    ->label('Nova proposta')
+                    ->icon('heroicon-o-document-text')
+                    ->color('gray')
+                    ->visible(fn () => auth()->user()?->can('create', CrmProposta::class))
+                    ->action(function (CrmLead $record) {
+                        $proposta = CrmProposta::doLead($record, auth()->user());
+
+                        return redirect(CrmPropostaResource::getUrl('edit', ['record' => $proposta->id]));
+                    }),
                 Tables\Actions\Action::make('enviar_para_erp')
                     ->label('Enviar para Clientes do ERP')
                     ->icon('heroicon-o-arrow-up-on-square')
