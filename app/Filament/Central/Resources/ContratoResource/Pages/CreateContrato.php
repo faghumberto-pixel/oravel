@@ -3,6 +3,7 @@
 namespace App\Filament\Central\Resources\ContratoResource\Pages;
 
 use App\Filament\Central\Resources\ContratoResource;
+use App\Services\ComplementoService;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -58,6 +59,11 @@ class CreateContrato extends CreateRecord
         $features = [];
         foreach (array_unique($selectedKeys) as $featureKey) {
             $features[$featureKey] = true;
+        }
+
+        // Complementos (cobrança automática, notas fiscais) só entram pelo cadastro do cliente na Central (valor + fidelidade).
+        foreach (array_keys(ComplementoService::catalogo()) as $complemento) {
+            unset($features[$complemento]);
         }
 
         return $features;

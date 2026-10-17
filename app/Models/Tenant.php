@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 
 class Tenant extends Model
 {
@@ -47,6 +48,25 @@ class Tenant extends Model
             );
         });
 
+        // mrr_value é o TOTAL mensal (base + complementos). Quem muda o total à mão (Central) está mudando a base:
+        // o complemento já contratado continua somado em cima. O ComplementoService ajusta o total sem passar por aqui.
+        static::saving(function (Tenant $tenant) {
+            if (static::$ajusteInternoDoMrr || ! (static::$temMrrBase ??= Schema::hasColumn('tenants', 'mrr_base'))) {
+                return;
+            }
+
+            if (! $tenant->exists || blank($tenant->mrr_base)) {
+                $tenant->mrr_base ??= $tenant->mrr_value;
+
+                return;
+            }
+
+            if ($tenant->isDirty('mrr_value')) {
+                $tenant->mrr_base = max(0, round((float) $tenant->mrr_value - static::complementosVigentes($tenant), 2));
+                $tenant->mrr_pendente_sincronizar = filled($tenant->asaas_subscription_id) ? true : $tenant->mrr_pendente_sincronizar;
+            }
+        });
+
         static::updated(function (Tenant $tenant) {
             if ($tenant->wasChanged('email_contato') && filled($tenant->asaas_customer_id)) {
                 app(AsaasService::class)->syncCustomerContact($tenant);
@@ -64,6 +84,28 @@ class Tenant extends Model
                 );
             }
         });
+    }
+
+    /** Ligado só pelo ComplementoService enquanto recalcula o total da mensalidade. */
+    public static bool $ajusteInternoDoMrr = false;
+
+    private static ?bool $temMrrBase = null;
+
+    private static ?bool $temComplementos = null;
+
+    /** Soma mensal dos complementos que contam na mensalidade (ativos ou com cancelamento agendado). */
+    public static function complementosVigentes(Tenant $tenant): float
+    {
+        if (! $tenant->exists || ! (static::$temComplementos ??= Schema::hasTable('tenant_complementos'))) {
+            return 0.0;
+        }
+
+        return (float) TenantComplemento::withoutGlobalScopes()->where('tenant_id', $tenant->id)->whereIn('status', [TenantComplemento::ATIVO, TenantComplemento::ENCERRANDO])->sum('valor_mensal');
+    }
+
+    public function complementos(): HasMany
+    {
+        return $this->hasMany(TenantComplemento::class);
     }
 
     public const PAYMENT_STATUS_EM_DIA = 'em_dia';
@@ -86,6 +128,9 @@ class Tenant extends Model
         'cidade',
         'uf',
         'mrr_value',
+        'mrr_base',
+        'mrr_pendente_sincronizar',
+        'mrr_pendente_desde',
         'cpf_cnpj',
         'telefone',
         'plan_id',
@@ -140,6 +185,8 @@ class Tenant extends Model
         'implementation_fee' => 'decimal:2',
         'implementation_installments' => 'integer',
         'subscription_reverted_to_base_at' => 'datetime',
+        'mrr_pendente_desde' => 'datetime',
+        'mrr_pendente_sincronizar' => 'boolean',
         'asaas_payment_updated_at' => 'datetime',
         'asaas_overdue_since' => 'datetime',
     ];

@@ -218,7 +218,9 @@ class ContratoResource extends Resource
                     Forms\Components\CheckboxList::make(static::groupFieldName($groupName))
                         ->label('')
                         ->options($options)
-                        ->bulkToggleable()
+                        ->disabled($groupName === 'Complementos')
+                        ->helperText($groupName === 'Complementos' ? 'Complementos são vendidos à parte, com valor e fidelidade de 12 meses: contrate em Clientes → Complementos. Aqui só aparecem.' : null)
+                        ->bulkToggleable($groupName !== 'Complementos')
                         ->live()
                         ->columns(1),
                 ]);

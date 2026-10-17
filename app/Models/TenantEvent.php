@@ -45,6 +45,18 @@ class TenantEvent extends Model
 
     public const ASSINATURA_CRIADA = 'assinatura_criada';
 
+    public const COMPLEMENTO_CONTRATADO = 'complemento_contratado';
+
+    public const COMPLEMENTO_CANCELAMENTO_AGENDADO = 'complemento_cancelamento_agendado';
+
+    public const COMPLEMENTO_ENCERRADO = 'complemento_encerrado';
+
+    public const COMPLEMENTO_ENCERRADO_ANTECIPADO = 'complemento_encerrado_antecipado';
+
+    public const FIDELIDADE_CONCLUINDO = 'fidelidade_concluindo';
+
+    public const FIDELIDADE_CONCLUIDA = 'fidelidade_concluida';
+
     public const ANOTACAO = 'anotacao';
 
     protected $fillable = [
@@ -73,6 +85,12 @@ class TenantEvent extends Model
             self::IMPLANTACAO_CANCELADA => ['label' => 'Implantação cancelada', 'color' => 'gray'],
             self::ACESSO_LIBERADO => ['label' => 'Acesso liberado', 'color' => 'success'],
             self::ASSINATURA_CRIADA => ['label' => 'Assinatura mensal criada', 'color' => 'info'],
+            self::COMPLEMENTO_CONTRATADO => ['label' => 'Complemento contratado', 'color' => 'success'],
+            self::COMPLEMENTO_CANCELAMENTO_AGENDADO => ['label' => 'Cancelamento de complemento agendado', 'color' => 'warning'],
+            self::COMPLEMENTO_ENCERRADO => ['label' => 'Complemento encerrado', 'color' => 'gray'],
+            self::COMPLEMENTO_ENCERRADO_ANTECIPADO => ['label' => 'Complemento encerrado antes da fidelidade', 'color' => 'danger'],
+            self::FIDELIDADE_CONCLUINDO => ['label' => 'Fidelidade do complemento terminando', 'color' => 'warning'],
+            self::FIDELIDADE_CONCLUIDA => ['label' => 'Fidelidade do complemento concluída', 'color' => 'info'],
             self::ANOTACAO => ['label' => 'Anotação', 'color' => 'warning'],
         ];
     }

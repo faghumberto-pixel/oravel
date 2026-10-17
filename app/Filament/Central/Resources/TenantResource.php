@@ -3,6 +3,7 @@
 namespace App\Filament\Central\Resources;
 
 use App\Filament\Central\Resources\TenantResource\Pages;
+use App\Filament\Central\Resources\TenantResource\RelationManagers\ComplementosRelationManager;
 use App\Filament\Central\Resources\TenantResource\RelationManagers\EventsRelationManager;
 use App\Models\Client;
 use App\Models\Tenant;
@@ -43,7 +44,17 @@ class TenantResource extends Resource
                 Forms\Components\TextInput::make('slug')->label('Slug')->unique(Tenant::class, 'slug', ignoreRecord: true)->required()->maxLength(255),
                 Forms\Components\Select::make('plan_id')->label('Plano')->relationship('plan', 'name')->searchable()->preload()->live(),
                 Forms\Components\Select::make('status')->label('Status')->options(['active' => 'Ativo', 'trial' => 'Teste', 'suspended' => 'Suspenso', 'canceled' => 'Cancelado'])->default('trial')->required(),
-                Forms\Components\TextInput::make('mrr_value')->label('MRR (R$)')->numeric()->step(0.01)->default(0),
+                Forms\Components\TextInput::make('mrr_value')->label('MRR (R$)')->numeric()->step(0.01)->default(0)
+                    ->helperText('Total cobrado por mês na assinatura (base + complementos). Os complementos contratados continuam somados se você mudar o total.'),
+                Forms\Components\Placeholder::make('composicao_mrr')->label('Composição da mensalidade')
+                    ->visible(fn (?Tenant $record) => $record?->exists === true)
+                    ->content(function (?Tenant $record) {
+                        $compl = Tenant::complementosVigentes($record);
+                        $base = (float) ($record->mrr_base ?? $record->mrr_value);
+                        $fmt = fn (float $v) => 'R$ '.number_format($v, 2, ',', '.');
+
+                        return 'Base '.$fmt($base).' + complementos '.$fmt($compl).' = '.$fmt($base + $compl).($record->mrr_pendente_sincronizar ? ' (novo valor ainda não enviado ao Asaas)' : '');
+                    }),
                 Forms\Components\TextInput::make('implementation_fee')
                     ->label('Taxa de Implantação (R$)')
                     ->helperText('Cobrança única via Asaas. Vazio = usa o valor do contrato. Depois de gerada a cobrança, alterar aqui não muda a cobrança já emitida.')
@@ -237,6 +248,7 @@ class TenantResource extends Resource
     public static function getRelations(): array
     {
         return [
+            ComplementosRelationManager::class,
             EventsRelationManager::class,
         ];
     }

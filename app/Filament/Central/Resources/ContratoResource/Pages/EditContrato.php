@@ -5,6 +5,7 @@ namespace App\Filament\Central\Resources\ContratoResource\Pages;
 use App\Filament\Central\Resources\ContratoResource;
 use App\Models\Plan;
 use App\Models\Tenant;
+use App\Services\ComplementoService;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
@@ -53,6 +54,11 @@ class EditContrato extends EditRecord
     {
         $data['price'] = $data['base_price'] ?? 0;
         $data['features'] = CreateContrato::mergeGroupedFeatures($data);
+
+        // Os complementos não são editados aqui: mantém exatamente o que o contrato já tem (quem liga e desliga é o cadastro do cliente).
+        foreach (array_keys(ComplementoService::catalogo()) as $complemento) {
+            $data['features'][$complemento] = (bool) ($this->record->features[$complemento] ?? false);
+        }
 
         return array_filter($data, fn ($key) => ! str_starts_with($key, 'features_group_'), ARRAY_FILTER_USE_KEY);
     }
