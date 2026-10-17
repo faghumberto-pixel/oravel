@@ -51,6 +51,16 @@ return [
         ],
     ],
 
+    // Emissor fiscal (Focus NFe) na conta da Oravel: o token principal cadastra cada empresa cliente; cada empresa emite com o token próprio.
+    'focusnfe' => [
+        'driver' => env('FISCAL_DRIVER', 'focus'), // focus | fake
+        'token' => env('FOCUSNFE_TOKEN'),
+        'urls' => [
+            'homologacao' => env('FOCUSNFE_HOMOLOGACAO_URL', 'https://homologacao.focusnfe.com.br'),
+            'producao' => env('FOCUSNFE_PRODUCAO_URL', 'https://api.focusnfe.com.br'),
+        ],
+    ],
+
     'traccar' => [
         'url' => env('TRACCAR_URL'),
         'email' => env('TRACCAR_EMAIL'),

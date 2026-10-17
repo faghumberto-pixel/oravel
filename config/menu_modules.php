@@ -371,4 +371,13 @@ return [
         'recurso' => true,
         'herda' => ['__nunca__'],
     ],
+
+    'modulo_fiscal_nfse' => [
+        'label' => 'Nota fiscal de serviço (NFS-e): emissão a partir das contas a receber, com envio ao cliente',
+        'grupo' => 'Complementos',
+        'menu' => 'Nota fiscal de serviço (módulo)',
+        'slug' => 'modulo-fiscal-nfse-sem-rota',
+        'recurso' => true,
+        'herda' => ['__nunca__'],
+    ],
 ];

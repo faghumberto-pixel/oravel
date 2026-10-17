@@ -10,5 +10,6 @@ return [
     // chave do módulo no contrato => nome para exibir
     'catalogo' => [
         'modulo_cobranca_automatica' => 'Cobrança automática',
+        'modulo_fiscal_nfse' => 'Nota fiscal de serviço (NFS-e)',
     ],
 ];

@@ -83,6 +83,9 @@ use App\Observers\SalesLeadInteractionObserver;
 use App\Observers\SolicitacaoLocacaoObserver;
 use App\Observers\TechnicianAllocationObserver;
 use App\Policies\DynamicPolicy;
+use App\Services\Fiscal\FakeFiscalProvider;
+use App\Services\Fiscal\FiscalProvider;
+use App\Services\Fiscal\FocusNfeProvider;
 use App\Services\Push\PushSender;
 use App\Services\Push\WebPushSender;
 use App\Support\Tenancy;
@@ -122,7 +125,10 @@ class AppServiceProvider extends ServiceProvider
         // Menu do painel admin: filtra páginas bloqueadas e menus pai vazios (ver a classe).
         $this->app->scoped(NavigationManager::class, fn () => new TenantNavigationManager);
 
-        //
+        // Emissor fiscal: Focus NFe em produção; FISCAL_DRIVER=fake usa o emissor falso (telas e testes sem conta no emissor).
+        $this->app->bind(FiscalProvider::class, fn () => config('services.focusnfe.driver') === 'fake'
+            ? new FakeFiscalProvider
+            : new FocusNfeProvider);
     }
 
     public function boot(): void
