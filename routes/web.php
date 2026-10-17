@@ -18,6 +18,7 @@ use App\Http\Controllers\ColaboradorAusenciasController;
 use App\Http\Controllers\ContractTimelinePrintController;
 use App\Http\Controllers\ContratoVisualizarController;
 use App\Http\Controllers\CrmDespesasPdfController;
+use App\Http\Controllers\CrmExtensaoDownloadController;
 use App\Http\Controllers\CrmPropostaPdfController;
 use App\Http\Controllers\CrmPropostaPublicaController;
 use App\Http\Controllers\EquipmentDamageReportController;
@@ -523,7 +524,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/crm/propostas/{id}/pdf', CrmPropostaPdfController::class)
         ->name('crm.propostas.pdf');
 
-    Route::get('/admin/crm/extensao-whatsapp/baixar', \App\Http\Controllers\CrmExtensaoDownloadController::class)
+    Route::get('/admin/crm/extensao-whatsapp/baixar', CrmExtensaoDownloadController::class)
         ->name('crm.extensao.download');
 
     Route::get('/admin/crm/despesas/pdf', CrmDespesasPdfController::class)
