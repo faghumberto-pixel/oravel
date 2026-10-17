@@ -156,6 +156,34 @@ PACOTES = [
              'lista': [['09:00 Metalúrgica Alfa', 'Realizada', 'ok'], ['11:00 Obras Beta', 'Em andamento', 'info'], ['14:30 Gama Eventos', 'Agendada', 'warn'], ['16:00 Delta Log', 'Agendada', 'warn']], 'legenda': 'Roteiro'},
         ],
     },
+    {
+        'codigo': 'departamento_pessoal', 'nome': 'Departamento Pessoal', 'pagina': '/departamento-pessoal/', 'pagina_nova': True,
+        'frase': 'Gestão de pessoas, ponto e EPI em um só lugar.',
+        'descricao': 'Colaboradores, cargos, faltas e atestados, ponto eletrônico no celular, alocação de equipamentos e entrega de EPI com conformidade.',
+        'inclui': [
+            ('Colaboradores e cargos', 'Cadastro completo, cargos, departamentos e certificações de cada pessoa'),
+            ('Faltas e atestados', 'Comunicação da falta pelo celular com foto do atestado e relatório de faltas'),
+            ('Ponto eletrônico', 'Entrada, saída e intervalos no app do colaborador, com horas apuradas e funcionamento offline'),
+            ('Alocação de equipamentos', 'Quem está com qual equipamento, com histórico por colaborador'),
+            ('EPI com conformidade', 'Entregas, entradas e especificações de EPI, com relatório de conformidade e alertas de vencimento'),
+        ],
+        'mockups': [
+            {'tipo': 'tabela', 'url': 'colaboradores', 'titulo': 'Colaboradores', 'kpis': [['Ativos', '86'], ['Em férias', '4'], ['Afastados', '2']],
+             'cabecalho': ['Nome', 'Cargo', 'Departamento', 'Situação'],
+             'linhas': [['Mariana Souza', 'Técnica de campo', 'Manutenção', ['Ativa', 'ok']], ['Paulo Lima', 'Motorista', 'Logística', ['Ativo', 'ok']], ['Renata Alves', 'Almoxarife', 'Estoque', ['Afastada', 'warn']], ['Carlos Dias', 'Operador', 'Pátio', ['Ativo', 'ok']]],
+             'legenda': 'Cadastro de colaboradores'},
+            {'tipo': 'celular', 'url': 'ponto', 'titulo': 'Registro de ponto', 'itens': [['Entrada 07:58', 'ok'], ['Início do intervalo 12:01', 'ok'], ['Retorno 13:02', 'ok'], ['Saída', 'mudo'], ['Horas hoje 6h 31m', 'info']], 'rodape': 'Registrar saída', 'legenda': 'Ponto no celular do colaborador'},
+            {'tipo': 'ficha', 'url': 'faltas', 'titulo': 'Falta · Atestado médico', 'etiqueta': ['Justificada', 'ok'],
+             'campos': [['Colaborador', 'Renata Alves'], ['Período', '14 a 16/10'], ['Motivo', 'Atestado médico'], ['Anexo', 'atestado.jpg'], ['Registrada por', 'App do colaborador']],
+             'linha_tempo': [['Hoje', 'Falta justificada pelo RH'], ['Ontem', 'Atestado anexado pelo celular'], ['Há 2 dias', 'Falta comunicada']], 'legenda': 'Faltas e atestados'},
+            {'tipo': 'tabela', 'url': 'epi/entregas', 'titulo': 'Entregas de EPI', 'kpis': [['Em conformidade', '92%'], ['A vencer', '9'], ['Vencidos', '3']],
+             'cabecalho': ['Colaborador', 'EPI', 'Validade', 'Situação'],
+             'linhas': [['Paulo Lima', 'Capacete', '12/2026', ['Em dia', 'ok']], ['Carlos Dias', 'Luva isolante', '11/2026', ['A vencer', 'warn']], ['Mariana Souza', 'Botina', '02/2027', ['Em dia', 'ok']], ['Renata Alves', 'Óculos', '10/2026', ['Vencido', 'bad']]],
+             'legenda': 'EPI com conformidade'},
+            {'tipo': 'painel', 'url': 'painel-rh', 'titulo': 'Painel de pessoas', 'kpis': [['Colaboradores', '86', 'info'], ['Faltas no mês', '7', 'warn'], ['EPI a vencer', '9', 'warn']],
+             'barras': [['Mai', 12], ['Jun', 9], ['Jul', 11], ['Ago', 8], ['Set', 10], ['Out', 7]], 'legenda': 'Faltas por mês', 'legenda_titulo': 'Visão geral'},
+        ],
+    },
 ]
 
 POR_CODIGO = {p['codigo']: p for p in PACOTES}
@@ -186,6 +214,7 @@ APPS = {
     'manutencao': ('Oravel Manutenção', '#ea580c', 'Ordens de serviço', [('OS-2041 Gerador', 'bad'), ('OS-2044 Empilhadeira', 'warn'), ('OS-2038 Plataforma', 'info'), ('OS-2025 Preventiva', 'ok')]),
     'servicos': ('Oravel Serviços', '#2563eb', 'Ordens de serviço', [('OS-310 Instalação', 'info'), ('OS-308 Visita técnica', 'warn'), ('OS-301 Montagem', 'ok'), ('Orçamento 118', 'mudo')]),
     'estoque': ('Oravel Estoque', '#7c3aed', 'Almoxarifado', [('Filtro de óleo', 'warn'), ('Correia dentada', 'ok'), ('Bateria 12V', 'bad'), ('Recebimento NF 4471', 'info')]),
+    'departamento_pessoal': ('Oravel Pessoas', '#0ea5e9', 'Colaboradores', [('Registrar ponto', 'ok'), ('Comunicar uma falta', 'warn'), ('Minhas horas', 'info'), ('Entrega de EPI', 'ok')]),
     'logistica': ('Oravel Logística', '#0d9488', 'Programação', [('Entrega Construtora Alfa', 'info'), ('Retirada Obras Beta', 'warn'), ('Veículo VAN-02', 'ok'), ('Coleta Delta Log', 'info')]),
 }
 
@@ -201,7 +230,10 @@ MATRIZ = [
     ('Estoque: materiais, peças e almoxarifado', {'locadora', 'estoque'}),
     ('Logística, frota e rastreamento', {'locadora', 'logistica'}),
     ('CRM de vendas: funil, contas, visitas e metas', {'locadora', 'vendas'}),
-    ('App instalável próprio da solução (celular)', {'locadora', 'manutencao', 'servicos', 'logistica', 'estoque', 'vendas'}),
-    ('Academia Oravel: treinamento do seu pacote', {'locadora', 'manutencao', 'servicos', 'logistica', 'estoque', 'vendas'}),
-    ('Usuários, perfis de acesso e app do colaborador', {'locadora', 'manutencao', 'servicos', 'logistica', 'estoque', 'vendas'}),
+    ('App instalável próprio da solução (celular)', {'locadora', 'manutencao', 'servicos', 'logistica', 'estoque', 'vendas', 'departamento_pessoal'}),
+    ('Academia Oravel: treinamento do seu pacote', {'locadora', 'manutencao', 'servicos', 'logistica', 'estoque', 'vendas', 'departamento_pessoal'}),
+    ('Colaboradores, cargos e departamentos', {'locadora', 'departamento_pessoal'}),
+    ('Faltas, atestados e ponto eletrônico', {'locadora', 'departamento_pessoal'}),
+    ('EPI com conformidade', {'locadora', 'departamento_pessoal'}),
+    ('Usuários, perfis de acesso e app do colaborador', {'locadora', 'manutencao', 'servicos', 'logistica', 'estoque', 'vendas', 'departamento_pessoal'}),
 ]

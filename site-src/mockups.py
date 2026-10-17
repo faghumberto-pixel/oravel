@@ -250,3 +250,49 @@ def academia_certificado():
            f'<line x1="170" y1="250" x2="310" y2="250" stroke="{LINE}"/><text x="240" y="264" font-family="Inter" font-size="8" fill="{SOFT}" text-anchor="middle">Código de verificação · OR-7F3A91C2</text>',
            f'<circle cx="420" cy="252" r="16" fill="{ACCENT}" opacity=".15"/><text x="420" y="256" font-family="Manrope" font-size="12" font-weight="800" fill="{ACCENT}" text-anchor="middle">✓</text>']
     return _chrome('academia/certificado', 'Certificado', ''.join(out), 'Certificado de conclusão da Academia Oravel')
+
+
+# ---------------------------------------------------------------- IA (telas de exemplo, dados fictícios)
+
+def ia_manutencao():
+    cards = [('Gerador 150kVA', '3 corretivas em 60 dias', 'Causa provável: bateria de partida. Troque antes da próxima locação.', 'bad'),
+             ('Empilhadeira 3t', 'Preventiva atrasada há 12 dias', 'Intervalo de 500 h vencido; risco de parada na semana que vem.', 'warn'),
+             ('Compressor 20pcm', 'MTBF caiu 18%', 'Falhas mais frequentes após a última preventiva. Revisar o plano.', 'info')]
+    out = [f'<text x="20" y="72" font-family="Inter" font-size="9" fill="{SOFT}">Análise por IA · números calculados pelo sistema, leitura e prioridade pela IA</text>']
+    for i, (t, st, txt, tom) in enumerate(cards):
+        y = 84 + i * 68
+        out.append(f'<rect x="20" y="{y}" width="440" height="60" rx="8" fill="#fff" stroke="{LINE}"/><rect x="20" y="{y}" width="4" height="60" rx="2" fill="{TONS[tom]}"/>')
+        out.append(f'<text x="34" y="{y + 18}" font-family="Manrope" font-size="10.5" font-weight="800" fill="{INK}">{esc(t)}</text>')
+        out.append(_pill(34, y + 24, st, tom, len(st) * 5 + 14))
+        out.append(f'<text x="34" y="{y + 52}" font-family="Inter" font-size="8.5" fill="{SOFT}">{esc(txt)}</text>')
+        out.append(f'<text x="446" y="{y + 18}" font-family="Manrope" font-size="9" font-weight="800" fill="{ACCENT}" text-anchor="end">IA</text>')
+    return _chrome('analise-ia', 'Análise de manutenção por IA', ''.join(out), 'Análise de manutenção feita por IA')
+
+
+def ia_proposta():
+    linhas = [('Coerência da proposta', 4, 'Valores e prazos batem com os itens.'), ('Clareza do texto', 5, 'Termos objetivos e fáceis de entender.')]
+    out = [f'<text x="20" y="74" font-family="Inter" font-size="9" fill="{SOFT}">Proposta #31 · Delta Log</text>']
+    for i, (t, n, c) in enumerate(linhas):
+        y = 86 + i * 60
+        out.append(f'<rect x="20" y="{y}" width="290" height="52" rx="8" fill="#fff" stroke="{LINE}"/><text x="32" y="{y + 20}" font-family="Manrope" font-size="10.5" font-weight="800" fill="{INK}">{esc(t)}</text>')
+        out.append(f'<text x="32" y="{y + 38}" font-family="Inter" font-size="8.5" fill="{SOFT}">{esc(c)}</text>')
+        for k in range(5):
+            out.append(f'<circle cx="{262 + k * 10}" cy="{y + 18}" r="3.6" fill="{ACCENT if k < n else LINE}"/>')
+    out.append(f'<rect x="326" y="86" width="134" height="112" rx="8" fill="{NAVY}"/><text x="393" y="116" font-family="Inter" font-size="8.5" fill="#cbd5e1" text-anchor="middle">Chance de fechamento</text>')
+    out.append(f'<text x="393" y="158" font-family="Manrope" font-size="34" font-weight="800" fill="#fff" text-anchor="middle">72%</text>')
+    out.append(f'<rect x="346" y="172" width="94" height="6" rx="3" fill="#334155"/><rect x="346" y="172" width="68" height="6" rx="3" fill="{ACCENT}"/>')
+    out.append(f'<rect x="20" y="214" width="440" height="68" rx="8" fill="{SURF}" stroke="{LINE}"/><text x="32" y="234" font-family="Inter" font-size="8.5" font-weight="700" fill="{ACCENT}">SUGESTÃO DA IA</text>')
+    out.append(f'<text x="32" y="252" font-family="Inter" font-size="9" fill="{INK}">Inclua a franquia de horas no item de locação para evitar</text><text x="32" y="266" font-family="Inter" font-size="9" fill="{INK}">dúvidas na medição e aumentar a chance de aceite.</text>')
+    return _chrome('propostas/avaliacao-ia', 'Avaliação da proposta por IA', ''.join(out), 'Avaliação de proposta comercial por IA')
+
+
+def ia_avaria():
+    out = [f'<rect x="20" y="64" width="200" height="150" rx="8" fill="#dbe4ee"/><path d="M20 190 L90 120 L130 160 L170 110 L220 170 L220 214 L20 214 Z" fill="#b6c4d4"/><circle cx="70" cy="96" r="14" fill="#f1f5f9"/>',
+           f'<rect x="70" y="128" width="64" height="40" rx="5" fill="none" stroke="{TONS["bad"]}" stroke-width="2" stroke-dasharray="5 3"/><text x="102" y="122" font-family="Inter" font-size="8" font-weight="700" fill="{TONS["bad"]}" text-anchor="middle">DANO DETECTADO</text>',
+           f'<text x="236" y="76" font-family="Manrope" font-size="11" font-weight="800" fill="{INK}">Diagnóstico por IA</text>']
+    itens = [('Local', 'Lança telescópica, articulação 2'), ('Tipo', 'Amassado com trinca na solda'), ('Gravidade', 'Alta · não operar'), ('Provável causa', 'Impacto lateral na operação')]
+    for i, (k, v) in enumerate(itens):
+        y = 96 + i * 28
+        out.append(f'<text x="236" y="{y}" font-family="Inter" font-size="8" fill="{SOFT}">{esc(k.upper())}</text><text x="236" y="{y + 13}" font-family="Inter" font-size="9.5" font-weight="600" fill="{INK}">{esc(v)}</text>')
+    out.append(f'<rect x="20" y="228" width="440" height="54" rx="8" fill="{SURF}" stroke="{LINE}"/><text x="32" y="248" font-family="Inter" font-size="8.5" font-weight="700" fill="{ACCENT}">DOSSIÊ</text><text x="32" y="266" font-family="Inter" font-size="9" fill="{INK}">As fotos e o diagnóstico seguem para o dossiê jurídico da avaria.</text>')
+    return _chrome('avarias/diagnostico-ia', 'Avaria · diagnóstico por foto', ''.join(out), 'Diagnóstico de avaria por foto com IA')

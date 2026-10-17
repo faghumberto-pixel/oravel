@@ -94,7 +94,7 @@ class TestPacotes(unittest.TestCase):
         self.assertIn('Falar com um especialista', bloco)
         self.assertIn('/contato.php?pacote=locadora', bloco)
 
-    def test_hub_e_planos_tem_os_seis_pacotes(self):
+    def test_hub_e_planos_tem_todos_os_pacotes(self):
         for rel in ('solucoes/index.html', 'planos/index.html'):
             t = ler(rel)
             for p in dados.PACOTES:

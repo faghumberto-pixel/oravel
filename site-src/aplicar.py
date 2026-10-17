@@ -122,7 +122,7 @@ def footer_inav():
         '<div class="ifoot-wrap">'
         '<div class="ifoot-copy">© 2026 Oravel Desenvolvimento de Software'
         '<div class="ifoot-legal">CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, conj. 1713, Pinheiros, São Paulo/SP · CEP 05424-150</div></div>'
-        '<div class="ifoot-links"><a href="/">Home</a><a href="/solucoes/">Soluções</a><a href="/planos/">Planos</a><a href="/academia/">Academia</a><a href="/contato.php">Contato</a><a href="/faq.php">FAQ</a><a href="/central-de-conhecimento/">Ajuda</a>'
+        '<div class="ifoot-links"><a href="/">Home</a><a href="/solucoes/">Soluções</a><a href="/planos/">Planos</a><a href="/inteligencia-artificial/">IA</a><a href="/academia/">Academia</a><a href="/contato.php">Contato</a><a href="/faq.php">FAQ</a><a href="/central-de-conhecimento/">Ajuda</a>'
         '<a href="/politica-de-privacidade/">Privacidade</a><a href="/termos-de-uso/">Termos</a></div>'
         '</div></footer>'
     )
@@ -364,7 +364,7 @@ def cards_pacotes(com_shot=True):
 def pagina_solucoes():
     corpo = (
         '<section class="hero"><div class="wrap"><span class="eyebrow">Soluções Oravel</span><h1>Escolha a solução certa para a sua operação</h1>'
-        '<p class="desc">Seis soluções, cada uma completa no que se propõe. Comece pela que resolve o seu dia a dia e contrate online ou com a nossa equipe.</p></div></section>'
+        '<p class="desc">Sete soluções, cada uma completa no que se propõe. Comece pela que resolve o seu dia a dia e contrate online ou com a nossa equipe.</p></div></section>'
         f'<main class="wrap"><div class="plans">{cards_pacotes()}</div>'
         '<div class="como"><div><b>1</b><h3>Escolha a solução</h3><p>Veja as telas e o que está incluído em cada uma.</p></div>'
         '<div><b>2</b><h3>Contrate</h3><p>Online, em poucos minutos, ou com apoio da nossa equipe comercial.</p></div>'
@@ -373,6 +373,17 @@ def pagina_solucoes():
     )
     return pagina_base('Soluções — ERP Locadoras, Manutenção, Serviços, Logística, Estoque e Vendas | Oravel',
                        'Conheça as soluções Oravel: ERP Locadoras, Manutenção, Serviços, Logística, Estoque e Vendas. Contrate só o que a sua operação precisa.', corpo, '/solucoes/')
+
+
+def pagina_pacote_nova(codigo):
+    """Página de uma solução que não tinha página própria (Departamento Pessoal): hero + bloco padrão do pacote."""
+    p = dados.POR_CODIGO[codigo]
+    href, rotulo = cta(codigo)
+    corpo = (
+        f'<section class="hero"><div class="wrap"><span class="eyebrow">Solução {p["nome"]}</span><h1>{p["frase"]}</h1>'
+        f'<p class="desc">{p["descricao"]}</p><div style="margin-top:26px;display:flex;gap:12px;flex-wrap:wrap"><a class="btn btn-primary" href="{href}">{rotulo}</a>'
+        '<a class="btn btn-ghost" href="/planos/">Comparar planos</a></div></div></section>' + bloco_pacote(codigo))
+    return pagina_base(f'Software de {p["nome"]} | Oravel', p['descricao'], corpo, p['pagina'])
 
 
 def pagina_planos():
@@ -398,7 +409,7 @@ CSS_ACADEMIA = """<style data-site="academia-css">
   .ac-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
   .ac-eyebrow { font-family: Manrope, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #f97316; }
   .ac-sec h2 { font-family: Manrope, sans-serif; font-weight: 800; font-size: clamp(28px, 4vw, 44px); letter-spacing: -.02em; line-height: 1.1; margin: 10px 0 0; }
-  .ac-lead { font-size: 17px; line-height: 1.65; margin-top: 14px; max-width: 58ch; color: rgba(255,255,255,.78); }
+  .ac-sub { font-family: Manrope, sans-serif; font-size: clamp(20px, 2.4vw, 26px); font-weight: 700; color: #fdba74; margin-top: 12px; }\n  .ac-lead { font-size: 17px; line-height: 1.65; margin-top: 14px; max-width: 58ch; color: rgba(255,255,255,.78); }
   .ac-hero { display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px; align-items: center; }
   .ac-hero svg, .ac-shots svg { width: 100%; height: auto; display: block; border-radius: 12px; box-shadow: 0 30px 60px -28px rgba(0,0,0,.7); }
   .ac-chips { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 26px; }
@@ -410,7 +421,7 @@ CSS_ACADEMIA = """<style data-site="academia-css">
   .ac-shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 56px; }
   .ac-shots figure { margin: 0; } .ac-shots figcaption { margin-top: 12px; font-size: 14px; color: rgba(255,255,255,.85); line-height: 1.5; } .ac-shots figcaption b { display: block; color: #fff; font-family: Manrope, sans-serif; }
   .ac-light { background: var(--surface, #f6f7f9); color: var(--ink, #0f172a); } .ac-light .ac-lead { color: var(--ink-soft, #5b6472); }
-  .ac-phones { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; margin-top: 44px; }
+  .ac-phones { display: grid; grid-template-columns: repeat(7, 1fr); gap: 18px; margin-top: 44px; }
   .ac-phone { text-align: center; text-decoration: none; color: inherit; } .ac-phone svg { width: 100%; max-width: 190px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0 22px 24px rgba(15,23,42,.28)); transition: transform .2s; }
   .ac-phone:hover svg { transform: translateY(-6px); } .ac-phone b { display: block; margin-top: 12px; font-family: Manrope, sans-serif; font-size: 15px; } .ac-phone span { font-size: 12.5px; color: var(--ink-soft, #5b6472); }
   @media (max-width: 980px) { .ac-hero { grid-template-columns: 1fr; } .ac-phones { grid-template-columns: repeat(3, 1fr); } .ac-shots { grid-template-columns: 1fr; } }
@@ -427,7 +438,7 @@ def bloco_academia():
     return (
         '<!-- site:academia -->'
         f'<section class="ac-sec ac-dark" id="academia" data-site="academia"><div class="ac-wrap"><div class="ac-hero"><div>'
-        '<div class="ac-eyebrow">Academia Oravel</div><h2>Aprendizado que transforma a sua operação</h2>'
+        '<div class="ac-eyebrow">Academia Oravel</div><h2>Aprendizado que transforma a sua operação</h2><p class="ac-sub">Aprendizado que se transforma em resultados.</p>'
         '<p class="ac-lead">Sua equipe aprende a usar o sistema dentro do próprio sistema: aulas curtas, provas e certificado. Mais de 60 aulas, organizadas por solução, para quem está começando e para quem já domina.</p>'
         f'<div class="ac-chips">{chips_html}</div>'
         '<div class="ac-btns"><a class="ac-btn p" href="/solucoes/">Escolher a minha solução</a><a class="ac-btn" href="/contato.php">Falar com um especialista</a></div></div>'
@@ -466,6 +477,70 @@ def pagina_academia():
                        'A Academia Oravel ensina a sua equipe a usar o sistema: aulas passo a passo, provas e certificado, organizadas por solução. Cada solução tem ainda o seu app no celular.', corpo, '/academia/')
 
 
+
+# ---------------------------------------------------------------- IA em destaque (home e /inteligencia-artificial/)
+
+CSS_IA = """<style data-site="ia-css">
+  .ia-sec { position: relative; overflow: hidden; padding: 96px 0; color: #fff; background:
+    radial-gradient(900px 420px at 85% 0%, rgba(99,102,241,.35), transparent 60%), radial-gradient(700px 400px at 5% 100%, rgba(249,115,22,.28), transparent 60%), #070b14; }
+  .ia-sec::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px); background-size: 46px 46px; mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 75%); -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 75%); pointer-events: none; }
+  .ia-wrap { position: relative; max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  .ia-tag { display: inline-flex; align-items: center; gap: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: #c7d2fe; border: 1px solid rgba(165,180,252,.35); background: rgba(99,102,241,.12); padding: 7px 14px; border-radius: 999px; }
+  .ia-tag i { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 10px #22c55e; }
+  .ia-sec h2 { font-family: Manrope, sans-serif; font-weight: 800; font-size: clamp(44px, 9vw, 104px); line-height: .98; letter-spacing: -.04em; margin: 22px 0 0; text-transform: uppercase;
+    background: linear-gradient(95deg, #ffffff 0%, #fdba74 40%, #f97316 62%, #a5b4fc 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .ia-sub { font-family: Manrope, sans-serif; font-size: clamp(20px, 2.6vw, 30px); font-weight: 700; margin-top: 18px; color: #e2e8f0; max-width: 28ch; line-height: 1.25; }
+  .ia-lead { font-size: 17px; line-height: 1.7; color: rgba(226,232,240,.78); max-width: 62ch; margin-top: 16px; }
+  .ia-trust { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+  .ia-trust span { font-size: 13px; font-weight: 600; color: #e2e8f0; border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.05); padding: 8px 14px; border-radius: 10px; }
+  .ia-shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 54px; }
+  .ia-shots figure { margin: 0; } .ia-shots svg { width: 100%; height: auto; display: block; border-radius: 12px; box-shadow: 0 0 0 1px rgba(255,255,255,.1), 0 30px 70px -30px rgba(99,102,241,.7); }
+  .ia-shots figcaption { margin-top: 12px; font-size: 14px; color: rgba(226,232,240,.82); line-height: 1.5; } .ia-shots figcaption b { display: block; color: #fff; font-family: Manrope, sans-serif; font-size: 16px; }
+  .ia-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 40px; }
+  .ia-card { border: 1px solid rgba(255,255,255,.13); background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.02)); border-radius: 14px; padding: 20px; backdrop-filter: blur(4px); }
+  .ia-card .n { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: #fdba74; letter-spacing: .1em; }
+  .ia-card b { display: block; margin-top: 8px; font-family: Manrope, sans-serif; font-size: 16px; } .ia-card span { display: block; margin-top: 6px; font-size: 13.5px; line-height: 1.55; color: rgba(226,232,240,.72); }
+  .ia-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 34px; }
+  .ia-btn { display: inline-flex; padding: 14px 26px; border-radius: 10px; font-weight: 700; font-size: 15px; text-decoration: none; border: 1px solid rgba(255,255,255,.3); color: #fff; } .ia-btn.p { background: #f97316; border-color: #f97316; box-shadow: 0 10px 30px -10px rgba(249,115,22,.8); }
+  @media (max-width: 980px) { .ia-shots { grid-template-columns: 1fr; } .ia-grid { grid-template-columns: repeat(2, 1fr); } } @media (max-width: 560px) { .ia-grid { grid-template-columns: 1fr; } .ia-sec { padding: 64px 0; } }
+</style>"""
+
+IA_RECURSOS = [
+    ('Manutenção preventiva', 'Aponta o que está atrasado, o que quebrou depois da preventiva e onde o tempo entre falhas está caindo.'),
+    ('Retrabalho em corretivas', 'Mostra quantas vezes você voltou ao mesmo equipamento e o motivo mais comum.'),
+    ('Diagnóstico de avarias', 'Lê as fotos do dano e sugere local, tipo, gravidade e causa provável para o dossiê.'),
+    ('Saúde do estoque', 'Destaca materiais críticos, quantos dias faltam para acabar e itens parados.'),
+    ('Rotas do dia', 'Resume as rotas por veículo, com distância e custo calculados pelo sistema.'),
+    ('Risco de perda de leads', 'No CRM, avalia quais negociações estão em risco e o que fazer a seguir.'),
+    ('Avaliação de propostas', 'Revisa coerência e clareza e estima a chance de fechamento antes do envio.'),
+    ('Leitura de OS em papel', 'Fotografe a ordem de serviço de terceiros e os campos já vêm preenchidos.'),
+]
+
+
+def bloco_ia(titulo_h1=False):
+    cards = ''.join(f'<div class="ia-card"><div class="n">{i + 1:02d}</div><b>{t}</b><span>{d}</span></div>' for i, (t, d) in enumerate(IA_RECURSOS))
+    return (
+        '<!-- site:ia -->'
+        '<section class="ia-sec" id="ia" data-site="ia"><div class="ia-wrap"><span class="ia-tag"><i></i>Inteligência artificial no sistema</span>'
+        '<h2>IA dentro do sistema</h2><p class="ia-sub">Menos achismo. Mais decisão com dados.</p>'
+        '<p class="ia-lead">Os números vêm do próprio sistema, calculados com regra e sem invenção. A inteligência artificial lê esses números, destaca o que importa e diz o que fazer primeiro. Nas análises, ela nunca inventa dado: ela interpreta o que o sistema já mediu.</p>'
+        '<div class="ia-trust"><span>Números calculados pelo sistema</span><span>IA só interpreta e prioriza</span><span>Dados da sua empresa, isolados das demais</span></div>'
+        '<div class="ia-shots">'
+        f'<figure>{mockups.ia_manutencao()}<figcaption><b>Manutenção que se antecipa</b>Prioridades e causas prováveis, equipamento por equipamento.</figcaption></figure>'
+        f'<figure>{mockups.ia_proposta()}<figcaption><b>Proposta avaliada antes de enviar</b>Nota de coerência, clareza e chance de fechamento.</figcaption></figure>'
+        f'<figure>{mockups.ia_avaria()}<figcaption><b>Avaria diagnosticada pela foto</b>Dano, gravidade e causa para o dossiê do equipamento.</figcaption></figure>'
+        f'</div><div class="ia-grid">{cards}</div>'
+        '<div class="ia-btns"><a class="ia-btn p" href="/inteligencia-artificial/">Ver tudo que a IA faz</a><a class="ia-btn" href="/contato.php">Falar com um especialista</a></div>'
+        '</div></section><!-- /site:ia -->'
+    )
+
+
+def pagina_ia():
+    corpo = CSS_IA + bloco_ia().replace('<a class="ia-btn p" href="/inteligencia-artificial/">Ver tudo que a IA faz</a>', '<a class="ia-btn p" href="/solucoes/">Escolher a minha solução</a>')
+    return pagina_base('Inteligência artificial no sistema | Oravel',
+                       'A Oravel usa inteligência artificial para priorizar manutenção, diagnosticar avarias, avaliar propostas e cuidar do estoque: números calculados pelo sistema e IA que interpreta.', corpo, '/inteligencia-artificial/')
+
+
 # ---------------------------------------------------------------- menu "onav" (nav-fragment.html, usado por .php e gestao-locadoras)
 
 def nav_fragment():
@@ -493,13 +568,15 @@ def aplicar_home():
         f'<h3>{p["nome"]}</h3><p>{p["frase"]} {p["descricao"]}</p><span class="frente-go">Conhecer →</span></a>' for p in PACOTES)
     secao = ('<section class="frentes-section" id="solucoes" aria-labelledby="solucoes-t" data-site="solucoes">\n    <div class="wrap">\n'
              '      <div class="frentes-eyebrow">Soluções</div>\n      <h2 id="solucoes-t">Escolha a solução certa para a sua operação</h2>\n'
-             '      <p class="frentes-lead">Seis soluções, cada uma com as telas e os módulos que o dia a dia realmente usa. Contrate só o que precisa.</p>\n'
+             '      <p class="frentes-lead">Sete soluções, cada uma com as telas e os módulos que o dia a dia realmente usa. Contrate só o que precisa.</p>\n'
              '      <style>.sp-mini{margin:-4px -4px 14px;border-radius:10px;overflow:hidden;background:#f6f7f9}.sp-mini svg{width:100%;height:auto;display:block}</style>\n'
              f'      <div class="frentes-grid">{cards}</div>\n    </div>\n  </section>')
+    t = re.sub(r'\s*<style data-site="ia-css">.*?</style>', '', t, flags=re.S)
+    t = re.sub(r'\s*<!-- site:ia -->.*?<!-- /site:ia -->', '', t, flags=re.S)
     t = re.sub(r'\s*<style data-site="academia-css">.*?</style>', '', t, flags=re.S)
     t = re.sub(r'\s*<!-- site:academia -->.*?<!-- /site:academia -->', '', t, flags=re.S)
     t = re.sub(r'\s*<!-- site:apps -->.*?<!-- /site:apps -->', '', t, flags=re.S)
-    t = trocar(t, r'<section class="frentes-section".*?</section>', secao + '\n  ' + blocos_academia_e_apps(), 'seção frentes da home')
+    t = trocar(t, r'<section class="frentes-section".*?</section>', CSS_IA + bloco_ia() + '\n  ' + secao + '\n  ' + blocos_academia_e_apps(), 'seção frentes da home')
 
     passos = [
         ('1', '#f97316', 'Escolha a solução', 'ERP Locadoras, Manutenção, Serviços, Logística, Estoque ou Vendas: veja as telas e o que cada uma inclui.'),
@@ -650,6 +727,10 @@ def main():
     gravar('solucoes/index.html', pagina_solucoes())
     gravar('planos/index.html', pagina_planos())
     gravar('academia/index.html', pagina_academia())
+    gravar('inteligencia-artificial/index.html', pagina_ia())
+    for p in PACOTES:
+        if p.get('pagina_nova'):
+            gravar(p['pagina'].strip('/') + '/index.html', pagina_pacote_nova(p['codigo']))
     gravar('inc/nav-fragment.html', nav_fragment())
     gravar('inc/precos.js', JS_PRECOS)
     aplicar_sobre()
