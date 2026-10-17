@@ -68,11 +68,11 @@ CSS_NAV = '''<style data-site="nav-css">
 
 
 TOPBAR_CSS = (
-    '.tb { background: #000; color: #e5e7eb; font-size: 12px; font-weight: 600; } '
-    '.tb-in { max-width: 1180px; margin: 0 auto; padding: 0 28px; min-height: 36px; display: flex; align-items: center; justify-content: space-between; gap: 24px; } '
-    '.tb a { color: #e5e7eb; text-decoration: none; white-space: nowrap; } .tb a:hover { color: #f97316; } '
-    '.tb-msg a { color: #f97316; font-weight: 700; margin-left: 6px; } .tb-msg b { color: #fff; } '
-    '@media (max-width: 760px) { .tb-in { padding: 6px 16px; } .tb-wa { display: none; } }'
+    '.tb { background:#000 !important; color:#e5e7eb !important; font-size:12px !important; font-weight:600 !important; font-family:Inter,"Segoe UI",system-ui,sans-serif !important; line-height:1.4 !important; } '
+    '.tb-in { max-width:1180px !important; margin:0 auto !important; padding:0 28px !important; min-height:36px; display:flex !important; align-items:center !important; justify-content:space-between !important; gap:24px; box-sizing:border-box; } '
+    '.tb a { color:#e5e7eb !important; text-decoration:none !important; white-space:nowrap; } .tb a:hover { color:#f97316 !important; } '
+    '.tb .tb-msg a { color:#f97316 !important; font-weight:700 !important; margin-left:6px; } .tb .tb-msg b { color:#fff !important; } '
+    '@media (max-width:760px) { .tb-in { padding:6px 16px !important; } .tb-wa { display:none !important; } }'
 )
 MSG_PLANOS = ('<span class="tb-msg"><b>Contrate online:</b> no cartão recorrente você paga menos que o valor cheio. Sem compromisso, no boleto ou Pix. '
               '<a href="/planos/">Veja os planos →</a></span>')
@@ -82,18 +82,19 @@ TOPBAR = f'<div class="tb" data-site="topbar"><div class="tb-in">{MSG_PLANOS}{WA
 
 
 CSS_HDR = (
-    'nav.inav { position:sticky; top:0; z-index:50; background:rgba(255,255,255,.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--border,#e4e7ec); } '
-    '.hd-wrap { max-width:1180px; margin:0 auto; padding:0 28px; height:72px; display:flex; align-items:center; justify-content:space-between; } '
-    '.hd-logo { text-decoration:none; color:#0f172a; font-size:22px; font-weight:900; font-family:Manrope,sans-serif; } .hd-logo i { color:#f97316; font-style:normal; } '
-    '.hd-links { display:flex; align-items:center; gap:32px; } .hd-links a { color:var(--ink-soft,#5b6472); font-size:14px; font-weight:600; text-decoration:none; transition:color .2s; } '
-    '.hd-links a:hover, .hd-links a[aria-current="page"] { color:var(--ink,#0f172a); } '
-    '.hd-dd { position:relative; padding-bottom:8px; } .hd-dd::after { content:""; position:absolute; top:100%; left:0; right:0; height:8px; z-index:99; } '
-    '.hd-dd > a { display:inline-block; padding:8px 0; } '
-    '.hd-menu { position:absolute; top:calc(100% + 8px); left:0; background:#fff; border:1px solid var(--border,#e4e7ec); border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,.1); opacity:0; visibility:hidden; transition:opacity .2s ease, visibility .2s ease; min-width:220px; z-index:100; pointer-events:none; } '
-    '.hd-dd:hover .hd-menu, .hd-dd:focus-within .hd-menu { opacity:1; visibility:visible; pointer-events:auto; } '
-    '.hd-menu a { display:block; padding:12px 16px; font-size:14px; border-bottom:1px solid var(--border,#e4e7ec); } .hd-menu a:last-child { border-bottom:none; } .hd-menu a:hover { background:var(--surface,#f6f7f9); } '
-    '.hd-cta { background:#f97316; color:#fff !important; padding:10px 24px; border-radius:6px; font-weight:700; font-size:14px; text-decoration:none; transition:background .2s; } .hd-cta:hover { background:#ea580c; } '
-    '@media (max-width:768px) { .hd-wrap { flex-direction:column; height:auto; gap:16px; padding:16px 28px; } .hd-links { flex-wrap:wrap; justify-content:center; gap:16px; } .hd-cta, .hd-sobre { display:none; } }'
+    # Cabeçalho idêntico ao da home. Seletores específicos + !important nos pontos de layout: páginas antigas têm CSS próprio
+    # para `nav`, `a` e `.wrap` que desmontavam o menu (logo colado nos links, fundo cinza).
+    'nav.inav[data-site="nav"] { position:sticky !important; top:0; z-index:50; display:block !important; background:rgba(255,255,255,.96) !important; backdrop-filter:blur(10px); border-bottom:1px solid #e4e7ec !important; padding:0 !important; margin:0 !important; font-family:Inter,"Segoe UI",system-ui,sans-serif !important; } '
+    'nav.inav .hd-wrap { max-width:1180px !important; margin:0 auto !important; padding:0 28px !important; height:72px !important; display:flex !important; flex-direction:row !important; align-items:center !important; justify-content:space-between !important; gap:24px !important; box-sizing:border-box; } '
+    'nav.inav .hd-logo { text-decoration:none !important; color:#0f172a !important; font-size:22px !important; font-weight:900 !important; font-family:Manrope,sans-serif !important; letter-spacing:-.01em; flex:none; } nav.inav .hd-logo i { color:#f97316 !important; font-style:normal !important; } '
+    'nav.inav .hd-links { display:flex !important; align-items:center !important; gap:32px !important; } nav.inav .hd-links a { color:#5b6472 !important; font-size:14px !important; font-weight:600 !important; text-decoration:none !important; transition:color .2s; } '
+    'nav.inav .hd-links a:hover, nav.inav .hd-links a[aria-current="page"] { color:#0f172a !important; } '
+    'nav.inav .hd-dd { position:relative; padding-bottom:8px; } nav.inav .hd-dd::after { content:""; position:absolute; top:100%; left:0; right:0; height:8px; z-index:99; } nav.inav .hd-dd > a { display:inline-block !important; padding:8px 0; } '
+    'nav.inav .hd-menu { position:absolute; top:calc(100% + 8px); left:0; background:#fff; border:1px solid #e4e7ec; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,.1); opacity:0; visibility:hidden; transition:opacity .2s ease, visibility .2s ease; min-width:220px; z-index:100; pointer-events:none; } '
+    'nav.inav .hd-dd:hover .hd-menu, nav.inav .hd-dd:focus-within .hd-menu { opacity:1; visibility:visible; pointer-events:auto; } '
+    'nav.inav .hd-menu a { display:block !important; padding:12px 16px !important; font-size:14px !important; border-bottom:1px solid #e4e7ec; } nav.inav .hd-menu a:last-child { border-bottom:none; } nav.inav .hd-menu a:hover { background:#f6f7f9; } '
+    'nav.inav a.hd-cta { background:#f97316 !important; color:#fff !important; padding:10px 24px !important; border-radius:6px !important; font-weight:700 !important; font-size:14px !important; text-decoration:none !important; white-space:nowrap; flex:none; } nav.inav a.hd-cta:hover { background:#ea580c !important; } '
+    '@media (max-width:768px) { nav.inav .hd-wrap { flex-direction:column !important; height:auto !important; gap:16px !important; padding:16px 28px !important; } nav.inav .hd-links { flex-wrap:wrap; justify-content:center; gap:16px !important; } nav.inav a.hd-cta, nav.inav .hd-sobre { display:none !important; } }'
 )
 CSS_NAV = CSS_NAV.replace('</style>', '  ' + CSS_HDR + '\n</style>')
 
@@ -805,6 +806,23 @@ RewriteRule ^(.*)$ $1.html [L]
 """
 
 
+# Páginas antigas que só existem no servidor (enterprise e proposta): ganham o MESMO cabeçalho do restante do site.
+PAGINAS_LEGADO = ['nova/enterprise/index.php', 'nova/enterprise/solucoes/index.php', 'nova/enterprise/novidades/index.php', 'proposta/index.php']
+
+
+def aplicar_legado():
+    for rel in PAGINAS_LEGADO:
+        t = ler(rel)
+        t = re.sub(r'<style data-site="nav-css">.*?</style>\s*', '', t, flags=re.S)
+        if 'data-site="nav"' in t:
+            t = trocar(t, r'(?:<div class="tb" data-site="topbar">.*?</div></div>\s*)?<nav class="inav"[^>]*>.*?</nav>', nav_inav(None), f'nav em {rel}')
+        else:
+            t = trocar(t, r'<nav class="nav">.*?</nav>', nav_inav(None), f'nav antigo em {rel}')
+        # O CSS do cabeçalho entra logo antes dele (estas páginas não têm um <head> próprio de fácil acesso).
+        t = t.replace(TOPBAR, CSS_NAV + '\n' + TOPBAR, 1)
+        gravar(rel, t)
+
+
 def main():
     print('aplicando estrutura de Soluções em', RAIZ)
     for rel in PAGINAS_INAV:
@@ -821,6 +839,7 @@ def main():
     aplicar_sobre()
     aplicar_home()
     aplicar_contato()
+    aplicar_legado()
     varrer_links()
     gravar('.htaccess', htaccess())
     print('ok')

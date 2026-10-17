@@ -237,6 +237,11 @@ class TestCabecalhoUnico(unittest.TestCase):
                 self.assertIn('Falar com um Especialista', m.group(0), p)
                 menus.add(re.sub(r' aria-current="page"', '', m.group(0)))
         self.assertEqual(len(menus), 1)
+        for rel in ('nova/enterprise/index.php', 'nova/enterprise/solucoes/index.php', 'nova/enterprise/novidades/index.php', 'proposta/index.php'):
+            m = re.search(r'<nav class="inav" data-site="nav".*?</nav>', ler(rel), re.S)
+            self.assertIsNotNone(m, rel)
+            self.assertEqual(re.sub(r' aria-current="page"', '', m.group(0)), next(iter(menus)), rel)
+            self.assertNotIn('<nav class="nav">', ler(rel), rel)
         self.assertIn('class="tb"', ler('inc/nav-fragment.html'))
         self.assertIn('Veja os planos', ler('index.html'))
 
