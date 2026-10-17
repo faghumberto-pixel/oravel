@@ -98,25 +98,24 @@
     .section { padding: 52px 0; }
   }
 </style>
+<style data-site="nav-css">
+  .inav-dd-menu a[aria-current="page"] { background: var(--surface, #f6f7f9); }
+  .inav-links > a[aria-current="page"] { color: var(--ink, #0f172a); }
+  .inav-m { display: none; position: relative; }
+  .inav-m > summary { list-style: none; cursor: pointer; font-weight: 700; font-size: 14px; padding: 8px 12px; border: 1px solid var(--border, #e4e7ec); border-radius: 8px; }
+  .inav-m > summary::-webkit-details-marker { display: none; }
+  .inav-m-list { position: absolute; right: 0; top: 44px; min-width: 240px; background: #fff; border: 1px solid var(--border, #e4e7ec); border-radius: 10px; box-shadow: 0 16px 36px -18px rgba(15,23,42,.35); padding: 6px; display: grid; }
+  .inav-m-list a { padding: 10px 12px; border-radius: 6px; text-decoration: none; color: var(--ink, #0f172a); font-size: 14px; }
+  .inav-m-list a:hover { background: var(--surface, #f6f7f9); }
+  .inav-m-list hr { border: 0; border-top: 1px solid var(--border, #e4e7ec); margin: 4px 0; width: 100%; }
+  @media (max-width: 860px) { .inav-m { display: block; } .inav-cta { display: none; } }
+  .ifoot-sol { max-width: 1180px; margin: 0 auto 22px; padding: 0 28px; display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 13.5px; }
+  .ifoot-sol b { color: var(--ink, #0f172a); } .ifoot-sol a { color: var(--ink-soft, #5b6472); text-decoration: none; } .ifoot-sol a:hover { color: var(--ink, #0f172a); }
+</style>
 </head>
 <body>
 
-<nav class="inav">
-  <div class="inav-wrap">
-    <a href="/" class="inav-logo"><span class="inav-logo-mark">O</span>Oravel</a>
-    <div class="inav-links">
-      <a href="/">Home</a>
-      <a href="/#frentes">Produtos</a>
-      <div class="inav-dd">
-        <a href="/segmentos/" aria-haspopup="true">Segmentos</a>
-        <div class="inav-dd-menu"><a href="/erp-cmms/">Locação de Equipamentos</a><a href="/software-manutencao-industrial/">Manutenção Industrial</a><a href="/software-montagem-industrial/">Montagem Industrial</a><a href="/software-gestao-frota-logistica/">Logística e Transportes</a><a href="/software-gestao-de-servicos/">Gestão de Serviços</a><a href="/wms/">Estoque</a><a href="/crm/">Qualquer Segmento</a></div>
-      </div>
-      <a href="/sobre-nos">Sobre</a>
-      <a href="/contato.php">Contato</a>
-    </div>
-    <a href="/contato.php" class="inav-cta">Iniciar Conversa</a>
-  </div>
-</nav>
+<nav class="inav" data-site="nav" aria-label="Principal"><div class="inav-wrap"><a href="/" class="inav-logo"><span class="inav-logo-mark">O</span>Oravel</a><div class="inav-links"><div class="inav-dd"><a href="/solucoes/" aria-haspopup="true">Soluções</a><div class="inav-dd-menu"><a href="/erp-cmms/">ERP Locadoras</a><a href="/software-manutencao-industrial/">Manutenção</a><a href="/software-gestao-de-servicos/">Serviços</a><a href="/software-gestao-frota-logistica/">Logística</a><a href="/wms/">Estoque</a><a href="/crm/">Vendas</a></div></div><a href="/planos/">Planos</a><a href="/sobre/">Sobre</a><a href="/faq.php">FAQ</a><a href="/central-de-conhecimento/">Ajuda</a><a href="/contato.php">Contato</a></div><details class="inav-m"><summary>Menu</summary><div class="inav-m-list"><a href="/solucoes/">Todas as soluções</a><a href="/erp-cmms/">ERP Locadoras</a><a href="/software-manutencao-industrial/">Manutenção</a><a href="/software-gestao-de-servicos/">Serviços</a><a href="/software-gestao-frota-logistica/">Logística</a><a href="/wms/">Estoque</a><a href="/crm/">Vendas</a><hr><a href="/planos/">Planos</a><a href="/sobre/">Sobre</a><a href="/faq.php">FAQ</a><a href="/central-de-conhecimento/">Ajuda</a><a href="/contato.php">Contato</a></div></details><a href="/contato.php" class="inav-cta">Agendar demonstração</a></div></nav>
 
 <section class="hero">
   <div class="wrap hero-grid">
@@ -256,19 +255,7 @@
   </div>
 </section>
 
-<footer class="ifoot">
-  <div class="ifoot-wrap">
-    <div class="ifoot-copy">© 2026 Oravel Desenvolvimento de Software<div class="ifoot-legal">CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, conj. 1713, Pinheiros, São Paulo/SP · CEP 05424-150</div></div>
-    <div class="ifoot-links">
-      <a href="/">Home</a>
-      <a href="/#frentes">Produtos</a>
-      <a href="/contato.php">Contato</a>
-      <a href="/politica-de-privacidade/">Privacidade</a>
-      <a href="/termos-de-uso/">Termos</a>
-      <a href="/segmentos/">Segmentos</a>
-    </div>
-  </div>
-</footer>
+<footer class="ifoot" data-site="footer"><div class="ifoot-sol"><b>Soluções</b><a href="/erp-cmms/">ERP Locadoras</a><a href="/software-manutencao-industrial/">Manutenção</a><a href="/software-gestao-de-servicos/">Serviços</a><a href="/software-gestao-frota-logistica/">Logística</a><a href="/wms/">Estoque</a><a href="/crm/">Vendas</a></div><div class="ifoot-wrap"><div class="ifoot-copy">© 2026 Oravel Desenvolvimento de Software<div class="ifoot-legal">CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, conj. 1713, Pinheiros, São Paulo/SP · CEP 05424-150</div></div><div class="ifoot-links"><a href="/">Home</a><a href="/solucoes/">Soluções</a><a href="/planos/">Planos</a><a href="/contato.php">Contato</a><a href="/politica-de-privacidade/">Privacidade</a><a href="/termos-de-uso/">Termos</a></div></div></footer>
 
 </body>
 </html>

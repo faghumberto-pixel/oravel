@@ -146,7 +146,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
 }
 
 $origem = limpar($_POST['origem'] ?? '', 40);
-$pagina = $paginas[$origem] ?? '/segmentos/';
+$pagina = $paginas[$origem] ?? '/solucoes/';
 
 // Campo armadilha: bot preenche, humano não vê. Finge sucesso para não dar pista.
 if (limpar($_POST['website'] ?? '', 200) !== '') {

@@ -1,12 +1,18 @@
 <IfModule mod_rewrite.c>
 RewriteEngine On
-# "Soluções" saiu do site (15/10/2026): só existem as Frentes da home
-RewriteRule ^solucoes(\.php|/.*)?$ https://oravel.com.br/#frentes [R=301,NE,L]
+# Reestruturação em Soluções (6 pacotes): páginas antigas apontam para o equivalente atual
+RewriteRule ^solucoes/crm/?$ https://oravel.com.br/crm/ [R=301,L]
+RewriteRule ^solucoes/frota/?$ https://oravel.com.br/software-gestao-frota-logistica/ [R=301,L]
+RewriteRule ^solucoes/wms/?$ https://oravel.com.br/wms/ [R=301,L]
+RewriteRule ^solucoes/os/?$ https://oravel.com.br/software-gestao-de-servicos/ [R=301,L]
+RewriteRule ^solucoes/recebimentos/?$ https://oravel.com.br/software-gestao-de-servicos/ [R=301,L]
+RewriteRule ^solucoes/rh/?$ https://oravel.com.br/solucoes/ [R=301,L]
+RewriteRule ^solucoes/analytics/?$ https://oravel.com.br/solucoes/ [R=301,L]
+RewriteRule ^segmentos/?$ https://oravel.com.br/solucoes/ [R=301,L]
+RewriteRule ^solucoes\.php/?$ https://oravel.com.br/solucoes/ [R=301,L]
+RewriteRule ^sobre-nos(\.html)?/?$ https://oravel.com.br/sobre/ [R=301,L]
 # Páginas antigas de FSM e PCM foram absorvidas por Manutenção Industrial
 RewriteRule ^(fsm|pcm)/?$ https://oravel.com.br/software-manutencao-industrial/ [R=301,L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^solucoes/([a-z]+)$ solucoes/$1.html [L]
 RewriteRule ^(.+)\.html$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
