@@ -5,10 +5,13 @@ namespace App\Services;
 use App\Models\AccountReceivable;
 use App\Models\Client;
 use App\Models\MaintenanceOrder;
+use App\Models\TenantAsaasSetting;
 use App\Models\TenantWhatsappSetting;
 use App\Models\WhatsappMensagem;
 use App\Models\WhatsappNumero;
+use App\Services\Cobranca\CobrancaService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * Avisos automáticos de WhatsApp aos CLIENTES da empresa (cobrança e ordem de serviço), pelo número
@@ -20,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
 class AvisosWhatsApp
 {
     /** Lembretes de vencimento (X dias antes) e de atraso (1 dia depois) de uma empresa. Devolve quantos foram enviados. */
-    public static function cobrancas(TenantWhatsappSetting $config, ?\Illuminate\Support\Carbon $hoje = null): int
+    public static function cobrancas(TenantWhatsappSetting $config, ?Carbon $hoje = null): int
     {
         if (! $config->enabled || ! $config->aviso_cobranca || blank($config->template_cobranca) || ! WhatsAppEmpresaService::moduloLiberado($config->tenant_id)) {
             return 0;
@@ -42,21 +45,97 @@ class AvisosWhatsApp
         foreach ($contas as $conta) {
             $atrasada = $conta->due_date->lt($hoje);
 
+            $variaveis = static::variaveisCobranca($config, $conta);
+
+            // Modelo com link (5 variáveis): sem link de pagamento não há o que avisar ainda.
+            if ($variaveis === null) {
+                continue;
+            }
+
             $enviou = static::enviar(
-                $config, $conta->client, $atrasada ? 'cobranca_atrasada' : 'cobranca_vencimento', $config->template_cobranca,
-                [
-                    (string) $conta->client->name,
-                    (string) ($conta->description ?: 'Fatura'),
-                    'R$ '.number_format((float) $conta->amount, 2, ',', '.'),
-                    $conta->due_date->format('d/m/Y'),
-                ],
-                $conta,
+                $config, $conta->client, $atrasada ? 'cobranca_atrasada' : 'cobranca_vencimento', $config->template_cobranca, $variaveis, $conta,
             );
 
             $enviados += $enviou ? 1 : 0;
         }
 
         return $enviados;
+    }
+
+    /**
+     * Variáveis do modelo de cobrança: nome, descrição, valor e vencimento (+ link de pagamento quando a empresa usa o modelo
+     * de 5 variáveis). Devolve null se o modelo exige link e a conta ainda não tem cobrança.
+     *
+     * @return list<string>|null
+     */
+    private static function variaveisCobranca(TenantWhatsappSetting $config, AccountReceivable $conta): ?array
+    {
+        $variaveis = [
+            (string) $conta->client->name,
+            (string) ($conta->description ?: 'Fatura'),
+            'R$ '.number_format((float) $conta->amount, 2, ',', '.'),
+            $conta->due_date->format('d/m/Y'),
+        ];
+
+        if ($config->cobranca_com_link) {
+            $link = static::linkDaCobranca($conta);
+
+            if (! $link) {
+                return null;
+            }
+
+            $variaveis[] = $link;
+        }
+
+        return $variaveis;
+    }
+
+    /** Link de pagamento da conta; se ainda não existe e a cobrança automática está pronta, gera agora. */
+    private static function linkDaCobranca(AccountReceivable $conta): ?string
+    {
+        if (filled($conta->asaas_invoice_url)) {
+            return $conta->asaas_invoice_url;
+        }
+
+        if (! (TenantAsaasSetting::daEmpresa($conta->tenant_id)?->pronta() ?? false)) {
+            return null;
+        }
+
+        try {
+            return app(CobrancaService::class)->gerar($conta)->asaas_invoice_url ?: null;
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * Reenvio manual do aviso de cobrança (painel de cobranças): ignora o "já enviado". Lança com o motivo quando não dá para enviar.
+     *
+     * @throws \RuntimeException
+     */
+    public static function reenviarCobranca(AccountReceivable $conta): void
+    {
+        $config = TenantWhatsappSetting::withoutGlobalScopes()->where('tenant_id', $conta->tenant_id)->first();
+
+        if (! $config || ! $config->enabled || blank($config->template_cobranca) || ! WhatsAppEmpresaService::moduloLiberado($conta->tenant_id)) {
+            throw new \RuntimeException('O WhatsApp da empresa não está ligado ou falta o modelo de cobrança.');
+        }
+
+        $cliente = $conta->client ?? throw new \RuntimeException('A conta não tem cliente.');
+
+        if (! $cliente->aceita_avisos_whatsapp) {
+            throw new \RuntimeException('O cliente não aceitou receber avisos por WhatsApp.');
+        }
+
+        if (strlen(preg_replace('/\D+/', '', (string) ($cliente->whatsapp ?: $cliente->phone))) < 10) {
+            throw new \RuntimeException('O cliente não tem um WhatsApp válido cadastrado.');
+        }
+
+        $variaveis = static::variaveisCobranca($config, $conta) ?? throw new \RuntimeException('Esta conta ainda não tem link de pagamento. Gere a cobrança primeiro.');
+
+        if (! static::enviar($config, $cliente, $conta->due_date->isPast() ? 'cobranca_atrasada' : 'cobranca_vencimento', $config->template_cobranca, $variaveis, $conta, forcar: true)) {
+            throw new \RuntimeException('O WhatsApp não aceitou a mensagem (sem número da empresa ou modelo recusado).');
+        }
     }
 
     /** Aviso de OS concluída ao cliente. Devolve true se enviou. */
@@ -75,7 +154,7 @@ class AvisosWhatsApp
         );
     }
 
-    private static function enviar(TenantWhatsappSetting $config, ?Client $cliente, string $evento, string $modelo, array $variaveis, Model $relacionado): bool
+    private static function enviar(TenantWhatsappSetting $config, ?Client $cliente, string $evento, string $modelo, array $variaveis, Model $relacionado, bool $forcar = false): bool
     {
         $telefone = (string) ($cliente?->whatsapp ?: $cliente?->phone);
 
@@ -86,7 +165,7 @@ class AvisosWhatsApp
         $jaEnviado = WhatsappMensagem::withoutGlobalScopes()
             ->where('tenant_id', $config->tenant_id)->where('evento', $evento)->where('related_id', $relacionado->getKey())->exists();
 
-        if ($jaEnviado) {
+        if ($jaEnviado && ! $forcar) {
             return false;
         }
 

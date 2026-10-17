@@ -188,7 +188,7 @@ class AccountReceivableResource extends Resource
         return TenantAsaasSetting::daEmpresa(Tenancy::current()?->id)?->pronta() ?? false;
     }
 
-    private static function executarCobranca(\Closure $acao, string $titulo, ?string $corpo = null): void
+    public static function executarCobranca(\Closure $acao, string $titulo, ?string $corpo = null): void
     {
         try {
             $acao();

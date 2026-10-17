@@ -57,7 +57,7 @@ class WhatsAppDaEmpresa extends Page implements HasForms
         $c = $this->config();
 
         $this->form->fill(array_merge(
-            $c ? $c->only(['waba_id', 'template_abertura', 'template_proposta', 'template_language', 'distribuicao', 'atendentes', 'aviso_cobranca', 'aviso_cobranca_dias_antes', 'template_cobranca', 'aviso_os', 'template_os_concluida']) : ['template_language' => 'pt_BR'],
+            $c ? $c->only(['waba_id', 'template_abertura', 'template_proposta', 'template_language', 'distribuicao', 'atendentes', 'aviso_cobranca', 'aviso_cobranca_dias_antes', 'cobranca_com_link', 'template_cobranca', 'aviso_os', 'template_os_concluida']) : ['template_language' => 'pt_BR'],
             ['numeros' => $this->numeros()->map(fn (WhatsappNumero $n) => ['user_id' => $n->user_id, 'phone_number_id' => $n->phone_number_id, 'rotulo' => $n->rotulo])->all()],
         ));
     }
@@ -142,11 +142,15 @@ class WhatsAppDaEmpresa extends Page implements HasForms
                     Toggle::make('aviso_cobranca')->label('Lembrar cobranças (vencimento e atraso)')->live(),
                     TextInput::make('aviso_cobranca_dias_antes')->label('Avisar quantos dias antes de vencer')->numeric()->minValue(0)->maxValue(30)->default(3)->visible(fn ($get) => (bool) $get('aviso_cobranca')),
                     TextInput::make('template_cobranca')->label('Modelo de cobrança')->helperText('4 variáveis: nome, descrição, valor e vencimento.')->maxLength(120)->visible(fn ($get) => (bool) $get('aviso_cobranca')),
+                    Toggle::make('cobranca_com_link')->label('O modelo de cobrança leva o link de pagamento')->live()
+                        ->helperText('Exige modelo com 5 variáveis: nome, descrição, valor, vencimento e link. Só funciona com a Cobrança automática ligada: o sistema gera o link sozinho se ainda não existir.')
+                        ->visible(fn ($get) => (bool) $get('aviso_cobranca')),
                     Toggle::make('aviso_os')->label('Avisar quando a ordem de serviço for concluída')->live(),
                     TextInput::make('template_os_concluida')->label('Modelo de OS concluída')->helperText('3 variáveis: nome, número da OS e equipamento.')->maxLength(120)->visible(fn ($get) => (bool) $get('aviso_os')),
                     Placeholder::make('textos_sugeridos')->label('Textos sugeridos para cadastrar na Meta')->columnSpanFull()->content(new HtmlString(
                         '<div style="font-size:12px;line-height:1.6">'
                         .'<b>Cobrança</b> (categoria: Utilidade): <code>Olá {{1}}, lembrete da cobrança "{{2}}" no valor de {{3}}, com vencimento em {{4}}. Em caso de dúvida, é só responder esta mensagem.</code><br>'
+                        .'<b>Cobrança com link</b> (5 variáveis): <code>Olá {{1}}, lembrete da cobrança "{{2}}" no valor de {{3}}, com vencimento em {{4}}. Pague por aqui: {{5}}</code><br>'
                         .'<b>OS concluída</b> (categoria: Utilidade): <code>Olá {{1}}, a ordem de serviço {{2}} do equipamento {{3}} foi concluída. Qualquer dúvida, responda esta mensagem.</code><br>'
                         .'<b>Iniciar conversa</b> (categoria: Utilidade): <code>Olá {{1}}, aqui é da nossa equipe. Posso ajudar em algo? Responda esta mensagem para conversarmos.</code><br>'
                         .'<b>Proposta</b> (categoria: Utilidade): <code>Olá {{1}}, segue a nossa proposta comercial. Para ver e responder, acesse: {{2}}</code>'
@@ -237,7 +241,7 @@ class WhatsAppDaEmpresa extends Page implements HasForms
             'waba_id' => $d['waba_id'] ?? null, 'template_abertura' => $d['template_abertura'] ?? null,
             'template_proposta' => $d['template_proposta'] ?? null, 'template_language' => $d['template_language'] ?: 'pt_BR',
             'distribuicao' => $d['distribuicao'] ?? 'fila', 'atendentes' => array_values((array) ($d['atendentes'] ?? [])),
-            'aviso_cobranca' => (bool) ($d['aviso_cobranca'] ?? false), 'aviso_cobranca_dias_antes' => (int) ($d['aviso_cobranca_dias_antes'] ?? 3), 'template_cobranca' => $d['template_cobranca'] ?? null,
+            'aviso_cobranca' => (bool) ($d['aviso_cobranca'] ?? false), 'cobranca_com_link' => (bool) ($d['cobranca_com_link'] ?? false), 'aviso_cobranca_dias_antes' => (int) ($d['aviso_cobranca_dias_antes'] ?? 3), 'template_cobranca' => $d['template_cobranca'] ?? null,
             'aviso_os' => (bool) ($d['aviso_os'] ?? false), 'template_os_concluida' => $d['template_os_concluida'] ?? null,
         ];
 
