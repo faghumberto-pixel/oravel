@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use App\Models\DocumentSignature;
 use App\Models\Plan;
+use App\Models\TaxaConfiguracao;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Rules\CpfCnpj;
 use App\Services\AsaasService;
 use App\Services\SignatureService;
+use App\Services\TaxasService;
 use App\Services\TenantProvisioner;
 use App\Support\Pacotes;
 use App\Support\Precos;
@@ -96,6 +98,7 @@ class AsaasCheckoutController extends Controller
             'valorCheio' => (float) $selectedPlan->base_price,
             'valorRecorrente' => Precos::recorrente((float) $selectedPlan->base_price),
             'descontoPercentual' => Precos::descontoPercentual(),
+            'taxas' => TaxaConfiguracao::disponiveis()->get(),
             'implantacaoValor' => (float) $selectedPlan->implementation_fee,
             'implantacaoParcelas' => max(1, min(2, (int) $selectedPlan->implementation_installments)),
             'pacoteDescricao' => Pacotes::todos()[$selectedPlan->pacote ?? '']['descricao'] ?? null,
@@ -145,6 +148,8 @@ class AsaasCheckoutController extends Controller
             'plan_id' => ['required', 'uuid', 'exists:plans,id'],
             'forma_pagamento' => ['nullable', Rule::in(['cartao', 'boleto_pix'])],
             'implantacao' => ['nullable', Rule::in(['contratar', 'nao_contratar'])],
+            'taxas' => ['nullable', 'array'],
+            'taxas.*' => ['string', 'max:40'],
             'terms_accepted' => ['accepted'],
         ]);
 
@@ -196,6 +201,9 @@ class AsaasCheckoutController extends Controller
             'uf' => strtoupper($data['uf']),
             'terms_accepted_at' => now(),
         ]);
+
+        // Taxas de configuração opcionais (pagamento único): só os códigos escolhidos, com o valor do catálogo no servidor.
+        app(TaxasService::class)->aprovar($tenant, (array) ($data['taxas'] ?? []), 'checkout', $request->ip());
 
         $admin = TenantProvisioner::provision($tenant, [
             'name' => $data['admin_name'],
@@ -253,6 +261,19 @@ class AsaasCheckoutController extends Controller
         }
 
         $tenant->refresh();
+
+        // Cobranças únicas aprovadas no cadastro: taxas de configuração e implantação (esta só quando o cliente contratou
+        // e não vai somada à mensalidade). Idempotentes; falha aqui nunca impede o pagamento da mensalidade.
+        try {
+            app(TaxasService::class)->cobrar($tenant);
+
+            if ($tenant->implantacao_contratada === true) {
+                $asaas->chargeTenantImplementation($tenant);
+            }
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
         // Forma de pagamento definida no contrato: cartão = checkout recorrente automático;
         // boleto/Pix = assinatura mensal (cliente escolhe boleto, Pix ou cartão no link).
         // Quem já tem assinatura mensal volta para a fatura dela (createTenantBoletoPixSubscription

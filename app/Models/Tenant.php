@@ -103,6 +103,11 @@ class Tenant extends Model
         return (float) TenantComplemento::withoutGlobalScopes()->where('tenant_id', $tenant->id)->whereIn('status', [TenantComplemento::ATIVO, TenantComplemento::ENCERRANDO])->sum('valor_mensal');
     }
 
+    public function taxas(): HasMany
+    {
+        return $this->hasMany(TenantTaxa::class);
+    }
+
     public function complementos(): HasMany
     {
         return $this->hasMany(TenantComplemento::class);

@@ -5,6 +5,7 @@ namespace App\Filament\Central\Resources;
 use App\Filament\Central\Resources\TenantResource\Pages;
 use App\Filament\Central\Resources\TenantResource\RelationManagers\ComplementosRelationManager;
 use App\Filament\Central\Resources\TenantResource\RelationManagers\EventsRelationManager;
+use App\Filament\Central\Resources\TenantResource\RelationManagers\TaxasRelationManager;
 use App\Models\Client;
 use App\Models\Tenant;
 use App\Models\User;
@@ -238,6 +239,11 @@ class TenantResource extends Resource
                         'dispensada' => $query->where('implantacao_contratada', false),
                         default => $query,
                     }),
+                Tables\Filters\TernaryFilter::make('taxas_pendentes')->label('Taxas de configuração pendentes')
+                    ->queries(
+                        true: fn (Builder $query) => $query->whereHas('taxas', fn ($q) => $q->withoutGlobalScopes()->whereIn('status', ['aprovada', 'cobrada'])),
+                        false: fn (Builder $query) => $query->whereDoesntHave('taxas', fn ($q) => $q->withoutGlobalScopes()->whereIn('status', ['aprovada', 'cobrada'])),
+                    ),
                 Tables\Filters\SelectFilter::make('status')->label('Status')->options(['active' => 'Ativo', 'trial' => 'Teste']),
                 Tables\Filters\SelectFilter::make('segment')->label('Segmento')->options(Client::nicheLabels()),
                 // Usado pelos cards de resumo em ContratoResource ("Pagos"
@@ -274,6 +280,7 @@ class TenantResource extends Resource
     public static function getRelations(): array
     {
         return [
+            TaxasRelationManager::class,
             ComplementosRelationManager::class,
             EventsRelationManager::class,
         ];

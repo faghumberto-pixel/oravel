@@ -57,6 +57,14 @@ class TenantEvent extends Model
 
     public const FIDELIDADE_CONCLUIDA = 'fidelidade_concluida';
 
+    public const TAXA_APROVADA = 'taxa_aprovada';
+
+    public const TAXA_COBRADA = 'taxa_cobrada';
+
+    public const TAXA_PAGA = 'taxa_paga';
+
+    public const TAXA_CANCELADA = 'taxa_cancelada';
+
     public const ANOTACAO = 'anotacao';
 
     protected $fillable = [
@@ -91,6 +99,10 @@ class TenantEvent extends Model
             self::COMPLEMENTO_ENCERRADO_ANTECIPADO => ['label' => 'Complemento encerrado antes da fidelidade', 'color' => 'danger'],
             self::FIDELIDADE_CONCLUINDO => ['label' => 'Fidelidade do complemento terminando', 'color' => 'warning'],
             self::FIDELIDADE_CONCLUIDA => ['label' => 'Fidelidade do complemento concluída', 'color' => 'info'],
+            self::TAXA_APROVADA => ['label' => 'Taxa de configuração aprovada', 'color' => 'info'],
+            self::TAXA_COBRADA => ['label' => 'Taxas de configuração cobradas', 'color' => 'info'],
+            self::TAXA_PAGA => ['label' => 'Taxas de configuração pagas', 'color' => 'success'],
+            self::TAXA_CANCELADA => ['label' => 'Taxa de configuração cancelada', 'color' => 'gray'],
             self::ANOTACAO => ['label' => 'Anotação', 'color' => 'warning'],
         ];
     }

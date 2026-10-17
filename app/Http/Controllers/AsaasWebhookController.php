@@ -146,6 +146,19 @@ class AsaasWebhookController extends Controller
             return;
         }
 
+        // Cobrança única das taxas de configuração (TaxasService::cobrar()): também não mexe na mensalidade nem no bloqueio.
+        if (\App\Models\TenantTaxa::withoutGlobalScopes()->where('asaas_payment_id', $paymentId)->exists()) {
+            $taxas = app(\App\Services\TaxasService::class);
+
+            if (in_array($event, self::PAYMENT_OK_EVENTS, true)) {
+                $taxas->marcarPagas($paymentId, $payment);
+            } elseif (in_array($event, self::PAYMENT_CANCELLED_EVENTS, true)) {
+                $taxas->reabrir($paymentId);
+            }
+
+            return;
+        }
+
         // Caso contrário, trata como assinatura SaaS do Tenant
         $subscriptionId = $payment['subscription'] ?? null;
 

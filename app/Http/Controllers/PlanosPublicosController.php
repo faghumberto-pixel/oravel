@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Plan;
+use App\Models\TaxaConfiguracao;
 use App\Support\Pacotes;
 use App\Support\Precos;
 use Illuminate\Http\JsonResponse;
@@ -19,10 +20,18 @@ class PlanosPublicosController extends Controller
 
     public function __invoke(Request $request): JsonResponse
     {
-        $dados = Cache::remember(self::CACHE_KEY, 300, fn () => $this->montar());
+        $pacote = Cache::remember(self::CACHE_KEY, 300, fn () => ['planos' => $this->montar(), 'taxas' => $this->taxas()]);
 
         // CORS: o middleware global das rotas /api já libera leitura entre origens; aqui só há dado público (nada de cliente).
-        return response()->json(['data' => $dados])->header('Cache-Control', 'public, max-age=300')->header('Vary', 'Origin');
+        return response()->json(['data' => $pacote['planos'], 'taxas' => $pacote['taxas']])->header('Cache-Control', 'public, max-age=300')->header('Vary', 'Origin');
+    }
+
+    /** Taxas de configuração (pagamento único, opcionais) à venda: só as ativas e com valor. @return list<array<string, mixed>> */
+    private function taxas(): array
+    {
+        return TaxaConfiguracao::disponiveis()->get()->map(fn (TaxaConfiguracao $t) => [
+            'codigo' => $t->codigo, 'nome' => $t->nome, 'descricao' => $t->descricao, 'valor' => (float) $t->valor, 'pagamento' => 'unico',
+        ])->values()->all();
     }
 
     /** @return list<array<string, mixed>> */

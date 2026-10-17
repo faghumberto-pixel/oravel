@@ -166,6 +166,26 @@
                             @endif
                         @endif
 
+                        @if ($taxas->isNotEmpty())
+                            <div data-testid="taxas">
+                                <span class="oravel-auth-label">Taxas de configuração (opcionais, pagamento único)</span>
+                                <p class="mt-1 text-xs text-white/70">Nós configuramos para você. Se preferir, deixe sem marcar e faça sozinho: a Academia Oravel tem o treinamento passo a passo.</p>
+                                <div class="mt-2 grid gap-3">
+                                    @foreach ($taxas as $taxa)
+                                        <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-white/25 bg-white/10 p-4">
+                                            <input type="checkbox" name="taxas[]" value="{{ $taxa->codigo }}" class="mt-1" @checked(in_array($taxa->codigo, (array) old('taxas', []), true)) />
+                                            <span class="text-sm text-white">
+                                                <strong class="block">{{ $taxa->nome }} — R$ {{ number_format($taxa->valor, 2, ',', '.') }}</strong>
+                                                @if ($taxa->descricao)<span class="block text-xs text-white/70">{{ $taxa->descricao }}</span>@endif
+                                                @if ($taxa->complemento_feature)<span class="block text-xs text-white/60">Para usar este recurso é preciso contratar o complemento correspondente com a nossa equipe.</span>@endif
+                                            </span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                                <x-input-error :messages="$errors->get('taxas')" class="oravel-auth-error" />
+                            </div>
+                        @endif
+
                         <div class="grid gap-5 sm:grid-cols-2">
                             <div>
                                 <label class="oravel-auth-label">Nome da Empresa</label>
