@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Events\DocumentSigned;
 use App\Filament\Central\Widgets\SalesAgendaWidget;
 use App\Filament\Navigation\TenantNavigationManager;
+use App\Jobs\EmitirNotaFiscalJob;
 use App\Listeners\DownscaleNonEvidenceMedia;
 use App\Listeners\EnviarPushDoAviso;
 use App\Listeners\NotifyCentralOfSignedDocument;
@@ -15,8 +16,8 @@ use App\Mail\TenantAwareTransport;
 use App\Models\AbcMatrix;
 use App\Models\AccountPayable;
 use App\Models\AccountReceivable;
-use App\Models\Announcement;
-use App\Models\Asset; // Importante
+use App\Models\Announcement; // Importante
+use App\Models\Asset;
 use App\Models\BatteryCycleReading;
 use App\Models\Client;
 use App\Models\ClientFeedback;
@@ -133,6 +134,13 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // NFS-e automática: quando uma conta a receber vira "pago" (webhook, sincronização ou baixa manual) e a empresa ligou a emissão automática.
+        AccountReceivable::updated(function (AccountReceivable $conta) {
+            if ($conta->wasChanged('status') && $conta->status === 'pago') {
+                EmitirNotaFiscalJob::dispatch($conta->id)->afterCommit();
+            }
+        });
+
         // API do CRM (/api/crm/v1): limite por token (leitura 120/min, escrita 30/min).
         RateLimiter::for('crm-api-leitura', fn (Request $r) => Limit::perMinute(120)->by('crm-r|'.($r->user()?->currentAccessToken()?->id ?? $r->ip())));
         RateLimiter::for('crm-api-escrita', fn (Request $r) => Limit::perMinute(30)->by('crm-w|'.($r->user()?->currentAccessToken()?->id ?? $r->ip())));

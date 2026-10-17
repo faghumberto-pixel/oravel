@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AccountReceivable extends Model
 {
@@ -73,6 +74,11 @@ class AccountReceivable extends Model
     public function costCenter(): BelongsTo
     {
         return $this->belongsTo(CostCenter::class, 'cost_center_id');
+    }
+
+    public function notasFiscais(): HasMany
+    {
+        return $this->hasMany(NotaFiscal::class, 'account_receivable_id');
     }
 
     public function client(): BelongsTo

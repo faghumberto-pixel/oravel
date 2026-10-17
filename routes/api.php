@@ -12,9 +12,12 @@ use App\Http\Controllers\Api\SignatureController;
 use App\Http\Controllers\Api\V1\HourMeterPreloadController;
 use App\Http\Controllers\Api\V1\HourMeterSyncController;
 use App\Http\Controllers\Api\V1\TimeClockSyncController;
+use App\Http\Controllers\AsaasEmpresaWebhookController;
 use App\Http\Controllers\AsaasWebhookController;
+use App\Http\Controllers\FiscalWebhookController;
 use App\Http\Controllers\InboundLeadController;
 use App\Http\Controllers\LandingPageLeadController;
+use App\Http\Controllers\PlanosPublicosController;
 use App\Http\Controllers\SiteTrackingController;
 use App\Http\Controllers\WhatsAppEmpresaWebhookController;
 use App\Http\Controllers\WhatsAppWebhookController;
@@ -65,10 +68,11 @@ Route::post('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'handle']);
 Route::get('/webhooks/whatsapp-meta', [WhatsAppEmpresaWebhookController::class, 'verifyPlataforma']);
 Route::post('/webhooks/whatsapp-meta', [WhatsAppEmpresaWebhookController::class, 'handlePlataforma'])->middleware('throttle:600,1');
 // Preços das soluções para o site institucional (lidos da Central, sem dados de clientes).
-Route::get('/public/planos', \App\Http\Controllers\PlanosPublicosController::class)->middleware('throttle:60,1')->name('planos.publicos');
+Route::get('/public/planos', PlanosPublicosController::class)->middleware('throttle:60,1')->name('planos.publicos');
 
 // Asaas da EMPRESA cliente (cobrança automática dos clientes dela): empresa na URL, token por empresa no cabeçalho.
-Route::post('/webhooks/asaas-empresa/{tenant}', [\App\Http\Controllers\AsaasEmpresaWebhookController::class, 'handle'])->middleware('throttle:600,1')->name('asaas.empresa.webhook');
+Route::post('/webhooks/fiscal/{tenant}', [FiscalWebhookController::class, 'handle'])->middleware('throttle:600,1')->name('fiscal.webhook');
+Route::post('/webhooks/asaas-empresa/{tenant}', [AsaasEmpresaWebhookController::class, 'handle'])->middleware('throttle:600,1')->name('asaas.empresa.webhook');
 Route::get('/webhooks/whatsapp-empresa/{tenant}', [WhatsAppEmpresaWebhookController::class, 'verify']);
 Route::post('/webhooks/whatsapp-empresa/{tenant}', [WhatsAppEmpresaWebhookController::class, 'handle'])->middleware('throttle:600,1');
 

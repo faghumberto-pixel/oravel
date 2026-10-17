@@ -4,9 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\AccountReceivableResource\Pages;
 use App\Models\AccountReceivable;
+use App\Models\NotaFiscal;
 use App\Models\TenantAsaasSetting;
+use App\Models\TenantFiscalSetting;
 use App\Services\Cobranca\CobrancaException;
 use App\Services\Cobranca\CobrancaService;
+use App\Services\Fiscal\FiscalException;
+use App\Services\Fiscal\NotaFiscalService;
 use App\Support\Tenancy;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
@@ -171,6 +175,31 @@ class AccountReceivableResource extends Resource
                     ->requiresConfirmation()
                     ->modalDescription('Cancela a cobrança no Asaas. Você poderá gerar outra depois.')
                     ->action(fn (AccountReceivable $record) => static::executarCobranca(fn () => app(CobrancaService::class)->cancelar($record), 'Cobrança cancelada')),
+                // Nota fiscal de serviço (complemento): emissor fiscal da Oravel, com o cadastro fiscal da própria empresa.
+                Tables\Actions\Action::make('emitirNfse')
+                    ->label('Emitir NFS-e')
+                    ->icon('heroicon-o-document-text')
+                    ->color('success')
+                    ->visible(fn (AccountReceivable $record) => static::nfseLigada() && (float) $record->amount > 0 && ! app(NotaFiscalService::class)->notaViva($record))
+                    ->requiresConfirmation()
+                    ->modalHeading('Emitir NFS-e')
+                    ->modalDescription(fn (AccountReceivable $record) => 'Emite a nota de serviço de R$ '.number_format((float) $record->amount, 2, ',', '.').' para '.($record->client?->name ?? 'o cliente').'. O retorno da prefeitura pode levar alguns minutos.')
+                    ->action(fn (AccountReceivable $record) => static::executarNfse(fn () => app(NotaFiscalService::class)->emitir($record, auth()->user()), 'NFS-e enviada para emissão', 'Acompanhe a situação nesta conta; o número aparece quando a prefeitura autorizar.')),
+                Tables\Actions\Action::make('atualizarNfse')
+                    ->label('Atualizar NFS-e')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('gray')
+                    ->visible(fn (AccountReceivable $record) => static::nfseLigada() && app(NotaFiscalService::class)->notaViva($record)?->status === NotaFiscal::PROCESSANDO)
+                    ->action(function (AccountReceivable $record) {
+                        static::executarNfse(fn () => app(NotaFiscalService::class)->reconsultar(app(NotaFiscalService::class)->notaViva($record)), 'Situação da NFS-e atualizada');
+                    }),
+                Tables\Actions\Action::make('verNfse')
+                    ->label('Ver NFS-e')
+                    ->icon('heroicon-o-document-check')
+                    ->color('gray')
+                    ->visible(fn (AccountReceivable $record) => filled(app(NotaFiscalService::class)->notaViva($record)?->pdf_url))
+                    ->url(fn (AccountReceivable $record) => app(NotaFiscalService::class)->notaViva($record)?->pdf_url)
+                    ->openUrlInNewTab(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -186,6 +215,25 @@ class AccountReceivableResource extends Resource
     public static function cobrancaLigada(): bool
     {
         return TenantAsaasSetting::daEmpresa(Tenancy::current()?->id)?->pronta() ?? false;
+    }
+
+    /** A empresa tem o complemento de NFS-e e o cadastro fiscal pronto (ligado, completo, com certificado enviado)? */
+    public static function nfseLigada(): bool
+    {
+        return TenantFiscalSetting::daEmpresa(Tenancy::current()?->id)?->pronta() ?? false;
+    }
+
+    public static function executarNfse(\Closure $acao, string $titulo, ?string $corpo = null): void
+    {
+        try {
+            $acao();
+            Notification::make()->title($titulo)->body($corpo)->success()->send();
+        } catch (FiscalException $e) {
+            Notification::make()->title('Não foi possível emitir')->body($e->getMessage())->danger()->send();
+        } catch (\Throwable $e) {
+            report($e);
+            Notification::make()->title('Erro ao falar com o emissor fiscal')->body('Tente de novo em instantes.')->danger()->send();
+        }
     }
 
     public static function executarCobranca(\Closure $acao, string $titulo, ?string $corpo = null): void
