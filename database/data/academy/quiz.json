@@ -6712,5 +6712,54 @@
     "why": "Assim os vínculos entre eles já existem quando você precisar."
    }
   ]
+ },
+ {
+  "page": "/configuracoes/instalar-app.html",
+  "questions": [
+   {
+    "q": "Onde se instala o app da solução?",
+    "options": [
+     "Na Play Store ou na App Store",
+     "Pelo navegador do celular, com Adicionar à tela inicial",
+     "Somente no computador, por um instalador",
+     "Só o suporte da Oravel consegue instalar"
+    ],
+    "correct": 1,
+    "why": "O app é instalado pelo navegador, sem loja de aplicativos."
+   },
+   {
+    "q": "Uma empresa com a solução Manutenção instala o app. Que nome ele tem?",
+    "options": [
+     "Oravel Manutenção",
+     "Oravel Administrador para todos os perfis",
+     "O nome da empresa cliente",
+     "Oravel Locadoras"
+    ],
+    "correct": 0,
+    "why": "O nome segue a solução contratada; contrato personalizado vê apenas Oravel."
+   },
+   {
+    "q": "No iPhone, qual navegador deve ser usado para instalar?",
+    "options": [
+     "Chrome",
+     "Qualquer navegador",
+     "Safari",
+     "Só o aplicativo do WhatsApp"
+    ],
+    "correct": 2,
+    "why": "No iPhone, só o Safari oferece Adicionar à Tela de Início."
+   },
+   {
+    "q": "O que acontece ao abrir o app já instalado, com o celular sem internet?",
+    "options": [
+     "Funciona normalmente, sem conexão",
+     "Precisa de conexão e de login ativo, pois é o próprio sistema em tela cheia",
+     "Abre só as telas da solução, sem login",
+     "Instala uma versão offline completa"
+    ],
+    "correct": 1,
+    "why": "O app é o sistema aberto em tela cheia: precisa de internet e de login ativo."
+   }
+  ]
  }
 ]

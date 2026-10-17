@@ -146,7 +146,7 @@ class AcademiaPorPacoteTest extends TestCase
 
         foreach (array_keys(Pacotes::opcoes()) as $codigo) {
             $aulas = collect($this->visivel($codigo))['Configurações da Empresa'] ?? 0;
-            $this->assertSame(3, $aulas, "{$codigo}: WhatsApp, e-mail e migração de dados");
+            $this->assertSame(4, $aulas, "{$codigo}: WhatsApp, e-mail, migração de dados e instalar o app");
         }
     }
 

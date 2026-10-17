@@ -50,6 +50,13 @@
                 "slug": "configuracoes__migracao-dados",
                 "summary": "Importar clientes, ativos e leads de planilhas com simulação antes de gravar.",
                 "feature": null
+            },
+            {
+                "title": "Instalar o app da sua solução",
+                "href": "/configuracoes/instalar-app.html",
+                "slug": "configuracoes__instalar-app",
+                "summary": "Instalar no celular o app com o nome da sua solução (Android e iPhone), sem loja de aplicativos.",
+                "feature": null
             }
         ]
     },
