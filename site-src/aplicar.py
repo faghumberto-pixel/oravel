@@ -541,6 +541,73 @@ def pagina_ia():
                        'A Oravel usa inteligência artificial para priorizar manutenção, diagnosticar avarias, avaliar propostas e cuidar do estoque: números calculados pelo sistema e IA que interpreta.', corpo, '/inteligencia-artificial/')
 
 
+
+# ---------------------------------------------------------------- visual de tecnologia (home e demais páginas)
+
+TECH_HERO_BG = ('radial-gradient(900px 420px at 85% 0%, rgba(99,102,241,.38), transparent 60%), radial-gradient(700px 420px at 0% 100%, rgba(249,115,22,.26), transparent 60%), #070b14')
+TECH_GRID = ('linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px)')
+
+# Faixa de topo (hero) das páginas internas no mesmo estilo escuro da home: fundo noturno, grade e brilho.
+CSS_TECH_INTERNAS = (
+    f'.hero {{ position:relative; overflow:hidden; background:{TECH_HERO_BG} !important; color:#fff; }} '
+    f'.hero::before {{ content:""; position:absolute; inset:0; background-image:{TECH_GRID}; background-size:46px 46px; '
+    'mask-image:radial-gradient(ellipse at 50% 20%, #000 25%, transparent 75%); -webkit-mask-image:radial-gradient(ellipse at 50% 20%, #000 25%, transparent 75%); pointer-events:none; } '
+    '.hero > * { position:relative; } .hero h1, .hero h1 * { color:#fff !important; } .hero .desc, .hero p.desc { color:rgba(226,232,240,.82) !important; } '
+    '.hero .eyebrow { color:#fdba74; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.14em; } .hero .slogan { color:#fdba74 !important; } '
+    '.hero .btn-primary { background:#f97316 !important; border-color:#f97316 !important; color:#fff !important; box-shadow:0 10px 30px -12px rgba(249,115,22,.8); } '
+    '.hero .btn-ghost { background:transparent !important; color:#fff !important; border-color:rgba(255,255,255,.3) !important; } '
+    '.hero .hero-visual { background:rgba(255,255,255,.06) !important; border-color:rgba(255,255,255,.14) !important; box-shadow:0 30px 70px -30px rgba(99,102,241,.7); } '
+    '.hero .status-pill { background:rgba(34,197,94,.16) !important; color:#86efac !important; }'
+)
+CSS_NAV = CSS_NAV.replace('</style>', '  ' + CSS_TECH_INTERNAS + '\n</style>')
+
+CSS_TECH_HOME = """<style data-site="hero-tech-css">
+  .th-hero { position: relative; overflow: hidden; color: #fff; padding: 84px 0 64px; background: __BG__; }
+  .th-hero::before { content: ""; position: absolute; inset: 0; background-image: __GRID__; background-size: 46px 46px; mask-image: radial-gradient(ellipse at 50% 25%, #000 25%, transparent 75%); -webkit-mask-image: radial-gradient(ellipse at 50% 25%, #000 25%, transparent 75%); pointer-events: none; }
+  .th-wrap { position: relative; max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  .th-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; }
+  .th-tag { display: inline-flex; align-items: center; gap: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: #c7d2fe; border: 1px solid rgba(165,180,252,.35); background: rgba(99,102,241,.12); padding: 7px 14px; border-radius: 999px; }
+  .th-tag i { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 10px #22c55e; }
+  .th-h { font-family: Manrope, sans-serif; font-weight: 800; font-size: clamp(30px, 4.2vw, 50px); line-height: 1.08; letter-spacing: -.035em; margin: 20px 0 0;
+    background: linear-gradient(95deg, #ffffff 0%, #fdba74 55%, #f97316 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .th-copy { margin-top: 26px; } .th-copy p { color: rgba(226,232,240,.82) !important; font-size: 17px; line-height: 1.7; margin: 0 0 14px; }
+  .th-copy p:first-child { font-family: Manrope, sans-serif; font-size: 22px !important; font-weight: 800; color: #fdba74 !important; margin-bottom: 10px; }
+  .th-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
+  .th-btn { display: inline-flex; padding: 14px 26px; border-radius: 10px; font-weight: 700; font-size: 15px; text-decoration: none; border: 1px solid rgba(255,255,255,.3); color: #fff; } .th-btn.p { background: #f97316; border-color: #f97316; box-shadow: 0 10px 30px -10px rgba(249,115,22,.8); }
+  .th-visual { position: relative; padding-bottom: 36px; } .th-visual .th-main svg { width: 100%; height: auto; display: block; border-radius: 12px; box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 40px 80px -30px rgba(99,102,241,.75); }
+  .th-visual .th-phone { position: absolute; right: -8px; bottom: -8px; width: 34%; } .th-visual .th-phone svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 24px 30px rgba(0,0,0,.6)); }
+  .th-chip { position: absolute; font-size: 12.5px; font-weight: 700; color: #fff; background: rgba(15,23,42,.85); border: 1px solid rgba(255,255,255,.18); border-radius: 999px; padding: 8px 14px; backdrop-filter: blur(6px); }
+  .th-chip i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+  .th-stats { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 56px; }
+  .th-stat { border: 1px solid rgba(255,255,255,.13); background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.02)); border-radius: 14px; padding: 18px 20px; }
+  .th-stat b { display: block; font-family: Manrope, sans-serif; font-size: 34px; letter-spacing: -.02em; color: #fff; } .th-stat span { font-size: 13.5px; color: rgba(226,232,240,.75); }
+  .th-video-head { background: #070b14; color: #fff; text-align: center; padding: 34px 28px 22px; font-family: Manrope, sans-serif; } .th-video-head .e { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: #fdba74; } .th-video-head h2 { font-size: clamp(22px, 3vw, 32px); margin: 8px 0 0; font-weight: 800; letter-spacing: -.02em; }
+  @media (max-width: 980px) { .th-grid { grid-template-columns: 1fr; } .th-stats { grid-template-columns: repeat(2, 1fr); } .th-visual { max-width: 560px; margin: 0 auto; } }
+  @media (max-width: 560px) { .th-hero { padding: 56px 0 44px; } .th-chip { display: none; } }
+</style>""".replace('__BG__', TECH_HERO_BG).replace('__GRID__', TECH_GRID)
+
+
+def bloco_hero_tech(texto_html):
+    """Primeira dobra da home: título de tecnologia + o texto de boas-vindas de sempre + produto (painel e celular) + números."""
+    painel = mockups.gerar(dados.POR_CODIGO['locadora']['mockups'][1])
+    celular = mockups.app_celular(*dados.APPS['manutencao'])
+    stats = [('7', 'soluções, cada uma com o seu app'), ('8', 'recursos de IA no sistema'), ('60+', 'aulas na Academia Oravel'), ('1', 'base única para contratos, OS, frota, estoque, comercial e financeiro')]
+    stats_html = ''.join(f'<div class="th-stat"><b>{n}</b><span>{t}</span></div>' for n, t in stats)
+    return (
+        '<!-- site:hero-tech -->' + CSS_TECH_HOME +
+        '<section class="th-hero" data-site="hero-tech"><div class="th-wrap"><div class="th-grid"><div>'
+        '<span class="th-tag"><i></i>Plataforma de gestão com IA</span>'
+        '<p class="th-h">Gestão que se encaixa na sua empresa, com inteligência artificial</p>'
+        f'<div class="th-copy"><!-- hero-text -->{texto_html}<!-- /hero-text --></div>'
+        '<div class="th-btns"><a class="th-btn p" href="https://oravel.com.br/contato.php">Solicite uma apresentação</a><a class="th-btn" href="https://oravel.com.br/solucoes/">Conheça as soluções</a></div></div>'
+        f'<div class="th-visual"><div class="th-main">{painel}</div><div class="th-phone">{celular}</div>'
+        '<span class="th-chip" style="top:-18px;left:24px"><i></i>IA analisando a sua operação</span><span class="th-chip" style="bottom:70px;left:-14px"><i></i>Academia Oravel</span></div></div>'
+        f'<div class="th-stats">{stats_html}</div></div></section>'
+        '<div class="th-video-head"><div class="e">Oravel em campo</div><h2>Veja a plataforma na operação de quem usa</h2></div>'
+        '<!-- /site:hero-tech -->'
+    )
+
+
 # ---------------------------------------------------------------- menu "onav" (nav-fragment.html, usado por .php e gestao-locadoras)
 
 def nav_fragment():
@@ -571,6 +638,13 @@ def aplicar_home():
              '      <p class="frentes-lead">Sete soluções, cada uma com as telas e os módulos que o dia a dia realmente usa. Contrate só o que precisa.</p>\n'
              '      <style>.sp-mini{margin:-4px -4px 14px;border-radius:10px;overflow:hidden;background:#f6f7f9}.sp-mini svg{width:100%;height:auto;display:block}</style>\n'
              f'      <div class="frentes-grid">{cards}</div>\n    </div>\n  </section>')
+    # Primeira dobra de tecnologia: o texto de boas-vindas é o mesmo de sempre (preservado, só muda de lugar).
+    m = re.search(r'<section class="hero hero-intro">.*?<div class="hero-text">(.*?)</div>\s*</div>\s*</section>', t, re.S) or re.search(r'<!-- hero-text -->(.*?)<!-- /hero-text -->', t, re.S)
+    texto_hero = re.sub(r'<h1 class="sr-only-h1">.*?</h1>', '', m.group(1), flags=re.S).strip()
+    h1_oculto = (re.search(r'<h1 class="sr-only-h1">.*?</h1>', m.group(1), re.S) or re.search(r'<h1 class="sr-only-h1">.*?</h1>', t, re.S)).group(0)
+    t = re.sub(r'\s*<!-- site:hero-tech -->.*?<!-- /site:hero-tech -->', '', t, flags=re.S)
+    t = re.sub(r'\s*<section class="hero hero-intro">.*?</section>', '', t, count=1, flags=re.S)
+    t = trocar(t, r'<section class="hero-full">', bloco_hero_tech(texto_hero).replace('<section class="th-hero"', h1_oculto + '<section class="th-hero"', 1) + '\n  <section class="hero-full">', 'hero da home')
     t = re.sub(r'\s*<style data-site="ia-css">.*?</style>', '', t, flags=re.S)
     t = re.sub(r'\s*<!-- site:ia -->.*?<!-- /site:ia -->', '', t, flags=re.S)
     t = re.sub(r'\s*<style data-site="academia-css">.*?</style>', '', t, flags=re.S)
