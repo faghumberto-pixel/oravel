@@ -165,4 +165,28 @@ class PacotesCheckoutTest extends TestCase
         $this->assertStringNotContainsString('R$', $html, 'preço fica só na Central/checkout');
         $this->assertStringContainsString('href="/planos/"', file_get_contents(base_path('public_html/inc/nav-fragment.html')));
     }
+
+    public function test_central_action_creates_the_missing_showcase_plans_without_touching_existing_ones(): void
+    {
+        $super = User::create(['name' => 'Super', 'email' => (config('oravel.super_admins')[0] ?? 'faghumberto@gmail.com'), 'password' => bcrypt('x'), 'is_approved' => true]);
+        $this->actingAs($super);
+        Filament::setCurrentPanel(Filament::getPanel('central'));
+
+        $editado = $this->aVenda('estoque', 450);
+
+        Livewire::test(ContratoResource\Pages\ListContratos::class)
+            ->callAction('criarVitrines')
+            ->assertNotified();
+
+        foreach (array_keys(Pacotes::opcoes()) as $codigo) {
+            $this->assertSame(1, Plan::where('pacote', $codigo)->where('campaign_tag', 'vitrine')->count(), $codigo);
+        }
+        $this->assertEquals(450, $editado->fresh()->price, 'vitrine já editada não muda');
+        $this->assertTrue($editado->fresh()->is_active);
+        $this->assertFalse(Pacotes::vitrine('vendas')->is_active, 'novas nascem fora de venda');
+
+        // Segunda vez: nada a criar.
+        Livewire::test(ContratoResource\Pages\ListContratos::class)->callAction('criarVitrines')->assertNotified('Todos os pacotes já têm plano de vitrine.');
+        $this->assertSame(6, Plan::where('campaign_tag', 'vitrine')->count());
+    }
 }
