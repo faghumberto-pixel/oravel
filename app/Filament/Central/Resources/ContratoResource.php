@@ -312,6 +312,13 @@ class ContratoResource extends Resource
                         ])
                         ->default('monthly')
                         ->required(),
+
+                    // Só no contrato de vitrine (o que o site vende em /assinar/{pacote}): o preço acima e este
+                    // interruptor são o que libera a venda. Contratos de cliente seguem sempre ativos.
+                    Forms\Components\Toggle::make('is_active')
+                        ->label('À venda no site (checkout)')
+                        ->helperText('Só vende se o Valor Mensal estiver preenchido. Desligado, o botão Assinar do site não leva ao checkout.')
+                        ->visible(fn (?Plan $record) => $record?->campaign_tag === Pacotes::TAG_VITRINE),
                 ]),
 
             Forms\Components\Section::make('Módulos incluídos')
@@ -449,6 +456,11 @@ class ContratoResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')->label('Criado em')->dateTime('d/m/Y H:i')->sortable(),
             ])
             ->filters([
+                Tables\Filters\TernaryFilter::make('vitrine')->label('Planos de vitrine (site)')
+                    ->queries(
+                        true: fn (Builder $query) => $query->where('campaign_tag', Pacotes::TAG_VITRINE),
+                        false: fn (Builder $query) => $query->where(fn ($q) => $q->whereNull('campaign_tag')->orWhere('campaign_tag', '!=', Pacotes::TAG_VITRINE)),
+                    ),
                 Tables\Filters\SelectFilter::make('pacote')->label('Pacote')
                     ->options(Pacotes::opcoes() + ['personalizado' => 'Personalizado'])
                     ->query(fn (Builder $query, array $data) => match ($data['value'] ?? null) {

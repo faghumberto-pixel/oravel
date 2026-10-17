@@ -126,21 +126,23 @@ class PacotesVendaveisTest extends TestCase
         $this->assertSame('crm', DB::table('plans')->where('id', $crm->id)->value('pacote'));
     }
 
-    public function test_price_suggestion_is_null_until_defined_and_reads_the_config(): void
+    public function test_price_comes_from_the_showcase_plan_registered_in_central(): void
     {
-        $this->assertNull(Pacotes::precoSugerido('manutencao'));
+        $this->assertNull(Pacotes::precoSugerido('manutencao'), 'sem vitrine, sem preço');
+
+        $vitrine = Pacotes::planoDeVitrine('manutencao');
+        $this->assertNull(Pacotes::precoSugerido('manutencao'), 'vitrine nasce sem preço');
         $this->assertSame('monthly', Pacotes::cicloSugerido('manutencao'));
 
-        config(['pacotes.pacotes.manutencao.preco_base' => 490, 'pacotes.pacotes.manutencao.ciclo' => 'annual']);
+        $vitrine->update(['base_price' => 490, 'price' => 490, 'billing_cycle' => 'annual']);
 
         $this->assertSame(490.0, Pacotes::precoSugerido('manutencao'));
         $this->assertSame('annual', Pacotes::cicloSugerido('manutencao'));
-        $this->assertSame(490.0, Pacotes::precoSugerido('manutencao'));
     }
 
-    public function test_choosing_a_package_suggests_price_only_when_the_field_is_empty(): void
+    public function test_choosing_a_package_suggests_the_central_price_only_when_the_field_is_empty(): void
     {
-        config(['pacotes.pacotes.servicos.preco_base' => 790, 'pacotes.pacotes.servicos.ciclo' => 'quarterly']);
+        Pacotes::planoDeVitrine('servicos')->update(['base_price' => 790, 'price' => 790, 'billing_cycle' => 'quarterly']);
         $super = User::create(['name' => 'Super', 'email' => (config('oravel.super_admins')[0] ?? 'faghumberto@gmail.com'), 'password' => bcrypt('x'), 'is_approved' => true]);
         $this->actingAs($super);
         Filament::setCurrentPanel(Filament::getPanel('central'));

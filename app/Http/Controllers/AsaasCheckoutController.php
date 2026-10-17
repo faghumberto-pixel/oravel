@@ -69,6 +69,26 @@ class AsaasCheckoutController extends Controller
             return redirect()->away('https://oravel.com.br/#planos');
         }
 
+        return $this->formulario($selectedPlan);
+    }
+
+    /**
+     * Link estável por pacote para o site (/assinar/manutencao): resolve o plano de vitrine ATIVO do pacote, sem o
+     * site precisar conhecer UUIDs. Pacote desconhecido, sem vitrine ou sem preço/à venda vai para o contato comercial (evita laço com a página de planos).
+     */
+    public function porPacote(string $pacote): View|RedirectResponse
+    {
+        $plano = Pacotes::vitrine($pacote);
+
+        if (! $plano || ! $plano->is_active || (float) $plano->price <= 0) {
+            return redirect()->away('https://oravel.com.br/contato.php');
+        }
+
+        return $this->formulario($plano);
+    }
+
+    private function formulario(Plan $selectedPlan): View
+    {
         return view('checkout.create', [
             'selectedPlan' => $selectedPlan,
             'pacoteDescricao' => Pacotes::todos()[$selectedPlan->pacote ?? '']['descricao'] ?? null,

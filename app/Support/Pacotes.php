@@ -79,43 +79,58 @@ class Pacotes
         return array_values(array_intersect(self::features($codigo), $doGrupo));
     }
 
-    /** Valor mensal sugerido do pacote (R$) ou null quando ainda não foi definido. */
+    public const TAG_VITRINE = 'vitrine';
+
+    /** Plano de vitrine já criado para o pacote (o que o site/checkout vende), ou null. */
+    public static function vitrine(?string $codigo): ?Plan
+    {
+        $codigo = self::normalizar($codigo);
+
+        return $codigo ? Plan::where('pacote', $codigo)->where('campaign_tag', self::TAG_VITRINE)->first() : null;
+    }
+
+    /** Valor mensal do pacote = o cadastrado na Central no plano de vitrine (null enquanto não definido). */
     public static function precoSugerido(?string $codigo): ?float
     {
-        $preco = self::todos()[self::normalizar($codigo)]['preco_base'] ?? null;
+        $preco = (float) (self::vitrine($codigo)?->base_price ?? 0);
 
-        return $preco === null ? null : (float) $preco;
+        return $preco > 0 ? $preco : null;
     }
 
     public static function cicloSugerido(?string $codigo): string
     {
-        return self::todos()[self::normalizar($codigo)]['ciclo'] ?? 'monthly';
+        return self::vitrine($codigo)?->billing_cycle ?: 'monthly';
     }
 
-    public const TAG_VITRINE = 'vitrine';
-
     /**
-     * Plano de vitrine do pacote: o `Plan` que o site/checkout vende (um por pacote, identificado por pacote + tag).
-     * Idempotente. Sem preço definido no config o plano fica INATIVO: o checkout não vende pacote a R$ 0.
+     * Cria o plano de vitrine do pacote (um por pacote, identificado por pacote + tag). Preço, ciclo e se está à
+     * venda (is_active) são cadastrados na Central e NUNCA sobrescritos aqui: nasce inativo e sem preço, e o checkout
+     * só vende plano ativo. Os módulos só são ressincronizados com $sincronizarModulos (preserva ajustes da Central).
      */
-    public static function planoDeVitrine(string $codigo): Plan
+    public static function planoDeVitrine(string $codigo, bool $sincronizarModulos = false): Plan
     {
         $codigo = self::normalizar($codigo);
         $pacote = self::todos()[$codigo] ?? throw new \InvalidArgumentException("Pacote desconhecido: {$codigo}");
-        $preco = self::precoSugerido($codigo);
 
-        $plano = Plan::where('pacote', $codigo)->where('campaign_tag', self::TAG_VITRINE)->first() ?? new Plan;
-        $plano->forceFill([
-            'name' => 'Oravel '.$pacote['nome'],
-            'pacote' => $codigo,
-            'campaign_tag' => self::TAG_VITRINE,
-            'level' => $plano->level ?? 1,
-            'price' => $preco ?? 0,
-            'base_price' => $preco ?? 0,
-            'billing_cycle' => self::cicloSugerido($codigo),
-            'features' => array_fill_keys(self::features($codigo), true),
-            'is_active' => $preco !== null && $preco > 0,
-        ])->save();
+        $plano = self::vitrine($codigo);
+
+        if (! $plano) {
+            return Plan::create([
+                'name' => 'Oravel '.$pacote['nome'],
+                'pacote' => $codigo,
+                'campaign_tag' => self::TAG_VITRINE,
+                'level' => 1,
+                'price' => 0,
+                'base_price' => 0,
+                'billing_cycle' => 'monthly',
+                'features' => array_fill_keys(self::features($codigo), true),
+                'is_active' => false,
+            ]);
+        }
+
+        if ($sincronizarModulos) {
+            $plano->update(['features' => array_fill_keys(self::features($codigo), true)]);
+        }
 
         return $plano;
     }

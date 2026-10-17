@@ -105,6 +105,9 @@
                                     {{ $selectedPlan->name }} -- R$ {{ number_format($selectedPlan->price, 2, ',', '.') }}/{{ $selectedPlan->billing_cycle === 'monthly' ? 'mês' : $selectedPlan->billing_cycle }}
                                 </span>
                             </div>
+                            @if (! empty($pacoteDescricao))
+                                <p class="mt-2 text-xs text-white/70">{{ $pacoteDescricao }}</p>
+                            @endif
                             <x-input-error :messages="$errors->get('plan_id')" class="oravel-auth-error" />
                         </div>
 

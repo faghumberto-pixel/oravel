@@ -38,4 +38,8 @@ Route::middleware('guest')->group(function () {
     // acessível pelo cliente depois que a página fecha.
     Route::get('/assinar/recuperar', [AsaasCheckoutController::class, 'recoverForm'])->name('checkout.recover');
     Route::post('/assinar/recuperar', [AsaasCheckoutController::class, 'recoverSubmit'])->name('checkout.recover.submit');
+
+    // Link estável por pacote (Manutenção, Serviços...) usado pelo site; fica por último para não engolir as
+    // rotas fixas /assinar/pendente, /sucesso, /cancelado e /recuperar.
+    Route::get('/assinar/{pacote}', [AsaasCheckoutController::class, 'porPacote'])->where('pacote', '[a-z]+')->name('checkout.pacote');
 });

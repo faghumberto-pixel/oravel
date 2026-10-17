@@ -8,7 +8,7 @@ use App\Filament\Pages\ProgramacaoLogistica;
 /**
  * Pacotes vendáveis do Oravel. Cada pacote é um conjunto de módulos montado pelos MESMOS grupos de menu da
  * tela de Contratos (módulo novo num grupo entra no pacote sozinho) mais chaves extras explícitas.
- * `preco_base`/`ciclo` = sugestão ao criar um contrato do pacote (nulo = sem sugestão). `grupos` = '*' liga todos os grupos (ERP completo). A "base" entra em todos os pacotes.
+ * Preço NÃO fica aqui: é cadastrado/editado na Central, no contrato de vitrine do pacote (`pacotes:vitrine`). `grupos` = '*' liga todos os grupos (ERP completo). A "base" entra em todos os pacotes.
  */
 return [
     // Códigos antigos de pacote → código atual (o pacote "CRM" passou a se chamar "Vendas").
@@ -22,8 +22,6 @@ return [
     'pacotes' => [
         'locadora' => [
             'nome' => 'Locadora',
-            'preco_base' => null, // valor mensal sugerido (R$) — definir quando o preço for fechado
-            'ciclo' => 'monthly',
             'descricao' => 'ERP completo para locadoras: ativos, manutenção, contratos, estoque, logística, frota, financeiro e CRM.',
             'grupos' => '*',
             'features' => [],
@@ -32,8 +30,6 @@ return [
 
         'vendas' => [
             'nome' => 'Vendas',
-            'preco_base' => null, // valor mensal sugerido (R$) — definir quando o preço for fechado
-            'ciclo' => 'monthly',
             'descricao' => 'CRM de vendas independente do ERP: leads, funil, contas, catálogo, visitas, veículos, despesas, metas e propostas.',
             'grupos' => [],
             'features' => [
@@ -47,8 +43,6 @@ return [
 
         'manutencao' => [
             'nome' => 'Manutenção',
-            'preco_base' => null, // valor mensal sugerido (R$) — definir quando o preço for fechado
-            'ciclo' => 'monthly',
             'descricao' => 'Manutenção de equipamentos: ativos, ordens de serviço, preventiva (PMP), checklists e itens agregados — sem contratos, financeiro nem comercial.',
             'grupos' => ['Ativos', 'Manutenção', 'PMP', 'Itens Agregados'],
             // Clientes simples para a OS; avarias e substituição de equipamento são de locação.
@@ -59,8 +53,6 @@ return [
 
         'servicos' => [
             'nome' => 'Serviços',
-            'preco_base' => null, // valor mensal sugerido (R$) — definir quando o preço for fechado
-            'ciclo' => 'monthly',
             'descricao' => 'Prestação de serviços: clientes, orçamentos, propostas, ordens de serviço, contratos de serviço e financeiro — sem locação de equipamentos.',
             'grupos' => ['Ativos', 'Manutenção', 'Financeiro'],
             'features' => [
@@ -72,8 +64,6 @@ return [
 
         'estoque' => [
             'nome' => 'Estoque',
-            'preco_base' => null, // valor mensal sugerido (R$) — definir quando o preço for fechado
-            'ciclo' => 'monthly',
             'descricao' => 'Gestão de estoque: materiais e peças, almoxarifado, compras, inventário e transferências.',
             'grupos' => ['Materiais e Peças'],
             'features' => [],
@@ -82,8 +72,6 @@ return [
 
         'logistica' => [
             'nome' => 'Logística',
-            'preco_base' => null, // valor mensal sugerido (R$) — definir quando o preço for fechado
-            'ciclo' => 'monthly',
             'descricao' => 'Logística e frota: veículos, fretes, pátio, rastreamento, rotas, checklists, abastecimento e custos.',
             'grupos' => ['Logística', 'Gestão de Frota'],
             'features' => [],
