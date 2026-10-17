@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Oravel CRM para WhatsApp Web",
+  "description": "Mostra no WhatsApp Web quem é o contato no CRM Oravel e registra a conversa quando você clica. Não envia mensagens e não lê nada em massa.",
+  "version": "0.1.0",
+  "minimum_chrome_version": "110",
+  "permissions": ["storage"],
+  "host_permissions": ["https://web.whatsapp.com/*", "https://app.oravel.com.br/*"],
+  "optional_host_permissions": ["https://*/*", "http://localhost/*", "http://127.0.0.1/*"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["https://web.whatsapp.com/*"],
+      "js": ["lib/telefone.js", "lib/whatsapp.js", "selectors.js", "panel.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_ui": { "page": "options.html", "open_in_tab": true }
+}
