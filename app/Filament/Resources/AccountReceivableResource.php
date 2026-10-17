@@ -4,8 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\AccountReceivableResource\Pages;
 use App\Models\AccountReceivable;
+use App\Models\TenantAsaasSetting;
+use App\Services\Cobranca\CobrancaException;
+use App\Services\Cobranca\CobrancaService;
 use App\Support\Tenancy;
-use App\Services\AsaasService;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -87,6 +89,13 @@ class AccountReceivableResource extends Resource
                 Tables\Columns\TextColumn::make('status')->badge()->colors([
                     'warning' => 'pendente', 'success' => 'pago', 'danger' => 'atrasado',
                 ])->formatStateUsing(fn ($state) => ucfirst($state)),
+                Tables\Columns\TextColumn::make('asaas_status')->label('Cobrança')->badge()->placeholder('—')
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'PENDING' => 'Aguardando', 'RECEIVED', 'CONFIRMED', 'RECEIVED_IN_CASH' => 'Paga', 'OVERDUE' => 'Vencida', 'DELETED' => 'Cancelada', 'REFUNDED' => 'Estornada', default => $state,
+                    })
+                    ->color(fn ($state) => match ($state) {
+                        'RECEIVED', 'CONFIRMED', 'RECEIVED_IN_CASH' => 'success', 'OVERDUE' => 'danger', 'PENDING' => 'warning', default => 'gray',
+                    }),
                 Tables\Columns\IconColumn::make('asaas_payment_id')
                     ->label('Asaas')
                     ->boolean()
@@ -128,36 +137,36 @@ class AccountReceivableResource extends Resource
 
                         Notification::make()->title('Recebimento registrado')->success()->send();
                     }),
-                Tables\Actions\Action::make('sincronizarAsaas')
-                    ->label('Sincronizar Asaas')
-                    ->icon('heroicon-o-arrow-path')
+                // Cobrança automática (complemento): usa a conta Asaas DA EMPRESA, nunca a da Oravel.
+                Tables\Actions\Action::make('gerarCobranca')
+                    ->label('Gerar cobrança')
+                    ->icon('heroicon-o-qr-code')
                     ->color('info')
-                    ->action(function (AccountReceivable $record) {
-                        try {
-                            $asaasService = new AsaasService();
-                            $paymentId = $asaasService->createPayment($record);
-
-                            if ($paymentId) {
-                                Notification::make()
-                                    ->title('Sincronizado com sucesso')
-                                    ->body("Cobrança criada no Asaas: {$paymentId}")
-                                    ->success()
-                                    ->send();
-                            } else {
-                                Notification::make()
-                                    ->title('Erro')
-                                    ->body('Falha ao sincronizar')
-                                    ->danger()
-                                    ->send();
-                            }
-                        } catch (\Throwable $e) {
-                            Notification::make()
-                                ->title('Erro')
-                                ->body($e->getMessage())
-                                ->danger()
-                                ->send();
-                        }
-                    }),
+                    ->visible(fn (AccountReceivable $record) => blank($record->asaas_payment_id) && $record->status !== 'pago' && static::cobrancaLigada())
+                    ->requiresConfirmation()
+                    ->modalDescription('Cria a cobrança na conta Asaas da empresa e guarda o link de pagamento nesta conta a receber.')
+                    ->action(fn (AccountReceivable $record) => static::executarCobranca(fn () => app(CobrancaService::class)->gerar($record), 'Cobrança gerada', 'O link de pagamento já está nesta conta.')),
+                Tables\Actions\Action::make('verCobranca')
+                    ->label('Link de pagamento')
+                    ->icon('heroicon-o-link')
+                    ->color('gray')
+                    ->visible(fn (AccountReceivable $record) => filled($record->asaas_invoice_url))
+                    ->url(fn (AccountReceivable $record) => $record->asaas_invoice_url)
+                    ->openUrlInNewTab(),
+                Tables\Actions\Action::make('atualizarCobranca')
+                    ->label('Atualizar situação')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('gray')
+                    ->visible(fn (AccountReceivable $record) => filled($record->asaas_payment_id) && $record->status !== 'pago' && static::cobrancaLigada())
+                    ->action(fn (AccountReceivable $record) => static::executarCobranca(fn () => app(CobrancaService::class)->sincronizar($record), 'Situação atualizada')),
+                Tables\Actions\Action::make('cancelarCobranca')
+                    ->label('Cancelar cobrança')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->visible(fn (AccountReceivable $record) => filled($record->asaas_payment_id) && $record->status !== 'pago' && static::cobrancaLigada())
+                    ->requiresConfirmation()
+                    ->modalDescription('Cancela a cobrança no Asaas. Você poderá gerar outra depois.')
+                    ->action(fn (AccountReceivable $record) => static::executarCobranca(fn () => app(CobrancaService::class)->cancelar($record), 'Cobrança cancelada')),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -167,6 +176,25 @@ class AccountReceivableResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()]),
             ]);
+    }
+
+    /** A empresa tem o complemento e a cobrança automática ligada e configurada? */
+    public static function cobrancaLigada(): bool
+    {
+        return TenantAsaasSetting::daEmpresa(Tenancy::current()?->id)?->pronta() ?? false;
+    }
+
+    private static function executarCobranca(\Closure $acao, string $titulo, ?string $corpo = null): void
+    {
+        try {
+            $acao();
+            Notification::make()->title($titulo)->body($corpo)->success()->send();
+        } catch (CobrancaException $e) {
+            Notification::make()->title('Não foi possível')->body($e->getMessage())->danger()->send();
+        } catch (\Throwable $e) {
+            report($e);
+            Notification::make()->title('Erro ao falar com o Asaas')->body('Tente de novo em instantes.')->danger()->send();
+        }
     }
 
     public static function getPages(): array

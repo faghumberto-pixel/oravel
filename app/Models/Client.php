@@ -68,6 +68,7 @@ class Client extends Model implements AuthenticatableContract, FilamentUser
         'name',
         'activity_type',
         'cpf_cnpj',
+        'asaas_customer_id',
         'contact_name',
         'email',
         'cep',

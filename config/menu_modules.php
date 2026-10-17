@@ -361,4 +361,14 @@ return [
         'recurso' => true,
         'herda' => ['__nunca__'],
     ],
+
+    // Complementos vendidos à parte (não entram em nenhum pacote, nem no ERP Locadoras): nascem DESLIGADOS e a Central liga por contrato.
+    'modulo_cobranca_automatica' => [
+        'label' => 'Cobrança automática: boletos, Pix e cartão pelo Asaas do cliente, gerados a partir dos contratos',
+        'grupo' => 'Complementos',
+        'menu' => 'Cobrança automática (módulo)',
+        'slug' => 'modulo-cobranca-automatica-sem-rota',
+        'recurso' => true,
+        'herda' => ['__nunca__'],
+    ],
 ];

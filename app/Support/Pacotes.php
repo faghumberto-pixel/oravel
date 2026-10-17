@@ -54,7 +54,9 @@ class Pacotes
 
         if ($pacote['grupos'] === '*') {
             // Tudo que os menus oferecem + os extras explícitos de qualquer pacote (ex.: módulo recém-criado).
-            return collect($porGrupo)->flatMap(fn ($opcoes) => array_keys($opcoes))
+            $complementos = (array) config('pacotes.grupos_complementos', []);
+
+            return collect($porGrupo)->except($complementos)->flatMap(fn ($opcoes) => array_keys($opcoes))
                 ->merge(collect(self::todos())->flatMap(fn ($p) => $p['features'] ?? []))
                 ->merge(config('pacotes.base.features', []))
                 ->unique()->values()->all();

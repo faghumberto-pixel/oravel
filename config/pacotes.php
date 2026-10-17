@@ -14,6 +14,9 @@ return [
     // Códigos antigos de pacote → código atual (o pacote "CRM" passou a se chamar "Vendas").
     'aliases' => ['crm' => 'vendas'],
 
+    // Complementos (cobrança automática, notas fiscais) são vendidos à parte: nenhum pacote os inclui, nem o ERP completo.
+    'grupos_complementos' => ['Complementos'],
+
     'base' => [
         'grupos' => ['Configurações', 'Equipe'],
         'features' => ['modulo_dashboard'],

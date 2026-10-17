@@ -43,6 +43,14 @@ return [
         'webhook_token' => env('ASAAS_WEBHOOK_TOKEN'),
     ],
 
+    // Asaas DA EMPRESA CLIENTE (cada uma usa a própria conta e chave; o dinheiro não passa pela Oravel).
+    'asaas_empresa' => [
+        'urls' => [
+            'sandbox' => env('ASAAS_EMPRESA_SANDBOX_URL', 'https://api-sandbox.asaas.com/v3'),
+            'producao' => env('ASAAS_EMPRESA_PRODUCAO_URL', 'https://api.asaas.com/v3'),
+        ],
+    ],
+
     'traccar' => [
         'url' => env('TRACCAR_URL'),
         'email' => env('TRACCAR_EMAIL'),

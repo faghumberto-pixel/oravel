@@ -4,7 +4,9 @@ namespace App\Filament\Client\Pages;
 
 use App\Models\AccountReceivable;
 use App\Models\Client;
-use App\Services\AsaasService;
+use App\Models\TenantAsaasSetting;
+use App\Services\Cobranca\CobrancaException;
+use App\Services\Cobranca\CobrancaService;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -16,7 +18,7 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Facades\Auth;
 
 /**
- * "Gerar 2ª via" chama AsaasService::createPayment() sob demanda -- não
+ * "Gerar 2ª via" chama CobrancaService::gerar() (conta Asaas da empresa) sob demanda -- não
  * gera boleto no cadastro do AccountReceivable, só quando o Client pedir.
  * asaas_payment_id/asaas_invoice_url/asaas_boleto_url são reaproveitados
  * se já existirem (evita criar cobrança duplicada na Asaas a cada clique).
@@ -65,7 +67,8 @@ class MeuFinanceiro extends Page implements HasTable
                 Tables\Actions\Action::make('gerarSegundaVia')
                     ->label('Gerar 2ª via')
                     ->icon('heroicon-o-document-plus')
-                    ->visible(fn (AccountReceivable $record) => blank($record->asaas_invoice_url))
+                    // Só existe quando a empresa ligou a cobrança automática (conta Asaas DELA); nunca usa a conta da Oravel.
+                    ->visible(fn (AccountReceivable $record) => blank($record->asaas_invoice_url) && $record->status !== 'pago' && (TenantAsaasSetting::daEmpresa($record->tenant_id)?->pronta() ?? false))
                     ->form([
                         Forms\Components\Radio::make('billingType')
                             ->label('Forma de pagamento')
@@ -77,18 +80,13 @@ class MeuFinanceiro extends Page implements HasTable
                             ->required(),
                     ])
                     ->action(function (AccountReceivable $record, array $data) {
-                        /** @var Client $client */
-                        $client = $this->guard()->user();
-
                         try {
-                            $payment = app(AsaasService::class)->createPayment([
-                                'customer' => $client->tenant->asaas_customer_id,
-                                'billingType' => $data['billingType'],
-                                'value' => (float) $record->amount,
-                                'dueDate' => $record->due_date->toDateString(),
-                                'description' => $record->description,
-                            ]);
+                            app(CobrancaService::class)->gerar($record, $data['billingType']);
                         } catch (\Throwable $e) {
+                            if (! $e instanceof CobrancaException) {
+                                report($e);
+                            }
+
                             Notification::make()
                                 ->title('Não foi possível gerar a cobrança agora')
                                 ->body('Tente novamente em instantes ou contate a locadora.')
@@ -97,12 +95,6 @@ class MeuFinanceiro extends Page implements HasTable
 
                             return;
                         }
-
-                        $record->update([
-                            'asaas_payment_id' => $payment['id'] ?? null,
-                            'asaas_invoice_url' => $payment['invoiceUrl'] ?? null,
-                            'asaas_boleto_url' => $payment['bankSlipUrl'] ?? null,
-                        ]);
 
                         Notification::make()
                             ->title($data['billingType'] === 'PIX' ? 'Cobrança PIX gerada' : 'Boleto gerado')

@@ -3,56 +3,49 @@
 namespace App\Console\Commands;
 
 use App\Models\AccountReceivable;
-use App\Services\AsaasService;
+use App\Models\TenantAsaasSetting;
+use App\Services\Cobranca\CobrancaException;
+use App\Services\Cobranca\CobrancaService;
 use Illuminate\Console\Command;
 
+/**
+ * Rede de segurança do webhook: consulta no Asaas DA EMPRESA as cobranças ainda abertas e atualiza as contas a receber.
+ * Cada empresa usa a própria chave (nunca a da Oravel) e só empresas com a cobrança automática ligada são consultadas.
+ */
 class SyncAsaasPaymentStatus extends Command
 {
-    protected $signature = 'asaas:sync-payment-status {--limit=100 : Máximo de registros por execução}';
+    protected $signature = 'asaas:sync-payment-status {--limit=100 : Máximo de contas por empresa em cada execução} {--tenant-id= : Só uma empresa}';
 
-    protected $description = 'Sincroniza status de pagamentos com Asaas (busca atualizações)';
+    protected $description = 'Confere no Asaas de cada empresa as cobranças abertas e atualiza as contas a receber';
 
-    public function handle()
+    public function handle(CobrancaService $cobranca): int
     {
-        $asaasService = new AsaasService();
-        $limit = (int) $this->option('limit');
+        $limite = (int) $this->option('limit');
+        $atualizadas = 0;
 
-        // Buscar contas a receber com asaas_payment_id mas que podem ter mudado de status
-        $receivables = AccountReceivable::whereNotNull('asaas_payment_id')
-            ->where('status', '!=', 'pago') // Já pagas não precisam sincronizar
-            ->limit($limit)
-            ->get();
+        TenantAsaasSetting::withoutGlobalScopes()->where('enabled', true)
+            ->when($this->option('tenant-id'), fn ($q, $id) => $q->where('tenant_id', $id))
+            ->get()
+            ->filter(fn (TenantAsaasSetting $c) => $c->pronta())
+            ->each(function (TenantAsaasSetting $config) use ($cobranca, $limite, &$atualizadas) {
+                AccountReceivable::withoutGlobalScopes()->where('tenant_id', $config->tenant_id)
+                    ->whereNotNull('asaas_payment_id')->where('status', '!=', 'pago')
+                    ->orderBy('updated_at')->limit($limite)->get()
+                    ->each(function (AccountReceivable $conta) use ($cobranca, &$atualizadas) {
+                        try {
+                            $antes = $conta->status.'|'.$conta->asaas_status;
+                            $cobranca->sincronizar($conta);
+                            $atualizadas += $antes !== $conta->status.'|'.$conta->asaas_status ? 1 : 0;
+                        } catch (CobrancaException $e) {
+                            $this->warn("Conta {$conta->id}: {$e->getMessage()}");
+                        } catch (\Throwable $e) {
+                            report($e);
+                        }
+                    });
+            });
 
-        $total = $receivables->count();
+        $this->info("Contas atualizadas: {$atualizadas}");
 
-        if ($total === 0) {
-            $this->info('✓ Nenhuma conta para sincronizar');
-            return 0;
-        }
-
-        $this->info("🔄 Sincronizando status de {$total} contas...");
-
-        $bar = $this->output->createProgressBar($total);
-        $updated = 0;
-
-        foreach ($receivables as $receivable) {
-            try {
-                if ($asaasService->syncPaymentStatus($receivable)) {
-                    $updated++;
-                }
-            } catch (\Throwable $e) {
-                $this->error("\n❌ Erro ao sincronizar {$receivable->id}: {$e->getMessage()}");
-            }
-
-            $bar->advance();
-        }
-
-        $bar->finish();
-        $this->newLine();
-        $this->newLine();
-
-        $this->info("✅ Sincronização concluída: {$updated} contas atualizadas");
-
-        return 0;
+        return self::SUCCESS;
     }
 }
