@@ -3,17 +3,20 @@
 namespace App\Filament\Central\Resources;
 
 use App\Filament\Central\Resources\TenantResource\Pages;
+use App\Filament\Central\Resources\TenantResource\RelationManagers\EventsRelationManager;
 use App\Models\Client;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\CnpjLookupService;
 use App\Support\CrmPalette;
+use App\Support\Pacotes;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 
 class TenantResource extends Resource
@@ -184,6 +187,9 @@ class TenantResource extends Resource
                 Tables\Columns\TextColumn::make('name')->label('Empresa')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('slug')->label('Slug')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('plan.name')->label('Plano')->sortable(),
+                Tables\Columns\TextColumn::make('plan.pacote')->label('Pacote')->badge()
+                    ->formatStateUsing(fn (?string $state) => Pacotes::nome($state))
+                    ->color(fn (?string $state) => $state ? 'primary' : 'gray'),
                 Tables\Columns\TextColumn::make('segment')
                     ->label('Segmento')
                     ->badge()
@@ -201,6 +207,13 @@ class TenantResource extends Resource
                     ->color(fn (Tenant $record) => $record->implementationSummary()['color']),
                 Tables\Columns\TextColumn::make('created_at')->label('Criado em')->dateTime('d/m/Y H:i')->sortable(),
             ])->filters([
+                Tables\Filters\SelectFilter::make('pacote')->label('Pacote')
+                    ->options(Pacotes::opcoes() + ['personalizado' => 'Personalizado'])
+                    ->query(fn (Builder $query, array $data) => match ($data['value'] ?? null) {
+                        null, '' => $query,
+                        'personalizado' => $query->whereHas('plan', fn ($q) => $q->whereNull('pacote')),
+                        default => $query->whereHas('plan', fn ($q) => $q->where('pacote', $data['value'])),
+                    }),
                 Tables\Filters\SelectFilter::make('status')->label('Status')->options(['active' => 'Ativo', 'trial' => 'Teste']),
                 Tables\Filters\SelectFilter::make('segment')->label('Segmento')->options(Client::nicheLabels()),
                 // Usado pelos cards de resumo em ContratoResource ("Pagos"
@@ -224,7 +237,7 @@ class TenantResource extends Resource
     public static function getRelations(): array
     {
         return [
-            \App\Filament\Central\Resources\TenantResource\RelationManagers\EventsRelationManager::class,
+            EventsRelationManager::class,
         ];
     }
 

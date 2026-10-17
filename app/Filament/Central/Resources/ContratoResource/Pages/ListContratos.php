@@ -21,6 +21,7 @@ class ListContratos extends ListRecords
     {
         return [
             ContratoResource\Widgets\ContratoFunnelStats::class,
+            ContratoResource\Widgets\ClientesPorPacoteStats::class,
         ];
     }
 }

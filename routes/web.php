@@ -71,6 +71,7 @@ use App\Models\MaintenancePlan;
 use App\Models\PreventiveMaintenanceExecution;
 use App\Models\User;
 use App\Support\AppProfile;
+use App\Support\Pacotes;
 use App\Support\Tenancy;
 use Filament\Facades\Filament;
 use Filament\Http\Controllers\RedirectToHomeController;
@@ -302,6 +303,11 @@ Route::middleware(['auth'])->group(function () {
 
         if ($user && AppProfile::for($user) !== AppProfile::ADMIN) {
             return redirect()->to(AppProfile::homeUrl($user, AppProfile::for($user)));
+        }
+
+        // Contrato de pacote (CRM, Estoque, Logística) entra direto na tela do pacote.
+        if ($user && ($urlPacote = Pacotes::urlInicial(Tenancy::current() ?? $user->tenant))) {
+            return redirect()->to($urlPacote);
         }
 
         // Quem entra em /admin cai sempre na tela de Início (Painel de

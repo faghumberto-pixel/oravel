@@ -49,7 +49,7 @@ class AppProfile
     public static function homeUrl(User $user, string $profile): string
     {
         return match ($profile) {
-            self::ADMIN => route('filament.admin.pages.painel-controle'),
+            self::ADMIN => Pacotes::urlInicial(Tenancy::current() ?? $user->tenant) ?? route('filament.admin.pages.painel-controle'),
             self::TECNICO => route('filament.admin.pages.technician-daily-tasks'),
             default => route('filament.admin.pages.app-colaborador'),
         };

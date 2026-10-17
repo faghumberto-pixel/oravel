@@ -6,11 +6,14 @@ use App\Filament\Central\Resources\ContratoResource\Pages;
 use App\Models\DocumentSignature;
 use App\Models\Plan;
 use App\Models\Tenant;
+use App\Support\Colaborador\Modulos;
 use App\Support\MenuModules;
+use App\Support\Pacotes;
 use App\Support\SaaSRegistry;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -121,7 +124,7 @@ class ContratoResource extends Resource
         // toggle (liga a página App\Filament\Pages\ManageTenantSettings)
         // deveria estar.
         $grouped['Configurações']['modulo_configuracoes'] = 'Painel: Configurações do Tenant';
-        $grouped['Configurações'][\App\Support\Colaborador\Modulos::FEATURE] = 'App do Colaborador (celular)';
+        $grouped['Configurações'][Modulos::FEATURE] = 'App do Colaborador (celular)';
         ksort($grouped);
 
         return $grouped;
@@ -153,6 +156,7 @@ class ContratoResource extends Resource
             'tabela_courses' => 'Academia e Comunicação',
             'caixa_email' => 'Academia e Comunicação',
             'tabela_client_messages' => 'Comercial',
+            'tabela_crm_etapas' => 'Comercial', // etapas do funil: gerenciadas dentro de Funis e Etapas, sem Resource próprio
             'landing_page_leads' => 'Comercial',
             'tabela_battery_cycle_readings' => 'Manutenção',
             'tabela_equipment_hour_meters' => 'Manutenção',
@@ -170,6 +174,15 @@ class ContratoResource extends Resource
             'tabela_asaas_sync' => 'Financeiro',
             'modulo_dashboard' => 'Painel Inicial',
         ];
+    }
+
+    /** Marca em cada grupo os módulos do pacote (união com o que já está marcado: nunca desmarca). */
+    public static function aplicarPacote(string $pacote, callable $get, callable $set): void
+    {
+        foreach (array_keys(static::groupedFeatureOptions()) as $grupo) {
+            $campo = static::groupFieldName($grupo);
+            $set($campo, array_values(array_unique(array_merge((array) ($get($campo) ?? []), Pacotes::featuresDoGrupo($pacote, $grupo)))));
+        }
     }
 
     /**
@@ -221,6 +234,28 @@ class ContratoResource extends Resource
                         ->helperText('Uso interno -- não aparece pro cliente, só ajuda você a reconhecer esse contrato depois.')
                         ->required()
                         ->maxLength(255),
+
+                    Forms\Components\Select::make('pacote')
+                        ->label('Pacote')
+                        ->options(Pacotes::opcoes())
+                        ->placeholder('Personalizado (módulos montados à mão)')
+                        ->live()
+                        ->helperText('Identifica o produto vendido (Locadora, CRM, Estoque, Logística). Depois de escolher, use "Aplicar módulos do pacote" e ajuste os extras abaixo.'),
+
+                    Forms\Components\Actions::make([
+                        Forms\Components\Actions\Action::make('aplicarPacote')
+                            ->label('Aplicar módulos do pacote')
+                            ->icon('heroicon-o-squares-plus')
+                            ->color('gray')
+                            ->requiresConfirmation()
+                            ->modalDescription('Marca os módulos do pacote (e a base comum: usuários, configurações e painel inicial). Não desmarca nada que já esteja selecionado.')
+                            ->visible(fn (Get $get) => filled($get('pacote')))
+                            ->action(function (Get $get, Set $set) {
+                                static::aplicarPacote((string) $get('pacote'), fn ($campo) => $get($campo), fn ($campo, $valor) => $set($campo, $valor));
+
+                                Notification::make()->title('Módulos do pacote marcados. Revise e salve.')->success()->send();
+                            }),
+                    ])->key('acoesPacote'),
 
                     Forms\Components\TextInput::make('base_price')
                         ->label('Valor Mensal')
@@ -366,6 +401,9 @@ class ContratoResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('name')->label('Contrato')->weight('bold')->searchable(),
+                Tables\Columns\TextColumn::make('pacote')->label('Pacote')->badge()
+                    ->formatStateUsing(fn (?string $state) => Pacotes::nome($state))
+                    ->color(fn (?string $state) => $state ? 'primary' : 'gray'),
                 Tables\Columns\TextColumn::make('base_price')->label('Valor')->money('BRL')->weight('bold'),
                 Tables\Columns\TextColumn::make('billing_cycle')
                     ->label('Ciclo')
@@ -396,6 +434,15 @@ class ContratoResource extends Resource
                     ->state(fn (Plan $record) => static::funnelStatusFor($record)['label'])
                     ->color(fn (Plan $record) => static::funnelStatusFor($record)['color']),
                 Tables\Columns\TextColumn::make('created_at')->label('Criado em')->dateTime('d/m/Y H:i')->sortable(),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('pacote')->label('Pacote')
+                    ->options(Pacotes::opcoes() + ['personalizado' => 'Personalizado'])
+                    ->query(fn (Builder $query, array $data) => match ($data['value'] ?? null) {
+                        null, '' => $query,
+                        'personalizado' => $query->whereNull('pacote'),
+                        default => $query->where('pacote', $data['value']),
+                    }),
             ])
             ->actions([
                 Tables\Actions\Action::make('copy_signup_link')

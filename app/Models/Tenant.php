@@ -285,6 +285,12 @@ class Tenant extends Model
         return true;
     }
 
+    /** Pacote do contrato (locadora, crm, estoque, logistica) ou null = personalizado. */
+    public function pacote(): ?string
+    {
+        return $this->plan?->pacote;
+    }
+
     public function plan(): BelongsTo
     {
         return $this->belongsTo(Plan::class, 'plan_id', 'id');
