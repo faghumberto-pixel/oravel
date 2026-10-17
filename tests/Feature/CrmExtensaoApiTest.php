@@ -153,8 +153,15 @@ class CrmExtensaoApiTest extends TestCase
     public function test_extension_download_needs_login_the_crm_module_and_a_built_package(): void
     {
         $dir = storage_path('app/extensao');
-        $zip = $dir.'/oravel-crm-whatsapp-0.0.1-teste.zip';
+        $zip = $dir.'/oravel-crm-whatsapp-9.9.9-teste.zip';
         File::ensureDirectoryExists($dir);
+
+        // Pacotes reais já gerados por build.sh saem do caminho durante o teste e voltam no fim.
+        $reais = [];
+        foreach (glob($dir.'/oravel-crm-whatsapp-*.zip') ?: [] as $real) {
+            File::move($real, $real.'.guardado');
+            $reais[] = $real;
+        }
 
         try {
             File::put($zip, 'PK-fake');
@@ -163,7 +170,7 @@ class CrmExtensaoApiTest extends TestCase
 
             $this->get($url)->assertRedirect();   // visitante vai para o login
 
-            $this->actingAs($this->usuario($t, 'admin'))->get($url)->assertOk()->assertDownload('oravel-crm-whatsapp-0.0.1-teste.zip');
+            $this->actingAs($this->usuario($t, 'admin'))->get($url)->assertOk()->assertDownload('oravel-crm-whatsapp-9.9.9-teste.zip');
 
             $semModulo = $this->tenant(['tabela_clients' => true]);
             $this->actingAs($this->usuario($semModulo, 'admin'))->get($url)->assertForbidden();
@@ -172,6 +179,10 @@ class CrmExtensaoApiTest extends TestCase
             $this->actingAs($this->usuario($t, 'admin'))->get($url)->assertNotFound();
         } finally {
             File::delete($zip);
+
+            foreach ($reais as $real) {
+                File::move($real.'.guardado', $real);
+            }
         }
     }
 }
