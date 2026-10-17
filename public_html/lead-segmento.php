@@ -173,6 +173,17 @@ if (!turnstile_ok((string) ($_POST['cf-turnstile-response'] ?? ''), $config['tur
     voltar($pagina, 'erro=captcha');
 }
 
+// Origem do anúncio (preenchida pelo t.js nos campos ocultos). Só valores simples; o resto é descartado.
+$anuncio = [];
+foreach (['gclid', 'gbraid', 'wbraid'] as $k) {
+    $v = limpar($_POST[$k] ?? '', 200);
+    if ($v !== '' && preg_match('/^[A-Za-z0-9_\-]+$/', $v)) { $anuncio[$k] = $v; }
+}
+foreach (['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'landing_url'] as $k) {
+    $v = limpar($_POST[$k] ?? '', $k === 'landing_url' ? 255 : 200);
+    if ($v !== '') { $anuncio[$k] = $v; }
+}
+
 $rotuloPorte = $origem === 'logistica-transportes' ? 'Nº de veículos' : 'Nº de técnicos';
 $corpo  = "Nome: {$nome}\n";
 $corpo .= "Empresa: {$empresa}\n";
@@ -181,6 +192,9 @@ $corpo .= 'WhatsApp: ' . ($fone !== '' ? $fone : '(não informado)') . "\n";
 $corpo .= 'Segmento: ' . $segmentos[$segKey] . "\n";
 $corpo .= "{$rotuloPorte}: {$porte}\n";
 $corpo .= "Origem: página {$origem}\n";
+if (! empty($anuncio['utm_campaign']) || ! empty($anuncio['gclid'])) {
+    $corpo .= 'Anúncio: ' . ($anuncio['utm_source'] ?? 'google') . ' / ' . ($anuncio['utm_campaign'] ?? 'sem campanha') . "\n";
+}
 $assunto = "Novo lead ({$origem}) — {$empresa}";
 
 // 1) guarda o lead antes de qualquer tentativa de envio
@@ -188,7 +202,7 @@ $lead = [
     'id' => bin2hex(random_bytes(6)), 'quando' => date('c'), 'origem' => $origem,
     'nome' => $nome, 'empresa' => $empresa, 'email' => $email, 'whatsapp' => $fone,
     'segmento' => $segKey, 'porte' => $porte,
-];
+] + $anuncio;
 guardar_lead($lead + ['status' => 'recebido']);
 
 // 2) canal principal: CRM do app (notifica a equipe no sino). Não depende de e-mail.
@@ -203,7 +217,7 @@ $entreguePeloApp = enviar_para_app($config, array_filter([
     'segmento'     => $segmentos[$segKey],
     'porte'        => $porte,
     'porte_label'  => $rotuloPorte,
-], fn ($v) => $v !== ''));
+] + $anuncio, fn ($v) => $v !== ''));
 
 // 3) aviso por e-mail (extra): SMTP; se falhar E o app também, mail() do PHP como último recurso.
 $enviadoPorEmail = false;

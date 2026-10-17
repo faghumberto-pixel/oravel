@@ -43,7 +43,7 @@ $faq_grupos = [
       ["q" => "É difícil de implantar?", "a" => "Não. O cadastro inicial é simples e sua equipe já opera com dados reais da sua operação logo na primeira semana — sem curva de aprendizado de semanas."],
       ["q" => "Minha equipe não é boa com tecnologia, vai dar certo?", "a" => "A interface foi pensada pra quem está em campo, com o celular na mão — não é preciso ser \"da área de TI\" pra usar no dia a dia."],
       ["q" => "Preciso pagar por algo que talvez eu não use tudo?", "a" => "Não. Você começa com o básico e ativa o resto — preventiva, QR Code, relatórios — no seu ritmo, conforme sua operação cresce."],
-      ["q" => "Tem contrato de fidelidade?", "a" => "Não. Você não fica preso a um contrato de permanência mínima — pode cancelar quando quiser."],
+      ["q" => "Tem contrato de fidelidade?", "a" => "Sim. O contrato tem prazo inicial de 12 meses e se renova por períodos de 12 meses. Em troca, a implantação tem condição especial. Para não renovar, basta avisar com 60 dias de antecedência; cancelar antes do fim do período prevê multa, nos termos do contrato."],
       ["q" => "Como funciona o suporte depois que eu começo a usar?", "a" => "Suporte dedicado em português nas primeiras semanas de uso, pra sua equipe não travar na virada. Depois disso, atendimento contínuo por e-mail e chat."],
     ],
   ],
@@ -59,6 +59,14 @@ $faq_grupos = [
 ?>
 <?php include __DIR__ . '/inc/head.php'; ?>
 <?php include __DIR__ . '/inc/nav.php'; ?>
+<?php
+$faq_ld = ["@context" => "https://schema.org", "@type" => "FAQPage", "mainEntity" => []];
+foreach ($faq_grupos as $g) { foreach ($g['itens'] as $it) {
+  $faq_ld["mainEntity"][] = ["@type" => "Question", "name" => trim(html_entity_decode(strip_tags($it['q']), ENT_QUOTES, 'UTF-8')),
+    "acceptedAnswer" => ["@type" => "Answer", "text" => trim(html_entity_decode(strip_tags($it['a']), ENT_QUOTES, 'UTF-8'))]];
+} }
+?>
+<script type="application/ld+json"><?= json_encode($faq_ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) ?></script>
 
 <header class="page-header">
   <div class="page-header-inner">

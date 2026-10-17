@@ -1,5 +1,7 @@
 <IfModule mod_rewrite.c>
 RewriteEngine On
+# "Soluções" saiu do site (15/10/2026): só existem as Frentes da home
+RewriteRule ^solucoes(\.php|/.*)?$ https://oravel.com.br/#frentes [R=301,NE,L]
 # Páginas antigas de FSM e PCM foram absorvidas por Manutenção Industrial
 RewriteRule ^(fsm|pcm)/?$ https://oravel.com.br/software-manutencao-industrial/ [R=301,L]
 RewriteCond %{REQUEST_FILENAME} !-f

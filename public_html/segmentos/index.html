@@ -109,11 +109,6 @@
   .ifoot-links a:hover { color: var(--ink); }
   .ifoot-copy { font-size: 13px; color: var(--ink-faint); }
 .ifoot-legal { font-size: 11.5px; color: var(--ink-faint); margin-top: 4px; }
-
-/* Proteção básica contra cópia (dissuasão client-side, não impede DevTools/curl). */
-html { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-input, textarea, select, [contenteditable] { -webkit-user-select: text; -moz-user-select: text; user-select: text; }
-img, svg { -webkit-user-drag: none; user-drag: none; }
 </style>
 </head>
 <body>
@@ -125,7 +120,7 @@ img, svg { -webkit-user-drag: none; user-drag: none; }
       <a href="/#frentes">Produtos</a>
       <div class="inav-dd">
         <a href="/segmentos/" aria-haspopup="true" aria-current="page">Segmentos</a>
-        <div class="inav-dd-menu"><a href="/erp-cmms/">Locação de Equipamentos</a><a href="/software-manutencao-industrial/">Manutenção Industrial</a><a href="/software-montagem-industrial/">Montagem Industrial</a><a href="/software-gestao-frota-logistica/">Logística e Transportes</a><a href="/software-gestao-de-servicos/">Gestão de Serviços</a><a href="/wms/">Distribuidor e Atacadista</a><a href="/crm/">Qualquer Segmento</a></div>
+        <div class="inav-dd-menu"><a href="/erp-cmms/">Locação de Equipamentos</a><a href="/software-manutencao-industrial/">Manutenção Industrial</a><a href="/software-montagem-industrial/">Montagem Industrial</a><a href="/software-gestao-frota-logistica/">Logística e Transportes</a><a href="/software-gestao-de-servicos/">Gestão de Serviços</a><a href="/wms/">Estoque</a><a href="/crm/">Qualquer Segmento</a></div>
       </div>
       <a href="/sobre-nos">Sobre</a>
       <a href="/contato.php">Contato</a>
@@ -407,28 +402,6 @@ img, svg { -webkit-user-drag: none; user-drag: none; }
     })();
 </script>
 
-<script>
-(function () {
-  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
-  document.addEventListener('copy', function (e) { e.preventDefault(); });
-  document.addEventListener('cut', function (e) { e.preventDefault(); });
-  document.addEventListener('selectstart', function (e) {
-    var t = e.target.tagName;
-    if (t !== 'INPUT' && t !== 'TEXTAREA') e.preventDefault();
-  });
-  document.addEventListener('dragstart', function (e) {
-    var t = e.target.tagName;
-    if (t === 'IMG' || t === 'svg' || t === 'SVG') e.preventDefault();
-  });
-  document.addEventListener('keydown', function (e) {
-    var k = (e.key || '').toLowerCase();
-    var mod = e.ctrlKey || e.metaKey;
-    if ((mod && ['c', 'x', 'u', 's'].indexOf(k) !== -1) || k === 'f12' || (mod && e.shiftKey && ['i', 'j', 'c'].indexOf(k) !== -1)) {
-      e.preventDefault();
-    }
-  });
-})();
-</script>
-
+<script async src="https://app.oravel.com.br/t.js?v=2"></script>
 </body>
 </html>
