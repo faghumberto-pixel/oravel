@@ -265,6 +265,10 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->to(AppProfile::homeUrl($user, AppProfile::resolve($user, $perfil)));
     })->whereIn('perfil', [...AppProfile::ALL, 'administrador'])->name('app.entrada');
 
+    // Manifesto do app instalável com o nome da solução contratada (ver ManifestoAppController).
+    Route::get('/app-manifest/{perfil}.json', \App\Http\Controllers\ManifestoAppController::class)
+        ->whereIn('perfil', AppProfile::ALL)->name('app.manifesto');
+
     Route::get('/admin/trocar-senha', fn () => view('auth.trocar-senha'))->name('admin.trocar-senha');
     Route::post('/admin/trocar-senha', [PasswordController::class, 'update'])->name('admin.trocar-senha.update');
 

@@ -25,6 +25,8 @@ return [
 
     'pacotes' => [
         'locadora' => [
+            // App instalável próprio da solução (manifesto dinâmico em ManifestoAppController).
+            'app' => ['nome' => 'Oravel Locadoras', 'curto' => 'Locadoras', 'cor' => '#0f172a'],
             'nome' => 'Locadora',
             'descricao' => 'ERP completo para locadoras: ativos, manutenção, contratos, estoque, logística, frota, financeiro e CRM.',
             'grupos' => '*',
@@ -33,6 +35,8 @@ return [
         ],
 
         'vendas' => [
+            // App instalável próprio da solução (manifesto dinâmico em ManifestoAppController).
+            'app' => ['nome' => 'Oravel Vendas', 'curto' => 'Vendas', 'cor' => '#db2777'],
             'nome' => 'Vendas',
             'descricao' => 'CRM de vendas independente do ERP: leads, funil, contas, catálogo, visitas, veículos, despesas, metas e propostas.',
             'grupos' => [],
@@ -46,6 +50,8 @@ return [
         ],
 
         'manutencao' => [
+            // App instalável próprio da solução (manifesto dinâmico em ManifestoAppController).
+            'app' => ['nome' => 'Oravel Manutenção', 'curto' => 'Manutenção', 'cor' => '#ea580c'],
             'nome' => 'Manutenção',
             'descricao' => 'Manutenção de equipamentos: ativos, ordens de serviço, preventiva (PMP), checklists e itens agregados — sem contratos, financeiro nem comercial.',
             'grupos' => ['Ativos', 'Manutenção', 'PMP', 'Itens Agregados'],
@@ -56,6 +62,8 @@ return [
         ],
 
         'servicos' => [
+            // App instalável próprio da solução (manifesto dinâmico em ManifestoAppController).
+            'app' => ['nome' => 'Oravel Serviços', 'curto' => 'Serviços', 'cor' => '#2563eb'],
             'nome' => 'Serviços',
             'descricao' => 'Prestação de serviços: clientes, orçamentos, propostas, ordens de serviço, contratos de serviço e financeiro — sem locação de equipamentos.',
             'grupos' => ['Ativos', 'Manutenção', 'Financeiro'],
@@ -67,6 +75,8 @@ return [
         ],
 
         'estoque' => [
+            // App instalável próprio da solução (manifesto dinâmico em ManifestoAppController).
+            'app' => ['nome' => 'Oravel Estoque', 'curto' => 'Estoque', 'cor' => '#7c3aed'],
             'nome' => 'Estoque',
             'descricao' => 'Gestão de estoque: materiais e peças, almoxarifado, compras, inventário e transferências.',
             'grupos' => ['Materiais e Peças'],
@@ -75,6 +85,8 @@ return [
         ],
 
         'logistica' => [
+            // App instalável próprio da solução (manifesto dinâmico em ManifestoAppController).
+            'app' => ['nome' => 'Oravel Logística', 'curto' => 'Logística', 'cor' => '#0d9488'],
             'nome' => 'Logística',
             'descricao' => 'Logística e frota: veículos, fretes, pátio, rastreamento, rotas, checklists, abastecimento e custos.',
             'grupos' => ['Logística', 'Gestão de Frota'],

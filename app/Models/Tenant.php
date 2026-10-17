@@ -7,6 +7,7 @@ use App\Services\AsaasService;
 use App\Services\TenantTimeline;
 use App\Support\Pacotes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -22,6 +23,7 @@ class Tenant extends Model
     // pagamento -- mesmo mecanismo já usado em Contract/MaintenanceOrder
     // (DocumentSignature + SignatureService), Tenant como terceiro tipo de
     // documento assinável. Ver AsaasCheckoutController.
+    use HasFactory;
     use HasSignatures;
     use HasUuids;
 

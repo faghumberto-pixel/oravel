@@ -57,6 +57,8 @@ class AppProfile
 
     public static function manifestUrl(?User $user): string
     {
-        return asset('manifest-'.self::for($user).'.json');
+        return $user
+            ? route('app.manifesto', self::for($user))
+            : asset('manifest-'.self::for($user).'.json');
     }
 }
