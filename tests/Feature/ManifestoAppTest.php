@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Resources\EmployeeResource;
 use App\Models\Plan;
 use App\Models\Tenant;
 use App\Models\User;
@@ -63,6 +64,15 @@ class ManifestoAppTest extends TestCase
 
         $this->actingAs($this->usuario('estoque'));
         $this->getJson(route('app.manifesto', AppProfile::ADMIN))->assertJsonPath('name', 'Oravel Estoque');
+    }
+
+    public function test_hr_package_has_its_own_app_and_opens_on_employees(): void
+    {
+        $usuario = $this->usuario('departamento_pessoal');
+        $this->actingAs($usuario);
+
+        $this->getJson(route('app.manifesto', AppProfile::ADMIN))->assertJsonPath('name', 'Oravel Pessoas')->assertJsonPath('theme_color', '#0ea5e9');
+        $this->assertTrue(method_exists(EmployeeResource::class, 'canAccess'), 'a tela inicial do pacote precisa de canAccess()');
     }
 
     public function test_exige_login(): void

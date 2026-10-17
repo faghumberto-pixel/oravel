@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Tests\TestCase;
 
-/** Pacotes vendáveis separadamente: Locadora, Vendas, Manutenção, Serviços, Estoque e Logística. */
+/** Pacotes vendáveis separadamente: Locadora, Vendas, Manutenção, Serviços, Estoque, Logística e Departamento Pessoal. */
 class PacotesVendaveisTest extends TestCase
 {
     use DatabaseTransactions;
@@ -29,15 +29,41 @@ class PacotesVendaveisTest extends TestCase
         return ['tabela_solicitacao_locacao', 'tabela_equipment_damages', 'tabela_equipment_replacements'];
     }
 
-    public function test_all_six_packages_exist_with_names(): void
+    public function test_all_seven_packages_exist_with_names(): void
     {
         $this->assertSame(
-            ['locadora', 'vendas', 'manutencao', 'servicos', 'estoque', 'logistica'],
+            ['locadora', 'vendas', 'manutencao', 'servicos', 'estoque', 'logistica', 'departamento_pessoal'],
             array_keys(Pacotes::opcoes())
         );
         $this->assertSame('Manutenção', Pacotes::nome('manutencao'));
         $this->assertSame('Serviços', Pacotes::nome('servicos'));
         $this->assertSame('Vendas', Pacotes::nome('vendas'));
+        $this->assertSame('Departamento Pessoal', Pacotes::nome('departamento_pessoal'));
+    }
+
+    public function test_hr_package_has_people_absences_time_clock_and_epi_but_nothing_operational(): void
+    {
+        $f = Pacotes::features('departamento_pessoal');
+
+        foreach (['tabela_employees', 'tabela_job_roles', 'tabela_departments', 'tabela_absences', 'tabela_equipment_allocations', 'tabela_time_clocks', 'tabela_epi_deliveries', 'tabela_epi_entries', 'tabela_epi_specifications', 'menu_gestao_epi', 'modulo_dashboard', 'tabela_courses'] as $chave) {
+            $this->assertContains($chave, $f, $chave);
+        }
+
+        $proibidas = array_merge(
+            $this->chavesDoGrupo('Ativos'), $this->chavesDoGrupo('Manutenção'), $this->chavesDoGrupo('Financeiro'), $this->chavesDoGrupo('Materiais e Peças'),
+            $this->chavesDoGrupo('Logística'), $this->chavesDoGrupo('Comercial'), $this->chavesDoGrupo('Complementos'),
+            ['tabela_contracts', 'tabela_quotes', 'tabela_crm_leads', 'tabela_maintenance_orders'],
+        );
+        $this->assertSame([], array_values(array_intersect($f, $proibidas)));
+    }
+
+    public function test_hr_package_showcase_plan_is_born_inactive_and_without_price(): void
+    {
+        $plano = Pacotes::planoDeVitrine('departamento_pessoal');
+
+        $this->assertFalse((bool) $plano->is_active);
+        $this->assertNull(Pacotes::precoSugerido('departamento_pessoal'));
+        $this->assertTrue((bool) ($plano->features['tabela_absences'] ?? false));
     }
 
     public function test_old_crm_code_is_an_alias_of_vendas(): void

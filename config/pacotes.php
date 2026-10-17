@@ -4,6 +4,7 @@ use App\Filament\Pages\Almoxarifado;
 use App\Filament\Pages\CrmFunil;
 use App\Filament\Pages\MaintenanceKanban;
 use App\Filament\Pages\ProgramacaoLogistica;
+use App\Filament\Resources\EmployeeResource;
 
 /**
  * Pacotes vendáveis do Oravel. Cada pacote é um conjunto de módulos montado pelos MESMOS grupos de menu da
@@ -92,6 +93,17 @@ return [
             'grupos' => ['Logística', 'Gestão de Frota'],
             'features' => [],
             'inicio' => ProgramacaoLogistica::class,
+        ],
+
+        'departamento_pessoal' => [
+            // App instalável próprio da solução (manifesto dinâmico em ManifestoAppController).
+            'app' => ['nome' => 'Oravel Pessoas', 'curto' => 'Pessoas', 'cor' => '#0ea5e9'],
+            'nome' => 'Departamento Pessoal',
+            'descricao' => 'Gestão de pessoas: colaboradores, cargos, faltas e atestados, ponto eletrônico, alocação de equipamentos e EPI com conformidade.',
+            // Equipe (colaboradores, cargos, departamentos, usuários e perfis) já vem na base comum.
+            'grupos' => ['Departamento Pessoal', 'EPI'],
+            'features' => [],
+            'inicio' => EmployeeResource::class,
         ],
     ],
 ];

@@ -158,7 +158,8 @@ class PacotesCheckoutTest extends TestCase
     {
         $html = file_get_contents(base_path('public_html/planos/index.html'));
 
-        foreach (array_keys(Pacotes::opcoes()) as $codigo) {
+        // Departamento Pessoal entra no site publicado junto com a página própria (branch do site, Fase 8I-site).
+        foreach (array_diff(array_keys(Pacotes::opcoes()), ['departamento_pessoal']) as $codigo) {
             $this->assertStringContainsString('href="https://app.oravel.com.br/assinar/'.$codigo.'"', $html, "link de {$codigo}");
         }
 
@@ -187,6 +188,6 @@ class PacotesCheckoutTest extends TestCase
 
         // Segunda vez: nada a criar.
         Livewire::test(ContratoResource\Pages\ListContratos::class)->callAction('criarVitrines')->assertNotified('Todos os pacotes já têm plano de vitrine.');
-        $this->assertSame(6, Plan::where('campaign_tag', 'vitrine')->count());
+        $this->assertSame(7, Plan::where('campaign_tag', 'vitrine')->count());
     }
 }
