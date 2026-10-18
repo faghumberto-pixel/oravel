@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToTenant;
+use App\Models\Concerns\HasSaaSMetadata;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class NotaFiscal extends Model
 {
     use BelongsToTenant;
+    use HasSaaSMetadata;
     use HasUuids;
+
+    // O módulo é o complemento "Nota fiscal de serviço": a mesma chave do contrato e do menu (config/menu_modules.php).
+    protected static ?string $saasFeatureKey = 'modulo_fiscal_nfse';
+
+    protected static ?string $saasPermissionSlug = 'nota_fiscal';
+
+    protected static ?string $saasModuleLabel = 'Notas Fiscais (NFS-e)';
 
     protected $table = 'notas_fiscais';
 

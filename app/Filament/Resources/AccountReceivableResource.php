@@ -84,6 +84,7 @@ class AccountReceivableResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn ($query) => $query->with('notasFiscais'))
             ->columns([
                 Tables\Columns\TextColumn::make('description')->label('Descrição')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('client.name')->label('Cliente')->searchable(),
@@ -101,6 +102,12 @@ class AccountReceivableResource extends Resource
                         'RECEIVED', 'CONFIRMED', 'RECEIVED_IN_CASH' => 'success', 'OVERDUE' => 'danger', 'PENDING' => 'warning', default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('cobranca_erro')->label('Falha na cobrança')->limit(40)->tooltip(fn ($state) => $state)->color('danger')->placeholder('—')->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('nfse')->label('NFS-e')->badge()
+                    ->visible(fn () => static::nfseLigada())
+                    ->getStateUsing(fn (AccountReceivable $r) => $r->notasFiscais->whereIn('status', [NotaFiscal::PROCESSANDO, NotaFiscal::AUTORIZADA])->first()?->status)
+                    ->formatStateUsing(fn (?string $state) => $state === NotaFiscal::AUTORIZADA ? 'Emitida' : ($state === NotaFiscal::PROCESSANDO ? 'Processando' : null))
+                    ->color(fn (?string $state) => $state === NotaFiscal::AUTORIZADA ? 'success' : 'warning')
+                    ->placeholder('—'),
                 Tables\Columns\IconColumn::make('asaas_payment_id')
                     ->label('Asaas')
                     ->boolean()

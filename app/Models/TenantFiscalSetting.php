@@ -22,7 +22,7 @@ class TenantFiscalSetting extends Model
     protected $fillable = [
         'tenant_id', 'enabled', 'ambiente', 'padrao', 'cnpj', 'razao_social', 'nome_fantasia', 'inscricao_municipal', 'inscricao_estadual', 'regime_tributario',
         'codigo_municipio', 'cep', 'logradouro', 'numero', 'complemento', 'bairro', 'municipio', 'uf', 'email', 'telefone',
-        'item_lista_servico', 'codigo_tributario_municipio', 'aliquota_iss', 'iss_retido', 'descricao_padrao', 'emissao_automatica',
+        'item_lista_servico', 'codigo_tributario_municipio', 'aliquota_iss', 'iss_retido', 'descricao_padrao', 'emissao_automatica', 'enviar_email_ao_autorizar',
         'provider_company_id', 'token_homologacao', 'token_producao', 'certificado_validade', 'certificado_enviado_em',
         'last_test_at', 'last_test_ok', 'last_error',
     ];
@@ -33,6 +33,7 @@ class TenantFiscalSetting extends Model
         'enabled' => 'boolean',
         'iss_retido' => 'boolean',
         'emissao_automatica' => 'boolean',
+        'enviar_email_ao_autorizar' => 'boolean',
         'aliquota_iss' => 'decimal:2',
         'token_homologacao' => 'encrypted',
         'token_producao' => 'encrypted',
@@ -93,10 +94,16 @@ class TenantFiscalSetting extends Model
         return $this->ambiente === 'producao' ? $this->token_producao : $this->token_homologacao;
     }
 
+    /** O certificado A1 enviado já passou da validade? (sem data conhecida, não bloqueia) */
+    public function certificadoVencido(): bool
+    {
+        return $this->certificado_validade !== null && $this->certificado_validade->lt(today());
+    }
+
     /** Pronta para emitir: ligada, cadastro completo, empresa no emissor e complemento no contrato. */
     public function pronta(): bool
     {
-        return $this->enabled && filled($this->token()) && $this->faltando() === [] && static::moduloLiberado($this->tenant_id);
+        return $this->enabled && filled($this->token()) && ! $this->certificadoVencido() && $this->faltando() === [] && static::moduloLiberado($this->tenant_id);
     }
 
     public function urlDoWebhook(): string

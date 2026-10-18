@@ -2,13 +2,16 @@
 
 namespace App\Services\Fiscal;
 
+use App\Mail\NotaFiscalMail;
 use App\Models\AccountReceivable;
 use App\Models\NotaFiscal;
 use App\Models\TenantFiscalSetting;
 use App\Models\User;
+use App\Services\AvisosWhatsApp;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Emite, consulta e acompanha a NFS-e de uma conta a receber. Fala com o emissor só por FiscalProvider. O retorno do emissor é
@@ -22,6 +25,10 @@ class NotaFiscalService
     public function emitir(AccountReceivable $conta, ?User $ator = null): NotaFiscal
     {
         $config = TenantFiscalSetting::daEmpresa($conta->tenant_id);
+
+        if ($config?->certificadoVencido()) {
+            throw new FiscalException('O certificado digital da empresa venceu. Envie um novo em Configurações → Notas fiscais.');
+        }
 
         if (! $config?->pronta()) {
             throw new FiscalException('As notas fiscais não estão ligadas para esta empresa. Ative em Configurações → Notas fiscais.');
@@ -65,6 +72,72 @@ class NotaFiscalService
         $this->aplicar($nota, $retorno);
 
         return $nota->refresh();
+    }
+
+    /**
+     * Cancela uma NFS-e autorizada. O emissor decide se o município aceita o cancelamento pela API.
+     *
+     * @throws FiscalException
+     */
+    public function cancelar(NotaFiscal $nota, string $motivo): NotaFiscal
+    {
+        $motivo = trim($motivo);
+
+        if ($nota->status !== NotaFiscal::AUTORIZADA) {
+            throw new FiscalException('Só é possível cancelar uma nota já autorizada.');
+        }
+
+        if (mb_strlen($motivo) < 15) {
+            throw new FiscalException('Explique o motivo do cancelamento com pelo menos 15 caracteres (exigência da prefeitura).');
+        }
+
+        $config = TenantFiscalSetting::daEmpresa($nota->tenant_id);
+
+        if (! $config || blank($config->token())) {
+            throw new FiscalException('Empresa sem cadastro no emissor fiscal.');
+        }
+
+        $retorno = $this->provider->cancelarNfse($config, $nota->ref, $motivo);
+
+        if (($retorno['status'] ?? '') !== NotaFiscal::CANCELADA) {
+            throw new FiscalException($retorno['mensagem'] ?? 'A prefeitura não aceitou o cancelamento desta nota.');
+        }
+
+        $nota->forceFill(['cancelamento_motivo' => mb_substr($motivo, 0, 1000)]);
+        $this->aplicar($nota, $retorno);
+
+        return $nota->refresh();
+    }
+
+    /** Envia os links da nota ao cliente por e-mail (pela caixa da empresa, se ela cadastrou uma). @throws FiscalException */
+    public function enviarPorEmail(NotaFiscal $nota): void
+    {
+        if ($nota->status !== NotaFiscal::AUTORIZADA || blank($nota->pdf_url)) {
+            throw new FiscalException('A nota ainda não foi autorizada pela prefeitura.');
+        }
+
+        $para = $nota->tomador['email'] ?? $nota->cliente?->email_financial ?? $nota->cliente?->email;
+
+        if (! filter_var($para, FILTER_VALIDATE_EMAIL)) {
+            throw new FiscalException('O cliente não tem um e-mail válido cadastrado.');
+        }
+
+        $empresa = TenantFiscalSetting::daEmpresa($nota->tenant_id)?->razao_social ?: 'Oravel';
+
+        Mail::to($para)->send(new NotaFiscalMail($nota, $empresa));
+        $nota->forceFill(['enviada_em' => now()])->save();
+    }
+
+    /** Envia o link da nota ao cliente por WhatsApp. @throws FiscalException */
+    public function enviarPorWhatsApp(NotaFiscal $nota): void
+    {
+        try {
+            AvisosWhatsApp::notaFiscal($nota);
+        } catch (\RuntimeException $e) {
+            throw new FiscalException($e->getMessage());
+        }
+
+        $nota->forceFill(['enviada_em' => now()])->save();
     }
 
     /** Pergunta ao emissor como está a nota e aplica o resultado. @throws FiscalException */
@@ -180,6 +253,16 @@ class NotaFiscalService
             $dados['cancelada_em'] = now();
         }
 
+        $acabouDeAutorizar = $status === NotaFiscal::AUTORIZADA && $nota->status !== NotaFiscal::AUTORIZADA;
+
         $nota->forceFill($dados)->save();
+
+        if ($acabouDeAutorizar && TenantFiscalSetting::daEmpresa($nota->tenant_id)?->enviar_email_ao_autorizar) {
+            try {
+                $this->enviarPorEmail($nota->refresh());
+            } catch (\Throwable $e) {
+                Log::info('NFS-e: e-mail ao cliente não enviado', ['nota' => $nota->id, 'motivo' => $e->getMessage()]);
+            }
+        }
     }
 }

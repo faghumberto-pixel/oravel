@@ -42,6 +42,7 @@ Schedule::command('asaas:sync-payment-status')->everyThirtyMinutes()->withoutOve
 // Cobrança automática (complemento): gera as contas dos planos de cobrança e as cobranças no Asaas de cada empresa que ligou a automação.
 Schedule::command('cobranca:processar')->dailyAt('06:00')->withoutOverlapping();
 Schedule::command('fiscal:reconsultar')->everyTenMinutes()->withoutOverlapping();
+Schedule::command('fiscal:avisar-certificados')->dailyAt('08:00')->withoutOverlapping();
 // Complementos: cancelamentos agendados, valor da mensalidade pendente no Asaas e aviso de fim da fidelidade.
 Schedule::command('complementos:sincronizar')->dailyAt('07:00')->withoutOverlapping();
 // Limpeza semanal de notificações e registros automáticos antigos (domingo de madrugada).

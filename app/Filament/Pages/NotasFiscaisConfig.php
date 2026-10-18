@@ -61,7 +61,7 @@ class NotasFiscaisConfig extends Page implements HasForms
     {
         $c = $this->config();
 
-        $this->form->fill($c ? $c->only(array_merge(array_keys(TenantFiscalSetting::OBRIGATORIOS), ['ambiente', 'padrao', 'nome_fantasia', 'inscricao_estadual', 'complemento', 'telefone', 'codigo_tributario_municipio', 'iss_retido', 'emissao_automatica'])) : $this->sugestao());
+        $this->form->fill($c ? $c->only(array_merge(array_keys(TenantFiscalSetting::OBRIGATORIOS), ['ambiente', 'padrao', 'nome_fantasia', 'inscricao_estadual', 'complemento', 'telefone', 'codigo_tributario_municipio', 'iss_retido', 'emissao_automatica', 'enviar_email_ao_autorizar'])) : $this->sugestao());
     }
 
     public function config(): ?TenantFiscalSetting
@@ -121,6 +121,8 @@ class NotasFiscaisConfig extends Page implements HasForms
                         ->helperText('Texto que sai na nota. O sistema acrescenta a descrição da conta a receber.')->columnSpanFull(),
                     Toggle::make('emissao_automatica')->label('Emitir a nota sozinho quando a cobrança for paga')
                         ->helperText('Desligado, você emite pelo botão "Emitir NFS-e" em cada conta a receber.'),
+                    Toggle::make('enviar_email_ao_autorizar')->label('Enviar a nota ao cliente por e-mail assim que a prefeitura autorizar')
+                        ->helperText('Sai pela caixa de e-mail da empresa, se estiver cadastrada. Por WhatsApp o envio é manual, na tela de Notas Fiscais.'),
                 ])->columns(3),
         ]);
     }
@@ -134,6 +136,12 @@ class NotasFiscaisConfig extends Page implements HasForms
         }
 
         $cert = $c->certificado_validade ? ' Certificado válido até <b>'.$c->certificado_validade->format('d/m/Y').'</b>.' : ' <b style="color:#b45309">Certificado ainda não enviado.</b>';
+
+        if ($c->certificado_validade && $c->certificado_validade->lte(now()->addDays(30))) {
+            $cert .= $c->certificado_validade->isPast()
+                ? ' <b style="color:#b91c1c">O certificado venceu: envie um novo para continuar emitindo.</b>'
+                : ' <b style="color:#b45309">O certificado vence em '.now()->startOfDay()->diffInDays($c->certificado_validade).' dias: providencie a renovação.</b>';
+        }
 
         if ($c->enabled) {
             return new HtmlString('<b style="color:#15803d">Ligada</b> em ambiente <b>'.($c->ambiente === 'producao' ? 'de produção' : 'de teste').'</b>.'.$cert);
@@ -225,7 +233,7 @@ class NotasFiscaisConfig extends Page implements HasForms
 
         $d = $this->form->getState();
         $campos = collect($d)->only(array_merge(array_keys(TenantFiscalSetting::OBRIGATORIOS), ['ambiente', 'padrao', 'nome_fantasia', 'inscricao_estadual', 'complemento', 'telefone', 'codigo_tributario_municipio']))->all()
-            + ['iss_retido' => (bool) ($d['iss_retido'] ?? false), 'emissao_automatica' => (bool) ($d['emissao_automatica'] ?? false)];
+            + ['iss_retido' => (bool) ($d['iss_retido'] ?? false), 'emissao_automatica' => (bool) ($d['emissao_automatica'] ?? false), 'enviar_email_ao_autorizar' => (bool) ($d['enviar_email_ao_autorizar'] ?? false)];
         $campos['cnpj'] = preg_replace('/\D/', '', (string) ($campos['cnpj'] ?? ''));
         $campos['uf'] = strtoupper((string) ($campos['uf'] ?? ''));
 

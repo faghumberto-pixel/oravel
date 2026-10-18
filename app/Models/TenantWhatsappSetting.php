@@ -15,7 +15,7 @@ class TenantWhatsappSetting extends Model
     protected $fillable = [
         'tenant_id', 'enabled', 'waba_id', 'access_token', 'app_secret', 'verify_token',
         'template_abertura', 'template_proposta', 'template_language', 'distribuicao', 'atendentes', 'ultimo_atendente_id',
-        'aviso_cobranca', 'aviso_cobranca_dias_antes', 'template_cobranca', 'cobranca_com_link', 'aviso_os', 'template_os_concluida',
+        'aviso_cobranca', 'aviso_cobranca_dias_antes', 'template_cobranca', 'cobranca_com_link', 'aviso_os', 'template_os_concluida', 'template_nfse',
         'last_test_at', 'last_test_ok', 'last_error',
     ];
 

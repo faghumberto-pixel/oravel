@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\AccountReceivable;
 use App\Models\Client;
 use App\Models\MaintenanceOrder;
+use App\Models\NotaFiscal;
 use App\Models\TenantAsaasSetting;
 use App\Models\TenantWhatsappSetting;
 use App\Models\WhatsappMensagem;
@@ -135,6 +136,34 @@ class AvisosWhatsApp
 
         if (! static::enviar($config, $cliente, $conta->due_date->isPast() ? 'cobranca_atrasada' : 'cobranca_vencimento', $config->template_cobranca, $variaveis, $conta, forcar: true)) {
             throw new \RuntimeException('O WhatsApp não aceitou a mensagem (sem número da empresa ou modelo recusado).');
+        }
+    }
+
+    /**
+     * Envia a NFS-e ao cliente por WhatsApp (botão "Enviar ao cliente"). Lança com o motivo quando não dá para enviar.
+     *
+     * @throws \RuntimeException
+     */
+    public static function notaFiscal(NotaFiscal $nota): void
+    {
+        $config = TenantWhatsappSetting::withoutGlobalScopes()->where('tenant_id', $nota->tenant_id)->first();
+
+        if (! $config || ! $config->enabled || blank($config->template_nfse) || ! WhatsAppEmpresaService::moduloLiberado($nota->tenant_id)) {
+            throw new \RuntimeException('O WhatsApp da empresa não está ligado ou falta o modelo de NFS-e (Configurações → WhatsApp da Empresa).');
+        }
+
+        $cliente = $nota->cliente ?? throw new \RuntimeException('A nota não tem cliente.');
+
+        if (! $cliente->aceita_avisos_whatsapp) {
+            throw new \RuntimeException('O cliente não aceitou receber avisos por WhatsApp.');
+        }
+
+        if (blank($nota->pdf_url)) {
+            throw new \RuntimeException('A nota ainda não foi autorizada pela prefeitura.');
+        }
+
+        if (! static::enviar($config, $cliente, 'nfse', $config->template_nfse, [(string) $cliente->name, (string) $nota->numero, (string) $nota->pdf_url], $nota, forcar: true)) {
+            throw new \RuntimeException('O WhatsApp não aceitou a mensagem (cliente sem WhatsApp válido, sem número da empresa ou modelo recusado).');
         }
     }
 
