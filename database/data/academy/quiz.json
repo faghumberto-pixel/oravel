@@ -6761,5 +6761,65 @@
     "why": "O app é o sistema aberto em tela cheia: precisa de internet e de login ativo."
    }
   ]
+ },
+ {
+  "page": "/configuracoes/notas-fiscais.html",
+  "questions": [
+   {
+    "q": "O que acontece com o arquivo do certificado digital A1 e a senha depois de enviados?",
+    "options": [
+     "Ficam guardados no sistema para uso futuro",
+     "Seguem direto ao emissor e não ficam guardados; o sistema só guarda a validade",
+     "Ficam guardados só até a primeira nota",
+     "São enviados por e-mail ao contador"
+    ],
+    "correct": 1,
+    "why": "O certificado e a senha são repassados ao emissor e descartados: aparece apenas a validade."
+   },
+   {
+    "q": "Por qual ambiente você deve começar a configurar as notas?",
+    "options": [
+     "Direto em Produção",
+     "Teste (homologação), que não tem valor fiscal",
+     "Tanto faz, a nota é igual nos dois",
+     "Só existe produção"
+    ],
+    "correct": 1,
+    "why": "No ambiente de teste a nota não tem valor fiscal; só depois de conferir se troca para Produção."
+   },
+   {
+    "q": "Uma conta a receber já tem uma NFS-e autorizada. O que o botão Emitir NFS-e faz?",
+    "options": [
+     "Emite uma segunda nota",
+     "Não aparece: cada conta só tem uma nota ativa",
+     "Cancela a nota e emite outra",
+     "Apaga a conta"
+    ],
+    "correct": 1,
+    "why": "Uma conta só pode ter uma nota em processamento ou autorizada; o botão some."
+   },
+   {
+    "q": "Qual é o mínimo exigido para o motivo do cancelamento de uma nota?",
+    "options": [
+     "Nenhum motivo",
+     "5 caracteres",
+     "15 caracteres",
+     "100 caracteres"
+    ],
+    "correct": 2,
+    "why": "A prefeitura exige um motivo com pelo menos 15 caracteres."
+   },
+   {
+    "q": "O certificado digital da empresa venceu. O que o sistema faz?",
+    "options": [
+     "Continua emitindo normalmente",
+     "Para de emitir e avisa; é preciso enviar o certificado renovado",
+     "Emite notas só em ambiente de teste",
+     "Cancela as notas já emitidas"
+    ],
+    "correct": 1,
+    "why": "Com o certificado vencido a emissão é bloqueada até o envio de um novo certificado."
+   }
+  ]
  }
 ]

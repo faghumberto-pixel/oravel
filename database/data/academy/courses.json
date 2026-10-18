@@ -52,6 +52,13 @@
                 "feature": null
             },
             {
+                "title": "Configurar as notas fiscais (NFS-e)",
+                "href": "/configuracoes/notas-fiscais.html",
+                "slug": "configuracoes__notas-fiscais",
+                "summary": "Dados fiscais, certificado digital A1, emitir a NFS-e pela conta a receber, enviar ao cliente, cancelar e acompanhar a validade do certificado.",
+                "feature": "modulo_fiscal_nfse"
+            },
+            {
                 "title": "Instalar o app da sua solução",
                 "href": "/configuracoes/instalar-app.html",
                 "slug": "configuracoes__instalar-app",

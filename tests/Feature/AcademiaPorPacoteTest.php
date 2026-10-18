@@ -133,11 +133,14 @@ class AcademiaPorPacoteTest extends TestCase
         $total = Lesson::withoutGlobalScopes()->count();
 
         $locadora = AcademiaDoPlano::resumo(array_fill_keys(Pacotes::features('locadora'), true));
-        $this->assertSame($total - 1, $locadora['aulas'], 'tudo, menos a aula do complemento de cobrança automática (não faz parte de nenhum pacote)');
+        $this->assertSame($total - 2, $locadora['aulas'], 'tudo, menos as aulas dos complementos (cobrança automática e nota fiscal de serviço não fazem parte de nenhum pacote)');
 
         $com = AcademiaDoPlano::resumo(array_fill_keys(array_merge(Pacotes::features('manutencao'), ['modulo_cobranca_automatica']), true));
         $sem = AcademiaDoPlano::resumo(array_fill_keys(Pacotes::features('manutencao'), true));
         $this->assertSame($sem['aulas'] + 1, $com['aulas']);
+
+        $comNota = AcademiaDoPlano::resumo(array_fill_keys(array_merge(Pacotes::features('manutencao'), ['modulo_fiscal_nfse']), true));
+        $this->assertSame($sem['aulas'] + 1, $comNota['aulas'], 'a aula de notas fiscais só aparece com o complemento de NFS-e');
     }
 
     public function test_setup_course_reaches_every_package_except_the_complement_lesson(): void
