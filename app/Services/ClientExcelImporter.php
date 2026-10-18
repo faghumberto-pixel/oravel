@@ -5,9 +5,9 @@ namespace App\Services;
 use App\Models\Client;
 use App\Models\Tenant;
 use App\Support\AssetImport\AssetImportColumns as Norm;
+use App\Support\ClientDuplicidade;
 use App\Support\ClientImport\ClientImportColumns as Cols;
 use App\Support\ExcelImport\XlsxReader;
-use App\Support\ClientDuplicidade;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -20,9 +20,10 @@ class ClientExcelImporter
     /**
      * @return array{created:int, updated:int, skipped:int, errors:list<array{line:int, patrimonio:string, message:string}>, dry_run:bool}
      */
-    public function import(string $path, Tenant $tenant, bool $updateExisting = false, bool $dryRun = false): array
+    public function import(string $path, Tenant $tenant, bool $updateExisting = false, bool $dryRun = false, ?int $maxRows = null): array
     {
-        $result = ['created' => 0, 'updated' => 0, 'skipped' => 0, 'errors' => [], 'dry_run' => $dryRun];
+        // `rejected`: as linhas com erro como vieram na planilha (por título de coluna), para devolver ao cliente corrigir.
+        $result = ['created' => 0, 'updated' => 0, 'skipped' => 0, 'errors' => [], 'rejected' => [], 'dry_run' => $dryRun];
         $byTitle = [];
         foreach (Cols::all() as $col) {
             $byTitle[Norm::normalize($col['title'])] = $col;
@@ -30,6 +31,7 @@ class ClientExcelImporter
 
         $header = null;
         $map = [];
+        $nameIndex = null;
         $dataRows = [];
         foreach (XlsxReader::rows($path, Cols::SHEET) as $line => $cells) {
             if ($header === null) {
@@ -42,10 +44,16 @@ class ClientExcelImporter
                 if (collect($found)->contains(fn ($c) => $c['field'] === 'name')) {
                     $header = $line;
                     $map = $found;
+                    $nameIndex = collect($found)->search(fn ($c) => $c['field'] === 'name');
                 }
 
                 continue;
             }
+            // A linha de exemplo do modelo ("(EXEMPLO - apague esta linha)") nunca vira cliente, mesmo que o usuário esqueça de apagá-la.
+            if ($nameIndex !== null && $nameIndex !== false && str_starts_with(Norm::normalize((string) ($cells[$nameIndex] ?? '')), '(exemplo')) {
+                continue;
+            }
+
             if (collect($cells)->filter(fn ($v) => trim((string) $v) !== '')->isNotEmpty()) {
                 $dataRows[$line] = $cells;
             }
@@ -53,6 +61,12 @@ class ClientExcelImporter
 
         if ($header === null) {
             $result['errors'][] = ['line' => 0, 'patrimonio' => '', 'message' => 'Cabeçalho não encontrado: use o modelo da Oravel (coluna "Razão Social" obrigatória).'];
+
+            return $result;
+        }
+
+        if ($maxRows !== null && count($dataRows) > $maxRows) {
+            $result['errors'][] = ['line' => 0, 'patrimonio' => '', 'message' => 'A planilha tem '.count($dataRows)." clientes e o limite é de {$maxRows} por envio. Divida em arquivos menores e envie um de cada vez."];
 
             return $result;
         }
@@ -114,7 +128,9 @@ class ClientExcelImporter
                     $result[$outcome]++;
                 } catch (\Throwable $e) {
                     DB::rollBack();
-                    $result['errors'][] = ['line' => $line, 'patrimonio' => $label, 'message' => $e instanceof \DomainException ? $e->getMessage() : 'Erro inesperado: '.$e->getMessage()];
+                    $mensagem = $e instanceof \DomainException ? $e->getMessage() : 'Erro inesperado: '.$e->getMessage();
+                    $result['errors'][] = ['line' => $line, 'patrimonio' => $label, 'message' => $mensagem];
+                    $result['rejected'][] = ['line' => $line, 'message' => $mensagem, 'cells' => collect($map)->mapWithKeys(fn ($col, $i) => [$col['title'] => $cells[$i] ?? null])->all()];
                 }
             }
             $dryRun ? DB::rollBack() : DB::commit();
@@ -139,6 +155,10 @@ class ClientExcelImporter
         }
         $title = $col['title'];
         $str = is_float($text) && floor($text) === $text ? (string) (int) $text : (string) $text;
+
+        if (in_array($col['field'], ['phone', 'whatsapp', 'site_phone'], true) && ! in_array(strlen($this->digits($str)), range(10, 13), true)) {
+            throw new \DomainException("{$title}: \"{$str}\" deve ter DDD e número (10 a 13 dígitos).");
+        }
 
         switch ($col['type']) {
             case 'enum':

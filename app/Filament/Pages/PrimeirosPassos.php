@@ -7,13 +7,17 @@ use App\Models\Tenant;
 use App\Services\ClientExcelImporter;
 use App\Support\AppProfile;
 use App\Support\ClientImport\ClientImportColumns;
+use App\Support\ClientImport\ClientImportRelatorio;
 use App\Support\Onboarding\OnboardingService;
 use App\Support\Tenancy;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
+use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 /**
  * "Primeiros passos": checklist guiado da solução contratada (config/onboarding.php). Aparece como página inicial do administrador
@@ -102,7 +106,7 @@ class PrimeirosPassos extends Page
         return Action::make('baixarModelo')
             ->label('Baixar planilha modelo')
             ->action(fn () => response()->streamDownload(
-                fn () => ClientImportColumns::writeTemplate('php://output'),
+                fn () => ClientImportColumns::writeTemplate('php://output', linhaDeExemplo: true),
                 'modelo-importacao-clientes.xlsx',
                 ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
             ));
@@ -113,7 +117,7 @@ class PrimeirosPassos extends Page
         return Action::make('importar')
             ->label('Enviar planilha preenchida')
             ->modalHeading('Enviar planilha de clientes')
-            ->modalDescription('Use a planilha modelo. As linhas com erro são puladas e listadas no final; as demais são gravadas.')
+            ->modalDescription('Use a planilha modelo, com até '.config('onboarding.importacao_max_linhas').' clientes por envio. As linhas com erro são puladas e você baixa a lista com o motivo de cada uma; as demais são gravadas.')
             ->modalSubmitActionLabel('Importar')
             ->form([
                 FileUpload::make('arquivo')->label('Planilha (.xlsx)')->disk('local')->directory('client-imports')
@@ -121,16 +125,28 @@ class PrimeirosPassos extends Page
             ])
             ->action(function (array $data) {
                 $caminho = Storage::disk('local')->path($data['arquivo']);
+                $tenant = $this->tenant();
 
                 try {
-                    $r = app(ClientExcelImporter::class)->import($caminho, $this->tenant());
+                    $r = app(ClientExcelImporter::class)->import($caminho, $tenant, maxRows: (int) config('onboarding.importacao_max_linhas'));
                 } finally {
                     Storage::disk('local')->delete($data['arquivo']);
                 }
 
-                $erros = count($r['errors']);
-                Notification::make()->title("{$r['created']} importados".($erros ? ", {$erros} com erro" : ''))
-                    ->color($erros ? 'warning' : 'success')->persistent()->send();
+                $notificacao = Notification::make()->title(ClientImportRelatorio::resumo($r))->color($r['errors'] ? 'warning' : 'success')->persistent();
+
+                if ($r['errors'] && $r['rejected'] !== []) {
+                    $arquivo = $tenant->id.'-'.Str::uuid().'.csv';
+                    Storage::disk('local')->put("onboarding-rejeitadas/{$arquivo}", ClientImportRelatorio::csvDasRejeitadas($r['rejected']));
+                    $notificacao->actions([
+                        NotificationAction::make('baixar')->label('Baixar linhas rejeitadas')
+                            ->url(URL::temporarySignedRoute('onboarding.rejeitadas', now()->addMinutes(30), ['arquivo' => $arquivo])),
+                    ]);
+                } elseif ($r['errors']) {
+                    $notificacao->body($r['errors'][0]['message']);
+                }
+
+                $notificacao->send();
             });
     }
 

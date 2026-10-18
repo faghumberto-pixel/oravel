@@ -57,7 +57,7 @@ class ClientImportColumns
         ];
     }
 
-    public static function writeTemplate(string $target): void
+    public static function writeTemplate(string $target, bool $linhaDeExemplo = false): void
     {
         AssetImportColumns::writeTemplate($target, self::all(), self::SHEET, [
             'Modelo de cadastro de clientes - Oravel',
@@ -67,6 +67,6 @@ class ClientImportColumns
             'Acesso ao portal do cliente não faz parte deste modelo (é concedido depois, cliente a cliente).',
             '',
             '',
-        ]);
+        ], $linhaDeExemplo);
     }
 }

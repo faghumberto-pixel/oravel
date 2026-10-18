@@ -119,7 +119,7 @@ class AssetImportColumns
      * @param  list<array<string, mixed>>|null  $cols  padrão: colunas de ativos (o importador de clientes reaproveita este gerador)
      * @param  list<string>|null  $intro  linhas da aba Instruções (a primeira é o título)
      */
-    public static function writeTemplate(string $target, ?array $cols = null, string $sheetName = self::SHEET, ?array $intro = null): void
+    public static function writeTemplate(string $target, ?array $cols = null, string $sheetName = self::SHEET, ?array $intro = null, bool $linhaDeExemplo = false): void
     {
         $cols ??= self::all();
 
@@ -139,6 +139,16 @@ class AssetImportColumns
             fn (array $c) => Cell::fromValue($c['title'].($c['required'] ? ' *' : ''), $c['required'] ? $req : $head),
             $cols
         )));
+
+        if ($linhaDeExemplo) {
+            // Uma linha de exemplo na aba de dados, marcada para ser apagada; o importador a ignora se ficar na planilha.
+            $exemplo = (new Style)->setFontItalic()->setFontColor('6B7280')->setBackgroundColor('F3F4F6');
+            $writer->addRow(new Row(array_map(
+                fn (array $c, int $i) => Cell::fromValue($i === 0 ? '(EXEMPLO - apague esta linha) '.$c['example'] : $c['example'], $exemplo),
+                $cols,
+                array_keys($cols),
+            )));
+        }
 
         $sheet = $writer->addNewSheetAndMakeItCurrent();
         $sheet->setName('Instruções');

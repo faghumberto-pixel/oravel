@@ -30,6 +30,8 @@ use App\Http\Controllers\MaintenanceKanbanPrintController;
 use App\Http\Controllers\MaintenanceOrderController;
 use App\Http\Controllers\MaintenanceOrderDossieController;
 use App\Http\Controllers\MaintenanceReportController;
+use App\Http\Controllers\ManifestoAppController;
+use App\Http\Controllers\OnboardingRejeitadasController;
 use App\Http\Controllers\Pmp5w2hController;
 use App\Http\Controllers\PreventiveMaintenanceKanbanPrintController;
 use App\Http\Controllers\PrintQrController;
@@ -266,8 +268,11 @@ Route::middleware(['auth'])->group(function () {
     })->whereIn('perfil', [...AppProfile::ALL, 'administrador'])->name('app.entrada');
 
     // Manifesto do app instalável com o nome da solução contratada (ver ManifestoAppController).
-    Route::get('/app-manifest/{perfil}.json', \App\Http\Controllers\ManifestoAppController::class)
+    Route::get('/app-manifest/{perfil}.json', ManifestoAppController::class)
         ->whereIn('perfil', AppProfile::ALL)->name('app.manifesto');
+
+    // Linhas rejeitadas da importação de clientes dos Primeiros passos (link assinado, só da própria empresa).
+    Route::get('/admin/onboarding/rejeitadas/{arquivo}', OnboardingRejeitadasController::class)->name('onboarding.rejeitadas');
 
     Route::get('/admin/trocar-senha', fn () => view('auth.trocar-senha'))->name('admin.trocar-senha');
     Route::post('/admin/trocar-senha', [PasswordController::class, 'update'])->name('admin.trocar-senha.update');
