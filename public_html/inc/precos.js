@@ -11,8 +11,8 @@
     rec.appendChild(cheio);
     rec.appendChild(el('b', 'pv-valor', ' ' + brl(p.valor_recorrente)));
     rec.appendChild(el('span', 'pv-un', '/' + un));
+    rec.appendChild(el('span', 'pv-chip', p.desconto_percentual + '% de desconto no cartão recorrente'));
     box.appendChild(rec);
-    box.appendChild(el('div', 'pv-linha', 'No cartão recorrente (' + p.desconto_percentual + '% de desconto sobre o valor cheio).'));
     box.appendChild(el('div', 'pv-linha', 'Ou ' + brl(p.valor_cheio) + '/' + un + ' no boleto ou Pix, sem compromisso: 30 dias de acesso a cada pagamento.'));
     if (p.implantacao) {
       var i = p.implantacao;
@@ -24,12 +24,15 @@
 
   function taxas(box, lista) {
     if (!lista.length) return;
-    box.appendChild(el('h3', 'pv-tit', 'Taxas de configuração (opcionais, pagamento único)'));
+    box.appendChild(el('h3', 'pv-tit', 'Taxas de configuração · opcionais, pagamento único'));
     var ul = el('ul', 'pv-taxas');
     lista.forEach(function (t) {
       var li = el('li');
-      li.appendChild(el('b', null, t.nome + ' · ' + brl(t.valor)));
-      if (t.descricao) li.appendChild(el('span', null, ' ' + t.descricao));
+      var topo = el('div', 'pv-t-topo');
+      topo.appendChild(el('b', 'pv-t-nome', t.nome));
+      topo.appendChild(el('span', 'pv-t-valor', brl(t.valor)));
+      li.appendChild(topo);
+      if (t.descricao) li.appendChild(el('span', 'pv-t-desc', t.descricao));
       ul.appendChild(li);
     });
     box.appendChild(ul);
