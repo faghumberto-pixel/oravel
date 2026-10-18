@@ -2,8 +2,10 @@
 
 namespace App\Support;
 
+use App\Filament\Pages\PrimeirosPassos;
 use App\Models\MaintenanceOrder;
 use App\Models\User;
+use App\Support\Onboarding\OnboardingService;
 
 /**
  * Qual dos 3 apps instalaveis (Colaborador, Tecnico, Administrador) um
@@ -49,10 +51,22 @@ class AppProfile
     public static function homeUrl(User $user, string $profile): string
     {
         return match ($profile) {
-            self::ADMIN => Pacotes::urlInicial(Tenancy::current() ?? $user->tenant) ?? route('filament.admin.pages.painel-controle'),
+            self::ADMIN => self::urlDoOnboarding($user) ?? Pacotes::urlInicial(Tenancy::current() ?? $user->tenant) ?? route('filament.admin.pages.painel-controle'),
             self::TECNICO => route('filament.admin.pages.technician-daily-tasks'),
             default => route('filament.admin.pages.app-colaborador'),
         };
+    }
+
+    /** Enquanto o onboarding da solução está pendente, o administrador abre direto nos "Primeiros passos". */
+    private static function urlDoOnboarding(User $user): ?string
+    {
+        $tenant = Tenancy::current() ?? $user->tenant;
+
+        if (! $tenant || ! $user->isAdmin() || ! app(OnboardingService::class)->pendente($tenant)) {
+            return null;
+        }
+
+        return PrimeirosPassos::getUrl();
     }
 
     public static function manifestUrl(?User $user): string

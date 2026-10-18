@@ -106,7 +106,15 @@ class OnboardingService
         ];
     }
 
-    /** Há onboarding para mostrar: configurado, incompleto e não dispensado. */
+    /** Há passos por fazer (mesmo que a empresa tenha fechado o guia): o item do menu continua disponível para voltar a ele. */
+    public function incompleto(?Tenant $tenant): bool
+    {
+        $estado = $tenant ? $this->estado($tenant) : null;
+
+        return $estado !== null && ! $estado['completo'];
+    }
+
+    /** Há onboarding para mostrar sozinho (página inicial): configurado, incompleto e não dispensado. */
     public function pendente(?Tenant $tenant): bool
     {
         $estado = $tenant ? $this->estado($tenant) : null;
