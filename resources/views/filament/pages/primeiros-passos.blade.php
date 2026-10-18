@@ -76,7 +76,7 @@
         @if ($e['completo'])
             <div class="pp-fim">
                 <b>Tudo certo por aqui</b>
-                Sua primeira proposta já chegou ao cliente. Quando quiser ampliar, veja as outras soluções da Oravel.
+                {{ $e['conclusao'] }} Quando quiser ampliar, veja as outras soluções da Oravel.
                 <div style="margin-top:.8rem; display:flex; gap:.6rem; flex-wrap:wrap">
                     <x-filament::button tag="a" href="https://oravel.com.br/planos/" target="_blank" size="sm">Ver outras soluções</x-filament::button>
                     <x-filament::button color="gray" size="sm" wire:click="dispensar">Fechar este guia</x-filament::button>

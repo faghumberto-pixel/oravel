@@ -1,7 +1,13 @@
 <?php
 
+use App\Filament\Resources\AssetResource;
+use App\Filament\Resources\MaintenanceOrderResource;
+use App\Filament\Resources\MaintenancePlanResource;
 use App\Filament\Resources\PropostaComercialResource;
+use App\Support\Onboarding\Detectores\AtivosCadastrados;
 use App\Support\Onboarding\Detectores\ClientesImportados;
+use App\Support\Onboarding\Detectores\PrimeiraOrdemDeServico;
+use App\Support\Onboarding\Detectores\PrimeiroPlanoPreventivo;
 use App\Support\Onboarding\Detectores\PropostaEnviada;
 use App\Support\Onboarding\Detectores\PropostaVista;
 
@@ -35,12 +41,16 @@ return [
         'clientes_importados' => ClientesImportados::class,
         'proposta_enviada' => PropostaEnviada::class,
         'proposta_vista' => PropostaVista::class,
+        'ativos_cadastrados' => AtivosCadastrados::class,
+        'primeira_os' => PrimeiraOrdemDeServico::class,
+        'primeiro_plano_preventivo' => PrimeiroPlanoPreventivo::class,
     ],
 
     'solucoes' => [
         'servicos' => [
             'titulo' => 'Serviços',
             'meta' => 'enviar sua primeira proposta',
+            'conclusao' => 'Sua primeira proposta já chegou ao cliente.',
             'passos' => [
                 [
                     'chave' => 'importar_clientes',
@@ -77,8 +87,46 @@ return [
             ],
         ],
 
-        // TODO (não implementado): replicar para as outras soluções com os mesmos detectores/ações.
-        // 'manutencao' => passos sugeridos: cadastrar 3 equipamentos; gerar o QR Code; abrir a primeira OS.
+        'manutencao' => [
+            'titulo' => 'Manutenção',
+            'meta' => 'abrir sua primeira ordem de serviço',
+            'conclusao' => 'Seus equipamentos, a primeira ordem de serviço e o primeiro plano preventivo já estão no sistema.',
+            'passos' => [
+                [
+                    'chave' => 'cadastrar_equipamentos',
+                    'titulo' => 'Cadastre seus equipamentos',
+                    'descricao' => 'Cadastre pelo menos 3 equipamentos, um a um ou importando a planilha (botão Importar Excel na lista). Depois, imprima a etiqueta com QR Code de cada um.',
+                    'minutos' => 10,
+                    'detector' => 'ativos_cadastrados',
+                    'acoes' => [
+                        ['rotulo' => 'Cadastrar equipamento', 'recurso' => AssetResource::class, 'pagina' => 'create', 'icone' => 'heroicon-o-plus'],
+                        ['rotulo' => 'Importar planilha', 'recurso' => AssetResource::class, 'pagina' => 'index', 'icone' => 'heroicon-o-arrow-up-tray'],
+                    ],
+                ],
+                [
+                    'chave' => 'primeira_os',
+                    'titulo' => 'Abra sua primeira ordem de serviço',
+                    'descricao' => 'Escolha um equipamento, descreva o serviço e abra a OS. Ela aparece no kanban do pátio e o técnico a recebe no celular.',
+                    'minutos' => 5,
+                    'detector' => 'primeira_os',
+                    'acoes' => [
+                        ['rotulo' => 'Abrir ordem de serviço', 'recurso' => MaintenanceOrderResource::class, 'pagina' => 'create', 'icone' => 'heroicon-o-wrench-screwdriver'],
+                    ],
+                ],
+                [
+                    'chave' => 'primeiro_plano_preventivo',
+                    'titulo' => 'Crie seu primeiro plano preventivo',
+                    'descricao' => 'Defina de quanto em quanto tempo (horas, dias ou ciclos) um equipamento precisa de manutenção. O sistema passa a avisar quando vencer.',
+                    'minutos' => 5,
+                    'detector' => 'primeiro_plano_preventivo',
+                    'acoes' => [
+                        ['rotulo' => 'Criar plano preventivo', 'recurso' => MaintenancePlanResource::class, 'pagina' => 'create', 'icone' => 'heroicon-o-calendar-days'],
+                    ],
+                ],
+            ],
+        ],
+
+        // TODO (não implementado): replicar para Vendas com os mesmos detectores/ações.
         // 'vendas' => passos sugeridos: importar contatos; configurar o funil; criar a primeira negociação.
     ],
 ];

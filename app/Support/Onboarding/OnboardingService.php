@@ -64,7 +64,7 @@ class OnboardingService
     }
 
     /**
-     * @return array{solucao: string, titulo: string, meta: string, passos: list<array<string, mixed>>, total: int, concluidos: int, percentual: int, atual: ?int,
+     * @return array{solucao: string, titulo: string, meta: string, conclusao: string, passos: list<array<string, mixed>>, total: int, concluidos: int, percentual: int, atual: ?int,
      *     minutos_restantes: int, completo: bool, dispensado: bool, iniciado_em: Carbon, primeiro_acesso_em: mixed}|null
      */
     public function estado(Tenant $tenant): ?array
@@ -100,7 +100,7 @@ class OnboardingService
         $concluidos = $feitos->count();
 
         return [
-            'solucao' => $solucao, 'titulo' => $cfg['titulo'], 'meta' => $cfg['meta'], 'passos' => $passos, 'total' => $total, 'concluidos' => $concluidos,
+            'solucao' => $solucao, 'titulo' => $cfg['titulo'], 'meta' => $cfg['meta'], 'conclusao' => $cfg['conclusao'] ?? '', 'passos' => $passos, 'total' => $total, 'concluidos' => $concluidos,
             'percentual' => $total ? (int) round($concluidos / $total * 100) : 0, 'atual' => $atual, 'minutos_restantes' => $minutos, 'completo' => $concluidos >= $total,
             'dispensado' => $inicio->dispensado_em !== null, 'iniciado_em' => $inicio->iniciado_em, 'primeiro_acesso_em' => $inicio->primeiro_acesso_em,
         ];

@@ -123,9 +123,9 @@ class OnboardingLembretes
                 'Abrir os primeiros passos', $link, $ajuda,
             ),
             'passo_1' => new OnboardingLembreteMail(
-                'Você ainda não importou seus clientes', $saudacao,
-                ['Notamos que ainda não há clientes cadastrados na sua conta. Baixe a planilha modelo, preencha e envie: o sistema confere e avisa se alguma linha tiver erro.', 'Precisa de ajuda?'],
-                'Importar meus clientes', $link, $ajuda,
+                'Falta pouco: '.mb_strtolower($estado['passos'][0]['titulo']), $saudacao,
+                ["Ainda falta concluir o primeiro passo: \"{$estado['passos'][0]['titulo']}\". {$estado['passos'][0]['descricao']}", 'Precisa de ajuda?'],
+                'Continuar de onde parei', $link, $ajuda,
             ),
             'passo_3' => new OnboardingLembreteMail(
                 'Falta pouco para ver o primeiro resultado', $saudacao,
