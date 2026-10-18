@@ -315,7 +315,8 @@ class AsaasCheckoutController extends Controller
 
         return view('checkout.pending', [
             'token' => $tenant ? $token : null,
-            'motivo' => session('motivo_checkout'),
+            // Mesmo abrindo a tela depois (sem a sessão do erro), o e-mail com cara de digitação errada já mostra o formulário de correção.
+            'motivo' => session('motivo_checkout') === 'email' || ($tenant?->adminUser && EmailSemErroDeDigitacao::sugestao($tenant->adminUser->email)) ? 'email' : session('motivo_checkout'),
             'email' => $tenant?->adminUser?->email,
             'empresa' => $tenant?->name,
         ]);

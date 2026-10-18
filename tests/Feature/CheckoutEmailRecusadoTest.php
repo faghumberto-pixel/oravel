@@ -133,6 +133,9 @@ class CheckoutEmailRecusadoTest extends TestCase
         $this->withSession(['motivo_checkout' => 'geral'])->get(route('checkout.pending', ['t' => $token]))->assertOk()
             ->assertSee('Tentar de novo')->assertSee(route('checkout.continue', ['token' => $token]), false)->assertDontSee('E-mail correto');
 
+        $t->adminUser->forceFill(['email' => 'cliente@gamil.com'])->save();
+        $this->get(route('checkout.pending', ['t' => $token]))->assertOk()->assertSee('E-mail correto');
+
         $this->get(route('checkout.pending'))->assertOk()->assertSee('Recuperar meu link de pagamento')->assertDontSee('E-mail correto');
         $this->get(route('checkout.pending', ['t' => 'token-que-nao-existe']))->assertOk()->assertDontSee('E-mail correto');
     }
