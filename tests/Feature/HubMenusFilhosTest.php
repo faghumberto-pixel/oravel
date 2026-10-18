@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Pages\GestaoAtivos;
+use App\Filament\Pages\GestaoEpi;
 use App\Models\Plan;
 use App\Models\Role;
 use App\Models\Tenant;
@@ -101,5 +103,20 @@ class HubMenusFilhosTest extends TestCase
         $this->assertNotNull($url);
 
         $this->get($url)->assertOk()->assertSee('Grupos de Ativos')->assertDontSee('Categorias de Ativos');
+    }
+
+    public function test_opening_a_sidebar_group_goes_to_its_main_hub_page(): void
+    {
+        $this->actingAs($this->admin());
+        $this->paisComFilhos();
+
+        $mapa = HubMenus::paginaPrincipalDeCadaGrupo();
+        $this->assertSame(GestaoAtivos::getUrl(), $mapa['Ativos'] ?? null);
+        $this->assertSame(GestaoEpi::getUrl(), $mapa['EPI'] ?? null);
+        $this->assertArrayNotHasKey('Financeiro', $mapa, 'grupo sem página de menu pai segue como antes');
+
+        $this->get(GestaoAtivos::getUrl())->assertOk()
+            ->assertSee('fi-sidebar-group-button', false)
+            ->assertSee('"Ativos":"'.GestaoAtivos::getUrl().'"', false);
     }
 }

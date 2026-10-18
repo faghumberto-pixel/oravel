@@ -193,6 +193,10 @@ class AdminPanelProvider extends PanelProvider
                 fn () => view('filament.help-icon'),
             )
             ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn () => view('filament.hub-grupo-abre-pagina'),
+            )
+            ->renderHook(
                 // Busca de tela/menu -- o global search nativo do Filament so'
                 // aparece se algum Resource declarar getGloballySearchableAttributes()
                 // (nenhum declara hoje), entao a lupa nativa nunca renderiza. Ver
