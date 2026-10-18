@@ -91,7 +91,7 @@ class OnboardingTelaTest extends TestCase
 
     public function test_solutions_without_onboarding_and_non_admins_do_not_see_it(): void
     {
-        $this->actingAs($this->admin('vendas'));
+        $this->actingAs($this->admin('estoque'));
         $this->assertFalse(PrimeirosPassos::canAccess());
 
         $admin = $this->admin();

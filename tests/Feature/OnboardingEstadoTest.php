@@ -38,8 +38,8 @@ class OnboardingEstadoTest extends TestCase
     public function test_only_configured_solutions_have_onboarding(): void
     {
         $this->assertSame('servicos', $this->servico()->solucaoDe($this->tenant('servicos')));
-        $this->assertNull($this->servico()->solucaoDe($this->tenant('vendas')), 'Vendas ainda é só TODO na configuração');
-        $this->assertNull($this->servico()->estado($this->tenant('estoque')));
+        $this->assertNull($this->servico()->solucaoDe($this->tenant('estoque')), 'Estoque ainda não tem onboarding');
+        $this->assertNull($this->servico()->estado($this->tenant('logistica')));
 
         $personalizado = Plan::create(['name' => 'P'.uniqid(), 'price' => 1, 'is_active' => true, 'features' => []]);
         $t = Tenant::create(['name' => 'X', 'slug' => 'x-'.uniqid(), 'plan_id' => $personalizado->id, 'status' => 'active']);

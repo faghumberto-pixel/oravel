@@ -85,6 +85,12 @@ class PrimeirosPassos extends Page
             return $recurso::canViewAny() ? $recurso::getUrl($acao['pagina'] ?? 'index') : null;
         }
 
+        if (isset($acao['pagina_filament'])) {
+            $pagina = $acao['pagina_filament'];
+
+            return $pagina::canAccess() ? $pagina::getUrl() : null;
+        }
+
         if (isset($acao['aula'])) {
             return Course::visibleToUser()->where('slug', $acao['aula'])->exists() ? route('academy.course', $acao['aula']) : null;
         }

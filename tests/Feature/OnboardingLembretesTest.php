@@ -149,8 +149,8 @@ class OnboardingLembretesTest extends TestCase
     public function test_failed_send_is_retried_and_companies_without_onboarding_are_ignored(): void
     {
         Mail::fake();
-        $this->empresa(0, 'vendas');
-        $this->assertSame(0, array_sum($this->rodar()), 'Vendas ainda não tem onboarding');
+        $this->empresa(0, 'estoque');
+        $this->assertSame(0, array_sum($this->rodar()), 'Estoque ainda não tem onboarding');
 
         $t = $this->empresa(0);
         Mail::shouldReceive('to')->once()->andThrow(new \RuntimeException('smtp fora do ar'));

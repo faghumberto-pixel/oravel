@@ -1,13 +1,20 @@
 <?php
 
+use App\Filament\Pages\CrmFunil;
+use App\Filament\Pages\ImportarPlanilhaCrm;
 use App\Filament\Resources\AssetResource;
+use App\Filament\Resources\CrmLeadResource;
+use App\Filament\Resources\CrmPropostaResource;
 use App\Filament\Resources\MaintenanceOrderResource;
 use App\Filament\Resources\MaintenancePlanResource;
 use App\Filament\Resources\PropostaComercialResource;
 use App\Support\Onboarding\Detectores\AtivosCadastrados;
 use App\Support\Onboarding\Detectores\ClientesImportados;
+use App\Support\Onboarding\Detectores\InteracaoRegistrada;
+use App\Support\Onboarding\Detectores\LeadsCadastrados;
 use App\Support\Onboarding\Detectores\PrimeiraOrdemDeServico;
 use App\Support\Onboarding\Detectores\PrimeiroPlanoPreventivo;
+use App\Support\Onboarding\Detectores\PropostaCrmEnviada;
 use App\Support\Onboarding\Detectores\PropostaEnviada;
 use App\Support\Onboarding\Detectores\PropostaVista;
 
@@ -18,6 +25,7 @@ use App\Support\Onboarding\Detectores\PropostaVista;
  *
  * Passo: chave, titulo, descricao, minutos, detector (chave de `detectores`) e acoes[]. Cada ação tem `rotulo` e UM destes:
  *  - `recurso` + `pagina` (resource do painel admin e a página dele, ex.: index/create) → vai direto à tela;
+ *  - `pagina_filament` (classe de uma Page do painel, ex.: a importação de planilha do CRM) → vai direto à tela;
  *  - `acao` (baixar_modelo | importar), tratada pela própria tela de Primeiros passos;
  *  - `aula` (slug do curso da Academia) → abre a aula.
  * Closures não entram aqui (config:cache): o detector é sempre uma classe.
@@ -44,6 +52,9 @@ return [
         'ativos_cadastrados' => AtivosCadastrados::class,
         'primeira_os' => PrimeiraOrdemDeServico::class,
         'primeiro_plano_preventivo' => PrimeiroPlanoPreventivo::class,
+        'leads_cadastrados' => LeadsCadastrados::class,
+        'interacao_registrada' => InteracaoRegistrada::class,
+        'proposta_crm_enviada' => PropostaCrmEnviada::class,
     ],
 
     'solucoes' => [
@@ -126,7 +137,44 @@ return [
             ],
         ],
 
-        // TODO (não implementado): replicar para Vendas com os mesmos detectores/ações.
-        // 'vendas' => passos sugeridos: importar contatos; configurar o funil; criar a primeira negociação.
+        'vendas' => [
+            'titulo' => 'Vendas',
+            'meta' => 'enviar sua primeira proposta',
+            'conclusao' => 'Seus leads, o primeiro contato e a primeira proposta já estão no CRM.',
+            'passos' => [
+                [
+                    'chave' => 'cadastrar_leads',
+                    'titulo' => 'Cadastre seus leads',
+                    'descricao' => 'Importe sua planilha de contatos ou cadastre pelo menos 3 leads. O funil de vendas já vem pronto; ajuste as etapas quando quiser.',
+                    'minutos' => 10,
+                    'detector' => 'leads_cadastrados',
+                    'acoes' => [
+                        ['rotulo' => 'Importar planilha', 'pagina_filament' => ImportarPlanilhaCrm::class, 'icone' => 'heroicon-o-arrow-up-tray'],
+                        ['rotulo' => 'Cadastrar lead', 'recurso' => CrmLeadResource::class, 'pagina' => 'create', 'icone' => 'heroicon-o-plus'],
+                    ],
+                ],
+                [
+                    'chave' => 'registrar_contato',
+                    'titulo' => 'Registre seu primeiro contato',
+                    'descricao' => 'Abra um lead e registre a ligação, a mensagem ou a visita que você fez. O histórico fica guardado na ficha dele.',
+                    'minutos' => 5,
+                    'detector' => 'interacao_registrada',
+                    'acoes' => [
+                        ['rotulo' => 'Ver meus leads', 'recurso' => CrmLeadResource::class, 'pagina' => 'index', 'icone' => 'heroicon-o-users'],
+                        ['rotulo' => 'Abrir o funil de vendas', 'pagina_filament' => CrmFunil::class, 'icone' => 'heroicon-o-view-columns'],
+                    ],
+                ],
+                [
+                    'chave' => 'enviar_proposta',
+                    'titulo' => 'Envie sua primeira proposta',
+                    'descricao' => 'Monte a proposta com produtos e serviços para um lead e envie. Você acompanha quando o cliente abrir e responder.',
+                    'minutos' => 10,
+                    'detector' => 'proposta_crm_enviada',
+                    'acoes' => [
+                        ['rotulo' => 'Criar proposta', 'recurso' => CrmPropostaResource::class, 'pagina' => 'create', 'icone' => 'heroicon-o-document-text'],
+                    ],
+                ],
+            ],
+        ],
     ],
 ];
