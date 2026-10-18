@@ -431,6 +431,7 @@ def pagina_planos():
         '<p class="desc">O valor de cada solução aparece na tela de contratação. Compare abaixo o que cada uma inclui.</p></div></section>'
         f'<main class="wrap"><div class="plans">{cards_pacotes(com_shot=False)}</div>'
         f'<h2 style="margin:8px 0 14px">Compare o que está incluído</h2><div class="comp"><table><thead><tr><th>Recurso</th>{cab}</tr></thead><tbody>{linhas}</tbody></table></div>'
+        '<div class="note"><b>Complementos, contratados à parte:</b> <b>Cobrança automática</b> (boletos, Pix e cartão pela conta Asaas da sua empresa, com aviso por WhatsApp) e <b>Nota fiscal de serviço (NFS-e)</b> (emissão a partir da conta a receber, com envio ao cliente). Valem para qualquer solução e o valor é combinado com a nossa equipe.</div>'
         '<p class="note">Dúvida sobre qual solução escolher, ou precisa de uma combinação diferente? Fale com a nossa equipe em <a href="/contato.php">contato</a> e montamos o contrato sob medida.</p></main>'
     )
     return pagina_base('Planos | Oravel', 'Compare as soluções Oravel e contrate online: ERP Locadoras, Manutenção, Serviços, Logística, Estoque e Vendas.', corpo, '/planos/')
