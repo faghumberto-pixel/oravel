@@ -6,6 +6,7 @@ use App\Models\Plan;
 use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Support\HubMenus;
 use App\Support\SaaSRegistry;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationManager;
@@ -83,6 +84,7 @@ class HubMenusFilhosTest extends TestCase
             }
 
             $comFilhos++;
+            $resposta->assertSee('hub-h1', false)->assertSee(e(HubMenus::descricao($classe)), false)->assertDontSee('Escolha uma das opções abaixo para começar.');
             $resposta->assertSee('hub-card', false);
             foreach ($filhos as $rotulo) {
                 $resposta->assertSee(e($rotulo), false);

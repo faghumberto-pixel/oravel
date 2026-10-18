@@ -23,7 +23,11 @@
 
 <style>
     /* Cartões sóbrios: ícone em bloco suave, borda fina e destaque discreto ao passar o mouse. */
-    .hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
+    .hub-wrap { max-width: 1040px; margin: 0 auto; padding: 3rem 0 2rem; }
+    .hub-head { text-align: center; margin-bottom: 2.25rem; }
+    .hub-h1 { font-size: 1.9rem; font-weight: 700; letter-spacing: -.01em; line-height: 1.2; color: #0f172a; }
+    .hub-desc { max-width: 40rem; margin: .65rem auto 0; font-size: .95rem; line-height: 1.6; color: #64748b; }
+    .hub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 300px)); justify-content: center; gap: 1.1rem; }
     .hub-card { --hub-cor: #ea580c; display: flex; flex-direction: column; border-radius: .75rem; background: #fff; border: 1px solid #e2e8f0; text-decoration: none; color: inherit; transition: border-color .2s, box-shadow .2s, transform .2s; }
     .hub-card:hover, .hub-card:focus-visible { border-color: var(--hub-cor); box-shadow: 0 6px 18px rgba(15,23,42,.10); transform: translateY(-2px); outline: none; }
     .hub-top { display: flex; align-items: center; gap: .9rem; padding: 1.15rem 1.15rem 1rem; }
@@ -35,10 +39,17 @@
     .hub-card:hover .hub-foot { color: var(--hub-cor); }
     .hub-foot svg { width: .95rem; height: .95rem; }
     .dark .hub-card { background: #1c2230; border-color: #2d3548; }
+    .dark .hub-h1 { color: #f8fafc; } .dark .hub-desc { color: #94a3b8; }
     .dark .hub-title { color: #f1f5f9; } .dark .hub-sub { color: #94a3b8; } .dark .hub-foot { border-color: #2d3548; color: #94a3b8; }
     .hub-vazio { color: #64748b; }
     @media (prefers-reduced-motion: reduce) { .hub-card { transition: none; } .hub-card:hover { transform: none; } }
 </style>
+
+<div class="hub-wrap">
+    <div class="hub-head">
+        <h1 class="hub-h1">{{ $this->getTitle() }}</h1>
+        <p class="hub-desc">{{ \App\Support\HubMenus::descricao($this) }}</p>
+    </div>
 
 @if (count($filhos))
     <div class="hub-grid">
@@ -65,3 +76,4 @@
         <p class="hub-vazio">Nenhuma opção deste menu está liberada no seu plano ou perfil de acesso. Fale com o administrador da empresa.</p>
     </x-filament::section>
 @endif
+</div>
