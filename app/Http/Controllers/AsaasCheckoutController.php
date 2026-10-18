@@ -7,12 +7,15 @@ use App\Models\DocumentSignature;
 use App\Models\Plan;
 use App\Models\TaxaConfiguracao;
 use App\Models\Tenant;
+use App\Models\TenantEvent;
 use App\Models\User;
 use App\Rules\CpfCnpj;
+use App\Rules\EmailSemErroDeDigitacao;
 use App\Services\AsaasService;
 use App\Services\SignatureService;
 use App\Services\TaxasService;
 use App\Services\TenantProvisioner;
+use App\Services\TenantTimeline;
 use App\Support\Pacotes;
 use App\Support\Precos;
 use Illuminate\Http\RedirectResponse;
@@ -138,7 +141,7 @@ class AsaasCheckoutController extends Controller
             'cidade' => ['required', 'string', 'max:255'],
             'uf' => ['required', 'string', 'size:2'],
             'admin_name' => ['required', 'string', 'max:255'],
-            'admin_email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'admin_email' => ['required', 'email', 'max:255', 'unique:users,email', new EmailSemErroDeDigitacao],
             // Exigido pela Asaas pra criar o Checkout de pagamento (achado
             // real em PROD 2026-09-23: "O campo phoneNumber deve ser
             // informado"). Sem regex de formato -- a Asaas já normaliza o
@@ -290,10 +293,48 @@ class AsaasCheckoutController extends Controller
             return redirect()->away($checkoutUrl);
         }
 
-        // Assinou, mas o Checkout falhou ao criar (Asaas fora do ar etc)
-        // -- o cadastro e a assinatura já existem, mas sem link de
-        // pagamento pra mandar o cliente.
-        return redirect()->route('checkout.pending');
+        // Assinou, mas o Checkout falhou ao criar (Asaas fora do ar, e-mail recusado etc): o cadastro e a assinatura já existem, só falta o
+        // link. A equipe é avisada na hora (sino da Central + linha do tempo) e o cliente cai numa tela que deixa tentar de novo ou corrigir o e-mail.
+        $motivo = $asaas->ultimoErro;
+
+        TenantTimeline::record(
+            $tenant, TenantEvent::CHECKOUT_FALHOU, 'Link de pagamento não gerado',
+            $motivo ? 'Motivo informado pelo Asaas: '.mb_substr($motivo, 0, 300) : 'O Asaas não devolveu o link de pagamento (veja o log).',
+            dedupeKey: 'checkout-falhou:'.$tenant->id.':'.now()->format('YmdHi'), notify: true, level: 'danger',
+        );
+
+        return redirect()->route('checkout.pending', ['t' => $token])->with('motivo_checkout', str_contains(mb_strtolower((string) $motivo), 'email') ? 'email' : 'geral');
+    }
+
+    /** Tela de "pagamento pendente": tentar de novo, corrigir o e-mail (quando foi o motivo) ou falar com a equipe. */
+    public function pendente(Request $request): View
+    {
+        $token = (string) $request->query('t', '');
+        $assinatura = $token !== '' ? DocumentSignature::withoutGlobalScope('tenant')->where('token', $token)->where('signable_type', Tenant::class)->first() : null;
+        $tenant = $assinatura?->is_signed ? $assinatura->signable : null;
+
+        return view('checkout.pending', [
+            'token' => $tenant ? $token : null,
+            'motivo' => session('motivo_checkout'),
+            'email' => $tenant?->adminUser?->email,
+            'empresa' => $tenant?->name,
+        ]);
+    }
+
+    /** O e-mail do cadastro foi recusado: corrige o do administrador (só enquanto nada foi pago) e tenta o pagamento de novo. */
+    public function corrigirEmail(Request $request, string $token): RedirectResponse
+    {
+        $assinatura = DocumentSignature::withoutGlobalScope('tenant')->where('token', $token)->where('signable_type', Tenant::class)->first();
+        $tenant = $assinatura?->is_signed ? $assinatura->signable : null;
+        $admin = $tenant?->adminUser;
+
+        abort_unless($tenant && $admin && blank($tenant->asaas_subscription_id) && blank($tenant->asaas_checkout_id), 404);
+
+        $dados = $request->validate(['email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($admin->id), new EmailSemErroDeDigitacao]]);
+
+        $admin->forceFill(['email' => mb_strtolower($dados['email'])])->save();
+
+        return redirect()->route('checkout.continue', ['token' => $token]);
     }
 
     /**

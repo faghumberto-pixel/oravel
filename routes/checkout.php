@@ -15,7 +15,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('guest')->group(function () {
     Route::get('/assinar', [AsaasCheckoutController::class, 'create'])->name('checkout.create');
     Route::post('/assinar', [AsaasCheckoutController::class, 'store'])->name('checkout.store');
-    Route::get('/assinar/pendente', fn () => view('checkout.pending'))->name('checkout.pending');
+    Route::get('/assinar/pendente', [AsaasCheckoutController::class, 'pendente'])->name('checkout.pending');
+    Route::post('/assinar/corrigir-email/{token}', [AsaasCheckoutController::class, 'corrigirEmail'])->middleware('throttle:10,1')->name('checkout.fix-email');
 
     // callback do Checkout da Asaas (POST /v3/checkouts, ver
     // AsaasService::createTenantCheckout()) -- só controla a experiência

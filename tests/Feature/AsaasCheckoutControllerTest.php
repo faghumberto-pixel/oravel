@@ -6,6 +6,7 @@ use App\Models\Client;
 use App\Models\DocumentSignature;
 use App\Models\Plan;
 use App\Models\Tenant;
+use App\Models\TenantEvent;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
@@ -261,7 +262,9 @@ class AsaasCheckoutControllerTest extends TestCase
 
         $response = $this->get(route('checkout.continue', ['token' => $signature->token]));
 
-        $response->assertRedirect(route('checkout.pending', absolute: false));
+        // A tela de pendência recebe o contrato (para tentar de novo e corrigir o e-mail) e a equipe é avisada na linha do tempo.
+        $response->assertRedirect(route('checkout.pending', ['t' => $signature->token], absolute: false));
+        $this->assertTrue(TenantEvent::withoutGlobalScopes()->where('tenant_id', $tenant->id)->where('event_type', TenantEvent::CHECKOUT_FALHOU)->exists());
     }
 
     public function test_checkout_generates_unique_slug_for_duplicate_company_names(): void

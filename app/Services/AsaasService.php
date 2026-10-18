@@ -172,8 +172,13 @@ class AsaasService
      * (AsaasWebhookController) casa o evento de checkout pelo
      * externalReference primeiro, não só pelo asaas_customer_id.
      */
+    /** Motivo da última falha ao criar o checkout (texto do Asaas), para a tela de pagamento pendente e a linha do tempo. */
+    public ?string $ultimoErro = null;
+
     public function createTenantCheckout(Tenant $tenant): ?string
     {
+        $this->ultimoErro = null;
+
         if (blank($this->apiKey)) {
             Log::warning('AsaasService: API key não configurada, checkout não criado.', ['tenant_id' => $tenant->id]);
             $tenant->update(['asaas_status' => 'error']);
@@ -289,6 +294,7 @@ class AsaasService
             ]);
         } catch (\Throwable $e) {
             Log::warning('AsaasService: falha ao criar checkout.', ['tenant_id' => $tenant->id, 'error' => $e->getMessage()]);
+            $this->ultimoErro = $e->getMessage();
             $tenant->update(['asaas_status' => 'error']);
 
             return null;

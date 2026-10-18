@@ -29,18 +29,47 @@
                         <x-heroicon-o-clock class="h-7 w-7 text-white" />
                     </span>
 
-                    <h1 class="text-xl font-bold text-white">Cadastro recebido</h1>
+                    <h1 class="text-xl font-bold text-white">{{ $token ? 'Falta só o pagamento' : 'Cadastro recebido' }}</h1>
 
-                    <p class="mt-3 text-sm text-white/75">
-                        Sua empresa foi cadastrada, mas não conseguimos gerar o link de pagamento agora.
-                        Entraremos em contato para concluir a assinatura, ou você pode tentar novamente
-                        mais tarde.
-                    </p>
+                    @if ($token && $motivo === 'email')
+                        <p class="mt-3 text-sm text-white/75">
+                            Seu cadastro e o contrato estão prontos, mas o e-mail <strong class="text-white">{{ $email }}</strong>
+                            foi recusado pelo sistema de pagamento. Confira se está escrito certo e tente de novo.
+                        </p>
 
-                    <a href="{{ route('checkout.create') }}"
-                        class="mt-6 inline-block w-full rounded-full px-6 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-lg transition hover:opacity-90"
-                        style="background-color: #ea580c;">
-                        Voltar
+                        <form method="POST" action="{{ route('checkout.fix-email', $token) }}" class="mt-5 text-left">
+                            @csrf
+                            <label for="email" class="block text-xs font-semibold uppercase tracking-wide text-white/70">E-mail correto</label>
+                            <input id="email" name="email" type="email" required autocomplete="email" value="{{ old('email', $email) }}"
+                                class="mt-1 w-full rounded-xl border border-white/30 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-orange-400 focus:outline-none">
+                            @error('email')<p class="mt-2 text-sm text-orange-200">{{ $message }}</p>@enderror
+                            <button type="submit" class="mt-4 inline-block w-full rounded-full px-6 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-lg transition hover:opacity-90" style="background-color: #ea580c;">
+                                Corrigir e ir para o pagamento
+                            </button>
+                        </form>
+                    @elseif ($token)
+                        <p class="mt-3 text-sm text-white/75">
+                            Seu cadastro e o contrato de {{ $empresa }} estão prontos, mas não conseguimos gerar o link de pagamento agora.
+                            Já avisamos a nossa equipe. Você pode tentar de novo agora mesmo.
+                        </p>
+
+                        <a href="{{ route('checkout.continue', $token) }}" class="mt-5 inline-block w-full rounded-full px-6 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-lg transition hover:opacity-90" style="background-color: #ea580c;">
+                            Tentar de novo
+                        </a>
+                    @else
+                        <p class="mt-3 text-sm text-white/75">
+                            Sua empresa foi cadastrada, mas não conseguimos gerar o link de pagamento agora.
+                            Você pode tentar novamente mais tarde ou falar com a nossa equipe.
+                        </p>
+
+                        <a href="{{ route('checkout.recover') }}" class="mt-5 inline-block w-full rounded-full px-6 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-lg transition hover:opacity-90" style="background-color: #ea580c;">
+                            Recuperar meu link de pagamento
+                        </a>
+                    @endif
+
+                    <a href="https://wa.me/5519999332615?text={{ rawurlencode('Olá! Fiz o cadastro no Oravel'.($empresa ? ' ('.$empresa.')' : '').' e preciso de ajuda para concluir o pagamento.') }}" target="_blank" rel="noopener"
+                        class="mt-3 inline-block w-full rounded-full border border-white/40 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+                        Falar com a equipe pelo WhatsApp
                     </a>
                 </div>
 

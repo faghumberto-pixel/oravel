@@ -23,6 +23,8 @@ class TenantEvent extends Model
 
     public const CHECKOUT_CRIADO = 'checkout_criado';
 
+    public const CHECKOUT_FALHOU = 'checkout_falhou';
+
     public const CHECKOUT_PAGO = 'checkout_pago';
 
     public const CHECKOUT_CANCELADO = 'checkout_cancelado';
@@ -78,6 +80,7 @@ class TenantEvent extends Model
     {
         return [
             self::CLIENTE_CADASTRADO => ['label' => 'Cliente cadastrado', 'color' => 'gray'],
+            self::CHECKOUT_FALHOU => ['label' => 'Link de pagamento não gerado', 'color' => 'danger'],
             self::CONTRATO_ALTERADO => ['label' => 'Contrato alterado', 'color' => 'gray'],
             self::CONTRATO_LINK => ['label' => 'Link do contrato gerado', 'color' => 'info'],
             self::CONTRATO_ASSINADO => ['label' => 'Contrato assinado', 'color' => 'success'],
