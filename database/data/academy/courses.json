@@ -573,5 +573,18 @@
                 "feature": "tabela_account_receivables"
             }
         ]
+    },
+    {
+        "title": "Comece por aqui — Serviços",
+        "description": "Do cadastro de clientes à sua primeira proposta enviada, em poucos minutos.",
+        "lessons": [
+            {
+                "title": "Sua primeira proposta, passo a passo",
+                "href": "/comece-por-aqui/primeira-proposta.html",
+                "slug": "comece-por-aqui-servicos__primeira-proposta",
+                "summary": "Escolher o cliente, montar os itens, enviar para revisão e acompanhar o aceite online.",
+                "feature": "tabela_proposta_comercial"
+            }
+        ]
     }
 ]

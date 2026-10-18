@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Filament\Pages\PrimeirosPassos;
 use App\Filament\Resources\PropostaComercialResource;
 use App\Models\Client;
+use App\Models\Course;
+use App\Models\Lesson;
 use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
@@ -111,5 +113,17 @@ class OnboardingTelaTest extends TestCase
         $this->actingAs($a);
         Livewire::test(PrimeirosPassos::class)->assertSee('Faltam 2 passos');
         $this->assertTrue(app(OnboardingService::class)->estado($a->tenant)['passos'][0]['concluido']);
+    }
+
+    public function test_lesson_button_only_shows_when_the_course_is_published_and_available(): void
+    {
+        $this->actingAs($this->admin());
+        $curso = Course::create(['title' => 'Comece por aqui — Serviços', 'slug' => 'comece-por-aqui-servicos', 'is_published' => false, 'position' => 99]);
+        Lesson::create(['course_id' => $curso->id, 'title' => 'Sua primeira proposta', 'page_url' => '/comece-por-aqui/primeira-proposta.html', 'feature_key' => 'tabela_proposta_comercial', 'position' => 1]);
+
+        Livewire::test(PrimeirosPassos::class)->assertDontSee('Assistir aula de 5 min');
+
+        $curso->update(['is_published' => true]);
+        Livewire::test(PrimeirosPassos::class)->assertSee('Assistir aula de 5 min')->assertSee(route('academy.course', 'comece-por-aqui-servicos'), false);
     }
 }

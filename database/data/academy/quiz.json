@@ -6821,5 +6821,43 @@
     "why": "Com o certificado vencido a emissão é bloqueada até o envio de um novo certificado."
    }
   ]
+ },
+ {
+  "page": "/comece-por-aqui/primeira-proposta.html",
+  "questions": [
+   {
+    "q": "Depois que você envia a proposta para revisão, o que acontece com a edição?",
+    "options": [
+     "Continua livre para o vendedor",
+     "Fica travada para o vendedor",
+     "A proposta é apagada",
+     "Só o cliente pode editar"
+    ],
+    "correct": 1,
+    "why": "Enviada para o Comercial, a proposta fica travada para edição; confira tudo antes de enviar."
+   },
+   {
+    "q": "Quem pode aprovar a proposta que você mesmo criou?",
+    "options": [
+     "Ninguém",
+     "Somente o cliente",
+     "O vendedor que criou",
+     "O administrador da empresa"
+    ],
+    "correct": 3,
+    "why": "O vendedor não aprova a própria proposta, mas o administrador da empresa pode."
+   },
+   {
+    "q": "O que acontece quando o cliente aceita a proposta pelo link?",
+    "options": [
+     "Nada, é preciso refazer a proposta",
+     "O que foi vendido vira contrato de serviço",
+     "A proposta é apagada",
+     "O cliente é bloqueado"
+    ],
+    "correct": 1,
+    "why": "A proposta aceita gera contrato(s) de serviço."
+   }
+  ]
  }
 ]
