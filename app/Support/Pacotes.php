@@ -83,6 +83,9 @@ class Pacotes
 
     public const TAG_VITRINE = 'vitrine';
 
+    /** Contrato criado no cadastro quando o cliente escolhe mais de um produto: um por empresa, nunca aparece no site. */
+    public const TAG_COMBO = 'combo';
+
     /** Plano de vitrine já criado para o pacote (o que o site/checkout vende), ou null. */
     public static function vitrine(?string $codigo): ?Plan
     {
@@ -170,6 +173,60 @@ class Pacotes
     public static function featuresDeProdutos(array $codigos): array
     {
         return collect($codigos)->flatMap(fn ($c) => self::features($c))->unique()->values()->all();
+    }
+
+    /** Plano com preço cheio e escolha de forma de pagamento (vitrine do site ou combinação de produtos). */
+    public static function ehVitrine(?Plan $plano): bool
+    {
+        return in_array($plano?->campaign_tag, [self::TAG_VITRINE, self::TAG_COMBO], true);
+    }
+
+    /**
+     * Produtos à venda no site (vitrine ativa e com preço), exceto os códigos de $excluir.
+     *
+     * @param  list<string>  $excluir
+     * @return array<string, Plan> código => plano de vitrine
+     */
+    public static function vendaveis(array $excluir = []): array
+    {
+        return collect(self::todos())->keys()->reject(fn ($c) => in_array($c, $excluir, true))
+            ->mapWithKeys(fn ($c) => [$c => self::vitrine($c)])
+            ->filter(fn ($p) => $p && $p->is_active && (float) $p->base_price > 0)->all();
+    }
+
+    /**
+     * Contrato da empresa que escolheu vários produtos: valor cheio = SOMA dos valores cheios das vitrines (o desconto de
+     * recorrência é aplicado depois, sobre a soma, em Precos); módulos = união; implantação = soma (só se o principal tem).
+     *
+     * @param  list<string>  $extras
+     */
+    public static function planoCombinado(Plan $principal, array $extras): Plan
+    {
+        $vitrines = [$principal->pacote => $principal];
+        foreach ($extras as $codigo) {
+            $v = self::vendaveis()[self::normalizar($codigo)] ?? throw new \InvalidArgumentException("Produto indisponível: {$codigo}");
+            $vitrines[$v->pacote] = $v;
+        }
+
+        $codigos = array_keys($vitrines);
+        $soma = round(collect($vitrines)->sum(fn (Plan $p) => (float) $p->base_price), 2);
+        $implantacao = (float) $principal->implementation_fee > 0 ? round(collect($vitrines)->sum(fn (Plan $p) => (float) $p->implementation_fee), 2) : 0;
+
+        return Plan::create([
+            'name' => 'Oravel '.collect($codigos)->map(fn ($c) => self::nome($c))->implode(' + '),
+            'pacote' => $principal->pacote,
+            'pacotes' => $codigos,
+            'campaign_tag' => self::TAG_COMBO,
+            'level' => 1,
+            'price' => $soma,
+            'base_price' => $soma,
+            'billing_cycle' => $principal->billing_cycle,
+            'implementation_fee' => $implantacao,
+            'implementation_installments' => max(1, (int) collect($vitrines)->max('implementation_installments')),
+            'implantacao_opcional' => true,
+            'features' => array_fill_keys(self::featuresDeProdutos($codigos), true),
+            'is_active' => true,
+        ]);
     }
 
     /** Pacote do contrato do tenant (nulo = personalizado). */

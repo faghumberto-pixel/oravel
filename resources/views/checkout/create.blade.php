@@ -115,6 +115,23 @@
                             <x-input-error :messages="$errors->get('plan_id')" class="oravel-auth-error" />
                         </div>
 
+                        @if ($vitrine && ! empty($outrosProdutos))
+                            <div data-testid="produtos-extra">
+                                <span class="oravel-auth-label">Quer incluir outros produtos?</span>
+                                <p class="mt-1 text-xs text-white/70">O valor é a soma dos produtos e o desconto da recorrência vale sobre o total. Você pode mudar de produtos depois, sem perder seus dados.</p>
+                                <div class="mt-2 grid gap-2 sm:grid-cols-2">
+                                    @foreach ($outrosProdutos as $o)
+                                        <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-white/25 bg-white/10 p-3 text-sm text-white">
+                                            <input type="checkbox" name="produtos_extra[]" value="{{ $o['codigo'] }}" class="mt-1 produto-extra"
+                                                data-cheio="{{ $o['cheio'] }}" data-impl="{{ $o['implantacao'] }}" @checked(in_array($o['codigo'], (array) old('produtos_extra', []), true)) />
+                                            <span><strong class="block">{{ $o['nome'] }}</strong><span class="text-xs text-white/70">+ R$ {{ number_format($o['cheio'], 2, ',', '.') }}/mês (valor cheio)</span></span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                                <x-input-error :messages="$errors->get('produtos_extra')" class="oravel-auth-error" />
+                            </div>
+                        @endif
+
                         @if ($vitrine)
                             <div>
                                 <span class="oravel-auth-label">Como pagar a mensalidade</span>
@@ -123,15 +140,15 @@
                                         <input type="radio" name="forma_pagamento" value="cartao" class="mt-1" @checked(old('forma_pagamento', 'cartao') === 'cartao') />
                                         <span class="text-sm text-white">
                                             <strong class="block">Cartão de crédito recorrente</strong>
-                                            <span class="block text-lg font-bold">R$ {{ number_format($valorRecorrente, 2, ',', '.') }}/mês</span>
-                                            <span class="block text-xs text-white/70"><s>R$ {{ number_format($valorCheio, 2, ',', '.') }}</s> · {{ rtrim(rtrim(number_format($descontoPercentual, 2, ',', ''), '0'), ',') }}% de desconto pela recorrência</span>
+                                            <span class="block text-lg font-bold">R$ <span id="v-rec">{{ number_format($valorRecorrente, 2, ',', '.') }}</span>/mês</span>
+                                            <span class="block text-xs text-white/70"><s>R$ <span id="v-risc">{{ number_format($valorCheio, 2, ',', '.') }}</span></s> · {{ rtrim(rtrim(number_format($descontoPercentual, 2, ',', ''), '0'), ',') }}% de desconto pela recorrência</span>
                                         </span>
                                     </label>
                                     <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-white/25 bg-white/10 p-4">
                                         <input type="radio" name="forma_pagamento" value="boleto_pix" class="mt-1" @checked(old('forma_pagamento') === 'boleto_pix') />
                                         <span class="text-sm text-white">
                                             <strong class="block">Boleto ou Pix todo mês</strong>
-                                            <span class="block text-lg font-bold">R$ {{ number_format($valorCheio, 2, ',', '.') }}/mês</span>
+                                            <span class="block text-lg font-bold">R$ <span id="v-cheio">{{ number_format($valorCheio, 2, ',', '.') }}</span>/mês</span>
                                             <span class="block text-xs text-white/70">Valor cheio, sem compromisso. Cada pagamento libera 30 dias de acesso; sem novo pagamento, o sistema bloqueia até você pagar.</span>
                                         </span>
                                     </label>
@@ -147,7 +164,7 @@
                                             <input type="radio" name="implantacao" value="contratar" class="mt-1" @checked(old('implantacao', 'contratar') === 'contratar') />
                                             <span class="text-sm text-white">
                                                 <strong class="block">Contratar implantação</strong>
-                                                <span class="block text-lg font-bold">R$ {{ number_format($implantacaoValor, 2, ',', '.') }}</span>
+                                                <span class="block text-lg font-bold">R$ <span id="v-impl">{{ number_format($implantacaoValor, 2, ',', '.') }}</span></span>
                                                 <span class="block text-xs text-white/70">{{ $implantacaoParcelas > 1 ? 'À vista ou em até '.$implantacaoParcelas.'x' : 'À vista' }}</span>
                                             </span>
                                         </label>
@@ -392,6 +409,20 @@
 
         <script src="//unpkg.com/alpinejs" defer></script>
         <script>
+            (function () {
+                var extras = document.querySelectorAll('.produto-extra');
+                if (!extras.length) { return; }
+                var base = { cheio: {{ (float) $valorCheio }}, impl: {{ (float) $implantacaoValor }}, desc: {{ (float) $descontoPercentual }} };
+                function brl(v) { return v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+                function set(id, v) { var e = document.getElementById(id); if (e) { e.textContent = brl(v); } }
+                function recalcular() {
+                    var cheio = base.cheio, impl = base.impl;
+                    extras.forEach(function (c) { if (c.checked) { cheio += parseFloat(c.dataset.cheio); if (base.impl > 0) { impl += parseFloat(c.dataset.impl); } } });
+                    set('v-cheio', cheio); set('v-risc', cheio); set('v-rec', Math.round(cheio * (1 - base.desc / 100) * 100) / 100); set('v-impl', impl);
+                }
+                extras.forEach(function (c) { c.addEventListener('change', recalcular); });
+                recalcular();
+            })();
             (function () {
                 var tipo = document.getElementById('tipo_documento');
                 var doc = document.getElementById('cpf_cnpj');

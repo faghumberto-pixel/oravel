@@ -98,11 +98,16 @@ class AsaasCheckoutController extends Controller
     {
         return view('checkout.create', [
             'selectedPlan' => $selectedPlan,
-            'vitrine' => $selectedPlan->campaign_tag === Pacotes::TAG_VITRINE,
+            'vitrine' => Pacotes::ehVitrine($selectedPlan),
             'valorCheio' => (float) $selectedPlan->base_price,
             'valorRecorrente' => Precos::recorrente((float) $selectedPlan->base_price),
             'descontoPercentual' => Precos::descontoPercentual(),
             'taxas' => TaxaConfiguracao::disponiveis()->get(),
+            'outrosProdutos' => Pacotes::ehVitrine($selectedPlan) && $selectedPlan->campaign_tag === Pacotes::TAG_VITRINE
+                ? collect(Pacotes::vendaveis([(string) $selectedPlan->pacote]))->map(fn (Plan $p, string $c) => [
+                    'codigo' => $c, 'nome' => Pacotes::nome($c), 'cheio' => (float) $p->base_price, 'implantacao' => (float) $p->implementation_fee,
+                ])->values()->all()
+                : [],
             'implantacaoValor' => (float) $selectedPlan->implementation_fee,
             'implantacaoParcelas' => max(1, min(2, (int) $selectedPlan->implementation_installments)),
             'pacoteDescricao' => Pacotes::todos()[$selectedPlan->pacote ?? '']['descricao'] ?? null,
@@ -156,6 +161,8 @@ class AsaasCheckoutController extends Controller
             }],
             'admin_password' => ['required', 'string', 'min:8'],
             'plan_id' => ['required', 'uuid', 'exists:plans,id'],
+            'produtos_extra' => ['nullable', 'array'],
+            'produtos_extra.*' => ['string', Rule::in(array_keys(Pacotes::todos()))],
             'forma_pagamento' => ['nullable', Rule::in(['cartao', 'boleto_pix'])],
             'implantacao' => ['nullable', Rule::in(['contratar', 'nao_contratar'])],
             'taxas' => ['nullable', 'array'],
@@ -165,9 +172,19 @@ class AsaasCheckoutController extends Controller
 
         $plan = Plan::where('is_active', true)->findOrFail($data['plan_id']);
 
+        // Mais de um produto: contrato próprio da empresa com a soma dos valores e a união dos módulos.
+        $extras = array_values(array_diff(array_unique((array) ($data['produtos_extra'] ?? [])), [(string) $plan->pacote]));
+        if ($extras !== [] && $plan->campaign_tag === Pacotes::TAG_VITRINE) {
+            try {
+                $plan = Pacotes::planoCombinado($plan, $extras);
+            } catch (\InvalidArgumentException) {
+                return back()->withInput()->withErrors(['produtos_extra' => 'Um dos produtos escolhidos não está disponível agora. Desmarque-o e tente de novo.']);
+            }
+        }
+
         // Planos de vitrine têm valor cheio (a escolha de como pagar define o valor) e implantação opcional.
         // Contratos comuns (link direto) seguem como sempre: valor cobrado fixo e implantação do contrato.
-        $vitrine = $plan->campaign_tag === Pacotes::TAG_VITRINE;
+        $vitrine = Pacotes::ehVitrine($plan);
         $comercial = [];
 
         if ($vitrine) {
