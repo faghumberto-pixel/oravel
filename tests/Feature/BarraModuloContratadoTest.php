@@ -30,7 +30,7 @@ class BarraModuloContratadoTest extends TestCase
 
         $this->assertStringContainsString('Empresa da Barra', $html);
         $this->assertStringContainsString('Módulo: Manutenção', $html);
-        $this->assertSame(1, substr_count($html, 'images/oravel-logo-or.png'), 'o logotipo aparece uma vez só, no menu lateral');
+        $this->assertSame(1, substr_count($html, 'images/oravel-logo-menu.png'), 'o logotipo aparece uma vez só, no menu lateral');
     }
 
     public function test_com_mais_de_um_produto_lista_todos(): void

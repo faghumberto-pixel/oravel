@@ -86,7 +86,7 @@
                         <span class="block h-2.5 w-2.5 rounded-full" style="background:#ef4444"></span>
                         <span class="block h-2.5 w-2.5 rounded-full" style="background:#f59e0b"></span>
                         <span class="block h-2.5 w-2.5 rounded-full" style="background:#22c55e"></span>
-                        <img src="{{ asset('images/oravel-logo-or.png') }}" alt="Oravel" class="ms-2 h-6 w-auto shrink-0">
+                        <img src="{{ asset('images/oravel-logo-menu.png') }}" alt="Oravel" class="ms-2 h-6 w-auto shrink-0">
                     </a>
                 @elseif ($homeUrl = filament()->getHomeUrl())
                     <a {{ \Filament\Support\generate_href_html($homeUrl) }}>
