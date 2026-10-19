@@ -42,11 +42,6 @@ class PainelGestao extends Page
             return false;
         }
 
-        // Tenant admin sempre pode acessar
-        if ($user?->isAdmin()) {
-            return true;
-        }
-
         $tenant = Tenancy::current();
 
         // Sem tenant (super admin sem "atuar como", contexto de console): nao
@@ -55,6 +50,9 @@ class PainelGestao extends Page
             return true;
         }
 
+        // O contrato manda, inclusive para o administrador da empresa: se a Central tirou "Painel: Dashboard" do contrato, o painel
+        // (e a aba Gestão à Vista, que mora nele) some para todos. Antes o administrador passava direto, sem olhar o contrato.
+        // Super admin continua vendo (Tenant::hasFeature libera).
         return $tenant->hasFeature('modulo_dashboard');
     }
 

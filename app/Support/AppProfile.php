@@ -51,10 +51,35 @@ class AppProfile
     public static function homeUrl(User $user, string $profile): string
     {
         return match ($profile) {
-            self::ADMIN => self::urlDoOnboarding($user) ?? Pacotes::urlInicial(Tenancy::current() ?? $user->tenant) ?? route('filament.admin.pages.painel-controle'),
+            self::ADMIN => self::urlDoOnboarding($user) ?? Pacotes::urlInicial(Tenancy::current() ?? $user->tenant) ?? self::urlDoPainelOuPrimeiraTela(),
             self::TECNICO => route('filament.admin.pages.technician-daily-tasks'),
             default => route('filament.admin.pages.app-colaborador'),
         };
+    }
+
+    /**
+     * Painel de Controle quando o contrato o inclui; senão a primeira tela do menu a que o usuário tem acesso (evita mandar o administrador
+     * para uma página que dá 403 quando a Central tirou o painel do contrato).
+     */
+    private static function urlDoPainelOuPrimeiraTela(): string
+    {
+        if (\App\Filament\Pages\PainelGestao::canAccess()) {
+            return route('filament.admin.pages.painel-controle');
+        }
+
+        try {
+            foreach (\Filament\Facades\Filament::getNavigation() as $grupo) {
+                foreach ($grupo->getItems() as $item) {
+                    if ($url = $item->getUrl()) {
+                        return $url;
+                    }
+                }
+            }
+        } catch (\Throwable) {
+            // sem navegação disponível neste contexto: cai no padrão
+        }
+
+        return route('filament.admin.pages.painel-controle');
     }
 
     /** Enquanto o onboarding da solução está pendente, o administrador abre direto nos "Primeiros passos". */
