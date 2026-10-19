@@ -48,6 +48,11 @@ class TenantProvisioner
         // Funil de vendas padrão, motivos de perda e origens do CRM.
         CrmFunilPadrao::garantir((string) $tenant->id);
 
+        // Interface simples (Manutenção/Serviços...): categorias, tipos de ação e problemas comuns de exemplo, que a empresa edita.
+        if ($tenant->interfaceSimples()) {
+            \App\Support\CatalogosIniciais::garantir($tenant);
+        }
+
         return $user;
     }
 }

@@ -84,10 +84,11 @@ class AssetCategoryResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                // Interface simples: sem exclusão (os itens e as OS antigas apontam para a categoria).
+                Tables\Actions\DeleteAction::make()->visible(fn () => ! (\App\Support\Tenancy::current()?->interfaceSimples() ?? false)),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make()->visible(fn () => ! (\App\Support\Tenancy::current()?->interfaceSimples() ?? false)),
             ]);
     }
 

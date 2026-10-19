@@ -118,8 +118,33 @@ class AssetResource extends Resource
             });
     }
 
+    /** Interface simples (padrão de quem não contratou Locadora; a Central pode forçar por empresa). */
+    public static function interfaceSimples(): bool
+    {
+        return \App\Support\Tenancy::current()?->interfaceSimples() ?? false;
+    }
+
+    /** Cadastro curto de "o que você mantém" (carro, casa, máquina...): grava no mesmo cadastro de ativos, então nada se perde ao trocar de modo. */
+    public static function formSimples(Form $form): Form
+    {
+        return $form->schema([
+            Forms\Components\Section::make('O que você mantém')->schema([
+                Forms\Components\TextInput::make('name')->label('Nome')->placeholder('Ex.: Carro do João, Casa da praia, Gerador da obra')->required()->maxLength(255),
+                Forms\Components\Select::make('asset_category_id')->label('Categoria')->relationship('category', 'name')->searchable()->preload()
+                    ->createOptionForm([Forms\Components\TextInput::make('name')->label('Nome da categoria')->placeholder('Ex.: Carro, Casa, Equipamento')->required()->maxLength(255)]),
+                Forms\Components\Textarea::make('description')->label('Observações')->rows(3)->maxLength(2000)->columnSpanFull(),
+                Forms\Components\SpatieMediaLibraryFileUpload::make('fotos')->label('Fotos')->collection('fotos')->multiple()->image()->reorderable()->columnSpanFull(),
+                Forms\Components\Hidden::make('status')->default(Asset::STATUS_DISPONIVEL),
+            ])->columns(2),
+        ]);
+    }
+
     public static function form(Form $form): Form
     {
+        if (static::interfaceSimples()) {
+            return static::formSimples($form);
+        }
+
         return $form->schema([
             Tabs::make('Detalhes do Ativo')
                 ->tabs([
@@ -1185,7 +1210,8 @@ class AssetResource extends Resource
                     ->url(fn (Asset $record): string => route('assets.dossier.mobile', ['assetId' => $record->id]))
                     ->openUrlInNewTab(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                // Interface simples: sem exclusão (o histórico das OS depende do item).
+                Tables\Actions\DeleteAction::make()->visible(fn () => ! static::interfaceSimples()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -1210,7 +1236,7 @@ class AssetResource extends Resource
                         })
                         ->deselectRecordsAfterCompletion()
                         ->requiresConfirmation(),
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->visible(fn () => ! static::interfaceSimples()),
                 ]),
             ]);
     }

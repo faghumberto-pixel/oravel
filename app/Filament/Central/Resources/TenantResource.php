@@ -134,6 +134,11 @@ class TenantResource extends Resource
                     ->helperText('Também exigido pela Asaas pra gerar o Checkout de pagamento.')
                     ->maxLength(20),
                 Forms\Components\Toggle::make('onboarding_completed')->label('Onboarding Completo')->default(false),
+                Forms\Components\Select::make('interface_simples')->label('Interface do sistema')
+                    ->options(['simples' => 'Simples (formulários curtos e cadastros editáveis)', 'completa' => 'Completa'])->placeholder('Automática (simples, exceto quem contratou Locadora)')
+                    ->formatStateUsing(fn ($state) => $state === null ? null : ($state ? 'simples' : 'completa'))
+                    ->dehydrateStateUsing(fn ($state) => $state === null || $state === '' ? null : $state === 'simples')
+                    ->helperText('Muda só as telas; os dados são os mesmos. Pode alternar sem perder nada.'),
                 Forms\Components\Toggle::make('campo_ativo')->label('Área de campo (celular)')->default(false)
                     ->helperText('Liga o /campo (atalhos grandes para celular) e leva o celular para ele no login. Desligado por padrão nas empresas existentes.'),
             ])->columns(2),

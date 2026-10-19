@@ -196,6 +196,12 @@ class MaintenanceOrder extends Model implements HasMedia
         return $this->belongsTo(ReportedProblem::class);
     }
 
+    /** Tipos de ação realizados nesta OS (modo simples: a empresa marca o que foi feito). */
+    public function actionTypes(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(MaintenanceActionType::class, 'maintenance_order_action_type');
+    }
+
     public function maintenancePlan(): BelongsTo
     {
         return $this->belongsTo(MaintenancePlan::class);

@@ -146,6 +146,7 @@ class Tenant extends Model
         'asaas_customer_id',
         'asaas_subscription_id',
         'campo_ativo',
+        'interface_simples',
         'asaas_checkout_id',
         'asaas_status',
         'asaas_synced_at',
@@ -183,6 +184,7 @@ class Tenant extends Model
 
     protected $casts = [
         'campo_ativo' => 'boolean',
+        'interface_simples' => 'boolean',
         'id' => 'string',
         'plan_id' => 'string',
         'features' => 'array',
@@ -474,6 +476,15 @@ class Tenant extends Model
         $amounts[$count - 1] = round($total - $base * ($count - 1), 2);
 
         return $amounts;
+    }
+
+    /**
+     * Interface simples (formulários curtos e cadastros que a própria empresa edita): é o padrão de quem NÃO contratou Locadora, ou seja, só
+     * Manutenção/Serviços/Vendas etc. A Central pode forçar um lado por empresa (interface_simples = true/false); nulo = automático pelo produto.
+     */
+    public function interfaceSimples(): bool
+    {
+        return $this->interface_simples ?? ! in_array('locadora', \App\Support\Pacotes::produtosDoTenant($this), true);
     }
 
     /**

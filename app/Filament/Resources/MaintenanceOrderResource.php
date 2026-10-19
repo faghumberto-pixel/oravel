@@ -8,6 +8,7 @@ use App\Filament\Resources\MaintenanceOrderResource\RelationManagers;
 use App\Forms\Components\CameraCapture;
 use App\Models\AbcMatrix;
 use App\Models\Asset;
+use App\Models\AssetCategory;
 use App\Models\Client;
 use App\Models\Contract;
 use App\Models\CriticalityLevel;
@@ -172,8 +173,54 @@ class MaintenanceOrderResource extends Resource
             ->send();
     }
 
+    /** Interface simples (padrão de quem não contratou Locadora; a Central pode forçar por empresa). */
+    public static function interfaceSimples(): bool
+    {
+        return \App\Support\Tenancy::current()?->interfaceSimples() ?? false;
+    }
+
+    /**
+     * Formulário curto da OS para quem só quer controlar a manutenção do básico: o que está sendo mantido, o que aconteceu, o que foi feito
+     * (tipos de ação que a própria empresa cadastra) e fotos. Grava nas mesmas colunas da tela completa, então trocar de modo não perde nada.
+     */
+    public static function formSimples(Form $form): Form
+    {
+        return $form->schema([
+            Forms\Components\Section::make('Ordem de serviço')->schema([
+                Forms\Components\Select::make('asset_id')->label('O que você está mantendo')->relationship('asset', 'name')->searchable()->preload()->required()
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('name')->label('Nome')->placeholder('Ex.: Carro do João, Casa da praia')->required()->maxLength(255),
+                        Forms\Components\Select::make('asset_category_id')->label('Categoria')->options(fn () => AssetCategory::query()->orderBy('name')->pluck('name', 'id'))->searchable(),
+                    ])
+                    ->createOptionUsing(fn (array $data) => Asset::create($data + ['status' => Asset::STATUS_DISPONIVEL])->getKey()),
+                Forms\Components\Radio::make('maintenance_type')->label('Tipo')->inline()->default(MaintenanceOrder::TYPE_CORRECTIVE)->required()
+                    ->options([MaintenanceOrder::TYPE_CORRECTIVE => 'Corretiva (algo quebrou)', MaintenanceOrder::TYPE_PREVENTIVE => 'Preventiva (revisão)']),
+                Forms\Components\Select::make('reported_problem_id')->label('Problema (opcional)')
+                    ->relationship('reportedProblem', 'description', fn (Builder $query) => $query->where('is_active', true))->searchable()->preload()
+                    ->createOptionForm([Forms\Components\TextInput::make('description')->label('Problema')->required()->maxLength(160)]),
+                Forms\Components\Textarea::make('description')->label('O que está acontecendo ou o que foi feito')->rows(3)->required()->maxLength(2000),
+                Forms\Components\Select::make('actionTypes')->label('Ações realizadas')->relationship('actionTypes', 'name', fn (Builder $query) => $query->where('is_active', true))
+                    ->multiple()->preload()->searchable()
+                    ->createOptionForm([Forms\Components\TextInput::make('name')->label('O que foi feito')->placeholder('Ex.: Troca de óleo')->required()->maxLength(120)]),
+            ]),
+            Forms\Components\Section::make('Andamento')->schema([
+                Forms\Components\Select::make('status')->label('Situação')->default('Aberto')->required()
+                    ->options(['Aberto' => 'Aberta', 'Em Andamento' => 'Em andamento', 'Concluída' => 'Concluída']),
+                Forms\Components\Select::make('technician_id')->label('Responsável')->options(fn () => User::query()->orderBy('name')->pluck('name', 'id'))->searchable(),
+                Forms\Components\DateTimePicker::make('scheduled_at')->label('Agendada para'),
+                Forms\Components\Select::make('client_id')->label('Cliente (opcional)')->relationship('client', 'name')->searchable()->preload(),
+                Forms\Components\Textarea::make('technical_notes')->label('Observações')->rows(2)->columnSpanFull(),
+                Forms\Components\SpatieMediaLibraryFileUpload::make('fotos')->label('Fotos')->collection('default')->multiple()->image()->reorderable()->columnSpanFull(),
+            ])->columns(2),
+        ]);
+    }
+
     public static function form(Form $form): Form
     {
+        if (static::interfaceSimples()) {
+            return static::formSimples($form);
+        }
+
         return $form->schema([
             Forms\Components\Tabs::make('Fluxo Oravel')->tabs([
 
@@ -931,9 +978,9 @@ class MaintenanceOrderResource extends Resource
         ])->actions([
             Tables\Actions\ViewAction::make(),
             Tables\Actions\EditAction::make(),
-            Tables\Actions\DeleteAction::make(),
+            Tables\Actions\DeleteAction::make()->visible(fn () => ! static::interfaceSimples()),
         ])->bulkActions([
-            Tables\Actions\DeleteBulkAction::make(),
+            Tables\Actions\DeleteBulkAction::make()->visible(fn () => ! static::interfaceSimples()),
         ]);
     }
 

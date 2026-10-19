@@ -13,7 +13,7 @@ class EditAssetCategory extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()->visible(fn () => ! (\App\Support\Tenancy::current()?->interfaceSimples() ?? false)),
         ];
     }
 }

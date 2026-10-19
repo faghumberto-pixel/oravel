@@ -307,7 +307,7 @@ class EditMaintenanceOrder extends EditRecord
                         $this->refreshFormData(['status', 'cancel_reason']);
                     }),
 
-                Actions\DeleteAction::make(),
+                Actions\DeleteAction::make()->visible(fn () => ! MaintenanceOrderResource::interfaceSimples()),
             ])
                 ->label('Mais Ações')
                 ->icon('heroicon-m-ellipsis-vertical')

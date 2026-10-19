@@ -72,7 +72,7 @@ class EditAsset extends EditRecord
                     $this->refreshFormData(['status']);
                 }),
 
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()->visible(fn () => ! \App\Filament\Resources\AssetResource::interfaceSimples()),
         ];
     }
 }
