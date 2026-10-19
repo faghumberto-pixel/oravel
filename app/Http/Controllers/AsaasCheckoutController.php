@@ -227,6 +227,7 @@ class AsaasCheckoutController extends Controller
             'cidade' => $data['cidade'],
             'uf' => strtoupper($data['uf']),
             'terms_accepted_at' => now(),
+            'campo_ativo' => true,   // empresas novas já nascem com a área de campo; as existentes seguem desligadas
         ]);
 
         // Taxas de configuração opcionais (pagamento único): só os códigos escolhidos, com o valor do catálogo no servidor.

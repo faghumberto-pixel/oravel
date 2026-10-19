@@ -1,0 +1,15 @@
+{
+  "id": "/campo",
+  "name": "Oravel Campo",
+  "short_name": "Oravel Campo",
+  "description": "Área de campo da Oravel: atalhos grandes para o celular",
+  "start_url": "/campo",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    { "src": "/icon.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

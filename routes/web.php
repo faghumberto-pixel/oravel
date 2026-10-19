@@ -8,6 +8,7 @@ use App\Http\Controllers\AssetCadastroPrintController;
 use App\Http\Controllers\AssetDossierPdfController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\BancaryReconciliationExportController;
+use App\Http\Controllers\CampoController;
 use App\Http\Controllers\CashflowExportController;
 use App\Http\Controllers\Central\ContratoAssinadoController;
 use App\Http\Controllers\ChatHistoryPdfController;
@@ -266,6 +267,10 @@ Route::middleware(['auth'])->group(function () {
 
         return redirect()->to(AppProfile::homeUrl($user, AppProfile::resolve($user, $perfil)));
     })->whereIn('perfil', [...AppProfile::ALL, 'administrador'])->name('app.entrada');
+
+    // Área de campo (celular): atalhos grandes, uma cor por produto. Ligada por empresa (tenants.campo_ativo).
+    Route::get('/campo', [CampoController::class, 'home'])->name('campo.home');
+    Route::get('/campo/versao/{versao}', [CampoController::class, 'alternar'])->name('campo.alternar');
 
     // Manifesto do app instalável com o nome da solução contratada (ver ManifestoAppController).
     Route::get('/app-manifest/{perfil}.json', ManifestoAppController::class)

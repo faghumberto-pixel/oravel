@@ -134,6 +134,8 @@ class TenantResource extends Resource
                     ->helperText('Também exigido pela Asaas pra gerar o Checkout de pagamento.')
                     ->maxLength(20),
                 Forms\Components\Toggle::make('onboarding_completed')->label('Onboarding Completo')->default(false),
+                Forms\Components\Toggle::make('campo_ativo')->label('Área de campo (celular)')->default(false)
+                    ->helperText('Liga o /campo (atalhos grandes para celular) e leva o celular para ele no login. Desligado por padrão nas empresas existentes.'),
             ])->columns(2),
 
             // CEP/logradouro/número/UF também são exigidos pela Asaas pra

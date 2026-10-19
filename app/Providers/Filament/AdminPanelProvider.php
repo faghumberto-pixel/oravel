@@ -17,6 +17,7 @@ use App\Models\Employee;
 use App\Models\FrotaSaidaVeiculo;
 use App\Models\TraccarDevice;
 use App\Support\AppProfile;
+use App\Support\Campo;
 use App\Support\Tenancy;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
@@ -291,6 +292,11 @@ class AdminPanelProvider extends PanelProvider
                     ->enableTwoFactorAuthentication()
             )
             ->userMenuItems([
+                'versao_campo' => MenuItem::make()
+                    ->label('Versão campo (celular)')
+                    ->icon('heroicon-o-device-phone-mobile')
+                    ->url(fn () => route('campo.alternar', 'campo'))
+                    ->visible(fn () => Campo::ativaPara(auth()->user())),
                 // Chave != 'account' de proposito: BreezyCore::boot() roda depois de
                 // panel() e registra o proprio item na chave 'account' (sem label,
                 // por isso o menu mostrava soh o nome do usuario) -- usar a mesma

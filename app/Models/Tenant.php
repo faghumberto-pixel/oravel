@@ -145,6 +145,7 @@ class Tenant extends Model
         'features',
         'asaas_customer_id',
         'asaas_subscription_id',
+        'campo_ativo',
         'asaas_checkout_id',
         'asaas_status',
         'asaas_synced_at',
@@ -181,6 +182,7 @@ class Tenant extends Model
     ];
 
     protected $casts = [
+        'campo_ativo' => 'boolean',
         'id' => 'string',
         'plan_id' => 'string',
         'features' => 'array',

@@ -2,10 +2,12 @@
 
 namespace App\Filament\Pages\Auth;
 
+use App\Filament\Pages\PainelGestao;
 use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Support\AppProfile;
+use App\Support\Campo;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -176,6 +178,13 @@ class Login extends BaseLogin
         // Reativado 28/09/2026 -- ver App\Filament\Pages\TechnicianDailyTasks::canAccess().
         // Tecnico -> Minhas Ordens de Servico; colaborador (sem acesso a OS) -> App do
         // Colaborador (AppProfile; antes todo nao-admin caia na tela do tecnico).
+        // Celular + área de campo ligada na empresa (e sem escolha manual pela versão completa): abre o campo.
+        if ($user instanceof User && Campo::deveAbrirNoLogin($user, request())) {
+            $this->redirect(route('campo.home'));
+
+            return null;
+        }
+
         if ($user instanceof User && AppProfile::for($user) !== AppProfile::ADMIN) {
             $this->redirect(AppProfile::homeUrl($user, AppProfile::for($user)));
 
@@ -184,7 +193,7 @@ class Login extends BaseLogin
 
         // Administrador: abre no Início (Painel de Controle) em vez do primeiro item do menu,
         // a não ser que ele tenha vindo de um link específico (url.intended).
-        if ($user instanceof User && \App\Filament\Pages\PainelGestao::canAccess()) {
+        if ($user instanceof User && PainelGestao::canAccess()) {
             $this->redirect(session()->pull('url.intended', AppProfile::homeUrl($user, AppProfile::ADMIN)));
 
             return null;
