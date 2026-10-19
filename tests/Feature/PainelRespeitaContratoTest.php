@@ -58,5 +58,6 @@ class PainelRespeitaContratoTest extends TestCase
         $this->actingAs($u);
 
         $this->assertStringNotContainsString('painel-controle', AppProfile::homeUrl($u, AppProfile::ADMIN));
+        $this->assertSame(\App\Filament\Pages\PrimeirosPassos::getUrl(), AppProfile::homeUrl($u, AppProfile::ADMIN), 'cai no Guia dos módulos');
     }
 }

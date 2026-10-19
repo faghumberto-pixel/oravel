@@ -58,13 +58,18 @@ class AppProfile
     }
 
     /**
-     * Painel de Controle quando o contrato o inclui; senão a primeira tela do menu a que o usuário tem acesso (evita mandar o administrador
+     * Painel de Controle quando o contrato o inclui; senão o Guia dos módulos; senão a primeira tela do menu a que o usuário tem acesso (evita mandar o administrador
      * para uma página que dá 403 quando a Central tirou o painel do contrato).
      */
     private static function urlDoPainelOuPrimeiraTela(): string
     {
         if (\App\Filament\Pages\PainelGestao::canAccess()) {
             return route('filament.admin.pages.painel-controle');
+        }
+
+        // Sem o painel no contrato, o administrador cai no Guia dos módulos (telas importantes de cada módulo contratado).
+        if (\App\Filament\Pages\PrimeirosPassos::canAccess()) {
+            return \App\Filament\Pages\PrimeirosPassos::getUrl();
         }
 
         try {
