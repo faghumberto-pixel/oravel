@@ -49,14 +49,17 @@ class CorPorModuloTest extends TestCase
         $this->assertSame('#752c06', Pacotes::escurecer('#ea580c', 0.5));
     }
 
-    public function test_painel_imprime_a_cor_do_modulo_so_quando_ha_tema(): void
+    public function test_desktop_fica_no_visual_padrao_para_todos_e_so_o_app_do_celular_leva_a_cor(): void
     {
-        $this->actingAs($this->admin('manutencao'));
-        $html = $this->get(route('filament.admin.pages.maintenance-kanban'))->getContent();
-        $this->assertStringContainsString('data-tema="manutencao"', $html);
-        $this->assertStringContainsString('--oravel-primary: #ea580c', $html);
+        $u = $this->admin('manutencao');
+        $u->tenant->forceFill(['campo_ativo' => true])->save();
+        $this->actingAs($u);
 
-        $this->actingAs($this->admin('locadora'));
-        $this->assertStringNotContainsString('data-tema=', $this->get(route('filament.admin.pages.painel-controle'))->getContent());
+        $desktop = $this->get(route('filament.admin.pages.maintenance-kanban'))->getContent();
+        $this->assertStringNotContainsString('data-tema=', $desktop, 'o painel do desktop não recebe a cor do módulo');
+
+        $campo = $this->get('/campo');
+        $campo->assertOk();
+        $this->assertStringContainsString('background:'.Pacotes::tema(auth()->user()->tenant)['topo'], $campo->getContent(), 'a barra do app leva a cor do módulo');
     }
 }
