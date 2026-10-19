@@ -254,6 +254,10 @@ class AdminPanelProvider extends PanelProvider
             )
             ->renderHook(
                 PanelsRenderHook::BODY_END,
+                fn () => view('filament.sidebar-fechado-no-celular'),
+            )
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
                 fn () => view('filament.livewire-session-recovery'),
             )
             ->renderHook(
