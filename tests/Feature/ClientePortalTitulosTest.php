@@ -15,7 +15,7 @@ class ClientePortalTitulosTest extends TestCase
 
     public function test_titulo_da_tela_acompanha_o_menu(): void
     {
-        $plan = Plan::create(['name' => 'Plano PT '.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => ['tabela_clients' => true]]);
+        $plan = Plan::create(['name' => 'Plano PT '.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => ['tabela_clients' => true, 'modulo_portal_cliente' => true]]);
         $t = Tenant::create(['name' => 'Locadora PT', 'slug' => 'pt-'.uniqid(), 'plan_id' => $plan->id, 'status' => 'active']);
         $c = Client::create(['tenant_id' => $t->id, 'name' => 'Cliente PT', 'email' => 'c-'.uniqid().'@t.com', 'password' => 'senha123']);
         $c->forceFill(['portal_access_enabled_at' => now()])->save();

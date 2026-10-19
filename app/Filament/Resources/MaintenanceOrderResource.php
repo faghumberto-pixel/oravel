@@ -875,7 +875,7 @@ class MaintenanceOrderResource extends Resource
     {
         return $table->poll('10s')->columns([
             static::tenantColumn(),
-            Tables\Columns\TextColumn::make('asset.patrimonio')->label('Patrimônio')->weight('bold')->searchable(),
+            Tables\Columns\TextColumn::make('asset.patrimonio')->hidden(fn () => static::interfaceSimples())->label('Patrimônio')->weight('bold')->searchable(),
             Tables\Columns\TextColumn::make('created_at')->label('Data')->dateTime('d/m/Y'),
             Tables\Columns\TextColumn::make('os_number')->label('Nº OS')->searchable()->weight('bold'),
             Tables\Columns\TextColumn::make('asset.name')->label('Ativo')->searchable(),
@@ -883,12 +883,12 @@ class MaintenanceOrderResource extends Resource
                 ->label('Categoria do Ativo')
                 ->sortable()
                 ->placeholder('Sem Categoria'),
-            Tables\Columns\TextColumn::make('asset.checklistGroup.name')
+            Tables\Columns\TextColumn::make('asset.checklistGroup.name')->hidden(fn () => static::interfaceSimples())
                 ->label('Grupo')
                 ->badge()
                 ->color('gray')
                 ->placeholder('Sem grupo'),
-            Tables\Columns\TextColumn::make('asset.abcMatrix.nivel')
+            Tables\Columns\TextColumn::make('asset.abcMatrix.nivel')->hidden(fn () => static::interfaceSimples())
                 ->label('Matriz ABC')
                 ->badge()
                 ->formatStateUsing(fn (?string $state): string => $state
@@ -899,7 +899,7 @@ class MaintenanceOrderResource extends Resource
                     ->value('is_urgent') ? 'danger' : 'gray')
                 ->placeholder('-'),
             Tables\Columns\TextColumn::make('status')->label('Status')->badge(),
-            Tables\Columns\TextColumn::make('is_rework')
+            Tables\Columns\TextColumn::make('is_rework')->hidden(fn () => static::interfaceSimples())
                 ->label('Retrabalho')
                 ->badge()
                 ->color('danger')
@@ -910,7 +910,7 @@ class MaintenanceOrderResource extends Resource
             // nasceu sozinha do vencimento de um plano de PMP, não foi
             // aberta manualmente -- origin='pmp_auto' setado só em
             // CheckMaintenanceDueAlerts::createOrderAutomatically().
-            Tables\Columns\TextColumn::make('origin')
+            Tables\Columns\TextColumn::make('origin')->hidden(fn () => static::interfaceSimples())
                 ->label('Origem')
                 ->badge()
                 ->color('warning')

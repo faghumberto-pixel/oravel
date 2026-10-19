@@ -1001,7 +1001,7 @@ class AssetResource extends Resource
                     ->size(56)
                     ->defaultImageUrl(fn () => null),
 
-                Tables\Columns\TextColumn::make('patrimonio')
+                Tables\Columns\TextColumn::make('patrimonio')->hidden(fn () => static::interfaceSimples())
                     ->label('Patrimônio')
                     ->searchable()
                     ->sortable()
@@ -1012,14 +1012,14 @@ class AssetResource extends Resource
                     ->searchable()
                     ->description(fn (Asset $record): string => ($record->placa ? 'Placa: '.$record->placa.' · ' : '').'Tag: '.($record->tag ?? '---')),
 
-                Tables\Columns\TextColumn::make('grupo')
+                Tables\Columns\TextColumn::make('grupo')->hidden(fn () => static::interfaceSimples())
                     ->label('Tipo')
                     ->badge()
                     ->formatStateUsing(fn (?string $state) => Asset::grupoLabels()[$state] ?? 'Máquina / Equipamento')
                     ->color(fn (?string $state) => $state === Asset::GRUPO_VEICULO ? 'info' : 'gray')
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('placa')
+                Tables\Columns\TextColumn::make('placa')->hidden(fn () => static::interfaceSimples())
                     ->label('Placa')
                     // Quem digita "kmx-1a23" acha "KMX1A23": a placa é gravada sem hífen e em maiúsculas.
                     ->searchable(query: fn (Builder $query, string $search): Builder => Asset::normalizarCodigo($search) !== ''
@@ -1028,7 +1028,7 @@ class AssetResource extends Resource
                     ->placeholder('—')
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('seguro_vencimento')
+                Tables\Columns\TextColumn::make('seguro_vencimento')->hidden(fn () => static::interfaceSimples())
                     ->label('Seguro')
                     ->date('d/m/Y')
                     ->badge()
@@ -1036,7 +1036,7 @@ class AssetResource extends Resource
                     ->placeholder('—')
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('ipva_vencimento')
+                Tables\Columns\TextColumn::make('ipva_vencimento')->hidden(fn () => static::interfaceSimples())
                     ->label('IPVA')
                     ->date('d/m/Y')
                     ->badge()
@@ -1044,7 +1044,7 @@ class AssetResource extends Resource
                     ->placeholder('—')
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('licenciamento_vencimento')
+                Tables\Columns\TextColumn::make('licenciamento_vencimento')->hidden(fn () => static::interfaceSimples())
                     ->label('Licenciamento')
                     ->date('d/m/Y')
                     ->badge()
@@ -1052,25 +1052,25 @@ class AssetResource extends Resource
                     ->placeholder('—')
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('carroceria_tipo')
+                Tables\Columns\TextColumn::make('carroceria_tipo')->hidden(fn () => static::interfaceSimples())
                     ->label('Carroceria')
                     ->formatStateUsing(fn (?string $state) => Asset::carroceriaLabels()[$state] ?? $state)
                     ->placeholder('—')
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('quantidade_eixos')
+                Tables\Columns\TextColumn::make('quantidade_eixos')->hidden(fn () => static::interfaceSimples())
                     ->label('Eixos')
                     ->placeholder('—')
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('chassi')
+                Tables\Columns\TextColumn::make('chassi')->hidden(fn () => static::interfaceSimples())
                     ->label('Chassi')
                     ->searchable()
                     ->placeholder('—')
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 // Máquina: horímetro (h). Veículo: odômetro (km).
-                Tables\Columns\TextColumn::make('last_horimetro')
+                Tables\Columns\TextColumn::make('last_horimetro')->hidden(fn () => static::interfaceSimples())
                     ->label('Horímetro / Odômetro')
                     ->state(fn (Asset $record) => $record->isVehicle() ? (float) $record->odometro_atual : (float) $record->last_horimetro)
                     ->formatStateUsing(fn ($state, Asset $record) => number_format((float) $state, $record->isVehicle() ? 0 : 1, ',', '.').($record->isVehicle() ? ' km' : ' h'))
@@ -1081,13 +1081,13 @@ class AssetResource extends Resource
                     ->label('Categoria')
                     ->badge(),
 
-                Tables\Columns\TextColumn::make('checklistGroup.name')
+                Tables\Columns\TextColumn::make('checklistGroup.name')->hidden(fn () => static::interfaceSimples())
                     ->label('Grupo')
                     ->badge()
                     ->color('gray')
                     ->placeholder('Sem grupo'),
 
-                Tables\Columns\TextColumn::make('capacity_value')
+                Tables\Columns\TextColumn::make('capacity_value')->hidden(fn () => static::interfaceSimples())
                     ->label('Capacidade')
                     ->sortable()
                     ->formatStateUsing(fn (Asset $record) => $record->capacity_value !== null
@@ -1099,7 +1099,7 @@ class AssetResource extends Resource
                     ->badge()
                     ->color(fn (string $state): string => Asset::statusColor($state)),
 
-                Tables\Columns\TextColumn::make('abcMatrix.nivel')
+                Tables\Columns\TextColumn::make('abcMatrix.nivel')->hidden(fn () => static::interfaceSimples())
                     ->label('Criticidade')
                     ->badge()
                     ->formatStateUsing(fn (Asset $record): string => $record->currentCriticalityLevel()?->name ?? $record->abcMatrix?->nivel ?? '—')

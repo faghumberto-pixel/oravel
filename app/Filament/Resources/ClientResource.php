@@ -350,14 +350,14 @@ class ClientResource extends Resource
         return $table
             ->columns([
                 static::tenantColumn(),
-                Tables\Columns\TextColumn::make('name')->label('Razão Social')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('document')->label('CNPJ')->searchable(),
+                Tables\Columns\TextColumn::make('name')->label(fn () => static::interfaceSimples() ? 'Nome' : 'Razão Social')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('document')->label(fn () => static::interfaceSimples() ? 'CPF / CNPJ' : 'CNPJ')->searchable(),
                 Tables\Columns\TextColumn::make('email')->label('E-mail')->searchable()->toggleable(),
                 Tables\Columns\TextColumn::make('phone')->label('Telefone')->searchable()->toggleable(),
-                Tables\Columns\TextColumn::make('whatsapp')->label('Celular / WhatsApp')->searchable()->toggleable(),
+                Tables\Columns\TextColumn::make('whatsapp')->hidden(fn () => static::interfaceSimples())->label('Celular / WhatsApp')->searchable()->toggleable(),
                 Tables\Columns\TextColumn::make('city')->label('Cidade')->sortable(),
-                Tables\Columns\TextColumn::make('state')->label('UF'),
-                Tables\Columns\TextColumn::make('activity_type')
+                Tables\Columns\TextColumn::make('state')->hidden(fn () => static::interfaceSimples())->label('UF'),
+                Tables\Columns\TextColumn::make('activity_type')->hidden(fn () => static::interfaceSimples())
                     ->label('Nicho')
                     ->badge()
                     ->formatStateUsing(fn (?string $state) => $state ? (Client::nicheLabels()[$state] ?? $state) : null)
@@ -367,10 +367,10 @@ class ClientResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
-                Tables\Filters\SelectFilter::make('activity_type')
+                Tables\Filters\SelectFilter::make('activity_type')->hidden(fn () => static::interfaceSimples())
                     ->label('Nicho')
                     ->options(Client::nicheLabels()),
-                Tables\Filters\SelectFilter::make('state')
+                Tables\Filters\SelectFilter::make('state')->hidden(fn () => static::interfaceSimples())
                     ->label('UF')
                     ->options(fn () => Client::query()->whereNotNull('state')->distinct()->pluck('state', 'state')),
                 Tables\Filters\Filter::make('com_contrato_ativo')

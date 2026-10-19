@@ -344,7 +344,7 @@ class PropostaComercialResource extends BaseResource
                     ->label('Cliente')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('sellerUser.name')
+                Tables\Columns\TextColumn::make('sellerUser.name')->hidden(fn () => static::interfaceSimples())
                     ->label('Vendedor'),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
@@ -358,7 +358,7 @@ class PropostaComercialResource extends BaseResource
                         PropostaComercial::STATUS_REJEITADA => 'danger',
                         default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('items_count')
+                Tables\Columns\TextColumn::make('items_count')->hidden(fn () => static::interfaceSimples())
                     ->label('Itens')
                     ->counts('items'),
                 Tables\Columns\TextColumn::make('total_value')

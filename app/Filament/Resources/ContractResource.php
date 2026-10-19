@@ -420,7 +420,7 @@ class ContractResource extends Resource
                     ->badge()
                     ->formatStateUsing(fn (?string $state) => $state ? (Contract::serviceCategoryLabels()[$state] ?? $state) : 'Locação'),
                 Tables\Columns\TextColumn::make('client.name')->label('Cliente'),
-                Tables\Columns\TextColumn::make('asset.patrimonio')->label('Patrimônio'),
+                Tables\Columns\TextColumn::make('asset.patrimonio')->hidden(fn () => static::interfaceSimples())->label('Patrimônio'),
                 Tables\Columns\TextColumn::make('asset.name')->label('Ativo'),
                 Tables\Columns\TextColumn::make('start_date')->date('d/m/Y'),
                 Tables\Columns\IconColumn::make('is_active')->boolean()->label('Ativo'),
