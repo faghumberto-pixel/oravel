@@ -198,11 +198,18 @@
                             </div>
 
                             <div>
-                                <label class="oravel-auth-label">CPF ou CNPJ</label>
-                                <div class="oravel-auth-field">
-                                    <x-heroicon-o-identification class="oravel-auth-field-icon" />
-                                    <input type="text" name="cpf_cnpj" value="{{ old('cpf_cnpj') }}" required
-                                        placeholder="Necessário para a cobrança" class="oravel-auth-input-raw" />
+                                <label class="oravel-auth-label" for="tipo_documento">Documento da empresa ou do responsável</label>
+                                @php($docDigitos = strlen(preg_replace('/\D/', '', (string) old('cpf_cnpj'))))
+                                <div class="flex gap-2">
+                                    <select id="tipo_documento" name="tipo_documento" class="oravel-auth-input px-3 py-2.5 text-sm" style="width:7rem;flex:none">
+                                        <option value="cnpj" @selected(old('tipo_documento', $docDigitos === 11 ? 'cpf' : 'cnpj') === 'cnpj')>CNPJ</option>
+                                        <option value="cpf" @selected(old('tipo_documento', $docDigitos === 11 ? 'cpf' : 'cnpj') === 'cpf')>CPF</option>
+                                    </select>
+                                    <div class="oravel-auth-field" style="flex:1;min-width:0">
+                                        <x-heroicon-o-identification class="oravel-auth-field-icon" />
+                                        <input type="text" id="cpf_cnpj" name="cpf_cnpj" value="{{ old('cpf_cnpj') }}" required inputmode="numeric"
+                                            placeholder="00.000.000/0000-00" class="oravel-auth-input-raw" />
+                                    </div>
                                 </div>
                                 <x-input-error :messages="$errors->get('cpf_cnpj')" class="oravel-auth-error" />
                             </div>
@@ -385,6 +392,28 @@
 
         <script src="//unpkg.com/alpinejs" defer></script>
         <script>
+            (function () {
+                var tipo = document.getElementById('tipo_documento');
+                var doc = document.getElementById('cpf_cnpj');
+                if (!tipo || !doc) { return; }
+
+                function formatar() {
+                    var cpf = tipo.value === 'cpf';
+                    var d = doc.value.replace(/\D/g, '').slice(0, cpf ? 11 : 14);
+                    if (cpf) {
+                        d = d.replace(/^(\d{3})(\d)/, '$1.$2').replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3').replace(/\.(\d{3})(\d)/, '.$1-$2');
+                    } else {
+                        d = d.replace(/^(\d{2})(\d)/, '$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3').replace(/\.(\d{3})(\d)/, '.$1/$2').replace(/(\d{4})(\d)/, '$1-$2');
+                    }
+                    doc.value = d;
+                    doc.placeholder = cpf ? '000.000.000-00' : '00.000.000/0000-00';
+                    doc.maxLength = cpf ? 14 : 18;
+                }
+
+                tipo.addEventListener('change', function () { doc.value = ''; formatar(); doc.focus(); });
+                doc.addEventListener('input', formatar);
+                formatar();
+            })();
             (function () {
                 var tel = document.getElementById('telefone');
                 if (!tel) { return; }
