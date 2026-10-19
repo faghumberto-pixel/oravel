@@ -175,6 +175,38 @@ class Pacotes
         return collect($codigos)->flatMap(fn ($c) => self::features($c))->unique()->values()->all();
     }
 
+    /**
+     * Cores do sistema por produto: o menu, o topo e o destaque do painel (desktop e app) ganham a cor do único produto contratado
+     * (config/pacotes.php, `app.cor`). Locadora (e empresa com mais de um produto ou contrato personalizado) fica no visual padrão de sempre.
+     *
+     * @return array{codigo: string, cor: string, topo: string, menu: string, menu_fim: string}|null
+     */
+    public static function tema(?Tenant $tenant): ?array
+    {
+        $produtos = self::produtosDoTenant($tenant);
+
+        if (count($produtos) !== 1 || $produtos[0] === 'locadora') {
+            return null;
+        }
+
+        $cor = self::todos()[$produtos[0]]['app']['cor'] ?? null;
+
+        if (! is_string($cor) || ! preg_match('/^#[0-9a-f]{6}$/i', $cor)) {
+            return null;
+        }
+
+        return ['codigo' => $produtos[0], 'cor' => $cor, 'topo' => self::escurecer($cor, 0.12), 'menu' => self::escurecer($cor, 0.5), 'menu_fim' => self::escurecer($cor, 0.62)];
+    }
+
+    /** Mistura a cor com preto (0 = igual, 1 = preto). */
+    public static function escurecer(string $hex, float $quanto): string
+    {
+        [$r, $g, $b] = sscanf($hex, '#%02x%02x%02x');
+        $f = 1 - max(0, min(1, $quanto));
+
+        return sprintf('#%02x%02x%02x', (int) round($r * $f), (int) round($g * $f), (int) round($b * $f));
+    }
+
     /** Plano com preço cheio e escolha de forma de pagamento (vitrine do site ou combinação de produtos). */
     public static function ehVitrine(?Plan $plano): bool
     {
