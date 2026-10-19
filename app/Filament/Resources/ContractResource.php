@@ -38,8 +38,46 @@ class ContractResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+    /** Interface simples (padrão de quem não contratou Locadora; a Central pode forçar por empresa). */
+    public static function interfaceSimples(): bool
+    {
+        return \App\Support\Tenancy::current()?->interfaceSimples() ?? false;
+    }
+
+    /**
+     * Contrato de serviço curto: cliente, o que foi contratado, valor e prazo. Grava nas mesmas colunas do contrato completo (os
+     * contratos gerados das propostas aceitas aparecem aqui do mesmo jeito) e não pede equipamento, local de instalação nem cláusulas de locação.
+     */
+    public static function formSimples(Form $form): Form
+    {
+        return $form->schema([
+            Forms\Components\Section::make('Contrato')->schema([
+                Forms\Components\Select::make('client_id')->label('Cliente')->relationship('client', 'name')->searchable()->preload()->required()
+                    ->createOptionForm([Forms\Components\TextInput::make('name')->label('Nome do cliente')->required()->maxLength(255)]),
+                Forms\Components\TextInput::make('contract_number')->label('Número do contrato')->required()->maxLength(60)
+                    ->default(fn () => 'CT-'.now()->format('Ym').'-'.strtoupper(\Illuminate\Support\Str::random(4))),
+                Forms\Components\TextInput::make('service_category')->label('O que está sendo contratado')->placeholder('Ex.: Manutenção mensal, Revisão anual, Reforma do telhado')->required()->maxLength(160)->columnSpanFull(),
+                Forms\Components\Select::make('asset_id')->label('Item atendido (opcional)')->relationship('asset', 'name')->searchable()->preload(),
+                Forms\Components\Select::make('status')->label('Situação')->options([
+                    'Draft' => 'Rascunho', 'Ativo' => 'Ativo', 'Encerrado' => 'Encerrado',
+                ])->default('Ativo')->native(false)->required(),
+            ])->columns(2),
+            Forms\Components\Section::make('Valor e prazo')->schema([
+                Forms\Components\TextInput::make('price')->label('Valor mensal (R$)')->numeric()->prefix('R$')->minValue(0),
+                Forms\Components\Hidden::make('billing_type')->default(Contract::BILLING_MENSAL_FIXO),
+                Forms\Components\DatePicker::make('start_date')->label('Início')->required()->default(now()),
+                Forms\Components\DatePicker::make('end_date')->label('Fim (opcional)')->afterOrEqual('start_date'),
+                Forms\Components\Textarea::make('observations')->label('Observações')->rows(3)->columnSpanFull(),
+            ])->columns(2),
+        ]);
+    }
+
     public static function form(Form $form): Form
     {
+        if (static::interfaceSimples()) {
+            return static::formSimples($form);
+        }
+
         return $form->schema([
             Forms\Components\Section::make('1. Qualificação das Partes')
                 ->schema([
