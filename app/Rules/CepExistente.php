@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 
 /**
  * Confere se o CEP existe (ViaCEP). O Asaas recusa o checkout com "O campo postalCode é inválido" quando o CEP não existe
- * (caso real de 18/10/2026: 13080-580), e o cliente ficava sem link de pagamento. Se a consulta estiver fora do ar, NÃO bloqueia o cadastro.
+ * (caso real de 18/10/2026: 13080-580), e o cliente ficava sem link de pagamento. Se a consulta estiver fora do ar (após uma nova tentativa), o cadastro também é barrado: sem confirmar o CEP não dá para garantir o pagamento.
  */
 class CepExistente implements ValidationRule
 {
@@ -21,9 +21,16 @@ class CepExistente implements ValidationRule
             return null;
         }
 
-        try {
-            $r = Http::timeout(3)->acceptJson()->get("https://viacep.com.br/ws/{$digitos}/json/");
-        } catch (\Throwable) {
+        $r = null;
+        for ($tentativa = 0; $tentativa < 2 && ! $r?->successful() && $r?->status() !== 400; $tentativa++) {
+            try {
+                $r = Http::timeout(3)->acceptJson()->get("https://viacep.com.br/ws/{$digitos}/json/");
+            } catch (\Throwable) {
+                $r = null;
+            }
+        }
+
+        if ($r === null) {
             return null;
         }
 
@@ -40,8 +47,16 @@ class CepExistente implements ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (is_string($value) && self::existe($value) === false) {
+        if (! is_string($value) || ! config('services.cep_lookup.ativo', true) || strlen(preg_replace('/\D/', '', $value)) !== 8) {
+            return;
+        }
+
+        $existe = self::existe($value);
+
+        if ($existe === false) {
             $fail('Não encontramos esse CEP. Confira o número e tente de novo.');
+        } elseif ($existe === null) {
+            $fail('Não conseguimos confirmar o CEP agora. Aguarde um instante e tente de novo.');
         }
     }
 }
