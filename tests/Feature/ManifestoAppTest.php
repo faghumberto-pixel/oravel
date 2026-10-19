@@ -79,4 +79,20 @@ class ManifestoAppTest extends TestCase
     {
         $this->get('/app-manifest/admin.json')->assertRedirect();
     }
+
+    public function test_link_do_manifesto_envia_cookie_pois_a_rota_exige_login(): void
+    {
+        $this->assertStringNotContainsString('use-credentials', view('partials.app-manifest')->render());
+
+        $usuario = $this->usuario('manutencao');
+        $this->actingAs($usuario);
+        $html = view('partials.app-manifest')->render();
+
+        $this->assertStringContainsString(route('app.manifesto', AppProfile::for($usuario)), $html);
+        $this->assertStringContainsString('crossorigin="use-credentials"', $html);
+
+        // Sem login a rota redireciona (HTML), que é exatamente o que o navegador sem cookie recebia.
+        auth()->logout();
+        $this->get(route('app.manifesto', AppProfile::ADMIN))->assertRedirect();
+    }
 }
