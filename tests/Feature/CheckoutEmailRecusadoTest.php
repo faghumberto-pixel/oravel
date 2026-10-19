@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Rules\EmailSemErroDeDigitacao;
 use App\Support\Pacotes;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
@@ -27,16 +28,27 @@ class CheckoutEmailRecusadoTest extends TestCase
 
     private bool $emailRecusado = true;
 
+    private string $erroDoCheckout = 'email';
+
+    /** 'existe' | 'nao_existe' | 'fora_do_ar' */
+    private string $viaCep = 'existe';
+
     protected function setUp(): void
     {
         parent::setUp();
         config(['services.asaas.api_key' => 'KEY', 'services.asaas.base_url' => 'https://asaas.test/v3']);
         $this->emailRecusado = true;
-        Http::fake(['asaas.test/*' => function ($r) {
+        $this->erroDoCheckout = 'email';
+        $this->viaCep = 'existe';
+        Http::fake(['viacep.com.br/*' => fn () => match ($this->viaCep) {
+            'nao_existe' => Http::response(['erro' => true], 200),
+            'fora_do_ar' => throw new ConnectionException('sem rede'),
+            default => Http::response(['cep' => '13080-510', 'logradouro' => 'Rua Martins Torres'], 200),
+        }, 'asaas.test/*' => function ($r) {
             $url = $r->url();
 
             return match (true) {
-                str_contains($url, '/checkouts') && $this->emailRecusado => Http::response(['errors' => [['code' => 'invalid_object', 'description' => 'O campo email é inválido.']]], 400),
+                str_contains($url, '/checkouts') && $this->emailRecusado => Http::response(['errors' => [['code' => 'invalid_object', 'description' => $this->erroDoCheckout === 'cep' ? 'O campo postalCode é inválido.' : 'O campo email é inválido.']]], 400),
                 str_contains($url, '/checkouts') => Http::response(['id' => 'che_1', 'link' => 'https://asaas.test/checkout/che_1'], 200),
                 str_contains($url, '/customers') => Http::response(['id' => 'cus_1', 'data' => []], 200),
                 default => Http::response([], 200),
@@ -162,5 +174,48 @@ class CheckoutEmailRecusadoTest extends TestCase
         $this->cadastrarEAssinar($email);
 
         Mail::assertSent(SignatureLinkMail::class, fn ($m) => $m->hasTo($email));
+    }
+
+    public function test_signup_checks_that_the_cep_exists_but_never_blocks_when_the_lookup_is_down(): void
+    {
+        config(['services.cep_lookup.ativo' => true]);
+        $plano = $this->vitrine();
+
+        $this->viaCep = 'nao_existe';
+        $this->post('/assinar', $this->payload($plano, ['cep' => '13080-580']))->assertSessionHasErrors('cep');
+        $this->assertStringContainsString('Não encontramos esse CEP', session('errors')->first('cep'));
+
+        $this->viaCep = 'fora_do_ar';
+        $this->post('/assinar', $this->payload($plano, ['cep' => '13080-580', 'company_name' => 'Empresa CEP sem consulta']))->assertSessionHasNoErrors();
+        $this->assertSame('13080-580', Tenant::where('name', 'Empresa CEP sem consulta')->value('cep'));
+
+        $this->viaCep = 'existe';
+        $this->post('/assinar', $this->payload($plano, ['cep' => '13080510', 'company_name' => 'Empresa CEP certo']))->assertSessionHasNoErrors();
+        $this->assertSame('13080-510', Tenant::where('name', 'Empresa CEP certo')->value('cep'), 'o CEP é gravado sempre com hífen');
+    }
+
+    public function test_when_the_emitter_refuses_the_cep_the_client_fixes_it_and_goes_to_payment(): void
+    {
+        $this->erroDoCheckout = 'cep';
+        [$t, $token] = $this->cadastrarEAssinar('cep-'.uniqid().'@empresa.com.br');
+
+        $this->get(route('checkout.continue', ['token' => $token]))->assertRedirect(route('checkout.pending', ['t' => $token]));
+        $this->assertSame('cep', session('motivo_checkout'));
+
+        $this->withSession(['motivo_checkout' => 'cep'])->get(route('checkout.pending', ['t' => $token]))->assertOk()
+            ->assertSee('CEP correto')->assertSee('Corrigir e ir para o pagamento')->assertDontSee('E-mail correto');
+
+        config(['services.cep_lookup.ativo' => true]);
+        $this->viaCep = 'nao_existe';
+        $this->post(route('checkout.fix-cep', $token), ['cep' => '13080-580'])->assertSessionHasErrors('cep');
+
+        $this->viaCep = 'existe';
+        $this->emailRecusado = false;
+        $this->post(route('checkout.fix-cep', $token), ['cep' => '13080510'])->assertRedirect(route('checkout.continue', ['token' => $token]));
+        $this->assertSame('13080-510', $t->fresh()->cep);
+        $this->get(route('checkout.continue', ['token' => $token]))->assertRedirect('https://asaas.test/checkout/che_1');
+
+        $t->forceFill(['asaas_subscription_id' => 'sub_1'])->save();
+        $this->post(route('checkout.fix-cep', $token), ['cep' => '13080510'])->assertNotFound();
     }
 }

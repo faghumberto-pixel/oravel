@@ -9,6 +9,7 @@ use App\Models\TaxaConfiguracao;
 use App\Models\Tenant;
 use App\Models\TenantEvent;
 use App\Models\User;
+use App\Rules\CepExistente;
 use App\Rules\CpfCnpj;
 use App\Rules\EmailSemErroDeDigitacao;
 use App\Services\AsaasService;
@@ -133,7 +134,7 @@ class AsaasCheckoutController extends Controller
             'equipment_types' => ['required', 'array', 'min:1'],
             'equipment_types.*' => ['string', Rule::in(array_keys(self::EQUIPMENT_TYPES))],
             'cpf_cnpj' => ['required', 'string', new CpfCnpj],
-            'cep' => ['required', 'string', 'regex:/^\d{5}-?\d{3}$/'],
+            'cep' => ['required', 'string', 'regex:/^\d{5}-?\d{3}$/', new CepExistente],
             'logradouro' => ['required', 'string', 'max:255'],
             'numero' => ['required', 'string', 'max:20'],
             'complemento' => ['nullable', 'string', 'max:255'],
@@ -195,7 +196,7 @@ class AsaasCheckoutController extends Controller
             'telefone' => $data['telefone'],
             'segment' => $data['segment'],
             'equipment_types' => $data['equipment_types'],
-            'cep' => $data['cep'],
+            'cep' => preg_replace('/^(\d{5})(\d{3})$/', '$1-$2', preg_replace('/\D/', '', $data['cep'])),
             'logradouro' => $data['logradouro'],
             'numero' => $data['numero'],
             'complemento' => $data['complemento'] ?? null,
@@ -303,7 +304,9 @@ class AsaasCheckoutController extends Controller
             dedupeKey: 'checkout-falhou:'.$tenant->id.':'.now()->format('YmdHi'), notify: true, level: 'danger',
         );
 
-        return redirect()->route('checkout.pending', ['t' => $token])->with('motivo_checkout', str_contains(mb_strtolower((string) $motivo), 'email') ? 'email' : 'geral');
+        $texto = mb_strtolower((string) $motivo);
+
+        return redirect()->route('checkout.pending', ['t' => $token])->with('motivo_checkout', str_contains($texto, 'postalcode') ? 'cep' : (str_contains($texto, 'email') ? 'email' : 'geral'));
     }
 
     /** Tela de "pagamento pendente": tentar de novo, corrigir o e-mail (quando foi o motivo) ou falar com a equipe. */
@@ -318,8 +321,24 @@ class AsaasCheckoutController extends Controller
             // Mesmo abrindo a tela depois (sem a sessão do erro), o e-mail com cara de digitação errada já mostra o formulário de correção.
             'motivo' => session('motivo_checkout') === 'email' || ($tenant?->adminUser && EmailSemErroDeDigitacao::sugestao($tenant->adminUser->email)) ? 'email' : session('motivo_checkout'),
             'email' => $tenant?->adminUser?->email,
+            'cep' => $tenant?->cep,
             'empresa' => $tenant?->name,
         ]);
+    }
+
+    /** O CEP do cadastro foi recusado (não existe): corrige o da empresa (só enquanto nada foi pago) e tenta o pagamento de novo. */
+    public function corrigirCep(Request $request, string $token): RedirectResponse
+    {
+        $assinatura = DocumentSignature::withoutGlobalScope('tenant')->where('token', $token)->where('signable_type', Tenant::class)->first();
+        $tenant = $assinatura?->is_signed ? $assinatura->signable : null;
+
+        abort_unless($tenant && blank($tenant->asaas_subscription_id) && blank($tenant->asaas_checkout_id), 404);
+
+        $dados = $request->validate(['cep' => ['required', 'string', 'regex:/^\d{5}-?\d{3}$/', new CepExistente]]);
+
+        $tenant->forceFill(['cep' => preg_replace('/^(\d{5})(\d{3})$/', '$1-$2', preg_replace('/\D/', '', $dados['cep']))])->save();
+
+        return redirect()->route('checkout.continue', ['token' => $token]);
     }
 
     /** O e-mail do cadastro foi recusado: corrige o do administrador (só enquanto nada foi pago) e tenta o pagamento de novo. */

@@ -246,6 +246,7 @@
                                             placeholder="00000-000" autocomplete="postal-code" class="oravel-auth-input-raw">
                                     </div>
                                     <x-input-error :messages="$errors->get('cep')" class="oravel-auth-error" />
+                                    <p id="cep-aviso" class="oravel-auth-error" hidden></p>
                                 </div>
 
                                 <div class="sm:col-span-2">
@@ -393,9 +394,12 @@
                 fetch('https://viacep.com.br/ws/' + cep + '/json/')
                     .then(function (response) { return response.json(); })
                     .then(function (data) {
+                        var aviso = document.getElementById('cep-aviso');
                         if (data.erro) {
+                            if (aviso) { aviso.textContent = 'Não encontramos esse CEP. Confira o número antes de continuar.'; aviso.hidden = false; }
                             return;
                         }
+                        if (aviso) { aviso.hidden = true; }
 
                         document.getElementById('logradouro').value = data.logradouro || '';
                         document.getElementById('bairro').value = data.bairro || '';

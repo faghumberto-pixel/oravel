@@ -61,6 +61,9 @@ return [
         ],
     ],
 
+    // Consulta de CEP no cadastro (ViaCEP): confere se o CEP existe antes de pedir o pagamento. Desligada nos testes.
+    'cep_lookup' => ['ativo' => env('CEP_LOOKUP', true)],
+
     'traccar' => [
         'url' => env('TRACCAR_URL'),
         'email' => env('TRACCAR_EMAIL'),

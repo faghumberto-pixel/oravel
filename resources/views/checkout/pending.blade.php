@@ -47,6 +47,22 @@
                                 Corrigir e ir para o pagamento
                             </button>
                         </form>
+                    @elseif ($token && $motivo === 'cep')
+                        <p class="mt-3 text-sm text-white/75">
+                            Seu cadastro e o contrato estão prontos, mas o CEP <strong class="text-white">{{ $cep }}</strong>
+                            não foi aceito pelo sistema de pagamento. Confira o número e tente de novo.
+                        </p>
+
+                        <form method="POST" action="{{ route('checkout.fix-cep', $token) }}" class="mt-5 text-left">
+                            @csrf
+                            <label for="cep" class="block text-xs font-semibold uppercase tracking-wide text-white/70">CEP correto</label>
+                            <input id="cep" name="cep" type="text" inputmode="numeric" required maxlength="9" value="{{ old('cep', $cep) }}"
+                                class="mt-1 w-full rounded-xl border border-white/30 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-orange-400 focus:outline-none">
+                            @error('cep')<p class="mt-2 text-sm text-orange-200">{{ $message }}</p>@enderror
+                            <button type="submit" class="mt-4 inline-block w-full rounded-full px-6 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-lg transition hover:opacity-90" style="background-color: #ea580c;">
+                                Corrigir e ir para o pagamento
+                            </button>
+                        </form>
                     @elseif ($token)
                         <p class="mt-3 text-sm text-white/75">
                             Seu cadastro e o contrato de {{ $empresa }} estão prontos, mas não conseguimos gerar o link de pagamento agora.
