@@ -6,6 +6,7 @@ use App\Filament\Central\Resources\ContratoResource\Pages;
 use App\Models\DocumentSignature;
 use App\Models\Plan;
 use App\Models\Tenant;
+use App\Support\AcademiaDoPlano;
 use App\Support\Colaborador\Modulos;
 use App\Support\MenuModules;
 use App\Support\Pacotes;
@@ -258,6 +259,12 @@ class ContratoResource extends Resource
                                 : 'Valor sugerido do pacote: R$ '.number_format($preco, 2, ',', '.').'. Depois de escolher, use "Aplicar módulos do pacote" e ajuste os extras abaixo.';
                         }),
 
+                    Forms\Components\Select::make('pacotes')
+                        ->label('Produtos contratados (mais de um)')
+                        ->options(Pacotes::opcoes())
+                        ->multiple()
+                        ->helperText('Deixe vazio para só o pacote acima. Com mais de um produto, "Aplicar módulos do pacote" marca os módulos de todos. A empresa pode trocar de produto depois sem perder dados.'),
+
                     Forms\Components\Actions::make([
                         Forms\Components\Actions\Action::make('aplicarPacote')
                             ->label('Aplicar módulos do pacote')
@@ -267,7 +274,9 @@ class ContratoResource extends Resource
                             ->modalDescription('Marca os módulos do pacote (e a base comum: usuários, configurações e painel inicial). Não desmarca nada que já esteja selecionado.')
                             ->visible(fn (Get $get) => filled($get('pacote')))
                             ->action(function (Get $get, Set $set) {
-                                static::aplicarPacote((string) $get('pacote'), fn ($campo) => $get($campo), fn ($campo, $valor) => $set($campo, $valor));
+                                foreach (array_unique(array_merge([(string) $get('pacote')], (array) ($get('pacotes') ?? []))) as $codigo) {
+                                    static::aplicarPacote($codigo, fn ($campo) => $get($campo), fn ($campo, $valor) => $set($campo, $valor));
+                                }
 
                                 Notification::make()->title('Módulos do pacote marcados. Revise e salve.')->success()->send();
                             }),
@@ -343,7 +352,7 @@ class ContratoResource extends Resource
                 ->description('Selecione o que esse contrato específico libera pro cliente, agrupado pelos mesmos menus do painel.')
                 ->schema([
                     Forms\Components\Placeholder::make('academia_do_plano')->label('Academia deste contrato')
-                        ->content(fn (?Plan $record) => \App\Support\AcademiaDoPlano::texto($record))
+                        ->content(fn (?Plan $record) => AcademiaDoPlano::texto($record))
                         ->helperText('A Academia faz parte de todos os pacotes e mostra só as aulas dos módulos marcados abaixo.'),
 
                     // Resumo ao vivo (pedido do usuário: "que sejam

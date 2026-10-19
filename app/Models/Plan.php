@@ -18,10 +18,11 @@ class Plan extends Model
     protected $table = 'plans';
 
     protected $fillable = [
-        'name', 'pacote', 'price', 'level', 'base_price', 'discount_value', 'discount_type', 'final_price', 'implementation_fee', 'implementation_installments', 'implementation_billing_mode', 'implantacao_opcional', 'payment_method', 'billing_cycle', 'campaign_tag', 'features', 'is_active',
+        'name', 'pacote', 'pacotes', 'price', 'level', 'base_price', 'discount_value', 'discount_type', 'final_price', 'implementation_fee', 'implementation_installments', 'implementation_billing_mode', 'implantacao_opcional', 'payment_method', 'billing_cycle', 'campaign_tag', 'features', 'is_active',
     ];
 
     protected $casts = [
+        'pacotes' => 'array',
         'price' => 'decimal:2',
         'base_price' => 'decimal:2',
         'discount_value' => 'decimal:2',

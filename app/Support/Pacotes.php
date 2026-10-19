@@ -138,6 +138,40 @@ class Pacotes
         return $plano;
     }
 
+    /**
+     * Produtos contratados no contrato: a lista `pacotes` quando existe; senão o pacote principal; contrato personalizado (sem
+     * pacote) segue como Locadora, que é o que todas as empresas antigas são. Códigos desconhecidos são ignorados.
+     *
+     * @return list<string>
+     */
+    public static function produtosDoPlano(?Plan $plano): array
+    {
+        $codigos = collect((array) ($plano?->pacotes ?? []))->push($plano?->pacote)
+            ->map(fn ($c) => self::normalizar(is_string($c) ? $c : null))
+            ->filter(fn ($c) => $c && isset(self::todos()[$c]))
+            ->unique()->values()->all();
+
+        return $codigos ?: ['locadora'];
+    }
+
+    /** @return list<string> */
+    public static function produtosDoTenant(?Tenant $tenant): array
+    {
+        return self::produtosDoPlano($tenant?->plan);
+    }
+
+    /**
+     * Módulos de vários produtos juntos (união sem repetir). Um módulo excluído por um produto só sai se TODOS os
+     * produtos o excluem: ele entra assim que algum produto escolhido o oferece.
+     *
+     * @param  list<string>  $codigos
+     * @return list<string>
+     */
+    public static function featuresDeProdutos(array $codigos): array
+    {
+        return collect($codigos)->flatMap(fn ($c) => self::features($c))->unique()->values()->all();
+    }
+
     /** Pacote do contrato do tenant (nulo = personalizado). */
     public static function doTenant(?Tenant $tenant): ?string
     {
