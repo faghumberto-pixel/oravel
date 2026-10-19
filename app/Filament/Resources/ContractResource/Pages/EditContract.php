@@ -21,7 +21,8 @@ class EditContract extends EditRecord
                 ->color('primary'),
             FaturarContratoAction::header()->record($this->getRecord()),
             FaturarContratoAction::custoMargem(true)->record($this->getRecord()),
-            Actions\DeleteAction::make(),
+            // Interface simples: sem exclusão (faturas e histórico dependem do contrato); encerre em vez de excluir.
+            Actions\DeleteAction::make()->visible(fn () => ! \App\Filament\Resources\ContractResource::interfaceSimples()),
         ];
     }
 }
