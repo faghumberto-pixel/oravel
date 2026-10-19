@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Pages\PainelGestao;
+use App\Filament\Pages\PrimeirosPassos;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\TenantProvisioner;
@@ -58,6 +59,16 @@ class PainelRespeitaContratoTest extends TestCase
         $this->actingAs($u);
 
         $this->assertStringNotContainsString('painel-controle', AppProfile::homeUrl($u, AppProfile::ADMIN));
-        $this->assertSame(\App\Filament\Pages\PrimeirosPassos::getUrl(), AppProfile::homeUrl($u, AppProfile::ADMIN), 'cai no Guia dos módulos');
+        $this->assertSame(PrimeirosPassos::getUrl(), AppProfile::homeUrl($u, AppProfile::ADMIN), 'cai no Guia dos módulos');
+    }
+
+    public function test_sem_o_painel_o_guia_vale_ate_antes_da_tela_inicial_do_pacote(): void
+    {
+        $u = $this->admin(false);
+        $this->actingAs($u);
+
+        // a tela inicial do pacote Manutenção é o Quadro de OS; sem o painel, o administrador abre o Guia dos módulos mesmo assim
+        $this->assertNotNull(Pacotes::urlInicial($u->tenant), 'o pacote tem tela inicial própria');
+        $this->assertSame(PrimeirosPassos::getUrl(), AppProfile::homeUrl($u, AppProfile::ADMIN));
     }
 }
