@@ -385,32 +385,56 @@
 
         <script src="//unpkg.com/alpinejs" defer></script>
         <script>
-            document.getElementById('cep').addEventListener('blur', function () {
-                var cep = this.value.replace(/\D/g, '');
-                if (cep.length !== 8) {
-                    return;
+            (function () {
+                var campo = document.getElementById('cep');
+                var aviso = document.getElementById('cep-aviso');
+                var ultimo = '';
+
+                function mostrar(texto) {
+                    if (!aviso) { return; }
+                    aviso.textContent = texto || '';
+                    aviso.hidden = !texto;
                 }
 
-                fetch('https://viacep.com.br/ws/' + cep + '/json/')
-                    .then(function (response) { return response.json(); })
-                    .then(function (data) {
-                        var aviso = document.getElementById('cep-aviso');
-                        if (data.erro) {
-                            if (aviso) { aviso.textContent = 'Não encontramos esse CEP. Confira o número antes de continuar.'; aviso.hidden = false; }
-                            return;
-                        }
-                        if (aviso) { aviso.hidden = true; }
+                function buscar() {
+                    var cep = campo.value.replace(/\D/g, '');
+                    if (cep.length !== 8 || cep === ultimo) {
+                        return;
+                    }
+                    ultimo = cep;
+                    mostrar('Buscando endereço…');
 
-                        document.getElementById('logradouro').value = data.logradouro || '';
-                        document.getElementById('bairro').value = data.bairro || '';
-                        document.getElementById('cidade').value = data.localidade || '';
-                        document.getElementById('uf').value = data.uf || '';
-                    })
-                    .catch(function () {
-                        // Falha na busca (offline, API fora do ar) não deve
-                        // travar o cadastro -- cliente preenche manualmente.
-                    });
-            });
+                    fetch('https://viacep.com.br/ws/' + cep + '/json/')
+                        .then(function (response) { return response.json(); })
+                        .then(function (data) {
+                            if (data.erro) {
+                                mostrar('Não encontramos esse CEP. Confira o número antes de continuar.');
+                                return;
+                            }
+                            mostrar('');
+                            document.getElementById('logradouro').value = data.logradouro || '';
+                            document.getElementById('bairro').value = data.bairro || '';
+                            document.getElementById('cidade').value = data.localidade || '';
+                            document.getElementById('uf').value = data.uf || '';
+                            var numero = document.getElementById('numero');
+                            if (numero && document.activeElement === campo) { numero.focus(); }
+                        })
+                        .catch(function () {
+                            ultimo = '';
+                            mostrar('');
+                            // Sem a busca o cliente preenche à mão; o servidor confere o CEP ao enviar.
+                        });
+                }
+
+                // Busca assim que o 8º dígito é digitado (ou colado), sem precisar sair do campo.
+                campo.addEventListener('input', function () {
+                    var d = campo.value.replace(/\D/g, '').slice(0, 8);
+                    campo.value = d.length > 5 ? d.slice(0, 5) + '-' + d.slice(5) : d;
+                    if (d.length < 8) { ultimo = ''; mostrar(''); }
+                    buscar();
+                });
+                campo.addEventListener('blur', buscar);
+            })();
         </script>
     </body>
 </html>
