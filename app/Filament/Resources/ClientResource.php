@@ -91,8 +91,57 @@ class ClientResource extends Resource
         };
     }
 
+    /** Interface simples (padrão de quem não contratou Locadora; a Central pode forçar por empresa). */
+    public static function interfaceSimples(): bool
+    {
+        return Tenancy::current()?->interfaceSimples() ?? false;
+    }
+
+    /**
+     * Cadastro curto de cliente: nome, documento, contato e endereço. Grava nas mesmas colunas da ficha completa, então trocar de modo não
+     * perde nada. O acesso ao Portal do Cliente só aparece para empresas que o têm incluído (cartão recorrente).
+     */
+    public static function formSimples(Form $form): Form
+    {
+        return $form->schema([
+            Forms\Components\Section::make('Cliente')->schema([
+                Forms\Components\TextInput::make('name')->label('Nome ou razão social')->required()->maxLength(255)->rules([static::regraDuplicidade('name')]),
+                Forms\Components\TextInput::make('document')->label('CPF ou CNPJ')->maxLength(20)->rules([static::regraDuplicidade('document')]),
+                Forms\Components\TextInput::make('contact_name')->label('Nome do contato')->maxLength(255),
+                Forms\Components\TextInput::make('phone')->label('Telefone')->tel()->maxLength(30)->rules([static::regraDuplicidade('phone')]),
+                Forms\Components\TextInput::make('whatsapp')->label('Celular / WhatsApp')->tel()->maxLength(30)->rules([static::regraDuplicidade('whatsapp')]),
+                Forms\Components\TextInput::make('email')->label('E-mail')->email()->maxLength(255)
+                    ->required(fn (Get $get) => (bool) $get('portal_access_enabled_at'))
+                    ->rules([static::regraDuplicidade('email')]),
+            ])->columns(2),
+            Forms\Components\Section::make('Endereço')->schema([
+                Forms\Components\TextInput::make('address')->label('Endereço')->maxLength(255)->columnSpan(2),
+                Forms\Components\TextInput::make('city')->label('Cidade')->maxLength(120),
+                Forms\Components\TextInput::make('uf')->label('UF')->maxLength(2)->extraInputAttributes(['style' => 'text-transform:uppercase']),
+            ])->columns(2),
+            Forms\Components\Section::make('Acesso ao Portal do Cliente')
+                ->description('O cliente entra em app.oravel.com.br/cliente com o e-mail deste cadastro e a senha definida aqui.')
+                ->visible(fn () => Tenancy::current()?->portalClienteIncluido() ?? false)
+                ->schema([
+                    Forms\Components\Toggle::make('portal_access_enabled_at')->label('Acesso ao portal ativo')->live()
+                        ->formatStateUsing(fn ($state) => (bool) $state)
+                        ->dehydrateStateUsing(fn ($state, ?Client $record) => $state ? ($record?->portal_access_enabled_at ?? now()) : null),
+                    Forms\Components\TextInput::make('password')->label('Senha do portal')->password()->revealable()->autocomplete('new-password')
+                        ->afterStateHydrated(fn (Forms\Components\TextInput $component) => $component->state(null))
+                        ->minLength(8)
+                        ->required(fn (Get $get, ?Client $record) => (bool) $get('portal_access_enabled_at') && ! $record?->password)
+                        ->dehydrated(fn ($state) => filled($state))
+                        ->helperText(fn (?Client $record) => $record?->password ? 'Deixe em branco para manter a senha atual.' : 'Mínimo de 8 caracteres. Passe a senha ao cliente por um canal seguro.'),
+                ])->columns(2),
+        ]);
+    }
+
     public static function form(Form $form): Form
     {
+        if (static::interfaceSimples()) {
+            return static::formSimples($form);
+        }
+
         // (SEU CÓDIGO ORIGINAL DE TABS FOI MANTIDO INTEGRALMENTE)
         return $form->schema([
             Forms\Components\Tabs::make('Ficha Cadastral para Integração ERP')
@@ -372,7 +421,7 @@ class ClientResource extends Resource
                         }
                     }),
             ])
-            ->bulkActions([Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()])]);
+            ->bulkActions([Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()->visible(fn () => ! static::interfaceSimples())])]);
     }
 
     public static function getRelations(): array

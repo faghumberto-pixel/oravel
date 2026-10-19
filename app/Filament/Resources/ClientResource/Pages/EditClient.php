@@ -26,7 +26,8 @@ class EditClient extends EditRecord
                     'related_id' => $record->id,
                 ])),
 
-            Actions\DeleteAction::make(),
+            // Interface simples: sem exclusão (o histórico de OS e contratos depende do cliente).
+            Actions\DeleteAction::make()->visible(fn () => ! \App\Filament\Resources\ClientResource::interfaceSimples()),
         ];
     }
 
