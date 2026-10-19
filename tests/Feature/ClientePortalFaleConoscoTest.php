@@ -29,7 +29,7 @@ class ClientePortalFaleConoscoTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $plan = Plan::create(['name' => 'Plano FC '.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => ['tabela_client_feedbacks' => true, 'tabela_clients' => true]]);
+        $plan = Plan::create(['name' => 'Plano FC '.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => ['tabela_client_feedbacks' => true, 'tabela_clients' => true, 'modulo_portal_cliente' => true]]);
         $this->tenant = Tenant::create(['name' => 'Locadora FC', 'slug' => 'fc-'.uniqid(), 'plan_id' => $plan->id, 'status' => 'active']);
         $this->cliente = $this->novoCliente($this->tenant, 'Construtora Alfa');
         $this->admin = User::create(['name' => 'Chefe', 'email' => 'fc-'.uniqid().'@oravel.com.br', 'password' => bcrypt('x'), 'tenant_id' => $this->tenant->id]);

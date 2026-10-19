@@ -29,7 +29,7 @@ class ClientPortalDataIsolationTest extends TestCase
         $plan = Plan::create([
             'name' => 'Plano Isolamento '.uniqid(), 'price' => 100, 'base_price' => 100, 'level' => 1,
             'billing_cycle' => 'monthly', 'is_active' => true,
-            'features' => ['tabela_clients', 'tabela_contracts'],
+            'features' => ['tabela_clients', 'tabela_contracts', 'modulo_portal_cliente'],
         ]);
 
         $tenant = Tenant::create([
