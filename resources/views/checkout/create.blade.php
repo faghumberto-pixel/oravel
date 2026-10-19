@@ -332,8 +332,8 @@
                                         <label class="oravel-auth-label">Telefone</label>
                                         <div class="oravel-auth-field">
                                             <x-heroicon-o-phone class="oravel-auth-field-icon" />
-                                            <input type="tel" name="telefone" value="{{ old('telefone') }}" required
-                                                placeholder="(00) 00000-0000" class="oravel-auth-input-raw">
+                                            <input type="tel" id="telefone" name="telefone" value="{{ old('telefone') }}" required inputmode="numeric" maxlength="15"
+                                                autocomplete="tel-national" placeholder="(00) 00000-0000" class="oravel-auth-input-raw">
                                         </div>
                                         <x-input-error :messages="$errors->get('telefone')" class="oravel-auth-error" />
                                     </div>
@@ -385,6 +385,23 @@
 
         <script src="//unpkg.com/alpinejs" defer></script>
         <script>
+            (function () {
+                var tel = document.getElementById('telefone');
+                if (!tel) { return; }
+
+                // (DD) 9999-9999 para fixo e (DD) 99999-9999 para celular, montado enquanto digita.
+                function formatar(valor) {
+                    var d = valor.replace(/\D/g, '').replace(/^0+/, '').slice(0, 11);
+                    if (d.length === 0) { return ''; }
+                    if (d.length <= 2) { return '(' + d; }
+                    var corte = d.length > 10 ? 7 : 6;
+                    if (d.length <= corte) { return '(' + d.slice(0, 2) + ') ' + d.slice(2); }
+                    return '(' + d.slice(0, 2) + ') ' + d.slice(2, corte) + '-' + d.slice(corte);
+                }
+
+                tel.addEventListener('input', function () { tel.value = formatar(tel.value); });
+                tel.value = formatar(tel.value);
+            })();
             (function () {
                 var campo = document.getElementById('cep');
                 var aviso = document.getElementById('cep-aviso');
