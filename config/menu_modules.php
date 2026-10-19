@@ -380,4 +380,16 @@ return [
         'recurso' => true,
         'herda' => ['__nunca__'],
     ],
+
+    // Adicionais: recursos incluídos nos pacotes, sem custo, que a Central liga ou desliga por contrato.
+    // Portal do cliente: nasce LIGADO em todos os contratos (herda vazio), mas só vale para quem paga no cartão recorrente
+    // (ver Tenant::portalClienteIncluido()).
+    'modulo_portal_cliente' => [
+        'label' => 'Portal do cliente: os clientes da empresa abrem chamados e acompanham ordens de serviço, contratos e financeiro',
+        'grupo' => 'Adicionais',
+        'menu' => 'Portal do cliente (módulo)',
+        'slug' => 'modulo-portal-cliente-sem-rota',
+        'recurso' => true,
+        'herda' => [],
+    ],
 ];

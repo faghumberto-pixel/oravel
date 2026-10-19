@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Central\Resources\ContratoResource;
 use App\Filament\Client\Pages\Auth\Login as ClientLogin;
 use App\Models\Client;
+use App\Models\Plan;
 use App\Models\Tenant;
 use App\Support\Pacotes;
 use Filament\Facades\Filament;
@@ -18,16 +20,31 @@ class PortalClienteSoCartaoTest extends TestCase
 
     private function cliente(?string $forma): Client
     {
-        $tenant = Tenant::factory()->create(['payment_method' => $forma]);
+        $tenant = $this->empresa($forma);
 
         return Client::factory()->create(['tenant_id' => $tenant->id, 'email' => 'cli-'.uniqid().'@exemplo.com', 'password' => 'senha12345', 'portal_access_enabled_at' => now()]);
     }
 
+    private function empresa(?string $forma, bool $comModulo = true): Tenant
+    {
+        $plano = Plan::create(['name' => 'Contrato '.uniqid(), 'price' => 100, 'is_active' => true, 'features' => ['modulo_portal_cliente' => $comModulo]]);
+
+        return Tenant::factory()->create(['payment_method' => $forma, 'plan_id' => $plano->id]);
+    }
+
     public function test_cartao_e_empresa_antiga_sem_forma_gravada_tem_portal_e_boleto_pix_nao(): void
     {
-        $this->assertTrue(Tenant::factory()->create(['payment_method' => 'cartao'])->portalClienteIncluido());
-        $this->assertTrue(Tenant::factory()->create(['payment_method' => null])->portalClienteIncluido(), 'empresa antiga não perde o portal');
-        $this->assertFalse(Tenant::factory()->create(['payment_method' => 'boleto_pix'])->portalClienteIncluido());
+        $this->assertTrue($this->empresa('cartao')->portalClienteIncluido());
+        $this->assertTrue($this->empresa(null)->portalClienteIncluido(), 'empresa antiga não perde o portal');
+        $this->assertFalse($this->empresa('boleto_pix')->portalClienteIncluido());
+    }
+
+    public function test_a_central_desliga_o_portal_pelo_modulo_adicionais_do_contrato(): void
+    {
+        $this->assertFalse($this->empresa('cartao', false)->portalClienteIncluido(), 'contrato sem o módulo Portal do cliente');
+        $this->assertArrayHasKey('modulo_portal_cliente', ContratoResource::groupedFeatureOptions()['Adicionais']);
+        $this->assertContains('modulo_portal_cliente', Pacotes::features('manutencao'), 'todo pacote traz o portal ligado por padrão');
+        $this->assertContains('modulo_portal_cliente', Pacotes::features('locadora'));
     }
 
     public function test_cliente_so_acessa_o_painel_do_portal_se_a_empresa_inclui(): void

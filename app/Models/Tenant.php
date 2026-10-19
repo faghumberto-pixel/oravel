@@ -477,13 +477,13 @@ class Tenant extends Model
     }
 
     /**
-     * Portal do Cliente: incluído, sem custo, para quem paga a mensalidade no cartão recorrente (decisão do dono em 19/10/2026: não é vendido
-     * separado). Empresa antiga sem forma de pagamento gravada conta como cartão (paymentMethod() cai em 'cartao'), então ninguém que já
-     * tinha o portal o perde sem ter escolhido boleto/Pix.
+     * Portal do Cliente: recurso "Adicionais" do contrato (a Central liga ou desliga em Contratos), incluído sem custo e só para quem paga a
+     * mensalidade no cartão recorrente (decisão do dono em 19/10/2026: não é vendido separado). Empresa antiga sem forma de pagamento gravada
+     * conta como cartão (paymentMethod() cai em 'cartao'), então ninguém que já tinha o portal o perde sem ter escolhido boleto/Pix.
      */
     public function portalClienteIncluido(): bool
     {
-        return $this->paymentMethod() === 'cartao';
+        return $this->paymentMethod() === 'cartao' && (bool) $this->plan?->hasFeature('modulo_portal_cliente');
     }
 
     /** 'cartao' (checkout recorrente automático) ou 'boleto_pix' (assinatura mensal por boleto/Pix). */

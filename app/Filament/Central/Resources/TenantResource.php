@@ -208,6 +208,9 @@ class TenantResource extends Resource
                 Tables\Columns\TextColumn::make('name')->label('Empresa')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('slug')->label('Slug')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('plan.name')->label('Plano')->sortable(),
+                Tables\Columns\IconColumn::make('portal_cliente')->label('Portal do cliente')->boolean()
+                    ->state(fn (Tenant $r) => $r->portalClienteIncluido())
+                    ->tooltip(fn (Tenant $r) => $r->portalClienteIncluido() ? 'Ativo' : ($r->paymentMethod() !== 'cartao' ? 'Inativo: paga no boleto/Pix (o portal só vale no cartão recorrente)' : 'Inativo: o contrato não tem o módulo "Portal do cliente" (Adicionais)')),
                 Tables\Columns\TextColumn::make('plan.pacote')->label('Pacote')->badge()
                     ->formatStateUsing(fn (?string $state) => Pacotes::nome($state))
                     ->color(fn (?string $state) => $state ? 'primary' : 'gray'),
