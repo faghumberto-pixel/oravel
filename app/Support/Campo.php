@@ -58,7 +58,7 @@ class Campo
 
         return collect(config('campo.itens', []))
             ->filter(fn ($i) => array_intersect($i['perfis'], $perfis) !== [])
-            ->filter(fn ($i) => $user->can('viewAny', $i['modelo']))
+            ->filter(fn ($i) => $user->can($i['acao'] ?? 'viewAny', $i['modelo']))
             ->map(fn ($i) => [
                 'chave' => $i['chave'], 'titulo' => $i['titulo'], 'descricao' => $i['descricao'], 'icone' => $i['icone'],
                 'url' => route($i['rota']),

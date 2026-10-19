@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\CrmLead;
 use App\Models\CrmVisita;
 use App\Models\MaintenanceOrder;
 
@@ -11,10 +12,14 @@ use App\Models\MaintenanceOrder;
  */
 return [
     'itens' => [
+        ['chave' => 'os_rapida', 'titulo' => 'OS rápida', 'descricao' => 'Abrir uma ordem agora', 'icone' => 'heroicon-o-plus-circle',
+            'produto' => 'manutencao', 'rota' => 'os-rapida.mobile', 'modelo' => MaintenanceOrder::class, 'perfis' => ['tecnico'], 'acao' => 'create'],
         ['chave' => 'minhas_os', 'titulo' => 'Minhas OS do dia', 'descricao' => 'O que fazer hoje', 'icone' => 'heroicon-o-wrench-screwdriver',
             'produto' => 'manutencao', 'rota' => 'filament.admin.pages.technician-daily-tasks', 'modelo' => MaintenanceOrder::class, 'perfis' => ['tecnico']],
         ['chave' => 'agenda_tecnico', 'titulo' => 'Agenda', 'descricao' => 'Próximos compromissos', 'icone' => 'heroicon-o-calendar-days',
             'produto' => 'manutencao', 'rota' => 'agenda-tecnico.mobile', 'modelo' => MaintenanceOrder::class, 'perfis' => ['tecnico']],
+        ['chave' => 'leads', 'titulo' => 'Meus leads', 'descricao' => 'Retornos e contatos', 'icone' => 'heroicon-o-user-group',
+            'produto' => 'vendas', 'rota' => 'crm.leads.mobile', 'modelo' => CrmLead::class, 'perfis' => ['vendedor']],
         ['chave' => 'visitas', 'titulo' => 'Visitas e ligações', 'descricao' => 'Registrar e agendar', 'icone' => 'heroicon-o-map-pin',
             'produto' => 'vendas', 'rota' => 'crm.visitas.mobile', 'modelo' => CrmVisita::class, 'perfis' => ['vendedor']],
     ],

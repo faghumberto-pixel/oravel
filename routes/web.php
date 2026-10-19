@@ -472,6 +472,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/agenda-tecnico/mobile', 'App\Livewire\AgendaTecnicoMobile')
         ->name('agenda-tecnico.mobile');
 
+    // OS rápida do campo: equipamento da lista + descrição, depois segue para o modo campo da O.S.
+    Route::get('/admin/os-rapida', \App\Livewire\OsRapidaMobile::class)->name('os-rapida.mobile');
+
     // Almoxarifado Volante: saldo do próprio veículo, consulta no celular
     Route::get('/admin/meu-estoque', 'App\Livewire\MobileWarehouseStock')
         ->name('warehouse.mobile-stock');
@@ -531,6 +534,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/admin/propostas-comerciais/nova', PropostaComercialMobile::class)
         ->name('proposta-comercial.mobile.create');
+
+    Route::get('/admin/crm/leads/mobile', \App\Livewire\CrmLeadsMobile::class)
+        ->name('crm.leads.mobile');
 
     Route::get('/admin/crm/visitas/mobile', CrmVisitasMobile::class)
         ->name('crm.visitas.mobile');
