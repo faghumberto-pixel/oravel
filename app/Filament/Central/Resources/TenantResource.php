@@ -11,6 +11,8 @@ use App\Models\Tenant;
 use App\Models\User;
 use App\Services\AsaasService;
 use App\Services\CnpjLookupService;
+use App\Services\ProdutosDaEmpresa;
+use App\Support\AcademiaDoPlano;
 use App\Support\CrmPalette;
 use App\Support\Pacotes;
 use App\Support\Precos;
@@ -51,7 +53,7 @@ class TenantResource extends Resource
                     ->helperText('Total cobrado por mês na assinatura (base + complementos). Os complementos contratados continuam somados se você mudar o total.'),
                 Forms\Components\Placeholder::make('academia_do_plano')->label('Academia deste plano')
                     ->visible(fn (?Tenant $record) => $record?->exists === true)
-                    ->content(fn (?Tenant $record) => \App\Support\AcademiaDoPlano::texto($record?->plan)),
+                    ->content(fn (?Tenant $record) => AcademiaDoPlano::texto($record?->plan)),
                 Forms\Components\Placeholder::make('composicao_mrr')->label('Composição da mensalidade')
                     ->visible(fn (?Tenant $record) => $record?->exists === true)
                     ->content(function (?Tenant $record) {
@@ -272,6 +274,33 @@ class TenantResource extends Resource
                         Notification::make()->title('Implantação contratada')
                             ->body($links ? 'Cobrança gerada.' : 'Marcada como contratada; a cobrança não pôde ser gerada agora (confira o cadastro no Asaas).')
                             ->success()->send();
+                    }),
+                Tables\Actions\Action::make('alterarProdutos')
+                    ->label('Alterar produtos')->icon('heroicon-o-squares-plus')->color('info')
+                    ->visible(fn (Tenant $r) => $r->plan !== null)
+                    ->form(fn (Tenant $r) => [
+                        Forms\Components\Select::make('produtos')->label('Produtos contratados')->options(Pacotes::opcoes())->multiple()->required()
+                            ->default(Pacotes::produtosDoTenant($r))->live()
+                            ->helperText(function (Forms\Get $get) use ($r) {
+                                try {
+                                    $v = app(ProdutosDaEmpresa::class)->calcular($r, (array) $get('produtos'));
+                                } catch (\InvalidArgumentException $e) {
+                                    return $e->getMessage();
+                                }
+
+                                return 'Valor cheio '.Precos::brl($v['cheio']).'; mensalidade '.Precos::brl($v['mensalidade']).' ('.($r->paymentMethod() === 'cartao' ? 'cartão, com desconto' : 'boleto/Pix, cheio').'); total com complementos '.Precos::brl($v['total']).'. Os dados da empresa não mudam; o novo valor é enviado ao Asaas na hora.';
+                            }),
+                    ])
+                    ->action(function (Tenant $r, array $data) {
+                        try {
+                            app(ProdutosDaEmpresa::class)->alterar($r, (array) $data['produtos']);
+                        } catch (\InvalidArgumentException $e) {
+                            Notification::make()->title('Não foi possível alterar')->body($e->getMessage())->danger()->send();
+
+                            return;
+                        }
+
+                        Notification::make()->title('Produtos alterados')->body('Mensalidade recalculada e enviada ao Asaas (se a assinatura já existir).')->success()->send();
                     }),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
