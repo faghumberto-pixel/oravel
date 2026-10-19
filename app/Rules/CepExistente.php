@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 
 /**
  * Confere se o CEP existe (ViaCEP). O Asaas recusa o checkout com "O campo postalCode é inválido" quando o CEP não existe
- * (caso real de 18/10/2026: 13080-580), e o cliente ficava sem link de pagamento. Se a consulta estiver fora do ar (após uma nova tentativa), o cadastro também é barrado: sem confirmar o CEP não dá para garantir o pagamento.
+ * (caso real de 18/10/2026: 13080-580), e o cliente ficava sem link de pagamento. Se a consulta estiver fora do ar (após uma nova tentativa), o cadastro segue sem a checagem (decisão do dono: uma queda de terceiro não trava a venda).
  */
 class CepExistente implements ValidationRule
 {
@@ -51,12 +51,8 @@ class CepExistente implements ValidationRule
             return;
         }
 
-        $existe = self::existe($value);
-
-        if ($existe === false) {
+        if (self::existe($value) === false) {
             $fail('Não encontramos esse CEP. Confira o número e tente de novo.');
-        } elseif ($existe === null) {
-            $fail('Não conseguimos confirmar o CEP agora. Aguarde um instante e tente de novo.');
         }
     }
 }

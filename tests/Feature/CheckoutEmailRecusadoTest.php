@@ -176,7 +176,7 @@ class CheckoutEmailRecusadoTest extends TestCase
         Mail::assertSent(SignatureLinkMail::class, fn ($m) => $m->hasTo($email));
     }
 
-    public function test_signup_checks_that_the_cep_exists_but_blocks_when_the_lookup_is_down(): void
+    public function test_signup_checks_that_the_cep_exists_but_never_blocks_when_the_lookup_is_down(): void
     {
         config(['services.cep_lookup.ativo' => true]);
         $plano = $this->vitrine();
@@ -186,9 +186,8 @@ class CheckoutEmailRecusadoTest extends TestCase
         $this->assertStringContainsString('Não encontramos esse CEP', session('errors')->first('cep'));
 
         $this->viaCep = 'fora_do_ar';
-        $this->post('/assinar', $this->payload($plano, ['cep' => '13080-510', 'company_name' => 'Empresa CEP sem consulta']))->assertSessionHasErrors('cep');
-        $this->assertStringContainsString('Não conseguimos confirmar', session('errors')->first('cep'));
-        $this->assertNull(Tenant::where('name', 'Empresa CEP sem consulta')->first());
+        $this->post('/assinar', $this->payload($plano, ['cep' => '13080-510', 'company_name' => 'Empresa CEP sem consulta']))->assertSessionHasNoErrors();
+        $this->assertSame('13080-510', Tenant::where('name', 'Empresa CEP sem consulta')->value('cep'));
 
         $this->viaCep = 'existe';
         $this->post('/assinar', $this->payload($plano, ['cep' => '13080510', 'company_name' => 'Empresa CEP certo']))->assertSessionHasNoErrors();
