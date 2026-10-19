@@ -36,8 +36,44 @@ class MaterialResource extends Resource
 
     protected static ?int $navigationSort = 5;
 
+    /** Interface simples (padrão de quem não contratou Locadora; a Central pode forçar por empresa). */
+    public static function interfaceSimples(): bool
+    {
+        return \App\Support\Tenancy::current()?->interfaceSimples() ?? false;
+    }
+
+    /**
+     * Cadastro curto de material: nome, código, categoria, unidade, custo, estoque mínimo e onde fica. As quantidades continuam sendo
+     * lançadas pela gestão de estoque; grava nas mesmas colunas do cadastro completo, então trocar de modo não perde nada.
+     */
+    public static function formSimples(Form $form): Form
+    {
+        return $form->schema([
+            Forms\Components\Section::make('Material')->columns(2)->schema([
+                Forms\Components\TextInput::make('name')->label('Nome do material')->placeholder('Ex.: Filtro de óleo, Parafuso 10 mm')->required()->maxLength(255),
+                Forms\Components\TextInput::make('sku')->label('Código')->required()->unique(ignoreRecord: true)->maxLength(255)
+                    ->default(fn () => 'MAT-'.strtoupper(\Illuminate\Support\Str::random(5))),
+                Forms\Components\Select::make('material_category_id')->label('Categoria')
+                    ->relationship('category', 'name', modifyQueryUsing: fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))->searchable()->preload()
+                    ->createOptionForm([Forms\Components\TextInput::make('name')->label('Nome da categoria')->required()->maxLength(255)])
+                    ->createOptionUsing(fn (array $data) => MaterialCategory::create($data + ['tenant_id' => Tenancy::current()?->id])->id),
+                Forms\Components\Select::make('unit_of_measure')->label('Unidade')->options(['un' => 'Unidade', 'l' => 'Litro', 'kg' => 'Quilograma', 'm' => 'Metro', 'par' => 'Par', 'cx' => 'Caixa'])->default('un')->native(false),
+                Forms\Components\TextInput::make('unit_cost')->label('Custo unitário')->required()->numeric()->prefix('R$')->minValue(0)->default(0),
+                Forms\Components\TextInput::make('min_stock')->label('Estoque mínimo')->numeric()->minValue(0)->default(0)->helperText('O sistema avisa quando chegar nesse nível.'),
+                Forms\Components\TextInput::make('warehouse_location')->label('Onde fica')->placeholder('Ex.: Prateleira B, corredor 2')->maxLength(255)->columnSpanFull(),
+                Forms\Components\Textarea::make('description')->label('Observações')->rows(2)->columnSpanFull(),
+                Forms\Components\Hidden::make('price')->default(0),
+                Forms\Components\Hidden::make('max_stock')->default(0),
+            ]),
+        ]);
+    }
+
     public static function form(Form $form): Form
     {
+        if (static::interfaceSimples()) {
+            return static::formSimples($form);
+        }
+
         return $form
             ->schema([
                 Forms\Components\Section::make('Informações Básicas')
@@ -247,14 +283,14 @@ class MaterialResource extends Resource
                 Tables\Columns\TextColumn::make('sku')->label('SKU')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('name')->label('Nome')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('category.name')->label('Categoria')->sortable(),
-                Tables\Columns\TextColumn::make('brand_name')->label('Marca')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('supplier.name')->label('Fornecedor')->sortable(),
-                Tables\Columns\TextColumn::make('price')->label('Preço')->money('BRL')->sortable(),
+                Tables\Columns\TextColumn::make('brand_name')->hidden(fn () => static::interfaceSimples())->label('Marca')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('supplier.name')->hidden(fn () => static::interfaceSimples())->label('Fornecedor')->sortable(),
+                Tables\Columns\TextColumn::make('price')->hidden(fn () => static::interfaceSimples())->label('Preço')->money('BRL')->sortable(),
                 Tables\Columns\TextColumn::make('current_stock')
                     ->label('Qtd. Atual')
                     ->numeric()
                     ->color(fn ($record) => $record->current_stock <= $record->min_stock ? 'danger' : 'success'),
-                Tables\Columns\TextColumn::make('epiSpecification.ca_number')
+                Tables\Columns\TextColumn::make('epiSpecification.ca_number')->hidden(fn () => static::interfaceSimples())
                     ->label('CA (EPI)')
                     ->placeholder('—')
                     ->badge()
@@ -285,10 +321,11 @@ class MaterialResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                // Interface simples: sem exclusão (as movimentações de estoque dependem do material).
+                Tables\Actions\DeleteAction::make()->visible(fn () => ! static::interfaceSimples()),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()]),
+                Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()->visible(fn () => ! static::interfaceSimples())]),
             ]);
     }
 

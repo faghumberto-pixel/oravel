@@ -14,7 +14,7 @@ class EditWarehouse extends EditRecord
     {
         return [
             Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()->visible(fn () => ! \App\Filament\Resources\WarehouseResource::interfaceSimples()),
         ];
     }
 }

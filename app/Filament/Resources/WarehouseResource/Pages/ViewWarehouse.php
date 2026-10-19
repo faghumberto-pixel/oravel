@@ -18,7 +18,7 @@ class ViewWarehouse extends ViewRecord
         return [
             $this->printAction(),
             Actions\EditAction::make(),
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()->visible(fn () => ! \App\Filament\Resources\WarehouseResource::interfaceSimples()),
         ];
     }
 }

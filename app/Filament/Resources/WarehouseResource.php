@@ -28,8 +28,33 @@ class WarehouseResource extends BaseResource
 
     protected static ?string $pluralLabel = 'Almoxarifados';
 
+    /** Interface simples (padrão de quem não contratou Locadora; a Central pode forçar por empresa). */
+    public static function interfaceSimples(): bool
+    {
+        return \App\Support\Tenancy::current()?->interfaceSimples() ?? false;
+    }
+
+    /** Cadastro curto de almoxarifado: nome, código, endereço e se está ativo. */
+    public static function formSimples(Form $form): Form
+    {
+        return $form->schema([
+            Forms\Components\Section::make('Almoxarifado')->columns(2)->schema([
+                Forms\Components\TextInput::make('name')->label('Nome')->placeholder('Ex.: Depósito central, Oficina')->required()->maxLength(255),
+                Forms\Components\TextInput::make('code')->label('Código (opcional)')->maxLength(50),
+                Forms\Components\TextInput::make('address')->label('Endereço')->maxLength(255),
+                Forms\Components\TextInput::make('city')->label('Cidade')->maxLength(120),
+                Forms\Components\Hidden::make('type')->default(Warehouse::TYPE_CENTRAL)->dehydrateStateUsing(fn ($state) => $state ?: Warehouse::TYPE_CENTRAL),
+                Forms\Components\Toggle::make('is_active')->label('Ativo')->default(true),
+            ]),
+        ]);
+    }
+
     public static function form(Form $form): Form
     {
+        if (static::interfaceSimples()) {
+            return static::formSimples($form);
+        }
+
         return $form->schema([
             Forms\Components\Section::make('Informações Básicas')
                 ->schema([
@@ -120,13 +145,13 @@ class WarehouseResource extends BaseResource
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('type')
+                Tables\Columns\TextColumn::make('type')->hidden(fn () => static::interfaceSimples())
                     ->label('Tipo')
                     ->badge()
                     ->formatStateUsing(fn (string $state) => Warehouse::typeLabels()[$state] ?? $state)
                     ->color(fn (string $state) => $state === Warehouse::TYPE_MOBILE ? 'warning' : 'gray'),
 
-                Tables\Columns\TextColumn::make('technician.name')
+                Tables\Columns\TextColumn::make('technician.name')->hidden(fn () => static::interfaceSimples())
                     ->label('Técnico / Placa')
                     ->formatStateUsing(fn (?string $state, Warehouse $record) => $record->isMobile()
                         ? trim(($state ?? '—').' · '.($record->vehicle_plate ?? 's/ placa'))
@@ -137,7 +162,7 @@ class WarehouseResource extends BaseResource
                     ->label('Cidade')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('manager.name')
+                Tables\Columns\TextColumn::make('manager.name')->hidden(fn () => static::interfaceSimples())
                     ->label('Gerente')
                     ->sortable(),
 
@@ -156,7 +181,7 @@ class WarehouseResource extends BaseResource
                     ->boolean()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('created_at')->hidden(fn () => static::interfaceSimples())
                     ->label('Criado em')
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
@@ -177,11 +202,12 @@ class WarehouseResource extends BaseResource
                     ->icon('heroicon-o-cube-transparent')
                     ->color('info')
                     ->url(fn (Warehouse $record) => WarehouseStockResource::getUrl('index', ['warehouses' => $record->id])),
-                Tables\Actions\DeleteAction::make(),
+                // Interface simples: sem exclusão (o histórico de estoque depende do almoxarifado).
+                Tables\Actions\DeleteAction::make()->visible(fn () => ! static::interfaceSimples()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->visible(fn () => ! static::interfaceSimples()),
                 ]),
             ]);
     }

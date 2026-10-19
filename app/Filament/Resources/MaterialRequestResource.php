@@ -37,6 +37,12 @@ class MaterialRequestResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
+    /** Interface simples (padrão de quem não contratou Locadora; a Central pode forçar por empresa). */
+    public static function interfaceSimples(): bool
+    {
+        return \App\Support\Tenancy::current()?->interfaceSimples() ?? false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -129,13 +135,13 @@ class MaterialRequestResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Solicitante'),
-                Tables\Columns\TextColumn::make('maintenanceOrder.os_number')
+                Tables\Columns\TextColumn::make('maintenanceOrder.os_number')->hidden(fn () => static::interfaceSimples())
                     ->label('OS de Origem')
                     ->placeholder('—'),
-                Tables\Columns\TextColumn::make('requestedForLocation.name')
+                Tables\Columns\TextColumn::make('requestedForLocation.name')->hidden(fn () => static::interfaceSimples())
                     ->label('Filial')
                     ->placeholder('—'),
-                Tables\Columns\TextColumn::make('origin')
+                Tables\Columns\TextColumn::make('origin')->hidden(fn () => static::interfaceSimples())
                     ->label('Origem')
                     ->badge()
                     ->color('gray')
@@ -160,7 +166,7 @@ class MaterialRequestResource extends Resource
                         'danger' => MaterialRequest::STATUS_RECUSADA,
                     ])
                     ->formatStateUsing(fn (string $state) => MaterialRequest::statusOptions()[$state] ?? $state),
-                Tables\Columns\TextColumn::make('approvedBy.name')
+                Tables\Columns\TextColumn::make('approvedBy.name')->hidden(fn () => static::interfaceSimples())
                     ->label('Aprovada por')
                     ->placeholder('—'),
             ])

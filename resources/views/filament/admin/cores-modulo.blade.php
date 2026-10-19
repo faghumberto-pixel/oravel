@@ -31,6 +31,24 @@
         box-shadow: 0 10px 30px {{ $tema['menu'] }}33 !important;
     }
 
+    /* Letras brancas no menu lateral e no topo (pedido do usuário, 19/10/2026): itens, grupos, ícones, busca e botões. */
+    html:not(.dark) .fi-sidebar .fi-sidebar-item-label, html.dark .fi-sidebar .fi-sidebar-item-label,
+    html:not(.dark) .fi-sidebar .fi-sidebar-item-icon, html.dark .fi-sidebar .fi-sidebar-item-icon,
+    html:not(.dark) .fi-sidebar .fi-sidebar-item a, html.dark .fi-sidebar .fi-sidebar-item a,
+    html:not(.dark) .fi-sidebar .fi-sidebar-item button, html.dark .fi-sidebar .fi-sidebar-item button,
+    html:not(.dark) .fi-sidebar .fi-sidebar-group-label, html.dark .fi-sidebar .fi-sidebar-group-label,
+    html:not(.dark) .fi-sidebar .fi-sidebar-group-button svg, html.dark .fi-sidebar .fi-sidebar-group-button svg,
+    html:not(.dark) .fi-sidebar .fi-sidebar-group-icon, html.dark .fi-sidebar .fi-sidebar-group-icon,
+    html:not(.dark) .fi-sidebar .fi-icon-btn, html.dark .fi-sidebar .fi-icon-btn,
+    html:not(.dark) .fi-sidebar .fi-icon-btn svg, html.dark .fi-sidebar .fi-icon-btn svg,
+    html:not(.dark) .fi-topbar .fi-icon-btn svg, html.dark .fi-topbar .fi-icon-btn svg,
+    html:not(.dark) .fi-topbar-item, html.dark .fi-topbar-item,
+    html:not(.dark) .fi-topbar .fi-global-search-field svg, html.dark .fi-topbar .fi-global-search-field svg,
+    html:not(.dark) .fi-topbar .fi-global-search-field input, html.dark .fi-topbar .fi-global-search-field input {
+        color: #ffffff !important;
+    }
+    html .fi-topbar .fi-global-search-field input::placeholder { color: #ffffff !important; opacity: 0.85; }
+
     html .fi-sidebar .fi-sidebar-item.fi-active > a,
     html .fi-sidebar .fi-sidebar-item[aria-current="page"] > a,
     html .fi-sidebar .fi-sidebar-item.fi-active > button {
