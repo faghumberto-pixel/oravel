@@ -9,12 +9,14 @@ use App\Support\AppProfile;
 use App\Support\ClientImport\ClientImportColumns;
 use App\Support\ClientImport\ClientImportRelatorio;
 use App\Support\Onboarding\OnboardingService;
+use App\Support\Pacotes;
 use App\Support\Tenancy;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
@@ -44,10 +46,59 @@ class PrimeirosPassos extends Page
         return (bool) (auth()->user()?->isAdmin() && $tenant && app(OnboardingService::class)->solucaoDe($tenant));
     }
 
-    /** O item do menu fica enquanto houver passo por fazer; some quando tudo foi concluído. */
+    /** O item do menu fica sempre: com passos por fazer é "Primeiros passos"; concluídos, vira o "Guia dos módulos". */
     public static function shouldRegisterNavigation(): bool
     {
-        return static::canAccess() && app(OnboardingService::class)->incompleto(Tenancy::current());
+        return static::canAccess();
+    }
+
+    private static function concluido(): bool
+    {
+        return ! app(OnboardingService::class)->incompleto(Tenancy::current());
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return static::concluido() ? 'Guia dos módulos' : 'Primeiros passos';
+    }
+
+    public static function getNavigationIcon(): string|Htmlable|null
+    {
+        return static::concluido() ? 'heroicon-o-book-open' : 'heroicon-o-rocket-launch';
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return static::concluido() ? 'Guia dos módulos' : 'Primeiros passos';
+    }
+
+    /**
+     * Telas importantes de cada produto contratado (config/guia_modulos.php), só as que o usuário pode acessar.
+     *
+     * @return list<array{nome: string, cor: string, telas: list<array{titulo: string, descricao: string, icone: string, url: string}>}>
+     */
+    public function guiaDosModulos(): array
+    {
+        $tenant = $this->tenant();
+        $guia = [];
+
+        foreach (Pacotes::produtosDoTenant($tenant) as $codigo) {
+            $telas = [];
+
+            foreach ((array) config("guia_modulos.{$codigo}", []) as $tela) {
+                $url = $this->urlDaAcao(isset($tela['recurso']) ? ['recurso' => $tela['recurso']] : ['pagina_filament' => $tela['pagina']]);
+
+                if ($url) {
+                    $telas[] = ['titulo' => $tela['titulo'], 'descricao' => $tela['descricao'], 'icone' => $tela['icone'], 'url' => $url];
+                }
+            }
+
+            if ($telas) {
+                $guia[] = ['nome' => Pacotes::nome($codigo), 'cor' => Pacotes::todos()[$codigo]['app']['cor'] ?? '#334155', 'telas' => $telas];
+            }
+        }
+
+        return $guia;
     }
 
     public function mount(): void

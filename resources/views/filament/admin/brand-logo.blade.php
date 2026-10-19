@@ -25,7 +25,7 @@
         <div class="flex flex-col leading-none">
             <span class="flex items-center gap-2">
                 <span class="text-sm font-bold tracking-tight text-white truncate max-w-[10rem]">{{ $tenant->name }}</span>
-                <span class="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-orange-300 whitespace-nowrap" data-testid="modulo-contratado">Módulo: {{ $modulo }}</span>
+                <span class="rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-semibold text-white whitespace-nowrap" data-testid="modulo-contratado">Módulo: {{ $modulo }}</span>
             </span>
             @if($segmentLabel)
                 <span class="mt-1 flex items-center gap-1 text-[10px] font-medium tracking-wide text-gray-400 truncate max-w-[12rem]">
