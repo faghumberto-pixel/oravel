@@ -4,6 +4,8 @@ namespace App\Filament\Client\Pages\Auth;
 
 use App\Models\Client;
 use Filament\Pages\Auth\Login as BaseLogin;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 /**
  * Sobrescreve getCredentialsFromFormData() em vez de confiar em sintaxe de
@@ -37,6 +39,13 @@ class Login extends BaseLogin
                 'email' => $data['email'],
                 'password' => $data['password'].'-portal-access-not-granted',
             ];
+        }
+
+        // Senha certa, mas a empresa não tem o portal incluído (paga no boleto/Pix): diz o motivo só para quem provou ser o cliente.
+        if ($client->tenant && ! $client->tenant->portalClienteIncluido() && Hash::check($data['password'], (string) $client->password)) {
+            throw ValidationException::withMessages([
+                'data.email' => 'O Portal do Cliente não está disponível no momento. Fale com a empresa que atende você.',
+            ]);
         }
 
         return [

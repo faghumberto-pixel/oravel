@@ -183,7 +183,9 @@ class Client extends Model implements AuthenticatableContract, FilamentUser
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return $panel->getId() === 'portal-cliente';
+        // O portal é incluído para quem paga no cartão recorrente (ver Tenant::portalClienteIncluido()); sessão já aberta também cai quando a
+        // empresa passa para boleto/Pix.
+        return $panel->getId() === 'portal-cliente' && ($this->tenant?->portalClienteIncluido() ?? true);
     }
 
     /**

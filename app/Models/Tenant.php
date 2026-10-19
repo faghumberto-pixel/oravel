@@ -476,6 +476,16 @@ class Tenant extends Model
         return $amounts;
     }
 
+    /**
+     * Portal do Cliente: incluído, sem custo, para quem paga a mensalidade no cartão recorrente (decisão do dono em 19/10/2026: não é vendido
+     * separado). Empresa antiga sem forma de pagamento gravada conta como cartão (paymentMethod() cai em 'cartao'), então ninguém que já
+     * tinha o portal o perde sem ter escolhido boleto/Pix.
+     */
+    public function portalClienteIncluido(): bool
+    {
+        return $this->paymentMethod() === 'cartao';
+    }
+
     /** 'cartao' (checkout recorrente automático) ou 'boleto_pix' (assinatura mensal por boleto/Pix). */
     public function paymentMethod(): string
     {

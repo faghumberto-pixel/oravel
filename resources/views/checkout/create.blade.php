@@ -142,6 +142,7 @@
                                             <strong class="block">Cartão de crédito recorrente</strong>
                                             <span class="block text-lg font-bold">R$ <span id="v-rec">{{ number_format($valorRecorrente, 2, ',', '.') }}</span>/mês</span>
                                             <span class="block text-xs text-white/70"><s>R$ <span id="v-risc">{{ number_format($valorCheio, 2, ',', '.') }}</span></s> · {{ rtrim(rtrim(number_format($descontoPercentual, 2, ',', ''), '0'), ',') }}% de desconto pela recorrência</span>
+                                            <span class="mt-1 block text-xs font-semibold text-emerald-300">Inclui o Portal do Cliente, sem custo extra</span>
                                         </span>
                                     </label>
                                     <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-white/25 bg-white/10 p-4">
@@ -150,6 +151,7 @@
                                             <strong class="block">Boleto ou Pix todo mês</strong>
                                             <span class="block text-lg font-bold">R$ <span id="v-cheio">{{ number_format($valorCheio, 2, ',', '.') }}</span>/mês</span>
                                             <span class="block text-xs text-white/70">Valor cheio, sem compromisso. Cada pagamento libera 30 dias de acesso; sem novo pagamento, o sistema bloqueia até você pagar.</span>
+                                            <span class="mt-1 block text-xs text-white/60">Não inclui o Portal do Cliente</span>
                                         </span>
                                     </label>
                                 </div>

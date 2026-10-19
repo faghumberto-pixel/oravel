@@ -241,7 +241,8 @@ class ClientResource extends Resource
                         ->icon('heroicon-o-key')
                         ->schema([
                             Forms\Components\Section::make('Login do cliente no Portal')
-                                ->description('O cliente entra em app.oravel.com.br/cliente com o e-mail de contato (aba Entrega e Contatos) e a senha definida aqui.')
+                                ->description(fn () => 'O cliente entra em app.oravel.com.br/cliente com o e-mail de contato (aba Entrega e Contatos) e a senha definida aqui.'
+                                    .(\App\Support\Tenancy::current()?->portalClienteIncluido() === false ? ' ATENÇÃO: o Portal do Cliente só está incluído para quem paga a mensalidade no cartão recorrente; com boleto/Pix o cliente não consegue entrar.' : ''))
                                 ->schema([
                                     Forms\Components\Toggle::make('portal_access_enabled_at')
                                         ->label('Acesso ao portal ativo')
