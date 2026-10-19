@@ -17,8 +17,11 @@
     {{-- Área de Logística (portaria/despacho de veículos): moldura própria, azul-marinho, separada das telas
          do técnico (checklist-mobile, zinc). Mesma moldura de celular no desktop. --}}
     <body class="h-screen font-sans antialiased bg-slate-950 text-slate-100 overscroll-none md:flex md:h-screen md:items-center md:justify-center md:bg-slate-900 md:py-6">
-        <div class="relative h-full md:mx-auto md:h-[844px] md:w-[390px] md:overflow-hidden md:rounded-[2rem] md:border md:border-slate-800 md:shadow-2xl">
-            {{ $slot }}
+        <div class="relative flex h-full flex-col md:mx-auto md:h-[844px] md:w-[390px] md:overflow-hidden md:rounded-[2rem] md:border md:border-slate-800 md:shadow-2xl">
+            <x-barra-oravel />
+            <div class="relative min-h-0 flex-1 overflow-y-auto">
+                {{ $slot }}
+            </div>
         </div>
     </body>
 </html>

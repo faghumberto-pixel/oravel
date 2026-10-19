@@ -14,6 +14,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-zinc-950 font-sans text-zinc-100 antialiased overscroll-none">
+    <x-barra-oravel />
     <main class="mx-auto flex min-h-screen w-full max-w-md flex-col p-5">
         @yield('conteudo')
     </main>

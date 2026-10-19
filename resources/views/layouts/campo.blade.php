@@ -13,6 +13,7 @@
     @vite('resources/css/app.css')
 </head>
 <body class="min-h-screen bg-slate-900 font-sans text-white antialiased">
+    <x-barra-oravel />
     <main class="mx-auto flex min-h-screen w-full max-w-md flex-col px-4 pb-8 pt-6">
         @yield('conteudo')
     </main>
