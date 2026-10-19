@@ -24,13 +24,14 @@ class BarraModuloContratadoTest extends TestCase
         return $this->actingAs($admin)->get(route('filament.admin.pages.painel-controle'))->assertOk()->getContent();
     }
 
-    public function test_topbar_mostra_o_modulo_na_frente_do_nome_e_o_logo_fica_no_menu_lateral_ao_lado_das_bolinhas(): void
+    public function test_topbar_mostra_o_modulo_na_frente_do_nome_e_o_nome_oravel_fica_no_menu_lateral_ao_lado_das_bolinhas(): void
     {
         $html = $this->paginaComoAdmin('manutencao');
 
         $this->assertStringContainsString('Empresa da Barra', $html);
         $this->assertStringContainsString('Módulo: Manutenção', $html);
-        $this->assertSame(1, substr_count($html, 'images/oravel-logo-menu.png'), 'o logotipo aparece uma vez só, no menu lateral');
+        $this->assertStringContainsString('<span class="ms-2 text-sm font-bold tracking-tight text-white">Oravel</span>', $html, 'o nome Oravel fica ao lado das bolinhas');
+        $this->assertStringNotContainsString('oravel-logo', $html);
     }
 
     public function test_com_mais_de_um_produto_lista_todos(): void
