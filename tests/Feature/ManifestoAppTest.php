@@ -95,4 +95,13 @@ class ManifestoAppTest extends TestCase
         auth()->logout();
         $this->get(route('app.manifesto', AppProfile::ADMIN))->assertRedirect();
     }
+
+    public function test_empresa_com_mais_de_um_produto_leva_o_nome_generico(): void
+    {
+        $usuario = $this->usuario('manutencao');
+        $usuario->tenant->plan->update(['pacotes' => ['manutencao', 'vendas']]);
+        $this->actingAs($usuario->fresh());
+
+        $this->getJson(route('app.manifesto', AppProfile::ADMIN))->assertOk()->assertJsonPath('name', 'Oravel Administrador');
+    }
 }

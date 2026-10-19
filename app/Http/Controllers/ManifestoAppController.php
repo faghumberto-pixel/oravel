@@ -25,8 +25,10 @@ class ManifestoAppController extends Controller
         $base = json_decode((string) file_get_contents(public_path("manifest-{$perfil}.json")), true);
 
         $user = auth()->user();
-        $codigo = Pacotes::doTenant(Tenancy::current() ?? $user?->tenant);
-        $app = $codigo ? (Pacotes::todos()[$codigo]['app'] ?? null) : null;
+        $tenant = Tenancy::current() ?? $user?->tenant;
+        $codigo = Pacotes::doTenant($tenant);
+        // Com mais de um produto contratado o app leva o nome genérico "Oravel" (não é só "Manutenção" ou só "Vendas").
+        $app = $codigo && count(Pacotes::produtosDoTenant($tenant)) === 1 ? (Pacotes::todos()[$codigo]['app'] ?? null) : null;
 
         if ($app) {
             $sufixo = self::SUFIXOS[$perfil] ?? ['nome' => '', 'curto' => ''];
