@@ -2,10 +2,12 @@
 
 namespace App\Observers;
 
+use App\Mail\SignatureLinkMail;
 use App\Models\DocumentSignature;
-use App\Notifications\SignatureLinkMailNotification;
-use App\Notifications\SignatureLinkWhatsAppNotification;
-use Illuminate\Support\Facades\Notification;
+use App\Models\Tenant;
+use App\Models\TenantEvent;
+use App\Services\TenantTimeline;
+use Illuminate\Support\Facades\Mail;
 use Spatie\Activitylog\Facades\LogActivity;
 
 class DocumentSignatureObserver
@@ -27,10 +29,10 @@ class DocumentSignatureObserver
             \Log::warning('LogActivity não disponível para DocumentSignature', ['error' => $e->getMessage()]);
         }
 
-        if ($signature->signable_type === \App\Models\Tenant::class) {
-            \App\Services\TenantTimeline::record(
+        if ($signature->signable_type === Tenant::class) {
+            TenantTimeline::record(
                 $signature->signable_id,
-                \App\Models\TenantEvent::CONTRATO_LINK,
+                TenantEvent::CONTRATO_LINK,
                 'Link do contrato de assinatura gerado',
                 'Válido até '.$signature->expires_at?->format('d/m/Y H:i').'. Signatário: '.($signature->signer_name ?: '—').'.',
                 dedupeKey: 'contrato-link:'.$signature->id,
@@ -114,36 +116,22 @@ class DocumentSignatureObserver
     }
 
     /**
-     * Envia notificações de assinatura ao signatário.
+     * Envia o link de assinatura ao signatário por e-mail, na hora (sendNow: o e-mail do link não pode depender de worker de fila).
      *
-     * - E-mail se email fornecido
-     * - WhatsApp se telefone fornecido
+     * Antes isto usava um "notificável anônimo" com rota de e-mail vazia: o e-mail nunca saía e, com fila, o job nem serializava
+     * ("Serialization of class@anonymous is not allowed", visto em PROD em 18/10/2026). O aviso por WhatsApp dependia do mesmo
+     * notificável (canal de banco sem usuário) e também nunca funcionou, por isso foi retirado daqui.
      */
     private function notifySignatories(DocumentSignature $signature): void
     {
+        if (! $signature->signer_email) {
+            return;
+        }
+
         try {
-            // Cria notificável anônimo (não precisa de usuário no sistema)
-            $notifiable = new class {
-                use \Illuminate\Notifications\Notifiable;
-
-                public function routeNotificationForMail(): string
-                {
-                    return ''; // Preenchido dinamicamente
-                }
-            };
-
-            // Envia e-mail
-            if ($signature->signer_email) {
-                Notification::send($notifiable, new SignatureLinkMailNotification($signature));
-            }
-
-            // Envia WhatsApp
-            if ($signature->signer_phone) {
-                Notification::send($notifiable, new SignatureLinkWhatsAppNotification($signature));
-            }
-
+            Mail::to($signature->signer_email)->sendNow(new SignatureLinkMail($signature));
         } catch (\Throwable $e) {
-            \Log::error('Erro ao enviar notificações de assinatura', [
+            \Log::error('Erro ao enviar o link de assinatura por e-mail', [
                 'signature_id' => $signature->id,
                 'error' => $e->getMessage(),
             ]);

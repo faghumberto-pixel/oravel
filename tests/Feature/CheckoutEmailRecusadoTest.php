@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Mail\SignatureLinkMail;
 use App\Models\Client;
 use App\Models\DocumentSignature;
 use App\Models\Plan;
@@ -13,6 +14,7 @@ use App\Support\Pacotes;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 /**
@@ -150,5 +152,15 @@ class CheckoutEmailRecusadoTest extends TestCase
 
         $t->forceFill(['asaas_subscription_id' => 'sub_1'])->save();
         $this->post(route('checkout.fix-email', $token), ['email' => 'novo-'.uniqid().'@empresa.com.br'])->assertNotFound();
+    }
+
+    public function test_the_contract_link_goes_to_the_signer_by_email_at_signup(): void
+    {
+        Mail::fake();
+        $email = 'contrato-'.uniqid().'@empresa.com.br';
+
+        $this->cadastrarEAssinar($email);
+
+        Mail::assertSent(SignatureLinkMail::class, fn ($m) => $m->hasTo($email));
     }
 }
