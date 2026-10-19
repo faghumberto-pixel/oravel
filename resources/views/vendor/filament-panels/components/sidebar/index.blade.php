@@ -79,7 +79,15 @@
                     x-transition:enter-end="opacity-100"
                 @endif
             >
-                @if ($homeUrl = filament()->getHomeUrl())
+                {{-- Admin: no lugar do logo/nome vão as 3 bolinhas (vermelha, amarela, verde) da barra de janela usada no site
+                     oravel.com.br; logo e nome da empresa passaram para o topbar. Outros painéis seguem com o logo de sempre. --}}
+                @if (filament()->getId() === 'admin')
+                    <a @if ($homeUrl = filament()->getHomeUrl()) {{ \Filament\Support\generate_href_html($homeUrl) }} @endif class="flex items-center gap-1.5" aria-label="Início">
+                        <span class="block h-2.5 w-2.5 rounded-full" style="background:#ef4444"></span>
+                        <span class="block h-2.5 w-2.5 rounded-full" style="background:#f59e0b"></span>
+                        <span class="block h-2.5 w-2.5 rounded-full" style="background:#22c55e"></span>
+                    </a>
+                @elseif ($homeUrl = filament()->getHomeUrl())
                     <a {{ \Filament\Support\generate_href_html($homeUrl) }}>
                         <x-filament-panels::logo />
                     </a>
@@ -122,10 +130,15 @@
         </header>
     </div>
 
-    {{-- "Início" fixo acima da rolagem do menu (02/10/2026): o Filament rola a
-         sidebar até o grupo ativo e o item sumia por cima. Só no admin. --}}
-    @if (filament()->getId() === 'admin')
-        <ul class="fi-sidebar-pinned flex flex-col gap-y-1 px-6 pb-2 pt-4" style="border-bottom: 1px solid var(--oravel-border);">
+    <nav
+        class="fi-sidebar-nav flex-grow flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden px-6 {{ filament()->getId() === 'admin' ? 'pb-8 pt-4' : 'py-8' }}"
+        style="scrollbar-gutter: stable"
+    >
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_NAV_START) }}
+
+        {{-- "Início" e "Academia Oravel" rolam junto com os demais itens (sem faixa divisória nem fixação). --}}
+        @if (filament()->getId() === 'admin')
+            <ul class="fi-sidebar-nav-home -mx-2 flex flex-col gap-y-1">
             @if (\App\Filament\Pages\PainelGestao::canAccess())
             <x-filament-panels::sidebar.item
                 :active="request()->routeIs('filament.admin.pages.painel-controle')"
@@ -133,7 +146,6 @@
                 active-icon="heroicon-s-home"
                 :url="route('filament.admin.pages.painel-controle')"
                 :sidebar-collapsible="false"
-                class="-mx-2"
             >
                 Início
             </x-filament-panels::sidebar.item>
@@ -144,19 +156,13 @@
                 icon="heroicon-o-academic-cap"
                 :url="url('/academia')"
                 :sidebar-collapsible="false"
-                class="-mx-2"
             >
                 Academia Oravel
             </x-filament-panels::sidebar.item>
             @endif
-        </ul>
-    @endif
+            </ul>
+        @endif
 
-    <nav
-        class="fi-sidebar-nav flex-grow flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden px-6 {{ filament()->getId() === 'admin' ? 'pb-8 pt-4' : 'py-8' }}"
-        style="scrollbar-gutter: stable"
-    >
-        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_NAV_START) }}
 
         @if (filament()->hasTenancy() && filament()->hasTenantMenu())
             <div

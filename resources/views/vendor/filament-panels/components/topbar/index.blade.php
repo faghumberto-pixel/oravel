@@ -103,6 +103,12 @@
                  laranja (text-primary-500), resto no tom neutro do topbar. --}}
             
 
+            {{-- Admin: logo Oravel + nome da empresa onde ficava a data/hora (que saiu a pedido do usuário, 19/10/2026). --}}
+            @if (filament()->getId() === 'admin')
+                <div class="hidden items-center md:flex">
+                    @include('filament.admin.brand-logo')
+                </div>
+            @else
             {{-- Data/hora ao vivo (2026-09-18, pedido do usuario): ocupa o
                  centro do topbar, que ficou vazio depois que o aviso saiu
                  daqui. flex-1 nos dois lados (aqui e' o unico elemento
@@ -131,6 +137,7 @@
                     <span x-text="horaFormatada" class="font-mono text-sm tabular-nums text-gray-100"></span>
                 </div>
             </div>
+            @endif
 
             {{-- Busca/notificacoes/e-mail/avatar/ajuda: no canto direito, o
                  mais longe possivel da sidebar (2026-09-18, pedido do
