@@ -218,4 +218,17 @@ class CheckoutEmailRecusadoTest extends TestCase
         $t->forceFill(['asaas_subscription_id' => 'sub_1'])->save();
         $this->post(route('checkout.fix-cep', $token), ['cep' => '13080510'])->assertNotFound();
     }
+
+    public function test_signup_refuses_what_the_emitter_would_refuse_later_phone_and_address_number(): void
+    {
+        $plano = $this->vitrine();
+
+        $this->post('/assinar', $this->payload($plano, ['telefone' => '99999-9999']))->assertSessionHasErrors('telefone');
+        $this->post('/assinar', $this->payload($plano, ['telefone' => '(19) 99999-99999']))->assertSessionHasErrors('telefone');
+        $this->post('/assinar', $this->payload($plano, ['numero' => 'S/N']))->assertSessionHasErrors('numero');
+        $this->assertStringContainsString('algarismos', session('errors')->first('numero'));
+
+        $this->post('/assinar', $this->payload($plano, ['telefone' => '(19) 3333-4444', 'numero' => '595-B', 'company_name' => 'Empresa Telefone Fixo']))->assertSessionHasNoErrors();
+        $this->assertNotNull(Tenant::where('name', 'Empresa Telefone Fixo')->first());
+    }
 }

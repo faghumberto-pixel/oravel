@@ -136,7 +136,8 @@ class AsaasCheckoutController extends Controller
             'cpf_cnpj' => ['required', 'string', new CpfCnpj],
             'cep' => ['required', 'string', 'regex:/^\d{5}-?\d{3}$/', new CepExistente],
             'logradouro' => ['required', 'string', 'max:255'],
-            'numero' => ['required', 'string', 'max:20'],
+            // O Asaas exige o número do endereço (inteiro): sem algarismos o checkout seria recusado depois da assinatura do contrato.
+            'numero' => ['required', 'string', 'max:20', 'regex:/\d/'],
             'complemento' => ['nullable', 'string', 'max:255'],
             'bairro' => ['required', 'string', 'max:255'],
             'cidade' => ['required', 'string', 'max:255'],
@@ -147,7 +148,12 @@ class AsaasCheckoutController extends Controller
             // real em PROD 2026-09-23: "O campo phoneNumber deve ser
             // informado"). Sem regex de formato -- a Asaas já normaliza o
             // que vier.
-            'telefone' => ['required', 'string', 'max:20'],
+            'telefone' => ['required', 'string', 'max:20', function ($attribute, $value, $fail) {
+                // DDD + número (10 ou 11 dígitos), como o Asaas aceita; evita descobrir o erro só na hora do pagamento.
+                if (! in_array(strlen(preg_replace('/\D/', '', (string) $value)), [10, 11], true)) {
+                    $fail('Informe o telefone com DDD, por exemplo (19) 99999-9999.');
+                }
+            }],
             'admin_password' => ['required', 'string', 'min:8'],
             'plan_id' => ['required', 'uuid', 'exists:plans,id'],
             'forma_pagamento' => ['nullable', Rule::in(['cartao', 'boleto_pix'])],
@@ -155,7 +161,7 @@ class AsaasCheckoutController extends Controller
             'taxas' => ['nullable', 'array'],
             'taxas.*' => ['string', 'max:40'],
             'terms_accepted' => ['accepted'],
-        ]);
+        ], ['numero.regex' => 'Informe o número do endereço com algarismos (por exemplo, 595).']);
 
         $plan = Plan::where('is_active', true)->findOrFail($data['plan_id']);
 
