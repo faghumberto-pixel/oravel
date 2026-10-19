@@ -57,8 +57,51 @@ class PropostaComercialResource extends BaseResource
         return $record->status === PropostaComercial::STATUS_RASCUNHO && parent::canEdit($record);
     }
 
+    /** Interface simples (padrão de quem não contratou Locadora; a Central pode forçar por empresa). */
+    public static function interfaceSimples(): bool
+    {
+        return Tenancy::current()?->interfaceSimples() ?? false;
+    }
+
+    /**
+     * Proposta curta de serviço: para quem é, o que está sendo proposto (descrição, quantidade e valor) e as condições. O texto padrão da empresa
+     * (template Padrão) continua sendo aplicado sozinho ao criar. Grava nas mesmas colunas da proposta completa, então trocar de modo não perde nada.
+     */
+    public static function formSimples(Form $form): Form
+    {
+        return $form->schema([
+            Forms\Components\Section::make('Proposta')->columns(2)->schema([
+                Forms\Components\Select::make('client_id')->label('Cliente')
+                    ->options(fn () => Client::where('tenant_id', Tenancy::current()?->id)->orderBy('name')->pluck('name', 'id'))->searchable()
+                    ->createOptionForm([Forms\Components\TextInput::make('name')->label('Nome do cliente')->required()->maxLength(255)])
+                    ->createOptionUsing(fn (array $data) => Client::create($data + ['tenant_id' => Tenancy::current()?->id])->getKey())
+                    ->helperText('Obrigatório antes de enviar; pode ficar em branco enquanto for rascunho.'),
+                Forms\Components\DatePicker::make('valid_until')->label('Válida até')->default(now()->addDays(15)),
+                Forms\Components\Hidden::make('seller_user_id')->default(fn () => auth()->id()),
+            ]),
+            Forms\Components\Section::make('O que está sendo proposto')->schema([
+                Forms\Components\Repeater::make('items')->relationship()->label('')
+                    ->schema([
+                        Forms\Components\Hidden::make('type')->default(PropostaComercialItem::TYPE_SERVICO)->dehydrateStateUsing(fn ($state) => $state ?: PropostaComercialItem::TYPE_SERVICO),
+                        Forms\Components\TextInput::make('description')->label('Serviço')->placeholder('Ex.: Manutenção mensal do galpão')->required()->maxLength(255)->columnSpan(2),
+                        Forms\Components\TextInput::make('quantity')->label('Qtd')->numeric()->default(1)->minValue(0.01)->required(),
+                        Forms\Components\TextInput::make('unit_price')->label('Valor (R$)')->numeric()->prefix('R$')->minValue(0)->required(),
+                        Forms\Components\TextInput::make('unit_period')->label('Período')->placeholder('ex.: mensal, único')->maxLength(191),
+                    ])
+                    ->columns(3)->defaultItems(1)->addActionLabel('Adicionar serviço'),
+            ]),
+            Forms\Components\Section::make('Condições')->schema([
+                Forms\Components\Textarea::make('terms')->label('Condições e observações')->rows(4)->helperText('Já vem com o texto padrão da sua empresa; ajuste se precisar.'),
+            ]),
+        ]);
+    }
+
     public static function form(Form $form): Form
     {
+        if (static::interfaceSimples()) {
+            return static::formSimples($form);
+        }
+
         return $form->schema([
             Forms\Components\Section::make('Identificação')
                 ->columns(2)
