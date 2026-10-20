@@ -19,6 +19,8 @@ class MaintenanceOrderFactory extends Factory
 
         return [
             'id' => (string) Str::uuid(),
+            // asset_id é obrigatório na tabela: sem equipamento informado, cria um da mesma empresa.
+            'asset_id' => fn (array $atributos) => \App\Models\Asset::factory()->create(['tenant_id' => $atributos['tenant_id'] ?? \App\Models\Tenant::factory()->create()->id])->id,
             'status' => 'Aberto',
             'internal_status' => 'aguardando_diagnostico',
             'maintenance_type' => $this->faker->randomElement(['Corretiva', 'Corretiva', 'Preventiva']),

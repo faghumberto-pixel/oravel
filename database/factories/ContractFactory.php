@@ -20,6 +20,8 @@ class ContractFactory extends Factory
         return [
             'id' => (string) Str::uuid(),
             'contract_number' => 'CTR-'.$this->faker->unique()->numerify('####-####'),
+            // client_id é obrigatório na tabela: cria um cliente da mesma empresa do contrato.
+            'client_id' => fn (array $atributos) => \App\Models\Client::factory()->create(['tenant_id' => $atributos['tenant_id'] ?? \App\Models\Tenant::factory()->create()->id])->id,
             'status' => 'Ativo',
             'start_date' => $startDate->format('Y-m-d'),
             'end_date' => (clone $startDate)->modify('+'.$this->faker->numberBetween(6, 24).' months')->format('Y-m-d'),

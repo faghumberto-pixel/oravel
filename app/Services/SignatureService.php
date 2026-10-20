@@ -45,12 +45,20 @@ class SignatureService
      *
      * @throws Throwable
      */
-    public function getSignatureByToken(string $token): DocumentSignature
+    /**
+     * @param  bool  $exigirPodeAssinar  false para as telas PÓS-assinatura (sucesso e download): um documento já assinado tem que continuar
+     *                                   acessível pelo mesmo link, mesmo que não possa mais ser assinado de novo.
+     */
+    public function getSignatureByToken(string $token, bool $exigirPodeAssinar = true): DocumentSignature
     {
         // O token é a credencial do link PÚBLICO de assinatura: sem o escopo de
         // tenant, senão um usuário logado de OUTRA empresa (ex.: o operador da
         // Oravel testando o link do cliente) via "No query results".
         $signature = DocumentSignature::withoutGlobalScope('tenant')->byToken($token)->firstOrFail();
+
+        if (! $exigirPodeAssinar && $signature->is_signed) {
+            return $signature;
+        }
 
         if ($signature->is_expired) {
             $signature->markAsExpired();

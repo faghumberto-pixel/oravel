@@ -112,7 +112,7 @@ class PublicSignatureController extends Controller
     public function success(string $token)
     {
         try {
-            $signature = $this->signatureService->getSignatureByToken($token);
+            $signature = $this->signatureService->getSignatureByToken($token, false);
 
             if (! $signature->is_signed) {
                 return view('signature.error', [
@@ -132,7 +132,7 @@ class PublicSignatureController extends Controller
     public function download(string $token)
     {
         try {
-            $signature = $this->signatureService->getSignatureByToken($token);
+            $signature = $this->signatureService->getSignatureByToken($token, false);
 
             if (! $signature->is_signed) {
                 abort(404, 'Documento não assinado ainda.');
@@ -151,6 +151,8 @@ class PublicSignatureController extends Controller
                 \Storage::disk('s3')->path($pdfPath),
                 sprintf('%s_%s_assinado.pdf', class_basename($document), $document->id)
             );
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+            throw $e; // abort(404) etc. não podem virar erro 500
         } catch (Throwable $e) {
             abort(500, $e->getMessage());
         }

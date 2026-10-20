@@ -13,6 +13,8 @@ class DocumentSignatureFactory extends Factory
     public function definition(): array
     {
         return [
+            // tenant_id é obrigatório na tabela: sem tenant informado, cria uma empresa própria.
+            'tenant_id' => fn () => \App\Models\Tenant::factory()->create()->id,
             'signable_type' => Contract::class,
             'signer_name' => $this->faker->name(),
             'signer_document' => $this->faker->numerify('###.###.###-##'),
