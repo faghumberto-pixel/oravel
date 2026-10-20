@@ -102,4 +102,13 @@ class CheckoutVariosProdutosTest extends TestCase
         $this->get(route('checkout.pacote', 'servicos'))->assertOk()
             ->assertSee('Quer incluir outros produtos?')->assertSee('value="vendas"', false)->assertDontSee('value="servicos"', false);
     }
+
+    public function test_campos_do_cadastro_encolhem_no_celular_em_vez_de_vazar_do_cartao(): void
+    {
+        $this->vitrine('servicos', 300);
+
+        // Bug de 20/10/2026: sem min-width 0 os campos tinham largura mínima maior que a tela e o formulário ficava cortado no celular.
+        $this->get(route('checkout.pacote', 'servicos'))->assertOk()
+            ->assertSee('min-width: 0', false)->assertSee('.oravel-glass-card form { min-width: 0', false);
+    }
 }

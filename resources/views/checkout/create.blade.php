@@ -13,6 +13,8 @@
         <script src="https://cdn.tailwindcss.com"></script>
 
         <style>
+            html, body { overflow-x: hidden; }
+            .oravel-glass-card, .oravel-glass-card form { min-width: 0; max-width: 100%; }
             .oravel-glass-card :where(.oravel-auth-input) {
                 border-radius: 0.75rem;
                 background-color: rgba(255, 255, 255, 0.12);
@@ -33,6 +35,8 @@
 
             .oravel-auth-field {
                 display: flex;
+                min-width: 0;
+                max-width: 100%;
                 align-items: center;
                 gap: 0.625rem;
                 border-radius: 0.75rem;
@@ -51,6 +55,8 @@
 
             .oravel-auth-input-raw {
                 flex: 1 1 auto;
+                min-width: 0;   /* sem isto o campo não encolhe no celular e vaza do cartão (o formulário ficava cortado e inutilizável) */
+                width: 100%;
                 border: none;
                 background: transparent;
                 color: #fff;

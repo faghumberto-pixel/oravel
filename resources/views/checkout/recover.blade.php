@@ -15,6 +15,8 @@
         <style>
             .oravel-auth-field {
                 display: flex;
+                min-width: 0;
+                max-width: 100%;
                 align-items: center;
                 gap: 0.625rem;
                 border-radius: 0.75rem;
@@ -33,6 +35,8 @@
 
             .oravel-auth-input-raw {
                 flex: 1 1 auto;
+                min-width: 0;   /* sem isto o campo não encolhe no celular e vaza do cartão (o formulário ficava cortado e inutilizável) */
+                width: 100%;
                 border: none;
                 background: transparent;
                 color: #fff;
