@@ -83,8 +83,8 @@ class PrecosEImplantacaoTest extends TestCase
         $plano = $this->vitrine();
 
         $this->get('/assinar/manutencao')->assertOk()
-            ->assertSee('R$ 600,00/mês', false)->assertSee('R$ 1.000,00/mês', false)->assertSee('40% de desconto')
-            ->assertSee('Contratar implantação')->assertSee('Não contratar agora')->assertSee('R$ 900,00', false)
+            ->assertSee('id="v-rec">600,00</span>/mês', false)->assertSee('id="v-cheio">1.000,00</span>/mês', false)->assertSee('40% de desconto')
+            ->assertSee('Contratar implantação')->assertSee('Não contratar agora')->assertSee('id="v-impl">900,00</span>', false)
             ->assertSee('30 dias de acesso');
 
         $this->get('/assinar/manutencao')->assertSee('name="forma_pagamento"', false);

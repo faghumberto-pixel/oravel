@@ -76,6 +76,12 @@ class AsaasCheckoutController extends Controller
             return redirect()->away('https://oravel.com.br/#planos');
         }
 
+        // Sem venda online, os planos de vitrine (preço público) não abrem cadastro: o cliente fala com a Oravel. Contrato montado pela
+        // equipe na Central (link próprio) segue valendo.
+        if (! Pacotes::vendaOnline() && Pacotes::ehVitrine($selectedPlan)) {
+            return redirect()->away($this->contatoUrl($selectedPlan->pacote));
+        }
+
         return $this->formulario($selectedPlan);
     }
 
@@ -85,6 +91,10 @@ class AsaasCheckoutController extends Controller
      */
     public function porPacote(string $pacote): View|RedirectResponse
     {
+        if (! Pacotes::vendaOnline()) {
+            return redirect()->away($this->contatoUrl($pacote));
+        }
+
         $plano = Pacotes::vitrine($pacote);
 
         if (! $plano || ! $plano->is_active || (float) $plano->price <= 0) {
@@ -92,6 +102,11 @@ class AsaasCheckoutController extends Controller
         }
 
         return $this->formulario($plano);
+    }
+
+    private function contatoUrl(?string $pacote = null): string
+    {
+        return 'https://oravel.com.br/contato.php'.($pacote && isset(Pacotes::todos()[$pacote]) ? '?pacote='.$pacote : '');
     }
 
     private function formulario(Plan $selectedPlan): View
@@ -171,6 +186,10 @@ class AsaasCheckoutController extends Controller
         ], ['numero.regex' => 'Informe o número do endereço com algarismos (por exemplo, 595).']);
 
         $plan = Plan::where('is_active', true)->findOrFail($data['plan_id']);
+
+        if (! Pacotes::vendaOnline() && Pacotes::ehVitrine($plan)) {
+            return redirect()->away($this->contatoUrl($plan->pacote));
+        }
 
         // Mais de um produto: contrato próprio da empresa com a soma dos valores e a união dos módulos.
         $extras = array_values(array_diff(array_unique((array) ($data['produtos_extra'] ?? [])), [(string) $plan->pacote]));

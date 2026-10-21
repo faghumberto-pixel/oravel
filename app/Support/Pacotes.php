@@ -207,6 +207,12 @@ class Pacotes
         return sprintf('#%02x%02x%02x', (int) round($r * $f), (int) round($g * $f), (int) round($b * $f));
     }
 
+    /** Venda online ligada? Desligada: o cadastro/pagamento pelo site não existe e quem quer contratar fala com a Oravel. */
+    public static function vendaOnline(): bool
+    {
+        return (bool) config('oravel.venda_online', false);
+    }
+
     /** Plano com preço cheio e escolha de forma de pagamento (vitrine do site ou combinação de produtos). */
     public static function ehVitrine(?Plan $plano): bool
     {

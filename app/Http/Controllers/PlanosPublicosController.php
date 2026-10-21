@@ -20,6 +20,11 @@ class PlanosPublicosController extends Controller
 
     public function __invoke(Request $request): JsonResponse
     {
+        // Sem venda online nenhum valor é divulgado: a API pública responde vazia (o site também não consulta mais).
+        if (! Pacotes::vendaOnline()) {
+            return response()->json(['data' => [], 'taxas' => []])->header('Cache-Control', 'no-store');
+        }
+
         $pacote = Cache::remember(self::CACHE_KEY, 300, fn () => ['planos' => $this->montar(), 'taxas' => $this->taxas()]);
 
         // CORS: o middleware global das rotas /api já libera leitura entre origens; aqui só há dado público (nada de cliente).

@@ -42,6 +42,13 @@ return [
     | esses mesmos valores).
     */
 
+    /*
+     * Venda online (cadastro e pagamento pelo site). DESLIGADA por decisão do dono (21/10/2026): o cliente entra em contato com a Oravel
+     * e nenhum valor é divulgado pelo site. As rotas /assinar/{pacote} e a API pública de preços mandam para o contato. Contratos
+     * montados pela equipe na Central (link com ?plano= de um contrato próprio) continuam funcionando.
+     */
+    'venda_online' => (bool) env('VENDA_ONLINE', false),
+
     'brand' => [
         'primary' => '#f86c24',
         'sidebar_from' => '#1d2133',
