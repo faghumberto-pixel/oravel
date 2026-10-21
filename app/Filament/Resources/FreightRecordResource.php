@@ -29,6 +29,12 @@ class FreightRecordResource extends Resource
 
     protected static ?int $navigationSort = 0;
 
+    /** Interface simples (padrão de quem não contratou Locadora; a Central pode forçar por empresa). */
+    public static function interfaceSimples(): bool
+    {
+        return \App\Support\Tenancy::current()?->interfaceSimples() ?? false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -146,20 +152,20 @@ class FreightRecordResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('equipmentMovement.maintenanceOrder.os_number')
+                Tables\Columns\TextColumn::make('equipmentMovement.maintenanceOrder.os_number')->hidden(fn () => static::interfaceSimples())
                     ->label('OS'),
-                Tables\Columns\TextColumn::make('equipmentMovement.asset.name')
+                Tables\Columns\TextColumn::make('equipmentMovement.asset.name')->hidden(fn () => static::interfaceSimples())
                     ->label('Ativo'),
                 Tables\Columns\TextColumn::make('tipo')
                     ->badge()
                     ->formatStateUsing(fn (string $state) => $state === FreightRecord::TIPO_PROPRIO ? 'Frota Própria' : 'Terceirizado')
                     ->color(fn (string $state) => $state === FreightRecord::TIPO_PROPRIO ? 'info' : 'gray'),
                 Tables\Columns\TextColumn::make('fleetVehicle.placa')->label('Veículo')->placeholder('—'),
-                Tables\Columns\TextColumn::make('freightCarrier.nome')->label('Transportadora')->placeholder('—'),
+                Tables\Columns\TextColumn::make('freightCarrier.nome')->hidden(fn () => static::interfaceSimples())->label('Transportadora')->placeholder('—'),
                 Tables\Columns\TextColumn::make('origem')->label('Origem'),
                 Tables\Columns\TextColumn::make('destino')->label('Destino'),
                 Tables\Columns\TextColumn::make('valor')->label('Frete')->money('BRL'),
-                Tables\Columns\TextColumn::make('custo_total')->label('Custo Total')->money('BRL')->weight('bold'),
+                Tables\Columns\TextColumn::make('custo_total')->hidden(fn () => static::interfaceSimples())->label('Custo Total')->money('BRL')->weight('bold'),
                 Tables\Columns\TextColumn::make('data')->label('Data')->date('d/m/Y')->sortable(),
             ])
             ->filters([
@@ -172,11 +178,11 @@ class FreightRecordResource extends Resource
             ->defaultSort('data', 'desc')
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()->visible(fn () => ! static::interfaceSimples()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->visible(fn () => ! static::interfaceSimples()),
                 ]),
             ]);
     }
