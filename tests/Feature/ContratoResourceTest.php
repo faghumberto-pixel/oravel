@@ -59,7 +59,7 @@ class ContratoResourceTest extends TestCase
         $this->assertSame('480.00', $plan->base_price);
         $this->assertSame('480.00', $plan->price, 'price deve acompanhar base_price mesmo nao aparecendo no formulario');
         $this->assertTrue($plan->is_active);
-        $this->assertSame(['tabela_clients'], $plan->features);
+        $this->assertSame(['tabela_clients' => true], $plan->features);
 
         // O link gerado precisa realmente funcionar -- ir na tela pública
         // de cadastro pre-selecionando esse contrato. /assinar fica sob

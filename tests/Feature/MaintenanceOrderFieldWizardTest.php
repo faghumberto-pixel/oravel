@@ -433,10 +433,12 @@ class MaintenanceOrderFieldWizardTest extends TestCase
         $this->actingAs($user);
 
         Livewire::test(MaintenanceOrderFieldWizard::class, ['maintenanceOrder' => $order, 'step' => 3])
-            ->call('clearDamagePhotoBefore')
-            ->assertSet('damagePhotoBefore', null)
-            ->call('clearDamagePhotoAfter')
-            ->assertSet('damagePhotoAfter', null);
+            ->call('removeDamagePhoto', 'damage_photos_before')
+            ->call('removeDamagePhoto', 'damage_photos_after')
+            ->assertHasNoErrors();
+
+        $this->assertCount(0, $order->fresh()->getMedia('damage_photos_before'));
+        $this->assertCount(0, $order->fresh()->getMedia('damage_photos_after'));
     }
 
     public function test_step_three_damage_registration_flag_can_be_toggled(): void

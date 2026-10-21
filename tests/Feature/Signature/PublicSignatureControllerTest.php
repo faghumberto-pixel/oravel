@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Signature;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\Models\Contract;
 use App\Models\DocumentSignature;
 use App\Models\Tenant;
@@ -9,6 +10,8 @@ use Tests\TestCase;
 
 class PublicSignatureControllerTest extends TestCase
 {
+    use DatabaseTransactions;
+
     private Tenant $tenant;
     private Contract $contract;
     private DocumentSignature $signature;
@@ -108,6 +111,6 @@ class PublicSignatureControllerTest extends TestCase
         $response = $this->get(route('signature.sign', ['token' => $this->signature->token]));
 
         // Sem middleware auth, deve retornar 200 (ou 404 se token inválido)
-        $this->assertIn($response->status(), [200, 404]);
+        $this->assertContains($response->status(), [200, 404]);
     }
 }

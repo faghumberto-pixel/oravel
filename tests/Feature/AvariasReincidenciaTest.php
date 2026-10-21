@@ -25,7 +25,7 @@ class AvariasReincidenciaTest extends TestCase
         $plan = Plan::create([
             'name' => 'Plano Avarias '.uniqid(), 'price' => 100, 'base_price' => 100, 'level' => 1,
             'billing_cycle' => 'monthly', 'is_active' => true,
-            'features' => ['tabela_assets', 'tabela_equipment_damages', 'tabela_maintenance_orders', 'tabela_materials'],
+            'features' => ['tabela_assets', 'tabela_equipment_damages', 'tabela_maintenance_orders', 'tabela_materials', 'menu_avarias_reincidencia'],
         ]);
 
         $tenant = Tenant::create([

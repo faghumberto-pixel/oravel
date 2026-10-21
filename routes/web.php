@@ -324,7 +324,7 @@ Route::middleware(['auth'])->group(function () {
     // critério do /dashboard acima, registrado aqui (não mexe em
     // navigationParentItem, que afetaria o menu de todo mundo).
     Route::get('/admin', function () {
-        $user = auth()->user();
+        $user = auth()->user() instanceof \App\Models\User ? auth()->user() : null; // outro guard (ex.: Client do portal) não é usuário do painel
 
         if ($user && AppProfile::for($user) !== AppProfile::ADMIN) {
             return redirect()->to(AppProfile::homeUrl($user, AppProfile::for($user)));

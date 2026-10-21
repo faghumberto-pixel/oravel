@@ -22,7 +22,7 @@ class PainelCriticidadeTest extends TestCase
         $plan = Plan::create([
             'name' => 'Plano Criticidade '.uniqid(), 'price' => 100, 'base_price' => 100, 'level' => 1,
             'billing_cycle' => 'monthly', 'is_active' => true,
-            'features' => ['tabela_assets', 'tabela_maintenance_plans', 'tabela_abc_matrix'],
+            'features' => ['tabela_assets', 'tabela_maintenance_plans', 'tabela_abc_matrix', 'menu_painel_criticidade'],
         ]);
 
         $tenant = Tenant::create([

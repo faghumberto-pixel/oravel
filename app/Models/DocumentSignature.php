@@ -25,6 +25,9 @@ class DocumentSignature extends Model
 
     protected static ?string $saasModuleLabel = 'Assinatura Eletrônica';
 
+    /** Mesmo padrão da coluna no banco: a assinatura nasce pendente também na memória (antes só aparecia depois de recarregar o registro). */
+    protected $attributes = ['status' => 'pending'];
+
     protected $fillable = [
         'tenant_id',
         'signable_type',

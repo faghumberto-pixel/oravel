@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Signature;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\Models\Contract;
 use App\Models\DocumentSignature;
 use App\Models\MaintenanceOrder;
@@ -11,6 +12,8 @@ use Tests\TestCase;
 
 class SignatureServiceTest extends TestCase
 {
+    use DatabaseTransactions;
+
     private SignatureService $service;
     private Tenant $tenant;
     private Contract $contract;

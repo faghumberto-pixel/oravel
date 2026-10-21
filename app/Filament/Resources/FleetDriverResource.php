@@ -31,6 +31,12 @@ class FleetDriverResource extends Resource
 
     protected static ?int $navigationSort = 0;
 
+    /** Interface simples (padrão de quem não contratou Locadora; a Central pode forçar por empresa). */
+    public static function interfaceSimples(): bool
+    {
+        return \App\Support\Tenancy::current()?->interfaceSimples() ?? false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -56,14 +62,14 @@ class FleetDriverResource extends Resource
                         ->required()
                         ->live()
                         ->native(false),
-                    Forms\Components\Select::make('freight_carrier_id')
+                    Forms\Components\Select::make('freight_carrier_id')->hidden(fn () => static::interfaceSimples())
                         ->label('Transportadora')
                         ->relationship('freightCarrier', 'nome')
                         ->searchable()
                         ->preload()
                         ->visible(fn (Forms\Get $get) => $get('employment_type') === FleetDriver::EMPLOYMENT_TERCEIRO)
                         ->required(fn (Forms\Get $get) => $get('employment_type') === FleetDriver::EMPLOYMENT_TERCEIRO),
-                    Forms\Components\Select::make('employee_id')
+                    Forms\Components\Select::make('employee_id')->hidden(fn () => static::interfaceSimples())
                         ->label('Colaborador (Departamento Pessoal)')
                         ->helperText('Motorista próprio precisa ter um Colaborador vinculado -- é o que dá lastro pra bater ponto e registrar deslocamento pelo app.')
                         ->relationship(
@@ -121,11 +127,11 @@ class FleetDriverResource extends Resource
                 Tables\Columns\TextColumn::make('name')->label('Nome')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('cpf')->label('CPF')->searchable(),
                 Tables\Columns\TextColumn::make('phone')->label('Telefone'),
-                Tables\Columns\TextColumn::make('employee.name')
+                Tables\Columns\TextColumn::make('employee.name')->hidden(fn () => static::interfaceSimples())
                     ->label('Colaborador')
                     ->placeholder('Sem vínculo')
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('employment_type')
+                Tables\Columns\TextColumn::make('employment_type')->hidden(fn () => static::interfaceSimples())
                     ->label('Vínculo')
                     ->badge()
                     ->formatStateUsing(fn (string $state) => match ($state) {
@@ -144,7 +150,7 @@ class FleetDriverResource extends Resource
                         default => 'success',
                     }),
                 Tables\Columns\IconColumn::make('active')->label('Ativo')->boolean(),
-                Tables\Columns\TextColumn::make('alertas')
+                Tables\Columns\TextColumn::make('alertas')->hidden(fn () => static::interfaceSimples())
                     ->label('Alertas')
                     ->state(function (FleetDriver $record) {
                         $docsVencidos = $record->documents()->get()->filter(fn ($d) => $d->isVencido())->count();
@@ -191,7 +197,7 @@ class FleetDriverResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->visible(fn () => ! static::interfaceSimples()),
                 ]),
             ]);
     }

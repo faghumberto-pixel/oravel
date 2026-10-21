@@ -30,6 +30,12 @@ class FleetVehicleResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
+    /** Interface simples (padrão de quem não contratou Locadora; a Central pode forçar por empresa). */
+    public static function interfaceSimples(): bool
+    {
+        return \App\Support\Tenancy::current()?->interfaceSimples() ?? false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -65,19 +71,19 @@ class FleetVehicleResource extends Resource
                         ->default(FleetVehicle::STATUS_DISPONIVEL)
                         ->required()
                         ->native(false),
-                    Forms\Components\TextInput::make('capacidade_carga')
+                    Forms\Components\TextInput::make('capacidade_carga')->hidden(fn () => static::interfaceSimples())
                         ->label('Capacidade de Carga (kg)')
                         ->numeric(),
                     Forms\Components\TextInput::make('km_atual')
                         ->label('KM Atual')
                         ->numeric()
                         ->required(),
-                    Forms\Components\TextInput::make('custo_por_km')
+                    Forms\Components\TextInput::make('custo_por_km')->hidden(fn () => static::interfaceSimples())
                         ->label('Custo por KM (R$)')
                         ->helperText('Usado pra calcular o custo do frete automaticamente ao finalizar uma movimentação. Deixe em branco pro financeiro completar depois.')
                         ->numeric()
                         ->prefix('R$'),
-                    Forms\Components\TextInput::make('tag_sem_parar')
+                    Forms\Components\TextInput::make('tag_sem_parar')->hidden(fn () => static::interfaceSimples())
                         ->label('Tag Sem Parar')
                         ->maxLength(50),
                 ]),
@@ -112,7 +118,7 @@ class FleetVehicleResource extends Resource
                         FleetVehicle::STATUS_MANUTENCAO => 'Em Manutenção',
                         default => 'Inativo',
                     }),
-                Tables\Columns\TextColumn::make('movimentacao_atual')
+                Tables\Columns\TextColumn::make('movimentacao_atual')->hidden(fn () => static::interfaceSimples())
                     ->label('Movimentação Atual')
                     ->state(function (FleetVehicle $record) {
                         if ($record->status !== FleetVehicle::STATUS_EM_ROTA) {
@@ -146,7 +152,7 @@ class FleetVehicleResource extends Resource
                     })
                     ->placeholder('—'),
                 Tables\Columns\TextColumn::make('km_atual')->label('KM Atual')->numeric(decimalPlaces: 0)->sortable(),
-                Tables\Columns\TextColumn::make('alertas')
+                Tables\Columns\TextColumn::make('alertas')->hidden(fn () => static::interfaceSimples())
                     ->label('Alertas')
                     ->state(function (FleetVehicle $record) {
                         $docsVencidos = $record->documents()->get()->filter(fn ($d) => $d->isVencido())->count();
@@ -194,7 +200,7 @@ class FleetVehicleResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->visible(fn () => ! static::interfaceSimples()),
                 ]),
             ]);
     }

@@ -46,6 +46,12 @@ class EmployeeResource extends BaseResource
 
     protected static ?string $pluralModelLabel = 'Colaboradores';
 
+    /** Interface simples (padrão de quem não contratou Locadora; a Central pode forçar por empresa). */
+    public static function interfaceSimples(): bool
+    {
+        return \App\Support\Tenancy::current()?->interfaceSimples() ?? false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -71,7 +77,7 @@ class EmployeeResource extends BaseResource
                     Forms\Components\TextInput::make('role_title')
                         ->label('Cargo')
                         ->maxLength(191),
-                    Forms\Components\Select::make('job_role_id')
+                    Forms\Components\Select::make('job_role_id')->hidden(fn () => static::interfaceSimples())
                         ->label('Tipo/Função')
                         ->helperText('Usado pra filtrar e agrupar colaboradores (ex: vincular rastreamento GPS só a vendedores/técnicos). Gerencie em Equipe → Funções e Cargos.')
                         ->relationship('jobRole', 'name')
@@ -89,7 +95,7 @@ class EmployeeResource extends BaseResource
                         ->native(false),
                     Forms\Components\DatePicker::make('admission_date')
                         ->label('Data de Admissão'),
-                    Forms\Components\TextInput::make('daily_work_hours')
+                    Forms\Components\TextInput::make('daily_work_hours')->hidden(fn () => static::interfaceSimples())
                         ->label('Jornada diária (h)')
                         ->helperText('Usado pra calcular horas extras em "Minhas Horas".')
                         ->numeric()
@@ -98,7 +104,7 @@ class EmployeeResource extends BaseResource
                         ->maxValue(24)
                         ->default(8)
                         ->required(),
-                    Forms\Components\Select::make('user_id')
+                    Forms\Components\Select::make('user_id')->hidden(fn () => static::interfaceSimples())
                         ->label('Usuário do painel vinculado')
                         ->helperText('Só preencher se este colaborador também faz login no Oravel.')
                         ->relationship(
@@ -126,7 +132,7 @@ class EmployeeResource extends BaseResource
                 Tables\Columns\TextColumn::make('cpf')->label('CPF')->searchable(),
                 Tables\Columns\TextColumn::make('department.name')->label('Setor')->searchable(),
                 Tables\Columns\TextColumn::make('role_title')->label('Cargo')->searchable(),
-                Tables\Columns\TextColumn::make('jobRole.name')
+                Tables\Columns\TextColumn::make('jobRole.name')->hidden(fn () => static::interfaceSimples())
                     ->label('Tipo/Função')
                     ->badge()
                     ->color('gray')
@@ -142,7 +148,7 @@ class EmployeeResource extends BaseResource
                         Employee::STATUS_INCOMPLETO => 'danger',
                         default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('certificacoes_alerta')
+                Tables\Columns\TextColumn::make('certificacoes_alerta')->hidden(fn () => static::interfaceSimples())
                     ->label('Certificações')
                     ->state(fn (Employee $record) => self::certificationSummary($record)[0])
                     ->badge()
@@ -156,7 +162,7 @@ class EmployeeResource extends BaseResource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
+                Tables\Actions\DeleteAction::make()->visible(fn () => ! static::interfaceSimples())
                     ->visible(fn (Employee $record) => ! $record->hasHistory())
                     ->modalDescription('Só é possível excluir quem nunca teve ponto, falta, certificação, alocação ou EPI. Para os demais, use o status "Desligado".'),
             ])

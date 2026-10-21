@@ -27,6 +27,12 @@ class AbsenceResource extends BaseResource
 
     protected static ?string $pluralModelLabel = 'Faltas e Ausências';
 
+    /** Interface simples (padrão de quem não contratou Locadora; a Central pode forçar por empresa). */
+    public static function interfaceSimples(): bool
+    {
+        return \App\Support\Tenancy::current()?->interfaceSimples() ?? false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -37,7 +43,7 @@ class AbsenceResource extends BaseResource
                 ->preload()
                 ->required(),
             Forms\Components\Select::make('type')->label('Tipo')->options(Absence::typeLabels())->required()->native(false),
-            Forms\Components\TextInput::make('cid_code')->label('CID')->maxLength(10)->placeholder('Ex.: J11'),
+            Forms\Components\TextInput::make('cid_code')->hidden(fn () => static::interfaceSimples())->label('CID')->maxLength(10)->placeholder('Ex.: J11'),
             Forms\Components\DatePicker::make('start_date')->label('De')->required()->native(false),
             Forms\Components\DatePicker::make('end_date')->label('Até')->required()->native(false),
             Forms\Components\TextInput::make('reason')->label('Motivo')->required()->maxLength(191)->columnSpanFull(),
@@ -60,9 +66,9 @@ class AbsenceResource extends BaseResource
                 Tables\Columns\TextColumn::make('start_date')->label('De')->date('d/m/Y')->sortable(),
                 Tables\Columns\TextColumn::make('end_date')->label('Até')->date('d/m/Y'),
                 Tables\Columns\TextColumn::make('days')->label('Dias')->state(fn (Absence $r) => $r->days),
-                Tables\Columns\TextColumn::make('cid_code')->label('CID')->placeholder('—')->searchable(),
+                Tables\Columns\TextColumn::make('cid_code')->hidden(fn () => static::interfaceSimples())->label('CID')->placeholder('—')->searchable(),
                 Tables\Columns\TextColumn::make('reason')->label('Motivo')->limit(40)->tooltip(fn (Absence $r) => $r->details),
-                Tables\Columns\IconColumn::make('attachment_path')
+                Tables\Columns\IconColumn::make('attachment_path')->hidden(fn () => static::interfaceSimples())
                     ->label('Atestado')
                     ->boolean()
                     ->state(fn (Absence $record) => $record->attachmentPaths() !== []),
@@ -75,7 +81,7 @@ class AbsenceResource extends BaseResource
                         Absence::STATUS_REJEITADO => 'danger',
                         default => 'warning',
                     }),
-                Tables\Columns\TextColumn::make('created_at')->label('Registrado em')->dateTime('d/m/Y H:i')->sortable(),
+                Tables\Columns\TextColumn::make('created_at')->hidden(fn () => static::interfaceSimples())->label('Registrado em')->dateTime('d/m/Y H:i')->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
@@ -125,10 +131,10 @@ class AbsenceResource extends BaseResource
                         Notification::make()->title('Falta rejeitada')->danger()->send();
                     }),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()->visible(fn () => ! static::interfaceSimples()),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()]),
+                Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()->visible(fn () => ! static::interfaceSimples())]),
             ]);
     }
 
