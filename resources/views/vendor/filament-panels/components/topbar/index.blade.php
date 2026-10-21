@@ -59,8 +59,8 @@
             class="fi-topbar-bar sticky top-0 z-20 flex h-16 items-center gap-x-4 px-4 shadow-sm md:px-6 lg:px-8"
             
         >
-            {{-- Celular/tablet: o menu lateral fica escondido, então as 3 bolinhas ficam aqui no topo. --}}
-            @if (filament()->getId() === 'admin')
+            {{-- Celular/tablet: o menu lateral fica escondido, então as 3 bolinhas ficam aqui no topo (painel da empresa e portal do cliente). --}}
+            @if (in_array(filament()->getId(), ['admin', 'portal-cliente'], true))
                 <span class="flex items-center gap-1.5 lg:hidden" aria-hidden="true">
                     <span class="block h-2.5 w-2.5 rounded-full" style="background:#ef4444"></span>
                     <span class="block h-2.5 w-2.5 rounded-full" style="background:#f59e0b"></span>
