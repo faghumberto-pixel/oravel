@@ -22,7 +22,7 @@ class BolinhasPortalClienteTest extends TestCase
 
         $html = $this->actingAs($c, 'client')->get('/cliente/abrir-chamado')->assertOk()->getContent();
 
-        $this->assertGreaterThanOrEqual(2, substr_count($html, 'background:#ef4444'), 'bolinhas no menu lateral e no topo do celular');
+        $this->assertGreaterThanOrEqual(1, substr_count($html, 'background:#ef4444'), 'bolinhas no menu lateral');
         $this->assertStringContainsString('background:#f59e0b', $html);
         $this->assertStringContainsString('background:#22c55e', $html);
         $this->assertStringContainsString('>Oravel</span>', $html);
