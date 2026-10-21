@@ -81,7 +81,7 @@
             >
                 {{-- Admin: no lugar do logo/nome vão as 3 bolinhas (vermelha, amarela, verde) da barra de janela usada no site
                      oravel.com.br; logo e nome da empresa passaram para o topbar. Outros painéis seguem com o logo de sempre. --}}
-                @if (filament()->getId() === 'admin')
+                @if (in_array(filament()->getId(), ['admin', 'portal-cliente'], true))
                     <a @if ($homeUrl = filament()->getHomeUrl()) {{ \Filament\Support\generate_href_html($homeUrl) }} @endif class="flex items-center gap-1.5" aria-label="Início">
                         <span class="block h-2.5 w-2.5 rounded-full" style="background:#ef4444"></span>
                         <span class="block h-2.5 w-2.5 rounded-full" style="background:#f59e0b"></span>
