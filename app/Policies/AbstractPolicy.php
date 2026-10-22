@@ -43,8 +43,16 @@ abstract class AbstractPolicy
             }
         }
 
-        // 3. Admin do tenant: passou na trava comercial, ve o modulo.
+        // 3. Admin do tenant: passou na trava comercial, ve o modulo. Mas so dos
+        //    registros do proprio tenant: antes retornava true aqui sem olhar o
+        //    tenant do registro (achado 2026-10-22), entao a policy sozinha nao
+        //    barrava um admin de agir em registro de outro tenant -- so o escopo
+        //    do Eloquent impedia de carregar o registro.
         if (method_exists($user, 'isAdmin') && $user->isAdmin()) {
+            if ($model && is_object($model) && $action !== 'create') {
+                return $this->isSameTenant($user, $model);
+            }
+
             return true;
         }
 
