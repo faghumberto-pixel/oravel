@@ -46,10 +46,49 @@ class CashflowReportTest extends PerfisTestCase
         foreach (['tecnico', 'colaborador'] as $perfil) {
             $this->actingAs($this->a[$perfil]);
 
-            $this->lacunaConhecida(
-                "CashflowPage::canAccess() so confere o plano, nao a permissao do usuario: o {$perfil} do tenant abre o fluxo de caixa",
-                fn () => $this->assertFalse(CashflowPage::canAccess(), $perfil)
-            );
+            $this->assertFalse(CashflowPage::canAccess(), $perfil);
+            Livewire::test(CashflowPage::class)->assertForbidden();
         }
+    }
+
+    public function test_permissao_do_proprio_modulo_libera_a_tela(): void
+    {
+        $this->conceder($this->a['colaborador'], 'cashflow_report', ['ler']);
+        $this->actingAs($this->a['colaborador']);
+
+        $this->assertTrue(CashflowPage::canAccess());
+        Livewire::test(CashflowPage::class)->assertSuccessful();
+    }
+
+    public function test_quem_ja_ve_contas_a_receber_ou_a_pagar_continua_entrando(): void
+    {
+        foreach (['contas_receber', 'contas_pagar'] as $slug) {
+            [, $perfis] = $this->montarTenant();
+            $this->conceder($perfis['tecnico'], $slug, ['ler']);
+            $this->actingAs($perfis['tecnico']);
+
+            $this->assertTrue(CashflowPage::canAccess(), $slug);
+        }
+    }
+
+    public function test_permissao_de_outro_modulo_nao_libera_a_tela(): void
+    {
+        $this->conceder($this->a['colaborador'], 'ordem_servico', ['ler', 'criar', 'editar', 'excluir']);
+        $this->actingAs($this->a['colaborador']);
+
+        $this->assertFalse(CashflowPage::canAccess());
+    }
+
+    public function test_permissao_sem_o_modulo_no_plano_nao_adianta(): void
+    {
+        $semModulo = array_values(array_diff(
+            array_filter(array_column(SaaSRegistry::modules(), 'feature')),
+            ['tabela_cashflow_report']
+        ));
+        [, $perfis] = $this->montarTenant($semModulo);
+        $this->conceder($perfis['colaborador'], 'cashflow_report', ['ler']);
+        $this->actingAs($perfis['colaborador']);
+
+        $this->assertFalse(CashflowPage::canAccess());
     }
 }

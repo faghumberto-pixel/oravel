@@ -46,9 +46,28 @@ class CashflowPage extends Page
     // rotear por Policy (agrega AccountPayable/AccountReceivable), então
     // checa o Contrato direto -- Fluxo de Caixa aparecia pra qualquer
     // usuário autenticado, plano incluído ou não.
+    //
+    // Achado em 2026-10-22 (testes por modulo): so o plano era conferido, entao
+    // tecnico e colaborador sem nenhuma permissao abriam o fluxo de caixa (que
+    // lista contas a receber e a pagar). Alem do plano, exige administrador, a
+    // permissao do proprio modulo (ler_cashflow_report) ou quem ja pode ver
+    // Contas a Receber / a Pagar -- assim um perfil financeiro continua entrando.
     public static function canAccess(): bool
     {
-        return (bool) Tenancy::current()?->hasFeature('tabela_cashflow_report');
+        if (! Tenancy::current()?->hasFeature('tabela_cashflow_report')) {
+            return false;
+        }
+
+        $user = auth()->user();
+        if (! $user) {
+            return false;
+        }
+
+        return $user->isSuperAdmin()
+            || $user->isAdmin()
+            || $user->can('ler_cashflow_report')
+            || $user->can('viewAny', AccountReceivable::class)
+            || $user->can('viewAny', AccountPayable::class);
     }
 
     public function getMaxContentWidth(): MaxWidth
