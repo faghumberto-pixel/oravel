@@ -86,17 +86,32 @@ class LandingPageLeadTest extends PerfisTestCase
         $this->assertNull($lead->fresh()->contacted_at);
     }
 
-    public function test_rota_publica_de_leads_nao_expoe_dados_pessoais_sem_login(): void
+    public function test_rota_de_leads_exige_login(): void
     {
         $this->lead(['name' => 'Pessoa Exposta', 'email' => 'exposta@exemplo.com.br']);
 
-        $this->lacunaConhecida(
-            'GET /leads (routes/web.php) so tem o middleware web: lista nome/e-mail/telefone dos leads para qualquer visitante, sem login',
-            function () {
-                $resposta = $this->get('/leads');
-                $this->assertContains($resposta->status(), [301, 302, 401, 403, 404]);
-                $this->assertStringNotContainsString('exposta@exemplo.com.br', (string) $resposta->getContent());
-            }
-        );
+        $resposta = $this->get('/leads');
+
+        $resposta->assertRedirect();
+        $this->assertStringNotContainsString('exposta@exemplo.com.br', (string) $resposta->getContent());
+    }
+
+    public function test_rota_de_leads_e_barrada_para_usuario_de_tenant(): void
+    {
+        $this->lead(['email' => 'exposta@exemplo.com.br']);
+
+        foreach (['admin', 'tecnico', 'colaborador'] as $perfil) {
+            $resposta = $this->actingAs($this->a[$perfil])->get('/leads');
+
+            $resposta->assertForbidden();
+            $this->assertStringNotContainsString('exposta@exemplo.com.br', (string) $resposta->getContent());
+        }
+    }
+
+    public function test_rota_de_leads_mostra_os_leads_ao_super_admin(): void
+    {
+        $this->lead(['name' => 'Carlos Lead', 'email' => 'carlos@exemplo.com.br']);
+
+        $this->actingAs($this->superAdmin())->get('/leads')->assertOk()->assertSee('Carlos Lead');
     }
 }

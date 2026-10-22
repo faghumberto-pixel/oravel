@@ -626,8 +626,13 @@ Route::middleware(['auth'])->group(function () {
         ->name('bancary-reconciliation.print');
 });
 
-// Dashboard simples dos leads da landing page
-Route::get('/leads', function () {
+// Dashboard simples dos leads da landing page. Tem nome/e-mail/telefone de
+// pessoas: so super admin (mesma regra da LandingPageLeadPolicy). Achado em
+// 2026-10-22: a rota estava so com o middleware `web`, aberta a qualquer
+// visitante, inclusive em producao.
+Route::middleware(['web', 'auth'])->get('/leads', function () {
+    abort_unless(auth()->user()?->isSuperAdmin(), 403);
+
     $leads = LandingPageLead::orderBy('created_at', 'desc')->get();
 
     return view('leads-manager', compact('leads'));
