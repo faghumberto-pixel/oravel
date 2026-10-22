@@ -174,11 +174,9 @@ abstract class ModuloTestCase extends PerfisTestCase
     }
 
     /**
-     * A protecao real e o escopo do Eloquent: o registro do outro tenant nem
-     * carrega. (A policy sozinha NAO barra: AbstractPolicy::check() libera o
-     * admin antes de comparar o tenant do registro, entao can('update', $doB)
-     * devolve true. Achado em 2026-10-22, ver relatorio; nao e testado aqui
-     * porque falharia em todos os modulos ate a policy ser ajustada.)
+     * Duas camadas: o escopo do Eloquent nem carrega o registro do outro tenant,
+     * e a policy tambem nega (AbstractPolicy::check() compara o tenant do
+     * registro ate para o administrador; antes retornava true antes disso).
      */
     public function test_admin_de_um_tenant_nao_alcanca_registro_de_outro(): void
     {
@@ -187,6 +185,17 @@ abstract class ModuloTestCase extends PerfisTestCase
 
         $this->assertNull($this->modelo()::query()->find($doB->getKey()));
         $this->assertSame(0, $this->modelo()::query()->whereKey($doB->getKey())->count());
+    }
+
+    public function test_policy_nega_ao_admin_agir_em_registro_de_outro_tenant(): void
+    {
+        $doB = $this->novoRegistro($this->tenantB);
+        $this->actingAs($this->a['admin']);
+
+        foreach (['view', 'update', 'delete'] as $acao) {
+            $this->assertFalse($this->a['admin']->can($acao, $doB), $acao);
+        }
+        $this->assertTrue($this->b['admin']->can('update', $doB), 'o admin dono continua podendo');
     }
 
     public function test_registro_novo_herda_o_tenant_de_quem_criou(): void

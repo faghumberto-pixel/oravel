@@ -69,12 +69,10 @@ class TraccarDeviceTest extends ModuloTestCase
         $this->actingAs($this->a['admin']);
 
         Livewire::test($this->paginaDoResource('index'))
-            ->callTableAction('create', data: ['user_id' => $this->b['tecnico']->id, 'identifier' => 'INVASOR', 'traccar_device_id' => 7]);
+            ->callTableAction('create', data: ['user_id' => $this->b['tecnico']->id, 'identifier' => 'INVASOR', 'traccar_device_id' => 7])
+            ->assertHasTableActionErrors(['user_id']);
 
-        $this->lacunaConhecida(
-            'o servidor nao valida que user_id e do tenant (so o formulario filtra); requisicao forjada vincula usuario alheio',
-            fn () => $this->assertSame(0, TraccarDevice::withoutGlobalScopes()->where('identifier', 'INVASOR')->count())
-        );
+        $this->assertSame(0, TraccarDevice::withoutGlobalScopes()->where('identifier', 'INVASOR')->count());
     }
 
     public function test_edita_e_exclui_vinculo(): void

@@ -17,6 +17,8 @@ use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Exists;
 
 class TraccarDeviceResource extends BaseResource
 {
@@ -64,6 +66,11 @@ class TraccarDeviceResource extends BaseResource
                         ->searchable()
                         ->preload()
                         ->required()
+                        // Valida no servidor que o usuario e do tenant: o filtro acima so
+                        // restringe as opcoes na tela (achado 2026-10-22).
+                        ->rules([fn (): ?Exists => Tenancy::current()
+                            ? Rule::exists('users', 'id')->where('tenant_id', Tenancy::current()->id)
+                            : null])
                         ->columnSpanFull(),
 
                     TextInput::make('identifier')

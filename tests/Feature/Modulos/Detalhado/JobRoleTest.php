@@ -90,11 +90,9 @@ class JobRoleTest extends ModuloTestCase
         $this->actingAs($this->a['admin']);
 
         Livewire::test($this->paginaDoResource('index'))
-            ->callTableAction('create', data: ['name' => 'Invasora', 'department_id' => $depDeB->id]);
+            ->callTableAction('create', data: ['name' => 'Invasora', 'department_id' => $depDeB->id])
+            ->assertHasTableActionErrors(['department_id']);
 
-        $this->lacunaConhecida(
-            'o servidor nao valida que department_id e do tenant (so o formulario filtra); requisicao forjada vincula departamento alheio',
-            fn () => $this->assertSame(0, JobRole::withoutGlobalScopes()->where('name', 'Invasora')->count())
-        );
+        $this->assertSame(0, JobRole::withoutGlobalScopes()->where('name', 'Invasora')->count());
     }
 }
