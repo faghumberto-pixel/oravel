@@ -22,7 +22,7 @@
     clearSignaturePad() {
         this.signaturePad?.clear();
     }
-}" @livewire:navigating="initSignature()">
+}" x-on:livewire:navigating="initSignature()">
 
     {{-- Cabeçalho fixo --}}
     <header class="sticky top-0 z-40 border-b border-zinc-800 bg-zinc-900 px-5 py-4">

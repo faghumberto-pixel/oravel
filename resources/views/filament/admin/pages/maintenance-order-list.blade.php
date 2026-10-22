@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-zinc-50">
     {{-- Header com gradiente --}}
     <div class="bg-gradient-to-r from-blue-600 to-blue-500 rounded-b-3xl pb-8">
         <div class="px-5 pt-6">
@@ -23,9 +23,9 @@
                 wire:model.live="search"
                 type="text"
                 placeholder="Buscar por cliente, OS ou tipo..."
-                class="w-full px-4 py-3 pl-10 rounded-xl border border-gray-200 bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-4 py-3 pl-10 rounded-xl border border-zinc-200 bg-white text-zinc-900 placeholder-zinc-400 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-            <svg class="absolute left-3 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="absolute left-3 top-3.5 w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
         </div>
@@ -36,25 +36,25 @@
         <div class="flex gap-2 overflow-x-auto pb-2">
             <button
                 wire:click="$set('statusFilter', '')"
-                class="px-4 py-2 rounded-full font-semibold whitespace-nowrap transition {{ $statusFilter === '' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700' }}"
+                class="px-4 py-2 rounded-full font-semibold whitespace-nowrap transition {{ $statusFilter === '' ? 'bg-blue-600 text-white' : 'bg-zinc-200 text-zinc-700' }}"
             >
                 Todas <span class="text-sm font-normal">({{ $this->total }})</span>
             </button>
             <button
                 wire:click="$set('statusFilter', 'Pendente')"
-                class="px-4 py-2 rounded-full font-semibold whitespace-nowrap transition {{ $statusFilter === 'Pendente' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-amber-600' }}"
+                class="px-4 py-2 rounded-full font-semibold whitespace-nowrap transition {{ $statusFilter === 'Pendente' ? 'bg-blue-600 text-white' : 'bg-zinc-200 text-amber-600' }}"
             >
                 Pendentes <span class="text-sm font-normal">({{ $this->pendingCount }})</span>
             </button>
             <button
                 wire:click="$set('statusFilter', 'Em Andamento')"
-                class="px-4 py-2 rounded-full font-semibold whitespace-nowrap transition {{ $statusFilter === 'Em Andamento' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700' }}"
+                class="px-4 py-2 rounded-full font-semibold whitespace-nowrap transition {{ $statusFilter === 'Em Andamento' ? 'bg-blue-600 text-white' : 'bg-zinc-200 text-zinc-700' }}"
             >
                 Em andamento <span class="text-sm font-normal">({{ $this->inProgressCount }})</span>
             </button>
             <button
                 wire:click="$set('statusFilter', 'Concluída')"
-                class="px-4 py-2 rounded-full font-semibold whitespace-nowrap transition {{ $statusFilter === 'Concluída' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-green-600' }}"
+                class="px-4 py-2 rounded-full font-semibold whitespace-nowrap transition {{ $statusFilter === 'Concluída' ? 'bg-blue-600 text-white' : 'bg-zinc-200 text-green-600' }}"
             >
                 Concluídas <span class="text-sm font-normal">({{ $this->completedCount }})</span>
             </button>
@@ -64,7 +64,7 @@
     {{-- Lista de cards --}}
     <div class="px-5 pb-32 space-y-3">
         @forelse ($this->orders as $order)
-            <a href="{{ route('maintenance-orders.field-wizard', $order) }}" class="block bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition p-4">
+            <a href="{{ route('maintenance-orders.field-wizard', $order) }}" class="block bg-white rounded-xl border border-zinc-200 shadow-sm hover:shadow-md transition p-4">
                 {{-- Header do card --}}
                 <div class="flex items-center justify-between mb-3">
                     <span class="text-blue-600 font-semibold">OS #{{ $order->os_number }}</span>
@@ -74,19 +74,19 @@
                 </div>
 
                 {{-- Nome do cliente --}}
-                <h3 class="font-bold text-gray-900 truncate mb-1">
+                <h3 class="font-bold text-zinc-900 truncate mb-1">
                     {{ $order->client?->name ?? 'Sem cliente' }}
                 </h3>
 
                 {{-- Tipo de serviço --}}
                 @if ($order->maintenance_type)
-                    <p class="text-sm text-gray-600 mb-3">{{ $order->maintenance_type }}</p>
+                    <p class="text-sm text-zinc-600 mb-3">{{ $order->maintenance_type }}</p>
                 @endif
 
                 {{-- Localização --}}
                 @if ($order->asset?->endereco)
-                    <div class="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                        <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <div class="flex items-center gap-2 text-sm text-zinc-600 mb-2">
+                        <svg class="w-4 h-4 text-zinc-400" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"/>
                         </svg>
                         <span class="truncate">{{ $order->asset->endereco }}</span>
@@ -95,8 +95,8 @@
 
                 {{-- Data e Prioridade --}}
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2 text-sm text-gray-600">
-                        <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <div class="flex items-center gap-2 text-sm text-zinc-600">
+                        <svg class="w-4 h-4 text-zinc-400" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v2h16V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"/>
                         </svg>
                         <span>{{ $order->created_at->format('d M Y') }}</span>
@@ -110,10 +110,10 @@
             </a>
         @empty
             <div class="text-center py-12">
-                <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-12 h-12 text-zinc-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
-                <p class="text-gray-600 font-medium">Nenhuma ordem encontrada</p>
+                <p class="text-zinc-600 font-medium">Nenhuma ordem encontrada</p>
             </div>
         @endforelse
     </div>
@@ -126,8 +126,8 @@
     </a>
 
     {{-- Bottom tab bar --}}
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-20">
-        <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center h-full w-full text-gray-600 hover:text-blue-600 transition">
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-zinc-200 flex justify-around items-center h-20">
+        <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center h-full w-full text-zinc-600 hover:text-blue-600 transition">
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
             </svg>
@@ -139,19 +139,19 @@
             </svg>
             <span class="text-xs mt-1">OS</span>
         </button>
-        <a href="{{ route('filament.admin.resources.clients.index') }}" class="flex flex-col items-center justify-center h-full w-full text-gray-600 hover:text-blue-600 transition">
+        <a href="{{ route('filament.admin.resources.clients.index') }}" class="flex flex-col items-center justify-center h-full w-full text-zinc-600 hover:text-blue-600 transition">
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM9 10a9 9 0 018.946 7.5H2a9 9 0 018.946-7.5z"/>
             </svg>
             <span class="text-xs mt-1">Clientes</span>
         </a>
-        <a href="{{ route('filament.admin.pages.agenda-tecnico') }}" class="flex flex-col items-center justify-center h-full w-full text-gray-600 hover:text-blue-600 transition">
+        <a href="{{ route('filament.admin.pages.agenda-tecnico') }}" class="flex flex-col items-center justify-center h-full w-full text-zinc-600 hover:text-blue-600 transition">
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v2h16V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"/>
             </svg>
             <span class="text-xs mt-1">Agenda</span>
         </a>
-        <button class="flex flex-col items-center justify-center h-full w-full text-gray-600 hover:text-blue-600 transition">
+        <button class="flex flex-col items-center justify-center h-full w-full text-zinc-600 hover:text-blue-600 transition">
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V17a2 2 0 01-2 2h-1C9.716 19 3 12.284 3 4V3z"/>
             </svg>
