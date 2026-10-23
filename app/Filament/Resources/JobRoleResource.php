@@ -4,13 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\JobRoleResource\Pages;
 use App\Models\JobRole;
-use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Exists;
 
 class JobRoleResource extends BaseResource
 {
@@ -42,14 +39,7 @@ class JobRoleResource extends BaseResource
                 ->relationship('department', 'name')
                 ->searchable()
                 ->preload()
-                ->required()
-                // O Select so mostra os departamentos do tenant (escopo do
-                // Eloquent), mas o valor que chega do navegador nao era
-                // validado no servidor: uma requisicao forjada vinculava
-                // departamento de outro tenant (achado 2026-10-22).
-                ->rules([fn (): ?Exists => Tenancy::current()
-                    ? Rule::exists('departments', 'id')->where('tenant_id', Tenancy::current()->id)
-                    : null]),
+                ->required(),
         ]);
     }
 
