@@ -98,6 +98,14 @@ class TechnicianDailyTasks extends Page
     #[Url]
     public string $filterNature = ''; // 'internal' | 'external' | ''
 
+    /** "Todos": o botao antes so zerava o tipo, e os filtros de urgencia e natureza nao tinham como ser limpos. */
+    public function limparFiltros(): void
+    {
+        $this->filterType = '';
+        $this->filterCriticality = '';
+        $this->filterNature = '';
+    }
+
     #[Url]
     public string $filterCEP = ''; // CEP para filtrar por localização
 

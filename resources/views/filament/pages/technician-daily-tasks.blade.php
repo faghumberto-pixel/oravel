@@ -21,24 +21,20 @@
             {{-- Filtros: só fazem sentido para a lista de abertas --}}
             @if ($activeTab === 'aberta')
                 <div class="flex gap-2 overflow-x-auto pb-1">
-                    <button wire:click="$set('filterType', '')"
-                            :class="$wire.filterType === '' ? 'bg-blue-600 text-white' : 'bg-zinc-200 text-zinc-700'"
-                            class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95">
+                    <button wire:click="limparFiltros"
+                            class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95 {{ $filterType === '' && $filterCriticality === '' && $filterNature === '' ? 'bg-blue-600 text-white' : 'bg-zinc-200 text-zinc-700' }}">
                         Todos
                     </button>
-                    <button wire:click="$set('filterCriticality', 'A')"
-                            :class="$wire.filterCriticality === 'A' ? 'bg-red-600 text-white' : 'bg-zinc-200 text-zinc-700'"
-                            class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95">
+                    <button wire:click="$set('filterCriticality', '{{ $filterCriticality === 'A' ? '' : 'A' }}')"
+                            class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95 {{ $filterCriticality === 'A' ? 'bg-red-600 text-white' : 'bg-zinc-200 text-zinc-700' }}">
                         🔴 Urgente
                     </button>
-                    <button wire:click="$set('filterCriticality', 'B')"
-                            :class="$wire.filterCriticality === 'B' ? 'bg-amber-500 text-white' : 'bg-zinc-200 text-zinc-700'"
-                            class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95">
+                    <button wire:click="$set('filterCriticality', '{{ $filterCriticality === 'B' ? '' : 'B' }}')"
+                            class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95 {{ $filterCriticality === 'B' ? 'bg-amber-500 text-white' : 'bg-zinc-200 text-zinc-700' }}">
                         🟡 Média
                     </button>
-                    <button wire:click="$set('filterNature', 'external')"
-                            :class="$wire.filterNature === 'external' ? 'bg-purple-600 text-white' : 'bg-zinc-200 text-zinc-700'"
-                            class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95">
+                    <button wire:click="$set('filterNature', '{{ $filterNature === 'external' ? '' : 'external' }}')"
+                            class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95 {{ $filterNature === 'external' ? 'bg-purple-600 text-white' : 'bg-zinc-200 text-zinc-700' }}">
                         🌐 Cliente
                     </button>
                 </div>
