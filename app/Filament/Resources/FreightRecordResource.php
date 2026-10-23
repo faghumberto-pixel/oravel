@@ -27,6 +27,10 @@ class FreightRecordResource extends Resource
 
     protected static ?string $navigationLabel = 'Fretes';
 
+    protected static ?string $modelLabel = 'Frete';
+
+    protected static ?string $pluralModelLabel = 'Fretes';
+
     protected static ?int $navigationSort = 0;
 
     /** Interface simples (padrão de quem não contratou Locadora; a Central pode forçar por empresa). */

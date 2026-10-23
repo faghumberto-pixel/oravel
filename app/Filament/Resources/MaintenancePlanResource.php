@@ -29,6 +29,10 @@ class MaintenancePlanResource extends Resource
 
     protected static ?string $navigationLabel = 'Planos Preventivos';
 
+    protected static ?string $modelLabel = 'Plano preventivo';
+
+    protected static ?string $pluralModelLabel = 'Planos preventivos';
+
     protected static ?int $navigationSort = 5;
 
     // Garante que o resource seja escopado ao tenant atual

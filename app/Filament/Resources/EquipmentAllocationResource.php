@@ -27,6 +27,10 @@ class EquipmentAllocationResource extends BaseResource
 
     protected static ?string $navigationLabel = 'Alocação de Equipamento';
 
+    protected static ?string $modelLabel = 'Alocação de equipamento';
+
+    protected static ?string $pluralModelLabel = 'Alocações de equipamento';
+
     protected static ?int $navigationSort = 0;
 
     public static function form(Form $form): Form
