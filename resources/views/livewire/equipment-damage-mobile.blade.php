@@ -8,30 +8,30 @@
     $causeLabels = \App\Models\EquipmentDamage::causeLabels();
 @endphp
 
-<div class="mx-auto flex min-h-screen max-w-md flex-col md:h-full md:min-h-0 md:overflow-y-auto">
+<div class="mx-auto flex min-h-screen max-w-md flex-col bg-zinc-50 text-zinc-900 md:h-full md:min-h-0 md:overflow-y-auto">
     {{-- Header --}}
-    <header class="flex items-center justify-between px-5 pb-2 pt-6">
-        <h1 class="text-xs font-bold tracking-widest text-zinc-400">REGISTRO DE AVARIA</h1>
+    <header class="mb-4 flex items-center justify-between rounded-b-3xl bg-gradient-to-r from-blue-600 to-blue-500 px-5 pb-5 pt-6 text-white shadow-md">
+        <h1 class="text-xs font-bold tracking-widest text-blue-100">REGISTRO DE AVARIA</h1>
         <div class="flex items-center gap-2">
-            <span class="flex h-7 w-7 items-center justify-center rounded-full bg-red-500/15 text-red-400">
+            <span class="flex h-7 w-7 items-center justify-center rounded-full bg-white/20 text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-8.99 4.5h.008v.008h-.008v-.008z" />
                 </svg>
             </span>
-            <span class="text-xs font-bold tracking-wide text-zinc-300">SISTEMA {{ strtoupper(config('app.name', 'ORAVEL')) }}</span>
+            <span class="text-xs font-bold tracking-wide text-white">SISTEMA {{ strtoupper(config('app.name', 'ORAVEL')) }}</span>
         </div>
     </header>
 
     {{-- Identificação --}}
     <section class="px-5 pb-4">
-        <h2 class="text-xl font-extrabold leading-tight text-white">
+        <h2 class="text-xl font-extrabold leading-tight text-zinc-900">
             OS Nº. {{ $equipmentMovement->maintenanceOrder->os_number }}
         </h2>
-        <p class="mt-1 text-sm font-medium text-zinc-400">
+        <p class="mt-1 text-sm font-medium text-zinc-600">
             ATIVO: {{ strtoupper($equipmentMovement->asset?->name ?? '—') }}
         </p>
         @if($this->originItem)
-            <p class="mt-1 text-[11px] font-semibold text-zinc-500">
+            <p class="mt-1 text-[11px] font-semibold text-zinc-600">
                 Item de origem: {{ $this->originItem->label }}
             </p>
         @endif
@@ -39,8 +39,8 @@
 
     <main class="flex-1 space-y-3 overflow-y-auto px-5 pb-4">
         {{-- Detalhes da avaria --}}
-        <div class="rounded-2xl bg-zinc-900 p-4">
-            <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">Detalhes da Avaria</h3>
+        <div class="rounded-xl bg-white p-4 border border-zinc-200 shadow-sm">
+            <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-600">Detalhes da Avaria</h3>
 
             <div class="mt-3 space-y-3">
                 <div class="flex gap-2">
@@ -48,44 +48,44 @@
                         <button type="button"
                                 @if(!$this->isLocked) wire:click="$set('severity', '{{ $value }}')" @endif
                                 @disabled($this->isLocked)
-                                class="min-h-[2.5rem] flex-1 rounded-xl border text-[11px] font-bold {{ $severity === $value ? 'border-red-500 bg-red-500/15 text-red-400' : 'border-zinc-700 text-zinc-400' }}">
+                                class="min-h-[2.5rem] flex-1 rounded-xl border text-[11px] font-bold {{ $severity === $value ? 'border-red-500 bg-red-100 text-red-600' : 'border-zinc-300 text-zinc-600' }}">
                             {{ strtoupper($label) }}
                         </button>
                     @endforeach
                 </div>
-                @error('severity') <p class="text-[11px] text-red-400">{{ $message }}</p> @enderror
+                @error('severity') <p class="text-[11px] text-red-600">{{ $message }}</p> @enderror
 
                 <select wire:model="damageType" @disabled($this->isLocked)
-                        class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 disabled:opacity-60">
+                        class="w-full rounded-xl border-0 bg-zinc-100 p-3 text-sm text-zinc-900 disabled:opacity-60">
                     <option value="">Tipo de dano...</option>
                     @foreach($damageTypeLabels as $value => $label)
                         <option value="{{ $value }}">{{ $label }}</option>
                     @endforeach
                 </select>
-                @error('damageType') <p class="text-[11px] text-red-400">{{ $message }}</p> @enderror
+                @error('damageType') <p class="text-[11px] text-red-600">{{ $message }}</p> @enderror
 
                 <select wire:model="cause" @disabled($this->isLocked)
-                        class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 disabled:opacity-60">
+                        class="w-full rounded-xl border-0 bg-zinc-100 p-3 text-sm text-zinc-900 disabled:opacity-60">
                     <option value="">Causa (se souber)...</option>
                     @foreach($causeLabels as $value => $label)
                         <option value="{{ $value }}">{{ $label }}</option>
                     @endforeach
                 </select>
-                @error('cause') <p class="text-[11px] text-red-400">{{ $message }}</p> @enderror
+                @error('cause') <p class="text-[11px] text-red-600">{{ $message }}</p> @enderror
 
                 <textarea wire:model="description" rows="4" placeholder="Descreva o dano encontrado..."
                           @disabled($this->isLocked)
-                          class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-red-500 disabled:opacity-60"></textarea>
-                @error('description') <p class="text-[11px] text-red-400">{{ $message }}</p> @enderror
+                          class="w-full rounded-xl border-0 bg-zinc-100 p-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:ring-2 focus:ring-red-500 disabled:opacity-60"></textarea>
+                @error('description') <p class="text-[11px] text-red-600">{{ $message }}</p> @enderror
 
-                <label class="flex items-center justify-between rounded-xl bg-zinc-800 px-3 py-3 text-xs font-semibold text-zinc-300">
+                <label class="flex items-center justify-between rounded-xl bg-zinc-100 px-3 py-3 text-xs font-semibold text-zinc-700">
                     Exige substituição do equipamento?
                     <input type="checkbox" wire:model="requiresReplacement" @disabled($this->isLocked) class="h-5 w-5 rounded accent-red-500">
                 </label>
 
                 @if(!$this->isLocked)
                     <button type="button" wire:click="saveDamageDetails"
-                            class="min-h-[2.75rem] w-full rounded-xl bg-red-500 text-xs font-bold text-zinc-950">
+                            class="min-h-[2.75rem] w-full rounded-xl bg-red-500 text-xs font-bold text-white">
                         {{ $damage ? 'ATUALIZAR DETALHES' : 'REGISTRAR AVARIA' }}
                     </button>
                 @endif
@@ -94,8 +94,8 @@
 
         @if($damage)
             {{-- Fotos --}}
-            <div class="rounded-2xl bg-zinc-900 p-4">
-                <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">Fotos do Dano</h3>
+            <div class="rounded-xl bg-white p-4 border border-zinc-200 shadow-sm">
+                <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-600">Fotos do Dano</h3>
 
                 @if($damage->getMedia('photos')->count())
                     <div class="mt-3 flex flex-wrap gap-2">
@@ -109,7 +109,7 @@
                                     </button>
                                 @endif
                                 @if($media->getCustomProperty('latitude'))
-                                    <span class="absolute bottom-0.5 right-0.5 rounded bg-black/60 px-1 text-[8px] text-emerald-300">GPS</span>
+                                    <span class="absolute bottom-0.5 right-0.5 rounded bg-black/60 px-1 text-[8px] text-emerald-700">GPS</span>
                                 @endif
                             </div>
                         @endforeach
@@ -117,7 +117,7 @@
                 @endif
 
                 @if(!$this->isLocked)
-                    <label class="mt-3 flex min-h-[2.75rem] cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-700 text-xs font-semibold text-zinc-400">
+                    <label class="mt-3 flex min-h-[2.75rem] cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-300 text-xs font-semibold text-zinc-600">
                         <input
                             type="file"
                             accept="image/*"
@@ -144,11 +144,11 @@
                             Adicionar foto do dano
                         @endif
                     </label>
-                    <div wire:loading wire:target="newPhoto" class="mt-1 text-[11px] text-zinc-500">Enviando foto...</div>
+                    <div wire:loading wire:target="newPhoto" class="mt-1 text-[11px] text-zinc-600">Enviando foto...</div>
 
                     @if($newPhoto)
                         <button type="button" wire:click="savePhoto"
-                                class="mt-2 min-h-[2.5rem] w-full rounded-xl bg-red-500 text-xs font-bold text-zinc-950">
+                                class="mt-2 min-h-[2.5rem] w-full rounded-xl bg-red-500 text-xs font-bold text-white">
                             SALVAR FOTO
                         </button>
                     @endif
@@ -157,11 +157,11 @@
 
             {{-- Assinatura do cliente --}}
             @if(!$this->isLocked)
-                <div class="rounded-2xl bg-zinc-900 p-4">
-                    <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">Ciência do Cliente</h3>
+                <div class="rounded-xl bg-white p-4 border border-zinc-200 shadow-sm">
+                    <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-600">Ciência do Cliente</h3>
 
                     @if(!$this->canSign)
-                        <p class="mt-2 text-[11px] text-zinc-500">
+                        <p class="mt-2 text-[11px] text-zinc-600">
                             Anexe pelo menos uma foto do dano antes de coletar a assinatura do cliente.
                         </p>
                     @else
@@ -172,15 +172,15 @@
                                  ciência do dano físico, não da responsabilização atribuída
                                  (achado real da investigação de 2026-08-25: causa preenchida
                                  em campo não aparecia nesta tela, mesmo já sendo conhecida). --}}
-                            <div class="mt-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2">
-                                <p class="text-[10px] font-bold uppercase tracking-wide text-amber-400">Causa atribuída a este dano</p>
+                            <div class="mt-2 rounded-xl border border-amber-500/30 bg-amber-100 px-3 py-2">
+                                <p class="text-[10px] font-bold uppercase tracking-wide text-amber-700">Causa atribuída a este dano</p>
                                 <p class="mt-0.5 text-sm font-semibold text-amber-200">{{ $causeLabels[$damage->cause] ?? $damage->cause }}</p>
                             </div>
-                            <p class="mt-2 text-[11px] text-zinc-500">
-                                Leia a causa acima para o cliente antes de coletar a assinatura — ela confirma ciência do dano descrito <strong class="text-zinc-300">e da causa atribuída</strong> acima. A causa ainda pode ser revisada pelo supervisor depois.
+                            <p class="mt-2 text-[11px] text-zinc-600">
+                                Leia a causa acima para o cliente antes de coletar a assinatura — ela confirma ciência do dano descrito <strong class="text-zinc-700">e da causa atribuída</strong> acima. A causa ainda pode ser revisada pelo supervisor depois.
                             </p>
                         @else
-                            <p class="mt-2 text-[11px] text-zinc-500">
+                            <p class="mt-2 text-[11px] text-zinc-600">
                                 Causa ainda não identificada em campo — a assinatura confirma apenas ciência do dano físico descrito. A causa será definida pelo supervisor na revisão, sem participação do cliente nessa etapa.
                             </p>
                         @endif
@@ -210,15 +210,15 @@
                             }"
                             x-init="initPad()"
                         >
-                            <canvas x-ref="canvas" class="h-40 w-full rounded-xl bg-zinc-800"></canvas>
-                            @error('signature') <p class="mt-1 text-[11px] text-red-400">{{ $message }}</p> @enderror
+                            <canvas x-ref="canvas" class="h-40 w-full rounded-xl bg-zinc-100"></canvas>
+                            @error('signature') <p class="mt-1 text-[11px] text-red-600">{{ $message }}</p> @enderror
                             <div class="mt-2 flex gap-2">
                                 <button type="button" x-on:click="clear()"
-                                        class="min-h-[2.75rem] flex-1 rounded-xl border border-zinc-700 text-xs font-bold text-zinc-300">
+                                        class="min-h-[2.75rem] flex-1 rounded-xl border border-zinc-300 text-xs font-bold text-zinc-700">
                                     LIMPAR
                                 </button>
                                 <button type="button" x-on:click="confirmSignature()" x-bind:disabled="isEmpty"
-                                        class="min-h-[2.75rem] flex-1 rounded-xl bg-emerald-500 text-xs font-bold text-zinc-950 disabled:bg-zinc-800 disabled:text-zinc-600">
+                                        class="min-h-[2.75rem] flex-1 rounded-xl bg-emerald-600 text-xs font-bold text-white disabled:bg-zinc-100 disabled:text-zinc-500">
                                     CONFIRMAR ASSINATURA
                                 </button>
                             </div>
@@ -226,9 +226,9 @@
                     @endif
                 </div>
             @else
-                <div class="rounded-2xl bg-emerald-500/10 p-4">
-                    <p class="text-sm font-bold text-emerald-400">Registro confirmado pelo cliente</p>
-                    <p class="mt-1 text-[11px] text-zinc-400">
+                <div class="rounded-xl bg-emerald-100 p-4">
+                    <p class="text-sm font-bold text-emerald-700">Registro confirmado pelo cliente</p>
+                    <p class="mt-1 text-[11px] text-zinc-600">
                         Assinado em {{ $damage->client_acknowledged_at->format('d/m/Y H:i') }}. Aguardando revisão do supervisor de manutenção.
                     </p>
                 </div>
@@ -237,9 +237,9 @@
     </main>
 
     {{-- Rodapé --}}
-    <footer class="sticky bottom-0 flex gap-3 border-t border-zinc-800 bg-zinc-950 px-5 py-4">
+    <footer class="sticky bottom-0 flex gap-3 border-t border-zinc-200 bg-white px-5 py-4">
         <button type="button" wire:click="back"
-                class="min-h-[3.25rem] w-full rounded-xl border border-zinc-700 bg-zinc-900 text-sm font-bold tracking-wide text-zinc-300">
+                class="min-h-[3.25rem] w-full rounded-xl border border-zinc-300 bg-white text-sm font-bold tracking-wide text-zinc-700">
             VOLTAR
         </button>
     </footer>
