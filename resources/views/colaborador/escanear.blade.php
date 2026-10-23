@@ -1,19 +1,20 @@
 @extends('layouts.colaborador')
 @section('titulo', 'Ler QR - Oravel Colaborador')
+@section('voltar', route('colab.home'))
+@section('voltar_rotulo', 'Início')
+@section('tela', 'Ler QR do equipamento')
 @section('conteudo')
     {{-- JavaScript puro: esta página não carrega Livewire/Alpine (x-data, @click e x-show não funcionariam aqui). --}}
-    <a href="{{ route('colab.home') }}" class="text-sm font-semibold text-zinc-400">← Início</a>
-    <h1 class="mt-3 text-xl font-bold">Ler QR do equipamento</h1>
 
     <div class="mt-4">
-        <video id="qr-video" playsinline muted class="hidden aspect-square w-full rounded-2xl bg-black object-cover"></video>
-        <button id="qr-abrir" type="button" class="min-h-[3rem] w-full rounded-xl bg-orange-500 text-base font-bold text-white active:bg-orange-600">Abrir câmera</button>
-        <p id="qr-aviso" class="mt-3 hidden rounded-lg bg-zinc-900 p-3 text-sm text-zinc-300"></p>
+        <video id="qr-video" playsinline muted class="hidden aspect-square w-full rounded-xl bg-zinc-50 object-cover"></video>
+        <button id="qr-abrir" type="button" class="min-h-[3rem] w-full rounded-xl bg-blue-600 text-base font-bold text-white active:bg-blue-600">Abrir câmera</button>
+        <p id="qr-aviso" class="mt-3 hidden rounded-lg bg-white p-3 text-sm text-zinc-700 border border-zinc-200 shadow-sm"></p>
 
         <form id="qr-form" class="mt-6">
-            <label class="mb-1 block text-xs font-semibold uppercase text-zinc-400" for="q">Ou digite o patrimônio ou a placa</label>
-            <input id="q" name="q" autocomplete="off" class="min-h-[3rem] w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 text-base uppercase text-white">
-            <button type="submit" class="mt-3 min-h-[3rem] w-full rounded-xl bg-zinc-800 text-base font-bold text-white active:bg-zinc-700">Buscar</button>
+            <label class="mb-1 block text-xs font-semibold uppercase text-zinc-600" for="q">Ou digite o patrimônio ou a placa</label>
+            <input id="q" name="q" autocomplete="off" class="min-h-[3rem] w-full rounded-xl border border-zinc-300 bg-white px-4 text-base uppercase text-zinc-900">
+            <button type="submit" class="mt-3 min-h-[3rem] w-full rounded-xl bg-zinc-100 text-base font-bold text-zinc-900 active:bg-zinc-200">Buscar</button>
         </form>
     </div>
 
