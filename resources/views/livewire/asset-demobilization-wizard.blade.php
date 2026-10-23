@@ -1,6 +1,6 @@
 {{-- Wizard de Desmobilização: 5 etapas para retornar equipamento ao pátio --}}
 
-<div class="mx-auto flex min-h-screen max-w-md flex-col bg-zinc-950 md:h-full md:min-h-0 md:overflow-y-auto" x-data="{
+<div class="mx-auto flex min-h-screen max-w-md flex-col bg-zinc-50 text-zinc-900 md:h-full md:min-h-0 md:overflow-y-auto" x-data="{
     signaturePad: null,
     initSignature() {
         const canvas = document.getElementById('signaturePad');
@@ -25,11 +25,11 @@
 }" x-on:livewire:navigating="initSignature()">
 
     {{-- Cabeçalho fixo --}}
-    <header class="sticky top-0 z-40 border-b border-zinc-800 bg-zinc-900 px-5 py-4">
+    <header class="sticky top-0 z-40 rounded-b-3xl bg-gradient-to-r from-blue-600 to-blue-500 px-5 pb-5 pt-5 text-white shadow-md">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-xs font-bold tracking-widest text-zinc-400">DESMOBILIZAÇÃO</h1>
-                <p class="mt-1 text-sm font-semibold text-zinc-100">
+                <h1 class="text-xs font-bold tracking-widest text-blue-100">DESMOBILIZAÇÃO</h1>
+                <p class="mt-1 text-sm font-semibold text-white">
                     @if ($asset)
                         {{ $asset->name }}
                     @else
@@ -37,7 +37,7 @@
                     @endif
                 </p>
             </div>
-            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800 text-xs font-bold text-zinc-300">
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white/25 text-xs font-bold text-white">
                 {{ strtoupper(mb_substr(auth()->user()?->name ?? '?', 0, 1)) }}
             </div>
         </div>
@@ -45,13 +45,13 @@
         {{-- Progresso --}}
         <div class="mt-3">
             <div class="flex items-baseline justify-between mb-2">
-                <span class="text-[11px] font-bold tracking-widest text-emerald-400">
+                <span class="text-[11px] font-bold tracking-widest text-white">
                     ETAPA {{ $step }} DE {{ $this->totalSteps }}
                 </span>
-                <span class="text-[11px] font-semibold uppercase text-zinc-500">{{ $this->stepLabel }}</span>
+                <span class="text-[11px] font-semibold uppercase text-blue-100">{{ $this->stepLabel }}</span>
             </div>
-            <div class="h-2 w-full overflow-hidden rounded-full bg-zinc-800">
-                <div class="h-2 rounded-full bg-emerald-500 transition-all duration-300"
+            <div class="h-2 w-full overflow-hidden rounded-full bg-white/25">
+                <div class="h-2 rounded-full bg-white transition-all duration-300"
                      style="width: {{ $this->stepProgress }}%"></div>
             </div>
         </div>
@@ -61,10 +61,10 @@
     <main class="flex-1 overflow-y-auto">
         @if ($step === 1)
             <div class="space-y-3 px-5 pb-4 pt-4">
-                <label class="text-xs font-bold uppercase tracking-wide text-zinc-400">
+                <label class="text-xs font-bold uppercase tracking-wide text-zinc-600">
                     📱 Scan QR/Etiqueta do Ativo
                 </label>
-                <p class="text-[11px] text-zinc-500">
+                <p class="text-[11px] text-zinc-600">
                     Leia a etiqueta do equipamento para confirmar o retorno.
                     Ou busque manualmente pelo patrimônio/nome.
                 </p>
@@ -74,43 +74,43 @@
                     <input type="text"
                            wire:model.live="assetSearch"
                            placeholder="Patrimônio ou nome do ativo..."
-                           class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-emerald-500">
+                           class="w-full rounded-xl border-0 bg-zinc-100 p-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:ring-2 focus:ring-emerald-500">
                 </div>
 
                 {{-- Equipamento selecionado --}}
                 @if ($asset)
-                    <div class="mt-4 rounded-xl border border-emerald-900 bg-emerald-950/20 p-4">
-                        <p class="text-xs font-bold uppercase tracking-wide text-emerald-400">
+                    <div class="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+                        <p class="text-xs font-bold uppercase tracking-wide text-emerald-700">
                             ✓ Equipamento Selecionado
                         </p>
 
                         <div class="mt-3 space-y-2">
-                            <p class="font-semibold text-zinc-100">{{ $asset->name }}</p>
-                            <p class="text-sm text-zinc-400">
+                            <p class="font-semibold text-zinc-900">{{ $asset->name }}</p>
+                            <p class="text-sm text-zinc-600">
                                 PAT. {{ $asset->patrimonio ?? '—' }}
                             </p>
 
                             @if ($contract)
-                                <div class="mt-3 rounded-lg bg-zinc-800 p-3">
-                                    <p class="text-[11px] font-semibold text-zinc-400">Contrato</p>
-                                    <p class="mt-1 text-sm font-semibold text-zinc-100">
+                                <div class="mt-3 rounded-lg bg-zinc-100 p-3">
+                                    <p class="text-[11px] font-semibold text-zinc-600">Contrato</p>
+                                    <p class="mt-1 text-sm font-semibold text-zinc-900">
                                         {{ $contract->client?->name }}
                                     </p>
-                                    <p class="text-[11px] text-zinc-500">
+                                    <p class="text-[11px] text-zinc-600">
                                         Nº {{ $contract->number }} • CEP: {{ $contract->client?->cep }}
                                     </p>
                                 </div>
                             @endif
 
                             @if ($mobilizationRecord)
-                                <div class="mt-2 rounded-lg bg-blue-900/20 border border-blue-800 p-3">
-                                    <p class="text-[11px] font-semibold text-blue-400">Mobilização anterior</p>
-                                    <p class="mt-1 text-[11px] text-blue-300">
+                                <div class="mt-2 rounded-lg bg-blue-50 border border-blue-200 p-3">
+                                    <p class="text-[11px] font-semibold text-blue-700">Mobilização anterior</p>
+                                    <p class="mt-1 text-[11px] text-blue-700">
                                         Horímetro: {{ number_format($mobilizationRecord->horimeter_reading_start ?? 0, 2, ',', '.') }}
                                     </p>
                                 </div>
                             @else
-                                <p class="text-[11px] text-amber-400">
+                                <p class="text-[11px] text-amber-700">
                                     ⚠️ Nenhum registro de mobilização encontrado.
                                 </p>
                             @endif
@@ -121,10 +121,10 @@
 
         @elseif ($step === 2)
             <div class="space-y-3 px-5 pb-4 pt-4">
-                <label class="text-xs font-bold uppercase tracking-wide text-zinc-400">
+                <label class="text-xs font-bold uppercase tracking-wide text-zinc-600">
                     📋 Checklist com Comparação
                 </label>
-                <p class="text-[11px] text-zinc-500">
+                <p class="text-[11px] text-zinc-600">
                     Verifique cada item e compare com o estado anterior.
                 </p>
 
@@ -136,25 +136,25 @@
                             $currentState = $item['state'] ?? 'present';
                             $hasDivergence = $originalState !== $currentState;
                         @endphp
-                        <div class="rounded-lg border {{ $hasDivergence ? 'border-amber-800 bg-amber-900/20' : 'border-zinc-800 bg-zinc-900' }} p-3">
+                        <div class="rounded-lg border {{ $hasDivergence ? 'border-amber-200 bg-amber-50' : 'border-zinc-200 bg-white' }} p-3">
                             <div class="flex items-center justify-between">
-                                <p class="font-semibold text-zinc-100">{{ $item['name'] }}</p>
+                                <p class="font-semibold text-zinc-900">{{ $item['name'] }}</p>
                                 <button wire:click="removeChecklistItem('{{ $itemId }}')"
                                         type="button"
-                                        class="text-xs text-red-400 hover:text-red-300">
+                                        class="text-xs text-red-600 hover:text-red-600">
                                     ✕
                                 </button>
                             </div>
 
                             {{-- Estado anterior vs atual --}}
                             @if ($hasDivergence)
-                                <p class="mt-2 text-[10px] text-amber-400 font-semibold">
+                                <p class="mt-2 text-[10px] text-amber-700 font-semibold">
                                     ⚠️ Divergência detectada
                                 </p>
                                 <div class="mt-2 flex gap-2 text-[10px]">
                                     <div class="flex-1">
-                                        <p class="text-zinc-400 uppercase text-[9px] font-bold">Antes</p>
-                                        <p class="mt-0.5 text-zinc-300">
+                                        <p class="text-zinc-600 uppercase text-[9px] font-bold">Antes</p>
+                                        <p class="mt-0.5 text-zinc-700">
                                             @switch($originalState)
                                                 @case('present') ✓ Presente @break
                                                 @case('absent') — Ausente @break
@@ -163,8 +163,8 @@
                                         </p>
                                     </div>
                                     <div class="flex-1">
-                                        <p class="text-zinc-400 uppercase text-[9px] font-bold">Agora</p>
-                                        <p class="mt-0.5 text-zinc-300">
+                                        <p class="text-zinc-600 uppercase text-[9px] font-bold">Agora</p>
+                                        <p class="mt-0.5 text-zinc-700">
                                             @switch($currentState)
                                                 @case('present') ✓ Presente @break
                                                 @case('absent') — Ausente @break
@@ -180,30 +180,30 @@
                                 <button wire:click="toggleItemState('{{ $itemId }}')"
                                         type="button"
                                         class="flex-1 rounded-lg px-2 py-2 text-xs font-bold"
-                                        :class="'{{ $currentState }}' === 'present' ? 'bg-emerald-600 text-zinc-950' : 'bg-emerald-900/30 text-emerald-400'">
+                                        :class="'{{ $currentState }}' === 'present' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-700'">
                                     ✓ Presente
                                 </button>
                                 <button wire:click="toggleItemState('{{ $itemId }}')"
                                         type="button"
                                         class="flex-1 rounded-lg px-2 py-2 text-xs font-bold"
-                                        :class="'{{ $currentState }}' === 'absent' ? 'bg-yellow-600 text-zinc-950' : 'bg-yellow-900/30 text-yellow-400'">
+                                        :class="'{{ $currentState }}' === 'absent' ? 'bg-yellow-600 text-white' : 'bg-yellow-50 text-yellow-700'">
                                     — Ausente
                                 </button>
                                 <button wire:click="toggleItemState('{{ $itemId }}')"
                                         type="button"
                                         class="flex-1 rounded-lg px-2 py-2 text-xs font-bold"
-                                        :class="'{{ $currentState }}' === 'damaged' ? 'bg-red-600 text-zinc-950' : 'bg-red-900/30 text-red-400'">
+                                        :class="'{{ $currentState }}' === 'damaged' ? 'bg-red-600 text-white' : 'bg-red-50 text-red-600'">
                                     ⚠️ Danificado
                                 </button>
                             </div>
                         </div>
                     @empty
-                        <p class="text-center text-[11px] text-zinc-500">Nenhum item adicionado ainda.</p>
+                        <p class="text-center text-[11px] text-zinc-600">Nenhum item adicionado ainda.</p>
                     @endforelse
 
                     <button wire:click="addChecklistItem"
                             type="button"
-                            class="w-full rounded-lg border border-dashed border-zinc-700 px-3 py-2 text-xs font-bold text-zinc-400 hover:bg-zinc-800">
+                            class="w-full rounded-lg border border-dashed border-zinc-300 px-3 py-2 text-xs font-bold text-zinc-600 hover:bg-zinc-100">
                         + Adicionar Item
                     </button>
                 </div>
@@ -211,31 +211,31 @@
 
         @elseif ($step === 3)
             <div class="space-y-3 px-5 pb-4 pt-4">
-                <label class="text-xs font-bold uppercase tracking-wide text-zinc-400">
+                <label class="text-xs font-bold uppercase tracking-wide text-zinc-600">
                     📸 Estado Físico do Equipamento
                 </label>
-                <p class="text-[11px] text-zinc-500">
+                <p class="text-[11px] text-zinc-600">
                     Registre horímetro final, combustível e fotos de retorno.
                 </p>
 
                 {{-- Horímetro com cálculo de consumo --}}
                 <div class="mt-4">
-                    <label class="text-xs font-semibold text-zinc-300">Horímetro Final</label>
+                    <label class="text-xs font-semibold text-zinc-700">Horímetro Final</label>
                     <input type="number"
                            wire:model="horimetroEnd"
                            placeholder="0"
                            step="0.01"
                            min="0"
-                           class="mt-1 w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 focus:ring-2 focus:ring-emerald-500">
+                           class="mt-1 w-full rounded-xl border-0 bg-zinc-100 p-3 text-sm text-zinc-900 focus:ring-2 focus:ring-emerald-500">
 
                     @if ($mobilizationRecord && $horimetroEnd)
                         @php
                             $consumption = $horimetroEnd - ($mobilizationRecord->horimeter_reading_start ?? 0);
                         @endphp
-                        <p class="mt-1 text-[11px] text-zinc-400">
+                        <p class="mt-1 text-[11px] text-zinc-600">
                             Consumo: {{ number_format($consumption, 2, ',', '.') }} horas
                             @if ($consumption > 500)
-                                <span class="ml-1 text-amber-400">⚠️ Alto</span>
+                                <span class="ml-1 text-amber-700">⚠️ Alto</span>
                             @endif
                         </p>
                     @endif
@@ -243,21 +243,21 @@
 
                 {{-- Combustível --}}
                 <div class="mt-3">
-                    <label class="text-xs font-semibold text-zinc-300">Nível de Combustível</label>
+                    <label class="text-xs font-semibold text-zinc-700">Nível de Combustível</label>
                     <div class="mt-2 flex gap-2">
                         <button wire:click="$set('fuelLevelEnd', 'empty')" type="button"
                                 class="flex-1 rounded-lg px-2 py-2 text-xs font-bold"
-                                :class="$fuelLevelEnd === 'empty' ? 'bg-red-600 text-zinc-950' : 'bg-red-900/30 text-red-400'">
+                                :class="$wire.fuelLevelEnd === 'empty' ? 'bg-red-600 text-white' : 'bg-red-50 text-red-600'">
                                 Vazio
                         </button>
                         <button wire:click="$set('fuelLevelEnd', 'half')" type="button"
                                 class="flex-1 rounded-lg px-2 py-2 text-xs font-bold"
-                                :class="$fuelLevelEnd === 'half' ? 'bg-yellow-600 text-zinc-950' : 'bg-yellow-900/30 text-yellow-400'">
+                                :class="$wire.fuelLevelEnd === 'half' ? 'bg-yellow-600 text-white' : 'bg-yellow-50 text-yellow-700'">
                                 Meio
                         </button>
                         <button wire:click="$set('fuelLevelEnd', 'full')" type="button"
                                 class="flex-1 rounded-lg px-2 py-2 text-xs font-bold"
-                                :class="$fuelLevelEnd === 'full' ? 'bg-emerald-600 text-zinc-950' : 'bg-emerald-900/30 text-emerald-400'">
+                                :class="$wire.fuelLevelEnd === 'full' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-700'">
                                 Cheio
                         </button>
                     </div>
@@ -265,30 +265,30 @@
 
                 {{-- Observações --}}
                 <div class="mt-3">
-                    <label class="text-xs font-semibold text-zinc-300">Observações</label>
+                    <label class="text-xs font-semibold text-zinc-700">Observações</label>
                     <textarea wire:model="observations"
                               placeholder="Observações sobre o retorno..."
                               rows="3"
-                              class="mt-1 w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-emerald-500"></textarea>
+                              class="mt-1 w-full rounded-xl border-0 bg-zinc-100 p-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:ring-2 focus:ring-emerald-500"></textarea>
                 </div>
 
                 {{-- Fotos obrigatórias --}}
-                <div class="mt-4 rounded-lg border border-zinc-800 bg-zinc-900 p-3">
-                    <p class="text-xs font-semibold text-zinc-300">📸 Fotos de Retorno</p>
-                    <p class="mt-1 text-[11px] text-zinc-500">Tire fotos do equipamento ao retornar.</p>
+                <div class="mt-4 rounded-lg border border-zinc-200 bg-white p-3">
+                    <p class="text-xs font-semibold text-zinc-700">📸 Fotos de Retorno</p>
+                    <p class="mt-1 text-[11px] text-zinc-600">Tire fotos do equipamento ao retornar.</p>
 
                     <div class="mt-3 space-y-2">
-                        <div class="rounded-lg bg-zinc-800 p-2">
-                            <input type="file" wire:model="photoFront" accept="image/*" capture="environment" class="text-xs text-zinc-400">
-                            @if ($photoFront) <p class="mt-1 text-[10px] text-emerald-400">✓ Frente capturada</p> @endif
+                        <div class="rounded-lg bg-zinc-100 p-2">
+                            <input type="file" wire:model="photoFront" accept="image/*" capture="environment" class="text-xs text-zinc-600">
+                            @if ($photoFront) <p class="mt-1 text-[10px] text-emerald-700">✓ Frente capturada</p> @endif
                         </div>
-                        <div class="rounded-lg bg-zinc-800 p-2">
-                            <input type="file" wire:model="photoBack" accept="image/*" capture="environment" class="text-xs text-zinc-400">
-                            @if ($photoBack) <p class="mt-1 text-[10px] text-emerald-400">✓ Trás capturada</p> @endif
+                        <div class="rounded-lg bg-zinc-100 p-2">
+                            <input type="file" wire:model="photoBack" accept="image/*" capture="environment" class="text-xs text-zinc-600">
+                            @if ($photoBack) <p class="mt-1 text-[10px] text-emerald-700">✓ Trás capturada</p> @endif
                         </div>
-                        <div class="rounded-lg bg-zinc-800 p-2">
-                            <input type="file" wire:model="photoSide" accept="image/*" capture="environment" class="text-xs text-zinc-400">
-                            @if ($photoSide) <p class="mt-1 text-[10px] text-emerald-400">✓ Lateral capturada</p> @endif
+                        <div class="rounded-lg bg-zinc-100 p-2">
+                            <input type="file" wire:model="photoSide" accept="image/*" capture="environment" class="text-xs text-zinc-600">
+                            @if ($photoSide) <p class="mt-1 text-[10px] text-emerald-700">✓ Lateral capturada</p> @endif
                         </div>
                     </div>
                 </div>
@@ -296,30 +296,30 @@
 
         @elseif ($step === 4)
             <div class="space-y-3 px-5 pb-4 pt-4">
-                <label class="text-xs font-bold uppercase tracking-wide text-zinc-400">
+                <label class="text-xs font-bold uppercase tracking-wide text-zinc-600">
                     ⚠️ Resumo de Divergências
                 </label>
 
                 {{-- Resumo geral --}}
                 <div class="mt-4 space-y-3">
-                    <div class="rounded-lg border border-emerald-900 bg-emerald-950/20 p-4">
-                        <p class="text-xs font-bold text-emerald-400">Equipamento</p>
-                        <p class="mt-2 text-sm font-semibold text-zinc-100">{{ $asset?->name }}</p>
-                        <p class="text-[11px] text-zinc-400">PAT. {{ $asset?->patrimonio }}</p>
+                    <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+                        <p class="text-xs font-bold text-emerald-700">Equipamento</p>
+                        <p class="mt-2 text-sm font-semibold text-zinc-900">{{ $asset?->name }}</p>
+                        <p class="text-[11px] text-zinc-600">PAT. {{ $asset?->patrimonio }}</p>
                     </div>
 
                     {{-- Divergências detectadas --}}
                     @if (!empty($divergences))
-                        <div class="rounded-lg border border-amber-900 bg-amber-950/20 p-4">
-                            <p class="text-xs font-bold text-amber-400">🔍 Divergências Detectadas</p>
+                        <div class="rounded-lg border border-amber-200 bg-amber-50 p-4">
+                            <p class="text-xs font-bold text-amber-700">🔍 Divergências Detectadas</p>
                             <div class="mt-3 space-y-2">
                                 @foreach ($divergences as $itemId => $divergence)
                                     @if ($itemId === 'high_consumption')
-                                        <div class="text-[11px] text-amber-300">
+                                        <div class="text-[11px] text-amber-700">
                                             📊 {{ $divergence['message'] }}
                                         </div>
                                     @else
-                                        <div class="text-[11px] text-amber-300">
+                                        <div class="text-[11px] text-amber-700">
                                             • {{ $divergence['name'] }}:
                                             @switch($divergence['original_state'])
                                                 @case('present') ✓ Presente @break
@@ -338,61 +338,61 @@
                             </div>
                         </div>
                     @else
-                        <div class="rounded-lg border border-emerald-900 bg-emerald-950/20 p-4">
-                            <p class="text-xs font-bold text-emerald-400">✓ Sem divergências</p>
-                            <p class="mt-1 text-[11px] text-emerald-300">O equipamento retornou conforme o esperado.</p>
+                        <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+                            <p class="text-xs font-bold text-emerald-700">✓ Sem divergências</p>
+                            <p class="mt-1 text-[11px] text-emerald-700">O equipamento retornou conforme o esperado.</p>
                         </div>
                     @endif
                 </div>
 
-                <div class="rounded-lg border border-blue-900 bg-blue-950/20 px-4 py-3">
-                    <p class="text-xs font-semibold text-blue-400">ℹ️ Próxima etapa: confirmação com assinatura.</p>
+                <div class="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3">
+                    <p class="text-xs font-semibold text-blue-700">ℹ️ Próxima etapa: confirmação com assinatura.</p>
                 </div>
             </div>
 
         @elseif ($step === 5)
             <div class="space-y-3 px-5 pb-4 pt-4">
-                <label class="text-xs font-bold uppercase tracking-wide text-zinc-400">
+                <label class="text-xs font-bold uppercase tracking-wide text-zinc-600">
                     ✍️ Assinatura de Retorno
                 </label>
-                <p class="text-[11px] text-zinc-500">
+                <p class="text-[11px] text-zinc-600">
                     O cliente confirma o retorno do equipamento assinando abaixo.
                 </p>
 
                 {{-- Canvas de assinatura --}}
-                <div class="mt-4 rounded-xl border-2 border-zinc-700 bg-white" style="height: 120px;">
+                <div class="mt-4 rounded-xl border-2 border-zinc-300 bg-white" style="height: 120px;">
                     <canvas id="signaturePad" class="w-full h-full" x-init="initSignature()"></canvas>
                 </div>
 
                 <button type="button" 
                         @click="clearSignaturePad(); @entangle('signature').defer = null"
-                        class="w-full rounded-xl border border-zinc-700 px-3 py-2 text-xs font-bold text-zinc-400 hover:bg-zinc-800">
+                        class="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs font-bold text-zinc-600 hover:bg-zinc-100">
                     Limpar assinatura
                 </button>
 
-                <div class="rounded-lg border border-emerald-900 bg-emerald-950/20 px-4 py-3">
-                    <p class="text-xs font-semibold text-emerald-400">✓ Ao finalizar, o ativo será marcado como DISPONÍVEL.</p>
+                <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3">
+                    <p class="text-xs font-semibold text-emerald-700">✓ Ao finalizar, o ativo será marcado como DISPONÍVEL.</p>
                 </div>
             </div>
         @endif
     </main>
 
     {{-- Rodapé fixo --}}
-    <footer class="sticky bottom-0 border-t border-zinc-800 bg-zinc-900 px-5 pb-4 pt-3">
+    <footer class="sticky bottom-0 border-t border-zinc-200 bg-white px-5 pb-4 pt-3">
         <div class="mb-2 min-h-[1.25rem] text-[11px] font-semibold">
             @if ($saveState === 'error')
-                <button type="button" wire:click="$emit('retry')" class="text-left text-red-400 underline">
+                <button type="button" wire:click="$emit('retry')" class="text-left text-red-600 underline">
                     Não foi possível salvar. Toque para tentar de novo.
                 </button>
             @elseif ($saveState === 'saved')
-                <span class="text-emerald-400">✓ Salvo</span>
+                <span class="text-emerald-700">✓ Salvo</span>
             @endif
-            <span wire:loading wire:target="next,back" class="text-zinc-400">Salvando...</span>
+            <span wire:loading wire:target="next,back" class="text-zinc-600">Salvando...</span>
         </div>
 
         <div class="flex gap-3">
             <button type="button" wire:click="back"
-                    class="min-h-[3.25rem] flex-1 rounded-xl border border-zinc-700 bg-zinc-900 text-sm font-bold tracking-wide text-zinc-300">
+                    class="min-h-[3.25rem] flex-1 rounded-xl border border-zinc-300 bg-white text-sm font-bold tracking-wide text-zinc-700">
                 VOLTAR
             </button>
             <button type="button" 
@@ -400,7 +400,7 @@
                     wire:click="next" 
                     wire:loading.attr="disabled" 
                     wire:target="next"
-                    class="min-h-[3.25rem] flex-[1.4] rounded-xl bg-emerald-500 text-sm font-bold tracking-wide text-zinc-950 disabled:bg-zinc-800 disabled:text-zinc-600">
+                    class="min-h-[3.25rem] flex-[1.4] rounded-xl bg-emerald-600 text-sm font-bold tracking-wide text-white disabled:bg-zinc-100 disabled:text-zinc-500">
                 {{ $step === 5 ? 'FINALIZAR' : 'CONTINUAR' }}
             </button>
         </div>

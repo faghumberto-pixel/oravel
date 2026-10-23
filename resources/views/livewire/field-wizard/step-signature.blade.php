@@ -1,28 +1,28 @@
 <div class="space-y-4">
     {{-- Resumo da O.S. --}}
-    <div class="rounded-2xl bg-slate-800 p-4 border border-slate-700">
-        <label class="text-xs font-bold uppercase tracking-wide text-slate-400">Resumo da Execução</label>
+    <div class="rounded-xl bg-zinc-100 p-4 border border-zinc-300">
+        <label class="text-xs font-bold uppercase tracking-wide text-zinc-600">Resumo da Execução</label>
 
         <div class="mt-3 space-y-2 text-sm">
-            <div class="flex items-center justify-between rounded-lg bg-slate-700 px-3 py-2">
-                <span class="text-slate-400">Equipamento</span>
-                <span class="font-semibold text-emerald-400">✓ Registrado</span>
+            <div class="flex items-center justify-between rounded-lg bg-zinc-200 px-3 py-2">
+                <span class="text-zinc-600">Equipamento</span>
+                <span class="font-semibold text-emerald-700">✓ Registrado</span>
             </div>
-            <div class="flex items-center justify-between rounded-lg bg-slate-700 px-3 py-2">
-                <span class="text-slate-400">Checklist ({{ $maintenanceOrder->checklists_count ?? 0 }} itens)</span>
-                <span class="font-semibold {{ $maintenanceOrder->checklists_count > 0 ? 'text-emerald-400' : 'text-slate-500' }}">
+            <div class="flex items-center justify-between rounded-lg bg-zinc-200 px-3 py-2">
+                <span class="text-zinc-600">Checklist ({{ $maintenanceOrder->checklists_count ?? 0 }} itens)</span>
+                <span class="font-semibold {{ $maintenanceOrder->checklists_count > 0 ? 'text-emerald-700' : 'text-zinc-600' }}">
                     {{ $maintenanceOrder->checklists_count > 0 ? '✓ Vistoriado' : '— Opcional' }}
                 </span>
             </div>
-            <div class="flex items-center justify-between rounded-lg bg-slate-700 px-3 py-2">
-                <span class="text-slate-400">Avarias</span>
-                <span class="font-semibold {{ strlen($maintenanceOrder->description ?? '') > 0 ? 'text-emerald-400' : 'text-slate-500' }}">
+            <div class="flex items-center justify-between rounded-lg bg-zinc-200 px-3 py-2">
+                <span class="text-zinc-600">Avarias</span>
+                <span class="font-semibold {{ strlen($maintenanceOrder->description ?? '') > 0 ? 'text-emerald-700' : 'text-zinc-600' }}">
                     {{ strlen($maintenanceOrder->description ?? '') > 0 ? '✓ Documentado' : '— Nenhum' }}
                 </span>
             </div>
-            <div class="flex items-center justify-between rounded-lg bg-slate-700 px-3 py-2">
-                <span class="text-slate-400">Materiais ({{ $maintenanceOrder->materials_count ?? 0 }})</span>
-                <span class="font-semibold {{ $maintenanceOrder->materials_count > 0 ? 'text-emerald-400' : 'text-slate-500' }}">
+            <div class="flex items-center justify-between rounded-lg bg-zinc-200 px-3 py-2">
+                <span class="text-zinc-600">Materiais ({{ $maintenanceOrder->materials_count ?? 0 }})</span>
+                <span class="font-semibold {{ $maintenanceOrder->materials_count > 0 ? 'text-emerald-700' : 'text-zinc-600' }}">
                     {{ $maintenanceOrder->materials_count > 0 ? '✓ Aplicado' : '— Nenhum' }}
                 </span>
             </div>
@@ -30,22 +30,22 @@
     </div>
 
     {{-- Custos finais --}}
-    <div class="rounded-2xl border border-emerald-900 bg-emerald-950/30 p-4">
-        <p class="text-xs font-bold uppercase tracking-wide text-emerald-400">💰 Custos Finais</p>
+    <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+        <p class="text-xs font-bold uppercase tracking-wide text-emerald-700">💰 Custos Finais</p>
         <div class="mt-3 space-y-1 text-sm">
-            <div class="flex justify-between text-slate-300">
+            <div class="flex justify-between text-zinc-700">
                 <span>Materiais:</span>
                 <span>R$ {{ number_format($maintenanceOrder->material_cost ?? 0, 2, ',', '.') }}</span>
             </div>
-            <div class="flex justify-between text-slate-300">
+            <div class="flex justify-between text-zinc-700">
                 <span>Mão de obra:</span>
                 <span>R$ {{ number_format($maintenanceOrder->labor_cost ?? 0, 2, ',', '.') }}</span>
             </div>
-            <div class="flex justify-between text-slate-300">
+            <div class="flex justify-between text-zinc-700">
                 <span>Logística:</span>
                 <span>R$ {{ number_format($maintenanceOrder->logistics_cost ?? 0, 2, ',', '.') }}</span>
             </div>
-            <div class="border-t border-emerald-800 pt-2 flex justify-between text-lg font-bold text-emerald-300">
+            <div class="border-t border-emerald-200 pt-2 flex justify-between text-lg font-bold text-emerald-700">
                 <span>Total:</span>
                 <span>R$ {{ number_format($maintenanceOrder->total_order_cost ?? 0, 2, ',', '.') }}</span>
             </div>
@@ -53,11 +53,11 @@
     </div>
 
     {{-- Assinatura do Técnico --}}
-    <div class="rounded-2xl bg-slate-800 p-4 border border-slate-700">
-        <label class="text-xs font-bold uppercase tracking-wide text-slate-400">✍️ Assinatura do Técnico</label>
-        <p class="mt-1 text-[11px] text-slate-500">Use o dedo para assinar na área abaixo</p>
+    <div class="rounded-xl bg-zinc-100 p-4 border border-zinc-300">
+        <label class="text-xs font-bold uppercase tracking-wide text-zinc-600">✍️ Assinatura do Técnico</label>
+        <p class="mt-1 text-[11px] text-zinc-600">Use o dedo para assinar na área abaixo</p>
 
-        <div class="mt-3 rounded-xl border-2 border-slate-600 bg-slate-900" style="height: 150px; touch-action: none; -webkit-user-select: none; user-select: none;">
+        <div class="mt-3 rounded-xl border-2 border-zinc-300 bg-white" style="height: 150px; touch-action: none; -webkit-user-select: none; user-select: none;">
             <canvas
                 id="technicianSignaturePad"
                 width="300"
@@ -71,18 +71,18 @@
         <button
             type="button"
             id="clearTechSignature"
-            class="mt-2 w-full rounded-lg bg-slate-700 hover:bg-slate-600 px-3 py-2 text-xs font-bold text-slate-300 transition"
+            class="mt-2 w-full rounded-lg bg-zinc-200 hover:bg-zinc-300 px-3 py-2 text-xs font-bold text-zinc-700 transition"
         >
             Limpar Assinatura
         </button>
     </div>
 
     {{-- Assinatura do Cliente --}}
-    <div class="rounded-2xl bg-slate-800 p-4 border border-slate-700">
-        <label class="text-xs font-bold uppercase tracking-wide text-slate-400">✍️ Assinatura do Cliente</label>
-        <p class="mt-1 text-[11px] text-slate-500">Cliente deve assinar para confirmar o trabalho realizado</p>
+    <div class="rounded-xl bg-zinc-100 p-4 border border-zinc-300">
+        <label class="text-xs font-bold uppercase tracking-wide text-zinc-600">✍️ Assinatura do Cliente</label>
+        <p class="mt-1 text-[11px] text-zinc-600">Cliente deve assinar para confirmar o trabalho realizado</p>
 
-        <div class="mt-3 rounded-xl border-2 border-slate-600 bg-slate-900" style="height: 150px; touch-action: none; -webkit-user-select: none; user-select: none;">
+        <div class="mt-3 rounded-xl border-2 border-zinc-300 bg-white" style="height: 150px; touch-action: none; -webkit-user-select: none; user-select: none;">
             <canvas
                 id="clientSignaturePad"
                 width="300"
@@ -96,15 +96,15 @@
         <button
             type="button"
             id="clearClientSignature"
-            class="mt-2 w-full rounded-lg bg-slate-700 hover:bg-slate-600 px-3 py-2 text-xs font-bold text-slate-300 transition"
+            class="mt-2 w-full rounded-lg bg-zinc-200 hover:bg-zinc-300 px-3 py-2 text-xs font-bold text-zinc-700 transition"
         >
             Limpar Assinatura
         </button>
     </div>
 
     {{-- Aviso de finalização --}}
-    <div class="rounded-2xl border border-amber-900 bg-amber-950/30 px-4 py-3">
-        <p class="text-xs font-semibold text-amber-400">
+    <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+        <p class="text-xs font-semibold text-amber-700">
             ⚠️ Ao enviar, a O.S. será marcada como concluída e não poderá ser editada.
         </p>
     </div>

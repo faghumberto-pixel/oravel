@@ -4,24 +4,24 @@
     sticky com acao full-width, alvos de 2.75rem/3.25rem = 44/52px, dark zinc,
     esmeralda no concluido). Nao inventar espacamento novo aqui.
 --}}
-<div class="mx-auto flex min-h-screen max-w-md flex-col md:h-full md:min-h-0 md:overflow-y-auto">
+<div class="mx-auto flex min-h-screen max-w-md flex-col bg-zinc-50 text-zinc-900 md:h-full md:min-h-0 md:overflow-y-auto">
     {{-- Cabecalho fixo: modulo + status + usuario. Sem menu. --}}
-    <header class="flex items-center justify-between px-5 pb-2 pt-6">
-        <h1 class="text-xs font-bold tracking-widest text-zinc-400">MODO CAMPO</h1>
+    <header class="mb-4 flex items-center justify-between rounded-b-3xl bg-gradient-to-r from-blue-600 to-blue-500 px-5 pb-5 pt-6 text-white shadow-md">
+        <h1 class="text-xs font-bold tracking-widest text-blue-100">MODO CAMPO</h1>
         <div class="flex items-center gap-2">
             @php
                 $statusColor = match ($maintenanceOrder->status) {
-                    'Em Andamento' => 'bg-emerald-500/15 text-emerald-400',
-                    'Pausada' => 'bg-amber-500/15 text-amber-400',
-                    'Concluída' => 'bg-sky-500/15 text-sky-400',
-                    'Cancelada' => 'bg-red-500/15 text-red-400',
-                    default => 'bg-zinc-800 text-zinc-400',
+                    'Em Andamento' => 'bg-white/20 text-white',
+                    'Pausada' => 'bg-white/20 text-white',
+                    'Concluída' => 'bg-white/20 text-white',
+                    'Cancelada' => 'bg-white/20 text-white',
+                    default => 'bg-white/25 text-blue-100',
                 };
             @endphp
             <span class="rounded-full px-2.5 py-1 text-[11px] font-bold tracking-wide {{ $statusColor }}">
                 {{ strtoupper($maintenanceOrder->status ?? '—') }}
             </span>
-            <span class="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 text-xs font-bold text-zinc-300">
+            <span class="flex h-8 w-8 items-center justify-center rounded-full bg-white/25 text-xs font-bold text-white">
                 {{ strtoupper(mb_substr(auth()->user()?->name ?? '?', 0, 1)) }}
             </span>
         </div>
@@ -34,10 +34,10 @@
             {{-- Tipo de manutenção --}}
             @php
                 $typeColors = [
-                    'emerald' => 'bg-emerald-900/30 text-emerald-400',
-                    'amber' => 'bg-amber-900/30 text-amber-400',
-                    'red' => 'bg-red-900/30 text-red-400',
-                    'zinc' => 'bg-zinc-800 text-zinc-400',
+                    'emerald' => 'bg-emerald-50 text-emerald-700',
+                    'amber' => 'bg-amber-50 text-amber-700',
+                    'red' => 'bg-red-50 text-red-600',
+                    'zinc' => 'bg-zinc-100 text-zinc-600',
                 ];
                 $typeColor = $typeColors[$this->maintenanceTypeColor] ?? $typeColors['zinc'];
             @endphp
@@ -49,10 +49,10 @@
             @if ($this->slaRemaining)
                 @php
                     $slaColors = [
-                        'success' => 'bg-emerald-900/30 text-emerald-400',
-                        'warning' => 'bg-amber-900/30 text-amber-400',
-                        'danger' => 'bg-red-900/30 text-red-400',
-                        'gray' => 'bg-zinc-800 text-zinc-400',
+                        'success' => 'bg-emerald-50 text-emerald-700',
+                        'warning' => 'bg-amber-50 text-amber-700',
+                        'danger' => 'bg-red-50 text-red-600',
+                        'gray' => 'bg-zinc-100 text-zinc-600',
                     ];
                     $slaColor = $slaColors[$this->slaColor] ?? $slaColors['gray'];
                 @endphp
@@ -66,10 +66,10 @@
             @endif
         </div>
 
-        <h2 class="text-xl font-extrabold leading-tight text-white">
+        <h2 class="text-xl font-extrabold leading-tight text-zinc-900">
             ORDEM DE SERVIÇO Nº. {{ $maintenanceOrder->os_number }}
         </h2>
-        <p class="mt-1 text-sm font-medium text-zinc-400">
+        <p class="mt-1 text-sm font-medium text-zinc-600">
             @if($maintenanceOrder->asset?->patrimonio)
                 PAT. {{ strtoupper($maintenanceOrder->asset->patrimonio) }} —
             @endif
@@ -79,13 +79,13 @@
         {{-- Progresso: "Etapa X de Y" + o nome da etapa, pra o tecnico saber
              onde esta e quanto falta sem precisar contar telas. --}}
         <div class="mt-4 flex items-baseline justify-between">
-            <span class="text-[11px] font-bold tracking-widest text-emerald-400">
+            <span class="text-[11px] font-bold tracking-widest text-emerald-700">
                 ETAPA {{ $step }} DE {{ $this->totalSteps }}
             </span>
-            <span class="text-[11px] font-semibold uppercase text-zinc-500">{{ $this->stepLabel }}</span>
+            <span class="text-[11px] font-semibold uppercase text-zinc-600">{{ $this->stepLabel }}</span>
         </div>
-        <div class="mt-2 h-2 w-full overflow-hidden rounded-full bg-zinc-800">
-            <div class="h-2 rounded-full bg-emerald-500 transition-all duration-300"
+        <div class="mt-2 h-2 w-full overflow-hidden rounded-full bg-zinc-100">
+            <div class="h-2 rounded-full bg-emerald-600 transition-all duration-300"
                  style="width: {{ $this->stepProgress }}%"></div>
         </div>
     </section>
@@ -114,23 +114,23 @@
     </main>
 
     {{-- Rodape fixo: estado de gravacao + acao primaria full-width --}}
-    <footer class="sticky bottom-0 border-t border-zinc-800 bg-zinc-950 px-5 pb-4 pt-3">
+    <footer class="sticky bottom-0 border-t border-zinc-200 bg-white px-5 pb-4 pt-3">
         {{-- Estado de gravacao. wire:offline e' nativo do Livewire e cobre o
              caso de o celular perder rede antes de tocar em Continuar. --}}
         <div class="mb-2 min-h-[1.25rem] text-[11px] font-semibold">
-            <span wire:offline class="text-amber-400">
+            <span wire:offline class="text-amber-700">
                 ● Sem conexão — o que você já enviou está salvo.
             </span>
 
             <span wire:offline.remove>
                 @if($saveState === 'error')
-                    <button type="button" wire:click="retry" class="text-left text-red-400 underline">
+                    <button type="button" wire:click="retry" class="text-left text-red-600 underline">
                         Não foi possível salvar. Toque para tentar de novo.
                     </button>
                 @elseif($saveState === 'saved')
-                    <span class="text-emerald-400">✓ Salvo</span>
+                    <span class="text-emerald-700">✓ Salvo</span>
                 @endif
-                <span wire:loading wire:target="next,retry,saveAndPause" class="text-zinc-400">Salvando...</span>
+                <span wire:loading wire:target="next,retry,saveAndPause" class="text-zinc-600">Salvando...</span>
             </span>
         </div>
 
@@ -139,18 +139,18 @@
                  voz) so' persiste ao avancar de step -- se o tecnico for
                  chamado pra outra coisa no meio, perde tudo sem isso. --}}
             <button type="button" wire:click="saveAndPause" wire:loading.attr="disabled" wire:target="saveAndPause,next"
-                    class="mb-3 min-h-[2.75rem] w-full rounded-xl border border-amber-700 bg-amber-900/20 text-xs font-bold tracking-wide text-amber-400">
+                    class="mb-3 min-h-[2.75rem] w-full rounded-xl border border-amber-200 bg-amber-50 text-xs font-bold tracking-wide text-amber-700">
                 SALVAR E PAUSAR
             </button>
         @endif
 
         <div class="flex gap-3">
             <button type="button" wire:click="back"
-                    class="min-h-[3.25rem] flex-1 rounded-xl border border-zinc-700 bg-zinc-900 text-sm font-bold tracking-wide text-zinc-300">
+                    class="min-h-[3.25rem] flex-1 rounded-xl border border-zinc-300 bg-white text-sm font-bold tracking-wide text-zinc-700">
                 {{ $step === 1 ? 'SAIR' : 'VOLTAR' }}
             </button>
             <button type="button" wire:click="next" wire:loading.attr="disabled" wire:target="next"
-                    class="min-h-[3.25rem] flex-[1.4] rounded-xl bg-emerald-500 text-sm font-bold tracking-wide text-zinc-950 disabled:bg-zinc-800 disabled:text-zinc-600">
+                    class="min-h-[3.25rem] flex-[1.4] rounded-xl bg-emerald-600 text-sm font-bold tracking-wide text-white disabled:bg-zinc-100 disabled:text-zinc-500">
                 {{ $this->primaryLabel }}
             </button>
         </div>
