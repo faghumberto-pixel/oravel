@@ -1,7 +1,7 @@
 {{-- Estrutura padrao dos apps mobile: cabecalho azul, busca flutuante, abas, conteudo e barra de icones.
-     Slots opcionais: actions (botao do cabecalho), search, tabs, fab. Usa zinc-* (nao gray-*): as variaveis
+     Prop nav=false esconde a barra de icones (ex.: dentro do app do colaborador). Slots opcionais: actions (botao do cabecalho), search, tabs, bar (acoes fixas acima do rodape), fab. Usa zinc-* (nao gray-*): as variaveis
      --gray-N do Filament nao existem neste layout. --}}
-@props(['title', 'subtitle' => null, 'active' => null, 'back' => null])
+@props(['title', 'subtitle' => null, 'active' => null, 'back' => null, 'nav' => true])
 
 <div class="absolute inset-0 mx-auto flex max-w-md flex-col bg-zinc-50 text-zinc-900">
     <div class="flex-1 overflow-y-auto">
@@ -37,5 +37,11 @@
         {{ $fab }}
     @endisset
 
-    <x-mobile.bottom-nav :active="$active" />
+    @isset($bar)
+        <div class="shrink-0 space-y-2 border-t border-zinc-200 bg-white px-4 py-3">{{ $bar }}</div>
+    @endisset
+
+    @if ($nav)
+        <x-mobile.bottom-nav :active="$active" />
+    @endif
 </div>

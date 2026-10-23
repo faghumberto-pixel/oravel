@@ -14,7 +14,7 @@
 
 <nav class="flex h-20 shrink-0 items-center justify-around border-t border-zinc-200 bg-white" aria-label="Navegação principal">
     @foreach (\App\Support\MobileNav::itens(auth()->user()) as $item)
-        @php($ativo = $item['key'] === $active)
+        @php($ativo = $active ? $item['key'] === $active : url()->current() === strtok($item['url'], '?'))
         <a href="{{ $item['url'] }}"
            @if ($ativo) aria-current="page" @endif
            class="flex h-full w-full flex-col items-center justify-center transition {{ $ativo ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600' }}">
