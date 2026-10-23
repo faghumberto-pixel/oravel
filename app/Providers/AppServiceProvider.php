@@ -90,6 +90,7 @@ use App\Services\Fiscal\FocusNfeProvider;
 use App\Services\Push\PushSender;
 use App\Services\Push\WebPushSender;
 use App\Support\Tenancy;
+use App\Support\TenantScopedRelationshipRule;
 use Filament\Navigation\NavigationManager;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
@@ -134,6 +135,9 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Select/CheckboxList por relationship validam o tenant no servidor (ver a classe).
+        TenantScopedRelationshipRule::register();
+
         // NFS-e automática: quando uma conta a receber vira "pago" (webhook, sincronização ou baixa manual) e a empresa ligou a emissão automática.
         AccountReceivable::updated(function (AccountReceivable $conta) {
             if ($conta->wasChanged('status') && $conta->status === 'pago') {
