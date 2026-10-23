@@ -97,13 +97,13 @@ class SituacaoOs
     public static function classes(string $cor): string
     {
         return match ($cor) {
-            'green' => 'bg-emerald-500/15 text-emerald-400',
-            'orange' => 'bg-orange-500/15 text-orange-400',
-            'amber' => 'bg-amber-500/15 text-amber-400',
-            'red' => 'bg-red-500/15 text-red-400',
-            'yellow' => 'bg-yellow-500/15 text-yellow-300',
-            'sky' => 'bg-sky-500/15 text-sky-400',
-            default => 'bg-zinc-700/40 text-zinc-300',
+            'green' => 'bg-emerald-100 text-emerald-800',
+            'orange' => 'bg-orange-100 text-orange-800',
+            'amber' => 'bg-amber-100 text-amber-800',
+            'red' => 'bg-red-100 text-red-700',
+            'yellow' => 'bg-yellow-100 text-yellow-800',
+            'sky' => 'bg-sky-100 text-sky-800',
+            default => 'bg-zinc-200 text-zinc-700',
         };
     }
 }
