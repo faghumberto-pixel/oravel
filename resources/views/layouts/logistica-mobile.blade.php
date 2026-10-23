@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-        <meta name="theme-color" content="#0c1a2e">
+        <meta name="theme-color" content="#2563eb">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>Logística - {{ config('app.name', 'Oravel') }}</title>
@@ -16,8 +16,8 @@
     </head>
     {{-- Área de Logística (portaria/despacho de veículos): moldura própria, azul-marinho, separada das telas
          do técnico (checklist-mobile, zinc). Mesma moldura de celular no desktop. --}}
-    <body class="h-screen font-sans antialiased bg-slate-950 text-slate-100 overscroll-none md:flex md:h-screen md:items-center md:justify-center md:bg-slate-900 md:py-6">
-        <div class="relative h-full md:mx-auto md:h-[844px] md:w-[390px] md:overflow-hidden md:rounded-[2rem] md:border md:border-slate-800 md:shadow-2xl">
+    <body class="h-screen font-sans antialiased bg-zinc-50 text-zinc-900 overscroll-none md:flex md:h-screen md:items-center md:justify-center md:bg-zinc-200 md:py-6">
+        <div class="relative h-full md:mx-auto md:h-[844px] md:w-[390px] md:overflow-hidden md:rounded-[2rem] md:border md:border-zinc-300 md:shadow-2xl">
             {{ $slot }}
         </div>
     </body>

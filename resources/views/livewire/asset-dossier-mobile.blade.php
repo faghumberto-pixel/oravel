@@ -116,11 +116,11 @@
                             </div>
                             <p class="mt-1 text-xs text-zinc-600">Aberta em {{ $os['aberta_em']->format('d/m/Y') }} · <strong class="text-zinc-800">{{ $os['dias'] }} {{ $os['dias'] === 1 ? 'dia' : 'dias' }}</strong> em aberto</p>
                             <p class="text-xs text-zinc-600">Técnico: {{ $os['tecnico'] ?? 'não definido' }}</p>
-                            @if ($abrir)<a href="{{ $abrir }}" class="mt-1 block text-[11px] font-bold text-orange-700 after:absolute after:inset-0">Ver dossiê da OS →</a>@endif
+                            @if ($abrir)<a href="{{ $abrir }}" class="mt-1 block text-[11px] font-bold text-blue-700 after:absolute after:inset-0">Ver dossiê da OS →</a>@endif
                         </div>
                     @endforeach
                     @if ($modoApp)
-                        <a href="{{ route('colab.os.ativo', ['id' => $asset->id]) }}" class="mt-3 block text-xs font-bold text-orange-700">Ver todas as OS deste equipamento →</a>
+                        <a href="{{ route('colab.os.ativo', ['id' => $asset->id]) }}" class="mt-3 block text-xs font-bold text-blue-700">Ver todas as OS deste equipamento →</a>
                     @endif
                 </div>
                 <div class="mt-3 flex gap-2">

@@ -12,7 +12,7 @@
     var meta = function (n) { var e = document.querySelector('meta[name="' + n + '"]'); return e ? e.content : null; };
     var BASE = (meta('colab-base') || '/').replace(/\/?$/, '/');
     var UUID = /^[0-9a-f-]{8,}$/i;
-    var COR = { green: ['#10b98126', '#34d399'], orange: ['#f9731626', '#fb923c'], amber: ['#f59e0b26', '#fbbf24'], red: ['#ef444426', '#f87171'], yellow: ['#eab30826', '#fde047'], sky: ['#0ea5e926', '#38bdf8'], zinc: ['#3f3f4666', '#d4d4d8'] };
+    var COR = { green: ['#d1fae5', '#065f46'], orange: ['#ffedd5', '#9a3412'], amber: ['#fef3c7', '#92400e'], red: ['#fee2e2', '#b91c1c'], yellow: ['#fef9c3', '#854d0e'], sky: ['#e0f2fe', '#075985'], zinc: ['#e4e4e7', '#3f3f46'] };
     var ROTULO_ATIVO = { disponivel: ['Liberado', 'green'], operando: ['Operando', 'sky'], locado: ['Locado', 'yellow'], manutencao: ['Em manutenção', 'orange'], aguardando_triagem: ['Aguardando triagem', 'red'], quarentena: ['Em quarentena', 'red'], reservado: ['Reservado', 'sky'] };
     var PRIORIDADE_SIT = ['Aguardando peça', 'Em manutenção', 'Aguardando diagnóstico'];
 
@@ -167,7 +167,7 @@
     function estilos() {
         if (document.getElementById('co-css')) { return; }
         var s = document.createElement('style'); s.id = 'co-css';
-        s.textContent = '.co-wrap{max-width:28rem;margin:0 auto;padding:1.25rem;color:#f4f4f5;font-family:inherit}.co-h1{font-size:1.25rem;font-weight:700;margin:.5rem 0}.co-sub{color:#a1a1aa;font-size:.8rem}.co-card{background:#18181b;border-radius:1rem;padding:.9rem;margin-top:.7rem;display:block;color:inherit;text-decoration:none}.co-card b{display:block}.co-badge{display:inline-block;border-radius:999px;padding:.15rem .7rem;font-size:.7rem;font-weight:700}.co-btn{display:flex;align-items:center;justify-content:center;min-height:3rem;border-radius:.75rem;background:#f97316;color:#fff;font-weight:700;border:0;width:100%;margin-top:.7rem;font-size:1rem;text-decoration:none}.co-btn.alt{background:#27272a}.co-btn.ok{background:#059669}.co-btn:disabled{opacity:.5}.co-in{width:100%;min-height:3rem;border-radius:.75rem;border:1px solid #3f3f46;background:#18181b;color:#fff;padding:0 .9rem;font-size:1rem;box-sizing:border-box}textarea.co-in{padding:.7rem .9rem;min-height:5rem}.co-lbl{display:block;color:#a1a1aa;font-size:.7rem;font-weight:700;text-transform:uppercase;margin:.9rem 0 .25rem}.co-row{display:flex;gap:.5rem}.co-seg{flex:1;border-radius:.6rem;border:1px solid #3f3f46;background:#18181b;color:#d4d4d8;padding:.6rem .2rem;font-size:.75rem;font-weight:700}.co-seg.on-g{background:#059669;color:#fff;border-color:#059669}.co-seg.on-r{background:#dc2626;color:#fff;border-color:#dc2626}.co-seg.on-n{background:#52525b;color:#fff;border-color:#52525b}.co-sig{background:#fff;border-radius:.6rem;width:100%;height:140px;touch-action:none;display:block}.co-fotos img{width:4.5rem;height:4.5rem;object-fit:cover;border-radius:.5rem;margin:.25rem .25rem 0 0}.co-bar{position:fixed;left:0;right:0;bottom:0;z-index:50;padding:.55rem .9rem;font-size:.8rem;font-weight:700;display:flex;gap:.6rem;align-items:center;justify-content:space-between;color:#fff}.co-bar button{background:#00000040;border:0;color:#fff;border-radius:.5rem;padding:.4rem .7rem;font-weight:700}.co-pad{height:3.5rem}';
+        s.textContent = '.co-wrap{max-width:28rem;margin:0 auto;padding:1.25rem;color:#18181b;font-family:inherit}.co-h1{font-size:1.25rem;font-weight:700;margin:.5rem 0}.co-sub{color:#52525b;font-size:.8rem}.co-card{background:#fff;border:1px solid #e4e4e7;box-shadow:0 1px 2px #0000000d;border-radius:.75rem;padding:.9rem;margin-top:.7rem;display:block;color:inherit;text-decoration:none}.co-card b{display:block}.co-badge{display:inline-block;border-radius:999px;padding:.15rem .7rem;font-size:.7rem;font-weight:700}.co-btn{display:flex;align-items:center;justify-content:center;min-height:3rem;border-radius:.75rem;background:#2563eb;color:#fff;font-weight:700;border:0;width:100%;margin-top:.7rem;font-size:1rem;text-decoration:none}.co-btn.alt{background:#e4e4e7;color:#3f3f46}.co-btn.ok{background:#059669}.co-btn:disabled{opacity:.5}.co-in{width:100%;min-height:3rem;border-radius:.75rem;border:1px solid #d4d4d8;background:#fff;color:#18181b;padding:0 .9rem;font-size:1rem;box-sizing:border-box}textarea.co-in{padding:.7rem .9rem;min-height:5rem}.co-lbl{display:block;color:#52525b;font-size:.7rem;font-weight:700;text-transform:uppercase;margin:.9rem 0 .25rem}.co-row{display:flex;gap:.5rem}.co-seg{flex:1;border-radius:.6rem;border:1px solid #d4d4d8;background:#fff;color:#3f3f46;padding:.6rem .2rem;font-size:.75rem;font-weight:700}.co-seg.on-g{background:#059669;color:#fff;border-color:#059669}.co-seg.on-r{background:#dc2626;color:#fff;border-color:#dc2626}.co-seg.on-n{background:#52525b;color:#fff;border-color:#52525b}.co-sig{background:#fff;border:1px solid #d4d4d8;border-radius:.6rem;width:100%;height:140px;touch-action:none;display:block}.co-fotos img{width:4.5rem;height:4.5rem;object-fit:cover;border-radius:.5rem;margin:.25rem .25rem 0 0}.co-bar{position:fixed;left:0;right:0;bottom:var(--co-bar-bottom,0);z-index:50;padding:.55rem .9rem;font-size:.8rem;font-weight:700;display:flex;gap:.6rem;align-items:center;justify-content:space-between;color:#fff}.co-bar button{background:#00000040;border:0;color:#fff;border-radius:.5rem;padding:.4rem .7rem;font-weight:700}.co-pad{height:3.5rem}';
         document.head.appendChild(s);
     }
     function atualizarBarra() {
@@ -237,7 +237,7 @@
             var abertas = s.abertas.map(function (o) { return cartaoOS(o, BASE + 'os/' + o.id); }).join('');
             return '<div class="co-wrap"><a class="co-sub" href="' + BASE + '">← Início</a><p class="co-sub" style="margin-top:.6rem">DOSSIÊ DO ATIVO · OFFLINE</p><h1 class="co-h1">' + esc(a.n) + '</h1>' +
                 '<p class="co-sub">PAT: ' + esc(a.p || '—') + (a.pl ? ' · Placa: ' + esc(a.pl) : '') + ' · TAG: ' + esc(a.t || '—') + '</p>' +
-                '<div class="co-card"><b>Situação ' + badge(s.rotulo, s.cor) + '</b>' + abertas + '<a class="co-sub" style="display:block;margin-top:.7rem;color:#fb923c;font-weight:700" href="' + BASE + 'os/ativo/' + a.id + '">Ver todas as OS deste equipamento →</a></div></div>';
+                '<div class="co-card"><b>Situação ' + badge(s.rotulo, s.cor) + '</b>' + abertas + '<a class="co-sub" style="display:block;margin-top:.7rem;color:#2563eb;font-weight:700" href="' + BASE + 'os/ativo/' + a.id + '">Ver todas as OS deste equipamento →</a></div></div>';
         });
     }
     function telaOsAtivo(id) {
@@ -246,7 +246,7 @@
             var s = situacaoAtivo(a, r[1]);
             var fechadas = r[1].filter(function (o) { return o.fechada; }).sort(function (x, y) { return new Date(y.ab) - new Date(x.ab); }).slice(0, 10);
             var bloco = function (titulo, lista) { return lista.length ? '<p class="co-lbl">' + titulo + ' (' + lista.length + ')</p>' + lista.map(function (o) { return cartaoOS(o, BASE + 'os/' + o.id); }).join('') : ''; };
-            return '<div class="co-wrap"><a class="co-sub" href="' + BASE + 'os">← Buscar outro equipamento</a><div class="co-card"><h1 class="co-h1" style="margin:0">' + esc(a.n) + '</h1><span class="co-sub">PAT: ' + esc(a.p || '—') + (a.pl ? ' · Placa: ' + esc(a.pl) : '') + '</span><p style="margin:.6rem 0 0">' + badge(s.rotulo, s.cor) + '</p><a class="co-sub" style="display:block;margin-top:.6rem;color:#fb923c;font-weight:700" href="' + BASE + 'dossie/' + a.id + '">Ver dossiê do ativo →</a></div>' +
+            return '<div class="co-wrap"><a class="co-sub" href="' + BASE + 'os">← Buscar outro equipamento</a><div class="co-card"><h1 class="co-h1" style="margin:0">' + esc(a.n) + '</h1><span class="co-sub">PAT: ' + esc(a.p || '—') + (a.pl ? ' · Placa: ' + esc(a.pl) : '') + '</span><p style="margin:.6rem 0 0">' + badge(s.rotulo, s.cor) + '</p><a class="co-sub" style="display:block;margin-top:.6rem;color:#2563eb;font-weight:700" href="' + BASE + 'dossie/' + a.id + '">Ver dossiê do ativo →</a></div>' +
                 bloco('Em aberto', s.abertas) + bloco('Concluídas recentemente', fechadas) + (!s.abertas.length && !fechadas.length ? '<div class="co-card"><span class="co-sub">Este equipamento não tem nenhuma ordem de serviço.</span></div>' : '') + '</div>';
         });
     }
@@ -318,7 +318,7 @@
                 '<label class="co-lbl">Assinatura do técnico</label><canvas class="co-sig" id="x-sigt"></canvas><button type="button" class="co-seg" style="margin-top:.4rem;width:100%" id="x-limpar-t">Limpar</button>' +
                 '<label class="co-lbl">Assinatura do cliente</label><canvas class="co-sig" id="x-sigc"></canvas><button type="button" class="co-seg" style="margin-top:.4rem;width:100%" id="x-limpar-c">Limpar</button>' +
                 '<p class="co-sub" style="margin-top:1rem">Peças/materiais e avarias são registrados online, no Modo Campo.</p>' +
-                '<button class="co-btn alt" id="x-pausar">⏸ Salvar e pausar</button><button class="co-btn ok" id="x-concluir">✔ Concluir OS</button><p class="co-sub" id="x-msg" style="color:#f87171;margin-top:.6rem"></p></div><div class="co-pad"></div>';
+                '<button class="co-btn alt" id="x-pausar">⏸ Salvar e pausar</button><button class="co-btn ok" id="x-concluir">✔ Concluir OS</button><p class="co-sub" id="x-msg" style="color:#dc2626;margin-top:.6rem"></p></div><div class="co-pad"></div>';
             root.innerHTML = h;
             var $ = function (id) { return root.querySelector('#' + id); };
             var msg = function (t) { $('x-msg').textContent = t || ''; };
@@ -497,7 +497,7 @@
                     campo('Justificativa (só se o km for menor)', '<input class="co-in" id="e-just">') +
                     campo('Combustível', '<select class="co-in" id="e-comb">' + opts(COMBUSTIVEL_NIVEL, '') + '</select>') +
                     campo('Observações (avarias, ocorrências)', '<textarea class="co-in" id="e-obs"></textarea>') +
-                    '<button class="co-btn ok" id="e-ok">REGISTRAR ENTRADA</button><p class="co-sub" id="x-msg" style="color:#f87171;margin-top:.6rem"></p></div><div class="co-pad"></div>';
+                    '<button class="co-btn ok" id="e-ok">REGISTRAR ENTRADA</button><p class="co-sub" id="x-msg" style="color:#dc2626;margin-top:.6rem"></p></div><div class="co-pad"></div>';
                 $('e-ok').addEventListener('click', function () {
                     var odo = $('e-odo').value, erro = validaOdo(root, v, odo, $('e-just').value);
                     if (erro) { msg(erro); return; }
@@ -519,7 +519,7 @@
                     '<select class="co-in" id="s-' + pref + 'c" style="margin-top:.5rem">' + opts(clientes, cliente, 'Escolha o cliente') + '</select>' +
                     '<input class="co-in" id="s-' + pref + 'x" placeholder="Nome do local" style="margin-top:.5rem" value="' + esc(texto || '') + '"></div>';
             }
-            root.innerHTML = cab + (local.tipo !== 'empresa' ? '<p class="co-sub" style="margin-top:.7rem;color:#38bdf8">📍 Veículo está em: ' + esc(local.rotulo) + '</p>' : '') +
+            root.innerHTML = cab + (local.tipo !== 'empresa' ? '<p class="co-sub" style="margin-top:.7rem;color:#0369a1">📍 Veículo está em: ' + esc(local.rotulo) + '</p>' : '') +
                 campo('Finalidade', '<select class="co-in" id="s-fin">' + opts(mapaPares(f.rotulos && f.rotulos.finalidades), 'visita_tecnica') + '</select>') +
                 campo('Motorista', '<select class="co-in" id="s-mot">' + opts(motoristas, v.titular ? v.titular.motorista_id : '', 'Escolha o motorista') + '</select>') +
                 bloco('o', 'SAINDO DE', local.tipo, local.cliente_id, local.texto) + bloco('d', 'INDO PARA', local.tipo === 'empresa' ? 'cliente' : 'empresa', '', '') +
@@ -531,7 +531,7 @@
                 campo('Justificativa (só se o km for menor)', '<input class="co-in" id="s-just">') +
                 campo('Combustível', '<select class="co-in" id="s-comb">' + opts(COMBUSTIVEL_NIVEL, '') + '</select>') +
                 campo('Observações', '<textarea class="co-in" id="s-obs"></textarea>') +
-                '<button class="co-btn ok" id="s-ok">REGISTRAR SAÍDA</button><p class="co-sub" id="x-msg" style="color:#f87171;margin-top:.6rem"></p></div><div class="co-pad"></div>';
+                '<button class="co-btn ok" id="s-ok">REGISTRAR SAÍDA</button><p class="co-sub" id="x-msg" style="color:#dc2626;margin-top:.6rem"></p></div><div class="co-pad"></div>';
 
             function lugar(pref) { var t = $('s-' + pref + 't').value; return { tipo: t, cliente_id: t === 'cliente' ? $('s-' + pref + 'c').value : null, texto: t === 'outro' ? $('s-' + pref + 'x').value : null }; }
             function rotuloLugar(l) { return l.tipo === 'empresa' ? 'Empresa' : (l.tipo === 'cliente' ? ((clientes.filter(function (c) { return c[0] === l.cliente_id; })[0] || [0, 'Cliente'])[1]) : (l.texto || '')); }
@@ -590,7 +590,7 @@
                 campo('Posto', '<input class="co-in" id="a-posto">') + campo('Nota fiscal / cupom', '<input class="co-in" id="a-nf">') +
                 campo('Motorista', '<select class="co-in" id="a-mot">' + opts(motoristas, v.titular ? v.titular.motorista_id : '', 'Não informar') + '</select>') +
                 campo('Observações', '<textarea class="co-in" id="a-obs"></textarea>') +
-                '<button class="co-btn ok" id="a-ok">REGISTRAR ABASTECIMENTO</button><p class="co-sub" id="x-msg" style="color:#f87171;margin-top:.6rem"></p></div><div class="co-pad"></div>';
+                '<button class="co-btn ok" id="a-ok">REGISTRAR ABASTECIMENTO</button><p class="co-sub" id="x-msg" style="color:#dc2626;margin-top:.6rem"></p></div><div class="co-pad"></div>';
             $('a-ok').addEventListener('click', function () {
                 var erro = validaOdo(root, v, $('a-odo').value, $('a-just').value); if (erro) { msg(erro); return; }
                 if (!(Number($('a-lit').value) > 0)) { msg('Informe os litros abastecidos.'); return; }
@@ -610,7 +610,7 @@
             root.innerHTML = '<div class="co-wrap">' + cabecalhoFrota('Marcar km', BASE + 'logistica/km') + '<div class="co-card"><b>' + esc(v.pl || v.n) + '</b><span class="co-sub">' + esc(v.n) + ' · último km: ' + Number(v.odo).toLocaleString('pt-BR') + '</span></div>' +
                 campo('Km no painel agora', '<input class="co-in" id="k-odo" type="number" inputmode="numeric" value="' + v.odo + '" style="font-size:1.2rem;font-weight:700">') +
                 campo('Justificativa (só se o km for menor, ex.: painel trocado)', '<input class="co-in" id="k-just">') +
-                '<button class="co-btn ok" id="k-ok">MARCAR KM</button><p class="co-sub" id="x-msg" style="color:#f87171;margin-top:.6rem"></p></div><div class="co-pad"></div>';
+                '<button class="co-btn ok" id="k-ok">MARCAR KM</button><p class="co-sub" id="x-msg" style="color:#dc2626;margin-top:.6rem"></p></div><div class="co-pad"></div>';
             $('k-ok').addEventListener('click', function () {
                 var erro = validaOdo(root, v, $('k-odo').value, $('k-just').value); if (erro) { msg(erro); return; }
                 $('k-ok').disabled = true;

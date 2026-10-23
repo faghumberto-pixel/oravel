@@ -17,31 +17,31 @@
     {{-- Mobile-first (max-w-md) -- em telas largas o body vira moldura
          neutra e o conteudo fica centralizado com formato de celular, em
          vez de esticar. --}}
-    <body class="font-sans antialiased bg-zinc-950 text-zinc-100 overscroll-none md:bg-zinc-900 md:flex md:min-h-screen md:items-center md:justify-center md:py-6">
-    <div class="mx-auto flex min-h-screen max-w-md flex-col md:h-[844px] md:min-h-0 md:w-[390px] md:overflow-y-auto md:rounded-[2rem] md:border md:border-zinc-800 md:shadow-2xl" x-data="hourMeterOffline()" x-init="init()">
-        <header class="flex items-center gap-3 px-5 pb-2 pt-6">
+    <body class="font-sans antialiased bg-zinc-50 text-zinc-900 overscroll-none md:bg-white md:flex md:min-h-screen md:items-center md:justify-center md:py-6">
+    <div class="mx-auto flex min-h-screen max-w-md flex-col md:h-[844px] md:min-h-0 md:w-[390px] md:overflow-y-auto md:rounded-[2rem] md:border md:border-zinc-200 md:shadow-2xl" x-data="hourMeterOffline()" x-init="init()">
+        <header class="mb-4 flex items-center gap-3 rounded-b-3xl bg-gradient-to-r from-blue-600 to-blue-500 px-5 pb-5 pt-6 text-white shadow-md">
             <a
                 href="{{ route('filament.admin.pages.technician-daily-tasks') }}"
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-zinc-700 text-zinc-300 active:bg-zinc-800"
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/40 text-white active:bg-white/25"
                 aria-label="Voltar"
             >
                 ←
             </a>
             <div class="flex flex-1 items-center justify-between">
-                <h1 class="text-xs font-bold tracking-widest text-zinc-400">REGISTRO DE HORÍMETRO</h1>
-                <span class="text-xs font-bold tracking-wide text-zinc-300">{{ strtoupper(config('app.name', 'ORAVEL')) }}</span>
+                <h1 class="text-xs font-bold tracking-widest text-blue-100">REGISTRO DE HORÍMETRO</h1>
+                <span class="text-xs font-bold tracking-wide text-white">{{ strtoupper(config('app.name', 'ORAVEL')) }}</span>
             </div>
         </header>
 
         {{-- Técnico autenticado --}}
         <div class="px-5 pb-2">
-            <div class="flex items-center gap-2 rounded-xl bg-zinc-900 px-3 py-2">
-                <span class="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500/20 text-xs font-bold text-blue-400">
+            <div class="flex items-center gap-2 rounded-xl bg-white px-3 py-2 border border-zinc-200 shadow-sm">
+                <span class="flex h-7 w-7 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700">
                     {{ strtoupper(substr($technicianName, 0, 1)) }}
                 </span>
                 <div class="min-w-0">
-                    <p class="truncate text-xs font-semibold text-zinc-100">{{ $technicianName }}</p>
-                    <p class="text-[10px] text-zinc-500">Técnico responsável pelo apontamento</p>
+                    <p class="truncate text-xs font-semibold text-zinc-900">{{ $technicianName }}</p>
+                    <p class="text-[10px] text-zinc-600">Técnico responsável pelo apontamento</p>
                 </div>
             </div>
         </div>
@@ -50,7 +50,7 @@
         <div class="px-5 pb-2">
             <div
                 class="flex items-center justify-between rounded-xl px-3 py-2 text-[11px] font-semibold"
-                :class="isOnline ? 'bg-zinc-900 text-zinc-400' : 'bg-amber-950/40 text-amber-400'"
+                :class="isOnline ? 'bg-white text-zinc-600' : 'bg-amber-50 text-amber-700'"
             >
                 <span x-show="isOnline">
                     <span x-show="!syncing">🟢 Online</span>
@@ -58,7 +58,7 @@
                 </span>
                 <span x-show="!isOnline">● Sem conexão — os apontamentos ficam salvos no aparelho</span>
 
-                <span x-show="pendingCount > 0" class="rounded-full bg-amber-500/20 px-2 py-0.5 text-amber-400" x-text="pendingCount + ' pendente(s)'"></span>
+                <span x-show="pendingCount > 0" class="rounded-full bg-amber-100 px-2 py-0.5 text-amber-700" x-text="pendingCount + ' pendente(s)'"></span>
             </div>
         </div>
 
@@ -66,27 +66,27 @@
             <template x-if="!asset">
                 <div class="space-y-3">
                     {{-- Busca (contra o cache local -- funciona offline) --}}
-                    <div class="rounded-2xl bg-zinc-900 p-4">
-                        <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">Buscar Equipamento</h3>
-                        <p class="mt-1 text-[11px] text-zinc-500">Patrimônio, nome ou tag — busca funciona mesmo offline.</p>
+                    <div class="rounded-xl bg-white p-4 border border-zinc-200 shadow-sm">
+                        <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-600">Buscar Equipamento</h3>
+                        <p class="mt-1 text-[11px] text-zinc-600">Patrimônio, nome ou tag — busca funciona mesmo offline.</p>
 
                         <input
                             type="text"
                             x-model="query"
                             @input="search()"
                             placeholder="Ex: PAT-0001, Guindaste..."
-                            class="mt-3 w-full rounded-xl border-0 bg-zinc-800 p-3 text-base text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-blue-500"
+                            class="mt-3 w-full rounded-xl border-0 bg-zinc-100 p-3 text-base text-zinc-900 placeholder:text-zinc-400 focus:ring-2 focus:ring-blue-500"
                             autofocus
                         />
 
-                        <p class="mt-2 text-[10px] text-zinc-600" x-show="assets.length === 0">
+                        <p class="mt-2 text-[10px] text-zinc-500" x-show="assets.length === 0">
                             Nenhum equipamento em cache ainda — conecte à internet uma vez para pré-carregar a lista.
                         </p>
                     </div>
 
                     <template x-if="searchResults.length > 0">
-                        <div class="rounded-2xl bg-zinc-900 p-4">
-                            <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">
+                        <div class="rounded-xl bg-white p-4 border border-zinc-200 shadow-sm">
+                            <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-600">
                                 <span x-text="searchResults.length"></span> encontrados — toque para abrir
                             </h3>
                             <div class="mt-3 space-y-2">
@@ -94,10 +94,10 @@
                                     <button
                                         type="button"
                                         @click="selectAsset(result.id)"
-                                        class="min-h-[3rem] w-full rounded-xl border border-zinc-700 p-3 text-left active:bg-zinc-800"
+                                        class="min-h-[3rem] w-full rounded-xl border border-zinc-300 p-3 text-left active:bg-zinc-100"
                                     >
-                                        <span class="block text-sm font-bold text-white" x-text="result.name"></span>
-                                        <span class="block text-[11px] text-zinc-500">
+                                        <span class="block text-sm font-bold text-zinc-900" x-text="result.name"></span>
+                                        <span class="block text-[11px] text-zinc-600">
                                             Patrimônio: <span x-text="result.patrimonio || '—'"></span>
                                             · Tag: <span x-text="result.tag || '—'"></span>
                                         </span>
@@ -112,59 +112,59 @@
             <template x-if="asset">
                 <div class="space-y-3">
                     {{-- Cabeçalho do equipamento --}}
-                    <div class="rounded-2xl bg-zinc-900 p-4">
-                        <h2 class="text-xl font-extrabold leading-tight text-white" x-text="asset.name"></h2>
-                        <p class="mt-1 text-sm font-medium text-zinc-400">
+                    <div class="rounded-xl bg-white p-4 border border-zinc-200 shadow-sm">
+                        <h2 class="text-xl font-extrabold leading-tight text-zinc-900" x-text="asset.name"></h2>
+                        <p class="mt-1 text-sm font-medium text-zinc-600">
                             PAT: <span x-text="asset.patrimonio || '—'"></span> · TAG: <span x-text="asset.tag || '—'"></span>
                         </p>
-                        <p class="mt-1 text-[11px] text-zinc-500">
+                        <p class="mt-1 text-[11px] text-zinc-600">
                             Cliente: <span x-text="asset.client_name || 'Disponível — sem cliente vinculado'"></span>
                         </p>
                         <button
                             type="button"
                             @click="clearAsset()"
-                            class="mt-3 flex min-h-[2.75rem] w-full items-center justify-center rounded-xl border border-zinc-700 text-xs font-bold text-zinc-200 active:bg-zinc-800"
+                            class="mt-3 flex min-h-[2.75rem] w-full items-center justify-center rounded-xl border border-zinc-300 text-xs font-bold text-zinc-800 active:bg-zinc-100"
                         >
                             Trocar Equipamento
                         </button>
                     </div>
 
-                    <div x-show="saved" x-cloak class="rounded-xl bg-emerald-900/30 px-3 py-2 text-xs font-bold text-emerald-400">
+                    <div x-show="saved" x-cloak class="rounded-xl bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700">
                         ✓ Apontamento salvo no aparelho <span x-show="isOnline">e sincronizado</span><span x-show="!isOnline">— será enviado quando a conexão voltar</span>
                     </div>
 
                     {{-- Form de apontamento --}}
-                    <div class="rounded-2xl bg-zinc-900 p-4">
-                        <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-400">Apontamento de Horímetro</h3>
+                    <div class="rounded-xl bg-white p-4 border border-zinc-200 shadow-sm">
+                        <h3 class="text-xs font-bold uppercase tracking-wide text-zinc-600">Apontamento de Horímetro</h3>
 
                         {{-- Último horímetro -- somente leitura, base de comparação --}}
-                        <div class="mt-3 rounded-xl border border-zinc-800 bg-zinc-950/50 p-3">
-                            <p class="text-[11px] text-zinc-500">Último horímetro registrado</p>
+                        <div class="mt-3 rounded-xl border border-zinc-200 bg-zinc-100 p-3">
+                            <p class="text-[11px] text-zinc-600">Último horímetro registrado</p>
                             <template x-if="lastReading !== null && lastReading !== undefined">
-                                <p class="mt-1 text-lg font-bold text-zinc-100">
+                                <p class="mt-1 text-lg font-bold text-zinc-900">
                                     <span x-text="parseFloat(lastReading).toFixed(2)"></span>h
                                 </p>
                             </template>
                             <template x-if="lastReading === null || lastReading === undefined">
-                                <p class="mt-1 text-sm text-zinc-500">Nenhum apontamento anterior conhecido para este equipamento.</p>
+                                <p class="mt-1 text-sm text-zinc-600">Nenhum apontamento anterior conhecido para este equipamento.</p>
                             </template>
                         </div>
 
                         {{-- Data/hora travada no momento da captura --}}
-                        <p class="mt-3 text-[11px] font-semibold text-zinc-400">
+                        <p class="mt-3 text-[11px] font-semibold text-zinc-600">
                             🕐 Este apontamento será registrado em <span x-text="recordedAtLabel"></span>
                         </p>
 
                         <div class="mt-3 space-y-3">
                             <div>
-                                <label class="mb-1 block text-[11px] font-semibold text-zinc-400">Novo Horímetro (h)</label>
+                                <label class="mb-1 block text-[11px] font-semibold text-zinc-600">Novo Horímetro (h)</label>
                                 <input
                                     type="number"
                                     step="0.01"
                                     min="0"
                                     x-model="reading"
                                     placeholder="Ex: 1234.50"
-                                    class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-base text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-blue-500"
+                                    class="w-full rounded-xl border-0 bg-zinc-100 p-3 text-base text-zinc-900 placeholder:text-zinc-400 focus:ring-2 focus:ring-blue-500"
                                 />
                             </div>
 
@@ -173,19 +173,19 @@
                                 x-show="difference !== null"
                                 x-cloak
                                 class="rounded-xl p-3"
-                                :class="difference >= 0 ? 'border border-emerald-900 bg-emerald-950/30' : 'border border-red-900 bg-red-950/30'"
+                                :class="difference >= 0 ? 'border border-emerald-200 bg-emerald-50' : 'border border-red-200 bg-red-50'"
                             >
-                                <p class="text-[11px] text-zinc-500">Diferença em relação ao último registro</p>
+                                <p class="text-[11px] text-zinc-600">Diferença em relação ao último registro</p>
                                 <p
                                     class="mt-0.5 text-base font-bold"
-                                    :class="difference >= 0 ? 'text-emerald-400' : 'text-red-400'"
+                                    :class="difference >= 0 ? 'text-emerald-700' : 'text-red-600'"
                                     x-text="(difference >= 0 ? '+' : '') + difference + 'h'"
                                 ></p>
                             </div>
 
-                            <label x-show="needsResetConfirm" x-cloak class="flex items-start gap-2 rounded-xl border border-amber-800 bg-amber-950/30 p-3">
-                                <input type="checkbox" x-model="resetConfirmed" class="mt-0.5 rounded border-zinc-700 bg-zinc-800 text-amber-500 focus:ring-amber-500">
-                                <span class="text-[11px] font-semibold text-amber-400">
+                            <label x-show="needsResetConfirm" x-cloak class="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3">
+                                <input type="checkbox" x-model="resetConfirmed" class="mt-0.5 rounded border-zinc-300 bg-zinc-100 text-amber-500 focus:ring-amber-500">
+                                <span class="text-[11px] font-semibold text-amber-700">
                                     Leitura menor que a anterior, ou salto grande demais. Confirmo que este valor está correto (ex: reset do horímetro por troca de painel).
                                 </span>
                             </label>
@@ -204,19 +204,19 @@
                                 </div>
                             </template>
                             <template x-if="!photoDataUrl">
-                                <label class="flex min-h-[3rem] cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-700 hover:border-zinc-600">
+                                <label class="flex min-h-[3rem] cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-300 hover:border-zinc-300">
                                     <input type="file" accept="image/*" capture="environment" @change="onPhotoSelected($event)" class="hidden">
-                                    <span class="text-xs font-semibold text-zinc-400">📷 Foto do painel (validação)</span>
+                                    <span class="text-xs font-semibold text-zinc-600">📷 Foto do painel (validação)</span>
                                 </label>
                             </template>
 
                             <div>
-                                <label class="mb-1 block text-[11px] font-semibold text-zinc-400">Observações</label>
+                                <label class="mb-1 block text-[11px] font-semibold text-zinc-600">Observações</label>
                                 <textarea
                                     x-model="notes"
                                     rows="2"
                                     placeholder="Observações (opcional)"
-                                    class="w-full rounded-xl border-0 bg-zinc-800 p-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-blue-500"
+                                    class="w-full rounded-xl border-0 bg-zinc-100 p-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:ring-2 focus:ring-blue-500"
                                 ></textarea>
                             </div>
                         </div>
@@ -226,11 +226,11 @@
         </main>
 
         <template x-if="asset">
-            <footer class="sticky bottom-0 border-t border-zinc-800 bg-zinc-950 px-5 pb-4 pt-3">
+            <footer class="sticky bottom-0 border-t border-zinc-200 bg-white px-5 pb-4 pt-3">
                 <button
                     type="button"
                     @click="save()"
-                    class="min-h-[3.25rem] w-full rounded-xl bg-blue-500 text-sm font-bold text-white active:bg-blue-600"
+                    class="min-h-[3.25rem] w-full rounded-xl bg-blue-600 text-sm font-bold text-white active:bg-blue-600"
                 >
                     Salvar Apontamento
                 </button>
