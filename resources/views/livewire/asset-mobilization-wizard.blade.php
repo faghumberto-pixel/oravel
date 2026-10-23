@@ -211,18 +211,15 @@
                     <label class="text-xs font-semibold text-zinc-700">Nível de Combustível</label>
                     <div class="mt-2 flex gap-2">
                         <button wire:click="$set('fuelLevelStart', 'empty')" type="button"
-                                class="flex-1 rounded-lg px-2 py-2 text-xs font-bold"
-                                :class="$wire.fuelLevelStart === 'empty' ? 'bg-red-600 text-white' : 'bg-red-50 text-red-600'">
+                                class="flex-1 rounded-lg px-2 py-2 text-xs font-bold {{ $fuelLevelStart === 'empty' ? 'bg-red-600 text-white' : 'bg-red-50 text-red-600' }}">
                                 Vazio
                         </button>
                         <button wire:click="$set('fuelLevelStart', 'half')" type="button"
-                                class="flex-1 rounded-lg px-2 py-2 text-xs font-bold"
-                                :class="$wire.fuelLevelStart === 'half' ? 'bg-yellow-600 text-white' : 'bg-yellow-50 text-yellow-700'">
+                                class="flex-1 rounded-lg px-2 py-2 text-xs font-bold {{ $fuelLevelStart === 'half' ? 'bg-yellow-600 text-white' : 'bg-yellow-50 text-yellow-700' }}">
                                 Meio
                         </button>
                         <button wire:click="$set('fuelLevelStart', 'full')" type="button"
-                                class="flex-1 rounded-lg px-2 py-2 text-xs font-bold"
-                                :class="$wire.fuelLevelStart === 'full' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-700'">
+                                class="flex-1 rounded-lg px-2 py-2 text-xs font-bold {{ $fuelLevelStart === 'full' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-700' }}">
                                 Cheio
                         </button>
                     </div>

@@ -15,8 +15,7 @@
             <div class="flex gap-2 overflow-x-auto pb-1">
                 @foreach (['' => 'Todos', 'appointment' => 'Agendamentos', 'order' => 'O.S.'] as $valor => $rotulo)
                     <button wire:click="$set('filterType', '{{ $valor }}')"
-                            :class="$wire.filterType === '{{ $valor }}' ? 'bg-blue-600 text-white' : 'bg-zinc-200 text-zinc-700'"
-                            class="shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition active:scale-95">
+                            class="shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition active:scale-95 {{ $filterType === $valor ? 'bg-blue-600 text-white' : 'bg-zinc-200 text-zinc-700' }}">
                         {{ $rotulo }}
                     </button>
                 @endforeach
@@ -24,8 +23,7 @@
             <div class="flex gap-2">
                 @foreach (['date' => 'Por data', 'urgency' => 'Por urgência'] as $valor => $rotulo)
                     <button wire:click="$set('sortBy', '{{ $valor }}')"
-                            :class="$wire.sortBy === '{{ $valor }}' ? 'bg-zinc-800 text-white' : 'bg-zinc-200 text-zinc-700'"
-                            class="flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition active:scale-95">
+                            class="flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition active:scale-95 {{ $sortBy === $valor ? 'bg-zinc-800 text-white' : 'bg-zinc-200 text-zinc-700' }}">
                         {{ $rotulo }}
                     </button>
                 @endforeach
