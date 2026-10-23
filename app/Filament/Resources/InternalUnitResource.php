@@ -30,6 +30,10 @@ class InternalUnitResource extends Resource
 
     protected static ?string $navigationLabel = 'Unidades Internas';
 
+    protected static ?string $modelLabel = 'Unidade interna';
+
+    protected static ?string $pluralModelLabel = 'Unidades internas';
+
     protected static ?string $navigationGroup = 'Materiais e Peças';
 
     protected static ?string $navigationParentItem = 'Gestão de Estoque';
