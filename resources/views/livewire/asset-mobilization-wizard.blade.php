@@ -68,13 +68,34 @@
                     Ou busque manualmente pelo patrimônio/nome.
                 </p>
 
+                <div class="mt-4">
+                    <x-mobile.leitor-qr />
+                    @if ($qrMensagem)
+                        <p class="mt-2 rounded-lg bg-amber-50 p-3 text-xs font-semibold text-amber-800">{{ $qrMensagem }}</p>
+                    @endif
+                </div>
+
                 {{-- Busca manual --}}
                 <div class="mt-4">
                     <input type="text"
-                           wire:model.live="assetSearch"
+                           wire:model.live.debounce.400ms="assetSearch"
                            placeholder="Patrimônio ou nome do ativo..."
                            class="w-full rounded-xl border-0 bg-zinc-100 p-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:ring-2 focus:ring-emerald-500">
                 </div>
+
+                @if (! $asset && ! empty($assetResults))
+                    <div class="mt-2 space-y-2">
+                        @foreach ($assetResults as $resultado)
+                            <button type="button" wire:click="selectAsset('{{ $resultado['id'] }}')" wire:key="res-{{ $resultado['id'] }}"
+                                    class="w-full rounded-xl border border-zinc-200 bg-white p-3 text-left shadow-sm active:bg-zinc-50">
+                                <span class="block text-sm font-bold text-zinc-900">{{ $resultado['name'] }}</span>
+                                <span class="block text-xs text-zinc-600">Patrimônio: {{ $resultado['patrimonio'] ?? '—' }}</span>
+                            </button>
+                        @endforeach
+                    </div>
+                @elseif (! $asset && mb_strlen(trim((string) $assetSearch)) >= 2)
+                    <p class="mt-2 text-xs text-zinc-600">Nenhum equipamento encontrado.</p>
+                @endif
 
                 {{-- Equipamento selecionado --}}
                 @if ($asset)
