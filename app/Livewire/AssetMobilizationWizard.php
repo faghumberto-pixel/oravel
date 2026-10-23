@@ -6,6 +6,7 @@ use App\Models\Asset;
 use App\Models\AssetMovement;
 use App\Models\Contract;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
@@ -25,7 +26,9 @@ class AssetMobilizationWizard extends Component
     public const TOTAL_STEPS = 5;
 
     public ?AssetMovement $movement = null;
+
     public ?Asset $asset = null;
+
     public ?Contract $contract = null;
 
     #[Url]
@@ -33,18 +36,30 @@ class AssetMobilizationWizard extends Component
 
     // --- Etapa 1: Identificação ---
     public ?string $qrCode = null;
+
     public ?string $assetSearch = null;
+
+    /** @var array<int, array{id: string, name: string, patrimonio: ?string}> */
+    public array $assetResults = [];
+
+    public ?string $qrMensagem = null;
 
     // --- Etapa 2: Checklist de itens ---
     public array $checklistItems = [];
+
     public string $expandedItemId = '';
 
     // --- Etapa 3: Estado físico ---
     public ?float $horimetroStart = null;
+
     public string $fuelLevelStart = 'half';
+
     public string $observations = '';
+
     public $photoFront = null;
+
     public $photoBack = null;
+
     public $photoSide = null;
 
     // --- Etapa 4: Confirmação ---
@@ -91,47 +106,132 @@ class AssetMobilizationWizard extends Component
         return (int) round($this->step / self::TOTAL_STEPS * 100);
     }
 
-    public function scanQRCode(): void
+    /** Equipamentos do tenant que casam com o texto (sem diferenciar maiusculas). */
+    /** Ativos que esta tela pode oferecer: do tenant. */
+    private function baseDosAtivos()
     {
-        // Placeholder: em implementação real, integraria com leitor de câmera
-        // Por enquanto, aceita entrada manual
+        return Asset::query()
+            ->where('tenant_id', auth()->user()->tenant_id);
     }
 
-    public function searchAsset(): void
+    private function equipamentosDaBusca(string $termo)
     {
-        if (!$this->assetSearch) {
+        $termo = mb_strtolower(trim($termo));
+
+        return $this->baseDosAtivos()
+            ->where(function ($q) use ($termo) {
+                $q->whereRaw('LOWER(patrimonio) LIKE ?', ["%{$termo}%"])
+                    ->orWhereRaw('LOWER(name) LIKE ?', ["%{$termo}%"]);
+            })
+            ->orderBy('name');
+    }
+
+    /**
+     * Resultado da leitura do QR da etiqueta (ou de um codigo digitado): o link do dossie
+     * (.../dossie-mobile/{id}) ou o patrimonio, tag ou placa do equipamento.
+     */
+    public function buscarPorCodigo(string $codigo): void
+    {
+        $codigo = trim($codigo);
+        $this->qrMensagem = null;
+
+        if ($codigo === '') {
             return;
         }
 
-        $asset = Asset::query()
-            ->where('tenant_id', auth()->user()->tenant_id)
-            ->where(function ($q) {
-                $q->whereRaw('LOWER(patrimonio) LIKE ?', ["%{$this->assetSearch}%"])
-                    ->orWhereRaw('LOWER(name) LIKE ?', ["%{$this->assetSearch}%"]);
+        $id = preg_match('#dossie-mobile/([0-9a-f-]{8,})#i', $codigo, $m) && Str::isUuid($m[1]) ? $m[1] : null;
+        $termo = mb_strtolower($codigo);
+
+        $achados = $this->baseDosAtivos()
+            ->where(function ($q) use ($id, $termo) {
+                if ($id) {
+                    $q->orWhere('id', $id);
+                }
+                $q->orWhereRaw('LOWER(patrimonio) = ?', [$termo])
+                    ->orWhereRaw('LOWER(tag) = ?', [$termo])
+                    ->orWhereRaw('LOWER(placa) = ?', [$termo]);
             })
+            ->limit(2)
+            ->get();
+
+        if ($achados->count() === 1) {
+            $this->selecionarAtivo($achados->first());
+
+            return;
+        }
+
+        if ($achados->count() > 1) {
+            $this->assetSearch = $codigo;
+            $this->updatedAssetSearch();
+
+            return;
+        }
+
+        $this->qrMensagem = 'Nenhum equipamento encontrado para esse QR.';
+    }
+
+    /**
+     * Lista as opcoes enquanto o usuario digita (2+ letras). Antes a busca manual nao
+     * tinha gatilho nenhum (searchAsset() nunca era chamado) e comparava LOWER(coluna)
+     * com o texto digitado sem converter, entao patrimonio em maiusculas nunca casava.
+     */
+    public function updatedAssetSearch(): void
+    {
+        $termo = trim((string) $this->assetSearch);
+
+        $this->assetResults = mb_strlen($termo) < 2
+            ? []
+            : $this->equipamentosDaBusca($termo)->limit(6)->get(['id', 'name', 'patrimonio'])->toArray();
+    }
+
+    public function selectAsset(string $assetId): void
+    {
+        $asset = $this->equipamentosDaBusca((string) $this->assetSearch)->whereKey($assetId)->first();
+
+        if (! $asset) {
+            return;
+        }
+
+        $this->selecionarAtivo($asset);
+    }
+
+    /** Mantido por compatibilidade: seleciona o primeiro resultado do texto atual. */
+    public function searchAsset(): void
+    {
+        if (! $this->assetSearch) {
+            return;
+        }
+
+        if ($asset = $this->equipamentosDaBusca($this->assetSearch)->first()) {
+            $this->selecionarAtivo($asset);
+        }
+    }
+
+    private function selecionarAtivo(Asset $asset): void
+    {
+
+        $this->asset = $asset;
+        $this->assetSearch = null;
+        $this->assetResults = [];
+
+        // Carregar contratos ativos do ativo
+        $contract = Contract::query()
+            ->where('asset_id', $asset->id)
+            ->where('status', 'ativo')
+            ->latest('created_at')
             ->first();
 
-        if ($asset) {
-            $this->asset = $asset;
-            $this->assetSearch = null;
-
-            // Carregar contratos ativos do ativo
-            $contract = Contract::query()
-                ->where('asset_id', $asset->id)
-                ->where('status', 'ativo')
-                ->latest('created_at')
-                ->first();
-
-            if ($contract) {
-                $this->contract = $contract;
-            }
+        if ($contract) {
+            $this->contract = $contract;
         }
+
     }
 
     public function confirmAsset(): void
     {
-        if (!$this->asset || !$this->contract) {
+        if (! $this->asset || ! $this->contract) {
             $this->addError('asset', 'Equipamento ou contrato não encontrado.');
+
             return;
         }
 
@@ -145,7 +245,7 @@ class AssetMobilizationWizard extends Component
 
     public function toggleItemState(string $itemId): void
     {
-        if (!isset($this->checklistItems[$itemId])) {
+        if (! isset($this->checklistItems[$itemId])) {
             return;
         }
 
@@ -176,12 +276,13 @@ class AssetMobilizationWizard extends Component
 
     public function next(): void
     {
-        if (!$this->persistCurrentStep()) {
+        if (! $this->persistCurrentStep()) {
             return;
         }
 
         if ($this->step === 5) {
             $this->completeMobilization();
+
             return;
         }
 
@@ -192,6 +293,7 @@ class AssetMobilizationWizard extends Component
     {
         if ($this->step > 1) {
             $this->step = $this->step - 1;
+
             return;
         }
 
@@ -217,16 +319,18 @@ class AssetMobilizationWizard extends Component
         } catch (\Throwable $e) {
             report($e);
             $this->saveState = 'error';
+
             return false;
         }
 
         $this->saveState = 'saved';
+
         return true;
     }
 
     private function persistIdentification(): void
     {
-        if (!$this->asset || !$this->contract) {
+        if (! $this->asset || ! $this->contract) {
             throw ValidationException::withMessages([
                 'asset' => 'Equipamento e contrato são obrigatórios.',
             ]);
@@ -261,7 +365,7 @@ class AssetMobilizationWizard extends Component
 
     private function persistSignature(): void
     {
-        if (!$this->signature) {
+        if (! $this->signature) {
             throw ValidationException::withMessages([
                 'signature' => 'Assinatura é obrigatória para finalizar a mobilização.',
             ]);

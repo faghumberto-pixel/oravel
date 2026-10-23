@@ -1,5 +1,6 @@
 import './bootstrap';
 import './offline/init'; // Offline-first initialization for field technician
+import './leitor-qr'; // window.leitorQr(): leitura de QR por camera (x-mobile.leitor-qr)
 
 import Alpine from 'alpinejs';
 import SignaturePad from 'signature_pad';

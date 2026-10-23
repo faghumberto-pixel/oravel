@@ -6,6 +6,7 @@ use App\Models\Asset;
 use App\Models\AssetMovement;
 use App\Models\Contract;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
@@ -25,8 +26,11 @@ class AssetDemobilizationWizard extends Component
     public const TOTAL_STEPS = 5;
 
     public ?AssetMovement $movement = null;
+
     public ?AssetMovement $mobilizationRecord = null;
+
     public ?Asset $asset = null;
+
     public ?Contract $contract = null;
 
     #[Url]
@@ -34,20 +38,34 @@ class AssetDemobilizationWizard extends Component
 
     // --- Etapa 1: Identificação ---
     public ?string $qrCode = null;
+
     public ?string $assetSearch = null;
+
+    /** @var array<int, array{id: string, name: string, patrimonio: ?string}> */
+    public array $assetResults = [];
+
+    public ?string $qrMensagem = null;
 
     // --- Etapa 2: Checklist com comparação ---
     public array $checklistItems = [];
+
     public array $checklistComparison = [];
+
     public string $expandedItemId = '';
 
     // --- Etapa 3: Estado físico com divergências ---
     public ?float $horimetroEnd = null;
+
     public string $fuelLevelEnd = 'half';
+
     public string $observations = '';
+
     public array $divergences = [];
+
     public $photoFront = null;
+
     public $photoBack = null;
+
     public $photoSide = null;
 
     // --- Etapa 4: Resumo de divergências ---
@@ -74,7 +92,7 @@ class AssetDemobilizationWizard extends Component
                 ->latest('completed_at')
                 ->first();
 
-            if ($this->mobilizationRecord && !empty($this->mobilizationRecord->checklist_items)) {
+            if ($this->mobilizationRecord && ! empty($this->mobilizationRecord->checklist_items)) {
                 $this->checklistComparison = $this->mobilizationRecord->checklist_items;
             }
         }
@@ -106,60 +124,152 @@ class AssetDemobilizationWizard extends Component
         return (int) round($this->step / self::TOTAL_STEPS * 100);
     }
 
-    public function searchAsset(): void
+    /** Equipamentos do tenant que casam com o texto (sem diferenciar maiusculas). */
+    /** Ativos que esta tela pode oferecer: do tenant e em locacao. */
+    private function baseDosAtivos()
     {
-        if (!$this->assetSearch) {
+        return Asset::query()
+            ->where('tenant_id', auth()->user()->tenant_id)
+            ->where('status', 'em_locacao');
+    }
+
+    private function equipamentosDaBusca(string $termo)
+    {
+        $termo = mb_strtolower(trim($termo));
+
+        return $this->baseDosAtivos()
+            ->where(function ($q) use ($termo) {
+                $q->whereRaw('LOWER(patrimonio) LIKE ?', ["%{$termo}%"])
+                    ->orWhereRaw('LOWER(name) LIKE ?', ["%{$termo}%"]);
+            })
+            ->orderBy('name');
+    }
+
+    /**
+     * Resultado da leitura do QR da etiqueta (ou de um codigo digitado): o link do dossie
+     * (.../dossie-mobile/{id}) ou o patrimonio, tag ou placa do equipamento.
+     */
+    public function buscarPorCodigo(string $codigo): void
+    {
+        $codigo = trim($codigo);
+        $this->qrMensagem = null;
+
+        if ($codigo === '') {
             return;
         }
 
-        $asset = Asset::query()
-            ->where('tenant_id', auth()->user()->tenant_id)
-            ->where('status', 'em_locacao')
-            ->where(function ($q) {
-                $q->whereRaw('LOWER(patrimonio) LIKE ?', ["%{$this->assetSearch}%"])
-                    ->orWhereRaw('LOWER(name) LIKE ?', ["%{$this->assetSearch}%"]);
+        $id = preg_match('#dossie-mobile/([0-9a-f-]{8,})#i', $codigo, $m) && Str::isUuid($m[1]) ? $m[1] : null;
+        $termo = mb_strtolower($codigo);
+
+        $achados = $this->baseDosAtivos()
+            ->where(function ($q) use ($id, $termo) {
+                if ($id) {
+                    $q->orWhere('id', $id);
+                }
+                $q->orWhereRaw('LOWER(patrimonio) = ?', [$termo])
+                    ->orWhereRaw('LOWER(tag) = ?', [$termo])
+                    ->orWhereRaw('LOWER(placa) = ?', [$termo]);
             })
+            ->limit(2)
+            ->get();
+
+        if ($achados->count() === 1) {
+            $this->selecionarAtivo($achados->first());
+
+            return;
+        }
+
+        if ($achados->count() > 1) {
+            $this->assetSearch = $codigo;
+            $this->updatedAssetSearch();
+
+            return;
+        }
+
+        $this->qrMensagem = 'Nenhum equipamento em locação encontrado para esse QR.';
+    }
+
+    /**
+     * Lista as opcoes enquanto o usuario digita (2+ letras). Antes a busca manual nao
+     * tinha gatilho nenhum (searchAsset() nunca era chamado) e comparava LOWER(coluna)
+     * com o texto digitado sem converter, entao patrimonio em maiusculas nunca casava.
+     */
+    public function updatedAssetSearch(): void
+    {
+        $termo = trim((string) $this->assetSearch);
+
+        $this->assetResults = mb_strlen($termo) < 2
+            ? []
+            : $this->equipamentosDaBusca($termo)->limit(6)->get(['id', 'name', 'patrimonio'])->toArray();
+    }
+
+    public function selectAsset(string $assetId): void
+    {
+        $asset = $this->equipamentosDaBusca((string) $this->assetSearch)->whereKey($assetId)->first();
+
+        if (! $asset) {
+            return;
+        }
+
+        $this->selecionarAtivo($asset);
+    }
+
+    /** Mantido por compatibilidade: seleciona o primeiro resultado do texto atual. */
+    public function searchAsset(): void
+    {
+        if (! $this->assetSearch) {
+            return;
+        }
+
+        if ($asset = $this->equipamentosDaBusca($this->assetSearch)->first()) {
+            $this->selecionarAtivo($asset);
+        }
+    }
+
+    private function selecionarAtivo(Asset $asset): void
+    {
+
+        $this->asset = $asset;
+        $this->assetSearch = null;
+        $this->assetResults = [];
+
+        // Carregar contrato ativo relacionado
+        $contract = Contract::query()
+            ->where('asset_id', $asset->id)
+            ->where('status', 'ativo')
+            ->latest('created_at')
             ->first();
 
-        if ($asset) {
-            $this->asset = $asset;
-            $this->assetSearch = null;
-
-            // Carregar contrato ativo relacionado
-            $contract = Contract::query()
-                ->where('asset_id', $asset->id)
-                ->where('status', 'ativo')
-                ->latest('created_at')
-                ->first();
-
-            if ($contract) {
-                $this->contract = $contract;
-            }
-
-            // Carregar mobilização anterior
-            $this->mobilizationRecord = AssetMovement::query()
-                ->where('asset_id', $asset->id)
-                ->where('movement_type', 'mobilization')
-                ->where('sync_status', '!=', 'pending')
-                ->latest('completed_at')
-                ->first();
-
-            if ($this->mobilizationRecord && !empty($this->mobilizationRecord->checklist_items)) {
-                $this->checklistComparison = $this->mobilizationRecord->checklist_items;
-                $this->checklistItems = $this->mobilizationRecord->checklist_items;
-            }
+        if ($contract) {
+            $this->contract = $contract;
         }
+
+        // Carregar mobilização anterior
+        $this->mobilizationRecord = AssetMovement::query()
+            ->where('asset_id', $asset->id)
+            ->where('movement_type', 'mobilization')
+            ->where('sync_status', '!=', 'pending')
+            ->latest('completed_at')
+            ->first();
+
+        if ($this->mobilizationRecord && ! empty($this->mobilizationRecord->checklist_items)) {
+            $this->checklistComparison = $this->mobilizationRecord->checklist_items;
+            $this->checklistItems = $this->mobilizationRecord->checklist_items;
+        }
+
     }
 
     public function confirmAsset(): void
     {
-        if (!$this->asset || !$this->contract) {
+        if (! $this->asset || ! $this->contract) {
             $this->addError('asset', 'Equipamento ou contrato não encontrado.');
+
             return;
         }
 
-        if (!$this->mobilizationRecord) {
+        if (! $this->mobilizationRecord) {
             $this->addError('asset', 'Nenhum registro de mobilização anterior encontrado.');
+
             return;
         }
 
@@ -173,7 +283,7 @@ class AssetDemobilizationWizard extends Component
 
     public function toggleItemState(string $itemId): void
     {
-        if (!isset($this->checklistItems[$itemId])) {
+        if (! isset($this->checklistItems[$itemId])) {
             return;
         }
 
@@ -190,7 +300,7 @@ class AssetDemobilizationWizard extends Component
         // Detectar divergências: comparar com mobilização anterior
         $originalState = $this->checklistComparison[$itemId]['state'] ?? 'present';
         if ($next !== $originalState) {
-            if (!isset($this->divergences[$itemId])) {
+            if (! isset($this->divergences[$itemId])) {
                 $this->divergences[$itemId] = [];
             }
             $this->divergences[$itemId]['original_state'] = $originalState;
@@ -218,12 +328,13 @@ class AssetDemobilizationWizard extends Component
 
     public function next(): void
     {
-        if (!$this->persistCurrentStep()) {
+        if (! $this->persistCurrentStep()) {
             return;
         }
 
         if ($this->step === 5) {
             $this->completeDemobilization();
+
             return;
         }
 
@@ -234,6 +345,7 @@ class AssetDemobilizationWizard extends Component
     {
         if ($this->step > 1) {
             $this->step = $this->step - 1;
+
             return;
         }
 
@@ -259,16 +371,18 @@ class AssetDemobilizationWizard extends Component
         } catch (\Throwable $e) {
             report($e);
             $this->saveState = 'error';
+
             return false;
         }
 
         $this->saveState = 'saved';
+
         return true;
     }
 
     private function persistIdentification(): void
     {
-        if (!$this->asset || !$this->contract) {
+        if (! $this->asset || ! $this->contract) {
             throw ValidationException::withMessages([
                 'asset' => 'Equipamento e contrato são obrigatórios.',
             ]);
@@ -316,7 +430,7 @@ class AssetDemobilizationWizard extends Component
 
     private function persistSignature(): void
     {
-        if (!$this->signature) {
+        if (! $this->signature) {
             throw ValidationException::withMessages([
                 'signature' => 'Assinatura é obrigatória para finalizar a desmobilização.',
             ]);
