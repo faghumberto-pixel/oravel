@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oravel — Controle para donos de locadoras de equipamentos | Teste 30 dias</title>
+  <title>Oravel — Controle para locadoras de equipamentos | Teste 30 dias</title>
   <meta name="description" content="Ninguém deveria perder dinheiro à toa. A Oravel mostra, em números, onde a sua locadora de equipamentos perde dinheiro. Teste por 30 dias, com a gente ao seu lado.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,13 +25,14 @@
     .lead { font-size: 18px; color: var(--ink-soft); max-width: 680px; }
 
     /* header */
-    header { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.94); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+    header { position: sticky; top: 0; z-index: 50; background: rgba(8,20,44,0.96); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,.08); }
     nav { max-width: 1120px; margin: 0 auto; padding: 0 24px; height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
     .logo { font-family: "Manrope", sans-serif; font-weight: 900; font-size: 22px; color: var(--ink); }
+    header .logo { color: #fff; }
     .logo span { color: var(--accent); }
     .nav-links { display: flex; align-items: center; gap: 28px; }
-    .nav-links a.link { font-size: 14px; font-weight: 600; color: var(--ink-soft); }
-    .nav-links a.link:hover { color: var(--ink); }
+    .nav-links a.link { font-size: 14px; font-weight: 600; color: #b7c4dc; }
+    .nav-links a.link:hover { color: #fff; }
     .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: "Manrope", sans-serif; font-weight: 700; font-size: 15px; padding: 14px 24px; border-radius: 10px; border: 2px solid transparent; cursor: pointer; transition: transform .15s, background .15s, border-color .15s; }
     .btn:hover { transform: translateY(-1px); }
     .btn-primary { background: var(--accent); color: #fff; }
@@ -41,14 +42,62 @@
     .btn-sm { padding: 10px 18px; font-size: 14px; }
 
     /* hero */
-    .hero { padding: 72px 0 84px; background: linear-gradient(180deg, #fff 0%, var(--surface) 100%); }
-    .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; }
-    .hero h1 { font-size: clamp(38px, 6vw, 62px); margin-bottom: 20px; }
+    .hero { padding: 64px 0 96px; background: radial-gradient(1000px 500px at 85% 10%, rgba(37,99,235,.35), transparent 60%), linear-gradient(135deg, #07142c 0%, #0b2150 55%, #10316f 100%); color: #fff; position: relative; overflow: hidden; }
+    .hero::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px); background-size: 48px 48px; mask-image: radial-gradient(ellipse at 60% 40%, #000 20%, transparent 75%); -webkit-mask-image: radial-gradient(ellipse at 60% 40%, #000 20%, transparent 75%); }
+    .hero-grid { position: relative; display: grid; grid-template-columns: 1fr 1.05fr; gap: 48px; align-items: center; }
+    .audience { display: inline-flex; align-items: center; gap: 10px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 13.5px; letter-spacing: .07em; text-transform: uppercase; color: #ffd9bd; background: rgba(249,115,22,.16); border: 1px solid rgba(249,115,22,.55); padding: 9px 16px; border-radius: 999px; margin-bottom: 24px; }
+    .audience::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px rgba(249,115,22,.25); }
+    .hero h1 { font-size: clamp(38px, 5.6vw, 60px); margin-bottom: 20px; color: #fff; }
     .hero h1 em { font-style: normal; color: var(--accent); }
-    .hero p.sub { font-size: 19px; color: var(--ink-soft); margin-bottom: 30px; max-width: 560px; }
+    .hero p.sub { font-size: 19px; color: #c3d0e6; margin-bottom: 30px; max-width: 540px; }
     .hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
     .micro { font-size: 14px; color: var(--ink-faint); }
+    .hero .micro { color: #8fa3c4; }
+    .hero .btn-ghost { color: #fff; border-color: rgba(255,255,255,.3); }
+    .hero .btn-ghost:hover { border-color: #fff; }
 
+    /* product mockup */
+    .mock-wrap { position: relative; padding: 0 0 36px; }
+    .mock { background: #0e1b36; border: 1px solid rgba(255,255,255,.12); border-radius: 18px; box-shadow: 0 40px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.04); overflow: hidden; }
+    .mock-bar { display: flex; align-items: center; gap: 7px; padding: 12px 16px; background: #0a1529; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .mock-bar i { width: 11px; height: 11px; border-radius: 50%; background: #ef4444; display: block; }
+    .mock-bar i:nth-child(2) { background: #f59e0b; } .mock-bar i:nth-child(3) { background: #22c55e; }
+    .mock-bar span { margin-left: 12px; font-size: 12px; color: #7f93b5; background: rgba(255,255,255,.06); padding: 4px 14px; border-radius: 6px; }
+    .mock-body { padding: 20px; background: #f4f6fa; color: var(--ink); }
+    .mock-title { font-family: "Manrope", sans-serif; font-weight: 800; font-size: 17px; display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+    .mock-title small { font-family: "Inter", sans-serif; font-weight: 500; font-size: 11px; color: var(--ink-faint); }
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+    .kpi { background: #fff; border-radius: 10px; padding: 11px 12px; border-top: 3px solid #3b82f6; box-shadow: 0 1px 2px rgba(15,23,42,.06); }
+    .kpi span { display: block; font-size: 10.5px; color: var(--ink-soft); line-height: 1.25; min-height: 26px; }
+    .kpi b { font-family: "Manrope", sans-serif; font-size: 25px; font-weight: 800; line-height: 1.1; }
+    .kpi.k2 { border-top-color: #22c55e; } .kpi.k3 { border-top-color: var(--accent); } .kpi.k4 { border-top-color: #ef4444; }
+    .mock-row { display: grid; grid-template-columns: 1.1fr 1fr; gap: 10px; }
+    .panel { background: #fff; border-radius: 10px; padding: 14px; box-shadow: 0 1px 2px rgba(15,23,42,.06); }
+    .ct { font-size: 11.5px; font-weight: 700; color: var(--ink); margin-bottom: 10px; font-family: "Manrope", sans-serif; }
+    .bars { display: flex; align-items: flex-end; gap: 9px; height: 96px; }
+    .bars div { flex: 1; text-align: center; font-size: 9.5px; color: var(--ink-faint); display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
+    .bars div i { display: block; background: linear-gradient(180deg, #fb923c, #f97316); border-radius: 4px 4px 0 0; margin-bottom: 4px; }
+    .bars div:nth-child(odd) i { background: linear-gradient(180deg, #60a5fa, #3b82f6); }
+    .osi { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 7px 9px; padding-right: 36px; margin-bottom: 6px; border-left: 3px solid #3b82f6; background: #f4f6fa; border-radius: 6px; font-size: 11px; font-weight: 600; }
+    .osi small { font-weight: 600; font-size: 9.5px; padding: 2px 7px; border-radius: 999px; background: #dbeafe; color: #1d4ed8; white-space: nowrap; }
+    .osi.o2 { border-left-color: var(--accent); } .osi.o2 small { background: #ffedd5; color: #c2410c; }
+    .osi.o3 { border-left-color: #22c55e; margin-bottom: 0; } .osi.o3 small { background: #dcfce7; color: #15803d; }
+    .phone { position: absolute; right: -26px; bottom: -8px; width: 134px; background: #0a1529; border: 3px solid #1c2c4d; border-radius: 24px; padding: 8px; box-shadow: 0 24px 50px rgba(0,0,0,.5); }
+    .phone .scr { background: #fff; border-radius: 17px; overflow: hidden; color: var(--ink); }
+    .phone .ph-h { background: var(--accent); color: #fff; padding: 10px 11px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 11.5px; }
+    .phone .ph-h small { display: block; font-weight: 500; font-size: 8.5px; opacity: .9; }
+    .phone .ph-b { padding: 8px; }
+    .phone .ph-i { font-size: 9.5px; font-weight: 600; padding: 6px 7px; border-left: 3px solid #3b82f6; background: #f4f6fa; border-radius: 5px; margin-bottom: 5px; }
+    .phone .ph-i:nth-child(2) { border-left-color: var(--accent); } .phone .ph-i:nth-child(3) { border-left-color: #22c55e; }
+    .phone .ph-btn { margin-top: 6px; text-align: center; background: var(--accent); color: #fff; font-weight: 800; font-size: 9.5px; padding: 7px; border-radius: 8px; font-family: "Manrope", sans-serif; }
+    .chip { position: absolute; background: #fff; color: var(--ink); font-size: 11.5px; font-weight: 700; padding: 9px 14px; border-radius: 999px; box-shadow: 0 12px 30px rgba(0,0,0,.3); display: flex; align-items: center; gap: 8px; white-space: nowrap; font-family: "Manrope", sans-serif; }
+    .chip::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: #22c55e; }
+    .chip.c1 { left: -26px; bottom: 96px; } .chip.c2 { left: 150px; bottom: 0; }
+    .chip.c2::before { background: var(--accent); }
+    .mock-note { text-align: center; font-size: 11px; color: #7f93b5; margin-top: 14px; }
+
+    /* calculator section */
+    .calc-grid { display: grid; grid-template-columns: 1fr 440px; gap: 56px; align-items: center; }
     .calc { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 28px; box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08); }
     .calc h3 { font-size: 20px; margin-bottom: 6px; }
     .calc .hint { font-size: 14px; color: var(--ink-soft); margin-bottom: 18px; }
@@ -128,13 +177,17 @@
 
     @media (max-width: 900px) {
       section { padding: 60px 0; }
-      .hero-grid, .proof-grid { grid-template-columns: 1fr; gap: 36px; }
+      .hero-grid, .proof-grid, .calc-grid { grid-template-columns: 1fr; gap: 36px; }
+      .mock-wrap { padding-bottom: 0; }
+      .phone, .chip { display: none; }
+      .mock-row { grid-template-columns: 1fr; }
       .grid4 { grid-template-columns: 1fr; }
       .steps { grid-template-columns: 1fr 1fr; }
       .nav-links a.link { display: none; }
     }
     @media (max-width: 520px) {
       .steps { grid-template-columns: 1fr; }
+      .kpis { grid-template-columns: 1fr 1fr; }
       .btn { width: 100%; }
       .btn-sm { width: auto; }
       .hero-cta { flex-direction: column; }
@@ -161,19 +214,79 @@
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <div class="eyebrow">Para donos de locadoras de equipamentos</div>
+      <div class="audience">Para locadoras de equipamentos</div>
       <h1>Ninguém deveria perder dinheiro <em>à toa.</em></h1>
       <p class="sub">A Oravel mostra, em números, onde a sua locadora perde dinheiro: máquina parada, peça comprada na emergência, avaria sem registro. Teste por 30 dias, com a gente ao seu lado.</p>
       <div class="hero-cta">
-        <a class="btn btn-primary" href="https://wa.me/5519999332615?text=Ol%C3%A1!%20Quero%20testar%20a%20Oravel%20por%2030%20dias%20na%20minha%20locadora." >Quero testar 30 dias</a>
+        <a class="btn btn-primary" href="https://wa.me/5519999332615?text=Ol%C3%A1!%20Quero%20testar%20a%20Oravel%20por%2030%20dias%20na%20minha%20locadora.">Quero testar 30 dias</a>
         <a class="btn btn-ghost" href="#manifesto">Ler o nosso manifesto</a>
       </div>
       <p class="micro">Sem compromisso. Se não fizer sentido, você não deve nada.</p>
     </div>
 
-    <div class="calc" id="calculadora">
-      <h3>Quanto custa uma máquina parada?</h3>
-      <p class="hint">Faça uma conta rápida com os seus números.</p>
+    <div>
+      <div class="mock-wrap">
+        <div class="mock">
+          <div class="mock-bar"><i></i><i></i><i></i><span>app.oravel.com.br/painel</span></div>
+          <div class="mock-body">
+            <div class="mock-title">Painel da operação <small>Dados de exemplo</small></div>
+            <div class="kpis">
+              <div class="kpi"><span>Equipamentos disponíveis</span><b>62</b></div>
+              <div class="kpi k2"><span>Locados</span><b>148</b></div>
+              <div class="kpi k3"><span>Em manutenção</span><b>9</b></div>
+              <div class="kpi k4"><span>Preventivas a vencer</span><b>5</b></div>
+            </div>
+            <div class="mock-row">
+              <div class="panel">
+                <div class="ct">Horas de equipamento parado</div>
+                <div class="bars">
+                  <div><i style="height:62%"></i>Mai</div>
+                  <div><i style="height:78%"></i>Jun</div>
+                  <div><i style="height:54%"></i>Jul</div>
+                  <div><i style="height:88%"></i>Ago</div>
+                  <div><i style="height:66%"></i>Set</div>
+                  <div><i style="height:72%"></i>Out</div>
+                </div>
+              </div>
+              <div class="panel">
+                <div class="ct">Ordens de serviço</div>
+                <div class="osi">OS-2041 Gerador <small>Em andamento</small></div>
+                <div class="osi o2">OS-2044 Empilhadeira <small>Preventiva</small></div>
+                <div class="osi o3">OS-2038 Plataforma <small>Concluída</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chip c1">Preventiva aberta automaticamente</div>
+        <div class="chip c2">Peça baixada do estoque</div>
+        <div class="phone">
+          <div class="scr">
+            <div class="ph-h">Manutenção<small>Ordens de serviço</small></div>
+            <div class="ph-b">
+              <div class="ph-i">OS-2041 Gerador</div>
+              <div class="ph-i">OS-2044 Empilhadeira</div>
+              <div class="ph-i">OS-2038 Plataforma</div>
+              <div class="ph-btn">Iniciar OS</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="mock-note">Imagem ilustrativa com dados de exemplo</p>
+    </div>
+  </div>
+</section>
+
+<!-- CALCULADORA -->
+<section class="alt" id="calculadora">
+  <div class="wrap calc-grid">
+    <div>
+      <div class="eyebrow">Faça a conta</div>
+      <h2>Quanto custa uma máquina parada?</h2>
+      <p class="lead">Cada dia de equipamento parado é uma diária que deixa de entrar. Coloque os seus números e veja o tamanho do problema.</p>
+    </div>
+    <div class="calc">
+      <h3>Calcule com os seus números</h3>
+      <p class="hint">Uma conta rápida, só com o que você já sabe.</p>
       <div class="field">
         <label for="c-maq">Quantas máquinas ficam paradas, em média, no mês?</label>
         <input id="c-maq" type="number" min="0" inputmode="numeric" value="3">
@@ -277,10 +390,10 @@
     <p><b>Por isso, acreditamos que:</b></p>
     <ul>
       <li>Quem investe em uma operação merece saber, em números, para onde vai o seu dinheiro.</li>
-      <li>Controle não é burocracia. É o que permite ao dono decidir sem adivinhar.</li>
+      <li>Controle não é burocracia. É o que permite decidir sem adivinhar.</li>
       <li>Um bom sistema não complica. Começa pelo problema que mais dói e cresce com a sua operação.</li>
       <li>Tecnologia só vale se mostrar resultado: menos horas paradas, menos compras de emergência, custo claro de cada equipamento.</li>
-      <li>Quem fala com o dono precisa falar a língua dele. A língua do dono é resultado, não funcionalidade.</li>
+      <li>Quem decide precisa de uma conversa na língua dele. A língua de quem decide é resultado, não funcionalidade.</li>
     </ul>
     <p>Colocamos a vivência de quem já esteve do seu lado do balcão em módulos simples, conectados do campo ao escritório.</p>
     <div class="promise"><b>Nossa promessa.</b> Você não precisa acreditar em nós. Use por 30 dias, com a gente ao seu lado, e meça. Se não fizer sentido, você não deve nada.</div>
@@ -312,7 +425,7 @@
 <section class="alt">
   <div class="wrap">
     <div class="eyebrow">Perguntas frequentes</div>
-    <h2>O que os donos de locadora perguntam.</h2>
+    <h2>Dúvidas comuns antes de começar.</h2>
     <details>
       <summary>Preciso parar a minha operação para implantar?</summary>
       <p>Não. Você começa por um módulo, com a nossa ajuda, e a operação continua rodando. Os demais entram quando você quiser.</p>
