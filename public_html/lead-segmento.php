@@ -18,12 +18,14 @@ $config = require __DIR__ . '/inc/lead-config.php';
 
 // origem => página de retorno. Lista fechada: nunca redirecionar para URL vinda do POST.
 $paginas = [
+    'home'                  => '/',
     'manutencao-industrial' => '/software-manutencao-industrial/',
     'montagem-industrial'   => '/software-montagem-industrial/',
     'logistica-transportes' => '/software-gestao-frota-logistica/',
     'gestao-servicos'       => '/software-gestao-de-servicos/',
 ];
 $origemLabels = [
+    'home'                  => 'Página inicial',
     'manutencao-industrial' => 'Manutenção Industrial',
     'montagem-industrial'   => 'Montagem Industrial',
     'logistica-transportes' => 'Logística e Transportes',

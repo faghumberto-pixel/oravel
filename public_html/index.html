@@ -122,7 +122,7 @@
     .also b { color: var(--ink); }
 
     /* start small */
-    .alt { background: var(--surface); }
+    .alt-contact { background: var(--surface); }
     .pills { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 8px; }
     .pill { background: #fff; border: 1px solid var(--border); border-radius: 999px; padding: 12px 22px; font-family: "Manrope", sans-serif; font-weight: 700; }
     .pill.hot { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark); }
@@ -192,6 +192,23 @@
       .btn-sm { width: auto; }
       .hero-cta { flex-direction: column; }
     }
+
+    .final .hero-cta { margin-bottom: 8px; }
+    .lead-form { max-width: 640px; margin: 28px auto 0; background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 28px; text-align: left; box-shadow: 0 10px 30px rgba(15,23,42,.08); }
+    .lead-form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .lead-form label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--ink); }
+    .lead-form input, .lead-form select { width: 100%; font: inherit; font-size: 15px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: var(--ink); }
+    .lead-form input:focus, .lead-form select:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+    .lead-form [aria-invalid="true"] { border-color: #dc2626; }
+    .lead-form .hp { position: absolute; left: -9999px; height: 0; overflow: hidden; }
+    .lead-form .btn { width: 100%; margin-top: 6px; }
+    .lead-form .fine { font-size: 12px; color: var(--ink-faint); margin-top: 12px; text-align: center; }
+    .form-msg { padding: 12px 14px; border-radius: 10px; font-size: 14px; margin-bottom: 16px; }
+    .form-msg.ok { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .form-msg.err { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    .alt-contact { margin: 22px 0 0; font-size: 14px; color: var(--ink-soft); }
+    .alt-contact a { color: var(--accent-dark); font-weight: 600; }
+    @media (max-width: 640px) { .lead-form { padding: 20px; } .lead-form .row { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -449,11 +466,28 @@
 <section class="final" id="contato">
   <div class="wrap">
     <h2>Vamos olhar a sua operação juntos?</h2>
-    <p class="lead">Uma conversa de 40 minutos, sem custo e sem compromisso. Você não precisa enviar nenhum dado, só contar como funciona aí.</p>
-    <div class="hero-cta">
-      <a class="btn btn-primary" href="https://wa.me/5519999332615?text=Ol%C3%A1!%20Quero%20conversar%20sobre%20testar%20a%20Oravel%20por%2030%20dias.">Chamar no WhatsApp</a>
-      <a class="btn btn-ghost" href="mailto:contato@oravel.com.br?subject=Quero%20testar%20a%20Oravel%20por%2030%20dias">contato@oravel.com.br</a>
-    </div>
+    <p class="lead">Uma conversa de 40 minutos, sem custo e sem compromisso. Deixe seus dados e retornamos para combinar o melhor horário.</p>
+    <form class="lead-form" id="lead-form" method="post" action="/lead-segmento.php" novalidate>
+      <div id="form-msg" class="form-msg" role="status" hidden></div>
+      <input type="hidden" name="origem" value="home">
+      <div class="hp" aria-hidden="true"><label>Não preencha <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+      <div class="row">
+        <div><label for="f-nome">Nome *</label><input id="f-nome" name="name" type="text" autocomplete="name" required minlength="2" maxlength="120"></div>
+        <div><label for="f-empresa">Empresa *</label><input id="f-empresa" name="company" type="text" autocomplete="organization" required minlength="2" maxlength="120"></div>
+      </div>
+      <div class="row">
+        <div><label for="f-email">E-mail *</label><input id="f-email" name="email" type="email" autocomplete="email" required maxlength="160"></div>
+        <div><label for="f-tel">WhatsApp</label><input id="f-tel" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" placeholder="(19) 90000-0000"></div>
+      </div>
+      <div class="row">
+        <div><label for="f-seg">Segmento *</label><select id="f-seg" name="segmento" required><option value="locacao" selected>Locação de Equipamentos</option><option value="manutencao-industrial">Manutenção Industrial</option><option value="montagem-industrial">Montagem Industrial</option><option value="logistica-transportes">Logística e Transportes</option><option value="gestao-servicos">Gestão de Serviços</option><option value="distribuidor-atacadista">Distribuidor e Atacadista</option><option value="outro">Outro segmento</option></select></div>
+        <div><label for="f-porte">Nº de técnicos *</label><select id="f-porte" name="porte" required><option value="">Selecione</option><option>1 a 5</option><option>6 a 15</option><option>16 a 50</option><option>Mais de 50</option></select></div>
+      </div>
+      <div class="cf-turnstile" data-sitekey="0x4AAAAAAEUrIcrw2tIq9KEj"></div>
+      <button class="btn btn-primary" type="submit">Quero conversar</button>
+      <p class="fine">Usamos seus dados apenas para retornar este contato. <a href="/politica-de-privacidade/">Privacidade</a></p>
+    </form>
+    <p class="alt-contact">Prefere falar agora? <a href="https://wa.me/5519999332615?text=Ol%C3%A1!%20Quero%20conversar%20sobre%20testar%20a%20Oravel%20por%2030%20dias.">WhatsApp (19) 99933-2615</a> ou <a href="mailto:contato@oravel.com.br">contato@oravel.com.br</a></p>
   </div>
 </section>
 
@@ -488,6 +522,32 @@
     [maq, dias, dia].forEach(function (el) { el.addEventListener('input', calc); });
     calc();
   })();
+
+  (function () {
+    var f = document.getElementById('lead-form'), box = document.getElementById('form-msg');
+    if (!f) return;
+    var msgs = {
+      captcha: 'Não conseguimos confirmar que você não é um robô. Tente novamente.',
+      dados: 'Confira os campos obrigatórios e tente novamente.',
+      envio: 'Não foi possível enviar agora. Fale com a gente pelo WhatsApp ou e-mail abaixo.'
+    };
+    function show(cls, text) { box.className = 'form-msg ' + cls; box.textContent = text; box.hidden = false; }
+    var q = new URLSearchParams(location.search);
+    if (q.get('enviado') === '1') show('ok', 'Recebemos seu contato. Retornamos em breve para combinar a conversa.');
+    else if (q.get('erro')) show('err', msgs[q.get('erro')] || msgs.envio);
+    if (q.has('enviado') || q.has('erro')) history.replaceState(null, '', location.pathname + '#contato');
+    f.addEventListener('submit', function (ev) {
+      var bad = false;
+      Array.prototype.forEach.call(f.querySelectorAll('[required]'), function (el) {
+        var ok = el.checkValidity() && el.value.trim() !== '';
+        el.setAttribute('aria-invalid', ok ? 'false' : 'true');
+        if (!ok) bad = true;
+      });
+      if (bad) { ev.preventDefault(); show('err', msgs.dados); var first = f.querySelector('[aria-invalid="true"]'); if (first) first.focus(); return; }
+      var b = f.querySelector('button[type=submit]'); b.disabled = true; b.textContent = 'Enviando...';
+    });
+  })();
 </script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </body>
 </html>
