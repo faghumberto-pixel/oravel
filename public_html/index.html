@@ -122,7 +122,7 @@
     .also b { color: var(--ink); }
 
     /* start small */
-    .alt-contact { background: var(--surface); }
+    .alt { background: var(--surface); }
     .pills { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 8px; }
     .pill { background: #fff; border: 1px solid var(--border); border-radius: 999px; padding: 12px 22px; font-family: "Manrope", sans-serif; font-weight: 700; }
     .pill.hot { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark); }
@@ -209,6 +209,11 @@
     .alt-contact { margin: 22px 0 0; font-size: 14px; color: var(--ink-soft); }
     .alt-contact a { color: var(--accent-dark); font-weight: 600; }
     @media (max-width: 640px) { .lead-form { padding: 20px; } .lead-form .row { grid-template-columns: 1fr; } }
+    .porque h2 { max-width: 780px; }
+    .porque p { font-size: 18px; max-width: 720px; margin-bottom: 16px; color: var(--ink-soft); }
+    .porque p b { color: var(--ink); }
+    .porque .more { display: inline-block; margin-top: 8px; font-family: "Manrope", sans-serif; font-weight: 700; color: var(--accent-dark); }
+    .porque .more:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -217,9 +222,9 @@
   <nav>
     <a href="/" class="logo" aria-label="Oravel">O<span>r</span>avel</a>
     <div class="nav-links">
+      <a class="link" href="#porque">Por que existimos</a>
       <a class="link" href="#problema">O que muda</a>
       <a class="link" href="#como-funciona">Como funciona</a>
-      <a class="link" href="#manifesto">Manifesto</a>
       <a class="btn btn-primary btn-sm" href="#contato">Testar 30 dias</a>
     </div>
   </nav>
@@ -232,7 +237,7 @@
   <div class="wrap hero-grid">
     <div>
       <div class="audience">Para locadoras de equipamentos</div>
-      <h1>Cada equipamento trabalhando. Cada decisão <em>com clareza.</em></h1>
+      <h1>Quem opera equipamentos merece trabalhar <em>sem apagar incêndio.</em></h1>
       <p class="sub">A Oravel junta manutenção, estoque, logística e financeiro numa visão só, do campo ao escritório, para a sua operação render mais com menos correria. Teste por 30 dias, com a gente ao seu lado.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="https://wa.me/5519999332615?text=Ol%C3%A1!%20Quero%20testar%20a%20Oravel%20por%2030%20dias%20na%20minha%20locadora.">Quero testar 30 dias</a>
@@ -293,35 +298,14 @@
   </div>
 </section>
 
-<!-- CALCULADORA -->
-<section class="alt" id="calculadora">
-  <div class="wrap calc-grid">
-    <div>
-      <div class="eyebrow">Veja o potencial</div>
-      <h2>Quanto vale uma máquina trabalhando?</h2>
-      <p class="lead">Cada dia a mais de equipamento disponível é uma diária que entra. Coloque os seus números e veja o tamanho da oportunidade.</p>
-    </div>
-    <div class="calc">
-      <h3>Calcule com os seus números</h3>
-      <p class="hint">Uma conta rápida, só com o que você já sabe.</p>
-      <div class="field">
-        <label for="c-maq">Quantas máquinas costumam ficar paradas no mês?</label>
-        <input id="c-maq" type="number" min="0" inputmode="numeric" value="3">
-      </div>
-      <div class="field">
-        <label for="c-dias">Por quantos dias cada uma, em média?</label>
-        <input id="c-dias" type="number" min="0" inputmode="numeric" value="5">
-      </div>
-      <div class="field">
-        <label for="c-diaria">Diária média de locação (R$)</label>
-        <input id="c-diaria" type="number" min="0" inputmode="numeric" value="250">
-      </div>
-      <div class="result">
-        <div class="big" id="r-mes">R$ 3.750</div>
-        <div class="small">de diárias que podem voltar a entrar por mês. Em um ano: <b id="r-ano">R$ 45.000</b>.</div>
-      </div>
-      <p class="note">Cálculo simples: máquinas × dias × diária. Nos 30 dias de teste, mostramos o seu número real.</p>
-    </div>
+<!-- POR QUE EXISTIMOS -->
+<section class="alt porque" id="porque">
+  <div class="wrap">
+    <div class="eyebrow">Por que a Oravel existe</div>
+    <h2>Nós já estivemos do seu lado do balcão.</h2>
+    <p>Administramos uma operação de equipamentos por anos. Vivemos a máquina parada no canteiro, a peça que faltou na hora errada, o cliente esperando "para ontem" e o fechamento do mês que não bate.</p>
+    <p>Aprendemos que nada disso é azar. É falta de informação na hora certa. Por isso criamos a Oravel: para que toda operação de equipamentos funcione com <b>clareza, previsibilidade e tranquilidade</b>, do campo ao escritório.</p>
+    <a class="more" href="#manifesto">Ler o manifesto completo →</a>
   </div>
 </section>
 
@@ -363,8 +347,40 @@
   </div>
 </section>
 
-<!-- COMECE PELO QUE DÓI -->
-<section class="alt">
+<!-- CALCULADORA -->
+<section class="alt" id="calculadora">
+  <div class="wrap calc-grid">
+    <div>
+      <div class="eyebrow">Veja o potencial</div>
+      <h2>Quanto vale uma máquina trabalhando?</h2>
+      <p class="lead">Cada dia a mais de equipamento disponível é uma diária que entra. Coloque os seus números e veja o tamanho da oportunidade.</p>
+    </div>
+    <div class="calc">
+      <h3>Calcule com os seus números</h3>
+      <p class="hint">Uma conta rápida, só com o que você já sabe.</p>
+      <div class="field">
+        <label for="c-maq">Quantas máquinas costumam ficar paradas no mês?</label>
+        <input id="c-maq" type="number" min="0" inputmode="numeric" value="3">
+      </div>
+      <div class="field">
+        <label for="c-dias">Por quantos dias cada uma, em média?</label>
+        <input id="c-dias" type="number" min="0" inputmode="numeric" value="5">
+      </div>
+      <div class="field">
+        <label for="c-diaria">Diária média de locação (R$)</label>
+        <input id="c-diaria" type="number" min="0" inputmode="numeric" value="250">
+      </div>
+      <div class="result">
+        <div class="big" id="r-mes">R$ 3.750</div>
+        <div class="small">de diárias que podem voltar a entrar por mês. Em um ano: <b id="r-ano">R$ 45.000</b>.</div>
+      </div>
+      <p class="note">Cálculo simples: máquinas × dias × diária. Nos 30 dias de teste, mostramos o seu número real.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMECE POR ONDE FAZ SENTIDO -->
+<section>
   <div class="wrap">
     <div class="eyebrow">Sem ficar refém de um sistema gigante</div>
     <h2>Comece por onde faz mais sentido. Cresça no seu ritmo.</h2>
@@ -380,7 +396,7 @@
 </section>
 
 <!-- COMO FUNCIONA -->
-<section id="como-funciona">
+<section class="alt" id="como-funciona">
   <div class="wrap">
     <div class="eyebrow">Como funciona</div>
     <h2>Quatro passos, sem risco para você.</h2>
