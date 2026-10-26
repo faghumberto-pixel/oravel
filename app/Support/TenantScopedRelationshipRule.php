@@ -41,7 +41,8 @@ class TenantScopedRelationshipRule
     public static function regra(Select|CheckboxList $componente): Closure
     {
         return function (string $attribute, mixed $value, Closure $fail) use ($componente): void {
-            if (! $componente->hasRelationship()) {
+            // hasRelationship() so existe no Select; CheckboxList::getRelationship() devolve null sem relacao.
+            if ($componente instanceof Select && ! $componente->hasRelationship()) {
                 return;
             }
 
