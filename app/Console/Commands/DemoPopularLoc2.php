@@ -66,8 +66,11 @@ class DemoPopularLoc2 extends Command
         }
         $this->adminId = $admin->id;
 
+        $this->liberarModulos($tenant);
+
         foreach (['departamentos', 'cargosEFuncionarios', 'clientes', 'categoriasEAtivos', 'contratos', 'medicoes',
-            'comercial', 'unidadesEEstoque', 'compras', 'financeiro', 'frota', 'manutencao', 'relacionamento'] as $etapa) {
+            'comercial', 'unidadesEEstoque', 'compras', 'financeiro', 'frota', 'manutencao', 'relacionamento',
+            'cadastrosDaEmpresa', 'crm', 'solicitacoes', 'manutencaoAmpliada', 'logistica'] as $etapa) {
             try {
                 DB::transaction(fn () => $this->{$etapa}());
                 $this->info("✔ $etapa");
@@ -428,6 +431,221 @@ class DemoPopularLoc2 extends Command
     {
         $this->mk('chat_rooms', ['type' => 'group', 'title' => 'Equipe de Manutenção']);
         $this->mk('chat_rooms', ['type' => 'group', 'title' => 'Comercial e Operações']);
+    }
+
+    // ───────────────────────── módulos extras ─────────────────────────
+
+    /** Módulos de Locadora liberados a mais no contrato da empresa para a demonstração (mesmo contrato da tela Contratos). */
+    private const MODULOS_EXTRAS = [
+        // CRM e Comercial
+        'tabela_crm_contas', 'tabela_crm_leads', 'tabela_crm_visitas', 'tabela_crm_produtos', 'tabela_crm_propostas', 'tabela_crm_metas',
+        'tabela_crm_funis', 'tabela_crm_etapas', 'tabela_crm_origens', 'tabela_crm_motivos_perda', 'tabela_crm_campos_custom', 'tabela_crm_veiculos',
+        'tabela_crm_despesas', 'tabela_solicitacao_locacao', 'menu_gestao_crm', 'menu_proposta_comercial_kanban',
+        // Manutenção
+        'tabela_maintenance_orders', 'tabela_maintenance_plans', 'tabela_maintenance_action_types', 'tabela_reported_problems', 'tabela_checklist_templates',
+        'tabela_criticality_levels', 'tabela_equipment_damages', 'tabela_asset_downtime_events', 'tabela_preventive_maintenance_executions',
+        'tabela_equipment_hour_meters', 'tabela_horimeter_readings', 'menu_maintenancao_cadastros', 'menu_maintenancao_operacao', 'menu_maintenance_kanban',
+        'menu_preventive_maintenance_kanban', 'menu_apontamento_horimetro', 'menu_reservas_urgentes', 'menu_painel_pmp',
+        // Logística
+        'tabela_fleet_vehicles', 'tabela_freight_carriers', 'tabela_freight_records', 'tabela_equipment_movements', 'tabela_depots',
+        'menu_logistica_fretes_transporte', 'menu_logistica_frota', 'menu_logistica_patio', 'menu_patio_aprovacoes', 'menu_patio_chegadas',
+        // Cadastros da empresa
+        'tabela_companies', 'tabela_branches', 'tabela_locations', 'tabela_cost_centers',
+    ];
+
+    private function liberarModulos(Tenant $tenant): void
+    {
+        $plano = DB::table('plans')->where('id', $tenant->plan_id)->first();
+        if (! $plano) {
+            $this->warn('Empresa sem contrato: módulos não liberados.');
+
+            return;
+        }
+        $features = json_decode($plano->features ?? '[]', true) ?: [];
+        $novos = 0;
+        foreach (self::MODULOS_EXTRAS as $chave) {
+            if (empty($features[$chave])) {
+                $features[$chave] = true;
+                $novos++;
+            }
+        }
+        DB::table('plans')->where('id', $plano->id)->update(['features' => json_encode($features), 'updated_at' => now()]);
+        $this->info("Módulos liberados no contrato \"{$plano->name}\": $novos novos.");
+    }
+
+    private function cadastrosDaEmpresa(): void
+    {
+        $this->mk('companies', ['name' => 'Loc2 Locações de Equipamentos Ltda', 'address' => 'Av. das Indústrias, 1500', 'city' => 'Campinas', 'state' => 'SP', 'phone' => '(19) 3251-8800']);
+        $this->mk('branches', ['name' => 'Matriz Campinas', 'description' => 'Sede administrativa e pátio principal', 'city' => 'Campinas', 'state' => 'SP']);
+        $this->mk('branches', ['name' => 'Filial Sumaré', 'description' => 'Pátio de equipamentos e oficina', 'city' => 'Sumaré', 'state' => 'SP']);
+        foreach ([['Operações', 'CC-01'], ['Manutenção', 'CC-02'], ['Comercial', 'CC-03'], ['Administrativo', 'CC-04']] as [$n, $c]) {
+            $this->mk('cost_centers', ['name' => $n, 'code' => $c]);
+        }
+        $this->mk('locations', ['name' => 'Obra Horizonte — Campinas', 'address' => 'Rua Barão de Jaguara, 1250', 'city' => 'Campinas', 'state' => 'SP', 'zip_code' => '13015-001']);
+        $this->mk('locations', ['name' => 'Planta Metalúrgica Paulista', 'address' => 'Rod. Anhanguera km 108', 'city' => 'Hortolândia', 'state' => 'SP', 'zip_code' => '13183-000']);
+        $this->mk('depots', ['name' => 'Pátio Central Campinas', 'address' => 'Av. das Indústrias, 1500', 'city' => 'Campinas', 'state' => 'SP', 'zip_code' => '13054-700', 'latitude' => -22.9099, 'longitude' => -47.0626, 'is_default' => true, 'internal_unit_id' => $this->ref['unidade'] ?? null]);
+        foreach ([['baixa', 'Baixa', '#22c55e', false], ['media', 'Média', '#f59e0b', false], ['alta', 'Alta', '#ef4444', false], ['urgente', 'Urgente', '#7f1d1d', true]] as $i => [$cod, $nome, $cor, $urg]) {
+            if (! DB::table('criticality_levels')->where('tenant_id', $this->tenantId)->where('code', $cod)->exists()) {
+                $this->mk('criticality_levels', ['code' => $cod, 'name' => $nome, 'color' => $cor, 'is_urgent' => $urg, 'sort_order' => $i]);
+            }
+        }
+    }
+
+    private function crm(): void
+    {
+        $contas = [];
+        foreach ([['Metalúrgica Vale do Aço', 'Indústria', 'Campinas'], ['Construtora Planalto', 'Construção civil', 'Jundiaí'], ['Frigorífico Boa Carne', 'Alimentos', 'Piracicaba'],
+            ['Porto Seco Logística', 'Logística', 'Louveira']] as $i => [$nome, $seg, $cidade]) {
+            $contas[] = $this->mk('crm_contas', [
+                'nome' => $nome, 'nome_fantasia' => $nome, 'tipo_pessoa' => 'PJ', 'documento' => '5'.$i.'.123.456/0001-8'.$i, 'documento_digitos' => '5'.$i.'12345600018'.$i,
+                'email' => 'compras@'.Str::slug($nome).'.demo.br', 'telefone' => '(19) 3'.rand(200, 899).'-'.rand(1000, 9999), 'segmento' => $seg, 'cidade' => $cidade, 'uf' => 'SP',
+                'responsavel_user_id' => $this->adminId, 'origem' => 'indicacao', 'ativa' => true,
+            ]);
+        }
+
+        $produtos = [];
+        foreach ([['LOC-EMP', 'Locação de empilhadeira (mensal)', 'servico', 8500], ['LOC-PLT', 'Locação de plataforma elevatória (mensal)', 'servico', 6200],
+            ['LOC-GER', 'Locação de gerador (diária)', 'servico', 650], ['FRT-001', 'Frete e içamento', 'servico', 900]] as [$cod, $nome, $tipo, $preco]) {
+            $produtos[] = $this->mk('crm_produtos', ['codigo' => $cod, 'nome' => $nome, 'tipo' => $tipo, 'unidade' => 'un', 'preco' => $preco, 'ativo' => true]);
+        }
+
+        $etapas = DB::table('crm_etapas')->where('tenant_id', $this->tenantId)->orderBy('created_at')->pluck('id')->all();
+        $leads = [];
+        foreach ([['Ricardo Menezes', 'Metalúrgica Vale do Aço', 'novo', 12000, 'Empilhadeira 5t'], ['Camila Rocha', 'Construtora Planalto', 'contato_iniciado', 18500, 'Plataforma 12m'],
+            ['Eduardo Lima', 'Frigorífico Boa Carne', 'qualificado', 9800, 'Gerador 150 kVA'], ['Sandra Oliveira', 'Porto Seco Logística', 'convertido', 22000, 'Empilhadeiras (3 un.)'],
+            ['Paulo Henrique', 'Mecânica Central', 'perdido', 4200, 'Compressor de ar']] as $i => [$nome, $empresa, $stage, $valor, $interesse]) {
+            $leads[] = $this->mk('crm_leads', [
+                'name' => $nome, 'company_name' => $empresa, 'phone' => '(19) 98'.rand(100, 999).'-'.rand(1000, 9999), 'email' => Str::slug($nome).'@'.Str::slug($empresa).'.demo.br',
+                'source' => ['site', 'indicacao', 'evento', 'contato_frio', 'site'][$i], 'stage' => $stage, 'etapa_id' => $etapas[$i % max(count($etapas), 1)] ?? null,
+                'assigned_user_id' => $this->adminId, 'estimated_value' => $valor, 'estimated_revenue' => $valor, 'equipment_interest' => $interesse, 'city' => 'Campinas', 'uf' => 'SP',
+                'next_followup_date' => now()->addDays(2 + $i)->toDateString(), 'last_contacted_at' => now()->subDays($i + 1), 'segment' => 'industria', 'company_size' => 'media',
+                'crm_conta_id' => $contas[$i % count($contas)], 'lost_reason' => $stage === 'perdido' ? 'Fechou com concorrente por preço.' : null,
+                'previsao_fechamento' => now()->addDays(15)->toDateString(), 'fechado_em' => $stage === 'convertido' ? now()->subDays(3) : null, 'valor_fechado' => $stage === 'convertido' ? $valor : null,
+            ]);
+        }
+
+        foreach ([['visita_tecnica', 'agendada', 1], ['apresentacao', 'realizada', -2], ['negociacao', 'agendada', 3]] as $i => [$obj, $status, $dias]) {
+            $this->mk('crm_visitas', [
+                'user_id' => $this->adminId, 'crm_lead_id' => $leads[$i], 'crm_conta_id' => $contas[$i], 'contato_nome' => 'Contato da conta '.($i + 1), 'objetivo' => $obj,
+                'agendada_para' => now()->addDays($dias)->setTime(9 + $i, 0), 'duracao_prevista_min' => 60, 'status' => $status, 'cidade' => 'Campinas', 'uf' => 'SP',
+                'resultado' => $status === 'realizada' ? 'Cliente interessado, pediu proposta formal.' : null, 'proximo_passo' => 'Enviar proposta comercial',
+                'proximo_contato' => now()->addDays(5)->toDateString(),
+            ]);
+        }
+
+        foreach ([['enviada', 8500], ['aceita', 22000], ['rascunho', 12000]] as $i => [$status, $total]) {
+            $numero = ((int) DB::table('crm_propostas')->where('tenant_id', $this->tenantId)->max('numero')) + 1;
+            $prop = $this->mk('crm_propostas', [
+                'numero' => $numero, 'crm_lead_id' => $leads[$i + 1], 'crm_conta_id' => $contas[$i + 1], 'vendedor_user_id' => $this->adminId, 'titulo' => 'Proposta de locação '.($i + 1),
+                'validade_ate' => now()->addDays(15)->toDateString(), 'condicoes' => 'Pagamento em 28 dias. Manutenção preventiva inclusa.', 'desconto' => 0, 'total' => $total,
+                'status' => $status, 'token' => Str::random(40), 'enviada_em' => $status === 'rascunho' ? null : now()->subDays(3),
+            ]);
+            $this->mk('crm_proposta_itens', ['crm_proposta_id' => $prop, 'crm_produto_id' => $produtos[$i], 'descricao' => 'Locação mensal de equipamento', 'quantidade' => 1, 'preco_unitario' => $total, 'subtotal' => $total]);
+        }
+
+        $this->mk('crm_metas', ['user_id' => $this->adminId, 'mes' => now()->startOfMonth()->toDateString(), 'meta_valor' => 60000, 'meta_ganhos' => 4, 'meta_visitas' => 20]);
+    }
+
+    private function solicitacoes(): void
+    {
+        $categoria = $this->ref['cat']['Empilhadeira'] ?? null;
+        foreach ([[2, 'proposta_em_andamento', 'Obra nova — fundação'], [3, 'contrato_fechado', 'Movimentação de cargas no galpão'], [6, 'proposta_em_andamento', 'Colheita — turno extra']] as $i => [$cli, $status, $fim]) {
+            $this->mk('solicitacoes_locacao', [
+                'user_id' => $this->adminId, 'customer_id' => $this->ref['cli'][$cli], 'category_id' => $categoria, 'purpose' => $fim,
+                'data_saida_prevista' => now()->addDays(4 + $i * 3)->toDateString(), 'status_comercial' => $status, 'observations' => 'Solicitação de demonstração.',
+            ]);
+        }
+    }
+
+    private function manutencaoAmpliada(): void
+    {
+        $problemas = [];
+        foreach (['Vazamento de óleo hidráulico', 'Falha na partida', 'Ruído anormal no motor', 'Superaquecimento', 'Pneu desgastado'] as $d) {
+            $problemas[] = $this->mk('reported_problems', ['description' => $d, 'is_active' => true]);
+        }
+        foreach (['Checklist de entrega', 'Checklist de devolução', 'Inspeção diária de empilhadeira'] as $n) {
+            $this->mk('checklist_templates', ['name' => $n, 'description' => 'Modelo de demonstração', 'is_active' => true]);
+        }
+
+        $crit = DB::table('criticality_levels')->where('tenant_id', $this->tenantId)->pluck('id', 'code');
+        $tags = ['EMP-001', 'PLT-001', 'GER-001', 'CMP-001', 'RET-001', 'EMP-002'];
+        $estados = [
+            ['Aberto', 'aguardando_diagnostico', 'Corretiva', 'Vazamento de óleo hidráulico no cilindro de inclinação'],
+            ['Em Andamento', 'em_manutencao', 'Corretiva', 'Troca de mangueiras e vedações do braço'],
+            ['Pendente', 'aguardando_peca', 'Corretiva', 'Aguardando alternador 24V do fornecedor'],
+            ['Concluída', 'concluido', 'Preventiva', 'Revisão preventiva de 500 horas'],
+            ['Concluída', 'concluido', 'Preventiva', 'Troca de filtros e óleo do motor'],
+            ['Aberto', 'aguardando_diagnostico', 'Emergência', 'Gerador parou durante a operação do cliente'],
+        ];
+        $ordens = [];
+        foreach ($estados as $i => [$status, $interno, $tipo, $desc]) {
+            $ativo = $this->ref['ativo'][$tags[$i]] ?? null;
+            if (! $ativo) {
+                continue;
+            }
+            $criada = now()->subDays(20 - $i * 3);
+            $concluida = $status === 'Concluída';
+            $ordens[] = $this->mk('maintenance_orders', [
+                'os_number' => 'OS-DEMO-'.str_pad((string) ($i + 1), 4, '0', STR_PAD_LEFT), 'asset_id' => $ativo, 'status' => $status, 'internal_status' => $interno,
+                'maintenance_type' => $tipo, 'service_type' => $tipo, 'priority' => $tipo === 'Emergência' ? 'alta' : 'media', 'description' => $desc, 'created_by' => $this->adminId,
+                'assigned_technician_id' => $this->adminId, 'reported_problem_id' => $problemas[$i % count($problemas)], 'criticality_level_id' => $crit[$tipo === 'Emergência' ? 'urgente' : 'media'] ?? null,
+                'scheduled_at' => $criada->copy()->addDays(1), 'started_at' => $status === 'Aberto' ? null : $criada->copy()->addDays(1),
+                'finished_at' => $concluida ? $criada->copy()->addDays(2) : null, 'resolved_at' => $concluida ? $criada->copy()->addDays(2) : null,
+                'hours_spent' => $concluida ? 4.5 : 0, 'labor_cost' => $concluida ? 540 : 0, 'material_cost' => $concluida ? 860 : 0, 'logistics_cost' => 0, 'total_order_cost' => $concluida ? 1400 : 0,
+                'horimetro_entry' => 1200 + $i * 310, 'solution' => $concluida ? 'Serviço executado e equipamento liberado.' : null, 'is_rework' => false,
+            ]);
+            $this->mk('equipment_hour_meters', ['asset_id' => $ativo, 'recorded_by' => $this->adminId, 'client_uuid' => (string) Str::uuid(), 'reading' => 1200 + $i * 310, 'recorded_at' => $criada, 'sync_status' => 'synced', 'synced_at' => $criada]);
+            $this->mk('horimeter_readings', ['asset_id' => $ativo, 'reading' => 1200 + $i * 310, 'recorded_at' => $criada, 'recorded_by' => $this->adminId, 'source' => 'manual', 'recorded_by_name' => 'Administrador']);
+        }
+
+        $plano = DB::table('maintenance_plans')->where('tenant_id', $this->tenantId)->value('id');
+        if ($plano && isset($ordens[3])) {
+            $this->mk('preventive_maintenance_executions', [
+                'asset_id' => $this->ref['ativo'][$tags[3]] ?? null, 'maintenance_plan_id' => $plano, 'maintenance_order_id' => $ordens[3], 'technician_id' => $this->adminId,
+                'horimetro_at_execution' => 1830, 'next_due_horimetro' => 2330, 'observacao' => 'Execução registrada na demonstração.',
+            ]);
+        }
+
+        if (isset($ordens[1])) {
+            $this->mk('equipment_damages', [
+                'maintenance_order_id' => $ordens[1], 'asset_id' => $this->ref['ativo'][$tags[1]], 'reported_by_user_id' => $this->adminId, 'severity' => 'moderada',
+                'description' => 'Mangueira hidráulica rompida durante a operação; sinais de uso fora da especificação.', 'requires_replacement' => false, 'status' => 'aguardando_supervisor',
+                'estimated_cost' => 1850, 'damage_type' => 'hidraulico', 'cause' => 'mau_uso',
+            ]);
+        }
+
+        $this->ref['ordens'] = $ordens;
+    }
+
+    private function logistica(): void
+    {
+        $veic = [];
+        foreach ([['QWE-4R12', 'Volvo FMX 440 Munck', 'caminhao_munck', 20000, 'em_rota', 48210], ['RTY-8K45', 'Mercedes Accelo 1016', 'caminhao_toco', 5000, 'disponivel', 92350],
+            ['UIO-2L90', 'Fiat Strada Endurance', 'utilitario', 650, 'disponivel', 31800]] as [$placa, $modelo, $tipo, $cap, $status, $km]) {
+            $veic[] = $this->mk('fleet_vehicles', ['placa' => $placa, 'modelo' => $modelo, 'tipo' => $tipo, 'capacidade_carga' => $cap, 'status' => $status, 'km_atual' => $km, 'custo_por_km' => 4.8]);
+        }
+        $transp = $this->mk('freight_carriers', [
+            'nome' => 'Transportes Rápido Sul Ltda', 'documento' => '33.222.111/0001-44', 'contato_nome' => 'Marcelo Antunes', 'contato_telefone' => '(19) 3412-7700',
+            'vehicle_types' => ['carreta_prancha', 'caminhao_munck'], 'insurance_policy_number' => 'AP-2026-889912', 'insurance_coverage_value' => 500000,
+        ]);
+
+        foreach ([['mobilizacao', 'concluido', 0, 'Matriz — Campinas', 'Obra Construtora Horizonte'], ['desmobilizacao', 'em_andamento', 2, 'Planta Metalúrgica Paulista', 'Matriz — Campinas'],
+            ['mobilizacao', 'aguardando_vistoria', 4, 'Matriz — Campinas', 'Shopping Plaza Norte']] as $i => [$tipo, $status, $idx, $origem, $destino]) {
+            $ativo = array_values($this->ref['ativo'] ?? [])[$idx] ?? null;
+            if (! $ativo) {
+                continue;
+            }
+            $mov = $this->mk('equipment_movements', [
+                'asset_id' => $ativo, 'type' => $tipo, 'status' => $status, 'notes' => "$origem → $destino", 'started_at' => $status === 'aguardando_vistoria' ? null : now()->subDays(3 - $i),
+                'completed_at' => $status === 'concluido' ? now()->subDays(3) : null, 'custo_transporte' => 900 + $i * 150, 'qr_token' => Str::random(24), 'fleet_vehicle_id' => $veic[0],
+                'scheduled_at' => now()->subDays(3 - $i), 'km_inicial' => 48100 + $i * 40, 'km_final' => $status === 'concluido' ? 48140 : null,
+            ]);
+            $this->mk('freight_records', [
+                'equipment_movement_id' => $mov, 'tipo' => $i === 1 ? 'terceirizado' : 'proprio', 'fleet_vehicle_id' => $i === 1 ? null : $veic[0], 'freight_carrier_id' => $i === 1 ? $transp : null,
+                'valor' => 900 + $i * 150, 'origem' => $origem, 'destino' => $destino, 'km_percorrido' => 40 + $i * 25, 'data' => now()->subDays(3 - $i)->toDateString(),
+                'horas_motorista' => 3.5, 'custo_motorista' => 210, 'insurance_confirmed' => true,
+            ]);
+        }
     }
 
     // ───────────────────────── infra ─────────────────────────
