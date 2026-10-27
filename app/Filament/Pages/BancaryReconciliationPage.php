@@ -57,7 +57,7 @@ class BancaryReconciliationPage extends Page
     {
         // O módulo "Reconciliação Bancária" do contrato libera esta tela (antes só a permissão de contas a
         // receber era conferida, e a tela aparecia mesmo sem o módulo).
-        return (bool) \App\Support\Tenancy::current()?->hasFeature('tabela_bank_reconciliation')
+        return (bool) Tenancy::current()?->hasFeature('tabela_bank_reconciliation')
             && auth()->user()?->can('viewAny', AccountReceivable::class);
     }
 

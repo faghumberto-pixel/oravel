@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\Client;
 use App\Models\TenantWhatsappSetting;
+use App\Models\User;
 use App\Models\WhatsappConversa;
 use App\Models\WhatsappNumero;
 use App\Services\WhatsAppEmpresaService;
@@ -194,7 +195,7 @@ class CaixaWhatsApp extends Page
     {
         $usuario = auth()->user();
         $conversa = $this->consulta()->find($id);
-        $destino = \App\Models\User::withoutGlobalScopes()->where('tenant_id', $usuario->tenant_id)->where('is_approved', true)->find($paraUserId);
+        $destino = User::withoutGlobalScopes()->where('tenant_id', $usuario->tenant_id)->where('is_approved', true)->find($paraUserId);
 
         if (! $conversa || ! $destino || ! ($usuario->isAdmin() || $conversa->responsavel_user_id === $usuario->id)) {
             Notification::make()->title('Não foi possível transferir')->warning()->send();
@@ -233,7 +234,7 @@ class CaixaWhatsApp extends Page
     /** @return array<string, string> pessoas para quem dá para transferir */
     public function colegas(): array
     {
-        return \App\Models\User::withoutGlobalScopes()->where('tenant_id', auth()->user()->tenant_id)->where('is_approved', true)->where('id', '!=', auth()->id())->orderBy('name')->pluck('name', 'id')->all();
+        return User::withoutGlobalScopes()->where('tenant_id', auth()->user()->tenant_id)->where('is_approved', true)->where('id', '!=', auth()->id())->orderBy('name')->pluck('name', 'id')->all();
     }
 
     public function novaConversa(): void

@@ -2,6 +2,9 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\Asset;
+use App\Models\ChecklistGroup;
+use App\Models\Client;
 use App\Models\PreventiveMaintenanceExecution;
 use App\Models\User;
 use App\Support\Tenancy;
@@ -16,7 +19,9 @@ class PreventiveMaintenanceKanban extends Page
     protected static ?string $title = 'Kanban de Execuções Preventivas';
 
     protected static ?string $navigationIcon = 'heroicon-o-view-columns';
+
     protected static ?string $navigationGroup = 'PMP';
+
     protected static ?string $navigationLabel = 'Kanban Preventivas';
 
     protected static ?int $navigationSort = 4;
@@ -66,7 +71,7 @@ class PreventiveMaintenanceKanban extends Page
     public function getTotalExecutionsCount(): int
     {
         $tenant = Tenancy::current();
-        if (!$tenant) {
+        if (! $tenant) {
             return 0;
         }
 
@@ -75,7 +80,7 @@ class PreventiveMaintenanceKanban extends Page
 
     public function getRecords(): Collection
     {
-        if (!Tenancy::current()) {
+        if (! Tenancy::current()) {
             return collect();
         }
 
@@ -91,30 +96,30 @@ class PreventiveMaintenanceKanban extends Page
         $query = PreventiveMaintenanceExecution::where('tenant_id', $tenant->id)
             ->with(['asset', 'maintenancePlan', 'maintenanceOrder', 'technician', 'asset.client']);
 
-        if (!empty($this->search)) {
-            $query->whereHas('asset', fn ($q) => $q->where('patrimonio', 'like', '%' . $this->search . '%')
-                ->orWhere('name', 'like', '%' . $this->search . '%'));
+        if (! empty($this->search)) {
+            $query->whereHas('asset', fn ($q) => $q->where('patrimonio', 'like', '%'.$this->search.'%')
+                ->orWhere('name', 'like', '%'.$this->search.'%'));
         }
 
-        if (!empty($this->technicianId)) {
+        if (! empty($this->technicianId)) {
             $query->where('technician_id', $this->technicianId);
         }
 
-        if (!empty($this->assetId)) {
+        if (! empty($this->assetId)) {
             $query->where('asset_id', $this->assetId);
         }
 
-        if (!empty($this->groupId)) {
+        if (! empty($this->groupId)) {
             $query->whereHas('asset', fn ($q) => $q->where('checklist_group_id', $this->groupId));
         }
 
-        if (!empty($this->clientId)) {
+        if (! empty($this->clientId)) {
             $query->whereHas('asset', fn ($q) => $q->where('client_id', $this->clientId));
         }
 
-        if (!empty($this->startDate) && !empty($this->endDate)) {
-            $query->whereBetween('created_at', [$this->startDate, $this->endDate . ' 23:59:59']);
-        } elseif (!empty($this->weekFilter)) {
+        if (! empty($this->startDate) && ! empty($this->endDate)) {
+            $query->whereBetween('created_at', [$this->startDate, $this->endDate.' 23:59:59']);
+        } elseif (! empty($this->weekFilter)) {
             [$startDate, $endDate] = $this->parseWeekFilter($this->weekFilter);
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
@@ -176,7 +181,7 @@ class PreventiveMaintenanceKanban extends Page
     public function getTechniciansList(): Collection
     {
         $tenant = Tenancy::current();
-        if (!$tenant) {
+        if (! $tenant) {
             return collect();
         }
 
@@ -189,11 +194,11 @@ class PreventiveMaintenanceKanban extends Page
     public function getAssetsList(): Collection
     {
         $tenant = Tenancy::current();
-        if (!$tenant) {
+        if (! $tenant) {
             return collect();
         }
 
-        return \App\Models\Asset::whereHas('preventiveMaintenanceExecutions', fn ($q) => $q->where('tenant_id', $tenant->id))
+        return Asset::whereHas('preventiveMaintenanceExecutions', fn ($q) => $q->where('tenant_id', $tenant->id))
             ->select('id', 'patrimonio', 'name')
             ->orderBy('patrimonio')
             ->get();
@@ -202,12 +207,11 @@ class PreventiveMaintenanceKanban extends Page
     public function getGroupsList(): Collection
     {
         $tenant = Tenancy::current();
-        if (!$tenant) {
+        if (! $tenant) {
             return collect();
         }
 
-        return \App\Models\ChecklistGroup::whereHas('assets', fn ($q) =>
-            $q->whereHas('preventiveMaintenanceExecutions', fn ($q2) => $q2->where('tenant_id', $tenant->id))
+        return ChecklistGroup::whereHas('assets', fn ($q) => $q->whereHas('preventiveMaintenanceExecutions', fn ($q2) => $q2->where('tenant_id', $tenant->id))
         )
             ->where('tenant_id', $tenant->id)
             ->select('id', 'name')
@@ -218,12 +222,11 @@ class PreventiveMaintenanceKanban extends Page
     public function getClientsList(): Collection
     {
         $tenant = Tenancy::current();
-        if (!$tenant) {
+        if (! $tenant) {
             return collect();
         }
 
-        return \App\Models\Client::whereHas('assets', fn ($q) =>
-            $q->whereHas('preventiveMaintenanceExecutions', fn ($q2) => $q2->where('tenant_id', $tenant->id))
+        return Client::whereHas('assets', fn ($q) => $q->whereHas('preventiveMaintenanceExecutions', fn ($q2) => $q2->where('tenant_id', $tenant->id))
         )
             ->where('tenant_id', $tenant->id)
             ->select('id', 'name')
@@ -234,13 +237,27 @@ class PreventiveMaintenanceKanban extends Page
     public function getActiveFilterCount(): int
     {
         $count = 0;
-        if (!empty($this->search)) $count++;
-        if (!empty($this->technicianId)) $count++;
-        if (!empty($this->assetId)) $count++;
-        if (!empty($this->groupId)) $count++;
-        if (!empty($this->clientId)) $count++;
-        if (!empty($this->startDate) || !empty($this->endDate)) $count++;
-        if (!empty($this->weekFilter)) $count++;
+        if (! empty($this->search)) {
+            $count++;
+        }
+        if (! empty($this->technicianId)) {
+            $count++;
+        }
+        if (! empty($this->assetId)) {
+            $count++;
+        }
+        if (! empty($this->groupId)) {
+            $count++;
+        }
+        if (! empty($this->clientId)) {
+            $count++;
+        }
+        if (! empty($this->startDate) || ! empty($this->endDate)) {
+            $count++;
+        }
+        if (! empty($this->weekFilter)) {
+            $count++;
+        }
 
         return $count;
     }
@@ -269,7 +286,7 @@ class PreventiveMaintenanceKanban extends Page
 
     public function toggleFiltersPanel(): void
     {
-        $this->showFilters = !$this->showFilters;
+        $this->showFilters = ! $this->showFilters;
     }
 
     public function getPrintData(): array
@@ -288,27 +305,27 @@ class PreventiveMaintenanceKanban extends Page
     {
         $labels = [];
 
-        if (!empty($this->technicianId)) {
+        if (! empty($this->technicianId)) {
             $tech = User::find($this->technicianId);
             $labels[] = "Técnico: {$tech?->name}";
         }
 
-        if (!empty($this->assetId)) {
-            $asset = \App\Models\Asset::find($this->assetId);
+        if (! empty($this->assetId)) {
+            $asset = Asset::find($this->assetId);
             $labels[] = "Equipamento: {$asset?->patrimonio}";
         }
 
-        if (!empty($this->groupId)) {
-            $group = \App\Models\ChecklistGroup::find($this->groupId);
+        if (! empty($this->groupId)) {
+            $group = ChecklistGroup::find($this->groupId);
             $labels[] = "Grupo: {$group?->name}";
         }
 
-        if (!empty($this->clientId)) {
-            $client = \App\Models\Client::find($this->clientId);
+        if (! empty($this->clientId)) {
+            $client = Client::find($this->clientId);
             $labels[] = "Cliente: {$client?->name}";
         }
 
-        if (!empty($this->startDate) && !empty($this->endDate)) {
+        if (! empty($this->startDate) && ! empty($this->endDate)) {
             $labels[] = "Período: {$this->startDate} a {$this->endDate}";
         }
 

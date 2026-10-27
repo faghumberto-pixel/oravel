@@ -2,6 +2,7 @@
 
 namespace App\Dashboards;
 
+use App\Dashboards\Blocks\Comercial;
 use App\Dashboards\Blocks\Manutencao;
 use App\Dashboards\Blocks\MateriaisPecas;
 
@@ -38,6 +39,17 @@ class BlockRegistry
             MateriaisPecas\CoberturaEmDias::class,
             MateriaisPecas\AplicadasEOrcadas::class,
             MateriaisPecas\RequisicoesEmAberto::class,
+
+            Comercial\ContratosAtivos::class,
+            Comercial\ContratosVencendo::class,
+            Comercial\ConversaoDeOrcamentos::class,
+            Comercial\OrcamentosSemRetorno::class,
+            Comercial\FunilDeVendas::class,
+            Comercial\VendasPorVendedor::class,
+            Comercial\ContratosARenovar::class,
+            Comercial\ClientesParaLigar::class,
+            Comercial\PedidosDeLocacao::class,
+            Comercial\ContratosPorMes::class,
         ];
 
         $porChave = [];

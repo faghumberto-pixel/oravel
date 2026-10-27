@@ -48,6 +48,23 @@ class ModuleDashboards
                     'materiais.requisicoes_abertas',
                 ],
             ],
+            'comercial' => [
+                'label' => 'Visão geral',
+                'module' => 'Comercial',
+                'lead' => 'Contratos, orçamentos, funil de vendas e clientes para contatar, em uma tela.',
+                'blocks' => [
+                    'comercial.contratos_ativos',
+                    'comercial.contratos_vencendo',
+                    'comercial.conversao_orcamentos',
+                    'comercial.orcamentos_sem_retorno',
+                    'comercial.funil',
+                    'comercial.vendas_por_vendedor',
+                    'comercial.contratos_a_renovar',
+                    'comercial.clientes_para_ligar',
+                    'comercial.pedidos_locacao',
+                    'comercial.contratos_por_mes',
+                ],
+            ],
         ];
     }
 
