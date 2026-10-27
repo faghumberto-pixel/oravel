@@ -2,6 +2,7 @@
 
 namespace App\Dashboards;
 
+use App\Dashboards\Blocks\Ativos;
 use App\Dashboards\Blocks\Comercial;
 use App\Dashboards\Blocks\Financeiro;
 use App\Dashboards\Blocks\Frota;
@@ -80,6 +81,15 @@ class BlockRegistry
             Logistica\FretePorTipo::class,
             Logistica\ProgramacaoDaLogistica::class,
             Logistica\VeiculosForaDoPatio::class,
+
+            Ativos\TotalDeAtivos::class,
+            Ativos\TaxaDeLocacao::class,
+            Ativos\AtivosDisponiveis::class,
+            Ativos\AtivosEmManutencao::class,
+            Ativos\AtivosPorSituacao::class,
+            Ativos\AtivosPorCategoria::class,
+            Ativos\AtivosPorCliente::class,
+            Ativos\VencimentosDeDocumentos::class,
         ];
 
         $porChave = [];

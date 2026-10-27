@@ -110,6 +110,21 @@ class ModuleDashboards
                     'logistica.veiculos_fora',
                 ],
             ],
+            'ativos' => [
+                'label' => 'Visão geral',
+                'module' => 'Ativos',
+                'lead' => 'Situação dos equipamentos e veículos, quem está locado e o que vence, em uma tela.',
+                'blocks' => [
+                    'ativos.total',
+                    'ativos.taxa_locacao',
+                    'ativos.disponiveis',
+                    'ativos.em_manutencao',
+                    'ativos.por_situacao',
+                    'ativos.por_categoria',
+                    'ativos.por_cliente',
+                    'ativos.vencimentos',
+                ],
+            ],
         ];
     }
 
