@@ -5,6 +5,7 @@ namespace App\Dashboards;
 use App\Dashboards\Blocks\Comercial;
 use App\Dashboards\Blocks\Financeiro;
 use App\Dashboards\Blocks\Frota;
+use App\Dashboards\Blocks\Logistica;
 use App\Dashboards\Blocks\Manutencao;
 use App\Dashboards\Blocks\MateriaisPecas;
 
@@ -70,6 +71,15 @@ class BlockRegistry
             Frota\TrocasDeOleoAVencer::class,
             Frota\CombustivelPorVeiculo::class,
             Frota\CombustivelPorMes::class,
+
+            Logistica\MovimentacoesDeHoje::class,
+            Logistica\MovimentacoesEmCurso::class,
+            Logistica\FreteNoMes::class,
+            Logistica\RetiradasSolicitadas::class,
+            Logistica\MobilizacaoXDesmobilizacao::class,
+            Logistica\FretePorTipo::class,
+            Logistica\ProgramacaoDaLogistica::class,
+            Logistica\VeiculosForaDoPatio::class,
         ];
 
         $porChave = [];

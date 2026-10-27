@@ -95,6 +95,21 @@ class ModuleDashboards
                     'frota.combustivel_por_mes',
                 ],
             ],
+            'logistica' => [
+                'label' => 'Visão geral',
+                'module' => 'Logística',
+                'lead' => 'Movimentações de equipamentos, fretes, retiradas e veículos na rua, em uma tela.',
+                'blocks' => [
+                    'logistica.movimentacoes_hoje',
+                    'logistica.em_curso',
+                    'logistica.frete_mes',
+                    'logistica.retiradas_solicitadas',
+                    'logistica.mobilizacao_x_desmobilizacao',
+                    'logistica.frete_por_tipo',
+                    'logistica.programacao',
+                    'logistica.veiculos_fora',
+                ],
+            ],
         ];
     }
 
