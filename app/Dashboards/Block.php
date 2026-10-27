@@ -47,6 +47,34 @@ abstract class Block
 
     abstract public function data(array $config): array;
 
+    /**
+     * Junta a configuração padrão com os ajustes de um dashboard personalizado. Só vale chave que o bloco declara em
+     * defaultConfig(), e o valor é convertido para o tipo do padrão (número continua número).
+     *
+     * @param  array<string, mixed>|null  $ajustes
+     */
+    public static function mergeConfig(?array $ajustes): array
+    {
+        $padrao = static::defaultConfig();
+
+        foreach ($padrao as $chave => $valorPadrao) {
+            if (! is_array($ajustes) || ! array_key_exists($chave, $ajustes) || $ajustes[$chave] === '' || $ajustes[$chave] === null) {
+                continue;
+            }
+
+            $valor = $ajustes[$chave];
+            if (is_int($valorPadrao) && is_numeric($valor)) {
+                $padrao[$chave] = (int) $valor;
+            } elseif (is_float($valorPadrao) && is_numeric($valor)) {
+                $padrao[$chave] = (float) $valor;
+            } elseif (is_string($valorPadrao)) {
+                $padrao[$chave] = (string) $valor;
+            }
+        }
+
+        return $padrao;
+    }
+
     public static function visibleTo(?User $user): bool
     {
         if (! $user) {

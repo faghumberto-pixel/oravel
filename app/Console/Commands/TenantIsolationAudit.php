@@ -2,6 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Models\DashboardTemplate;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -19,8 +22,9 @@ class TenantIsolationAudit extends Command
      * e a justificativa fica registrada aqui de proposito.
      */
     private const EXEMPT = [
-        \App\Models\User::class => 'Login e painel central precisam enxergar usuarios de todos os tenants; isolamento feito no UserResource via Auth::user()->tenant_id.',
-        \App\Models\Role::class => 'Spatie Permission roda com teams mode DESLIGADO e resolve roles/permissoes globalmente; um global scope quebraria a resolucao de permissoes. Isolamento feito no RoleResource.',
+        User::class => 'Login e painel central precisam enxergar usuarios de todos os tenants; isolamento feito no UserResource via Auth::user()->tenant_id.',
+        DashboardTemplate::class => 'tenant_id nulo = modelo da plataforma (vale para varias empresas), entao o escopo comum esconderia todos. Isolamento por App\\Models\\Scopes\\DashboardTemplateScope (empresa ve os da plataforma e os proprios) e por DashboardResolver, que filtra explicitamente por tenant.',
+        Role::class => 'Spatie Permission roda com teams mode DESLIGADO e resolve roles/permissoes globalmente; um global scope quebraria a resolucao de permissoes. Isolamento feito no RoleResource.',
     ];
 
     public function handle(): int
@@ -38,8 +42,8 @@ class TenantIsolationAudit extends Command
         $violations = [];
         $warnings = [];
 
-        foreach (glob(app_path('Models') . '/*.php') as $file) {
-            $class = 'App\\Models\\' . basename($file, '.php');
+        foreach (glob(app_path('Models').'/*.php') as $file) {
+            $class = 'App\\Models\\'.basename($file, '.php');
             if (! class_exists($class)) {
                 continue;
             }
@@ -52,8 +56,9 @@ class TenantIsolationAudit extends Command
             try {
                 $model = new $class;
             } catch (\Throwable $e) {
-                $rows[] = [class_basename($class), '?', '?', '?', 'ERRO: ' . $e->getMessage()];
+                $rows[] = [class_basename($class), '?', '?', '?', 'ERRO: '.$e->getMessage()];
                 $violations[] = "{$class}: nao instanciavel ({$e->getMessage()})";
+
                 continue;
             }
 
@@ -64,6 +69,7 @@ class TenantIsolationAudit extends Command
             if (! $existingTables->has($table)) {
                 $rows[] = [class_basename($class), $table, 'n/a', 'n/a', 'TABELA INEXISTENTE (morto?)'];
                 $warnings[] = "{$class}: aponta para a tabela '{$table}', que nao existe no banco (model morto/incompleto).";
+
                 continue;
             }
 
@@ -107,22 +113,23 @@ class TenantIsolationAudit extends Command
 
         if (! empty($warnings)) {
             $this->newLine();
-            $this->warn(count($warnings) . ' aviso(s) (NAO falham o build):');
+            $this->warn(count($warnings).' aviso(s) (NAO falham o build):');
             foreach ($warnings as $w) {
-                $this->line('  ~ ' . $w);
+                $this->line('  ~ '.$w);
             }
         }
 
         if (empty($violations)) {
             $this->newLine();
-            $this->info('Isolamento multi-tenant OK: ' . count($rows) . ' models auditados, 0 violacoes.');
+            $this->info('Isolamento multi-tenant OK: '.count($rows).' models auditados, 0 violacoes.');
+
             return self::SUCCESS;
         }
 
         $this->newLine();
-        $this->error(count($violations) . ' violacao(oes) encontrada(s):');
+        $this->error(count($violations).' violacao(oes) encontrada(s):');
         foreach ($violations as $v) {
-            $this->line('  - ' . $v);
+            $this->line('  - '.$v);
         }
 
         if ($this->option('strict')) {
@@ -131,6 +138,7 @@ class TenantIsolationAudit extends Command
 
         $this->newLine();
         $this->comment('Rode com --strict para falhar o build (exit 1) em CI.');
+
         return self::SUCCESS;
     }
 }

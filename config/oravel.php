@@ -199,4 +199,14 @@ return [
 
     'dashboards_modulo' => env('DASHBOARDS_MODULO', false),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Dashboards personalizados por empresa
+    |--------------------------------------------------------------------------
+    | Liga a página "Dashboards" da empresa e o cadastro de modelos na Central
+    | (App\Dashboards\Personalizacao). Independe de DASHBOARDS_MODULO.
+    */
+
+    'dashboards_personalizados' => env('DASHBOARDS_PERSONALIZADOS', false),
+
 ];

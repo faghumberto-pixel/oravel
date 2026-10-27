@@ -2,6 +2,7 @@
 
 namespace App\Dashboards;
 
+use App\Models\Tenant;
 use App\Models\User;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Cache;
@@ -31,12 +32,7 @@ class DashboardRenderer
                 continue;
             }
 
-            $config = $classe::defaultConfig();
-            $payload = Cache::remember(
-                'dash:'.$tenant->id.':'.$user->id.':'.$chave.':'.md5(json_encode($config)),
-                static::CACHE_SECONDS,
-                fn () => (new $classe)->data($config),
-            );
+            $payload = static::payload($classe, $classe::defaultConfig(), $tenant, $user);
 
             $blocos[] = [
                 'key' => $chave,
@@ -48,6 +44,21 @@ class DashboardRenderer
         }
 
         return $blocos;
+    }
+
+    /**
+     * Conta de um bloco, em cache curto por tenant e por usuário (o resultado pode diferir entre usuários do mesmo
+     * tenant) e por configuração.
+     *
+     * @param  class-string<Block>  $classe
+     */
+    public static function payload(string $classe, array $config, Tenant $tenant, User $user): array
+    {
+        return Cache::remember(
+            'dash:'.$tenant->id.':'.$user->id.':'.$classe::key().':'.md5(json_encode($config)),
+            static::CACHE_SECONDS,
+            fn () => (new $classe)->data($config),
+        );
     }
 
     /** O dashboard aparece no menu só se a flag estiver ligada e ao menos um bloco for visível. */
