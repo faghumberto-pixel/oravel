@@ -2384,7 +2384,7 @@
    {
     "q": "Na tela da preventiva no celular, quais planos aparecem?",
     "options": [
-     "Todos do tenant",
+     "Todos os planos da empresa",
      "Os planos ativos do ativo e do seu Grupo de Checklist; se o nome repete, vale o do ativo",
      "Só os vencidos",
      "Só os críticos"
