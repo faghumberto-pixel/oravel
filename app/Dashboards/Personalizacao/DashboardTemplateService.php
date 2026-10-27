@@ -34,13 +34,13 @@ class DashboardTemplateService
     }
 
     /** Copia um modelo da plataforma para uma empresa, para ajustar só para ela, e já o atribui a ela. */
-    public static function exclusivoPara(DashboardTemplate $modelo, Tenant $empresa, ?string $nome = null): DashboardTemplate
+    public static function exclusivoPara(DashboardTemplate $modelo, Tenant $empresa, ?string $nome = null, bool $inicio = false): DashboardTemplate
     {
         if (! $modelo->isPlatform()) {
             throw new InvalidArgumentException('Só um modelo da plataforma pode virar exclusivo de uma empresa.');
         }
 
-        return DB::transaction(function () use ($modelo, $empresa, $nome) {
+        return DB::transaction(function () use ($modelo, $empresa, $nome, $inicio) {
             $copia = DashboardTemplate::create([
                 'tenant_id' => $empresa->id,
                 'source_template_id' => $modelo->id,
@@ -51,7 +51,7 @@ class DashboardTemplateService
             ]);
 
             static::copiarBlocos($modelo, $copia);
-            static::atribuir($copia, [$empresa->id]);
+            static::atribuir($copia, [$empresa->id], $inicio);
 
             return $copia;
         });
@@ -59,11 +59,13 @@ class DashboardTemplateService
 
     /**
      * Atribui o modelo a empresas. Modelo exclusivo só pode ir para a própria empresa dele.
+     * Com `$inicio`, o dashboard passa a ser a tela Início dessas empresas (o Painel de Controle e a Gestão à Vista saem
+     * do lugar); sem isso, ele aparece na página "Dashboards". Reatribuir com `$inicio` também ajusta uma atribuição que já existia.
      *
      * @param  iterable<string>  $tenantIds
      * @return int quantas atribuições novas foram criadas (repetir a mesma não duplica)
      */
-    public static function atribuir(DashboardTemplate $modelo, iterable $tenantIds): int
+    public static function atribuir(DashboardTemplate $modelo, iterable $tenantIds, bool $inicio = false): int
     {
         $ids = collect($tenantIds)->filter()->unique()->values();
 
@@ -75,8 +77,12 @@ class DashboardTemplateService
         $criadas = 0;
 
         foreach ($ids->diff($existentes) as $id) {
-            DashboardAssignment::withoutGlobalScopes()->create(['tenant_id' => $id, 'dashboard_template_id' => $modelo->id]);
+            DashboardAssignment::withoutGlobalScopes()->create(['tenant_id' => $id, 'dashboard_template_id' => $modelo->id, 'is_home' => $inicio]);
             $criadas++;
+        }
+
+        if ($inicio) {
+            DashboardAssignment::withoutGlobalScopes()->where('dashboard_template_id', $modelo->id)->whereIn('tenant_id', $ids)->update(['is_home' => true]);
         }
 
         return $criadas;

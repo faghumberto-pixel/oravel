@@ -330,6 +330,11 @@ Route::middleware(['auth'])->group(function () {
             return redirect()->to(AppProfile::homeUrl($user, AppProfile::for($user)));
         }
 
+        // Empresa com Início personalizado (escolhido na Central) abre nele, antes da tela do pacote.
+        if ($user && \App\Dashboards\Personalizacao\DashboardResolver::visiveisPara($user, true)->isNotEmpty()) {
+            return redirect()->to(AppProfile::homeUrl($user, AppProfile::ADMIN));
+        }
+
         // Contrato de pacote (CRM, Estoque, Logística) entra direto na tela do pacote.
         if ($user && ($urlPacote = Pacotes::urlInicial(Tenancy::current() ?? $user->tenant))) {
             return redirect()->to($urlPacote);

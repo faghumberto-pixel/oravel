@@ -76,6 +76,12 @@ class DashboardTemplateResource extends Resource
                     ->disabled(fn (string $operation) => $operation === 'edit')
                     ->dehydrated(fn (string $operation) => $operation === 'create'),
                 Forms\Components\Toggle::make('is_active')->label('Ativo')->default(true)->inline(false),
+                Forms\Components\Toggle::make('usar_como_inicio')
+                    ->label('Usar como tela Início da empresa (no lugar do Painel de Controle e da Gestão à Vista)')
+                    ->helperText('Só para dashboard exclusivo, na criação. Desmarcado, a empresa segue com o Início padrão. Depois dá para trocar na lista de empresas atribuídas.')
+                    ->visible(fn (string $operation, Get $get) => $operation === 'create' && filled($get('tenant_id')))
+                    ->dehydrated(fn (string $operation) => $operation === 'create')
+                    ->inline(false),
                 Forms\Components\Textarea::make('description')->label('Descrição (aparece para a empresa)')->rows(2)->columnSpanFull(),
             ]),
 
@@ -156,10 +162,11 @@ class DashboardTemplateResource extends Resource
                         ->visible(fn (DashboardTemplate $record) => $record->isPlatform())
                         ->form([
                             Forms\Components\Select::make('tenant_id')->label('Empresa')->options(fn () => Tenant::query()->orderBy('name')->pluck('name', 'id'))->searchable()->required(),
+                            Forms\Components\Toggle::make('inicio')->label('Usar como tela Início da empresa (no lugar do Painel de Controle e da Gestão à Vista)'),
                         ])
                         ->modalDescription('Copia este modelo para a empresa, já atribuído a ela, para você ajustar só para ela sem mexer no modelo.')
                         ->action(function (DashboardTemplate $record, array $data) {
-                            $copia = DashboardTemplateService::exclusivoPara($record, Tenant::query()->findOrFail($data['tenant_id']));
+                            $copia = DashboardTemplateService::exclusivoPara($record, Tenant::query()->findOrFail($data['tenant_id']), null, (bool) ($data['inicio'] ?? false));
                             Notification::make()->title('Dashboard exclusivo criado')->body('“'.$copia->name.'” já está atribuído à empresa.')->success()->send();
                         }),
                     Tables\Actions\Action::make('atribuir')
@@ -167,10 +174,11 @@ class DashboardTemplateResource extends Resource
                         ->form(fn (DashboardTemplate $record) => [
                             Forms\Components\Select::make('tenant_ids')->label('Empresas')->multiple()->searchable()->required()
                                 ->options(fn () => Tenant::query()->when($record->tenant_id, fn ($q) => $q->whereKey($record->tenant_id))->orderBy('name')->pluck('name', 'id')),
+                            Forms\Components\Toggle::make('inicio')->label('Usar como tela Início da empresa (no lugar do Painel de Controle e da Gestão à Vista)'),
                         ])
                         ->action(function (DashboardTemplate $record, array $data) {
                             try {
-                                $novas = DashboardTemplateService::atribuir($record, $data['tenant_ids']);
+                                $novas = DashboardTemplateService::atribuir($record, $data['tenant_ids'], (bool) ($data['inicio'] ?? false));
                             } catch (InvalidArgumentException $e) {
                                 Notification::make()->title('Não foi possível atribuir')->body($e->getMessage())->danger()->send();
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Dashboards\Personalizacao\DashboardResolver;
 use App\Models\Asset;
 use App\Models\Branch;
 use App\Support\SegmentDashboardWidgets;
@@ -32,6 +33,11 @@ class PainelGestao extends Page
     {
         $user = auth()->user();
 
+        // Empresa com Início personalizado (escolhido na Central): quem vê ao menos um bloco entra, sem depender do contrato do Painel de Controle.
+        if ($user && DashboardResolver::visiveisPara($user, true)->isNotEmpty()) {
+            return true;
+        }
+
         // Tecnico puro (nao admin, nao supervisiona nenhum departamento) nao
         // precisa do dashboard de gestao -- mesmo criterio ja usado no
         // redirect de /dashboard (routes/web.php) pra mandar esse usuario
@@ -54,6 +60,41 @@ class PainelGestao extends Page
         // (e a aba Gestão à Vista, que mora nele) some para todos. Antes o administrador passava direto, sem olhar o contrato.
         // Super admin continua vendo (Tenant::hasFeature libera).
         return $tenant->hasFeature('modulo_dashboard');
+    }
+
+    /** Id do dashboard do Início personalizado que está aberto (aba). Vem do navegador: só vale se for um dos permitidos. */
+    public ?string $painelInicio = null;
+
+    public function selecionarPainel(string $id): void
+    {
+        $this->painelInicio = $id;
+    }
+
+    private function iniciosPersonalizados(): Collection
+    {
+        return DashboardResolver::visiveisPara(auth()->user(), true);
+    }
+
+    /** O Início padrão (Gestão à Vista e Painel de Controle) só sai de cena quando a Central marcou um dashboard como Início da empresa. */
+    public function getView(): string
+    {
+        return $this->iniciosPersonalizados()->isNotEmpty() ? 'filament.pages.inicio-personalizado' : parent::getView();
+    }
+
+    protected function getViewData(): array
+    {
+        $paineis = $this->iniciosPersonalizados();
+        if ($paineis->isEmpty()) {
+            return parent::getViewData();
+        }
+
+        $atual = $paineis->firstWhere('id', $this->painelInicio) ?? $paineis->first();
+
+        return [
+            'paineis' => $paineis,
+            'atual' => $atual,
+            'blocks' => DashboardResolver::blocks($atual, auth()->user()),
+        ];
     }
 
     public function getMaxContentWidth(): MaxWidth
