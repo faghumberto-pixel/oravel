@@ -1,0 +1,173 @@
+<title>Dashboards Rautec Sultec</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700&display=swap">
+<style>
+/* Layout: abas por dashboard; cada widget tem uma chave "Incluir" para o Humberto montar a tela do cliente; barra fixa embaixo resume a escolha. */
+:root{--bg:#f4f2ea;--card:#ffffff;--fg:#1c1b18;--muted:#5c5a52;--accent:#d9520a;--accent-soft:#fbe6d9;--border:rgba(28,27,24,.16);--ok:#0b7a56;--warn:#8a6a00;--crit:#c2262e;--track:#e8e5da;--font:'Inter',system-ui,sans-serif;--display:'Syne','Inter',system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0f0d;--card:#1a1a18;--fg:#f4f2ea;--muted:#c9c5b6;--accent:#ff8a3d;--accent-soft:#3a2315;--border:rgba(244,242,234,.16);--ok:#10b981;--warn:#e3b341;--crit:#ff6b72;--track:#2a2a27;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b0f0d;--card:#1a1a18;--fg:#f4f2ea;--muted:#c9c5b6;--accent:#ff8a3d;--accent-soft:#3a2315;--border:rgba(244,242,234,.16);--ok:#10b981;--warn:#e3b341;--crit:#ff6b72;--track:#2a2a27;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:14px;line-height:1.45;padding-block:0 96px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:11;background:var(--bg)}
+.wrap{max-width:1180px;margin:0 auto}
+h1{font-family:var(--display);font-size:clamp(24px,4vw,34px);line-height:1.1;margin:26px 0 8px;text-wrap:balance}
+.lead{color:var(--muted);max-width:68ch;margin:0 0 4px}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);border-bottom:1px solid var(--border);margin-top:16px;padding-block:10px;display:flex;gap:8px;overflow-x:auto}
+nav button{flex:none;font:600 13px var(--font);color:var(--fg);background:transparent;border:1px solid var(--border);border-radius:8px;padding:7px 12px;cursor:pointer}
+nav button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+nav button:focus-visible,.sw input:focus-visible+span,.cp:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.app{margin-top:18px;background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.bar{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--muted);flex-wrap:wrap}
+.dots{display:flex;gap:5px}.dots i{width:9px;height:9px;border-radius:50%;background:var(--track)}
+.url{flex:1;min-width:140px;background:var(--bg);border-radius:6px;padding:3px 10px}
+.logo{font-family:var(--display);color:var(--accent);font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px;padding:16px}
+.w{grid-column:span 4;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0;transition:opacity .15s}
+.w.s2{grid-column:span 2}.w.s6{grid-column:span 6}.w.s8{grid-column:span 8}.w.s12{grid-column:span 12}
+.w.off{opacity:.38}
+.wh{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.wh h3{margin:0;font-size:13px;font-weight:700;letter-spacing:.02em}
+.wh small{display:block;color:var(--muted);font-size:12px;font-weight:400}
+.sw{flex:none;display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+.sw input{position:absolute;opacity:0}
+.sw span{width:30px;height:17px;border-radius:9px;background:var(--track);position:relative}
+.sw span::after{content:"";position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:var(--card);border:1px solid var(--border);transition:left .15s}
+.sw input:checked+span{background:var(--accent)}.sw input:checked+span::after{left:15px}
+.kpi{font-family:var(--display);font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.kpi em{font-style:normal;font-size:14px;color:var(--muted);font-family:var(--font);font-weight:500}
+.dl{font-size:12px;font-weight:600}.dl.up{color:var(--ok)}.dl.dn{color:var(--crit)}.dl.n{color:var(--muted)}
+.hb{display:grid;gap:7px}
+.hb div.r{display:grid;grid-template-columns:minmax(80px,38%) 1fr auto;gap:8px;align-items:center;font-size:12.5px}
+.tr{height:9px;background:var(--track);border-radius:5px;overflow:hidden}.tr i{display:block;height:100%;background:var(--accent);border-radius:5px}
+.tr i.ok{background:var(--ok)}.tr i.warn{background:var(--warn)}.tr i.crit{background:var(--crit)}
+.num{font-variant-numeric:tabular-nums;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:4px 8px 6px 0;border-bottom:1px solid var(--border)}
+td{padding:6px 8px 6px 0;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+td.r,th.r{text-align:right;padding-right:0;font-variant-numeric:tabular-nums}
+.tw{overflow-x:auto}
+.pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border:1px solid currentColor;border-radius:999px;padding:1px 7px;white-space:nowrap}
+.pill.ok{color:var(--ok)}.pill.warn{color:var(--warn)}.pill.crit{color:var(--crit)}.pill.n{color:var(--muted)}
+svg{display:block;width:100%;height:auto}
+svg text{fill:var(--muted);font:11px var(--font)}
+.legend{display:flex;gap:12px;font-size:12px;color:var(--muted);flex-wrap:wrap}.legend b{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px}
+.alert{display:grid;gap:6px}
+.alert div{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 9px;border-radius:6px;background:var(--card);border:1px solid var(--border)}
+.alert .pill{margin-top:1px}
+.fun{display:grid;gap:5px}
+.fun div{display:flex;justify-content:space-between;padding:7px 10px;border-radius:5px;font-size:12.5px;color:#fff;background:var(--accent)}
+.note{padding:0 16px 14px;color:var(--muted);font-size:12.5px}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:12;background:var(--card);border-top:1px solid var(--border);padding-block:10px calc(10px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.dock .in{max-width:1180px;margin:0 auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.dock p{margin:0;flex:1;min-width:200px;font-size:13px}
+.cp{font:600 13px var(--font);background:var(--accent);color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer}
+.cp.alt{background:transparent;color:var(--fg);border:1px solid var(--border)}
+#lista{width:100%;margin-top:8px;font:12px/1.4 var(--font);background:var(--bg);color:var(--fg);border:1px solid var(--border);border-radius:6px;padding:8px;min-height:90px}
+@media (max-width:820px){.w,.w.s2,.w.s6,.w.s8{grid-column:span 12}.w.s2{grid-column:span 6}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<div class="wrap">
+<h1>Dashboards Rautec Sultec</h1>
+<p class="lead">Quatro painéis no padrão das telas do Oravel, pensados para a Rautec Sultec: fabricação e revenda de máquinas, peças e assistência técnica com 4 técnicos externos. Use a chave "Incluir" para decidir o que entra. A lista final aparece na barra de baixo. Nomes de clientes e números são de exemplo.</p>
+<nav role="tablist" id="tabs"></nav>
+<div class="app">
+  <div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">app.oravel.com.br</div><span class="logo">oravel</span></div>
+  <div class="grid" id="grid"></div>
+  <p class="note" id="nota"></p>
+</div>
+</div>
+<div class="dock"><div class="in"><p id="resumo"></p><button class="cp alt" id="ver" type="button">Ver lista</button><button class="cp" id="copiar" type="button">Copiar lista</button></div><div class="in"><textarea id="lista" hidden readonly aria-label="Lista de blocos escolhidos"></textarea></div></div>
+<script>
+var P=function(c,t,r){return '<span class="pill '+c+'">'+t+'</span>'};
+function kpi(v,u,d,c){return '<div class="kpi">'+v+(u?' <em>'+u+'</em>':'')+'</div><div class="dl '+(c||'n')+'">'+d+'</div>'}
+function hb(rows,max){max=max||Math.max.apply(null,rows.map(function(r){return r[1]}));return '<div class="hb">'+rows.map(function(r){return '<div class="r"><span>'+r[0]+'</span><div class="tr"><i class="'+(r[3]||'')+'" style="width:'+(r[1]/max*100)+'%"></i></div><span class="num">'+(r[2]||r[1])+'</span></div>'}).join('')+'</div>'}
+function tbl(h,rows){return '<div class="tw"><table><thead><tr>'+h.map(function(x,i){return '<th'+(x[0]=='>'?' class="r"':'')+'>'+x.replace('>','')+'</th>'}).join('')+'</tr></thead><tbody>'+rows.map(function(r){return '<tr>'+r.map(function(c,i){return '<td'+(h[i][0]=='>'?' class="r"':'')+'>'+c+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div>'}
+function cols(a,b,labels,fmt){var W=520,H=190,pl=36,pb=22,pt=8,mx=Math.ceil(Math.max.apply(null,a.concat(b))/50)*50,n=labels.length,gw=(W-pl)/n,bw=gw*.30,s='';
+ for(var g=0;g<=4;g++){var y=pt+(H-pt-pb)*(1-g/4);s+='<line x1="'+pl+'" x2="'+W+'" y1="'+y+'" y2="'+y+'" stroke="currentColor" opacity=".13"/><text x="'+(pl-6)+'" y="'+(y+4)+'" text-anchor="end">'+Math.round(mx*g/4)+'</text>'}
+ labels.forEach(function(l,i){var x=pl+gw*i+gw/2,ha=(H-pt-pb)*a[i]/mx,hb2=(H-pt-pb)*b[i]/mx;
+  s+='<rect x="'+(x-bw-1)+'" y="'+(H-pb-ha)+'" width="'+bw+'" height="'+ha+'" rx="2" fill="var(--accent)"/><rect x="'+(x+1)+'" y="'+(H-pb-hb2)+'" width="'+bw+'" height="'+hb2+'" rx="2" fill="var(--fg)" opacity=".55"/><text x="'+x+'" y="'+(H-6)+'" text-anchor="middle">'+l+'</text>'});
+ return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Gráfico de colunas">'+s+'</svg>'}
+function line(v,labels,limit){var W=520,H=170,pl=36,pb=22,pt=10,mx=Math.ceil(Math.max.apply(null,v.concat([limit||0]))*1.15),n=v.length,s='',pts=[];
+ for(var g=0;g<=4;g++){var y=pt+(H-pt-pb)*(1-g/4);s+='<line x1="'+pl+'" x2="'+W+'" y1="'+y+'" y2="'+y+'" stroke="currentColor" opacity=".13"/><text x="'+(pl-6)+'" y="'+(y+4)+'" text-anchor="end">'+Math.round(mx*g/4)+'</text>'}
+ v.forEach(function(x,i){var px=pl+(W-pl-14)*i/(n-1)+4,py=pt+(H-pt-pb)*(1-x/mx);pts.push([px,py]);s+='<text x="'+px+'" y="'+(H-6)+'" text-anchor="middle">'+labels[i]+'</text>'});
+ if(limit){var ly=pt+(H-pt-pb)*(1-limit/mx);s+='<line x1="'+pl+'" x2="'+W+'" y1="'+ly+'" y2="'+ly+'" stroke="var(--crit)" stroke-dasharray="4 3"/><text x="'+W+'" y="'+(ly-4)+'" text-anchor="end" style="fill:var(--crit)">meta '+limit+'</text>'}
+ var d=pts.map(function(p,i){return (i?'L':'M')+p[0]+' '+p[1]}).join(' ');
+ s+='<path d="'+d+' L'+pts[n-1][0]+' '+(H-pb)+' L'+pts[0][0]+' '+(H-pb)+'Z" fill="var(--accent)" opacity=".14"/><path d="'+d+'" fill="none" stroke="var(--accent)" stroke-width="2.4"/><circle cx="'+pts[n-1][0]+'" cy="'+pts[n-1][1]+'" r="4.5" fill="var(--accent)"/>';
+ return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Gráfico de linha">'+s+'</svg>'}
+var meses=['Mai','Jun','Jul','Ago','Set','Out'];
+var D=[
+{id:'geral',nome:'Visão geral',nota:'Para a direção: máquinas, assistência, peças e vendas do dia em uma tela.',w:[
+ ['Visitas técnicas hoje','4 técnicos em campo',2,function(){return kpi(6,'','2 corretivas, 3 preventivas, 1 startup','n')}],
+ ['Máquinas paradas no cliente','Aguardando atendimento ou peça',2,function(){return kpi(3,'','1 há mais de 5 dias','dn')}],
+ ['Faturamento do mês','Máquinas, peças e assistência',2,function(){return kpi('R$ 148 mil','','+9% sobre setembro','up')}],
+ ['Orçamentos em aberto','Peças, serviços e máquinas',2,function(){return kpi('R$ 213 mil','','17 orçamentos','n')}],
+ ['Peças abaixo do mínimo','Estoque',2,function(){return kpi(9,'itens','4 sem compra aberta','dn')}],
+ ['Preventivas a vencer','Próximos 30 dias',2,function(){return kpi(12,'máquinas','5 clientes','n')}],
+ ['Faturamento por origem','Mês, R$ mil',4,function(){return hb([['Máquinas novas',71,'R$ 71 mil'],['Venda de peças',46,'R$ 46 mil'],['Assistência técnica',31,'R$ 31 mil']])}],
+ ['Atendimentos por situação','Todos os técnicos',4,function(){return hb([['Aguardando agendamento',6,6],['Agendados',9,9],['Em atendimento',4,4],['Aguardando peça',5,5,'warn'],['Concluídos hoje',3,3,'ok']],9)}],
+ ['Alertas do dia','O que precisa de ação',4,function(){return '<div class="alert"><div>'+P('crit','Peça')+'<span>Válvula solenoide Festo zerada e 2 atendimentos esperando por ela.</span></div><div>'+P('warn','Preventiva')+'<span>3 máquinas do mesmo cliente vencem na semana que vem.</span></div><div>'+P('warn','Venda')+'<span>5 orçamentos sem retorno há mais de 5 dias.</span></div><div>'+P('n','Fabricação')+'<span>1 máquina com entrega prometida para sexta.</span></div></div>'}],
+ ['Máquinas paradas nos clientes','Mais antigas primeiro',6,function(){return tbl(['Máquina','Cliente','Motivo','>Dias'],[['DG-320','Arrozeira Pampa','Aguardando peça',P('crit','7')],['MK 30','Cooperativa Sul','Agendado para amanhã',P('warn','3')],['PG-25','Grãos do Campo','Aguardando aprovação',P('warn','2')]])}],
+ ['Faturamento por mês','Máquinas x peças e assistência, R$ mil',6,function(){return '<div class="legend"><span><b style="background:var(--accent)"></b>Máquinas</span><span><b style="background:var(--fg);opacity:.55"></b>Peças e assistência</span></div>'+cols([52,60,48,66,64,71],[58,63,61,69,70,77],meses)}]
+]},
+{id:'assist',nome:'Assistência técnica',nota:'Para quem coordena os 4 técnicos externos: agenda, prazo de resposta, deslocamento e defeitos por modelo.',w:[
+ ['Atendidos no prazo','Meta 90%',3,function(){return kpi('88%','','-2 pontos no mês','dn')+'<div class="tr"><i class="warn" style="width:88%"></i></div>'}],
+ ['Voltou à máquina','Retorno em até 30 dias',3,function(){return kpi('5%','','3 de 62 atendimentos','n')+'<div class="tr"><i class="warn" style="width:5%"></i></div>'}],
+ ['Quilômetros rodados','Mês, 4 técnicos',3,function(){return kpi('3.420','km','R$ 41 por atendimento em deslocamento','n')}],
+ ['Custo médio por atendimento','Mão de obra, deslocamento e peças',3,function(){return kpi('R$ 480','','-R$ 35 no mês','up')}],
+ ['Agenda de hoje','Visitas por técnico',8,function(){return tbl(['Técnico','Cliente','Máquina','Tipo','Situação'],[['Anderson','Arrozeira Pampa','DG-320','Corretiva',P('warn','A caminho')],['Luciano','Cooperativa Sul','MK 30','Preventiva',P('ok','Concluída')],['Fabiano','Grãos do Campo','PG-25','Startup',P('n','14h')],['Diego','Frigorífico Litoral','KPS','Preventiva',P('n','15h')]])}],
+ ['Tipo de atendimento','Últimos 30 dias',4,function(){return hb([['Corretiva',36,'58%'],['Preventiva',19,'31%'],['Startup',7,'11%']],36)}],
+ ['Tempo até o primeiro atendimento','Horas, média semanal',6,function(){return line([31,28,26,27,24,22],['S1','S2','S3','S4','S5','S6'],24)}],
+ ['Defeitos mais frequentes','Últimos 90 dias',6,function(){return hb([['Válvulas e parte pneumática',31],['Cilindro e dosador',24],['Correias e redutor',19],['Parte elétrica',14],['Guia do filme e esteira',9]])}],
+ ['Aguardando peça','Atendimentos parados por falta de item',12,function(){return tbl(['Atendimento','Máquina','Cliente','Peça','Situação','>Dias'],[['#612','DG-320','Arrozeira Pampa','Válvula Festo MFH-5/2',P('crit','Sem compra'),'7'],['#618','MK 30','Cooperativa Sul','Cilindro 80x125 haste 170',P('warn','Chega quinta'),'3']])}]
+]},
+{id:'pecas',nome:'Peças e materiais',nota:'Para o estoque: peças de revenda, peças aplicadas em assistência e materiais da fabricação.',w:[
+ ['Valor em estoque','Peças, insumos e materiais',3,function(){return kpi('R$ 268 mil','','+R$ 14 mil no mês','n')}],
+ ['Giro do estoque','Últimos 12 meses',3,function(){return kpi('3,6','x','+0,2 no ano','up')}],
+ ['Itens abaixo do mínimo','Precisam de compra',3,function(){return kpi(9,'itens','4 sem pedido aberto','dn')}],
+ ['Compras a receber','Pedidos abertos',3,function(){return kpi(7,'pedidos','R$ 31 mil','n')}],
+ ['Abaixo do mínimo','Sugestão de compra',8,function(){return tbl(['Item','Categoria','>Saldo','>Mínimo','Situação'],[['Válvula solenoide Festo MFH-5/2','Pneumáticos','0','4',P('crit','Zerado')],['Cilindro 80x125, haste 170 mm','Pneumáticos','1','3',P('crit','Crítico')],['Bucha dos guias do cilindro do dosador','Mecânica','4','10',P('warn','Baixo')],['Volante do dosador','Conjuntos','1','2',P('warn','Baixo')],['Correia dentada','Correias','5','12',P('warn','Baixo')]])}],
+ ['Estoque por categoria','Valor, R$ mil',4,function(){return hb([['Mecânica',74],['Conjuntos',58],['Elétrica',44],['Pneumáticos',39],['Redutores',27],['Correias',16],['Consumíveis',10]])}],
+ ['Peças mais vendidas','Quantidade, mês',6,function(){return hb([['Bucha dos guias do dosador',36],['Guias do colarinho',24],['Válvula solenoide Parker 3/8',19],['Correia dentada',17],['Chapéu chinês',11]])}],
+ ['Materiais da fabricação','Dias de cobertura',6,function(){return hb([['Chapa de aço inox',21,'21 dias','ok'],['Tubo e perfil de aço',14,'14 dias','warn'],['Tarugo de nylon e tecnil',9,'9 dias','crit'],['Tinta e acabamento',33,'33 dias','ok']],35)}],
+ ['Kit de peças de desgaste por modelo','Quantos kits prontos para vender',6,function(){return tbl(['Modelo','>Kits prontos','Situação'],[['MK 30','5',P('ok','Ok')],['DG-320','2',P('warn','Baixo')],['PG-25','3',P('ok','Ok')],['DG4','0',P('crit','Montar')]])}],
+ ['Peças aplicadas x vendidas','Mês, R$ mil',6,function(){return '<div class="legend"><span><b style="background:var(--accent)"></b>Aplicadas em atendimento</span><span><b style="background:var(--fg);opacity:.55"></b>Vendidas avulsas</span></div>'+cols([14,16,15,19,18,22],[28,30,29,32,34,36],meses)}]
+]},
+{id:'comercial',nome:'Comercial',nota:'Para os 2 vendedores: funil, pedidos de máquina, contratos de preventiva e clientes que precisam de contato.',w:[
+ ['Vendas do mês','Máquinas, peças e assistência',3,function(){return kpi('R$ 148 mil','','meta R$ 140 mil','up')+'<div class="tr"><i class="ok" style="width:100%"></i></div>'}],
+ ['Conversão de orçamentos','Aprovados sobre enviados',3,function(){return kpi('34%','','+3 pontos no mês','up')}],
+ ['Máquinas em pedido','Fabricação em andamento',3,function(){return kpi(4,'máquinas','R$ 296 mil','n')}],
+ ['Orçamentos sem retorno','Mais de 5 dias',3,function(){return kpi(5,'','R$ 37 mil parados','dn')}],
+ ['Funil de vendas','Oportunidades abertas',6,function(){return '<div class="fun"><div style="width:100%"><span>Novos contatos</span><b>28</b></div><div style="width:80%"><span>Orçamento enviado</span><b>19</b></div><div style="width:52%"><span>Negociação</span><b>9</b></div><div style="width:34%"><span>Fechado no mês</span><b>6</b></div></div>'}],
+ ['Vendas por vendedor','Mês, R$ mil',6,function(){return hb([['Patrícia',86,'R$ 86 mil'],['Rodrigo',62,'R$ 62 mil']])}],
+ ['Pedidos de máquina','Da venda até a entrega',12,function(){return tbl(['Modelo','Cliente','Etapa','Entrega prometida'],[['MK 30','Arrozeira Pampa',P('ok','Em testes'),'Sex, 30/10'],['DG-320','Cooperativa Sul',P('n','Em fabricação'),'14/11'],['PG-25','Grãos do Campo',P('warn','Aguardando material'),'21/11'],['DG4','Frigorífico Litoral',P('n','Em fabricação'),'05/12']])}],
+ ['Contratos de preventiva a renovar','Por cliente',6,function(){return tbl(['Cliente','>Máquinas','Vence'],[['Arrozeira Pampa','5','12 dias'],['Cooperativa Sul','3','26 dias'],['Frigorífico Litoral','2','41 dias']])}],
+ ['Clientes para ligar','Têm máquina e não compram peça há 90 dias',6,function(){return tbl(['Cliente','Máquina','Última peça'],[['Grãos do Campo','PG-25','104 dias'],['Moinho Pelotense','MK 30','118 dias'],['Fazenda Boa Safra','KPS','131 dias']])}],
+ ['Vendas por mês','Máquinas x peças e assistência, R$ mil',12,function(){return '<div class="legend"><span><b style="background:var(--accent)"></b>Máquinas</span><span><b style="background:var(--fg);opacity:.55"></b>Peças e assistência</span></div>'+cols([52,60,48,66,64,71],[58,63,61,69,70,77],meses)}]
+]}
+];
+var sel={};var cur=0;
+D.forEach(function(d,i){d.w.forEach(function(w,j){sel[i+'-'+j]=true})});
+var tabs=document.getElementById('tabs'),grid=document.getElementById('grid');
+function sizeCls(n){return n==2?'s2':n==6?'s6':n==8?'s8':n==12?'s12':''}
+function draw(){
+ tabs.innerHTML=D.map(function(d,i){return '<button type="button" role="tab" aria-selected="'+(i==cur)+'" data-i="'+i+'">'+d.nome+'</button>'}).join('');
+ var d=D[cur];
+ grid.innerHTML=d.w.map(function(w,j){var k=cur+'-'+j;return '<section class="w '+sizeCls(w[2]*0+({2:2,3:4,4:4,6:6,8:8,12:12})[w[2]]==2?2:'')+'"></section>'}).join('');
+ var html='';d.w.forEach(function(w,j){var k=cur+'-'+j,span={2:'s2',3:'',4:'',6:'s6',8:'s8',12:'s12'}[w[2]];
+  var col={2:2,3:3,4:4,6:6,8:8,12:12}[w[2]];
+  html+='<section class="w'+(sel[k]?'':' off')+'" id="w'+k+'" style="grid-column:span '+col+'"><div class="wh"><h3>'+w[0]+'<small>'+w[1]+'</small></h3><label class="sw"><input type="checkbox" data-k="'+k+'"'+(sel[k]?' checked':'')+'><span></span>Incluir</label></div>'+w[3]()+'</section>'});
+ grid.innerHTML=html;document.getElementById('nota').textContent=d.nota;resumo();
+}
+function lista(){var t=[];D.forEach(function(d,i){var l=[];d.w.forEach(function(w,j){if(sel[i+'-'+j])l.push('  - '+w[0])});if(l.length)t.push(d.nome+' ('+l.length+')\n'+l.join('\n'))});return t.join('\n\n')}
+function resumo(){var tot=0,on=0;D.forEach(function(d,i){d.w.forEach(function(w,j){tot++;if(sel[i+'-'+j])on++})});
+ var perTab=D.map(function(d,i){var c=0;d.w.forEach(function(w,j){if(sel[i+'-'+j])c++});return d.nome+': '+c+'/'+d.w.length}).join(' · ');
+ document.getElementById('resumo').innerHTML='<b>'+on+' de '+tot+' blocos incluídos.</b> <span style="color:var(--muted)">'+perTab+'</span>';
+ var ta=document.getElementById('lista');ta.value=lista()}
+tabs.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;cur=+b.dataset.i;draw();window.scrollTo({top:0})});
+grid.addEventListener('change',function(e){var k=e.target.dataset.k;if(!k)return;sel[k]=e.target.checked;document.getElementById('w'+k).classList.toggle('off',!e.target.checked);resumo()});
+document.getElementById('ver').addEventListener('click',function(){var ta=document.getElementById('lista');ta.hidden=!ta.hidden;this.textContent=ta.hidden?'Ver lista':'Esconder lista'});
+document.getElementById('copiar').addEventListener('click',function(){var ta=document.getElementById('lista'),b=this;function ok(){b.textContent='Copiado';setTimeout(function(){b.textContent='Copiar lista'},1600)}
+ try{navigator.clipboard.writeText(ta.value).then(ok,function(){ta.hidden=false;ta.select()})}catch(x){ta.hidden=false;ta.select()}});
+draw();
+</script>

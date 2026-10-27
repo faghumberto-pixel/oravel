@@ -188,4 +188,15 @@ return [
 
     'payment_grace_days' => env('ASAAS_PAYMENT_GRACE_DAYS', 5),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Dashboards por módulo
+    |--------------------------------------------------------------------------
+    | Liga a aba "Visão geral" de cada módulo (App\Dashboards). Desligado por
+    | padrão: com a flag desligada nenhuma página nova aparece no menu nem abre
+    | pela URL. Ver App\Dashboards\DashboardRenderer::available().
+    */
+
+    'dashboards_modulo' => env('DASHBOARDS_MODULO', false),
+
 ];
