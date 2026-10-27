@@ -55,6 +55,20 @@ class DashboardsInicioTest extends TestCase
         return $m;
     }
 
+    public function test_dashboards_da_empresa_seguem_a_ordem_de_atribuicao_e_nao_a_alfabetica(): void
+    {
+        [$t] = $this->empresa();
+        $b = $this->modelo('B primeiro');
+        $z = $this->modelo('Z segundo');
+        $a = $this->modelo('A terceiro');
+
+        foreach ([$b, $z, $a] as $m) {
+            DashboardTemplateService::atribuir($m, [$t->id], true);
+        }
+
+        $this->assertSame(['B primeiro', 'Z segundo', 'A terceiro'], DashboardResolver::templatesFor($t)->pluck('name')->all());
+    }
+
     public function test_sem_inicio_personalizado_a_empresa_segue_com_o_inicio_padrao(): void
     {
         [$t, $admin] = $this->empresa(['tabela_assets' => true, 'modulo_dashboard' => true]);
@@ -176,7 +190,7 @@ class DashboardsInicioTest extends TestCase
         [$t] = $this->empresa();
 
         Livewire::test(CreateDashboardTemplate::class)
-            ->fillForm(['name' => 'Início da empresa', 'tenant_id' => $t->id, 'usar_como_inicio' => true, 'blocks' => [['block_key' => 'ativos.total', 'config' => []]]])
+            ->fillForm(['name' => 'Início da empresa', 'description' => 'Visão da direção.', 'tenant_id' => $t->id, 'usar_como_inicio' => true, 'blocks' => [['block_key' => 'ativos.total', 'config' => []]]])
             ->call('create')
             ->assertHasNoFormErrors();
 

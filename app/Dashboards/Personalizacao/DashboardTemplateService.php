@@ -77,7 +77,8 @@ class DashboardTemplateService
         $criadas = 0;
 
         foreach ($ids->diff($existentes) as $id) {
-            DashboardAssignment::withoutGlobalScopes()->create(['tenant_id' => $id, 'dashboard_template_id' => $modelo->id, 'is_home' => $inicio]);
+            $proxima = (int) DashboardAssignment::withoutGlobalScopes()->where('tenant_id', $id)->max('position') + 1;
+            DashboardAssignment::withoutGlobalScopes()->create(['tenant_id' => $id, 'dashboard_template_id' => $modelo->id, 'is_home' => $inicio, 'position' => $proxima]);
             $criadas++;
         }
 

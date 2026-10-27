@@ -86,6 +86,7 @@ class DashboardsCentralTest extends TestCase
         Livewire::test(CreateDashboardTemplate::class)
             ->fillForm([
                 'name' => 'Painel do Estoque',
+                'description' => 'Para o estoque.',
                 'profile' => 'estoque',
                 'is_active' => true,
                 'blocks' => [
@@ -106,6 +107,18 @@ class DashboardsCentralTest extends TestCase
         $this->assertSame('Compra sem ver o saldo', $blocos[0]->ficha_dor);
         $this->assertSame('2027-01-15', $blocos[0]->ficha_revisao_em->toDateString());
         $this->assertEquals(['meta' => '85'], $blocos[1]->config);
+    }
+
+    public function test_dashboard_sem_descritivo_e_recusado(): void
+    {
+        $this->superAdmin();
+
+        Livewire::test(CreateDashboardTemplate::class)
+            ->fillForm(['name' => 'Sem descritivo', 'blocks' => [['block_key' => 'ativos.total', 'config' => []]]])
+            ->call('create')
+            ->assertHasFormErrors(['description' => 'required']);
+
+        $this->assertNull(DashboardTemplate::where('name', 'Sem descritivo')->first());
     }
 
     public function test_ajuste_que_o_bloco_nao_tem_e_recusado(): void
@@ -142,7 +155,7 @@ class DashboardsCentralTest extends TestCase
         $empresa = $this->empresa();
 
         Livewire::test(CreateDashboardTemplate::class)
-            ->fillForm(['name' => 'Só da empresa', 'tenant_id' => $empresa->id, 'blocks' => [['block_key' => 'ativos.total', 'config' => []]]])
+            ->fillForm(['name' => 'Só da empresa', 'description' => 'Só dela.', 'tenant_id' => $empresa->id, 'blocks' => [['block_key' => 'ativos.total', 'config' => []]]])
             ->call('create')
             ->assertHasNoFormErrors();
 

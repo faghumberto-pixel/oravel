@@ -16,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use InvalidArgumentException;
 
@@ -65,7 +66,7 @@ class DashboardTemplateResource extends Resource
     {
         return $form->schema([
             Forms\Components\Section::make('Dashboard')->columns(2)->schema([
-                Forms\Components\TextInput::make('name')->label('Nome')->required()->maxLength(120),
+                Forms\Components\TextInput::make('name')->label('Nome de referência')->helperText('É o nome que aparece na aba da empresa e na lista da Central. Ex.: Visão geral, Assistência técnica.')->required()->maxLength(120),
                 Forms\Components\Select::make('profile')->label('Perfil de quem vê')->options(DashboardTemplate::PROFILES)->native(false),
                 Forms\Components\Select::make('tenant_id')
                     ->label('Empresa (só para dashboard exclusivo)')
@@ -82,7 +83,7 @@ class DashboardTemplateResource extends Resource
                     ->visible(fn (string $operation, Get $get) => $operation === 'create' && filled($get('tenant_id')))
                     ->dehydrated(fn (string $operation) => $operation === 'create')
                     ->inline(false),
-                Forms\Components\Textarea::make('description')->label('Descrição (aparece para a empresa)')->rows(2)->columnSpanFull(),
+                Forms\Components\Textarea::make('description')->label('Descritivo')->helperText('Para quem é e o que o dashboard mostra. A empresa vê este texto no topo da tela.')->required()->rows(2)->maxLength(500)->columnSpanFull(),
             ]),
 
             Forms\Components\Section::make('Blocos')
@@ -133,7 +134,7 @@ class DashboardTemplateResource extends Resource
         return $table
             ->modifyQueryUsing(fn (Builder $query) => $query->with('tenant')->withCount(['blocks', 'assignments']))
             ->columns([
-                Tables\Columns\TextColumn::make('name')->label('Nome')->searchable()->weight('bold'),
+                Tables\Columns\TextColumn::make('name')->label('Nome de referência')->searchable()->weight('bold')->description(fn (DashboardTemplate $r) => $r->description)->wrap(),
                 Tables\Columns\TextColumn::make('profile')->label('Perfil')->badge()->formatStateUsing(fn (?string $state) => DashboardTemplate::PROFILES[$state] ?? '—'),
                 Tables\Columns\TextColumn::make('tenant.name')->label('Tipo')->placeholder('Modelo da plataforma')->description(fn (DashboardTemplate $r) => $r->tenant_id ? 'Exclusivo' : null),
                 Tables\Columns\TextColumn::make('blocks_count')->label('Blocos')->alignEnd(),
@@ -188,6 +189,30 @@ class DashboardTemplateResource extends Resource
                         }),
                 ]),
                 Tables\Actions\DeleteAction::make()->modalDescription('Apaga o dashboard, os blocos e as atribuições. As empresas voltam a ver só os dashboards padrão dos módulos.'),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkAction::make('atribuir_varios')
+                    ->label('Atribuir a empresas')->icon('heroicon-o-link')->deselectRecordsAfterCompletion()
+                    ->modalDescription('Entrega os dashboards marcados às empresas escolhidas, na ordem em que foram criados (a primeira aba é a mais antiga). Só modelos da plataforma.')
+                    ->form([
+                        Forms\Components\Select::make('tenant_ids')->label('Empresas')->multiple()->searchable()->required()
+                            ->options(fn () => Tenant::query()->orderBy('name')->pluck('name', 'id')),
+                        Forms\Components\Toggle::make('inicio')->label('Usar como tela Início da empresa (no lugar do Painel de Controle e da Gestão à Vista)'),
+                    ])
+                    ->action(function (Collection $records, array $data) {
+                        $novas = 0;
+                        $ignorados = 0;
+                        foreach ($records->sortBy([['created_at', 'asc'], ['id', 'asc']]) as $modelo) {
+                            if (! $modelo->isPlatform()) {
+                                $ignorados++;
+
+                                continue;
+                            }
+                            $novas += DashboardTemplateService::atribuir($modelo, $data['tenant_ids'], (bool) ($data['inicio'] ?? false));
+                        }
+                        Notification::make()->title($novas.' atribuição(ões) nova(s)')
+                            ->body($ignorados ? $ignorados.' dashboard(s) exclusivo(s) ficaram de fora.' : null)->success()->send();
+                    }),
             ])
             ->defaultSort('name');
     }

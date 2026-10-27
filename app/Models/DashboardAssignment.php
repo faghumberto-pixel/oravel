@@ -13,7 +13,7 @@ class DashboardAssignment extends Model
     use BelongsToTenant;
     use HasUuids;
 
-    protected $fillable = ['tenant_id', 'dashboard_template_id', 'is_home'];
+    protected $fillable = ['tenant_id', 'dashboard_template_id', 'is_home', 'position'];
 
     protected $casts = ['is_home' => 'boolean'];
 

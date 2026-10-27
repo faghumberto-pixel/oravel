@@ -32,15 +32,16 @@ class DashboardResolver
             return collect();
         }
 
-        $ids = DashboardAssignment::withoutGlobalScopes()->where('tenant_id', $tenant->id)->pluck('dashboard_template_id');
+        $ordem = DashboardAssignment::withoutGlobalScopes()->where('tenant_id', $tenant->id)->pluck('position', 'dashboard_template_id');
 
         return DashboardTemplate::withoutGlobalScopes()
-            ->whereIn('id', $ids)
+            ->whereIn('id', $ordem->keys())
             ->where('is_active', true)
             ->where(fn ($q) => $q->whereNull('tenant_id')->orWhere('tenant_id', $tenant->id))
             ->with('blocks')
-            ->orderBy('name')
-            ->get();
+            ->get()
+            ->sortBy(fn (DashboardTemplate $t) => [$ordem[$t->id] ?? 0, $t->name])
+            ->values();
     }
 
     /** @return list<array{key: string, title: string, subtitle: string, size: int, payload: array}> */
