@@ -33,6 +33,11 @@ abstract class ModuleDashboardPage extends Page
         return ModuleDashboards::find(static::$dashboardKey)['label'] ?? 'Visão geral';
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return ModuleDashboards::find(static::$dashboardKey)['label'] ?? 'Visão geral';
+    }
+
     protected function getViewData(): array
     {
         return [

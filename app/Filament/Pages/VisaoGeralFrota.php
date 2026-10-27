@@ -13,7 +13,5 @@ class VisaoGeralFrota extends ModuleDashboardPage
 
     protected static ?string $navigationParentItem = 'Frota';
 
-    protected static ?string $navigationLabel = 'Visão geral da frota';
-
     protected static ?string $slug = 'visao-geral-frota';
 }

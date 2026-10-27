@@ -10,7 +10,5 @@ class VisaoGeralAtivos extends ModuleDashboardPage
 
     protected static ?string $navigationGroup = 'Ativos';
 
-    protected static ?string $navigationLabel = 'Visão geral';
-
     protected static ?string $slug = 'visao-geral-ativos';
 }
