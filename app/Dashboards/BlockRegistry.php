@@ -3,6 +3,7 @@
 namespace App\Dashboards;
 
 use App\Dashboards\Blocks\Comercial;
+use App\Dashboards\Blocks\Financeiro;
 use App\Dashboards\Blocks\Manutencao;
 use App\Dashboards\Blocks\MateriaisPecas;
 
@@ -50,6 +51,16 @@ class BlockRegistry
             Comercial\ClientesParaLigar::class,
             Comercial\PedidosDeLocacao::class,
             Comercial\ContratosPorMes::class,
+
+            Financeiro\AReceberNoMes::class,
+            Financeiro\RecebidoNoMes::class,
+            Financeiro\APagarNoMes::class,
+            Financeiro\PagoNoMes::class,
+            Financeiro\RecebimentosAtrasados::class,
+            Financeiro\PagamentosAtrasados::class,
+            Financeiro\RecebidoXPago::class,
+            Financeiro\ReceitaPorCategoria::class,
+            Financeiro\ProximosPagamentos::class,
         ];
 
         $porChave = [];

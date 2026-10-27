@@ -65,6 +65,22 @@ class ModuleDashboards
                     'comercial.contratos_por_mes',
                 ],
             ],
+            'financeiro' => [
+                'label' => 'Visão geral',
+                'module' => 'Financeiro',
+                'lead' => 'O que entra, o que sai e o que está em atraso, em uma tela.',
+                'blocks' => [
+                    'financeiro.a_receber_mes',
+                    'financeiro.recebido_mes',
+                    'financeiro.a_pagar_mes',
+                    'financeiro.pago_mes',
+                    'financeiro.recebimentos_atrasados',
+                    'financeiro.pagamentos_atrasados',
+                    'financeiro.receita_por_categoria',
+                    'financeiro.proximos_pagamentos',
+                    'financeiro.recebido_x_pago',
+                ],
+            ],
         ];
     }
 
