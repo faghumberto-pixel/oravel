@@ -10,11 +10,21 @@ class CreateDashboardTemplate extends CreateRecord
 {
     protected static string $resource = DashboardTemplateResource::class;
 
-    /** Dashboard exclusivo já nasce atribuído à empresa dele. */
+    private bool $comoInicio = false;
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $this->comoInicio = (bool) ($data['usar_como_inicio'] ?? false);
+        unset($data['usar_como_inicio']);
+
+        return $data;
+    }
+
+    /** Dashboard exclusivo já nasce atribuído à empresa dele (e, se escolhido, como o Início dela). */
     protected function afterCreate(): void
     {
         if ($this->record->tenant_id) {
-            DashboardTemplateService::atribuir($this->record, [$this->record->tenant_id]);
+            DashboardTemplateService::atribuir($this->record, [$this->record->tenant_id], $this->comoInicio);
         }
     }
 }

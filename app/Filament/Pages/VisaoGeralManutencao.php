@@ -10,7 +10,5 @@ class VisaoGeralManutencao extends ModuleDashboardPage
 
     protected static ?string $navigationGroup = 'Manutenção';
 
-    protected static ?string $navigationLabel = 'Visão geral';
-
     protected static ?string $slug = 'visao-geral-manutencao';
 }

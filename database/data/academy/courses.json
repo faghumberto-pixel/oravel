@@ -495,14 +495,14 @@
                 "href": "/comunicacao/fotos-evidencias.html",
                 "slug": "comunicacao__fotos-evidencias",
                 "summary": "Onde e como anexar fotos como evidência na Oravel: checklist, avarias, mobilização e ordens de serviço.",
-                "feature": null
+                "feature": "tabela_maintenance_orders"
             },
             {
                 "title": "Descrição em Áudio",
                 "href": "/comunicacao/descricao-audio.html",
                 "slug": "comunicacao__descricao-audio",
                 "summary": "Como enviar e ouvir mensagens de áudio no Chat Interno da Oravel.",
-                "feature": null
+                "feature": "modulo_chat"
             }
         ]
     },

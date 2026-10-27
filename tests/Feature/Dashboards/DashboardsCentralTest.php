@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Dashboards;
 
+use App\Dashboards\ModuleDashboards;
 use App\Dashboards\Personalizacao\DashboardTemplateService;
 use App\Filament\Central\Resources\DashboardTemplateResource;
 use App\Filament\Central\Resources\DashboardTemplateResource\Pages\CreateDashboardTemplate;
@@ -9,6 +10,7 @@ use App\Filament\Central\Resources\DashboardTemplateResource\Pages\EditDashboard
 use App\Filament\Central\Resources\DashboardTemplateResource\Pages\ListDashboardTemplates;
 use App\Filament\Central\Resources\DashboardTemplateResource\RelationManagers\AssignmentsRelationManager;
 use App\Filament\Pages\DashboardsDaEmpresa;
+use App\Filament\Pages\VisaoGeralManutencao;
 use App\Models\DashboardAssignment;
 use App\Models\DashboardTemplate;
 use App\Models\DashboardTemplateBlock;
@@ -86,6 +88,7 @@ class DashboardsCentralTest extends TestCase
         Livewire::test(CreateDashboardTemplate::class)
             ->fillForm([
                 'name' => 'Painel do Estoque',
+                'description' => 'Para o estoque.',
                 'profile' => 'estoque',
                 'is_active' => true,
                 'blocks' => [
@@ -106,6 +109,27 @@ class DashboardsCentralTest extends TestCase
         $this->assertSame('Compra sem ver o saldo', $blocos[0]->ficha_dor);
         $this->assertSame('2027-01-15', $blocos[0]->ficha_revisao_em->toDateString());
         $this->assertEquals(['meta' => '85'], $blocos[1]->config);
+    }
+
+    public function test_visao_geral_de_cada_modulo_leva_o_nome_do_modulo(): void
+    {
+        foreach (ModuleDashboards::all() as $chave => $dash) {
+            $this->assertStringStartsWith('Visão geral — ', $dash['label'], $chave);
+        }
+        $this->assertSame('Visão geral — Manutenção', ModuleDashboards::find('manutencao')['label']);
+        $this->assertSame('Visão geral — Manutenção', VisaoGeralManutencao::getNavigationLabel());
+    }
+
+    public function test_dashboard_sem_descritivo_e_recusado(): void
+    {
+        $this->superAdmin();
+
+        Livewire::test(CreateDashboardTemplate::class)
+            ->fillForm(['name' => 'Sem descritivo', 'blocks' => [['block_key' => 'ativos.total', 'config' => []]]])
+            ->call('create')
+            ->assertHasFormErrors(['description' => 'required']);
+
+        $this->assertNull(DashboardTemplate::where('name', 'Sem descritivo')->first());
     }
 
     public function test_ajuste_que_o_bloco_nao_tem_e_recusado(): void
@@ -142,7 +166,7 @@ class DashboardsCentralTest extends TestCase
         $empresa = $this->empresa();
 
         Livewire::test(CreateDashboardTemplate::class)
-            ->fillForm(['name' => 'Só da empresa', 'tenant_id' => $empresa->id, 'blocks' => [['block_key' => 'ativos.total', 'config' => []]]])
+            ->fillForm(['name' => 'Só da empresa', 'description' => 'Só dela.', 'tenant_id' => $empresa->id, 'blocks' => [['block_key' => 'ativos.total', 'config' => []]]])
             ->call('create')
             ->assertHasNoFormErrors();
 

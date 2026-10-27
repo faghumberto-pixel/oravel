@@ -13,7 +13,7 @@ class ModuleDashboards
     {
         return [
             'manutencao' => [
-                'label' => 'Visão geral',
+                'label' => 'Visão geral — Manutenção',
                 'module' => 'Manutenção',
                 'lead' => 'Atendimentos, prazo, retorno à máquina e peças paradas, em uma tela.',
                 'blocks' => [
@@ -32,7 +32,7 @@ class ModuleDashboards
                 ],
             ],
             'materiais' => [
-                'label' => 'Visão geral',
+                'label' => 'Visão geral — Materiais e Peças',
                 'module' => 'Materiais e Peças',
                 'lead' => 'Estoque, compras e reposição de materiais e peças, em uma tela.',
                 'blocks' => [
@@ -49,7 +49,7 @@ class ModuleDashboards
                 ],
             ],
             'comercial' => [
-                'label' => 'Visão geral',
+                'label' => 'Visão geral — Comercial',
                 'module' => 'Comercial',
                 'lead' => 'Contratos, orçamentos, funil de vendas e clientes para contatar, em uma tela.',
                 'blocks' => [
@@ -66,7 +66,7 @@ class ModuleDashboards
                 ],
             ],
             'financeiro' => [
-                'label' => 'Visão geral',
+                'label' => 'Visão geral — Financeiro',
                 'module' => 'Financeiro',
                 'lead' => 'O que entra, o que sai e o que está em atraso, em uma tela.',
                 'blocks' => [
@@ -82,7 +82,7 @@ class ModuleDashboards
                 ],
             ],
             'frota' => [
-                'label' => 'Visão geral da frota',
+                'label' => 'Visão geral — Frota',
                 'module' => 'Gestão de Frota',
                 'lead' => 'Combustível, óleo, multas e sinistros dos veículos, em uma tela.',
                 'blocks' => [
@@ -96,7 +96,7 @@ class ModuleDashboards
                 ],
             ],
             'logistica' => [
-                'label' => 'Visão geral',
+                'label' => 'Visão geral — Logística',
                 'module' => 'Logística',
                 'lead' => 'Movimentações de equipamentos, fretes, retiradas e veículos na rua, em uma tela.',
                 'blocks' => [
@@ -111,7 +111,7 @@ class ModuleDashboards
                 ],
             ],
             'ativos' => [
-                'label' => 'Visão geral',
+                'label' => 'Visão geral — Ativos',
                 'module' => 'Ativos',
                 'lead' => 'Situação dos equipamentos e veículos, quem está locado e o que vence, em uma tela.',
                 'blocks' => [

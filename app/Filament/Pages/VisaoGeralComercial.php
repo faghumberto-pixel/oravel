@@ -10,7 +10,5 @@ class VisaoGeralComercial extends ModuleDashboardPage
 
     protected static ?string $navigationGroup = 'Comercial';
 
-    protected static ?string $navigationLabel = 'Visão geral';
-
     protected static ?string $slug = 'visao-geral-comercial';
 }

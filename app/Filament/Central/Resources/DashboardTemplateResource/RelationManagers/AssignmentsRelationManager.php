@@ -24,6 +24,9 @@ class AssignmentsRelationManager extends RelationManager
             ->modifyQueryUsing(fn ($query) => $query->with('tenant'))
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')->label('Empresa')->searchable(),
+                Tables\Columns\ToggleColumn::make('is_home')
+                    ->label('Tela Início')
+                    ->tooltip('Ligado: este dashboard é o Início da empresa (substitui o Painel de Controle e a Gestão à Vista). Desligado em todos: a empresa usa o Início padrão.'),
                 Tables\Columns\TextColumn::make('created_at')->label('Atribuído em')->dateTime('d/m/Y H:i'),
             ])
             ->headerActions([
@@ -32,10 +35,11 @@ class AssignmentsRelationManager extends RelationManager
                     ->form([
                         Forms\Components\Select::make('tenant_ids')->label('Empresas')->multiple()->searchable()->required()
                             ->options(fn () => Tenant::query()->when($this->getOwnerRecord()->tenant_id, fn ($q, $id) => $q->whereKey($id))->orderBy('name')->pluck('name', 'id')),
+                        Forms\Components\Toggle::make('inicio')->label('Usar como tela Início da empresa (no lugar do Painel de Controle e da Gestão à Vista)'),
                     ])
                     ->action(function (array $data) {
                         try {
-                            $novas = DashboardTemplateService::atribuir($this->getOwnerRecord(), $data['tenant_ids']);
+                            $novas = DashboardTemplateService::atribuir($this->getOwnerRecord(), $data['tenant_ids'], (bool) ($data['inicio'] ?? false));
                         } catch (InvalidArgumentException $e) {
                             Notification::make()->title('Não foi possível atribuir')->body($e->getMessage())->danger()->send();
 
