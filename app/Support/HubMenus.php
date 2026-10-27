@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Dashboards\ModuleDashboardPage;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
 
@@ -60,13 +61,38 @@ class HubMenus
     }
 
     /**
-     * Para cada grupo do menu lateral, a página de menu pai principal (a primeira do grupo). Ao abrir o grupo, o usuário vai direto a ela.
+     * Endereços das "Visão geral" por módulo que o usuário pode abrir agora (flag ligada, módulo contratado, permissão).
+     * Não guarda em cache: o resultado muda de usuário para usuário.
+     *
+     * @return list<string>
+     */
+    private static function urlsDosDashboards(): array
+    {
+        $urls = [];
+
+        foreach (Filament::getCurrentPanel()?->getPages() ?? [] as $classe) {
+            if (is_subclass_of($classe, ModuleDashboardPage::class) && $classe::canAccess()) {
+                try {
+                    $urls[] = $classe::getUrl();
+                } catch (\Throwable) {
+                    // sem rota registrada: não é destino possível
+                }
+            }
+        }
+
+        return $urls;
+    }
+
+    /**
+     * Para cada grupo do menu lateral, a página principal: a "Visão geral" do módulo, quando o usuário a enxerga; senão a
+     * primeira página de menu pai do grupo. Ao abrir o grupo, o usuário vai direto a ela.
      *
      * @return array<string, string> rótulo do grupo => endereço
      */
     public static function paginaPrincipalDeCadaGrupo(): array
     {
         $hubs = array_flip(self::urlsDosHubs());
+        $dashboards = array_flip(self::urlsDosDashboards());
         $mapa = [];
 
         foreach (Filament::getNavigation() as $grupo) {
@@ -74,10 +100,12 @@ class HubMenus
                 continue;
             }
 
-            foreach ($grupo->getItems() as $item) {
-                if (isset($hubs[$item->getUrl()])) {
-                    $mapa[$grupo->getLabel()] = $item->getUrl();
-                    break;
+            foreach ([$dashboards, $hubs] as $candidatas) {
+                foreach ($grupo->getItems() as $item) {
+                    if (isset($candidatas[$item->getUrl()])) {
+                        $mapa[$grupo->getLabel()] = $item->getUrl();
+                        break 2;
+                    }
                 }
             }
         }

@@ -17,8 +17,10 @@ use App\Models\Plan;
 use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Support\HubMenus;
 use App\Support\SaaSRegistry;
 use Filament\Facades\Filament;
+use Filament\Navigation\NavigationManager;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Livewire;
@@ -232,5 +234,34 @@ class DashboardsManutencaoTest extends TestCase
             ->assertSee('Aguardando peça')
             ->assertSee('Tempo até o primeiro atendimento')
             ->assertSee('Sem pedido');
+    }
+
+    // ── clique no grupo do menu ──
+
+    private function principalDeManutencao(): ?string
+    {
+        Filament::setCurrentPanel(Filament::getPanel('admin'));
+        app()->forgetInstance(NavigationManager::class);
+
+        return HubMenus::paginaPrincipalDeCadaGrupo()['Manutenção'] ?? null;
+    }
+
+    public function test_abrir_o_grupo_manutencao_leva_a_visao_geral(): void
+    {
+        [, $admin] = $this->empresa();
+        $this->actingAs($admin);
+
+        $this->assertSame(VisaoGeralManutencao::getUrl(), $this->principalDeManutencao());
+    }
+
+    public function test_sem_a_flag_o_grupo_manutencao_continua_indo_para_a_pagina_de_antes(): void
+    {
+        [, $admin] = $this->empresa();
+        config(['oravel.dashboards_modulo' => false]);
+        $this->actingAs($admin);
+
+        $destino = $this->principalDeManutencao();
+
+        $this->assertNotSame(VisaoGeralManutencao::getUrl(), $destino);
     }
 }
