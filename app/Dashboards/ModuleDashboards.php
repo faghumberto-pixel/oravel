@@ -31,6 +31,23 @@ class ModuleDashboards
                     'manutencao.aguardando_peca',
                 ],
             ],
+            'materiais' => [
+                'label' => 'Visão geral',
+                'module' => 'Materiais e Peças',
+                'lead' => 'Estoque, compras e reposição de materiais e peças, em uma tela.',
+                'blocks' => [
+                    'materiais.valor_em_estoque',
+                    'materiais.giro',
+                    'materiais.abaixo_minimo_total',
+                    'materiais.compras_a_receber',
+                    'materiais.abaixo_minimo_lista',
+                    'materiais.estoque_por_categoria',
+                    'materiais.mais_consumidos',
+                    'materiais.cobertura_dias',
+                    'materiais.aplicadas_x_orcadas',
+                    'materiais.requisicoes_abertas',
+                ],
+            ],
         ];
     }
 

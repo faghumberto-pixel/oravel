@@ -3,6 +3,7 @@
 namespace App\Dashboards;
 
 use App\Dashboards\Blocks\Manutencao;
+use App\Dashboards\Blocks\MateriaisPecas;
 
 /**
  * Catálogo de blocos. Lista explícita (e não descoberta por pasta) para que uma classe nova nunca apareça
@@ -26,6 +27,17 @@ class BlockRegistry
             Manutencao\TempoPrimeiroAtendimento::class,
             Manutencao\DefeitosFrequentes::class,
             Manutencao\AguardandoPeca::class,
+
+            MateriaisPecas\ValorEmEstoque::class,
+            MateriaisPecas\GiroDoEstoque::class,
+            MateriaisPecas\ItensAbaixoDoMinimo::class,
+            MateriaisPecas\ComprasAReceber::class,
+            MateriaisPecas\AbaixoDoMinimoSugestao::class,
+            MateriaisPecas\EstoquePorCategoria::class,
+            MateriaisPecas\MateriaisMaisConsumidos::class,
+            MateriaisPecas\CoberturaEmDias::class,
+            MateriaisPecas\AplicadasEOrcadas::class,
+            MateriaisPecas\RequisicoesEmAberto::class,
         ];
 
         $porChave = [];
