@@ -81,6 +81,20 @@ class ModuleDashboards
                     'financeiro.recebido_x_pago',
                 ],
             ],
+            'frota' => [
+                'label' => 'Visão geral da frota',
+                'module' => 'Gestão de Frota',
+                'lead' => 'Combustível, óleo, multas e sinistros dos veículos, em uma tela.',
+                'blocks' => [
+                    'frota.combustivel_mes',
+                    'frota.consumo_medio',
+                    'frota.multas_em_aberto',
+                    'frota.sinistros_em_aberto',
+                    'frota.trocas_oleo_a_vencer',
+                    'frota.combustivel_por_veiculo',
+                    'frota.combustivel_por_mes',
+                ],
+            ],
         ];
     }
 

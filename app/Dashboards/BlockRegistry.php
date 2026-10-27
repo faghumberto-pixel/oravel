@@ -4,6 +4,7 @@ namespace App\Dashboards;
 
 use App\Dashboards\Blocks\Comercial;
 use App\Dashboards\Blocks\Financeiro;
+use App\Dashboards\Blocks\Frota;
 use App\Dashboards\Blocks\Manutencao;
 use App\Dashboards\Blocks\MateriaisPecas;
 
@@ -61,6 +62,14 @@ class BlockRegistry
             Financeiro\RecebidoXPago::class,
             Financeiro\ReceitaPorCategoria::class,
             Financeiro\ProximosPagamentos::class,
+
+            Frota\GastoComCombustivel::class,
+            Frota\ConsumoMedio::class,
+            Frota\MultasEmAberto::class,
+            Frota\SinistrosEmAberto::class,
+            Frota\TrocasDeOleoAVencer::class,
+            Frota\CombustivelPorVeiculo::class,
+            Frota\CombustivelPorMes::class,
         ];
 
         $porChave = [];
