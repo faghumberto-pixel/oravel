@@ -1,0 +1,23 @@
+# Oravel
+
+> Plataforma de gestão em nuvem para locação de equipamentos, manutenção industrial, serviços de campo, logística e estoque. Os módulos podem ser contratados separadamente e integram-se ao ERP que a empresa já usa.
+
+Empresa: Oravel Desenvolvimento de Software LTDA, São Paulo/SP. Contato: contato@oravel.com.br, WhatsApp (19) 99933-2615.
+
+## Soluções
+- [ERP para locação e manutenção](https://oravel.com.br/erp-cmms/): contratos, ordens de serviço e manutenção de equipamentos locados
+- [Manutenção industrial](https://oravel.com.br/software-manutencao-industrial/): ordens de serviço e planos de manutenção
+- [Gestão de serviços](https://oravel.com.br/software-gestao-de-servicos/): equipes de campo e serviços
+- [Frota e logística](https://oravel.com.br/software-gestao-frota-logistica/): controle de frota e transportes
+- [Guindastes](https://oravel.com.br/software-manutencao-guindastes/): manutenção preventiva e histórico por equipamento
+- [Plataformas elevatórias](https://oravel.com.br/software-manutencao-plataformas-elevatorias/): manutenção, checklist com fotos e assinatura digital
+- [Inspeções NR-13](https://oravel.com.br/nr-13-inspecao-equipamentos/): datas, laudos e alertas de vencimento
+- [Equipamento devolvido com defeito](https://oravel.com.br/equipamento-devolvido-com-defeito/): da avaria à liberação
+- [Estoque (WMS)](https://oravel.com.br/wms/): almoxarifado e estoque
+- [CRM](https://oravel.com.br/crm/): vendas e relacionamento
+
+## Informações
+- [Perguntas frequentes](https://oravel.com.br/faq.php): preço, implantação, contrato e migração
+- [Central de conhecimento](https://oravel.com.br/central-de-conhecimento/): guias práticos
+- [Sobre a Oravel](https://oravel.com.br/sobre/)
+- [Contato](https://oravel.com.br/contato.php)
