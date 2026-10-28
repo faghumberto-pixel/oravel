@@ -17,6 +17,9 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import equip_art as ea  # noqa: E402
+
 BASE = 'https://oravel.com.br'
 WA = 'https://wa.me/5519999332615'
 WA_FONE = '(19) 99933-2615'
@@ -35,174 +38,6 @@ NAV_EQUIP = (
     '<a href="/equipamento-devolvido-com-defeito/">Devolução com defeito</a>'
     '</div></div>'
 )
-
-
-# ---------------------------------------------------------------- mockups (SVG)
-def t(x, y, s, size=11, fill='#0f172a', w=500, anchor='start'):
-    return (f'<text x="{x}" y="{y}" font-family="Inter,Segoe UI,sans-serif" font-size="{size}" '
-            f'font-weight="{w}" fill="{fill}" text-anchor="{anchor}">{html.escape(s)}</text>')
-
-
-def r(x, y, w, h, fill='#f1f5f9', rx=6, stroke=None):
-    st = f' stroke="{stroke}"' if stroke else ''
-    return f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{rx}" fill="{fill}"{st}/>'
-
-
-def pill(x, y, label, bg, fg):
-    w = 14 + len(label) * 6
-    return r(x, y, w, 18, bg, 9) + t(x + w / 2, y + 12.5, label, 10, fg, 700, 'middle')
-
-
-OK = ('#dcfce7', '#166534')
-WARN = ('#fef3c7', '#92400e')
-BAD = ('#fee2e2', '#991b1b')
-ORG = ('#fff1e4', '#c2410c')
-
-
-def mock(titulo, corpo, legenda):
-    svg = (
-        f'<svg viewBox="0 0 480 300" role="img" aria-label="{html.escape(legenda)}"><title>{html.escape(legenda)}</title>'
-        '<rect width="480" height="300" rx="10" fill="#ffffff"/>'
-        '<rect width="480" height="30" rx="10" fill="#0f172a"/><rect y="15" width="480" height="15" fill="#0f172a"/>'
-        '<circle cx="18" cy="15" r="4" fill="#f97316"/>'
-        + t(30, 19, titulo, 12, '#ffffff', 700)
-        + corpo + '</svg>'
-    )
-    return f'<figure class="mock">{svg}<figcaption>{html.escape(legenda)}</figcaption></figure>'
-
-
-def linhas(itens, y0=48, passo=44):
-    """itens: (titulo, subtitulo, (rotulo, cores))"""
-    out = []
-    for i, (a, b, (lab, (bg, fg))) in enumerate(itens):
-        y = y0 + i * passo
-        out.append(r(16, y, 448, 36, '#f8fafc', 8, '#e4e7ec'))
-        out.append(t(30, y + 15, a, 12, '#0f172a', 700))
-        out.append(t(30, y + 29, b, 10.5, '#5b6472', 500))
-        out.append(pill(448 - (14 + len(lab) * 6), y + 9, lab, bg, fg))
-    return ''.join(out)
-
-
-def foto(x, y, danger=False):
-    c = '#fecaca' if danger else '#e2e8f0'
-    return (r(x, y, 46, 36, c, 6) + f'<path d="M{x+8} {y+28} l10 -12 l8 8 l6 -7 l8 11z" fill="{"#f87171" if danger else "#94a3b8"}"/>'
-            f'<circle cx="{x+34}" cy="{y+11}" r="4" fill="{"#f87171" if danger else "#94a3b8"}"/>')
-
-
-def m_agenda():
-    return mock('Inspeções', linhas([
-        ('Equipamento 01', 'Próxima inspeção em 18/11', WARN and ('Em breve', WARN)),
-        ('Equipamento 02', 'Próxima inspeção em 09/03', ('Em dia', OK)),
-        ('Equipamento 03', 'Próxima inspeção em 02/09', ('Em dia', OK)),
-        ('Equipamento 04', 'Próxima inspeção em 21/10', ('Vencida', BAD)),
-    ]) + t(16, 244, 'Cada equipamento com a sua data à vista.', 11, '#5b6472', 500),
-        'Recorte ilustrativo: lista de equipamentos com a data da próxima inspeção')
-
-
-def m_laudo():
-    c = r(16, 44, 448, 190, '#f8fafc', 10, '#e4e7ec')
-    c += t(32, 68, 'Registro da inspeção', 13, '#0f172a', 800)
-    c += pill(360, 54, 'Aprovado', *OK)
-    for i, (k, v) in enumerate([('Equipamento', 'Equipamento 01'), ('Responsável técnico', 'Nome do profissional'), ('Documento', 'laudo-inspecao.pdf')]):
-        y = 92 + i * 40
-        c += t(32, y, k, 10, '#8891a0', 600) + r(32, y + 6, 416, 22, '#ffffff', 6, '#e4e7ec') + t(42, y + 21, v, 11, '#0f172a', 500)
-    return mock('Inspeções', c, 'Recorte ilustrativo: registro da inspeção com o laudo anexado')
-
-
-def m_proxima():
-    c = r(16, 50, 205, 120, '#f8fafc', 12, '#e4e7ec') + t(32, 80, 'Inspeção feita', 11, '#5b6472', 600) + t(32, 112, '14/03', 28, '#0f172a', 800) + pill(32, 130, 'Aprovado', *OK)
-    c += '<path d="M232 110 h16 m-6 -6 l6 6 l-6 6" stroke="#f97316" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
-    c += r(259, 50, 205, 120, '#fff1e4', 12, '#fdba74') + t(275, 80, 'Próxima inspeção', 11, '#c2410c', 700) + t(275, 112, 'Já definida', 22, '#0f172a', 800) + t(275, 138, 'Acompanhada pelo sistema', 10.5, '#5b6472', 500)
-    c += t(16, 214, 'Ao registrar uma inspeção, a seguinte já nasce agendada.', 11, '#5b6472', 500)
-    return mock('Inspeções', c, 'Recorte ilustrativo: inspeção realizada e próxima inspeção definida')
-
-
-def m_painel():
-    c = ''
-    for i, (n, lab, col, bg) in enumerate([('18', 'Em dia', '#166534', '#dcfce7'), ('3', 'Vencendo', '#92400e', '#fef3c7'), ('1', 'Vencidas', '#991b1b', '#fee2e2')]):
-        x = 16 + i * 153
-        c += r(x, 50, 142, 100, bg, 12) + t(x + 71, 100, n, 36, col, 800, 'middle') + t(x + 71, 128, lab, 12, col, 700, 'middle')
-    c += r(16, 166, 448, 36, '#f8fafc', 8, '#e4e7ec') + t(30, 189, 'Aviso: uma inspeção está perto de vencer', 11.5, '#0f172a', 600) + pill(392, 175, 'Ver', *ORG)
-    return mock('Conformidade', c, 'Recorte ilustrativo: painel de conformidade com avisos de vencimento')
-
-
-def m_laudo_recebimento():
-    c = ''
-    for i, (a, dano) in enumerate([('Estrutura', False), ('Parte elétrica', False), ('Sistema hidráulico', True)]):
-        y = 46 + i * 56
-        c += r(16, y, 448, 48, '#f8fafc', 8, '#fca5a5' if dano else '#e4e7ec') + t(30, y + 20, a, 12, '#0f172a', 700)
-        c += t(30, y + 36, 'Avaria encontrada' if dano else 'Sem observações', 10.5, '#b91c1c' if dano else '#5b6472', 600)
-        c += foto(404, y + 6, dano)
-    c += t(16, 232, 'Conferência na volta, com fotos.', 11, '#5b6472', 500)
-    return mock('Recebimento', c, 'Recorte ilustrativo: conferência do equipamento na devolução, com fotos')
-
-
-def m_bloqueado():
-    c = r(16, 50, 448, 120, '#fef2f2', 12, '#fecaca') + t(34, 82, 'Equipamento 07', 16, '#0f172a', 800)
-    c += pill(34, 94, 'Bloqueado para locação', *BAD) + t(34, 138, 'Fora da vitrine comercial até a liberação.', 11.5, '#7f1d1d', 600)
-    c += r(16, 186, 448, 36, '#f8fafc', 8, '#e4e7ec') + t(30, 209, 'Ninguém aluga por engano.', 11.5, '#5b6472', 600)
-    return mock('Equipamentos', c, 'Recorte ilustrativo: equipamento bloqueado para nova locação')
-
-
-def m_os_custo():
-    c = r(16, 46, 448, 40, '#f8fafc', 8, '#e4e7ec') + t(30, 62, 'Ordem de serviço', 12, '#0f172a', 800) + t(30, 77, 'Equipamento 07', 10.5, '#5b6472', 500) + pill(380, 57, 'Em execução', *ORG)
-    for i, (k, v) in enumerate([('Peças', 'R$ 0.000,00'), ('Mão de obra', 'R$ 0.000,00'), ('Custo total', 'R$ 0.000,00')]):
-        y = 100 + i * 38
-        last = i == 2
-        c += r(16, y, 448, 30, '#fff1e4' if last else '#ffffff', 8, '#fdba74' if last else '#e4e7ec') + t(30, y + 20, k, 11.5, '#0f172a', 800 if last else 600) + t(448, y + 20, v, 11.5, '#0f172a', 800, 'end')
-    return mock('Ordens de serviço', c, 'Recorte ilustrativo: ordem de serviço com o custo do reparo')
-
-
-def m_liberado():
-    c = r(16, 50, 448, 120, '#f0fdf4', 12, '#bbf7d0') + t(34, 82, 'Equipamento 07', 16, '#0f172a', 800)
-    c += pill(34, 94, 'Disponível', *OK) + t(34, 138, 'Volta a aparecer para o comercial.', 11.5, '#14532d', 600)
-    c += '<circle cx="420" cy="110" r="22" fill="#16a34a"/><path d="M409 110 l8 8 l15 -16" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
-    return mock('Equipamentos', c, 'Recorte ilustrativo: equipamento liberado e disponível para locação')
-
-
-def m_horimetro(nome):
-    c = r(16, 46, 448, 112, '#f8fafc', 12, '#e4e7ec') + t(32, 72, nome, 13, '#0f172a', 800) + t(32, 92, 'Manutenção preventiva', 10.5, '#5b6472', 600)
-    c += r(32, 108, 416, 12, '#e2e8f0', 6) + r(32, 108, 300, 12, '#f97316', 6)
-    c += t(32, 142, 'Horímetro', 10.5, '#5b6472', 600) + t(448, 142, 'Próxima revisão se aproxima', 10.5, '#c2410c', 700, 'end')
-    c += t(16, 190, 'A revisão chega antes da quebra.', 11, '#5b6472', 500)
-    return mock('Preventiva', c, 'Recorte ilustrativo: acompanhamento da preventiva por horímetro')
-
-
-def m_os_equip(nome):
-    return mock('Ordens de serviço', linhas([
-        (nome, 'Ordem de serviço aberta', ('Em execução', ORG)),
-        (nome, 'Ordem de serviço anterior', ('Concluída', OK)),
-        ('Outro equipamento', 'Ordem de serviço', ('Aberta', WARN)),
-    ], passo=46), 'Recorte ilustrativo: ordens de serviço separadas por equipamento')
-
-
-def m_historico(nome):
-    c = t(32, 62, nome, 13, '#0f172a', 800)
-    for i, (a, b) in enumerate([('Revisão concluída', 'Ordem de serviço'), ('Avaria registrada', 'Com fotos'), ('Checklist de entrega', 'Assinado'), ('Inspeção', 'Registrada')]):
-        y = 84 + i * 42
-        c += f'<circle cx="38" cy="{y+8}" r="6" fill="#f97316"/>' + (f'<line x1="38" y1="{y+14}" x2="38" y2="{y+38}" stroke="#e4e7ec" stroke-width="2"/>' if i < 3 else '')
-        c += t(56, y + 8, a, 11.5, '#0f172a', 700) + t(56, y + 22, b, 10, '#5b6472', 500)
-    return mock('Histórico', c, 'Recorte ilustrativo: histórico individual de um equipamento')
-
-
-def m_avarias():
-    c = r(16, 46, 448, 100, '#fffbeb', 12, '#fde68a') + t(32, 72, 'Avaria registrada', 13, '#0f172a', 800) + pill(350, 58, 'Em análise', *WARN)
-    c += foto(32, 88) + foto(86, 88, True) + t(150, 106, 'Fotos anexadas ao registro', 10.5, '#5b6472', 600)
-    c += t(150, 124, 'Cada avaria com data e responsável', 10.5, '#5b6472', 600)
-    c += t(16, 182, 'Nada se perde na conversa de corredor.', 11, '#5b6472', 500)
-    return mock('Avarias', c, 'Recorte ilustrativo: avaria registrada com fotos')
-
-
-def m_checklist_assinatura():
-    c = ''
-    for i, a in enumerate(['Parte estrutural', 'Parte elétrica', 'Itens de segurança']):
-        y = 44 + i * 36
-        c += r(16, y, 300, 30, '#f8fafc', 8, '#e4e7ec') + '<circle cx="34" cy="' + str(y + 15) + '" r="7" fill="#16a34a"/>' + t(48, y + 19, a, 11.5, '#0f172a', 600) + foto(320, y - 3)
-    c += r(16, 158, 448, 74, '#ffffff', 10, '#cbd5e1')
-    c += t(30, 178, 'Assinatura do cliente', 10, '#8891a0', 600)
-    c += '<path d="M40 218 c18 -34 30 6 46 -14 s24 18 40 -4 s26 -16 38 6" stroke="#0f172a" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
-    c += pill(372, 170, 'Entrega', *OK)
-    return mock('Checklist', c, 'Recorte ilustrativo: checklist com fotos e assinatura digital')
 
 
 # ---------------------------------------------------------------- blocos de página
@@ -269,6 +104,9 @@ EXTRA_CSS = """<style data-site="equip-css">
 .porte { margin-top: 18px; background: var(--accent-soft); border-radius: 12px; padding: 16px 20px; font-size: 15px; line-height: 1.6; color: var(--ink); }
 .vt { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 14px; margin-top: 30px; color: var(--ink-soft); }
 .vt a { color: var(--accent-ink); font-weight: 600; }
+.hero-grid { display: grid; grid-template-columns: 1fr; gap: 36px; align-items: center; }
+.hero-art svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 30px 50px rgba(0,0,0,.45)); }
+@media (min-width: 960px) { .hero-grid { grid-template-columns: 1.02fr .98fr; gap: 48px; } }
 .lead-p { font-size: 18px; line-height: 1.65; max-width: 62ch; }
 .texto { max-width: 760px; font-size: 16px; line-height: 1.7; color: var(--ink-soft); }
 .texto p + p { margin-top: 14px; }
@@ -321,16 +159,16 @@ def pagina_nr13():
     corpo_flow = (
         solve('Agendamento', 'Cada equipamento sabe a sua próxima inspeção',
               'Chega de planilha e de lembrete no calendário de alguém. A agenda das inspeções fica num só lugar, à vista de quem decide.',
-              'Resultado: você enxerga o mês antes de ele chegar.', m_agenda())
+              'Resultado: você enxerga o mês antes de ele chegar.', ea.NR13_SCENES[0]())
         + solve('Relatório de inspeção', 'O laudo mora junto do equipamento',
                 'Quando o cliente, o auditor ou a seguradora pedir, o documento está a um clique, com responsável técnico e resultado.',
-                'Resultado: menos correria, mais segurança na hora de provar.', m_laudo(), True)
+                'Resultado: menos correria, mais segurança na hora de provar.', ea.NR13_SCENES[1](), True)
         + solve('Próxima data', 'Feita a inspeção, a seguinte já está marcada',
                 'A cada registro, a próxima data fica definida e acompanhada. Nada depende de memória.',
-                'Resultado: inspeção vencida deixa de ser surpresa.', m_proxima())
+                'Resultado: inspeção vencida deixa de ser surpresa.', ea.NR13_SCENES[2]())
         + solve('Alertas de vencimento', 'Um painel que mostra o que merece atenção hoje',
                 'Os alertas de vencimento avisam antes de vencer. Você abre o painel e vê, sem perguntar para ninguém.',
-                'Resultado: tranquilidade para locar equipamentos com a documentação em dia.', m_painel(), True)
+                'Resultado: tranquilidade para locar equipamentos com a documentação em dia.', ea.NR13_SCENES[3](), True)
     )
     corpo = (
         secao('o-que-t', 'A norma', 'O que é a NR-13 e quais equipamentos entram?', None,
@@ -352,7 +190,7 @@ def pagina_nr13():
                        'locadoras de pequeno e médio porte, com equipamentos sujeitos à NR-13 na frota. <!-- VALIDAR porte ideal -->'), True)
         + secao('faq-t', 'Perguntas frequentes', 'Perguntas frequentes sobre NR-13 e a Oravel', None, faq(faqs))
     )
-    return dict(slug='/nr-13-inspecao-equipamentos/', origem='nr13', eyebrow='Inspeções NR-13',
+    return dict(slug='/nr-13-inspecao-equipamentos/', origem='nr13', hero=ea.HERO['nr13'](), eyebrow='Inspeções NR-13',
                 title='Controle de inspeções NR-13 para locadoras | Oravel',
                 desc='Inspeção NR-13 vencida para a sua locadora? Organize datas, laudos e alertas de vencimento com a Oravel, o sistema de gestão de manutenção que complementa o seu.',
                 h1='Inspeções NR-13 sempre em dia na sua locadora.',
@@ -433,19 +271,19 @@ def pagina_equip(tipo):
     flow = (
         solve('Manutenção preventiva', 'Revisão por horímetro ou por tempo, sem depender de memória',
               f'A manutenção preventiva por horímetro ou por tempo mantém cada {sing} saudável e a sua locadora longe de parada inesperada.',
-              'Resultado: menos quebra no meio da locação.', m_horimetro(nome))
+              'Resultado: menos quebra no meio da locação.', ea.EQUIP_SCENES[0](tipo))
         + solve('Ordem de serviço por equipamento', 'Cada equipamento com as suas ordens de serviço',
                 'Quem fez, quando e quanto custou, separado por equipamento e fácil de achar.',
-                'Resultado: clareza sobre o que cada máquina consome.', m_os_equip(nome), True)
+                'Resultado: clareza sobre o que cada máquina consome.', ea.EQUIP_SCENES[1](tipo), True)
         + solve('Histórico individual', 'A vida inteira do equipamento em uma tela',
                 'O histórico individual por equipamento conta tudo o que já aconteceu com ele. É o argumento na hora de negociar, vender ou renovar.',
-                'Resultado: decisão com base em fato, não em lembrança.', m_historico(nome))
+                'Resultado: decisão com base em fato, não em lembrança.', ea.EQUIP_SCENES[2](tipo))
         + solve('Controle de avarias', 'Avaria registrada, com prova e com responsável',
                 'As avarias deixam de virar discussão: ficam registradas com fotos, data e acompanhamento, com trilha de auditoria de quem mexeu em quê.',
-                'Resultado: menos prejuízo na devolução.', m_avarias(), True)
+                'Resultado: menos prejuízo na devolução.', ea.EQUIP_SCENES[3](tipo), True)
         + solve('Checklist com fotos e assinatura digital', 'Entrega e devolução comprovadas',
                 'O checklist com fotos e assinatura digital documenta o estado do equipamento na saída e na volta.',
-                'Resultado: sem dúvida sobre o estado em que ele saiu e voltou.', m_checklist_assinatura())
+                'Resultado: sem dúvida sobre o estado em que ele saiu e voltou.', ea.EQUIP_SCENES[4](tipo))
     )
     corpo = (
         secao('como-t', 'Como a Oravel ajuda', c['h2a'], 'Do plano de revisão ao checklist assinado, tudo por equipamento.', flow, True)
@@ -456,7 +294,7 @@ def pagina_equip(tipo):
                 quem_e(c['quem'], 'Porte ideal:', c['porte'] + ' <!-- VALIDAR porte ideal -->'), True)
         + secao('faq-t', 'Perguntas frequentes', f'Perguntas frequentes sobre {plural} e a Oravel', None, faq(faqs))
     )
-    return dict(slug=c['slug'], origem=tipo, eyebrow=c['pagina'], title=c['title'], desc=c['desc'], h1=c['h1'], lead=c['lead'],
+    return dict(slug=c['slug'], origem=tipo, hero=ea.HERO[tipo](), eyebrow=c['pagina'], title=c['title'], desc=c['desc'], h1=c['h1'], lead=c['lead'],
                 corpo=corpo, faq=faqs, vt=c['vt'],
                 app_desc=f'Sistema de gestão de manutenção (CMMS) para locadoras de {plural}: manutenção preventiva por horímetro, ordem de serviço por equipamento e histórico individual.',
                 cta_h=c['cta'])
@@ -478,16 +316,16 @@ def pagina_devolucao():
     flow = (
         solve('1. Volta com defeito', 'O problema aparece na devolução, não na próxima locação',
               'O equipamento é conferido na volta, com fotos, e a avaria é registrada na hora.',
-              'Resultado: o defeito tem dia, prova e responsável.', m_laudo_recebimento())
+              'Resultado: o defeito tem dia, prova e responsável.', ea.DEV_SCENES[0]())
         + solve('2. É bloqueado', 'Equipamento com problema não vai para a rua',
                 'Enquanto não for resolvido, o equipamento fica bloqueado para nova locação. Ninguém aluga por engano.',
-                'Resultado: menos reclamação e menos troca de equipamento no cliente.', m_bloqueado(), True)
+                'Resultado: menos reclamação e menos troca de equipamento no cliente.', ea.DEV_SCENES[1](), True)
         + solve('3. Abre a ordem de serviço', 'O reparo tem dono, peças e custo',
                 'A ordem de serviço acompanha o reparo, com peças, mão de obra e o custo total.',
-                'Resultado: você sabe quanto cada defeito custou.', m_os_custo())
+                'Resultado: você sabe quanto cada defeito custou.', ea.DEV_SCENES[2]())
         + solve('4. É liberado', 'Reparado, ele volta a ser vendido',
                 'Depois da liberação, o equipamento volta a aparecer como disponível para o comercial.',
-                'Resultado: a máquina volta a gerar receita sem ruído entre manutenção e vendas.', m_liberado(), True)
+                'Resultado: a máquina volta a gerar receita sem ruído entre manutenção e vendas.', ea.DEV_SCENES[3](), True)
     )
     corpo = (
         secao('como-t', 'O caminho do equipamento', 'O que a locadora precisa para um equipamento com defeito não ser alugado de novo?',
@@ -503,7 +341,7 @@ def pagina_devolucao():
                        'Porte ideal:', 'locadoras de pequeno e médio porte, com devoluções frequentes e equipamentos de valor. <!-- VALIDAR porte ideal -->'), True)
         + secao('faq-t', 'Perguntas frequentes', 'Perguntas frequentes sobre equipamento devolvido com defeito', None, faq(faqs))
     )
-    return dict(slug='/equipamento-devolvido-com-defeito/', origem='devolucao', eyebrow='Devolução com defeito',
+    return dict(slug='/equipamento-devolvido-com-defeito/', origem='devolucao', hero=ea.HERO['devolucao'](), eyebrow='Devolução com defeito',
                 title='Equipamento devolvido com defeito: da avaria à liberação | Oravel',
                 desc='O equipamento voltou com defeito? Registre a avaria, bloqueie para locação, controle a ordem de serviço e libere de volta ao comercial com a Oravel.',
                 h1='Equipamento voltou com defeito? Do bloqueio à liberação, sem ruído.',
@@ -526,7 +364,7 @@ def hub():
     grid = '<div class="who-grid">' + ''.join(
         f'<a class="who" href="{u}" style="text-decoration:none;color:inherit"><h3>{n}</h3><p>{d}</p></a>' for u, n, d in cards) + '</div>'
     corpo = secao('hub-t', 'Equipamentos', 'Qual é o desafio da sua locadora?', 'Escolha o assunto e veja como a Oravel ajuda.', grid, True)
-    return dict(slug='/guindastes-e-plataformas/', origem='home', eyebrow='Equipamentos',
+    return dict(slug='/guindastes-e-plataformas/', origem='home', hero=ea.HERO['hub'](), eyebrow='Equipamentos',
                 title='Guindastes, munks, empilhadeiras e geradores | Oravel',
                 desc='Manutenção de guindastes, munks, plataformas, empilhadeiras e geradores, inspeções NR-13 e equipamento devolvido com defeito: veja como a Oravel ajuda a sua locadora.',
                 h1='Equipamentos de locação sempre prontos.',
@@ -615,10 +453,11 @@ def montar(molde, p):
                             f'<div class="ft-brand">O<i>r</i>avel</div><p class="slogan">{SLOGAN}</p>', 1)
 
     vt = veja_tambem([LINKS[k] for k in p['vt']])
-    hero = (f'<header class="hero"><div class="wrap"><div class="eyebrow">{p["eyebrow"]}</div><h1>{p["h1"]}</h1>'
+    hero = (f'<header class="hero"><div class="wrap hero-grid"><div><div class="eyebrow">{p["eyebrow"]}</div><h1>{p["h1"]}</h1>'
             f'<p class="sub lead-p">{p["lead"]}</p>'
             '<div class="hero-actions"><a href="#contato" class="btn btn-primary">Teste por 30 dias</a>'
-            f'<a href="#{"como-t" if "id=\"como-t\"" in p["corpo"] else "hub-t"}" class="btn btn-ghost">Ver como funciona</a></div></div></header>')
+            f'<a href="#{"como-t" if "id=\"como-t\"" in p["corpo"] else "hub-t"}" class="btn btn-ghost">Ver como funciona</a></div></div>'
+            f'<div class="hero-art">{p["hero"]}</div></div></header>')
     posic = f'<section class="section"><div class="wrap"><div class="texto"><p>{POSICIONAMENTO}</p>{vt}</div></div></section>'
     main = f'<main id="conteudo">{hero}{p["corpo"]}{posic}{cta_form(p)}</main>\n'
     return head + css + EXTRA_CSS + FOOTER_NAVY + '\n</head>\n' + topo + nav + '\n\n' + main + rodape + cauda
