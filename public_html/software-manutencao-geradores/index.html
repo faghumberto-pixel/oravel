@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Software de manutenção para geradores de locação | Oravel</title>
+<meta name="description" content="Manutenção preventiva por horímetro, ordem de serviço por equipamento e histórico individual para a sua frota de geradores. Conheça a Oravel.">
+<link rel="canonical" href="https://oravel.com.br/software-manutencao-geradores/">
+<meta property="og:title" content="Software de manutenção para geradores de locação | Oravel">
+<meta property="og:description" content="Manutenção preventiva por horímetro, ordem de serviço por equipamento e histórico individual para a sua frota de geradores. Conheça a Oravel.">
+<meta property="og:url" content="https://oravel.com.br/software-manutencao-geradores/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="Oravel">
+<link rel="icon" type="image/svg+xml" href="/nova/assets/favicon.svg?v=6" />
+<link rel="icon" type="image/png" sizes="32x32" href="/nova/assets/favicon-32.png?v=6" />
+<link rel="icon" type="image/x-icon" href="/nova/assets/favicon.ico?v=6" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "@id": "https://oravel.com.br/software-manutencao-geradores/#webpage", "url": "https://oravel.com.br/software-manutencao-geradores/", "name": "Software de manutenção para geradores de locação | Oravel", "description": "Manutenção preventiva por horímetro, ordem de serviço por equipamento e histórico individual para a sua frota de geradores. Conheça a Oravel.", "inLanguage": "pt-BR", "isPartOf": {"@id": "https://oravel.com.br/#website"}}, {"@type": "SoftwareApplication", "name": "Oravel", "applicationCategory": "BusinessApplication", "operatingSystem": "Web", "description": "Sistema de gestão de manutenção (CMMS) para locadoras de geradores: manutenção preventiva por horímetro, ordem de serviço por equipamento e histórico individual.", "url": "https://oravel.com.br/software-manutencao-geradores/", "publisher": {"@type": "Organization", "name": "Oravel Desenvolvimento de Software LTDA", "url": "https://oravel.com.br/"}}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "A Oravel funciona junto com o sistema de locação que já uso?", "acceptedAnswer": {"@type": "Answer", "text": "Sim. A Oravel complementa o sistema que a sua locadora já usa. Você não precisa trocar nada para começar."}}, {"@type": "Question", "name": "Como a manutenção preventiva por horímetro ajuda a locadora?", "acceptedAnswer": {"@type": "Answer", "text": "Ela faz a revisão chegar antes da quebra, no momento certo para cada equipamento. Menos geradores parados e menos reparo caro."}}, {"@type": "Question", "name": "Consigo ver tudo o que aconteceu com um equipamento?", "acceptedAnswer": {"@type": "Answer", "text": "Sim. Cada equipamento tem o seu histórico individual, com ordens de serviço, avarias e checklists."}}, {"@type": "Question", "name": "O checklist de entrega e devolução tem fotos e assinatura?", "acceptedAnswer": {"@type": "Answer", "text": "Sim. O checklist com fotos e assinatura digital deixa registrada a condição do equipamento nos dois momentos."}}, {"@type": "Question", "name": "É possível evitar que um equipamento com problema seja locado?", "acceptedAnswer": {"@type": "Answer", "text": "Sim. É possível bloquear o equipamento em manutenção para locação, para ninguém alugar por engano."}}]}]}</script>
+<style>
+:root {
+  --paper: #ffffff; --surface: #f6f7f9; --ink: #0f172a; --ink-soft: #5b6472;
+  --ink-faint: #8891a0; --border: #e4e7ec; --accent: #f97316; --accent-ink: #c2410c;
+  --accent-soft: #fff1e4; --navy: #0f172a; --navy-2: #1a2540;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: "Inter", "Segoe UI", system-ui, sans-serif; color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { font-family: "Manrope", "Inter", sans-serif; font-weight: 800; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+p, ul { margin: 0; }
+a { color: inherit; }
+img, svg { max-width: 100%; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.skip { position: absolute; left: -9999px; top: 0; background: var(--navy); color: #fff; padding: 10px 16px; z-index: 100; border-radius: 0 0 8px 0; }
+.skip:focus { left: 0; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+.eyebrow { font-family: "Manrope", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); }
+
+.inav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.94); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+.inav-wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.inav-logo { display: flex; align-items: center; gap: 9px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 19px; text-decoration: none; color: var(--ink); }
+.inav-logo-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--navy); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 15px; flex: none; }
+.inav-links { display: none; align-items: center; gap: 34px; }
+.inav-links a { text-decoration: none; color: var(--ink-soft); font-size: 14.5px; font-weight: 600; }
+.inav-links a:hover, .inav-links a[aria-current="page"] { color: var(--ink); }
+.inav-dd { position: relative; padding: 24px 0; }
+.inav-dd-menu { position: absolute; top: 100%; left: -16px; min-width: 260px; background: #fff; border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 16px 36px -18px rgba(15,23,42,0.35); padding: 6px; opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity .15s, transform .15s, visibility .15s; z-index: 60; }
+.inav-dd:hover .inav-dd-menu, .inav-dd:focus-within .inav-dd-menu { opacity: 1; visibility: visible; transform: none; }
+.inav-dd-menu a { display: block; padding: 10px 12px; border-radius: 6px; font-size: 14px; }
+.inav-dd-menu a:hover, .inav-dd-menu a[aria-current="page"] { background: var(--surface); color: var(--ink); }
+.inav-cta { background: var(--navy); color: #fff; padding: 10px 16px; border-radius: 7px; text-decoration: none; font-weight: 700; font-size: 13.5px; white-space: nowrap; }
+.inav-cta:hover { background: var(--navy-2); }
+
+.hero { padding: 48px 0 44px; background: linear-gradient(180deg, #eef1f5 0%, #ffffff 100%); }
+.hero h1 { font-size: clamp(28px, 6vw, 46px); line-height: 1.12; margin-top: 14px; max-width: 22ch; }
+.hero .sub { font-size: 17px; color: var(--ink-soft); line-height: 1.65; margin-top: 18px; max-width: 58ch; font-weight: 500; }
+.hero-actions { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 24px; border-radius: 8px; font-weight: 700; font-size: 15px; text-decoration: none; border: 1px solid transparent; cursor: pointer; font-family: inherit; min-height: 48px; }
+.btn-primary { background: var(--accent); color: var(--navy); }
+.btn-primary:hover { background: #ea580c; }
+.btn-ghost { border-color: var(--border); color: var(--ink); background: #fff; }
+.btn-ghost:hover { border-color: var(--ink-faint); }
+
+.section { padding: 56px 0; }
+.section-surface { background: var(--surface); }
+.section-head { max-width: 680px; margin: 0 0 34px; }
+.section-head h2 { font-size: clamp(24px, 4.4vw, 32px); line-height: 1.18; margin-top: 10px; }
+.section-head p { font-size: 16px; color: var(--ink-soft); line-height: 1.6; margin-top: 12px; }
+
+.pain-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+.pain { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
+.pain h3 { font-size: 17px; line-height: 1.3; }
+.pain .impact { font-size: 14.5px; color: var(--ink-soft); line-height: 1.6; margin-top: 10px; }
+.pain .tag { display: inline-block; font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 8px; }
+
+.solve { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: center; padding: 34px 0; border-top: 1px solid var(--border); }
+.solve:first-of-type { border-top: 0; padding-top: 0; }
+.solve h3 { font-size: clamp(21px, 3.6vw, 26px); line-height: 1.2; margin-top: 8px; }
+.solve p { font-size: 15.5px; color: var(--ink-soft); line-height: 1.65; margin-top: 12px; }
+.solve .result { color: var(--ink); font-weight: 600; }
+.solve ul { list-style: none; padding: 0; margin-top: 14px; display: grid; gap: 8px; }
+.solve li { font-size: 14.5px; color: var(--ink); padding-left: 22px; position: relative; line-height: 1.5; }
+.solve li::before { content: ""; position: absolute; left: 0; top: 7px; width: 10px; height: 10px; border-radius: 3px; background: var(--accent); }
+.mock { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 14px; }
+.mock svg { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--border); background: #fff; box-shadow: 0 24px 50px -30px rgba(15,23,42,0.3); }
+.mock figcaption { font-size: 12.5px; color: var(--ink-faint); margin-top: 10px; text-align: center; }
+.mock { margin: 0; }
+
+.mod-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.mod { background: #fff; padding: 22px 24px; display: flex; gap: 14px; }
+.mod .ic { width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); color: var(--accent-ink); display: flex; align-items: center; justify-content: center; flex: none; }
+.mod h3 { font-size: 15.5px; }
+.mod p { font-size: 13.5px; color: var(--ink-soft); margin-top: 6px; line-height: 1.5; }
+
+.who-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+.who { background: #fff; border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 10px; padding: 20px 22px; }
+.who h3 { font-size: 16px; }
+.who p { font-size: 14px; color: var(--ink-soft); margin-top: 6px; line-height: 1.55; }
+
+.cta-box { background: var(--navy); border-radius: 22px; padding: 32px 20px; color: #fff; display: grid; grid-template-columns: 1fr; gap: 30px; }
+.cta-box h2 { font-size: clamp(24px, 4.4vw, 32px); color: #fff; line-height: 1.18; }
+.cta-box .lead { color: rgba(255,255,255,0.78); font-size: 15.5px; line-height: 1.6; margin-top: 12px; }
+.cta-alt { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+.cta-alt .btn-ghost { background: transparent; border-color: rgba(255,255,255,0.35); color: #fff; }
+.cta-alt .btn-ghost:hover { border-color: #fff; }
+.form { background: #fff; border-radius: 16px; padding: 22px 18px; color: var(--ink); display: grid; gap: 14px; }
+.form label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.form input, .form select { width: 100%; font: inherit; font-size: 16px; padding: 12px 12px; border: 1px solid #c3c9d3; border-radius: 8px; background: #fff; color: var(--ink); min-height: 48px; }
+.form input[aria-invalid="true"], .form select[aria-invalid="true"] { border-color: #b91c1c; }
+.form .row { display: grid; grid-template-columns: 1fr; gap: 14px; }
+.form .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.form .fine { font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
+.form .btn { width: 100%; }
+.form-msg { border-radius: 8px; padding: 12px 14px; font-size: 14px; font-weight: 600; line-height: 1.45; }
+.form-msg[hidden] { display: none; }
+.form-msg.ok { background: #dcfce7; color: #14532d; }
+.form-msg.err { background: #fee2e2; color: #7f1d1d; }
+
+footer.ifoot { border-top: 1px solid var(--border); padding: 36px 0; }
+.ifoot-wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+.ifoot-links { display: flex; gap: 20px; flex-wrap: wrap; font-size: 13.5px; color: var(--ink-soft); }
+.ifoot-links a { text-decoration: none; }
+.ifoot-links a:hover { color: var(--ink); }
+.ifoot-copy { font-size: 13px; color: var(--ink-faint); }
+.ifoot-legal { font-size: 11.5px; color: var(--ink-faint); margin-top: 4px; }
+
+@media (min-width: 640px) {
+  .form .row { grid-template-columns: 1fr 1fr; }
+  .pain-grid { grid-template-columns: repeat(2, 1fr); }
+  .mod-grid { grid-template-columns: repeat(2, 1fr); }
+  .who-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 900px) {
+  .wrap, .inav-wrap, .ifoot-wrap { padding-left: 28px; padding-right: 28px; }
+  .inav-wrap { height: 72px; }
+  .inav-links { display: flex; }
+  .inav-cta { padding: 10px 20px; font-size: 14px; }
+  .hero { padding: 84px 0 72px; }
+  .section { padding: 76px 0; }
+  .pain-grid { grid-template-columns: repeat(4, 1fr); }
+  .solve { grid-template-columns: 1fr 1fr; gap: 56px; padding: 44px 0; }
+  .solve.rev .mock { order: -1; }
+  .mod-grid { grid-template-columns: repeat(3, 1fr); }
+  .who-grid { grid-template-columns: repeat(4, 1fr); }
+  .cta-box { grid-template-columns: 1fr 1fr; gap: 48px; padding: 52px; align-items: start; }
+  .form { padding: 28px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* Proteção básica contra cópia (dissuasão client-side, não impede DevTools/curl). */
+html { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+input, textarea, select, [contenteditable] { -webkit-user-select: text; -moz-user-select: text; user-select: text; }
+img, svg { -webkit-user-drag: none; user-drag: none; }
+</style>
+<style data-site="nav-css">
+  .inav-dd-menu a[aria-current="page"] { background: var(--surface, #f6f7f9); }
+  .inav-links > a[aria-current="page"] { color: var(--ink, #0f172a); }
+  .inav-m { display: none; position: relative; }
+  .inav-m > summary { list-style: none; cursor: pointer; font-weight: 700; font-size: 14px; padding: 8px 12px; border: 1px solid var(--border, #e4e7ec); border-radius: 8px; }
+  .inav-m > summary::-webkit-details-marker { display: none; }
+  .inav-m-list { position: absolute; right: 0; top: 44px; min-width: 240px; background: #fff; border: 1px solid var(--border, #e4e7ec); border-radius: 10px; box-shadow: 0 16px 36px -18px rgba(15,23,42,.35); padding: 6px; display: grid; }
+  .inav-m-list a { padding: 10px 12px; border-radius: 6px; text-decoration: none; color: var(--ink, #0f172a); font-size: 14px; }
+  .inav-m-list a:hover { background: var(--surface, #f6f7f9); }
+  .inav-m-list hr { border: 0; border-top: 1px solid var(--border, #e4e7ec); margin: 4px 0; width: 100%; }
+  @media (max-width: 860px) { .inav-m { display: block; } .inav-cta { display: none; } }
+  .ifoot-sol { max-width: 1180px; margin: 0 auto 22px; padding: 0 28px; display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 13.5px; }
+  .ifoot-sol b { color: var(--ink, #0f172a); } .ifoot-sol a { color: var(--ink-soft, #5b6472); text-decoration: none; } .ifoot-sol a:hover { color: var(--ink, #0f172a); }
+  .tb { background:#000 !important; color:#e5e7eb !important; font-size:12px !important; font-weight:600 !important; font-family:Inter,"Segoe UI",system-ui,sans-serif !important; line-height:1.4 !important; } .tb-in { max-width:1180px !important; margin:0 auto !important; padding:0 28px !important; min-height:36px; display:flex !important; align-items:center !important; justify-content:space-between !important; gap:24px; box-sizing:border-box; } .tb a { color:#e5e7eb !important; text-decoration:none !important; white-space:nowrap; } .tb a:hover { color:#f97316 !important; } .tb .tb-msg a { color:#f97316 !important; font-weight:700 !important; margin-left:6px; } .tb .tb-msg b { color:#fff !important; } @media (max-width:760px) { .tb-in { padding:6px 16px !important; } .tb-wa { display:none !important; } }
+  nav.inav[data-site="nav"] { position:sticky !important; top:0; z-index:50; display:block !important; background:#fff !important; border-bottom:1px solid #e4e7ec !important; padding:0 !important; margin:0 !important; font-family:Inter,"Segoe UI",system-ui,sans-serif !important; } nav.inav .hd-wrap { max-width:1180px !important; margin:0 auto !important; padding:0 28px !important; height:72px !important; display:flex !important; flex-direction:row !important; align-items:center !important; justify-content:space-between !important; gap:24px !important; box-sizing:border-box; } nav.inav .hd-logo { text-decoration:none !important; color:#0f172a !important; font-size:22px !important; font-weight:900 !important; font-family:Manrope,sans-serif !important; letter-spacing:-.01em; flex:none; } nav.inav .hd-logo i { color:#f97316 !important; font-style:normal !important; } nav.inav .hd-links { display:flex !important; align-items:center !important; gap:32px !important; } nav.inav .hd-links a { color:#5b6472 !important; font-size:14px !important; font-weight:600 !important; text-decoration:none !important; transition:color .2s; } nav.inav .hd-links a:hover, nav.inav .hd-links a[aria-current="page"] { color:#0f172a !important; } nav.inav .hd-dd { position:relative; padding-bottom:8px; } nav.inav .hd-dd::after { content:""; position:absolute; top:100%; left:0; right:0; height:8px; z-index:99; } nav.inav .hd-dd > a { display:inline-block !important; padding:8px 0; } nav.inav .hd-menu { position:absolute; top:calc(100% + 8px); left:0; background:#fff; border:1px solid #e4e7ec; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,.1); opacity:0; visibility:hidden; transition:opacity .2s ease, visibility .2s ease; min-width:220px; z-index:100; pointer-events:none; } nav.inav .hd-dd:hover .hd-menu, nav.inav .hd-dd:focus-within .hd-menu { opacity:1; visibility:visible; pointer-events:auto; } nav.inav .hd-menu a { display:block !important; padding:12px 16px !important; font-size:14px !important; border-bottom:1px solid #e4e7ec; } nav.inav .hd-menu a:last-child { border-bottom:none; } nav.inav .hd-menu a:hover { background:#f6f7f9; } nav.inav a.hd-cta { background:#f97316 !important; color:#fff !important; padding:10px 24px !important; border-radius:6px !important; font-weight:700 !important; font-size:14px !important; text-decoration:none !important; white-space:nowrap; flex:none; } nav.inav a.hd-cta:hover { background:#ea580c !important; } @media (max-width:768px) { nav.inav .hd-wrap { flex-direction:column !important; height:auto !important; gap:16px !important; padding:16px 28px !important; } nav.inav .hd-links { flex-wrap:wrap; justify-content:center; gap:16px !important; } nav.inav a.hd-cta, nav.inav .hd-sobre { display:none !important; } }.hd-logo::before, footer.ifoot .ft-brand::before, header nav > a:first-child > span::before { content:""; display:inline-block; width:38px; height:10px; margin-right:10px; vertical-align:middle; background:radial-gradient(circle at 5px 5px,#ef4444 4.5px,transparent 5px) 0 0/10px 10px no-repeat,radial-gradient(circle at 5px 5px,#f59e0b 4.5px,transparent 5px) 14px 0/10px 10px no-repeat,radial-gradient(circle at 5px 5px,#22c55e 4.5px,transparent 5px) 28px 0/10px 10px no-repeat; } 
+  footer.ifoot[data-site="footer"] { display:block !important; background:#fff !important; border-top:1px solid #e4e7ec !important; padding:48px 0 !important; margin:0 !important; font-family:Inter,"Segoe UI",system-ui,sans-serif !important; color:#0f172a; } footer.ifoot .ft-wrap { max-width:1180px !important; margin:0 auto !important; padding:0 28px !important; box-sizing:border-box; } footer.ifoot .ft-grid { display:grid !important; grid-template-columns:1.3fr 1.2fr 1fr 1fr; gap:32px; margin-bottom:32px; } footer.ifoot .ft-col h4 { font-size:14px !important; font-weight:700 !important; margin:0 0 16px !important; color:#0f172a !important; } footer.ifoot .ft-col a { display:block !important; font-size:13px !important; color:#5b6472 !important; line-height:1.8 !important; text-decoration:none !important; transition:color .2s; } footer.ifoot .ft-col a:hover { color:#0f172a !important; } footer.ifoot .ft-brand { font-weight:800; font-size:20px; margin-bottom:12px; font-family:Manrope,sans-serif; } footer.ifoot .ft-brand i { color:#f97316; font-style:normal; } footer.ifoot .ft-col p { font-size:13px !important; color:#5b6472 !important; line-height:1.6 !important; margin:0 !important; } footer.ifoot .ft-bottom { border-top:1px solid #e4e7ec; padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px 24px; font-size:12px; color:#8891a0; } footer.ifoot .ft-bottom p { margin:0 !important; font-size:12px !important; color:#8891a0 !important; } footer.ifoot .ft-legal { width:100%; margin-top:6px !important; font-size:11.5px !important; } @media (max-width:768px) { footer.ifoot .ft-grid { grid-template-columns:1fr; } }
+  .hero { position:relative; overflow:hidden; background:radial-gradient(900px 420px at 85% 0%, rgba(99,102,241,.38), transparent 60%), radial-gradient(700px 420px at 0% 100%, rgba(249,115,22,.26), transparent 60%), #070b14 !important; color:#fff; } .hero::before { content:""; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px); background-size:46px 46px; mask-image:radial-gradient(ellipse at 50% 20%, #000 25%, transparent 75%); -webkit-mask-image:radial-gradient(ellipse at 50% 20%, #000 25%, transparent 75%); pointer-events:none; } .hero > * { position:relative; } .hero h1, .hero h1 * { color:#fff !important; } .hero .desc, .hero p.desc { color:rgba(226,232,240,.82) !important; } .hero .eyebrow { color:#fdba74; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.14em; } .hero .slogan { color:#fdba74 !important; } .hero .btn-primary { background:#f97316 !important; border-color:#f97316 !important; color:#fff !important; box-shadow:0 10px 30px -12px rgba(249,115,22,.8); } .hero .btn-ghost { background:transparent !important; color:#fff !important; border-color:rgba(255,255,255,.3) !important; } .hero .hero-visual { background:rgba(255,255,255,.06) !important; border-color:rgba(255,255,255,.14) !important; box-shadow:0 30px 70px -30px rgba(99,102,241,.7); } .hero .status-pill { background:rgba(34,197,94,.16) !important; color:#86efac !important; } .chero { position:relative; overflow:hidden; background:radial-gradient(900px 420px at 85% 0%, rgba(99,102,241,.38), transparent 60%), radial-gradient(700px 420px at 0% 100%, rgba(249,115,22,.26), transparent 60%), #070b14 !important; color:#fff; } .chero::before { content:""; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px); background-size:46px 46px; mask-image:radial-gradient(ellipse at 50% 20%, #000 25%, transparent 75%); -webkit-mask-image:radial-gradient(ellipse at 50% 20%, #000 25%, transparent 75%); pointer-events:none; } .chero > * { position:relative; } .chero h1, .chero h1 * { color:#fff !important; } .chero .desc, .chero p.desc { color:rgba(226,232,240,.82) !important; } .chero .eyebrow { color:#fdba74; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.14em; } .chero .slogan { color:#fdba74 !important; } .chero .btn-primary { background:#f97316 !important; border-color:#f97316 !important; color:#fff !important; box-shadow:0 10px 30px -12px rgba(249,115,22,.8); } .chero .btn-ghost { background:transparent !important; color:#fff !important; border-color:rgba(255,255,255,.3) !important; } .chero .chero-visual { background:rgba(255,255,255,.06) !important; border-color:rgba(255,255,255,.14) !important; box-shadow:0 30px 70px -30px rgba(99,102,241,.7); } .chero .status-pill { background:rgba(34,197,94,.16) !important; color:#86efac !important; } .chero p { color:rgba(226,232,240,.82) !important; }
+</style>
+<style data-site="equip-css">
+.faq { display: grid; gap: 10px; max-width: 820px; }
+.faq details { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 0 20px; }
+.faq summary { cursor: pointer; font-family: "Manrope", sans-serif; font-weight: 700; font-size: 16px; padding: 18px 0; list-style: none; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; float: right; color: var(--accent); font-size: 22px; line-height: 1; }
+.faq details[open] summary::after { content: "–"; }
+.faq p { font-size: 15px; color: var(--ink-soft); line-height: 1.65; padding-bottom: 18px; }
+.porte { margin-top: 18px; background: var(--accent-soft); border-radius: 12px; padding: 16px 20px; font-size: 15px; line-height: 1.6; color: var(--ink); }
+.vt { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 14px; margin-top: 30px; color: var(--ink-soft); }
+.vt a { color: var(--accent-ink); font-weight: 600; }
+.lead-p { font-size: 18px; line-height: 1.65; max-width: 62ch; }
+.texto { max-width: 760px; font-size: 16px; line-height: 1.7; color: var(--ink-soft); }
+.texto p + p { margin-top: 14px; }
+.hero .sub { color: rgba(226,232,240,.88) !important; }
+.slogan { font-size: 12.5px; color: var(--ink-faint); margin-top: 6px; }
+</style><style data-site="footer-navy">
+footer.ifoot[data-site="footer"] { background:#0f172a !important; border-top:0 !important; color:#e2e8f0 !important; }
+footer.ifoot .ft-grid { grid-template-columns:1.3fr 1.2fr 1.2fr 1fr 1fr; }
+footer.ifoot .ft-col h4, footer.ifoot .ft-brand { color:#fff !important; }
+footer.ifoot .ft-col a { color:#cbd5e1 !important; }
+footer.ifoot .ft-col a:hover { color:#f97316 !important; }
+footer.ifoot .ft-col p, footer.ifoot .ft-bottom p, footer.ifoot .ft-bottom { color:#94a3b8 !important; }
+footer.ifoot .ft-bottom { border-top-color:rgba(255,255,255,.14); }
+footer.ifoot .ft-col .slogan { color:#94a3b8 !important; }
+@media (max-width:768px) { footer.ifoot .ft-grid { grid-template-columns:1fr; } }
+</style>
+
+</head>
+<body>
+<a class="skip" href="#conteudo">Ir para o conteúdo</a>
+
+<div class="tb" data-site="topbar"><div class="tb-in"><span class="tb-msg"><b>Fale com um especialista:</b> montamos a solução certa para a sua operação, sem compromisso. <a href="/contato.php">Falar com a equipe →</a></span><a class="tb-wa" href="https://wa.me/5519999332615" target="_blank" rel="noopener noreferrer">WhatsApp (19) 99933-2615</a></div></div><nav class="inav" data-site="nav" aria-label="Principal"><div class="hd-wrap"><a href="/" class="hd-logo">O<i>r</i>avel</a><div class="hd-links"><div class="hd-dd"><a href="/solucoes/" aria-haspopup="true">Soluções</a><div class="hd-menu"><a href="/erp-cmms/">ERP Locadoras</a><a href="/software-manutencao-industrial/">Manutenção</a><a href="/software-gestao-de-servicos/">Serviços</a><a href="/software-gestao-frota-logistica/">Logística</a><a href="/wms/">Estoque</a><a href="/crm/">Vendas</a><a href="/departamento-pessoal/">Departamento Pessoal</a></div></div><div class="hd-dd"><a href="/guindastes-e-plataformas/" aria-haspopup="true">Equipamentos</a><div class="hd-menu"><a href="/software-manutencao-guindastes/">Guindastes</a><a href="/software-manutencao-munks/">Munks</a><a href="/software-manutencao-plataformas-elevatorias/">Plataformas elevatórias</a><a href="/software-manutencao-empilhadeiras/">Empilhadeiras</a><a href="/software-manutencao-geradores/" aria-current="page">Geradores</a><a href="/nr-13-inspecao-equipamentos/">Inspeções NR-13</a><a href="/equipamento-devolvido-com-defeito/">Devolução com defeito</a></div></div><a href="/planos/">Planos</a><a href="/sobre/" class="hd-sobre">Sobre Nós</a><a href="/contato.php">Contato</a></div><a href="/contato.php" class="hd-cta">Falar com um Especialista</a></div></nav>
+
+<main id="conteudo"><header class="hero"><div class="wrap"><div class="eyebrow">Geradores</div><h1>Geradores prontos quando a energia não pode faltar.</h1><p class="sub lead-p">Gerador que falha no evento ou na obra do cliente custa contrato e confiança. A Oravel organiza a manutenção preventiva por horímetro, as ordens de serviço e o histórico de cada gerador, para ele partir da base pronto para trabalhar. Ela complementa o sistema que a sua locadora já usa.</p><div class="hero-actions"><a href="#contato" class="btn btn-primary">Teste por 30 dias</a><a href="#como-t" class="btn btn-ghost">Ver como funciona</a></div></div></header><section class="section section-surface" aria-labelledby="como-t"><div class="wrap"><div class="section-head"><div class="eyebrow">Como a Oravel ajuda</div><h2 id="como-t">Como manter geradores de locação sempre prontos para o cliente?</h2><p>Do plano de revisão ao checklist assinado, tudo por equipamento.</p></div><div class="solve"><div><div class="eyebrow">Manutenção preventiva</div><h3>Revisão por horímetro ou por tempo, sem depender de memória</h3><p>A manutenção preventiva por horímetro ou por tempo mantém cada gerador saudável e a sua locadora longe de parada inesperada.</p><p class="result">Resultado: menos quebra no meio da locação.</p></div><figure class="mock"><svg viewBox="0 0 480 300" role="img" aria-label="Recorte ilustrativo: acompanhamento da preventiva por horímetro"><title>Recorte ilustrativo: acompanhamento da preventiva por horímetro</title><rect width="480" height="300" rx="10" fill="#ffffff"/><rect width="480" height="30" rx="10" fill="#0f172a"/><rect y="15" width="480" height="15" fill="#0f172a"/><circle cx="18" cy="15" r="4" fill="#f97316"/><text x="30" y="19" font-family="Inter,Segoe UI,sans-serif" font-size="12" font-weight="700" fill="#ffffff" text-anchor="start">Preventiva</text><rect x="16" y="46" width="448" height="112" rx="12" fill="#f8fafc" stroke="#e4e7ec"/><text x="32" y="72" font-family="Inter,Segoe UI,sans-serif" font-size="13" font-weight="800" fill="#0f172a" text-anchor="start">Gerador 01</text><text x="32" y="92" font-family="Inter,Segoe UI,sans-serif" font-size="10.5" font-weight="600" fill="#5b6472" text-anchor="start">Manutenção preventiva</text><rect x="32" y="108" width="416" height="12" rx="6" fill="#e2e8f0"/><rect x="32" y="108" width="300" height="12" rx="6" fill="#f97316"/><text x="32" y="142" font-family="Inter,Segoe UI,sans-serif" font-size="10.5" font-weight="600" fill="#5b6472" text-anchor="start">Horímetro</text><text x="448" y="142" font-family="Inter,Segoe UI,sans-serif" font-size="10.5" font-weight="700" fill="#c2410c" text-anchor="end">Próxima revisão se aproxima</text><text x="16" y="190" font-family="Inter,Segoe UI,sans-serif" font-size="11" font-weight="500" fill="#5b6472" text-anchor="start">A revisão chega antes da quebra.</text></svg><figcaption>Recorte ilustrativo: acompanhamento da preventiva por horímetro</figcaption></figure></div><div class="solve rev"><div><div class="eyebrow">Ordem de serviço por equipamento</div><h3>Cada equipamento com as suas ordens de serviço</h3><p>Quem fez, quando e quanto custou, separado por equipamento e fácil de achar.</p><p class="result">Resultado: clareza sobre o que cada máquina consome.</p></div><figure class="mock"><svg viewBox="0 0 480 300" role="img" aria-label="Recorte ilustrativo: ordens de serviço separadas por equipamento"><title>Recorte ilustrativo: ordens de serviço separadas por equipamento</title><rect width="480" height="300" rx="10" fill="#ffffff"/><rect width="480" height="30" rx="10" fill="#0f172a"/><rect y="15" width="480" height="15" fill="#0f172a"/><circle cx="18" cy="15" r="4" fill="#f97316"/><text x="30" y="19" font-family="Inter,Segoe UI,sans-serif" font-size="12" font-weight="700" fill="#ffffff" text-anchor="start">Ordens de serviço</text><rect x="16" y="48" width="448" height="36" rx="8" fill="#f8fafc" stroke="#e4e7ec"/><text x="30" y="63" font-family="Inter,Segoe UI,sans-serif" font-size="12" font-weight="700" fill="#0f172a" text-anchor="start">Gerador 01</text><text x="30" y="77" font-family="Inter,Segoe UI,sans-serif" font-size="10.5" font-weight="500" fill="#5b6472" text-anchor="start">Ordem de serviço aberta</text><rect x="368" y="57" width="80" height="18" rx="9" fill="#fff1e4"/><text x="408.0" y="69.5" font-family="Inter,Segoe UI,sans-serif" font-size="10" font-weight="700" fill="#c2410c" text-anchor="middle">Em execução</text><rect x="16" y="94" width="448" height="36" rx="8" fill="#f8fafc" stroke="#e4e7ec"/><text x="30" y="109" font-family="Inter,Segoe UI,sans-serif" font-size="12" font-weight="700" fill="#0f172a" text-anchor="start">Gerador 01</text><text x="30" y="123" font-family="Inter,Segoe UI,sans-serif" font-size="10.5" font-weight="500" fill="#5b6472" text-anchor="start">Ordem de serviço anterior</text><rect x="380" y="103" width="68" height="18" rx="9" fill="#dcfce7"/><text x="414.0" y="115.5" font-family="Inter,Segoe UI,sans-serif" font-size="10" font-weight="700" fill="#166534" text-anchor="middle">Concluída</text><rect x="16" y="140" width="448" height="36" rx="8" fill="#f8fafc" stroke="#e4e7ec"/><text x="30" y="155" font-family="Inter,Segoe UI,sans-serif" font-size="12" font-weight="700" fill="#0f172a" text-anchor="start">Outro equipamento</text><text x="30" y="169" font-family="Inter,Segoe UI,sans-serif" font-size="10.5" font-weight="500" fill="#5b6472" text-anchor="start">Ordem de serviço</text><rect x="398" y="149" width="50" height="18" rx="9" fill="#fef3c7"/><text x="423.0" y="161.5" font-family="Inter,Segoe UI,sans-serif" font-size="10" font-weight="700" fill="#92400e" text-anchor="middle">Aberta</text></svg><figcaption>Recorte ilustrativo: ordens de serviço separadas por equipamento</figcaption></figure></div><div class="solve"><div><div class="eyebrow">Histórico individual</div><h3>A vida inteira do equipamento em uma tela</h3><p>O histórico individual por equipamento conta tudo o que já aconteceu com ele. É o argumento na hora de negociar, vender ou renovar.</p><p class="result">Resultado: decisão com base em fato, não em lembrança.</p></div><figure class="mock"><svg viewBox="0 0 480 300" role="img" aria-label="Recorte ilustrativo: histórico individual de um equipamento"><title>Recorte ilustrativo: histórico individual de um equipamento</title><rect width="480" height="300" rx="10" fill="#ffffff"/><rect width="480" height="30" rx="10" fill="#0f172a"/><rect y="15" width="480" height="15" fill="#0f172a"/><circle cx="18" cy="15" r="4" fill="#f97316"/><text x="30" y="19" font-family="Inter,Segoe UI,sans-serif" font-size="12" font-weight="700" fill="#ffffff" text-anchor="start">Histórico</text><text x="32" y="62" font-family="Inter,Segoe UI,sans-serif" font-size="13" font-weight="800" fill="#0f172a" text-anchor="start">Gerador 01</text><circle cx="38" cy="92" r="6" fill="#f97316"/><line x1="38" y1="98" x2="38" y2="122" stroke="#e4e7ec" stroke-width="2"/><text x="56" y="92" font-family="Inter,Segoe UI,sans-serif" font-size="11.5" font-weight="700" fill="#0f172a" text-anchor="start">Revisão concluída</text><text x="56" y="106" font-family="Inter,Segoe UI,sans-serif" font-size="10" font-weight="500" fill="#5b6472" text-anchor="start">Ordem de serviço</text><circle cx="38" cy="134" r="6" fill="#f97316"/><line x1="38" y1="140" x2="38" y2="164" stroke="#e4e7ec" stroke-width="2"/><text x="56" y="134" font-family="Inter,Segoe UI,sans-serif" font-size="11.5" font-weight="700" fill="#0f172a" text-anchor="start">Avaria registrada</text><text x="56" y="148" font-family="Inter,Segoe UI,sans-serif" font-size="10" font-weight="500" fill="#5b6472" text-anchor="start">Com fotos</text><circle cx="38" cy="176" r="6" fill="#f97316"/><line x1="38" y1="182" x2="38" y2="206" stroke="#e4e7ec" stroke-width="2"/><text x="56" y="176" font-family="Inter,Segoe UI,sans-serif" font-size="11.5" font-weight="700" fill="#0f172a" text-anchor="start">Checklist de entrega</text><text x="56" y="190" font-family="Inter,Segoe UI,sans-serif" font-size="10" font-weight="500" fill="#5b6472" text-anchor="start">Assinado</text><circle cx="38" cy="218" r="6" fill="#f97316"/><text x="56" y="218" font-family="Inter,Segoe UI,sans-serif" font-size="11.5" font-weight="700" fill="#0f172a" text-anchor="start">Inspeção</text><text x="56" y="232" font-family="Inter,Segoe UI,sans-serif" font-size="10" font-weight="500" fill="#5b6472" text-anchor="start">Registrada</text></svg><figcaption>Recorte ilustrativo: histórico individual de um equipamento</figcaption></figure></div><div class="solve rev"><div><div class="eyebrow">Controle de avarias</div><h3>Avaria registrada, com prova e com responsável</h3><p>As avarias deixam de virar discussão: ficam registradas com fotos, data e acompanhamento, com trilha de auditoria de quem mexeu em quê.</p><p class="result">Resultado: menos prejuízo na devolução.</p></div><figure class="mock"><svg viewBox="0 0 480 300" role="img" aria-label="Recorte ilustrativo: avaria registrada com fotos"><title>Recorte ilustrativo: avaria registrada com fotos</title><rect width="480" height="300" rx="10" fill="#ffffff"/><rect width="480" height="30" rx="10" fill="#0f172a"/><rect y="15" width="480" height="15" fill="#0f172a"/><circle cx="18" cy="15" r="4" fill="#f97316"/><text x="30" y="19" font-family="Inter,Segoe UI,sans-serif" font-size="12" font-weight="700" fill="#ffffff" text-anchor="start">Avarias</text><rect x="16" y="46" width="448" height="100" rx="12" fill="#fffbeb" stroke="#fde68a"/><text x="32" y="72" font-family="Inter,Segoe UI,sans-serif" font-size="13" font-weight="800" fill="#0f172a" text-anchor="start">Avaria registrada</text><rect x="350" y="58" width="74" height="18" rx="9" fill="#fef3c7"/><text x="387.0" y="70.5" font-family="Inter,Segoe UI,sans-serif" font-size="10" font-weight="700" fill="#92400e" text-anchor="middle">Em análise</text><rect x="32" y="88" width="46" height="36" rx="6" fill="#e2e8f0"/><path d="M40 116 l10 -12 l8 8 l6 -7 l8 11z" fill="#94a3b8"/><circle cx="66" cy="99" r="4" fill="#94a3b8"/><rect x="86" y="88" width="46" height="36" rx="6" fill="#fecaca"/><path d="M94 116 l10 -12 l8 8 l6 -7 l8 11z" fill="#f87171"/><circle cx="120" cy="99" r="4" fill="#f87171"/><text x="150" y="106" font-family="Inter,Segoe UI,sans-serif" font-size="10.5" font-weight="600" fill="#5b6472" text-anchor="start">Fotos anexadas ao registro</text><text x="150" y="124" font-family="Inter,Segoe UI,sans-serif" font-size="10.5" font-weight="600" fill="#5b6472" text-anchor="start">Cada avaria com data e responsável</text><text x="16" y="182" font-family="Inter,Segoe UI,sans-serif" font-size="11" font-weight="500" fill="#5b6472" text-anchor="start">Nada se perde na conversa de corredor.</text></svg><figcaption>Recorte ilustrativo: avaria registrada com fotos</figcaption></figure></div><div class="solve"><div><div class="eyebrow">Checklist com fotos e assinatura digital</div><h3>Entrega e devolução comprovadas</h3><p>O checklist com fotos e assinatura digital documenta o estado do equipamento na saída e na volta.</p><p class="result">Resultado: sem dúvida sobre o estado em que ele saiu e voltou.</p></div><figure class="mock"><svg viewBox="0 0 480 300" role="img" aria-label="Recorte ilustrativo: checklist com fotos e assinatura digital"><title>Recorte ilustrativo: checklist com fotos e assinatura digital</title><rect width="480" height="300" rx="10" fill="#ffffff"/><rect width="480" height="30" rx="10" fill="#0f172a"/><rect y="15" width="480" height="15" fill="#0f172a"/><circle cx="18" cy="15" r="4" fill="#f97316"/><text x="30" y="19" font-family="Inter,Segoe UI,sans-serif" font-size="12" font-weight="700" fill="#ffffff" text-anchor="start">Checklist</text><rect x="16" y="44" width="300" height="30" rx="8" fill="#f8fafc" stroke="#e4e7ec"/><circle cx="34" cy="59" r="7" fill="#16a34a"/><text x="48" y="63" font-family="Inter,Segoe UI,sans-serif" font-size="11.5" font-weight="600" fill="#0f172a" text-anchor="start">Parte estrutural</text><rect x="320" y="41" width="46" height="36" rx="6" fill="#e2e8f0"/><path d="M328 69 l10 -12 l8 8 l6 -7 l8 11z" fill="#94a3b8"/><circle cx="354" cy="52" r="4" fill="#94a3b8"/><rect x="16" y="80" width="300" height="30" rx="8" fill="#f8fafc" stroke="#e4e7ec"/><circle cx="34" cy="95" r="7" fill="#16a34a"/><text x="48" y="99" font-family="Inter,Segoe UI,sans-serif" font-size="11.5" font-weight="600" fill="#0f172a" text-anchor="start">Parte elétrica</text><rect x="320" y="77" width="46" height="36" rx="6" fill="#e2e8f0"/><path d="M328 105 l10 -12 l8 8 l6 -7 l8 11z" fill="#94a3b8"/><circle cx="354" cy="88" r="4" fill="#94a3b8"/><rect x="16" y="116" width="300" height="30" rx="8" fill="#f8fafc" stroke="#e4e7ec"/><circle cx="34" cy="131" r="7" fill="#16a34a"/><text x="48" y="135" font-family="Inter,Segoe UI,sans-serif" font-size="11.5" font-weight="600" fill="#0f172a" text-anchor="start">Itens de segurança</text><rect x="320" y="113" width="46" height="36" rx="6" fill="#e2e8f0"/><path d="M328 141 l10 -12 l8 8 l6 -7 l8 11z" fill="#94a3b8"/><circle cx="354" cy="124" r="4" fill="#94a3b8"/><rect x="16" y="158" width="448" height="74" rx="10" fill="#ffffff" stroke="#cbd5e1"/><text x="30" y="178" font-family="Inter,Segoe UI,sans-serif" font-size="10" font-weight="600" fill="#8891a0" text-anchor="start">Assinatura do cliente</text><path d="M40 218 c18 -34 30 6 46 -14 s24 18 40 -4 s26 -16 38 6" stroke="#0f172a" stroke-width="2.2" fill="none" stroke-linecap="round"/><rect x="372" y="170" width="56" height="18" rx="9" fill="#dcfce7"/><text x="400.0" y="182.5" font-family="Inter,Segoe UI,sans-serif" font-size="10" font-weight="700" fill="#166534" text-anchor="middle">Entrega</text></svg><figcaption>Recorte ilustrativo: checklist com fotos e assinatura digital</figcaption></figure></div></div></section><section class="section" aria-labelledby="porque-t"><div class="wrap"><div class="section-head"><div class="eyebrow">Por que importa</div><h2 id="porque-t">Por que isso muda o resultado da locadora?</h2></div><div class="texto"><p>Equipamento disponível e documentado aluga mais e dá menos dor de cabeça. Com avarias registradas e o equipamento em manutenção bloqueado para locação, a sua operação ganha ritmo e a sua margem agradece.</p></div></div></section><section class="section section-surface" aria-labelledby="quem-t"><div class="wrap"><div class="section-head"><div class="eyebrow">Para quem é</div><h2 id="quem-t">Para quem é e qual o porte ideal?</h2></div><div class="who-grid"><div class="who"><h3>Locadoras de geradores</h3><p>Frotas de várias potências, para obra, evento e emergência.</p></div><div class="who"><h3>Locadoras com frota mista</h3><p>Quem opera geradores junto com compressores e outros equipamentos.</p></div><div class="who"><h3>Gestores de manutenção</h3><p>Quem responde pela disponibilidade da frota.</p></div><div class="who"><h3>Donos de locadora</h3><p>Quem quer menos parada e mais previsibilidade.</p></div></div><div class="porte"><strong>Porte ideal:</strong> locadoras de pequeno e médio porte, com frota a partir de poucos geradores. <!-- VALIDAR porte ideal --></div></div></section><section class="section" aria-labelledby="faq-t"><div class="wrap"><div class="section-head"><div class="eyebrow">Perguntas frequentes</div><h2 id="faq-t">Perguntas frequentes sobre geradores e a Oravel</h2></div><div class="faq"><details><summary>A Oravel funciona junto com o sistema de locação que já uso?</summary><p>Sim. A Oravel complementa o sistema que a sua locadora já usa. Você não precisa trocar nada para começar.</p></details><details><summary>Como a manutenção preventiva por horímetro ajuda a locadora?</summary><p>Ela faz a revisão chegar antes da quebra, no momento certo para cada equipamento. Menos geradores parados e menos reparo caro.</p></details><details><summary>Consigo ver tudo o que aconteceu com um equipamento?</summary><p>Sim. Cada equipamento tem o seu histórico individual, com ordens de serviço, avarias e checklists.</p></details><details><summary>O checklist de entrega e devolução tem fotos e assinatura?</summary><p>Sim. O checklist com fotos e assinatura digital deixa registrada a condição do equipamento nos dois momentos.</p></details><details><summary>É possível evitar que um equipamento com problema seja locado?</summary><p>Sim. É possível bloquear o equipamento em manutenção para locação, para ninguém alugar por engano.</p></details></div></div></section><section class="section"><div class="wrap"><div class="texto"><p>A Oravel é um sistema de gestão de manutenção (CMMS) que trabalha ao lado do sistema que a sua locadora já usa. Você mantém o que funciona e ganha o controle que faltava.</p><nav class="vt" aria-label="Veja também"><span>Veja também:</span><a href="/software-manutencao-empilhadeiras/">Empilhadeiras</a><a href="/nr-13-inspecao-equipamentos/">Inspeções NR-13</a><a href="/equipamento-devolvido-com-defeito/">Equipamento devolvido com defeito</a><a href="/erp-cmms/">Oravel para locadoras</a></nav></div></div></section><section class="section" id="contato" aria-labelledby="cta-t"><div class="wrap"><div class="cta-box"><div><h2 id="cta-t">Veja a Oravel cuidando da sua frota de geradores</h2><p class="lead">Teste a Oravel por 30 dias, sem custo, com acompanhamento, treinamento e implementação inclusos. A Oravel complementa o sistema que a sua locadora já usa; você não precisa trocar nada para começar.</p><div class="cta-alt"><a class="btn btn-ghost" href="https://wa.me/5519999332615?text=Ol%C3%A1%21%20Vim%20pela%20p%C3%A1gina%20Geradores%20e%20quero%20testar%20a%20Oravel%20por%2030%20dias." target="_blank" rel="noopener">WhatsApp (19) 99933-2615</a><a class="btn btn-ghost" href="mailto:contato@oravel.com.br">contato@oravel.com.br</a></div></div><form class="form" id="lead-form" method="post" action="/lead-segmento.php" novalidate><div id="form-msg" class="form-msg" role="status" aria-live="polite" hidden></div><input type="hidden" name="origem" value="gerador"><div class="hp" aria-hidden="true"><label>Não preencha <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div><div class="row"><div><label for="f-nome">Nome *</label><input id="f-nome" name="name" type="text" autocomplete="name" required minlength="2" maxlength="120"></div><div><label for="f-empresa">Empresa *</label><input id="f-empresa" name="company" type="text" autocomplete="organization" required minlength="2" maxlength="120"></div></div><div class="row"><div><label for="f-email">E-mail *</label><input id="f-email" name="email" type="email" autocomplete="email" required maxlength="160"></div><div><label for="f-tel">WhatsApp</label><input id="f-tel" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" placeholder="(19) 90000-0000"></div></div><div class="row"><div><label for="f-seg">Segmento *</label><select id="f-seg" name="segmento" required><option value="locacao" selected>Locação de Equipamentos</option><option value="manutencao-industrial">Manutenção Industrial</option><option value="outro">Outro segmento</option></select></div><div><label for="f-porte">Nº de técnicos *</label><select id="f-porte" name="porte" required><option value="">Selecione</option><option>1 a 5</option><option>6 a 15</option><option>16 a 50</option><option>Mais de 50</option></select></div></div><div class="cf-turnstile" data-sitekey="0x4AAAAAAEUrIcrw2tIq9KEj"></div><button type="submit" class="btn btn-primary">Quero testar por 30 dias</button><p class="fine">Ao enviar, você concorda em ser contatado pela Oravel, conforme a <a href="/politica-de-privacidade/" style="color:inherit;text-decoration:underline;">Política de Privacidade</a>.</p></form></div></div></section></main>
+<footer class="ifoot" data-site="footer"><div class="ft-wrap"><div class="ft-grid"><div class="ft-col"><div class="ft-brand">O<i>r</i>avel</div><p class="slogan">Desenvolvimento e tecnologia</p><p>Plataforma de gestão com inteligência artificial para locação, manutenção, serviços, vendas (CRM), logística e estoque em todo o Brasil.</p></div><div class="ft-col"><h4>Soluções</h4><a href="/erp-cmms/">ERP Locadoras</a><a href="/software-manutencao-industrial/">Manutenção</a><a href="/software-gestao-de-servicos/">Serviços</a><a href="/software-gestao-frota-logistica/">Logística</a><a href="/wms/">Estoque</a><a href="/crm/">Vendas</a><a href="/departamento-pessoal/">Departamento Pessoal</a></div><div class="ft-col"><h4>Equipamentos</h4><a href="/software-manutencao-guindastes/">Guindastes</a><a href="/software-manutencao-munks/">Munks</a><a href="/software-manutencao-plataformas-elevatorias/">Plataformas elevatórias</a><a href="/software-manutencao-empilhadeiras/">Empilhadeiras</a><a href="/software-manutencao-geradores/">Geradores</a><a href="/nr-13-inspecao-equipamentos/">Inspeções NR-13</a><a href="/equipamento-devolvido-com-defeito/">Devolução com defeito</a></div><div class="ft-col"><h4>Empresa</h4><a href="/planos/">Planos</a><a href="/inteligencia-artificial/">Inteligência artificial</a><a href="/academia/">Academia</a><a href="/sobre/">Sobre</a><a href="/contato.php">Contato</a></div><div class="ft-col"><h4>Legal</h4><a href="/politica-de-privacidade/">Privacidade</a><a href="/termos-de-uso/">Termos de Uso</a></div></div><div class="ft-bottom"><p>© 2026 Oravel Software. Todos os direitos reservados.</p><p class="ft-legal">Oravel Desenvolvimento de Software Ltda · CNPJ 65.707.953/0001-30</p></div></div></footer>
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+(function () {
+  var f = document.getElementById('lead-form'), box = document.getElementById('form-msg');
+  if (!f) return;
+  var msgs = {
+    captcha: 'Não conseguimos confirmar que você não é um robô. Tente novamente.',
+    dados: 'Confira os campos obrigatórios e tente novamente.',
+    envio: 'Não foi possível enviar agora. Fale com a gente pelo WhatsApp ou e-mail abaixo.'
+  };
+  function show(cls, text) { box.className = 'form-msg ' + cls; box.textContent = text; box.hidden = false; }
+  var q = new URLSearchParams(location.search);
+  if (q.get('enviado') === '1') show('ok', 'Recebemos seu contato. Nossa equipe retorna em breve para agendar a demonstração.');
+  else if (q.get('erro')) show('err', msgs[q.get('erro')] || msgs.envio);
+  if (q.has('enviado') || q.has('erro')) history.replaceState(null, '', location.pathname + '#contato');
+  f.addEventListener('submit', function (ev) {
+    var bad = false;
+    Array.prototype.forEach.call(f.querySelectorAll('[required]'), function (el) {
+      var ok = el.checkValidity() && el.value.trim() !== '';
+      el.setAttribute('aria-invalid', ok ? 'false' : 'true');
+      if (!ok) bad = true;
+    });
+    if (bad) { ev.preventDefault(); show('err', msgs.dados); var first = f.querySelector('[aria-invalid="true"]'); if (first) first.focus(); return; }
+    var b = f.querySelector('button[type=submit]'); b.disabled = true; b.textContent = 'Enviando...';
+  });
+})();
+</script>
+
+<script>
+(function () {
+  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  document.addEventListener('copy', function (e) { e.preventDefault(); });
+  document.addEventListener('cut', function (e) { e.preventDefault(); });
+  document.addEventListener('selectstart', function (e) {
+    var t = e.target.tagName;
+    if (t !== 'INPUT' && t !== 'TEXTAREA') e.preventDefault();
+  });
+  document.addEventListener('dragstart', function (e) {
+    var t = e.target.tagName;
+    if (t === 'IMG' || t === 'svg' || t === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('keydown', function (e) {
+    var k = (e.key || '').toLowerCase();
+    var mod = e.ctrlKey || e.metaKey;
+    if ((mod && ['c', 'x', 'u', 's'].indexOf(k) !== -1) || k === 'f12' || (mod && e.shiftKey && ['i', 'j', 'c'].indexOf(k) !== -1)) {
+      e.preventDefault();
+    }
+  });
+})();
+</script>
+
+<!-- Tailwind via CDN, so' pra este widget -- preflight desligado de proposito
+     pra nao resetar margin/padding/font do resto do site. -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    corePlugins: { preflight: false },
+  };
+</script>
+
+<div id="wa-widget" class="fixed bottom-6 right-6 z-[9999]" style="font-family: 'Inter', sans-serif;">
+    <!-- Janela de chat -->
+    <div
+        id="wa-chat-panel"
+        class="hidden mb-4 w-80 max-w-[calc(100vw-3rem)] origin-bottom-right flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10 sm:w-96"
+    >
+        <!-- Cabecalho -->
+        <div class="flex items-center gap-3 bg-emerald-600 px-4 py-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg font-extrabold" style="background:#101010;">
+                <span style="color:#ffffff">O</span><span style="color:#E8541A">r</span>
+            </div>
+            <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-semibold text-white">Oravel</p>
+                <p class="flex items-center gap-1.5 text-xs text-emerald-100">
+                    <span class="relative flex h-2 w-2">
+                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75"></span>
+                        <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-300"></span>
+                    </span>
+                    Online agora
+                </p>
+            </div>
+            <button
+                type="button"
+                onclick="waToggleChat(false)"
+                aria-label="Fechar chat"
+                class="shrink-0 rounded-full p-1 text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Corpo (mensagem de boas vindas) -->
+        <div class="flex-1 space-y-2 bg-[#e5ddd5] px-3 py-4" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect width=%2260%22 height=%2260%22 fill=%22%23e5ddd5%22/%3E%3C/svg%3E');">
+            <div class="max-w-[85%] rounded-lg rounded-tl-none bg-white px-3 py-2 shadow-sm">
+                <p class="text-sm text-gray-800">Olá! Como podemos ajudar você hoje?</p>
+                <p class="mt-1 text-right text-[10px] text-gray-400" id="wa-msg-time"></p>
+            </div>
+        </div>
+
+        <!-- Campo de entrada -->
+        <div class="flex items-center gap-2 border-t border-gray-200 bg-white p-2">
+            <input
+                type="text"
+                id="wa-input"
+                placeholder="Digite sua mensagem..."
+                class="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-800 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                style="background-color:#ffffff; color:#1f2937; color-scheme: light;"
+                onkeydown="if (event.key === 'Enter') { event.preventDefault(); waSendMessage(); }"
+            >
+            <button
+                type="button"
+                onclick="waSendMessage()"
+                aria-label="Enviar mensagem"
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white transition hover:bg-emerald-700"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+                    <path d="M3.4 20.6l17.45-8.5a1 1 0 000-1.8L3.4 1.8a1 1 0 00-1.44 1.1L4.3 11 1.96 18.9a1 1 0 001.44 1.1z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Botao flutuante -->
+    <button
+        type="button"
+        id="wa-fab"
+        onclick="waToggleChat()"
+        aria-label="Abrir chat do WhatsApp"
+        class="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg transition duration-200 ease-out hover:scale-110 hover:bg-emerald-600 active:scale-95"
+    >
+        <span class="absolute inline-flex h-16 w-16 animate-ping rounded-full bg-emerald-500 opacity-40" style="animation-duration: 2.5s;"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" class="relative h-8 w-8">
+            <path d="M16.001 3C9.107 3 3.5 8.607 3.5 15.5c0 2.42.687 4.68 1.878 6.598L3.2 28.8l6.876-2.14A12.44 12.44 0 0016 28c6.894 0 12.5-5.607 12.5-12.5S22.894 3 16.001 3zm0 22.7a10.15 10.15 0 01-5.44-1.573l-.39-.232-4.08 1.27 1.293-3.976-.253-.407A10.14 10.14 0 015.8 15.5c0-5.632 4.57-10.2 10.2-10.2 5.63 0 10.2 4.568 10.2 10.2 0 5.632-4.57 10.2-10.199 10.2zm5.58-7.64c-.306-.153-1.81-.893-2.09-.995-.28-.102-.484-.153-.688.153-.204.306-.789.995-.967 1.199-.178.204-.356.23-.662.077-.306-.153-1.293-.477-2.463-1.522-.91-.812-1.524-1.816-1.703-2.123-.178-.306-.019-.472.134-.624.137-.137.306-.357.459-.535.153-.178.204-.306.306-.51.102-.204.051-.383-.026-.535-.077-.153-.688-1.658-.943-2.27-.248-.596-.5-.516-.688-.526l-.586-.011c-.204 0-.535.077-.815.383-.28.306-1.069 1.044-1.069 2.549 0 1.505 1.094 2.958 1.247 3.163.153.204 2.153 3.286 5.216 4.608.729.315 1.297.503 1.74.644.731.232 1.396.2 1.922.121.586-.087 1.81-.74 2.065-1.454.255-.714.255-1.326.178-1.454-.076-.128-.28-.204-.586-.357z"/>
+        </svg>
+    </button>
+</div>
+
+<script>
+    (function () {
+        var WA_NUMERO = "5519999332615";
+        var WA_MENSAGEM_PADRAO = "Olá! Vim pelo site da Oravel e gostaria de mais informações.";
+
+        var timeEl = document.getElementById('wa-msg-time');
+        if (timeEl) {
+            var agora = new Date();
+            timeEl.textContent = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        window.waToggleChat = function (forceState) {
+            var panel = document.getElementById('wa-chat-panel');
+            var isHidden = panel.classList.contains('hidden');
+            var shouldOpen = (typeof forceState === 'boolean') ? forceState : isHidden;
+
+            if (shouldOpen) {
+                panel.classList.remove('hidden');
+                panel.classList.add('flex');
+                document.getElementById('wa-input').focus();
+            } else {
+                panel.classList.add('hidden');
+                panel.classList.remove('flex');
+            }
+        };
+
+        window.waSendMessage = function () {
+            var input = document.getElementById('wa-input');
+            var texto = (input.value || '').trim();
+
+            if (texto === '') {
+                texto = WA_MENSAGEM_PADRAO;
+            }
+
+            var url = 'https://wa.me/' + WA_NUMERO + '?text=' + encodeURIComponent(texto);
+            window.open(url, '_blank');
+            input.value = '';
+        };
+    })();
+</script>
+
+<script async src="https://app.oravel.com.br/t.js?v=2"></script>
+<script src="/protecao.js?v=3" defer></script>
+</body>
+</html>

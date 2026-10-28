@@ -27,7 +27,10 @@ NAV_EQUIP = (
     '<div class="hd-dd"><a href="/guindastes-e-plataformas/" aria-haspopup="true">Equipamentos</a>'
     '<div class="hd-menu">'
     '<a href="/software-manutencao-guindastes/">Guindastes</a>'
+    '<a href="/software-manutencao-munks/">Munks</a>'
     '<a href="/software-manutencao-plataformas-elevatorias/">Plataformas elevatórias</a>'
+    '<a href="/software-manutencao-empilhadeiras/">Empilhadeiras</a>'
+    '<a href="/software-manutencao-geradores/">Geradores</a>'
     '<a href="/nr-13-inspecao-equipamentos/">Inspeções NR-13</a>'
     '<a href="/equipamento-devolvido-com-defeito/">Devolução com defeito</a>'
     '</div></div>'
@@ -234,10 +237,26 @@ LINKS = {
     'nr13': ('/nr-13-inspecao-equipamentos/', 'Inspeções NR-13'),
     'guindaste': ('/software-manutencao-guindastes/', 'Guindastes'),
     'plataforma': ('/software-manutencao-plataformas-elevatorias/', 'Plataformas elevatórias'),
+    'munk': ('/software-manutencao-munks/', 'Munks'),
+    'empilhadeira': ('/software-manutencao-empilhadeiras/', 'Empilhadeiras'),
+    'gerador': ('/software-manutencao-geradores/', 'Geradores'),
     'devolucao': ('/equipamento-devolvido-com-defeito/', 'Equipamento devolvido com defeito'),
     'locadoras': ('/erp-cmms/', 'Oravel para locadoras'),
     'manutencao': ('/software-manutencao-industrial/', 'Manutenção'),
 }
+
+FOOTER_NAVY = """<style data-site="footer-navy">
+footer.ifoot[data-site="footer"] { background:#0f172a !important; border-top:0 !important; color:#e2e8f0 !important; }
+footer.ifoot .ft-grid { grid-template-columns:1.3fr 1.2fr 1.2fr 1fr 1fr; }
+footer.ifoot .ft-col h4, footer.ifoot .ft-brand { color:#fff !important; }
+footer.ifoot .ft-col a { color:#cbd5e1 !important; }
+footer.ifoot .ft-col a:hover { color:#f97316 !important; }
+footer.ifoot .ft-col p, footer.ifoot .ft-bottom p, footer.ifoot .ft-bottom { color:#94a3b8 !important; }
+footer.ifoot .ft-bottom { border-top-color:rgba(255,255,255,.14); }
+footer.ifoot .ft-col .slogan { color:#94a3b8 !important; }
+@media (max-width:768px) { footer.ifoot .ft-grid { grid-template-columns:1fr; } }
+</style>
+"""
 
 EXTRA_CSS = """<style data-site="equip-css">
 .faq { display: grid; gap: 10px; max-width: 820px; }
@@ -343,10 +362,60 @@ def pagina_nr13():
                 cta_h='Deixe a NR-13 sob controle na sua locadora')
 
 
+EQUIPS = {
+    'guindaste': dict(nome='Guindaste 01', sing='guindaste', plural='guindastes', pagina='Guindastes', slug='/software-manutencao-guindastes/',
+        title='Software de manutenção para guindastes de locação | Oravel',
+        desc='Manutenção preventiva por horímetro, ordem de serviço por equipamento e histórico individual para a sua frota de guindastes. Conheça a Oravel.',
+        h1='Manutenção de guindastes sob controle na sua locadora.',
+        lead='Guindaste parado é contrato em risco. A Oravel cuida da manutenção preventiva por horímetro, das ordens de serviço e do histórico de cada guindaste, para ele estar pronto quando o cliente precisar. Ela complementa o sistema que a sua locadora já usa.',
+        quem=[('Locadoras de guindastes', 'Frotas em que cada máquina precisa estar pronta e documentada.'), ('Locadoras de equipamentos de elevação de carga', 'Quem opera guindastes e outros equipamentos de içamento.'), ('Gestores de manutenção', 'Quem responde pela disponibilidade da frota.'), ('Donos de locadora', 'Quem quer menos parada e mais previsibilidade.')],
+        porte='locadoras de pequeno e médio porte, com frota a partir de poucos guindastes.',
+        h2a='Como manter guindastes de locação sempre prontos para o cliente?', cta='Veja a Oravel cuidando da sua frota de guindastes',
+        vt=['munk', 'plataforma', 'nr13', 'devolucao'], extra=None),
+    'munk': dict(nome='Munk 01', sing='munk', plural='munks', pagina='Munks', slug='/software-manutencao-munks/',
+        title='Software de manutenção para caminhões munk de locação | Oravel',
+        desc='Manutenção preventiva por horímetro, ordem de serviço por equipamento e histórico individual para a sua frota de munks. Conheça a Oravel.',
+        h1='Munks sempre prontos para o próximo serviço.',
+        lead='Munk parado é serviço cancelado e cliente insatisfeito. A Oravel organiza a manutenção preventiva, as ordens de serviço e o histórico de cada munk, para ele sair da base pronto e voltar com tudo registrado. Ela complementa o sistema que a sua locadora já usa.',
+        quem=[('Locadoras de munks', 'Frotas em que cada caminhão precisa estar pronto e documentado.'), ('Locadoras com frota mista', 'Quem opera munks junto com guindastes e outros equipamentos.'), ('Gestores de manutenção', 'Quem responde pela disponibilidade da frota.'), ('Donos de locadora', 'Quem quer menos parada e mais previsibilidade.')],
+        porte='locadoras de pequeno e médio porte, com frota a partir de poucos munks.',
+        h2a='Como manter munks de locação sempre prontos e comprovar a entrega e a devolução?', cta='Veja a Oravel cuidando da sua frota de munks',
+        vt=['guindaste', 'plataforma', 'devolucao', 'locadoras'], extra=None),
+    'plataforma': dict(nome='Plataforma 01', sing='plataforma', plural='plataformas elevatórias', pagina='Plataformas elevatórias', slug='/software-manutencao-plataformas-elevatorias/',
+        title='Software de manutenção para plataformas elevatórias | Oravel',
+        desc='Manutenção preventiva por horímetro, checklist com fotos e assinatura digital e histórico individual para a sua frota de plataformas elevatórias. Conheça a Oravel.',
+        h1='Plataformas elevatórias sempre prontas e documentadas.',
+        lead='Plataforma elevatória parada ou devolvida com dano sem prova é prejuízo certo. A Oravel organiza a manutenção preventiva, o checklist com fotos e assinatura digital e o histórico de cada plataforma. Ela complementa o sistema que a sua locadora já usa.',
+        quem=[('Locadoras de plataformas elevatórias', 'Frotas de tesoura, articuladas e telescópicas.'), ('Locadoras de acesso em altura', 'Quem entrega e recebe equipamentos todos os dias.'), ('Gestores de manutenção', 'Quem precisa de previsibilidade na frota.'), ('Donos de locadora', 'Quem quer provar o estado em que cada plataforma saiu e voltou.')],
+        porte='locadoras de pequeno e médio porte, com frota a partir de dezenas de plataformas.',
+        h2a='Como manter plataformas elevatórias prontas e comprovar a entrega e a devolução?', cta='Veja a Oravel cuidando da sua frota de plataformas',
+        vt=['empilhadeira', 'guindaste', 'nr13', 'devolucao'],
+        extra=('Serve para plataformas tesoura, articuladas e telescópicas?', 'Sim. A Oravel atende os principais tipos de plataforma elevatória usados em locação.')),
+    'empilhadeira': dict(nome='Empilhadeira 01', sing='empilhadeira', plural='empilhadeiras', pagina='Empilhadeiras', slug='/software-manutencao-empilhadeiras/',
+        title='Software de manutenção para empilhadeiras de locação | Oravel',
+        desc='Manutenção preventiva por horímetro, ordem de serviço por equipamento e histórico individual para a sua frota de empilhadeiras. Conheça a Oravel.',
+        h1='Empilhadeiras sempre disponíveis, sem parada surpresa.',
+        lead='Empilhadeira parada derruba a operação do seu cliente e a sua reputação. A Oravel organiza a manutenção preventiva, as ordens de serviço e o histórico de cada empilhadeira, para ela estar pronta quando for alugada. Ela complementa o sistema que a sua locadora já usa.',
+        quem=[('Locadoras de empilhadeiras', 'Frotas elétricas, a combustão e de movimentação em geral.'), ('Locadoras de equipamentos de armazém', 'Quem aluga empilhadeiras e transpaleteiras.'), ('Gestores de manutenção', 'Quem precisa de previsibilidade na frota.'), ('Donos de locadora', 'Quem quer menos parada e mais receita por equipamento.')],
+        porte='locadoras de pequeno e médio porte, com frota a partir de dezenas de empilhadeiras.',
+        h2a='Como manter empilhadeiras de locação sempre disponíveis para o cliente?', cta='Veja a Oravel cuidando da sua frota de empilhadeiras',
+        vt=['gerador', 'plataforma', 'devolucao', 'locadoras'],
+        extra=('Serve para empilhadeiras elétricas e a combustão?', 'Sim. A Oravel atende empilhadeiras elétricas, a combustão e outros equipamentos de movimentação.')),
+    'gerador': dict(nome='Gerador 01', sing='gerador', plural='geradores', pagina='Geradores', slug='/software-manutencao-geradores/',
+        title='Software de manutenção para geradores de locação | Oravel',
+        desc='Manutenção preventiva por horímetro, ordem de serviço por equipamento e histórico individual para a sua frota de geradores. Conheça a Oravel.',
+        h1='Geradores prontos quando a energia não pode faltar.',
+        lead='Gerador que falha no evento ou na obra do cliente custa contrato e confiança. A Oravel organiza a manutenção preventiva por horímetro, as ordens de serviço e o histórico de cada gerador, para ele partir da base pronto para trabalhar. Ela complementa o sistema que a sua locadora já usa.',
+        quem=[('Locadoras de geradores', 'Frotas de várias potências, para obra, evento e emergência.'), ('Locadoras com frota mista', 'Quem opera geradores junto com compressores e outros equipamentos.'), ('Gestores de manutenção', 'Quem responde pela disponibilidade da frota.'), ('Donos de locadora', 'Quem quer menos parada e mais previsibilidade.')],
+        porte='locadoras de pequeno e médio porte, com frota a partir de poucos geradores.',
+        h2a='Como manter geradores de locação sempre prontos para o cliente?', cta='Veja a Oravel cuidando da sua frota de geradores',
+        vt=['empilhadeira', 'nr13', 'devolucao', 'locadoras'], extra=None),
+}
+
+
 def pagina_equip(tipo):
-    g = tipo == 'guindaste'
-    nome = 'Guindaste 01' if g else 'Plataforma 01'
-    plural = 'guindastes' if g else 'plataformas elevatórias'
+    c = EQUIPS[tipo]
+    nome, plural, sing = c['nome'], c['plural'], c['sing']
     faqs = [
         ('A Oravel funciona junto com o sistema de locação que já uso?',
          'Sim. A Oravel complementa o sistema que a sua locadora já usa. Você não precisa trocar nada para começar.'),
@@ -359,12 +428,11 @@ def pagina_equip(tipo):
         ('É possível evitar que um equipamento com problema seja locado?',
          'Sim. É possível bloquear o equipamento em manutenção para locação, para ninguém alugar por engano.'),
     ]
-    if not g:
-        faqs.append(('Serve para plataformas tesoura, articuladas e telescópicas?',
-                     'Sim. A Oravel atende os principais tipos de plataforma elevatória usados em locação.'))
+    if c['extra']:
+        faqs.append(c['extra'])
     flow = (
-        solve('Manutenção preventiva', f'Revisão por horímetro ou por tempo, sem depender de memória',
-              f'A manutenção preventiva por horímetro ou por tempo mantém cada {"guindaste" if g else "plataforma"} saudável e a sua locadora longe de parada inesperada.',
+        solve('Manutenção preventiva', 'Revisão por horímetro ou por tempo, sem depender de memória',
+              f'A manutenção preventiva por horímetro ou por tempo mantém cada {sing} saudável e a sua locadora longe de parada inesperada.',
               'Resultado: menos quebra no meio da locação.', m_horimetro(nome))
         + solve('Ordem de serviço por equipamento', 'Cada equipamento com as suas ordens de serviço',
                 'Quem fez, quando e quanto custou, separado por equipamento e fácil de achar.',
@@ -379,48 +447,19 @@ def pagina_equip(tipo):
                 'O checklist com fotos e assinatura digital documenta o estado do equipamento na saída e na volta.',
                 'Resultado: sem dúvida sobre o estado em que ele saiu e voltou.', m_checklist_assinatura())
     )
-    if g:
-        pagina_nome, slug = 'Guindastes', '/software-manutencao-guindastes/'
-        title = 'Software de manutenção para guindastes de locação | Oravel'
-        desc = 'Manutenção preventiva por horímetro, ordem de serviço por equipamento e histórico individual para a sua frota de guindastes. Conheça a Oravel.'
-        h1 = 'Manutenção de guindastes sob controle na sua locadora.'
-        lead = 'Guindaste parado é contrato em risco. A Oravel cuida da manutenção preventiva por horímetro, das ordens de serviço e do histórico de cada guindaste, para ele estar pronto quando o cliente precisar. Ela complementa o sistema que a sua locadora já usa.'
-        quem = [('Locadoras de guindastes', 'Frotas em que cada máquina precisa estar pronta e documentada.'),
-                ('Locadoras de equipamentos de elevação de carga', 'Quem opera guindastes e outros equipamentos de içamento.'),
-                ('Gestores de manutenção', 'Quem responde pela disponibilidade da frota.'),
-                ('Donos de locadora', 'Quem quer menos parada e mais previsibilidade.')]
-        porte = 'locadoras de pequeno e médio porte, com frota a partir de poucos guindastes. <!-- VALIDAR porte ideal -->'
-        h2a = 'Como manter guindastes de locação sempre prontos para o cliente?'
-        eq = 'guindaste'
-        vt = ['plataforma', 'nr13', 'devolucao', 'locadoras']
-        cta_h = 'Veja a Oravel cuidando da sua frota de guindastes'
-        app_desc = 'Sistema de gestão de manutenção (CMMS) para locadoras de guindastes: manutenção preventiva por horímetro, ordem de serviço por equipamento e histórico individual.'
-    else:
-        pagina_nome, slug = 'Plataformas elevatórias', '/software-manutencao-plataformas-elevatorias/'
-        title = 'Software de manutenção para plataformas elevatórias | Oravel'
-        desc = 'Manutenção preventiva por horímetro, checklist com fotos e assinatura digital e histórico individual para a sua frota de plataformas elevatórias. Conheça a Oravel.'
-        h1 = 'Plataformas elevatórias sempre prontas e documentadas.'
-        lead = 'Plataforma elevatória parada ou devolvida com dano sem prova é prejuízo certo. A Oravel organiza a manutenção preventiva, o checklist com fotos e assinatura digital e o histórico de cada plataforma. Ela complementa o sistema que a sua locadora já usa.'
-        quem = [('Locadoras de plataformas elevatórias', 'Frotas de tesoura, articuladas e telescópicas.'),
-                ('Locadoras de acesso em altura', 'Quem entrega e recebe equipamentos todos os dias.'),
-                ('Gestores de manutenção', 'Quem precisa de previsibilidade na frota.'),
-                ('Donos de locadora', 'Quem quer provar o estado em que cada plataforma saiu e voltou.')]
-        porte = 'locadoras de pequeno e médio porte, com frota a partir de dezenas de plataformas. <!-- VALIDAR porte ideal -->'
-        h2a = 'Como manter plataformas elevatórias prontas e comprovar a entrega e a devolução?'
-        eq = 'plataforma'
-        vt = ['guindaste', 'nr13', 'devolucao', 'locadoras']
-        cta_h = 'Veja a Oravel cuidando da sua frota de plataformas'
-        app_desc = 'Sistema de gestão de manutenção (CMMS) para locadoras de plataformas elevatórias: manutenção preventiva por horímetro, checklist com fotos e assinatura digital e histórico individual.'
     corpo = (
-        secao('como-t', 'Como a Oravel ajuda', h2a, 'Do plano de revisão ao checklist assinado, tudo por equipamento.', flow, True)
+        secao('como-t', 'Como a Oravel ajuda', c['h2a'], 'Do plano de revisão ao checklist assinado, tudo por equipamento.', flow, True)
         + secao('porque-t', 'Por que importa', 'Por que isso muda o resultado da locadora?', None,
                 '<div class="texto"><p>Equipamento disponível e documentado aluga mais e dá menos dor de cabeça. '
                 'Com avarias registradas e o equipamento em manutenção bloqueado para locação, a sua operação ganha ritmo e a sua margem agradece.</p></div>')
-        + secao('quem-t', 'Para quem é', 'Para quem é e qual o porte ideal?', None, quem_e(quem, 'Porte ideal:', porte), True)
+        + secao('quem-t', 'Para quem é', 'Para quem é e qual o porte ideal?', None,
+                quem_e(c['quem'], 'Porte ideal:', c['porte'] + ' <!-- VALIDAR porte ideal -->'), True)
         + secao('faq-t', 'Perguntas frequentes', f'Perguntas frequentes sobre {plural} e a Oravel', None, faq(faqs))
     )
-    return dict(slug=slug, origem=eq, eyebrow=pagina_nome, title=title, desc=desc, h1=h1, lead=lead, corpo=corpo,
-                faq=faqs, vt=vt, app_desc=app_desc, cta_h=cta_h)
+    return dict(slug=c['slug'], origem=tipo, eyebrow=c['pagina'], title=c['title'], desc=c['desc'], h1=c['h1'], lead=c['lead'],
+                corpo=corpo, faq=faqs, vt=c['vt'],
+                app_desc=f'Sistema de gestão de manutenção (CMMS) para locadoras de {plural}: manutenção preventiva por horímetro, ordem de serviço por equipamento e histórico individual.',
+                cta_h=c['cta'])
 
 
 def pagina_devolucao():
@@ -477,7 +516,10 @@ def pagina_devolucao():
 def hub():
     cards = [
         ('/software-manutencao-guindastes/', 'Guindastes', 'Prontos quando o cliente precisar.'),
+        ('/software-manutencao-munks/', 'Munks', 'Prontos para o próximo serviço.'),
         ('/software-manutencao-plataformas-elevatorias/', 'Plataformas elevatórias', 'Prontas, documentadas e comprovadas.'),
+        ('/software-manutencao-empilhadeiras/', 'Empilhadeiras', 'Disponíveis, sem parada surpresa.'),
+        ('/software-manutencao-geradores/', 'Geradores', 'Prontos quando a energia não pode faltar.'),
         ('/nr-13-inspecao-equipamentos/', 'Inspeções NR-13', 'Datas e laudos sob controle.'),
         ('/equipamento-devolvido-com-defeito/', 'Devolução com defeito', 'Do bloqueio à liberação.'),
     ]
@@ -485,10 +527,10 @@ def hub():
         f'<a class="who" href="{u}" style="text-decoration:none;color:inherit"><h3>{n}</h3><p>{d}</p></a>' for u, n, d in cards) + '</div>'
     corpo = secao('hub-t', 'Equipamentos', 'Qual é o desafio da sua locadora?', 'Escolha o assunto e veja como a Oravel ajuda.', grid, True)
     return dict(slug='/guindastes-e-plataformas/', origem='home', eyebrow='Equipamentos',
-                title='Guindastes, plataformas, NR-13 e devolução | Oravel',
-                desc='Manutenção de guindastes e plataformas elevatórias, inspeções NR-13 e equipamento devolvido com defeito: veja como a Oravel ajuda a sua locadora.',
+                title='Guindastes, munks, empilhadeiras e geradores | Oravel',
+                desc='Manutenção de guindastes, munks, plataformas, empilhadeiras e geradores, inspeções NR-13 e equipamento devolvido com defeito: veja como a Oravel ajuda a sua locadora.',
                 h1='Equipamentos de locação sempre prontos.',
-                lead='Guindastes, plataformas elevatórias, inspeções e devoluções com defeito: escolha o desafio da sua locadora e veja como a Oravel ajuda. Ela complementa o sistema que você já usa.',
+                lead='Guindastes, munks, plataformas, empilhadeiras, geradores, inspeções e devoluções com defeito: escolha o desafio da sua locadora e veja como a Oravel ajuda. Ela complementa o sistema que você já usa.',
                 corpo=corpo, faq=[],
                 vt=['locadoras', 'manutencao'], app_desc='Sistema de gestão de manutenção (CMMS) para locadoras de equipamentos.',
                 cta_h='Fale com a Oravel sobre a sua frota')
@@ -561,9 +603,12 @@ def montar(molde, p):
 
     rodape = rodape.replace(
         '<a href="/departamento-pessoal/">Departamento Pessoal</a></div>',
-        '<a href="/departamento-pessoal/">Departamento Pessoal</a>'
+        '<a href="/departamento-pessoal/">Departamento Pessoal</a></div><div class="ft-col"><h4>Equipamentos</h4>'
         '<a href="/software-manutencao-guindastes/">Guindastes</a>'
+        '<a href="/software-manutencao-munks/">Munks</a>'
         '<a href="/software-manutencao-plataformas-elevatorias/">Plataformas elevatórias</a>'
+        '<a href="/software-manutencao-empilhadeiras/">Empilhadeiras</a>'
+        '<a href="/software-manutencao-geradores/">Geradores</a>'
         '<a href="/nr-13-inspecao-equipamentos/">Inspeções NR-13</a>'
         '<a href="/equipamento-devolvido-com-defeito/">Devolução com defeito</a></div>', 1)
     rodape = rodape.replace('<div class="ft-brand">O<i>r</i>avel</div>',
@@ -576,13 +621,13 @@ def montar(molde, p):
             f'<a href="#{"como-t" if "id=\"como-t\"" in p["corpo"] else "hub-t"}" class="btn btn-ghost">Ver como funciona</a></div></div></header>')
     posic = f'<section class="section"><div class="wrap"><div class="texto"><p>{POSICIONAMENTO}</p>{vt}</div></div></section>'
     main = f'<main id="conteudo">{hero}{p["corpo"]}{posic}{cta_form(p)}</main>\n'
-    return head + css + EXTRA_CSS + '\n</head>\n' + topo + nav + '\n\n' + main + rodape + cauda
+    return head + css + EXTRA_CSS + FOOTER_NAVY + '\n</head>\n' + topo + nav + '\n\n' + main + rodape + cauda
 
 
 def main():
     molde = Path(sys.argv[1]).read_text(encoding='utf-8')
     saida = Path(sys.argv[2])
-    for p in (pagina_nr13(), pagina_equip('guindaste'), pagina_equip('plataforma'), pagina_devolucao(), hub()):
+    for p in (pagina_nr13(), *[pagina_equip(k) for k in EQUIPS], pagina_devolucao(), hub()):
         destino = saida / p['slug'].strip('/') / 'index.html'
         destino.parent.mkdir(parents=True, exist_ok=True)
         destino.write_text(montar(molde, p), encoding='utf-8')

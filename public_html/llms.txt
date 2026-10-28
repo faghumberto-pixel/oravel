@@ -10,6 +10,9 @@ Empresa: Oravel Desenvolvimento de Software LTDA, São Paulo/SP. Contato: contat
 - [Gestão de serviços](https://oravel.com.br/software-gestao-de-servicos/): equipes de campo e serviços
 - [Frota e logística](https://oravel.com.br/software-gestao-frota-logistica/): controle de frota e transportes
 - [Guindastes](https://oravel.com.br/software-manutencao-guindastes/): manutenção preventiva e histórico por equipamento
+- [Munks](https://oravel.com.br/software-manutencao-munks/): manutenção preventiva e histórico por equipamento
+- [Empilhadeiras](https://oravel.com.br/software-manutencao-empilhadeiras/): manutenção preventiva e histórico por equipamento
+- [Geradores](https://oravel.com.br/software-manutencao-geradores/): manutenção preventiva por horímetro e histórico por equipamento
 - [Plataformas elevatórias](https://oravel.com.br/software-manutencao-plataformas-elevatorias/): manutenção, checklist com fotos e assinatura digital
 - [Inspeções NR-13](https://oravel.com.br/nr-13-inspecao-equipamentos/): datas, laudos e alertas de vencimento
 - [Equipamento devolvido com defeito](https://oravel.com.br/equipamento-devolvido-com-defeito/): da avaria à liberação
