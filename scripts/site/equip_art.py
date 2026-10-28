@@ -85,165 +85,234 @@ def person(x, y, vest=YL, s=1.0):
 
 
 # ------------------------------------------------------------------ equipamentos (caixa 320x200)
+# Desenho técnico: traço fino azul-marinho, preenchimento claro e laranja só nos conjuntos principais.
+PAPER = dict(INK='#12315a', FILL='#ffffff', FILL2='#e6eef8', DET='#6b86a8', ACC=O, ACCL='#ffe6d1', TIRE='#d5e2f1', GLASS='#cfe6fb')
+DARK = dict(INK='#d3e8ff', FILL='#0e2748', FILL2='#143560', DET='#6f93c0', ACC=O, ACCL='#17406f', TIRE='#08182f', GLASS='#1c4a7a')
+T = dict(PAPER)
+
+
+def use_theme(nome):
+    T.clear()
+    T.update(PAPER if nome == 'paper' else DARK)
+
+
+def ol(d, fill=None, sw=1.3):
+    return f'<path d="{d}" fill="{fill or T["FILL"]}" stroke="{T["INK"]}" stroke-width="{sw}" stroke-linejoin="round" stroke-linecap="round"/>'
+
+
+def bx(x, y, w, h, r=0, fill=None, sw=1.3):
+    return f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{r}" fill="{fill or T["FILL"]}" stroke="{T["INK"]}" stroke-width="{sw}"/>'
+
+
+def ci(cx, cy, r, fill=None, sw=1.3):
+    return f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="{fill or T["FILL"]}" stroke="{T["INK"]}" stroke-width="{sw}"/>'
+
+
+def ln(x0, y0, x1, y1, sw=.8, dash=None, col=None):
+    d = f' stroke-dasharray="{dash}"' if dash else ''
+    return f'<line x1="{x0}" y1="{y0}" x2="{x1}" y2="{y1}" stroke="{col or T["DET"]}" stroke-width="{sw}" stroke-linecap="round"{d}/>'
+
+
+def bar(x0, y0, x1, y1, th, fill=None, sw=1.3):
+    dx, dy = x1 - x0, y1 - y0
+    L = math.hypot(dx, dy) or 1
+    nx, ny = -dy / L * th / 2, dx / L * th / 2
+    pts = f'{x0+nx:.1f},{y0+ny:.1f} {x1+nx:.1f},{y1+ny:.1f} {x1-nx:.1f},{y1-ny:.1f} {x0-nx:.1f},{y0-ny:.1f}'
+    return f'<polygon points="{pts}" fill="{fill or T["FILL"]}" stroke="{T["INK"]}" stroke-width="{sw}" stroke-linejoin="round"/>'
+
+
+def hatch(x, y, w, h, step=4):
+    cid = uid('cp')
+    ls = ''.join(f'<line x1="{x+i}" y1="{y+h}" x2="{x+i+h}" y2="{y}" stroke="{T["DET"]}" stroke-width=".6"/>' for i in range(-int(h), int(w), step))
+    return f'<clipPath id="{cid}"><rect x="{x}" y="{y}" width="{w}" height="{h}"/></clipPath><g clip-path="url(#{cid})">{ls}</g>'
+
+
+def tire(cx, cy, r):
+    g = ci(cx, cy, r, T['TIRE'], 1.5)
+    g += f'<circle cx="{cx}" cy="{cy}" r="{r*.84:.1f}" fill="none" stroke="{T["DET"]}" stroke-width=".8" stroke-dasharray="2 2"/>'
+    g += ci(cx, cy, r * .6, T['FILL'], 1.2) + ci(cx, cy, r * .2, T['INK'], 1)
+    for i in range(6):
+        a = i * math.pi / 3
+        g += f'<circle cx="{cx+math.cos(a)*r*.4:.1f}" cy="{cy+math.sin(a)*r*.4:.1f}" r="{max(r*.045, .8):.1f}" fill="{T["INK"]}"/>'
+    return g
+
+
+def center(x0, y, x1):
+    return ln(x0, y, x1, y, .7, '10 3 2 3')
+
+
+def gauge_dial(cx, cy, r):
+    g = ci(cx, cy, r, T['FILL'], 1.4) + ci(cx, cy, r * .78, 'none', .7)
+    for i in range(9):
+        a = math.radians(150 + 30 * i)
+        g += ln(cx + math.cos(a) * r * .66, cy + math.sin(a) * r * .66, cx + math.cos(a) * r * .8, cy + math.sin(a) * r * .8, .8, col=T['INK'])
+    a = math.radians(300)
+    g += f'<line x1="{cx}" y1="{cy}" x2="{cx+math.cos(a)*r*.62:.1f}" y2="{cy+math.sin(a)*r*.62:.1f}" stroke="{O}" stroke-width="1.6" stroke-linecap="round"/>' + ci(cx, cy, 1.8, T['INK'], .8)
+    return g
+
+
+def bolts(xs, y, r=1.1):
+    return ''.join(f'<circle cx="{x}" cy="{y}" r="{r}" fill="{T["INK"]}"/>' for x in xs)
+
+
 def eq_empilhadeira():
-    g = shadow(170, 150)
-    g += path('M26 172 V128 Q26 108 46 108 H118 V140 H205 V172 Z', O)
-    g += rect(26, 150, 14, 22, OD, 4)
-    g += ''.join(path(f'M{26+i*9} 172 l6 -10 h5 l-6 10z', YL, op=.9) for i in range(1))
-    g += rect(66, 70, 10, 38, S1, 4) + rect(70, 92, 38, 16, S1, 5)
-    g += person(90, 94, '#1d4ed8', .9)
-    g += line(150, 140, 160, 108, S1, 4) + f'<ellipse cx="160" cy="106" rx="12" ry="4" fill="none" stroke="{S1}" stroke-width="3"/>'
-    g += rect(112, 46, 5, 96, N, 2) + rect(198, 46, 5, 96, N, 2)
-    g += rect(106, 40, 104, 8, N, 3) + ''.join(line(120 + i * 22, 44, 120 + i * 22, 44, S4, 1) for i in range(1))
-    g += ''.join(rect(122 + i * 22, 42, 3, 5, S3, 1) for i in range(4))
-    g += circ(158, 34, 5, YL) + rect(154, 36, 8, 4, S2, 1)
-    g += wheel(64, 160, 17) + wheel(176, 158, 24)
-    g += rect(214, 24, 7, 156, S1, 2) + rect(232, 24, 7, 156, S1, 2) + rect(214, 24, 25, 5, N, 2)
-    g += rect(214, 92, 25, 4, N, 1) + rect(214, 168, 25, 5, N, 1) + rect(222, 66, 9, 112, S2, 2)
-    g += line(226, 30, 226, 94, S3, 1.5, dash='3 3')
-    g += rect(240, 92, 8, 84, N, 2) + ''.join(line(240, 100 + i * 14, 248, 100 + i * 14, S3, 1) for i in range(5))
-    g += path('M240 172 H312 L316 178 H240 Z', S1)
-    g += rect(256, 126, 52, 46, '#d6a76b', 3, '#a8793e', 1.5) + line(256, 149, 308, 149, '#a8793e', 1.5) + line(282, 126, 282, 172, '#a8793e', 1.5)
+    g = ln(8, 185, 312, 185, .9)
+    g += ol('M28 172 V126 Q28 108 46 108 H120 L124 140 H205 V172 Z', T['ACCL'])
+    g += f'<rect x="28" y="150" width="177" height="6" fill="{O}" stroke="{T["INK"]}" stroke-width="1"/>'
+    g += ln(62, 112, 62, 172, .8) + ln(124, 140, 124, 172, .8)
+    g += ''.join(ln(140, 146 + i * 4, 188, 146 + i * 4, .7) for i in range(4))
+    g += bx(70, 94, 38, 14, 5, T['FILL2']) + bx(66, 66, 10, 42, 4, T['FILL2'])
+    g += ln(150, 140, 162, 108, 2.4, col=T['INK']) + f'<ellipse cx="162" cy="106" rx="12" ry="4" fill="none" stroke="{T["INK"]}" stroke-width="1.6"/>'
+    g += bx(112, 46, 5, 96, 1.5) + bx(198, 46, 5, 96, 1.5) + bx(104, 40, 108, 8, 3)
+    g += ''.join(ln(116 + i * 17, 41, 116 + i * 17, 47, .8, col=T['INK']) for i in range(6))
+    g += bx(154, 32, 10, 8, 2, O)
+    g += tire(64, 160, 17) + tire(176, 158, 24)
+    g += bx(214, 22, 8, 160, 1.5, T['FILL2']) + bx(233, 22, 8, 160, 1.5, T['FILL2']) + bx(222, 62, 11, 120, 1, T['FILL'])
+    g += bx(212, 22, 31, 5, 1.5) + bx(212, 172, 31, 6, 1.5)
+    g += ln(228, 28, 228, 100, .8, '2 2', T['INK']) + bx(226, 74, 4, 98, 1, T['FILL2'], .9)
+    g += bx(243, 92, 8, 86, 2) + ''.join(ln(243, 100 + i * 14, 251, 100 + i * 14, .8) for i in range(5))
+    g += ol('M243 172 H312 L317 178 H243 Z', T['FILL2'])
+    g += bx(257, 124, 52, 48, 2, T['ACCL']) + ln(257, 148, 309, 148, .8) + ln(283, 124, 283, 172, .8) + ln(257, 124, 309, 172, .7, '3 2')
+    g += center(10, 160, 120)
     return g
 
 
 def eq_gerador():
-    g = shadow(150, 150)
-    g += rect(28, 150, 252, 12, N, 3)
-    g += path('M8 162 L32 150 V162 Z', S1) + circ(10, 160, 5, 'none', S2, 2) + rect(38, 162, 4, 16, S2, 1) + rect(32, 176, 16, 4, S1, 1)
-    g += rect(36, 56, 240, 12, OD, 6) + rect(40, 62, 232, 90, O, 10)
-    for i in range(7):
-        g += rect(54, 76 + i * 9, 92, 4.5, '#7c2d12', 2, op=.85)
-    g += rect(158, 76, 104, 68, 'none', 6, OD, 2) + rect(244, 102, 6, 18, N, 2)
-    g += rect(170, 86, 52, 30, N, 4) + rect(175, 91, 42, 13, '#22c55e', 2, op=.9) + line(179, 97, 205, 97, '#064e3b', 2)
-    g += circ(231, 93, 4, YL) + circ(231, 105, 4, '#ef4444')
-    g += path('M200 120 l-11 17 h8 l-4 14 l15 -21 h-9 l5 -10z', W)
-    g += rect(242, 24, 10, 36, S1, 2) + rect(238, 20, 18, 6, S2, 3)
-    g += circ(250, 12, 6, S3, op=.45) + circ(258, 4, 4, S3, op=.3)
-    g += rect(264, 112, 14, 34, N, 3) + circ(271, 122, 3, YL) + circ(271, 132, 3, YL) + circ(271, 142, 3, YL)
-    g += path('M170 152 a20 20 0 0 1 40 0 Z', N) + wheel(190, 166, 17)
+    g = ln(8, 185, 312, 185, .9)
+    g += bx(28, 150, 252, 12, 2, T['FILL2']) + ol('M8 162 L32 150 V162 Z', T['FILL2']) + ci(10, 160, 5, 'none', 1.3)
+    g += bx(36, 164, 4, 14, 1, T['FILL2']) + bx(30, 177, 16, 4, 1, T['FILL2'])
+    g += bx(40, 60, 232, 90, 6, T['ACCL']) + bx(36, 54, 240, 10, 5, T['FILL2'])
+    g += ''.join(bx(54, 76 + i * 9, 92, 4.5, 1.5, T['FILL'], .9) for i in range(7))
+    g += bx(158, 76, 104, 68, 5, 'none') + bx(244, 102, 6, 18, 2, T['FILL2'])
+    g += bx(170, 86, 52, 30, 3, T['FILL2']) + bx(175, 91, 42, 13, 1.5, O, 1) + ln(179, 97, 205, 97, 1.4, col=T['INK'])
+    g += ci(231, 93, 3.5, T['FILL'], 1) + ci(231, 105, 3.5, O, 1)
+    g += bolts([176, 216, 176, 216], 111) + bolts([164, 256], 82) + bolts([164, 256], 138)
+    g += ol('M200 120 l-11 17 h8 l-4 14 l15 -21 h-9 l5 -10z', O, 1)
+    g += bx(54, 132, 52, 10, 1, T['FILL']) + ln(58, 137, 100, 137, .7)
+    g += bx(242, 24, 10, 32, 1.5) + bx(238, 20, 18, 6, 2) + hatch(242, 24, 10, 32, 3)
+    g += f'<path d="M247 14 q6 -4 0 -9 q-6 -4 0 -9" fill="none" stroke="{T["DET"]}" stroke-width="1" stroke-dasharray="2 2"/>'
+    g += bx(264, 112, 14, 34, 3, T['FILL2']) + ci(271, 122, 3, T['FILL'], 1) + ci(271, 132, 3, T['FILL'], 1) + ci(271, 142, 3, T['FILL'], 1)
+    g += ol('M170 152 a20 20 0 0 1 40 0 Z', T['FILL2']) + tire(190, 168, 17)
+    g += center(30, 105, 290)
     return g
 
 
 def eq_tesoura():
-    g = shadow(170, 125)
-    g += rect(70, 160, 190, 16, O, 5) + rect(70, 168, 190, 8, OD, 4)
-    n, h, y = 3, 30, 160
-    for i in range(n):
+    g = ln(8, 185, 312, 185, .9)
+    g += bx(70, 158, 190, 18, 4, T['ACCL']) + f'<rect x="70" y="168" width="190" height="4" fill="{O}" stroke="{T["INK"]}" stroke-width="1"/>'
+    h, y = 30, 158
+    for i in range(3):
         y0, y1 = y - h * i, y - h * (i + 1)
-        g += line(112, y0, 218, y1, S1, 8) + line(218, y0, 112, y1, S1, 8)
-        g += circ(165, (y0 + y1) / 2, 5, S4, S1, 2)
-    g += rect(100, 66, 14, 10, S2, 2) + rect(212, 66, 14, 10, S2, 2)
-    g += wheel(98, 176, 11) + wheel(232, 176, 11)
-    g += rect(78, 60, 176, 10, S1, 3) + rect(250, 62, 40, 6, S2, 2) + rect(80, 54, 172, 6, OD, 2)
-    g += ''.join(rect(x, 24, 4, 36, N, 1) for x in (84, 166, 246))
-    g += rect(80, 22, 172, 4, O, 2) + rect(80, 38, 172, 3, O, 2)
-    g += rect(122, 44, 20, 12, N, 3) + circ(128, 50, 2.5, '#22c55e') + circ(136, 50, 2.5, '#ef4444')
-    g += person(200, 56, YL, .95)
+        g += bar(112, y0, 218, y1, 7, T['FILL']) + bar(218, y0, 112, y1, 7, T['FILL'])
+        g += ci(165, (y0 + y1) / 2, 4.5, T['FILL2'], 1.2) + ln(112, y0, 112, y1, .6, '2 2') + ln(218, y0, 218, y1, .6, '2 2')
+    g += bx(100, 64, 16, 8, 2, T['FILL2']) + bx(210, 64, 16, 8, 2, T['FILL2'])
+    g += bar(150, 150, 190, 108, 4, T['FILL2'], 1)
+    g += tire(98, 173, 12) + tire(232, 173, 12)
+    g += bx(78, 60, 176, 10, 2, T['FILL2']) + bx(250, 62, 40, 5, 1.5, T['FILL2']) + bx(80, 54, 172, 6, 1.5)
+    g += ''.join(bx(x, 24, 4, 30, 1) for x in (84, 166, 246)) + bx(80, 22, 172, 4, 2, O, 1.1) + bx(80, 38, 172, 3, 1.5)
+    g += ''.join(ln(x, 26, x, 38, .5) for x in range(96, 246, 12))
+    g += bx(122, 44, 20, 10, 2, T['FILL2']) + ci(128, 49, 2, O, .8)
+    g += center(60, 100, 270)
     return g
 
 
 def eq_articulada():
-    g = shadow(150, 125)
-    g += rect(48, 134, 40, 26, OD, 7) + rect(60, 156, 132, 20, O, 6)
-    g += wheel(92, 172, 13) + wheel(166, 172, 13)
-    g += rect(96, 128, 64, 30, O, 7) + rect(104, 120, 20, 10, S2, 3)
-    g += line(142, 136, 214, 60, OD, 17) + line(142, 136, 214, 60, O, 12)
-    g += line(154, 146, 198, 92, S3, 4)
-    g += circ(214, 60, 10, S1) + circ(214, 60, 4, S4)
-    g += line(214, 60, 272, 42, OD, 14) + line(214, 60, 272, 42, O, 9)
-    g += line(222, 74, 258, 56, S3, 3.5)
-    g += rect(258, 38, 48, 30, '#e2e8f0', 4, N, 3) + line(258, 48, 306, 48, N, 2) + line(258, 58, 306, 58, N, 2)
-    g += rect(278, 30, 18, 12, YL, 3) + circ(287, 24, 6, '#f1c9a5') + path('M280.5 22 A7 7 0 0 1 293.5 22 Z', W)
+    g = ln(8, 185, 312, 185, .9)
+    g += bx(48, 134, 40, 24, 6, T['FILL2']) + bx(60, 156, 132, 20, 6, T['ACCL'])
+    g += tire(92, 172, 13) + tire(166, 172, 13)
+    g += bx(96, 126, 64, 30, 6, T['ACCL']) + bx(104, 118, 20, 10, 3, T['FILL2'])
+    g += bar(142, 136, 214, 60, 16, T['ACCL']) + bar(150, 130, 206, 68, 5, 'none', .8)
+    g += bar(154, 148, 198, 94, 5, T['FILL2'], 1)
+    g += ci(214, 60, 9, T['FILL']) + ci(214, 60, 3, T['INK'], 1)
+    g += bar(214, 60, 272, 42, 12, T['ACCL']) + bar(224, 74, 258, 56, 4, T['FILL2'], 1)
+    g += bx(258, 38, 48, 28, 3) + ln(258, 48, 306, 48, .9, col=T['INK']) + ln(258, 57, 306, 57, .9, col=T['INK'])
+    g += ''.join(ln(x, 38, x, 66, .6) for x in (270, 282, 294))
+    g += ci(142, 136, 4, T['FILL2'], 1.1)
+    g += center(40, 100, 140)
     return g
 
 
 def eq_guindaste():
-    g = shadow(150, 150)
-    g += rect(24, 130, 240, 28, O, 6)
-    g += path('M222 130 V102 Q222 92 232 92 H258 L278 118 V130 Z', O) + path('M232 99 H254 L267 118 H232 Z', GL)
-    g += circ(274, 124, 4, YL) + rect(30, 150, 232, 6, OD, 2)
-    g += rect(60, 104, 118, 28, OD, 6) + rect(66, 98, 106, 14, O, 6)
-    g += rect(134, 82, 42, 28, O, 5) + rect(142, 88, 26, 16, GL, 3)
-    g += rect(52, 100, 18, 30, S1, 4)
+    g = ln(8, 185, 312, 185, .9)
+    g += bx(24, 130, 240, 28, 5, T['ACCL'])
+    g += ol('M222 130 V102 Q222 92 232 92 H258 L278 118 V130 Z', T['ACCL']) + ol('M232 99 H254 L267 118 H232 Z', T['GLASS'], 1.1)
+    g += ci(274, 124, 3, O, .9) + ln(30, 150, 262, 150, .8)
+    g += bx(60, 104, 118, 28, 5, T['FILL2']) + bx(66, 98, 106, 14, 5, T['FILL'])
+    g += bx(134, 82, 42, 28, 4, T['ACCL']) + bx(142, 88, 26, 16, 3, T['GLASS'], 1.1) + bx(52, 100, 18, 30, 4, T['FILL2'])
     for x in (92, 132, 214, 252):
-        g += wheel(x, 162, 18)
-    g += rect(56, 160, 8, 22, S1, 2) + rect(50, 180, 20, 5, N, 2) + rect(226, 160, 8, 22, S1, 2) + rect(220, 180, 20, 5, N, 2)
-    px, py = 150, 96
-    tx, ty = 50, 14
-    g += line(112, 108, 74, 62, S2, 5)
+        g += tire(x, 162, 18)
+    g += bx(56, 160, 8, 22, 2, T['FILL2']) + bx(48, 180, 24, 5, 1.5) + bx(226, 160, 8, 22, 2, T['FILL2']) + bx(218, 180, 24, 5, 1.5)
+    px, py, tx, ty = 150, 96, 50, 14
+
     def at(f):
         return px + (tx - px) * f, py + (ty - py) * f
-    a, b, c, d = at(0), at(.46), at(.42), at(.78)
-    e, f_ = at(.74), at(1)
-    g += seg(*a, *b, 24, O, OD) + seg(*c, *d, 17, OL, OD) + seg(*e, *f_, 11, S3, S1)
-    g += circ(px, py, 8, S1) + circ(px, py, 3, S4)
-    g += line(f_[0], f_[1], f_[0], 92, N, 2)
-    g += rect(f_[0] - 6, 88, 12, 14, S1, 3) + path(f'M{f_[0]} 102 v6 a6 6 0 1 1 -6 -3', 'none', S1, 3)
-    g += line(f_[0], 102, f_[0] - 22, 124, N, 1.5) + line(f_[0], 102, f_[0] + 22, 124, N, 1.5)
-    g += rect(f_[0] - 30, 124, 60, 26, '#94a3b8', 3, S2, 2) + line(f_[0] - 30, 137, f_[0] + 30, 137, S2, 1.5)
+    a, b, c, d, e, f_ = at(0), at(.46), at(.42), at(.78), at(.74), at(1)
+    g += ln(112, 108, 80, 64, 4, col=T['INK']) + ln(112, 108, 80, 64, 2.4, col=T['FILL'])
+    g += bar(*a, *b, 24, T['ACCL']) + bar(*c, *d, 17, T['FILL']) + bar(*e, *f_, 11, T['FILL2'])
+    g += ln(*at(.05), *at(.95), .7, '8 3 2 3')
+    g += ci(px, py, 8, T['FILL']) + ci(px, py, 2.5, T['INK'], 1)
+    g += ln(f_[0], f_[1], f_[0], 92, 1, col=T['INK'])
+    g += bx(f_[0] - 6, 88, 12, 14, 3, T['FILL2']) + f'<path d="M{f_[0]} 102 v6 a6 6 0 1 1 -6 -3" fill="none" stroke="{T["INK"]}" stroke-width="2.2"/>'
+    g += ln(f_[0], 102, f_[0] - 22, 124, .9, col=T['INK']) + ln(f_[0], 102, f_[0] + 22, 124, .9, col=T['INK'])
+    g += bx(f_[0] - 30, 124, 60, 26, 3, T['FILL2']) + hatch(f_[0] - 30, 124, 60, 26, 4)
     return g
 
 
 def eq_munk():
-    g = shadow(145, 150)
-    g += rect(18, 134, 238, 14, N, 3)
-    g += rect(24, 116, 150, 20, S2, 3) + rect(24, 102, 150, 6, S1, 2)
-    for i in range(6):
-        g += circ(40 + i * 22, 110, 9, S3, S2, 2) + circ(40 + i * 22, 110, 5, S5)
-    g += path('M184 134 V92 Q184 80 196 80 H232 L260 106 V134 Z', O) + path('M194 87 H228 L246 106 H194 Z', GL)
-    g += line(222, 106, 222, 134, OD, 2) + rect(252, 124, 12, 10, N, 2) + circ(254, 116, 4, YL)
-    g += rect(158, 106, 28, 12, S1, 3) + rect(164, 60, 16, 48, O, 3) + circ(172, 62, 7, S1)
-    g += seg(172, 66, 114, 16, 14, O, OD) + circ(114, 16, 7, S1) + circ(114, 16, 3, S4)
-    g += seg(114, 16, 54, 56, 11, O, OD) + seg(54, 56, 34, 70, 7, S3, S1)
-    g += line(166, 90, 124, 38, S2, 4) + line(120, 30, 70, 50, S2, 3.5)
-    g += line(34, 70, 34, 92, N, 2) + rect(28, 90, 12, 8, S1, 2)
-    g += line(34, 98, 20, 106, N, 1.5) + line(34, 98, 48, 106, N, 1.5)
-    g += rect(12, 106, 44, 9, S3, 3, S2, 1.5) + circ(18, 110, 3, S5) + circ(50, 110, 3, S5)
-    g += rect(112, 146, 40, 6, S1, 2) + rect(144, 150, 6, 32, S2, 2) + rect(138, 180, 18, 5, N, 2)
-    g += wheel(58, 162, 17) + wheel(90, 162, 17) + wheel(224, 162, 17)
+    g = ln(8, 185, 312, 185, .9)
+    g += bx(18, 134, 238, 14, 3, T['FILL2']) + bx(24, 116, 150, 20, 3, T['FILL']) + bx(24, 102, 150, 6, 2, T['FILL2'])
+    g += ''.join(ci(40 + i * 22, 110, 9, T['FILL2'], 1.2) + ci(40 + i * 22, 110, 4.5, T['FILL'], 1) for i in range(6))
+    g += ol('M184 134 V92 Q184 80 196 80 H232 L260 106 V134 Z', T['ACCL']) + ol('M194 87 H228 L246 106 H194 Z', T['GLASS'], 1.1)
+    g += ln(222, 106, 222, 134, .9) + bx(252, 124, 12, 10, 2, T['FILL2']) + ci(254, 116, 3.4, O, .9)
+    g += bx(158, 106, 28, 12, 3, T['FILL2']) + bx(164, 60, 16, 48, 3, T['ACCL']) + ci(172, 62, 6, T['FILL'], 1.2)
+    g += bar(172, 66, 114, 16, 14, T['ACCL']) + ci(114, 16, 6.5, T['FILL']) + ci(114, 16, 2, T['INK'], 1)
+    g += bar(114, 16, 54, 56, 11, T['ACCL']) + bar(54, 56, 34, 70, 7, T['FILL2'])
+    g += bar(166, 90, 124, 38, 4, T['FILL2'], 1) + bar(120, 30, 70, 50, 3.5, T['FILL2'], 1)
+    g += ln(34, 70, 34, 92, 1.2, col=T['INK']) + bx(28, 90, 12, 8, 2, T['FILL2'])
+    g += ln(34, 98, 20, 106, .8, col=T['INK']) + ln(34, 98, 48, 106, .8, col=T['INK']) + bx(12, 106, 44, 9, 3, T['FILL2'])
+    g += bx(112, 146, 40, 6, 2, T['FILL2']) + bx(144, 150, 6, 32, 2, T['FILL2']) + bx(138, 180, 18, 5, 1.5)
+    g += tire(58, 162, 17) + tire(90, 162, 17) + tire(224, 162, 17)
     return g
 
 
 def eq_vaso():
-    g = shadow(160, 135)
-    g += path('M86 140 L74 182 H118 L112 140 Z', S1) + path('M208 140 L204 182 H248 L236 140 Z', S1)
-    g += rect(44, 64, 232, 82, S4, 41)
-    g += rect(62, 72, 196, 14, W, 7, op=.55) + rect(58, 122, 204, 14, S3, 7, op=.6)
-    g += line(94, 66, 94, 144, S2, 2) + line(226, 66, 226, 144, S2, 2)
-    g += rect(156, 38, 8, 28, S1, 2) + rect(146, 36, 28, 6, S2, 2)
-    g += circ(160, 22, 17, W, S1, 4)
-    g += path('M149 31 A14 14 0 0 1 171 31', 'none', '#22c55e', 3)
-    g += path('M168 14 A14 14 0 0 1 174 24', 'none', '#ef4444', 3)
-    g += line(160, 22, 168, 13, '#ef4444', 2) + circ(160, 22, 2.5, N)
-    g += rect(222, 42, 8, 24, S1, 2) + rect(214, 32, 24, 12, '#ef4444', 3) + rect(222, 26, 8, 6, S2, 2)
-    g += rect(150, 146, 10, 14, S1, 2) + circ(155, 163, 6, S2, S1, 2)
-    g += rect(112, 94, 44, 28, S5, 2, S2, 1.5) + line(118, 102, 148, 102, S3, 2) + line(118, 109, 140, 109, S3, 2) + line(118, 116, 144, 116, S3, 2)
-    g += path('M252 70 l14 0 l-4 16 l-10 -4z', O)
+    g = ln(8, 185, 312, 185, .9)
+    g += ol('M86 140 L74 182 H118 L112 140 Z', T['FILL2']) + ol('M208 140 L204 182 H248 L236 140 Z', T['FILL2'])
+    g += hatch(76, 150, 40, 30, 4) + hatch(206, 150, 40, 30, 4)
+    g += bx(44, 64, 232, 82, 41, T['FILL2'])
+    g += f'<path d="M62 78 H258" stroke="{T["FILL"]}" stroke-width="5" stroke-linecap="round" opacity=".8"/>'
+    g += ln(94, 66, 94, 144, 1, col=T['INK']) + ln(226, 66, 226, 144, 1, col=T['INK'])
+    g += bx(156, 38, 8, 28, 1.5) + bx(146, 36, 28, 6, 2) + bolts([150, 158, 166, 170], 39, 1)
+    g += gauge_dial(160, 22, 17)
+    g += bx(222, 42, 8, 24, 1.5) + bx(214, 32, 24, 12, 3, O, 1.2) + bx(222, 26, 8, 6, 2)
+    g += bx(150, 146, 10, 14, 1.5) + ci(155, 163, 6, T['FILL'], 1.3)
+    g += bx(112, 94, 44, 28, 2) + ln(118, 102, 148, 102, .8) + ln(118, 109, 140, 109, .8) + ln(118, 116, 144, 116, .8)
+    g += bx(40, 100, 6, 10, 1.5, T['FILL2']) + bx(274, 100, 6, 10, 1.5, T['FILL2'])
+    g += center(20, 105, 300)
     return g
 
 
 def eq_caldeira():
-    g = shadow(160, 120)
-    g += rect(96, 170, 128, 12, S1, 3)
-    g += rect(104, 56, 112, 116, S4, 16) + path('M104 70 Q160 30 216 70', S4)
-    g += rect(118, 64, 14, 100, W, 7, op=.5) + rect(190, 70, 18, 96, S3, 8, op=.55)
-    g += rect(150, 6, 20, 50, S1, 2) + rect(144, 2, 32, 8, N, 3)
-    g += circ(160, 126, 24, S2, S1, 4) + circ(160, 126, 14, S1) + circ(160, 126, 5, S4)
-    g += rect(60, 124, 40, 32, O, 5) + path('M52 140 q-6 -10 2 -18 q2 10 10 8 z', '#fbbf24') + rect(98, 136, 8, 8, S1, 2)
-    g += circ(228, 78, 14, W, S1, 3) + line(228, 78, 234, 70, '#ef4444', 2) + path('M219 84 A11 11 0 0 1 226 66', 'none', '#22c55e', 2.5)
-    g += rect(228, 104, 7, 44, GL, 2, S1, 1.5) + rect(229, 124, 5, 24, '#38bdf8', 1)
-    g += line(216, 100, 228, 100, S2, 3) + line(216, 150, 228, 150, S2, 3)
+    g = ln(8, 185, 312, 185, .9)
+    g += bx(96, 170, 128, 12, 3, T['FILL2']) + hatch(96, 170, 128, 12, 4)
+    g += ol('M104 70 Q160 30 216 70 V156 Q216 172 200 172 H120 Q104 172 104 156 Z', T['FILL2'])
+    g += f'<path d="M104 70 H216" stroke="{T["INK"]}" stroke-width="1"/>'
+    g += bx(150, 6, 20, 52, 1.5) + hatch(150, 6, 20, 52, 4) + bx(144, 2, 32, 8, 3)
+    g += ci(160, 126, 24, T['FILL']) + ci(160, 126, 15, T['FILL2'], 1.2) + ci(160, 126, 4, T['INK'], 1)
+    g += ''.join(f'<circle cx="{160+math.cos(i*math.pi/4)*20:.1f}" cy="{126+math.sin(i*math.pi/4)*20:.1f}" r="1.3" fill="{T["INK"]}"/>' for i in range(8))
+    g += bx(60, 124, 40, 32, 5, T['ACCL']) + ol('M52 140 q-6 -10 2 -18 q2 10 10 8 z', O, 1) + bx(98, 136, 8, 8, 2, T['FILL2'])
+    g += gauge_dial(228, 78, 14) + bx(228, 104, 7, 44, 2, T['GLASS'], 1.1) + bx(229, 126, 5, 22, 1, O, .6)
+    g += ln(216, 100, 228, 100, 2, col=T['INK']) + ln(216, 150, 228, 150, 2, col=T['INK'])
+    g += ln(160, -6, 160, 190, .7, '10 3 2 3')
     return g
 
 
 def eq_carreta(carga=None):
-    g = shadow(160, 160)
-    g += path('M16 158 H236 V148 H16 Z', N) + rect(120, 150, 116, 6, S1, 2)
-    g += path('M236 158 V112 Q236 98 250 98 H292 L316 130 V158 Z', O) + path('M246 106 H288 L304 130 H246 Z', GL)
-    g += line(262, 130, 262, 158, OD, 2) + rect(306, 148, 12, 10, N, 2) + circ(312, 138, 4, YL)
-    g += rect(228, 148, 12, 8, S1, 2)
-    g += wheel(264, 164, 18) + wheel(60, 164, 16) + wheel(96, 164, 16) + wheel(132, 164, 16)
+    g = ln(8, 185, 312, 185, .9)
+    g += bx(16, 148, 220, 10, 1.5, T['FILL2']) + bx(120, 156, 116, 5, 1.5, T['FILL2'])
+    g += ol('M236 158 V112 Q236 98 250 98 H292 L316 130 V158 Z', T['ACCL']) + ol('M246 106 H288 L304 130 H246 Z', T['GLASS'], 1.1)
+    g += ln(262, 130, 262, 158, .9) + bx(306, 148, 12, 10, 2, T['FILL2']) + ci(312, 138, 3.4, O, .9) + bx(228, 148, 12, 8, 2, T['FILL2'])
+    g += tire(264, 164, 18) + tire(60, 164, 16) + tire(96, 164, 16) + tire(132, 164, 16)
     if carga:
         g += f'<g transform="translate(22 26) scale(.66)">{carga}</g>'
     return g
@@ -346,19 +415,34 @@ def tick_row(x, y, w, label, ok=True, thumb=None):
 
 # ------------------------------------------------------------------ cenas
 BGS = {
-    'a': ('#fff7ed', '#ffedd5'), 'b': ('#eff6ff', '#dbeafe'), 'c': ('#f1f5f9', '#e2e8f0'),
-    'd': ('#fef2f2', '#fee2e2'), 'e': ('#f0fdf4', '#dcfce7'),
+    'a': ('#f4f8fd', '#e9f1fa'), 'b': ('#f1f6fc', '#e6eff9'), 'c': ('#f5f8fb', '#eaf0f6'),
+    'd': ('#fbf3f3', '#f6e7e7'), 'e': ('#f1f8f4', '#e4f1e9'),
 }
 
 
+def corners(w, h, col='#12315a'):
+    g = ''
+    for x, y, sx, sy in ((10, 10, 1, 1), (w - 10, 10, -1, 1), (10, h - 10, 1, -1), (w - 10, h - 10, -1, -1)):
+        g += f'<path d="M{x} {y+sy*10} V{y} H{x+sx*10}" fill="none" stroke="{col}" stroke-width="1.2" opacity=".45"/>'
+    return g
+
+
 def scene(corpo, legenda, bg='a', w=480, h=300):
-    gid, pid = uid('bg'), uid('dt')
+    gid, pid = uid('bg'), uid('gr')
     c0, c1 = BGS[bg]
     return (f'<figure class="mock"><svg viewBox="0 0 {w} {h}" role="img" aria-label="{esc(legenda)}"><title>{esc(legenda)}</title>'
             f'<defs><linearGradient id="{gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{c0}"/><stop offset="1" stop-color="{c1}"/></linearGradient>'
-            f'<pattern id="{pid}" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="#0f172a" opacity=".07"/></pattern></defs>'
-            f'<rect width="{w}" height="{h}" rx="18" fill="url(#{gid})"/><rect width="{w}" height="{h}" rx="18" fill="url(#{pid})"/>'
-            f'{corpo}</svg><figcaption>{esc(legenda)}</figcaption></figure>')
+            f'<pattern id="{pid}" width="60" height="60" patternUnits="userSpaceOnUse">'
+            '<path d="M0 0H60M0 12H60M0 24H60M0 36H60M0 48H60M0 0V60M12 0V60M24 0V60M36 0V60M48 0V60" stroke="#5b8fc7" stroke-width=".5" opacity=".16" fill="none"/>'
+            '<path d="M0 0H60M0 0V60" stroke="#5b8fc7" stroke-width=".9" opacity=".26" fill="none"/></pattern></defs>'
+            f'<rect width="{w}" height="{h}" rx="16" fill="url(#{gid})"/><rect width="{w}" height="{h}" rx="16" fill="url(#{pid})"/>'
+            f'{corners(w, h)}{corpo}</svg><figcaption>{esc(legenda)}</figcaption></figure>')
+
+
+def callout(px, py, n, lx, ly, cor='#dc2626'):
+    return (f'<circle cx="{px}" cy="{py}" r="11" fill="none" stroke="{cor}" stroke-width="1.8" stroke-dasharray="4 3"/>'
+            f'<line x1="{px}" y1="{py}" x2="{lx}" y2="{ly}" stroke="{cor}" stroke-width="1.3"/>'
+            f'<circle cx="{lx}" cy="{ly}" r="9" fill="{cor}"/>' + txt(lx, ly + 4, str(n), 11, W, 800, 'middle'))
 
 
 # configuração por equipamento: arte, peças (para marcadores) e textos
@@ -386,7 +470,7 @@ def sc_preventiva(tipo):
     g = art(c['arte'], 8, 70, .92)
     g += card(268, 22, 192, 150)
     g += txt(284, 44, 'Horímetro', 11, S2, 700) + gauge(364, 112, 40, c['horas'][2], c['horas'][0], 'Atual')
-    g += rect(284, 148, 160, 6, S5, 3) + rect(284, 148, 160 * c['horas'][2], 6, O, 3)
+    g += rect(284, 160, 160, 6, S5, 3) + rect(284, 160, 160 * c['horas'][2], 6, O, 3)
     ch, w = chip(250, 230, c['horas'][1], 'org', True)
     g += ch
     ch, w = chip(24, 24, 'Preventiva por horímetro ou tempo', 'navy')
@@ -402,7 +486,8 @@ def sc_os(tipo):
         y = 58 + i * 42
         g += rect(30, y, 214, 34, '#f8fafc', 9, '#e4e7ec', 1) + wrench(38, y + 3, .8, O if i == 0 else S3)
         g += txt(66, y + 14, nome, 11, N, 700) + rect(66, y + 21, 70, 4, S5, 2)
-        g += chip(166, y + 5, ['Em curso', 'Feita', 'Aberta'][i], st)[0]
+        lab = ['Em curso', 'Feita', 'Aberta'][i]
+        g += chip(238 - (20 + len(lab) * 6.3), y + 5, lab, st)[0]
     g += chip(40, 236, 'Uma OS por equipamento', 'org', True)[0]
     return scene(g, f'Ilustração: ordens de serviço separadas para o {c["nome"]}', 'b')
 
@@ -425,12 +510,12 @@ def sc_avarias(tipo):
     g = art(c['arte'], 40, 44, 1.05)
     for i, (peca, px, py) in enumerate(c['pecas'][:2]):
         x, y = 40 + px * 1.05, 44 + py * 1.05
-        g += pin(x, y, str(i + 1), '#ef4444' if i == 0 else '#f59e0b')
+        g += callout(x, y, i + 1, x + (26 if i == 0 else -26), y - 34, '#dc2626' if i == 0 else '#d97706')
     g += card(300, 24, 164, 98) + photo(312, 36, 56, 44, True) + photo(374, 36, 56, 44, False)
     g += txt(312, 98, 'Avaria registrada', 11, N, 800) + rect(312, 106, 100, 4, S5, 2)
     g += chip(26, 24, 'Com fotos e data', 'bad', True)[0]
     g += card(26, 236, 266, 46)
-    g += circ(46, 259, 7, '#ef4444') + txt(60, 263, c['pecas'][0][0], 11, N, 700) + circ(190, 259, 7, '#f59e0b') + txt(204, 263, c['pecas'][1][0], 11, N, 700)
+    g += circ(46, 259, 8, '#dc2626') + txt(46, 263, '1', 10, W, 800, 'middle') + txt(60, 263, c['pecas'][0][0], 11, N, 700) + circ(190, 259, 8, '#d97706') + txt(190, 263, '2', 10, W, 800, 'middle') + txt(204, 263, c['pecas'][1][0], 11, N, 700)
     return scene(g, f'Ilustração: avarias do {c["nome"]} marcadas nas peças, com fotos', 'd')
 
 
@@ -506,7 +591,7 @@ NR13_SCENES = (sc_nr13_agenda, sc_nr13_laudo, sc_nr13_proxima, sc_nr13_painel)
 # ---- devolução com defeito
 def sc_dev_volta():
     g = art_raw_carreta()
-    g += pin(164, 104, '!', '#ef4444')
+    g += callout(176, 128, 1, 214, 92)
     g += card(300, 24, 164, 92) + photo(312, 36, 56, 44, True) + photo(374, 36, 56, 44) + txt(312, 100, 'Conferência com fotos', 10.5, N, 800)
     g += chip(24, 24, 'Volta da locação', 'navy')[0] + chip(24, 252, 'Defeito registrado na hora', 'bad', True)[0]
     return scene(g, 'Ilustração: equipamento chegando de carreta, com a avaria marcada e fotografada', 'd')
@@ -555,26 +640,41 @@ DEV_SCENES = (sc_dev_volta, sc_dev_bloqueado, sc_dev_os, sc_dev_liberado)
 def hero(corpo, rotulo):
     gid, pid = uid('hg'), uid('hp')
     return (f'<svg viewBox="0 0 520 380" role="img" aria-label="{esc(rotulo)}"><title>{esc(rotulo)}</title>'
-            f'<defs><radialGradient id="{gid}" cx=".5" cy=".55" r=".6"><stop offset="0" stop-color="#f97316" stop-opacity=".35"/><stop offset="1" stop-color="#f97316" stop-opacity="0"/></radialGradient>'
-            f'<pattern id="{pid}" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.3" fill="#fff" opacity=".12"/></pattern></defs>'
-            f'<rect width="520" height="380" rx="26" fill="#0b1630" stroke="#ffffff" stroke-opacity=".12"/><rect width="520" height="380" rx="26" fill="url(#{pid})"/>'
-            f'<rect width="520" height="380" rx="26" fill="url(#{gid})"/>'
-            f'<rect x="20" y="318" width="480" height="3" rx="1.5" fill="#fff" opacity=".12"/>{corpo}</svg>')
+            f'<defs><radialGradient id="{gid}" cx=".5" cy=".6" r=".6"><stop offset="0" stop-color="#f97316" stop-opacity=".16"/><stop offset="1" stop-color="#f97316" stop-opacity="0"/></radialGradient>'
+            f'<pattern id="{pid}" width="65" height="65" patternUnits="userSpaceOnUse">'
+            '<path d="M0 0H65M0 13H65M0 26H65M0 39H65M0 52H65M0 0V65M13 0V65M26 0V65M39 0V65M52 0V65" stroke="#7fb2e8" stroke-width=".5" opacity=".18" fill="none"/>'
+            '<path d="M0 0H65M0 0V65" stroke="#7fb2e8" stroke-width=".9" opacity=".3" fill="none"/></pattern></defs>'
+            '<rect width="520" height="380" rx="22" fill="#0a1d38" stroke="#7fb2e8" stroke-opacity=".3"/>'
+            f'<rect width="520" height="380" rx="22" fill="url(#{pid})"/><rect width="520" height="380" rx="22" fill="url(#{gid})"/>'
+            f'{corners(520, 380, "#d3e8ff")}{corpo}</svg>')
 
 
 def hero_chip(x, y, label, kind='ok', icon=True):
     return chip(x, y, label, kind, icon)[0]
 
 
-HERO = {
+_HERO = {
     'guindaste': lambda: hero(art('guindaste', 40, 78, 1.28) + hero_chip(310, 36, 'Revisão em dia', 'ok') + hero_chip(30, 336, 'Histórico individual', 'org'), 'Ilustração de um guindaste com carga içada'),
     'munk': lambda: hero(art('munk', 40, 76, 1.26) + hero_chip(300, 40, 'Checklist assinado', 'ok') + hero_chip(34, 336, 'Preventiva programada', 'org'), 'Ilustração de um caminhão munk com a lança articulada'),
     'plataforma': lambda: hero(art('articulada', 236, 84, .84) + art('plataforma', -6, 96, 1.0) + hero_chip(300, 336, 'Fotos e assinatura', 'org') + hero_chip(30, 34, 'Entrega comprovada', 'ok'), 'Ilustração de plataformas elevatórias tesoura e articulada'),
     'empilhadeira': lambda: hero(art('empilhadeira', 60, 82, 1.2) + hero_chip(30, 36, 'Disponível', 'ok') + hero_chip(300, 336, 'Revisão por horímetro', 'org'), 'Ilustração de uma empilhadeira com carga'),
     'gerador': lambda: hero(art('gerador', 52, 74, 1.25) + hero_chip(30, 36, 'Pronto para locar', 'ok') + hero_chip(300, 336, 'Troca de óleo em dia', 'org'), 'Ilustração de um grupo gerador sobre reboque'),
     'nr13': lambda: hero(art('vaso', 0, 112, .92) + art('caldeira', 276, 96, .86) + hero_chip(30, 36, 'Laudo anexado', 'ok') + hero_chip(300, 336, 'Inspeção em dia', 'ok') + hero_chip(30, 336, 'Aviso antes de vencer', 'warn'), 'Ilustração de um vaso de pressão e de uma caldeira'),
-    'devolucao': lambda: hero(f'<g transform="translate(4 72) scale(1.34)">{eq_carreta(eq_tesoura())}</g>' + pin(176, 124, '!', '#ef4444') + hero_chip(30, 36, 'Avaria registrada', 'bad') + hero_chip(300, 336, 'Bloqueado → liberado', 'org'), 'Ilustração de uma carreta devolvendo um equipamento com defeito'),
+    'devolucao': lambda: hero(f'<g transform="translate(4 72) scale(1.34)">{eq_carreta(eq_tesoura())}</g>' + callout(176, 124, 1, 250, 96) + hero_chip(30, 36, 'Avaria registrada', 'bad') + hero_chip(300, 336, 'Bloqueado → liberado', 'org'), 'Ilustração de uma carreta devolvendo um equipamento com defeito'),
     'hub': lambda: hero(art('guindaste', 6, 52, .54) + art('munk', 168, 52, .52) + art('plataforma', 330, 40, .56)
                         + art('empilhadeira', -6, 182, .52) + art('gerador', 172, 176, .56) + art('articulada', 338, 176, .54)
                         + hero_chip(30, 336, 'Frota inteira sob controle', 'org'), 'Ilustração de vários equipamentos de locação'),
 }
+
+
+def _dark(fn):
+    def run():
+        use_theme('dark')
+        try:
+            return fn()
+        finally:
+            use_theme('paper')
+    return run
+
+
+HERO = {k: _dark(v) for k, v in _HERO.items()}
