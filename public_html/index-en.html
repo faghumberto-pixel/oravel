@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oravel — Clarity for those who run equipment | 30-day trial</title>
+  <meta name="description" content="Every equipment operation deserves to run with clarity. Oravel connects maintenance, inventory, logistics and finance in a single view. Try it for 30 days, with us by your side.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #ffffff; --surface: #f6f7f9; --ink: #0f172a; --ink-soft: #5b6472;
+      --ink-faint: #8891a0; --border: #e4e7ec; --accent: #f97316; --accent-dark: #c2410c; --accent-soft: #fff1e6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: "Inter", "Segoe UI", system-ui, sans-serif; color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; line-height: 1.6; }
+    h1, h2, h3 { font-family: "Manrope", "Inter", sans-serif; font-weight: 800; letter-spacing: -0.02em; line-height: 1.12; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 84px 0; }
+    .eyebrow { font-family: "Manrope", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-dark); margin-bottom: 14px; }
+    h2 { font-size: clamp(28px, 4vw, 40px); margin-bottom: 16px; }
+    .lead { font-size: 18px; color: var(--ink-soft); max-width: 680px; }
+
+    /* header */
+    header { position: sticky; top: 0; z-index: 50; background: rgba(8,20,44,0.96); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,.08); }
+    nav { max-width: 1120px; margin: 0 auto; padding: 0 24px; height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .logo { font-family: "Manrope", sans-serif; font-weight: 900; font-size: 22px; color: var(--ink); }
+    header .logo { color: #fff; }
+    .logo span { color: var(--accent); }
+    .lang { display: inline-flex; align-items: center; gap: 8px; margin: 0 4px; }
+    .lang a { display: inline-flex; line-height: 0; opacity: .5; transition: opacity .15s; }
+    .lang a:hover, .lang a.on { opacity: 1; }
+    .lang svg { width: 24px; height: 16px; display: block; border-radius: 2px; box-shadow: 0 0 0 1px rgba(255,255,255,.28); }
+    .logo::before { content:""; display:inline-block; width:38px; height:10px; margin-right:10px; vertical-align:middle; background:radial-gradient(circle at 5px 5px,#ef4444 4.5px,transparent 5px) 0 0/10px 10px no-repeat,radial-gradient(circle at 5px 5px,#f59e0b 4.5px,transparent 5px) 14px 0/10px 10px no-repeat,radial-gradient(circle at 5px 5px,#22c55e 4.5px,transparent 5px) 28px 0/10px 10px no-repeat; }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a.link { font-size: 14px; font-weight: 600; color: #b7c4dc; }
+    .nav-links a.link:hover { color: #fff; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: "Manrope", sans-serif; font-weight: 700; font-size: 15px; padding: 14px 24px; border-radius: 10px; border: 2px solid transparent; cursor: pointer; transition: transform .15s, background .15s, border-color .15s; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #ea580c; }
+    .btn-ghost { background: transparent; color: var(--ink); border-color: var(--border); }
+    .btn-ghost:hover { border-color: var(--ink); }
+    .btn-sm { padding: 10px 18px; font-size: 14px; }
+
+    /* hero */
+    .hero { padding: 64px 0 96px; background: radial-gradient(1000px 500px at 85% 10%, rgba(37,99,235,.35), transparent 60%), linear-gradient(135deg, #07142c 0%, #0b2150 55%, #10316f 100%); color: #fff; position: relative; overflow: hidden; }
+    .hero::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px); background-size: 48px 48px; mask-image: radial-gradient(ellipse at 60% 40%, #000 20%, transparent 75%); -webkit-mask-image: radial-gradient(ellipse at 60% 40%, #000 20%, transparent 75%); }
+    .hero-grid { position: relative; display: grid; grid-template-columns: 1fr 1.05fr; gap: 48px; align-items: center; }
+    .audience { display: inline-flex; align-items: center; gap: 10px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 13.5px; letter-spacing: .07em; text-transform: uppercase; color: #ffd9bd; background: rgba(249,115,22,.16); border: 1px solid rgba(249,115,22,.55); padding: 9px 16px; border-radius: 999px; margin-bottom: 24px; }
+    .audience::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px rgba(249,115,22,.25); }
+    .hero h1 { font-size: clamp(38px, 5.6vw, 60px); margin-bottom: 20px; color: #fff; }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero p.sub { font-size: 19px; color: #c3d0e6; margin-bottom: 30px; max-width: 540px; }
+    .hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+    .micro { font-size: 14px; color: var(--ink-faint); }
+    .hero .micro { color: #8fa3c4; }
+    .hero .btn-ghost { color: #fff; border-color: rgba(255,255,255,.3); }
+    .hero .btn-ghost:hover { border-color: #fff; }
+
+    /* product mockup */
+    .mock-wrap { position: relative; padding: 0 0 36px; }
+    .mock { background: #0e1b36; border: 1px solid rgba(255,255,255,.12); border-radius: 18px; box-shadow: 0 40px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.04); overflow: hidden; }
+    .mock-bar { display: flex; align-items: center; gap: 7px; padding: 12px 16px; background: #0a1529; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .mock-bar i { width: 11px; height: 11px; border-radius: 50%; background: #ef4444; display: block; }
+    .mock-bar i:nth-child(2) { background: #f59e0b; } .mock-bar i:nth-child(3) { background: #22c55e; }
+    .mock-bar span { margin-left: 12px; font-size: 12px; color: #7f93b5; background: rgba(255,255,255,.06); padding: 4px 14px; border-radius: 6px; }
+    .mock-body { padding: 20px; background: #f4f6fa; color: var(--ink); }
+    .mock-title { font-family: "Manrope", sans-serif; font-weight: 800; font-size: 17px; display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+    .mock-title small { font-family: "Inter", sans-serif; font-weight: 500; font-size: 11px; color: var(--ink-faint); }
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+    .kpi { background: #fff; border-radius: 10px; padding: 11px 12px; border-top: 3px solid #3b82f6; box-shadow: 0 1px 2px rgba(15,23,42,.06); }
+    .kpi span { display: block; font-size: 10.5px; color: var(--ink-soft); line-height: 1.25; min-height: 26px; }
+    .kpi b { font-family: "Manrope", sans-serif; font-size: 25px; font-weight: 800; line-height: 1.1; }
+    .kpi.k2 { border-top-color: #22c55e; } .kpi.k3 { border-top-color: var(--accent); } .kpi.k4 { border-top-color: #ef4444; }
+    .mock-row { display: grid; grid-template-columns: 1.1fr 1fr; gap: 10px; }
+    .panel { background: #fff; border-radius: 10px; padding: 14px; box-shadow: 0 1px 2px rgba(15,23,42,.06); }
+    .ct { font-size: 11.5px; font-weight: 700; color: var(--ink); margin-bottom: 10px; font-family: "Manrope", sans-serif; }
+    .bars { display: flex; align-items: flex-end; gap: 9px; height: 96px; }
+    .bars div { flex: 1; text-align: center; font-size: 9.5px; color: var(--ink-faint); display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
+    .bars div i { display: block; background: linear-gradient(180deg, #fb923c, #f97316); border-radius: 4px 4px 0 0; margin-bottom: 4px; }
+    .bars div:nth-child(odd) i { background: linear-gradient(180deg, #60a5fa, #3b82f6); }
+    .osi { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 7px 9px; padding-right: 36px; margin-bottom: 6px; border-left: 3px solid #3b82f6; background: #f4f6fa; border-radius: 6px; font-size: 11px; font-weight: 600; }
+    .osi small { font-weight: 600; font-size: 9.5px; padding: 2px 7px; border-radius: 999px; background: #dbeafe; color: #1d4ed8; white-space: nowrap; }
+    .osi.o2 { border-left-color: var(--accent); } .osi.o2 small { background: #ffedd5; color: #c2410c; }
+    .osi.o3 { border-left-color: #22c55e; margin-bottom: 0; } .osi.o3 small { background: #dcfce7; color: #15803d; }
+    .phone { position: absolute; right: -26px; bottom: -8px; width: 134px; background: #0a1529; border: 3px solid #1c2c4d; border-radius: 24px; padding: 8px; box-shadow: 0 24px 50px rgba(0,0,0,.5); }
+    .phone .scr { background: #fff; border-radius: 17px; overflow: hidden; color: var(--ink); }
+    .phone .ph-h { background: var(--accent); color: #fff; padding: 10px 11px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 11.5px; }
+    .phone .ph-h small { display: block; font-weight: 500; font-size: 8.5px; opacity: .9; }
+    .phone .ph-b { padding: 8px; }
+    .phone .ph-i { font-size: 9.5px; font-weight: 600; padding: 6px 7px; border-left: 3px solid #3b82f6; background: #f4f6fa; border-radius: 5px; margin-bottom: 5px; }
+    .phone .ph-i:nth-child(2) { border-left-color: var(--accent); } .phone .ph-i:nth-child(3) { border-left-color: #22c55e; }
+    .phone .ph-btn { margin-top: 6px; text-align: center; background: var(--accent); color: #fff; font-weight: 800; font-size: 9.5px; padding: 7px; border-radius: 8px; font-family: "Manrope", sans-serif; }
+    .chip { position: absolute; background: #fff; color: var(--ink); font-size: 11.5px; font-weight: 700; padding: 9px 14px; border-radius: 999px; box-shadow: 0 12px 30px rgba(0,0,0,.3); display: flex; align-items: center; gap: 8px; white-space: nowrap; font-family: "Manrope", sans-serif; }
+    .chip::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: #22c55e; }
+    .chip.c1 { left: -26px; bottom: 96px; } .chip.c2 { left: 150px; bottom: 0; }
+    .chip.c2::before { background: var(--accent); }
+    .mock-note { text-align: center; font-size: 11px; color: #7f93b5; margin-top: 14px; }
+
+    /* calculator section */
+    .calc-grid { display: grid; grid-template-columns: 1fr 440px; gap: 56px; align-items: center; }
+    .calc { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 28px; box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08); }
+    .calc h3 { font-size: 20px; margin-bottom: 6px; }
+    .calc .hint { font-size: 14px; color: var(--ink-soft); margin-bottom: 18px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 13px; font-weight: 600; color: var(--ink-soft); margin-bottom: 6px; }
+    .field input { width: 100%; font: inherit; font-size: 17px; font-weight: 600; padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--ink); }
+    .field input:focus { outline: 2px solid var(--accent); background: #fff; }
+    .result { margin-top: 18px; padding: 18px; background: var(--accent-soft); border-radius: 12px; }
+    .result .big { font-family: "Manrope", sans-serif; font-weight: 800; font-size: 32px; color: var(--accent-dark); line-height: 1.1; }
+    .result .small { font-size: 14px; color: var(--ink-soft); margin-top: 6px; }
+    .calc .note { font-size: 12.5px; color: var(--ink-faint); margin-top: 12px; }
+
+    /* losses */
+    .grid4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 40px; }
+    .loss { border: 1px solid var(--border); border-radius: 16px; padding: 28px; background: #fff; }
+    .loss .tag { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-dark); }
+    .loss h3 { font-size: 22px; margin: 8px 0 10px; }
+    .loss p { color: var(--ink-soft); font-size: 15.5px; }
+    .loss .fix { margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--border); font-size: 15px; color: var(--ink); }
+    .loss .fix b { color: var(--accent-dark); }
+    .also { margin-top: 28px; padding: 18px 22px; background: var(--surface); border-radius: 12px; font-size: 15px; color: var(--ink-soft); }
+    .also b { color: var(--ink); }
+
+    /* start small */
+    .alt { background: var(--surface); }
+    #calculadora { background: radial-gradient(900px 420px at 85% 0%, rgba(37,99,235,.35), transparent 60%), linear-gradient(135deg, #07142c 0%, #0b2150 55%, #10316f 100%); color: #fff; }
+    #calculadora .eyebrow { color: var(--accent); }
+    #calculadora h2 { color: #fff; }
+    #calculadora .lead { color: #c9d1de; }
+    #calculadora .calc { border-color: rgba(255,255,255,.12); box-shadow: 0 24px 60px rgba(0,0,0,.35); color: var(--ink); }
+    .pills { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 8px; }
+    .pill { background: #fff; border: 1px solid var(--border); border-radius: 999px; padding: 12px 22px; font-family: "Manrope", sans-serif; font-weight: 700; }
+    .pill.hot { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark); }
+
+    /* steps */
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 40px; }
+    .step { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+    .step .n { width: 38px; height: 38px; border-radius: 50%; background: var(--accent); color: #fff; font-family: "Manrope", sans-serif; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .step h3 { font-size: 18px; margin-bottom: 8px; }
+    .step p { color: var(--ink-soft); font-size: 14.5px; }
+
+    /* manifesto */
+    .manifesto { background: var(--ink); color: #e8ecf3; }
+    .manifesto .eyebrow { color: var(--accent); }
+    .manifesto h2 { color: #fff; font-size: clamp(32px, 5vw, 52px); }
+    .manifesto .why { font-family: "Manrope", sans-serif; font-weight: 800; font-size: clamp(22px, 3vw, 30px); line-height: 1.25; color: #fff; margin: 24px 0 28px; max-width: 760px; }
+    .manifesto .why span { color: var(--accent); }
+    .manifesto p { font-size: 18px; max-width: 720px; margin-bottom: 18px; color: #c9d1de; }
+    .manifesto ul { list-style: none; max-width: 720px; margin: 8px 0 28px; }
+    .manifesto li { position: relative; padding: 12px 0 12px 30px; border-bottom: 1px solid rgba(255,255,255,.1); font-size: 17.5px; color: #e8ecf3; }
+    .manifesto li::before { content: ""; position: absolute; left: 0; top: 21px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
+    .manifesto .promise { background: rgba(249,115,22,.12); border-left: 4px solid var(--accent); padding: 18px 22px; border-radius: 0 12px 12px 0; max-width: 720px; color: #fff; font-size: 18px; }
+    .manifesto .sign { margin-top: 30px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 20px; color: #fff; }
+    .manifesto .sign span { color: var(--accent); }
+
+    /* proof */
+    .proof-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 36px; }
+    .card { border: 1px solid var(--border); border-radius: 16px; padding: 28px; background: #fff; }
+    .card h3 { font-size: 21px; margin-bottom: 10px; }
+    .card p { color: var(--ink-soft); font-size: 16px; }
+    .card .num { font-family: "Manrope", sans-serif; font-weight: 800; font-size: 34px; color: var(--accent); }
+    .card a.more { display: inline-block; margin-top: 14px; font-weight: 700; color: var(--accent-dark); }
+
+    /* faq */
+    details { border-bottom: 1px solid var(--border); padding: 20px 0; }
+    summary { cursor: pointer; font-family: "Manrope", sans-serif; font-weight: 700; font-size: 18px; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+    summary::after { content: "+"; color: var(--accent); font-size: 24px; line-height: 1; }
+    details[open] summary::after { content: "−"; }
+    details p { margin-top: 12px; color: var(--ink-soft); max-width: 720px; }
+
+    /* final */
+    .final { background: var(--accent-soft); text-align: center; }
+    .final h2 { max-width: 700px; margin: 0 auto 14px; }
+    .final .lead { margin: 0 auto 28px; }
+    .final .hero-cta { justify-content: center; }
+
+    footer { padding: 40px 0; background: #fff; border-top: 1px solid var(--border); font-size: 13px; color: var(--ink-soft); }
+    .foot { display: flex; flex-wrap: wrap; gap: 14px 40px; justify-content: space-between; align-items: flex-start; }
+    .foot a { color: var(--ink-soft); }
+    .foot a:hover { color: var(--ink); }
+    .foot .legal { width: 100%; font-size: 12px; color: var(--ink-faint); margin-top: 8px; }
+
+    @media (max-width: 900px) {
+      section { padding: 60px 0; }
+      .hero-grid, .proof-grid, .calc-grid { grid-template-columns: 1fr; gap: 36px; }
+      .mock-wrap { padding-bottom: 0; }
+      .phone, .chip { display: none; }
+      .mock-row { grid-template-columns: 1fr; }
+      .grid4 { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr 1fr; }
+      .nav-links a.link { display: none; }
+    }
+    @media (max-width: 520px) {
+      .steps { grid-template-columns: 1fr; }
+      .kpis { grid-template-columns: 1fr 1fr; }
+      .btn { width: 100%; }
+      .btn-sm { width: auto; }
+      .hero-cta { flex-direction: column; }
+    }
+
+    .final .hero-cta { margin-bottom: 8px; }
+    .lead-form { max-width: 640px; margin: 28px auto 0; background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 28px; text-align: left; box-shadow: 0 10px 30px rgba(15,23,42,.08); }
+    .lead-form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .lead-form label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--ink); }
+    .lead-form input, .lead-form select { width: 100%; font: inherit; font-size: 15px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: var(--ink); }
+    .lead-form input:focus, .lead-form select:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+    .lead-form [aria-invalid="true"] { border-color: #dc2626; }
+    .lead-form .hp { position: absolute; left: -9999px; height: 0; overflow: hidden; }
+    .lead-form .btn { width: 100%; margin-top: 6px; }
+    .lead-form .fine { font-size: 12px; color: var(--ink-faint); margin-top: 12px; text-align: center; }
+    .form-msg { padding: 12px 14px; border-radius: 10px; font-size: 14px; margin-bottom: 16px; }
+    .form-msg.ok { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .form-msg.err { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    .alt-contact { margin: 22px 0 0; font-size: 14px; color: var(--ink-soft); }
+    .alt-contact a { color: var(--accent-dark); font-weight: 600; }
+    @media (max-width: 640px) { .lead-form { padding: 20px; } .lead-form .row { grid-template-columns: 1fr; } }
+    .porque h2 { max-width: 780px; }
+    .porque p { font-size: 18px; max-width: 720px; margin-bottom: 16px; color: var(--ink-soft); }
+    .porque p b { color: var(--ink); }
+    .porque .more { display: inline-block; margin-top: 8px; font-family: "Manrope", sans-serif; font-weight: 700; color: var(--accent-dark); }
+    .porque .more:hover { text-decoration: underline; }
+  
+/* menu: itens do site atual + ancoras da pagina (menus suspensos sem JS; hamburguer no celular).
+   As regras globais de details/summary do FAQ (borda, fonte 18px, "+" laranja) sao neutralizadas aqui dentro. */
+.nav-links details.dd { border: 0; padding: 0; position: relative; }
+.nav-links summary.link { display: block; justify-content: normal; gap: 0; font-family: inherit; font-size: 14px; font-weight: 600; color: #b7c4dc; cursor: pointer; list-style: none; user-select: none; }
+.nav-links summary.link::-webkit-details-marker { display: none; }
+.nav-links summary.link::after, .nav-links details[open] > summary.link::after { color: inherit; font-size: 11px; line-height: inherit; }
+.nav-links summary.link::after { content: "\00a0\25BE"; }
+.nav-links details[open] > summary.link::after { content: "\00a0\25B4"; }
+.nav-links summary.link:hover, .nav-links details[open] > summary.link { color: #fff; }
+.dd-lista { position: absolute; top: calc(100% + 18px); left: -14px; min-width: 240px; display: flex; flex-direction: column; padding: 8px; background: #08142c; border: 1px solid rgba(255,255,255,.1); border-radius: 10px; box-shadow: 0 18px 40px rgba(0,0,0,.35); z-index: 60; }
+.dd-lista a { padding: 9px 12px; border-radius: 8px; font-size: 14px; font-weight: 600; color: #d7e0f1; }
+.dd-lista a:hover { background: rgba(255,255,255,.08); color: #fff; }
+.menu-btn { display: none; width: 42px; height: 42px; padding: 0; border: 1px solid rgba(255,255,255,.18); border-radius: 10px; background: transparent; cursor: pointer; flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
+.menu-btn span { display: block; width: 18px; height: 2px; background: #fff; border-radius: 2px; }
+@media (max-width: 1000px) {
+  .menu-btn { display: flex; }
+  .nav-links { display: none; position: absolute; top: 68px; left: 0; right: 0; flex-direction: column; align-items: stretch; gap: 2px; padding: 12px 24px 22px; border-bottom: 1px solid rgba(255,255,255,.1); max-height: calc(100vh - 68px); overflow-y: auto; background: #08142c; z-index: 60; }
+  header.aberto .nav-links { display: flex; }
+  .nav-links a.link, .nav-links summary.link { display: block; padding: 12px 4px; font-size: 16px; }
+  .nav-links .btn { margin-top: 10px; text-align: center; }
+  .dd-lista { position: static; min-width: 0; margin: 0 0 6px 10px; padding: 2px 0 2px 10px; background: transparent; z-index: auto; border: 0; border-left: 2px solid rgba(255,255,255,.14); border-radius: 0; box-shadow: none; }
+  .dd-lista a { padding: 10px 6px; }
+  .lang { margin: 12px 4px 6px; gap: 12px; }
+}
+</style>
+<style data-site="footer-igual-paginas">
+footer.ifoot .ft-brand::before { content:""; display:inline-block; width:38px; height:10px; margin-right:10px; vertical-align:middle; background:radial-gradient(circle at 5px 5px,#ef4444 4.5px,transparent 5px) 0 0/10px 10px no-repeat,radial-gradient(circle at 5px 5px,#f59e0b 4.5px,transparent 5px) 14px 0/10px 10px no-repeat,radial-gradient(circle at 5px 5px,#22c55e 4.5px,transparent 5px) 28px 0/10px 10px no-repeat; }
+footer.ifoot[data-site="footer"] { display:block !important; background:#fff !important; border-top:1px solid #e4e7ec !important; padding:48px 0 !important; margin:0 !important; font-family:Inter,"Segoe UI",system-ui,sans-serif !important; color:#0f172a; }
+footer.ifoot .ft-wrap { max-width:1180px !important; margin:0 auto !important; padding:0 28px !important; box-sizing:border-box; }
+footer.ifoot .ft-grid { display:grid !important; grid-template-columns:1.3fr 1.2fr 1fr 1fr; gap:32px; margin-bottom:32px; }
+footer.ifoot .ft-col h4 { font-size:14px !important; font-weight:700 !important; margin:0 0 16px !important; color:#0f172a !important; }
+footer.ifoot .ft-col a { display:block !important; font-size:13px !important; color:#5b6472 !important; line-height:1.8 !important; text-decoration:none !important; transition:color .2s; }
+footer.ifoot .ft-col a:hover { color:#0f172a !important; }
+footer.ifoot .ft-brand { font-weight:800; font-size:20px; margin-bottom:12px; font-family:Manrope,sans-serif; }
+footer.ifoot .ft-brand i { color:#f97316; font-style:normal; }
+footer.ifoot .ft-col p { font-size:13px !important; color:#5b6472 !important; line-height:1.6 !important; margin:0 !important; }
+footer.ifoot .ft-bottom { border-top:1px solid #e4e7ec; padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px 24px; font-size:12px; color:#8891a0; }
+footer.ifoot .ft-bottom p { margin:0 !important; font-size:12px !important; color:#8891a0 !important; }
+footer.ifoot .ft-legal { width:100%; margin-top:6px !important; font-size:11.5px !important; }
+@media (max-width:768px) { footer.ifoot .ft-grid { grid-template-columns:1fr; } }
+footer.ifoot[data-site="footer"] { background:#0f172a !important; border-top:0 !important; color:#e2e8f0 !important; }
+footer.ifoot .ft-grid { grid-template-columns:1.3fr 1.1fr 1.2fr 1fr 1fr 1fr; }
+footer.ifoot .ft-col h4, footer.ifoot .ft-brand { color:#fff !important; }
+footer.ifoot .ft-col a { color:#cbd5e1 !important; }
+footer.ifoot .ft-col a:hover { color:#f97316 !important; }
+footer.ifoot .ft-col p, footer.ifoot .ft-bottom p, footer.ifoot .ft-bottom { color:#94a3b8 !important; }
+footer.ifoot .ft-bottom { border-top-color:rgba(255,255,255,.14); }
+footer.ifoot .ft-col .slogan { color:#94a3b8 !important; }
+@media (max-width:768px) { footer.ifoot .ft-grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="/" class="logo" aria-label="Oravel">O<span>r</span>avel</a>
+    <button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu-principal"><span></span><span></span><span></span></button>
+    <div class="nav-links" id="menu-principal">
+      <a class="link" href="/solucoes/">Solutions</a>
+      <details class="dd">
+        <summary class="link">Products</summary>
+        <div class="dd-lista">
+          <a href="/erp-cmms/">Rental ERP</a>
+          <a href="/software-manutencao-industrial/">Maintenance</a>
+          <a href="/software-gestao-de-servicos/">Services</a>
+          <a href="/software-gestao-frota-logistica/">Logistics</a>
+          <a href="/wms/">Inventory</a>
+          <a href="/crm/">Sales</a>
+          <a href="/departamento-pessoal/">HR</a>
+          <a href="/inteligencia-artificial/">Artificial intelligence</a>
+        </div>
+      </details>
+      <details class="dd">
+        <summary class="link">Equipment</summary>
+        <div class="dd-lista">
+          <a href="/software-manutencao-guindastes/">Cranes</a>
+          <a href="/software-manutencao-munks/">Munk trucks</a>
+          <a href="/software-manutencao-plataformas-elevatorias/">Aerial work platforms</a>
+          <a href="/software-manutencao-empilhadeiras/">Forklifts</a>
+          <a href="/software-manutencao-geradores/">Generators</a>
+          <a href="/software-manutencao-compressores/">Compressors</a>
+          <a href="/software-manutencao-outros-equipamentos/">Other equipment</a>
+        </div>
+      </details>
+      <details class="dd">
+        <summary class="link">Processes</summary>
+        <div class="dd-lista">
+          <a href="/processo-manutencao/">Maintenance</a>
+          <a href="/processo-gestao-de-equipes/">Team management</a>
+          <a href="/processo-gestao-de-estoques/">Inventory management</a>
+          <a href="/processo-logistica/">Logistics</a>
+          <a href="/processo-cobranca-automatica/">Automatic billing</a>
+          <a href="/nr-13-inspecao-equipamentos/">NR-13 inspections</a>
+          <a href="/equipamento-devolvido-com-defeito/">Returns with defects</a>
+        </div>
+      </details>
+      <details class="dd">
+        <summary class="link">On this page</summary>
+        <div class="dd-lista">
+          <a href="#porque">Why we exist</a>
+          <a href="#problema">What changes</a>
+          <a href="#como-funciona">How it works</a>
+        </div>
+      </details>
+      <a class="link" href="/sobre/">About us</a>
+      <a class="link" href="/contato.php">Contact</a>
+      <span class="lang" role="group" aria-label="Language">
+        <a href="/" hreflang="pt-BR" lang="pt-BR" title="Português" aria-label="Português"><svg viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#009c3b"/><path d="M12 2 22 8 12 14 2 8z" fill="#ffdf00"/><circle cx="12" cy="8" r="3.4" fill="#002776"/></svg></a>
+        <a class="on" href="/index-en.html" hreflang="en" lang="en" title="English" aria-label="English" aria-current="true"><svg viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#fff"/><path fill="#b22234" d="M0 0h24v1.23H0zm0 2.46h24v1.23H0zm0 2.46h24v1.23H0zm0 2.46h24v1.23H0zm0 2.46h24v1.23H0zm0 2.46h24v1.23H0zm0 2.46h24V16H0z"/><rect width="10.5" height="8.6" fill="#3c3b6e"/><g fill="#fff"><circle cx="2" cy="1.8" r=".55"/><circle cx="5.2" cy="1.8" r=".55"/><circle cx="8.4" cy="1.8" r=".55"/><circle cx="3.6" cy="4.3" r=".55"/><circle cx="6.8" cy="4.3" r=".55"/><circle cx="2" cy="6.8" r=".55"/><circle cx="5.2" cy="6.8" r=".55"/><circle cx="8.4" cy="6.8" r=".55"/></g></svg></a>
+      </span>
+      <a class="btn btn-primary btn-sm" href="#contato">Try 30 days</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="audience">For equipment rental companies</div>
+      <h1>Those who run equipment deserve to work <em>without firefighting.</em></h1>
+      <p class="sub">Oravel brings maintenance, inventory, logistics and finance into a single view, from the field to the office, so your operation delivers more with less rush. Try it for 30 days, with us by your side.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="https://wa.me/5519999332615?text=Hello!%20I%20want%20to%20try%20Oravel%20for%2030%20days%20at%20my%20rental%20company.">I want to try 30 days</a>
+        <a class="btn btn-ghost" href="#manifesto">Read our manifesto</a>
+      </div>
+      <p class="micro">No commitment. If it does not make sense, you owe nothing.</p>
+    </div>
+
+    <div>
+      <div class="mock-wrap">
+        <div class="mock">
+          <div class="mock-bar"><i></i><i></i><i></i><span>app.oravel.com.br/painel</span></div>
+          <div class="mock-body">
+            <div class="mock-title">Operations dashboard <small>Sample data</small></div>
+            <div class="kpis">
+              <div class="kpi"><span>Available equipment</span><b>62</b></div>
+              <div class="kpi k2"><span>Rented</span><b>148</b></div>
+              <div class="kpi k3"><span>In maintenance</span><b>9</b></div>
+              <div class="kpi k4"><span>Upcoming preventive</span><b>5</b></div>
+            </div>
+            <div class="mock-row">
+              <div class="panel">
+                <div class="ct">Equipment downtime hours</div>
+                <div class="bars">
+                  <div><i style="height:62%"></i>May</div>
+                  <div><i style="height:78%"></i>Jun</div>
+                  <div><i style="height:54%"></i>Jul</div>
+                  <div><i style="height:88%"></i>Aug</div>
+                  <div><i style="height:66%"></i>Sep</div>
+                  <div><i style="height:72%"></i>Oct</div>
+                </div>
+              </div>
+              <div class="panel">
+                <div class="ct">Work orders</div>
+                <div class="osi">WO-2041 Generator <small>In progress</small></div>
+                <div class="osi o2">WO-2044 Forklift <small>Preventive</small></div>
+                <div class="osi o3">WO-2038 Platform <small>Completed</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chip c1">Preventive opened automatically</div>
+        <div class="chip c2">Part deducted from inventory</div>
+        <div class="phone">
+          <div class="scr">
+            <div class="ph-h">Maintenance<small>Work orders</small></div>
+            <div class="ph-b">
+              <div class="ph-i">WO-2041 Generator</div>
+              <div class="ph-i">WO-2044 Forklift</div>
+              <div class="ph-i">WO-2038 Platform</div>
+              <div class="ph-btn">Start WO</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="mock-note">Illustrative image with sample data</p>
+    </div>
+  </div>
+</section>
+
+<!-- POR QUE EXISTIMOS -->
+<section class="alt porque" id="porque">
+  <div class="wrap">
+    <div class="eyebrow">Why Oravel exists</div>
+    <h2>We have been on your side of the counter.</h2>
+    <p>We ran an equipment operation for years. We lived the machine idle on the job site, the part missing at the wrong time, the customer waiting "since yesterday" and the month-end close that would not add up.</p>
+    <p>We learned that none of this is bad luck. It is a lack of information at the right time. That is why we created Oravel: so every equipment operation runs with <b>clarity, predictability and peace of mind</b>, from the field to the office.</p>
+    <a class="more" href="#manifesto">Read the full manifesto →</a>
+  </div>
+</section>
+
+<!-- O QUE MUDA -->
+<section id="problema">
+  <div class="wrap">
+    <div class="eyebrow">What changes</div>
+    <h2>A predictable operation starts with the right information at the right time.</h2>
+    <p class="lead">Anyone who has run an equipment operation knows the value of having control in hand. These are the four changes Oravel brings to your day to day.</p>
+
+    <div class="grid4">
+      <div class="loss">
+        <div class="tag">Predictability</div>
+        <h3>Equipment ready when the customer needs it</h3>
+        <p>Maintenance planned on time and at the right hour-meter reading, so equipment is available and the team works without surprises.</p>
+        <div class="fix"><b>In Oravel:</b> the work order is opened automatically by hour meter or due date, with a checklist and an assigned technician.</div>
+      </div>
+      <div class="loss">
+        <div class="tag">Availability</div>
+        <h3>The right part, at the right time</h3>
+        <p>With the real balance in sight, purchases are planned and maintenance does not wait for parts.</p>
+        <div class="fix"><b>In Oravel:</b> the part used on a work order leaves inventory on the spot, and you see the real balance and what is running out.</div>
+      </div>
+      <div class="loss">
+        <div class="tag">Trust</div>
+        <h3>Delivery and return with transparency</h3>
+        <p>Everything recorded on the way out and back: a clear and fair relationship with the customer, with no arguments.</p>
+        <div class="fix"><b>In Oravel:</b> checkout and return with a checklist, before and after photos and digital signature.</div>
+      </div>
+      <div class="loss">
+        <div class="tag">View of the real cost</div>
+        <h3>Every piece of equipment with its own history</h3>
+        <p>You know how much each machine earns and how much it costs, and decide with confidence what to keep, renew or sell.</p>
+        <div class="fix"><b>In Oravel:</b> each piece of equipment has its own file: maintenance history, parts and accumulated cost.</div>
+      </div>
+    </div>
+
+    <div class="also"><b>Also on the platform:</b> vehicle and driver logistics, accounts payable and receivable with bank slips, a customer portal and integrated WhatsApp communication.</div>
+  </div>
+</section>
+
+<!-- CALCULADORA -->
+<section class="alt" id="calculadora">
+  <div class="wrap calc-grid">
+    <div>
+      <div class="eyebrow">See the potential</div>
+      <h2>How much is a working machine worth?</h2>
+      <p class="lead">Every extra day of available equipment is a daily rental coming in. Enter your numbers and see the size of the opportunity.</p>
+    </div>
+    <div class="calc">
+      <h3>Calculate with your numbers</h3>
+      <p class="hint">A quick estimate, using only what you already know.</p>
+      <div class="field">
+        <label for="c-maq">How many machines are usually idle in a month?</label>
+        <input id="c-maq" type="number" min="0" inputmode="numeric" value="3">
+      </div>
+      <div class="field">
+        <label for="c-dias">For how many days each, on average?</label>
+        <input id="c-dias" type="number" min="0" inputmode="numeric" value="5">
+      </div>
+      <div class="field">
+        <label for="c-diaria">Average daily rental rate (R$)</label>
+        <input id="c-diaria" type="number" min="0" inputmode="numeric" value="250">
+      </div>
+      <div class="result">
+        <div class="big" id="r-mes">R$ 3,750</div>
+        <div class="small">of daily rentals that could come back in each month. In one year: <b id="r-ano">R$ 45,000</b>.</div>
+      </div>
+      <p class="note">Simple calculation: machines × days × daily rate. During the 30-day trial, we show you your real number.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMECE POR ONDE FAZ SENTIDO -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Without being held hostage by a giant system</div>
+    <h2>Start where it makes the most sense. Grow at your own pace.</h2>
+    <p class="lead">You do not need to buy everything at once. Pick the module that matters most right now, use it for 30 days and decide with numbers.</p>
+    <div class="pills">
+      <span class="pill hot">Maintenance</span>
+      <span class="pill">Inventory</span>
+      <span class="pill">Logistics</span>
+      <span class="pill">Services</span>
+    </div>
+    <p class="micro">Each module works on its own and connects with the others when you want to expand.</p>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="alt" id="como-funciona">
+  <div class="wrap">
+    <div class="eyebrow">How it works</div>
+    <h2>Four steps, no risk to you.</h2>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Conversation</h3><p>40 minutes, free of charge and with no need to send data. You tell us how your operation works.</p></div>
+      <div class="step"><div class="n">2</div><h3>The module for your moment</h3><p>Together we choose where to start, the point where clarity makes the most difference.</p></div>
+      <div class="step"><div class="n">3</div><h3>30 days of use</h3><p>Setup by your side, live training and access to Oravel Academy for your team.</p></div>
+      <div class="step"><div class="n">4</div><h3>A decision backed by numbers</h3><p>At the end of the trial, you see the result and decide whether to continue. If not, you owe nothing.</p></div>
+    </div>
+    <div class="hero-cta" style="margin-top:36px">
+      <a class="btn btn-primary" href="#contato">I want to start</a>
+    </div>
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<section class="manifesto" id="manifesto">
+  <div class="wrap">
+    <div class="eyebrow">Manifesto</div>
+    <h2>Every operation deserves to run with clarity.</h2>
+    <div class="why">We believe every equipment operation can run with <span>clarity, predictability and peace of mind.</span></div>
+    <p>We saw this from the inside. We ran an equipment operation for years. We know the silence of a machine idle on the job site, the part missing at the wrong time, the customer waiting "since yesterday" and the month-end close that would not add up.</p>
+    <p>And we learned one thing: organized operations do not depend on luck or heroes. They depend on having the right information, at the right time, in the hands of whoever decides.</p>
+    <p><b>That is why we believe that:</b></p>
+    <ul>
+      <li>Whoever builds an operation deserves to see all of it, in numbers, and grow with confidence.</li>
+      <li>Control is not bureaucracy. It is what lets you decide without guessing.</li>
+      <li>A good system does not complicate things. It starts with what is a priority and grows with your operation.</li>
+      <li>Technology is only worth it if it shows results: more equipment available, planned purchases, a clear cost for each piece of equipment.</li>
+      <li>Decision makers need a conversation in their own language. The language of decision makers is results, not features.</li>
+    </ul>
+    <p>We put the experience of people who have been on your side of the counter into simple modules, connected from the field to the office.</p>
+    <div class="promise"><b>Our promise.</b> You do not have to take our word for it. Use it for 30 days, with us by your side, and measure. If it does not make sense, you owe nothing.</div>
+    <div class="sign">Oravel. Control from people who have been on your <span>side of the counter.</span></div>
+  </div>
+</section>
+
+<!-- CREDIBILIDADE -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Why trust us</div>
+    <h2>Built by people who lived the operation.</h2>
+    <div class="proof-grid">
+      <div class="card">
+        <h3>Oravel was born from scars, not spreadsheets</h3>
+        <p>Every screen answers a situation we have lived: the equipment on the job site, a customer emergency, the fleet that never stops.</p>
+        <a class="more" href="/sobre-nos">Read our story →</a>
+      </div>
+      <div class="card">
+        <div class="num">21 courses · 66 lessons</div>
+        <h3>Oravel Academy</h3>
+        <p>Lessons with real screens, exercises and certified exams. Your team learns at its own pace, and you track who has studied.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="alt">
+  <div class="wrap">
+    <div class="eyebrow">Frequently asked questions</div>
+    <h2>Common questions before you start.</h2>
+    <details>
+      <summary>Do I need to stop my operation to set it up?</summary>
+      <p>No. You start with one module, with our help, and the operation keeps running. The others come in whenever you want.</p>
+    </details>
+    <details>
+      <summary>What if my team is not tech-savvy?</summary>
+      <p>The system was designed for people in the field and at the counter. You get live training and Oravel Academy, with step-by-step lessons.</p>
+    </details>
+    <details>
+      <summary>How much does it cost?</summary>
+      <p>It depends on the modules and the size of your operation. In the first conversation you get a clear price, with no surprises, and you only decide after seeing the trial working.</p>
+    </details>
+    <details>
+      <summary>What if I do not like it after 30 days?</summary>
+      <p>You owe nothing. We would rather you decide with numbers than be stuck with a system that does not help.</p>
+    </details>
+  </div>
+</section>
+
+<!-- CONTATO -->
+<section class="final" id="contato">
+  <div class="wrap">
+    <h2>Shall we look at your operation together?</h2>
+    <p class="lead">A 40-minute conversation, free and with no commitment. Leave your details and we will get back to you to set the best time.</p>
+    <form class="lead-form" id="lead-form" method="post" action="/lead-segmento.php" novalidate>
+      <div id="form-msg" class="form-msg" role="status" hidden></div>
+      <input type="hidden" name="origem" value="home">
+      <div class="hp" aria-hidden="true"><label>Do not fill in <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+      <div class="row">
+        <div><label for="f-nome">Name *</label><input id="f-nome" name="name" type="text" autocomplete="name" required minlength="2" maxlength="120"></div>
+        <div><label for="f-empresa">Company *</label><input id="f-empresa" name="company" type="text" autocomplete="organization" required minlength="2" maxlength="120"></div>
+      </div>
+      <div class="row">
+        <div><label for="f-email">Email *</label><input id="f-email" name="email" type="email" autocomplete="email" required maxlength="160"></div>
+        <div><label for="f-tel">WhatsApp</label><input id="f-tel" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" placeholder="(19) 90000-0000"></div>
+      </div>
+      <div class="row">
+        <div><label for="f-seg">Industry *</label><select id="f-seg" name="segmento" required><option value="locacao" selected>Equipment Rental</option><option value="manutencao-industrial">Industrial Maintenance</option><option value="montagem-industrial">Industrial Assembly</option><option value="logistica-transportes">Logistics and Transport</option><option value="gestao-servicos">Service Management</option><option value="distribuidor-atacadista">Distributor and Wholesaler</option><option value="outro">Other industry</option></select></div>
+        <div><label for="f-porte">Number of technicians *</label><select id="f-porte" name="porte" required><option value="">Select</option><option>1 a 5</option><option>6 a 15</option><option>16 a 50</option><option>Mais de 50</option></select></div>
+      </div>
+      <div class="cf-turnstile" data-sitekey="0x4AAAAAAEUrIcrw2tIq9KEj"></div>
+      <button class="btn btn-primary" type="submit">Let's talk</button>
+      <p class="fine">We use your data only to get back to you about this contact. <a href="/politica-de-privacidade/">Privacy</a></p>
+    </form>
+    <p class="alt-contact">Prefer to talk now? <a href="https://wa.me/5519999332615?text=Hello!%20I%20want%20to%20talk%20about%20trying%20Oravel%20for%2030%20days.">WhatsApp (19) 99933-2615</a> or <a href="mailto:contato@oravel.com.br">contato@oravel.com.br</a></p>
+  </div>
+</section>
+
+</main>
+
+<footer class="ifoot" data-site="footer"><div class="ft-wrap"><div class="ft-grid"><div class="ft-col"><div class="ft-brand">O<i>r</i>avel</div><p class="slogan">Desenvolvimento e tecnologia</p><p>Control for those who run equipment, from people who have been on your side of the counter.</p></div><div class="ft-col"><h4>Solutions</h4><a href="/erp-cmms/">Rental ERP</a><a href="/software-manutencao-industrial/">Maintenance</a><a href="/software-gestao-de-servicos/">Services</a><a href="/software-gestao-frota-logistica/">Logistics</a><a href="/wms/">Inventory</a><a href="/crm/">Sales</a><a href="/departamento-pessoal/">HR</a></div><div class="ft-col"><h4>Equipment</h4><a href="/software-manutencao-guindastes/">Cranes</a><a href="/software-manutencao-munks/">Munk trucks</a><a href="/software-manutencao-plataformas-elevatorias/">Aerial work platforms</a><a href="/software-manutencao-empilhadeiras/">Forklifts</a><a href="/software-manutencao-geradores/">Generators</a><a href="/software-manutencao-compressores/">Compressors</a><a href="/software-manutencao-outros-equipamentos/">Other equipment</a></div><div class="ft-col"><h4>Processes</h4><a href="/processo-manutencao/">Maintenance</a><a href="/processo-gestao-de-equipes/">Team management</a><a href="/processo-gestao-de-estoques/">Inventory management</a><a href="/processo-logistica/">Logistics</a><a href="/processo-cobranca-automatica/">Automatic billing</a><a href="/nr-13-inspecao-equipamentos/">NR-13 inspections</a><a href="/equipamento-devolvido-com-defeito/">Returns with defects</a></div><div class="ft-col"><h4>Company</h4><a href="/planos/">Plans</a><a href="/inteligencia-artificial/">Artificial intelligence</a><a href="/academia/">Academy</a><a href="/sobre/">About</a><a href="/contato.php">Contact</a></div><div class="ft-col"><h4>Legal</h4><a href="/politica-de-privacidade/">Privacy</a><a href="/termos-de-uso/">Terms of Use</a></div></div><div class="ft-bottom"><p>© 2026 Oravel Software. All rights reserved.</p><p class="ft-legal">Oravel Desenvolvimento de Software Ltda · CNPJ 65.707.953/0001-30</p></div></div></footer>
+
+<!-- WhatsApp -->
+<a href="https://wa.me/5519999332615" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer" style="position: fixed; bottom: 20px; right: 20px; z-index: 999; width: 60px; height: 60px; background-color: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease; text-decoration: none;">
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 0C7.16 0 0 7.16 0 16c0 2.84 0.72 5.52 1.96 7.84L0 32l8.48-4.48C10.48 30.28 13.16 31 16 31c8.84 0 16-7.16 16-16S24.84 0 16 0zm9.44 20.56c-0.36 1.04-1.56 1.84-2.72 2.08-0.84 0.16-1.96 0.28-5.84-1.24-5.12-2.04-8.44-7.16-8.7-7.56-0.28-0.4-2.16-2.88-2.16-5.52 0-2.64 1.36-3.96 1.84-4.48 0.48-0.52 1.04-0.64 1.36-0.64 0.32 0 0.64 0 0.92 0.04 0.28 0.04 0.64-0.12 1 0.76 0.36 0.88 1.2 2.96 1.36 3.24 0.12 0.28 0 0.52-0.2 0.76-0.2 0.24-0.44 0.56-0.64 0.8-0.2 0.24-0.4 0.52-0.16 1 0.24 0.48 1.2 2 2.56 3.24 1.76 1.56 3.28 2.04 3.76 2.28 0.48 0.24 0.76 0.2 1 -0.04 0.24-0.24 1-1.2 1.44-1.68 0.4-0.44 0.84-0.36 1.32-0.2 0.48 0.16 3.08 1.44 3.6 1.68 0.52 0.24 0.88 0.36 1 0.56 0.12 0.2 0.12 1.04-0.28 2.04z" fill="white"/>
+  </svg>
+</a>
+
+<script>
+  (function () {
+    var fmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+    var maq = document.getElementById('c-maq'), dias = document.getElementById('c-dias'), dia = document.getElementById('c-diaria');
+    function calc() {
+      var m = Math.max(0, parseFloat(maq.value) || 0), d = Math.max(0, parseFloat(dias.value) || 0), v = Math.max(0, parseFloat(dia.value) || 0);
+      var mes = m * d * v;
+      document.getElementById('r-mes').textContent = fmt.format(mes);
+      document.getElementById('r-ano').textContent = fmt.format(mes * 12);
+    }
+    [maq, dias, dia].forEach(function (el) { el.addEventListener('input', calc); });
+    calc();
+  })();
+
+  (function () {
+    var f = document.getElementById('lead-form'), box = document.getElementById('form-msg');
+    if (!f) return;
+    var msgs = {
+      captcha: 'We could not confirm you are not a robot. Please try again.',
+      dados: 'Please check the required fields and try again.',
+      envio: 'We could not send it right now. Please reach us by WhatsApp or email below.'
+    };
+    function show(cls, text) { box.className = 'form-msg ' + cls; box.textContent = text; box.hidden = false; }
+    var q = new URLSearchParams(location.search);
+    if (q.get('enviado') === '1') show('ok', 'We received your message. We will get back to you soon to set up the conversation.');
+    else if (q.get('erro')) show('err', msgs[q.get('erro')] || msgs.envio);
+    if (q.has('enviado') || q.has('erro')) history.replaceState(null, '', location.pathname + '#contato');
+    f.addEventListener('submit', function (ev) {
+      var bad = false;
+      Array.prototype.forEach.call(f.querySelectorAll('[required]'), function (el) {
+        var ok = el.checkValidity() && el.value.trim() !== '';
+        el.setAttribute('aria-invalid', ok ? 'false' : 'true');
+        if (!ok) bad = true;
+      });
+      if (bad) { ev.preventDefault(); show('err', msgs.dados); var first = f.querySelector('[aria-invalid="true"]'); if (first) first.focus(); return; }
+      var b = f.querySelector('button[type=submit]'); b.disabled = true; b.textContent = 'Sending...';
+    });
+  })();
+</script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script async src="https://app.oravel.com.br/t.js?v=2"></script>
+<script>
+(function () {
+  var h = document.querySelector('header'), b = h.querySelector('.menu-btn');
+  b.addEventListener('click', function () { var a = h.classList.toggle('aberto'); b.setAttribute('aria-expanded', a); });
+  h.addEventListener('click', function (e) { if (e.target.closest('.nav-links a')) { h.classList.remove('aberto'); b.setAttribute('aria-expanded', 'false'); } });
+  document.addEventListener('click', function (e) { h.querySelectorAll('details.dd[open]').forEach(function (d) { if (!d.contains(e.target)) { d.removeAttribute('open'); } }); });
+  h.querySelectorAll('details.dd').forEach(function (d) { d.addEventListener('toggle', function () { if (d.open) { h.querySelectorAll('details.dd[open]').forEach(function (o) { if (o !== d) { o.removeAttribute('open'); } }); } }); });
+})();
+</script>
+<script src="/protecao.js?v=3" defer></script>
+</body>
+</html>
