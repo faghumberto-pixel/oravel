@@ -13,11 +13,20 @@ Empresa: Oravel Desenvolvimento de Software LTDA, São Paulo/SP. Contato: contat
 - [Munks](https://oravel.com.br/software-manutencao-munks/): manutenção preventiva e histórico por equipamento
 - [Empilhadeiras](https://oravel.com.br/software-manutencao-empilhadeiras/): manutenção preventiva e histórico por equipamento
 - [Geradores](https://oravel.com.br/software-manutencao-geradores/): manutenção preventiva por horímetro e histórico por equipamento
+- [Compressores](https://oravel.com.br/software-manutencao-compressores/): manutenção preventiva, histórico por equipamento e inspeções em dia
+- [Outros equipamentos](https://oravel.com.br/software-manutencao-outros-equipamentos/): manutenção e histórico para qualquer equipamento da frota
 - [Plataformas elevatórias](https://oravel.com.br/software-manutencao-plataformas-elevatorias/): manutenção, checklist com fotos e assinatura digital
 - [Inspeções NR-13](https://oravel.com.br/nr-13-inspecao-equipamentos/): datas, laudos e alertas de vencimento
 - [Equipamento devolvido com defeito](https://oravel.com.br/equipamento-devolvido-com-defeito/): da avaria à liberação
 - [Estoque (WMS)](https://oravel.com.br/wms/): almoxarifado e estoque
 - [CRM](https://oravel.com.br/crm/): vendas e relacionamento
+
+## Processos
+- [Manutenção](https://oravel.com.br/processo-manutencao/): preventiva, ordens de serviço e histórico por equipamento
+- [Gestão de equipes](https://oravel.com.br/processo-gestao-de-equipes/): agenda, carga e desempenho dos técnicos
+- [Gestão de estoques](https://oravel.com.br/processo-gestao-de-estoques/): almoxarifado, reposição e recebimento
+- [Logística](https://oravel.com.br/processo-logistica/): retiradas, entregas, saída e chegada no pátio
+- [Cobrança automática](https://oravel.com.br/processo-cobranca-automatica/): da medição ao pagamento
 
 ## Informações
 - [Perguntas frequentes](https://oravel.com.br/faq.php): preço, implantação, contrato e migração
