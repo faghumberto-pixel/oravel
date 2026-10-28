@@ -40,20 +40,8 @@ NAV_EQUIP = (
     '<a href="/software-manutencao-outros-equipamentos/">Outros equipamentos</a>'
     '</div></div>'
 )
-PROCESSOS = [
-    ('/processo-manutencao/', 'Manutenção'),
-    ('/processo-gestao-de-equipes/', 'Gestão de equipes'),
-    ('/processo-gestao-de-estoques/', 'Gestão de estoques'),
-    ('/processo-logistica/', 'Logística'),
-    ('/processo-cobranca-automatica/', 'Cobrança automática'),
-    ('/nr-13-inspecao-equipamentos/', 'Inspeções NR-13'),
-    ('/equipamento-devolvido-com-defeito/', 'Devolução com defeito'),
-]
-PROCESSOS_LINKS = ''.join(f'<a href="{u}">{n}</a>' for u, n in PROCESSOS)
-NAV_PROC = (
-    '<div class="hd-dd"><a href="/guindastes-e-plataformas/#proc-t" aria-haspopup="true">Processos</a>'
-    '<div class="hd-menu">' + PROCESSOS_LINKS + '</div></div>'
-)
+# Os processos não entram no menu nem no rodapé; ficam acessíveis pelo índice e por links nas páginas.
+NAV_PROC = ''
 LINK_NR13 = '<a href="/nr-13-inspecao-equipamentos/">Inspeções NR-13</a>'
 LINK_DEV = '<a href="/equipamento-devolvido-com-defeito/">Devolução com defeito</a>'
 
@@ -112,7 +100,7 @@ LINKS = {
 
 FOOTER_NAVY = """<style data-site="footer-navy">
 footer.ifoot[data-site="footer"] { background:#0f172a !important; border-top:0 !important; color:#e2e8f0 !important; }
-footer.ifoot .ft-grid { grid-template-columns:1.3fr 1.1fr 1.2fr 1fr 1fr 1fr; }
+footer.ifoot .ft-grid { grid-template-columns:1.3fr 1.2fr 1.2fr 1fr 1fr; }
 footer.ifoot .ft-col h4, footer.ifoot .ft-brand { color:#fff !important; }
 footer.ifoot .ft-col a { color:#cbd5e1 !important; }
 footer.ifoot .ft-col a:hover { color:#f97316 !important; }
@@ -342,11 +330,11 @@ def pagina_equip(tipo):
         secao('como-t', 'Como a Oravel ajuda', c['h2a'], 'Do plano de revisão ao checklist assinado, tudo por equipamento.', flow, True)
         + (secao('app-t', 'No celular', 'Como o técnico registra tudo na hora, no pátio ou na obra?', None,
                  foto_larga('celular.jpg', 'Telas do app do técnico: ordem de serviço, leitura de QR e checklist com assinatura digital',
-                            'Telas ilustrativas do app do técnico.')) if tipo in ('gerador', 'plataforma') else '')
+                            'Telas ilustrativas do app do técnico.')) if tipo == 'gerador' else '')
         + secao('porque-t', 'Por que importa', 'Por que isso muda o resultado da locadora?', None,
                 '<div class="texto"><p>Equipamento disponível e documentado aluga mais e dá menos dor de cabeça. '
                 'Com avarias registradas e o equipamento em manutenção bloqueado para locação, a sua operação ganha ritmo e a sua margem agradece.</p></div>'
-                + ('' if tipo in ('gerador', 'plataforma') else '<div style="margin-top:28px">' + foto_larga('equipe.jpg', 'Equipe de manutenção registrando o serviço com tablets, ao lado de um caminhão', 'Equipe registrando a manutenção em campo.') + '</div>'))
+                + ('' if tipo == 'gerador' else '<div style="margin-top:28px">' + foto_larga('equipe.jpg', 'Equipe de manutenção registrando o serviço com tablets, ao lado de um caminhão', 'Equipe registrando a manutenção em campo.') + '</div>'))
         + secao('quem-t', 'Para quem é', 'Para quem é e qual o porte ideal?', None,
                 quem_e(c['quem'], 'Porte ideal:', c['porte'] + ' <!-- VALIDAR porte ideal -->'), True)
         + secao('faq-t', 'Perguntas frequentes', f'Perguntas frequentes sobre {plural} e a Oravel', None, faq(faqs))
@@ -633,8 +621,7 @@ def montar(molde, p):
         '<a href="/software-manutencao-empilhadeiras/">Empilhadeiras</a>'
         '<a href="/software-manutencao-geradores/">Geradores</a>'
         '<a href="/software-manutencao-compressores/">Compressores</a>'
-        '<a href="/software-manutencao-outros-equipamentos/">Outros equipamentos</a></div>'
-        '<div class="ft-col"><h4>Processos</h4>' + PROCESSOS_LINKS + '</div>', 1)
+        '<a href="/software-manutencao-outros-equipamentos/">Outros equipamentos</a></div>', 1)
     rodape = rodape.replace('<div class="ft-brand">O<i>r</i>avel</div>',
                             f'<div class="ft-brand">O<i>r</i>avel</div><p class="slogan">{SLOGAN}</p>', 1)
 

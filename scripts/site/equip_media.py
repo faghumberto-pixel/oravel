@@ -205,7 +205,7 @@ def topo_colagem():
 HERO = {
     'guindaste': lambda: topo('guindaste-capa.jpg', [(24, 24, 'Revisão em dia', 'ok'), (24, 332, 'Histórico individual', 'org')], 'Foto de um guindaste içando uma carga em obra'),
     'munk': lambda: topo('munk-capa.jpg', [(24, 24, 'Checklist assinado', 'ok'), (24, 332, 'Preventiva programada', 'org')], 'Foto de um caminhão munk descarregando tubos em obra'),
-    'plataforma': lambda: '<img src="/img/equip/celular.jpg" alt="Telas do app do técnico: ordem de serviço, leitura de QR e checklist com assinatura digital" width="1040" height="568">',
+    'plataforma': lambda: topo('plataforma-capa.jpg', [(24, 24, 'Entrega comprovada', 'ok'), (24, 332, 'Fotos e assinatura', 'org')], 'Foto de plataformas elevatórias articulada e tesoura em uma obra'),
     'empilhadeira': lambda: topo('empilhadeira-capa.jpg', [(24, 24, 'Disponível', 'ok'), (24, 332, 'Revisão por horímetro', 'org')], 'Foto de uma empilhadeira em armazém'),
     'gerador': lambda: topo('gerador-capa.jpg', [(24, 24, 'Pronto para locar', 'ok'), (24, 332, 'Troca de óleo em dia', 'org')], 'Foto de um grupo gerador em obra'),
     'compressor': lambda: topo('compressor-capa.jpg', [(24, 24, 'Revisão em dia', 'ok'), (24, 332, 'Inspeção NR-13 agendada', 'org')], 'Foto de técnicos junto a um compressor e equipamentos industriais'),
