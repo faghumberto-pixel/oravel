@@ -21,6 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import equip_art as ea  # noqa: E402
 import equip_media as em  # noqa: E402
 import processos as pr  # noqa: E402
+import tema as tm  # noqa: E402
 
 BASE = 'https://oravel.com.br'
 WA = 'https://wa.me/5519999332615'
@@ -645,13 +646,28 @@ def montar(molde, p):
     return head + css + EXTRA_CSS + FOOTER_NAVY + '\n</head>\n' + topo + nav + '\n\n' + main + rodape + cauda
 
 
+def montar_novo(molde, p):
+    """Página no padrão novo do site (tema.py): cabeçalho, topo, corpo gerado, convite final e rodapé."""
+    url = BASE + p['slug']
+    j = re.search(r'<script type="application/ld\+json">(.*?)</script>', ld(p), re.S)
+    ldj = json.loads(j.group(1))
+    alvo = '"como-t"' if 'id="como-t"' in p['corpo'] else '"hub-t"'
+    hero = ('<section class="hero"><div class="wrap"><div><div class="eyebrow">' + p['eyebrow'] + '</div><h1>' + p['h1'] + '</h1>'
+            '<p class="sub">' + p['lead'] + '</p><div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar demonstração</a>'
+            '<a class="btn btn-o" href="#' + alvo.strip('"') + '">Ver como funciona</a></div></div>'
+            '<div class="hero-art">' + p['hero'] + '</div></div></section>')
+    posic = ('<section class="section"><div class="wrap"><div class="texto"><p>' + POSICIONAMENTO + '</p>' + veja_tambem([LINKS[k] for k in p['vt']]) + '</div></div></section>')
+    corpo = hero + p['corpo'] + posic + tm.cta_final(p['cta_h'], CTA_FIM)
+    return tm.pagina(p['title'], p['desc'], url, corpo, ldj)
+
+
 def main():
     molde = Path(sys.argv[1]).read_text(encoding='utf-8')
     saida = Path(sys.argv[2])
     for p in (pagina_nr13(), *[pagina_equip(k) for k in EQUIPS], *[pagina_processo(k) for k in PROC_PAGES], pagina_devolucao(), hub()):
         destino = saida / p['slug'].strip('/') / 'index.html'
         destino.parent.mkdir(parents=True, exist_ok=True)
-        destino.write_text(montar(molde, p), encoding='utf-8')
+        destino.write_text(montar_novo(molde, p), encoding='utf-8')
         print('ok', destino)
 
 
