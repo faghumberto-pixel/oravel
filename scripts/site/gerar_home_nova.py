@@ -30,10 +30,10 @@ LD = {
 
 hero = (
     '<section class="hero"><div class="wrap"><div><div class="eyebrow">Para locadoras de equipamentos</div>'
-    '<h1>Sua frota disponível, documentada e rentável.</h1>'
+    '<h1>Seus equipamentos disponíveis, documentados e rentáveis.</h1>'
     '<p class="sub">A Oravel reúne manutenção, ordens de serviço, estoque, logística e cobrança em um só lugar, ao lado do sistema que a sua locadora já usa.</p>'
-    '<div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar demonstração</a>'
-    f'<a class="btn btn-o" href="{t.WHATS_TESTE}" target="_blank" rel="noopener">Testar 30 dias</a></div>'
+    '<div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a>'
+    f'</div>'
     '<ul class="trust"><li>30 dias grátis com acompanhamento</li><li>Treinamento e implementação inclusos</li><li>Funciona ao lado do seu sistema</li></ul></div>'
     f'<div>{t.mk_painel()}<p class="nota" style="color:#94a3b8">Tela ilustrativa, com dados fictícios.</p></div></div></section>')
 

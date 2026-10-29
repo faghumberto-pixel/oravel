@@ -16,7 +16,7 @@ import tema as t
 RAIZ, SAIDA = Path(sys.argv[1]), Path(sys.argv[2])
 
 PAGINAS = [  # chave, rótulo, arquivo, links do site que apontam para ela
-    ('home', 'Home', 'novo/index.html', ['/', '/novo/']),
+    ('home', 'Home', 'index.html', ['/', '/novo/']),
     ('recursos', 'Recursos', 'recursos/index.html', ['/recursos/']),
     ('manutencao', 'Manutenção', 'software-manutencao-industrial/index.html', ['/software-manutencao-industrial/']),
     ('logistica', 'Logística', 'processo-logistica/index.html', ['/processo-logistica/']),

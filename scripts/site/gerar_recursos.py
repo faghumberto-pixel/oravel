@@ -91,7 +91,7 @@ abas = ''.join(f'<a href="#{i}">{n}</a>' for i, n, _ in secoes)
 hero = ('<section class="hero"><div class="wrap" style="grid-template-columns:1fr"><div style="max-width:780px"><div class="eyebrow">Recursos</div>'
         '<h1>Tudo o que a manutenção da sua locadora precisa.</h1>'
         '<p class="sub">Da ordem de serviço ao relatório, passando pelo celular do técnico, pelo estoque e pela logística: veja o que a Oravel faz pela sua operação.</p>'
-        f'<div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar demonstração</a><a class="btn btn-o" href="{t.WHATS_TESTE}" target="_blank" rel="noopener">Testar 30 dias</a></div></div></div></section>')
+        f'<div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a></div></div></div></section>')
 js = ("<script>(function(){var l=[].slice.call(document.querySelectorAll('.subnav a')),s=l.map(function(a){return document.querySelector(a.getAttribute('href'))});"
       "if(!('IntersectionObserver' in window))return;var o=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){l.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+x.target.id)})}})},{rootMargin:'-40% 0px -55% 0px'});"
       "s.forEach(function(x){if(x)o.observe(x)})})();</script>")

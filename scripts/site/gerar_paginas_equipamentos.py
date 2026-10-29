@@ -653,7 +653,7 @@ def montar_novo(molde, p):
     ldj = json.loads(j.group(1))
     alvo = '"como-t"' if 'id="como-t"' in p['corpo'] else '"hub-t"'
     hero = ('<section class="hero"><div class="wrap"><div><div class="eyebrow">' + p['eyebrow'] + '</div><h1>' + p['h1'] + '</h1>'
-            '<p class="sub">' + p['lead'] + '</p><div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar demonstração</a>'
+            '<p class="sub">' + p['lead'] + '</p><div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a>'
             '<a class="btn btn-o" href="#' + alvo.strip('"') + '">Ver como funciona</a></div></div>'
             '<div class="hero-art">' + p['hero'] + '</div></div></section>')
     posic = ('<section class="section"><div class="wrap"><div class="texto"><p>' + POSICIONAMENTO + '</p>' + veja_tambem([LINKS[k] for k in p['vt']]) + '</div></div></section>')

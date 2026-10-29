@@ -61,8 +61,8 @@ def converter(arq, slug, titulo, desc, hero_mock, eyebrow, rotulo_cta=None):
     h1 = h1 or titulo
     sub_txt = sub[0] if sub else desc
     hero = ('<section class="hero"><div class="wrap"><div><div class="eyebrow">' + eyebrow + '</div><h1>' + H.escape(h1) + '</h1><p class="sub">' + H.escape(sub_txt) + '</p>'
-            '<div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar demonstração</a>'
-            f'<a class="btn btn-o" href="{t.WHATS_TESTE}" target="_blank" rel="noopener">Testar 30 dias</a></div>'
+            '<div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a>'
+            f'</div>'
             '<ul class="trust"><li>30 dias grátis com acompanhamento</li><li>Treinamento e implementação inclusos</li><li>Funciona ao lado do seu sistema</li></ul></div>'
             f'<div>{hero_mock}<p class="nota" style="color:#94a3b8">Tela ilustrativa, com dados fictícios.</p></div></div></section>')
     corpo, n = hero, 0

@@ -238,11 +238,11 @@ def cabecalho(atual=''):
         '<a href="/software-manutencao-industrial/">Manutenção</a><a href="/processo-logistica/">Logística</a><a href="/erp-cmms/">Locação</a>'
         f'<div class="dd"><button type="button" aria-haspopup="true">Soluções</button><div class="dd-menu">{eqp}</div></div>'
         '<a href="/contato.php">Contato</a></nav>'
-        f'<div class="top-cta"><a class="btn btn-l" href="/contato.php">Agendar demonstração</a><a class="btn btn-p" href="{WHATS_TESTE}" target="_blank" rel="noopener">Testar 30 dias</a></div>'
+        f'<div class="top-cta"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a></div>'
         '<button class="burger" type="button" aria-expanded="false" aria-controls="mnav">Menu</button></div>'
         f'<div class="mnav" id="mnav"><h4>Recursos</h4>{m_rec}<h4>Soluções</h4>{m_eq}<h4>Mais</h4>'
         '<a href="/software-manutencao-industrial/">Manutenção</a><a href="/processo-logistica/">Logística</a><a href="/erp-cmms/">Locação</a><a href="/contato.php">Contato</a>'
-        f'<div style="display:grid;gap:10px;margin-top:16px"><a class="btn btn-l" href="/contato.php">Agendar demonstração</a><a class="btn btn-p" href="{WHATS_TESTE}">Testar 30 dias</a></div></div></header>')
+        f'<div style="display:grid;gap:10px;margin-top:16px"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a></div></div></header>')
 
 
 def rodape():
@@ -288,7 +288,7 @@ def faq(itens):
 
 def cta_final(titulo='Veja a Oravel na rotina da sua locadora', texto='Teste por 30 dias, com acompanhamento, treinamento e implementação inclusos. A Oravel complementa o sistema que você já usa.'):
     return (f'<section class="sec"><div class="wrap"><div class="cta"><h2>{titulo}</h2><p>{texto}</p>'
-            f'<div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar demonstração</a><a class="btn btn-o" href="{WHATS_TESTE}" target="_blank" rel="noopener">Testar 30 dias</a></div>'
+            f'<div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a></div>'
             f'<ul><li>30 dias grátis</li><li>Treinamento incluso</li><li>Implementação inclusa</li><li>WhatsApp {FONE}</li></ul></div></div></section>')
 
 
@@ -477,7 +477,7 @@ def pagina_ref(titulo, desc, canonico, corpo, ld=None, extra_js=''):
 def hero_pg(eyebrow, h1, sub, mock='', nota=True, ctas=True):
     m = f'<div>{mock}<p class="nota" style="color:#94a3b8">Tela ilustrativa, com dados fictícios.</p></div>' if mock else ''
     cols = '' if mock else ' style="grid-template-columns:1fr"'
-    a = (f'<div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar demonstração</a><a class="btn btn-o" href="{WHATS_TESTE}" target="_blank" rel="noopener">Testar 30 dias</a></div>') if ctas else ''
+    a = (f'<div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a></div>') if ctas else ''
     return f'<section class="hero"><div class="wrap"{cols}><div><div class="eyebrow">{eyebrow}</div><h1>{h1}</h1><p class="sub">{sub}</p>{a}</div>{m}</div></section>'
 
 
