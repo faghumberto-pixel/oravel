@@ -8,7 +8,11 @@ header('Content-Type: text/html; charset=utf-8');
 <meta charset="utf-8" />
 <title>Solicitar Proposta — Oravel</title>
 <link rel="canonical" href="https://oravel.com.br/proposta/">
-<link rel="icon" type="image/png" sizes="32x32" href="/nova/assets/favicon-32.png?v=4" /><link rel="apple-touch-icon" href="/nova/assets/apple-touch-icon.png?v=4" />
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="/nova/assets/apple-touch-icon.png?v=4" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="description" content="Fale com a Oravel e receba uma proposta sob medida para a gestão de equipamentos e manutenção da sua operação." />
 <style>

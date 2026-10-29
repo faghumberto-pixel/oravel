@@ -42,6 +42,8 @@ NAV_EQUIP = (
 )
 # Os processos não entram no menu nem no rodapé; ficam acessíveis pelo índice e por links nas páginas.
 NAV_PROC = ''
+FAVICON_BLOCO = ('<link rel="icon" href="/favicon.ico" sizes="any">\n<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">\n'
+                 '<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">\n<link rel="apple-touch-icon" href="/apple-touch-icon.png">\n')
 LINK_NR13 = '<a href="/nr-13-inspecao-equipamentos/">Inspeções NR-13</a>'
 LINK_DEV = '<a href="/equipamento-devolvido-com-defeito/">Devolução com defeito</a>'
 
@@ -604,6 +606,13 @@ def montar(molde, p):
             f'<meta property="og:description" content="{html.escape(p["desc"])}">\n<meta property="og:url" content="{url}">\n')
     head = head.replace('<meta name="viewport" content="width=device-width, initial-scale=1.0">\n',
                         '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' + meta, 1)
+    if 'href="/favicon-48.png"' not in head:
+        antigos = list(re.finditer(r'<link rel="icon"[^>]*nova/assets/favicon[^>]*>\s*\n?', head))
+        if antigos:
+            for m in reversed(antigos[1:]):
+                head = head[:m.start()] + head[m.end():]
+            m = antigos[0]
+            head = head[:m.start()] + FAVICON_BLOCO + head[m.end():]
     head += ld(p) + '\n'
 
     # nav: sem item "atual" herdado; novo dropdown "Equipamentos"
