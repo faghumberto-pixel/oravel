@@ -33,7 +33,7 @@ p,ul{margin:0}a{color:inherit}img,svg,video{max-width:100%}
 .top-in{max-width:1180px;margin:0 auto;padding:0 24px;height:72px;display:flex;align-items:center;gap:28px}
 .logo{font-family:"Manrope",sans-serif;font-weight:900;font-size:22px;text-decoration:none;letter-spacing:-.01em;display:flex;align-items:center;flex:none}
 .logo i{color:var(--accent);font-style:normal}
-.logo::before{content:"";display:inline-block;width:44px;height:26px;margin-right:10px;background:url(/img/logo-or.png) no-repeat center/contain}
+.logo::before{content:"";display:inline-block;width:38px;height:10px;margin-right:10px;background:radial-gradient(circle at 5px 5px,#ef4444 4.5px,transparent 5px) 0 0/10px 10px no-repeat,radial-gradient(circle at 5px 5px,#f59e0b 4.5px,transparent 5px) 14px 0/10px 10px no-repeat,radial-gradient(circle at 5px 5px,#22c55e 4.5px,transparent 5px) 28px 0/10px 10px no-repeat}
 .nav{display:none;align-items:center;gap:6px;flex:1}
 .nav>a,.nav .dd>button{font:600 14.5px "Inter",sans-serif;color:var(--ink-soft);text-decoration:none;background:none;border:0;padding:10px 12px;border-radius:8px;cursor:pointer}
 .nav>a:hover,.nav .dd>button:hover,.nav a[aria-current]{color:var(--ink);background:var(--surface)}
