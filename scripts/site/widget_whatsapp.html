@@ -1,0 +1,128 @@
+<!-- Tailwind via CDN, so' pra este widget -- preflight desligado de proposito
+     pra nao resetar margin/padding/font do resto do site. -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    corePlugins: { preflight: false },
+  };
+</script>
+
+<div id="wa-widget" class="fixed bottom-6 right-6 z-[9999]" style="font-family: 'Inter', sans-serif;">
+    <!-- Janela de chat -->
+    <div
+        id="wa-chat-panel"
+        class="hidden mb-4 w-80 max-w-[calc(100vw-3rem)] origin-bottom-right flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10 sm:w-96"
+    >
+        <!-- Cabecalho -->
+        <div class="flex items-center gap-3 bg-emerald-600 px-4 py-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg font-extrabold" style="background:#101010;">
+                <span style="color:#ffffff">O</span><span style="color:#E8541A">r</span>
+            </div>
+            <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-semibold text-white">Oravel</p>
+                <p class="flex items-center gap-1.5 text-xs text-emerald-100">
+                    <span class="relative flex h-2 w-2">
+                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75"></span>
+                        <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-300"></span>
+                    </span>
+                    Online agora
+                </p>
+            </div>
+            <button
+                type="button"
+                onclick="waToggleChat(false)"
+                aria-label="Fechar chat"
+                class="shrink-0 rounded-full p-1 text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Corpo (mensagem de boas vindas) -->
+        <div class="flex-1 space-y-2 bg-[#e5ddd5] px-3 py-4" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect width=%2260%22 height=%2260%22 fill=%22%23e5ddd5%22/%3E%3C/svg%3E');">
+            <div class="max-w-[85%] rounded-lg rounded-tl-none bg-white px-3 py-2 shadow-sm">
+                <p class="text-sm text-gray-800">Olá! Como podemos ajudar você hoje?</p>
+                <p class="mt-1 text-right text-[10px] text-gray-400" id="wa-msg-time"></p>
+            </div>
+        </div>
+
+        <!-- Campo de entrada -->
+        <div class="flex items-center gap-2 border-t border-gray-200 bg-white p-2">
+            <input
+                type="text"
+                id="wa-input"
+                placeholder="Digite sua mensagem..."
+                class="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-800 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                style="background-color:#ffffff; color:#1f2937; color-scheme: light;"
+                onkeydown="if (event.key === 'Enter') { event.preventDefault(); waSendMessage(); }"
+            >
+            <button
+                type="button"
+                onclick="waSendMessage()"
+                aria-label="Enviar mensagem"
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white transition hover:bg-emerald-700"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+                    <path d="M3.4 20.6l17.45-8.5a1 1 0 000-1.8L3.4 1.8a1 1 0 00-1.44 1.1L4.3 11 1.96 18.9a1 1 0 001.44 1.1z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Botao flutuante -->
+    <button
+        type="button"
+        id="wa-fab"
+        onclick="waToggleChat()"
+        aria-label="Abrir chat do WhatsApp"
+        class="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg transition duration-200 ease-out hover:scale-110 hover:bg-emerald-600 active:scale-95"
+    >
+        <span class="absolute inline-flex h-16 w-16 animate-ping rounded-full bg-emerald-500 opacity-40" style="animation-duration: 2.5s;"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" class="relative h-8 w-8">
+            <path d="M16.001 3C9.107 3 3.5 8.607 3.5 15.5c0 2.42.687 4.68 1.878 6.598L3.2 28.8l6.876-2.14A12.44 12.44 0 0016 28c6.894 0 12.5-5.607 12.5-12.5S22.894 3 16.001 3zm0 22.7a10.15 10.15 0 01-5.44-1.573l-.39-.232-4.08 1.27 1.293-3.976-.253-.407A10.14 10.14 0 015.8 15.5c0-5.632 4.57-10.2 10.2-10.2 5.63 0 10.2 4.568 10.2 10.2 0 5.632-4.57 10.2-10.199 10.2zm5.58-7.64c-.306-.153-1.81-.893-2.09-.995-.28-.102-.484-.153-.688.153-.204.306-.789.995-.967 1.199-.178.204-.356.23-.662.077-.306-.153-1.293-.477-2.463-1.522-.91-.812-1.524-1.816-1.703-2.123-.178-.306-.019-.472.134-.624.137-.137.306-.357.459-.535.153-.178.204-.306.306-.51.102-.204.051-.383-.026-.535-.077-.153-.688-1.658-.943-2.27-.248-.596-.5-.516-.688-.526l-.586-.011c-.204 0-.535.077-.815.383-.28.306-1.069 1.044-1.069 2.549 0 1.505 1.094 2.958 1.247 3.163.153.204 2.153 3.286 5.216 4.608.729.315 1.297.503 1.74.644.731.232 1.396.2 1.922.121.586-.087 1.81-.74 2.065-1.454.255-.714.255-1.326.178-1.454-.076-.128-.28-.204-.586-.357z"/>
+        </svg>
+    </button>
+</div>
+
+<script>
+    (function () {
+        var WA_NUMERO = "5519999332615";
+        var WA_MENSAGEM_PADRAO = "Olá! Vim pelo site da Oravel e gostaria de mais informações.";
+
+        var timeEl = document.getElementById('wa-msg-time');
+        if (timeEl) {
+            var agora = new Date();
+            timeEl.textContent = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        window.waToggleChat = function (forceState) {
+            var panel = document.getElementById('wa-chat-panel');
+            var isHidden = panel.classList.contains('hidden');
+            var shouldOpen = (typeof forceState === 'boolean') ? forceState : isHidden;
+
+            if (shouldOpen) {
+                panel.classList.remove('hidden');
+                panel.classList.add('flex');
+                document.getElementById('wa-input').focus();
+            } else {
+                panel.classList.add('hidden');
+                panel.classList.remove('flex');
+            }
+        };
+
+        window.waSendMessage = function () {
+            var input = document.getElementById('wa-input');
+            var texto = (input.value || '').trim();
+
+            if (texto === '') {
+                texto = WA_MENSAGEM_PADRAO;
+            }
+
+            var url = 'https://wa.me/' + WA_NUMERO + '?text=' + encodeURIComponent(texto);
+            window.open(url, '_blank');
+            input.value = '';
+        };
+    })();
+</script>
