@@ -15,11 +15,9 @@ import gerar_paginas_equipamentos as g  # noqa: E402
 
 RAIZ = Path(sys.argv[1])
 EQ_PT = [(u, n) for u, n in re.findall(r'<a href="([^"]+)">([^<]+)</a>', g.NAV_EQUIP)]
-PR_PT = list(g.PROCESSOS)
+PR_PT = [('/processo-manutencao/', ''), ('/processo-gestao-de-equipes/', ''), ('/processo-gestao-de-estoques/', ''), ('/processo-logistica/', ''), ('/processo-cobranca-automatica/', ''), ('/nr-13-inspecao-equipamentos/', ''), ('/equipamento-devolvido-com-defeito/', '')]
 EN_EQ = ['Cranes', 'Munk trucks', 'Aerial work platforms', 'Forklifts', 'Generators', 'Compressors', 'Other equipment']
-EN_PR = ['Maintenance', 'Team management', 'Inventory management', 'Logistics', 'Automatic billing', 'NR-13 inspections', 'Returns with defects']
 EQ_EN = [(u, n) for (u, _), n in zip(EQ_PT, EN_EQ)]
-PR_EN = [(u, n) for (u, _), n in zip(PR_PT, EN_PR)]
 NOVAS = {p.strip('/') for p in [
     '/nr-13-inspecao-equipamentos/', '/equipamento-devolvido-com-defeito/', '/guindastes-e-plataformas/']} | {u.strip('/') for u, _ in EQ_PT + PR_PT}
 
@@ -40,20 +38,19 @@ for f in arquivos:
     s = open(f, encoding='utf-8').read()
     o = s
     en = f.endswith('index-en.html')
-    EQ, PR, h_eq, h_pr = (EQ_EN, PR_EN, 'Equipment', 'Processes') if en else (EQ_PT, PR_PT, 'Equipamentos', 'Processos')
+    EQ, h_eq = (EQ_EN, 'Equipment') if en else (EQ_PT, 'Equipamentos')
     s = re.sub(r'<div class="hd-dd"><a href="/guindastes-e-plataformas/" aria-haspopup="true">Equipamentos</a><div class="hd-menu">.*?</div></div>'
                r'(?:<div class="hd-dd"><a href="/guindastes-e-plataformas/#proc-t" aria-haspopup="true">Processos</a><div class="hd-menu">.*?</div></div>)?',
-               lambda m: ('<div class="hd-dd"><a href="/guindastes-e-plataformas/" aria-haspopup="true">Equipamentos</a><div class="hd-menu">' + links(EQ) + '</div></div>'
-                          '<div class="hd-dd"><a href="/guindastes-e-plataformas/#proc-t" aria-haspopup="true">Processos</a><div class="hd-menu">' + links(PR) + '</div></div>'),
+               lambda m: '<div class="hd-dd"><a href="/guindastes-e-plataformas/" aria-haspopup="true">Equipamentos</a><div class="hd-menu">' + links(EQ) + '</div></div>',
                s, count=1, flags=re.S)
     s = re.sub(r'      <details class="dd">\s*<summary class="link">(?:Equipamentos|Equipment)</summary>.*?</details>\n'
                r'(?:      <details class="dd">\s*<summary class="link">(?:Processos|Processes)</summary>.*?</details>\n)?',
-               lambda m: det(h_eq, EQ) + det(h_pr, PR), s, count=1, flags=re.S)
+               lambda m: det(h_eq, EQ), s, count=1, flags=re.S)
     i = s.find('<footer')
     head, foot = s[:i], s[i:]
     foot = re.sub(r'<div class="ft-col"><h4>(?:Equipamentos|Equipment)</h4>.*?</div>(?:<div class="ft-col"><h4>(?:Processos|Processes)</h4>.*?</div>)?',
-                  lambda m: f'<div class="ft-col"><h4>{h_eq}</h4>' + links(EQ) + f'</div><div class="ft-col"><h4>{h_pr}</h4>' + links(PR) + '</div>',
-                  foot, count=1, flags=re.S)
+                  lambda m: f'<div class="ft-col"><h4>{h_eq}</h4>' + links(EQ) + '</div>', foot, count=1, flags=re.S)
+    head = head.replace('grid-template-columns:1.3fr 1.1fr 1.2fr 1fr 1fr 1fr;', 'grid-template-columns:1.3fr 1.2fr 1.2fr 1fr 1fr;')
     s = head + foot
     if s != o:
         open(f, 'w', encoding='utf-8').write(s)

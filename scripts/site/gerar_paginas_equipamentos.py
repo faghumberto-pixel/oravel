@@ -21,6 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import equip_art as ea  # noqa: E402
 import equip_media as em  # noqa: E402
 import processos as pr  # noqa: E402
+import tema as tm  # noqa: E402
 
 BASE = 'https://oravel.com.br'
 WA = 'https://wa.me/5519999332615'
@@ -40,20 +41,10 @@ NAV_EQUIP = (
     '<a href="/software-manutencao-outros-equipamentos/">Outros equipamentos</a>'
     '</div></div>'
 )
-PROCESSOS = [
-    ('/processo-manutencao/', 'Manutenção'),
-    ('/processo-gestao-de-equipes/', 'Gestão de equipes'),
-    ('/processo-gestao-de-estoques/', 'Gestão de estoques'),
-    ('/processo-logistica/', 'Logística'),
-    ('/processo-cobranca-automatica/', 'Cobrança automática'),
-    ('/nr-13-inspecao-equipamentos/', 'Inspeções NR-13'),
-    ('/equipamento-devolvido-com-defeito/', 'Devolução com defeito'),
-]
-PROCESSOS_LINKS = ''.join(f'<a href="{u}">{n}</a>' for u, n in PROCESSOS)
-NAV_PROC = (
-    '<div class="hd-dd"><a href="/guindastes-e-plataformas/#proc-t" aria-haspopup="true">Processos</a>'
-    '<div class="hd-menu">' + PROCESSOS_LINKS + '</div></div>'
-)
+# Os processos não entram no menu nem no rodapé; ficam acessíveis pelo índice e por links nas páginas.
+NAV_PROC = ''
+FAVICON_BLOCO = ('<link rel="icon" href="/favicon.ico" sizes="any">\n<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">\n'
+                 '<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">\n<link rel="apple-touch-icon" href="/apple-touch-icon.png">\n')
 LINK_NR13 = '<a href="/nr-13-inspecao-equipamentos/">Inspeções NR-13</a>'
 LINK_DEV = '<a href="/equipamento-devolvido-com-defeito/">Devolução com defeito</a>'
 
@@ -112,7 +103,7 @@ LINKS = {
 
 FOOTER_NAVY = """<style data-site="footer-navy">
 footer.ifoot[data-site="footer"] { background:#0f172a !important; border-top:0 !important; color:#e2e8f0 !important; }
-footer.ifoot .ft-grid { grid-template-columns:1.3fr 1.1fr 1.2fr 1fr 1fr 1fr; }
+footer.ifoot .ft-grid { grid-template-columns:1.3fr 1.2fr 1.2fr 1fr 1fr; }
 footer.ifoot .ft-col h4, footer.ifoot .ft-brand { color:#fff !important; }
 footer.ifoot .ft-col a { color:#cbd5e1 !important; }
 footer.ifoot .ft-col a:hover { color:#f97316 !important; }
@@ -342,11 +333,11 @@ def pagina_equip(tipo):
         secao('como-t', 'Como a Oravel ajuda', c['h2a'], 'Do plano de revisão ao checklist assinado, tudo por equipamento.', flow, True)
         + (secao('app-t', 'No celular', 'Como o técnico registra tudo na hora, no pátio ou na obra?', None,
                  foto_larga('celular.jpg', 'Telas do app do técnico: ordem de serviço, leitura de QR e checklist com assinatura digital',
-                            'Telas ilustrativas do app do técnico.')) if tipo in ('gerador', 'plataforma') else '')
+                            'Telas ilustrativas do app do técnico.')) if tipo == 'gerador' else '')
         + secao('porque-t', 'Por que importa', 'Por que isso muda o resultado da locadora?', None,
                 '<div class="texto"><p>Equipamento disponível e documentado aluga mais e dá menos dor de cabeça. '
                 'Com avarias registradas e o equipamento em manutenção bloqueado para locação, a sua operação ganha ritmo e a sua margem agradece.</p></div>'
-                + ('' if tipo in ('gerador', 'plataforma') else '<div style="margin-top:28px">' + foto_larga('equipe.jpg', 'Equipe de manutenção registrando o serviço com tablets, ao lado de um caminhão', 'Equipe registrando a manutenção em campo.') + '</div>'))
+                + ('' if tipo == 'gerador' else '<div style="margin-top:28px">' + foto_larga('equipe.jpg', 'Equipe de manutenção registrando o serviço com tablets, ao lado de um caminhão', 'Equipe registrando a manutenção em campo.') + '</div>'))
         + secao('quem-t', 'Para quem é', 'Para quem é e qual o porte ideal?', None,
                 quem_e(c['quem'], 'Porte ideal:', c['porte'] + ' <!-- VALIDAR porte ideal -->'), True)
         + secao('faq-t', 'Perguntas frequentes', f'Perguntas frequentes sobre {plural} e a Oravel', None, faq(faqs))
@@ -616,6 +607,13 @@ def montar(molde, p):
             f'<meta property="og:description" content="{html.escape(p["desc"])}">\n<meta property="og:url" content="{url}">\n')
     head = head.replace('<meta name="viewport" content="width=device-width, initial-scale=1.0">\n',
                         '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' + meta, 1)
+    if 'href="/favicon-48.png"' not in head:
+        antigos = list(re.finditer(r'<link rel="icon"[^>]*nova/assets/favicon[^>]*>\s*\n?', head))
+        if antigos:
+            for m in reversed(antigos[1:]):
+                head = head[:m.start()] + head[m.end():]
+            m = antigos[0]
+            head = head[:m.start()] + FAVICON_BLOCO + head[m.end():]
     head += ld(p) + '\n'
 
     # nav: sem item "atual" herdado; novo dropdown "Equipamentos"
@@ -633,8 +631,7 @@ def montar(molde, p):
         '<a href="/software-manutencao-empilhadeiras/">Empilhadeiras</a>'
         '<a href="/software-manutencao-geradores/">Geradores</a>'
         '<a href="/software-manutencao-compressores/">Compressores</a>'
-        '<a href="/software-manutencao-outros-equipamentos/">Outros equipamentos</a></div>'
-        '<div class="ft-col"><h4>Processos</h4>' + PROCESSOS_LINKS + '</div>', 1)
+        '<a href="/software-manutencao-outros-equipamentos/">Outros equipamentos</a></div>', 1)
     rodape = rodape.replace('<div class="ft-brand">O<i>r</i>avel</div>',
                             f'<div class="ft-brand">O<i>r</i>avel</div><p class="slogan">{SLOGAN}</p>', 1)
 
@@ -649,13 +646,28 @@ def montar(molde, p):
     return head + css + EXTRA_CSS + FOOTER_NAVY + '\n</head>\n' + topo + nav + '\n\n' + main + rodape + cauda
 
 
+def montar_novo(molde, p):
+    """Página no padrão novo do site (tema.py): cabeçalho, topo, corpo gerado, convite final e rodapé."""
+    url = BASE + p['slug']
+    j = re.search(r'<script type="application/ld\+json">(.*?)</script>', ld(p), re.S)
+    ldj = json.loads(j.group(1))
+    alvo = '"como-t"' if 'id="como-t"' in p['corpo'] else '"hub-t"'
+    hero = ('<section class="hero"><div class="wrap"><div><div class="eyebrow">' + p['eyebrow'] + '</div><h1>' + p['h1'] + '</h1>'
+            '<p class="sub">' + p['lead'] + '</p><div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a>'
+            '<a class="btn btn-o" href="#' + alvo.strip('"') + '">Ver como funciona</a></div></div>'
+            '<div class="hero-art">' + p['hero'] + '</div></div></section>')
+    posic = ('<section class="section"><div class="wrap"><div class="texto"><p>' + POSICIONAMENTO + '</p>' + veja_tambem([LINKS[k] for k in p['vt']]) + '</div></div></section>')
+    corpo = hero + p['corpo'] + posic + tm.cta_final(p['cta_h'], CTA_FIM)
+    return tm.pagina(p['title'], p['desc'], url, corpo, ldj)
+
+
 def main():
     molde = Path(sys.argv[1]).read_text(encoding='utf-8')
     saida = Path(sys.argv[2])
     for p in (pagina_nr13(), *[pagina_equip(k) for k in EQUIPS], *[pagina_processo(k) for k in PROC_PAGES], pagina_devolucao(), hub()):
         destino = saida / p['slug'].strip('/') / 'index.html'
         destino.parent.mkdir(parents=True, exist_ok=True)
-        destino.write_text(montar(molde, p), encoding='utf-8')
+        destino.write_text(montar_novo(molde, p), encoding='utf-8')
         print('ok', destino)
 
 

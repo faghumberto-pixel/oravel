@@ -1,108 +1,310 @@
-<?php
-// Oravel — Perguntas Frequentes
-// Página institucional pública, linkada no menu principal e usada como
-// sitelink das campanhas de Ads. Reescrita 2026-08-21 (pedido do usuário):
-// a primeira versão só tinha perguntas de migração/planilha (herdadas das
-// landing pages segmentadas de Ads), dando a impressão de que a Oravel só
-// serve pra quem já tem sistema. Agora cobre 3 blocos: o que o sistema
-// resolve (incluindo os módulos reais, confirmados no código antes de
-// publicar), preço/dificuldade de implantar, e só por último as perguntas
-// específicas de quem já tem sistema ou usa planilha.
-//
-// Módulos citados abaixo foram checados direto no código (app/Models,
-// app/Filament/Resources, AdminPanelProvider) antes de publicar --
-// Financeiro (contas a pagar/receber) e Departamento Pessoal (cadastro de
-// colaboradores + ponto eletrônico) são reais. Fiscal e Contábil formal
-// (plano de contas, lançamento contábil) NÃO existem hoje -- não afirmar
-// isso aqui. Departamento Pessoal não inclui folha de pagamento nem férias
-// -- não prometer isso também.
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perguntas Frequentes | Oravel</title>
+<meta name="description" content="Tire suas dúvidas sobre o que a Oravel resolve, implantação, migração de sistema e suporte.">
+<link rel="canonical" href="https://oravel.com.br/faq.php">
+<meta property="og:type" content="website"><meta property="og:locale" content="pt_BR"><meta property="og:site_name" content="Oravel"><meta property="og:title" content="Perguntas Frequentes | Oravel"><meta property="og:description" content="Tire suas dúvidas sobre o que a Oravel resolve, implantação, migração de sistema e suporte."><meta property="og:url" content="https://oravel.com.br/faq.php">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "name": "Perguntas frequentes | Oravel"}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Pra quem é a Oravel?", "acceptedAnswer": {"@type": "Answer", "text": "Pra empresas que operam com equipamentos, equipes e serviços em campo: locação de equipamentos, manutenção industrial, montagem, logística e transportes, gestão de serviços e distribuição. Não importa se você já usa um sistema, controla por planilha, ou ainda não tem nenhum controle formal."}}, {"@type": "Question", "name": "Que áreas da minha operação a Oravel controla?", "acceptedAnswer": {"@type": "Answer", "text": "Ativos e manutenção (preventiva e corretiva), logística de saída e retorno, comercial e contratos, suprimentos e estoque, equipe e departamento pessoal (cadastro de colaboradores e ponto eletrônico), financeiro (contas a pagar e a receber) e relatórios."}}, {"@type": "Question", "name": "A Oravel emite nota fiscal ou faz contabilidade?", "acceptedAnswer": {"@type": "Answer", "text": "Não. A Oravel organiza o financeiro operacional da sua operação — contas a pagar, contas a receber, centro de custo — mas não substitui seu sistema fiscal ou sua contabilidade."}}, {"@type": "Question", "name": "Dá pra usar pelo celular, em campo?", "acceptedAnswer": {"@type": "Answer", "text": "Sim. A interface foi pensada pra quem está no pátio ou na obra, não só no escritório — checklist, foto e ponto eletrônico funcionam direto do celular, inclusive offline."}}, {"@type": "Question", "name": "É difícil de implantar?", "acceptedAnswer": {"@type": "Answer", "text": "Não. O cadastro inicial é simples e sua equipe já opera com dados reais da sua operação logo na primeira semana — sem curva de aprendizado de semanas."}}, {"@type": "Question", "name": "Minha equipe não é boa com tecnologia, vai dar certo?", "acceptedAnswer": {"@type": "Answer", "text": "A interface foi pensada pra quem está em campo, com o celular na mão — não é preciso ser \"da área de TI\" pra usar no dia a dia."}}, {"@type": "Question", "name": "Como funciona o suporte depois que eu começo a usar?", "acceptedAnswer": {"@type": "Answer", "text": "Suporte dedicado em português nas primeiras semanas de uso, pra sua equipe não travar na virada. Depois disso, atendimento contínuo por e-mail e chat."}}, {"@type": "Question", "name": "Já uso outro sistema. Vou perder meus dados na migração?", "acceptedAnswer": {"@type": "Answer", "text": "Não. A migração assistida traz contratos, clientes e equipamentos junto — nosso time cuida da importação com você acompanhando cada etapa."}}, {"@type": "Question", "name": "Quanto tempo leva pra migrar de outro sistema?", "acceptedAnswer": {"@type": "Answer", "text": "Varia com o tamanho da operação, mas a implantação roda em paralelo ao sistema atual — você só desliga o antigo quando tiver segurança de que o Oravel está redondo."}}, {"@type": "Question", "name": "Hoje controlo tudo em planilha. Vale a pena trocar?", "acceptedAnswer": {"@type": "Answer", "text": "Se você já perdeu contrato por esquecer renovação, ou teve equipamento parado sem saber a causa, provavelmente sim. Comece simples — cadastro de equipamentos e contratos já resolve boa parte disso."}}]}]}</script>
+<style>
+:root{--paper:#fff;--surface:#f6f7f9;--ink:#0f172a;--ink-soft:#5b6472;--ink-faint:#8891a0;--line:#e4e7ec;
+--accent:#f97316;--accent-ink:#c2410c;--accent-soft:#fff1e4;--navy:#0f172a;--navy-2:#08142c;--ok:#16a34a}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;line-height:1.5}
+h1,h2,h3,h4{font-family:"Manrope","Inter",sans-serif;font-weight:800;letter-spacing:-.02em;margin:0;text-wrap:balance}
+p,ul{margin:0}a{color:inherit}img,svg,video{max-width:100%}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.skip{position:absolute;left:-9999px}.skip:focus{left:8px;top:8px;background:var(--navy);color:#fff;padding:10px 14px;border-radius:8px;z-index:100}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.eyebrow{font-family:"Manrope",sans-serif;font-size:12.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-ink)}
+.on-dark .eyebrow,.hero .eyebrow{color:#fdba74}
+/* botões */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none;border:1.5px solid transparent;cursor:pointer;min-height:48px;font-family:inherit;transition:.15s}
+.btn-p{background:var(--accent);color:#0f172a}.btn-p:hover{background:#ea580c}
+.btn-o{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}.btn-o:hover{border-color:#fff}
+.btn-d{background:var(--navy);color:#fff}.btn-d:hover{background:#1a2540}
+.btn-l{background:#fff;color:var(--ink);border-color:var(--line)}.btn-l:hover{border-color:var(--ink-faint)}
+/* cabeçalho */
+.top{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1180px;margin:0 auto;padding:0 24px;height:72px;display:flex;align-items:center;gap:28px}
+.logo{font-family:"Manrope",sans-serif;font-weight:900;font-size:22px;text-decoration:none;letter-spacing:-.01em;display:flex;align-items:center;flex:none}
+.logo i{color:var(--accent);font-style:normal}
+.logo::before{content:"";display:inline-block;width:38px;height:10px;margin-right:10px;background:radial-gradient(circle at 5px 5px,#ef4444 4.5px,transparent 5px) 0 0/10px 10px no-repeat,radial-gradient(circle at 5px 5px,#f59e0b 4.5px,transparent 5px) 14px 0/10px 10px no-repeat,radial-gradient(circle at 5px 5px,#22c55e 4.5px,transparent 5px) 28px 0/10px 10px no-repeat}
+.nav{display:none;align-items:center;gap:6px;flex:1}
+.nav>a,.nav .dd>button{font:600 14.5px "Inter",sans-serif;color:var(--ink-soft);text-decoration:none;background:none;border:0;padding:10px 12px;border-radius:8px;cursor:pointer}
+.nav>a:hover,.nav .dd>button:hover,.nav a[aria-current]{color:var(--ink);background:var(--surface)}
+.dd{position:relative}.dd>button::after{content:"▾";margin-left:6px;font-size:11px}
+.dd-menu{position:absolute;top:100%;left:0;min-width:300px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 24px 50px -24px rgba(15,23,42,.35);padding:8px;opacity:0;visibility:hidden;transform:translateY(6px);transition:.15s}
+.dd:hover .dd-menu,.dd:focus-within .dd-menu{opacity:1;visibility:visible;transform:none}
+.dd-menu a{display:block;padding:10px 12px;border-radius:9px;text-decoration:none}
+.dd-menu a:hover{background:var(--surface)}.dd-menu strong{display:block;font-size:14px}.dd-menu span{display:block;font-size:12.5px;color:var(--ink-soft)}
+.top-cta{display:none;gap:10px;margin-left:auto}
+.top-cta .btn{padding:10px 16px;min-height:42px;font-size:14px}
+.burger{margin-left:auto;background:none;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-weight:700;cursor:pointer}
+.mnav{display:none;border-top:1px solid var(--line);padding:12px 24px 20px;background:#fff}.mnav.open{display:block}
+.mnav a{display:block;padding:11px 4px;text-decoration:none;font-weight:600;border-bottom:1px solid var(--line)}
+.mnav h4{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin:14px 0 4px}
+@media(min-width:1000px){.nav,.top-cta{display:flex}.burger,.mnav{display:none!important}}
+/* hero */
+.hero{background:radial-gradient(900px 420px at 85% 0%,rgba(99,102,241,.3),transparent 60%),radial-gradient(700px 420px at 0% 100%,rgba(249,115,22,.22),transparent 60%),var(--navy-2);color:#fff;padding:56px 0 64px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:46px 46px;-webkit-mask-image:radial-gradient(ellipse at 50% 20%,#000 25%,transparent 75%);mask-image:radial-gradient(ellipse at 50% 20%,#000 25%,transparent 75%)}
+.hero .wrap{position:relative;display:grid;gap:40px;align-items:center}
+.hero h1{font-size:clamp(32px,5.2vw,56px);line-height:1.06;margin:14px 0 18px}
+.hero .sub{font-size:18px;color:rgba(226,232,240,.88);max-width:54ch}
+.hero-act{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.trust{display:flex;gap:10px 24px;flex-wrap:wrap;margin-top:26px;list-style:none;padding:0;font-size:14px;color:rgba(226,232,240,.85)}
+.trust li::before{content:"✓";color:var(--accent);font-weight:800;margin-right:8px}
+@media(min-width:1000px){.hero .wrap{grid-template-columns:1fr 1.05fr}.hero{padding:84px 0 92px}}
+/* seções */
+.sec{padding:72px 0}.sec.alt{background:var(--surface)}.sec.dark{background:var(--navy-2);color:#fff}
+.sec-h{max-width:720px;margin-bottom:38px}.sec-h h2{font-size:clamp(26px,4vw,40px);line-height:1.12;margin-top:10px}
+.sec-h p{font-size:17px;color:var(--ink-soft);margin-top:14px}.dark .sec-h p{color:rgba(226,232,240,.8)}
+.center{text-align:center;margin-left:auto;margin-right:auto}
+.strip{padding:22px 0;border-bottom:1px solid var(--line);background:#fff}
+.strip .wrap{display:flex;gap:10px 12px;flex-wrap:wrap;align-items:center}
+.strip span{font-size:13px;font-weight:700;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em;margin-right:6px}
+.chip-l{padding:8px 14px;border:1px solid var(--line);border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;color:var(--ink-soft);background:#fff}
+.chip-l:hover{border-color:var(--accent);color:var(--ink)}
+.grid3{display:grid;gap:18px}.grid4{display:grid;gap:18px}
+@media(min-width:700px){.grid3{grid-template-columns:repeat(2,1fr)}.grid4{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1000px){.grid3{grid-template-columns:repeat(3,1fr)}.grid4{grid-template-columns:repeat(4,1fr)}}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px;text-decoration:none;display:block;transition:.15s}
+a.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 18px 36px -24px rgba(15,23,42,.35)}
+.card .ic{width:42px;height:42px;border-radius:11px;background:var(--accent-soft);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.card h3{font-size:18px}.card p{font-size:14.5px;color:var(--ink-soft);margin-top:8px}
+.dark .card{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12)}.dark .card p{color:rgba(226,232,240,.75)}
+.more{display:inline-block;margin-top:26px;font-weight:700;color:var(--accent-ink);text-decoration:none}.more::after{content:" →"}
+.split{display:grid;gap:40px;align-items:center}
+@media(min-width:1000px){.split{grid-template-columns:1fr 1.15fr;gap:64px}.split.rev .split-t{order:2}}
+.split h2{font-size:clamp(26px,3.6vw,38px);line-height:1.12;margin:10px 0 16px}.split p{color:var(--ink-soft);font-size:17px}
+.ticks{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:12px}
+.ticks li{position:relative;padding-left:30px;font-size:16px}
+.ticks li::before{content:"✓";position:absolute;left:0;top:0;width:21px;height:21px;border-radius:50%;background:var(--accent-soft);color:var(--accent-ink);font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center}
+.steps{display:grid;gap:18px;counter-reset:s}
+@media(min-width:900px){.steps{grid-template-columns:repeat(3,1fr)}}
+.step{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px;position:relative}
+.step::before{counter-increment:s;content:counter(s);width:38px;height:38px;border-radius:50%;background:var(--navy);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-family:"Manrope",sans-serif}
+.step h3{font-size:18px}.step p{font-size:14.5px;color:var(--ink-soft);margin-top:8px}
+.faq{max-width:820px;display:grid;gap:10px}
+.faq details{background:#fff;border:1px solid var(--line);border-radius:14px;padding:0 22px}
+.faq summary{cursor:pointer;font-family:"Manrope",sans-serif;font-weight:700;font-size:16.5px;padding:18px 0;list-style:none}
+.faq summary::-webkit-details-marker{display:none}.faq summary::after{content:"+";float:right;color:var(--accent);font-size:22px;line-height:1}
+.faq details[open] summary::after{content:"–"}.faq p{font-size:15px;color:var(--ink-soft);padding-bottom:18px}
+.cta{background:var(--navy-2);color:#fff;border-radius:26px;padding:48px 28px;text-align:center}
+.cta h2{font-size:clamp(26px,4vw,40px)}.cta p{color:rgba(226,232,240,.82);margin:14px auto 0;max-width:56ch;font-size:17px}
+.cta .hero-act{justify-content:center}.cta ul{list-style:none;padding:0;margin:22px 0 0;display:flex;gap:8px 24px;justify-content:center;flex-wrap:wrap;font-size:14px;color:rgba(226,232,240,.85)}
+.cta li::before{content:"✓";color:var(--accent);margin-right:6px;font-weight:800}
+/* rodapé */
+.foot{background:var(--navy-2);color:#cbd5e1;padding:56px 0 28px}
+.foot-g{display:grid;gap:34px}@media(min-width:900px){.foot-g{grid-template-columns:1.4fr 1fr 1fr 1fr 1fr}}
+.foot h4{color:#fff;font-size:14px;margin-bottom:14px}.foot a{display:block;color:#cbd5e1;text-decoration:none;font-size:14px;line-height:2}.foot a:hover{color:var(--accent)}
+.foot p{font-size:14px;color:#94a3b8}.foot .logo{color:#fff;margin-bottom:12px;font-size:22px;line-height:1.2}
+.foot-b{border-top:1px solid rgba(255,255,255,.14);margin-top:34px;padding-top:20px;font-size:12.5px;color:#94a3b8}
+/* mockups */
+.mk{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 40px 70px -40px rgba(15,23,42,.55);overflow:hidden;font-size:13px;color:var(--ink)}
+.mk-bar{display:flex;align-items:center;gap:6px;padding:11px 14px;background:#f1f4f8;border-bottom:1px solid var(--line)}
+.mk-bar i{width:10px;height:10px;border-radius:50%;background:#cbd5e1}.mk-bar i:nth-child(1){background:#f87171}.mk-bar i:nth-child(2){background:#fbbf24}.mk-bar i:nth-child(3){background:#4ade80}
+.mk-bar b{margin-left:12px;font-weight:600;color:var(--ink-faint);font-size:12px;background:#fff;border:1px solid var(--line);border-radius:7px;padding:3px 12px}
+.mk-body{display:grid}
+.mk-2{grid-template-columns:1fr}@media(min-width:620px){.mk-2{grid-template-columns:.9fr 1.1fr}}
+.mk-l{border-right:1px solid var(--line);padding:14px;background:#fafbfc}.mk-r{padding:18px}
+.mk h5{font-family:"Manrope",sans-serif;font-size:13px;margin:0 0 10px;color:var(--ink)}
+.oi{background:#fff;border:1px solid var(--line);border-radius:11px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.oi.on{border-color:var(--accent);box-shadow:0 0 0 3px rgba(249,115,22,.14)}
+.oi b{display:block;font-size:12.5px}.oi small{color:var(--ink-faint);font-size:11.5px}
+.tg{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.tg.o{background:var(--accent-soft);color:var(--accent-ink)}.tg.g{background:#dcfce7;color:#166534}.tg.y{background:#fef3c7;color:#92400e}.tg.r{background:#fee2e2;color:#991b1b}
+.tl{list-style:none;padding:0;margin:12px 0;display:grid;gap:10px}
+.tl li{display:flex;gap:10px;align-items:flex-start;font-size:12.5px}.tl li i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--accent);margin-top:5px}
+.tl li.d i{background:var(--ok)}.tl li.n i{background:#cbd5e1}
+.cst{border:1px solid var(--line);border-radius:11px;overflow:hidden}.cst div{display:flex;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--line);font-size:12.5px}.cst div:last-child{border:0;background:var(--accent-soft);font-weight:800}
+.bar{height:7px;border-radius:4px;background:#e6ebf1;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--accent);border-radius:4px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:16px 16px 4px}
+@media(min-width:620px){.stats{grid-template-columns:repeat(4,1fr)}}
+.st{border:1px solid var(--line);border-radius:12px;padding:12px}.st small{color:var(--ink-faint);font-size:11px;display:block}.st b{font-family:"Manrope",sans-serif;font-size:22px}
+.st.o{background:var(--accent-soft);border-color:#fed7aa}
+.mk-t{padding:8px 16px 16px}.mk-t .oi{margin:0 0 6px}
+.phone{width:min(300px,100%);margin:0 auto;border-radius:38px;border:9px solid #0f172a;background:#fff;box-shadow:0 40px 70px -40px rgba(15,23,42,.6);overflow:hidden;position:relative}
+.phone::before{content:"";position:absolute;top:7px;left:50%;transform:translateX(-50%);width:84px;height:20px;background:#0f172a;border-radius:12px;z-index:2}
+.ph-h{background:var(--navy-2);color:#fff;padding:36px 16px 14px;font-family:"Manrope",sans-serif;font-weight:800;font-size:15px}
+.ph-b{padding:14px;background:#f6f7f9;display:grid;gap:9px;font-size:12.5px}
+.ph-c{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 12px}.ph-c b{display:block}
+.ph-k{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+.ph-k i{width:17px;height:17px;border-radius:50%;background:var(--ok);color:#fff;font-size:10px;font-style:normal;display:flex;align-items:center;justify-content:center}
+.ph-s{background:#fff;border:1px dashed #cbd5e1;border-radius:10px;padding:10px;color:var(--ink-faint);font-size:11.5px}
+.ph-s svg{display:block;margin-top:4px}.ph-btn{background:var(--accent);color:#0f172a;text-align:center;font-weight:800;border-radius:11px;padding:11px}
+.vs{display:grid;gap:16px}@media(min-width:700px){.vs{grid-template-columns:1fr 1fr}}
+.vs>div{border-radius:18px;padding:24px;border:1px solid var(--line);background:#fff}
+.vs .antes{background:#fff7f7;border-color:#fecaca}.vs .depois{background:#f0fdf4;border-color:#bbf7d0}
+.vs h3{font-size:17px;margin-bottom:12px}.vs ul{list-style:none;padding:0;display:grid;gap:10px;font-size:14.5px}
+.vs .antes li::before{content:"✕";color:#dc2626;font-weight:800;margin-right:10px}.vs .depois li::before{content:"✓";color:#16a34a;font-weight:800;margin-right:10px}
+.nota{font-size:12.5px;color:var(--ink-faint);margin-top:12px}
 
-$site_name    = "Oravel";
-$slogan       = "Gestão de Operações em Campo";
-$app_url      = "https://app.oravel.com.br";
-$contact_mail = "contato@oravel.com.br";
+/* compatibilidade com o corpo das páginas geradas */
+:root{--border:var(--line)}
+.section{padding:64px 0}.section-surface{background:var(--surface)}
+.section-head{max-width:720px;margin:0 0 34px}.section-head h2{font-size:clamp(26px,4vw,38px);line-height:1.12;margin-top:10px}
+.section-head p{font-size:17px;color:var(--ink-soft);margin-top:12px}
+.section .eyebrow{color:var(--accent-ink)}
+.solve{display:grid;gap:28px;align-items:center;padding:36px 0;border-top:1px solid var(--line)}.solve:first-of-type{border-top:0;padding-top:0}
+@media(min-width:1000px){.solve{grid-template-columns:1fr 1.1fr;gap:56px}.solve.rev .mock{order:-1}}
+.solve h3{font-size:clamp(22px,3.2vw,30px);line-height:1.15;margin-top:8px}.solve p{font-size:16.5px;color:var(--ink-soft);margin-top:12px}
+.solve .result{color:var(--ink);font-weight:600}
+.mock{margin:0;background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px}
+.mock svg{display:block;width:100%;height:auto;border-radius:12px}.mock figcaption{font-size:12.5px;color:var(--ink-faint);margin-top:10px;text-align:center}
+.who-grid{display:grid;gap:14px}@media(min-width:700px){.who-grid{grid-template-columns:repeat(2,1fr)}}@media(min-width:1000px){.who-grid{grid-template-columns:repeat(4,1fr)}}
+.who{background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:20px 22px;display:block;text-decoration:none}
+a.who:hover{border-color:var(--accent)}.who h3{font-size:16px}.who p{font-size:14px;color:var(--ink-soft);margin-top:6px}
+.porte{margin-top:18px;background:var(--accent-soft);border-radius:12px;padding:16px 20px;font-size:15px}
+.texto{max-width:760px;font-size:16.5px;color:var(--ink-soft)}.texto p+p{margin-top:14px}
+.vt{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;margin-top:26px;color:var(--ink-soft)}.vt a{color:var(--accent-ink);font-weight:600}
+.wide{margin:0}.wide img{width:100%;height:auto;display:block;border-radius:18px;border:1px solid var(--line);box-shadow:0 30px 60px -36px rgba(15,23,42,.45)}
+.wide figcaption{font-size:12.5px;color:var(--ink-faint);margin-top:10px;text-align:center}
+.hero-art svg,.hero-art img,.hero-art video{width:100%;height:auto;display:block;border-radius:22px;box-shadow:0 30px 60px -24px rgba(0,0,0,.55)}
+html{-webkit-user-select:none;user-select:none}input,textarea{-webkit-user-select:text;user-select:text}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style></head><body>
+<a class="skip" href="#conteudo">Ir para o conteúdo</a><header class="top"><div class="top-in"><a class="logo" href="/" aria-label="Oravel">O<i>r</i>avel</a><nav class="nav" aria-label="Principal"><div class="dd"><button type="button" aria-haspopup="true">Recursos</button><div class="dd-menu"><a href="/recursos/"><strong>Todos os recursos</strong><span>Visão completa da plataforma</span></a><a href="/processo-manutencao/"><strong>Preventiva e ordens de serviço</strong><span>Revisão no prazo, ordem por equipamento</span></a><a href="/processo-gestao-de-equipes/"><strong>Gestão de equipes</strong><span>Agenda, carga e desempenho dos técnicos</span></a><a href="/processo-gestao-de-estoques/"><strong>Gestão de estoques</strong><span>Peça certa, na hora certa</span></a><a href="/processo-cobranca-automatica/"><strong>Cobrança automática</strong><span>Da medição ao pagamento</span></a><a href="/nr-13-inspecao-equipamentos/"><strong>Inspeções NR-13</strong><span>Datas, laudos e alertas</span></a><a href="/equipamento-devolvido-com-defeito/"><strong>Devolução com defeito</strong><span>Do bloqueio à liberação</span></a></div></div><a href="/software-manutencao-industrial/">Manutenção</a><a href="/processo-logistica/">Logística</a><a href="/erp-cmms/">Locação</a><div class="dd"><button type="button" aria-haspopup="true">Soluções</button><div class="dd-menu"><a href="/software-manutencao-guindastes/"><strong>Guindastes</strong></a><a href="/software-manutencao-munks/"><strong>Munks</strong></a><a href="/software-manutencao-plataformas-elevatorias/"><strong>Plataformas elevatórias</strong></a><a href="/software-manutencao-empilhadeiras/"><strong>Empilhadeiras</strong></a><a href="/software-manutencao-geradores/"><strong>Geradores</strong></a><a href="/software-manutencao-compressores/"><strong>Compressores</strong></a><a href="/software-manutencao-outros-equipamentos/"><strong>Outros equipamentos</strong></a></div></div><a href="/contato.php">Contato</a></nav><div class="top-cta"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a></div><button class="burger" type="button" aria-expanded="false" aria-controls="mnav">Menu</button></div><div class="mnav" id="mnav"><h4>Recursos</h4><a href="/recursos/">Todos os recursos</a><a href="/processo-manutencao/">Preventiva e ordens de serviço</a><a href="/processo-gestao-de-equipes/">Gestão de equipes</a><a href="/processo-gestao-de-estoques/">Gestão de estoques</a><a href="/processo-cobranca-automatica/">Cobrança automática</a><a href="/nr-13-inspecao-equipamentos/">Inspeções NR-13</a><a href="/equipamento-devolvido-com-defeito/">Devolução com defeito</a><h4>Soluções</h4><a href="/software-manutencao-guindastes/">Guindastes</a><a href="/software-manutencao-munks/">Munks</a><a href="/software-manutencao-plataformas-elevatorias/">Plataformas elevatórias</a><a href="/software-manutencao-empilhadeiras/">Empilhadeiras</a><a href="/software-manutencao-geradores/">Geradores</a><a href="/software-manutencao-compressores/">Compressores</a><a href="/software-manutencao-outros-equipamentos/">Outros equipamentos</a><h4>Mais</h4><a href="/software-manutencao-industrial/">Manutenção</a><a href="/processo-logistica/">Logística</a><a href="/erp-cmms/">Locação</a><a href="/contato.php">Contato</a><div style="display:grid;gap:10px;margin-top:16px"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a></div></div></header>
+<main id="conteudo"><section class="hero"><div class="wrap" style="grid-template-columns:1fr"><div><div class="eyebrow">Perguntas frequentes</div><h1>Tire suas dúvidas sobre a Oravel.</h1><p class="sub">O que a plataforma resolve, como é a implantação, como funciona a migração e o suporte.</p></div></div></section><section class="sec"><div class="wrap"><div class="sec-h"><div class="eyebrow">Perguntas frequentes</div><h2>Sobre a Oravel</h2></div><div class="faq"><details><summary>Pra quem é a Oravel?</summary><p>Pra empresas que operam com equipamentos, equipes e serviços em campo: locação de equipamentos, manutenção industrial, montagem, logística e transportes, gestão de serviços e distribuição. Não importa se você já usa um sistema, controla por planilha, ou ainda não tem nenhum controle formal.</p></details><details><summary>Que áreas da minha operação a Oravel controla?</summary><p>Ativos e manutenção (preventiva e corretiva), logística de saída e retorno, comercial e contratos, suprimentos e estoque, equipe e departamento pessoal (cadastro de colaboradores e ponto eletrônico), financeiro (contas a pagar e a receber) e relatórios.</p></details><details><summary>A Oravel emite nota fiscal ou faz contabilidade?</summary><p>Não. A Oravel organiza o financeiro operacional da sua operação — contas a pagar, contas a receber, centro de custo — mas não substitui seu sistema fiscal ou sua contabilidade.</p></details><details><summary>Dá pra usar pelo celular, em campo?</summary><p>Sim. A interface foi pensada pra quem está no pátio ou na obra, não só no escritório — checklist, foto e ponto eletrônico funcionam direto do celular, inclusive offline.</p></details></div></div></section><section class="sec alt"><div class="wrap"><div class="sec-h"><div class="eyebrow">Perguntas frequentes</div><h2>Implantação e suporte</h2></div><div class="faq"><details><summary>É difícil de implantar?</summary><p>Não. O cadastro inicial é simples e sua equipe já opera com dados reais da sua operação logo na primeira semana — sem curva de aprendizado de semanas.</p></details><details><summary>Minha equipe não é boa com tecnologia, vai dar certo?</summary><p>A interface foi pensada pra quem está em campo, com o celular na mão — não é preciso ser "da área de TI" pra usar no dia a dia.</p></details><details><summary>Como funciona o suporte depois que eu começo a usar?</summary><p>Suporte dedicado em português nas primeiras semanas de uso, pra sua equipe não travar na virada. Depois disso, atendimento contínuo por e-mail e chat.</p></details></div></div></section><section class="sec"><div class="wrap"><div class="sec-h"><div class="eyebrow">Perguntas frequentes</div><h2>Trocando de sistema ou saindo da planilha</h2></div><div class="faq"><details><summary>Já uso outro sistema. Vou perder meus dados na migração?</summary><p>Não. A migração assistida traz contratos, clientes e equipamentos junto — nosso time cuida da importação com você acompanhando cada etapa.</p></details><details><summary>Quanto tempo leva pra migrar de outro sistema?</summary><p>Varia com o tamanho da operação, mas a implantação roda em paralelo ao sistema atual — você só desliga o antigo quando tiver segurança de que o Oravel está redondo.</p></details><details><summary>Hoje controlo tudo em planilha. Vale a pena trocar?</summary><p>Se você já perdeu contrato por esquecer renovação, ou teve equipamento parado sem saber a causa, provavelmente sim. Comece simples — cadastro de equipamentos e contratos já resolve boa parte disso.</p></details></div></div></section><section class="sec"><div class="wrap"><div class="cta"><h2>Não achou a sua dúvida?</h2><p>Fale com a gente pelo WhatsApp ou agende uma demonstração. Respondemos em horário comercial.</p><div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a></div><ul><li>30 dias grátis</li><li>Treinamento incluso</li><li>Implementação inclusa</li><li>WhatsApp (19) 99933-2615</li></ul></div></div></section></main>
+<footer class="foot"><div class="wrap"><div class="foot-g"><div><a class="logo" href="/">O<i>r</i>avel</a><p>Desenvolvimento e tecnologia</p><p style="margin-top:10px">Gestão de manutenção, estoque, logística e cobrança para locadoras de equipamentos.</p></div><div><h4>Recursos</h4><a href="/recursos/">Todos os recursos</a><a href="/processo-manutencao/">Preventiva e ordens de serviço</a><a href="/processo-gestao-de-equipes/">Gestão de equipes</a><a href="/processo-gestao-de-estoques/">Gestão de estoques</a><a href="/processo-cobranca-automatica/">Cobrança automática</a><a href="/nr-13-inspecao-equipamentos/">Inspeções NR-13</a><a href="/equipamento-devolvido-com-defeito/">Devolução com defeito</a></div><div><h4>Soluções</h4><a href="/software-manutencao-guindastes/">Guindastes</a><a href="/software-manutencao-munks/">Munks</a><a href="/software-manutencao-plataformas-elevatorias/">Plataformas elevatórias</a><a href="/software-manutencao-empilhadeiras/">Empilhadeiras</a><a href="/software-manutencao-geradores/">Geradores</a><a href="/software-manutencao-compressores/">Compressores</a><a href="/software-manutencao-outros-equipamentos/">Outros equipamentos</a></div><div><h4>Conteúdo</h4><a href="/central-de-conhecimento/">Central de conhecimento</a><a href="/academia/">Academia Oravel</a><a href="/faq.php">Perguntas frequentes</a><a href="/novidades.php">Novidades</a></div><div><h4>Empresa</h4><a href="/sobre/">Sobre a Oravel</a><a href="/contato.php">Contato</a><a href="/politica-de-privacidade/">Privacidade</a><a href="/termos-de-uso/">Termos de uso</a></div></div><div class="foot-b">© 2026 Oravel Desenvolvimento de Software Ltda · CNPJ 65.707.953/0001-30 · (19) 99933-2615 · contato@oravel.com.br</div></div></footer>
+<script>
+(function(){var b=document.querySelector('.burger'),m=document.getElementById('mnav');
+if(b&&m){b.addEventListener('click',function(){var o=m.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false')})}
+})();
+</script>
+<!-- Tailwind via CDN, so' pra este widget -- preflight desligado de proposito
+     pra nao resetar margin/padding/font do resto do site. -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    corePlugins: { preflight: false },
+  };
+</script>
 
-$page_title       = "Perguntas Frequentes | $site_name";
-$page_description = "Tire suas dúvidas sobre o que a Oravel resolve, preço, implantação, migração de sistema e suporte.";
-
-$faq_grupos = [
-  [
-    "titulo" => "Sobre a Oravel",
-    "itens"  => [
-      ["q" => "Pra quem é a Oravel?", "a" => "Pra empresas que operam com equipamentos, equipes e serviços em campo: locação de equipamentos, manutenção industrial, montagem, logística e transportes, gestão de serviços e distribuição. Não importa se você já usa um sistema, controla por planilha, ou ainda não tem nenhum controle formal."],
-      ["q" => "Que áreas da minha operação a Oravel controla?", "a" => "Ativos e manutenção (preventiva e corretiva), logística de saída e retorno, comercial e contratos, suprimentos e estoque, equipe e departamento pessoal (cadastro de colaboradores e ponto eletrônico), financeiro (contas a pagar e a receber) e relatórios."],
-      ["q" => "A Oravel emite nota fiscal ou faz contabilidade?", "a" => "Não. A Oravel organiza o financeiro operacional da sua operação — contas a pagar, contas a receber, centro de custo — mas não substitui seu sistema fiscal ou sua contabilidade."],
-      ["q" => "Dá pra usar pelo celular, em campo?", "a" => "Sim. A interface foi pensada pra quem está no pátio ou na obra, não só no escritório — checklist, foto e ponto eletrônico funcionam direto do celular, inclusive offline."],
-    ],
-  ],
-  [
-    "titulo" => "Preço e implantação",
-    "itens"  => [
-      ["q" => "A Oravel é cara?", "a" => "Você começa só com o que precisa — equipamentos e contratos — e ativa mais módulos conforme sua operação cresce. Não existe pacote único obrigatório caro demais pra quem está começando."],
-      ["q" => "Quanto custa a Oravel?", "a" => "Depende do tamanho da sua operação e dos módulos que fizerem sentido pra você. Fale com nosso time e a gente monta uma proposta sob medida."],
-      ["q" => "É difícil de implantar?", "a" => "Não. O cadastro inicial é simples e sua equipe já opera com dados reais da sua operação logo na primeira semana — sem curva de aprendizado de semanas."],
-      ["q" => "Minha equipe não é boa com tecnologia, vai dar certo?", "a" => "A interface foi pensada pra quem está em campo, com o celular na mão — não é preciso ser \"da área de TI\" pra usar no dia a dia."],
-      ["q" => "Preciso pagar por algo que talvez eu não use tudo?", "a" => "Não. Você começa com o básico e ativa o resto — preventiva, QR Code, relatórios — no seu ritmo, conforme sua operação cresce."],
-      ["q" => "Tem contrato de fidelidade?", "a" => "Não. Você não fica preso a um contrato de permanência mínima — pode cancelar quando quiser."],
-      ["q" => "Como funciona o suporte depois que eu começo a usar?", "a" => "Suporte dedicado em português nas primeiras semanas de uso, pra sua equipe não travar na virada. Depois disso, atendimento contínuo por e-mail e chat."],
-    ],
-  ],
-  [
-    "titulo" => "Trocando de sistema ou saindo da planilha",
-    "itens"  => [
-      ["q" => "Já uso outro sistema. Vou perder meus dados na migração?", "a" => "Não. A migração assistida traz contratos, clientes e equipamentos junto — nosso time cuida da importação com você acompanhando cada etapa."],
-      ["q" => "Quanto tempo leva pra migrar de outro sistema?", "a" => "Varia com o tamanho da operação, mas a implantação roda em paralelo ao sistema atual — você só desliga o antigo quando tiver segurança de que o Oravel está redondo."],
-      ["q" => "Hoje controlo tudo em planilha. Vale a pena trocar?", "a" => "Se você já perdeu contrato por esquecer renovação, ou teve equipamento parado sem saber a causa, provavelmente sim. Comece simples — cadastro de equipamentos e contratos já resolve boa parte disso."],
-    ],
-  ],
-];
-?>
-<?php include __DIR__ . '/inc/head.php'; ?>
-<?php include __DIR__ . '/inc/nav.php'; ?>
-
-<header class="page-header">
-  <div class="page-header-inner">
-    <span class="pill-badge">Perguntas Frequentes</span>
-    <h1>Ficou com dúvidas<br>sobre a Oravel?</h1>
-    <p>O que a Oravel resolve, quanto custa, como implantar — e, se for o seu caso, como migrar de outro sistema ou sair da planilha.</p>
-  </div>
-</header>
-
-<section class="zone-light" style="background:var(--bg);color:var(--fg)">
-  <?php foreach ($faq_grupos as $gi => $grupo): ?>
-  <div class="wrap-wide" style="<?= $gi === 0 ? 'padding-top:0' : 'padding-top:0;padding-bottom:0' ?>" <?= $gi === 0 ? 'id="faq"' : '' ?>>
-    <span class="pill-badge"><?= $grupo['titulo'] ?></span>
-    <div class="faq-grid">
-      <?php
-      $mid = ceil(count($grupo['itens']) / 2);
-      $cols = [array_slice($grupo['itens'], 0, $mid), array_slice($grupo['itens'], $mid)];
-      foreach ($cols as $col): ?>
-      <div>
-        <?php foreach ($col as $f): ?>
-        <div class="faq-item">
-          <div class="faq-q"><?= $f['q'] ?></div>
-          <div class="faq-a"><?= $f['a'] ?></div>
+<div id="wa-widget" class="fixed bottom-6 right-6 z-[9999]" style="font-family: 'Inter', sans-serif;">
+    <!-- Janela de chat -->
+    <div
+        id="wa-chat-panel"
+        class="hidden mb-4 w-80 max-w-[calc(100vw-3rem)] origin-bottom-right flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10 sm:w-96"
+    >
+        <!-- Cabecalho -->
+        <div class="flex items-center gap-3 bg-emerald-600 px-4 py-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg font-extrabold" style="background:#101010;">
+                <span style="color:#ffffff">O</span><span style="color:#E8541A">r</span>
+            </div>
+            <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-semibold text-white">Oravel</p>
+                <p class="flex items-center gap-1.5 text-xs text-emerald-100">
+                    <span class="relative flex h-2 w-2">
+                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75"></span>
+                        <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-300"></span>
+                    </span>
+                    Online agora
+                </p>
+            </div>
+            <button
+                type="button"
+                onclick="waToggleChat(false)"
+                aria-label="Fechar chat"
+                class="shrink-0 rounded-full p-1 text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
         </div>
-        <?php endforeach; ?>
-      </div>
-      <?php endforeach; ?>
-    </div>
-  </div>
-  <?php if ($gi < count($faq_grupos) - 1): ?>
-  <div class="divider"><div class="div-line"></div><div class="div-dot"></div><div class="div-line"></div></div>
-  <?php endif; ?>
-  <?php endforeach; ?>
-</section>
 
-<div class="cta-section" id="cta">
-  <div class="cta-inner">
-    <span class="pill-badge">Ainda com dúvidas?</span>
-    <h2 class="section-title">Fale direto com<br>o nosso time</h2>
-    <p>A gente responde rápido e mostra, na prática, como o Oravel se encaixa na sua operação.</p>
-    <div class="cta-btns">
-      <a href="/contato.php" class="btn-cta-dark">Falar com o Time →</a>
+        <!-- Corpo (mensagem de boas vindas) -->
+        <div class="flex-1 space-y-2 bg-[#e5ddd5] px-3 py-4" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect width=%2260%22 height=%2260%22 fill=%22%23e5ddd5%22/%3E%3C/svg%3E');">
+            <div class="max-w-[85%] rounded-lg rounded-tl-none bg-white px-3 py-2 shadow-sm">
+                <p class="text-sm text-gray-800">Olá! Como podemos ajudar você hoje?</p>
+                <p class="mt-1 text-right text-[10px] text-gray-400" id="wa-msg-time"></p>
+            </div>
+        </div>
+
+        <!-- Campo de entrada -->
+        <div class="flex items-center gap-2 border-t border-gray-200 bg-white p-2">
+            <input
+                type="text"
+                id="wa-input"
+                placeholder="Digite sua mensagem..."
+                class="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-800 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                style="background-color:#ffffff; color:#1f2937; color-scheme: light;"
+                onkeydown="if (event.key === 'Enter') { event.preventDefault(); waSendMessage(); }"
+            >
+            <button
+                type="button"
+                onclick="waSendMessage()"
+                aria-label="Enviar mensagem"
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white transition hover:bg-emerald-700"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+                    <path d="M3.4 20.6l17.45-8.5a1 1 0 000-1.8L3.4 1.8a1 1 0 00-1.44 1.1L4.3 11 1.96 18.9a1 1 0 001.44 1.1z"/>
+                </svg>
+            </button>
+        </div>
     </div>
-  </div>
+
+    <!-- Botao flutuante -->
+    <button
+        type="button"
+        id="wa-fab"
+        onclick="waToggleChat()"
+        aria-label="Abrir chat do WhatsApp"
+        class="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg transition duration-200 ease-out hover:scale-110 hover:bg-emerald-600 active:scale-95"
+    >
+        <span class="absolute inline-flex h-16 w-16 animate-ping rounded-full bg-emerald-500 opacity-40" style="animation-duration: 2.5s;"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" class="relative h-8 w-8">
+            <path d="M16.001 3C9.107 3 3.5 8.607 3.5 15.5c0 2.42.687 4.68 1.878 6.598L3.2 28.8l6.876-2.14A12.44 12.44 0 0016 28c6.894 0 12.5-5.607 12.5-12.5S22.894 3 16.001 3zm0 22.7a10.15 10.15 0 01-5.44-1.573l-.39-.232-4.08 1.27 1.293-3.976-.253-.407A10.14 10.14 0 015.8 15.5c0-5.632 4.57-10.2 10.2-10.2 5.63 0 10.2 4.568 10.2 10.2 0 5.632-4.57 10.2-10.199 10.2zm5.58-7.64c-.306-.153-1.81-.893-2.09-.995-.28-.102-.484-.153-.688.153-.204.306-.789.995-.967 1.199-.178.204-.356.23-.662.077-.306-.153-1.293-.477-2.463-1.522-.91-.812-1.524-1.816-1.703-2.123-.178-.306-.019-.472.134-.624.137-.137.306-.357.459-.535.153-.178.204-.306.306-.51.102-.204.051-.383-.026-.535-.077-.153-.688-1.658-.943-2.27-.248-.596-.5-.516-.688-.526l-.586-.011c-.204 0-.535.077-.815.383-.28.306-1.069 1.044-1.069 2.549 0 1.505 1.094 2.958 1.247 3.163.153.204 2.153 3.286 5.216 4.608.729.315 1.297.503 1.74.644.731.232 1.396.2 1.922.121.586-.087 1.81-.74 2.065-1.454.255-.714.255-1.326.178-1.454-.076-.128-.28-.204-.586-.357z"/>
+        </svg>
+    </button>
 </div>
 
-<?php include __DIR__ . '/inc/footer.php'; ?>
+<script>
+    (function () {
+        var WA_NUMERO = "5519999332615";
+        var WA_MENSAGEM_PADRAO = "Olá! Vim pelo site da Oravel e gostaria de mais informações.";
+
+        var timeEl = document.getElementById('wa-msg-time');
+        if (timeEl) {
+            var agora = new Date();
+            timeEl.textContent = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        window.waToggleChat = function (forceState) {
+            var panel = document.getElementById('wa-chat-panel');
+            var isHidden = panel.classList.contains('hidden');
+            var shouldOpen = (typeof forceState === 'boolean') ? forceState : isHidden;
+
+            if (shouldOpen) {
+                panel.classList.remove('hidden');
+                panel.classList.add('flex');
+                document.getElementById('wa-input').focus();
+            } else {
+                panel.classList.add('hidden');
+                panel.classList.remove('flex');
+            }
+        };
+
+        window.waSendMessage = function () {
+            var input = document.getElementById('wa-input');
+            var texto = (input.value || '').trim();
+
+            if (texto === '') {
+                texto = WA_MENSAGEM_PADRAO;
+            }
+
+            var url = 'https://wa.me/' + WA_NUMERO + '?text=' + encodeURIComponent(texto);
+            window.open(url, '_blank');
+            input.value = '';
+        };
+    })();
+</script>
+
+<script async src="https://app.oravel.com.br/t.js?v=2"></script>
+<script src="/protecao.js?v=3" defer></script>
+</body></html>

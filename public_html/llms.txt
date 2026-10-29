@@ -5,6 +5,7 @@
 Empresa: Oravel Desenvolvimento de Software LTDA, São Paulo/SP. Contato: contato@oravel.com.br, WhatsApp (19) 99933-2615.
 
 ## Soluções
+- [Recursos](https://oravel.com.br/recursos/): ordens de serviço, preventiva, checklist, estoque, app de campo, relatórios e logística
 - [ERP para locação e manutenção](https://oravel.com.br/erp-cmms/): contratos, ordens de serviço e manutenção de equipamentos locados
 - [Manutenção industrial](https://oravel.com.br/software-manutencao-industrial/): ordens de serviço e planos de manutenção
 - [Gestão de serviços](https://oravel.com.br/software-gestao-de-servicos/): equipes de campo e serviços
