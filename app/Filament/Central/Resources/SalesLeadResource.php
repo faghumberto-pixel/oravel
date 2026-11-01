@@ -267,52 +267,81 @@ class SalesLeadResource extends Resource
                 .CrmPalette::stage($record->pipeline_stage)['border'].' '
                 .CrmPalette::stage($record->pipeline_stage)['soft'])
             ->columns([
-                // Edicao inline (pedido 2026-08-19: "editar direto na
-                // celula, como Excel/Sheets") nas colunas onde faz sentido
-                // clicar e trocar sem abrir o form inteiro -- Empresa,
-                // Estagio, Valor Estimado, Responsavel. Ultima Interacao
-                // fica de fora por ser um campo calculado (refreshInteractionCache,
-                // ver SalesLead::refreshInteractionCache()), nao editavel a mao.
-                Tables\Columns\TextInputColumn::make('company_name')
-                    ->label('Empresa')
-                    ->searchable()
-                    ->extraInputAttributes(['class' => 'font-bold'])
-                    ->rules(['required', 'string', 'max:255']),
-                Tables\Columns\TextColumn::make('segment')
-                    ->label('Segmento')
-                    ->badge()
-                    ->color(fn (?string $state) => CrmPalette::segment($state)['filament'])
-                    ->formatStateUsing(fn (?string $state) => $state ? (Client::nicheLabels()[$state] ?? $state) : null)
-                    ->placeholder('—'),
-                Tables\Columns\SelectColumn::make('pipeline_stage')
-                    ->label('Estágio')
-                    ->options(SalesLead::stageLabels())
-                    ->selectablePlaceholder(false),
-                Tables\Columns\TextInputColumn::make('estimated_contract_value')
-                    ->label('Valor Estimado')
-                    ->type('number')
-                    ->rules(['nullable', 'numeric', 'min:0'])
-                    ->placeholder('—'),
-                Tables\Columns\SelectColumn::make('assigned_user_id')
-                    ->label('Responsável')
-                    ->options(fn () => User::whereIn('email', config('oravel.super_admins', []))->pluck('name', 'id'))
-                    ->placeholder('—'),
-                Tables\Columns\TextColumn::make('city')
-                    ->label('Cidade / UF')
-                    ->formatStateUsing(fn ($state, SalesLead $record) => collect([$record->city, $record->uf])->filter()->implode(' / ') ?: null)
-                    ->placeholder('—')
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Recebido em')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('last_interaction_at')
-                    ->label('Última Interação')
-                    ->dateTime('d/m/Y H:i')
-                    ->placeholder('Nunca')
-                    ->color(fn (?SalesLead $record) => $record?->isOpen() && (! $record->last_interaction_at || $record->last_interaction_at->diffInDays(now()) >= 3) ? 'danger' : null),
+                // Layout em CARTOES (pedido 2026-11-01: lista "muito ruim e pouco intuitiva", queria o
+                // estilo do acompanhamento de Prospects). Cada lead e' um cartao: quem e', como falar,
+                // em que etapa esta e quando foi o ultimo contato / quando voltar.
+                Tables\Columns\Layout\Stack::make([
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\Layout\Stack::make([
+                            Tables\Columns\TextColumn::make('company_name')
+                                ->label('Empresa')
+                                ->searchable()
+                                ->weight('bold')
+                                ->size('lg')
+                                ->color('crmOrange'),
+                            Tables\Columns\TextColumn::make('city')
+                                ->label('Cidade / UF')
+                                ->formatStateUsing(fn ($state, SalesLead $record) => collect([$record->city, $record->uf])->filter()->implode(' / ') ?: null)
+                                ->color('gray')
+                                ->placeholder('—'),
+                        ]),
+                        Tables\Columns\TextColumn::make('segment')
+                            ->label('Segmento')
+                            ->badge()
+                            ->color(fn (?string $state) => CrmPalette::segment($state)['filament'])
+                            ->formatStateUsing(fn (?string $state) => $state ? (Client::nicheLabels()[$state] ?? $state) : null)
+                            ->grow(false),
+                    ]),
+                    Tables\Columns\SelectColumn::make('pipeline_stage')
+                        ->label('Estágio')
+                        ->options(SalesLead::stageLabels())
+                        ->selectablePlaceholder(false),
+                    Tables\Columns\TextColumn::make('phone')
+                        ->label('Telefone')
+                        ->icon('heroicon-m-phone')
+                        ->copyable()
+                        ->copyMessage('Telefone copiado')
+                        ->placeholder('Sem telefone'),
+                    Tables\Columns\TextColumn::make('email')
+                        ->label('E-mail')
+                        ->icon('heroicon-m-envelope')
+                        ->copyable()
+                        ->copyMessage('E-mail copiado')
+                        ->placeholder('Sem e-mail'),
+                    Tables\Columns\TextColumn::make('decision_makers')
+                        ->label('Contato')
+                        ->icon('heroicon-m-user')
+                        ->color('gray')
+                        ->state(fn (SalesLead $record) => ($dm = $record->primaryDecisionMaker())
+                            ? trim(($dm['name'] ?? '').(filled($dm['role'] ?? null) ? ' ('.$dm['role'].')' : ''))
+                            : null)
+                        ->placeholder('Sem contato informado'),
+                    Tables\Columns\TextInputColumn::make('estimated_contract_value')
+                        ->label('Valor Estimado')
+                        ->type('number')
+                        ->rules(['nullable', 'numeric', 'min:0'])
+                        ->placeholder('Valor estimado (R$)'),
+                    Tables\Columns\TextColumn::make('last_interaction_at')
+                        ->label('Última Interação')
+                        ->icon('heroicon-m-clock')
+                        ->formatStateUsing(fn ($state) => 'Último contato: '.$state->format('d/m/Y').' ('.$state->diffForHumans().')')
+                        ->placeholder('Nunca contatado')
+                        ->color(fn (?SalesLead $record) => $record?->isOpen() && (! $record->last_interaction_at || $record->last_interaction_at->diffInDays(now()) >= 3) ? 'danger' : 'gray'),
+                    Tables\Columns\TextColumn::make('next_followup_date')
+                        ->label('Retorno')
+                        ->icon('heroicon-m-calendar-days')
+                        ->formatStateUsing(fn ($state) => 'Retornar em '.$state->format('d/m/Y'))
+                        ->visible(fn () => true)
+                        ->placeholder('Sem retorno agendado')
+                        ->color(fn (?SalesLead $record) => $record?->isOpen() && $record->next_followup_date && $record->next_followup_date->lte(now()) ? 'danger' : 'gray'),
+                    Tables\Columns\SelectColumn::make('assigned_user_id')
+                        ->label('Responsável')
+                        ->options(fn () => User::whereIn('email', config('oravel.super_admins', []))->pluck('name', 'id'))
+                        ->placeholder('Responsável'),
+                ])->space(2),
             ])
+            ->contentGrid(['md' => 2, 'xl' => 3])
+            ->searchPlaceholder('Buscar empresa, telefone, e-mail ou cidade')
             ->filters([
                 // Filtro por coluna, pedido do usuário 2026-08-05 -- um
                 // filtro pra cada coluna visível da tabela, não só
@@ -374,6 +403,16 @@ class SalesLeadResource extends Resource
                 // Contato"/"Sem Contato Direto") nao tem pra onde levar --
                 // pedido do usuario 2026-08-10: card clicavel deve linkar
                 // pro dado real no banco, nao so decorativo.
+                Tables\Filters\Filter::make('sem_contato')
+                    ->label('Sem contato há 3 dias ou mais')
+                    ->toggle()
+                    ->query(fn (Builder $query): Builder => $query->whereNotIn('pipeline_stage', [SalesLead::STAGE_GANHO, SalesLead::STAGE_PERDIDO])
+                        ->where(fn ($w) => $w->whereNull('last_interaction_at')->orWhere('last_interaction_at', '<=', now()->subDays(3)))),
+                Tables\Filters\Filter::make('retorno_vencido')
+                    ->label('Retorno vencido')
+                    ->toggle()
+                    ->query(fn (Builder $query): Builder => $query->whereNotIn('pipeline_stage', [SalesLead::STAGE_GANHO, SalesLead::STAGE_PERDIDO])
+                        ->whereNotNull('next_followup_date')->whereDate('next_followup_date', '<=', now())),
                 Tables\Filters\TernaryFilter::make('has_contact')
                     ->label('Tem Contato Direto')
                     ->placeholder('Todos')
@@ -402,9 +441,34 @@ class SalesLeadResource extends Resource
             // ("coloque acima do grid os list box com os filtros em cada
             // coluna"). filtersFormColumns() maior que o padrao (2) pra
             // caber os 6 filtros numa faixa horizontal em vez de empilhar.
-            ->filtersLayout(Tables\Enums\FiltersLayout::AboveContent)
-            ->filtersFormColumns(3)
+            ->filtersLayout(Tables\Enums\FiltersLayout::Dropdown)
+            ->filtersFormColumns(2)
             ->actions([
+                Tables\Actions\Action::make('registrar_contato')
+                    ->label('Registrar contato')
+                    ->icon('heroicon-o-chat-bubble-left-right')
+                    ->color('success')
+                    ->visible(fn (SalesLead $record) => $record->isOpen())
+                    ->form([
+                        Forms\Components\Select::make('channel')->label('Canal')->options(SalesLeadInteraction::channelLabels())->default(SalesLeadInteraction::CHANNEL_WHATSAPP)->required()->native(false),
+                        Forms\Components\DateTimePicker::make('contact_date')->label('Quando')->default(now())->required()->native(false)->displayFormat('d/m/Y H:i'),
+                        Forms\Components\Textarea::make('summary')->label('O que foi dito / combinado')->required()->rows(4),
+                        Forms\Components\DatePicker::make('next_followup_date')->label('Próximo retorno (opcional)')->native(false)->displayFormat('d/m/Y'),
+                    ])
+                    ->action(function (SalesLead $record, array $data) {
+                        $record->interactions()->create([
+                            'user_id' => auth()->id(),
+                            'channel' => $data['channel'],
+                            'contact_date' => $data['contact_date'],
+                            'summary' => $data['summary'],
+                            'stage_at_time' => $record->pipeline_stage,
+                        ]);
+                        $record->refreshInteractionCache();
+                        if (filled($data['next_followup_date'] ?? null)) {
+                            $record->update(['next_followup_date' => $data['next_followup_date']]);
+                        }
+                        Notification::make()->title('Contato registrado.')->success()->send();
+                    }),
                 Tables\Actions\Action::make('advance')
                     ->label('Avançar Estágio')
                     ->icon('heroicon-o-arrow-right-circle')

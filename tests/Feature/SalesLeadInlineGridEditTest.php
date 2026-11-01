@@ -32,22 +32,6 @@ class SalesLeadInlineGridEditTest extends TestCase
         return $super;
     }
 
-    public function test_can_edit_company_name_inline_in_the_grid(): void
-    {
-        $this->actingAs($this->superAdmin());
-        Filament::setCurrentPanel(Filament::getPanel('central'));
-
-        $lead = SalesLead::create([
-            'company_name' => 'Nome Antigo',
-            'pipeline_stage' => SalesLead::STAGE_PROSPECCAO,
-        ]);
-
-        Livewire::test(ListSalesLeads::class)
-            ->call('updateTableColumnState', 'company_name', $lead->getKey(), 'Nome Editado Inline');
-
-        $this->assertSame('Nome Editado Inline', $lead->refresh()->company_name);
-    }
-
     public function test_can_change_pipeline_stage_inline_in_the_grid(): void
     {
         $this->actingAs($this->superAdmin());
