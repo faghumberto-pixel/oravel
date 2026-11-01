@@ -82,12 +82,14 @@ class ProspectResource extends Resource
                     ->description(fn (Prospect $r): string => $r->ehCelular() ? 'Celular' : 'Fixo: ligar'),
                 Tables\Columns\TextColumn::make('socio')->label('Sócio')->placeholder('—')->toggleable(),
                 Tables\Columns\SelectColumn::make('status')->label('Situação')->options(Prospect::STATUS)->selectablePlaceholder(false),
+                Tables\Columns\TextColumn::make('origem')->label('Lista')->placeholder('—')->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('lote')->label('Lote')->placeholder('—')->sortable()->toggleable(),
                 Tables\Columns\TextColumn::make('proximo_contato')->label('Próx. contato')->date('d/m/Y')->placeholder('—')->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')->label('Situação')->options(Prospect::STATUS),
                 Tables\Filters\SelectFilter::make('lote')->label('Lote')->options(fn () => Prospect::whereNotNull('lote')->distinct()->orderBy('lote')->pluck('lote', 'lote')->all()),
+                Tables\Filters\SelectFilter::make('origem')->label('Lista de origem')->options(fn () => Prospect::whereNotNull('origem')->distinct()->orderBy('origem')->pluck('origem', 'origem')->all()),
                 Tables\Filters\SelectFilter::make('porte')->options(fn () => Prospect::whereNotNull('porte')->distinct()->pluck('porte', 'porte')->all()),
                 Tables\Filters\SelectFilter::make('atividade')->options(fn () => Prospect::whereNotNull('atividade')->distinct()->orderBy('atividade')->pluck('atividade', 'atividade')->all()),
                 Tables\Filters\Filter::make('ano_abertura')->label('Ano de abertura')

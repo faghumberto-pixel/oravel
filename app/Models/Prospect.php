@@ -80,7 +80,7 @@ class Prospect extends Model
         $f = $f ?? [];
         $v = fn (string $k) => $f[$k]['value'] ?? null;
 
-        foreach (['status', 'lote', 'porte', 'atividade'] as $campo) {
+        foreach (['status', 'lote', 'porte', 'atividade', 'origem'] as $campo) {
             if (filled($v($campo))) {
                 $q->where($campo, $v($campo));
             }
@@ -105,7 +105,7 @@ class Prospect extends Model
     {
         $f = $f ?? [];
         $r = [];
-        foreach (['status', 'lote', 'porte', 'atividade', 'empresa_nova', 'regiao_campinas'] as $k) {
+        foreach (['status', 'lote', 'porte', 'atividade', 'origem', 'empresa_nova', 'regiao_campinas'] as $k) {
             if (filled($f[$k]['value'] ?? null)) {
                 $r[$k] = (string) $f[$k]['value'];
             }
