@@ -8,4 +8,14 @@
             </x-filament::button>
         </div>
     @endforeach
+
+    <div class="space-y-2">
+        <div class="text-sm font-semibold">Se o sócio responder</div>
+        @foreach ($objecoes as $pergunta => $resposta)
+            <div class="rounded-lg border border-gray-200 p-3 text-sm dark:border-white/10">
+                <div class="font-semibold">{{ $pergunta }}</div>
+                <div>{{ $resposta }}</div>
+            </div>
+        @endforeach
+    </div>
 </div>

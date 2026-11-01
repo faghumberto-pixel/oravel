@@ -26,6 +26,14 @@ class Prospect extends Model
 
     public const FOLLOW_UP = 'Olá, {nome}. Só passando para dizer que o convite dos 30 dias grátis continua de pé. Se quiser, deixo o cadastro dos seus equipamentos montado e você só confere. Se não for o momento, sem problema.';
 
+    /** Respostas prontas para quando o socio responde (abordagem interna, so' super admin). */
+    public const OBJECOES = [
+        '"Quanto custa?"' => 'R$ 280 por mês com 3 módulos: manutenção, ativos e logística. Os 30 dias são grátis e a implantação só é combinada depois do teste.',
+        '"Já uso planilha" ou "meu contador cuida"' => 'A planilha não avisa a manutenção que vence nem mostra o equipamento parado. Ofereça montar os equipamentos dele no sistema para ele ver isso com dados dele, sem compromisso.',
+        '"Não tenho tempo"' => 'Você faz o cadastro dos equipamentos e ele só confere. Peça 10 minutos por WhatsApp ou na visita.',
+        '"Não conheço a Oravel"' => 'Conte que administrou uma locadora por muitos anos e criou o sistema a partir disso. Como ainda não tem cliente de referência para mostrar, sugira uma conversa rápida no escritório dele.',
+    ];
+
     protected $table = 'prospects';
 
     protected $guarded = [];

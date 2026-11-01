@@ -59,4 +59,12 @@ class ProspectTest extends TestCase
         $this->actingAs($u);
         $this->assertFalse(ProspectResource::canViewAny());
     }
+
+    public function test_modal_da_mensagem_mostra_as_objecoes(): void
+    {
+        $p = $this->prospect();
+        $html = view('filament.central.prospect-mensagem', ['abordagem' => $p->mensagemAbordagem(), 'followup' => $p->mensagemFollowUp(), 'objecoes' => Prospect::OBJECOES])->render();
+        $this->assertStringContainsString('Se o sócio responder', $html);
+        $this->assertStringContainsString('R$ 280 por mês', $html);
+    }
 }
