@@ -653,3 +653,14 @@ Route::middleware(['web', 'auth'])
         Route::get('/central/contratos-assinados/{signature}', [ContratoAssinadoController::class, 'ver'])
             ->name('central.contrato-assinado.ver');
     });
+
+// Previa do site novo para o painel Central (so' super admin). Arquivo gerado por scripts/site/montar_previa.py.
+Route::middleware(['web', 'auth'])->get('/central/previa-site', function () {
+    abort_unless(auth()->user()?->isSuperAdmin(), 403);
+
+    return response()->file(resource_path('previa-site/index.html'), [
+        'Content-Type' => 'text/html; charset=UTF-8',
+        'X-Frame-Options' => 'SAMEORIGIN',
+        'Cache-Control' => 'private, no-store',
+    ]);
+})->name('central.previa-site');
