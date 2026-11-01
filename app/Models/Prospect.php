@@ -32,7 +32,6 @@ class Prospect extends Model
 
     protected $attributes = ['status' => 'nao_enviado'];
 
-
     protected $casts = [
         'regiao_campinas' => 'boolean',
         'empresa_nova' => 'boolean',
