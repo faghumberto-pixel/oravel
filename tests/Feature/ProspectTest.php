@@ -107,4 +107,17 @@ class ProspectTest extends TestCase
         $this->assertStringContainsString('Antes de enviar', $html);
         $this->assertStringContainsString('Veja o Instagram', $html);
     }
+
+    public function test_filtro_por_origem_na_tabela_e_na_impressao(): void
+    {
+        $a = $this->prospect(['nome' => 'Da Lista A', 'origem' => 'Lista A']);
+        $b = $this->prospect(['nome' => 'Da Lista B', 'origem' => 'Lista B']);
+        $u = User::factory()->create(['email' => 'equipe@oravel.test']);
+
+        Livewire::actingAs($u)->test(ListProspects::class)
+            ->filterTable('origem', 'Lista A')
+            ->assertCanSeeTableRecords([$a])->assertCanNotSeeTableRecords([$b]);
+
+        $this->assertSame([$a->id], Prospect::filtrar(['origem' => ['value' => 'Lista A']])->pluck('id')->all());
+    }
 }

@@ -23,6 +23,7 @@ class ProspectImpressaoController extends Controller
         foreach (Prospect::filtrosAtivos($filtros) as $k => $v) {
             $partes[] = match ($k) {
                 'status' => 'Situação: '.(Prospect::STATUS[$v] ?? $v),
+                'origem' => 'Lista: '.$v,
                 'empresa_nova' => 'Empresas novas',
                 'regiao_campinas' => 'Região de Campinas',
                 'nota_alta' => 'Nota 8 ou mais',
