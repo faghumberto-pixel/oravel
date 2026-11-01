@@ -666,3 +666,8 @@ Route::middleware(['web', 'auth'])->get('/central/acompanhamentos/{acompanhament
         'Cache-Control' => 'private, no-store',
     ]);
 })->name('central.acompanhamento.previa');
+
+// Impressao dos Prospects (PDF gerado em PHP, aberto no navegador; NAO manda direto para a impressora).
+// Recebe os filtros/busca ativos na tela. So' super admin.
+Route::middleware(['web', 'auth'])->get('/central/prospects/imprimir', [App\Http\Controllers\ProspectImpressaoController::class, 'show'])
+    ->name('central.prospects.imprimir');

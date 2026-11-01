@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -46,6 +47,82 @@ class Prospect extends Model
         'proximo_contato' => 'date',
         'ultimo_contato_em' => 'datetime',
     ];
+
+    public function scopeNotaAlta(Builder $q): Builder
+    {
+        return $q->where('nota', '>=', 8);
+    }
+
+    public function scopeRetornoVencido(Builder $q): Builder
+    {
+        return $q->whereNotNull('proximo_contato')->whereDate('proximo_contato', '<=', now());
+    }
+
+    public function scopeAnoAbertura(Builder $q, $de, $ate): Builder
+    {
+        return $q->when(filled($de), fn ($q) => $q->where('ano_abertura', '>=', (int) $de))
+            ->when(filled($ate), fn ($q) => $q->where('ano_abertura', '<=', (int) $ate));
+    }
+
+    public function scopeBusca(Builder $q, ?string $termo): Builder
+    {
+        $termo = trim((string) $termo);
+
+        return $q->when($termo !== '', fn ($q) => $q->where(fn ($w) => $w
+            ->where('nome', 'ilike', "%{$termo}%")->orWhere('razao_social', 'ilike', "%{$termo}%")
+            ->orWhere('cnpj', 'ilike', "%{$termo}%")->orWhere('socio', 'ilike', "%{$termo}%")
+            ->orWhere('telefone', 'ilike', "%{$termo}%")));
+    }
+
+    /** Aplica o estado dos filtros da tabela (mesmas chaves dos filtros do Resource); usado na impressão. */
+    public function scopeFiltrar(Builder $q, ?array $f): Builder
+    {
+        $f = $f ?? [];
+        $v = fn (string $k) => $f[$k]['value'] ?? null;
+
+        foreach (['status', 'lote', 'porte', 'atividade'] as $campo) {
+            if (filled($v($campo))) {
+                $q->where($campo, $v($campo));
+            }
+        }
+        foreach (['empresa_nova', 'regiao_campinas'] as $campo) {
+            if (filled($v($campo))) {
+                $q->where($campo, (bool) $v($campo));
+            }
+        }
+        if (! empty($f['nota_alta']['isActive'])) {
+            $q->notaAlta();
+        }
+        if (! empty($f['retorno_vencido']['isActive'])) {
+            $q->retornoVencido();
+        }
+
+        return $q->anoAbertura($f['ano_abertura']['de'] ?? null, $f['ano_abertura']['ate'] ?? null);
+    }
+
+    /** Filtros ativos em forma normalizada (chave => valor), para comparar com os cards. */
+    public static function filtrosAtivos(?array $f): array
+    {
+        $f = $f ?? [];
+        $r = [];
+        foreach (['status', 'lote', 'porte', 'atividade', 'empresa_nova', 'regiao_campinas'] as $k) {
+            if (filled($f[$k]['value'] ?? null)) {
+                $r[$k] = (string) $f[$k]['value'];
+            }
+        }
+        foreach (['nota_alta', 'retorno_vencido'] as $k) {
+            if (! empty($f[$k]['isActive'])) {
+                $r[$k] = '1';
+            }
+        }
+        foreach (['de', 'ate'] as $k) {
+            if (filled($f['ano_abertura'][$k] ?? null)) {
+                $r['ano_'.$k] = (string) $f['ano_abertura'][$k];
+            }
+        }
+
+        return $r;
+    }
 
     public function contatos(): HasMany
     {
