@@ -88,11 +88,28 @@ class ProspectResource extends Resource
                 Tables\Filters\SelectFilter::make('lote')->label('Lote')->options(fn () => Prospect::whereNotNull('lote')->distinct()->orderBy('lote')->pluck('lote', 'lote')->all()),
                 Tables\Filters\SelectFilter::make('porte')->options(fn () => Prospect::whereNotNull('porte')->distinct()->pluck('porte', 'porte')->all()),
                 Tables\Filters\SelectFilter::make('atividade')->options(fn () => Prospect::whereNotNull('atividade')->distinct()->orderBy('atividade')->pluck('atividade', 'atividade')->all()),
+                Tables\Filters\Filter::make('ano_abertura')->label('Ano de abertura')
+                    ->form([
+                        Forms\Components\TextInput::make('de')->label('Aberta a partir de')->numeric()->minValue(1900)->maxValue(2100)->placeholder('2023'),
+                        Forms\Components\TextInput::make('ate')->label('Aberta até')->numeric()->minValue(1900)->maxValue(2100)->placeholder('2026'),
+                    ])->columns(2)
+                    ->query(fn (Builder $query, array $data): Builder => $query->anoAbertura($data['de'] ?? null, $data['ate'] ?? null))
+                    ->indicateUsing(function (array $data): array {
+                        $i = [];
+                        if (filled($data['de'] ?? null)) {
+                            $i[] = 'Aberta desde '.$data['de'];
+                        }
+                        if (filled($data['ate'] ?? null)) {
+                            $i[] = 'Aberta até '.$data['ate'];
+                        }
+
+                        return $i;
+                    }),
                 Tables\Filters\TernaryFilter::make('empresa_nova')->label('Empresa nova (desde 2023)'),
                 Tables\Filters\TernaryFilter::make('regiao_campinas')->label('Região de Campinas'),
-                Tables\Filters\Filter::make('nota_alta')->label('Nota 8 ou mais')->toggle()->query(fn (Builder $q): Builder => $q->where('nota', '>=', 8)),
+                Tables\Filters\Filter::make('nota_alta')->label('Nota 8 ou mais')->toggle()->query(fn (Builder $query): Builder => $query->notaAlta()),
                 Tables\Filters\Filter::make('retorno_vencido')->label('Retorno vencido')->toggle()
-                    ->query(fn (Builder $q): Builder => $q->whereNotNull('proximo_contato')->whereDate('proximo_contato', '<=', now())),
+                    ->query(fn (Builder $query): Builder => $query->retornoVencido()),
             ])
             ->actions([
                 Tables\Actions\Action::make('mensagem')->label('Mensagem')->icon('heroicon-o-chat-bubble-left-ellipsis')

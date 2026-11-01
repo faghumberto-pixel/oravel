@@ -67,4 +67,35 @@ class ProspectTest extends TestCase
         $this->assertStringContainsString('Se o sócio responder', $html);
         $this->assertStringContainsString('R$ 280 por mês', $html);
     }
+
+    public function test_filtro_de_ano_e_card_aplicam_o_mesmo_recorte(): void
+    {
+        $velha = $this->prospect(['ano_abertura' => 2010, 'nome' => 'Velha']);
+        $nova = $this->prospect(['ano_abertura' => 2025, 'nome' => 'Nova', 'empresa_nova' => true]);
+        $u = User::factory()->create(['email' => 'equipe@oravel.test']);
+
+        Livewire::actingAs($u)->test(ListProspects::class)
+            ->filterTable('ano_abertura', ['de' => 2024, 'ate' => null])
+            ->assertCanSeeTableRecords([$nova])->assertCanNotSeeTableRecords([$velha])
+            ->call('filtrarCard', 'nova')
+            ->assertCanSeeTableRecords([$nova])->assertCanNotSeeTableRecords([$velha])
+            ->call('filtrarCard', 'total')
+            ->assertCanSeeTableRecords([$nova, $velha]);
+    }
+
+    public function test_impressao_respeita_filtros_e_so_super_admin(): void
+    {
+        $this->prospect(['nome' => 'Velha Locadora', 'ano_abertura' => 2010]);
+        $this->prospect(['nome' => 'Nova Locadora', 'ano_abertura' => 2025]);
+        $query = ['filtros' => ['ano_abertura' => ['de' => 2024]]];
+
+        $this->actingAs(User::factory()->create(['email' => Str::random(8).'@x.test']))
+            ->get(route('central.prospects.imprimir', $query))->assertForbidden();
+
+        $r = $this->actingAs(User::factory()->create(['email' => 'equipe@oravel.test']))->get(route('central.prospects.imprimir', $query));
+        $r->assertOk();
+        $this->assertSame('application/pdf', $r->headers->get('Content-Type'));
+        $this->assertStringContainsString('inline', $r->headers->get('Content-Disposition'));
+        $this->assertSame(1, Prospect::filtrar($query['filtros'])->count());
+    }
 }
