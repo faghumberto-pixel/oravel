@@ -3,7 +3,6 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Central\Pages\AcessosClientes;
-use App\Filament\Central\Pages\AcompanhamentoSite;
 use App\Filament\Central\Pages\ParticipacaoTreinamento;
 use App\Filament\Central\Pages\DashboardCrm;
 use App\Filament\Central\Pages\DashboardSaaS;
@@ -23,9 +22,6 @@ use App\Filament\Central\Resources\SalesLeadResource\Widgets\LeadsByStageChart;
 use App\Filament\Central\Resources\SalesLeadResource\Widgets\SalesLeadListStats;
 use App\Filament\Central\Resources\SignatureResource;
 use App\Filament\Central\Resources\TenantComplianceResource;
-use App\Filament\Central\Widgets\Acompanhamento\NotasTable;
-use App\Filament\Central\Widgets\Acompanhamento\PaginasTable;
-use App\Filament\Central\Widgets\Acompanhamento\PendenciasTable;
 use App\Filament\Central\Widgets\AcquisitionChannelChart;
 use App\Filament\Central\Widgets\ArrChart;
 use App\Filament\Central\Widgets\BackupStatsOverview;
@@ -145,7 +141,6 @@ class CentralPanelProvider extends PanelProvider
                 AcessosClientes::class,
                 ParticipacaoTreinamento::class,
                 RolesTree::class,
-                AcompanhamentoSite::class,
             ])
             ->widgets([
                 // Registro aqui (mesmo os que so' aparecem via getWidgets()
@@ -178,10 +173,6 @@ class CentralPanelProvider extends PanelProvider
                 // disfarçada de "page expired"/419) -- foi a causa da janela
                 // "This page has expired" em Implantações (2026-10-01).
                 ImplementationStats::class,
-                // Widgets da pagina Acompanhamento do Site: registrar aqui da' o alias Livewire correto.
-                NotasTable::class,
-                PaginasTable::class,
-                PendenciasTable::class,
                 BackupStatsOverview::class,
                 SiteStatsOverview::class,
                 SiteVisitsChart::class,

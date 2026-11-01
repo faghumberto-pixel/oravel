@@ -654,13 +654,15 @@ Route::middleware(['web', 'auth'])
             ->name('central.contrato-assinado.ver');
     });
 
-// Previa do site novo para o painel Central (so' super admin). Arquivo gerado por scripts/site/montar_previa.py.
-Route::middleware(['web', 'auth'])->get('/central/previa-site', function () {
+// Previa (arquivo HTML) de um Acompanhamento do painel Central. So' super admin; o arquivo fica no disco
+// privado e e' aberto dentro de um iframe com sandbox (sem acesso a sessao do painel).
+Route::middleware(['web', 'auth'])->get('/central/acompanhamentos/{acompanhamento}/previa', function (App\Models\Acompanhamento $acompanhamento) {
     abort_unless(auth()->user()?->isSuperAdmin(), 403);
+    abort_unless($acompanhamento->previa_arquivo && Illuminate\Support\Facades\Storage::disk('local')->exists($acompanhamento->previa_arquivo), 404);
 
-    return response()->file(resource_path('previa-site/index.html'), [
+    return response()->file(Illuminate\Support\Facades\Storage::disk('local')->path($acompanhamento->previa_arquivo), [
         'Content-Type' => 'text/html; charset=UTF-8',
         'X-Frame-Options' => 'SAMEORIGIN',
         'Cache-Control' => 'private, no-store',
     ]);
-})->name('central.previa-site');
+})->name('central.acompanhamento.previa');

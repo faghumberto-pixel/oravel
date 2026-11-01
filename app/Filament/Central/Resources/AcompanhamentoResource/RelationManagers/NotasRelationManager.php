@@ -1,39 +1,37 @@
 <?php
 
-namespace App\Filament\Central\Widgets\Acompanhamento;
+namespace App\Filament\Central\Resources\AcompanhamentoResource\RelationManagers;
 
-use App\Models\SiteAcompanhamentoNota;
 use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Widgets\TableWidget;
 
-class NotasTable extends TableWidget
+class NotasRelationManager extends RelationManager
 {
-    protected static bool $isDiscovered = false;
+    protected static string $relationship = 'notas';
 
-    protected static ?string $heading = 'Acompanhamento (notas por data)';
+    protected static ?string $title = 'Acompanhamento (notas por data)';
 
-    protected int|string|array $columnSpan = 'full';
-
-    public static function canView(): bool
+    public function isReadOnly(): bool
     {
-        return (bool) auth()->user()?->isSuperAdmin();
+        return false;
     }
 
-    private static function formulario(): array
+    public function form(Form $form): Form
     {
-        return [
+        return $form->schema([
             Forms\Components\DatePicker::make('data')->label('Data')->default(now())->required()->native(false)->displayFormat('d/m/Y'),
             Forms\Components\TextInput::make('titulo')->label('Título')->maxLength(160),
             Forms\Components\Textarea::make('texto')->label('Acompanhamento e detalhes')->required()->rows(6)->columnSpanFull(),
-        ];
+        ]);
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->query(SiteAcompanhamentoNota::query())
+            ->recordTitleAttribute('titulo')
             ->columns([
                 Tables\Columns\TextColumn::make('data')->label('Data')->date('d/m/Y')->sortable(),
                 Tables\Columns\TextColumn::make('titulo')->label('Título')->weight('bold')->placeholder('—')->searchable(),
@@ -42,16 +40,12 @@ class NotasTable extends TableWidget
             ])
             ->defaultSort('data', 'desc')
             ->headerActions([
-                Tables\Actions\CreateAction::make()->label('Nova nota')->icon('heroicon-o-plus')->form(self::formulario())
+                Tables\Actions\CreateAction::make()->label('Nova nota')->icon('heroicon-o-plus')
                     ->mutateFormDataUsing(fn (array $data): array => $data + ['autor' => auth()->user()?->name]),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make()->form(self::formulario()),
-                Tables\Actions\DeleteAction::make(),
-            ])
+            ->actions([Tables\Actions\EditAction::make(), Tables\Actions\DeleteAction::make()])
             ->paginated([5, 10, 25])
             ->defaultPaginationPageOption(5)
-            ->emptyStateHeading('Nenhuma nota ainda')
-            ->emptyStateDescription('Use "Nova nota" para registrar um acompanhamento.');
+            ->emptyStateHeading('Nenhuma nota ainda');
     }
 }
