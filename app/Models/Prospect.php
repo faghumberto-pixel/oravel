@@ -1,0 +1,74 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+/**
+ * Prospect da Oravel (empresa que ainda nao e' cliente) com o acompanhamento da abordagem comercial.
+ * Tabela GLOBAL (sem tenant_id): controle interno da Oravel, so' super admin.
+ */
+class Prospect extends Model
+{
+    use HasUuids;
+
+    public const STATUS = [
+        'nao_enviado' => 'Não enviei',
+        'enviado' => 'Enviei',
+        'respondeu' => 'Respondeu',
+        'em_teste' => 'Em teste',
+        'sem_interesse' => 'Sem interesse',
+    ];
+
+    public const CANAIS = ['whatsapp' => 'WhatsApp', 'telefone' => 'Telefone', 'email' => 'E-mail', 'visita' => 'Visita', 'outro' => 'Outro'];
+
+    public const FOLLOW_UP = 'Olá, {nome}. Só passando para dizer que o convite dos 30 dias grátis continua de pé. Se quiser, deixo o cadastro dos seus equipamentos montado e você só confere. Se não for o momento, sem problema.';
+
+    protected $table = 'prospects';
+
+    protected $guarded = [];
+
+    protected $attributes = ['status' => 'nao_enviado'];
+
+
+    protected $casts = [
+        'regiao_campinas' => 'boolean',
+        'empresa_nova' => 'boolean',
+        'proximo_contato' => 'date',
+        'ultimo_contato_em' => 'datetime',
+    ];
+
+    public function contatos(): HasMany
+    {
+        return $this->hasMany(ProspectContato::class);
+    }
+
+    public function primeiroNomeSocio(): string
+    {
+        $primeiro = explode(' ', trim((string) $this->socio))[0] ?? '';
+
+        return $primeiro !== '' ? mb_convert_case($primeiro, MB_CASE_TITLE, 'UTF-8') : 'tudo bem';
+    }
+
+    /** Celular (9 apos o DDD) permite WhatsApp direto; fixo pede ligacao. */
+    public function ehCelular(): bool
+    {
+        return (bool) preg_match('/^\(\d\d\) 9/', (string) $this->telefone);
+    }
+
+    public function mensagemAbordagem(): string
+    {
+        $abertura = $this->ano_abertura ? ' abriu em '.$this->ano_abertura : ' está começando';
+
+        return 'Olá, '.$this->primeiroNomeSocio().'. Aqui é o Humberto, de Campinas. Administrei uma locadora por muitos anos e sei como a bagunça com contrato, manutenção e equipamento parado aparece quando a operação começa a crescer.'
+            ."\n\nVi que a ".$this->nome.$abertura.'. Criei o Oravel para quem está nessa fase. Posso deixar o cadastro dos seus equipamentos montado e você usa 30 dias grátis, com treinamento incluso.'
+            ."\n\nSe não fizer sentido, é só me avisar.";
+    }
+
+    public function mensagemFollowUp(): string
+    {
+        return str_replace('{nome}', $this->primeiroNomeSocio(), self::FOLLOW_UP);
+    }
+}
