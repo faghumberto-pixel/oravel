@@ -40,7 +40,8 @@ class SalesLeadResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Section::make('Identificação')
+            Forms\Components\Section::make('Empresa e contato')
+                ->icon('heroicon-o-building-office')
                 ->columns(3)
                 ->schema([
                     Forms\Components\TextInput::make('company_name')
@@ -56,6 +57,26 @@ class SalesLeadResource extends Resource
                     Forms\Components\TextInput::make('email')
                         ->label('E-mail')
                         ->email(),
+                    Forms\Components\Repeater::make('decision_makers')
+                        ->label('Tomadores de Decisão')
+                        ->schema([
+                            Forms\Components\TextInput::make('name')
+                                ->label('Nome')
+                                ->required(),
+                            Forms\Components\TextInput::make('role')
+                                ->label('Cargo'),
+                        ])
+                        ->columns(2)
+                        ->addActionLabel('+ Adicionar tomador de decisão')
+                        ->defaultItems(0)
+                        ->columnSpanFull(),
+                ]),
+
+            Forms\Components\Section::make('Venda')
+                ->icon('heroicon-o-currency-dollar')
+                ->description('Valor, responsável e o argumento de venda desta empresa.')
+                ->columns(2)
+                ->schema([
                     Forms\Components\TextInput::make('estimated_contract_value')
                         ->label('Valor Estimado do Contrato (MRR)')
                         ->numeric()
@@ -65,7 +86,26 @@ class SalesLeadResource extends Resource
                         ->options(fn () => User::whereIn('email', config('oravel.super_admins', []))->pluck('name', 'id'))
                         ->searchable()
                         ->preload(),
+                    Forms\Components\Textarea::make('critical_pain')
+                        ->label('Dor Crítica Mapeada')
+                        ->columnSpanFull(),
+                    Forms\Components\Textarea::make('oravel_solution')
+                        ->label('Solução Oravel')
+                        ->helperText('O que o sistema oferece pra resolver essa dor específica -- vira a base do argumento de venda.')
+                        ->columnSpanFull(),
+                    Forms\Components\Textarea::make('outreach_email_draft')
+                        ->label('Rascunho do E-mail de Prospecção (D3)')
+                        ->helperText('Texto personalizado pronto pra copiar e enviar -- fica salvo aqui pra não se perder numa conversa avulsa, e sai junto na exportação.')
+                        ->rows(6)
+                        ->columnSpanFull(),
+                ]),
 
+            Forms\Components\Section::make('Classificação')
+                ->icon('heroicon-o-tag')
+                ->description('Segmento e de onde veio o lead.')
+                ->columns(3)
+                ->collapsible()
+                ->schema([
                     Forms\Components\Select::make('segment')
                         ->label('Segmento Principal')
                         // Mesmos valores de tenants.segment/Client::NICHE_* de
@@ -85,7 +125,6 @@ class SalesLeadResource extends Resource
                         ->addActionLabel('+ Adicionar segmento')
                         ->defaultItems(0)
                         ->columnSpan(2),
-
                     Forms\Components\Select::make('source')
                         ->label('Origem Principal')
                         ->options(SalesLead::sourceLabels()),
@@ -99,33 +138,6 @@ class SalesLeadResource extends Resource
                         ->addActionLabel('+ Adicionar origem')
                         ->defaultItems(0)
                         ->columnSpan(2),
-
-                    Forms\Components\Repeater::make('decision_makers')
-                        ->label('Tomadores de Decisão')
-                        ->schema([
-                            Forms\Components\TextInput::make('name')
-                                ->label('Nome')
-                                ->required(),
-                            Forms\Components\TextInput::make('role')
-                                ->label('Cargo'),
-                        ])
-                        ->columns(2)
-                        ->addActionLabel('+ Adicionar tomador de decisão')
-                        ->defaultItems(0)
-                        ->columnSpanFull(),
-
-                    Forms\Components\Textarea::make('critical_pain')
-                        ->label('Dor Crítica Mapeada')
-                        ->columnSpanFull(),
-                    Forms\Components\Textarea::make('oravel_solution')
-                        ->label('Solução Oravel')
-                        ->helperText('O que o sistema oferece pra resolver essa dor específica -- vira a base do argumento de venda.')
-                        ->columnSpanFull(),
-                    Forms\Components\Textarea::make('outreach_email_draft')
-                        ->label('Rascunho do E-mail de Prospecção (D3)')
-                        ->helperText('Texto personalizado pronto pra copiar e enviar -- fica salvo aqui pra não se perder numa conversa avulsa, e sai junto na exportação.')
-                        ->rows(6)
-                        ->columnSpanFull(),
                 ]),
 
             Forms\Components\Section::make('Recebido pelo formulário do site')
@@ -158,6 +170,7 @@ class SalesLeadResource extends Resource
                 ]),
 
             Forms\Components\Section::make('Endereço')
+                ->icon('heroicon-o-map-pin')
                 ->description('Preencha o CEP: endereço e localização no mapa são preenchidos automaticamente.')
                 ->columns(3)
                 ->collapsible()
@@ -205,6 +218,7 @@ class SalesLeadResource extends Resource
                 ]),
 
             Forms\Components\Section::make('Funil')
+                ->icon('heroicon-o-funnel')
                 ->columns(3)
                 ->schema([
                     Forms\Components\Placeholder::make('pipeline_stage_display')
