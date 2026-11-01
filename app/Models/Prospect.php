@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -21,6 +22,7 @@ class Prospect extends Model
         'respondeu' => 'Respondeu',
         'em_teste' => 'Em teste',
         'sem_interesse' => 'Sem interesse',
+        'convertido' => 'Virou lead',
     ];
 
     public const CANAIS = ['whatsapp' => 'WhatsApp', 'telefone' => 'Telefone', 'email' => 'E-mail', 'visita' => 'Visita', 'outro' => 'Outro'];
@@ -122,6 +124,11 @@ class Prospect extends Model
         }
 
         return $r;
+    }
+
+    public function lead(): BelongsTo
+    {
+        return $this->belongsTo(SalesLead::class, 'sales_lead_id');
     }
 
     public function contatos(): HasMany
