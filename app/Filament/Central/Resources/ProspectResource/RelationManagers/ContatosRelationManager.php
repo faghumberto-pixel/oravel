@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Resources\ProspectResource\RelationManagers;
 
+use App\Filament\Central\Resources\ProspectResource\ConverterEmLeadAction;
 use App\Models\Prospect;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -42,6 +43,7 @@ class ContatosRelationManager extends RelationManager
             ])
             ->defaultSort('data', 'desc')
             ->headerActions([
+                ConverterEmLeadAction::make(fn () => $this->getOwnerRecord())->label('Converter em lead (fim dos contatos)'),
                 Tables\Actions\CreateAction::make()->label('Novo contato')->icon('heroicon-o-plus')
                     ->mutateFormDataUsing(fn (array $data): array => $data + ['autor' => auth()->user()?->name])
                     ->after(fn () => $this->getOwnerRecord()->update(['ultimo_contato_em' => now()])),

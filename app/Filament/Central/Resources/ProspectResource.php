@@ -126,6 +126,10 @@ class ProspectResource extends Resource
                         $r->update(['status' => 'enviado', 'ultimo_contato_em' => now(), 'proximo_contato' => now()->addDays(4)]);
                         $r->contatos()->create(['data' => now(), 'canal' => $r->ehCelular() ? 'whatsapp' : 'telefone', 'titulo' => 'Primeiro contato', 'texto' => 'Mensagem de abordagem enviada.', 'autor' => auth()->user()?->name]);
                     }),
+                ProspectResource\ConverterEmLeadAction::make(),
+                Tables\Actions\Action::make('verLead')->label('Ver lead')->icon('heroicon-o-arrow-top-right-on-square')->color('gray')
+                    ->visible(fn (Prospect $r): bool => $r->sales_lead_id !== null)
+                    ->url(fn (Prospect $r): string => SalesLeadResource::getUrl('edit', ['record' => $r->sales_lead_id]))->openUrlInNewTab(),
                 Tables\Actions\ViewAction::make()->label('Abrir')->url(fn (Prospect $r): string => static::getUrl('edit', ['record' => $r])),
             ])
             ->defaultSort('nota', 'desc')

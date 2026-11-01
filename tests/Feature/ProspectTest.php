@@ -3,9 +3,13 @@
 namespace Tests\Feature;
 
 use App\Filament\Central\Resources\ProspectResource;
+use App\Filament\Central\Resources\ProspectResource\Pages\EditProspect;
 use App\Filament\Central\Resources\ProspectResource\Pages\ListProspects;
+use App\Filament\Central\Resources\ProspectResource\RelationManagers\ContatosRelationManager;
 use App\Models\Prospect;
+use App\Models\SalesLead;
 use App\Models\User;
+use App\Services\ProspectToLead;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
@@ -119,5 +123,39 @@ class ProspectTest extends TestCase
             ->assertCanSeeTableRecords([$a])->assertCanNotSeeTableRecords([$b]);
 
         $this->assertSame([$a->id], Prospect::filtrar(['origem' => ['value' => 'Lista A']])->pluck('id')->all());
+    }
+
+    public function test_converter_em_lead_cria_lead_com_contatos_e_e_idempotente(): void
+    {
+        $u = User::factory()->create(['email' => 'equipe@oravel.test']);
+        $p = $this->prospect(['origem' => 'Lista A', 'socio_cargo' => 'Sócio-Administrador', 'proximo_contato' => '2026-12-20']);
+        $p->contatos()->create(['data' => '2026-11-02', 'canal' => 'whatsapp', 'titulo' => 'Primeiro contato', 'texto' => 'Enviei a mensagem.']);
+
+        $lead = ProspectToLead::converter($p, $u);
+        $again = ProspectToLead::converter($p->fresh(), $u);
+
+        $this->assertSame($lead->id, $again->id);
+        $this->assertSame(1, SalesLead::where('company_name', 'Obra Mais')->count());
+        $this->assertSame(SalesLead::STAGE_PROSPECCAO, $lead->pipeline_stage);
+        $this->assertSame('prospeccao_ativa', $lead->source);
+        $this->assertSame('2026-12-20', $lead->next_followup_date->toDateString());
+        $this->assertSame('FRANCO DE ANDRADE', $lead->decision_makers[0]['name']);
+        $this->assertSame(2, $lead->interactions()->count()); // ficha + 1 contato
+        $this->assertNull($lead->blockerForNextStage());       // ja pode avancar no funil
+        $this->assertSame('convertido', $p->fresh()->status);
+        $this->assertSame($lead->id, $p->fresh()->sales_lead_id);
+    }
+
+    public function test_acao_na_tabela_e_no_fim_dos_contatos(): void
+    {
+        $u = User::factory()->create(['email' => 'equipe@oravel.test']);
+        $p = $this->prospect(['nome' => 'Via Tabela']);
+        Livewire::actingAs($u)->test(ListProspects::class)->callTableAction('converterEmLead', $p);
+        $this->assertNotNull($p->fresh()->sales_lead_id);
+
+        $q = $this->prospect(['nome' => 'Via Contatos']);
+        Livewire::actingAs($u)->test(ContatosRelationManager::class, ['ownerRecord' => $q, 'pageClass' => EditProspect::class])
+            ->callTableAction('converterEmLead');
+        $this->assertNotNull($q->fresh()->sales_lead_id);
     }
 }
