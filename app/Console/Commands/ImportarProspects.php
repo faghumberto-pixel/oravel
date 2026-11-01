@@ -36,6 +36,12 @@ class ImportarProspects extends Command
                 'socio_cargo' => ($x['pr'] ?? '') ?: null, 'nota' => (int) ($x['sc'] ?? 0),
                 'regiao_campinas' => (bool) ($x['rg'] ?? false), 'empresa_nova' => (bool) ($x['nv'] ?? false),
             ];
+            // Campos opcionais da lista: so' sobrescrevem quando vierem no arquivo.
+            foreach (['msg' => 'mensagem_personalizada', 'ver' => 'o_que_olhar'] as $chave => $coluna) {
+                if (filled($x[$chave] ?? null)) {
+                    $dados[$coluna] = $x[$chave];
+                }
+            }
             $p = Prospect::firstWhere('cnpj', $x['cnpj']);
             if ($p) {
                 $p->update($dados);

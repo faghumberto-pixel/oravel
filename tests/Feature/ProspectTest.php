@@ -98,4 +98,13 @@ class ProspectTest extends TestCase
         $this->assertStringContainsString('inline', $r->headers->get('Content-Disposition'));
         $this->assertSame(1, Prospect::filtrar($query['filtros'])->count());
     }
+
+    public function test_mensagem_propria_substitui_a_padrao_e_modal_mostra_o_que_olhar(): void
+    {
+        $p = $this->prospect(['mensagem_personalizada' => 'Texto sob medida', 'o_que_olhar' => 'Veja o Instagram']);
+        $this->assertSame('Texto sob medida', $p->mensagemAbordagem());
+        $html = view('filament.central.prospect-mensagem', ['abordagem' => $p->mensagemAbordagem(), 'followup' => '', 'objecoes' => [], 'olhar' => $p->o_que_olhar])->render();
+        $this->assertStringContainsString('Antes de enviar', $html);
+        $this->assertStringContainsString('Veja o Instagram', $html);
+    }
 }

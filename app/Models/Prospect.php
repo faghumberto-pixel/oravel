@@ -144,6 +144,10 @@ class Prospect extends Model
 
     public function mensagemAbordagem(): string
     {
+        if (filled($this->mensagem_personalizada)) {
+            return $this->mensagem_personalizada;
+        }
+
         $abertura = $this->ano_abertura ? ' abriu em '.$this->ano_abertura : ' está começando';
 
         return 'Olá, '.$this->primeiroNomeSocio().'. Aqui é o Humberto, de Campinas. Administrei uma locadora por muitos anos e sei como a bagunça com contrato, manutenção e equipamento parado aparece quando a operação começa a crescer.'
