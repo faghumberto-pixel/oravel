@@ -23,7 +23,7 @@ class InteractionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'interactions';
 
-    protected static ?string $title = 'Follow Up';
+    protected static ?string $title = 'Contatos';
 
     protected static string $view = 'filament.central.resources.sales-lead-resource.relation-managers.interactions-relation-manager';
 
