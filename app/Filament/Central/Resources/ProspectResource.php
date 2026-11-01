@@ -97,7 +97,7 @@ class ProspectResource extends Resource
             ->actions([
                 Tables\Actions\Action::make('mensagem')->label('Mensagem')->icon('heroicon-o-chat-bubble-left-ellipsis')
                     ->modalHeading(fn (Prospect $r): string => 'Mensagem para '.$r->nome)
-                    ->modalContent(fn (Prospect $r) => view('filament.central.prospect-mensagem', ['abordagem' => $r->mensagemAbordagem(), 'followup' => $r->mensagemFollowUp()]))
+                    ->modalContent(fn (Prospect $r) => view('filament.central.prospect-mensagem', ['abordagem' => $r->mensagemAbordagem(), 'followup' => $r->mensagemFollowUp(), 'objecoes' => Prospect::OBJECOES]))
                     ->modalSubmitAction(false)->modalCancelActionLabel('Fechar'),
                 Tables\Actions\Action::make('enviei')->label('Enviei')->icon('heroicon-o-paper-airplane')->color('success')
                     ->visible(fn (Prospect $r): bool => $r->status === 'nao_enviado')
