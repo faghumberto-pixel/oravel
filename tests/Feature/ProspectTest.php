@@ -183,4 +183,17 @@ class ProspectTest extends TestCase
             ->callTableAction('converterEmLead');
         $this->assertNotNull($q->fresh()->sales_lead_id);
     }
+
+    public function test_cada_card_tem_cor_propria_por_significado(): void
+    {
+        $u = User::factory()->create(['email' => 'equipe@oravel.test']);
+
+        $t = Livewire::actingAs($u)->test(ListProspects::class);
+        $cards = collect($t->instance()->cards())->keyBy('chave');
+
+        $this->assertSame('bg-blue-50 dark:bg-blue-500/25', $cards['enviado']['paleta']['soft']);
+        $this->assertSame('bg-emerald-50 dark:bg-emerald-500/25', $cards['respondeu']['paleta']['soft']);
+        $this->assertSame('bg-red-50 dark:bg-red-500/25', $cards['sem_interesse']['paleta']['soft']);
+        $t->assertSeeHtml('bg-emerald-50');
+    }
 }

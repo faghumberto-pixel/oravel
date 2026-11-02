@@ -181,6 +181,16 @@ class CrmPalette
         };
     }
 
+    /**
+     * Paleta de um cartão da Central por nome de cor ('blue', 'emerald', 'red'...), para os
+     * cartões clicáveis de lista (Prospects, CRM Comercial). Cor por significado: quem monta
+     * o cartão escolhe o nome; as classes literais vêm das mesmas tabelas acima.
+     */
+    public static function cor(?string $nome): array
+    {
+        return self::etapa(new CrmEtapa(['cor' => $nome ?: 'gray']));
+    }
+
     /** Opções do seletor de cor da etapa (nome da paleta => rótulo). */
     public static function etapaCores(): array
     {
