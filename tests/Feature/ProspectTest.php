@@ -84,7 +84,32 @@ class ProspectTest extends TestCase
             ->call('filtrarCard', 'nova')
             ->assertCanSeeTableRecords([$nova])->assertCanNotSeeTableRecords([$velha])
             ->call('filtrarCard', 'total')
-            ->assertCanSeeTableRecords([$nova, $velha]);
+            ->assertCanSeeTableRecords([$nova])->assertCanNotSeeTableRecords([$velha]);
+    }
+
+    public function test_cards_refletem_filtros_e_busca_e_clique_mantem_filtros_base(): void
+    {
+        $a = $this->prospect(['nome' => 'Alfa Locacao', 'porte' => 'EPP', 'status' => 'enviado']);
+        $b = $this->prospect(['nome' => 'Beta Locacao', 'porte' => 'EPP', 'status' => 'nao_enviado']);
+        $c = $this->prospect(['nome' => 'Gama Locacao', 'porte' => 'ME', 'status' => 'enviado']);
+        $u = User::factory()->create(['email' => 'equipe@oravel.test']);
+
+        $totais = fn ($t) => collect($t->instance()->cards())->pluck('total', 'chave');
+
+        $t = Livewire::actingAs($u)->test(ListProspects::class);
+        $base = $totais($t);
+
+        $t->filterTable('porte', 'EPP');
+        $cards = $totais($t);
+        $this->assertSame($base['total'] - 1, $cards['total']);
+        $this->assertSame($base['enviado'] - 1, $cards['enviado']);
+
+        $t->call('filtrarCard', 'enviado')
+            ->assertCanSeeTableRecords([$a])->assertCanNotSeeTableRecords([$b, $c]);
+
+        $t->searchTable('Alfa');
+        $this->assertSame(1, $totais($t)['total']);
+        $this->assertSame(0, $totais($t)['nao_enviado']);
     }
 
     public function test_impressao_respeita_filtros_e_so_super_admin(): void
