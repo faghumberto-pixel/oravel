@@ -115,6 +115,11 @@ class ProspectResource extends Resource
                 Tables\Filters\Filter::make('retorno_vencido')->label('Retorno vencido')->toggle()
                     ->query(fn (Builder $query): Builder => $query->retornoVencido()),
             ])
+            // Mantem filtros, busca e ordenacao ao navegar para outro menu e voltar (sessao do usuario).
+            ->persistFiltersInSession()
+            ->persistSearchInSession()
+            ->persistColumnSearchesInSession()
+            ->persistSortInSession()
             ->actions([
                 Tables\Actions\Action::make('mensagem')->label('Mensagem')->icon('heroicon-o-chat-bubble-left-ellipsis')
                     ->modalHeading(fn (Prospect $r): string => 'Mensagem para '.$r->nome)
