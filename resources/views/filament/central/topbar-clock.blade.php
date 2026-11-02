@@ -1,5 +1,7 @@
 @php
     $compromissosHoje = \App\Models\SalesLeadAppointment::whereDate('scheduled_at', now()->toDateString())->count();
+    $compromissosSemana = \App\Models\SalesLeadAppointment::whereBetween('scheduled_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
+    $urlProgramacao = \App\Filament\Central\Pages\Programacao::getUrl();
 @endphp
 
 <div
@@ -24,13 +26,18 @@
         <span x-text="horaFormatada" class="font-mono text-sm text-gray-100 tabular-nums"></span>
     </div>
 
-    <a
-        href="{{ \App\Filament\Central\Pages\Programacao::getUrl() }}"
-        title="Compromissos de hoje"
-        class="flex items-center gap-1.5 rounded-full bg-white/5 hover:bg-white/10 transition-colors px-3 py-1.5 border border-white/10"
-    >
-        <x-heroicon-o-calendar-days class="w-4 h-4 text-primary-400" />
-        <span class="text-gray-100 font-bold">{{ $compromissosHoje }}</span>
-        <span class="text-gray-400">{{ $compromissosHoje === 1 ? 'compromisso hoje' : 'compromissos hoje' }}</span>
-    </a>
+    <div class="flex items-center rounded-full bg-white/5 border border-white/10 overflow-hidden">
+        <a href="{{ $urlProgramacao }}?visao=hoje" title="Ver a lista de compromissos de hoje"
+           class="flex items-center gap-1.5 hover:bg-white/10 transition-colors pl-3 pr-2 py-1.5">
+            <x-heroicon-o-calendar-days class="w-4 h-4 text-primary-400" />
+            <span class="text-gray-100 font-bold">{{ $compromissosHoje }}</span>
+            <span class="text-gray-400">hoje</span>
+        </a>
+        <span class="h-4 w-px bg-white/10"></span>
+        <a href="{{ $urlProgramacao }}?visao=semana" title="Ver a lista de compromissos da semana"
+           class="flex items-center gap-1.5 hover:bg-white/10 transition-colors pl-2 pr-3 py-1.5">
+            <span class="text-gray-100 font-bold">{{ $compromissosSemana }}</span>
+            <span class="text-gray-400">na semana</span>
+        </a>
+    </div>
 </div>

@@ -196,4 +196,33 @@ class ProspectTest extends TestCase
         $this->assertSame('bg-red-50 dark:bg-red-500/25', $cards['sem_interesse']['paleta']['soft']);
         $t->assertSeeHtml('bg-emerald-50');
     }
+
+    public function test_proximo_contato_vira_compromisso_na_programacao_e_topo_conta(): void
+    {
+        $p = $this->prospect(['nome' => 'Locadora Teste']);
+        $this->assertSame(0, $p->compromissos()->count());
+
+        $p->update(['proximo_contato' => now()->addDay()->toDateString()]);
+        $this->assertSame(1, $p->compromissos()->count());
+        $c = $p->compromissos()->first();
+        $this->assertSame('pendente', $c->status);
+        $this->assertNull($c->sales_lead_id);
+        $this->assertSame('Locadora Teste', $c->empresaNome());
+
+        // mudar a data move o mesmo compromisso, sem duplicar
+        $p->update(['proximo_contato' => now()->addDays(3)->toDateString()]);
+        $this->assertSame(1, $p->compromissos()->count());
+        $this->assertTrue($p->compromissos()->first()->scheduled_at->isSameDay(now()->addDays(3)));
+
+        // apagar a data remove o compromisso pendente
+        $p->update(['proximo_contato' => null]);
+        $this->assertSame(0, $p->compromissos()->count());
+
+        // topo: hoje e semana
+        $p->update(['proximo_contato' => now()->toDateString()]);
+        $html = view('filament.central.topbar-clock')->render();
+        $this->assertStringContainsString('na semana', $html);
+        $this->assertStringContainsString('visao=hoje', $html);
+        $this->assertStringContainsString('visao=semana', $html);
+    }
 }
