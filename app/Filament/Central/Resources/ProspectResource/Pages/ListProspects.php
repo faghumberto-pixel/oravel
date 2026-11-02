@@ -4,6 +4,7 @@ namespace App\Filament\Central\Resources\ProspectResource\Pages;
 
 use App\Filament\Central\Resources\ProspectResource;
 use App\Models\Prospect;
+use App\Support\CrmPalette;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -25,6 +26,13 @@ class ListProspects extends ListRecords
         'campinas' => ['Região de Campinas', ['regiao_campinas' => '1']],
         'nota_alta' => ['Nota 8 ou mais', ['nota_alta' => '1']],
         'retorno' => ['Retorno vencido', ['retorno_vencido' => '1']],
+    ];
+
+    /** Cor por significado de cada card (nome da paleta de App\Support\CrmPalette::cor). */
+    public const CORES = [
+        'total' => 'gray', 'nao_enviado' => 'gray', 'enviado' => 'blue', 'respondeu' => 'emerald',
+        'em_teste' => 'purple', 'sem_interesse' => 'red', 'nova' => 'teal', 'campinas' => 'cyan',
+        'nota_alta' => 'amber', 'retorno' => 'orange',
     ];
 
     /** Filtros que os cards controlam; os demais (lote, porte, atividade, origem, ano) sao "base" e valem para todos os cards. */
@@ -65,6 +73,7 @@ class ListProspects extends ListRecords
                 'rotulo' => $rotulo,
                 'total' => Prospect::filtrar($estado)->busca($this->tableSearch)->count(),
                 'ativo' => $ativosCard == $filtros,
+                'paleta' => CrmPalette::cor(self::CORES[$chave] ?? 'gray'),
             ];
         }
 

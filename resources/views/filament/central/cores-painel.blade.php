@@ -1,4 +1,14 @@
 <style>
+    /* Cards de estatística (StatsOverview) da Central: fundo suave na cor do significado do próprio
+       Stat (->color()), mesmo padrão dos cards clicáveis de Prospects/CRM Comercial. */
+    .fi-wi-stats-overview-stat:has(.fi-color-success) { background-color: rgba(16, 185, 129, 0.12); }
+    .fi-wi-stats-overview-stat:has(.fi-color-danger) { background-color: rgba(239, 68, 68, 0.12); }
+    .fi-wi-stats-overview-stat:has(.fi-color-warning) { background-color: rgba(245, 158, 11, 0.12); }
+    .fi-wi-stats-overview-stat:has(.fi-color-info) { background-color: rgba(59, 130, 246, 0.12); }
+    .fi-wi-stats-overview-stat:has(.fi-color-primary) { background-color: rgba(249, 115, 22, 0.12); }
+    .fi-wi-stats-overview-stat:has(.fi-color-gray) { background-color: rgba(156, 163, 175, 0.10); }
+</style>
+<style>
     /* Central no mesmo padrão do app (pedido do usuário 2026-10-08): paleta neutra escura da imagem
        de referência -- menu #17191f, topo #1e1f26, fundo #15161b, cards #202128 -- e laranja da marca
        como destaque. Tem os dois temas, claro e escuro. Vale sobre o tema compilado (theme.css). */

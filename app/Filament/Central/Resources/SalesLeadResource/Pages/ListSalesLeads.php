@@ -41,7 +41,11 @@ class ListSalesLeads extends ListRecords
             $cards[] = [
                 'chave' => $chave, 'rotulo' => $rotulo, 'filtros' => $estado, 'total' => $query->count(),
                 'ativo' => $atual == $this->normalizar($estado),
-                'paleta' => $stage ? CrmPalette::stage($stage) : null,
+                'paleta' => $stage ? CrmPalette::stage($stage) : CrmPalette::cor(match ($chave) {
+                    'sem_contato' => 'amber',
+                    'retorno_vencido' => 'orange',
+                    default => 'gray',
+                }),
             ];
         }
 
