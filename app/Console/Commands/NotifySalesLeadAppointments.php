@@ -36,7 +36,7 @@ class NotifySalesLeadAppointments extends Command
             // Reagendar para depois do último aviso volta a avisar.
             ->where(fn ($q) => $q->whereNull('last_alerted_at')
                 ->orWhereColumn('last_alerted_at', '<', 'scheduled_at'))
-            ->with('lead', 'assignedUser')
+            ->with('lead', 'prospect', 'assignedUser')
             ->get()
             ->filter(fn ($a) => $a->last_alerted_at === null || $a->scheduled_at->isPast());
 
@@ -52,7 +52,7 @@ class NotifySalesLeadAppointments extends Command
                     ->title($isOverdue ? 'Compromisso vencido: '.$appointment->title : 'Compromisso em breve: '.$appointment->title)
                     ->body(sprintf(
                         '%s — %s%s',
-                        $appointment->lead?->company_name ?? 'Lead',
+                        $appointment->empresaNome() ?? 'Lead',
                         $appointment->scheduled_at->format('d/m/Y H:i'),
                         $isOverdue ? ' (venceu)' : ''
                     ))

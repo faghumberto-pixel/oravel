@@ -29,7 +29,11 @@ class SalesAgendaWidget extends FullCalendarWidget
                 'center' => 'title',
                 'right' => 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
             ],
-            'initialView' => 'dayGridMonth',
+            'initialView' => match (request('visao')) {
+                'hoje' => 'listDay',
+                'semana' => 'listWeek',
+                default => 'dayGridMonth',
+            },
         ];
     }
 
@@ -40,11 +44,11 @@ class SalesAgendaWidget extends FullCalendarWidget
                 Carbon::parse($fetchInfo['start']),
                 Carbon::parse($fetchInfo['end']),
             ])
-            ->with('lead')
+            ->with('lead', 'prospect')
             ->get()
             ->map(fn (SalesLeadAppointment $appointment) => EventData::make()
                 ->id($appointment->id)
-                ->title($appointment->title.($appointment->lead?->company_name ? ' — '.$appointment->lead->company_name : ''))
+                ->title($appointment->title.($appointment->empresaNome() ? ' — '.$appointment->empresaNome() : ''))
                 ->start($appointment->scheduled_at->toIso8601String())
                 ->backgroundColor(SalesLeadAppointment::statusColors()[$appointment->status] ?? '#6b7280'))
             // ->toArray() de proposito, nao ->all() -- mesmo motivo
@@ -90,7 +94,7 @@ class SalesAgendaWidget extends FullCalendarWidget
                 ->options(fn () => SalesLead::pluck('company_name', 'id'))
                 ->searchable()
                 ->preload()
-                ->required(),
+                ->required(fn (?SalesLeadAppointment $record) => ! $record?->prospect_id),
             Forms\Components\TextInput::make('title')
                 ->label('Título')
                 ->required(),

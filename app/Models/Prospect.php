@@ -126,6 +126,56 @@ class Prospect extends Model
         return $r;
     }
 
+    protected static function booted(): void
+    {
+        static::saved(function (Prospect $p): void {
+            if ($p->wasRecentlyCreated || $p->wasChanged('proximo_contato')) {
+                $p->sincronizarCompromisso();
+            }
+        });
+    }
+
+    public function compromissos(): HasMany
+    {
+        return $this->hasMany(SalesLeadAppointment::class);
+    }
+
+    /**
+     * "Proximo contato" vira compromisso na Programacao (calendario): cria/move o compromisso
+     * pendente do prospect, ou remove quando a data e' apagada. Compromissos ja concluidos ficam.
+     */
+    public function sincronizarCompromisso(): void
+    {
+        $aberto = $this->compromissos()->where('status', '!=', SalesLeadAppointment::STATUS_CONCLUIDO)->orderBy('scheduled_at');
+
+        if (! $this->proximo_contato) {
+            $aberto->delete();
+
+            return;
+        }
+
+        $quando = $this->proximo_contato->copy()->setTime(9, 0);
+        $existente = $aberto->first();
+        $dados = ['scheduled_at' => $quando, 'sales_lead_id' => $this->sales_lead_id];
+
+        if ($existente) {
+            // preserva hora ajustada na agenda se o dia nao mudou
+            if ($existente->scheduled_at->isSameDay($quando)) {
+                unset($dados['scheduled_at']);
+            }
+            $existente->update($dados);
+
+            return;
+        }
+
+        $this->compromissos()->create($dados + [
+            'title' => 'Contato com prospect',
+            'type' => SalesLeadAppointment::TYPE_LIGACAO,
+            'status' => SalesLeadAppointment::STATUS_PENDENTE,
+            'assigned_user_id' => auth()->id(),
+        ]);
+    }
+
     public function lead(): BelongsTo
     {
         return $this->belongsTo(SalesLead::class, 'sales_lead_id');

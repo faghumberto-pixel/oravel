@@ -72,6 +72,7 @@ class ProspectToLead
             $lead->refreshInteractionCache();
 
             $p->update(['sales_lead_id' => $lead->id, 'status' => 'convertido']);
+            $p->compromissos()->update(['sales_lead_id' => $lead->id]);
 
             return $lead;
         });

@@ -34,6 +34,7 @@ class SalesLeadAppointment extends Model
 
     protected $fillable = [
         'sales_lead_id',
+        'prospect_id',
         'assigned_user_id',
         'title',
         'notes',
@@ -83,6 +84,17 @@ class SalesLeadAppointment extends Model
     public function lead(): BelongsTo
     {
         return $this->belongsTo(SalesLead::class, 'sales_lead_id');
+    }
+
+    public function prospect(): BelongsTo
+    {
+        return $this->belongsTo(Prospect::class);
+    }
+
+    /** Nome exibido na agenda: lead ou prospect de origem. */
+    public function empresaNome(): ?string
+    {
+        return $this->lead?->company_name ?? $this->prospect?->nome;
     }
 
     public function assignedUser(): BelongsTo

@@ -67,7 +67,10 @@ class CentralTopbarBrandingTest extends TestCase
 
         $response = $this->get('/central');
         $response->assertOk();
-        $response->assertSee('1');
-        $response->assertSee('compromisso hoje');
+        // Hoje conta so o de hoje (1); o de ontem nao entra.
+        $response->assertSee('<span class="text-gray-100 font-bold">1</span>', false);
+        $response->assertSee('hoje');
+        $response->assertSee('na semana');
+        $response->assertSee('visao=semana', false);
     }
 }
