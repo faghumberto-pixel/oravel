@@ -51,6 +51,8 @@ class ListProspects extends ListRecords
             $estado[$k] = in_array($k, ['nota_alta', 'retorno_vencido'], true) ? ['isActive' => true] : ['value' => $valor];
         }
         $this->tableFilters = $estado;
+        // Atribuir pelo servidor nao dispara o gancho do Filament que grava na sessao.
+        $this->updatedTableFilters();
         $this->resetPage();
     }
 

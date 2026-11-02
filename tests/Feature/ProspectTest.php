@@ -6,6 +6,7 @@ use App\Filament\Central\Resources\ProspectResource;
 use App\Filament\Central\Resources\ProspectResource\Pages\EditProspect;
 use App\Filament\Central\Resources\ProspectResource\Pages\ListProspects;
 use App\Filament\Central\Resources\ProspectResource\RelationManagers\ContatosRelationManager;
+use App\Filament\Central\Widgets\SalesAgendaWidget;
 use App\Models\Prospect;
 use App\Models\SalesLead;
 use App\Models\User;
@@ -224,5 +225,41 @@ class ProspectTest extends TestCase
         $this->assertStringContainsString('na semana', $html);
         $this->assertStringContainsString('visao=hoje', $html);
         $this->assertStringContainsString('visao=semana', $html);
+    }
+
+    public function test_filtros_busca_e_card_sobrevivem_a_sair_da_tela_e_voltar(): void
+    {
+        $a = $this->prospect(['nome' => 'Alfa Locacao', 'porte' => 'EPP', 'status' => 'enviado']);
+        $b = $this->prospect(['nome' => 'Beta Locacao', 'porte' => 'ME', 'status' => 'nao_enviado']);
+        $u = User::factory()->create(['email' => 'equipe@oravel.test']);
+
+        Livewire::actingAs($u)->test(ListProspects::class)
+            ->filterTable('porte', 'EPP')
+            ->call('filtrarCard', 'enviado')
+            ->searchTable('Alfa');
+
+        // "Voltar" de outro menu: componente novo, mesma sessao.
+        Livewire::actingAs($u)->test(ListProspects::class)
+            ->assertSet('tableFilters.porte.value', 'EPP')
+            ->assertSet('tableFilters.status.value', 'enviado')
+            ->assertSet('tableSearch', 'Alfa')
+            ->assertCanSeeTableRecords([$a])->assertCanNotSeeTableRecords([$b]);
+    }
+
+    public function test_compromisso_de_prospect_aparece_no_calendario_da_programacao(): void
+    {
+        $p = $this->prospect(['nome' => 'Locadora Agenda']);
+        $p->update(['proximo_contato' => now()->addDay()->toDateString()]);
+        $u = User::factory()->create(['email' => 'equipe@oravel.test']);
+
+        $this->actingAs($u);
+        $widget = new SalesAgendaWidget;
+        $eventos = $widget->fetchEvents([
+            'start' => now()->startOfMonth()->subWeek()->toIso8601String(),
+            'end' => now()->endOfMonth()->addWeek()->toIso8601String(),
+        ]);
+
+        $this->assertCount(1, $eventos);
+        $this->assertStringContainsString('Locadora Agenda', $eventos[0]['title']);
     }
 }
