@@ -27,33 +27,44 @@ class ListProspects extends ListRecords
         'retorno' => ['Retorno vencido', ['retorno_vencido' => '1']],
     ];
 
+    /** Filtros que os cards controlam; os demais (lote, porte, atividade, origem, ano) sao "base" e valem para todos os cards. */
+    private const CHAVES_CARD = ['status', 'empresa_nova', 'regiao_campinas', 'nota_alta', 'retorno_vencido'];
+
     public function filtrarCard(string $chave): void
     {
         $filtros = self::CARDS[$chave][1] ?? [];
 
-        $this->resetTableFiltersForm();
-        $estado = [];
+        // Mantem os filtros base; so troca o recorte do card.
+        $estado = $this->tableFilters ?? [];
+        foreach (self::CHAVES_CARD as $k) {
+            $estado[$k] = in_array($k, ['nota_alta', 'retorno_vencido'], true) ? ['isActive' => false] : ['value' => null];
+        }
         foreach ($filtros as $k => $valor) {
             $estado[$k] = in_array($k, ['nota_alta', 'retorno_vencido'], true) ? ['isActive' => true] : ['value' => $valor];
         }
-        $this->tableFilters = array_replace($this->tableFilters ?? [], $estado);
+        $this->tableFilters = $estado;
         $this->resetPage();
     }
 
     public function cards(): array
     {
-        $ativos = Prospect::filtrosAtivos($this->tableFilters);
+        $atuais = $this->tableFilters ?? [];
+        $ativosCard = array_intersect_key(Prospect::filtrosAtivos($atuais), array_flip(self::CHAVES_CARD));
+
+        // Filtros base + busca atuais, sem os filtros que o proprio card controla.
+        $base = array_diff_key($atuais, array_flip(self::CHAVES_CARD));
+
         $cards = [];
         foreach (self::CARDS as $chave => [$rotulo, $filtros]) {
-            $estado = [];
+            $estado = $base;
             foreach ($filtros as $k => $valor) {
-                $estado[$k] = ['value' => $valor, 'isActive' => true];
+                $estado[$k] = in_array($k, ['nota_alta', 'retorno_vencido'], true) ? ['isActive' => true] : ['value' => $valor];
             }
             $cards[] = [
                 'chave' => $chave,
                 'rotulo' => $rotulo,
-                'total' => Prospect::filtrar($estado)->count(),
-                'ativo' => $ativos == $filtros,
+                'total' => Prospect::filtrar($estado)->busca($this->tableSearch)->count(),
+                'ativo' => $ativosCard == $filtros,
             ];
         }
 
