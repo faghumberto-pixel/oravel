@@ -44,6 +44,19 @@ class TenantResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
+            Forms\Components\Section::make('Interface do sistema')
+                ->description('Para clientes que contrataram os módulos básicos: ative a interface Simples (formulários curtos, só o essencial, sem exclusão). Muda só as telas; os dados são os mesmos e dá para alternar sem perder nada.')
+                ->icon('heroicon-o-adjustments-horizontal')
+                ->schema([
+                    Forms\Components\Select::make('interface_simples')->label('Interface')
+                        ->options(['simples' => 'Simples (formulários curtos e cadastros editáveis)', 'completa' => 'Completa'])
+                        ->placeholder('Automática (simples, exceto quem contratou Locadora)')
+                        ->native(false)
+                        ->formatStateUsing(fn ($state) => $state === null ? null : ($state ? 'simples' : 'completa'))
+                        ->dehydrateStateUsing(fn ($state) => $state === null || $state === '' ? null : $state === 'simples')
+                        ->helperText(fn (?Tenant $record) => $record ? 'Hoje esta empresa usa a interface '.($record->interfaceSimples() ? 'SIMPLES' : 'COMPLETA').($record->interface_simples === null ? ' (automático pelo pacote contratado).' : ' (definido aqui).') : 'Em branco = automático: simples, exceto para quem contratou Locadora.'),
+                ]),
+
             Forms\Components\Section::make('Informações da Empresa')->schema([
                 Forms\Components\TextInput::make('name')->label('Nome')->required()->maxLength(255),
                 Forms\Components\TextInput::make('slug')->label('Slug')->unique(Tenant::class, 'slug', ignoreRecord: true)->required()->maxLength(255),
@@ -134,11 +147,6 @@ class TenantResource extends Resource
                     ->helperText('Também exigido pela Asaas pra gerar o Checkout de pagamento.')
                     ->maxLength(20),
                 Forms\Components\Toggle::make('onboarding_completed')->label('Onboarding Completo')->default(false),
-                Forms\Components\Select::make('interface_simples')->label('Interface do sistema')
-                    ->options(['simples' => 'Simples (formulários curtos e cadastros editáveis)', 'completa' => 'Completa'])->placeholder('Automática (simples, exceto quem contratou Locadora)')
-                    ->formatStateUsing(fn ($state) => $state === null ? null : ($state ? 'simples' : 'completa'))
-                    ->dehydrateStateUsing(fn ($state) => $state === null || $state === '' ? null : $state === 'simples')
-                    ->helperText('Muda só as telas; os dados são os mesmos. Pode alternar sem perder nada.'),
                 Forms\Components\Toggle::make('campo_ativo')->label('Área de campo (celular)')->default(false)
                     ->helperText('Liga o /campo (atalhos grandes para celular) e leva o celular para ele no login. Desligado por padrão nas empresas existentes.'),
             ])->columns(2),
@@ -219,6 +227,10 @@ class TenantResource extends Resource
                 Tables\Columns\TextColumn::make('plan.pacote')->label('Pacote')->badge()
                     ->formatStateUsing(fn (?string $state) => Pacotes::nome($state))
                     ->color(fn (?string $state) => $state ? 'primary' : 'gray'),
+                Tables\Columns\TextColumn::make('interface')->label('Interface')->badge()
+                    ->state(fn (Tenant $r) => $r->interfaceSimples() ? 'Simples' : 'Completa')
+                    ->color(fn (string $state) => $state === 'Simples' ? 'success' : 'gray')
+                    ->description(fn (Tenant $r) => $r->interface_simples === null ? 'automática' : 'definida na Central'),
                 Tables\Columns\TextColumn::make('segment')
                     ->label('Segmento')
                     ->badge()
@@ -246,6 +258,18 @@ class TenantResource extends Resource
                         null, '' => $query,
                         'personalizado' => $query->whereHas('plan', fn ($q) => $q->whereNull('pacote')),
                         default => $query->whereHas('plan', fn ($q) => $q->where('pacote', $data['value'])),
+                    }),
+                Tables\Filters\SelectFilter::make('interface')->label('Interface')
+                    ->options(['simples' => 'Simples', 'completa' => 'Completa'])
+                    ->query(function (Builder $query, array $data) {
+                        $v = $data['value'] ?? null;
+                        if (! $v) {
+                            return $query;
+                        }
+                        // Efetiva = valor forcado ou, se nulo, automatica pelo produto (usa o mesmo metodo do model).
+                        $ids = Tenant::query()->get()->filter(fn (Tenant $t) => $t->interfaceSimples() === ($v === 'simples'))->modelKeys();
+
+                        return $query->whereIn('id', $ids);
                     }),
                 Tables\Filters\SelectFilter::make('implantacao')->label('Implantação')
                     ->options(['contratada' => 'Contratada', 'dispensada' => 'Dispensada pelo cliente'])
