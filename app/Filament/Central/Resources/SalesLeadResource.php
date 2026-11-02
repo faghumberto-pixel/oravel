@@ -404,6 +404,12 @@ class SalesLeadResource extends Resource
             // caber os 6 filtros numa faixa horizontal em vez de empilhar.
             ->filtersLayout(Tables\Enums\FiltersLayout::AboveContent)
             ->filtersFormColumns(3)
+            // Mantem o ultimo filtro/busca/ordenacao ao recarregar a pagina
+            // (guardado na sessao do usuario) -- pedido do usuario.
+            ->persistFiltersInSession()
+            ->persistSearchInSession()
+            ->persistColumnSearchesInSession()
+            ->persistSortInSession()
             ->actions([
                 Tables\Actions\Action::make('advance')
                     ->label('Avançar Estágio')
