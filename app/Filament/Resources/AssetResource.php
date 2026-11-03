@@ -42,19 +42,8 @@ class AssetResource extends Resource
     /** Cor do cartao por status (nome da paleta de CrmPalette::cor). */
     public const COR_STATUS = [
         Asset::STATUS_DISPONIVEL => 'emerald', Asset::STATUS_OPERANDO => 'blue', Asset::STATUS_LOCADO => 'amber',
-        Asset::STATUS_MANUTENCAO => 'red', Asset::STATUS_AGUARDANDO_TRIAGEM => 'gray', Asset::STATUS_RESERVADO => 'indigo',
+        Asset::STATUS_MANUTENCAO => 'red', Asset::STATUS_AGUARDANDO_TRIAGEM => 'orange', Asset::STATUS_RESERVADO => 'pink',
         Asset::STATUS_QUARENTENA => 'purple',
-    ];
-
-    /** Fundo suave do cartao por status; com "!" porque o cartao do Filament tem bg-white (literais para o Tailwind gerar). */
-    public const FUNDO_STATUS = [
-        Asset::STATUS_DISPONIVEL => '!bg-emerald-50 dark:!bg-emerald-500/25',
-        Asset::STATUS_OPERANDO => '!bg-blue-50 dark:!bg-blue-500/25',
-        Asset::STATUS_LOCADO => '!bg-amber-50 dark:!bg-amber-500/25',
-        Asset::STATUS_MANUTENCAO => '!bg-red-50 dark:!bg-red-500/25',
-        Asset::STATUS_AGUARDANDO_TRIAGEM => '!bg-gray-50 dark:!bg-gray-500/25',
-        Asset::STATUS_RESERVADO => '!bg-indigo-50 dark:!bg-indigo-500/25',
-        Asset::STATUS_QUARENTENA => '!bg-purple-50 dark:!bg-purple-500/25',
     ];
 
     public const STATUS_ROTULOS = [
@@ -1017,7 +1006,7 @@ class AssetResource extends Resource
             // Lista em cartoes (mesmo padrao do CRM Comercial / Prospects): cor do status na lateral e no fundo.
             ->recordClasses(fn (Asset $record) => 'border-s-4 hover:!bg-transparent '
                 .CrmPalette::cor(self::COR_STATUS[$record->status] ?? 'gray')['border'].' '
-                .(self::FUNDO_STATUS[$record->status] ?? self::FUNDO_STATUS[Asset::STATUS_AGUARDANDO_TRIAGEM]))
+                .CrmPalette::fundoCartao(self::COR_STATUS[$record->status] ?? 'gray'))
             ->columns([
                 Tables\Columns\Layout\Stack::make([
                     static::tenantColumn(),

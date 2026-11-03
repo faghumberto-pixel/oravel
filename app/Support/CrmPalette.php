@@ -191,6 +191,27 @@ class CrmPalette
         return self::etapa(new CrmEtapa(['cor' => $nome ?: 'gray']));
     }
 
+    /**
+     * Fundo suave de um cartao de registro (listas em cartoes). Com "!" porque o cartao do Filament
+     * tem bg-white; literais para o Tailwind gerar as classes (o tema do admin escaneia este arquivo).
+     */
+    public static function fundoCartao(?string $nome): string
+    {
+        return match ($nome) {
+            'emerald' => '!bg-emerald-100 dark:!bg-emerald-500/35',
+            'blue' => '!bg-blue-100 dark:!bg-blue-500/35',
+            'amber' => '!bg-amber-100 dark:!bg-amber-500/35',
+            'red' => '!bg-red-100 dark:!bg-red-500/35',
+            'indigo' => '!bg-indigo-100 dark:!bg-indigo-500/35',
+            'purple' => '!bg-purple-100 dark:!bg-purple-500/35',
+            'orange' => '!bg-orange-100 dark:!bg-orange-500/35',
+            'teal' => '!bg-teal-100 dark:!bg-teal-500/35',
+            'cyan' => '!bg-cyan-100 dark:!bg-cyan-500/35',
+            'pink' => '!bg-pink-100 dark:!bg-pink-500/35',
+            default => '!bg-gray-100 dark:!bg-gray-500/35',
+        };
+    }
+
     /** Opções do seletor de cor da etapa (nome da paleta => rótulo). */
     public static function etapaCores(): array
     {

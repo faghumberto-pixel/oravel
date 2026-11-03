@@ -23,7 +23,7 @@ class ListAssets extends ListRecords
 
     protected static string $resource = AssetResource::class;
 
-    protected static string $view = 'filament.resources.assets-list';
+    protected static string $view = 'filament.resources.lista-com-cartoes';
 
     /** Cards de totais: Total, um por status (cor por significado) e por tipo de ativo. */
     protected function definicaoCartoes(): array
@@ -34,10 +34,10 @@ class ListAssets extends ListRecords
             'operando' => ['Em operação', ['status' => Asset::STATUS_OPERANDO], 'blue'],
             'locado' => ['Locado', ['status' => Asset::STATUS_LOCADO], 'amber'],
             'manutencao' => ['Em manutenção', ['status' => Asset::STATUS_MANUTENCAO], 'red'],
-            'triagem' => ['Aguardando triagem', ['status' => Asset::STATUS_AGUARDANDO_TRIAGEM], 'gray'],
-            'reservado' => ['Reservado', ['status' => Asset::STATUS_RESERVADO], 'indigo'],
+            'triagem' => ['Aguardando triagem', ['status' => Asset::STATUS_AGUARDANDO_TRIAGEM], 'orange'],
+            'reservado' => ['Reservado', ['status' => Asset::STATUS_RESERVADO], 'pink'],
             'quarentena' => ['Quarentena', ['status' => Asset::STATUS_QUARENTENA], 'purple'],
-            'veiculos' => ['Veículos', ['grupo' => Asset::GRUPO_VEICULO], 'cyan'],
+            'veiculos' => ['Veículos', ['grupo' => Asset::GRUPO_VEICULO], 'indigo'],
             'maquinas' => ['Máquinas / equipamentos', ['grupo' => Asset::GRUPO_MAQUINA], 'teal'],
         ];
     }

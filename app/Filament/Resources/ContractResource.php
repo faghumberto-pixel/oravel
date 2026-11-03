@@ -11,6 +11,7 @@ use App\Models\Contract;
 use App\Models\EquipmentReplacement;
 use App\Services\CepGeocodingService;
 use App\Services\SignatureService;
+use App\Support\CrmPalette;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -416,24 +417,53 @@ class ContractResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            // Lista em cartoes coloridos (padrao do app): cor por situacao/vigencia na lateral e no fundo.
+            ->recordClasses(fn (Contract $record) => 'border-s-4 hover:!bg-transparent '
+                .CrmPalette::cor(self::corDoContrato($record))['border'].' '
+                .CrmPalette::fundoCartao(self::corDoContrato($record)))
             ->columns([
-                static::tenantColumn(),
-                Tables\Columns\TextColumn::make('contract_number')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('service_category')
-                    ->label('Tipo de venda')
-                    ->badge()
-                    ->formatStateUsing(fn (?string $state) => $state ? (Contract::serviceCategoryLabels()[$state] ?? $state) : 'Locação'),
-                Tables\Columns\TextColumn::make('client.name')->label('Cliente'),
-                Tables\Columns\TextColumn::make('asset.patrimonio')->hidden(fn () => static::interfaceSimples())->label('Patrimônio'),
-                Tables\Columns\TextColumn::make('asset.name')->label('Ativo'),
-                Tables\Columns\TextColumn::make('start_date')->date('d/m/Y'),
-                Tables\Columns\IconColumn::make('is_active')->boolean()->label('Ativo'),
-                Tables\Columns\TextColumn::make('assinatura')
-                    ->label('Assinatura')
-                    ->badge()
-                    ->state(fn (Contract $record) => $record->signedSignatures()->exists() ? '🔒 Contrato assinado' : 'Assinatura pendente')
-                    ->color(fn (Contract $record) => $record->signedSignatures()->exists() ? 'success' : 'warning'),
+                Tables\Columns\Layout\Stack::make([
+                    static::tenantColumn(),
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\TextColumn::make('contract_number')->label('Contrato')->sortable()->searchable()
+                            ->weight('bold')->size('lg')->color('crmOrange'),
+                        Tables\Columns\TextColumn::make('status')->label('Situação')->badge()
+                            ->formatStateUsing(fn (?string $state): string => match ($state) {
+                                'Draft' => 'Rascunho', 'Ativo' => 'Ativo', 'Encerrado' => 'Encerrado', default => (string) $state,
+                            })
+                            ->color(fn (?string $state): string => match ($state) {
+                                'Ativo' => 'success', 'Encerrado' => 'gray', default => 'info',
+                            })
+                            ->grow(false),
+                    ]),
+                    Tables\Columns\TextColumn::make('client.name')->label('Cliente')->icon('heroicon-m-building-office')
+                        ->weight('semibold')->searchable(),
+                    Tables\Columns\TextColumn::make('asset.name')->label('Ativo')->icon('heroicon-m-truck')->color('gray')
+                        ->placeholder('Sem ativo')
+                        ->formatStateUsing(fn ($state, Contract $r): string => $state.(static::interfaceSimples() || ! $r->asset?->patrimonio ? '' : ' · Patrimônio '.$r->asset->patrimonio)),
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\TextColumn::make('service_category')
+                            ->label('Tipo de venda')
+                            ->badge()
+                            ->formatStateUsing(fn (?string $state) => $state ? (Contract::serviceCategoryLabels()[$state] ?? $state) : 'Locação')
+                            ->grow(false),
+                        Tables\Columns\TextColumn::make('assinatura')
+                            ->label('Assinatura')
+                            ->badge()
+                            ->state(fn (Contract $record) => $record->signedSignatures()->exists() ? '🔒 Contrato assinado' : 'Assinatura pendente')
+                            ->color(fn (Contract $record) => $record->signedSignatures()->exists() ? 'success' : 'warning')
+                            ->grow(false),
+                    ])->extraAttributes(['class' => 'flex-wrap gap-1']),
+                    Tables\Columns\TextColumn::make('start_date')->label('Vigência')->icon('heroicon-m-calendar-days')
+                        ->formatStateUsing(fn ($state, Contract $r): string => $r->start_date?->format('d/m/Y').' até '.($r->end_date?->format('d/m/Y') ?? 'sem data final'))
+                        ->color(fn (Contract $r) => self::vigenciaVencida($r) ? 'danger' : 'gray')
+                        ->sortable(),
+                ])->space(2),
             ])
+            ->contentGrid(['md' => 2, '2xl' => 3])
+            ->persistFiltersInSession()
+            ->persistSearchInSession()
+            ->persistSortInSession()
             ->filters([
                 Tables\Filters\SelectFilter::make('service_category')
                     ->label('Tipo de venda')
@@ -445,6 +475,14 @@ class ContractResource extends Resource
                         'Ativo' => 'Ativo',
                         'Encerrado' => 'Encerrado',
                     ]),
+                Tables\Filters\SelectFilter::make('assinatura')
+                    ->label('Assinatura')
+                    ->options(['assinado' => 'Contrato assinado', 'pendente' => 'Assinatura pendente'])
+                    ->query(fn ($query, array $data) => match ($data['value'] ?? null) {
+                        'assinado' => $query->whereHas('signedSignatures'),
+                        'pendente' => $query->whereDoesntHave('signedSignatures'),
+                        default => $query,
+                    }),
                 Tables\Filters\Filter::make('vigencia_vencida')
                     ->label('Vigência vencida (ainda Ativo)')
                     ->query(fn ($query) => $query->where('status', 'Ativo')
@@ -460,17 +498,40 @@ class ContractResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('ver_imprimir')
-                    ->label('Ver e imprimir')
-                    ->icon('heroicon-o-printer')
-                    ->url(fn (Contract $record) => route('contratos.visualizar', ['contract' => $record->id]))
-                    ->openUrlInNewTab(),
-                FaturarContratoAction::table(),
-                FaturarContratoAction::custoMargem(),
-                static::generateSignatureAction(),
-                static::copySignatureLinkAction(),
-                static::viewSignatureCertificateAction(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('ver_imprimir')
+                        ->label('Ver e imprimir')
+                        ->icon('heroicon-o-printer')
+                        ->url(fn (Contract $record) => route('contratos.visualizar', ['contract' => $record->id]))
+                        ->openUrlInNewTab(),
+                    FaturarContratoAction::table(),
+                    FaturarContratoAction::custoMargem(),
+                    static::generateSignatureAction(),
+                    static::copySignatureLinkAction(),
+                    static::viewSignatureCertificateAction(),
+                ]),
             ]);
+    }
+
+    /** Vigencia vencida: contrato ainda Ativo com data final no passado. */
+    public static function vigenciaVencida(Contract $c): bool
+    {
+        return $c->status === 'Ativo' && $c->end_date !== null && $c->end_date->lt(today());
+    }
+
+    /** Cor do cartao por significado: vencido = vermelho; vence em 30 dias = amarelo; ativo = verde; rascunho = ciano; encerrado = roxo. */
+    public static function corDoContrato(Contract $c): string
+    {
+        if (self::vigenciaVencida($c)) {
+            return 'red';
+        }
+        if ($c->status === 'Ativo' && $c->end_date !== null && $c->end_date->lte(today()->addDays(30))) {
+            return 'amber';
+        }
+
+        return match ($c->status) {
+            'Ativo' => 'emerald', 'Encerrado' => 'purple', default => 'cyan',
+        };
     }
 
     /**
