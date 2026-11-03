@@ -67,6 +67,12 @@
                             <span class="contract-value">R$ {{ number_format($document->implementationAmount(), 2, ',', '.') }}{{ $document->implementationInstallments() > 1 ? ' em '.$document->implementationInstallments().'x' : ' à vista' }}</span>
                         </div>
                     @endif
+                    @if ($document->plan?->temSiteEmail())
+                        <div>
+                            <span class="contract-label">Site e e-mail institucional</span>
+                            <span class="contract-value">{{ $document->plan->siteEmailModo() === \App\Models\Plan::SITE_EMAIL_INCLUSO ? 'Incluso, sem custo adicional (contrato de 12 meses, renovado com o contrato)' : 'R$ '.number_format($document->plan->siteEmailValor(), 2, ',', '.').' (cobrança única)' }} — ver Anexo III</span>
+                        </div>
+                    @endif
                 </div>
                 <div class="contract-modules">
                     <span class="contract-label">Módulos incluídos</span>
@@ -84,6 +90,7 @@
                 <div class="contract-section-title">Termos e Condições</div>
                 @include('partials.subscription-agreement-clauses', ['contract' => $document])
                 @include('partials.subscription-agreement-implementation', ['contract' => $document])
+                @include('partials.subscription-agreement-site-email', ['contract' => $document])
                 @include('partials.subscription-agreement-taxas', ['contract' => $document])
             </div>
         </div>

@@ -350,6 +350,40 @@ class ContratoResource extends Resource
                         ->visible(fn (?Plan $record) => $record?->campaign_tag === Pacotes::TAG_VITRINE),
                 ]),
 
+            Forms\Components\Section::make('Site e e-mail institucional')
+                ->description('Opcional. Quando ligado, passa a constar no contrato assinado (Anexo III). Oferta padrão: grátis no contrato de 12 meses, que renova com o contrato enquanto estiver pago; ou vendido à parte por valor único.')
+                ->icon('heroicon-o-globe-alt')
+                ->schema([
+                    Forms\Components\Select::make('site_email_modo')
+                        ->label('Site e e-mail institucional')
+                        ->options(Plan::siteEmailOpcoes())
+                        ->default(Plan::SITE_EMAIL_NAO)
+                        ->native(false)
+                        ->live()
+                        ->required()
+                        ->helperText('Incluso: sem custo adicional, enquanto o contrato (12 meses, renovado automaticamente) estiver em dia; some junto com o contrato. Vendido à parte: valor único, abaixo.'),
+
+                    Forms\Components\TextInput::make('site_email_valor')
+                        ->label('Valor único do site e e-mail')
+                        ->numeric()->prefix('R$')->minValue(0.01)
+                        ->default(fn () => config('site_email.valor_avulso'))
+                        ->visible(fn (Get $get) => $get('site_email_modo') === Plan::SITE_EMAIL_AVULSO)
+                        ->required(fn (Get $get) => $get('site_email_modo') === Plan::SITE_EMAIL_AVULSO)
+                        ->helperText('Padrão R$ 500,00 (site + e-mail juntos). Cobrança única; este valor aparece no contrato.'),
+
+                    Forms\Components\Toggle::make('site_email_cliente_possui')
+                        ->label('O cliente já tem site e e-mail')
+                        ->visible(fn (Get $get) => $get('site_email_modo') !== Plan::SITE_EMAIL_NAO)
+                        ->helperText('Só um aviso interno: mesmo assim a Oravel oferece, e o item continua constando no contrato.'),
+
+                    Forms\Components\Textarea::make('site_email_escopo')
+                        ->label('Escopo combinado (aparece no Anexo III)')
+                        ->rows(3)
+                        ->visible(fn (Get $get) => $get('site_email_modo') !== Plan::SITE_EMAIL_NAO)
+                        ->placeholder('Ex.: domínio, páginas do site, quantidade de caixas de e-mail. Se ficar vazio, vale o descrito na proposta comercial aceita.')
+                        ->columnSpanFull(),
+                ])->columns(2),
+
             Forms\Components\Section::make('Módulos incluídos')
                 ->description('Selecione o que esse contrato específico libera pro cliente, agrupado pelos mesmos menus do painel.')
                 ->schema([
@@ -465,6 +499,17 @@ class ContratoResource extends Resource
                         'semiannual' => 'Semestral',
                         'annual' => 'Anual',
                         default => 'Mensal',
+                    }),
+                Tables\Columns\TextColumn::make('site_email_modo')->label('Site e e-mail')->badge()
+                    ->formatStateUsing(fn (?string $state, Plan $record) => match ($record->siteEmailModo()) {
+                        Plan::SITE_EMAIL_INCLUSO => 'Incluso',
+                        Plan::SITE_EMAIL_AVULSO => 'À parte · R$ '.number_format($record->siteEmailValor(), 2, ',', '.'),
+                        default => '—',
+                    })
+                    ->color(fn (Plan $record) => match ($record->siteEmailModo()) {
+                        Plan::SITE_EMAIL_INCLUSO => 'success',
+                        Plan::SITE_EMAIL_AVULSO => 'info',
+                        default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('features')
                     ->label('Módulos')

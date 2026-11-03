@@ -503,6 +503,31 @@ class Tenant extends Model
         return ($this->payment_method ?? $this->plan?->payment_method ?? 'cartao') === 'boleto_pix' ? 'boleto_pix' : 'cartao';
     }
 
+    /**
+     * Situação do site e e-mail institucional da empresa, para a Central: rótulo + cor do badge.
+     * O incluso acompanha o contrato: suspenso junto com o acesso (inadimplência/cancelamento). O avulso
+     * (cobrança única) também só vale com o contrato em dia.
+     *
+     * @return array{label: string, color: string}
+     */
+    public function siteEmailSituacao(): array
+    {
+        $plano = $this->plan;
+        if (! $plano || ! $plano->temSiteEmail()) {
+            return ['label' => 'Não incluído', 'color' => 'gray'];
+        }
+
+        $base = $plano->siteEmailModo() === Plan::SITE_EMAIL_INCLUSO
+            ? 'Incluso (sem custo)'
+            : 'Vendido à parte (R$ '.number_format($plano->siteEmailValor(), 2, ',', '.').')';
+
+        if ($this->asaas_payment_status === self::PAYMENT_STATUS_CANCELADO || $this->isAccessBlockedForNonPayment()) {
+            return ['label' => $base.' — suspenso', 'color' => 'danger'];
+        }
+
+        return ['label' => $base, 'color' => $plano->siteEmailModo() === Plan::SITE_EMAIL_INCLUSO ? 'success' : 'info'];
+    }
+
     /** 'separada' (cobranças avulsas) ou 'somada' (parcelas somadas às primeiras mensalidades). */
     public function implementationBillingMode(): string
     {

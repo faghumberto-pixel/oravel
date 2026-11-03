@@ -231,6 +231,10 @@ class TenantResource extends Resource
                     ->state(fn (Tenant $r) => $r->interfaceSimples() ? 'Simples' : 'Completa')
                     ->color(fn (string $state) => $state === 'Simples' ? 'success' : 'gray')
                     ->description(fn (Tenant $r) => $r->interface_simples === null ? 'automática' : 'definida na Central'),
+                Tables\Columns\TextColumn::make('site_email')->label('Site e e-mail')->badge()
+                    ->state(fn (Tenant $r) => $r->siteEmailSituacao()['label'])
+                    ->color(fn (Tenant $r) => $r->siteEmailSituacao()['color'])
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('segment')
                     ->label('Segmento')
                     ->badge()
