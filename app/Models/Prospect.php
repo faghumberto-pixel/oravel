@@ -25,6 +25,22 @@ class Prospect extends Model
         'convertido' => 'Virou lead',
     ];
 
+    /** Estagio / resultado do ultimo contato (campo livre de funil, alem da "situacao" da abordagem). */
+    public const RESULTADOS = [
+        'nao_atendeu' => 'Não atendeu a ligação',
+        'nao_respondeu' => 'Não respondeu a mensagem',
+        'numero_invalido' => 'Telefone inválido / não é a empresa',
+        'ja_tem_sistema' => 'Já tem sistema',
+        'sem_interesse_momento' => 'Sem interesse no momento',
+        'sem_interesse' => 'Sem interesse',
+        'pediu_email' => 'Pediu para enviar e-mail',
+        'quer_reuniao' => 'Quer agendar reunião',
+        'reuniao_agendada' => 'Reunião agendada',
+        'proposta_enviada' => 'Proposta enviada',
+        'contrato_andamento' => 'Contrato em andamento',
+        'fechado' => 'Fechado (virou cliente)',
+    ];
+
     public const CANAIS = ['whatsapp' => 'WhatsApp', 'telefone' => 'Telefone', 'email' => 'E-mail', 'visita' => 'Visita', 'outro' => 'Outro'];
 
     public const FOLLOW_UP = 'Olá, {nome}. Só passando para dizer que o convite dos 30 dias grátis continua de pé. Se quiser, deixo o cadastro dos seus equipamentos montado e você só confere. Se não for o momento, sem problema.';
@@ -82,7 +98,7 @@ class Prospect extends Model
         $f = $f ?? [];
         $v = fn (string $k) => $f[$k]['value'] ?? null;
 
-        foreach (['status', 'lote', 'porte', 'atividade', 'origem'] as $campo) {
+        foreach (['status', 'resultado', 'lote', 'porte', 'atividade', 'origem'] as $campo) {
             if (filled($v($campo))) {
                 $q->where($campo, $v($campo));
             }
@@ -107,7 +123,7 @@ class Prospect extends Model
     {
         $f = $f ?? [];
         $r = [];
-        foreach (['status', 'lote', 'porte', 'atividade', 'origem', 'empresa_nova', 'regiao_campinas'] as $k) {
+        foreach (['status', 'resultado', 'lote', 'porte', 'atividade', 'origem', 'empresa_nova', 'regiao_campinas'] as $k) {
             if (filled($f[$k]['value'] ?? null)) {
                 $r[$k] = (string) $f[$k]['value'];
             }

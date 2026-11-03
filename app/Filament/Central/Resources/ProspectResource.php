@@ -49,6 +49,7 @@ class ProspectResource extends Resource
         return $form->schema([
             Forms\Components\Section::make('Acompanhamento')->schema([
                 Forms\Components\Select::make('status')->label('Situação')->options(Prospect::STATUS)->required()->native(false),
+                Forms\Components\Select::make('resultado')->label('Estágio / resultado')->options(Prospect::RESULTADOS)->native(false)->placeholder('Sem resultado registrado'),
                 Forms\Components\TextInput::make('lote')->label('Lote')->numeric()->minValue(1),
                 Forms\Components\DatePicker::make('proximo_contato')->label('Próximo contato')->native(false)->displayFormat('d/m/Y'),
                 Forms\Components\Textarea::make('observacoes')->label('Observações e detalhes')->rows(4)->columnSpanFull(),
@@ -98,6 +99,8 @@ class ProspectResource extends Resource
                             ->formatStateUsing(fn ($state) => 'Nota '.$state)->grow(false),
                     ]),
                     Tables\Columns\SelectColumn::make('status')->label('Situação')->options(Prospect::STATUS)->selectablePlaceholder(false),
+                    Tables\Columns\SelectColumn::make('resultado')->label('Estágio / resultado')->options(Prospect::RESULTADOS)
+                        ->placeholder('Sem resultado registrado')->selectablePlaceholder(true),
                     Tables\Columns\TextColumn::make('atividade')->label('Atividade')->icon('heroicon-m-briefcase')->color('gray')->wrap()->placeholder('Sem atividade'),
                     Tables\Columns\TextColumn::make('telefone')->label('Telefone')->icon('heroicon-m-phone')->copyable()->copyMessage('Número copiado')->searchable()
                         ->formatStateUsing(fn ($state, Prospect $r): string => $state.($r->ehCelular() ? ' (celular)' : ' (fixo: ligar)'))
@@ -115,6 +118,7 @@ class ProspectResource extends Resource
             ->searchPlaceholder('Buscar empresa, sócio, CNPJ ou telefone')
             ->filters([
                 Tables\Filters\SelectFilter::make('status')->label('Situação')->options(Prospect::STATUS),
+                Tables\Filters\SelectFilter::make('resultado')->label('Estágio / resultado')->options(Prospect::RESULTADOS),
                 Tables\Filters\SelectFilter::make('lote')->label('Lote')->options(fn () => Prospect::whereNotNull('lote')->distinct()->orderBy('lote')->pluck('lote', 'lote')->all()),
                 Tables\Filters\SelectFilter::make('origem')->label('Lista de origem')->options(fn () => Prospect::whereNotNull('origem')->distinct()->orderBy('origem')->pluck('origem', 'origem')->all()),
                 Tables\Filters\SelectFilter::make('porte')->options(fn () => Prospect::whereNotNull('porte')->distinct()->pluck('porte', 'porte')->all()),
