@@ -20,6 +20,7 @@ $iscas = [
         'label' => 'Isca: planilha de manutenção preventiva',
         'pagina' => '/materiais-gratuitos/planilha-manutencao-preventiva/',
         'arquivo' => 'Oravel_Controle_Manutencao_Preventiva.xlsx', // fica no app, em storage/app/private
+        'exige_aceite' => true, // a página tem a caixa de consentimento (política de privacidade)
     ],
     'isca-controle-combustivel-oleo' => [
         'label' => 'Isca: controle de combustível e óleo',

@@ -19,6 +19,7 @@ class IscaPlanilhaTest extends TestCase
         'email' => 'maria.isca@example.com',
         'phone' => '(19) 99999-1234',
         'company' => 'Locadora Isca Teste',
+        'aceite' => '1',
     ];
 
     protected function setUp(): void
@@ -35,6 +36,8 @@ class IscaPlanilhaTest extends TestCase
             ->assertSee('name="description"', false)
             ->assertSee('name="_token"', false)
             ->assertSee('name="email"', false)
+            ->assertSee('name="aceite"', false)
+            ->assertSee('href="/politica-de-privacidade/"', false)
             ->assertSee('Desenvolvimento e tecnologia')
             ->assertSee('#F26B1D', false)
             ->assertSee('Manrope', false);
@@ -51,6 +54,7 @@ class IscaPlanilhaTest extends TestCase
         $lead = SalesLead::where('email', 'maria.isca@example.com')->firstOrFail();
         $this->assertSame('Locadora Isca Teste', $lead->company_name);
         $this->assertSame('isca-planilha-manutencao', $lead->inbound_details['origem']);
+        $this->assertStringContainsString('Aceitou receber o material', $lead->inbound_details['aceite_privacidade']);
 
         Mail::assertQueued(MaterialGratuitoMail::class, function (MaterialGratuitoMail $m) {
             $anexos = $m->attachments();
@@ -85,7 +89,7 @@ class IscaPlanilhaTest extends TestCase
         Mail::fake();
 
         $this->post('/planilha-manutencao-preventiva', ['email' => 'invalido'])
-            ->assertSessionHasErrors(['name', 'email', 'phone', 'company']);
+            ->assertSessionHasErrors(['name', 'email', 'phone', 'company', 'aceite']);
         Mail::assertNothingQueued();
 
         $this->post('/planilha-manutencao-preventiva', $this->dados);
@@ -101,6 +105,18 @@ class IscaPlanilhaTest extends TestCase
 
         $this->post('/planilha-manutencao-preventiva', $this->dados + ['website' => 'http://spam'])
             ->assertSessionHas('planilha_enviada');
+
+        $this->assertSame(0, SalesLead::where('email', 'maria.isca@example.com')->count());
+        Mail::assertNothingQueued();
+    }
+
+    public function test_sem_o_aceite_nao_ha_lead_nem_email(): void
+    {
+        Mail::fake();
+        $dados = $this->dados;
+        unset($dados['aceite']);
+
+        $this->post('/planilha-manutencao-preventiva', $dados)->assertSessionHasErrors('aceite');
 
         $this->assertSame(0, SalesLead::where('email', 'maria.isca@example.com')->count());
         Mail::assertNothingQueued();

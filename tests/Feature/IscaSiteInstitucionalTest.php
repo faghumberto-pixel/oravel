@@ -187,19 +187,28 @@ class IscaSiteInstitucionalTest extends TestCase
         $this->assertSame($doApp, $doSite);
     }
 
-    public function test_isca_com_caixa_de_consentimento_exige_o_aceite_no_servidor_e_na_pagina(): void
+    public function test_toda_isca_exige_o_aceite_na_pagina_e_no_servidor(): void
     {
-        $html = file_get_contents($this->site.'/materiais-gratuitos/controle-combustivel-oleo/index.html');
-        $this->assertStringContainsString('name="aceite" value="1" required', $html);
-        $this->assertStringContainsString('href="/politica-de-privacidade/"', $html);
+        $iscas = $this->iscasDoPhp();
+        $this->assertNotEmpty($iscas);
+        $php = file_get_contents($this->site.'/lead-isca.php');
 
-        $ok = ['origem' => 'isca-controle-combustivel-oleo', 'name' => 'Maria Souza', 'company' => 'Locadora X', 'email' => 'maria@example.com', 'phone' => '(19) 99999-1234'];
+        foreach ($iscas as $origem => $d) {
+            // politica: toda isca coleta o consentimento (LGPD)
+            $this->assertMatchesRegularExpression("/'{$origem}' => \\[[^\\]]*'exige_aceite' => true/s", $php, "Isca sem exige_aceite: {$origem}");
 
-        [$h, $out] = $this->rodar('POST', $ok); // sem aceite
-        $this->assertSame('/materiais-gratuitos/controle-combustivel-oleo/?erro=dados#baixar', $this->location($h));
-        $this->assertStringNotContainsString('LEAD-GRAVADO', $out);
+            $html = file_get_contents($this->site.$d['pagina'].'index.html');
+            $this->assertStringContainsString('name="aceite" value="1" required', $html, "Pagina sem caixa de aceite: {$d['pagina']}");
+            $this->assertStringContainsString('href="/politica-de-privacidade/"', $html);
 
-        [$h] = $this->rodar('POST', $ok + ['aceite' => '1', 'website' => 'spam']); // com aceite passa da validacao (honeypot encerra antes)
-        $this->assertSame('/materiais-gratuitos/controle-combustivel-oleo/?enviado=1#baixar', $this->location($h));
+            $ok = ['origem' => $origem, 'name' => 'Maria Souza', 'company' => 'Locadora X', 'email' => 'maria@example.com', 'phone' => '(19) 99999-1234'];
+
+            [$h, $out] = $this->rodar('POST', $ok); // sem aceite
+            $this->assertSame($d['pagina'].'?erro=dados#baixar', $this->location($h), "Sem aceite deveria dar erro=dados: {$origem}");
+            $this->assertStringNotContainsString('LEAD-GRAVADO', $out);
+
+            [$h] = $this->rodar('POST', $ok + ['aceite' => '1', 'website' => 'spam']); // com aceite passa da validacao (honeypot encerra antes)
+            $this->assertSame($d['pagina'].'?enviado=1#baixar', $this->location($h));
+        }
     }
 }

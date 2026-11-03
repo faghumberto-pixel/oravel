@@ -39,6 +39,7 @@ class IscaPlanilhaController extends Controller
             'email' => ['required', 'email:rfc', 'max:160'],
             'phone' => ['required', 'string', 'max:30', 'regex:/^[0-9 ()+\-.]{8,30}$/'],
             'company' => ['required', 'string', 'min:2', 'max:120'],
+            'aceite' => ['accepted'],
             'utm_source' => ['nullable', 'string', 'max:200'],
             'utm_medium' => ['nullable', 'string', 'max:200'],
             'utm_campaign' => ['nullable', 'string', 'max:200'],
@@ -50,6 +51,7 @@ class IscaPlanilhaController extends Controller
             'phone.required' => 'Informe seu WhatsApp.',
             'phone.regex' => 'Informe o WhatsApp com DDD, só números.',
             'company.required' => 'Informe o nome da empresa.',
+            'aceite.accepted' => 'Marque o aceite para receber a planilha.',
         ]);
 
         $this->registrarLead($dados);
@@ -77,6 +79,7 @@ class IscaPlanilhaController extends Controller
                     'utm_medium' => $d['utm_medium'] ?? null,
                     'utm_campaign' => $d['utm_campaign'] ?? null,
                     'gclid' => $d['gclid'] ?? null,
+                    'aceite_privacidade' => 'Aceitou receber o material e ser contatado pela Oravel (política de privacidade) em '.now()->format('d/m/Y H:i'),
                     'recebido_em' => now()->format('d/m/Y H:i'),
                 ], fn ($v) => filled($v));
 
