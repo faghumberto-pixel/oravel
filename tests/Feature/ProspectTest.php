@@ -262,4 +262,16 @@ class ProspectTest extends TestCase
         $this->assertCount(1, $eventos);
         $this->assertStringContainsString('Locadora Agenda', $eventos[0]['title']);
     }
+
+    public function test_lista_de_prospects_usa_cartoes_coloridos_como_o_crm_comercial(): void
+    {
+        $this->prospect(['nome' => 'Cartao Azul', 'status' => 'enviado', 'telefone' => '(19) 98888-7777', 'socio' => 'Maria Souza']);
+        $this->prospect(['nome' => 'Cartao Verde', 'status' => 'respondeu']);
+        $u = User::factory()->create(['email' => 'equipe@oravel.test']);
+
+        Livewire::actingAs($u)->test(ListProspects::class)
+            ->assertSee('Cartao Azul')->assertSee('Maria Souza')->assertSee('(celular)')
+            ->assertSeeHtml('border-blue-600')->assertSeeHtml('border-emerald-600')
+            ->assertSeeHtml('fi-ta-content-grid');
+    }
 }
