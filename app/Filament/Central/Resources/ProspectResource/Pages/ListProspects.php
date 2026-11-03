@@ -94,6 +94,7 @@ class ListProspects extends ListRecords
                 'rotulo' => $rotulo,
                 'total' => Prospect::filtrar($estado)->busca($this->tableSearch)->count(),
                 'ativo' => $ativosCard == $filtros,
+                'cor' => self::CORES[$chave] ?? self::CORES_RESULTADO[substr($chave, 4)] ?? 'gray',
                 'paleta' => CrmPalette::cor(self::CORES[$chave] ?? self::CORES_RESULTADO[substr($chave, 4)] ?? 'gray'),
             ];
         }
