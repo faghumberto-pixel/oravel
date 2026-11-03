@@ -8,8 +8,8 @@
     </div>
     <div style="padding:28px;font-size:16px;line-height:1.6">
       <p style="margin-top:0">Olá, {{ $nome }}!</p>
-      <p>Segue em anexo a <strong>planilha de controle de manutenção preventiva</strong> (Excel). Abra o arquivo, cadastre seus ativos, defina os intervalos em dias e/ou horas e a planilha mostra o que está em dia, em atenção ou vencido.</p>
-      <p>Quando ela ficar pequena para a sua operação, a Oravel organiza ativos, manutenção e serviços em um só sistema. É só responder este e-mail ou falar pelo <a href="https://wa.me/5519999332615" style="color:#C2410C">WhatsApp (19) 99933-2615</a>.</p>
+      <p>Segue em anexo a <strong>{{ $material['material'] }}</strong> (Excel). {{ $material['miolo'] }}</p>
+      <p>Quando a planilha ficar pequena para a sua operação, a Oravel organiza ativos, manutenção e serviços em um só sistema. É só responder este e-mail ou falar pelo <a href="https://wa.me/5519999332615" style="color:#C2410C">WhatsApp (19) 99933-2615</a>.</p>
       <p style="margin-bottom:0">Equipe Oravel</p>
     </div>
     <div style="padding:16px 28px;background:#F9FAFB;font-size:12px;color:#6B7280">

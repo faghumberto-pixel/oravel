@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Support\Iscas;
 use Tests\TestCase;
 
 /**
@@ -173,5 +174,32 @@ class IscaSiteInstitucionalTest extends TestCase
                 $this->assertStringNotContainsString('</div></div><a href="'.$url.'">'.$rotulo.'</a>', $html, "{$rotulo} ainda no menu: {$rel}");
             }
         }
+    }
+
+    public function test_toda_isca_do_site_existe_no_cadastro_do_app_e_vice_versa(): void
+    {
+        // Se faltar no app, o lead entra mas o e-mail nunca sai; se faltar no site, a isca nao tem rota de envio.
+        $doSite = array_keys($this->iscasDoPhp());
+        $doApp = array_keys(Iscas::materiais());
+        sort($doSite);
+        sort($doApp);
+
+        $this->assertSame($doApp, $doSite);
+    }
+
+    public function test_isca_com_caixa_de_consentimento_exige_o_aceite_no_servidor_e_na_pagina(): void
+    {
+        $html = file_get_contents($this->site.'/materiais-gratuitos/controle-combustivel-oleo/index.html');
+        $this->assertStringContainsString('name="aceite" value="1" required', $html);
+        $this->assertStringContainsString('href="/politica-de-privacidade/"', $html);
+
+        $ok = ['origem' => 'isca-controle-combustivel-oleo', 'name' => 'Maria Souza', 'company' => 'Locadora X', 'email' => 'maria@example.com', 'phone' => '(19) 99999-1234'];
+
+        [$h, $out] = $this->rodar('POST', $ok); // sem aceite
+        $this->assertSame('/materiais-gratuitos/controle-combustivel-oleo/?erro=dados#baixar', $this->location($h));
+        $this->assertStringNotContainsString('LEAD-GRAVADO', $out);
+
+        [$h] = $this->rodar('POST', $ok + ['aceite' => '1', 'website' => 'spam']); // com aceite passa da validacao (honeypot encerra antes)
+        $this->assertSame('/materiais-gratuitos/controle-combustivel-oleo/?enviado=1#baixar', $this->location($h));
     }
 }

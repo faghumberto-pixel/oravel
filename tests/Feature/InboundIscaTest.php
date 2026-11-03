@@ -2,10 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Mail\PlanilhaManutencaoMail;
+use App\Mail\MaterialGratuitoMail;
 use App\Models\Plan;
 use App\Models\SalesLead;
 use App\Models\Tenant;
+use App\Support\Iscas;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
@@ -56,7 +57,7 @@ class InboundIscaTest extends TestCase
         $lead = SalesLead::where('email', 'maria.isca@example.com')->firstOrFail();
         $this->assertSame('isca-planilha-manutencao', $lead->inbound_details['origem']);
 
-        Mail::assertSent(PlanilhaManutencaoMail::class, fn (PlanilhaManutencaoMail $m) => $m->hasTo('maria.isca@example.com') && $m->nome === 'Maria Souza' && count($m->attachments()) === 1);
+        Mail::assertSent(MaterialGratuitoMail::class, fn (MaterialGratuitoMail $m) => $m->hasTo('maria.isca@example.com') && $m->nome === 'Maria Souza' && $m->origem === 'isca-planilha-manutencao' && count($m->attachments()) === 1);
     }
 
     public function test_falha_no_smtp_nao_perde_o_lead_e_avisa_o_site_que_nao_enviou(): void
@@ -76,5 +77,39 @@ class InboundIscaTest extends TestCase
 
         $this->assertArrayNotHasKey('email_enviado', $r->json());
         Mail::assertNothingSent();
+    }
+
+    public function test_controle_combustivel_envia_o_arquivo_certo_e_guarda_o_aceite_no_lead(): void
+    {
+        Mail::fake();
+
+        $this->enviar(['origem' => 'isca-controle-combustivel-oleo', 'aceite' => true])->assertCreated()->assertJson(['email_enviado' => true]);
+
+        Mail::assertSent(MaterialGratuitoMail::class, fn (MaterialGratuitoMail $m) => $m->origem === 'isca-controle-combustivel-oleo'
+            && str_ends_with(MaterialGratuitoMail::caminho($m->origem), 'Oravel_Controle_Combustivel_Oleo.xlsx')
+            && count($m->attachments()) === 1
+            && $m->envelope()->subject === 'Sua planilha de controle de combustível e óleo (Oravel)');
+
+        $lead = SalesLead::where('email', 'maria.isca@example.com')->firstOrFail();
+        $this->assertSame('isca-controle-combustivel-oleo', $lead->inbound_details['origem']);
+        $this->assertStringContainsString('Aceitou receber o material', $lead->inbound_details['aceite_privacidade']);
+    }
+
+    public function test_sem_aceite_o_lead_nao_registra_consentimento(): void
+    {
+        Mail::fake();
+
+        $this->enviar()->assertCreated();
+
+        $this->assertArrayNotHasKey('aceite_privacidade', SalesLead::where('email', 'maria.isca@example.com')->firstOrFail()->inbound_details);
+    }
+
+    public function test_todo_material_cadastrado_tem_o_arquivo_no_storage_e_texto_completo(): void
+    {
+        foreach (Iscas::materiais() as $origem => $m) {
+            $this->assertFileExists(MaterialGratuitoMail::caminho($origem), "Falta o arquivo da isca {$origem}: storage/app/private/{$m['arquivo']}");
+            $html = (new MaterialGratuitoMail($origem, 'Maria'))->render();
+            $this->assertStringContainsString($m['material'], $html);
+        }
     }
 }

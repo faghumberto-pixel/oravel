@@ -71,6 +71,8 @@ class InboundLeadController extends Controller
             'utm_term' => ['nullable', 'string', 'max:200'],
             'utm_content' => ['nullable', 'string', 'max:200'],
             'landing_url' => ['nullable', 'string', 'max:255'],
+            // Consentimento marcado no formulário (iscas): guardado no lead como registro do aceite (LGPD).
+            'aceite' => ['nullable', 'boolean'],
         ]);
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
@@ -202,6 +204,7 @@ class InboundLeadController extends Controller
             'gclid' => $data['gclid'] ?? null,
             'gbraid' => $data['gbraid'] ?? null,
             'wbraid' => $data['wbraid'] ?? null,
+            'aceite_privacidade' => filter_var($data['aceite'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'Aceitou receber o material e ser contatado pela Oravel (política de privacidade) em '.now()->format('d/m/Y H:i') : null,
             'recebido_em' => now()->format('d/m/Y H:i'),
         ], fn ($v) => filled($v));
 

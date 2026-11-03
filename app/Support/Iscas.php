@@ -2,25 +2,44 @@
 
 namespace App\Support;
 
-use App\Mail\PlanilhaManutencaoMail;
-use Illuminate\Mail\Mailable;
+use App\Mail\MaterialGratuitoMail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 /**
- * Iscas (materiais gratuitos) do site: origem do lead => e-mail que entrega o material.
+ * Iscas (materiais gratuitos) do site: origem do lead => material entregue por e-mail.
  * O site (HostGator) só entrega o lead ao app (POST /api/inbound/leads); quem envia o e-mail é o app, que
  * tem a caixa de e-mail configurada e funcionando -- o site não guarda senha de SMTP.
  *
- * Nova isca: 1 linha aqui + o Mailable + o item em public_html/lead-isca.php + a página em /materiais-gratuitos/.
+ * Nova isca: 1 item em materiais() + o arquivo em storage/app/private/ + o item em public_html/lead-isca.php
+ * + a página em public_html/materiais-gratuitos/<slug>/ (+ card no índice e sitemap). Sem classe nova de e-mail.
  */
 class Iscas
 {
-    /** @return array<string, callable(array): Mailable> */
-    public static function mails(): array
+    private const XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+    /**
+     * origem => assunto, nome do material (no texto), o que fazer com ele e o arquivo (em storage/app/private/).
+     *
+     * @return array<string, array{assunto: string, material: string, miolo: string, arquivo: string, mime: string}>
+     */
+    public static function materiais(): array
     {
         return [
-            'isca-planilha-manutencao' => fn (array $d) => new PlanilhaManutencaoMail((string) ($d['name'] ?? '')),
+            'isca-planilha-manutencao' => [
+                'assunto' => 'Sua planilha de manutenção preventiva (Oravel)',
+                'material' => 'planilha de controle de manutenção preventiva',
+                'miolo' => 'Abra o arquivo, cadastre seus ativos, defina os intervalos em dias e/ou horas e a planilha mostra o que está em dia, em atenção ou vencido.',
+                'arquivo' => 'Oravel_Controle_Manutencao_Preventiva.xlsx',
+                'mime' => self::XLSX,
+            ],
+            'isca-controle-combustivel-oleo' => [
+                'assunto' => 'Sua planilha de controle de combustível e óleo (Oravel)',
+                'material' => 'planilha de controle de combustível e óleo',
+                'miolo' => 'Cadastre seus equipamentos, registre os abastecimentos e as trocas de óleo, e a planilha calcula o consumo médio, o custo por hora ou km e mostra quando é a próxima troca (em dia, atenção ou vencido).',
+                'arquivo' => 'Oravel_Controle_Combustivel_Oleo.xlsx',
+                'mime' => self::XLSX,
+            ],
         ];
     }
 
@@ -30,13 +49,12 @@ class Iscas
      */
     public static function enviar(array $data): ?bool
     {
-        $monta = self::mails()[$data['origem'] ?? ''] ?? null;
-        if ($monta === null) {
+        if (! isset(self::materiais()[$data['origem'] ?? ''])) {
             return null;
         }
 
         try {
-            Mail::to($data['email'])->sendNow($monta($data));
+            Mail::to($data['email'])->sendNow(new MaterialGratuitoMail($data['origem'], (string) ($data['name'] ?? '')));
 
             return true;
         } catch (\Throwable $e) {
