@@ -19,6 +19,7 @@ class Plan extends Model
 
     protected $fillable = [
         'name', 'pacote', 'pacotes', 'price', 'level', 'base_price', 'discount_value', 'discount_type', 'final_price', 'implementation_fee', 'implementation_installments', 'implementation_billing_mode', 'implantacao_opcional', 'payment_method', 'billing_cycle', 'campaign_tag', 'features', 'is_active',
+        'site_email_modo', 'site_email_valor', 'site_email_cliente_possui', 'site_email_escopo',
     ];
 
     protected $casts = [
@@ -32,7 +33,39 @@ class Plan extends Model
         'is_active' => 'boolean',
         'implantacao_opcional' => 'boolean',
         'level' => 'integer',
+        'site_email_valor' => 'decimal:2',
+        'site_email_cliente_possui' => 'boolean',
     ];
+
+    public const SITE_EMAIL_NAO = 'nao';
+
+    public const SITE_EMAIL_INCLUSO = 'incluso';
+
+    public const SITE_EMAIL_AVULSO = 'avulso';
+
+    /** @return array<string, string> modo => rótulo (config/site_email.php) */
+    public static function siteEmailOpcoes(): array
+    {
+        return (array) config('site_email.modos', []);
+    }
+
+    /** 'nao' | 'incluso' | 'avulso' (qualquer valor desconhecido vale como 'nao'). */
+    public function siteEmailModo(): string
+    {
+        return in_array($this->site_email_modo, [self::SITE_EMAIL_INCLUSO, self::SITE_EMAIL_AVULSO], true) ? $this->site_email_modo : self::SITE_EMAIL_NAO;
+    }
+
+    /** O contrato prevê site e e-mail institucional (incluso ou vendido à parte)? */
+    public function temSiteEmail(): bool
+    {
+        return $this->siteEmailModo() !== self::SITE_EMAIL_NAO;
+    }
+
+    /** Valor único do site e e-mail vendido à parte: o do contrato ou o padrão (config/site_email.php). */
+    public function siteEmailValor(): float
+    {
+        return (float) ($this->site_email_valor ?? config('site_email.valor_avulso', 500));
+    }
 
     protected static function booted(): void
     {

@@ -105,6 +105,14 @@
                     </td>
                 </tr>
             @endif
+            @if ($contract->plan?->temSiteEmail())
+                <tr>
+                    <td colspan="2">
+                        <span class="label">Site e e-mail institucional</span>
+                        <span class="value">{{ $contract->plan->siteEmailModo() === \App\Models\Plan::SITE_EMAIL_INCLUSO ? 'Incluso, sem custo adicional (contrato de 12 meses, renovado com o contrato)' : 'R$ '.number_format($contract->plan->siteEmailValor(), 2, ',', '.').' (cobrança única)' }} — ver Anexo III</span>
+                    </td>
+                </tr>
+            @endif
         </table>
 
         <div style="margin-top:12px;">
@@ -125,6 +133,7 @@
 
         @include('partials.subscription-agreement-clauses', ['contract' => $contract])
         @include('partials.subscription-agreement-implementation', ['contract' => $contract])
+        @include('partials.subscription-agreement-site-email', ['contract' => $contract])
         @include('partials.subscription-agreement-taxas', ['contract' => $contract])
     </div>
 
