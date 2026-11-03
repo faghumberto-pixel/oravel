@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Mail\PlanilhaManutencaoMail;
+use App\Mail\MaterialGratuitoMail;
 use App\Models\SalesLead;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Mail\Mailables\Attachment;
@@ -52,13 +52,13 @@ class IscaPlanilhaTest extends TestCase
         $this->assertSame('Locadora Isca Teste', $lead->company_name);
         $this->assertSame('isca-planilha-manutencao', $lead->inbound_details['origem']);
 
-        Mail::assertQueued(PlanilhaManutencaoMail::class, function (PlanilhaManutencaoMail $m) {
+        Mail::assertQueued(MaterialGratuitoMail::class, function (MaterialGratuitoMail $m) {
             $anexos = $m->attachments();
             $this->assertCount(1, $anexos);
-            $this->assertFileExists(PlanilhaManutencaoMail::caminho());
-            $this->assertStringContainsString('storage/app/private', PlanilhaManutencaoMail::caminho());
+            $this->assertFileExists(MaterialGratuitoMail::caminho('isca-planilha-manutencao'));
+            $this->assertStringContainsString('storage/app/private', MaterialGratuitoMail::caminho('isca-planilha-manutencao'));
 
-            return $m->hasTo('maria.isca@example.com') && $m->nome === 'Maria Souza';
+            return $m->hasTo('maria.isca@example.com') && $m->nome === 'Maria Souza' && $m->origem === 'isca-planilha-manutencao';
         });
     }
 
@@ -74,10 +74,10 @@ class IscaPlanilhaTest extends TestCase
 
     public function test_e_mail_renderiza_com_anexo_real(): void
     {
-        $mail = new PlanilhaManutencaoMail('Maria Souza');
+        $mail = new MaterialGratuitoMail('isca-planilha-manutencao', 'Maria Souza');
 
         $mail->assertSeeInHtml('Olá, Maria Souza!');
-        $mail->assertHasAttachment(Attachment::fromPath(PlanilhaManutencaoMail::caminho())->as(PlanilhaManutencaoMail::ARQUIVO)->withMime('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'));
+        $mail->assertHasAttachment(Attachment::fromPath(MaterialGratuitoMail::caminho('isca-planilha-manutencao'))->as('Oravel_Controle_Manutencao_Preventiva.xlsx')->withMime('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'));
     }
 
     public function test_validacao_e_nao_duplica_lead_no_mesmo_email(): void

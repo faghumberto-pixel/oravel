@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\PlanilhaManutencaoMail;
+use App\Mail\MaterialGratuitoMail;
 use App\Models\SalesLead;
 use App\Models\SalesLeadInteraction;
 use App\Models\User;
@@ -54,7 +54,7 @@ class IscaPlanilhaController extends Controller
 
         $this->registrarLead($dados);
 
-        Mail::to($dados['email'])->queue(new PlanilhaManutencaoMail($dados['name']));
+        Mail::to($dados['email'])->queue(new MaterialGratuitoMail(self::ORIGEM, $dados['name']));
 
         return $this->sucesso($dados['email']);
     }

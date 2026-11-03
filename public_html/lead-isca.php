@@ -1,4 +1,5 @@
 <?php
+
 // Oravel — recebe o formulário de qualquer ISCA (material gratuito) de /materiais-gratuitos/.
 // (1) guarda o lead em arquivo, (2) entrega ao CRM do app (POST /api/inbound/leads, com a origem da isca).
 // Quem ENVIA o material por e-mail é o app (App\Support\Iscas): o app já tem a caixa de e-mail funcionando e o
@@ -11,14 +12,20 @@
 
 declare(strict_types=1);
 
-$config = require __DIR__ . '/inc/lead-config.php';
+$config = require __DIR__.'/inc/lead-config.php';
 
 // origem => dados da isca. Lista fechada: nunca redirecionar para URL nem ler arquivo vindos do POST.
 $iscas = [
     'isca-planilha-manutencao' => [
-        'label'   => 'Isca: planilha de manutenção preventiva',
-        'pagina'  => '/materiais-gratuitos/planilha-manutencao-preventiva/',
+        'label' => 'Isca: planilha de manutenção preventiva',
+        'pagina' => '/materiais-gratuitos/planilha-manutencao-preventiva/',
         'arquivo' => 'Oravel_Controle_Manutencao_Preventiva.xlsx', // fica no app, em storage/app/private
+    ],
+    'isca-controle-combustivel-oleo' => [
+        'label' => 'Isca: controle de combustível e óleo',
+        'pagina' => '/materiais-gratuitos/controle-combustivel-oleo/',
+        'arquivo' => 'Oravel_Controle_Combustivel_Oleo.xlsx', // fica no app, em storage/app/private
+        'exige_aceite' => true, // a página tem a caixa de consentimento (política de privacidade)
     ],
 ];
 
@@ -32,7 +39,7 @@ function limpar(mixed $v, int $max): string
 
 function voltar(string $pagina, string $query): never
 {
-    header('Location: ' . $pagina . '?' . $query . '#baixar', true, 303);
+    header('Location: '.$pagina.'?'.$query.'#baixar', true, 303);
     exit;
 }
 
@@ -43,10 +50,10 @@ function turnstile_ok(string $token, string $secret, string $ip): bool
     }
     $ch = curl_init('https://challenges.cloudflare.com/turnstile/v0/siteverify');
     curl_setopt_array($ch, [
-        CURLOPT_POST           => true,
+        CURLOPT_POST => true,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT        => 10,
-        CURLOPT_POSTFIELDS     => http_build_query(['secret' => $secret, 'response' => $token, 'remoteip' => $ip]),
+        CURLOPT_TIMEOUT => 10,
+        CURLOPT_POSTFIELDS => http_build_query(['secret' => $secret, 'response' => $token, 'remoteip' => $ip]),
     ]);
     $resp = curl_exec($ch);
     curl_close($ch);
@@ -67,12 +74,12 @@ function enviar_para_app(array $config, array $payload): ?array
     for ($tentativa = 1; $tentativa <= 2; $tentativa++) {
         $ch = curl_init($url);
         curl_setopt_array($ch, [
-            CURLOPT_POST           => true,
+            CURLOPT_POST => true,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_CONNECTTIMEOUT => 5,
-            CURLOPT_TIMEOUT        => 25,
-            CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Accept: application/json', 'X-Channel-Token: ' . $token],
-            CURLOPT_POSTFIELDS     => json_encode($payload, JSON_UNESCAPED_UNICODE),
+            CURLOPT_TIMEOUT => 25,
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'Accept: application/json', 'X-Channel-Token: '.$token],
+            CURLOPT_POSTFIELDS => json_encode($payload, JSON_UNESCAPED_UNICODE),
         ]);
         $resp = curl_exec($ch);
         $codigo = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
@@ -95,15 +102,15 @@ function enviar_para_app(array $config, array $payload): ?array
 // Cópia de segurança (JSON por linha, fora do docroot, só de acréscimo): se tudo falhar, o lead não se perde.
 function guardar_lead(array $registro): void
 {
-    $dir = dirname(__DIR__) . '/leads-site';
-    if (!is_dir($dir) && !@mkdir($dir, 0700, true)) {
-        error_log('lead-isca: não consegui criar ' . $dir);
+    $dir = dirname(__DIR__).'/leads-site';
+    if (! is_dir($dir) && ! @mkdir($dir, 0700, true)) {
+        error_log('lead-isca: não consegui criar '.$dir);
 
         return;
     }
-    $arquivo = $dir . '/leads.jsonl';
-    if (@file_put_contents($arquivo, json_encode($registro, JSON_UNESCAPED_UNICODE) . "\n", FILE_APPEND | LOCK_EX) === false) {
-        error_log('lead-isca: não consegui gravar ' . $arquivo);
+    $arquivo = $dir.'/leads.jsonl';
+    if (@file_put_contents($arquivo, json_encode($registro, JSON_UNESCAPED_UNICODE)."\n", FILE_APPEND | LOCK_EX) === false) {
+        error_log('lead-isca: não consegui gravar '.$arquivo);
 
         return;
     }
@@ -128,20 +135,23 @@ if (limpar($_POST['website'] ?? '', 200) !== '') {
     voltar($pagina, 'enviado=1');
 }
 
-$nome    = limpar($_POST['name'] ?? '', 120);
+$nome = limpar($_POST['name'] ?? '', 120);
 $empresa = limpar($_POST['company'] ?? '', 120);
-$email   = limpar($_POST['email'] ?? '', 160);
-$fone    = limpar($_POST['phone'] ?? '', 30);
+$email = limpar($_POST['email'] ?? '', 160);
+$fone = limpar($_POST['phone'] ?? '', 30);
+
+$aceite = limpar($_POST['aceite'] ?? '', 5) === '1';
 
 if (
-    mb_strlen($nome) < 2 || mb_strlen($empresa) < 2
-    || !filter_var($email, FILTER_VALIDATE_EMAIL)
-    || !preg_match('/^[0-9 ()+\-.]{8,30}$/', $fone)
+    ($isca['exige_aceite'] ?? false) && ! $aceite
+    || mb_strlen($nome) < 2 || mb_strlen($empresa) < 2
+    || ! filter_var($email, FILTER_VALIDATE_EMAIL)
+    || ! preg_match('/^[0-9 ()+\-.]{8,30}$/', $fone)
 ) {
     voltar($pagina, 'erro=dados');
 }
 
-if (!turnstile_ok((string) ($_POST['cf-turnstile-response'] ?? ''), $config['turnstile_secret'], $_SERVER['REMOTE_ADDR'] ?? '')) {
+if (! turnstile_ok((string) ($_POST['cf-turnstile-response'] ?? ''), $config['turnstile_secret'], $_SERVER['REMOTE_ADDR'] ?? '')) {
     voltar($pagina, 'erro=captcha');
 }
 
@@ -149,32 +159,37 @@ if (!turnstile_ok((string) ($_POST['cf-turnstile-response'] ?? ''), $config['tur
 $anuncio = [];
 foreach (['gclid', 'gbraid', 'wbraid'] as $k) {
     $v = limpar($_POST[$k] ?? '', 200);
-    if ($v !== '' && preg_match('/^[A-Za-z0-9_\-]+$/', $v)) { $anuncio[$k] = $v; }
+    if ($v !== '' && preg_match('/^[A-Za-z0-9_\-]+$/', $v)) {
+        $anuncio[$k] = $v;
+    }
 }
 foreach (['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'landing_url'] as $k) {
     $v = limpar($_POST[$k] ?? '', $k === 'landing_url' ? 255 : 200);
-    if ($v !== '') { $anuncio[$k] = $v; }
+    if ($v !== '') {
+        $anuncio[$k] = $v;
+    }
 }
 
 // 1) guarda o lead antes de qualquer tentativa de envio
 $lead = [
     'id' => bin2hex(random_bytes(6)), 'quando' => date('c'), 'origem' => $origem,
     'nome' => $nome, 'empresa' => $empresa, 'email' => $email, 'whatsapp' => $fone,
-] + $anuncio;
+] + ($aceite ? ['aceite_privacidade' => true] : []) + $anuncio;
 guardar_lead($lead + ['status' => 'recebido']);
 
 // 2) CRM do app + e-mail com a planilha (o app envia). O app exige segmento e porte: a isca não pergunta, vão como "não informado".
 $resposta = enviar_para_app($config, array_filter([
-    'lead_id'      => $lead['id'],
-    'origem'       => $origem,
+    'lead_id' => $lead['id'],
+    'origem' => $origem,
     'origem_label' => $isca['label'],
-    'name'         => $nome,
-    'company'      => $empresa,
-    'email'        => $email,
-    'phone'        => $fone,
-    'segmento'     => 'Não informado',
-    'porte'        => 'Não informado',
-    'porte_label'  => 'Porte',
+    'name' => $nome,
+    'company' => $empresa,
+    'email' => $email,
+    'phone' => $fone,
+    'segmento' => 'Não informado',
+    'porte' => 'Não informado',
+    'porte_label' => 'Porte',
+    'aceite' => $aceite ? true : '',
 ] + $anuncio, fn ($v) => $v !== ''));
 
 $entreguePeloApp = $resposta !== null;
