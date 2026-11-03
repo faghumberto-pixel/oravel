@@ -1,12 +1,40 @@
 <IfModule mod_rewrite.c>
 RewriteEngine On
+# Um só endereço: www redireciona para o domínio sem www (evita dois sites para o Google)
+RewriteCond %{HTTP_HOST} ^www\.oravel\.com\.br$ [NC]
+RewriteRule ^ https://oravel.com.br%{REQUEST_URI} [R=301,L]
+# Diretorio sem barra final: o Apache enxerga http (Cloudflare->origem) e redirecionaria para http://. Forca https.
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(.+[^/])$ https://oravel.com.br/$1/ [R=301,L]
+# Reestruturação em Soluções (6 pacotes): páginas antigas apontam para o equivalente atual
+RewriteRule ^solucoes/crm/?$ https://oravel.com.br/crm/ [R=301,L]
+RewriteRule ^solucoes/frota/?$ https://oravel.com.br/software-gestao-frota-logistica/ [R=301,L]
+RewriteRule ^solucoes/wms/?$ https://oravel.com.br/wms/ [R=301,L]
+RewriteRule ^solucoes/os/?$ https://oravel.com.br/software-gestao-de-servicos/ [R=301,L]
+RewriteRule ^solucoes/recebimentos/?$ https://oravel.com.br/software-gestao-de-servicos/ [R=301,L]
+RewriteRule ^solucoes/rh/?$ https://oravel.com.br/solucoes/ [R=301,L]
+RewriteRule ^solucoes/analytics/?$ https://oravel.com.br/solucoes/ [R=301,L]
+RewriteRule ^segmentos/?$ https://oravel.com.br/solucoes/ [R=301,L]
+RewriteRule ^solucoes\.php/?$ https://oravel.com.br/solucoes/ [R=301,L]
+RewriteRule ^sobre-nos(\.html)?/?$ https://oravel.com.br/sobre/ [R=301,L]
 # Páginas antigas de FSM e PCM foram absorvidas por Manutenção Industrial
 RewriteRule ^(fsm|pcm)/?$ https://oravel.com.br/software-manutencao-industrial/ [R=301,L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^solucoes/([a-z]+)$ solucoes/$1.html [L]
+# Página antiga solta no servidor: aponta para a atual
+RewriteRule ^sobre\.html$ https://oravel.com.br/sobre/ [R=301,L]
 RewriteRule ^(.+)\.html$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ $1.html [L]
+</IfModule>
+# Páginas (HTML/PHP) sempre revalidadas: o navegador não guarda a versão antiga do menu e dos textos
+<IfModule mod_headers.c>
+<FilesMatch "\.(html|php)$">
+Header set Cache-Control "no-cache, must-revalidate"
+</FilesMatch>
+</IfModule>
+# llms.txt para buscadores/assistentes de IA: texto puro em UTF-8
+<IfModule mod_headers.c>
+<Files "llms.txt">
+Header set Content-Type "text/plain; charset=utf-8"
+</Files>
 </IfModule>
