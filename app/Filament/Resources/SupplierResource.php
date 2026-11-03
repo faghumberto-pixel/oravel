@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SupplierResource\Pages;
 use App\Models\Supplier;
+use App\Support\CrmPalette;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -95,31 +96,81 @@ class SupplierResource extends Resource
             ])->columns(3);
     }
 
+    /** Falta CND Federal, FGTS ou CNDT (mesma regra do filtro "Certidoes pendentes"). */
+    public static function certidoesPendentes(Supplier $s): bool
+    {
+        return $s->cnd_federal === null || $s->crf_fgts === null || $s->cndt === null;
+    }
+
+    /** Cor do cartao: sem termo LGPD = vermelho; pendencia de compliance/certidao = amarelo; tudo em dia = verde. */
+    public static function corDoFornecedor(Supplier $s): string
+    {
+        if (! $s->termo_lgpd) {
+            return 'red';
+        }
+
+        $completo = $s->compliance_ceis_cnep && $s->lista_trabalho_escravo && $s->termo_lgpd;
+
+        return $completo && ! self::certidoesPendentes($s) ? 'emerald' : 'amber';
+    }
+
     public static function table(Table $table): Table
     {
         return $table
+            // Lista em cartoes (padrao do CRM Comercial): verde = compliance e certidoes em dia; vermelho = sem termo LGPD.
+            ->recordClasses(fn (Supplier $record) => 'border-s-4 hover:!bg-transparent '
+                .CrmPalette::cor(self::corDoFornecedor($record))['border'].' '
+                .CrmPalette::cor(self::corDoFornecedor($record))['soft'])
+            ->contentGrid(['md' => 2, '2xl' => 3])
+            ->persistFiltersInSession()
+            ->persistSearchInSession()
+            ->persistSortInSession()
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Fornecedor')
-                    ->searchable()
-                    ->sortable(),
-
-                Tables\Columns\TextColumn::make('document')
-                    ->label('Documento')
-                    ->searchable(),
-
-                // STATUS DE COMPLIANCE VISUAL
-                Tables\Columns\IconColumn::make('termo_lgpd')
-                    ->label('LGPD')
-                    ->boolean(),
-
-                Tables\Columns\IconColumn::make('lista_trabalho_escravo')
-                    ->label('Ficha Limpa MTE')
-                    ->boolean(),
+                Tables\Columns\Layout\Stack::make([
+                    Tables\Columns\TextColumn::make('name')
+                        ->label('Fornecedor')
+                        ->searchable()
+                        ->sortable()
+                        ->weight('bold')->size('lg')->color('crmOrange'),
+                    Tables\Columns\TextColumn::make('document')
+                        ->label('Documento')
+                        ->searchable()
+                        ->color('gray')->placeholder('Sem documento'),
+                    // STATUS DE COMPLIANCE VISUAL
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\IconColumn::make('termo_lgpd')
+                            ->label('LGPD')
+                            ->boolean()
+                            ->grow(false),
+                        Tables\Columns\TextColumn::make('lgpd_texto')->label('Termo LGPD')
+                            ->state(fn (Supplier $r): string => $r->termo_lgpd ? 'Termo LGPD assinado' : 'Sem termo LGPD')
+                            ->color(fn (Supplier $r): string => $r->termo_lgpd ? 'success' : 'danger'),
+                    ]),
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\IconColumn::make('lista_trabalho_escravo')
+                            ->label('Ficha Limpa MTE')
+                            ->boolean()
+                            ->grow(false),
+                        Tables\Columns\TextColumn::make('mte_texto')->label('Ficha Limpa MTE')
+                            ->state(fn (Supplier $r): string => $r->lista_trabalho_escravo ? 'Ficha limpa (MTE)' : 'Ficha limpa pendente')
+                            ->color(fn (Supplier $r): string => $r->lista_trabalho_escravo ? 'success' : 'warning'),
+                    ]),
+                    Tables\Columns\TextColumn::make('certidoes_texto')->label('Certidões')->icon('heroicon-m-document-check')
+                        ->state(fn (Supplier $r): string => self::certidoesPendentes($r) ? 'Certidões pendentes' : 'Certidões em dia')
+                        ->color(fn (Supplier $r): string => self::certidoesPendentes($r) ? 'warning' : 'success'),
+                ])->space(2),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('termo_lgpd')
                     ->label('Apenas com Termo LGPD'),
+                Tables\Filters\Filter::make('compliance_completo')
+                    ->label('Compliance completo (CEIS/CNEP + MTE + LGPD)')
+                    ->toggle()
+                    ->query(fn ($query) => $query->where('compliance_ceis_cnep', true)->where('lista_trabalho_escravo', true)->where('termo_lgpd', true)),
+                Tables\Filters\Filter::make('certidoes_pendentes')
+                    ->label('Certidões pendentes (CND Federal, FGTS ou CNDT)')
+                    ->toggle()
+                    ->query(fn ($query) => $query->where(fn ($q) => $q->whereNull('cnd_federal')->orWhereNull('crf_fgts')->orWhereNull('cndt'))),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
