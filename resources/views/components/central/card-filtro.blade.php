@@ -5,7 +5,7 @@
     wire:click="filtrarCard('{{ $card['chave'] }}')"
     @class([
         'rounded-xl border p-3 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
-        isset($card['cor']) ? \App\Support\CrmPalette::fundoCartao($card['cor']) : $card['paleta']['soft'],
+        $card['paleta']['soft'],
         $card['paleta']['border'].' ring-2 '.$card['paleta']['ring'] => $card['ativo'],
         'border-transparent' => ! $card['ativo'],
     ])

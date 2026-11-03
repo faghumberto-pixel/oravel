@@ -1006,7 +1006,7 @@ class AssetResource extends Resource
             // Lista em cartoes (mesmo padrao do CRM Comercial / Prospects): cor do status na lateral e no fundo.
             ->recordClasses(fn (Asset $record) => 'border-s-4 hover:!bg-transparent '
                 .CrmPalette::cor(self::COR_STATUS[$record->status] ?? 'gray')['border'].' '
-                .CrmPalette::fundoCartao(self::COR_STATUS[$record->status] ?? 'gray'))
+                .CrmPalette::cor(self::COR_STATUS[$record->status] ?? 'gray')['soft'])
             ->columns([
                 Tables\Columns\Layout\Stack::make([
                     static::tenantColumn(),

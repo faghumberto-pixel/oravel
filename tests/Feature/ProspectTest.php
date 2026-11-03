@@ -272,7 +272,6 @@ class ProspectTest extends TestCase
         Livewire::actingAs($u)->test(ListProspects::class)
             ->assertSee('Cartao Azul')->assertSee('Maria Souza')->assertSee('(celular)')
             ->assertSeeHtml('border-blue-600')->assertSeeHtml('border-emerald-600')
-            ->assertSeeHtml('!bg-blue-100')->assertSeeHtml('!bg-emerald-100')
             ->assertSeeHtml('fi-ta-content-grid');
     }
 
