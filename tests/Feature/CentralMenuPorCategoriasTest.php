@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Blade;
 use Tests\TestCase;
 
 class CentralMenuPorCategoriasTest extends TestCase
@@ -40,5 +41,15 @@ class CentralMenuPorCategoriasTest extends TestCase
         $this->assertContains('Prospects', $item('Prospecção'));
         $this->assertContains('Empresas (Tenants)', $item('Clientes e Contratos'));
         $this->assertContains('Usuários do Sistema', $item('Segurança e Conformidade'));
+    }
+
+    public function test_todo_grupo_novo_do_menu_da_central_tem_icone(): void
+    {
+        $svgs = fn (string $grupo) => substr_count(Blade::render('<x-filament-panels::sidebar.group :label="$label" :items="[]" />', ['label' => $grupo]), '<svg');
+        $semIcone = $svgs('Grupo Inexistente');
+
+        foreach (['Prospecção', 'Clientes e Contratos', 'Acessos e Uso', 'Treinamento', 'Site Institucional', 'Segurança e Conformidade', 'Sistema', 'Comercial'] as $grupo) {
+            $this->assertGreaterThan($semIcone, $svgs($grupo), "Grupo sem icone: {$grupo}");
+        }
     }
 }
