@@ -96,7 +96,6 @@ trait HasCartoesFiltro
                     'rotulo' => $rotulo,
                     'total' => $this->getFilteredTableQuery()->reorder()->count(),
                     'ativo' => $ativos == array_map(fn ($v) => $v === true ? '1' : (string) $v, $filtros),
-                    'cor' => $cor,
                     'paleta' => CrmPalette::cor($cor),
                 ];
             }

@@ -420,7 +420,7 @@ class ContractResource extends Resource
             // Lista em cartoes coloridos (padrao do app): cor por situacao/vigencia na lateral e no fundo.
             ->recordClasses(fn (Contract $record) => 'border-s-4 hover:!bg-transparent '
                 .CrmPalette::cor(self::corDoContrato($record))['border'].' '
-                .CrmPalette::fundoCartao(self::corDoContrato($record)))
+                .CrmPalette::cor(self::corDoContrato($record))['soft'])
             ->columns([
                 Tables\Columns\Layout\Stack::make([
                     static::tenantColumn(),
