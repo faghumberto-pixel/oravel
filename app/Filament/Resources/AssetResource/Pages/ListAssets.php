@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AssetResource\Pages;
 
+use App\Filament\Concerns\HasCartoesFiltro;
 use App\Filament\Concerns\HasPrintAction;
 use App\Filament\Exports\AssetExporter;
 use App\Filament\Resources\AssetResource;
@@ -17,9 +18,29 @@ use Illuminate\Support\Facades\Storage;
 
 class ListAssets extends ListRecords
 {
+    use HasCartoesFiltro;
     use HasPrintAction;
 
     protected static string $resource = AssetResource::class;
+
+    protected static string $view = 'filament.resources.assets-list';
+
+    /** Cards de totais: Total, um por status (cor por significado) e por tipo de ativo. */
+    protected function definicaoCartoes(): array
+    {
+        return [
+            'total' => ['Total', [], 'gray'],
+            'disponivel' => ['Disponível', ['status' => Asset::STATUS_DISPONIVEL], 'emerald'],
+            'operando' => ['Em operação', ['status' => Asset::STATUS_OPERANDO], 'blue'],
+            'locado' => ['Locado', ['status' => Asset::STATUS_LOCADO], 'amber'],
+            'manutencao' => ['Em manutenção', ['status' => Asset::STATUS_MANUTENCAO], 'red'],
+            'triagem' => ['Aguardando triagem', ['status' => Asset::STATUS_AGUARDANDO_TRIAGEM], 'gray'],
+            'reservado' => ['Reservado', ['status' => Asset::STATUS_RESERVADO], 'indigo'],
+            'quarentena' => ['Quarentena', ['status' => Asset::STATUS_QUARENTENA], 'purple'],
+            'veiculos' => ['Veículos', ['grupo' => Asset::GRUPO_VEICULO], 'cyan'],
+            'maquinas' => ['Máquinas / equipamentos', ['grupo' => Asset::GRUPO_MAQUINA], 'teal'],
+        ];
+    }
 
     protected function getHeaderActions(): array
     {

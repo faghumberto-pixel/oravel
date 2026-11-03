@@ -5,6 +5,9 @@ export default {
     content: [
         './app/Filament/**/*.php',
         './app/Livewire/**/*.php',
+        // Cores dos cartoes (CrmPalette::cor) usadas em listas do admin: as classes sao literais aqui.
+        './app/Support/CrmPalette.php',
+        './resources/views/components/central/*.blade.php',
         './resources/views/filament/**/*.blade.php',
         './resources/views/livewire/**/*.blade.php',
         // Views do Filament ejetadas (publicadas em resources/views/vendor/...,
