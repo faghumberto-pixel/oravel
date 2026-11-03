@@ -7,6 +7,7 @@ use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\Employee;
 use App\Models\User;
 use App\Support\Cpf;
+use App\Support\CrmPalette;
 use App\Support\Tenancy;
 use Filament\Facades\Filament;
 use Filament\Forms;
@@ -170,19 +171,37 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            // Lista em cartoes (padrao do CRM Comercial): verde = aprovado; amarelo = aguardando aprovacao.
+            ->recordClasses(fn (User $record) => 'border-s-4 hover:!bg-transparent '
+                .CrmPalette::cor($record->is_approved ? 'emerald' : 'amber')['border'].' '
+                .CrmPalette::cor($record->is_approved ? 'emerald' : 'amber')['soft'])
+            ->contentGrid(['md' => 2, '2xl' => 3])
+            ->persistFiltersInSession()
+            ->persistSearchInSession()
+            ->persistSortInSession()
             ->columns([
-                Tables\Columns\TextColumn::make('department.name')
-                    ->label('Departamento')
-                    ->badge()->color('gray'),
-
-                Tables\Columns\TextColumn::make('roles.name')
-                    ->label('Função / Cargo')
-                    ->badge()
-                    ->color('info'),
-
-                Tables\Columns\TextColumn::make('name')->label('Nome')->searchable(),
-                Tables\Columns\TextColumn::make('hourly_rate')->label('Vlr. Hora')->money('BRL'),
-                Tables\Columns\IconColumn::make('is_approved')->label('Aprovado')->boolean(),
+                Tables\Columns\Layout\Stack::make([
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\TextColumn::make('name')->label('Nome')->searchable()
+                            ->weight('bold')->size('lg')->color('crmOrange'),
+                        Tables\Columns\IconColumn::make('is_approved')->label('Aprovado')->boolean()->grow(false),
+                    ]),
+                    Tables\Columns\TextColumn::make('email')->label('E-mail')->icon('heroicon-m-envelope')->searchable()->color('gray'),
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\TextColumn::make('department.name')
+                            ->label('Departamento')
+                            ->badge()->color('gray')->grow(false),
+                        Tables\Columns\TextColumn::make('roles.name')
+                            ->label('Função / Cargo')
+                            ->badge()
+                            ->color('info')
+                            ->grow(false),
+                    ])->extraAttributes(['class' => 'flex-wrap gap-1']),
+                    Tables\Columns\TextColumn::make('hourly_rate')->label('Vlr. Hora')->icon('heroicon-m-banknotes')->color('gray')->money('BRL'),
+                    Tables\Columns\TextColumn::make('last_seen')->label('Último acesso')->icon('heroicon-m-clock')->color('gray')
+                        ->formatStateUsing(fn ($state, User $r): string => 'Último acesso '.$r->last_seen?->diffForHumans())
+                        ->placeholder('Nunca acessou'),
+                ])->space(2),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('department')
@@ -197,6 +216,10 @@ class UserResource extends Resource
                     ]),
                 Tables\Filters\TernaryFilter::make('is_approved')
                     ->label('Aprovado'),
+                Tables\Filters\Filter::make('ativo_semana')
+                    ->label('Ativos na última semana')
+                    ->toggle()
+                    ->query(fn (Builder $query) => $query->where('users.last_seen', '>=', now()->subDays(7))),
             ])
             ->actions([
                 Tables\Actions\Action::make('approve')
