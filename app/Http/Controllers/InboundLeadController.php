@@ -11,6 +11,7 @@ use App\Models\SalesLead;
 use App\Models\SalesLeadInteraction;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Support\Iscas;
 use App\Support\SiteVisitMatcher;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
@@ -148,7 +149,7 @@ class InboundLeadController extends Controller
 
         $this->notify($recipients, $lead, $rotuloPorte);
 
-        return response()->json(['success' => true, 'id' => $lead->id], 201);
+        return $this->respostaCriado($lead->id, Iscas::enviar($data));
     }
 
     /**
@@ -251,7 +252,13 @@ class InboundLeadController extends Controller
 
         $this->notifyCentral($lead, $rotuloPorte, $superEmails);
 
-        return response()->json(['success' => true, 'id' => $lead->id], 201);
+        return $this->respostaCriado($lead->id, Iscas::enviar($data));
+    }
+
+    /** 201 do lead; em iscas, `email_enviado` diz ao site se o material saiu por e-mail (o lead já está salvo de qualquer forma). */
+    private function respostaCriado(string|int $id, ?bool $emailEnviado): JsonResponse
+    {
+        return response()->json(['success' => true, 'id' => $id] + ($emailEnviado === null ? [] : ['email_enviado' => $emailEnviado]), 201);
     }
 
     /** Melhor esforço: o lead já está gravado. Só o sino da Central, só para super admins. */
