@@ -11,6 +11,7 @@ use App\Models\PropostaComercial;
 use App\Models\PropostaComercialItem;
 use App\Models\PropostaComercialTemplate;
 use App\Models\User;
+use App\Support\CrmPalette;
 use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -336,40 +337,64 @@ class PropostaComercialResource extends BaseResource
         ]);
     }
 
+    /** Cor do cartao por situacao (nome da paleta de CrmPalette::cor). */
+    public const COR_STATUS = [
+        PropostaComercial::STATUS_RASCUNHO => 'gray', PropostaComercial::STATUS_ENVIADA_PARA_COMERCIAL => 'blue',
+        PropostaComercial::STATUS_APROVADA_INTERNA => 'amber', PropostaComercial::STATUS_ACEITA_PELO_CLIENTE => 'emerald',
+        PropostaComercial::STATUS_RECUSADA_PELO_CLIENTE => 'red', PropostaComercial::STATUS_REJEITADA => 'orange',
+    ];
+
     public static function table(Table $table): Table
     {
         return $table
+            // Lista em cartoes (padrao do CRM Comercial): borda na cor da situacao da proposta.
+            ->recordClasses(fn (PropostaComercial $record) => 'border-s-4 hover:!bg-transparent '
+                .CrmPalette::cor(self::COR_STATUS[$record->status] ?? 'gray')['border'].' '
+                .CrmPalette::cor(self::COR_STATUS[$record->status] ?? 'gray')['soft'])
+            ->contentGrid(['md' => 2, '2xl' => 3])
+            ->persistFiltersInSession()
+            ->persistSearchInSession()
+            ->persistSortInSession()
             ->columns([
-                Tables\Columns\TextColumn::make('client.name')
-                    ->label('Cliente')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('sellerUser.name')->hidden(fn () => static::interfaceSimples())
-                    ->label('Vendedor'),
-                Tables\Columns\TextColumn::make('status')
-                    ->label('Status')
-                    ->badge()
-                    ->formatStateUsing(fn (string $state) => PropostaComercial::statusLabels()[$state] ?? $state)
-                    ->color(fn (string $state) => match ($state) {
-                        PropostaComercial::STATUS_ENVIADA_PARA_COMERCIAL => 'info',
-                        PropostaComercial::STATUS_APROVADA_INTERNA => 'warning',
-                        PropostaComercial::STATUS_ACEITA_PELO_CLIENTE => 'success',
-                        PropostaComercial::STATUS_RECUSADA_PELO_CLIENTE => 'danger',
-                        PropostaComercial::STATUS_REJEITADA => 'danger',
-                        default => 'gray',
-                    }),
-                Tables\Columns\TextColumn::make('items_count')->hidden(fn () => static::interfaceSimples())
-                    ->label('Itens')
-                    ->counts('items'),
-                Tables\Columns\TextColumn::make('total_value')
-                    ->label('Valor Total')
-                    ->money('BRL')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('sent_at')
-                    ->label('Enviada em')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable()
-                    ->placeholder('—'),
+                Tables\Columns\Layout\Stack::make([
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\TextColumn::make('client.name')
+                            ->label('Cliente')
+                            ->searchable()
+                            ->sortable()
+                            ->weight('bold')->size('lg')->color('crmOrange'),
+                        Tables\Columns\TextColumn::make('status')
+                            ->label('Status')
+                            ->badge()
+                            ->grow(false)
+                            ->formatStateUsing(fn (string $state) => PropostaComercial::statusLabels()[$state] ?? $state)
+                            ->color(fn (string $state) => match ($state) {
+                                PropostaComercial::STATUS_ENVIADA_PARA_COMERCIAL => 'info',
+                                PropostaComercial::STATUS_APROVADA_INTERNA => 'warning',
+                                PropostaComercial::STATUS_ACEITA_PELO_CLIENTE => 'success',
+                                PropostaComercial::STATUS_RECUSADA_PELO_CLIENTE => 'danger',
+                                PropostaComercial::STATUS_REJEITADA => 'danger',
+                                default => 'gray',
+                            }),
+                    ]),
+                    Tables\Columns\TextColumn::make('total_value')
+                        ->label('Valor Total')
+                        ->money('BRL')
+                        ->sortable()
+                        ->weight('semibold')->size('lg'),
+                    Tables\Columns\TextColumn::make('items_count')->hidden(fn () => static::interfaceSimples())
+                        ->label('Itens')
+                        ->icon('heroicon-m-list-bullet')->color('gray')
+                        ->counts('items')
+                        ->formatStateUsing(fn ($state): string => (int) $state === 1 ? '1 item' : (int) $state.' itens'),
+                    Tables\Columns\TextColumn::make('sellerUser.name')->hidden(fn () => static::interfaceSimples())
+                        ->label('Vendedor')->icon('heroicon-m-user')->color('gray')->placeholder('Sem vendedor'),
+                    Tables\Columns\TextColumn::make('sent_at')
+                        ->label('Enviada em')->icon('heroicon-m-paper-airplane')->color('gray')
+                        ->formatStateUsing(fn ($state, PropostaComercial $r): string => 'Enviada em '.$r->sent_at?->format('d/m/Y H:i'))
+                        ->sortable()
+                        ->placeholder('Ainda não enviada'),
+                ])->space(2),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')

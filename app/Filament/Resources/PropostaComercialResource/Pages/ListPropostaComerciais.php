@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\PropostaComercialResource\Pages;
 
+use App\Filament\Concerns\HasCartoesFiltro;
 use App\Filament\Resources\PropostaComercialResource;
+use App\Models\PropostaComercial;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -18,7 +20,22 @@ use Filament\Resources\Pages\ListRecords;
  */
 class ListPropostaComerciais extends ListRecords
 {
+    use HasCartoesFiltro;
+
     protected static string $resource = PropostaComercialResource::class;
+
+    protected static string $view = 'filament.resources.lista-com-cartoes';
+
+    /** Cards de totais clicaveis: um por situacao da proposta. */
+    protected function definicaoCartoes(): array
+    {
+        $cards = ['total' => ['Total', [], 'gray']];
+        foreach (PropostaComercialResource::COR_STATUS as $status => $cor) {
+            $cards[$status] = [PropostaComercial::statusLabels()[$status] ?? $status, ['status' => $status], $cor];
+        }
+
+        return $cards;
+    }
 
     protected function getHeaderActions(): array
     {
