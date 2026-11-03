@@ -48,15 +48,9 @@ class ListMaintenanceOrders extends ListRecords
         ];
     }
 
+    /** Sem widgets no topo (pedido do usuario 2026-11-03): so' os cards de totais clicaveis acima da lista. */
     protected function getHeaderWidgets(): array
     {
-        return [
-            MaintenanceOrderResource\Widgets\MaintenanceOrderStats::class,
-        ];
-    }
-
-    public function getHeaderWidgetsColumns(): int|array
-    {
-        return 4;
+        return [];
     }
 }

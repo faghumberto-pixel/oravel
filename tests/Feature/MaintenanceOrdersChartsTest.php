@@ -62,6 +62,8 @@ class MaintenanceOrdersChartsTest extends TestCase
         $this->get(ListMaintenanceOrders::getUrl())->assertOk();
 
         $widgets = (new \ReflectionMethod(ListMaintenanceOrders::class, 'getHeaderWidgets'))->invoke(new ListMaintenanceOrders);
+        // Nem os 4 cards antigos (MaintenanceOrderStats): so' os cards de totais clicaveis.
+        $this->assertSame([], $widgets);
         $this->assertNotContains(MaintenanceOrdersEvolutionChart::class, $widgets);
         $this->assertNotContains(MaintenanceOrdersStatusDonutChart::class, $widgets);
         $this->assertNotContains(MaintenanceOrdersByTypeChart::class, $widgets);
