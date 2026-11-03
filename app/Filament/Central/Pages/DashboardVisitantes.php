@@ -18,11 +18,13 @@ class DashboardVisitantes extends BaseDashboard
 {
     protected static ?string $navigationIcon = 'heroicon-o-cursor-arrow-rays';
 
-    protected static ?string $navigationLabel = 'Acessos e Visitantes';
+    protected static ?string $navigationGroup = 'Acessos e Uso';
+
+    protected static ?string $navigationLabel = 'Acessos e Visitantes (painel)';
 
     protected static ?string $title = 'Acessos e Visitantes';
 
-    protected static ?int $navigationSort = -9;
+    protected static ?int $navigationSort = 1;
 
     public function getWidgets(): array
     {

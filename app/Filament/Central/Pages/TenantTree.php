@@ -24,7 +24,9 @@ class TenantTree extends Page
 
     protected static ?string $navigationLabel = 'Árvore de Tenants';
 
-    protected static ?string $navigationGroup = 'Gestão SaaS';
+    protected static ?string $navigationGroup = 'Clientes e Contratos';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $title = 'Árvore de Tenants';
 

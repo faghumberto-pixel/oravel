@@ -28,7 +28,9 @@ class RolesTree extends Page
 
     protected static ?string $navigationLabel = 'Perfis por Tenant';
 
-    protected static ?string $navigationGroup = 'Gestão SaaS';
+    protected static ?string $navigationGroup = 'Segurança e Conformidade';
+
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $title = 'Perfis por Tenant';
 

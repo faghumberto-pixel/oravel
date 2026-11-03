@@ -33,7 +33,7 @@ class DashboardSiteInstitucional extends BaseDashboard
 
     protected static ?string $title = 'Site Institucional — Acessos';
 
-    protected static ?int $navigationSort = 0;
+    protected static ?int $navigationSort = 1;
 
     public function filtersForm(Form $form): Form
     {

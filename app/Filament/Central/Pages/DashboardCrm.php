@@ -37,7 +37,7 @@ class DashboardCrm extends BaseDashboard
 
     protected static ?string $navigationGroup = 'Comercial';
 
-    protected static ?int $navigationSort = -1;
+    protected static ?int $navigationSort = 1;
 
     protected static string $view = 'filament.central.pages.dashboard-crm';
 

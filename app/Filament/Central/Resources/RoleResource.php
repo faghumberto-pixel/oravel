@@ -21,8 +21,8 @@ class RoleResource extends Resource
     protected static ?string $modelLabel = 'Perfil';
     protected static ?string $pluralModelLabel = 'Perfis de Acesso';
 
-    protected static ?string $navigationGroup = 'Gestão SaaS';
-    protected static ?int $navigationSort = 3;
+    protected static ?string $navigationGroup = 'Segurança e Conformidade';
+    protected static ?int $navigationSort = 2;
 
     protected static bool $isScopedToTenant = false;
 

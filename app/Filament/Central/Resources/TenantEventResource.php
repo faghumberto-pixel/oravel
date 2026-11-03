@@ -16,7 +16,9 @@ class TenantEventResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
 
-    protected static ?string $navigationGroup = 'Gestão SaaS';
+    protected static ?string $navigationGroup = 'Acessos e Uso';
+
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $navigationLabel = 'Histórico de Clientes';
 

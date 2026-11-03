@@ -27,9 +27,11 @@ class SiteVisitResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-cursor-arrow-rays';
 
-    protected static ?string $navigationGroup = 'Gestão SaaS';
+    protected static ?string $navigationGroup = 'Acessos e Uso';
 
-    protected static ?string $navigationLabel = 'Acessos e Visitantes';
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationLabel = 'Acessos e Visitantes (lista)';
 
     protected static ?string $pluralModelLabel = 'Acessos e Visitantes';
 

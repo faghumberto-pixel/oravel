@@ -3,7 +3,6 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Central\Pages\AcessosClientes;
-use App\Filament\Central\Pages\ParticipacaoTreinamento;
 use App\Filament\Central\Pages\DashboardCrm;
 use App\Filament\Central\Pages\DashboardSaaS;
 use App\Filament\Central\Pages\DashboardSiteInstitucional;
@@ -11,6 +10,7 @@ use App\Filament\Central\Pages\DashboardVisitantes;
 use App\Filament\Central\Pages\FunilVendas;
 use App\Filament\Central\Pages\Kanban;
 use App\Filament\Central\Pages\MinhasNotificacoes;
+use App\Filament\Central\Pages\ParticipacaoTreinamento;
 use App\Filament\Central\Pages\Programacao;
 use App\Filament\Central\Pages\RolesTree;
 use App\Filament\Central\Pages\TenantTree;
@@ -53,6 +53,7 @@ use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 // Importações corretas dos seus arquivos
 use Filament\PanelProvider;
@@ -123,6 +124,18 @@ class CentralPanelProvider extends PanelProvider
                 SignatureResource::class,
                 TenantComplianceResource::class,
                 RoleResource::class,
+            ])
+            // Menu por categorias (ordem de cima para baixo). Os de uso menos frequente
+            // nascem recolhidos; o grupo da pagina aberta abre sozinho.
+            ->navigationGroups([
+                NavigationGroup::make('Comercial'),
+                NavigationGroup::make('Prospecção'),
+                NavigationGroup::make('Clientes e Contratos'),
+                NavigationGroup::make('Acessos e Uso')->collapsed(),
+                NavigationGroup::make('Treinamento')->collapsed(),
+                NavigationGroup::make('Site Institucional')->collapsed(),
+                NavigationGroup::make('Segurança e Conformidade')->collapsed(),
+                NavigationGroup::make('Sistema')->collapsed(),
             ])
             ->discoverResources(in: app_path('Filament/Central/Resources'), for: 'App\\Filament\\Central\\Resources')
             ->pages([

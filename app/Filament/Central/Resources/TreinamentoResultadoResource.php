@@ -18,7 +18,7 @@ class TreinamentoResultadoResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $navigationGroup = 'Gestão SaaS';
+    protected static ?string $navigationGroup = 'Treinamento';
 
     protected static ?string $navigationLabel = 'Resultados de Treinamento';
 
@@ -26,7 +26,7 @@ class TreinamentoResultadoResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Resultados de Treinamento';
 
-    protected static ?int $navigationSort = 90;
+    protected static ?int $navigationSort = 4;
 
     public static function canViewAny(): bool
     {

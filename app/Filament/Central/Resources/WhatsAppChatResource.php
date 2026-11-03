@@ -31,6 +31,8 @@ class WhatsAppChatResource extends Resource
 
     protected static ?string $navigationGroup = 'Comercial';
 
+    protected static ?int $navigationSort = 6;
+
     protected static ?string $modelLabel = 'Chat de WhatsApp';
 
     protected static ?string $pluralModelLabel = 'Chats de WhatsApp';

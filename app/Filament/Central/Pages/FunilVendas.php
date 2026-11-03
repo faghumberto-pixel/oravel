@@ -23,7 +23,7 @@ class FunilVendas extends Page
 
     protected static ?string $title = 'Funil de Vendas — CRM Comercial';
 
-    protected static ?int $navigationSort = 0;
+    protected static ?int $navigationSort = 3;
 
     protected static string $view = 'filament.central.pages.funil-vendas';
 

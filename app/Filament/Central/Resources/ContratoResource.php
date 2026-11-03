@@ -49,7 +49,9 @@ class ContratoResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-link';
 
-    protected static ?string $navigationGroup = 'Gestão SaaS';
+    protected static ?string $navigationGroup = 'Clientes e Contratos';
+
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $navigationLabel = 'Contratos';
 
