@@ -19,7 +19,6 @@ use App\Models\TraccarDevice;
 use App\Support\AppProfile;
 use App\Support\Campo;
 use App\Support\Tenancy;
-use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
@@ -50,20 +49,9 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(Login::class)
             ->sidebarCollapsibleOnDesktop()
-            // Modo escuro REATIVADO (2026-09-25, pedido do usuario -- reverte a
-            // decisao de 2026-09-18 "padronizar tudo claro", desta vez de proposito,
-            // nao mal-entendido). darkMode() (sem false) devolve o seletor
-            // claro/escuro nativo do Filament (icone sol/lua no menu do usuario).
-            // defaultThemeMode(Light) mantem o padrao claro pra quem nunca escolheu
-            // -- sem isso o default seria "System" (segue o SO), reintroduzindo a
-            // mesma surpresa que motivou o darkMode(false) original em paginas
-            // customizadas que ainda nao tem todas as variantes dark: cobertas
-            // (ex: painéis com HTML/CSS proprios, nao só componentes nativos do
-            // Filament). Sidebar/topbar continuam azul-escuro sempre, independente
-            // do tema escolhido (forcado via classe "dark" literal, ver overrides em
-            // resources/views/vendor/filament-panels/components/{topbar,sidebar}).
-            ->darkMode()
-            ->defaultThemeMode(ThemeMode::Light)
+            // Somente modo escuro (pedido do usuario 2026-11-03): sem seletor claro/escuro, a classe
+            // "dark" fica sempre aplicada. Substitui o modo claro padrao de 2026-09-25.
+            ->darkMode(true, isForced: true)
             ->homeUrl(fn () => auth()->user() ? AppProfile::homeUrl(auth()->user(), AppProfile::ADMIN) : route('filament.admin.pages.painel-controle'))
             ->colors([
                 // Paleta do artefato "Central de Artefatos" (2026-07-25):
@@ -174,12 +162,10 @@ class AdminPanelProvider extends PanelProvider
                     ->visible(fn () => (bool) auth()->user()?->can('viewAny', TraccarDevice::class)
                         && (Tenancy::current()?->hasFeature('menu_rastreamento_gps') ?? true)),
             ])
-            // Todo acesso novo (aba/navegador novo) abre no tema claro, mesmo que
-            // alguém tenha deixado o escuro guardado antes. Dentro da sessão, quem
-            // troca para o escuro continua com ele até fechar o navegador.
+            // Limpa grupos de menu recolhidos com valor invalido guardados no navegador.
             ->renderHook(
                 PanelsRenderHook::HEAD_START,
-                fn () => new HtmlString("<script>try{if(!sessionStorage.getItem('oravel_tema_inicial')){localStorage.setItem('theme','light');sessionStorage.setItem('oravel_tema_inicial','1');}}catch(e){}try{var g=JSON.parse(localStorage.getItem('collapsedGroups')||'[]');if(Array.isArray(g)){var f=g.filter(function(x){return x&&x!=='null'});if(f.length!==g.length)localStorage.setItem('collapsedGroups',JSON.stringify(f));}}catch(e){}</script>"),
+                fn () => new HtmlString("<script>try{var g=JSON.parse(localStorage.getItem('collapsedGroups')||'[]');if(Array.isArray(g)){var f=g.filter(function(x){return x&&x!=='null'});if(f.length!==g.length)localStorage.setItem('collapsedGroups',JSON.stringify(f));}}catch(e){}</script>"),
             )
             ->renderHook(
                 PanelsRenderHook::TOPBAR_START,

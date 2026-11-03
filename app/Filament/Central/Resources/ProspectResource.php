@@ -85,7 +85,7 @@ class ProspectResource extends Resource
             // da situacao na lateral e no fundo (pedido do usuario 2026-11-02).
             ->recordClasses(fn (Prospect $record) => 'border-s-4 hover:!bg-transparent '
                 .CrmPalette::cor(self::COR_STATUS[$record->status] ?? 'gray')['border'].' '
-                .CrmPalette::cor(self::COR_STATUS[$record->status] ?? 'gray')['soft'])
+                .CrmPalette::fundoCartao(self::COR_STATUS[$record->status] ?? 'gray'))
             ->columns([
                 Tables\Columns\Layout\Stack::make([
                     Tables\Columns\Layout\Split::make([
