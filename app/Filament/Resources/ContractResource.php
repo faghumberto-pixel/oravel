@@ -439,8 +439,9 @@ class ContractResource extends Resource
                     Tables\Columns\TextColumn::make('client.name')->label('Cliente')->icon('heroicon-m-building-office')
                         ->weight('semibold')->searchable(),
                     Tables\Columns\TextColumn::make('asset.name')->label('Ativo')->icon('heroicon-m-truck')->color('gray')
-                        ->placeholder('Sem ativo')
-                        ->formatStateUsing(fn ($state, Contract $r): string => $state.(static::interfaceSimples() || ! $r->asset?->patrimonio ? '' : ' · Patrimônio '.$r->asset->patrimonio)),
+                        ->placeholder('Sem ativo'),
+                    Tables\Columns\TextColumn::make('asset.patrimonio')->hidden(fn () => static::interfaceSimples())->label('Patrimônio')
+                        ->color('gray')->formatStateUsing(fn ($state): string => 'Patrimônio '.$state),
                     Tables\Columns\Layout\Split::make([
                         Tables\Columns\TextColumn::make('service_category')
                             ->label('Tipo de venda')
