@@ -5,6 +5,7 @@ namespace App\Filament\Central\Resources;
 use App\Filament\Central\Resources\ProspectResource\Pages;
 use App\Filament\Central\Resources\ProspectResource\RelationManagers;
 use App\Models\Prospect;
+use App\Support\CrmPalette;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -19,6 +20,12 @@ use Illuminate\Database\Eloquent\Builder;
 class ProspectResource extends Resource
 {
     protected static ?string $model = Prospect::class;
+
+    /** Cor do cartao por situacao (nome da paleta de CrmPalette::cor). */
+    public const COR_STATUS = [
+        'nao_enviado' => 'gray', 'enviado' => 'blue', 'respondeu' => 'emerald',
+        'em_teste' => 'purple', 'sem_interesse' => 'red', 'convertido' => 'teal',
+    ];
 
     protected static ?string $navigationIcon = 'heroicon-o-user-plus';
 
@@ -73,19 +80,39 @@ class ProspectResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            // Mesmo layout do CRM Comercial (SalesLeadResource): cada prospect e' um cartao, com a cor
+            // da situacao na lateral e no fundo (pedido do usuario 2026-11-02).
+            ->recordClasses(fn (Prospect $record) => 'border-s-4 hover:!bg-transparent '
+                .CrmPalette::cor(self::COR_STATUS[$record->status] ?? 'gray')['border'].' '
+                .CrmPalette::cor(self::COR_STATUS[$record->status] ?? 'gray')['soft'])
             ->columns([
-                Tables\Columns\TextColumn::make('nome')->label('Empresa')->weight('bold')->searchable(['nome', 'razao_social', 'cnpj', 'socio'])->sortable()
-                    ->description(fn (Prospect $r): string => trim($r->cidade.' · '.$r->porte.($r->ano_abertura ? ' · desde '.$r->ano_abertura : ''), ' ·')),
-                Tables\Columns\TextColumn::make('atividade')->label('Atividade')->wrap()->toggleable(),
-                Tables\Columns\TextColumn::make('nota')->label('Nota')->badge()->color(fn (int $state): string => $state >= 8 ? 'success' : 'gray')->sortable(),
-                Tables\Columns\TextColumn::make('telefone')->copyable()->copyMessage('Número copiado')->searchable()
-                    ->description(fn (Prospect $r): string => $r->ehCelular() ? 'Celular' : 'Fixo: ligar'),
-                Tables\Columns\TextColumn::make('socio')->label('Sócio')->placeholder('—')->toggleable(),
-                Tables\Columns\SelectColumn::make('status')->label('Situação')->options(Prospect::STATUS)->selectablePlaceholder(false),
-                Tables\Columns\TextColumn::make('origem')->label('Lista')->placeholder('—')->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('lote')->label('Lote')->placeholder('—')->sortable()->toggleable(),
-                Tables\Columns\TextColumn::make('proximo_contato')->label('Próx. contato')->date('d/m/Y')->placeholder('—')->sortable(),
+                Tables\Columns\Layout\Stack::make([
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\Layout\Stack::make([
+                            Tables\Columns\TextColumn::make('nome')->label('Empresa')->searchable(['nome', 'razao_social', 'cnpj', 'socio'])
+                                ->weight('bold')->size('lg')->color('crmOrange'),
+                            Tables\Columns\TextColumn::make('cidade')->label('Cidade')->color('gray')->placeholder('—')
+                                ->formatStateUsing(fn ($state, Prospect $r): string => trim($r->cidade.' · '.$r->porte.($r->ano_abertura ? ' · desde '.$r->ano_abertura : ''), ' ·')),
+                        ]),
+                        Tables\Columns\TextColumn::make('nota')->label('Nota')->badge()->color(fn (int $state): string => $state >= 8 ? 'success' : 'gray')
+                            ->formatStateUsing(fn ($state) => 'Nota '.$state)->grow(false),
+                    ]),
+                    Tables\Columns\SelectColumn::make('status')->label('Situação')->options(Prospect::STATUS)->selectablePlaceholder(false),
+                    Tables\Columns\TextColumn::make('atividade')->label('Atividade')->icon('heroicon-m-briefcase')->color('gray')->wrap()->placeholder('Sem atividade'),
+                    Tables\Columns\TextColumn::make('telefone')->label('Telefone')->icon('heroicon-m-phone')->copyable()->copyMessage('Número copiado')->searchable()
+                        ->formatStateUsing(fn ($state, Prospect $r): string => $state.($r->ehCelular() ? ' (celular)' : ' (fixo: ligar)'))
+                        ->placeholder('Sem telefone'),
+                    Tables\Columns\TextColumn::make('socio')->label('Sócio')->icon('heroicon-m-user')->color('gray')->placeholder('Sem sócio informado'),
+                    Tables\Columns\TextColumn::make('lote')->label('Lote')->icon('heroicon-m-tag')->color('gray')
+                        ->formatStateUsing(fn ($state) => 'Lote '.$state)->placeholder('Sem lote'),
+                    Tables\Columns\TextColumn::make('proximo_contato')->label('Próximo contato')->icon('heroicon-m-calendar-days')
+                        ->formatStateUsing(fn ($state) => 'Retornar em '.$state->format('d/m/Y'))
+                        ->placeholder('Sem retorno agendado')
+                        ->color(fn (?Prospect $r) => $r?->proximo_contato && $r->proximo_contato->lte(now()) ? 'danger' : 'gray'),
+                ])->space(2),
             ])
+            ->contentGrid(['md' => 2, 'xl' => 3])
+            ->searchPlaceholder('Buscar empresa, sócio, CNPJ ou telefone')
             ->filters([
                 Tables\Filters\SelectFilter::make('status')->label('Situação')->options(Prospect::STATUS),
                 Tables\Filters\SelectFilter::make('lote')->label('Lote')->options(fn () => Prospect::whereNotNull('lote')->distinct()->orderBy('lote')->pluck('lote', 'lote')->all()),
@@ -115,6 +142,8 @@ class ProspectResource extends Resource
                 Tables\Filters\Filter::make('retorno_vencido')->label('Retorno vencido')->toggle()
                     ->query(fn (Builder $query): Builder => $query->retornoVencido()),
             ])
+            ->filtersLayout(Tables\Enums\FiltersLayout::Dropdown)
+            ->filtersFormColumns(2)
             // Mantem filtros, busca e ordenacao ao navegar para outro menu e voltar (sessao do usuario).
             ->persistFiltersInSession()
             ->persistSearchInSession()
