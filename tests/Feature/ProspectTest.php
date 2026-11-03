@@ -287,9 +287,20 @@ class ProspectTest extends TestCase
             ->filterTable('resultado', 'quer_reuniao')
             ->assertCanSeeTableRecords([$a])->assertCanNotSeeTableRecords([$b, $c]);
 
-        // O filtro e' "base": os cards recontam dentro do recorte do resultado.
-        $enviados = collect($t->instance()->cards())->firstWhere('chave', 'enviado');
-        $this->assertSame(1, $enviados['total']);
+        // Cards "por resultado" contam todos os prospects com aquele resultado e o ativo fica marcado.
+        $cards = collect($t->instance()->cards())->keyBy('chave');
+        $this->assertSame(1, $cards['res_quer_reuniao']['total']);
+        $this->assertSame(1, $cards['res_ja_tem_sistema']['total']);
+        $this->assertSame(0, $cards['res_fechado']['total']);
+        $this->assertTrue($cards['res_quer_reuniao']['ativo']);
+        $this->assertSame('geral', $cards['enviado']['grupo']);
+
+        // Clicar no card aplica o filtro de resultado na lista; "Total" limpa.
+        $t->call('filtrarCard', 'res_ja_tem_sistema')
+            ->assertSet('tableFilters.resultado.value', 'ja_tem_sistema')
+            ->assertCanSeeTableRecords([$b])->assertCanNotSeeTableRecords([$a, $c])
+            ->call('filtrarCard', 'total')
+            ->assertCanSeeTableRecords([$a, $b, $c]);
 
         $this->assertSame([$b->id], Prospect::filtrar(['resultado' => ['value' => 'ja_tem_sistema']])->pluck('id')->all());
 

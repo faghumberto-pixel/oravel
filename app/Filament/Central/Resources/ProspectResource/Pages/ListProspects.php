@@ -35,12 +35,30 @@ class ListProspects extends ListRecords
         'nota_alta' => 'amber', 'retorno' => 'orange',
     ];
 
+    /** Cor de cada card "por estagio / resultado" (nome da paleta de CrmPalette::cor). */
+    public const CORES_RESULTADO = [
+        'nao_atendeu' => 'gray', 'nao_respondeu' => 'amber', 'numero_invalido' => 'gray', 'ja_tem_sistema' => 'pink',
+        'sem_interesse_momento' => 'orange', 'sem_interesse' => 'red', 'pediu_email' => 'indigo', 'quer_reuniao' => 'cyan',
+        'reuniao_agendada' => 'teal', 'proposta_enviada' => 'purple', 'contrato_andamento' => 'blue', 'fechado' => 'emerald',
+    ];
+
     /** Filtros que os cards controlam; os demais (lote, porte, atividade, origem, ano) sao "base" e valem para todos os cards. */
-    private const CHAVES_CARD = ['status', 'empresa_nova', 'regiao_campinas', 'nota_alta', 'retorno_vencido'];
+    private const CHAVES_CARD = ['status', 'resultado', 'empresa_nova', 'regiao_campinas', 'nota_alta', 'retorno_vencido'];
+
+    /** Cards de situacao/recortes + um card por estagio / resultado (chave "res_<resultado>"). */
+    public static function todosCards(): array
+    {
+        $cards = self::CARDS;
+        foreach (Prospect::RESULTADOS as $k => $rotulo) {
+            $cards['res_'.$k] = [$rotulo, ['resultado' => $k]];
+        }
+
+        return $cards;
+    }
 
     public function filtrarCard(string $chave): void
     {
-        $filtros = self::CARDS[$chave][1] ?? [];
+        $filtros = self::todosCards()[$chave][1] ?? [];
 
         // Mantem os filtros base; so troca o recorte do card.
         $estado = $this->tableFilters ?? [];
@@ -65,17 +83,18 @@ class ListProspects extends ListRecords
         $base = array_diff_key($atuais, array_flip(self::CHAVES_CARD));
 
         $cards = [];
-        foreach (self::CARDS as $chave => [$rotulo, $filtros]) {
+        foreach (self::todosCards() as $chave => [$rotulo, $filtros]) {
             $estado = $base;
             foreach ($filtros as $k => $valor) {
                 $estado[$k] = in_array($k, ['nota_alta', 'retorno_vencido'], true) ? ['isActive' => true] : ['value' => $valor];
             }
             $cards[] = [
                 'chave' => $chave,
+                'grupo' => str_starts_with($chave, 'res_') ? 'resultado' : 'geral',
                 'rotulo' => $rotulo,
                 'total' => Prospect::filtrar($estado)->busca($this->tableSearch)->count(),
                 'ativo' => $ativosCard == $filtros,
-                'paleta' => CrmPalette::cor(self::CORES[$chave] ?? 'gray'),
+                'paleta' => CrmPalette::cor(self::CORES[$chave] ?? self::CORES_RESULTADO[substr($chave, 4)] ?? 'gray'),
             ];
         }
 
