@@ -54,16 +54,10 @@ class ListAssets extends ListRecords
         ];
     }
 
+    /** Sem widgets no topo (pedido do usuario 2026-11-03): so' os cards de totais clicaveis acima da lista. */
     protected function getHeaderWidgets(): array
     {
-        return [
-            AssetResource\Widgets\AssetStats::class,
-        ];
-    }
-
-    public function getHeaderWidgetsColumns(): int|string|array
-    {
-        return 2;
+        return [];
     }
 
     private function templateAction(): Actions\Action

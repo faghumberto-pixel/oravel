@@ -81,7 +81,7 @@ class AssetStatsWidgetTest extends TestCase
         $this->assertSame(1, $semPmp->getValue());
     }
 
-    public function test_pagina_de_ativos_nao_tem_mais_widgets_de_grafico(): void
+    public function test_pagina_de_ativos_nao_tem_widgets_no_topo(): void
     {
         [, $admin] = $this->makeTenant();
         $this->actingAs($admin);
@@ -90,6 +90,7 @@ class AssetStatsWidgetTest extends TestCase
         $reflection->setAccessible(true);
         $widgets = $reflection->invoke(new ListAssets);
 
-        $this->assertSame([AssetStats::class], $widgets);
+        // Pedido do usuario 2026-11-03: sem cards antigos no topo; so' os cards de totais clicaveis.
+        $this->assertSame([], $widgets);
     }
 }

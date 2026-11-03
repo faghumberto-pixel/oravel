@@ -63,4 +63,11 @@ class ClientCartoesTest extends TestCase
             ->call('filtrarCard', 'total')
             ->assertCanSeeTableRecords([$com, $sem]);
     }
+
+    public function test_lista_sem_widgets_no_topo(): void
+    {
+        $this->cenario();
+
+        $this->assertSame([], (new \ReflectionMethod(ListClients::class, 'getHeaderWidgets'))->invoke(new ListClients));
+    }
 }
