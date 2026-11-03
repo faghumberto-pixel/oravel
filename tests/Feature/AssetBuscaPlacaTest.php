@@ -73,7 +73,8 @@ class AssetBuscaPlacaTest extends TestCase
         Livewire::test(ListAssets::class)->searchTable('kmx-1a23')->assertCanSeeTableRecords([$v])->assertCanNotSeeTableRecords([$outro, $maquina]);
         Livewire::test(ListAssets::class)->searchTable('KMX1A23')->assertCanSeeTableRecords([$v]);
         Livewire::test(ListAssets::class)->filterTable('placa', ['placa' => 'kmx-1a'])->assertCanSeeTableRecords([$v])->assertCanNotSeeTableRecords([$outro, $maquina]);
-        Livewire::test(ListAssets::class)->filterTable('placa', ['placa' => null])->assertCanSeeTableRecords([$v, $outro, $maquina]);
+        // A busca e os filtros ficam guardados na sessao (de proposito): limpa a busca antes de conferir a lista toda.
+        Livewire::test(ListAssets::class)->searchTable('')->filterTable('placa', ['placa' => null])->assertCanSeeTableRecords([$v, $outro, $maquina]);
     }
 
     public function test_campo_ativo_da_ordem_de_servico_busca_pela_placa(): void
