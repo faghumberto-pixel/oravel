@@ -171,6 +171,11 @@ Route::post('/proposta-comercial/{token}/aceitar', [PropostaComercialApprovalCon
 Route::post('/proposta-comercial/{token}/recusar', [PropostaComercialApprovalController::class, 'reject'])
     ->name('proposta-comercial.public-reject');
 
+// Landing de captura (isca): planilha de manutencao preventiva. Publica, sem auth; POST limitado por IP.
+Route::get('/planilha-manutencao-preventiva', [\App\Http\Controllers\IscaPlanilhaController::class, 'show'])->name('isca.planilha');
+Route::post('/planilha-manutencao-preventiva', [\App\Http\Controllers\IscaPlanilhaController::class, 'store'])
+    ->middleware('throttle:6,1')->name('isca.planilha.store');
+
 // Publica, sem auth de proposito -- cliente final vendo/aceitando/recusando a proposta do CRM pelo link recebido.
 // Limite por IP contra tentativa de adivinhar token ou aceitar em massa.
 Route::middleware('throttle:30,1')->group(function () {
