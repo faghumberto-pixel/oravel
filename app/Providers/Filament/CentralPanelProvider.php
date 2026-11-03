@@ -47,7 +47,6 @@ use App\Filament\Central\Widgets\TopReferrersChart;
 use App\Filament\Central\Widgets\WonLostTrendChart;
 use App\Filament\Resources\RoleResource;
 use App\Http\Middleware\TrackSiteVisit;
-use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -108,10 +107,8 @@ class CentralPanelProvider extends PanelProvider
                 'crmAmber' => Color::Amber,
                 'crmTeal' => Color::Teal,
             ])
-            // Claro e escuro, com botão para alternar (pedido do usuário 2026-10-08).
-            // Começa no claro, como o app; quem escolhe o escuro mantém a escolha.
-            ->darkMode()
-            ->defaultThemeMode(ThemeMode::Light)
+            // Somente modo escuro (pedido do usuario 2026-11-03): sem seletor claro/escuro.
+            ->darkMode(true, isForced: true)
             ->viteTheme('resources/css/filament/central/theme.css')
             // Central nunca teve isso (so' o Admin) -- caia no texto padrao
             // do Filament em vez do wordmark "Oravel" com o "r" laranja.
