@@ -235,13 +235,13 @@ def cabecalho(atual=''):
         '<header class="top"><div class="top-in"><a class="logo" href="/" aria-label="Oravel">O<i>r</i>avel</a>'
         '<nav class="nav" aria-label="Principal">'
         f'<div class="dd"><button type="button" aria-haspopup="true">Recursos</button><div class="dd-menu">{rec}</div></div>'
-        '<a href="/software-manutencao-industrial/">Manutenção</a><a href="/processo-logistica/">Logística</a><a href="/erp-cmms/">Locação</a>'
+        '<a href="/materiais-gratuitos/">Materiais gratuitos</a>'
         f'<div class="dd"><button type="button" aria-haspopup="true">Soluções</button><div class="dd-menu">{eqp}</div></div>'
         '<a href="/contato.php">Contato</a></nav>'
         f'<div class="top-cta"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a></div>'
         '<button class="burger" type="button" aria-expanded="false" aria-controls="mnav">Menu</button></div>'
         f'<div class="mnav" id="mnav"><h4>Recursos</h4>{m_rec}<h4>Soluções</h4>{m_eq}<h4>Mais</h4>'
-        '<a href="/software-manutencao-industrial/">Manutenção</a><a href="/processo-logistica/">Logística</a><a href="/erp-cmms/">Locação</a><a href="/contato.php">Contato</a>'
+        '<a href="/materiais-gratuitos/">Materiais gratuitos</a><a href="/contato.php">Contato</a>'
         f'<div style="display:grid;gap:10px;margin-top:16px"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a></div></div></header>')
 
 

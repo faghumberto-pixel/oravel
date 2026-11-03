@@ -138,4 +138,40 @@ class IscaSiteInstitucionalTest extends TestCase
         [$h] = $this->rodar('POST', ['phone' => ''] + $ok);
         $this->assertSame($pagina.'?erro=dados#baixar', $this->location($h));
     }
+
+    /** @return array<int, string> páginas do site (sem backups) que têm o menu principal "Principal" */
+    private function paginasComMenu(): array
+    {
+        $achadas = [];
+        $it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->site, \FilesystemIterator::SKIP_DOTS));
+        foreach ($it as $arq) {
+            $f = $arq->getPathname();
+            if (str_contains($f, '.bak') || ! preg_match('/\.(html|php)$/', $f) || str_contains($f, '/nova/')) {
+                continue;
+            }
+            if (str_contains((string) file_get_contents($f), '<nav class="nav" aria-label="Principal">')) {
+                $achadas[] = $f;
+            }
+        }
+
+        return $achadas;
+    }
+
+    public function test_menu_do_site_tem_materiais_gratuitos_e_nao_tem_manutencao_logistica_locacao(): void
+    {
+        $paginas = $this->paginasComMenu();
+        $this->assertGreaterThan(30, count($paginas));
+
+        foreach ($paginas as $f) {
+            $html = file_get_contents($f);
+            $rel = str_replace($this->site.'/', '', $f);
+
+            $this->assertStringContainsString('<a href="/materiais-gratuitos/">Materiais gratuitos</a>', $html, "Sem Materiais gratuitos no menu: {$rel}");
+            foreach (['Manutenção' => '/software-manutencao-industrial/', 'Logística' => '/processo-logistica/', 'Locação' => '/erp-cmms/'] as $rotulo => $url) {
+                $this->assertStringNotContainsString('<a href="'.$url.'">'.$rotulo.'</a><a href="/materiais-gratuitos/"', $html, "{$rotulo} ainda no menu: {$rel}");
+                // dentro do bloco do menu principal e do menu do celular (antes de Contato)
+                $this->assertStringNotContainsString('</div></div><a href="'.$url.'">'.$rotulo.'</a>', $html, "{$rotulo} ainda no menu: {$rel}");
+            }
+        }
+    }
 }
