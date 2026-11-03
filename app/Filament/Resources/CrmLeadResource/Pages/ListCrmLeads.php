@@ -26,10 +26,6 @@ class ListCrmLeads extends ListRecords
         return [
             CrmLeadResource\Widgets\CrmMinhasMetasStats::class,
             CrmLeadResource\Widgets\CrmLeadStats::class,
-            CrmLeadResource\Widgets\CrmLeadsCreatedTrendWidget::class,
-            CrmLeadResource\Widgets\ConversionRateGaugeWidget::class,
-            CrmLeadResource\Widgets\LeadsWonVsLostAreaWidget::class,
-            CrmLeadResource\Widgets\LeadsBySourceChartWidget::class,
         ];
     }
 

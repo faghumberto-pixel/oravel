@@ -9,6 +9,7 @@ use App\Models\Material;
 use App\Models\MaterialCategory;
 use App\Models\StorageLocation;
 use App\Models\Supplier;
+use App\Support\CrmPalette;
 use App\Support\Tenancy;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -276,31 +277,65 @@ class MaterialResource extends Resource
             ]);
     }
 
+    /** Cor do cartao por significado: abaixo do estoque minimo = vermelho; sem fornecedor = amarelo; senao verde. */
+    public static function corDoMaterial(Material $m): string
+    {
+        if ($m->current_stock < $m->min_stock) {
+            return 'red';
+        }
+
+        return $m->supplier_id === null ? 'amber' : 'emerald';
+    }
+
     public static function table(Table $table): Table
     {
         return $table
+            // Lista em cartoes (padrao do CRM Comercial): borda vermelha = abaixo do minimo; amarela = sem fornecedor.
+            ->recordClasses(fn (Material $record) => 'border-s-4 hover:!bg-transparent '
+                .CrmPalette::cor(self::corDoMaterial($record))['border'].' '
+                .CrmPalette::cor(self::corDoMaterial($record))['soft'])
+            ->contentGrid(['md' => 2, '2xl' => 3])
+            ->persistFiltersInSession()
+            ->persistSearchInSession()
+            ->persistSortInSession()
             ->columns([
-                Tables\Columns\TextColumn::make('sku')->label('SKU')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('name')->label('Nome')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('category.name')->label('Categoria')->sortable(),
-                Tables\Columns\TextColumn::make('brand_name')->hidden(fn () => static::interfaceSimples())->label('Marca')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('supplier.name')->hidden(fn () => static::interfaceSimples())->label('Fornecedor')->sortable(),
-                Tables\Columns\TextColumn::make('price')->hidden(fn () => static::interfaceSimples())->label('Preço')->money('BRL')->sortable(),
-                Tables\Columns\TextColumn::make('current_stock')
-                    ->label('Qtd. Atual')
-                    ->numeric()
-                    ->color(fn ($record) => $record->current_stock <= $record->min_stock ? 'danger' : 'success'),
-                Tables\Columns\TextColumn::make('epiSpecification.ca_number')->hidden(fn () => static::interfaceSimples())
-                    ->label('CA (EPI)')
-                    ->placeholder('—')
-                    ->badge()
-                    ->color(fn (Material $record) => match (true) {
-                        $record->epiSpecification === null => 'gray',
-                        $record->epiSpecification->isCaVencido() => 'danger',
-                        $record->epiSpecification->isCaProximoVencimento() => 'warning',
-                        default => 'success',
-                    })
-                    ->toggleable(),
+                Tables\Columns\Layout\Stack::make([
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\Layout\Stack::make([
+                            Tables\Columns\TextColumn::make('name')->label('Nome')->searchable()->sortable()
+                                ->weight('bold')->size('lg')->color('crmOrange'),
+                            Tables\Columns\TextColumn::make('sku')->label('SKU')->searchable()->sortable()
+                                ->color('gray')->formatStateUsing(fn ($state): string => 'SKU '.$state),
+                        ]),
+                        Tables\Columns\TextColumn::make('current_stock')
+                            ->label('Qtd. Atual')
+                            ->numeric()
+                            ->badge()
+                            ->grow(false)
+                            ->formatStateUsing(fn ($state): string => 'Estoque '.rtrim(rtrim(number_format((float) $state, 2, ',', '.'), '0'), ','))
+                            ->color(fn ($record) => $record->current_stock <= $record->min_stock ? 'danger' : 'success'),
+                    ]),
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\TextColumn::make('category.name')->label('Categoria')->badge()->sortable()->grow(false),
+                        Tables\Columns\TextColumn::make('epiSpecification.ca_number')->hidden(fn () => static::interfaceSimples())
+                            ->label('CA (EPI)')
+                            ->badge()
+                            ->grow(false)
+                            ->formatStateUsing(fn ($state): ?string => $state ? 'CA '.$state : null)
+                            ->color(fn (Material $record) => match (true) {
+                                $record->epiSpecification === null => 'gray',
+                                $record->epiSpecification->isCaVencido() => 'danger',
+                                $record->epiSpecification->isCaProximoVencimento() => 'warning',
+                                default => 'success',
+                            }),
+                    ])->extraAttributes(['class' => 'flex-wrap gap-1']),
+                    Tables\Columns\TextColumn::make('brand_name')->hidden(fn () => static::interfaceSimples())->label('Marca')
+                        ->icon('heroicon-m-tag')->color('gray')->searchable()->sortable()->placeholder('Sem marca'),
+                    Tables\Columns\TextColumn::make('supplier.name')->hidden(fn () => static::interfaceSimples())->label('Fornecedor')
+                        ->icon('heroicon-m-building-storefront')->color('gray')->sortable()->placeholder('Sem fornecedor homologado'),
+                    Tables\Columns\TextColumn::make('price')->hidden(fn () => static::interfaceSimples())->label('Preço')
+                        ->icon('heroicon-m-banknotes')->color('gray')->money('BRL')->sortable(),
+                ])->space(2),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('category')->relationship('category', 'name')->label('Categoria'),

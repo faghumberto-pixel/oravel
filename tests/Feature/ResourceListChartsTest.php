@@ -77,63 +77,56 @@ class ResourceListChartsTest extends TestCase
     }
 
     /**
-     * Pedido do usuário: "não é apenas 1 gráfico por página, são 3", depois
-     * "está faltando mais um para ficar uniforme" -- 4 gráficos por
-     * página, lado a lado (getHeaderWidgetsColumns()=4), cada página abaixo
-     * confirma os 4 títulos. Ativos saiu dessa lista em 2026-08-30 (pedido
-     * do usuário: retirar os gráficos da tela de Ativos, deixar só os
-     * cards Total de Ativos / Ativos sem PMP -- ver AssetStatsWidgetTest).
+     * Pedido do usuário 2026-11-03: as listas (CRM Leads, Clientes, Materiais e Fornecedores) não têm
+     * mais gráficos -- só cards. Os widgets de gráfico continuam existindo e testados abaixo, mas não
+     * aparecem mais nas listas.
      */
-    public function test_leads_index_shows_all_4_charts(): void
+    public function test_leads_index_has_no_charts(): void
     {
         [, $admin] = $this->makeTenantAdmin(['tabela_crm_leads']);
         $this->actingAs($admin);
 
         $html = $this->get(CrmLeadResource::getUrl('index'))->assertOk()->getContent();
 
-        $this->assertStringContainsString('Leads Criados por Mês', $html);
-        $this->assertStringContainsString('Taxa de Conversão', $html);
-        $this->assertStringContainsString('Convertidos vs. Perdidos por Mês', $html);
-        $this->assertStringContainsString('Leads por Origem', $html);
+        foreach (['Leads Criados por Mês', 'Taxa de Conversão', 'Convertidos vs. Perdidos por Mês', 'Leads por Origem'] as $titulo) {
+            $this->assertStringNotContainsString($titulo, $html);
+        }
     }
 
-    public function test_clients_index_shows_all_4_charts(): void
+    public function test_clients_index_has_no_charts(): void
     {
         [, $admin] = $this->makeTenantAdmin(['tabela_clients']);
         $this->actingAs($admin);
 
         $html = $this->get(ClientResource::getUrl('index'))->assertOk()->getContent();
 
-        $this->assertStringContainsString('Taxa de Clientes com Contrato Ativo', $html);
-        $this->assertStringContainsString('Novos Clientes por Mês', $html);
-        $this->assertStringContainsString('Contratos Iniciados vs. Encerrados por Mês', $html);
-        $this->assertStringContainsString('Clientes por Nicho', $html);
+        foreach (['Taxa de Clientes com Contrato Ativo', 'Novos Clientes por Mês', 'Contratos Iniciados vs. Encerrados por Mês', 'Clientes por Nicho'] as $titulo) {
+            $this->assertStringNotContainsString($titulo, $html);
+        }
     }
 
-    public function test_materials_index_shows_all_4_charts(): void
+    public function test_materials_index_has_no_charts(): void
     {
         [, $admin] = $this->makeTenantAdmin(['tabela_materials']);
         $this->actingAs($admin);
 
         $html = $this->get(MaterialResource::getUrl('index'))->assertOk()->getContent();
 
-        $this->assertStringContainsString('Taxa de Estoque Saudável', $html);
-        $this->assertStringContainsString('Materiais Cadastrados por Mês', $html);
-        $this->assertStringContainsString('Entradas vs. Saídas de Estoque por Mês', $html);
-        $this->assertStringContainsString('Materiais por Categoria', $html);
+        foreach (['Taxa de Estoque Saudável', 'Materiais Cadastrados por Mês', 'Entradas vs. Saídas de Estoque por Mês', 'Materiais por Categoria'] as $titulo) {
+            $this->assertStringNotContainsString($titulo, $html);
+        }
     }
 
-    public function test_suppliers_index_shows_all_4_charts(): void
+    public function test_suppliers_index_has_no_charts(): void
     {
         [, $admin] = $this->makeTenantAdmin(['tabela_suppliers']);
         $this->actingAs($admin);
 
         $html = $this->get(SupplierResource::getUrl('index'))->assertOk()->getContent();
 
-        $this->assertStringContainsString('Taxa de Compliance Completo', $html);
-        $this->assertStringContainsString('Fornecedores Cadastrados por Mês', $html);
-        $this->assertStringContainsString('Ordens de Compra Abertas vs. Recebidas por Mês', $html);
-        $this->assertStringContainsString('Top Fornecedores por Materiais Vinculados', $html);
+        foreach (['Taxa de Compliance Completo', 'Fornecedores Cadastrados por Mês', 'Ordens de Compra Abertas vs. Recebidas por Mês', 'Top Fornecedores por Materiais Vinculados'] as $titulo) {
+            $this->assertStringNotContainsString($titulo, $html);
+        }
     }
 
     public function test_client_active_contract_gauge_computes_correct_percentage(): void
@@ -501,52 +494,5 @@ class ResourceListChartsTest extends TestCase
 
         $this->assertSame('Fornecedor Top', $data['labels'][0]);
         $this->assertSame(2, $data['datasets'][0]['data'][0]);
-    }
-
-    /**
-     * Pedido do usuário: as 4 caixas de cada página têm que ter o mesmo
-     * tamanho -- os 4 gráficos tinham maxHeight diferente (190px Gauge /
-     * 220px Linha e Área / 260px categórico / 280px o donut reaproveitado
-     * de AssetsByStatusChart), padronizados em 220px. Cada página abaixo
-     * só pode ter uma única altura no HTML.
-     */
-    private function assertUniformChartHeight(string $html): void
-    {
-        $this->assertStringContainsString('max-height: 220px', $html);
-        $this->assertStringNotContainsString('max-height: 190px', $html);
-        $this->assertStringNotContainsString('max-height: 260px', $html);
-        $this->assertStringNotContainsString('max-height: 280px', $html);
-    }
-
-    public function test_leads_page_has_uniform_chart_height(): void
-    {
-        [, $admin] = $this->makeTenantAdmin(['tabela_crm_leads']);
-        $this->actingAs($admin);
-
-        $this->assertUniformChartHeight($this->get(CrmLeadResource::getUrl('index'))->assertOk()->getContent());
-    }
-
-    public function test_clients_page_has_uniform_chart_height(): void
-    {
-        [, $admin] = $this->makeTenantAdmin(['tabela_clients']);
-        $this->actingAs($admin);
-
-        $this->assertUniformChartHeight($this->get(ClientResource::getUrl('index'))->assertOk()->getContent());
-    }
-
-    public function test_materials_page_has_uniform_chart_height(): void
-    {
-        [, $admin] = $this->makeTenantAdmin(['tabela_materials']);
-        $this->actingAs($admin);
-
-        $this->assertUniformChartHeight($this->get(MaterialResource::getUrl('index'))->assertOk()->getContent());
-    }
-
-    public function test_suppliers_page_has_uniform_chart_height(): void
-    {
-        [, $admin] = $this->makeTenantAdmin(['tabela_suppliers']);
-        $this->actingAs($admin);
-
-        $this->assertUniformChartHeight($this->get(SupplierResource::getUrl('index'))->assertOk()->getContent());
     }
 }
