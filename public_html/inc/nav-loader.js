@@ -43,6 +43,7 @@
     // Um dropdown aberto por vez (Módulos, Segmentos, ...).
     dropdowns.forEach(function (dd) {
       var trigger = dd.querySelector('.onav-dropdown-trigger');
+      if (!trigger) return;
       trigger.addEventListener('click', function (e) {
         e.stopPropagation();
         var willOpen = !dd.classList.contains('is-open');
@@ -62,6 +63,7 @@
       if (e.key === 'Escape') closeAll();
     });
 
+    if (!burger || !navLinks) return;
     burger.addEventListener('click', function () {
       var isOpen = navLinks.classList.toggle('is-open');
       burger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');

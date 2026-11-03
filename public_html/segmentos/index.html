@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Segmentos — Software para cada operação | Oravel</title>
+<link rel="canonical" href="https://oravel.com.br/segmentos/">
 <meta name="description" content="Locação, manutenção industrial, montagem, logística, gestão de serviços e distribuição: veja as dores de cada segmento e como a Oravel resolve.">
-<link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
-<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" type="image/svg+xml" href="/nova/assets/favicon.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="/nova/assets/favicon-32.png" />
+<link rel="icon" type="image/x-icon" href="/nova/assets/favicon.ico" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -110,11 +110,6 @@
   .ifoot-links a:hover { color: var(--ink); }
   .ifoot-copy { font-size: 13px; color: var(--ink-faint); }
 .ifoot-legal { font-size: 11.5px; color: var(--ink-faint); margin-top: 4px; }
-
-/* Proteção básica contra cópia (dissuasão client-side, não impede DevTools/curl). */
-html { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-input, textarea, select, [contenteditable] { -webkit-user-select: text; -moz-user-select: text; user-select: text; }
-img, svg { -webkit-user-drag: none; user-drag: none; }
 </style>
 </head>
 <body>
@@ -123,10 +118,10 @@ img, svg { -webkit-user-drag: none; user-drag: none; }
   <div class="inav-wrap">
     <a href="/" class="inav-logo"><span class="inav-logo-mark">O</span>Oravel</a>
     <div class="inav-links">
-      <a href="/#frentes">Produtos</a>
+      <a href="/solucoes/">Produtos</a>
       <div class="inav-dd">
         <a href="/segmentos/" aria-haspopup="true" aria-current="page">Segmentos</a>
-        <div class="inav-dd-menu"><a href="/erp-cmms/">Locação de Equipamentos</a><a href="/software-manutencao-industrial/">Manutenção Industrial</a><a href="/software-montagem-industrial/">Montagem Industrial</a><a href="/software-gestao-frota-logistica/">Logística e Transportes</a><a href="/software-gestao-de-servicos/">Gestão de Serviços</a><a href="/wms/">Distribuidor e Atacadista</a><a href="/crm/">Qualquer Segmento</a></div>
+        <div class="inav-dd-menu"><a href="/erp-cmms/">Locação de Equipamentos</a><a href="/software-manutencao-industrial/">Manutenção Industrial</a><a href="/software-montagem-industrial/">Montagem Industrial</a><a href="/software-gestao-frota-logistica/">Logística e Transportes</a><a href="/software-gestao-de-servicos/">Gestão de Serviços</a><a href="/wms/">Estoque</a><a href="/crm/">Qualquer Segmento</a></div>
       </div>
       <a href="/sobre-nos">Sobre</a>
       <a href="/contato.php">Contato</a>
@@ -275,7 +270,7 @@ img, svg { -webkit-user-drag: none; user-drag: none; }
       <a href="/politica-de-privacidade/">Privacidade</a>
       <a href="/termos-de-uso/">Termos</a>
     </div>
-    <div class="ifoot-copy">© <script>document.write(new Date().getFullYear())</script> Oravel Desenvolvimento de Software<div class="ifoot-legal">CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, conj. 1713, Pinheiros, São Paulo/SP · CEP 05424-150</div></div>
+    <div class="ifoot-copy">© <script>document.write(new Date().getFullYear())</script> Oravel Desenvolvimento de Software<div class="ifoot-legal">CNPJ 65.707.953/0001-30</div></div>
   </div>
 </footer>
 
@@ -408,28 +403,7 @@ img, svg { -webkit-user-drag: none; user-drag: none; }
     })();
 </script>
 
-<script>
-(function () {
-  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
-  document.addEventListener('copy', function (e) { e.preventDefault(); });
-  document.addEventListener('cut', function (e) { e.preventDefault(); });
-  document.addEventListener('selectstart', function (e) {
-    var t = e.target.tagName;
-    if (t !== 'INPUT' && t !== 'TEXTAREA') e.preventDefault();
-  });
-  document.addEventListener('dragstart', function (e) {
-    var t = e.target.tagName;
-    if (t === 'IMG' || t === 'svg' || t === 'SVG') e.preventDefault();
-  });
-  document.addEventListener('keydown', function (e) {
-    var k = (e.key || '').toLowerCase();
-    var mod = e.ctrlKey || e.metaKey;
-    if ((mod && ['c', 'x', 'u', 's'].indexOf(k) !== -1) || k === 'f12' || (mod && e.shiftKey && ['i', 'j', 'c'].indexOf(k) !== -1)) {
-      e.preventDefault();
-    }
-  });
-})();
-</script>
-
+<script async src="https://app.oravel.com.br/t.js?v=2"></script>
+<script src="/protecao.js?v=3" defer></script>
 </body>
 </html>
