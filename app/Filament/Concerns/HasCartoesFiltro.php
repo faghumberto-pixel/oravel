@@ -8,13 +8,14 @@ use App\Support\CrmPalette;
  * Cards de totais clicaveis acima de uma lista (padrao do app, igual aos Prospects da Central).
  *
  * A pagina define `definicaoCartoes()`: chave => [rotulo, [filtro => valor], cor da paleta CrmPalette].
- * Valor string = SelectFilter (['value' => x]); valor `true` = filtro liga/desliga (['isActive' => true]).
+ * Valor string = SelectFilter (['value' => x]); valor `true` = filtro liga/desliga (['isActive' => true]);
+ * valor array = SelectFilter multiplo (['values' => [...]]).
  * Cada card e' um recorte sobre os filtros da tabela; o total e' calculado com a
  * propria query da tabela (busca e demais filtros ja aplicados), trocando so' os filtros do card.
  */
 trait HasCartoesFiltro
 {
-    /** @return array<string, array{0: string, 1: array<string, string|bool>, 2: string}> */
+    /** @return array<string, array{0: string, 1: array<string, string|bool|array<int, string>>, 2: string}> */
     abstract protected function definicaoCartoes(): array;
 
     /** Filtros controlados pelos cards (os demais valem como "base" para todos). */
@@ -43,28 +44,54 @@ trait HasCartoesFiltro
         return array_values(array_unique($chaves));
     }
 
+    /** Chaves dos filtros de selecao multipla controlados pelos cards. */
+    private function chavesMultiplas(): array
+    {
+        $chaves = [];
+        foreach ($this->definicaoCartoes() as [, $filtros]) {
+            foreach ($filtros as $k => $valor) {
+                if (is_array($valor)) {
+                    $chaves[] = $k;
+                }
+            }
+        }
+
+        return array_values(array_unique($chaves));
+    }
+
     private function estadoComCartao(array $atual, array $filtros): array
     {
         $toggles = $this->chavesToggle();
+        $multiplas = $this->chavesMultiplas();
         foreach ($this->chavesCartao() as $k) {
-            $atual[$k] = in_array($k, $toggles, true) ? ['isActive' => false] : ['value' => null];
+            $atual[$k] = in_array($k, $toggles, true) ? ['isActive' => false] : (in_array($k, $multiplas, true) ? ['values' => []] : ['value' => null]);
         }
         foreach ($filtros as $k => $valor) {
-            $atual[$k] = $valor === true ? ['isActive' => true] : ['value' => $valor];
+            $atual[$k] = $valor === true ? ['isActive' => true] : (is_array($valor) ? ['values' => $valor] : ['value' => $valor]);
         }
 
         return $atual;
+    }
+
+    private function normalizarValor(mixed $valor): string
+    {
+        return $valor === true ? '1' : (is_array($valor) ? implode(',', $valor) : (string) $valor);
     }
 
     /** Estado atual dos filtros dos cards, normalizado (chave => texto) para comparar com a definicao. */
     private function ativosNormalizados(array $estado): array
     {
         $toggles = $this->chavesToggle();
+        $multiplas = $this->chavesMultiplas();
         $r = [];
         foreach ($this->chavesCartao() as $k) {
             if (in_array($k, $toggles, true)) {
                 if (! empty($estado[$k]['isActive'])) {
                     $r[$k] = '1';
+                }
+            } elseif (in_array($k, $multiplas, true)) {
+                if (! empty($estado[$k]['values'])) {
+                    $r[$k] = implode(',', $estado[$k]['values']);
                 }
             } elseif (filled($estado[$k]['value'] ?? null)) {
                 $r[$k] = (string) $estado[$k]['value'];
@@ -95,7 +122,7 @@ trait HasCartoesFiltro
                     'chave' => $chave,
                     'rotulo' => $rotulo,
                     'total' => $this->getFilteredTableQuery()->reorder()->count(),
-                    'ativo' => $ativos == array_map(fn ($v) => $v === true ? '1' : (string) $v, $filtros),
+                    'ativo' => $ativos == array_map(fn ($v) => $this->normalizarValor($v), $filtros),
                     'paleta' => CrmPalette::cor($cor),
                 ];
             }

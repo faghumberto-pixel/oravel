@@ -47,7 +47,7 @@ class MaintenanceOrdersChartsTest extends TestCase
         return [$tenant, $admin];
     }
 
-    public function test_list_page_renders_with_the_three_new_charts(): void
+    public function test_list_page_has_no_charts_only_cards(): void
     {
         [$tenant, $admin] = $this->makeTenantAdmin();
         $asset = Asset::create(['tenant_id' => $tenant->id, 'name' => 'Ativo Chart', 'status' => 'disponivel']);
@@ -58,13 +58,15 @@ class MaintenanceOrdersChartsTest extends TestCase
 
         $this->actingAs($admin);
 
-        // ChartWidgets do Filament são lazy (carregam via wire:init) --
-        // o GET inicial não traz o heading no HTML, só depois do Livewire
-        // montar. assertOk() confirma que a página (com os 3 novos widgets
-        // registrados) não quebra o boot; Livewire::test() por widget
-        // confirma que cada um realmente monta e mostra seu heading.
+        // Pedido do usuario 2026-11-03: a lista de OS nao tem graficos, so' cards.
         $this->get(ListMaintenanceOrders::getUrl())->assertOk();
 
+        $widgets = (new \ReflectionMethod(ListMaintenanceOrders::class, 'getHeaderWidgets'))->invoke(new ListMaintenanceOrders);
+        $this->assertNotContains(MaintenanceOrdersEvolutionChart::class, $widgets);
+        $this->assertNotContains(MaintenanceOrdersStatusDonutChart::class, $widgets);
+        $this->assertNotContains(MaintenanceOrdersByTypeChart::class, $widgets);
+
+        // Os widgets continuam montando sozinhos (nao sao usados na lista).
         Livewire::test(MaintenanceOrdersEvolutionChart::class)->assertSee('Evolução Mensal de O.S. (Abertas vs. Concluídas)');
         Livewire::test(MaintenanceOrdersStatusDonutChart::class)->assertSee('Status das O.S. Atuais');
         Livewire::test(MaintenanceOrdersByTypeChart::class)->assertSee('O.S. por Tipo de Manutenção');

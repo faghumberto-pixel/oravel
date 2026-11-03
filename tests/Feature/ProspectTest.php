@@ -30,7 +30,7 @@ class ProspectTest extends TestCase
 
     private function prospect(array $o = []): Prospect
     {
-        return Prospect::create($o + ['cnpj' => '11.111.111/0001-'.random_int(10, 99), 'nome' => 'Obra Mais', 'socio' => 'FRANCO DE ANDRADE', 'ano_abertura' => 2025, 'telefone' => '(19) 98888-7777', 'nota' => 9]);
+        return Prospect::create($o + ['cnpj' => sprintf('11.111.111/%04d-%02d', random_int(1, 9999), random_int(10, 99)), 'nome' => 'Obra Mais', 'socio' => 'FRANCO DE ANDRADE', 'ano_abertura' => 2025, 'telefone' => '(19) 98888-7777', 'nota' => 9]);
     }
 
     public function test_mensagem_usa_primeiro_nome_empresa_e_ano(): void
