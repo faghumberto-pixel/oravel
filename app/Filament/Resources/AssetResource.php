@@ -15,6 +15,7 @@ use App\Models\CriticalityLevel;
 use App\Models\EquipmentReplacement;
 use App\Models\StorageLocation;
 use App\Services\CepGeocodingService;
+use App\Support\CrmPalette;
 use App\Support\Tenancy;
 use App\Support\VehicleExpirations;
 use Carbon\Carbon;
@@ -37,6 +38,30 @@ class AssetResource extends Resource
     use HasSuperAdminTenantColumn;
 
     protected static ?string $model = Asset::class;
+
+    /** Cor do cartao por status (nome da paleta de CrmPalette::cor). */
+    public const COR_STATUS = [
+        Asset::STATUS_DISPONIVEL => 'emerald', Asset::STATUS_OPERANDO => 'blue', Asset::STATUS_LOCADO => 'amber',
+        Asset::STATUS_MANUTENCAO => 'red', Asset::STATUS_AGUARDANDO_TRIAGEM => 'gray', Asset::STATUS_RESERVADO => 'indigo',
+        Asset::STATUS_QUARENTENA => 'purple',
+    ];
+
+    /** Fundo suave do cartao por status; com "!" porque o cartao do Filament tem bg-white (literais para o Tailwind gerar). */
+    public const FUNDO_STATUS = [
+        Asset::STATUS_DISPONIVEL => '!bg-emerald-50 dark:!bg-emerald-500/25',
+        Asset::STATUS_OPERANDO => '!bg-blue-50 dark:!bg-blue-500/25',
+        Asset::STATUS_LOCADO => '!bg-amber-50 dark:!bg-amber-500/25',
+        Asset::STATUS_MANUTENCAO => '!bg-red-50 dark:!bg-red-500/25',
+        Asset::STATUS_AGUARDANDO_TRIAGEM => '!bg-gray-50 dark:!bg-gray-500/25',
+        Asset::STATUS_RESERVADO => '!bg-indigo-50 dark:!bg-indigo-500/25',
+        Asset::STATUS_QUARENTENA => '!bg-purple-50 dark:!bg-purple-500/25',
+    ];
+
+    public const STATUS_ROTULOS = [
+        Asset::STATUS_DISPONIVEL => 'Disponível', Asset::STATUS_OPERANDO => 'Em operação', Asset::STATUS_LOCADO => 'Locado',
+        Asset::STATUS_MANUTENCAO => 'Em manutenção', Asset::STATUS_AGUARDANDO_TRIAGEM => 'Aguardando triagem',
+        Asset::STATUS_RESERVADO => 'Reservado', Asset::STATUS_QUARENTENA => 'Quarentena',
+    ];
 
     protected static ?string $navigationIcon = 'heroicon-o-truck';
 
@@ -989,125 +1014,130 @@ class AssetResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            // Lista em cartoes (mesmo padrao do CRM Comercial / Prospects): cor do status na lateral e no fundo.
+            ->recordClasses(fn (Asset $record) => 'border-s-4 hover:!bg-transparent '
+                .CrmPalette::cor(self::COR_STATUS[$record->status] ?? 'gray')['border'].' '
+                .(self::FUNDO_STATUS[$record->status] ?? self::FUNDO_STATUS[Asset::STATUS_AGUARDANDO_TRIAGEM]))
             ->columns([
-                static::tenantColumn(),
+                Tables\Columns\Layout\Stack::make([
+                    static::tenantColumn(),
 
-                Tables\Columns\SpatieMediaLibraryImageColumn::make('fotos')
-                    ->label('Foto')
-                    ->collection('fotos')
-                    ->conversion('thumb')
-                    ->limit(1)
-                    ->square()
-                    ->size(56)
-                    ->defaultImageUrl(fn () => null),
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\SpatieMediaLibraryImageColumn::make('fotos')
+                            ->label('Foto')
+                            ->collection('fotos')
+                            ->conversion('thumb')
+                            ->limit(1)
+                            ->square()
+                            ->size(56)
+                            ->defaultImageUrl(fn () => null)
+                            ->grow(false),
+                        Tables\Columns\Layout\Stack::make([
+                            Tables\Columns\TextColumn::make('name')
+                                ->label('Equipamento')
+                                ->searchable()
+                                ->weight('bold')->size('lg')->color('crmOrange')
+                                ->description(fn (Asset $record): string => ($record->placa ? 'Placa: '.$record->placa.' · ' : '').'Tag: '.($record->tag ?? '---')),
+                            Tables\Columns\TextColumn::make('patrimonio')->hidden(fn () => static::interfaceSimples())
+                                ->label('Patrimônio')
+                                ->searchable()
+                                ->sortable()
+                                ->color('gray')
+                                ->formatStateUsing(fn ($state, Asset $record): string => 'Patrimônio '.($state ?: '—').' · S/N: '.($record->serial_number ?? 'N/A')),
+                        ]),
+                    ]),
 
-                Tables\Columns\TextColumn::make('patrimonio')->hidden(fn () => static::interfaceSimples())
-                    ->label('Patrimônio')
-                    ->searchable()
-                    ->sortable()
-                    ->description(fn (Asset $record): string => 'S/N: '.($record->serial_number ?? 'N/A')),
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\TextColumn::make('status')
+                            ->badge()
+                            ->formatStateUsing(fn (?string $state): string => self::STATUS_ROTULOS[$state] ?? (string) $state)
+                            ->color(fn (string $state): string => Asset::statusColor($state))
+                            ->grow(false),
+                        Tables\Columns\TextColumn::make('grupo')->hidden(fn () => static::interfaceSimples())
+                            ->label('Tipo')
+                            ->badge()
+                            ->formatStateUsing(fn (?string $state) => Asset::grupoLabels()[$state] ?? 'Máquina / Equipamento')
+                            ->color(fn (?string $state) => $state === Asset::GRUPO_VEICULO ? 'info' : 'gray')
+                            ->grow(false),
+                        Tables\Columns\TextColumn::make('asset_category')
+                            ->label('Categoria')
+                            ->badge()
+                            ->grow(false),
+                        Tables\Columns\TextColumn::make('checklistGroup.name')->hidden(fn () => static::interfaceSimples())
+                            ->label('Grupo')
+                            ->badge()
+                            ->color('gray')
+                            ->grow(false),
+                        Tables\Columns\TextColumn::make('abcMatrix.nivel')->hidden(fn () => static::interfaceSimples())
+                            ->label('Criticidade')
+                            ->badge()
+                            ->formatStateUsing(fn (Asset $record): string => $record->currentCriticalityLevel()?->name ?? $record->abcMatrix?->nivel ?? '—')
+                            ->color(fn (Asset $record): string|array => $record->currentCriticalityLevel()?->color
+                                ? Color::hex($record->currentCriticalityLevel()->color)
+                                : 'gray')
+                            ->grow(false),
+                    ])->extraAttributes(['class' => 'flex-wrap gap-1']),
 
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Equipamento')
-                    ->searchable()
-                    ->description(fn (Asset $record): string => ($record->placa ? 'Placa: '.$record->placa.' · ' : '').'Tag: '.($record->tag ?? '---')),
+                    // Máquina: horímetro (h). Veículo: odômetro (km).
+                    Tables\Columns\TextColumn::make('last_horimetro')->hidden(fn () => static::interfaceSimples())
+                        ->label('Horímetro / Odômetro')
+                        ->icon('heroicon-m-clock')
+                        ->color('gray')
+                        ->state(fn (Asset $record) => $record->isVehicle() ? (float) $record->odometro_atual : (float) $record->last_horimetro)
+                        ->formatStateUsing(fn ($state, Asset $record) => number_format((float) $state, $record->isVehicle() ? 0 : 1, ',', '.').($record->isVehicle() ? ' km' : ' h'))
+                        ->sortable(query: fn (Builder $query, string $direction) => $query->orderByRaw("CASE WHEN assets.grupo = 'veiculo' THEN assets.odometro_atual ELSE assets.last_horimetro END {$direction}")),
 
-                Tables\Columns\TextColumn::make('grupo')->hidden(fn () => static::interfaceSimples())
-                    ->label('Tipo')
-                    ->badge()
-                    ->formatStateUsing(fn (?string $state) => Asset::grupoLabels()[$state] ?? 'Máquina / Equipamento')
-                    ->color(fn (?string $state) => $state === Asset::GRUPO_VEICULO ? 'info' : 'gray')
-                    ->toggleable(),
+                    Tables\Columns\TextColumn::make('capacity_value')->hidden(fn () => static::interfaceSimples())
+                        ->label('Capacidade')
+                        ->icon('heroicon-m-bolt')
+                        ->color('gray')
+                        ->sortable()
+                        ->formatStateUsing(fn (Asset $record) => $record->capacity_value !== null
+                            ? 'Capacidade '.rtrim(rtrim(number_format((float) $record->capacity_value, 2, ',', '.'), '0'), ',').' '.($record->capacity_unit ?? '')
+                            : null),
 
-                Tables\Columns\TextColumn::make('placa')->hidden(fn () => static::interfaceSimples())
-                    ->label('Placa')
-                    // Quem digita "kmx-1a23" acha "KMX1A23": a placa é gravada sem hífen e em maiúsculas.
-                    ->searchable(query: fn (Builder $query, string $search): Builder => Asset::normalizarCodigo($search) !== ''
-                        ? $query->where('assets.placa', 'ilike', '%'.Asset::normalizarCodigo($search).'%')
-                        : $query->whereRaw('1 = 0'))
-                    ->placeholder('—')
-                    ->toggleable(),
+                    // Veículo: vencimentos em cor (verde/amarelo/vermelho); só aparecem quando há data.
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\TextColumn::make('seguro_vencimento')->hidden(fn () => static::interfaceSimples())
+                            ->label('Seguro')
+                            ->formatStateUsing(fn ($state) => 'Seguro '.\Illuminate\Support\Carbon::parse($state)->format('d/m/Y'))
+                            ->badge()
+                            ->color(fn (Asset $record) => VehicleExpirations::status($record->seguro_vencimento)[1])
+                            ->grow(false),
+                        Tables\Columns\TextColumn::make('ipva_vencimento')->hidden(fn () => static::interfaceSimples())
+                            ->label('IPVA')
+                            ->formatStateUsing(fn ($state) => 'IPVA '.\Illuminate\Support\Carbon::parse($state)->format('d/m/Y'))
+                            ->badge()
+                            ->color(fn (Asset $record) => VehicleExpirations::status($record->ipva_vencimento)[1])
+                            ->grow(false),
+                        Tables\Columns\TextColumn::make('licenciamento_vencimento')->hidden(fn () => static::interfaceSimples())
+                            ->label('Licenciamento')
+                            ->formatStateUsing(fn ($state) => 'Licenc. '.\Illuminate\Support\Carbon::parse($state)->format('d/m/Y'))
+                            ->badge()
+                            ->color(fn (Asset $record) => VehicleExpirations::status($record->licenciamento_vencimento)[1])
+                            ->grow(false),
+                    ])->extraAttributes(['class' => 'flex-wrap gap-1']),
 
-                Tables\Columns\TextColumn::make('seguro_vencimento')->hidden(fn () => static::interfaceSimples())
-                    ->label('Seguro')
-                    ->date('d/m/Y')
-                    ->badge()
-                    ->color(fn (Asset $record) => VehicleExpirations::status($record->seguro_vencimento)[1])
-                    ->placeholder('—')
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                Tables\Columns\TextColumn::make('ipva_vencimento')->hidden(fn () => static::interfaceSimples())
-                    ->label('IPVA')
-                    ->date('d/m/Y')
-                    ->badge()
-                    ->color(fn (Asset $record) => VehicleExpirations::status($record->ipva_vencimento)[1])
-                    ->placeholder('—')
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                Tables\Columns\TextColumn::make('licenciamento_vencimento')->hidden(fn () => static::interfaceSimples())
-                    ->label('Licenciamento')
-                    ->date('d/m/Y')
-                    ->badge()
-                    ->color(fn (Asset $record) => VehicleExpirations::status($record->licenciamento_vencimento)[1])
-                    ->placeholder('—')
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                Tables\Columns\TextColumn::make('carroceria_tipo')->hidden(fn () => static::interfaceSimples())
-                    ->label('Carroceria')
-                    ->formatStateUsing(fn (?string $state) => Asset::carroceriaLabels()[$state] ?? $state)
-                    ->placeholder('—')
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                Tables\Columns\TextColumn::make('quantidade_eixos')->hidden(fn () => static::interfaceSimples())
-                    ->label('Eixos')
-                    ->placeholder('—')
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                Tables\Columns\TextColumn::make('chassi')->hidden(fn () => static::interfaceSimples())
-                    ->label('Chassi')
-                    ->searchable()
-                    ->placeholder('—')
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                // Máquina: horímetro (h). Veículo: odômetro (km).
-                Tables\Columns\TextColumn::make('last_horimetro')->hidden(fn () => static::interfaceSimples())
-                    ->label('Horímetro / Odômetro')
-                    ->state(fn (Asset $record) => $record->isVehicle() ? (float) $record->odometro_atual : (float) $record->last_horimetro)
-                    ->formatStateUsing(fn ($state, Asset $record) => number_format((float) $state, $record->isVehicle() ? 0 : 1, ',', '.').($record->isVehicle() ? ' km' : ' h'))
-                    ->sortable(query: fn (Builder $query, string $direction) => $query->orderByRaw("CASE WHEN assets.grupo = 'veiculo' THEN assets.odometro_atual ELSE assets.last_horimetro END {$direction}"))
-                    ->alignEnd(),
-
-                Tables\Columns\TextColumn::make('asset_category')
-                    ->label('Categoria')
-                    ->badge(),
-
-                Tables\Columns\TextColumn::make('checklistGroup.name')->hidden(fn () => static::interfaceSimples())
-                    ->label('Grupo')
-                    ->badge()
-                    ->color('gray')
-                    ->placeholder('Sem grupo'),
-
-                Tables\Columns\TextColumn::make('capacity_value')->hidden(fn () => static::interfaceSimples())
-                    ->label('Capacidade')
-                    ->sortable()
-                    ->formatStateUsing(fn (Asset $record) => $record->capacity_value !== null
-                        ? rtrim(rtrim(number_format((float) $record->capacity_value, 2, ',', '.'), '0'), ',').' '.($record->capacity_unit ?? '')
-                        : null)
-                    ->placeholder('Não informado'),
-
-                Tables\Columns\TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (string $state): string => Asset::statusColor($state)),
-
-                Tables\Columns\TextColumn::make('abcMatrix.nivel')->hidden(fn () => static::interfaceSimples())
-                    ->label('Criticidade')
-                    ->badge()
-                    ->formatStateUsing(fn (Asset $record): string => $record->currentCriticalityLevel()?->name ?? $record->abcMatrix?->nivel ?? '—')
-                    ->color(fn (Asset $record): string|array => $record->currentCriticalityLevel()?->color
-                        ? Color::hex($record->currentCriticalityLevel()->color)
-                        : 'gray')
-                    ->placeholder('Não definida'),
+                    // Placa e chassi (veículos): visíveis só quando preenchidos; entram na busca.
+                    Tables\Columns\TextColumn::make('placa')->hidden(fn () => static::interfaceSimples())
+                        ->label('Placa')
+                        ->icon('heroicon-m-identification')
+                        ->color('gray')
+                        ->formatStateUsing(fn ($state) => 'Placa '.$state)
+                        ->searchable(query: fn (Builder $query, string $search): Builder => Asset::normalizarCodigo($search) !== ''
+                            ? $query->where('assets.placa', 'ilike', '%'.Asset::normalizarCodigo($search).'%')
+                            : $query->whereRaw('1 = 0')),
+                    Tables\Columns\TextColumn::make('chassi')->hidden(fn () => static::interfaceSimples())
+                        ->label('Chassi')
+                        ->color('gray')
+                        ->formatStateUsing(fn ($state) => 'Chassi '.$state)
+                        ->searchable(),
+                ])->space(2),
             ])
+            ->contentGrid(['md' => 2, '2xl' => 3])
+            ->persistFiltersInSession()
+            ->persistSearchInSession()
+            ->persistSortInSession()
             ->filters([
                 Tables\Filters\Filter::make('placa')
                     ->label('Placa')
@@ -1192,26 +1222,27 @@ class AssetResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\Action::make('qr_patio')
-                    ->label('QR do Pátio')
-                    ->icon('heroicon-o-qr-code')
-                    ->color('gray')
-                    ->url(fn (Asset $record): string => route('assets.qr', ['asset' => $record->id]))
-                    ->openUrlInNewTab(),
-                // Atalho direto pro dossie mobile (celular) deste ativo --
-                // antes so' dava pra chegar la escaneando o QR fisico ou
-                // entrando em Editar > aba Rastreabilidade. E' de la que o
-                // tecnico registra o horimetro e, se o ativo estiver
-                // locado, copia o link publico pro funcionario do cliente.
-                Tables\Actions\Action::make('dossie_horimetro')
-                    ->label('Dossiê / Horímetro')
-                    ->icon('heroicon-o-clock')
-                    ->color('gray')
-                    ->url(fn (Asset $record): string => route('assets.dossier.mobile', ['assetId' => $record->id]))
-                    ->openUrlInNewTab(),
                 Tables\Actions\EditAction::make(),
-                // Interface simples: sem exclusão (o histórico das OS depende do item).
-                Tables\Actions\DeleteAction::make()->visible(fn () => ! static::interfaceSimples()),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('qr_patio')
+                        ->label('QR do Pátio')
+                        ->icon('heroicon-o-qr-code')
+                        ->color('gray')
+                        ->url(fn (Asset $record): string => route('assets.qr', ['asset' => $record->id]))
+                        ->openUrlInNewTab(),
+                    // Atalho direto pro dossie mobile (celular) deste ativo --
+                    // antes so' dava pra chegar la escaneando o QR fisico ou
+                    // entrando em Editar > aba Rastreabilidade. E' de la que o
+                    // tecnico registra o horimetro e, se o ativo estiver
+                    // locado, copia o link publico pro funcionario do cliente.
+                    Tables\Actions\Action::make('dossie_horimetro')
+                        ->label('Dossiê / Horímetro')
+                        ->icon('heroicon-o-clock')
+                        ->color('gray')
+                        ->url(fn (Asset $record): string => route('assets.dossier.mobile', ['assetId' => $record->id]))
+                        ->openUrlInNewTab(),
+                    Tables\Actions\DeleteAction::make()->visible(fn () => ! static::interfaceSimples()),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
