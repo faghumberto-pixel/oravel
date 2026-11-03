@@ -25,6 +25,7 @@ PAGINAS = [  # chave, rótulo, arquivo, links do site que apontam para ela
     ('contato', 'Contato', 'contato.novo.php', ['/contato.php', '/contato/']),
     ('sobre', 'Sobre', 'sobre/index.html', ['/sobre/']),
     ('faq', 'FAQ', 'faq.php', ['/faq.php']),
+    ('locadoras', 'Página de campanha', 'locadoras/index.html', ['/locadoras/']),
 ]
 ALVO = {}
 for k, _, _, ls in PAGINAS:
