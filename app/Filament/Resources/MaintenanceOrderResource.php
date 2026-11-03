@@ -19,6 +19,7 @@ use App\Models\MaintenancePlan;
 use App\Models\SolicitacaoLocacao;
 use App\Models\User;
 use App\Services\OsPhotoOcrService;
+use App\Support\CrmPalette;
 use App\Support\FormHelpers;
 use App\Support\Tenancy;
 use Filament\Forms;
@@ -873,115 +874,149 @@ class MaintenanceOrderResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->poll('10s')->columns([
-            static::tenantColumn(),
-            Tables\Columns\TextColumn::make('asset.patrimonio')->hidden(fn () => static::interfaceSimples())->label('Patrimônio')->weight('bold')->searchable(),
-            Tables\Columns\TextColumn::make('created_at')->label('Data')->dateTime('d/m/Y'),
-            Tables\Columns\TextColumn::make('os_number')->label('Nº OS')->searchable()->weight('bold'),
-            Tables\Columns\TextColumn::make('asset.name')->label('Ativo')->searchable(),
-            Tables\Columns\TextColumn::make('asset.assetCategory.name')
-                ->label('Categoria do Ativo')
-                ->sortable()
-                ->placeholder('Sem Categoria'),
-            Tables\Columns\TextColumn::make('asset.checklistGroup.name')->hidden(fn () => static::interfaceSimples())
-                ->label('Grupo')
-                ->badge()
-                ->color('gray')
-                ->placeholder('Sem grupo'),
-            Tables\Columns\TextColumn::make('asset.abcMatrix.nivel')->hidden(fn () => static::interfaceSimples())
-                ->label('Matriz ABC')
-                ->badge()
-                ->formatStateUsing(fn (?string $state): string => $state
-                    ? (CriticalityLevel::where('tenant_id', Tenancy::current()?->id)->where('code', $state)->value('name') ?? $state)
-                    : '-')
-                ->color(fn (?string $state): string => $state && CriticalityLevel::where('tenant_id', Tenancy::current()?->id)
-                    ->where('code', $state)
-                    ->value('is_urgent') ? 'danger' : 'gray')
-                ->placeholder('-'),
-            Tables\Columns\TextColumn::make('status')->label('Status')->badge(),
-            Tables\Columns\TextColumn::make('is_rework')->hidden(fn () => static::interfaceSimples())
-                ->label('Retrabalho')
-                ->badge()
-                ->color('danger')
-                ->icon('heroicon-o-arrow-path')
-                ->formatStateUsing(fn (bool $state): ?string => $state ? 'Retrabalho' : null)
-                ->toggleable(),
-            // Pedido do usuário 2026-08-27: precisa estar claro que a OS
-            // nasceu sozinha do vencimento de um plano de PMP, não foi
-            // aberta manualmente -- origin='pmp_auto' setado só em
-            // CheckMaintenanceDueAlerts::createOrderAutomatically().
-            Tables\Columns\TextColumn::make('origin')->hidden(fn () => static::interfaceSimples())
-                ->label('Origem')
-                ->badge()
-                ->color('warning')
-                ->icon('heroicon-o-clock')
-                ->formatStateUsing(fn (?string $state): ?string => $state === 'pmp_auto' ? 'PMP Automática' : null)
-                ->toggleable(),
-        ])->filters([
-            Tables\Filters\SelectFilter::make('status')
-                ->label('Status')
-                ->multiple()
-                ->options([
-                    'Aberto' => 'Aberto',
-                    'Pendente' => 'Pendente',
-                    'Em Andamento' => 'Em Andamento',
-                    'Concluída' => 'Concluída',
-                    'Cancelada' => 'Cancelada',
-                ]),
-            Tables\Filters\SelectFilter::make('maintenance_type')
-                ->label('Tipo')
-                ->options([
-                    'Corretiva' => 'Corretiva',
-                    'Preventiva' => 'Preventiva',
-                    'Avaria' => 'Registro de Avaria',
-                    'Troca' => 'Troca de Equipamento',
-                    'Emergência' => 'Chamado de Emergência',
-                ]),
-            Tables\Filters\SelectFilter::make('matriz_abc')
-                ->label('Matriz ABC')
-                ->options(fn () => CriticalityLevel::where('tenant_id', Tenancy::current()?->id)
-                    ->orderBy('sort_order')
-                    ->pluck('name', 'code'))
-                ->query(fn (Builder $query, array $data) => $query->when(
-                    $data['value'] ?? null,
-                    fn (Builder $q, $nivel) => $q->whereHas('asset.abcMatrix', fn (Builder $q2) => $q2->where('nivel', $nivel))
-                )),
-            Tables\Filters\SelectFilter::make('asset.checklist_group_id')
-                ->label('Grupo')
-                ->relationship('asset.checklistGroup', 'name'),
-            Tables\Filters\SelectFilter::make('technician_id')
-                ->label('Técnico')
-                ->relationship(
-                    name: 'technician',
-                    titleAttribute: 'name',
-                    modifyQueryUsing: function (Builder $query) {
-                        $tenant = Tenancy::current();
+        return $table->poll('10s')
+            // Lista em cartoes (padrao do CRM Comercial): borda na cor da situacao da OS (vermelho = em atraso).
+            ->recordClasses(fn (MaintenanceOrder $record) => 'border-s-4 hover:!bg-transparent '
+                .CrmPalette::cor(self::corDaOs($record))['border'].' '
+                .CrmPalette::cor(self::corDaOs($record))['soft'])
+            ->contentGrid(['md' => 2, '2xl' => 3])
+            ->persistFiltersInSession()
+            ->persistSearchInSession()
+            ->persistSortInSession()
+            ->columns([
+                Tables\Columns\Layout\Stack::make([
+                    static::tenantColumn(),
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\TextColumn::make('os_number')->label('Nº OS')->searchable()->weight('bold')->size('lg')->color('crmOrange'),
+                        Tables\Columns\TextColumn::make('status')->label('Status')->badge()->grow(false)
+                            ->color(fn (?string $state): string => match ($state) {
+                                'Aberto' => 'info', 'Pendente' => 'warning', 'Em Andamento' => 'primary',
+                                'Concluída', 'Completado' => 'success', default => 'gray',
+                            }),
+                    ]),
+                    Tables\Columns\TextColumn::make('asset.name')->label('Ativo')->icon('heroicon-m-truck')->searchable()->weight('semibold'),
+                    Tables\Columns\TextColumn::make('asset.patrimonio')->hidden(fn () => static::interfaceSimples())->label('Patrimônio')->color('gray')->searchable()
+                        ->formatStateUsing(fn ($state): string => 'Patrimônio '.$state),
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\TextColumn::make('maintenance_type')->label('Tipo')->badge()->color('info')->grow(false)->placeholder(null),
+                        Tables\Columns\TextColumn::make('asset.assetCategory.name')->label('Categoria do Ativo')->badge()->grow(false),
+                        Tables\Columns\TextColumn::make('asset.checklistGroup.name')->hidden(fn () => static::interfaceSimples())
+                            ->label('Grupo')
+                            ->badge()
+                            ->color('gray')
+                            ->grow(false),
+                        Tables\Columns\TextColumn::make('asset.abcMatrix.nivel')->hidden(fn () => static::interfaceSimples())
+                            ->label('Matriz ABC')
+                            ->badge()
+                            ->grow(false)
+                            ->formatStateUsing(fn (?string $state): ?string => $state
+                                ? (CriticalityLevel::where('tenant_id', Tenancy::current()?->id)->where('code', $state)->value('name') ?? $state)
+                                : null)
+                            ->color(fn (?string $state): string => $state && CriticalityLevel::where('tenant_id', Tenancy::current()?->id)
+                                ->where('code', $state)
+                                ->value('is_urgent') ? 'danger' : 'gray'),
+                        Tables\Columns\TextColumn::make('is_rework')->hidden(fn () => static::interfaceSimples())
+                            ->label('Retrabalho')
+                            ->badge()
+                            ->color('danger')
+                            ->icon('heroicon-o-arrow-path')
+                            ->grow(false)
+                            ->formatStateUsing(fn (bool $state): ?string => $state ? 'Retrabalho' : null),
+                        // Pedido do usuário 2026-08-27: precisa estar claro que a OS
+                        // nasceu sozinha do vencimento de um plano de PMP, não foi
+                        // aberta manualmente -- origin='pmp_auto' setado só em
+                        // CheckMaintenanceDueAlerts::createOrderAutomatically().
+                        Tables\Columns\TextColumn::make('origin')->hidden(fn () => static::interfaceSimples())
+                            ->label('Origem')
+                            ->badge()
+                            ->color('warning')
+                            ->icon('heroicon-o-clock')
+                            ->grow(false)
+                            ->formatStateUsing(fn (?string $state): ?string => $state === 'pmp_auto' ? 'PMP Automática' : null),
+                    ])->extraAttributes(['class' => 'flex-wrap gap-1']),
+                    Tables\Columns\TextColumn::make('technician.name')->label('Técnico')->icon('heroicon-m-user')->color('gray')->placeholder('Sem técnico'),
+                    Tables\Columns\TextColumn::make('created_at')->label('Data')->icon('heroicon-m-calendar-days')->color('gray')
+                        ->formatStateUsing(fn ($state, MaintenanceOrder $r): string => 'Aberta em '.$r->created_at?->format('d/m/Y')),
+                ])->space(2),
+            ])->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Status')
+                    ->multiple()
+                    ->options([
+                        'Aberto' => 'Aberto',
+                        'Pendente' => 'Pendente',
+                        'Em Andamento' => 'Em Andamento',
+                        'Concluída' => 'Concluída',
+                        'Cancelada' => 'Cancelada',
+                    ]),
+                Tables\Filters\SelectFilter::make('maintenance_type')
+                    ->label('Tipo')
+                    ->options([
+                        'Corretiva' => 'Corretiva',
+                        'Preventiva' => 'Preventiva',
+                        'Avaria' => 'Registro de Avaria',
+                        'Troca' => 'Troca de Equipamento',
+                        'Emergência' => 'Chamado de Emergência',
+                    ]),
+                Tables\Filters\SelectFilter::make('matriz_abc')
+                    ->label('Matriz ABC')
+                    ->options(fn () => CriticalityLevel::where('tenant_id', Tenancy::current()?->id)
+                        ->orderBy('sort_order')
+                        ->pluck('name', 'code'))
+                    ->query(fn (Builder $query, array $data) => $query->when(
+                        $data['value'] ?? null,
+                        fn (Builder $q, $nivel) => $q->whereHas('asset.abcMatrix', fn (Builder $q2) => $q2->where('nivel', $nivel))
+                    )),
+                Tables\Filters\SelectFilter::make('asset.checklist_group_id')
+                    ->label('Grupo')
+                    ->relationship('asset.checklistGroup', 'name'),
+                Tables\Filters\SelectFilter::make('technician_id')
+                    ->label('Técnico')
+                    ->relationship(
+                        name: 'technician',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: function (Builder $query) {
+                            $tenant = Tenancy::current();
 
-                        return $query->when($tenant, fn (Builder $q) => $q->where('tenant_id', $tenant->id));
-                    },
-                ),
-            Tables\Filters\Filter::make('atrasada')
-                ->label('Em atraso (+3 dias aberta)')
-                ->toggle()
-                ->query(fn (Builder $query) => $query
-                    ->whereIn('status', ['Aberto', 'Pendente', 'Em Andamento'])
-                    ->where('created_at', '<', now()->subDays(3))),
-            Tables\Filters\Filter::make('is_rework')
-                ->label('Só retrabalho')
-                ->toggle()
-                ->query(fn (Builder $query) => $query->where('is_rework', true)),
-            Tables\Filters\Filter::make('origin_pmp_auto')
-                ->label('Só PMP automática')
-                ->toggle()
-                ->query(fn (Builder $query) => $query->where('origin', 'pmp_auto')),
+                            return $query->when($tenant, fn (Builder $q) => $q->where('tenant_id', $tenant->id));
+                        },
+                    ),
+                Tables\Filters\Filter::make('atrasada')
+                    ->label('Em atraso (+3 dias aberta)')
+                    ->toggle()
+                    ->query(fn (Builder $query) => $query
+                        ->whereIn('status', ['Aberto', 'Pendente', 'Em Andamento'])
+                        ->where('created_at', '<', now()->subDays(3))),
+                Tables\Filters\Filter::make('is_rework')
+                    ->label('Só retrabalho')
+                    ->toggle()
+                    ->query(fn (Builder $query) => $query->where('is_rework', true)),
+                Tables\Filters\Filter::make('origin_pmp_auto')
+                    ->label('Só PMP automática')
+                    ->toggle()
+                    ->query(fn (Builder $query) => $query->where('origin', 'pmp_auto')),
 
-        ])->actions([
-            Tables\Actions\ViewAction::make(),
-            Tables\Actions\EditAction::make(),
-            Tables\Actions\DeleteAction::make()->visible(fn () => ! static::interfaceSimples()),
-        ])->bulkActions([
-            Tables\Actions\DeleteBulkAction::make()->visible(fn () => ! static::interfaceSimples()),
-        ]);
+            ])->actions([
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()->visible(fn () => ! static::interfaceSimples()),
+            ])->bulkActions([
+                Tables\Actions\DeleteBulkAction::make()->visible(fn () => ! static::interfaceSimples()),
+            ]);
+    }
+
+    /** Cor do cartao por significado: atraso = vermelho; senao pela situacao da OS. */
+    public static function corDaOs(MaintenanceOrder $os): string
+    {
+        $aberta = in_array($os->status, ['Aberto', 'Pendente', 'Em Andamento'], true);
+        if ($aberta && $os->created_at !== null && $os->created_at->lt(now()->subDays(3))) {
+            return 'red';
+        }
+
+        return match ($os->status) {
+            'Aberto' => 'blue', 'Pendente' => 'amber', 'Em Andamento' => 'indigo',
+            'Concluída', 'Completado' => 'emerald', 'Cancelada' => 'gray', default => 'gray',
+        };
     }
 
     // GATILHO DE NOTIFICAÇÃO
