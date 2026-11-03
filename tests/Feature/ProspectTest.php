@@ -274,4 +274,29 @@ class ProspectTest extends TestCase
             ->assertSeeHtml('border-blue-600')->assertSeeHtml('border-emerald-600')
             ->assertSeeHtml('fi-ta-content-grid');
     }
+
+    public function test_estagio_resultado_aparece_no_cartao_e_filtra_lista_cards_e_impressao(): void
+    {
+        $a = $this->prospect(['nome' => 'Alfa Resultado', 'status' => 'enviado', 'resultado' => 'quer_reuniao']);
+        $b = $this->prospect(['nome' => 'Beta Resultado', 'status' => 'enviado', 'resultado' => 'ja_tem_sistema']);
+        $c = $this->prospect(['nome' => 'Gama Resultado', 'status' => 'enviado']);
+        $u = User::factory()->create(['email' => 'equipe@oravel.test']);
+
+        $t = Livewire::actingAs($u)->test(ListProspects::class)
+            ->assertSee('Quer agendar reunião')->assertSee('Já tem sistema')
+            ->filterTable('resultado', 'quer_reuniao')
+            ->assertCanSeeTableRecords([$a])->assertCanNotSeeTableRecords([$b, $c]);
+
+        // O filtro e' "base": os cards recontam dentro do recorte do resultado.
+        $enviados = collect($t->instance()->cards())->firstWhere('chave', 'enviado');
+        $this->assertSame(1, $enviados['total']);
+
+        $this->assertSame([$b->id], Prospect::filtrar(['resultado' => ['value' => 'ja_tem_sistema']])->pluck('id')->all());
+
+        // Registrar o resultado direto no cartao.
+        Livewire::actingAs($u)->test(ListProspects::class)
+            ->filterTable('resultado', null)
+            ->call('updateTableColumnState', 'resultado', $c->getKey(), 'pediu_email');
+        $this->assertSame('pediu_email', $c->fresh()->resultado);
+    }
 }

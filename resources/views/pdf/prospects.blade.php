@@ -16,7 +16,7 @@
  <div class="aviso">Atenção: o relatório mostra só as primeiras {{ $prospects->count() }} de {{ $total }} empresas. Aplique mais filtros para a lista completa.</div>
 @endif
 <table>
-<thead><tr><th>Empresa</th><th>Cidade / porte</th><th>Atividade</th><th>Aberta</th><th>Nota</th><th>Telefone</th><th>Sócio</th><th>Situação</th><th>Próx. contato</th></tr></thead>
+<thead><tr><th>Empresa</th><th>Cidade / porte</th><th>Atividade</th><th>Aberta</th><th>Nota</th><th>Telefone</th><th>Sócio</th><th>Situação</th><th>Estágio / resultado</th><th>Próx. contato</th></tr></thead>
 <tbody>
 @foreach ($prospects as $p)
  <tr>
@@ -28,6 +28,7 @@
   <td>{{ $p->telefone }}<br>{{ $p->email }}</td>
   <td>{{ $p->socio }}</td>
   <td>{{ \App\Models\Prospect::STATUS[$p->status] ?? $p->status }}</td>
+  <td>{{ \App\Models\Prospect::RESULTADOS[$p->resultado] ?? '' }}</td>
   <td>{{ $p->proximo_contato?->format('d/m/Y') }}</td>
  </tr>
 @endforeach
