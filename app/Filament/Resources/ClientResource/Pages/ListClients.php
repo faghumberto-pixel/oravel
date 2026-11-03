@@ -133,19 +133,9 @@ class ListClients extends ListRecords
             });
     }
 
+    /** Sem widgets no topo (pedido do usuario 2026-11-03): so' os cards de totais clicaveis acima da lista. */
     protected function getHeaderWidgets(): array
     {
-        return [
-            ClientResource\Widgets\ClientStats::class,
-            ClientResource\Widgets\ClientActiveContractGaugeWidget::class,
-            ClientResource\Widgets\NewClientsTrendWidget::class,
-            ClientResource\Widgets\ContractsStartedVsEndedAreaWidget::class,
-            ClientResource\Widgets\ClientsByNicheChartWidget::class,
-        ];
-    }
-
-    public function getHeaderWidgetsColumns(): int|string|array
-    {
-        return 4;
+        return [];
     }
 }

@@ -87,4 +87,11 @@ class ContractCartoesTest extends TestCase
             ->call('filtrarCard', 'total')
             ->assertCanSeeTableRecords([$ok, $perto, $vencido, $rascunho]);
     }
+
+    public function test_lista_sem_widgets_no_topo(): void
+    {
+        $this->cenario();
+
+        $this->assertSame([], (new \ReflectionMethod(ListContracts::class, 'getHeaderWidgets'))->invoke(new ListContracts));
+    }
 }
