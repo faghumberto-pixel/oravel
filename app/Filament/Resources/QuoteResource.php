@@ -9,6 +9,7 @@ use App\Models\Quote;
 use App\Models\QuoteItem;
 use App\Models\Supplier;
 use App\Models\User;
+use App\Support\CrmPalette;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -118,45 +119,66 @@ class QuoteResource extends BaseResource
         ]);
     }
 
+    /** Cor do cartao por situacao (nome da paleta de CrmPalette::cor). */
+    public const COR_STATUS = [
+        Quote::STATUS_RASCUNHO => 'gray', Quote::STATUS_ENVIADO => 'blue', Quote::STATUS_APROVADO => 'emerald',
+        Quote::STATUS_REPROVADO => 'red', Quote::STATUS_CONCLUIDO => 'purple',
+    ];
+
     public static function table(Table $table): Table
     {
         return $table
+            // Lista em cartoes (padrao do CRM Comercial): borda na cor da situacao do orcamento.
+            ->recordClasses(fn (Quote $record) => 'border-s-4 hover:!bg-transparent '
+                .CrmPalette::cor(self::COR_STATUS[$record->status] ?? 'gray')['border'].' '
+                .CrmPalette::cor(self::COR_STATUS[$record->status] ?? 'gray')['soft'])
+            ->contentGrid(['md' => 2, '2xl' => 3])
+            ->persistFiltersInSession()
+            ->persistSearchInSession()
+            ->persistSortInSession()
             ->columns([
-                Tables\Columns\TextColumn::make('client.name')
-                    ->label('Cliente')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('type')
-                    ->label('Tipo')
-                    ->badge()
-                    ->formatStateUsing(fn (string $state) => Quote::typeLabels()[$state] ?? $state)
-                    ->color('gray'),
-                Tables\Columns\TextColumn::make('status')
-                    ->label('Status')
-                    ->badge()
-                    ->formatStateUsing(fn (string $state) => Quote::statusLabels()[$state] ?? $state)
-                    ->color(fn (string $state) => match ($state) {
-                        Quote::STATUS_ENVIADO => 'info',
-                        Quote::STATUS_APROVADO => 'success',
-                        Quote::STATUS_REPROVADO => 'danger',
-                        Quote::STATUS_CONCLUIDO => 'primary',
-                        default => 'gray',
-                    }),
-                Tables\Columns\TextColumn::make('total_value')
-                    ->label('Valor Total')
-                    ->money('BRL')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('assignedUser.name')
-                    ->label('Responsável'),
-                Tables\Columns\TextColumn::make('sent_at')
-                    ->label('Enviado em')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable()
-                    ->placeholder('—'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Criado em')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable(),
+                Tables\Columns\Layout\Stack::make([
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\TextColumn::make('client.name')
+                            ->label('Cliente')
+                            ->searchable()
+                            ->sortable()
+                            ->weight('bold')->size('lg')->color('crmOrange'),
+                        Tables\Columns\TextColumn::make('status')
+                            ->label('Status')
+                            ->badge()
+                            ->grow(false)
+                            ->formatStateUsing(fn (string $state) => Quote::statusLabels()[$state] ?? $state)
+                            ->color(fn (string $state) => match ($state) {
+                                Quote::STATUS_ENVIADO => 'info',
+                                Quote::STATUS_APROVADO => 'success',
+                                Quote::STATUS_REPROVADO => 'danger',
+                                Quote::STATUS_CONCLUIDO => 'primary',
+                                default => 'gray',
+                            }),
+                    ]),
+                    Tables\Columns\TextColumn::make('total_value')
+                        ->label('Valor Total')
+                        ->money('BRL')
+                        ->sortable()
+                        ->weight('semibold')->size('lg'),
+                    Tables\Columns\TextColumn::make('type')
+                        ->label('Tipo')
+                        ->badge()
+                        ->formatStateUsing(fn (string $state) => Quote::typeLabels()[$state] ?? $state)
+                        ->color('gray'),
+                    Tables\Columns\TextColumn::make('assignedUser.name')
+                        ->label('Responsável')->icon('heroicon-m-user')->color('gray')->placeholder('Sem responsável'),
+                    Tables\Columns\TextColumn::make('sent_at')
+                        ->label('Enviado em')->icon('heroicon-m-paper-airplane')->color('gray')
+                        ->formatStateUsing(fn ($state, Quote $r): string => 'Enviado em '.$r->sent_at?->format('d/m/Y H:i'))
+                        ->sortable()
+                        ->placeholder('Ainda não enviado'),
+                    Tables\Columns\TextColumn::make('created_at')
+                        ->label('Criado em')->icon('heroicon-m-calendar-days')->color('gray')
+                        ->formatStateUsing(fn ($state, Quote $r): string => 'Criado em '.$r->created_at?->format('d/m/Y H:i'))
+                        ->sortable(),
+                ])->space(2),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
@@ -167,15 +189,17 @@ class QuoteResource extends BaseResource
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([
-                Tables\Actions\Action::make('baixar_pdf')
-                    ->label('Ver e imprimir')
-                    ->icon('heroicon-o-document-arrow-down')
-                    ->color('gray')
-                    ->url(fn (Quote $record) => route('quotes.pdf', $record))
-                    ->openUrlInNewTab(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
-                    ->visible(fn (Quote $record) => $record->status === Quote::STATUS_RASCUNHO),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('baixar_pdf')
+                        ->label('Ver e imprimir')
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->color('gray')
+                        ->url(fn (Quote $record) => route('quotes.pdf', $record))
+                        ->openUrlInNewTab(),
+                    Tables\Actions\DeleteAction::make()
+                        ->visible(fn (Quote $record) => $record->status === Quote::STATUS_RASCUNHO),
+                ]),
             ]);
     }
 
