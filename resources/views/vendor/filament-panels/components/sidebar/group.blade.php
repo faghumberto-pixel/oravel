@@ -35,6 +35,14 @@
         'Financeiro' => 'heroicon-o-banknotes',
         'Relatórios' => 'heroicon-o-chart-bar',
         'Configurações' => 'heroicon-o-adjustments-horizontal',
+        // Grupos do menu da Central (organizado por categorias).
+        'Prospecção' => 'heroicon-o-user-plus',
+        'Clientes e Contratos' => 'heroicon-o-building-office-2',
+        'Acessos e Uso' => 'heroicon-o-cursor-arrow-rays',
+        'Treinamento' => 'heroicon-o-academic-cap',
+        'Site Institucional' => 'heroicon-o-globe-alt',
+        'Segurança e Conformidade' => 'heroicon-o-lock-closed',
+        'Sistema' => 'heroicon-o-cog-6-tooth',
     ];
     $groupLabelIcon = $groupIcons[$label] ?? null;
 @endphp
