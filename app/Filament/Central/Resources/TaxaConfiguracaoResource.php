@@ -17,7 +17,7 @@ class TaxaConfiguracaoResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
-    protected static ?string $navigationGroup = 'Gestão SaaS';
+    protected static ?string $navigationGroup = 'Clientes e Contratos';
 
     protected static ?string $navigationLabel = 'Taxas de configuração';
 
@@ -25,7 +25,7 @@ class TaxaConfiguracaoResource extends Resource
 
     protected static ?string $pluralModelLabel = 'taxas de configuração';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 6;
 
     public static function form(Form $form): Form
     {

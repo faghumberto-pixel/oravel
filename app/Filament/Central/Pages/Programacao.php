@@ -14,7 +14,7 @@ class Programacao extends Page
 
     protected static ?string $title = 'Programação — CRM Comercial';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 5;
 
     protected static string $view = 'filament.central.pages.programacao';
 }

@@ -25,7 +25,9 @@ class DatabaseBackupResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-circle-stack';
 
-    protected static ?string $navigationGroup = 'Gestão SaaS';
+    protected static ?string $navigationGroup = 'Sistema';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $navigationLabel = 'Backups do Banco';
 

@@ -23,7 +23,9 @@ class AnnouncementResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-megaphone';
 
-    protected static ?string $navigationGroup = 'Gestão SaaS';
+    protected static ?string $navigationGroup = 'Clientes e Contratos';
+
+    protected static ?int $navigationSort = 7;
 
     protected static ?string $navigationLabel = 'Avisos aos Tenants';
 

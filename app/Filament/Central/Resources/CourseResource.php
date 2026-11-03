@@ -24,7 +24,9 @@ class CourseResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
 
-    protected static ?string $navigationGroup = 'Gestão SaaS';
+    protected static ?string $navigationGroup = 'Treinamento';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $navigationLabel = 'Academia (cursos)';
 

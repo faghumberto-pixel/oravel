@@ -13,13 +13,13 @@ class OnboardingMetricasPage extends Page
 
     protected static ?string $navigationLabel = 'Onboarding';
 
-    protected static ?string $navigationGroup = 'Gestão SaaS';
+    protected static ?string $navigationGroup = 'Treinamento';
 
     protected static ?string $title = 'Onboarding dos clientes';
 
     protected static ?string $slug = 'onboarding-metricas';
 
-    protected static ?int $navigationSort = 88;
+    protected static ?int $navigationSort = 2;
 
     protected static string $view = 'filament.central.pages.onboarding-metricas';
 

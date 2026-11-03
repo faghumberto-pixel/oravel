@@ -22,7 +22,9 @@ class TenantComplianceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
 
-    protected static ?string $navigationGroup = 'Conformidade & Compliance';
+    protected static ?string $navigationGroup = 'Segurança e Conformidade';
+
+    protected static ?int $navigationSort = 6;
 
     protected static ?string $navigationLabel = 'Status de Conformidade dos Clientes';
 

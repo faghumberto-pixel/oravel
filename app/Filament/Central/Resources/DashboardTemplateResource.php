@@ -30,7 +30,7 @@ class DashboardTemplateResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-line';
 
-    protected static ?string $navigationGroup = 'Gestão SaaS';
+    protected static ?string $navigationGroup = 'Sistema';
 
     protected static ?string $navigationLabel = 'Dashboards Personalizados';
 
@@ -38,7 +38,7 @@ class DashboardTemplateResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Dashboards Personalizados';
 
-    protected static ?int $navigationSort = 80;
+    protected static ?int $navigationSort = 3;
 
     public static function canAccess(): bool
     {

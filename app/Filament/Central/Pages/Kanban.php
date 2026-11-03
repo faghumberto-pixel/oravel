@@ -32,7 +32,7 @@ class Kanban extends Page
 
     protected static ?string $title = 'Kanban — CRM Comercial';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 4;
 
     protected static string $view = 'filament.central.pages.kanban';
 

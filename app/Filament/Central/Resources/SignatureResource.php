@@ -20,7 +20,9 @@ class SignatureResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-check';
 
-    protected static ?string $navigationGroup = 'Conformidade & Compliance';
+    protected static ?string $navigationGroup = 'Segurança e Conformidade';
+
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $navigationLabel = 'Assinaturas SLA + LGPD';
 

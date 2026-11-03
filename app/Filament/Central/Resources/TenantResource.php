@@ -39,7 +39,7 @@ class TenantResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationGroup = 'Gestão SaaS';
+    protected static ?string $navigationGroup = 'Clientes e Contratos';
 
     public static function form(Form $form): Form
     {

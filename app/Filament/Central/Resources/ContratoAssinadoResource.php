@@ -20,7 +20,7 @@ class ContratoAssinadoResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-check';
 
-    protected static ?string $navigationGroup = 'Gestão SaaS';
+    protected static ?string $navigationGroup = 'Clientes e Contratos';
 
     protected static ?string $navigationLabel = 'Contratos Assinados';
 
@@ -28,7 +28,7 @@ class ContratoAssinadoResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Contratos Assinados';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     protected static bool $isScopedToTenant = false;
 

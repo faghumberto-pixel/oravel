@@ -29,7 +29,7 @@ class WebVisitResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Visitas do Site';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     protected static bool $isScopedToTenant = false;
 

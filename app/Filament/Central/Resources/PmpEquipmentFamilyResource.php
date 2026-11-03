@@ -26,7 +26,9 @@ class PmpEquipmentFamilyResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
-    protected static ?string $navigationGroup = 'Gestão SaaS';
+    protected static ?string $navigationGroup = 'Sistema';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationLabel = 'Catálogo de PMP';
 

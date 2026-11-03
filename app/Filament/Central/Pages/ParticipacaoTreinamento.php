@@ -17,11 +17,11 @@ class ParticipacaoTreinamento extends Page
 
     protected static ?string $navigationLabel = 'Participação no Treinamento';
 
-    protected static ?string $navigationGroup = 'Gestão SaaS';
+    protected static ?string $navigationGroup = 'Treinamento';
 
     protected static ?string $title = 'Participação no Treinamento, por cliente';
 
-    protected static ?int $navigationSort = 89;
+    protected static ?int $navigationSort = 3;
 
     protected static string $view = 'filament.central.pages.participacao-treinamento';
 

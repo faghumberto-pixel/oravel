@@ -19,6 +19,10 @@ class LandingPageLeadResource extends Resource
     protected static ?string $model = LandingPageLead::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-phone';
+
+    protected static ?string $navigationGroup = 'Prospecção';
+
+    protected static ?int $navigationSort = 3;
     protected static ?string $navigationLabel = 'Leads das Landing Pages';
     protected static ?string $modelLabel = 'Lead';
     protected static ?string $pluralModelLabel = 'Leads';

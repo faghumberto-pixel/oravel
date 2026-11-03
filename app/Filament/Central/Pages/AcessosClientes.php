@@ -21,7 +21,9 @@ class AcessosClientes extends Page
 
     protected static ?string $navigationLabel = 'Acessos dos Clientes';
 
-    protected static ?string $navigationGroup = 'Gestão SaaS';
+    protected static ?string $navigationGroup = 'Acessos e Uso';
+
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $title = 'Acessos dos Clientes';
 

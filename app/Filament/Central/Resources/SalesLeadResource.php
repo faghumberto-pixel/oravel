@@ -33,6 +33,8 @@ class SalesLeadResource extends Resource
 
     protected static ?string $navigationGroup = 'Comercial';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $modelLabel = 'Lead Comercial';
 
     protected static ?string $pluralModelLabel = 'Leads Comerciais';
