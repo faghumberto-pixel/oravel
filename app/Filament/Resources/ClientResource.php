@@ -11,6 +11,7 @@ use App\Services\WhatsAppEmpresaService;
 use App\Support\ClientDuplicidade;
 use App\Support\CrmCamposCustom;
 use App\Support\CrmCnpjPreenchimento;
+use App\Support\CrmPalette;
 use App\Support\Tenancy;
 use App\Traits\HasPlanAuthorization;
 use Filament\Forms;
@@ -348,23 +349,50 @@ class ClientResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            // Lista em cartoes (padrao do CRM Comercial): borda na cor da situacao (verde = contrato ativo).
+            ->modifyQueryUsing(fn (Builder $query) => $query->withCount(['contracts as contratos_ativos_count' => fn ($c) => $c->where('status', 'Ativo')]))
+            ->recordClasses(fn (Client $record) => 'border-s-4 hover:!bg-transparent '
+                .CrmPalette::cor(($record->contratos_ativos_count ?? 0) > 0 ? 'emerald' : 'gray')['border'].' '
+                .CrmPalette::cor(($record->contratos_ativos_count ?? 0) > 0 ? 'emerald' : 'gray')['soft'])
             ->columns([
-                static::tenantColumn(),
-                Tables\Columns\TextColumn::make('name')->label(fn () => static::interfaceSimples() ? 'Nome' : 'Razão Social')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('document')->label(fn () => static::interfaceSimples() ? 'CPF / CNPJ' : 'CNPJ')->searchable(),
-                Tables\Columns\TextColumn::make('email')->label('E-mail')->searchable()->toggleable(),
-                Tables\Columns\TextColumn::make('phone')->label('Telefone')->searchable()->toggleable(),
-                Tables\Columns\TextColumn::make('whatsapp')->hidden(fn () => static::interfaceSimples())->label('Celular / WhatsApp')->searchable()->toggleable(),
-                Tables\Columns\TextColumn::make('city')->label('Cidade')->sortable(),
-                Tables\Columns\TextColumn::make('state')->hidden(fn () => static::interfaceSimples())->label('UF'),
-                Tables\Columns\TextColumn::make('activity_type')->hidden(fn () => static::interfaceSimples())
-                    ->label('Nicho')
-                    ->badge()
-                    ->formatStateUsing(fn (?string $state) => $state ? (Client::nicheLabels()[$state] ?? $state) : null)
-                    ->placeholder('—'),
+                Tables\Columns\Layout\Stack::make([
+                    static::tenantColumn(),
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\Layout\Stack::make([
+                            Tables\Columns\TextColumn::make('name')->label(fn () => static::interfaceSimples() ? 'Nome' : 'Razão Social')->searchable()->sortable()
+                                ->weight('bold')->size('lg')->color('crmOrange'),
+                            Tables\Columns\TextColumn::make('document')->label(fn () => static::interfaceSimples() ? 'CPF / CNPJ' : 'CNPJ')->searchable()
+                                ->color('gray')->placeholder('Sem documento'),
+                        ]),
+                        Tables\Columns\TextColumn::make('activity_type')->hidden(fn () => static::interfaceSimples())
+                            ->label('Nicho')
+                            ->badge()
+                            ->formatStateUsing(fn (?string $state) => $state ? (Client::nicheLabels()[$state] ?? $state) : null)
+                            ->grow(false),
+                    ]),
+                    Tables\Columns\TextColumn::make('contratos_ativos_count')->label('Contratos ativos')->icon('heroicon-m-document-text')
+                        ->formatStateUsing(fn ($state): string => match ((int) $state) {
+                            0 => 'Sem contrato ativo',
+                            1 => '1 contrato ativo',
+                            default => (int) $state.' contratos ativos',
+                        })
+                        ->color(fn ($state) => (int) $state > 0 ? 'success' : 'gray'),
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\TextColumn::make('city')->label('Cidade')->icon('heroicon-m-map-pin')->color('gray')->sortable()->placeholder('Sem cidade'),
+                        Tables\Columns\TextColumn::make('state')->hidden(fn () => static::interfaceSimples())->label('UF')->badge()->color('gray')->grow(false),
+                    ]),
+                    Tables\Columns\TextColumn::make('email')->label('E-mail')->icon('heroicon-m-envelope')->searchable()->color('gray')->placeholder('Sem e-mail'),
+                    Tables\Columns\TextColumn::make('phone')->label('Telefone')->icon('heroicon-m-phone')->searchable()->color('gray')->placeholder('Sem telefone'),
+                    Tables\Columns\TextColumn::make('whatsapp')->hidden(fn () => static::interfaceSimples())->label('Celular / WhatsApp')
+                        ->icon('heroicon-m-chat-bubble-left-ellipsis')->searchable()->color('gray')->placeholder('Sem WhatsApp'),
 
-                ...CrmCamposCustom::colunas('cliente'),
+                    ...CrmCamposCustom::colunas('cliente'),
+                ])->space(2),
             ])
+            ->contentGrid(['md' => 2, '2xl' => 3])
+            ->persistFiltersInSession()
+            ->persistSearchInSession()
+            ->persistSortInSession()
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
                 Tables\Filters\SelectFilter::make('activity_type')->hidden(fn () => static::interfaceSimples())
@@ -373,6 +401,14 @@ class ClientResource extends Resource
                 Tables\Filters\SelectFilter::make('state')->hidden(fn () => static::interfaceSimples())
                     ->label('UF')
                     ->options(fn () => Client::query()->whereNotNull('state')->distinct()->pluck('state', 'state')),
+                Tables\Filters\Filter::make('sem_contrato_ativo')
+                    ->label('Sem Contrato Ativo')
+                    ->query(fn (Builder $query) => $query->whereDoesntHave('contracts', fn ($q) => $q->where('status', 'Ativo')))
+                    ->toggle(),
+                Tables\Filters\Filter::make('com_portal')
+                    ->label('Com acesso ao portal')
+                    ->query(fn (Builder $query) => $query->whereNotNull('portal_access_enabled_at'))
+                    ->toggle(),
                 Tables\Filters\Filter::make('com_contrato_ativo')
                     ->label('Com Contrato Ativo')
                     ->query(fn (Builder $query) => $query->whereHas('contracts', fn ($q) => $q->where('status', 'Ativo')))
@@ -380,46 +416,48 @@ class ClientResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('grantPortalAccess')
-                    ->label(fn (Client $record) => $record->portal_access_enabled_at ? 'Reenviar acesso' : 'Conceder acesso ao portal')
-                    ->icon('heroicon-o-key')
-                    ->visible(fn (Client $record) => filled($record->email))
-                    ->requiresConfirmation()
-                    ->modalDescription('Uma senha temporária será gerada, enviada por e-mail ao cliente e mostrada aqui na tela. Para escolher a senha, use a aba "Acesso ao Portal" ao editar o cliente.')
-                    ->action(function (Client $record) {
-                        $temporaryPassword = Str::password(12);
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('grantPortalAccess')
+                        ->label(fn (Client $record) => $record->portal_access_enabled_at ? 'Reenviar acesso' : 'Conceder acesso ao portal')
+                        ->icon('heroicon-o-key')
+                        ->visible(fn (Client $record) => filled($record->email))
+                        ->requiresConfirmation()
+                        ->modalDescription('Uma senha temporária será gerada, enviada por e-mail ao cliente e mostrada aqui na tela. Para escolher a senha, use a aba "Acesso ao Portal" ao editar o cliente.')
+                        ->action(function (Client $record) {
+                            $temporaryPassword = Str::password(12);
 
-                        $record->update([
-                            'password' => $temporaryPassword,
-                            'portal_access_enabled_at' => now(),
-                        ]);
-
-                        // Senha/flag já ficam salvas mesmo se o e-mail falhar
-                        // (SMTP fora do ar, credencial inválida, etc.) -- sem
-                        // isso uma falha de e-mail virava 500 pro operador,
-                        // apesar do acesso já ter sido concedido de verdade.
-                        try {
-                            $record->notify(new ClientPortalAccessGranted($temporaryPassword));
-
-                            Notification::make()
-                                ->title('Acesso ao portal enviado')
-                                ->body("Usuário: {$record->email}\nSenha temporária: {$temporaryPassword}\n(guarde agora: ela não aparece de novo)")
-                                ->persistent()
-                                ->success()
-                                ->send();
-                        } catch (Throwable $e) {
-                            Log::warning('ClientResource: falha ao enviar e-mail de acesso ao portal.', [
-                                'client_id' => $record->id, 'error' => $e->getMessage(),
+                            $record->update([
+                                'password' => $temporaryPassword,
+                                'portal_access_enabled_at' => now(),
                             ]);
 
-                            Notification::make()
-                                ->title('Acesso concedido, mas o e-mail não pôde ser enviado')
-                                ->body("O acesso já está ativo. Passe ao cliente: usuário {$record->email}, senha temporária {$temporaryPassword}. (guarde agora: ela não aparece de novo)")
-                                ->persistent()
-                                ->warning()
-                                ->send();
-                        }
-                    }),
+                            // Senha/flag já ficam salvas mesmo se o e-mail falhar
+                            // (SMTP fora do ar, credencial inválida, etc.) -- sem
+                            // isso uma falha de e-mail virava 500 pro operador,
+                            // apesar do acesso já ter sido concedido de verdade.
+                            try {
+                                $record->notify(new ClientPortalAccessGranted($temporaryPassword));
+
+                                Notification::make()
+                                    ->title('Acesso ao portal enviado')
+                                    ->body("Usuário: {$record->email}\nSenha temporária: {$temporaryPassword}\n(guarde agora: ela não aparece de novo)")
+                                    ->persistent()
+                                    ->success()
+                                    ->send();
+                            } catch (Throwable $e) {
+                                Log::warning('ClientResource: falha ao enviar e-mail de acesso ao portal.', [
+                                    'client_id' => $record->id, 'error' => $e->getMessage(),
+                                ]);
+
+                                Notification::make()
+                                    ->title('Acesso concedido, mas o e-mail não pôde ser enviado')
+                                    ->body("O acesso já está ativo. Passe ao cliente: usuário {$record->email}, senha temporária {$temporaryPassword}. (guarde agora: ela não aparece de novo)")
+                                    ->persistent()
+                                    ->warning()
+                                    ->send();
+                            }
+                        }),
+                ]),
             ])
             ->bulkActions([Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()->visible(fn () => ! static::interfaceSimples())])]);
     }

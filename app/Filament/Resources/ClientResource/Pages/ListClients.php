@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ClientResource\Pages;
 
+use App\Filament\Concerns\HasCartoesFiltro;
 use App\Filament\Concerns\HasPrintAction;
 use App\Filament\Exports\ClientExporter;
 use App\Filament\Resources\ClientResource;
@@ -17,9 +18,35 @@ use Illuminate\Support\Facades\Storage;
 
 class ListClients extends ListRecords
 {
+    use HasCartoesFiltro;
     use HasPrintAction;
 
     protected static string $resource = ClientResource::class;
+
+    protected static string $view = 'filament.resources.lista-com-cartoes';
+
+    /** Cards de totais clicaveis: relacionamento (contrato, portal) e nicho (so' fora da interface simples). */
+    protected function definicaoCartoes(): array
+    {
+        $cards = [
+            'total' => ['Total', [], 'gray'],
+            'com_contrato' => ['Com contrato ativo', ['com_contrato_ativo' => true], 'emerald'],
+            'sem_contrato' => ['Sem contrato ativo', ['sem_contrato_ativo' => true], 'orange'],
+            'portal' => ['Com acesso ao portal', ['com_portal' => true], 'blue'],
+        ];
+
+        if (! ClientResource::interfaceSimples()) {
+            $cores = [
+                Client::NICHE_EVENTOS => 'pink', Client::NICHE_INDUSTRIAL_HOSPITALAR => 'cyan',
+                Client::NICHE_CONSTRUCAO_CIVIL => 'amber', Client::NICHE_LOCACAO_EQUIPAMENTOS => 'teal', Client::NICHE_OUTRO => 'gray',
+            ];
+            foreach (Client::nicheLabels() as $nicho => $rotulo) {
+                $cards['nicho_'.$nicho] = [$rotulo, ['activity_type' => $nicho], $cores[$nicho] ?? 'gray'];
+            }
+        }
+
+        return $cards;
+    }
 
     protected function getHeaderActions(): array
     {
