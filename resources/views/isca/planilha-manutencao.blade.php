@@ -96,6 +96,11 @@ input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid #F26B
           <input id="f-empresa" name="company" value="{{ old('company') }}" required type="text" autocomplete="organization" style="height: 46px; box-sizing: border-box; padding: 0 14px; font-size: 16px; border: 1px solid #9CA3AF; border-radius: 8px; color: #1F2937; background: #FFFFFF" />
           @error('company')<span style="font-size: 13px; color: #B91C1C">{{ $message }}</span>@enderror
         </div>
+        <div style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px">
+          <input id="f-aceite" name="aceite" value="1" required type="checkbox" @checked(old('aceite')) style="flex: none; width: 22px; height: 22px; margin: 2px 0 0; accent-color: #F26B1D" />
+          <label for="f-aceite" style="font-size: 13px; line-height: 1.5; color: #374151">Concordo em receber a planilha e em ser contatado pela Oravel sobre este material, conforme a <a href="/politica-de-privacidade/" target="_blank" rel="noopener">política de privacidade</a>.</label>
+        </div>
+        @error('aceite')<span style="font-size: 13px; color: #B91C1C">{{ $message }}</span>@enderror
         <button type="submit" style="min-height: 52px; border: 0; border-radius: 8px; background: #F26B1D; color: #1F2937; font-family: inherit; font-size: 17px; font-weight: 800; cursor: pointer">Quero a planilha gratuita</button>
         <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #4B5563">Gratuito, em Excel, pronto para usar. Seus dados são usados apenas para o envio do material e contato da Oravel.</p>
       </form>
