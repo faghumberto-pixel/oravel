@@ -303,3 +303,80 @@ def mk_implantacao():
         '<div class="r"><span>Almoxarife</span><div class="t"><i style="width:85%"></i></div><b>85%</b></div>'
         '<div class="r"><span>Comercial</span><div class="t"><i style="width:78%"></i></div><b>78%</b></div></div>'
         '<div class="chips"><span>Academia Oravel</span><span>Trilha por função</span><span>Prova de conhecimento</span><span>Acompanhamento semanal</span></div></div>')
+
+
+# ------------------------------------------------------------------ OS feita a mao lida pela IA
+CSS_OS = """
+/*os-manuscrita*/
+.v2-lerOS{display:grid;gap:0;justify-items:start}.v2-lerOS .v2-papel{width:min(100%,470px);z-index:1}.v2-lerOS .v2-leu{width:min(100%,520px);justify-self:end;margin-top:-26px;position:relative;z-index:2}
+.v2-papel{position:relative;background:#fffef9;border:1px solid #d9d4c4;border-radius:6px;padding:14px 16px 16px;box-shadow:0 30px 50px -28px rgba(15,23,42,.45);transform:rotate(-1.4deg);color:#1e293b;min-width:0}
+.v2-papel::before{content:"";position:absolute;inset:0;border-radius:6px;background:repeating-linear-gradient(to bottom,transparent 0 25px,rgba(59,130,246,.10) 25px 26px);pointer-events:none}
+.v2-papel .tt{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid #0f172a;padding-bottom:5px;margin-bottom:6px;font:800 11px "Manrope",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#334155;position:relative}
+.v2-papel .tt b{font:800 19px "Manrope",sans-serif;color:#0f172a;letter-spacing:0}
+.v2-papel .l{position:relative;display:grid;grid-template-columns:auto 1fr;gap:6px;align-items:baseline;margin:3px 0;font:700 9.5px "Manrope",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#64748b}
+.v2-papel .l span{font:600 21px/1.05 "Caveat","Segoe Script","Bradley Hand",cursive;text-transform:none;letter-spacing:0;color:#1e3a8a;transform:rotate(-.6deg)}
+.v2-papel .l.t3{grid-template-columns:auto 1fr auto 1fr auto 1fr}
+.v2-papel .ck{display:inline-flex;gap:14px;font:600 12px "Manrope",sans-serif;color:#334155;margin:4px 0 2px;position:relative}
+.v2-papel .ck i{display:inline-block;width:12px;height:12px;border:1.5px solid #0f172a;border-radius:2px;margin-right:5px;vertical-align:-2px;position:relative}
+.v2-papel .ck i.x::after{content:"X";position:absolute;inset:-6px -2px auto -2px;font:700 20px/1 "Caveat",cursive;color:#1e3a8a}
+.v2-papel table{width:100%;border-collapse:collapse;position:relative;margin-top:5px}
+.v2-papel th{font:800 9px "Manrope",sans-serif;letter-spacing:.06em;text-transform:uppercase;text-align:left;border:1px solid #0f172a;background:#f1f5f9;padding:2px 5px}
+.v2-papel td{border:1px solid #0f172a;height:25px;padding:0 5px;font:600 19px/1 "Caveat",cursive;color:#1e3a8a}
+.v2-papel td.n{width:44px;text-align:center}.v2-papel td.v{width:70px;text-align:right}
+.v2-papel .as{display:flex;gap:14px;margin-top:8px;position:relative}.v2-papel .as div{flex:1;border-bottom:1.5px solid #0f172a;height:34px;display:flex;align-items:flex-end}
+.v2-papel .as svg{width:100%;height:30px}
+.v2-papel .as small{display:block;text-align:center;font:700 8px "Manrope",sans-serif;letter-spacing:.07em;text-transform:uppercase;color:#64748b;margin-top:2px}
+.v2-leu{background:#0b1220;color:#e2e8f0;border:1px solid rgba(148,163,184,.28);border-radius:14px;padding:14px;font-size:12.5px;box-shadow:0 40px 70px -40px rgba(2,6,23,.8);min-width:0}
+.v2-leu h6{margin:0 0 10px;font:800 11px "Manrope",sans-serif;letter-spacing:.07em;text-transform:uppercase;color:#fdba74;display:flex;gap:8px;align-items:center}
+.v2-leu h6::before{content:"";width:8px;height:8px;border-radius:50%;background:#f97316;box-shadow:0 0 0 4px rgba(249,115,22,.25)}
+.v2-leu .r{display:grid;grid-template-columns:104px 1fr auto;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid rgba(148,163,184,.14)}.v2-leu .r:last-of-type{border-bottom:0}
+.v2-leu .r small{color:#94a3b8;font-weight:600}.v2-leu .r b{color:#fff;font-weight:700}
+.v2-leu .tg{font-size:9.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;border-radius:6px;padding:2px 7px;white-space:nowrap}
+.v2-leu .ok{background:rgba(34,197,94,.18);color:#86efac}.v2-leu .rv{background:rgba(245,158,11,.2);color:#fcd34d}
+.v2-leu .bt{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}.v2-leu .bt span{font-weight:800;font-size:12px;border-radius:8px;padding:8px 12px}
+.v2-leu .bt .p{background:#f97316;color:#0b1220}.v2-leu .bt .s{border:1px solid rgba(148,163,184,.4);color:#cbd5e1}
+@media(max-width:600px){.v2-leu .r{grid-template-columns:1fr;gap:3px}.v2-leu .tg{justify-self:start}.v2-lerOS .v2-leu{margin-top:-12px}.v2-papel td{font-size:17px}}
+.v2-seta{display:none}
+.v2-pass{display:grid;gap:12px;margin:22px 0 0;padding:0;list-style:none;counter-reset:p}
+.v2-pass li{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;font-size:15.5px}
+.v2-pass li::before{counter-increment:p;content:counter(p);width:34px;height:34px;border-radius:9px;background:var(--accent);color:#0f172a;font:800 16px/34px "Manrope",sans-serif;text-align:center}
+.v2-pass b{color:var(--ink)}
+.v2-gen{margin-top:26px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:12px}
+.v2-gen h3{font:800 16px "Manrope",sans-serif;margin:0}
+.v2-gen .g{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.v2-gen .g label.w{grid-column:1/-1}
+.v2-gen label{display:grid;gap:5px;font-size:12.5px;font-weight:700;color:var(--ink-soft)}
+.v2-gen input{font:600 15px "Inter",sans-serif;padding:11px 12px;border:1.5px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);min-height:46px;width:100%}
+.v2-gen input:focus{outline:3px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.v2-gen .a{display:flex;flex-wrap:wrap;gap:12px;align-items:center}.v2-gen small{color:var(--ink-soft);font-size:13px}
+"""
+
+
+def mk_os_manuscrita():
+    """Folha preenchida a mao (esquerda) e o que a IA preencheu no sistema (direita)."""
+    assinatura = ('<svg viewBox="0 0 120 30" aria-hidden="true"><path d="M3 22c8-20 14 6 22-6s12 10 20-2 12-8 18 4 10-8 18-2 12 6 20-4" '
+                  'fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round"/></svg>')
+    papel = (
+        '<div class="v2-papel" role="img" aria-label="Ordem de serviço preenchida à mão: compressor com vazamento de óleo, troca do kit de vedação">'
+        '<div class="tt">Ordem de serviço <b>nº 0041</b></div>'
+        '<div class="l">Cliente<span>Construtora Alvorada</span></div>'
+        '<div class="l t3" style="grid-template-columns:auto 1fr auto auto">Equip.<span>Compressor 02</span>Horím.<span>3250</span></div>'
+        '<div class="l">Data<span>05/11/26</span></div>'
+        '<div class="ck"><span><i></i>Preventiva</span><span><i class="x"></i>Corretiva</span><span><i></i>Troca</span></div>'
+        '<div class="l">Problema<span>vazando óleo no cabeçote</span></div>'
+        '<div class="l">Serviço<span>trocou o kit de vedação e completou o óleo</span></div>'
+        '<table><thead><tr><th>Peças usadas</th><th>Qtd</th><th>R$</th></tr></thead><tbody>'
+        '<tr><td>Kit de vedação cabeçote</td><td class="n">1</td><td class="v">180</td></tr>'
+        '<tr><td>Óleo 15W40 (litro)</td><td class="n">3</td><td class="v">26</td></tr></tbody></table>'
+        f'<div class="as"><div>{assinatura}</div><div>{assinatura}</div></div>'
+        '<div class="as" style="margin-top:0;gap:14px"><small style="flex:1">Técnico</small><small style="flex:1">Cliente</small></div></div>')
+    leu = (
+        '<div class="v2-leu" role="img" aria-label="Campos da ordem de serviço preenchidos pela IA, prontos para revisão">'
+        '<h6>A IA leu a foto e preencheu a O.S.</h6>'
+        '<div class="r"><small>Cliente</small><b>Construtora Alvorada</b><span class="tg ok">no cadastro</span></div>'
+        '<div class="r"><small>Equipamento</small><b>Compressor 02</b><span class="tg ok">no cadastro</span></div>'
+        '<div class="r"><small>Horímetro</small><b>3.250 h</b><span class="tg ok">lido</span></div>'
+        '<div class="r"><small>Tipo</small><b>Corretiva</b><span class="tg ok">marcado</span></div>'
+        '<div class="r"><small>Serviço</small><b>Vazamento de óleo no cabeçote. Troca do kit de vedação.</b><span class="tg ok">lido</span></div>'
+        '<div class="r"><small>Peças</small><b>Kit de vedação (1) · Óleo 15W40 (3 L)</b><span class="tg rv">revisar: óleo sem cadastro</span></div>'
+        '<div class="bt"><span class="p">Revisar e salvar</span><span class="s">Ler outra folha</span></div></div>')
+    return f'<div class="v2-lerOS">{papel}{leu}</div>'

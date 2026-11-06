@@ -234,4 +234,41 @@ class OsPhotoOcrServiceTest extends TestCase
         $this->assertNull($service->dataUrlFromState(null));
         $this->assertNull($service->dataUrlFromState(['latitude' => -22.9]));
     }
+
+    public function test_resolve_fields_reads_horimetro_paper_number_and_observations_from_the_oravel_form(): void
+    {
+        [$tenant] = $this->makeTenantAdmin();
+
+        $resolved = app(OsPhotoOcrService::class)->resolveFields([
+            'paper_number' => '0041',
+            'horimetro' => 3250.5,
+            'checklist_notes' => 'Freios OK.',
+            'observations' => 'Voltar em 15 dias.',
+        ], $tenant->id, []);
+
+        $this->assertEquals(3250.5, $resolved['fields']['horimetro_entry']);
+        $this->assertSame("OS de papel nº 0041\nFreios OK.\nObservações do papel: Voltar em 15 dias.", $resolved['fields']['technical_notes']);
+        $this->assertContains('Horímetro/km', $resolved['matched']);
+
+        // horimetro invalido (negativo ou texto) nao preenche nada
+        $ruim = app(OsPhotoOcrService::class)->resolveFields(['horimetro' => -5], $tenant->id, []);
+        $this->assertArrayNotHasKey('horimetro_entry', $ruim['fields']);
+        $ruim = app(OsPhotoOcrService::class)->resolveFields(['horimetro' => 'abc'], $tenant->id, []);
+        $this->assertArrayNotHasKey('horimetro_entry', $ruim['fields']);
+    }
+
+    public function test_the_prompt_describes_the_oravel_printed_form_and_asks_for_the_new_fields(): void
+    {
+        Http::fake(['api.anthropic.com/*' => Http::response(['content' => [['type' => 'text', 'text' => json_encode(['paper_number' => '0007', 'horimetro' => 120])]]], 200)]);
+
+        $r = app(OsPhotoOcrService::class)->extract(self::FAKE_PHOTO);
+
+        $this->assertTrue($r['ok']);
+        $this->assertSame('0007', $r['data']['paper_number']);
+        Http::assertSent(function ($request) {
+            $system = (string) data_get($request->data(), 'system');
+
+            return str_contains($system, 'formulário da Oravel') && str_contains($system, '"horimetro"') && str_contains($system, '"paper_number"') && str_contains($system, '"observations"');
+        });
+    }
 }

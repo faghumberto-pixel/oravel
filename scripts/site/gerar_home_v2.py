@@ -99,6 +99,7 @@ ia = (
     '<p>A IA não inventa números: o sistema calcula e ela interpreta, prioriza e sugere o próximo passo, no celular do técnico e no painel do gestor.</p>'
     + ck(['<b>Diagnóstico guiado</b> de avarias e falhas, com o histórico do equipamento e as peças em estoque',
           '<b>Tarefas do dia organizadas</b> por urgência e por rota',
+          '<b>Lê a ordem de serviço feita à mão:</b> imprima a folha, o mecânico preenche e a IA passa para o sistema (<a href="/inteligencia-artificial/#os-manuscrita">imprimir a folha</a>)',
           '<b>Decisões com dados:</b> trocar ou vender, repor estoque, revisar antes de quebrar',
           '<b>Alerta de venda parada:</b> leads em risco de perda e propostas sem retorno'])
     + '<a class="more" href="/inteligencia-artificial/">Ver a IA da Oravel</a></div>'
