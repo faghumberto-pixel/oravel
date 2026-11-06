@@ -14,6 +14,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use App\Services\OsFolhaAtualizacaoService;
 use App\Services\OsPhotoOcrService;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
@@ -160,5 +161,41 @@ class OsFolhaImpressaAtualizaTest extends TestCase
         $os->forceFill(['solution' => 'mudou'])->save();
         $t2->call('aplicar'); // ja aplicada e sem confirmar: nao grava
         $this->assertSame('mudou', $os->fresh()->solution);
+    }
+
+    public function test_numero_segue_a_sequencia_da_empresa_e_nunca_repete(): void
+    {
+        [$tenant, , $asset, , $os] = $this->cenario();
+        $tenant->forceFill(['os_prefix' => 'MNT-', 'os_next_number' => 123])->save();
+
+        $a = MaintenanceOrder::create(['tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'maintenance_type' => 'Corretiva', 'description' => 'a', 'status' => 'Aberto']);
+        $b = MaintenanceOrder::create(['tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'maintenance_type' => 'Corretiva', 'description' => 'b', 'status' => 'Aberto']);
+
+        $this->assertSame('MNT-000123', $a->os_number);
+        $this->assertSame('MNT-000124', $b->os_number);
+
+        // numero digitado a mao ocupa a vaga: a sequencia pula
+        MaintenanceOrder::create(['tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'maintenance_type' => 'Corretiva', 'description' => 'c', 'status' => 'Aberto', 'os_number' => 'MNT-000125']);
+        $d = MaintenanceOrder::create(['tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'maintenance_type' => 'Corretiva', 'description' => 'd', 'status' => 'Aberto']);
+        $this->assertSame('MNT-000126', $d->os_number);
+    }
+
+    public function test_numero_duplicado_na_mesma_empresa_e_recusado_mas_vale_em_outra(): void
+    {
+        [$tenant, , $asset, , $os] = $this->cenario();
+
+        $this->expectException(QueryException::class);
+        MaintenanceOrder::create(['tenant_id' => $tenant->id, 'asset_id' => $asset->id, 'maintenance_type' => 'Corretiva', 'description' => 'x', 'status' => 'Aberto', 'os_number' => $os->os_number]);
+    }
+
+    public function test_o_mesmo_numero_pode_existir_em_empresas_diferentes(): void
+    {
+        [$t1, , $a1] = $this->cenario();
+        $um = MaintenanceOrder::create(['tenant_id' => $t1->id, 'asset_id' => $a1->id, 'maintenance_type' => 'Corretiva', 'description' => 'x', 'status' => 'Aberto', 'os_number' => 'FOLHA-0001']);
+        [$t2, , $a2] = $this->cenario();
+        $dois = MaintenanceOrder::create(['tenant_id' => $t2->id, 'asset_id' => $a2->id, 'maintenance_type' => 'Corretiva', 'description' => 'y', 'status' => 'Aberto', 'os_number' => 'FOLHA-0001']);
+
+        $this->assertSame($um->os_number, $dois->os_number);
+        $this->assertNotSame($um->tenant_id, $dois->tenant_id);
     }
 }

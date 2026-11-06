@@ -122,6 +122,8 @@ class Tenant extends Model
     public const PAYMENT_STATUS_CANCELADO = 'cancelado';
 
     protected $fillable = [
+        'os_prefix',
+        'os_next_number',
         'logo_path',
         'name',
         'slug',
@@ -486,7 +488,7 @@ class Tenant extends Model
      */
     public function interfaceSimples(): bool
     {
-        return $this->interface_simples ?? ! in_array('locadora', \App\Support\Pacotes::produtosDoTenant($this), true);
+        return $this->interface_simples ?? ! in_array('locadora', Pacotes::produtosDoTenant($this), true);
     }
 
     /**
