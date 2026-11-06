@@ -180,6 +180,7 @@ class Tenant extends Model
         'targets',
         'signature_id',
         'auto_generate_patrimonio',
+        'is_demo',
     ];
 
     protected $casts = [
@@ -192,6 +193,7 @@ class Tenant extends Model
         'terms_accepted_at' => 'datetime',
         'onboarding_completed' => 'boolean',
         'auto_generate_patrimonio' => 'boolean',
+        'is_demo' => 'boolean',
         'mrr_value' => 'decimal:2',
         'enabled_modules' => 'array',
         'ui_customizations' => 'array',
