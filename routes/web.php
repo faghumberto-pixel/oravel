@@ -493,6 +493,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/contagem-estoque/{contagem?}', \App\Livewire\ContagemEstoqueMobile::class)
         ->name('estoque.contagem-mobile');
 
+    // Folha da O.S. para imprimir ja preenchida (cliente, equipamento, problema); o mecanico completa a mao e a IA atualiza a mesma O.S.
+    Route::get('/admin/maintenance-orders/{maintenanceOrder}/folha', [\App\Http\Controllers\OsFolhaController::class, 'imprimir'])
+        ->name('maintenance-orders.folha');
+
     // QR do estoque: o link do QR abre o item (rastreio) ou o endereço; as etiquetas saem prontas para imprimir
     Route::get('/admin/estoque/qr/{tipo}/{id}', [\App\Http\Controllers\EstoqueQrController::class, 'abrir'])->name('estoque.qr');
     Route::get('/admin/estoque/etiquetas', [\App\Http\Controllers\EstoqueQrController::class, 'etiquetas'])->name('estoque.etiquetas');

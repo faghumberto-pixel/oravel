@@ -292,6 +292,125 @@ class OsPhotoOcrService
     /**
      * Aceita só AAAA-MM-DD de data real (rejeita "2026-02-31", "30/09/2026", etc.).
      */
+    /** Aceita "AAAA-MM-DD" ou "AAAA-MM-DD HH:MM"; devolve no formato do banco ou null. */
+    private function validDateTime(mixed $value): ?string
+    {
+        if (! is_string($value)) {
+            return null;
+        }
+        $value = trim($value);
+        foreach (['!Y-m-d H:i' => 'Y-m-d H:i', '!Y-m-d' => 'Y-m-d'] as $entrada => $saida) {
+            $d = \DateTimeImmutable::createFromFormat($entrada, $value);
+            if ($d && $d->format($saida) === $value) {
+                return $d->format($saida === 'Y-m-d' ? 'Y-m-d 00:00:00' : 'Y-m-d H:i:00');
+            }
+        }
+
+        return null;
+    }
+
+    /** "OS-2026-0012" e "os 2026 0012" sao a mesma coisa; "0041" e "41" tambem. */
+    private function normalizaNumero(?string $n): string
+    {
+        $n = strtolower(preg_replace('/[^a-z0-9]/i', '', (string) $n));
+
+        return preg_replace('/^0+(?=\d)/', '', $n) ?? $n;
+    }
+
+    /**
+     * Folha preenchida pelo mecanico para uma OS que ja existe: devolve o que MUDA nessa OS (nunca cliente nem equipamento,
+     * que ja vieram impressos), as pecas a lancar e os avisos para revisar. Nao grava nada.
+     *
+     * @param  array<string, mixed>  $data  retorno de extract()['data']
+     * @return array{campos: array<string, mixed>, pecas: list<array<string, mixed>>, avisos: list<string>, lidos: list<string>, assinatura_cliente: ?bool, numero_confere: ?bool}
+     */
+    public function resolveUpdate(array $data, MaintenanceOrder $os): array
+    {
+        $campos = [];
+        $avisos = [];
+        $lidos = [];
+
+        $servico = trim((string) ($data['service_done'] ?? ''));
+        if ($servico === '' && ! empty($data['description'])) {
+            $servico = trim((string) $data['description']);
+        }
+        if ($servico !== '') {
+            $campos['solution'] = $servico;
+            $lidos[] = 'Serviço executado';
+        }
+
+        if (isset($data['horimetro']) && is_numeric($data['horimetro']) && $data['horimetro'] >= 0) {
+            $campos['horimetro_entry'] = (float) $data['horimetro'];
+            $lidos[] = 'Horímetro atual';
+            $anterior = (float) ($os->asset?->last_horimetro ?? 0);
+            if ($anterior > 0 && (float) $data['horimetro'] < $anterior) {
+                $avisos[] = 'O horímetro lido ('.$data['horimetro'].') é menor que a última leitura do equipamento ('.$anterior.'). Confira a folha.';
+            }
+        }
+
+        foreach (['started_at', 'finished_at'] as $campo) {
+            $valor = $this->validDateTime($data[$campo] ?? null);
+            if ($valor) {
+                $campos[$campo] = $valor;
+                $lidos[] = $campo === 'started_at' ? 'Início' : 'Fim';
+            } elseif (! empty($data[$campo])) {
+                $avisos[] = 'Data não reconhecida (lida: "'.$data[$campo].'").';
+            }
+        }
+        if (isset($campos['started_at'], $campos['finished_at']) && $campos['finished_at'] < $campos['started_at']) {
+            $avisos[] = 'O fim lido é anterior ao início. Confira as datas na folha.';
+        }
+
+        if (isset($data['hours_spent']) && is_numeric($data['hours_spent']) && $data['hours_spent'] > 0 && $data['hours_spent'] <= 240) {
+            $horas = round((float) $data['hours_spent'], 2);
+            $campos['hours_spent'] = $horas;
+            $campos['total_time_seconds'] = (int) round($horas * 3600);
+            $taxa = (float) ($os->technician?->hourly_rate ?? 0);
+            if ($taxa > 0) {
+                $campos['labor_cost'] = round($taxa * $horas, 2); // mesma conta do Modo Campo: valor/hora do tecnico x horas
+            }
+            $lidos[] = 'Horas trabalhadas';
+        }
+
+        $notas = array_filter([
+            ! empty($data['checklist_notes']) ? 'Checklist do papel: '.trim((string) $data['checklist_notes']) : null,
+            ! empty($data['observations']) ? 'Observações do papel: '.trim((string) $data['observations']) : null,
+        ]);
+        if ($notas) {
+            $campos['technical_notes'] = trim(implode("\n", array_filter([(string) $os->technical_notes, ...$notas])));
+            $lidos[] = 'Observações';
+        }
+
+        $numeroConfere = null;
+        if (! empty($data['paper_number'])) {
+            $numeroConfere = $this->normalizaNumero((string) $data['paper_number']) === $this->normalizaNumero((string) $os->os_number);
+            if (! $numeroConfere) {
+                $avisos[] = 'O número da folha ('.$data['paper_number'].') não é o desta O.S. ('.$os->os_number.'). Confirme que a foto é da folha certa.';
+            }
+        } else {
+            $avisos[] = 'Não consegui ler o número da folha. Confirme que a foto é da O.S. '.$os->os_number.'.';
+        }
+
+        $pecas = array_values($this->resolveParts($data['parts'] ?? [], (string) $os->tenant_id));
+        $pecas = array_map(function (array $linha) {
+            $linha['material_nome'] = $linha['material_id'] ? Material::withoutGlobalScopes()->whereKey($linha['material_id'])->value('name') : null;
+
+            return $linha;
+        }, $pecas);
+        if ($pecas) {
+            $lidos[] = 'Peças e materiais ('.count($pecas).')';
+            if (collect($pecas)->whereNull('material_id')->isNotEmpty()) {
+                $avisos[] = 'Há peças sem cadastro no estoque: elas entram como texto livre, sem baixa de estoque.';
+            }
+        }
+
+        return [
+            'campos' => $campos, 'pecas' => $pecas, 'avisos' => $avisos, 'lidos' => $lidos,
+            'assinatura_cliente' => array_key_exists('has_client_signature', $data) ? (bool) $data['has_client_signature'] : null,
+            'numero_confere' => $numeroConfere,
+        ];
+    }
+
     private function validDate(mixed $value): ?string
     {
         if (! is_string($value)) {
@@ -331,6 +450,10 @@ class OsPhotoOcrService
             Problema relatado, Serviço executado, tabela de peças e materiais
             (descrição, quantidade, valor unitário), Início e Fim, Mão de obra (R$),
             Técnico responsável, Observações e duas assinaturas (técnico e cliente).
+            Quando a folha foi impressa pelo sistema, Cliente, Equipamento, Problema
+            relatado e Técnico já vêm impressos: leia o que o mecânico ESCREVEU à mão
+            (Serviço executado, Horímetro atual, Horas trabalhadas, Início/Fim, peças,
+            observações) e não confunda com o texto impresso.
 
             Extraia apenas o que conseguir ler com confiança razoável e responda
             APENAS com um objeto JSON válido, sem markdown, sem crases, sem texto
@@ -338,10 +461,13 @@ class OsPhotoOcrService
 
             {
               "paper_number": "string (número impresso/escrito da OS no papel, como está) ou null",
+              "problem_reported": "string (campo Problema relatado, como está) ou null",
+              "service_done": "string (campo Serviço executado, como está) ou null",
+              "hours_spent": number ou null (horas trabalhadas, em horas decimais: 1h30 = 1.5),
               "maintenance_type": "Preventiva" ou "Corretiva" ou "Troca" ou null,
               "description": "string (problema relatado e serviço executado; se o papel tiver os dois campos, junte assim: 'Problema: ... Serviço: ...') ou null",
-              "started_at": "AAAA-MM-DD ou null (se só houver um campo Data, use-o aqui)",
-              "finished_at": "AAAA-MM-DD ou null",
+              "started_at": "AAAA-MM-DD ou AAAA-MM-DD HH:MM (se houver hora) ou null (se só houver um campo Data, use-o aqui)",
+              "finished_at": "AAAA-MM-DD ou AAAA-MM-DD HH:MM (se houver hora) ou null",
               "horimetro": number ou null (horímetro ou km do equipamento, só o número),
               "labor_cost": number ou null,
               "material_cost": number ou null,

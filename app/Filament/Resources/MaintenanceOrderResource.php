@@ -1009,6 +1009,9 @@ class MaintenanceOrderResource extends Resource
             ])->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('imprimirFolha')->label('Imprimir folha')->icon('heroicon-o-printer')->color('gray')
+                    ->url(fn (MaintenanceOrder $record) => route('maintenance-orders.folha', $record))->openUrlInNewTab()
+                    ->visible(fn () => ! static::interfaceSimples()),
                 Tables\Actions\DeleteAction::make()->visible(fn () => ! static::interfaceSimples()),
             ])->bulkActions([
                 Tables\Actions\DeleteBulkAction::make()->visible(fn () => ! static::interfaceSimples()),
@@ -1058,6 +1061,7 @@ class MaintenanceOrderResource extends Resource
             'index' => Pages\ListMaintenanceOrders::route('/'),
             'create' => Pages\CreateMaintenanceOrder::route('/create'),
             'edit' => Pages\EditMaintenanceOrder::route('/{record}/edit'),
+            'atualizar-folha' => Pages\AtualizarComFolha::route('/{record}/atualizar-folha'),
         ];
     }
 }
