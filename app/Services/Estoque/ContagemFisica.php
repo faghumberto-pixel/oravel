@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Models\Warehouse;
 use App\Models\WarehouseStock;
 use App\Services\MaterialStockService;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
@@ -57,7 +58,7 @@ class ContagemFisica
     }
 
     /** Registra uma contagem (ou recontagem) de um item: guarda quem, quando e quanto, e atualiza o "contado" da folha. */
-    public function registrar(StockCountItem $item, float $quantidade, ?User $usuario = null, string $origem = 'web', ?string $nota = null): StockCountEntry
+    public function registrar(StockCountItem $item, float $quantidade, ?User $usuario = null, string $origem = 'web', ?string $nota = null, ?Carbon $quando = null): StockCountEntry
     {
         if (! $item->count->aberta()) {
             throw new RuntimeException('Esta contagem já foi finalizada: não aceita novos registros.');
@@ -66,8 +67,8 @@ class ContagemFisica
             throw new RuntimeException('A quantidade contada não pode ser negativa.');
         }
 
-        return DB::transaction(function () use ($item, $quantidade, $usuario, $origem, $nota) {
-            $agora = now();
+        return DB::transaction(function () use ($item, $quantidade, $usuario, $origem, $nota, $quando) {
+            $agora = $quando ?? now();
             $entrada = StockCountEntry::create([
                 'tenant_id' => $item->tenant_id, 'stock_count_item_id' => $item->id, 'quantity' => $quantidade, 'counted_by_user_id' => $usuario?->id,
                 'counted_by_name' => $usuario?->name, 'source' => $origem, 'note' => $nota, 'counted_at' => $agora,

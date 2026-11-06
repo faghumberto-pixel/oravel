@@ -13,6 +13,8 @@ use Illuminate\Support\Str;
  * Popula MATERIAIS, FINANCEIRO, FROTA e LOGISTICA da Locadora Demo (so' ela), para as telas "Visao geral" desses modulos
  * nao aparecerem vazias. Idempotente: apaga as linhas destas tabelas no tenant demo e recria, de forma deterministica.
  * Insere direto nas tabelas (sem observers: nao manda e-mail nem notificacao). Tudo fictício.
+ * Atencao: repetir este servico apaga TODOS os materiais da demo (inclusive os de escritorio do estoque estruturado):
+ * depois, rode demo:alec-estoque de novo (ou, melhor, demo:alec-criar).
  */
 class LocadoraDemoOperacional
 {

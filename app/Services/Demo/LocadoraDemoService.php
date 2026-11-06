@@ -180,8 +180,10 @@ class LocadoraDemoService
                 $operacional = (new LocadoraDemoOperacional)->popular($tenant);
                 // Manutencao recente (agenda de hoje, SLA, deslocamento, esperando peca): depois do operacional, que cria os materiais.
                 $manutencao = (new LocadoraDemoManutencao)->popular($tenant);
+                // Estoque estruturado (grupos, enderecos, pecas/oleo, itens agregados, contagens com historico): depois do operacional.
+                $estoque = (new LocadoraDemoEstoque)->popular($tenant);
 
-                return $resumo + ['comercial' => $comercial, 'operacional' => $operacional, 'manutencao' => $manutencao] + [
+                return $resumo + ['comercial' => $comercial, 'operacional' => $operacional, 'manutencao' => $manutencao, 'estoque' => $estoque] + [
                     'tenant_id' => $this->tenantId,
                     'email' => self::EMAIL_ADMIN,
                     'senha' => $senha,

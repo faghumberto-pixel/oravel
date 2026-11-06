@@ -22,7 +22,12 @@ class LocadoraDemoOperacionalTest extends TestCase
 
     private function contar(string $tenantId): array
     {
-        return collect(self::TABELAS)->mapWithKeys(fn ($t) => [$t => DB::table($t)->where('tenant_id', $tenantId)->count()])->all();
+        // Materiais de escritorio (ADM-) e ajustes de contagem pertencem ao estoque estruturado (LocadoraDemoEstoque), nao ao operacional.
+        return collect(self::TABELAS)->mapWithKeys(fn ($t) => [$t => match ($t) {
+            'materials' => DB::table('materials')->where('tenant_id', $tenantId)->where('sku', 'not like', 'ADM-%')->count(),
+            'material_stock_movements' => DB::table('material_stock_movements')->where('tenant_id', $tenantId)->where('type', '!=', 'ajuste')->whereIn('material_id', DB::table('materials')->where('sku', 'not like', 'ADM-%')->select('id'))->count(),
+            default => DB::table($t)->where('tenant_id', $tenantId)->count(),
+        }])->all();
     }
 
     public function test_demo_nasce_com_operacional_populado_idempotente_e_isolado(): void
