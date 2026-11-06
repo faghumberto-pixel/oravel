@@ -18,6 +18,8 @@ FONE = '(19) 99933-2615'
 
 RECURSOS = [
     ('/recursos/', 'Todos os recursos', 'Visão completa da plataforma'),
+    ('/crm/', 'CRM e vendas', 'Funil, propostas e retorno no prazo'),
+    ('/inteligencia-artificial/', 'IA no campo e na gestão', 'Diagnóstico, rotas e decisão com dados'),
     ('/processo-manutencao/', 'Preventiva e ordens de serviço', 'Revisão no prazo, ordem por equipamento'),
     ('/processo-gestao-de-equipes/', 'Gestão de equipes', 'Agenda, carga e desempenho dos técnicos'),
     ('/processo-gestao-de-estoques/', 'Gestão de estoques', 'Peça certa, na hora certa'),
