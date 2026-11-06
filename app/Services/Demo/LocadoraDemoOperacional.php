@@ -529,11 +529,12 @@ class LocadoraDemoOperacional
         }
         $odo = [];
         $devolvidas = 0;
-        for ($n = 0; $n < 32; $n++) {
+        for ($n = 0; $n < 64; $n++) {
             $vi = $n % 6 === 5 ? mt_rand(0, 4) : $n % 6;
             $m = $this->motoristas[mt_rand(0, count($this->motoristas) - 1)];
             $p = $this->percursos[mt_rand(0, count($this->percursos) - 1)];
-            $saida = $this->dia(mt_rand(1, 60), mt_rand(6, 14));
+            // 32 nos ultimos 60 dias e 32 nos 110 dias anteriores (os graficos mensais mostram 6 meses)
+            $saida = $this->dia($n < 32 ? mt_rand(1, 60) : mt_rand(61, 170), mt_rand(6, 14));
             $km = (int) ($p['km'] * mt_rand(90, 130) / 100);
             $odo[$vi] = ($odo[$vi] ?? (int) DB::table('assets')->where('id', $this->veiculos[$vi]['id'])->value('odometro_atual') - 12000) + mt_rand(40, 200);
             $this->inserir('frota_saidas_veiculo', [
