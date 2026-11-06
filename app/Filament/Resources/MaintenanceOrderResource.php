@@ -232,8 +232,8 @@ class MaintenanceOrderResource extends Resource
                     // via IA com visao (App\Services\OsPhotoOcrService). So' na
                     // criacao -- numa OS ja existente os campos abaixo ja tem dado
                     // real, nao faz sentido sobrescrever por foto.
-                    Forms\Components\Section::make('Preencher via Foto (IA) — teste')
-                        ->description('Anexe a foto de uma O.S. em papel (impressa ou manuscrita, de qualquer layout) e a IA tenta preencher os campos abaixo. Revise tudo antes de salvar -- é um teste, pode errar leitura de nomes/valores.')
+                    Forms\Components\Section::make('Ler O.S. de papel (IA)')
+                        ->description('Fotografe a O.S. preenchida à mão (a folha em branco da Oravel, em oravel.com.br/inteligencia-artificial, ou qualquer outro formulário) e a IA preenche os campos abaixo: cliente, equipamento, horímetro, tipo, serviço, peças e datas. Revise tudo antes de salvar: a IA pode errar a leitura de nomes e valores.')
                         ->icon('heroicon-o-sparkles')
                         ->visible(fn (string $operation) => $operation === 'create')
                         ->collapsible()
@@ -243,7 +243,7 @@ class MaintenanceOrderResource extends Resource
                                 ->dehydrated(false),
                             Forms\Components\Actions::make([
                                 Forms\Components\Actions\Action::make('extrairComIA')
-                                    ->label('Preencher com IA')
+                                    ->label('Ler a foto com IA')
                                     ->icon('heroicon-o-sparkles')
                                     ->action(function (Get $get, Set $set) {
                                         static::preencherViaFotoIA($get, $set);

@@ -187,8 +187,20 @@ class OsPhotoOcrService
             $matched[] = 'Peças/Materiais: '.count($materials).($livres ? " ({$livres} sem cadastro, como texto livre -- revisar)" : '');
         }
 
-        if (! empty($data['checklist_notes'])) {
-            $fields['technical_notes'] = $data['checklist_notes'];
+        if (isset($data['horimetro']) && is_numeric($data['horimetro']) && $data['horimetro'] >= 0) {
+            $fields['horimetro_entry'] = $data['horimetro'];
+            $matched[] = 'Horímetro/km';
+        }
+
+        // Notas: numero impresso da folha (para achar o papel depois), checklist e observacoes, juntos no mesmo campo.
+        $notas = array_filter([
+            ! empty($data['paper_number']) ? 'OS de papel nº '.trim((string) $data['paper_number']) : null,
+            ! empty($data['checklist_notes']) ? trim((string) $data['checklist_notes']) : null,
+            ! empty($data['observations']) ? 'Observações do papel: '.trim((string) $data['observations']) : null,
+        ]);
+
+        if ($notas) {
+            $fields['technical_notes'] = implode("\n", $notas);
             $matched[] = 'Notas técnicas';
         }
 
@@ -307,24 +319,36 @@ class OsPhotoOcrService
     {
         return <<<'PROMPT'
             Você lê fotos de Ordens de Serviço em papel, de qualquer origem
-            (formulário impresso de terceiros ou anotação manuscrita), tiradas em
-            campo por um técnico -- a foto pode ter qualidade ruim, o documento
-            pode estar amassado/manchado, e a caligrafia pode ser difícil de ler.
+            (formulário impresso de terceiros, o formulário em branco da Oravel
+            preenchido à mão, ou anotação manuscrita), tiradas em campo por um
+            técnico -- a foto pode ter qualidade ruim, o documento pode estar
+            amassado/manchado, e a caligrafia pode ser difícil de ler.
+
+            O formulário da Oravel tem: número da OS impresso no topo, Cliente,
+            Data (dd/mm/aaaa em quadrinhos), Equipamento (código, patrimônio ou
+            placa), Horímetro ou km, Tipo de serviço (três caixas: Preventiva,
+            Corretiva, Troca -- a marcada com X, risco ou preenchida é a escolhida),
+            Problema relatado, Serviço executado, tabela de peças e materiais
+            (descrição, quantidade, valor unitário), Início e Fim, Mão de obra (R$),
+            Técnico responsável, Observações e duas assinaturas (técnico e cliente).
 
             Extraia apenas o que conseguir ler com confiança razoável e responda
             APENAS com um objeto JSON válido, sem markdown, sem crases, sem texto
             antes ou depois, no formato exato:
 
             {
+              "paper_number": "string (número impresso/escrito da OS no papel, como está) ou null",
               "maintenance_type": "Preventiva" ou "Corretiva" ou "Troca" ou null,
-              "description": "string (descrição do serviço/problema relatado) ou null",
-              "started_at": "AAAA-MM-DD ou null",
+              "description": "string (problema relatado e serviço executado; se o papel tiver os dois campos, junte assim: 'Problema: ... Serviço: ...') ou null",
+              "started_at": "AAAA-MM-DD ou null (se só houver um campo Data, use-o aqui)",
               "finished_at": "AAAA-MM-DD ou null",
+              "horimetro": number ou null (horímetro ou km do equipamento, só o número),
               "labor_cost": number ou null,
               "material_cost": number ou null,
               "parts": [ {"description": "string (peça/material como escrito)", "quantity": number, "unit_price": number ou null} ] ou [] (tabela de peças/materiais aplicados, uma linha por item),
               "has_client_signature": true ou false,
               "checklist_notes": "string (itens de checklist/inspeção anotados no papel) ou null",
+              "observations": "string (campo Observações) ou null",
               "asset_text": "string (texto que identifica o ativo/equipamento/patrimônio, exatamente como escrito) ou null",
               "client_text": "string (texto que identifica o cliente/empresa, exatamente como escrito) ou null",
               "technician_text": "string (nome do técnico responsável, exatamente como escrito) ou null"
