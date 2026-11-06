@@ -13,6 +13,8 @@ use Illuminate\Support\Str;
  * Popula MATERIAIS, FINANCEIRO, FROTA e LOGISTICA da Locadora Demo (so' ela), para as telas "Visao geral" desses modulos
  * nao aparecerem vazias. Idempotente: apaga as linhas destas tabelas no tenant demo e recria, de forma deterministica.
  * Insere direto nas tabelas (sem observers: nao manda e-mail nem notificacao). Tudo fictício.
+ * Atencao: repetir este servico apaga TODOS os materiais da demo (inclusive os de escritorio do estoque estruturado):
+ * depois, rode demo:alec-estoque de novo (ou, melhor, demo:alec-criar).
  */
 class LocadoraDemoOperacional
 {
@@ -23,9 +25,9 @@ class LocadoraDemoOperacional
     /** Tabelas limpas e recriadas por este servico (so' do tenant demo). A ordem respeita as chaves estrangeiras. */
     private const TABELAS = [
         'freight_records', 'equipment_pickup_requests', 'equipment_movements', 'freight_carriers', 'fleet_vehicles',
-        'frota_sinistros', 'frota_multas', 'frota_trocas_oleo', 'frota_abastecimentos', 'frota_saidas_veiculo',
+        'frota_vinculos_motorista', 'frota_sinistros', 'frota_multas', 'frota_trocas_oleo', 'frota_abastecimentos', 'frota_saidas_veiculo',
         'maintenance_order_materials', 'material_stock_movements', 'purchase_order_items', 'purchase_orders', 'material_requests',
-        'materials', 'material_categories', 'suppliers', 'account_receivables', 'account_payables', 'bill_categories', 'cost_centers',
+        'materials', 'material_categories', 'suppliers', 'frota_percursos', 'fleet_drivers', 'account_receivables', 'account_payables', 'bill_categories', 'cost_centers',
     ];
 
     private string $tenantId;
@@ -48,6 +50,12 @@ class LocadoraDemoOperacional
 
     /** @var list<string> */
     private array $clientes = [];
+
+    /** @var list<array{id: string, nome: string}> */
+    private array $motoristas = [];
+
+    /** @var list<array{id: string, nome: string, cliente: string}> */
+    private array $percursos = [];
 
     /** @var list<string> */
     private array $equipamentos = [];
@@ -96,11 +104,13 @@ class LocadoraDemoOperacional
                 $this->equipamentos = DB::table('assets')->where('tenant_id', $this->tenantId)->where('tag', 'not like', self::TAG_VEICULO.'%')->pluck('id')->map(fn ($v) => (string) $v)->all();
 
                 $this->criarVeiculos();
+                $this->criarMotoristasEPercursos();
+                $osVeiculos = $this->criarOsDosVeiculos();
 
                 return [
                     'materiais' => $this->criarMateriais(),
                     'financeiro' => $this->criarFinanceiro(),
-                    'frota' => $this->criarFrota(),
+                    'frota' => $this->criarFrota() + ['os_dos_veiculos' => $osVeiculos],
                     'logistica' => $this->criarLogistica(),
                 ];
             });
@@ -111,11 +121,14 @@ class LocadoraDemoOperacional
 
     private function limpar(): void
     {
+        DB::table('maintenance_orders')->whereIn('asset_id', DB::table('assets')->where('tenant_id', $this->tenantId)->where('tag', 'like', self::TAG_VEICULO.'%')->select('id'))->delete();
         DB::table('assets')->where('tenant_id', $this->tenantId)->where('tag', 'like', self::TAG_VEICULO.'%')->get(['id'])->each(function ($a) {
             foreach (['frota_abastecimentos', 'frota_multas', 'frota_sinistros', 'frota_trocas_oleo', 'frota_saidas_veiculo'] as $t) {
                 DB::table($t)->where('ativo_id', $a->id)->delete();
             }
         });
+        // Pedidos de peca (criados por LocadoraDemoManutencao) apontam para os materiais: saem antes deles.
+        DB::table('parts_requests')->where('tenant_id', $this->tenantId)->delete();
         DB::table('material_request_items')->whereIn('material_request_id', DB::table('material_requests')->where('tenant_id', $this->tenantId)->select('id'))->delete();
         DB::table('quote_items')->where('tenant_id', $this->tenantId)->whereNotNull('material_id')->update(['material_id' => null]);
         foreach (self::TABELAS as $tabela) {
@@ -142,6 +155,7 @@ class LocadoraDemoOperacional
     private function criarVeiculos(): void
     {
         $cat = $this->inserir('asset_categories', ['name' => 'Veículos', 'slug' => 'veiculos-demo', 'is_active' => true]);
+        $matriz = DB::table('internal_units')->where('tenant_id', $this->tenantId)->orderBy('created_at')->value('id');
         $docs = [[-12, 18, 40], [22, -5, 200], [9, 28, 300], [60, 14, 90], [150, 210, 24], [300, 12, 180]];
 
         foreach (self::VEICULOS as $i => [$nome, $placa, $ano, $valor, $carroceria]) {
@@ -149,13 +163,88 @@ class LocadoraDemoOperacional
                 'name' => $nome, 'tag' => self::TAG_VEICULO.($i + 1), 'patrimonio' => 'VEI-'.str_pad((string) ($i + 1), 3, '0', STR_PAD_LEFT), 'serial_number' => 'CH'.mt_rand(100000, 999999),
                 'status' => 'disponivel', 'grupo' => 'veiculo', 'is_vehicle' => true, 'placa' => $placa, 'manufacturing_year' => $ano, 'ano_modelo' => $ano,
                 'acquisition_date' => Carbon::create($ano, mt_rand(1, 12), mt_rand(1, 28))->toDateString(), 'acquisition_value' => $valor, 'residual_value' => round($valor * 0.2, 2),
-                'useful_life_years' => 10, 'asset_category' => 'Veículos', 'asset_category_id' => $cat, 'carroceria_tipo' => $carroceria, 'odometro_atual' => mt_rand(40000, 210000),
+                'useful_life_years' => 10, 'asset_category' => 'Veículos', 'asset_category_id' => $cat, 'internal_unit_id' => $matriz, 'carroceria_tipo' => $carroceria, 'odometro_atual' => mt_rand(40000, 210000),
                 'licenciamento_vencimento' => $this->agora->copy()->addDays($docs[$i][0])->toDateString(),
                 'seguro_vencimento' => $this->agora->copy()->addDays($docs[$i][1])->toDateString(),
                 'ipva_vencimento' => $this->agora->copy()->addDays($docs[$i][2])->toDateString(),
                 'description' => 'Veículo fictício da Locadora Demo.',
             ]);
             $this->veiculos[] = ['id' => $id, 'nome' => $nome, 'placa' => $placa];
+        }
+    }
+
+    /** OS (preventivas e corretivas) dos veiculos nos ultimos 6 meses: alimenta custo de manutencao e corretivas x preventivas da frota. */
+    private function criarOsDosVeiculos(): int
+    {
+        $tecnicos = DB::table('users')->where('tenant_id', $this->tenantId)->where('role', 'tecnico')->orderBy('created_at')->pluck('id')->map(fn ($v) => (string) $v)->all();
+        $n = 0;
+        $seq = 0;
+        foreach ($this->veiculos as $vi => $v) {
+            for ($mesesAtras = 5; $mesesAtras >= 0; $mesesAtras--) {
+                $base = $this->agora->copy()->startOfMonth()->subMonths($mesesAtras);
+                // preventiva a cada 2 meses (escalonada por veiculo) + 0 a 2 corretivas por mes
+                $tipos = (($mesesAtras + $vi) % 2 === 0) ? ['Preventiva'] : [];
+                for ($c = 0, $q = mt_rand(0, 2); $c < $q; $c++) {
+                    $tipos[] = mt_rand(1, 100) <= 12 ? 'Emergência' : 'Corretiva';
+                }
+                foreach ($tipos as $tipo) {
+                    $fim = $base->copy()->addDays(mt_rand(1, 26))->setTime(mt_rand(9, 17), mt_rand(0, 59));
+                    if ($fim->gt($this->agora)) {
+                        $fim = $this->agora->copy()->subDays(mt_rand(1, 3));
+                    }
+                    $horas = $tipo === 'Preventiva' ? mt_rand(2, 4) : mt_rand(3, 14);
+                    $labor = $horas * 62;
+                    $material = $tipo === 'Preventiva' ? mt_rand(220, 560) : mt_rand(380, 3200);
+                    $logistica = $tipo === 'Preventiva' ? 0 : mt_rand(0, 3) * 90;
+                    $ini = $fim->copy()->subHours($horas);
+                    $seq++;
+                    $this->inserir('maintenance_orders', [
+                        'os_number' => 'DEMO-VEI-OS-'.str_pad((string) $seq, 5, '0', STR_PAD_LEFT), 'asset_id' => $v['id'], 'technician_id' => $tecnicos ? $tecnicos[$seq % count($tecnicos)] : null,
+                        'maintenance_type' => $tipo, 'status' => 'Concluída', 'internal_status' => 'concluido', 'priority' => $tipo === 'Emergência' ? 'alta' : 'media', 'service_type' => 'Interno', 'workflow_status' => 'scheduled',
+                        'description' => $tipo === 'Preventiva' ? ['Revisão e troca de óleo', 'Revisão de freios e suspensão', 'Alinhamento e balanceamento'][mt_rand(0, 2)] : ['Reparo de embreagem', 'Troca de bateria', 'Reparo no sistema elétrico', 'Vazamento no radiador', 'Troca de pneus danificados'][mt_rand(0, 4)],
+                        'started_at' => $ini, 'finished_at' => $fim, 'hours_spent' => $horas, 'total_time_seconds' => $horas * 3600, 'labor_cost' => $labor, 'material_cost' => $material, 'logistics_cost' => $logistica,
+                        'total_order_cost' => $labor + $material + $logistica, 'is_rework' => false, 'technical_notes' => 'Ordem de serviço fictícia da Locadora Demo.',
+                    ], $ini->copy()->subHours(mt_rand(4, 48)));
+                    $n++;
+                }
+            }
+        }
+
+        return $n;
+    }
+
+    /** Motoristas, titular de cada veiculo e percursos (rotas) usados nas saidas. Tambem garante coordenadas nos clientes. */
+    private function criarMotoristasEPercursos(): void
+    {
+        foreach ([['Marcos Pereira', 'C'], ['João Batista', 'D'], ['Rafael Nunes', 'E'], ['Eduardo Prado', 'C'], ['Anderson Lopes', 'D'], ['Paulo Ribeiro', 'B']] as $i => [$nome, $cat]) {
+            $id = $this->inserir('fleet_drivers', [
+                'name' => $nome, 'cpf' => sprintf('900.%03d.%03d-%02d', 100 + $i, 200 + $i, 10 + $i), 'phone' => '(19) 98800-'.(1000 + $i), 'employment_type' => 'clt',
+                'cnh_number' => '0'.mt_rand(1000000000, 9999999999), 'cnh_category' => $cat, 'cnh_expiry_date' => $this->agora->copy()->addMonths([2, 14, 30, 9, 22, 40][$i])->toDateString(), 'active' => true,
+            ]);
+            $this->motoristas[] = ['id' => $id, 'nome' => $nome];
+        }
+        // Titular vigente: um por veiculo (o ultimo fica sem titular, de proposito: aparece como "sem titular" na tela)
+        foreach ($this->veiculos as $i => $v) {
+            if ($i < 5) {
+                $this->inserir('frota_vinculos_motorista', ['ativo_id' => $v['id'], 'motorista_id' => $this->motoristas[$i]['id'], 'inicio' => $this->agora->copy()->subMonths(3 + $i)->toDateString(), 'registrado_por' => $this->admin]);
+            }
+        }
+
+        // Coordenadas dos clientes (para o mapa da frota): so' completa os que nao tem
+        $cidades = [[-22.9056, -47.0608], [-23.1857, -46.8978], [-23.2237, -45.9009], [-23.5614, -46.6559], [-22.7253, -47.6492], [-23.5015, -47.4526], [-22.7374, -47.3331], [-23.0922, -47.2181]];
+        $clientes = DB::table('clients')->where('tenant_id', $this->tenantId)->orderBy('created_at')->get(['id', 'name', 'latitude', 'longitude', 'city']);
+        foreach ($clientes as $i => $c) {
+            if ($c->latitude === null || $c->longitude === null) {
+                [$lat, $lng] = $cidades[$i % count($cidades)];
+                DB::table('clients')->where('id', $c->id)->update(['latitude' => $lat + mt_rand(-40, 40) / 10000, 'longitude' => $lng + mt_rand(-40, 40) / 10000]);
+            }
+        }
+
+        $rotas = [['Pátio → Obra Vista Verde', 28], ['Pátio → Torre Comercial Jundiaí', 62], ['Pátio → Planta Industrial', 95], ['Pátio → Shopping Paulista', 105], ['Pátio → Fornecedor Hidrotec', 18]];
+        foreach ($rotas as $i => [$nome, $km]) {
+            $cliente = $clientes[$i % max(1, $clientes->count())]->id ?? null;
+            $id = $this->inserir('frota_percursos', ['nome' => $nome, 'local_a_tipo' => 'empresa', 'local_a_texto' => 'Pátio da Locadora Demo', 'local_b_tipo' => 'cliente', 'local_b_cliente_id' => $cliente, 'local_b_texto' => $nome, 'km_previsto' => $km, 'ativo' => true]);
+            $this->percursos[] = ['id' => $id, 'nome' => $nome, 'destino' => explode('→ ', $nome)[1], 'km' => $km, 'cliente' => $cliente];
         }
     }
 
@@ -427,24 +516,39 @@ class LocadoraDemoOperacional
             ], $feita);
         }
 
-        // Entradas e saidas de veiculos: 3 fora do patio (uma ha mais de 24h) e 6 ja devolvidos
-        $saidas = [[2, 'Obra Construtora Horizonte', 'visita_tecnica', 30], [3, 'Cliente Metalúrgica Vale Forte', 'cliente', 7], [5, 'Fornecedor Hidrotec', 'administrativo', 3]];
-        foreach ($saidas as [$vi, $destino, $fin, $horas]) {
+        // Entradas e saidas: 3 veiculos fora do patio agora (um ha mais de 24h) e ~30 saidas ja devolvidas nos ultimos 60 dias.
+        $finalidades = ['visita_tecnica', 'cliente', 'locacao', 'manutencao', 'administrativo'];
+        $agoraFora = [[2, 0, 'visita_tecnica', 30], [3, 1, 'cliente', 7], [5, 2, 'administrativo', 3]];
+        foreach ($agoraFora as [$vi, $pi, $fin, $horas]) {
+            $m = $this->motoristas[$vi % count($this->motoristas)];
+            $p = $this->percursos[$pi % count($this->percursos)];
+            $quando = $this->agora->copy()->subHours($horas);
             $this->inserir('frota_saidas_veiculo', [
-                'ativo_id' => $this->veiculos[$vi]['id'], 'condutor_nome' => ['Marcos Pereira', 'João Batista', 'Rafael Nunes'][mt_rand(0, 2)], 'finalidade' => $fin, 'destino' => $destino,
-                'motivo' => 'Saída registrada na demonstração', 'saida_em' => $this->agora->copy()->subHours($horas), 'odometro_saida' => (int) DB::table('assets')->where('id', $this->veiculos[$vi]['id'])->value('odometro_atual'),
-                'registrado_por' => $this->admin,
-            ], $this->agora->copy()->subHours($horas));
+                'ativo_id' => $this->veiculos[$vi]['id'], 'motorista_id' => $m['id'], 'condutor_nome' => $m['nome'], 'finalidade' => $fin, 'destino' => $p['destino'], 'cliente_id' => $p['cliente'], 'percurso_id' => $p['id'],
+                'motivo' => 'Saída registrada na demonstração', 'saida_em' => $quando, 'odometro_saida' => (int) DB::table('assets')->where('id', $this->veiculos[$vi]['id'])->value('odometro_atual'),
+                'combustivel_saida' => 'cheio', 'registrado_por' => $this->admin,
+            ], $quando);
         }
-        for ($n = 0; $n < 6; $n++) {
-            $saida = $this->dia(mt_rand(3, 40), 8);
+        $odo = [];
+        $devolvidas = 0;
+        for ($n = 0; $n < 64; $n++) {
+            $vi = $n % 6 === 5 ? mt_rand(0, 4) : $n % 6;
+            $m = $this->motoristas[mt_rand(0, count($this->motoristas) - 1)];
+            $p = $this->percursos[mt_rand(0, count($this->percursos) - 1)];
+            // 32 nos ultimos 60 dias e 32 nos 110 dias anteriores (os graficos mensais mostram 6 meses)
+            $saida = $this->dia($n < 32 ? mt_rand(1, 60) : mt_rand(61, 170), mt_rand(6, 14));
+            $km = (int) ($p['km'] * mt_rand(90, 130) / 100);
+            $odo[$vi] = ($odo[$vi] ?? (int) DB::table('assets')->where('id', $this->veiculos[$vi]['id'])->value('odometro_atual') - 12000) + mt_rand(40, 200);
             $this->inserir('frota_saidas_veiculo', [
-                'ativo_id' => $this->veiculos[mt_rand(0, 5)]['id'], 'condutor_nome' => 'Motorista Demo', 'finalidade' => 'cliente', 'destino' => 'Visita a cliente', 'motivo' => 'Visita de rotina',
-                'saida_em' => $saida, 'odometro_saida' => mt_rand(50000, 200000), 'retorno_em' => $saida->copy()->addHours(mt_rand(3, 9)), 'odometro_retorno' => mt_rand(50000, 200000), 'registrado_por' => $this->admin,
+                'ativo_id' => $this->veiculos[$vi]['id'], 'motorista_id' => $m['id'], 'condutor_nome' => $m['nome'], 'finalidade' => $finalidades[mt_rand(0, 4)], 'destino' => $p['destino'], 'cliente_id' => $p['cliente'], 'percurso_id' => $p['id'],
+                'motivo' => 'Saída concluída na demonstração', 'saida_em' => $saida, 'odometro_saida' => $odo[$vi], 'combustivel_saida' => 'cheio',
+                'retorno_em' => $saida->copy()->addHours(mt_rand(3, 10)), 'odometro_retorno' => $odo[$vi] + $km, 'combustivel_retorno' => ['cheio', '3/4', '1/2'][mt_rand(0, 2)], 'registrado_por' => $this->admin,
             ], $saida);
+            $odo[$vi] += $km;
+            $devolvidas++;
         }
 
-        return ['veiculos' => count($this->veiculos), 'abastecimentos' => $abast, 'multas' => count($multas), 'sinistros' => count($sin), 'trocas_de_oleo' => count($this->veiculos), 'saidas_de_veiculo' => count($saidas) + 6];
+        return ['veiculos' => count($this->veiculos), 'abastecimentos' => $abast, 'multas' => count($multas), 'sinistros' => count($sin), 'trocas_de_oleo' => count($this->veiculos), 'saidas_de_veiculo' => count($agoraFora) + $devolvidas, 'motoristas' => count($this->motoristas), 'percursos' => count($this->percursos)];
     }
 
     // ---------------------------------------------------------------- LOGISTICA

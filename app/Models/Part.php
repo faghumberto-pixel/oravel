@@ -25,6 +25,7 @@ class Part extends Model
     protected $fillable = [
         'tenant_id',
         'part_category_id',
+        'stock_group_id',
         'sku',
         'barcode',
         'name',
@@ -72,6 +73,11 @@ class Part extends Model
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
+    }
+
+    public function stockGroup(): BelongsTo
+    {
+        return $this->belongsTo(StockGroup::class, 'stock_group_id');
     }
 
     public function category(): BelongsTo

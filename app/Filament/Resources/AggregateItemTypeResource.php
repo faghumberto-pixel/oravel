@@ -45,6 +45,7 @@ class AggregateItemTypeResource extends BaseResource
                 ->placeholder('Ex: Bandeja de Contenção, Cabo, Mangueira')
                 ->required()
                 ->maxLength(255),
+            Forms\Components\Select::make('stock_group_id')->label('Grupo de estoque')->options(fn () => \App\Models\StockGroup::query()->where('is_active', true)->orderBy('sort_order')->pluck('name', 'id'))->searchable()->placeholder('Sem grupo')->helperText('Administração e escritório, Equipamentos, Veículos, Manutenção, Logística... Usado nos filtros da Visão geral do Estoque.'),
             Forms\Components\Hidden::make('category')->default(fn () => static::$category),
             Forms\Components\Select::make('unit_of_measure')->label('Unidade de medida')
                 ->options(['un' => 'Unidade', 'L' => 'Litro', 'kg' => 'Quilo', 'm' => 'Metro', 'cj' => 'Conjunto'])

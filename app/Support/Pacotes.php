@@ -59,6 +59,7 @@ class Pacotes
             return collect($porGrupo)->except($complementos)->flatMap(fn ($opcoes) => array_keys($opcoes))
                 ->merge(collect(self::todos())->flatMap(fn ($p) => $p['features'] ?? []))
                 ->merge(config('pacotes.base.features', []))
+                ->reject(fn ($chave) => in_array($chave, (array) config('pacotes.chaves_complementos', []), true))
                 ->unique()->values()->all();
         }
 
@@ -70,6 +71,7 @@ class Pacotes
             ->merge($base['features'] ?? [])
             ->merge($pacote['features'] ?? [])
             ->reject(fn ($chave) => in_array($chave, $pacote['excluir'] ?? [], true))
+            ->reject(fn ($chave) => in_array($chave, (array) config('pacotes.chaves_complementos', []), true))
             ->unique()->values()->all();
     }
 

@@ -54,6 +54,7 @@ class MaterialResource extends Resource
                 Forms\Components\TextInput::make('name')->label('Nome do material')->placeholder('Ex.: Filtro de óleo, Parafuso 10 mm')->required()->maxLength(255),
                 Forms\Components\TextInput::make('sku')->label('Código')->required()->unique(ignoreRecord: true)->maxLength(255)
                     ->default(fn () => 'MAT-'.strtoupper(\Illuminate\Support\Str::random(5))),
+                Forms\Components\Select::make('stock_group_id')->label('Grupo de estoque')->options(fn () => \App\Models\StockGroup::query()->where('is_active', true)->orderBy('sort_order')->pluck('name', 'id'))->searchable()->placeholder('Sem grupo')->helperText('Administração e escritório, Equipamentos, Veículos, Manutenção, Logística... Usado nos filtros da Visão geral do Estoque.'),
                 Forms\Components\Select::make('material_category_id')->label('Categoria')
                     ->relationship('category', 'name', modifyQueryUsing: fn (Builder $query) => $query->where('tenant_id', Tenancy::current()?->id))->searchable()->preload()
                     ->createOptionForm([Forms\Components\TextInput::make('name')->label('Nome da categoria')->required()->maxLength(255)])

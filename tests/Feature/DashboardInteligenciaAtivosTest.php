@@ -81,11 +81,11 @@ class DashboardInteligenciaAtivosTest extends TestCase
 
         $this->assertSame(3, $blocos['ativos_ia.trocar_vender']['payload']['value']);
         $this->assertSame(1, $blocos['ativos_ia.em_revisao']['payload']['value']);
-        $this->assertSame(25, $blocos['ativos_ia.localizados']['payload']['value']);
+        $this->assertSame(31, $blocos['ativos_ia.localizados']['payload']['value']);
         $this->assertCount(12, $blocos['ativos_ia.custo_12m']['payload']['spark']);
         $this->assertStringStartsWith('R$ ', (string) $blocos['ativos_ia.custo_12m']['payload']['value']);
 
-        $this->assertCount(25, $blocos['ativos_ia.mapa']['payload']['points']);
+        $this->assertCount(31, $blocos['ativos_ia.mapa']['payload']['points']);
         $this->assertNotEmpty($blocos['ativos_ia.mapa']['payload']['legend']);
 
         $calor = $blocos['ativos_ia.mapa_calor']['payload'];

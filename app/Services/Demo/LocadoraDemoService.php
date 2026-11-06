@@ -37,7 +37,7 @@ class LocadoraDemoService
     public const PLANO_NOME = 'Contrato Locadora Demo (DEMO)';
 
     /** Chaves das telas novas (custo por equipamento e localizacao): ligadas SO' no contrato da demo. */
-    public const FEATURES_EXTRAS = ['menu_custo_equipamentos', 'menu_localizacao_equipamentos'];
+    public const FEATURES_EXTRAS = ['menu_custo_equipamentos', 'menu_localizacao_equipamentos', 'menu_visao_geral_logistica_frota'];
 
     private const SEMENTE = 20261109;
 
@@ -178,8 +178,12 @@ class LocadoraDemoService
                 $comercial = (new LocadoraDemoComercial)->popular($tenant);
                 // Materiais, Financeiro, Frota e Logistica (depois do comercial: marca itens orcados com material).
                 $operacional = (new LocadoraDemoOperacional)->popular($tenant);
+                // Manutencao recente (agenda de hoje, SLA, deslocamento, esperando peca): depois do operacional, que cria os materiais.
+                $manutencao = (new LocadoraDemoManutencao)->popular($tenant);
+                // Estoque estruturado (grupos, enderecos, pecas/oleo, itens agregados, contagens com historico): depois do operacional.
+                $estoque = (new LocadoraDemoEstoque)->popular($tenant);
 
-                return $resumo + ['comercial' => $comercial, 'operacional' => $operacional] + [
+                return $resumo + ['comercial' => $comercial, 'operacional' => $operacional, 'manutencao' => $manutencao, 'estoque' => $estoque] + [
                     'tenant_id' => $this->tenantId,
                     'email' => self::EMAIL_ADMIN,
                     'senha' => $senha,

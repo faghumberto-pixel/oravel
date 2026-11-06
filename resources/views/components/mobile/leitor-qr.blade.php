@@ -1,12 +1,12 @@
 {{-- Botao "Ler QR do equipamento": abre a camera, le o QR da etiqueta e chama $wire.{metodo}(texto).
      A etiqueta traz o link do dossie (.../dossie-mobile/{id}) ou so o patrimonio/placa.
      JS em resources/js/leitor-qr.js (window.leitorQr). --}}
-@props(['metodo' => 'buscarPorCodigo'])
+@props(['metodo' => 'buscarPorCodigo', 'rotulo' => 'Ler QR do equipamento'])
 
 <div x-data="leitorQr('{{ $metodo }}')" x-on:livewire:navigating.window="parar()" class="space-y-2">
     <button type="button" x-show="!aberto" x-on:click="abrir()"
             class="flex min-h-[3rem] w-full items-center justify-center gap-2 rounded-xl bg-blue-600 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 active:scale-95">
-        <span aria-hidden="true">📷</span> Ler QR do equipamento
+        <span aria-hidden="true">📷</span> {{ $rotulo }}
     </button>
 
     <div x-show="aberto" x-cloak class="space-y-2">

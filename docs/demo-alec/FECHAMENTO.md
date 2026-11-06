@@ -67,7 +67,7 @@ Valores abaixo são os da demo recém-criada; podem variar um pouco no dia.
 | Tempo | Onde | O que clicar | O que dizer |
 |---|---|---|---|
 | 0:00 | **Início** (o dashboard já abre) | Mostrar os 4 números do topo, o **mapa**, o **mapa de calor** e o ranking com as linhas de 40% e 60%. | "Duas perguntas que todo locador faz: onde está meu equipamento e quanto ele me custa de manutenção. Esta é a tela da direção, em uma olhada." |
-| 0:30 | **Inteligência de Ativos → Localização dos Equipamentos** | Esperar o mapa carregar (25 equipamentos). | "Cada pino é um equipamento; a cor é o status (locado, disponível, em manutenção)." |
+| 0:30 | **Inteligência de Ativos → Localização dos Equipamentos** | Esperar o mapa carregar (25 equipamentos + 6 veículos da frota no pátio da matriz). | "Cada pino é um equipamento; a cor é o status (locado, disponível, em manutenção)." |
 | 1:15 | Mapa | Clicar no filtro **Locado (13)**, depois **Com rastreador (5)**. Abrir o popup de **PA-01 (Articulada 15m)** (pino com pulso). | "Os com rastreador mostram velocidade, última atualização e o caminho percorrido. Os demais usam o endereço da obra do contrato ativo — sem hardware." |
 | 2:30 | Mapa | Botão de camadas (canto superior direito) → **Satélite**. Voltar para **Ruas**. | "Vista de rua ou satélite, como no Google." |
 | 3:00 | Mapa | Buscar **PT-02**, clicar no item da lista: popup com cliente, obra, contrato e **manutenção acumulada + sinalização**. | "Já aqui eu vejo quanto esse equipamento custou e se vale a pena continuar com ele." |

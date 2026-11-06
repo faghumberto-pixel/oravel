@@ -57,7 +57,7 @@ class LocalizacaoEquipamentosTest extends TestCase
         ], $local));
     }
 
-    public function test_demo_resolve_25_pontos_com_contrato_unidade_e_rastreador_simulado(): void
+    public function test_demo_resolve_31_pontos_com_contrato_unidade_e_rastreador_simulado(): void
     {
         $this->entrarNaDemo();
         Carbon::setTestNow(Carbon::parse('2026-11-09 10:00:00'));
@@ -67,7 +67,7 @@ class LocalizacaoEquipamentosTest extends TestCase
 
         $this->assertTrue($r['simulado']);
         $this->assertSame(0, $r['sem_localizacao']);
-        $this->assertCount(25, $pontos);
+        $this->assertCount(31, $pontos); // 25 equipamentos + 6 veiculos da frota (no patio da matriz)
         foreach ($pontos as $p) {
             $this->assertGreaterThan(-25.5, $p['lat']);
             $this->assertLessThan(-20.5, $p['lat']);
@@ -75,11 +75,11 @@ class LocalizacaoEquipamentosTest extends TestCase
             $this->assertLessThan(-45, $p['lng']);
         }
 
-        // 13 locados: 5 com rastreador simulado e 8 pela obra do contrato; os demais, pela unidade.
+        // 13 locados: 5 com rastreador simulado e 8 pela obra do contrato; os demais (12 equipamentos + 6 veículos), pela unidade.
         $this->assertSame(5, $pontos->where('rastreador', true)->count());
         $this->assertSame(['C-01', 'G-03', 'PA-01', 'PT-02', 'PT-05'], $pontos->where('rastreador', true)->pluck('patrimonio')->sort()->values()->all());
         $this->assertSame(8, $pontos->where('fonte', 'contrato')->count());
-        $this->assertSame(12, $pontos->where('fonte', 'unidade')->count());
+        $this->assertSame(18, $pontos->where('fonte', 'unidade')->count());
         $this->assertStringContainsString('simulado', $pontos->firstWhere('patrimonio', 'PT-05')['fonte_rotulo']);
 
         // Em deslocamento: tem trilha e velocidade; parado: sem trilha.

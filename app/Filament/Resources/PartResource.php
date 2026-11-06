@@ -44,6 +44,7 @@ class PartResource extends BaseResource
                         ->placeholder('7891234567890')
                         ->maxLength(50),
 
+                    Forms\Components\Select::make('stock_group_id')->label('Grupo de estoque')->options(fn () => \App\Models\StockGroup::query()->where('is_active', true)->orderBy('sort_order')->pluck('name', 'id'))->searchable()->placeholder('Sem grupo')->helperText('Administração e escritório, Equipamentos, Veículos, Manutenção, Logística... Usado nos filtros da Visão geral do Estoque.'),
                     Forms\Components\Select::make('part_category_id')
                         ->relationship('category', 'name')
                         ->label('Categoria')
