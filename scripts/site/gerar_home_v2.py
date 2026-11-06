@@ -46,8 +46,9 @@ hero = (
     '<h1>Tenha a locadora inteira sob controle, da venda à manutenção.</h1>'
     '<p class="sub">Vendas, manutenção, estoque, frota e financeiro num painel que mostra resultado de verdade. Com IA que ajuda o time no campo e consultores que já viveram a rotina de uma locadora.</p></div>'
     '<div class="v2h-act"><div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a><a class="btn btn-o" href="#controle">Ver o painel do dono</a></div>'
-    '<ul class="trust"><li>30 dias grátis com acompanhamento</li><li>Treinamento e implementação inclusos</li><li>Funciona ao lado do seu sistema</li></ul></div></div>'
-    f'<div class="v2h-dash">{m.hero_dashboard()}{NOTA}</div></div></section>')
+    '<ul class="trust"><li>30 dias grátis com acompanhamento</li><li>Treinamento e implementação inclusos</li><li>Funciona ao lado do seu sistema</li></ul>'
+    '<p class="v2-nota v2h-n1">Tela ilustrativa, com dados fictícios.</p></div></div>'
+    f'<div class="v2h-dash">{m.hero_dashboard()}<p class="v2-nota v2h-n2">Tela ilustrativa, com dados fictícios.</p></div></div></section>')
 
 segmentos = ('<div class="strip"><div class="wrap"><span>Equipamentos atendidos</span>'
              + ''.join(f'<a class="chip-l" href="{u}">{n}</a>' for u, n in t.EQUIPAMENTOS) + '</div></div>')
@@ -153,12 +154,22 @@ comecar = t.secao('Como começar', 'Em poucos dias, sua operação rodando',
 faq = t.secao('Perguntas frequentes', 'O que donos de locadora mais perguntam', None, t.faq(FAQ), alt=True)
 
 EXTRA = m.CSS_V2 + """
-@media(min-width:1000px){.hero.v2h{padding:64px 0 76px}.v2h-top{grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr);align-items:end}}
 .v2h-top{display:grid;gap:26px;grid-template-columns:minmax(0,1fr)}.v2h-act .hero-act{margin-top:0}.v2h-act .trust{margin-top:18px}
-.hero.v2h .wrap{grid-template-columns:minmax(0,1fr);gap:40px;align-items:start}.v2h-top>*,.v2h-dash{min-width:0}
-.hero.v2h h1{font-size:clamp(28px,4vw,48px);line-height:1.08;max-width:18ch}
-.hero.v2h .v2-app{max-width:1120px;margin:0 auto}.hero.v2h .v2-nota{max-width:1120px;margin:12px auto 0}
-.hero.v2h .sub{max-width:56ch}
+.hero.v2h .wrap{grid-template-columns:minmax(0,1fr);gap:36px;align-items:start}.v2h-top>*,.v2h-dash{min-width:0}
+.hero.v2h h1{font-size:clamp(28px,4vw,46px);line-height:1.08;max-width:18ch}
+.hero.v2h .sub{max-width:52ch}
+.v2h-n1{display:none}
+/* computador: o painel fica ao lado do texto, maior que a coluna, e a janela do hero corta o que passa (nao aparece inteiro) */
+@media(min-width:1000px){
+.hero.v2h{padding:68px 0 0;overflow:hidden}
+.hero.v2h .wrap{grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:40px;align-items:start;min-height:620px}
+.v2h-top{align-self:center;padding-bottom:70px}
+.v2h-dash{position:relative;align-self:stretch;height:auto}
+.v2h-dash .v2-app{position:absolute;left:0;top:0;width:clamp(780px,63vw,1010px);max-width:none;margin:0}
+.v2h-dash::after{content:"";position:absolute;left:-20px;right:-100vw;bottom:0;height:150px;background:linear-gradient(to bottom,rgba(8,20,44,0),var(--navy-2) 90%);pointer-events:none;z-index:2}
+.v2h-n1{display:block;margin-top:16px}.v2h-n2{display:none}
+}
+.hero.v2h .v2-nota{margin-top:12px}
 .more{display:inline-block;margin-top:22px}
 """
 
