@@ -7,6 +7,7 @@ use App\Models\AggregateItemType;
 use App\Models\InternalUnit;
 use App\Models\Material;
 use App\Models\MaterialLocationStock;
+use App\Models\MaterialStockMovement;
 use App\Models\Part;
 use App\Models\PartCategory;
 use App\Models\Plan;
@@ -14,6 +15,7 @@ use App\Models\Role;
 use App\Models\StockCount;
 use App\Models\StockGroup;
 use App\Models\StockLocation;
+use App\Models\StockMovement;
 use App\Models\StockPlacement;
 use App\Models\Tenant;
 use App\Models\User;
@@ -22,6 +24,7 @@ use App\Models\WarehouseStock;
 use App\Services\Estoque\ContagemFisica;
 use App\Services\Estoque\EstoqueGrupos;
 use App\Services\Estoque\EstoqueUnificado;
+use App\Services\Estoque\RastreioDoItem;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -175,5 +178,38 @@ class EstoqueEstruturadoTest extends TestCase
 
         $this->expectException(\RuntimeException::class);
         $servico->finalizar($contagem->fresh());
+    }
+
+    public function test_rastreio_do_item_junta_movimentos_ajustes_e_contagens_de_cada_item(): void
+    {
+        $this->empresa();
+        $papel = $this->material('Papel A4', 20, 5);
+        $outro = $this->material('Caneta', 9, 1);
+        foreach ([['entrada', 30, 30, 10], ['saida', 10, 20, 5], ['ajuste', -2, 18, 1]] as [$tipo, $q, $saldo, $dias]) {
+            MaterialStockMovement::unguarded(fn () => MaterialStockMovement::create(['tenant_id' => $this->tenant->id, 'material_id' => $papel->id, 'type' => $tipo, 'quantity' => $q, 'balance_after' => $saldo, 'created_by_user_id' => $this->admin->id, 'reason' => 'teste '.$tipo, 'created_at' => now()->subDays($dias)]));
+        }
+        MaterialStockMovement::create(['tenant_id' => $this->tenant->id, 'material_id' => $outro->id, 'type' => 'entrada', 'quantity' => 9, 'balance_after' => 9, 'created_by_user_id' => $this->admin->id]);
+
+        $a = $this->endereco('A', '01');
+        $this->colocar($a, StockPlacement::MATERIAL, $papel, 20);
+        $contagens = app(ContagemFisica::class);
+        $c = $contagens->criar((string) $this->tenant->id, (string) $this->unidade->id, 'Inventário', null, null, (string) $this->admin->id);
+        $contagens->registrar($c->items()->first(), 18, $this->admin, 'celular');
+
+        $rastreio = app(RastreioDoItem::class);
+        $eventos = $rastreio->eventos(StockPlacement::MATERIAL, (string) $papel->id);
+
+        $this->assertSame(['contagem', 'ajuste', 'saida', 'entrada'], $eventos->pluck('tipo')->all()); // mais recente primeiro
+        $this->assertSame($this->admin->name, $eventos->firstWhere('tipo', 'contagem')['quem']);
+        $this->assertSame(18.0, $eventos->firstWhere('tipo', 'ajuste')['saldo']);
+        $totais = $rastreio->totais($eventos);
+        $this->assertSame(30.0, $totais['entradas']);
+        $this->assertSame(10.0, $totais['saidas']);
+        $this->assertSame(1, $totais['contagens']);
+
+        // nao mistura com outro item
+        $this->assertCount(1, $rastreio->eventos(StockPlacement::MATERIAL, (string) $outro->id));
+        $this->assertSame('Papel A4', $rastreio->cabecalho(StockPlacement::MATERIAL, (string) $papel->id)['nome']);
+        $this->assertArrayHasKey('material|'.$papel->id, $rastreio->buscar('papel'));
     }
 }
