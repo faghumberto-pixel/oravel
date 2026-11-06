@@ -11,6 +11,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use App\Services\AsaasService;
 use App\Services\CnpjLookupService;
+use App\Services\InteligenciaDeAtivosService;
 use App\Services\ProdutosDaEmpresa;
 use App\Support\AcademiaDoPlano;
 use App\Support\CrmPalette;
@@ -231,6 +232,10 @@ class TenantResource extends Resource
                     ->state(fn (Tenant $r) => $r->interfaceSimples() ? 'Simples' : 'Completa')
                     ->color(fn (string $state) => $state === 'Simples' ? 'success' : 'gray')
                     ->description(fn (Tenant $r) => $r->interface_simples === null ? 'automática' : 'definida na Central'),
+                Tables\Columns\TextColumn::make('inteligencia_ativos')->label('Inteligência de Ativos')->badge()
+                    ->state(fn (Tenant $r) => app(InteligenciaDeAtivosService::class)->resumo($r))
+                    ->color(fn (string $state) => $state === 'Desligado' ? 'gray' : 'success')
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('site_email')->label('Site e e-mail')->badge()
                     ->state(fn (Tenant $r) => $r->siteEmailSituacao()['label'])
                     ->color(fn (Tenant $r) => $r->siteEmailSituacao()['color'])
@@ -311,6 +316,24 @@ class TenantResource extends Resource
 
                         Notification::make()->title('Implantação contratada')
                             ->body($links ? 'Cobrança gerada.' : 'Marcada como contratada; a cobrança não pôde ser gerada agora (confira o cadastro no Asaas).')
+                            ->success()->send();
+                    }),
+                Tables\Actions\Action::make('inteligenciaDeAtivos')
+                    ->label('Inteligência de Ativos')->icon('heroicon-o-presentation-chart-line')->color('info')
+                    ->visible(fn (Tenant $r) => $r->plan !== null)
+                    ->modalHeading(fn (Tenant $r) => 'Inteligência de Ativos — '.$r->name)
+                    ->modalDescription('Liga ou desliga estas telas só para este cliente. Se ele estiver num contrato compartilhado (vitrine do pacote), é criada uma cópia exclusiva do contrato dele, sem afetar os outros clientes.')
+                    ->form(fn (Tenant $r) => [
+                        Forms\Components\CheckboxList::make('chaves')->label('Telas liberadas')
+                            ->options(InteligenciaDeAtivosService::CHAVES)
+                            ->default(app(InteligenciaDeAtivosService::class)->ativas($r))
+                            ->columns(1),
+                    ])
+                    ->action(function (Tenant $r, array $data) {
+                        app(InteligenciaDeAtivosService::class)->definir($r, (array) ($data['chaves'] ?? []));
+
+                        Notification::make()->title('Inteligência de Ativos atualizada')
+                            ->body('Agora: '.app(InteligenciaDeAtivosService::class)->resumo($r->refresh()).'. O cliente vê as telas no próximo carregamento do menu.')
                             ->success()->send();
                     }),
                 Tables\Actions\Action::make('alterarProdutos')

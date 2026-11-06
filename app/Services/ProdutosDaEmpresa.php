@@ -37,6 +37,8 @@ class ProdutosDaEmpresa
         $codigos = array_values(array_unique(array_map(fn ($c) => Pacotes::normalizar($c), $codigos)));
         $valores = $this->calcular($tenant, $codigos);
         $antigo = $tenant->plan;
+        // Telas de Inteligencia de Ativos ligadas so' para este cliente (fora dos pacotes) sobrevivem a troca de produtos.
+        $inteligencia = app(InteligenciaDeAtivosService::class)->ativas($tenant);
 
         DB::transaction(function () use ($tenant, $codigos, $valores, $antigo) {
             $vitrines = $this->vitrines($codigos);
@@ -52,6 +54,10 @@ class ProdutosDaEmpresa
                 $antigo->delete();
             }
         });
+
+        if ($inteligencia !== []) {
+            app(InteligenciaDeAtivosService::class)->definir($tenant->refresh(), $inteligencia);
+        }
 
         ($this->complementos ?? app(ComplementoService::class))->enviarValor($tenant->refresh());
 
