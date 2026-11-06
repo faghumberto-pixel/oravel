@@ -100,8 +100,8 @@ class DashboardInteligenciaAtivosTest extends TestCase
         $this->assertSame([40, 60], $ranking['marks']);
 
         $situacao = $blocos['ativos_ia.situacao']['payload'];
-        $this->assertSame('25', $situacao['center']);
-        $this->assertSame(25, array_sum(array_column($situacao['slices'], 1)));
+        $this->assertSame('31', $situacao['center']); // 25 equipamentos + 6 veiculos da frota
+        $this->assertSame(31, array_sum(array_column($situacao['slices'], 1)));
         $this->assertGreaterThan(0, count($blocos['ativos_ia.tipo_manutencao']['payload']['slices']));
 
         $this->assertCount(6, $blocos['ativos_ia.menos_retorno']['payload']['rows']);

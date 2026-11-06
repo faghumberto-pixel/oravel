@@ -45,7 +45,9 @@ class LocadoraDemoTest extends TestCase
         $demo = Tenant::withoutGlobalScopes()->where('slug', LocadoraDemoService::SLUG)->firstOrFail();
         $this->assertTrue($demo->is_demo);
         $this->assertSame('Locadora Demo', $demo->name);
-        $this->assertSame(25, DB::table('assets')->where('tenant_id', $demo->id)->count());
+        // 25 equipamentos de locacao + 6 veiculos da frota (criados por LocadoraDemoOperacional).
+        $this->assertSame(31, DB::table('assets')->where('tenant_id', $demo->id)->count());
+        $this->assertSame(25, DB::table('assets')->where('tenant_id', $demo->id)->where('is_vehicle', false)->count());
         $this->assertSame(25, $r['equipamentos']);
         $this->assertGreaterThan(100, DB::table('maintenance_orders')->where('tenant_id', $demo->id)->count());
 
