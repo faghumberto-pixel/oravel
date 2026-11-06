@@ -136,4 +136,19 @@ class LocadoraDemoTest extends TestCase
         $this->artisan('demo:alec-apagar', ['--force' => true])->assertSuccessful();
         $this->assertNull(app(LocadoraDemoService::class)->tenant());
     }
+
+    public function test_contrato_da_demo_sobrevive_ao_saas_sync_modules_do_deploy(): void
+    {
+        app(LocadoraDemoService::class)->criar('x');
+        $demo = app(LocadoraDemoService::class)->tenant();
+
+        $this->artisan('saas:sync-modules')->assertSuccessful();
+
+        $plano = Plan::findOrFail($demo->plan_id);
+        $this->assertFalse(array_is_list($plano->features), 'contrato em formato de mapa, como o da Central');
+        foreach (array_merge(['tabela_assets', 'tabela_contracts', 'tabela_maintenance_orders'], LocadoraDemoService::FEATURES_EXTRAS) as $chave) {
+            $this->assertTrue($plano->hasFeature($chave), "{$chave} deve continuar ligada depois do sync de modulos");
+        }
+        $this->assertSame(0, app(LocadoraDemoService::class)->apagar()['apagado'] ? 0 : 1);
+    }
 }
