@@ -31,11 +31,15 @@ class AtivosEmManutencao extends AtivosBlock
     {
         $triagem = Asset::query()->where('status', Asset::STATUS_AGUARDANDO_TRIAGEM)->count();
 
+        $emManutencao = Asset::query()->where('status', Asset::STATUS_MANUTENCAO)->count();
+        $total = max(1, Asset::query()->count());
+
         return Payload::kpi(
-            Asset::query()->where('status', Asset::STATUS_MANUTENCAO)->count(),
+            $emManutencao,
             '',
             $triagem > 0 ? $triagem.' aguardando triagem' : 'Nenhum aguardando triagem',
             $triagem > 0 ? 'dn' : 'n',
+            ['pct' => (int) round($emManutencao / $total * 100), 'tone' => 'warn'],
         );
     }
 }

@@ -2,11 +2,14 @@
 
 namespace App\Dashboards\Blocks\MateriaisPecas;
 
+use App\Dashboards\Concerns\SeriesDeTempo;
 use App\Dashboards\Payload;
 use App\Models\MaterialRequest;
 
 class RequisicoesEmAberto extends MateriaisBlock
 {
+    use SeriesDeTempo;
+
     public static function key(): string
     {
         return 'materiais.requisicoes_abertas';
@@ -46,12 +49,11 @@ class RequisicoesEmAberto extends MateriaisBlock
             ->pluck('total', 'status');
 
         $rotulos = ['rascunho' => 'Rascunho', 'aguardando_aprovacao' => 'Aguardando aprovação', 'aprovado' => 'Aprovada', 'cotado' => 'Cotada', 'a_caminho' => 'A caminho'];
-        $linhas = [];
+        $valores = [];
         foreach ($rotulos as $status => $rotulo) {
-            $n = (int) ($porSituacao[$status] ?? 0);
-            $linhas[] = [$rotulo, $n, (string) $n, $status === 'aguardando_aprovacao' && $n > 0 ? 'warn' : ''];
+            $valores[$rotulo] = (int) ($porSituacao[$status] ?? 0);
         }
 
-        return Payload::bars($linhas, max(1, ...array_column($linhas, 1)));
+        return Payload::donut($this->fatias($valores, ['Aguardando aprovação' => '#f59e0b', 'Aprovada' => '#16a34a', 'A caminho' => '#38bdf8']), (string) array_sum($valores), 'requisições');
     }
 }

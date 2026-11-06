@@ -2,11 +2,14 @@
 
 namespace App\Dashboards\Blocks\Logistica;
 
+use App\Dashboards\Concerns\SeriesDeTempo;
 use App\Dashboards\Payload;
 use App\Models\FreightRecord;
 
 class FretePorTipo extends LogisticaBlock
 {
+    use SeriesDeTempo;
+
     public static function key(): string
     {
         return 'logistica.frete_por_tipo';
@@ -47,12 +50,11 @@ class FretePorTipo extends LogisticaBlock
             ->keyBy('tipo');
 
         $rotulos = [FreightRecord::TIPO_PROPRIO => 'Frota própria', FreightRecord::TIPO_TERCEIRIZADO => 'Transportadora'];
-        $linhas = [];
+        $valores = [];
         foreach ($rotulos as $tipo => $rotulo) {
-            $linha = $porTipo->get($tipo);
-            $linhas[] = [$rotulo.' ('.(int) ($linha->viagens ?? 0).' viagens)', (float) ($linha->total ?? 0), number_format((float) ($linha->total ?? 0), 2, ',', '.')];
+            $valores[$rotulo.' ('.(int) ($porTipo->get($tipo)->viagens ?? 0).' viagens)'] = (float) ($porTipo->get($tipo)->total ?? 0);
         }
 
-        return Payload::bars($linhas);
+        return Payload::donut($this->fatias($valores), 'R$ '.number_format(array_sum($valores) / 1000, 1, ',', '.').' mil', 'em fretes no mês');
     }
 }

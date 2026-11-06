@@ -25,7 +25,7 @@ class EquipamentosParados extends ManutencaoBlock
 
     public static function size(): int
     {
-        return 2;
+        return 3;
     }
 
     public static function defaultConfig(): array

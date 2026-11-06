@@ -2,11 +2,14 @@
 
 namespace App\Dashboards\Blocks\Logistica;
 
+use App\Dashboards\Concerns\SeriesDeTempo;
 use App\Dashboards\Payload;
 use App\Models\FreightRecord;
 
 class FreteNoMes extends LogisticaBlock
 {
+    use SeriesDeTempo;
+
     public static function key(): string
     {
         return 'logistica.frete_mes';
@@ -44,12 +47,13 @@ class FreteNoMes extends LogisticaBlock
         $atual = $soma(now()->startOfMonth(), now()->endOfMonth());
         $anterior = $soma(now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth());
 
+        $serie = $this->serieMensal(FreightRecord::query(), 'data', 12, 'valor');
         if ($anterior <= 0) {
-            return Payload::kpi($this->brl($atual), '', 'Sem mês anterior para comparar');
+            return Payload::kpi($this->brl($atual), '', 'Sem mês anterior para comparar', 'n', null, $serie);
         }
 
         $pct = round(($atual - $anterior) / $anterior * 100);
 
-        return Payload::kpi($this->brl($atual), '', ($pct >= 0 ? '+' : '').$pct.'% sobre o mês anterior', $pct <= 0 ? 'up' : 'dn');
+        return Payload::kpi($this->brl($atual), '', ($pct >= 0 ? '+' : '').$pct.'% sobre o mês anterior', $pct <= 0 ? 'up' : 'dn', null, $serie);
     }
 }

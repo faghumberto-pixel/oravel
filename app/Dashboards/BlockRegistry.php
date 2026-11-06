@@ -22,6 +22,10 @@ class BlockRegistry
     {
         $classes = [
             Manutencao\AtendimentosHoje::class,
+            Manutencao\CargaPorTecnico::class,
+            Manutencao\CustoPorMes::class,
+            Manutencao\OsPorDiaDaSemana::class,
+            Manutencao\UltimasOcorrencias::class,
             Manutencao\EquipamentosParados::class,
             Manutencao\AtendimentosNoPrazo::class,
             Manutencao\RetornoMaquina::class,
@@ -35,6 +39,8 @@ class BlockRegistry
             Manutencao\AguardandoPeca::class,
 
             MateriaisPecas\ValorEmEstoque::class,
+            MateriaisPecas\EntregasPrevistas::class,
+            MateriaisPecas\UltimasMovimentacoes::class,
             MateriaisPecas\GiroDoEstoque::class,
             MateriaisPecas\ItensAbaixoDoMinimo::class,
             MateriaisPecas\ComprasAReceber::class,
@@ -66,6 +72,9 @@ class BlockRegistry
             Comercial\UltimosFechamentos::class,
 
             Financeiro\AReceberNoMes::class,
+            Financeiro\SaldoDoMes::class,
+            Financeiro\AgendaDeVencimentos::class,
+            Financeiro\PagarPorCategoria::class,
             Financeiro\RecebidoNoMes::class,
             Financeiro\APagarNoMes::class,
             Financeiro\PagoNoMes::class,
@@ -93,12 +102,15 @@ class BlockRegistry
             Frota\MultasEmAberto::class,
             Frota\SinistrosEmAberto::class,
             Frota\TrocasDeOleoAVencer::class,
+            Frota\AgendaDaFrota::class,
+            Frota\CombustivelPorTipo::class,
             Frota\CombustivelPorVeiculo::class,
             Frota\CombustivelPorMes::class,
 
             Logistica\MovimentacoesDeHoje::class,
             Logistica\MovimentacoesEmCurso::class,
             Logistica\FreteNoMes::class,
+            Logistica\FretePorMes::class,
             Logistica\RetiradasSolicitadas::class,
             Logistica\MobilizacaoXDesmobilizacao::class,
             Logistica\FretePorTipo::class,
@@ -106,6 +118,7 @@ class BlockRegistry
             Logistica\VeiculosForaDoPatio::class,
 
             Ativos\TotalDeAtivos::class,
+            Ativos\ValorPorCategoria::class,
             Ativos\TaxaDeLocacao::class,
             Ativos\AtivosDisponiveis::class,
             Ativos\AtivosEmManutencao::class,

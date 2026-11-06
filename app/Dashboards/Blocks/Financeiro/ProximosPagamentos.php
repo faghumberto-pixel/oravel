@@ -45,8 +45,12 @@ class ProximosPagamentos extends FinanceiroBlock
             ->limit(6)
             ->get();
 
-        $linhas = $contas->map(fn ($c) => [$c->description, $c->due_date->format('d/m'), $this->brl((float) $c->amount)])->all();
+        $eventos = $contas->map(function ($c) {
+            $hoje = $c->due_date->isToday();
 
-        return Payload::table(['Conta', 'Vence', '>Valor'], $linhas, 'Nenhum pagamento nos próximos 7 dias.');
+            return [$hoje ? 'Hoje' : $c->due_date->format('d/m'), $c->description, $this->brl((float) $c->amount), $hoje ? 'crit' : 'warn', $hoje ? 'vence hoje' : null];
+        })->all();
+
+        return Payload::timeline($eventos, 'Nenhum pagamento nos próximos 7 dias.');
     }
 }

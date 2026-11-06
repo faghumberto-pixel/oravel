@@ -2,11 +2,14 @@
 
 namespace App\Dashboards\Blocks\Ativos;
 
+use App\Dashboards\Concerns\SeriesDeTempo;
 use App\Dashboards\Payload;
 use App\Models\Asset;
 
 class AtivosPorSituacao extends AtivosBlock
 {
+    use SeriesDeTempo;
+
     public static function key(): string
     {
         return 'ativos.por_situacao';
@@ -31,15 +34,10 @@ class AtivosPorSituacao extends AtivosBlock
     {
         $porStatus = Asset::query()->selectRaw('status, count(*) as total')->groupBy('status')->orderByDesc('total')->pluck('total', 'status');
 
-        return Payload::bars($porStatus->map(fn ($n, $status) => [
-            $this->rotuloDaSituacao($status),
-            (int) $n,
-            (string) $n,
-            match ($status) {
-                Asset::STATUS_MANUTENCAO => 'warn',
-                Asset::STATUS_LOCADO => 'ok',
-                default => '',
-            },
-        ])->values()->all());
+        $cores = [Asset::STATUS_LOCADO => '#16a34a', Asset::STATUS_MANUTENCAO => '#f59e0b', Asset::STATUS_DISPONIVEL => '#38bdf8', Asset::STATUS_RESERVADO => '#a78bfa'];
+        $valores = $porStatus->mapWithKeys(fn ($n, $status) => [$this->rotuloDaSituacao($status) => (int) $n]);
+        $corPorRotulo = collect($cores)->mapWithKeys(fn ($c, $status) => [$this->rotuloDaSituacao($status) => $c])->all();
+
+        return Payload::donut($this->fatias($valores, $corPorRotulo), (string) $porStatus->sum(), 'ativos');
     }
 }

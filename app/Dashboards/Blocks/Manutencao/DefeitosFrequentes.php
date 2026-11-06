@@ -2,11 +2,14 @@
 
 namespace App\Dashboards\Blocks\Manutencao;
 
+use App\Dashboards\Concerns\SeriesDeTempo;
 use App\Dashboards\Payload;
 use App\Models\MaintenanceOrder;
 
 class DefeitosFrequentes extends ManutencaoBlock
 {
+    use SeriesDeTempo;
+
     public static function key(): string
     {
         return 'manutencao.defeitos_frequentes';
@@ -39,6 +42,6 @@ class DefeitosFrequentes extends ManutencaoBlock
             ->limit(5)
             ->get();
 
-        return Payload::bars($ordens->map(fn ($o) => [$o->reportedProblem?->description ?? 'Sem descrição', (int) $o->total])->all());
+        return Payload::ranking($this->linhasDeRanking($ordens->mapWithKeys(fn ($o) => [($o->reportedProblem?->description ?? 'Sem descrição') => (int) $o->total]), fn ($n) => $n.($n === 1 ? ' ocorrência' : ' ocorrências'), 'warn'));
     }
 }

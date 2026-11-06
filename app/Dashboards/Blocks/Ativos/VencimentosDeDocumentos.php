@@ -24,7 +24,7 @@ class VencimentosDeDocumentos extends AtivosBlock
 
     public static function size(): int
     {
-        return 12;
+        return 6;
     }
 
     public static function defaultConfig(): array
@@ -54,18 +54,18 @@ class VencimentosDeDocumentos extends AtivosBlock
             }
         }
 
-        $linhas = $linhas->sortBy('data')->take((int) ($config['limite'] ?? 8))->map(function ($l) {
+        $eventos = $linhas->sortBy('data')->take((int) ($config['limite'] ?? 8))->map(function ($l) {
             $dias = (int) now()->startOfDay()->diffInDays($l['data'], false);
 
             return [
-                $l['ativo']->name,
-                $l['ativo']->placa ?: '—',
-                $l['documento'],
-                $l['data']->format('d/m/Y'),
-                $dias < 0 ? Payload::pill('crit', 'Vencido há '.abs($dias).' dias') : Payload::pill('warn', 'Em '.$dias.' dias'),
+                $l['data']->format('d/m'),
+                $l['documento'].' — '.$l['ativo']->name,
+                ($l['ativo']->placa ?: 'sem placa').' · '.($dias < 0 ? 'vencido há '.abs($dias).' dias' : ($dias === 0 ? 'vence hoje' : 'vence em '.$dias.' dias')),
+                $dias < 0 ? 'crit' : 'warn',
+                $dias < 0 ? 'vencido' : null,
             ];
         })->values()->all();
 
-        return Payload::table(['Ativo', 'Placa', 'Documento', 'Vencimento', 'Situação'], $linhas, 'Nenhum documento vencendo nos próximos '.(int) ($config['dias'] ?? 30).' dias.');
+        return Payload::timeline($eventos, 'Nenhum documento vencendo nos próximos '.(int) ($config['dias'] ?? 30).' dias.');
     }
 }

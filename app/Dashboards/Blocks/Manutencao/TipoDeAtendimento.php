@@ -2,14 +2,22 @@
 
 namespace App\Dashboards\Blocks\Manutencao;
 
+use App\Dashboards\Concerns\SeriesDeTempo;
 use App\Dashboards\Payload;
 use App\Models\MaintenanceOrder;
 
 class TipoDeAtendimento extends ManutencaoBlock
 {
+    use SeriesDeTempo;
+
     public static function key(): string
     {
         return 'manutencao.tipo_atendimento';
+    }
+
+    public static function size(): int
+    {
+        return 6;
     }
 
     public static function title(): string
@@ -32,9 +40,8 @@ class TipoDeAtendimento extends ManutencaoBlock
             ->orderByDesc('total')
             ->pluck('total', 'maintenance_type');
 
-        $soma = max((int) $porTipo->sum(), 1);
-        $linhas = $porTipo->map(fn ($n, $tipo) => [$tipo ?: 'Sem tipo', (int) $n, round($n / $soma * 100).'%'])->values()->all();
+        $valores = $porTipo->mapWithKeys(fn ($n, $tipo) => [($tipo ?: 'Sem tipo') => (int) $n]);
 
-        return Payload::bars($linhas);
+        return Payload::donut($this->fatias($valores), (string) $porTipo->sum(), 'OS em 30 dias');
     }
 }

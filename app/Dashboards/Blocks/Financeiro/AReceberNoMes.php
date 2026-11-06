@@ -2,11 +2,14 @@
 
 namespace App\Dashboards\Blocks\Financeiro;
 
+use App\Dashboards\Concerns\SeriesDeTempo;
 use App\Dashboards\Payload;
 use App\Models\AccountReceivable;
 
 class AReceberNoMes extends FinanceiroBlock
 {
+    use SeriesDeTempo;
+
     public static function key(): string
     {
         return 'financeiro.a_receber_mes';
@@ -32,6 +35,6 @@ class AReceberNoMes extends FinanceiroBlock
         $q = $this->emAberto(AccountReceivable::query())->whereBetween('due_date', [now()->startOfMonth()->toDateString(), now()->endOfMonth()->toDateString()]);
         $n = (clone $q)->count();
 
-        return Payload::kpi($this->brl((float) (clone $q)->sum('amount')), '', $n.' '.($n === 1 ? 'título' : 'títulos'));
+        return Payload::kpi($this->brl((float) (clone $q)->sum('amount')), '', $n.' '.($n === 1 ? 'título' : 'títulos'), 'n', null, $this->serieMensal(AccountReceivable::query(), 'due_date', 12, 'amount'));
     }
 }

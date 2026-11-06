@@ -2,11 +2,14 @@
 
 namespace App\Dashboards\Blocks\Ativos;
 
+use App\Dashboards\Concerns\SeriesDeTempo;
 use App\Dashboards\Payload;
 use App\Models\Asset;
 
 class AtivosPorCliente extends AtivosBlock
 {
+    use SeriesDeTempo;
+
     public static function key(): string
     {
         return 'ativos.por_cliente';
@@ -39,6 +42,6 @@ class AtivosPorCliente extends AtivosBlock
             ->sortDesc()
             ->take(6);
 
-        return Payload::bars($porCliente->map(fn ($n, $nome) => [$nome, $n, (string) $n])->values()->all());
+        return Payload::ranking($this->linhasDeRanking($porCliente, fn ($n) => $n.' '.($n === 1 ? 'ativo' : 'ativos')));
     }
 }

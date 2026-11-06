@@ -2,11 +2,14 @@
 
 namespace App\Dashboards\Blocks\Ativos;
 
+use App\Dashboards\Concerns\SeriesDeTempo;
 use App\Dashboards\Payload;
 use App\Models\Asset;
 
 class TotalDeAtivos extends AtivosBlock
 {
+    use SeriesDeTempo;
+
     public static function key(): string
     {
         return 'ativos.total';
@@ -31,6 +34,6 @@ class TotalDeAtivos extends AtivosBlock
     {
         $valor = (float) Asset::query()->sum('acquisition_value');
 
-        return Payload::kpi(Asset::query()->count(), '', $valor > 0 ? $this->brl($valor).' em valor de aquisição' : 'Sem valor de aquisição informado');
+        return Payload::kpi(Asset::query()->count(), '', $valor > 0 ? $this->brl($valor).' em valor de aquisição' : 'Sem valor de aquisição informado', 'n', null, $this->serieMensal(Asset::query(), 'created_at'));
     }
 }

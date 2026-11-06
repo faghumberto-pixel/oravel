@@ -2,11 +2,14 @@
 
 namespace App\Dashboards\Blocks\Financeiro;
 
+use App\Dashboards\Concerns\SeriesDeTempo;
 use App\Dashboards\Payload;
 use App\Models\AccountReceivable;
 
 class RecebidoNoMes extends FinanceiroBlock
 {
+    use SeriesDeTempo;
+
     public static function key(): string
     {
         return 'financeiro.recebido_mes';
@@ -34,12 +37,13 @@ class RecebidoNoMes extends FinanceiroBlock
         $atual = $soma(now()->startOfMonth(), now()->endOfMonth());
         $anterior = $soma(now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth());
 
+        $serie = $this->serieMensal(AccountReceivable::query()->where('status', 'pago'), 'payment_date', 12, 'amount');
         if ($anterior <= 0) {
-            return Payload::kpi($this->brl($atual), '', 'Sem mês anterior para comparar');
+            return Payload::kpi($this->brl($atual), '', 'Sem mês anterior para comparar', 'n', null, $serie);
         }
 
         $pct = round(($atual - $anterior) / $anterior * 100);
 
-        return Payload::kpi($this->brl($atual), '', ($pct >= 0 ? '+' : '').$pct.'% sobre o mês anterior', $pct >= 0 ? 'up' : 'dn');
+        return Payload::kpi($this->brl($atual), '', ($pct >= 0 ? '+' : '').$pct.'% sobre o mês anterior', $pct >= 0 ? 'up' : 'dn', null, $serie);
     }
 }

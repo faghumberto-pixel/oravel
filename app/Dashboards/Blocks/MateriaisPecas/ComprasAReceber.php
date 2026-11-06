@@ -2,11 +2,14 @@
 
 namespace App\Dashboards\Blocks\MateriaisPecas;
 
+use App\Dashboards\Concerns\SeriesDeTempo;
 use App\Dashboards\Payload;
 use App\Models\PurchaseOrder;
 
 class ComprasAReceber extends MateriaisBlock
 {
+    use SeriesDeTempo;
+
     public static function key(): string
     {
         return 'materiais.compras_a_receber';
@@ -43,6 +46,6 @@ class ComprasAReceber extends MateriaisBlock
         $pedidos = (clone $abertos)->count();
         $valor = (float) (clone $abertos)->sum('total_value');
 
-        return Payload::kpi($pedidos, $pedidos === 1 ? 'pedido' : 'pedidos', $this->brl($valor));
+        return Payload::kpi($pedidos, $pedidos === 1 ? 'pedido' : 'pedidos', $this->brl($valor), 'n', null, $this->serieMensal(PurchaseOrder::query(), 'created_at', 12));
     }
 }
