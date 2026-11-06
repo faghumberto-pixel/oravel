@@ -252,7 +252,10 @@ class LocadoraDemoService
 
     private function criarEmpresa(string $senha): Tenant
     {
-        $features = array_values(array_unique(array_merge(Pacotes::features('locadora'), self::FEATURES_EXTRAS)));
+        // Formato MAPA (chave => true), o mesmo que a Central grava: o saas:sync-modules do deploy acrescenta as chaves novas como
+        // false, e num contrato em formato de lista isso derrubava os modulos (a chave existente vence a lista).
+        $features = collect(array_unique(array_merge(Pacotes::features('locadora'), self::FEATURES_EXTRAS)))
+            ->mapWithKeys(fn ($chave) => [$chave => true])->all();
 
         $plano = Plan::create([
             'name' => self::PLANO_NOME, 'pacote' => 'locadora', 'price' => 0, 'base_price' => 0, 'level' => 1,
