@@ -379,6 +379,17 @@ return [
         'herda' => ['__nunca__'],
     ],
 
+    // Painel opcional "Visão geral — Logística da Frota" (menu Gestão de Frota): onde estão os veículos, com quem, km, custo e
+    // corretivas x preventivas. Fora de qualquer pacote (config/pacotes.php: chaves_complementos) e desligado por padrão: a Central
+    // liga contrato a contrato, em Contratos → Gestão de Frota.
+    'menu_visao_geral_logistica_frota' => [
+        'label' => 'Tela: Gestão de Frota → Visão geral — Logística da Frota (quantos veículos, com quem estão, onde estão, km, custo e corretivas x preventivas)',
+        'grupo' => 'Gestão de Frota',
+        'menu' => 'Visão geral — Logística da Frota',
+        'slug' => 'visao-geral-logistica-frota',
+        'herda' => ['__nunca__'],
+    ],
+
     // Complementos vendidos à parte (não entram em nenhum pacote, nem no ERP Locadoras): nascem DESLIGADOS e a Central liga por contrato.
     'modulo_cobranca_automatica' => [
         'label' => 'Cobrança automática: boletos, Pix e cartão pelo Asaas do cliente, gerados a partir dos contratos',

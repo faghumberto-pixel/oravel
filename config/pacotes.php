@@ -19,6 +19,9 @@ return [
     // 'Inteligência de Ativos' também fica fora de todos os pacotes: é opcional por contrato (Central liga caso a caso).
     'grupos_complementos' => ['Complementos', 'Inteligência de Ativos'],
 
+    // Chaves soltas (de grupos que o pacote contém) que NUNCA entram em pacote: a Central liga contrato a contrato.
+    'chaves_complementos' => ['menu_visao_geral_logistica_frota'],
+
     'base' => [
         'grupos' => ['Configurações', 'Equipe', 'Adicionais'],
         // Academia Oravel em todos os pacotes: cada cliente só vê as aulas dos módulos do próprio pacote (Lesson::scopeAvailable).

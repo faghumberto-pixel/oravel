@@ -37,7 +37,7 @@ class LocadoraDemoService
     public const PLANO_NOME = 'Contrato Locadora Demo (DEMO)';
 
     /** Chaves das telas novas (custo por equipamento e localizacao): ligadas SO' no contrato da demo. */
-    public const FEATURES_EXTRAS = ['menu_custo_equipamentos', 'menu_localizacao_equipamentos'];
+    public const FEATURES_EXTRAS = ['menu_custo_equipamentos', 'menu_localizacao_equipamentos', 'menu_visao_geral_logistica_frota'];
 
     private const SEMENTE = 20261109;
 
