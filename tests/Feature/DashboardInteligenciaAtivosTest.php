@@ -51,7 +51,7 @@ class DashboardInteligenciaAtivosTest extends TestCase
         $modelo = $this->modelo();
 
         $this->assertTrue($modelo->isPlatform());
-        $this->assertCount(11, $modelo->blocks);
+        $this->assertCount(13, $modelo->blocks);
         foreach (DashboardInteligenciaDeAtivos::BLOCOS as $chave) {
             $this->assertNotNull(BlockRegistry::find($chave), "bloco {$chave} no catalogo");
         }
@@ -73,8 +73,11 @@ class DashboardInteligenciaAtivosTest extends TestCase
         $admin = $this->entrarNaDemo();
         $blocos = collect(DashboardResolver::blocks($this->modelo()->load('blocks'), $admin))->keyBy('key');
 
-        $this->assertCount(11, $blocos);
-        $this->assertSame(['kpi', 'kpi', 'kpi', 'kpi', 'map', 'heat', 'ranking', 'donut', 'donut', 'table', 'alerts'], $blocos->pluck('payload.type')->values()->all());
+        $this->assertCount(13, $blocos);
+        $this->assertSame(['kpi', 'kpi', 'kpi', 'kpi', 'map', 'heat', 'ranking', 'donut', 'donut', 'table', 'alerts', 'timeline', 'timeline'], $blocos->pluck('payload.type')->values()->all());
+
+        $this->assertNotEmpty($blocos['ativos_ia.ocorrencias']['payload']['events']);
+        $this->assertNotEmpty($blocos['ativos_ia.devolucoes']['payload']['events']);
 
         $this->assertSame(3, $blocos['ativos_ia.trocar_vender']['payload']['value']);
         $this->assertSame(1, $blocos['ativos_ia.em_revisao']['payload']['value']);
@@ -147,7 +150,7 @@ class DashboardInteligenciaAtivosTest extends TestCase
         $this->artisan('dashboards:inteligencia-ativos', ['--empresa' => $a->slug])->assertSuccessful();
 
         $this->assertSame(1, DashboardTemplate::withoutGlobalScopes()->whereNull('tenant_id')->where('name', DashboardInteligenciaDeAtivos::NOME)->count());
-        $this->assertCount(11, $this->modelo()->blocks);
+        $this->assertCount(13, $this->modelo()->blocks);
         $this->assertSame(1, DashboardAssignment::withoutGlobalScopes()->where('dashboard_template_id', $this->modelo()->id)->where('tenant_id', $a->id)->count());
         $this->assertSame(0, DashboardAssignment::withoutGlobalScopes()->where('dashboard_template_id', $this->modelo()->id)->where('tenant_id', $b->id)->count());
     }

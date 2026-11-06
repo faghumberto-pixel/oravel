@@ -33,6 +33,10 @@ class ContratosAtivos extends ComercialBlock
         $total = (clone $ativos)->count();
         $mensal = (float) (clone $ativos)->sum('price');
 
-        return Payload::kpi($total, $total === 1 ? 'contrato' : 'contratos', $this->brl($mensal).' por período');
+        $inicio = now()->startOfMonth()->subMonths(11);
+        $porMes = Contract::query()->whereNotNull('start_date')->where('start_date', '>=', $inicio)->get(['start_date'])->groupBy(fn ($c) => $c->start_date->format('Y-m'))->map->count();
+        $serie = collect(range(0, 11))->map(fn ($i) => (int) ($porMes[$inicio->copy()->addMonths($i)->format('Y-m')] ?? 0))->all();
+
+        return Payload::kpi($total, $total === 1 ? 'contrato' : 'contratos', $this->brl($mensal).' por período', 'n', null, $serie);
     }
 }
