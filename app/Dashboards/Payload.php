@@ -6,9 +6,48 @@ namespace App\Dashboards;
 class Payload
 {
     /** @param 'up'|'dn'|'n' $tone up = verde, dn = vermelho, n = cinza */
-    public static function kpi(string|int|float $value, string $unit = '', string $delta = '', string $tone = 'n', ?array $bar = null): array
+    /** `$spark` (opcional): serie numerica desenhada como minigrafico de area abaixo do numero. */
+    public static function kpi(string|int|float $value, string $unit = '', string $delta = '', string $tone = 'n', ?array $bar = null, ?array $spark = null): array
     {
-        return ['type' => 'kpi', 'value' => $value, 'unit' => $unit, 'delta' => $delta, 'tone' => $tone, 'bar' => $bar];
+        return ['type' => 'kpi', 'value' => $value, 'unit' => $unit, 'delta' => $delta, 'tone' => $tone, 'bar' => $bar, 'spark' => $spark];
+    }
+
+    /**
+     * Anel (donut) com legenda. `$fatias`: lista de [rotulo, valor, cor css]. O centro mostra o total/legenda.
+     */
+    public static function donut(array $fatias, string $centro, string $centroSub = ''): array
+    {
+        return ['type' => 'donut', 'slices' => array_values($fatias), 'center' => $centro, 'centerSub' => $centroSub];
+    }
+
+    /**
+     * Mapa de calor (linhas x colunas). `$linhas`: lista de [rotulo, subrotulo, valores[], total (texto), pill|null].
+     */
+    public static function heat(array $colunas, array $linhas, string $unidade = 'R$'): array
+    {
+        $max = 0;
+        foreach ($linhas as $l) {
+            $max = max($max, max(array_merge([0], $l[2])));
+        }
+
+        return ['type' => 'heat', 'columns' => $colunas, 'rows' => $linhas, 'max' => $max ?: 1, 'unit' => $unidade];
+    }
+
+    /**
+     * Ranking com barras de progresso e marcas de limiar. `$linhas`: lista de [rotulo, subrotulo, pct, valor (texto), tom].
+     * `$marcas`: percentuais onde desenhar uma linha vertical (ex.: [40, 60]).
+     */
+    public static function ranking(array $linhas, array $marcas = [], string $nota = ''): array
+    {
+        return ['type' => 'ranking', 'rows' => $linhas, 'marks' => $marcas, 'note' => $nota];
+    }
+
+    /**
+     * Mapa (Leaflet). `$pontos`: lista de [lat, lng, cor css, titulo, linha 2]. `$legenda`: lista de [rotulo, cor].
+     */
+    public static function map(array $pontos, array $legenda = [], ?string $link = null, string $linkRotulo = ''): array
+    {
+        return ['type' => 'map', 'points' => array_values($pontos), 'legend' => array_values($legenda), 'link' => $link, 'linkLabel' => $linkRotulo];
     }
 
     /** @param list<array{0: string, 1: int|float, 2?: string, 3?: string}> $rows rótulo, valor, texto, tom (ok|warn|crit) */

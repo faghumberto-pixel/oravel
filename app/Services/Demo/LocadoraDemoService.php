@@ -2,6 +2,7 @@
 
 namespace App\Services\Demo;
 
+use App\Dashboards\Personalizacao\DashboardInteligenciaDeAtivos;
 use App\Models\Plan;
 use App\Models\Tenant;
 use App\Models\User;
@@ -169,6 +170,9 @@ class LocadoraDemoService
                 $this->criarUnidadesECategorias();
                 $this->criarClientes();
                 $resumo = $this->criarAtivosContratosEOrdens();
+
+                // Dashboard "Inteligencia de Ativos" (modelo da plataforma) atribuido SO' a esta empresa, como tela Inicio.
+                DashboardInteligenciaDeAtivos::atribuirA($tenant, true);
 
                 return $resumo + [
                     'tenant_id' => $this->tenantId,

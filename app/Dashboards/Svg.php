@@ -5,6 +5,62 @@ namespace App\Dashboards;
 /** Gráficos em SVG puro (sem biblioteca), no mesmo desenho do exemplo aprovado. Cores vêm de variáveis CSS. */
 class Svg
 {
+    /** Minigrafico de area (sparkline) para o KPI. Cor segue o tom (ok/warn/crit/n) ou o acento. */
+    public static function spark(array $values, string $tone = 'a'): string
+    {
+        $values = array_values(array_map('floatval', $values));
+        if (count($values) < 2) {
+            return '';
+        }
+        $cor = ['ok' => 'var(--odb-ok)', 'warn' => 'var(--odb-warn)', 'crit' => 'var(--odb-crit)', 'n' => 'var(--odb-muted)'][$tone] ?? 'var(--odb-accent)';
+        $W = 160;
+        $H = 44;
+        $max = max(1.0, max($values));
+        $passo = $W / (count($values) - 1);
+        $pts = [];
+        foreach ($values as $i => $v) {
+            $pts[] = [round($i * $passo, 1), round($H - 4 - ($H - 10) * $v / $max, 1)];
+        }
+        $linha = implode(' ', array_map(fn ($p) => $p[0].','.$p[1], $pts));
+        $area = '0,'.$H.' '.$linha.' '.$W.','.$H;
+        $ultimo = end($pts);
+
+        return '<svg viewBox="0 0 '.$W.' '.$H.'" preserveAspectRatio="none" role="img" aria-label="Evolução nos últimos meses" style="height:44px">'
+            .'<polygon points="'.$area.'" fill="'.$cor.'" opacity=".16"/>'
+            .'<polyline points="'.$linha.'" fill="none" stroke="'.$cor.'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>'
+            .'<circle cx="'.$ultimo[0].'" cy="'.$ultimo[1].'" r="3" fill="'.$cor.'"/></svg>';
+    }
+
+    /** Anel com fatias proporcionais e texto no centro. `$fatias`: [rotulo, valor, cor css]. */
+    public static function donut(array $fatias, string $centro, string $sub = ''): string
+    {
+        $total = array_sum(array_map(fn ($f) => max(0, (float) $f[1]), $fatias));
+        $r = 46;
+        $c = 2 * M_PI * $r;
+        $s = '<circle cx="60" cy="60" r="'.$r.'" fill="none" stroke="var(--odb-track)" stroke-width="14"/>';
+
+        if ($total > 0) {
+            $acumulado = 0.0;
+            foreach ($fatias as $f) {
+                $v = max(0, (float) $f[1]);
+                if ($v <= 0) {
+                    continue;
+                }
+                $comp = $v / $total * $c;
+                $s .= '<circle cx="60" cy="60" r="'.$r.'" fill="none" stroke="'.e($f[2]).'" stroke-width="14" stroke-dasharray="'.round(max(0, $comp - 1.5), 2).' '.round($c, 2).'" stroke-dashoffset="'.round(-$acumulado, 2).'" transform="rotate(-90 60 60)"><title>'.e($f[0]).': '.e((string) $f[1]).'</title></circle>';
+                $acumulado += $comp;
+            }
+        }
+
+        $tamanho = mb_strlen($centro) > 6 ? 13 : 17; // numero longo (R$ 211 mil) precisa caber dentro do anel
+        $s .= '<text x="60" y="'.($sub !== '' ? 58 : 65).'" text-anchor="middle" style="font:700 '.$tamanho.'px sans-serif;fill:var(--odb-fg)">'.e($centro).'</text>';
+        if ($sub !== '') {
+            $s .= '<text x="60" y="73" text-anchor="middle" style="font:11px sans-serif;fill:var(--odb-muted)">'.e($sub).'</text>';
+        }
+
+        return '<svg viewBox="0 0 120 120" role="img" aria-label="Gráfico em anel" style="max-width:150px;margin:0 auto">'.$s.'</svg>';
+    }
+
     public static function cols(array $labels, array $a, array $b): string
     {
         $W = 520;

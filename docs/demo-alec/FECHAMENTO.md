@@ -24,9 +24,15 @@ Branch: `feat/demo-alec-custos-mapa`. Nada disto foi para produção até algué
      está num contrato compartilhado (vitrine do pacote), ele ganha uma **cópia exclusiva do contrato**: os outros clientes não mudam.
    - *Central → Contratos → grupo "Inteligência de Ativos"* (liga para todos os clientes daquele contrato; o grupo avisa disso).
    - Fora de qualquer pacote vendável. A troca de produtos (*Alterar produtos*) **preserva** a chave.
-5. **Dados de demo** — empresa fictícia **Locadora Demo** (`tenants.is_demo = true`): 25 equipamentos, 8 clientes e 10 obras
+5. **Dashboard "Inteligência de Ativos — custo e localização"** (sistema de dashboards personalizados): **modelo da plataforma**, visível em
+   *Central → Dashboards personalizados*, para atribuir a qualquer cliente que tenha as chaves do contrato (sem elas, nenhum bloco aparece).
+   Na Locadora Demo ele é atribuído **só a ela, como tela Início** (o login da demo já cai nele). Formatos visuais: KPIs com minigráfico e
+   comparação de tendência, **mapa** com os equipamentos por situação, **mapa de calor** equipamento × mês, ranking com **linhas de limiar**
+   (40% revisar / 60% trocar ou vender), **anéis** (situação da frota e para onde vai o dinheiro), tabela de retorno (receita − manutenção) e alertas.
+   Comando: `php artisan dashboards:inteligencia-ativos [--empresa=slug] [--inicio]` (cria/atualiza o modelo; repetir não duplica).
+6. **Dados de demo** — empresa fictícia **Locadora Demo** (`tenants.is_demo = true`): 25 equipamentos, 8 clientes e 10 obras
    em cidades de SP, 18 meses de OS (≈190) e contratos (≈130), 4 problemáticos. Comandos `demo:alec-criar` e `demo:alec-apagar`.
-6. **Testes** novos para tudo acima (cálculo, sinalização, visibilidade por contrato, 403 sem chave, isolamento do tenant demo,
+7. **Testes** novos para tudo acima (cálculo, sinalização, visibilidade por contrato, 403 sem chave, isolamento do tenant demo,
    ativação por cliente, preservação na troca de produtos, mapa/rastreador simulado e real mockado).
 
 ### Ficou de fora (de propósito)
@@ -46,9 +52,12 @@ Branch: `feat/demo-alec-custos-mapa`. Nada disto foi para produção até algué
    (dump `pg_dump -Fc` em `/var/backups/db`, registrado em *Central → Backups do Banco*).
 2. PR → merge → `./deploy.sh` (a migration é só `tenants.is_demo`, aditiva; o build `public/build` vai commitado).
 3. Conferir: `php artisan migrate:status | grep is_demo`, login 200, e que um cliente **sem** a chave não vê o grupo *Inteligência de Ativos* (403 nas URLs).
-4. **Criar a demo na manhã da segunda** (as datas são relativas a "hoje"):
+4. **Dashboard na Central** (a flag `DASHBOARDS_PERSONALIZADOS` já está ligada em produção): `sudo -u www-data php artisan dashboards:inteligencia-ativos`
+   cria o modelo (aparece em *Central → Dashboards personalizados*). A demo já existente recebe o dashboard com
+   `... dashboards:inteligencia-ativos --empresa=locadora-demo --inicio` (sem recriar a demo).
+5. **Criar a demo na manhã da segunda** (as datas são relativas a "hoje"):
    `sudo -u www-data php artisan demo:alec-criar --senha='<defina uma senha forte>'` — login `demo@locadorademo.test`.
-5. Treinar o roteiro uma vez, logado como administrador da demo.
+6. Treinar o roteiro uma vez, logado como administrador da demo.
 
 ## (b) Roteiro de cliques — 10 minutos
 
@@ -57,7 +66,7 @@ Valores abaixo são os da demo recém-criada; podem variar um pouco no dia.
 
 | Tempo | Onde | O que clicar | O que dizer |
 |---|---|---|---|
-| 0:00 | Tela inicial | — | "Duas perguntas que todo locador faz: onde está meu equipamento e quanto ele me custa de manutenção." |
+| 0:00 | **Início** (o dashboard já abre) | Mostrar os 4 números do topo, o **mapa**, o **mapa de calor** e o ranking com as linhas de 40% e 60%. | "Duas perguntas que todo locador faz: onde está meu equipamento e quanto ele me custa de manutenção. Esta é a tela da direção, em uma olhada." |
 | 0:30 | **Inteligência de Ativos → Localização dos Equipamentos** | Esperar o mapa carregar (25 equipamentos). | "Cada pino é um equipamento; a cor é o status (locado, disponível, em manutenção)." |
 | 1:15 | Mapa | Clicar no filtro **Locado (13)**, depois **Com rastreador (5)**. Abrir o popup de **PA-01 (Articulada 15m)** (pino com pulso). | "Os com rastreador mostram velocidade, última atualização e o caminho percorrido. Os demais usam o endereço da obra do contrato ativo — sem hardware." |
 | 2:30 | Mapa | Botão de camadas (canto superior direito) → **Satélite**. Voltar para **Ruas**. | "Vista de rua ou satélite, como no Google." |
@@ -75,6 +84,7 @@ Valores abaixo são os da demo recém-criada; podem variar um pouco no dia.
 - **Não entrar na Central / painel de super admin**: a "Locadora Demo" aparece misturada com clientes reais. Ligar/desligar módulos mostra-se só em conversa, não na tela.
 - **Não logar como super admin** (ele vê tudo e ignora a liberação por contrato): use `demo@locadorademo.test`.
 - **Não clicar em Salvar alterações, Excluir, Imprimir etiqueta** no cadastro do equipamento (a demo é editável).
+- **Não rolar o dashboard com o mouse sobre o mapa** (a roda do mouse não dá zoom ali, de propósito; use os botões + e −).
 - **Não abrir outros módulos** (estoque, financeiro, RH, CRM, contratos assinados): o tenant demo só tem dados em ativos, clientes, contratos e OS; o resto aparece vazio.
 - **Não usar o "Mapa de Equipamentos" antigo** (menu Ativos): ele posiciona pelo cadastro, não pela obra, e destoa do novo.
 - **Não abrir o widget flutuante "Mensagens"** (chat) no canto da tela.
