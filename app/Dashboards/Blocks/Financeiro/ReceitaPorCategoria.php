@@ -41,6 +41,6 @@ class ReceitaPorCategoria extends FinanceiroBlock
             ->sortDesc()
             ->take(6);
 
-        return Payload::donut($this->fatias($porCategoria->map(fn ($v) => round($v / 1000, 1))), 'R$ '.number_format($porCategoria->sum() / 1000, 1, ',', '.').' mil', 'a receber no mês');
+        return Payload::donut($this->fatias($porCategoria->map(fn ($v) => round($v / 1000, 1))), 'R$ '.number_format($porCategoria->sum() / 1000, 1, ',', '.').' mil', 'no mês');
     }
 }

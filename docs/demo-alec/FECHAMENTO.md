@@ -30,7 +30,7 @@ Branch: `feat/demo-alec-custos-mapa`. Nada disto foi para produção até algué
    comparação de tendência, **mapa** com os equipamentos por situação, **mapa de calor** equipamento × mês, ranking com **linhas de limiar**
    (40% revisar / 60% trocar ou vender), **anéis** (situação da frota e para onde vai o dinheiro), tabela de retorno (receita − manutenção) e alertas.
    Comando: `php artisan dashboards:inteligencia-ativos [--empresa=slug] [--inicio]` (cria/atualiza o modelo; repetir não duplica).
-6. **Dados de demo** — empresa fictícia **Locadora Demo** (`tenants.is_demo = true`): 25 equipamentos, 8 clientes e 10 obras
+6. **Dados de demo** — empresa fictícia **Locadora Demo** (`tenants.is_demo = true`): 25 equipamentos (mais 6 veículos da frota, usados nas telas de Frota), 8 clientes e 10 obras
    em cidades de SP, 18 meses de OS (≈190) e contratos (≈130), 4 problemáticos. Comandos `demo:alec-criar` e `demo:alec-apagar`.
 7. **Testes** novos para tudo acima (cálculo, sinalização, visibilidade por contrato, 403 sem chave, isolamento do tenant demo,
    ativação por cliente, preservação na troca de produtos, mapa/rastreador simulado e real mockado).

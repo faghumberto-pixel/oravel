@@ -55,6 +55,6 @@ class FretePorTipo extends LogisticaBlock
             $valores[$rotulo.' ('.(int) ($porTipo->get($tipo)->viagens ?? 0).' viagens)'] = (float) ($porTipo->get($tipo)->total ?? 0);
         }
 
-        return Payload::donut($this->fatias($valores), 'R$ '.number_format(array_sum($valores) / 1000, 1, ',', '.').' mil', 'em fretes no mês');
+        return Payload::donut($this->fatias($valores), 'R$ '.number_format(array_sum($valores) / 1000, 1, ',', '.').' mil', 'no mês');
     }
 }

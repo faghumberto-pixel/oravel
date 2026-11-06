@@ -30,7 +30,7 @@ class GiroDoEstoque extends MateriaisBlock
     public function data(array $config): array
     {
         $custos = Material::query()->pluck('unit_cost', 'id');
-        $consumido = $this->saidasPorMaterial(365)->sum(fn ($q, $id) => $q * (float) ($custos[$id] ?? 0));
+        $consumido = $this->saidasPorMaterial(365)->map(fn ($q, $id) => $q * (float) ($custos[$id] ?? 0))->sum();
         $estoque = (float) Material::query()->get(['unit_cost', 'current_stock'])->sum(fn ($m) => $m->unit_cost * $m->current_stock);
 
         if ($estoque <= 0 || $consumido <= 0) {
