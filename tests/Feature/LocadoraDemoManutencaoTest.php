@@ -62,6 +62,7 @@ class LocadoraDemoManutencaoTest extends TestCase
         $this->assertNotSame('0', (new B\KmRodados)->data([])['value']);
         $this->assertGreaterThanOrEqual(2, (new B\EquipamentosParados)->data([])['value']);
         $this->assertGreaterThan(0, (int) (new B\RetornoMaquina)->data([])['bar']['pct']);
+        $this->assertGreaterThanOrEqual(3, DB::table('maintenance_orders')->where('is_rework', true)->where('os_number', 'like', 'DEMO-MAN-%')->where('finished_at', '>=', now()->subDays(30))->count());
         $this->assertNotEmpty((new B\DefeitosFrequentes)->data([])['rows']);
         $this->assertCount(4, (new B\AguardandoPeca)->data([])['rows']);
         $this->assertNotEmpty((new B\AgendaDeHoje)->data([])['events']);

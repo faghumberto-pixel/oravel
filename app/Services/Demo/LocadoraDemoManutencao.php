@@ -275,6 +275,14 @@ class LocadoraDemoManutencao
 
     private function retrabalho(): int
     {
+        // O sorteio pode nao gerar nenhum retrabalho: garante ao menos 3 entre as corretivas concluidas dos ultimos 30 dias ("Voltou a maquina").
+        $faltam = 3 - (int) DB::table('maintenance_orders')->where('tenant_id', $this->tenantId)->where('is_rework', true)->where('os_number', 'like', self::PREFIXO.'%')->where('finished_at', '>=', $this->agora->copy()->subDays(30))->count();
+        if ($faltam > 0) {
+            $ids = DB::table('maintenance_orders')->where('tenant_id', $this->tenantId)->where('os_number', 'like', self::PREFIXO.'%')->where('status', 'Concluída')
+                ->where('maintenance_type', '!=', 'Preventiva')->where('is_rework', false)->where('finished_at', '>=', $this->agora->copy()->subDays(30))->orderBy('os_number')->limit($faltam)->pluck('id');
+            DB::table('maintenance_orders')->whereIn('id', $ids)->update(['is_rework' => true]);
+        }
+
         return (int) DB::table('maintenance_orders')->where('tenant_id', $this->tenantId)->where('is_rework', true)->where('os_number', 'like', self::PREFIXO.'%')->count();
     }
 }
