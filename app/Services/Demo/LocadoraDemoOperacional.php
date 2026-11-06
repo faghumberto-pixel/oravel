@@ -116,6 +116,8 @@ class LocadoraDemoOperacional
                 DB::table($t)->where('ativo_id', $a->id)->delete();
             }
         });
+        // Pedidos de peca (criados por LocadoraDemoManutencao) apontam para os materiais: saem antes deles.
+        DB::table('parts_requests')->where('tenant_id', $this->tenantId)->delete();
         DB::table('material_request_items')->whereIn('material_request_id', DB::table('material_requests')->where('tenant_id', $this->tenantId)->select('id'))->delete();
         DB::table('quote_items')->where('tenant_id', $this->tenantId)->whereNotNull('material_id')->update(['material_id' => null]);
         foreach (self::TABELAS as $tabela) {

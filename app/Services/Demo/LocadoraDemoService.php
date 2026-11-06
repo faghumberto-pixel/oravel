@@ -178,8 +178,10 @@ class LocadoraDemoService
                 $comercial = (new LocadoraDemoComercial)->popular($tenant);
                 // Materiais, Financeiro, Frota e Logistica (depois do comercial: marca itens orcados com material).
                 $operacional = (new LocadoraDemoOperacional)->popular($tenant);
+                // Manutencao recente (agenda de hoje, SLA, deslocamento, esperando peca): depois do operacional, que cria os materiais.
+                $manutencao = (new LocadoraDemoManutencao)->popular($tenant);
 
-                return $resumo + ['comercial' => $comercial, 'operacional' => $operacional] + [
+                return $resumo + ['comercial' => $comercial, 'operacional' => $operacional, 'manutencao' => $manutencao] + [
                     'tenant_id' => $this->tenantId,
                     'email' => self::EMAIL_ADMIN,
                     'senha' => $senha,
