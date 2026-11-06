@@ -6,6 +6,7 @@ use App\Models\Concerns\BelongsToTenant;
 use App\Models\Concerns\HasSaaSMetadata;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -22,7 +23,7 @@ class AggregateItemType extends Model
 
     protected static ?string $saasModuleLabel = 'Tipos de Item Agregado';
 
-    protected $fillable = ['tenant_id', 'category', 'name', 'unit_of_measure', 'description', 'inspection_interval_days'];
+    protected $fillable = ['tenant_id', 'stock_group_id', 'category', 'name', 'unit_of_measure', 'description', 'inspection_interval_days'];
 
     public const CATEGORY_ACESSORIO = 'acessorio';
 
@@ -52,5 +53,10 @@ class AggregateItemType extends Model
     public function items(): HasMany
     {
         return $this->hasMany(AggregateItem::class);
+    }
+
+    public function stockGroup(): BelongsTo
+    {
+        return $this->belongsTo(StockGroup::class, 'stock_group_id');
     }
 }

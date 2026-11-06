@@ -39,6 +39,7 @@ class Material extends Model
         'name',
         'brand_name',
         'material_category_id',
+        'stock_group_id',
         'supplier_id',
         'supplier_type',
         'unit_cost',
@@ -68,6 +69,11 @@ class Material extends Model
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class, 'tenant_id');
+    }
+
+    public function stockGroup(): BelongsTo
+    {
+        return $this->belongsTo(StockGroup::class, 'stock_group_id');
     }
 
     public function category(): BelongsTo
