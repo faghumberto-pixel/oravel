@@ -489,6 +489,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/meu-estoque', 'App\Livewire\MobileWarehouseStock')
         ->name('warehouse.mobile-stock');
 
+    // Contagem física do estoque pelo celular (também funciona no computador): sem papel, cega, com histórico de quem contou e quando
+    Route::get('/admin/contagem-estoque/{contagem?}', \App\Livewire\ContagemEstoqueMobile::class)
+        ->name('estoque.contagem-mobile');
+
+    // QR do estoque: o link do QR abre o item (rastreio) ou o endereço; as etiquetas saem prontas para imprimir
+    Route::get('/admin/estoque/qr/{tipo}/{id}', [\App\Http\Controllers\EstoqueQrController::class, 'abrir'])->name('estoque.qr');
+    Route::get('/admin/estoque/etiquetas', [\App\Http\Controllers\EstoqueQrController::class, 'etiquetas'])->name('estoque.etiquetas');
+
     // "Modo Campo": execucao da O.S. no celular do tecnico, uma etapa por tela,
     // em vez do form de 7 abas do painel. Ponto de entrada em
     // EditMaintenanceOrder, na tabela de O.S. e no dossie mobile do ativo

@@ -12,6 +12,7 @@ use App\Models\StockCountItem;
 use App\Models\StockLocation;
 use App\Models\StockMovement;
 use App\Models\StockPlacement;
+use App\Models\User;
 use App\Models\Warehouse;
 use App\Models\WarehouseStock;
 use App\Services\MaterialStockService;
@@ -56,7 +57,7 @@ class ContagemFisica
     }
 
     /** Registra uma contagem (ou recontagem) de um item: guarda quem, quando e quanto, e atualiza o "contado" da folha. */
-    public function registrar(StockCountItem $item, float $quantidade, ?\App\Models\User $usuario = null, string $origem = 'web', ?string $nota = null): StockCountEntry
+    public function registrar(StockCountItem $item, float $quantidade, ?User $usuario = null, string $origem = 'web', ?string $nota = null): StockCountEntry
     {
         if (! $item->count->aberta()) {
             throw new RuntimeException('Esta contagem já foi finalizada: não aceita novos registros.');

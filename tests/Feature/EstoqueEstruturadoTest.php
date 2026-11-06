@@ -15,7 +15,6 @@ use App\Models\Role;
 use App\Models\StockCount;
 use App\Models\StockGroup;
 use App\Models\StockLocation;
-use App\Models\StockMovement;
 use App\Models\StockPlacement;
 use App\Models\Tenant;
 use App\Models\User;

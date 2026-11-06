@@ -7,7 +7,6 @@ use App\Models\Concerns\HasSaaSMetadata;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /** Um registro de contagem: quem contou, quanto, quando e por qual canal (web ou celular). */
 class StockCountEntry extends Model

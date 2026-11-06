@@ -7,7 +7,6 @@ use App\Models\Concerns\HasSaaSMetadata;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /** Onde um item esta (e quanto ha ali): material, peca/oleo ou item agregado em um endereco do almoxarifado. */
 class StockPlacement extends Model
@@ -34,6 +33,17 @@ class StockPlacement extends Model
     protected $fillable = ['tenant_id', 'stock_location_id', 'item_type', 'item_id', 'quantity'];
 
     protected $casts = ['quantity' => 'decimal:3'];
+
+    /** Nome do item (material, peca ou tipo de item agregado) para mostrar nas telas. */
+    public function nomeDoItem(): string
+    {
+        return match ($this->item_type) {
+            self::MATERIAL => Material::query()->whereKey($this->item_id)->value('name'),
+            self::PART => Part::query()->whereKey($this->item_id)->value('name'),
+            self::AGGREGATE => AggregateItemType::query()->whereKey($this->item_id)->value('name'),
+            default => null,
+        } ?? 'Item removido';
+    }
 
     public function location(): BelongsTo
     {
