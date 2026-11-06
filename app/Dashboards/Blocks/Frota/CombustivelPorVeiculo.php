@@ -2,12 +2,15 @@
 
 namespace App\Dashboards\Blocks\Frota;
 
+use App\Dashboards\Concerns\SeriesDeTempo;
 use App\Dashboards\Payload;
 use App\Models\Asset;
 use App\Models\FrotaAbastecimento;
 
 class CombustivelPorVeiculo extends FrotaBlock
 {
+    use SeriesDeTempo;
+
     public static function key(): string
     {
         return 'frota.combustivel_por_veiculo';
@@ -40,6 +43,6 @@ class CombustivelPorVeiculo extends FrotaBlock
 
         $nomes = Asset::query()->whereIn('id', $porVeiculo->keys())->pluck('name', 'id');
 
-        return Payload::bars($porVeiculo->map(fn ($v, $id) => [$nomes[$id] ?? 'Veículo removido', (float) $v, number_format((float) $v, 2, ',', '.')])->values()->all());
+        return Payload::ranking($this->linhasDeRanking($porVeiculo->mapWithKeys(fn ($v, $id) => [($nomes[$id] ?? 'Veículo removido') => (float) $v]), fn ($v) => 'R$ '.number_format($v, 2, ',', '.'), 'warn'), [], 'Gasto do mês; a barra compara com o veículo que mais gastou.');
     }
 }

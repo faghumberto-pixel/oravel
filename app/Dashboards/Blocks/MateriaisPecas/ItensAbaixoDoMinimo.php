@@ -45,6 +45,7 @@ class ItensAbaixoDoMinimo extends MateriaisBlock
             'itens',
             $semPedido > 0 ? $semPedido.' sem pedido aberto' : 'Todos com pedido aberto',
             $semPedido > 0 ? 'dn' : 'n',
+            ['pct' => $abaixo->count() > 0 ? (int) round(($abaixo->count() - $semPedido) / $abaixo->count() * 100) : 100, 'tone' => $semPedido > 0 ? 'warn' : 'ok'],
         );
     }
 }

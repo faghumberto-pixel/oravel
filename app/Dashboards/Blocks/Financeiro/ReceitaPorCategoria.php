@@ -2,11 +2,14 @@
 
 namespace App\Dashboards\Blocks\Financeiro;
 
+use App\Dashboards\Concerns\SeriesDeTempo;
 use App\Dashboards\Payload;
 use App\Models\AccountReceivable;
 
 class ReceitaPorCategoria extends FinanceiroBlock
 {
+    use SeriesDeTempo;
+
     public static function key(): string
     {
         return 'financeiro.receita_por_categoria';
@@ -24,7 +27,7 @@ class ReceitaPorCategoria extends FinanceiroBlock
 
     public static function size(): int
     {
-        return 6;
+        return 4;
     }
 
     public function data(array $config): array
@@ -38,6 +41,6 @@ class ReceitaPorCategoria extends FinanceiroBlock
             ->sortDesc()
             ->take(6);
 
-        return Payload::bars($porCategoria->map(fn ($v, $nome) => [$nome, round($v / 1000, 1), number_format($v / 1000, 1, ',', '.')])->values()->all());
+        return Payload::donut($this->fatias($porCategoria->map(fn ($v) => round($v / 1000, 1))), 'R$ '.number_format($porCategoria->sum() / 1000, 1, ',', '.').' mil', 'a receber no mês');
     }
 }

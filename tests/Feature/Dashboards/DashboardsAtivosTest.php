@@ -108,7 +108,7 @@ class DashboardsAtivosTest extends TestCase
 
         $linhas = (new AtivosPorCategoria)->data([])['rows'];
 
-        $this->assertSame(['Gerador', 2, '2'], $linhas[0]);
+        $this->assertSame(['Gerador', '', 100, '2 ativos', 'a'], $linhas[0]);
         $this->assertSame('Sem categoria', $linhas[1][0]);
     }
 
@@ -123,7 +123,7 @@ class DashboardsAtivosTest extends TestCase
 
         $linhas = (new AtivosPorCliente)->data([])['rows'];
 
-        $this->assertSame(['Construtora', 2, '2'], $linhas[0]);
+        $this->assertSame(['Construtora', '', 100, '2 ativos', 'a'], $linhas[0]);
     }
 
     public function test_documentos_a_vencer_marca_vencidos_e_ignora_os_distantes(): void
@@ -134,12 +134,13 @@ class DashboardsAtivosTest extends TestCase
         $this->ativo($t, ['name' => 'Longe', 'licenciamento_vencimento' => now()->addDays(200)->toDateString()]);
         $this->actingAs($admin);
 
-        $linhas = (new VencimentosDeDocumentos)->data(['dias' => 30])['rows'];
+        $linhas = (new VencimentosDeDocumentos)->data(['dias' => 30])['events'];
 
         $this->assertCount(2, $linhas);
-        $this->assertSame(['Munck', 'AAA1A11', 'Seguro'], array_slice($linhas[0], 0, 3));
-        $this->assertSame('crit', $linhas[0][4]['pill']);
-        $this->assertSame('warn', $linhas[1][4]['pill']);
+        $this->assertSame('Seguro — Munck', $linhas[0][1]);
+        $this->assertStringContainsString('AAA1A11', $linhas[0][2]);
+        $this->assertSame('crit', $linhas[0][3]);
+        $this->assertSame('warn', $linhas[1][3]);
     }
 
     public function test_abrir_o_grupo_ativos_leva_a_visao_geral(): void

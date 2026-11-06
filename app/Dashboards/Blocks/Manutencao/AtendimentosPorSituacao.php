@@ -2,14 +2,22 @@
 
 namespace App\Dashboards\Blocks\Manutencao;
 
+use App\Dashboards\Concerns\SeriesDeTempo;
 use App\Dashboards\Payload;
 use App\Models\MaintenanceOrder;
 
 class AtendimentosPorSituacao extends ManutencaoBlock
 {
+    use SeriesDeTempo;
+
     public static function key(): string
     {
         return 'manutencao.por_situacao';
+    }
+
+    public static function size(): int
+    {
+        return 6;
     }
 
     public static function title(): string
@@ -37,13 +45,13 @@ class AtendimentosPorSituacao extends ManutencaoBlock
             ->whereBetween('finished_at', [now()->startOfDay(), now()->endOfDay()])
             ->count();
 
-        $linhas = [];
+        $valores = [];
         foreach ($porStatus as $status => $total) {
-            $linhas[] = [$status ?: 'Sem situação', $total, (string) $total];
+            $valores[$status ?: 'Sem situação'] = $total;
         }
-        $linhas[] = ['Aguardando peça', $aguardandoPeca, (string) $aguardandoPeca, 'warn'];
-        $linhas[] = ['Concluídas hoje', $concluidasHoje, (string) $concluidasHoje, 'ok'];
+        $valores['Aguardando peça'] = $aguardandoPeca;
+        $valores['Concluídas hoje'] = $concluidasHoje;
 
-        return Payload::bars($linhas);
+        return Payload::donut($this->fatias($valores, ['Aguardando peça' => '#f59e0b', 'Concluídas hoje' => '#16a34a']), (string) array_sum($valores), 'atendimentos');
     }
 }

@@ -2,14 +2,22 @@
 
 namespace App\Dashboards\Blocks\MateriaisPecas;
 
+use App\Dashboards\Concerns\SeriesDeTempo;
 use App\Dashboards\Payload;
 use App\Models\Material;
 
 class EstoquePorCategoria extends MateriaisBlock
 {
+    use SeriesDeTempo;
+
     public static function key(): string
     {
         return 'materiais.estoque_por_categoria';
+    }
+
+    public static function size(): int
+    {
+        return 6;
     }
 
     public static function title(): string
@@ -33,6 +41,6 @@ class EstoquePorCategoria extends MateriaisBlock
             ->sortDesc()
             ->take(7);
 
-        return Payload::bars($porCategoria->map(fn ($v, $nome) => [$nome, round($v / 1000, 1), number_format($v / 1000, 1, ',', '.')])->values()->all());
+        return Payload::donut($this->fatias($porCategoria->map(fn ($v) => round($v / 1000, 1))), $this->mil((float) $porCategoria->sum()), 'em estoque');
     }
 }

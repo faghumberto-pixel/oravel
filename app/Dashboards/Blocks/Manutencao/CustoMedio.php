@@ -2,11 +2,14 @@
 
 namespace App\Dashboards\Blocks\Manutencao;
 
+use App\Dashboards\Concerns\SeriesDeTempo;
 use App\Dashboards\Payload;
 use App\Models\MaintenanceOrder;
 
 class CustoMedio extends ManutencaoBlock
 {
+    use SeriesDeTempo;
+
     public static function key(): string
     {
         return 'manutencao.custo_medio';
@@ -53,6 +56,8 @@ class CustoMedio extends ManutencaoBlock
             '',
             ($dif <= 0 ? '-' : '+').$this->brl(abs($dif)).' sobre o mês anterior',
             $dif <= 0 ? 'up' : 'dn', // custo menor é melhor
+            null,
+            $this->serieMensal(MaintenanceOrder::query()->whereIn('status', $this->concluidas())->where('total_order_cost', '>', 0), 'finished_at', 12, 'total_order_cost'),
         );
     }
 }

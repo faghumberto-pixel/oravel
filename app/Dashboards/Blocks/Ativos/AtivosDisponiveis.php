@@ -31,6 +31,9 @@ class AtivosDisponiveis extends AtivosBlock
     {
         $reservados = Asset::query()->where('status', Asset::STATUS_RESERVADO)->count();
 
-        return Payload::kpi(Asset::query()->where('status', Asset::STATUS_DISPONIVEL)->count(), '', $reservados > 0 ? $reservados.' reservados' : 'Nenhum reservado');
+        $disponiveis = Asset::query()->where('status', Asset::STATUS_DISPONIVEL)->count();
+        $total = max(1, Asset::query()->count());
+
+        return Payload::kpi($disponiveis, '', $reservados > 0 ? $reservados.' reservados' : 'Nenhum reservado', 'n', ['pct' => (int) round($disponiveis / $total * 100), 'tone' => 'ok']);
     }
 }

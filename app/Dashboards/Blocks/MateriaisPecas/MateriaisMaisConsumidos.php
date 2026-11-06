@@ -2,11 +2,14 @@
 
 namespace App\Dashboards\Blocks\MateriaisPecas;
 
+use App\Dashboards\Concerns\SeriesDeTempo;
 use App\Dashboards\Payload;
 use App\Models\Material;
 
 class MateriaisMaisConsumidos extends MateriaisBlock
 {
+    use SeriesDeTempo;
+
     public static function key(): string
     {
         return 'materiais.mais_consumidos';
@@ -32,6 +35,6 @@ class MateriaisMaisConsumidos extends MateriaisBlock
         $top = $this->saidasPorMaterial(30)->sortDesc()->take(5);
         $nomes = Material::query()->whereIn('id', $top->keys())->pluck('name', 'id');
 
-        return Payload::bars($top->map(fn ($q, $id) => [$nomes[$id] ?? 'Material removido', (float) $q, rtrim(rtrim(number_format($q, 2, ',', '.'), '0'), ',')])->values()->all());
+        return Payload::ranking($this->linhasDeRanking($top->mapWithKeys(fn ($q, $id) => [($nomes[$id] ?? 'Material removido') => (float) $q]), fn ($q) => rtrim(rtrim(number_format($q, 2, ',', '.'), '0'), ',').' saídas', 'a'), [], 'Saídas dos últimos 30 dias; a barra compara com o item mais consumido.');
     }
 }

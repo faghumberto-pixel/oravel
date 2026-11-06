@@ -24,7 +24,7 @@ class TrocasDeOleoAVencer extends FrotaBlock
 
     public static function size(): int
     {
-        return 6;
+        return 12;
     }
 
     public static function requiredFeature(): string

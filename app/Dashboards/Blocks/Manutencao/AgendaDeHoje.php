@@ -19,12 +19,12 @@ class AgendaDeHoje extends ManutencaoBlock
 
     public static function subtitle(): string
     {
-        return 'Visitas por técnico';
+        return 'Linha do tempo das visitas de hoje, por horário';
     }
 
     public static function size(): int
     {
-        return 8;
+        return 6;
     }
 
     public static function defaultConfig(): array
@@ -42,18 +42,22 @@ class AgendaDeHoje extends ManutencaoBlock
             ->limit((int) ($config['limite'] ?? 8))
             ->get();
 
-        $linhas = $ordens->map(fn (MaintenanceOrder $os) => [
-            $os->technician?->name ?? '—',
-            $os->client?->name ?? $os->asset?->client?->name ?? '—',
-            $os->asset?->name ?? '—',
-            $os->maintenance_type ?: '—',
+        $eventos = $ordens->map(fn (MaintenanceOrder $os) => [
+            $os->scheduled_at->format('H\hi'),
+            ($os->asset?->name ?? 'Máquina').' — '.($os->client?->name ?? $os->asset?->client?->name ?? 'cliente'),
+            ($os->technician?->name ?? 'sem técnico').' · '.($os->maintenance_type ?: 'atendimento'),
             match (true) {
-                in_array($os->status, $this->concluidas(), true) => Payload::pill('ok', 'Concluída'),
-                $os->status === 'Em Andamento' => Payload::pill('warn', 'Em atendimento'),
-                default => Payload::pill('n', $os->scheduled_at->format('H\hi')),
+                in_array($os->status, $this->concluidas(), true) => 'ok',
+                $os->status === 'Em Andamento' => 'warn',
+                default => 'a',
+            },
+            match (true) {
+                in_array($os->status, $this->concluidas(), true) => 'concluída',
+                $os->status === 'Em Andamento' => 'em atendimento',
+                default => null,
             },
         ])->all();
 
-        return Payload::table(['Técnico', 'Cliente', 'Máquina', 'Tipo', 'Situação'], $linhas, 'Nenhuma visita agendada para hoje.');
+        return Payload::timeline($eventos, 'Nenhuma visita agendada para hoje.');
     }
 }

@@ -24,7 +24,7 @@ class AbaixoDoMinimoSugestao extends MateriaisBlock
 
     public static function size(): int
     {
-        return 8;
+        return 6;
     }
 
     public static function defaultConfig(): array

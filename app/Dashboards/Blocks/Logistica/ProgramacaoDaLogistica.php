@@ -24,7 +24,7 @@ class ProgramacaoDaLogistica extends LogisticaBlock
 
     public static function size(): int
     {
-        return 12;
+        return 6;
     }
 
     public static function defaultConfig(): array
@@ -41,18 +41,22 @@ class ProgramacaoDaLogistica extends LogisticaBlock
             ->limit((int) ($config['limite'] ?? 8))
             ->get();
 
-        $linhas = $movs->map(fn ($m) => [
-            $m->asset?->name ?? '—',
-            $this->rotuloDoTipo($m->type),
-            $m->notes ?: '—',
-            match ($m->status) {
-                EquipmentMovement::STATUS_EM_ANDAMENTO => Payload::pill('warn', 'Em andamento'),
-                EquipmentMovement::STATUS_AGUARDANDO_APROVACAO => Payload::pill('crit', 'Aguardando aprovação'),
-                default => Payload::pill('n', 'Aguardando vistoria'),
-            },
+        $eventos = $movs->map(fn ($m) => [
             $m->scheduled_at?->format('d/m H\hi') ?? 'Sem data',
+            ($m->asset?->name ?? 'Equipamento').' — '.$this->rotuloDoTipo($m->type),
+            $m->notes ?: 'sem trajeto informado',
+            match ($m->status) {
+                EquipmentMovement::STATUS_EM_ANDAMENTO => 'warn',
+                EquipmentMovement::STATUS_AGUARDANDO_APROVACAO => 'crit',
+                default => 'a',
+            },
+            match ($m->status) {
+                EquipmentMovement::STATUS_EM_ANDAMENTO => 'em andamento',
+                EquipmentMovement::STATUS_AGUARDANDO_APROVACAO => 'aguarda aprovação',
+                default => 'aguarda vistoria',
+            },
         ])->all();
 
-        return Payload::table(['Equipamento', 'Tipo', 'Trajeto', 'Situação', '>Agendada'], $linhas, 'Nenhuma movimentação pendente.');
+        return Payload::timeline($eventos, 'Nenhuma movimentação pendente.');
     }
 }

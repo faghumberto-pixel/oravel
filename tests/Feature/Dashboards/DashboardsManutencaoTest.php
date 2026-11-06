@@ -117,7 +117,7 @@ class DashboardsManutencaoTest extends TestCase
         $this->actingAs($admin);
 
         $this->assertTrue(VisaoGeralManutencao::canAccess());
-        $this->assertCount(12, DashboardRenderer::blocks('manutencao', $admin));
+        $this->assertCount(16, DashboardRenderer::blocks('manutencao', $admin));
     }
 
     public function test_usuario_sem_permissao_de_leitura_nao_ve_blocos(): void
