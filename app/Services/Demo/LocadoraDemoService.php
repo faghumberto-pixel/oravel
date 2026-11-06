@@ -176,8 +176,10 @@ class LocadoraDemoService
 
                 // Comercial populado (leads, orcamentos, propostas, solicitacoes, Voz do Cliente) para a demo nao nascer vazia.
                 $comercial = (new LocadoraDemoComercial)->popular($tenant);
+                // Materiais, Financeiro, Frota e Logistica (depois do comercial: marca itens orcados com material).
+                $operacional = (new LocadoraDemoOperacional)->popular($tenant);
 
-                return $resumo + ['comercial' => $comercial] + [
+                return $resumo + ['comercial' => $comercial, 'operacional' => $operacional] + [
                     'tenant_id' => $this->tenantId,
                     'email' => self::EMAIL_ADMIN,
                     'senha' => $senha,

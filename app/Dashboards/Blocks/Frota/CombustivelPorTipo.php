@@ -34,6 +34,6 @@ class CombustivelPorTipo extends FrotaBlock
     {
         $porTipo = FrotaAbastecimento::query()->whereBetween('abastecido_em', [now()->startOfMonth(), now()->endOfMonth()])->selectRaw('combustivel, sum(litros) as total')->groupBy('combustivel')->pluck('total', 'combustivel');
 
-        return Payload::donut($this->fatias($porTipo->mapWithKeys(fn ($v, $k) => [(string) ($k ?: 'Não informado') => round((float) $v, 1)])), number_format((float) $porTipo->sum(), 0, ',', '.'), 'litros');
+        return Payload::donut($this->fatias($porTipo->mapWithKeys(fn ($v, $k) => [(string) (FrotaAbastecimento::combustivelLabels()[$k] ?? ($k ?: 'Não informado')) => round((float) $v, 1)])), number_format((float) $porTipo->sum(), 0, ',', '.'), 'litros');
     }
 }

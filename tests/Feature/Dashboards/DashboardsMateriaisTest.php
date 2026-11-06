@@ -5,6 +5,7 @@ namespace Tests\Feature\Dashboards;
 use App\Dashboards\Blocks\MateriaisPecas\AbaixoDoMinimoSugestao;
 use App\Dashboards\Blocks\MateriaisPecas\CoberturaEmDias;
 use App\Dashboards\Blocks\MateriaisPecas\ComprasAReceber;
+use App\Dashboards\Blocks\MateriaisPecas\GiroDoEstoque;
 use App\Dashboards\Blocks\MateriaisPecas\ItensAbaixoDoMinimo;
 use App\Dashboards\Blocks\MateriaisPecas\ValorEmEstoque;
 use App\Dashboards\DashboardRenderer;
@@ -142,6 +143,18 @@ class DashboardsMateriaisTest extends TestCase
         $this->assertSame('Óleo', $linha[0]);
         $this->assertSame('30 dias', $linha[2]); // 30 de saldo ÷ (90 de saída / 90 dias)
         $this->assertSame('ok', $linha[3]);
+    }
+
+    public function test_giro_do_estoque_calcula_com_saidas_registradas(): void
+    {
+        [$t, $admin] = $this->empresa();
+        $m = $this->material($t, ['name' => 'Filtro', 'unit_cost' => 10, 'current_stock' => 10]);
+        MaterialStockMovement::create(['tenant_id' => $t->id, 'material_id' => $m->id, 'type' => 'saida', 'quantity' => 20, 'balance_after' => 10]);
+        $this->actingAs($admin);
+
+        $p = (new GiroDoEstoque)->data([]);
+
+        $this->assertSame('2,0', $p['value']); // consumido R$ 200 sobre estoque de R$ 100
     }
 
     public function test_a_pagina_renderiza(): void
