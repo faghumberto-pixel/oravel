@@ -137,6 +137,18 @@ class EditMaintenanceOrder extends EditRecord
             // consultas/impressão primeiro, depois transições administrativas,
             // destrutivas por último)
             Actions\ActionGroup::make([
+                // Folha em papel: imprime a O.S. ja com cliente, equipamento e problema; o mecanico completa a mao
+                // e a IA le a foto de volta e atualiza ESTA O.S. (nunca cria outra).
+                Actions\Action::make('imprimir_folha')
+                    ->label('Imprimir folha para o mecânico')
+                    ->icon('heroicon-o-printer')
+                    ->url(fn () => route('maintenance-orders.folha', $this->record))
+                    ->openUrlInNewTab(),
+                Actions\Action::make('atualizar_com_folha')
+                    ->label('Atualizar com a folha preenchida (IA)')
+                    ->icon('heroicon-o-sparkles')
+                    ->url(fn () => MaintenanceOrderResource::getUrl('atualizar-folha', ['record' => $this->record])),
+
                 Actions\Action::make('dossie')
                     ->label('Dossiê Operacional')
                     ->icon('heroicon-o-document-chart-bar')
