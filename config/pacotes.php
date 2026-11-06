@@ -16,7 +16,8 @@ return [
     'aliases' => ['crm' => 'vendas'],
 
     // Complementos (cobrança automática, notas fiscais) são vendidos à parte: nenhum pacote os inclui, nem o ERP completo.
-    'grupos_complementos' => ['Complementos'],
+    // 'Inteligência de Ativos' também fica fora de todos os pacotes: é opcional por contrato (Central liga caso a caso).
+    'grupos_complementos' => ['Complementos', 'Inteligência de Ativos'],
 
     'base' => [
         'grupos' => ['Configurações', 'Equipe', 'Adicionais'],

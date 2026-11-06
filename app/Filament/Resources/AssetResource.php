@@ -15,6 +15,7 @@ use App\Models\CriticalityLevel;
 use App\Models\EquipmentReplacement;
 use App\Models\StorageLocation;
 use App\Services\CepGeocodingService;
+use App\Services\CustoManutencaoService;
 use App\Support\CrmPalette;
 use App\Support\Tenancy;
 use App\Support\VehicleExpirations;
@@ -742,6 +743,30 @@ class AssetResource extends Resource
                                     })
                                     ->columnSpanFull(),
                             ]),
+                        ]),
+
+                    // ABA: CUSTOS E HISTÓRICO (Inteligência de Ativos). Só aparece quando o contrato do cliente libera a
+                    // chave menu_custo_equipamentos (opcional por contrato, desligada por padrão).
+                    Tabs\Tab::make('Custos e histórico')
+                        ->icon('heroicon-m-banknotes')
+                        ->visible(fn (?Asset $record) => (bool) $record?->exists && CustoManutencaoService::habilitado())
+                        ->schema([
+                            Forms\Components\Placeholder::make('custos_e_historico')
+                                ->label('')
+                                ->content(function (?Asset $record) {
+                                    if (! $record?->exists) {
+                                        return '';
+                                    }
+                                    $servico = app(CustoManutencaoService::class);
+
+                                    return new HtmlString(view('filament.partials.asset-custos-historico', [
+                                        'resumo' => $servico->resumo($record),
+                                        'meses' => $servico->porMes($record),
+                                        'ordens' => $servico->ordens($record),
+                                        'linha' => $servico->linhaDoTempo($record),
+                                    ])->render());
+                                })
+                                ->columnSpanFull(),
                         ]),
 
                     // ABA 4: LOGS DE AUDITORIA (Rastreabilidade de Ações)

@@ -223,7 +223,7 @@ class ContratoResource extends Resource
                         ->label('')
                         ->options($options)
                         ->disabled($groupName === 'Complementos')
-                        ->helperText($groupName === 'Complementos' ? 'Complementos são vendidos à parte, com valor e fidelidade de 12 meses: contrate em Clientes → Complementos. Aqui só aparecem.' : null)
+                        ->helperText($groupName === 'Inteligência de Ativos' ? 'Atenção: libera estas telas para TODOS os clientes que usam este contrato. Para ligar só em um cliente, use Empresas → "Inteligência de Ativos".' : ($groupName === 'Complementos' ? 'Complementos são vendidos à parte, com valor e fidelidade de 12 meses: contrate em Clientes → Complementos. Aqui só aparecem.' : null))
                         ->bulkToggleable($groupName !== 'Complementos')
                         ->live()
                         ->columns(1),

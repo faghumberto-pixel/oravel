@@ -87,6 +87,7 @@ class AdminPanelProvider extends PanelProvider
             // juntos no topo, fora da ordem alfabética, de propósito.
             ->navigationGroups([
                 NavigationGroup::make('Ativos'),
+                NavigationGroup::make('Inteligência de Ativos'),
                 NavigationGroup::make('Materiais e Peças'),
                 NavigationGroup::make('Itens Agregados'),
                 NavigationGroup::make('EPI'),
