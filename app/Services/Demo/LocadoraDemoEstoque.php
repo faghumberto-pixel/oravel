@@ -68,8 +68,9 @@ class LocadoraDemoEstoque
         mt_srand(self::SEMENTE);
 
         try {
-            return DB::transaction(function () {
+            return DB::transaction(function () use ($tenant) {
                 $this->limpar();
+                $this->ligarChavesDoPlanoDaDemo($tenant);
                 $this->admin = (string) User::withoutGlobalScopes()->where('tenant_id', $this->tenantId)->orderBy('created_at')->value('id');
                 $this->grupos = app(EstoqueGrupos::class)->garantirPadrao($this->tenantId)->pluck('id', 'name')->map(fn ($v) => (string) $v)->all();
 
@@ -85,6 +86,21 @@ class LocadoraDemoEstoque
         } finally {
             mt_srand();
         }
+    }
+
+    /** O plano da demo e' so' dela: liga as chaves opcionais (estoque estruturado e telas extras), que o saas:sync-modules do deploy acrescenta desligadas. */
+    private function ligarChavesDoPlanoDaDemo(Tenant $tenant): void
+    {
+        $plano = $tenant->plan;
+        if (! $plano) {
+            return;
+        }
+        $features = is_array($plano->features) ? $plano->features : (json_decode((string) $plano->features, true) ?: []);
+        $mapa = array_is_list($features) ? array_fill_keys($features, true) : $features;
+        foreach (array_merge(LocadoraDemoService::FEATURES_EXTRAS, ['tabela_stock_structure']) as $chave) {
+            $mapa[$chave] = true;
+        }
+        $plano->update(['features' => $mapa]);
     }
 
     private function limpar(): void
