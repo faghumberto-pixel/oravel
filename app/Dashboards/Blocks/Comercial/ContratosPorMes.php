@@ -24,7 +24,7 @@ class ContratosPorMes extends ComercialBlock
 
     public static function size(): int
     {
-        return 12;
+        return 6;
     }
 
     public function data(array $config): array

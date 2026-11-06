@@ -174,7 +174,10 @@ class LocadoraDemoService
                 // Dashboard "Inteligencia de Ativos" (modelo da plataforma) atribuido SO' a esta empresa, como tela Inicio.
                 DashboardInteligenciaDeAtivos::atribuirA($tenant, true);
 
-                return $resumo + [
+                // Comercial populado (leads, orcamentos, propostas, solicitacoes, Voz do Cliente) para a demo nao nascer vazia.
+                $comercial = (new LocadoraDemoComercial)->popular($tenant);
+
+                return $resumo + ['comercial' => $comercial] + [
                     'tenant_id' => $this->tenantId,
                     'email' => self::EMAIL_ADMIN,
                     'senha' => $senha,

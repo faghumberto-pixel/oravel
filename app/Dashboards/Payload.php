@@ -23,14 +23,14 @@ class Payload
     /**
      * Mapa de calor (linhas x colunas). `$linhas`: lista de [rotulo, subrotulo, valores[], total (texto), pill|null].
      */
-    public static function heat(array $colunas, array $linhas, string $unidade = 'R$'): array
+    public static function heat(array $colunas, array $linhas, string $unidade = 'R$', string $legenda = 'Mais custo no mês'): array
     {
         $max = 0;
         foreach ($linhas as $l) {
             $max = max($max, max(array_merge([0], $l[2])));
         }
 
-        return ['type' => 'heat', 'columns' => $colunas, 'rows' => $linhas, 'max' => $max ?: 1, 'unit' => $unidade];
+        return ['type' => 'heat', 'columns' => $colunas, 'rows' => $linhas, 'max' => $max ?: 1, 'unit' => $unidade, 'legend' => $legenda];
     }
 
     /**
@@ -40,6 +40,14 @@ class Payload
     public static function ranking(array $linhas, array $marcas = [], string $nota = ''): array
     {
         return ['type' => 'ranking', 'rows' => $linhas, 'marks' => $marcas, 'note' => $nota];
+    }
+
+    /**
+     * Linha do tempo vertical. `$eventos`: lista de [data (texto), titulo, detalhe, tom (ok|warn|crit|n|a), etiqueta|null].
+     */
+    public static function timeline(array $eventos, string $vazio = 'Nada por aqui.'): array
+    {
+        return ['type' => 'timeline', 'events' => array_values($eventos), 'empty' => $vazio];
     }
 
     /**

@@ -28,8 +28,8 @@
 .odb-legend{display:flex;gap:12px;font-size:12px;color:var(--odb-muted);flex-wrap:wrap}.odb-legend b{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px}
 .odb-alert{display:grid;gap:6px}
 .odb-alert div{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 9px;border-radius:6px;background:var(--odb-bg);border:1px solid var(--odb-border)}
-.odb-fun{display:grid;gap:5px}
-.odb-fun div{display:flex;justify-content:space-between;padding:7px 10px;border-radius:5px;font-size:12.5px;color:#fff;background:var(--odb-accent)}
+.odb-fun{display:grid;gap:5px;justify-items:center}
+.odb-fun div{display:flex;justify-content:space-between;padding:8px 12px;border-radius:6px;font-size:12.5px;color:#fff;background:var(--odb-accent);margin:0 auto;min-width:150px}.odb-fun em{font-style:normal;font-weight:500;opacity:.85;margin-left:6px;font-size:11px}
 .odb-empty{color:var(--odb-muted);font-size:12.5px;margin:0}
 .odb-spark{margin-top:2px}.odb-spark svg{width:100%}
 .odb-donut{display:grid;gap:10px;justify-items:center}
@@ -54,5 +54,12 @@
 .odb-map{height:320px;width:100%;z-index:1}
 .odb .odb-map svg{display:inline;width:auto;height:auto;max-width:none}.odb .odb-map .leaflet-overlay-pane svg{display:block}
 .odb-link{margin-left:auto;color:var(--odb-accent);font-weight:600;text-decoration:none}
+.odb-tl{list-style:none;margin:0;padding:0;position:relative;display:grid;gap:12px}
+.odb-tl:before{content:"";position:absolute;left:86px;top:6px;bottom:6px;width:2px;background:var(--odb-border)}
+.odb-tl li{display:grid;grid-template-columns:78px 1fr;gap:20px;position:relative;font-size:12.5px;line-height:1.35}
+.odb-tl li .d{font-size:11px;font-weight:700;color:var(--odb-muted);text-align:right;padding-top:2px;font-variant-numeric:tabular-nums}
+.odb-tl li:before{content:"";position:absolute;left:80px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--odb-accent);border:3px solid var(--odb-card);box-shadow:0 0 0 1px var(--odb-border)}
+.odb-tl li.ok:before{background:var(--odb-ok)}.odb-tl li.warn:before{background:var(--odb-warn)}.odb-tl li.crit:before{background:var(--odb-crit)}.odb-tl li.n:before{background:var(--odb-muted)}
+.odb-tl small{display:block;color:var(--odb-muted);font-size:11.5px}
 @media (max-width:820px){.odb-w{grid-column:span 12}.odb-w[style*="--span: 2"]{grid-column:span 6}}
 </style>

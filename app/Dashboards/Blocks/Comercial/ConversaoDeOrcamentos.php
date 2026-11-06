@@ -53,6 +53,8 @@ class ConversaoDeOrcamentos extends ComercialBlock
 
         $aprovados = (int) (($porStatus[Quote::STATUS_APROVADO] ?? 0) + ($porStatus[Quote::STATUS_CONCLUIDO] ?? 0));
 
-        return Payload::kpi(round($aprovados / $enviados * 100).'%', '', $aprovados.' de '.$enviados.' orçamentos');
+        $pct = (int) round($aprovados / $enviados * 100);
+
+        return Payload::kpi($pct.'%', '', $aprovados.' de '.$enviados.' orçamentos', 'n', ['pct' => $pct, 'tone' => $pct >= 50 ? 'ok' : 'warn']);
     }
 }

@@ -20,7 +20,7 @@ class VendasPorVendedor extends ComercialBlock
 
     public static function subtitle(): string
     {
-        return 'Negócios fechados no mês, R$ mil';
+        return 'Negócios fechados nos últimos 90 dias';
     }
 
     public static function size(): int
@@ -42,7 +42,7 @@ class VendasPorVendedor extends ComercialBlock
     {
         $porVendedor = CrmLead::query()
             ->where('stage', CrmLead::STAGE_CONVERTIDO)
-            ->where('fechado_em', '>=', now()->startOfMonth())
+            ->where('fechado_em', '>=', now()->subDays(90))
             ->whereNotNull('vendedor_fechamento_id')
             ->selectRaw('vendedor_fechamento_id, sum(valor_fechado) as total')
             ->groupBy('vendedor_fechamento_id')
@@ -52,6 +52,16 @@ class VendasPorVendedor extends ComercialBlock
 
         $nomes = User::query()->whereIn('id', $porVendedor->keys())->pluck('name', 'id');
 
-        return Payload::bars($porVendedor->map(fn ($v, $id) => [$nomes[$id] ?? 'Usuário removido', round($v / 1000, 1), 'R$ '.number_format($v / 1000, 1, ',', '.').' mil'])->values()->all());
+        $max = max(1, (float) $porVendedor->max());
+        $tons = ['ok', 'ok', 'a', 'a', 'n', 'n'];
+
+        return Payload::ranking(
+            $porVendedor->values()->map(fn ($v, $i) => [
+                $nomes[$porVendedor->keys()[$i]] ?? 'Usuário removido', '', (int) round($v / $max * 100),
+                'R$ '.number_format($v / 1000, 1, ',', '.').' mil', $tons[$i] ?? 'n',
+            ])->all(),
+            [],
+            'Fechado nos últimos 90 dias; a barra compara com o melhor vendedor.',
+        );
     }
 }

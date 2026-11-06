@@ -20,7 +20,7 @@ class DashboardInteligenciaDeAtivos
         'ativos_ia.custo_12m', 'ativos_ia.trocar_vender', 'ativos_ia.em_revisao', 'ativos_ia.localizados',
         'ativos_ia.mapa', 'ativos_ia.mapa_calor',
         'ativos_ia.ranking_valor', 'ativos_ia.situacao', 'ativos_ia.tipo_manutencao',
-        'ativos_ia.menos_retorno', 'ativos_ia.alertas',
+        'ativos_ia.menos_retorno', 'ativos_ia.alertas', 'ativos_ia.ocorrencias', 'ativos_ia.devolucoes',
     ];
 
     /** Cria (ou atualiza) o modelo da plataforma. Repetir nao duplica. */
