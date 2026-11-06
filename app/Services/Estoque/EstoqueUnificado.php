@@ -79,6 +79,7 @@ class EstoqueUnificado
             'categoria' => $categoria ?: 'Sem categoria', 'unidade' => $unidade ?: 'un',
             'quantidade' => $quantidade, 'minimo' => $minimo, 'custo' => $custo, 'valor' => round($quantidade * $custo, 2),
             'situacao' => $quantidade <= 0 ? 'zerado' : ($minimo > 0 && $quantidade < $minimo ? 'abaixo' : 'ok'),
+            'alocado' => ($alocado = array_sum(array_column($ends, 'quantidade'))), 'nao_alocado' => $ends === [] ? 0.0 : max(0.0, round($quantidade - $alocado, 3)),
             'enderecos' => array_column($ends, 'codigo'), 'unidades' => array_values(array_unique(array_column($ends, 'unidade'))),
             'corredores' => array_values(array_unique(array_column($ends, 'corredor'))), 'sem_endereco' => $ends === [],
         ];

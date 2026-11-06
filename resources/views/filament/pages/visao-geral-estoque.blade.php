@@ -106,7 +106,7 @@
                                             @elseif ($i['situacao'] === 'abaixo')<span class="odb-pill warn">abaixo do mínimo</span>
                                             @else<span class="odb-pill ok">normal</span>@endif
                                         </td>
-                                        <td>@if ($i['sem_endereco'])<span class="odb-pill warn">sem endereço</span>@else{{ implode(' | ', array_slice($i['enderecos'], 0, 2)) }}@if (count($i['enderecos']) > 2) <small>+{{ count($i['enderecos']) - 2 }}</small>@endif @endif</td>
+                                        <td>@if ($i['sem_endereco'])<span class="odb-pill warn">sem endereço</span>@else{{ implode(' | ', array_slice($i['enderecos'], 0, 2)) }}@if (count($i['enderecos']) > 2) <small>+{{ count($i['enderecos']) - 2 }}</small>@endif @if ($i['nao_alocado'] > 0.0005)<small style="color:var(--odb-warn)">{{ rtrim(rtrim(number_format($i['nao_alocado'], 3, ',', '.'), '0'), ',') }} {{ $i['unidade'] }} ainda sem endereço</small>@endif @endif</td>
                                         <td><a class="ve-btn" href="{{ \App\Filament\Pages\RastreioDoItemPage::getUrl(['item' => $i['tipo'].'|'.$i['id']]) }}">Rastrear</a></td>
                                     </tr>
                                 @endforeach
