@@ -26,6 +26,7 @@
         'Logística' => 'heroicon-o-truck',
         'Gestão de Frota' => 'heroicon-o-map',
         'Ativos' => 'heroicon-o-truck',
+        'Inteligência de Ativos' => 'heroicon-o-presentation-chart-line',
         'Materiais e Peças' => 'heroicon-o-cube',
         'Itens Agregados' => 'heroicon-o-link',
         'EPI' => 'heroicon-o-shield-check',
