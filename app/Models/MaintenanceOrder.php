@@ -5,10 +5,12 @@ namespace App\Models;
 use App\Models\Concerns\HasSaaSMetadata;
 use App\Models\Concerns\HasSignatures;
 use App\Models\Traits\BelongsToTenant;
+use App\Services\OsNumberGenerator;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -197,7 +199,7 @@ class MaintenanceOrder extends Model implements HasMedia
     }
 
     /** Tipos de ação realizados nesta OS (modo simples: a empresa marca o que foi feito). */
-    public function actionTypes(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function actionTypes(): BelongsToMany
     {
         return $this->belongsToMany(MaintenanceActionType::class, 'maintenance_order_action_type');
     }
@@ -310,25 +312,7 @@ class MaintenanceOrder extends Model implements HasMedia
     {
         static::creating(function (MaintenanceOrder $os) {
             if (empty($os->os_number)) {
-                $prefix = 'OS-'.now()->format('Ym').'-';
-
-                // Comparacao por string (ORDER BY os_number DESC) quebra quando
-                // sequencias de tamanhos diferentes coexistem na mesma tabela
-                // (ex: legado "0005" de 4 digitos vs "00006" de 5 digitos --
-                // "0005" > "00006" lexicograficamente mesmo sendo menor). Calcula
-                // o maximo de verdade em PHP a partir do sufixo numerico real.
-                $maxSequence = static::withoutGlobalScopes()
-                    ->where('os_number', 'like', $prefix.'%')
-                    ->pluck('os_number')
-                    ->map(function ($value) use ($prefix) {
-                        $suffix = substr((string) $value, strlen($prefix));
-
-                        return ctype_digit($suffix) ? (int) $suffix : 0;
-                    })
-                    ->max();
-
-                $nextSequence = $maxSequence ? $maxSequence + 1 : 10000;
-                $os->os_number = $prefix.str_pad((string) $nextSequence, 5, '0', STR_PAD_LEFT);
+                $os->os_number = app(OsNumberGenerator::class)->next($os->tenant_id ?? auth()->user()?->tenant_id);
             }
 
             $isUnderContract = Contract::where('asset_id', $os->asset_id)

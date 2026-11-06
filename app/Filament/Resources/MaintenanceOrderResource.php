@@ -188,6 +188,17 @@ class MaintenanceOrderResource extends Resource
     {
         return $form->schema([
             Forms\Components\Section::make('Ordem de serviço')->schema([
+                Forms\Components\TextInput::make('os_number')
+                ->label('Nº da O.S.')
+                ->placeholder('Automático')
+                ->helperText('Deixe em branco para numerar sozinho, ou digite o número (ex.: o da folha pré-numerada). Não pode repetir dentro da empresa.')
+                ->maxLength(40)
+                ->rules([fn (?MaintenanceOrder $record) => function (string $attribute, $value, \Closure $fail) use ($record) {
+                    if (filled($value) && app(\App\Services\OsNumberGenerator::class)->existe(\App\Support\Tenancy::current()?->id ?? auth()->user()?->tenant_id, trim($value), $record?->id)) {
+                        $fail('Já existe uma O.S. com este número na sua empresa.');
+                    }
+                }])
+                ->dehydrateStateUsing(fn ($state) => filled($state) ? trim($state) : null),
                 Forms\Components\Select::make('asset_id')->label('O que você está mantendo')->relationship('asset', 'name')->searchable()->preload()->required()
                     ->createOptionForm([
                         Forms\Components\TextInput::make('name')->label('Nome')->placeholder('Ex.: Carro do João, Casa da praia')->required()->maxLength(255),
@@ -227,6 +238,17 @@ class MaintenanceOrderResource extends Resource
 
                 // --- ABA 1: DADOS GERAIS ---
                 Forms\Components\Tabs\Tab::make('Dados Gerais')->schema([
+                    Forms\Components\TextInput::make('os_number')
+                    ->label('Nº da O.S.')
+                    ->placeholder('Automático')
+                    ->helperText('Deixe em branco para numerar sozinho, ou digite o número (ex.: o da folha pré-numerada). Não pode repetir dentro da empresa.')
+                    ->maxLength(40)
+                    ->rules([fn (?MaintenanceOrder $record) => function (string $attribute, $value, \Closure $fail) use ($record) {
+                        if (filled($value) && app(\App\Services\OsNumberGenerator::class)->existe(\App\Support\Tenancy::current()?->id ?? auth()->user()?->tenant_id, trim($value), $record?->id)) {
+                            $fail('Já existe uma O.S. com este número na sua empresa.');
+                        }
+                    }])
+                    ->dehydrateStateUsing(fn ($state) => filled($state) ? trim($state) : null),
                     // Teste pedido pelo usuario 29/09/2026: preencher a OS a partir
                     // da foto de uma OS em papel (de terceiros, layout variavel),
                     // via IA com visao (App\Services\OsPhotoOcrService). So' na

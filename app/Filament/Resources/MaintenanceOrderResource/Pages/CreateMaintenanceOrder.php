@@ -6,7 +6,6 @@ use App\Filament\Resources\MaintenanceOrderResource;
 use App\Filament\Resources\MaintenanceOrderResource\Concerns\CreatesDamageFromAvariaType;
 use App\Filament\Resources\MaintenanceOrderResource\Concerns\CreatesReplacementFromOsType;
 use App\Filament\Resources\MaintenanceOrderResource\Concerns\StoresPhotoEvidence;
-use App\Models\MaintenanceOrder;
 use App\Models\SolicitacaoLocacao;
 use App\Models\User;
 use App\Support\Tenancy;
@@ -27,19 +26,6 @@ class CreateMaintenanceOrder extends CreateRecord
      */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $prefix = 'OS-'.date('Ym').'-';
-
-        // Busca a última OS para incrementar o sequencial
-        $lastOrder = MaintenanceOrder::withoutGlobalScopes()
-            ->withTrashed()
-            ->where('os_number', 'like', $prefix.'%')
-            ->orderBy('os_number', 'desc')
-            ->first();
-
-        $nextNumber = $lastOrder ? intval(substr($lastOrder->os_number, -4)) + 1 : 1;
-
-        $data['os_number'] = $prefix.str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
-
         // Define o status inicial (Pendente conforme sua regra)
         $data['status'] = $data['status'] ?? 'Aberto';
 

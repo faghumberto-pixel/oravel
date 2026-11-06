@@ -55,6 +55,11 @@ class EditMaintenanceOrder extends EditRecord
      * quebrando linha sem nenhum criterio no celular -- ver reclamacao do
      * usuario sobre o layout mobile, 2026-07-14.
      */
+    public function getHeading(): string
+    {
+        return 'O.S. '.$this->record->os_number;
+    }
+
     protected function getHeaderActions(): array
     {
         return [

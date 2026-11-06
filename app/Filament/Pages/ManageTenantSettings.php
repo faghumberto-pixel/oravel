@@ -85,6 +85,8 @@ class ManageTenantSettings extends Page implements HasForms
         $this->form->fill([
             'logo_path' => $tenant?->logo_path,
             'segment' => $tenant?->segment,
+            'os_prefix' => $tenant?->os_prefix,
+            'os_next_number' => $tenant?->os_next_number,
             'auto_generate_patrimonio' => (bool) $tenant?->auto_generate_patrimonio,
             'targets' => array_merge(self::TARGET_DEFAULTS, array_intersect_key($targets, self::TARGET_DEFAULTS)),
             'ui_customizations' => array_keys(array_filter(array_merge(
@@ -134,6 +136,13 @@ class ManageTenantSettings extends Page implements HasForms
                         ])
                         ->native(false),
                 ]),
+
+            Section::make('Numeração das ordens de serviço')
+                ->description('Defina o prefixo e o próximo número da sua sequência (ex.: MNT- e 123 geram MNT-000123). Sem prefixo, o sistema usa o padrão OS-AAAAMM-NNNNN. O número nunca se repete dentro da empresa.')
+                ->schema([
+                    TextInput::make('os_prefix')->label('Prefixo')->maxLength(20)->placeholder('Ex.: MNT-'),
+                    TextInput::make('os_next_number')->label('Próximo número')->numeric()->minValue(1)->maxValue(999999)->placeholder('1'),
+                ])->columns(2),
 
             Section::make('Ativos')
                 ->schema([
@@ -185,6 +194,8 @@ class ManageTenantSettings extends Page implements HasForms
         $tenant->update([
             'logo_path' => $state['logo_path'] ?? null,
             'segment' => $state['segment'] ?? null,
+            'os_prefix' => filled($state['os_prefix'] ?? null) ? trim($state['os_prefix']) : null,
+            'os_next_number' => filled($state['os_next_number'] ?? null) ? (int) $state['os_next_number'] : null,
             'ui_customizations' => $uiCustomizations,
             'targets' => $targets,
             'auto_generate_patrimonio' => (bool) ($state['auto_generate_patrimonio'] ?? false),
