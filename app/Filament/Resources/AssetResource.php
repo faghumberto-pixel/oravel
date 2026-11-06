@@ -763,6 +763,7 @@ class AssetResource extends Resource
                                         'resumo' => $servico->resumo($record),
                                         'meses' => $servico->porMes($record),
                                         'ordens' => $servico->ordens($record),
+                                        'linha' => $servico->linhaDoTempo($record),
                                     ])->render());
                                 })
                                 ->columnSpanFull(),

@@ -29,6 +29,9 @@
         </div>
     </div>
 
+    {{-- Linha do tempo: locacoes e manutencao no mesmo eixo --}}
+    @include('filament.partials.asset-linha-do-tempo', ['linha' => $linha])
+
     {{-- Numeros --}}
     <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
         @foreach ([

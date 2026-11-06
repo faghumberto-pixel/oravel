@@ -119,4 +119,45 @@ class CustoEquipamentoAbaTest extends TestCase
         $this->assertSame(['PA-02'], $situacoes->filter(fn ($v) => $v === 'revisar')->keys()->all());
         $this->assertSame(21, $situacoes->filter(fn ($v) => $v === 'ok')->count());
     }
+
+    public function test_linha_do_tempo_posiciona_locacoes_e_ordens_e_calcula_o_retorno(): void
+    {
+        [$t, $a] = $this->cenario(['tabela_assets', CustoManutencaoService::FEATURE]);
+        DB::table('clients')->insert(['id' => $id = (string) Str::uuid(), 'tenant_id' => $t->id, 'name' => 'Cliente Linha', 'created_at' => now(), 'updated_at' => now()]);
+        $contrato = fn (string $numero, $de, $ate, string $status, float $preco) => DB::table('contracts')->insert([
+            'id' => (string) Str::uuid(), 'tenant_id' => $t->id, 'client_id' => $id, 'asset_id' => $a->id, 'contract_number' => $numero,
+            'start_date' => $de, 'end_date' => $ate, 'status' => $status, 'is_active' => $status === 'Ativo', 'price' => $preco, 'local_tipo' => 'outro',
+            'cidade_obra' => 'Campinas', 'created_at' => now(), 'updated_at' => now(),
+        ]);
+        $contrato('LT-ANTIGO', now()->subMonths(30), now()->subMonths(25), 'Encerrado', 5000); // fora da janela de 18 meses
+        $contrato('LT-ENCERRADO', now()->subMonths(10)->startOfDay(), now()->subMonths(6)->startOfDay(), 'Encerrado', 12000);
+        $contrato('LT-ATIVO', now()->subMonths(2)->startOfDay(), now()->addMonths(3)->startOfDay(), 'Ativo', 9000);
+        $this->os($t, $a, 'Preventiva', 100, 100, 0, now()->subMonths(8));
+        $this->os($t, $a, 'Emergência', 1000, 2000, 500, now()->subDays(10), true);
+
+        $linha = app(CustoManutencaoService::class)->linhaDoTempo($a, 18);
+
+        $this->assertCount(2, $linha['contratos'], 'o contrato fora da janela nao aparece');
+        $this->assertTrue(collect($linha['contratos'])->firstWhere('numero', 'LT-ATIVO')['ativo']);
+        $this->assertFalse(collect($linha['contratos'])->firstWhere('numero', 'LT-ENCERRADO')['ativo']);
+        foreach ($linha['contratos'] as $c) {
+            $this->assertGreaterThanOrEqual(0, $c['esq']);
+            $this->assertLessThanOrEqual(100.05, $c['esq'] + $c['larg']); // tolerancia de arredondamento
+        }
+        $this->assertCount(2, $linha['ordens']);
+        $grande = collect($linha['ordens'])->firstWhere('tipo', 'Emergência');
+        $pequena = collect($linha['ordens'])->firstWhere('tipo', 'Preventiva');
+        $this->assertGreaterThan($pequena['tamanho'], $grande['tamanho'], 'ponto maior = OS mais cara');
+        $this->assertTrue($grande['retrabalho']);
+        $this->assertGreaterThan($pequena['esq'], $grande['esq'], 'OS mais recente fica mais a direita');
+        $this->assertGreaterThan(0, $linha['taxa_locacao']);
+        $this->assertLessThan(100, $linha['taxa_locacao']);
+        $this->assertSame(26000.0, $linha['receita']);
+        $this->assertSame(3700.0, $linha['custo']); // 200 + 3.500
+        $this->assertSame(22300.0, $linha['saldo']);
+        $this->assertCount(18, $linha['eixo']);
+
+        Livewire::test(EditAsset::class, ['record' => $a->getRouteKey()])
+            ->assertSee('Linha do tempo')->assertSee('Cliente Linha')->assertSee('Receita menos manutenção');
+    }
 }

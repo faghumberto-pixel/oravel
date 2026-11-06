@@ -185,6 +185,75 @@ class CustoManutencaoService
         })->values();
     }
 
+    /**
+     * Linha do tempo do equipamento: locacoes (contratos) e ordens de servico no mesmo eixo de meses. Posicoes em
+     * percentual da largura (0 a 100) para o HTML desenhar sem biblioteca de grafico.
+     *
+     * @return array<string, mixed>
+     */
+    public function linhaDoTempo(Asset $asset, int $meses = 18): array
+    {
+        $inicio = Carbon::now()->startOfMonth()->subMonths($meses - 1);
+        $fim = Carbon::now()->endOfDay();
+        $dias = max(1, $inicio->diffInDays($fim));
+        $pos = fn (Carbon $d): float => round(max(0, min(100, $inicio->diffInDays($d, false) / $dias * 100)), 2);
+
+        $ordens = $this->carregar($asset)->filter(fn ($o) => $o['data']->gte($inicio))->values();
+        $maiorCusto = max(1.0, (float) $ordens->max('total'));
+
+        $diasLocado = 0;
+        $contratos = $asset->contracts()->with('client:id,name')->orderBy('start_date')
+            ->get(['id', 'client_id', 'contract_number', 'status', 'start_date', 'end_date', 'price', 'cidade_obra'])
+            ->map(function ($c) use ($inicio, $fim, $pos, &$diasLocado) {
+                $de = Carbon::parse($c->start_date)->startOfDay();
+                $ativo = $c->status === 'Ativo';
+                $ate = $c->end_date ? Carbon::parse($c->end_date)->endOfDay() : $fim->copy();
+                $ate = $ate->gt($fim) ? $fim->copy() : $ate;
+                if ($ate->lt($inicio) || $de->gt($fim)) {
+                    return null;
+                }
+                $de = $de->lt($inicio) ? $inicio->copy() : $de;
+                $diasLocado += max(0, $de->diffInDays($ate));
+                $esq = $pos($de);
+
+                return [
+                    'numero' => $c->contract_number,
+                    'cliente' => $c->client?->name ?? 'Cliente',
+                    'cidade' => $c->cidade_obra,
+                    'de' => Carbon::parse($c->start_date),
+                    'ate' => $c->end_date ? Carbon::parse($c->end_date) : null,
+                    'valor' => (float) $c->price,
+                    'ativo' => $ativo,
+                    'esq' => $esq,
+                    'larg' => max(0.8, round($pos($ate) - $esq, 2)),
+                ];
+            })->filter()->values();
+
+        $eixo = collect(range(0, $meses - 1))->map(function ($i) use ($inicio, $pos) {
+            $mes = $inicio->copy()->addMonths($i);
+
+            return ['rotulo' => self::MESES[$mes->month].'/'.$mes->format('y'), 'esq' => $pos($mes), 'mostrar' => $i % 2 === 0];
+        })->all();
+
+        $receita = (float) $asset->contracts()->sum('price');
+        $custo = (float) $this->carregar($asset)->sum('total');
+
+        return [
+            'meses' => $meses,
+            'contratos' => $contratos->all(),
+            'ordens' => $ordens->map(fn ($o) => [
+                'numero' => $o['numero'], 'tipo' => $o['tipo'], 'descricao' => $o['descricao'], 'data' => $o['data'], 'custo' => $o['total'],
+                'retrabalho' => $o['retrabalho'], 'esq' => $pos($o['data']),
+                'tamanho' => (int) round(10 + sqrt($o['total'] / $maiorCusto) * 18),
+            ])->all(),
+            'eixo' => $eixo,
+            'taxa_locacao' => (int) round(min(100, $diasLocado / $dias * 100)),
+            'receita' => round($receita, 2),
+            'custo' => round($custo, 2),
+            'saldo' => round($receita - $custo, 2),
+        ];
+    }
+
     /** Rotulos dos 12 meses da serie do ranking (do mais antigo ao atual), na mesma ordem de 'serie'. */
     public static function rotulosSerie(): array
     {
