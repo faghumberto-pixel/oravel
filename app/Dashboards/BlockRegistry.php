@@ -6,6 +6,7 @@ use App\Dashboards\Blocks\Ativos;
 use App\Dashboards\Blocks\Comercial;
 use App\Dashboards\Blocks\Financeiro;
 use App\Dashboards\Blocks\Frota;
+use App\Dashboards\Blocks\InteligenciaAtivos;
 use App\Dashboards\Blocks\Logistica;
 use App\Dashboards\Blocks\Manutencao;
 use App\Dashboards\Blocks\MateriaisPecas;
@@ -65,6 +66,17 @@ class BlockRegistry
             Financeiro\ReceitaPorCategoria::class,
             Financeiro\ProximosPagamentos::class,
 
+            InteligenciaAtivos\CustoDoPeriodo::class,
+            InteligenciaAtivos\TrocarOuVender::class,
+            InteligenciaAtivos\EmRevisao::class,
+            InteligenciaAtivos\Localizados::class,
+            InteligenciaAtivos\MapaDosEquipamentos::class,
+            InteligenciaAtivos\MapaDeCalorDoCusto::class,
+            InteligenciaAtivos\RankingDoCusto::class,
+            InteligenciaAtivos\SituacaoDaFrota::class,
+            InteligenciaAtivos\TipoDeManutencao::class,
+            InteligenciaAtivos\QuemDaMenosRetorno::class,
+            InteligenciaAtivos\AlertasDeAtivos::class,
             Frota\GastoComCombustivel::class,
             Frota\ConsumoMedio::class,
             Frota\MultasEmAberto::class,
