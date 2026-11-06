@@ -137,7 +137,7 @@
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_NAV_START) }}
 
-        {{-- "Início" e "Academia Oravel" rolam junto com os demais itens (sem faixa divisória nem fixação). --}}
+        {{-- "Início" e "Academia Oravel" rolam junto com os demais itens (sem faixa divisória nem fixação) e, como os demais, recolhem para só o ícone quando o menu é recolhido. --}}
         @if (filament()->getId() === 'admin')
             <ul class="fi-sidebar-nav-home -mx-2 flex flex-col gap-y-1">
             @if (\App\Filament\Pages\PainelGestao::canAccess())
@@ -146,7 +146,6 @@
                 icon="heroicon-o-home"
                 active-icon="heroicon-s-home"
                 :url="route('filament.admin.pages.painel-controle')"
-                :sidebar-collapsible="false"
             >
                 Início
             </x-filament-panels::sidebar.item>
@@ -156,7 +155,6 @@
                 :active="false"
                 icon="heroicon-o-academic-cap"
                 :url="url('/academia')"
-                :sidebar-collapsible="false"
             >
                 Academia Oravel
             </x-filament-panels::sidebar.item>
