@@ -1,0 +1,147 @@
+<?php
+
+namespace App\Services;
+
+use App\Filament\Resources\MaintenanceOrderResource;
+use App\Models\Asset;
+use App\Support\Tenancy;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
+
+/**
+ * Custo de manutencao por equipamento ao longo do tempo (Inteligencia de Ativos).
+ *
+ * Fonte unica: maintenance_orders.total_order_cost (mao de obra + material + logistica, ja mantido pelo
+ * sistema). O mes de cada custo e' o da conclusao da OS (ou da abertura, se ainda nao concluida). Usado pela aba
+ * "Custos e historico" do cadastro do equipamento e pela tela de ranking.
+ */
+class CustoManutencaoService
+{
+    /** Chave de contrato que libera as telas de custo (config/menu_modules.php). */
+    public const FEATURE = 'menu_custo_equipamentos';
+
+    private const MESES = [1 => 'jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+
+    public static function habilitado(): bool
+    {
+        $tenant = Tenancy::current();
+
+        return $tenant !== null && $tenant->hasFeature(self::FEATURE);
+    }
+
+    /** @return array<string, mixed> */
+    public function resumo(Asset $asset): array
+    {
+        $ordens = $this->carregar($asset);
+
+        $total = (float) $ordens->sum('total');
+        $valor = (float) ($asset->acquisition_value ?? 0);
+        $razao = $valor > 0 ? $total / $valor : null;
+
+        $janela = (int) config('custo_manutencao.janela_tendencia_meses', 6);
+        $corte = Carbon::now()->subMonths($janela);
+        $corteAnterior = Carbon::now()->subMonths($janela * 2);
+        $recentes = (float) $ordens->filter(fn ($o) => $o['data']->gte($corte))->sum('total');
+        $anteriores = (float) $ordens->filter(fn ($o) => $o['data']->gte($corteAnterior) && $o['data']->lt($corte))->sum('total');
+
+        return [
+            'total' => round($total, 2),
+            'mao_de_obra' => round((float) $ordens->sum('labor'), 2),
+            'material' => round((float) $ordens->sum('material'), 2),
+            'logistica' => round((float) $ordens->sum('logistics'), 2),
+            'os_total' => $ordens->count(),
+            'os_preventivas' => $ordens->where('tipo', 'Preventiva')->count(),
+            'os_corretivas' => $ordens->where('tipo', '!=', 'Preventiva')->count(),
+            'retrabalho' => $ordens->where('retrabalho', true)->count(),
+            'em_aberto' => $ordens->filter(fn ($o) => ! in_array($o['status'], ['Concluída', 'Completado', 'Cancelada'], true))->count(),
+            'custo_medio_os' => $ordens->count() ? round($total / $ordens->count(), 2) : 0.0,
+            'valor_aquisicao' => $valor,
+            'valor_atual' => (float) ($asset->getDepreciationData()['current_value'] ?? $valor),
+            'razao' => $razao,
+            'janela_meses' => $janela,
+            'custo_recente' => round($recentes, 2),
+            'custo_anterior' => round($anteriores, 2),
+            'variacao_tendencia' => $anteriores > 0 ? round(($recentes - $anteriores) / $anteriores * 100) : null,
+            'primeira_data' => $ordens->min('data'),
+            'ultima_data' => $ordens->max('data'),
+            'situacao' => self::situacao($razao),
+        ];
+    }
+
+    /**
+     * Sinalizacao por custo acumulado / valor de aquisicao (limiares em config/custo_manutencao.php).
+     *
+     * @return array{chave: string, rotulo: string, cor: string}
+     */
+    public static function situacao(?float $razao): array
+    {
+        if ($razao !== null && $razao >= (float) config('custo_manutencao.limiar_trocar_vender', 0.60)) {
+            return ['chave' => 'trocar_vender', 'rotulo' => 'Considerar trocar ou vender', 'cor' => 'red'];
+        }
+        if ($razao !== null && $razao >= (float) config('custo_manutencao.limiar_revisar', 0.40)) {
+            return ['chave' => 'revisar', 'rotulo' => 'Revisar', 'cor' => 'amber'];
+        }
+
+        return ['chave' => 'ok', 'rotulo' => $razao === null ? 'Sem valor de aquisição' : 'Custo sob controle', 'cor' => $razao === null ? 'gray' : 'emerald'];
+    }
+
+    /**
+     * Custo mes a mes dos ultimos $meses meses (incluindo o atual), com o acumulado desde o inicio do historico.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function porMes(Asset $asset, int $meses = 18): array
+    {
+        $ordens = $this->carregar($asset);
+        $inicio = Carbon::now()->startOfMonth()->subMonths($meses - 1);
+        $acumulado = (float) $ordens->filter(fn ($o) => $o['data']->lt($inicio))->sum('total');
+
+        $linhas = [];
+        for ($i = 0; $i < $meses; $i++) {
+            $mes = $inicio->copy()->addMonths($i);
+            $doMes = $ordens->filter(fn ($o) => $o['data']->isSameMonth($mes));
+            $totalMes = (float) $doMes->sum('total');
+            $acumulado += $totalMes;
+
+            $linhas[] = [
+                'mes' => $mes->format('Y-m'),
+                'rotulo' => self::MESES[$mes->month].'/'.$mes->format('y'),
+                'os' => $doMes->count(),
+                'mao_de_obra' => round((float) $doMes->sum('labor'), 2),
+                'material' => round((float) $doMes->sum('material'), 2),
+                'logistica' => round((float) $doMes->sum('logistics'), 2),
+                'total' => round($totalMes, 2),
+                'acumulado' => round($acumulado, 2),
+            ];
+        }
+
+        return $linhas;
+    }
+
+    /** OS do equipamento, da mais recente para a mais antiga. */
+    public function ordens(Asset $asset, int $limite = 100): Collection
+    {
+        return $this->carregar($asset)->sortByDesc('data')->take($limite)->values();
+    }
+
+    /** @return Collection<int, array<string, mixed>> */
+    private function carregar(Asset $asset): Collection
+    {
+        return $asset->maintenanceOrders()
+            ->get(['id', 'os_number', 'maintenance_type', 'description', 'status', 'is_rework', 'labor_cost', 'material_cost', 'logistics_cost', 'total_order_cost', 'created_at', 'finished_at'])
+            ->map(fn ($o) => [
+                'id' => $o->id,
+                'numero' => $o->os_number,
+                'tipo' => $o->maintenance_type ?: 'Corretiva',
+                'descricao' => $o->description,
+                'status' => $o->status,
+                'retrabalho' => (bool) $o->is_rework,
+                'labor' => (float) $o->labor_cost,
+                'material' => (float) $o->material_cost,
+                'logistics' => (float) $o->logistics_cost,
+                'total' => (float) $o->total_order_cost,
+                'data' => Carbon::parse($o->finished_at ?? $o->created_at),
+                'url' => MaintenanceOrderResource::getUrl('edit', ['record' => $o->id]),
+            ]);
+    }
+}

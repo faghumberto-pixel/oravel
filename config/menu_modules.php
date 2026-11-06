@@ -362,6 +362,23 @@ return [
         'herda' => ['__nunca__'],
     ],
 
+    // Inteligência de Ativos (custo e localização por equipamento): opcional por contrato, fora de qualquer pacote e
+    // desligado por padrão (herda __nunca__): a Central liga contrato a contrato. Mesmo grupo no menu lateral.
+    'menu_custo_equipamentos' => [
+        'label' => 'Tela: Inteligência de Ativos → Custo de Manutenção por Equipamento (inclui a aba "Custos e histórico" no cadastro do equipamento)',
+        'grupo' => 'Inteligência de Ativos',
+        'menu' => 'Custo de Manutenção',
+        'slug' => 'custo-manutencao-equipamentos',
+        'herda' => ['__nunca__'],
+    ],
+    'menu_localizacao_equipamentos' => [
+        'label' => 'Tela: Inteligência de Ativos → Localização dos Equipamentos (mapa com contrato ativo e rastreador)',
+        'grupo' => 'Inteligência de Ativos',
+        'menu' => 'Localização dos Equipamentos',
+        'slug' => 'localizacao-equipamentos',
+        'herda' => ['__nunca__'],
+    ],
+
     // Complementos vendidos à parte (não entram em nenhum pacote, nem no ERP Locadoras): nascem DESLIGADOS e a Central liga por contrato.
     'modulo_cobranca_automatica' => [
         'label' => 'Cobrança automática: boletos, Pix e cartão pelo Asaas do cliente, gerados a partir dos contratos',
