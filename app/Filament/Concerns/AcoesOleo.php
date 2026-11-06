@@ -36,7 +36,7 @@ trait AcoesOleo
             Forms\Components\TextInput::make('custo')->label('Custo (R$, opcional)')->numeric()->minValue(0)->prefix('R$'),
             Forms\Components\Select::make('peca_id')->label('Óleo no estoque (opcional)')->searchable()->native(false)->live()
                 ->options(fn () => EstoqueFrotaService::opcoesPecas())
-                ->helperText('Se escolher, os litros saem do almoxarifado.'),
+                ->helperText('Se escolher, os litros saem do almoxarifado e a troca aparece no rastreio do óleo. Se deixar em branco, nada baixa do estoque.'),
             Forms\Components\Select::make('almoxarifado_id')->label('Almoxarifado de onde saiu')->searchable()->native(false)
                 ->options(fn () => EstoqueFrotaService::opcoesAlmoxarifados())
                 ->default(fn () => EstoqueFrotaService::almoxarifadoDoUsuario())

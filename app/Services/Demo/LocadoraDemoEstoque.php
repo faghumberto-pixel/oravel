@@ -291,7 +291,7 @@ class LocadoraDemoEstoque
             $corredor = $corredorDoGrupo[$item['grupo']] ?? 'D';
             $local = $enderecos[$corredor][$cursor[$corredor]++ % count($enderecos[$corredor])];
             $divide = $item['tipo'] !== 'aggregate' && $item['qtd'] >= 2 && $i % 4 === 0;
-            $partes = $divide ? [round($item['qtd'] * 0.6, 3), round($item['qtd'] * 0.4, 3)] : [$item['qtd']];
+            $partes = $divide ? [floor($item['qtd'] * 0.6), $item['qtd'] - floor($item['qtd'] * 0.6)] : [$item['qtd']];
             foreach ($partes as $k => $q) {
                 $destino = $k === 0 ? $local : $enderecos[$corredor][$cursor[$corredor]++ % count($enderecos[$corredor])];
                 DB::table('stock_placements')->insertOrIgnore(['id' => (string) Str::uuid(), 'tenant_id' => $this->tenantId, 'stock_location_id' => $destino, 'item_type' => $item['tipo'], 'item_id' => $item['id'], 'quantity' => $q, 'created_at' => $this->agora, 'updated_at' => $this->agora]);

@@ -181,8 +181,35 @@ class RastreioDoItem
     {
         $nomes = [];
         $eventos = collect();
+        $movimentos = StockMovement::query()->where('part_id', $id)->get();
+        $trocas = FrotaTrocaOleo::query()->where('peca_id', $id)->with('veiculo:id,name,placa')->get();
+        $abastecimentos = FrotaAbastecimento::query()->where('peca_id', $id)->get();
 
-        foreach (StockMovement::query()->where('part_id', $id)->get() as $m) {
+        // Uso na frota que ja baixou o estoque (saida "exit_fleet" de mesma quantidade, na mesma hora) vira UM evento so':
+        // o uso, com o saldo e a pessoa do movimento. Sem movimento (ex.: registro antigo), o uso aparece sozinho.
+        $casados = [];
+        $casar = function (float $quantidade, $quando) use ($movimentos, &$casados) {
+            $m = $movimentos->first(fn ($m) => $m->movement_type === 'exit_fleet' && ! isset($casados[$m->id]) && abs((float) $m->quantity - $quantidade) < 0.001 && abs(Carbon::parse($m->created_at)->diffInMinutes(Carbon::parse($quando), false)) <= 10);
+            if ($m) {
+                $casados[$m->id] = true;
+            }
+
+            return $m;
+        };
+
+        foreach ($trocas as $t) {
+            $m = $casar((float) $t->litros, $t->realizado_em);
+            $eventos->push($this->evento(Carbon::parse($t->realizado_em), 'uso', 'Usado na frota — troca de óleo', ($t->veiculo?->name ?? 'Veículo').' ('.($t->veiculo?->placa ?? 'sem placa').') · '.$t->litros.' L · '.$t->produto, -abs((float) $t->litros), $m ? (float) $m->balance_after : null, $this->nomeDoUsuario($m?->created_by ?? $t->realizado_por, $nomes), 'n'));
+        }
+        foreach ($abastecimentos as $a) {
+            $m = $casar((float) $a->litros, $a->abastecido_em);
+            $eventos->push($this->evento(Carbon::parse($a->abastecido_em), 'uso', 'Usado na frota — abastecimento', $this->num($a->litros).' L · odômetro '.$a->odometro, -abs((float) $a->litros), $m ? (float) $m->balance_after : null, $this->nomeDoUsuario($m?->created_by ?? $a->registrado_por, $nomes), 'n'));
+        }
+
+        foreach ($movimentos as $m) {
+            if (isset($casados[$m->id])) {
+                continue;
+            }
             $entrada = str_starts_with((string) $m->movement_type, 'entry_') || $m->movement_type === 'transfer_in';
             $tipo = str_contains((string) $m->movement_type, 'adjustment') ? 'ajuste' : ($entrada ? 'entrada' : 'saida');
             $eventos->push($this->evento(
@@ -196,13 +223,6 @@ class RastreioDoItem
 
         foreach (MaintenanceOrderPart::query()->where('part_id', $id)->get() as $u) {
             $eventos->push($this->evento(Carbon::parse($u->created_at), 'uso', 'Usada em ordem de serviço', $this->os($u->maintenance_order_id).' · '.$this->num($u->quantity).' un', -abs((float) $u->quantity), null, null, 'n'));
-        }
-
-        foreach (FrotaTrocaOleo::query()->where('peca_id', $id)->with('veiculo:id,name,placa')->get() as $t) {
-            $eventos->push($this->evento(Carbon::parse($t->realizado_em), 'uso', 'Usado na frota — troca de óleo', ($t->veiculo?->name ?? 'Veículo').' ('.($t->veiculo?->placa ?? 'sem placa').') · '.$t->litros.' L · '.$t->produto, -abs((float) $t->litros), null, $this->nomeDoUsuario($t->realizado_por, $nomes), 'n'));
-        }
-        foreach (FrotaAbastecimento::query()->where('peca_id', $id)->get() as $a) {
-            $eventos->push($this->evento(Carbon::parse($a->abastecido_em), 'uso', 'Usado na frota — abastecimento', $this->num($a->litros).' L · odômetro '.$a->odometro, -abs((float) $a->litros), null, $this->nomeDoUsuario($a->registrado_por, $nomes), 'n'));
         }
 
         return $eventos;

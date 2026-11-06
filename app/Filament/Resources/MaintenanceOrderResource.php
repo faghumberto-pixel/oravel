@@ -816,6 +816,16 @@ class MaintenanceOrderResource extends Resource
                 // explicito do usuario ("acredito que isso pro tecnico nao
                 // deve ser permitido").
                 Forms\Components\Tabs\Tab::make('Custos')->schema([
+                    Forms\Components\Section::make('Deslocamento')
+                        ->description('Quanto o técnico rodou para atender esta O.S. Com o custo por km do veículo cadastrado, a logística é calculada sozinha.')
+                        ->schema([
+                            Forms\Components\Grid::make(2)->schema([
+                                Forms\Components\Select::make('transport_vehicle_id')->label('Veículo usado no deslocamento')
+                                    ->options(fn () => \App\Models\Asset::query()->where('is_vehicle', true)->orderBy('name')->get(['id', 'name', 'placa'])->mapWithKeys(fn ($v) => [$v->id => trim($v->name.' '.($v->placa ? '('.$v->placa.')' : ''))])->all())
+                                    ->searchable()->placeholder('Nenhum'),
+                                Forms\Components\TextInput::make('km_traveled')->label('Km percorridos')->numeric()->minValue(0)->suffix('km')->step(0.1),
+                            ]),
+                        ]),
                     Forms\Components\Section::make('Custos da O.S.')
                         ->schema([
                             Forms\Components\Grid::make(2)->schema([

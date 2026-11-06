@@ -84,7 +84,7 @@ class MaintenanceOrder extends Model implements HasMedia
         'last_timer_start', 'reschedule_reason', 'criticality_level_id', 'is_rework',
         'parent_os_id', 'labor_cost', 'material_cost', 'logistics_cost', 'total_order_cost',
         'horimetro_entry', 'fuel_level', 'scheduled_at',
-        'is_prazo_fatal', 'prazo_fatal_at', 'sla_target_minutes',
+        'is_prazo_fatal', 'prazo_fatal_at', 'sla_target_minutes', 'km_traveled', 'transport_vehicle_id',
     ];
 
     protected $casts = [
@@ -391,6 +391,15 @@ class MaintenanceOrder extends Model implements HasMedia
             // material_cost fica de fora do isDirty aqui de proposito: quem
             // recalcula ele e' o Observer acima, que ja chama update() com
             // os 2 campos juntos.
+            // Deslocamento: km percorrido x custo por km do veiculo usado vira o custo de logistica da OS (a nao ser que
+            // alguem tenha digitado a logistica na mesma gravacao). Sem custo por km no veiculo, o km fica so' registrado.
+            if ($os->km_traveled > 0 && $os->transport_vehicle_id && $os->isDirty(['km_traveled', 'transport_vehicle_id']) && ! $os->isDirty('logistics_cost')) {
+                $porKm = (float) Asset::withoutGlobalScopes()->whereKey($os->transport_vehicle_id)->value('cost_per_km');
+                if ($porKm > 0) {
+                    $os->logistics_cost = round((float) $os->km_traveled * $porKm, 2);
+                }
+            }
+
             if ($os->isDirty(['labor_cost', 'logistics_cost'])) {
                 $os->total_order_cost = (float) $os->labor_cost + (float) $os->material_cost + (float) $os->logistics_cost;
             }

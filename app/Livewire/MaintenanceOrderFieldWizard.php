@@ -60,6 +60,11 @@ class MaintenanceOrderFieldWizard extends Component
 
     public ?string $fuelLevel = null;
 
+    /** Deslocamento ate o atendimento (opcional): alimenta o card "Quilometros rodados" e o custo de logistica da O.S. */
+    public ?string $kmPercorrido = null;
+
+    public ?string $veiculoDeslocamento = null;
+
     // --- Etapa 2: checklist (compartilhado via trait) ---
     public ?string $expandedItemId = null;
 
@@ -122,6 +127,8 @@ class MaintenanceOrderFieldWizard extends Component
         $this->horimetroEntry = $maintenanceOrder->horimetro_entry !== null
             ? (string) $maintenanceOrder->horimetro_entry
             : null;
+        $this->kmPercorrido = $maintenanceOrder->km_traveled !== null && (float) $maintenanceOrder->km_traveled > 0 ? (string) (float) $maintenanceOrder->km_traveled : null;
+        $this->veiculoDeslocamento = $maintenanceOrder->transport_vehicle_id ? (string) $maintenanceOrder->transport_vehicle_id : null;
         $this->fuelLevel = $maintenanceOrder->fuel_level !== null
             ? (string) $maintenanceOrder->fuel_level
             : null;
@@ -400,7 +407,10 @@ class MaintenanceOrderFieldWizard extends Component
         $this->validate([
             'horimetroEntry' => ['required', 'numeric', 'min:0'],
             'fuelLevel' => ['nullable', 'in:0,25,50,75,100'],
+            'kmPercorrido' => ['nullable', 'numeric', 'min:0', 'max:5000'],
+            'veiculoDeslocamento' => ['nullable', 'uuid'],
         ], attributes: [
+            'kmPercorrido' => 'km percorridos',
             'horimetroEntry' => 'horímetro atual',
             'fuelLevel' => 'nível de combustível',
         ]);
@@ -410,6 +420,8 @@ class MaintenanceOrderFieldWizard extends Component
         $this->maintenanceOrder->update([
             'horimetro_entry' => $this->horimetroEntry,
             'fuel_level' => $this->fuelLevel,
+            'km_traveled' => filled($this->kmPercorrido) ? (float) $this->kmPercorrido : 0,
+            'transport_vehicle_id' => $this->veiculoDeslocamento ?: null,
         ]);
     }
 

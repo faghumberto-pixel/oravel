@@ -74,7 +74,7 @@ class ContagemEstoqueMobileTest extends TestCase
         $this->assertSame('Joana Contadora', $papel->counted_by_name);
         $this->assertCount(2, $papel->entries);
         $this->assertEquals(['celular', 'celular'], $papel->entries->pluck('source')->all());
-        $this->assertEquals([19.0, 18.5], $papel->entries->pluck('quantity')->map(fn ($q) => (float) $q)->all());
+        $this->assertEqualsCanonicalizing([19.0, 18.5], $papel->entries->pluck('quantity')->map(fn ($q) => (float) $q)->all()); // as duas ficam no historico
 
         $tela->assertSee('Contado por Joana Contadora');
     }

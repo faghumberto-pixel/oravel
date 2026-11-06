@@ -68,6 +68,28 @@
     @enderror
 </div>
 
+{{-- Deslocamento: opcional. O km alimenta o indicador de quilometros rodados e o custo de logistica da O.S. --}}
+<div class="rounded-xl bg-white px-4 py-4 border border-zinc-200 shadow-sm">
+    <label for="km" class="block text-[11px] font-bold tracking-widest text-zinc-600">DESLOCAMENTO ATÉ O ATENDIMENTO (OPCIONAL)</label>
+    <div class="mt-3 flex items-center gap-2">
+        <input id="km" type="number" step="0.1" min="0" inputmode="decimal" wire:model.blur="kmPercorrido" placeholder="Km rodados"
+               class="min-h-[3.25rem] min-w-0 flex-1 rounded-xl border-0 bg-zinc-100 px-4 text-lg font-bold text-zinc-900 placeholder:text-zinc-400 focus:ring-2 focus:ring-emerald-500">
+        <span class="text-sm font-bold text-zinc-500">km</span>
+    </div>
+    @php($veiculos = \App\Models\Asset::query()->where('is_vehicle', true)->orderBy('name')->get(['id', 'name', 'placa']))
+    @if($veiculos->isNotEmpty())
+        <select wire:model.blur="veiculoDeslocamento" class="mt-3 min-h-[3.25rem] w-full rounded-xl border-0 bg-zinc-100 px-4 text-base font-semibold text-zinc-900 focus:ring-2 focus:ring-emerald-500">
+            <option value="">Veículo usado (opcional)</option>
+            @foreach($veiculos as $v)
+                <option value="{{ $v->id }}">{{ $v->name }}@if($v->placa) · {{ $v->placa }}@endif</option>
+            @endforeach
+        </select>
+    @endif
+    @error('kmPercorrido')
+        <p class="mt-2 text-xs font-semibold text-red-600">{{ $message }}</p>
+    @enderror
+</div>
+
 {{-- Historico: contexto secundario, no fim da tela pra nao competir com a acao. --}}
 @if($this->recentOrders->isNotEmpty())
     <div class="rounded-xl bg-white px-4 py-4 border border-zinc-200 shadow-sm">

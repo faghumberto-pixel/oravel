@@ -90,7 +90,8 @@ class ContagemFisica
             throw new RuntimeException('Esta contagem já foi finalizada.');
         }
 
-        return DB::transaction(function () use ($contagem, $userId) {
+        // Os ajustes de estoque desta finalizacao nao mexem nos enderecos (a propria contagem grava o contado em cada um).
+        return EstoqueEnderecos::pausar(fn () => DB::transaction(function () use ($contagem, $userId) {
             $resumo = ['ajustados' => 0, 'divergentes' => 0, 'sem_contagem' => 0, 'informativos' => 0];
             $unidade = InternalUnit::findOrFail($contagem->internal_unit_id);
 
@@ -120,7 +121,7 @@ class ContagemFisica
             $contagem->update(['status' => StockCount::FINALIZADA, 'finished_at' => now()]);
 
             return $resumo;
-        });
+        }));
     }
 
     private function ajustarMaterial(StockCountItem $item, InternalUnit $unidade, float $dif, ?string $userId, StockCount $contagem): bool

@@ -138,6 +138,10 @@ class AppServiceProvider extends ServiceProvider
         // Select/CheckboxList por relationship validam o tenant no servidor (ver a classe).
         TenantScopedRelationshipRule::register();
 
+        // Estoque estruturado: o consumo/entrada/ajuste de um item tambem atualiza a quantidade do endereco (prateleira) onde ele esta.
+        \App\Models\MaterialStockMovement::created(fn (\App\Models\MaterialStockMovement $m) => app(\App\Services\Estoque\EstoqueEnderecos::class)->aoMovimentarMaterial($m));
+        \App\Models\StockMovement::created(fn (\App\Models\StockMovement $m) => app(\App\Services\Estoque\EstoqueEnderecos::class)->aoMovimentarPeca($m));
+
         // NFS-e automática: quando uma conta a receber vira "pago" (webhook, sincronização ou baixa manual) e a empresa ligou a emissão automática.
         AccountReceivable::updated(function (AccountReceivable $conta) {
             if ($conta->wasChanged('status') && $conta->status === 'pago') {
