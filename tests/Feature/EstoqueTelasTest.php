@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Central\Resources\ContratoResource;
 use App\Filament\Pages\RastreioDoItemPage;
 use App\Filament\Pages\VisaoGeralEstoque;
 use App\Filament\Resources\StockCountResource\Pages\CreateStockCount;
@@ -23,6 +24,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use App\Services\Estoque\EstoqueGrupos;
 use App\Services\Estoque\EstoqueQr;
+use App\Support\Pacotes;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Livewire\Livewire;
@@ -159,5 +161,15 @@ class EstoqueTelasTest extends TestCase
         Livewire::test(EditStockCount::class, ['record' => $contagem->id])->callAction('finalizar');
         $this->assertSame(StockCount::FINALIZADA, $contagem->fresh()->status);
         $this->assertEquals(2, $this->papel->fresh()->current_stock);
+    }
+
+    public function test_a_central_oferece_a_chave_do_estoque_estruturado_no_contrato(): void
+    {
+        $opcoes = ContratoResource::groupedFeatureOptions();
+        $grupo = collect($opcoes)->first(fn ($itens) => isset($itens['tabela_stock_structure']));
+
+        $this->assertNotNull($grupo, 'a chave tabela_stock_structure precisa aparecer em algum grupo do contrato');
+        $this->assertStringContainsString('Endereços do Almoxarifado', $grupo['tabela_stock_structure']);
+        $this->assertContains('tabela_stock_structure', Pacotes::features('locadora'));
     }
 }
