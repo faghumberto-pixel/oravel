@@ -3,16 +3,15 @@
 namespace App\Filament\Pages;
 
 use App\Models\MaintenanceOrder;
+use App\Models\SlaTimer;
+use App\Services\Sla\SlaService;
 use App\Support\Tenancy;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 
 /**
- * Chamados de Emergência (locadoras industrial/hospitalar) -- so' as O.S.
- * tipo TYPE_EMERGENCIA com sla_target_minutes preenchido, ordenadas pelas
- * mais criticas primeiro (mesma logica de cor de MaintenanceOrder::slaColor()).
- * Fecha em aberto: nao mostra concluida/cancelada, ja que o SLA de
- * "atendimento" para de contar quando o tecnico ja iniciou (started_at).
+ * Painel de SLA (F2): todas as O.S. com cronômetro aberto (Resposta, Atendimento, Resolução), das mais críticas para as menos,
+ * e os indicadores dos últimos 30 dias (% cumprido por relógio). Mantém a classe/rota/chave de menu do antigo painel de Emergência.
  */
 class PainelSlaEmergencia extends Page
 {
@@ -26,7 +25,7 @@ class PainelSlaEmergencia extends Page
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $title = 'Painel de SLA de Emergência';
+    protected static ?string $title = 'Painel de SLA';
 
     protected static string $view = 'filament.pages.painel-sla-emergencia';
 
@@ -43,38 +42,37 @@ class PainelSlaEmergencia extends Page
             return collect();
         }
 
+        $avisarEm = SlaService::settings((string) $tenant->id)->warn_pct;
+        $ordem = ['vencido' => 0, 'em_risco' => 1, 'no_prazo' => 2, 'pausado' => 3];
+
         return MaintenanceOrder::where('tenant_id', $tenant->id)
-            ->where('maintenance_type', MaintenanceOrder::TYPE_EMERGENCIA)
-            ->whereNotNull('sla_target_minutes')
-            ->whereNotIn('status', ['Concluída', 'Completado', 'Cancelada'])
-            ->with(['asset', 'client', 'technician'])
+            ->whereHas('slaTimers', fn ($q) => $q->whereNull('stopped_at'))
+            ->with(['asset', 'client', 'technician', 'slaTimers'])
             ->get()
-            ->map(fn (MaintenanceOrder $order) => [
-                'order' => $order,
-                'minutos_decorridos' => $order->started_at ? null : (int) $order->created_at->diffInMinutes(now()),
-                'cor' => $order->slaColor(),
-            ])
-            ->sortBy(fn ($linha) => match ($linha['cor']) {
-                'danger' => 0,
-                'warning' => 1,
-                'success' => 2,
-                default => 3,
+            ->map(function (MaintenanceOrder $order) use ($avisarEm, $ordem) {
+                $relogios = $order->slaTimers->filter(fn (SlaTimer $t) => $t->aberto())->map(function (SlaTimer $t) use ($avisarEm) {
+                    $estado = $t->estado($avisarEm);
+
+                    return ['label' => $t->label(), 'estado' => $estado, 'rotulo' => SlaTimer::rotuloDoEstado($estado), 'cor' => SlaTimer::corDoEstado($estado),
+                        'restante' => match ($estado) {
+                            'pausado' => null,
+                            'vencido' => 'há '.SlaService::formatarMinutos(abs($t->minutosRestantes())),
+                            default => SlaService::formatarMinutos($t->minutosRestantes()),
+                        }, 'meta' => SlaService::formatarMinutos($t->target_minutes)];
+                })->values();
+
+                $pior = $relogios->sortBy(fn ($r) => $ordem[$r['estado']] ?? 9)->first();
+
+                return ['order' => $order, 'relogios' => $relogios, 'pior' => $pior, 'rank' => $ordem[$pior['estado']] ?? 9];
             })
+            ->sortBy('rank')
             ->values();
     }
 
     public function getResumoProperty(): array
     {
-        $chamados = $this->chamados->where('cor', '!=', 'gray');
+        $tenant = Tenancy::current();
 
-        $total = $chamados->count();
-        $noPrazo = $chamados->where('cor', 'success')->count();
-        $vencidos = $chamados->where('cor', 'danger')->count();
-
-        return [
-            'total' => $total,
-            'no_prazo_pct' => $total > 0 ? round($noPrazo / $total * 100) : 0,
-            'vencidos_pct' => $total > 0 ? round($vencidos / $total * 100) : 0,
-        ];
+        return $tenant ? SlaService::resumo((string) $tenant->id) : ['relogios' => [], 'abertos' => []];
     }
 }
