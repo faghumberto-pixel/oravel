@@ -2,11 +2,11 @@
 
 namespace App\Observers;
 
-use App\Services\DestinatariosAvisos;
 use App\Models\Asset;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\CepGeocodingService;
+use App\Services\DestinatariosAvisos;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 
@@ -43,8 +43,9 @@ class AssetObserver
 
     public function updated(Asset $asset): void
     {
-        // Verifica se o status mudou para 'manutencao' E é criticidade 5
-        if ($asset->isDirty('status') && $asset->status === 'manutencao' && $asset->criticidade_peso === 5) {
+        // Verifica se o status mudou para 'manutencao' E o ativo e' critico (peso 5 legado OU nivel marcado
+        // como urgente no catalogo de criticidade -- criticidade_peso nunca passa de 1 em producao, entao so' ele nunca disparava).
+        if ($asset->isDirty('status') && $asset->status === 'manutencao' && $this->ativoCritico($asset)) {
 
             // Nao usar User::role('oficina') direto: Spatie resolve o papel
             // por nome globalmente (Role::findByName), ignorando tenant_id --
@@ -68,5 +69,10 @@ class AssetObserver
                     ->sendToDatabase($recipient);
             }
         }
+    }
+
+    private function ativoCritico(Asset $asset): bool
+    {
+        return $asset->criticidade_peso === 5 || (bool) $asset->currentCriticalityLevel()?->is_urgent;
     }
 }
