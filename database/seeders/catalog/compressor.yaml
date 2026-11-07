@@ -1,0 +1,72 @@
+# G1 -- grupo COMPRESSOR (exemplo completo do formato). TEMPLATE INICIAL, tudo editavel pelo tenant.
+# Intervalos de preventiva devem seguir o manual do fabricante. Itens marcados "validar" dependem de norma:
+# VALIDAR COM O RESPONSAVEL TECNICO antes de ligar a chave em cliente real (pendencia bloqueante).
+versao: 1
+
+grupo:
+  slug: compressor
+  nome: Compressor
+  descricao: "Compressores de ar (parafuso/pistao) com vaso de pressao"
+  medidor: horimetro
+  criticidade_padrao: media        # referencia inicial: media/alta (o tenant ajusta; o ativo pode sobrescrever, com log)
+  exige_operador: false
+  ordem: 20
+
+atributos:
+  - {slug: pressao-maxima, rotulo: "Pressao maxima",  tipo: numero,   unidade: bar, obrigatorio: true}
+  - {slug: vazao-pcm,      rotulo: "Vazao",           tipo: numero,   unidade: pcm, obrigatorio: true}
+  - {slug: tipo,           rotulo: "Tipo",            tipo: selecao,  obrigatorio: true,  opcoes: [parafuso, pistao]}
+  - {slug: acionamento,    rotulo: "Acionamento",     tipo: selecao,  obrigatorio: false, opcoes: [eletrico, diesel, outro]}
+
+requisitos:
+  # --- Documentos e inspecoes (vencido = Inapto) ---
+  - slug: inspecao-vaso-pressao
+    item: inspecao-vaso-pressao
+    efeito: INSP
+    norma: NR-13
+    validar_norma: true            # validar com o responsavel tecnico
+    parametros: {fonte_validade: nr13_inspection_periodicities}   # reaproveita a periodicidade NR-13 ja existente no sistema
+  - slug: prontuario
+    item: prontuario
+    efeito: DOC
+    norma: NR-13
+    validar_norma: true            # validar com o responsavel tecnico
+  - slug: teste-valvula-seguranca
+    item: teste-valvula-seguranca
+    efeito: INSP
+    norma: NR-13
+    validar_norma: true            # validar: periodicidade a definir pelo responsavel tecnico
+  - slug: calibracao-manometro
+    item: calibracao-manometro
+    efeito: INSP
+    norma: NR-13
+    validar_norma: true            # validar: periodicidade a definir pelo responsavel tecnico
+  # --- Checklist (IMP = reprovado e Inapto e gera OS; ALR = Apto com restricao) ---
+  - {slug: manometro,          item: manometro,          efeito: IMP, gera_os: true}
+  - {slug: valvula-seguranca,  item: valvula-seguranca,  efeito: IMP, gera_os: true}
+  - {slug: oleo,               item: oleo,               efeito: IMP, gera_os: true}
+  - {slug: dreno-reservatorio, item: dreno-reservatorio, efeito: IMP, gera_os: true}
+  - {slug: vazamentos-de-ar,   item: vazamentos,         efeito: ALR}
+  - {slug: mangueiras-engates, item: mangueiras-engates, efeito: ALR}
+
+preventivas:    # seguir o manual do fabricante
+  - {slug: revisao-500h,  nome: "Revisao 500 h",  medidor: horimetro, intervalo: 500}
+  - {slug: revisao-1000h, nome: "Revisao 1000 h", medidor: horimetro, intervalo: 1000}
+  - {slug: revisao-2000h, nome: "Revisao 2000 h", medidor: horimetro, intervalo: 2000}
+
+operadores: []   # compressor nao exige operador habilitado
+
+pecas_criticas: []   # o tenant vincula Materiais (a OS consome Material)
+
+sla:    # resposta conforme _vocabulario.yaml; resolucao a definir pelo tenant
+  - {slug: critica, criticidade: critica, resposta_min: 60,   calendario: 24x7}
+  - {slug: alta,    criticidade: alta,    resposta_min: 240,  calendario: comercial}
+  - {slug: media,   criticidade: media,   resposta_min: 480,  calendario: comercial}
+  - {slug: baixa,   criticidade: baixa,   resposta_min: 1440, calendario: comercial}
+
+regras:
+  - slug: nr13-vencida-inapto
+    nome: "NR-13 vencida = Inapto"
+    efeito: inapto
+    strategy: nr13                 # nao da para expressar so em dados: usa Nr13Inspection/Nr13InspectionPeriodicity
+    validar_norma: true            # validar com o responsavel tecnico

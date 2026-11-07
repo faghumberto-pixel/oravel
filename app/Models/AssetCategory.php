@@ -7,6 +7,7 @@ use App\Models\Concerns\HasSaaSMetadata;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class AssetCategory extends Model
@@ -15,6 +16,8 @@ class AssetCategory extends Model
     use BelongsToTenant;
     use HasSaaSMetadata;
     use HasUuids;
+    // G1: grupo arquivado (soft delete) some das listas mas continua valendo para o historico dos ativos.
+    use SoftDeletes;
 
     protected static ?string $saasFeatureKey = "tabela_asset_categories";
     protected static ?string $saasPermissionSlug = "categoria_ativo";
@@ -27,6 +30,15 @@ class AssetCategory extends Model
         'tenant_id',
         'name',
         'slug',
+        // G1 -- perfil do grupo e metadados do catalogo (is_active = "ativo")
+        'description', 'is_active', 'medidor', 'criticidade_padrao', 'exige_operador',
+        'origem', 'slug_template', 'versao_template', 'personalizado', 'ordem',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+        'exige_operador' => 'boolean',
+        'personalizado' => 'boolean',
     ];
 
     protected static function booted(): void

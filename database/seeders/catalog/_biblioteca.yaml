@@ -1,0 +1,22 @@
+# G1 -- biblioteca de itens reutilizaveis. Cada grupo referencia o item por slug e define o efeito (IMP/ALR...)
+# no proprio requisito, entao o mesmo item pode ser IMP num grupo e ALR em outro, sem duplicar.
+versao: 1
+
+itens:
+  # --- Checklist ---
+  - {slug: extintor,            tipo: checklist, nome: "Extintor"}
+  - {slug: freios,              tipo: checklist, nome: "Freios"}
+  - {slug: cinto,               tipo: checklist, nome: "Cinto de seguranca"}
+  - {slug: oleo,                tipo: checklist, nome: "Nivel/condicao do oleo"}
+  - {slug: vazamentos,          tipo: checklist, nome: "Vazamentos"}
+  - {slug: manometro,           tipo: checklist, nome: "Manometro"}
+  - {slug: valvula-seguranca,   tipo: checklist, nome: "Valvula de seguranca"}
+  - {slug: dreno-reservatorio,  tipo: checklist, nome: "Dreno do reservatorio"}
+  - {slug: mangueiras-engates,  tipo: checklist, nome: "Mangueiras e engates"}
+  # --- Documentos / inspecoes ---
+  - {slug: crlv,                      tipo: documento, nome: "CRLV / licenciamento"}
+  - {slug: seguro,                    tipo: documento, nome: "Seguro"}
+  - {slug: prontuario,                tipo: documento, nome: "Prontuario"}
+  - {slug: inspecao-vaso-pressao,     tipo: inspecao,  nome: "Inspecao de vaso de pressao"}
+  - {slug: teste-valvula-seguranca,   tipo: inspecao,  nome: "Teste da valvula de seguranca"}
+  - {slug: calibracao-manometro,      tipo: inspecao,  nome: "Calibracao do manometro"}

@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\CatalogoItem;
 use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Services\Catalogo\CatalogoInstalador;
 
 class TenantProvisioner
 {
@@ -51,6 +53,12 @@ class TenantProvisioner
         // Interface simples (Manutenção/Serviços...): categorias, tipos de ação e problemas comuns de exemplo, que a empresa edita.
         if ($tenant->interfaceSimples()) {
             \App\Support\CatalogosIniciais::garantir($tenant);
+        }
+
+        // G1: catalogo padrao de grupos de equipamento. So instala se o CONTRATO tiver a chave ligada (desligada por
+        // padrao) -- instalar cria categorias de ativo visiveis nas telas existentes, entao nao pode acontecer por padrao.
+        if ($tenant->plan?->hasFeature(CatalogoItem::FEATURE_KEY)) {
+            app(CatalogoInstalador::class)->instalar($tenant);
         }
 
         return $user;
