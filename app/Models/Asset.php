@@ -77,6 +77,11 @@ class Asset extends Model implements HasMedia
     protected $guarded = [];
 
     protected $casts = [
+        // G1: aptidao (cache do AssetFitnessService) e campos tecnicos do grupo
+        'aptidao_motivos' => 'array',
+        'aptidao_bloqueia_alocacao' => 'boolean',
+        'aptidao_calculada_em' => 'datetime',
+        'atributos_tecnicos' => 'array',
         'veiculo_pesado' => 'boolean',
         'licenciamento_vencimento' => 'date',
         'ipva_vencimento' => 'date',

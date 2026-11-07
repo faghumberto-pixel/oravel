@@ -48,3 +48,6 @@ Schedule::command('fiscal:avisar-certificados')->dailyAt('08:00')->withoutOverla
 Schedule::command('complementos:sincronizar')->dailyAt('07:00')->withoutOverlapping();
 // Limpeza semanal de notificações e registros automáticos antigos (domingo de madrugada).
 Schedule::command('registros:limpar')->weeklyOn(0, '04:00')->withoutOverlapping();
+
+// G1: vencimentos por data do catalogo de equipamentos (documento/inspecao/preventiva por dias). Tenants sem a chave ligada sao pulados.
+Schedule::job(new \App\Jobs\Aptidao\RecalcularAptidaoDiarioJob)->dailyAt('02:30')->withoutOverlapping();

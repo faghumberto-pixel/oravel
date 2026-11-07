@@ -20,3 +20,17 @@ As normas citadas nos YAML (NR-10/11/12/13/18/35, CTB/ANTT) são **hipóteses**.
 ## Testes
 `tests/Feature/G1CatalogoInstaladorTest.php` recusa rodar se o nome do banco não contiver "test" (o `config/database.php` fixa `pgsql`,
 então o sqlite do `phpunit.xml` NÃO vale). Rodar só em banco descartável: `DB_DATABASE=oravel_test_g1 php artisan test --filter=G1Catalogo`.
+
+## Fase 3 — Motor de aptidão (`AssetFitnessService`)
+- **Status:** `apto` / `apto_restricao` / `inapto` / `cadastro_incompleto` (ativo sem grupo ou com grupo arquivado). Cache em `assets.aptidao_*`.
+- **Evidências:** tabela `catalogo_cumprimentos` (documento, inspeção, checklist, acessório, preventiva) com **snapshot imutável** da regra da época
+  (`valido_ate` calculado uma vez, snapshot write-once) + NR-13 já existente (`Nr13Inspection`) + medidores `horimetro_atual`/`odometro_atual`.
+- **Evidência ausente ≠ vencida:** padrão = Apto com restrição (`parametros.sem_registro`: `inapto` | `restricao` | `ignorar`), para ligar a chave sem derrubar a frota.
+- **Preventiva:** em dia / até `tolerancia_pct` (padrão 10%, editável) acima do intervalo = restrição / acima = Inapto; dimensão por medidor e por dias (`primeiro` | `ambos`).
+- **Regras em dados:** condições `sem_cumprimento` e `atributo_vazio`; efeitos `restricao`, `inapto`, `bloqueia_alocacao` (flag, sem mudar o status). Strategy `nr13`.
+- **Gatilhos** (só com a chave do contrato ligada; senão custam uma consulta): ativo criado/trocou de grupo/horímetro/km/atributos, leitura de horímetro e odômetro,
+  mudança de status da OS, checklist de frota concluído, NR-13, documento do ativo, cumprimento. **Job diário** 02:30 (`aptidao:recalcular` para rodar manual).
+  Mudou a regra do grupo → recálculo do grupo em fila. **Prévia de impacto** na tela de edição do grupo (nada é salvo).
+- **Fora desta fase (fases 4–7):** formulário de campos técnicos no cadastro do ativo, operador, peças críticas, sobrescrita por modelo/ativo,
+  liberação excepcional, bloqueio de despacho, OS automática em IMP reprovado, SLA por grupo. Nesta fase `os_a_gerar` só é calculado.
+- Em PROD a fila é `sync` (sem worker): os jobs rodam inline; o recálculo de um grupo grande acontece dentro da requisição de salvar.
