@@ -110,7 +110,7 @@ class TechnicianDailyTasks extends Page
     public string $filterCEP = ''; // CEP para filtrar por localização
 
     #[Url]
-    public string $sortBy = 'criticality'; // 'criticality' | 'cep' | 'created_at'
+    public string $sortBy = 'criticality'; // 'criticality' | 'cep' | 'created_at' | 'sla'
 
     #[Url]
     public string $search = ''; // busca livre por patrimônio/nome do ativo
@@ -134,7 +134,7 @@ class TechnicianDailyTasks extends Page
             ->where('technician_id', $userId)
             ->where('tenant_id', Auth::user()->tenant_id)
             ->whereNotIn('status', ['Concluída', 'Cancelada'])
-            ->with(['asset', 'asset.abcMatrix'])
+            ->with(['asset', 'asset.abcMatrix', 'slaTimers'])
             ->get()
             ->map(fn (MaintenanceOrder $order) => [
                 'id' => $order->id,
@@ -151,6 +151,7 @@ class TechnicianDailyTasks extends Page
                 'maintenance_type' => $order->maintenance_type,
                 'sla_target_minutes' => $order->sla_target_minutes,
                 'sla_color' => $order->slaColor(),
+                'sla' => \App\Services\Sla\SlaService::resumoDaOs($order),
                 'replacement_status' => $order->equipmentReplacements?->first()?->status,
                 'url' => route('maintenance-orders.field-wizard', $order),
             ]);
@@ -235,6 +236,8 @@ class TechnicianDailyTasks extends Page
         $tasks = match ($this->sortBy) {
             'cep' => $tasks->sortBy(fn ($t) => $t['cep'] ?? '~'),
             'created_at' => $tasks->sortByDesc('created_at'),
+            // F3: prazo de SLA mais proximo primeiro (quem nao tem SLA vai para o fim)
+            'sla' => $tasks->sortBy(fn ($t) => ($t['sla']['prazo'] ?? null)?->getTimestamp() ?? PHP_INT_MAX),
             'criticality' => $tasks->sortBy(fn ($t) => ['A' => 1, 'B' => 2, 'C' => 3][$t['criticality']] ?? 4),
             default => $tasks->sortBy(fn ($t) => ['A' => 1, 'B' => 2, 'C' => 3][$t['criticality']] ?? 4)->sortBy(fn ($t) => $t['cep'] ?? '~'),
         };

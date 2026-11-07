@@ -33,6 +33,10 @@
                             class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95 {{ $filterCriticality === 'B' ? 'bg-amber-500 text-white' : 'bg-zinc-200 text-zinc-700' }}">
                         🟡 Média
                     </button>
+                    <button wire:click="$set('sortBy', '{{ $sortBy === 'sla' ? 'criticality' : 'sla' }}')"
+                            class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95 {{ $sortBy === 'sla' ? 'bg-zinc-900 text-white' : 'bg-zinc-200 text-zinc-700' }}">
+                        ⏱ Por prazo
+                    </button>
                     <button wire:click="$set('filterNature', '{{ $filterNature === 'external' ? '' : 'external' }}')"
                             class="shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition active:scale-95 {{ $filterNature === 'external' ? 'bg-purple-600 text-white' : 'bg-zinc-200 text-zinc-700' }}">
                         🌐 Cliente
@@ -140,12 +144,19 @@
                         @endif
                     </div>
 
-                    {{-- SLA --}}
-                    @if ($task['sla_target_minutes'])
-                        @php
-                            $minutesElapsed = (int) $task['created_at']->diffInMinutes(now());
-                            $minutesRemaining = $task['sla_target_minutes'] - $minutesElapsed;
-                        @endphp
+                    {{-- SLA (F3): pior relógio aberto da OS --}}
+                    @if (! empty($task['sla']))
+                        @if ($task['sla']['estado'] === 'vencido')
+                            <div class="rounded-lg bg-red-50 px-3 py-2 text-sm font-bold text-red-700">⚠️ {{ $task['sla']['texto'] }}</div>
+                        @elseif ($task['sla']['estado'] === 'em_risco')
+                            <div class="rounded-lg bg-amber-50 px-3 py-2 text-sm font-bold text-amber-800">⏱ {{ $task['sla']['texto'] }}</div>
+                        @elseif ($task['sla']['estado'] === 'pausado')
+                            <div class="rounded-lg bg-zinc-100 px-3 py-2 text-sm font-semibold text-zinc-600">⏸ {{ $task['sla']['texto'] }}</div>
+                        @else
+                            <div class="rounded-lg bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">⏱ {{ $task['sla']['texto'] }}</div>
+                        @endif
+                    @elseif ($task['sla_target_minutes'])
+                        @php $minutesRemaining = $task['sla_target_minutes'] - (int) $task['created_at']->diffInMinutes(now()); @endphp
                         @if ($minutesRemaining <= 0)
                             <div class="rounded-lg bg-red-50 px-3 py-2 text-sm font-bold text-red-700">⚠️ SLA EXPIRADO</div>
                         @elseif ($minutesRemaining <= 60)

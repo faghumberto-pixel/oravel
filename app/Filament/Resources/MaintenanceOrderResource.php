@@ -185,26 +185,9 @@ class MaintenanceOrderResource extends Resource
      */
     public static function slaResumo(MaintenanceOrder $os): ?array
     {
-        $abertos = $os->slaTimers->filter(fn (\App\Models\SlaTimer $t) => $t->aberto());
+        $r = \App\Services\Sla\SlaService::resumoDaOs($os);
 
-        if ($abertos->isEmpty()) {
-            return null;
-        }
-
-        $avisarEm = \App\Services\Sla\SlaService::settings((string) $os->tenant_id)->warn_pct;
-        $ordem = ['vencido' => 0, 'em_risco' => 1, 'no_prazo' => 2, 'pausado' => 3];
-        $pior = $abertos->sortBy(fn ($t) => [$ordem[$t->estado($avisarEm)] ?? 9, $t->prazoEfetivo()->getTimestamp()])->first();
-        $estado = $pior->estado($avisarEm);
-        $restante = $pior->minutosRestantes();
-        $fmt = \App\Services\Sla\SlaService::class;
-
-        $texto = match ($estado) {
-            'vencido' => $pior->label().' · vencido há '.$fmt::formatarMinutos(abs($restante)),
-            'pausado' => $pior->label().' · pausado',
-            default => $pior->label().' · '.$fmt::formatarMinutos($restante).' restantes',
-        };
-
-        return ['texto' => $texto, 'cor' => \App\Models\SlaTimer::corDoEstado($estado)];
+        return $r ? ['texto' => $r['texto'], 'cor' => $r['cor']] : null;
     }
 
     /** Formulário da ação "Alterar prioridade" (F1): usado pela ação da tabela e pela da tela de edição. */

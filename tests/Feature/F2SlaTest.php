@@ -236,7 +236,7 @@ class F2SlaTest extends TestCase
             ->fillForm(['priority_code' => 'media', 'maintenance_type' => null, 'resolution_minutes' => 2880, 'is_active' => true])
             ->call('create')->assertHasNoFormErrors();
 
-        Livewire::test(ListSlaPolicies::class)->assertSee('48h')->callAction('configurar', ['pause_statuses' => ['aguardando_peca'], 'warn_pct' => 80]);
+        Livewire::test(ListSlaPolicies::class)->assertSee('48h')->callAction('configurar', ['pause_statuses' => ['aguardando_peca'], 'warn_pct' => 80, 'escalate_pct' => 150]);
         SlaService::esquecer();
         $this->assertSame(80, SlaService::settings((string) $this->tenant->id)->warn_pct);
 

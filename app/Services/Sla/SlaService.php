@@ -21,6 +21,8 @@ class SlaService
 {
     public const WARN_PADRAO = 70;
 
+    public const ESCALONAR_PADRAO = 150;
+
     public const PAUSA_PADRAO = ['aguardando_peca', 'aguardando_peca_canibalizado'];
 
     public const STATUS_PAUSA_OPCOES = [
@@ -41,12 +43,12 @@ class SlaService
     public static function settings(string $tenantId): SlaSetting
     {
         return self::$settings[$tenantId] ??= SlaSetting::withoutGlobalScopes()->where('tenant_id', $tenantId)->first()
-            ?? new SlaSetting(['tenant_id' => $tenantId, 'pause_statuses' => self::PAUSA_PADRAO, 'warn_pct' => self::WARN_PADRAO]);
+            ?? new SlaSetting(['tenant_id' => $tenantId, 'pause_statuses' => self::PAUSA_PADRAO, 'warn_pct' => self::WARN_PADRAO, 'escalate_pct' => self::ESCALONAR_PADRAO]);
     }
 
-    public static function salvarSettings(string $tenantId, array $statusQuePausam, int $avisarEm): void
+    public static function salvarSettings(string $tenantId, array $statusQuePausam, int $avisarEm, int $escalonarEm = self::ESCALONAR_PADRAO): void
     {
-        SlaSetting::withoutGlobalScopes()->updateOrCreate(['tenant_id' => $tenantId], ['pause_statuses' => array_values($statusQuePausam), 'warn_pct' => $avisarEm]);
+        SlaSetting::withoutGlobalScopes()->updateOrCreate(['tenant_id' => $tenantId], ['pause_statuses' => array_values($statusQuePausam), 'warn_pct' => $avisarEm, 'escalate_pct' => $escalonarEm]);
         unset(self::$settings[$tenantId]);
     }
 
@@ -150,7 +152,7 @@ class SlaService
             }
 
             if (isset($minutos[$relogio])) {
-                $t->update(['policy_id' => $politica->id, 'target_minutes' => $minutos[$relogio], 'due_at' => self::prazo($t->started_at, $minutos[$relogio], $t->paused_seconds)]);
+                $t->update(['policy_id' => $politica->id, 'target_minutes' => $minutos[$relogio], 'due_at' => self::prazo($t->started_at, $minutos[$relogio], $t->paused_seconds), 'warned_at' => null, 'breached_at' => null, 'escalated_at' => null]);
             } else {
                 $t->delete();
             }
@@ -163,6 +165,34 @@ class SlaService
         }
 
         self::avancar($os->refresh());
+    }
+
+    /**
+     * Pior cronometro aberto da OS (vencido > em risco > no prazo > pausado) para telas e apps; nulo se nao ha cronometro aberto.
+     *
+     * @return array{texto: string, cor: string, estado: string, relogio: string, minutos: int, prazo: CarbonInterface}|null
+     */
+    public static function resumoDaOs(MaintenanceOrder $os): ?array
+    {
+        $abertos = $os->slaTimers->filter(fn (SlaTimer $t) => $t->aberto());
+
+        if ($abertos->isEmpty()) {
+            return null;
+        }
+
+        $avisarEm = self::settings((string) $os->tenant_id)->warn_pct;
+        $ordem = ['vencido' => 0, 'em_risco' => 1, 'no_prazo' => 2, 'pausado' => 3];
+        $pior = $abertos->sortBy(fn (SlaTimer $t) => [$ordem[$t->estado($avisarEm)] ?? 9, $t->prazoEfetivo()->getTimestamp()])->first();
+        $estado = $pior->estado($avisarEm);
+        $restante = $pior->minutosRestantes();
+
+        $texto = match ($estado) {
+            'vencido' => $pior->label().' · vencido há '.self::formatarMinutos(abs($restante)),
+            'pausado' => $pior->label().' · pausado',
+            default => $pior->label().' · '.self::formatarMinutos($restante).' restantes',
+        };
+
+        return ['texto' => $texto, 'cor' => SlaTimer::corDoEstado($estado), 'estado' => $estado, 'relogio' => $pior->label(), 'minutos' => $restante, 'prazo' => $pior->prazoEfetivo()];
     }
 
     /** @return Collection<string, SlaTimer> indexado pelo relogio */

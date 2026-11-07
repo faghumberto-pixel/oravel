@@ -12,10 +12,11 @@ class SlaSetting extends Model
     use BelongsToTenant;
     use HasUuids;
 
-    protected $fillable = ['tenant_id', 'pause_statuses', 'warn_pct'];
+    protected $fillable = ['tenant_id', 'pause_statuses', 'warn_pct', 'escalate_pct'];
 
     protected $casts = [
         'pause_statuses' => 'array',
         'warn_pct' => 'integer',
+        'escalate_pct' => 'integer',
     ];
 }
