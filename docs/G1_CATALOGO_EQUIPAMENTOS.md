@@ -59,3 +59,14 @@ então o sqlite do `phpunit.xml` NÃO vale). Rodar só em banco descartável: `D
   aprova o item**: o ativo segue Inapto até um novo checklist OK (reinspeção). Falha ao abrir a OS é logada e nunca derruba o registro do checklist.
 - **Campo**: `Checklist do equipamento` (`/admin/checklist-aptidao`, atalho em `config/campo.php`): só itens IMP/ALR do grupo do ativo. Documentos e inspeções (validade/anexo) ficam na tela de gestão.
 - **Painéis**: aptidão por grupo (tabela) e principais motivos de Inapto/restrição. Aba do ativo ganha "Liberar excepcionalmente" e "Revogar liberação".
+
+## Fase 6 — Atualização de template (diff item a item) e "restaurar padrão"
+- **Tela** Manutenção > Cadastros > "Atualizações do catálogo" (e botão com a contagem na lista de grupos). O diff é calculado na hora (template × catálogo do tenant); nada é aplicado sem confirmação.
+- **Classificação por item:** `novo` (item/atributo/etc. que não existe no tenant), `grupo_novo`, `atualizar` (difere do padrão e **não** é personalizado), `personalizado` (difere e o tenant mexeu: **nunca** é alterado por aceite,
+  só informado, com "Restaurar ao padrão"), `arquivado` (o que o tenant arquivou **não volta sozinho**), `removido_do_padrao` (saiu do template: **não é apagado** do tenant), `conflito` (categoria do tenant com o mesmo slug).
+  `ordem` é cosmética (o tenant reordena) e não conta como diferença.
+- **Aceitar** (item a item, atômico): edição sensível (IMP/DOC/INSP rebaixado, intervalo ampliado, obrigatório removido/desativado) exige justificativa e vai ao log (antes/depois/aviso do responsável técnico).
+  **Ignorar**: mantém a versão do tenant (vira personalizado) e para de oferecer. **Restaurar padrão** (item ou grupo inteiro): sobrescreve a personalização, **sempre** com justificativa e log; reativa o que estava arquivado/desativado;
+  itens que o tenant criou ficam intactos; a ordem escolhida é preservada.
+- **Prévia de impacto** na aptidão: simula o aceite/restauração dentro de uma transação **desfeita** (nada é gravado nem logado). Depois de aceitar/restaurar, a aptidão do grupo é recalculada em fila.
+- O mapeamento YAML → campos agora é único (`CatalogoTemplate`): instalador e diff não divergem. A coluna `catalogo_instalacoes.diff_pendente` segue reservada e sem uso (o diff é calculado sob demanda).

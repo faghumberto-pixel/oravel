@@ -7,6 +7,7 @@ use App\Models\AssetCategory;
 use App\Models\CatalogoItem;
 use App\Models\Material;
 use App\Services\Catalogo\CatalogoGestao;
+use App\Services\Catalogo\CatalogoTemplateService;
 use App\Support\CatalogoAcesso;
 use App\Support\Tenancy;
 use Filament\Forms;
@@ -251,6 +252,20 @@ class CatalogoGrupoResource extends Resource
                             return;
                         }
                         Notification::make()->success()->title('Grupo arquivado.')->send();
+                    }),
+                Tables\Actions\Action::make('restaurar_padrao')->label('Restaurar padrão')->icon('heroicon-o-arrow-uturn-left')->color('warning')
+                    ->visible(fn (AssetCategory $r) => CatalogoAcesso::podeGerenciar() && ! $r->trashed() && filled($r->slug_template))
+                    ->modalDescription('Volta o perfil deste grupo e todos os itens que vieram do padrão (inclusive os que você arquivou ou personalizou) para a versão do padrão. Itens que você criou ficam como estão. Fica registrado em log.')
+                    ->form([Forms\Components\Textarea::make('justificativa')->label('Justificativa')->required()->minLength(5)->rows(2)])
+                    ->action(function (AssetCategory $record, array $data) {
+                        try {
+                            $r = app(CatalogoTemplateService::class)->restaurarGrupo(Tenancy::current(), $record, $data['justificativa'], auth()->user());
+                        } catch (ValidationException $e) {
+                            Notification::make()->danger()->title('Não foi possível restaurar')->body(collect($e->errors())->flatten()->first())->persistent()->send();
+
+                            return;
+                        }
+                        Notification::make()->success()->title($r['aplicadas'] ? "{$r['aplicadas']} item(ns) restaurado(s) ao padrão." : 'O grupo já está igual ao padrão.')->send();
                     }),
                 Tables\Actions\Action::make('restaurar')->label('Restaurar')->icon('heroicon-o-arrow-uturn-left')
                     ->visible(fn (AssetCategory $r) => CatalogoAcesso::podeGerenciar() && $r->trashed())
