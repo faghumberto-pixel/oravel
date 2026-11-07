@@ -18,6 +18,8 @@ use App\Services\Sla\SlaService;
 use Carbon\Carbon;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -200,6 +202,24 @@ class F2SlaTest extends TestCase
 
         $this->artisan('sla:migrar-legado', ['--apply' => true])->assertSuccessful();
         $this->assertSame(1, SlaTimer::withoutGlobalScopes()->where('subject_id', $os->id)->count());
+    }
+
+    public function test_comando_legado_ignora_os_de_empresa_inexistente_sem_abortar(): void
+    {
+        $boa = $this->os(['priority' => 'media']);
+        $boa->update(['sla_target_minutes' => 90]);
+        SlaTimer::withoutGlobalScopes()->where('subject_id', $boa->id)->delete();
+
+        DB::table('maintenance_orders')->insert([
+            'id' => (string) Str::uuid7(), 'tenant_id' => (string) Str::uuid7(), 'os_number' => 'ORFA-1',
+            'asset_id' => $boa->asset_id, 'description' => 'orfa', 'maintenance_type' => 'Corretiva', 'status' => 'Pendente', 'priority' => 'media',
+            'sla_target_minutes' => 60, 'created_at' => now(), 'updated_at' => now(),
+        ]);
+
+        $this->artisan('sla:migrar-legado', ['--apply' => true])->expectsOutputToContain('ignorada')->assertSuccessful();
+
+        $this->assertSame(90, $this->timer($boa, 'service')->target_minutes);
+        $this->assertSame(1, SlaTimer::withoutGlobalScopes()->where('subject_type', MaintenanceOrder::class)->count());
     }
 
     public function test_resumo_calcula_percentual_cumprido_e_abertos_por_estado(): void
