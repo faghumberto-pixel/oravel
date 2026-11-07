@@ -9,7 +9,10 @@ use App\Filament\Pages\VisaoGeralEstoque;
 use App\Filament\Resources\StockCountResource\Pages\CreateStockCount;
 use App\Filament\Resources\StockCountResource\Pages\EditStockCount;
 use App\Filament\Resources\StockCountResource\RelationManagers\ItemsRelationManager;
+use App\Filament\Resources\StockLocationResource;
 use App\Filament\Resources\StockLocationResource\Pages\ListStockLocations;
+use App\Filament\Resources\StockLocationResource\Pages\ViewStockLocation;
+use App\Filament\Resources\StockLocationResource\RelationManagers\PlacementsRelationManager;
 use App\Models\AggregateItem;
 use App\Models\AggregateItemType;
 use App\Models\InternalUnit;
@@ -109,8 +112,36 @@ class EstoqueTelasTest extends TestCase
 
         $this->get($link)->assertRedirect(RastreioDoItemPage::getUrl(['item' => 'material|'.$this->papel->id]));
         $endereco = StockLocation::first();
-        $this->get($qr->link('endereco', (string) $endereco->id))->assertRedirect();
+        $this->get($qr->link('endereco', (string) $endereco->id))->assertRedirect(StockLocationResource::getUrl('view', ['record' => $endereco->id]));
         $this->get('/admin/estoque/qr/foo/'.$this->papel->id)->assertNotFound();
+    }
+
+    public function test_qr_do_endereco_abre_consulta_somente_leitura_com_os_itens_sem_editar_nem_excluir(): void
+    {
+        $endereco = StockLocation::first();
+
+        $pagina = $this->get(StockLocationResource::getUrl('view', ['record' => $endereco->id]))->assertOk();
+        $pagina->assertSee('C-A · P-01 · N-2')->assertDontSee('Excluir');
+
+        Livewire::test(ViewStockLocation::class, ['record' => $endereco->id])->assertSee('Editar endereço')->assertDontSee('Excluir');
+
+        Livewire::test(PlacementsRelationManager::class, ['ownerRecord' => $endereco, 'pageClass' => ViewStockLocation::class])
+            ->assertSee('Papel A4')
+            ->assertDontSee('Colocar item neste endereço')
+            ->assertTableActionHidden('edit', $endereco->placements()->first())
+            ->assertTableActionHidden('delete', $endereco->placements()->first());
+    }
+
+    public function test_folha_de_conferencia_traz_resumo_empilhado_para_o_celular(): void
+    {
+        Livewire::test(CreateStockCount::class)->fillForm(['name' => 'Inventário celular', 'internal_unit_id' => $this->unidade->id])->call('create');
+        $contagem = StockCount::where('name', 'Inventário celular')->firstOrFail();
+        $item = $contagem->items()->first();
+        $tabela = Livewire::test(ItemsRelationManager::class, ['ownerRecord' => $contagem, 'pageClass' => EditStockCount::class]);
+        $tabela->assertSee('Não contado')->assertSee('Sistema: 3');
+
+        $tabela->callTableAction('contar', $item, ['quantidade' => 2]);
+        $tabela->assertSee('Contado: <strong>2</strong>', false)->assertSee('diferença -1')->assertSee('Ana Estoquista')->assertSee($item->fresh()->counted_at->format('d/m/Y H:i'));
     }
 
     public function test_etiquetas_saem_com_qr_e_item_agregado_vira_uma_etiqueta_por_unidade(): void
