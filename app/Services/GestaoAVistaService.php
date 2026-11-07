@@ -72,9 +72,8 @@ class GestaoAVistaService
     /**
      * Resumo de OS no periodo: Planejadas (todas as OS abertas no
      * periodo), Concluidas (status finalizado) e Atrasadas (SLA estourado
-     * e ainda nao concluida) -- mesmo criterio de sla_target_minutes ja
-     * usado por MaintenanceOrder::slaColor(), aqui contado a partir de
-     * created_at.
+     * e ainda nao concluida) -- regra antiga de sla_target_minutes (contada
+     * a partir de created_at) OU algum relogio de SLA (F2) aberto e vencido.
      *
      * @param  array{from: ?string, until: ?string, branchId: ?string, assetId: ?string}  $filtros
      * @return array{planejadas: int, concluidas: int, atrasadas: int}
@@ -93,8 +92,11 @@ class GestaoAVistaService
         $atrasadas = (clone $this->baseQuery($filtros))
             ->where('maintenance_type', '!=', MaintenanceOrder::TYPE_RESERVA)
             ->whereNotIn('status', self::STATUS_CONCLUIDA)
-            ->whereNotNull('sla_target_minutes')
-            ->whereRaw('created_at + (sla_target_minutes || \' minutes\')::interval < ?', [now()])
+            ->where(function ($q) {
+                // regra antiga (prazo digitado, contado desde a abertura) OU, desde a F2, qualquer relogio de SLA aberto, nao pausado e vencido
+                $q->where(fn ($l) => $l->whereNotNull('sla_target_minutes')->whereRaw('created_at + (sla_target_minutes || \' minutes\')::interval < ?', [now()]))
+                    ->orWhereHas('slaTimers', fn ($t) => $t->whereNull('stopped_at')->whereNull('paused_at')->where('due_at', '<', now()));
+            })
             ->count();
 
         return [
