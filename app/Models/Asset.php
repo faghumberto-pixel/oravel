@@ -497,6 +497,12 @@ class Asset extends Model implements HasMedia
      * mas essa é a fonte confiável daqui pra frente pra "quais Ativos são
      * dessa categoria" (usado por SolicitacaoLocacaoResource).
      */
+    /** G1: evidencias de cumprimento (documento/inspecao/checklist/preventiva) lidas pelo motor de aptidao. */
+    public function cumprimentos(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(CatalogoCumprimento::class, 'asset_id');
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(AssetCategory::class, 'asset_category_id');

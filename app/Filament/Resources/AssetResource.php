@@ -317,6 +317,9 @@ class AssetResource extends Resource
                                 ]),
                             ]),
 
+                            // G1: campos tecnicos do GRUPO (so com a chave do catalogo ligada no contrato)
+                            \App\Support\Catalogo\CampoTecnicoForm::secao(),
+
                             Forms\Components\Section::make('Investimento e Depreciação')
                                 ->description('Calculado automaticamente com base na vida útil informada.')
                                 ->compact()
@@ -1067,6 +1070,16 @@ class AssetResource extends Resource
                             ->formatStateUsing(fn (?string $state): string => self::STATUS_ROTULOS[$state] ?? (string) $state)
                             ->color(fn (string $state): string => Asset::statusColor($state))
                             ->grow(false),
+
+                        // G1: aptidao (so com a chave do catalogo ligada no contrato)
+                        Tables\Columns\TextColumn::make('aptidao_status')
+                            ->label('Aptidão')
+                            ->badge()
+                            ->formatStateUsing(fn (?string $state): string => \App\Services\Catalogo\Aptidao\AptidaoImpacto::rotulo((string) $state))
+                            ->color(fn (?string $state): string => ['apto' => 'success', 'apto_restricao' => 'warning', 'inapto' => 'danger'][$state] ?? 'gray')
+                            ->placeholder('—')
+                            ->visible(fn (): bool => \App\Services\Catalogo\Aptidao\AptidaoGate::ligada(Tenancy::current()?->id ?? auth()->user()?->tenant_id))
+                            ->grow(false),
                         Tables\Columns\TextColumn::make('grupo')->hidden(fn () => static::interfaceSimples())
                             ->label('Tipo')
                             ->badge()
@@ -1181,6 +1194,11 @@ class AssetResource extends Resource
                 Tables\Filters\SelectFilter::make('grupo')
                     ->label('Tipo de ativo')
                     ->options(Asset::grupoLabels()),
+
+                Tables\Filters\SelectFilter::make('aptidao_status')
+                    ->label('Aptidão')
+                    ->options(['apto' => 'Apto', 'apto_restricao' => 'Apto com restrição', 'inapto' => 'Inapto', 'cadastro_incompleto' => 'Cadastro incompleto'])
+                    ->visible(fn (): bool => \App\Services\Catalogo\Aptidao\AptidaoGate::ligada(Tenancy::current()?->id ?? auth()->user()?->tenant_id)),
 
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Status')
@@ -1298,6 +1316,7 @@ class AssetResource extends Resource
             AssetResource\RelationManagers\MaintenancePlansRelationManager::class,
             AssetResource\RelationManagers\Nr13DocumentsRelationManager::class,
             AssetResource\RelationManagers\Nr13InspectionsRelationManager::class,
+            AssetResource\RelationManagers\CumprimentosRelationManager::class,
         ];
     }
 

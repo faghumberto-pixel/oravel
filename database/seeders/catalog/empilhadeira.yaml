@@ -1,0 +1,52 @@
+# G1 -- grupo EMPILHADEIRA. TEMPLATE INICIAL, tudo editavel pelo tenant.
+# Intervalos de preventiva devem seguir o manual do fabricante. Itens marcados "validar" dependem de norma:
+# VALIDAR COM O RESPONSAVEL TECNICO antes de ligar a chave em cliente real (pendencia bloqueante).
+# criticidade_padrao: referencia inicial media (media/alta); o tenant ajusta.
+versao: 1
+
+grupo:
+  slug: empilhadeira
+  nome: Empilhadeira
+  descricao: "Empilhadeiras eletricas, a GLP ou diesel"
+  medidor: horimetro
+  criticidade_padrao: media
+  exige_operador: true
+  ordem: 30
+
+atributos:
+  - {slug: capacidade-kg, rotulo: "Capacidade", tipo: numero, unidade: kg, obrigatorio: true}
+  - {slug: altura-elevacao, rotulo: "Altura de elevacao", tipo: numero, unidade: m, obrigatorio: true}
+  - {slug: tipo, rotulo: "Tipo", tipo: selecao, obrigatorio: true, opcoes: [eletrica, glp, diesel]}
+  - {slug: torre, rotulo: "Torre", tipo: texto, obrigatorio: false}
+  - {slug: garfos, rotulo: "Garfos", tipo: texto, obrigatorio: false}
+
+requisitos:
+  # --- Checklist (IMP = reprovado e Inapto e gera OS; ALR = Apto com restricao) ---
+  - {slug: freios, item: freios, efeito: IMP, gera_os: true}
+  - {slug: direcao, item: direcao, efeito: IMP, gera_os: true}
+  - {slug: hidraulico-vazamentos, item: vazamentos, efeito: IMP, gera_os: true}
+  - {slug: garfos-corrente, item: garfos-corrente, efeito: IMP, gera_os: true}
+  - {slug: buzina-alarme-re, item: buzina-alarme-re, efeito: IMP, gera_os: true}
+  - {slug: cinto, item: cinto, efeito: IMP, gera_os: true}
+  - {slug: luzes, item: luzes, efeito: ALR}
+  - {slug: pneus, item: pneus, efeito: ALR}
+  - {slug: bateria-glp, item: bateria-glp, efeito: ALR}
+
+preventivas:
+  - {slug: revisao-250h, nome: "Revisao 250 h", medidor: horimetro, intervalo: 250}
+  - {slug: revisao-500h, nome: "Revisao 500 h", medidor: horimetro, intervalo: 500}
+  - {slug: revisao-1000h, nome: "Revisao 1000 h", medidor: horimetro, intervalo: 1000}
+  - {slug: revisao-2000h, nome: "Revisao 2000 h", medidor: horimetro, intervalo: 2000}
+
+operadores:
+  - {slug: capacitacao-empilhadeira, habilitacao: "Operador com capacitacao valida", norma: NR-11, validar_norma: true}   # validar com o responsavel tecnico
+
+pecas_criticas: []   # o tenant vincula Materiais (a OS consome Material)
+
+sla:    # resposta conforme _vocabulario.yaml; resolucao a definir pelo tenant
+  - {slug: critica, criticidade: critica, resposta_min: 60,   calendario: 24x7}
+  - {slug: alta,    criticidade: alta,    resposta_min: 240,  calendario: comercial}
+  - {slug: media,   criticidade: media,   resposta_min: 480,  calendario: comercial}
+  - {slug: baixa,   criticidade: baixa,   resposta_min: 1440, calendario: comercial}
+
+regras: []

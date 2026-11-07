@@ -34,3 +34,15 @@ então o sqlite do `phpunit.xml` NÃO vale). Rodar só em banco descartável: `D
 - **Fora desta fase (fases 4–7):** formulário de campos técnicos no cadastro do ativo, operador, peças críticas, sobrescrita por modelo/ativo,
   liberação excepcional, bloqueio de despacho, OS automática em IMP reprovado, SLA por grupo. Nesta fase `os_a_gerar` só é calculado.
 - Em PROD a fila é `sync` (sem worker): os jobs rodam inline; o recálculo de um grupo grande acontece dentro da requisição de salvar.
+
+## Fase 4 — Grupos do MVP e cadastro do ativo por grupo
+- **Template:** compressor, gerador, empilhadeira, plataforma elevatória, munk e guindaste (50 itens na biblioteca). **Veículos leves, caminhão e reboque ficam na fase 8**
+  (dependem da unificação com `FrotaModeloChecklist`). Todo item que cita norma tem `validar_norma: true` (teste garante); operadores e a regra do guindaste também.
+- **Munk (chassi + guindaste):** medidor `ambos`. Km do chassi = `assets.odometro_atual`; horas do guindaste = `assets.horimetro_atual` (os dois já ficam no `Asset`); duas preventivas,
+  uma por medidor. **Os intervalos do munk e do guindaste são PLACEHOLDER** (`parametros.validar_manual`): a especificação não os define; usar o manual do fabricante.
+- **Validade de documento/inspeção** sem validade padrão (laudos, CRLV, seguro, plano de içamento): informada no registro do cumprimento (`valido_ate`).
+  Itens "quando aplicável" (ART) usam `sem_registro: ignorar`.
+- **Guindaste:** regra em dados `bloqueia_alocacao` enquanto não houver plano de içamento válido (`sem_cumprimento: plano-icamento`); o status não muda, só a flag.
+- **Cadastro do ativo:** seção "Campos técnicos do grupo" mostra só os campos do grupo escolhido (gravados em `assets.atributos_tecnicos`); obrigatório vazio = aviso, nunca bloqueia.
+  Coluna e filtro "Aptidão" na lista e aba "Aptidão e cumprimentos" no ativo (registrar cumprimento; histórico sem editar/excluir). Widget "Aptidão da frota" com alerta de cadastro incompleto.
+  Tudo inerte com a chave do contrato desligada.

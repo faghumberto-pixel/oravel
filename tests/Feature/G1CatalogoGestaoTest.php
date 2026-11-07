@@ -228,7 +228,7 @@ class G1CatalogoGestaoTest extends TestCase
         $usado = CatalogoItem::withoutGlobalScopes()->where('tenant_id', $this->tenant->id)->where('slug', 'extintor')->firstOrFail();
         // extintor nao e usado pelo compressor: vira usado ao referenciar
         CatalogoRequisito::withoutGlobalScopes()->create(['tenant_id' => $this->tenant->id, 'grupo_id' => $this->grupo->id, 'item_id' => $usado->id, 'slug' => 'extintor', 'efeito' => 'ALR']);
-        $livre = CatalogoItem::withoutGlobalScopes()->where('tenant_id', $this->tenant->id)->where('slug', 'cinto')->firstOrFail();
+        $livre = CatalogoItem::withoutGlobalScopes()->create(['tenant_id' => $this->tenant->id, 'slug' => 'item-livre', 'tipo' => 'checklist', 'nome' => 'Item livre']);
 
         $this->assertSame('arquivado', $g->removerItem($usado));
         $this->assertTrue(CatalogoItem::withoutGlobalScopes()->withTrashed()->find($usado->id)->trashed());
@@ -356,9 +356,9 @@ class G1CatalogoGestaoTest extends TestCase
 
     public function test_biblioteca_lista_e_arquiva_pela_tela(): void
     {
-        $item = CatalogoItem::withoutGlobalScopes()->where('tenant_id', $this->tenant->id)->where('slug', 'cinto')->firstOrFail();
+        $item = CatalogoItem::withoutGlobalScopes()->create(['tenant_id' => $this->tenant->id, 'slug' => 'item-livre', 'tipo' => 'checklist', 'nome' => 'Item livre']);
 
-        Livewire::test(ListCatalogoItens::class)->assertSuccessful()->assertCanSeeTableRecords([$item])
+        Livewire::test(ListCatalogoItens::class)->assertSuccessful()->searchTable('Item livre')->assertCanSeeTableRecords([$item])
             ->callTableAction('remover', $item);
 
         $this->assertNull(CatalogoItem::withoutGlobalScopes()->withTrashed()->find($item->id), 'item nunca usado e excluido de vez');

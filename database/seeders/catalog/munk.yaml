@@ -1,0 +1,55 @@
+# G1 -- grupo MUNK. TEMPLATE INICIAL, tudo editavel pelo tenant.
+# Intervalos de preventiva devem seguir o manual do fabricante. Itens marcados "validar" dependem de norma:
+# VALIDAR COM O RESPONSAVEL TECNICO antes de ligar a chave em cliente real (pendencia bloqueante).
+# MEDIDOR "ambos": km = odometro_atual do chassi; horas = horimetro_atual do guindaste (os dois ja ficam no Asset).
+# Os intervalos de km/horas abaixo sao PLACEHOLDERS: usar o manual do fabricante (parametros.validar_manual).
+versao: 1
+
+grupo:
+  slug: munk
+  nome: Munk
+  descricao: "Caminhao com guindauto (km do chassi + horas do guindaste)"
+  medidor: ambos
+  criticidade_padrao: alta
+  exige_operador: true
+  ordem: 50
+
+atributos:
+  - {slug: capacidade-momento, rotulo: "Capacidade / momento de carga", tipo: texto, obrigatorio: true}
+  - {slug: alcance-lanca, rotulo: "Alcance da lanca", tipo: numero, unidade: m, obrigatorio: true}
+  - {slug: pbt, rotulo: "PBT", tipo: numero, unidade: kg, obrigatorio: true}
+  - {slug: placa, rotulo: "Placa", tipo: texto, obrigatorio: true}
+
+requisitos:
+  # --- Documentos e inspecoes (vencido = Inapto; a validade e informada no registro do cumprimento) ---
+  - {slug: inspecao-icamento, item: inspecao-icamento, efeito: INSP, norma: "validar (inspecao de icamento)", validar_norma: true}   # validar com o responsavel tecnico
+  - {slug: art, item: art, efeito: DOC, norma: "validar (ART)", validar_norma: true, parametros: {sem_registro: ignorar, quando_aplicavel: true}}   # ART "quando aplicavel": validar quando exigir
+  - {slug: crlv, item: crlv, efeito: DOC, norma: "CTB (validar)", validar_norma: true}
+  - {slug: seguro, item: seguro, efeito: DOC}
+  - {slug: tabela-carga-legivel, item: tabela-carga-legivel, efeito: DOC}
+  # --- Checklist (IMP = reprovado e Inapto e gera OS; ALR = Apto com restricao) ---
+  - {slug: estabilizadores, item: estabilizadores, efeito: IMP, gera_os: true}
+  - {slug: cabos-correntes-ganchos, item: cabos-correntes-ganchos, efeito: IMP, gera_os: true}
+  - {slug: trava-gancho, item: trava-gancho, efeito: IMP, gera_os: true}
+  - {slug: limitador-carga, item: limitador-carga, efeito: IMP, gera_os: true}
+  - {slug: vazamentos-hidraulicos, item: vazamentos, efeito: IMP, gera_os: true}
+  - {slug: comandos, item: comandos, efeito: IMP, gera_os: true}
+  - {slug: freios-pneus-chassi, item: freios-pneus-chassi, efeito: IMP, gera_os: true}
+  - {slug: sinalizacao, item: sinalizacao, efeito: ALR}
+
+preventivas:
+  - {slug: revisao-chassi-km, nome: "Revisao do chassi (km)", medidor: km, intervalo: 10000, parametros: {validar_manual: true}}
+  - {slug: revisao-guindaste-horas, nome: "Revisao do guindaste (horas)", medidor: horimetro, intervalo: 500, parametros: {validar_manual: true}}
+
+operadores:
+  - {slug: operador-munk, habilitacao: "Operador habilitado (guindauto / munk)", norma: NR-11, validar_norma: true}   # validar com o responsavel tecnico
+
+pecas_criticas: []   # o tenant vincula Materiais (a OS consome Material)
+
+sla:    # resposta conforme _vocabulario.yaml; resolucao a definir pelo tenant
+  - {slug: critica, criticidade: critica, resposta_min: 60,   calendario: 24x7}
+  - {slug: alta,    criticidade: alta,    resposta_min: 240,  calendario: comercial}
+  - {slug: media,   criticidade: media,   resposta_min: 480,  calendario: comercial}
+  - {slug: baixa,   criticidade: baixa,   resposta_min: 1440, calendario: comercial}
+
+regras: []

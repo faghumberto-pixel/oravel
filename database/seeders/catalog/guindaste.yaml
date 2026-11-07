@@ -1,0 +1,58 @@
+# G1 -- grupo GUINDASTE. TEMPLATE INICIAL, tudo editavel pelo tenant.
+# Intervalos de preventiva devem seguir o manual do fabricante. Itens marcados "validar" dependem de norma:
+# VALIDAR COM O RESPONSAVEL TECNICO antes de ligar a chave em cliente real (pendencia bloqueante).
+# Guindaste autopropelido: acrescentar plano por km no tenant. Intervalos de horas sao PLACEHOLDER (parametros.validar_manual).
+versao: 1
+
+grupo:
+  slug: guindaste
+  nome: Guindaste
+  descricao: "Guindastes (horimetro; km tambem se autopropelido)"
+  medidor: horimetro
+  criticidade_padrao: critica
+  exige_operador: true
+  ordem: 60
+
+atributos:
+  - {slug: capacidade-maxima, rotulo: "Capacidade maxima", tipo: numero, unidade: t, obrigatorio: true}
+  - {slug: tabela-carga, rotulo: "Tabela de carga (referencia)", tipo: texto, obrigatorio: true}
+  - {slug: lanca, rotulo: "Lanca (tipo / comprimento)", tipo: texto, obrigatorio: false}
+  - {slug: contrapeso, rotulo: "Contrapeso", tipo: texto, obrigatorio: false}
+  - {slug: autopropelido, rotulo: "Autopropelido", tipo: booleano, obrigatorio: false}
+
+requisitos:
+  # --- Documentos e inspecoes (vencido = Inapto; a validade e informada no registro do cumprimento) ---
+  - {slug: laudo-periodico, item: laudo-periodico-guindaste, efeito: INSP, norma: "validar (laudo periodico)", validar_norma: true}   # validar com o responsavel tecnico
+  - {slug: art, item: art, efeito: DOC, norma: "validar (ART)", validar_norma: true}   # validar quando exigir
+  - {slug: manual-tabela-carga, item: manual-tabela-carga, efeito: DOC}
+  - {slug: plano-icamento, item: plano-icamento, efeito: DOC, parametros: {sem_registro: ignorar}}   # por operacao: a regra abaixo bloqueia a alocacao sem plano valido
+  - {slug: revisao-cabos-aco, item: revisao-cabos-aco, efeito: INSP, norma: "validar (revisao de cabos)", validar_norma: true}   # por data/uso: validar periodicidade
+  # --- Checklist (IMP = reprovado e Inapto e gera OS; ALR = Apto com restricao) ---
+  - {slug: cabos-aco, item: cabos-aco, efeito: IMP, gera_os: true}
+  - {slug: ganchos-travas, item: ganchos-travas, efeito: IMP, gera_os: true}
+  - {slug: limitador-momento, item: limitador-momento, efeito: IMP, gera_os: true}
+  - {slug: estabilizadores, item: estabilizadores, efeito: IMP, gera_os: true}
+  - {slug: freios, item: freios, efeito: IMP, gera_os: true}
+  - {slug: vazamentos, item: vazamentos, efeito: IMP, gera_os: true}
+  - {slug: alarmes, item: alarmes, efeito: IMP, gera_os: true}
+
+preventivas:
+  - {slug: revisao-periodica-horas, nome: "Revisao periodica (horas)", medidor: horimetro, intervalo: 500, parametros: {validar_manual: true}}
+
+operadores:
+  - {slug: operador-guindaste, habilitacao: "Operador habilitado de guindaste", norma: "NR-11 / NR-12", validar_norma: true}   # validar com o responsavel tecnico
+
+pecas_criticas: []   # o tenant vincula Materiais (a OS consome Material)
+
+sla:    # resposta conforme _vocabulario.yaml; resolucao a definir pelo tenant
+  - {slug: critica, criticidade: critica, resposta_min: 60,   calendario: 24x7}
+  - {slug: alta,    criticidade: alta,    resposta_min: 240,  calendario: comercial}
+  - {slug: media,   criticidade: media,   resposta_min: 480,  calendario: comercial}
+  - {slug: baixa,   criticidade: baixa,   resposta_min: 1440, calendario: comercial}
+
+regras:
+  - slug: bloqueia-sem-plano-icamento
+    nome: "Sem plano de icamento valido: bloqueia a alocacao"
+    efeito: bloqueia_alocacao
+    condicao: {sem_cumprimento: plano-icamento}
+    validar_norma: true            # validar com o responsavel tecnico

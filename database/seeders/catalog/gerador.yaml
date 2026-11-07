@@ -1,0 +1,52 @@
+# G1 -- grupo GERADOR. TEMPLATE INICIAL, tudo editavel pelo tenant.
+# Intervalos de preventiva devem seguir o manual do fabricante. Itens marcados "validar" dependem de norma:
+# VALIDAR COM O RESPONSAVEL TECNICO antes de ligar a chave em cliente real (pendencia bloqueante).
+versao: 1
+
+grupo:
+  slug: gerador
+  nome: Gerador
+  descricao: "Grupos geradores (cabinados ou abertos)"
+  medidor: horimetro
+  criticidade_padrao: media
+  exige_operador: false
+  ordem: 10
+
+atributos:
+  - {slug: kva, rotulo: "Potencia", tipo: numero, unidade: kVA, obrigatorio: true}
+  - {slug: tensao, rotulo: "Tensao", tipo: numero, unidade: V, obrigatorio: true}
+  - {slug: fases, rotulo: "Fases", tipo: selecao, obrigatorio: true, opcoes: [monofasico, bifasico, trifasico]}
+  - {slug: combustivel, rotulo: "Combustivel", tipo: selecao, obrigatorio: true, opcoes: [diesel, gasolina, gas, outro]}
+  - {slug: tipo, rotulo: "Tipo", tipo: selecao, obrigatorio: false, opcoes: [cabinado, aberto]}
+  - {slug: capacidade-tanque, rotulo: "Capacidade do tanque", tipo: numero, unidade: L, obrigatorio: false}
+
+requisitos:
+  # --- Documentos e inspecoes (vencido = Inapto; a validade e informada no registro do cumprimento) ---
+  # Sem rotina legal fixa de documento: VALIDAR com o responsavel tecnico se NR-10 exige algo (ex.: prontuario/laudo de aterramento).
+  # --- Checklist (IMP = reprovado e Inapto e gera OS; ALR = Apto com restricao) ---
+  - {slug: oleo, item: oleo, efeito: IMP, gera_os: true}
+  - {slug: combustivel, item: combustivel, efeito: ALR}
+  - {slug: arrefecimento, item: arrefecimento, efeito: IMP, gera_os: true}
+  - {slug: bateria-partida, item: bateria-partida, efeito: IMP, gera_os: true}
+  - {slug: disjuntor-painel, item: disjuntor-painel, efeito: IMP, gera_os: true}
+  - {slug: aterramento, item: aterramento, efeito: IMP, gera_os: true}
+  - {slug: vazamentos, item: vazamentos, efeito: IMP, gera_os: true}
+  - {slug: cabos-conexoes, item: cabos-conexoes, efeito: ALR}
+
+preventivas:
+  - {slug: revisao-250h, nome: "Revisao 250 h (oleo e filtros)", medidor: horimetro, intervalo: 250}
+  - {slug: revisao-500h, nome: "Revisao 500 h (filtros de combustivel e ar)", medidor: horimetro, intervalo: 500}
+  - {slug: revisao-1000h, nome: "Revisao 1000 h (revisao geral)", medidor: horimetro, intervalo: 1000}
+  - {slug: revisao-2000h, nome: "Revisao 2000 h (revisao maior)", medidor: horimetro, intervalo: 2000}
+
+operadores: []   # este grupo nao exige operador habilitado
+
+pecas_criticas: []   # o tenant vincula Materiais (a OS consome Material)
+
+sla:    # resposta conforme _vocabulario.yaml; resolucao a definir pelo tenant
+  - {slug: critica, criticidade: critica, resposta_min: 60,   calendario: 24x7}
+  - {slug: alta,    criticidade: alta,    resposta_min: 240,  calendario: comercial}
+  - {slug: media,   criticidade: media,   resposta_min: 480,  calendario: comercial}
+  - {slug: baixa,   criticidade: baixa,   resposta_min: 1440, calendario: comercial}
+
+regras: []
