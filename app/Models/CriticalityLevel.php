@@ -27,7 +27,7 @@ class CriticalityLevel extends Model
 
     protected static ?string $saasModuleLabel = 'Níveis de Criticidade';
 
-    protected $fillable = ['tenant_id', 'code', 'name', 'color', 'is_urgent', 'sort_order'];
+    protected $fillable = ['tenant_id', 'code', 'name', 'color', 'is_urgent', 'sort_order', 'default_priority'];
 
     protected $casts = [
         'is_urgent' => 'boolean',

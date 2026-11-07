@@ -63,6 +63,13 @@ class EditMaintenanceOrder extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('alterar_prioridade')
+                ->label('Alterar prioridade')->icon('heroicon-o-flag')->color('gray')
+                ->modalHeading('Alterar prioridade da O.S.')
+                ->form(MaintenanceOrderResource::alterarPrioridadeForm())
+                ->action(fn (array $data) => MaintenanceOrderResource::alterarPrioridade($this->record, $data))
+                ->visible(fn () => ! MaintenanceOrderResource::interfaceSimples() && auth()->user()?->can('update', $this->record)),
+
             // 1. BOTÃO INICIAR / CONTINUAR
             // O timer (last_timer_start/started_at/total_time_seconds/finished_at) é
             // responsabilidade única do hook MaintenanceOrder::booted() -- as actions

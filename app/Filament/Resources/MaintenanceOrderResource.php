@@ -16,9 +16,12 @@ use App\Models\EquipmentDamage;
 use App\Models\EquipmentReplacement;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
+use App\Models\PriorityLevel;
 use App\Models\SolicitacaoLocacao;
 use App\Models\User;
+use App\Services\OsNumberGenerator;
 use App\Services\OsPhotoOcrService;
+use App\Services\Prioridade\PrioridadeDaOs;
 use App\Support\CrmPalette;
 use App\Support\FormHelpers;
 use App\Support\Tenancy;
@@ -175,9 +178,36 @@ class MaintenanceOrderResource extends Resource
     }
 
     /** Interface simples (padrão de quem não contratou Locadora; a Central pode forçar por empresa). */
+    /** Formulário da ação "Alterar prioridade" (F1): usado pela ação da tabela e pela da tela de edição. */
+    public static function alterarPrioridadeForm(): array
+    {
+        return [
+            Forms\Components\Select::make('priority')->label('Nova prioridade')->required()
+                ->options(fn (MaintenanceOrder $record) => PrioridadeDaOs::opcoes((string) $record->tenant_id))
+                ->default(fn (MaintenanceOrder $record) => $record->priority),
+            Forms\Components\Textarea::make('justificativa')->label('Justificativa')->required()->minLength(5)->maxLength(500)->rows(3),
+        ];
+    }
+
+    /** Exige justificativa e grava no log de atividades. */
+    public static function alterarPrioridade(MaintenanceOrder $record, array $data): void
+    {
+        PrioridadeDaOs::alterar($record, $data['priority'], $data['justificativa']);
+        Notification::make()->title('Prioridade alterada')->success()->send();
+    }
+
+    public static function alterarPrioridadeAction(): Tables\Actions\Action
+    {
+        return Tables\Actions\Action::make('alterar_prioridade')
+            ->label('Alterar prioridade')->icon('heroicon-o-flag')->color('gray')
+            ->modalHeading('Alterar prioridade da O.S.')
+            ->form(static::alterarPrioridadeForm())
+            ->action(fn (MaintenanceOrder $record, array $data) => static::alterarPrioridade($record, $data));
+    }
+
     public static function interfaceSimples(): bool
     {
-        return \App\Support\Tenancy::current()?->interfaceSimples() ?? false;
+        return Tenancy::current()?->interfaceSimples() ?? false;
     }
 
     /**
@@ -189,16 +219,16 @@ class MaintenanceOrderResource extends Resource
         return $form->schema([
             Forms\Components\Section::make('Ordem de serviço')->schema([
                 Forms\Components\TextInput::make('os_number')
-                ->label('Nº da O.S.')
-                ->placeholder('Automático')
-                ->helperText('Deixe em branco para numerar sozinho, ou digite o número (ex.: o da folha pré-numerada). Não pode repetir dentro da empresa.')
-                ->maxLength(40)
-                ->rules([fn (?MaintenanceOrder $record) => function (string $attribute, $value, \Closure $fail) use ($record) {
-                    if (filled($value) && app(\App\Services\OsNumberGenerator::class)->existe(\App\Support\Tenancy::current()?->id ?? auth()->user()?->tenant_id, trim($value), $record?->id)) {
-                        $fail('Já existe uma O.S. com este número na sua empresa.');
-                    }
-                }])
-                ->dehydrateStateUsing(fn ($state) => filled($state) ? trim($state) : null),
+                    ->label('Nº da O.S.')
+                    ->placeholder('Automático')
+                    ->helperText('Deixe em branco para numerar sozinho, ou digite o número (ex.: o da folha pré-numerada). Não pode repetir dentro da empresa.')
+                    ->maxLength(40)
+                    ->rules([fn (?MaintenanceOrder $record) => function (string $attribute, $value, \Closure $fail) use ($record) {
+                        if (filled($value) && app(OsNumberGenerator::class)->existe(Tenancy::current()?->id ?? auth()->user()?->tenant_id, trim($value), $record?->id)) {
+                            $fail('Já existe uma O.S. com este número na sua empresa.');
+                        }
+                    }])
+                    ->dehydrateStateUsing(fn ($state) => filled($state) ? trim($state) : null),
                 Forms\Components\Select::make('asset_id')->label('O que você está mantendo')->relationship('asset', 'name')->searchable()->preload()->required()
                     ->createOptionForm([
                         Forms\Components\TextInput::make('name')->label('Nome')->placeholder('Ex.: Carro do João, Casa da praia')->required()->maxLength(255),
@@ -239,16 +269,16 @@ class MaintenanceOrderResource extends Resource
                 // --- ABA 1: DADOS GERAIS ---
                 Forms\Components\Tabs\Tab::make('Dados Gerais')->schema([
                     Forms\Components\TextInput::make('os_number')
-                    ->label('Nº da O.S.')
-                    ->placeholder('Automático')
-                    ->helperText('Deixe em branco para numerar sozinho, ou digite o número (ex.: o da folha pré-numerada). Não pode repetir dentro da empresa.')
-                    ->maxLength(40)
-                    ->rules([fn (?MaintenanceOrder $record) => function (string $attribute, $value, \Closure $fail) use ($record) {
-                        if (filled($value) && app(\App\Services\OsNumberGenerator::class)->existe(\App\Support\Tenancy::current()?->id ?? auth()->user()?->tenant_id, trim($value), $record?->id)) {
-                            $fail('Já existe uma O.S. com este número na sua empresa.');
-                        }
-                    }])
-                    ->dehydrateStateUsing(fn ($state) => filled($state) ? trim($state) : null),
+                        ->label('Nº da O.S.')
+                        ->placeholder('Automático')
+                        ->helperText('Deixe em branco para numerar sozinho, ou digite o número (ex.: o da folha pré-numerada). Não pode repetir dentro da empresa.')
+                        ->maxLength(40)
+                        ->rules([fn (?MaintenanceOrder $record) => function (string $attribute, $value, \Closure $fail) use ($record) {
+                            if (filled($value) && app(OsNumberGenerator::class)->existe(Tenancy::current()?->id ?? auth()->user()?->tenant_id, trim($value), $record?->id)) {
+                                $fail('Já existe uma O.S. com este número na sua empresa.');
+                            }
+                        }])
+                        ->dehydrateStateUsing(fn ($state) => filled($state) ? trim($state) : null),
                     // Teste pedido pelo usuario 29/09/2026: preencher a OS a partir
                     // da foto de uma OS em papel (de terceiros, layout variavel),
                     // via IA com visao (App\Services\OsPhotoOcrService). So' na
@@ -843,7 +873,7 @@ class MaintenanceOrderResource extends Resource
                         ->schema([
                             Forms\Components\Grid::make(2)->schema([
                                 Forms\Components\Select::make('transport_vehicle_id')->label('Veículo usado no deslocamento')
-                                    ->options(fn () => \App\Models\Asset::query()->where('is_vehicle', true)->orderBy('name')->get(['id', 'name', 'placa'])->mapWithKeys(fn ($v) => [$v->id => trim($v->name.' '.($v->placa ? '('.$v->placa.')' : ''))])->all())
+                                    ->options(fn () => Asset::query()->where('is_vehicle', true)->orderBy('name')->get(['id', 'name', 'placa'])->mapWithKeys(fn ($v) => [$v->id => trim($v->name.' '.($v->placa ? '('.$v->placa.')' : ''))])->all())
                                     ->searchable()->placeholder('Nenhum'),
                                 Forms\Components\TextInput::make('km_traveled')->label('Km percorridos')->numeric()->minValue(0)->suffix('km')->step(0.1),
                             ]),
@@ -931,6 +961,9 @@ class MaintenanceOrderResource extends Resource
                         ->formatStateUsing(fn ($state): string => 'Patrimônio '.$state),
                     Tables\Columns\Layout\Split::make([
                         Tables\Columns\TextColumn::make('maintenance_type')->label('Tipo')->badge()->color('info')->grow(false)->placeholder(null),
+                        Tables\Columns\TextColumn::make('priority')->label('Prioridade')->badge()->grow(false)->placeholder(null)
+                            ->formatStateUsing(fn (?string $state) => $state ? (PrioridadeDaOs::opcoes((string) Tenancy::current()?->id)[$state] ?? ucfirst($state)) : null)
+                            ->color(fn (?string $state) => PriorityLevel::where('tenant_id', Tenancy::current()?->id)->where('code', $state)->first()?->badgeColor() ?? 'gray'),
                         Tables\Columns\TextColumn::make('asset.assetCategory.name')->label('Categoria do Ativo')->badge()->grow(false),
                         Tables\Columns\TextColumn::make('asset.checklistGroup.name')->hidden(fn () => static::interfaceSimples())
                             ->label('Grupo')
@@ -990,6 +1023,8 @@ class MaintenanceOrderResource extends Resource
                         'Troca' => 'Troca de Equipamento',
                         'Emergência' => 'Chamado de Emergência',
                     ]),
+                Tables\Filters\SelectFilter::make('priority')->label('Prioridade')
+                    ->options(fn () => PrioridadeDaOs::opcoes((string) Tenancy::current()?->id)),
                 Tables\Filters\SelectFilter::make('matriz_abc')
                     ->label('Matriz ABC')
                     ->options(fn () => CriticalityLevel::where('tenant_id', Tenancy::current()?->id)
@@ -1031,6 +1066,7 @@ class MaintenanceOrderResource extends Resource
             ])->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                static::alterarPrioridadeAction()->visible(fn (MaintenanceOrder $record) => ! static::interfaceSimples() && auth()->user()?->can('update', $record)),
                 Tables\Actions\Action::make('imprimirFolha')->label('Imprimir folha')->icon('heroicon-o-printer')->color('gray')
                     ->url(fn (MaintenanceOrder $record) => route('maintenance-orders.folha', $record))->openUrlInNewTab()
                     ->visible(fn () => ! static::interfaceSimples()),
