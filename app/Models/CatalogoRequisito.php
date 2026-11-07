@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CatalogoRequisito extends CatalogoModel
 {
+    use BelongsToTenant; // declarado aqui tambem: tenant:audit-models so enxerga trait direto (o escopo vem de CatalogoModel)
+
     protected $table = 'catalogo_requisitos';
 
     protected function casts(): array

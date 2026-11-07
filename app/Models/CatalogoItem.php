@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToTenant;
 use App\Models\Concerns\HasSaaSMetadata;
 
 /**
@@ -12,6 +13,7 @@ use App\Models\Concerns\HasSaaSMetadata;
  */
 class CatalogoItem extends CatalogoModel
 {
+    use BelongsToTenant; // declarado aqui tambem: tenant:audit-models so enxerga trait direto (o escopo vem de CatalogoModel)
     use HasSaaSMetadata;
 
     public const FEATURE_KEY = 'tabela_catalogo_equipamentos';
