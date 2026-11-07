@@ -34,6 +34,18 @@ abstract class CatalogoModel extends Model
         'versao_template' => 'integer',
     ];
 
+    protected static function booted(): void
+    {
+        // Editar um item vindo do template o marca como personalizado: a atualizacao de template nunca o altera sozinha.
+        static::updating(function (self $model) {
+            $mudou = array_diff(array_keys($model->getDirty()), ['personalizado', 'ordem', 'updated_at']);
+
+            if ($model->origem === self::ORIGEM_SISTEMA && $mudou !== []) {
+                $model->personalizado = true;
+            }
+        });
+    }
+
     public function scopeAtivos(Builder $query): Builder
     {
         return $query->where($query->getModel()->getTable().'.ativo', true);
