@@ -8,6 +8,9 @@ use App\Models\InternalUnit;
 use App\Models\StockLocation;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -38,6 +41,21 @@ class StockLocationResource extends BaseResource
             Forms\Components\TextInput::make('position')->label('Posição / caixa')->maxLength(30),
             Forms\Components\TextInput::make('description')->label('Descrição')->maxLength(255)->columnSpanFull(),
             Forms\Components\Toggle::make('is_active')->label('Ativo')->default(true),
+        ])->columns(2);
+    }
+
+    /** Consulta somente leitura (destino do QR da prateleira): onde fica e o que tem, sem formulário de edição. */
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist->schema([
+            TextEntry::make('code')->label('Endereço')->weight('bold')->size('lg'),
+            TextEntry::make('internalUnit.name')->label('Almoxarifado'),
+            TextEntry::make('aisle')->label('Corredor'),
+            TextEntry::make('shelf')->label('Prateleira'),
+            TextEntry::make('level')->label('Nível')->placeholder('—'),
+            TextEntry::make('position')->label('Posição / caixa')->placeholder('—'),
+            TextEntry::make('description')->label('Descrição')->placeholder('—')->columnSpanFull(),
+            IconEntry::make('is_active')->label('Ativo')->boolean(),
         ])->columns(2);
     }
 
@@ -104,6 +122,7 @@ class StockLocationResource extends BaseResource
         return [
             'index' => Pages\ListStockLocations::route('/'),
             'create' => Pages\CreateStockLocation::route('/create'),
+            'view' => Pages\ViewStockLocation::route('/{record}'),
             'edit' => Pages\EditStockLocation::route('/{record}/edit'),
         ];
     }

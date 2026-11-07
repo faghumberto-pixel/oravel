@@ -21,7 +21,7 @@ class EstoqueQrController extends Controller
         if ($tipo === EstoqueQr::ENDERECO) {
             abort_unless(StockLocation::query()->whereKey($id)->exists(), 404);
 
-            return redirect(StockLocationResource::getUrl('edit', ['record' => $id]));
+            return redirect(StockLocationResource::getUrl('view', ['record' => $id]));
         }
 
         return redirect(RastreioDoItemPage::getUrl(['item' => $tipo.'|'.$id]));
