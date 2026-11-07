@@ -114,6 +114,7 @@ class CentralPanelProvider extends PanelProvider
             // do Filament em vez do wordmark "Oravel" com o "r" laranja.
             ->brandLogo(fn () => view('filament.brand-logo'))
             ->brandLogoHeight('1.25rem')
+            ->globalSearch(false) // a busca que vale e a ScreenSearch (campo unico no topbar)
             ->favicon(asset('favicon.png').'?v=6')
             ->resources([
                 LandingPageLeadResource::class,

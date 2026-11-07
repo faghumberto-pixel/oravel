@@ -74,6 +74,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->brandLogo(fn () => view('filament.admin.brand-logo'))
+            // Pesquisa global nativa desligada: nenhum Resource declara atributos pesquisaveis, entao ela
+            // nunca achava nada. A busca que vale e a ScreenSearch (campo unico no topbar, Ctrl+K).
+            ->globalSearch(false)
             ->brandLogoHeight('1.25rem')
             ->favicon(asset('favicon.png').'?v=6')
             // Ordem alfabética dos menus-pai, pedido explícito do usuário
