@@ -87,6 +87,7 @@ class MaintenanceOrder extends Model implements HasMedia
         'parent_os_id', 'labor_cost', 'material_cost', 'logistics_cost', 'total_order_cost',
         'horimetro_entry', 'fuel_level', 'scheduled_at',
         'is_prazo_fatal', 'prazo_fatal_at', 'sla_target_minutes', 'km_traveled', 'transport_vehicle_id',
+        'priority', 'priority_source',
     ];
 
     protected $casts = [
@@ -320,6 +321,21 @@ class MaintenanceOrder extends Model implements HasMedia
                 ->exists();
 
             $os->service_type = $isUnderContract ? 'Externo' : 'Interno';
+
+            // F1: prioridade automatica (ativo + tipo) quando ninguem informou; informada na criacao = manual.
+            try {
+                if (blank($os->getAttributes()['priority'] ?? null)) {
+                    $tenantId = (string) ($os->tenant_id ?? auth()->user()?->tenant_id);
+                    if ($tenantId !== '') {
+                        $os->priority = \App\Services\Prioridade\PrioridadeDaOs::sugerir($tenantId, $os->asset_id, $os->maintenance_type);
+                        $os->priority_source = \App\Services\Prioridade\PrioridadeDaOs::AUTO;
+                    }
+                } elseif (blank($os->priority_source)) {
+                    $os->priority_source = \App\Services\Prioridade\PrioridadeDaOs::MANUAL;
+                }
+            } catch (\Throwable $e) {
+                report($e); // nunca bloqueia a abertura da OS por causa da prioridade
+            }
         });
 
         // Corretiva = ativo parado por quebra ate a OS fechar -- abre o

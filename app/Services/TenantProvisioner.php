@@ -45,6 +45,9 @@ class TenantProvisioner
         // ajustar -- ver App\Services\OrganizationalStructureSeeder.
         OrganizationalStructureSeeder::seed($tenant);
 
+        // Prioridades da O.S. (Crítica/Alta/Média/Baixa), que o tenant pode ampliar.
+        \App\Services\Prioridade\PrioridadeDaOs::garantirPadrao((string) $tenant->id);
+
         // Funil de vendas padrão, motivos de perda e origens do CRM.
         CrmFunilPadrao::garantir((string) $tenant->id);
 

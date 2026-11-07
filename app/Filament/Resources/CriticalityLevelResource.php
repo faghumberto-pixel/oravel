@@ -50,6 +50,11 @@ class CriticalityLevelResource extends Resource
                     ->label('Urgente')
                     ->helperText('Ativos/O.S. neste nível aparecem em vermelho no Kanban de Manutenção.')
                     ->default(false),
+                Forms\Components\Select::make('default_priority')
+                    ->label('Prioridade padrão da O.S.')
+                    ->helperText('O.S. de ativos neste nível nascem com esta prioridade (Emergência sobe um nível).')
+                    ->options(fn () => \App\Services\Prioridade\PrioridadeDaOs::opcoes((string) \App\Support\Tenancy::current()?->id))
+                    ->placeholder('Automática (urgente = Alta, demais = Média)'),
                 Forms\Components\TextInput::make('sort_order')
                     ->label('Ordem')
                     ->numeric()
