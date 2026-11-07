@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\MaintenanceOrder;
 use App\Models\SlaTimer;
+use App\Models\Tenant;
 use App\Services\Sla\SlaService;
 use Illuminate\Console\Command;
 
@@ -22,7 +23,12 @@ class SlaMigrarLegado extends Command
         $aplicar = (bool) $this->option('apply');
         $total = 0;
 
-        MaintenanceOrder::withoutGlobalScopes()->whereNotNull('sla_target_minutes')->where('sla_target_minutes', '>', 0)->orderBy('created_at')
+        // OS de empresas que nao existem mais (restos antigos) nao podem ter cronometro: a FK de sla_timers.tenant_id barraria o comando inteiro.
+        $orfas = MaintenanceOrder::withoutGlobalScopes()->whereNotNull('sla_target_minutes')->where('sla_target_minutes', '>', 0)
+            ->whereNotIn('tenant_id', Tenant::query()->select('id'))->count();
+
+        MaintenanceOrder::withoutGlobalScopes()->whereNotNull('sla_target_minutes')->where('sla_target_minutes', '>', 0)
+            ->whereIn('tenant_id', Tenant::query()->select('id'))->orderBy('created_at')
             ->chunk(200, function ($ordens) use ($aplicar, &$total) {
                 foreach ($ordens as $os) {
                     $existe = SlaTimer::withoutGlobalScopes()->where('subject_type', MaintenanceOrder::class)->where('subject_id', $os->id)->where('clock', SlaTimer::SERVICE)->exists();
@@ -41,6 +47,9 @@ class SlaMigrarLegado extends Command
             });
 
         $this->info(($aplicar ? 'Criados' : 'A criar').": {$total} cronômetro(s) Atendimento a partir de sla_target_minutes.");
+        if ($orfas > 0) {
+            $this->warn("{$orfas} O.S. de empresa inexistente ignorada(s).");
+        }
 
         return self::SUCCESS;
     }
