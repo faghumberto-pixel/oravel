@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToTenant;
+use App\Services\Sla\SlaCalendar;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
@@ -25,7 +26,7 @@ class SlaTimer extends Model
 
     public const CLOCKS = [self::RESPONSE => 'Resposta', self::SERVICE => 'Atendimento', self::RESOLUTION => 'Resolução'];
 
-    protected $fillable = ['tenant_id', 'subject_type', 'subject_id', 'clock', 'policy_id', 'started_at', 'target_minutes', 'due_at', 'paused_at', 'paused_seconds', 'stopped_at', 'result', 'warned_at', 'breached_at', 'escalated_at'];
+    protected $fillable = ['tenant_id', 'subject_type', 'subject_id', 'clock', 'policy_id', 'started_at', 'target_minutes', 'due_at', 'paused_at', 'paused_seconds', 'stopped_at', 'result', 'warned_at', 'breached_at', 'escalated_at', 'calendar_mode', 'spent_minutes'];
 
     protected $casts = [
         'started_at' => 'datetime',
@@ -35,6 +36,7 @@ class SlaTimer extends Model
         'warned_at' => 'datetime',
         'breached_at' => 'datetime',
         'escalated_at' => 'datetime',
+        'spent_minutes' => 'integer',
         'target_minutes' => 'integer',
         'paused_seconds' => 'integer',
     ];
@@ -54,38 +56,54 @@ class SlaTimer extends Model
         return $this->stopped_at === null;
     }
 
-    /** Prazo efetivo: enquanto pausado, o prazo "anda" junto com a pausa. */
+    /** Calendário com que este cronômetro nasceu (mudar o calendário da empresa depois não mexe nele). */
+    public function calendario(): SlaCalendar
+    {
+        return $this->calendar_mode === SlaCalendar::MODO_COMERCIAL
+            ? SlaCalendar::doTenant((string) $this->tenant_id)
+            : SlaCalendar::vinte4x7();
+    }
+
+    /** Prazo efetivo: enquanto pausado, o prazo "anda" junto com a pausa (no calendário do cronômetro). */
     public function prazoEfetivo(?CarbonInterface $agora = null): CarbonInterface
     {
         $agora ??= now();
 
         if ($this->aberto() && $this->paused_at) {
-            return $this->due_at->copy()->addSeconds(max(0, (int) $this->paused_at->diffInSeconds($agora)));
+            $cal = $this->calendario();
+
+            return $cal->somar($this->due_at, $cal->entre($this->paused_at, $agora));
         }
 
         return $this->due_at;
     }
 
-    /** Minutos de relógio corrido já gastos, sem contar as pausas. */
+    /** Minutos de calendário já gastos, sem contar as pausas. Parado, vale o valor gravado ao parar. */
     public function minutosGastos(?CarbonInterface $agora = null): float
     {
-        $agora ??= now();
-        $fim = $this->stopped_at ?? $agora;
-        $segundos = max(0, (int) $this->started_at->diffInSeconds($fim)) - $this->paused_seconds;
-
-        if ($this->aberto() && $this->paused_at) {
-            $segundos -= max(0, (int) $this->paused_at->diffInSeconds($agora));
+        if (! $this->aberto() && $this->spent_minutes !== null) {
+            return (float) $this->spent_minutes;
         }
 
-        return max(0, $segundos) / 60;
+        $agora ??= now();
+        $cal = $this->calendario();
+        $minutos = $cal->entre($this->started_at, $this->stopped_at ?? $agora) - $this->paused_seconds / 60;
+
+        if ($this->aberto() && $this->paused_at) {
+            $minutos -= $cal->entre($this->paused_at, $agora);
+        }
+
+        return max(0, $minutos);
     }
 
-    /** Minutos que faltam para o prazo (negativo = já passou). Só faz sentido para relógio aberto e não pausado. */
+    /** Minutos de calendário que faltam para o prazo (negativo = já passou). Só faz sentido para relógio aberto e não pausado. */
     public function minutosRestantes(?CarbonInterface $agora = null): int
     {
         $agora ??= now();
+        $prazo = $this->prazoEfetivo($agora);
+        $cal = $this->calendario();
 
-        return (int) round(($this->prazoEfetivo($agora)->getTimestamp() - $agora->getTimestamp()) / 60);
+        return (int) round($agora->lessThan($prazo) ? $cal->entre($agora, $prazo) : -$cal->entre($prazo, $agora));
     }
 
     /** cumprido | estourado | cancelado | pausado | vencido | em_risco | no_prazo */

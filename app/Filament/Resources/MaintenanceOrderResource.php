@@ -17,11 +17,13 @@ use App\Models\EquipmentReplacement;
 use App\Models\MaintenanceOrder;
 use App\Models\MaintenancePlan;
 use App\Models\PriorityLevel;
+use App\Models\SlaTimer;
 use App\Models\SolicitacaoLocacao;
 use App\Models\User;
 use App\Services\OsNumberGenerator;
 use App\Services\OsPhotoOcrService;
 use App\Services\Prioridade\PrioridadeDaOs;
+use App\Services\Sla\SlaService;
 use App\Support\CrmPalette;
 use App\Support\FormHelpers;
 use App\Support\Tenancy;
@@ -185,9 +187,21 @@ class MaintenanceOrderResource extends Resource
      */
     public static function slaResumo(MaintenanceOrder $os): ?array
     {
-        $r = \App\Services\Sla\SlaService::resumoDaOs($os);
+        $r = SlaService::resumoDaOs($os);
 
         return $r ? ['texto' => $r['texto'], 'cor' => $r['cor']] : null;
+    }
+
+    /** @return array<int, string> ids das OS com algum relógio de SLA aberto, não pausado e em risco (ainda não vencido) */
+    public static function osComRelogioEmRisco(): array
+    {
+        $avisarEm = SlaService::settings((string) Tenancy::current()?->id)->warn_pct;
+
+        return SlaTimer::query()
+            ->where('subject_type', MaintenanceOrder::class)->whereNull('stopped_at')->whereNull('paused_at')
+            ->get()
+            ->filter(fn (SlaTimer $t) => $t->estado($avisarEm) === 'em_risco')
+            ->pluck('subject_id')->unique()->values()->all();
     }
 
     /** Formulário da ação "Alterar prioridade" (F1): usado pela ação da tabela e pela da tela de edição. */
@@ -1045,8 +1059,8 @@ class MaintenanceOrderResource extends Resource
 
                         return match ($data['value'] ?? null) {
                             'vencido' => $query->whereHas('slaTimers', fn ($t) => $aberto($t)->whereNull('paused_at')->where('due_at', '<', now())),
-                            'em_risco' => $query->whereHas('slaTimers', fn ($t) => $aberto($t)->whereNull('paused_at')->where('due_at', '>=', now())
-                                ->whereRaw("started_at + (target_minutes * CAST(? AS numeric) / 100.0 * 60 + paused_seconds) * interval '1 second' <= ?", [\App\Services\Sla\SlaService::settings((string) Tenancy::current()?->id)->warn_pct, now()])),
+                            // "Em risco" depende do calendario de cada cronometro (horario comercial/feriados): calculado em PHP sobre os poucos relogios abertos
+                            'em_risco' => $query->whereIn('id', static::osComRelogioEmRisco()),
                             'pausado' => $query->whereHas('slaTimers', fn ($t) => $aberto($t)->whereNotNull('paused_at')),
                             'estourado' => $query->whereHas('slaTimers', fn ($t) => $t->where('result', 'breached')),
                             default => $query,

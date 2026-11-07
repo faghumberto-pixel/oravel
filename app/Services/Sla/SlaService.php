@@ -38,18 +38,25 @@ class SlaService
     public static function esquecer(): void
     {
         self::$settings = [];
+        SlaCalendar::esquecer();
     }
 
     public static function settings(string $tenantId): SlaSetting
     {
         return self::$settings[$tenantId] ??= SlaSetting::withoutGlobalScopes()->where('tenant_id', $tenantId)->first()
-            ?? new SlaSetting(['tenant_id' => $tenantId, 'pause_statuses' => self::PAUSA_PADRAO, 'warn_pct' => self::WARN_PADRAO, 'escalate_pct' => self::ESCALONAR_PADRAO]);
+            ?? new SlaSetting(['tenant_id' => $tenantId, 'pause_statuses' => self::PAUSA_PADRAO, 'warn_pct' => self::WARN_PADRAO, 'escalate_pct' => self::ESCALONAR_PADRAO, 'calendar_mode' => SlaCalendar::MODO_24X7, 'timezone' => 'America/Sao_Paulo']);
     }
 
-    public static function salvarSettings(string $tenantId, array $statusQuePausam, int $avisarEm, int $escalonarEm = self::ESCALONAR_PADRAO): void
+    public static function salvarSettings(string $tenantId, array $statusQuePausam, int $avisarEm, int $escalonarEm = self::ESCALONAR_PADRAO, ?array $calendario = null): void
     {
-        SlaSetting::withoutGlobalScopes()->updateOrCreate(['tenant_id' => $tenantId], ['pause_statuses' => array_values($statusQuePausam), 'warn_pct' => $avisarEm, 'escalate_pct' => $escalonarEm]);
-        unset(self::$settings[$tenantId]);
+        $dados = ['pause_statuses' => array_values($statusQuePausam), 'warn_pct' => $avisarEm, 'escalate_pct' => $escalonarEm];
+
+        if ($calendario !== null) {
+            $dados += ['calendar_mode' => $calendario['modo'] ?? SlaCalendar::MODO_24X7, 'timezone' => $calendario['timezone'] ?? 'America/Sao_Paulo', 'business_hours' => $calendario['horarios'] ?? null];
+        }
+
+        SlaSetting::withoutGlobalScopes()->updateOrCreate(['tenant_id' => $tenantId], $dados);
+        self::esquecer();
     }
 
     public static function politicaPara(MaintenanceOrder $os): ?SlaPolicy
@@ -100,7 +107,7 @@ class SlaService
         }
 
         if ($timer->aberto() && $timer->policy_id === null && $timer->target_minutes !== (int) $os->sla_target_minutes) {
-            $timer->update(['target_minutes' => (int) $os->sla_target_minutes, 'due_at' => self::prazo($timer->started_at, (int) $os->sla_target_minutes, $timer->paused_seconds)]);
+            $timer->update(['target_minutes' => (int) $os->sla_target_minutes, 'due_at' => self::prazo($timer->started_at, (int) $os->sla_target_minutes, $timer->paused_seconds, $timer)]);
         }
     }
 
@@ -152,7 +159,7 @@ class SlaService
             }
 
             if (isset($minutos[$relogio])) {
-                $t->update(['policy_id' => $politica->id, 'target_minutes' => $minutos[$relogio], 'due_at' => self::prazo($t->started_at, $minutos[$relogio], $t->paused_seconds), 'warned_at' => null, 'breached_at' => null, 'escalated_at' => null]);
+                $t->update(['policy_id' => $politica->id, 'target_minutes' => $minutos[$relogio], 'due_at' => self::prazo($t->started_at, $minutos[$relogio], $t->paused_seconds, $t), 'warned_at' => null, 'breached_at' => null, 'escalated_at' => null]);
             } else {
                 $t->delete();
             }
@@ -244,22 +251,28 @@ class SlaService
     private static function criar(MaintenanceOrder $os, string $relogio, int $minutos, ?SlaPolicy $politica): void
     {
         $inicio = $os->created_at ?? now();
+        $comercial = SlaCalendar::doTenant((string) $os->tenant_id)->ehComercial();
+        $modo = $comercial ? SlaCalendar::MODO_COMERCIAL : SlaCalendar::MODO_24X7;
+        $calendario = $comercial ? SlaCalendar::doTenant((string) $os->tenant_id) : SlaCalendar::vinte4x7();
 
         SlaTimer::withoutGlobalScopes()->firstOrCreate(
             ['subject_type' => MaintenanceOrder::class, 'subject_id' => $os->id, 'clock' => $relogio],
-            ['tenant_id' => $os->tenant_id, 'policy_id' => $politica?->id, 'started_at' => $inicio, 'target_minutes' => $minutos, 'due_at' => self::prazo($inicio, $minutos, 0)],
+            ['tenant_id' => $os->tenant_id, 'policy_id' => $politica?->id, 'started_at' => $inicio, 'target_minutes' => $minutos, 'due_at' => $calendario->somar($inicio, $minutos), 'calendar_mode' => $modo],
         );
     }
 
-    private static function prazo(CarbonInterface $inicio, int $minutos, int $pausadoSegundos): CarbonInterface
+    /** Prazo = inicio + meta + o que ficou pausado, tudo no calendario do cronometro. */
+    private static function prazo(CarbonInterface $inicio, int $minutos, int $pausadoSegundos, SlaTimer $t): CarbonInterface
     {
-        return $inicio->copy()->addMinutes($minutos)->addSeconds($pausadoSegundos);
+        return $t->calendario()->somar($inicio, $minutos + $pausadoSegundos / 60);
     }
 
     private static function retomar(SlaTimer $t, CarbonInterface $quando): void
     {
-        $pausa = max(0, (int) $t->paused_at->diffInSeconds($quando));
-        $t->update(['paused_at' => null, 'paused_seconds' => $t->paused_seconds + $pausa, 'due_at' => $t->due_at->copy()->addSeconds($pausa)]);
+        $cal = $t->calendario();
+        $pausaMinutos = $cal->entre($t->paused_at, $quando);
+
+        $t->update(['paused_at' => null, 'paused_seconds' => $t->paused_seconds + (int) round($pausaMinutos * 60), 'due_at' => $cal->somar($t->due_at, $pausaMinutos)]);
     }
 
     private static function parar(SlaTimer $t, CarbonInterface $quando, ?string $resultado = null): void
@@ -269,6 +282,8 @@ class SlaService
             $t->refresh();
         }
 
-        $t->update(['stopped_at' => $quando, 'result' => $resultado ?? ($quando->lessThanOrEqualTo($t->due_at) ? 'met' : 'breached')]);
+        $gasto = (int) round($t->minutosGastos($quando));
+
+        $t->update(['stopped_at' => $quando, 'spent_minutes' => $gasto, 'result' => $resultado ?? ($quando->lessThanOrEqualTo($t->due_at) ? 'met' : 'breached')]);
     }
 }

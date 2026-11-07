@@ -99,7 +99,7 @@ class SlaKpis
     }
 
     private const AGREGADOS = "count(*) as total, sum(case when t.result = 'met' then 1 else 0 end) as cumpridos,
-        avg((extract(epoch from (t.stopped_at - t.started_at)) - t.paused_seconds) / 60.0) as tempo_medio";
+        avg(coalesce(t.spent_minutes, (extract(epoch from (t.stopped_at - t.started_at)) - t.paused_seconds) / 60.0)) as tempo_medio";
 
     private static function base(string $tenantId): Builder
     {
