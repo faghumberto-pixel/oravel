@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Models;
+
+use App\Models\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
+
+/** Configuração de SLA do tenant: status internos que pausam o relógio e o % do prazo a partir do qual fica "em risco". */
+class SlaSetting extends Model
+{
+    use BelongsToTenant;
+    use HasUuids;
+
+    protected $fillable = ['tenant_id', 'pause_statuses', 'warn_pct'];
+
+    protected $casts = [
+        'pause_statuses' => 'array',
+        'warn_pct' => 'integer',
+    ];
+}

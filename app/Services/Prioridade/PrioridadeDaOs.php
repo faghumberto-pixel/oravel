@@ -109,6 +109,7 @@ class PrioridadeDaOs
         }
 
         $os->update(['priority' => $codigo, 'priority_source' => self::MANUAL]);
+        \App\Services\Sla\SlaService::recalcular($os);
 
         activity('prioridade_os')
             ->performedOn($os)

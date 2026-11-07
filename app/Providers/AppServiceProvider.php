@@ -186,6 +186,7 @@ class AppServiceProvider extends ServiceProvider
         // ATIVAÇÃO FORÇADA
         AccountReceivable::observe(AccountReceivableObserver::class);
         Asset::observe(AssetObserver::class);
+        \App\Models\MaintenanceOrder::observe(\App\Observers\MaintenanceOrderSlaObserver::class);
         Client::observe(ClientObserver::class);
         Contract::observe(ContractObserver::class);
         EquipmentMovement::observe(EquipmentMovementObserver::class);

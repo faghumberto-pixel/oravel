@@ -178,6 +178,35 @@ class MaintenanceOrderResource extends Resource
     }
 
     /** Interface simples (padrão de quem não contratou Locadora; a Central pode forçar por empresa). */
+    /**
+     * Resumo do SLA da OS para a lista (F2): o pior cronômetro aberto (vencido > em risco > no prazo > pausado), ou nada.
+     *
+     * @return array{texto: string, cor: string}|null
+     */
+    public static function slaResumo(MaintenanceOrder $os): ?array
+    {
+        $abertos = $os->slaTimers->filter(fn (\App\Models\SlaTimer $t) => $t->aberto());
+
+        if ($abertos->isEmpty()) {
+            return null;
+        }
+
+        $avisarEm = \App\Services\Sla\SlaService::settings((string) $os->tenant_id)->warn_pct;
+        $ordem = ['vencido' => 0, 'em_risco' => 1, 'no_prazo' => 2, 'pausado' => 3];
+        $pior = $abertos->sortBy(fn ($t) => [$ordem[$t->estado($avisarEm)] ?? 9, $t->prazoEfetivo()->getTimestamp()])->first();
+        $estado = $pior->estado($avisarEm);
+        $restante = $pior->minutosRestantes();
+        $fmt = \App\Services\Sla\SlaService::class;
+
+        $texto = match ($estado) {
+            'vencido' => $pior->label().' · vencido há '.$fmt::formatarMinutos(abs($restante)),
+            'pausado' => $pior->label().' · pausado',
+            default => $pior->label().' · '.$fmt::formatarMinutos($restante).' restantes',
+        };
+
+        return ['texto' => $texto, 'cor' => \App\Models\SlaTimer::corDoEstado($estado)];
+    }
+
     /** Formulário da ação "Alterar prioridade" (F1): usado pela ação da tabela e pela da tela de edição. */
     public static function alterarPrioridadeForm(): array
     {
@@ -964,6 +993,9 @@ class MaintenanceOrderResource extends Resource
                         Tables\Columns\TextColumn::make('priority')->label('Prioridade')->badge()->grow(false)->placeholder(null)
                             ->formatStateUsing(fn (?string $state) => $state ? (PrioridadeDaOs::opcoes((string) Tenancy::current()?->id)[$state] ?? ucfirst($state)) : null)
                             ->color(fn (?string $state) => PriorityLevel::where('tenant_id', Tenancy::current()?->id)->where('code', $state)->first()?->badgeColor() ?? 'gray'),
+                        Tables\Columns\TextColumn::make('sla')->label('SLA')->badge()->grow(false)->placeholder(null)
+                            ->state(fn (MaintenanceOrder $record) => static::slaResumo($record)['texto'] ?? null)
+                            ->color(fn (MaintenanceOrder $record) => static::slaResumo($record)['cor'] ?? 'gray'),
                         Tables\Columns\TextColumn::make('asset.assetCategory.name')->label('Categoria do Ativo')->badge()->grow(false),
                         Tables\Columns\TextColumn::make('asset.checklistGroup.name')->hidden(fn () => static::interfaceSimples())
                             ->label('Grupo')
@@ -1023,6 +1055,20 @@ class MaintenanceOrderResource extends Resource
                         'Troca' => 'Troca de Equipamento',
                         'Emergência' => 'Chamado de Emergência',
                     ]),
+                Tables\Filters\SelectFilter::make('sla')->label('SLA')
+                    ->options(['vencido' => 'Vencido', 'em_risco' => 'Em risco', 'pausado' => 'Pausado', 'estourado' => 'Estourado (concluído fora do prazo)'])
+                    ->query(function (Builder $query, array $data) {
+                        $aberto = fn ($t) => $t->whereNull('stopped_at');
+
+                        return match ($data['value'] ?? null) {
+                            'vencido' => $query->whereHas('slaTimers', fn ($t) => $aberto($t)->whereNull('paused_at')->where('due_at', '<', now())),
+                            'em_risco' => $query->whereHas('slaTimers', fn ($t) => $aberto($t)->whereNull('paused_at')->where('due_at', '>=', now())
+                                ->whereRaw("started_at + (target_minutes * CAST(? AS numeric) / 100.0 * 60 + paused_seconds) * interval '1 second' <= ?", [\App\Services\Sla\SlaService::settings((string) Tenancy::current()?->id)->warn_pct, now()])),
+                            'pausado' => $query->whereHas('slaTimers', fn ($t) => $aberto($t)->whereNotNull('paused_at')),
+                            'estourado' => $query->whereHas('slaTimers', fn ($t) => $t->where('result', 'breached')),
+                            default => $query,
+                        };
+                    }),
                 Tables\Filters\SelectFilter::make('priority')->label('Prioridade')
                     ->options(fn () => PrioridadeDaOs::opcoes((string) Tenancy::current()?->id)),
                 Tables\Filters\SelectFilter::make('matriz_abc')
