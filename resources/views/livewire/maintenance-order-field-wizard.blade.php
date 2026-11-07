@@ -58,9 +58,11 @@
                 @endphp
                 <span class="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide {{ $slaColor }}">
                     @if ($this->slaRemaining['exceeded'])
-                        ⏰ SLA EXPIRADO
+                        ⏰ {{ $this->slaRemaining['label'] }} VENCIDO
+                    @elseif ($this->slaRemaining['paused'] ?? false)
+                        ⏸ {{ $this->slaRemaining['label'] }} PAUSADO
                     @else
-                        ⏱ {{ $this->slaRemaining['hours'] }}h {{ $this->slaRemaining['minutes'] }}m
+                        ⏱ {{ $this->slaRemaining['label'] }} {{ $this->slaRemaining['hours'] }}h {{ $this->slaRemaining['minutes'] }}m
                     @endif
                 </span>
             @endif

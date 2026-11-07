@@ -22,12 +22,23 @@ class ColaboradorOsController extends Controller
         $aba = $request->query('aba') === 'concluidas' ? 'concluidas' : 'abertas';
         $base = fn () => MaintenanceOrder::query()->where('technician_id', $request->user()->id);
 
-        $query = $base()->with('asset');
+        $query = $base()->with(['asset', 'slaTimers']);
         $aba === 'abertas'
             ? $query->whereNotIn('status', SituacaoOs::FECHADAS)->orderByRaw('is_prazo_fatal desc nulls last')->orderByRaw('scheduled_at asc nulls last')->orderBy('created_at')
             : $query->whereIn('status', SituacaoOs::FECHADAS)->orderByDesc('updated_at')->limit(20);
 
-        $ordens = $query->get()->filter(fn ($os) => Gate::allows('view', $os))->values()->map(fn (MaintenanceOrder $os) => [
+        $lista = $query->get();
+        if ($aba === 'abertas') {
+            // F3: prazo fatal primeiro, depois o prazo de SLA mais proximo, depois agendamento e abertura.
+            $lista = $lista->sortBy(fn (MaintenanceOrder $os) => [
+                $os->is_prazo_fatal ? 0 : 1,
+                (\App\Services\Sla\SlaService::resumoDaOs($os)['prazo'] ?? null)?->getTimestamp() ?? PHP_INT_MAX,
+                $os->scheduled_at?->getTimestamp() ?? PHP_INT_MAX,
+                $os->created_at->getTimestamp(),
+            ])->values();
+        }
+
+        $ordens = $lista->filter(fn ($os) => Gate::allows('view', $os))->values()->map(fn (MaintenanceOrder $os) => [
             'id' => $os->id,
             'numero' => $os->os_number,
             'equipamento' => $os->asset?->name,
@@ -37,6 +48,7 @@ class ColaboradorOsController extends Controller
             'dias' => SituacaoOs::diasEmAberto($os),
             'agendada' => $os->scheduled_at,
             'prazo_fatal' => (bool) $os->is_prazo_fatal,
+            'sla' => $aba === 'abertas' ? \App\Services\Sla\SlaService::resumoDaOs($os) : null,
             'pode_executar' => ! in_array($os->status, SituacaoOs::FECHADAS, true) && Gate::allows('update', $os),
             'problema' => $os->description,
         ]);

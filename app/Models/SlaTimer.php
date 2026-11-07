@@ -25,13 +25,16 @@ class SlaTimer extends Model
 
     public const CLOCKS = [self::RESPONSE => 'Resposta', self::SERVICE => 'Atendimento', self::RESOLUTION => 'Resolução'];
 
-    protected $fillable = ['tenant_id', 'subject_type', 'subject_id', 'clock', 'policy_id', 'started_at', 'target_minutes', 'due_at', 'paused_at', 'paused_seconds', 'stopped_at', 'result'];
+    protected $fillable = ['tenant_id', 'subject_type', 'subject_id', 'clock', 'policy_id', 'started_at', 'target_minutes', 'due_at', 'paused_at', 'paused_seconds', 'stopped_at', 'result', 'warned_at', 'breached_at', 'escalated_at'];
 
     protected $casts = [
         'started_at' => 'datetime',
         'due_at' => 'datetime',
         'paused_at' => 'datetime',
         'stopped_at' => 'datetime',
+        'warned_at' => 'datetime',
+        'breached_at' => 'datetime',
+        'escalated_at' => 'datetime',
         'target_minutes' => 'integer',
         'paused_seconds' => 'integer',
     ];
