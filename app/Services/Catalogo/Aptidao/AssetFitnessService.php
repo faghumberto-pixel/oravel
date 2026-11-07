@@ -2,6 +2,7 @@
 
 namespace App\Services\Catalogo\Aptidao;
 
+use App\Models\AptidaoLiberacao;
 use App\Models\Asset;
 use App\Models\AssetCategory;
 use App\Models\CatalogoCumprimento;
@@ -38,7 +39,14 @@ class AssetFitnessService
             return ResultadoAptidao::incompleto("O grupo \"{$grupo->name}\" foi arquivado: cadastro incompleto.");
         }
 
-        return $this->avaliar($ativo, PerfilDoGrupo::doGrupo($grupo), $agora);
+        $r = $this->avaliar($ativo, PerfilDoGrupo::doGrupo($grupo), $agora);
+
+        // liberacao excepcional vigente: so vale para Inapto (nao levanta bloqueio de regra especial nem cadastro incompleto)
+        if ($r->status === ResultadoAptidao::INAPTO && ($l = AptidaoLiberacao::vigente($ativo, $agora))) {
+            $r->liberacao = ['id' => $l->id, 'valida_ate' => $l->valida_ate->toIso8601String(), 'justificativa' => $l->justificativa, 'usuario_id' => $l->usuario_id];
+        }
+
+        return $r;
     }
 
     public function avaliar(Asset $ativo, PerfilDoGrupo $perfil, ?CarbonInterface $agora = null): ResultadoAptidao
@@ -82,6 +90,7 @@ class AssetFitnessService
             'aptidao_motivos' => json_encode(['motivos' => $r->motivos, 'avisos' => $r->avisos, 'os_a_gerar' => $r->osAGerar], JSON_UNESCAPED_UNICODE),
             'aptidao_bloqueia_alocacao' => $r->bloqueiaAlocacao,
             'aptidao_calculada_em' => now(),
+            'aptidao_liberada_ate' => $r->liberacao['valida_ate'] ?? null,
         ];
 
         Asset::withoutGlobalScopes()->whereKey($ativo->id)->update($dados);

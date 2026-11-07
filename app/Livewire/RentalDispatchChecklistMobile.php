@@ -53,20 +53,31 @@ class RentalDispatchChecklistMobile extends Component
             $this->equipmentMovement = $existing;
         } else {
             Gate::authorize('create', EquipmentMovement::class);
-            $this->equipmentMovement = EquipmentMovement::create([
-                'solicitacao_locacao_id' => $solicitacaoLocacao->id,
-                'asset_id' => $solicitacaoLocacao->asset_id,
-                'type' => EquipmentMovement::TYPE_MOBILIZACAO,
-                'status' => EquipmentMovement::STATUS_AGUARDANDO_VISTORIA,
-                // scheduled_at=now() pra nascer visivel no mapa de
-                // Programacao da Logistica (LogisticaAgendaWidget exige
-                // scheduled_at preenchido) -- reagenda pelo calendario se
-                // precisar de outro horario.
-                'scheduled_at' => now(),
-            ]);
+
+            try {
+                $this->equipmentMovement = $this->criarMobilizacao($solicitacaoLocacao);
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                // G1: ativo Inapto / cadastro incompleto / bloqueio de regra
+                abort(422, collect($e->errors())->flatten()->first());
+            }
         }
 
         $this->solicitacaoLocacao = $solicitacaoLocacao;
+    }
+
+    private function criarMobilizacao(SolicitacaoLocacao $solicitacaoLocacao): EquipmentMovement
+    {
+        return EquipmentMovement::create([
+            'solicitacao_locacao_id' => $solicitacaoLocacao->id,
+            'asset_id' => $solicitacaoLocacao->asset_id,
+            'type' => EquipmentMovement::TYPE_MOBILIZACAO,
+            'status' => EquipmentMovement::STATUS_AGUARDANDO_VISTORIA,
+            // scheduled_at=now() pra nascer visivel no mapa de
+            // Programacao da Logistica (LogisticaAgendaWidget exige
+            // scheduled_at preenchido) -- reagenda pelo calendario se
+            // precisar de outro horario.
+            'scheduled_at' => now(),
+        ]);
     }
 
     public function getItemsProperty()

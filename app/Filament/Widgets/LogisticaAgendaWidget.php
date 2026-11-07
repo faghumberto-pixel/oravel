@@ -114,13 +114,23 @@ class LogisticaAgendaWidget extends FullCalendarWidget
                         'scheduled_at' => $arguments['start'] ?? now(),
                     ]);
                 })
-                ->using(fn (array $data) => EquipmentMovement::create([
-                    'asset_id' => $data['asset_id'],
-                    'maintenance_order_id' => $data['maintenance_order_id'] ?? null,
-                    'type' => $data['type'],
-                    'status' => EquipmentMovement::STATUS_AGUARDANDO_VISTORIA,
-                    'scheduled_at' => $data['scheduled_at'],
-                ])),
+                ->using(function (array $data) {
+                    try {
+                        return EquipmentMovement::create([
+                            'asset_id' => $data['asset_id'],
+                            'maintenance_order_id' => $data['maintenance_order_id'] ?? null,
+                            'type' => $data['type'],
+                            'status' => EquipmentMovement::STATUS_AGUARDANDO_VISTORIA,
+                            'scheduled_at' => $data['scheduled_at'],
+                        ]);
+                    } catch (\Illuminate\Validation\ValidationException $e) {
+                        // G1: ativo Inapto / cadastro incompleto / bloqueio de regra -- mostra o motivo em vez de erro generico
+                        \Filament\Notifications\Notification::make()->danger()->title('Ativo bloqueado para despacho')
+                            ->body(collect($e->errors())->flatten()->first())->persistent()->send();
+
+                        throw new \Filament\Support\Exceptions\Halt;
+                    }
+                }),
         ];
     }
 

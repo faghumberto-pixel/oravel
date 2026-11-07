@@ -3,14 +3,17 @@
 namespace App\Services\Catalogo\Aptidao;
 
 use App\Jobs\Aptidao\RecalcularAptidaoAtivoJob;
+use App\Models\AptidaoLiberacao;
 use App\Models\Asset;
 use App\Models\AssetDocument;
 use App\Models\CatalogoCumprimento;
+use App\Models\EquipmentMovement;
 use App\Models\FrotaChecklist;
 use App\Models\FrotaLeituraOdometro;
 use App\Models\HorimeterReading;
 use App\Models\MaintenanceOrder;
 use App\Models\Nr13Inspection;
+use App\Models\SolicitacaoLocacao;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
@@ -46,10 +49,48 @@ class AptidaoGatilhos
             }
         });
 
+        // IMP reprovado (com gera_os) abre OS corretiva; nunca derruba o registro do checklist
+        CatalogoCumprimento::created(fn (CatalogoCumprimento $c) => app(OsAutomaticaAptidao::class)->tentar($c));
+
+        AptidaoLiberacao::saved(fn ($l) => self::disparar($l->asset_id));
+
+        self::registrarBloqueios();
+
         foreach ([Nr13Inspection::class, AssetDocument::class, CatalogoCumprimento::class] as $classe) {
             $classe::saved(fn (Model $m) => self::disparar($m->asset_id));
             $classe::deleted(fn (Model $m) => self::disparar($m->asset_id));
         }
+    }
+
+    /**
+     * Bloqueio de ALOCACAO/DESPACHO por aptidao (so com a chave do contrato ligada; AptidaoBloqueio sai cedo senao):
+     * mobilizacao de equipamento sem OS (despacho de locacao/agenda) e solicitacao de locacao virando contrato fechado.
+     * A troca de equipamento (EquipmentReplacement) chama AptidaoBloqueio direto, antes de criar qualquer movimentacao.
+     */
+    private static function registrarBloqueios(): void
+    {
+        EquipmentMovement::creating(function (EquipmentMovement $m) {
+            // mobilizacao ligada a uma OS de manutencao e exatamente o caso de um ativo Inapto precisar ir ao conserto: nao bloqueia.
+            if ($m->type === EquipmentMovement::TYPE_MOBILIZACAO && blank($m->maintenance_order_id) && $m->asset_id) {
+                AptidaoBloqueio::exigirPodeAlocar(Asset::withoutGlobalScopes()->find($m->asset_id));
+            }
+        });
+
+        SolicitacaoLocacao::saving(function (SolicitacaoLocacao $s) {
+            if (! ($s->isDirty('status_comercial') && $s->status_comercial === 'contrato_fechado')) {
+                return;
+            }
+
+            if ($s->asset_id) {
+                AptidaoBloqueio::exigirPodeAlocar(Asset::withoutGlobalScopes()->find($s->asset_id));
+            }
+
+            if ($s->exists) {
+                foreach ($s->assets as $ativo) {
+                    AptidaoBloqueio::exigirPodeAlocar($ativo);
+                }
+            }
+        });
     }
 
     public static function disparar(?string $assetId): void

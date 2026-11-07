@@ -46,3 +46,16 @@ então o sqlite do `phpunit.xml` NÃO vale). Rodar só em banco descartável: `D
 - **Cadastro do ativo:** seção "Campos técnicos do grupo" mostra só os campos do grupo escolhido (gravados em `assets.atributos_tecnicos`); obrigatório vazio = aviso, nunca bloqueia.
   Coluna e filtro "Aptidão" na lista e aba "Aptidão e cumprimentos" no ativo (registrar cumprimento; histórico sem editar/excluir). Widget "Aptidão da frota" com alerta de cadastro incompleto.
   Tudo inerte com a chave do contrato desligada.
+
+## Fase 5 — Consumidores: bloqueio, liberação excepcional, OS automática, campo e painéis
+- **Bloqueio de alocação/despacho** (`AptidaoBloqueio`, calcula na hora, só com a chave do contrato ligada): barra **Inapto**, **cadastro incompleto** e **regra especial de bloqueio**
+  (ex.: guindaste sem plano de içamento). "Apto com restrição" não bloqueia. Pontos de barragem: mobilização **sem OS** (despacho/agenda da logística), solicitação de locação
+  virando `contrato_fechado` e troca de equipamento (checa o substituto antes de criar qualquer movimentação). Mobilização **de OS de manutenção** e desmobilização não são
+  barradas (o ativo Inapto precisa ir ao conserto). Operador exigido (`exige_operador`) **ainda não é avaliado**: depende de `EmployeeCertification`/`EquipmentAllocation` e da trigger de NR; fica para fatia própria.
+- **Liberação excepcional** (`aptidao_liberacoes`): permissão própria `criar_liberacao_aptidao` (atribuída em Perfis de Acesso; admin do tenant tem o bypass padrão), justificativa
+  ≥ 10 caracteres, prazo futuro de no máx. 30 dias, só para ativo **Inapto**, sem duplicar, revogável com justificativa, log com motivos da época. O status **continua Inapto**.
+  **Não levanta** bloqueio de regra especial nem cadastro incompleto.
+- **OS automática**: item **IMP** reprovado com `gera_os` abre **uma** OS corretiva (`origin = aptidao_auto`); se já há OS aberta para o mesmo item, vincula à mesma. **Fechar a OS não
+  aprova o item**: o ativo segue Inapto até um novo checklist OK (reinspeção). Falha ao abrir a OS é logada e nunca derruba o registro do checklist.
+- **Campo**: `Checklist do equipamento` (`/admin/checklist-aptidao`, atalho em `config/campo.php`): só itens IMP/ALR do grupo do ativo. Documentos e inspeções (validade/anexo) ficam na tela de gestão.
+- **Painéis**: aptidão por grupo (tabela) e principais motivos de Inapto/restrição. Aba do ativo ganha "Liberar excepcionalmente" e "Revogar liberação".

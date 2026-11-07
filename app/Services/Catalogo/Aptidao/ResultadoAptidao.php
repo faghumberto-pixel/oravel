@@ -23,6 +23,9 @@ class ResultadoAptidao
 
     public bool $bloqueiaAlocacao = false;
 
+    /** Liberacao excepcional vigente (so quando o status e Inapto): o status continua Inapto, mas a alocacao e permitida ate o prazo. */
+    public ?array $liberacao = null;
+
     /** @var array<int, string> slugs de requisitos IMP reprovados com gera_os (a OS automatica e criada na fase 5) */
     public array $osAGerar = [];
 
@@ -55,7 +58,7 @@ class ResultadoAptidao
     {
         return [
             'status' => $this->status, 'motivos' => $this->motivos, 'avisos' => $this->avisos,
-            'bloqueia_alocacao' => $this->bloqueiaAlocacao, 'os_a_gerar' => $this->osAGerar,
+            'bloqueia_alocacao' => $this->bloqueiaAlocacao, 'os_a_gerar' => $this->osAGerar, 'liberacao' => $this->liberacao,
         ];
     }
 }
