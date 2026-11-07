@@ -460,7 +460,7 @@ class MaintenanceOrderFieldWizard extends Component
         $urgencyToSla = [
             'critico' => 120,    // 2 horas
             'urgente' => 480,    // 8 horas
-            'normal' => 1440,    // 48 horas
+            'normal' => 2880,    // 48 horas (era 1440 = 24h, divergia da tela de Trocas: 2h/8h/48h)
         ];
 
         EquipmentReplacement::create([
@@ -475,7 +475,7 @@ class MaintenanceOrderFieldWizard extends Component
 
         // Atualizar MaintenanceOrder com SLA
         $this->maintenanceOrder->update([
-            'sla_target_minutes' => $urgencyToSla[$this->replacementUrgency] ?? 1440,
+            'sla_target_minutes' => $urgencyToSla[$this->replacementUrgency] ?? 2880,
         ]);
     }
 
