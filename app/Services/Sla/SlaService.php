@@ -2,6 +2,7 @@
 
 namespace App\Services\Sla;
 
+use App\Models\Contract;
 use App\Models\MaintenanceOrder;
 use App\Models\SlaPolicy;
 use App\Models\SlaSetting;
@@ -59,16 +60,36 @@ class SlaService
         self::esquecer();
     }
 
+    /**
+     * Cliente e contrato da OS para casar politicas especificas: contrato = o contrato Ativo do equipamento;
+     * cliente = o da OS ou, na falta, o do contrato.
+     *
+     * @return array{0: ?string, 1: ?string} [client_id, contract_id]
+     */
+    public static function contextoDaOs(MaintenanceOrder $os): array
+    {
+        $contrato = $os->asset_id
+            ? Contract::withoutGlobalScopes()->where('tenant_id', $os->tenant_id)->where('asset_id', $os->asset_id)->where('status', 'Ativo')->first(['id', 'client_id'])
+            : null;
+
+        return [$os->client_id ?? $contrato?->client_id, $contrato?->id];
+    }
+
+    /** A politica mais especifica vence: contrato > cliente > tipo de OS > geral. */
     public static function politicaPara(MaintenanceOrder $os): ?SlaPolicy
     {
         if (blank($os->priority) || blank($os->tenant_id)) {
             return null;
         }
 
+        [$clienteId, $contratoId] = self::contextoDaOs($os);
+
         return SlaPolicy::withoutGlobalScopes()
             ->where('tenant_id', $os->tenant_id)->where('is_active', true)->where('priority_code', $os->priority)
             ->where(fn ($q) => $q->where('maintenance_type', $os->maintenance_type)->orWhereNull('maintenance_type'))
-            ->orderByRaw('maintenance_type is null')
+            ->where(fn ($q) => $q->whereNull('client_id')->when($clienteId, fn ($w) => $w->orWhere('client_id', $clienteId)))
+            ->where(fn ($q) => $q->whereNull('contract_id')->when($contratoId, fn ($w) => $w->orWhere('contract_id', $contratoId)))
+            ->orderByRaw('contract_id is null')->orderByRaw('client_id is null')->orderByRaw('maintenance_type is null')
             ->first();
     }
 
@@ -200,6 +221,24 @@ class SlaService
         };
 
         return ['texto' => $texto, 'cor' => SlaTimer::corDoEstado($estado), 'estado' => $estado, 'relogio' => $pior->label(), 'minutos' => $restante, 'prazo' => $pior->prazoEfetivo()];
+    }
+
+    /**
+     * Cronometros abertos da OS em formato compacto para o pacote offline do app do colaborador: o celular calcula sozinho
+     * "vencido / em risco / restam X" comparando com a hora do aparelho (prazo e inicio do risco ja vem calculados no calendario certo).
+     *
+     * @return array<int, array{rel: string, due: ?string, risco: ?string, pausado: bool}>
+     */
+    public static function relogiosParaApp(MaintenanceOrder $os): array
+    {
+        $avisarEm = self::settings((string) $os->tenant_id)->warn_pct;
+
+        return $os->slaTimers->filter(fn (SlaTimer $t) => $t->aberto())->map(fn (SlaTimer $t) => [
+            'rel' => $t->label(),
+            'due' => $t->paused_at ? null : $t->due_at->toIso8601String(),
+            'risco' => $t->paused_at ? null : $t->inicioDoRisco($avisarEm)->toIso8601String(),
+            'pausado' => (bool) $t->paused_at,
+        ])->values()->all();
     }
 
     /** @return Collection<string, SlaTimer> indexado pelo relogio */
