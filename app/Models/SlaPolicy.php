@@ -6,6 +6,7 @@ use App\Models\Concerns\BelongsToTenant;
 use App\Models\Concerns\HasSaaSMetadata;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /** Política de SLA do tenant: para cada prioridade (e, opcionalmente, tipo de OS), os prazos em minutos de cada relógio. */
 class SlaPolicy extends Model
@@ -20,7 +21,7 @@ class SlaPolicy extends Model
 
     protected static ?string $saasModuleLabel = 'Políticas de SLA';
 
-    protected $fillable = ['tenant_id', 'priority_code', 'maintenance_type', 'response_minutes', 'service_minutes', 'resolution_minutes', 'is_active'];
+    protected $fillable = ['tenant_id', 'priority_code', 'maintenance_type', 'client_id', 'contract_id', 'response_minutes', 'service_minutes', 'resolution_minutes', 'is_active'];
 
     protected $casts = [
         'response_minutes' => 'integer',
@@ -37,5 +38,15 @@ class SlaPolicy extends Model
             SlaTimer::SERVICE => $this->service_minutes,
             SlaTimer::RESOLUTION => $this->resolution_minutes,
         ], fn ($m) => $m !== null && $m > 0);
+    }
+
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class);
+    }
+
+    public function contract(): BelongsTo
+    {
+        return $this->belongsTo(Contract::class);
     }
 }

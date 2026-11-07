@@ -11,6 +11,7 @@ use App\Models\FrotaSaidaVeiculo;
 use App\Models\FrotaVinculoMotorista;
 use App\Models\MaintenanceOrder;
 use App\Models\User;
+use App\Services\Sla\SlaService;
 use App\Support\Colaborador\Modulos;
 use App\Support\Colaborador\SituacaoOs;
 use Illuminate\Support\Facades\Gate;
@@ -42,9 +43,9 @@ class PacoteOffline
         }
 
         if (Gate::forUser($user)->allows('viewAny', MaintenanceOrder::class) && Modulos::acessoAlgum($user, ['os', 'minhas_os'])) {
-            $campos = ['id', 'os_number', 'asset_id', 'status', 'internal_status', 'created_at', 'updated_at', 'finished_at', 'scheduled_at', 'description', 'technician_id'];
+            $campos = ['id', 'os_number', 'asset_id', 'status', 'internal_status', 'created_at', 'updated_at', 'finished_at', 'scheduled_at', 'description', 'technician_id', 'tenant_id'];
 
-            $abertas = MaintenanceOrder::query()->whereNotIn('status', SituacaoOs::FECHADAS)->with('technician:id,name')->get($campos);
+            $abertas = MaintenanceOrder::query()->whereNotIn('status', SituacaoOs::FECHADAS)->with(['technician:id,name', 'slaTimers'])->get($campos);
             $recentes = MaintenanceOrder::query()->whereIn('status', SituacaoOs::FECHADAS)->where('created_at', '>=', now()->subDays(180))
                 ->with('technician:id,name')->orderByDesc('created_at')->limit(3000)->get($campos)
                 ->groupBy('asset_id')->flatMap(fn ($grupo) => $grupo->take(self::RECENTES_POR_ATIVO));
@@ -60,6 +61,8 @@ class PacoteOffline
                     'ag' => $os->scheduled_at?->toIso8601String(),
                     'tec' => $os->technician?->name, 'tec_id' => $os->technician_id,
                     'prob' => $os->description,
+                    // F6: relógios de SLA abertos (o app calcula o estado offline com a hora do aparelho)
+                    'sla' => $fechada ? [] : SlaService::relogiosParaApp($os),
                 ];
             }
 

@@ -106,6 +106,12 @@ class SlaTimer extends Model
         return (int) round($agora->lessThan($prazo) ? $cal->entre($agora, $prazo) : -$cal->entre($prazo, $agora));
     }
 
+    /** Instante em que o cronômetro passa a "em risco" (no calendário dele): início + (meta × % de alerta + pausas). */
+    public function inicioDoRisco(int $avisarEm): CarbonInterface
+    {
+        return $this->calendario()->somar($this->started_at, $this->target_minutes * $avisarEm / 100 + $this->paused_seconds / 60);
+    }
+
     /** cumprido | estourado | cancelado | pausado | vencido | em_risco | no_prazo */
     public function estado(int $avisarEm = 70, ?CarbonInterface $agora = null): string
     {
