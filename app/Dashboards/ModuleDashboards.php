@@ -13,7 +13,7 @@ class ModuleDashboards
     {
         return [
             'manutencao' => [
-                'label' => 'Visão geral — Manutenção',
+                'label' => 'Painel de Controle — Técnico',
                 'module' => 'Manutenção',
                 'lead' => 'Atendimentos, prazo, retorno à máquina e peças paradas, em uma tela.',
                 'blocks' => [
@@ -55,7 +55,7 @@ class ModuleDashboards
                 ],
             ],
             'comercial' => [
-                'label' => 'Visão geral — Comercial',
+                'label' => 'Painel de Controle — Comercial',
                 'module' => 'Comercial',
                 'lead' => 'Contratos, orçamentos, funil de vendas e clientes para contatar, em uma tela.',
                 'blocks' => [
@@ -81,7 +81,7 @@ class ModuleDashboards
                 ],
             ],
             'financeiro' => [
-                'label' => 'Visão geral — Financeiro',
+                'label' => 'Painel de Controle — Financeiro',
                 'module' => 'Financeiro',
                 'lead' => 'O que entra, o que sai e o que está em atraso, em uma tela.',
                 'blocks' => [
@@ -155,6 +155,66 @@ class ModuleDashboards
                     'logistica.mobilizacao_x_desmobilizacao',
                     'logistica.programacao',
                     'logistica.veiculos_fora',
+                ],
+            ],
+            'administrativo' => [
+                'label' => 'Painel de Controle — Administrativo',
+                'module' => 'Adicionais',
+                'lead' => 'Contratos a vencer, documentos, assinaturas e pedidos pendentes, em uma tela.',
+                'blocks' => [
+                    'administrativo.assinaturas_pendentes',
+                    'comercial.contratos_ativos',
+                    'comercial.contratos_vencendo',
+                    'comercial.pedidos_locacao',
+                    'administrativo.assinaturas_situacao',
+                    'comercial.contratos_a_renovar',
+                    'ativos.vencimentos',
+                    'materiais.requisicoes_abertas',
+                    'comercial.orcamentos_sem_retorno',
+                ],
+            ],
+            'rh' => [
+                'label' => 'Painel de Controle — Recursos Humanos',
+                'module' => 'Equipe',
+                'lead' => 'Colaboradores, ponto de hoje, certificações a vencer e EPI, em uma tela.',
+                'blocks' => [
+                    'rh.colaboradores_ativos',
+                    'rh.ponto_hoje',
+                    'rh.por_situacao',
+                    'rh.admissoes_por_mes',
+                    'rh.certificacoes_a_vencer',
+                    'rh.epi_a_devolver',
+                ],
+            ],
+            'compras' => [
+                'label' => 'Painel de Controle — Compras',
+                'module' => 'Materiais e Peças',
+                'lead' => 'Pedidos, atrasos, fornecedores e itens abaixo do mínimo, em uma tela.',
+                'blocks' => [
+                    'materiais.compras_a_receber',
+                    'materiais.abaixo_minimo_total',
+                    'materiais.valor_em_estoque',
+                    'compras.pedidos_atrasados',
+                    'materiais.requisicoes_abertas',
+                    'compras.por_fornecedor',
+                    'compras.por_mes',
+                    'materiais.entregas_previstas',
+                    'materiais.abaixo_minimo_lista',
+                ],
+            ],
+            'planejamento' => [
+                'label' => 'Painel de Controle — Planejamento',
+                'module' => 'PMP',
+                'lead' => 'Preventivas vencidas e a vencer, cobertura dos planos e carga da equipe, em uma tela.',
+                'blocks' => [
+                    'pmp.preventivas_vencidas',
+                    'pmp.cobertura',
+                    'ativos.em_manutencao',
+                    'pmp.mais_atrasadas',
+                    'pmp.a_vencer',
+                    'manutencao.carga_tecnico',
+                    'manutencao.agenda_hoje',
+                    'manutencao.aguardando_peca',
                 ],
             ],
             'ativos' => [

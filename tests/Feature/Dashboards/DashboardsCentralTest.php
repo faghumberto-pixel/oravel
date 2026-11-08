@@ -113,11 +113,13 @@ class DashboardsCentralTest extends TestCase
 
     public function test_visao_geral_de_cada_modulo_leva_o_nome_do_modulo(): void
     {
+        $areas = ['administrativo', 'financeiro', 'manutencao', 'comercial', 'rh', 'compras', 'planejamento'];
+
         foreach (ModuleDashboards::all() as $chave => $dash) {
-            $this->assertStringStartsWith('Visão geral — ', $dash['label'], $chave);
+            $this->assertStringStartsWith(in_array($chave, $areas, true) ? 'Painel de Controle — ' : 'Visão geral — ', $dash['label'], $chave);
         }
-        $this->assertSame('Visão geral — Manutenção', ModuleDashboards::find('manutencao')['label']);
-        $this->assertSame('Visão geral — Manutenção', VisaoGeralManutencao::getNavigationLabel());
+        $this->assertSame('Painel de Controle — Técnico', ModuleDashboards::find('manutencao')['label']);
+        $this->assertSame('Painel de Controle — Técnico', VisaoGeralManutencao::getNavigationLabel());
     }
 
     public function test_dashboard_sem_descritivo_e_recusado(): void

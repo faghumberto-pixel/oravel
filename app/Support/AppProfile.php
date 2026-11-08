@@ -51,7 +51,7 @@ class AppProfile
     public static function homeUrl(User $user, string $profile): string
     {
         return match ($profile) {
-            self::ADMIN => self::urlDoOnboarding($user) ?? self::urlDoGuiaSemPainel() ?? Pacotes::urlInicial(Tenancy::current() ?? $user->tenant) ?? self::urlDoPainelOuPrimeiraTela(),
+            self::ADMIN => self::urlDoOnboarding($user) ?? self::urlDoGuiaSemPainel() ?? PainelDaArea::urlInicialPara($user) ?? Pacotes::urlInicial(Tenancy::current() ?? $user->tenant) ?? self::urlDoPainelOuPrimeiraTela(),
             self::TECNICO => route('filament.admin.pages.technician-daily-tasks'),
             default => route('filament.admin.pages.app-colaborador'),
         };
