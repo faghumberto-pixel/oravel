@@ -87,6 +87,7 @@ class MaintenanceOrder extends Model implements HasMedia
         'parent_os_id', 'labor_cost', 'material_cost', 'logistics_cost', 'total_order_cost',
         'horimetro_entry', 'fuel_level', 'scheduled_at',
         'is_prazo_fatal', 'prazo_fatal_at', 'sla_target_minutes', 'km_traveled', 'transport_vehicle_id',
+        'priority', 'priority_source', 'first_response_at',
     ];
 
     protected $casts = [
@@ -100,6 +101,7 @@ class MaintenanceOrder extends Model implements HasMedia
         'is_prazo_fatal' => 'boolean',
         'prazo_fatal_at' => 'datetime',
         'sla_target_minutes' => 'integer',
+        'first_response_at' => 'datetime',
     ];
 
     /**
@@ -126,8 +128,23 @@ class MaintenanceOrder extends Model implements HasMedia
      * so' que em minutos (nao horas) e a partir de created_at (ticket aberto)
      * em vez de uma janela fixa por urgencia.
      */
+    public function slaTimers(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(SlaTimer::class, 'subject');
+    }
+
     public function slaColor(): ?string
     {
+        // F2: com cronometros, a cor vem do pior relogio aberto (vencido > em risco > no prazo > pausado); sem eles, regra legada abaixo.
+        $timers = $this->slaTimers;
+        if ($timers->isNotEmpty()) {
+            $avisarEm = \App\Services\Sla\SlaService::settings((string) $this->tenant_id)->warn_pct;
+            $ordem = ['danger' => 0, 'warning' => 1, 'success' => 2, 'gray' => 3];
+            $cores = $timers->filter(fn (SlaTimer $t) => $t->aberto())->map(fn (SlaTimer $t) => SlaTimer::corDoEstado($t->estado($avisarEm)));
+
+            return $cores->isEmpty() ? 'gray' : $cores->sortBy(fn ($c) => $ordem[$c])->first();
+        }
+
         if (! $this->sla_target_minutes) {
             return null;
         }
@@ -320,6 +337,21 @@ class MaintenanceOrder extends Model implements HasMedia
                 ->exists();
 
             $os->service_type = $isUnderContract ? 'Externo' : 'Interno';
+
+            // F1: prioridade automatica (ativo + tipo) quando ninguem informou; informada na criacao = manual.
+            try {
+                if (blank($os->getAttributes()['priority'] ?? null)) {
+                    $tenantId = (string) ($os->tenant_id ?? auth()->user()?->tenant_id);
+                    if ($tenantId !== '') {
+                        $os->priority = \App\Services\Prioridade\PrioridadeDaOs::sugerir($tenantId, $os->asset_id, $os->maintenance_type);
+                        $os->priority_source = \App\Services\Prioridade\PrioridadeDaOs::AUTO;
+                    }
+                } elseif (blank($os->priority_source)) {
+                    $os->priority_source = \App\Services\Prioridade\PrioridadeDaOs::MANUAL;
+                }
+            } catch (\Throwable $e) {
+                report($e); // nunca bloqueia a abertura da OS por causa da prioridade
+            }
         });
 
         // Corretiva = ativo parado por quebra ate a OS fechar -- abre o

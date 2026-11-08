@@ -27,10 +27,30 @@ class CriticalityLevel extends Model
 
     protected static ?string $saasModuleLabel = 'Níveis de Criticidade';
 
-    protected $fillable = ['tenant_id', 'code', 'name', 'color', 'is_urgent', 'sort_order'];
+    protected $fillable = ['tenant_id', 'code', 'name', 'color', 'is_urgent', 'sort_order', 'default_priority'];
 
     protected $casts = [
         'is_urgent' => 'boolean',
         'sort_order' => 'integer',
     ];
+
+    /**
+     * Letra A/B/C do nivel -- a agenda do tecnico (TechnicianDailyTasks) le `->letter`, que nao existia
+     * (sempre null, toda tarefa caia em "C"). Tolera tenants com codigos nao padrao (alta/media/baixa/urgente):
+     * urgente = A; "media" = B; o resto = C.
+     */
+    public function getLetterAttribute(): string
+    {
+        $codigo = mb_strtoupper(trim((string) $this->code));
+
+        if (in_array($codigo, ['A', 'B', 'C'], true)) {
+            return $codigo;
+        }
+
+        if ($this->is_urgent) {
+            return 'A';
+        }
+
+        return in_array(mb_strtolower($codigo), ['media', 'média'], true) ? 'B' : 'C';
+    }
 }

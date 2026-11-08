@@ -251,6 +251,15 @@ class MaintenanceOrderFieldWizard extends Component
 
     public function getSlaRemainingProperty(): ?array
     {
+        // F3: pior relogio aberto (Resposta/Atendimento/Resolucao); sem cronometro, cai na regra legada de sla_target_minutes.
+        $resumo = \App\Services\Sla\SlaService::resumoDaOs($this->maintenanceOrder->loadMissing('slaTimers'));
+
+        if ($resumo) {
+            $min = max(0, $resumo['minutos']);
+
+            return ['hours' => intdiv($min, 60), 'minutes' => $min % 60, 'exceeded' => $resumo['estado'] === 'vencido', 'paused' => $resumo['estado'] === 'pausado', 'label' => $resumo['relogio']];
+        }
+
         if (! $this->maintenanceOrder->sla_target_minutes) {
             return null;
         }
@@ -259,13 +268,10 @@ class MaintenanceOrderFieldWizard extends Component
         $minutesRemaining = $this->maintenanceOrder->sla_target_minutes - $minutesElapsed;
 
         if ($minutesRemaining <= 0) {
-            return ['hours' => 0, 'minutes' => 0, 'exceeded' => true];
+            return ['hours' => 0, 'minutes' => 0, 'exceeded' => true, 'paused' => false, 'label' => 'SLA'];
         }
 
-        $hours = (int) floor($minutesRemaining / 60);
-        $minutes = $minutesRemaining % 60;
-
-        return ['hours' => $hours, 'minutes' => $minutes, 'exceeded' => false];
+        return ['hours' => (int) floor($minutesRemaining / 60), 'minutes' => $minutesRemaining % 60, 'exceeded' => false, 'paused' => false, 'label' => 'SLA'];
     }
 
     public function getSlaColorProperty(): string
@@ -460,7 +466,7 @@ class MaintenanceOrderFieldWizard extends Component
         $urgencyToSla = [
             'critico' => 120,    // 2 horas
             'urgente' => 480,    // 8 horas
-            'normal' => 1440,    // 48 horas
+            'normal' => 2880,    // 48 horas (era 1440 = 24h, divergia da tela de Trocas: 2h/8h/48h)
         ];
 
         EquipmentReplacement::create([
@@ -475,7 +481,7 @@ class MaintenanceOrderFieldWizard extends Component
 
         // Atualizar MaintenanceOrder com SLA
         $this->maintenanceOrder->update([
-            'sla_target_minutes' => $urgencyToSla[$this->replacementUrgency] ?? 1440,
+            'sla_target_minutes' => $urgencyToSla[$this->replacementUrgency] ?? 2880,
         ]);
     }
 

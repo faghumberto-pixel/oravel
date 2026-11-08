@@ -220,9 +220,26 @@
             return ach.slice(0, 20);
         });
     }
+    /* F6: SLA da OS no app, calculado no aparelho com a hora do celular (a OS traz o prazo e o inicio do "em risco") */
+    function fmtMin(m) { var h = Math.floor(m / 60), r = m % 60; return h > 0 ? h + 'h' + (r > 0 ? ' ' + r + 'min' : '') : r + 'min'; }
+    function slaBadge(lista) {
+        if (!lista || !lista.length) { return ''; }
+        var agora = Date.now(), ordem = { venc: 0, risco: 1, ok: 2, pausa: 3 }, pior = null;
+        lista.forEach(function (r) {
+            var rest = null, est = 'pausa';
+            if (!r.pausado && r.due) {
+                rest = Math.round((new Date(r.due).getTime() - agora) / 60000);
+                est = rest <= 0 ? 'venc' : (r.risco && agora >= new Date(r.risco).getTime() ? 'risco' : 'ok');
+            }
+            if (!pior || ordem[est] < ordem[pior.est] || (ordem[est] === ordem[pior.est] && (rest || 0) < (pior.rest || 0))) { pior = { r: r, est: est, rest: rest }; }
+        });
+        var texto = pior.est === 'venc' ? pior.r.rel + ' · vencido há ' + fmtMin(-pior.rest)
+            : (pior.est === 'pausa' ? pior.r.rel + ' · pausado' : pior.r.rel + ' · ' + fmtMin(pior.rest) + ' restantes');
+        return badge(texto, { venc: 'red', risco: 'amber', ok: 'green', pausa: 'zinc' }[pior.est]);
+    }
     function cartaoOS(o, link) {
         var n = dias(o.ab, o.fim);
-        return '<a class="co-card" href="' + link + '"><b>OS ' + esc(o.num) + ' ' + badge(o.sit, o.cor) + '</b><span class="co-sub">Aberta em ' + dataBR(o.ab) + ' · ' + dd(n) + (o.fechada ? ' de duração' : ' em aberto') + '</span><br><span class="co-sub">Técnico: ' + esc(o.tec || 'não definido') + '</span>' + (o.prob ? '<br><span class="co-sub">' + esc(String(o.prob).slice(0, 120)) + '</span>' : '') + '</a>';
+        return '<a class="co-card" href="' + link + '"><b>OS ' + esc(o.num) + ' ' + badge(o.sit, o.cor) + '</b><span class="co-sub">Aberta em ' + dataBR(o.ab) + ' · ' + dd(n) + (o.fechada ? ' de duração' : ' em aberto') + '</span><br><span class="co-sub">Técnico: ' + esc(o.tec || 'não definido') + '</span>' + (o.prob ? '<br><span class="co-sub">' + esc(String(o.prob).slice(0, 120)) + '</span>' : '') + (!o.fechada && o.sla && o.sla.length ? '<br>' + slaBadge(o.sla) : '') + '</a>';
     }
     function semPacote() { return '<div class="co-wrap"><h1 class="co-h1">Dados ainda não baixados</h1><p class="co-sub">Abra o app uma vez com internet para guardar os equipamentos e as OS neste aparelho.</p><a class="co-btn alt" href="' + BASE + '">Ir para o início</a></div>'; }
     function listaAtivos(lista, destino, titulo) {

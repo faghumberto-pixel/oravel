@@ -11,6 +11,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\HtmlString;
 use RuntimeException;
 
 /** Folha de contagem + confronto: esperado x contado, quem contou e quando. No computador a contagem tambem pode ser feita aqui. */
@@ -25,15 +26,18 @@ class ItemsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('item_name')
             ->columns([
-                Tables\Columns\TextColumn::make('location_code')->label('Endereço')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('item_name')->label('Item')->searchable()->weight('bold')->description(fn (StockCountItem $r) => trim(($r->item_sku ?: '').' · '.($r->group_name ?: ''), ' ·')),
-                Tables\Columns\TextColumn::make('expected_quantity')->label('Sistema')->numeric(3, ',', '.'),
-                Tables\Columns\TextColumn::make('counted_quantity')->label('Contado')->numeric(3, ',', '.')->placeholder('não contado'),
-                Tables\Columns\TextColumn::make('diferenca')->label('Diferença')->state(fn (StockCountItem $r) => $r->diferenca())->numeric(3, ',', '.')->badge()->placeholder('—')
+                Tables\Columns\TextColumn::make('location_code')->label('Endereço')->searchable()->sortable()->visibleFrom('md'),
+                Tables\Columns\TextColumn::make('item_name')->label('Item')->searchable()->weight('bold')->wrap()->description(fn (StockCountItem $r) => trim(($r->item_sku ?: '').' · '.($r->group_name ?: ''), ' ·')),
+                Tables\Columns\TextColumn::make('resumo_celular')->label('Contagem')->hiddenFrom('md')->html()->wrap()
+                    ->state(fn (StockCountItem $r) => self::resumoCelular($r)),
+                Tables\Columns\TextColumn::make('expected_quantity')->label('Sistema')->numeric(3, ',', '.')->visibleFrom('md'),
+                Tables\Columns\TextColumn::make('counted_quantity')->label('Contado')->numeric(3, ',', '.')->placeholder('não contado')->visibleFrom('md'),
+                Tables\Columns\TextColumn::make('diferenca')->label('Diferença')->state(fn (StockCountItem $r) => $r->diferenca())->numeric(3, ',', '.')->badge()->placeholder('—')->visibleFrom('md')
                     ->color(fn ($state) => $state === null ? 'gray' : (abs((float) $state) < 0.001 ? 'success' : ((float) $state < 0 ? 'danger' : 'warning'))),
-                Tables\Columns\TextColumn::make('counted_by_name')->label('Contou')->placeholder('—'),
-                Tables\Columns\TextColumn::make('counted_at')->label('Quando')->dateTime('d/m/Y H:i')->placeholder('—')->sortable(),
+                Tables\Columns\TextColumn::make('counted_by_name')->label('Contou')->placeholder('—')->visibleFrom('md'),
+                Tables\Columns\TextColumn::make('counted_at')->label('Quando')->dateTime('d/m/Y H:i')->placeholder('—')->sortable()->visibleFrom('md'),
             ])
+            // No celular as colunas viram um resumo empilhado ao lado do item (senao ficam fora da tela, sem aviso).
             ->defaultSort('location_code')
             ->groups([Tables\Grouping\Group::make('location_code')->label('Endereço')->collapsible()])
             ->filters([
@@ -69,6 +73,21 @@ class ItemsRelationManager extends RelationManager
                     ->url(fn (StockCountItem $r) => RastreioDoItemPage::getUrl(['item' => $r->item_type.'|'.$r->item_id]))->openUrlInNewTab(),
             ])
             ->paginated([25, 50, 100]);
+    }
+
+    private static function resumoCelular(StockCountItem $r): HtmlString
+    {
+        $n = fn ($v) => rtrim(rtrim(number_format((float) $v, 3, ',', '.'), '0'), ',');
+        $linhas = ['<strong>'.e($r->location_code).'</strong>', 'Sistema: '.$n($r->expected_quantity)];
+        if ($r->counted_quantity === null) {
+            $linhas[] = 'Não contado';
+        } else {
+            $d = $r->diferenca();
+            $linhas[] = 'Contado: <strong>'.$n($r->counted_quantity).'</strong> (diferença '.($d > 0 ? '+' : '').$n($d).')';
+            $linhas[] = e($r->counted_by_name ?: '—').' · '.$r->counted_at?->format('d/m/Y H:i');
+        }
+
+        return new HtmlString(implode('<br>', $linhas));
     }
 
     public function isReadOnly(): bool

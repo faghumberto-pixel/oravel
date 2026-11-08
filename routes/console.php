@@ -19,6 +19,7 @@ Artisan::command('inspire', function () {
 */
 Schedule::command('maintenance:check-due-alerts')->daily()->withoutOverlapping();
 Schedule::command('sales:notify-appointments')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('sla:avaliar')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('financeiro:verificar-vencimentos')->daily()->withoutOverlapping();
 Schedule::command('financeiro:marcar-contas-atrasadas')->dailyAt('01:00')->withoutOverlapping();
 // Lembretes de cobrança por WhatsApp: só empresas com o módulo WhatsApp liberado e o aviso ligado.

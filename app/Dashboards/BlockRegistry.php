@@ -37,6 +37,9 @@ class BlockRegistry
             Manutencao\TempoPrimeiroAtendimento::class,
             Manutencao\DefeitosFrequentes::class,
             Manutencao\AguardandoPeca::class,
+            Manutencao\SlaResolucaoCumprida::class,
+            Manutencao\SlaVencidosAgora::class,
+            Manutencao\SlaTempoMedioResolucao::class,
 
             MateriaisPecas\ValorEmEstoque::class,
             MateriaisPecas\EntregasPrevistas::class,

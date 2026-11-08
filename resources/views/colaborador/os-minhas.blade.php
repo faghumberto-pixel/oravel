@@ -18,6 +18,9 @@
                     <span class="text-sm font-bold">OS {{ $os['numero'] }}@if($os['prazo_fatal']) <span class="ml-1 rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-bold text-red-600">PRAZO FATAL</span>@endif</span>
                     <span class="rounded-full px-2 py-0.5 text-[10px] font-bold {{ \App\Support\Colaborador\SituacaoOs::classes($os['situacao']['cor']) }}">{{ $os['situacao']['rotulo'] }}</span>
                 </div>
+                @if(! empty($os['sla']) && $os['sla']['estado'] !== 'no_prazo')
+                    <p class="mt-1 inline-block rounded px-1.5 py-0.5 text-[11px] font-bold {{ $os['sla']['estado'] === 'vencido' ? 'bg-red-100 text-red-700' : ($os['sla']['estado'] === 'em_risco' ? 'bg-amber-100 text-amber-800' : 'bg-zinc-100 text-zinc-600') }}">{{ $os['sla']['estado'] === 'pausado' ? '⏸' : '⏱' }} {{ $os['sla']['texto'] }}</p>
+                @endif
                 <p class="mt-1 text-sm font-semibold text-zinc-800">{{ $os['equipamento'] ?? 'Equipamento não informado' }}</p>
                 @if($os['identificacao'])<p class="text-xs text-zinc-600">{{ $os['identificacao'] }}</p>@endif
                 <p class="mt-1 text-xs text-zinc-600">
