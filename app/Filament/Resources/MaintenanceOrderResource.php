@@ -723,6 +723,7 @@ class MaintenanceOrderResource extends Resource
                                 Forms\Components\Placeholder::make('checklists_do_equipamento')->hiddenLabel()
                                     ->content(fn (Get $get, ?MaintenanceOrder $record) => view('filament.forms.checklists-da-os', [
                                         'dados' => app(ChecklistsDaOs::class)->paraAtivo($get('asset_id') ?? $record?->asset_id),
+                                        'os' => $record?->exists ? $record : null,
                                     ])),
                             ]),
 

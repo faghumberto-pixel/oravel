@@ -169,6 +169,8 @@
             </div>
         @endif
 
+        @include('print.partials.checklist-dossie')
+
         @if($order->materials && $order->materials->count() > 0)
             <div class="mb-8 page-break-inside-avoid">
                 <h3 class="text-sm font-bold text-gray-900 border-b border-gray-100 pb-2 mb-3">Materiais e Insumos Utilizados</h3>

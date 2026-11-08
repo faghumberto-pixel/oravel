@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MaintenanceOrder;
+use App\Services\Checklists\ChecklistsDaOs;
 use Illuminate\Support\Facades\Gate;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -25,6 +26,8 @@ class OsFolhaController extends Controller
             'tipo' => $os->maintenance_type,
             'problema' => mb_substr((string) $problema, 0, 500),
             'tecnico' => $os->technician?->name,
+            // Checklists do grupo (modulo novo): vao em folhas A4 extras depois da folha da OS.
+            'checklistsImpressao' => app(ChecklistsDaOs::class)->paraImpressao($os),
             'qr' => (string) QrCode::format('svg')->size(110)->margin(0)->errorCorrection('M')->generate(route('maintenance-orders.field-wizard', $os)),
         ]);
     }

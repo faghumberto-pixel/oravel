@@ -81,7 +81,7 @@ class CkExecutionResource extends BaseResource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->with(['asset.category', 'executor', 'ordemServico'])->withCount([
+        return parent::getEloquentQuery()->with(['asset.category', 'executor', 'ordemServico', 'os'])->withCount([
             'respostas as criticos_nc_count' => fn ($q) => $q->where('critico', true)->where('resposta', 'nao_conforme'),
             'respostas as pendencias_count' => fn ($q) => $q->where('critico', false)->where('resposta', 'nao_conforme'),
         ]);
@@ -115,8 +115,9 @@ class CkExecutionResource extends BaseResource
                     ->formatStateUsing(fn (?string $state) => CkExecucaoExport::STATUS[$state] ?? $state)->color(fn (?string $state) => static::corStatus($state)),
                 Tables\Columns\TextColumn::make('criticos_nc_count')->label('Críticos')->alignEnd()->color(fn ($state) => $state > 0 ? 'danger' : 'gray'),
                 Tables\Columns\TextColumn::make('pendencias_count')->label('Pendências')->alignEnd()->color(fn ($state) => $state > 0 ? 'warning' : 'gray'),
-                Tables\Columns\TextColumn::make('ordemServico.os_number')->label('OS')->placeholder('—')->toggleable(),
-                Tables\Columns\TextColumn::make('legado_tipo')->label('Origem')->badge()->formatStateUsing(fn (?string $state) => $state ? 'Frota' : 'Checklist')->color(fn (?string $state) => $state ? 'gray' : 'primary')->toggleable(),
+                Tables\Columns\TextColumn::make('os.os_number')->label('OS do atendimento')->placeholder('—')->toggleable(),
+                Tables\Columns\TextColumn::make('ordemServico.os_number')->label('OS corretiva aberta')->placeholder('—')->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('legado_tipo')->label('Origem')->badge()->state(fn (CkExecution $r) => $r->origemRotulo())->color(fn (?string $state) => $state === 'Checklist' ? 'primary' : 'gray')->toggleable(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('periodo')->label('Período')
@@ -141,9 +142,11 @@ class CkExecutionResource extends BaseResource
                 Tables\Filters\SelectFilter::make('status')->label('Resultado')->options(CkExecucaoExport::STATUS),
                 Tables\Filters\SelectFilter::make('template_id')->label('Checklist')
                     ->options(fn () => CkTemplate::query()->where('tenant_id', static::tenantId())->orderBy('nome')->pluck('nome', 'id')->all()),
-                Tables\Filters\SelectFilter::make('origem')->label('Origem')->options(['checklist' => 'Checklist', 'frota' => 'Frota'])
+                Tables\Filters\SelectFilter::make('origem')->label('Origem')->options(['checklist' => 'Checklist (tela)', 'papel' => 'Papel (IA)', 'frota' => 'Frota'])
                     ->query(fn (Builder $query, array $data) => match ($data['value'] ?? null) {
-                        'checklist' => $query->whereNull('legado_tipo'), 'frota' => $query->whereNotNull('legado_tipo'), default => $query,
+                        'checklist' => $query->whereNull('legado_tipo')->whereNull('registro_origem'),
+                        'papel' => $query->where('registro_origem', CkExecution::ORIGEM_PAPEL_IA),
+                        'frota' => $query->whereNotNull('legado_tipo'), default => $query,
                     }),
             ]);
     }
@@ -160,7 +163,9 @@ class CkExecutionResource extends BaseResource
                 Infolists\Components\TextEntry::make('status')->label('Resultado')->badge()
                     ->formatStateUsing(fn (?string $state) => CkExecucaoExport::STATUS[$state] ?? $state)->color(fn (?string $state) => static::corStatus($state)),
                 Infolists\Components\TextEntry::make('leitura_medidor')->label('Leitura (h/km)')->placeholder('—'),
-                Infolists\Components\TextEntry::make('ordemServico.os_number')->label('OS aberta')->placeholder('—'),
+                Infolists\Components\TextEntry::make('os.os_number')->label('OS do atendimento')->placeholder('—'),
+                Infolists\Components\TextEntry::make('ordemServico.os_number')->label('OS corretiva aberta')->placeholder('—'),
+                Infolists\Components\TextEntry::make('origem')->label('Origem')->state(fn (CkExecution $record) => $record->origemRotulo()),
                 Infolists\Components\TextEntry::make('observacoes')->label('Observações')->placeholder('—')->columnSpanFull(),
             ])->columns(3),
             Infolists\Components\Section::make('Respostas')->schema([

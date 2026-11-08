@@ -1,4 +1,27 @@
 <div class="flex-1 space-y-2 overflow-y-auto px-5 pb-4">
+    {{-- Checklist do equipamento (modulo por grupo): feito AQUI, vinculado a esta OS, e obrigatorio para concluir a OS. --}}
+    @php($ckOs = app(\App\Services\Checklists\ChecklistsDaOs::class)->paraOrdemServico($maintenanceOrder))
+    @if ($ckOs && count($ckOs['modelos']) > 0)
+        <div class="rounded-xl bg-white p-4 border border-blue-200" data-testid="checklists-do-equipamento">
+            <p class="text-xs font-bold uppercase tracking-wide text-zinc-600">Checklist do equipamento</p>
+            @error('checklist') <p class="mt-2 rounded-lg bg-red-100 p-3 text-sm font-bold text-red-600">{{ $message }}</p> @enderror
+            @foreach ($ckOs['modelos'] as $m)
+                <div class="mt-3 border-t border-zinc-200 pt-3">
+                    <p class="text-sm font-bold text-zinc-900">{{ $m['template']->nome }}</p>
+                    <p class="text-[11px] text-zinc-500">{{ $m['itens'] }} itens · {{ $m['criticos'] }} críticos</p>
+                    @if ($m['feito'])
+                        <p class="mt-1 text-xs font-bold text-emerald-700">✔ Feito em {{ $m['feito']->finalizado_em?->format('d/m H:i') }} · {{ \App\Support\CkExecucaoExport::STATUS[$m['feito']->status] ?? $m['feito']->status }}</p>
+                    @else
+                        <p class="mt-1 text-xs font-bold text-amber-700">⚠ Pendente: precisa ser feito para concluir a OS</p>
+                    @endif
+                    @if ($ckOs['pode_executar'])
+                        <a href="{{ route('ck.execucao.mobile', ['assetId' => $ckOs['ativo']->id, 'checklist' => $m['template']->id, 'os' => $maintenanceOrder->id]) }}" class="mt-2 flex min-h-[3rem] items-center justify-center rounded-xl bg-emerald-600 text-sm font-bold text-white active:bg-emerald-600">📋 {{ $m['feito'] ? 'REFAZER' : 'PREENCHER' }} CHECKLIST</a>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+    @endif
+
     @forelse($this->items as $index => $item)
         <div class="overflow-hidden rounded-xl bg-white">
             <div class="flex w-full items-center gap-3 px-4 py-4">

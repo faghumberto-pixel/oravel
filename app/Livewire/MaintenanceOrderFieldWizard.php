@@ -13,6 +13,8 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use App\Models\CkExecution;
+use App\Services\Checklists\ChecklistsDaOs;
 
 /**
  * "Modo Campo" -- execucao da O.S. no celular do tecnico, uma etapa por tela.
@@ -749,6 +751,20 @@ class MaintenanceOrderFieldWizard extends Component
 
     private function completeOrder(): void
     {
+        // Checklist do equipamento (modulo por grupo): no Modo Campo a OS so conclui com o checklist feito NESTA OS. So segura quem pode
+        // executar checklist (senao a OS ficaria presa sem saida) e so em contratos com as chaves dos checklists ligadas.
+        $faltam = app(ChecklistsDaOs::class)->pendentesDaOs($this->maintenanceOrder);
+
+        if ($faltam > 0 && Gate::allows('create', CkExecution::class)) {
+            $this->step = 2;
+            $this->saveState = 'idle';
+            $this->addError('checklist', $faltam === 1
+                ? 'Falta fazer o checklist do equipamento para concluir esta OS.'
+                : "Faltam {$faltam} checklists do equipamento para concluir esta OS.");
+
+            return;
+        }
+
         $oldStatus = $this->maintenanceOrder->status;
 
         // Replicar exatamente o padrao da action 'concluir' em

@@ -63,8 +63,13 @@
                 <div class="mt-2 border-t border-zinc-200 pt-2">
                     <p class="text-sm font-bold text-zinc-900">{{ $m['template']->nome }}</p>
                     <p class="text-[11px] text-zinc-500">{{ $m['itens'] }} itens · {{ $m['criticos'] }} críticos · {{ $m['motivo'] }}</p>
+                    @if($m['feito'])
+                        <p class="mt-1 text-xs font-bold text-emerald-700">✔ Feito em {{ $m['feito']->finalizado_em?->format('d/m H:i') }} · {{ \App\Support\CkExecucaoExport::STATUS[$m['feito']->status] ?? $m['feito']->status }}</p>
+                    @else
+                        <p class="mt-1 text-xs font-bold text-amber-700">⚠ Pendente nesta OS</p>
+                    @endif
                     @if($checklists['pode_executar'])
-                        <a href="{{ route('ck.execucao.mobile', ['assetId' => $checklists['ativo']->id, 'checklist' => $m['template']->id]) }}" class="mt-2 flex min-h-[3rem] items-center justify-center rounded-xl bg-emerald-600 text-sm font-bold text-white active:bg-emerald-600">📋 EXECUTAR CHECKLIST</a>
+                        <a href="{{ route('ck.execucao.mobile', ['assetId' => $checklists['ativo']->id, 'checklist' => $m['template']->id, 'os' => $os->id]) }}" class="mt-2 flex min-h-[3rem] items-center justify-center rounded-xl bg-emerald-600 text-sm font-bold text-white active:bg-emerald-600">📋 {{ $m['feito'] ? 'REFAZER' : 'EXECUTAR' }} CHECKLIST</a>
                     @endif
                 </div>
             @endforeach

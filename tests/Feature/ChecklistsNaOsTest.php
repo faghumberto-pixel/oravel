@@ -111,7 +111,7 @@ class ChecklistsNaOsTest extends TestCase
             ->assertSee('Checklist de pré-uso do gerador')
             ->assertSee('19 itens')->assertSee('8 críticos')->assertSee('grupo de equipamento: Gerador')
             ->assertSee('Executar')
-            ->assertSee(route('ck.execucao.mobile', ['assetId' => $a->id, 'checklist' => $tpl->id]), false);
+            ->assertSee(e(route('ck.execucao.desktop', ['assetId' => $a->id, 'checklist' => $tpl->id, 'os' => $os->id])), false);
     }
 
     public function test_a_origem_do_vinculo_diz_grupo_de_checklist_quando_e_por_ele(): void
@@ -180,7 +180,7 @@ class ChecklistsNaOsTest extends TestCase
 
         $this->withHeaders(['User-Agent' => self::CELULAR])->actingAs($this->admin)->get('/colaborador/os/'.$os->id)->assertOk()
             ->assertSee('Checklists do equipamento')->assertSee('Checklist de pré-uso do gerador')->assertSee('EXECUTAR CHECKLIST')
-            ->assertSee(route('ck.execucao.mobile', ['assetId' => $a->id, 'checklist' => $tpl->id]), false);
+            ->assertSee(e(route('ck.execucao.mobile', ['assetId' => $a->id, 'checklist' => $tpl->id, 'os' => $os->id])), false);
     }
 
     public function test_o_app_do_colaborador_nao_mostra_a_secao_quando_nao_ha_checklist(): void

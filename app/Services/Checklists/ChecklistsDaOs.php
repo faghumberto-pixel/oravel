@@ -9,6 +9,7 @@ use App\Models\CkItem;
 use App\Models\CkSection;
 use App\Models\CkTemplate;
 use App\Models\MaintenanceOrder;
+use App\Models\Tenant;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 
@@ -19,16 +20,41 @@ use Illuminate\Support\Facades\Gate;
  */
 class ChecklistsDaOs
 {
-    public function __construct(private ChecklistAplicavel $aplicavel) {}
+    public function __construct(private ChecklistAplicavel $aplicavel, private ChecklistExecucaoService $execucao) {}
 
-    /** @return array{ativo: Asset, modelos: array<int, array{template: CkTemplate, itens: int, criticos: int, motivo: string}>, ultimas: Collection, pode_executar: bool}|null */
+    /**
+     * Com a OS, cada modelo traz `feito` (a execucao feita NESTA OS, a mais recente) ou nulo se esta pendente, e `pendentes` conta os que faltam.
+     *
+     * @return array{ativo: Asset, modelos: array<int, array{template: CkTemplate, itens: int, criticos: int, motivo: string, feito: ?CkExecution}>, ultimas: Collection, pode_executar: bool, pendentes: ?int}|null
+     */
     public function paraOrdemServico(MaintenanceOrder $os): ?array
     {
-        return $this->paraAtivo($os->asset_id);
+        return $this->paraAtivo($os->asset_id, $os);
     }
 
-    /** @return array{ativo: Asset, modelos: array<int, array{template: CkTemplate, itens: int, criticos: int, motivo: string}>, ultimas: Collection, pode_executar: bool}|null */
-    public function paraAtivo(?string $assetId): ?array
+    /**
+     * Quantos checklists que valem para o equipamento da OS ainda nao foram feitos NESTA OS. Nao depende de permissao: e a regra que
+     * segura a conclusao da OS no Modo Campo, e so conta se o contrato tem as chaves dos checklists.
+     */
+    public function pendentesDaOs(MaintenanceOrder $os): int
+    {
+        $tenant = Tenant::withoutGlobalScopes()->with(['plan' => fn ($q) => $q->withoutGlobalScopes()])->find($os->tenant_id);
+
+        if (! $tenant?->plan?->hasFeature(CkTemplate::FEATURE_KEY) || ! $tenant->plan->hasFeature('tabela_ck_execucoes')) {
+            return 0;
+        }
+
+        return $this->aplicavel->paraOrdemServico($os)->filter(fn (CkTemplate $t) => $this->feitoNaOs($os, $t) === null)->count();
+    }
+
+    private function feitoNaOs(MaintenanceOrder $os, CkTemplate $t): ?CkExecution
+    {
+        return CkExecution::withoutGlobalScopes()->where('tenant_id', $os->tenant_id)->where('os_id', $os->id)->where('template_id', $t->id)
+            ->whereNotNull('finalizado_em')->orderByDesc('finalizado_em')->first();
+    }
+
+    /** @return array{ativo: Asset, modelos: array<int, array{template: CkTemplate, itens: int, criticos: int, motivo: string, feito: ?CkExecution}>, ultimas: Collection, pode_executar: bool, pendentes: ?int}|null */
+    public function paraAtivo(?string $assetId, ?MaintenanceOrder $os = null): ?array
     {
         $podeExecutar = Gate::allows('create', CkExecution::class);
 
@@ -42,19 +68,22 @@ class ChecklistsDaOs
             return null;
         }
 
-        $modelos = $this->aplicavel->paraAtivo($ativo)->map(function (CkTemplate $t) use ($ativo) {
+        $modelos = $this->aplicavel->paraAtivo($ativo)->map(function (CkTemplate $t) use ($ativo, $os) {
             $secoes = CkSection::withoutGlobalScopes()->where('template_id', $t->id)->whereNull('deleted_at')->pluck('id');
             $itens = CkItem::withoutGlobalScopes()->whereIn('section_id', $secoes)->where('ativo', true)->whereNull('deleted_at');
 
             return [
                 'template' => $t, 'itens' => (clone $itens)->count(), 'criticos' => (clone $itens)->where('critico', true)->count(),
-                'motivo' => $this->motivo($t, $ativo),
+                'motivo' => $this->motivo($t, $ativo), 'feito' => $os ? $this->feitoNaOs($os, $t) : null,
             ];
         })->all();
 
         $ultimas = CkExecution::query()->where('asset_id', $ativo->id)->orderByDesc('finalizado_em')->limit(5)->get();
 
-        return ['ativo' => $ativo, 'modelos' => $modelos, 'ultimas' => $ultimas, 'pode_executar' => $podeExecutar];
+        return [
+            'ativo' => $ativo, 'modelos' => $modelos, 'ultimas' => $ultimas, 'pode_executar' => $podeExecutar,
+            'pendentes' => $os ? count(array_filter($modelos, fn ($m) => $m['feito'] === null)) : null,
+        ];
     }
 
     private function motivo(CkTemplate $t, Asset $ativo): string
@@ -66,5 +95,58 @@ class ChecklistsDaOs
         }
 
         return 'grupo de equipamento: '.($t->grupo?->name ?? '—');
+    }
+
+    /**
+     * Checklists para IMPRIMIR junto com a OS (o mecanico que trabalha no papel): cada modelo que vale para o ativo, ja em paginas de
+     * `$linhasPorPagina` linhas (cabecalho de secao + itens) para caber numa folha A4. Quem imprime a OS ja ve o conteudo dela, entao aqui
+     * so vale a chave do contrato (nao a permissao individual de checklist). Sem a chave ou sem modelo aplicavel, devolve lista vazia.
+     *
+     * @return array<int, array{template: CkTemplate, itens: int, criticos: int, paginas: array<int, array<int, array<string, mixed>>>}>
+     */
+    public function paraImpressao(MaintenanceOrder $os, int $linhasPorPagina = 20): array
+    {
+        $tenant = Tenant::withoutGlobalScopes()->with(['plan' => fn ($q) => $q->withoutGlobalScopes()])->find($os->tenant_id);
+
+        if (! $tenant?->plan?->hasFeature(CkTemplate::FEATURE_KEY)) {
+            return [];
+        }
+
+        $saida = [];
+
+        foreach ($this->aplicavel->paraOrdemServico($os) as $template) {
+            $itens = $this->execucao->itensAtivos($template);
+
+            if ($itens->isEmpty()) {
+                continue;
+            }
+
+            $paginas = [[]];
+            $tituloSecao = null;
+            $secaoAtual = null;
+            $n = 0;
+
+            foreach ($itens as $item) {
+                $novaSecao = $secaoAtual !== $item->section_id;
+                $secaoAtual = $item->section_id;
+                $tituloSecao = $item->secao?->titulo;
+                $linhasNecessarias = $novaSecao ? 2 : 1; // titulo da secao + o item (o titulo nunca fica sozinho no fim da pagina)
+
+                if (count(end($paginas)) + $linhasNecessarias > $linhasPorPagina) {
+                    $paginas[] = [];
+                    $novaSecao = true; // pagina nova repete o titulo da secao (continuacao)
+                }
+
+                if ($novaSecao) {
+                    $paginas[count($paginas) - 1][] = ['tipo' => 'secao', 'titulo' => (string) $tituloSecao];
+                }
+
+                $paginas[count($paginas) - 1][] = ['tipo' => 'item', 'n' => ++$n, 'item' => $item];
+            }
+
+            $saida[] = ['template' => $template, 'itens' => $itens->count(), 'criticos' => $itens->where('critico', true)->count(), 'paginas' => $paginas];
+        }
+
+        return $saida;
     }
 }
