@@ -34,7 +34,7 @@ class DemoPopularChecklistsTest extends TestCase
         app(ChecklistInstalador::class)->instalar($t);
         $propria = Asset::withoutGlobalScopes()->create(['tenant_id' => $t->id, 'name' => 'Ativo real do cliente', 'tag' => 'REAL-1', 'status' => Asset::STATUS_DISPONIVEL]);
 
-        $this->artisan('demo:popular-checklists', ['--tenant' => $t->name])->assertSuccessful();
+        $this->artisan('demo:popular-checklists', ['--tenant' => $t->name])->expectsOutputToContain('Criados: 22 ativos, 10 ordens de serviço, 12 checklists preenchidos.')->assertSuccessful();
         $this->artisan('demo:popular-checklists', ['--tenant' => $t->name])->assertFailed(); // idempotente: nao duplica
 
         $this->actingAs(User::withoutGlobalScopes()->where('tenant_id', $t->id)->first());
