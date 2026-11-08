@@ -81,6 +81,55 @@ class ChecklistInstalador
         return $stats;
     }
 
+    /** Existe definicao padrao (YAML) para este template? So templates que vieram do padrao podem ser restaurados. */
+    public function temPadrao(CkTemplate $template, ?string $dir = null): bool
+    {
+        return filled($template->slug_template) && isset($this->carregar($dir)[$template->slug_template]);
+    }
+
+    /**
+     * Restaurar padrao: descarta seções/itens atuais deste template (inclusive arquivados) e recria do YAML, repondo os campos do
+     * conjunto. Sobe a versao e volta a "nao personalizado". Execucoes antigas nao mudam (guardam snapshot; o item_id vira nulo).
+     */
+    public function restaurar(CkTemplate $template, ?string $dir = null): CkTemplate
+    {
+        $def = $this->carregar($dir)[$template->slug_template] ?? null;
+
+        if (! $def) {
+            throw new InvalidArgumentException('Este checklist não tem versão padrão para restaurar.');
+        }
+
+        return DB::transaction(function () use ($template, $def) {
+            $tid = (string) $template->tenant_id;
+            $t = $def['template'];
+
+            $secaoIds = CkSection::withoutGlobalScopes()->withTrashed()->where('template_id', $template->id)->pluck('id');
+            CkItem::withoutGlobalScopes()->withTrashed()->whereIn('section_id', $secaoIds)->forceDelete();
+            CkSection::withoutGlobalScopes()->withTrashed()->where('template_id', $template->id)->forceDelete();
+
+            $grupoId = ! empty($t['grupo'])
+                ? AssetCategory::withoutGlobalScopes()->where('tenant_id', $tid)->where('slug_template', $t['grupo'])->value('id')
+                : null;
+
+            $template->forceFill([
+                'grupo_id' => $grupoId ?? $template->grupo_id, 'nome' => $t['nome'], 'tipo' => $t['tipo'], 'periodicidade' => $t['periodicidade'] ?? 'por_uso',
+                'intervalo_horimetro_km' => $t['intervalo_horimetro_km'] ?? null, 'referencia_manual' => $t['referencia_manual'] ?? null,
+                'observacoes' => $t['observacoes'] ?? null, 'ativo' => true, 'origem' => CkTemplate::ORIGEM_PADRAO, 'personalizado' => false,
+                'versao_template' => (int) ($def['versao'] ?? 1), 'versao' => $template->versao + 1, 'deleted_at' => null,
+            ])->save();
+
+            foreach ($def['secoes'] as $i => $s) {
+                $secao = CkSection::withoutGlobalScopes()->create(['tenant_id' => $tid, 'template_id' => $template->id, 'titulo' => $s['titulo'], 'ordem' => $i, 'slug_template' => $s['slug']]);
+
+                foreach ($s['itens'] as $j => $item) {
+                    $this->criarItem($tid, $secao, $template->grupo_id, $item, $j);
+                }
+            }
+
+            return $template->refresh();
+        });
+    }
+
     private function instalarTemplate(string $tid, array $def, array &$stats): void
     {
         $t = $def['template'];

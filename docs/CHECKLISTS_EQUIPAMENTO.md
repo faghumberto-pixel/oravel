@@ -5,7 +5,10 @@ empilhadeira), editáveis por empresa. Entrega em fases; cada uma para e espera 
 
 ## Decisões (08/11/2026)
 - **Tabelas novas com prefixo `ck_`.** O nome `checklist_templates` já é do módulo "Checklists" antigo (id numérico, 23 registros em PROD,
-  menu Manutenção › Cadastros). Ele **não é tocado**; na C2 o menu aponta para o novo e o antigo é aposentado depois, com os dados migrados.
+  menu Manutenção › Cadastros). Ele **não é tocado**. O novo módulo entra no mesmo menu como **"Checklists de equipamento"**, ao lado do antigo;
+  trocar um pelo outro depende de decidir o que fazer com os 23 registros antigos, e fica para depois.
+- **O que ativa o checklist na OS é o grupo de checklist do ativo** (`assets.checklist_group_id`, o campo "Grupo de checklist"), como já
+  acontece com o checklist base e os planos de preventiva. Por isso `ck_templates.checklist_group_id` liga o template a esse grupo (C2).
 - **Item crítico ↔ aptidão do G1:** `ck_items.catalogo_requisito_id` liga o item ao requisito equivalente do catálogo. Na C3, reprovar um
   item crítico grava um cumprimento reprovado nesse requisito, e o motor atual calcula o inapto e abre a OS pelo gatilho que já existe.
   Item crítico sem requisito equivalente ganha um requisito novo do tenant (C3).
@@ -24,7 +27,19 @@ empilhadeira), editáveis por empresa. Entrega em fases; cada uma para e espera 
 - `php artisan checklists:seed {--tenant=} {--group=}` e gancho no `TenantProvisioner` (só com a chave do contrato ligada). Idempotente: o
   que o tenant já tem (inclusive editado ou arquivado) não é recriado nem sobrescrito. Restaurar o padrão é ação explícita da C2.
 
+## C2 — o que existe
+- **Tela** Manutenção › Cadastros › "Checklists de equipamento" (`CkTemplateResource`, slug `checklists-equipamento`): lista com filtros por grupo de
+  equipamento, grupo de checklist, tipo, origem, ativo e arquivados; criar e editar com **seções e itens aninhados e reordenáveis**.
+- **Ações:** duplicar (cópia independente, customizada, versão 1, mantém o vínculo com requisitos e grupos), restaurar padrão (só para os que vieram
+  do padrão, com confirmação e justificativa, sobe a versão e fica no registro), ativar/desativar, arquivar e desarquivar, e "Instalar checklists padrão".
+- **Versão:** editar o conteúdo sobe a versão e marca como editado (o `checklists:seed` não sobrescreve mais); salvar sem mudar nada não gasta versão.
+  O repeater regrava `ordem` a partir de 1, então a comparação usa a sequência e não o número.
+- **Quem pode o quê** vem das permissões dos perfis (`ler/criar/editar/excluir_checklist_equipamento`; admin do tenant tem bypass), e a chave do
+  contrato precisa estar ligada. Não há papel fixo no código: "só admin e gerente editam" se obtém dando essas permissões só a esses perfis.
+- **Qual checklist vale para o ativo/OS** (`ChecklistAplicavel`): template ligado a um grupo de checklist vale para os ativos desse grupo; template sem
+  grupo de checklist vale para os ativos do mesmo grupo de equipamento (assim os padrões já servem antes de a empresa montar grupos de checklist).
+  Só entram ativos (não arquivados) do tenant. A tela da OS usa isso na C3.
+
 ## Próximas fases
-- **C2:** CRUD Filament (repeater de seções e itens, duplicar, restaurar padrão, ativar/desativar).
 - **C3:** execução mobile por QR (câmera, voz, assinatura) e regras do item crítico (aptidão, OS corretiva, downtime).
 - **C4:** histórico, relatório e exportação (OpenSpout) e migração da Frota.
