@@ -20,3 +20,69 @@ As normas citadas nos YAML (NR-10/11/12/13/18/35, CTB/ANTT) são **hipóteses**.
 ## Testes
 `tests/Feature/G1CatalogoInstaladorTest.php` recusa rodar se o nome do banco não contiver "test" (o `config/database.php` fixa `pgsql`,
 então o sqlite do `phpunit.xml` NÃO vale). Rodar só em banco descartável: `DB_DATABASE=oravel_test_g1 php artisan test --filter=G1Catalogo`.
+
+## Fase 3 — Motor de aptidão (`AssetFitnessService`)
+- **Status:** `apto` / `apto_restricao` / `inapto` / `cadastro_incompleto` (ativo sem grupo ou com grupo arquivado). Cache em `assets.aptidao_*`.
+- **Evidências:** tabela `catalogo_cumprimentos` (documento, inspeção, checklist, acessório, preventiva) com **snapshot imutável** da regra da época
+  (`valido_ate` calculado uma vez, snapshot write-once) + NR-13 já existente (`Nr13Inspection`) + medidores `horimetro_atual`/`odometro_atual`.
+- **Evidência ausente ≠ vencida:** padrão = Apto com restrição (`parametros.sem_registro`: `inapto` | `restricao` | `ignorar`), para ligar a chave sem derrubar a frota.
+- **Preventiva:** em dia / até `tolerancia_pct` (padrão 10%, editável) acima do intervalo = restrição / acima = Inapto; dimensão por medidor e por dias (`primeiro` | `ambos`).
+- **Regras em dados:** condições `sem_cumprimento` e `atributo_vazio`; efeitos `restricao`, `inapto`, `bloqueia_alocacao` (flag, sem mudar o status). Strategy `nr13`.
+- **Gatilhos** (só com a chave do contrato ligada; senão custam uma consulta): ativo criado/trocou de grupo/horímetro/km/atributos, leitura de horímetro e odômetro,
+  mudança de status da OS, checklist de frota concluído, NR-13, documento do ativo, cumprimento. **Job diário** 02:30 (`aptidao:recalcular` para rodar manual).
+  Mudou a regra do grupo → recálculo do grupo em fila. **Prévia de impacto** na tela de edição do grupo (nada é salvo).
+- **Fora desta fase (fases 4–7):** formulário de campos técnicos no cadastro do ativo, operador, peças críticas, sobrescrita por modelo/ativo,
+  liberação excepcional, bloqueio de despacho, OS automática em IMP reprovado, SLA por grupo. Nesta fase `os_a_gerar` só é calculado.
+- Em PROD a fila é `sync` (sem worker): os jobs rodam inline; o recálculo de um grupo grande acontece dentro da requisição de salvar.
+
+## Fase 4 — Grupos do MVP e cadastro do ativo por grupo
+- **Template:** compressor, gerador, empilhadeira, plataforma elevatória, munk e guindaste (50 itens na biblioteca). **Veículos leves, caminhão e reboque entram na fase 8**
+  (dependem da unificação com `FrotaModeloChecklist`). Todo item que cita norma tem `validar_norma: true` (teste garante); operadores e a regra do guindaste também.
+- **Munk (chassi + guindaste):** medidor `ambos`. Km do chassi = `assets.odometro_atual`; horas do guindaste = `assets.horimetro_atual` (os dois já ficam no `Asset`); duas preventivas,
+  uma por medidor. **Os intervalos do munk e do guindaste são PLACEHOLDER** (`parametros.validar_manual`): a especificação não os define; usar o manual do fabricante.
+- **Validade de documento/inspeção** sem validade padrão (laudos, CRLV, seguro, plano de içamento): informada no registro do cumprimento (`valido_ate`).
+  Itens "quando aplicável" (ART) usam `sem_registro: ignorar`.
+- **Guindaste:** regra em dados `bloqueia_alocacao` enquanto não houver plano de içamento válido (`sem_cumprimento: plano-icamento`); o status não muda, só a flag.
+- **Cadastro do ativo:** seção "Campos técnicos do grupo" mostra só os campos do grupo escolhido (gravados em `assets.atributos_tecnicos`); obrigatório vazio = aviso, nunca bloqueia.
+  Coluna e filtro "Aptidão" na lista e aba "Aptidão e cumprimentos" no ativo (registrar cumprimento; histórico sem editar/excluir). Widget "Aptidão da frota" com alerta de cadastro incompleto.
+  Tudo inerte com a chave do contrato desligada.
+
+## Fase 5 — Consumidores: bloqueio, liberação excepcional, OS automática, campo e painéis
+- **Bloqueio de alocação/despacho** (`AptidaoBloqueio`, calcula na hora, só com a chave do contrato ligada): barra **Inapto**, **cadastro incompleto** e **regra especial de bloqueio**
+  (ex.: guindaste sem plano de içamento). "Apto com restrição" não bloqueia. Pontos de barragem: mobilização **sem OS** (despacho/agenda da logística), solicitação de locação
+  virando `contrato_fechado` e troca de equipamento (checa o substituto antes de criar qualquer movimentação). Mobilização **de OS de manutenção** e desmobilização não são
+  barradas (o ativo Inapto precisa ir ao conserto). Operador exigido (`exige_operador`) **ainda não é avaliado**: depende de `EmployeeCertification`/`EquipmentAllocation` e da trigger de NR; fica para fatia própria.
+- **Liberação excepcional** (`aptidao_liberacoes`): permissão própria `criar_liberacao_aptidao` (atribuída em Perfis de Acesso; admin do tenant tem o bypass padrão), justificativa
+  ≥ 10 caracteres, prazo futuro de no máx. 30 dias, só para ativo **Inapto**, sem duplicar, revogável com justificativa, log com motivos da época. O status **continua Inapto**.
+  **Não levanta** bloqueio de regra especial nem cadastro incompleto.
+- **OS automática**: item **IMP** reprovado com `gera_os` abre **uma** OS corretiva (`origin = aptidao_auto`); se já há OS aberta para o mesmo item, vincula à mesma. **Fechar a OS não
+  aprova o item**: o ativo segue Inapto até um novo checklist OK (reinspeção). Falha ao abrir a OS é logada e nunca derruba o registro do checklist.
+- **Campo**: `Checklist do equipamento` (`/admin/checklist-aptidao`, atalho em `config/campo.php`): só itens IMP/ALR do grupo do ativo. Documentos e inspeções (validade/anexo) ficam na tela de gestão.
+- **Painéis**: aptidão por grupo (tabela) e principais motivos de Inapto/restrição. Aba do ativo ganha "Liberar excepcionalmente" e "Revogar liberação".
+
+## Fase 6 — Atualização de template (diff item a item) e "restaurar padrão"
+- **Tela** Manutenção > Cadastros > "Atualizações do catálogo" (e botão com a contagem na lista de grupos). O diff é calculado na hora (template × catálogo do tenant); nada é aplicado sem confirmação.
+- **Classificação por item:** `novo` (item/atributo/etc. que não existe no tenant), `grupo_novo`, `atualizar` (difere do padrão e **não** é personalizado), `personalizado` (difere e o tenant mexeu: **nunca** é alterado por aceite,
+  só informado, com "Restaurar ao padrão"), `arquivado` (o que o tenant arquivou **não volta sozinho**), `removido_do_padrao` (saiu do template: **não é apagado** do tenant), `conflito` (categoria do tenant com o mesmo slug).
+  `ordem` é cosmética (o tenant reordena) e não conta como diferença.
+- **Aceitar** (item a item, atômico): edição sensível (IMP/DOC/INSP rebaixado, intervalo ampliado, obrigatório removido/desativado) exige justificativa e vai ao log (antes/depois/aviso do responsável técnico).
+  **Ignorar**: mantém a versão do tenant (vira personalizado) e para de oferecer. **Restaurar padrão** (item ou grupo inteiro): sobrescreve a personalização, **sempre** com justificativa e log; reativa o que estava arquivado/desativado;
+  itens que o tenant criou ficam intactos; a ordem escolhida é preservada.
+- **Prévia de impacto** na aptidão: simula o aceite/restauração dentro de uma transação **desfeita** (nada é gravado nem logado). Depois de aceitar/restaurar, a aptidão do grupo é recalculada em fila.
+- O mapeamento YAML → campos agora é único (`CatalogoTemplate`): instalador e diff não divergem. O diff é calculado sob demanda (a coluna `diff_pendente`, que nunca foi usada, foi removida).
+
+## Fase 7 — SLA por grupo × criticidade e peças críticas × estoque
+
+- **SLA do grupo** (`catalogo_sla`) passa a valer nas OS dos ativos do grupo, sobre o SLA da F2/F6. A criticidade do catálogo é o **nível base da prioridade da OS** (F1): prioridade personalizada do tenant entra pelo `base_level`. Só vale com a chave `tabela_catalogo_equipamentos` ligada no contrato.
+- **Ordem de precedência** (`SlaService::definicao()`): política de **contrato/cliente** (acordo comercial, vale inteira) > **SLA do grupo × criticidade** (por relógio: Resposta e Resolução) > política geral/por tipo da F2 (completa o que o grupo não define; ex.: o relógio Atendimento).
+- O cronômetro guarda a origem (`catalogo_sla_id`, ao lado do `policy_id`) e, se o grupo definiu, as **pausas próprias** (`pause_statuses`; vazio = pausas da empresa). Mudar a prioridade recalcula pelo SLA da nova criticidade. Cronômetro já fechado nunca muda.
+- **Calendário:** grupo `24x7` força 24x7; `comercial` segue o calendário da empresa (se a empresa não configurou horário comercial, fica 24x7).
+- **Peças críticas** (`catalogo_pecas_criticas`): vínculo com **Material** (é o que a OS consome — não `Part`). A página **Peças críticas** (Manutenção › Cadastros) mostra, por grupo, o estoque do Material contra o mínimo: sem estoque, abaixo do mínimo, sem material vinculado, ok — da mais grave para a mais leve. É alerta de abastecimento; **não altera a aptidão** do ativo.
+- Migration aditiva `2026_12_31_100000_g1_sla_timers_origem_catalogo`. Dependência: este PR parte da pilha G1 **com a main (SLA F2–F6) mesclada**.
+
+## Fase 8 — Veículos leves, caminhão e reboque (grupos novos)
+
+- Três grupos novos no template, **aditivos e desligados por padrão** (a chave `tabela_catalogo_equipamentos` continua desligada nos contratos): **Veículos leves** (km), **Caminhão** sem guindaste (km; o munk e o guindaste seguem com grupo próprio) e **Reboque** (por dias). 8 itens novos na biblioteca (58 no total): painel sem alerta, triângulo e macaco, amarração da carga, engate/pino-rei, corrente de segurança, estrutura/chassi, RNTRC e aferição do tacógrafo.
+- Impeditivos (IMP): freios, direção, pneus e cinto nos motorizados (e vazamentos no caminhão); no reboque, engate/pino-rei, corrente de segurança, freios, pneus e estrutura. Documentos (CRLV, seguro, RNTRC) e tacógrafo "quando aplicável" (sem registro = ignorado).
+- **Itens que citam CTB/ANTT/tacógrafo e os intervalos de preventiva (km/dias) estão marcados para validar** — o checklist subiu de 21 para 33 itens em `docs/G1_VALIDACAO_NORMAS.md`. Habilitação do condutor (CNH) **não** é avaliada: `exige_operador = false`.
+- **Fora desta fase, por decisão:** (1) o módulo **Frota** (`FrotaModeloChecklist`, checklist de saída/retorno) segue como está, sem ponte com a aptidão; (2) a **trava de NR do Postgres** continua sem ler a aptidão, porque as normas ainda não foram validadas. Ambos são avaliados quando o responsável técnico validar os itens.

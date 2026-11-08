@@ -3,16 +3,9 @@
 namespace App\Services\Catalogo;
 
 use App\Models\AssetCategory;
-use App\Models\CatalogoAtributo;
 use App\Models\CatalogoInstalacao;
 use App\Models\CatalogoItem;
 use App\Models\CatalogoModel;
-use App\Models\CatalogoOperador;
-use App\Models\CatalogoPecaCritica;
-use App\Models\CatalogoPreventiva;
-use App\Models\CatalogoRegra;
-use App\Models\CatalogoRequisito;
-use App\Models\CatalogoSla;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -69,20 +62,21 @@ class CatalogoInstalador
     /**
      * @return array{criados: array<string,int>, ignorados: array<string,int>, conflitos: array<int,string>}
      */
-    public function instalar(Tenant $tenant, ?string $dir = null): array
+    public function instalar(Tenant $tenant, ?string $dir = null, ?array $apenasGrupos = null): array
     {
         $template = $this->carregarTemplate($dir);
+
+        if ($apenasGrupos !== null) {
+            $template['grupos'] = array_intersect_key($template['grupos'], array_flip($apenasGrupos));
+        }
         $tenantId = (string) $tenant->id;
         $stats = ['criados' => [], 'ignorados' => [], 'conflitos' => []];
 
         DB::transaction(function () use ($template, $tenantId, &$stats) {
             $itens = [];
             foreach ($template['biblioteca']['itens'] ?? [] as $i => $item) {
-                $itens[$item['slug']] = $this->criar(CatalogoItem::class, ['tenant_id' => $tenantId, 'slug' => $item['slug']], [
-                    'tipo' => $item['tipo'], 'nome' => $item['nome'], 'descricao' => $item['descricao'] ?? null,
-                    'validade_dias' => $item['validade_dias'] ?? null, 'parametros' => $item['parametros'] ?? null,
-                    'ordem' => $i, ...$this->meta($item['slug'], $template['biblioteca']),
-                ], $stats)->id;
+                $itens[$item['slug']] = $this->criar(CatalogoItem::class, ['tenant_id' => $tenantId, 'slug' => $item['slug']],
+                    ['ordem' => $i, ...$this->meta($item['slug'], $template['biblioteca'])] + CatalogoTemplate::item($item), $stats)->id;
             }
 
             foreach ($template['grupos'] as $arquivo) {
@@ -124,12 +118,10 @@ class CatalogoInstalador
         }
 
         $grupo = AssetCategory::withoutGlobalScopes()->create([
-            'tenant_id' => $tenantId, 'name' => $g['nome'], 'slug' => $slug, 'description' => $g['descricao'] ?? null,
-            'is_active' => true, 'medidor' => $g['medidor'], 'criticidade_padrao' => $g['criticidade_padrao'],
-            'exige_operador' => (bool) ($g['exige_operador'] ?? false), 'ordem' => (int) ($g['ordem'] ?? 0),
+            'tenant_id' => $tenantId, 'slug' => $slug,
             'origem' => CatalogoModel::ORIGEM_SISTEMA, 'slug_template' => $slug,
             'versao_template' => (int) ($arquivo['versao'] ?? 1), 'personalizado' => false,
-        ]);
+        ] + CatalogoTemplate::grupo($arquivo));
         $this->contar($stats, 'criados', 'grupos');
 
         $base = fn (string $filhoSlug, int $ordem) => [
@@ -138,56 +130,10 @@ class CatalogoInstalador
             'versao_template' => (int) ($arquivo['versao'] ?? 1), 'personalizado' => false, 'ativo' => true,
         ];
 
-        foreach ($arquivo['atributos'] ?? [] as $i => $a) {
-            $this->gravar(CatalogoAtributo::class, $base($a['slug'], $i) + [
-                'chave' => $a['slug'], 'rotulo' => $a['rotulo'], 'tipo' => $a['tipo'], 'unidade' => $a['unidade'] ?? null,
-                'obrigatorio' => (bool) ($a['obrigatorio'] ?? false), 'opcoes' => $a['opcoes'] ?? null,
-            ], $stats);
-        }
-
-        foreach ($arquivo['requisitos'] ?? [] as $i => $r) {
-            $this->gravar(CatalogoRequisito::class, $base($r['slug'], $i) + [
-                'item_id' => $itens[$r['item']], 'efeito' => $r['efeito'], 'validade_dias' => $r['validade_dias'] ?? null,
-                'tolerancia_pct' => $r['tolerancia_pct'] ?? null, 'gera_os' => (bool) ($r['gera_os'] ?? false),
-                'validar_norma' => (bool) ($r['validar_norma'] ?? false), 'norma' => $r['norma'] ?? null,
-                'parametros' => $r['parametros'] ?? null,
-            ], $stats);
-        }
-
-        foreach ($arquivo['preventivas'] ?? [] as $i => $p) {
-            $this->gravar(CatalogoPreventiva::class, $base($p['slug'], $i) + [
-                'nome' => $p['nome'], 'medidor' => $p['medidor'], 'intervalo' => $p['intervalo'],
-                'tolerancia_pct' => $p['tolerancia_pct'] ?? 10, 'ou_dias' => $p['ou_dias'] ?? null,
-                'regra_ou' => $p['regra_ou'] ?? 'primeiro', 'parametros' => $p['parametros'] ?? null,
-            ], $stats);
-        }
-
-        foreach ($arquivo['operadores'] ?? [] as $i => $o) {
-            $this->gravar(CatalogoOperador::class, $base($o['slug'], $i) + [
-                'habilitacao' => $o['habilitacao'], 'norma' => $o['norma'] ?? null, 'validade_dias' => $o['validade_dias'] ?? null,
-                'obrigatorio' => (bool) ($o['obrigatorio'] ?? true), 'validar_norma' => (bool) ($o['validar_norma'] ?? false),
-            ], $stats);
-        }
-
-        foreach ($arquivo['pecas_criticas'] ?? [] as $i => $p) {
-            $this->gravar(CatalogoPecaCritica::class, $base($p['slug'], $i) + [
-                'descricao' => $p['descricao'], 'compatibilidade' => $p['compatibilidade'] ?? null,
-            ], $stats);
-        }
-
-        foreach ($arquivo['sla'] ?? [] as $i => $s) {
-            $this->gravar(CatalogoSla::class, $base($s['slug'], $i) + [
-                'criticidade' => $s['criticidade'], 'resposta_min' => $s['resposta_min'] ?? null,
-                'resolucao_min' => $s['resolucao_min'] ?? null, 'calendario' => $s['calendario'] ?? 'comercial',
-                'pausa_por' => $s['pausa_por'] ?? null,
-            ], $stats);
-        }
-
-        foreach ($arquivo['regras'] ?? [] as $i => $r) {
-            $this->gravar(CatalogoRegra::class, $base($r['slug'], $i) + [
-                'nome' => $r['nome'], 'condicao' => $r['condicao'] ?? null, 'efeito' => $r['efeito'],
-                'strategy' => $r['strategy'] ?? null, 'validar_norma' => (bool) ($r['validar_norma'] ?? false),
-            ], $stats);
+        foreach (CatalogoTemplate::SECOES as $secao => [$classe]) {
+            foreach ($arquivo[$secao] ?? [] as $i => $linha) {
+                $this->gravar($classe, $base($linha['slug'], $i) + CatalogoTemplate::camposDb($secao, $linha, $itens), $stats);
+            }
         }
     }
 

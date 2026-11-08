@@ -1,0 +1,49 @@
+# G1 -- grupo PLATAFORMA ELEVATORIA. TEMPLATE INICIAL, tudo editavel pelo tenant.
+# Intervalos de preventiva devem seguir o manual do fabricante. Itens marcados "validar" dependem de norma:
+# VALIDAR COM O RESPONSAVEL TECNICO antes de ligar a chave em cliente real (pendencia bloqueante).
+versao: 1
+
+grupo:
+  slug: plataforma-elevatoria
+  nome: Plataforma Elevatoria
+  descricao: "Plataformas tesoura e articuladas (eletricas ou diesel)"
+  medidor: horimetro
+  criticidade_padrao: alta
+  exige_operador: true
+  ordem: 40
+
+atributos:
+  - {slug: altura-trabalho, rotulo: "Altura de trabalho", tipo: numero, unidade: m, obrigatorio: true}
+  - {slug: capacidade, rotulo: "Capacidade", tipo: numero, unidade: kg, obrigatorio: true}
+  - {slug: tipo, rotulo: "Tipo", tipo: selecao, obrigatorio: true, opcoes: [tesoura, articulada]}
+  - {slug: acionamento, rotulo: "Acionamento", tipo: selecao, obrigatorio: true, opcoes: [eletrica, diesel]}
+
+requisitos:
+  # --- Documentos e inspecoes (vencido = Inapto; a validade e informada no registro do cumprimento) ---
+  - {slug: inspecao-periodica, item: inspecao-periodica-plataforma, efeito: INSP, norma: "validar (NR-18/NR-35)", validar_norma: true}   # validar: periodicidade e norma com o responsavel tecnico
+  # --- Checklist (IMP = reprovado e Inapto e gera OS; ALR = Apto com restricao) ---
+  - {slug: comandos-emergencia-descida, item: comandos-emergencia-descida, efeito: IMP, gera_os: true}
+  - {slug: guarda-corpos, item: guarda-corpos, efeito: IMP, gera_os: true}
+  - {slug: estabilizadores-nivelamento, item: estabilizadores, efeito: IMP, gera_os: true}
+  - {slug: sensor-inclinacao, item: sensor-inclinacao, efeito: IMP, gera_os: true}
+  - {slug: vazamentos, item: vazamentos, efeito: IMP, gera_os: true}
+  - {slug: bateria-combustivel, item: bateria-combustivel, efeito: ALR}
+  - {slug: pneus, item: pneus, efeito: ALR}
+
+preventivas:
+  - {slug: revisao-250h, nome: "Revisao 250 h", medidor: horimetro, intervalo: 250}
+  - {slug: revisao-500h, nome: "Revisao 500 h", medidor: horimetro, intervalo: 500}
+  - {slug: revisao-1000h, nome: "Revisao 1000 h", medidor: horimetro, intervalo: 1000}
+
+operadores:
+  - {slug: treinamento-operador, habilitacao: "Treinamento do operador (trabalho em altura / plataforma)", norma: "NR-35 / NR-18", validar_norma: true}   # validar com o responsavel tecnico
+
+pecas_criticas: []   # o tenant vincula Materiais (a OS consome Material)
+
+sla:    # resposta conforme _vocabulario.yaml; resolucao a definir pelo tenant
+  - {slug: critica, criticidade: critica, resposta_min: 60,   calendario: 24x7}
+  - {slug: alta,    criticidade: alta,    resposta_min: 240,  calendario: comercial}
+  - {slug: media,   criticidade: media,   resposta_min: 480,  calendario: comercial}
+  - {slug: baixa,   criticidade: baixa,   resposta_min: 1440, calendario: comercial}
+
+regras: []

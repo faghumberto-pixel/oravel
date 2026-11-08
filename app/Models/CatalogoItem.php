@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BelongsToTenant;
 use App\Models\Concerns\HasSaaSMetadata;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Biblioteca de itens reutilizaveis (Extintor, Freios, CRLV, Cinto...). Cada grupo referencia o item via
@@ -25,6 +26,11 @@ class CatalogoItem extends CatalogoModel
     protected static ?string $saasModuleLabel = 'Catálogo de Equipamentos';
 
     protected $table = 'catalogo_itens';
+
+    public function requisitos(): HasMany
+    {
+        return $this->hasMany(CatalogoRequisito::class, 'item_id');
+    }
 
     protected function casts(): array
     {

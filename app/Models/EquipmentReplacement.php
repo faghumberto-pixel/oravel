@@ -180,6 +180,10 @@ class EquipmentReplacement extends Model
             return;
         }
 
+        // G1: o equipamento SUBSTITUTO vai para o cliente -- precisa estar apto (chave do catalogo no contrato). Checa ANTES de
+        // criar qualquer movimentacao, para nao deixar a troca pela metade.
+        \App\Services\Catalogo\Aptidao\AptidaoBloqueio::exigirPodeAlocar(Asset::withoutGlobalScopes()->find($this->replacement_asset_id));
+
         // scheduled_at=now() pra nascer visivel no mapa de Programacao da
         // Logistica (LogisticaAgendaWidget exige scheduled_at preenchido) --
         // Logistica reagenda pelo calendario se precisar de outro horario.

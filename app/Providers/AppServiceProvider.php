@@ -138,6 +138,9 @@ class AppServiceProvider extends ServiceProvider
         // Select/CheckboxList por relationship validam o tenant no servidor (ver a classe).
         TenantScopedRelationshipRule::register();
 
+        // G1: recalculo da aptidao do ativo (inerte para tenants sem a chave tabela_catalogo_equipamentos).
+        \App\Services\Catalogo\Aptidao\AptidaoGatilhos::registrar();
+
         // Estoque estruturado: o consumo/entrada/ajuste de um item tambem atualiza a quantidade do endereco (prateleira) onde ele esta.
         \App\Models\MaterialStockMovement::created(fn (\App\Models\MaterialStockMovement $m) => app(\App\Services\Estoque\EstoqueEnderecos::class)->aoMovimentarMaterial($m));
         \App\Models\StockMovement::created(fn (\App\Models\StockMovement $m) => app(\App\Services\Estoque\EstoqueEnderecos::class)->aoMovimentarPeca($m));

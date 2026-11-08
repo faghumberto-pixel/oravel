@@ -77,6 +77,11 @@ class Asset extends Model implements HasMedia
     protected $guarded = [];
 
     protected $casts = [
+        // G1: aptidao (cache do AssetFitnessService) e campos tecnicos do grupo
+        'aptidao_motivos' => 'array',
+        'aptidao_bloqueia_alocacao' => 'boolean',
+        'aptidao_calculada_em' => 'datetime',
+        'atributos_tecnicos' => 'array',
         'veiculo_pesado' => 'boolean',
         'licenciamento_vencimento' => 'date',
         'ipva_vencimento' => 'date',
@@ -492,6 +497,12 @@ class Asset extends Model implements HasMedia
      * mas essa é a fonte confiável daqui pra frente pra "quais Ativos são
      * dessa categoria" (usado por SolicitacaoLocacaoResource).
      */
+    /** G1: evidencias de cumprimento (documento/inspecao/checklist/preventiva) lidas pelo motor de aptidao. */
+    public function cumprimentos(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(CatalogoCumprimento::class, 'asset_id');
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(AssetCategory::class, 'asset_category_id');

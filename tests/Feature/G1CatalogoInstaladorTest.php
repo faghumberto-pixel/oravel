@@ -79,7 +79,7 @@ class G1CatalogoInstaladorTest extends TestCase
         $this->assertSame('compressor', $g->slug_template);
         $this->assertFalse($g->personalizado);
         $this->assertTrue($g->is_active);
-        $this->assertSame(1, $r['criados']['grupos']);
+        $this->assertSame(9, $r['criados']['grupos'], 'template: compressor + gerador + empilhadeira + plataforma + munk + guindaste + veiculos leves + caminhao + reboque');
 
         $this->assertSame(4, CatalogoAtributo::withoutGlobalScopes()->where('grupo_id', $g->id)->count());
         $this->assertSame(10, CatalogoRequisito::withoutGlobalScopes()->where('grupo_id', $g->id)->count());
@@ -159,7 +159,8 @@ class G1CatalogoInstaladorTest extends TestCase
         $this->assertSame(['compressor'], $r['conflitos']);
         $this->assertSame(1, AssetCategory::withoutGlobalScopes()->withTrashed()->where('tenant_id', $this->tenant->id)->where('slug', 'compressor')->count());
         $this->assertNull($propria->fresh()->slug_template);
-        $this->assertSame(0, CatalogoRequisito::withoutGlobalScopes()->where('tenant_id', $this->tenant->id)->count());
+        $this->assertSame(0, CatalogoRequisito::withoutGlobalScopes()->where('grupo_id', $propria->id)->count(), 'a categoria propria do tenant nao ganha filhos');
+        $this->assertSame(8, AssetCategory::withoutGlobalScopes()->where('tenant_id', $this->tenant->id)->where('origem', 'sistema')->count(), 'os outros 8 grupos instalam normalmente');
     }
 
     public function test_isolamento_entre_tenants(): void
@@ -213,7 +214,7 @@ class G1CatalogoInstaladorTest extends TestCase
         }
 
         $this->assertSame(0, $this->total(AssetCategory::class, $desligado));
-        $this->assertSame(1, $this->total(AssetCategory::class, $ligado));
+        $this->assertSame(9, $this->total(AssetCategory::class, $ligado));
     }
 
     public function test_comando_dry_run_nao_grava(): void
@@ -222,7 +223,7 @@ class G1CatalogoInstaladorTest extends TestCase
         $this->assertSame(0, $this->total(AssetCategory::class, $this->tenant));
 
         $this->artisan('catalogo:instalar', ['tenant' => $this->tenant->id])->assertSuccessful();
-        $this->assertSame(1, $this->total(AssetCategory::class, $this->tenant));
+        $this->assertSame(9, $this->total(AssetCategory::class, $this->tenant));
     }
 
     public function test_slug_de_requisito_unico_por_grupo_no_banco(): void

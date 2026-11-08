@@ -484,6 +484,8 @@ Route::middleware(['auth'])->group(function () {
 
     // OS rápida do campo: equipamento da lista + descrição, depois segue para o modo campo da O.S.
     Route::get('/admin/os-rapida', \App\Livewire\OsRapidaMobile::class)->name('os-rapida.mobile');
+    // G1: checklist do grupo do equipamento no campo (itens IMP/ALR; IMP reprovado abre OS). So com a chave do catalogo ligada (mount aborta 404 senao).
+    Route::get('/admin/checklist-aptidao', \App\Livewire\ChecklistAptidaoMobile::class)->name('checklist-aptidao.mobile');
 
     // Almoxarifado Volante: saldo do próprio veículo, consulta no celular
     Route::get('/admin/meu-estoque', 'App\Livewire\MobileWarehouseStock')

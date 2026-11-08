@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\CatalogoItem;
 use App\Models\CrmLead;
 use App\Models\CrmVisita;
 use App\Models\MaintenanceOrder;
@@ -16,6 +17,9 @@ return [
             'produto' => 'manutencao', 'rota' => 'os-rapida.mobile', 'modelo' => MaintenanceOrder::class, 'perfis' => ['tecnico'], 'acao' => 'create'],
         ['chave' => 'minhas_os', 'titulo' => 'Minhas OS do dia', 'descricao' => 'O que fazer hoje', 'icone' => 'heroicon-o-wrench-screwdriver',
             'produto' => 'manutencao', 'rota' => 'filament.admin.pages.technician-daily-tasks', 'modelo' => MaintenanceOrder::class, 'perfis' => ['tecnico']],
+        // G1: aparece so com a chave do catalogo no contrato (a policy de CatalogoItem faz o gate) e a permissao de leitura.
+        ['chave' => 'checklist_aptidao', 'titulo' => 'Checklist do equipamento', 'descricao' => 'Itens do grupo; reprovar abre OS', 'icone' => 'heroicon-o-clipboard-document-check',
+            'produto' => 'manutencao', 'rota' => 'checklist-aptidao.mobile', 'modelo' => CatalogoItem::class, 'perfis' => ['tecnico']],
         ['chave' => 'agenda_tecnico', 'titulo' => 'Agenda', 'descricao' => 'Próximos compromissos', 'icone' => 'heroicon-o-calendar-days',
             'produto' => 'manutencao', 'rota' => 'agenda-tecnico.mobile', 'modelo' => MaintenanceOrder::class, 'perfis' => ['tecnico']],
         ['chave' => 'leads', 'titulo' => 'Meus leads', 'descricao' => 'Retornos e contatos', 'icone' => 'heroicon-o-user-group',

@@ -44,11 +44,53 @@ class AssetCategory extends Model
     protected static function booted(): void
     {
         // O tenant_id e carimbado pela trait BelongsToTenant (no creating). Aqui apenas geramos o slug.
+        // G1: editar um grupo vindo do template o marca como personalizado (nunca mais alterado automaticamente).
+        static::updating(function (self $model) {
+            if ($model->origem === 'sistema' && $model->isDirty(['name', 'description', 'medidor', 'criticidade_padrao', 'exige_operador', 'is_active', 'deleted_at'])) {
+                $model->personalizado = true;
+            }
+        });
+
         static::creating(function (self $model) {
             if (empty($model->slug) && ! empty($model->name)) {
                 $model->slug = Str::slug($model->name);
             }
         });
+    }
+
+    public function atributos(): HasMany
+    {
+        return $this->hasMany(CatalogoAtributo::class, 'grupo_id')->orderBy('ordem');
+    }
+
+    public function requisitos(): HasMany
+    {
+        return $this->hasMany(CatalogoRequisito::class, 'grupo_id')->orderBy('ordem');
+    }
+
+    public function preventivas(): HasMany
+    {
+        return $this->hasMany(CatalogoPreventiva::class, 'grupo_id')->orderBy('ordem');
+    }
+
+    public function operadores(): HasMany
+    {
+        return $this->hasMany(CatalogoOperador::class, 'grupo_id')->orderBy('ordem');
+    }
+
+    public function pecasCriticas(): HasMany
+    {
+        return $this->hasMany(CatalogoPecaCritica::class, 'grupo_id')->orderBy('ordem');
+    }
+
+    public function slaPoliticas(): HasMany
+    {
+        return $this->hasMany(CatalogoSla::class, 'grupo_id')->orderBy('ordem');
+    }
+
+    public function regras(): HasMany
+    {
+        return $this->hasMany(CatalogoRegra::class, 'grupo_id')->orderBy('ordem');
     }
 
     public function assets(): HasMany

@@ -20,3 +20,48 @@ itens:
   - {slug: inspecao-vaso-pressao,     tipo: inspecao,  nome: "Inspecao de vaso de pressao"}
   - {slug: teste-valvula-seguranca,   tipo: inspecao,  nome: "Teste da valvula de seguranca"}
   - {slug: calibracao-manometro,      tipo: inspecao,  nome: "Calibracao do manometro"}
+  # --- Itens dos grupos da fase 4 (gerador, empilhadeira, munk, plataforma, guindaste) ---
+  - {slug: combustivel, tipo: checklist, nome: "Combustivel"}
+  - {slug: arrefecimento, tipo: checklist, nome: "Arrefecimento"}
+  - {slug: bateria-partida, tipo: checklist, nome: "Bateria e partida"}
+  - {slug: disjuntor-painel, tipo: checklist, nome: "Disjuntor e painel"}
+  - {slug: aterramento, tipo: checklist, nome: "Aterramento"}
+  - {slug: cabos-conexoes, tipo: checklist, nome: "Cabos e conexoes"}
+  - {slug: direcao, tipo: checklist, nome: "Direcao"}
+  - {slug: garfos-corrente, tipo: checklist, nome: "Garfos e corrente"}
+  - {slug: buzina-alarme-re, tipo: checklist, nome: "Buzina e alarme de re"}
+  - {slug: luzes, tipo: checklist, nome: "Luzes"}
+  - {slug: pneus, tipo: checklist, nome: "Pneus"}
+  - {slug: bateria-glp, tipo: checklist, nome: "Bateria / GLP"}
+  - {slug: estabilizadores, tipo: checklist, nome: "Estabilizadores / outriggers"}
+  - {slug: cabos-correntes-ganchos, tipo: checklist, nome: "Cabos, correntes e ganchos"}
+  - {slug: trava-gancho, tipo: checklist, nome: "Trava do gancho"}
+  - {slug: limitador-carga, tipo: checklist, nome: "Limitador de carga"}
+  - {slug: comandos, tipo: checklist, nome: "Comandos"}
+  - {slug: freios-pneus-chassi, tipo: checklist, nome: "Freios e pneus do chassi"}
+  - {slug: sinalizacao, tipo: checklist, nome: "Sinalizacao"}
+  - {slug: comandos-emergencia-descida, tipo: checklist, nome: "Comandos de emergencia e descida"}
+  - {slug: guarda-corpos, tipo: checklist, nome: "Guarda-corpos"}
+  - {slug: sensor-inclinacao, tipo: checklist, nome: "Sensor de inclinacao"}
+  - {slug: bateria-combustivel, tipo: checklist, nome: "Bateria / combustivel"}
+  - {slug: cabos-aco, tipo: checklist, nome: "Cabos de aco"}
+  - {slug: ganchos-travas, tipo: checklist, nome: "Ganchos e travas"}
+  - {slug: limitador-momento, tipo: checklist, nome: "Limitador / indicador de momento"}
+  - {slug: alarmes, tipo: checklist, nome: "Alarmes"}
+  - {slug: art, tipo: documento, nome: "ART (Anotacao de Responsabilidade Tecnica)"}
+  - {slug: tabela-carga-legivel, tipo: documento, nome: "Tabela de carga legivel"}
+  - {slug: manual-tabela-carga, tipo: documento, nome: "Manual e tabela de carga"}
+  - {slug: plano-icamento, tipo: documento, nome: "Plano de icamento (por operacao)"}
+  - {slug: inspecao-icamento, tipo: inspecao, nome: "Laudo / inspecao periodica de icamento"}
+  - {slug: laudo-periodico-guindaste, tipo: inspecao, nome: "Laudo periodico do guindaste"}
+  - {slug: inspecao-periodica-plataforma, tipo: inspecao, nome: "Inspecao periodica da plataforma"}
+  - {slug: revisao-cabos-aco, tipo: inspecao, nome: "Revisao de cabos de aco e componentes de icamento"}
+  # --- Itens da fase 8 (veiculo leve, caminhao, reboque) ---
+  - {slug: luz-painel,         tipo: checklist, nome: "Painel sem luz de alerta acesa"}
+  - {slug: triangulo-macaco,   tipo: acessorio, nome: "Triangulo e macaco"}
+  - {slug: amarracao-carga,    tipo: checklist, nome: "Amarracao e fixacao da carga"}
+  - {slug: engate-pino-rei,    tipo: checklist, nome: "Engate / pino-rei / quinta roda"}
+  - {slug: corrente-seguranca, tipo: checklist, nome: "Corrente de seguranca do reboque"}
+  - {slug: estrutura-chassi,   tipo: checklist, nome: "Estrutura e chassi (trincas, corrosao)"}
+  - {slug: rntrc,              tipo: documento, nome: "RNTRC (transporte rodoviario de cargas)"}
+  - {slug: tacografo,          tipo: inspecao,  nome: "Afericao do tacografo"}
