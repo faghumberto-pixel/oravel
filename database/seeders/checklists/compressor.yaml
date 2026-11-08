@@ -1,0 +1,45 @@
+# Checklists -- COMPRESSOR. TEMPLATE INICIAL, tudo editavel pelo tenant (a fonte da verdade e o banco).
+# REVISAR COM O RESPONSAVEL TECNICO ANTES DE USO EM PRODUCAO. As normas citadas sao hipoteses de referencia e nao afirmam
+# conformidade legal automatica. O vaso de pressao tem inspecao propria (NR-13, vertical existente): aqui so a conferencia visual.
+versao: 1
+
+template:
+  slug: compressor-diario
+  grupo: compressor
+  nome: "Checklist diário do compressor"
+  tipo: diario
+  periodicidade: diaria
+  referencia_manual: "NR-12 e NR-13 (hipótese, validar); manual do fabricante"
+  observacoes: "Faça antes de ligar o compressor no dia. Manômetro, válvula de segurança ou parada de emergência com defeito: não operar."
+
+secoes:
+  - slug: fluidos-filtros
+    titulo: "Óleo, filtros e correias"
+    itens:
+      - {slug: nivel-oleo, descricao: "Nível do óleo dentro da marca", requisito: oleo, referencia: "Manual do fabricante"}
+      - {slug: filtro-ar, descricao: "Filtro de ar limpo e bem fixado"}
+      - {slug: correias-protecao, descricao: "Correias com tensão correta e protegidas por proteção fixa", critico: true, referencia: "NR-12 (validar)"}
+      - {slug: protecao-partes-moveis, descricao: "Proteções de polias, acoplamentos e ventoinha instaladas e firmes", critico: true, referencia: "NR-12 (validar)"}
+  - slug: ar-pressao
+    titulo: "Ar comprimido e pressão"
+    itens:
+      - {slug: dreno-reservatorio, descricao: "Condensado drenado do reservatório", critico: true, requisito: dreno-reservatorio, referencia: "NR-13 (validar)"}
+      - {slug: manometro, descricao: "Manômetro legível, ponteiro em zero sem pressão e sem vidro quebrado", critico: true, requisito: manometro, referencia: "NR-13 (validar)"}
+      - {slug: valvula-seguranca, descricao: "Válvula de segurança sem obstrução, lacre íntegro e sem vazamento", critico: true, requisito: valvula-seguranca, referencia: "NR-13 (validar)"}
+      - {slug: pressao-trabalho, descricao: "Pressão de trabalho com o compressor em carga", tipo_resposta: numerico, unidade: bar}
+      - {slug: mangueiras-engates, descricao: "Mangueiras e engates sem rachadura, ressecamento ou folga", requisito: mangueiras-engates}
+      - {slug: vazamentos, descricao: "Sem vazamento de ar ou óleo nas conexões", requisito: vazamentos-de-ar}
+  - slug: operacao
+    titulo: "Funcionamento"
+    itens:
+      - {slug: ruidos-vibracao, descricao: "Sem ruído ou vibração anormal ao ligar"}
+      - {slug: temperatura, descricao: "Temperatura de operação", tipo_resposta: numerico, unidade: °C}
+      - {slug: parada-emergencia, descricao: "Botão de parada de emergência testado e funcionando", critico: true, referencia: "NR-12 (validar)"}
+      - {slug: horimetro, descricao: "Horímetro atual", tipo_resposta: numerico, unidade: h}
+  - slug: instalacao-vaso
+    titulo: "Instalação e vaso de pressão"
+    itens:
+      - {slug: plaqueta-vaso, descricao: "Plaqueta de identificação do vaso legível (dados, pressão máxima e número)", referencia: "NR-13 (validar)"}
+      - {slug: prontuario-acessivel, descricao: "Prontuário e último registro de inspeção do vaso disponíveis no local", referencia: "NR-13 (validar)"}
+      - {slug: local-ventilacao, descricao: "Local ventilado, limpo e sem material inflamável por perto"}
+      - {slug: sinalizacao, descricao: "Sinalização de risco e área delimitada"}

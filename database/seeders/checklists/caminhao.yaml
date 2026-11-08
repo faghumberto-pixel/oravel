@@ -1,0 +1,54 @@
+# Checklists -- CAMINHAO (saida; sem guindaste, que tem grupo proprio). TEMPLATE INICIAL, tudo editavel pelo tenant.
+# REVISAR COM O RESPONSAVEL TECNICO ANTES DE USO EM PRODUCAO. As normas citadas sao hipoteses de referencia e nao afirmam
+# conformidade legal automatica. Na C4 este checklist passa a ser o mesmo usado pelo modulo Frota (saida/retorno), sem duplicar tabelas.
+versao: 1
+
+template:
+  slug: caminhao-saida
+  grupo: caminhao
+  nome: "Checklist de saída do caminhão"
+  tipo: saida
+  periodicidade: por_uso
+  referencia_manual: "CTB, ANTT e NR-11 (hipótese, validar); manual do veículo"
+  observacoes: "Faça antes de sair. Freio, pneu, direção, engate ou cinto não conforme: não liberar o caminhão."
+
+secoes:
+  - slug: documentos
+    titulo: "Documentos"
+    itens:
+      - {slug: crlv, descricao: "CRLV (licenciamento) do veículo em dia", critico: true, referencia: "CTB (validar)"}
+      - {slug: cnh, descricao: "CNH do motorista válida para a categoria do veículo", critico: true, referencia: "CTB (validar)"}
+      - {slug: documentos-transporte, descricao: "Documentos do transporte da carga (nota fiscal e documentos de transporte) no veículo", referencia: "ANTT (validar)"}
+  - slug: pneus-rodagem
+    titulo: "Pneus e rodagem"
+    itens:
+      - {slug: pneus-pressao-dianteiro, descricao: "Pressão dos pneus do eixo dianteiro", tipo_resposta: numerico, unidade: psi}
+      - {slug: pneus-pressao-traseiro, descricao: "Pressão dos pneus dos eixos traseiros (menor valor medido)", tipo_resposta: numerico, unidade: psi}
+      - {slug: pneus-desgaste, descricao: "Desgaste e estado de todos os pneus (sem corte, bolha ou carcaça aparente), inclusive estepe", critico: true, requisito: pneus}
+      - {slug: suspensao, descricao: "Molas, amortecedores e bolsas de ar sem quebra ou vazamento"}
+  - slug: freios-direcao
+    titulo: "Freios e direção"
+    itens:
+      - {slug: freios-ar-drenagem, descricao: "Sistema de freio a ar drenado e sem vazamento audível", critico: true, requisito: freios}
+      - {slug: freio-estacionamento, descricao: "Freio de estacionamento segurando em declive leve", critico: true, requisito: freios}
+      - {slug: direcao, descricao: "Direção sem folga ou ruído estranho", critico: true, requisito: direcao}
+  - slug: engates-carroceria
+    titulo: "Engates, carroceria e carga"
+    itens:
+      - {slug: engate-quinta-roda, descricao: "Engate e quinta roda travados, com pino-rei firme e sem folga", critico: true}
+      - {slug: carroceria, descricao: "Carroceria, portas e travas íntegras"}
+      - {slug: lonas, descricao: "Lonas sem rasgo e bem presas"}
+      - {slug: amarracao-carga, descricao: "Carga amarrada e distribuída, com cintas e correntes em bom estado", requisito: amarracao-carga, referencia: "CTB (validar)"}
+  - slug: seguranca-luzes
+    titulo: "Segurança, luzes e fluidos"
+    itens:
+      - {slug: cinto, descricao: "Cintos de segurança travando e sem desgaste", critico: true, requisito: cinto}
+      - {slug: luzes-setas, descricao: "Faróis, lanternas, setas, freio e luz de ré funcionando", requisito: luzes}
+      - {slug: extintor, descricao: "Extintor presente e dentro da validade", requisito: extintor, referencia: "CTB (validar)"}
+      - {slug: triangulo-macaco, descricao: "Triângulo, macaco e chave de roda presentes", requisito: triangulo-macaco, referencia: "CTB (validar)"}
+      - {slug: epi-motorista, descricao: "EPI do motorista disponível (colete, calçado de segurança e luvas)"}
+      - {slug: tacografo, descricao: "Tacógrafo funcionando, com disco ou registro em dia", referencia: "CTB (validar)", obrigatorio: false}
+      - {slug: oleo-arrefecimento, descricao: "Nível de óleo do motor e líquido de arrefecimento", requisito: oleo}
+      - {slug: vazamentos, descricao: "Sem manchas de óleo, água ou combustível sob o veículo", requisito: vazamentos}
+      - {slug: luz-painel, descricao: "Painel sem luz de alerta acesa", requisito: luz-painel}
+      - {slug: quilometragem, descricao: "Quilometragem atual", tipo_resposta: numerico, unidade: km}

@@ -3,10 +3,14 @@
 namespace App\Services;
 
 use App\Models\CatalogoItem;
+use App\Models\CkTemplate;
 use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\Catalogo\CatalogoInstalador;
+use App\Services\Checklists\ChecklistInstalador;
+use App\Services\Prioridade\PrioridadeDaOs;
+use App\Support\CatalogosIniciais;
 
 class TenantProvisioner
 {
@@ -48,20 +52,26 @@ class TenantProvisioner
         OrganizationalStructureSeeder::seed($tenant);
 
         // Prioridades da O.S. (Crítica/Alta/Média/Baixa), que o tenant pode ampliar.
-        \App\Services\Prioridade\PrioridadeDaOs::garantirPadrao((string) $tenant->id);
+        PrioridadeDaOs::garantirPadrao((string) $tenant->id);
 
         // Funil de vendas padrão, motivos de perda e origens do CRM.
         CrmFunilPadrao::garantir((string) $tenant->id);
 
         // Interface simples (Manutenção/Serviços...): categorias, tipos de ação e problemas comuns de exemplo, que a empresa edita.
         if ($tenant->interfaceSimples()) {
-            \App\Support\CatalogosIniciais::garantir($tenant);
+            CatalogosIniciais::garantir($tenant);
         }
 
         // G1: catalogo padrao de grupos de equipamento. So instala se o CONTRATO tiver a chave ligada (desligada por
         // padrao) -- instalar cria categorias de ativo visiveis nas telas existentes, entao nao pode acontecer por padrao.
         if ($tenant->plan?->hasFeature(CatalogoItem::FEATURE_KEY)) {
             app(CatalogoInstalador::class)->instalar($tenant);
+        }
+
+        // Checklists por grupo de equipamento: mesma regra (so com a chave do contrato ligada), depois do catalogo para os
+        // templates ja nascerem ligados aos grupos.
+        if ($tenant->plan?->hasFeature(CkTemplate::FEATURE_KEY)) {
+            app(ChecklistInstalador::class)->instalar($tenant);
         }
 
         return $user;
