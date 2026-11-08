@@ -34,15 +34,15 @@ class CkExecutionResource extends BaseResource
 
     protected static ?string $pluralModelLabel = 'Execuções de Checklist';
 
-    protected static ?string $navigationLabel = 'Checklists de equipamento';
+    protected static ?string $navigationLabel = 'Checklists preenchidos';
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $navigationGroup = 'Relatórios';
+    protected static ?string $navigationGroup = 'Ativos';
 
-    protected static ?string $navigationParentItem = 'Históricos & Logs';
+    protected static ?string $navigationParentItem = 'Checklist';
 
-    protected static ?int $navigationSort = 12;
+    protected static ?int $navigationSort = 5;
 
     public static function shouldRegisterNavigation(): bool
     {

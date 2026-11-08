@@ -37,15 +37,15 @@ class CkTemplateResource extends BaseResource
 
     protected static ?string $pluralModelLabel = 'Checklists de Equipamento';
 
-    protected static ?string $navigationLabel = 'Checklists de equipamento';
+    protected static ?string $navigationLabel = 'Modelos de equipamentos';
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $navigationGroup = 'Manutenção';
+    protected static ?string $navigationGroup = 'Ativos';
 
-    protected static ?string $navigationParentItem = 'Cadastros';
+    protected static ?string $navigationParentItem = 'Checklist';
 
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 6;
 
     public static function shouldRegisterNavigation(): bool
     {

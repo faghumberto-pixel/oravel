@@ -22,11 +22,13 @@ class FrotaChecklistResource extends BaseResource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
-    protected static ?string $navigationGroup = 'Gestão de Frota';
+    protected static ?string $navigationGroup = 'Ativos';
 
-    protected static ?string $navigationLabel = 'Checklists';
+    protected static ?string $navigationParentItem = 'Checklist';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationLabel = 'Veículos';
+
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $modelLabel = 'Checklist';
 

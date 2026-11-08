@@ -16,11 +16,13 @@ class ChecklistTemplateResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $navigationGroup = 'Manutenção';
+    protected static ?string $navigationGroup = 'Ativos';
 
-    protected static ?string $navigationParentItem = 'Cadastros';
+    protected static ?string $navigationParentItem = 'Checklist';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 8;
+
+    protected static ?string $navigationLabel = 'Checklists antigos';
 
     protected static ?string $modelLabel = 'Checklist';
 
