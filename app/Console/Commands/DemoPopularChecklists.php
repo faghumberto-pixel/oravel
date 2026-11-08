@@ -28,6 +28,9 @@ class DemoPopularChecklists extends Command
 
     protected $signature = 'demo:popular-checklists {--tenant=Locadora Demo : nome da empresa} {--remover : Apaga o que este comando criou}';
 
+    /** @var array{ativos: int, os: int, execucoes: int} */
+    private array $n = ['ativos' => 0, 'os' => 0, 'execucoes' => 0];
+
     protected $description = 'Popula a Visão geral de checklists com exemplos (ativos, serviços e corretivas), reversível com --remover';
 
     public function handle(): int
@@ -59,22 +62,22 @@ class DemoPopularChecklists extends Command
             return self::FAILURE;
         }
 
-        $n = ['ativos' => 0, 'os' => 0, 'execucoes' => 0];
+        $this->n = ['ativos' => 0, 'os' => 0, 'execucoes' => 0];
 
-        DB::transaction(function () use ($tenant, $executor, $modelos, &$n) {
-            Asset::withoutEvents(fn () => MaintenanceOrder::withoutEvents(fn () => CkExecution::withoutEvents(fn () => $this->criar($tenant, $executor, $modelos, $n))));
+        DB::transaction(function () use ($tenant, $executor, $modelos) {
+            Asset::withoutEvents(fn () => MaintenanceOrder::withoutEvents(fn () => CkExecution::withoutEvents(fn () => $this->criar($tenant, $executor, $modelos))));
         });
 
-        $this->info("Criados: {$n['ativos']} ativos, {$n['os']} ordens de serviço, {$n['execucoes']} checklists preenchidos.");
+        $this->info("Criados: {$this->n['ativos']} ativos, {$this->n['os']} ordens de serviço, {$this->n['execucoes']} checklists preenchidos.");
 
         return self::SUCCESS;
     }
 
-    private function criar(Tenant $tenant, User $executor, $modelos, array &$n): void
+    private function criar(Tenant $tenant, User $executor, $modelos): void
     {
-        $ativo = function (string $nome, ?string $grupo, int $seq, float $horas = 0) use ($tenant, &$n): Asset {
+        $ativo = function (string $nome, ?string $grupo, int $seq, float $horas = 0) use ($tenant): Asset {
             $cat = $grupo ? AssetCategory::withoutGlobalScopes()->where('tenant_id', $tenant->id)->where('slug_template', $grupo)->first() : null;
-            $n['ativos']++;
+            $this->n['ativos']++;
 
             return Asset::withoutGlobalScopes()->create([
                 'tenant_id' => $tenant->id, 'name' => $nome, 'tag' => self::TAG.str_pad((string) $seq, 3, '0', STR_PAD_LEFT), 'status' => Asset::STATUS_DISPONIVEL,
@@ -82,8 +85,8 @@ class DemoPopularChecklists extends Command
             ]);
         };
 
-        $os = function (Asset $a, string $tipo, int $diasAtras, string $descricao, string $status = 'Concluída') use ($tenant, &$n): MaintenanceOrder {
-            $n['os']++;
+        $os = function (Asset $a, string $tipo, int $diasAtras, string $descricao, string $status = 'Concluída') use ($tenant): MaintenanceOrder {
+            $this->n['os']++;
             $o = MaintenanceOrder::withoutGlobalScopes()->create([
                 'tenant_id' => $tenant->id, 'asset_id' => $a->id, 'maintenance_type' => $tipo, 'status' => $status, 'priority' => $tipo === 'Corretiva' ? 'alta' : 'media',
                 'description' => self::MARCA.$descricao,
@@ -94,7 +97,7 @@ class DemoPopularChecklists extends Command
         };
 
         // Preenche TODOS os itens do modelo como conforme, exceto os que casam com $nc (trecho da descricao => observacao).
-        $exec = function (Asset $a, string $slug, int $diasAtras, array $nc = [], ?MaintenanceOrder $ordem = null) use ($tenant, $executor, $modelos, &$n): ?CkExecution {
+        $exec = function (Asset $a, string $slug, int $diasAtras, array $nc = [], ?MaintenanceOrder $ordem = null) use ($tenant, $executor, $modelos): ?CkExecution {
             $t = $modelos[$slug] ?? null;
 
             if (! $t) {
@@ -106,7 +109,7 @@ class DemoPopularChecklists extends Command
                 'tenant_id' => $tenant->id, 'asset_id' => $a->id, 'template_id' => $t->id, 'template_nome' => $t->nome, 'versao_template' => $t->versao, 'executor_id' => $executor->id,
                 'status' => $nc ? 'reprovado' : 'aprovado', 'iniciado_em' => $quando, 'finalizado_em' => $quando, 'os_id' => $ordem?->id, 'observacoes' => self::MARCA.'exemplo',
             ]);
-            $n['execucoes']++;
+            $this->n['execucoes']++;
 
             foreach (CkSection::withoutGlobalScopes()->where('template_id', $t->id)->orderBy('ordem')->get() as $s) {
                 foreach (CkItem::withoutGlobalScopes()->where('section_id', $s->id)->where('ativo', true)->orderBy('ordem')->get() as $i) {
