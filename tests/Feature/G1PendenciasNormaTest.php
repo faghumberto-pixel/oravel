@@ -90,7 +90,7 @@ class G1PendenciasNormaTest extends TestCase
     {
         $prev = collect(app(PendenciasDeNorma::class)->levantar())->filter(fn ($l) => str_starts_with($l['tipo'], 'Preventiva'));
 
-        $this->assertEqualsCanonicalizing(['Guindaste', 'Munk', 'Munk', 'Caminhao', 'Reboque', 'Veiculo leve'], $prev->pluck('grupo')->all());
+        $this->assertEqualsCanonicalizing(['Guindaste', 'Munk', 'Munk', 'Caminhão', 'Reboque', 'Veículo leve'], $prev->pluck('grupo')->all());
     }
 
     public function test_o_checklist_commitado_esta_atualizado(): void
