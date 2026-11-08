@@ -40,6 +40,21 @@ empilhadeira), editáveis por empresa. Entrega em fases; cada uma para e espera 
   grupo de checklist vale para os ativos do mesmo grupo de equipamento (assim os padrões já servem antes de a empresa montar grupos de checklist).
   Só entram ativos (não arquivados) do tenant. A tela da OS usa isso na C3.
 
+## C3 — o que existe
+- **Tela de execução** (`ChecklistExecucaoMobile`, rota `/admin/checklists/ativo/{assetId}`), no mesmo desenho da tela de checklist da Frota. Chega
+  pelo QR do ativo: o botão **"Checklist do equipamento"** aparece no Dossiê do ativo (destino do QR) quando há checklist aplicável (`ChecklistAplicavel`)
+  e a pessoa pode executar. OK / Problema / Não se aplica, número, texto, seleção e foto; câmera nos itens que pedem; **voz** nas observações;
+  assinatura no fim; leitura de horímetro/km opcional.
+- **Resultado** (`ChecklistExecucaoService`): item **crítico** não conforme = **reprovado**; só itens não críticos não conformes = **aprovado com
+  ressalva**, e essas respostas são as **pendências** (`CkAnswer::pendencias()`); senão aprovado. Texto, tipo e criticidade vão para a resposta (snapshot).
+- **Item crítico × aptidão (G1):** com a chave do catálogo ligada, cada item ligado a um requisito grava um cumprimento (conforme = OK; crítico
+  não conforme = reprovado). Reprovado deixa o ativo **Inapto**, abre a **OS corretiva** pelo gatilho do G1 (com **downtime** pela regra da própria OS)
+  e a OS recebe as **fotos** do item (coleção `checklist_evidencias`). Um novo checklist conforme grava OK e tira o ativo de Inapto.
+  Item crítico **sem** requisito equivalente ganha um requisito do tenant (`RequisitoDoItem`), com `sem_registro = ignorar`: só vale para o ativo
+  depois de reprovado, então os outros ativos do grupo não mudam de status.
+- **Sem a chave do catálogo:** nada muda na aptidão; a tela **oferece** "Abrir OS corretiva agora" (já com itens, observações e fotos). Idempotente.
+- Falha na integração com a aptidão é registrada em log e **nunca derruba** o checklist.
+- **Chaves:** o módulo usa duas chaves do contrato (`tabela_ck_templates` para editar e `tabela_ck_execucoes` para executar), ambas desligadas por padrão.
+
 ## Próximas fases
-- **C3:** execução mobile por QR (câmera, voz, assinatura) e regras do item crítico (aptidão, OS corretiva, downtime).
 - **C4:** histórico, relatório e exportação (OpenSpout) e migração da Frota.

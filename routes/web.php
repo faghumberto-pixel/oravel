@@ -592,6 +592,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/frota/checklist/{assetId}', ChecklistFrotaMobile::class)
         ->name('frota.checklist.mobile');
 
+    // Checklist do equipamento (por grupo de equipamento / grupo de checklist), pelo celular -- botao no Dossie do ativo (destino do QR).
+    Route::get('/admin/checklists/ativo/{assetId}', \App\Livewire\ChecklistExecucaoMobile::class)
+        ->name('ck.execucao.mobile');
+
     // Óleo da frota (troca/reposição) pelo celular.
     Route::get('/admin/frota/oleo/{assetId}', OleoFrotaMobile::class)
         ->name('frota.oleo.mobile');

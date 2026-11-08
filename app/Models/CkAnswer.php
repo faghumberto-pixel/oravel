@@ -19,6 +19,12 @@ class CkAnswer extends Model
 
     protected $casts = ['critico' => 'boolean', 'valor_numerico' => 'decimal:3', 'fotos' => 'array'];
 
+    /** Pendencias: respostas nao conformes de itens NAO criticos (o ativo segue, mas a manutencao precisa ver). */
+    public function scopePendencias($query)
+    {
+        return $query->where('resposta', 'nao_conforme')->where('critico', false);
+    }
+
     public function execucao(): BelongsTo
     {
         return $this->belongsTo(CkExecution::class, 'execution_id');

@@ -123,6 +123,9 @@
                         <a href="{{ route('colab.os.ativo', ['id' => $asset->id]) }}" class="mt-3 block text-xs font-bold text-blue-700">Ver todas as OS deste equipamento →</a>
                     @endif
                 </div>
+                @if (\Illuminate\Support\Facades\Gate::allows('create', \App\Models\CkExecution::class) && app(\App\Services\Checklists\ChecklistAplicavel::class)->paraAtivo($asset)->isNotEmpty())
+                    <a href="{{ route('ck.execucao.mobile', ['assetId' => $asset->id]) }}" class="mt-3 flex min-h-[3rem] items-center justify-center rounded-xl bg-emerald-600 text-sm font-bold text-white active:bg-emerald-600">📋 CHECKLIST DO EQUIPAMENTO</a>
+                @endif
                 <div class="mt-3 flex gap-2">
 @unless ($modoApp)
                     <a
