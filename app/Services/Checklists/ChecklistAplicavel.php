@@ -5,6 +5,7 @@ namespace App\Services\Checklists;
 use App\Models\Asset;
 use App\Models\CkTemplate;
 use App\Models\MaintenanceOrder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 /**
@@ -52,5 +53,26 @@ class ChecklistAplicavel
         $ativo = $os->asset_id ? Asset::withoutGlobalScopes()->where('tenant_id', $os->tenant_id)->find($os->asset_id) : null;
 
         return $ativo ? $this->paraAtivo($ativo, $tipos) : collect();
+    }
+
+    /**
+     * Mesma regra de paraAtivo(), em SQL, para filtrar muitos ativos de uma vez: ativos COM (ou, com $com = false, SEM) pelo menos um checklist aplicavel.
+     * (Mexeu em uma regra, mexa na outra: ChecklistsVisaoGeralTest garante que as duas concordam.)
+     *
+     * @param  Builder<Asset>  $ativos
+     * @return Builder<Asset>
+     */
+    public function filtrarAtivosComChecklist(Builder $ativos, bool $com = true): Builder
+    {
+        $existe = function ($q) {
+            $q->selectRaw('1')->from('ck_templates')
+                ->whereColumn('ck_templates.tenant_id', 'assets.tenant_id')->where('ck_templates.ativo', true)->whereNull('ck_templates.deleted_at')
+                ->where(function ($w) {
+                    $w->where(fn ($x) => $x->whereNotNull('ck_templates.checklist_group_id')->whereColumn('ck_templates.checklist_group_id', 'assets.checklist_group_id'))
+                        ->orWhere(fn ($x) => $x->whereNull('ck_templates.checklist_group_id')->whereNotNull('assets.asset_category_id')->whereColumn('ck_templates.grupo_id', 'assets.asset_category_id'));
+                });
+        };
+
+        return $com ? $ativos->whereExists($existe) : $ativos->whereNotExists($existe);
     }
 }
