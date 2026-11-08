@@ -503,6 +503,12 @@ class Asset extends Model implements HasMedia
         return $this->hasMany(CatalogoCumprimento::class, 'asset_id');
     }
 
+    /** Execucoes de checklist do equipamento (inclui as copiadas da Frota). */
+    public function ckExecucoes(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(CkExecution::class, 'asset_id');
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(AssetCategory::class, 'asset_category_id');

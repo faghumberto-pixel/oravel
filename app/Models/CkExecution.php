@@ -45,6 +45,16 @@ class CkExecution extends Model
         return $this->belongsTo(Asset::class, 'asset_id');
     }
 
+    public function ordemServico(): BelongsTo
+    {
+        return $this->belongsTo(MaintenanceOrder::class, 'ordem_servico_id');
+    }
+
+    public function origemRotulo(): string
+    {
+        return $this->legado_tipo === 'frota_checklist' ? 'Frota' : 'Checklist';
+    }
+
     public function template(): BelongsTo
     {
         return $this->belongsTo(CkTemplate::class, 'template_id');
