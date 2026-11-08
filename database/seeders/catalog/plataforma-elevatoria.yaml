@@ -5,8 +5,8 @@ versao: 1
 
 grupo:
   slug: plataforma-elevatoria
-  nome: Plataforma Elevatoria
-  descricao: "Plataformas tesoura e articuladas (eletricas ou diesel)"
+  nome: Plataforma Elevatória
+  descricao: "Plataformas tesoura e articuladas (elétricas ou diesel)"
   medidor: horimetro
   criticidade_padrao: alta
   exige_operador: true

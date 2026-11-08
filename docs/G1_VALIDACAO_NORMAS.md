@@ -62,7 +62,7 @@ Total a validar: **33** item(ns).
 | ☐ | Preventiva (intervalo provisório) | Revisao do chassi (km) — 10000 km | Manual do fabricante | Conferir/ajustar o intervalo conforme o manual do fabricante deste modelo. |  |
 | ☐ | Preventiva (intervalo provisório) | Revisao do guindaste (horas) — 500 h | Manual do fabricante | Conferir/ajustar o intervalo conforme o manual do fabricante deste modelo. |  |
 
-## Plataforma Elevatoria
+## Plataforma Elevatória
 
 | ✔ | Tipo | Item | Norma | O que validar | Validado por / data |
 |---|---|---|---|---|---|
