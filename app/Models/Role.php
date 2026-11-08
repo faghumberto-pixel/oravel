@@ -29,6 +29,7 @@ class Role extends SpatieRole
         'sees_all_crm_leads',
         'department_id',
         'hierarchy_level',
+        'painel_area',
     ];
 
     protected $casts = [

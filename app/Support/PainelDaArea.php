@@ -4,59 +4,75 @@ namespace App\Support;
 
 use App\Dashboards\BlockRegistry;
 use App\Dashboards\ModuleDashboards;
-use App\Filament\Pages\PainelControleAdministrativo;
-use App\Filament\Pages\PainelControleCompras;
-use App\Filament\Pages\PainelControlePlanejamento;
-use App\Filament\Pages\PainelControleRh;
-use App\Filament\Pages\VisaoGeralComercial;
-use App\Filament\Pages\VisaoGeralFinanceiro;
-use App\Filament\Pages\VisaoGeralManutencao;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 /**
- * Painel de Controle de cada area (Administrativo, Financeiro, Tecnico, Comercial, RH, Compras, Planejamento): a tela inicial de quem NAO e o
- * administrador da empresa. O dono/administrador continua no Painel de Controle geral. Cada pessoa abre no painel em que o perfil dela le
- * mais blocos (empate: a ordem da lista abaixo); sem nenhum painel de area liberado, a tela inicial segue como sempre.
+ * Painel de Controle por FUNCAO: cada Perfil de Acesso (roles.painel_area) escolhe qual painel de area a pessoa ve como Painel de Controle
+ * (Financeiro, Comercial, Tecnico, Compras, Planejamento, RH, Administrativo). Vazio = Painel de Controle geral, o do dono. Administrador e
+ * super admin nunca trocam de painel. So vale com a flag dos dashboards ligada e se a pessoa le ao menos um bloco do painel escolhido.
  */
 class PainelDaArea
 {
-    /** Ordem de desempate. chave do dashboard => pagina */
-    private const PAINEIS = [
-        'financeiro' => VisaoGeralFinanceiro::class,
-        'comercial' => VisaoGeralComercial::class,
-        'manutencao' => VisaoGeralManutencao::class,
-        'compras' => PainelControleCompras::class,
-        'planejamento' => PainelControlePlanejamento::class,
-        'rh' => PainelControleRh::class,
-        'administrativo' => PainelControleAdministrativo::class,
-    ];
+    /** @return array<string, string> chave do dashboard => nome da area */
+    public static function areas(): array
+    {
+        return [
+            'administrativo' => 'Administrativo',
+            'financeiro' => 'Financeiro',
+            'manutencao' => 'Técnico',
+            'comercial' => 'Comercial',
+            'compras' => 'Compras',
+            'planejamento' => 'Planejamento',
+            'rh' => 'Recursos Humanos',
+        ];
+    }
 
-    /** Chave do painel de area da pessoa, ou null (administrador, ou nenhum painel de area liberado). */
+    /** Chave do painel de area desta pessoa, ou null (administrador, perfil sem painel de area, ou nenhum bloco liberado). */
     public static function chaveDoPainel(?User $user): ?string
     {
         if (! $user || $user->isAdmin() || $user->isSuperAdmin() || ! config('oravel.dashboards_modulo')) {
             return null;
         }
 
-        $melhor = null;
-        $max = 0;
+        // Query direta (mesmo estilo de User::isAdmin): o relacionamento do Spatie com "teams" depende do tenant corrente da sessao.
+        $escolhidas = DB::table('model_has_roles')
+            ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->where('model_has_roles.model_id', $user->id)->where('model_has_roles.model_type', get_class($user))
+            ->whereNotNull('roles.painel_area')->pluck('roles.painel_area')->all();
 
-        foreach (array_keys(self::PAINEIS) as $chave) {
-            $visiveis = collect(ModuleDashboards::find($chave)['blocks'] ?? [])
-                ->filter(fn (string $b) => ($classe = BlockRegistry::find($b)) && $classe::visibleTo($user))->count();
+        if ($escolhidas === []) {
+            return null;
+        }
 
-            if ($visiveis > $max) {
-                [$melhor, $max] = [$chave, $visiveis];
+        foreach (array_keys(self::areas()) as $chave) { // ordem fixa: se a pessoa tem mais de um perfil com painel, vale a ordem da lista
+            if (in_array($chave, $escolhidas, true) && self::leAlgumBloco($user, $chave)) {
+                return $chave;
             }
         }
 
-        return $melhor;
+        return null;
     }
 
+    public static function rotulo(string $chave): string
+    {
+        return self::areas()[$chave] ?? $chave;
+    }
+
+    /** Endereco do Painel de Controle quando a funcao tem painel de area; senao null. */
     public static function urlInicialPara(?User $user): ?string
     {
-        $chave = self::chaveDoPainel($user);
+        return self::chaveDoPainel($user) ? route('filament.admin.pages.painel-controle') : null;
+    }
 
-        return $chave ? self::PAINEIS[$chave]::getUrl() : null;
+    private static function leAlgumBloco(User $user, string $chave): bool
+    {
+        foreach (ModuleDashboards::find($chave)['blocks'] ?? [] as $bloco) {
+            if (($classe = BlockRegistry::find($bloco)) && $classe::visibleTo($user)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

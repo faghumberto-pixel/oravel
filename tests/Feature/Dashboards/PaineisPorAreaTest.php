@@ -5,11 +5,12 @@ namespace Tests\Feature\Dashboards;
 use App\Dashboards\BlockRegistry;
 use App\Dashboards\DashboardRenderer;
 use App\Dashboards\ModuleDashboards;
-use App\Filament\Pages\PainelControleAdministrativo;
-use App\Filament\Pages\PainelControleCompras;
-use App\Filament\Pages\PainelControlePlanejamento;
-use App\Filament\Pages\PainelControleRh;
-use App\Filament\Pages\VisaoGeralFinanceiro;
+use App\Filament\Pages\PainelGestao;
+use App\Filament\Pages\VisaoGeralAdministrativa;
+use App\Filament\Pages\VisaoGeralCompras;
+use App\Filament\Pages\VisaoGeralPlanejamento;
+use App\Filament\Pages\VisaoGeralRh;
+use App\Filament\Resources\RoleResource\Pages\EditRole;
 use App\Models\Asset;
 use App\Models\DocumentSignature;
 use App\Models\Employee;
@@ -76,11 +77,11 @@ class PaineisPorAreaTest extends TestCase
         return $modelo::unguarded(fn () => $modelo::create($attrs));
     }
 
-    public function test_os_quatro_paineis_novos_existem_com_o_nome_de_painel_de_controle_e_so_blocos_registrados(): void
+    public function test_os_quatro_paineis_novos_existem_como_visao_geral_e_so_com_blocos_registrados(): void
     {
-        foreach (['administrativo' => 'Administrativo', 'rh' => 'Recursos Humanos', 'compras' => 'Compras', 'planejamento' => 'Planejamento'] as $chave => $nome) {
+        foreach (['administrativo' => 'Administrativa', 'rh' => 'Recursos Humanos', 'compras' => 'Compras', 'planejamento' => 'Planejamento'] as $chave => $nome) {
             $d = ModuleDashboards::find($chave);
-            $this->assertSame('Painel de Controle — '.$nome, $d['label']);
+            $this->assertSame('Visão geral — '.$nome, $d['label']);
             $this->assertNotEmpty($d['blocks']);
 
             foreach ($d['blocks'] as $b) {
@@ -132,46 +133,87 @@ class PaineisPorAreaTest extends TestCase
     {
         [, $comRh] = $this->empresa(['tabela_employees' => true]);
         $this->actingAs($comRh);
-        $this->assertTrue(PainelControleRh::canAccess());
-        $this->assertFalse(PainelControleCompras::canAccess());
-        $this->assertFalse(PainelControleAdministrativo::canAccess());
-        $this->assertFalse(PainelControlePlanejamento::canAccess());
-        Livewire::test(PainelControleRh::class)->assertSee('Painel de Controle — Recursos Humanos')->assertSee('Colaboradores ativos');
-        Livewire::test(PainelControleCompras::class)->assertForbidden();
+        $this->assertTrue(VisaoGeralRh::canAccess());
+        $this->assertFalse(VisaoGeralCompras::canAccess());
+        $this->assertFalse(VisaoGeralAdministrativa::canAccess());
+        $this->assertFalse(VisaoGeralPlanejamento::canAccess());
+        Livewire::test(VisaoGeralRh::class)->assertSee('Visão geral — Recursos Humanos')->assertSee('Colaboradores ativos');
+        Livewire::test(VisaoGeralCompras::class)->assertForbidden();
     }
 
-    public function test_quem_nao_e_administrador_abre_no_painel_da_sua_area_e_o_dono_continua_no_painel_geral(): void
+    /** Usuario comum com um perfil que le o que o painel pede e cujo Painel de Controle e o da area dada. */
+    private function funcao(Tenant $t, array $leituras, ?string $area): User
+    {
+        $u = $this->colega($t, $leituras);
+        $perfil = $u->roles()->first();
+        $perfil->forceFill(['painel_area' => $area])->save();
+
+        return $u->refresh();
+    }
+
+    public function test_cada_funcao_abre_no_seu_painel_de_controle_com_o_titulo_e_os_blocos_da_area(): void
     {
         [$t, $dono] = $this->empresa(['tabela_account_receivables' => true, 'tabela_account_payables' => true, 'tabela_employees' => true]);
-
-        $financeiro = $this->colega($t, ['contas_receber', 'contas_pagar']);
-        $rh = $this->colega($t, ['colaborador']);
-        $semNada = $this->colega($t, []);
+        $financeiro = $this->funcao($t, ['contas_receber', 'contas_pagar'], 'financeiro');
+        $rh = $this->funcao($t, ['colaborador'], 'rh');
 
         $this->actingAs($financeiro);
         $this->assertSame('financeiro', PainelDaArea::chaveDoPainel($financeiro));
-        $this->assertSame(VisaoGeralFinanceiro::getUrl(), AppProfile::homeUrl($financeiro, AppProfile::ADMIN));
+        $this->assertSame(AppProfile::ADMIN, AppProfile::for($financeiro), 'quem tem painel de area trabalha no painel de escritorio');
+        $this->assertTrue(PainelGestao::canAccess());
+        $this->assertSame(route('filament.admin.pages.painel-controle'), AppProfile::homeUrl($financeiro, AppProfile::ADMIN));
+        Livewire::test(PainelGestao::class)->assertOk()->assertSee('Painel de Controle — Financeiro')->assertSee('A receber no mês')->assertDontSee('Colaboradores ativos');
 
         $this->actingAs($rh);
         $this->assertSame('rh', PainelDaArea::chaveDoPainel($rh));
-        $this->assertSame(PainelControleRh::getUrl(), AppProfile::homeUrl($rh, AppProfile::ADMIN));
-
-        $this->actingAs($semNada);
-        $this->assertNull(PainelDaArea::chaveDoPainel($semNada), 'sem leitura em nenhum painel, a tela inicial segue como sempre');
+        Livewire::test(PainelGestao::class)->assertOk()->assertSee('Painel de Controle — Recursos Humanos')->assertSee('Colaboradores ativos')->assertDontSee('A receber no mês');
 
         $this->actingAs($dono);
-        $this->assertNull(PainelDaArea::chaveDoPainel($dono), 'o administrador/dono continua no Painel de Controle geral');
-        $this->assertNotSame(VisaoGeralFinanceiro::getUrl(), AppProfile::homeUrl($dono, AppProfile::ADMIN));
+        $this->assertNull(PainelDaArea::chaveDoPainel($dono), 'o dono continua no Painel de Controle geral');
+        $this->assertSame(AppProfile::ADMIN, AppProfile::for($dono));
     }
 
-    public function test_com_a_flag_dos_paineis_desligada_ninguem_e_redirecionado(): void
+    public function test_sem_escolher_painel_no_perfil_ou_sem_ler_nenhum_bloco_nada_muda(): void
     {
-        config(['oravel.dashboards_modulo' => false]);
-        [$t] = $this->empresa(['tabela_employees' => true]);
-        $rh = $this->colega($t, ['colaborador']);
-        $this->actingAs($rh);
+        [$t] = $this->empresa(['tabela_account_receivables' => true, 'tabela_employees' => true]);
 
-        $this->assertNull(PainelDaArea::chaveDoPainel($rh));
+        $semEscolha = $this->funcao($t, ['contas_receber'], null);
+        $this->actingAs($semEscolha);
+        $this->assertNull(PainelDaArea::chaveDoPainel($semEscolha));
+        $this->assertNotSame(AppProfile::ADMIN, AppProfile::for($semEscolha));
+        $this->assertFalse(PainelGestao::canAccess());
+
+        $escolheuSemPermissao = $this->funcao($t, [], 'financeiro');
+        $this->actingAs($escolheuSemPermissao);
+        $this->assertNull(PainelDaArea::chaveDoPainel($escolheuSemPermissao), 'escolheu o painel mas o perfil nao le nenhum bloco dele');
+    }
+
+    public function test_administrador_ignora_a_escolha_e_flag_desligada_desliga_tudo(): void
+    {
+        [$t, $dono] = $this->empresa(['tabela_account_receivables' => true]);
+        $perfilDoDono = $dono->roles()->first();
+        $perfilDoDono->forceFill(['painel_area' => 'financeiro'])->save();
+        $this->actingAs($dono);
+        $this->assertNull(PainelDaArea::chaveDoPainel($dono->refresh()));
+
+        $fin = $this->funcao($t, ['contas_receber'], 'financeiro');
+        $this->actingAs($fin);
+        $this->assertSame('financeiro', PainelDaArea::chaveDoPainel($fin));
+        config(['oravel.dashboards_modulo' => false]);
+        $this->assertNull(PainelDaArea::chaveDoPainel($fin));
+    }
+
+    public function test_perfil_de_acesso_oferece_o_campo_do_painel_de_controle(): void
+    {
+        [$t, $dono] = $this->empresa(['tabela_roles' => true]);
+        $this->actingAs($dono);
+        $perfil = Role::create(['name' => 'Financeiro', 'guard_name' => 'web', 'tenant_id' => $t->id]);
+
+        Livewire::test(EditRole::class, ['record' => $perfil->getKey()])
+            ->assertFormFieldExists('painel_area', fn ($campo) => array_keys($campo->getOptions()) === array_keys(PainelDaArea::areas()))
+            ->fillForm(['painel_area' => 'financeiro'])->call('save')->assertHasNoFormErrors();
+
+        $this->assertSame('financeiro', $perfil->fresh()->painel_area);
     }
 
     public function test_planejamento_separa_preventiva_vencida_da_a_vencer_e_mede_a_cobertura(): void
