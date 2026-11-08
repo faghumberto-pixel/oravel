@@ -6,7 +6,7 @@ versao: 1
 grupo:
   slug: compressor
   nome: Compressor
-  descricao: "Compressores de ar (parafuso/pistao) com vaso de pressao"
+  descricao: "Compressores de ar (parafuso/pistão) com vaso de pressão"
   medidor: horimetro
   criticidade_padrao: media        # referencia inicial: media/alta (o tenant ajusta; o ativo pode sobrescrever, com log)
   exige_operador: false
