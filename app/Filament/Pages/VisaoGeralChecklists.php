@@ -8,8 +8,10 @@ use App\Services\Checklists\ChecklistVisaoGeral;
 use App\Support\CkVisaoGeralExport;
 use App\Support\Tenancy;
 use Filament\Actions\Action;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Gate;
+use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 
 /**
@@ -22,9 +24,9 @@ class VisaoGeralChecklists extends Page
 
     protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-bar';
 
-    protected static ?string $navigationGroup = 'Relatórios';
+    protected static ?string $navigationGroup = 'Ativos';
 
-    protected static ?string $navigationParentItem = 'Históricos & Logs';
+    protected static ?string $navigationParentItem = 'Checklist';
 
     protected static ?string $navigationLabel = 'Visão geral de checklists';
 
@@ -32,10 +34,11 @@ class VisaoGeralChecklists extends Page
 
     protected static ?string $slug = 'visao-geral-checklists';
 
-    protected static ?int $navigationSort = 11;
+    protected static ?int $navigationSort = 1;
 
     protected static string $view = 'filament.pages.visao-geral-checklists';
 
+    #[Url(as: 'aba')]
     public string $aba = 'cobertura';
 
     public ?string $de = null;
@@ -53,6 +56,27 @@ class VisaoGeralChecklists extends Page
     public ?string $tipo = null;
 
     public ?string $diagnostico = null;
+
+    /**
+     * Itens do submenu "Checklist" (Ativos): Equipamentos, Servicos e Corretivas abrem esta pagina ja na aba certa.
+     *
+     * @return array<NavigationItem>
+     */
+    public static function getNavigationItems(): array
+    {
+        $aba = fn (): string => (string) request()->query('aba', 'cobertura');
+        $item = fn (string $rotulo, string $icone, int $ordem, string $nome) => NavigationItem::make($rotulo)
+            ->group(static::getNavigationGroup())->parentItem('Checklist')->icon($icone)->sort($ordem)
+            ->url(static::getUrl(['aba' => $nome]))
+            ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName()) && ($nome === 'cobertura' ? ! in_array($aba(), ['servicos', 'corretivas'], true) : $aba() === $nome))
+            ->visible(static::canAccess());
+
+        return [
+            $item('Equipamentos', 'heroicon-o-wrench-screwdriver', 1, 'cobertura'),
+            $item('Serviços', 'heroicon-o-clipboard-document-check', 2, 'servicos'),
+            $item('Corretivas × checklist', 'heroicon-o-exclamation-triangle', 3, 'corretivas'),
+        ];
+    }
 
     public static function canAccess(): bool
     {

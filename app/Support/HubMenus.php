@@ -11,6 +11,7 @@ class HubMenus
 {
     public const DESCRICOES = [
         'Almoxarifado' => 'Controle o estoque de materiais e peças: saldos por filial, movimentações, localizações no almoxarifado, transferências e análises para evitar falta de peças.',
+        'GestaoChecklists' => 'Acompanhe os checklists dos equipamentos: quais ativos têm checklist, quais serviços foram conferidos e o que o checklist dizia antes de cada corretiva.',
         'GestaoAtivos' => 'Cadastre e acompanhe os equipamentos da empresa: categorias, grupos, histórico do patrimônio, localização no mapa e na planta do pátio.',
         'GestaoComercial' => 'Tudo da venda e da locação: clientes, propostas, orçamentos, contratos, medições, franquias de horas e solicitações de locação.',
         'GestaoCompras' => 'Do pedido ao recebimento: fornecedores, requisições e ordens de compra, recebimentos e reposição de estoque.',
