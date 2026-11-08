@@ -2,13 +2,17 @@
 
 namespace App\Filament\Pages;
 
+use App\Dashboards\DashboardRenderer;
+use App\Dashboards\ModuleDashboards;
 use App\Dashboards\Personalizacao\DashboardResolver;
 use App\Models\Asset;
 use App\Models\Branch;
+use App\Support\PainelDaArea;
 use App\Support\SegmentDashboardWidgets;
 use App\Support\Tenancy;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
 
 class PainelGestao extends Page
@@ -35,6 +39,11 @@ class PainelGestao extends Page
 
         // Empresa com Início personalizado (escolhido na Central): quem vê ao menos um bloco entra, sem depender do contrato do Painel de Controle.
         if ($user && DashboardResolver::visiveisPara($user, true)->isNotEmpty()) {
+            return true;
+        }
+
+        // Funcao com Painel de Controle de area (Perfil de Acesso): entra sem depender do contrato do painel geral nem de supervisionar setor.
+        if ($user && PainelDaArea::chaveDoPainel($user)) {
             return true;
         }
 
@@ -78,11 +87,35 @@ class PainelGestao extends Page
     /** O Início padrão (Gestão à Vista e Painel de Controle) só sai de cena quando a Central marcou um dashboard como Início da empresa. */
     public function getView(): string
     {
+        if ($this->chaveDaArea()) {
+            return 'filament.pages.module-dashboard';
+        }
+
         return $this->iniciosPersonalizados()->isNotEmpty() ? 'filament.pages.inicio-personalizado' : parent::getView();
+    }
+
+    /** Painel de area da funcao desta pessoa (null para o dono e para quem usa o Painel de Controle geral). */
+    private function chaveDaArea(): ?string
+    {
+        return PainelDaArea::chaveDoPainel(auth()->user());
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        $chave = $this->chaveDaArea();
+
+        return $chave ? 'Painel de Controle — '.PainelDaArea::rotulo($chave) : parent::getTitle();
     }
 
     protected function getViewData(): array
     {
+        if ($chave = $this->chaveDaArea()) {
+            return [
+                'lead' => ModuleDashboards::find($chave)['lead'] ?? '',
+                'blocks' => DashboardRenderer::blocks($chave, auth()->user()),
+            ];
+        }
+
         $paineis = $this->iniciosPersonalizados();
         if ($paineis->isEmpty()) {
             return parent::getViewData();
@@ -110,7 +143,8 @@ class PainelGestao extends Page
     // nao e' vazio), nao so' o texto.
     public function getHeading(): string
     {
-        return '';
+        // Painel de area (funcao): mostra o titulo "Painel de Controle — <Area>", que o Inicio geral dispensa por ja ter cabecalho proprio.
+        return $this->chaveDaArea() ? (string) $this->getTitle() : '';
     }
 
     public $activeTab = 'gestao';

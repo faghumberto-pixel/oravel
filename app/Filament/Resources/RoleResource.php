@@ -167,6 +167,13 @@ class RoleResource extends Resource
                 Forms\Components\Grid::make(1)->schema([
                     Forms\Components\TextInput::make('name')->label('Nome do Perfil')->required(),
 
+                    Forms\Components\Select::make('painel_area')
+                        ->label('Painel de Controle desta função')
+                        ->helperText('Quem tiver este perfil abre no Painel de Controle da sua área (blocos do Financeiro, Comercial, Técnico...), só com o que o perfil pode ler. Em branco: o Painel de Controle geral. Administradores sempre veem o geral.')
+                        ->options(\App\Support\PainelDaArea::areas())
+                        ->placeholder('Painel de Controle geral (padrão)')
+                        ->native(false),
+
                     Forms\Components\Select::make('department_id')
                         ->label('Setor supervisionado')
                         ->helperText('Quem tiver este perfil passa a ver, na Programação, a agenda de todos os colaboradores deste setor -- não só a própria. Deixe em branco pra um perfil comum, sem esse privilégio.')

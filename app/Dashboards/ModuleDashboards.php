@@ -13,7 +13,7 @@ class ModuleDashboards
     {
         return [
             'manutencao' => [
-                'label' => 'Painel de Controle — Técnico',
+                'label' => 'Visão geral — Manutenção',
                 'module' => 'Manutenção',
                 'lead' => 'Atendimentos, prazo, retorno à máquina e peças paradas, em uma tela.',
                 'blocks' => [
@@ -55,7 +55,7 @@ class ModuleDashboards
                 ],
             ],
             'comercial' => [
-                'label' => 'Painel de Controle — Comercial',
+                'label' => 'Visão geral — Comercial',
                 'module' => 'Comercial',
                 'lead' => 'Contratos, orçamentos, funil de vendas e clientes para contatar, em uma tela.',
                 'blocks' => [
@@ -81,7 +81,7 @@ class ModuleDashboards
                 ],
             ],
             'financeiro' => [
-                'label' => 'Painel de Controle — Financeiro',
+                'label' => 'Visão geral — Financeiro',
                 'module' => 'Financeiro',
                 'lead' => 'O que entra, o que sai e o que está em atraso, em uma tela.',
                 'blocks' => [
@@ -158,7 +158,7 @@ class ModuleDashboards
                 ],
             ],
             'administrativo' => [
-                'label' => 'Painel de Controle — Administrativo',
+                'label' => 'Visão geral — Administrativa',
                 'module' => 'Adicionais',
                 'lead' => 'Contratos a vencer, documentos, assinaturas e pedidos pendentes, em uma tela.',
                 'blocks' => [
@@ -174,7 +174,7 @@ class ModuleDashboards
                 ],
             ],
             'rh' => [
-                'label' => 'Painel de Controle — Recursos Humanos',
+                'label' => 'Visão geral — Recursos Humanos',
                 'module' => 'Equipe',
                 'lead' => 'Colaboradores, ponto de hoje, certificações a vencer e EPI, em uma tela.',
                 'blocks' => [
@@ -187,7 +187,7 @@ class ModuleDashboards
                 ],
             ],
             'compras' => [
-                'label' => 'Painel de Controle — Compras',
+                'label' => 'Visão geral — Compras',
                 'module' => 'Materiais e Peças',
                 'lead' => 'Pedidos, atrasos, fornecedores e itens abaixo do mínimo, em uma tela.',
                 'blocks' => [
@@ -203,7 +203,7 @@ class ModuleDashboards
                 ],
             ],
             'planejamento' => [
-                'label' => 'Painel de Controle — Planejamento',
+                'label' => 'Visão geral — Planejamento',
                 'module' => 'PMP',
                 'lead' => 'Preventivas vencidas e a vencer, cobertura dos planos e carga da equipe, em uma tela.',
                 'blocks' => [

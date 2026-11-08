@@ -30,7 +30,8 @@ class AppProfile
             return self::COLABORADOR;
         }
 
-        if ($user->isAdmin() || ! empty($user->supervisedDepartmentIds())) {
+        // Quem tem Painel de Controle de area (escolhido no Perfil de Acesso) trabalha no painel de escritorio, como o administrador.
+        if ($user->isAdmin() || ! empty($user->supervisedDepartmentIds()) || PainelDaArea::chaveDoPainel($user) !== null) {
             return self::ADMIN;
         }
 
