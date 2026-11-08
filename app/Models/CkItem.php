@@ -32,6 +32,20 @@ class CkItem extends Model
         'validar_norma' => 'boolean', 'ativo' => 'boolean', 'personalizado' => 'boolean', 'ordem' => 'integer',
     ];
 
+    /** Padroes aplicados quando o formulario manda null (toggle nunca tocado): as colunas booleanas sao NOT NULL. */
+    private const PADROES = ['obrigatorio' => true, 'critico' => false, 'exige_foto_se_nao_conforme' => false, 'validar_norma' => false, 'ativo' => true, 'personalizado' => false];
+
+    protected static function booted(): void
+    {
+        static::saving(function (self $item) {
+            foreach (self::PADROES as $campo => $padrao) {
+                if ($item->getAttribute($campo) === null) {
+                    $item->setAttribute($campo, $padrao);
+                }
+            }
+        });
+    }
+
     public function secao(): BelongsTo
     {
         return $this->belongsTo(CkSection::class, 'section_id');
