@@ -8,6 +8,7 @@ use App\Domain\Fleet\Models\PlatformSpecification;
 use App\Filament\Concerns\HasSuperAdminTenantColumn;
 use App\Filament\Resources\AssetResource\Pages;
 use App\Models\Asset;
+use App\Models\ChecklistGroup;
 use App\Models\AssetCategory;
 use App\Models\AssetModel;
 use App\Models\AssetNr13Specification;
@@ -280,10 +281,16 @@ class AssetResource extends Resource
                                         ->searchable()
                                         ->native(false)
                                         ->live()
-                                        ->afterStateUpdated(function ($state, callable $set) {
+                                        ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                             $categoryName = $state ? AssetCategory::find($state)?->name : null;
                                             $set('asset_category', $categoryName);
                                             $set('checklist', Asset::getDefaultChecklist($categoryName));
+
+                                            // O grupo de checklist ja vem escolhido: o de mesmo nome do grupo de equipamento (so se estiver vazio).
+                                            if ($categoryName && ! $get('checklist_group_id')) {
+                                                $grupo = ChecklistGroup::where('tenant_id', Tenancy::current()?->id)->whereRaw('lower(name) = ?', [mb_strtolower($categoryName)])->value('id');
+                                                $grupo && $set('checklist_group_id', $grupo);
+                                            }
                                         }),
 
                                     Forms\Components\Hidden::make('asset_category'),

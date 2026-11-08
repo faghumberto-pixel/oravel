@@ -95,8 +95,9 @@ return [
             'nome' => 'Logística',
             'descricao' => 'Logística e frota: veículos, fretes, pátio, rastreamento, rotas, checklists, abastecimento e custos.',
             'grupos' => ['Logística', 'Gestão de Frota'],
-            // Checklists da Frota agora ficam no menu Ativos > Checklist, mas continuam parte deste pacote.
-            'features' => ['tabela_frota_checklists', 'tabela_frota_modelos_checklist'],
+            // Checklists da Frota agora ficam no menu Ativos > Checklist, mas continuam parte deste pacote. Catálogo e checklists de equipamento
+            // (caminhão, veículo leve...) tambem: empresa nova de logística já nasce com eles.
+            'features' => ['tabela_frota_checklists', 'tabela_frota_modelos_checklist', 'tabela_catalogo_equipamentos', 'tabela_ck_templates', 'tabela_ck_execucoes'],
             'inicio' => ProgramacaoLogistica::class,
         ],
 

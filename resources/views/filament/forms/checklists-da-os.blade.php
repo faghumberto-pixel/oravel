@@ -19,6 +19,19 @@
                     @endif
                 </div>
                 <div style="opacity:.75;font-size:.8rem">{{ $m['itens'] }} itens · {{ $m['criticos'] }} críticos · {{ $m['motivo'] }}</div>
+                @if (! empty($m['secoes']))
+                    <details style="margin-top:.35rem;font-size:.85rem" data-testid="itens-do-checklist">
+                        <summary style="cursor:pointer;font-weight:600">Ver os {{ $m['itens'] }} itens a conferir</summary>
+                        @foreach ($m['secoes'] as $secao)
+                            <div style="margin-top:.4rem;font-weight:600">{{ $secao['titulo'] }}</div>
+                            <ul style="margin:.1rem 0 0 1.1rem;list-style:disc">
+                                @foreach ($secao['itens'] as $item)
+                                    <li>{{ $item['descricao'] }}@if ($item['critico']) <strong style="color:#b91c1c">· crítico</strong>@endif</li>
+                                @endforeach
+                            </ul>
+                        @endforeach
+                    </details>
+                @endif
                 @if (! empty($os))
                     @if ($m['feito'])
                         <div style="font-size:.8rem;font-weight:600;color:#059669">

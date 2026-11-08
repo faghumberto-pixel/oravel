@@ -4,6 +4,7 @@ namespace App\Services\Checklists;
 
 use App\Models\AssetCategory;
 use App\Models\CatalogoRequisito;
+use App\Models\ChecklistGroup;
 use App\Models\CkItem;
 use App\Models\CkSection;
 use App\Models\CkTemplate;
@@ -76,9 +77,36 @@ class ChecklistInstalador
 
                 $this->instalarTemplate($tid, $def, $stats);
             }
+
+            $stats['grupos_checklist'] = $this->garantirGruposDeChecklist($tid, $grupo);
         });
 
         return $stats;
+    }
+
+    /**
+     * Cria o GRUPO DE CHECKLIST (assets.checklist_group_id) de cada grupo de equipamento instalado, com o mesmo nome, para a lista de "Grupo de
+     * checklist" ja vir preenchida na empresa nova (ativo e OS). Nao liga modelos nem mexe em ativos: o checklist continua valendo pelo grupo de
+     * equipamento. Idempotente: nao duplica nem renomeia o que a empresa ja tem.
+     *
+     * @return list<string> nomes dos grupos criados
+     */
+    public function garantirGruposDeChecklist(string $tid, ?string $slugGrupo = null): array
+    {
+        $slugs = collect($this->carregar())->map(fn ($d) => $d['template']['grupo'] ?? null)->filter()->unique()
+            ->when($slugGrupo, fn ($c) => $c->filter(fn ($g) => $g === $slugGrupo));
+        $criados = [];
+
+        foreach (AssetCategory::withoutGlobalScopes()->where('tenant_id', $tid)->whereIn('slug_template', $slugs->all())->orderBy('name')->get() as $categoria) {
+            $existe = ChecklistGroup::withoutGlobalScopes()->where('tenant_id', $tid)->whereRaw('lower(name) = ?', [mb_strtolower($categoria->name)])->exists();
+
+            if (! $existe) {
+                ChecklistGroup::withoutGlobalScopes()->create(['tenant_id' => $tid, 'name' => $categoria->name, 'description' => 'Grupo de checklist criado a partir do grupo de equipamento.']);
+                $criados[] = $categoria->name;
+            }
+        }
+
+        return $criados;
     }
 
     /** Existe definicao padrao (YAML) para este template? So templates que vieram do padrao podem ser restaurados. */

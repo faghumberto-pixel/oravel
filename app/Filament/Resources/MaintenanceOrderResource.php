@@ -547,9 +547,7 @@ class MaintenanceOrderResource extends Resource
                             Forms\Components\Placeholder::make('grupo_display')
                                 ->label('Grupo do Ativo')
                                 ->content(function (Get $get) {
-                                    $asset = Asset::find($get('asset_id'));
-
-                                    return $asset?->checklistGroup?->name ?? 'Sem grupo definido';
+                                    return app(ChecklistsDaOs::class)->textoGrupoDoAtivo(Asset::find($get('asset_id')));
                                 }),
 
                             Forms\Components\Placeholder::make('preventivas_pendentes')
