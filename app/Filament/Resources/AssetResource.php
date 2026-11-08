@@ -1336,6 +1336,7 @@ class AssetResource extends Resource
             AssetResource\RelationManagers\Nr13DocumentsRelationManager::class,
             AssetResource\RelationManagers\Nr13InspectionsRelationManager::class,
             AssetResource\RelationManagers\CumprimentosRelationManager::class,
+            AssetResource\RelationManagers\ExecucoesChecklistRelationManager::class,
         ];
     }
 

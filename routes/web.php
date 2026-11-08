@@ -596,6 +596,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/checklists/ativo/{assetId}', \App\Livewire\ChecklistExecucaoMobile::class)
         ->name('ck.execucao.mobile');
 
+    // Foto de um item de checklist (disco privado): so para quem pode ver a execucao, do proprio tenant.
+    Route::get('/admin/checklists/resposta/{resposta}/foto/{indice}', [\App\Http\Controllers\CkFotoController::class, 'show'])
+        ->whereNumber('indice')->name('ck.resposta.foto');
+
     // Óleo da frota (troca/reposição) pelo celular.
     Route::get('/admin/frota/oleo/{assetId}', OleoFrotaMobile::class)
         ->name('frota.oleo.mobile');

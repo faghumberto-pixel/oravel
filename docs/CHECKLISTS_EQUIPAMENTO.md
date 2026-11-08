@@ -56,5 +56,19 @@ empilhadeira), editáveis por empresa. Entrega em fases; cada uma para e espera 
 - Falha na integração com a aptidão é registrada em log e **nunca derruba** o checklist.
 - **Chaves:** o módulo usa duas chaves do contrato (`tabela_ck_templates` para editar e `tabela_ck_execucoes` para executar), ambas desligadas por padrão.
 
-## Próximas fases
-- **C4:** histórico, relatório e exportação (OpenSpout) e migração da Frota.
+## C4 — o que existe
+- **Relatório** Relatórios › Históricos & Logs › **"Checklists de equipamento"** (`CkExecutionResource`, somente leitura): filtros por **período, grupo de
+  equipamento, executor, resultado, checklist e origem**, busca, e detalhe com as respostas, as fotos e a assinatura. **Exportar Excel** (OpenSpout, como no
+  resto do projeto) leva o que está na tela: aba "Execuções" e aba "Respostas". Acesso pela chave `tabela_ck_execucoes` e a permissão `ler_execucao_checklist`.
+- **Histórico no ativo:** aba **"Checklists executados"** no cadastro do ativo (somente leitura; some sem permissão).
+- **Fotos** ficam em disco privado e só saem pela rota `ck.resposta.foto`, para quem pode ver a execução e do próprio tenant (outro tenant = 404; caminho fora da
+  pasta do tenant = 404).
+- **Frota:** o checklist de saída/retorno da Frota **segue exatamente como está** (odômetro, pareamento, bloqueio, bateria, pneu, liberação). O que muda é que
+  cada checklist gravado (e cada liberação) é **espelhado** no motor novo (`FrotaParaChecklists`), então o histórico e o relatório são unificados, com a origem
+  "Frota". O espelho é idempotente (`legado_tipo`/`legado_id`) e, se falhar, vai para o log e **nunca derruba** o fluxo da Frota. Fotos da Frota não são copiadas.
+- **Cópia do que já existe** (PROD hoje): `php artisan checklists:migrar-frota {--tenant=} {--dry-run}` copia os checklists já gravados e os **modelos** da Frota.
+  Os modelos entram **inativos e sem grupo**: não se aplicam a nenhum ativo, só existem para o dia da troca. Nada da Frota é alterado ou apagado.
+
+## Fora da C4, por decisão (a fazer só depois de validar a cópia em PROD)
+- **Trocar a Frota** para ler os modelos do motor novo (hoje ela usa os modelos dela) e só então pensar em aposentar as tabelas `frota_*`.
+- Dar baixa em pendências (hoje elas só ficam registradas e aparecem no relatório).

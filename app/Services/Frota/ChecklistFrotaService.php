@@ -11,6 +11,7 @@ use App\Models\FrotaModeloChecklist;
 use App\Models\FrotaRespostaChecklist as Resposta;
 use App\Models\FrotaTesteBateria;
 use App\Models\User;
+use App\Services\Checklists\FrotaParaChecklists;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -79,7 +80,7 @@ class ChecklistFrotaService
 
         $situacao = self::situacaoDas(array_map(fn ($l) => ['gravidade' => $l['gravidade_registrada'], 'resultado' => $l['resultado']], $respostasLinhas));
 
-        return DB::transaction(function () use ($ativo, $dados, $usuario, $respostasLinhas, $situacao) {
+        $checklist = DB::transaction(function () use ($ativo, $dados, $usuario, $respostasLinhas, $situacao) {
             $usuario ??= auth()->user();
 
             // Odômetro: menor que o anterior só com justificativa (lança ValidationException).
@@ -139,6 +140,23 @@ class ChecklistFrotaService
 
             return $checklist;
         });
+
+        $this->espelharNoMotorNovo($checklist);
+
+        return $checklist;
+    }
+
+    /**
+     * Copia o checklist para o motor novo (historico e relatorio unificados). So leitura do que a Frota gravou: se falhar, vai para o log
+     * e o checklist da Frota segue valendo (nunca bloqueia o fluxo do veiculo).
+     */
+    private function espelharNoMotorNovo(FrotaChecklist $checklist): void
+    {
+        try {
+            app(FrotaParaChecklists::class)->espelharChecklist($checklist);
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 
     /** A saída (concluída, não bloqueada sem liberação) que ainda não tem retorno: é o par do próximo retorno. */
@@ -181,6 +199,8 @@ class ChecklistFrotaService
             'liberado_em' => now(),
             'motivo_liberacao' => trim($motivo),
         ]);
+
+        $this->espelharNoMotorNovo($checklist);
 
         return $checklist;
     }
