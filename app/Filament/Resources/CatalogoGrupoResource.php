@@ -166,12 +166,13 @@ class CatalogoGrupoResource extends Resource
                 ]),
 
                 Forms\Components\Tabs\Tab::make('SLA e regras')->schema([
-                    static::repetidor('slaPoliticas', 'SLA', 'SLA por criticidade (reaproveita a política da F2 na fase 7)', [
+                    static::repetidor('slaPoliticas', 'SLA', 'SLA por criticidade (vale para as OS dos ativos deste grupo; o que não for definido aqui vem da política de SLA geral)', [
                         Forms\Components\Select::make('criticidade')->label('Criticidade')->required()->options(['critica' => 'Crítica', 'alta' => 'Alta', 'media' => 'Média', 'baixa' => 'Baixa']),
                         Forms\Components\TextInput::make('resposta_min')->label('Resposta (min)')->numeric()->minValue(1),
                         Forms\Components\TextInput::make('resolucao_min')->label('Resolução (min)')->numeric()->minValue(1),
                         Forms\Components\Select::make('calendario')->label('Calendário')->options(['comercial' => 'Horário comercial', '24x7' => '24x7'])->default('comercial'),
-                        Forms\Components\TagsInput::make('pausa_por')->label('Pausa por (ex.: aguardando peça)'),
+                        Forms\Components\Select::make('pausa_por')->label('Pausa o relógio em')->multiple()->options(\App\Services\Sla\SlaService::STATUS_PAUSA_OPCOES)
+                            ->helperText('Vazio = usa as pausas das configurações de SLA da empresa.'),
                     ], fn (array $state) => ucfirst((string) ($state['criticidade'] ?? 'novo SLA')), fn (array $d) => $d + ['slug' => Str::slug((string) ($d['criticidade'] ?? 'sla')).'-'.Str::lower(Str::random(4))]),
                     static::repetidor('regras', 'Regra', 'Regras especiais (condição + efeito sobre a aptidão)', [
                         Forms\Components\TextInput::make('nome')->label('Nome')->required(),

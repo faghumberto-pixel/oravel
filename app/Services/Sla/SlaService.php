@@ -2,11 +2,13 @@
 
 namespace App\Services\Sla;
 
+use App\Models\CatalogoSla;
 use App\Models\Contract;
 use App\Models\MaintenanceOrder;
 use App\Models\SlaPolicy;
 use App\Models\SlaSetting;
 use App\Models\SlaTimer;
+use App\Services\Catalogo\SlaDoGrupo;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 
@@ -40,6 +42,7 @@ class SlaService
     {
         self::$settings = [];
         SlaCalendar::esquecer();
+        SlaDoGrupo::esquecer();
     }
 
     public static function settings(string $tenantId): SlaSetting
@@ -93,20 +96,38 @@ class SlaService
             ->first();
     }
 
+    /**
+     * De onde vem cada relogio da OS. Ordem: politica de contrato/cliente (acordo comercial, vale inteira) > SLA do grupo x
+     * criticidade do catalogo (G1, por relogio) > politica geral/por tipo da F2 (completa o que o grupo nao define).
+     *
+     * @return array<string, array{min: int, policy: ?SlaPolicy, catalogo: ?CatalogoSla}>
+     */
+    public static function definicao(MaintenanceOrder $os): array
+    {
+        $politica = self::politicaPara($os);
+        $daPolitica = fn (SlaPolicy $p) => array_map(fn ($m) => ['min' => $m, 'policy' => $p, 'catalogo' => null], $p->minutosPorRelogio());
+
+        if ($politica && ($politica->client_id || $politica->contract_id)) {
+            return $daPolitica($politica);
+        }
+
+        $grupo = SlaDoGrupo::para($os);
+        $doGrupo = $grupo ? array_map(fn ($m) => ['min' => $m, 'policy' => null, 'catalogo' => $grupo], SlaDoGrupo::minutos($grupo)) : [];
+
+        return $doGrupo + ($politica ? $daPolitica($politica) : []);
+    }
+
     /** Cria os cronometros de uma OS recem-aberta e ja aplica o que ela tem de fato (OS criada ja iniciada/concluida). */
     public static function iniciar(MaintenanceOrder $os): void
     {
-        $politica = self::politicaPara($os);
-        $minutos = $politica?->minutosPorRelogio() ?? [];
+        $def = self::definicao($os);
 
-        $legado = false;
-        if (! isset($minutos[SlaTimer::SERVICE]) && $os->sla_target_minutes) {
-            $minutos[SlaTimer::SERVICE] = (int) $os->sla_target_minutes; // legado digitado a mao
-            $legado = true;
+        if (! isset($def[SlaTimer::SERVICE]) && $os->sla_target_minutes) {
+            $def[SlaTimer::SERVICE] = ['min' => (int) $os->sla_target_minutes, 'policy' => null, 'catalogo' => null]; // legado digitado a mao
         }
 
-        foreach ($minutos as $relogio => $min) {
-            self::criar($os, $relogio, $min, ($legado && $relogio === SlaTimer::SERVICE) ? null : $politica);
+        foreach ($def as $relogio => $d) {
+            self::criar($os, $relogio, $d['min'], $d['policy'], $d['catalogo']);
         }
 
         self::avancar($os);
@@ -122,12 +143,12 @@ class SlaService
         $timer = self::timers($os)->get(SlaTimer::SERVICE);
 
         if (! $timer) {
-            self::criar($os, SlaTimer::SERVICE, (int) $os->sla_target_minutes, null);
+            self::criar($os, SlaTimer::SERVICE, (int) $os->sla_target_minutes, null, null);
 
             return;
         }
 
-        if ($timer->aberto() && $timer->policy_id === null && $timer->target_minutes !== (int) $os->sla_target_minutes) {
+        if ($timer->aberto() && $timer->policy_id === null && $timer->catalogo_sla_id === null && $timer->target_minutes !== (int) $os->sla_target_minutes) {
             $timer->update(['target_minutes' => (int) $os->sla_target_minutes, 'due_at' => self::prazo($timer->started_at, (int) $os->sla_target_minutes, $timer->paused_seconds, $timer)]);
         }
     }
@@ -142,9 +163,11 @@ class SlaService
         }
 
         $cancelada = in_array($os->status, ['Cancelada', 'Cancelado'], true);
-        $pausar = in_array($os->internal_status, self::settings((string) $os->tenant_id)->pause_statuses ?? [], true);
+        $pausaPadrao = self::settings((string) $os->tenant_id)->pause_statuses ?? [];
 
         foreach ($abertos as $t) {
+            $pausar = in_array($os->internal_status, $t->pause_statuses ?? $pausaPadrao, true);
+
             if ($cancelada) {
                 self::parar($t, now(), 'cancelled');
 
@@ -170,25 +193,29 @@ class SlaService
     /** Prioridade mudou: refaz os prazos dos cronometros abertos pela politica da nova prioridade. */
     public static function recalcular(MaintenanceOrder $os): void
     {
-        $politica = self::politicaPara($os);
-        $minutos = $politica?->minutosPorRelogio() ?? [];
+        $def = self::definicao($os);
         $timers = self::timers($os);
 
         foreach ($timers as $relogio => $t) {
-            if (! $t->aberto() || $t->policy_id === null) {
+            if (! $t->aberto() || ($t->policy_id === null && $t->catalogo_sla_id === null)) {
                 continue; // fechado nao muda; legado digitado a mao segue o campo sla_target_minutes
             }
 
-            if (isset($minutos[$relogio])) {
-                $t->update(['policy_id' => $politica->id, 'target_minutes' => $minutos[$relogio], 'due_at' => self::prazo($t->started_at, $minutos[$relogio], $t->paused_seconds, $t), 'warned_at' => null, 'breached_at' => null, 'escalated_at' => null]);
+            if (isset($def[$relogio])) {
+                $d = $def[$relogio];
+                $t->update([
+                    'policy_id' => $d['policy']?->id, 'catalogo_sla_id' => $d['catalogo']?->id, 'pause_statuses' => self::pausasDoCatalogo($d['catalogo']),
+                    'target_minutes' => $d['min'], 'due_at' => self::prazo($t->started_at, $d['min'], $t->paused_seconds, $t),
+                    'warned_at' => null, 'breached_at' => null, 'escalated_at' => null,
+                ]);
             } else {
                 $t->delete();
             }
         }
 
-        foreach ($minutos as $relogio => $min) {
+        foreach ($def as $relogio => $d) {
             if (! $timers->has($relogio)) {
-                self::criar($os, $relogio, $min, $politica);
+                self::criar($os, $relogio, $d['min'], $d['policy'], $d['catalogo']);
             }
         }
 
@@ -287,17 +314,27 @@ class SlaService
         return $sinal.($h > 0 ? "{$h}h".($r > 0 ? " {$r}min" : '') : "{$r}min");
     }
 
-    private static function criar(MaintenanceOrder $os, string $relogio, int $minutos, ?SlaPolicy $politica): void
+    private static function criar(MaintenanceOrder $os, string $relogio, int $minutos, ?SlaPolicy $politica, ?CatalogoSla $catalogo): void
     {
         $inicio = $os->created_at ?? now();
-        $comercial = SlaCalendar::doTenant((string) $os->tenant_id)->ehComercial();
+        // Grupo com calendario 24x7 forca 24x7; "comercial" segue o calendario da empresa (que pode ser 24x7 se nao configurou horario).
+        $comercial = $catalogo?->calendario !== '24x7' && SlaCalendar::doTenant((string) $os->tenant_id)->ehComercial();
         $modo = $comercial ? SlaCalendar::MODO_COMERCIAL : SlaCalendar::MODO_24X7;
         $calendario = $comercial ? SlaCalendar::doTenant((string) $os->tenant_id) : SlaCalendar::vinte4x7();
 
         SlaTimer::withoutGlobalScopes()->firstOrCreate(
             ['subject_type' => MaintenanceOrder::class, 'subject_id' => $os->id, 'clock' => $relogio],
-            ['tenant_id' => $os->tenant_id, 'policy_id' => $politica?->id, 'started_at' => $inicio, 'target_minutes' => $minutos, 'due_at' => $calendario->somar($inicio, $minutos), 'calendar_mode' => $modo],
+            ['tenant_id' => $os->tenant_id, 'policy_id' => $politica?->id, 'catalogo_sla_id' => $catalogo?->id, 'pause_statuses' => self::pausasDoCatalogo($catalogo),
+                'started_at' => $inicio, 'target_minutes' => $minutos, 'due_at' => $calendario->somar($inicio, $minutos), 'calendar_mode' => $modo],
         );
+    }
+
+    /** Pausas proprias do grupo (so os status conhecidos); vazio = usa as da empresa. */
+    private static function pausasDoCatalogo(?CatalogoSla $catalogo): ?array
+    {
+        $validos = array_values(array_intersect((array) ($catalogo?->pausa_por ?? []), array_keys(self::STATUS_PAUSA_OPCOES)));
+
+        return $validos ?: null;
     }
 
     /** Prazo = inicio + meta + o que ficou pausado, tudo no calendario do cronometro. */

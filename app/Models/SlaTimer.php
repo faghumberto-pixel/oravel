@@ -26,7 +26,7 @@ class SlaTimer extends Model
 
     public const CLOCKS = [self::RESPONSE => 'Resposta', self::SERVICE => 'Atendimento', self::RESOLUTION => 'Resolução'];
 
-    protected $fillable = ['tenant_id', 'subject_type', 'subject_id', 'clock', 'policy_id', 'started_at', 'target_minutes', 'due_at', 'paused_at', 'paused_seconds', 'stopped_at', 'result', 'warned_at', 'breached_at', 'escalated_at', 'calendar_mode', 'spent_minutes'];
+    protected $fillable = ['tenant_id', 'subject_type', 'subject_id', 'clock', 'policy_id', 'catalogo_sla_id', 'pause_statuses', 'started_at', 'target_minutes', 'due_at', 'paused_at', 'paused_seconds', 'stopped_at', 'result', 'warned_at', 'breached_at', 'escalated_at', 'calendar_mode', 'spent_minutes'];
 
     protected $casts = [
         'started_at' => 'datetime',
@@ -39,6 +39,7 @@ class SlaTimer extends Model
         'spent_minutes' => 'integer',
         'target_minutes' => 'integer',
         'paused_seconds' => 'integer',
+        'pause_statuses' => 'array',
     ];
 
     public function subject(): MorphTo

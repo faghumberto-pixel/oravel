@@ -70,3 +70,12 @@ então o sqlite do `phpunit.xml` NÃO vale). Rodar só em banco descartável: `D
   itens que o tenant criou ficam intactos; a ordem escolhida é preservada.
 - **Prévia de impacto** na aptidão: simula o aceite/restauração dentro de uma transação **desfeita** (nada é gravado nem logado). Depois de aceitar/restaurar, a aptidão do grupo é recalculada em fila.
 - O mapeamento YAML → campos agora é único (`CatalogoTemplate`): instalador e diff não divergem. O diff é calculado sob demanda (a coluna `diff_pendente`, que nunca foi usada, foi removida).
+
+## Fase 7 — SLA por grupo × criticidade e peças críticas × estoque
+
+- **SLA do grupo** (`catalogo_sla`) passa a valer nas OS dos ativos do grupo, sobre o SLA da F2/F6. A criticidade do catálogo é o **nível base da prioridade da OS** (F1): prioridade personalizada do tenant entra pelo `base_level`. Só vale com a chave `tabela_catalogo_equipamentos` ligada no contrato.
+- **Ordem de precedência** (`SlaService::definicao()`): política de **contrato/cliente** (acordo comercial, vale inteira) > **SLA do grupo × criticidade** (por relógio: Resposta e Resolução) > política geral/por tipo da F2 (completa o que o grupo não define; ex.: o relógio Atendimento).
+- O cronômetro guarda a origem (`catalogo_sla_id`, ao lado do `policy_id`) e, se o grupo definiu, as **pausas próprias** (`pause_statuses`; vazio = pausas da empresa). Mudar a prioridade recalcula pelo SLA da nova criticidade. Cronômetro já fechado nunca muda.
+- **Calendário:** grupo `24x7` força 24x7; `comercial` segue o calendário da empresa (se a empresa não configurou horário comercial, fica 24x7).
+- **Peças críticas** (`catalogo_pecas_criticas`): vínculo com **Material** (é o que a OS consome — não `Part`). A página **Peças críticas** (Manutenção › Cadastros) mostra, por grupo, o estoque do Material contra o mínimo: sem estoque, abaixo do mínimo, sem material vinculado, ok — da mais grave para a mais leve. É alerta de abastecimento; **não altera a aptidão** do ativo.
+- Migration aditiva `2026_12_31_100000_g1_sla_timers_origem_catalogo`. Dependência: este PR parte da pilha G1 **com a main (SLA F2–F6) mesclada**.
