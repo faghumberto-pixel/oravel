@@ -75,6 +75,7 @@ class ChecklistsDaOs
             return [
                 'template' => $t, 'itens' => (clone $itens)->count(), 'criticos' => (clone $itens)->where('critico', true)->count(),
                 'motivo' => $this->motivo($t, $ativo), 'feito' => $os ? $this->feitoNaOs($os, $t) : null,
+                'secoes' => $this->secoesComItens($t),
             ];
         })->all();
 
@@ -84,6 +85,40 @@ class ChecklistsDaOs
             'ativo' => $ativo, 'modelos' => $modelos, 'ultimas' => $ultimas, 'pode_executar' => $podeExecutar,
             'pendentes' => $os ? count(array_filter($modelos, fn ($m) => $m['feito'] === null)) : null,
         ];
+    }
+
+    /**
+     * Itens do modelo, por secao, para mostrar dentro da propria OS (o tecnico ve o que vai conferir sem abrir a execucao).
+     *
+     * @return array<int, array{titulo: string, itens: array<int, array{descricao: string, critico: bool}>}>
+     */
+    private function secoesComItens(CkTemplate $t): array
+    {
+        $secoes = CkSection::withoutGlobalScopes()->where('template_id', $t->id)->whereNull('deleted_at')->orderBy('ordem')->get();
+        $itens = CkItem::withoutGlobalScopes()->whereIn('section_id', $secoes->pluck('id'))->where('ativo', true)->whereNull('deleted_at')->orderBy('ordem')->get()->groupBy('section_id');
+
+        return $secoes->map(fn (CkSection $s) => [
+            'titulo' => $s->titulo,
+            'itens' => ($itens[$s->id] ?? collect())->map(fn (CkItem $i) => ['descricao' => $i->descricao, 'critico' => (bool) $i->critico])->all(),
+        ])->filter(fn (array $s) => $s['itens'] !== [])->values()->all();
+    }
+
+    /** Texto do campo "Grupo do Ativo" na OS: o grupo de checklist; sem ele, o grupo de equipamento que esta valendo para os checklists. */
+    public function textoGrupoDoAtivo(?Asset $ativo): string
+    {
+        if (! $ativo) {
+            return 'Sem grupo definido';
+        }
+
+        if ($ativo->checklistGroup?->name) {
+            return $ativo->checklistGroup->name;
+        }
+
+        $equipamento = $ativo->asset_category_id ? $ativo->category?->name : null;
+
+        return $equipamento && $this->aplicavel->paraAtivo($ativo)->isNotEmpty()
+            ? $equipamento.' (grupo de equipamento — os checklists vêm dele)'
+            : 'Sem grupo definido';
     }
 
     private function motivo(CkTemplate $t, Asset $ativo): string

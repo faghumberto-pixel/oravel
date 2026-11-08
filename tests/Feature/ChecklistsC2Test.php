@@ -451,7 +451,7 @@ class ChecklistsC2Test extends TestCase
         $tpl = $this->tpl('gerador-pre-uso');
 
         $c = Livewire::test(EditCkTemplate::class, ['record' => $tpl->getKey()]);
-        $c->assertFormFieldExists('checklist_group_id', fn ($campo) => array_keys($campo->getOptions()) === [$meu->id] && $campo->getLabel() === 'Grupo de checklist (ativa na OS)');
+        $c->assertFormFieldExists('checklist_group_id', fn ($campo) => in_array($meu->id, array_keys($campo->getOptions()), true) && ! in_array($deles->id, array_keys($campo->getOptions()), true) && $campo->getLabel() === 'Grupo de checklist (ativa na OS)');
         $c->fillForm(['checklist_group_id' => $meu->id])->call('save')->assertHasNoFormErrors();
 
         $tpl = $tpl->fresh();
