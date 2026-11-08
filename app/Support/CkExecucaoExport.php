@@ -17,7 +17,7 @@ class CkExecucaoExport
 
     public static function cabecalhoExecucoes(): array
     {
-        return ['Data', 'Ativo', 'Patrimônio/Tag', 'Grupo', 'Checklist', 'Versão', 'Executor', 'Resultado', 'Leitura (h/km)', 'Itens críticos não conformes', 'Pendências', 'OS', 'Origem', 'Observações'];
+        return ['Data', 'Ativo', 'Patrimônio/Tag', 'Grupo', 'Checklist', 'Versão', 'Executor', 'Resultado', 'Leitura (h/km)', 'Itens críticos não conformes', 'Pendências', 'OS do atendimento', 'OS corretiva aberta', 'Origem', 'Observações'];
     }
 
     public static function cabecalhoRespostas(): array
@@ -35,7 +35,7 @@ class CkExecucaoExport
 
         $ids = [];
 
-        (clone $query)->with(['asset.category', 'executor', 'ordemServico'])->withCount([
+        (clone $query)->with(['asset.category', 'executor', 'ordemServico', 'os'])->withCount([
             'respostas as criticos_nc_count' => fn ($q) => $q->where('critico', true)->where('resposta', 'nao_conforme'),
             'respostas as pendencias_count' => fn ($q) => $q->where('critico', false)->where('resposta', 'nao_conforme'),
         ])->chunk(500, function ($execucoes) use ($writer, &$ids) {
@@ -45,7 +45,7 @@ class CkExecucaoExport
                     $e->finalizado_em?->format('d/m/Y H:i'), $e->asset?->name, $e->asset?->patrimonio ?: $e->asset?->tag, $e->asset?->category?->name,
                     $e->template_nome, $e->versao_template, $e->executor?->name, self::STATUS[$e->status] ?? $e->status,
                     $e->leitura_medidor !== null ? (float) $e->leitura_medidor : null, $e->criticos_nc_count, $e->pendencias_count,
-                    $e->ordemServico?->os_number, $e->origemRotulo(), $e->observacoes,
+                    $e->os?->os_number, $e->ordemServico?->os_number, $e->origemRotulo(), $e->observacoes,
                 ]));
             }
         });

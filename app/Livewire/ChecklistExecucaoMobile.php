@@ -2,6 +2,8 @@
 
 namespace App\Livewire;
 
+use App\Filament\Resources\AssetResource;
+use App\Filament\Resources\MaintenanceOrderResource;
 use App\Models\Asset;
 use App\Models\CkExecution;
 use App\Models\CkTemplate;
@@ -51,6 +53,9 @@ class ChecklistExecucaoMobile extends Component
 
     public ?string $execucaoEnviadaId = null;
 
+    /** OS do atendimento (vem do link da OS: ?os=<id>); so vale se e deste equipamento. */
+    public ?string $osId = null;
+
     public function mount(string $assetId): void
     {
         $this->ativo = Asset::findOrFail($assetId);
@@ -63,6 +68,9 @@ class ChecklistExecucaoMobile extends Component
             ? $pedido
             : ($this->templates->count() === 1 ? $this->templates->first()->id : null);
         $this->iniciadoEm = now()->toIso8601String();
+
+        $pedidoOs = (string) request()->query('os', '');
+        $this->osId = $pedidoOs !== '' ? MaintenanceOrder::query()->where('asset_id', $this->ativo->id)->whereKey($pedidoOs)->value('id') : null;
     }
 
     /** @return Collection<int, CkTemplate> */
@@ -91,6 +99,18 @@ class ChecklistExecucaoMobile extends Component
         $id = $this->execucaoEnviada?->ordem_servico_id;
 
         return $id ? MaintenanceOrder::withoutGlobalScopes()->find($id) : null;
+    }
+
+    /** Para onde voltar: a OS do atendimento (Modo Campo, etapa do checklist) ou, sem OS, o equipamento. */
+    public function urlDeVolta(bool $desktop = false): string
+    {
+        if ($this->osId) {
+            return $desktop
+                ? MaintenanceOrderResource::getUrl('edit', ['record' => $this->osId])
+                : route('maintenance-orders.field-wizard', ['maintenanceOrder' => $this->osId, 'step' => 2]);
+        }
+
+        return $desktop ? AssetResource::getUrl('edit', ['record' => $this->ativo]) : route('assets.dossier.mobile', ['assetId' => $this->ativo->id]);
     }
 
     public function podeAbrirOs(): bool
@@ -137,7 +157,7 @@ class ChecklistExecucaoMobile extends Component
             'leitura' => 'nullable|numeric|min:0',
         ], ['fotosItens.*.image' => 'O arquivo precisa ser uma imagem.', 'leitura.numeric' => 'A leitura do horímetro/km deve ser um número.']);
 
-        $dados = ['respostas' => [], 'assinatura' => $this->assinatura, 'observacoes' => $this->observacoes, 'iniciado_em' => $this->iniciadoEm ?: null];
+        $dados = ['respostas' => [], 'assinatura' => $this->assinatura, 'observacoes' => $this->observacoes, 'iniciado_em' => $this->iniciadoEm ?: null, 'os_id' => $this->osId];
 
         foreach ($this->itens as $item) {
             $dados['respostas'][$item->id] = [

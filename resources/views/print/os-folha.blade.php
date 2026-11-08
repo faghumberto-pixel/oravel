@@ -38,6 +38,18 @@ body{margin:0;background:#e9edf3;color:#0f172a;font-family:Arial,Helvetica,sans-
 .assin .traco{display:block;height:11mm;border-bottom:.4mm solid #0f172a}
 .assin small{display:block;margin-top:1mm;font-size:2.7mm;text-transform:uppercase;letter-spacing:.05em;color:#475569;text-align:center}
 .pe{position:absolute;left:13mm;right:13mm;bottom:7mm;text-align:center;font-size:2.5mm;color:#64748b}
+.cab.ck{grid-template-columns:34mm 1fr 52mm}
+.cknome{font-size:4.6mm;font-weight:900;margin:3mm 0 .8mm}.ckmeta{font-size:2.7mm;color:#475569;margin-bottom:2.2mm}
+.ckt{width:100%;border-collapse:collapse;margin:0 0 2.4mm}
+.ckt th{font-size:2.5mm;text-transform:uppercase;letter-spacing:.05em;text-align:left;border:.35mm solid #0f172a;background:#fff7ed;padding:1mm 1.6mm}
+.ckt td{border:.35mm solid #0f172a;padding:1mm 1.6mm;font-size:3.1mm;vertical-align:middle}
+.ckt .n{width:8mm;text-align:center;font-weight:700}.ckt .m{width:11mm;text-align:center}.ckt .v{width:38mm}
+.ckt .dif{color:#64748b;font-size:2.5mm;text-transform:uppercase}
+.ckt tr.sec td{background:#e2e8f0;font-weight:800;font-size:2.6mm;text-transform:uppercase;letter-spacing:.06em}
+.ckt .cr{margin-left:1.5mm;border:.3mm solid #b91c1c;border-radius:.8mm;padding:0 1mm;font-size:2.3mm;font-weight:900;color:#b91c1c}
+.ckt .ref{display:block;font-size:2.3mm;color:#475569}
+.caixa{display:inline-block;width:4.4mm;height:4.4mm;border:.4mm solid #0f172a;border-radius:.8mm;vertical-align:middle}
+.ckt .linha{display:inline-block;width:20mm;border-bottom:.35mm solid #0f172a}.ckt .op{display:inline-block;margin-right:2mm;font-size:2.7mm}
 @page{size:A4;margin:0}
 @media print{body{background:#fff}.barra{display:none}.folha{margin:0;box-shadow:none;width:210mm;height:297mm;min-height:0;overflow:hidden}}
 @media (max-width:820px){.folha{width:100%;min-height:0;padding:16px}.cab{grid-template-columns:1fr 1fr}.l2,.l3,.l2.a{grid-template-columns:1fr}}
@@ -101,7 +113,11 @@ body{margin:0;background:#e9edf3;color:#0f172a;font-family:Arial,Helvetica,sans-
         <div><span class="traco"></span><small>Assinatura do técnico</small></div>
         <div><span class="traco"></span><small>Assinatura do cliente</small></div>
     </div>
-    <footer class="pe">Depois de preenchida, fotografe a folha inteira e envie em Ordens de serviço › {{ $os->os_number }} › Mais ações › Atualizar com a folha preenchida (IA)</footer>
+    <footer class="pe">Depois de preenchida, fotografe a folha inteira e envie em Ordens de serviço › {{ $os->os_number }} › Mais ações › Atualizar com a folha preenchida (IA)@if (! empty($checklistsImpressao)) · Esta é a folha 1; as seguintes são o checklist do equipamento.@endif</footer>
 </section>
+
+@if (! empty($checklistsImpressao))
+    @include('print.partials.checklist-folhas')
+@endif
 </body>
 </html>

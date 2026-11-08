@@ -596,6 +596,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/checklists/ativo/{assetId}', \App\Livewire\ChecklistExecucaoMobile::class)
         ->name('ck.execucao.mobile');
 
+    // Mesma execucao, em tela larga para o desktop (o painel abre esta; o QR e o app do colaborador abrem a de celular).
+    Route::get('/admin/checklists/ativo/{assetId}/desktop', \App\Livewire\ChecklistExecucaoDesktop::class)
+        ->name('ck.execucao.desktop');
+
     // Foto de um item de checklist (disco privado): so para quem pode ver a execucao, do proprio tenant.
     Route::get('/admin/checklists/resposta/{resposta}/foto/{indice}', [\App\Http\Controllers\CkFotoController::class, 'show'])
         ->whereNumber('indice')->name('ck.resposta.foto');

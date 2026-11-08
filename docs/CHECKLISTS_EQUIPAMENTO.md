@@ -76,6 +76,24 @@ empilhadeira), editáveis por empresa. Entrega em fases; cada uma para e espera 
   da OS (vale também na criação, assim que o ativo é escolhido). App do colaborador: tela da OS. A seção some sem permissão ou sem a chave do contrato.
 - Executar a partir da OS **não amarra** a execução à OS (o `ordem_servico_id` da execução continua sendo a OS aberta por item crítico reprovado).
 
+## O checklist no atendimento da OS (correções pós-C4)
+O pedido de fundo: **o técnico, ao atender a OS, preenche também o checklist do equipamento, e isso fica registrado contra aquela OS.**
+- **Registro contra a OS:** a execução guarda `os_id` (a OS do atendimento; diferente de `ordem_servico_id`, a OS corretiva aberta por item crítico reprovado), só se a OS é do mesmo
+  tenant e do mesmo equipamento. Aparece no relatório (coluna "OS do atendimento"), na exportação e na seção da OS (feito/pendente).
+- **Modo Campo (celular do técnico):** a etapa 2 "Vistoria / Checklist" mostra o checklist do equipamento com **Preencher**; a OS **só conclui** depois de feitos os checklists que valem
+  para o equipamento (decisão: obrigatório no Modo Campo). Só segura quem pode executar checklist (senão a OS ficaria sem saída) e só em contratos com as duas chaves ligadas.
+  Painel, app do colaborador e a página da folha em papel **avisam** que há checklist pendente, sem bloquear.
+- **Desktop:** o botão Executar do painel abre uma tela larga (`ck.execucao.desktop`), com a mesma lógica da de celular; o QR e o app do colaborador seguem abrindo a de celular
+  (`ck.execucao.mobile`). Ambas aceitam `?os=<id>` (registra contra a OS e volta para ela) e `?checklist=<id>` (já abre no modelo escolhido).
+- **Impressão:** a folha impressa da OS ("Imprimir folha para o mecânico") traz o checklist em **folhas A4 extras** (20 linhas por folha, título da seção repetido na continuação,
+  caixas OK / N/C / N/A, itens críticos marcados, assinatura na última folha), e a impressão do dossiê da OS também. Vale com a chave do contrato ligada, sem exigir a permissão de
+  checklist de quem imprime. A folha 1 da OS (que a IA lê) não mudou.
+- **Leitura do papel pela IA:** na página "Atualizar com a folha preenchida" da OS há a seção **"Checklist em papel"**: escolher o checklist, fotografar a folha, a IA lê as marcações, a pessoa
+  **confere item por item** (itens em dúvida vêm marcados e em branco), e só então **registra**. Checklist de várias folhas: lê uma por vez e as leituras se somam. O registro passa pelas
+  mesmas regras da tela (item crítico não conforme reprova, deixa o ativo inapto e abre a OS corretiva), com a **foto da folha como evidência** no lugar da assinatura e da foto por item,
+  origem "Papel (IA)" e a nota "lida pela IA e conferida por <nome>". A IA nunca adivinha: marca ilegível, duas caixas ou incerteza viram "dúvida" e ficam em branco.
+- **Limites:** a leitura do papel não foi testada com a IA de verdade nem com folhas reais (os testes simulam a resposta da IA); vale validar com algumas folhas preenchidas à mão antes de confiar.
+
 ## Fora da C4, por decisão (a fazer só depois de validar a cópia em PROD)
 - **Trocar a Frota** para ler os modelos do motor novo (hoje ela usa os modelos dela) e só então pensar em aposentar as tabelas `frota_*`.
 - Dar baixa em pendências (hoje elas só ficam registradas e aparecem no relatório).

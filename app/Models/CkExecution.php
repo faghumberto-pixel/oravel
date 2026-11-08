@@ -38,7 +38,9 @@ class CkExecution extends Model
 
     protected $guarded = [];
 
-    protected $casts = ['iniciado_em' => 'datetime', 'finalizado_em' => 'datetime', 'leitura_medidor' => 'decimal:1', 'versao_template' => 'integer'];
+    protected $casts = ['iniciado_em' => 'datetime', 'finalizado_em' => 'datetime', 'leitura_medidor' => 'decimal:1', 'versao_template' => 'integer', 'folhas' => 'array'];
+
+    public const ORIGEM_PAPEL_IA = 'papel_ia';
 
     public function asset(): BelongsTo
     {
@@ -50,9 +52,19 @@ class CkExecution extends Model
         return $this->belongsTo(MaintenanceOrder::class, 'ordem_servico_id');
     }
 
+    /** OS em que este checklist foi feito (o atendimento). A OS corretiva aberta pela reprovacao e a `ordemServico`. */
+    public function os(): BelongsTo
+    {
+        return $this->belongsTo(MaintenanceOrder::class, 'os_id');
+    }
+
     public function origemRotulo(): string
     {
-        return $this->legado_tipo === 'frota_checklist' ? 'Frota' : 'Checklist';
+        return match (true) {
+            $this->legado_tipo === 'frota_checklist' => 'Frota',
+            $this->registro_origem === self::ORIGEM_PAPEL_IA => 'Papel (IA)',
+            default => 'Checklist',
+        };
     }
 
     public function template(): BelongsTo

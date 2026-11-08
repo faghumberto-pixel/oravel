@@ -1,6 +1,6 @@
 <div class="mx-auto flex min-h-screen max-w-md flex-col bg-zinc-50 text-zinc-900 md:h-full md:min-h-0 md:overflow-y-auto">
     <header class="mb-4 flex items-center justify-between rounded-b-3xl bg-gradient-to-r from-blue-600 to-blue-500 px-5 pb-5 pt-6 text-white shadow-md">
-        <a href="{{ route('assets.dossier.mobile', ['assetId' => $ativo->id]) }}" class="text-xs font-bold tracking-widest text-blue-100">← VOLTAR</a>
+        <a href="{{ $this->urlDeVolta() }}" class="text-xs font-bold tracking-widest text-blue-100">← VOLTAR{{ $osId ? ' À OS' : '' }}</a>
         <h1 class="text-xs font-bold tracking-widest text-blue-100">CHECKLIST DO EQUIPAMENTO</h1>
     </header>
 
@@ -62,7 +62,7 @@
                     </ul>
                 </div>
             @endif
-            <a href="{{ route('assets.dossier.mobile', ['assetId' => $ativo->id]) }}" class="flex min-h-[3rem] items-center justify-center rounded-xl bg-zinc-100 text-sm font-bold text-zinc-900 active:bg-zinc-200">VOLTAR AO EQUIPAMENTO</a>
+            <a href="{{ $this->urlDeVolta() }}" class="flex min-h-[3rem] items-center justify-center rounded-xl bg-zinc-100 text-sm font-bold text-zinc-900 active:bg-zinc-200">{{ $osId ? 'VOLTAR À OS' : 'VOLTAR AO EQUIPAMENTO' }}</a>
         @elseif ($this->templates->isEmpty())
             <div class="rounded-xl bg-amber-100 p-4">
                 <p class="text-sm font-bold text-amber-700">Nenhum checklist se aplica a este equipamento.</p>

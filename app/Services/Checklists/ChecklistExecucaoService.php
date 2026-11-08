@@ -61,15 +61,18 @@ class ChecklistExecucaoService
 
         $itens = $this->itensAtivos($template);
         $respostas = (array) ($dados['respostas'] ?? []);
-        $this->validar($itens, $respostas, $dados);
+        $papel = ($dados['origem'] ?? null) === CkExecution::ORIGEM_PAPEL_IA;
+        $osId = $this->osDoAtendimento($ativo, $dados['os_id'] ?? null);
+        $this->validar($itens, $respostas, $dados, $papel);
 
-        $execucao = DB::transaction(function () use ($ativo, $template, $itens, $respostas, $dados, $usuario) {
+        $execucao = DB::transaction(function () use ($ativo, $template, $itens, $respostas, $dados, $usuario, $papel, $osId) {
             $execucao = CkExecution::withoutGlobalScopes()->create([
                 'tenant_id' => $ativo->tenant_id, 'asset_id' => $ativo->id, 'template_id' => $template->id, 'template_nome' => $template->nome,
                 'versao_template' => $template->versao, 'executor_id' => $usuario?->id, 'medidor' => $dados['medidor'] ?? null,
                 'leitura_medidor' => filled($dados['leitura_medidor'] ?? null) ? (float) str_replace(',', '.', (string) $dados['leitura_medidor']) : null,
                 'status' => CkExecution::STATUS_EM_ANDAMENTO, 'iniciado_em' => $dados['iniciado_em'] ?? now(), 'assinatura' => $dados['assinatura'] ?? null,
                 'observacoes' => filled($dados['observacoes'] ?? null) ? trim($dados['observacoes']) : null,
+                'os_id' => $osId, 'registro_origem' => $papel ? CkExecution::ORIGEM_PAPEL_IA : null, 'folhas' => $papel ? array_values((array) ($dados['folhas'] ?? [])) : null,
             ]);
 
             $temCritico = false;
@@ -88,6 +91,8 @@ class ChecklistExecucaoService
 
                 $foto = $r['foto'] ?? null;
                 $caminho = $foto instanceof UploadedFile ? $foto->store('ck-execucoes/'.$ativo->tenant_id.'/'.$execucao->id, 'local') : null;
+                // Papel: a evidencia do item nao conforme e a propria foto da folha (a IA leu dela e a pessoa conferiu).
+                $fotosDoItem = $caminho ? [$caminho] : ($papel && $naoConforme ? array_values((array) ($dados['folhas'] ?? [])) : null);
 
                 CkAnswer::withoutGlobalScopes()->create([
                     'tenant_id' => $ativo->tenant_id, 'execution_id' => $execucao->id, 'item_id' => $item->id,
@@ -96,7 +101,7 @@ class ChecklistExecucaoService
                     'resposta' => $r['resposta'] ?? null,
                     'valor_numerico' => $item->tipo_resposta === 'numerico' ? (float) str_replace(',', '.', (string) $r['valor_numerico']) : null,
                     'valor_texto' => filled($r['valor_texto'] ?? null) ? trim((string) $r['valor_texto']) : null,
-                    'fotos' => $caminho ? [$caminho] : null,
+                    'fotos' => $fotosDoItem ?: null,
                     'observacao' => filled($r['observacao'] ?? null) ? trim((string) $r['observacao']) : null,
                 ]);
             }
@@ -112,6 +117,16 @@ class ChecklistExecucaoService
         $this->integrarComAptidao($execucao, $ativo, $usuario);
 
         return $execucao->refresh();
+    }
+
+    /** A OS do atendimento so vale se e do mesmo tenant e do mesmo ativo (nunca amarra o checklist a uma OS de outro equipamento). */
+    private function osDoAtendimento(Asset $ativo, mixed $osId): ?string
+    {
+        if (! is_string($osId) || $osId === '') {
+            return null;
+        }
+
+        return MaintenanceOrder::withoutGlobalScopes()->where('tenant_id', $ativo->tenant_id)->where('asset_id', $ativo->id)->whereKey($osId)->value('id');
     }
 
     /** Respostas da execucao lidas sem o escopo do usuario logado: o servico tambem roda em fila/job, sem usuario do mesmo tenant. */
@@ -136,7 +151,7 @@ class ChecklistExecucaoService
     }
 
     /** @throws ValidationException */
-    private function validar($itens, array $respostas, array $dados): void
+    private function validar($itens, array $respostas, array $dados, bool $papel = false): void
     {
         $erro = fn (string $msg) => throw ValidationException::withMessages(['itens' => $msg]);
 
@@ -158,7 +173,7 @@ class ChecklistExecucaoService
                         $erro("Responda o item: {$descricao}");
                     }
 
-                    if (($r['resposta'] ?? null) === self::RESPOSTA_NAO_CONFORME && $item->exige_foto_se_nao_conforme && ! (($r['foto'] ?? null) instanceof UploadedFile)) {
+                    if (! $papel && ($r['resposta'] ?? null) === self::RESPOSTA_NAO_CONFORME && $item->exige_foto_se_nao_conforme && ! (($r['foto'] ?? null) instanceof UploadedFile)) {
                         $erro("Tire a foto do problema: {$descricao}");
                     }
                     break;
@@ -178,11 +193,20 @@ class ChecklistExecucaoService
                     }
                     break;
                 case 'foto':
-                    if (! (($r['foto'] ?? null) instanceof UploadedFile)) {
+                    if (! $papel && ! (($r['foto'] ?? null) instanceof UploadedFile)) {
                         $erro("Tire a foto: {$descricao}");
                     }
                     break;
             }
+        }
+
+        // No papel a assinatura esta na folha impressa (a foto dela fica como evidencia): so a tela exige assinar.
+        if ($papel) {
+            if (empty($dados['folhas'])) {
+                throw ValidationException::withMessages(['folhas' => 'Anexe a foto da folha preenchida.']);
+            }
+
+            return;
         }
 
         if (! str_starts_with((string) ($dados['assinatura'] ?? ''), 'data:image')) {

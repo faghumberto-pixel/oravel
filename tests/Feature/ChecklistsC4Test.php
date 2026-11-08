@@ -98,7 +98,7 @@ class ChecklistsC4Test extends TestCase
         $t ??= $this->tenant;
         $cat = AssetCategory::withoutGlobalScopes()->where('tenant_id', $t->id)->where('slug_template', $grupo)->firstOrFail();
 
-        return Asset::factory()->create(['tenant_id' => $t->id, 'asset_category_id' => $cat->id, 'status' => Asset::STATUS_DISPONIVEL]);
+        return Asset::factory()->create(['tenant_id' => $t->id, 'asset_category_id' => $cat->id, 'status' => Asset::STATUS_DISPONIVEL, 'name' => 'Ativo '.uniqid()]); // nome fixo: o da fabrica e aleatorio e entrava na busca
     }
 
     private function execucao(Asset $a, string $status = CkExecution::STATUS_APROVADO, array $extra = [], ?User $executor = null): CkExecution
