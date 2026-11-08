@@ -38,7 +38,7 @@ empilhadeira), editáveis por empresa. Entrega em fases; cada uma para e espera 
   contrato precisa estar ligada. Não há papel fixo no código: "só admin e gerente editam" se obtém dando essas permissões só a esses perfis.
 - **Qual checklist vale para o ativo/OS** (`ChecklistAplicavel`): template ligado a um grupo de checklist vale para os ativos desse grupo; template sem
   grupo de checklist vale para os ativos do mesmo grupo de equipamento (assim os padrões já servem antes de a empresa montar grupos de checklist).
-  Só entram ativos (não arquivados) do tenant. A tela da OS usa isso na C3.
+  Só entram ativos (não arquivados) do tenant. **A tela da OS passou a usar isso só depois** (correção pós-C4): ver "Checklists na OS".
 
 ## C3 — o que existe
 - **Tela de execução** (`ChecklistExecucaoMobile`, rota `/admin/checklists/ativo/{assetId}`), no mesmo desenho da tela de checklist da Frota. Chega
@@ -68,6 +68,13 @@ empilhadeira), editáveis por empresa. Entrega em fases; cada uma para e espera 
   "Frota". O espelho é idempotente (`legado_tipo`/`legado_id`) e, se falhar, vai para o log e **nunca derruba** o fluxo da Frota. Fotos da Frota não são copiadas.
 - **Cópia do que já existe** (PROD hoje): `php artisan checklists:migrar-frota {--tenant=} {--dry-run}` copia os checklists já gravados e os **modelos** da Frota.
   Os modelos entram **inativos e sem grupo**: não se aplicam a nenhum ativo, só existem para o dia da troca. Nada da Frota é alterado ou apagado.
+
+## Checklists na OS (correção pós-C4)
+- A C3 entregou a regra (`ChecklistAplicavel`) e a execução pelo Dossiê/QR, mas **não ligou a tela da OS**. Corrigido: ao abrir a OS aparece a seção
+  **"Checklists do equipamento"** com os modelos que valem para o ativo, **de onde vem o vínculo** (grupo de checklist ou grupo de equipamento), itens e críticos,
+  o botão **Executar** (abre a execução já no modelo escolhido, `?checklist=<id>`) e os **últimos checklists** do equipamento. Painel: aba "Vistoria / Checklist"
+  da OS (vale também na criação, assim que o ativo é escolhido). App do colaborador: tela da OS. A seção some sem permissão ou sem a chave do contrato.
+- Executar a partir da OS **não amarra** a execução à OS (o `ordem_servico_id` da execução continua sendo a OS aberta por item crítico reprovado).
 
 ## Fora da C4, por decisão (a fazer só depois de validar a cópia em PROD)
 - **Trocar a Frota** para ler os modelos do motor novo (hoje ela usa os modelos dela) e só então pensar em aposentar as tabelas `frota_*`.

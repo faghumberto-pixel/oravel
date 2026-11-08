@@ -20,6 +20,7 @@ use App\Models\PriorityLevel;
 use App\Models\SlaTimer;
 use App\Models\SolicitacaoLocacao;
 use App\Models\User;
+use App\Services\Checklists\ChecklistsDaOs;
 use App\Services\OsNumberGenerator;
 use App\Services\OsPhotoOcrService;
 use App\Services\Prioridade\PrioridadeDaOs;
@@ -714,6 +715,17 @@ class MaintenanceOrderResource extends Resource
                 // --- ABA 3: VISTORIA / CHECKLIST ---
                 Forms\Components\Tabs\Tab::make('Vistoria / Checklist')
                     ->schema([
+                        // Checklists por grupo de equipamento / grupo de checklist (modulo novo): os modelos que valem para o ativo desta OS.
+                        Forms\Components\Section::make('Checklists do equipamento')
+                            ->description('Modelos que valem para o ativo desta OS: pelo grupo de checklist dele ou, na falta dele, pelo grupo de equipamento.')
+                            ->visible(fn (Get $get, ?MaintenanceOrder $record) => app(ChecklistsDaOs::class)->paraAtivo($get('asset_id') ?? $record?->asset_id) !== null)
+                            ->schema([
+                                Forms\Components\Placeholder::make('checklists_do_equipamento')->hiddenLabel()
+                                    ->content(fn (Get $get, ?MaintenanceOrder $record) => view('filament.forms.checklists-da-os', [
+                                        'dados' => app(ChecklistsDaOs::class)->paraAtivo($get('asset_id') ?? $record?->asset_id),
+                                    ])),
+                            ]),
+
                         Forms\Components\Section::make('Checklist do Ativo')
                             ->schema([
                                 Forms\Components\Repeater::make('checklists')

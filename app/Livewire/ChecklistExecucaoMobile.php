@@ -57,7 +57,11 @@ class ChecklistExecucaoMobile extends Component
         Gate::authorize('view', $this->ativo);
         Gate::authorize('create', CkExecution::class);
 
-        $this->templateId = $this->templates->count() === 1 ? $this->templates->first()->id : null;
+        // O link da OS manda ?checklist=<id>: so vale se o modelo se aplica a este ativo.
+        $pedido = (string) request()->query('checklist', '');
+        $this->templateId = $this->templates->contains('id', $pedido)
+            ? $pedido
+            : ($this->templates->count() === 1 ? $this->templates->first()->id : null);
         $this->iniciadoEm = now()->toIso8601String();
     }
 

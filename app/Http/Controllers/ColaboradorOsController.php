@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
+use App\Services\Checklists\ChecklistsDaOs;
 
 /**
  * OS no app do colaborador. O caminho é sempre PELO EQUIPAMENTO (QR, patrimônio, placa, TAG ou nome): acha o ativo,
@@ -125,6 +126,7 @@ class ColaboradorOsController extends Controller
             'dias' => SituacaoOs::diasEmAberto($os),
             'fechada' => in_array($os->status, SituacaoOs::FECHADAS, true),
             'podeExecutar' => ! in_array($os->status, SituacaoOs::FECHADAS, true) && Gate::allows('update', $os),
+            'checklists' => app(ChecklistsDaOs::class)->paraOrdemServico($os),
         ]);
     }
 }
