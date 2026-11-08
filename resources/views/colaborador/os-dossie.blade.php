@@ -56,6 +56,21 @@
         @endif
     @endforeach
 
+    @if(! empty($checklists) && count($checklists['modelos']) > 0)
+        <section class="mt-3 rounded-xl bg-white p-4 border border-zinc-200 shadow-sm" data-testid="checklists-da-os">
+            <h2 class="text-xs font-bold uppercase tracking-wide text-zinc-600">Checklists do equipamento</h2>
+            @foreach($checklists['modelos'] as $m)
+                <div class="mt-2 border-t border-zinc-200 pt-2">
+                    <p class="text-sm font-bold text-zinc-900">{{ $m['template']->nome }}</p>
+                    <p class="text-[11px] text-zinc-500">{{ $m['itens'] }} itens · {{ $m['criticos'] }} críticos · {{ $m['motivo'] }}</p>
+                    @if($checklists['pode_executar'])
+                        <a href="{{ route('ck.execucao.mobile', ['assetId' => $checklists['ativo']->id, 'checklist' => $m['template']->id]) }}" class="mt-2 flex min-h-[3rem] items-center justify-center rounded-xl bg-emerald-600 text-sm font-bold text-white active:bg-emerald-600">📋 EXECUTAR CHECKLIST</a>
+                    @endif
+                </div>
+            @endforeach
+        </section>
+    @endif
+
     @if($os->pendencias->isNotEmpty())
         <section class="mt-3 rounded-xl bg-white p-4 border border-zinc-200 shadow-sm">
             <h2 class="text-xs font-bold uppercase tracking-wide text-zinc-600">Pendências ({{ $os->pendencias->count() }})</h2>
