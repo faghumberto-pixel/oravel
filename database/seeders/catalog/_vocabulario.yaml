@@ -1,0 +1,36 @@
+# G1 -- vocabulario do catalogo de equipamentos (TEMPLATE INICIAL; a fonte da verdade e o banco, por tenant).
+# Valores abaixo sao referencia inicial e editaveis. Normas citadas (NR-10, NR-11, NR-12, NR-13, NR-18, NR-35,
+# CTB/ANTT) sao HIPOTESES a VALIDAR com o responsavel tecnico -- nada aqui afirma exigencia legal.
+versao: 1
+
+medidores: [horimetro, km, ambos, dias]
+
+criticidades: [critica, alta, media, baixa]
+
+calendarios: [comercial, 24x7]
+
+tipos_atributo: [texto, numero, selecao, booleano, data]
+
+tipos_item: [checklist, documento, inspecao, acessorio, operador]
+
+# Efeito de cada requisito na aptidao (Apto / Apto com restricao / Inapto).
+efeitos_requisito:
+  IMP:   {tipo: checklist, descricao: "Impeditivo: reprovado = Inapto e gera OS"}
+  ALR:   {tipo: checklist, descricao: "Alerta: reprovado = Apto com restricao"}
+  DOC:   {tipo: documento, descricao: "Documento com validade: vencido = Inapto (configuravel)"}
+  INSP:  {tipo: inspecao,  descricao: "Inspecao periodica por data: vencida = Inapto"}
+  ACESS: {tipo: acessorio, descricao: "Acessorio que acompanha o ativo: faltando = alerta ou impeditivo"}
+
+efeitos_regra: [restricao, inapto, bloqueia_alocacao]
+
+# Preventiva vencida: ate X% do intervalo = Apto com restricao; acima = Inapto (editavel por tenant).
+preventiva:
+  tolerancia_pct_padrao: 10
+
+# SLA padrao por criticidade (editavel por tenant e por grupo). Minutos; "1 dia util" = 480 min comerciais.
+# Resolucao fica em aberto de proposito (a definir pelo tenant). Reaproveita a politica de SLA da F2 na fase 7.
+sla_padrao:
+  critica: {resposta_min: 60,   calendario: 24x7}
+  alta:    {resposta_min: 240,  calendario: comercial}
+  media:   {resposta_min: 480,  calendario: comercial}
+  baixa:   {resposta_min: 1440, calendario: comercial}   # 3 dias uteis = 3 x 480 min comerciais
