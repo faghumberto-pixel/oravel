@@ -1,0 +1,48 @@
+# Checklists -- GUINDASTE. TEMPLATE INICIAL, tudo editavel pelo tenant (a fonte da verdade e o banco).
+# REVISAR COM O RESPONSAVEL TECNICO ANTES DE USO EM PRODUCAO. As normas citadas sao hipoteses de referencia e nao afirmam
+# conformidade legal automatica. Plano de icamento e ART seguem como documentos do catalogo; aqui so a conferencia no dia.
+versao: 1
+
+template:
+  slug: guindaste-pre-uso
+  grupo: guindaste
+  nome: "Checklist de pré-uso do guindaste"
+  tipo: pre_uso
+  periodicidade: por_uso
+  referencia_manual: "NR-11, NR-12 e NR-18 (hipótese, validar); tabela de carga e manual do fabricante"
+  observacoes: "Faça antes de cada içamento. Item crítico não conforme: não iniciar a operação."
+
+secoes:
+  - slug: icamento
+    titulo: "Içamento"
+    itens:
+      - {slug: cabo-aco-polias, descricao: "Cabo de aço sem fio rompido, amassado ou corrosão, e polias girando livres", critico: true, requisito: cabos-aco, referencia: "NR-11 (validar)"}
+      - {slug: gancho-trava, descricao: "Gancho sem deformação e trava de segurança funcionando", critico: true, requisito: ganchos-travas, referencia: "NR-11 (validar)"}
+      - {slug: limitador-carga-momento, descricao: "Limitador de carga/momento ligado e funcionando", critico: true, requisito: limitador-momento}
+      - {slug: tabela-carga, descricao: "Tabela de carga legível e disponível na cabine"}
+      - {slug: lanca-extensoes, descricao: "Lança e extensões sem empenamento, trinca ou folga excessiva", critico: true}
+  - slug: base-estabilidade
+    titulo: "Base e estabilidade"
+    itens:
+      - {slug: estabilizadores-calcos, descricao: "Estabilizadores totalmente estendidos e apoiados em calços adequados", critico: true, requisito: estabilizadores}
+      - {slug: nivelamento, descricao: "Equipamento nivelado (nível/inclinômetro dentro do limite)"}
+      - {slug: piso-terreno, descricao: "Piso resistente e sem cavidade, galeria ou rede enterrada no apoio", referencia: "NR-18 (validar)"}
+  - slug: hidraulica-freios
+    titulo: "Hidráulica e freios"
+    itens:
+      - {slug: nivel-hidraulico, descricao: "Nível do óleo hidráulico dentro da marca"}
+      - {slug: mangueiras-vazamentos, descricao: "Mangueiras e cilindros sem vazamento ou ressecamento", critico: true, requisito: vazamentos}
+      - {slug: freios, descricao: "Freios de serviço, estacionamento e do giro funcionando", critico: true, requisito: freios}
+  - slug: sinalizacao-visibilidade
+    titulo: "Alarmes e visibilidade"
+    itens:
+      - {slug: alarmes, descricao: "Alarmes sonoros e luzes funcionando (inclusive alarme de ré)", requisito: alarmes}
+      - {slug: camera-visibilidade, descricao: "Câmeras, espelhos e visibilidade da cabine em ordem"}
+  - slug: operacao-seguranca
+    titulo: "Operação e segurança da área"
+    itens:
+      - {slug: plano-icamento, descricao: "Plano de içamento conferido para esta operação (peso, raio e rota)", critico: true, referencia: "NR-11 e NR-18 (validar)"}
+      - {slug: area-isolada, descricao: "Área de movimentação isolada e sinalizada, sem pessoas sob a carga", critico: true, referencia: "NR-11 (validar)"}
+      - {slug: condicao-vento, descricao: "Condição de vento e clima dentro do limite do fabricante", critico: true}
+      - {slug: documentacao-operador, descricao: "Operador e sinaleiro com habilitação e documentos em dia", critico: true, referencia: "NR-11 (validar)"}
+      - {slug: horimetro, descricao: "Horímetro atual", tipo_resposta: numerico, unidade: h}

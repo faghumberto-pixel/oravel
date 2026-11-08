@@ -1,0 +1,49 @@
+# Checklists -- EMPILHADEIRA. TEMPLATE INICIAL, tudo editavel pelo tenant (a fonte da verdade e o banco).
+# REVISAR COM O RESPONSAVEL TECNICO ANTES DE USO EM PRODUCAO. As normas citadas sao hipoteses de referencia e nao afirmam
+# conformidade legal automatica.
+versao: 1
+
+template:
+  slug: empilhadeira-pre-uso
+  grupo: empilhadeira
+  nome: "Checklist de pré-uso da empilhadeira"
+  tipo: pre_uso
+  periodicidade: por_uso
+  referencia_manual: "NR-11 e NR-12 (hipótese, validar); manual do fabricante"
+  observacoes: "Faça no início do turno, antes de operar. Item crítico não conforme: não operar a empilhadeira."
+
+secoes:
+  - slug: mastro-garfos
+    titulo: "Garfos, mastro e hidráulica"
+    itens:
+      - {slug: garfos-trincas, descricao: "Garfos sem trinca, empenamento ou desgaste excessivo, e travados no carro", critico: true, requisito: garfos-corrente, referencia: "NR-11 (validar)"}
+      - {slug: correntes-mastro, descricao: "Correntes do mastro com tensão igual, sem elo travado ou folga", critico: true, requisito: garfos-corrente, referencia: "NR-11 (validar)"}
+      - {slug: cilindros-vazamentos, descricao: "Cilindros e mangueiras sem vazamento", critico: true, requisito: hidraulico-vazamentos}
+      - {slug: comando-hidraulico, descricao: "Comandos de elevação, inclinação e deslocamento lateral respondem e voltam ao neutro"}
+      - {slug: protetor-carga, descricao: "Encosto/protetor de carga íntegro e firme", referencia: "NR-11 (validar)"}
+  - slug: rodagem
+    titulo: "Rodagem, freios e direção"
+    itens:
+      - {slug: pneus-rodas, descricao: "Pneus e rodas sem corte, desgaste excessivo ou porca solta", requisito: pneus}
+      - {slug: freio-servico, descricao: "Freio de serviço segurando a empilhadeira", critico: true, requisito: freios}
+      - {slug: freio-estacionamento, descricao: "Freio de estacionamento segurando em rampa leve", critico: true, requisito: freios}
+      - {slug: direcao, descricao: "Direção sem folga ou esforço excessivo", critico: true, requisito: direcao}
+  - slug: sinalizacao-seguranca
+    titulo: "Sinalização e segurança do operador"
+    itens:
+      - {slug: buzina, descricao: "Buzina funcionando", requisito: buzina-alarme-re}
+      - {slug: luz-alarme-re, descricao: "Luz de ré e alarme sonoro de ré funcionando", requisito: buzina-alarme-re}
+      - {slug: luzes, descricao: "Faróis e giroflex funcionando", requisito: luzes}
+      - {slug: cinto, descricao: "Cinto de segurança travando e sem desgaste", critico: true, requisito: cinto, referencia: "NR-11 (validar)"}
+      - {slug: extintor, descricao: "Extintor presente, carregado e dentro da validade"}
+  - slug: energia
+    titulo: "Energia"
+    itens:
+      - {slug: bateria-eletrica, descricao: "Elétrica: bateria carregada, bornes e cabos sem desgaste ou ressecamento, e eletrólito no nível", requisito: bateria-glp}
+      - {slug: combustivel-glp, descricao: "Combustão: combustível suficiente e, se GLP, cilindro firme, sem vazamento e com mangueira em bom estado", critico: true, requisito: bateria-glp}
+  - slug: operador-identificacao
+    titulo: "Operador e identificação"
+    itens:
+      - {slug: plaqueta-capacidade, descricao: "Plaqueta de capacidade de carga legível e coerente com os garfos instalados", critico: true, referencia: "NR-11 (validar)"}
+      - {slug: habilitacao-operador, descricao: "Operador com habilitação/capacitação válida para empilhadeira", critico: true, referencia: "NR-11 (validar)"}
+      - {slug: horimetro, descricao: "Horímetro atual", tipo_resposta: numerico, unidade: h}

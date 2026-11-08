@@ -1,0 +1,50 @@
+# Checklists -- VEICULO LEVE (saida). TEMPLATE INICIAL, tudo editavel pelo tenant (a fonte da verdade e o banco).
+# REVISAR COM O RESPONSAVEL TECNICO ANTES DE USO EM PRODUCAO. As normas citadas sao hipoteses de referencia e nao afirmam
+# conformidade legal automatica. Na C4 este checklist passa a ser o mesmo usado pelo modulo Frota (saida/retorno), sem duplicar tabelas.
+versao: 1
+
+template:
+  slug: veiculo-leve-saida
+  grupo: veiculos-leves
+  nome: "Checklist de saída do veículo leve"
+  tipo: saida
+  periodicidade: por_uso
+  referencia_manual: "CTB (hipótese, validar); manual do veículo"
+  observacoes: "Faça antes de sair com o veículo. Freio, direção, pneu ou cinto não conforme: não liberar o veículo."
+
+secoes:
+  - slug: documentos
+    titulo: "Documentos"
+    itens:
+      - {slug: crlv, descricao: "CRLV (licenciamento) do veículo no carro e em dia", critico: true, referencia: "CTB (validar)"}
+      - {slug: cnh, descricao: "CNH do condutor válida para a categoria do veículo", critico: true, referencia: "CTB (validar)"}
+  - slug: rodagem-seguranca
+    titulo: "Rodagem e segurança"
+    itens:
+      - {slug: pneus, descricao: "Pneus sem corte ou bolha, com sulco e calibragem corretos", critico: true, requisito: pneus}
+      - {slug: estepe, descricao: "Estepe, macaco e chave de roda presentes", requisito: triangulo-macaco}
+      - {slug: freios, descricao: "Pedal de freio firme e freio de mão segurando", critico: true, requisito: freios}
+      - {slug: direcao, descricao: "Direção sem folga ou ruído estranho", critico: true, requisito: direcao}
+      - {slug: cinto, descricao: "Cintos de segurança travando e sem desgaste", critico: true, requisito: cinto}
+      - {slug: extintor, descricao: "Extintor presente e dentro da validade", requisito: extintor, referencia: "CTB (validar)"}
+      - {slug: triangulo, descricao: "Triângulo de sinalização presente", requisito: triangulo-macaco, referencia: "CTB (validar)"}
+  - slug: luzes-visibilidade
+    titulo: "Luzes e visibilidade"
+    itens:
+      - {slug: luzes-setas, descricao: "Faróis, lanternas, freio, setas e pisca-alerta funcionando", requisito: luzes}
+      - {slug: limpador-parabrisa, descricao: "Limpador e parabrisa sem trinca e com esguicho funcionando"}
+  - slug: mecanica-fluidos
+    titulo: "Mecânica e fluidos"
+    itens:
+      - {slug: oleo-motor, descricao: "Nível do óleo do motor dentro da marca", requisito: oleo}
+      - {slug: agua-arrefecimento, descricao: "Nível da água do radiador", requisito: arrefecimento}
+      - {slug: fluido-freio, descricao: "Nível do fluido de freio dentro da marca"}
+      - {slug: bateria, descricao: "Bateria fixa e bornes limpos"}
+      - {slug: vazamentos, descricao: "Sem manchas de óleo, água ou combustível sob o veículo", requisito: vazamentos}
+      - {slug: luz-painel, descricao: "Painel sem luz de alerta acesa", requisito: luz-painel}
+  - slug: estado-geral
+    titulo: "Estado do veículo"
+    itens:
+      - {slug: avarias-lataria, descricao: "Avarias na lataria (riscos, amassados, vidros): registrar com fotos", tipo_resposta: foto, obrigatorio: false}
+      - {slug: combustivel, descricao: "Nível de combustível", tipo_resposta: selecao, opcoes: ["Reserva", "1/4", "1/2", "3/4", "Cheio"]}
+      - {slug: quilometragem, descricao: "Quilometragem atual", tipo_resposta: numerico, unidade: km}

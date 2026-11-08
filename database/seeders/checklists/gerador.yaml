@@ -1,0 +1,46 @@
+# Checklists -- GERADOR. TEMPLATE INICIAL, tudo editavel pelo tenant (a fonte da verdade e o banco).
+# REVISAR COM O RESPONSAVEL TECNICO ANTES DE USO EM PRODUCAO. As normas citadas sao hipoteses de referencia e nao afirmam
+# conformidade legal automatica. "requisito" liga o item ao requisito equivalente do catalogo (G1); "critico" reprovado = inapto (C3).
+versao: 1
+
+template:
+  slug: gerador-pre-uso
+  grupo: gerador
+  nome: "Checklist de pré-uso do gerador"
+  tipo: pre_uso
+  periodicidade: por_uso
+  referencia_manual: "NR-10 e NR-12 (hipótese, validar); manual do fabricante"
+  observacoes: "Faça antes de ligar o gerador em cada uso. Item crítico não conforme: não liberar o equipamento."
+
+secoes:
+  - slug: motor-fluidos
+    titulo: "Motor e fluidos"
+    itens:
+      - {slug: nivel-oleo, descricao: "Nível do óleo do motor dentro da marca", critico: true, requisito: oleo, referencia: "Manual do fabricante"}
+      - {slug: liquido-arrefecimento, descricao: "Nível do líquido de arrefecimento e mangueiras sem ressecamento", critico: true, requisito: arrefecimento, referencia: "Manual do fabricante"}
+      - {slug: combustivel-nivel, descricao: "Combustível suficiente e sem água no tanque", requisito: combustivel}
+      - {slug: vazamentos, descricao: "Sem vazamento de óleo, combustível ou líquido de arrefecimento", critico: true, requisito: vazamentos}
+      - {slug: filtro-ar, descricao: "Filtro de ar limpo e bem fixado"}
+      - {slug: correias, descricao: "Correias com tensão correta e sem trincas"}
+  - slug: eletrico
+    titulo: "Parte elétrica"
+    itens:
+      - {slug: bateria-bornes, descricao: "Bateria fixa, bornes limpos e apertados", critico: true, requisito: bateria-partida}
+      - {slug: painel-disjuntores, descricao: "Painel fechado, disjuntores e indicadores funcionando", critico: true, requisito: disjuntor-painel, referencia: "NR-10 (validar)"}
+      - {slug: parada-emergencia, descricao: "Botão de parada de emergência testado e funcionando", critico: true, referencia: "NR-12 (validar)"}
+      - {slug: aterramento, descricao: "Aterramento da carcaça ligado e firme", critico: true, requisito: aterramento, referencia: "NR-10 (validar)"}
+      - {slug: cabos-tomadas, descricao: "Cabos, plugues e tomadas sem emenda, corte ou aquecimento", requisito: cabos-conexoes, referencia: "NR-10 (validar)"}
+  - slug: seguranca-instalacao
+    titulo: "Segurança e instalação"
+    itens:
+      - {slug: silencioso-escapamento, descricao: "Silencioso e escapamento sem furo e com saída livre"}
+      - {slug: extintor, descricao: "Extintor presente, carregado e dentro da validade", referencia: "NR-23 (validar)"}
+      - {slug: sinalizacao, descricao: "Sinalização de risco elétrico e área delimitada", referencia: "NR-10 (validar)"}
+      - {slug: bacia-contencao, descricao: "Bacia de contenção limpa e sem acúmulo de líquido"}
+  - slug: teste
+    titulo: "Partida e carga"
+    itens:
+      - {slug: horimetro, descricao: "Horímetro atual", tipo_resposta: numerico, unidade: h}
+      - {slug: teste-partida, descricao: "Partida normal, sem ruído estranho ou fumaça excessiva"}
+      - {slug: tensao-saida, descricao: "Tensão de saída em carga", tipo_resposta: numerico, unidade: V, critico: true}
+      - {slug: frequencia-saida, descricao: "Frequência de saída em carga", tipo_resposta: numerico, unidade: Hz}

@@ -1,0 +1,48 @@
+# Checklists -- MUNK (caminhao com guindaste articulado). TEMPLATE INICIAL, tudo editavel pelo tenant (a fonte da verdade e o banco).
+# REVISAR COM O RESPONSAVEL TECNICO ANTES DE USO EM PRODUCAO. As normas citadas sao hipoteses de referencia e nao afirmam
+# conformidade legal automatica. Medidores: km do chassi e horas do guindaste.
+versao: 1
+
+template:
+  slug: munk-pre-uso
+  grupo: munk
+  nome: "Checklist de pré-uso do munk"
+  tipo: pre_uso
+  periodicidade: por_uso
+  referencia_manual: "CTB, NR-11 e NR-12 (hipótese, validar); tabela de carga e manual do fabricante"
+  observacoes: "Faça antes de sair e antes de cada operação com a lança. Item crítico não conforme: não operar nem liberar."
+
+secoes:
+  - slug: caminhao
+    titulo: "Caminhão"
+    itens:
+      - {slug: pneus, descricao: "Pneus e estepe sem corte, bolha ou desgaste excessivo, com pressão correta", critico: true, requisito: freios-pneus-chassi, referencia: "CTB (validar)"}
+      - {slug: freios, descricao: "Freios de serviço e de estacionamento funcionando", critico: true, requisito: freios-pneus-chassi, referencia: "CTB (validar)"}
+      - {slug: luzes, descricao: "Faróis, lanternas, setas e luz de ré funcionando", referencia: "CTB (validar)"}
+      - {slug: oleo-agua, descricao: "Nível de óleo do motor e líquido de arrefecimento"}
+      - {slug: odometro, descricao: "Quilometragem atual do chassi", tipo_resposta: numerico, unidade: km}
+  - slug: guindaste
+    titulo: "Guindaste articulado"
+    itens:
+      - {slug: comandos-hidraulicos, descricao: "Comandos hidráulicos respondem em todos os movimentos e voltam ao neutro", critico: true, requisito: comandos}
+      - {slug: estabilizadores, descricao: "Estabilizadores estendem, travam e apoiam firme no piso", critico: true, requisito: estabilizadores}
+      - {slug: lanca-cilindros, descricao: "Lança e cilindros sem empenamento, trinca ou vazamento", critico: true}
+      - {slug: cabo-gancho, descricao: "Cabo, corrente e gancho sem desgaste, deformação ou fio rompido", critico: true, requisito: cabos-correntes-ganchos, referencia: "NR-11 (validar)"}
+      - {slug: trava-gancho, descricao: "Trava de segurança do gancho funcionando", critico: true, requisito: trava-gancho, referencia: "NR-11 (validar)"}
+      - {slug: limitador-carga, descricao: "Limitador de carga/momento ligado e funcionando", critico: true, requisito: limitador-carga}
+      - {slug: tabela-carga, descricao: "Tabela de carga legível e visível ao operador"}
+      - {slug: horimetro-guindaste, descricao: "Horímetro atual do guindaste", tipo_resposta: numerico, unidade: h}
+  - slug: hidraulica-transmissao
+    titulo: "Hidráulica e tomada de força"
+    itens:
+      - {slug: pto, descricao: "Tomada de força (PTO) engata e desengata sem ruído ou folga"}
+      - {slug: nivel-hidraulico, descricao: "Nível do óleo hidráulico dentro da marca"}
+      - {slug: vazamentos, descricao: "Sem vazamento em mangueiras, cilindros e conexões", critico: true, requisito: vazamentos-hidraulicos}
+  - slug: carga-seguranca
+    titulo: "Carga e segurança"
+    itens:
+      - {slug: carroceria-amarracao, descricao: "Carroceria íntegra e carga amarrada com cintas ou correntes em bom estado", referencia: "CTB (validar)"}
+      - {slug: calcos, descricao: "Calços das rodas e calços dos estabilizadores disponíveis"}
+      - {slug: extintor, descricao: "Extintor presente, carregado e dentro da validade"}
+      - {slug: sinalizacao, descricao: "Cones, sinalização e luz giratória disponíveis", requisito: sinalizacao}
+      - {slug: documentos-operador, descricao: "CRLV do veículo e habilitação/capacitação do operador em dia", critico: true, referencia: "CTB e NR-11 (validar)"}
