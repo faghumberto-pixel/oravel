@@ -7,7 +7,7 @@ As normas citadas (NR-10, NR-11, NR-12, NR-13, NR-18, NR-35, CTB/ANTT) são **hi
 
 Total a validar: **33** item(ns).
 
-## Caminhao
+## Caminhão
 
 | ✔ | Tipo | Item | Norma | O que validar | Validado por / data |
 |---|---|---|---|---|---|
@@ -76,7 +76,7 @@ Total a validar: **33** item(ns).
 | ☐ | Requisito (DOC) | CRLV / licenciamento | CTB (validar) | A norma se aplica a este grupo? Qual a periodicidade/validade? (a validade é informada no registro do cumprimento) |  |
 | ☐ | Preventiva (intervalo provisório) | Revisao a cada 180 dias — 180 h | Manual do fabricante | Conferir/ajustar o intervalo conforme o manual do fabricante deste modelo. |  |
 
-## Veiculo leve
+## Veículo leve
 
 | ✔ | Tipo | Item | Norma | O que validar | Validado por / data |
 |---|---|---|---|---|---|

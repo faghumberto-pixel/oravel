@@ -5,8 +5,8 @@ versao: 1
 
 grupo:
   slug: caminhao
-  nome: Caminhao
-  descricao: "Caminhoes de carga (toco, truck, cavalo mecanico)"
+  nome: Caminhão
+  descricao: "Caminhões de carga (toco, truck, cavalo mecânico)"
   medidor: km
   criticidade_padrao: media
   exige_operador: false      # habilitacao (CNH categoria) NAO e avaliada nesta fase: depende de validacao de norma

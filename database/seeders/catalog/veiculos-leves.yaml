@@ -6,8 +6,8 @@ versao: 1
 
 grupo:
   slug: veiculos-leves
-  nome: Veiculo leve
-  descricao: "Carros, utilitarios e vans de apoio"
+  nome: Veículo leve
+  descricao: "Carros, utilitários e vans de apoio"
   medidor: km
   criticidade_padrao: baixa
   exige_operador: false
