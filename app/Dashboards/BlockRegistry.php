@@ -2,14 +2,18 @@
 
 namespace App\Dashboards;
 
+use App\Dashboards\Blocks\Administrativo;
 use App\Dashboards\Blocks\Ativos;
 use App\Dashboards\Blocks\Comercial;
+use App\Dashboards\Blocks\Compras;
 use App\Dashboards\Blocks\Financeiro;
 use App\Dashboards\Blocks\Frota;
 use App\Dashboards\Blocks\InteligenciaAtivos;
 use App\Dashboards\Blocks\Logistica;
 use App\Dashboards\Blocks\Manutencao;
 use App\Dashboards\Blocks\MateriaisPecas;
+use App\Dashboards\Blocks\Planejamento;
+use App\Dashboards\Blocks\RecursosHumanos;
 
 /**
  * Catálogo de blocos. Lista explícita (e não descoberta por pasta) para que uma classe nova nunca apareça
@@ -148,6 +152,22 @@ class BlockRegistry
             Ativos\AtivosPorCategoria::class,
             Ativos\AtivosPorCliente::class,
             Ativos\VencimentosDeDocumentos::class,
+            // Paineis por area (Administrativo, RH, Compras, Planejamento)
+            Administrativo\AssinaturasPendentes::class,
+            Administrativo\AssinaturasPorSituacao::class,
+            RecursosHumanos\ColaboradoresAtivos::class,
+            RecursosHumanos\ColaboradoresPorSituacao::class,
+            RecursosHumanos\AdmissoesPorMes::class,
+            RecursosHumanos\CertificacoesAVencer::class,
+            RecursosHumanos\EpiADevolver::class,
+            RecursosHumanos\PontoDeHoje::class,
+            Compras\PedidosAtrasados::class,
+            Compras\ComprasPorFornecedor::class,
+            Compras\ComprasPorMes::class,
+            Planejamento\PreventivasVencidas::class,
+            Planejamento\PreventivasMaisAtrasadas::class,
+            Planejamento\PreventivasAVencer::class,
+            Planejamento\CoberturaDePlanos::class,
         ];
 
         $porChave = [];
