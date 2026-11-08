@@ -16,5 +16,5 @@ class CatalogoInstalacao extends Model
 
     protected $guarded = [];
 
-    protected $casts = ['instalado_em' => 'datetime', 'diff_pendente' => 'array', 'versao_instalada' => 'integer'];
+    protected $casts = ['instalado_em' => 'datetime', 'versao_instalada' => 'integer'];
 }

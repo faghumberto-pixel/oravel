@@ -69,4 +69,4 @@ então o sqlite do `phpunit.xml` NÃO vale). Rodar só em banco descartável: `D
   **Ignorar**: mantém a versão do tenant (vira personalizado) e para de oferecer. **Restaurar padrão** (item ou grupo inteiro): sobrescreve a personalização, **sempre** com justificativa e log; reativa o que estava arquivado/desativado;
   itens que o tenant criou ficam intactos; a ordem escolhida é preservada.
 - **Prévia de impacto** na aptidão: simula o aceite/restauração dentro de uma transação **desfeita** (nada é gravado nem logado). Depois de aceitar/restaurar, a aptidão do grupo é recalculada em fila.
-- O mapeamento YAML → campos agora é único (`CatalogoTemplate`): instalador e diff não divergem. A coluna `catalogo_instalacoes.diff_pendente` segue reservada e sem uso (o diff é calculado sob demanda).
+- O mapeamento YAML → campos agora é único (`CatalogoTemplate`): instalador e diff não divergem. O diff é calculado sob demanda (a coluna `diff_pendente`, que nunca foi usada, foi removida).

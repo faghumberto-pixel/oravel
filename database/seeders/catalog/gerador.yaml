@@ -11,6 +11,7 @@ grupo:
   criticidade_padrao: media
   exige_operador: false
   ordem: 10
+  validar: "NR-10: confirmar se alguma rotina de documento/laudo se aplica (o padrao nao define nenhuma rotina legal fixa para gerador)"   # validar com o responsavel tecnico
 
 atributos:
   - {slug: kva, rotulo: "Potencia", tipo: numero, unidade: kVA, obrigatorio: true}
