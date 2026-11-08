@@ -56,3 +56,12 @@ itens:
   - {slug: laudo-periodico-guindaste, tipo: inspecao, nome: "Laudo periodico do guindaste"}
   - {slug: inspecao-periodica-plataforma, tipo: inspecao, nome: "Inspecao periodica da plataforma"}
   - {slug: revisao-cabos-aco, tipo: inspecao, nome: "Revisao de cabos de aco e componentes de icamento"}
+  # --- Itens da fase 8 (veiculo leve, caminhao, reboque) ---
+  - {slug: luz-painel,         tipo: checklist, nome: "Painel sem luz de alerta acesa"}
+  - {slug: triangulo-macaco,   tipo: acessorio, nome: "Triangulo e macaco"}
+  - {slug: amarracao-carga,    tipo: checklist, nome: "Amarracao e fixacao da carga"}
+  - {slug: engate-pino-rei,    tipo: checklist, nome: "Engate / pino-rei / quinta roda"}
+  - {slug: corrente-seguranca, tipo: checklist, nome: "Corrente de seguranca do reboque"}
+  - {slug: estrutura-chassi,   tipo: checklist, nome: "Estrutura e chassi (trincas, corrosao)"}
+  - {slug: rntrc,              tipo: documento, nome: "RNTRC (transporte rodoviario de cargas)"}
+  - {slug: tacografo,          tipo: inspecao,  nome: "Afericao do tacografo"}

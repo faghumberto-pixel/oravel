@@ -1,0 +1,43 @@
+# G1 -- grupo REBOQUE / SEMIRREBOQUE (sem motor: medidor por dias). TEMPLATE INICIAL, tudo editavel pelo tenant.
+# Itens marcados "validar" dependem de norma/CTB: VALIDAR COM O RESPONSAVEL TECNICO antes de ligar a chave em cliente real.
+versao: 1
+
+grupo:
+  slug: reboque
+  nome: Reboque
+  descricao: "Reboques e semirreboques (prancha, carreta, carretinha)"
+  medidor: dias
+  criticidade_padrao: media
+  exige_operador: false
+  ordem: 90
+
+atributos:
+  - {slug: placa, rotulo: "Placa", tipo: texto, obrigatorio: true}
+  - {slug: capacidade-kg, rotulo: "Capacidade de carga", tipo: numero, unidade: kg, obrigatorio: false}
+  - {slug: eixos, rotulo: "Eixos", tipo: numero, obrigatorio: false}
+  - {slug: tipo, rotulo: "Tipo", tipo: selecao, obrigatorio: false, opcoes: [prancha, carreta, carretinha, outro]}
+
+requisitos:
+  - {slug: crlv, item: crlv, efeito: DOC, norma: "CTB (validar)", validar_norma: true}
+  - {slug: engate-pino-rei, item: engate-pino-rei, efeito: IMP, gera_os: true}
+  - {slug: corrente-seguranca, item: corrente-seguranca, efeito: IMP, gera_os: true}
+  - {slug: freios, item: freios, efeito: IMP, gera_os: true}
+  - {slug: pneus, item: pneus, efeito: IMP, gera_os: true}
+  - {slug: estrutura-chassi, item: estrutura-chassi, efeito: IMP, gera_os: true}
+  - {slug: luzes, item: luzes, efeito: ALR}
+  - {slug: amarracao-carga, item: amarracao-carga, efeito: ALR}
+
+preventivas:
+  - {slug: revisao-180dias, nome: "Revisao a cada 180 dias", medidor: dias, intervalo: 180, parametros: {validar_manual: true}}
+
+operadores: []
+
+pecas_criticas: []
+
+sla:
+  - {slug: critica, criticidade: critica, resposta_min: 60,   calendario: 24x7}
+  - {slug: alta,    criticidade: alta,    resposta_min: 240,  calendario: comercial}
+  - {slug: media,   criticidade: media,   resposta_min: 480,  calendario: comercial}
+  - {slug: baixa,   criticidade: baixa,   resposta_min: 1440, calendario: comercial}
+
+regras: []

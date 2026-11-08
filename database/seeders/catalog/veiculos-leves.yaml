@@ -1,0 +1,49 @@
+# G1 -- grupo VEICULOS LEVES. TEMPLATE INICIAL, tudo editavel pelo tenant.
+# Intervalos de preventiva devem seguir o manual do fabricante. Itens marcados "validar" dependem de norma/CTB:
+# VALIDAR COM O RESPONSAVEL TECNICO antes de ligar a chave em cliente real (pendencia bloqueante).
+# Convive com o modulo Frota (checklist de saida/retorno): nesta fase o catalogo NAO altera a Frota.
+versao: 1
+
+grupo:
+  slug: veiculos-leves
+  nome: Veiculo leve
+  descricao: "Carros, utilitarios e vans de apoio"
+  medidor: km
+  criticidade_padrao: baixa
+  exige_operador: false
+  ordem: 70
+
+atributos:
+  - {slug: placa, rotulo: "Placa", tipo: texto, obrigatorio: true}
+  - {slug: combustivel-tipo, rotulo: "Combustivel", tipo: selecao, obrigatorio: false, opcoes: [flex, gasolina, diesel, etanol, eletrico]}
+  - {slug: ano-modelo, rotulo: "Ano/modelo", tipo: numero, obrigatorio: false}
+
+requisitos:
+  - {slug: crlv, item: crlv, efeito: DOC, norma: "CTB (validar)", validar_norma: true}
+  - {slug: seguro, item: seguro, efeito: DOC}
+  - {slug: freios, item: freios, efeito: IMP, gera_os: true}
+  - {slug: direcao, item: direcao, efeito: IMP, gera_os: true}
+  - {slug: pneus, item: pneus, efeito: IMP, gera_os: true}
+  - {slug: cinto, item: cinto, efeito: IMP, gera_os: true}
+  - {slug: luzes, item: luzes, efeito: ALR}
+  - {slug: oleo, item: oleo, efeito: ALR}
+  - {slug: arrefecimento, item: arrefecimento, efeito: ALR}
+  - {slug: vazamentos, item: vazamentos, efeito: ALR}
+  - {slug: luz-painel, item: luz-painel, efeito: ALR}
+  - {slug: extintor, item: extintor, efeito: ACESS, norma: "CTB (validar)", validar_norma: true}
+  - {slug: triangulo-macaco, item: triangulo-macaco, efeito: ACESS, norma: "CTB (validar)", validar_norma: true}
+
+preventivas:
+  - {slug: revisao-10000km, nome: "Revisao a cada 10.000 km", medidor: km, intervalo: 10000, ou_dias: 180, regra_ou: primeiro, parametros: {validar_manual: true}}
+
+operadores: []
+
+pecas_criticas: []
+
+sla:
+  - {slug: critica, criticidade: critica, resposta_min: 60,   calendario: 24x7}
+  - {slug: alta,    criticidade: alta,    resposta_min: 240,  calendario: comercial}
+  - {slug: media,   criticidade: media,   resposta_min: 480,  calendario: comercial}
+  - {slug: baixa,   criticidade: baixa,   resposta_min: 1440, calendario: comercial}
+
+regras: []

@@ -36,7 +36,7 @@ então o sqlite do `phpunit.xml` NÃO vale). Rodar só em banco descartável: `D
 - Em PROD a fila é `sync` (sem worker): os jobs rodam inline; o recálculo de um grupo grande acontece dentro da requisição de salvar.
 
 ## Fase 4 — Grupos do MVP e cadastro do ativo por grupo
-- **Template:** compressor, gerador, empilhadeira, plataforma elevatória, munk e guindaste (50 itens na biblioteca). **Veículos leves, caminhão e reboque ficam na fase 8**
+- **Template:** compressor, gerador, empilhadeira, plataforma elevatória, munk e guindaste (50 itens na biblioteca). **Veículos leves, caminhão e reboque entram na fase 8**
   (dependem da unificação com `FrotaModeloChecklist`). Todo item que cita norma tem `validar_norma: true` (teste garante); operadores e a regra do guindaste também.
 - **Munk (chassi + guindaste):** medidor `ambos`. Km do chassi = `assets.odometro_atual`; horas do guindaste = `assets.horimetro_atual` (os dois já ficam no `Asset`); duas preventivas,
   uma por medidor. **Os intervalos do munk e do guindaste são PLACEHOLDER** (`parametros.validar_manual`): a especificação não os define; usar o manual do fabricante.
@@ -79,3 +79,10 @@ então o sqlite do `phpunit.xml` NÃO vale). Rodar só em banco descartável: `D
 - **Calendário:** grupo `24x7` força 24x7; `comercial` segue o calendário da empresa (se a empresa não configurou horário comercial, fica 24x7).
 - **Peças críticas** (`catalogo_pecas_criticas`): vínculo com **Material** (é o que a OS consome — não `Part`). A página **Peças críticas** (Manutenção › Cadastros) mostra, por grupo, o estoque do Material contra o mínimo: sem estoque, abaixo do mínimo, sem material vinculado, ok — da mais grave para a mais leve. É alerta de abastecimento; **não altera a aptidão** do ativo.
 - Migration aditiva `2026_12_31_100000_g1_sla_timers_origem_catalogo`. Dependência: este PR parte da pilha G1 **com a main (SLA F2–F6) mesclada**.
+
+## Fase 8 — Veículos leves, caminhão e reboque (grupos novos)
+
+- Três grupos novos no template, **aditivos e desligados por padrão** (a chave `tabela_catalogo_equipamentos` continua desligada nos contratos): **Veículos leves** (km), **Caminhão** sem guindaste (km; o munk e o guindaste seguem com grupo próprio) e **Reboque** (por dias). 8 itens novos na biblioteca (58 no total): painel sem alerta, triângulo e macaco, amarração da carga, engate/pino-rei, corrente de segurança, estrutura/chassi, RNTRC e aferição do tacógrafo.
+- Impeditivos (IMP): freios, direção, pneus e cinto nos motorizados (e vazamentos no caminhão); no reboque, engate/pino-rei, corrente de segurança, freios, pneus e estrutura. Documentos (CRLV, seguro, RNTRC) e tacógrafo "quando aplicável" (sem registro = ignorado).
+- **Itens que citam CTB/ANTT/tacógrafo e os intervalos de preventiva (km/dias) estão marcados para validar** — o checklist subiu de 21 para 33 itens em `docs/G1_VALIDACAO_NORMAS.md`. Habilitação do condutor (CNH) **não** é avaliada: `exige_operador = false`.
+- **Fora desta fase, por decisão:** (1) o módulo **Frota** (`FrotaModeloChecklist`, checklist de saída/retorno) segue como está, sem ponte com a aptidão; (2) a **trava de NR do Postgres** continua sem ler a aptidão, porque as normas ainda não foram validadas. Ambos são avaliados quando o responsável técnico validar os itens.

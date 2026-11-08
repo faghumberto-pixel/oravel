@@ -86,11 +86,11 @@ class G1PendenciasNormaTest extends TestCase
         $this->assertStringContainsString('NR-10', $g->first()['validar']);
     }
 
-    public function test_intervalos_provisorios_do_munk_e_guindaste_estao_listados(): void
+    public function test_intervalos_provisorios_de_munk_guindaste_e_veiculos_estao_listados(): void
     {
         $prev = collect(app(PendenciasDeNorma::class)->levantar())->filter(fn ($l) => str_starts_with($l['tipo'], 'Preventiva'));
 
-        $this->assertSame(['Guindaste', 'Munk', 'Munk'], $prev->pluck('grupo')->sort()->values()->all());
+        $this->assertEqualsCanonicalizing(['Guindaste', 'Munk', 'Munk', 'Caminhao', 'Reboque', 'Veiculo leve'], $prev->pluck('grupo')->all());
     }
 
     public function test_o_checklist_commitado_esta_atualizado(): void

@@ -5,7 +5,18 @@
 **Pendência bloqueante:** a chave `tabela_catalogo_equipamentos` não deve ser ligada em contrato de cliente real antes de todos os itens abaixo serem validados.
 As normas citadas (NR-10, NR-11, NR-12, NR-13, NR-18, NR-35, CTB/ANTT) são **hipóteses** do template, não afirmações de exigência legal. Os valores são editáveis por empresa.
 
-Total a validar: **21** item(ns).
+Total a validar: **33** item(ns).
+
+## Caminhao
+
+| ✔ | Tipo | Item | Norma | O que validar | Validado por / data |
+|---|---|---|---|---|---|
+| ☐ | Requisito (DOC) | CRLV / licenciamento | CTB (validar) | A norma se aplica a este grupo? Qual a periodicidade/validade? (a validade é informada no registro do cumprimento) |  |
+| ☐ | Requisito (DOC) | RNTRC (transporte rodoviario de cargas) | ANTT (validar) | A norma se aplica a este grupo? Qual a periodicidade/validade? (a validade é informada no registro do cumprimento) |  |
+| ☐ | Requisito (INSP) | Afericao do tacografo | validar (aferição do tacografo) | A norma se aplica a este grupo? Qual a periodicidade/validade? (a validade é informada no registro do cumprimento) |  |
+| ☐ | Requisito (ACESS) | Extintor | CTB (validar) | A norma se aplica a este grupo? Qual a periodicidade/validade? (a validade é informada no registro do cumprimento) |  |
+| ☐ | Requisito (ACESS) | Triangulo e macaco | CTB (validar) | A norma se aplica a este grupo? Qual a periodicidade/validade? (a validade é informada no registro do cumprimento) |  |
+| ☐ | Preventiva (intervalo provisório) | Revisao a cada 10.000 km — 10000 km | Manual do fabricante | Conferir/ajustar o intervalo conforme o manual do fabricante deste modelo. |  |
 
 ## Compressor
 
@@ -57,3 +68,19 @@ Total a validar: **21** item(ns).
 |---|---|---|---|---|---|
 | ☐ | Requisito (INSP) | Inspecao periodica da plataforma | validar (NR-18/NR-35) | A norma se aplica a este grupo? Qual a periodicidade/validade? (a validade é informada no registro do cumprimento) |  |
 | ☐ | Operador | Treinamento do operador (trabalho em altura / plataforma) | NR-35 / NR-18 | Qual habilitação/capacitação é exigida e por quanto tempo vale? |  |
+
+## Reboque
+
+| ✔ | Tipo | Item | Norma | O que validar | Validado por / data |
+|---|---|---|---|---|---|
+| ☐ | Requisito (DOC) | CRLV / licenciamento | CTB (validar) | A norma se aplica a este grupo? Qual a periodicidade/validade? (a validade é informada no registro do cumprimento) |  |
+| ☐ | Preventiva (intervalo provisório) | Revisao a cada 180 dias — 180 h | Manual do fabricante | Conferir/ajustar o intervalo conforme o manual do fabricante deste modelo. |  |
+
+## Veiculo leve
+
+| ✔ | Tipo | Item | Norma | O que validar | Validado por / data |
+|---|---|---|---|---|---|
+| ☐ | Requisito (DOC) | CRLV / licenciamento | CTB (validar) | A norma se aplica a este grupo? Qual a periodicidade/validade? (a validade é informada no registro do cumprimento) |  |
+| ☐ | Requisito (ACESS) | Extintor | CTB (validar) | A norma se aplica a este grupo? Qual a periodicidade/validade? (a validade é informada no registro do cumprimento) |  |
+| ☐ | Requisito (ACESS) | Triangulo e macaco | CTB (validar) | A norma se aplica a este grupo? Qual a periodicidade/validade? (a validade é informada no registro do cumprimento) |  |
+| ☐ | Preventiva (intervalo provisório) | Revisao a cada 10.000 km — 10000 km | Manual do fabricante | Conferir/ajustar o intervalo conforme o manual do fabricante deste modelo. |  |

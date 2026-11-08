@@ -1,0 +1,52 @@
+# G1 -- grupo CAMINHAO (sem guindaste; o munk e o guindaste tem grupo proprio). TEMPLATE INICIAL, tudo editavel pelo tenant.
+# Intervalos de preventiva devem seguir o manual do fabricante. Itens marcados "validar" dependem de norma/CTB/ANTT:
+# VALIDAR COM O RESPONSAVEL TECNICO antes de ligar a chave em cliente real (pendencia bloqueante).
+versao: 1
+
+grupo:
+  slug: caminhao
+  nome: Caminhao
+  descricao: "Caminhoes de carga (toco, truck, cavalo mecanico)"
+  medidor: km
+  criticidade_padrao: media
+  exige_operador: false      # habilitacao (CNH categoria) NAO e avaliada nesta fase: depende de validacao de norma
+  ordem: 80
+
+atributos:
+  - {slug: placa, rotulo: "Placa", tipo: texto, obrigatorio: true}
+  - {slug: pbt-kg, rotulo: "PBT", tipo: numero, unidade: kg, obrigatorio: false}
+  - {slug: eixos, rotulo: "Eixos", tipo: numero, obrigatorio: false}
+  - {slug: configuracao, rotulo: "Configuracao", tipo: selecao, obrigatorio: false, opcoes: [toco, truck, cavalo-mecanico, outro]}
+
+requisitos:
+  - {slug: crlv, item: crlv, efeito: DOC, norma: "CTB (validar)", validar_norma: true}
+  - {slug: seguro, item: seguro, efeito: DOC}
+  - {slug: rntrc, item: rntrc, efeito: DOC, norma: "ANTT (validar)", validar_norma: true, parametros: {sem_registro: ignorar, quando_aplicavel: true}}
+  - {slug: tacografo, item: tacografo, efeito: INSP, norma: "validar (aferição do tacografo)", validar_norma: true, parametros: {sem_registro: ignorar, quando_aplicavel: true}}
+  - {slug: freios, item: freios, efeito: IMP, gera_os: true}
+  - {slug: direcao, item: direcao, efeito: IMP, gera_os: true}
+  - {slug: pneus, item: pneus, efeito: IMP, gera_os: true}
+  - {slug: cinto, item: cinto, efeito: IMP, gera_os: true}
+  - {slug: vazamentos, item: vazamentos, efeito: IMP, gera_os: true}
+  - {slug: luzes, item: luzes, efeito: ALR}
+  - {slug: oleo, item: oleo, efeito: ALR}
+  - {slug: arrefecimento, item: arrefecimento, efeito: ALR}
+  - {slug: luz-painel, item: luz-painel, efeito: ALR}
+  - {slug: amarracao-carga, item: amarracao-carga, efeito: ALR}
+  - {slug: extintor, item: extintor, efeito: ACESS, norma: "CTB (validar)", validar_norma: true}
+  - {slug: triangulo-macaco, item: triangulo-macaco, efeito: ACESS, norma: "CTB (validar)", validar_norma: true}
+
+preventivas:
+  - {slug: revisao-10000km, nome: "Revisao a cada 10.000 km", medidor: km, intervalo: 10000, parametros: {validar_manual: true}}
+
+operadores: []
+
+pecas_criticas: []
+
+sla:
+  - {slug: critica, criticidade: critica, resposta_min: 60,   calendario: 24x7}
+  - {slug: alta,    criticidade: alta,    resposta_min: 240,  calendario: comercial}
+  - {slug: media,   criticidade: media,   resposta_min: 480,  calendario: comercial}
+  - {slug: baixa,   criticidade: baixa,   resposta_min: 1440, calendario: comercial}
+
+regras: []

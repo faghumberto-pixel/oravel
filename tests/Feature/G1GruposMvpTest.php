@@ -22,7 +22,7 @@ use Tests\TestCase;
 
 /**
  * G1 fase 4: os grupos do MVP em YAML (compressor, gerador, empilhadeira, plataforma, munk, guindaste) conferidos contra a
- * especificacao, comparativo lado a lado e motor ponta a ponta. Leves/caminhao/reboque ficam na fase 8.
+ * especificacao, comparativo lado a lado e motor ponta a ponta. Fase 8 acrescenta veiculos leves, caminhao e reboque.
  * SEGURANCA: so roda em banco com "test" no nome.
  */
 class G1GruposMvpTest extends TestCase
@@ -77,17 +77,44 @@ class G1GruposMvpTest extends TestCase
 
     // ------------------------------------------------------------ conteudo x especificacao
 
-    public function test_os_seis_grupos_do_mvp_sao_instalados_e_leves_caminhao_reboque_nao(): void
+    public function test_os_nove_grupos_sao_instalados_com_veiculos_leves_caminhao_e_reboque(): void
     {
         foreach (self::GRUPOS as $slug) {
             $this->assertNotNull($this->g($slug));
         }
 
         foreach (['veiculos-leves', 'caminhao', 'reboque'] as $fase8) {
-            $this->assertSame(0, AssetCategory::withoutGlobalScopes()->where('tenant_id', $this->tenant->id)->where('slug', $fase8)->count());
+            $this->assertNotNull($this->g($fase8));
         }
 
-        $this->assertSame(6, AssetCategory::withoutGlobalScopes()->where('tenant_id', $this->tenant->id)->where('origem', 'sistema')->count());
+        $this->assertSame(9, AssetCategory::withoutGlobalScopes()->where('tenant_id', $this->tenant->id)->where('origem', 'sistema')->count());
+    }
+
+    public function test_veiculos_leves_caminhao_e_reboque_conforme_a_especificacao(): void
+    {
+        $leve = $this->g('veiculos-leves');
+        $this->assertSame('km', $leve->medidor);
+        $this->assertSame('baixa', $leve->criticidade_padrao);
+        $this->assertFalse($leve->exige_operador);
+
+        $caminhao = $this->g('caminhao');
+        $this->assertSame('km', $caminhao->medidor);
+        $this->assertFalse($caminhao->exige_operador, 'habilitacao nao e avaliada: depende de validacao de norma');
+        $this->assertSame(0, CatalogoOperador::withoutGlobalScopes()->where('grupo_id', $caminhao->id)->count());
+
+        $reboque = $this->g('reboque');
+        $this->assertSame('dias', $reboque->medidor);
+        $this->assertEqualsCanonicalizing(['engate-pino-rei', 'corrente-seguranca', 'freios', 'pneus', 'estrutura-chassi'], $this->reqs('reboque')->where('efeito', 'IMP')->pluck('item.slug')->all());
+
+        // freios/direcao/pneus/cinto sao impeditivos nos veiculos motorizados; o reboque nao tem cinto nem direcao
+        foreach (['veiculos-leves', 'caminhao'] as $g) {
+            $this->assertEqualsCanonicalizing(['freios', 'direcao', 'pneus', 'cinto'], $this->reqs($g)->where('efeito', 'IMP')->pluck('item.slug')->filter(fn ($s) => $s !== 'vazamentos')->all());
+        }
+
+        // preventivas em km/dias sao placeholder: usar o manual do fabricante
+        foreach (['veiculos-leves', 'caminhao', 'reboque'] as $g) {
+            $this->assertTrue((bool) ($this->prevs($g)->first()->parametros['validar_manual'] ?? false), $g);
+        }
     }
 
     public function test_reinstalar_com_os_seis_grupos_e_idempotente(): void
@@ -262,5 +289,28 @@ class G1GruposMvpTest extends TestCase
 
         $this->cumprir($a, $this->reqs('empilhadeira')->firstWhere('slug', 'freios'), 'reprovado');
         $this->assertSame(ResultadoAptidao::INAPTO, $this->motor->calcular($a)->status);
+    }
+
+    public function test_veiculo_leve_pneu_reprovado_impede_e_luz_de_painel_so_alerta(): void
+    {
+        $a = $this->ativo('veiculos-leves', ['odometro_atual' => 100]);
+        $this->cumprir($a, $this->reqs('veiculos-leves')->firstWhere('slug', 'luz-painel'), 'reprovado');
+        $this->assertSame(ResultadoAptidao::RESTRICAO, $this->motor->calcular($a->fresh())->status);
+
+        $this->cumprir($a, $this->reqs('veiculos-leves')->firstWhere('slug', 'pneus'), 'reprovado');
+        $r = $this->motor->calcular($a->fresh());
+        $this->assertSame(ResultadoAptidao::INAPTO, $r->status);
+        $this->assertContains('pneus', $r->osAGerar);
+    }
+
+    public function test_reboque_avalia_por_dias_e_engate_reprovado_impede(): void
+    {
+        $a = $this->ativo('reboque', ['odometro_atual' => 0, 'horimetro_atual' => 0]);
+        $prev = $this->prevs('reboque')->first();
+        CatalogoCumprimento::create(['tenant_id' => $a->tenant_id, 'asset_id' => $a->id, 'preventiva_id' => $prev->id, 'resultado' => 'ok', 'realizado_em' => now()->subDays(10)]);
+        $this->assertNotContains('prev:'.$prev->slug, array_column($this->motor->calcular($a->fresh())->motivos, 'codigo'), '10 dias de 180: em dia');
+
+        $this->cumprir($a, $this->reqs('reboque')->firstWhere('slug', 'engate-pino-rei'), 'reprovado');
+        $this->assertSame(ResultadoAptidao::INAPTO, $this->motor->calcular($a->fresh())->status);
     }
 }
