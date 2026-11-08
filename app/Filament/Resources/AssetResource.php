@@ -36,6 +36,25 @@ use Illuminate\Support\HtmlString;
 
 class AssetResource extends Resource
 {
+    /**
+     * G1: com a chave do catalogo ligada, a "categoria" do ativo e o GRUPO DE EQUIPAMENTO do catalogo e o antigo "Grupo"
+     * (checklist_group_id) e o grupo de checklist. Sem a chave, os rotulos continuam os de sempre.
+     */
+    public static function rotuloGrupoEquipamento(string $padrao): string
+    {
+        return static::catalogoLigado() ? 'Grupo de equipamento' : $padrao;
+    }
+
+    public static function rotuloGrupoChecklist(): string
+    {
+        return static::catalogoLigado() ? 'Grupo de checklist' : 'Grupo';
+    }
+
+    private static function catalogoLigado(): bool
+    {
+        return \App\Services\Catalogo\Aptidao\AptidaoGate::ligada(Tenancy::current()?->id ?? auth()->user()?->tenant_id);
+    }
+
     use HasSuperAdminTenantColumn;
 
     protected static ?string $model = Asset::class;
@@ -251,7 +270,7 @@ class AssetResource extends Resource
                                     // sincronia, a busca de disponibilidade por categoria em
                                     // SolicitacaoLocacaoResource não teria como funcionar.
                                     Forms\Components\Select::make('asset_category_id')
-                                        ->label('Categoria e Tipo')
+                                        ->label(fn () => static::rotuloGrupoEquipamento('Categoria e Tipo'))
                                         // Não-obrigatório de propósito: o backfill da migration
                                         // 2026_07_24_143615 deixou boa parte dos ativos existentes
                                         // sem match seguro (nome do texto livre não batia com
@@ -270,7 +289,7 @@ class AssetResource extends Resource
                                     Forms\Components\Hidden::make('asset_category'),
 
                                     Forms\Components\Select::make('checklist_group_id')
-                                        ->label('Grupo')
+                                        ->label(fn () => static::rotuloGrupoChecklist())
                                         ->helperText('Define o checklist básico aplicado às OS deste ativo e o template de manutenção preventiva herdado (aba "Planos de Manutenção").')
                                         ->relationship('checklistGroup', 'name', fn ($query) => $query->where('tenant_id', Tenancy::current()?->id))
                                         ->searchable()
@@ -1087,11 +1106,11 @@ class AssetResource extends Resource
                             ->color(fn (?string $state) => $state === Asset::GRUPO_VEICULO ? 'info' : 'gray')
                             ->grow(false),
                         Tables\Columns\TextColumn::make('asset_category')
-                            ->label('Categoria')
+                            ->label(fn () => static::rotuloGrupoEquipamento('Categoria'))
                             ->badge()
                             ->grow(false),
                         Tables\Columns\TextColumn::make('checklistGroup.name')->hidden(fn () => static::interfaceSimples())
-                            ->label('Grupo')
+                            ->label(fn () => static::rotuloGrupoChecklist())
                             ->badge()
                             ->color('gray')
                             ->grow(false),
@@ -1219,10 +1238,10 @@ class AssetResource extends Resource
                         fn ($q, $nivel) => $q->whereHas('abcMatrix', fn ($q2) => $q2->where('nivel', $nivel))
                     )),
                 Tables\Filters\SelectFilter::make('asset_category')
-                    ->label('Categoria')
+                    ->label(fn () => static::rotuloGrupoEquipamento('Categoria'))
                     ->options(fn () => AssetCategory::pluck('name', 'name')),
                 Tables\Filters\SelectFilter::make('checklist_group_id')
-                    ->label('Grupo')
+                    ->label(fn () => static::rotuloGrupoChecklist())
                     ->relationship('checklistGroup', 'name'),
                 Tables\Filters\SelectFilter::make('capacity_unit')
                     ->label('Unidade de Capacidade')
