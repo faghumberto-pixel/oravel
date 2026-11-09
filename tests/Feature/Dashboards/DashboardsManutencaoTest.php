@@ -42,7 +42,7 @@ class DashboardsManutencaoTest extends TestCase
     {
         $plan = Plan::create([
             'name' => 'Plano Dash '.uniqid(), 'price' => 100, 'base_price' => 100, 'level' => 1,
-            'billing_cycle' => 'monthly', 'is_active' => true, 'features' => $features,
+            'billing_cycle' => 'monthly', 'is_active' => true, 'features' => $features + ['modulo_paineis_funcao' => true],
         ]);
         $tenant = Tenant::create(['name' => 'Empresa '.uniqid(), 'slug' => 'dash-'.uniqid(), 'plan_id' => $plan->id, 'status' => 'active']);
         $admin = User::create([

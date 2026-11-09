@@ -33,7 +33,7 @@ class DemoPopularPaineisTest extends TestCase
         Filament::setCurrentPanel(Filament::getPanel('admin'));
 
         $plano = Plan::create(['name' => 'P'.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1, 'billing_cycle' => 'monthly', 'is_active' => true,
-            'features' => ['tabela_employees' => true, 'tabela_time_clocks' => true, 'tabela_maintenance_plans' => true, 'tabela_purchase_orders' => true, 'tabela_assets' => true]]);
+            'features' => ['tabela_employees' => true, 'tabela_time_clocks' => true, 'tabela_maintenance_plans' => true, 'tabela_purchase_orders' => true, 'tabela_assets' => true] + ['modulo_paineis_funcao' => true]]);
         $t = Tenant::create(['name' => 'Demo Painéis '.uniqid(), 'slug' => 'dp-'.uniqid(), 'plan_id' => $plano->id, 'status' => 'active']);
         $admin = User::create(['name' => 'Adm', 'email' => uniqid().'@oravel.test', 'password' => bcrypt('x'), 'tenant_id' => $t->id, 'is_approved' => true]);
         $admin->assignRole(Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web', 'tenant_id' => $t->id]));

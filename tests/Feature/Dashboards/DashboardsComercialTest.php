@@ -41,7 +41,7 @@ class DashboardsComercialTest extends TestCase
 
     private function empresa(array $features = self::FEATURES): array
     {
-        $plan = Plan::create(['name' => 'P '.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => $features]);
+        $plan = Plan::create(['name' => 'P '.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => $features + ['modulo_paineis_funcao' => true]]);
         $tenant = Tenant::create(['name' => 'E '.uniqid(), 'slug' => 'c-'.uniqid(), 'plan_id' => $plan->id, 'status' => 'active']);
         $admin = User::create(['name' => 'Admin', 'email' => uniqid().'@oravel.test', 'password' => bcrypt('x'), 'tenant_id' => $tenant->id, 'is_approved' => true]);
         $admin->assignRole(Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web', 'tenant_id' => $tenant->id]));
