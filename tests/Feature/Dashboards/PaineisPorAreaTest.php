@@ -5,9 +5,11 @@ namespace Tests\Feature\Dashboards;
 use App\Dashboards\BlockRegistry;
 use App\Dashboards\DashboardRenderer;
 use App\Dashboards\ModuleDashboards;
+use App\Filament\Central\Resources\ContratoResource;
 use App\Filament\Pages\PainelGestao;
 use App\Filament\Pages\VisaoGeralAdministrativa;
 use App\Filament\Pages\VisaoGeralCompras;
+use App\Filament\Pages\VisaoGeralFinanceiro;
 use App\Filament\Pages\VisaoGeralPlanejamento;
 use App\Filament\Pages\VisaoGeralRh;
 use App\Filament\Resources\RoleResource\Pages\EditRole;
@@ -24,6 +26,7 @@ use App\Models\Tenant;
 use App\Models\TimeClock;
 use App\Models\User;
 use App\Support\AppProfile;
+use App\Support\Pacotes;
 use App\Support\PainelDaArea;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -49,7 +52,7 @@ class PaineisPorAreaTest extends TestCase
     /** @return array{0: Tenant, 1: User} */
     private function empresa(array $features): array
     {
-        $plan = Plan::create(['name' => 'P '.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => $features]);
+        $plan = Plan::create(['name' => 'P '.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => $features + ['modulo_paineis_funcao' => true]]);
         $tenant = Tenant::create(['name' => 'E '.uniqid(), 'slug' => 'a-'.uniqid(), 'plan_id' => $plan->id, 'status' => 'active']);
         $admin = User::create(['name' => 'Admin', 'email' => uniqid().'@oravel.test', 'password' => bcrypt('x'), 'tenant_id' => $tenant->id, 'is_approved' => true]);
         $admin->assignRole(Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web', 'tenant_id' => $tenant->id]));
@@ -253,5 +256,58 @@ class PaineisPorAreaTest extends TestCase
         $this->assertSame('Peças Ltda', $atrasados[0][0]);
         $this->assertStringContainsString('4 d de atraso', $atrasados[0][2]['text']);
         $this->assertStringContainsString('2.000,00', $blocos['compras.por_fornecedor']['payload']['rows'][0][3], 'soma dos nao cancelados');
+    }
+
+    public function test_sem_a_chave_do_contrato_nada_de_visao_geral_nem_painel_por_funcao(): void
+    {
+        $features = ['tabela_account_receivables' => true, 'tabela_account_payables' => true];
+        $plan = Plan::create(['name' => 'P '.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => $features]);
+        $t = Tenant::create(['name' => 'E '.uniqid(), 'slug' => 'sk-'.uniqid(), 'plan_id' => $plan->id, 'status' => 'active']);
+        $fin = $this->funcao($t, ['contas_receber', 'contas_pagar'], 'financeiro');
+        $this->actingAs($fin);
+
+        $this->assertFalse(VisaoGeralFinanceiro::canAccess(), 'a visao geral some sem a chave');
+        $this->assertNull(PainelDaArea::chaveDoPainel($fin), 'o painel por funcao nao vale sem a chave');
+        $this->assertFalse(PainelGestao::canAccess());
+
+        $plan->update(['features' => $features + [PainelDaArea::CHAVE_CONTRATO => true]]);
+        $this->actingAs($fin->refresh());
+        Tenant::withoutGlobalScopes()->find($t->id)->unsetRelation('plan');
+        $this->assertTrue(VisaoGeralFinanceiro::canAccess());
+        $this->assertSame('financeiro', PainelDaArea::chaveDoPainel($fin));
+    }
+
+    public function test_a_flag_global_continua_desligando_tudo_mesmo_com_a_chave(): void
+    {
+        [$t] = $this->empresa(['tabela_account_receivables' => true]);
+        $fin = $this->funcao($t, ['contas_receber'], 'financeiro');
+        $this->actingAs($fin);
+        $this->assertTrue(VisaoGeralFinanceiro::canAccess());
+
+        config(['oravel.dashboards_modulo' => false]);
+        $this->assertFalse(VisaoGeralFinanceiro::canAccess());
+        $this->assertNull(PainelDaArea::chaveDoPainel($fin));
+    }
+
+    public function test_a_central_lista_a_chave_no_contrato_e_no_plano_e_todo_pacote_ja_a_inclui(): void
+    {
+        $this->assertArrayHasKey(PainelDaArea::CHAVE_CONTRATO, ContratoResource::groupedFeatureOptions()['Painel Inicial'] ?? ContratoResource::groupedFeatureOptions()['Outros'] ?? []);
+        $this->assertArrayHasKey(PainelDaArea::CHAVE_CONTRATO, Plan::getAvailableFeaturesOptions());
+
+        foreach (array_keys(Pacotes::opcoes()) as $pacote) {
+            $this->assertContains(PainelDaArea::CHAVE_CONTRATO, Pacotes::features($pacote), "pacote $pacote");
+        }
+    }
+
+    public function test_a_migration_liga_a_chave_nos_contratos_existentes_e_respeita_quem_ja_tem(): void
+    {
+        $novo = Plan::create(['name' => 'Antigo '.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => ['tabela_assets' => true]]);
+        $desligado = Plan::create(['name' => 'Desligado '.uniqid(), 'price' => 1, 'base_price' => 1, 'level' => 1, 'billing_cycle' => 'monthly', 'is_active' => true, 'features' => [PainelDaArea::CHAVE_CONTRATO => false]]);
+
+        (require database_path('migrations/2027_01_07_100000_backfill_modulo_paineis_funcao_on_plans.php'))->up();
+
+        $this->assertTrue($novo->fresh()->features[PainelDaArea::CHAVE_CONTRATO]);
+        $this->assertTrue($novo->fresh()->features['tabela_assets'], 'o resto do contrato nao muda');
+        $this->assertFalse($desligado->fresh()->features[PainelDaArea::CHAVE_CONTRATO], 'quem a Central ja desligou continua desligado');
     }
 }

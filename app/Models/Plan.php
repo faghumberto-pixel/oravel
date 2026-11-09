@@ -133,6 +133,7 @@ class Plan extends Model
         // todo plano existente com essa chave = true, pra ninguem perder o
         // Dashboard sem querer; desmarcar aqui esconde so o Dashboard.
         $options['modulo_dashboard'] = 'Painel: Dashboard (Painel de Controle)';
+        $options[\App\Support\PainelDaArea::CHAVE_CONTRATO] = 'Painéis por função e Visões gerais';
 
         // Mesma lógica: 'modulo_configuracoes' não tem Model/tabela por trás
         // (é a página App\Filament\Pages\ManageTenantSettings) -- adicionado

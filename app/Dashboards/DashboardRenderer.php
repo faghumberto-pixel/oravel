@@ -4,6 +4,7 @@ namespace App\Dashboards;
 
 use App\Models\Tenant;
 use App\Models\User;
+use App\Support\PainelDaArea;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Cache;
 
@@ -64,7 +65,7 @@ class DashboardRenderer
     /** O dashboard aparece no menu só se a flag estiver ligada e ao menos um bloco for visível. */
     public static function available(string $dashboardKey, ?User $user): bool
     {
-        if (! config('oravel.dashboards_modulo') || ! $user || ! Tenancy::current()) {
+        if (! $user || ! PainelDaArea::liberadoPara(Tenancy::current())) {
             return false;
         }
 

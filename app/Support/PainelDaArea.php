@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Dashboards\BlockRegistry;
 use App\Dashboards\ModuleDashboards;
+use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
@@ -14,6 +15,18 @@ use Illuminate\Support\Facades\DB;
  */
 class PainelDaArea
 {
+    /** Chave do contrato que liga as Visoes gerais e os Paineis de Controle por funcao (Central: Contratos > Painel Inicial). */
+    public const CHAVE_CONTRATO = 'modulo_paineis_funcao';
+
+    /**
+     * Visoes gerais e paineis por funcao liberados para a empresa: a chave do contrato (a Central liga contrato a contrato) E a flag global
+     * `oravel.dashboards_modulo`, que continua como "desligar tudo" da plataforma.
+     */
+    public static function liberadoPara(?Tenant $tenant): bool
+    {
+        return config('oravel.dashboards_modulo') && $tenant && $tenant->hasFeature(self::CHAVE_CONTRATO);
+    }
+
     /** @return array<string, string> chave do dashboard => nome da area */
     public static function areas(): array
     {
@@ -31,7 +44,7 @@ class PainelDaArea
     /** Chave do painel de area desta pessoa, ou null (administrador, perfil sem painel de area, ou nenhum bloco liberado). */
     public static function chaveDoPainel(?User $user): ?string
     {
-        if (! $user || $user->isAdmin() || $user->isSuperAdmin() || ! config('oravel.dashboards_modulo')) {
+        if (! $user || $user->isAdmin() || $user->isSuperAdmin() || ! self::liberadoPara(Tenancy::current() ?? $user->tenant)) {
             return null;
         }
 

@@ -103,6 +103,7 @@ class ContratoResource extends Resource
         }
 
         $grouped['Outros']['modulo_dashboard'] = 'Painel: Dashboard (Painel de Controle)';
+        $grouped['Outros'][\App\Support\PainelDaArea::CHAVE_CONTRATO] = 'Painéis por função e Visões gerais (Painel de Controle de cada função e Visão geral de cada módulo)';
 
         foreach (MenuModules::all() as $chave => $menu) {
             $grouped[$menu['grupo']][$chave] = $menu['label'];
@@ -177,6 +178,7 @@ class ContratoResource extends Resource
             'tabela_bank_reconciliation' => 'Financeiro',
             'tabela_asaas_sync' => 'Financeiro',
             'modulo_dashboard' => 'Painel Inicial',
+            \App\Support\PainelDaArea::CHAVE_CONTRATO => 'Painel Inicial',
         ];
     }
 
