@@ -44,6 +44,19 @@ class ProspectResource extends Resource
         return (bool) auth()->user()?->isSuperAdmin();
     }
 
+    /** Bloco HTML de cor solida (fundo forte, texto branco) usado na lista; $cor null = vazio, tracejado. */
+    public static function bloco(string $rotulo, string $texto, ?string $cor): string
+    {
+        $hex = ['gray' => '#475569', 'warning' => '#d97706', 'info' => '#2563eb', 'primary' => '#7c3aed', 'danger' => '#dc2626', 'success' => '#16a34a'];
+        $estilo = $cor === null
+            ? 'border:2px dashed #f59e0b;color:#f59e0b;background:transparent'
+            : 'background:'.($hex[$cor] ?? $hex['gray']).';color:#fff';
+
+        return '<div style="'.$estilo.';border-radius:8px;padding:6px 10px;width:100%;line-height:1.25">'
+            .'<div style="font-size:10px;letter-spacing:.06em;opacity:.85;font-weight:600">'.e($rotulo).'</div>'
+            .'<div style="font-size:15px;font-weight:800">'.e($texto).'</div></div>';
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -98,23 +111,16 @@ class ProspectResource extends Resource
                         Tables\Columns\TextColumn::make('nota')->label('Nota')->badge()->color(fn (int $state): string => $state >= 8 ? 'success' : 'gray')
                             ->formatStateUsing(fn ($state) => 'Nota '.$state)->grow(false),
                     ]),
-                    Tables\Columns\TextColumn::make('status')->label('Situação')->badge()->size('lg')
-                        ->formatStateUsing(fn (?string $state): string => Prospect::STATUS[$state] ?? (string) $state)
-                        ->color(fn (?string $state): string => Prospect::STATUS_CORES[$state] ?? 'gray')
-                        ->icon(fn (?string $state): string => match ($state) {
-                            'enviado' => 'heroicon-m-paper-airplane',
-                            'respondeu' => 'heroicon-m-chat-bubble-left-right',
-                            'em_teste' => 'heroicon-m-beaker',
-                            'sem_interesse' => 'heroicon-m-x-circle',
-                            'convertido' => 'heroicon-m-check-circle',
-                            default => 'heroicon-m-clock',
-                        })
-                        ->extraAttributes(['class' => 'font-bold']),
-                    Tables\Columns\TextColumn::make('resultado')->label('Estágio / resultado')->badge()->size('lg')
-                        ->formatStateUsing(fn (?string $state): string => Prospect::RESULTADOS[$state] ?? (string) $state)
-                        ->color(fn (?string $state): string => Prospect::RESULTADO_CORES[$state] ?? 'gray')
-                        ->icon('heroicon-m-exclamation-triangle')
-                        ->extraAttributes(['class' => 'font-bold']),
+                    // Situacao e resultado: dois blocos de cor solida, um embaixo do outro, SEMPRE visiveis
+                    // (vazio mostra aviso tracejado), para dar pra ler a situacao de cada prospect de longe.
+                    Tables\Columns\TextColumn::make('status')->label('Situação')->html()
+                        ->state(fn (Prospect $r): string => (string) $r->status)
+                        ->formatStateUsing(fn (string $state): string => self::bloco('SITUAÇÃO', Prospect::STATUS[$state] ?? $state, Prospect::STATUS_CORES[$state] ?? 'gray')),
+                    Tables\Columns\TextColumn::make('resultado')->label('Estágio / resultado')->html()
+                        ->state(fn (Prospect $r): string => (string) $r->resultado)
+                        ->formatStateUsing(fn (string $state): string => $state === ''
+                            ? self::bloco('RESULTADO', 'Sem resultado registrado', null)
+                            : self::bloco('RESULTADO', Prospect::RESULTADOS[$state] ?? $state, Prospect::RESULTADO_CORES[$state] ?? 'gray')),
                     Tables\Columns\TextColumn::make('atividade')->label('Atividade')->icon('heroicon-m-briefcase')->color('gray')->wrap()->placeholder('Sem atividade'),
                     Tables\Columns\TextColumn::make('telefone')->label('Telefone')->icon('heroicon-m-phone')->copyable()->copyMessage('Número copiado')->searchable()
                         ->formatStateUsing(fn ($state, Prospect $r): string => $state.($r->ehCelular() ? ' (celular)' : ' (fixo: ligar)'))
@@ -178,10 +184,6 @@ class ProspectResource extends Resource
                         $r->update(['status' => 'enviado', 'ultimo_contato_em' => now(), 'proximo_contato' => now()->addDays(4)]);
                         $r->contatos()->create(['data' => now(), 'canal' => $r->ehCelular() ? 'whatsapp' : 'telefone', 'titulo' => 'Primeiro contato', 'texto' => 'Mensagem de abordagem enviada.', 'autor' => auth()->user()?->name]);
                     }),
-                ProspectResource\ConverterEmLeadAction::make(),
-                Tables\Actions\Action::make('verLead')->label('Ver lead')->icon('heroicon-o-arrow-top-right-on-square')->color('gray')
-                    ->visible(fn (Prospect $r): bool => $r->sales_lead_id !== null)
-                    ->url(fn (Prospect $r): string => SalesLeadResource::getUrl('edit', ['record' => $r->sales_lead_id]))->openUrlInNewTab(),
                 Tables\Actions\Action::make('situacao')->label('Situação')->icon('heroicon-o-flag')->color('warning')
                     ->fillForm(fn (Prospect $r): array => ['status' => $r->status, 'resultado' => $r->resultado])
                     ->form([
@@ -189,7 +191,13 @@ class ProspectResource extends Resource
                         Forms\Components\Select::make('resultado')->label('Estágio / resultado')->options(Prospect::RESULTADOS)->native(false)->placeholder('Sem resultado registrado'),
                     ])
                     ->action(fn (Prospect $r, array $data) => $r->update(['status' => $data['status'], 'resultado' => $data['resultado'] ?? null])),
-                Tables\Actions\ViewAction::make()->label('Abrir')->url(fn (Prospect $r): string => static::getUrl('edit', ['record' => $r])),
+                Tables\Actions\ActionGroup::make([
+                    ProspectResource\ConverterEmLeadAction::make(),
+                    Tables\Actions\Action::make('verLead')->label('Ver lead')->icon('heroicon-o-arrow-top-right-on-square')->color('gray')
+                        ->visible(fn (Prospect $r): bool => $r->sales_lead_id !== null)
+                        ->url(fn (Prospect $r): string => SalesLeadResource::getUrl('edit', ['record' => $r->sales_lead_id]))->openUrlInNewTab(),
+                    Tables\Actions\ViewAction::make()->label('Abrir')->url(fn (Prospect $r): string => static::getUrl('edit', ['record' => $r])),
+                ])->label('Mais')->icon('heroicon-m-ellipsis-vertical')->color('gray'),
             ])
             ->defaultSort('nota', 'desc')
             ->paginated([25, 50, 100])
