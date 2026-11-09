@@ -43,7 +43,7 @@ class Prospect extends Model
 
     /** Cor (Filament) da etiqueta de cada situacao e resultado na lista de Prospects. */
     public const STATUS_CORES = [
-        'nao_enviado' => 'gray', 'enviado' => 'warning', 'respondeu' => 'info',
+        'nao_enviado' => 'orange', 'enviado' => 'blue', 'respondeu' => 'teal',
         'em_teste' => 'primary', 'sem_interesse' => 'danger', 'convertido' => 'success',
     ];
 

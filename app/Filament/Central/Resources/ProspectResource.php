@@ -47,12 +47,12 @@ class ProspectResource extends Resource
     /** Bloco HTML de cor solida (fundo forte, texto branco) usado na lista; $cor null = vazio, tracejado. */
     public static function bloco(string $rotulo, string $texto, ?string $cor): string
     {
-        $hex = ['gray' => '#475569', 'warning' => '#d97706', 'info' => '#2563eb', 'primary' => '#7c3aed', 'danger' => '#dc2626', 'success' => '#16a34a'];
+        $hex = ['gray' => '#475569', 'orange' => '#ea580c', 'blue' => '#2563eb', 'teal' => '#0d9488', 'warning' => '#d97706', 'info' => '#2563eb', 'primary' => '#7c3aed', 'danger' => '#dc2626', 'success' => '#16a34a'];
         $estilo = $cor === null
             ? 'border:2px dashed #f59e0b;color:#f59e0b;background:transparent'
             : 'background:'.($hex[$cor] ?? $hex['gray']).';color:#fff';
 
-        return '<div style="'.$estilo.';border-radius:8px;padding:6px 10px;width:100%;line-height:1.25">'
+        return '<div style="'.$estilo.';display:block;box-sizing:border-box;width:100%;border-radius:8px;padding:8px 12px;line-height:1.25">'
             .'<div style="font-size:10px;letter-spacing:.06em;opacity:.85;font-weight:600">'.e($rotulo).'</div>'
             .'<div style="font-size:15px;font-weight:800">'.e($texto).'</div></div>';
     }
@@ -115,10 +115,12 @@ class ProspectResource extends Resource
                     // (vazio mostra aviso tracejado), para dar pra ler a situacao de cada prospect de longe.
                     Tables\Columns\TextColumn::make('status')->label('Situação')->html()
                         ->state(fn (Prospect $r): string => (string) $r->status)
+                        ->extraAttributes(['style' => 'width:100%'])
                         ->formatStateUsing(fn (string $state): string => self::bloco('SITUAÇÃO', Prospect::STATUS[$state] ?? $state, Prospect::STATUS_CORES[$state] ?? 'gray')),
                     Tables\Columns\TextColumn::make('resultado')->label('Estágio / resultado')->html()
-                        ->state(fn (Prospect $r): string => (string) $r->resultado)
-                        ->formatStateUsing(fn (string $state): string => $state === ''
+                        ->state(fn (Prospect $r): string => $r->resultado ?: '__vazio')
+                        ->extraAttributes(['style' => 'width:100%'])
+                        ->formatStateUsing(fn (string $state): string => $state === '__vazio'
                             ? self::bloco('RESULTADO', 'Sem resultado registrado', null)
                             : self::bloco('RESULTADO', Prospect::RESULTADOS[$state] ?? $state, Prospect::RESULTADO_CORES[$state] ?? 'gray')),
                     Tables\Columns\TextColumn::make('atividade')->label('Atividade')->icon('heroicon-m-briefcase')->color('gray')->wrap()->placeholder('Sem atividade'),
