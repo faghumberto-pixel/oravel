@@ -304,10 +304,12 @@ class ProspectTest extends TestCase
 
         $this->assertSame([$b->id], Prospect::filtrar(['resultado' => ['value' => 'ja_tem_sistema']])->pluck('id')->all());
 
-        // Registrar o resultado direto no cartao.
+        // Registrar situacao e resultado pelo botao "Situacao" do cartao.
         Livewire::actingAs($u)->test(ListProspects::class)
             ->filterTable('resultado', null)
-            ->call('updateTableColumnState', 'resultado', $c->getKey(), 'pediu_email');
+            ->callTableAction('situacao', $c, ['status' => 'respondeu', 'resultado' => 'pediu_email'])
+            ->assertHasNoTableActionErrors();
         $this->assertSame('pediu_email', $c->fresh()->resultado);
+        $this->assertSame('respondeu', $c->fresh()->status);
     }
 }

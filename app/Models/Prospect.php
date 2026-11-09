@@ -41,6 +41,19 @@ class Prospect extends Model
         'fechado' => 'Fechado (virou cliente)',
     ];
 
+    /** Cor (Filament) da etiqueta de cada situacao e resultado na lista de Prospects. */
+    public const STATUS_CORES = [
+        'nao_enviado' => 'gray', 'enviado' => 'warning', 'respondeu' => 'info',
+        'em_teste' => 'primary', 'sem_interesse' => 'danger', 'convertido' => 'success',
+    ];
+
+    public const RESULTADO_CORES = [
+        'nao_atendeu' => 'danger', 'nao_respondeu' => 'danger', 'numero_invalido' => 'danger',
+        'ja_tem_sistema' => 'gray', 'sem_interesse_momento' => 'warning', 'sem_interesse' => 'danger',
+        'pediu_email' => 'info', 'quer_reuniao' => 'success', 'reuniao_agendada' => 'success',
+        'proposta_enviada' => 'primary', 'contrato_andamento' => 'primary', 'fechado' => 'success',
+    ];
+
     public const CANAIS = ['whatsapp' => 'WhatsApp', 'telefone' => 'Telefone', 'email' => 'E-mail', 'visita' => 'Visita', 'outro' => 'Outro'];
 
     public const FOLLOW_UP = 'Olá, {nome}. Só passando para dizer que o convite dos 30 dias grátis continua de pé. Se quiser, deixo o cadastro dos seus equipamentos montado e você só confere. Se não for o momento, sem problema.';

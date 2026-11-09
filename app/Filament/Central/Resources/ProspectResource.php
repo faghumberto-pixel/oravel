@@ -98,9 +98,23 @@ class ProspectResource extends Resource
                         Tables\Columns\TextColumn::make('nota')->label('Nota')->badge()->color(fn (int $state): string => $state >= 8 ? 'success' : 'gray')
                             ->formatStateUsing(fn ($state) => 'Nota '.$state)->grow(false),
                     ]),
-                    Tables\Columns\SelectColumn::make('status')->label('Situação')->options(Prospect::STATUS)->selectablePlaceholder(false),
-                    Tables\Columns\SelectColumn::make('resultado')->label('Estágio / resultado')->options(Prospect::RESULTADOS)
-                        ->placeholder('Sem resultado registrado')->selectablePlaceholder(true),
+                    Tables\Columns\TextColumn::make('status')->label('Situação')->badge()->size('lg')
+                        ->formatStateUsing(fn (?string $state): string => Prospect::STATUS[$state] ?? (string) $state)
+                        ->color(fn (?string $state): string => Prospect::STATUS_CORES[$state] ?? 'gray')
+                        ->icon(fn (?string $state): string => match ($state) {
+                            'enviado' => 'heroicon-m-paper-airplane',
+                            'respondeu' => 'heroicon-m-chat-bubble-left-right',
+                            'em_teste' => 'heroicon-m-beaker',
+                            'sem_interesse' => 'heroicon-m-x-circle',
+                            'convertido' => 'heroicon-m-check-circle',
+                            default => 'heroicon-m-clock',
+                        })
+                        ->extraAttributes(['class' => 'font-bold']),
+                    Tables\Columns\TextColumn::make('resultado')->label('Estágio / resultado')->badge()->size('lg')
+                        ->formatStateUsing(fn (?string $state): string => Prospect::RESULTADOS[$state] ?? (string) $state)
+                        ->color(fn (?string $state): string => Prospect::RESULTADO_CORES[$state] ?? 'gray')
+                        ->icon('heroicon-m-exclamation-triangle')
+                        ->extraAttributes(['class' => 'font-bold']),
                     Tables\Columns\TextColumn::make('atividade')->label('Atividade')->icon('heroicon-m-briefcase')->color('gray')->wrap()->placeholder('Sem atividade'),
                     Tables\Columns\TextColumn::make('telefone')->label('Telefone')->icon('heroicon-m-phone')->copyable()->copyMessage('Número copiado')->searchable()
                         ->formatStateUsing(fn ($state, Prospect $r): string => $state.($r->ehCelular() ? ' (celular)' : ' (fixo: ligar)'))
@@ -168,6 +182,13 @@ class ProspectResource extends Resource
                 Tables\Actions\Action::make('verLead')->label('Ver lead')->icon('heroicon-o-arrow-top-right-on-square')->color('gray')
                     ->visible(fn (Prospect $r): bool => $r->sales_lead_id !== null)
                     ->url(fn (Prospect $r): string => SalesLeadResource::getUrl('edit', ['record' => $r->sales_lead_id]))->openUrlInNewTab(),
+                Tables\Actions\Action::make('situacao')->label('Situação')->icon('heroicon-o-flag')->color('warning')
+                    ->fillForm(fn (Prospect $r): array => ['status' => $r->status, 'resultado' => $r->resultado])
+                    ->form([
+                        Forms\Components\Select::make('status')->label('Situação')->options(Prospect::STATUS)->required()->native(false),
+                        Forms\Components\Select::make('resultado')->label('Estágio / resultado')->options(Prospect::RESULTADOS)->native(false)->placeholder('Sem resultado registrado'),
+                    ])
+                    ->action(fn (Prospect $r, array $data) => $r->update(['status' => $data['status'], 'resultado' => $data['resultado'] ?? null])),
                 Tables\Actions\ViewAction::make()->label('Abrir')->url(fn (Prospect $r): string => static::getUrl('edit', ['record' => $r])),
             ])
             ->defaultSort('nota', 'desc')
