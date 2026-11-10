@@ -17,7 +17,7 @@ FAQ = [
     ('Quanto tempo leva para começar?', 'Você começa em poucos dias. A implementação e o treinamento da equipe estão inclusos nos 30 dias de teste.'),
     ('Meus técnicos precisam de computador?', 'Não. O técnico usa o celular para ver as ordens do dia, preencher o checklist com fotos, coletar a assinatura e receber ajuda da IA.'),
     ('Serve para qualquer tipo de equipamento?', 'Sim. Guindastes, munks, plataformas elevatórias, empilhadeiras, geradores, compressores e outros equipamentos da frota.'),
-    ('A Oravel emite nota fiscal?', 'Não. A Oravel cuida da medição e da cobrança e trabalha ao lado do sistema fiscal que a sua locadora já usa.'),
+    ('A Oravel emite nota fiscal?', 'Sim. A Oravel tem módulo fiscal, preparado para IBS e CBS, que emite a nota fiscal junto com a medição e a cobrança, sem digitar os dados duas vezes.'),
     ('Como funciona o teste de 30 dias?', 'Você usa a Oravel por 30 dias, com acompanhamento, treinamento e implementação inclusos. Depois decide se continua.'),
 ]
 

@@ -438,7 +438,7 @@ PROC_PAGES = {
         why='Receber em dia é o que sustenta a locadora. Quanto menos a cobrança depende de pessoas lembrando, mais previsível fica o seu caixa.',
         quem=[('Financeiro de locadoras', 'Quem emite e acompanha as cobranças todos os meses.'), ('Gestores de contratos', 'Quem cuida de medições e renovações.'), ('Donos de locadora', 'Quem quer caixa previsível.'), ('Locadoras em crescimento', 'Quem já não aguenta cobrar na planilha.')],
         porte='locadoras de pequeno e médio porte, com vários contratos ativos.',
-        faq=[('A Oravel emite nota fiscal?', 'Não. A Oravel cuida da medição e da cobrança e trabalha ao lado do sistema fiscal que a sua locadora já usa, onde a nota fiscal continua sendo emitida.'),
+        faq=[('A Oravel emite nota fiscal?', 'Sim. A Oravel tem módulo fiscal, preparado para IBS e CBS, que emite a nota fiscal junto com a medição e a cobrança, sem digitar os dados duas vezes.'),
              ('Quais formas de cobrança os contratos aceitam?', 'Mensal fixo, por hora, diária e franquia de horas com excedente.'),
              ('Como o cliente paga?', 'O cliente recebe a cobrança com boleto e link de pagamento.'),
              ('O que acontece quando o cliente paga?', 'A Oravel identifica o pagamento e atualiza o status da cobrança.'),

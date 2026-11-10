@@ -228,6 +228,13 @@ def ic(k):
             f'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{ICONES[k]}</svg></span>')
 
 
+# Item de menu "Reforma tributária" (inline, para poder ser aplicado também nas páginas já geradas sem mexer no CSS)
+NAV_RT = ('<a href="/reforma-tributaria/" style="color:#fdba74">Reforma tributária<span style="margin-left:6px;padding:2px 7px;'
+          'border-radius:999px;background:#f97316;color:#0f172a;font-size:11px;font-weight:800">2027</span></a>')
+MNAV_RT = '<a href="/reforma-tributaria/">Reforma tributária (2027)</a>'
+FOOT_RT = '<a href="/reforma-tributaria/">Reforma tributária</a>'
+
+
 def cabecalho(atual=''):
     rec = ''.join(f'<a href="{u}"><strong>{t}</strong><span>{d}</span></a>' for u, t, d in RECURSOS)
     eqp = ''.join(f'<a href="{u}"><strong>{t}</strong></a>' for u, t in EQUIPAMENTOS)
@@ -238,13 +245,13 @@ def cabecalho(atual=''):
         '<header class="top"><div class="top-in"><a class="logo" href="/" aria-label="Oravel">O<i>r</i>avel</a>'
         '<nav class="nav" aria-label="Principal">'
         f'<div class="dd"><button type="button" aria-haspopup="true">Recursos</button><div class="dd-menu">{rec}</div></div>'
-        '<a href="/materiais-gratuitos/">Materiais gratuitos</a>'
+        f'{NAV_RT}<a href="/materiais-gratuitos/">Materiais gratuitos</a>'
         f'<div class="dd"><button type="button" aria-haspopup="true">Soluções</button><div class="dd-menu">{eqp}</div></div>'
         '<a href="/contato.php">Contato</a></nav>'
         f'<div class="top-cta"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a></div>'
         '<button class="burger" type="button" aria-expanded="false" aria-controls="mnav">Menu</button></div>'
         f'<div class="mnav" id="mnav"><h4>Recursos</h4>{m_rec}<h4>Soluções</h4>{m_eq}<h4>Mais</h4>'
-        '<a href="/materiais-gratuitos/">Materiais gratuitos</a><a href="/contato.php">Contato</a>'
+        f'{MNAV_RT}<a href="/materiais-gratuitos/">Materiais gratuitos</a><a href="/contato.php">Contato</a>'
         f'<div style="display:grid;gap:10px;margin-top:16px"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a></div></div></header>')
 
 
@@ -255,7 +262,7 @@ def rodape():
         '<footer class="foot"><div class="wrap"><div class="foot-g"><div><a class="logo" href="/">O<i>r</i>avel</a>'
         '<p>Desenvolvimento e tecnologia</p><p style="margin-top:10px">Gestão de manutenção, estoque, logística e cobrança para locadoras de equipamentos.</p></div>'
         f'<div><h4>Recursos</h4>{rec}</div><div><h4>Soluções</h4>{eqp}</div>'
-        '<div><h4>Conteúdo</h4><a href="/central-de-conhecimento/">Central de conhecimento</a><a href="/academia/">Academia Oravel</a><a href="/faq.php">Perguntas frequentes</a><a href="/novidades.php">Novidades</a></div>'
+        f'<div><h4>Conteúdo</h4>{FOOT_RT}<a href="/central-de-conhecimento/">Central de conhecimento</a><a href="/academia/">Academia Oravel</a><a href="/faq.php">Perguntas frequentes</a><a href="/novidades.php">Novidades</a></div>'
         '<div><h4>Empresa</h4><a href="/sobre/">Sobre a Oravel</a><a href="/contato.php">Contato</a><a href="/politica-de-privacidade/">Privacidade</a><a href="/termos-de-uso/">Termos de uso</a></div></div>'
         f'<div class="foot-b">© 2026 Oravel Desenvolvimento de Software Ltda · CNPJ 65.707.953/0001-30 · {FONE} · {EMAIL}</div></div></footer>')
 
