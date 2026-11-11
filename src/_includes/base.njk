@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% if titulo %}{{ titulo }} · {% endif %}oravel.org</title>
+<meta name="description" content="{{ resumo or site.descricao }}">
+<link rel="canonical" href="{{ site.url }}{{ page.url }}">
+<link rel="alternate" type="application/rss+xml" title="oravel.org" href="/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<header class="topo">
+  <div class="wrap topo-in">
+    <a class="logo" href="/">oravel<span>.org</span></a>
+    <nav class="menu" aria-label="Temas">
+      {% for t in temas %}<a href="/{{ t.slug }}/"{% if tema and tema.slug == t.slug %} class="ativo"{% endif %}>{{ t.nome }}</a>{% endfor %}
+    </nav>
+    <form class="busca-topo" action="/busca/" method="get" role="search">
+      <input type="search" name="q" placeholder="Buscar" aria-label="Buscar no site">
+    </form>
+  </div>
+</header>
+<main>
+{{ content | safe }}
+</main>
+<footer class="rodape">
+  <div class="wrap rodape-in">
+    <div><strong>oravel.org</strong> · conteúdo independente para o setor de locação. Não vende produtos nem serviços.</div>
+    <div><a href="/sobre/">Sobre</a> · <a href="/busca/">Busca</a> · <a href="/feed.xml">RSS</a></div>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,17 @@
+---
+layout: base.njk
+---
+<article class="wrap post" data-pagefind-body>
+  <div class="crumbs"><a href="/">Início</a> / {% for t in temas %}{% if t.slug == theme %}<a href="/{{ t.slug }}/">{{ t.nome }}</a>{% endif %}{% endfor %}</div>
+  <h1 data-pagefind-meta="title">{{ title }}</h1>
+  <p class="meta"><time datetime="{{ page.date | dataIso }}" data-pagefind-meta="data:{{ page.date | dataLonga }}, {{ page.date | hora }}">{{ page.date | dataLonga }}, {{ page.date | hora }}</time>
+    <span data-pagefind-filter="tema" hidden>{% for t in temas %}{% if t.slug == theme %}{{ t.nome }}{% endif %}{% endfor %}</span></p>
+  <p class="lead">{{ summary }}</p>
+  <div class="corpo">{{ content | safe }}</div>
+  {% if sources %}
+  <aside class="fontes"><h2>Fontes</h2><ul>
+    {% for s in sources %}<li><a href="{{ s.url }}" rel="noopener" target="_blank">{{ s.title }}</a></li>{% endfor %}
+  </ul></aside>
+  {% endif %}
+  <p class="aviso">Conteúdo informativo, sem caráter de consultoria jurídica, tributária ou financeira. Confirme com seu contador ou advogado antes de decidir.</p>
+</article>

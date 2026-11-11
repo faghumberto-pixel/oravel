@@ -1,0 +1,6 @@
+<article class="cartao-post">
+  <div class="meta"><a href="/{{ p.data.theme }}/">{% for t in temas %}{% if t.slug == p.data.theme %}{{ t.nome }}{% endif %}{% endfor %}</a>
+    <span>·</span> <time datetime="{{ p.date | dataIso }}">{{ p.date | dataLonga }}, {{ p.date | hora }}</time></div>
+  <h3><a href="{{ p.url }}">{{ p.data.title }}</a></h3>
+  <p>{{ p.data.summary }}</p>
+</article>

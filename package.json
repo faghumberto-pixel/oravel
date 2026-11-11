@@ -1,0 +1,16 @@
+{
+  "name": "oravel-org-blog",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "eleventy --serve",
+    "build": "eleventy && pagefind --site _site",
+    "novo": "node scripts/novo.mjs",
+    "publicar": "npm run build && npx --yes firebase-tools deploy --only hosting --project oravel-org"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0",
+    "pagefind": "^1.3.0"
+  }
+}

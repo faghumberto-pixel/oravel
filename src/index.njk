@@ -1,0 +1,23 @@
+---
+layout: base.njk
+titulo: Conhecimento para quem aluga equipamentos
+---
+<section class="wrap hero">
+  <div class="kicker">Conhecimento para quem aluga equipamentos</div>
+  <h1>O que as melhores locadoras sabem, ao alcance de todas.</h1>
+  <p class="lead">Artigos, guias e referências do Brasil e de fora sobre tributação, tecnologia, vendas e gestão da locação. Gratuito, direto e sem enrolação.</p>
+</section>
+<section class="faixa">
+  <div class="wrap">
+    <h2>Últimas publicações</h2>
+    <div class="grade">
+      {% for p in collections.posts | head(6) %}{% include "cartao.njk" %}{% endfor %}
+    </div>
+  </div>
+</section>
+<section class="wrap temas">
+  <h2>Temas</h2>
+  <div class="grade">
+    {% for t in temas %}<a class="tema-card" href="/{{ t.slug }}/"><h3>{{ t.nome }}</h3><p>{{ t.descricao }}</p></a>{% endfor %}
+  </div>
+</section>

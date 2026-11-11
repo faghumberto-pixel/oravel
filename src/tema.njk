@@ -1,0 +1,23 @@
+---
+layout: base.njk
+pagination:
+  data: temas
+  size: 1
+  alias: tema
+permalink: "/{{ tema.slug }}/"
+eleventyComputed:
+  titulo: "{{ tema.nome }}"
+---
+<section class="wrap hero hero-tema">
+  <div class="crumbs"><a href="/">Início</a> / {{ tema.nome }}</div>
+  <h1>{{ tema.nome }}</h1>
+  <p class="lead">{{ tema.descricao }}</p>
+</section>
+<section class="wrap lista">
+  {% set lista = collections.posts | doTema(tema.slug) %}
+  {% if lista.length %}
+    {% for p in lista %}{% include "cartao.njk" %}{% endfor %}
+  {% else %}
+    <p class="vazio">Ainda não há publicações neste tema.</p>
+  {% endif %}
+</section>

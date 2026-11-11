@@ -1,0 +1,12 @@
+---
+permalink: /feed.xml
+eleventyExcludeFromCollections: true
+---
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0"><channel>
+<title>oravel.org</title><link>{{ site.url }}/</link><description>{{ site.descricao }}</description><language>pt-BR</language>
+{% for p in collections.posts | head(30) %}<item>
+<title>{{ p.data.title | escape }}</title><link>{{ site.url }}{{ p.url }}</link><guid>{{ site.url }}{{ p.url }}</guid>
+<pubDate>{{ p.date | rfc822 }}</pubDate><description>{{ p.data.summary | escape }}</description>
+</item>
+{% endfor %}</channel></rss>

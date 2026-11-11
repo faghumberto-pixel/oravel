@@ -1,0 +1,22 @@
+---
+layout: base.njk
+titulo: Busca
+permalink: /busca/
+---
+<section class="wrap hero hero-tema">
+  <h1>Busca</h1>
+  <p class="lead">Pesquise por qualquer palavra em todos os artigos.</p>
+</section>
+<section class="wrap">
+  <link href="/pagefind/pagefind-ui.css" rel="stylesheet">
+  <div id="pf"></div>
+  <script src="/pagefind/pagefind-ui.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      var ui = new PagefindUI({ element: "#pf", showSubResults: false, showImages: false, resetStyles: false,
+        translations: { placeholder: "Digite para buscar", zero_results: "Nada encontrado para [SEARCH_TERM]" } });
+      var q = new URLSearchParams(location.search).get("q");
+      if (q) ui.triggerSearch(q);
+    });
+  </script>
+</section>

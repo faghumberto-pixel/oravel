@@ -1,0 +1,5 @@
+{
+  "layout": "post.njk",
+  "permalink": "/{{ theme }}/{{ page.fileSlug }}/",
+  "eleventyComputed": { "titulo": "{{ title }}", "resumo": "{{ summary }}" }
+}

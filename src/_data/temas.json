@@ -1,0 +1,8 @@
+[
+  {"slug":"reforma-tributaria","nome":"Reforma tributária","descricao":"IBS, CBS, créditos, split payment e contratos. A lei explicada para a rotina da locadora."},
+  {"slug":"tecnologia","nome":"Tecnologia","descricao":"Telemetria, rastreamento, QR Code, nota fiscal eletrônica e inteligência artificial na operação."},
+  {"slug":"la-fora","nome":"Lá fora","descricao":"Como o mercado de locação se organiza nos Estados Unidos, na Europa e na América Latina."},
+  {"slug":"vendas","nome":"Vendas","descricao":"Atendimento de balcão, proposta, preço da diária, retorno ao cliente e fidelização."},
+  {"slug":"gestao-e-operacao","nome":"Gestão e operação","descricao":"Manutenção, disponibilidade de frota, vistoria, financeiro e os indicadores que importam."},
+  {"slug":"comunidade","nome":"Comunidade","descricao":"Conversas, práticas e experiências entre locadores."}
+]
