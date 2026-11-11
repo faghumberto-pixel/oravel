@@ -1,0 +1,20 @@
+---
+layout: base.njk
+pagination:
+  data: collections.posts
+  size: 10
+  alias: lote
+permalink: "/publicacoes/{% if pagination.pageNumber > 0 %}pagina-{{ pagination.pageNumber + 1 }}/{% endif %}"
+titulo: Todas as publicações
+---
+<section class="wrap hero hero-tema">
+  <div class="crumbs"><a href="/">Início</a> / Publicações</div>
+  <h1>Todas as publicações</h1>
+</section>
+<section class="wrap lista">
+  {% for p in lote %}{% include "cartao.njk" %}{% endfor %}
+  <nav class="paginacao" aria-label="Paginação">
+    <span>{% if pagination.href.previous %}<a href="{{ pagination.href.previous }}">← Mais recentes</a>{% endif %}</span>
+    <span>{% if pagination.href.next %}<a href="{{ pagination.href.next }}">Mais antigas →</a>{% endif %}</span>
+  </nav>
+</section>

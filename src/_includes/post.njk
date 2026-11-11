@@ -1,5 +1,6 @@
 ---
 layout: base.njk
+conta: true
 ---
 <article class="wrap post" data-pagefind-body>
   <div class="crumbs"><a href="/">Início</a> / {% for t in temas %}{% if t.slug == theme %}<a href="/{{ t.slug }}/">{{ t.nome }}</a>{% endif %}{% endfor %}</div>
@@ -10,8 +11,25 @@ layout: base.njk
   <div class="corpo">{{ content | safe }}</div>
   {% if sources %}
   <aside class="fontes"><h2>Fontes</h2><ul>
-    {% for s in sources %}<li><a href="{{ s.url }}" rel="noopener" target="_blank">{{ s.title }}</a></li>{% endfor %}
+    {% for s in sources %}<li>{% if s.url %}<a href="{{ s.url }}" rel="noopener" target="_blank">{{ s.title }}</a>{% else %}{{ s.title }}{% endif %}</li>{% endfor %}
   </ul></aside>
   {% endif %}
+  <div class="compartilhar" aria-label="Compartilhar">
+    <strong>Compartilhar</strong>
+    <a href="https://wa.me/?text={{ title | urlencode }}%20{{ site.url }}{{ page.url }}" target="_blank" rel="noopener">WhatsApp</a>
+    <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ site.url }}{{ page.url }}" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="https://twitter.com/intent/tweet?text={{ title | urlencode }}&url={{ site.url }}{{ page.url }}" target="_blank" rel="noopener">X</a>
+    <button type="button" onclick="navigator.clipboard.writeText('{{ site.url }}{{ page.url }}').then(()=>{this.textContent='Link copiado'})">Copiar link</button>
+  </div>
+  <section class="comentarios" aria-label="Comentários">
+    <h2>Comentários</h2>
+    <div id="comentarios-lista" data-slug="{{ page.url }}"><p class="nota">Carregando…</p></div>
+    <div id="comentar-deslogado"><p class="nota"><a href="/entrar/">Entre</a> ou <a href="/cadastro/">cadastre-se</a> para comentar.</p></div>
+    <form id="form-comentario" class="form-conta" hidden>
+      <label>Seu comentário<textarea name="texto" rows="4" maxlength="2000" required></textarea></label>
+      <button class="btn">Publicar comentário</button>
+      <p class="nota" id="comentario-msg"></p>
+    </form>
+  </section>
   <p class="aviso">Conteúdo informativo, sem caráter de consultoria jurídica, tributária ou financeira. Confirme com seu contador ou advogado antes de decidir.</p>
 </article>

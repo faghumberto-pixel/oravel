@@ -1,0 +1,18 @@
+---
+layout: base.njk
+titulo: Entrar
+permalink: /entrar/
+conta: true
+---
+<section class="wrap hero hero-tema"><h1>Entrar</h1>
+<p class="lead">Use seu e-mail e a senha que você definiu no cadastro para comentar nos artigos.</p></section>
+<section class="wrap">
+<div id="conta-estado" hidden class="form-conta"><p>Você está conectado como <strong id="conta-email"></strong>.</p><button class="btn" id="sair" type="button">Sair</button></div>
+<form class="form-conta" id="form-entrar">
+  <label>E-mail<input type="email" name="email" autocomplete="username" required></label>
+  <label>Senha<input type="password" name="senha" autocomplete="current-password" required></label>
+  <button class="btn">Entrar</button>
+  <p class="nota" id="entrar-msg" role="status"></p>
+  <p class="nota"><a href="#" id="esqueci">Esqueci minha senha</a> · <a href="/cadastro/">Fazer cadastro</a></p>
+</form>
+</section>

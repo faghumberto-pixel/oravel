@@ -18,6 +18,7 @@
     <nav class="menu" aria-label="Temas">
       {% for t in temas %}<a href="/{{ t.slug }}/"{% if tema and tema.slug == t.slug %} class="ativo"{% endif %}>{{ t.nome }}</a>{% endfor %}
     </nav>
+    <a class="entrar" href="/entrar/" aria-label="Entrar ou cadastrar" title="Entrar"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg></a>
     <form class="busca-topo" action="/busca/" method="get" role="search">
       <input type="search" name="q" placeholder="Buscar" aria-label="Buscar no site">
     </form>
@@ -32,5 +33,6 @@
     <div><a href="/sobre/">Sobre</a> · <a href="/busca/">Busca</a> · <a href="/feed.xml">RSS</a></div>
   </div>
 </footer>
+{% if conta or layout == "post.njk" %}<script type="module" src="/assets/conta.js"></script>{% endif %}
 </body>
 </html>
