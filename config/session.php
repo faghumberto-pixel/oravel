@@ -32,7 +32,11 @@ return [
     |
     */
 
-    'lifetime' => (int) env('SESSION_LIFETIME', 120),
+    // 2FA: quem entrou com senha + codigo fica conectado ate o logout (a validacao
+    // do 2FA vive na sessao). 30 dias de inatividade, renovado a cada uso.
+    // Variavel propria (e nao SESSION_LIFETIME) pra valer sem editar o .env da PROD,
+    // que herdou SESSION_LIFETIME=120 do .env.example.
+    'lifetime' => (int) env('ORAVEL_SESSION_LIFETIME', 43200),
 
     'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
 

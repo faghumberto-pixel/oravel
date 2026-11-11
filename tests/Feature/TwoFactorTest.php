@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Livewire;
 use PragmaRX\Google2FA\Google2FA;
+use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
 /**
@@ -177,7 +178,7 @@ class TwoFactorTest extends TestCase
     {
         // O menu do painel admin chama MaterialPolicy -> hasPermissionTo('ler_material'),
         // que explode se a Permission nao existir (bug anterior, alheio ao 2FA).
-        \Spatie\Permission\Models\Permission::firstOrCreate(['name' => 'ler_material', 'guard_name' => 'web']);
+        Permission::firstOrCreate(['name' => 'ler_material', 'guard_name' => 'web']);
 
         $user = $this->user();
         [$secret] = $this->withTwoFactor($user);
@@ -204,6 +205,60 @@ class TwoFactorTest extends TestCase
         $resp->assertOk();
         $this->assertNotNull($resp->json('components.0.effects.redirect'));
         $this->assertTrue($user->fresh()->hasValidTwoFactorSession());
+    }
+
+    public function test_primeiro_acesso_entra_so_com_senha_e_ao_confirmar_nao_pede_codigo_de_novo(): void
+    {
+        $user = $this->user();
+
+        // 1) entra sem 2FA e e' levado a configurar (nao a uma tela de codigo)
+        $resp = $this->actingAs($user)->get('/admin/painel-controle');
+        $resp->assertRedirect(route('filament.admin.pages.my-profile'));
+
+        // 2) confirma o 2FA (o pacote ja marca a sessao como validada)
+        Filament::setCurrentPanel(Filament::getPanel('admin'));
+        $user->enableTwoFactorAuthentication();
+        $user->confirmTwoFactorAuthentication();
+
+        $resp = $this->actingAs($user->fresh())->get('/admin/painel-controle');
+        $this->assertStringNotContainsString('two-factor', (string) $resp->headers->get('Location'));
+        $this->assertNotEquals(route('filament.admin.pages.my-profile'), $resp->headers->get('Location'));
+    }
+
+    public function test_2fa_validado_permanece_ativo_em_varias_requisicoes(): void
+    {
+        $user = $this->user();
+        $this->withTwoFactor($user);
+        $user->refresh();
+
+        $this->withSession(['breezy_session_id' => md5($user->breezySession->id)]);
+
+        foreach (range(1, 4) as $i) {
+            $resp = $this->actingAs($user)->get('/admin/painel-controle');
+            $this->assertStringNotContainsString('two-factor', (string) $resp->headers->get('Location'));
+        }
+    }
+
+    public function test_logout_encerra_a_validacao_e_o_proximo_acesso_pede_o_codigo(): void
+    {
+        $user = $this->user();
+        $this->withTwoFactor($user);
+        $user->refresh();
+
+        $this->withSession(['breezy_session_id' => md5($user->breezySession->id)]);
+        $this->actingAs($user)->post(route('filament.admin.auth.logout'));
+
+        $this->assertFalse(session()->has('breezy_session_id'));
+
+        // nova sessao (novo login) -> volta a pedir o segundo fator
+        $this->flushSession();
+        $resp = $this->actingAs($user->fresh())->get('/admin/painel-controle');
+        $this->assertStringContainsString('two-factor', (string) $resp->headers->get('Location'));
+    }
+
+    public function test_sessao_dura_30_dias_de_inatividade(): void
+    {
+        $this->assertGreaterThanOrEqual(43200, config('session.lifetime'));
     }
 
     public function test_segredo_fica_criptografado_no_banco(): void
