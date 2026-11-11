@@ -1,0 +1,162 @@
+---
+layout: base.njk
+pagefind: true
+---
+<!-- Hero com fundo claro (como original) -->
+<section style="max-width:1200px;margin:0 auto;padding:72px 32px 64px;display:flex;flex-wrap:wrap;gap:48px;align-items:center">
+<div style="flex:1 1 520px;min-width:0">
+<div style="font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9a3412">Conhecimento para quem aluga equipamentos</div>
+<h1 style="margin:16px 0 0;font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:60px;line-height:1.05;letter-spacing:-0.02em;color:#1b2230">O que as melhores locadoras sabem, ao alcance de todas.</h1>
+<p style="margin:22px 0 0;font-size:19px;color:#4a5361;max-width:56ch">Guias, ferramentas e referências do Brasil e de fora sobre tributação, tecnologia, vendas e gestão da locação. Gratuito, direto e sem enrolação.</p>
+<div style="margin-top:32px;display:flex;flex-wrap:wrap;gap:14px">
+<a class="btn" href="/reforma-tributaria/" style="background:#0b5f57;color:#fff;text-decoration:none;font-weight:600;padding:14px 26px;border-radius:8px">Começar pela reforma tributária</a>
+<a class="btn btn-outline" href="/comunidade/">Entrar na comunidade</a>
+</div>
+</div>
+<div style="flex:1 1 380px;min-width:0">
+{% set featured = collections.posts | limit(1) %}
+{% if featured.length > 0 %}
+{% set post = featured[0] %}
+<a href="{{ post.url }}" style="display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid #e4dfd3;border-radius:16px;padding:30px;color:#1b2230">
+<div style="display:flex;align-items:center;gap:10px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9a3412"><span style="width:8px;height:8px;border-radius:50%;background:#c2410c"></span>Em destaque</div>
+<div style="margin-top:14px;font-family:'Newsreader',Georgia,serif;font-size:32px;line-height:1.15;font-weight:500;color:#1b2230">{{ post.data.title }}</div>
+<p style="margin:14px 0 0;color:#4a5361;font-size:16px">{{ post.data.summary }}</p>
+<div style="margin-top:22px;display:flex;flex-wrap:wrap;gap:8px">
+<span style="font-size:13px;font-weight:600;padding:5px 12px;border-radius:999px;background:#e7f1ef;color:#0b5f57">Guia completo</span>
+{% if post.data.source %}
+<span style="font-size:13px;font-weight:600;padding:5px 12px;border-radius:999px;background:#e7f1ef;color:#0b5f57">Fonte: {{ post.data.source }}</span>
+{% endif %}
+</div>
+</a>
+{% endif %}
+</div>
+</section>
+
+<!-- Cinco frentes -->
+<section style="border-top:1px solid #e4dfd3;background:#fbfaf6">
+<div class="container" style="padding:72px 32px">
+<h2 class="section-title section-title-h2">Cinco frentes de conhecimento</h2>
+<p style="margin:10px 0 0;color:#4a5361;font-size:18px;max-width:62ch">Fontes citadas em cada conteúdo.</p>
+<div style="margin-top:36px;display:flex;flex-wrap:wrap;gap:20px">
+
+<a href="/reforma-tributaria/" class="grid-item card">
+<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0b5f57" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>
+<h3 class="section-title section-title-h3">Reforma tributária</h3>
+<p class="muted">IBS, CBS, créditos, split payment e contratos. A lei explicada para a rotina da locadora.</p>
+</a>
+
+<a href="/tecnologia/" class="grid-item card">
+<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0b5f57" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>
+<h3 class="section-title section-title-h3">Tecnologia na locação</h3>
+<p class="muted">Telemetria, rastreamento, QR Code, nota fiscal eletrônica e inteligência artificial na operação.</p>
+</a>
+
+<a href="/la-fora/" class="grid-item card">
+<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0b5f57" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>
+<h3 class="section-title section-title-h3">Lá fora</h3>
+<p class="muted">Como o mercado de locação se organiza nos Estados Unidos, na Europa e na América Latina.</p>
+</a>
+
+<a href="/vendas/" class="grid-item card">
+<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0b5f57" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>
+<h3 class="section-title section-title-h3">Vendas em locadoras</h3>
+<p class="muted">Como a locadora vende melhor: atendimento de balcão, proposta, preço da diária, retorno ao cliente e fidelização. Conhecimento de vendas, não propaganda.</p>
+</a>
+
+<a href="/gestao-e-operacao/" class="grid-item card">
+<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0b5f57" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.7 2.7-2.3-.7-.7-2.3z"/></svg>
+<h3 class="section-title section-title-h3">Gestão e operação</h3>
+<p class="muted">Manutenção, disponibilidade de frota, estoque, financeiro e os indicadores que importam para a locadora pequena e média.</p>
+</a>
+
+<a href="/comunidade/" class="grid-item card" style="background:#12312e;border-color:#12312e;color:#e8f1ef;position:relative">
+<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#9ad7cd" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6M17 5a3.5 3.5 0 0 1 0 7M22 20c0-2.5-1.5-4.5-4-5.5"/></svg>
+<h3 class="section-title section-title-h3" style="color:#fff">Comunidade</h3>
+<p class="muted" style="color:#c9ded9">Um grupo de donos e gestores de locadoras trocando experiência, com moderação.</p>
+<span style="position:absolute;top:16px;right:16px;background:#f59e0b;color:#1b2230;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px">Em breve</span>
+</a>
+
+</div>
+</div>
+</section>
+
+<!-- Últimas publicações -->
+<section class="container" style="padding:72px 32px 56px">
+<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px">
+<h2 class="section-title section-title-h2">Últimas publicações</h2>
+<a href="/reforma-tributaria/" style="font-weight:600;text-decoration:none">Ver todas as publicações →</a>
+</div>
+<p class="muted-sm">Pautas propostas para o lançamento. Títulos provisórios.</p>
+<div style="margin-top:30px;display:flex;flex-wrap:wrap;gap:24px">
+{% for post in collections.posts | limit(6) %}
+<article style="flex:1 1 340px;min-width:0;box-sizing:border-box;border-top:3px solid #1b2230;padding-top:16px">
+<div class="tag" style="color:{{ post.data.theme | themeColor }}">{{ post.data.theme | themeLabel }}</div>
+<h3 style="margin:10px 0 8px;font-family:'Newsreader',Georgia,serif;font-size:27px;line-height:1.2;font-weight:600"><a href="{{ post.url }}" style="color:#1b2230;text-decoration:none">{{ post.data.title }}</a></h3>
+<p class="muted">{{ post.data.summary }}</p>
+<div style="margin-top:8px;font-size:13px;color:#6b7280">{{ post.date | dateBr }}</div>
+</article>
+{% endfor %}
+</div>
+</section>
+
+<!-- Lá fora -->
+<section style="background:#12312e;color:#e8f1ef">
+<div class="container" style="padding:72px 32px;display:flex;flex-wrap:wrap;gap:48px;align-items:center">
+<div style="flex:1 1 460px;min-width:0">
+<div style="font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9ad7cd">Referências externas</div>
+<h2 class="section-title" style="font-size:44px;line-height:1.1;letter-spacing:-0.01em;color:#fff">Como se faz lá fora, traduzido para a sua locadora.</h2>
+<p style="margin:18px 0 0;font-size:18px;color:#c9ded9;max-width:54ch">Acompanhamos associações, pesquisas e boas práticas do setor de locação no Brasil, nos Estados Unidos e na Europa. Você recebe o resumo em português, com a fonte e o que vale adaptar.</p>
+</div>
+<div style="flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:14px">
+<div style="background:#1a403c;border:1px solid #2a5651;border-radius:12px;padding:20px 22px"><b style="color:#fff">Resumo em português</b><div style="color:#c9ded9;margin-top:4px">Do material original ao que importa para a decisão.</div></div>
+<div style="background:#1a403c;border:1px solid #2a5651;border-radius:12px;padding:20px 22px"><b style="color:#fff">Fonte sempre citada</b><div style="color:#c9ded9;margin-top:4px">Link para o original, para você conferir.</div></div>
+<div style="background:#1a403c;border:1px solid #2a5651;border-radius:12px;padding:20px 22px"><b style="color:#fff">Adaptação à realidade brasileira</b><div style="color:#c9ded9;margin-top:4px">O que funciona aqui, e o que depende da nossa legislação e do nosso mercado.</div></div>
+</div>
+</div>
+</section>
+
+<!-- Ferramentas -->
+<section class="container" style="padding:72px 32px">
+<h2 class="section-title section-title-h2">Ferramentas gratuitas</h2>
+<p class="muted" style="font-size:18px">Para usar na hora, sem cadastro.</p>
+<div style="margin-top:30px;display:flex;flex-wrap:wrap;gap:20px">
+<a href="/reforma-tributaria/" class="grid-item card"><div style="font-weight:700;font-size:18px">Simulador de impacto 2027</div><p class="muted">Compare o que a sua locadora paga hoje com o que pode pagar de CBS e IBS.</p></a>
+<a href="/reforma-tributaria/" class="grid-item card"><div style="font-weight:700;font-size:18px">Autoavaliação de prontidão</div><p class="muted">Seis perguntas para saber onde a locadora está pronta e onde há risco.</p></a>
+<a href="/glossario/" class="grid-item card"><div style="font-weight:700;font-size:18px">Glossário da locação</div><p class="muted">Termos de tributação, contrato, manutenção e tecnologia, em linguagem simples.</p></a>
+</div>
+</section>
+
+<!-- Comunidade -->
+<section id="comunidade" style="background:#fbfaf6;border-top:1px solid #e4dfd3">
+<div class="container" style="padding:72px 32px;display:flex;flex-wrap:wrap;gap:48px;align-items:center">
+<div style="flex:1 1 460px;min-width:0">
+<h2 class="section-title" style="font-size:44px;line-height:1.1;letter-spacing:-0.01em">Quem aluga equipamento aprende mais junto.</h2>
+<p class="muted" style="font-size:18px;max-width:54ch">Um grupo de donos, gestores e profissionais de locadoras para tirar dúvidas, trocar experiência e acompanhar as mudanças do setor. Moderado, sem spam e sem venda.</p>
+<div style="margin-top:28px"><button class="btn" disabled style="opacity:0.6;cursor:not-allowed;display:inline-block;background:#0b5f57;color:#fff;text-decoration:none;font-weight:600;padding:14px 26px;border-radius:8px;border:0">Comunidade em breve</button></div>
+<p class="muted-sm">Regras do grupo: respeito, sem propaganda, foco em aprendizado.</p>
+</div>
+<div style="flex:1 1 380px;min-width:0;background:#fff;border:1px solid #e4dfd3;border-radius:16px;padding:28px">
+<div style="font-weight:700;font-size:18px">Depois do lançamento</div>
+<ul style="margin:14px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px;color:#4a5361">
+<li style="display:flex;gap:12px"><span style="color:#0b5f57;font-weight:700">+</span><span>Encontros online mensais com especialistas convidados</span></li>
+<li style="display:flex;gap:12px"><span style="color:#0b5f57;font-weight:700">+</span><span>Trilhas de aprendizado por tema, em formato curto</span></li>
+<li style="display:flex;gap:12px"><span style="color:#0b5f57;font-weight:700">+</span><span>Treinamentos aprofundados, em formato a definir</span></li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- Newsletter -->
+<section style="max-width:1200px;margin:0 auto;padding:72px 32px">
+<div style="background:#1b2230;border-radius:20px;padding:48px;display:flex;flex-wrap:wrap;gap:32px;align-items:center;justify-content:space-between">
+<div style="flex:1 1 380px;min-width:0">
+<h2 class="section-title" style="font-size:36px;line-height:1.15;color:#fff">Newsletter — primeira edição no ar</h2>
+<p style="margin:12px 0 0;color:#c4cad6;font-size:17px">Uma carta por semana com o que mudou no setor. Curta, objetiva e com fonte. Cancele quando quiser.</p>
+</div>
+<div style="flex:1 1 380px;min-width:0;display:flex;flex-wrap:wrap;gap:12px">
+<label for="nl-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">E-mail</label>
+<input id="nl-email" type="email" placeholder="seu@email.com.br" style="flex:1 1 220px;min-width:0;box-sizing:border-box;padding:14px 16px;border-radius:8px;border:1px solid #4a5361;background:#fff;font-size:16px;font-family:inherit;color:#1b2230">
+<button type="button" class="btn" style="background:#f59e0b;color:#1b2230">Receber gratuitamente</button>
+</div>
+</div>
+</section>

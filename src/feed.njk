@@ -1,0 +1,23 @@
+---
+permalink: /feed.xml
+---
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>oravel.org · Conhecimento para quem aluga equipamentos</title>
+<link>https://oravel.org/</link>
+<description>Guias, ferramentas e referências do Brasil e de fora sobre tributação, tecnologia, vendas e gestão da locação.</description>
+<language>pt-BR</language>
+<atom:link href="https://oravel.org/feed.xml" rel="self" type="application/rss+xml" />
+{% for post in collections.posts | limit(20) %}
+<item>
+<title>{{ post.data.title }}</title>
+<link>https://oravel.org{{ post.url }}</link>
+<guid isPermaLink="true">https://oravel.org{{ post.url }}</guid>
+<description>{{ post.data.summary }}</description>
+<pubDate>{{ post.date | dateRSS }}</pubDate>
+<category>{{ post.data.theme | themeLabel }}</category>
+</item>
+{% endfor %}
+</channel>
+</rss>

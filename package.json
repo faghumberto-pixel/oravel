@@ -1,0 +1,21 @@
+{
+  "name": "oravel-org",
+  "version": "1.0.0",
+  "description": "oravel.org - Conhecimento para quem aluga equipamentos",
+  "scripts": {
+    "dev": "npx @11ty/eleventy --serve",
+    "build": "npx @11ty/eleventy && npx pagefind --site _site",
+    "novo": "node scripts/novo-post.js"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0",
+    "luxon": "^3.5.0",
+    "pagefind": "^1.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "firebase-tools": "^15.35.0"
+  }
+}

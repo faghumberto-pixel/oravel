@@ -1,0 +1,61 @@
+---
+layout: base.njk
+pagefind: true
+---
+{% set themePosts = collections[theme] %}
+<section class="container" style="padding:48px 32px 16px">
+<div class="breadcrumb"><a href="/">Início</a> / <a href="/{{ theme }}/">{{ theme | themeLabel }}</a> / {{ title }}</div>
+<h1 class="section-title" style="font-size:56px;line-height:1.05;letter-spacing:-0.02em;max-width:22ch">{{ title }}</h1>
+<p style="margin:20px 0 0;font-size:20px;color:#4a5361;max-width:64ch">{{ summary }}</p>
+<div style="margin-top:20px;display:flex;flex-wrap:wrap;gap:8px 24px;font-size:13px;color:#6b7280">
+<span>{{ date | dateBr }}</span>
+<span class="tag" style="background:{{ theme | themeBg }};color:{{ theme | themeColor }};padding:2px 10px;border-radius:999px">{{ theme | themeLabel }}</span>
+{% if source %}<span style="font-size:12px">Fonte: {{ source }}</span>{% endif %}
+</div>
+</section>
+
+<div class="container" style="padding:0 32px 72px">
+<div class="main-layout">
+<article class="main-content" style="max-width:800px">
+{{ content | safe }}
+
+{% if source %}
+<div style="margin-top:40px;padding:18px 0;color:#4a5361;font-size:14px;line-height:1.9;border-top:1px solid #e4dfd3">
+<b style="color:#1b2230;font-size:16px">Fonte</b><br>
+{{ source | safe }}
+</div>
+{% endif %}
+</article>
+
+<aside class="post-sidebar">
+<!-- Filtros por data -->
+<div class="sidebar-widget">
+<h4>Filtrar por data</h4>
+<ul class="date-filters">
+<li><a href="/{{ theme }}/" class="active">Todos <span class="count">{{ themePosts | length }}</span></a></li>
+{% set dateGroups = themePosts | groupByDate() %}
+{% for group in dateGroups %}
+<li><a href="/{{ theme }}/?month={{ group.key }}">{{ group.key | formatMonth }} <span class="count">{{ group.items.length }}</span></a></li>
+{% endfor %}
+</ul>
+</div>
+
+<!-- Neste tema -->
+<div class="sidebar-widget">
+<h4>Neste tema</h4>
+<div style="display:flex;flex-direction:column;gap:8px">
+{% for post in themePosts %}
+<a href="{{ post.url }}" style="color:#1b2230;text-decoration:none;padding:8px 12px;border-radius:8px;font-size:14px;transition:background .15s{% if post.url == page.url %};background:#e7f1ef;font-weight:600{% endif %}">{{ post.data.title }}</a>
+{% endfor %}
+</div>
+</div>
+
+<!-- Comunidade -->
+<div style="background:#12312e;border-radius:16px;padding:24px;color:#e8f1ef">
+<div style="font-weight:700;font-size:18px;color:#fff">Troque experiência</div>
+<p style="margin:8px 0 16px;color:#c9ded9;font-size:15px">Como a sua locadora lida com isso? Conte para o grupo.</p>
+<a href="/comunidade/" class="btn btn-amber">Conhecer a comunidade</a>
+</div>
+</aside>
+</div>
+</div>

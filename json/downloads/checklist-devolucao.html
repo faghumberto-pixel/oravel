@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Checklist de devolução de equipamento · oravel.org</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f6f3ec;color:#1b2230;font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.5}
+a{color:#0b5f57}a:hover{color:#08443f}
+.page{max-width:210mm;margin:0 auto;background:#fff;padding:32mm 24mm;box-sizing:border-box}
+header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #1b2230;padding-bottom:16px;margin-bottom:24px}
+.logo{font-family:'Newsreader',Georgia,serif;font-size:28px;font-weight:600;color:#1b2230}.logo span{color:#0b5f57}
+h1{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:28px;line-height:1.1;margin:0 0 8px}
+.subtitle{color:#4a5361;font-size:14px}
+.card{background:#fbfaf6;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:16px}
+.card-title{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:16px;color:#1b2230;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.card-title::before{content:"";width:6px;height:6px;background:#0b5f57;border-radius:50%;flex-shrink:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280}
+.field input,.field textarea{border:1px solid #e4dfd3;background:#fff;border-radius:8px;padding:10px 12px;font-family:'Inter',system-ui,sans-serif;font-size:14px;color:#1b2230;outline:none}
+.field input:focus,.field textarea:focus{border-color:#0b5f57;box-shadow:0 0 0 3px rgba(11,95,87,.15)}
+.field.full{grid-column:1/-1}
+.field textarea{min-height:60px;resize:vertical}
+.checklist-table{width:100%;border-collapse:collapse;font-size:13px}
+.checklist-table th,.checklist-table td{border-bottom:1px solid #e4dfd3;padding:12px 8px;text-align:left;vertical-align:top}
+.checklist-table th{font-weight:600;color:#1b2230;background:#fbfaf6;font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.checklist-table td:first-child{width:40px}
+.checklist-table input[type="checkbox"]{width:18px;height:18px;accent-color:#0b5f57;cursor:pointer}
+.checklist-table .item{font-weight:500;color:#1b2230}
+.checklist-table .obs{color:#4a5361;font-size:12px}
+.signatures{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:24px}
+.sig-block{display:flex;flex-direction:column;gap:8px}
+.sig-line{border-top:1px solid #1b2230;height:40px}
+.sig-label{font-size:12px;color:#6b7280}
+.footer-note{margin-top:24px;font-size:12px;color:#6b7280;text-align:center;border-top:1px dashed #e4dfd3;padding-top:16px}
+@media print{
+body{background:#fff}.page{padding:0;margin:0;box-shadow:none}
+header{border-bottom-color:#000}
+.card{border-color:#ccc;background:#fafafa}
+.checklist-table th,.checklist-table td{border-bottom-color:#ccc}
+.field input,.field textarea{border-color:#999}
+@page{margin:0;size:A4}
+}
+@page{margin:0;size:A4}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+<div class="logo">oravel<span>.</span>org</div>
+<div style="text-align:right">
+<div style="font-size:11px;color:#6b7280;font-weight:600;letter-spacing:.08em;text-transform:uppercase">Documento de vistoria</div>
+<div style="font-size:11px;color:#6b7280">Versão para impressão — preencher à mão ou digitalmente</div>
+</div>
+</header>
+
+<h1>Checklist de inspeção na devolução</h1>
+<p class="subtitle">Preencha um formulário por equipamento. Anexe fotos da vistoria ao processo.</p>
+
+<div class="card">
+<h2 class="card-title">Identificação</h2>
+<div class="grid">
+<div class="field">
+<label>Cliente / Locatário</label>
+<input type="text" placeholder="Razão social ou nome completo">
+</div>
+<div class="field">
+<label>CNPJ / CPF</label>
+<input type="text" placeholder="00.000.000/0000-00 ou 000.000.000-00">
+</div>
+<div class="field">
+<label>Contrato nº</label>
+<input type="text" placeholder="Número do contrato de locação">
+</div>
+<div class="field">
+<label>Data da devolução</label>
+<input type="date">
+</div>
+<div class="field">
+<label>Hora da devolução</label>
+<input type="time">
+</div>
+<div class="field">
+<label>Equipamento</label>
+<input type="text" placeholder="Ex.: Escavadeira hidráulica 20 ton">
+</div>
+<div class="field">
+<label>Marca / Modelo</label>
+<input type="text" placeholder="Ex.: Caterpillar 320D">
+</div>
+<div class="field">
+<label>Nº de série / Chassi</label>
+<input type="text" placeholder="Identificação única do equipamento">
+</div>
+<div class="field">
+<label>Horímetro na devolução</label>
+<input type="text" placeholder="Horas totais no momento da devolução">
+</div>
+<div class="field">
+<label>Horímetro na entrega</label>
+<input type="text" placeholder="Horas totais no momento da entrega">
+</div>
+<div class="field">
+<label>Horas trabalhadas no período</label>
+<input type="text" placeholder="Diferença entre devolução e entrega">
+</div>
+<div class="field full">
+<label>Local da vistoria</label>
+<input type="text" placeholder="Pátio da locadora, obra do cliente, etc.">
+</div>
+<div class="field full">
+<label>Responsável pela vistoria (locadora)</label>
+<input type="text" placeholder="Nome do colaborador que realizou a inspeção">
+</div>
+</div>
+</div>
+
+<div class="card">
+<h2 class="card-title">Itens de verificação</h2>
+<table class="checklist-table">
+<thead>
+<tr>
+<th style="width:40px">OK</th>
+<th style="width:40px">Não</th>
+<th style="width:40px">N/A</th>
+<th class="item">Item inspecionado</th>
+<th>Observações / Fotos</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><input type="checkbox" name="i1"></td><td><input type="checkbox" name="i1n"></td><td><input type="checkbox" name="i1na"></td><td class="item">Aspecto geral / limpeza</td><td class="obs"><input type="text" placeholder="Sujeira excessiva, resíduos de obra, etc."></td></tr>
+<tr><td><input type="checkbox" name="i2"></td><td><input type="checkbox" name="i2n"></td><td><input type="checkbox" name="i2na"></td><td class="item">Carroceria / chassi / estrutura — trincas, amassados, soldas</td><td class="obs"><input type="text" placeholder="Registre local e extensão do dano"></td></tr>
+<tr><td><input type="checkbox" name="i3"></td><td><input type="checkbox" name="i3n"></td><td><input type="checkbox" name="i3na"></td><td class="item">Pneus / esteiras / rodas — desgaste, cortes, furos, pressão</td><td class="obs"><input type="text" placeholder="Profundidade de sulco, danos laterais"></td></tr>
+<tr><td><input type="checkbox" name="i4"></td><td><input type="checkbox" name="i4n"></td><td><input type="checkbox" name="i4na"></td><td class="item">Sistema hidráulico — vazamentos, mangueiras, cilindros</td><td class="obs"><input type="text" placeholder="Gotejamento, rasgos, folga excessiva"></td></tr>
+<tr><td><input type="checkbox" name="i5"></td><td><input type="checkbox" name="i5n"></td><td><input type="checkbox" name="i5na"></td><td class="item">Motor — partida, ruídos, fumaça, vazamentos de óleo/água</td><td class="obs"><input type="text" placeholder="Cor da fumaça, tempo de partida a frio"></td></tr>
+<tr><td><input type="checkbox" name="i6"></td><td><input type="checkbox" name="i6n"></td><td><input type="checkbox" name="i6na"></td><td class="item">Níveis de fluidos — óleo motor, hidráulico, arrefecimento, combustível</td><td class="obs"><input type="text" placeholder="Abaixo do mínimo, contaminação visível"></td></tr>
+<tr><td><input type="checkbox" name="i7"></td><td><input type="checkbox" name="i7n"></td><td><input type="checkbox" name="i7na"></td><td class="item">Filtros (ar, óleo, combustível, cabine) — condição</td><td class="obs"><input type="text" placeholder="Saturados, rasgados, fora de prazo"></td></tr>
+<tr><td><input type="checkbox" name="i8"></td><td><input type="checkbox" name="i8n"></td><td><input type="checkbox" name="i8na"></td><td class="item">Sistema elétrico — bateria, cabos, luzes, painel, alarmes</td><td class="obs"><input type="text" placeholder="Lâmpadas queimadas, terminais oxidados"></td></tr>
+<tr><td><input type="checkbox" name="i9"></td><td><input type="checkbox" name="i9n"></td><td><input type="checkbox" name="i9na"></td><td class="item">Comandos e alavancas — folga, travamento, identificação</td><td class="obs"><input type="text" placeholder="Folga excessiva, etiquetas ausentes"></td></tr>
+<tr><td><input type="checkbox" name="i10"></td><td><input type="checkbox" name="i10n"></td><td><input type="checkbox" name="i10na"></td><td class="item">Assento, cinto, retrovisores, vidros, limpadores</td><td class="obs"><input type="text" placeholder="Rasgos no cinto, trincas no vidro"></td></tr>
+<tr><td><input type="checkbox" name="i11"></td><td><input type="checkbox" name="i11n"></td><td><input type="checkbox" name="i11na"></td><td class="item">Implementos / acessórios (balde, garfo, rompedor, etc.)</td><td class="obs"><input type="text" placeholder="Desgaste de dentes, trincas, pinos"></td></tr>
+<tr><td><input type="checkbox" name="i12"></td><td><input type="checkbox" name="i12n"></td><td><input type="checkbox" name="i12na"></td><td class="item">Sistemas de segurança (ROPS/FOPS, alarme de ré, luzes de trabalho)</td><td class="obs"><input type="text" placeholder="Estrutura íntegra, alarmes funcionando"></td></tr>
+<tr><td><input type="checkbox" name="i13"></td><td><input type="checkbox" name="i13n"></td><td><input type="checkbox" name="i13na"></td><td class="item">Documentação a bordo (manual, ART, certificado de calibração)</td><td class="obs"><input type="text" placeholder="Ausente, vencido, rasurado"></td></tr>
+<tr><td><input type="checkbox" name="i14"></td><td><input type="checkbox" name="i14n"></td><td><input type="checkbox" name="i14na"></td><td class="item">Ferramentas e kit de bordo (chaves, macaco, triângulo, extintor)</td><td class="obs"><input type="text" placeholder="Faltando, vencido (extintor)"></td></tr>
+<tr><td><input type="checkbox" name="i15"></td><td><input type="checkbox" name="i15n"></td><td><input type="checkbox" name="i15na"></td><td class="item">Pintura e identificação da locadora (adesivos, logotipo, nº patrimônio)</td><td class="obs"><input type="text" placeholder="Raspados, adesivos removidos"></td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="card">
+<h2 class="card-title">Registro de avarias e pendências</h2>
+<div class="field full">
+<label>Descrição detalhada dos danos encontrados (um por linha)</label>
+<textarea placeholder="Ex.: Amassado na lateral direita da caçamba, ~15 cm — foto anexa.&#10;Vazamento no cilindro da lança (gotejamento lento).&#10;Pneu traseiro esquerdo com corte na lateral."></textarea>
+</div>
+<div class="field full">
+<label>Peças / reparos necessários e custo estimado</label>
+<textarea placeholder="Ex.: Substituição do cilindro da lança — R$ 3.200,00 (peça + mão de obra).&#10;Troca do pneu traseiro esquerdo — R$ 1.800,00."></textarea>
+</div>
+<div class="field full">
+<label>Fotos anexadas (descreva o que cada arquivo mostra)</label>
+<textarea placeholder="Ex.: IMG_001.jpg — vista geral na chegada.&#10;IMG_002.jpg — detalhe do amassado na caçamba.&#10;IMG_003.jpg — vazamento no cilindro."></textarea>
+</div>
+</div>
+
+<div class="signatures">
+<div class="sig-block">
+<div class="sig-line"></div>
+<div class="sig-label">Assinatura do vistoriador (locadora)</div>
+<div style="font-size:12px;color:#6b7280">Nome legível: <u style="min-width:200px;display:inline-block;border-bottom:1px solid #999"></u></div>
+<div style="font-size:12px;color:#6b7280">Data: <u style="min-width:120px;display:inline-block;border-bottom:1px solid #999"></u></div>
+</div>
+<div class="sig-block">
+<div class="sig-line"></div>
+<div class="sig-label">Assinatura do cliente / representante</div>
+<div style="font-size:12px;color:#6b7280">Nome legível: <u style="min-width:200px;display:inline-block;border-bottom:1px solid #999"></u></div>
+<div style="font-size:12px;color:#6b7280">Data: <u style="min-width:120px;display:inline-block;border-bottom:1px solid #999"></u></div>
+</div>
+</div>
+
+<p class="footer-note">Este checklist é um modelo genérico. Adapte os itens ao tipo de equipamento e à sua operação. A assinatura de ambas as partes confirma o estado descrito. Guarde uma cópia assinada (física ou digital) no processo do contrato. — <a href="https://oravel.org" style="color:#0b5f57">oravel.org</a></p>
+
+</div>
+</body>
+</html>

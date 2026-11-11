@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% if title %}{{ title }} · {% endif %}oravel.org</title>
+{% if description %}<meta name="description" content="{{ description }}">{% endif %}
+{% if canonical %}<link rel="canonical" href="{{ canonical }}">{% endif %}
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+{% if pagefind %}<link rel="stylesheet" href="/pagefind/pagefind-ui.css">{% endif %}
+<style>
+body{margin:0;background:#f6f3ec;color:#1b2230;font-family:'Inter',system-ui,sans-serif;font-size:16px;line-height:1.6;width:100%}
+a{color:#0b5f57}a:hover{color:#08443f}
+.btn{display:inline-block;background:#0b5f57;color:#fff;text-decoration:none;font-weight:600;padding:11px 20px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:15px;min-height:48px}
+.btn:hover{filter:brightness(1.08)}
+.btn-outline{background:transparent;color:#1b2230;border:2px solid #1b2230}
+.btn-outline:hover{background:#1b2230;color:#fff}
+.btn-amber{background:#f59e0b;color:#1b2230}
+.btn-amber:hover{filter:brightness(1.08)}
+.container{max-width:1200px;margin:0 auto;padding:0 32px}
+.tag{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;display:inline-block}
+.card{background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:28px;text-decoration:none;color:inherit;display:block}
+.card:hover{border-color:#c9c2b3}
+.section-title{font-family:'Newsreader',Georgia,serif;font-weight:500;letter-spacing:-0.01em}
+.section-title-h2{font-size:40px}
+.section-title-h3{font-size:26px;font-weight:600}
+.muted{color:#4a5361}
+.muted-sm{color:#6b7280;font-size:14px}
+.breadcrumb{font-size:14px;color:#6b7280;margin-bottom:14px}
+.breadcrumb a{color:#6b7280}
+.divider{border-top:1px solid #e4dfd3}
+.bg-light{background:#fbfaf6}
+.bg-dark{background:#12312e;color:#e8f1ef}
+.bg-dark .muted{color:#c9ded9}
+.bg-dark .muted-sm{color:#c9ded9}
+.bg-dark a{color:#9ad7cd}
+.bg-dark a:hover{color:#fff}
+.bg-dark .btn-outline{border-color:#fff;color:#fff}
+.bg-dark .btn-outline:hover{background:#fff;color:#12312e}
+.grid{display:flex;flex-wrap:wrap;gap:20px}
+.grid-item{flex:1 1 340px;min-width:0;box-sizing:border-box}
+.flex-center{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:16px}
+
+/* Hero com fundo verde */
+.hero-green{background:#0b5f57;color:#fff;padding:80px 32px}
+.hero-green .container{display:flex;flex-wrap:wrap;gap:48px;align-items:center;max-width:1200px;margin:0 auto}
+.hero-green h1{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:56px;line-height:1.05;letter-spacing:-0.02em;margin:0;max-width:18ch}
+.hero-green p{font-size:19px;color:#c9ded9;margin:22px 0 0;max-width:56ch}
+.hero-green .tag{color:#f59e0b;background:rgba(255,255,255,.15);padding:6px 14px;border-radius:999px}
+.hero-green .btn{background:#f59e0b;color:#1b2230}
+.hero-green .btn:hover{filter:brightness(1.08)}
+.hero-green .btn-outline{background:transparent;color:#fff;border-color:#fff}
+.hero-green .btn-outline:hover{background:#fff;color:#0b5f57}
+
+/* Header com busca - fundo escuro igual Referências externas */
+.site-header{border-bottom:1px solid #2a5651;background:#12312e}
+.site-header .container{padding:16px 32px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px}
+.site-logo{text-decoration:none;font-family:'Newsreader',Georgia,serif;font-size:34px;font-weight:600;color:#fff;letter-spacing:-0.01em;display:flex;align-items:center;gap:4px}
+.site-logo span{color:#f59e0b}
+
+/* Mobile menu toggle */
+.menu-toggle{display:none;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;padding:8px;line-height:1}
+.site-nav{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:14px;font-weight:500}
+.site-nav a{color:#e8f1ef;text-decoration:none;padding:4px 0}
+.site-nav a:hover{color:#fff}
+.site-nav a.active{color:#f59e0b;border-bottom:2px solid #f59e0b}
+.site-search{flex:1 1 300px;max-width:400px;margin-left:24px}
+.site-search input{width:100%;box-sizing:border-box;padding:10px 14px;border-radius:8px;border:1px solid #2a5651;background:#0e2724;font-size:14px;font-family:inherit;color:#1b2230}
+.site-search input::placeholder{color:#8ab5af}
+.site-search input:focus{outline:none;border-color:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.2)}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .site-header .container{padding:12px 20px}
+  .site-logo{font-size:28px}
+  .menu-toggle{display:block;z-index:1001}
+  .site-nav{
+    position:fixed;top:0;right:-100%;width:280px;max-width:85vw;height:100vh;
+    background:#12312e;flex-direction:column;padding:80px 24px 24px;gap:8px;
+    transition:right .3s ease;z-index:1000;border-left:1px solid #2a5651
+  }
+  .site-nav.open{right:0}
+  .site-nav a{display:block;padding:16px 0;font-size:16px;border-bottom:1px solid #1e3a36}
+  .site-nav a:last-child{border-bottom:none}
+  .site-search{order:3;width:100%;max-width:none;margin:16px 0 0}
+  .site-search input{font-size:16px} /* prevent zoom on iOS */
+}
+
+/* Layout principal com sidebar */
+.main-layout{display:flex;flex-wrap:wrap;gap:48px}
+.main-content{flex:1 1 700px;min-width:0}
+.post-sidebar{flex:1 1 280px;min-width:0;position:sticky;top:100px;align-self:flex-start}
+
+/* Sidebar de filtros por data */
+.sidebar-widget{background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:20px}
+.sidebar-widget h4{margin:0 0 16px;font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;color:#1b2230}
+.date-filters{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.date-filters a{display:block;padding:10px 12px;border-radius:8px;color:#4a5361;text-decoration:none;font-size:14px;transition:background .15s}
+.date-filters a:hover{background:#f6f3ec;color:#0b5f57}
+.date-filters a.active{background:#e7f1ef;color:#0b5f57;font-weight:600}
+.date-filters .count{float:right;color:#6b7280;font-weight:400}
+
+/* Busca Pagefind no header */
+#search{width:100%}
+</style>
+</head>
+<body>
+<div style="background:#f6f3ec;color:#1b2230;font-family:'Inter',system-ui,sans-serif;font-size:16px;line-height:1.55;width:100%">
+
+<!-- Header -->
+<header class="site-header">
+<div class="container">
+<a href="/" class="site-logo">oravel<span>.</span>org</a>
+<button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="site-nav">☰</button>
+<nav class="site-nav" id="site-nav" role="navigation">
+<a href="/reforma-tributaria/" class="{% if theme == 'reforma-tributaria' %}active{% endif %}">Reforma tributária</a>
+<a href="/tecnologia/" class="{% if theme == 'tecnologia' %}active{% endif %}">Tecnologia</a>
+<a href="/la-fora/" class="{% if theme == 'la-fora' %}active{% endif %}">Lá fora</a>
+<a href="/vendas/" class="{% if theme == 'vendas' %}active{% endif %}">Vendas</a>
+<a href="/gestao-e-operacao/" class="{% if theme == 'gestao-e-operacao' %}active{% endif %}">Gestão e operação</a>
+<a href="/comunidade/" class="{% if theme == 'comunidade' %}active{% endif %}">Comunidade</a>
+</nav>
+<div class="site-search" id="search-header"></div>
+</div>
+</header>
+
+<!-- Main Content -->
+<main>
+{{ content | safe }}
+</main>
+
+<!-- Footer -->
+<footer style="border-top:1px solid #e4dfd3;margin-top:40px">
+<div class="container" style="padding:28px 32px;color:#6b7280;font-size:14px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between">
+<span>Uma iniciativa da <a href="/sobre/" style="color:#4a5361">Oravel</a>. Conteúdo informativo, não substitui a orientação de contador, advogado ou consultor.</span>
+<span style="display:flex;flex-wrap:wrap;gap:8px 20px">
+<a href="/sobre/" style="color:#4a5361">Sobre</a>
+<a href="/privacidade/" style="color:#4a5361">Privacidade</a>
+<a href="/termos/" style="color:#4a5361">Termos</a>
+</span>
+</div>
+</footer>
+
+</div>
+
+{% if pagefind %}
+<script src="/pagefind/pagefind-ui.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  // Mobile menu toggle
+  const toggle = document.querySelector('.menu-toggle');
+  const nav = document.getElementById('site-nav');
+  if (toggle && nav) {
+    toggle.addEventListener('click', () => {
+      const open = nav.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', open);
+      toggle.textContent = open ? '✕' : '☰';
+    });
+    // Close menu when clicking a link
+    nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      nav.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.textContent = '☰';
+    }));
+  }
+
+  // Busca no header
+  new PagefindUI({
+    element: '#search-header',
+    showSubResults: true,
+    showImages: false,
+    translations: {
+      placeholder: 'Buscar artigos, assuntos...',
+      zeroResults: 'Nenhum resultado para "[[searchTerm]]"',
+      manyResults: '[[count]] resultados',
+      searchLabel: 'Buscar'
+    }
+  });
+
+  // Busca na página /busca/ (se existir)
+  const searchPage = document.getElementById('search');
+  if (searchPage && searchPage !== document.getElementById('search-header')) {
+    new PagefindUI({
+      element: '#search',
+      showSubResults: true,
+      showImages: false,
+      translations: {
+        placeholder: 'Buscar no oravel.org...',
+        zeroResults: 'Nenhum resultado para "[[searchTerm]]"',
+        manyResults: '[[count]] resultados para "[[searchTerm]]"',
+        searchLabel: 'Buscar'
+      }
+    });
+  }
+});
+</script>
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,15 @@
+---
+layout: base.njk
+pagefind: true
+---
+<section class="container" style="padding:48px 32px 16px">
+<div class="breadcrumb"><a href="/">Início</a> / {{ title }}</div>
+<h1 class="section-title" style="font-size:56px;line-height:1.05;letter-spacing:-0.02em;max-width:20ch">{{ title }}</h1>
+<p style="margin:20px 0 0;font-size:20px;color:#4a5361;max-width:64ch">{{ description }}</p>
+</section>
+
+<section class="container" style="padding:24px 32px 72px;display:flex;flex-wrap:wrap;gap:48px;align-items:flex-start">
+<main style="flex:999 1 640px;min-width:0">
+{{ content | safe }}
+</main>
+</section>
