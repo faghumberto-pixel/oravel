@@ -49,7 +49,7 @@ if (fc) fc.addEventListener("submit", async (ev) => {
       nome: d.nome.trim(), sobrenome: d.sobrenome.trim(), empresa: d.empresa.trim(), whatsapp: d.whatsapp.trim(),
       cidade: d.cidade.trim(), estado: d.estado, email: d.email.trim(), criado: serverTimestamp()
     });
-    await sendPasswordResetEmail(auth, d.email.trim(), { url: "https://oravel.org/entrar/?senha=definida" });
+    await sendPasswordResetEmail(auth, d.email.trim(), { url: "https://oravel.org/?cadastro=ok" });
     await signOut(auth);
     fc.reset();
     msg(out, "Cadastro feito! Enviamos um e-mail para você definir sua senha. Seu usuário é o e-mail cadastrado. Confira também o spam.", true);

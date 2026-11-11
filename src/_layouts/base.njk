@@ -144,6 +144,9 @@ article.main-content h3{border-left:4px solid #0b5f57;padding:2px 0 2px 12px;mar
 </div>
 </header>
 
+<div id="aviso-cadastro" role="status" hidden style="background:#e7f1ef;border-bottom:1px solid #0b5f57;color:#0b5f57;font-weight:600;text-align:center;padding:14px 20px">Cadastro concluído com sucesso! Agora você já pode <a href="/entrar/" style="color:#0b5f57">entrar</a> e comentar nos artigos.</div>
+<script>if(new URLSearchParams(location.search).get("cadastro")==="ok"){document.getElementById("aviso-cadastro").hidden=false;history.replaceState(null,"",location.pathname)}</script>
+
 <!-- Main Content -->
 <main>
 {{ content | safe }}
