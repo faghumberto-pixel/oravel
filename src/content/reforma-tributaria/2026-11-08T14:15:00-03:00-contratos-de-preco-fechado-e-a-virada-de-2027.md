@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/contratos-de-preco-fechado-e-a-virada-de-2027.jpg"
 title: "Contratos de preço fechado e a virada de 2027"
 date: 2026-11-08T14:15:00-03:00
 theme: "reforma-tributaria"

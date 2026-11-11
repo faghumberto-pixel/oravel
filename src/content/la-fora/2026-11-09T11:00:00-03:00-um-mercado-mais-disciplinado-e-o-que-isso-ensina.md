@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/um-mercado-mais-disciplinado-e-o-que-isso-ensina.jpg"
 title: "Um mercado mais disciplinado, e o que isso ensina a locadoras pequenas"
 date: 2026-11-09T11:00:00-03:00
 theme: "la-fora"

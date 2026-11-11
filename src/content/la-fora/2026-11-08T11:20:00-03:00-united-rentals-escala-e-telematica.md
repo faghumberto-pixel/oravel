@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/united-rentals-escala-e-telematica.jpg"
 title: "Lá fora: o que a maior locadora do mundo faz com dados da frota"
 date: 2026-11-08T11:20:00-03:00
 theme: "la-fora"

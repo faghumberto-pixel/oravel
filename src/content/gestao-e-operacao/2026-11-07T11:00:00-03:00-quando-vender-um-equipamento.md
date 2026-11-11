@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/quando-vender-um-equipamento.jpg"
 title: "Quando vender um equipamento: os dois sinais juntos"
 date: 2026-11-07T11:00:00-03:00
 theme: "gestao-e-operacao"

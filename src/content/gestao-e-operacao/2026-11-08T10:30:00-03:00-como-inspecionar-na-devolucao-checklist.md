@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/como-inspecionar-na-devolucao-checklist.jpg"
 title: "Como inspecionar na devolução: checklist prático"
 date: 2026-11-08T10:30:00-03:00
 theme: "gestao-e-operacao"

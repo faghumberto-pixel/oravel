@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/cinco-perguntas-para-trocar-com-outro-locador.jpg"
 title: "Cinco perguntas para trocar com outro locador (sem falar de preço)"
 date: 2026-11-10T08:15:00-03:00
 theme: "comunidade"

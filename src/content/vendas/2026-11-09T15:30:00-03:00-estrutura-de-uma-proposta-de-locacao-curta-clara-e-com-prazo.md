@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/estrutura-de-uma-proposta-de-locacao-curta-clara-e-com-prazo.jpg"
 title: "Estrutura de uma proposta de locação: curta, clara e com prazo"
 date: 2026-11-09T15:30:00-03:00
 theme: "vendas"

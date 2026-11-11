@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/telemetria-e-rastreamento-o-que-as-fontes-do-setor-descem.jpg"
 title: "Telemetria e rastreamento: o que as fontes do setor descrevem"
 date: 2026-11-10T16:20:00-03:00
 theme: "tecnologia"

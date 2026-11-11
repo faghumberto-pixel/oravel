@@ -33,7 +33,7 @@ pagefind: true
 </section>
 
 <!-- Cinco frentes -->
-<section style="background:#12312e;color:#e8f1ef">
+<section class="frentes" style="background:#12312e;color:#e8f1ef">
 <div class="container" style="padding:72px 32px">
 <h2 class="section-title section-title-h2" style="color:#fff">Cinco frentes de conhecimento</h2>
 <p style="margin:10px 0 0;color:#c9ded9;font-size:18px;max-width:62ch">Fontes citadas em cada conteúdo.</p>
@@ -84,12 +84,13 @@ pagefind: true
 <section class="container" style="padding:72px 32px 56px">
 <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px">
 <h2 class="section-title section-title-h2">Últimas publicações</h2>
-<a href="/reforma-tributaria/" style="font-weight:600;text-decoration:none">Ver todas as publicações →</a>
+<a href="/publicacoes/" style="font-weight:600;text-decoration:none">Ver todas as publicações →</a>
 </div>
 <p class="muted-sm">Pautas propostas para o lançamento. Títulos provisórios.</p>
 <div style="margin-top:30px;display:flex;flex-wrap:wrap;gap:24px">
 {% for post in collections.posts | limit(6) %}
 <article style="flex:1 1 340px;min-width:0;box-sizing:border-box;border-top:3px solid #1b2230;padding-top:16px">
+{% if post.data.image %}<a href="{{ post.url }}"><img class="thumb-card" src="{{ post.data.image }}" alt="" loading="lazy" width="600" height="400"></a>{% endif %}
 <div class="tag" style="color:{{ post.data.theme | themeColor }}">{{ post.data.theme | themeLabel }}</div>
 <h3 style="margin:10px 0 8px;font-family:'Newsreader',Georgia,serif;font-size:27px;line-height:1.2;font-weight:600"><a href="{{ post.url }}" style="color:#1b2230;text-decoration:none">{{ post.data.title }}</a></h3>
 <p class="muted">{{ post.data.summary }}</p>

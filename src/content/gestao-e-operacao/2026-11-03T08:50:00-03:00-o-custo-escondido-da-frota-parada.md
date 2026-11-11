@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/o-custo-escondido-da-frota-parada.jpg"
 title: "O custo escondido da frota parada"
 date: 2026-11-03T08:50:00-03:00
 theme: "gestao-e-operacao"

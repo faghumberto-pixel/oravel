@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/credito-de-cbs-como-a-locadora-passa-a-recuperar-imposto.jpg"
 title: "Crédito de CBS: como a locadora passa a recuperar imposto"
 date: 2026-11-09T10:30:00-03:00
 theme: "reforma-tributaria"

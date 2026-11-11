@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/utilizacao-o-indicador-que-mais-importa.jpg"
 title: "Utilização: o indicador que mais importa na frota e como medir"
 date: 2026-11-06T14:05:00-03:00
 theme: "tecnologia"

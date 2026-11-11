@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/por-que-a-manutencao-decide-o-resultado-da-locadora.jpg"
 title: "Por que a manutenção decide o resultado da locadora"
 date: 2026-11-10T09:30:00-03:00
 theme: "gestao-e-operacao"

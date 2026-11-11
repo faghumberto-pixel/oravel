@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/vistoria-na-entrega-e-na-devolucao.jpg"
 title: "Lá fora: vistoria na entrega e na devolução, o processo que reduz discussão"
 date: 2026-11-05T15:30:00-03:00
 theme: "la-fora"

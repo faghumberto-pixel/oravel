@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/inteligencia-artificial-operacao-o-que-e-pratica-e-o-que-e-promessa.jpg"
 title: "Inteligência artificial na operação: o que já é prática e o que ainda é promessa"
 date: 2026-11-11T10:30:00-03:00
 theme: "tecnologia"
