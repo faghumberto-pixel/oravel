@@ -18,6 +18,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | 2FA obrigatório
+    |--------------------------------------------------------------------------
+    | Exige 2FA (TOTP) de todos os usuários dos painéis admin e central.
+    | Exceção individual: users.two_factor_exempt (só a Central altera).
+    | TWO_FACTOR_REQUIRED=false desliga para todos (emergência).
+    */
+
+    'require_2fa' => env('TWO_FACTOR_REQUIRED', true),
+
+    /*
+    |--------------------------------------------------------------------------
     | Horímetro
     |--------------------------------------------------------------------------
     | Salto (em horas) entre duas leituras de horímetro acima do qual o

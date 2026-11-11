@@ -259,6 +259,7 @@ class AppServiceProvider extends ServiceProvider
         Livewire::component('two_factor_authentication', TwoFactorAuthentication::class);
         Livewire::component('personal_info', PersonalInfo::class);
         Livewire::component('update_password', UpdatePassword::class);
+        Livewire::component('app-two-factor-page', \App\Filament\Pages\Auth\TwoFactorPage::class);
 
         // Mesmo bug de novo, agora auto-infligido: CentralPanelProvider usa
         // ->pages([])/->widgets([]) explicitos em vez de discoverPages()/

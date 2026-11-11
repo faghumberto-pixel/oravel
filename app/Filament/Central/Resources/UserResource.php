@@ -54,10 +54,10 @@ class UserResource extends Resource
                         Forms\Components\TextInput::make('password')
                             ->label('Senha')
                             ->password()
-                            ->dehydrateStateUsing(fn($state) => $state ? Hash::make($state) : null)
-                            ->dehydrated(fn($state) => filled($state))
-                            ->required(fn(string $operation) => $operation === 'create')
-                            ->helperText(fn(string $operation) => $operation === 'edit' ? 'Deixe em branco para manter a senha atual' : ''),
+                            ->dehydrateStateUsing(fn ($state) => $state ? Hash::make($state) : null)
+                            ->dehydrated(fn ($state) => filled($state))
+                            ->required(fn (string $operation) => $operation === 'create')
+                            ->helperText(fn (string $operation) => $operation === 'edit' ? 'Deixe em branco para manter a senha atual' : ''),
 
                         Forms\Components\Select::make('role')
                             ->label('Função')
@@ -67,6 +67,23 @@ class UserResource extends Resource
                                 'manager' => 'Gerente',
                             ])
                             ->required(),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Verificação em duas etapas (2FA)')
+                    ->description('O 2FA é obrigatório para todos. Use a exceção só em casos excepcionais.')
+                    ->visible(fn (string $operation) => $operation === 'edit' && (auth()->user()?->isSuperAdmin() ?? false))
+                    ->schema([
+                        Forms\Components\Toggle::make('two_factor_exempt')
+                            ->label('Dispensar este usuário do 2FA')
+                            ->live()
+                            ->dehydrated(false),
+
+                        Forms\Components\TextInput::make('two_factor_exempt_reason')
+                            ->label('Motivo da exceção')
+                            ->maxLength(255)
+                            ->required(fn (Forms\Get $get) => (bool) $get('two_factor_exempt'))
+                            ->visible(fn (Forms\Get $get) => (bool) $get('two_factor_exempt'))
+                            ->dehydrated(false),
                     ])->columns(2),
             ]);
     }
@@ -79,7 +96,7 @@ class UserResource extends Resource
                     ->label('Nome')
                     ->searchable()
                     ->sortable()
-                    ->url(fn(User $record) => route('filament.central.resources.users.edit', $record)),
+                    ->url(fn (User $record) => route('filament.central.resources.users.edit', $record)),
 
                 Tables\Columns\TextColumn::make('email')
                     ->label('Email')

@@ -252,13 +252,14 @@ class CentralPanelProvider extends PanelProvider
                     ->locale('pt-br')
             )
             ->plugin(
-                // 2FA obrigatorio (force: true) causou lockout do super admin
-                // duas vezes (perda do dispositivo autenticador, sem forma de
-                // entrar pra desativar) -- pedido do usuario 2026-09-24 pra
-                // tornar opcional, igual ja e' no painel admin.
+                // 2FA obrigatorio pra todos (pedido 2026-11-11) via
+                // App\Http\Middleware\RequireTwoFactor, nao via force: true do
+                // pacote -- precisa de excecao por usuario (users.two_factor_exempt).
+                // O force: true causou lockout do super admin 2x (09/2026); a saida
+                // agora e' `php artisan user:reset-2fa {email}`.
                 BreezyCore::make()
                     ->myProfile()
-                    ->enableTwoFactorAuthentication()
+                    ->enableTwoFactorAuthentication(action: \App\Filament\Pages\Auth\TwoFactorPage::class)
             )
             ->userMenuItems([
                 // chave != 'account' de proposito -- ver comentario em AdminPanelProvider
@@ -290,4 +291,5 @@ class CentralPanelProvider extends PanelProvider
                 Authenticate::class,
             ]);
     }
+                \App\Http\Middleware\RequireTwoFactor::class,
 }
