@@ -11,6 +11,8 @@ O oravel.org é um espaço de conhecimento para quem trabalha com locação de e
 
 **Como trabalhamos.** Cada artigo traz data, hora e as fontes consultadas, sempre com link. Quando um número é estimativa, o texto avisa. O conteúdo é informativo e não substitui orientação de contador, advogado ou consultor.
 
+**Quem está por trás.** O oravel.org é mantido pela Oravel Desenvolvimento de Software LTDA, CNPJ 65.707.953/0001-30, com sede na Rua Pais Leme, 215, Conj. 1713, Pinheiros, São Paulo/SP, CEP 05424-150. O portal é editorial e independente: não vende produtos nem serviços.
+
 **Independência.** O oravel.org não vende produtos nem serviços e não faz propaganda dentro dos artigos.
 
 </div>
