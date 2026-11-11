@@ -1,4 +1,4 @@
-// Gera functions/gazeta.html (e-mail da Gazeta) com os 5 artigos mais recentes.
+// Gera gazeta/email-boas-vindas.html (e-mail da Gazeta) com os 5 artigos mais recentes.
 // Rode antes de publicar as funções:  node scripts/gerar-gazeta.js
 const fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '..'), C = path.join(ROOT, 'src/content');
@@ -29,7 +29,7 @@ const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><met
 <p style="margin:12px 0 0;font-size:16px;line-height:1.6;color:#4a5361">Uma edição por semana com o que mudou no setor de locação de equipamentos. Curta, objetiva e com fonte. Estes são os destaques mais recentes:</p></td></tr>
 <tr><td style="padding:8px 32px 8px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${bloco}</table></td></tr>
 <tr><td style="padding:8px 32px 28px"><a href="https://oravel.org/publicacoes/" style="display:inline-block;background:#0b5f57;color:#fff;text-decoration:none;font-weight:600;padding:12px 22px;border-radius:8px">Ver todas as publicações</a></td></tr>
-<tr><td style="background:#fbfaf6;padding:20px 32px;font-size:12px;line-height:1.6;color:#6b7280">Você recebeu este e-mail porque se inscreveu na Gazeta Oravel em oravel.org. Conteúdo informativo, não substitui orientação de contador, advogado ou consultor.<br>Oravel Desenvolvimento de Software LTDA · CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, Conj. 1713, Pinheiros, São Paulo/SP<br><a href="{{CANCELAR}}" style="color:#6b7280">Cancelar inscrição</a></td></tr>
+<tr><td style="background:#fbfaf6;padding:20px 32px;font-size:12px;line-height:1.6;color:#6b7280">Você recebeu este e-mail porque se inscreveu na Gazeta Oravel em oravel.org. Conteúdo informativo, não substitui orientação de contador, advogado ou consultor.<br>Oravel Desenvolvimento de Software LTDA · CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, Conj. 1713, Pinheiros, São Paulo/SP<br><a href="{{ unsubscribe }}" style="color:#6b7280">Cancelar inscrição</a></td></tr>
 </table></td></tr></table></body></html>`;
-fs.writeFileSync(path.join(ROOT, 'functions/gazeta.html'), html);
-console.log('functions/gazeta.html gerado com', top.length, 'destaques');
+fs.writeFileSync(path.join(ROOT, 'gazeta/email-boas-vindas.html'), html);
+console.log('gazeta/email-boas-vindas.html gerado com', top.length, 'destaques');

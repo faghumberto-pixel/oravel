@@ -2,4 +2,3 @@ node_modules/
 _site/
 .firebase/
 .DS_Store
-functions/node_modules/
