@@ -1,0 +1,30 @@
+---
+layout: base.njk
+pagefind: true
+pagination:
+  data: collections.posts
+  size: 10
+  alias: lote
+permalink: "/publicacoes/{% if pagination.pageNumber > 0 %}pagina-{{ pagination.pageNumber + 1 }}/{% endif %}"
+---
+<section class="container" style="padding:48px 32px 16px">
+<div class="breadcrumb"><a href="/">Início</a> / Todas as publicações</div>
+<h1 class="section-title" style="font-size:56px;line-height:1.05;letter-spacing:-0.02em;max-width:22ch">Todas as publicações</h1>
+</section>
+<section class="container" style="padding:24px 32px 72px">
+<div style="display:flex;flex-direction:column">
+{% for post in lote %}
+<a href="{{ post.url }}" style="display:block;padding:22px 0;border-top:1px solid #e4dfd3;text-decoration:none;color:inherit{% if loop.last %};border-bottom:1px solid #e4dfd3{% endif %}">
+<div class="section-title" style="font-size:25px;font-weight:600;color:#1b2230">{{ post.data.title }}</div>
+<div style="margin-top:6px;color:#4a5361">{{ post.data.summary }}</div>
+<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px 24px;font-size:13px;color:#6b7280">
+<span>{{ post.data.theme | themeLabel }} · Leitura de {{ post.data.readingTime or '—' }} · {{ post.date | dateBr }}</span>
+</div>
+</a>
+{% endfor %}
+</div>
+<nav style="display:flex;justify-content:space-between;margin-top:28px;font-weight:600">
+<span>{% if pagination.href.previous %}<a href="{{ pagination.href.previous }}">← Mais recentes</a>{% endif %}</span>
+<span>{% if pagination.href.next %}<a href="{{ pagination.href.next }}">Mais antigas →</a>{% endif %}</span>
+</nav>
+</section>

@@ -25,6 +25,26 @@ pagefind: true
 {{ source | safe }}
 </div>
 {% endif %}
+
+<div class="compartilhar" aria-label="Compartilhar">
+<b>Compartilhar</b>
+<a href="https://wa.me/?text={{ title | urlencode }}%20https://oravel.org{{ page.url }}" target="_blank" rel="noopener">WhatsApp</a>
+<a href="https://www.linkedin.com/sharing/share-offsite/?url=https://oravel.org{{ page.url }}" target="_blank" rel="noopener">LinkedIn</a>
+<a href="https://twitter.com/intent/tweet?text={{ title | urlencode }}&url=https://oravel.org{{ page.url }}" target="_blank" rel="noopener">X</a>
+<button type="button" onclick="navigator.clipboard.writeText('https://oravel.org{{ page.url }}').then(()=>{this.textContent='Link copiado'})">Copiar link</button>
+</div>
+
+<section class="comentarios" aria-label="Comentários">
+<h2 class="section-title section-title-h3">Comentários</h2>
+<div id="comentarios-lista" data-slug="{{ page.url }}"><p class="muted">Carregando…</p></div>
+<div id="comentar-deslogado"><p class="muted"><a href="/entrar/">Entre</a> ou <a href="/cadastro/">cadastre-se</a> para comentar.</p></div>
+<form id="form-comentario" class="form-conta" hidden>
+<label>Seu comentário<textarea name="texto" rows="4" maxlength="2000" required></textarea></label>
+<button class="btn">Publicar comentário</button>
+<p class="muted" id="comentario-msg"></p>
+</form>
+</section>
+<script type="module" src="/assets/conta.js"></script>
 </article>
 
 <aside class="post-sidebar">

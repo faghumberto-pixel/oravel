@@ -1,0 +1,18 @@
+---
+layout: base.njk
+permalink: /entrar/
+---
+<section class="container" style="padding:48px 32px 72px">
+<div class="breadcrumb"><a href="/">Início</a> / Entrar</div>
+<h1 class="section-title" style="font-size:56px;line-height:1.05;letter-spacing:-0.02em">Entrar</h1>
+<p style="margin:20px 0 0;font-size:20px;color:#4a5361;max-width:64ch">Use seu e-mail e a senha definida no cadastro para comentar nos artigos.</p>
+<div id="conta-estado" hidden class="form-conta"><p>Você está conectado como <strong id="conta-email"></strong>.</p><button class="btn" id="sair" type="button">Sair</button></div>
+<form class="form-conta" id="form-entrar">
+<label>E-mail<input type="email" name="email" autocomplete="username" required></label>
+<label>Senha<input type="password" name="senha" autocomplete="current-password" required></label>
+<button class="btn">Entrar</button>
+<p class="muted" id="entrar-msg" role="status"></p>
+<p class="muted"><a href="#" id="esqueci">Esqueci minha senha</a> · <a href="/cadastro/">Fazer cadastro</a></p>
+</form>
+</section>
+<script type="module" src="/assets/conta.js"></script>

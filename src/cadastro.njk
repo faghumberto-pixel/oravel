@@ -1,0 +1,22 @@
+---
+layout: base.njk
+permalink: /cadastro/
+---
+<section class="container" style="padding:48px 32px 72px">
+<div class="breadcrumb"><a href="/">Início</a> / Cadastro</div>
+<h1 class="section-title" style="font-size:56px;line-height:1.05;letter-spacing:-0.02em">Cadastro</h1>
+<p style="margin:20px 0 0;font-size:20px;color:#4a5361;max-width:64ch">Cadastre-se para comentar nos artigos. Seu usuário é o e-mail informado, e você recebe por e-mail o link para definir a senha.</p>
+<form class="form-conta" id="form-cadastro">
+<div class="dupla"><label>Nome<input name="nome" autocomplete="given-name" maxlength="80" required></label><label>Sobrenome<input name="sobrenome" autocomplete="family-name" maxlength="80" required></label></div>
+<label>E-mail<input type="email" name="email" autocomplete="email" required></label>
+<label>Empresa<input name="empresa" autocomplete="organization" maxlength="120" required></label>
+<label>WhatsApp<input type="tel" name="whatsapp" autocomplete="tel" placeholder="(11) 99999-9999" maxlength="20" required></label>
+<div class="dupla"><label>Cidade<input name="cidade" autocomplete="address-level2" maxlength="80" required></label>
+<label>Estado<select name="estado" required><option value="">UF</option>{% for uf in ["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"] %}<option>{{ uf }}</option>{% endfor %}</select></label></div>
+<input name="site" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+<label style="font-weight:400"><span><input type="checkbox" required> Concordo com a <a href="/privacidade/">política de privacidade</a> e o tratamento dos meus dados (LGPD).</span></label>
+<button class="btn">Cadastrar</button>
+<p class="muted" id="cadastro-msg" role="status"></p>
+</form>
+</section>
+<script type="module" src="/assets/conta.js"></script>

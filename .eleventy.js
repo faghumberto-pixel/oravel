@@ -7,6 +7,7 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ 'favicon.svg': 'favicon.svg' });
   eleventyConfig.addPassthroughCopy({ 'downloads': 'downloads' });
   eleventyConfig.addPassthroughCopy({ 'robots.txt': 'robots.txt' });
+  eleventyConfig.addPassthroughCopy({ 'src/assets': 'assets' });
 
   // Collections: posts por tema
   const themes = [
