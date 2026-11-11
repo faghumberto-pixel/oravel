@@ -276,7 +276,7 @@ class AdminPanelProvider extends PanelProvider
             ->plugin(
                 BreezyCore::make()
                     ->myProfile(hasAvatars: true)
-                    ->enableTwoFactorAuthentication()
+                    ->enableTwoFactorAuthentication(action: \App\Filament\Pages\Auth\TwoFactorPage::class)
             )
             ->userMenuItems([
                 // Chave != 'account' de proposito: BreezyCore::boot() roda depois de
@@ -312,6 +312,7 @@ class AdminPanelProvider extends PanelProvider
                 // vir DEPOIS de Authenticate::class (senão auth()->user()
                 // ainda não existe) e antes de qualquer outra coisa que
                 // dependa do tenant já estar liberado.
+                \App\Http\Middleware\RequireTwoFactor::class,
                 EnsureTenantPaymentIsCurrent::class,
                 EnsureMenuModuleEnabled::class,
                 LogUserActivity::class,
