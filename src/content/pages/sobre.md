@@ -14,7 +14,7 @@ Um site de conhecimento para quem aluga equipamentos, sobre reforma tributária,
 
 O oravel.org é uma iniciativa da **Oravel**, empresa de tecnologia para locadoras. Dizemos isso de forma explícita porque você merece saber quem financia o site. A regra editorial é que o conteúdo não seja propaganda de sistema, nosso ou de terceiros.
 
-> **[A PREENCHER]** Razão social, CNPJ, cidade, e-mail de contato.
+O oravel.org é mantido pela **Oravel Desenvolvimento de Software LTDA**, CNPJ 65.707.953/0001-30, com sede na Rua Pais Leme, 215, Conj. 1713, Pinheiros, São Paulo/SP, CEP 05424-150. O portal é editorial e independente: não vende produtos nem serviços dentro dos artigos. Contato: [contato@oravel.org](mailto:contato@oravel.org).
 
 ## Como escolhemos as fontes
 

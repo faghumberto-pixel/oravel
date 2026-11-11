@@ -21,6 +21,16 @@ Este texto descreve o que o site faz hoje. Deve ser revisado por advogado antes 
 
 A Lei Geral de Proteção de Dados (Lei 13.709/2018) garante ao titular, entre outros, confirmação de tratamento, acesso, correção e eliminação de dados, nos termos da lei. Texto da lei: [planalto.gov.br](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm).
 
-> **[A PREENCHER]** Nome do controlador (razão social e CNPJ), e-mail do encarregado (DPO) e base legal de cada tratamento, definidos com o advogado.
+## Quem é o controlador
 
-<p style="margin:24px 0 0;color:#6b7280;font-size:14px">Última revisão: [DATA]</p>
+O controlador dos dados pessoais tratados neste site é a **Oravel Desenvolvimento de Software LTDA**, CNPJ 65.707.953/0001-30, com sede na Rua Pais Leme, 215, Conj. 1713, Pinheiros, São Paulo/SP, CEP 05424-150.
+
+## Dados do cadastro e dos comentários
+
+Para comentar nos artigos, a pessoa se cadastra informando nome, sobrenome, e-mail, empresa, WhatsApp, cidade e estado. Usamos esses dados para criar o acesso, enviar o e-mail de definição de senha e identificar quem comenta. O comentário publicado exibe nome, inicial do sobrenome e empresa; os demais dados não são exibidos publicamente.
+
+- **Base legal:** consentimento do titular (LGPD, art. 7º, I), dado no cadastro, e legítimo interesse para segurança e prevenção de abuso (art. 7º, IX).
+- **Armazenamento:** os dados ficam em serviços do Google (Firebase Authentication e Cloud Firestore), com acesso restrito. O reCAPTCHA do Google é usado para barrar robôs.
+- **Eliminação:** você pode pedir a exclusão do cadastro e dos seus comentários a qualquer momento, pelo controlador acima, no e-mail [contato@oravel.org](mailto:contato@oravel.org), que também atende pedidos dos titulares sobre seus dados (LGPD).
+
+<p style="margin:24px 0 0;color:#6b7280;font-size:14px">Última revisão: 11 de novembro de 2026</p>

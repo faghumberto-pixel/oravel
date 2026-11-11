@@ -16,7 +16,7 @@ Resumimos e citamos fontes de terceiros, que são de responsabilidade dos respec
 
 ## Propriedade e reprodução
 
-> **[A PREENCHER]** Regra de reprodução do conteúdo (por exemplo, licença) e titularidade, definidas com o advogado.
+Os textos originais do oravel.org são de titularidade da Oravel Desenvolvimento de Software LTDA. É permitida a reprodução de trechos curtos, desde que com citação da fonte e link para o artigo original. A reprodução integral ou comercial depende de autorização prévia. Fontes de terceiros citadas pertencem aos respectivos autores.
 
 ## Ferramentas e simuladores
 
@@ -28,6 +28,6 @@ Quem participa do grupo deve seguir as [regras da comunidade](/comunidade/). Pod
 
 ## Lei aplicável
 
-> **[A PREENCHER]** Foro e lei aplicável, definidos com o advogado.
+Estes termos são regidos pela legislação brasileira. Fica eleito o foro da comarca de São Paulo/SP para resolver qualquer questão deles decorrente, ressalvado o foro do consumidor quando aplicável.
 
-<p style="margin:24px 0 0;color:#6b7280;font-size:14px">Última revisão: [DATA]</p>
+<p style="margin:24px 0 0;color:#6b7280;font-size:14px">Última revisão: 11 de novembro de 2026</p>

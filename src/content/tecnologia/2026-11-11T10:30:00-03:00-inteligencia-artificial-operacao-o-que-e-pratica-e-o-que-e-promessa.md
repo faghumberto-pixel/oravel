@@ -97,12 +97,3 @@ Feedback em tempo real na cabine: "reduza rotação", "evite giro desnecessário
 
 > Artigo baseado em fontes técnicas e relatórios de mercado (maioria norte-americana/europeia). Números de economia e ROI variam por região, tipo de obra e maturidade da frota. Não há estudo brasileiro consolidado citado aqui.
 
----
-
-## Próximos artigos (em preparação)
-
-- **QR Code no equipamento**: cadastro, histórico e inspeção por leitura rápida.
-- **Nota fiscal eletrônica na locação**: impactos práticos da reforma tributária; veja [Reforma tributária](/reforma-tributaria/).
-- **Telemetria retrofit**: critérios para escolher rastreador instalado depois (bateria, AEMP, custo/mês).
-
-> **[A PREENCHER]** Fontes brasileiras (legislação, casos de locadoras nacionais, integração SPED/NFS-e). Nenhuma afirmação sobre esses temas será publicada sem fonte.

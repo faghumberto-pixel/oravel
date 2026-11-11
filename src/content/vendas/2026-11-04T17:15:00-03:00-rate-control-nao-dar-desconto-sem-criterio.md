@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/rate-control-nao-dar-desconto-sem-criterio.jpg"
 title: "Rate control: a disciplina de não dar desconto sem critério"
 date: 2026-11-04T17:15:00-03:00
 theme: "vendas"

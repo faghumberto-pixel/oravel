@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/a-regra-72-20-8-como-as-locadoras-americanas-leem-a-propria-frota.jpg"
 title: "A regra 72-20-8: como as locadoras americanas leem a própria frota"
 date: 2026-11-10T14:30:00-03:00
 theme: "la-fora"

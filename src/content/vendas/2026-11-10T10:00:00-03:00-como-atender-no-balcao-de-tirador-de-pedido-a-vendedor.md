@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/como-atender-no-balcao-de-tirador-de-pedido-a-vendedor.jpg"
 title: "Como atender no balcão: de tirador de pedido a vendedor"
 date: 2026-11-10T10:00:00-03:00
 theme: "vendas"

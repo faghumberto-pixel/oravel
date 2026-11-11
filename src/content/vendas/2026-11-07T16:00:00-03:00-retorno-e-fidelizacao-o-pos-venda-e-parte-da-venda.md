@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/retorno-e-fidelizacao-o-pos-venda-e-parte-da-venda.jpg"
 title: "Retorno e fidelização: o pós-venda é parte da venda"
 date: 2026-11-07T16:00:00-03:00
 theme: "vendas"
@@ -39,7 +40,7 @@ Programas formais de pontos ou descontos por volume existem, mas **não encontra
 - **Antecipe**: se o cliente costuma repetir, procure-o antes (sugestão editorial)
 - **Trate as reclamações**: registre cada reclamação e o que foi feito
 
-## [A PREENCHER]
+## Limite dos dados
 
 Taxa de recompra e conversão de propostas das locadoras brasileiras. Não há dado público; se a sua locadora medir, publique com o método. Não usar números de outro setor.
 

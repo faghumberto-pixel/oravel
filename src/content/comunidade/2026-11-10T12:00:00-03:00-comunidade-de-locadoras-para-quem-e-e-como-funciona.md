@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/comunidade-de-locadoras-para-quem-e-e-como-funciona.jpg"
 title: "Comunidade de locadoras: para quem é e como funciona"
 date: 2026-11-10T12:00:00-03:00
 theme: "comunidade"
@@ -22,7 +23,7 @@ Donos, gestores e profissionais de locadoras de equipamentos que querem **tirar 
 
 A comunidade é um **grupo de WhatsApp com moderação**. Quem entra concorda com as regras acima e pode sair a qualquer momento. O número de telefone dos participantes é visível aos outros membros, como em qualquer grupo de WhatsApp.
 
-> **Link do grupo: [A PREENCHER]**
+> **Como entrar:** peça o convite do grupo pelo e-mail [contato@oravel.org](mailto:contato@oravel.org).
 
 ## Antes de entrar
 

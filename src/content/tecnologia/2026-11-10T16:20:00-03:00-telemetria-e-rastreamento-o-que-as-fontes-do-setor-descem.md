@@ -47,7 +47,6 @@ Painéis mostram a **utilização da frota** e destacam os equipamentos que foge
 - **QR Code no equipamento**: Cadastro, histórico e inspeção por leitura rápida.
 - **Inteligência artificial na operação**: O que já é prática e o que ainda é promessa.
 
-> **[A PREENCHER]** Fontes brasileiras (legislação e prática) para NF-e/NFS-e na locação, QR Code e IA. Nenhuma afirmação sobre esses temas será publicada sem fonte.
 
 ## Fontes
 

@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/a-locacao-nao-paga-iss-mas-vai-pagar-ibs-e-cbs.jpg"
 title: "A locação não paga ISS, mas vai pagar IBS e CBS"
 date: 2026-11-10T22:46:00-03:00
 theme: "reforma-tributaria"

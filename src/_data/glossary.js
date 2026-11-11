@@ -12,17 +12,17 @@ module.exports = [
   {
     term: "Diária",
     definition: "Valor cobrado por um dia de locação do equipamento. No Brasil, a diária costuma ser calculada sobre 8 ou 10 horas de uso; horas extras podem ter acréscimo. A diária não inclui frete, operador, combustível nem seguro, salvo acordo expresso.",
-    source: '<a href="https://www.anbima.com.br/pt_br/autorregulacao/codigos/codigo-de-conduta-de-fundos-de-investimento.htm">Prática de mercado — sem norma única [A PREENCHER]</a>'
+    source: '<a href="https://www.anbima.com.br/pt_br/autorregulacao/codigos/codigo-de-conduta-de-fundos-de-investimento.htm">Prática de mercado — sem norma única</a>'
   },
   {
     term: "Caução",
     definition: "Valor retido (ou garantia apresentada) pelo locador para cobrir eventuais danos, multas ou inadimplemento do locatário. No Brasil, costuma ser devolvida após a vistoria de devolução, descontados eventuais reparos. Não é aluguel antecipado.",
-    source: '<a href="https://www.planalto.gov.br/ccivil_03/leis/l8245.htm">Lei do Inquilinato (Lei 8.245/91, art. 37) — analogia para bens móveis [A PREENCHER]</a>'
+    source: '<a href="https://www.planalto.gov.br/ccivil_03/leis/l8245.htm">Lei do Inquilinato (Lei 8.245/91, art. 37) — analogia para bens móveis</a>'
   },
   {
     term: "Avaria",
     definition: "Dano ao equipamento ocorrido durante a posse do locatário, que excede o desgaste normal de uso. A distinção entre avaria e desgaste natural deve constar no termo de vistoria de entrega e devolução, com fotos e assinatura de ambas as partes.",
-    source: "Prática contratual do setor [A PREENCHER]"
+    source: "Prática contratual do setor"
   },
   {
     term: "Manutenção preventiva",
@@ -37,17 +37,17 @@ module.exports = [
   {
     term: "Horímetro",
     definition: "Contador de horas de funcionamento do motor do equipamento. É a referência principal para agendar manutenções preventivas (ex.: troca de óleo a cada 250 h) e para medir a vida útil real da máquina, independente da data de fabricação.",
-    source: "Manual do fabricante — prática padrão do setor [A PREENCHER]"
+    source: "Manual do fabricante — prática padrão do setor"
   },
   {
     term: "Subaluguel",
     definition: "Locação do equipamento pelo locatário original a um terceiro. No contrato padrão de locação de equipamentos no Brasil, o subaluguel costuma ser vedado ou exigir autorização prévia por escrito do locador, pois transfere a posse e o risco a alguém não qualificado pelo contrato original.",
-    source: "Cláusula padrão de contratos de locação de equipamentos [A PREENCHER]"
+    source: "Cláusula padrão de contratos de locação de equipamentos"
   },
   {
     term: "Vistoria",
     definition: "Inspeção visual e funcional do equipamento feita na entrega e na devolução, registrada em termo assinado por ambas as partes, com fotos, horímetro e descrição do estado. É a prova principal em caso de disputa sobre avarias.",
-    source: "Prática contratual do setor [A PREENCHER]"
+    source: "Prática contratual do setor"
   },
   {
     term: "Downtime (tempo parado)",
@@ -67,16 +67,16 @@ module.exports = [
   {
     term: "Valor residual",
     definition: "Preço estimado de venda do equipamento ao final da vida útil na locadora. Serve para calcular a depreciação econômica e decidir o momento ótimo de venda. Depende de marca, horas, condição e mercado de usados.",
-    source: "Prática de gestão de ativos [A PREENCHER]"
+    source: "Prática de gestão de ativos"
   },
   {
     term: "Contrato de locação (equipamentos)",
     definition: "Instrumento jurídico que regula a cessão temporária do uso do equipamento. Deve conter: identificação das partes, descrição do equipamento (marca, modelo, série, horímetro), valor e forma de pagamento, prazo, obrigações de manutenção, seguro, vistoria, multas e foro.",
-    source: '<a href="https://www.planalto.gov.br/ccivil_03/leis/l8245.htm">Lei 8.245/91 (Lei do Inquilinato) — aplicação analógica a bens móveis [A PREENCHER]</a>'
+    source: '<a href="https://www.planalto.gov.br/ccivil_03/leis/l8245.htm">Lei 8.245/91 (Lei do Inquilinato) — aplicação analógica a bens móveis</a>'
   },
   {
     term: "Seguro de responsabilidade civil do locatário",
     definition: "Apólice que cobre danos a terceiros ou ao próprio equipamento causados durante a posse do locatário. Muitas locadoras exigem a apresentação do certificado antes da entrega da máquina. Não substitui a caução.",
-    source: "Prática de mercado — cláusula contratual padrão [A PREENCHER]"
+    source: "Prática de mercado — cláusula contratual padrão"
   }
 ];

@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/preco-da-diaria-a-conta-nao-termina-na-diaria.jpg"
 title: "Preço da diária: a conta não termina na diária"
 date: 2026-11-08T13:45:00-03:00
 theme: "vendas"
@@ -31,7 +32,7 @@ Alguns guias sugerem comparar com **poucos concorrentes diretos** que aluguem eq
 ### 4. Leia o preço junto com a utilização
 Equipamento sempre alugado a preço baixo rende pouco; veja a **utilização financeira** em [Lá fora](/la-fora/).
 
-## [A PREENCHER]
+## Limite dos dados
 
 Referência de diária, semana e mês para os equipamentos mais alugados na sua região. **Não há fonte pública confiável com tarifas brasileiras**; use pesquisa própria, com data e método descritos.
 

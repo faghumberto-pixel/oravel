@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/preventiva-ou-corretiva-qual-compensa.jpg"
 title: "Preventiva ou corretiva: qual compensa"
 date: 2026-11-09T14:00:00-03:00
 theme: "gestao-e-operacao"

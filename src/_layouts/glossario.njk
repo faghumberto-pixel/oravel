@@ -5,7 +5,7 @@ pagefind: true
 <section class="container" style="padding:48px 32px 16px">
 <div class="breadcrumb"><a href="/">Início</a> / Glossário</div>
 <h1 class="section-title" style="font-size:56px;line-height:1.05;letter-spacing:-0.02em;max-width:20ch">Glossário da locação</h1>
-<p style="margin:20px 0 0;font-size:20px;color:#4a5361;max-width:64ch">Definições curtas em português simples para os termos mais usados no dia a dia da locação de equipamentos. Cada verbete tem a fonte indicada — se não houver fonte confirmada, ficou marcado como <span style="background:#fef3c7;color:#92400e;padding:2px 6px;border-radius:4px;font-size:13px;font-weight:600">[A PREENCHER]</span>.</p>
+<p style="margin:20px 0 0;font-size:20px;color:#4a5361;max-width:64ch">Definições curtas em português simples para os termos mais usados no dia a dia da locação de equipamentos. Cada verbete indica a fonte; nos de prática de mercado, a origem é descrita como prática do setor.</p>
 </section>
 
 <section class="container" style="padding:32px 32px 48px">
@@ -25,7 +25,7 @@ pagefind: true
 
 <div style="margin-top:28px" class="card">
 <div style="font-weight:700;font-size:18px">Como usar este glossário</div>
-<p style="margin:8px 0 0;color:#4a5361">Os verbetes acima servem como referência rápida para alinhar a linguagem entre equipe comercial, operacional e jurídica. Termos marcados com <span style="background:#fef3c7;color:#92400e;padding:2px 6px;border-radius:4px;font-size:13px;font-weight:600">[A PREENCHER]</span> precisam de fonte confirmada — se você tem a referência (norma, manual do fabricante, publicação do setor), envie para <a href="mailto:contato@oravel.org" style="color:#0b5f57">contato@oravel.org</a>.</p>
+<p style="margin:8px 0 0;color:#4a5361">Os verbetes acima servem como referência rápida para alinhar a linguagem entre equipe comercial, operacional e jurídica. Se você tem uma referência melhor para algum termo (norma, manual do fabricante, publicação do setor), envie (norma, manual do fabricante, publicação do setor) para <a href="mailto:contato@oravel.org" style="color:#0b5f57">contato@oravel.org</a>.</p>
 </div>
 
 <div style="margin-top:28px;padding:8px 4px;color:#4a5361;font-size:14px;line-height:1.9">
@@ -33,6 +33,6 @@ pagefind: true
 {% for source in glossarySources %}
 <a href="{{ source.url }}">{{ source.title }}</a>{% if not loop.last %} · {% endif %}
 {% endfor %}
-<div style="margin-top:10px;color:#6b7280">Resumo em português feito a partir das fontes acima. Verbetes sem link confirmado estão marcados como [A PREENCHER].</div>
+<div style="margin-top:10px;color:#6b7280">Resumo em português feito a partir das fontes acima. Verbetes de prática de mercado, sem fonte pública única, indicam a origem como prática do setor.</div>
 </div>
 </section>

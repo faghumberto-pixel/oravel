@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/split-payment-o-efeito-no-caixa-da-locadora.jpg"
 title: "Split payment: o efeito no caixa da locadora"
 date: 2026-11-07T09:00:00-03:00
 theme: "reforma-tributaria"
