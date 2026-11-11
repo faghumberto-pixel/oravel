@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\ApontamentoHorimetro;
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\Auth\TwoFactorPage;
 use App\Filament\Pages\BancaryReconciliationPage;
 use App\Filament\Pages\CashflowPage;
 use App\Filament\Pages\MinhasNotificacoes;
@@ -11,6 +12,7 @@ use App\Filament\Pages\RastreamentoGps;
 use App\Http\Middleware\EnsureMenuModuleEnabled;
 use App\Http\Middleware\EnsureTenantPaymentIsCurrent;
 use App\Http\Middleware\LogUserActivity;
+use App\Http\Middleware\RequireTwoFactor;
 use App\Http\Middleware\TrackSiteVisit;
 use App\Models\Asset;
 use App\Models\Employee;
@@ -279,7 +281,7 @@ class AdminPanelProvider extends PanelProvider
             ->plugin(
                 BreezyCore::make()
                     ->myProfile(hasAvatars: true)
-                    ->enableTwoFactorAuthentication(action: \App\Filament\Pages\Auth\TwoFactorPage::class)
+                    ->enableTwoFactorAuthentication(action: TwoFactorPage::class)
             )
             ->userMenuItems([
                 'versao_campo' => MenuItem::make()
@@ -316,11 +318,12 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                // 2FA obrigatorio (excecao por usuario: users.two_factor_exempt)
+                RequireTwoFactor::class,
                 // Bloqueio real por inadimplência (2026-09-23) -- precisa
                 // vir DEPOIS de Authenticate::class (senão auth()->user()
                 // ainda não existe) e antes de qualquer outra coisa que
                 // dependa do tenant já estar liberado.
-                \App\Http\Middleware\RequireTwoFactor::class,
                 EnsureTenantPaymentIsCurrent::class,
                 EnsureMenuModuleEnabled::class,
                 LogUserActivity::class,

@@ -45,16 +45,18 @@ use App\Filament\Central\Widgets\Site\SiteVisitsChart;
 use App\Filament\Central\Widgets\SiteVisitsStatsOverview;
 use App\Filament\Central\Widgets\TopReferrersChart;
 use App\Filament\Central\Widgets\WonLostTrendChart;
+use App\Filament\Pages\Auth\TwoFactorPage;
 use App\Filament\Resources\RoleResource;
+use App\Http\Middleware\RequireTwoFactor;
 use App\Http\Middleware\TrackSiteVisit;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
+// Importações corretas dos seus arquivos
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
-// Importações corretas dos seus arquivos
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\View\PanelsRenderHook;
@@ -259,7 +261,7 @@ class CentralPanelProvider extends PanelProvider
                 // agora e' `php artisan user:reset-2fa {email}`.
                 BreezyCore::make()
                     ->myProfile()
-                    ->enableTwoFactorAuthentication(action: \App\Filament\Pages\Auth\TwoFactorPage::class)
+                    ->enableTwoFactorAuthentication(action: TwoFactorPage::class)
             )
             ->userMenuItems([
                 // chave != 'account' de proposito -- ver comentario em AdminPanelProvider
@@ -289,7 +291,7 @@ class CentralPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                RequireTwoFactor::class,
             ]);
     }
-                \App\Http\Middleware\RequireTwoFactor::class,
 }

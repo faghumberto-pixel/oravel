@@ -175,6 +175,10 @@ class TwoFactorTest extends TestCase
      */
     public function test_tela_do_segundo_fator_funciona_pelo_endpoint_real_do_livewire(): void
     {
+        // O menu do painel admin chama MaterialPolicy -> hasPermissionTo('ler_material'),
+        // que explode se a Permission nao existir (bug anterior, alheio ao 2FA).
+        \Spatie\Permission\Models\Permission::firstOrCreate(['name' => 'ler_material', 'guard_name' => 'web']);
+
         $user = $this->user();
         [$secret] = $this->withTwoFactor($user);
 
