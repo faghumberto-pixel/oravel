@@ -34,7 +34,7 @@ class GovernanceService
             return $this->resolvedGates[$cacheKey] = false;
         }
 
-        if (!$user->hasPermissionTo($permission)) {
+        if (! $user->checkPermissionTo($permission)) {
             return $this->resolvedGates[$cacheKey] = false;
         }
 

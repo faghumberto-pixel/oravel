@@ -27,7 +27,7 @@ class ChecklistPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('ler_checklist');
+        return $user->checkPermissionTo('ler_checklist');
     }
 
     /**
@@ -35,7 +35,7 @@ class ChecklistPolicy
      */
     public function view(User $user, Checklist $checklist): bool
     {
-        return $user->hasPermissionTo('ler_checklist');
+        return $user->checkPermissionTo('ler_checklist');
     }
 
     /**
@@ -43,7 +43,7 @@ class ChecklistPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('criar_checklist');
+        return $user->checkPermissionTo('criar_checklist');
     }
 
     /**
@@ -51,7 +51,7 @@ class ChecklistPolicy
      */
     public function update(User $user, Checklist $checklist): bool
     {
-        return $user->hasPermissionTo('editar_checklist');
+        return $user->checkPermissionTo('editar_checklist');
     }
 
     /**
@@ -59,7 +59,7 @@ class ChecklistPolicy
      */
     public function delete(User $user, Checklist $checklist): bool
     {
-        return $user->hasPermissionTo('excluir_checklist');
+        return $user->checkPermissionTo('excluir_checklist');
     }
 
     /**

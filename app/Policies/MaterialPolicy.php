@@ -44,7 +44,7 @@ class MaterialPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('ler_material');
+        return $user->checkPermissionTo('ler_material');
     }
 
     /**
@@ -52,7 +52,7 @@ class MaterialPolicy
      */
     public function view(User $user, Material $material): bool
     {
-        return $user->hasPermissionTo('ler_material');
+        return $user->checkPermissionTo('ler_material');
     }
 
     /**
@@ -60,7 +60,7 @@ class MaterialPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('criar_material');
+        return $user->checkPermissionTo('criar_material');
     }
 
     /**
@@ -68,7 +68,7 @@ class MaterialPolicy
      */
     public function update(User $user, Material $material): bool
     {
-        return $user->hasPermissionTo('editar_material');
+        return $user->checkPermissionTo('editar_material');
     }
 
     /**
@@ -76,7 +76,7 @@ class MaterialPolicy
      */
     public function delete(User $user, Material $material): bool
     {
-        return $user->hasPermissionTo('excluir_material');
+        return $user->checkPermissionTo('excluir_material');
     }
 
     /**
