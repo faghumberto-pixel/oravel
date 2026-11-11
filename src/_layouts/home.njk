@@ -154,13 +154,18 @@ pagefind: true
 <h2 class="section-title" style="font-size:36px;line-height:1.15;color:#fff">Gazeta Oravel — primeira edição no ar</h2>
 <p style="margin:12px 0 0;color:#c4cad6;font-size:17px">Uma edição por semana com o que mudou no setor. Curta, objetiva e com fonte. Cancele quando quiser.</p>
 </div>
-<form id="form-gazeta" style="flex:1 1 380px;min-width:0;display:flex;flex-wrap:wrap;gap:12px">
-<input name="site" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
-<label for="nl-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">E-mail</label>
-<input id="nl-email" name="email" type="email" required autocomplete="email" placeholder="seu@email.com.br" style="flex:1 1 220px;min-width:0;box-sizing:border-box;padding:14px 16px;border-radius:8px;border:1px solid #4a5361;background:#fff;font-size:16px;font-family:inherit;color:#1b2230">
-<button class="btn" style="background:#f59e0b;color:#1b2230">Receber gratuitamente</button>
-<p id="gazeta-msg" role="status" style="flex:1 1 100%;margin:0;font-size:14px;color:#c4cad6"></p>
-</form>
-<script type="module" src="/assets/gazeta.js"></script>
+<div style="flex:1 1 380px;min-width:0">
+<div style="text-align: left" class="sender-form-field" data-sender-form-id="dPNO2z"></div>
+</div>
+<script>
+(function (s, e, n, d, er) {
+  s['Sender'] = er;
+  s[er] = s[er] || function () { (s[er].q = s[er].q || []).push(arguments) }, s[er].l = 1 * new Date();
+  s[er].on = function(event, callback) { s[er].listeners = s[er].listeners || {}; (s[er].listeners[event] = s[er].listeners[event] || []).push(callback); };
+  var a = e.createElement(n), m = e.getElementsByTagName(n)[0];
+  a.async = 1; a.src = d; m.parentNode.insertBefore(a, m)
+})(window, document, 'script', 'https://cdn.sender.net/accounts_resources/universal.js', 'sender');
+sender('a297d49ed08135')
+</script>
 </div>
 </section>

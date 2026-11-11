@@ -24,15 +24,5 @@ service cloud.firestore {
       allow update: if false;
     }
   
-    match /gazeta_assinantes/{email} {
-      allow create: if request.resource.data.keys().hasOnly(['email','criado'])
-        && request.resource.data.email is string
-        && request.resource.data.email == email
-        && email == email.lower()
-        && email.size() <= 254
-        && email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$')
-        && request.resource.data.criado == request.time;
-      allow read, update, delete: if false;
-    }
   }
 }
