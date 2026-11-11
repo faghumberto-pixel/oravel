@@ -8,13 +8,13 @@ pagefind: true
 
 ## Resumo
 
-Este texto descreve o que o site faz hoje. Deve ser revisado por advogado antes da publicação e sempre que o site mudar (por exemplo, ao ativar a newsletter ou ferramentas de análise).
+Este texto descreve o que o site faz hoje. Deve ser revisado por advogado antes da publicação e sempre que o site mudar (por exemplo, ao alterar a Gazeta Oravel ou ferramentas de análise).
 
 ## Dados que coletamos hoje
 
 - **Navegação**: O site é estático e não usa cookies próprios nem ferramentas de análise de audiência. O servidor de hospedagem pode registrar dados técnicos de acesso (como endereço IP e data), conforme a hospedagem escolhida.
 - **Fontes do Google Fonts**: As páginas carregam fontes do Google Fonts, o que envia seu endereço IP ao Google. Se preferirmos evitar isso, as fontes podem ser servidas pelo próprio site.
-- **Newsletter**: O formulário de e-mail ainda não está ligado a nenhum serviço e não envia dados. Quando for ativado, esta página será atualizada com o serviço usado, a finalidade e como cancelar.
+- **Gazeta Oravel**: ao se inscrever, coletamos apenas o seu e-mail, para enviar a Gazeta Oravel (edição semanal). A base legal é o consentimento (LGPD, art. 7º, I). O e-mail fica armazenado no Cloud Firestore (Google), com acesso restrito, e você pode cancelar a inscrição a qualquer momento pelo e-mail [contato@oravel.org](mailto:contato@oravel.org).
 - **Comunidade**: O grupo de WhatsApp é regido pelas regras e pela política do próprio WhatsApp. Seu número fica visível aos membros.
 
 ## Seus direitos (LGPD)

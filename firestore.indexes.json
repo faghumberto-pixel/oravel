@@ -1,0 +1,1 @@
+{"indexes":[{"collectionGroup":"comentarios","queryScope":"COLLECTION","fields":[{"fieldPath":"slug","order":"ASCENDING"},{"fieldPath":"criado","order":"DESCENDING"}]}],"fieldOverrides":[]}
