@@ -49,7 +49,7 @@ if (fc) fc.addEventListener("submit", async (ev) => {
       nome: d.nome.trim(), sobrenome: d.sobrenome.trim(), empresa: d.empresa.trim(), whatsapp: d.whatsapp.trim(),
       cidade: d.cidade.trim(), estado: d.estado, email: d.email.trim(), criado: serverTimestamp()
     });
-    await sendPasswordResetEmail(auth, d.email.trim());
+    await sendPasswordResetEmail(auth, d.email.trim(), { url: "https://oravel.org/entrar/?senha=definida" });
     await signOut(auth);
     fc.reset();
     msg(out, "Cadastro feito! Enviamos um e-mail para você definir sua senha. Seu usuário é o e-mail cadastrado. Confira também o spam.", true);
@@ -57,6 +57,7 @@ if (fc) fc.addEventListener("submit", async (ev) => {
 });
 
 // Entrar
+if (new URLSearchParams(location.search).get("senha") === "definida") msg($("#entrar-msg"), "Senha definida! Entre com seu e-mail e a nova senha.", true);
 const fe = $("#form-entrar");
 if (fe) fe.addEventListener("submit", async (ev) => {
   ev.preventDefault();
@@ -68,7 +69,7 @@ const esq = $("#esqueci");
 if (esq) esq.addEventListener("click", async (ev) => {
   ev.preventDefault(); const em = fe.email.value.trim(), out = $("#entrar-msg");
   if (!em) return msg(out, "Digite seu e-mail e clique de novo.");
-  try { await sendPasswordResetEmail(auth, em); msg(out, "Enviamos um e-mail para redefinir a senha.", true); } catch (e) { msg(out, erro(e)); }
+  try { await sendPasswordResetEmail(auth, em, { url: "https://oravel.org/entrar/?senha=definida" }); msg(out, "Enviamos um e-mail para redefinir a senha.", true); } catch (e) { msg(out, erro(e)); }
 });
 const sair = $("#sair"); if (sair) sair.addEventListener("click", () => signOut(auth));
 
