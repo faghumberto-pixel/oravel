@@ -168,6 +168,40 @@ class TwoFactorTest extends TestCase
             ->assertHasErrors('code');
     }
 
+    /**
+     * Passa pelo endpoint real /livewire/update (resolucao do componente por nome),
+     * que o Livewire::test() nao exercita -- e' onde ja deu 419 "disfarcado" com
+     * componentes do breezy neste projeto.
+     */
+    public function test_tela_do_segundo_fator_funciona_pelo_endpoint_real_do_livewire(): void
+    {
+        $user = $this->user();
+        [$secret] = $this->withTwoFactor($user);
+
+        $this->actingAs($user);
+        $page = $this->get(route('filament.admin.auth.two-factor'));
+        $page->assertOk();
+
+        preg_match_all('/wire:snapshot="([^"]+)"/', $page->getContent(), $all);
+        $snapshot = collect($all[1])
+            ->map(fn ($raw) => html_entity_decode($raw))
+            ->first(fn ($json) => array_key_exists('code', json_decode($json, true)['data'] ?? []));
+        $this->assertNotNull($snapshot, 'snapshot da tela do 2FA nao encontrado na pagina');
+
+        $resp = $this->postJson('/livewire/update', [
+            '_token' => csrf_token(),
+            'components' => [[
+                'snapshot' => $snapshot,
+                'updates' => ['code' => (new Google2FA)->getCurrentOtp($secret)],
+                'calls' => [['path' => '', 'method' => 'authenticate', 'params' => []]],
+            ]],
+        ], ['X-Livewire' => 'true']);
+
+        $resp->assertOk();
+        $this->assertNotNull($resp->json('components.0.effects.redirect'));
+        $this->assertTrue($user->fresh()->hasValidTwoFactorSession());
+    }
+
     public function test_segredo_fica_criptografado_no_banco(): void
     {
         $user = $this->user();
