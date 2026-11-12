@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /assets/gazeta/
+Disallow: /gazeta/obrigado/
 
 Sitemap: https://oravel.org/sitemap.xml
