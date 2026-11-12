@@ -4,6 +4,7 @@ const fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '..'), C = path.join(ROOT, 'src/content');
 const L = { 'reforma-tributaria': 'Reforma tributária', tecnologia: 'Tecnologia', 'la-fora': 'Lá fora', vendas: 'Vendas', 'gestao-e-operacao': 'Gestão e operação', comunidade: 'Comunidade' };
 const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const gd=path.join(ROOT,'src/assets/gazeta');const nums=fs.readdirSync(gd).map(f=>(f.match(/^gazeta-oravel-edicao-(\d+)\.pdf$/)||[])[1]).filter(Boolean).map(Number);const NUM=nums.length?Math.max(...nums):1;
 const itens = [];
 for (const t of Object.keys(L)) for (const f of fs.readdirSync(path.join(C, t)).filter(x => x.endsWith('.md'))) {
   const s = fs.readFileSync(path.join(C, t, f), 'utf8'), fm = (s.match(/^---\n([\s\S]*?)\n---/) || [])[1] || '';
@@ -28,7 +29,7 @@ const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><met
 <tr><td style="padding:28px 32px 8px"><h1 style="margin:0;font-family:Georgia,serif;font-size:26px;line-height:1.2;font-weight:700">Bem-vindo à Gazeta Oravel</h1>
 <p style="margin:12px 0 0;font-size:16px;line-height:1.6;color:#4a5361">Uma edição por semana com o que mudou no setor de locação de equipamentos. Curta, objetiva e com fonte. Baixe a edição completa em PDF no botão abaixo. Estes são os destaques mais recentes:</p></td></tr>
 <tr><td style="padding:8px 32px 8px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${bloco}</table></td></tr>
-<tr><td style="padding:8px 32px 8px"><a href="https://oravel.org/assets/gazeta/gazeta-oravel-edicao-1.pdf" style="display:inline-block;background:#f59e0b;color:#1b2230;text-decoration:none;font-weight:700;padding:13px 22px;border-radius:8px">Baixar a edição nº 1 em PDF</a></td></tr>
+<tr><td style="padding:8px 32px 8px"><a href="https://oravel.org/assets/gazeta/gazeta-oravel-atual.pdf" style="display:inline-block;background:#f59e0b;color:#1b2230;text-decoration:none;font-weight:700;padding:13px 22px;border-radius:8px">Baixar a edição nº ${NUM} em PDF</a></td></tr>
 <tr><td style="padding:8px 32px 28px"><a href="https://oravel.org/publicacoes/" style="display:inline-block;background:#0b5f57;color:#fff;text-decoration:none;font-weight:600;padding:12px 22px;border-radius:8px">Ver todas as publicações</a></td></tr>
 <tr><td style="background:#fbfaf6;padding:20px 32px;font-size:12px;line-height:1.6;color:#6b7280">Você recebeu este e-mail porque se inscreveu na Gazeta Oravel em oravel.org. Conteúdo informativo, não substitui orientação de contador, advogado ou consultor.<br>Oravel Desenvolvimento de Software LTDA · CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, Conj. 1713, Pinheiros, São Paulo/SP<br><a href="{$unsubscribe_link}" style="color:#6b7280">Cancelar inscrição</a></td></tr>
 </table></td></tr></table></body></html>`;
