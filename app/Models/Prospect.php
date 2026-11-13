@@ -95,6 +95,12 @@ class Prospect extends Model
             ->when(filled($ate), fn ($q) => $q->where('ano_abertura', '<=', (int) $ate));
     }
 
+    /** Ordena por última interação (ultimo_contato_em) decrescente; nulls last (sem contato vão pro final). */
+    public function scopeOrderByUltimaInteracao(Builder $q): Builder
+    {
+        return $q->orderByDesc('ultimo_contato_em');
+    }
+
     public function scopeBusca(Builder $q, ?string $termo): Builder
     {
         $termo = trim((string) $termo);

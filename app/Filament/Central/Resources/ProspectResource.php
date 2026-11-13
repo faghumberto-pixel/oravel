@@ -134,6 +134,11 @@ class ProspectResource extends Resource
                         ->formatStateUsing(fn ($state) => 'Retornar em '.$state->format('d/m/Y'))
                         ->placeholder('Sem retorno agendado')
                         ->color(fn (?Prospect $r) => $r?->proximo_contato && $r->proximo_contato->lte(now()) ? 'danger' : 'gray'),
+                    Tables\Columns\TextColumn::make('ultimo_contato_em')->label('Última interação')->icon('heroicon-m-clock')
+                        ->formatStateUsing(fn ($state) => $state ? 'Último: '.$state->format('d/m/Y H:i') : 'Sem interação')
+                        ->placeholder('Sem interação')
+                        ->sortable()
+                        ->toggleable(isToggledHiddenByDefault: true),
                 ])->space(2),
             ])
             ->contentGrid(['md' => 2, 'xl' => 3])
@@ -201,7 +206,7 @@ class ProspectResource extends Resource
                     Tables\Actions\ViewAction::make()->label('Abrir')->url(fn (Prospect $r): string => static::getUrl('edit', ['record' => $r])),
                 ])->label('Mais')->icon('heroicon-m-ellipsis-vertical')->color('gray'),
             ])
-            ->defaultSort('nota', 'desc')
+            ->defaultSort('ultimo_contato_em', 'desc')
             ->paginated([25, 50, 100])
             ->defaultPaginationPageOption(25);
     }
