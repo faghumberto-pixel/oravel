@@ -1,5 +1,7 @@
 <IfModule mod_rewrite.c>
 RewriteEngine On
+# Custom 404 page
+ErrorDocument 404 /404.html
 # Um só endereço: www redireciona para o domínio sem www (evita dois sites para o Google)
 RewriteCond %{HTTP_HOST} ^www\.oravel\.com\.br$ [NC]
 RewriteRule ^ https://oravel.com.br%{REQUEST_URI} [R=301,L]
