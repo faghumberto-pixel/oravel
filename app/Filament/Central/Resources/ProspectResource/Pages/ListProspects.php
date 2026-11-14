@@ -101,20 +101,42 @@ class ListProspects extends ListRecords
         return $cards;
     }
 
-    /** Abre o PDF (gerado em PHP) com os filtros, a busca e a ordem que estão na tela. */
-    public function urlImpressao(): string
+    /** Gera URL de impressão/exportação com os filtros, a busca e o formato. */
+    public function urlImpressao(string $formato = 'html'): string
     {
         return route('central.prospects.imprimir', array_filter([
             'filtros' => $this->tableFilters,
             'busca' => $this->tableSearch,
+            'formato' => $formato,
         ]));
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('imprimir')->label('Imprimir')->icon('heroicon-o-printer')->color('gray')
-                ->url(fn (): string => $this->urlImpressao())->openUrlInNewTab(),
+            Actions\ActionGroup::make([
+                Actions\Action::make('imprimir_html')
+                    ->label('Ver para imprimir (HTML)')
+                    ->icon('heroicon-o-printer')
+                    ->color('gray')
+                    ->url(fn (): string => $this->urlImpressao('html'))
+                    ->openUrlInNewTab(),
+
+                Actions\Action::make('exportar_csv')
+                    ->label('Exportar CSV')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('success')
+                    ->url(fn (): string => $this->urlImpressao('csv'))
+                    ->openUrlInNewTab(),
+
+                Actions\Action::make('exportar_excel')
+                    ->label('Exportar Excel')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('info')
+                    ->url(fn (): string => $this->urlImpressao('excel'))
+                    ->openUrlInNewTab(),
+            ])->label('Exportar')->icon('heroicon-o-arrow-down-tray')->color('gray')->button(),
+
             Actions\CreateAction::make()->label('Novo prospect'),
         ];
     }

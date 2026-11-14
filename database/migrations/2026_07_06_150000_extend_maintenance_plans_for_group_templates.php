@@ -25,15 +25,19 @@ return new class extends Migration
             $table->string('notes')->nullable()->after('interval_hours');
         });
 
-        DB::statement(
-            'ALTER TABLE maintenance_plans ADD CONSTRAINT maintenance_plans_asset_or_group_check '
-            .'CHECK (asset_id IS NOT NULL OR checklist_group_id IS NOT NULL)'
-        );
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement(
+                'ALTER TABLE maintenance_plans ADD CONSTRAINT maintenance_plans_asset_or_group_check '
+                .'CHECK (asset_id IS NOT NULL OR checklist_group_id IS NOT NULL)'
+            );
+        }
     }
 
     public function down(): void
     {
-        DB::statement('ALTER TABLE maintenance_plans DROP CONSTRAINT IF EXISTS maintenance_plans_asset_or_group_check');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('ALTER TABLE maintenance_plans DROP CONSTRAINT IF EXISTS maintenance_plans_asset_or_group_check');
+        }
 
         Schema::table('maintenance_plans', function (Blueprint $table) {
             $table->dropConstrainedForeignId('checklist_group_id');

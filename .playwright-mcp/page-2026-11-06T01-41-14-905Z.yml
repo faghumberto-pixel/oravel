@@ -1,0 +1,512 @@
+- generic [active] [ref=f41e1]:
+  - generic [ref=f41e2]:
+    - generic [ref=f41e3]:
+      - navigation [ref=f41e5]:
+        - generic [ref=f41e9]:
+          - generic [ref=f41e10]: Locadora Demo
+          - generic [ref=f41e11]: "Módulo: Locadora"
+        - generic [ref=f41e12]:
+          - generic [ref=f41e15]:
+            - generic [ref=f41e16]: Pesquisa global
+            - searchbox "Pesquisa global" [ref=f41e22]
+          - button "⌘K" [ref=f41e24] [cursor=pointer]
+          - button "Abrir notificações" [ref=f41e30] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=f41e34] [cursor=pointer]:
+            - /url: https://app.oravel.com.br/admin/caixa-de-email
+          - button "Menu do usuário" [ref=f41e39] [cursor=pointer]:
+            - img "Avatar de Administrador Demo" [ref=f41e40]
+        - link "Ajuda" [ref=f41e42] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=f41e46]:
+        - generic [ref=f41e52]:
+          - generic [ref=f41e53]:
+            - generic [ref=f41e54]:
+              - paragraph [ref=f41e55]: Painel de Controle
+              - paragraph [ref=f41e56]: Locadora Demo
+            - generic [ref=f41e57]:
+              - generic [ref=f41e58]: 05/11/2026 22:41
+              - generic [ref=f41e60]: Ao vivo
+          - generic [ref=f41e61]:
+            - button "Painel de Gestão" [ref=f41e62] [cursor=pointer]
+            - button "Gestão à Vista" [ref=f41e63] [cursor=pointer]
+          - generic [ref=f41e64]:
+            - generic [ref=f41e66]:
+              - link "Disponível 8 Prontos para locação" [ref=f41e67] [cursor=pointer]:
+                - /url: https://app.oravel.com.br/admin/assets?tableFilters%5Bstatus%5D%5Bvalue%5D=disponivel
+                - generic [ref=f41e68]:
+                  - generic [ref=f41e69]: Disponível
+                  - generic [ref=f41e71]: "8"
+                  - generic [ref=f41e72]: Prontos para locação
+              - link "Locado 13 Em contrato com cliente" [ref=f41e78] [cursor=pointer]:
+                - /url: https://app.oravel.com.br/admin/assets?tableFilters%5Bstatus%5D%5Bvalue%5D=locado
+                - generic [ref=f41e79]:
+                  - generic [ref=f41e80]: Locado
+                  - generic [ref=f41e82]: "13"
+                  - generic [ref=f41e83]: Em contrato com cliente
+              - link "Em Operação 0 Equipamentos em uso" [ref=f41e89] [cursor=pointer]:
+                - /url: https://app.oravel.com.br/admin/assets?tableFilters%5Bstatus%5D%5Bvalue%5D=operando
+                - generic [ref=f41e90]:
+                  - generic [ref=f41e91]: Em Operação
+                  - generic [ref=f41e93]: "0"
+                  - generic [ref=f41e94]: Equipamentos em uso
+              - link "Em Manutenção 4 Parados para manutenção" [ref=f41e100] [cursor=pointer]:
+                - /url: https://app.oravel.com.br/admin/assets?tableFilters%5Bstatus%5D%5Bvalue%5D=manutencao
+                - generic [ref=f41e101]:
+                  - generic [ref=f41e102]: Em Manutenção
+                  - generic [ref=f41e104]: "4"
+                  - generic [ref=f41e105]: Parados para manutenção
+            - generic [ref=f41e112]:
+              - link "Manutenção em Atraso 2 O.S. abertas há mais de 3 dias" [ref=f41e113] [cursor=pointer]:
+                - /url: https://app.oravel.com.br/admin/maintenance-orders?tableFilters%5Batrasada%5D%5BisActive%5D=1
+                - generic [ref=f41e114]:
+                  - generic [ref=f41e115]: Manutenção em Atraso
+                  - generic [ref=f41e117]: "2"
+                  - generic [ref=f41e118]: O.S. abertas há mais de 3 dias
+              - link "Preventiva Próxima 0 Preventivas ainda não iniciadas" [ref=f41e120] [cursor=pointer]:
+                - /url: https://app.oravel.com.br/admin/maintenance-orders?tableFilters%5Bmaintenance_type%5D%5Bvalue%5D=Preventiva&tableFilters%5Bstatus%5D%5Bvalues%5D%5B0%5D=Aberto
+                - generic [ref=f41e121]:
+                  - generic [ref=f41e122]: Preventiva Próxima
+                  - generic [ref=f41e124]: "0"
+                  - generic [ref=f41e125]: Preventivas ainda não iniciadas
+              - link "Disponível no Pátio 8 Pronto para despacho" [ref=f41e127] [cursor=pointer]:
+                - /url: https://app.oravel.com.br/admin/assets?tableFilters%5Bstatus%5D%5Bvalue%5D=disponivel
+                - generic [ref=f41e128]:
+                  - generic [ref=f41e129]: Disponível no Pátio
+                  - generic [ref=f41e131]: "8"
+                  - generic [ref=f41e132]: Pronto para despacho
+              - link "Retrabalho (30 dias) 0 O.S. reabertas pro mesmo ativo" [ref=f41e134] [cursor=pointer]:
+                - /url: https://app.oravel.com.br/admin/maintenance-orders?tableFilters%5Bis_rework%5D%5BisActive%5D=1
+                - generic [ref=f41e135]:
+                  - generic [ref=f41e136]: Retrabalho (30 dias)
+                  - generic [ref=f41e138]: "0"
+                  - generic [ref=f41e139]: O.S. reabertas pro mesmo ativo
+            - generic [ref=f41e142]:
+              - link "Abertas 0 OS atribuídas a você, em aberto" [ref=f41e143] [cursor=pointer]:
+                - /url: https://app.oravel.com.br/admin/maintenance-orders?tableFilters%5Btechnician_id%5D%5Bvalue%5D=01a1ae84-0af4-723e-a9c9-fc83f4412fd5&tableFilters%5Bstatus%5D%5Bvalues%5D%5B0%5D=Aberto
+                - generic [ref=f41e144]:
+                  - generic [ref=f41e145]: Abertas
+                  - generic [ref=f41e147]: "0"
+                  - generic [ref=f41e148]: OS atribuídas a você, em aberto
+              - link "Pendentes 0 Aguardando ou em andamento" [ref=f41e152] [cursor=pointer]:
+                - /url: https://app.oravel.com.br/admin/maintenance-orders?tableFilters%5Btechnician_id%5D%5Bvalue%5D=01a1ae84-0af4-723e-a9c9-fc83f4412fd5&tableFilters%5Bstatus%5D%5Bvalues%5D%5B0%5D=Pendente&tableFilters%5Bstatus%5D%5Bvalues%5D%5B1%5D=Em%20Andamento
+                - generic [ref=f41e153]:
+                  - generic [ref=f41e154]: Pendentes
+                  - generic [ref=f41e156]: "0"
+                  - generic [ref=f41e157]: Aguardando ou em andamento
+              - link "Executadas 0 Concluídas por você" [ref=f41e161] [cursor=pointer]:
+                - /url: https://app.oravel.com.br/admin/maintenance-orders?tableFilters%5Btechnician_id%5D%5Bvalue%5D=01a1ae84-0af4-723e-a9c9-fc83f4412fd5&tableFilters%5Bstatus%5D%5Bvalues%5D%5B0%5D=Conclu%C3%ADda
+                - generic [ref=f41e162]:
+                  - generic [ref=f41e163]: Executadas
+                  - generic [ref=f41e165]: "0"
+                  - generic [ref=f41e166]: Concluídas por você
+            - generic [ref=f41e170]:
+              - heading "Ativos por Status" [level=3] [ref=f41e176]
+              - heading "Manutenções por Status" [level=3] [ref=f41e187]
+              - heading "Custo de Manutenção por Mês" [level=3] [ref=f41e198]
+              - generic [ref=f41e206]:
+                - heading "Top 3 Clientes com Mais Locações" [level=3] [ref=f41e210]
+                - table [ref=f41e212]:
+                  - rowgroup [ref=f41e213]:
+                    - row [ref=f41e214]:
+                      - columnheader "Cliente" [ref=f41e215]
+                      - columnheader "Contratos" [ref=f41e218]
+                  - rowgroup [ref=f41e221]:
+                    - row [ref=f41e222]:
+                      - cell "Agroindustrial Campo Bom" [ref=f41e223]
+                      - cell "30" [ref=f41e231]
+                    - row [ref=f41e240]:
+                      - cell "Construtora Horizonte Ltda" [ref=f41e241]
+                      - cell "24" [ref=f41e249]
+                    - row [ref=f41e258]:
+                      - cell "Logística Rota Sul Ltda" [ref=f41e259]
+                      - cell "17" [ref=f41e267]
+              - heading "Taxa de Disponibilidade da Frota" [level=3] [ref=f41e281]
+              - heading "O.S. Abertas vs. Concluídas por Mês" [level=3] [ref=f41e292]
+    - complementary [ref=f41e298]:
+      - generic [ref=f41e300]:
+        - link "Início" [ref=f41e302] [cursor=pointer]:
+          - /url: https://app.oravel.com.br/admin/painel-controle
+          - generic [ref=f41e306]: Oravel
+        - button "Recolher barra lateral" [ref=f41e307] [cursor=pointer]
+      - navigation [ref=f41e311]:
+        - list [ref=f41e312]:
+          - listitem [ref=f41e313]:
+            - link "Início" [ref=f41e314] [cursor=pointer]:
+              - /url: https://app.oravel.com.br/admin/painel-controle
+          - listitem [ref=f41e319]:
+            - link "Academia Oravel" [ref=f41e320] [cursor=pointer]:
+              - /url: https://app.oravel.com.br/academia
+        - list [ref=f41e324]:
+          - listitem [ref=f41e325]:
+            - generic [ref=f41e326] [cursor=pointer]:
+              - generic [ref=f41e329]: Ativos
+              - button "Ativos" [expanded] [ref=f41e330]
+            - list [ref=f41e334]:
+              - listitem [ref=f41e335]:
+                - link "Visão geral — Ativos" [ref=f41e336] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/visao-geral-ativos
+              - listitem [ref=f41e340]:
+                - link "Gestão de Ativos" [ref=f41e341] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/gestao-ativos
+          - listitem [ref=f41e345]:
+            - generic [ref=f41e346] [cursor=pointer]:
+              - generic [ref=f41e349]: Conformidade NR-13
+              - button "Conformidade NR-13" [expanded] [ref=f41e350]
+            - list [ref=f41e354]:
+              - listitem [ref=f41e355]:
+                - link "Dashboard" [ref=f41e356] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/nr13-compliance-dashboard
+              - listitem [ref=f41e360]:
+                - link "Documentos" [ref=f41e361] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/nr13-documents
+              - listitem [ref=f41e365]:
+                - link "Inspeções" [ref=f41e366] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/nr13-inspections
+              - listitem [ref=f41e370]:
+                - link "Periodicidades" [ref=f41e371] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/nr13-inspection-periodicities
+          - listitem [ref=f41e375]:
+            - generic [ref=f41e376] [cursor=pointer]:
+              - generic [ref=f41e379]: Gestão de Frota
+              - button "Gestão de Frota" [expanded] [ref=f41e380]
+            - list [ref=f41e384]:
+              - listitem [ref=f41e385]:
+                - link "Pendências da Frota" [ref=f41e386] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-pendencias
+              - listitem [ref=f41e390]:
+                - link "Checklists" [ref=f41e391] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-checklists
+              - listitem [ref=f41e395]:
+                - link "Modelos de Checklist" [ref=f41e396] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-modelo-checklists
+              - listitem [ref=f41e400]:
+                - link "Pneus" [ref=f41e401] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-pneus
+              - listitem [ref=f41e405]:
+                - link "Baterias" [ref=f41e406] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-baterias
+              - listitem [ref=f41e410]:
+                - link "Baterias por veículo" [ref=f41e411] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-baterias-por-veiculo
+              - listitem [ref=f41e415]:
+                - link "Óleo (trocas e reposições)" [ref=f41e416] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-troca-oleos
+              - listitem [ref=f41e420]:
+                - link "Planos de óleo" [ref=f41e421] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-plano-oleos
+              - listitem [ref=f41e425]:
+                - link "Coleta de óleo usado" [ref=f41e426] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-coleta-oleo-usados
+              - listitem [ref=f41e430]:
+                - link "Multas" [ref=f41e431] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-multas
+              - listitem [ref=f41e435]:
+                - link "Sinistros e ocorrências" [ref=f41e436] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-sinistros
+              - listitem [ref=f41e440]:
+                - link "Abastecimentos" [ref=f41e441] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-abastecimentos
+              - listitem [ref=f41e446]:
+                - link "Consumo por veículo" [ref=f41e447] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-consumo-por-veiculo
+              - listitem [ref=f41e451]:
+                - link "Custo por veículo" [ref=f41e452] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-custo-por-veiculo
+              - listitem [ref=f41e456]:
+                - link "Seguro, IPVA e outros custos" [ref=f41e457] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-custo-avulsos
+              - listitem [ref=f41e461]:
+                - link "Revisões" [ref=f41e462] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-plano-revisaos
+              - listitem [ref=f41e466]:
+                - link "Kit de segurança" [ref=f41e467] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-item-segurancas
+              - listitem [ref=f41e471]:
+                - link "Disponibilidade" [ref=f41e472] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-disponibilidade
+              - listitem [ref=f41e476]:
+                - link "Motorista titular" [ref=f41e477] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-vinculo-motoristas
+              - listitem [ref=f41e481]:
+                - link "Chaves" [ref=f41e482] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-chaves
+              - listitem [ref=f41e486]:
+                - link "Ranking de motoristas" [ref=f41e487] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-ranking-motoristas
+              - listitem [ref=f41e491]:
+                - link "Tags de pedágio" [ref=f41e492] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-tags
+              - listitem [ref=f41e497]:
+                - link "Pedágios" [ref=f41e498] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-pedagios
+              - listitem [ref=f41e502]:
+                - link "Lavagens" [ref=f41e503] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-lavagems
+              - listitem [ref=f41e507]:
+                - link "Baixa de veículos" [ref=f41e508] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-baixas
+              - listitem [ref=f41e512]:
+                - link "GPS dos veículos" [ref=f41e513] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-vinculo-gps
+          - listitem [ref=f41e518]:
+            - generic [ref=f41e519] [cursor=pointer]:
+              - generic [ref=f41e522]: Inteligência de Ativos
+              - button "Inteligência de Ativos" [expanded] [ref=f41e523]
+            - list [ref=f41e527]:
+              - listitem [ref=f41e528]:
+                - link "Custo de Manutenção" [ref=f41e529] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/custo-manutencao-equipamentos
+              - listitem [ref=f41e533]:
+                - link "Localização dos Equipamentos" [ref=f41e534] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/localizacao-equipamentos
+          - listitem [ref=f41e539]:
+            - generic [ref=f41e540] [cursor=pointer]:
+              - generic [ref=f41e543]: Materiais e Peças
+              - button "Materiais e Peças" [expanded] [ref=f41e544]
+            - list [ref=f41e548]:
+              - listitem [ref=f41e549]:
+                - link "Visão geral — Materiais e Peças" [ref=f41e550] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/visao-geral-materiais
+              - listitem [ref=f41e554]:
+                - link "Gestão de Compras" [ref=f41e555] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/gestao-compras
+              - listitem [ref=f41e559]:
+                - link "Gestão de Estoque" [ref=f41e560] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/almoxarifado
+          - listitem [ref=f41e564]:
+            - generic [ref=f41e565] [cursor=pointer]:
+              - generic [ref=f41e568]: Itens Agregados
+              - button "Itens Agregados" [expanded] [ref=f41e569]
+            - list [ref=f41e573]:
+              - listitem [ref=f41e574]:
+                - link "Acessórios e Componentes" [ref=f41e575] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/gestao-itens-agregados
+              - listitem [ref=f41e579]:
+                - link "Insumos e Consumíveis" [ref=f41e580] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/gestao-insumos
+              - listitem [ref=f41e584]:
+                - link "Mão de Obra Especializada" [ref=f41e585] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/specialized-services
+              - listitem [ref=f41e589]:
+                - link "Segurança e Documentação" [ref=f41e590] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/compliance-documents
+          - listitem [ref=f41e594]:
+            - generic [ref=f41e595] [cursor=pointer]:
+              - generic [ref=f41e598]: EPI
+              - button "EPI" [expanded] [ref=f41e599]
+            - list [ref=f41e603]:
+              - listitem [ref=f41e604]:
+                - link "Gestão de EPI" [ref=f41e605] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/gestao-epi
+          - listitem [ref=f41e609]:
+            - generic [ref=f41e610] [cursor=pointer]:
+              - generic [ref=f41e613]: Comercial
+              - button "Comercial" [expanded] [ref=f41e614]
+            - list [ref=f41e618]:
+              - listitem [ref=f41e619]:
+                - link "Visão geral — Comercial" [ref=f41e620] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/visao-geral-comercial
+              - listitem [ref=f41e624]:
+                - link "Rastreamento GPS" [ref=f41e625] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/rastreamento-gps
+              - listitem [ref=f41e630]:
+                - link "Gestão Comercial" [ref=f41e631] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/gestao-comercial
+              - listitem [ref=f41e635]:
+                - link "Gestão CRM" [ref=f41e636] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/gestao-crm
+          - listitem [ref=f41e640]:
+            - generic [ref=f41e641] [cursor=pointer]:
+              - generic [ref=f41e644]: Configurações
+              - button "Configurações" [expanded] [ref=f41e645]
+            - list [ref=f41e649]:
+              - listitem [ref=f41e650]:
+                - link "Centros de Custo" [ref=f41e651] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/cost-centers
+              - listitem [ref=f41e655]:
+                - link "Configurações do Tenant" [ref=f41e656] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/manage-tenant-settings
+              - listitem [ref=f41e660]:
+                - link "Responsáveis pelos Avisos" [ref=f41e661] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/responsaveis-avisos
+              - listitem [ref=f41e665]:
+                - link "Empresas" [ref=f41e666] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/companies
+              - listitem [ref=f41e670]:
+                - link "E-mail da Empresa" [ref=f41e671] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/email-da-empresa
+              - listitem [ref=f41e675]:
+                - link "Filiais" [ref=f41e676] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/branches
+              - listitem [ref=f41e680]:
+                - link "WhatsApp da Empresa" [ref=f41e681] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/whatsapp-da-empresa
+              - listitem [ref=f41e685]:
+                - link "Localizações" [ref=f41e686] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/locations
+              - listitem [ref=f41e692]:
+                - link "Logs de Atividade" [ref=f41e693] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/user-activity-logs
+              - listitem [ref=f41e697]:
+                - link "Status de Conformidade" [ref=f41e698] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/compliance-status
+          - listitem [ref=f41e702]:
+            - generic [ref=f41e703] [cursor=pointer]:
+              - generic [ref=f41e706]: Departamento Pessoal
+              - button "Departamento Pessoal" [expanded] [ref=f41e707]
+            - list [ref=f41e711]:
+              - listitem [ref=f41e712]:
+                - link "Alocação de Equipamento" [ref=f41e713] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/equipment-allocations
+              - listitem [ref=f41e717]:
+                - link "Faltas e Ausências" [ref=f41e718] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/absences
+              - listitem [ref=f41e722]:
+                - link "Relatório de Faltas" [ref=f41e723] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/relatorio-faltas
+          - listitem [ref=f41e727]:
+            - generic [ref=f41e728] [cursor=pointer]:
+              - generic [ref=f41e731]: Equipe
+              - button "Equipe" [expanded] [ref=f41e732]
+            - list [ref=f41e736]:
+              - listitem [ref=f41e737]:
+                - link "Chat Interno G M" [ref=f41e738] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/chat
+                  - generic [ref=f41e741]: Chat Interno
+                  - generic [ref=f41e742]: G M
+              - listitem [ref=f41e746]:
+                - link "Colaboradores" [ref=f41e747] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/users
+              - listitem [ref=f41e751]:
+                - link "Departamentos" [ref=f41e752] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/departments
+              - listitem [ref=f41e756]:
+                - link "Funções e Cargos" [ref=f41e757] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/job-roles
+              - listitem [ref=f41e761]:
+                - link "Perfis de Acesso" [ref=f41e762] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/roles
+              - listitem [ref=f41e766]:
+                - link "Acesso ao App Mobile" [ref=f41e767] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/acesso-app-mobile
+              - listitem [ref=f41e771]:
+                - link "PMOC" [ref=f41e772] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/pmocs
+          - listitem [ref=f41e776]:
+            - generic [ref=f41e777] [cursor=pointer]:
+              - generic [ref=f41e780]: Financeiro
+              - button "Financeiro" [expanded] [ref=f41e781]
+            - list [ref=f41e785]:
+              - listitem [ref=f41e786]:
+                - link "Visão geral — Financeiro" [ref=f41e787] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/visao-geral-financeiro
+              - listitem [ref=f41e791]:
+                - link "Fluxo de Caixa" [ref=f41e792] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/fluxo-de-caixa
+              - listitem [ref=f41e796]:
+                - link "Conciliação Bancária" [ref=f41e797] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/conciliacao-bancaria
+              - listitem [ref=f41e801]:
+                - link "Categorias de Contas a Pagar" [ref=f41e802] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/bill-categories
+              - listitem [ref=f41e807]:
+                - link "Contas a Pagar" [ref=f41e808] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/account-payables
+              - listitem [ref=f41e812]:
+                - link "Contas a Receber" [ref=f41e813] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/account-receivables
+              - listitem [ref=f41e817]:
+                - link "Planos de Cobrança" [ref=f41e818] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/billing-plans
+          - listitem [ref=f41e822]:
+            - generic [ref=f41e823] [cursor=pointer]:
+              - generic [ref=f41e826]: Logística
+              - button "Logística" [expanded] [ref=f41e827]
+            - list [ref=f41e831]:
+              - listitem [ref=f41e832]:
+                - link "Visão geral — Logística" [ref=f41e833] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/visao-geral-logistica
+              - listitem [ref=f41e837]:
+                - link "Fretes & Transporte" [ref=f41e838] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/logistica-fretes-transporte
+              - listitem [ref=f41e842]:
+                - link "Entrada e saída de veículos" [ref=f41e843] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/frota-saida-veiculos
+              - listitem [ref=f41e847]:
+                - link "Entrada e Saída (celular)" [ref=f41e848] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/logistica/saida-veiculos
+              - listitem [ref=f41e852]:
+                - link "Frota" [ref=f41e853] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/logistica-frota
+              - listitem [ref=f41e857]:
+                - link "Pátio" [ref=f41e858] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/logistica-patio
+          - listitem [ref=f41e862]:
+            - generic [ref=f41e863] [cursor=pointer]:
+              - generic [ref=f41e866]: Manutenção
+              - button "Manutenção" [expanded] [ref=f41e867]
+            - list [ref=f41e871]:
+              - listitem [ref=f41e872]:
+                - link "Visão geral — Manutenção" [ref=f41e873] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/visao-geral-manutencao
+              - listitem [ref=f41e877]:
+                - link "Análise (IA)" [ref=f41e878] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/maintenancao-analise-ia
+              - listitem [ref=f41e882]:
+                - link "Cadastros" [ref=f41e883] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/maintenancao-cadastros
+              - listitem [ref=f41e887]:
+                - link "Operação" [ref=f41e888] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/maintenancao-operacao
+              - listitem [ref=f41e893]:
+                - link "Tipos de ação" [ref=f41e894] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/tipos-de-acao
+              - listitem [ref=f41e898]:
+                - link "Problemas comuns" [ref=f41e899] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/problemas-comuns
+          - listitem [ref=f41e903]:
+            - generic [ref=f41e904] [cursor=pointer]:
+              - generic [ref=f41e907]: PMP
+              - button "PMP" [expanded] [ref=f41e908]
+            - list [ref=f41e912]:
+              - listitem [ref=f41e913]:
+                - link "Alocação de Técnicos" [ref=f41e914] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/alocacao-tecnicos-pmp
+              - listitem [ref=f41e918]:
+                - link "Cobertura de PMP" [ref=f41e919] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/cobertura-pmp
+              - listitem [ref=f41e923]:
+                - link "Consulta por Cliente" [ref=f41e924] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/consulta-cliente-pmp
+              - listitem [ref=f41e928]:
+                - link "Dashboard PMP" [ref=f41e929] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/painel-pmp
+              - listitem [ref=f41e933]:
+                - link "Kanban Preventivas P M" [ref=f41e934] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/preventive-maintenance-kanban
+                  - generic [ref=f41e937]: Kanban Preventivas
+                  - generic [ref=f41e938]: P M
+              - listitem [ref=f41e942]:
+                - link "Planos Preventivos" [ref=f41e943] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/maintenance-plans
+          - listitem [ref=f41e947]:
+            - generic [ref=f41e948] [cursor=pointer]:
+              - generic [ref=f41e951]: Relatórios
+              - button "Relatórios" [expanded] [ref=f41e952]
+            - list [ref=f41e956]:
+              - listitem [ref=f41e957]:
+                - link "Análises" [ref=f41e958] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/relatorios-analises
+              - listitem [ref=f41e963]:
+                - link "Históricos & Logs" [ref=f41e964] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/relatorios-historicos-logs
+              - listitem [ref=f41e968]:
+                - link "Painéis" [ref=f41e969] [cursor=pointer]:
+                  - /url: https://app.oravel.com.br/admin/relatorios-paineis
+  - generic:
+    - status
+  - button "💬 Mensagens" [ref=f41e975] [cursor=pointer]:
+    - generic [ref=f41e976]:
+      - generic [ref=f41e977]: 💬
+      - generic [ref=f41e978]: Mensagens
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f41e982]

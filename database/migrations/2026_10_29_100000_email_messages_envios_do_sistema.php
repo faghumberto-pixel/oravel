@@ -14,7 +14,9 @@ return new class extends Migration
             $table->string('tipo')->nullable();           // ex.: ClientPortalAccessGranted, GenericPdfMail
         });
 
-        DB::statement('ALTER TABLE email_messages ALTER COLUMN from_user_id DROP NOT NULL');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('ALTER TABLE email_messages ALTER COLUMN from_user_id DROP NOT NULL');
+        }
     }
 
     public function down(): void

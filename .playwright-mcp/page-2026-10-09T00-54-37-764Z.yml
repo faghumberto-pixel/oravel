@@ -1,0 +1,28 @@
+- generic [ref=e1]:
+  - main [ref=e4]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - img "Oravel" [ref=e10]
+        - heading "Portal do Cliente" [level=1] [ref=e11]
+      - generic [ref=e12]:
+        - generic [ref=e13]:
+          - generic [ref=e16]:
+            - generic [ref=e19]:
+              - text: E-mail
+              - superscript [ref=e20]: "*"
+            - textbox "E-mail*" [active] [ref=e24]
+          - generic [ref=e27]:
+            - generic [ref=e30]:
+              - text: Senha
+              - superscript [ref=e31]: "*"
+            - generic [ref=e33]:
+              - textbox "Senha*" [ref=e35]
+              - button "Mostrar senha" [ref=e38] [cursor=pointer]
+          - generic [ref=e47]:
+            - checkbox "Lembre de mim" [ref=e48]
+            - generic [ref=e49]: Lembre de mim
+        - button "Login" [ref=e52] [cursor=pointer]
+      - link "Entrar sem senha (link por e-mail)" [ref=e55] [cursor=pointer]:
+        - /url: http://127.0.0.1:8001/cliente/entrar-sem-senha
+  - generic:
+    - status

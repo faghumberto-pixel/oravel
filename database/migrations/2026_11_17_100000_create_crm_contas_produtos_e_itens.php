@@ -41,8 +41,10 @@ return new class extends Migration
             $table->index(['tenant_id', 'nome']);
         });
 
-        DB::statement("ALTER TABLE crm_contas ADD COLUMN custom jsonb NOT NULL DEFAULT '{}'::jsonb");
-        DB::statement('CREATE UNIQUE INDEX crm_contas_documento_unico ON crm_contas (tenant_id, documento_digitos) WHERE documento_digitos IS NOT NULL');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE crm_contas ADD COLUMN custom jsonb NOT NULL DEFAULT '{}'::jsonb");
+            DB::statement('CREATE UNIQUE INDEX crm_contas_documento_unico ON crm_contas (tenant_id, documento_digitos) WHERE documento_digitos IS NOT NULL');
+        }
 
         Schema::create('crm_conta_contatos', function (Blueprint $table) {
             $table->uuid('id')->primary();
@@ -73,7 +75,9 @@ return new class extends Migration
             $table->index(['tenant_id', 'nome']);
         });
 
-        DB::statement('CREATE UNIQUE INDEX crm_produtos_codigo_unico ON crm_produtos (tenant_id, codigo) WHERE codigo IS NOT NULL');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('CREATE UNIQUE INDEX crm_produtos_codigo_unico ON crm_produtos (tenant_id, codigo) WHERE codigo IS NOT NULL');
+        }
 
         Schema::create('crm_lead_itens', function (Blueprint $table) {
             $table->uuid('id')->primary();
@@ -109,10 +113,14 @@ return new class extends Migration
         });
 
         Schema::dropIfExists('crm_lead_itens');
-        DB::statement('DROP INDEX IF EXISTS crm_produtos_codigo_unico');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('DROP INDEX IF EXISTS crm_produtos_codigo_unico');
+        }
         Schema::dropIfExists('crm_produtos');
         Schema::dropIfExists('crm_conta_contatos');
-        DB::statement('DROP INDEX IF EXISTS crm_contas_documento_unico');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('DROP INDEX IF EXISTS crm_contas_documento_unico');
+        }
         Schema::dropIfExists('crm_contas');
     }
 };

@@ -1,0 +1,193 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - navigation [ref=e3]:
+      - link "Oravel" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e6]:
+        - button "Produtos" [ref=e8] [cursor=pointer]
+        - button "Soluções" [ref=e10] [cursor=pointer]
+        - link "Segmentos" [ref=e12] [cursor=pointer]:
+          - /url: https://oravel.com.br/segmentos/
+        - link "Sobre Nós" [ref=e13] [cursor=pointer]:
+          - /url: https://oravel.com.br/sobre-nos
+        - link "Contato" [ref=e14] [cursor=pointer]:
+          - /url: https://oravel.com.br/contato.php
+      - link "Falar com um Especialista" [ref=e15] [cursor=pointer]:
+        - /url: https://oravel.com.br/contato.php
+  - generic [ref=e18]:
+    - generic [ref=e19]:
+      - heading "Oravel" [level=1] [ref=e20]
+      - paragraph [ref=e21]: Bem-vindo ao Oravel!
+      - paragraph [ref=e22]: "A plataforma de gestão para quem opera com equipamentos, equipes e serviços em campo: locação, manutenção industrial, montagem, logística e transportes, gestão de serviços e distribuição. Contratos, ordens de serviço, frota, estoque, comercial e financeiro em uma só base. Acesse sua conta e domine sua operação."
+      - link "Solicite uma apresentação" [ref=e23] [cursor=pointer]:
+        - /url: https://oravel.com.br/contato.php
+    - img "Profissional com Laptop" [ref=e25]
+  - region [ref=e26]:
+    - generic [ref=e27]:
+      - generic [ref=e28]: Nossas frentes
+      - heading "Uma plataforma para quem vive de equipamentos, equipes e serviços" [level=2] [ref=e29]
+      - paragraph [ref=e30]: Cada frente tem as telas e os módulos que a operação realmente usa no dia a dia.
+      - generic [ref=e31]:
+        - link "Locação de Equipamentos Contratos, medições, manutenção e avarias da sua locadora em uma base só. Conhecer →" [ref=e32] [cursor=pointer]:
+          - /url: https://oravel.com.br/erp-cmms/
+          - heading "Locação de Equipamentos" [level=3] [ref=e37]
+          - paragraph [ref=e38]: Contratos, medições, manutenção e avarias da sua locadora em uma base só.
+          - generic [ref=e39]: Conhecer →
+        - link "Manutenção Industrial Ordens de serviço, preventivas com checklist e o dossiê de cada equipamento. Conhecer →" [ref=e40] [cursor=pointer]:
+          - /url: https://oravel.com.br/software-manutencao-industrial/
+          - heading "Manutenção Industrial" [level=3] [ref=e44]
+          - paragraph [ref=e45]: Ordens de serviço, preventivas com checklist e o dossiê de cada equipamento.
+          - generic [ref=e46]: Conhecer →
+        - link "Montagem Industrial Frentes de serviço, horas por técnico e a entrada e saída de equipamentos em obra. Conhecer →" [ref=e47] [cursor=pointer]:
+          - /url: https://oravel.com.br/software-montagem-industrial/
+          - heading "Montagem Industrial" [level=3] [ref=e52]
+          - paragraph [ref=e53]: Frentes de serviço, horas por técnico e a entrada e saída de equipamentos em obra.
+          - generic [ref=e54]: Conhecer →
+        - link "Logística e Transportes Agenda de motoristas, saídas de veículos e o trajeto de cada transporte. Conhecer →" [ref=e55] [cursor=pointer]:
+          - /url: https://oravel.com.br/software-gestao-frota-logistica/
+          - heading "Logística e Transportes" [level=3] [ref=e61]
+          - paragraph [ref=e62]: Agenda de motoristas, saídas de veículos e o trajeto de cada transporte.
+          - generic [ref=e63]: Conhecer →
+        - link "Gestão de Serviços Portal do cliente, custo por serviço e um painel geral da operação. Conhecer →" [ref=e64] [cursor=pointer]:
+          - /url: https://oravel.com.br/software-gestao-de-servicos/
+          - heading "Gestão de Serviços" [level=3] [ref=e69]
+          - paragraph [ref=e70]: Portal do cliente, custo por serviço e um painel geral da operação.
+          - generic [ref=e71]: Conhecer →
+        - link "Ordem de Serviço Criação e despacho de O.S., histórico completo, SLA e relatório de tempo e custo. Conhecer →" [ref=e72] [cursor=pointer]:
+          - /url: https://oravel.com.br/os/
+          - heading "Ordem de Serviço" [level=3] [ref=e77]
+          - paragraph [ref=e78]: Criação e despacho de O.S., histórico completo, SLA e relatório de tempo e custo.
+          - generic [ref=e79]: Conhecer →
+  - generic [ref=e81]:
+    - heading "Qual é a diferença?" [level=2] [ref=e82]
+    - generic [ref=e83]:
+      - generic [ref=e84]:
+        - generic [ref=e85]: Soluções
+        - heading "Módulos Especializados" [level=3] [ref=e86]
+        - paragraph [ref=e87]: Funcionalidades focadas em um área específica (CRM para vendas, WMS para estoque, RH para pessoal). Escolha apenas o que sua empresa precisa e pague só por isso.
+        - generic [ref=e88]:
+          - paragraph [ref=e89]: ✓ Vendidas individualmente
+          - paragraph [ref=e90]: ✓ Máxima flexibilidade
+          - paragraph [ref=e91]: ✓ Ideal para necessidades específicas
+      - generic [ref=e92]:
+        - generic [ref=e93]: Segmentos
+        - heading "Foco no Ramo" [level=3] [ref=e94]
+        - paragraph [ref=e95]: Pacotes pré-montados com as soluções mais relevantes para seu segmento (locação, manutenção, montagem, logística, serviços). Tudo que o seu ramo realmente precisa, nada mais.
+        - generic [ref=e96]:
+          - paragraph [ref=e97]: ✓ Curado para o segmento
+          - paragraph [ref=e98]: ✓ Soluções integradas
+          - paragraph [ref=e99]: ✓ Configuração rápida
+      - generic [ref=e100]:
+        - generic [ref=e101]: Produtos
+        - heading "Suite Completa" [level=3] [ref=e102]
+        - paragraph [ref=e103]: "A solução mais abrangente. Todos os módulos integrados: vendas, estoque, RH, financeiro, atendimento. Gestão 360° da sua empresa em um sistema."
+        - generic [ref=e104]:
+          - paragraph [ref=e105]: ✓ Tudo integrado
+          - paragraph [ref=e106]: ✓ Máxima eficiência
+          - paragraph [ref=e107]: ✓ Escalável conforme crescimento
+  - generic [ref=e110]:
+    - img "Equipe Técnica em Campo" [ref=e112]
+    - generic [ref=e113]:
+      - heading "Nós entendemos a sua operação, seja qual for o segmento" [level=2] [ref=e114]
+      - paragraph [ref=e115]: Oravel não é apenas software. Nasceu da vivência de quem operou locadora, frota e estoque e conhece os desafios de quem vive de equipamentos, equipes e serviços em campo — seja uma locadora, uma prestadora de manutenção industrial, uma montadora, uma operação de logística ou uma empresa de serviços.
+      - paragraph [ref=e116]: "Cada segmento tem as suas dores, e a Oravel responde a cada uma com telas e módulos pensados para ela: contratos e medições na locação, ordens de serviço e preventivas na manutenção, frentes de serviço e horas na montagem, agenda de motoristas e transportes na logística, portal do cliente e custo por serviço na gestão de serviços."
+      - paragraph [ref=e117]: Atendemos desde pequenas operações até empresas com várias equipes e frentes de trabalho, em todo o Brasil. Você começa pelo que precisa e ativa novos módulos conforme a operação cresce, sempre na mesma plataforma.
+  - generic [ref=e119]:
+    - heading "Uma plataforma completa para a sua operação" [level=2] [ref=e120]
+    - paragraph [ref=e121]: Oravel é muito mais que um ERP. É um ecossistema integrado que conecta o campo e o escritório, da ordem de serviço ao financeiro, com mais de 90 módulos na mesma base e painéis e relatórios em cada área.
+    - generic [ref=e122]:
+      - generic [ref=e123]:
+        - generic [ref=e124]: ✓
+        - heading "Ativos e Equipamentos" [level=4] [ref=e125]
+        - paragraph [ref=e126]: Cadastro e dossiê de cada equipamento, histórico de manutenções, custo acumulado e controle de avarias com registro fotográfico.
+      - generic [ref=e127]:
+        - generic [ref=e128]: ✓
+        - heading "Manutenção e Ordens de Serviço" [level=4] [ref=e129]
+        - paragraph [ref=e130]: Ordens de serviço com checklist, fotos de antes e depois, assinatura digital e apontamento de horas, mais planos de manutenção preventiva.
+      - generic [ref=e131]:
+        - generic [ref=e132]: ✓
+        - heading "Contratos, Locação e Medições" [level=4] [ref=e133]
+        - paragraph [ref=e134]: Contratos, medições, mobilização e desmobilização de equipamentos e vistorias de entrada e saída.
+      - generic [ref=e135]:
+        - generic [ref=e136]: ✓
+        - heading "Frota, Logística e Transportes" [level=4] [ref=e137]
+        - paragraph [ref=e138]: Veículos e motoristas, agenda de saídas, registro de entrada e saída, mapa de equipamentos e trajeto dos transportes.
+      - generic [ref=e139]:
+        - generic [ref=e140]: ✓
+        - heading "Estoque, Peças e Suprimentos" [level=4] [ref=e141]
+        - paragraph [ref=e142]: Almoxarifados, movimentação de peças, requisição, cotação, pedido de compra e recebimento.
+      - generic [ref=e143]:
+        - generic [ref=e144]: ✓
+        - heading "Comercial e CRM" [level=4] [ref=e145]
+        - paragraph [ref=e146]: CRM de leads, orçamentos e propostas, contratos e contas a receber integrados.
+      - generic [ref=e147]:
+        - generic [ref=e148]: ✓
+        - heading "Financeiro" [level=4] [ref=e149]
+        - paragraph [ref=e150]: Contas a receber com boleto, contas a pagar e o custo de cada serviço e de cada equipamento.
+      - generic [ref=e151]:
+        - generic [ref=e152]: ✓
+        - heading "Equipe e Departamento Pessoal" [level=4] [ref=e153]
+        - paragraph [ref=e154]: Cadastro de colaboradores, certificações, apontamento de jornada e rotinas de departamento pessoal.
+      - generic [ref=e155]:
+        - generic [ref=e156]: ✓
+        - heading "Portal do Cliente e Assinatura Eletrônica" [level=4] [ref=e157]
+        - paragraph [ref=e158]: Seu cliente acompanha serviços, contratos e cobranças, e os documentos são assinados eletronicamente.
+  - generic [ref=e160]:
+    - heading "Números que falam por si" [level=2] [ref=e161]
+    - generic [ref=e162]:
+      - generic [ref=e163]:
+        - generic [ref=e164]: 90+
+        - generic [ref=e165]: Módulos integrados
+      - generic [ref=e166]:
+        - generic [ref=e167]: "9"
+        - generic [ref=e168]: Áreas de gestão em uma só base
+      - generic [ref=e169]:
+        - generic [ref=e170]: 100%
+        - generic [ref=e171]: Web, do escritório ao campo
+  - generic [ref=e173]:
+    - heading "Sua empresa merece uma plataforma integrada" [level=2] [ref=e174]
+    - paragraph [ref=e175]: Locação, manutenção, montagem, logística, serviços e distribuição. Qual é o seu segmento?
+    - link "Agendar Demonstração" [ref=e176] [cursor=pointer]:
+      - /url: https://oravel.com.br/contato.php
+  - contentinfo [ref=e177]:
+    - generic [ref=e178]:
+      - generic [ref=e179]:
+        - generic [ref=e180]:
+          - generic [ref=e181]: Oravel
+          - paragraph [ref=e182]: Plataforma de gestão para locação, manutenção, montagem, logística e serviços em todo o Brasil.
+        - generic [ref=e183]:
+          - heading "Produtos" [level=4] [ref=e184]
+          - link "Oravel ERP" [ref=e185] [cursor=pointer]:
+            - /url: https://app.oravel.com.br/produtos/erp
+          - link "Pequenas Locadoras" [ref=e186] [cursor=pointer]:
+            - /url: /pequenas-locadoras
+        - generic [ref=e187]:
+          - heading "Soluções" [level=4] [ref=e188]
+          - link "Frota" [ref=e189] [cursor=pointer]:
+            - /url: https://oravel.com.br/solucoes/frota
+          - link "WMS" [ref=e190] [cursor=pointer]:
+            - /url: https://oravel.com.br/solucoes/wms
+          - link "Analytics" [ref=e191] [cursor=pointer]:
+            - /url: https://oravel.com.br/solucoes/analytics
+          - link "OS" [ref=e192] [cursor=pointer]:
+            - /url: https://oravel.com.br/solucoes/os
+        - generic [ref=e193]:
+          - heading "Empresa" [level=4] [ref=e194]
+          - link "Segmentos" [ref=e195] [cursor=pointer]:
+            - /url: https://oravel.com.br/segmentos/
+          - link "Sobre" [ref=e196] [cursor=pointer]:
+            - /url: https://oravel.com.br/sobre-nos
+          - link "Contato" [ref=e197] [cursor=pointer]:
+            - /url: https://oravel.com.br/contato.php
+        - generic [ref=e198]:
+          - heading "Legal" [level=4] [ref=e199]
+          - link "Privacidade" [ref=e200] [cursor=pointer]:
+            - /url: https://oravel.com.br/politica-de-privacidade/
+          - link "Termos de Uso" [ref=e201] [cursor=pointer]:
+            - /url: https://oravel.com.br/termos-de-uso/
+      - generic [ref=e202]:
+        - paragraph [ref=e203]: © 2026 Oravel Software. Todos os direitos reservados.
+        - paragraph [ref=e204]: Feito por quem entende de operação em campo
+        - paragraph [ref=e205]: Oravel Desenvolvimento de Software Ltda · CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, conj. 1713, Pinheiros, São Paulo/SP · CEP 05424-150
+  - link [ref=e206] [cursor=pointer]:
+    - /url: https://wa.me/5519999332615

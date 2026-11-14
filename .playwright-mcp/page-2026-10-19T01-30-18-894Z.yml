@@ -1,0 +1,28 @@
+- generic [ref=f38e1]:
+  - generic [ref=f38e2]:
+    - generic [ref=f38e5]:
+      - generic [ref=f38e6]:
+        - heading "Bem-vindo ao Oravel!" [level=1] [ref=f38e7]
+        - paragraph [ref=f38e9]: Simplifique a gestão da sua locadora de equipamentos com nossa plataforma SaaS. Cadastre-se ou faça login.
+        - button "Cadastrar" [ref=f38e10] [cursor=pointer]
+      - generic [ref=f38e12]:
+        - img "Oravel" [ref=f38e14]
+        - generic [ref=f38e16]:
+          - generic [ref=f38e17]:
+            - generic [ref=f38e19]:
+              - generic [ref=f38e20]: E-mail
+              - textbox "E-mail" [active] [ref=f38e28]
+            - generic [ref=f38e30]:
+              - generic [ref=f38e31]: Senha
+              - generic [ref=f38e34]:
+                - textbox "Senha" [ref=f38e39]
+                - button "Mostrar senha" [ref=f38e42] [cursor=pointer]
+          - generic [ref=f38e47]:
+            - generic [ref=f38e48]:
+              - checkbox "Lembrar de mim" [ref=f38e49]
+              - text: Lembrar de mim
+            - button "Criar Conta" [ref=f38e51] [cursor=pointer]
+          - button "LOGIN" [ref=f38e54] [cursor=pointer]
+    - paragraph [ref=f38e56]: © 2026 Oravel. Todos os direitos reservados.
+  - generic:
+    - status

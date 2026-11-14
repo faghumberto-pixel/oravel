@@ -1,0 +1,157 @@
+- generic [active] [ref=f15e1]:
+  - generic [ref=f15e2]:
+    - generic [ref=f15e3]:
+      - navigation [ref=f15e5]:
+        - generic [ref=f15e9]:
+          - generic [ref=f15e10]: Locadora Visual
+          - generic [ref=f15e11]: "Módulo: Locadora"
+        - generic [ref=f15e12]:
+          - button "⌘K" [ref=f15e14] [cursor=pointer]
+          - button "Abrir notificações" [ref=f15e20] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=f15e24] [cursor=pointer]:
+            - /url: http://127.0.0.1:8099/admin/caixa-de-email
+          - button "Menu do usuário" [ref=f15e29] [cursor=pointer]:
+            - img "Avatar de Admin Visual" [ref=f15e30]
+        - link "Ajuda" [ref=f15e32] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=f15e36]:
+        - generic [ref=f15e38]:
+          - generic [ref=f15e39]:
+            - generic [ref=f15e40]:
+              - navigation [ref=f15e41]:
+                - list [ref=f15e42]:
+                  - listitem [ref=f15e43]:
+                    - link "Ordens De Compra" [ref=f15e44] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/purchase-orders
+                  - listitem [ref=f15e45]:
+                    - generic [ref=f15e48]: Listar
+              - heading "Ordens De Compra" [level=1] [ref=f15e49]
+            - generic [ref=f15e51]:
+              - link "Nova Ordem de Compra (Avulsa)" [ref=f15e52] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/purchase-orders/create
+              - link "Imprimir" [ref=f15e54] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/print/tabela/4ad1b81d-f67d-41ec-86ca-b6c881ec818a
+              - button "Exportar purchase orders" [ref=f15e58] [cursor=pointer]
+          - generic [ref=f15e62]:
+            - generic [ref=f15e63]:
+              - button "Total 5" [ref=f15e64] [cursor=pointer]:
+                - generic [ref=f15e65]: Total
+                - generic [ref=f15e66]: "5"
+              - button "Abertas 2" [ref=f15e67] [cursor=pointer]:
+                - generic [ref=f15e68]: Abertas
+                - generic [ref=f15e69]: "2"
+              - button "Parcialmente recebidas 1" [ref=f15e70] [cursor=pointer]:
+                - generic [ref=f15e71]: Parcialmente recebidas
+                - generic [ref=f15e72]: "1"
+              - button "Recebidas 1" [ref=f15e73] [cursor=pointer]:
+                - generic [ref=f15e74]: Recebidas
+                - generic [ref=f15e75]: "1"
+              - button "Canceladas 1" [ref=f15e76] [cursor=pointer]:
+                - generic [ref=f15e77]: Canceladas
+                - generic [ref=f15e78]: "1"
+              - button "Entrega atrasada 1" [ref=f15e79] [cursor=pointer]:
+                - generic [ref=f15e80]: Entrega atrasada
+                - generic [ref=f15e81]: "1"
+            - generic [ref=f15e83]:
+              - button "Filtrar 0" [ref=f15e89] [cursor=pointer]:
+                - generic [ref=f15e90]: Filtrar
+                - generic [ref=f15e93]: "0"
+              - generic [ref=f15e97]:
+                - generic [ref=f15e101]:
+                  - generic [ref=f15e102]: Ordenar por
+                  - combobox "Ordenar por" [ref=f15e105]:
+                    - option "-" [selected]
+                    - option "Aberta em"
+                - generic [ref=f15e106]:
+                  - generic [ref=f15e109]:
+                    - link "Distribuidora Alfa Aberta R$ 2.500,00 Entrega prevista para 10/11/2026 Aberta em 03/11/2026 20:48" [ref=f15e111] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/purchase-orders/01a1a3d0-b96f-7031-bb0e-5988e933b059/edit
+                      - generic [ref=f15e113]:
+                        - generic [ref=f15e115]:
+                          - generic [ref=f15e116]: Distribuidora Alfa
+                          - generic [ref=f15e124]: Aberta
+                        - generic [ref=f15e133]: R$ 2.500,00
+                        - generic [ref=f15e141]: Entrega prevista para 10/11/2026
+                        - generic [ref=f15e152]: Aberta em 03/11/2026 20:48
+                    - generic [ref=f15e163]:
+                      - button "Visualizar" [ref=f15e164] [cursor=pointer]
+                      - link "Editar" [ref=f15e169] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/purchase-orders/01a1a3d0-b96f-7031-bb0e-5988e933b059/edit
+                  - generic [ref=f15e176]:
+                    - link "Peças Beta Aberta R$ 900,00 Entrega prevista para 31/10/2026 (atrasada) Aberta em 03/11/2026 20:48" [ref=f15e178] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/purchase-orders/01a1a3d0-b974-73a3-82eb-f76b4038325d/edit
+                      - generic [ref=f15e180]:
+                        - generic [ref=f15e182]:
+                          - generic [ref=f15e183]: Peças Beta
+                          - generic [ref=f15e191]: Aberta
+                        - generic [ref=f15e200]: R$ 900,00
+                        - generic [ref=f15e208]: Entrega prevista para 31/10/2026 (atrasada)
+                        - generic [ref=f15e219]: Aberta em 03/11/2026 20:48
+                    - generic [ref=f15e230]:
+                      - button "Visualizar" [ref=f15e231] [cursor=pointer]
+                      - link "Editar" [ref=f15e236] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/purchase-orders/01a1a3d0-b974-73a3-82eb-f76b4038325d/edit
+                  - generic [ref=f15e243]:
+                    - link "Distribuidora Alfa Parcialmente Recebida R$ 4.300,00 Entrega prevista para 07/11/2026 Aberta em 03/11/2026 20:48" [ref=f15e245] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/purchase-orders/01a1a3d0-b977-7378-87d7-b61ea08e5092/edit
+                      - generic [ref=f15e247]:
+                        - generic [ref=f15e249]:
+                          - generic [ref=f15e250]: Distribuidora Alfa
+                          - generic [ref=f15e258]: Parcialmente Recebida
+                        - generic [ref=f15e267]: R$ 4.300,00
+                        - generic [ref=f15e275]: Entrega prevista para 07/11/2026
+                        - generic [ref=f15e286]: Aberta em 03/11/2026 20:48
+                    - generic [ref=f15e297]:
+                      - button "Visualizar" [ref=f15e298] [cursor=pointer]
+                      - link "Editar" [ref=f15e303] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/purchase-orders/01a1a3d0-b977-7378-87d7-b61ea08e5092/edit
+                  - generic [ref=f15e310]:
+                    - link "Peças Beta Recebida R$ 1.200,00 Entrega prevista para 24/10/2026 Aberta em 03/11/2026 20:48" [ref=f15e312] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/purchase-orders/01a1a3d0-b97b-7161-b235-ecfe900c32b5/edit
+                      - generic [ref=f15e314]:
+                        - generic [ref=f15e316]:
+                          - generic [ref=f15e317]: Peças Beta
+                          - generic [ref=f15e325]: Recebida
+                        - generic [ref=f15e334]: R$ 1.200,00
+                        - generic [ref=f15e342]: Entrega prevista para 24/10/2026
+                        - generic [ref=f15e353]: Aberta em 03/11/2026 20:48
+                    - generic [ref=f15e364]:
+                      - button "Visualizar" [ref=f15e365] [cursor=pointer]
+                      - link "Editar" [ref=f15e370] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/purchase-orders/01a1a3d0-b97b-7161-b235-ecfe900c32b5/edit
+                  - generic [ref=f15e377]:
+                    - link "Distribuidora Alfa Cancelada R$ 350,00 Sem previsão de entrega Aberta em 03/11/2026 20:48" [ref=f15e379] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/purchase-orders/01a1a3d0-b980-733a-90a6-96466077f261/edit
+                      - generic [ref=f15e381]:
+                        - generic [ref=f15e383]:
+                          - generic [ref=f15e384]: Distribuidora Alfa
+                          - generic [ref=f15e392]: Cancelada
+                        - generic [ref=f15e401]: R$ 350,00
+                        - generic [ref=f15e409]: Sem previsão de entrega
+                        - generic [ref=f15e414]: Aberta em 03/11/2026 20:48
+                    - generic [ref=f15e425]:
+                      - button "Visualizar" [ref=f15e426] [cursor=pointer]
+                      - link "Editar" [ref=f15e431] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/purchase-orders/01a1a3d0-b980-733a-90a6-96466077f261/edit
+              - navigation "Paginação" [ref=f15e436]:
+                - generic [ref=f15e437]: Exibindo 1 a 5 de 5 resultados
+                - generic [ref=f15e440]:
+                  - generic [ref=f15e441]: por página
+                  - combobox "por página" [ref=f15e444]:
+                    - option "5"
+                    - option "10" [selected]
+                    - option "25"
+                    - option "50"
+                    - option "Todas"
+    - complementary [ref=f15e445]:
+      - generic [ref=f15e447]:
+        - link "Início" [ref=f15e449] [cursor=pointer]:
+          - /url: http://127.0.0.1:8099/admin/painel-controle
+          - generic [ref=f15e453]: Oravel
+        - button "Recolher barra lateral" [ref=f15e454] [cursor=pointer]
+      - navigation [ref=f15e458]:
+        - list
+        - list
+  - generic:
+    - status
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f15e459]

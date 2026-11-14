@@ -106,9 +106,11 @@ class Prospect extends Model
         $termo = trim((string) $termo);
 
         return $q->when($termo !== '', fn ($q) => $q->where(fn ($w) => $w
-            ->where('nome', 'ilike', "%{$termo}%")->orWhere('razao_social', 'ilike', "%{$termo}%")
-            ->orWhere('cnpj', 'ilike', "%{$termo}%")->orWhere('socio', 'ilike', "%{$termo}%")
-            ->orWhere('telefone', 'ilike', "%{$termo}%")));
+            ->whereRaw('LOWER(nome) LIKE ?', ["%" . strtolower($termo) . "%"])
+            ->orWhereRaw('LOWER(razao_social) LIKE ?', ["%" . strtolower($termo) . "%"])
+            ->orWhereRaw('LOWER(cnpj) LIKE ?', ["%" . strtolower($termo) . "%"])
+            ->orWhereRaw('LOWER(socio) LIKE ?', ["%" . strtolower($termo) . "%"])
+            ->orWhereRaw('LOWER(telefone) LIKE ?', ["%" . strtolower($termo) . "%"])));
     }
 
     /** Aplica o estado dos filtros da tabela (mesmas chaves dos filtros do Resource); usado na impressão. */
@@ -219,6 +221,11 @@ class Prospect extends Model
     public function contatos(): HasMany
     {
         return $this->hasMany(ProspectContato::class);
+    }
+
+    public function aiAnalyses(): HasMany
+    {
+        return $this->hasMany(AIAnalysis::class, 'prospect_id');
     }
 
     public function primeiroNomeSocio(): string

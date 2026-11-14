@@ -1,0 +1,538 @@
+- generic [active] [ref=f8e1]:
+  - generic [ref=f8e2]:
+    - generic [ref=f8e3]:
+      - navigation [ref=f8e5]:
+        - generic [ref=f8e6]:
+          - generic [ref=f8e7]:
+            - generic [ref=f8e8]: Terça-feira, 3 de novembro
+            - generic [ref=f8e9]: 15:40:12
+          - generic [ref=f8e10]:
+            - link "0 hoje" [ref=f8e11] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/central/programacao?visao=hoje
+              - generic [ref=f8e14]: "0"
+              - generic [ref=f8e15]: hoje
+            - link "0 na semana" [ref=f8e17] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/central/programacao?visao=semana
+              - generic [ref=f8e18]: "0"
+              - generic [ref=f8e19]: na semana
+        - generic [ref=f8e20]:
+          - generic [ref=f8e23]:
+            - generic [ref=f8e24]: Pesquisa global
+            - searchbox "Pesquisa global" [ref=f8e30]
+          - button "⌘K" [ref=f8e32] [cursor=pointer]
+          - button "Abrir notificações" [ref=f8e1122] [cursor=pointer]
+          - button "Menu do usuário" [ref=f8e38] [cursor=pointer]:
+            - img "Avatar de Admin Visual" [ref=f8e39]
+      - main [ref=f8e40]:
+        - generic [ref=f8e42]:
+          - generic [ref=f8e43]:
+            - generic [ref=f8e44]:
+              - navigation [ref=f8e45]:
+                - list [ref=f8e46]:
+                  - listitem [ref=f8e47]:
+                    - link "Prospects" [ref=f8e48] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/prospects
+                  - listitem [ref=f8e49]:
+                    - generic [ref=f8e52]: Listar
+              - heading "Prospects" [level=1] [ref=f8e53]
+            - generic [ref=f8e55]:
+              - link "Imprimir" [ref=f8e56] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/central/prospects/imprimir?filtros%5Bnota_alta%5D%5BisActive%5D=0&filtros%5Bretorno_vencido%5D%5BisActive%5D=0
+              - link "Novo prospect" [ref=f8e60] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/central/prospects/create
+          - generic [ref=f8e64]:
+            - generic [ref=f8e65]:
+              - button "Total 6" [ref=f8e66] [cursor=pointer]:
+                - generic [ref=f8e67]: Total
+                - generic [ref=f8e68]: "6"
+              - button "Não enviei 1" [ref=f8e69] [cursor=pointer]:
+                - generic [ref=f8e70]: Não enviei
+                - generic [ref=f8e71]: "1"
+              - button "Enviei 1" [ref=f8e72] [cursor=pointer]:
+                - generic [ref=f8e73]: Enviei
+                - generic [ref=f8e74]: "1"
+              - button "Respondeu 1" [ref=f8e75] [cursor=pointer]:
+                - generic [ref=f8e76]: Respondeu
+                - generic [ref=f8e77]: "1"
+              - button "Em teste 1" [ref=f8e78] [cursor=pointer]:
+                - generic [ref=f8e79]: Em teste
+                - generic [ref=f8e80]: "1"
+              - button "Sem interesse 1" [ref=f8e81] [cursor=pointer]:
+                - generic [ref=f8e82]: Sem interesse
+                - generic [ref=f8e83]: "1"
+              - button "Empresas novas 0" [ref=f8e84] [cursor=pointer]:
+                - generic [ref=f8e85]: Empresas novas
+                - generic [ref=f8e86]: "0"
+              - button "Região de Campinas 0" [ref=f8e87] [cursor=pointer]:
+                - generic [ref=f8e88]: Região de Campinas
+                - generic [ref=f8e89]: "0"
+              - button "Nota 8 ou mais 2" [ref=f8e90] [cursor=pointer]:
+                - generic [ref=f8e91]: Nota 8 ou mais
+                - generic [ref=f8e92]: "2"
+              - button "Retorno vencido 0" [ref=f8e93] [cursor=pointer]:
+                - generic [ref=f8e94]: Retorno vencido
+                - generic [ref=f8e95]: "0"
+            - generic [ref=f8e96]:
+              - heading "Por estágio / resultado" [level=3] [ref=f8e97]
+              - generic [ref=f8e98]:
+                - button "Não atendeu a ligação 0" [ref=f8e99] [cursor=pointer]:
+                  - generic [ref=f8e100]: Não atendeu a ligação
+                  - generic [ref=f8e101]: "0"
+                - button "Não respondeu a mensagem 0" [ref=f8e102] [cursor=pointer]:
+                  - generic [ref=f8e103]: Não respondeu a mensagem
+                  - generic [ref=f8e104]: "0"
+                - button "Telefone inválido / não é a empresa 0" [ref=f8e105] [cursor=pointer]:
+                  - generic [ref=f8e106]: Telefone inválido / não é a empresa
+                  - generic [ref=f8e107]: "0"
+                - button "Já tem sistema 1" [ref=f8e108] [cursor=pointer]:
+                  - generic [ref=f8e109]: Já tem sistema
+                  - generic [ref=f8e110]: "1"
+                - button "Sem interesse no momento 0" [ref=f8e111] [cursor=pointer]:
+                  - generic [ref=f8e112]: Sem interesse no momento
+                  - generic [ref=f8e113]: "0"
+                - button "Sem interesse 0" [ref=f8e114] [cursor=pointer]:
+                  - generic [ref=f8e115]: Sem interesse
+                  - generic [ref=f8e116]: "0"
+                - button "Pediu para enviar e-mail 1" [ref=f8e117] [cursor=pointer]:
+                  - generic [ref=f8e118]: Pediu para enviar e-mail
+                  - generic [ref=f8e119]: "1"
+                - button "Quer agendar reunião 1" [ref=f8e120] [cursor=pointer]:
+                  - generic [ref=f8e121]: Quer agendar reunião
+                  - generic [ref=f8e122]: "1"
+                - button "Reunião agendada 0" [ref=f8e123] [cursor=pointer]:
+                  - generic [ref=f8e124]: Reunião agendada
+                  - generic [ref=f8e125]: "0"
+                - button "Proposta enviada 1" [ref=f8e126] [cursor=pointer]:
+                  - generic [ref=f8e127]: Proposta enviada
+                  - generic [ref=f8e128]: "1"
+                - button "Contrato em andamento 0" [ref=f8e129] [cursor=pointer]:
+                  - generic [ref=f8e130]: Contrato em andamento
+                  - generic [ref=f8e131]: "0"
+                - button "Fechado (virou cliente) 1" [ref=f8e132] [cursor=pointer]:
+                  - generic [ref=f8e133]: Fechado (virou cliente)
+                  - generic [ref=f8e134]: "1"
+            - generic [ref=f8e136]:
+              - generic [ref=f8e139]:
+                - generic [ref=f8e140]:
+                  - generic [ref=f8e141]: Pesquisar
+                  - searchbox "Pesquisar" [ref=f8e147]
+                - button "Filtrar 0" [ref=f8e150] [cursor=pointer]:
+                  - generic [ref=f8e151]: Filtrar
+                  - generic [ref=f8e154]: "0"
+              - generic [ref=f8e159]:
+                - generic [ref=f8e162]:
+                  - link "Locadora Alfa Campinas · EPP · desde 2024 Nota 9 Não enviei Sem resultado registrado Locação de máquinas (19) 98888-7710 (celular) Maria Souza Lote 1 Sem retorno agendado" [ref=f8e164] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8099/central/prospects/01a1a2b3-9c8f-73d0-a41a-af8e49cbc708/edit
+                    - generic [ref=f8e166]:
+                      - generic [ref=f8e168]:
+                        - generic [ref=f8e170]:
+                          - generic [ref=f8e171]: Locadora Alfa
+                          - generic [ref=f8e179]: Campinas · EPP · desde 2024
+                        - generic [ref=f8e187]: Nota 9
+                      - combobox [ref=f8e202]:
+                        - option "Não enviei" [selected]
+                        - option "Enviei"
+                        - option "Respondeu"
+                        - option "Em teste"
+                        - option "Sem interesse"
+                        - option "Virou lead"
+                      - combobox [ref=f8e209]:
+                        - option "Sem resultado registrado" [selected]
+                        - option "Não atendeu a ligação"
+                        - option "Não respondeu a mensagem"
+                        - option "Telefone inválido / não é a empresa"
+                        - option "Já tem sistema"
+                        - option "Sem interesse no momento"
+                        - option "Sem interesse"
+                        - option "Pediu para enviar e-mail"
+                        - option "Quer agendar reunião"
+                        - option "Reunião agendada"
+                        - option "Proposta enviada"
+                        - option "Contrato em andamento"
+                        - option "Fechado (virou cliente)"
+                      - generic [ref=f8e210]: Locação de máquinas
+                      - generic [ref=f8e221]: (19) 98888-7710 (celular)
+                      - generic [ref=f8e231]: Maria Souza
+                      - generic [ref=f8e241]: Lote 1
+                      - generic [ref=f8e251]: Sem retorno agendado
+                  - generic [ref=f8e256]:
+                    - button "Mensagem" [ref=f8e257] [cursor=pointer]
+                    - button "Enviei" [ref=f8e261] [cursor=pointer]
+                    - button "Converter em lead" [ref=f8e265] [cursor=pointer]
+                    - link "Abrir" [ref=f8e269] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/prospects/01a1a2b3-9c8f-73d0-a41a-af8e49cbc708/edit
+                - generic [ref=f8e276]:
+                  - link "Munck Beta Campinas · EPP · desde 2024 Nota 8 Enviei Quer agendar reunião Locação de máquinas (19) 98888-7711 (celular) Maria Souza Lote 1 Sem retorno agendado" [ref=f8e278] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8099/central/prospects/01a1a2b3-9cb4-7156-be92-e24464182b34/edit
+                    - generic [ref=f8e280]:
+                      - generic [ref=f8e282]:
+                        - generic [ref=f8e284]:
+                          - generic [ref=f8e285]: Munck Beta
+                          - generic [ref=f8e293]: Campinas · EPP · desde 2024
+                        - generic [ref=f8e301]: Nota 8
+                      - combobox [ref=f8e316]:
+                        - option "Não enviei"
+                        - option "Enviei" [selected]
+                        - option "Respondeu"
+                        - option "Em teste"
+                        - option "Sem interesse"
+                        - option "Virou lead"
+                      - combobox [ref=f8e323]:
+                        - option "Sem resultado registrado"
+                        - option "Não atendeu a ligação"
+                        - option "Não respondeu a mensagem"
+                        - option "Telefone inválido / não é a empresa"
+                        - option "Já tem sistema"
+                        - option "Sem interesse no momento"
+                        - option "Sem interesse"
+                        - option "Pediu para enviar e-mail"
+                        - option "Quer agendar reunião" [selected]
+                        - option "Reunião agendada"
+                        - option "Proposta enviada"
+                        - option "Contrato em andamento"
+                        - option "Fechado (virou cliente)"
+                      - generic [ref=f8e324]: Locação de máquinas
+                      - generic [ref=f8e335]: (19) 98888-7711 (celular)
+                      - generic [ref=f8e345]: Maria Souza
+                      - generic [ref=f8e355]: Lote 1
+                      - generic [ref=f8e365]: Sem retorno agendado
+                  - generic [ref=f8e370]:
+                    - button "Mensagem" [ref=f8e371] [cursor=pointer]
+                    - button "Converter em lead" [ref=f8e375] [cursor=pointer]
+                    - link "Abrir" [ref=f8e379] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/prospects/01a1a2b3-9cb4-7156-be92-e24464182b34/edit
+                - generic [ref=f8e386]:
+                  - link "Gruas Gama Campinas · EPP · desde 2024 Nota 7 Respondeu Pediu para enviar e-mail Locação de máquinas (19) 98888-7712 (celular) Maria Souza Lote 1 Sem retorno agendado" [ref=f8e388] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8099/central/prospects/01a1a2b3-9cbd-7254-8a82-e43085af01a5/edit
+                    - generic [ref=f8e390]:
+                      - generic [ref=f8e392]:
+                        - generic [ref=f8e394]:
+                          - generic [ref=f8e395]: Gruas Gama
+                          - generic [ref=f8e403]: Campinas · EPP · desde 2024
+                        - generic [ref=f8e411]: Nota 7
+                      - combobox [ref=f8e426]:
+                        - option "Não enviei"
+                        - option "Enviei"
+                        - option "Respondeu" [selected]
+                        - option "Em teste"
+                        - option "Sem interesse"
+                        - option "Virou lead"
+                      - combobox [ref=f8e433]:
+                        - option "Sem resultado registrado"
+                        - option "Não atendeu a ligação"
+                        - option "Não respondeu a mensagem"
+                        - option "Telefone inválido / não é a empresa"
+                        - option "Já tem sistema"
+                        - option "Sem interesse no momento"
+                        - option "Sem interesse"
+                        - option "Pediu para enviar e-mail" [selected]
+                        - option "Quer agendar reunião"
+                        - option "Reunião agendada"
+                        - option "Proposta enviada"
+                        - option "Contrato em andamento"
+                        - option "Fechado (virou cliente)"
+                      - generic [ref=f8e434]: Locação de máquinas
+                      - generic [ref=f8e445]: (19) 98888-7712 (celular)
+                      - generic [ref=f8e455]: Maria Souza
+                      - generic [ref=f8e465]: Lote 1
+                      - generic [ref=f8e475]: Sem retorno agendado
+                  - generic [ref=f8e480]:
+                    - button "Mensagem" [ref=f8e481] [cursor=pointer]
+                    - button "Converter em lead" [ref=f8e485] [cursor=pointer]
+                    - link "Abrir" [ref=f8e489] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/prospects/01a1a2b3-9cbd-7254-8a82-e43085af01a5/edit
+                - generic [ref=f8e496]:
+                  - link "Obras Delta Campinas · EPP · desde 2024 Nota 6 Em teste Proposta enviada Locação de máquinas (19) 98888-7713 (celular) Maria Souza Lote 1 Sem retorno agendado" [ref=f8e498] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8099/central/prospects/01a1a2b3-9cc4-70e3-82b3-04aef51c99db/edit
+                    - generic [ref=f8e500]:
+                      - generic [ref=f8e502]:
+                        - generic [ref=f8e504]:
+                          - generic [ref=f8e505]: Obras Delta
+                          - generic [ref=f8e513]: Campinas · EPP · desde 2024
+                        - generic [ref=f8e521]: Nota 6
+                      - combobox [ref=f8e536]:
+                        - option "Não enviei"
+                        - option "Enviei"
+                        - option "Respondeu"
+                        - option "Em teste" [selected]
+                        - option "Sem interesse"
+                        - option "Virou lead"
+                      - combobox [ref=f8e543]:
+                        - option "Sem resultado registrado"
+                        - option "Não atendeu a ligação"
+                        - option "Não respondeu a mensagem"
+                        - option "Telefone inválido / não é a empresa"
+                        - option "Já tem sistema"
+                        - option "Sem interesse no momento"
+                        - option "Sem interesse"
+                        - option "Pediu para enviar e-mail"
+                        - option "Quer agendar reunião"
+                        - option "Reunião agendada"
+                        - option "Proposta enviada" [selected]
+                        - option "Contrato em andamento"
+                        - option "Fechado (virou cliente)"
+                      - generic [ref=f8e544]: Locação de máquinas
+                      - generic [ref=f8e555]: (19) 98888-7713 (celular)
+                      - generic [ref=f8e565]: Maria Souza
+                      - generic [ref=f8e575]: Lote 1
+                      - generic [ref=f8e585]: Sem retorno agendado
+                  - generic [ref=f8e590]:
+                    - button "Mensagem" [ref=f8e591] [cursor=pointer]
+                    - button "Converter em lead" [ref=f8e595] [cursor=pointer]
+                    - link "Abrir" [ref=f8e599] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/prospects/01a1a2b3-9cc4-70e3-82b3-04aef51c99db/edit
+                - generic [ref=f8e606]:
+                  - link "Epsilon Eq. Campinas · EPP · desde 2024 Nota 5 Sem interesse Já tem sistema Locação de máquinas (19) 98888-7714 (celular) Maria Souza Lote 1 Sem retorno agendado" [ref=f8e608] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8099/central/prospects/01a1a2b3-9cc9-7023-b4a5-e862197cc521/edit
+                    - generic [ref=f8e610]:
+                      - generic [ref=f8e612]:
+                        - generic [ref=f8e614]:
+                          - generic [ref=f8e615]: Epsilon Eq.
+                          - generic [ref=f8e623]: Campinas · EPP · desde 2024
+                        - generic [ref=f8e631]: Nota 5
+                      - combobox [ref=f8e646]:
+                        - option "Não enviei"
+                        - option "Enviei"
+                        - option "Respondeu"
+                        - option "Em teste"
+                        - option "Sem interesse" [selected]
+                        - option "Virou lead"
+                      - combobox [ref=f8e653]:
+                        - option "Sem resultado registrado"
+                        - option "Não atendeu a ligação"
+                        - option "Não respondeu a mensagem"
+                        - option "Telefone inválido / não é a empresa"
+                        - option "Já tem sistema" [selected]
+                        - option "Sem interesse no momento"
+                        - option "Sem interesse"
+                        - option "Pediu para enviar e-mail"
+                        - option "Quer agendar reunião"
+                        - option "Reunião agendada"
+                        - option "Proposta enviada"
+                        - option "Contrato em andamento"
+                        - option "Fechado (virou cliente)"
+                      - generic [ref=f8e654]: Locação de máquinas
+                      - generic [ref=f8e665]: (19) 98888-7714 (celular)
+                      - generic [ref=f8e675]: Maria Souza
+                      - generic [ref=f8e685]: Lote 1
+                      - generic [ref=f8e695]: Sem retorno agendado
+                  - generic [ref=f8e700]:
+                    - button "Mensagem" [ref=f8e701] [cursor=pointer]
+                    - button "Converter em lead" [ref=f8e705] [cursor=pointer]
+                    - link "Abrir" [ref=f8e709] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/prospects/01a1a2b3-9cc9-7023-b4a5-e862197cc521/edit
+                - generic [ref=f8e716]:
+                  - link "Zeta Loc. Campinas · EPP · desde 2024 Nota 4 Virou lead Fechado (virou cliente) Locação de máquinas (19) 98888-7715 (celular) Maria Souza Lote 1 Sem retorno agendado" [ref=f8e718] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8099/central/prospects/01a1a2b3-9cd0-71d9-9a3b-d2de0546277a/edit
+                    - generic [ref=f8e720]:
+                      - generic [ref=f8e722]:
+                        - generic [ref=f8e724]:
+                          - generic [ref=f8e725]: Zeta Loc.
+                          - generic [ref=f8e733]: Campinas · EPP · desde 2024
+                        - generic [ref=f8e741]: Nota 4
+                      - combobox [ref=f8e756]:
+                        - option "Não enviei"
+                        - option "Enviei"
+                        - option "Respondeu"
+                        - option "Em teste"
+                        - option "Sem interesse"
+                        - option "Virou lead" [selected]
+                      - combobox [ref=f8e763]:
+                        - option "Sem resultado registrado"
+                        - option "Não atendeu a ligação"
+                        - option "Não respondeu a mensagem"
+                        - option "Telefone inválido / não é a empresa"
+                        - option "Já tem sistema"
+                        - option "Sem interesse no momento"
+                        - option "Sem interesse"
+                        - option "Pediu para enviar e-mail"
+                        - option "Quer agendar reunião"
+                        - option "Reunião agendada"
+                        - option "Proposta enviada"
+                        - option "Contrato em andamento"
+                        - option "Fechado (virou cliente)" [selected]
+                      - generic [ref=f8e764]: Locação de máquinas
+                      - generic [ref=f8e775]: (19) 98888-7715 (celular)
+                      - generic [ref=f8e785]: Maria Souza
+                      - generic [ref=f8e795]: Lote 1
+                      - generic [ref=f8e805]: Sem retorno agendado
+                  - generic [ref=f8e810]:
+                    - button "Mensagem" [ref=f8e811] [cursor=pointer]
+                    - button "Converter em lead" [ref=f8e815] [cursor=pointer]
+                    - link "Abrir" [ref=f8e819] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/prospects/01a1a2b3-9cd0-71d9-9a3b-d2de0546277a/edit
+              - navigation "Paginação" [ref=f8e824]:
+                - generic [ref=f8e825]: Exibindo 1 a 6 de 6 resultados
+                - generic [ref=f8e828]:
+                  - generic [ref=f8e829]: por página
+                  - combobox "por página" [ref=f8e832]:
+                    - option "25" [selected]
+                    - option "50"
+                    - option "100"
+    - complementary [ref=f8e833]:
+      - link [ref=f8e837] [cursor=pointer]:
+        - /url: http://127.0.0.1:8099/central/dashboard-saas
+        - img "Oravel" [ref=f8e840]
+      - navigation [ref=f8e841]:
+        - list [ref=f8e842]:
+          - listitem [ref=f8e843]:
+            - list [ref=f8e844]:
+              - listitem [ref=f8e845]:
+                - link "Dashboard SaaS" [ref=f8e846] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/dashboard-saas
+          - listitem [ref=f8e850]:
+            - generic [ref=f8e851] [cursor=pointer]:
+              - generic [ref=f8e854]: Comercial
+              - button "Comercial" [expanded] [ref=f8e855]
+            - list [ref=f8e859]:
+              - listitem [ref=f8e860]:
+                - link "Dashboard CRM" [ref=f8e861] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/dashboard-crm
+              - listitem [ref=f8e865]:
+                - link "CRM Comercial" [ref=f8e866] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/sales-leads
+              - listitem [ref=f8e870]:
+                - link "Funil de Vendas" [ref=f8e871] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/funil-vendas
+              - listitem [ref=f8e875]:
+                - link "Kanban" [ref=f8e876] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/kanban
+              - listitem [ref=f8e880]:
+                - link "Programação" [ref=f8e881] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/programacao
+              - listitem [ref=f8e885]:
+                - link "Atendimento WhatsApp" [ref=f8e886] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/whats-app-chats
+          - listitem [ref=f8e890]:
+            - generic [ref=f8e891] [cursor=pointer]:
+              - generic [ref=f8e894]: Equipe
+              - button "Equipe" [expanded] [ref=f8e895]
+            - list [ref=f8e899]:
+              - listitem [ref=f8e900]:
+                - link "Perfis de Acesso" [ref=f8e901] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/roles
+          - listitem [ref=f8e905]:
+            - generic [ref=f8e906] [cursor=pointer]:
+              - generic [ref=f8e909]: Prospecção
+              - button "Prospecção" [expanded] [ref=f8e910]
+            - list [ref=f8e914]:
+              - listitem [ref=f8e915]:
+                - link "Prospects" [ref=f8e916] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/prospects
+              - listitem [ref=f8e920]:
+                - link "Acompanhamentos" [ref=f8e921] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/acompanhamentos
+              - listitem [ref=f8e925]:
+                - link "Leads das Landing Pages" [ref=f8e926] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/landing-page-leads
+          - listitem [ref=f8e930]:
+            - generic [ref=f8e931] [cursor=pointer]:
+              - generic [ref=f8e934]: Clientes e Contratos
+              - button "Clientes e Contratos" [expanded] [ref=f8e935]
+            - list [ref=f8e939]:
+              - listitem [ref=f8e940]:
+                - link "Empresas (Tenants)" [ref=f8e941] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/tenants
+              - listitem [ref=f8e945]:
+                - link "Árvore de Tenants" [ref=f8e946] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/tenant-tree
+              - listitem [ref=f8e950]:
+                - link "Contratos" [ref=f8e951] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/contratos
+              - listitem [ref=f8e955]:
+                - link "Contratos Assinados" [ref=f8e956] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/contrato-assinados
+              - listitem [ref=f8e960]:
+                - link "Implantações" [ref=f8e961] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/implementation-charges
+              - listitem [ref=f8e965]:
+                - link "Taxas de configuração" [ref=f8e966] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/taxa-configuracaos
+              - listitem [ref=f8e970]:
+                - link "Avisos aos Tenants" [ref=f8e971] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/announcements
+          - listitem [ref=f8e975]:
+            - generic [ref=f8e976] [cursor=pointer]:
+              - generic [ref=f8e979]: Acessos e Uso
+              - button "Acessos e Uso" [expanded] [ref=f8e980]
+            - list [ref=f8e984]:
+              - listitem [ref=f8e985]:
+                - link "Acessos e Visitantes (painel)" [ref=f8e986] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central
+              - listitem [ref=f8e990]:
+                - link "Acessos e Visitantes (lista)" [ref=f8e991] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/site-visits
+              - listitem [ref=f8e995]:
+                - link "Acessos dos Clientes" [ref=f8e996] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/acessos-clientes
+              - listitem [ref=f8e1000]:
+                - link "Histórico de Clientes" [ref=f8e1001] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/tenant-events
+          - listitem [ref=f8e1005]:
+            - generic [ref=f8e1006] [cursor=pointer]:
+              - generic [ref=f8e1009]: Treinamento
+              - button "Treinamento" [expanded] [ref=f8e1010]
+            - list [ref=f8e1014]:
+              - listitem [ref=f8e1015]:
+                - link "Academia (cursos)" [ref=f8e1016] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/courses
+              - listitem [ref=f8e1020]:
+                - link "Participação no Treinamento" [ref=f8e1021] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/participacao-treinamento
+              - listitem [ref=f8e1025]:
+                - link "Resultados de Treinamento" [ref=f8e1026] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/treinamento-resultados
+          - listitem [ref=f8e1030]:
+            - generic [ref=f8e1031] [cursor=pointer]:
+              - generic [ref=f8e1034]: Site Institucional
+              - button "Site Institucional" [expanded] [ref=f8e1035]
+            - list [ref=f8e1039]:
+              - listitem [ref=f8e1040]:
+                - link "Painel do Site" [ref=f8e1041] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/site-institucional
+              - listitem [ref=f8e1045]:
+                - link "Visitas do Site" [ref=f8e1046] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/web-visits
+          - listitem [ref=f8e1050]:
+            - generic [ref=f8e1051] [cursor=pointer]:
+              - generic [ref=f8e1054]: Segurança e Conformidade
+              - button "Segurança e Conformidade" [expanded] [ref=f8e1055]
+            - list [ref=f8e1059]:
+              - listitem [ref=f8e1060]:
+                - link "Usuários do Sistema" [ref=f8e1061] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/users
+              - listitem [ref=f8e1065]:
+                - link "Perfis de Acesso" [ref=f8e1066] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/roles
+              - listitem [ref=f8e1070]:
+                - link "Perfis por Tenant" [ref=f8e1071] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/roles-tree
+              - listitem [ref=f8e1075]:
+                - link "IPs Bloqueados" [ref=f8e1076] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/blocked-ips
+              - listitem [ref=f8e1080]:
+                - link "Assinaturas SLA + LGPD" [ref=f8e1081] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/signatures
+              - listitem [ref=f8e1085]:
+                - link "Status de Conformidade dos Clientes" [ref=f8e1086] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/tenant-compliances
+          - listitem [ref=f8e1090]:
+            - generic [ref=f8e1091] [cursor=pointer]:
+              - generic [ref=f8e1095]: Sistema
+              - button "Sistema" [expanded] [ref=f8e1096]
+            - list [ref=f8e1100]:
+              - listitem [ref=f8e1101]:
+                - link "Backups do Banco" [ref=f8e1102] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/database-backups
+              - listitem [ref=f8e1106]:
+                - link "Catálogo de PMP" [ref=f8e1107] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/pmp-equipment-families
+      - generic [ref=f8e1111]:
+        - button "Menu do usuário" [ref=f8e1114] [cursor=pointer]:
+          - img "Avatar de Admin Visual" [ref=f8e1115]
+        - generic [ref=f8e1116]:
+          - paragraph [ref=f8e1117]: Admin Visual
+          - paragraph [ref=f8e1118]: Super Admin
+  - generic:
+    - status
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f8e1119]

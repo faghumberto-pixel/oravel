@@ -21,14 +21,16 @@ return new class extends Migration
         });
 
         // Leads que já estão em etapa final: melhor estimativa possível (data da última alteração).
-        DB::statement("
-            UPDATE crm_leads l
-            SET fechado_em = l.updated_at,
-                valor_fechado = CASE WHEN e.tipo = 'ganho' THEN l.estimated_value END,
-                vendedor_fechamento_id = l.assigned_user_id
-            FROM crm_etapas e
-            WHERE e.id = l.etapa_id AND e.tipo IN ('ganho', 'perdido')
-        ");
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("
+                UPDATE crm_leads l
+                SET fechado_em = l.updated_at,
+                    valor_fechado = CASE WHEN e.tipo = 'ganho' THEN l.estimated_value END,
+                    vendedor_fechamento_id = l.assigned_user_id
+                FROM crm_etapas e
+                WHERE e.id = l.etapa_id AND e.tipo IN ('ganho', 'perdido')
+            ");
+        }
 
         Schema::create('crm_metas', function (Blueprint $table) {
             $table->uuid('id')->primary();
@@ -44,12 +46,16 @@ return new class extends Migration
             $table->unique(['tenant_id', 'user_id', 'mes']);
         });
 
-        DB::statement('CREATE UNIQUE INDEX crm_metas_equipe_unica ON crm_metas (tenant_id, mes) WHERE user_id IS NULL');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('CREATE UNIQUE INDEX crm_metas_equipe_unica ON crm_metas (tenant_id, mes) WHERE user_id IS NULL');
+        }
     }
 
     public function down(): void
     {
-        DB::statement('DROP INDEX IF EXISTS crm_metas_equipe_unica');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('DROP INDEX IF EXISTS crm_metas_equipe_unica');
+        }
         Schema::dropIfExists('crm_metas');
 
         Schema::table('crm_leads', function (Blueprint $table) {

@@ -26,6 +26,12 @@ class ProspectTest extends TestCase
         parent::setUp();
         config(['oravel.super_admins' => ['equipe@oravel.test']]);
         Filament::setCurrentPanel(Filament::getPanel('central'));
+
+        // Debug: verificar env vars
+        error_log("DB_CONNECTION: " . getenv("DB_CONNECTION"));
+        error_log("DB_DATABASE_TESTING: " . getenv("DB_DATABASE_TESTING"));
+        error_log("config database.default: " . config("database.default"));
+        error_log("config database.connections.sqlite.database: " . config("database.connections.sqlite.database"));
     }
 
     private function prospect(array $o = []): Prospect

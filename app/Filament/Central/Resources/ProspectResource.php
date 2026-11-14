@@ -4,10 +4,13 @@ namespace App\Filament\Central\Resources;
 
 use App\Filament\Central\Resources\ProspectResource\Pages;
 use App\Filament\Central\Resources\ProspectResource\RelationManagers;
+use App\Models\AIAnalysis;
 use App\Models\Prospect;
+use App\Services\ProspectAnalysisService;
 use App\Support\CrmPalette;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -198,6 +201,33 @@ class ProspectResource extends Resource
                         Forms\Components\Select::make('resultado')->label('Estágio / resultado')->options(Prospect::RESULTADOS)->native(false)->placeholder('Sem resultado registrado'),
                     ])
                     ->action(fn (Prospect $r, array $data) => $r->update(['status' => $data['status'], 'resultado' => $data['resultado'] ?? null])),
+                Tables\Actions\Action::make('analise_ia')->label('Analisar com IA')->icon('heroicon-o-sparkles')->color('info')
+                    ->visible(fn (Prospect $r): bool => config('services.anthropic.key') !== null)
+                    ->action(function (Prospect $r): void {
+                        $service = app(ProspectAnalysisService::class);
+                        $analysis = $service->analyze($r, (string) auth()->id());
+
+                        if ($analysis->status === AIAnalysis::STATUS_CONCLUIDA) {
+                            $resp = $analysis->response;
+                            $mensagem = "Prioridade: {$resp['prioridade']}\nRisco: {$resp['risco_perda']}\nQualificação: {$resp['qualificacao']}\n\nPróximos passos:\n";
+                            foreach ($resp['proximos_passos'] as $i => $passo) {
+                                $mensagem .= ($i + 1) . ". {$passo['acao']} ({$passo['prazo_dias']} dias, {$passo['canal']}) — {$passo['roteiro']}\n";
+                            }
+                            $mensagem .= "\nMensagem sugerida:\n{$resp['mensagem_sugerida']}";
+
+                            Notification::make()
+                                ->title('Análise concluída')
+                                ->body($mensagem)
+                                ->persistent()
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->title('Falha na análise')
+                                ->body($analysis->error ?? 'Erro desconhecido')
+                                ->danger()
+                                ->send();
+                        }
+                    }),
                 Tables\Actions\ActionGroup::make([
                     ProspectResource\ConverterEmLeadAction::make(),
                     Tables\Actions\Action::make('verLead')->label('Ver lead')->icon('heroicon-o-arrow-top-right-on-square')->color('gray')
@@ -213,7 +243,10 @@ class ProspectResource extends Resource
 
     public static function getRelations(): array
     {
-        return [RelationManagers\ContatosRelationManager::class];
+        return [
+            RelationManagers\ContatosRelationManager::class,
+            RelationManagers\AIAnalysesRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

@@ -1,0 +1,130 @@
+- generic [active] [ref=f1e1]:
+  - generic [ref=f1e3]:
+    - generic [ref=f1e4]:
+      - text: "Fale com um especialista: montamos a solução certa para a sua operação, sem compromisso."
+      - link "Falar com a equipe →" [ref=f1e5] [cursor=pointer]:
+        - /url: /contato.php
+    - link "WhatsApp (19) 99933-2615" [ref=f1e6] [cursor=pointer]:
+      - /url: https://wa.me/5519999332615
+  - navigation "Principal" [ref=f1e7]:
+    - generic [ref=f1e8]:
+      - link "Oravel" [ref=f1e9] [cursor=pointer]:
+        - /url: /
+      - generic [ref=f1e10]:
+        - link "Soluções" [ref=f1e12] [cursor=pointer]:
+          - /url: /solucoes/
+        - link "Planos" [ref=f1e13] [cursor=pointer]:
+          - /url: /planos/
+        - link "Sobre Nós" [ref=f1e14] [cursor=pointer]:
+          - /url: /sobre/
+        - link "Contato" [ref=f1e15] [cursor=pointer]:
+          - /url: /contato.php
+      - link "Falar com um Especialista" [ref=f1e16] [cursor=pointer]:
+        - /url: /contato.php
+  - generic [ref=f1e18]:
+    - text: Fiscal e cobrança
+    - heading "Cobrança automática e nota fiscal de serviço, no mesmo lugar do seu financeiro." [level=1] [ref=f1e19]
+    - paragraph [ref=f1e20]: A Oravel gera as cobranças dos seus contratos, acompanha o pagamento e emite a NFS-e da conta a receber, sem retrabalho entre sistemas.
+    - generic [ref=f1e21]:
+      - link "Falar com um especialista" [ref=f1e22] [cursor=pointer]:
+        - /url: /contato.php
+      - link "Comparar planos" [ref=f1e23] [cursor=pointer]:
+        - /url: /planos/
+  - generic [ref=f1e25]:
+    - generic [ref=f1e26]: Cobrança automática
+    - heading "Do contrato ao pagamento, sem planilha no meio" [level=2] [ref=f1e27]
+    - paragraph [ref=f1e28]: "Cada empresa liga a automação quando quiser e define as regras: antecedência, forma de pagamento e avisos."
+    - generic [ref=f1e29]:
+      - generic [ref=f1e30]:
+        - heading "Contas geradas sozinhas" [level=3] [ref=f1e31]
+        - paragraph [ref=f1e32]: Os planos de cobrança dos contratos (mensal, trimestral ou anual) viram contas a receber com a antecedência que a sua empresa definir, sem duplicar.
+      - generic [ref=f1e33]:
+        - heading "Boleto, Pix e cartão" [level=3] [ref=f1e34]
+        - paragraph [ref=f1e35]: A cobrança é criada na conta da sua empresa no Asaas, com a forma de pagamento padrão que você escolher. O cliente recebe o link para pagar.
+      - generic [ref=f1e36]:
+        - heading "Do contrato à cobrança" [level=3] [ref=f1e37]
+        - paragraph [ref=f1e38]: Mensalidades, medições faturadas e lançamentos manuais entram no mesmo fluxo, ligados ao cliente e ao contrato de origem.
+      - generic [ref=f1e39]:
+        - heading "Status de pagamento na conta" [level=3] [ref=f1e40]
+        - paragraph [ref=f1e41]: O link de pagamento e a situação da cobrança ficam registrados na própria conta a receber, para o financeiro acompanhar em um só lugar.
+      - generic [ref=f1e42]:
+        - heading "Avisos de cobrança por WhatsApp" [level=3] [ref=f1e43]
+        - paragraph [ref=f1e44]: Lembretes de vencimento enviados pelo WhatsApp da empresa, sem ninguém precisar lembrar de cobrar.
+      - generic [ref=f1e45]:
+        - heading "Falha não perde cobrança" [level=3] [ref=f1e46]
+        - paragraph [ref=f1e47]: Se o gateway não responder, a conta fica guardada com o motivo e a Oravel tenta de novo nos dias seguintes.
+  - generic [ref=f1e49]:
+    - generic [ref=f1e50]: Nota fiscal de serviço
+    - heading "NFS-e emitida no mesmo fluxo da cobrança" [level=2] [ref=f1e51]
+    - paragraph [ref=f1e52]: "A nota nasce da conta a receber: quem cobra, fatura e emite trabalha na mesma tela."
+    - generic [ref=f1e53]:
+      - generic [ref=f1e54]:
+        - heading "NFS-e a partir da conta a receber" [level=3] [ref=f1e55]
+        - paragraph [ref=f1e56]: A nota de serviço é emitida direto da conta, já com os dados do cliente e do contrato, sem digitar tudo de novo em outro sistema.
+      - generic [ref=f1e57]:
+        - heading "Certificado digital A1" [level=3] [ref=f1e58]
+        - paragraph [ref=f1e59]: "O certificado é enviado ao emissor e não fica guardado no sistema: a Oravel guarda só a validade e avisa antes de vencer."
+      - generic [ref=f1e60]:
+        - heading "Acompanhamento da emissão" [level=3] [ref=f1e61]
+        - paragraph [ref=f1e62]: Cada nota mostra se está em processamento, autorizada ou com erro, com a mensagem pronta para corrigir e tentar de novo.
+      - generic [ref=f1e63]:
+        - heading "Envio da nota ao cliente" [level=3] [ref=f1e64]
+        - paragraph [ref=f1e65]: A nota autorizada pode ser enviada ao cliente por e-mail e por WhatsApp.
+      - generic [ref=f1e66]:
+        - heading "Notas sempre atualizadas" [level=3] [ref=f1e67]
+        - paragraph [ref=f1e68]: Notas que ainda estão em processamento são reconsultadas pelo sistema até virarem autorizadas ou com erro, sem ninguém precisar acompanhar.
+      - generic [ref=f1e69]:
+        - heading "Cadastro fiscal da empresa" [level=3] [ref=f1e70]
+        - paragraph [ref=f1e71]: Dados fiscais, ambiente de emissão e certificado configurados em uma tela só, dentro das configurações da empresa.
+    - paragraph [ref=f1e72]: Cobrança automática e NFS-e são complementos da Oravel, contratados à parte e ativados na implantação, junto com o cadastro fiscal e a conta de cobrança da sua empresa.
+  - generic [ref=f1e75]:
+    - heading "Quer cobrar e emitir nota pela Oravel?" [level=2] [ref=f1e76]
+    - paragraph [ref=f1e77]: Cada empresa tem um município, um regime e um jeito de cobrar. Fale com um especialista e veja como isso se encaixa na sua operação.
+    - generic [ref=f1e78]:
+      - link "Falar com um especialista" [ref=f1e79] [cursor=pointer]:
+        - /url: /contato.php
+      - link "Comparar planos" [ref=f1e80] [cursor=pointer]:
+        - /url: /planos/
+  - contentinfo [ref=f1e81]:
+    - generic [ref=f1e82]:
+      - generic [ref=f1e83]:
+        - generic [ref=f1e84]:
+          - generic [ref=f1e85]: Oravel
+          - paragraph [ref=f1e86]: Plataforma de gestão com inteligência artificial para locação, manutenção, serviços, vendas (CRM), logística e estoque em todo o Brasil.
+        - generic [ref=f1e87]:
+          - heading "Soluções" [level=4] [ref=f1e88]
+          - link "ERP Locadoras" [ref=f1e89] [cursor=pointer]:
+            - /url: /erp-cmms/
+          - link "Manutenção" [ref=f1e90] [cursor=pointer]:
+            - /url: /software-manutencao-industrial/
+          - link "Serviços" [ref=f1e91] [cursor=pointer]:
+            - /url: /software-gestao-de-servicos/
+          - link "Logística" [ref=f1e92] [cursor=pointer]:
+            - /url: /software-gestao-frota-logistica/
+          - link "Estoque" [ref=f1e93] [cursor=pointer]:
+            - /url: /wms/
+          - link "Vendas" [ref=f1e94] [cursor=pointer]:
+            - /url: /crm/
+          - link "Departamento Pessoal" [ref=f1e95] [cursor=pointer]:
+            - /url: /departamento-pessoal/
+        - generic [ref=f1e96]:
+          - heading "Empresa" [level=4] [ref=f1e97]
+          - link "Planos" [ref=f1e98] [cursor=pointer]:
+            - /url: /planos/
+          - link "Inteligência artificial" [ref=f1e99] [cursor=pointer]:
+            - /url: /inteligencia-artificial/
+          - link "Academia" [ref=f1e100] [cursor=pointer]:
+            - /url: /academia/
+          - link "Sobre" [ref=f1e101] [cursor=pointer]:
+            - /url: /sobre/
+          - link "Contato" [ref=f1e102] [cursor=pointer]:
+            - /url: /contato.php
+        - generic [ref=f1e103]:
+          - heading "Legal" [level=4] [ref=f1e104]
+          - link "Privacidade" [ref=f1e105] [cursor=pointer]:
+            - /url: /politica-de-privacidade/
+          - link "Termos de Uso" [ref=f1e106] [cursor=pointer]:
+            - /url: /termos-de-uso/
+      - generic [ref=f1e107]:
+        - paragraph [ref=f1e108]: © 2026 Oravel Software. Todos os direitos reservados.
+        - paragraph [ref=f1e109]: Oravel Desenvolvimento de Software Ltda · CNPJ 65.707.953/0001-30

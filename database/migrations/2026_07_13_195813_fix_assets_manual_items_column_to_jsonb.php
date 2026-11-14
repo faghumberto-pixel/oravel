@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * assets.manual_items foi criada como `json` (nao `jsonb`) -- Postgres nao
@@ -16,11 +17,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement('ALTER TABLE assets ALTER COLUMN manual_items TYPE jsonb USING manual_items::jsonb');
+        if (DB::getDriverName() !== 'sqlite' && Schema::hasColumn('assets', 'manual_items')) {
+            DB::statement('ALTER TABLE assets ALTER COLUMN manual_items TYPE jsonb USING manual_items::jsonb');
+        }
     }
 
     public function down(): void
     {
-        DB::statement('ALTER TABLE assets ALTER COLUMN manual_items TYPE json USING manual_items::json');
+        if (DB::getDriverName() !== 'sqlite' && Schema::hasColumn('assets', 'manual_items')) {
+            DB::statement('ALTER TABLE assets ALTER COLUMN manual_items TYPE json USING manual_items::json');
+        }
     }
 };

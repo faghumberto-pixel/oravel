@@ -17,7 +17,9 @@ return new class extends Migration
         // Contrato de serviço contratado separado da locação: service_category preenchido
         // (mao_de_obra, seguranca_documentacao, acessorio, insumo); null = contrato de locação.
         // Contrato de serviço não tem equipamento: asset_id era NOT NULL no banco.
-        DB::statement('ALTER TABLE contracts ALTER COLUMN asset_id DROP NOT NULL');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('ALTER TABLE contracts ALTER COLUMN asset_id DROP NOT NULL');
+        }
 
         Schema::table('contracts', function (Blueprint $table) {
             $table->string('service_category')->nullable()->index();

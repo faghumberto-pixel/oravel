@@ -1,0 +1,157 @@
+- generic [active] [ref=f9e1]:
+  - generic [ref=f9e2]:
+    - generic [ref=f9e3]:
+      - navigation [ref=f9e5]:
+        - generic [ref=f9e9]:
+          - generic [ref=f9e10]: Locadora Visual
+          - generic [ref=f9e11]: "Módulo: Locadora"
+        - generic [ref=f9e12]:
+          - button "⌘K" [ref=f9e14] [cursor=pointer]
+          - button "Abrir notificações" [ref=f9e20] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=f9e24] [cursor=pointer]:
+            - /url: http://127.0.0.1:8099/admin/caixa-de-email
+          - button "Menu do usuário" [ref=f9e29] [cursor=pointer]:
+            - img "Avatar de Admin Visual" [ref=f9e30]
+        - link "Ajuda" [ref=f9e32] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=f9e36]:
+        - generic [ref=f9e38]:
+          - generic [ref=f9e39]:
+            - generic [ref=f9e40]:
+              - navigation [ref=f9e41]:
+                - list [ref=f9e42]:
+                  - listitem [ref=f9e43]:
+                    - link "Colaboradores" [ref=f9e44] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/users
+                  - listitem [ref=f9e45]:
+                    - generic [ref=f9e48]: Listar
+              - heading "Colaboradores" [level=1] [ref=f9e49]
+            - generic [ref=f9e51]:
+              - link "Criar Colaborador" [ref=f9e52] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/users/create
+              - link "Imprimir" [ref=f9e54] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/print/tabela/4de4be5e-a0c6-4c45-a1f5-9caa76325df5
+          - generic [ref=f9e60]:
+            - generic [ref=f9e61]:
+              - button "Total 4" [ref=f9e62] [cursor=pointer]:
+                - generic [ref=f9e63]: Total
+                - generic [ref=f9e64]: "4"
+              - button "Aprovados 3" [ref=f9e65] [cursor=pointer]:
+                - generic [ref=f9e66]: Aprovados
+                - generic [ref=f9e67]: "3"
+              - button "Aguardando aprovação 1" [ref=f9e68] [cursor=pointer]:
+                - generic [ref=f9e69]: Aguardando aprovação
+                - generic [ref=f9e70]: "1"
+              - button "Administradores 1" [ref=f9e71] [cursor=pointer]:
+                - generic [ref=f9e72]: Administradores
+                - generic [ref=f9e73]: "1"
+              - button "Técnicos 1" [ref=f9e74] [cursor=pointer]:
+                - generic [ref=f9e75]: Técnicos
+                - generic [ref=f9e76]: "1"
+              - button "Colaboradores 2" [ref=f9e77] [cursor=pointer]:
+                - generic [ref=f9e78]: Colaboradores
+                - generic [ref=f9e79]: "2"
+              - button "Ativos na última semana 2" [ref=f9e80] [cursor=pointer]:
+                - generic [ref=f9e81]: Ativos na última semana
+                - generic [ref=f9e82]: "2"
+            - generic [ref=f9e84]:
+              - generic [ref=f9e87]:
+                - generic [ref=f9e88]:
+                  - generic [ref=f9e89]: Pesquisar
+                  - searchbox "Pesquisar" [ref=f9e95]
+                - button "Filtrar 0" [ref=f9e98] [cursor=pointer]:
+                  - generic [ref=f9e99]: Filtrar
+                  - generic [ref=f9e102]: "0"
+              - generic [ref=f9e106]:
+                - generic [ref=f9e108]:
+                  - checkbox "Marcar/desmarcar todos os itens para ações em massa." [ref=f9e109]
+                  - generic [ref=f9e110]: Marcar/desmarcar todos os itens para ações em massa.
+                - generic [ref=f9e111]:
+                  - generic [ref=f9e113]:
+                    - generic [ref=f9e114]:
+                      - checkbox "Marcar/desmarcar o item 01a1a39f-5b03-7218-9130-825dcf6a72e5 para ações em massa." [ref=f9e115]
+                      - generic [ref=f9e116]: Marcar/desmarcar o item 01a1a39f-5b03-7218-9130-825dcf6a72e5 para ações em massa.
+                    - generic [ref=f9e117]:
+                      - link "Admin Visual visual@oravel.test admin R$ 0,00 Último acesso há 1 minuto" [ref=f9e119] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/users/01a1a39f-5b03-7218-9130-825dcf6a72e5/edit
+                        - generic [ref=f9e121]:
+                          - generic [ref=f9e122]: Admin Visual
+                          - generic [ref=f9e138]: visual@oravel.test
+                          - generic [ref=f9e149]: admin
+                          - generic [ref=f9e160]: R$ 0,00
+                          - generic [ref=f9e170]: Último acesso há 1 minuto
+                      - generic [ref=f9e180]:
+                        - link "Editar" [ref=f9e181] [cursor=pointer]:
+                          - /url: http://127.0.0.1:8099/admin/users/01a1a39f-5b03-7218-9130-825dcf6a72e5/edit
+                        - button "Excluir" [ref=f9e186] [cursor=pointer]
+                  - generic [ref=f9e191]:
+                    - generic [ref=f9e192]:
+                      - checkbox "Marcar/desmarcar o item 01a1a39f-5d1b-7085-91b6-c99970a09dd0 para ações em massa." [ref=f9e193]
+                      - generic [ref=f9e194]: Marcar/desmarcar o item 01a1a39f-5d1b-7085-91b6-c99970a09dd0 para ações em massa.
+                    - generic [ref=f9e195]:
+                      - link "Carlos Técnico carlo@oravel.test R$ 85,00 Último acesso há 2 dias" [ref=f9e197] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/users/01a1a39f-5d1b-7085-91b6-c99970a09dd0/edit
+                        - generic [ref=f9e199]:
+                          - generic [ref=f9e200]: Carlos Técnico
+                          - generic [ref=f9e216]: carlo@oravel.test
+                          - generic [ref=f9e227]: R$ 85,00
+                          - generic [ref=f9e237]: Último acesso há 2 dias
+                      - generic [ref=f9e247]:
+                        - link "Editar" [ref=f9e248] [cursor=pointer]:
+                          - /url: http://127.0.0.1:8099/admin/users/01a1a39f-5d1b-7085-91b6-c99970a09dd0/edit
+                        - button "Excluir" [ref=f9e253] [cursor=pointer]
+                  - generic [ref=f9e258]:
+                    - generic [ref=f9e259]:
+                      - checkbox "Marcar/desmarcar o item 01a1a39f-5ef4-7150-a13f-fc1c4a11b854 para ações em massa." [ref=f9e260]
+                      - generic [ref=f9e261]: Marcar/desmarcar o item 01a1a39f-5ef4-7150-a13f-fc1c4a11b854 para ações em massa.
+                    - generic [ref=f9e262]:
+                      - link "Marina Colaboradora marin@oravel.test R$ 45,00 Último acesso há 1 mês" [ref=f9e264] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/users/01a1a39f-5ef4-7150-a13f-fc1c4a11b854/edit
+                        - generic [ref=f9e266]:
+                          - generic [ref=f9e267]: Marina Colaboradora
+                          - generic [ref=f9e283]: marin@oravel.test
+                          - generic [ref=f9e294]: R$ 45,00
+                          - generic [ref=f9e304]: Último acesso há 1 mês
+                      - generic [ref=f9e314]:
+                        - link "Editar" [ref=f9e315] [cursor=pointer]:
+                          - /url: http://127.0.0.1:8099/admin/users/01a1a39f-5ef4-7150-a13f-fc1c4a11b854/edit
+                        - button "Excluir" [ref=f9e320] [cursor=pointer]
+                  - generic [ref=f9e325]:
+                    - generic [ref=f9e326]:
+                      - checkbox "Marcar/desmarcar o item 01a1a39f-6069-7110-99a0-4071e68d73ca para ações em massa." [ref=f9e327]
+                      - generic [ref=f9e328]: Marcar/desmarcar o item 01a1a39f-6069-7110-99a0-4071e68d73ca para ações em massa.
+                    - generic [ref=f9e329]:
+                      - link "João Pendente joão@oravel.test R$ 30,00 Nunca acessou" [ref=f9e331] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/users/01a1a39f-6069-7110-99a0-4071e68d73ca/edit
+                        - generic [ref=f9e333]:
+                          - generic [ref=f9e334]: João Pendente
+                          - generic [ref=f9e350]: joão@oravel.test
+                          - generic [ref=f9e361]: R$ 30,00
+                          - generic [ref=f9e371]: Nunca acessou
+                      - generic [ref=f9e376]:
+                        - button "Aprovar" [ref=f9e377] [cursor=pointer]
+                        - link "Editar" [ref=f9e381] [cursor=pointer]:
+                          - /url: http://127.0.0.1:8099/admin/users/01a1a39f-6069-7110-99a0-4071e68d73ca/edit
+                        - button "Excluir" [ref=f9e386] [cursor=pointer]
+              - navigation "Paginação" [ref=f9e390]:
+                - generic [ref=f9e391]: Exibindo 1 a 4 de 4 resultados
+                - generic [ref=f9e394]:
+                  - generic [ref=f9e395]: por página
+                  - combobox "por página" [ref=f9e398]:
+                    - option "5"
+                    - option "10" [selected]
+                    - option "25"
+                    - option "50"
+                    - option "Todas"
+    - complementary [ref=f9e399]:
+      - generic [ref=f9e401]:
+        - link "Início" [ref=f9e403] [cursor=pointer]:
+          - /url: http://127.0.0.1:8099/admin/painel-controle
+          - generic [ref=f9e407]: Oravel
+        - button "Recolher barra lateral" [ref=f9e408] [cursor=pointer]
+      - navigation [ref=f9e412]:
+        - list
+        - list
+  - generic:
+    - status
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f9e413]

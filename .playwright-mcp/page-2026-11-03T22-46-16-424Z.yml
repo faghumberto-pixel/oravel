@@ -1,0 +1,173 @@
+- generic [active] [ref=f4e1]:
+  - generic [ref=f4e2]:
+    - generic [ref=f4e3]:
+      - navigation [ref=f4e5]:
+        - generic [ref=f4e9]:
+          - generic [ref=f4e10]: Locadora Visual
+          - generic [ref=f4e11]: "Módulo: Locadora"
+        - generic [ref=f4e12]:
+          - button "⌘K" [ref=f4e14] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=f4e18] [cursor=pointer]:
+            - /url: http://127.0.0.1:8099/admin/caixa-de-email
+          - button "Menu do usuário" [ref=f4e23] [cursor=pointer]:
+            - img "Avatar de Admin Visual" [ref=f4e24]
+        - link "Ajuda" [ref=f4e26] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=f4e30]:
+        - generic [ref=f4e32]:
+          - generic [ref=f4e33]:
+            - generic [ref=f4e34]:
+              - navigation [ref=f4e35]:
+                - list [ref=f4e36]:
+                  - listitem [ref=f4e37]:
+                    - link "Materiais/Peças" [ref=f4e38] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/materials
+                  - listitem [ref=f4e39]:
+                    - generic [ref=f4e42]: Listar
+              - heading "Materiais/Peças" [level=1] [ref=f4e43]
+            - generic [ref=f4e45]:
+              - link "Criar Material/Peças" [ref=f4e46] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/materials/create
+              - link "Imprimir" [ref=f4e48] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/print/tabela/ddea57b4-1f19-4645-b1fe-975c2c91969a
+              - button "Exportar materials" [ref=f4e52] [cursor=pointer]
+          - generic [ref=f4e56]:
+            - generic [ref=f4e57]:
+              - button "Total 4" [ref=f4e58] [cursor=pointer]:
+                - generic [ref=f4e59]: Total
+                - generic [ref=f4e60]: "4"
+              - button "Abaixo do estoque mínimo 1" [ref=f4e61] [cursor=pointer]:
+                - generic [ref=f4e62]: Abaixo do estoque mínimo
+                - generic [ref=f4e63]: "1"
+              - button "Sem fornecedor 1" [ref=f4e64] [cursor=pointer]:
+                - generic [ref=f4e65]: Sem fornecedor
+                - generic [ref=f4e66]: "1"
+              - button "Com fornecedor 3" [ref=f4e67] [cursor=pointer]:
+                - generic [ref=f4e68]: Com fornecedor
+                - generic [ref=f4e69]: "3"
+            - generic [ref=f4e71]:
+              - generic [ref=f4e74]:
+                - generic [ref=f4e75]:
+                  - generic [ref=f4e76]: Pesquisar
+                  - searchbox "Pesquisar" [ref=f4e82]
+                - button "Filtrar 0" [ref=f4e85] [cursor=pointer]:
+                  - generic [ref=f4e86]: Filtrar
+                  - generic [ref=f4e89]: "0"
+              - generic [ref=f4e93]:
+                - generic [ref=f4e94]:
+                  - generic [ref=f4e95]:
+                    - checkbox "Marcar/desmarcar todos os itens para ações em massa." [ref=f4e96]
+                    - generic [ref=f4e97]: Marcar/desmarcar todos os itens para ações em massa.
+                  - generic [ref=f4e100]:
+                    - generic [ref=f4e101]: Ordenar por
+                    - combobox "Ordenar por" [ref=f4e104]:
+                      - option "-" [selected]
+                      - option "Nome"
+                      - option "SKU"
+                      - option "Categoria"
+                      - option "Marca"
+                      - option "Fornecedor"
+                      - option "Preço"
+                - generic [ref=f4e105]:
+                  - generic [ref=f4e107]:
+                    - generic [ref=f4e108]:
+                      - checkbox "Marcar/desmarcar o item 01a1a396-7d21-725c-a1bc-a87c91a645c9 para ações em massa." [ref=f4e109]
+                      - generic [ref=f4e110]: Marcar/desmarcar o item 01a1a396-7d21-725c-a1bc-a87c91a645c9 para ações em massa.
+                    - generic [ref=f4e111]:
+                      - link "Parafuso M10 SKU SKU-100 Estoque 50 Sem marca Distribuidora Alfa R$ 12,50" [ref=f4e113] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/materials/01a1a396-7d21-725c-a1bc-a87c91a645c9/edit
+                        - generic [ref=f4e115]:
+                          - generic [ref=f4e117]:
+                            - generic [ref=f4e119]:
+                              - generic [ref=f4e120]: Parafuso M10
+                              - generic [ref=f4e128]: SKU SKU-100
+                            - generic [ref=f4e136]: Estoque 50
+                          - generic [ref=f4e145]: Sem marca
+                          - generic [ref=f4e150]: Distribuidora Alfa
+                          - generic [ref=f4e160]: R$ 12,50
+                      - generic [ref=f4e170]:
+                        - link "Editar" [ref=f4e171] [cursor=pointer]:
+                          - /url: http://127.0.0.1:8099/admin/materials/01a1a396-7d21-725c-a1bc-a87c91a645c9/edit
+                        - button "Excluir" [ref=f4e176] [cursor=pointer]
+                  - generic [ref=f4e181]:
+                    - generic [ref=f4e182]:
+                      - checkbox "Marcar/desmarcar o item 01a1a396-7d26-7168-bbe4-1212f31da262 para ações em massa." [ref=f4e183]
+                      - generic [ref=f4e184]: Marcar/desmarcar o item 01a1a396-7d26-7168-bbe4-1212f31da262 para ações em massa.
+                    - generic [ref=f4e185]:
+                      - link "Óleo Hidráulico 20L SKU SKU-101 Estoque 1 Sem marca Distribuidora Alfa R$ 480,00" [ref=f4e187] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/materials/01a1a396-7d26-7168-bbe4-1212f31da262/edit
+                        - generic [ref=f4e189]:
+                          - generic [ref=f4e191]:
+                            - generic [ref=f4e193]:
+                              - generic [ref=f4e194]: Óleo Hidráulico 20L
+                              - generic [ref=f4e202]: SKU SKU-101
+                            - generic [ref=f4e210]: Estoque 1
+                          - generic [ref=f4e219]: Sem marca
+                          - generic [ref=f4e224]: Distribuidora Alfa
+                          - generic [ref=f4e234]: R$ 480,00
+                      - generic [ref=f4e244]:
+                        - link "Editar" [ref=f4e245] [cursor=pointer]:
+                          - /url: http://127.0.0.1:8099/admin/materials/01a1a396-7d26-7168-bbe4-1212f31da262/edit
+                        - button "Excluir" [ref=f4e250] [cursor=pointer]
+                  - generic [ref=f4e255]:
+                    - generic [ref=f4e256]:
+                      - checkbox "Marcar/desmarcar o item 01a1a396-7d29-7155-89cb-3d0973bb174d para ações em massa." [ref=f4e257]
+                      - generic [ref=f4e258]: Marcar/desmarcar o item 01a1a396-7d29-7155-89cb-3d0973bb174d para ações em massa.
+                    - generic [ref=f4e259]:
+                      - link "Filtro de Ar SKU SKU-102 Estoque 8 Sem marca Sem fornecedor homologado R$ 95,90" [ref=f4e261] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/materials/01a1a396-7d29-7155-89cb-3d0973bb174d/edit
+                        - generic [ref=f4e263]:
+                          - generic [ref=f4e265]:
+                            - generic [ref=f4e267]:
+                              - generic [ref=f4e268]: Filtro de Ar
+                              - generic [ref=f4e276]: SKU SKU-102
+                            - generic [ref=f4e284]: Estoque 8
+                          - generic [ref=f4e293]: Sem marca
+                          - generic [ref=f4e298]: Sem fornecedor homologado
+                          - generic [ref=f4e303]: R$ 95,90
+                      - generic [ref=f4e313]:
+                        - link "Editar" [ref=f4e314] [cursor=pointer]:
+                          - /url: http://127.0.0.1:8099/admin/materials/01a1a396-7d29-7155-89cb-3d0973bb174d/edit
+                        - button "Excluir" [ref=f4e319] [cursor=pointer]
+                  - generic [ref=f4e324]:
+                    - generic [ref=f4e325]:
+                      - checkbox "Marcar/desmarcar o item 01a1a396-7d2c-729b-a477-e8878c876779 para ações em massa." [ref=f4e326]
+                      - generic [ref=f4e327]: Marcar/desmarcar o item 01a1a396-7d2c-729b-a477-e8878c876779 para ações em massa.
+                    - generic [ref=f4e328]:
+                      - link "Correia Dentada SKU SKU-103 Estoque 3 Sem marca Peças Beta R$ 210,00" [ref=f4e330] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/materials/01a1a396-7d2c-729b-a477-e8878c876779/edit
+                        - generic [ref=f4e332]:
+                          - generic [ref=f4e334]:
+                            - generic [ref=f4e336]:
+                              - generic [ref=f4e337]: Correia Dentada
+                              - generic [ref=f4e345]: SKU SKU-103
+                            - generic [ref=f4e353]: Estoque 3
+                          - generic [ref=f4e362]: Sem marca
+                          - generic [ref=f4e367]: Peças Beta
+                          - generic [ref=f4e377]: R$ 210,00
+                      - generic [ref=f4e387]:
+                        - link "Editar" [ref=f4e388] [cursor=pointer]:
+                          - /url: http://127.0.0.1:8099/admin/materials/01a1a396-7d2c-729b-a477-e8878c876779/edit
+                        - button "Excluir" [ref=f4e393] [cursor=pointer]
+              - navigation "Paginação" [ref=f4e397]:
+                - generic [ref=f4e398]: Exibindo 1 a 4 de 4 resultados
+                - generic [ref=f4e401]:
+                  - generic [ref=f4e402]: por página
+                  - combobox "por página" [ref=f4e405]:
+                    - option "5" [selected]
+                    - option "10"
+                    - option "25"
+                    - option "50"
+                    - option "Todas"
+    - complementary [ref=f4e406]:
+      - generic [ref=f4e408]:
+        - link "Início" [ref=f4e410] [cursor=pointer]:
+          - /url: http://127.0.0.1:8099/admin/painel-controle
+          - generic [ref=f4e414]: Oravel
+        - button "Recolher barra lateral" [ref=f4e415] [cursor=pointer]
+      - navigation [ref=f4e419]:
+        - list
+        - list
+  - generic:
+    - status
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f4e420]

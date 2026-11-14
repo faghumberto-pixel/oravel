@@ -1,0 +1,203 @@
+- generic [active] [ref=f6e1]:
+  - generic [ref=f6e2]:
+    - generic [ref=f6e3]:
+      - navigation [ref=f6e5]:
+        - generic [ref=f6e9]:
+          - generic [ref=f6e10]: Locadora Visual
+          - generic [ref=f6e11]: "Módulo: Locadora"
+        - generic [ref=f6e12]:
+          - button "⌘K" [ref=f6e14] [cursor=pointer]
+          - button "Abrir notificações" [ref=f6e551] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=f6e18] [cursor=pointer]:
+            - /url: http://127.0.0.1:8099/admin/caixa-de-email
+          - button "Menu do usuário" [ref=f6e23] [cursor=pointer]:
+            - img "Avatar de Admin Visual" [ref=f6e24]
+        - link "Ajuda" [ref=f6e26] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=f6e30]:
+        - generic [ref=f6e32]:
+          - generic [ref=f6e33]:
+            - generic [ref=f6e34]:
+              - navigation [ref=f6e35]:
+                - list [ref=f6e36]:
+                  - listitem [ref=f6e37]:
+                    - link "Propostas Comerciais" [ref=f6e38] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/proposta-comercials
+                  - listitem [ref=f6e39]:
+                    - generic [ref=f6e42]: Listar
+              - heading "Propostas Comerciais" [level=1] [ref=f6e43]
+            - generic [ref=f6e45]:
+              - link "Imprimir Todas (filtro atual)" [ref=f6e46] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/proposta-comercial/print
+              - link "Nova Proposta Comercial" [ref=f6e50] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/proposta-comercials/create
+          - generic [ref=f6e54]:
+            - generic [ref=f6e55]:
+              - button "Total 6" [ref=f6e56] [cursor=pointer]:
+                - generic [ref=f6e57]: Total
+                - generic [ref=f6e58]: "6"
+              - button "Rascunho 1" [ref=f6e59] [cursor=pointer]:
+                - generic [ref=f6e60]: Rascunho
+                - generic [ref=f6e61]: "1"
+              - button "Enviada para o Comercial 1" [ref=f6e62] [cursor=pointer]:
+                - generic [ref=f6e63]: Enviada para o Comercial
+                - generic [ref=f6e64]: "1"
+              - button "Aprovada — Aguardando Cliente 1" [ref=f6e65] [cursor=pointer]:
+                - generic [ref=f6e66]: Aprovada — Aguardando Cliente
+                - generic [ref=f6e67]: "1"
+              - button "Aceita pelo Cliente 1" [ref=f6e68] [cursor=pointer]:
+                - generic [ref=f6e69]: Aceita pelo Cliente
+                - generic [ref=f6e70]: "1"
+              - button "Recusada pelo Cliente 1" [ref=f6e71] [cursor=pointer]:
+                - generic [ref=f6e72]: Recusada pelo Cliente
+                - generic [ref=f6e73]: "1"
+              - button "Rejeitada 1" [ref=f6e74] [cursor=pointer]:
+                - generic [ref=f6e75]: Rejeitada
+                - generic [ref=f6e76]: "1"
+            - generic [ref=f6e78]:
+              - generic [ref=f6e81]:
+                - generic [ref=f6e82]:
+                  - generic [ref=f6e83]: Pesquisar
+                  - searchbox "Pesquisar" [ref=f6e89]
+                - button "Filtrar 0" [ref=f6e92] [cursor=pointer]:
+                  - generic [ref=f6e93]: Filtrar
+                  - generic [ref=f6e96]: "0"
+              - generic [ref=f6e100]:
+                - generic [ref=f6e101]:
+                  - generic [ref=f6e102]:
+                    - checkbox "Marcar/desmarcar todos os itens para ações em massa." [ref=f6e103]
+                    - generic [ref=f6e104]: Marcar/desmarcar todos os itens para ações em massa.
+                  - generic [ref=f6e107]:
+                    - generic [ref=f6e108]: Ordenar por
+                    - combobox "Ordenar por" [ref=f6e111]:
+                      - option "-" [selected]
+                      - option "Cliente"
+                      - option "Valor Total"
+                      - option "Enviada em"
+                - generic [ref=f6e112]:
+                  - generic [ref=f6e114]:
+                    - generic [ref=f6e115]:
+                      - checkbox "Marcar/desmarcar o item 01a1a360-6fa8-73e6-a323-d0d4427cc8b9 para ações em massa." [ref=f6e116]
+                      - generic [ref=f6e117]: Marcar/desmarcar o item 01a1a360-6fa8-73e6-a323-d0d4427cc8b9 para ações em massa.
+                    - generic [ref=f6e118]:
+                      - link "Construtora Alfa Aceita pelo Cliente R$ 0,00 0 itens Admin Visual Ainda não enviada" [ref=f6e120] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/proposta-comercials/01a1a360-6fa8-73e6-a323-d0d4427cc8b9
+                        - generic [ref=f6e122]:
+                          - generic [ref=f6e124]:
+                            - generic [ref=f6e125]: Construtora Alfa
+                            - generic [ref=f6e133]: Aceita pelo Cliente
+                          - generic [ref=f6e142]: R$ 0,00
+                          - generic [ref=f6e150]: 0 itens
+                          - generic [ref=f6e160]: Admin Visual
+                          - generic [ref=f6e170]: Ainda não enviada
+                      - link "Visualizar" [ref=f6e176] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/proposta-comercials/01a1a360-6fa8-73e6-a323-d0d4427cc8b9
+                  - generic [ref=f6e182]:
+                    - generic [ref=f6e183]:
+                      - checkbox "Marcar/desmarcar o item 01a1a360-6fa0-721a-ad79-920038c3e3c0 para ações em massa." [ref=f6e184]
+                      - generic [ref=f6e185]: Marcar/desmarcar o item 01a1a360-6fa0-721a-ad79-920038c3e3c0 para ações em massa.
+                    - generic [ref=f6e186]:
+                      - link "Construtora Alfa Aprovada — Aguardando Cliente R$ 0,00 0 itens Admin Visual Ainda não enviada" [ref=f6e188] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/proposta-comercials/01a1a360-6fa0-721a-ad79-920038c3e3c0
+                        - generic [ref=f6e190]:
+                          - generic [ref=f6e192]:
+                            - generic [ref=f6e193]: Construtora Alfa
+                            - generic [ref=f6e201]: Aprovada — Aguardando Cliente
+                          - generic [ref=f6e210]: R$ 0,00
+                          - generic [ref=f6e218]: 0 itens
+                          - generic [ref=f6e228]: Admin Visual
+                          - generic [ref=f6e238]: Ainda não enviada
+                      - link "Visualizar" [ref=f6e244] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/proposta-comercials/01a1a360-6fa0-721a-ad79-920038c3e3c0
+                  - generic [ref=f6e250]:
+                    - generic [ref=f6e251]:
+                      - checkbox "Marcar/desmarcar o item 01a1a360-6f94-7029-92ae-237a828fba90 para ações em massa." [ref=f6e252]
+                      - generic [ref=f6e253]: Marcar/desmarcar o item 01a1a360-6f94-7029-92ae-237a828fba90 para ações em massa.
+                    - generic [ref=f6e254]:
+                      - link "Construtora Alfa Enviada para o Comercial R$ 0,00 0 itens Admin Visual Ainda não enviada" [ref=f6e256] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/proposta-comercials/01a1a360-6f94-7029-92ae-237a828fba90
+                        - generic [ref=f6e258]:
+                          - generic [ref=f6e260]:
+                            - generic [ref=f6e261]: Construtora Alfa
+                            - generic [ref=f6e269]: Enviada para o Comercial
+                          - generic [ref=f6e278]: R$ 0,00
+                          - generic [ref=f6e286]: 0 itens
+                          - generic [ref=f6e296]: Admin Visual
+                          - generic [ref=f6e306]: Ainda não enviada
+                      - link "Visualizar" [ref=f6e312] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/proposta-comercials/01a1a360-6f94-7029-92ae-237a828fba90
+                  - generic [ref=f6e318]:
+                    - generic [ref=f6e319]:
+                      - checkbox "Marcar/desmarcar o item 01a1a360-6f88-718b-8916-d4d07c5db4f3 para ações em massa." [ref=f6e320]
+                      - generic [ref=f6e321]: Marcar/desmarcar o item 01a1a360-6f88-718b-8916-d4d07c5db4f3 para ações em massa.
+                    - generic [ref=f6e322]:
+                      - link "Construtora Alfa Rascunho R$ 0,00 0 itens Admin Visual Ainda não enviada" [ref=f6e324] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/proposta-comercials/01a1a360-6f88-718b-8916-d4d07c5db4f3
+                        - generic [ref=f6e326]:
+                          - generic [ref=f6e328]:
+                            - generic [ref=f6e329]: Construtora Alfa
+                            - generic [ref=f6e337]: Rascunho
+                          - generic [ref=f6e346]: R$ 0,00
+                          - generic [ref=f6e354]: 0 itens
+                          - generic [ref=f6e364]: Admin Visual
+                          - generic [ref=f6e374]: Ainda não enviada
+                      - generic [ref=f6e379]:
+                        - link "Visualizar" [ref=f6e380] [cursor=pointer]:
+                          - /url: http://127.0.0.1:8099/admin/proposta-comercials/01a1a360-6f88-718b-8916-d4d07c5db4f3
+                        - button "Enviar para revisão" [ref=f6e385] [cursor=pointer]
+                  - generic [ref=f6e390]:
+                    - generic [ref=f6e391]:
+                      - checkbox "Marcar/desmarcar o item 01a1a360-6fb5-73db-869c-1322cc7607a6 para ações em massa." [ref=f6e392]
+                      - generic [ref=f6e393]: Marcar/desmarcar o item 01a1a360-6fb5-73db-869c-1322cc7607a6 para ações em massa.
+                    - generic [ref=f6e394]:
+                      - link "Construtora Alfa Recusada pelo Cliente R$ 0,00 0 itens Admin Visual Ainda não enviada" [ref=f6e396] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/proposta-comercials/01a1a360-6fb5-73db-869c-1322cc7607a6
+                        - generic [ref=f6e398]:
+                          - generic [ref=f6e400]:
+                            - generic [ref=f6e401]: Construtora Alfa
+                            - generic [ref=f6e409]: Recusada pelo Cliente
+                          - generic [ref=f6e418]: R$ 0,00
+                          - generic [ref=f6e426]: 0 itens
+                          - generic [ref=f6e436]: Admin Visual
+                          - generic [ref=f6e446]: Ainda não enviada
+                      - link "Visualizar" [ref=f6e452] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/proposta-comercials/01a1a360-6fb5-73db-869c-1322cc7607a6
+                  - generic [ref=f6e458]:
+                    - generic [ref=f6e459]:
+                      - checkbox "Marcar/desmarcar o item 01a1a360-6fc1-71f5-9f7d-644038894d05 para ações em massa." [ref=f6e460]
+                      - generic [ref=f6e461]: Marcar/desmarcar o item 01a1a360-6fc1-71f5-9f7d-644038894d05 para ações em massa.
+                    - generic [ref=f6e462]:
+                      - link "Construtora Alfa Rejeitada R$ 0,00 0 itens Admin Visual Ainda não enviada" [ref=f6e464] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/proposta-comercials/01a1a360-6fc1-71f5-9f7d-644038894d05
+                        - generic [ref=f6e466]:
+                          - generic [ref=f6e468]:
+                            - generic [ref=f6e469]: Construtora Alfa
+                            - generic [ref=f6e477]: Rejeitada
+                          - generic [ref=f6e486]: R$ 0,00
+                          - generic [ref=f6e494]: 0 itens
+                          - generic [ref=f6e504]: Admin Visual
+                          - generic [ref=f6e514]: Ainda não enviada
+                      - link "Visualizar" [ref=f6e520] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/proposta-comercials/01a1a360-6fc1-71f5-9f7d-644038894d05
+              - navigation "Paginação" [ref=f6e525]:
+                - generic [ref=f6e526]: Exibindo 1 a 6 de 6 resultados
+                - generic [ref=f6e529]:
+                  - generic [ref=f6e530]: por página
+                  - combobox "por página" [ref=f6e533]:
+                    - option "5"
+                    - option "10" [selected]
+                    - option "25"
+                    - option "50"
+                    - option "Todas"
+    - complementary [ref=f6e534]:
+      - generic [ref=f6e536]:
+        - link "Início" [ref=f6e538] [cursor=pointer]:
+          - /url: http://127.0.0.1:8099/admin/painel-controle
+          - generic [ref=f6e542]: Oravel
+        - button "Recolher barra lateral" [ref=f6e543] [cursor=pointer]
+      - navigation [ref=f6e547]:
+        - list
+        - list
+  - generic:
+    - status
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f6e548]

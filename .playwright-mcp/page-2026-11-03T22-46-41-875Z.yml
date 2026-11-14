@@ -1,0 +1,136 @@
+- generic [active] [ref=f5e1]:
+  - generic [ref=f5e2]:
+    - generic [ref=f5e3]:
+      - navigation [ref=f5e5]:
+        - generic [ref=f5e9]:
+          - generic [ref=f5e10]: Locadora Visual
+          - generic [ref=f5e11]: "Módulo: Locadora"
+        - generic [ref=f5e12]:
+          - button "⌘K" [ref=f5e14] [cursor=pointer]
+          - button "Abrir notificações" [ref=f5e355] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=f5e18] [cursor=pointer]:
+            - /url: http://127.0.0.1:8099/admin/caixa-de-email
+          - button "Menu do usuário" [ref=f5e23] [cursor=pointer]:
+            - img "Avatar de Admin Visual" [ref=f5e24]
+        - link "Ajuda" [ref=f5e26] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=f5e30]:
+        - generic [ref=f5e32]:
+          - generic [ref=f5e33]:
+            - generic [ref=f5e34]:
+              - navigation [ref=f5e35]:
+                - list [ref=f5e36]:
+                  - listitem [ref=f5e37]:
+                    - link "Fornecedores" [ref=f5e38] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/suppliers
+                  - listitem [ref=f5e39]:
+                    - generic [ref=f5e42]: Listar
+              - heading "Fornecedores" [level=1] [ref=f5e43]
+            - generic [ref=f5e45]:
+              - link "Criar Fornecedor" [ref=f5e46] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/suppliers/create
+              - link "Imprimir" [ref=f5e48] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/print/tabela/12d32016-73dc-450e-b6c8-56c46f2110f5
+          - generic [ref=f5e54]:
+            - generic [ref=f5e55]:
+              - button "Total 3" [ref=f5e56] [cursor=pointer]:
+                - generic [ref=f5e57]: Total
+                - generic [ref=f5e58]: "3"
+              - button "Compliance completo 1" [ref=f5e59] [cursor=pointer]:
+                - generic [ref=f5e60]: Compliance completo
+                - generic [ref=f5e61]: "1"
+              - button "Certidões pendentes 2" [ref=f5e62] [cursor=pointer]:
+                - generic [ref=f5e63]: Certidões pendentes
+                - generic [ref=f5e64]: "2"
+              - button "Sem termo LGPD 1" [ref=f5e65] [cursor=pointer]:
+                - generic [ref=f5e66]: Sem termo LGPD
+                - generic [ref=f5e67]: "1"
+              - button "Com termo LGPD 2" [ref=f5e68] [cursor=pointer]:
+                - generic [ref=f5e69]: Com termo LGPD
+                - generic [ref=f5e70]: "2"
+            - generic [ref=f5e72]:
+              - generic [ref=f5e75]:
+                - generic [ref=f5e76]:
+                  - generic [ref=f5e77]: Pesquisar
+                  - searchbox "Pesquisar" [ref=f5e83]
+                - button "Filtrar 0" [ref=f5e86] [cursor=pointer]:
+                  - generic [ref=f5e87]: Filtrar
+                  - generic [ref=f5e90]: "0"
+              - generic [ref=f5e94]:
+                - generic [ref=f5e95]:
+                  - generic [ref=f5e96]:
+                    - checkbox "Marcar/desmarcar todos os itens para ações em massa." [ref=f5e97]
+                    - generic [ref=f5e98]: Marcar/desmarcar todos os itens para ações em massa.
+                  - generic [ref=f5e101]:
+                    - generic [ref=f5e102]: Ordenar por
+                    - combobox "Ordenar por" [ref=f5e105]:
+                      - option "-" [selected]
+                      - option "Fornecedor"
+                - generic [ref=f5e106]:
+                  - generic [ref=f5e108]:
+                    - generic [ref=f5e109]:
+                      - checkbox "Marcar/desmarcar o item 01a1a396-7d12-7225-b5ee-4203608658aa para ações em massa." [ref=f5e110]
+                      - generic [ref=f5e111]: Marcar/desmarcar o item 01a1a396-7d12-7225-b5ee-4203608658aa para ações em massa.
+                    - generic [ref=f5e112]:
+                      - link "Distribuidora Alfa 11.111.111/0001-11 Termo LGPD assinado Ficha limpa (MTE) Certidões em dia" [ref=f5e114] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/suppliers/01a1a396-7d12-7225-b5ee-4203608658aa/edit
+                        - generic [ref=f5e116]:
+                          - generic [ref=f5e117]: Distribuidora Alfa
+                          - generic [ref=f5e125]: 11.111.111/0001-11
+                          - generic [ref=f5e133]: Termo LGPD assinado
+                          - generic [ref=f5e149]: Ficha limpa (MTE)
+                          - generic [ref=f5e165]: Certidões em dia
+                      - link "Editar" [ref=f5e176] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/suppliers/01a1a396-7d12-7225-b5ee-4203608658aa/edit
+                  - generic [ref=f5e182]:
+                    - generic [ref=f5e183]:
+                      - checkbox "Marcar/desmarcar o item 01a1a396-7d17-734b-abe5-246fd328a49b para ações em massa." [ref=f5e184]
+                      - generic [ref=f5e185]: Marcar/desmarcar o item 01a1a396-7d17-734b-abe5-246fd328a49b para ações em massa.
+                    - generic [ref=f5e186]:
+                      - link "Peças Beta 22.222.222/0001-22 Termo LGPD assinado Ficha limpa pendente Certidões pendentes" [ref=f5e188] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/suppliers/01a1a396-7d17-734b-abe5-246fd328a49b/edit
+                        - generic [ref=f5e190]:
+                          - generic [ref=f5e191]: Peças Beta
+                          - generic [ref=f5e199]: 22.222.222/0001-22
+                          - generic [ref=f5e207]: Termo LGPD assinado
+                          - generic [ref=f5e223]: Ficha limpa pendente
+                          - generic [ref=f5e239]: Certidões pendentes
+                      - link "Editar" [ref=f5e250] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/suppliers/01a1a396-7d17-734b-abe5-246fd328a49b/edit
+                  - generic [ref=f5e256]:
+                    - generic [ref=f5e257]:
+                      - checkbox "Marcar/desmarcar o item 01a1a396-7d1b-72b8-bcce-92d804b63094 para ações em massa." [ref=f5e258]
+                      - generic [ref=f5e259]: Marcar/desmarcar o item 01a1a396-7d1b-72b8-bcce-92d804b63094 para ações em massa.
+                    - generic [ref=f5e260]:
+                      - link "Gama Ferragens 33.333.333/0001-33 Sem termo LGPD Ficha limpa pendente Certidões pendentes" [ref=f5e262] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/suppliers/01a1a396-7d1b-72b8-bcce-92d804b63094/edit
+                        - generic [ref=f5e264]:
+                          - generic [ref=f5e265]: Gama Ferragens
+                          - generic [ref=f5e273]: 33.333.333/0001-33
+                          - generic [ref=f5e281]: Sem termo LGPD
+                          - generic [ref=f5e297]: Ficha limpa pendente
+                          - generic [ref=f5e313]: Certidões pendentes
+                      - link "Editar" [ref=f5e324] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/suppliers/01a1a396-7d1b-72b8-bcce-92d804b63094/edit
+              - navigation "Paginação" [ref=f5e329]:
+                - generic [ref=f5e330]: Exibindo 1 a 3 de 3 resultados
+                - generic [ref=f5e333]:
+                  - generic [ref=f5e334]: por página
+                  - combobox "por página" [ref=f5e337]:
+                    - option "5"
+                    - option "10" [selected]
+                    - option "25"
+                    - option "50"
+                    - option "Todas"
+    - complementary [ref=f5e338]:
+      - generic [ref=f5e340]:
+        - link "Início" [ref=f5e342] [cursor=pointer]:
+          - /url: http://127.0.0.1:8099/admin/painel-controle
+          - generic [ref=f5e346]: Oravel
+        - button "Recolher barra lateral" [ref=f5e347] [cursor=pointer]
+      - navigation [ref=f5e351]:
+        - list
+        - list
+  - generic:
+    - status
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f5e352]

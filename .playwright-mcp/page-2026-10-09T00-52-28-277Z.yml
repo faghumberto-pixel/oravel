@@ -1,0 +1,65 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - navigation [ref=e5]:
+        - button "Menu do usuário" [ref=e9]:
+          - img "Avatar de Cli" [ref=e10]
+      - main [ref=e11]:
+        - generic [ref=e13]:
+          - heading "Painel Cliente" [level=1] [ref=e16]
+          - generic [ref=e19]:
+            - generic [ref=e20]:
+              - heading "Olá, Cli" [level=2] [ref=e21]
+              - paragraph [ref=e22]: Aqui está o resumo da sua locação com L6ac83aab3331a.
+            - generic [ref=e23]:
+              - generic [ref=e24]:
+                - paragraph [ref=e25]: Equipamentos Locados
+                - paragraph [ref=e26]: "0"
+              - generic [ref=e27]:
+                - paragraph [ref=e28]: Contratos Vigentes
+                - paragraph [ref=e29]: "0"
+              - generic [ref=e30]:
+                - paragraph [ref=e31]: OS em Andamento
+                - paragraph [ref=e32]: "0"
+              - generic [ref=e33]:
+                - paragraph [ref=e34]: Próxima Fatura
+                - paragraph [ref=e35]: Tudo em dia
+            - generic [ref=e36]:
+              - generic [ref=e37]:
+                - heading "📦 Meus Equipamentos & Contratos em Andamento" [level=3] [ref=e38]
+                - link "Ver todos →" [ref=e39] [cursor=pointer]:
+                  - /url: http://localhost/cliente/meus-contratos
+              - paragraph [ref=e40]: Nenhum contrato ativo com equipamento no momento.
+            - generic [ref=e41]:
+              - generic [ref=e42]:
+                - generic [ref=e43]:
+                  - heading "🔧 Manutenções no Equipamento" [level=3] [ref=e44]
+                  - link "Ver todas →" [ref=e45] [cursor=pointer]:
+                    - /url: http://localhost/cliente/minhas-o-s
+                - list [ref=e46]:
+                  - listitem [ref=e47]: Nenhuma manutenção registrada ainda.
+              - generic [ref=e48]:
+                - generic [ref=e49]:
+                  - heading "💳 Financeiro" [level=3] [ref=e50]
+                  - link "Ver tudo →" [ref=e51] [cursor=pointer]:
+                    - /url: http://localhost/cliente/meu-financeiro
+                - generic [ref=e52]:
+                  - generic [ref=e53]:
+                    - paragraph [ref=e54]: "0"
+                    - paragraph [ref=e55]: Pagas
+                  - generic [ref=e56]:
+                    - paragraph [ref=e57]: "0"
+                    - paragraph [ref=e58]: Em Aberto
+                - list [ref=e59]:
+                  - listitem [ref=e60]: Nenhuma fatura por aqui ainda.
+    - complementary [ref=e61]:
+      - link [ref=e65] [cursor=pointer]:
+        - /url: http://localhost/cliente/inicio
+        - generic [ref=e67]:
+          - img "Oravel" [ref=e68]
+          - text: Cli
+      - navigation [ref=e69]:
+        - list [ref=e70]:
+          - listitem [ref=e71]
+  - generic:
+    - status

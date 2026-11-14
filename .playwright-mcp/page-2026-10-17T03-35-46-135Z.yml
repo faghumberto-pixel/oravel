@@ -1,0 +1,456 @@
+- generic [active] [ref=f1e1]:
+  - link "Ir para o conteúdo" [ref=f1e2] [cursor=pointer]:
+    - /url: "#conteudo"
+  - navigation "Principal" [ref=f1e3]:
+    - generic [ref=f1e4]:
+      - link "O Oravel" [ref=f1e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f1e6]: O
+        - text: Oravel
+      - generic [ref=f1e7]:
+        - link "Soluções" [ref=f1e9] [cursor=pointer]:
+          - /url: /solucoes/
+        - link "Planos" [ref=f1e10] [cursor=pointer]:
+          - /url: /planos/
+        - link "Sobre" [ref=f1e11] [cursor=pointer]:
+          - /url: /sobre/
+        - link "FAQ" [ref=f1e12] [cursor=pointer]:
+          - /url: /faq.php
+        - link "Ajuda" [ref=f1e13] [cursor=pointer]:
+          - /url: /central-de-conhecimento/
+        - link "Contato" [ref=f1e14] [cursor=pointer]:
+          - /url: /contato.php
+      - link "Agendar demonstração" [ref=f1e15] [cursor=pointer]:
+        - /url: /contato.php
+  - main [ref=f1e16]:
+    - generic [ref=f1e18]:
+      - generic [ref=f1e19]: Manutenção Industrial
+      - 'heading "Software para manutenção industrial: cada ordem de serviço sob controle." [level=1] [ref=f1e20]'
+      - paragraph [ref=f1e21]: Da ordem de serviço à preventiva assinada pelo cliente, sua equipe registra tudo em um só lugar e você enxerga a operação sem depender de papel, planilha ou mensagem.
+      - generic [ref=f1e22]:
+        - link "Agende uma demonstração" [ref=f1e23] [cursor=pointer]:
+          - /url: "#contato"
+        - link "Ver como funciona na prática" [ref=f1e24] [cursor=pointer]:
+          - /url: "#como-resolve"
+    - region [ref=f1e25]:
+      - generic [ref=f1e26]:
+        - generic [ref=f1e27]:
+          - generic [ref=f1e28]: Dores do segmento
+          - heading "O que atrapalha a operação de manutenção no dia a dia" [level=2] [ref=f1e29]
+          - paragraph [ref=f1e30]: Quem cuida de manutenção industrial e comercial convive com os mesmos problemas, seja em equipe interna ou como prestador de serviço.
+        - generic [ref=f1e31]:
+          - article [ref=f1e32]:
+            - generic [ref=f1e33]: Dor
+            - heading "Ordens de serviço espalhadas em papel e mensagens" [level=3] [ref=f1e34]
+            - paragraph [ref=f1e35]:
+              - strong [ref=f1e36]: "Impacto:"
+              - text: ninguém sabe ao certo o que está aberto, quem está executando e há quanto tempo.
+          - article [ref=f1e37]:
+            - generic [ref=f1e38]: Dor
+            - heading "Preventiva que vence sem ninguém perceber" [level=3] [ref=f1e39]
+            - paragraph [ref=f1e40]:
+              - strong [ref=f1e41]: "Impacto:"
+              - text: o equipamento para no pior momento e o custo da parada supera o da revisão que foi esquecida.
+          - article [ref=f1e42]:
+            - generic [ref=f1e43]: Dor
+            - heading "Serviço feito sem comprovação" [level=3] [ref=f1e44]
+            - paragraph [ref=f1e45]:
+              - strong [ref=f1e46]: "Impacto:"
+              - text: qualquer questionamento do cliente vira discussão, retrabalho e desgaste do contrato.
+          - article [ref=f1e47]:
+            - generic [ref=f1e48]: Dor
+            - heading "Histórico que se perde" [level=3] [ref=f1e49]
+            - paragraph [ref=f1e50]:
+              - strong [ref=f1e51]: "Impacto:"
+              - text: sem saber quanto cada equipamento já custou, fica difícil decidir entre consertar mais uma vez ou substituir.
+    - region [ref=f1e52]:
+      - generic [ref=f1e53]:
+        - generic [ref=f1e54]:
+          - generic [ref=f1e55]: Como a Oravel resolve
+          - heading "Uma operação de manutenção que se enxerga inteira" [level=2] [ref=f1e56]
+          - paragraph [ref=f1e57]: A Oravel organiza o trabalho da equipe e deixa o gestor com a visão que faltava.
+        - generic [ref=f1e58]:
+          - generic [ref=f1e59]:
+            - generic [ref=f1e60]: Ordens de serviço
+            - heading "Todas as ordens em um único painel" [level=3] [ref=f1e61]
+            - paragraph [ref=f1e62]: Cada ordem aparece com status, técnico responsável e o tempo de execução correndo, em uma só tela.
+            - paragraph [ref=f1e63]: "Resultado: você acompanha a operação sem precisar ligar para ninguém."
+            - list [ref=f1e64]:
+              - listitem [ref=f1e65]: Abertas, em execução e concluídas à vista
+              - listitem [ref=f1e66]: Responsável definido em cada ordem
+              - listitem [ref=f1e67]: Tempo de serviço registrado pelo próprio técnico
+          - figure "Painel de ordens de serviço (dados fictícios)" [ref=f1e68]:
+            - img "Painel de ordens de serviço com status, técnico responsável e cronômetro em execução" [ref=f1e69]:
+              - generic [ref=f1e76]: app.oravel.com.br/ordens-de-servico
+              - generic [ref=f1e77]: Ordens de Serviço
+              - generic [ref=f1e79]: Todas
+              - generic [ref=f1e81]: Abertas
+              - generic [ref=f1e83]: Em execução
+              - generic [ref=f1e85]: Concluídas
+              - generic [ref=f1e87]: OS
+              - generic [ref=f1e88]: EQUIPAMENTO
+              - generic [ref=f1e89]: TÉCNICO
+              - generic [ref=f1e90]: STATUS
+              - generic [ref=f1e91]: TEMPO
+              - generic [ref=f1e93]: OS-0142
+              - generic [ref=f1e94]: Equipamento 01
+              - generic [ref=f1e95]: Técnico 1
+              - generic [ref=f1e97]: Em execução
+              - generic [ref=f1e99]: 00:42:18
+              - generic [ref=f1e100]: OS-0141
+              - generic [ref=f1e101]: Equipamento 04
+              - generic [ref=f1e102]: Técnico 2
+              - generic [ref=f1e104]: Aberta
+              - generic [ref=f1e105]: —
+              - generic [ref=f1e106]: OS-0140
+              - generic [ref=f1e107]: Equipamento 02
+              - generic [ref=f1e108]: Técnico 3
+              - generic [ref=f1e110]: Concluída
+              - generic [ref=f1e111]: 01:20:05
+              - generic [ref=f1e112]: OS-0139
+              - generic [ref=f1e113]: Equipamento 07
+              - generic [ref=f1e114]: Técnico 1
+              - generic [ref=f1e116]: Concluída
+              - generic [ref=f1e117]: 00:55:40
+              - generic [ref=f1e118]: OS-0138
+              - generic [ref=f1e119]: Equipamento 03
+              - generic [ref=f1e120]: Técnico 2
+              - generic [ref=f1e122]: Aberta
+              - generic [ref=f1e123]: —
+              - generic [ref=f1e124]: 5 ordens listadas · 1 em execução agora
+        - generic [ref=f1e126]:
+          - generic [ref=f1e127]:
+            - generic [ref=f1e128]: Preventivas
+            - heading "Preventiva com checklist, fotos e assinatura" [level=3] [ref=f1e129]
+            - paragraph [ref=f1e130]: O técnico segue o checklist, registra fotos do antes e do depois e colhe a assinatura de quem executou e de quem recebeu o serviço.
+            - paragraph [ref=f1e131]: "Resultado: o serviço fica comprovado e pronto para mostrar ao cliente quando for preciso."
+            - list [ref=f1e132]:
+              - listitem [ref=f1e133]: Itens do checklist marcados no próprio serviço
+              - listitem [ref=f1e134]: Fotos antes e depois anexadas à ordem
+              - listitem [ref=f1e135]: Assinatura digital do técnico e do cliente
+          - figure "Checklist de preventiva (dados fictícios)" [ref=f1e136]:
+            - img "Checklist de manutenção preventiva com itens marcados, fotos antes e depois e assinaturas" [ref=f1e137]:
+              - generic [ref=f1e144]: app.oravel.com.br/checklists/preventiva
+              - generic [ref=f1e145]: Checklist de preventiva
+              - generic [ref=f1e146]: Equipamento 01 · OS-0142 · Técnico 1
+              - generic [ref=f1e150]: Inspeção visual geral
+              - generic [ref=f1e154]: Lubrificação dos pontos
+              - generic [ref=f1e158]: Aperto de fixações
+              - generic [ref=f1e162]: Teste de funcionamento
+              - generic [ref=f1e165]: Limpeza final
+              - generic [ref=f1e170]: ANTES
+              - generic [ref=f1e173]: + Adicionar foto
+              - generic [ref=f1e175]: DEPOIS
+              - generic [ref=f1e176]: Fotos do serviço
+              - generic [ref=f1e179]: Técnico 1
+              - generic [ref=f1e181]: Aguardando assinatura
+              - generic [ref=f1e182]: Cliente A
+              - generic [ref=f1e183]: Assinatura digital do técnico e do cliente ao concluir
+        - generic [ref=f1e185]:
+          - generic [ref=f1e186]:
+            - generic [ref=f1e187]: Equipamentos
+            - heading "O dossiê completo de cada equipamento" [level=3] [ref=f1e188]
+            - paragraph [ref=f1e189]: Toda manutenção feita fica na linha do tempo do equipamento, com o custo acumulado e a data da próxima preventiva.
+            - paragraph [ref=f1e190]: "Resultado: decisões de reparar ou substituir com base no que o equipamento realmente custou."
+            - list [ref=f1e191]:
+              - listitem [ref=f1e192]: Histórico de preventivas e corretivas
+              - listitem [ref=f1e193]: Custo acumulado por equipamento
+              - listitem [ref=f1e194]: Próxima preventiva sempre visível
+          - figure "Dossiê do equipamento (dados fictícios)" [ref=f1e195]:
+            - img "Dossiê do equipamento com linha do tempo de manutenções, custo acumulado e próxima preventiva" [ref=f1e196]:
+              - generic [ref=f1e203]: app.oravel.com.br/equipamentos/dossie
+              - generic [ref=f1e204]: Equipamento 01 — Dossiê
+              - generic [ref=f1e206]: Custo acumulado
+              - generic [ref=f1e207]: R$ 18.450
+              - generic [ref=f1e209]: Manutenções
+              - generic [ref=f1e210]: "12"
+              - generic [ref=f1e212]: Próxima preventiva
+              - generic [ref=f1e213]: 15/10
+              - generic [ref=f1e214]: Linha do tempo
+              - generic [ref=f1e217]: 12/09
+              - generic [ref=f1e218]: Preventiva
+              - generic [ref=f1e219]: Técnico 1
+              - generic [ref=f1e220]: R$ 850
+              - generic [ref=f1e223]: 28/07
+              - generic [ref=f1e224]: Corretiva
+              - generic [ref=f1e225]: Técnico 2
+              - generic [ref=f1e226]: R$ 2.300
+              - generic [ref=f1e229]: 10/06
+              - generic [ref=f1e230]: Preventiva
+              - generic [ref=f1e231]: Técnico 1
+              - generic [ref=f1e232]: R$ 780
+              - generic [ref=f1e235]: 02/04
+              - generic [ref=f1e236]: Corretiva
+              - generic [ref=f1e237]: Técnico 3
+              - generic [ref=f1e238]: R$ 3.150
+        - paragraph [ref=f1e240]: Telas ilustrativas, com dados fictícios e recortes do sistema.
+    - region [ref=f1e241]:
+      - generic [ref=f1e242]:
+        - generic [ref=f1e243]:
+          - generic [ref=f1e244]: Módulos que sustentam
+          - heading "Os módulos que sustentam essa operação" [level=2] [ref=f1e245]
+        - generic [ref=f1e246]:
+          - generic [ref=f1e252]:
+            - heading "Ordens de Serviço" [level=3] [ref=f1e253]
+            - paragraph [ref=f1e254]: Abertura, atribuição e acompanhamento de cada serviço.
+          - generic [ref=f1e260]:
+            - heading "Manutenção Preventiva" [level=3] [ref=f1e261]
+            - paragraph [ref=f1e262]: Planos de revisão por equipamento, sempre em dia.
+          - generic [ref=f1e268]:
+            - heading "Checklists" [level=3] [ref=f1e269]
+            - paragraph [ref=f1e270]: Roteiros padronizados com fotos antes e depois.
+          - generic [ref=f1e276]:
+            - heading "Equipamentos" [level=3] [ref=f1e277]
+            - paragraph [ref=f1e278]: Cadastro e dossiê completo de cada ativo.
+          - generic [ref=f1e284]:
+            - heading "Apontamento de horas" [level=3] [ref=f1e285]
+            - paragraph [ref=f1e286]: Tempo de serviço registrado em cada ordem.
+          - generic [ref=f1e291]:
+            - heading "Assinatura Eletrônica" [level=3] [ref=f1e292]
+            - paragraph [ref=f1e293]: Aceite do técnico e do cliente direto na ordem.
+    - region [ref=f1e294]:
+      - generic [ref=f1e295]:
+        - generic [ref=f1e296]:
+          - generic [ref=f1e297]: Para quem é
+          - heading "Feito para quem vive de manter equipamentos funcionando" [level=2] [ref=f1e298]
+        - generic [ref=f1e299]:
+          - generic [ref=f1e300]:
+            - heading "Prestadoras de manutenção industrial e comercial" [level=3] [ref=f1e301]
+            - paragraph [ref=f1e302]: Equipes que atendem vários clientes e precisam comprovar cada serviço.
+          - generic [ref=f1e303]:
+            - heading "Manutenção interna de fábricas e plantas" [level=3] [ref=f1e304]
+            - paragraph [ref=f1e305]: Times responsáveis por manter a própria produção rodando.
+          - generic [ref=f1e306]:
+            - heading "Prestadores com técnicos em campo" [level=3] [ref=f1e307]
+            - paragraph [ref=f1e308]: Operações com atendimento externo e várias ordens abertas ao mesmo tempo.
+          - generic [ref=f1e309]:
+            - heading "Contratos de manutenção recorrente" [level=3] [ref=f1e310]
+            - paragraph [ref=f1e311]: Empresas que executam rotinas preventivas periódicas para seus clientes.
+    - region [ref=f1e312]:
+      - generic [ref=f1e314]:
+        - generic [ref=f1e315]:
+          - heading "Veja a Oravel na rotina da sua manutenção" [level=2] [ref=f1e316]
+          - paragraph [ref=f1e317]: Conte um pouco da sua operação e agende uma demonstração. Retornamos em horário comercial.
+          - generic [ref=f1e318]:
+            - link "WhatsApp (19) 99933-2615" [ref=f1e319] [cursor=pointer]:
+              - /url: https://wa.me/5519999332615?text=Ol%C3%A1%21%20Vim%20pela%20p%C3%A1gina%20de%20Manuten%C3%A7%C3%A3o%20Industrial%20e%20quero%20agendar%20uma%20demonstra%C3%A7%C3%A3o%20da%20Oravel.
+            - link "contato@oravel.com.br" [ref=f1e320] [cursor=pointer]:
+              - /url: mailto:contato@oravel.com.br
+        - generic [ref=f1e321]:
+          - generic [ref=f1e323]:
+            - text: Não preencha
+            - textbox [ref=f1e324]
+          - generic [ref=f1e325]:
+            - generic [ref=f1e326]:
+              - generic [ref=f1e327]: Nome *
+              - textbox "Nome *" [ref=f1e328]
+            - generic [ref=f1e329]:
+              - generic [ref=f1e330]: Empresa *
+              - textbox "Empresa *" [ref=f1e331]
+          - generic [ref=f1e332]:
+            - generic [ref=f1e333]:
+              - generic [ref=f1e334]: E-mail *
+              - textbox "E-mail *" [ref=f1e335]
+            - generic [ref=f1e336]:
+              - generic [ref=f1e337]: WhatsApp
+              - textbox "WhatsApp" [ref=f1e338]:
+                - /placeholder: (19) 90000-0000
+          - generic [ref=f1e339]:
+            - generic [ref=f1e340]:
+              - generic [ref=f1e341]: Segmento *
+              - combobox "Segmento *" [ref=f1e342]:
+                - option "Locação de Equipamentos"
+                - option "Manutenção Industrial" [selected]
+                - option "Montagem Industrial"
+                - option "Logística e Transportes"
+                - option "Gestão de Serviços"
+                - option "Distribuidor e Atacadista"
+                - option "Outro segmento"
+            - generic [ref=f1e343]:
+              - generic [ref=f1e344]: Nº de técnicos *
+              - combobox "Nº de técnicos *" [ref=f1e345]:
+                - option "Selecione" [selected]
+                - option "1 a 5"
+                - option "6 a 15"
+                - option "16 a 50"
+                - option "Mais de 50"
+          - button "Agende uma demonstração" [ref=f1e349] [cursor=pointer]
+          - paragraph [ref=f1e350]:
+            - text: Ao enviar, você concorda em ser contatado pela Oravel sobre a demonstração, conforme a
+            - link "Política de Privacidade" [ref=f1e351] [cursor=pointer]:
+              - /url: /politica-de-privacidade/
+            - text: .
+  - generic [ref=f1e353]:
+    - generic [ref=f1e354]: Solução Manutenção
+    - heading "O que está incluído" [level=2] [ref=f1e355]
+    - paragraph [ref=f1e356]: Ativos, ordens de serviço, manutenção preventiva com checklist e o histórico de cada equipamento.
+    - generic [ref=f1e357]:
+      - generic [ref=f1e358]:
+        - heading "Ativos" [level=3] [ref=f1e359]
+        - paragraph [ref=f1e360]: Cadastro, categorias, grupos de checklist, mapa de equipamentos, planta do pátio, especificações técnicas
+      - generic [ref=f1e361]:
+        - heading "Ordens de serviço" [level=3] [ref=f1e362]
+        - paragraph [ref=f1e363]: OS, kanban do pátio, checklists, reservas urgentes, histórico de paradas
+      - generic [ref=f1e364]:
+        - heading "Preventiva (PMP)" [level=3] [ref=f1e365]
+        - paragraph [ref=f1e366]: Planos por horas, dias ou ciclos, cobertura, alocação de técnicos, consulta por cliente
+      - generic [ref=f1e367]:
+        - heading "Indicadores" [level=3] [ref=f1e368]
+        - paragraph [ref=f1e369]: Horímetro, ciclo de bateria, criticidade, matriz ABC, análise por IA
+      - generic [ref=f1e370]:
+        - heading "Itens agregados e clientes" [level=3] [ref=f1e371]
+        - paragraph [ref=f1e372]: Insumos, acessórios, mão de obra e cadastro de clientes
+    - paragraph [ref=f1e373]: "Em todas as soluções: Usuários e perfis de acesso, painel inicial, configurações da empresa e app do colaborador no celular."
+  - generic [ref=f1e375]:
+    - generic [ref=f1e376]: O sistema por dentro
+    - heading "Veja as telas da solução Manutenção" [level=2] [ref=f1e377]
+    - paragraph [ref=f1e378]: Exemplos de telas, com dados fictícios.
+    - generic [ref=f1e379]:
+      - figure "Kanban do pátio" [ref=f1e380]:
+        - img "Kanban do pátio" [ref=f1e381]:
+          - generic [ref=f1e388]: app.oravel.com.br/kanban-patio
+          - generic [ref=f1e391]: ABERTA
+          - generic [ref=f1e394]: OS-2041 Gerador
+          - generic [ref=f1e395]: Falha na partida
+          - generic [ref=f1e398]: OS-2044 Empilhadeira
+          - generic [ref=f1e399]: Revisão 500h
+          - generic [ref=f1e401]: EM EXECUÇÃO
+          - generic [ref=f1e404]: OS-2038 Plataforma
+          - generic [ref=f1e405]: Troca de cilindro
+          - generic [ref=f1e408]: OS-2036 Compressor
+          - generic [ref=f1e409]: Filtro e óleo
+          - generic [ref=f1e411]: AGUARDANDO PEÇA
+          - generic [ref=f1e414]: OS-2029 Munck
+          - generic [ref=f1e415]: Mangueira hidráulica
+          - generic [ref=f1e417]: CONCLUÍDA
+          - generic [ref=f1e420]: OS-2025 Gerador
+          - generic [ref=f1e421]: Preventiva 250h
+          - generic [ref=f1e424]: OS-2022 Torre de luz
+          - generic [ref=f1e425]: Bateria
+      - figure "Preventiva por horas, dias ou ciclos" [ref=f1e427]:
+        - img "Planos preventivos (PMP)" [ref=f1e428]:
+          - generic [ref=f1e435]: app.oravel.com.br/planos-preventivos
+          - generic [ref=f1e438]: Vencidos
+          - generic [ref=f1e439]: "4"
+          - generic [ref=f1e441]: A vencer
+          - generic [ref=f1e442]: "11"
+          - generic [ref=f1e444]: No prazo
+          - generic [ref=f1e445]: "86"
+          - generic [ref=f1e447]: Equipamento
+          - generic [ref=f1e448]: Plano
+          - generic [ref=f1e449]: Intervalo
+          - generic [ref=f1e450]: Situação
+          - generic [ref=f1e452]: Gerador 150kVA
+          - generic [ref=f1e453]: Troca de óleo
+          - generic [ref=f1e454]: 250 h
+          - generic [ref=f1e456]: Vencido
+          - generic [ref=f1e457]: Empilhadeira 3t
+          - generic [ref=f1e458]: Revisão geral
+          - generic [ref=f1e459]: 500 h
+          - generic [ref=f1e461]: A vencer
+          - generic [ref=f1e463]: Plataforma 12m
+          - generic [ref=f1e464]: Bateria
+          - generic [ref=f1e465]: 90 dias
+          - generic [ref=f1e467]: No prazo
+          - generic [ref=f1e468]: Compressor
+          - generic [ref=f1e469]: Filtros
+          - generic [ref=f1e470]: 400 h
+          - generic [ref=f1e472]: No prazo
+      - figure "Checklist no celular" [ref=f1e474]:
+        - img "Checklist da OS" [ref=f1e475]:
+          - generic [ref=f1e482]: app.oravel.com.br/os/checklist
+          - generic [ref=f1e491]: Nível de óleo
+          - generic [ref=f1e495]: Filtro de ar
+          - generic [ref=f1e498]: Mangueiras
+          - generic [ref=f1e502]: Bateria
+          - generic [ref=f1e505]: Fotos antes/depois
+          - generic [ref=f1e507]: Concluir OS
+      - figure "Histórico de cada equipamento" [ref=f1e509]:
+        - img "Ativo · Gerador 150kVA" [ref=f1e510]:
+          - generic [ref=f1e517]: app.oravel.com.br/ativos/gerador-150
+          - generic [ref=f1e521]: Operando
+          - generic [ref=f1e522]: Patrimônio
+          - generic [ref=f1e523]: GER-0150
+          - generic [ref=f1e524]: Horímetro
+          - generic [ref=f1e525]: 4.812 h
+          - generic [ref=f1e526]: Última preventiva
+          - generic [ref=f1e527]: 4.600 h
+          - generic [ref=f1e528]: Próxima
+          - generic [ref=f1e529]: 4.850 h
+          - generic [ref=f1e530]: Local
+          - generic [ref=f1e531]: Pátio Campinas
+          - generic [ref=f1e532]: HISTÓRICO
+          - generic [ref=f1e534]: Hoje
+          - generic [ref=f1e535]: "Horímetro atualizado: 4.812 h"
+          - generic [ref=f1e537]: Há 3 dias
+          - generic [ref=f1e538]: OS-2025 concluída
+          - generic [ref=f1e540]: Há 1 mês
+          - generic [ref=f1e541]: Preventiva 250h executada
+      - figure "Ordens de serviço abertas por mês" [ref=f1e543]:
+        - img "Painel de manutenção" [ref=f1e544]:
+          - generic [ref=f1e551]: app.oravel.com.br/painel-pmp
+          - generic [ref=f1e555]: OS abertas
+          - generic [ref=f1e556]: "23"
+          - generic [ref=f1e559]: Atrasadas
+          - generic [ref=f1e560]: "3"
+          - generic [ref=f1e563]: Disponibilidade
+          - generic [ref=f1e564]: 96%
+          - generic [ref=f1e566]: Ordens de serviço abertas por mês
+          - generic [ref=f1e568]: Mai
+          - generic [ref=f1e570]: Jun
+          - generic [ref=f1e572]: Jul
+          - generic [ref=f1e574]: Ago
+          - generic [ref=f1e576]: Set
+          - generic [ref=f1e578]: Out
+  - generic [ref=f1e582]:
+    - heading "Comece com a solução Manutenção" [level=2] [ref=f1e583]
+    - paragraph [ref=f1e584]: Contrate online, sem burocracia, ou converse com a nossa equipe para entender se é o melhor ponto de partida para a sua operação.
+    - generic [ref=f1e585]:
+      - link "Assinar Manutenção" [ref=f1e586] [cursor=pointer]:
+        - /url: https://app.oravel.com.br/assinar/manutencao
+      - link "Comparar planos" [ref=f1e587] [cursor=pointer]:
+        - /url: /planos/#manutencao
+      - link "Falar com vendas" [ref=f1e588] [cursor=pointer]:
+        - /url: /contato.php?pacote=manutencao
+  - contentinfo [ref=f1e589]:
+    - generic [ref=f1e590]:
+      - generic [ref=f1e591]: Soluções
+      - link "ERP Locadoras" [ref=f1e592] [cursor=pointer]:
+        - /url: /erp-cmms/
+      - link "Manutenção" [ref=f1e593] [cursor=pointer]:
+        - /url: /software-manutencao-industrial/
+      - link "Serviços" [ref=f1e594] [cursor=pointer]:
+        - /url: /software-gestao-de-servicos/
+      - link "Logística" [ref=f1e595] [cursor=pointer]:
+        - /url: /software-gestao-frota-logistica/
+      - link "Estoque" [ref=f1e596] [cursor=pointer]:
+        - /url: /wms/
+      - link "Vendas" [ref=f1e597] [cursor=pointer]:
+        - /url: /crm/
+    - generic [ref=f1e598]:
+      - generic [ref=f1e599]:
+        - text: © 2026 Oravel Desenvolvimento de Software
+        - generic [ref=f1e600]: CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, conj. 1713, Pinheiros, São Paulo/SP · CEP 05424-150
+      - generic [ref=f1e601]:
+        - link "Home" [ref=f1e602] [cursor=pointer]:
+          - /url: /
+        - link "Soluções" [ref=f1e603] [cursor=pointer]:
+          - /url: /solucoes/
+        - link "Planos" [ref=f1e604] [cursor=pointer]:
+          - /url: /planos/
+        - link "Contato" [ref=f1e605] [cursor=pointer]:
+          - /url: /contato.php
+        - link "Privacidade" [ref=f1e606] [cursor=pointer]:
+          - /url: /politica-de-privacidade/
+        - link "Termos" [ref=f1e607] [cursor=pointer]:
+          - /url: /termos-de-uso/
+  - button "Abrir chat do WhatsApp" [ref=f1e609]
+  - dialog "Aviso de cookies" [ref=f1e613]:
+    - generic [ref=f1e614]:
+      - text: Usamos cookies do Google (Analytics e Ads) para medir o site e nossos anúncios. Você pode recusar a qualquer momento.
+      - link "Saiba mais" [ref=f1e615] [cursor=pointer]:
+        - /url: /politica-de-privacidade/
+      - text: .
+    - generic [ref=f1e616]:
+      - button "Entendi" [ref=f1e617] [cursor=pointer]
+      - button "Recusar" [ref=f1e618] [cursor=pointer]

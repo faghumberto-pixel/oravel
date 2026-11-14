@@ -9,13 +9,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // O PostgreSQL exige um cast explícito quando mudamos de bigint para varchar
-        DB::statement('ALTER TABLE activity_log ALTER COLUMN subject_id TYPE VARCHAR(255) USING subject_id::text');
+        if (DB::getDriverName() !== 'sqlite') {
+            // O PostgreSQL exige um cast explícito quando mudamos de bigint para varchar
+            DB::statement('ALTER TABLE activity_log ALTER COLUMN subject_id TYPE VARCHAR(255) USING subject_id::text');
+        }
     }
 
     public function down(): void
     {
-        // Caso precise reverter (opcional, mas recomendado)
-        DB::statement('ALTER TABLE activity_log ALTER COLUMN subject_id TYPE BIGINT USING subject_id::bigint');
+        if (DB::getDriverName() !== 'sqlite') {
+            // Caso precise reverter (opcional, mas recomendado)
+            DB::statement('ALTER TABLE activity_log ALTER COLUMN subject_id TYPE BIGINT USING subject_id::bigint');
+        }
     }
 };

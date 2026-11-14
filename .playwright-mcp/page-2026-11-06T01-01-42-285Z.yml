@@ -1,0 +1,906 @@
+- generic [active] [ref=f24e1]:
+  - generic [ref=f24e2]:
+    - generic [ref=f24e3]:
+      - navigation [ref=f24e5]:
+        - generic [ref=f24e9]:
+          - generic [ref=f24e10]: Locadora Demo
+          - generic [ref=f24e11]: "Módulo: Locadora"
+        - generic [ref=f24e12]:
+          - generic [ref=f24e15]:
+            - generic [ref=f24e16]: Pesquisa global
+            - searchbox "Pesquisa global" [ref=f24e22]
+          - button "⌘K" [ref=f24e24] [cursor=pointer]
+          - button "Abrir notificações" [ref=f24e30] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=f24e34] [cursor=pointer]:
+            - /url: http://127.0.0.1:8099/admin/caixa-de-email
+          - button "Menu do usuário" [ref=f24e39] [cursor=pointer]:
+            - img "Avatar de Administrador Demo" [ref=f24e40]
+        - link "Ajuda" [ref=f24e42] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=f24e46]:
+        - generic [ref=f24e48]:
+          - heading "Custo de manutenção por equipamento" [level=1] [ref=f24e51]
+          - generic [ref=f24e54]:
+            - generic [ref=f24e55]:
+              - button "Todos os equipamentos 25 R$ 210.993,18 em manutenção no período" [ref=f24e56] [cursor=pointer]:
+                - generic [ref=f24e57]: Todos os equipamentos
+                - generic [ref=f24e58]: "25"
+                - generic [ref=f24e59]: R$ 210.993,18 em manutenção no período
+              - button "Considerar trocar ou vender 3 R$ 99.797,16 em manutenção no período" [ref=f24e60] [cursor=pointer]:
+                - generic [ref=f24e61]: Considerar trocar ou vender
+                - generic [ref=f24e62]: "3"
+                - generic [ref=f24e63]: R$ 99.797,16 em manutenção no período
+              - button "Revisar 1 R$ 50.743,04 em manutenção no período" [ref=f24e64] [cursor=pointer]:
+                - generic [ref=f24e65]: Revisar
+                - generic [ref=f24e66]: "1"
+                - generic [ref=f24e67]: R$ 50.743,04 em manutenção no período
+              - button "Custo sob controle 21 R$ 60.452,98 em manutenção no período" [ref=f24e68] [cursor=pointer]:
+                - generic [ref=f24e69]: Custo sob controle
+                - generic [ref=f24e70]: "21"
+                - generic [ref=f24e71]: R$ 60.452,98 em manutenção no período
+            - generic [ref=f24e72]:
+              - generic [ref=f24e73]:
+                - generic [ref=f24e74]: Período
+                - combobox [ref=f24e75]:
+                  - option "Últimos 6 meses"
+                  - option "Últimos 12 meses" [selected]
+                  - option "Últimos 18 meses"
+                  - option "Últimos 24 meses"
+              - generic [ref=f24e76]:
+                - generic [ref=f24e77]: Categoria
+                - combobox [ref=f24e78]:
+                  - option "Todas" [selected]
+                  - option "Andaime"
+                  - option "Compressor"
+                  - option "Ferramenta Elétrica"
+                  - option "Gerador"
+                  - option "Plataforma Elevatória"
+              - generic [ref=f24e79]:
+                - generic [ref=f24e80]: Ordenar por
+                - combobox [ref=f24e81]:
+                  - option "Maior custo no período" [selected]
+                  - option "Maior % do valor do equipamento"
+                  - option "Maior custo acumulado"
+                  - option "Mais retrabalho"
+                  - option "Nome (A–Z)"
+              - generic [ref=f24e82]:
+                - generic [ref=f24e83]: Buscar equipamento
+                - searchbox "Nome, patrimônio ou tag" [ref=f24e84]
+            - table [ref=f24e86]:
+              - rowgroup [ref=f24e87]:
+                - row [ref=f24e88]:
+                  - columnheader "#" [ref=f24e89]
+                  - columnheader "Equipamento" [ref=f24e90]
+                  - columnheader "Valor de aquisição" [ref=f24e91]
+                  - columnheader "Custo no período" [ref=f24e92]
+                  - columnheader "Últimos 12 meses" [ref=f24e93]
+                  - columnheader "Acumulado" [ref=f24e94]
+                  - columnheader "% do valor" [ref=f24e95]
+                  - columnheader "Tendência" [ref=f24e96]
+                  - columnheader "OS" [ref=f24e97]
+                  - columnheader "Situação" [ref=f24e98]
+              - rowgroup [ref=f24e99]:
+                - row [ref=f24e100]:
+                  - cell "1" [ref=f24e101]
+                  - cell "Plataforma Articulada 12m Diesel PA-02 · Plataforma Elevatória · Em manutenção" [ref=f24e102]:
+                    - link "Plataforma Articulada 12m Diesel" [ref=f24e103] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/38acc8ad-deb6-416a-96ce-0357c6a1c45c/edit
+                    - generic [ref=f24e104]: PA-02 · Plataforma Elevatória · Em manutenção
+                  - cell "R$ 120.000,00" [ref=f24e105]
+                  - cell "R$ 50.743,04 11 OS" [ref=f24e106]:
+                    - text: R$ 50.743,04
+                    - generic [ref=f24e107]: 11 OS
+                  - 'cell "dez/25: R$ 9.447,98 jan/26: R$ 0,00 fev/26: R$ 7.394,49 mar/26: R$ 1.696,33 abr/26: R$ 6.217,83 mai/26: R$ 0,00 jun/26: R$ 6.599,32 jul/26: R$ 2.751,32 ago/26: R$ 4.073,09 set/26: R$ 0,00 out/26: R$ 12.249,68 nov/26: R$ 313,00" [ref=f24e108]':
+                    - generic [ref=f24e109]:
+                      - 'generic "dez/25: R$ 9.447,98" [ref=f24e110]'
+                      - 'generic "jan/26: R$ 0,00" [ref=f24e111]'
+                      - 'generic "fev/26: R$ 7.394,49" [ref=f24e112]'
+                      - 'generic "mar/26: R$ 1.696,33" [ref=f24e113]'
+                      - 'generic "abr/26: R$ 6.217,83" [ref=f24e114]'
+                      - 'generic "mai/26: R$ 0,00" [ref=f24e115]'
+                      - 'generic "jun/26: R$ 6.599,32" [ref=f24e116]'
+                      - 'generic "jul/26: R$ 2.751,32" [ref=f24e117]'
+                      - 'generic "ago/26: R$ 4.073,09" [ref=f24e118]'
+                      - 'generic "set/26: R$ 0,00" [ref=f24e119]'
+                      - 'generic "out/26: R$ 12.249,68" [ref=f24e120]'
+                      - 'generic "nov/26: R$ 313,00" [ref=f24e121]'
+                  - cell "R$ 66.713,00" [ref=f24e122]
+                  - cell "56%" [ref=f24e123]
+                  - cell "↑ 5%" [ref=f24e124]
+                  - cell "15 2 retrabalho" [ref=f24e125]:
+                    - text: "15"
+                    - generic [ref=f24e126]: 2 retrabalho
+                  - cell "Revisar" [ref=f24e127]
+                - row [ref=f24e128]:
+                  - cell "2" [ref=f24e129]
+                  - cell "Gerador 150 kVA Diesel G-03 · Gerador · Locado" [ref=f24e130]:
+                    - link "Gerador 150 kVA Diesel" [ref=f24e131] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/e99bb9ea-a92b-4b30-85d1-577be6121f6f/edit
+                    - generic [ref=f24e132]: G-03 · Gerador · Locado
+                  - cell "R$ 95.000,00" [ref=f24e133]
+                  - cell "R$ 40.785,21 10 OS" [ref=f24e134]:
+                    - text: R$ 40.785,21
+                    - generic [ref=f24e135]: 10 OS
+                  - 'cell "dez/25: R$ 1.523,98 jan/26: R$ 4.379,52 fev/26: R$ 4.512,26 mar/26: R$ 0,00 abr/26: R$ 9.291,39 mai/26: R$ 3.381,56 jun/26: R$ 0,00 jul/26: R$ 7.825,72 ago/26: R$ 4.395,68 set/26: R$ 0,00 out/26: R$ 5.475,10 nov/26: R$ 0,00" [ref=f24e136]':
+                    - generic [ref=f24e137]:
+                      - 'generic "dez/25: R$ 1.523,98" [ref=f24e138]'
+                      - 'generic "jan/26: R$ 4.379,52" [ref=f24e139]'
+                      - 'generic "fev/26: R$ 4.512,26" [ref=f24e140]'
+                      - 'generic "mar/26: R$ 0,00" [ref=f24e141]'
+                      - 'generic "abr/26: R$ 9.291,39" [ref=f24e142]'
+                      - 'generic "mai/26: R$ 3.381,56" [ref=f24e143]'
+                      - 'generic "jun/26: R$ 0,00" [ref=f24e144]'
+                      - 'generic "jul/26: R$ 7.825,72" [ref=f24e145]'
+                      - 'generic "ago/26: R$ 4.395,68" [ref=f24e146]'
+                      - 'generic "set/26: R$ 0,00" [ref=f24e147]'
+                      - 'generic "out/26: R$ 5.475,10" [ref=f24e148]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e149]'
+                  - cell "R$ 61.300,00" [ref=f24e150]
+                  - cell "65%" [ref=f24e151]
+                  - cell "↓ 23%" [ref=f24e152]
+                  - cell "15 3 retrabalho" [ref=f24e153]:
+                    - text: "15"
+                    - generic [ref=f24e154]: 3 retrabalho
+                  - cell "Considerar trocar ou vender" [ref=f24e155]
+                - row [ref=f24e156]:
+                  - cell "3" [ref=f24e157]
+                  - cell "Plataforma Tesoura 10m Elétrica PT-02 · Plataforma Elevatória · Locado" [ref=f24e158]:
+                    - link "Plataforma Tesoura 10m Elétrica" [ref=f24e159] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/9e9d32af-f07a-4330-8068-acd750f71c80/edit
+                    - generic [ref=f24e160]: PT-02 · Plataforma Elevatória · Locado
+                  - cell "R$ 78.000,00" [ref=f24e161]
+                  - cell "R$ 33.324,27 10 OS" [ref=f24e162]:
+                    - text: R$ 33.324,27
+                    - generic [ref=f24e163]: 10 OS
+                  - 'cell "dez/25: R$ 1.432,12 jan/26: R$ 4.432,75 fev/26: R$ 0,00 mar/26: R$ 6.982,41 abr/26: R$ 0,00 mai/26: R$ 5.980,95 jun/26: R$ 0,00 jul/26: R$ 5.685,65 ago/26: R$ 4.856,98 set/26: R$ 0,00 out/26: R$ 3.953,41 nov/26: R$ 0,00" [ref=f24e164]':
+                    - generic [ref=f24e165]:
+                      - 'generic "dez/25: R$ 1.432,12" [ref=f24e166]'
+                      - 'generic "jan/26: R$ 4.432,75" [ref=f24e167]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e168]'
+                      - 'generic "mar/26: R$ 6.982,41" [ref=f24e169]'
+                      - 'generic "abr/26: R$ 0,00" [ref=f24e170]'
+                      - 'generic "mai/26: R$ 5.980,95" [ref=f24e171]'
+                      - 'generic "jun/26: R$ 0,00" [ref=f24e172]'
+                      - 'generic "jul/26: R$ 5.685,65" [ref=f24e173]'
+                      - 'generic "ago/26: R$ 4.856,98" [ref=f24e174]'
+                      - 'generic "set/26: R$ 0,00" [ref=f24e175]'
+                      - 'generic "out/26: R$ 3.953,41" [ref=f24e176]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e177]'
+                  - cell "R$ 49.200,00" [ref=f24e178]
+                  - cell "63%" [ref=f24e179]
+                  - cell "↓ 23%" [ref=f24e180]
+                  - cell "15 3 retrabalho" [ref=f24e181]:
+                    - text: "15"
+                    - generic [ref=f24e182]: 3 retrabalho
+                  - cell "Considerar trocar ou vender" [ref=f24e183]
+                - row [ref=f24e184]:
+                  - cell "4" [ref=f24e185]
+                  - cell "Compressor Parafuso 185 PCM C-02 · Compressor · Locado" [ref=f24e186]:
+                    - link "Compressor Parafuso 185 PCM" [ref=f24e187] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/7e1c6274-2eb4-4ea8-84a2-94b0ea7638a3/edit
+                    - generic [ref=f24e188]: C-02 · Compressor · Locado
+                  - cell "R$ 42.000,00" [ref=f24e189]
+                  - cell "R$ 25.687,68 9 OS" [ref=f24e190]:
+                    - text: R$ 25.687,68
+                    - generic [ref=f24e191]: 9 OS
+                  - 'cell "dez/25: R$ 1.215,83 jan/26: R$ 3.785,84 fev/26: R$ 0,00 mar/26: R$ 3.712,44 abr/26: R$ 1.117,07 mai/26: R$ 3.558,96 jun/26: R$ 0,00 jul/26: R$ 5.367,80 ago/26: R$ 2.679,45 set/26: R$ 0,00 out/26: R$ 4.250,29 nov/26: R$ 0,00" [ref=f24e192]':
+                    - generic [ref=f24e193]:
+                      - 'generic "dez/25: R$ 1.215,83" [ref=f24e194]'
+                      - 'generic "jan/26: R$ 3.785,84" [ref=f24e195]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e196]'
+                      - 'generic "mar/26: R$ 3.712,44" [ref=f24e197]'
+                      - 'generic "abr/26: R$ 1.117,07" [ref=f24e198]'
+                      - 'generic "mai/26: R$ 3.558,96" [ref=f24e199]'
+                      - 'generic "jun/26: R$ 0,00" [ref=f24e200]'
+                      - 'generic "jul/26: R$ 5.367,80" [ref=f24e201]'
+                      - 'generic "ago/26: R$ 2.679,45" [ref=f24e202]'
+                      - 'generic "set/26: R$ 0,00" [ref=f24e203]'
+                      - 'generic "out/26: R$ 4.250,29" [ref=f24e204]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e205]'
+                  - cell "R$ 38.100,00" [ref=f24e206]
+                  - cell "91%" [ref=f24e207]
+                  - cell "↓ 8%" [ref=f24e208]
+                  - cell "14 2 retrabalho" [ref=f24e209]:
+                    - text: "14"
+                    - generic [ref=f24e210]: 2 retrabalho
+                  - cell "Considerar trocar ou vender" [ref=f24e211]
+                - row [ref=f24e212]:
+                  - cell "5" [ref=f24e213]
+                  - cell "Gerador 180 kVA Diesel G-05 · Gerador · Em manutenção" [ref=f24e214]:
+                    - link "Gerador 180 kVA Diesel" [ref=f24e215] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/b70ad8e8-335e-4071-8b12-194f5a112085/edit
+                    - generic [ref=f24e216]: G-05 · Gerador · Em manutenção
+                  - cell "R$ 118.000,00" [ref=f24e217]
+                  - cell "R$ 8.213,36 7 OS" [ref=f24e218]:
+                    - text: R$ 8.213,36
+                    - generic [ref=f24e219]: 7 OS
+                  - 'cell "dez/25: R$ 668,16 jan/26: R$ 0,00 fev/26: R$ 2.228,60 mar/26: R$ 875,32 abr/26: R$ 0,00 mai/26: R$ 0,00 jun/26: R$ 953,20 jul/26: R$ 0,00 ago/26: R$ 2.498,78 set/26: R$ 720,30 out/26: R$ 0,00 nov/26: R$ 269,00" [ref=f24e220]':
+                    - generic [ref=f24e221]:
+                      - 'generic "dez/25: R$ 668,16" [ref=f24e222]'
+                      - 'generic "jan/26: R$ 0,00" [ref=f24e223]'
+                      - 'generic "fev/26: R$ 2.228,60" [ref=f24e224]'
+                      - 'generic "mar/26: R$ 875,32" [ref=f24e225]'
+                      - 'generic "abr/26: R$ 0,00" [ref=f24e226]'
+                      - 'generic "mai/26: R$ 0,00" [ref=f24e227]'
+                      - 'generic "jun/26: R$ 953,20" [ref=f24e228]'
+                      - 'generic "jul/26: R$ 0,00" [ref=f24e229]'
+                      - 'generic "ago/26: R$ 2.498,78" [ref=f24e230]'
+                      - 'generic "set/26: R$ 720,30" [ref=f24e231]'
+                      - 'generic "out/26: R$ 0,00" [ref=f24e232]'
+                      - 'generic "nov/26: R$ 269,00" [ref=f24e233]'
+                  - cell "R$ 9.919,04" [ref=f24e234]
+                  - cell "8%" [ref=f24e235]
+                  - cell "↑ 18%" [ref=f24e236]
+                  - cell "9" [ref=f24e237]
+                  - cell "Custo sob controle" [ref=f24e238]
+                - row [ref=f24e239]:
+                  - cell "6" [ref=f24e240]
+                  - cell "Plataforma Articulada 20m Diesel PA-03 · Plataforma Elevatória · Disponível" [ref=f24e241]:
+                    - link "Plataforma Articulada 20m Diesel" [ref=f24e242] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/759d169d-25b3-4eb7-8789-46789891e1fa/edit
+                    - generic [ref=f24e243]: PA-03 · Plataforma Elevatória · Disponível
+                  - cell "R$ 260.000,00" [ref=f24e244]
+                  - cell "R$ 7.504,80 4 OS" [ref=f24e245]:
+                    - text: R$ 7.504,80
+                    - generic [ref=f24e246]: 4 OS
+                  - 'cell "dez/25: R$ 0,00 jan/26: R$ 1.623,00 fev/26: R$ 0,00 mar/26: R$ 0,00 abr/26: R$ 2.349,20 mai/26: R$ 0,00 jun/26: R$ 0,00 jul/26: R$ 1.853,20 ago/26: R$ 0,00 set/26: R$ 0,00 out/26: R$ 1.679,40 nov/26: R$ 0,00" [ref=f24e247]':
+                    - generic [ref=f24e248]:
+                      - 'generic "dez/25: R$ 0,00" [ref=f24e249]'
+                      - 'generic "jan/26: R$ 1.623,00" [ref=f24e250]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e251]'
+                      - 'generic "mar/26: R$ 0,00" [ref=f24e252]'
+                      - 'generic "abr/26: R$ 2.349,20" [ref=f24e253]'
+                      - 'generic "mai/26: R$ 0,00" [ref=f24e254]'
+                      - 'generic "jun/26: R$ 0,00" [ref=f24e255]'
+                      - 'generic "jul/26: R$ 1.853,20" [ref=f24e256]'
+                      - 'generic "ago/26: R$ 0,00" [ref=f24e257]'
+                      - 'generic "set/26: R$ 0,00" [ref=f24e258]'
+                      - 'generic "out/26: R$ 1.679,40" [ref=f24e259]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e260]'
+                  - cell "R$ 13.953,60" [ref=f24e261]
+                  - cell "5%" [ref=f24e262]
+                  - cell "↓ 11%" [ref=f24e263]
+                  - cell "7" [ref=f24e264]
+                  - cell "Custo sob controle" [ref=f24e265]
+                - row [ref=f24e266]:
+                  - cell "7" [ref=f24e267]
+                  - cell "Plataforma Tesoura 10m Elétrica PT-05 · Plataforma Elevatória · Locado" [ref=f24e268]:
+                    - link "Plataforma Tesoura 10m Elétrica" [ref=f24e269] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/a9bcb153-18dd-42f9-8a57-9870e82f62e8/edit
+                    - generic [ref=f24e270]: PT-05 · Plataforma Elevatória · Locado
+                  - cell "R$ 88.000,00" [ref=f24e271]
+                  - cell "R$ 6.978,52 6 OS" [ref=f24e272]:
+                    - text: R$ 6.978,52
+                    - generic [ref=f24e273]: 6 OS
+                  - 'cell "dez/25: R$ 414,04 jan/26: R$ 0,00 fev/26: R$ 0,00 mar/26: R$ 571,40 abr/26: R$ 0,00 mai/26: R$ 2.285,00 jun/26: R$ 0,00 jul/26: R$ 667,88 ago/26: R$ 0,00 set/26: R$ 2.055,96 out/26: R$ 984,24 nov/26: R$ 0,00" [ref=f24e274]':
+                    - generic [ref=f24e275]:
+                      - 'generic "dez/25: R$ 414,04" [ref=f24e276]'
+                      - 'generic "jan/26: R$ 0,00" [ref=f24e277]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e278]'
+                      - 'generic "mar/26: R$ 571,40" [ref=f24e279]'
+                      - 'generic "abr/26: R$ 0,00" [ref=f24e280]'
+                      - 'generic "mai/26: R$ 2.285,00" [ref=f24e281]'
+                      - 'generic "jun/26: R$ 0,00" [ref=f24e282]'
+                      - 'generic "jul/26: R$ 667,88" [ref=f24e283]'
+                      - 'generic "ago/26: R$ 0,00" [ref=f24e284]'
+                      - 'generic "set/26: R$ 2.055,96" [ref=f24e285]'
+                      - 'generic "out/26: R$ 984,24" [ref=f24e286]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e287]'
+                  - cell "R$ 8.099,60" [ref=f24e288]
+                  - cell "9%" [ref=f24e289]
+                  - cell "↑ 13%" [ref=f24e290]
+                  - cell "8" [ref=f24e291]
+                  - cell "Custo sob controle" [ref=f24e292]
+                - row [ref=f24e293]:
+                  - cell "8" [ref=f24e294]
+                  - cell "Compressor Portátil 750 PCM C-01 · Compressor · Locado" [ref=f24e295]:
+                    - link "Compressor Portátil 750 PCM" [ref=f24e296] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/16f6ea20-084c-4b58-925c-f5fa60e518f6/edit
+                    - generic [ref=f24e297]: C-01 · Compressor · Locado
+                  - cell "R$ 96.000,00" [ref=f24e298]
+                  - cell "R$ 6.754,40 6 OS" [ref=f24e299]:
+                    - text: R$ 6.754,40
+                    - generic [ref=f24e300]: 6 OS
+                  - 'cell "dez/25: R$ 408,32 jan/26: R$ 0,00 fev/26: R$ 0,00 mar/26: R$ 3.139,40 abr/26: R$ 1.710,44 mai/26: R$ 0,00 jun/26: R$ 0,00 jul/26: R$ 806,84 ago/26: R$ 0,00 set/26: R$ 689,40 out/26: R$ 0,00 nov/26: R$ 0,00" [ref=f24e301]':
+                    - generic [ref=f24e302]:
+                      - 'generic "dez/25: R$ 408,32" [ref=f24e303]'
+                      - 'generic "jan/26: R$ 0,00" [ref=f24e304]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e305]'
+                      - 'generic "mar/26: R$ 3.139,40" [ref=f24e306]'
+                      - 'generic "abr/26: R$ 1.710,44" [ref=f24e307]'
+                      - 'generic "mai/26: R$ 0,00" [ref=f24e308]'
+                      - 'generic "jun/26: R$ 0,00" [ref=f24e309]'
+                      - 'generic "jul/26: R$ 806,84" [ref=f24e310]'
+                      - 'generic "ago/26: R$ 0,00" [ref=f24e311]'
+                      - 'generic "set/26: R$ 689,40" [ref=f24e312]'
+                      - 'generic "out/26: R$ 0,00" [ref=f24e313]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e314]'
+                  - cell "R$ 8.566,72" [ref=f24e315]
+                  - cell "9%" [ref=f24e316]
+                  - cell "↓ 72%" [ref=f24e317]
+                  - cell "8" [ref=f24e318]
+                  - cell "Custo sob controle" [ref=f24e319]
+                - row [ref=f24e320]:
+                  - cell "9" [ref=f24e321]
+                  - cell "Gerador 80 kVA Diesel G-02 · Gerador · Disponível" [ref=f24e322]:
+                    - link "Gerador 80 kVA Diesel" [ref=f24e323] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/c4e2c8ae-69c0-4322-94bd-b146714630d4/edit
+                    - generic [ref=f24e324]: G-02 · Gerador · Disponível
+                  - cell "R$ 62.000,00" [ref=f24e325]
+                  - cell "R$ 5.590,66 6 OS" [ref=f24e326]:
+                    - text: R$ 5.590,66
+                    - generic [ref=f24e327]: 6 OS
+                  - 'cell "dez/25: R$ 525,76 jan/26: R$ 0,00 fev/26: R$ 0,00 mar/26: R$ 485,10 abr/26: R$ 1.817,50 mai/26: R$ 0,00 jun/26: R$ 0,00 jul/26: R$ 465,30 ago/26: R$ 1.666,00 set/26: R$ 0,00 out/26: R$ 631,00 nov/26: R$ 0,00" [ref=f24e328]':
+                    - generic [ref=f24e329]:
+                      - 'generic "dez/25: R$ 525,76" [ref=f24e330]'
+                      - 'generic "jan/26: R$ 0,00" [ref=f24e331]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e332]'
+                      - 'generic "mar/26: R$ 485,10" [ref=f24e333]'
+                      - 'generic "abr/26: R$ 1.817,50" [ref=f24e334]'
+                      - 'generic "mai/26: R$ 0,00" [ref=f24e335]'
+                      - 'generic "jun/26: R$ 0,00" [ref=f24e336]'
+                      - 'generic "jul/26: R$ 465,30" [ref=f24e337]'
+                      - 'generic "ago/26: R$ 1.666,00" [ref=f24e338]'
+                      - 'generic "set/26: R$ 0,00" [ref=f24e339]'
+                      - 'generic "out/26: R$ 631,00" [ref=f24e340]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e341]'
+                  - cell "R$ 7.019,42" [ref=f24e342]
+                  - cell "11%" [ref=f24e343]
+                  - cell "↓ 2%" [ref=f24e344]
+                  - cell "8" [ref=f24e345]
+                  - cell "Custo sob controle" [ref=f24e346]
+                - row [ref=f24e347]:
+                  - cell "10" [ref=f24e348]
+                  - cell "Plataforma Articulada 15m Diesel PA-01 · Plataforma Elevatória · Locado" [ref=f24e349]:
+                    - link "Plataforma Articulada 15m Diesel" [ref=f24e350] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/2479e4e0-5777-457c-a311-f7cb0e4cb4a4/edit
+                    - generic [ref=f24e351]: PA-01 · Plataforma Elevatória · Locado
+                  - cell "R$ 185.000,00" [ref=f24e352]
+                  - cell "R$ 4.964,25 4 OS" [ref=f24e353]:
+                    - text: R$ 4.964,25
+                    - generic [ref=f24e354]: 4 OS
+                  - 'cell "dez/25: R$ 0,00 jan/26: R$ 1.063,25 fev/26: R$ 0,00 mar/26: R$ 0,00 abr/26: R$ 1.404,25 mai/26: R$ 0,00 jun/26: R$ 0,00 jul/26: R$ 741,80 ago/26: R$ 0,00 set/26: R$ 0,00 out/26: R$ 1.754,95 nov/26: R$ 0,00" [ref=f24e355]':
+                    - generic [ref=f24e356]:
+                      - 'generic "dez/25: R$ 0,00" [ref=f24e357]'
+                      - 'generic "jan/26: R$ 1.063,25" [ref=f24e358]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e359]'
+                      - 'generic "mar/26: R$ 0,00" [ref=f24e360]'
+                      - 'generic "abr/26: R$ 1.404,25" [ref=f24e361]'
+                      - 'generic "mai/26: R$ 0,00" [ref=f24e362]'
+                      - 'generic "jun/26: R$ 0,00" [ref=f24e363]'
+                      - 'generic "jul/26: R$ 741,80" [ref=f24e364]'
+                      - 'generic "ago/26: R$ 0,00" [ref=f24e365]'
+                      - 'generic "set/26: R$ 0,00" [ref=f24e366]'
+                      - 'generic "out/26: R$ 1.754,95" [ref=f24e367]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e368]'
+                  - cell "R$ 11.452,25" [ref=f24e369]
+                  - cell "6%" [ref=f24e370]
+                  - cell "↑ 1%" [ref=f24e371]
+                  - cell "7" [ref=f24e372]
+                  - cell "Custo sob controle" [ref=f24e373]
+                - row [ref=f24e374]:
+                  - cell "11" [ref=f24e375]
+                  - cell "Plataforma Tesoura 12m Elétrica PT-03 · Plataforma Elevatória · Disponível" [ref=f24e376]:
+                    - link "Plataforma Tesoura 12m Elétrica" [ref=f24e377] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/4d259ad3-5e36-4b47-a2e6-ab51f5a64c18/edit
+                    - generic [ref=f24e378]: PT-03 · Plataforma Elevatória · Disponível
+                  - cell "R$ 95.000,00" [ref=f24e379]
+                  - cell "R$ 3.175,00 4 OS" [ref=f24e380]:
+                    - text: R$ 3.175,00
+                    - generic [ref=f24e381]: 4 OS
+                  - 'cell "dez/25: R$ 781,40 jan/26: R$ 0,00 fev/26: R$ 0,00 mar/26: R$ 588,80 abr/26: R$ 0,00 mai/26: R$ 0,00 jun/26: R$ 809,00 jul/26: R$ 0,00 ago/26: R$ 0,00 set/26: R$ 0,00 out/26: R$ 995,80 nov/26: R$ 0,00" [ref=f24e382]':
+                    - generic [ref=f24e383]:
+                      - 'generic "dez/25: R$ 781,40" [ref=f24e384]'
+                      - 'generic "jan/26: R$ 0,00" [ref=f24e385]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e386]'
+                      - 'generic "mar/26: R$ 588,80" [ref=f24e387]'
+                      - 'generic "abr/26: R$ 0,00" [ref=f24e388]'
+                      - 'generic "mai/26: R$ 0,00" [ref=f24e389]'
+                      - 'generic "jun/26: R$ 809,00" [ref=f24e390]'
+                      - 'generic "jul/26: R$ 0,00" [ref=f24e391]'
+                      - 'generic "ago/26: R$ 0,00" [ref=f24e392]'
+                      - 'generic "set/26: R$ 0,00" [ref=f24e393]'
+                      - 'generic "out/26: R$ 995,80" [ref=f24e394]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e395]'
+                  - cell "R$ 4.258,80" [ref=f24e396]
+                  - cell "4%" [ref=f24e397]
+                  - cell "↑ 32%" [ref=f24e398]
+                  - cell "6" [ref=f24e399]
+                  - cell "Custo sob controle" [ref=f24e400]
+                - row [ref=f24e401]:
+                  - cell "12" [ref=f24e402]
+                  - cell "Plataforma Tesoura 8m Elétrica PT-01 · Plataforma Elevatória · Locado" [ref=f24e403]:
+                    - link "Plataforma Tesoura 8m Elétrica" [ref=f24e404] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/f7bda06d-beec-4df0-a5a5-8cc659cd45fe/edit
+                    - generic [ref=f24e405]: PT-01 · Plataforma Elevatória · Locado
+                  - cell "R$ 62.000,00" [ref=f24e406]
+                  - cell "R$ 2.157,56 4 OS" [ref=f24e407]:
+                    - text: R$ 2.157,56
+                    - generic [ref=f24e408]: 4 OS
+                  - 'cell "dez/25: R$ 0,00 jan/26: R$ 432,82 fev/26: R$ 0,00 mar/26: R$ 0,00 abr/26: R$ 635,72 mai/26: R$ 0,00 jun/26: R$ 515,44 jul/26: R$ 0,00 ago/26: R$ 0,00 set/26: R$ 0,00 out/26: R$ 573,58 nov/26: R$ 0,00" [ref=f24e409]':
+                    - generic [ref=f24e410]:
+                      - 'generic "dez/25: R$ 0,00" [ref=f24e411]'
+                      - 'generic "jan/26: R$ 432,82" [ref=f24e412]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e413]'
+                      - 'generic "mar/26: R$ 0,00" [ref=f24e414]'
+                      - 'generic "abr/26: R$ 635,72" [ref=f24e415]'
+                      - 'generic "mai/26: R$ 0,00" [ref=f24e416]'
+                      - 'generic "jun/26: R$ 515,44" [ref=f24e417]'
+                      - 'generic "jul/26: R$ 0,00" [ref=f24e418]'
+                      - 'generic "ago/26: R$ 0,00" [ref=f24e419]'
+                      - 'generic "set/26: R$ 0,00" [ref=f24e420]'
+                      - 'generic "out/26: R$ 573,58" [ref=f24e421]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e422]'
+                  - cell "R$ 2.829,92" [ref=f24e423]
+                  - cell "5%" [ref=f24e424]
+                  - cell "↑ 2%" [ref=f24e425]
+                  - cell "6" [ref=f24e426]
+                  - cell "Custo sob controle" [ref=f24e427]
+                - row [ref=f24e428]:
+                  - cell "13" [ref=f24e429]
+                  - cell "Plataforma Tesoura 8m Elétrica PT-04 · Plataforma Elevatória · Em manutenção" [ref=f24e430]:
+                    - link "Plataforma Tesoura 8m Elétrica" [ref=f24e431] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/2301bc23-30aa-4fa3-a50e-e1b9d4fb400b/edit
+                    - generic [ref=f24e432]: PT-04 · Plataforma Elevatória · Em manutenção
+                  - cell "R$ 58.000,00" [ref=f24e433]
+                  - cell "R$ 2.133,80 5 OS" [ref=f24e434]:
+                    - text: R$ 2.133,80
+                    - generic [ref=f24e435]: 5 OS
+                  - 'cell "dez/25: R$ 396,72 jan/26: R$ 0,00 fev/26: R$ 0,00 mar/26: R$ 0,00 abr/26: R$ 500,68 mai/26: R$ 0,00 jun/26: R$ 0,00 jul/26: R$ 373,40 ago/26: R$ 0,00 set/26: R$ 0,00 out/26: R$ 588,00 nov/26: R$ 275,00" [ref=f24e436]':
+                    - generic [ref=f24e437]:
+                      - 'generic "dez/25: R$ 396,72" [ref=f24e438]'
+                      - 'generic "jan/26: R$ 0,00" [ref=f24e439]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e440]'
+                      - 'generic "mar/26: R$ 0,00" [ref=f24e441]'
+                      - 'generic "abr/26: R$ 500,68" [ref=f24e442]'
+                      - 'generic "mai/26: R$ 0,00" [ref=f24e443]'
+                      - 'generic "jun/26: R$ 0,00" [ref=f24e444]'
+                      - 'generic "jul/26: R$ 373,40" [ref=f24e445]'
+                      - 'generic "ago/26: R$ 0,00" [ref=f24e446]'
+                      - 'generic "set/26: R$ 0,00" [ref=f24e447]'
+                      - 'generic "out/26: R$ 588,00" [ref=f24e448]'
+                      - 'generic "nov/26: R$ 275,00" [ref=f24e449]'
+                  - cell "R$ 3.243,76" [ref=f24e450]
+                  - cell "6%" [ref=f24e451]
+                  - cell "↑ 38%" [ref=f24e452]
+                  - cell "7" [ref=f24e453]
+                  - cell "Custo sob controle" [ref=f24e454]
+                - row [ref=f24e455]:
+                  - cell "14" [ref=f24e456]
+                  - cell "Gerador 40 kVA Diesel G-01 · Gerador · Locado" [ref=f24e457]:
+                    - link "Gerador 40 kVA Diesel" [ref=f24e458] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/17ee7dd5-c087-4b04-9022-883f8cbfe617/edit
+                    - generic [ref=f24e459]: G-01 · Gerador · Locado
+                  - cell "R$ 38.000,00" [ref=f24e460]
+                  - cell "R$ 1.838,98 4 OS" [ref=f24e461]:
+                    - text: R$ 1.838,98
+                    - generic [ref=f24e462]: 4 OS
+                  - 'cell "dez/25: R$ 0,00 jan/26: R$ 517,60 fev/26: R$ 0,00 mar/26: R$ 0,00 abr/26: R$ 347,40 mai/26: R$ 0,00 jun/26: R$ 0,00 jul/26: R$ 630,50 ago/26: R$ 0,00 set/26: R$ 0,00 out/26: R$ 343,48 nov/26: R$ 0,00" [ref=f24e463]':
+                    - generic [ref=f24e464]:
+                      - 'generic "dez/25: R$ 0,00" [ref=f24e465]'
+                      - 'generic "jan/26: R$ 517,60" [ref=f24e466]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e467]'
+                      - 'generic "mar/26: R$ 0,00" [ref=f24e468]'
+                      - 'generic "abr/26: R$ 347,40" [ref=f24e469]'
+                      - 'generic "mai/26: R$ 0,00" [ref=f24e470]'
+                      - 'generic "jun/26: R$ 0,00" [ref=f24e471]'
+                      - 'generic "jul/26: R$ 630,50" [ref=f24e472]'
+                      - 'generic "ago/26: R$ 0,00" [ref=f24e473]'
+                      - 'generic "set/26: R$ 0,00" [ref=f24e474]'
+                      - 'generic "out/26: R$ 343,48" [ref=f24e475]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e476]'
+                  - cell "R$ 3.443,16" [ref=f24e477]
+                  - cell "9%" [ref=f24e478]
+                  - cell "↑ 13%" [ref=f24e479]
+                  - cell "7" [ref=f24e480]
+                  - cell "Custo sob controle" [ref=f24e481]
+                - row [ref=f24e482]:
+                  - cell "15" [ref=f24e483]
+                  - cell "Andaime Tubular (jogo 20 m²) AN-01 · Andaime · Locado" [ref=f24e484]:
+                    - link "Andaime Tubular (jogo 20 m²)" [ref=f24e485] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/3e34d3e4-08f7-4cfd-bc73-f4df12556817/edit
+                    - generic [ref=f24e486]: AN-01 · Andaime · Locado
+                  - cell "R$ 14.000,00" [ref=f24e487]
+                  - cell "R$ 1.762,72 4 OS" [ref=f24e488]:
+                    - text: R$ 1.762,72
+                    - generic [ref=f24e489]: 4 OS
+                  - 'cell "dez/25: R$ 0,00 jan/26: R$ 0,00 fev/26: R$ 166,24 mar/26: R$ 0,00 abr/26: R$ 939,64 mai/26: R$ 0,00 jun/26: R$ 405,76 jul/26: R$ 0,00 ago/26: R$ 0,00 set/26: R$ 0,00 out/26: R$ 251,08 nov/26: R$ 0,00" [ref=f24e490]':
+                    - generic [ref=f24e491]:
+                      - 'generic "dez/25: R$ 0,00" [ref=f24e492]'
+                      - 'generic "jan/26: R$ 0,00" [ref=f24e493]'
+                      - 'generic "fev/26: R$ 166,24" [ref=f24e494]'
+                      - 'generic "mar/26: R$ 0,00" [ref=f24e495]'
+                      - 'generic "abr/26: R$ 939,64" [ref=f24e496]'
+                      - 'generic "mai/26: R$ 0,00" [ref=f24e497]'
+                      - 'generic "jun/26: R$ 405,76" [ref=f24e498]'
+                      - 'generic "jul/26: R$ 0,00" [ref=f24e499]'
+                      - 'generic "ago/26: R$ 0,00" [ref=f24e500]'
+                      - 'generic "set/26: R$ 0,00" [ref=f24e501]'
+                      - 'generic "out/26: R$ 251,08" [ref=f24e502]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e503]'
+                  - cell "R$ 2.285,84" [ref=f24e504]
+                  - cell "16%" [ref=f24e505]
+                  - cell "↓ 41%" [ref=f24e506]
+                  - cell "6" [ref=f24e507]
+                  - cell "Custo sob controle" [ref=f24e508]
+                - row [ref=f24e509]:
+                  - cell "16" [ref=f24e510]
+                  - cell "Torre de Andaime Móvel 6m AN-03 · Andaime · Disponível" [ref=f24e511]:
+                    - link "Torre de Andaime Móvel 6m" [ref=f24e512] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/a453ff6b-8960-4180-99ee-063304c6f913/edit
+                    - generic [ref=f24e513]: AN-03 · Andaime · Disponível
+                  - cell "R$ 11.500,00" [ref=f24e514]
+                  - cell "R$ 1.741,38 4 OS" [ref=f24e515]:
+                    - text: R$ 1.741,38
+                    - generic [ref=f24e516]: 4 OS
+                  - 'cell "dez/25: R$ 0,00 jan/26: R$ 204,48 fev/26: R$ 0,00 mar/26: R$ 0,00 abr/26: R$ 0,00 mai/26: R$ 282,45 jun/26: R$ 0,00 jul/26: R$ 957,05 ago/26: R$ 0,00 set/26: R$ 297,40 out/26: R$ 0,00 nov/26: R$ 0,00" [ref=f24e517]':
+                    - generic [ref=f24e518]:
+                      - 'generic "dez/25: R$ 0,00" [ref=f24e519]'
+                      - 'generic "jan/26: R$ 204,48" [ref=f24e520]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e521]'
+                      - 'generic "mar/26: R$ 0,00" [ref=f24e522]'
+                      - 'generic "abr/26: R$ 0,00" [ref=f24e523]'
+                      - 'generic "mai/26: R$ 282,45" [ref=f24e524]'
+                      - 'generic "jun/26: R$ 0,00" [ref=f24e525]'
+                      - 'generic "jul/26: R$ 957,05" [ref=f24e526]'
+                      - 'generic "ago/26: R$ 0,00" [ref=f24e527]'
+                      - 'generic "set/26: R$ 297,40" [ref=f24e528]'
+                      - 'generic "out/26: R$ 0,00" [ref=f24e529]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e530]'
+                  - cell "R$ 2.279,45" [ref=f24e531]
+                  - cell "20%" [ref=f24e532]
+                  - cell "↑ 158%" [ref=f24e533]
+                  - cell "6" [ref=f24e534]
+                  - cell "Custo sob controle" [ref=f24e535]
+                - row [ref=f24e536]:
+                  - cell "17" [ref=f24e537]
+                  - cell "Compressor Pistão 20 pés C-03 · Compressor · Disponível" [ref=f24e538]:
+                    - link "Compressor Pistão 20 pés" [ref=f24e539] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/b04a474a-84dd-443b-92e9-eec1616f7dfe/edit
+                    - generic [ref=f24e540]: C-03 · Compressor · Disponível
+                  - cell "R$ 9.800,00" [ref=f24e541]
+                  - cell "R$ 1.624,62 6 OS" [ref=f24e542]:
+                    - text: R$ 1.624,62
+                    - generic [ref=f24e543]: 6 OS
+                  - 'cell "dez/25: R$ 557,59 jan/26: R$ 0,00 fev/26: R$ 0,00 mar/26: R$ 196,40 abr/26: R$ 0,00 mai/26: R$ 0,00 jun/26: R$ 736,01 jul/26: R$ 0,00 ago/26: R$ 0,00 set/26: R$ 134,62 out/26: R$ 0,00 nov/26: R$ 0,00" [ref=f24e544]':
+                    - generic [ref=f24e545]:
+                      - 'generic "dez/25: R$ 557,59" [ref=f24e546]'
+                      - 'generic "jan/26: R$ 0,00" [ref=f24e547]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e548]'
+                      - 'generic "mar/26: R$ 196,40" [ref=f24e549]'
+                      - 'generic "abr/26: R$ 0,00" [ref=f24e550]'
+                      - 'generic "mai/26: R$ 0,00" [ref=f24e551]'
+                      - 'generic "jun/26: R$ 736,01" [ref=f24e552]'
+                      - 'generic "jul/26: R$ 0,00" [ref=f24e553]'
+                      - 'generic "ago/26: R$ 0,00" [ref=f24e554]'
+                      - 'generic "set/26: R$ 134,62" [ref=f24e555]'
+                      - 'generic "out/26: R$ 0,00" [ref=f24e556]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e557]'
+                  - cell "R$ 1.960,00" [ref=f24e558]
+                  - cell "20%" [ref=f24e559]
+                  - cell "↑ 15%" [ref=f24e560]
+                  - cell "8" [ref=f24e561]
+                  - cell "Custo sob controle" [ref=f24e562]
+                - row [ref=f24e563]:
+                  - cell "18" [ref=f24e564]
+                  - cell "Gerador 20 kVA Diesel G-04 · Gerador · Locado" [ref=f24e565]:
+                    - link "Gerador 20 kVA Diesel" [ref=f24e566] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/23d3e9be-4455-4ea1-80ea-259869caaeb7/edit
+                    - generic [ref=f24e567]: G-04 · Gerador · Locado
+                  - cell "R$ 21.000,00" [ref=f24e568]
+                  - cell "R$ 1.372,94 4 OS" [ref=f24e569]:
+                    - text: R$ 1.372,94
+                    - generic [ref=f24e570]: 4 OS
+                  - 'cell "dez/25: R$ 367,52 jan/26: R$ 0,00 fev/26: R$ 0,00 mar/26: R$ 346,56 abr/26: R$ 0,00 mai/26: R$ 0,00 jun/26: R$ 257,64 jul/26: R$ 0,00 ago/26: R$ 0,00 set/26: R$ 401,22 out/26: R$ 0,00 nov/26: R$ 0,00" [ref=f24e571]':
+                    - generic [ref=f24e572]:
+                      - 'generic "dez/25: R$ 367,52" [ref=f24e573]'
+                      - 'generic "jan/26: R$ 0,00" [ref=f24e574]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e575]'
+                      - 'generic "mar/26: R$ 346,56" [ref=f24e576]'
+                      - 'generic "abr/26: R$ 0,00" [ref=f24e577]'
+                      - 'generic "mai/26: R$ 0,00" [ref=f24e578]'
+                      - 'generic "jun/26: R$ 257,64" [ref=f24e579]'
+                      - 'generic "jul/26: R$ 0,00" [ref=f24e580]'
+                      - 'generic "ago/26: R$ 0,00" [ref=f24e581]'
+                      - 'generic "set/26: R$ 401,22" [ref=f24e582]'
+                      - 'generic "out/26: R$ 0,00" [ref=f24e583]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e584]'
+                  - cell "R$ 2.012,69" [ref=f24e585]
+                  - cell "10%" [ref=f24e586]
+                  - cell "↓ 8%" [ref=f24e587]
+                  - cell "6" [ref=f24e588]
+                  - cell "Custo sob controle" [ref=f24e589]
+                - row [ref=f24e590]:
+                  - cell "19" [ref=f24e591]
+                  - cell "Martelete Rompedor 11 kg FE-01 · Ferramenta Elétrica · Locado" [ref=f24e592]:
+                    - link "Martelete Rompedor 11 kg" [ref=f24e593] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/6b2d6b51-8c24-4b82-bebe-549f841a942b/edit
+                    - generic [ref=f24e594]: FE-01 · Ferramenta Elétrica · Locado
+                  - cell "R$ 6.800,00" [ref=f24e595]
+                  - cell "R$ 1.048,43 3 OS" [ref=f24e596]:
+                    - text: R$ 1.048,43
+                    - generic [ref=f24e597]: 3 OS
+                  - 'cell "dez/25: R$ 236,13 jan/26: R$ 0,00 fev/26: R$ 0,00 mar/26: R$ 0,00 abr/26: R$ 0,00 mai/26: R$ 0,00 jun/26: R$ 357,17 jul/26: R$ 0,00 ago/26: R$ 455,13 set/26: R$ 0,00 out/26: R$ 0,00 nov/26: R$ 0,00" [ref=f24e598]':
+                    - generic [ref=f24e599]:
+                      - 'generic "dez/25: R$ 236,13" [ref=f24e600]'
+                      - 'generic "jan/26: R$ 0,00" [ref=f24e601]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e602]'
+                      - 'generic "mar/26: R$ 0,00" [ref=f24e603]'
+                      - 'generic "abr/26: R$ 0,00" [ref=f24e604]'
+                      - 'generic "mai/26: R$ 0,00" [ref=f24e605]'
+                      - 'generic "jun/26: R$ 357,17" [ref=f24e606]'
+                      - 'generic "jul/26: R$ 0,00" [ref=f24e607]'
+                      - 'generic "ago/26: R$ 455,13" [ref=f24e608]'
+                      - 'generic "set/26: R$ 0,00" [ref=f24e609]'
+                      - 'generic "out/26: R$ 0,00" [ref=f24e610]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e611]'
+                  - cell "R$ 1.246,43" [ref=f24e612]
+                  - cell "18%" [ref=f24e613]
+                  - cell "↑ 244%" [ref=f24e614]
+                  - cell "4" [ref=f24e615]
+                  - cell "Custo sob controle" [ref=f24e616]
+                - row [ref=f24e617]:
+                  - cell "20" [ref=f24e618]
+                  - cell "Andaime Fachadeiro (jogo 50 m²) AN-02 · Andaime · Locado" [ref=f24e619]:
+                    - link "Andaime Fachadeiro (jogo 50 m²)" [ref=f24e620] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/7c10eb22-a87b-40d0-9b7d-2c33cd7881e0/edit
+                    - generic [ref=f24e621]: AN-02 · Andaime · Locado
+                  - cell "R$ 32.000,00" [ref=f24e622]
+                  - cell "R$ 1.007,48 3 OS" [ref=f24e623]:
+                    - text: R$ 1.007,48
+                    - generic [ref=f24e624]: 3 OS
+                  - 'cell "dez/25: R$ 0,00 jan/26: R$ 0,00 fev/26: R$ 358,20 mar/26: R$ 0,00 abr/26: R$ 0,00 mai/26: R$ 0,00 jun/26: R$ 346,80 jul/26: R$ 0,00 ago/26: R$ 0,00 set/26: R$ 0,00 out/26: R$ 302,48 nov/26: R$ 0,00" [ref=f24e625]':
+                    - generic [ref=f24e626]:
+                      - 'generic "dez/25: R$ 0,00" [ref=f24e627]'
+                      - 'generic "jan/26: R$ 0,00" [ref=f24e628]'
+                      - 'generic "fev/26: R$ 358,20" [ref=f24e629]'
+                      - 'generic "mar/26: R$ 0,00" [ref=f24e630]'
+                      - 'generic "abr/26: R$ 0,00" [ref=f24e631]'
+                      - 'generic "mai/26: R$ 0,00" [ref=f24e632]'
+                      - 'generic "jun/26: R$ 346,80" [ref=f24e633]'
+                      - 'generic "jul/26: R$ 0,00" [ref=f24e634]'
+                      - 'generic "ago/26: R$ 0,00" [ref=f24e635]'
+                      - 'generic "set/26: R$ 0,00" [ref=f24e636]'
+                      - 'generic "out/26: R$ 302,48" [ref=f24e637]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e638]'
+                  - cell "R$ 1.789,96" [ref=f24e639]
+                  - cell "6%" [ref=f24e640]
+                  - cell "↑ 81%" [ref=f24e641]
+                  - cell "5" [ref=f24e642]
+                  - cell "Custo sob controle" [ref=f24e643]
+                - row [ref=f24e644]:
+                  - cell "21" [ref=f24e645]
+                  - cell "Cortadora de Piso 14\" FE-02 · Ferramenta Elétrica · Locado" [ref=f24e646]:
+                    - link "Cortadora de Piso 14\"" [ref=f24e647] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/9f58e012-ef01-4d42-bfd9-747e03e2ba44/edit
+                    - generic [ref=f24e648]: FE-02 · Ferramenta Elétrica · Locado
+                  - cell "R$ 18.500,00" [ref=f24e649]
+                  - cell "R$ 837,35 2 OS" [ref=f24e650]:
+                    - text: R$ 837,35
+                    - generic [ref=f24e651]: 2 OS
+                  - 'cell "dez/25: R$ 471,52 jan/26: R$ 0,00 fev/26: R$ 0,00 mar/26: R$ 0,00 abr/26: R$ 0,00 mai/26: R$ 0,00 jun/26: R$ 365,83 jul/26: R$ 0,00 ago/26: R$ 0,00 set/26: R$ 0,00 out/26: R$ 0,00 nov/26: R$ 0,00" [ref=f24e652]':
+                    - generic [ref=f24e653]:
+                      - 'generic "dez/25: R$ 471,52" [ref=f24e654]'
+                      - 'generic "jan/26: R$ 0,00" [ref=f24e655]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e656]'
+                      - 'generic "mar/26: R$ 0,00" [ref=f24e657]'
+                      - 'generic "abr/26: R$ 0,00" [ref=f24e658]'
+                      - 'generic "mai/26: R$ 0,00" [ref=f24e659]'
+                      - 'generic "jun/26: R$ 365,83" [ref=f24e660]'
+                      - 'generic "jul/26: R$ 0,00" [ref=f24e661]'
+                      - 'generic "ago/26: R$ 0,00" [ref=f24e662]'
+                      - 'generic "set/26: R$ 0,00" [ref=f24e663]'
+                      - 'generic "out/26: R$ 0,00" [ref=f24e664]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e665]'
+                  - cell "R$ 1.194,13" [ref=f24e666]
+                  - cell "6%" [ref=f24e667]
+                  - cell "↓ 22%" [ref=f24e668]
+                  - cell "3" [ref=f24e669]
+                  - cell "Custo sob controle" [ref=f24e670]
+                - row [ref=f24e671]:
+                  - cell "22" [ref=f24e672]
+                  - cell "Betoneira 400 L FE-04 · Ferramenta Elétrica · Disponível" [ref=f24e673]:
+                    - link "Betoneira 400 L" [ref=f24e674] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/8d1ed711-0f78-4637-8e28-adf6e10e8e21/edit
+                    - generic [ref=f24e675]: FE-04 · Ferramenta Elétrica · Disponível
+                  - cell "R$ 5.600,00" [ref=f24e676]
+                  - cell "R$ 728,48 2 OS" [ref=f24e677]:
+                    - text: R$ 728,48
+                    - generic [ref=f24e678]: 2 OS
+                  - 'cell "dez/25: R$ 517,96 jan/26: R$ 0,00 fev/26: R$ 0,00 mar/26: R$ 0,00 abr/26: R$ 0,00 mai/26: R$ 210,52 jun/26: R$ 0,00 jul/26: R$ 0,00 ago/26: R$ 0,00 set/26: R$ 0,00 out/26: R$ 0,00 nov/26: R$ 0,00" [ref=f24e679]':
+                    - generic [ref=f24e680]:
+                      - 'generic "dez/25: R$ 517,96" [ref=f24e681]'
+                      - 'generic "jan/26: R$ 0,00" [ref=f24e682]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e683]'
+                      - 'generic "mar/26: R$ 0,00" [ref=f24e684]'
+                      - 'generic "abr/26: R$ 0,00" [ref=f24e685]'
+                      - 'generic "mai/26: R$ 210,52" [ref=f24e686]'
+                      - 'generic "jun/26: R$ 0,00" [ref=f24e687]'
+                      - 'generic "jul/26: R$ 0,00" [ref=f24e688]'
+                      - 'generic "ago/26: R$ 0,00" [ref=f24e689]'
+                      - 'generic "set/26: R$ 0,00" [ref=f24e690]'
+                      - 'generic "out/26: R$ 0,00" [ref=f24e691]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e692]'
+                  - cell "R$ 1.120,00" [ref=f24e693]
+                  - cell "20%" [ref=f24e694]
+                  - cell "↓ 100%" [ref=f24e695]
+                  - cell "4" [ref=f24e696]
+                  - cell "Custo sob controle" [ref=f24e697]
+                - row [ref=f24e698]:
+                  - cell "23" [ref=f24e699]
+                  - cell "Compressor Pistão 10 pés C-04 · Compressor · Disponível" [ref=f24e700]:
+                    - link "Compressor Pistão 10 pés" [ref=f24e701] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/8bfc8df3-7aa6-48e8-ac84-66d45219c835/edit
+                    - generic [ref=f24e702]: C-04 · Compressor · Disponível
+                  - cell "R$ 4.200,00" [ref=f24e703]
+                  - cell "R$ 567,51 4 OS" [ref=f24e704]:
+                    - text: R$ 567,51
+                    - generic [ref=f24e705]: 4 OS
+                  - 'cell "dez/25: R$ 139,28 jan/26: R$ 0,00 fev/26: R$ 0,00 mar/26: R$ 150,99 abr/26: R$ 0,00 mai/26: R$ 0,00 jun/26: R$ 130,33 jul/26: R$ 0,00 ago/26: R$ 0,00 set/26: R$ 146,91 out/26: R$ 0,00 nov/26: R$ 0,00" [ref=f24e706]':
+                    - generic [ref=f24e707]:
+                      - 'generic "dez/25: R$ 139,28" [ref=f24e708]'
+                      - 'generic "jan/26: R$ 0,00" [ref=f24e709]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e710]'
+                      - 'generic "mar/26: R$ 150,99" [ref=f24e711]'
+                      - 'generic "abr/26: R$ 0,00" [ref=f24e712]'
+                      - 'generic "mai/26: R$ 0,00" [ref=f24e713]'
+                      - 'generic "jun/26: R$ 130,33" [ref=f24e714]'
+                      - 'generic "jul/26: R$ 0,00" [ref=f24e715]'
+                      - 'generic "ago/26: R$ 0,00" [ref=f24e716]'
+                      - 'generic "set/26: R$ 146,91" [ref=f24e717]'
+                      - 'generic "out/26: R$ 0,00" [ref=f24e718]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e719]'
+                  - cell "R$ 840,00" [ref=f24e720]
+                  - cell "20%" [ref=f24e721]
+                  - cell "↓ 4%" [ref=f24e722]
+                  - cell "6" [ref=f24e723]
+                  - cell "Custo sob controle" [ref=f24e724]
+                - row [ref=f24e725]:
+                  - cell "24" [ref=f24e726]
+                  - cell "Vibrador de Concreto 2\" FE-05 · Ferramenta Elétrica · Em manutenção" [ref=f24e727]:
+                    - link "Vibrador de Concreto 2\"" [ref=f24e728] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/7cd15e8a-4539-4776-9e26-d76e757e1aaa/edit
+                    - generic [ref=f24e729]: FE-05 · Ferramenta Elétrica · Em manutenção
+                  - cell "R$ 3.900,00" [ref=f24e730]
+                  - cell "R$ 300,93 2 OS" [ref=f24e731]:
+                    - text: R$ 300,93
+                    - generic [ref=f24e732]: 2 OS
+                  - 'cell "dez/25: R$ 0,00 jan/26: R$ 0,00 fev/26: R$ 0,00 mar/26: R$ 0,00 abr/26: R$ 0,00 mai/26: R$ 157,93 jun/26: R$ 0,00 jul/26: R$ 0,00 ago/26: R$ 0,00 set/26: R$ 0,00 out/26: R$ 0,00 nov/26: R$ 143,00" [ref=f24e733]':
+                    - generic [ref=f24e734]:
+                      - 'generic "dez/25: R$ 0,00" [ref=f24e735]'
+                      - 'generic "jan/26: R$ 0,00" [ref=f24e736]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e737]'
+                      - 'generic "mar/26: R$ 0,00" [ref=f24e738]'
+                      - 'generic "abr/26: R$ 0,00" [ref=f24e739]'
+                      - 'generic "mai/26: R$ 157,93" [ref=f24e740]'
+                      - 'generic "jun/26: R$ 0,00" [ref=f24e741]'
+                      - 'generic "jul/26: R$ 0,00" [ref=f24e742]'
+                      - 'generic "ago/26: R$ 0,00" [ref=f24e743]'
+                      - 'generic "set/26: R$ 0,00" [ref=f24e744]'
+                      - 'generic "out/26: R$ 0,00" [ref=f24e745]'
+                      - 'generic "nov/26: R$ 143,00" [ref=f24e746]'
+                  - cell "R$ 923,00" [ref=f24e747]
+                  - cell "24%" [ref=f24e748]
+                  - cell "↓ 9%" [ref=f24e749]
+                  - cell "5" [ref=f24e750]
+                  - cell "Custo sob controle" [ref=f24e751]
+                - row [ref=f24e752]:
+                  - cell "25" [ref=f24e753]
+                  - cell "Serra Mármore 110 mm FE-03 · Ferramenta Elétrica · Disponível" [ref=f24e754]:
+                    - link "Serra Mármore 110 mm" [ref=f24e755] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets/169c5a19-7136-46ec-8027-080bb1dfb383/edit
+                    - generic [ref=f24e756]: FE-03 · Ferramenta Elétrica · Disponível
+                  - cell "R$ 1.250,00" [ref=f24e757]
+                  - cell "R$ 149,81 2 OS" [ref=f24e758]:
+                    - text: R$ 149,81
+                    - generic [ref=f24e759]: 2 OS
+                  - 'cell "dez/25: R$ 0,00 jan/26: R$ 55,90 fev/26: R$ 0,00 mar/26: R$ 0,00 abr/26: R$ 0,00 mai/26: R$ 0,00 jun/26: R$ 0,00 jul/26: R$ 93,91 ago/26: R$ 0,00 set/26: R$ 0,00 out/26: R$ 0,00 nov/26: R$ 0,00" [ref=f24e760]':
+                    - generic [ref=f24e761]:
+                      - 'generic "dez/25: R$ 0,00" [ref=f24e762]'
+                      - 'generic "jan/26: R$ 55,90" [ref=f24e763]'
+                      - 'generic "fev/26: R$ 0,00" [ref=f24e764]'
+                      - 'generic "mar/26: R$ 0,00" [ref=f24e765]'
+                      - 'generic "abr/26: R$ 0,00" [ref=f24e766]'
+                      - 'generic "mai/26: R$ 0,00" [ref=f24e767]'
+                      - 'generic "jun/26: R$ 0,00" [ref=f24e768]'
+                      - 'generic "jul/26: R$ 93,91" [ref=f24e769]'
+                      - 'generic "ago/26: R$ 0,00" [ref=f24e770]'
+                      - 'generic "set/26: R$ 0,00" [ref=f24e771]'
+                      - 'generic "out/26: R$ 0,00" [ref=f24e772]'
+                      - 'generic "nov/26: R$ 0,00" [ref=f24e773]'
+                  - cell "R$ 250,00" [ref=f24e774]
+                  - cell "20%" [ref=f24e775]
+                  - cell "↑ 68%" [ref=f24e776]
+                  - cell "3" [ref=f24e777]
+                  - cell "Custo sob controle" [ref=f24e778]
+            - paragraph [ref=f24e779]: "Custo = mão de obra + material + logística das ordens de serviço, no mês em que foram concluídas. O \"% do valor\" compara o custo acumulado com o valor de aquisição: revisar a partir de 40% e considerar trocar ou vender a partir de 60%. A tendência compara os últimos 6 meses com os 6 anteriores."
+    - complementary [ref=f24e780]:
+      - generic [ref=f24e782]:
+        - link "Início" [ref=f24e784] [cursor=pointer]:
+          - /url: http://127.0.0.1:8099/admin/painel-controle
+          - generic [ref=f24e788]: Oravel
+        - button "Recolher barra lateral" [ref=f24e789] [cursor=pointer]
+      - navigation [ref=f24e793]:
+        - list [ref=f24e794]:
+          - listitem [ref=f24e795]:
+            - link "Início" [ref=f24e796] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/admin/painel-controle
+          - listitem [ref=f24e800]:
+            - link "Academia Oravel" [ref=f24e801] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/academia
+        - list [ref=f24e805]:
+          - listitem [ref=f24e806]:
+            - generic [ref=f24e807] [cursor=pointer]:
+              - generic [ref=f24e810]: Ativos
+              - button "Ativos" [ref=f24e811]
+          - listitem [ref=f24e815]:
+            - generic [ref=f24e816] [cursor=pointer]:
+              - generic [ref=f24e819]: Conformidade NR-13
+              - button "Conformidade NR-13" [ref=f24e820]
+          - listitem [ref=f24e824]:
+            - generic [ref=f24e825] [cursor=pointer]:
+              - generic [ref=f24e828]: Gestão de Frota
+              - button "Gestão de Frota" [ref=f24e829]
+          - listitem [ref=f24e833]:
+            - generic [ref=f24e834] [cursor=pointer]:
+              - generic [ref=f24e837]: Inteligência de Ativos
+              - button "Inteligência de Ativos" [expanded] [ref=f24e838]
+            - list [ref=f24e842]:
+              - listitem [ref=f24e843]:
+                - link "Custo de Manutenção" [ref=f24e844] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/admin/custo-manutencao-equipamentos
+          - listitem [ref=f24e848]:
+            - generic [ref=f24e849] [cursor=pointer]:
+              - generic [ref=f24e852]: Materiais e Peças
+              - button "Materiais e Peças" [ref=f24e853]
+          - listitem [ref=f24e857]:
+            - generic [ref=f24e858] [cursor=pointer]:
+              - generic [ref=f24e861]: Itens Agregados
+              - button "Itens Agregados" [ref=f24e862]
+          - listitem [ref=f24e866]:
+            - generic [ref=f24e867] [cursor=pointer]:
+              - generic [ref=f24e870]: EPI
+              - button "EPI" [ref=f24e871]
+          - listitem [ref=f24e875]:
+            - generic [ref=f24e876] [cursor=pointer]:
+              - generic [ref=f24e879]: Comercial
+              - button "Comercial" [ref=f24e880]
+          - listitem [ref=f24e884]:
+            - generic [ref=f24e885] [cursor=pointer]:
+              - generic [ref=f24e888]: Configurações
+              - button "Configurações" [ref=f24e889]
+          - listitem [ref=f24e893]:
+            - generic [ref=f24e894] [cursor=pointer]:
+              - generic [ref=f24e897]: Departamento Pessoal
+              - button "Departamento Pessoal" [ref=f24e898]
+          - listitem [ref=f24e902]:
+            - generic [ref=f24e903] [cursor=pointer]:
+              - generic [ref=f24e906]: Equipe
+              - button "Equipe" [ref=f24e907]
+          - listitem [ref=f24e911]:
+            - generic [ref=f24e912] [cursor=pointer]:
+              - generic [ref=f24e915]: Financeiro
+              - button "Financeiro" [ref=f24e916]
+          - listitem [ref=f24e920]:
+            - generic [ref=f24e921] [cursor=pointer]:
+              - generic [ref=f24e924]: Logística
+              - button "Logística" [ref=f24e925]
+          - listitem [ref=f24e929]:
+            - generic [ref=f24e930] [cursor=pointer]:
+              - generic [ref=f24e933]: Manutenção
+              - button "Manutenção" [ref=f24e934]
+          - listitem [ref=f24e938]:
+            - generic [ref=f24e939] [cursor=pointer]:
+              - generic [ref=f24e942]: PMP
+              - button "PMP" [ref=f24e943]
+          - listitem [ref=f24e947]:
+            - generic [ref=f24e948] [cursor=pointer]:
+              - generic [ref=f24e951]: Relatórios
+              - button "Relatórios" [ref=f24e952]
+  - generic:
+    - status
+  - button "💬 Mensagens" [ref=f24e958] [cursor=pointer]:
+    - generic [ref=f24e959]:
+      - generic [ref=f24e960]: 💬
+      - generic [ref=f24e961]: Mensagens
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f24e965]

@@ -1,0 +1,962 @@
+- generic [active] [ref=f2e1]:
+  - generic [ref=f2e2]:
+    - generic [ref=f2e3]:
+      - generic [ref=f2e5]:
+        - generic [ref=f2e6]:
+          - link "0800 100 2511" [ref=f2e7] [cursor=pointer]:
+            - /url: tel:08001002511
+          - link "WhatsApp" [ref=f2e13] [cursor=pointer]:
+            - /url: https://api.whatsapp.com/send?phone=5511943277733&text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Armac%20e%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es.&utm_campaign=Bem-vindo%20%C3%A0%20Armac&utm_source=%5BSite%20seminovos%5D%20%5BAll%5D%5BSite%5D%20%5BSEMINOVOS%5D
+        - generic [ref=f2e17]:
+          - link "A Armac" [ref=f2e18] [cursor=pointer]:
+            - /url: https://armac.com.br/sobre-nos/
+          - link "Trabalhe conosco" [ref=f2e20] [cursor=pointer]:
+            - /url: https://armac.gupy.io/
+          - link "Relações com Investidores" [ref=f2e21] [cursor=pointer]:
+            - /url: https://ri.armac.com.br/?_ga=2.219248217.1733186914.1672084344-369905832.1672084343&_gl=1%2A1rrfdzs%2A_ga%2AMzY5OTA1ODMyLjE2NzIwODQzNDM.%2A_ga_Q0VDBZXRWG%2AMTY3MjE0NDYzMS4yLjEuMTY3MjE0NTI3Mi4wLjAuMA
+          - link "Política de Fornecedores" [ref=f2e22] [cursor=pointer]:
+            - /url: https://armac.com.br/politica-de-fornecedores/
+          - link "Contato" [ref=f2e23] [cursor=pointer]:
+            - /url: https://armac.com.br/contato/
+      - banner [ref=f2e24]:
+        - generic [ref=f2e25]:
+          - link [ref=f2e27] [cursor=pointer]:
+            - /url: https://armac.com.br
+            - img "Armac" [ref=f2e29]
+          - generic [ref=f2e30]:
+            - list [ref=f2e32]:
+              - listitem [ref=f2e33]:
+                - link "Locação" [ref=f2e34] [cursor=pointer]:
+                  - /url: https://rental.armac.com.br/
+              - listitem [ref=f2e37]:
+                - link "Seminovos" [ref=f2e38] [cursor=pointer]:
+                  - /url: https://seminovos.armac.com.br/
+              - listitem [ref=f2e41]:
+                - link "SOLUÇÕES OPERACIONAIS" [ref=f2e42] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=f2e43]:
+                - link "TERRAPLANAGEM" [ref=f2e44] [cursor=pointer]:
+                  - /url: "#"
+            - generic [ref=f2e45]:
+              - link "Lojas" [ref=f2e46] [cursor=pointer]:
+                - /url: https://armac.com.br/lojas-armac/
+              - link "Solicitar orçamento" [ref=f2e51] [cursor=pointer]:
+                - /url: https://armac.com.br/orcamento/
+    - complementary [ref=f2e53]:
+      - generic [ref=f2e54]:
+        - link "Armac" [ref=f2e56] [cursor=pointer]:
+          - /url: https://armac.com.br
+        - generic [ref=f2e66] [cursor=pointer]
+      - navigation [ref=f2e69]:
+        - navigation [ref=f2e71]:
+          - list [ref=f2e72]:
+            - listitem [ref=f2e73]:
+              - link "Locação" [ref=f2e74] [cursor=pointer]:
+                - /url: https://rental.armac.com.br/
+              - list [ref=f2e76]:
+                - listitem [ref=f2e77]:
+                  - link "Voltar" [ref=f2e78] [cursor=pointer]:
+                    - /url: "#"
+                - listitem [ref=f2e80]:
+                  - link "EQUIPAMENTOS PARA LOCAÇÃO" [ref=f2e81] [cursor=pointer]:
+                    - /url: https://rental.armac.com.br/equipamentos
+                - listitem [ref=f2e82]:
+                  - link "COMO FUNCIONA A LOCAÇÃO - Em breve" [ref=f2e83] [cursor=pointer]:
+                    - /url: "#"
+            - listitem [ref=f2e84]:
+              - link "SEMINOVOS" [ref=f2e85] [cursor=pointer]:
+                - /url: https://seminovos.armac.com.br/
+              - list [ref=f2e87]:
+                - listitem [ref=f2e88]:
+                  - link "Voltar" [ref=f2e89] [cursor=pointer]:
+                    - /url: "#"
+                - listitem [ref=f2e91]:
+                  - link "MÁQUINAS À VENDA" [ref=f2e92] [cursor=pointer]:
+                    - /url: https://seminovos.armac.com.br/estoque
+                - listitem [ref=f2e93]:
+                  - link "POR QUE COMPRAR DA ARMAC" [ref=f2e94] [cursor=pointer]:
+                    - /url: "#"
+            - listitem [ref=f2e95]:
+              - link "SOLUÇÕES OPERACIONAIS" [ref=f2e96] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=f2e97]:
+              - link "TERRAPLANAGEM" [ref=f2e98] [cursor=pointer]:
+                - /url: "#"
+      - generic [ref=f2e100]:
+        - link "Facebook" [ref=f2e101] [cursor=pointer]:
+          - /url: https://www.facebook.com/armaclocacao/
+        - link "LinkedIn" [ref=f2e104] [cursor=pointer]:
+          - /url: https://www.linkedin.com/company/armac-locacao/
+        - link "YouTube" [ref=f2e107] [cursor=pointer]:
+          - /url: https://www.youtube.com/armac/
+        - link "Instagram" [ref=f2e110] [cursor=pointer]:
+          - /url: https://www.instagram.com/armaclocacao/
+        - link "TikTok" [ref=f2e116] [cursor=pointer]:
+          - /url: https://www.tiktok.com/@armaclocacao/
+    - main [ref=f2e120]:
+      - generic [ref=f2e121]:
+        - iframe [ref=f2e122]
+        - link "Conheça nossa história" [ref=f2e124] [cursor=pointer]:
+          - /url: ./sobre-nos/
+        - generic [ref=f2e125] [cursor=pointer]
+      - generic [ref=f2e131]:
+        - heading "Maior locadora de máquinas e equipamentos do Brasil" [level=1] [ref=f2e140]
+        - generic [ref=f2e144]:
+          - generic [ref=f2e146]:
+            - generic [ref=f2e151]:
+              - generic [ref=f2e152]: máquinas e equipamentos
+              - generic [ref=f2e153]:
+                - generic [ref=f2e154]: +
+                - generic [ref=f2e155]: "0"
+                - generic [ref=f2e156]: mil
+            - generic [ref=f2e161]:
+              - generic [ref=f2e162]: Mecânicos
+              - generic [ref=f2e163]:
+                - generic [ref=f2e164]: +
+                - generic [ref=f2e165]: "0"
+                - generic [ref=f2e166]: mil
+            - generic [ref=f2e171]:
+              - generic [ref=f2e172]: Oficinas
+              - generic [ref=f2e173]:
+                - generic [ref=f2e174]: +
+                - generic [ref=f2e175]: "0"
+            - generic [ref=f2e181]:
+              - generic [ref=f2e182]: Lojas
+              - generic [ref=f2e183]:
+                - generic [ref=f2e184]: +
+                - generic [ref=f2e185]: "0"
+            - generic [ref=f2e191]:
+              - generic [ref=f2e192]: de toneladas movimentadas por ano
+              - generic [ref=f2e193]:
+                - generic [ref=f2e194]: +
+                - generic [ref=f2e195]: "0"
+                - generic [ref=f2e196]: MI
+          - region "Carrossel de imagens" [ref=f2e203]:
+            - generic [ref=f2e204]:
+              - group [aria-hidden] [ref=f2e205]:
+                - figure [ref=f2e206]
+              - group [aria-hidden] [ref=f2e209]:
+                - figure [ref=f2e210]
+              - group [aria-hidden] [ref=f2e213]:
+                - figure [ref=f2e214]
+              - group [aria-hidden] [ref=f2e217]:
+                - figure [ref=f2e218]
+              - group [aria-hidden] [ref=f2e221]:
+                - figure [ref=f2e222]
+              - group [aria-hidden] [ref=f2e225]:
+                - figure [ref=f2e226]
+              - group [aria-hidden] [ref=f2e229]:
+                - figure [ref=f2e230]
+              - group "1 / 22" [ref=f2e233]:
+                - figure [ref=f2e234]:
+                  - img "liugong" [ref=f2e235]
+              - group "2 / 22" [ref=f2e237]:
+                - figure [ref=f2e238]:
+                  - img "xcmg" [ref=f2e239]
+              - group "3 / 22" [ref=f2e241]:
+                - figure [ref=f2e242]:
+                  - img "johndeere" [ref=f2e243]
+              - group "4 / 22" [ref=f2e245]:
+                - figure [ref=f2e246]:
+                  - img "sany-branco-transparente" [ref=f2e247]
+              - group "5 / 22" [ref=f2e249]:
+                - figure [ref=f2e250]:
+                  - img "bobcat" [ref=f2e251]
+              - group "6 / 22" [ref=f2e253]:
+                - figure [ref=f2e254]:
+                  - img "JCB" [ref=f2e255]
+              - group "7 / 22" [ref=f2e257]:
+                - figure [ref=f2e258]:
+                  - img "heli" [ref=f2e259]
+              - group [aria-hidden] [ref=f2e261]:
+                - figure [ref=f2e262]
+              - group [aria-hidden] [ref=f2e265]:
+                - figure [ref=f2e266]
+              - group [aria-hidden] [ref=f2e269]:
+                - figure [ref=f2e270]
+              - group [aria-hidden] [ref=f2e273]:
+                - figure [ref=f2e274]
+              - group [aria-hidden] [ref=f2e277]:
+                - figure [ref=f2e278]
+              - group [aria-hidden] [ref=f2e281]:
+                - figure [ref=f2e282]
+              - group [aria-hidden] [ref=f2e285]:
+                - figure [ref=f2e286]
+              - group [aria-hidden] [ref=f2e289]:
+                - figure [ref=f2e290]
+              - group [aria-hidden] [ref=f2e293]:
+                - figure [ref=f2e294]
+              - group [aria-hidden] [ref=f2e297]:
+                - figure [ref=f2e298]
+              - group [aria-hidden] [ref=f2e301]:
+                - figure [ref=f2e302]
+              - group [aria-hidden] [ref=f2e305]:
+                - figure [ref=f2e306]
+              - group [aria-hidden] [ref=f2e309]:
+                - figure [ref=f2e310]
+              - group [aria-hidden] [ref=f2e313]:
+                - figure [ref=f2e314]
+              - group [aria-hidden] [ref=f2e317]:
+                - figure [ref=f2e318]
+              - group [aria-hidden] [ref=f2e321]:
+                - figure [ref=f2e322]
+              - group [aria-hidden] [ref=f2e325]:
+                - figure [ref=f2e326]
+              - group [aria-hidden] [ref=f2e329]:
+                - figure [ref=f2e330]
+              - group [aria-hidden] [ref=f2e333]:
+                - figure [ref=f2e334]
+              - group [aria-hidden] [ref=f2e337]:
+                - figure [ref=f2e338]
+              - group [aria-hidden] [ref=f2e341]:
+                - figure [ref=f2e342]
+              - group [aria-hidden] [ref=f2e345]:
+                - figure [ref=f2e346]
+            - button "Slide anterior" [ref=f2e349] [cursor=pointer]:
+              - generic [aria-hidden] [ref=f2e350]: 
+            - button "Próximo slide" [ref=f2e351] [cursor=pointer]:
+              - generic [aria-hidden] [ref=f2e352]: 
+          - link "Saiba mais sobre a Armac" [ref=f2e360] [cursor=pointer]:
+            - /url: https://armac.com.br/sobre-nos/
+        - generic [ref=f2e372]:
+          - paragraph [ref=f2e375]: O maior portfólio de Linha Amarela do Brasil
+          - paragraph [ref=f2e378]: Com mais de 11,5 mil máquinas de Linha Amarela, empilhadeiras e caminhões, somos referência nacional em locação, prestação se serviços especializados e venda de Seminovos
+          - paragraph [ref=f2e381]: Com disponibilidade imediata e abrangência nacional, atendemos todos os segmentos da economia com eficiência e segurança, garantindo produtividade máximas nas operações com excelência em manutenção e ativos nas melhores condições e com as mais modernas tecnologias.
+          - link "Fale com um consultor" [ref=f2e385] [cursor=pointer]:
+            - /url: https://armac.com.br/ligamos-para-voce/
+        - generic [ref=f2e391]:
+          - heading "Nossa excelência em manutenção permite que os equipamentos rodem com eficiência e segurança pelo máximo de tempo possível. Sua operação nunca para!" [level=3] [ref=f2e396]
+          - generic [ref=f2e398]:
+            - link "Faça um orçamento" [ref=f2e402] [cursor=pointer]:
+              - /url: https://armac.com.br/orcamento
+            - link "Ligamos pra você" [ref=f2e408] [cursor=pointer]:
+              - /url: https://armac.com.br/ligamos-para-voce
+        - generic [ref=f2e419]:
+          - generic [ref=f2e420]:
+            - heading "Soluções em locação" [level=3] [ref=f2e421]
+            - generic [ref=f2e422]:
+              - heading "O equipamento certo pelo tempo que você precisa" [level=2] [ref=f2e423]
+              - paragraph [ref=f2e424]: Nossos modelos e processos de locação atendem aos interesses do cliente, seja para um projeto de longo prazo ou para períodos menores.
+              - paragraph [ref=f2e425]: Temos um portfólio completo em linha amarela, caminhões, empilhadeiras e outros equipamentos.
+              - paragraph [ref=f2e426]: Sua máquina disponível no tempo que você precisa, com padrão de manutenção Armac.
+              - paragraph [ref=f2e427]:
+                - link "Veja todos os equipamentos " [ref=f2e428] [cursor=pointer]:
+                  - /url: /locacao-de-equipamentos
+                  - text: Veja todos os equipamentos
+                  - generic [ref=f2e429]: 
+          - generic [ref=f2e430]:
+            - generic [ref=f2e431] [cursor=pointer]
+            - generic [ref=f2e434] [cursor=pointer]
+            - generic [ref=f2e437]:
+              - generic [ref=f2e438]:
+                - link [ref=f2e439] [cursor=pointer]:
+                  - /url: https://armac.com.br/locacao-de-equipamentos/caminhoes/
+                  - img "Caminhões" [ref=f2e441]
+                - generic [ref=f2e442]:
+                  - heading [level=3] [ref=f2e443]:
+                    - link "Caminhões" [ref=f2e444] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/caminhoes/
+                  - paragraph [ref=f2e445]: Caminhões Basculantes de 10m³ a 20m³, Pipa de 10.000 a 20.000 litros, Comboio de 6.000 e 10.000 litros e Munck de 25t, 33t e 45t com e sem controle remoto.
+                  - paragraph [ref=f2e446]:
+                    - link "veja os modelos" [ref=f2e447] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/caminhoes/
+                  - button "adicionar ao orçamento" [ref=f2e451] [cursor=pointer]
+              - generic [ref=f2e452]:
+                - link [ref=f2e453] [cursor=pointer]:
+                  - /url: https://armac.com.br/locacao-de-equipamentos/empilhadeiras/
+                  - img "Empilhadeiras" [ref=f2e455]
+                - generic [ref=f2e456]:
+                  - heading [level=3] [ref=f2e457]:
+                    - link "Empilhadeiras" [ref=f2e458] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/empilhadeiras/
+                  - paragraph [ref=f2e459]: O portfólio de logística da Armac conta com empilhadeiras retráteis, contrabalançadas, pantográficas e trilaterais, além de transpaleteiras e rebocadores.
+                  - paragraph [ref=f2e460]:
+                    - link "veja os modelos" [ref=f2e461] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/empilhadeiras/
+                  - button "adicionar ao orçamento" [ref=f2e465] [cursor=pointer]
+              - generic [ref=f2e466]:
+                - link [ref=f2e467] [cursor=pointer]:
+                  - /url: https://armac.com.br/locacao-de-equipamentos/escavadeiras/
+                  - img "Escavadeiras" [ref=f2e469]
+                - generic [ref=f2e470]:
+                  - heading [level=3] [ref=f2e471]:
+                    - link "Escavadeiras" [ref=f2e472] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/escavadeiras/
+                  - paragraph [ref=f2e473]: Escavadeiras de 11t a 48t. Performance e qualidade ideais para operações mineração, infraestrutura, saneamento, drenagem de canais e construção civil geral.
+                  - paragraph [ref=f2e474]:
+                    - link "veja os modelos" [ref=f2e475] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/escavadeiras/
+                  - button "adicionar ao orçamento" [ref=f2e479] [cursor=pointer]
+              - generic [ref=f2e480]:
+                - link [ref=f2e481] [cursor=pointer]:
+                  - /url: https://armac.com.br/locacao-de-equipamentos/manipuladores-telescopicos/
+                  - img "Manipuladores Telescópicos" [ref=f2e483]
+                - generic [ref=f2e484]:
+                  - heading [level=3] [ref=f2e485]:
+                    - link "Manipuladores Telescópicos" [ref=f2e486] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/manipuladores-telescopicos/
+                  - paragraph [ref=f2e487]: Para eventos, montagens industriais, movimentação e manipulação de cargas, içamento e descarga, a Armac oferece manipuladores telescópicos de 10t a 13t.
+                  - paragraph [ref=f2e488]:
+                    - link "veja os modelos" [ref=f2e489] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/manipuladores-telescopicos/
+                  - button "adicionar ao orçamento" [ref=f2e493] [cursor=pointer]
+              - generic [ref=f2e494]:
+                - link [ref=f2e495] [cursor=pointer]:
+                  - /url: https://armac.com.br/locacao-de-equipamentos/minicarregadeiras/
+                  - img "Minicarregadeiras" [ref=f2e497]
+                - generic [ref=f2e498]:
+                  - heading [level=3] [ref=f2e499]:
+                    - link "Minicarregadeiras" [ref=f2e500] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/minicarregadeiras/
+                  - paragraph [ref=f2e501]: Eficiência e economia. Tradicionais ou com implemento de vassoura, rompedor hidráulico, garfo pallet, fresadora ou perfuratriz atendemos diferentes projetos.
+                  - paragraph [ref=f2e502]:
+                    - link "veja os modelos" [ref=f2e503] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/minicarregadeiras/
+                  - button "adicionar ao orçamento" [ref=f2e507] [cursor=pointer]
+              - generic [ref=f2e508]:
+                - link [ref=f2e509] [cursor=pointer]:
+                  - /url: https://armac.com.br/locacao-de-equipamentos/miniescavadeiras/
+                  - img "Miniescavadeiras" [ref=f2e511]
+                - generic [ref=f2e512]:
+                  - heading [level=3] [ref=f2e513]:
+                    - link "Miniescavadeiras" [ref=f2e514] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/miniescavadeiras/
+                  - paragraph [ref=f2e515]: Para operações de menor escala, em espaços de movimentação limitada, conte com nossas mini escavadeiras de 1t a 8t, e capacidade de caçamba até 0,30m³.
+                  - paragraph [ref=f2e516]:
+                    - link "veja os modelos" [ref=f2e517] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/miniescavadeiras/
+                  - button "adicionar ao orçamento" [ref=f2e521] [cursor=pointer]
+              - generic [ref=f2e522]:
+                - link [ref=f2e523] [cursor=pointer]:
+                  - /url: https://armac.com.br/locacao-de-equipamentos/motoniveladoras/
+                  - img "Motoniveladoras" [ref=f2e525]
+                - generic [ref=f2e526]:
+                  - heading [level=3] [ref=f2e527]:
+                    - link "Motoniveladoras" [ref=f2e528] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/motoniveladoras/
+                  - paragraph [ref=f2e529]: Para preparação do trecho de asfalto, na construção de curvas de nível ou nivelamento de obras, confira nosso portfólio de motoniveladoras de alta performance.
+                  - paragraph [ref=f2e530]:
+                    - link "veja os modelos" [ref=f2e531] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/motoniveladoras/
+                  - button "adicionar ao orçamento" [ref=f2e535] [cursor=pointer]
+              - generic [ref=f2e536]:
+                - link [ref=f2e537] [cursor=pointer]:
+                  - /url: https://armac.com.br/locacao-de-equipamentos/pas-carregadeiras/
+                  - img "Pás Carregadeiras" [ref=f2e538]
+                - generic [ref=f2e539]:
+                  - heading [level=3] [ref=f2e540]:
+                    - link "Pás Carregadeiras" [ref=f2e541] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/pas-carregadeiras/
+                  - paragraph [ref=f2e542]: Pás carregadeiras para movimentação, mistura de materiais, tracionamento etc. Atendemos demandas da mineração, agronegócio, construção civil, usinas e portos.
+                  - paragraph [ref=f2e543]:
+                    - link "veja os modelos" [ref=f2e544] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/pas-carregadeiras/
+                  - button "adicionar ao orçamento" [ref=f2e548] [cursor=pointer]
+              - generic [ref=f2e549]:
+                - link [ref=f2e550] [cursor=pointer]:
+                  - /url: https://armac.com.br/locacao-de-equipamentos/retroescavadeiras/
+                  - img "Retroescavadeiras" [ref=f2e552]
+                - generic [ref=f2e553]:
+                  - heading [level=3] [ref=f2e554]:
+                    - link "Retroescavadeiras" [ref=f2e555] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/retroescavadeiras/
+                  - paragraph [ref=f2e556]: Disponíveis na configuração que seu setor e projeto precisam, Conte com a versatilidade, alta economia, robustez e tecnologia das retroescavadeiras Armac.
+                  - paragraph [ref=f2e557]:
+                    - link "veja os modelos" [ref=f2e558] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/retroescavadeiras/
+                  - button "adicionar ao orçamento" [ref=f2e562] [cursor=pointer]
+              - generic [ref=f2e563]:
+                - link [ref=f2e564] [cursor=pointer]:
+                  - /url: https://armac.com.br/locacao-de-equipamentos/rolos-compactadores/
+                  - img "Rolos Compactadores" [ref=f2e566]
+                - generic [ref=f2e567]:
+                  - heading [level=3] [ref=f2e568]:
+                    - link "Rolos Compactadores" [ref=f2e569] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/rolos-compactadores/
+                  - paragraph [ref=f2e570]: Essenciais para condensar, aplainar e compactar o solo, os rolos compactadores da Armac vão de 1.2t a 27t nos modelos liso, pata de carneiro, de pneus e mini.
+                  - paragraph [ref=f2e571]:
+                    - link "veja os modelos" [ref=f2e572] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/rolos-compactadores/
+                  - button "adicionar ao orçamento" [ref=f2e576] [cursor=pointer]
+              - generic [ref=f2e577]:
+                - link [ref=f2e578] [cursor=pointer]:
+                  - /url: https://armac.com.br/locacao-de-equipamentos/tratores-de-esteira/
+                  - img "Tratores de Esteira" [ref=f2e580]
+                - generic [ref=f2e581]:
+                  - heading [level=3] [ref=f2e582]:
+                    - link "Tratores de Esteira" [ref=f2e583] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/tratores-de-esteira/
+                  - paragraph [ref=f2e584]: Os tratores de esteira, ou de lâmina, da Armac tem de 13t a 40t e trabalham apoiando escavadeiras e pás carregadeiras em diversos tipos de operação.
+                  - paragraph [ref=f2e585]:
+                    - link "veja os modelos" [ref=f2e586] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/tratores-de-esteira/
+                  - button "adicionar ao orçamento" [ref=f2e590] [cursor=pointer]
+              - generic [ref=f2e591]:
+                - link [ref=f2e592] [cursor=pointer]:
+                  - /url: https://armac.com.br/locacao-de-equipamentos/tratores-de-rodas/
+                  - img "Tratores de Rodas" [ref=f2e594]
+                - generic [ref=f2e595]:
+                  - heading [level=3] [ref=f2e596]:
+                    - link "Tratores de Rodas" [ref=f2e597] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/tratores-de-rodas/
+                  - paragraph [ref=f2e598]: Também chamados tratores agrícolas, nossos modelos atendem atividades de reboque, tração de arado, lavra e movimentação. Das obras urbanas ao agronegócio.
+                  - paragraph [ref=f2e599]:
+                    - link "veja os modelos" [ref=f2e600] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/tratores-de-rodas/
+                  - button "adicionar ao orçamento" [ref=f2e604] [cursor=pointer]
+              - generic [ref=f2e605]:
+                - link [ref=f2e606] [cursor=pointer]:
+                  - /url: https://armac.com.br/locacao-de-equipamentos/vibroacabadoras/
+                  - img "Vibroacabadoras" [ref=f2e608]
+                - generic [ref=f2e609]:
+                  - heading [level=3] [ref=f2e610]:
+                    - link "Vibroacabadoras" [ref=f2e611] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/vibroacabadoras/
+                  - paragraph [ref=f2e612]: Do acabamento à pavimentação, as vibroacabadoras da Armac facilitam o projeto, principalmente em tarefas que envolvem grandes trechos asfálticos.
+                  - paragraph [ref=f2e613]:
+                    - link "veja os modelos" [ref=f2e614] [cursor=pointer]:
+                      - /url: https://armac.com.br/locacao-de-equipamentos/vibroacabadoras/
+                  - button "adicionar ao orçamento" [ref=f2e618] [cursor=pointer]
+          - text: 
+        - generic [ref=f2e622]:
+          - paragraph [ref=f2e629]: Serviços especializados com gestão completa de ativos, mecânicos, operadores e profissionais especializados para
+          - generic [ref=f2e635]:
+            - region "Carrossel" [ref=f2e636]:
+              - generic [ref=f2e637]:
+                - group [aria-hidden] [ref=f2e638]:
+                  - generic [ref=f2e639]: Infraestrutura rodoviária e urbana
+                - group [aria-hidden] [ref=f2e646]:
+                  - generic [ref=f2e647]: Energia
+                - group [aria-hidden] [ref=f2e654]:
+                  - generic [ref=f2e655]: Saneamento básico
+                - group [aria-hidden] [ref=f2e662]:
+                  - generic [ref=f2e663]: Agronegócio
+                - group [aria-hidden] [ref=f2e670]:
+                  - generic [ref=f2e671]: Indústria
+                - group [aria-hidden] [ref=f2e678]:
+                  - generic [ref=f2e679]: Portos e Terminais
+                - group [aria-hidden] [ref=f2e686]:
+                  - generic [ref=f2e687]: Empilhadeiras
+                - group [aria-hidden] [ref=f2e694]:
+                  - generic [ref=f2e695]: Mineração
+                - group "1 / 8" [ref=f2e702]:
+                  - generic [ref=f2e704]:
+                    - generic [ref=f2e706]:
+                      - generic:
+                        - img "widget-infra"
+                    - generic [ref=f2e707]: Infraestrutura rodoviária e urbana
+                - group "2 / 8" [ref=f2e710]:
+                  - generic [ref=f2e711]: Energia
+                - group "3 / 8" [ref=f2e718]:
+                  - generic [ref=f2e719]: Saneamento básico
+                - group "4 / 8" [ref=f2e726]:
+                  - generic [ref=f2e727]: Agronegócio
+                - group "5 / 8" [ref=f2e734]:
+                  - generic [ref=f2e735]: Indústria
+                - group "6 / 8" [ref=f2e742]:
+                  - generic [ref=f2e743]: Portos e Terminais
+                - group "7 / 8" [ref=f2e750]:
+                  - generic [ref=f2e751]: Empilhadeiras
+                - group "8 / 8" [ref=f2e758]:
+                  - generic [ref=f2e759]: Mineração
+                - group [aria-hidden] [ref=f2e766]:
+                  - generic [ref=f2e767]: Infraestrutura rodoviária e urbana
+                - group [aria-hidden] [ref=f2e774]:
+                  - generic [ref=f2e775]: Energia
+                - group [aria-hidden] [ref=f2e782]:
+                  - generic [ref=f2e783]: Saneamento básico
+                - group [aria-hidden] [ref=f2e790]:
+                  - generic [ref=f2e791]: Agronegócio
+                - group [aria-hidden] [ref=f2e798]:
+                  - generic [ref=f2e799]: Indústria
+                - group [aria-hidden] [ref=f2e806]:
+                  - generic [ref=f2e807]: Portos e Terminais
+                - group [aria-hidden] [ref=f2e814]:
+                  - generic [ref=f2e815]: Empilhadeiras
+                - group [aria-hidden] [ref=f2e822]:
+                  - generic [ref=f2e823]: Mineração
+            - button "Slide anterior" [ref=f2e830] [cursor=pointer]
+            - button "Próximo slide" [ref=f2e833] [cursor=pointer]
+      - generic [ref=f2e844]:
+        - generic [ref=f2e845]:
+          - heading "Blog" [level=2] [ref=f2e846]
+          - paragraph [ref=f2e847]: No blog da Armac você encontra conteúdos sobre os principais setores que atendemos. Da locação pontual às operações contínuas, trazemos nossa expertise em manutenção e gestão de máquinas pesadas, plataformas elevatórias e equipamentos energéticos.
+        - generic [ref=f2e848]:
+          - article [ref=f2e849]:
+            - list [ref=f2e850]:
+              - listitem [ref=f2e851]:
+                - generic [ref=f2e852]: Máquina
+            - link [ref=f2e853] [cursor=pointer]:
+              - /url: https://armac.com.br/blog/maquina/locacao-de-pa-carregadeira-guia-completo-de-modelos-marcas-e-aplicacoes/
+              - 'img "Locação de pá carregadeira: guia completo de modelos, marcas e aplicações" [ref=f2e854]'
+            - generic [ref=f2e855]:
+              - heading [level=3] [ref=f2e856]:
+                - 'link "Locação de pá carregadeira: guia completo de modelos, marcas e aplicações" [ref=f2e857] [cursor=pointer]':
+                  - /url: https://armac.com.br/blog/maquina/locacao-de-pa-carregadeira-guia-completo-de-modelos-marcas-e-aplicacoes/
+              - link "18 de junho - 2026" [ref=f2e861] [cursor=pointer]:
+                - /url: https://armac.com.br/blog/maquina/locacao-de-pa-carregadeira-guia-completo-de-modelos-marcas-e-aplicacoes/
+              - generic [ref=f2e863]: "Tempo de leitura: 6 min"
+              - generic [ref=f2e869]: A locação de pá carregadeira é a solução mais estratégica para operações que precisam de frota disponível, flexível e com suporte contínuo. Afinal, esse equipamento carrega, empurra, nivela e movimenta grandes volumes de material em uma única máquina. Por isso, ele está presente em obras de infraestrutura, mineração, agronegócio, portos, saneamento e indústria. Neste guia, […]
+              - link "Leia mais" [ref=f2e870] [cursor=pointer]:
+                - /url: https://armac.com.br/blog/maquina/locacao-de-pa-carregadeira-guia-completo-de-modelos-marcas-e-aplicacoes/
+              - generic [ref=f2e874]:
+                - generic [ref=f2e875]: Compartilhe
+                - link [ref=f2e876] [cursor=pointer]:
+                  - /url: https://www.addtoany.com/add_to/facebook?linkurl=https%3A%2F%2Farmac.com.br%2Fblog%2Fmaquina%2Flocacao-de-pa-carregadeira-guia-completo-de-modelos-marcas-e-aplicacoes%2F&linkname=
+                - link [ref=f2e879] [cursor=pointer]:
+                  - /url: https://www.addtoany.com/add_to/linkedin?linkurl=https%3A%2F%2Farmac.com.br%2Fblog%2Fmaquina%2Flocacao-de-pa-carregadeira-guia-completo-de-modelos-marcas-e-aplicacoes%2F&linkname=
+          - article [ref=f2e882]:
+            - list [ref=f2e883]:
+              - listitem [ref=f2e884]:
+                - generic [ref=f2e885]: Máquina
+            - link [ref=f2e886] [cursor=pointer]:
+              - /url: https://armac.com.br/blog/maquina/locacao-de-trator-de-esteira/
+              - 'img "Locação de Trator de Esteira: o Guia Para Acertar na Escolha da Obra" [ref=f2e887]'
+            - generic [ref=f2e888]:
+              - heading [level=3] [ref=f2e889]:
+                - 'link "Locação de Trator de Esteira: o Guia Para Acertar na Escolha da Obra" [ref=f2e890] [cursor=pointer]':
+                  - /url: https://armac.com.br/blog/maquina/locacao-de-trator-de-esteira/
+              - link "18 de junho - 2026" [ref=f2e894] [cursor=pointer]:
+                - /url: https://armac.com.br/blog/maquina/locacao-de-trator-de-esteira/
+              - generic [ref=f2e896]: "Tempo de leitura: 6 min"
+              - generic [ref=f2e902]: "A locação de trator de esteira é, em muitos projetos, a decisão que define o ritmo de toda a frente de obra. Se existe uma máquina que abre o caminho para tudo o que vem depois, é o trator de esteira: com a lâmina frontal ele corta, empurra e nivela; com o escarificador traseiro, desagrega […]"
+              - link "Leia mais" [ref=f2e903] [cursor=pointer]:
+                - /url: https://armac.com.br/blog/maquina/locacao-de-trator-de-esteira/
+              - generic [ref=f2e907]:
+                - generic [ref=f2e908]: Compartilhe
+                - link [ref=f2e909] [cursor=pointer]:
+                  - /url: https://www.addtoany.com/add_to/facebook?linkurl=https%3A%2F%2Farmac.com.br%2Fblog%2Fmaquina%2Flocacao-de-trator-de-esteira%2F&linkname=
+                - link [ref=f2e912] [cursor=pointer]:
+                  - /url: https://www.addtoany.com/add_to/linkedin?linkurl=https%3A%2F%2Farmac.com.br%2Fblog%2Fmaquina%2Flocacao-de-trator-de-esteira%2F&linkname=
+          - article [ref=f2e915]:
+            - list [ref=f2e916]:
+              - listitem [ref=f2e917]:
+                - generic [ref=f2e918]: Agronegócio
+              - listitem [ref=f2e919]:
+                - generic [ref=f2e920]: Engenharia
+              - listitem [ref=f2e921]:
+                - generic [ref=f2e922]: Máquina
+            - link [ref=f2e923] [cursor=pointer]:
+              - /url: https://armac.com.br/blog/agronegocio/pa-carregadeira-locacao-marcas-modelos/
+              - 'img "Pá carregadeira: guia completo de modelos, marcas e aplicações" [ref=f2e924]'
+            - generic [ref=f2e925]:
+              - heading [level=3] [ref=f2e926]:
+                - 'link "Pá carregadeira: guia completo de modelos, marcas e aplicações" [ref=f2e927] [cursor=pointer]':
+                  - /url: https://armac.com.br/blog/agronegocio/pa-carregadeira-locacao-marcas-modelos/
+              - link "10 de junho - 2026" [ref=f2e931] [cursor=pointer]:
+                - /url: https://armac.com.br/blog/agronegocio/pa-carregadeira-locacao-marcas-modelos/
+              - generic [ref=f2e933]: "Tempo de leitura: 8 min"
+              - generic [ref=f2e939]: A locação de pá carregadeira é a solução mais estratégica para operações que precisam de frota disponível, flexível e com suporte contínuo. Versátil e produtiva, a pá carregadeira carrega, empurra, nivela e movimenta grandes volumes de material — em uma única máquina. Está presente em obras de infraestrutura rodoviária, mineração, agronegócio, portos, saneamento e indústria. […]
+              - link "Leia mais" [ref=f2e940] [cursor=pointer]:
+                - /url: https://armac.com.br/blog/agronegocio/pa-carregadeira-locacao-marcas-modelos/
+              - generic [ref=f2e944]:
+                - generic [ref=f2e945]: Compartilhe
+                - link [ref=f2e946] [cursor=pointer]:
+                  - /url: https://www.addtoany.com/add_to/facebook?linkurl=https%3A%2F%2Farmac.com.br%2Fblog%2Fagronegocio%2Fpa-carregadeira-locacao-marcas-modelos%2F&linkname=
+                - link [ref=f2e949] [cursor=pointer]:
+                  - /url: https://www.addtoany.com/add_to/linkedin?linkurl=https%3A%2F%2Farmac.com.br%2Fblog%2Fagronegocio%2Fpa-carregadeira-locacao-marcas-modelos%2F&linkname=
+          - article [ref=f2e952]:
+            - list [ref=f2e953]:
+              - listitem [ref=f2e954]:
+                - generic [ref=f2e955]: Corporativo
+            - link [ref=f2e956] [cursor=pointer]:
+              - /url: https://armac.com.br/blog/corporativo/locacao-maquinas-obras-saneamento-basico/
+              - 'img "Locação de máquinas para obras de saneamento básico: como garantir execução no prazo" [ref=f2e957]'
+            - generic [ref=f2e958]:
+              - heading [level=3] [ref=f2e959]:
+                - 'link "Locação de máquinas para obras de saneamento básico: como garantir execução no prazo" [ref=f2e960] [cursor=pointer]':
+                  - /url: https://armac.com.br/blog/corporativo/locacao-maquinas-obras-saneamento-basico/
+              - link "03 de junho - 2026" [ref=f2e964] [cursor=pointer]:
+                - /url: https://armac.com.br/blog/corporativo/locacao-maquinas-obras-saneamento-basico/
+              - generic [ref=f2e966]: "Tempo de leitura: 5 min"
+              - generic [ref=f2e972]: O Brasil vive um momento inédito no saneamento básico. Em 2025, o Novo PAC direcionou R$ 22,1 bilhões ao setor — o maior volume anual já registrado. Desde 2023, o acumulado chega a R$ 61 bilhões. Para 2026, mais R$ 8 bilhões via FGTS já estão garantidos. É muito dinheiro. E é necessário, porque o […]
+              - link "Leia mais" [ref=f2e973] [cursor=pointer]:
+                - /url: https://armac.com.br/blog/corporativo/locacao-maquinas-obras-saneamento-basico/
+              - generic [ref=f2e977]:
+                - generic [ref=f2e978]: Compartilhe
+                - link [ref=f2e979] [cursor=pointer]:
+                  - /url: https://www.addtoany.com/add_to/facebook?linkurl=https%3A%2F%2Farmac.com.br%2Fblog%2Fcorporativo%2Flocacao-maquinas-obras-saneamento-basico%2F&linkname=
+                - link [ref=f2e982] [cursor=pointer]:
+                  - /url: https://www.addtoany.com/add_to/linkedin?linkurl=https%3A%2F%2Farmac.com.br%2Fblog%2Fcorporativo%2Flocacao-maquinas-obras-saneamento-basico%2F&linkname=
+          - article [ref=f2e985]:
+            - list [ref=f2e986]:
+              - listitem [ref=f2e987]:
+                - generic [ref=f2e988]: Pavimentação
+            - link [ref=f2e989] [cursor=pointer]:
+              - /url: https://armac.com.br/blog/pavimentacao/obras-rodoviarias-2/
+              - 'img "Locação de máquinas para obras rodoviárias: como garantir produtividade em cada fase do canteiro" [ref=f2e990]'
+            - generic [ref=f2e991]:
+              - heading [level=3] [ref=f2e992]:
+                - 'link "Locação de máquinas para obras rodoviárias: como garantir produtividade em cada fase do canteiro" [ref=f2e993] [cursor=pointer]':
+                  - /url: https://armac.com.br/blog/pavimentacao/obras-rodoviarias-2/
+              - link "20 de maio - 2026" [ref=f2e997] [cursor=pointer]:
+                - /url: https://armac.com.br/blog/pavimentacao/obras-rodoviarias-2/
+              - generic [ref=f2e999]: "Tempo de leitura: 8 min"
+              - generic [ref=f2e1005]: O Brasil vive o maior ciclo de investimentos em infraestrutura rodoviária da sua história recente. São 269 obras rodoviárias previstas só em 2026, R$ 149,1 bilhões em leilões programados e mais de 6.400 km de corredores logísticos estratégicos para sair do papel. Para construtoras, concessionárias e empreiteiras, esse cenário representa uma janela de oportunidade — […]
+              - link "Leia mais" [ref=f2e1006] [cursor=pointer]:
+                - /url: https://armac.com.br/blog/pavimentacao/obras-rodoviarias-2/
+              - generic [ref=f2e1010]:
+                - generic [ref=f2e1011]: Compartilhe
+                - link [ref=f2e1012] [cursor=pointer]:
+                  - /url: https://www.addtoany.com/add_to/facebook?linkurl=https%3A%2F%2Farmac.com.br%2Fblog%2Fpavimentacao%2Fobras-rodoviarias-2%2F&linkname=
+                - link [ref=f2e1015] [cursor=pointer]:
+                  - /url: https://www.addtoany.com/add_to/linkedin?linkurl=https%3A%2F%2Farmac.com.br%2Fblog%2Fpavimentacao%2Fobras-rodoviarias-2%2F&linkname=
+          - article [ref=f2e1018]:
+            - list [ref=f2e1019]:
+              - listitem [ref=f2e1020]:
+                - generic [ref=f2e1021]: Corporativo
+              - listitem [ref=f2e1022]:
+                - generic [ref=f2e1023]: Gestão
+            - link [ref=f2e1024] [cursor=pointer]:
+              - /url: https://armac.com.br/blog/corporativo/frota-planejamento-e-risco-como-comecar-o-ano-com-mais-seguranca-operacional/
+              - 'img "Frota, planejamento e risco: como começar o ano com mais segurança operacional" [ref=f2e1025]'
+            - generic [ref=f2e1026]:
+              - heading [level=3] [ref=f2e1027]:
+                - 'link "Frota, planejamento e risco: como começar o ano com mais segurança operacional" [ref=f2e1028] [cursor=pointer]':
+                  - /url: https://armac.com.br/blog/corporativo/frota-planejamento-e-risco-como-comecar-o-ano-com-mais-seguranca-operacional/
+              - link "06 de janeiro - 2026" [ref=f2e1032] [cursor=pointer]:
+                - /url: https://armac.com.br/blog/corporativo/frota-planejamento-e-risco-como-comecar-o-ano-com-mais-seguranca-operacional/
+              - generic [ref=f2e1034]: "Tempo de leitura: 13 min"
+              - generic [ref=f2e1040]: O início de um novo ciclo anual nos setores de infraestrutura, mineração e agronegócio exige uma estruturação robusta para suportar os desafios que virão. O planejamento de frota deixa de ser apenas uma tarefa logística para se tornar um pilar de segurança estratégica, onde cada decisão sobre a alocação de ativos impacta diretamente a previsibilidade […]
+              - link "Leia mais" [ref=f2e1041] [cursor=pointer]:
+                - /url: https://armac.com.br/blog/corporativo/frota-planejamento-e-risco-como-comecar-o-ano-com-mais-seguranca-operacional/
+              - generic [ref=f2e1045]:
+                - generic [ref=f2e1046]: Compartilhe
+                - link [ref=f2e1047] [cursor=pointer]:
+                  - /url: https://www.addtoany.com/add_to/facebook?linkurl=https%3A%2F%2Farmac.com.br%2Fblog%2Fcorporativo%2Ffrota-planejamento-e-risco-como-comecar-o-ano-com-mais-seguranca-operacional%2F&linkname=
+                - link [ref=f2e1050] [cursor=pointer]:
+                  - /url: https://www.addtoany.com/add_to/linkedin?linkurl=https%3A%2F%2Farmac.com.br%2Fblog%2Fcorporativo%2Ffrota-planejamento-e-risco-como-comecar-o-ano-com-mais-seguranca-operacional%2F&linkname=
+          - article [ref=f2e1053]:
+            - list [ref=f2e1054]:
+              - listitem [ref=f2e1055]:
+                - generic [ref=f2e1056]: Máquina
+            - link [ref=f2e1057] [cursor=pointer]:
+              - /url: https://armac.com.br/blog/maquina/antecipacao-de-aquisicao-de-frota/
+              - 'img "Alta demanda, prazos curtos: por que planejar a locação antes do pico de obras?" [ref=f2e1058]'
+            - generic [ref=f2e1059]:
+              - heading [level=3] [ref=f2e1060]:
+                - 'link "Alta demanda, prazos curtos: por que planejar a locação antes do pico de obras?" [ref=f2e1061] [cursor=pointer]':
+                  - /url: https://armac.com.br/blog/maquina/antecipacao-de-aquisicao-de-frota/
+              - link "02 de dezembro - 2025" [ref=f2e1065] [cursor=pointer]:
+                - /url: https://armac.com.br/blog/maquina/antecipacao-de-aquisicao-de-frota/
+              - generic [ref=f2e1067]: "Tempo de leitura: 6 min"
+              - generic [ref=f2e1073]: "O início dos períodos secos no Brasil, especialmente entre abril e agosto, marca uma fase crítica para construtoras, loteamentos, indústrias e obras de infraestrutura: a elevação simultânea da demanda por máquinas.Mas além da disputa por equipamentos, surge outra questão importante: como a renovação de frota influencia diretamente a disponibilidade, o desempenho e a confiabilidade das […]"
+              - link "Leia mais" [ref=f2e1074] [cursor=pointer]:
+                - /url: https://armac.com.br/blog/maquina/antecipacao-de-aquisicao-de-frota/
+              - generic [ref=f2e1078]:
+                - generic [ref=f2e1079]: Compartilhe
+                - link [ref=f2e1080] [cursor=pointer]:
+                  - /url: https://www.addtoany.com/add_to/facebook?linkurl=https%3A%2F%2Farmac.com.br%2Fblog%2Fmaquina%2Fantecipacao-de-aquisicao-de-frota%2F&linkname=
+                - link [ref=f2e1083] [cursor=pointer]:
+                  - /url: https://www.addtoany.com/add_to/linkedin?linkurl=https%3A%2F%2Farmac.com.br%2Fblog%2Fmaquina%2Fantecipacao-de-aquisicao-de-frota%2F&linkname=
+          - article [ref=f2e1086]:
+            - list
+            - link [ref=f2e1087] [cursor=pointer]:
+              - /url: https://armac.com.br/blog/corporativo/black-friday/produtividade-obras-pesadas-black-armac/
+              - 'img "Produtividade em obras pesadas: prepare sua frota para a Black November Armac" [ref=f2e1088]'
+            - generic [ref=f2e1089]:
+              - heading [level=3] [ref=f2e1090]:
+                - 'link "Produtividade em obras pesadas: prepare sua frota para a Black November Armac" [ref=f2e1091] [cursor=pointer]':
+                  - /url: https://armac.com.br/blog/corporativo/black-friday/produtividade-obras-pesadas-black-armac/
+              - link "17 de outubro - 2025" [ref=f2e1095] [cursor=pointer]:
+                - /url: https://armac.com.br/blog/corporativo/black-friday/produtividade-obras-pesadas-black-armac/
+              - generic [ref=f2e1097]: "Tempo de leitura: 10 min"
+              - generic [ref=f2e1103]: "Em qualquer operação pesada, a produtividade em obras depende de um fator que muitas vezes passa despercebido: o dimensionamento da frota com máquinas pesadas. É ele que determina o equilíbrio entre o ritmo de escavação, o carregamento e o transporte de materiais e, portanto, o quanto a obra realmente avança a cada dia. Quando esse […]"
+              - link "Leia mais" [ref=f2e1104] [cursor=pointer]:
+                - /url: https://armac.com.br/blog/corporativo/black-friday/produtividade-obras-pesadas-black-armac/
+              - generic [ref=f2e1108]:
+                - generic [ref=f2e1109]: Compartilhe
+                - link [ref=f2e1110] [cursor=pointer]:
+                  - /url: https://www.addtoany.com/add_to/facebook?linkurl=https%3A%2F%2Farmac.com.br%2Fblog%2Fcorporativo%2Fblack-friday%2Fprodutividade-obras-pesadas-black-armac%2F&linkname=
+                - link [ref=f2e1113] [cursor=pointer]:
+                  - /url: https://www.addtoany.com/add_to/linkedin?linkurl=https%3A%2F%2Farmac.com.br%2Fblog%2Fcorporativo%2Fblack-friday%2Fprodutividade-obras-pesadas-black-armac%2F&linkname=
+        - link "Ver todas as postagens" [ref=f2e1117] [cursor=pointer]:
+          - /url: /blog
+      - link "Voltar para o topo" [ref=f2e1119] [cursor=pointer]:
+        - /url: "#all"
+    - contentinfo [ref=f2e1123]:
+      - generic [ref=f2e1125]:
+        - generic [ref=f2e1126]:
+          - generic [ref=f2e1127]:
+            - heading "Inscreva-se em nossa Newsletter" [level=3] [ref=f2e1128]
+            - paragraph [ref=f2e1129]: Mantenha-se atualizado com as novidades da Armac
+          - generic [ref=f2e1130]:
+            - generic [ref=f2e1131]:
+              - textbox "Seu melhor e-mail" [ref=f2e1132]
+              - button "INSCREVA-SE" [ref=f2e1133] [cursor=pointer]
+            - generic [ref=f2e1134]:
+              - checkbox "Concordo em receber comunicações, conteúdos e ofertas, e estou ciente da Política de Privacidade." [checked] [ref=f2e1135]
+              - generic [ref=f2e1136]: Concordo em receber comunicações, conteúdos e ofertas, e estou ciente da Política de Privacidade.
+            - paragraph
+        - generic [ref=f2e1137]:
+          - generic [ref=f2e1138]:
+            - link [ref=f2e1139] [cursor=pointer]:
+              - /url: https://armac.com.br
+              - img "Armac" [ref=f2e1141]
+            - paragraph [ref=f2e1142]: 4000-1087
+          - generic [ref=f2e1143]:
+            - button "Equipamentos para Compra" [ref=f2e1144]
+            - generic [ref=f2e1146]:
+              - list [ref=f2e1147]:
+                - listitem [ref=f2e1148]:
+                  - link "Caminhões" [ref=f2e1149] [cursor=pointer]:
+                    - /url: https://armac.com.br/locacao-de-equipamentos/caminhoes/
+                - listitem [ref=f2e1150]:
+                  - link "Empilhadeiras" [ref=f2e1151] [cursor=pointer]:
+                    - /url: https://armac.com.br/locacao-de-equipamentos/empilhadeiras/
+                - listitem [ref=f2e1152]:
+                  - link "Escavadeiras" [ref=f2e1153] [cursor=pointer]:
+                    - /url: https://armac.com.br/locacao-de-equipamentos/escavadeiras/
+                - listitem [ref=f2e1154]:
+                  - link "Manipuladores Telescópicos" [ref=f2e1155] [cursor=pointer]:
+                    - /url: https://armac.com.br/locacao-de-equipamentos/manipuladores-telescopicos/
+                - listitem [ref=f2e1156]:
+                  - link "Minicarregadeiras" [ref=f2e1157] [cursor=pointer]:
+                    - /url: https://armac.com.br/locacao-de-equipamentos/minicarregadeiras/
+                - listitem [ref=f2e1158]:
+                  - link "Miniescavadeiras" [ref=f2e1159] [cursor=pointer]:
+                    - /url: https://armac.com.br/locacao-de-equipamentos/miniescavadeiras/
+                - listitem [ref=f2e1160]:
+                  - link "Motoniveladoras" [ref=f2e1161] [cursor=pointer]:
+                    - /url: https://armac.com.br/locacao-de-equipamentos/motoniveladoras/
+              - list [ref=f2e1162]:
+                - listitem [ref=f2e1163]:
+                  - link "Pás Carregadeiras" [ref=f2e1164] [cursor=pointer]:
+                    - /url: https://armac.com.br/locacao-de-equipamentos/pas-carregadeiras/
+                - listitem [ref=f2e1165]:
+                  - link "Retroescavadeiras" [ref=f2e1166] [cursor=pointer]:
+                    - /url: https://armac.com.br/locacao-de-equipamentos/retroescavadeiras/
+                - listitem [ref=f2e1167]:
+                  - link "Rolos Compactadores" [ref=f2e1168] [cursor=pointer]:
+                    - /url: https://armac.com.br/locacao-de-equipamentos/rolos-compactadores/
+                - listitem [ref=f2e1169]:
+                  - link "Tratores de Esteira" [ref=f2e1170] [cursor=pointer]:
+                    - /url: https://armac.com.br/locacao-de-equipamentos/tratores-de-esteira/
+                - listitem [ref=f2e1171]:
+                  - link "Tratores de Rodas" [ref=f2e1172] [cursor=pointer]:
+                    - /url: https://armac.com.br/locacao-de-equipamentos/tratores-de-rodas/
+                - listitem [ref=f2e1173]:
+                  - link "Vibroacabadoras" [ref=f2e1174] [cursor=pointer]:
+                    - /url: https://armac.com.br/locacao-de-equipamentos/vibroacabadoras/
+          - generic [ref=f2e1175]:
+            - button "A Armac" [ref=f2e1176]
+            - list [ref=f2e1178]:
+              - listitem [ref=f2e1179]:
+                - link "Nossas Lojas" [ref=f2e1180] [cursor=pointer]:
+                  - /url: /lojas-armac/
+              - listitem [ref=f2e1183]:
+                - link "Sobre a Armac" [ref=f2e1184] [cursor=pointer]:
+                  - /url: /sobre-nos/
+              - listitem [ref=f2e1187]:
+                - link "Trabalhe Conosco" [ref=f2e1188] [cursor=pointer]:
+                  - /url: https://armac.gupy.io/
+              - listitem [ref=f2e1191]:
+                - link "Termos e Políticas" [ref=f2e1192] [cursor=pointer]:
+                  - /url: /termos-e-politicas/
+              - listitem [ref=f2e1195]:
+                - link "Canal ético" [ref=f2e1196] [cursor=pointer]:
+                  - /url: https://www.contatoseguro.com.br/armac
+              - listitem [ref=f2e1199]:
+                - link "Relação com investidores" [ref=f2e1200] [cursor=pointer]:
+                  - /url: https://ri.armac.com.br/
+          - generic [ref=f2e1203]:
+            - button "Soluções que movimentam" [ref=f2e1204]
+            - list [ref=f2e1206]:
+              - listitem [ref=f2e1207]:
+                - link "Florestal" [ref=f2e1208] [cursor=pointer]:
+                  - /url: https://armac.com.br/segmentos-de-mercado/florestal/
+              - listitem [ref=f2e1211]:
+                - link "Mineração" [ref=f2e1212] [cursor=pointer]:
+                  - /url: https://armac.com.br/segmentos-de-mercado/mineracao/
+              - listitem [ref=f2e1215]:
+                - link "Portos, Ferrovias e Fertilizantes" [ref=f2e1216] [cursor=pointer]:
+                  - /url: https://armac.com.br/segmentos-de-mercado/portos-ferrovias-e-fertilizantes/
+              - listitem [ref=f2e1219]:
+                - link "Empilhadeiras" [ref=f2e1220] [cursor=pointer]:
+                  - /url: https://armac.com.br/segmentos-de-mercado/empilhadeiras/
+              - listitem [ref=f2e1223]:
+                - link "Agroindústria" [ref=f2e1224] [cursor=pointer]:
+                  - /url: https://armac.com.br/segmentos-de-mercado/agro-industria-e-siderurgia/
+      - generic [ref=f2e1227]:
+        - generic [ref=f2e1228]:
+          - link "R. dos Pinheiros, 1673 - 12º Andar - Pinheiros São Paulo - SP, 05422-012" [ref=f2e1230] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/SwVZHDV4czuRfevs8
+          - generic [ref=f2e1231]:
+            - link "Facebook" [ref=f2e1232] [cursor=pointer]:
+              - /url: https://www.facebook.com/armaclocacao/
+              - generic [ref=f2e1233]: 
+            - link "YouTube" [ref=f2e1234] [cursor=pointer]:
+              - /url: https://www.youtube.com/channel/UCc3IuFXN0V3QnNMIgX49KKg#
+              - generic [ref=f2e1235]: 
+            - link "LinkedIn" [ref=f2e1236] [cursor=pointer]:
+              - /url: https://www.linkedin.com/company/armac-locacao/
+              - generic [ref=f2e1237]: 
+            - link "Instagram" [ref=f2e1238] [cursor=pointer]:
+              - /url: https://www.instagram.com/armaclocacao/
+              - generic [ref=f2e1239]: 
+        - generic [ref=f2e1240]: Armac © 2026. Todos os direitos reservados
+  - generic [ref=f2e1241]: desktop
+  - text: 
+  - generic [ref=f2e1242] [cursor=pointer]
+  - generic:
+    - generic:
+      - heading "Preencha seus dados" [level=3]
+      - generic:
+        - generic:
+          - radio "Locação" [checked]
+          - text: Locação
+        - generic:
+          - radio "Compra de seminovos"
+          - text: Compra de seminovos
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic: Nome*
+              - generic:
+                - textbox "Nome*":
+                  - /placeholder: ""
+            - generic:
+              - generic: E-mail*
+              - generic:
+                - textbox "E-mail*":
+                  - /placeholder: ""
+            - generic:
+              - generic: Número de telefone*
+              - generic:
+                - textbox "Número de telefone*":
+                  - /placeholder: ""
+            - generic:
+              - generic: CNPJ da empresa/ CPF - Produtor rural*
+              - generic:
+                - textbox "CNPJ da empresa/ CPF - Produtor rural*":
+                  - /placeholder: ""
+            - generic:
+              - generic: Estado*
+              - generic:
+                - combobox "Estado*":
+                  - option "Selecione" [disabled] [selected]
+                  - option "Acre"
+                  - option "Alagoas"
+                  - option "Amapá"
+                  - option "Amazonas"
+                  - option "Bahia"
+                  - option "Ceará"
+                  - option "Distrito Federal"
+                  - option "Espírito Santo"
+                  - option "Goiás"
+                  - option "Maranhão"
+                  - option "Mato Grosso"
+                  - option "Mato Grosso do Sul"
+                  - option "Minas Gerais"
+                  - option "Pará"
+                  - option "Paraíba"
+                  - option "Paraná"
+                  - option "Pernambuco"
+                  - option "Piauí"
+                  - option "Rio de Janeiro"
+                  - option "Rio Grande do Norte"
+                  - option "Rio Grande do Sul"
+                  - option "Rondônia"
+                  - option "Roraima"
+                  - option "Santa Catarina"
+                  - option "São Paulo"
+                  - option "Sergipe"
+                  - option "Tocantins"
+            - generic:
+              - generic: Cidade*
+              - generic:
+                - textbox "Cidade*":
+                  - /placeholder: ""
+            - generic:
+              - generic: Máquina de interesse*
+              - generic:
+                - combobox "Máquina de interesse*":
+                  - option "Selecione" [disabled] [selected]
+                  - option "Retroescavadeira"
+                  - option "Pá Carregadeira"
+                  - option "Escavadeira"
+                  - option "Motoniveladora"
+                  - option "Minicarregadeira"
+                  - option "Trator de Esteiras"
+                  - option "Trator de Rodas"
+                  - option "Manipulador Telescópico"
+                  - option "Empilhadeira"
+                  - option "Rolo Compactador"
+                  - option "Caminhão Pipa"
+                  - option "Caminhão Comboio"
+                  - option "Caminhão Basculante"
+                  - option "Miniescavadeira"
+                  - option "Vibroacabadora"
+            - generic:
+              - generic: Qual o período de locação?*
+              - generic:
+                - combobox "Qual o período de locação?*":
+                  - option "Selecione" [disabled] [selected]
+                  - option "3 dias"
+                  - option "7 dias"
+                  - option "14 dias"
+                  - option "21 dias"
+                  - option "28 dias"
+                  - option "1 mês"
+                  - option "2 meses"
+                  - option "3 meses"
+                  - option "4 meses"
+                  - option "5 meses"
+                  - option "6 meses"
+                  - option "7 meses"
+                  - option "8 meses"
+                  - option "9 meses"
+                  - option "10 meses"
+                  - option "11 meses"
+                  - option "12 meses"
+                  - option "13 meses"
+                  - option "14 meses"
+                  - option "15 meses"
+                  - option "16 meses"
+                  - option "17 meses"
+                  - option "18 meses"
+                  - option "19 meses"
+                  - option "20 meses"
+                  - option "21 meses"
+                  - option "22 meses"
+                  - option "23 meses"
+                  - option "24 meses"
+                  - option "25 meses"
+                  - option "26 meses"
+                  - option "27 meses"
+                  - option "28 meses"
+                  - option "29 meses"
+                  - option "30 meses"
+                  - option "31 meses"
+                  - option "32 meses"
+                  - option "33 meses"
+                  - option "34 meses"
+                  - option "35 meses"
+                  - option "36 meses"
+                  - option "37 meses"
+                  - option "38 meses"
+                  - option "39 meses"
+                  - option "40 meses"
+                  - option "41 meses"
+                  - option "42 meses"
+                  - option "43 meses"
+                  - option "44 meses"
+                  - option "45 meses"
+                  - option "46 meses"
+                  - option "47 meses"
+                  - option "48 meses"
+            - generic:
+              - generic: Quando você pretende iniciar a locação?*
+              - generic:
+                - combobox "Quando você pretende iniciar a locação?*":
+                  - option "Selecione" [disabled] [selected]
+                  - option "Imediatamente"
+                  - option "Nos próximos 7 dias"
+                  - option "Nos próximos 15 dias"
+                  - option "Nos próximos 30 dias"
+                  - option "Estou apenas pesquisando"
+            - generic:
+              - generic:
+                - button "Abrir conversa no WhatsApp"
+      - generic: Outros contatos

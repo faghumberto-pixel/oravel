@@ -1,0 +1,153 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - generic [ref=e6]: ORAVEL
+          - generic [ref=e7]: Desenvolvimento e tecnologia
+        - link "Baixar a planilha grátis" [ref=e8] [cursor=pointer]:
+          - /url: "#baixar"
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: Material gratuito · Excel
+        - heading "Saiba quanto cada equipamento consome, quanto custa e quando é a próxima troca de óleo" [level=1] [ref=e13]
+        - paragraph [ref=e14]: Registre os abastecimentos e as trocas de óleo e deixe a planilha calcular o consumo, o custo e o prazo de cada equipamento.
+        - list [ref=e15]:
+          - listitem [ref=e16]:
+            - generic [ref=e19]: Consumo médio por equipamento, em L/h ou km/L
+          - listitem [ref=e20]:
+            - generic [ref=e23]: Custo de combustível por hora ou por km
+          - listitem [ref=e24]:
+            - generic [ref=e27]: "Aviso da próxima troca de óleo: Em dia, Atenção ou Vencido"
+      - generic [ref=e28]:
+        - generic [ref=e30]:
+          - text: Não preencha
+          - textbox [ref=e31]
+        - generic [ref=e32]:
+          - heading "Receba a planilha agora" [level=2] [ref=e33]
+          - paragraph [ref=e34]: Preencha os dados e enviamos o arquivo para o seu e-mail.
+        - generic [ref=e35]:
+          - generic [ref=e36]: Nome
+          - textbox "Nome" [ref=e37]
+        - generic [ref=e38]:
+          - generic [ref=e39]: E-mail profissional
+          - textbox "E-mail profissional" [ref=e40]
+        - generic [ref=e41]:
+          - generic [ref=e42]: WhatsApp
+          - textbox "WhatsApp" [ref=e43]:
+            - /placeholder: (19) 90000-0000
+        - generic [ref=e44]:
+          - generic [ref=e45]: Empresa
+          - textbox "Empresa" [ref=e46]
+        - generic [ref=e47]:
+          - checkbox "Concordo em receber a planilha e em ser contatado pela Oravel sobre este material, conforme a política de privacidade." [ref=e48]
+          - generic [ref=e49]:
+            - text: Concordo em receber a planilha e em ser contatado pela Oravel sobre este material, conforme a
+            - link "política de privacidade" [ref=e50] [cursor=pointer]:
+              - /url: /politica-de-privacidade/
+            - text: .
+        - button "Quero a planilha gratuita" [ref=e54] [cursor=pointer]
+        - paragraph [ref=e55]: Gratuita, em Excel, pronta para usar. Você pode pedir a exclusão dos seus dados a qualquer momento.
+    - generic [ref=e57]:
+      - generic [ref=e58]:
+        - generic [ref=e59]: Do registro ao controle
+        - heading "O que você anota vira informação para decidir" [level=2] [ref=e60]
+        - paragraph [ref=e61]: Combustível e óleo pesam no custo de qualquer operação com equipamentos. Com os lançamentos organizados, a planilha mostra o que cada máquina gasta e quando precisa de atenção.
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - generic [ref=e64]: "1"
+          - heading "Cadastre os equipamentos" [level=3] [ref=e65]
+          - paragraph [ref=e66]: Código, descrição, combustível, tipo de medidor (horímetro ou odômetro) e intervalo de troca de óleo.
+        - generic [ref=e67]:
+          - generic [ref=e68]: "2"
+          - heading "Registre os abastecimentos" [level=3] [ref=e69]
+          - paragraph [ref=e70]: Data, equipamento, litros, preço por litro e a leitura do medidor no momento.
+        - generic [ref=e71]:
+          - generic [ref=e72]: "3"
+          - heading "Registre as trocas de óleo" [level=3] [ref=e73]
+          - paragraph [ref=e74]: Data, tipo e quantidade de óleo, custo e a leitura do medidor.
+        - generic [ref=e75]:
+          - generic [ref=e76]: "4"
+          - heading "Acompanhe o resultado" [level=3] [ref=e77]
+          - paragraph [ref=e78]: Consumo médio, custo por hora ou km e o status da próxima troca, calculados sozinhos.
+    - generic [ref=e80]:
+      - heading "O que a planilha calcula para você" [level=2] [ref=e81]
+      - generic [ref=e82]:
+        - generic [ref=e83]:
+          - heading "Consumo médio" [level=3] [ref=e86]
+          - paragraph [ref=e87]: "Pelo método do tanque cheio: litros abastecidos divididos pela variação do medidor. Equipamentos em horas mostram L/h; em km, km/L."
+        - generic [ref=e88]:
+          - heading "Custo por hora ou km" [level=3] [ref=e91]
+          - paragraph [ref=e92]: O gasto com combustível no período dividido pela variação do medidor, equipamento por equipamento.
+        - generic [ref=e93]:
+          - heading "Próxima troca de óleo" [level=3] [ref=e97]
+          - paragraph [ref=e98]: A leitura da última troca somada ao intervalo informado, com status Em dia, Atenção (faltando pouco) ou Vencido.
+        - generic [ref=e99]:
+          - heading "Painel resumido" [level=3] [ref=e103]
+          - paragraph [ref=e104]: Equipamentos cadastrados, litros abastecidos, gasto com combustível e preço médio pago por litro, em uma só aba.
+    - generic [ref=e106]:
+      - generic [ref=e107]:
+        - generic [ref=e108]: Dentro da planilha
+        - heading "Cinco abas, prontas para usar" [level=2] [ref=e109]
+        - paragraph [ref=e110]: "Os dados em azul já preenchidos são exemplos fictícios: substitua pelos seus ou apague. Cada aba comporta 40 equipamentos, 500 abastecimentos e 200 trocas de óleo."
+      - generic [ref=e111]:
+        - generic [ref=e112]:
+          - generic [ref=e113]: "1"
+          - generic [ref=e114]:
+            - heading "Como usar" [level=3] [ref=e115]
+            - paragraph [ref=e116]: O passo a passo e a explicação de como cada cálculo é feito.
+        - generic [ref=e117]:
+          - generic [ref=e118]: "2"
+          - generic [ref=e119]:
+            - heading "Equipamentos" [level=3] [ref=e120]
+            - paragraph [ref=e121]: Cadastro de cada equipamento, com consumo, custo e status da próxima troca calculados.
+        - generic [ref=e122]:
+          - generic [ref=e123]: "3"
+          - generic [ref=e124]:
+            - heading "Abastecimentos" [level=3] [ref=e125]
+            - paragraph [ref=e126]: Lançamento de data, litros, preço por litro e leitura do medidor.
+        - generic [ref=e127]:
+          - generic [ref=e128]: "4"
+          - generic [ref=e129]:
+            - heading "Trocas de óleo" [level=3] [ref=e130]
+            - paragraph [ref=e131]: Lançamento de data, tipo e quantidade de óleo, custo e leitura do medidor.
+        - generic [ref=e132]:
+          - generic [ref=e133]: "5"
+          - generic [ref=e134]:
+            - heading "Painel" [level=3] [ref=e135]
+            - paragraph [ref=e136]: O resumo automático de combustível e óleo.
+    - generic [ref=e138]:
+      - generic [ref=e139]:
+        - heading "Comece hoje a controlar o combustível e o óleo dos seus equipamentos" [level=2] [ref=e140]
+        - paragraph [ref=e141]: A planilha é gratuita e leva poucos minutos para ser preenchida.
+      - link "Quero a planilha gratuita" [ref=e142] [cursor=pointer]:
+        - /url: "#baixar"
+    - generic [ref=e144]:
+      - heading "Quando a planilha ficar pequena para o seu crescimento" [level=2] [ref=e145]
+      - paragraph [ref=e146]: A Oravel desenvolve tecnologia para organizar a gestão de ativos, manutenção e serviços em um só sistema. Fale com a gente e conte como é a sua operação.
+      - generic [ref=e147]:
+        - link "Conversar pelo WhatsApp" [ref=e148] [cursor=pointer]:
+          - /url: https://wa.me/5519999332615
+        - link "contato@oravel.com.br" [ref=e149] [cursor=pointer]:
+          - /url: mailto:contato@oravel.com.br
+    - contentinfo [ref=e150]:
+      - generic [ref=e151]:
+        - generic [ref=e152]:
+          - generic [ref=e153]: ORAVEL
+          - generic [ref=e154]: Desenvolvimento e tecnologia
+        - generic [ref=e155]: Oravel Desenvolvimento de Software LTDA CNPJ 65.707.953/0001-30 R. Pais Leme, 215, Conj. 1713, Pinheiros, São Paulo/SP, CEP 05424-150
+        - generic [ref=e156]:
+          - link "oravel.com.br" [ref=e157] [cursor=pointer]:
+            - /url: https://oravel.com.br
+          - link "contato@oravel.com.br" [ref=e158] [cursor=pointer]:
+            - /url: mailto:contato@oravel.com.br
+          - text: WhatsApp (19) 99933-2615
+  - dialog "Aviso de cookies" [ref=e159]:
+    - generic [ref=e160]:
+      - text: Usamos cookies do Google (Analytics e Ads) para medir o site e nossos anúncios. Você pode recusar a qualquer momento.
+      - link "Saiba mais" [ref=e161] [cursor=pointer]:
+        - /url: /politica-de-privacidade/
+      - text: .
+    - generic [ref=e162]:
+      - button "Entendi" [ref=e163] [cursor=pointer]
+      - button "Recusar" [ref=e164] [cursor=pointer]

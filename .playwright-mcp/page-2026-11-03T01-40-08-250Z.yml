@@ -1,0 +1,180 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]: ORAVEL
+        - generic [ref=e7]: Desenvolvimento e tecnologia
+      - link "Baixar a planilha grátis" [ref=e8] [cursor=pointer]:
+        - /url: "#baixar"
+  - generic [ref=e10]:
+    - generic [ref=e11]:
+      - generic [ref=e12]: Material gratuito · Excel
+      - heading "O resultado da sua operação começa na gestão dos ativos" [level=1] [ref=e13]
+      - paragraph [ref=e14]: "Quando cada equipamento tem um plano de manutenção preventiva, a rotina fica previsível: você planeja a agenda, atende melhor os clientes e decide com tranquilidade."
+      - list [ref=e15]:
+        - listitem [ref=e16]:
+          - generic [ref=e19]: Cadastro de ativos e plano preventivo por dias e/ou horas
+        - listitem [ref=e20]:
+          - generic [ref=e23]: Alertas automáticos de Em dia, Atenção e Vencido
+        - listitem [ref=e24]:
+          - generic [ref=e27]: Painel com histórico, custos e tempo de parada
+    - generic [ref=e28]:
+      - generic [ref=e30]:
+        - text: Não preencha
+        - textbox [ref=e31]
+      - generic [ref=e32]:
+        - heading "Receba a planilha agora" [level=2] [ref=e33]
+        - paragraph [ref=e34]: Preencha os dados e enviamos o arquivo para o seu e-mail.
+      - generic [ref=e35]:
+        - generic [ref=e36]: Nome
+        - textbox "Nome" [ref=e37]
+      - generic [ref=e38]:
+        - generic [ref=e39]: E-mail profissional
+        - textbox "E-mail profissional" [ref=e40]
+      - generic [ref=e41]:
+        - generic [ref=e42]: WhatsApp
+        - textbox "WhatsApp" [ref=e43]:
+          - /placeholder: (19) 90000-0000
+      - generic [ref=e44]:
+        - generic [ref=e45]: Empresa
+        - textbox "Empresa" [ref=e46]
+      - button "Quero a planilha gratuita" [ref=e50] [cursor=pointer]
+      - paragraph [ref=e51]: Gratuito, em Excel, pronto para usar. Seus dados são usados apenas para o envio do material e contato da Oravel.
+  - generic [ref=e53]:
+    - generic [ref=e54]:
+      - generic [ref=e55]: Como o resultado se constrói
+      - heading "Ativos bem geridos, rotina previsível, resultado consistente" [level=2] [ref=e56]
+      - paragraph [ref=e57]: Cada equipamento é um ativo que gera receita ou sustenta o serviço. Cuidar dele no tempo certo é o que mantém a operação funcionando como planejado.
+    - generic [ref=e58]:
+      - generic [ref=e59]:
+        - generic [ref=e60]: "1"
+        - heading "Gestão dos ativos" [level=3] [ref=e61]
+        - paragraph [ref=e62]: Saber o que você tem, onde está, quantas horas já trabalhou e o que cada equipamento precisa.
+      - generic [ref=e63]:
+        - generic [ref=e64]: "2"
+        - heading "Manutenção preventiva" [level=3] [ref=e65]
+        - paragraph [ref=e66]: Intervalos definidos por dias ou horas e acompanhados com antecedência, no lugar de agir só quando algo para.
+      - generic [ref=e67]:
+        - generic [ref=e68]: "3"
+        - heading "Previsibilidade" [level=3] [ref=e69]
+        - paragraph [ref=e70]: Você sabe o que vai acontecer nas próximas semanas e organiza equipe, agenda e entregas com calma.
+      - generic [ref=e71]:
+        - generic [ref=e72]: "4"
+        - heading "Resultado positivo" [level=3] [ref=e73]
+        - paragraph [ref=e74]: Equipamentos disponíveis, clientes bem atendidos e um caixa que você consegue planejar.
+  - generic [ref=e76]:
+    - heading "O que muda quando a manutenção preventiva está sob controle" [level=2] [ref=e77]
+    - generic [ref=e78]:
+      - generic [ref=e79]:
+        - heading "Agenda organizada" [level=3] [ref=e83]
+        - paragraph [ref=e84]: As paradas para manutenção entram no calendário com antecedência, sem atropelar entregas e contratos.
+      - generic [ref=e85]:
+        - heading "Equipamentos disponíveis" [level=3] [ref=e88]
+        - paragraph [ref=e89]: Menos paradas inesperadas significam mais tempo de equipamento pronto para trabalhar e gerar resultado.
+      - generic [ref=e90]:
+        - heading "Custos que você enxerga" [level=3] [ref=e93]
+        - paragraph [ref=e94]: Com o histórico registrado, fica claro quanto cada ativo consome e onde vale investir.
+      - generic [ref=e95]:
+        - heading "Segurança na operação" [level=3] [ref=e99]
+        - paragraph [ref=e100]: Inspeções em dia protegem equipes, clientes e a reputação da sua empresa.
+      - generic [ref=e101]:
+        - heading "Vida útil maior" [level=3] [ref=e105]
+        - paragraph [ref=e106]: Equipamento cuidado no tempo certo tende a durar mais e a manter seu valor ao longo dos anos.
+      - generic [ref=e107]:
+        - heading "Decisões com tranquilidade" [level=3] [ref=e110]
+        - paragraph [ref=e111]: Com informação à mão, você planeja compras, renovação de frota e crescimento com mais segurança.
+  - generic [ref=e113]:
+    - generic [ref=e114]:
+      - generic [ref=e115]: Dentro da planilha
+      - heading "Simples de usar desde o primeiro dia" [level=2] [ref=e116]
+      - paragraph [ref=e117]: Você cadastra os ativos, define os intervalos e a planilha calcula as próximas datas e avisa o que está chegando.
+    - generic [ref=e118]:
+      - generic [ref=e119]:
+        - generic [ref=e120]:
+          - generic [ref=e121]: "1"
+          - generic [ref=e122]:
+            - heading "Ativos" [level=3] [ref=e123]
+            - paragraph [ref=e124]: Código, descrição, categoria, localização e horímetro de cada equipamento.
+        - generic [ref=e125]:
+          - generic [ref=e126]: "2"
+          - generic [ref=e127]:
+            - heading "Plano preventivo" [level=3] [ref=e128]
+            - paragraph [ref=e129]: Serviços, intervalos em dias e/ou horas, próxima data e status automático.
+        - generic [ref=e130]:
+          - generic [ref=e131]: "3"
+          - generic [ref=e132]:
+            - heading "Histórico" [level=3] [ref=e133]
+            - paragraph [ref=e134]: Cada manutenção realizada, com custo, responsável e tempo de parada.
+        - generic [ref=e135]:
+          - generic [ref=e136]: "4"
+          - generic [ref=e137]:
+            - heading "Painel" [level=3] [ref=e138]
+            - paragraph [ref=e139]: Percentual do plano em dia, preventivas x corretivas e custos, em um só lugar.
+      - generic [ref=e140]:
+        - generic [ref=e141]:
+          - generic [ref=e142]:
+            - generic [ref=e143]: ORAVEL
+            - generic [ref=e144]: Plano de manutenção preventiva
+          - generic [ref=e146]:
+            - generic [ref=e147]:
+              - generic [ref=e148]: Equipamento
+              - generic [ref=e149]: Serviço preventivo
+              - generic [ref=e150]: Próxima data
+              - generic [ref=e151]: Status
+            - generic [ref=e152]:
+              - generic [ref=e153]: Gerador 150 kVA
+              - generic [ref=e154]: Troca de óleo e filtros
+              - generic [ref=e155]: 07/12/2026
+              - generic [ref=e156]: Em dia
+            - generic [ref=e158]:
+              - generic [ref=e159]: Empilhadeira 2,5 t
+              - generic [ref=e160]: Revisão de 250 h
+              - generic [ref=e161]: faltam 25 h
+              - generic [ref=e162]: Atenção
+            - generic [ref=e164]:
+              - generic [ref=e165]: Plataforma tesoura
+              - generic [ref=e166]: Inspeção de segurança
+              - generic [ref=e167]: 24/11/2026
+              - generic [ref=e168]: Em dia
+            - generic [ref=e170]:
+              - generic [ref=e171]: Compressor 20 pcm
+              - generic [ref=e172]: Troca de óleo do compressor
+              - generic [ref=e173]: 29/11/2026
+              - generic [ref=e174]: Em dia
+          - generic [ref=e176]:
+            - generic [ref=e177]:
+              - generic [ref=e178]: Plano em dia
+              - generic [ref=e179]: 80%
+            - generic [ref=e180]:
+              - generic [ref=e181]: Preventivas
+              - generic [ref=e182]: 75%
+            - generic [ref=e183]:
+              - generic [ref=e184]: Em atenção
+              - generic [ref=e185]: "1"
+        - paragraph [ref=e186]: Exemplo ilustrativo com dados fictícios.
+  - generic [ref=e188]:
+    - generic [ref=e189]:
+      - heading "Comece hoje a transformar manutenção em previsibilidade" [level=2] [ref=e190]
+      - paragraph [ref=e191]: A planilha é gratuita e leva poucos minutos para ser preenchida com os seus equipamentos.
+    - link "Quero a planilha gratuita" [ref=e192] [cursor=pointer]:
+      - /url: "#baixar"
+  - generic [ref=e194]:
+    - heading "Quando a planilha ficar pequena para o seu crescimento" [level=2] [ref=e195]
+    - paragraph [ref=e196]: A Oravel desenvolve tecnologia para organizar a gestão de ativos, manutenção e serviços em um só sistema. Fale com a gente e conte como é a sua operação.
+    - generic [ref=e197]:
+      - link "Conversar pelo WhatsApp" [ref=e198] [cursor=pointer]:
+        - /url: https://wa.me/5519999332615
+      - link "contato@oravel.com.br" [ref=e199] [cursor=pointer]:
+        - /url: mailto:contato@oravel.com.br
+  - contentinfo [ref=e200]:
+    - generic [ref=e201]:
+      - generic [ref=e202]:
+        - generic [ref=e203]: ORAVEL
+        - generic [ref=e204]: Desenvolvimento e tecnologia
+      - generic [ref=e205]: Oravel Desenvolvimento de Software LTDA CNPJ 65.707.953/0001-30 R. Pais Leme, 215, Conj. 1713, Pinheiros, São Paulo/SP, CEP 05424-150
+      - generic [ref=e206]:
+        - link "oravel.com.br" [ref=e207] [cursor=pointer]:
+          - /url: https://oravel.com.br
+        - link "contato@oravel.com.br" [ref=e208] [cursor=pointer]:
+          - /url: mailto:contato@oravel.com.br
+        - text: WhatsApp (19) 99933-2615

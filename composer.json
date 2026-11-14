@@ -26,7 +26,8 @@
         "spatie/laravel-backup": "^10.2",
         "spatie/laravel-medialibrary": "^11.22",
         "spatie/laravel-permission": "^7.3",
-        "symfony/yaml": "^8.1"
+        "symfony/yaml": "^8.1",
+        "phpoffice/phpspreadsheet": "^3.5"
     },
     "require-dev": {
         "laravel/breeze": "^2.4",

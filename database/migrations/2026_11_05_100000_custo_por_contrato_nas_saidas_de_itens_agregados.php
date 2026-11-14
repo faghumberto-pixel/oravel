@@ -17,7 +17,9 @@ return new class extends Migration
         });
 
         // Insumo vendido num contrato de serviço pode sair sem equipamento de destino (era NOT NULL no banco).
-        DB::statement('ALTER TABLE aggregate_item_exits ALTER COLUMN asset_id DROP NOT NULL');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('ALTER TABLE aggregate_item_exits ALTER COLUMN asset_id DROP NOT NULL');
+        }
     }
 
     public function down(): void

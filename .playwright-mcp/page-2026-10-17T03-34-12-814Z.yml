@@ -1,0 +1,287 @@
+- generic [active] [ref=e1]:
+  - navigation "Principal" [ref=e2]:
+    - generic [ref=e3]:
+      - link "O Oravel" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e5]: O
+        - text: Oravel
+      - generic [ref=e6]:
+        - link "Soluções" [ref=e8] [cursor=pointer]:
+          - /url: /solucoes/
+        - link "Planos" [ref=e9] [cursor=pointer]:
+          - /url: /planos/
+        - link "Sobre" [ref=e10] [cursor=pointer]:
+          - /url: /sobre/
+        - link "FAQ" [ref=e11] [cursor=pointer]:
+          - /url: /faq.php
+        - link "Ajuda" [ref=e12] [cursor=pointer]:
+          - /url: /central-de-conhecimento/
+        - link "Contato" [ref=e13] [cursor=pointer]:
+          - /url: /contato.php
+      - link "Agendar demonstração" [ref=e14] [cursor=pointer]:
+        - /url: /contato.php
+  - generic [ref=e16]:
+    - text: Soluções Oravel
+    - heading "Escolha a solução certa para a sua operação" [level=1] [ref=e17]
+    - paragraph [ref=e18]: Seis soluções, cada uma completa no que se propõe. Comece pela que resolve o seu dia a dia e contrate online ou com a nossa equipe.
+  - main [ref=e19]:
+    - generic [ref=e20]:
+      - article [ref=e21]:
+        - img "Contratos de locação" [ref=e23]:
+          - generic [ref=e30]: app.oravel.com.br/contratos
+          - generic [ref=e33]: Ativos
+          - generic [ref=e34]: "38"
+          - generic [ref=e36]: A vencer
+          - generic [ref=e37]: "5"
+          - generic [ref=e39]: Medições
+          - generic [ref=e40]: "12"
+          - generic [ref=e42]: Contrato
+          - generic [ref=e43]: Cliente
+          - generic [ref=e44]: Equipamento
+          - generic [ref=e45]: Situação
+          - generic [ref=e47]: CT-0412
+          - generic [ref=e48]: Construtora Alfa
+          - generic [ref=e49]: Gerador 150kVA
+          - generic [ref=e51]: Ativo
+          - generic [ref=e52]: CT-0415
+          - generic [ref=e53]: Obras Beta
+          - generic [ref=e54]: Plataforma 12m
+          - generic [ref=e56]: Ativo
+          - generic [ref=e58]: CT-0398
+          - generic [ref=e59]: Gama Eventos
+          - generic [ref=e60]: Empilhadeira 3t
+          - generic [ref=e62]: A vencer
+          - generic [ref=e63]: CT-0377
+          - generic [ref=e64]: Delta Log
+          - generic [ref=e65]: Compressor 20pcm
+          - generic [ref=e67]: Ativo
+        - generic [ref=e68]:
+          - heading "ERP Locadoras" [level=3] [ref=e69]
+          - paragraph [ref=e70]: O ERP completo para locadoras de equipamentos. Contratos, medições, manutenção, avarias, estoque, logística, financeiro e vendas em uma base só.
+          - list [ref=e71]:
+            - listitem [ref=e72]: ✓ Ativos e locação
+            - listitem [ref=e73]: ✓ Manutenção
+            - listitem [ref=e74]: ✓ Estoque e logística
+            - listitem [ref=e75]: ✓ Financeiro e comercial
+            - listitem [ref=e76]: ✓ Pessoas
+          - generic [ref=e77]:
+            - link "Falar com um especialista" [ref=e78] [cursor=pointer]:
+              - /url: /contato.php?pacote=locadora
+            - link "Conhecer a solução" [ref=e79] [cursor=pointer]:
+              - /url: /erp-cmms/
+      - article [ref=e80]:
+        - img "Kanban do pátio" [ref=e82]:
+          - generic [ref=e89]: app.oravel.com.br/kanban-patio
+          - generic [ref=e92]: ABERTA
+          - generic [ref=e95]: OS-2041 Gerador
+          - generic [ref=e96]: Falha na partida
+          - generic [ref=e99]: OS-2044 Empilhadeira
+          - generic [ref=e100]: Revisão 500h
+          - generic [ref=e102]: EM EXECUÇÃO
+          - generic [ref=e105]: OS-2038 Plataforma
+          - generic [ref=e106]: Troca de cilindro
+          - generic [ref=e109]: OS-2036 Compressor
+          - generic [ref=e110]: Filtro e óleo
+          - generic [ref=e112]: AGUARDANDO PEÇA
+          - generic [ref=e115]: OS-2029 Munck
+          - generic [ref=e116]: Mangueira hidráulica
+          - generic [ref=e118]: CONCLUÍDA
+          - generic [ref=e121]: OS-2025 Gerador
+          - generic [ref=e122]: Preventiva 250h
+          - generic [ref=e125]: OS-2022 Torre de luz
+          - generic [ref=e126]: Bateria
+        - generic [ref=e127]:
+          - heading "Manutenção" [level=3] [ref=e128]
+          - paragraph [ref=e129]: Controle de equipamentos, ordens de serviço e preventiva. Ativos, ordens de serviço, manutenção preventiva com checklist e o histórico de cada equipamento.
+          - list [ref=e130]:
+            - listitem [ref=e131]: ✓ Ativos
+            - listitem [ref=e132]: ✓ Ordens de serviço
+            - listitem [ref=e133]: ✓ Preventiva (PMP)
+            - listitem [ref=e134]: ✓ Indicadores
+            - listitem [ref=e135]: ✓ Itens agregados e clientes
+          - generic [ref=e136]:
+            - link "Assinar Manutenção" [ref=e137] [cursor=pointer]:
+              - /url: https://app.oravel.com.br/assinar/manutencao
+            - link "Conhecer a solução" [ref=e138] [cursor=pointer]:
+              - /url: /software-manutencao-industrial/
+      - article [ref=e139]:
+        - 'img "Proposta comercial #142" [ref=e141]':
+          - generic [ref=e148]: app.oravel.com.br/propostas/142
+          - generic [ref=e153]: Enviada
+          - generic [ref=e154]: Montagem de tubulação industrial
+          - generic [ref=e155]: R$ 18.500
+          - generic [ref=e156]: Mão de obra especializada (80 h)
+          - generic [ref=e157]: R$ 9.600
+          - generic [ref=e158]: Locação de plataforma (10 dias)
+          - generic [ref=e159]: R$ 4.200
+          - generic [ref=e160]: Deslocamento
+          - generic [ref=e161]: R$ 800
+          - generic [ref=e162]: Total R$ 33.100
+          - generic [ref=e165]: Assinatura
+          - generic [ref=e167]: Aceitar
+        - generic [ref=e168]:
+          - heading "Serviços" [level=3] [ref=e169]
+          - paragraph [ref=e170]: Venda, execute e cobre serviços em uma plataforma só. Clientes, orçamentos, propostas, contratos de serviço com assinatura, ordens de serviço e financeiro.
+          - list [ref=e171]:
+            - listitem [ref=e172]: ✓ Comercial
+            - listitem [ref=e173]: ✓ Execução
+            - listitem [ref=e174]: ✓ Financeiro
+            - listitem [ref=e175]: ✓ Relacionamento
+            - listitem [ref=e176]: ✓ Montagem industrial
+          - generic [ref=e177]:
+            - link "Assinar Serviços" [ref=e178] [cursor=pointer]:
+              - /url: https://app.oravel.com.br/assinar/servicos
+            - link "Conhecer a solução" [ref=e179] [cursor=pointer]:
+              - /url: /software-gestao-de-servicos/
+      - article [ref=e180]:
+        - img "Programação logística" [ref=e182]:
+          - generic [ref=e189]: app.oravel.com.br/programacao-logistica
+          - generic [ref=e192]: A PROGRAMAR
+          - generic [ref=e195]: "Entrega #881"
+          - generic [ref=e196]: Campinas → Limeira
+          - generic [ref=e198]: EM ROTA
+          - generic [ref=e201]: Carreta ABC-1D23
+          - generic [ref=e202]: Previsão 15:40
+          - generic [ref=e205]: Munck XYZ-9F87
+          - generic [ref=e206]: Obra Beta
+          - generic [ref=e208]: ENTREGUE
+          - generic [ref=e211]: "Entrega #877"
+          - generic [ref=e212]: Assinada
+          - generic [ref=e215]: "Entrega #874"
+          - generic [ref=e216]: Assinada
+        - generic [ref=e217]:
+          - heading "Logística" [level=3] [ref=e218]
+          - paragraph [ref=e219]: Frota, rotas e transporte sob controle. Agenda de motoristas, saídas de veículos, rastreamento, abastecimento e custo por trajeto.
+          - list [ref=e220]:
+            - listitem [ref=e221]: ✓ Logística
+            - listitem [ref=e222]: ✓ Frota
+            - listitem [ref=e223]: ✓ Rastreamento
+            - listitem [ref=e224]: ✓ Equipe
+          - generic [ref=e225]:
+            - link "Assinar Logística" [ref=e226] [cursor=pointer]:
+              - /url: https://app.oravel.com.br/assinar/logistica
+            - link "Conhecer a solução" [ref=e227] [cursor=pointer]:
+              - /url: /software-gestao-frota-logistica/
+      - article [ref=e228]:
+        - img "Almoxarifado" [ref=e230]:
+          - generic [ref=e237]: app.oravel.com.br/almoxarifado
+          - generic [ref=e240]: Itens
+          - generic [ref=e241]: "1.284"
+          - generic [ref=e243]: Abaixo do mínimo
+          - generic [ref=e244]: "17"
+          - generic [ref=e246]: Giro do mês
+          - generic [ref=e247]: 2,4x
+          - generic [ref=e249]: Código
+          - generic [ref=e250]: Material
+          - generic [ref=e251]: Saldo
+          - generic [ref=e252]: Situação
+          - generic [ref=e254]: FLT-204
+          - generic [ref=e255]: Filtro de óleo
+          - generic [ref=e256]: 38 un
+          - generic [ref=e258]: OK
+          - generic [ref=e259]: MNG-118
+          - generic [ref=e260]: Mangueira 1/2"
+          - generic [ref=e261]: 6 un
+          - generic [ref=e263]: Baixo
+          - generic [ref=e265]: BAT-060
+          - generic [ref=e266]: Bateria 60Ah
+          - generic [ref=e267]: 2 un
+          - generic [ref=e269]: Crítico
+          - generic [ref=e270]: OLE-15W
+          - generic [ref=e271]: Óleo 15W40 (20L)
+          - generic [ref=e272]: 14 un
+          - generic [ref=e274]: OK
+        - generic [ref=e275]:
+          - heading "Estoque" [level=3] [ref=e276]
+          - paragraph [ref=e277]: Materiais e peças com controle de verdade. Almoxarifado, movimentações, inventário, compras e reposição, inclusive em veículos e técnicos.
+          - list [ref=e278]:
+            - listitem [ref=e279]: ✓ Materiais e peças
+            - listitem [ref=e280]: ✓ Almoxarifado
+            - listitem [ref=e281]: ✓ Compras e reposição
+            - listitem [ref=e282]: ✓ Inventário
+          - generic [ref=e283]:
+            - link "Assinar Estoque" [ref=e284] [cursor=pointer]:
+              - /url: https://app.oravel.com.br/assinar/estoque
+            - link "Conhecer a solução" [ref=e285] [cursor=pointer]:
+              - /url: /wms/
+      - article [ref=e286]:
+        - img "Funil de vendas" [ref=e288]:
+          - generic [ref=e295]: app.oravel.com.br/funil-de-vendas
+          - generic [ref=e298]: NOVO
+          - generic [ref=e301]: Metalúrgica Alfa
+          - generic [ref=e302]: R$ 48 mil
+          - generic [ref=e305]: Obras Beta
+          - generic [ref=e306]: R$ 22 mil
+          - generic [ref=e308]: PROPOSTA
+          - generic [ref=e311]: Gama Eventos
+          - generic [ref=e312]: R$ 15 mil
+          - generic [ref=e314]: NEGOCIAÇÃO
+          - generic [ref=e317]: Delta Log
+          - generic [ref=e318]: R$ 90 mil
+          - generic [ref=e320]: GANHO
+          - generic [ref=e323]: Epsilon
+          - generic [ref=e324]: R$ 36 mil
+        - generic [ref=e325]:
+          - heading "Vendas" [level=3] [ref=e326]
+          - paragraph [ref=e327]: CRM de vendas que funciona sozinho. Leads, funil configurável, contas, catálogo, visitas, metas e propostas com aceite online.
+          - list [ref=e328]:
+            - listitem [ref=e329]: ✓ Funil de vendas
+            - listitem [ref=e330]: ✓ Clientes e catálogo
+            - listitem [ref=e331]: ✓ Equipe de campo
+            - listitem [ref=e332]: ✓ Metas e propostas
+            - listitem [ref=e333]: ✓ Integrações
+          - generic [ref=e334]:
+            - link "Assinar Vendas" [ref=e335] [cursor=pointer]:
+              - /url: https://app.oravel.com.br/assinar/vendas
+            - link "Conhecer a solução" [ref=e336] [cursor=pointer]:
+              - /url: /crm/
+    - generic [ref=e337]:
+      - generic [ref=e338]:
+        - generic [ref=e339]: "1"
+        - heading "Escolha a solução" [level=3] [ref=e340]
+        - paragraph [ref=e341]: Veja as telas e o que está incluído em cada uma.
+      - generic [ref=e342]:
+        - generic [ref=e343]: "2"
+        - heading "Contrate" [level=3] [ref=e344]
+        - paragraph [ref=e345]: Online, em poucos minutos, ou com apoio da nossa equipe comercial.
+      - generic [ref=e346]:
+        - generic [ref=e347]: "3"
+        - heading "Comece a usar" [level=3] [ref=e348]
+        - paragraph [ref=e349]: Acesso liberado e treinamento na Academia Oravel.
+    - paragraph [ref=e350]:
+      - text: Precisa de uma combinação diferente? Fale com a nossa equipe em
+      - link "contato" [ref=e351] [cursor=pointer]:
+        - /url: /contato.php
+      - text: e montamos o contrato sob medida.
+  - contentinfo [ref=e352]:
+    - generic [ref=e353]:
+      - generic [ref=e354]: Soluções
+      - link "ERP Locadoras" [ref=e355] [cursor=pointer]:
+        - /url: /erp-cmms/
+      - link "Manutenção" [ref=e356] [cursor=pointer]:
+        - /url: /software-manutencao-industrial/
+      - link "Serviços" [ref=e357] [cursor=pointer]:
+        - /url: /software-gestao-de-servicos/
+      - link "Logística" [ref=e358] [cursor=pointer]:
+        - /url: /software-gestao-frota-logistica/
+      - link "Estoque" [ref=e359] [cursor=pointer]:
+        - /url: /wms/
+      - link "Vendas" [ref=e360] [cursor=pointer]:
+        - /url: /crm/
+    - generic [ref=e361]:
+      - generic [ref=e362]:
+        - text: © 2026 Oravel Desenvolvimento de Software
+        - generic [ref=e363]: CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, conj. 1713, Pinheiros, São Paulo/SP · CEP 05424-150
+      - generic [ref=e364]:
+        - link "Home" [ref=e365] [cursor=pointer]:
+          - /url: /
+        - link "Soluções" [ref=e366] [cursor=pointer]:
+          - /url: /solucoes/
+        - link "Planos" [ref=e367] [cursor=pointer]:
+          - /url: /planos/
+        - link "Contato" [ref=e368] [cursor=pointer]:
+          - /url: /contato.php
+        - link "Privacidade" [ref=e369] [cursor=pointer]:
+          - /url: /politica-de-privacidade/
+        - link "Termos" [ref=e370] [cursor=pointer]:
+          - /url: /termos-de-uso/

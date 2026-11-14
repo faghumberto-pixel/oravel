@@ -1,0 +1,313 @@
+- generic [active] [ref=f9e1]:
+  - generic [ref=f9e2]:
+    - strong [ref=f9e3]: Nenhum tenant selecionado.
+    - text: Como super admin, você não vê cards de métricas nem consegue criar registros (Ativos, Grupos de Checklist, etc.) até escolher em nome de qual empresa está atuando.
+    - link "Escolher tenant agora" [ref=f9e4] [cursor=pointer]:
+      - /url: http://127.0.0.1:8099/admin/select-acting-tenant
+  - generic [ref=f9e5]:
+    - generic [ref=f9e6]:
+      - navigation [ref=f9e8]:
+        - generic [ref=f9e9]:
+          - generic [ref=f9e12]:
+            - generic [ref=f9e13]: Pesquisa global
+            - searchbox "Pesquisa global" [ref=f9e19]
+          - button "⌘K" [ref=f9e21] [cursor=pointer]
+          - button "Abrir notificações" [ref=f9e1310] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=f9e25] [cursor=pointer]:
+            - /url: http://127.0.0.1:8099/admin/caixa-de-email
+          - button "Menu do usuário" [ref=f9e30] [cursor=pointer]:
+            - img "Avatar de Admin Visual" [ref=f9e31]
+        - link "Ajuda" [ref=f9e33] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=f9e37]:
+        - generic [ref=f9e39]:
+          - generic [ref=f9e40]:
+            - generic [ref=f9e41]:
+              - navigation [ref=f9e42]:
+                - list [ref=f9e43]:
+                  - listitem [ref=f9e44]:
+                    - link "Contratos" [ref=f9e45] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/contracts
+                  - listitem [ref=f9e46]:
+                    - generic [ref=f9e49]: Listar
+              - heading "Contratos" [level=1] [ref=f9e50]
+            - generic [ref=f9e52]:
+              - link "Criar Contrato" [ref=f9e53] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/contracts/create
+              - link "Imprimir" [ref=f9e55] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/print/tabela/988851a5-1109-43fd-ab34-da69b26923e6
+              - button "Exportar contracts" [ref=f9e59] [cursor=pointer]
+          - generic [ref=f9e63]:
+            - generic [ref=f9e64]:
+              - button "Total 5" [ref=f9e65] [cursor=pointer]:
+                - generic [ref=f9e66]: Total
+                - generic [ref=f9e67]: "5"
+              - button "Rascunho 1" [ref=f9e68] [cursor=pointer]:
+                - generic [ref=f9e69]: Rascunho
+                - generic [ref=f9e70]: "1"
+              - button "Ativos 3" [ref=f9e71] [cursor=pointer]:
+                - generic [ref=f9e72]: Ativos
+                - generic [ref=f9e73]: "3"
+              - button "Encerrados 1" [ref=f9e74] [cursor=pointer]:
+                - generic [ref=f9e75]: Encerrados
+                - generic [ref=f9e76]: "1"
+              - button "Vencem em 30 dias 1" [ref=f9e77] [cursor=pointer]:
+                - generic [ref=f9e78]: Vencem em 30 dias
+                - generic [ref=f9e79]: "1"
+              - button "Vigência vencida 1" [ref=f9e80] [cursor=pointer]:
+                - generic [ref=f9e81]: Vigência vencida
+                - generic [ref=f9e82]: "1"
+              - button "Assinados 0" [ref=f9e83] [cursor=pointer]:
+                - generic [ref=f9e84]: Assinados
+                - generic [ref=f9e85]: "0"
+              - button "Assinatura pendente 5" [ref=f9e86] [cursor=pointer]:
+                - generic [ref=f9e87]: Assinatura pendente
+                - generic [ref=f9e88]: "5"
+            - generic [ref=f9e90]:
+              - generic [ref=f9e93]:
+                - generic [ref=f9e94]:
+                  - generic [ref=f9e95]: Pesquisar
+                  - searchbox "Pesquisar" [ref=f9e101]
+                - button "Filtrar 0" [ref=f9e104] [cursor=pointer]:
+                  - generic [ref=f9e105]: Filtrar
+                  - generic [ref=f9e108]: "0"
+                - button "Alternar colunas" [ref=f9e114] [cursor=pointer]
+              - generic [ref=f9e118]:
+                - generic [ref=f9e122]:
+                  - generic [ref=f9e123]: Ordenar por
+                  - combobox "Ordenar por" [ref=f9e126]:
+                    - option "-" [selected]
+                    - option "Contrato"
+                    - option "Vigência"
+                - generic [ref=f9e127]:
+                  - generic [ref=f9e130]:
+                    - link "Locadora Visual CT-001 Ativo Construtora Alfa Fiorino Entrega Assinatura pendente 03/08/2026 até 03/05/2027" [ref=f9e132] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/contracts/01a1a2b3-129e-73ba-93a7-52f70a9c0a0e/edit
+                      - generic [ref=f9e134]:
+                        - generic [ref=f9e135]: Locadora Visual
+                        - generic [ref=f9e145]:
+                          - generic [ref=f9e146]: CT-001
+                          - generic [ref=f9e154]: Ativo
+                        - generic [ref=f9e163]: Construtora Alfa
+                        - generic [ref=f9e173]: Fiorino Entrega
+                        - generic [ref=f9e184]: Assinatura pendente
+                        - generic [ref=f9e195]: 03/08/2026 até 03/05/2027
+                    - generic [ref=f9e206]:
+                      - link "Editar" [ref=f9e207] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/contracts/01a1a2b3-129e-73ba-93a7-52f70a9c0a0e/edit
+                      - button [ref=f9e214] [cursor=pointer]
+                  - generic [ref=f9e219]:
+                    - link "Locadora Visual CT-002 Ativo Construtora Alfa Fiorino Entrega Assinatura pendente 03/08/2026 até 15/11/2026" [ref=f9e221] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/contracts/01a1a2b3-12bd-70cd-b842-2727eb0524fd/edit
+                      - generic [ref=f9e223]:
+                        - generic [ref=f9e224]: Locadora Visual
+                        - generic [ref=f9e234]:
+                          - generic [ref=f9e235]: CT-002
+                          - generic [ref=f9e243]: Ativo
+                        - generic [ref=f9e252]: Construtora Alfa
+                        - generic [ref=f9e262]: Fiorino Entrega
+                        - generic [ref=f9e273]: Assinatura pendente
+                        - generic [ref=f9e284]: 03/08/2026 até 15/11/2026
+                    - generic [ref=f9e295]:
+                      - link "Editar" [ref=f9e296] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/contracts/01a1a2b3-12bd-70cd-b842-2727eb0524fd/edit
+                      - button [ref=f9e303] [cursor=pointer]
+                  - generic [ref=f9e308]:
+                    - link "Locadora Visual CT-003 Ativo Construtora Alfa Fiorino Entrega Assinatura pendente 03/08/2026 até 30/10/2026" [ref=f9e310] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/contracts/01a1a2b3-12ce-7251-a072-7eb6cdc03e7f/edit
+                      - generic [ref=f9e312]:
+                        - generic [ref=f9e313]: Locadora Visual
+                        - generic [ref=f9e323]:
+                          - generic [ref=f9e324]: CT-003
+                          - generic [ref=f9e332]: Ativo
+                        - generic [ref=f9e341]: Construtora Alfa
+                        - generic [ref=f9e351]: Fiorino Entrega
+                        - generic [ref=f9e362]: Assinatura pendente
+                        - generic [ref=f9e373]: 03/08/2026 até 30/10/2026
+                    - generic [ref=f9e384]:
+                      - link "Editar" [ref=f9e385] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/contracts/01a1a2b3-12ce-7251-a072-7eb6cdc03e7f/edit
+                      - button [ref=f9e392] [cursor=pointer]
+                  - generic [ref=f9e397]:
+                    - link "Locadora Visual CT-004 Rascunho Construtora Alfa Fiorino Entrega Assinatura pendente 03/08/2026 até sem data final" [ref=f9e399] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/contracts/01a1a2b3-12da-71cd-b69b-8db65932b25b/edit
+                      - generic [ref=f9e401]:
+                        - generic [ref=f9e402]: Locadora Visual
+                        - generic [ref=f9e412]:
+                          - generic [ref=f9e413]: CT-004
+                          - generic [ref=f9e421]: Rascunho
+                        - generic [ref=f9e430]: Construtora Alfa
+                        - generic [ref=f9e440]: Fiorino Entrega
+                        - generic [ref=f9e451]: Assinatura pendente
+                        - generic [ref=f9e462]: 03/08/2026 até sem data final
+                    - generic [ref=f9e473]:
+                      - link "Editar" [ref=f9e474] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/contracts/01a1a2b3-12da-71cd-b69b-8db65932b25b/edit
+                      - button [ref=f9e481] [cursor=pointer]
+                  - generic [ref=f9e486]:
+                    - link "Locadora Visual CT-005 Encerrado Construtora Alfa Fiorino Entrega Assinatura pendente 03/08/2026 até 03/10/2026" [ref=f9e488] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/contracts/01a1a2b3-12e2-7386-beb2-cce84f0b1e5d/edit
+                      - generic [ref=f9e490]:
+                        - generic [ref=f9e491]: Locadora Visual
+                        - generic [ref=f9e501]:
+                          - generic [ref=f9e502]: CT-005
+                          - generic [ref=f9e510]: Encerrado
+                        - generic [ref=f9e519]: Construtora Alfa
+                        - generic [ref=f9e529]: Fiorino Entrega
+                        - generic [ref=f9e540]: Assinatura pendente
+                        - generic [ref=f9e551]: 03/08/2026 até 03/10/2026
+                    - generic [ref=f9e562]:
+                      - link "Editar" [ref=f9e563] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/contracts/01a1a2b3-12e2-7386-beb2-cce84f0b1e5d/edit
+                      - button [ref=f9e570] [cursor=pointer]
+              - navigation "Paginação" [ref=f9e573]:
+                - generic [ref=f9e574]: Exibindo 1 a 5 de 5 resultados
+                - generic [ref=f9e577]:
+                  - generic [ref=f9e578]: por página
+                  - combobox "por página" [ref=f9e581]:
+                    - option "5"
+                    - option "10" [selected]
+                    - option "25"
+                    - option "50"
+                    - option "Todas"
+    - complementary [ref=f9e582]:
+      - generic [ref=f9e584]:
+        - link "Início" [ref=f9e586] [cursor=pointer]:
+          - /url: http://127.0.0.1:8099/admin/painel-controle
+          - generic [ref=f9e590]: Oravel
+        - button "Recolher barra lateral" [ref=f9e591] [cursor=pointer]
+      - navigation [ref=f9e595]:
+        - list [ref=f9e596]:
+          - listitem [ref=f9e597]:
+            - link "Início" [ref=f9e598] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/admin/painel-controle
+          - listitem [ref=f9e602]:
+            - link "Academia Oravel" [ref=f9e603] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/academia
+        - list [ref=f9e607]:
+          - listitem [ref=f9e608]:
+            - generic [ref=f9e609] [cursor=pointer]:
+              - generic [ref=f9e612]: Ativos
+              - button "Ativos" [ref=f9e613]
+          - listitem [ref=f9e623]:
+            - generic [ref=f9e624] [cursor=pointer]:
+              - generic [ref=f9e627]: Conformidade NR-13
+              - button "Conformidade NR-13" [ref=f9e628]
+          - listitem [ref=f9e653]:
+            - generic [ref=f9e654] [cursor=pointer]:
+              - generic [ref=f9e657]: Gestão de Frota
+              - button "Gestão de Frota" [ref=f9e658]
+          - listitem [ref=f9e800]:
+            - generic [ref=f9e801] [cursor=pointer]:
+              - generic [ref=f9e802]: Complementos
+              - button "Complementos" [ref=f9e803]
+          - listitem [ref=f9e813]:
+            - generic [ref=f9e814] [cursor=pointer]:
+              - generic [ref=f9e817]: Materiais e Peças
+              - button "Materiais e Peças" [ref=f9e818]
+          - listitem [ref=f9e833]:
+            - generic [ref=f9e834] [cursor=pointer]:
+              - generic [ref=f9e837]: Itens Agregados
+              - button "Itens Agregados" [ref=f9e838]
+          - listitem [ref=f9e863]:
+            - generic [ref=f9e864] [cursor=pointer]:
+              - generic [ref=f9e867]: EPI
+              - button "EPI" [ref=f9e868]
+          - listitem [ref=f9e878]:
+            - generic [ref=f9e879] [cursor=pointer]:
+              - generic [ref=f9e882]: Comercial
+              - button "Comercial" [expanded] [ref=f9e883]
+            - list [ref=f9e887]:
+              - listitem [ref=f9e888]:
+                - link "Rastreamento GPS" [ref=f9e889] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/admin/rastreamento-gps
+              - listitem [ref=f9e894]:
+                - link "Gestão Comercial" [ref=f9e895] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/admin/gestao-comercial
+                - list [ref=f9e899]:
+                  - listitem [ref=f9e900]:
+                    - link "Assinaturas Eletrônicas" [ref=f9e901] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/document-signatures
+                  - listitem [ref=f9e906]:
+                    - link "Clientes G C" [ref=f9e907] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/clients
+                      - generic [ref=f9e912]: Clientes
+                      - generic [ref=f9e913]: G C
+                  - listitem [ref=f9e917]:
+                    - link "Contratos" [ref=f9e918] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/contracts
+                  - listitem [ref=f9e924]:
+                    - link "Excedentes de Locação" [ref=f9e925] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/rental-overage-charges
+                  - listitem [ref=f9e931]:
+                    - link "Franquias de Horas" [ref=f9e932] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/rental-hour-franchises
+                  - listitem [ref=f9e938]:
+                    - link "Gestão de Clientes" [ref=f9e939] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/gestao-clientes
+                  - listitem [ref=f9e945]:
+                    - link "Kanban Comercial" [ref=f9e946] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/proposta-comercial-kanban
+                  - listitem [ref=f9e952]:
+                    - link "Medições de Contrato" [ref=f9e953] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/contract-measurements
+                  - listitem [ref=f9e959]:
+                    - link "Orçamentos" [ref=f9e960] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/quotes
+                  - listitem [ref=f9e966]:
+                    - link "Propostas Comerciais" [ref=f9e967] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/proposta-comercials
+                  - listitem [ref=f9e973]:
+                    - link "Voz do Cliente" [ref=f9e974] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/client-feedbacks
+                  - listitem [ref=f9e980]:
+                    - link "Solicitações de Locação" [ref=f9e981] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/solicitacoes-locacao
+                  - listitem [ref=f9e987]:
+                    - link "Status da Frota" [ref=f9e988] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/fleet-statuses
+                  - listitem [ref=f9e994]:
+                    - link "Templates De Proposta" [ref=f9e995] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/proposta-comercial-templates
+              - listitem [ref=f9e1000]:
+                - link "Gestão CRM" [ref=f9e1001] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/admin/gestao-crm
+          - listitem [ref=f9e1005]:
+            - generic [ref=f9e1006] [cursor=pointer]:
+              - generic [ref=f9e1009]: Configurações
+              - button "Configurações" [ref=f9e1010]
+          - listitem [ref=f9e1062]:
+            - generic [ref=f9e1063] [cursor=pointer]:
+              - generic [ref=f9e1066]: Departamento Pessoal
+              - button "Departamento Pessoal" [ref=f9e1067]
+          - listitem [ref=f9e1087]:
+            - generic [ref=f9e1088] [cursor=pointer]:
+              - generic [ref=f9e1091]: Equipe
+              - button "Equipe" [ref=f9e1092]
+          - listitem [ref=f9e1131]:
+            - generic [ref=f9e1132] [cursor=pointer]:
+              - generic [ref=f9e1135]: Financeiro
+              - button "Financeiro" [ref=f9e1136]
+          - listitem [ref=f9e1162]:
+            - generic [ref=f9e1163] [cursor=pointer]:
+              - generic [ref=f9e1166]: Logística
+              - button "Logística" [ref=f9e1167]
+          - listitem [ref=f9e1197]:
+            - generic [ref=f9e1198] [cursor=pointer]:
+              - generic [ref=f9e1201]: Manutenção
+              - button "Manutenção" [ref=f9e1202]
+          - listitem [ref=f9e1228]:
+            - generic [ref=f9e1229] [cursor=pointer]:
+              - generic [ref=f9e1232]: PMP
+              - button "PMP" [ref=f9e1233]
+          - listitem [ref=f9e1272]:
+            - generic [ref=f9e1273] [cursor=pointer]:
+              - generic [ref=f9e1276]: Relatórios
+              - button "Relatórios" [ref=f9e1277]
+  - generic:
+    - status
+  - button "💬 Mensagens" [ref=f9e1300] [cursor=pointer]:
+    - generic [ref=f9e1301]:
+      - generic [ref=f9e1302]: 💬
+      - generic [ref=f9e1303]: Mensagens
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f9e1307]

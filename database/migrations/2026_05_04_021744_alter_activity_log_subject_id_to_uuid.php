@@ -12,9 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Alteramos a coluna subject_id para aceitar UUIDs (varchar 36)
-        // Isso resolve o conflito de tipo de dado com o PostgreSQL
-        DB::statement('ALTER TABLE activity_log ALTER COLUMN subject_id TYPE VARCHAR(36) USING subject_id::varchar');
+        if (DB::getDriverName() !== 'sqlite') {
+            // Alteramos a coluna subject_id para aceitar UUIDs (varchar 36)
+            // Isso resolve o conflito de tipo de dado com o PostgreSQL
+            DB::statement('ALTER TABLE activity_log ALTER COLUMN subject_id TYPE VARCHAR(36) USING subject_id::varchar');
+        }
     }
 
     /**
@@ -22,7 +24,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Reverte para BIGINT se precisar desfazer
-        DB::statement('ALTER TABLE activity_log ALTER COLUMN subject_id TYPE BIGINT USING subject_id::bigint');
+        if (DB::getDriverName() !== 'sqlite') {
+            // Reverte para BIGINT se precisar desfazer
+            DB::statement('ALTER TABLE activity_log ALTER COLUMN subject_id TYPE BIGINT USING subject_id::bigint');
+        }
     }
 };

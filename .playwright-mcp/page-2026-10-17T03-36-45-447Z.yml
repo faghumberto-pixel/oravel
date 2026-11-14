@@ -1,0 +1,95 @@
+- generic [active] [ref=f16e1]:
+  - navigation "Principal" [ref=f16e2]:
+    - generic [ref=f16e3]:
+      - link "O Oravel" [ref=f16e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f16e5]: O
+        - text: Oravel
+      - generic [ref=f16e6]:
+        - link "Soluções" [ref=f16e8] [cursor=pointer]:
+          - /url: /solucoes/
+        - link "Planos" [ref=f16e9] [cursor=pointer]:
+          - /url: /planos/
+        - link "Sobre" [ref=f16e10] [cursor=pointer]:
+          - /url: /sobre/
+        - link "FAQ" [ref=f16e11] [cursor=pointer]:
+          - /url: /faq.php
+        - link "Ajuda" [ref=f16e12] [cursor=pointer]:
+          - /url: /central-de-conhecimento/
+        - link "Contato" [ref=f16e13] [cursor=pointer]:
+          - /url: /contato.php
+      - link "Agendar demonstração" [ref=f16e14] [cursor=pointer]:
+        - /url: /contato.php
+  - generic [ref=f16e16]:
+    - text: Nossa história
+    - heading "A tecnologia que nasceu da cicatriz, não da planilha" [level=1] [ref=f16e17]
+    - paragraph [ref=f16e18]: "Software feito por quem já esteve do outro lado do balcão: na locação, na manutenção e no campo."
+  - main [ref=f16e19]:
+    - article [ref=f16e20]:
+      - paragraph [ref=f16e21]: Existe um abismo entre o software criado em um escritório ar-condicionado e a solução forjada no calor da operação. Enquanto a maioria das empresas de tecnologia "desenha" sistemas, nós vivenciamos cada obstáculo da locação de máquinas.
+      - paragraph [ref=f16e22]: A Oravel não nasceu de uma reunião de diretoria; ela nasceu do silêncio angustiante de uma máquina parada no canteiro de obras, da urgência de um cliente que precisa de solução "para ontem" e da complexidade de gerenciar frotas que não param. Nós sabemos o peso de cada contrato, a incerteza de uma manutenção não planejada e a pressão de fazer o horímetro bater a meta.
+      - blockquote [ref=f16e23]:
+        - text: Transformar essa vivência em um sistema não foi uma escolha de mercado; foi uma
+        - strong [ref=f16e24]: estratégia de sobrevivência
+        - text: .
+      - paragraph [ref=f16e25]: "Sabemos que, no seu negócio, o erro de margem é zero. Por isso, a Oravel não é apenas uma ferramenta de gestão: é a transposição da nossa experiência para a sua tela. Cada linha de código do nosso sistema é uma resposta para uma dor que nós mesmos já sentimos. Quando você clica em um botão na Oravel, não está apenas executando um comando: você está utilizando a inteligência acumulada de quem entende que a tecnologia precisa ter \"cancha\" de balcão."
+      - paragraph [ref=f16e26]: Nós eliminamos o achismo porque o mercado não perdoa o amadorismo. Substituímos a improvisação por previsibilidade, transformando a complexidade do dia a dia em uma operação fluida, onde o controle absoluto não é um luxo, é a sua base de sustentação.
+      - paragraph [ref=f16e27]: Não somos apenas fornecedores de software. Somos parceiros de trincheira. De quem já esteve do seu lado do balcão, para quem entende que a tecnologia é a única diferença entre apenas "operar" e "dominar" o mercado.
+      - paragraph [ref=f16e28]: "Oravel: a tecnologia que fala a sua língua, porque conhece as suas batalhas."
+    - generic [ref=f16e29]:
+      - generic [ref=f16e30]:
+        - heading "Feito na operação" [level=3] [ref=f16e31]
+        - paragraph [ref=f16e32]: Cada tela nasceu de um problema real de pátio, obra e contrato.
+      - generic [ref=f16e33]:
+        - heading "Previsibilidade" [level=3] [ref=f16e34]
+        - paragraph [ref=f16e35]: "Menos achismo: manutenção, estoque, frota e financeiro com dados na mão."
+      - generic [ref=f16e36]:
+        - heading "Parceria" [level=3] [ref=f16e37]
+        - paragraph [ref=f16e38]: Treinamento, suporte e uma equipe que entende o seu dia a dia.
+    - generic [ref=f16e40]:
+      - heading "Pronto para tirar sua operação da planilha?" [level=2] [ref=f16e41]
+      - paragraph [ref=f16e42]: Conheça as soluções Oravel ou agende uma demonstração com o cenário real da sua operação.
+      - link "Ver as soluções" [ref=f16e43] [cursor=pointer]:
+        - /url: /solucoes/
+  - contentinfo [ref=f16e44]:
+    - generic [ref=f16e45]:
+      - generic [ref=f16e46]: Soluções
+      - link "ERP Locadoras" [ref=f16e47] [cursor=pointer]:
+        - /url: /erp-cmms/
+      - link "Manutenção" [ref=f16e48] [cursor=pointer]:
+        - /url: /software-manutencao-industrial/
+      - link "Serviços" [ref=f16e49] [cursor=pointer]:
+        - /url: /software-gestao-de-servicos/
+      - link "Logística" [ref=f16e50] [cursor=pointer]:
+        - /url: /software-gestao-frota-logistica/
+      - link "Estoque" [ref=f16e51] [cursor=pointer]:
+        - /url: /wms/
+      - link "Vendas" [ref=f16e52] [cursor=pointer]:
+        - /url: /crm/
+    - generic [ref=f16e53]:
+      - generic [ref=f16e54]:
+        - text: © 2026 Oravel Desenvolvimento de Software
+        - generic [ref=f16e55]: CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, conj. 1713, Pinheiros, São Paulo/SP · CEP 05424-150
+      - generic [ref=f16e56]:
+        - link "Home" [ref=f16e57] [cursor=pointer]:
+          - /url: /
+        - link "Soluções" [ref=f16e58] [cursor=pointer]:
+          - /url: /solucoes/
+        - link "Planos" [ref=f16e59] [cursor=pointer]:
+          - /url: /planos/
+        - link "Contato" [ref=f16e60] [cursor=pointer]:
+          - /url: /contato.php
+        - link "Privacidade" [ref=f16e61] [cursor=pointer]:
+          - /url: /politica-de-privacidade/
+        - link "Termos" [ref=f16e62] [cursor=pointer]:
+          - /url: /termos-de-uso/
+  - button "Abrir chat do WhatsApp" [ref=f16e64]
+  - dialog "Aviso de cookies" [ref=f16e68]:
+    - generic [ref=f16e69]:
+      - text: Usamos cookies do Google (Analytics e Ads) para medir o site e nossos anúncios. Você pode recusar a qualquer momento.
+      - link "Saiba mais" [ref=f16e70] [cursor=pointer]:
+        - /url: /politica-de-privacidade/
+      - text: .
+    - generic [ref=f16e71]:
+      - button "Entendi" [ref=f16e72] [cursor=pointer]
+      - button "Recusar" [ref=f16e73] [cursor=pointer]

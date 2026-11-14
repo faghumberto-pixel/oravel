@@ -1,0 +1,216 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e2]:
+    - generic [ref=f3e3]:
+      - navigation [ref=f3e5]:
+        - generic [ref=f3e6]:
+          - generic [ref=f3e7]:
+            - generic [ref=f3e8]: Terça-feira, 3 de novembro
+            - generic [ref=f3e9]: 15:09:50
+          - generic [ref=f3e10]:
+            - link "0 hoje" [ref=f3e11] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/central/programacao?visao=hoje
+              - generic [ref=f3e14]: "0"
+              - generic [ref=f3e15]: hoje
+            - link "0 na semana" [ref=f3e17] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/central/programacao?visao=semana
+              - generic [ref=f3e18]: "0"
+              - generic [ref=f3e19]: na semana
+        - generic [ref=f3e20]:
+          - generic [ref=f3e23]:
+            - generic [ref=f3e24]: Pesquisa global
+            - searchbox "Pesquisa global" [ref=f3e30]
+          - button "⌘K" [ref=f3e32] [cursor=pointer]
+          - button "Abrir notificações" [ref=f3e38] [cursor=pointer]
+          - button "Menu do usuário" [ref=f3e44] [cursor=pointer]:
+            - img "Avatar de Super Visual" [ref=f3e45]
+      - main [ref=f3e46]:
+        - generic [ref=f3e48]:
+          - heading "Dashboard SaaS" [level=1] [ref=f3e51]
+          - generic [ref=f3e54]:
+            - generic [ref=f3e56]:
+              - generic [ref=f3e58]:
+                - generic [ref=f3e59]: Total de Tenants
+                - generic [ref=f3e61]: "0"
+                - generic [ref=f3e62]: Empresas cadastradas na plataforma
+              - generic [ref=f3e67]:
+                - generic [ref=f3e68]: Em Teste
+                - generic [ref=f3e70]: "0"
+                - generic [ref=f3e71]: Ainda não converteram pra plano pago
+              - generic [ref=f3e76]:
+                - generic [ref=f3e77]: Ativos
+                - generic [ref=f3e79]: "0"
+                - generic [ref=f3e80]: Com plano pago em dia
+              - generic [ref=f3e85]:
+                - generic [ref=f3e86]: Total de Usuários
+                - generic [ref=f3e88]: "1"
+                - generic [ref=f3e89]: Usuários globais, todos os tenants
+            - heading "Faturamento Real Acumulado (MRR)" [level=3] [ref=f3e102]
+            - heading "Taxa de Retenção" [level=3] [ref=f3e113]
+            - heading "ARR (Receita Recorrente Anual)" [level=3] [ref=f3e124]
+    - complementary [ref=f3e134]:
+      - link [ref=f3e138] [cursor=pointer]:
+        - /url: http://127.0.0.1:8099/central/dashboard-saas
+        - img "Oravel" [ref=f3e141]
+      - navigation [ref=f3e142]:
+        - list [ref=f3e143]:
+          - listitem [ref=f3e144]:
+            - list [ref=f3e145]:
+              - listitem [ref=f3e146]:
+                - link "Dashboard SaaS" [ref=f3e147] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/dashboard-saas
+          - listitem [ref=f3e151]:
+            - generic [ref=f3e152] [cursor=pointer]:
+              - generic [ref=f3e155]: Comercial
+              - button "Comercial" [expanded] [ref=f3e156]
+            - list [ref=f3e160]:
+              - listitem [ref=f3e161]:
+                - link "Dashboard CRM" [ref=f3e162] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/dashboard-crm
+              - listitem [ref=f3e166]:
+                - link "CRM Comercial" [ref=f3e167] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/sales-leads
+              - listitem [ref=f3e171]:
+                - link "Funil de Vendas" [ref=f3e172] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/funil-vendas
+              - listitem [ref=f3e176]:
+                - link "Kanban" [ref=f3e177] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/kanban
+              - listitem [ref=f3e181]:
+                - link "Programação" [ref=f3e182] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/programacao
+              - listitem [ref=f3e186]:
+                - link "Atendimento WhatsApp" [ref=f3e187] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/whats-app-chats
+          - listitem [ref=f3e191]:
+            - generic [ref=f3e192] [cursor=pointer]:
+              - generic [ref=f3e195]: Equipe
+              - button "Equipe" [expanded] [ref=f3e196]
+            - list [ref=f3e200]:
+              - listitem [ref=f3e201]:
+                - link "Perfis de Acesso" [ref=f3e202] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/roles
+          - listitem [ref=f3e206]:
+            - generic [ref=f3e207] [cursor=pointer]:
+              - generic [ref=f3e210]: Prospecção
+              - button "Prospecção" [expanded] [ref=f3e211]
+            - list [ref=f3e215]:
+              - listitem [ref=f3e216]:
+                - link "Prospects" [ref=f3e217] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/prospects
+              - listitem [ref=f3e221]:
+                - link "Acompanhamentos" [ref=f3e222] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/acompanhamentos
+              - listitem [ref=f3e226]:
+                - link "Leads das Landing Pages" [ref=f3e227] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/landing-page-leads
+          - listitem [ref=f3e231]:
+            - generic [ref=f3e232] [cursor=pointer]:
+              - generic [ref=f3e235]: Clientes e Contratos
+              - button "Clientes e Contratos" [expanded] [ref=f3e236]
+            - list [ref=f3e240]:
+              - listitem [ref=f3e241]:
+                - link "Empresas (Tenants)" [ref=f3e242] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/tenants
+              - listitem [ref=f3e246]:
+                - link "Árvore de Tenants" [ref=f3e247] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/tenant-tree
+              - listitem [ref=f3e251]:
+                - link "Contratos" [ref=f3e252] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/contratos
+              - listitem [ref=f3e256]:
+                - link "Contratos Assinados" [ref=f3e257] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/contrato-assinados
+              - listitem [ref=f3e261]:
+                - link "Implantações" [ref=f3e262] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/implementation-charges
+              - listitem [ref=f3e266]:
+                - link "Taxas de configuração" [ref=f3e267] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/taxa-configuracaos
+              - listitem [ref=f3e271]:
+                - link "Avisos aos Tenants" [ref=f3e272] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/announcements
+          - listitem [ref=f3e276]:
+            - generic [ref=f3e277] [cursor=pointer]:
+              - generic [ref=f3e280]: Acessos e Uso
+              - button "Acessos e Uso" [expanded] [ref=f3e281]
+            - list [ref=f3e285]:
+              - listitem [ref=f3e286]:
+                - link "Acessos e Visitantes (painel)" [ref=f3e287] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central
+              - listitem [ref=f3e291]:
+                - link "Acessos e Visitantes (lista)" [ref=f3e292] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/site-visits
+              - listitem [ref=f3e296]:
+                - link "Acessos dos Clientes" [ref=f3e297] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/acessos-clientes
+              - listitem [ref=f3e301]:
+                - link "Histórico de Clientes" [ref=f3e302] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/tenant-events
+          - listitem [ref=f3e306]:
+            - generic [ref=f3e307] [cursor=pointer]:
+              - generic [ref=f3e310]: Treinamento
+              - button "Treinamento" [expanded] [ref=f3e311]
+            - list [ref=f3e315]:
+              - listitem [ref=f3e316]:
+                - link "Academia (cursos)" [ref=f3e317] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/courses
+              - listitem [ref=f3e321]:
+                - link "Participação no Treinamento" [ref=f3e322] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/participacao-treinamento
+              - listitem [ref=f3e326]:
+                - link "Resultados de Treinamento" [ref=f3e327] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/treinamento-resultados
+          - listitem [ref=f3e331]:
+            - generic [ref=f3e332] [cursor=pointer]:
+              - generic [ref=f3e335]: Site Institucional
+              - button "Site Institucional" [expanded] [ref=f3e336]
+            - list [ref=f3e340]:
+              - listitem [ref=f3e341]:
+                - link "Painel do Site" [ref=f3e342] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/site-institucional
+              - listitem [ref=f3e346]:
+                - link "Visitas do Site" [ref=f3e347] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/web-visits
+          - listitem [ref=f3e351]:
+            - generic [ref=f3e352] [cursor=pointer]:
+              - generic [ref=f3e355]: Segurança e Conformidade
+              - button "Segurança e Conformidade" [expanded] [ref=f3e356]
+            - list [ref=f3e360]:
+              - listitem [ref=f3e361]:
+                - link "Usuários do Sistema" [ref=f3e362] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/users
+              - listitem [ref=f3e366]:
+                - link "Perfis de Acesso" [ref=f3e367] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/roles
+              - listitem [ref=f3e371]:
+                - link "Perfis por Tenant" [ref=f3e372] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/roles-tree
+              - listitem [ref=f3e376]:
+                - link "IPs Bloqueados" [ref=f3e377] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/blocked-ips
+              - listitem [ref=f3e381]:
+                - link "Assinaturas SLA + LGPD" [ref=f3e382] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/signatures
+              - listitem [ref=f3e386]:
+                - link "Status de Conformidade dos Clientes" [ref=f3e387] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/tenant-compliances
+          - listitem [ref=f3e391]:
+            - generic [ref=f3e392] [cursor=pointer]:
+              - generic [ref=f3e396]: Sistema
+              - button "Sistema" [expanded] [ref=f3e397]
+            - list [ref=f3e401]:
+              - listitem [ref=f3e402]:
+                - link "Backups do Banco" [ref=f3e403] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/database-backups
+              - listitem [ref=f3e407]:
+                - link "Catálogo de PMP" [ref=f3e408] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/pmp-equipment-families
+      - generic [ref=f3e412]:
+        - button "Menu do usuário" [ref=f3e415] [cursor=pointer]:
+          - img "Avatar de Super Visual" [ref=f3e416]
+        - generic [ref=f3e417]:
+          - paragraph [ref=f3e418]: Super Visual
+          - paragraph [ref=f3e419]: Super Admin
+  - generic:
+    - status
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f3e420]

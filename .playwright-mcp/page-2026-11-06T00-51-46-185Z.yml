@@ -1,0 +1,170 @@
+- generic [active] [ref=f19e1]:
+  - generic [ref=f19e2]:
+    - generic [ref=f19e3]:
+      - navigation [ref=f19e5]:
+        - generic [ref=f19e9]:
+          - generic [ref=f19e10]: Locadora Demo
+          - generic [ref=f19e11]: "Módulo: Locadora"
+        - generic [ref=f19e12]:
+          - generic [ref=f19e15]:
+            - generic [ref=f19e16]: Pesquisa global
+            - searchbox "Pesquisa global" [ref=f19e22]
+          - button "⌘K" [ref=f19e24] [cursor=pointer]
+          - button "Abrir notificações" [ref=f19e30] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=f19e34] [cursor=pointer]:
+            - /url: http://127.0.0.1:8099/admin/caixa-de-email
+          - button "Menu do usuário" [ref=f19e39] [cursor=pointer]:
+            - img "Avatar de Administrador Demo" [ref=f19e40]
+        - link "Ajuda" [ref=f19e42] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=f19e46]:
+        - generic [ref=f19e48]:
+          - generic [ref=f19e49]:
+            - generic [ref=f19e50]:
+              - navigation [ref=f19e51]:
+                - list [ref=f19e52]:
+                  - listitem [ref=f19e53]:
+                    - link "Ordens De Compra" [ref=f19e54] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/purchase-orders
+                  - listitem [ref=f19e55]:
+                    - generic [ref=f19e58]: Listar
+              - heading "Ordens De Compra" [level=1] [ref=f19e59]
+            - generic [ref=f19e61]:
+              - link "Nova Ordem de Compra (Avulsa)" [ref=f19e62] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/purchase-orders/create
+              - link "Imprimir" [ref=f19e64] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/print/tabela/a1ee1d48-f062-4ff3-95a0-5698748820f3
+              - button "Exportar purchase orders" [ref=f19e68] [cursor=pointer]
+          - generic [ref=f19e72]:
+            - generic [ref=f19e73]:
+              - button "Total 0" [ref=f19e74] [cursor=pointer]:
+                - generic [ref=f19e75]: Total
+                - generic [ref=f19e76]: "0"
+              - button "Abertas 0" [ref=f19e77] [cursor=pointer]:
+                - generic [ref=f19e78]: Abertas
+                - generic [ref=f19e79]: "0"
+              - button "Parcialmente recebidas 0" [ref=f19e80] [cursor=pointer]:
+                - generic [ref=f19e81]: Parcialmente recebidas
+                - generic [ref=f19e82]: "0"
+              - button "Recebidas 0" [ref=f19e83] [cursor=pointer]:
+                - generic [ref=f19e84]: Recebidas
+                - generic [ref=f19e85]: "0"
+              - button "Canceladas 0" [ref=f19e86] [cursor=pointer]:
+                - generic [ref=f19e87]: Canceladas
+                - generic [ref=f19e88]: "0"
+              - button "Entrega atrasada 0" [ref=f19e89] [cursor=pointer]:
+                - generic [ref=f19e90]: Entrega atrasada
+                - generic [ref=f19e91]: "0"
+            - generic [ref=f19e93]:
+              - button "Filtrar 0" [ref=f19e99] [cursor=pointer]:
+                - generic [ref=f19e100]: Filtrar
+                - generic [ref=f19e103]: "0"
+              - heading "Sem registros" [level=4] [ref=f19e113]
+    - complementary [ref=f19e114]:
+      - generic [ref=f19e116]:
+        - link "Início" [ref=f19e118] [cursor=pointer]:
+          - /url: http://127.0.0.1:8099/admin/painel-controle
+          - generic [ref=f19e122]: Oravel
+        - button "Recolher barra lateral" [ref=f19e123] [cursor=pointer]
+      - navigation [ref=f19e127]:
+        - list [ref=f19e128]:
+          - listitem [ref=f19e129]:
+            - link "Início" [ref=f19e130] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/admin/painel-controle
+          - listitem [ref=f19e134]:
+            - link "Academia Oravel" [ref=f19e135] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/academia
+        - list [ref=f19e139]:
+          - listitem [ref=f19e140]:
+            - generic [ref=f19e141] [cursor=pointer]:
+              - generic [ref=f19e144]: Ativos
+              - button "Ativos" [ref=f19e145]
+          - listitem [ref=f19e149]:
+            - generic [ref=f19e150] [cursor=pointer]:
+              - generic [ref=f19e153]: Conformidade NR-13
+              - button "Conformidade NR-13" [ref=f19e154]
+          - listitem [ref=f19e158]:
+            - generic [ref=f19e159] [cursor=pointer]:
+              - generic [ref=f19e162]: Gestão de Frota
+              - button "Gestão de Frota" [ref=f19e163]
+          - listitem [ref=f19e167]:
+            - generic [ref=f19e168] [cursor=pointer]:
+              - generic [ref=f19e171]: Materiais e Peças
+              - button "Materiais e Peças" [expanded] [ref=f19e172]
+            - list [ref=f19e176]:
+              - listitem [ref=f19e177]:
+                - link "Gestão de Compras" [ref=f19e178] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/admin/gestao-compras
+                - list [ref=f19e182]:
+                  - listitem [ref=f19e183]:
+                    - link "Fornecedores" [ref=f19e184] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/suppliers
+                  - listitem [ref=f19e189]:
+                    - link "Ordens De Compra" [ref=f19e190] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/purchase-orders
+                  - listitem [ref=f19e196]:
+                    - link "Recebimentos De Compra" [ref=f19e197] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/goods-receipts
+                  - listitem [ref=f19e203]:
+                    - link "Reposição de Estoque" [ref=f19e204] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/requisicao-reposicao-estoque
+                  - listitem [ref=f19e210]:
+                    - link "Requisições De Compra" [ref=f19e211] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/material-requests
+                  - listitem [ref=f19e217]:
+                    - link "Solicitações de peças" [ref=f19e218] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/parts-requests
+              - listitem [ref=f19e223]:
+                - link "Gestão de Estoque" [ref=f19e224] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/admin/almoxarifado
+          - listitem [ref=f19e228]:
+            - generic [ref=f19e229] [cursor=pointer]:
+              - generic [ref=f19e232]: Itens Agregados
+              - button "Itens Agregados" [ref=f19e233]
+          - listitem [ref=f19e237]:
+            - generic [ref=f19e238] [cursor=pointer]:
+              - generic [ref=f19e241]: EPI
+              - button "EPI" [ref=f19e242]
+          - listitem [ref=f19e246]:
+            - generic [ref=f19e247] [cursor=pointer]:
+              - generic [ref=f19e250]: Comercial
+              - button "Comercial" [ref=f19e251]
+          - listitem [ref=f19e255]:
+            - generic [ref=f19e256] [cursor=pointer]:
+              - generic [ref=f19e259]: Configurações
+              - button "Configurações" [ref=f19e260]
+          - listitem [ref=f19e264]:
+            - generic [ref=f19e265] [cursor=pointer]:
+              - generic [ref=f19e268]: Departamento Pessoal
+              - button "Departamento Pessoal" [ref=f19e269]
+          - listitem [ref=f19e273]:
+            - generic [ref=f19e274] [cursor=pointer]:
+              - generic [ref=f19e277]: Equipe
+              - button "Equipe" [ref=f19e278]
+          - listitem [ref=f19e282]:
+            - generic [ref=f19e283] [cursor=pointer]:
+              - generic [ref=f19e286]: Financeiro
+              - button "Financeiro" [ref=f19e287]
+          - listitem [ref=f19e291]:
+            - generic [ref=f19e292] [cursor=pointer]:
+              - generic [ref=f19e295]: Logística
+              - button "Logística" [ref=f19e296]
+          - listitem [ref=f19e300]:
+            - generic [ref=f19e301] [cursor=pointer]:
+              - generic [ref=f19e304]: Manutenção
+              - button "Manutenção" [ref=f19e305]
+          - listitem [ref=f19e309]:
+            - generic [ref=f19e310] [cursor=pointer]:
+              - generic [ref=f19e313]: PMP
+              - button "PMP" [ref=f19e314]
+          - listitem [ref=f19e318]:
+            - generic [ref=f19e319] [cursor=pointer]:
+              - generic [ref=f19e322]: Relatórios
+              - button "Relatórios" [ref=f19e323]
+  - generic:
+    - status
+  - button "💬 Mensagens" [ref=f19e329] [cursor=pointer]:
+    - generic [ref=f19e330]:
+      - generic [ref=f19e331]: 💬
+      - generic [ref=f19e332]: Mensagens
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f19e336]

@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Filament\Facades\Filament;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Middleware that sets up the central panel AND redirects to central login if unauthenticated.
@@ -29,7 +30,7 @@ class CentralPanelAuth
             return redirect($panel->getLoginUrl());
         }
 
-        $this->auth->shouldUse(Filament::getAuthGuard());
+        Auth::shouldUse(Filament::getAuthGuard());
 
         /** @var \Illuminate\Database\Eloquent\Model $user */
         $user = $guard->user();

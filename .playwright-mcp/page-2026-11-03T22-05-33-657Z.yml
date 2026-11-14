@@ -1,0 +1,183 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e2]:
+    - generic [ref=f3e3]:
+      - navigation [ref=f3e5]:
+        - generic [ref=f3e9]:
+          - generic [ref=f3e10]: Locadora Visual
+          - generic [ref=f3e11]: "Módulo: Locadora"
+        - generic [ref=f3e12]:
+          - button "⌘K" [ref=f3e14] [cursor=pointer]
+          - button "Abrir notificações" [ref=f3e20] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=f3e24] [cursor=pointer]:
+            - /url: http://127.0.0.1:8099/admin/caixa-de-email
+          - button "Menu do usuário" [ref=f3e29] [cursor=pointer]:
+            - img "Avatar de Admin Visual" [ref=f3e30]
+        - link "Ajuda" [ref=f3e32] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=f3e36]:
+        - generic [ref=f3e38]:
+          - generic [ref=f3e39]:
+            - generic [ref=f3e40]:
+              - navigation [ref=f3e41]:
+                - list [ref=f3e42]:
+                  - listitem [ref=f3e43]:
+                    - link "Orçamentos" [ref=f3e44] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/quotes
+                  - listitem [ref=f3e45]:
+                    - generic [ref=f3e48]: Listar
+              - heading "Orçamentos" [level=1] [ref=f3e49]
+            - generic [ref=f3e51]:
+              - link "Criar Orçamento" [ref=f3e52] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/quotes/create
+              - link "Imprimir" [ref=f3e54] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/print/tabela/8dda7591-dd25-49be-9f2c-24e08fe28954
+              - button "Exportar quotes" [ref=f3e58] [cursor=pointer]
+          - generic [ref=f3e62]:
+            - generic [ref=f3e63]:
+              - button "Total 5" [ref=f3e64] [cursor=pointer]:
+                - generic [ref=f3e65]: Total
+                - generic [ref=f3e66]: "5"
+              - button "Rascunho 1" [ref=f3e67] [cursor=pointer]:
+                - generic [ref=f3e68]: Rascunho
+                - generic [ref=f3e69]: "1"
+              - button "Enviado 1" [ref=f3e70] [cursor=pointer]:
+                - generic [ref=f3e71]: Enviado
+                - generic [ref=f3e72]: "1"
+              - button "Aprovado 1" [ref=f3e73] [cursor=pointer]:
+                - generic [ref=f3e74]: Aprovado
+                - generic [ref=f3e75]: "1"
+              - button "Reprovado 1" [ref=f3e76] [cursor=pointer]:
+                - generic [ref=f3e77]: Reprovado
+                - generic [ref=f3e78]: "1"
+              - button "Concluído 1" [ref=f3e79] [cursor=pointer]:
+                - generic [ref=f3e80]: Concluído
+                - generic [ref=f3e81]: "1"
+              - button "Interno 5" [ref=f3e82] [cursor=pointer]:
+                - generic [ref=f3e83]: Interno
+                - generic [ref=f3e84]: "5"
+              - button "A Terceiro 0" [ref=f3e85] [cursor=pointer]:
+                - generic [ref=f3e86]: A Terceiro
+                - generic [ref=f3e87]: "0"
+              - button "Indenizatório 0" [ref=f3e88] [cursor=pointer]:
+                - generic [ref=f3e89]: Indenizatório
+                - generic [ref=f3e90]: "0"
+            - generic [ref=f3e92]:
+              - generic [ref=f3e95]:
+                - generic [ref=f3e96]:
+                  - generic [ref=f3e97]: Pesquisar
+                  - searchbox "Pesquisar" [ref=f3e103]
+                - button "Filtrar 0" [ref=f3e106] [cursor=pointer]:
+                  - generic [ref=f3e107]: Filtrar
+                  - generic [ref=f3e110]: "0"
+              - generic [ref=f3e114]:
+                - generic [ref=f3e118]:
+                  - generic [ref=f3e119]: Ordenar por
+                  - combobox "Ordenar por" [ref=f3e122]:
+                    - option "-" [selected]
+                    - option "Cliente"
+                    - option "Valor Total"
+                    - option "Enviado em"
+                    - option "Criado em"
+                - generic [ref=f3e123]:
+                  - generic [ref=f3e126]:
+                    - link "Construtora Alfa Aprovado R$ 8.800,00 Interno Admin Visual Enviado em 01/11/2026 18:46 Criado em 03/11/2026 18:46" [ref=f3e128] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/quotes/01a1a360-6f6f-71c6-91c6-2d863a7a55c3/edit
+                      - generic [ref=f3e130]:
+                        - generic [ref=f3e132]:
+                          - generic [ref=f3e133]: Construtora Alfa
+                          - generic [ref=f3e141]: Aprovado
+                        - generic [ref=f3e150]: R$ 8.800,00
+                        - generic [ref=f3e158]: Interno
+                        - generic [ref=f3e167]: Admin Visual
+                        - generic [ref=f3e177]: Enviado em 01/11/2026 18:46
+                        - generic [ref=f3e187]: Criado em 03/11/2026 18:46
+                    - generic [ref=f3e198]:
+                      - link "Editar" [ref=f3e199] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/quotes/01a1a360-6f6f-71c6-91c6-2d863a7a55c3/edit
+                      - button [ref=f3e206] [cursor=pointer]
+                  - generic [ref=f3e211]:
+                    - link "Construtora Alfa Concluído R$ 12.000,00 Interno Admin Visual Enviado em 01/11/2026 18:46 Criado em 03/11/2026 18:46" [ref=f3e213] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/quotes/01a1a360-6f80-72b1-98f7-31f582cbd54b/edit
+                      - generic [ref=f3e215]:
+                        - generic [ref=f3e217]:
+                          - generic [ref=f3e218]: Construtora Alfa
+                          - generic [ref=f3e226]: Concluído
+                        - generic [ref=f3e235]: R$ 12.000,00
+                        - generic [ref=f3e243]: Interno
+                        - generic [ref=f3e252]: Admin Visual
+                        - generic [ref=f3e262]: Enviado em 01/11/2026 18:46
+                        - generic [ref=f3e272]: Criado em 03/11/2026 18:46
+                    - generic [ref=f3e283]:
+                      - link "Editar" [ref=f3e284] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/quotes/01a1a360-6f80-72b1-98f7-31f582cbd54b/edit
+                      - button [ref=f3e291] [cursor=pointer]
+                  - generic [ref=f3e296]:
+                    - link "Construtora Alfa Enviado R$ 3.200,50 Interno Admin Visual Enviado em 01/11/2026 18:46 Criado em 03/11/2026 18:46" [ref=f3e298] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/quotes/01a1a360-6f67-7091-908a-73355d331aee/edit
+                      - generic [ref=f3e300]:
+                        - generic [ref=f3e302]:
+                          - generic [ref=f3e303]: Construtora Alfa
+                          - generic [ref=f3e311]: Enviado
+                        - generic [ref=f3e320]: R$ 3.200,50
+                        - generic [ref=f3e328]: Interno
+                        - generic [ref=f3e337]: Admin Visual
+                        - generic [ref=f3e347]: Enviado em 01/11/2026 18:46
+                        - generic [ref=f3e357]: Criado em 03/11/2026 18:46
+                    - generic [ref=f3e368]:
+                      - link "Editar" [ref=f3e369] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/quotes/01a1a360-6f67-7091-908a-73355d331aee/edit
+                      - button [ref=f3e376] [cursor=pointer]
+                  - generic [ref=f3e381]:
+                    - link "Construtora Alfa Rascunho R$ 1.500,00 Interno Admin Visual Ainda não enviado Criado em 03/11/2026 18:46" [ref=f3e383] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/quotes/01a1a360-6f51-729f-b19e-ff91e98b67ee/edit
+                      - generic [ref=f3e385]:
+                        - generic [ref=f3e387]:
+                          - generic [ref=f3e388]: Construtora Alfa
+                          - generic [ref=f3e396]: Rascunho
+                        - generic [ref=f3e405]: R$ 1.500,00
+                        - generic [ref=f3e413]: Interno
+                        - generic [ref=f3e422]: Admin Visual
+                        - generic [ref=f3e432]: Ainda não enviado
+                        - generic [ref=f3e437]: Criado em 03/11/2026 18:46
+                    - generic [ref=f3e448]:
+                      - link "Editar" [ref=f3e449] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/quotes/01a1a360-6f51-729f-b19e-ff91e98b67ee/edit
+                      - button [ref=f3e456] [cursor=pointer]
+                  - generic [ref=f3e461]:
+                    - link "Construtora Alfa Reprovado R$ 420,00 Interno Admin Visual Enviado em 01/11/2026 18:46 Criado em 03/11/2026 18:46" [ref=f3e463] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/quotes/01a1a360-6f79-7269-b3da-15267b988e6a/edit
+                      - generic [ref=f3e465]:
+                        - generic [ref=f3e467]:
+                          - generic [ref=f3e468]: Construtora Alfa
+                          - generic [ref=f3e476]: Reprovado
+                        - generic [ref=f3e485]: R$ 420,00
+                        - generic [ref=f3e493]: Interno
+                        - generic [ref=f3e502]: Admin Visual
+                        - generic [ref=f3e512]: Enviado em 01/11/2026 18:46
+                        - generic [ref=f3e522]: Criado em 03/11/2026 18:46
+                    - generic [ref=f3e533]:
+                      - link "Editar" [ref=f3e534] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/quotes/01a1a360-6f79-7269-b3da-15267b988e6a/edit
+                      - button [ref=f3e541] [cursor=pointer]
+              - navigation "Paginação" [ref=f3e544]:
+                - generic [ref=f3e545]: Exibindo 1 a 5 de 5 resultados
+                - generic [ref=f3e548]:
+                  - generic [ref=f3e549]: por página
+                  - combobox "por página" [ref=f3e552]:
+                    - option "5"
+                    - option "10" [selected]
+                    - option "25"
+                    - option "50"
+                    - option "Todas"
+    - complementary [ref=f3e553]:
+      - generic [ref=f3e555]:
+        - link "Início" [ref=f3e557] [cursor=pointer]:
+          - /url: http://127.0.0.1:8099/admin/painel-controle
+          - generic [ref=f3e561]: Oravel
+        - button "Recolher barra lateral" [ref=f3e562] [cursor=pointer]
+      - navigation [ref=f3e566]:
+        - list
+        - list
+  - generic:
+    - status
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f3e567]

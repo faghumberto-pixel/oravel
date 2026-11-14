@@ -13,8 +13,10 @@ return new class extends Migration
             $table->jsonb('checklist')->nullable()->after('status');
         });
 
-        // Índice GIN para buscas rápidas dentro do JSONB no PostgreSQL
-        DB::statement('CREATE INDEX assets_checklist_gin ON assets USING gin (checklist)');
+        // Índice GIN para buscas rápidas dentro do JSONB no PostgreSQL (nao existe no SQLite)
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('CREATE INDEX assets_checklist_gin ON assets USING gin (checklist)');
+        }
     }
 
     public function down(): void

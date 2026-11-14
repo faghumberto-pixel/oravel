@@ -10,7 +10,9 @@ return new class extends Migration
     public function up(): void
     {
         // Prova entregue de uma vez: questao em branco tambem vira linha (sem alternativa, errada = zero).
-        DB::statement('ALTER TABLE lesson_answers ALTER COLUMN selected_index DROP NOT NULL');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('ALTER TABLE lesson_answers ALTER COLUMN selected_index DROP NOT NULL');
+        }
 
         // Uma entrega por usuario e aula (do TENANT). Depois de entregue nao refaz: o gabarito ja foi mostrado.
         Schema::create('lesson_quiz_submissions', function (Blueprint $table) {
@@ -31,6 +33,8 @@ return new class extends Migration
     {
         Schema::dropIfExists('lesson_quiz_submissions');
         DB::statement('DELETE FROM lesson_answers WHERE selected_index IS NULL');
-        DB::statement('ALTER TABLE lesson_answers ALTER COLUMN selected_index SET NOT NULL');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('ALTER TABLE lesson_answers ALTER COLUMN selected_index SET NOT NULL');
+        }
     }
 };

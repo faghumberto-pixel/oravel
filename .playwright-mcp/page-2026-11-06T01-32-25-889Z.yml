@@ -1,0 +1,281 @@
+- generic [active] [ref=f38e1]:
+  - generic [ref=f38e2]:
+    - generic [ref=f38e3]:
+      - navigation [ref=f38e5]:
+        - generic [ref=f38e6]:
+          - generic [ref=f38e7]:
+            - generic [ref=f38e8]: Quinta-feira, 5 de novembro
+            - generic [ref=f38e9]: 22:32:25
+          - generic [ref=f38e10]:
+            - link "0 hoje" [ref=f38e11] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/central/programacao?visao=hoje
+              - generic [ref=f38e14]: "0"
+              - generic [ref=f38e15]: hoje
+            - link "0 na semana" [ref=f38e17] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/central/programacao?visao=semana
+              - generic [ref=f38e18]: "0"
+              - generic [ref=f38e19]: na semana
+        - generic [ref=f38e20]:
+          - generic [ref=f38e23]:
+            - generic [ref=f38e24]: Pesquisa global
+            - searchbox "Pesquisa global" [ref=f38e30]
+          - button "⌘K" [ref=f38e32] [cursor=pointer]
+          - button "Menu do usuário" [ref=f38e38] [cursor=pointer]:
+            - img "Avatar de Equipe Oravel" [ref=f38e39]
+      - main [ref=f38e40]:
+        - generic [ref=f38e42]:
+          - generic [ref=f38e43]:
+            - generic [ref=f38e44]:
+              - navigation [ref=f38e45]:
+                - list [ref=f38e46]:
+                  - listitem [ref=f38e47]:
+                    - link "Empresas" [ref=f38e48] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/tenants
+                  - listitem [ref=f38e49]:
+                    - generic [ref=f38e52]: Listar
+              - heading "Empresas" [level=1] [ref=f38e53]
+            - link "Criar Empresa" [ref=f38e56] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/central/tenants/create
+          - generic [ref=f38e62]:
+            - generic [ref=f38e65]:
+              - generic [ref=f38e66]:
+                - generic [ref=f38e67]: Pesquisar
+                - searchbox "Pesquisar" [ref=f38e73]
+              - button "Filtrar 0" [ref=f38e76] [cursor=pointer]:
+                - generic [ref=f38e77]: Filtrar
+                - generic [ref=f38e80]: "0"
+              - button "Alternar colunas" [ref=f38e86] [cursor=pointer]
+            - table [ref=f38e91]:
+              - rowgroup [ref=f38e92]:
+                - row [ref=f38e93]:
+                  - columnheader "Marcar/desmarcar todos os itens para ações em massa." [ref=f38e94]:
+                    - generic [ref=f38e96]:
+                      - checkbox "Marcar/desmarcar todos os itens para ações em massa." [ref=f38e97]
+                      - generic [ref=f38e98]: Marcar/desmarcar todos os itens para ações em massa.
+                  - columnheader [ref=f38e99]:
+                    - button "Empresa" [ref=f38e100] [cursor=pointer]
+                  - columnheader [ref=f38e104]:
+                    - button "Slug" [ref=f38e105] [cursor=pointer]
+                  - columnheader [ref=f38e109]:
+                    - button "Plano" [ref=f38e110] [cursor=pointer]
+                  - columnheader "Portal do cliente" [ref=f38e114]
+                  - columnheader "Pacote" [ref=f38e117]
+                  - columnheader "Interface" [ref=f38e120]
+                  - columnheader "Inteligência de Ativos" [ref=f38e123]
+                  - columnheader "Site e e-mail" [ref=f38e126]
+                  - columnheader "Segmento" [ref=f38e129]
+                  - columnheader "Status" [ref=f38e132]
+                  - columnheader "Implantação" [ref=f38e135]
+                  - columnheader "Acesso até" [ref=f38e138]
+                  - columnheader [ref=f38e141]:
+                    - button "Criado em" [ref=f38e142] [cursor=pointer]
+                  - columnheader "Ações" [ref=f38e146]
+              - rowgroup [ref=f38e147]:
+                - row [ref=f38e148]:
+                  - cell "Marcar/desmarcar o item 01a1ae7b-cfb3-71cd-affa-592f6ad800ce para ações em massa." [ref=f38e149]:
+                    - generic [ref=f38e151]:
+                      - checkbox "Marcar/desmarcar o item 01a1ae7b-cfb3-71cd-affa-592f6ad800ce para ações em massa." [ref=f38e152]
+                      - generic [ref=f38e153]: Marcar/desmarcar o item 01a1ae7b-cfb3-71cd-affa-592f6ad800ce para ações em massa.
+                  - cell [ref=f38e154]:
+                    - link "Locadora Demo" [ref=f38e156] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/tenants/01a1ae7b-cfb3-71cd-affa-592f6ad800ce/edit
+                  - cell [ref=f38e162]:
+                    - link "locadora-demo" [ref=f38e164] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/tenants/01a1ae7b-cfb3-71cd-affa-592f6ad800ce/edit
+                  - cell [ref=f38e170]:
+                    - link "Contrato Locadora Demo (DEMO)" [ref=f38e172] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/tenants/01a1ae7b-cfb3-71cd-affa-592f6ad800ce/edit
+                  - cell [ref=f38e178]:
+                    - link [ref=f38e180] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/tenants/01a1ae7b-cfb3-71cd-affa-592f6ad800ce/edit
+                  - cell [ref=f38e184]:
+                    - link "Locadora" [ref=f38e186] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/tenants/01a1ae7b-cfb3-71cd-affa-592f6ad800ce/edit
+                  - cell [ref=f38e193]:
+                    - link "Completa definida na Central" [ref=f38e195] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/tenants/01a1ae7b-cfb3-71cd-affa-592f6ad800ce/edit
+                      - generic [ref=f38e196]:
+                        - generic [ref=f38e197]: Completa
+                        - paragraph [ref=f38e202]: definida na Central
+                  - cell [ref=f38e203]:
+                    - link "Custo + Localização" [ref=f38e205] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/tenants/01a1ae7b-cfb3-71cd-affa-592f6ad800ce/edit
+                  - cell [ref=f38e212]:
+                    - link "Não incluído" [ref=f38e214] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/tenants/01a1ae7b-cfb3-71cd-affa-592f6ad800ce/edit
+                  - cell [ref=f38e221]:
+                    - link "—" [ref=f38e223] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/tenants/01a1ae7b-cfb3-71cd-affa-592f6ad800ce/edit
+                  - cell [ref=f38e226]:
+                    - link "active" [ref=f38e228] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/tenants/01a1ae7b-cfb3-71cd-affa-592f6ad800ce/edit
+                  - cell [ref=f38e237]:
+                    - link "Sem implantação" [ref=f38e239] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/tenants/01a1ae7b-cfb3-71cd-affa-592f6ad800ce/edit
+                  - cell [ref=f38e246]:
+                    - link "—" [ref=f38e248] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/tenants/01a1ae7b-cfb3-71cd-affa-592f6ad800ce/edit
+                  - cell [ref=f38e251]:
+                    - link "05/11/2026 22:31" [ref=f38e253] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/central/tenants/01a1ae7b-cfb3-71cd-affa-592f6ad800ce/edit
+                  - cell [ref=f38e259]:
+                    - generic [ref=f38e261]:
+                      - button "Inteligência de Ativos" [ref=f38e262] [cursor=pointer]
+                      - button "Alterar produtos" [ref=f38e266] [cursor=pointer]
+                      - link "Editar" [ref=f38e270] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/central/tenants/01a1ae7b-cfb3-71cd-affa-592f6ad800ce/edit
+                      - button "Excluir" [ref=f38e275] [cursor=pointer]
+            - navigation "Paginação" [ref=f38e279]:
+              - generic [ref=f38e280]: Exibindo 1 resultado
+              - generic [ref=f38e283]:
+                - generic [ref=f38e284]: por página
+                - combobox "por página" [ref=f38e287]:
+                  - option "5"
+                  - option "10" [selected]
+                  - option "25"
+                  - option "50"
+                  - option "Todas"
+    - complementary [ref=f38e288]:
+      - link [ref=f38e292] [cursor=pointer]:
+        - /url: http://127.0.0.1:8099/central/dashboard-saas
+        - img "Oravel" [ref=f38e295]
+      - navigation [ref=f38e296]:
+        - list [ref=f38e297]:
+          - listitem [ref=f38e298]:
+            - list [ref=f38e299]:
+              - listitem [ref=f38e300]:
+                - link "Dashboard SaaS" [ref=f38e301] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/dashboard-saas
+          - listitem [ref=f38e305]:
+            - generic [ref=f38e306] [cursor=pointer]:
+              - generic [ref=f38e309]: Comercial
+              - button "Comercial" [ref=f38e310]
+          - listitem [ref=f38e314]:
+            - generic [ref=f38e315] [cursor=pointer]:
+              - generic [ref=f38e318]: Equipe
+              - button "Equipe" [ref=f38e319]
+          - listitem [ref=f38e323]:
+            - generic [ref=f38e324] [cursor=pointer]:
+              - generic [ref=f38e327]: Prospecção
+              - button "Prospecção" [expanded] [ref=f38e328]
+            - list [ref=f38e332]:
+              - listitem [ref=f38e333]:
+                - link "Prospects" [ref=f38e334] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/prospects
+              - listitem [ref=f38e338]:
+                - link "Acompanhamentos" [ref=f38e339] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/acompanhamentos
+              - listitem [ref=f38e343]:
+                - link "Leads das Landing Pages" [ref=f38e344] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/landing-page-leads
+          - listitem [ref=f38e348]:
+            - generic [ref=f38e349] [cursor=pointer]:
+              - generic [ref=f38e352]: Clientes e Contratos
+              - button "Clientes e Contratos" [expanded] [ref=f38e353]
+            - list [ref=f38e357]:
+              - listitem [ref=f38e358]:
+                - link "Empresas (Tenants)" [ref=f38e359] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/tenants
+              - listitem [ref=f38e363]:
+                - link "Árvore de Tenants" [ref=f38e364] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/tenant-tree
+              - listitem [ref=f38e368]:
+                - link "Contratos" [ref=f38e369] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/contratos
+              - listitem [ref=f38e373]:
+                - link "Contratos Assinados" [ref=f38e374] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/contrato-assinados
+              - listitem [ref=f38e378]:
+                - link "Implantações" [ref=f38e379] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/implementation-charges
+              - listitem [ref=f38e383]:
+                - link "Taxas de configuração" [ref=f38e384] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/taxa-configuracaos
+              - listitem [ref=f38e388]:
+                - link "Avisos aos Tenants" [ref=f38e389] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/announcements
+          - listitem [ref=f38e393]:
+            - generic [ref=f38e394] [cursor=pointer]:
+              - generic [ref=f38e397]: Acessos e Uso
+              - button "Acessos e Uso" [expanded] [ref=f38e398]
+            - list [ref=f38e402]:
+              - listitem [ref=f38e403]:
+                - link "Acessos e Visitantes (painel)" [ref=f38e404] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central
+              - listitem [ref=f38e408]:
+                - link "Acessos e Visitantes (lista)" [ref=f38e409] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/site-visits
+              - listitem [ref=f38e413]:
+                - link "Acessos dos Clientes" [ref=f38e414] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/acessos-clientes
+              - listitem [ref=f38e418]:
+                - link "Histórico de Clientes" [ref=f38e419] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/tenant-events
+          - listitem [ref=f38e423]:
+            - generic [ref=f38e424] [cursor=pointer]:
+              - generic [ref=f38e427]: Treinamento
+              - button "Treinamento" [expanded] [ref=f38e428]
+            - list [ref=f38e432]:
+              - listitem [ref=f38e433]:
+                - link "Academia (cursos)" [ref=f38e434] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/courses
+              - listitem [ref=f38e438]:
+                - link "Participação no Treinamento" [ref=f38e439] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/participacao-treinamento
+              - listitem [ref=f38e443]:
+                - link "Resultados de Treinamento" [ref=f38e444] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/treinamento-resultados
+          - listitem [ref=f38e448]:
+            - generic [ref=f38e449] [cursor=pointer]:
+              - generic [ref=f38e452]: Site Institucional
+              - button "Site Institucional" [expanded] [ref=f38e453]
+            - list [ref=f38e457]:
+              - listitem [ref=f38e458]:
+                - link "Painel do Site" [ref=f38e459] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/site-institucional
+              - listitem [ref=f38e463]:
+                - link "Visitas do Site" [ref=f38e464] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/web-visits
+          - listitem [ref=f38e468]:
+            - generic [ref=f38e469] [cursor=pointer]:
+              - generic [ref=f38e472]: Segurança e Conformidade
+              - button "Segurança e Conformidade" [expanded] [ref=f38e473]
+            - list [ref=f38e477]:
+              - listitem [ref=f38e478]:
+                - link "Usuários do Sistema" [ref=f38e479] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/users
+              - listitem [ref=f38e483]:
+                - link "Perfis de Acesso" [ref=f38e484] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/roles
+              - listitem [ref=f38e488]:
+                - link "Perfis por Tenant" [ref=f38e489] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/roles-tree
+              - listitem [ref=f38e493]:
+                - link "IPs Bloqueados" [ref=f38e494] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/blocked-ips
+              - listitem [ref=f38e498]:
+                - link "Assinaturas SLA + LGPD" [ref=f38e499] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/signatures
+              - listitem [ref=f38e503]:
+                - link "Status de Conformidade dos Clientes" [ref=f38e504] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/tenant-compliances
+          - listitem [ref=f38e508]:
+            - generic [ref=f38e509] [cursor=pointer]:
+              - generic [ref=f38e513]: Sistema
+              - button "Sistema" [expanded] [ref=f38e514]
+            - list [ref=f38e518]:
+              - listitem [ref=f38e519]:
+                - link "Backups do Banco" [ref=f38e520] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/database-backups
+              - listitem [ref=f38e524]:
+                - link "Catálogo de PMP" [ref=f38e525] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/central/pmp-equipment-families
+      - generic [ref=f38e529]:
+        - button "Menu do usuário" [ref=f38e532] [cursor=pointer]:
+          - img "Avatar de Equipe Oravel" [ref=f38e533]
+        - generic [ref=f38e534]:
+          - paragraph [ref=f38e535]: Equipe Oravel
+          - paragraph [ref=f38e536]: Super Admin
+  - generic:
+    - status
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f38e537]

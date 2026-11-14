@@ -1,0 +1,335 @@
+- generic [active] [ref=f30e1]:
+  - generic [ref=f30e2]:
+    - generic [ref=f30e3]:
+      - navigation [ref=f30e5]:
+        - generic [ref=f30e9]:
+          - generic [ref=f30e10]: Locadora Demo
+          - generic [ref=f30e11]: "Módulo: Locadora"
+        - generic [ref=f30e12]:
+          - generic [ref=f30e15]:
+            - generic [ref=f30e16]: Pesquisa global
+            - searchbox "Pesquisa global" [ref=f30e22]
+          - button "⌘K" [ref=f30e24] [cursor=pointer]
+          - button "Abrir notificações" [ref=f30e30] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=f30e34] [cursor=pointer]:
+            - /url: http://127.0.0.1:8099/admin/caixa-de-email
+          - button "Menu do usuário" [ref=f30e39] [cursor=pointer]:
+            - img "Avatar de Administrador Demo" [ref=f30e40]
+        - link "Ajuda" [ref=f30e42] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=f30e46]:
+        - generic [ref=f30e48]:
+          - generic [ref=f30e49]:
+            - generic [ref=f30e50]:
+              - navigation [ref=f30e51]:
+                - list [ref=f30e52]:
+                  - listitem [ref=f30e53]:
+                    - link "Ativos" [ref=f30e54] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets
+                  - listitem [ref=f30e55]:
+                    - generic [ref=f30e58]: Editar
+              - heading "Editar Ativo" [level=1] [ref=f30e59]
+            - generic [ref=f30e61]:
+              - link "Imprimir cadastro" [ref=f30e62] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/print/ativo/8a4ad474-b0ae-4fde-8bc8-bf10531b2f6e/cadastro
+              - link "Imprimir Etiqueta" [ref=f30e66] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/app/locadora-demo/assets/8a4ad474-b0ae-4fde-8bc8-bf10531b2f6e/print-qr
+              - button "Excluir" [ref=f30e70] [cursor=pointer]
+          - generic [ref=f30e73]:
+            - generic [ref=f30e74]:
+              - generic [ref=f30e77]:
+                - tablist "Detalhes do Ativo" [ref=f30e78]:
+                  - tab "Informações Gerais" [ref=f30e79] [cursor=pointer]
+                  - tab "Localização" [ref=f30e83] [cursor=pointer]
+                  - tab "Rastreabilidade e QR Code" [ref=f30e87] [cursor=pointer]
+                  - tab "Histórico de Trabalho" [ref=f30e91] [cursor=pointer]
+                  - tab "Custos e histórico" [ref=f30e95] [cursor=pointer]
+                  - tab "NR-13" [ref=f30e99] [cursor=pointer]
+                  - tab "Logs de Auditoria" [ref=f30e103] [cursor=pointer]
+                  - tab "Checklist de Verificação" [ref=f30e107] [cursor=pointer]
+                - tabpanel [ref=f30e112]:
+                  - generic [ref=f30e113]:
+                    - generic [ref=f30e115]:
+                      - generic [ref=f30e118]:
+                        - heading "Tipo de ativo" [level=3] [ref=f30e119]
+                        - paragraph [ref=f30e120]: "Escolha se é uma máquina/equipamento ou um veículo: os campos abaixo mudam conforme a escolha."
+                      - generic [ref=f30e126]:
+                        - generic [ref=f30e129]:
+                          - text: Este ativo é
+                          - superscript [ref=f30e130]: "*"
+                        - generic [ref=f30e132]:
+                          - generic [ref=f30e134]:
+                            - radio "Máquina / Equipamento" [checked] [ref=f30e135]
+                            - generic [ref=f30e136]: Máquina / Equipamento
+                          - generic [ref=f30e139]:
+                            - radio "Veículo" [ref=f30e140]
+                            - generic [ref=f30e141]: Veículo
+                    - generic [ref=f30e144]:
+                      - generic [ref=f30e146] [cursor=pointer]:
+                        - generic [ref=f30e147]:
+                          - heading "Fotos do equipamento" [level=3] [ref=f30e148]
+                          - paragraph [ref=f30e149]: Até 3 fotos (JPG, PNG ou WebP, máx. 10 MB cada). A primeira é a foto principal, que aparece na lista.
+                        - button [ref=f30e150]
+                      - generic [ref=f30e158]:
+                        - generic [ref=f30e159]: Fotos
+                        - group "Fotos" [ref=f30e163]:
+                          - generic [ref=f30e165]:
+                            - button "Arraste e solte os arquivos ou Clique aqui" [ref=f30e166]
+                            - generic [ref=f30e167]: Arraste e solte os arquivos ou Clique aqui
+                            - generic:
+                              - list
+                            - alert [ref=f30e169]
+                    - generic [ref=f30e171]:
+                      - heading "Identificação" [level=3] [ref=f30e175]
+                      - generic [ref=f30e178]:
+                        - generic [ref=f30e181]:
+                          - generic [ref=f30e184]:
+                            - generic [ref=f30e187]:
+                              - text: Nº Patrimônio
+                              - superscript [ref=f30e188]: "*"
+                            - textbox "Nº Patrimônio*" [ref=f30e195]: PT-02
+                          - generic [ref=f30e198]:
+                            - generic [ref=f30e199]: Placa do equipamento
+                            - textbox "Placa do equipamento" [ref=f30e205]:
+                              - /placeholder: Número da plaqueta
+                          - generic [ref=f30e208]:
+                            - generic [ref=f30e209]: Marca / Fabricante
+                            - textbox "Marca / Fabricante" [ref=f30e215]: JLG
+                          - generic [ref=f30e218]:
+                            - generic [ref=f30e219]: Categoria e Tipo
+                            - combobox [ref=f30e226]:
+                              - generic [ref=f30e229]:
+                                - text: Plataforma Elevatória
+                                - 'button "Remove item: ''ed86972a-0d90-4123-ac5c-1f78ddbf7773''" [ref=f30e230] [cursor=pointer]': Remove item
+                          - generic [ref=f30e233]:
+                            - generic [ref=f30e234]: Grupo
+                            - generic [ref=f30e237]:
+                              - generic [ref=f30e238]:
+                                - combobox [ref=f30e241]:
+                                  - generic [ref=f30e242]: Selecione uma opção
+                                - button "Criar" [ref=f30e247] [cursor=pointer]
+                              - generic [ref=f30e251]: Define o checklist básico aplicado às OS deste ativo e o template de manutenção preventiva herdado (aba "Planos de Manutenção").
+                          - generic [ref=f30e254]:
+                            - generic [ref=f30e257]:
+                              - text: Nome/Modelo
+                              - superscript [ref=f30e258]: "*"
+                            - textbox "Nome/Modelo*" [ref=f30e262]: Plataforma Tesoura 10m Elétrica
+                        - generic [ref=f30e265]:
+                          - generic [ref=f30e268]:
+                            - generic [ref=f30e269]: Capacidade
+                            - generic [ref=f30e272]:
+                              - spinbutton "Capacidade" [ref=f30e275]
+                              - generic [ref=f30e276]: "Ex: 250 para um gerador de 250 kVA."
+                          - generic [ref=f30e279]:
+                            - generic [ref=f30e280]: Unidade
+                            - listbox [ref=f30e287]:
+                              - generic [ref=f30e288]: Selecione uma opção
+                          - generic [ref=f30e293]:
+                            - generic [ref=f30e294]: Especificação Adicional
+                            - generic [ref=f30e297]:
+                              - textbox "Especificação Adicional" [ref=f30e300]
+                              - generic [ref=f30e301]: Texto livre — detalhes que não cabem em capacidade estruturada.
+                    - generic [ref=f30e303]:
+                      - generic [ref=f30e306]:
+                        - heading "Investimento e Depreciação" [level=3] [ref=f30e307]
+                        - paragraph [ref=f30e308]: Calculado automaticamente com base na vida útil informada.
+                      - generic [ref=f30e311]:
+                        - generic [ref=f30e314]:
+                          - generic [ref=f30e317]:
+                            - generic [ref=f30e318]: Valor de Aquisição
+                            - generic [ref=f30e322]:
+                              - generic [ref=f30e323]: R$
+                              - spinbutton "Valor de Aquisição" [ref=f30e326]: "78000.00"
+                          - generic [ref=f30e329]:
+                            - generic [ref=f30e330]: Data de Aquisição
+                            - textbox "Data de Aquisição" [ref=f30e336]: 2020-05-04
+                          - generic [ref=f30e339]:
+                            - generic [ref=f30e340]: Valor Residual
+                            - generic [ref=f30e344]:
+                              - generic [ref=f30e345]: R$
+                              - spinbutton "Valor Residual" [ref=f30e348]: "7800.00"
+                          - generic [ref=f30e351]:
+                            - generic [ref=f30e352]: Vida Útil (anos)
+                            - spinbutton "Vida Útil (anos)" [ref=f30e358]: "10"
+                        - generic [ref=f30e361]:
+                          - generic [ref=f30e362]: Indicador de Depreciação
+                          - generic [ref=f30e367]:
+                            - generic [ref=f30e368]: "Valor Atual: R$ 32.332,33"
+                            - generic [ref=f30e369]: "Depreciado: R$ 45.667,67"
+                            - generic [ref=f30e370]: "Percentual: 65.1%"
+                    - generic [ref=f30e372]:
+                      - generic [ref=f30e375]:
+                        - heading "Dados do equipamento" [level=3] [ref=f30e376]
+                        - paragraph [ref=f30e377]: "Marca/fabricante fica em Identificação, acima. Horímetro: em \"Controle de Vida Útil\", abaixo."
+                      - generic [ref=f30e380]:
+                        - generic [ref=f30e383]:
+                          - generic [ref=f30e384]: Modelo
+                          - generic [ref=f30e388]:
+                            - combobox [ref=f30e391]:
+                              - generic [ref=f30e394]:
+                                - text: 3246ES
+                                - 'button "Remove item: ''3246ES''" [ref=f30e395] [cursor=pointer]': Remove item
+                            - button "Criar" [ref=f30e398] [cursor=pointer]
+                        - generic [ref=f30e404]:
+                          - generic [ref=f30e405]: Ano
+                          - spinbutton "Ano" [ref=f30e411]: "2020"
+                        - generic [ref=f30e414]:
+                          - generic [ref=f30e415]: Cor
+                          - textbox "Cor" [ref=f30e421]
+                        - generic [ref=f30e424]:
+                          - generic [ref=f30e425]: Chassi
+                          - textbox "Chassi" [ref=f30e431]
+                    - generic [ref=f30e433]:
+                      - generic [ref=f30e436]:
+                        - heading "Controle de Vida Útil e ROI" [level=3] [ref=f30e437]
+                        - paragraph [ref=f30e438]: Ajustes manuais nestes campos ficam registrados nos Logs de Auditoria.
+                      - generic [ref=f30e444]:
+                        - generic [ref=f30e447]:
+                          - generic [ref=f30e448]: Horímetro de Aquisição
+                          - generic [ref=f30e451]:
+                            - generic [ref=f30e452]:
+                              - spinbutton "Horímetro de Aquisição" [ref=f30e457]: "0.00"
+                              - generic [ref=f30e458]: h
+                            - generic [ref=f30e460]: Permitido correção de erro de digitação na entrada.
+                        - generic [ref=f30e463]:
+                          - generic [ref=f30e464]: Leitura Atual (Sistema)
+                          - generic [ref=f30e467]:
+                            - spinbutton "Leitura Atual (Sistema)" [ref=f30e473]: "3653.00"
+                            - generic [ref=f30e474]: Sincronizado automaticamente pelas Ordens de Serviço.
+                        - generic [ref=f30e477]:
+                          - generic [ref=f30e480]:
+                            - text: Status Operacional
+                            - superscript [ref=f30e481]: "*"
+                          - combobox "Status Operacional*" [ref=f30e485]:
+                            - option "Selecione uma opção"
+                            - option "Disponível"
+                            - option "Locado" [selected]
+                            - option "Em Manutenção"
+                            - option "Em Operação"
+                            - option "Aguardando Triagem"
+              - generic [ref=f30e487]:
+                - button "Salvar alterações" [ref=f30e488] [cursor=pointer]
+                - button "Cancelar" [ref=f30e490] [cursor=pointer]
+            - generic [ref=f30e492]:
+              - tablist [ref=f30e493]:
+                - tab "Documentos (laudos, notas fiscais...)" [ref=f30e494] [cursor=pointer]
+                - tab "Itens Extras do Manual (deste ativo)" [ref=f30e496] [cursor=pointer]
+                - tab "Histórico de Pátio" [ref=f30e498] [cursor=pointer]
+                - tab "Planos de Manutenção (deste ativo)" [ref=f30e500] [cursor=pointer]
+                - tab "Documentos NR-13" [ref=f30e502] [cursor=pointer]
+                - tab "Inspeções NR-13" [ref=f30e504] [cursor=pointer]
+              - tabpanel [ref=f30e506]
+    - complementary [ref=f30e511]:
+      - generic [ref=f30e513]:
+        - link "Início" [ref=f30e515] [cursor=pointer]:
+          - /url: http://127.0.0.1:8099/admin/painel-controle
+          - generic [ref=f30e519]: Oravel
+        - button "Recolher barra lateral" [ref=f30e520] [cursor=pointer]
+      - navigation [ref=f30e524]:
+        - list [ref=f30e525]:
+          - listitem [ref=f30e526]:
+            - link "Início" [ref=f30e527] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/admin/painel-controle
+          - listitem [ref=f30e531]:
+            - link "Academia Oravel" [ref=f30e532] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/academia
+        - list [ref=f30e536]:
+          - listitem [ref=f30e537]:
+            - generic [ref=f30e538] [cursor=pointer]:
+              - generic [ref=f30e541]: Ativos
+              - button "Ativos" [expanded] [ref=f30e542]
+            - list [ref=f30e546]:
+              - listitem [ref=f30e547]:
+                - link "Gestão de Ativos" [ref=f30e548] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/admin/gestao-ativos
+                - list [ref=f30e552]:
+                  - listitem [ref=f30e553]:
+                    - link "Ativos G A" [ref=f30e554] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets
+                      - generic [ref=f30e558]: Ativos
+                      - generic [ref=f30e559]: G A
+                  - listitem [ref=f30e563]:
+                    - link "Categorias de Ativos" [ref=f30e564] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/asset-categories
+                  - listitem [ref=f30e570]:
+                    - link "Dossiê Rápido (QR/Patrimônio)" [ref=f30e571] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/ativos/dossie
+                  - listitem [ref=f30e577]:
+                    - link "Grupos de Ativos" [ref=f30e578] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/checklist-groups
+                  - listitem [ref=f30e584]:
+                    - link "Histórico do Patrimônio" [ref=f30e585] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/patrimonio/historico
+                  - listitem [ref=f30e591]:
+                    - link "Mapa de Equipamentos" [ref=f30e592] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/mapa-equipamentos
+                  - listitem [ref=f30e598]:
+                    - link "Planta Baixa (Pátio de Ativos)" [ref=f30e599] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/planta-baixa-patio-ativos
+          - listitem [ref=f30e604]:
+            - generic [ref=f30e605] [cursor=pointer]:
+              - generic [ref=f30e608]: Conformidade NR-13
+              - button "Conformidade NR-13" [ref=f30e609]
+          - listitem [ref=f30e613]:
+            - generic [ref=f30e614] [cursor=pointer]:
+              - generic [ref=f30e617]: Gestão de Frota
+              - button "Gestão de Frota" [ref=f30e618]
+          - listitem [ref=f30e622]:
+            - generic [ref=f30e623] [cursor=pointer]:
+              - generic [ref=f30e626]: Inteligência de Ativos
+              - button "Inteligência de Ativos" [ref=f30e627]
+          - listitem [ref=f30e631]:
+            - generic [ref=f30e632] [cursor=pointer]:
+              - generic [ref=f30e635]: Materiais e Peças
+              - button "Materiais e Peças" [ref=f30e636]
+          - listitem [ref=f30e640]:
+            - generic [ref=f30e641] [cursor=pointer]:
+              - generic [ref=f30e644]: Itens Agregados
+              - button "Itens Agregados" [ref=f30e645]
+          - listitem [ref=f30e649]:
+            - generic [ref=f30e650] [cursor=pointer]:
+              - generic [ref=f30e653]: EPI
+              - button "EPI" [ref=f30e654]
+          - listitem [ref=f30e658]:
+            - generic [ref=f30e659] [cursor=pointer]:
+              - generic [ref=f30e662]: Comercial
+              - button "Comercial" [ref=f30e663]
+          - listitem [ref=f30e667]:
+            - generic [ref=f30e668] [cursor=pointer]:
+              - generic [ref=f30e671]: Configurações
+              - button "Configurações" [ref=f30e672]
+          - listitem [ref=f30e676]:
+            - generic [ref=f30e677] [cursor=pointer]:
+              - generic [ref=f30e680]: Departamento Pessoal
+              - button "Departamento Pessoal" [ref=f30e681]
+          - listitem [ref=f30e685]:
+            - generic [ref=f30e686] [cursor=pointer]:
+              - generic [ref=f30e689]: Equipe
+              - button "Equipe" [ref=f30e690]
+          - listitem [ref=f30e694]:
+            - generic [ref=f30e695] [cursor=pointer]:
+              - generic [ref=f30e698]: Financeiro
+              - button "Financeiro" [ref=f30e699]
+          - listitem [ref=f30e703]:
+            - generic [ref=f30e704] [cursor=pointer]:
+              - generic [ref=f30e707]: Logística
+              - button "Logística" [ref=f30e708]
+          - listitem [ref=f30e712]:
+            - generic [ref=f30e713] [cursor=pointer]:
+              - generic [ref=f30e716]: Manutenção
+              - button "Manutenção" [ref=f30e717]
+          - listitem [ref=f30e721]:
+            - generic [ref=f30e722] [cursor=pointer]:
+              - generic [ref=f30e725]: PMP
+              - button "PMP" [ref=f30e726]
+          - listitem [ref=f30e730]:
+            - generic [ref=f30e731] [cursor=pointer]:
+              - generic [ref=f30e734]: Relatórios
+              - button "Relatórios" [ref=f30e735]
+  - generic:
+    - status
+  - button "💬 Mensagens" [ref=f30e741] [cursor=pointer]:
+    - generic [ref=f30e742]:
+      - generic [ref=f30e743]: 💬
+      - generic [ref=f30e744]: Mensagens
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f30e748]

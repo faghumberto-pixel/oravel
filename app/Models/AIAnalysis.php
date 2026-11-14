@@ -36,6 +36,8 @@ class AIAnalysis extends Model
 
     public const TYPE_PLANO_PREVENTIVO = 'plano_preventivo';
 
+    public const TYPE_PROSPECT = 'prospect';
+
     public const STATUS_PENDENTE = 'pendente';
 
     public const STATUS_CONCLUIDA = 'concluida';
@@ -87,6 +89,11 @@ class AIAnalysis extends Model
         return $this->belongsTo(CrmLead::class);
     }
 
+    public function prospect(): BelongsTo
+    {
+        return $this->belongsTo(Prospect::class);
+    }
+
     /**
      * Rotulo de "do que trata" essa analise, usado na listagem e na tela
      * de detalhe da Central de IA. Cada tipo referencia algo diferente
@@ -100,6 +107,7 @@ class AIAnalysis extends Model
             // Lead pode ter sido excluido depois da analise; cai pro nome
             // que ja estava salvo no context original nesse caso.
             self::TYPE_COMERCIAL => $this->crmLead?->name ?? data_get($this->context, 'lead.nome'),
+            self::TYPE_PROSPECT => $this->prospect?->nome ?? data_get($this->context, 'prospect.nome'),
             self::TYPE_LOGISTICA => filled(data_get($this->context, 'data'))
                 ? Carbon::parse(data_get($this->context, 'data'))->format('d/m/Y')
                 : null,

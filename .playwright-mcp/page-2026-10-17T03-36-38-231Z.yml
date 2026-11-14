@@ -1,0 +1,102 @@
+- generic [active] [ref=f12e1]:
+  - navigation "Principal" [ref=f12e2]:
+    - generic [ref=f12e3]:
+      - link "O Oravel" [ref=f12e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f12e5]: O
+        - text: Oravel
+      - generic [ref=f12e6]:
+        - link "Soluções" [ref=f12e8] [cursor=pointer]:
+          - /url: /solucoes/
+        - link "Planos" [ref=f12e9] [cursor=pointer]:
+          - /url: /planos/
+        - link "Sobre" [ref=f12e10] [cursor=pointer]:
+          - /url: /sobre/
+        - link "FAQ" [ref=f12e11] [cursor=pointer]:
+          - /url: /faq.php
+        - link "Ajuda" [ref=f12e12] [cursor=pointer]:
+          - /url: /central-de-conhecimento/
+        - link "Contato" [ref=f12e13] [cursor=pointer]:
+          - /url: /contato.php
+      - link "Agendar demonstração" [ref=f12e14] [cursor=pointer]:
+        - /url: /contato.php
+  - banner [ref=f12e15]:
+    - generic [ref=f12e16]:
+      - generic [ref=f12e17]: Contato
+      - heading "Vamos conversar sobre a sua operação?" [level=1] [ref=f12e18]
+      - paragraph [ref=f12e19]: Conte o que você precisa e mostramos, na prática, qual solução Oravel se encaixa no seu dia a dia.
+  - generic [ref=f12e22]:
+    - generic [ref=f12e23]:
+      - generic [ref=f12e29]:
+        - heading "E-mail" [level=4] [ref=f12e30]
+        - link "contato@oravel.com.br" [ref=f12e31] [cursor=pointer]:
+          - /url: mailto:contato@oravel.com.br
+      - generic [ref=f12e36]:
+        - heading "WhatsApp" [level=4] [ref=f12e37]
+        - link "(19) 99933-2615" [ref=f12e38] [cursor=pointer]:
+          - /url: https://wa.me/5519999332615
+      - generic [ref=f12e44]:
+        - heading "Tempo de resposta" [level=4] [ref=f12e45]
+        - paragraph [ref=f12e46]: Time interno responde os e-mails, normalmente no mesmo dia útil.
+    - generic [ref=f12e48]:
+      - textbox [ref=f12e49]
+      - generic [ref=f12e50]:
+        - generic [ref=f12e51]: Nome
+        - textbox "Nome" [ref=f12e52]
+      - generic [ref=f12e53]:
+        - generic [ref=f12e54]: E-mail
+        - textbox "E-mail" [ref=f12e55]
+      - generic [ref=f12e56]:
+        - generic [ref=f12e57]: Empresa
+        - textbox "Empresa" [ref=f12e58]
+      - generic [ref=f12e59]:
+        - generic [ref=f12e60]: Telefone / WhatsApp
+        - textbox "Telefone / WhatsApp" [ref=f12e61]
+      - generic [ref=f12e62]:
+        - generic [ref=f12e63]: Como podemos ajudar?
+        - textbox "Como podemos ajudar?" [ref=f12e64]:
+          - /placeholder: "Ex: hoje controlamos tudo em planilha e queremos avaliar um sistema..."
+          - text: Quero falar com um especialista sobre o ERP Locadoras.
+      - button "Enviar mensagem" [ref=f12e69] [cursor=pointer]
+      - paragraph [ref=f12e70]: Ao enviar, você concorda em ser contatado pelo time da Oravel.
+  - contentinfo [ref=f12e71]:
+    - generic [ref=f12e72]:
+      - generic [ref=f12e73]: Soluções
+      - link "ERP Locadoras" [ref=f12e74] [cursor=pointer]:
+        - /url: /erp-cmms/
+      - link "Manutenção" [ref=f12e75] [cursor=pointer]:
+        - /url: /software-manutencao-industrial/
+      - link "Serviços" [ref=f12e76] [cursor=pointer]:
+        - /url: /software-gestao-de-servicos/
+      - link "Logística" [ref=f12e77] [cursor=pointer]:
+        - /url: /software-gestao-frota-logistica/
+      - link "Estoque" [ref=f12e78] [cursor=pointer]:
+        - /url: /wms/
+      - link "Vendas" [ref=f12e79] [cursor=pointer]:
+        - /url: /crm/
+    - generic [ref=f12e80]:
+      - generic [ref=f12e81]:
+        - text: © 2026 Oravel Desenvolvimento de Software
+        - generic [ref=f12e82]: CNPJ 65.707.953/0001-30 · Rua Pais Leme, 215, conj. 1713, Pinheiros, São Paulo/SP · CEP 05424-150
+      - generic [ref=f12e83]:
+        - link "Home" [ref=f12e84] [cursor=pointer]:
+          - /url: /
+        - link "Soluções" [ref=f12e85] [cursor=pointer]:
+          - /url: /solucoes/
+        - link "Planos" [ref=f12e86] [cursor=pointer]:
+          - /url: /planos/
+        - link "Contato" [ref=f12e87] [cursor=pointer]:
+          - /url: /contato.php
+        - link "Privacidade" [ref=f12e88] [cursor=pointer]:
+          - /url: /politica-de-privacidade/
+        - link "Termos" [ref=f12e89] [cursor=pointer]:
+          - /url: /termos-de-uso/
+  - dialog "Aviso de cookies" [ref=f12e90]:
+    - generic [ref=f12e91]:
+      - text: Usamos cookies do Google (Analytics e Ads) para medir o site e nossos anúncios. Você pode recusar a qualquer momento.
+      - link "Saiba mais" [ref=f12e92] [cursor=pointer]:
+        - /url: /politica-de-privacidade/
+      - text: .
+    - generic [ref=f12e93]:
+      - button "Entendi" [ref=f12e94] [cursor=pointer]
+      - button "Recusar" [ref=f12e95] [cursor=pointer]

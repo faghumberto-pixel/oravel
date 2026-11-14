@@ -30,16 +30,20 @@ return new class extends Migration
             $table->index(['tenant_id', 'entidade', 'ordem']);
         });
 
-        DB::statement("ALTER TABLE crm_leads ADD COLUMN custom jsonb NOT NULL DEFAULT '{}'::jsonb");
-        DB::statement("ALTER TABLE clients ADD COLUMN custom jsonb NOT NULL DEFAULT '{}'::jsonb");
-        DB::statement('CREATE INDEX crm_leads_custom_gin ON crm_leads USING gin (custom)');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE crm_leads ADD COLUMN custom jsonb NOT NULL DEFAULT '{}'::jsonb");
+            DB::statement("ALTER TABLE clients ADD COLUMN custom jsonb NOT NULL DEFAULT '{}'::jsonb");
+            DB::statement('CREATE INDEX crm_leads_custom_gin ON crm_leads USING gin (custom)');
+        }
     }
 
     public function down(): void
     {
-        DB::statement('DROP INDEX IF EXISTS crm_leads_custom_gin');
-        DB::statement('ALTER TABLE clients DROP COLUMN IF EXISTS custom');
-        DB::statement('ALTER TABLE crm_leads DROP COLUMN IF EXISTS custom');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('DROP INDEX IF EXISTS crm_leads_custom_gin');
+            DB::statement('ALTER TABLE clients DROP COLUMN IF EXISTS custom');
+            DB::statement('ALTER TABLE crm_leads DROP COLUMN IF EXISTS custom');
+        }
         Schema::dropIfExists('crm_campos_custom');
     }
 };

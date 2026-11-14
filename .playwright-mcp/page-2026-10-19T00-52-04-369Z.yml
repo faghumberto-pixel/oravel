@@ -1,0 +1,35 @@
+- generic [ref=e3]:
+  - link "Oravel" [ref=e4] [cursor=pointer]:
+    - /url: https://oravel.com.br
+  - generic [ref=e9]:
+    - generic [ref=e10]:
+      - heading "Bem-vindo à Oravel!" [level=1] [ref=e14]
+      - paragraph [ref=e15]: "Você acaba de dar um passo importante: menos papel, menos correria e mais controle sobre a sua operação. Daqui para frente, cada ordem de serviço, cada contrato e cada cliente fica num só lugar, e você enxerga tudo em tempo real."
+    - heading "Seus próximos passos" [level=2] [ref=e16]
+    - list [ref=e17]:
+      - listitem [ref=e18]:
+        - generic [ref=e19]: "1"
+        - generic [ref=e20]:
+          - paragraph [ref=e21]: Aguarde a confirmação do pagamento
+          - paragraph [ref=e22]: Normalmente leva poucos minutos. Você recebe um e-mail assim que o seu acesso for liberado, sem precisar fazer nada por aqui.
+      - listitem [ref=e23]:
+        - generic [ref=e24]: "2"
+        - generic [ref=e25]:
+          - paragraph [ref=e26]: Entre no painel
+          - paragraph [ref=e27]: "Use o e-mail e a senha que você cadastrou ao assinar. Se ainda não conseguir entrar, a confirmação não chegou: tente de novo em alguns minutos."
+      - listitem [ref=e28]:
+        - generic [ref=e29]: "3"
+        - generic [ref=e30]:
+          - paragraph [ref=e31]: Siga os Primeiros passos
+          - paragraph [ref=e32]: Ao entrar, o sistema mostra um guia curto, passo a passo, para você chegar ao primeiro resultado ainda hoje. Leva poucos minutos por etapa.
+      - listitem [ref=e33]:
+        - generic [ref=e34]: "4"
+        - generic [ref=e35]:
+          - paragraph [ref=e36]: Aprenda no seu ritmo
+          - paragraph [ref=e37]: A Academia Oravel tem aulas curtas e provas para você e sua equipe dominarem cada módulo.
+    - generic [ref=e38]:
+      - link "Entrar no painel" [ref=e39] [cursor=pointer]:
+        - /url: http://127.0.0.1:8765/admin/login
+      - link "Falar com a Oravel" [ref=e40] [cursor=pointer]:
+        - /url: https://wa.me/5519999332615?text=Ol%C3%A1%21%20Acabei%20de%20assinar%20a%20Oravel%20e%20preciso%20de%20ajuda%20para%20come%C3%A7ar.
+  - paragraph [ref=e41]: © 2026 Oravel. Todos os direitos reservados.

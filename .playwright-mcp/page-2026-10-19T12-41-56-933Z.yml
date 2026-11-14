@@ -1,0 +1,211 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - navigation [ref=e5]:
+        - generic [ref=e8]:
+          - generic [ref=e9]:
+            - generic [ref=e10]: Locadora Demo Cliente
+            - generic [ref=e11]: "Módulo: Manutenção"
+          - generic [ref=e12]: Construção Civil
+        - generic [ref=e14]:
+          - button "⌘K" [ref=e16] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=e20] [cursor=pointer]:
+            - /url: http://127.0.0.1:8765/admin/caixa-de-email
+          - button "Menu do usuário" [ref=e25] [cursor=pointer]:
+            - img "Avatar de Maria Cliente" [ref=e26]
+        - link "Ajuda" [ref=e28] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=e32]:
+        - generic [ref=e37]:
+          - generic [ref=e38]:
+            - heading "Bem-vindo, Maria" [level=1] [ref=e39]
+            - paragraph [ref=e40]: Faltam 3 passos para abrir sua primeira ordem de serviço. Leva cerca de 20 minutos.
+          - progressbar [ref=e41]:
+            - generic [ref=e43]: Passo 1 de 3
+          - generic [ref=e44]:
+            - generic [ref=e45]:
+              - generic [ref=e46]: "1"
+              - generic [ref=e47]:
+                - generic [ref=e48]: Cadastre seus equipamentos
+                - generic [ref=e49]: Cadastre pelo menos 3 equipamentos, um a um ou importando a planilha (botão Importar Excel na lista). Depois, imprima a etiqueta com QR Code de cada um.
+              - generic [ref=e50]: 10 min
+            - generic [ref=e51]:
+              - link "Cadastrar equipamento" [ref=e52] [cursor=pointer]:
+                - /url: http://127.0.0.1:8765/admin/assets/create
+              - link "Importar planilha" [ref=e56] [cursor=pointer]:
+                - /url: http://127.0.0.1:8765/admin/assets
+          - generic [ref=e60]:
+            - generic [ref=e61]:
+              - generic [ref=e62]: "2"
+              - generic [ref=e63]:
+                - generic [ref=e64]: Abra sua primeira ordem de serviço
+                - generic [ref=e65]: Escolha um equipamento, descreva o serviço e abra a OS. Ela aparece no kanban do pátio e o técnico a recebe no celular.
+              - generic [ref=e66]: 5 min
+            - link "Abrir ordem de serviço" [ref=e68] [cursor=pointer]:
+              - /url: http://127.0.0.1:8765/admin/maintenance-orders/create
+          - generic [ref=e72]:
+            - generic [ref=e73]:
+              - generic [ref=e74]: "3"
+              - generic [ref=e75]:
+                - generic [ref=e76]: Crie seu primeiro plano preventivo
+                - generic [ref=e77]: Defina de quanto em quanto tempo (horas, dias ou ciclos) um equipamento precisa de manutenção. O sistema passa a avisar quando vencer.
+              - generic [ref=e78]: 5 min
+            - link "Criar plano preventivo" [ref=e80] [cursor=pointer]:
+              - /url: http://127.0.0.1:8765/admin/maintenance-plans/create
+          - generic [ref=e84]:
+            - generic [ref=e85]: Travou em algum passo? Fale com a gente pelo WhatsApp.
+            - generic [ref=e86]:
+              - link "Pedir ajuda" [ref=e87] [cursor=pointer]:
+                - /url: https://wa.me/5519999332615?text=Ol%C3%A1%21%20Sou%20Maria%20Cliente%2C%20da%20empresa%20Locadora%20Demo%20Cliente.%20Travei%20no%20passo%201%20%28Cadastre%20seus%20equipamentos%29%20dos%20primeiros%20passos%20no%20Oravel.
+              - button "Agora não" [ref=e91] [cursor=pointer]
+    - complementary [ref=e93]:
+      - generic [ref=e95]:
+        - link "Início" [ref=e97] [cursor=pointer]:
+          - /url: http://127.0.0.1:8765/admin/primeiros-passos
+          - img "Oravel" [ref=e101]
+        - button "Recolher barra lateral" [ref=e102] [cursor=pointer]
+      - navigation [ref=e106]:
+        - list [ref=e107]:
+          - listitem [ref=e108]:
+            - link "Início" [ref=e109] [cursor=pointer]:
+              - /url: http://127.0.0.1:8765/admin/painel-controle
+          - listitem [ref=e113]:
+            - link "Academia Oravel" [ref=e114] [cursor=pointer]:
+              - /url: http://127.0.0.1:8765/academia
+        - list [ref=e118]:
+          - listitem [ref=e119]:
+            - list [ref=e120]:
+              - listitem [ref=e121]:
+                - link "Primeiros passos" [ref=e122] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/primeiros-passos
+          - listitem [ref=e126]:
+            - generic [ref=e127] [cursor=pointer]:
+              - generic [ref=e130]: Ativos
+              - button "Ativos" [expanded] [ref=e131]
+            - list [ref=e135]:
+              - listitem [ref=e136]:
+                - link "Gestão de Ativos" [ref=e137] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/gestao-ativos
+          - listitem [ref=e141]:
+            - generic [ref=e142] [cursor=pointer]:
+              - generic [ref=e145]: Itens Agregados
+              - button "Itens Agregados" [expanded] [ref=e146]
+            - list [ref=e150]:
+              - listitem [ref=e151]:
+                - link "Acessórios e Componentes" [ref=e152] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/gestao-itens-agregados
+              - listitem [ref=e156]:
+                - link "Insumos e Consumíveis" [ref=e157] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/gestao-insumos
+              - listitem [ref=e161]:
+                - link "Mão de Obra Especializada" [ref=e162] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/specialized-services
+              - listitem [ref=e166]:
+                - link "Segurança e Documentação" [ref=e167] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/compliance-documents
+          - listitem [ref=e171]:
+            - generic [ref=e172] [cursor=pointer]:
+              - generic [ref=e175]: Configurações
+              - button "Configurações" [expanded] [ref=e176]
+            - list [ref=e180]:
+              - listitem [ref=e181]:
+                - link "Centros de Custo" [ref=e182] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/cost-centers
+              - listitem [ref=e186]:
+                - link "Configurações do Tenant" [ref=e187] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/manage-tenant-settings
+              - listitem [ref=e191]:
+                - link "Responsáveis pelos Avisos" [ref=e192] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/responsaveis-avisos
+              - listitem [ref=e196]:
+                - link "Empresas" [ref=e197] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/companies
+              - listitem [ref=e201]:
+                - link "E-mail da Empresa" [ref=e202] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/email-da-empresa
+              - listitem [ref=e206]:
+                - link "Filiais" [ref=e207] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/branches
+              - listitem [ref=e211]:
+                - link "WhatsApp da Empresa" [ref=e212] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/whatsapp-da-empresa
+              - listitem [ref=e216]:
+                - link "Localizações" [ref=e217] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/locations
+              - listitem [ref=e223]:
+                - link "Logs de Atividade" [ref=e224] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/user-activity-logs
+              - listitem [ref=e228]:
+                - link "Status de Conformidade" [ref=e229] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/compliance-status
+          - listitem [ref=e233]:
+            - generic [ref=e234] [cursor=pointer]:
+              - generic [ref=e237]: Equipe
+              - button "Equipe" [expanded] [ref=e238]
+            - list [ref=e242]:
+              - listitem [ref=e243]:
+                - link "Chat Interno G M" [ref=e244] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/chat
+                  - generic [ref=e247]: Chat Interno
+                  - generic [ref=e248]: G M
+              - listitem [ref=e252]:
+                - link "Colaboradores" [ref=e253] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/users
+              - listitem [ref=e257]:
+                - link "Departamentos" [ref=e258] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/departments
+              - listitem [ref=e262]:
+                - link "Funções e Cargos" [ref=e263] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/job-roles
+              - listitem [ref=e267]:
+                - link "Perfis de Acesso" [ref=e268] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/roles
+              - listitem [ref=e272]:
+                - link "Acesso ao App Mobile" [ref=e273] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/acesso-app-mobile
+              - listitem [ref=e277]:
+                - link "PMOC" [ref=e278] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/pmocs
+          - listitem [ref=e282]:
+            - generic [ref=e283] [cursor=pointer]:
+              - generic [ref=e286]: Manutenção
+              - button "Manutenção" [expanded] [ref=e287]
+            - list [ref=e291]:
+              - listitem [ref=e292]:
+                - link "Cadastros" [ref=e293] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/maintenancao-cadastros
+              - listitem [ref=e297]:
+                - link "Operação" [ref=e298] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/maintenancao-operacao
+          - listitem [ref=e303]:
+            - generic [ref=e304] [cursor=pointer]:
+              - generic [ref=e307]: PMP
+              - button "PMP" [expanded] [ref=e308]
+            - list [ref=e312]:
+              - listitem [ref=e313]:
+                - link "Alocação de Técnicos" [ref=e314] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/alocacao-tecnicos-pmp
+              - listitem [ref=e318]:
+                - link "Cobertura de PMP" [ref=e319] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/cobertura-pmp
+              - listitem [ref=e323]:
+                - link "Consulta por Cliente" [ref=e324] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/consulta-cliente-pmp
+              - listitem [ref=e328]:
+                - link "Dashboard PMP" [ref=e329] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/painel-pmp
+              - listitem [ref=e333]:
+                - link "Kanban Preventivas P M" [ref=e334] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/preventive-maintenance-kanban
+                  - generic [ref=e337]: Kanban Preventivas
+                  - generic [ref=e338]: P M
+              - listitem [ref=e342]:
+                - link "Planos Preventivos" [ref=e343] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8765/admin/maintenance-plans
+  - generic:
+    - status
+  - button "💬 Mensagens" [ref=e349] [cursor=pointer]:
+    - generic [ref=e350]:
+      - generic [ref=e351]: 💬
+      - generic [ref=e352]: Mensagens
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=e356]

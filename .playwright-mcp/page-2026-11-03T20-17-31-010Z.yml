@@ -1,0 +1,260 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e2]:
+    - generic [ref=f3e3]:
+      - navigation [ref=f3e5]:
+        - generic [ref=f3e9]:
+          - generic [ref=f3e10]: Locadora Visual
+          - generic [ref=f3e11]: "Módulo: Locadora"
+        - generic [ref=f3e12]:
+          - button "⌘K" [ref=f3e14] [cursor=pointer]
+          - button "Abrir notificações" [ref=f3e20] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=f3e24] [cursor=pointer]:
+            - /url: http://127.0.0.1:8099/admin/caixa-de-email
+          - button "Menu do usuário" [ref=f3e29] [cursor=pointer]:
+            - img "Avatar de Admin Visual" [ref=f3e30]
+        - link "Ajuda" [ref=f3e32] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=f3e36]:
+        - generic [ref=f3e38]:
+          - generic [ref=f3e39]:
+            - generic [ref=f3e40]:
+              - navigation [ref=f3e41]:
+                - list [ref=f3e42]:
+                  - listitem [ref=f3e43]:
+                    - link "Ordens De Serviço" [ref=f3e44] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/maintenance-orders
+                  - listitem [ref=f3e45]:
+                    - generic [ref=f3e48]: Listar
+              - heading "Ordens De Serviço" [level=1] [ref=f3e49]
+            - generic [ref=f3e51]:
+              - link "Nova Ordem de Serviço" [ref=f3e52] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/maintenance-orders/create
+              - link "Imprimir" [ref=f3e56] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/print/tabela/afdf786e-709c-4f75-989c-022e4e859e00
+              - button "Exportar maintenance orders" [ref=f3e60] [cursor=pointer]
+          - generic [ref=f3e63]:
+            - generic [ref=f3e66]:
+              - generic [ref=f3e68]:
+                - generic [ref=f3e69]: Ativos Liberados
+                - generic [ref=f3e71]: 0 / 1
+                - generic [ref=f3e72]: Disponibilidade da Frota
+              - generic [ref=f3e75]:
+                - generic [ref=f3e76]: Trabalhos Feitos
+                - generic [ref=f3e78]: "1"
+                - generic [ref=f3e79]: OS Finalizadas
+              - generic [ref=f3e82]:
+                - generic [ref=f3e83]: Manutenções em Aberto
+                - generic [ref=f3e85]: "4"
+                - generic [ref=f3e86]: OS em fila ou execução
+              - generic [ref=f3e89]:
+                - generic [ref=f3e90]: OS em Atraso
+                - generic [ref=f3e92]: "1"
+                - generic [ref=f3e93]: Abertas há mais de 3 dias
+            - generic [ref=f3e95]:
+              - generic [ref=f3e96]:
+                - button "Total 6" [ref=f3e97] [cursor=pointer]:
+                  - generic [ref=f3e98]: Total
+                  - generic [ref=f3e99]: "6"
+                - button "Abertas 2" [ref=f3e100] [cursor=pointer]:
+                  - generic [ref=f3e101]: Abertas
+                  - generic [ref=f3e102]: "2"
+                - button "Pendentes 1" [ref=f3e103] [cursor=pointer]:
+                  - generic [ref=f3e104]: Pendentes
+                  - generic [ref=f3e105]: "1"
+                - button "Em andamento 1" [ref=f3e106] [cursor=pointer]:
+                  - generic [ref=f3e107]: Em andamento
+                  - generic [ref=f3e108]: "1"
+                - button "Concluídas 1" [ref=f3e109] [cursor=pointer]:
+                  - generic [ref=f3e110]: Concluídas
+                  - generic [ref=f3e111]: "1"
+                - button "Canceladas 1" [ref=f3e112] [cursor=pointer]:
+                  - generic [ref=f3e113]: Canceladas
+                  - generic [ref=f3e114]: "1"
+                - button "Em atraso (+3 dias) 1" [ref=f3e115] [cursor=pointer]:
+                  - generic [ref=f3e116]: Em atraso (+3 dias)
+                  - generic [ref=f3e117]: "1"
+                - button "Retrabalho 0" [ref=f3e118] [cursor=pointer]:
+                  - generic [ref=f3e119]: Retrabalho
+                  - generic [ref=f3e120]: "0"
+                - button "PMP automática 0" [ref=f3e121] [cursor=pointer]:
+                  - generic [ref=f3e122]: PMP automática
+                  - generic [ref=f3e123]: "0"
+                - button "Preventivas 2" [ref=f3e124] [cursor=pointer]:
+                  - generic [ref=f3e125]: Preventivas
+                  - generic [ref=f3e126]: "2"
+                - button "Corretivas 3" [ref=f3e127] [cursor=pointer]:
+                  - generic [ref=f3e128]: Corretivas
+                  - generic [ref=f3e129]: "3"
+              - generic [ref=f3e131]:
+                - generic [ref=f3e134]:
+                  - generic [ref=f3e135]:
+                    - generic [ref=f3e136]: Pesquisar
+                    - searchbox "Pesquisar" [ref=f3e142]
+                  - button "Filtrar 0" [ref=f3e145] [cursor=pointer]:
+                    - generic [ref=f3e146]: Filtrar
+                    - generic [ref=f3e149]: "0"
+                - generic [ref=f3e153]:
+                  - generic [ref=f3e155]:
+                    - checkbox "Marcar/desmarcar todos os itens para ações em massa." [ref=f3e156]
+                    - generic [ref=f3e157]: Marcar/desmarcar todos os itens para ações em massa.
+                  - generic [ref=f3e158]:
+                    - generic [ref=f3e160]:
+                      - generic [ref=f3e161]:
+                        - checkbox "Marcar/desmarcar o item 01a1a30d-a2af-7107-a417-d9a38e7409e5 para ações em massa." [ref=f3e162]
+                        - generic [ref=f3e163]: Marcar/desmarcar o item 01a1a30d-a2af-7107-a417-d9a38e7409e5 para ações em massa.
+                      - generic [ref=f3e164]:
+                        - link "OS-202611-10000 Aberto Gerador 150 kVA Patrimônio PAT-100 Corretiva - Admin Visual Aberta em 02/11/2026" [ref=f3e166] [cursor=pointer]:
+                          - /url: http://127.0.0.1:8099/admin/maintenance-orders/01a1a30d-a2af-7107-a417-d9a38e7409e5/edit
+                          - generic [ref=f3e168]:
+                            - generic [ref=f3e170]:
+                              - generic [ref=f3e171]: OS-202611-10000
+                              - generic [ref=f3e179]: Aberto
+                            - generic [ref=f3e188]: Gerador 150 kVA
+                            - generic [ref=f3e199]: Patrimônio PAT-100
+                            - generic [ref=f3e208]:
+                              - generic [ref=f3e209]: Corretiva
+                              - generic [ref=f3e218]: "-"
+                            - generic [ref=f3e223]: Admin Visual
+                            - generic [ref=f3e233]: Aberta em 02/11/2026
+                        - generic [ref=f3e244]:
+                          - button "Visualizar" [ref=f3e245] [cursor=pointer]
+                          - link "Editar" [ref=f3e250] [cursor=pointer]:
+                            - /url: http://127.0.0.1:8099/admin/maintenance-orders/01a1a30d-a2af-7107-a417-d9a38e7409e5/edit
+                          - button "Excluir" [ref=f3e255] [cursor=pointer]
+                    - generic [ref=f3e260]:
+                      - generic [ref=f3e261]:
+                        - checkbox "Marcar/desmarcar o item 01a1a30d-a2c9-704e-8677-58740b88c9d2 para ações em massa." [ref=f3e262]
+                        - generic [ref=f3e263]: Marcar/desmarcar o item 01a1a30d-a2c9-704e-8677-58740b88c9d2 para ações em massa.
+                      - generic [ref=f3e264]:
+                        - link "OS-202611-10001 Pendente Gerador 150 kVA Patrimônio PAT-100 Preventiva - Admin Visual Aberta em 01/11/2026" [ref=f3e266] [cursor=pointer]:
+                          - /url: http://127.0.0.1:8099/admin/maintenance-orders/01a1a30d-a2c9-704e-8677-58740b88c9d2/edit
+                          - generic [ref=f3e268]:
+                            - generic [ref=f3e270]:
+                              - generic [ref=f3e271]: OS-202611-10001
+                              - generic [ref=f3e279]: Pendente
+                            - generic [ref=f3e288]: Gerador 150 kVA
+                            - generic [ref=f3e299]: Patrimônio PAT-100
+                            - generic [ref=f3e308]:
+                              - generic [ref=f3e309]: Preventiva
+                              - generic [ref=f3e318]: "-"
+                            - generic [ref=f3e323]: Admin Visual
+                            - generic [ref=f3e333]: Aberta em 01/11/2026
+                        - generic [ref=f3e344]:
+                          - button "Visualizar" [ref=f3e345] [cursor=pointer]
+                          - link "Editar" [ref=f3e350] [cursor=pointer]:
+                            - /url: http://127.0.0.1:8099/admin/maintenance-orders/01a1a30d-a2c9-704e-8677-58740b88c9d2/edit
+                          - button "Excluir" [ref=f3e355] [cursor=pointer]
+                    - generic [ref=f3e360]:
+                      - generic [ref=f3e361]:
+                        - checkbox "Marcar/desmarcar o item 01a1a30d-a2dd-7386-b719-290c6013d797 para ações em massa." [ref=f3e362]
+                        - generic [ref=f3e363]: Marcar/desmarcar o item 01a1a30d-a2dd-7386-b719-290c6013d797 para ações em massa.
+                      - generic [ref=f3e364]:
+                        - link "OS-202611-10002 Em Andamento Gerador 150 kVA Patrimônio PAT-100 Corretiva - Admin Visual Aberta em 02/11/2026" [ref=f3e366] [cursor=pointer]:
+                          - /url: http://127.0.0.1:8099/admin/maintenance-orders/01a1a30d-a2dd-7386-b719-290c6013d797/edit
+                          - generic [ref=f3e368]:
+                            - generic [ref=f3e370]:
+                              - generic [ref=f3e371]: OS-202611-10002
+                              - generic [ref=f3e379]: Em Andamento
+                            - generic [ref=f3e388]: Gerador 150 kVA
+                            - generic [ref=f3e399]: Patrimônio PAT-100
+                            - generic [ref=f3e408]:
+                              - generic [ref=f3e409]: Corretiva
+                              - generic [ref=f3e418]: "-"
+                            - generic [ref=f3e423]: Admin Visual
+                            - generic [ref=f3e433]: Aberta em 02/11/2026
+                        - generic [ref=f3e444]:
+                          - button "Visualizar" [ref=f3e445] [cursor=pointer]
+                          - link "Editar" [ref=f3e450] [cursor=pointer]:
+                            - /url: http://127.0.0.1:8099/admin/maintenance-orders/01a1a30d-a2dd-7386-b719-290c6013d797/edit
+                          - button "Excluir" [ref=f3e455] [cursor=pointer]
+                    - generic [ref=f3e460]:
+                      - generic [ref=f3e461]:
+                        - checkbox "Marcar/desmarcar o item 01a1a30d-a2f5-71a2-a2f8-1448c977e457 para ações em massa." [ref=f3e462]
+                        - generic [ref=f3e463]: Marcar/desmarcar o item 01a1a30d-a2f5-71a2-a2f8-1448c977e457 para ações em massa.
+                      - generic [ref=f3e464]:
+                        - link "OS-202611-10003 Concluída Gerador 150 kVA Patrimônio PAT-100 Preventiva - Admin Visual Aberta em 24/10/2026" [ref=f3e466] [cursor=pointer]:
+                          - /url: http://127.0.0.1:8099/admin/maintenance-orders/01a1a30d-a2f5-71a2-a2f8-1448c977e457/edit
+                          - generic [ref=f3e468]:
+                            - generic [ref=f3e470]:
+                              - generic [ref=f3e471]: OS-202611-10003
+                              - generic [ref=f3e479]: Concluída
+                            - generic [ref=f3e488]: Gerador 150 kVA
+                            - generic [ref=f3e499]: Patrimônio PAT-100
+                            - generic [ref=f3e508]:
+                              - generic [ref=f3e509]: Preventiva
+                              - generic [ref=f3e518]: "-"
+                            - generic [ref=f3e523]: Admin Visual
+                            - generic [ref=f3e533]: Aberta em 24/10/2026
+                        - generic [ref=f3e544]:
+                          - button "Visualizar" [ref=f3e545] [cursor=pointer]
+                          - link "Editar" [ref=f3e550] [cursor=pointer]:
+                            - /url: http://127.0.0.1:8099/admin/maintenance-orders/01a1a30d-a2f5-71a2-a2f8-1448c977e457/edit
+                          - button "Excluir" [ref=f3e555] [cursor=pointer]
+                    - generic [ref=f3e560]:
+                      - generic [ref=f3e561]:
+                        - checkbox "Marcar/desmarcar o item 01a1a30d-a308-72ea-9289-27721fcfb0b7 para ações em massa." [ref=f3e562]
+                        - generic [ref=f3e563]: Marcar/desmarcar o item 01a1a30d-a308-72ea-9289-27721fcfb0b7 para ações em massa.
+                      - generic [ref=f3e564]:
+                        - link "OS-202611-10004 Cancelada Gerador 150 kVA Patrimônio PAT-100 Corretiva - Admin Visual Aberta em 25/10/2026" [ref=f3e566] [cursor=pointer]:
+                          - /url: http://127.0.0.1:8099/admin/maintenance-orders/01a1a30d-a308-72ea-9289-27721fcfb0b7/edit
+                          - generic [ref=f3e568]:
+                            - generic [ref=f3e570]:
+                              - generic [ref=f3e571]: OS-202611-10004
+                              - generic [ref=f3e579]: Cancelada
+                            - generic [ref=f3e588]: Gerador 150 kVA
+                            - generic [ref=f3e599]: Patrimônio PAT-100
+                            - generic [ref=f3e608]:
+                              - generic [ref=f3e609]: Corretiva
+                              - generic [ref=f3e618]: "-"
+                            - generic [ref=f3e623]: Admin Visual
+                            - generic [ref=f3e633]: Aberta em 25/10/2026
+                        - generic [ref=f3e644]:
+                          - button "Visualizar" [ref=f3e645] [cursor=pointer]
+                          - link "Editar" [ref=f3e650] [cursor=pointer]:
+                            - /url: http://127.0.0.1:8099/admin/maintenance-orders/01a1a30d-a308-72ea-9289-27721fcfb0b7/edit
+                          - button "Excluir" [ref=f3e655] [cursor=pointer]
+                    - generic [ref=f3e660]:
+                      - generic [ref=f3e661]:
+                        - checkbox "Marcar/desmarcar o item 01a1a30d-a31e-7373-aff8-255ed2549672 para ações em massa." [ref=f3e662]
+                        - generic [ref=f3e663]: Marcar/desmarcar o item 01a1a30d-a31e-7373-aff8-255ed2549672 para ações em massa.
+                      - generic [ref=f3e664]:
+                        - link "OS-202611-10005 Aberto Gerador 150 kVA Patrimônio PAT-100 Emergência - Admin Visual Aberta em 26/10/2026" [ref=f3e666] [cursor=pointer]:
+                          - /url: http://127.0.0.1:8099/admin/maintenance-orders/01a1a30d-a31e-7373-aff8-255ed2549672/edit
+                          - generic [ref=f3e668]:
+                            - generic [ref=f3e670]:
+                              - generic [ref=f3e671]: OS-202611-10005
+                              - generic [ref=f3e679]: Aberto
+                            - generic [ref=f3e688]: Gerador 150 kVA
+                            - generic [ref=f3e699]: Patrimônio PAT-100
+                            - generic [ref=f3e708]:
+                              - generic [ref=f3e709]: Emergência
+                              - generic [ref=f3e718]: "-"
+                            - generic [ref=f3e723]: Admin Visual
+                            - generic [ref=f3e733]: Aberta em 26/10/2026
+                        - generic [ref=f3e744]:
+                          - button "Visualizar" [ref=f3e745] [cursor=pointer]
+                          - link "Editar" [ref=f3e750] [cursor=pointer]:
+                            - /url: http://127.0.0.1:8099/admin/maintenance-orders/01a1a30d-a31e-7373-aff8-255ed2549672/edit
+                          - button "Excluir" [ref=f3e755] [cursor=pointer]
+                - navigation "Paginação" [ref=f3e759]:
+                  - generic [ref=f3e760]: Exibindo 1 a 6 de 6 resultados
+                  - generic [ref=f3e763]:
+                    - generic [ref=f3e764]: por página
+                    - combobox "por página" [ref=f3e767]:
+                      - option "5"
+                      - option "10" [selected]
+                      - option "25"
+                      - option "50"
+                      - option "Todas"
+    - complementary [ref=f3e768]:
+      - generic [ref=f3e770]:
+        - link "Início" [ref=f3e772] [cursor=pointer]:
+          - /url: http://127.0.0.1:8099/admin/painel-controle
+          - generic [ref=f3e776]: Oravel
+        - button "Recolher barra lateral" [ref=f3e777] [cursor=pointer]
+      - navigation [ref=f3e781]:
+        - list
+        - list
+  - generic:
+    - status
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f3e782]

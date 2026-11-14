@@ -1,0 +1,38 @@
+- generic [ref=f42e3]:
+  - banner [ref=f42e4]:
+    - link "‹ Voltar" [ref=f42e5] [cursor=pointer]:
+      - /url: http://127.0.0.1:8765/campo
+    - heading "OS rápida" [level=1] [ref=f42e6]
+    - paragraph [ref=f42e7]: Abra a ordem em poucos toques. Fotos e assinatura vêm no passo seguinte.
+  - generic [ref=f42e8]:
+    - generic [ref=f42e9]:
+      - text: 1. Equipamento
+      - searchbox "Buscar por nome, etiqueta ou patrimônio" [ref=f42e10]
+      - generic [ref=f42e11]:
+        - button "Empilhadeira 2,5t COM-1026" [ref=f42e12] [cursor=pointer]:
+          - generic [ref=f42e13]: Empilhadeira 2,5t
+          - generic [ref=f42e14]: COM-1026
+        - button "Gerador 100kVA PRE-4860" [ref=f42e15] [cursor=pointer]:
+          - generic [ref=f42e16]: Gerador 100kVA
+          - generic [ref=f42e17]: PRE-4860
+        - button "Plataforma 12m GER-3646" [ref=f42e18] [cursor=pointer]:
+          - generic [ref=f42e19]: Plataforma 12m
+          - generic [ref=f42e20]: GER-3646
+    - generic [ref=f42e21]:
+      - text: 2. Cliente (se houver)
+      - combobox "2. Cliente (se houver)" [ref=f42e22]:
+        - option "Sem cliente" [selected]
+    - generic [ref=f42e23]:
+      - text: 3. Local
+      - textbox "3. Local" [ref=f42e24]:
+        - /placeholder: Onde o equipamento está
+    - generic [ref=f42e25]:
+      - text: 4. Tipo
+      - generic [ref=f42e26]:
+        - button "Corretiva" [ref=f42e27] [cursor=pointer]
+        - button "Preventiva" [ref=f42e28] [cursor=pointer]
+      - paragraph [ref=f42e29]: Corretiva marca o equipamento como parado até a ordem ser concluída.
+    - generic [ref=f42e30]:
+      - text: 5. O que está acontecendo ou o que foi feito
+      - textbox "5. O que está acontecendo ou o que foi feito" [ref=f42e31]
+    - button "Abrir ordem e continuar" [ref=f42e32] [cursor=pointer]

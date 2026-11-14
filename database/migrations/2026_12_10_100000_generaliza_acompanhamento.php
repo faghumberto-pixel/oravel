@@ -40,7 +40,10 @@ return new class extends Migration
             $table->dropUnique('site_acompanhamento_paginas_slug_unique');
             $table->renameColumn('slug', 'referencia');
         });
-        DB::statement('alter table acompanhamento_itens alter column referencia drop not null');
+
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('alter table acompanhamento_itens alter column referencia drop not null');
+        }
 
         foreach (['acompanhamento_notas', 'acompanhamento_itens', 'acompanhamento_pendencias'] as $t) {
             Schema::table($t, fn (Blueprint $table) => $table->uuid('acompanhamento_id')->nullable()->index());
@@ -61,12 +64,16 @@ return new class extends Migration
         ]);
         foreach (['acompanhamento_notas', 'acompanhamento_itens', 'acompanhamento_pendencias'] as $t) {
             DB::table($t)->update(['acompanhamento_id' => $id]);
-            DB::statement("alter table {$t} alter column acompanhamento_id set not null");
+            if (DB::getDriverName() !== 'sqlite') {
+                DB::statement("alter table {$t} alter column acompanhamento_id set not null");
+            }
         }
         foreach (self::STATUS_ITEM as $de => $para) {
             DB::table('acompanhamento_itens')->where('status', $de)->update(['status' => $para]);
         }
-        DB::statement("alter table acompanhamento_itens alter column status set default 'a_fazer'");
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("alter table acompanhamento_itens alter column status set default 'a_fazer'");
+        }
     }
 
     public function down(): void

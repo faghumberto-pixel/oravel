@@ -29,14 +29,16 @@ return new class extends Migration
         // já cadastrada -- nada de fuzzy matching aqui, o resto fica null
         // pra ajuste manual (AssetResource passa a ter o Select certo daqui
         // pra frente, então essa lacuna não deve crescer).
-        DB::statement(<<<'SQL'
-            UPDATE assets
-            SET asset_category_id = asset_categories.id
-            FROM asset_categories
-            WHERE assets.tenant_id = asset_categories.tenant_id
-              AND lower(trim(assets.asset_category)) = lower(trim(asset_categories.name))
-              AND assets.asset_category_id IS NULL
-        SQL);
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement(<<<'SQL'
+                UPDATE assets
+                SET asset_category_id = asset_categories.id
+                FROM asset_categories
+                WHERE assets.tenant_id = asset_categories.tenant_id
+                  AND lower(trim(assets.asset_category)) = lower(trim(asset_categories.name))
+                  AND assets.asset_category_id IS NULL
+            SQL);
+        }
     }
 
     /**

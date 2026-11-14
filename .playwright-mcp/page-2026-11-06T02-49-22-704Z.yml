@@ -1,0 +1,607 @@
+- generic [active] [ref=f117e1]:
+  - generic [ref=f117e2]:
+    - generic [ref=f117e3]:
+      - navigation [ref=f117e5]:
+        - generic [ref=f117e9]:
+          - generic [ref=f117e10]: Locadora Demo
+          - generic [ref=f117e11]: "Módulo: Locadora"
+        - generic [ref=f117e12]:
+          - generic [ref=f117e15]:
+            - generic [ref=f117e16]: Pesquisa global
+            - searchbox "Pesquisa global" [ref=f117e22]
+          - button "⌘K" [ref=f117e24] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=f117e28] [cursor=pointer]:
+            - /url: http://127.0.0.1:8099/admin/caixa-de-email
+          - button "Menu do usuário" [ref=f117e33] [cursor=pointer]:
+            - img "Avatar de Administrador Demo" [ref=f117e34]
+        - link "Ajuda" [ref=f117e36] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=f117e40]:
+        - generic [ref=f117e42]:
+          - heading "Visão geral — Comercial" [level=1] [ref=f117e45]
+          - generic [ref=f117e48]:
+            - paragraph [ref=f117e49]: Contratos, orçamentos, funil de vendas e clientes para contatar, em uma tela.
+            - generic [ref=f117e50]:
+              - generic [ref=f117e51]:
+                - heading "Contratos ativos Locações em vigor" [level=3] [ref=f117e53]:
+                  - text: Contratos ativos
+                  - generic [ref=f117e54]: Locações em vigor
+                - generic [ref=f117e55]:
+                  - text: "13"
+                  - emphasis [ref=f117e56]: contratos
+                - generic [ref=f117e57]: R$ 120.725,16 por período
+                - img "Evolução nos últimos meses" [ref=f117e59]
+              - generic [ref=f117e63]:
+                - heading "Contratos vencendo Próximos 30 dias" [level=3] [ref=f117e65]:
+                  - text: Contratos vencendo
+                  - generic [ref=f117e66]: Próximos 30 dias
+                - generic [ref=f117e67]:
+                  - text: "1"
+                  - emphasis [ref=f117e68]: contrato
+                - generic [ref=f117e69]: 7 em 90 dias
+              - generic [ref=f117e70]:
+                - heading "Conversão de orçamentos Aprovados sobre enviados, 90 dias" [level=3] [ref=f117e72]:
+                  - text: Conversão de orçamentos
+                  - generic [ref=f117e73]: Aprovados sobre enviados, 90 dias
+                - generic [ref=f117e74]: 64%
+                - generic [ref=f117e75]: 7 de 11 orçamentos
+              - generic [ref=f117e78]:
+                - heading "Orçamentos sem retorno Enviados há mais de 5 dias" [level=3] [ref=f117e80]:
+                  - text: Orçamentos sem retorno
+                  - generic [ref=f117e81]: Enviados há mais de 5 dias
+                - generic [ref=f117e82]: "9"
+                - generic [ref=f117e83]: R$ 88.090,00 parados
+              - generic [ref=f117e84]:
+                - heading "Oportunidades em aberto Valor estimado no funil, com novos leads por mês" [level=3] [ref=f117e86]:
+                  - text: Oportunidades em aberto
+                  - generic [ref=f117e87]: Valor estimado no funil, com novos leads por mês
+                - generic [ref=f117e88]: R$ 2,9 mi
+                - generic [ref=f117e89]: 25 oportunidades · R$ 1,1 mi previstos para 30 dias
+                - img "Evolução nos últimos meses" [ref=f117e91]
+              - generic [ref=f117e95]:
+                - heading "Propostas em andamento Enviadas ou aprovadas, aguardando o cliente" [level=3] [ref=f117e97]:
+                  - text: Propostas em andamento
+                  - generic [ref=f117e98]: Enviadas ou aprovadas, aguardando o cliente
+                - generic [ref=f117e99]:
+                  - text: "14"
+                  - emphasis [ref=f117e100]: propostas
+                - generic [ref=f117e101]: R$ 147 mil em jogo · aceite de 73% (6 meses)
+              - generic [ref=f117e104]:
+                - heading "Orçamentos por situação Últimos 90 dias" [level=3] [ref=f117e106]:
+                  - text: Orçamentos por situação
+                  - generic [ref=f117e107]: Últimos 90 dias
+                - generic [ref=f117e108]:
+                  - img "Gráfico em anel" [ref=f117e109]:
+                    - 'generic "Rascunho: 3" [ref=f117e111]'
+                    - 'generic "Enviado: 2" [ref=f117e112]'
+                    - 'generic "Aprovado: 5" [ref=f117e113]'
+                    - 'generic "Reprovado: 2" [ref=f117e114]'
+                    - 'generic "Concluído: 2" [ref=f117e115]'
+                    - generic [ref=f117e116]: "14"
+                    - generic [ref=f117e117]: orçamentos
+                  - list [ref=f117e118]:
+                    - listitem [ref=f117e119]:
+                      - generic [ref=f117e121]: Rascunho
+                      - generic [ref=f117e122]: 21%
+                    - listitem [ref=f117e123]:
+                      - generic [ref=f117e125]: Enviado
+                      - generic [ref=f117e126]: 14%
+                    - listitem [ref=f117e127]:
+                      - generic [ref=f117e129]: Aprovado
+                      - generic [ref=f117e130]: 36%
+                    - listitem [ref=f117e131]:
+                      - generic [ref=f117e133]: Reprovado
+                      - generic [ref=f117e134]: 14%
+                    - listitem [ref=f117e135]:
+                      - generic [ref=f117e137]: Concluído
+                      - generic [ref=f117e138]: 14%
+              - generic [ref=f117e139]:
+                - heading "De onde vêm os leads Origem dos contatos do funil" [level=3] [ref=f117e141]:
+                  - text: De onde vêm os leads
+                  - generic [ref=f117e142]: Origem dos contatos do funil
+                - generic [ref=f117e143]:
+                  - img "Gráfico em anel" [ref=f117e144]:
+                    - 'generic "Site: 13" [ref=f117e146]'
+                    - 'generic "Indicação: 10" [ref=f117e147]'
+                    - 'generic "Contato frio: 6" [ref=f117e148]'
+                    - 'generic "Evento: 4" [ref=f117e149]'
+                    - 'generic "Outro: 3" [ref=f117e150]'
+                    - generic [ref=f117e151]: "36"
+                    - generic [ref=f117e152]: leads
+                  - list [ref=f117e153]:
+                    - listitem [ref=f117e154]:
+                      - generic [ref=f117e156]: Site
+                      - generic [ref=f117e157]: 36%
+                    - listitem [ref=f117e158]:
+                      - generic [ref=f117e160]: Indicação
+                      - generic [ref=f117e161]: 28%
+                    - listitem [ref=f117e162]:
+                      - generic [ref=f117e164]: Contato frio
+                      - generic [ref=f117e165]: 17%
+                    - listitem [ref=f117e166]:
+                      - generic [ref=f117e168]: Evento
+                      - generic [ref=f117e169]: 11%
+                    - listitem [ref=f117e170]:
+                      - generic [ref=f117e172]: Outro
+                      - generic [ref=f117e173]: 8%
+              - generic [ref=f117e174]:
+                - heading "Funil de vendas Oportunidades por etapa" [level=3] [ref=f117e176]:
+                  - text: Funil de vendas
+                  - generic [ref=f117e177]: Oportunidades por etapa
+                - generic [ref=f117e178]:
+                  - generic [ref=f117e179]:
+                    - generic [ref=f117e180]: Novos contatos
+                    - generic [ref=f117e181]: "8"
+                  - generic [ref=f117e182]:
+                    - generic [ref=f117e183]: Contato iniciado
+                    - generic [ref=f117e184]:
+                      - text: "8"
+                      - emphasis [ref=f117e185]: 100%
+                  - generic [ref=f117e186]:
+                    - generic [ref=f117e187]: Qualificados
+                    - generic [ref=f117e188]: "9"
+                  - generic [ref=f117e189]:
+                    - generic [ref=f117e190]: Convertidos
+                    - generic [ref=f117e191]:
+                      - text: "7"
+                      - emphasis [ref=f117e192]: 78%
+              - generic [ref=f117e193]:
+                - heading "Mapa comercial Onde estão as oportunidades; a cor é a etapa do funil" [level=3] [ref=f117e195]:
+                  - text: Mapa comercial
+                  - generic [ref=f117e196]: Onde estão as oportunidades; a cor é a etapa do funil
+                - generic [ref=f117e198]:
+                  - generic:
+                    - generic:
+                      - img:
+                        - generic:
+                          - generic [ref=f117e199] [cursor=pointer]
+                          - generic [ref=f117e200] [cursor=pointer]
+                          - generic [ref=f117e201] [cursor=pointer]
+                          - generic [ref=f117e202] [cursor=pointer]
+                          - generic [ref=f117e203] [cursor=pointer]
+                          - generic [ref=f117e204] [cursor=pointer]
+                          - generic [ref=f117e205] [cursor=pointer]
+                          - generic [ref=f117e206] [cursor=pointer]
+                          - generic [ref=f117e207] [cursor=pointer]
+                          - generic [ref=f117e208] [cursor=pointer]
+                          - generic [ref=f117e209] [cursor=pointer]
+                          - generic [ref=f117e210] [cursor=pointer]
+                          - generic [ref=f117e211] [cursor=pointer]
+                          - generic [ref=f117e212] [cursor=pointer]
+                          - generic [ref=f117e213] [cursor=pointer]
+                          - generic [ref=f117e214] [cursor=pointer]
+                          - generic [ref=f117e215] [cursor=pointer]
+                          - generic [ref=f117e216] [cursor=pointer]
+                          - generic [ref=f117e217] [cursor=pointer]
+                          - generic [ref=f117e218] [cursor=pointer]
+                          - generic [ref=f117e219] [cursor=pointer]
+                          - generic [ref=f117e220] [cursor=pointer]
+                          - generic [ref=f117e221] [cursor=pointer]
+                          - generic [ref=f117e222] [cursor=pointer]
+                          - generic [ref=f117e223] [cursor=pointer]
+                          - generic [ref=f117e224] [cursor=pointer]
+                          - generic [ref=f117e225] [cursor=pointer]
+                          - generic [ref=f117e226] [cursor=pointer]
+                          - generic [ref=f117e227] [cursor=pointer]
+                          - generic [ref=f117e228] [cursor=pointer]
+                          - generic [ref=f117e229] [cursor=pointer]
+                          - generic [ref=f117e230] [cursor=pointer]
+                          - generic [ref=f117e231] [cursor=pointer]
+                          - generic [ref=f117e232] [cursor=pointer]
+                          - generic [ref=f117e233] [cursor=pointer]
+                          - generic [ref=f117e234] [cursor=pointer]
+                  - generic:
+                    - generic [ref=f117e235]:
+                      - button "Zoom in" [ref=f117e236] [cursor=pointer]: +
+                      - button "Zoom out" [ref=f117e237] [cursor=pointer]: −
+                    - generic [ref=f117e238]:
+                      - link "Leaflet" [ref=f117e239] [cursor=pointer]:
+                        - /url: https://leafletjs.com
+                      - text: "| Mapa © Esri, HERE, Garmin, OpenStreetMap"
+                - generic [ref=f117e244]:
+                  - generic [ref=f117e245]: Qualificado
+                  - generic [ref=f117e247]: Contato iniciado
+                  - generic [ref=f117e249]: Perdido
+                  - generic [ref=f117e251]: Novo
+                  - generic [ref=f117e253]: Convertido
+                  - link "Abrir o mapa comercial →" [ref=f117e255] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8099/admin/crm-mapa
+              - generic [ref=f117e256]:
+                - heading "Vendas por vendedor Negócios fechados nos últimos 90 dias" [level=3] [ref=f117e258]:
+                  - text: Vendas por vendedor
+                  - generic [ref=f117e259]: Negócios fechados nos últimos 90 dias
+                - generic [ref=f117e260]:
+                  - generic [ref=f117e262]:
+                    - strong [ref=f117e264]: Fernanda Lopes (comercial)
+                    - generic [ref=f117e265]: R$ 133,0 mil
+                  - generic [ref=f117e269]:
+                    - strong [ref=f117e271]: Juliana Prado (comercial)
+                    - generic [ref=f117e272]: R$ 115,0 mil
+                  - generic [ref=f117e276]:
+                    - strong [ref=f117e278]: Ricardo Menezes (comercial)
+                    - generic [ref=f117e279]: R$ 50,4 mil
+                  - paragraph [ref=f117e282]: Fechado nos últimos 90 dias; a barra compara com o melhor vendedor.
+              - generic [ref=f117e283]:
+                - heading "Esteira de propostas De rascunho até aceite do cliente (6 meses), com a conversão entre etapas" [level=3] [ref=f117e285]:
+                  - text: Esteira de propostas
+                  - generic [ref=f117e286]: De rascunho até aceite do cliente (6 meses), com a conversão entre etapas
+                - generic [ref=f117e287]:
+                  - generic [ref=f117e288]:
+                    - generic [ref=f117e289]: Criadas
+                    - generic [ref=f117e290]: "32"
+                  - generic [ref=f117e291]:
+                    - generic [ref=f117e292]: Enviadas para revisão
+                    - generic [ref=f117e293]:
+                      - text: "27"
+                      - emphasis [ref=f117e294]: 84%
+                  - generic [ref=f117e295]:
+                    - generic [ref=f117e296]: Aprovadas e enviadas ao cliente
+                    - generic [ref=f117e297]:
+                      - text: "19"
+                      - emphasis [ref=f117e298]: 70%
+                  - generic [ref=f117e299]:
+                    - generic [ref=f117e300]: Aceitas pelo cliente
+                    - generic [ref=f117e301]:
+                      - text: "8"
+                      - emphasis [ref=f117e302]: 42%
+              - generic [ref=f117e303]:
+                - heading "Próximos compromissos Retornos de leads, fim de locações e propostas que vencem, em ordem de data" [level=3] [ref=f117e305]:
+                  - text: Próximos compromissos
+                  - generic [ref=f117e306]: Retornos de leads, fim de locações e propostas que vencem, em ordem de data
+                - list [ref=f117e307]:
+                  - listitem [ref=f117e308]:
+                    - generic [ref=f117e309]: 30/10
+                    - generic [ref=f117e310]:
+                      - strong [ref=f117e311]: Retornar para Incorporadora Zênite
+                      - generic [ref=f117e312]: atrasado
+                      - generic [ref=f117e313]: Contato iniciado · R$ 11,0 mil · Juliana Prado
+                  - listitem [ref=f117e314]:
+                    - generic [ref=f117e315]: 02/11
+                    - generic [ref=f117e316]:
+                      - strong [ref=f117e317]: Retornar para Construtora Alvorada
+                      - generic [ref=f117e318]: atrasado
+                      - generic [ref=f117e319]: Qualificado · R$ 177 mil · Ricardo Menezes
+                  - listitem [ref=f117e320]:
+                    - generic [ref=f117e321]: 02/11
+                    - generic [ref=f117e322]:
+                      - strong [ref=f117e323]: Retornar para Transportes Nova Era
+                      - generic [ref=f117e324]: atrasado
+                      - generic [ref=f117e325]: Contato iniciado · R$ 178 mil · Fernanda Lopes
+                  - listitem [ref=f117e326]:
+                    - generic [ref=f117e327]: 02/11
+                    - generic [ref=f117e328]:
+                      - strong [ref=f117e329]: Retornar para Transportes Delta
+                      - generic [ref=f117e330]: atrasado
+                      - generic [ref=f117e331]: Novo · R$ 127 mil · Juliana Prado
+                  - listitem [ref=f117e332]:
+                    - generic [ref=f117e333]: 03/11
+                    - generic [ref=f117e334]:
+                      - strong [ref=f117e335]: Retornar para Engenharia Tupã
+                      - generic [ref=f117e336]: atrasado
+                      - generic [ref=f117e337]: Contato iniciado · R$ 20,0 mil · Ricardo Menezes
+                  - listitem [ref=f117e338]:
+                    - generic [ref=f117e339]: 03/11
+                    - generic [ref=f117e340]:
+                      - strong [ref=f117e341]: Retornar para Eventos Diamante
+                      - generic [ref=f117e342]: atrasado
+                      - generic [ref=f117e343]: Novo · R$ 96,0 mil · Juliana Prado
+                  - listitem [ref=f117e344]:
+                    - generic [ref=f117e345]: Ontem
+                    - generic [ref=f117e346]:
+                      - strong [ref=f117e347]: Retornar para Agro Rio Claro
+                      - generic [ref=f117e348]: atrasado
+                      - generic [ref=f117e349]: Novo · R$ 58,0 mil · Ricardo Menezes
+                  - listitem [ref=f117e350]:
+                    - generic [ref=f117e351]: Amanhã
+                    - generic [ref=f117e352]:
+                      - strong [ref=f117e353]: Retornar para Terraplenagem Cristal
+                      - generic [ref=f117e354]: Contato iniciado · R$ 96,0 mil · Ricardo Menezes
+              - generic [ref=f117e355]:
+                - heading "Últimos fechamentos Negócios ganhos, do mais recente ao mais antigo" [level=3] [ref=f117e357]:
+                  - text: Últimos fechamentos
+                  - generic [ref=f117e358]: Negócios ganhos, do mais recente ao mais antigo
+                - list [ref=f117e359]:
+                  - listitem [ref=f117e360]:
+                    - generic [ref=f117e361]: 17/11
+                    - generic [ref=f117e362]:
+                      - strong [ref=f117e363]: Montagens Jatobá
+                      - generic [ref=f117e364]: fechado
+                      - generic [ref=f117e365]: R$ 133 mil · Fernanda Lopes · Torre de iluminação para obra noturna
+                  - listitem [ref=f117e366]:
+                    - generic [ref=f117e367]: 01/10
+                    - generic [ref=f117e368]:
+                      - strong [ref=f117e369]: Construtora Aurora
+                      - generic [ref=f117e370]: fechado
+                      - generic [ref=f117e371]: R$ 36,6 mil · Juliana Prado · Compressor de ar para jateamento
+                  - listitem [ref=f117e372]:
+                    - generic [ref=f117e373]: 14/09
+                    - generic [ref=f117e374]:
+                      - strong [ref=f117e375]: Transportes Vitória
+                      - generic [ref=f117e376]: fechado
+                      - generic [ref=f117e377]: R$ 78,4 mil · Juliana Prado · Torre de iluminação para obra noturna
+                  - listitem [ref=f117e378]:
+                    - generic [ref=f117e379]: 20/08
+                    - generic [ref=f117e380]:
+                      - strong [ref=f117e381]: Agro Fênix
+                      - generic [ref=f117e382]: fechado
+                      - generic [ref=f117e383]: R$ 50,4 mil · Ricardo Menezes · Plataforma articulada 15m para manutenção de galpão
+                  - listitem [ref=f117e384]:
+                    - generic [ref=f117e385]: 05/08
+                    - generic [ref=f117e386]:
+                      - strong [ref=f117e387]: Incorporadora Ipê
+                      - generic [ref=f117e388]: fechado
+                      - generic [ref=f117e389]: R$ 37,4 mil · Juliana Prado · Gerador 40 kVA para evento
+                  - listitem [ref=f117e390]:
+                    - generic [ref=f117e391]: 28/07
+                    - generic [ref=f117e392]:
+                      - strong [ref=f117e393]: Montagens Acácia
+                      - generic [ref=f117e394]: fechado
+                      - generic [ref=f117e395]: R$ 54,6 mil · Fernanda Lopes · Cortadora de piso para obra viária
+                  - listitem [ref=f117e396]:
+                    - generic [ref=f117e397]: 09/07
+                    - generic [ref=f117e398]:
+                      - strong [ref=f117e399]: Locações Brasa
+                      - generic [ref=f117e400]: fechado
+                      - generic [ref=f117e401]: R$ 132 mil · Juliana Prado · Plataforma elevatória tesoura 10m por 60 dias
+              - generic [ref=f117e402]:
+                - 'heading "Leads por origem e mês Mapa de calor dos últimos 6 meses: onde o esforço comercial rende contatos" [level=3] [ref=f117e404]':
+                  - text: Leads por origem e mês
+                  - generic [ref=f117e405]: "Mapa de calor dos últimos 6 meses: onde o esforço comercial rende contatos"
+                - generic [ref=f117e407]:
+                  - generic [ref=f117e408]:
+                    - generic [ref=f117e409]: Jun
+                    - generic [ref=f117e410]: Jul
+                    - generic [ref=f117e411]: Ago
+                    - generic [ref=f117e412]: Set
+                    - generic [ref=f117e413]: Out
+                    - generic [ref=f117e414]: Nov
+                    - generic [ref=f117e415]: Total
+                  - generic [ref=f117e416]:
+                    - strong [ref=f117e418]: Indicação
+                    - 'generic "Jun: 2" [ref=f117e419]'
+                    - 'generic "Jul: 2" [ref=f117e420]'
+                    - 'generic "Ago: 0" [ref=f117e421]'
+                    - 'generic "Set: 3" [ref=f117e422]'
+                    - 'generic "Out: 3" [ref=f117e423]'
+                    - 'generic "Nov: 0" [ref=f117e424]'
+                    - generic [ref=f117e425]: 10 leads
+                  - generic [ref=f117e426]:
+                    - strong [ref=f117e428]: Site
+                    - 'generic "Jun: 3" [ref=f117e429]'
+                    - 'generic "Jul: 2" [ref=f117e430]'
+                    - 'generic "Ago: 2" [ref=f117e431]'
+                    - 'generic "Set: 1" [ref=f117e432]'
+                    - 'generic "Out: 2" [ref=f117e433]'
+                    - 'generic "Nov: 0" [ref=f117e434]'
+                    - generic [ref=f117e435]: 10 leads
+                  - generic [ref=f117e436]:
+                    - strong [ref=f117e438]: Contato frio
+                    - 'generic "Jun: 1" [ref=f117e439]'
+                    - 'generic "Jul: 3" [ref=f117e440]'
+                    - 'generic "Ago: 0" [ref=f117e441]'
+                    - 'generic "Set: 1" [ref=f117e442]'
+                    - 'generic "Out: 1" [ref=f117e443]'
+                    - 'generic "Nov: 0" [ref=f117e444]'
+                    - generic [ref=f117e445]: 6 leads
+                  - generic [ref=f117e446]:
+                    - strong [ref=f117e448]: Evento
+                    - 'generic "Jun: 0" [ref=f117e449]'
+                    - 'generic "Jul: 2" [ref=f117e450]'
+                    - 'generic "Ago: 0" [ref=f117e451]'
+                    - 'generic "Set: 0" [ref=f117e452]'
+                    - 'generic "Out: 1" [ref=f117e453]'
+                    - 'generic "Nov: 0" [ref=f117e454]'
+                    - generic [ref=f117e455]: 3 leads
+                  - generic [ref=f117e456]:
+                    - strong [ref=f117e458]: Outro
+                    - 'generic "Jun: 1" [ref=f117e459]'
+                    - 'generic "Jul: 0" [ref=f117e460]'
+                    - 'generic "Ago: 0" [ref=f117e461]'
+                    - 'generic "Set: 2" [ref=f117e462]'
+                    - 'generic "Out: 0" [ref=f117e463]'
+                    - 'generic "Nov: 0" [ref=f117e464]'
+                    - generic [ref=f117e465]: 3 leads
+                - generic [ref=f117e466]:
+                  - generic [ref=f117e467]: Menos
+                  - generic [ref=f117e469]: Mais leads no mês
+              - generic [ref=f117e470]:
+                - heading "Contratos por mês Novos x encerrados, últimos 6 meses" [level=3] [ref=f117e472]:
+                  - text: Contratos por mês
+                  - generic [ref=f117e473]: Novos x encerrados, últimos 6 meses
+                - generic [ref=f117e474]:
+                  - generic [ref=f117e475]: Novos contratos
+                  - generic [ref=f117e477]: Encerrados
+                - img "Gráfico de colunas" [ref=f117e479]:
+                  - generic [ref=f117e480]: "0"
+                  - generic [ref=f117e481]: "13"
+                  - generic [ref=f117e482]: "25"
+                  - generic [ref=f117e483]: "38"
+                  - generic [ref=f117e484]: "50"
+                  - generic [ref=f117e487]: Jun
+                  - generic [ref=f117e490]: Jul
+                  - generic [ref=f117e493]: Ago
+                  - generic [ref=f117e496]: Set
+                  - generic [ref=f117e499]: Out
+                  - generic [ref=f117e500]: Nov
+              - generic [ref=f117e501]:
+                - heading "Contratos a renovar Por cliente, vencendo em 90 dias" [level=3] [ref=f117e503]:
+                  - text: Contratos a renovar
+                  - generic [ref=f117e504]: Por cliente, vencendo em 90 dias
+                - table [ref=f117e506]:
+                  - rowgroup [ref=f117e507]:
+                    - row [ref=f117e508]:
+                      - columnheader "Cliente" [ref=f117e509]
+                      - columnheader "Contratos" [ref=f117e510]
+                      - columnheader "Vence" [ref=f117e511]
+                  - rowgroup [ref=f117e512]:
+                    - row [ref=f117e513]:
+                      - cell "Metalúrgica Vale Forte S.A." [ref=f117e514]
+                      - cell "1" [ref=f117e515]
+                      - cell "17 dias" [ref=f117e516]
+                    - row [ref=f117e518]:
+                      - cell "Agroindustrial Campo Bom" [ref=f117e519]
+                      - cell "1" [ref=f117e520]
+                      - cell "33 dias" [ref=f117e521]
+                    - row [ref=f117e522]:
+                      - cell "Condomínio Parque das Águas" [ref=f117e523]
+                      - cell "1" [ref=f117e524]
+                      - cell "48 dias" [ref=f117e525]
+                    - row [ref=f117e526]:
+                      - cell "Construtora Horizonte Ltda" [ref=f117e527]
+                      - cell "2" [ref=f117e528]
+                      - cell "56 dias" [ref=f117e529]
+                    - row [ref=f117e530]:
+                      - cell "Logística Rota Sul Ltda" [ref=f117e531]
+                      - cell "1" [ref=f117e532]
+                      - cell "64 dias" [ref=f117e533]
+                    - row [ref=f117e534]:
+                      - cell "Indústria Têxtil Brasa" [ref=f117e535]
+                      - cell "1" [ref=f117e536]
+                      - cell "84 dias" [ref=f117e537]
+              - generic [ref=f117e538]:
+                - heading "Clientes para ligar Já locaram e estão sem contrato novo há 90 dias" [level=3] [ref=f117e540]:
+                  - text: Clientes para ligar
+                  - generic [ref=f117e541]: Já locaram e estão sem contrato novo há 90 dias
+                - paragraph [ref=f117e542]: Nenhum cliente parado há mais de 90 dias.
+              - generic [ref=f117e543]:
+                - heading "Pedidos de locação Da solicitação até a saída do equipamento" [level=3] [ref=f117e545]:
+                  - text: Pedidos de locação
+                  - generic [ref=f117e546]: Da solicitação até a saída do equipamento
+                - table [ref=f117e548]:
+                  - rowgroup [ref=f117e549]:
+                    - row [ref=f117e550]:
+                      - columnheader "Cliente" [ref=f117e551]
+                      - columnheader "Categoria" [ref=f117e552]
+                      - columnheader "Finalidade" [ref=f117e553]
+                      - columnheader "Situação" [ref=f117e554]
+                      - columnheader "Saída prevista" [ref=f117e555]
+                  - rowgroup [ref=f117e556]:
+                    - row [ref=f117e557]:
+                      - cell "Construtora Esmeralda" [ref=f117e558]
+                      - cell "Plataforma Elevatória" [ref=f117e559]
+                      - cell "Ampliação industrial" [ref=f117e560]
+                      - cell "Proposta em andamento" [ref=f117e561]
+                      - cell "07/11" [ref=f117e563]
+                    - row [ref=f117e564]:
+                      - cell "Engenharia Quartzo" [ref=f117e565]
+                      - cell "Ferramenta Elétrica" [ref=f117e566]
+                      - cell "Manutenção de fachada" [ref=f117e567]
+                      - cell "Contrato fechado" [ref=f117e568]
+                      - cell "09/11" [ref=f117e570]
+                    - row [ref=f117e571]:
+                      - cell "Metalúrgica Granito" [ref=f117e572]
+                      - cell "Gerador" [ref=f117e573]
+                      - cell "Obra viária" [ref=f117e574]
+                      - cell "cancelado" [ref=f117e575]
+                      - cell "12/11" [ref=f117e577]
+                    - row [ref=f117e578]:
+                      - cell "Agro Mirante" [ref=f117e579]
+                      - cell "Plataforma Elevatória" [ref=f117e580]
+                      - cell "Ampliação industrial" [ref=f117e581]
+                      - cell "cancelado" [ref=f117e582]
+                      - cell "14/11" [ref=f117e584]
+                    - row [ref=f117e585]:
+                      - cell "Metalúrgica Real" [ref=f117e586]
+                      - cell "Andaime" [ref=f117e587]
+                      - cell "Reforma de galpão" [ref=f117e588]
+                      - cell "Proposta em andamento" [ref=f117e589]
+                      - cell "29/11" [ref=f117e591]
+    - complementary [ref=f117e592]:
+      - generic [ref=f117e594]:
+        - link "Início" [ref=f117e596] [cursor=pointer]:
+          - /url: http://127.0.0.1:8099/admin/painel-controle
+          - generic [ref=f117e600]: Oravel
+        - button "Recolher barra lateral" [ref=f117e601] [cursor=pointer]
+      - navigation [ref=f117e605]:
+        - list [ref=f117e606]:
+          - listitem [ref=f117e607]:
+            - link "Início" [ref=f117e608] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/admin/painel-controle
+          - listitem [ref=f117e612]:
+            - link "Academia Oravel" [ref=f117e613] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/academia
+        - list [ref=f117e617]:
+          - listitem [ref=f117e618]:
+            - generic [ref=f117e619] [cursor=pointer]:
+              - generic [ref=f117e622]: Ativos
+              - button "Ativos" [ref=f117e623]
+          - listitem [ref=f117e627]:
+            - generic [ref=f117e628] [cursor=pointer]:
+              - generic [ref=f117e631]: Conformidade NR-13
+              - button "Conformidade NR-13" [ref=f117e632]
+          - listitem [ref=f117e636]:
+            - generic [ref=f117e637] [cursor=pointer]:
+              - generic [ref=f117e640]: Gestão de Frota
+              - button "Gestão de Frota" [ref=f117e641]
+          - listitem [ref=f117e645]:
+            - generic [ref=f117e646] [cursor=pointer]:
+              - generic [ref=f117e649]: Inteligência de Ativos
+              - button "Inteligência de Ativos" [ref=f117e650]
+          - listitem [ref=f117e654]:
+            - generic [ref=f117e655] [cursor=pointer]:
+              - generic [ref=f117e658]: Materiais e Peças
+              - button "Materiais e Peças" [ref=f117e659]
+          - listitem [ref=f117e663]:
+            - generic [ref=f117e664] [cursor=pointer]:
+              - generic [ref=f117e667]: Itens Agregados
+              - button "Itens Agregados" [ref=f117e668]
+          - listitem [ref=f117e672]:
+            - generic [ref=f117e673] [cursor=pointer]:
+              - generic [ref=f117e676]: EPI
+              - button "EPI" [ref=f117e677]
+          - listitem [ref=f117e681]:
+            - generic [ref=f117e682] [cursor=pointer]:
+              - generic [ref=f117e685]: Comercial
+              - button "Comercial" [expanded] [ref=f117e686]
+            - list [ref=f117e690]:
+              - listitem [ref=f117e691]:
+                - link "Visão geral — Comercial" [ref=f117e692] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/admin/visao-geral-comercial
+              - listitem [ref=f117e696]:
+                - link "Rastreamento GPS" [ref=f117e697] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/admin/rastreamento-gps
+              - listitem [ref=f117e702]:
+                - link "Gestão Comercial" [ref=f117e703] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/admin/gestao-comercial
+              - listitem [ref=f117e707]:
+                - link "Gestão CRM" [ref=f117e708] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/admin/gestao-crm
+          - listitem [ref=f117e712]:
+            - generic [ref=f117e713] [cursor=pointer]:
+              - generic [ref=f117e716]: Configurações
+              - button "Configurações" [ref=f117e717]
+          - listitem [ref=f117e721]:
+            - generic [ref=f117e722] [cursor=pointer]:
+              - generic [ref=f117e725]: Departamento Pessoal
+              - button "Departamento Pessoal" [ref=f117e726]
+          - listitem [ref=f117e730]:
+            - generic [ref=f117e731] [cursor=pointer]:
+              - generic [ref=f117e734]: Equipe
+              - button "Equipe" [ref=f117e735]
+          - listitem [ref=f117e739]:
+            - generic [ref=f117e740] [cursor=pointer]:
+              - generic [ref=f117e743]: Financeiro
+              - button "Financeiro" [ref=f117e744]
+          - listitem [ref=f117e748]:
+            - generic [ref=f117e749] [cursor=pointer]:
+              - generic [ref=f117e752]: Logística
+              - button "Logística" [ref=f117e753]
+          - listitem [ref=f117e757]:
+            - generic [ref=f117e758] [cursor=pointer]:
+              - generic [ref=f117e761]: Manutenção
+              - button "Manutenção" [ref=f117e762]
+          - listitem [ref=f117e766]:
+            - generic [ref=f117e767] [cursor=pointer]:
+              - generic [ref=f117e770]: PMP
+              - button "PMP" [ref=f117e771]
+          - listitem [ref=f117e775]:
+            - generic [ref=f117e776] [cursor=pointer]:
+              - generic [ref=f117e779]: Relatórios
+              - button "Relatórios" [ref=f117e780]
+  - generic:
+    - status
+  - button "💬 Mensagens" [ref=f117e786] [cursor=pointer]:
+    - generic [ref=f117e787]:
+      - generic [ref=f117e788]: 💬
+      - generic [ref=f117e789]: Mensagens
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f117e793]

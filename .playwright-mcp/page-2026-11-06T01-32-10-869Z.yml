@@ -1,0 +1,26 @@
+- generic [ref=f36e1]:
+  - main [ref=f36e4]:
+    - generic [ref=f36e6]:
+      - generic [ref=f36e7]:
+        - img "Oravel" [ref=f36e10]
+        - heading "Faça login" [level=1] [ref=f36e11]
+      - generic [ref=f36e12]:
+        - generic [ref=f36e13]:
+          - generic [ref=f36e16]:
+            - generic [ref=f36e19]:
+              - text: E-mail
+              - superscript [ref=f36e20]: "*"
+            - textbox "E-mail*" [active] [ref=f36e24]: visual@oravel.test
+          - generic [ref=f36e27]:
+            - generic [ref=f36e30]:
+              - text: Senha
+              - superscript [ref=f36e31]: "*"
+            - generic [ref=f36e33]:
+              - textbox "Senha*" [ref=f36e35]: Visual#12345
+              - button "Mostrar senha" [ref=f36e38] [cursor=pointer]
+          - generic [ref=f36e47]:
+            - checkbox "Lembre de mim" [ref=f36e48]
+            - generic [ref=f36e49]: Lembre de mim
+        - button "Login" [ref=f36e52] [cursor=pointer]
+  - generic:
+    - status

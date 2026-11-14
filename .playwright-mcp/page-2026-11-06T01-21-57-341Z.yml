@@ -1,0 +1,285 @@
+- generic [active] [ref=f32e1]:
+  - generic [ref=f32e2]:
+    - generic [ref=f32e3]:
+      - navigation [ref=f32e5]:
+        - generic [ref=f32e9]:
+          - generic [ref=f32e10]: Locadora Demo
+          - generic [ref=f32e11]: "Módulo: Locadora"
+        - generic [ref=f32e12]:
+          - generic [ref=f32e15]:
+            - generic [ref=f32e16]: Pesquisa global
+            - searchbox "Pesquisa global" [ref=f32e22]
+          - button "⌘K" [ref=f32e24] [cursor=pointer]
+          - button "Abrir notificações" [ref=f32e30] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=f32e34] [cursor=pointer]:
+            - /url: http://127.0.0.1:8099/admin/caixa-de-email
+          - button "Menu do usuário" [ref=f32e39] [cursor=pointer]:
+            - img "Avatar de Administrador Demo" [ref=f32e40]
+        - link "Ajuda" [ref=f32e42] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=f32e46]:
+        - generic [ref=f32e48]:
+          - heading "Localização dos equipamentos" [level=1] [ref=f32e51]
+          - generic [ref=f32e54]:
+            - generic [ref=f32e55]: "Demonstração: as posições do rastreador são simuladas. Nos clientes, esta tela usa o rastreador (Traccar) de cada equipamento e, quando não há aparelho, o endereço da obra do contrato ativo."
+            - generic [ref=f32e56]:
+              - generic [ref=f32e57]:
+                - generic [ref=f32e58]:
+                  - searchbox "Buscar equipamento, cliente ou cidade" [ref=f32e59]
+                  - generic [ref=f32e60]:
+                    - button "Todos (25)" [ref=f32e61] [cursor=pointer]
+                    - button "Locado (13)" [ref=f32e62] [cursor=pointer]
+                    - button "Disponível (8)" [ref=f32e65] [cursor=pointer]
+                    - button "Em manutenção (4)" [ref=f32e68] [cursor=pointer]
+                    - button "📡 Com rastreador ( 5 )" [ref=f32e71] [cursor=pointer]:
+                      - text: 📡 Com rastreador (
+                      - generic [ref=f32e72]: "5"
+                      - text: )
+                - generic [ref=f32e73]:
+                  - button "Plataforma Tesoura 8m Elétrica PT-01 · Locado · Shopping Plaza Nova Av. Paulista, 1000 - Bela Vista (Reforma da Fachada do Shopping) — São Paulo/SP" [ref=f32e74] [cursor=pointer]:
+                    - generic [ref=f32e75]: Plataforma Tesoura 8m Elétrica
+                    - generic [ref=f32e78]: PT-01 · Locado · Shopping Plaza Nova
+                    - generic [ref=f32e79]: Av. Paulista, 1000 - Bela Vista (Reforma da Fachada do Shopping) — São Paulo/SP
+                  - button "Plataforma Tesoura 10m Elétrica 📡 PT-02 · Locado · Construtora Horizonte Ltda Av. Dr. Moraes Salles, 1136 - Centro (Obra Residencial Vista Verde) — Campinas/SP" [ref=f32e80] [cursor=pointer]:
+                    - generic [ref=f32e81]:
+                      - generic [ref=f32e83]: Plataforma Tesoura 10m Elétrica
+                      - generic "Com rastreador" [ref=f32e84]: 📡
+                    - generic [ref=f32e85]: PT-02 · Locado · Construtora Horizonte Ltda
+                    - generic [ref=f32e86]: Av. Dr. Moraes Salles, 1136 - Centro (Obra Residencial Vista Verde) — Campinas/SP
+                  - button "Plataforma Tesoura 12m Elétrica PT-03 · Disponível Matriz Campinas (Oficina e Pátio)" [ref=f32e87] [cursor=pointer]:
+                    - generic [ref=f32e88]: Plataforma Tesoura 12m Elétrica
+                    - generic [ref=f32e91]: PT-03 · Disponível
+                    - generic [ref=f32e92]: Matriz Campinas (Oficina e Pátio)
+                  - button "Plataforma Tesoura 8m Elétrica PT-04 · Em manutenção Matriz Campinas (Oficina e Pátio)" [ref=f32e93] [cursor=pointer]:
+                    - generic [ref=f32e94]: Plataforma Tesoura 8m Elétrica
+                    - generic [ref=f32e97]: PT-04 · Em manutenção
+                    - generic [ref=f32e98]: Matriz Campinas (Oficina e Pátio)
+                  - button "Plataforma Tesoura 10m Elétrica 📡 PT-05 · Locado · Agroindustrial Campo Bom Av. Nações Unidas, 8-50 - Vila Universitária (Unidade Bauru) — Bauru/SP" [ref=f32e99] [cursor=pointer]:
+                    - generic [ref=f32e100]:
+                      - generic [ref=f32e102]: Plataforma Tesoura 10m Elétrica
+                      - generic "Com rastreador" [ref=f32e103]: 📡
+                    - generic [ref=f32e104]: PT-05 · Locado · Agroindustrial Campo Bom
+                    - generic [ref=f32e105]: Av. Nações Unidas, 8-50 - Vila Universitária (Unidade Bauru) — Bauru/SP
+                  - button "Plataforma Articulada 15m Diesel 📡 PA-01 · Locado · Metalúrgica Vale Forte S.A. Av. Cassiano Ricardo, 601 - Jd. Aquarius (Ampliação da Planta Industrial) — São José dos Campos/SP" [ref=f32e106] [cursor=pointer]:
+                    - generic [ref=f32e107]:
+                      - generic [ref=f32e109]: Plataforma Articulada 15m Diesel
+                      - generic "Com rastreador" [ref=f32e110]: 📡
+                    - generic [ref=f32e111]: PA-01 · Locado · Metalúrgica Vale Forte S.A.
+                    - generic [ref=f32e112]: Av. Cassiano Ricardo, 601 - Jd. Aquarius (Ampliação da Planta Industrial) — São José dos Campos/SP
+                  - button "Plataforma Articulada 12m Diesel PA-02 · Em manutenção Matriz Campinas (Oficina e Pátio)" [ref=f32e113] [cursor=pointer]:
+                    - generic [ref=f32e114]: Plataforma Articulada 12m Diesel
+                    - generic [ref=f32e117]: PA-02 · Em manutenção
+                    - generic [ref=f32e118]: Matriz Campinas (Oficina e Pátio)
+                  - button "Plataforma Articulada 20m Diesel PA-03 · Disponível Depósito São Paulo (Barueri)" [ref=f32e119] [cursor=pointer]:
+                    - generic [ref=f32e120]: Plataforma Articulada 20m Diesel
+                    - generic [ref=f32e123]: PA-03 · Disponível
+                    - generic [ref=f32e124]: Depósito São Paulo (Barueri)
+                  - button "Gerador 40 kVA Diesel G-01 · Locado · Logística Rota Sul Ltda Av. Dom Aguirre, 1500 - Jd. Sorocaba (Galpão Logístico - Fase 2) — Sorocaba/SP" [ref=f32e125] [cursor=pointer]:
+                    - generic [ref=f32e126]: Gerador 40 kVA Diesel
+                    - generic [ref=f32e129]: G-01 · Locado · Logística Rota Sul Ltda
+                    - generic [ref=f32e130]: Av. Dom Aguirre, 1500 - Jd. Sorocaba (Galpão Logístico - Fase 2) — Sorocaba/SP
+                  - button "Gerador 80 kVA Diesel G-02 · Disponível Depósito São Paulo (Barueri)" [ref=f32e131] [cursor=pointer]:
+                    - generic [ref=f32e132]: Gerador 80 kVA Diesel
+                    - generic [ref=f32e135]: G-02 · Disponível
+                    - generic [ref=f32e136]: Depósito São Paulo (Barueri)
+                  - button "Gerador 150 kVA Diesel 📡 G-03 · Locado · Agroindustrial Campo Bom Av. Presidente Vargas, 2121 - Jd. América (Silo de Armazenagem) — Ribeirão Preto/SP" [ref=f32e137] [cursor=pointer]:
+                    - generic [ref=f32e138]:
+                      - generic [ref=f32e140]: Gerador 150 kVA Diesel
+                      - generic "Com rastreador" [ref=f32e141]: 📡
+                    - generic [ref=f32e142]: G-03 · Locado · Agroindustrial Campo Bom
+                    - generic [ref=f32e143]: Av. Presidente Vargas, 2121 - Jd. América (Silo de Armazenagem) — Ribeirão Preto/SP
+                  - button "Gerador 20 kVA Diesel G-04 · Locado · Eventos Estrela Produções Av. Industrial, 600 - Santa Maria (Montagem de Palco - Festival) — Santo André/SP" [ref=f32e144] [cursor=pointer]:
+                    - generic [ref=f32e145]: Gerador 20 kVA Diesel
+                    - generic [ref=f32e148]: G-04 · Locado · Eventos Estrela Produções
+                    - generic [ref=f32e149]: Av. Industrial, 600 - Santa Maria (Montagem de Palco - Festival) — Santo André/SP
+                  - button "Gerador 180 kVA Diesel G-05 · Em manutenção Matriz Campinas (Oficina e Pátio)" [ref=f32e150] [cursor=pointer]:
+                    - generic [ref=f32e151]: Gerador 180 kVA Diesel
+                    - generic [ref=f32e154]: G-05 · Em manutenção
+                    - generic [ref=f32e155]: Matriz Campinas (Oficina e Pátio)
+                  - button "Compressor Portátil 750 PCM 📡 C-01 · Locado · Construtora Horizonte Ltda Av. 9 de Julho, 2000 - Anhangabaú (Torre Comercial Jundiaí) — Jundiaí/SP" [ref=f32e156] [cursor=pointer]:
+                    - generic [ref=f32e157]:
+                      - generic [ref=f32e159]: Compressor Portátil 750 PCM
+                      - generic "Com rastreador" [ref=f32e160]: 📡
+                    - generic [ref=f32e161]: C-01 · Locado · Construtora Horizonte Ltda
+                    - generic [ref=f32e162]: Av. 9 de Julho, 2000 - Anhangabaú (Torre Comercial Jundiaí) — Jundiaí/SP
+                  - button "Compressor Parafuso 185 PCM C-02 · Locado · Indústria Têxtil Brasa Av. Independência, 3500 - Alemães (Troca de Cobertura da Fábrica) — Piracicaba/SP" [ref=f32e163] [cursor=pointer]:
+                    - generic [ref=f32e164]: Compressor Parafuso 185 PCM
+                    - generic [ref=f32e167]: C-02 · Locado · Indústria Têxtil Brasa
+                    - generic [ref=f32e168]: Av. Independência, 3500 - Alemães (Troca de Cobertura da Fábrica) — Piracicaba/SP
+                  - button "Compressor Pistão 20 pés C-03 · Disponível Depósito São Paulo (Barueri)" [ref=f32e169] [cursor=pointer]:
+                    - generic [ref=f32e170]: Compressor Pistão 20 pés
+                    - generic [ref=f32e173]: C-03 · Disponível
+                    - generic [ref=f32e174]: Depósito São Paulo (Barueri)
+                  - button "Compressor Pistão 10 pés C-04 · Disponível Matriz Campinas (Oficina e Pátio)" [ref=f32e175] [cursor=pointer]:
+                    - generic [ref=f32e176]: Compressor Pistão 10 pés
+                    - generic [ref=f32e179]: C-04 · Disponível
+                    - generic [ref=f32e180]: Matriz Campinas (Oficina e Pátio)
+                  - button "Andaime Tubular (jogo 20 m²) AN-01 · Locado · Condomínio Parque das Águas Av. Ana Costa, 400 - Gonzaga (Manutenção de Fachada do Condomínio) — Santos/SP" [ref=f32e181] [cursor=pointer]:
+                    - generic [ref=f32e182]: Andaime Tubular (jogo 20 m²)
+                    - generic [ref=f32e185]: AN-01 · Locado · Condomínio Parque das Águas
+                    - generic [ref=f32e186]: Av. Ana Costa, 400 - Gonzaga (Manutenção de Fachada do Condomínio) — Santos/SP
+                  - button "Andaime Fachadeiro (jogo 50 m²) AN-02 · Locado · Shopping Plaza Nova Av. Paulista, 1000 - Bela Vista (Reforma da Fachada do Shopping) — São Paulo/SP" [ref=f32e187] [cursor=pointer]:
+                    - generic [ref=f32e188]: Andaime Fachadeiro (jogo 50 m²)
+                    - generic [ref=f32e191]: AN-02 · Locado · Shopping Plaza Nova
+                    - generic [ref=f32e192]: Av. Paulista, 1000 - Bela Vista (Reforma da Fachada do Shopping) — São Paulo/SP
+                  - button "Torre de Andaime Móvel 6m AN-03 · Disponível Depósito São Paulo (Barueri)" [ref=f32e193] [cursor=pointer]:
+                    - generic [ref=f32e194]: Torre de Andaime Móvel 6m
+                    - generic [ref=f32e197]: AN-03 · Disponível
+                    - generic [ref=f32e198]: Depósito São Paulo (Barueri)
+                  - button "Martelete Rompedor 11 kg FE-01 · Locado · Construtora Horizonte Ltda Av. Dr. Moraes Salles, 1136 - Centro (Obra Residencial Vista Verde) — Campinas/SP" [ref=f32e199] [cursor=pointer]:
+                    - generic [ref=f32e200]: Martelete Rompedor 11 kg
+                    - generic [ref=f32e203]: FE-01 · Locado · Construtora Horizonte Ltda
+                    - generic [ref=f32e204]: Av. Dr. Moraes Salles, 1136 - Centro (Obra Residencial Vista Verde) — Campinas/SP
+                  - button "Cortadora de Piso 14\" FE-02 · Locado · Logística Rota Sul Ltda Av. Dom Aguirre, 1500 - Jd. Sorocaba (Galpão Logístico - Fase 2) — Sorocaba/SP" [ref=f32e205] [cursor=pointer]:
+                    - generic [ref=f32e206]: Cortadora de Piso 14"
+                    - generic [ref=f32e209]: FE-02 · Locado · Logística Rota Sul Ltda
+                    - generic [ref=f32e210]: Av. Dom Aguirre, 1500 - Jd. Sorocaba (Galpão Logístico - Fase 2) — Sorocaba/SP
+                  - button "Serra Mármore 110 mm FE-03 · Disponível Matriz Campinas (Oficina e Pátio)" [ref=f32e211] [cursor=pointer]:
+                    - generic [ref=f32e212]: Serra Mármore 110 mm
+                    - generic [ref=f32e215]: FE-03 · Disponível
+                    - generic [ref=f32e216]: Matriz Campinas (Oficina e Pátio)
+                  - button "Betoneira 400 L FE-04 · Disponível Depósito São Paulo (Barueri)" [ref=f32e217] [cursor=pointer]:
+                    - generic [ref=f32e218]: Betoneira 400 L
+                    - generic [ref=f32e221]: FE-04 · Disponível
+                    - generic [ref=f32e222]: Depósito São Paulo (Barueri)
+                  - button "Vibrador de Concreto 2\" FE-05 · Em manutenção Matriz Campinas (Oficina e Pátio)" [ref=f32e223] [cursor=pointer]:
+                    - generic [ref=f32e224]: Vibrador de Concreto 2"
+                    - generic [ref=f32e227]: FE-05 · Em manutenção
+                    - generic [ref=f32e228]: Matriz Campinas (Oficina e Pátio)
+              - generic [ref=f32e229]:
+                - generic [ref=f32e230]:
+                  - generic:
+                    - generic:
+                      - img:
+                        - generic:
+                          - generic [ref=f32e231] [cursor=pointer]
+                          - generic [ref=f32e232] [cursor=pointer]
+                    - generic:
+                      - button "•" [ref=f32e233] [cursor=pointer]
+                      - button "◉" [ref=f32e237] [cursor=pointer]
+                      - button "•" [ref=f32e242] [cursor=pointer]
+                      - button "•" [ref=f32e246] [cursor=pointer]
+                      - button "◉" [ref=f32e250] [cursor=pointer]
+                      - button "◉" [ref=f32e255] [cursor=pointer]
+                      - button "•" [ref=f32e260] [cursor=pointer]
+                      - button "•" [ref=f32e264] [cursor=pointer]
+                      - button "•" [ref=f32e268] [cursor=pointer]
+                      - button "•" [ref=f32e272] [cursor=pointer]
+                      - button "◉" [ref=f32e276] [cursor=pointer]
+                      - button "•" [ref=f32e281] [cursor=pointer]
+                      - button "•" [ref=f32e285] [cursor=pointer]
+                      - button "◉" [ref=f32e289] [cursor=pointer]
+                      - button "•" [ref=f32e294] [cursor=pointer]
+                      - button "•" [ref=f32e298] [cursor=pointer]
+                      - button "•" [ref=f32e302] [cursor=pointer]
+                      - button "•" [ref=f32e306] [cursor=pointer]
+                      - button "•" [ref=f32e310] [cursor=pointer]
+                      - button "•" [ref=f32e314] [cursor=pointer]
+                      - button "•" [ref=f32e318] [cursor=pointer]
+                      - button "•" [ref=f32e322] [cursor=pointer]
+                      - button "•" [ref=f32e326] [cursor=pointer]
+                      - button "•" [ref=f32e330] [cursor=pointer]
+                      - button "•" [ref=f32e334] [cursor=pointer]
+                  - generic:
+                    - generic [ref=f32e338]:
+                      - button "Zoom in" [ref=f32e339] [cursor=pointer]: +
+                      - button "Zoom out" [ref=f32e340] [cursor=pointer]: −
+                    - button "Layers" [ref=f32e342] [cursor=pointer]
+                    - generic [ref=f32e343]:
+                      - link "Leaflet" [ref=f32e344] [cursor=pointer]:
+                        - /url: https://leafletjs.com
+                      - text: "| © OpenStreetMap © CARTO"
+                - generic: Atualizado às 22:21:50 · a cada 30 s
+    - complementary [ref=f32e349]:
+      - generic [ref=f32e351]:
+        - link "Início" [ref=f32e353] [cursor=pointer]:
+          - /url: http://127.0.0.1:8099/admin/painel-controle
+          - generic [ref=f32e357]: Oravel
+        - button "Recolher barra lateral" [ref=f32e358] [cursor=pointer]
+      - navigation [ref=f32e362]:
+        - list [ref=f32e363]:
+          - listitem [ref=f32e364]:
+            - link "Início" [ref=f32e365] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/admin/painel-controle
+          - listitem [ref=f32e369]:
+            - link "Academia Oravel" [ref=f32e370] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/academia
+        - list [ref=f32e374]:
+          - listitem [ref=f32e375]:
+            - generic [ref=f32e376] [cursor=pointer]:
+              - generic [ref=f32e379]: Ativos
+              - button "Ativos" [ref=f32e380]
+          - listitem [ref=f32e384]:
+            - generic [ref=f32e385] [cursor=pointer]:
+              - generic [ref=f32e388]: Conformidade NR-13
+              - button "Conformidade NR-13" [ref=f32e389]
+          - listitem [ref=f32e393]:
+            - generic [ref=f32e394] [cursor=pointer]:
+              - generic [ref=f32e397]: Gestão de Frota
+              - button "Gestão de Frota" [ref=f32e398]
+          - listitem [ref=f32e402]:
+            - generic [ref=f32e403] [cursor=pointer]:
+              - generic [ref=f32e406]: Inteligência de Ativos
+              - button "Inteligência de Ativos" [expanded] [ref=f32e407]
+            - list [ref=f32e411]:
+              - listitem [ref=f32e412]:
+                - link "Custo de Manutenção" [ref=f32e413] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/admin/custo-manutencao-equipamentos
+              - listitem [ref=f32e417]:
+                - link "Localização dos Equipamentos" [ref=f32e418] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/admin/localizacao-equipamentos
+          - listitem [ref=f32e423]:
+            - generic [ref=f32e424] [cursor=pointer]:
+              - generic [ref=f32e427]: Materiais e Peças
+              - button "Materiais e Peças" [ref=f32e428]
+          - listitem [ref=f32e432]:
+            - generic [ref=f32e433] [cursor=pointer]:
+              - generic [ref=f32e436]: Itens Agregados
+              - button "Itens Agregados" [ref=f32e437]
+          - listitem [ref=f32e441]:
+            - generic [ref=f32e442] [cursor=pointer]:
+              - generic [ref=f32e445]: EPI
+              - button "EPI" [ref=f32e446]
+          - listitem [ref=f32e450]:
+            - generic [ref=f32e451] [cursor=pointer]:
+              - generic [ref=f32e454]: Comercial
+              - button "Comercial" [ref=f32e455]
+          - listitem [ref=f32e459]:
+            - generic [ref=f32e460] [cursor=pointer]:
+              - generic [ref=f32e463]: Configurações
+              - button "Configurações" [ref=f32e464]
+          - listitem [ref=f32e468]:
+            - generic [ref=f32e469] [cursor=pointer]:
+              - generic [ref=f32e472]: Departamento Pessoal
+              - button "Departamento Pessoal" [ref=f32e473]
+          - listitem [ref=f32e477]:
+            - generic [ref=f32e478] [cursor=pointer]:
+              - generic [ref=f32e481]: Equipe
+              - button "Equipe" [ref=f32e482]
+          - listitem [ref=f32e486]:
+            - generic [ref=f32e487] [cursor=pointer]:
+              - generic [ref=f32e490]: Financeiro
+              - button "Financeiro" [ref=f32e491]
+          - listitem [ref=f32e495]:
+            - generic [ref=f32e496] [cursor=pointer]:
+              - generic [ref=f32e499]: Logística
+              - button "Logística" [ref=f32e500]
+          - listitem [ref=f32e504]:
+            - generic [ref=f32e505] [cursor=pointer]:
+              - generic [ref=f32e508]: Manutenção
+              - button "Manutenção" [ref=f32e509]
+          - listitem [ref=f32e513]:
+            - generic [ref=f32e514] [cursor=pointer]:
+              - generic [ref=f32e517]: PMP
+              - button "PMP" [ref=f32e518]
+          - listitem [ref=f32e522]:
+            - generic [ref=f32e523] [cursor=pointer]:
+              - generic [ref=f32e526]: Relatórios
+              - button "Relatórios" [ref=f32e527]
+  - generic:
+    - status
+  - button "💬 Mensagens" [ref=f32e533] [cursor=pointer]:
+    - generic [ref=f32e534]:
+      - generic [ref=f32e535]: 💬
+      - generic [ref=f32e536]: Mensagens
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f32e540]

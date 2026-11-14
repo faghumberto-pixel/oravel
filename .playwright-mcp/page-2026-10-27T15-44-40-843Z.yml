@@ -1,0 +1,314 @@
+- generic [active] [ref=f2e1]:
+  - banner [ref=f2e2]:
+    - navigation [ref=f2e3]:
+      - link "Oravel" [ref=f2e4] [cursor=pointer]:
+        - /url: /
+      - generic [ref=f2e5]:
+        - link "Soluções" [ref=f2e6] [cursor=pointer]:
+          - /url: /solucoes/
+        - group [ref=f2e7]:
+          - generic "Produtos ▾" [ref=f2e8] [cursor=pointer]
+        - group [ref=f2e9]:
+          - generic "Nesta página ▾" [ref=f2e10] [cursor=pointer]
+        - link "Sobre Nós" [ref=f2e11] [cursor=pointer]:
+          - /url: /sobre/
+        - link "Contato" [ref=f2e12] [cursor=pointer]:
+          - /url: /contato.php
+        - group "Idioma" [ref=f2e13]:
+          - link "Português" [ref=f2e14] [cursor=pointer]:
+            - /url: /
+          - link "English" [ref=f2e19] [cursor=pointer]:
+            - /url: /index-en.html
+        - link "Testar 30 dias" [ref=f2e33] [cursor=pointer]:
+          - /url: "#contato"
+  - main [ref=f2e34]:
+    - generic [ref=f2e36]:
+      - generic [ref=f2e37]:
+        - generic [ref=f2e38]: Para locadoras de equipamentos
+        - heading [level=1] [ref=f2e39]:
+          - text: Quem opera equipamentos merece trabalhar
+          - emphasis [ref=f2e40]: sem apagar incêndio.
+        - paragraph [ref=f2e41]: A Oravel junta manutenção, estoque, logística e financeiro numa visão só, do campo ao escritório, para a sua operação render mais com menos correria. Teste por 30 dias, com a gente ao seu lado.
+        - generic [ref=f2e42]:
+          - link "Quero testar 30 dias" [ref=f2e43] [cursor=pointer]:
+            - /url: https://wa.me/5519999332615?text=Ol%C3%A1!%20Quero%20testar%20a%20Oravel%20por%2030%20dias%20na%20minha%20locadora.
+          - link "Ler o nosso manifesto" [ref=f2e44] [cursor=pointer]:
+            - /url: "#manifesto"
+        - paragraph [ref=f2e45]: Sem compromisso. Se não fizer sentido, você não deve nada.
+      - generic [ref=f2e46]:
+        - generic [ref=f2e47]:
+          - generic [ref=f2e48]:
+            - generic [ref=f2e49]: app.oravel.com.br/painel
+            - generic [ref=f2e54]:
+              - generic [ref=f2e55]:
+                - text: Painel da operação
+                - generic [ref=f2e56]: Dados de exemplo
+              - generic [ref=f2e57]:
+                - generic [ref=f2e58]:
+                  - generic [ref=f2e59]: Equipamentos disponíveis
+                  - text: "62"
+                - generic [ref=f2e60]:
+                  - generic [ref=f2e61]: Locados
+                  - text: "148"
+                - generic [ref=f2e62]:
+                  - generic [ref=f2e63]: Em manutenção
+                  - text: "9"
+                - generic [ref=f2e64]:
+                  - generic [ref=f2e65]: Preventivas a vencer
+                  - text: "5"
+              - generic [ref=f2e66]:
+                - generic [ref=f2e67]:
+                  - generic [ref=f2e68]: Horas de equipamento parado
+                  - generic [ref=f2e69]:
+                    - generic [ref=f2e70]: Mai
+                    - generic [ref=f2e72]: Jun
+                    - generic [ref=f2e74]: Jul
+                    - generic [ref=f2e76]: Ago
+                    - generic [ref=f2e78]: Set
+                    - generic [ref=f2e80]: Out
+                - generic [ref=f2e82]:
+                  - generic [ref=f2e83]: Ordens de serviço
+                  - generic [ref=f2e84]:
+                    - text: OS-2041 Gerador
+                    - generic [ref=f2e85]: Em andamento
+                  - generic [ref=f2e86]:
+                    - text: OS-2044 Empilhadeira
+                    - generic [ref=f2e87]: Preventiva
+                  - generic [ref=f2e88]:
+                    - text: OS-2038 Plataforma
+                    - generic [ref=f2e89]: Concluída
+          - generic [ref=f2e90]: Preventiva aberta automaticamente
+          - generic [ref=f2e91]: Peça baixada do estoque
+          - generic [ref=f2e93]:
+            - generic [ref=f2e94]:
+              - text: Manutenção
+              - generic [ref=f2e95]: Ordens de serviço
+            - generic [ref=f2e96]:
+              - generic [ref=f2e97]: OS-2041 Gerador
+              - generic [ref=f2e98]: OS-2044 Empilhadeira
+              - generic [ref=f2e99]: OS-2038 Plataforma
+              - generic [ref=f2e100]: Iniciar OS
+        - paragraph [ref=f2e101]: Imagem ilustrativa com dados de exemplo
+    - generic [ref=f2e103]:
+      - generic [ref=f2e104]: Por que a Oravel existe
+      - heading "Nós já estivemos do seu lado do balcão." [level=2] [ref=f2e105]
+      - paragraph [ref=f2e106]: Administramos uma operação de equipamentos por anos. Vivemos a máquina parada no canteiro, a peça que faltou na hora errada, o cliente esperando "para ontem" e o fechamento do mês que não bate.
+      - paragraph [ref=f2e107]: "Aprendemos que nada disso é azar. É falta de informação na hora certa. Por isso criamos a Oravel: para que toda operação de equipamentos funcione com clareza, previsibilidade e tranquilidade, do campo ao escritório."
+      - link "Ler o manifesto completo →" [ref=f2e108] [cursor=pointer]:
+        - /url: "#manifesto"
+    - generic [ref=f2e110]:
+      - generic [ref=f2e111]: O que muda
+      - heading "Uma operação previsível começa com informação na hora certa." [level=2] [ref=f2e112]
+      - paragraph [ref=f2e113]: Quem já administrou uma operação de equipamentos sabe o valor de ter o controle na mão. Estas são as quatro mudanças que a Oravel traz para o dia a dia.
+      - generic [ref=f2e114]:
+        - generic [ref=f2e115]:
+          - generic [ref=f2e116]: Previsibilidade
+          - heading "Equipamento pronto quando o cliente precisa" [level=3] [ref=f2e117]
+          - paragraph [ref=f2e118]: Manutenção planejada, no prazo e no horímetro certos, para o equipamento estar disponível e a equipe trabalhar sem sobressalto.
+          - generic [ref=f2e119]: "Na Oravel: a ordem de serviço é aberta automaticamente por horímetro ou prazo, com checklist e técnico definido."
+        - generic [ref=f2e120]:
+          - generic [ref=f2e121]: Disponibilidade
+          - heading "Peça certa, na hora certa" [level=3] [ref=f2e122]
+          - paragraph [ref=f2e123]: Com o saldo real à vista, as compras são planejadas e a manutenção não espera por peça.
+          - generic [ref=f2e124]: "Na Oravel: a peça usada na ordem de serviço sai do estoque na hora, e você enxerga o saldo real e o que está acabando."
+        - generic [ref=f2e125]:
+          - generic [ref=f2e126]: Confiança
+          - heading "Entrega e devolução com transparência" [level=3] [ref=f2e127]
+          - paragraph [ref=f2e128]: "Tudo registrado na saída e no retorno: uma relação clara e justa com o cliente, sem discussão."
+          - generic [ref=f2e129]: "Na Oravel: saída e retorno com checklist, fotos de antes e depois e assinatura digital."
+        - generic [ref=f2e130]:
+          - generic [ref=f2e131]: Visão do custo real
+          - heading "Cada equipamento com a sua história" [level=3] [ref=f2e132]
+          - paragraph [ref=f2e133]: Você sabe quanto cada máquina fatura e quanto ela consome, e decide com segurança o que manter, renovar ou vender.
+          - generic [ref=f2e134]: "Na Oravel: cada equipamento tem o seu dossiê: histórico de manutenções, peças e custo acumulado."
+      - generic [ref=f2e135]: "E também na plataforma: logística de veículos e motoristas, contas a pagar e a receber com boleto, portal do cliente e comunicação integrada com o WhatsApp."
+    - generic [ref=f2e137]:
+      - generic [ref=f2e138]:
+        - generic [ref=f2e139]: Veja o potencial
+        - heading "Quanto vale uma máquina trabalhando?" [level=2] [ref=f2e140]
+        - paragraph [ref=f2e141]: Cada dia a mais de equipamento disponível é uma diária que entra. Coloque os seus números e veja o tamanho da oportunidade.
+      - generic [ref=f2e142]:
+        - heading "Calcule com os seus números" [level=3] [ref=f2e143]
+        - paragraph [ref=f2e144]: Uma conta rápida, só com o que você já sabe.
+        - generic [ref=f2e145]:
+          - generic [ref=f2e146]: Quantas máquinas costumam ficar paradas no mês?
+          - spinbutton "Quantas máquinas costumam ficar paradas no mês?" [ref=f2e147]: "3"
+        - generic [ref=f2e148]:
+          - generic [ref=f2e149]: Por quantos dias cada uma, em média?
+          - spinbutton "Por quantos dias cada uma, em média?" [ref=f2e150]: "5"
+        - generic [ref=f2e151]:
+          - generic [ref=f2e152]: Diária média de locação (R$)
+          - spinbutton "Diária média de locação (R$)" [ref=f2e153]: "250"
+        - generic [ref=f2e154]:
+          - generic [ref=f2e155]: R$ 3.750
+          - generic [ref=f2e156]: "de diárias que podem voltar a entrar por mês. Em um ano: R$ 45.000."
+        - paragraph [ref=f2e157]: "Cálculo simples: máquinas × dias × diária. Nos 30 dias de teste, mostramos o seu número real."
+    - generic [ref=f2e159]:
+      - generic [ref=f2e160]: Sem ficar refém de um sistema gigante
+      - heading "Comece por onde faz mais sentido. Cresça no seu ritmo." [level=2] [ref=f2e161]
+      - paragraph [ref=f2e162]: Você não precisa contratar tudo de uma vez. Escolhe o módulo mais importante para o seu momento, usa por 30 dias e decide com números.
+      - generic [ref=f2e163]:
+        - generic [ref=f2e164]: Manutenção
+        - generic [ref=f2e165]: Estoque
+        - generic [ref=f2e166]: Logística
+        - generic [ref=f2e167]: Serviços
+      - paragraph [ref=f2e168]: Cada módulo funciona sozinho e conversa com os outros quando você quiser ampliar.
+    - generic [ref=f2e170]:
+      - generic [ref=f2e171]: Como funciona
+      - heading "Quatro passos, sem risco para você." [level=2] [ref=f2e172]
+      - generic [ref=f2e173]:
+        - generic [ref=f2e174]:
+          - generic [ref=f2e175]: "1"
+          - heading "Conversa" [level=3] [ref=f2e176]
+          - paragraph [ref=f2e177]: 40 minutos, sem custo e sem precisar enviar dados. Você conta como a operação funciona.
+        - generic [ref=f2e178]:
+          - generic [ref=f2e179]: "2"
+          - heading "O módulo do seu momento" [level=3] [ref=f2e180]
+          - paragraph [ref=f2e181]: Escolhemos juntos por onde começar, o ponto em que a clareza mais faz diferença.
+        - generic [ref=f2e182]:
+          - generic [ref=f2e183]: "3"
+          - heading "30 dias de uso" [level=3] [ref=f2e184]
+          - paragraph [ref=f2e185]: Implantação ao seu lado, treinamento ao vivo e acesso à Academia Oravel para a sua equipe.
+        - generic [ref=f2e186]:
+          - generic [ref=f2e187]: "4"
+          - heading "Decisão com números" [level=3] [ref=f2e188]
+          - paragraph [ref=f2e189]: No fim do teste, você vê o resultado e decide se continua. Se não, você não deve nada.
+      - link "Quero começar" [ref=f2e191] [cursor=pointer]:
+        - /url: "#contato"
+    - generic [ref=f2e193]:
+      - generic [ref=f2e194]: Manifesto
+      - heading "Toda operação merece funcionar com clareza." [level=2] [ref=f2e195]
+      - generic [ref=f2e196]: Acreditamos que toda operação de equipamentos pode funcionar com clareza, previsibilidade e tranquilidade.
+      - paragraph [ref=f2e197]: Nós vimos isso de dentro. Administramos uma operação de equipamentos por anos. Conhecemos o silêncio de uma máquina parada no canteiro, a peça que faltou na hora errada, o cliente esperando "para ontem" e o fechamento do mês que não bate.
+      - paragraph [ref=f2e198]: "E aprendemos uma coisa: operações organizadas não dependem de sorte nem de heróis. Dependem de ter a informação certa, na hora certa, na mão de quem decide."
+      - paragraph [ref=f2e199]: "Por isso, acreditamos que:"
+      - list [ref=f2e200]:
+        - listitem [ref=f2e201]: Quem constrói uma operação merece enxergá-la por inteiro, em números, e crescer com segurança.
+        - listitem [ref=f2e202]: Controle não é burocracia. É o que permite decidir sem adivinhar.
+        - listitem [ref=f2e203]: Um bom sistema não complica. Começa pelo que é prioridade e cresce com a sua operação.
+        - listitem [ref=f2e204]: "Tecnologia só vale se mostrar resultado: mais equipamento disponível, compras planejadas, custo claro de cada equipamento."
+        - listitem [ref=f2e205]: Quem decide precisa de uma conversa na língua dele. A língua de quem decide é resultado, não funcionalidade.
+      - paragraph [ref=f2e206]: Colocamos a vivência de quem já esteve do seu lado do balcão em módulos simples, conectados do campo ao escritório.
+      - generic [ref=f2e207]: Nossa promessa. Você não precisa acreditar em nós. Use por 30 dias, com a gente ao seu lado, e meça. Se não fizer sentido, você não deve nada.
+      - generic [ref=f2e208]: Oravel. Controle de quem já esteve do seu lado do balcão.
+    - generic [ref=f2e210]:
+      - generic [ref=f2e211]: Fiscal e cobrança
+      - heading "Cobrar o cliente e emitir a nota sem sair do sistema." [level=2] [ref=f2e212]
+      - paragraph [ref=f2e213]: A cobrança dos contratos e a nota fiscal de serviço ficam no mesmo fluxo do seu financeiro, sem retrabalho entre sistemas.
+      - generic [ref=f2e214]:
+        - generic [ref=f2e215]:
+          - heading "Cobrança automática" [level=3] [ref=f2e216]
+          - paragraph [ref=f2e217]: As contas dos contratos são geradas sozinhas e a cobrança sai por boleto, Pix ou cartão, com aviso de vencimento por WhatsApp e o status do pagamento na própria conta.
+        - generic [ref=f2e218]:
+          - heading "Nota fiscal de serviço (NFS-e)" [level=3] [ref=f2e219]
+          - paragraph [ref=f2e220]: A nota é emitida direto da conta a receber, com os dados do cliente e do contrato, e pode ser enviada ao cliente por e-mail e WhatsApp.
+          - link "Ver como funciona →" [ref=f2e221] [cursor=pointer]:
+            - /url: /fiscal-e-cobranca/
+    - generic [ref=f2e223]:
+      - generic [ref=f2e224]: Por que confiar
+      - heading "Feita por quem viveu a operação." [level=2] [ref=f2e225]
+      - generic [ref=f2e226]:
+        - generic [ref=f2e227]:
+          - heading "A Oravel nasceu da cicatriz, não da planilha" [level=3] [ref=f2e228]
+          - paragraph [ref=f2e229]: "Cada tela responde a uma situação que já vivemos: o equipamento no canteiro, a urgência de um cliente, a frota que não para."
+          - link "Ler a nossa história →" [ref=f2e230] [cursor=pointer]:
+            - /url: /sobre-nos
+        - generic [ref=f2e231]:
+          - generic [ref=f2e232]: 21 cursos · 66 aulas
+          - heading "Academia Oravel" [level=3] [ref=f2e233]
+          - paragraph [ref=f2e234]: Aulas com telas reais, exercícios e provas com certificado. Sua equipe aprende no próprio ritmo, e você acompanha quem estudou.
+    - generic [ref=f2e236]:
+      - generic [ref=f2e237]: Perguntas frequentes
+      - heading "Dúvidas comuns antes de começar." [level=2] [ref=f2e238]
+      - group [ref=f2e239]:
+        - generic "Preciso parar a minha operação para implantar? +" [ref=f2e240] [cursor=pointer]
+      - group [ref=f2e241]:
+        - generic "E se a minha equipe não for de tecnologia? +" [ref=f2e242] [cursor=pointer]
+      - group [ref=f2e243]:
+        - generic "Quanto custa? +" [ref=f2e244] [cursor=pointer]
+      - group [ref=f2e245]:
+        - generic "E se eu não gostar depois dos 30 dias? +" [ref=f2e246] [cursor=pointer]
+    - generic [ref=f2e248]:
+      - heading "Vamos olhar a sua operação juntos?" [level=2] [ref=f2e249]
+      - paragraph [ref=f2e250]: Uma conversa de 40 minutos, sem custo e sem compromisso. Deixe seus dados e retornamos para combinar o melhor horário.
+      - generic [ref=f2e251]:
+        - generic [ref=f2e252]:
+          - text: Não preencha
+          - textbox [ref=f2e253]
+        - generic [ref=f2e254]:
+          - generic [ref=f2e255]:
+            - generic [ref=f2e256]: Nome *
+            - textbox "Nome *" [ref=f2e257]
+          - generic [ref=f2e258]:
+            - generic [ref=f2e259]: Empresa *
+            - textbox "Empresa *" [ref=f2e260]
+        - generic [ref=f2e261]:
+          - generic [ref=f2e262]:
+            - generic [ref=f2e263]: E-mail *
+            - textbox "E-mail *" [ref=f2e264]
+          - generic [ref=f2e265]:
+            - generic [ref=f2e266]: WhatsApp
+            - textbox "WhatsApp" [ref=f2e267]:
+              - /placeholder: (19) 90000-0000
+        - generic [ref=f2e268]:
+          - generic [ref=f2e269]:
+            - generic [ref=f2e270]: Segmento *
+            - combobox "Segmento *" [ref=f2e271]:
+              - option "Locação de Equipamentos" [selected]
+              - option "Manutenção Industrial"
+              - option "Montagem Industrial"
+              - option "Logística e Transportes"
+              - option "Gestão de Serviços"
+              - option "Distribuidor e Atacadista"
+              - option "Outro segmento"
+          - generic [ref=f2e272]:
+            - generic [ref=f2e273]: Nº de técnicos *
+            - combobox "Nº de técnicos *" [ref=f2e274]:
+              - option "Selecione" [selected]
+              - option "1 a 5"
+              - option "6 a 15"
+              - option "16 a 50"
+              - option "Mais de 50"
+        - button "Quero conversar" [ref=f2e278] [cursor=pointer]
+        - paragraph [ref=f2e279]:
+          - text: Usamos seus dados apenas para retornar este contato.
+          - link "Privacidade" [ref=f2e280] [cursor=pointer]:
+            - /url: /politica-de-privacidade/
+      - paragraph [ref=f2e281]:
+        - text: Prefere falar agora?
+        - link "WhatsApp (19) 99933-2615" [ref=f2e282] [cursor=pointer]:
+          - /url: https://wa.me/5519999332615?text=Ol%C3%A1!%20Quero%20conversar%20sobre%20testar%20a%20Oravel%20por%2030%20dias.
+        - text: ou
+        - link "[email protected]" [ref=f2e283] [cursor=pointer]:
+          - /url: /cdn-cgi/l/email-protection#42212d2c3623362d022d302334272e6c212d2f6c2030
+  - contentinfo [ref=f2e284]:
+    - generic [ref=f2e285]:
+      - generic [ref=f2e286]:
+        - link "Oravel" [ref=f2e287] [cursor=pointer]:
+          - /url: /
+        - paragraph [ref=f2e288]: Controle para quem opera equipamentos, de quem já esteve do seu lado do balcão.
+      - generic [ref=f2e289]:
+        - link "Sobre" [ref=f2e290] [cursor=pointer]:
+          - /url: /sobre-nos
+        - text: ·
+        - link "Privacidade" [ref=f2e291] [cursor=pointer]:
+          - /url: /politica-de-privacidade/
+        - text: ·
+        - link "Termos de Uso" [ref=f2e292] [cursor=pointer]:
+          - /url: /termos-de-uso/
+      - generic [ref=f2e293]:
+        - text: (19) 99933-2615 ·
+        - link "[email protected]" [ref=f2e294] [cursor=pointer]:
+          - /url: /cdn-cgi/l/email-protection
+      - paragraph [ref=f2e295]: © 2026 Oravel Desenvolvimento de Software Ltda · CNPJ 65.707.953/0001-30
+  - link "WhatsApp" [ref=f2e296] [cursor=pointer]:
+    - /url: https://wa.me/5519999332615
+  - dialog "Aviso de cookies" [ref=f2e299]:
+    - generic [ref=f2e300]:
+      - text: Usamos cookies do Google (Analytics e Ads) para medir o site e nossos anúncios. Você pode recusar a qualquer momento.
+      - link "Saiba mais" [ref=f2e301] [cursor=pointer]:
+        - /url: /politica-de-privacidade/
+      - text: .
+    - generic [ref=f2e302]:
+      - button "Entendi" [ref=f2e303] [cursor=pointer]
+      - button "Recusar" [ref=f2e304] [cursor=pointer]

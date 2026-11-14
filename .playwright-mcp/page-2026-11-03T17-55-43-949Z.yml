@@ -1,0 +1,172 @@
+- generic [active] [ref=f9e1]:
+  - generic [ref=f9e2]:
+    - generic [ref=f9e3]:
+      - navigation [ref=f9e5]:
+        - generic [ref=f9e9]:
+          - generic [ref=f9e10]: Locadora Visual
+          - generic [ref=f9e11]: "Módulo: Locadora"
+        - generic [ref=f9e12]:
+          - button "⌘K" [ref=f9e14] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=f9e18] [cursor=pointer]:
+            - /url: http://127.0.0.1:8099/admin/caixa-de-email
+          - button "Menu do usuário" [ref=f9e23] [cursor=pointer]:
+            - img "Avatar de Admin Visual" [ref=f9e24]
+        - link "Ajuda" [ref=f9e26] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=f9e30]:
+        - generic [ref=f9e32]:
+          - generic [ref=f9e33]:
+            - generic [ref=f9e34]:
+              - navigation [ref=f9e35]:
+                - list [ref=f9e36]:
+                  - listitem [ref=f9e37]:
+                    - link "Contratos" [ref=f9e38] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/contracts
+                  - listitem [ref=f9e39]:
+                    - generic [ref=f9e42]: Listar
+              - heading "Contratos" [level=1] [ref=f9e43]
+            - generic [ref=f9e45]:
+              - link "Criar Contrato" [ref=f9e46] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/contracts/create
+              - link "Imprimir" [ref=f9e48] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/print/tabela/d93b7ec3-c1c6-4366-b42a-e9efefaa242c
+              - button "Exportar contracts" [ref=f9e52] [cursor=pointer]
+          - generic [ref=f9e61]:
+            - generic [ref=f9e62]:
+              - button "Total 5" [ref=f9e63] [cursor=pointer]:
+                - generic [ref=f9e64]: Total
+                - generic [ref=f9e65]: "5"
+              - button "Rascunho 1" [ref=f9e66] [cursor=pointer]:
+                - generic [ref=f9e67]: Rascunho
+                - generic [ref=f9e68]: "1"
+              - button "Ativos 3" [ref=f9e69] [cursor=pointer]:
+                - generic [ref=f9e70]: Ativos
+                - generic [ref=f9e71]: "3"
+              - button "Encerrados 1" [ref=f9e72] [cursor=pointer]:
+                - generic [ref=f9e73]: Encerrados
+                - generic [ref=f9e74]: "1"
+              - button "Vencem em 30 dias 1" [ref=f9e75] [cursor=pointer]:
+                - generic [ref=f9e76]: Vencem em 30 dias
+                - generic [ref=f9e77]: "1"
+              - button "Vigência vencida 1" [ref=f9e78] [cursor=pointer]:
+                - generic [ref=f9e79]: Vigência vencida
+                - generic [ref=f9e80]: "1"
+              - button "Assinados 0" [ref=f9e81] [cursor=pointer]:
+                - generic [ref=f9e82]: Assinados
+                - generic [ref=f9e83]: "0"
+              - button "Assinatura pendente 5" [ref=f9e84] [cursor=pointer]:
+                - generic [ref=f9e85]: Assinatura pendente
+                - generic [ref=f9e86]: "5"
+            - generic [ref=f9e88]:
+              - generic [ref=f9e91]:
+                - generic [ref=f9e92]:
+                  - generic [ref=f9e93]: Pesquisar
+                  - searchbox "Pesquisar" [ref=f9e99]
+                - button "Filtrar 0" [ref=f9e102] [cursor=pointer]:
+                  - generic [ref=f9e103]: Filtrar
+                  - generic [ref=f9e106]: "0"
+              - generic [ref=f9e110]:
+                - generic [ref=f9e114]:
+                  - generic [ref=f9e115]: Ordenar por
+                  - combobox "Ordenar por" [ref=f9e118]:
+                    - option "-" [selected]
+                    - option "Contrato"
+                    - option "Vigência"
+                - generic [ref=f9e119]:
+                  - generic [ref=f9e122]:
+                    - link "CT-001 Ativo Construtora Alfa Fiorino Entrega Assinatura pendente 03/08/2026 até 03/05/2027" [ref=f9e124] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/contracts/01a1a27e-7fac-726d-b797-697a7996e6b2/edit
+                      - generic [ref=f9e126]:
+                        - generic [ref=f9e128]:
+                          - generic [ref=f9e129]: CT-001
+                          - generic [ref=f9e137]: Ativo
+                        - generic [ref=f9e146]: Construtora Alfa
+                        - generic [ref=f9e156]: Fiorino Entrega
+                        - generic [ref=f9e167]: Assinatura pendente
+                        - generic [ref=f9e178]: 03/08/2026 até 03/05/2027
+                    - generic [ref=f9e189]:
+                      - link "Editar" [ref=f9e190] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/contracts/01a1a27e-7fac-726d-b797-697a7996e6b2/edit
+                      - button [ref=f9e197] [cursor=pointer]
+                  - generic [ref=f9e202]:
+                    - link "CT-002 Ativo Construtora Alfa Fiorino Entrega Assinatura pendente 03/08/2026 até 15/11/2026" [ref=f9e204] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/contracts/01a1a27e-8060-71ff-a51f-dba23fb2118f/edit
+                      - generic [ref=f9e206]:
+                        - generic [ref=f9e208]:
+                          - generic [ref=f9e209]: CT-002
+                          - generic [ref=f9e217]: Ativo
+                        - generic [ref=f9e226]: Construtora Alfa
+                        - generic [ref=f9e236]: Fiorino Entrega
+                        - generic [ref=f9e247]: Assinatura pendente
+                        - generic [ref=f9e258]: 03/08/2026 até 15/11/2026
+                    - generic [ref=f9e269]:
+                      - link "Editar" [ref=f9e270] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/contracts/01a1a27e-8060-71ff-a51f-dba23fb2118f/edit
+                      - button [ref=f9e277] [cursor=pointer]
+                  - generic [ref=f9e282]:
+                    - link "CT-003 Ativo Construtora Alfa Fiorino Entrega Assinatura pendente 03/08/2026 até 30/10/2026" [ref=f9e284] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/contracts/01a1a27e-80c3-70df-a239-1808dd756923/edit
+                      - generic [ref=f9e286]:
+                        - generic [ref=f9e288]:
+                          - generic [ref=f9e289]: CT-003
+                          - generic [ref=f9e297]: Ativo
+                        - generic [ref=f9e306]: Construtora Alfa
+                        - generic [ref=f9e316]: Fiorino Entrega
+                        - generic [ref=f9e327]: Assinatura pendente
+                        - generic [ref=f9e338]: 03/08/2026 até 30/10/2026
+                    - generic [ref=f9e349]:
+                      - link "Editar" [ref=f9e350] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/contracts/01a1a27e-80c3-70df-a239-1808dd756923/edit
+                      - button [ref=f9e357] [cursor=pointer]
+                  - generic [ref=f9e362]:
+                    - link "CT-004 Rascunho Construtora Alfa Fiorino Entrega Assinatura pendente 03/08/2026 até sem data final" [ref=f9e364] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/contracts/01a1a27e-811f-711e-a1a1-5da391552772/edit
+                      - generic [ref=f9e366]:
+                        - generic [ref=f9e368]:
+                          - generic [ref=f9e369]: CT-004
+                          - generic [ref=f9e377]: Rascunho
+                        - generic [ref=f9e386]: Construtora Alfa
+                        - generic [ref=f9e396]: Fiorino Entrega
+                        - generic [ref=f9e407]: Assinatura pendente
+                        - generic [ref=f9e418]: 03/08/2026 até sem data final
+                    - generic [ref=f9e429]:
+                      - link "Editar" [ref=f9e430] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/contracts/01a1a27e-811f-711e-a1a1-5da391552772/edit
+                      - button [ref=f9e437] [cursor=pointer]
+                  - generic [ref=f9e442]:
+                    - link "CT-005 Encerrado Construtora Alfa Fiorino Entrega Assinatura pendente 03/08/2026 até 03/10/2026" [ref=f9e444] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/contracts/01a1a27e-818e-70ad-a01e-5020022f5a97/edit
+                      - generic [ref=f9e446]:
+                        - generic [ref=f9e448]:
+                          - generic [ref=f9e449]: CT-005
+                          - generic [ref=f9e457]: Encerrado
+                        - generic [ref=f9e466]: Construtora Alfa
+                        - generic [ref=f9e476]: Fiorino Entrega
+                        - generic [ref=f9e487]: Assinatura pendente
+                        - generic [ref=f9e498]: 03/08/2026 até 03/10/2026
+                    - generic [ref=f9e509]:
+                      - link "Editar" [ref=f9e510] [cursor=pointer]:
+                        - /url: http://127.0.0.1:8099/admin/contracts/01a1a27e-818e-70ad-a01e-5020022f5a97/edit
+                      - button [ref=f9e517] [cursor=pointer]
+              - navigation "Paginação" [ref=f9e520]:
+                - generic [ref=f9e521]: Exibindo 1 a 5 de 5 resultados
+                - generic [ref=f9e524]:
+                  - generic [ref=f9e525]: por página
+                  - combobox "por página" [ref=f9e528]:
+                    - option "5" [selected]
+                    - option "10"
+                    - option "25"
+                    - option "50"
+                    - option "Todas"
+    - complementary [ref=f9e529]:
+      - generic [ref=f9e531]:
+        - link "Início" [ref=f9e533] [cursor=pointer]:
+          - /url: http://127.0.0.1:8099/admin/painel-controle
+          - generic [ref=f9e537]: Oravel
+        - button "Recolher barra lateral" [ref=f9e538] [cursor=pointer]
+      - navigation [ref=f9e542]:
+        - list
+        - list
+  - generic:
+    - status
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f9e543]

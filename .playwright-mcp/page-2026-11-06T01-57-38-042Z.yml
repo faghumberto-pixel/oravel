@@ -1,0 +1,542 @@
+- generic [active] [ref=f62e1]:
+  - generic [ref=f62e2]:
+    - generic [ref=f62e3]:
+      - navigation [ref=f62e5]:
+        - generic [ref=f62e9]:
+          - generic [ref=f62e10]: Locadora Demo
+          - generic [ref=f62e11]: "Módulo: Locadora"
+        - generic [ref=f62e12]:
+          - generic [ref=f62e15]:
+            - generic [ref=f62e16]: Pesquisa global
+            - searchbox "Pesquisa global" [ref=f62e22]
+          - button "⌘K" [ref=f62e24] [cursor=pointer]
+          - button "Abrir notificações" [ref=f62e30] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=f62e34] [cursor=pointer]:
+            - /url: http://127.0.0.1:8099/admin/caixa-de-email
+          - button "Menu do usuário" [ref=f62e39] [cursor=pointer]:
+            - img "Avatar de Administrador Demo" [ref=f62e40]
+        - link "Ajuda" [ref=f62e42] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=f62e46]:
+        - generic [ref=f62e51]:
+          - paragraph [ref=f62e52]: "Onde está cada equipamento e quanto ele custa de manutenção: custo em 12 meses, quem passou do limite, mapa, mapa de calor por mês, retorno por equipamento e alertas."
+          - generic [ref=f62e53]:
+            - generic [ref=f62e54]:
+              - heading "Custo de manutenção (12 meses) Mão de obra, material e logística das OS da frota" [level=3] [ref=f62e56]:
+                - text: Custo de manutenção (12 meses)
+                - generic [ref=f62e57]: Mão de obra, material e logística das OS da frota
+              - generic [ref=f62e58]: R$ 211 mil
+              - generic [ref=f62e59]: ↓ 10% nos últimos 6 meses vs. os 6 anteriores
+              - img "Evolução nos últimos meses" [ref=f62e61]
+            - generic [ref=f62e65]:
+              - heading "Considerar trocar ou vender Custo acumulado de manutenção acima do limite do valor do equipamento" [level=3] [ref=f62e67]:
+                - text: Considerar trocar ou vender
+                - generic [ref=f62e68]: Custo acumulado de manutenção acima do limite do valor do equipamento
+              - generic [ref=f62e69]:
+                - text: "3"
+                - emphasis [ref=f62e70]: equipamentos
+              - generic [ref=f62e71]: R$ 149 mil já gastos em manutenção
+            - generic [ref=f62e74]:
+              - heading "Pedem revisão Custo de manutenção já na faixa de atenção" [level=3] [ref=f62e76]:
+                - text: Pedem revisão
+                - generic [ref=f62e77]: Custo de manutenção já na faixa de atenção
+              - generic [ref=f62e78]:
+                - text: "1"
+                - emphasis [ref=f62e79]: equipamento
+              - generic [ref=f62e80]: R$ 50,7 mil em manutenção nos últimos 12 meses
+            - generic [ref=f62e83]:
+              - heading "Equipamentos localizados Com posição conhecida (rastreador, obra do contrato ou cadastro)" [level=3] [ref=f62e85]:
+                - text: Equipamentos localizados
+                - generic [ref=f62e86]: Com posição conhecida (rastreador, obra do contrato ou cadastro)
+              - generic [ref=f62e87]:
+                - text: "25"
+                - emphasis [ref=f62e88]: de 25
+              - generic [ref=f62e89]: 8 em obra · 5 com rastreador
+            - generic [ref=f62e92]:
+              - heading "Onde estão os equipamentos Cada ponto é um equipamento; a cor é a situação" [level=3] [ref=f62e94]:
+                - text: Onde estão os equipamentos
+                - generic [ref=f62e95]: Cada ponto é um equipamento; a cor é a situação
+              - generic [ref=f62e97]:
+                - generic:
+                  - generic:
+                    - img:
+                      - generic:
+                        - generic [ref=f62e98] [cursor=pointer]
+                        - generic [ref=f62e99] [cursor=pointer]
+                        - generic [ref=f62e100] [cursor=pointer]
+                        - generic [ref=f62e101] [cursor=pointer]
+                        - generic [ref=f62e102] [cursor=pointer]
+                        - generic [ref=f62e103] [cursor=pointer]
+                        - generic [ref=f62e104] [cursor=pointer]
+                        - generic [ref=f62e105] [cursor=pointer]
+                        - generic [ref=f62e106] [cursor=pointer]
+                        - generic [ref=f62e107] [cursor=pointer]
+                        - generic [ref=f62e108] [cursor=pointer]
+                        - generic [ref=f62e109] [cursor=pointer]
+                        - generic [ref=f62e110] [cursor=pointer]
+                        - generic [ref=f62e111] [cursor=pointer]
+                        - generic [ref=f62e112] [cursor=pointer]
+                        - generic [ref=f62e113] [cursor=pointer]
+                        - generic [ref=f62e114] [cursor=pointer]
+                        - generic [ref=f62e115] [cursor=pointer]
+                        - generic [ref=f62e116] [cursor=pointer]
+                        - generic [ref=f62e117] [cursor=pointer]
+                        - generic [ref=f62e118] [cursor=pointer]
+                        - generic [ref=f62e119] [cursor=pointer]
+                        - generic [ref=f62e120] [cursor=pointer]
+                        - generic [ref=f62e121] [cursor=pointer]
+                        - generic [ref=f62e122] [cursor=pointer]
+                - generic:
+                  - generic [ref=f62e123]:
+                    - button "Zoom in" [ref=f62e124] [cursor=pointer]: +
+                    - button "Zoom out" [ref=f62e125] [cursor=pointer]: −
+                  - generic [ref=f62e126]:
+                    - link "Leaflet" [ref=f62e127] [cursor=pointer]:
+                      - /url: https://leafletjs.com
+                    - text: "| Mapa © Esri, HERE, Garmin, OpenStreetMap"
+              - generic [ref=f62e132]:
+                - generic [ref=f62e133]: Locado
+                - generic [ref=f62e135]: Disponível
+                - generic [ref=f62e137]: Em manutenção
+                - link "Abrir o mapa completo →" [ref=f62e139] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/admin/localizacao-equipamentos
+            - generic [ref=f62e140]:
+              - heading "Mapa de calor do custo por equipamento Os 10 que mais gastaram, mês a mês (últimos 12 meses)" [level=3] [ref=f62e142]:
+                - text: Mapa de calor do custo por equipamento
+                - generic [ref=f62e143]: Os 10 que mais gastaram, mês a mês (últimos 12 meses)
+              - generic [ref=f62e145]:
+                - generic [ref=f62e146]:
+                  - generic [ref=f62e147]: dez
+                  - generic [ref=f62e148]: jan
+                  - generic [ref=f62e149]: fev
+                  - generic [ref=f62e150]: mar
+                  - generic [ref=f62e151]: abr
+                  - generic [ref=f62e152]: mai
+                  - generic [ref=f62e153]: jun
+                  - generic [ref=f62e154]: jul
+                  - generic [ref=f62e155]: ago
+                  - generic [ref=f62e156]: set
+                  - generic [ref=f62e157]: out
+                  - generic [ref=f62e158]: nov
+                  - generic [ref=f62e159]: Total
+                - generic [ref=f62e160]:
+                  - generic [ref=f62e161]:
+                    - strong [ref=f62e162]: PA-02 · Plataforma Articulada 12m Diesel
+                    - generic [ref=f62e163]: Plataforma Elevatória
+                  - 'generic "dez: R$ 9.447,98" [ref=f62e164]'
+                  - 'generic "jan: R$ 0,00" [ref=f62e165]'
+                  - 'generic "fev: R$ 7.394,49" [ref=f62e166]'
+                  - 'generic "mar: R$ 1.696,33" [ref=f62e167]'
+                  - 'generic "abr: R$ 6.217,83" [ref=f62e168]'
+                  - 'generic "mai: R$ 0,00" [ref=f62e169]'
+                  - 'generic "jun: R$ 6.599,32" [ref=f62e170]'
+                  - 'generic "jul: R$ 2.751,32" [ref=f62e171]'
+                  - 'generic "ago: R$ 4.073,09" [ref=f62e172]'
+                  - 'generic "set: R$ 0,00" [ref=f62e173]'
+                  - 'generic "out: R$ 12.249,68" [ref=f62e174]'
+                  - 'generic "nov: R$ 313,00" [ref=f62e175]'
+                  - generic [ref=f62e176]:
+                    - text: R$ 50,7 mil
+                    - generic [ref=f62e177]: revisar
+                - generic [ref=f62e178]:
+                  - generic [ref=f62e179]:
+                    - strong [ref=f62e180]: G-03 · Gerador 150 kVA Diesel
+                    - generic [ref=f62e181]: Gerador
+                  - 'generic "dez: R$ 1.523,98" [ref=f62e182]'
+                  - 'generic "jan: R$ 4.379,52" [ref=f62e183]'
+                  - 'generic "fev: R$ 4.512,26" [ref=f62e184]'
+                  - 'generic "mar: R$ 0,00" [ref=f62e185]'
+                  - 'generic "abr: R$ 9.291,39" [ref=f62e186]'
+                  - 'generic "mai: R$ 3.381,56" [ref=f62e187]'
+                  - 'generic "jun: R$ 0,00" [ref=f62e188]'
+                  - 'generic "jul: R$ 7.825,72" [ref=f62e189]'
+                  - 'generic "ago: R$ 4.395,68" [ref=f62e190]'
+                  - 'generic "set: R$ 0,00" [ref=f62e191]'
+                  - 'generic "out: R$ 5.475,10" [ref=f62e192]'
+                  - 'generic "nov: R$ 0,00" [ref=f62e193]'
+                  - generic [ref=f62e194]:
+                    - text: R$ 40,8 mil
+                    - generic [ref=f62e195]: trocar/vender
+                - generic [ref=f62e196]:
+                  - generic [ref=f62e197]:
+                    - strong [ref=f62e198]: PT-02 · Plataforma Tesoura 10m Elétrica
+                    - generic [ref=f62e199]: Plataforma Elevatória
+                  - 'generic "dez: R$ 1.432,12" [ref=f62e200]'
+                  - 'generic "jan: R$ 4.432,75" [ref=f62e201]'
+                  - 'generic "fev: R$ 0,00" [ref=f62e202]'
+                  - 'generic "mar: R$ 6.982,41" [ref=f62e203]'
+                  - 'generic "abr: R$ 0,00" [ref=f62e204]'
+                  - 'generic "mai: R$ 5.980,95" [ref=f62e205]'
+                  - 'generic "jun: R$ 0,00" [ref=f62e206]'
+                  - 'generic "jul: R$ 5.685,65" [ref=f62e207]'
+                  - 'generic "ago: R$ 4.856,98" [ref=f62e208]'
+                  - 'generic "set: R$ 0,00" [ref=f62e209]'
+                  - 'generic "out: R$ 3.953,41" [ref=f62e210]'
+                  - 'generic "nov: R$ 0,00" [ref=f62e211]'
+                  - generic [ref=f62e212]:
+                    - text: R$ 33,3 mil
+                    - generic [ref=f62e213]: trocar/vender
+                - generic [ref=f62e214]:
+                  - generic [ref=f62e215]:
+                    - strong [ref=f62e216]: C-02 · Compressor Parafuso 185 PCM
+                    - generic [ref=f62e217]: Compressor
+                  - 'generic "dez: R$ 1.215,83" [ref=f62e218]'
+                  - 'generic "jan: R$ 3.785,84" [ref=f62e219]'
+                  - 'generic "fev: R$ 0,00" [ref=f62e220]'
+                  - 'generic "mar: R$ 3.712,44" [ref=f62e221]'
+                  - 'generic "abr: R$ 1.117,07" [ref=f62e222]'
+                  - 'generic "mai: R$ 3.558,96" [ref=f62e223]'
+                  - 'generic "jun: R$ 0,00" [ref=f62e224]'
+                  - 'generic "jul: R$ 5.367,80" [ref=f62e225]'
+                  - 'generic "ago: R$ 2.679,45" [ref=f62e226]'
+                  - 'generic "set: R$ 0,00" [ref=f62e227]'
+                  - 'generic "out: R$ 4.250,29" [ref=f62e228]'
+                  - 'generic "nov: R$ 0,00" [ref=f62e229]'
+                  - generic [ref=f62e230]:
+                    - text: R$ 25,7 mil
+                    - generic [ref=f62e231]: trocar/vender
+                - generic [ref=f62e232]:
+                  - generic [ref=f62e233]:
+                    - strong [ref=f62e234]: G-05 · Gerador 180 kVA Diesel
+                    - generic [ref=f62e235]: Gerador
+                  - 'generic "dez: R$ 668,16" [ref=f62e236]'
+                  - 'generic "jan: R$ 0,00" [ref=f62e237]'
+                  - 'generic "fev: R$ 2.228,60" [ref=f62e238]'
+                  - 'generic "mar: R$ 875,32" [ref=f62e239]'
+                  - 'generic "abr: R$ 0,00" [ref=f62e240]'
+                  - 'generic "mai: R$ 0,00" [ref=f62e241]'
+                  - 'generic "jun: R$ 953,20" [ref=f62e242]'
+                  - 'generic "jul: R$ 0,00" [ref=f62e243]'
+                  - 'generic "ago: R$ 2.498,78" [ref=f62e244]'
+                  - 'generic "set: R$ 720,30" [ref=f62e245]'
+                  - 'generic "out: R$ 0,00" [ref=f62e246]'
+                  - 'generic "nov: R$ 269,00" [ref=f62e247]'
+                  - generic [ref=f62e248]: R$ 8,2 mil
+                - generic [ref=f62e249]:
+                  - generic [ref=f62e250]:
+                    - strong [ref=f62e251]: PA-03 · Plataforma Articulada 20m Diesel
+                    - generic [ref=f62e252]: Plataforma Elevatória
+                  - 'generic "dez: R$ 0,00" [ref=f62e253]'
+                  - 'generic "jan: R$ 1.623,00" [ref=f62e254]'
+                  - 'generic "fev: R$ 0,00" [ref=f62e255]'
+                  - 'generic "mar: R$ 0,00" [ref=f62e256]'
+                  - 'generic "abr: R$ 2.349,20" [ref=f62e257]'
+                  - 'generic "mai: R$ 0,00" [ref=f62e258]'
+                  - 'generic "jun: R$ 0,00" [ref=f62e259]'
+                  - 'generic "jul: R$ 1.853,20" [ref=f62e260]'
+                  - 'generic "ago: R$ 0,00" [ref=f62e261]'
+                  - 'generic "set: R$ 0,00" [ref=f62e262]'
+                  - 'generic "out: R$ 1.679,40" [ref=f62e263]'
+                  - 'generic "nov: R$ 0,00" [ref=f62e264]'
+                  - generic [ref=f62e265]: R$ 7,5 mil
+                - generic [ref=f62e266]:
+                  - generic [ref=f62e267]:
+                    - strong [ref=f62e268]: PT-05 · Plataforma Tesoura 10m Elétrica
+                    - generic [ref=f62e269]: Plataforma Elevatória
+                  - 'generic "dez: R$ 414,04" [ref=f62e270]'
+                  - 'generic "jan: R$ 0,00" [ref=f62e271]'
+                  - 'generic "fev: R$ 0,00" [ref=f62e272]'
+                  - 'generic "mar: R$ 571,40" [ref=f62e273]'
+                  - 'generic "abr: R$ 0,00" [ref=f62e274]'
+                  - 'generic "mai: R$ 2.285,00" [ref=f62e275]'
+                  - 'generic "jun: R$ 0,00" [ref=f62e276]'
+                  - 'generic "jul: R$ 667,88" [ref=f62e277]'
+                  - 'generic "ago: R$ 0,00" [ref=f62e278]'
+                  - 'generic "set: R$ 2.055,96" [ref=f62e279]'
+                  - 'generic "out: R$ 984,24" [ref=f62e280]'
+                  - 'generic "nov: R$ 0,00" [ref=f62e281]'
+                  - generic [ref=f62e282]: R$ 7,0 mil
+                - generic [ref=f62e283]:
+                  - generic [ref=f62e284]:
+                    - strong [ref=f62e285]: C-01 · Compressor Portátil 750 PCM
+                    - generic [ref=f62e286]: Compressor
+                  - 'generic "dez: R$ 408,32" [ref=f62e287]'
+                  - 'generic "jan: R$ 0,00" [ref=f62e288]'
+                  - 'generic "fev: R$ 0,00" [ref=f62e289]'
+                  - 'generic "mar: R$ 3.139,40" [ref=f62e290]'
+                  - 'generic "abr: R$ 1.710,44" [ref=f62e291]'
+                  - 'generic "mai: R$ 0,00" [ref=f62e292]'
+                  - 'generic "jun: R$ 0,00" [ref=f62e293]'
+                  - 'generic "jul: R$ 806,84" [ref=f62e294]'
+                  - 'generic "ago: R$ 0,00" [ref=f62e295]'
+                  - 'generic "set: R$ 689,40" [ref=f62e296]'
+                  - 'generic "out: R$ 0,00" [ref=f62e297]'
+                  - 'generic "nov: R$ 0,00" [ref=f62e298]'
+                  - generic [ref=f62e299]: R$ 6,8 mil
+                - generic [ref=f62e300]:
+                  - generic [ref=f62e301]:
+                    - strong [ref=f62e302]: G-02 · Gerador 80 kVA Diesel
+                    - generic [ref=f62e303]: Gerador
+                  - 'generic "dez: R$ 525,76" [ref=f62e304]'
+                  - 'generic "jan: R$ 0,00" [ref=f62e305]'
+                  - 'generic "fev: R$ 0,00" [ref=f62e306]'
+                  - 'generic "mar: R$ 485,10" [ref=f62e307]'
+                  - 'generic "abr: R$ 1.817,50" [ref=f62e308]'
+                  - 'generic "mai: R$ 0,00" [ref=f62e309]'
+                  - 'generic "jun: R$ 0,00" [ref=f62e310]'
+                  - 'generic "jul: R$ 465,30" [ref=f62e311]'
+                  - 'generic "ago: R$ 1.666,00" [ref=f62e312]'
+                  - 'generic "set: R$ 0,00" [ref=f62e313]'
+                  - 'generic "out: R$ 631,00" [ref=f62e314]'
+                  - 'generic "nov: R$ 0,00" [ref=f62e315]'
+                  - generic [ref=f62e316]: R$ 5,6 mil
+                - generic [ref=f62e317]:
+                  - generic [ref=f62e318]:
+                    - strong [ref=f62e319]: PA-01 · Plataforma Articulada 15m Diesel
+                    - generic [ref=f62e320]: Plataforma Elevatória
+                  - 'generic "dez: R$ 0,00" [ref=f62e321]'
+                  - 'generic "jan: R$ 1.063,25" [ref=f62e322]'
+                  - 'generic "fev: R$ 0,00" [ref=f62e323]'
+                  - 'generic "mar: R$ 0,00" [ref=f62e324]'
+                  - 'generic "abr: R$ 1.404,25" [ref=f62e325]'
+                  - 'generic "mai: R$ 0,00" [ref=f62e326]'
+                  - 'generic "jun: R$ 0,00" [ref=f62e327]'
+                  - 'generic "jul: R$ 741,80" [ref=f62e328]'
+                  - 'generic "ago: R$ 0,00" [ref=f62e329]'
+                  - 'generic "set: R$ 0,00" [ref=f62e330]'
+                  - 'generic "out: R$ 1.754,95" [ref=f62e331]'
+                  - 'generic "nov: R$ 0,00" [ref=f62e332]'
+                  - generic [ref=f62e333]: R$ 5,0 mil
+              - generic [ref=f62e334]:
+                - generic [ref=f62e335]: Menos
+                - generic [ref=f62e337]: Mais custo no mês
+            - generic [ref=f62e338]:
+              - heading "Quanto do valor já foi gasto em manutenção Custo acumulado ÷ valor de aquisição, com as linhas de revisar e de trocar ou vender" [level=3] [ref=f62e340]:
+                - text: Quanto do valor já foi gasto em manutenção
+                - generic [ref=f62e341]: Custo acumulado ÷ valor de aquisição, com as linhas de revisar e de trocar ou vender
+              - generic [ref=f62e342]:
+                - generic [ref=f62e344]:
+                  - generic [ref=f62e345]:
+                    - strong [ref=f62e346]: C-02 · Compressor Parafuso 185 PCM
+                    - generic [ref=f62e347]: R$ 38,1 mil de R$ 42,0 mil
+                  - generic [ref=f62e348]: 91%
+                - generic [ref=f62e354]:
+                  - generic [ref=f62e355]:
+                    - strong [ref=f62e356]: G-03 · Gerador 150 kVA Diesel
+                    - generic [ref=f62e357]: R$ 61,3 mil de R$ 95,0 mil
+                  - generic [ref=f62e358]: 65%
+                - generic [ref=f62e364]:
+                  - generic [ref=f62e365]:
+                    - strong [ref=f62e366]: PT-02 · Plataforma Tesoura 10m Elétrica
+                    - generic [ref=f62e367]: R$ 49,2 mil de R$ 78,0 mil
+                  - generic [ref=f62e368]: 63%
+                - generic [ref=f62e374]:
+                  - generic [ref=f62e375]:
+                    - strong [ref=f62e376]: PA-02 · Plataforma Articulada 12m Diesel
+                    - generic [ref=f62e377]: R$ 66,7 mil de R$ 120 mil
+                  - generic [ref=f62e378]: 56%
+                - generic [ref=f62e384]:
+                  - generic [ref=f62e385]:
+                    - strong [ref=f62e386]: FE-05 · Vibrador de Concreto 2"
+                    - generic [ref=f62e387]: R$ 923 de R$ 3,9 mil
+                  - generic [ref=f62e388]: 24%
+                - generic [ref=f62e394]:
+                  - generic [ref=f62e395]:
+                    - strong [ref=f62e396]: C-03 · Compressor Pistão 20 pés
+                    - generic [ref=f62e397]: R$ 2,0 mil de R$ 9,8 mil
+                  - generic [ref=f62e398]: 20%
+                - generic [ref=f62e404]:
+                  - generic [ref=f62e405]:
+                    - strong [ref=f62e406]: C-04 · Compressor Pistão 10 pés
+                    - generic [ref=f62e407]: R$ 840 de R$ 4,2 mil
+                  - generic [ref=f62e408]: 20%
+                - generic [ref=f62e414]:
+                  - generic [ref=f62e415]:
+                    - strong [ref=f62e416]: FE-03 · Serra Mármore 110 mm
+                    - generic [ref=f62e417]: R$ 250 de R$ 1,3 mil
+                  - generic [ref=f62e418]: 20%
+                - paragraph [ref=f62e423]: "Linhas verticais: 40% (revisar) e 60% (trocar ou vender)."
+            - generic [ref=f62e424]:
+              - heading "Situação da frota Quantos equipamentos em cada situação" [level=3] [ref=f62e426]:
+                - text: Situação da frota
+                - generic [ref=f62e427]: Quantos equipamentos em cada situação
+              - generic [ref=f62e428]:
+                - img "Gráfico em anel" [ref=f62e429]:
+                  - 'generic "Locado: 13" [ref=f62e431]'
+                  - 'generic "Disponível: 8" [ref=f62e432]'
+                  - 'generic "Em manutenção: 4" [ref=f62e433]'
+                  - generic [ref=f62e434]: "25"
+                  - generic [ref=f62e435]: equipamentos
+                - list [ref=f62e436]:
+                  - listitem [ref=f62e437]:
+                    - generic [ref=f62e439]: Locado
+                    - generic [ref=f62e440]: 52%
+                  - listitem [ref=f62e441]:
+                    - generic [ref=f62e443]: Disponível
+                    - generic [ref=f62e444]: 32%
+                  - listitem [ref=f62e445]:
+                    - generic [ref=f62e447]: Em manutenção
+                    - generic [ref=f62e448]: 16%
+            - generic [ref=f62e449]:
+              - 'heading "Para onde vai o dinheiro Custo por tipo de manutenção (12 meses): preventiva custa menos que corretiva" [level=3] [ref=f62e451]':
+                - text: Para onde vai o dinheiro
+                - generic [ref=f62e452]: "Custo por tipo de manutenção (12 meses): preventiva custa menos que corretiva"
+              - generic [ref=f62e453]:
+                - img "Gráfico em anel" [ref=f62e454]:
+                  - 'generic "Corretiva: 103867.81" [ref=f62e456]'
+                  - 'generic "Preventiva: 64535.47" [ref=f62e457]'
+                  - 'generic "Emergência: 42589.9" [ref=f62e458]'
+                  - generic [ref=f62e459]: R$ 211 mil
+                  - generic [ref=f62e460]: 12 meses
+                - list [ref=f62e461]:
+                  - listitem [ref=f62e462]:
+                    - generic [ref=f62e464]: Corretiva
+                    - generic [ref=f62e465]: 49%
+                  - listitem [ref=f62e466]:
+                    - generic [ref=f62e468]: Preventiva
+                    - generic [ref=f62e469]: 31%
+                  - listitem [ref=f62e470]:
+                    - generic [ref=f62e472]: Emergência
+                    - generic [ref=f62e473]: 20%
+            - generic [ref=f62e474]:
+              - heading "Quem dá menos retorno Receita de locação menos manutenção, no histórico do equipamento" [level=3] [ref=f62e476]:
+                - text: Quem dá menos retorno
+                - generic [ref=f62e477]: Receita de locação menos manutenção, no histórico do equipamento
+              - table [ref=f62e479]:
+                - rowgroup [ref=f62e480]:
+                  - row [ref=f62e481]:
+                    - columnheader "Equipamento" [ref=f62e482]
+                    - columnheader "Receita" [ref=f62e483]
+                    - columnheader "Manutenção" [ref=f62e484]
+                    - columnheader "Saldo" [ref=f62e485]
+                - rowgroup [ref=f62e486]:
+                  - row [ref=f62e487]:
+                    - cell "C-02 · Compressor Parafuso 185 PCM" [ref=f62e488]
+                    - cell "R$ 27,6 mil" [ref=f62e489]
+                    - cell "R$ 38,1 mil" [ref=f62e490]
+                    - cell "-R$ 10,5 mil" [ref=f62e491]
+                  - row [ref=f62e493]:
+                    - cell "G-03 · Gerador 150 kVA Diesel" [ref=f62e494]
+                    - cell "R$ 56,4 mil" [ref=f62e495]
+                    - cell "R$ 61,3 mil" [ref=f62e496]
+                    - cell "-R$ 4,9 mil" [ref=f62e497]
+                  - row [ref=f62e499]:
+                    - cell "PA-02 · Plataforma Articulada 12m Diesel" [ref=f62e500]
+                    - cell "R$ 61,9 mil" [ref=f62e501]
+                    - cell "R$ 66,7 mil" [ref=f62e502]
+                    - cell "-R$ 4,8 mil" [ref=f62e503]
+                  - row [ref=f62e505]:
+                    - cell "C-04 · Compressor Pistão 10 pés" [ref=f62e506]
+                    - cell "R$ 2,2 mil" [ref=f62e507]
+                    - cell "R$ 840" [ref=f62e508]
+                    - cell "R$ 1,4 mil" [ref=f62e509]
+                  - row [ref=f62e511]:
+                    - cell "FE-03 · Serra Mármore 110 mm" [ref=f62e512]
+                    - cell "R$ 2,1 mil" [ref=f62e513]
+                    - cell "R$ 250" [ref=f62e514]
+                    - cell "R$ 1,8 mil" [ref=f62e515]
+                  - row [ref=f62e517]:
+                    - cell "FE-05 · Vibrador de Concreto 2\"" [ref=f62e518]
+                    - cell "R$ 3,6 mil" [ref=f62e519]
+                    - cell "R$ 923" [ref=f62e520]
+                    - cell "R$ 2,7 mil" [ref=f62e521]
+            - generic [ref=f62e523]:
+              - heading "O que pede atenção Custo alto, locações acabando e equipamentos parados na oficina" [level=3] [ref=f62e525]:
+                - text: O que pede atenção
+                - generic [ref=f62e526]: Custo alto, locações acabando e equipamentos parados na oficina
+              - generic [ref=f62e527]:
+                - generic [ref=f62e528]:
+                  - generic [ref=f62e529]: Trocar/vender
+                  - generic [ref=f62e530]: C-02 · Compressor Parafuso 185 PCM já custou 91% do valor (R$ 38,1 mil de R$ 42,0 mil).
+                - generic [ref=f62e531]:
+                  - generic [ref=f62e532]: Trocar/vender
+                  - generic [ref=f62e533]: G-03 · Gerador 150 kVA Diesel já custou 65% do valor (R$ 61,3 mil de R$ 95,0 mil).
+                - generic [ref=f62e534]:
+                  - generic [ref=f62e535]: Trocar/vender
+                  - generic [ref=f62e536]: PT-02 · Plataforma Tesoura 10m Elétrica já custou 63% do valor (R$ 49,2 mil de R$ 78,0 mil).
+                - generic [ref=f62e537]:
+                  - generic [ref=f62e538]: Revisar
+                  - generic [ref=f62e539]: "PA-02 · Plataforma Articulada 12m Diesel está em 56% do valor: vale revisar o equipamento."
+    - complementary [ref=f62e540]:
+      - generic [ref=f62e542]:
+        - link "Início" [ref=f62e544] [cursor=pointer]:
+          - /url: http://127.0.0.1:8099/admin/painel-controle
+          - generic [ref=f62e548]: Oravel
+        - button "Recolher barra lateral" [ref=f62e549] [cursor=pointer]
+      - navigation [ref=f62e553]:
+        - list [ref=f62e554]:
+          - listitem [ref=f62e555]:
+            - link "Início" [ref=f62e556] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/admin/painel-controle
+          - listitem [ref=f62e561]:
+            - link "Academia Oravel" [ref=f62e562] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/academia
+        - list [ref=f62e566]:
+          - listitem [ref=f62e567]:
+            - generic [ref=f62e568] [cursor=pointer]:
+              - generic [ref=f62e571]: Ativos
+              - button "Ativos" [ref=f62e572]
+          - listitem [ref=f62e576]:
+            - generic [ref=f62e577] [cursor=pointer]:
+              - generic [ref=f62e580]: Conformidade NR-13
+              - button "Conformidade NR-13" [ref=f62e581]
+          - listitem [ref=f62e585]:
+            - generic [ref=f62e586] [cursor=pointer]:
+              - generic [ref=f62e589]: Gestão de Frota
+              - button "Gestão de Frota" [ref=f62e590]
+          - listitem [ref=f62e594]:
+            - generic [ref=f62e595] [cursor=pointer]:
+              - generic [ref=f62e598]: Inteligência de Ativos
+              - button "Inteligência de Ativos" [expanded] [ref=f62e599]
+            - list [ref=f62e603]:
+              - listitem [ref=f62e604]:
+                - link "Custo de Manutenção" [ref=f62e605] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/admin/custo-manutencao-equipamentos
+              - listitem [ref=f62e609]:
+                - link "Localização dos Equipamentos" [ref=f62e610] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/admin/localizacao-equipamentos
+          - listitem [ref=f62e615]:
+            - generic [ref=f62e616] [cursor=pointer]:
+              - generic [ref=f62e619]: Materiais e Peças
+              - button "Materiais e Peças" [ref=f62e620]
+          - listitem [ref=f62e624]:
+            - generic [ref=f62e625] [cursor=pointer]:
+              - generic [ref=f62e628]: Itens Agregados
+              - button "Itens Agregados" [ref=f62e629]
+          - listitem [ref=f62e633]:
+            - generic [ref=f62e634] [cursor=pointer]:
+              - generic [ref=f62e637]: EPI
+              - button "EPI" [ref=f62e638]
+          - listitem [ref=f62e642]:
+            - generic [ref=f62e643] [cursor=pointer]:
+              - generic [ref=f62e646]: Comercial
+              - button "Comercial" [ref=f62e647]
+          - listitem [ref=f62e651]:
+            - generic [ref=f62e652] [cursor=pointer]:
+              - generic [ref=f62e655]: Configurações
+              - button "Configurações" [ref=f62e656]
+          - listitem [ref=f62e660]:
+            - generic [ref=f62e661] [cursor=pointer]:
+              - generic [ref=f62e664]: Departamento Pessoal
+              - button "Departamento Pessoal" [ref=f62e665]
+          - listitem [ref=f62e669]:
+            - generic [ref=f62e670] [cursor=pointer]:
+              - generic [ref=f62e673]: Equipe
+              - button "Equipe" [ref=f62e674]
+          - listitem [ref=f62e678]:
+            - generic [ref=f62e679] [cursor=pointer]:
+              - generic [ref=f62e682]: Financeiro
+              - button "Financeiro" [ref=f62e683]
+          - listitem [ref=f62e687]:
+            - generic [ref=f62e688] [cursor=pointer]:
+              - generic [ref=f62e691]: Logística
+              - button "Logística" [ref=f62e692]
+          - listitem [ref=f62e696]:
+            - generic [ref=f62e697] [cursor=pointer]:
+              - generic [ref=f62e700]: Manutenção
+              - button "Manutenção" [ref=f62e701]
+          - listitem [ref=f62e705]:
+            - generic [ref=f62e706] [cursor=pointer]:
+              - generic [ref=f62e709]: PMP
+              - button "PMP" [ref=f62e710]
+          - listitem [ref=f62e714]:
+            - generic [ref=f62e715] [cursor=pointer]:
+              - generic [ref=f62e718]: Relatórios
+              - button "Relatórios" [ref=f62e719]
+  - generic:
+    - status
+  - button "💬 Mensagens" [ref=f62e725] [cursor=pointer]:
+    - generic [ref=f62e726]:
+      - generic [ref=f62e727]: 💬
+      - generic [ref=f62e728]: Mensagens
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f62e732]

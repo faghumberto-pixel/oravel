@@ -30,47 +30,51 @@ return new class extends Migration
         // ativo. Sem certificacao valida, a linha entra bloqueada em vez de
         // ser rejeitada -- preserva o historico de "tentativa negada" pra
         // auditoria, ver artefato "Organograma Padrão Oravel" e RFC HR Field.
-        DB::unprepared(<<<'SQL'
-            CREATE OR REPLACE FUNCTION enforce_equipment_allocation_nr_block()
-            RETURNS TRIGGER AS $$
-            DECLARE
-                missing_norma TEXT;
-            BEGIN
-                IF NEW.blocked = false THEN
-                    SELECT req.norma INTO missing_norma
-                    FROM nr_requirements_by_category req
-                    JOIN assets a ON a.asset_category_id = req.asset_category_id
-                    WHERE a.id = NEW.asset_id
-                      AND req.tenant_id = NEW.tenant_id
-                      AND NOT EXISTS (
-                          SELECT 1 FROM employee_certifications ec
-                          WHERE ec.employee_id = NEW.employee_id
-                            AND ec.norma = req.norma
-                            AND ec.data_validade >= CURRENT_DATE
-                      )
-                    LIMIT 1;
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::unprepared(<<<'SQL'
+                CREATE OR REPLACE FUNCTION enforce_equipment_allocation_nr_block()
+                RETURNS TRIGGER AS $$
+                DECLARE
+                    missing_norma TEXT;
+                BEGIN
+                    IF NEW.blocked = false THEN
+                        SELECT req.norma INTO missing_norma
+                        FROM nr_requirements_by_category req
+                        JOIN assets a ON a.asset_category_id = req.asset_category_id
+                        WHERE a.id = NEW.asset_id
+                          AND req.tenant_id = NEW.tenant_id
+                          AND NOT EXISTS (
+                              SELECT 1 FROM employee_certifications ec
+                              WHERE ec.employee_id = NEW.employee_id
+                                AND ec.norma = req.norma
+                                AND ec.data_validade >= CURRENT_DATE
+                          )
+                        LIMIT 1;
 
-                    IF missing_norma IS NOT NULL THEN
-                        NEW.blocked := true;
-                        NEW.blocked_reason := 'certificacao_ausente_ou_vencida:' || missing_norma;
+                        IF missing_norma IS NOT NULL THEN
+                            NEW.blocked := true;
+                            NEW.blocked_reason := 'certificacao_ausente_ou_vencida:' || missing_norma;
+                        END IF;
                     END IF;
-                END IF;
 
-                RETURN NEW;
-            END;
-            $$ LANGUAGE plpgsql;
+                    RETURN NEW;
+                END;
+                $$ LANGUAGE plpgsql;
 
-            CREATE TRIGGER trg_equipment_allocation_nr_block
-                BEFORE INSERT OR UPDATE ON equipment_allocations
-                FOR EACH ROW
-                EXECUTE FUNCTION enforce_equipment_allocation_nr_block();
-        SQL);
+                CREATE TRIGGER trg_equipment_allocation_nr_block
+                    BEFORE INSERT OR UPDATE ON equipment_allocations
+                    FOR EACH ROW
+                    EXECUTE FUNCTION enforce_equipment_allocation_nr_block();
+            SQL);
+        }
     }
 
     public function down(): void
     {
-        DB::unprepared('DROP TRIGGER IF EXISTS trg_equipment_allocation_nr_block ON equipment_allocations');
-        DB::unprepared('DROP FUNCTION IF EXISTS enforce_equipment_allocation_nr_block');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::unprepared('DROP TRIGGER IF EXISTS trg_equipment_allocation_nr_block ON equipment_allocations');
+            DB::unprepared('DROP FUNCTION IF EXISTS enforce_equipment_allocation_nr_block');
+        }
         Schema::dropIfExists('equipment_allocations');
     }
 };

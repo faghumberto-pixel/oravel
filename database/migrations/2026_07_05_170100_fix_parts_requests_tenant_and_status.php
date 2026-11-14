@@ -20,18 +20,22 @@ return new class extends Migration
             $table->foreignUuid('tenant_id')->nullable()->after('id')->constrained()->cascadeOnDelete();
         });
 
-        DB::statement('UPDATE parts_requests pr SET tenant_id = mo.tenant_id FROM maintenance_orders mo WHERE mo.id = pr.maintenance_order_id');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('UPDATE parts_requests pr SET tenant_id = mo.tenant_id FROM maintenance_orders mo WHERE mo.id = pr.maintenance_order_id');
 
-        DB::statement('ALTER TABLE parts_requests ALTER COLUMN tenant_id SET NOT NULL');
+            DB::statement('ALTER TABLE parts_requests ALTER COLUMN tenant_id SET NOT NULL');
 
-        DB::statement('ALTER TABLE parts_requests DROP CONSTRAINT parts_requests_status_check');
-        DB::statement("ALTER TABLE parts_requests ADD CONSTRAINT parts_requests_status_check CHECK (status::text = ANY (ARRAY['pendente'::character varying, 'pedida'::character varying, 'entregue'::character varying]::text[]))");
+            DB::statement('ALTER TABLE parts_requests DROP CONSTRAINT parts_requests_status_check');
+            DB::statement("ALTER TABLE parts_requests ADD CONSTRAINT parts_requests_status_check CHECK (status::text = ANY (ARRAY['pendente'::character varying, 'pedida'::character varying, 'entregue'::character varying]::text[]))");
+        }
     }
 
     public function down(): void
     {
-        DB::statement('ALTER TABLE parts_requests DROP CONSTRAINT parts_requests_status_check');
-        DB::statement("ALTER TABLE parts_requests ADD CONSTRAINT parts_requests_status_check CHECK (status::text = ANY (ARRAY['pendente'::character varying, 'entregue'::character varying]::text[]))");
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('ALTER TABLE parts_requests DROP CONSTRAINT parts_requests_status_check');
+            DB::statement("ALTER TABLE parts_requests ADD CONSTRAINT parts_requests_status_check CHECK (status::text = ANY (ARRAY['pendente'::character varying, 'entregue'::character varying]::text[]))");
+        }
 
         Schema::table('parts_requests', function (Blueprint $table) {
             $table->dropConstrainedForeignId('tenant_id');

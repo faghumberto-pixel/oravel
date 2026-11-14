@@ -1,0 +1,535 @@
+- generic [active] [ref=f20e1]:
+  - generic [ref=f20e2]:
+    - generic [ref=f20e3]:
+      - navigation [ref=f20e5]:
+        - generic [ref=f20e9]:
+          - generic [ref=f20e10]: Locadora Demo
+          - generic [ref=f20e11]: "Módulo: Locadora"
+        - generic [ref=f20e12]:
+          - generic [ref=f20e15]:
+            - generic [ref=f20e16]: Pesquisa global
+            - searchbox "Pesquisa global" [ref=f20e22]
+          - button "⌘K" [ref=f20e24] [cursor=pointer]
+          - button "Abrir notificações" [ref=f20e729] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=f20e28] [cursor=pointer]:
+            - /url: http://127.0.0.1:8099/admin/caixa-de-email
+          - button "Menu do usuário" [ref=f20e33] [cursor=pointer]:
+            - img "Avatar de Administrador Demo" [ref=f20e34]
+        - link "Ajuda" [ref=f20e36] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=f20e40]:
+        - generic [ref=f20e42]:
+          - generic [ref=f20e43]:
+            - generic [ref=f20e44]:
+              - navigation [ref=f20e45]:
+                - list [ref=f20e46]:
+                  - listitem [ref=f20e47]:
+                    - link "Ativos" [ref=f20e48] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets
+                  - listitem [ref=f20e49]:
+                    - generic [ref=f20e52]: Editar
+              - heading "Editar Ativo" [level=1] [ref=f20e53]
+            - generic [ref=f20e55]:
+              - link "Imprimir cadastro" [ref=f20e56] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/print/ativo/b20ee8cf-87cd-4e15-9273-a48f325e690a/cadastro
+              - link "Imprimir Etiqueta" [ref=f20e60] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/app/locadora-demo/assets/b20ee8cf-87cd-4e15-9273-a48f325e690a/print-qr
+              - button "Excluir" [ref=f20e64] [cursor=pointer]
+          - generic [ref=f20e67]:
+            - generic [ref=f20e68]:
+              - generic [ref=f20e71]:
+                - tablist "Detalhes do Ativo" [ref=f20e72]:
+                  - tab "Informações Gerais" [ref=f20e73] [cursor=pointer]
+                  - tab "Localização" [ref=f20e77] [cursor=pointer]
+                  - tab "Rastreabilidade e QR Code" [ref=f20e81] [cursor=pointer]
+                  - tab "Histórico de Trabalho" [ref=f20e85] [cursor=pointer]
+                  - tab "Custos e histórico" [ref=f20e89] [cursor=pointer]
+                  - tab "NR-13" [ref=f20e93] [cursor=pointer]
+                  - tab "Logs de Auditoria" [ref=f20e97] [cursor=pointer]
+                  - tab "Checklist de Verificação" [ref=f20e101] [cursor=pointer]
+                - option "Selecione uma opção"
+                - option "Disponível"
+                - option "Locado" [selected]
+                - option "Em Manutenção"
+                - option "Em Operação"
+                - option "Aguardando Triagem"
+                - tabpanel [ref=f20e733]:
+                  - generic [ref=f20e740]:
+                    - generic [ref=f20e741]:
+                      - generic [ref=f20e742]: Considerar trocar ou vender
+                      - generic [ref=f20e743]: O custo acumulado de manutenção (R$ 49.200,00) equivale a 63% do valor de aquisição (R$ 78.000,00). Revisar a partir de 40% e considerar trocar ou vender a partir de 60%.
+                    - generic [ref=f20e744]:
+                      - generic [ref=f20e745]:
+                        - generic [ref=f20e746]: Custo acumulado
+                        - generic [ref=f20e747]: R$ 49.200,00
+                        - generic [ref=f20e748]: 15 ordens de serviço
+                      - generic [ref=f20e749]:
+                        - generic [ref=f20e750]: "% do valor de aquisição"
+                        - generic [ref=f20e751]: 63%
+                        - generic [ref=f20e752]: "Valor atual (depreciado): R$ 32.332,74"
+                      - generic [ref=f20e753]:
+                        - generic [ref=f20e754]: Custo médio por OS
+                        - generic [ref=f20e755]: R$ 3.280,00
+                        - generic [ref=f20e756]: 6 preventivas · 9 corretivas
+                      - generic [ref=f20e757]:
+                        - generic [ref=f20e758]: Retrabalho
+                        - generic [ref=f20e759]: "3"
+                        - generic [ref=f20e760]: Nenhuma OS em aberto
+                    - generic [ref=f20e761]:
+                      - generic [ref=f20e762]:
+                        - generic [ref=f20e763]: Mão de obra
+                        - generic [ref=f20e764]: R$ 15.397,48
+                      - generic [ref=f20e765]:
+                        - generic [ref=f20e766]: Material
+                        - generic [ref=f20e767]: R$ 32.285,88
+                      - generic [ref=f20e768]:
+                        - generic [ref=f20e769]: Logística
+                        - generic [ref=f20e770]: R$ 1.516,64
+                      - generic [ref=f20e771]:
+                        - generic [ref=f20e772]: Últimos 6 meses
+                        - generic [ref=f20e773]: R$ 20.476,99 (+28% vs. os 6 anteriores)
+                    - generic [ref=f20e774]:
+                      - heading "Custo mês a mês (últimos 18 meses)" [level=3] [ref=f20e775]
+                      - table [ref=f20e777]:
+                        - rowgroup [ref=f20e778]:
+                          - row [ref=f20e779]:
+                            - columnheader "Mês" [ref=f20e780]
+                            - columnheader "OS" [ref=f20e781]
+                            - columnheader "Mão de obra" [ref=f20e782]
+                            - columnheader "Material" [ref=f20e783]
+                            - columnheader "Logística" [ref=f20e784]
+                            - columnheader "Total do mês" [ref=f20e785]
+                            - columnheader [ref=f20e786]
+                            - columnheader "Acumulado" [ref=f20e787]
+                        - rowgroup [ref=f20e788]:
+                          - row [ref=f20e789]:
+                            - cell "jun/25" [ref=f20e790]
+                            - cell "1" [ref=f20e791]
+                            - cell "R$ 478,80" [ref=f20e792]
+                            - cell "R$ 1.194,05" [ref=f20e793]
+                            - cell "—" [ref=f20e794]
+                            - cell "R$ 1.672,85" [ref=f20e795]
+                            - cell [ref=f20e796]
+                            - cell "R$ 1.672,85" [ref=f20e799]
+                          - row [ref=f20e800]:
+                            - cell "jul/25" [ref=f20e801]
+                            - cell "1" [ref=f20e802]
+                            - cell "R$ 1.784,12" [ref=f20e803]
+                            - cell "R$ 4.378,18" [ref=f20e804]
+                            - cell "—" [ref=f20e805]
+                            - cell "R$ 6.162,30" [ref=f20e806]
+                            - cell [ref=f20e807]
+                            - cell "R$ 7.835,15" [ref=f20e810]
+                          - row [ref=f20e811]:
+                            - cell "ago/25" [ref=f20e812]
+                            - cell "1" [ref=f20e813]
+                            - cell "R$ 700,81" [ref=f20e814]
+                            - cell "R$ 1.027,14" [ref=f20e815]
+                            - cell "—" [ref=f20e816]
+                            - cell "R$ 1.727,95" [ref=f20e817]
+                            - cell [ref=f20e818]
+                            - cell "R$ 9.563,10" [ref=f20e821]
+                          - row [ref=f20e822]:
+                            - cell "set/25" [ref=f20e823]
+                            - cell "1" [ref=f20e824]
+                            - cell "R$ 952,24" [ref=f20e825]
+                            - cell "R$ 1.521,45" [ref=f20e826]
+                            - cell "R$ 671,39" [ref=f20e827]
+                            - cell "R$ 3.145,08" [ref=f20e828]
+                            - cell [ref=f20e829]
+                            - cell "R$ 12.708,18" [ref=f20e832]
+                          - row [ref=f20e833]:
+                            - cell "out/25" [ref=f20e834]
+                            - cell "—" [ref=f20e835]
+                            - cell "—" [ref=f20e836]
+                            - cell "—" [ref=f20e837]
+                            - cell "—" [ref=f20e838]
+                            - cell "—" [ref=f20e839]
+                            - cell [ref=f20e840]
+                            - cell "R$ 12.708,18" [ref=f20e841]
+                          - row [ref=f20e842]:
+                            - cell "nov/25" [ref=f20e843]
+                            - cell "1" [ref=f20e844]
+                            - cell "R$ 684,76" [ref=f20e845]
+                            - cell "R$ 2.482,79" [ref=f20e846]
+                            - cell "—" [ref=f20e847]
+                            - cell "R$ 3.167,55" [ref=f20e848]
+                            - cell [ref=f20e849]
+                            - cell "R$ 15.875,73" [ref=f20e852]
+                          - row [ref=f20e853]:
+                            - cell "dez/25" [ref=f20e854]
+                            - cell "1" [ref=f20e855]
+                            - cell "R$ 494,85" [ref=f20e856]
+                            - cell "R$ 937,27" [ref=f20e857]
+                            - cell "—" [ref=f20e858]
+                            - cell "R$ 1.432,12" [ref=f20e859]
+                            - cell [ref=f20e860]
+                            - cell "R$ 17.307,85" [ref=f20e863]
+                          - row [ref=f20e864]:
+                            - cell "jan/26" [ref=f20e865]
+                            - cell "1" [ref=f20e866]
+                            - cell "R$ 1.078,50" [ref=f20e867]
+                            - cell "R$ 3.354,25" [ref=f20e868]
+                            - cell "—" [ref=f20e869]
+                            - cell "R$ 4.432,75" [ref=f20e870]
+                            - cell [ref=f20e871]
+                            - cell "R$ 21.740,60" [ref=f20e874]
+                          - row [ref=f20e875]:
+                            - cell "fev/26" [ref=f20e876]
+                            - cell "—" [ref=f20e877]
+                            - cell "—" [ref=f20e878]
+                            - cell "—" [ref=f20e879]
+                            - cell "—" [ref=f20e880]
+                            - cell "—" [ref=f20e881]
+                            - cell [ref=f20e882]
+                            - cell "R$ 21.740,60" [ref=f20e883]
+                          - row [ref=f20e884]:
+                            - cell "mar/26" [ref=f20e885]
+                            - cell "2" [ref=f20e886]
+                            - cell "R$ 1.414,99" [ref=f20e887]
+                            - cell "R$ 5.262,49" [ref=f20e888]
+                            - cell "R$ 304,93" [ref=f20e889]
+                            - cell "R$ 6.982,41" [ref=f20e890]
+                            - cell [ref=f20e891]
+                            - cell "R$ 28.723,01" [ref=f20e894]
+                          - row [ref=f20e895]:
+                            - cell "abr/26" [ref=f20e896]
+                            - cell "—" [ref=f20e897]
+                            - cell "—" [ref=f20e898]
+                            - cell "—" [ref=f20e899]
+                            - cell "—" [ref=f20e900]
+                            - cell "—" [ref=f20e901]
+                            - cell [ref=f20e902]
+                            - cell "R$ 28.723,01" [ref=f20e903]
+                          - row [ref=f20e904]:
+                            - cell "mai/26" [ref=f20e905]
+                            - cell "1" [ref=f20e906]
+                            - cell "R$ 1.968,68" [ref=f20e907]
+                            - cell "R$ 4.012,27" [ref=f20e908]
+                            - cell "—" [ref=f20e909]
+                            - cell "R$ 5.980,95" [ref=f20e910]
+                            - cell [ref=f20e911]
+                            - cell "R$ 34.703,96" [ref=f20e914]
+                          - row [ref=f20e915]:
+                            - cell "jun/26" [ref=f20e916]
+                            - cell "—" [ref=f20e917]
+                            - cell "—" [ref=f20e918]
+                            - cell "—" [ref=f20e919]
+                            - cell "—" [ref=f20e920]
+                            - cell "—" [ref=f20e921]
+                            - cell [ref=f20e922]
+                            - cell "R$ 34.703,96" [ref=f20e923]
+                          - row [ref=f20e924]:
+                            - cell "jul/26" [ref=f20e925]
+                            - cell "2" [ref=f20e926]
+                            - cell "R$ 2.129,18" [ref=f20e927]
+                            - cell "R$ 3.556,47" [ref=f20e928]
+                            - cell "—" [ref=f20e929]
+                            - cell "R$ 5.685,65" [ref=f20e930]
+                            - cell [ref=f20e931]
+                            - cell "R$ 40.389,61" [ref=f20e934]
+                          - row [ref=f20e935]:
+                            - cell "ago/26" [ref=f20e936]
+                            - cell "1" [ref=f20e937]
+                            - cell "R$ 2.464,07" [ref=f20e938]
+                            - cell "R$ 2.392,91" [ref=f20e939]
+                            - cell "—" [ref=f20e940]
+                            - cell "R$ 4.856,98" [ref=f20e941]
+                            - cell [ref=f20e942]
+                            - cell "R$ 45.246,59" [ref=f20e945]
+                          - row [ref=f20e946]:
+                            - cell "set/26" [ref=f20e947]
+                            - cell "—" [ref=f20e948]
+                            - cell "—" [ref=f20e949]
+                            - cell "—" [ref=f20e950]
+                            - cell "—" [ref=f20e951]
+                            - cell "—" [ref=f20e952]
+                            - cell [ref=f20e953]
+                            - cell "R$ 45.246,59" [ref=f20e954]
+                          - row [ref=f20e955]:
+                            - cell "out/26" [ref=f20e956]
+                            - cell "2" [ref=f20e957]
+                            - cell "R$ 1.246,48" [ref=f20e958]
+                            - cell "R$ 2.166,61" [ref=f20e959]
+                            - cell "R$ 540,32" [ref=f20e960]
+                            - cell "R$ 3.953,41" [ref=f20e961]
+                            - cell [ref=f20e962]
+                            - cell "R$ 49.200,00" [ref=f20e965]
+                          - row [ref=f20e966]:
+                            - cell "nov/26" [ref=f20e967]
+                            - cell "—" [ref=f20e968]
+                            - cell "—" [ref=f20e969]
+                            - cell "—" [ref=f20e970]
+                            - cell "—" [ref=f20e971]
+                            - cell "—" [ref=f20e972]
+                            - cell [ref=f20e973]
+                            - cell "R$ 49.200,00" [ref=f20e974]
+                    - generic [ref=f20e975]:
+                      - heading "Histórico de ordens de serviço" [level=3] [ref=f20e976]
+                      - table [ref=f20e978]:
+                        - rowgroup [ref=f20e979]:
+                          - row [ref=f20e980]:
+                            - columnheader "Data" [ref=f20e981]
+                            - columnheader "OS" [ref=f20e982]
+                            - columnheader "Tipo" [ref=f20e983]
+                            - columnheader "O que foi feito" [ref=f20e984]
+                            - columnheader "Situação" [ref=f20e985]
+                            - columnheader "Custo" [ref=f20e986]
+                        - rowgroup [ref=f20e987]:
+                          - row [ref=f20e988]:
+                            - cell "12/10/2026" [ref=f20e989]
+                            - cell [ref=f20e990]:
+                              - link "DEMO-OS-00021" [ref=f20e991] [cursor=pointer]:
+                                - /url: http://127.0.0.1:8099/admin/maintenance-orders/6fca13e6-57d0-40d5-9b93-7b0b2eb6af88/edit
+                            - cell "Preventiva" [ref=f20e992]
+                            - cell "Inspeção de segurança NR-18 e verificação de sensores de inclinação" [ref=f20e993]
+                            - cell "Concluída" [ref=f20e994]
+                            - cell "R$ 1.234,16" [ref=f20e995]
+                          - row [ref=f20e996]:
+                            - cell "03/10/2026" [ref=f20e997]
+                            - cell [ref=f20e998]:
+                              - link "DEMO-OS-00015" [ref=f20e999] [cursor=pointer]:
+                                - /url: http://127.0.0.1:8099/admin/maintenance-orders/8f081e0f-54f6-4373-b4ab-53c73a463538/edit
+                            - cell "Corretiva retrabalho" [ref=f20e1000]
+                            - cell "Falha no painel de comando da cesta" [ref=f20e1001]
+                            - cell "Concluída" [ref=f20e1002]
+                            - cell "R$ 2.719,25" [ref=f20e1003]
+                          - row [ref=f20e1004]:
+                            - cell "18/08/2026" [ref=f20e1005]
+                            - cell [ref=f20e1006]:
+                              - link "DEMO-OS-00014" [ref=f20e1007] [cursor=pointer]:
+                                - /url: http://127.0.0.1:8099/admin/maintenance-orders/24d32c8f-129b-44d2-92a7-bb9502850dcd/edit
+                            - cell "Emergência retrabalho" [ref=f20e1008]
+                            - cell "Falha no sensor de inclinação, plataforma não eleva" [ref=f20e1009]
+                            - cell "Concluída" [ref=f20e1010]
+                            - cell "R$ 4.856,98" [ref=f20e1011]
+                          - row [ref=f20e1012]:
+                            - cell "03/07/2026" [ref=f20e1013]
+                            - cell [ref=f20e1014]:
+                              - link "DEMO-OS-00020" [ref=f20e1015] [cursor=pointer]:
+                                - /url: http://127.0.0.1:8099/admin/maintenance-orders/fcbc7092-0f2e-4043-8eac-05feb692b726/edit
+                            - cell "Preventiva" [ref=f20e1016]
+                            - cell "Inspeção de segurança NR-18 e verificação de sensores de inclinação" [ref=f20e1017]
+                            - cell "Concluída" [ref=f20e1018]
+                            - cell "R$ 1.331,54" [ref=f20e1019]
+                          - row [ref=f20e1020]:
+                            - cell "02/07/2026" [ref=f20e1021]
+                            - cell [ref=f20e1022]:
+                              - link "DEMO-OS-00013" [ref=f20e1023] [cursor=pointer]:
+                                - /url: http://127.0.0.1:8099/admin/maintenance-orders/38bf0de7-0af8-4c33-b547-fdadd6c9130d/edit
+                            - cell "Corretiva retrabalho" [ref=f20e1024]
+                            - cell "Mangueira hidráulica rompida" [ref=f20e1025]
+                            - cell "Concluída" [ref=f20e1026]
+                            - cell "R$ 4.354,11" [ref=f20e1027]
+                          - row [ref=f20e1028]:
+                            - cell "13/05/2026" [ref=f20e1029]
+                            - cell [ref=f20e1030]:
+                              - link "DEMO-OS-00012" [ref=f20e1031] [cursor=pointer]:
+                                - /url: http://127.0.0.1:8099/admin/maintenance-orders/f840ced5-2975-44d1-91a0-b9eb195b3443/edit
+                            - cell "Corretiva" [ref=f20e1032]
+                            - cell "Vazamento no cilindro hidráulico de elevação" [ref=f20e1033]
+                            - cell "Concluída" [ref=f20e1034]
+                            - cell "R$ 5.980,95" [ref=f20e1035]
+                          - row [ref=f20e1036]:
+                            - cell "22/03/2026" [ref=f20e1037]
+                            - cell [ref=f20e1038]:
+                              - link "DEMO-OS-00019" [ref=f20e1039] [cursor=pointer]:
+                                - /url: http://127.0.0.1:8099/admin/maintenance-orders/258ed46e-8410-4d60-b9a5-bad186487749/edit
+                            - cell "Preventiva" [ref=f20e1040]
+                            - 'cell "Preventiva 250h: lubrificação, inspeção de cilindros e teste de emergência de descida" [ref=f20e1041]'
+                            - cell "Concluída" [ref=f20e1042]
+                            - cell "R$ 1.126,64" [ref=f20e1043]
+                          - row [ref=f20e1044]:
+                            - cell "21/03/2026" [ref=f20e1045]
+                            - cell [ref=f20e1046]:
+                              - link "DEMO-OS-00011" [ref=f20e1047] [cursor=pointer]:
+                                - /url: http://127.0.0.1:8099/admin/maintenance-orders/7b8c34d8-2fd3-4b8b-86c8-fee24293cd4a/edit
+                            - cell "Corretiva" [ref=f20e1048]
+                            - cell "Falha no sensor de inclinação, plataforma não eleva" [ref=f20e1049]
+                            - cell "Concluída" [ref=f20e1050]
+                            - cell "R$ 5.855,77" [ref=f20e1051]
+                          - row [ref=f20e1052]:
+                            - cell "25/01/2026" [ref=f20e1053]
+                            - cell [ref=f20e1054]:
+                              - link "DEMO-OS-00010" [ref=f20e1055] [cursor=pointer]:
+                                - /url: http://127.0.0.1:8099/admin/maintenance-orders/fc9804de-2aea-426a-a178-20c125e7e710/edit
+                            - cell "Emergência" [ref=f20e1056]
+                            - cell "Falha no sensor de inclinação, plataforma não eleva" [ref=f20e1057]
+                            - cell "Concluída" [ref=f20e1058]
+                            - cell "R$ 4.432,75" [ref=f20e1059]
+                          - row [ref=f20e1060]:
+                            - cell "02/12/2025" [ref=f20e1061]
+                            - cell [ref=f20e1062]:
+                              - link "DEMO-OS-00018" [ref=f20e1063] [cursor=pointer]:
+                                - /url: http://127.0.0.1:8099/admin/maintenance-orders/428369c1-a0ce-4ee8-85e1-c740aa32b533/edit
+                            - cell "Preventiva" [ref=f20e1064]
+                            - cell "Troca de óleo hidráulico e filtros, teste de carga e inspeção de baterias" [ref=f20e1065]
+                            - cell "Concluída" [ref=f20e1066]
+                            - cell "R$ 1.432,12" [ref=f20e1067]
+                          - row [ref=f20e1068]:
+                            - cell "28/11/2025" [ref=f20e1069]
+                            - cell [ref=f20e1070]:
+                              - link "DEMO-OS-00009" [ref=f20e1071] [cursor=pointer]:
+                                - /url: http://127.0.0.1:8099/admin/maintenance-orders/9796c3ad-3007-4ce8-802b-9c208e27c535/edit
+                            - cell "Corretiva" [ref=f20e1072]
+                            - cell "Mangueira hidráulica rompida" [ref=f20e1073]
+                            - cell "Concluída" [ref=f20e1074]
+                            - cell "R$ 3.167,55" [ref=f20e1075]
+                          - row [ref=f20e1076]:
+                            - cell "24/09/2025" [ref=f20e1077]
+                            - cell [ref=f20e1078]:
+                              - link "DEMO-OS-00008" [ref=f20e1079] [cursor=pointer]:
+                                - /url: http://127.0.0.1:8099/admin/maintenance-orders/a0b5ed2b-d1a4-41dc-84d3-9381e3938d72/edit
+                            - cell "Corretiva" [ref=f20e1080]
+                            - cell "Falha no sensor de inclinação, plataforma não eleva" [ref=f20e1081]
+                            - cell "Concluída" [ref=f20e1082]
+                            - cell "R$ 3.145,08" [ref=f20e1083]
+                          - row [ref=f20e1084]:
+                            - cell "31/08/2025" [ref=f20e1085]
+                            - cell [ref=f20e1086]:
+                              - link "DEMO-OS-00017" [ref=f20e1087] [cursor=pointer]:
+                                - /url: http://127.0.0.1:8099/admin/maintenance-orders/3a2c0deb-dd5b-426a-89ac-92cd8a06cce2/edit
+                            - cell "Preventiva" [ref=f20e1088]
+                            - cell "Troca de óleo hidráulico e filtros, teste de carga e inspeção de baterias" [ref=f20e1089]
+                            - cell "Concluída" [ref=f20e1090]
+                            - cell "R$ 1.727,95" [ref=f20e1091]
+                          - row [ref=f20e1092]:
+                            - cell "06/07/2025" [ref=f20e1093]
+                            - cell [ref=f20e1094]:
+                              - link "DEMO-OS-00007" [ref=f20e1095] [cursor=pointer]:
+                                - /url: http://127.0.0.1:8099/admin/maintenance-orders/f34585c8-4692-421f-835d-32c59ff38033/edit
+                            - cell "Corretiva" [ref=f20e1096]
+                            - cell "Troca de baterias tracionárias sem carga" [ref=f20e1097]
+                            - cell "Concluída" [ref=f20e1098]
+                            - cell "R$ 6.162,30" [ref=f20e1099]
+                          - row [ref=f20e1100]:
+                            - cell "02/06/2025" [ref=f20e1101]
+                            - cell [ref=f20e1102]:
+                              - link "DEMO-OS-00016" [ref=f20e1103] [cursor=pointer]:
+                                - /url: http://127.0.0.1:8099/admin/maintenance-orders/f52fcf82-d3fa-4c2c-a5e9-c80fb188fcd0/edit
+                            - cell "Preventiva" [ref=f20e1104]
+                            - cell "Troca de óleo hidráulico e filtros, teste de carga e inspeção de baterias" [ref=f20e1105]
+                            - cell "Concluída" [ref=f20e1106]
+                            - cell "R$ 1.672,85" [ref=f20e1107]
+              - generic [ref=f20e474]:
+                - button "Salvar alterações" [ref=f20e475] [cursor=pointer]
+                - button "Cancelar" [ref=f20e477] [cursor=pointer]
+            - generic [ref=f20e479]:
+              - tablist [ref=f20e480]:
+                - tab "Documentos (laudos, notas fiscais...)" [ref=f20e481] [cursor=pointer]
+                - tab "Itens Extras do Manual (deste ativo)" [ref=f20e483] [cursor=pointer]
+                - tab "Histórico de Pátio" [ref=f20e485] [cursor=pointer]
+                - tab "Planos de Manutenção (deste ativo)" [ref=f20e487] [cursor=pointer]
+                - tab "Documentos NR-13" [ref=f20e489] [cursor=pointer]
+                - tab "Inspeções NR-13" [ref=f20e491] [cursor=pointer]
+              - tabpanel [ref=f20e493]
+    - complementary [ref=f20e498]:
+      - generic [ref=f20e500]:
+        - link "Início" [ref=f20e502] [cursor=pointer]:
+          - /url: http://127.0.0.1:8099/admin/painel-controle
+          - generic [ref=f20e506]: Oravel
+        - button "Recolher barra lateral" [ref=f20e507] [cursor=pointer]
+      - navigation [ref=f20e511]:
+        - list [ref=f20e512]:
+          - listitem [ref=f20e513]:
+            - link "Início" [ref=f20e514] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/admin/painel-controle
+          - listitem [ref=f20e518]:
+            - link "Academia Oravel" [ref=f20e519] [cursor=pointer]:
+              - /url: http://127.0.0.1:8099/academia
+        - list [ref=f20e523]:
+          - listitem [ref=f20e524]:
+            - generic [ref=f20e525] [cursor=pointer]:
+              - generic [ref=f20e528]: Ativos
+              - button "Ativos" [expanded] [ref=f20e529]
+            - list [ref=f20e533]:
+              - listitem [ref=f20e534]:
+                - link "Gestão de Ativos" [ref=f20e535] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8099/admin/gestao-ativos
+                - list [ref=f20e539]:
+                  - listitem [ref=f20e540]:
+                    - link "Ativos G A" [ref=f20e541] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets
+                      - generic [ref=f20e545]: Ativos
+                      - generic [ref=f20e546]: G A
+                  - listitem [ref=f20e550]:
+                    - link "Categorias de Ativos" [ref=f20e551] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/asset-categories
+                  - listitem [ref=f20e557]:
+                    - link "Dossiê Rápido (QR/Patrimônio)" [ref=f20e558] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/ativos/dossie
+                  - listitem [ref=f20e564]:
+                    - link "Grupos de Ativos" [ref=f20e565] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/checklist-groups
+                  - listitem [ref=f20e571]:
+                    - link "Histórico do Patrimônio" [ref=f20e572] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/patrimonio/historico
+                  - listitem [ref=f20e578]:
+                    - link "Mapa de Equipamentos" [ref=f20e579] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/mapa-equipamentos
+                  - listitem [ref=f20e585]:
+                    - link "Planta Baixa (Pátio de Ativos)" [ref=f20e586] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/planta-baixa-patio-ativos
+          - listitem [ref=f20e591]:
+            - generic [ref=f20e592] [cursor=pointer]:
+              - generic [ref=f20e595]: Conformidade NR-13
+              - button "Conformidade NR-13" [ref=f20e596]
+          - listitem [ref=f20e600]:
+            - generic [ref=f20e601] [cursor=pointer]:
+              - generic [ref=f20e604]: Gestão de Frota
+              - button "Gestão de Frota" [ref=f20e605]
+          - listitem [ref=f20e609]:
+            - generic [ref=f20e610] [cursor=pointer]:
+              - generic [ref=f20e613]: Materiais e Peças
+              - button "Materiais e Peças" [ref=f20e614]
+          - listitem [ref=f20e618]:
+            - generic [ref=f20e619] [cursor=pointer]:
+              - generic [ref=f20e622]: Itens Agregados
+              - button "Itens Agregados" [ref=f20e623]
+          - listitem [ref=f20e627]:
+            - generic [ref=f20e628] [cursor=pointer]:
+              - generic [ref=f20e631]: EPI
+              - button "EPI" [ref=f20e632]
+          - listitem [ref=f20e636]:
+            - generic [ref=f20e637] [cursor=pointer]:
+              - generic [ref=f20e640]: Comercial
+              - button "Comercial" [ref=f20e641]
+          - listitem [ref=f20e645]:
+            - generic [ref=f20e646] [cursor=pointer]:
+              - generic [ref=f20e649]: Configurações
+              - button "Configurações" [ref=f20e650]
+          - listitem [ref=f20e654]:
+            - generic [ref=f20e655] [cursor=pointer]:
+              - generic [ref=f20e658]: Departamento Pessoal
+              - button "Departamento Pessoal" [ref=f20e659]
+          - listitem [ref=f20e663]:
+            - generic [ref=f20e664] [cursor=pointer]:
+              - generic [ref=f20e667]: Equipe
+              - button "Equipe" [ref=f20e668]
+          - listitem [ref=f20e672]:
+            - generic [ref=f20e673] [cursor=pointer]:
+              - generic [ref=f20e676]: Financeiro
+              - button "Financeiro" [ref=f20e677]
+          - listitem [ref=f20e681]:
+            - generic [ref=f20e682] [cursor=pointer]:
+              - generic [ref=f20e685]: Logística
+              - button "Logística" [ref=f20e686]
+          - listitem [ref=f20e690]:
+            - generic [ref=f20e691] [cursor=pointer]:
+              - generic [ref=f20e694]: Manutenção
+              - button "Manutenção" [ref=f20e695]
+          - listitem [ref=f20e699]:
+            - generic [ref=f20e700] [cursor=pointer]:
+              - generic [ref=f20e703]: PMP
+              - button "PMP" [ref=f20e704]
+          - listitem [ref=f20e708]:
+            - generic [ref=f20e709] [cursor=pointer]:
+              - generic [ref=f20e712]: Relatórios
+              - button "Relatórios" [ref=f20e713]
+  - generic:
+    - status
+  - button "💬 Mensagens" [ref=f20e719] [cursor=pointer]:
+    - generic [ref=f20e720]:
+      - generic [ref=f20e721]: 💬
+      - generic [ref=f20e722]: Mensagens
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f20e726]

@@ -1,0 +1,298 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e2]:
+    - generic [ref=f3e3]:
+      - navigation [ref=f3e5]:
+        - generic [ref=f3e9]:
+          - generic [ref=f3e10]: Locadora Visual
+          - generic [ref=f3e11]: "Módulo: Locadora"
+        - generic [ref=f3e12]:
+          - button "⌘K" [ref=f3e14] [cursor=pointer]
+          - link "Caixa de E-mail" [ref=f3e18] [cursor=pointer]:
+            - /url: http://127.0.0.1:8099/admin/caixa-de-email
+          - button "Menu do usuário" [ref=f3e23] [cursor=pointer]:
+            - img "Avatar de Admin Visual" [ref=f3e24]
+        - link "Ajuda" [ref=f3e26] [cursor=pointer]:
+          - /url: https://academy.oravel.com.br/
+      - main [ref=f3e30]:
+        - generic [ref=f3e32]:
+          - generic [ref=f3e33]:
+            - generic [ref=f3e34]:
+              - navigation [ref=f3e35]:
+                - list [ref=f3e36]:
+                  - listitem [ref=f3e37]:
+                    - link "Ativos" [ref=f3e38] [cursor=pointer]:
+                      - /url: http://127.0.0.1:8099/admin/assets
+                  - listitem [ref=f3e39]:
+                    - generic [ref=f3e42]: Listar
+              - heading "Ativos" [level=1] [ref=f3e43]
+            - generic [ref=f3e45]:
+              - link "Novo Ativo" [ref=f3e46] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/assets/create
+              - link "Imprimir" [ref=f3e48] [cursor=pointer]:
+                - /url: http://127.0.0.1:8099/admin/print/tabela/91af4e5e-9cdf-430d-b959-639c9a3a9978
+              - button "Exportar assets" [ref=f3e52] [cursor=pointer]
+              - button "Importar Excel" [ref=f3e54] [cursor=pointer]
+              - button "Modelo de importação (Excel)" [ref=f3e58] [cursor=pointer]
+          - generic [ref=f3e63]:
+            - generic [ref=f3e66]:
+              - generic [ref=f3e68]:
+                - generic [ref=f3e69]: Total de Ativos
+                - generic [ref=f3e71]: "8"
+                - generic [ref=f3e72]: Cadastrados na frota
+              - generic [ref=f3e75]:
+                - generic [ref=f3e76]: Ativos sem PMP
+                - generic [ref=f3e78]: "8"
+                - generic [ref=f3e79]: Sem plano preventivo aplicável
+            - generic [ref=f3e81]:
+              - generic [ref=f3e82]:
+                - button "Total 8" [ref=f3e83] [cursor=pointer]:
+                  - generic [ref=f3e84]: Total
+                  - generic [ref=f3e85]: "8"
+                - button "Disponível 2" [ref=f3e86] [cursor=pointer]:
+                  - generic [ref=f3e87]: Disponível
+                  - generic [ref=f3e88]: "2"
+                - button "Em operação 1" [ref=f3e89] [cursor=pointer]:
+                  - generic [ref=f3e90]: Em operação
+                  - generic [ref=f3e91]: "1"
+                - button "Locado 1" [ref=f3e92] [cursor=pointer]:
+                  - generic [ref=f3e93]: Locado
+                  - generic [ref=f3e94]: "1"
+                - button "Em manutenção 1" [ref=f3e95] [cursor=pointer]:
+                  - generic [ref=f3e96]: Em manutenção
+                  - generic [ref=f3e97]: "1"
+                - button "Aguardando triagem 1" [ref=f3e98] [cursor=pointer]:
+                  - generic [ref=f3e99]: Aguardando triagem
+                  - generic [ref=f3e100]: "1"
+                - button "Reservado 1" [ref=f3e101] [cursor=pointer]:
+                  - generic [ref=f3e102]: Reservado
+                  - generic [ref=f3e103]: "1"
+                - button "Quarentena 1" [ref=f3e104] [cursor=pointer]:
+                  - generic [ref=f3e105]: Quarentena
+                  - generic [ref=f3e106]: "1"
+                - button "Veículos 1" [ref=f3e107] [cursor=pointer]:
+                  - generic [ref=f3e108]: Veículos
+                  - generic [ref=f3e109]: "1"
+                - button "Máquinas / equipamentos 7" [ref=f3e110] [cursor=pointer]:
+                  - generic [ref=f3e111]: Máquinas / equipamentos
+                  - generic [ref=f3e112]: "7"
+              - generic [ref=f3e114]:
+                - generic [ref=f3e117]:
+                  - generic [ref=f3e118]:
+                    - generic [ref=f3e119]: Pesquisar
+                    - searchbox "Pesquisar" [ref=f3e125]
+                  - button "Filtrar 0" [ref=f3e128] [cursor=pointer]:
+                    - generic [ref=f3e129]: Filtrar
+                    - generic [ref=f3e132]: "0"
+                - generic [ref=f3e136]:
+                  - generic [ref=f3e137]:
+                    - generic [ref=f3e138]:
+                      - checkbox "Marcar/desmarcar todos os itens para ações em massa." [ref=f3e139]
+                      - generic [ref=f3e140]: Marcar/desmarcar todos os itens para ações em massa.
+                    - generic [ref=f3e143]:
+                      - generic [ref=f3e144]: Ordenar por
+                      - combobox "Ordenar por" [ref=f3e147]:
+                        - option "-" [selected]
+                        - option "Patrimônio"
+                        - option "Horímetro / Odômetro"
+                        - option "Capacidade"
+                  - generic [ref=f3e148]:
+                    - generic [ref=f3e150]:
+                      - generic [ref=f3e151]:
+                        - checkbox "Marcar/desmarcar o item 01a1a252-08a4-7281-968b-6c700bfd9486 para ações em massa." [ref=f3e152]
+                        - generic [ref=f3e153]: Marcar/desmarcar o item 01a1a252-08a4-7281-968b-6c700bfd9486 para ações em massa.
+                      - generic [ref=f3e154]:
+                        - 'link "Gerador 150 kVA Tag: T-0 Patrimônio PAT-100 · S/N: N/A Disponível Máquina / Equipamento Geradores 1.200,5 h" [ref=f3e156] [cursor=pointer]':
+                          - /url: http://127.0.0.1:8099/admin/assets/01a1a252-08a4-7281-968b-6c700bfd9486/edit
+                          - generic [ref=f3e158]:
+                            - generic [ref=f3e162]:
+                              - generic [ref=f3e166]:
+                                - generic [ref=f3e167]: Gerador 150 kVA
+                                - paragraph [ref=f3e171]: "Tag: T-0"
+                              - generic [ref=f3e172]: "Patrimônio PAT-100 · S/N: N/A"
+                            - generic [ref=f3e181]:
+                              - generic [ref=f3e182]: Disponível
+                              - generic [ref=f3e191]: Máquina / Equipamento
+                              - generic [ref=f3e200]: Geradores
+                            - generic [ref=f3e209]: 1.200,5 h
+                        - generic [ref=f3e219]:
+                          - link "Editar" [ref=f3e220] [cursor=pointer]:
+                            - /url: http://127.0.0.1:8099/admin/assets/01a1a252-08a4-7281-968b-6c700bfd9486/edit
+                          - button [ref=f3e227] [cursor=pointer]
+                    - generic [ref=f3e231]:
+                      - generic [ref=f3e232]:
+                        - checkbox "Marcar/desmarcar o item 01a1a252-08b3-73ec-bd0e-6f2c68b07c1a para ações em massa." [ref=f3e233]
+                        - generic [ref=f3e234]: Marcar/desmarcar o item 01a1a252-08b3-73ec-bd0e-6f2c68b07c1a para ações em massa.
+                      - generic [ref=f3e235]:
+                        - 'link "Munck 30t Tag: T-1 Patrimônio PAT-101 · S/N: N/A Locado Máquina / Equipamento Geradores 1.201,5 h" [ref=f3e237] [cursor=pointer]':
+                          - /url: http://127.0.0.1:8099/admin/assets/01a1a252-08b3-73ec-bd0e-6f2c68b07c1a/edit
+                          - generic [ref=f3e239]:
+                            - generic [ref=f3e243]:
+                              - generic [ref=f3e247]:
+                                - generic [ref=f3e248]: Munck 30t
+                                - paragraph [ref=f3e252]: "Tag: T-1"
+                              - generic [ref=f3e253]: "Patrimônio PAT-101 · S/N: N/A"
+                            - generic [ref=f3e262]:
+                              - generic [ref=f3e263]: Locado
+                              - generic [ref=f3e272]: Máquina / Equipamento
+                              - generic [ref=f3e281]: Geradores
+                            - generic [ref=f3e290]: 1.201,5 h
+                        - generic [ref=f3e300]:
+                          - link "Editar" [ref=f3e301] [cursor=pointer]:
+                            - /url: http://127.0.0.1:8099/admin/assets/01a1a252-08b3-73ec-bd0e-6f2c68b07c1a/edit
+                          - button [ref=f3e308] [cursor=pointer]
+                    - generic [ref=f3e312]:
+                      - generic [ref=f3e313]:
+                        - checkbox "Marcar/desmarcar o item 01a1a252-08bc-7388-93b6-236c6956b5ef para ações em massa." [ref=f3e314]
+                        - generic [ref=f3e315]: Marcar/desmarcar o item 01a1a252-08bc-7388-93b6-236c6956b5ef para ações em massa.
+                      - generic [ref=f3e316]:
+                        - 'link "Empilhadeira GLP Tag: T-2 Patrimônio PAT-102 · S/N: N/A Em manutenção Máquina / Equipamento Geradores 1.202,5 h" [ref=f3e318] [cursor=pointer]':
+                          - /url: http://127.0.0.1:8099/admin/assets/01a1a252-08bc-7388-93b6-236c6956b5ef/edit
+                          - generic [ref=f3e320]:
+                            - generic [ref=f3e324]:
+                              - generic [ref=f3e328]:
+                                - generic [ref=f3e329]: Empilhadeira GLP
+                                - paragraph [ref=f3e333]: "Tag: T-2"
+                              - generic [ref=f3e334]: "Patrimônio PAT-102 · S/N: N/A"
+                            - generic [ref=f3e343]:
+                              - generic [ref=f3e344]: Em manutenção
+                              - generic [ref=f3e353]: Máquina / Equipamento
+                              - generic [ref=f3e362]: Geradores
+                            - generic [ref=f3e371]: 1.202,5 h
+                        - generic [ref=f3e381]:
+                          - link "Editar" [ref=f3e382] [cursor=pointer]:
+                            - /url: http://127.0.0.1:8099/admin/assets/01a1a252-08bc-7388-93b6-236c6956b5ef/edit
+                          - button [ref=f3e389] [cursor=pointer]
+                    - generic [ref=f3e393]:
+                      - generic [ref=f3e394]:
+                        - checkbox "Marcar/desmarcar o item 01a1a252-08c5-7283-a1ef-53109f4b64d8 para ações em massa." [ref=f3e395]
+                        - generic [ref=f3e396]: Marcar/desmarcar o item 01a1a252-08c5-7283-a1ef-53109f4b64d8 para ações em massa.
+                      - generic [ref=f3e397]:
+                        - 'link "Caminhão Baú Tag: T-3 Patrimônio PAT-103 · S/N: N/A Em operação Máquina / Equipamento Geradores 1.203,5 h" [ref=f3e399] [cursor=pointer]':
+                          - /url: http://127.0.0.1:8099/admin/assets/01a1a252-08c5-7283-a1ef-53109f4b64d8/edit
+                          - generic [ref=f3e401]:
+                            - generic [ref=f3e405]:
+                              - generic [ref=f3e409]:
+                                - generic [ref=f3e410]: Caminhão Baú
+                                - paragraph [ref=f3e414]: "Tag: T-3"
+                              - generic [ref=f3e415]: "Patrimônio PAT-103 · S/N: N/A"
+                            - generic [ref=f3e424]:
+                              - generic [ref=f3e425]: Em operação
+                              - generic [ref=f3e434]: Máquina / Equipamento
+                              - generic [ref=f3e443]: Geradores
+                            - generic [ref=f3e452]: 1.203,5 h
+                        - generic [ref=f3e462]:
+                          - link "Editar" [ref=f3e463] [cursor=pointer]:
+                            - /url: http://127.0.0.1:8099/admin/assets/01a1a252-08c5-7283-a1ef-53109f4b64d8/edit
+                          - button [ref=f3e470] [cursor=pointer]
+                    - generic [ref=f3e474]:
+                      - generic [ref=f3e475]:
+                        - checkbox "Marcar/desmarcar o item 01a1a252-08d4-72c7-8e60-dcc947cb0fec para ações em massa." [ref=f3e476]
+                        - generic [ref=f3e477]: Marcar/desmarcar o item 01a1a252-08d4-72c7-8e60-dcc947cb0fec para ações em massa.
+                      - generic [ref=f3e478]:
+                        - 'link "Plataforma Tesoura Tag: T-4 Patrimônio PAT-104 · S/N: N/A Aguardando triagem Máquina / Equipamento Geradores 1.204,5 h" [ref=f3e480] [cursor=pointer]':
+                          - /url: http://127.0.0.1:8099/admin/assets/01a1a252-08d4-72c7-8e60-dcc947cb0fec/edit
+                          - generic [ref=f3e482]:
+                            - generic [ref=f3e486]:
+                              - generic [ref=f3e490]:
+                                - generic [ref=f3e491]: Plataforma Tesoura
+                                - paragraph [ref=f3e495]: "Tag: T-4"
+                              - generic [ref=f3e496]: "Patrimônio PAT-104 · S/N: N/A"
+                            - generic [ref=f3e505]:
+                              - generic [ref=f3e506]: Aguardando triagem
+                              - generic [ref=f3e515]: Máquina / Equipamento
+                              - generic [ref=f3e524]: Geradores
+                            - generic [ref=f3e533]: 1.204,5 h
+                        - generic [ref=f3e543]:
+                          - link "Editar" [ref=f3e544] [cursor=pointer]:
+                            - /url: http://127.0.0.1:8099/admin/assets/01a1a252-08d4-72c7-8e60-dcc947cb0fec/edit
+                          - button [ref=f3e551] [cursor=pointer]
+                    - generic [ref=f3e555]:
+                      - generic [ref=f3e556]:
+                        - checkbox "Marcar/desmarcar o item 01a1a252-08de-7038-8955-045002a29e72 para ações em massa." [ref=f3e557]
+                        - generic [ref=f3e558]: Marcar/desmarcar o item 01a1a252-08de-7038-8955-045002a29e72 para ações em massa.
+                      - generic [ref=f3e559]:
+                        - 'link "Compressor Tag: T-5 Patrimônio PAT-105 · S/N: N/A Quarentena Máquina / Equipamento Geradores 1.205,5 h" [ref=f3e561] [cursor=pointer]':
+                          - /url: http://127.0.0.1:8099/admin/assets/01a1a252-08de-7038-8955-045002a29e72/edit
+                          - generic [ref=f3e563]:
+                            - generic [ref=f3e567]:
+                              - generic [ref=f3e571]:
+                                - generic [ref=f3e572]: Compressor
+                                - paragraph [ref=f3e576]: "Tag: T-5"
+                              - generic [ref=f3e577]: "Patrimônio PAT-105 · S/N: N/A"
+                            - generic [ref=f3e586]:
+                              - generic [ref=f3e587]: Quarentena
+                              - generic [ref=f3e596]: Máquina / Equipamento
+                              - generic [ref=f3e605]: Geradores
+                            - generic [ref=f3e614]: 1.205,5 h
+                        - generic [ref=f3e624]:
+                          - link "Editar" [ref=f3e625] [cursor=pointer]:
+                            - /url: http://127.0.0.1:8099/admin/assets/01a1a252-08de-7038-8955-045002a29e72/edit
+                          - button [ref=f3e632] [cursor=pointer]
+                    - generic [ref=f3e636]:
+                      - generic [ref=f3e637]:
+                        - checkbox "Marcar/desmarcar o item 01a1a252-08ed-7093-a955-b01006bcb1de para ações em massa." [ref=f3e638]
+                        - generic [ref=f3e639]: Marcar/desmarcar o item 01a1a252-08ed-7093-a955-b01006bcb1de para ações em massa.
+                      - generic [ref=f3e640]:
+                        - 'link "Torre de Iluminação Tag: T-6 Patrimônio PAT-106 · S/N: N/A Reservado Máquina / Equipamento Geradores 1.206,5 h" [ref=f3e642] [cursor=pointer]':
+                          - /url: http://127.0.0.1:8099/admin/assets/01a1a252-08ed-7093-a955-b01006bcb1de/edit
+                          - generic [ref=f3e644]:
+                            - generic [ref=f3e648]:
+                              - generic [ref=f3e652]:
+                                - generic [ref=f3e653]: Torre de Iluminação
+                                - paragraph [ref=f3e657]: "Tag: T-6"
+                              - generic [ref=f3e658]: "Patrimônio PAT-106 · S/N: N/A"
+                            - generic [ref=f3e667]:
+                              - generic [ref=f3e668]: Reservado
+                              - generic [ref=f3e677]: Máquina / Equipamento
+                              - generic [ref=f3e686]: Geradores
+                            - generic [ref=f3e695]: 1.206,5 h
+                        - generic [ref=f3e705]:
+                          - link "Editar" [ref=f3e706] [cursor=pointer]:
+                            - /url: http://127.0.0.1:8099/admin/assets/01a1a252-08ed-7093-a955-b01006bcb1de/edit
+                          - button [ref=f3e713] [cursor=pointer]
+                    - generic [ref=f3e717]:
+                      - generic [ref=f3e718]:
+                        - checkbox "Marcar/desmarcar o item 01a1a252-08f7-70ff-944c-19e7097113d8 para ações em massa." [ref=f3e719]
+                        - generic [ref=f3e720]: Marcar/desmarcar o item 01a1a252-08f7-70ff-944c-19e7097113d8 para ações em massa.
+                      - generic [ref=f3e721]:
+                        - 'link "Fiorino Entrega Placa: KMX1A23 · Tag: V-1 Disponível Veículo 45.210 km Seguro 13/11/2026 IPVA 29/10/2026 Licenc. 22/05/2027 Placa KMX1A23" [ref=f3e723] [cursor=pointer]':
+                          - /url: http://127.0.0.1:8099/admin/assets/01a1a252-08f7-70ff-944c-19e7097113d8/edit
+                          - generic [ref=f3e725]:
+                            - generic [ref=f3e733]:
+                              - generic [ref=f3e734]: Fiorino Entrega
+                              - paragraph [ref=f3e738]: "Placa: KMX1A23 · Tag: V-1"
+                            - generic [ref=f3e740]:
+                              - generic [ref=f3e741]: Disponível
+                              - generic [ref=f3e750]: Veículo
+                            - generic [ref=f3e759]: 45.210 km
+                            - generic [ref=f3e770]:
+                              - generic [ref=f3e771]: Seguro 13/11/2026
+                              - generic [ref=f3e780]: IPVA 29/10/2026
+                              - generic [ref=f3e789]: Licenc. 22/05/2027
+                            - generic [ref=f3e798]: Placa KMX1A23
+                        - generic [ref=f3e808]:
+                          - link "Editar" [ref=f3e809] [cursor=pointer]:
+                            - /url: http://127.0.0.1:8099/admin/assets/01a1a252-08f7-70ff-944c-19e7097113d8/edit
+                          - button [ref=f3e816] [cursor=pointer]
+                - navigation "Paginação" [ref=f3e819]:
+                  - generic [ref=f3e820]: Exibindo 1 a 8 de 8 resultados
+                  - generic [ref=f3e823]:
+                    - generic [ref=f3e824]: por página
+                    - combobox "por página" [ref=f3e827]:
+                      - option "5"
+                      - option "10" [selected]
+                      - option "25"
+                      - option "50"
+                      - option "Todas"
+    - complementary [ref=f3e828]:
+      - generic [ref=f3e830]:
+        - link "Início" [ref=f3e832] [cursor=pointer]:
+          - /url: http://127.0.0.1:8099/admin/painel-controle
+          - generic [ref=f3e836]: Oravel
+        - button "Recolher barra lateral" [ref=f3e837] [cursor=pointer]
+      - navigation [ref=f3e841]:
+        - list
+        - list
+  - generic:
+    - status
+  - generic "Arraste para ajustar a largura (duplo clique restaura)" [ref=f3e842]

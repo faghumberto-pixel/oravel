@@ -1,0 +1,334 @@
+- generic [active] [ref=f12e1]:
+  - banner [ref=f12e2]:
+    - navigation [ref=f12e3]:
+      - link "Oravel" [ref=f12e4] [cursor=pointer]:
+        - /url: /
+      - generic [ref=f12e5]:
+        - link "Solutions" [ref=f12e6] [cursor=pointer]:
+          - /url: /solucoes/
+        - group [ref=f12e7]:
+          - generic "Products ▾" [ref=f12e8] [cursor=pointer]
+        - group [ref=f12e9]:
+          - generic "Equipment ▾" [ref=f12e10] [cursor=pointer]
+        - group [ref=f12e11]:
+          - generic "On this page ▾" [ref=f12e12] [cursor=pointer]
+        - link "About us" [ref=f12e13] [cursor=pointer]:
+          - /url: /sobre/
+        - link "Contact" [ref=f12e14] [cursor=pointer]:
+          - /url: /contato.php
+        - group "Language" [ref=f12e15]:
+          - link "Português" [ref=f12e16] [cursor=pointer]:
+            - /url: /
+          - link "English" [ref=f12e21] [cursor=pointer]:
+            - /url: /index-en.html
+        - link "Try 30 days" [ref=f12e35] [cursor=pointer]:
+          - /url: "#contato"
+  - main [ref=f12e36]:
+    - generic [ref=f12e38]:
+      - generic [ref=f12e39]:
+        - generic [ref=f12e40]: For equipment rental companies
+        - heading [level=1] [ref=f12e41]:
+          - text: Those who run equipment deserve to work
+          - emphasis [ref=f12e42]: without firefighting.
+        - paragraph [ref=f12e43]: Oravel brings maintenance, inventory, logistics and finance into a single view, from the field to the office, so your operation delivers more with less rush. Try it for 30 days, with us by your side.
+        - generic [ref=f12e44]:
+          - link "I want to try 30 days" [ref=f12e45] [cursor=pointer]:
+            - /url: https://wa.me/5519999332615?text=Hello!%20I%20want%20to%20try%20Oravel%20for%2030%20days%20at%20my%20rental%20company.
+          - link "Read our manifesto" [ref=f12e46] [cursor=pointer]:
+            - /url: "#manifesto"
+        - paragraph [ref=f12e47]: No commitment. If it does not make sense, you owe nothing.
+      - generic [ref=f12e48]:
+        - generic [ref=f12e49]:
+          - generic [ref=f12e50]:
+            - generic [ref=f12e51]: app.oravel.com.br/painel
+            - generic [ref=f12e56]:
+              - generic [ref=f12e57]:
+                - text: Operations dashboard
+                - generic [ref=f12e58]: Sample data
+              - generic [ref=f12e59]:
+                - generic [ref=f12e60]:
+                  - generic [ref=f12e61]: Available equipment
+                  - text: "62"
+                - generic [ref=f12e62]:
+                  - generic [ref=f12e63]: Rented
+                  - text: "148"
+                - generic [ref=f12e64]:
+                  - generic [ref=f12e65]: In maintenance
+                  - text: "9"
+                - generic [ref=f12e66]:
+                  - generic [ref=f12e67]: Upcoming preventive
+                  - text: "5"
+              - generic [ref=f12e68]:
+                - generic [ref=f12e69]:
+                  - generic [ref=f12e70]: Equipment downtime hours
+                  - generic [ref=f12e71]:
+                    - generic [ref=f12e72]: May
+                    - generic [ref=f12e74]: Jun
+                    - generic [ref=f12e76]: Jul
+                    - generic [ref=f12e78]: Aug
+                    - generic [ref=f12e80]: Sep
+                    - generic [ref=f12e82]: Oct
+                - generic [ref=f12e84]:
+                  - generic [ref=f12e85]: Work orders
+                  - generic [ref=f12e86]:
+                    - text: WO-2041 Generator
+                    - generic [ref=f12e87]: In progress
+                  - generic [ref=f12e88]:
+                    - text: WO-2044 Forklift
+                    - generic [ref=f12e89]: Preventive
+                  - generic [ref=f12e90]:
+                    - text: WO-2038 Platform
+                    - generic [ref=f12e91]: Completed
+          - generic [ref=f12e92]: Preventive opened automatically
+          - generic [ref=f12e93]: Part deducted from inventory
+          - generic [ref=f12e95]:
+            - generic [ref=f12e96]:
+              - text: Maintenance
+              - generic [ref=f12e97]: Work orders
+            - generic [ref=f12e98]:
+              - generic [ref=f12e99]: WO-2041 Generator
+              - generic [ref=f12e100]: WO-2044 Forklift
+              - generic [ref=f12e101]: WO-2038 Platform
+              - generic [ref=f12e102]: Start WO
+        - paragraph [ref=f12e103]: Illustrative image with sample data
+    - generic [ref=f12e105]:
+      - generic [ref=f12e106]: Why Oravel exists
+      - heading "We have been on your side of the counter." [level=2] [ref=f12e107]
+      - paragraph [ref=f12e108]: We ran an equipment operation for years. We lived the machine idle on the job site, the part missing at the wrong time, the customer waiting "since yesterday" and the month-end close that would not add up.
+      - paragraph [ref=f12e109]: "We learned that none of this is bad luck. It is a lack of information at the right time. That is why we created Oravel: so every equipment operation runs with clarity, predictability and peace of mind, from the field to the office."
+      - link "Read the full manifesto →" [ref=f12e110] [cursor=pointer]:
+        - /url: "#manifesto"
+    - generic [ref=f12e112]:
+      - generic [ref=f12e113]: What changes
+      - heading "A predictable operation starts with the right information at the right time." [level=2] [ref=f12e114]
+      - paragraph [ref=f12e115]: Anyone who has run an equipment operation knows the value of having control in hand. These are the four changes Oravel brings to your day to day.
+      - generic [ref=f12e116]:
+        - generic [ref=f12e117]:
+          - generic [ref=f12e118]: Predictability
+          - heading "Equipment ready when the customer needs it" [level=3] [ref=f12e119]
+          - paragraph [ref=f12e120]: Maintenance planned on time and at the right hour-meter reading, so equipment is available and the team works without surprises.
+          - generic [ref=f12e121]: "In Oravel: the work order is opened automatically by hour meter or due date, with a checklist and an assigned technician."
+        - generic [ref=f12e122]:
+          - generic [ref=f12e123]: Availability
+          - heading "The right part, at the right time" [level=3] [ref=f12e124]
+          - paragraph [ref=f12e125]: With the real balance in sight, purchases are planned and maintenance does not wait for parts.
+          - generic [ref=f12e126]: "In Oravel: the part used on a work order leaves inventory on the spot, and you see the real balance and what is running out."
+        - generic [ref=f12e127]:
+          - generic [ref=f12e128]: Trust
+          - heading "Delivery and return with transparency" [level=3] [ref=f12e129]
+          - paragraph [ref=f12e130]: "Everything recorded on the way out and back: a clear and fair relationship with the customer, with no arguments."
+          - generic [ref=f12e131]: "In Oravel: checkout and return with a checklist, before and after photos and digital signature."
+        - generic [ref=f12e132]:
+          - generic [ref=f12e133]: View of the real cost
+          - heading "Every piece of equipment with its own history" [level=3] [ref=f12e134]
+          - paragraph [ref=f12e135]: You know how much each machine earns and how much it costs, and decide with confidence what to keep, renew or sell.
+          - generic [ref=f12e136]: "In Oravel: each piece of equipment has its own file: maintenance history, parts and accumulated cost."
+      - generic [ref=f12e137]: "Also on the platform: vehicle and driver logistics, accounts payable and receivable with bank slips, a customer portal and integrated WhatsApp communication."
+    - generic [ref=f12e139]:
+      - generic [ref=f12e140]:
+        - generic [ref=f12e141]: See the potential
+        - heading "How much is a working machine worth?" [level=2] [ref=f12e142]
+        - paragraph [ref=f12e143]: Every extra day of available equipment is a daily rental coming in. Enter your numbers and see the size of the opportunity.
+      - generic [ref=f12e144]:
+        - heading "Calculate with your numbers" [level=3] [ref=f12e145]
+        - paragraph [ref=f12e146]: A quick estimate, using only what you already know.
+        - generic [ref=f12e147]:
+          - generic [ref=f12e148]: How many machines are usually idle in a month?
+          - spinbutton "How many machines are usually idle in a month?" [ref=f12e149]: "3"
+        - generic [ref=f12e150]:
+          - generic [ref=f12e151]: For how many days each, on average?
+          - spinbutton "For how many days each, on average?" [ref=f12e152]: "5"
+        - generic [ref=f12e153]:
+          - generic [ref=f12e154]: Average daily rental rate (R$)
+          - spinbutton "Average daily rental rate (R$)" [ref=f12e155]: "250"
+        - generic [ref=f12e156]:
+          - generic [ref=f12e157]: R$3,750
+          - generic [ref=f12e158]: "of daily rentals that could come back in each month. In one year: R$45,000."
+        - paragraph [ref=f12e159]: "Simple calculation: machines × days × daily rate. During the 30-day trial, we show you your real number."
+    - generic [ref=f12e161]:
+      - generic [ref=f12e162]: Without being held hostage by a giant system
+      - heading "Start where it makes the most sense. Grow at your own pace." [level=2] [ref=f12e163]
+      - paragraph [ref=f12e164]: You do not need to buy everything at once. Pick the module that matters most right now, use it for 30 days and decide with numbers.
+      - generic [ref=f12e165]:
+        - generic [ref=f12e166]: Maintenance
+        - generic [ref=f12e167]: Inventory
+        - generic [ref=f12e168]: Logistics
+        - generic [ref=f12e169]: Services
+      - paragraph [ref=f12e170]: Each module works on its own and connects with the others when you want to expand.
+    - generic [ref=f12e172]:
+      - generic [ref=f12e173]: How it works
+      - heading "Four steps, no risk to you." [level=2] [ref=f12e174]
+      - generic [ref=f12e175]:
+        - generic [ref=f12e176]:
+          - generic [ref=f12e177]: "1"
+          - heading "Conversation" [level=3] [ref=f12e178]
+          - paragraph [ref=f12e179]: 40 minutes, free of charge and with no need to send data. You tell us how your operation works.
+        - generic [ref=f12e180]:
+          - generic [ref=f12e181]: "2"
+          - heading "The module for your moment" [level=3] [ref=f12e182]
+          - paragraph [ref=f12e183]: Together we choose where to start, the point where clarity makes the most difference.
+        - generic [ref=f12e184]:
+          - generic [ref=f12e185]: "3"
+          - heading "30 days of use" [level=3] [ref=f12e186]
+          - paragraph [ref=f12e187]: Setup by your side, live training and access to Oravel Academy for your team.
+        - generic [ref=f12e188]:
+          - generic [ref=f12e189]: "4"
+          - heading "A decision backed by numbers" [level=3] [ref=f12e190]
+          - paragraph [ref=f12e191]: At the end of the trial, you see the result and decide whether to continue. If not, you owe nothing.
+      - link "I want to start" [ref=f12e193] [cursor=pointer]:
+        - /url: "#contato"
+    - generic [ref=f12e195]:
+      - generic [ref=f12e196]: Manifesto
+      - heading "Every operation deserves to run with clarity." [level=2] [ref=f12e197]
+      - generic [ref=f12e198]: We believe every equipment operation can run with clarity, predictability and peace of mind.
+      - paragraph [ref=f12e199]: We saw this from the inside. We ran an equipment operation for years. We know the silence of a machine idle on the job site, the part missing at the wrong time, the customer waiting "since yesterday" and the month-end close that would not add up.
+      - paragraph [ref=f12e200]: "And we learned one thing: organized operations do not depend on luck or heroes. They depend on having the right information, at the right time, in the hands of whoever decides."
+      - paragraph [ref=f12e201]: "That is why we believe that:"
+      - list [ref=f12e202]:
+        - listitem [ref=f12e203]: Whoever builds an operation deserves to see all of it, in numbers, and grow with confidence.
+        - listitem [ref=f12e204]: Control is not bureaucracy. It is what lets you decide without guessing.
+        - listitem [ref=f12e205]: A good system does not complicate things. It starts with what is a priority and grows with your operation.
+        - listitem [ref=f12e206]: "Technology is only worth it if it shows results: more equipment available, planned purchases, a clear cost for each piece of equipment."
+        - listitem [ref=f12e207]: Decision makers need a conversation in their own language. The language of decision makers is results, not features.
+      - paragraph [ref=f12e208]: We put the experience of people who have been on your side of the counter into simple modules, connected from the field to the office.
+      - generic [ref=f12e209]: Our promise. You do not have to take our word for it. Use it for 30 days, with us by your side, and measure. If it does not make sense, you owe nothing.
+      - generic [ref=f12e210]: Oravel. Control from people who have been on your side of the counter.
+    - generic [ref=f12e212]:
+      - generic [ref=f12e213]: Why trust us
+      - heading "Built by people who lived the operation." [level=2] [ref=f12e214]
+      - generic [ref=f12e215]:
+        - generic [ref=f12e216]:
+          - heading "Oravel was born from scars, not spreadsheets" [level=3] [ref=f12e217]
+          - paragraph [ref=f12e218]: "Every screen answers a situation we have lived: the equipment on the job site, a customer emergency, the fleet that never stops."
+          - link "Read our story →" [ref=f12e219] [cursor=pointer]:
+            - /url: /sobre-nos
+        - generic [ref=f12e220]:
+          - generic [ref=f12e221]: 21 courses · 66 lessons
+          - heading "Oravel Academy" [level=3] [ref=f12e222]
+          - paragraph [ref=f12e223]: Lessons with real screens, exercises and certified exams. Your team learns at its own pace, and you track who has studied.
+    - generic [ref=f12e225]:
+      - generic [ref=f12e226]: Frequently asked questions
+      - heading "Common questions before you start." [level=2] [ref=f12e227]
+      - group [ref=f12e228]:
+        - generic "Do I need to stop my operation to set it up? +" [ref=f12e229] [cursor=pointer]
+      - group [ref=f12e230]:
+        - generic "What if my team is not tech-savvy? +" [ref=f12e231] [cursor=pointer]
+      - group [ref=f12e232]:
+        - generic "How much does it cost? +" [ref=f12e233] [cursor=pointer]
+      - group [ref=f12e234]:
+        - generic "What if I do not like it after 30 days? +" [ref=f12e235] [cursor=pointer]
+    - generic [ref=f12e237]:
+      - heading "Shall we look at your operation together?" [level=2] [ref=f12e238]
+      - paragraph [ref=f12e239]: A 40-minute conversation, free and with no commitment. Leave your details and we will get back to you to set the best time.
+      - generic [ref=f12e240]:
+        - generic [ref=f12e241]:
+          - text: Do not fill in
+          - textbox [ref=f12e242]
+        - generic [ref=f12e243]:
+          - generic [ref=f12e244]:
+            - generic [ref=f12e245]: Name *
+            - textbox "Name *" [ref=f12e246]
+          - generic [ref=f12e247]:
+            - generic [ref=f12e248]: Company *
+            - textbox "Company *" [ref=f12e249]
+        - generic [ref=f12e250]:
+          - generic [ref=f12e251]:
+            - generic [ref=f12e252]: Email *
+            - textbox "Email *" [ref=f12e253]
+          - generic [ref=f12e254]:
+            - generic [ref=f12e255]: WhatsApp
+            - textbox "WhatsApp" [ref=f12e256]:
+              - /placeholder: (19) 90000-0000
+        - generic [ref=f12e257]:
+          - generic [ref=f12e258]:
+            - generic [ref=f12e259]: Industry *
+            - combobox "Industry *" [ref=f12e260]:
+              - option "Equipment Rental" [selected]
+              - option "Industrial Maintenance"
+              - option "Industrial Assembly"
+              - option "Logistics and Transport"
+              - option "Service Management"
+              - option "Distributor and Wholesaler"
+              - option "Other industry"
+          - generic [ref=f12e261]:
+            - generic [ref=f12e262]: Number of technicians *
+            - combobox "Number of technicians *" [ref=f12e263]:
+              - option "Select" [selected]
+              - option "1 a 5"
+              - option "6 a 15"
+              - option "16 a 50"
+              - option "Mais de 50"
+        - button "Let's talk" [ref=f12e267] [cursor=pointer]
+        - paragraph [ref=f12e268]:
+          - text: We use your data only to get back to you about this contact.
+          - link "Privacy" [ref=f12e269] [cursor=pointer]:
+            - /url: /politica-de-privacidade/
+      - paragraph [ref=f12e270]:
+        - text: Prefer to talk now?
+        - link "WhatsApp (19) 99933-2615" [ref=f12e271] [cursor=pointer]:
+          - /url: https://wa.me/5519999332615?text=Hello!%20I%20want%20to%20talk%20about%20trying%20Oravel%20for%2030%20days.
+        - text: or
+        - link "contato@oravel.com.br" [ref=f12e272] [cursor=pointer]:
+          - /url: mailto:contato@oravel.com.br
+  - contentinfo [ref=f12e273]:
+    - generic [ref=f12e274]:
+      - generic [ref=f12e275]:
+        - generic [ref=f12e276]:
+          - generic [ref=f12e277]: Oravel
+          - paragraph [ref=f12e278]: Desenvolvimento e tecnologia
+          - paragraph [ref=f12e279]: Control for those who run equipment, from people who have been on your side of the counter.
+        - generic [ref=f12e280]:
+          - heading "Solutions" [level=4] [ref=f12e281]
+          - link "Rental ERP" [ref=f12e282] [cursor=pointer]:
+            - /url: /erp-cmms/
+          - link "Maintenance" [ref=f12e283] [cursor=pointer]:
+            - /url: /software-manutencao-industrial/
+          - link "Services" [ref=f12e284] [cursor=pointer]:
+            - /url: /software-gestao-de-servicos/
+          - link "Logistics" [ref=f12e285] [cursor=pointer]:
+            - /url: /software-gestao-frota-logistica/
+          - link "Inventory" [ref=f12e286] [cursor=pointer]:
+            - /url: /wms/
+          - link "Sales" [ref=f12e287] [cursor=pointer]:
+            - /url: /crm/
+          - link "HR" [ref=f12e288] [cursor=pointer]:
+            - /url: /departamento-pessoal/
+        - generic [ref=f12e289]:
+          - heading "Equipment" [level=4] [ref=f12e290]
+          - link "Cranes" [ref=f12e291] [cursor=pointer]:
+            - /url: /software-manutencao-guindastes/
+          - link "Munk trucks" [ref=f12e292] [cursor=pointer]:
+            - /url: /software-manutencao-munks/
+          - link "Aerial work platforms" [ref=f12e293] [cursor=pointer]:
+            - /url: /software-manutencao-plataformas-elevatorias/
+          - link "Forklifts" [ref=f12e294] [cursor=pointer]:
+            - /url: /software-manutencao-empilhadeiras/
+          - link "Generators" [ref=f12e295] [cursor=pointer]:
+            - /url: /software-manutencao-geradores/
+          - link "Compressors" [ref=f12e296] [cursor=pointer]:
+            - /url: /software-manutencao-compressores/
+          - link "Other equipment" [ref=f12e297] [cursor=pointer]:
+            - /url: /software-manutencao-outros-equipamentos/
+        - generic [ref=f12e298]:
+          - heading "Company" [level=4] [ref=f12e299]
+          - link "Plans" [ref=f12e300] [cursor=pointer]:
+            - /url: /planos/
+          - link "Artificial intelligence" [ref=f12e301] [cursor=pointer]:
+            - /url: /inteligencia-artificial/
+          - link "Academy" [ref=f12e302] [cursor=pointer]:
+            - /url: /academia/
+          - link "About" [ref=f12e303] [cursor=pointer]:
+            - /url: /sobre/
+          - link "Contact" [ref=f12e304] [cursor=pointer]:
+            - /url: /contato.php
+        - generic [ref=f12e305]:
+          - heading "Legal" [level=4] [ref=f12e306]
+          - link "Privacy" [ref=f12e307] [cursor=pointer]:
+            - /url: /politica-de-privacidade/
+          - link "Terms of Use" [ref=f12e308] [cursor=pointer]:
+            - /url: /termos-de-uso/
+      - generic [ref=f12e309]:
+        - paragraph [ref=f12e310]: © 2026 Oravel Software. All rights reserved.
+        - paragraph [ref=f12e311]: Oravel Desenvolvimento de Software Ltda · CNPJ 65.707.953/0001-30
+  - link "WhatsApp" [ref=f12e312] [cursor=pointer]:
+    - /url: https://wa.me/5519999332615

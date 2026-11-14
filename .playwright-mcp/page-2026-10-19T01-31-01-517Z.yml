@@ -1,0 +1,18 @@
+- main [ref=f40e2]:
+  - generic [ref=f40e3]:
+    - paragraph [ref=f40e4]: Locadora Demo Cliente
+    - heading "Olá, Maria" [level=1] [ref=f40e5]
+    - paragraph [ref=f40e6]: O que você vai fazer agora?
+  - navigation [ref=f40e7]:
+    - link "Minhas OS do dia O que fazer hoje" [ref=f40e8] [cursor=pointer]:
+      - /url: http://127.0.0.1:8765/admin/minhas-ordens-de-servico
+      - generic [ref=f40e11]:
+        - generic [ref=f40e12]: Minhas OS do dia
+        - generic [ref=f40e13]: O que fazer hoje
+    - link "Agenda Próximos compromissos" [ref=f40e14] [cursor=pointer]:
+      - /url: http://127.0.0.1:8765/admin/agenda-tecnico/mobile
+      - generic [ref=f40e17]:
+        - generic [ref=f40e18]: Agenda
+        - generic [ref=f40e19]: Próximos compromissos
+  - link "Abrir a versão completa" [ref=f40e21] [cursor=pointer]:
+    - /url: http://127.0.0.1:8765/campo/versao/completa
