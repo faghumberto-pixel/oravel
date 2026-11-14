@@ -679,7 +679,7 @@ require __DIR__.'/chat.php';
 require __DIR__.'/checkout.php';
 
 // Central: ver/baixar o contrato assinado de cada cliente (só administrador da plataforma).
-Route::middleware(['web', 'auth'])
+Route::middleware([\App\Http\Middleware\CentralPanelAuth::class])
     ->group(function () {
         Route::get('/central/contratos-assinados/{signature}', [ContratoAssinadoController::class, 'ver'])
             ->name('central.contrato-assinado.ver');
@@ -687,7 +687,7 @@ Route::middleware(['web', 'auth'])
 
 // Previa (arquivo HTML) de um Acompanhamento do painel Central. So' super admin; o arquivo fica no disco
 // privado e e' aberto dentro de um iframe com sandbox (sem acesso a sessao do painel).
-Route::middleware(['web', 'auth'])->get('/central/acompanhamentos/{acompanhamento}/previa', function (App\Models\Acompanhamento $acompanhamento) {
+Route::middleware([\App\Http\Middleware\CentralPanelAuth::class])->get('/central/acompanhamentos/{acompanhamento}/previa', function (App\Models\Acompanhamento $acompanhamento) {
     abort_unless(auth()->user()?->isSuperAdmin(), 403);
     abort_unless($acompanhamento->previa_arquivo && Illuminate\Support\Facades\Storage::disk('local')->exists($acompanhamento->previa_arquivo), 404);
 
@@ -700,5 +700,6 @@ Route::middleware(['web', 'auth'])->get('/central/acompanhamentos/{acompanhament
 
 // Impressao dos Prospects (PDF gerado em PHP, aberto no navegador; NAO manda direto para a impressora).
 // Recebe os filtros/busca ativos na tela. So' super admin.
-Route::middleware(['web', 'auth'])->get('/central/prospects/imprimir', [App\Http\Controllers\ProspectImpressaoController::class, 'show'])
+Route::middleware([\App\Http\Middleware\CentralPanelAuth::class])->get('/central/prospects/imprimir', [App\Http\Controllers\ProspectImpressaoController::class, 'show'])
     ->name('central.prospects.imprimir');
+
