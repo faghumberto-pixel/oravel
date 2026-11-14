@@ -4,23 +4,25 @@ namespace App\Models;
 
 use App\Models\Concerns\BelongsToTenant;
 use App\Models\Concerns\HasSaaSMetadata;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Registro de cada chamada feita a uma IA externa (Claude) -- guarda o
  * contexto enviado e a resposta recebida, pra auditoria e pra nao perder
  * a analise se o usuario recarregar a pagina. Um tipo por caso de uso
- * (avaria/comercial/estoque/logistica/retrabalho/plano_preventivo). Nao e'
- * morph generico -- tipos com um registro "dono" unico ganham FK propria
- * (equipment_damage_id, crm_lead_id); tipos tenant-wide (estoque,
+ * (avaria/comercial/estoque/logistica/retrabalho/plano_preventivo/prospect).
+ * Nao e' morph generico -- tipos com um registro "dono" unico ganham FK propria
+ * (equipment_damage_id, crm_lead_id, prospect_id); tipos tenant-wide (estoque,
  * retrabalho, plano_preventivo) nao tem FK, fica tudo em context/response.
+ * Prospects sao globais (sem tenant), entao tenant_id e' nullable.
  */
 class AIAnalysis extends Model
 {
-    use BelongsToTenant;
     use HasSaaSMetadata;
     use HasUuids;
 
@@ -61,6 +63,7 @@ class AIAnalysis extends Model
         'type',
         'equipment_damage_id',
         'crm_lead_id',
+        'prospect_id',
         'context',
         'response',
         'status',
@@ -73,6 +76,58 @@ class AIAnalysis extends Model
         'response' => 'array',
         'action_taken' => 'boolean',
     ];
+
+    /**
+     * Boot: aplica scope de tenant so para tipos que nao sao 'prospect'.
+     * Prospects sao globais (sem tenant_id).
+     */
+    protected static function booted(): void
+    {
+        // Scope de leitura: so filtra por tenant se nao for tipo 'prospect'
+        static::addGlobalScope('tenant', function (Builder $builder) {
+            $user = Auth::user();
+
+            if (! $user) {
+                return;
+            }
+
+            // Super admin enxerga tudo (exceto quando tem tenant atuante)
+            if (method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) {
+                if ($actingTenantId = \App\Support\Tenancy::actingReadScopeTenantId()) {
+                    $builder->where($builder->getModel()->qualifyColumn('tenant_id'), $actingTenantId);
+                }
+
+                return;
+            }
+
+            // Usuario sem tenant_id -> nada a escopar
+            if (blank($user->tenant_id)) {
+                return;
+            }
+
+            // Nao aplica scope para analises de prospect (globais)
+            $builder->where(function ($q) use ($user) {
+                $q->where('type', '!=', self::TYPE_PROSPECT)
+                    ->where($builder->getModel()->qualifyColumn('tenant_id'), $user->tenant_id)
+                    ->orWhere('type', self::TYPE_PROSPECT);
+            });
+        });
+
+        // Escrita: so seta tenant_id se nao for prospect
+        static::creating(function (Model $model) {
+            if ($model->type === self::TYPE_PROSPECT) {
+                return; // prospect nao tem tenant
+            }
+
+            if (blank($model->tenant_id)) {
+                $tenant = \App\Support\Tenancy::current();
+
+                if ($tenant) {
+                    $model->tenant_id = $tenant->id;
+                }
+            }
+        });
+    }
 
     public function user(): BelongsTo
     {
@@ -92,6 +147,11 @@ class AIAnalysis extends Model
     public function prospect(): BelongsTo
     {
         return $this->belongsTo(Prospect::class);
+    }
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class, 'tenant_id');
     }
 
     /**

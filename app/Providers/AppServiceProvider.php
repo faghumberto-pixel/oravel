@@ -277,6 +277,9 @@ class AppServiceProvider extends ServiceProvider
         // mismatch". Confirmado reproduzindo o POST real (nao so' o GET).
         Livewire::component('sales-agenda-widget', SalesAgendaWidget::class);
 
+        // Prospect Chat (lateral no painel Central)
+        Livewire::component('prospect-chat', \App\Livewire\Central\ProspectChat::class);
+
         // Sobrescreve o registro padrao de NotificationsServiceProvider::packageBooted()
         // (mesmo nome 'database-notifications', o ultimo registrado vence) --
         // App\Livewire\DatabaseNotifications transforma clearNotifications()/
