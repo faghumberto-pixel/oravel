@@ -76,16 +76,44 @@ class ProspectChatService
             ];
         }
 
-        // 5. Se a IA devolveu SQL, executa pra buscar dados reais completos
+        // 5. Se a IA devolveu SQL, executa pra buscar dados reais completos.
+        // Se a consulta falhar (coluna inexistente etc.), devolve o erro pra IA
+        // corrigir UMA vez; se mesmo assim nao der, avisa o usuario em vez de
+        // ficar mudo (antes a lista vinha vazia e os botoes de download sumiam).
         $data = [];
         $sql = $parsed['sql'] ?? '';
+        $aviso = '';
 
         if (filled($sql)) {
-            $data = $this->executeSafeSql($sql);
+            [$data, $erro] = $this->runSql($sql);
+
+            if ($erro !== null) {
+                $retry = $this->client->sendConversation($systemPrompt, [
+                    ...$this->historyMessages($history),
+                    ['role' => 'user', 'content' => $userContent],
+                    ['role' => 'assistant', 'content' => $result['text']],
+                    ['role' => 'user', 'content' => "A consulta falhou com o erro: {$erro}\nCorrija usando SOMENTE colunas do schema e responda de novo no mesmo formato JSON."],
+                ], 6000);
+
+                $parsed2 = $retry['ok'] ? $this->client->parseJson($retry['text']) : null;
+
+                if ($parsed2 !== null && filled($parsed2['sql'] ?? '')) {
+                    $parsed = $parsed2;
+                    $sql = $parsed2['sql'];
+                    [$data, $erro] = $this->runSql($sql);
+                }
+            }
+
+            if ($erro !== null) {
+                $aviso = "\n\nNão consegui montar a lista para essa pergunta. Tente reformular o pedido (ex.: citando o status, a cidade ou a nota).";
+                $data = [];
+            } elseif ($data === []) {
+                $aviso = "\n\nNenhum prospect encontrado com esse critério.";
+            }
         }
 
         return [
-            'answer' => $parsed['answer'] ?? 'Análise concluída.',
+            'answer' => ($parsed['answer'] ?? 'Análise concluída.').$aviso,
             'data' => $data,
             'sql' => $sql,
             'raw' => $parsed,
@@ -256,6 +284,13 @@ class ProspectChatService
               sem_interesse_momento, sem_interesse, pediu_email, quer_reuniao,
               reuniao_agendada, proposta_enviada, contrato_andamento, fechado
 
+            ATENÇÃO: o contexto que você recebe tem campos CALCULADOS que NÃO são colunas
+            do banco: eh_celular, dias_sem_contato, dias_proximo_contato, follow_up_vencido,
+            status_label, resultado_label. Nunca use esses nomes no SQL.
+            - celular: telefone ~ '^\(\d\d\) 9'
+            - sem contato há N dias: ultimo_contato_em < NOW() - INTERVAL 'N days'
+            - follow-up vencido: proximo_contato <= CURRENT_DATE
+
             SCHEMA DA TABELA prospects:
             - id (uuid)
             - nome (varchar)
@@ -311,37 +346,36 @@ class ProspectChatService
     /**
      * Executa SQL de forma segura (apenas SELECT na tabela prospects).
      *
-     * @return array<int, array>
+     * @return array{0: array<int, array>, 1: ?string} [linhas, mensagem de erro ou null]
      */
-    private function executeSafeSql(string $sql): array
+    private function runSql(string $sql): array
     {
-        // Validação básica de segurança
-        $sqlLower = strtolower(trim($sql));
+        $sql = rtrim(trim($sql), "; \t\n\r");
+        $sqlLower = strtolower($sql);
 
         if (! str_starts_with($sqlLower, 'select')) {
-            return [];
+            return [[], 'apenas SELECT e permitido'];
         }
 
-        // Bloqueia palavras perigosas
-        $blocked = ['join', 'union', 'insert', 'update', 'delete', 'drop', 'create', 'alter', 'truncate', 'grant', 'revoke', '--', '/*', '*/', ';--'];
-        foreach ($blocked as $word) {
-            if (str_contains($sqlLower, $word)) {
-                Log::warning('SQL bloqueado por segurança', ['sql' => $sql]);
-                return [];
-            }
+        // Palavras inteiras (\b): "created_at"/"updated_at" nao devem bloquear.
+        if (preg_match('/\b(join|union|insert|update|delete|drop|create|alter|truncate|grant|revoke)\b|--|\/\*|\*\/|;/', $sqlLower)) {
+            Log::warning('SQL bloqueado por segurança', ['sql' => $sql]);
+
+            return [[], 'consulta usa comando nao permitido'];
         }
 
-        // Garante que só acessa a tabela prospects
         if (! str_contains($sqlLower, 'from prospects') && ! str_contains($sqlLower, 'from "prospects"')) {
-            return [];
+            return [[], 'a consulta deve ser FROM prospects'];
         }
 
         try {
             $results = \Illuminate\Support\Facades\DB::select($sql);
-            return array_map(fn ($row) => (array) $row, $results);
+
+            return [array_map(fn ($row) => (array) $row, $results), null];
         } catch (\Throwable $e) {
             Log::warning('Erro ao executar SQL do chat', ['sql' => $sql, 'error' => $e->getMessage()]);
-            return [];
+
+            return [[], mb_substr($e->getMessage(), 0, 300)];
         }
     }
 
