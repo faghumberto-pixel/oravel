@@ -90,9 +90,10 @@ class AnthropicApiClient
      * 'messages' da API. Mesmo contrato de retorno.
      *
      * @param  array<int, array{role: string, content: string}>  $messages
+     * @param  string|null  $model  sobrescreve o modelo padrao (Sonnet) so nesta chamada
      * @return array{ok: bool, text: ?string, error: ?string}
      */
-    public function sendConversation(string $systemPrompt, array $messages, int $maxTokens = 4096): array
+    public function sendConversation(string $systemPrompt, array $messages, int $maxTokens = 4096, ?string $model = null): array
     {
         $apiKey = config('services.anthropic.key');
 
@@ -108,7 +109,7 @@ class AnthropicApiClient
             ])
                 ->timeout(60)
                 ->post(self::API_URL, [
-                    'model' => self::MODEL,
+                    'model' => $model ?? self::MODEL,
                     'max_tokens' => $maxTokens,
                     'system' => $systemPrompt,
                     'messages' => $messages,

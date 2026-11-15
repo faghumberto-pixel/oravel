@@ -49,6 +49,7 @@ class ProspectChatService
             $systemPrompt,
             [...$this->historyMessages($history), ['role' => 'user', 'content' => $userContent]],
             6000,
+            $this->model(),
         );
         $this->logTokens('ask', $result);
 
@@ -96,7 +97,7 @@ class ProspectChatService
                     ['role' => 'user', 'content' => $userContent],
                     ['role' => 'assistant', 'content' => $result['text']],
                     ['role' => 'user', 'content' => "A consulta falhou com o erro: {$erro}\nCorrija usando SOMENTE colunas do schema e responda de novo no mesmo formato JSON."],
-                ], 6000);
+                ], 6000, $this->model());
                 $this->logTokens('retry', $retry);
 
                 $parsed2 = $retry['ok'] ? $this->client->parseJson($retry['text']) : null;
@@ -277,6 +278,11 @@ class ProspectChatService
      * Registra no log o consumo REAL de tokens de cada chamada a API
      * (canal padrao; buscar por "prospect_chat_tokens").
      */
+    private function model(): string
+    {
+        return config('services.anthropic.prospect_chat_model') ?: self::MODEL;
+    }
+
     private function logTokens(string $etapa, array $result): void
     {
         $u = $result['usage'] ?? null;
@@ -287,6 +293,7 @@ class ProspectChatService
 
         Log::info('prospect_chat_tokens', [
             'etapa' => $etapa,
+            'model' => $this->model(),
             'input' => $u['input_tokens'] ?? null,
             'output' => $u['output_tokens'] ?? null,
             'cache_read' => $u['cache_read_input_tokens'] ?? null,

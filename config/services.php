@@ -80,6 +80,10 @@ return [
 
     'anthropic' => [
         'key' => env('ANTHROPIC_API_KEY'),
+        // Modelo SO do chat da Central/Prospects (teste do Haiku, liberado pelo
+        // usuario em 2026-11-15; o resto do sistema segue no Sonnet do
+        // AnthropicApiClient). Pra voltar ao Sonnet: PROSPECT_CHAT_MODEL=claude-sonnet-5
+        'prospect_chat_model' => env('PROSPECT_CHAT_MODEL', 'claude-haiku-5-5'),
     ],
 
     // Push do app do colaborador (Web Push): chaves geradas por `php artisan colaborador:gerar-chaves-push`.
