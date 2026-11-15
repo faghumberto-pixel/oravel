@@ -11,8 +11,12 @@
                 <button type="submit" class="text-[11px] px-2 py-1 rounded-lg bg-gray-200/80 dark:bg-gray-700/80 text-gray-700 dark:text-gray-200">Sair</button>
             </form>
         @else
-            <div class="min-h-screen flex items-center justify-center px-6 text-center text-sm text-gray-500">
-                Acesso restrito.
+            <div class="min-h-screen flex flex-col items-center justify-center px-6 text-center text-sm text-gray-500 gap-4">
+                <p>Este app é só para a equipe da Oravel.</p>
+                @if (filled(auth()->user()->tenant_id))
+                    <a href="{{ route('assistente.suprimentos') }}" class="text-white font-bold py-3 px-6 rounded-xl" style="background: #2563eb">Ir para Suprimentos</a>
+                @endif
+                <form method="POST" action="{{ route('assistente.logout') }}">@csrf<button class="underline">Sair</button></form>
             </div>
         @endif
     @else

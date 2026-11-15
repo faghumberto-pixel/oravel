@@ -7,19 +7,20 @@
         @if ($u->isSuperAdmin())
             <div class="min-h-screen flex items-center justify-center px-6 text-center text-sm text-gray-500">
                 O super admin fica na Central. Entre com um usuário de cliente para usar o Suprimentos.
-                <form method="POST" action="{{ route('assistente.logout') }}" class="mt-4">@csrf<button class="underline">Sair</button></form>
+                <form method="POST" action="{{ route('assistente.logout') }}" class="mt-4">@csrf<input type="hidden" name="area" value="suprimentos"><button class="underline">Sair</button></form>
             </div>
         @elseif (filled($u->tenant_id) && (Gate::forUser($u)->allows('viewAny', \App\Models\Material::class) || Gate::forUser($u)->allows('viewAny', \App\Models\Part::class)))
             <livewire:assistente.suprimentos-chat :fullscreen="true" />
             <form method="POST" action="{{ route('assistente.logout') }}"
                   class="fixed top-2 right-2 z-[60]" style="top: max(0.5rem, env(safe-area-inset-top));">
                 @csrf
+                <input type="hidden" name="area" value="suprimentos">
                 <button type="submit" class="text-[11px] px-2 py-1 rounded-lg bg-gray-200/80 text-gray-700">Sair</button>
             </form>
         @else
             <div class="min-h-screen flex items-center justify-center px-6 text-center text-sm text-gray-500">
                 Seu usuário não tem acesso a Suprimentos. Fale com o administrador da empresa.
-                <form method="POST" action="{{ route('assistente.logout') }}" class="mt-4">@csrf<button class="underline">Sair</button></form>
+                <form method="POST" action="{{ route('assistente.logout') }}" class="mt-4">@csrf<input type="hidden" name="area" value="suprimentos"><button class="underline">Sair</button></form>
             </div>
         @endif
     @else

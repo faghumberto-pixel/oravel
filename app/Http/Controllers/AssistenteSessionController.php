@@ -29,25 +29,28 @@ class AssistenteSessionController extends Controller
 
         $request->authenticate();
 
-        $area = $request->input('area') === 'suprimentos' ? 'suprimentos' : 'prospects';
         $user = Auth::user();
 
-        // Prospects: so super admin. Suprimentos: so usuario de cliente (o super admin fica na Central).
-        $permitido = $area === 'suprimentos'
-            ? ($user && ! $user->isSuperAdmin() && filled($user->tenant_id))
-            : (bool) $user?->isSuperAdmin();
+        // O destino vem de QUEM entrou, nao de qual tela de login foi usada (antes, entrar pelo login
+        // de Prospeccao com conta de cliente dava "Acesso restrito"; o "Sair" cai nesse login):
+        // super admin -> Prospeccao (so ele); usuario de cliente -> Suprimentos.
+        $destino = match (true) {
+            (bool) $user?->isSuperAdmin() => 'assistente.index',
+            filled($user?->tenant_id) => 'assistente.suprimentos',
+            default => null,
+        };
 
-        if (! $permitido) {
+        if ($destino === null) {
             Auth::guard('web')->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            throw ValidationException::withMessages(['email' => $area === 'suprimentos' ? 'Use um usuário de cliente com acesso a Suprimentos.' : 'Acesso restrito.']);
+            throw ValidationException::withMessages(['email' => 'Acesso restrito.']);
         }
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route($area === 'suprimentos' ? 'assistente.suprimentos' : 'assistente.index', absolute: false));
+        return redirect()->route($destino);
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -57,6 +60,7 @@ class AssistenteSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('assistente.login');
+        // Volta ao login da mesma area (cor/icone/manifesto certos).
+        return redirect()->route('assistente.login', $request->input('area') === 'suprimentos' ? ['area' => 'suprimentos'] : []);
     }
 }
