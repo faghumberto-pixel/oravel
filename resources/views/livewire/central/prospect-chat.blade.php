@@ -147,11 +147,15 @@
 
             {{-- Indicador de "trabalhando": wire:loading acompanha a requisicao
                  (isLoading volta a false na mesma request, entao nao serve) --}}
-            <div wire:loading.flex wire:target="send,handleSendQuestion" class="justify-start">
+            <div wire:loading.flex wire:target="send,handleSendQuestion" class="flex-col gap-3">
+                {{-- Eco imediato da pergunta digitada (o servidor so adiciona a mensagem quando responde) --}}
+                <div x-data x-show="$wire.question && $wire.question.trim() !== ''" x-cloak class="flex justify-end">
+                    <div class="max-w-[85%] bg-orange-500 text-white rounded-2xl rounded-tr-sm px-4 py-2 whitespace-pre-wrap" x-text="$wire.question"></div>
+                </div>
                 <div
                     x-data="{ i: 0, frases: ['Analisando a pergunta...', 'Consultando os prospects...', 'Montando a resposta...', 'Quase lá...'] }"
                     x-init="setInterval(() => i = (i + 1) % frases.length, 2500)"
-                    class="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-3"
+                    class="self-start bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-3"
                 >
                     <div class="flex gap-1">
                         <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
@@ -259,28 +263,30 @@
             <span class="text-base font-semibold whitespace-nowrap">Assistente de Prospecção</span>
         </button>
     @endif
-</div>
-
-@push('scripts')
-<script>
-    // Auto-scroll para a última mensagem
-    document.addEventListener('livewire:load', () => {
-        Livewire.on('message-added', () => {
-            const container = document.getElementById('messages-container');
-            if (container) {
-                container.scrollTop = container.scrollHeight;
-            }
+    @script
+    <script>
+        // Rola a lista de mensagens pro fim sempre que ela muda (pergunta enviada,
+        // bolinhas "pensando" aparecendo/sumindo, resposta chegando).
+        const box = () => document.getElementById('messages-container');
+        const descer = () => requestAnimationFrame(() => {
+            const el = box();
+            if (el) el.scrollTop = el.scrollHeight;
         });
-    });
-
-    // Fecha chat ao pressionar Escape
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            const chat = document.querySelector('[wire\\:id]');
-            if (chat) {
-                Livewire.dispatch('close-chat');
-            }
+        const el = box();
+        if (el) {
+            // So reage a mudancas que importam: mensagem nova (filhos diretos) e o
+            // indicador "pensando" (wire:loading) ligando/desligando. Ignora o texto
+            // da frase que troca a cada 2,5 s, senao puxaria a tela pra baixo o tempo todo.
+            new MutationObserver((muts) => {
+                if (muts.some((m) => m.target === el || m.target.hasAttribute?.('wire:target'))) descer();
+            }).observe(el, { childList: true, subtree: true, attributes: true, attributeFilter: ['style'] });
         }
-    });
-</script>
-@endpush
+        // O painel abre/fecha por display: rola de novo quando o chat e' aberto.
+        $wire.$watch('isOpen', descer);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && $wire.isOpen) $wire.toggle();
+        });
+        descer();
+    </script>
+    @endscript
+</div>
