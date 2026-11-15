@@ -6,6 +6,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -23,7 +24,8 @@ class AssistenteSessionController extends Controller
 
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->merge(['remember' => true]);
+        // Teclado do celular costuma por a 1a letra em maiuscula e espaco no fim: e-mail e' comparado exato.
+        $request->merge(['remember' => true, 'email' => Str::lower(trim((string) $request->input('email')))]);
 
         $request->authenticate();
 

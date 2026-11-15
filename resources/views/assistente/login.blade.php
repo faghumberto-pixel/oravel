@@ -15,14 +15,18 @@
                 <input type="hidden" name="area" value="{{ request('area', old('area')) }}">
                 <div>
                     <label for="email" class="block text-xs font-semibold text-gray-500 mb-1.5">E-mail</label>
-                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" inputmode="email"
                            class="w-full bg-white text-gray-900 placeholder-gray-400 text-base px-3.5 py-3 rounded-xl border border-gray-300 focus:ring-2 outline-none">
                     @error('email')<p class="mt-1.5 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label for="password" class="block text-xs font-semibold text-gray-500 mb-1.5">Senha</label>
-                    <input id="password" type="password" name="password" required autocomplete="current-password"
-                           class="w-full bg-white text-gray-900 placeholder-gray-400 text-base px-3.5 py-3 rounded-xl border border-gray-300 focus:ring-2 outline-none">
+                    <div class="relative">
+                        <input id="password" type="password" name="password" required autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false"
+                           class="w-full pr-20 bg-white text-gray-900 placeholder-gray-400 text-base px-3.5 py-3 rounded-xl border border-gray-300 focus:ring-2 outline-none">
+                        <button type="button" id="ver-senha" aria-label="Mostrar senha" aria-pressed="false"
+                                class="absolute inset-y-0 right-0 px-4 text-xs font-bold text-gray-500">Mostrar</button>
+                    </div>
                     @error('password')<p class="mt-1.5 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
                 <button type="submit" class="w-full text-white font-bold text-sm py-3 rounded-xl" style="background: {{ $t['cor'] }}">Entrar</button>
@@ -34,6 +38,20 @@
     </div>
 
 <script>
+    // Mostrar/ocultar a senha, pra conferir o que foi digitado (teclado do celular erra facil).
+    (function () {
+        var campo = document.getElementById('password'), btn = document.getElementById('ver-senha');
+        if (!campo || !btn) return;
+        btn.addEventListener('click', function () {
+            var mostrar = campo.type === 'password';
+            campo.type = mostrar ? 'text' : 'password';
+            btn.textContent = mostrar ? 'Ocultar' : 'Mostrar';
+            btn.setAttribute('aria-pressed', mostrar ? 'true' : 'false');
+            btn.setAttribute('aria-label', mostrar ? 'Ocultar senha' : 'Mostrar senha');
+            campo.focus();
+        });
+    })();
+
     // Voltar pela seta do navegador mostra a tela de login guardada, com o codigo de
     // seguranca ja vencido (causa do erro 419): recarrega pra pegar um novo.
     window.addEventListener('pageshow', function (e) { if (e.persisted) location.reload(); });
