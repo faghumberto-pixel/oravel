@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\Assistente\Resultado;
 use App\Support\Assistente\TenantSql;
 
 /**
@@ -35,7 +36,10 @@ class SuprimentosChatService extends ProspectChatService
             return [[], 'cliente nao definido'];
         }
 
-        return TenantSql::run($this->tenantId, $sql);
+        [$linhas, $erro] = TenantSql::run($this->tenantId, $sql);
+
+        // Codigos internos (UUID) nunca vao pro usuario: tela, Excel e relatorio saem sem eles.
+        return [Resultado::semCodigosInternos($linhas), $erro];
     }
 
     protected function avisoSemResultado(): string
@@ -153,6 +157,10 @@ class SuprimentosChatService extends ProspectChatService
             relatório (para compartilhar no WhatsApp) nos botões abaixo. Nunca fale em "SQL", "query" ou "consulta ao banco" para o usuário no answer.
             O resultado da consulta aparece para o usuário logo abaixo da sua resposta: nunca escreva
             números que você ainda não tem (totais, somas); diga que o valor está no resultado abaixo.
+            NUNCA inclua códigos internos nos resultados: nada de id, uuid ou colunas terminadas em _id
+            (o usuário não conhece esses códigos). Mostre nomes, SKU, patrimônio, número da OS (os_number),
+            fornecedor, datas. Pedido de compra e requisição não têm número: identifique pelo fornecedor e
+            pela data (created_at / requested_at). Use os ids só dentro do JOIN, nunca no SELECT final.
             Dê nomes claros às colunas com AS (ex.: AS peca, AS patrimonio, AS custo_unitario).
 
             Em perguntas de seguimento ("só os críticos", "agora com o fornecedor", "exporta isso"),
