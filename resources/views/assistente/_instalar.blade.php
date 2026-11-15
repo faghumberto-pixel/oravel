@@ -4,7 +4,7 @@
      Some se o app ja esta instalado (display-mode: standalone). --}}
 <div id="instalar-app" class="hidden mt-6 text-center">
     <button type="button" id="instalar-btn"
-            class="hidden w-full border border-orange-600 text-orange-600 font-bold text-sm py-3 rounded-xl">
+            class="hidden w-full border font-bold text-sm py-3 rounded-xl" style="border-color: {{ $t['cor'] ?? '#ea580c' }}; color: {{ $t['cor'] ?? '#ea580c' }}">
         Instalar app no celular
     </button>
     <p id="instalar-ios" class="hidden text-xs text-gray-500 leading-relaxed">

@@ -5,6 +5,7 @@ namespace App\Livewire\Central;
 use App\Models\AssistenteRelatorio;
 use App\Models\Prospect;
 use App\Services\ProspectChatService;
+use App\Support\Assistente\Areas;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -222,6 +223,6 @@ class ProspectChat extends Component
 
     public function render()
     {
-        return view('livewire.central.prospect-chat', $this->dadosDaTela());
+        return view('livewire.central.prospect-chat', $this->dadosDaTela() + ['tema' => Areas::tema($this->area())]);
     }
 }

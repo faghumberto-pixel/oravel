@@ -1,6 +1,7 @@
-@extends('layouts.assistente')
+@extends('layouts.assistente', ['area' => 'prospects'])
 
 @section('content')
+    @php($t = \App\Support\Assistente\Areas::tema('prospects'))
     @auth
         @if (auth()->user()->isSuperAdmin())
             <livewire:prospect-chat :fullscreen="true" />
@@ -16,10 +17,10 @@
         @endif
     @else
         <div class="min-h-screen flex flex-col items-center justify-center px-6 text-center">
-            <img src="{{ asset('icon.png') }}" alt="Oravel" class="w-16 h-16 rounded-2xl mb-4">
+            <img src="{{ asset($t['icone']) }}" alt="Oravel" class="w-16 h-16 rounded-2xl mb-4">
             <h1 class="text-xl font-bold mb-1">Oravel Mobile</h1>
             <p class="text-sm text-gray-500 mb-6">Entre para usar o assistente de prospecção.</p>
-            <a href="{{ route('assistente.login') }}" class="w-full max-w-sm bg-orange-600 text-white font-bold text-sm py-3 rounded-xl">Entrar</a>
+            <a href="{{ route('assistente.login') }}" class="w-full max-w-sm text-white font-bold text-sm py-3 rounded-xl" style="background: {{ $t['cor'] }}">Entrar</a>
             <div class="w-full max-w-sm">@include('assistente._instalar')</div>
         </div>
     @endauth

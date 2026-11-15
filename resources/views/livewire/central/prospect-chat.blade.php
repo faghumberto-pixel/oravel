@@ -11,15 +11,15 @@
     {{-- Chat Panel (lateral direita) --}}
     <div
         class="{{ $fullscreen ? 'fixed inset-0 w-full' : 'fixed right-0 top-0 h-full w-full max-w-2xl shadow-2xl' }} bg-white dark:bg-gray-900 flex flex-col z-50"
-        style="display: {{ $isOpen ? 'flex' : 'none' }};{{ $fullscreen ? ' height: 100dvh;' : '' }}"
+        @if ($fullscreen) data-tema style="display: flex; height: 100dvh; --ac: {{ $tema['cor'] }}; --ac-d: {{ $tema['escura'] }}; --fundo: {{ $tema['fundo'] }};" @else style="display: {{ $isOpen ? 'flex' : 'none' }};" @endif
     >
         {{-- Header --}}
-        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0"
+        <div class="tema-cab flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0"
              @if ($fullscreen) style="padding-top: max(0.75rem, env(safe-area-inset-top));" @endif>
             <div class="flex items-center gap-3">
                 @if ($fullscreen)
                     {{-- App do celular (Oravel Mobile): icone da Oravel no topo --}}
-                    <img src="{{ asset('icon.png') }}" alt="Oravel" class="w-10 h-10 rounded-xl">
+                    <img src="{{ asset('icon.png') }}" alt="Oravel" class="w-10 h-10 rounded-xl ring-2 ring-white/70">
                     <div>
                         <h3 class="font-bold text-gray-900 dark:text-white leading-tight">Oravel Mobile</h3>
                         <p class="text-xs text-gray-500 dark:text-gray-400">{{ $tituloApp }} · {{ $subtituloApp }}</p>
@@ -66,7 +66,7 @@
         <div class="flex-1 overflow-y-auto p-4 space-y-4" id="messages-container">
             @foreach ($messages as $index => $message)
                 <div class="flex {{ $message['role'] === 'user' ? 'justify-end' : 'justify-start' }}">
-                    <div class="max-w-[85%] {{ $message['role'] === 'user' ? 'bg-orange-500 text-white rounded-2xl rounded-tr-sm' : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl rounded-tl-sm' }}">
+                    <div class="max-w-[85%] {{ $message['role'] === 'user' ? 'tema-user bg-orange-500 text-white rounded-2xl rounded-tr-sm' : 'tema-bolha bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl rounded-tl-sm' }}">
                         <div class="px-4 py-2 whitespace-pre-wrap">{{ $message['content'] }}</div>
 
                         {{-- Download da lista: toda resposta com dados tem seus proprios botoes --}}
@@ -79,7 +79,7 @@
                                 </button>
                                 @if (! empty($message['relatorio']))
                                     <a href="{{ $message['relatorio']['url'] }}" target="_blank" rel="noopener"
-                                        class="px-4 py-2 text-sm font-semibold bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors flex items-center gap-2">
+                                        class="tema-send px-4 py-2 text-sm font-semibold bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors flex items-center gap-2">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                         Abrir relatório
                                     </a>
@@ -179,17 +179,17 @@
             <div wire:loading.flex wire:target="send,handleSendQuestion" class="flex-col gap-3">
                 {{-- Eco imediato da pergunta digitada (o servidor so adiciona a mensagem quando responde) --}}
                 <div x-data x-show="$wire.question && $wire.question.trim() !== ''" x-cloak class="flex justify-end">
-                    <div class="max-w-[85%] bg-orange-500 text-white rounded-2xl rounded-tr-sm px-4 py-2 whitespace-pre-wrap" x-text="$wire.question"></div>
+                    <div class="tema-user max-w-[85%] bg-orange-500 text-white rounded-2xl rounded-tr-sm px-4 py-2 whitespace-pre-wrap" x-text="$wire.question"></div>
                 </div>
                 <div
                     x-data="{ i: 0, frases: ['Analisando a pergunta...', 'Consultando os dados...', 'Montando a resposta...', 'Quase lá...'] }"
                     x-init="setInterval(() => i = (i + 1) % frases.length, 2500)"
-                    class="self-start bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-3"
+                    class="tema-bolha self-start bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-3"
                 >
                     <div class="flex gap-1">
-                        <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
-                        <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
-                        <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+                        <div class="tema-ponto w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+                        <div class="tema-ponto w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                        <div class="tema-ponto w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
                     </div>
                     <span class="text-sm animate-pulse" x-text="frases[i]">Analisando...</span>
                 </div>
@@ -221,7 +221,7 @@
         @endunless
 
         {{-- Input Area --}}
-        <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0"
+        <div class="tema-barra px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0"
              @if ($fullscreen) style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom));" @endif>
             <div class="flex gap-2">
                 <input
@@ -236,7 +236,7 @@
                 <button
                     wire:click="send"
                     @disabled($isLoading)
-                    class="px-5 py-2 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-medium text-sm transition-colors flex items-center gap-2"
+                    class="tema-send px-5 py-2 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-medium text-sm transition-colors flex items-center gap-2"
                 >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
@@ -321,4 +321,23 @@
         descer();
     </script>
     @endscript
+
+    @if ($fullscreen)
+        {{-- Tema do app do celular: cor propria da area (cada chat instalado tem a sua), sem branco.
+             Escopo [data-tema]: o chat da Central (desktop) nao e' afetado. --}}
+        <style>
+            [data-tema] { background: var(--fundo) !important; }
+            [data-tema] .tema-cab { background: var(--ac) !important; border-color: var(--ac-d) !important; }
+            [data-tema] .tema-cab h3, [data-tema] .tema-cab p { color: #fff !important; }
+            [data-tema] .tema-cab p { opacity: .85; }
+            [data-tema] .tema-user { background: var(--ac) !important; color: #fff !important; }
+            [data-tema] .tema-bolha { background: #fff !important; color: #111827 !important; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+            [data-tema] .tema-ponto { background: var(--ac) !important; }
+            [data-tema] .tema-send { background: var(--ac) !important; }
+            [data-tema] .tema-send:hover { background: var(--ac-d) !important; }
+            [data-tema] .tema-barra { background: var(--fundo) !important; border-color: var(--ac) !important; }
+            [data-tema] .tema-barra input { border-color: var(--ac) !important; }
+            [data-tema] .tema-barra input:focus { box-shadow: 0 0 0 2px var(--ac) !important; }
+        </style>
+    @endif
 </div>
