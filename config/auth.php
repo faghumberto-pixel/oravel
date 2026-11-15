@@ -48,6 +48,19 @@ return [
             'driver' => 'session',
             'provider' => 'clients',
         ],
+
+        // Apps do celular (Oravel Mobile / Oravel Suprimentos): um guard por app, mesmo provider de usuarios.
+        // O nome do guard define a chave de sessao e o cookie "lembrar de mim" (remember_<guard>_...), entao
+        // cada app guarda o proprio usuario no mesmo aparelho. Ver App\Support\Assistente\Sessao.
+        'assistente_prospects' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
+
+        'assistente_suprimentos' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
     ],
 
     /*

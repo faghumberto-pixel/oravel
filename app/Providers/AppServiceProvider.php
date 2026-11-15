@@ -135,6 +135,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Apps do celular: sessao e login separados por app (precisa rodar antes de a sessao ser lida).
+        if (! $this->app->runningInConsole()) {
+            \App\Support\Assistente\Sessao::aplicar($this->app->make('request'));
+        }
+
         // Select/CheckboxList por relationship validam o tenant no servidor (ver a classe).
         TenantScopedRelationshipRule::register();
 

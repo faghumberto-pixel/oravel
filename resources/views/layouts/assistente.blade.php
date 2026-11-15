@@ -6,6 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
         <meta name="theme-color" content="{{ $t['cor'] }}">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        {{-- Livewire descobre de qual app veio pelo Referer (sessao propria por app): precisa ir completo no mesmo site. --}}
+        <meta name="referrer" content="same-origin">
 
         <title>{{ $t['nome'] }}</title>
 
