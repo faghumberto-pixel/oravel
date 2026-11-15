@@ -16,7 +16,7 @@
     "name": "sortable.esm"
   },
   "resources/css/app.css": {
-    "file": "assets/app-elq9E5YK.css",
+    "file": "assets/app-Bs6L_pNK.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -25,15 +25,15 @@
     ]
   },
   "resources/css/filament/admin/theme.css": {
-    "file": "assets/theme-B1HOP2b2.css",
+    "file": "assets/theme-BpSUYdCs.css",
     "src": "resources/css/filament/admin/theme.css"
   },
   "resources/css/filament/central/theme.css": {
-    "file": "assets/theme-DeahwrX-.css",
+    "file": "assets/theme-B0Ah0uqQ.css",
     "src": "resources/css/filament/central/theme.css"
   },
   "resources/css/filament/client/theme.css": {
-    "file": "assets/theme-DCvpAfxd.css",
+    "file": "assets/theme-DU2_Yu_H.css",
     "src": "resources/css/filament/client/theme.css",
     "isEntry": true,
     "name": "theme",
@@ -61,7 +61,7 @@
     ]
   },
   "resources/js/chat-app.js": {
-    "file": "assets/chat-app-DFHxtEhq.js",
+    "file": "assets/chat-app-CvqmYY_H.js",
     "name": "chat-app",
     "src": "resources/js/chat-app.js",
     "isEntry": true,
@@ -69,7 +69,7 @@
       "_import-wrapper-prod-D0HhYmlZ.js"
     ],
     "css": [
-      "assets/app-elq9E5YK.css"
+      "assets/app-Bs6L_pNK.css"
     ]
   },
   "resources/js/crm-kanban.js": {

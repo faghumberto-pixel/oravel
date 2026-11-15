@@ -13,6 +13,9 @@ class ProspectChat extends Component
 {
     public bool $isOpen = false;
 
+    /** Tela cheia (app do celular /assistente): ja abre aberto, sem fechar/gatilho. */
+    public bool $fullscreen = false;
+
     public string $question = '';
 
     public array $messages = [];
@@ -23,9 +26,14 @@ class ProspectChat extends Component
 
     public string $lastSql = '';
 
-    public function mount(): void
+    public function mount(bool $fullscreen = false): void
     {
         abort_unless(Auth::user()?->isSuperAdmin(), 403);
+
+        if ($fullscreen) {
+            $this->fullscreen = true;
+            $this->toggle(); // abre e monta a mensagem de boas-vindas
+        }
     }
 
     public function toggle(): void

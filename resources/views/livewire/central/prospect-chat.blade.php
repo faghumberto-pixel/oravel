@@ -1,19 +1,30 @@
 <div>
     {{-- Backdrop (fecha ao clicar fora) --}}
-    <div
-        class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
-        wire:click="toggle"
-        style="display: {{ $isOpen ? 'block' : 'none' }};"
-    ></div>
+    @unless ($fullscreen)
+        <div
+            class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
+            wire:click="toggle"
+            style="display: {{ $isOpen ? 'block' : 'none' }};"
+        ></div>
+    @endunless
 
     {{-- Chat Panel (lateral direita) --}}
     <div
-        class="fixed right-0 top-0 h-full w-full max-w-2xl bg-white dark:bg-gray-900 shadow-2xl flex flex-col z-50"
-        style="display: {{ $isOpen ? 'flex' : 'none' }};"
+        class="{{ $fullscreen ? 'fixed inset-0 w-full' : 'fixed right-0 top-0 h-full w-full max-w-2xl shadow-2xl' }} bg-white dark:bg-gray-900 flex flex-col z-50"
+        style="display: {{ $isOpen ? 'flex' : 'none' }};{{ $fullscreen ? ' height: 100dvh;' : '' }}"
     >
         {{-- Header --}}
-        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0"
+             @if ($fullscreen) style="padding-top: max(0.75rem, env(safe-area-inset-top));" @endif>
             <div class="flex items-center gap-3">
+                @if ($fullscreen)
+                    {{-- App do celular (Oravel Mobile): icone da Oravel no topo --}}
+                    <img src="{{ asset('icon.png') }}" alt="Oravel" class="w-10 h-10 rounded-xl">
+                    <div>
+                        <h3 class="font-bold text-gray-900 dark:text-white leading-tight">Oravel Mobile</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Assistente de Prospecção · {{ $totalProspects }} prospects</p>
+                    </div>
+                @else
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
@@ -23,6 +34,7 @@
                     <h3 class="font-semibold text-gray-900 dark:text-white">Assistente de Prospecção</h3>
                     <p class="text-xs text-gray-500 dark:text-gray-400">{{ $totalProspects }} prospects no total</p>
                 </div>
+                @endif
             </div>
             <div class="flex items-center gap-2">
                 {{-- Quick stats --}}
@@ -34,6 +46,7 @@
                     <span class="text-gray-500 dark:text-gray-400">| EPP não contatados:</span>
                     <span class="font-medium text-blue-600 dark:text-blue-400">{{ $prospectsEppNaoContatados }}</span>
                 </div>
+                @unless ($fullscreen)
                 <button
                     wire:click="toggle"
                     class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
@@ -43,6 +56,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
+                @endunless
             </div>
         </div>
 
@@ -170,7 +184,7 @@
         {{-- Quick Action Buttons --}}
         <div class="px-4 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0">
             <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Perguntas rápidas:</p>
-            <div class="flex flex-wrap gap-2">
+            <div class="flex gap-2 {{ $fullscreen ? 'flex-nowrap overflow-x-auto pb-1' : 'flex-wrap' }}">
                 @foreach([
                     'Quais prospects são EPP e não contatei ainda?' => 'epp-nao-contatados',
                     'Quais estão aguardando retorno?' => 'aguardando-retorno',
@@ -190,14 +204,15 @@
         </div>
 
         {{-- Input Area --}}
-        <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0">
+        <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0"
+             @if ($fullscreen) style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom));" @endif>
             <div class="flex gap-2">
                 <input
                     type="text"
                     wire:model="question"
                     wire:keydown.enter="send"
                     placeholder="Digite sua pergunta sobre os prospects..."
-                    class="flex-1 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    class="flex-1 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl {{ $fullscreen ? 'text-base' : 'text-sm' }} focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     @disabled($isLoading)
                     autofocus
                 >
@@ -243,7 +258,7 @@
     </div>
 
     {{-- Gatilho (fechado): barra no rodape direito, no estilo do chat do app --}}
-    @if (! $isOpen)
+    @if (! $isOpen && ! $fullscreen)
         <button
             type="button"
             wire:click="toggle"
@@ -284,7 +299,7 @@
         // O painel abre/fecha por display: rola de novo quando o chat e' aberto.
         $wire.$watch('isOpen', descer);
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && $wire.isOpen) $wire.toggle();
+            if (e.key === 'Escape' && $wire.isOpen && !$wire.fullscreen) $wire.toggle();
         });
         descer();
     </script>

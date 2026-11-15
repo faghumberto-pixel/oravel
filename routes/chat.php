@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssistenteSessionController;
 use App\Http\Controllers\Chat\ChatAuthenticatedSessionController;
 use App\Http\Controllers\Chat\ChatMessageSyncController;
 use App\Livewire\GlobalChat;
@@ -33,4 +34,22 @@ Route::prefix('chat')->name('chat.')->group(function () {
         Route::post('/logout', [ChatAuthenticatedSessionController::class, 'destroy'])->name('logout');
         Route::post('/messages/sync', [ChatMessageSyncController::class, 'store'])->name('messages.sync');
     });
+});
+
+/*
+ * App instalavel (PWA) so com o Assistente de Prospeccao -- o mesmo chat da
+ * Central/Prospects em tela cheia, pra usar no celular. So super admin.
+ * GET / nao redireciona (mesmo motivo do /chat: start_url de PWA que
+ * redireciona trava em tela em branco em alguns WebViews): a view resolve
+ * visitante / sem permissao / autorizado sozinha.
+ */
+Route::prefix('assistente')->name('assistente.')->group(function () {
+    Route::middleware('guest')->group(function () {
+        Route::get('/login', [AssistenteSessionController::class, 'create'])->name('login');
+        Route::post('/login', [AssistenteSessionController::class, 'store'])->middleware('throttle:10,1');
+    });
+
+    Route::get('/', fn () => view('assistente.index'))->name('index');
+
+    Route::post('/logout', [AssistenteSessionController::class, 'destroy'])->middleware('auth')->name('logout');
 });
