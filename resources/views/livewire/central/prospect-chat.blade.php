@@ -1,4 +1,4 @@
-<div x-data="{}" class="fixed inset-0 z-50" wire:ignore>
+<div wire:ignore>
     {{-- Backdrop (fecha ao clicar fora) --}}
     <div
         x-show="isOpen"
@@ -8,7 +8,7 @@
         x-transition:leave="transition-opacity ease-linear duration-200"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        class="fixed inset-0 bg-black/30 backdrop-blur-sm"
+        class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
         @click="$dispatch('close-chat')"
         wire:loading.class.remove="hidden"
         style="display: {{ $isOpen ? 'block' : 'none' }};"
@@ -23,7 +23,7 @@
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="transform opacity-100 translate-x-0"
         x-transition:leave-end="transform opacity-0 translate-x-full"
-        class="fixed right-0 top-0 h-full w-full max-w-2xl bg-white dark:bg-gray-900 shadow-2xl flex flex-col"
+        class="fixed right-0 top-0 h-full w-full max-w-2xl bg-white dark:bg-gray-900 shadow-2xl flex flex-col z-50"
         style="display: {{ $isOpen ? 'flex' : 'none' }};"
         @click.outside="$dispatch('close-chat')"
     >
