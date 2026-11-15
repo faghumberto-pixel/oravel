@@ -240,6 +240,10 @@ class CentralPanelProvider extends PanelProvider
                 fn () => view('filament.livewire-session-recovery'),
             )
             ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn () => view('filament.central.prospect-chat-hook'),
+            )
+            ->renderHook(
                 PanelsRenderHook::PAGE_START,
                 fn () => view('filament.breadcrumb'),
             )

@@ -26,7 +26,4 @@
 
         {{ $this->table }}
     </div>
-
-    {{-- Assistente de Prospecção (chat lateral) --}}
-    @livewire(\App\Livewire\Central\ProspectChat::class)
 </x-filament-panels::page>
