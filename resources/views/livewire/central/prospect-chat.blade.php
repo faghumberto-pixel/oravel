@@ -251,7 +251,8 @@
     @if (! $isOpen)
         <button
             wire:click="toggle"
-            class="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
+            class="fixed bottom-4 right-4 z-50 w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group pb-safe"
+            style="padding-bottom: max(1rem, env(safe-area-inset-bottom));"
             title="Abrir Assistente de Prospecção"
         >
             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -263,7 +264,7 @@
                     {{ $prospectsAguardando + $prospectsSemContato }}
                 </span>
             @endif
-            <div class="absolute right-full top-1/2 -translate-y-1/2 mr-3 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+            <div class="absolute right-full bottom-1/2 translate-y-1/2 mr-3 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                 Assistente de Prospecção
             </div>
         </button>
