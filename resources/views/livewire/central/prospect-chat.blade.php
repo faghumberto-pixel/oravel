@@ -181,7 +181,8 @@
             </div>
         </div>
 
-        {{-- Quick Action Buttons --}}
+        {{-- Sugestoes so no desktop: no app do celular (fullscreen) tiravam espaco do campo de digitar --}}
+        @unless ($fullscreen)
         <div class="px-4 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0">
             <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Perguntas rápidas:</p>
             <div class="flex gap-2 {{ $fullscreen ? 'flex-nowrap overflow-x-auto pb-1' : 'flex-wrap' }}">
@@ -202,6 +203,7 @@
                 @endforeach
             </div>
         </div>
+        @endunless
 
         {{-- Input Area --}}
         <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0"
