@@ -28,22 +28,10 @@ class ProspectChatService
      */
     public function ask(string $question, array $history = []): array
     {
-        // 1. Pega uma amostra representativa dos prospects (pra caber no contexto)
-        $prospects = $this->fetchProspectsSample();
-
-        // 2. Monta o contexto pro Claude
-        $context = $this->buildContext($prospects);
-
-        // 3. System prompt que ensina o modelo a responder EM JSON estruturado
+        // Contexto (estatisticas + amostra) e prompt vem de ganchos, pra outras areas
+        // (ex.: Suprimentos) reaproveitarem toda a logica de conversa/retry/tokens.
         $systemPrompt = $this->systemPrompt();
-
-        // 4. Chama a API com o historico da conversa (se houver)
-        $total = Prospect::count();
-        $userContent = "Estatísticas gerais (banco inteiro, {$total} prospects):\n"
-            .json_encode($this->buildStats(), JSON_UNESCAPED_UNICODE)
-            ."\n\nAmostra dos {$prospects->count()} prospects mais relevantes (formato de exemplo, NÃO é a lista completa):\n"
-            .json_encode($context, JSON_UNESCAPED_UNICODE)
-            ."\n\nPergunta do usuário:\n".$question;
+        $userContent = $this->montarContexto()."\n\nPergunta do usuário:\n".$question;
 
         $result = $this->client->sendConversation(
             $systemPrompt,
@@ -110,10 +98,10 @@ class ProspectChatService
             }
 
             if ($erro !== null) {
-                $aviso = "\n\nNão consegui montar a lista para essa pergunta. Tente reformular o pedido (ex.: citando o status, a cidade ou a nota).";
+                $aviso = $this->avisoFalha();
                 $data = [];
             } elseif ($data === []) {
-                $aviso = "\n\nNenhum prospect encontrado com esse critério.";
+                $aviso = $this->avisoSemResultado();
             }
         }
 
@@ -123,6 +111,34 @@ class ProspectChatService
             'sql' => $sql,
             'raw' => $parsed,
         ];
+    }
+
+    /** Contexto enviado junto da pergunta (estatisticas + amostra). Sobrescrito por outras areas. */
+    protected function montarContexto(): string
+    {
+        $prospects = $this->fetchProspectsSample();
+        $total = Prospect::count();
+
+        return "Estatísticas gerais (banco inteiro, {$total} prospects):\n"
+            .json_encode($this->buildStats(), JSON_UNESCAPED_UNICODE)
+            ."\n\nAmostra dos {$prospects->count()} prospects mais relevantes (formato de exemplo, NÃO é a lista completa):\n"
+            .json_encode($this->buildContext($prospects), JSON_UNESCAPED_UNICODE);
+    }
+
+    /** Nome da area, gravado no log de tokens. */
+    protected function area(): string
+    {
+        return 'prospects';
+    }
+
+    protected function avisoSemResultado(): string
+    {
+        return "\n\nNenhum prospect encontrado com esse critério.";
+    }
+
+    protected function avisoFalha(): string
+    {
+        return "\n\nNão consegui montar a lista para essa pergunta. Tente reformular o pedido (ex.: citando o status, a cidade ou a nota).";
     }
 
     /**
@@ -292,6 +308,7 @@ class ProspectChatService
         }
 
         Log::info('prospect_chat_tokens', [
+            'area' => $this->area(),
             'etapa' => $etapa,
             'model' => $this->model(),
             'input' => $u['input_tokens'] ?? null,
@@ -301,7 +318,7 @@ class ProspectChatService
         ]);
     }
 
-    private function systemPrompt(): string
+    protected function systemPrompt(): string
     {
         return <<<'PROMPT'
             Você é um analista de vendas B2B especializado em prospecção ativa para
@@ -417,7 +434,7 @@ class ProspectChatService
      *
      * @return array{0: array<int, array>, 1: ?string} [linhas, mensagem de erro ou null]
      */
-    private function runSql(string $sql): array
+    protected function runSql(string $sql): array
     {
         $sql = rtrim(trim($sql), "; \t\n\r");
         $sqlLower = strtolower($sql);

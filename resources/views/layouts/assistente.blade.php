@@ -6,15 +6,15 @@
         <meta name="theme-color" content="#ea580c">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>Oravel Mobile</title>
+        <title>{{ $tituloPagina ?? 'Oravel Mobile' }}</title>
 
         {{-- PWA: instalavel como "Oravel Mobile", scope proprio (/assistente). --}}
-        <link rel="manifest" href="{{ asset('manifest-assistente.json') }}">
+        <link rel="manifest" href="{{ asset($manifesto ?? 'manifest-assistente.json') }}">
         <link rel="icon" type="image/png" href="{{ asset('icon.png') }}">
         <link rel="apple-touch-icon" href="{{ asset('icon.png') }}">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="default">
-        <meta name="apple-mobile-web-app-title" content="Oravel Mobile">
+        <meta name="apple-mobile-web-app-title" content="{{ $tituloPagina ?? 'Oravel Mobile' }}">
         <meta name="mobile-web-app-capable" content="yes">
 
         {{-- So tema claro: sem a classe "dark" e com color-scheme light, o Android nao

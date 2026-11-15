@@ -27,6 +27,8 @@ Schedule::command('whatsapp:avisos-cobranca')->dailyAt('09:00')->withoutOverlapp
 Schedule::command('site-visits:close-stale')->everyFiveMinutes()->withoutOverlapping();
 // Mantém só os 50 acessos mais recentes (pedido do usuário 2026-09-27).
 Schedule::command('site-visits:prune')->hourly()->withoutOverlapping();
+// Relatorios compartilhaveis do Assistente vencidos (validade de 7 dias).
+Schedule::command('model:prune', ['--model' => [\App\Models\AssistenteRelatorio::class]])->daily()->withoutOverlapping();
 Schedule::command('employees:check-certification-expirations')->daily()->withoutOverlapping();
 Schedule::command('epi:check-ca-expirations')->daily()->withoutOverlapping();
 Schedule::command('epi:check-lifespan-expirations')->daily()->withoutOverlapping();

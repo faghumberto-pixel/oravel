@@ -5,12 +5,13 @@
         <div class="w-full max-w-sm">
             <div class="flex flex-col items-center mb-8">
                 <img src="{{ asset('icon.png') }}" alt="Oravel" class="w-16 h-16 rounded-2xl mb-4">
-                <h1 class="text-xl font-bold">Oravel Mobile</h1>
+                <h1 class="text-xl font-bold">{{ request('area', old('area')) === 'suprimentos' ? 'Oravel Suprimentos' : 'Oravel Mobile' }}</h1>
                 <p class="text-sm text-gray-500 mt-1">Entre para usar o assistente de prospecção</p>
             </div>
 
             <form method="POST" action="{{ route('assistente.login') }}" class="space-y-4">
                 @csrf
+                <input type="hidden" name="area" value="{{ request('area', old('area')) }}">
                 <div>
                     <label for="email" class="block text-xs font-semibold text-gray-500 mb-1.5">E-mail</label>
                     <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"

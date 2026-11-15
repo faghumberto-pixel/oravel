@@ -22,7 +22,7 @@
                     <img src="{{ asset('icon.png') }}" alt="Oravel" class="w-10 h-10 rounded-xl">
                     <div>
                         <h3 class="font-bold text-gray-900 dark:text-white leading-tight">Oravel Mobile</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Assistente de Prospecção · {{ $totalProspects }} prospects</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $tituloApp }} · {{ $subtituloApp }}</p>
                     </div>
                 @else
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center">
@@ -31,12 +31,13 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="font-semibold text-gray-900 dark:text-white">Assistente de Prospecção</h3>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $totalProspects }} prospects no total</p>
+                    <h3 class="font-semibold text-gray-900 dark:text-white">{{ $tituloApp }}</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $subtituloApp }}</p>
                 </div>
                 @endif
             </div>
             <div class="flex items-center gap-2">
+                @if ($mostrarStats)
                 {{-- Quick stats --}}
                 <div class="hidden sm:flex items-center gap-3 text-xs px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
                     <span class="text-gray-500 dark:text-gray-400">Aguardando:</span>
@@ -46,6 +47,7 @@
                     <span class="text-gray-500 dark:text-gray-400">| EPP não contatados:</span>
                     <span class="font-medium text-blue-600 dark:text-blue-400">{{ $prospectsEppNaoContatados }}</span>
                 </div>
+                @endif
                 @unless ($fullscreen)
                 <button
                     wire:click="toggle"
@@ -75,11 +77,24 @@
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                                     Baixar Excel ({{ count($message['data']) }})
                                 </button>
+                                @if (! empty($message['relatorio']))
+                                    <a href="{{ $message['relatorio']['url'] }}" target="_blank" rel="noopener"
+                                        class="px-4 py-2 text-sm font-semibold bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        Abrir relatório
+                                    </a>
+                                    <a href="{{ $message['relatorio']['whatsapp'] }}" target="_blank" rel="noopener"
+                                        class="px-4 py-2 text-sm font-semibold bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2a9.9 9.9 0 00-8.5 14.9L2 22l5.25-1.5A9.9 9.9 0 1012.04 2zm5.8 14.1c-.25.7-1.45 1.35-2 1.4-.5.05-1.1.2-3.7-.8-3.1-1.3-5.1-4.5-5.25-4.7-.15-.2-1.25-1.65-1.25-3.15s.8-2.25 1.1-2.55c.3-.3.6-.35.8-.35h.6c.2 0 .45-.05.7.55.25.6.85 2.1.95 2.25.1.15.15.35.05.55-.1.2-.15.3-.3.5-.15.15-.3.35-.45.5-.15.15-.3.3-.15.6.15.3.7 1.15 1.5 1.85 1.05.9 1.9 1.2 2.2 1.35.3.15.45.1.65-.1.2-.2.75-.85.95-1.15.2-.3.4-.25.65-.15.25.1 1.65.8 1.95.95.3.15.5.2.55.3.05.1.05.65-.2 1.35z"/></svg>
+                                        WhatsApp
+                                    </a>
+                                @else
                                 <button type="button" wire:click="exportCsv({{ $index }})" wire:loading.attr="disabled" wire:target="exportCsv"
                                     class="px-4 py-2 text-sm font-semibold bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors flex items-center gap-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                                     Baixar CSV
                                 </button>
+                                @endif
                             </div>
                         @endif
 
@@ -167,7 +182,7 @@
                     <div class="max-w-[85%] bg-orange-500 text-white rounded-2xl rounded-tr-sm px-4 py-2 whitespace-pre-wrap" x-text="$wire.question"></div>
                 </div>
                 <div
-                    x-data="{ i: 0, frases: ['Analisando a pergunta...', 'Consultando os prospects...', 'Montando a resposta...', 'Quase lá...'] }"
+                    x-data="{ i: 0, frases: ['Analisando a pergunta...', 'Consultando os dados...', 'Montando a resposta...', 'Quase lá...'] }"
                     x-init="setInterval(() => i = (i + 1) % frases.length, 2500)"
                     class="self-start bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-3"
                 >
@@ -213,7 +228,7 @@
                     type="text"
                     wire:model="question"
                     wire:keydown.enter="send"
-                    placeholder="Digite sua pergunta sobre os prospects..."
+                    placeholder="{{ $placeholder }}"
                     class="flex-1 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl {{ $fullscreen ? 'text-base' : 'text-sm' }} focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     @disabled($isLoading)
                     autofocus
@@ -265,19 +280,19 @@
             type="button"
             wire:click="toggle"
             class="fixed bottom-0 right-6 z-[9999] flex items-center gap-3 pl-4 pr-5 py-3 rounded-t-2xl bg-gradient-to-r from-orange-500 to-amber-600 text-white shadow-2xl hover:from-orange-600 hover:to-amber-700 transition-colors"
-            title="Abrir Assistente de Prospecção"
+            title="Abrir {{ $tituloApp }}"
         >
             <span class="relative flex items-center justify-center w-10 h-10 rounded-full bg-white/20">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                 </svg>
-                @if ($prospectsAguardando > 0 || $prospectsSemContato > 0)
+                @if ($badge > 0)
                     <span class="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                        {{ $prospectsAguardando + $prospectsSemContato }}
+                        {{ $badge }}
                     </span>
                 @endif
             </span>
-            <span class="text-base font-semibold whitespace-nowrap">Assistente de Prospecção</span>
+            <span class="text-base font-semibold whitespace-nowrap">{{ $tituloApp }}</span>
         </button>
     @endif
     @script

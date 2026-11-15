@@ -27,17 +27,25 @@ class AssistenteSessionController extends Controller
 
         $request->authenticate();
 
-        if (! Auth::user()?->isSuperAdmin()) {
+        $area = $request->input('area') === 'suprimentos' ? 'suprimentos' : 'prospects';
+        $user = Auth::user();
+
+        // Prospects: so super admin. Suprimentos: so usuario de cliente (o super admin fica na Central).
+        $permitido = $area === 'suprimentos'
+            ? ($user && ! $user->isSuperAdmin() && filled($user->tenant_id))
+            : (bool) $user?->isSuperAdmin();
+
+        if (! $permitido) {
             Auth::guard('web')->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            throw ValidationException::withMessages(['email' => 'Acesso restrito.']);
+            throw ValidationException::withMessages(['email' => $area === 'suprimentos' ? 'Use um usuário de cliente com acesso a Suprimentos.' : 'Acesso restrito.']);
         }
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('assistente.index', absolute: false));
+        return redirect()->intended(route($area === 'suprimentos' ? 'assistente.suprimentos' : 'assistente.index', absolute: false));
     }
 
     public function destroy(Request $request): RedirectResponse

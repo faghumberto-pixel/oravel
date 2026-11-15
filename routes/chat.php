@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssistenteRelatorioController;
 use App\Http\Controllers\AssistenteSessionController;
 use App\Http\Controllers\Chat\ChatAuthenticatedSessionController;
 use App\Http\Controllers\Chat\ChatMessageSyncController;
@@ -50,6 +51,11 @@ Route::prefix('assistente')->name('assistente.')->group(function () {
     });
 
     Route::get('/', fn () => view('assistente.index'))->name('index');
+    Route::get('/suprimentos', fn () => view('assistente.suprimentos'))->name('suprimentos');
+
+    // Relatorio compartilhavel (WhatsApp): publico, so pelo token longo + validade.
+    Route::get('/r/{token}', [AssistenteRelatorioController::class, 'show'])
+        ->where('token', '[A-Za-z0-9]{48}')->middleware('throttle:60,1')->name('relatorio');
 
     Route::post('/logout', [AssistenteSessionController::class, 'destroy'])->middleware('auth')->name('logout');
 });
