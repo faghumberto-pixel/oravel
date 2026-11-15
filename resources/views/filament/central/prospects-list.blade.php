@@ -28,5 +28,5 @@
     </div>
 
     {{-- Assistente de Prospecção (chat lateral) --}}
-    @livewire('prospect-chat', key('prospect-chat'))
+    <livewire:prospect-chat />
 </x-filament-panels::page>
