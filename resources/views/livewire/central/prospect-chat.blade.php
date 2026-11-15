@@ -142,19 +142,22 @@
                 </div>
             @endforeach
 
-            {{-- Loading indicator --}}
-            @if ($isLoading)
-                <div class="flex justify-start">
-                    <div class="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl rounded-tl-sm px-4 py-2 flex items-center gap-2">
-                        <div class="flex gap-1">
-                            <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
-                            <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
-                            <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
-                        </div>
-                        <span class="text-sm">Analisando...</span>
+            {{-- Indicador de "trabalhando": wire:loading acompanha a requisicao
+                 (isLoading volta a false na mesma request, entao nao serve) --}}
+            <div wire:loading.flex wire:target="send,handleSendQuestion" class="justify-start">
+                <div
+                    x-data="{ i: 0, frases: ['Analisando a pergunta...', 'Consultando os prospects...', 'Montando a resposta...', 'Quase lá...'] }"
+                    x-init="setInterval(() => i = (i + 1) % frases.length, 2500)"
+                    class="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-3"
+                >
+                    <div class="flex gap-1">
+                        <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+                        <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                        <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
                     </div>
+                    <span class="text-sm animate-pulse" x-text="frases[i]">Analisando...</span>
                 </div>
-            @endif
+            </div>
         </div>
 
         {{-- Quick Action Buttons --}}
