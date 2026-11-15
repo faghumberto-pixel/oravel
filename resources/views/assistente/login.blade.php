@@ -26,6 +26,8 @@
                 <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm py-3 rounded-xl">Entrar</button>
                 <p class="text-center text-[11px] text-gray-500 pt-2">Você continuará conectado neste aparelho até sair.</p>
             </form>
+
+            @include('assistente._instalar')
         </div>
     </div>
 @endsection

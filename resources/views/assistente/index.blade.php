@@ -20,6 +20,7 @@
             <h1 class="text-xl font-bold mb-1">Oravel Mobile</h1>
             <p class="text-sm text-gray-500 mb-6">Entre para usar o assistente de prospecção.</p>
             <a href="{{ route('assistente.login') }}" class="w-full max-w-sm bg-orange-600 text-white font-bold text-sm py-3 rounded-xl">Entrar</a>
+            <div class="w-full max-w-sm">@include('assistente._instalar')</div>
         </div>
     @endauth
 @endsection
