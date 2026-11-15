@@ -39,15 +39,18 @@ class ProspectChatService
 
         // 4. Chama a API com o historico da conversa (se houver)
         $total = Prospect::count();
-        $userContent = "Contexto (amostra de {$prospects->count()} prospects de {$total} no total):\n"
-            . json_encode($context, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-            . "\n\nPergunta do usuário:\n" . $question;
+        $userContent = "Estatísticas gerais (banco inteiro, {$total} prospects):\n"
+            .json_encode($this->buildStats(), JSON_UNESCAPED_UNICODE)
+            ."\n\nAmostra dos {$prospects->count()} prospects mais relevantes (formato de exemplo, NÃO é a lista completa):\n"
+            .json_encode($context, JSON_UNESCAPED_UNICODE)
+            ."\n\nPergunta do usuário:\n".$question;
 
         $result = $this->client->sendConversation(
             $systemPrompt,
             [...$this->historyMessages($history), ['role' => 'user', 'content' => $userContent]],
             6000,
         );
+        $this->logTokens('ask', $result);
 
         if (! $result['ok']) {
             return [
@@ -94,6 +97,7 @@ class ProspectChatService
                     ['role' => 'assistant', 'content' => $result['text']],
                     ['role' => 'user', 'content' => "A consulta falhou com o erro: {$erro}\nCorrija usando SOMENTE colunas do schema e responda de novo no mesmo formato JSON."],
                 ], 6000);
+                $this->logTokens('retry', $retry);
 
                 $parsed2 = $retry['ok'] ? $this->client->parseJson($retry['text']) : null;
 
@@ -159,10 +163,10 @@ class ProspectChatService
     }
 
     /**
-     * Busca uma amostra representativa (max 200) pra caber no contexto da API.
+     * Busca uma amostra representativa (max 25; o resto vem das estatisticas e do SQL) pra caber no contexto da API.
      * Prioriza: prospects com interacoes recentes, nota alta, retorno vencido.
      */
-    private function fetchProspectsSample(int $limit = 200)
+    private function fetchProspectsSample(int $limit = 25)
     {
         return Prospect::query()
             ->select([
@@ -231,11 +235,63 @@ class ProspectChatService
                 'proximo_contato' => $proximoContato?->format('Y-m-d'),
                 'dias_proximo_contato' => $diasProximoContato,
                 'follow_up_vencido' => $followUpVencido,
-                'observacoes' => $p->observacoes,
-                'o_que_olhar' => $p->o_que_olhar,
-                'mensagem_personalizada' => $p->mensagem_personalizada,
+                'observacoes' => $p->observacoes ? mb_substr((string) $p->observacoes, 0, 120) : null,
+                'o_que_olhar' => $p->o_que_olhar ? mb_substr((string) $p->o_que_olhar, 0, 120) : null,
+                'mensagem_personalizada' => $p->mensagem_personalizada ? mb_substr((string) $p->mensagem_personalizada, 0, 120) : null,
             ];
         })->values()->all();
+    }
+
+    /**
+     * Resumo agregado do banco inteiro (contagens), barato em tokens, pra IA
+     * responder perguntas de panorama sem precisar de uma amostra grande.
+     *
+     * @return array<string, mixed>
+     */
+    private function buildStats(): array
+    {
+        $contagem = fn (string $col, int $top = 12) => Prospect::query()
+            ->whereNotNull($col)
+            ->selectRaw("{$col} as k, COUNT(*) as n")
+            ->groupBy($col)
+            ->orderByDesc('n')
+            ->limit($top)
+            ->pluck('n', 'k')
+            ->all();
+
+        return [
+            'por_status' => $contagem('status'),
+            'por_resultado' => $contagem('resultado'),
+            'por_porte' => $contagem('porte'),
+            'por_cidade_top12' => $contagem('cidade'),
+            'por_lote' => $contagem('lote', 30),
+            'retorno_vencido' => Prospect::whereNotNull('proximo_contato')->where('proximo_contato', '<=', now())->count(),
+            'sem_nenhum_contato' => Prospect::whereNull('ultimo_contato_em')->count(),
+            'regiao_campinas' => Prospect::where('regiao_campinas', true)->count(),
+            'empresas_novas' => Prospect::where('empresa_nova', true)->count(),
+            'nota_8_ou_mais' => Prospect::where('nota', '>=', 8)->count(),
+        ];
+    }
+
+    /**
+     * Registra no log o consumo REAL de tokens de cada chamada a API
+     * (canal padrao; buscar por "prospect_chat_tokens").
+     */
+    private function logTokens(string $etapa, array $result): void
+    {
+        $u = $result['usage'] ?? null;
+
+        if (! is_array($u)) {
+            return;
+        }
+
+        Log::info('prospect_chat_tokens', [
+            'etapa' => $etapa,
+            'input' => $u['input_tokens'] ?? null,
+            'output' => $u['output_tokens'] ?? null,
+            'cache_read' => $u['cache_read_input_tokens'] ?? null,
+            'cache_write' => $u['cache_creation_input_tokens'] ?? null,
+        ]);
     }
 
     private function systemPrompt(): string
@@ -246,8 +302,9 @@ class ProspectChatService
             Oravel) faz perguntas em linguagem natural sobre o dataset COMPLETO de
             prospects (empresas que AINDA NÃO são clientes).
 
-            Você recebe uma AMOSTRA representativa (até 200 registros, priorizando
-            os mais urgentes/importantes). Com base nessa amostra e no conhecimento
+            Você recebe ESTATÍSTICAS do banco inteiro (contagens) e uma AMOSTRA pequena
+            (até 25 registros, só de exemplo do formato). Para listas e números exatos use
+            SEMPRE o SQL, nunca a amostra. Com base nessa amostra e no conhecimento
             do schema, você deve:
 
             1. Entender a pergunta do usuário

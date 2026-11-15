@@ -80,7 +80,7 @@ class AnthropicApiClient
             return ['ok' => false, 'text' => null, 'error' => 'A resposta da IA não veio em um formato reconhecível.'];
         }
 
-        return ['ok' => true, 'text' => $text, 'error' => null];
+        return ['ok' => true, 'text' => $text, 'error' => null, 'usage' => $response->json('usage')];
     }
 
     /**
@@ -135,7 +135,7 @@ class AnthropicApiClient
             return ['ok' => false, 'text' => null, 'error' => 'A resposta da IA não veio em um formato reconhecível.'];
         }
 
-        return ['ok' => true, 'text' => $text, 'error' => null];
+        return ['ok' => true, 'text' => $text, 'error' => null, 'usage' => $response->json('usage')];
     }
 
     /**
