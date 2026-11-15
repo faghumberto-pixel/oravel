@@ -61,8 +61,15 @@ class ProspectChatService
         $parsed = $this->client->parseJson($result['text']);
 
         if ($parsed === null) {
+            // Resposta cortada/invalida: tenta ao menos recuperar o campo "answer"
+            // em vez de mostrar o JSON cru pro usuario.
+            $answer = $result['text'];
+            if (preg_match('/"answer"\s*:\s*"((?:[^"\\\\]|\\\\.)*)/s', $answer, $m)) {
+                $answer = stripcslashes($m[1]);
+            }
+
             return [
-                'answer' => $result['text'], // fallback: mostra texto bruto
+                'answer' => $answer,
                 'data' => [],
                 'sql' => '',
                 'raw' => ['raw_text' => $result['text']],
@@ -289,6 +296,13 @@ class ProspectChatService
             - "Quantos prospects por lote?"
               -> SELECT lote, COUNT(*) as total FROM prospects WHERE lote IS NOT NULL GROUP BY lote ORDER BY lote
 
+            LISTAS / EXPORTAÇÃO: quando o usuário pedir uma lista (de empresas, prospects,
+            contatos etc.), NÃO escreva as linhas no "answer". Gere o SQL com as colunas
+            úteis (nome, razao_social, cnpj, cidade, atividade, porte, socio, telefone,
+            email, status, nota — nunca SELECT *) e responda em 1 ou 2 frases curtas dizendo
+            o critério usado e que a lista está pronta para baixar em Excel ou CSV nos
+            botões abaixo. Nunca fale em "SQL", "query" ou "consulta" para o usuário no answer.
+
             Se a pergunta NÃO precisar de SQL (ex: "explique o que é EPP", "como faço follow-up"),
             retorne sql: "" vazio e responda direto no answer.
             PROMPT;
@@ -338,10 +352,11 @@ class ProspectChatService
     {
         return \Illuminate\Support\Facades\Response::stream(function () use ($data) {
             $out = fopen('php://temp', 'r+');
+            fwrite($out, "\xEF\xBB\xBF");
             if (! empty($data)) {
-                fputcsv($out, array_keys($data[0]));
+                fputcsv($out, array_keys($data[0]), ';');
                 foreach ($data as $row) {
-                    fputcsv($out, array_values($row));
+                    fputcsv($out, array_values($row), ';');
                 }
             }
             rewind($out);

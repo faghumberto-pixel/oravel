@@ -7,6 +7,7 @@ use App\Services\ProspectChatService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProspectChat extends Component
 {
@@ -81,32 +82,26 @@ class ProspectChat extends Component
         }
     }
 
-    public function exportCsv(): void
+    public function exportCsv(): ?StreamedResponse
     {
         if (empty($this->lastData)) {
             $this->dispatch('notify', type: 'warning', message: 'Nenhum dado para exportar. Faça uma pergunta que retorne resultados primeiro.');
 
-            return;
+            return null;
         }
 
-        $service = app(ProspectChatService::class);
-        $response = $service->exportCsv($this->lastData, 'prospects-chat');
-
-        $this->dispatch('download', url: $response->headers->get('Content-Disposition'));
+        return app(ProspectChatService::class)->exportCsv($this->lastData, 'prospects-chat');
     }
 
-    public function exportExcel(): void
+    public function exportExcel(): ?StreamedResponse
     {
         if (empty($this->lastData)) {
             $this->dispatch('notify', type: 'warning', message: 'Nenhum dado para exportar. Faça uma pergunta que retorne resultados primeiro.');
 
-            return;
+            return null;
         }
 
-        $service = app(ProspectChatService::class);
-        $response = $service->exportExcel($this->lastData, 'prospects-chat');
-
-        $this->dispatch('download', url: $response->headers->get('Content-Disposition'));
+        return app(ProspectChatService::class)->exportExcel($this->lastData, 'prospects-chat');
     }
 
     public function clearChat(): void

@@ -154,7 +154,23 @@ class AnthropicApiClient
 
         $decoded = json_decode(trim($text), true);
 
-        return is_array($decoded) ? $decoded : null;
+        if (is_array($decoded)) {
+            return $decoded;
+        }
+
+        // Texto antes/depois do JSON: pega do primeiro '{' ao ultimo '}'.
+        $ini = strpos($text, '{');
+        $fim = strrpos($text, '}');
+
+        if ($ini !== false && $fim !== false && $fim > $ini) {
+            $decoded = json_decode(substr($text, $ini, $fim - $ini + 1), true);
+
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+        }
+
+        return null;
     }
 
     /**
