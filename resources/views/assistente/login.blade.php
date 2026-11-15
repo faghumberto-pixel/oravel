@@ -14,13 +14,13 @@
                 <div>
                     <label for="email" class="block text-xs font-semibold text-gray-500 mb-1.5">E-mail</label>
                     <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"
-                           class="w-full bg-white dark:bg-gray-800 text-base px-3.5 py-3 rounded-xl border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none">
+                           class="w-full bg-white text-gray-900 placeholder-gray-400 text-base px-3.5 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none">
                     @error('email')<p class="mt-1.5 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label for="password" class="block text-xs font-semibold text-gray-500 mb-1.5">Senha</label>
                     <input id="password" type="password" name="password" required autocomplete="current-password"
-                           class="w-full bg-white dark:bg-gray-800 text-base px-3.5 py-3 rounded-xl border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none">
+                           class="w-full bg-white text-gray-900 placeholder-gray-400 text-base px-3.5 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none">
                     @error('password')<p class="mt-1.5 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
                 <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm py-3 rounded-xl">Entrar</button>
@@ -30,4 +30,10 @@
             @include('assistente._instalar')
         </div>
     </div>
+
+<script>
+    // Voltar pela seta do navegador mostra a tela de login guardada, com o codigo de
+    // seguranca ja vencido (causa do erro 419): recarrega pra pegar um novo.
+    window.addEventListener('pageshow', function (e) { if (e.persisted) location.reload(); });
+</script>
 @endsection

@@ -100,13 +100,24 @@ return Application::configure(basePath: dirname(__DIR__))
         // e renovou a sessão. Em vez de mostrar "Página expirada", leva ao início (se logado) ou à tela de entrada.
         $exceptions->render(function (HttpException $e, Request $request) {
             // O Laravel já converteu o TokenMismatchException em HttpException 419 neste ponto.
-            if ($e->getStatusCode() !== 419 || ! $request->routeIs('colab.*')) {
+            if ($e->getStatusCode() !== 419) {
                 return null;
             }
 
-            return $request->user()
-                ? redirect()->route('colab.home')
-                : redirect()->route('colab.login')->withErrors(['email' => 'A página expirou. Tente entrar de novo.']);
+            if ($request->routeIs('colab.*')) {
+                return $request->user()
+                    ? redirect()->route('colab.home')
+                    : redirect()->route('colab.login')->withErrors(['email' => 'A página expirou. Tente entrar de novo.']);
+            }
+
+            // Oravel Mobile (/assistente): tela de login guardada pelo navegador com token vencido.
+            if ($request->routeIs('assistente.*')) {
+                return $request->user()
+                    ? redirect()->route('assistente.index')
+                    : redirect()->route('assistente.login')->withErrors(['email' => 'A página expirou. Tente entrar de novo.']);
+            }
+
+            return null;
         });
     })
     // Força o carregamento dos provedores essenciais e das novas amarras de segurança

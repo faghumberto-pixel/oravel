@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" style="color-scheme: light;">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
@@ -17,10 +17,9 @@
         <meta name="apple-mobile-web-app-title" content="Oravel Mobile">
         <meta name="mobile-web-app-capable" content="yes">
 
-        <script>
-            // Tailwind darkMode: 'class' -- segue o tema do aparelho.
-            try { if (matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark'); } catch (e) {}
-        </script>
+        {{-- So tema claro: sem a classe "dark" e com color-scheme light, o Android nao
+             escurece a tela por conta propria (campos ficavam com letra branca em fundo branco). --}}
+        <meta name="color-scheme" content="light">
         @vite(['resources/css/app.css'])
         @livewireStyles
     </head>
