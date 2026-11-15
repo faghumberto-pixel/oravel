@@ -126,7 +126,7 @@ class ProspectChatService
 
     /**
      * Converte o historico da conversa no formato da API (alterna user/assistant,
-     * comeca em 'user', ultimos 8 turnos) pra IA lembrar do que ja foi dito
+     * comeca em 'user', ultimas 4 mensagens) pra IA lembrar do que ja foi dito
      * e responder como um agente em conversa, nao a cada pergunta isolada.
      *
      * @param  array<int, array{role: string, content: string, sql?: string}>  $history
@@ -136,7 +136,7 @@ class ProspectChatService
     {
         $out = [];
 
-        foreach (array_slice($history, -8) as $m) {
+        foreach (array_slice($history, -4) as $m) {
             $role = ($m['role'] ?? '') === 'user' ? 'user' : 'assistant';
             $text = trim((string) ($m['content'] ?? ''));
 
@@ -163,10 +163,10 @@ class ProspectChatService
     }
 
     /**
-     * Busca uma amostra representativa (max 25; o resto vem das estatisticas e do SQL) pra caber no contexto da API.
+     * Busca uma amostra representativa (max 8; o resto vem das estatisticas e do SQL) pra caber no contexto da API.
      * Prioriza: prospects com interacoes recentes, nota alta, retorno vencido.
      */
-    private function fetchProspectsSample(int $limit = 25)
+    private function fetchProspectsSample(int $limit = 8)
     {
         return Prospect::query()
             ->select([
@@ -303,7 +303,7 @@ class ProspectChatService
             prospects (empresas que AINDA NÃO são clientes).
 
             Você recebe ESTATÍSTICAS do banco inteiro (contagens) e uma AMOSTRA pequena
-            (até 25 registros, só de exemplo do formato). Para listas e números exatos use
+            (até 8 registros, só de exemplo do formato). Para listas e números exatos use
             SEMPRE o SQL, nunca a amostra. Com base nessa amostra e no conhecimento
             do schema, você deve:
 
