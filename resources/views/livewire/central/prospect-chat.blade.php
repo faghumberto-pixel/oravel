@@ -184,15 +184,16 @@
             <div class="flex gap-2">
                 <input
                     type="text"
-                    wire:model.debounce.300ms="question"
+                    wire:model="question"
                     wire:keydown.enter="send"
-                    placeholder="Pergunte sobre os prospects... (ex: EPPs não contatados, aguardando retorno, status por lote)"
+                    placeholder="Digite sua pergunta sobre os prospects..."
                     class="flex-1 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    disabled="{{ $isLoading }}"
+                    @disabled($isLoading)
+                    autofocus
                 >
                 <button
                     wire:click="send"
-                    :disabled="{{ $isLoading || $question === '' }}"
+                    @disabled($isLoading)
                     class="px-5 py-2 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-medium text-sm transition-colors flex items-center gap-2"
                 >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -231,26 +232,25 @@
         </div>
     </div>
 
-    {{-- Trigger button (when closed) --}}
+    {{-- Gatilho (fechado): barra no rodape direito, no estilo do chat do app --}}
     @if (! $isOpen)
         <button
+            type="button"
             wire:click="toggle"
-            class="fixed bottom-4 right-4 z-[9999] w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group pb-safe border-4 border-white"
-            style="padding-bottom: max(1rem, env(safe-area-inset-bottom));"
+            class="fixed bottom-0 right-6 z-[9999] flex items-center gap-3 pl-4 pr-5 py-3 rounded-t-2xl bg-gradient-to-r from-orange-500 to-amber-600 text-white shadow-2xl hover:from-orange-600 hover:to-amber-700 transition-colors"
             title="Abrir Assistente de Prospecção"
         >
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-            </svg>
-            {{-- Badge de notificação --}}
-            @if ($prospectsAguardando > 0 || $prospectsSemContato > 0)
-                <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                    {{ $prospectsAguardando + $prospectsSemContato }}
-                </span>
-            @endif
-            <div class="absolute left-full bottom-1/2 translate-y-1/2 ml-3 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                Assistente de Prospecção
-            </div>
+            <span class="relative flex items-center justify-center w-10 h-10 rounded-full bg-white/20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+                @if ($prospectsAguardando > 0 || $prospectsSemContato > 0)
+                    <span class="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                        {{ $prospectsAguardando + $prospectsSemContato }}
+                    </span>
+                @endif
+            </span>
+            <span class="text-base font-semibold whitespace-nowrap">Assistente de Prospecção</span>
         </button>
     @endif
 </div>
