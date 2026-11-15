@@ -251,7 +251,7 @@
     @if (! $isOpen)
         <button
             wire:click="toggle"
-            class="fixed bottom-4 left-4 z-50 w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group pb-safe"
+            class="fixed bottom-4 left-4 z-[9999] w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group pb-safe border-4 border-white"
             style="padding-bottom: max(1rem, env(safe-area-inset-bottom));"
             title="Abrir Assistente de Prospecção"
         >
