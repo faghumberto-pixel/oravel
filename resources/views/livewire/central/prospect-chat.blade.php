@@ -1,31 +1,15 @@
-<div wire:ignore>
+<div>
     {{-- Backdrop (fecha ao clicar fora) --}}
     <div
-        x-show="isOpen"
-        x-transition:enter="transition-opacity ease-linear duration-200"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition-opacity ease-linear duration-200"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
         class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
-        @click="$dispatch('close-chat')"
-        wire:loading.class.remove="hidden"
+        wire:click="toggle"
         style="display: {{ $isOpen ? 'block' : 'none' }};"
     ></div>
 
     {{-- Chat Panel (lateral direita) --}}
     <div
-        x-show="isOpen"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="transform opacity-0 translate-x-full"
-        x-transition:enter-end="transform opacity-100 translate-x-0"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="transform opacity-100 translate-x-0"
-        x-transition:leave-end="transform opacity-0 translate-x-full"
         class="fixed right-0 top-0 h-full w-full max-w-2xl bg-white dark:bg-gray-900 shadow-2xl flex flex-col z-50"
         style="display: {{ $isOpen ? 'flex' : 'none' }};"
-        @click.outside="$dispatch('close-chat')"
     >
         {{-- Header --}}
         <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0">
@@ -63,7 +47,7 @@
         </div>
 
         {{-- Messages Area --}}
-        <div class="flex-1 overflow-y-auto p-4 space-y-4" id="messages-container" wire:ignore>
+        <div class="flex-1 overflow-y-auto p-4 space-y-4" id="messages-container">
             @foreach ($messages as $index => $message)
                 <div class="flex {{ $message['role'] === 'user' ? 'justify-end' : 'justify-start' }}">
                     <div class="max-w-[85%] {{ $message['role'] === 'user' ? 'bg-orange-500 text-white rounded-2xl rounded-tr-sm' : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl rounded-tl-sm' }}">

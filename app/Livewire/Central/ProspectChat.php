@@ -50,12 +50,13 @@ class ProspectChat extends Component
         }
 
         $this->isLoading = true;
+        $history = $this->messages;
         $this->messages[] = ['role' => 'user', 'content' => $question, 'data' => [], 'sql' => ''];
         $this->question = '';
 
         try {
             $service = app(ProspectChatService::class);
-            $result = $service->ask($question);
+            $result = $service->ask($question, $history);
 
             $this->messages[] = [
                 'role' => 'assistant',

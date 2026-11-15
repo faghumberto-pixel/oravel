@@ -23,9 +23,10 @@ class ProspectChatService
     /**
      * Processa uma pergunta do usuario sobre o dataset de prospects.
      *
+     * @param  array<int, array{role: string, content: string, sql?: string}>  $history  turnos anteriores da conversa (sem a pergunta atual)
      * @return array{answer: string, data: array<int, array>, sql: string, raw: array}
      */
-    public function ask(string $question): array
+    public function ask(string $question, array $history = []): array
     {
         // 1. Pega uma amostra representativa dos prospects (pra caber no contexto)
         $prospects = $this->fetchProspectsSample();
@@ -37,11 +38,16 @@ class ProspectChatService
         $systemPrompt = $this->systemPrompt();
 
         // 4. Chama a API com o historico da conversa (se houver)
-        $userContent = "Contexto (amostra de {$prospects->count()} prospects de {$prospects->count()} total):\n"
+        $total = Prospect::count();
+        $userContent = "Contexto (amostra de {$prospects->count()} prospects de {$total} no total):\n"
             . json_encode($context, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
             . "\n\nPergunta do usuário:\n" . $question;
 
-        $result = $this->client->send($systemPrompt, $userContent, 6000);
+        $result = $this->client->sendConversation(
+            $systemPrompt,
+            [...$this->historyMessages($history), ['role' => 'user', 'content' => $userContent]],
+            6000,
+        );
 
         if (! $result['ok']) {
             return [
@@ -77,6 +83,44 @@ class ProspectChatService
             'sql' => $sql,
             'raw' => $parsed,
         ];
+    }
+
+    /**
+     * Converte o historico da conversa no formato da API (alterna user/assistant,
+     * comeca em 'user', ultimos 8 turnos) pra IA lembrar do que ja foi dito
+     * e responder como um agente em conversa, nao a cada pergunta isolada.
+     *
+     * @param  array<int, array{role: string, content: string, sql?: string}>  $history
+     * @return array<int, array{role: string, content: string}>
+     */
+    private function historyMessages(array $history): array
+    {
+        $out = [];
+
+        foreach (array_slice($history, -8) as $m) {
+            $role = ($m['role'] ?? '') === 'user' ? 'user' : 'assistant';
+            $text = trim((string) ($m['content'] ?? ''));
+
+            if ($text === '' || ($out === [] && $role !== 'user')) {
+                continue;
+            }
+
+            if ($out !== [] && $out[array_key_last($out)]['role'] === $role) {
+                continue;
+            }
+
+            if ($role === 'assistant' && filled($m['sql'] ?? '')) {
+                $text .= "\n[SQL usado: {$m['sql']}]";
+            }
+
+            $out[] = ['role' => $role, 'content' => $text];
+        }
+
+        if ($out !== [] && $out[array_key_last($out)]['role'] === 'user') {
+            array_pop($out);
+        }
+
+        return $out;
     }
 
     /**
@@ -177,6 +221,8 @@ class ProspectChatService
                à pergunta no banco REAL (não na amostra)
             3. Responder em linguagem natural com insights acionáveis
 
+            Você conversa como um agente: use o histórico da conversa para entender
+            perguntas de seguimento ("e desses, quais são de Campinas?", "exporta isso").
             Responda APENAS com um objeto JSON válido, sem markdown, sem crases,
             sem texto antes ou depois, no formato exato:
 
