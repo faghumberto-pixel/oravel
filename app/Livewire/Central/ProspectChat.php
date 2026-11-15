@@ -82,26 +82,30 @@ class ProspectChat extends Component
         }
     }
 
-    public function exportCsv(): ?StreamedResponse
+    public function exportCsv(?int $index = null): ?StreamedResponse
     {
-        if (empty($this->lastData)) {
+        $data = $index !== null ? ($this->messages[$index]['data'] ?? []) : $this->lastData;
+
+        if (empty($data)) {
             $this->dispatch('notify', type: 'warning', message: 'Nenhum dado para exportar. Faça uma pergunta que retorne resultados primeiro.');
 
             return null;
         }
 
-        return app(ProspectChatService::class)->exportCsv($this->lastData, 'prospects-chat');
+        return app(ProspectChatService::class)->exportCsv($data, 'prospects-chat');
     }
 
-    public function exportExcel(): ?StreamedResponse
+    public function exportExcel(?int $index = null): ?StreamedResponse
     {
-        if (empty($this->lastData)) {
+        $data = $index !== null ? ($this->messages[$index]['data'] ?? []) : $this->lastData;
+
+        if (empty($data)) {
             $this->dispatch('notify', type: 'warning', message: 'Nenhum dado para exportar. Faça uma pergunta que retorne resultados primeiro.');
 
             return null;
         }
 
-        return app(ProspectChatService::class)->exportExcel($this->lastData, 'prospects-chat');
+        return app(ProspectChatService::class)->exportExcel($data, 'prospects-chat');
     }
 
     public function clearChat(): void

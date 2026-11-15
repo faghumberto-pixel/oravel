@@ -53,15 +53,15 @@
                     <div class="max-w-[85%] {{ $message['role'] === 'user' ? 'bg-orange-500 text-white rounded-2xl rounded-tr-sm' : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl rounded-tl-sm' }}">
                         <div class="px-4 py-2 whitespace-pre-wrap">{{ $message['content'] }}</div>
 
-                        {{-- Download da lista (so na ultima resposta, que e' a que o servidor exporta) --}}
-                        @if ($loop->last && ! empty($message['data']))
+                        {{-- Download da lista: toda resposta com dados tem seus proprios botoes --}}
+                        @if (! empty($message['data']))
                             <div class="px-3 pb-3 flex flex-wrap gap-2">
-                                <button type="button" wire:click="exportExcel" wire:loading.attr="disabled" wire:target="exportExcel"
+                                <button type="button" wire:click="exportExcel({{ $index }})" wire:loading.attr="disabled" wire:target="exportExcel"
                                     class="px-4 py-2 text-sm font-semibold bg-green-700 hover:bg-green-800 text-white rounded-lg transition-colors flex items-center gap-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                                     Baixar Excel ({{ count($message['data']) }})
                                 </button>
-                                <button type="button" wire:click="exportCsv" wire:loading.attr="disabled" wire:target="exportCsv"
+                                <button type="button" wire:click="exportCsv({{ $index }})" wire:loading.attr="disabled" wire:target="exportCsv"
                                     class="px-4 py-2 text-sm font-semibold bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors flex items-center gap-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                                     Baixar CSV

@@ -338,6 +338,11 @@ class ProspectChatService
             o critério usado e que a lista está pronta para baixar em Excel ou CSV nos
             botões abaixo. Nunca fale em "SQL", "query" ou "consulta" para o usuário no answer.
 
+            Em perguntas de seguimento ("só os de Campinas", "agora com telefone", "exporta
+            isso"), SEMPRE gere o SQL COMPLETO e autossuficiente, com todos os filtros da
+            conversa somados aos novos. Nunca deixe sql vazio quando o usuário quer uma
+            lista ou arquivo: o arquivo só existe se o SQL rodar nesta resposta.
+
             Se a pergunta NÃO precisar de SQL (ex: "explique o que é EPP", "como faço follow-up"),
             retorne sql: "" vazio e responda direto no answer.
             PROMPT;
