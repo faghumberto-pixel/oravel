@@ -16,6 +16,23 @@
 @endphp
 
 <div class="space-y-6 text-sm">
+    {{-- Identificacao do equipamento: a primeira coisa da tela --}}
+    <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white p-4 dark:border-white/10 dark:bg-white/5">
+        <div class="min-w-0">
+            <div class="text-lg font-semibold text-gray-950 dark:text-white">{{ $ativo->name }}</div>
+            <div class="mt-1 flex flex-wrap gap-x-5 gap-y-1 text-xs text-gray-500 dark:text-gray-400">
+                <span>Patrimônio: <b class="text-gray-950 dark:text-white">{{ $ativo->patrimonio ?: '—' }}</b></span>
+                <span>Grupo: <b class="text-gray-950 dark:text-white">{{ $ativo->checklistGroup?->name ?? '—' }}</b></span>
+                <span>Categoria: <b class="text-gray-950 dark:text-white">{{ $ativo->asset_category ?: '—' }}</b></span>
+            </div>
+        </div>
+        @if (collect($linha['contratos'])->contains(fn ($c) => $c['ativo']))
+            <span class="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                <span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>Locado agora
+            </span>
+        @endif
+    </div>
+
     {{-- Sinalizacao --}}
     <div class="rounded-xl border p-4 {{ $faixa }}">
         <div class="text-base font-semibold">{{ $resumo['situacao']['rotulo'] }}</div>

@@ -171,6 +171,7 @@ class AssetResource extends Resource
                 $servico = app(CustoManutencaoService::class);
 
                 return new HtmlString(view('filament.partials.asset-custos-historico', [
+                    'ativo' => $record->loadMissing('checklistGroup:id,name'),
                     'resumo' => $servico->resumo($record),
                     'meses' => $servico->porMes($record),
                     'ordens' => $servico->ordens($record),
