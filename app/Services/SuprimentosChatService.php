@@ -30,6 +30,11 @@ class SuprimentosChatService extends ProspectChatService
         return 'suprimentos';
     }
 
+    protected function tenantParaConsumo(): ?string
+    {
+        return $this->tenantId;
+    }
+
     protected function runSql(string $sql): array
     {
         if ($this->tenantId === null) {

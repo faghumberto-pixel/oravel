@@ -241,12 +241,22 @@ class TenantSql
         }
 
         try {
-            $rows = DB::transaction(function () use ($final) {
-                DB::statement('SET TRANSACTION READ ONLY');
-                DB::statement("SET LOCAL statement_timeout = '".self::TIMEOUT."'");
+            $rows = [];
 
-                return DB::select($final);
-            });
+            try {
+                DB::transaction(function () use ($final, &$rows) {
+                    DB::statement('SET TRANSACTION READ ONLY');
+                    DB::statement("SET LOCAL statement_timeout = '".self::TIMEOUT."'");
+
+                    $rows = DB::select($final);
+
+                    // So' leitura: desfaz de proposito. Dentro de uma transacao maior, o COMMIT/RELEASE deixaria
+                    // "somente leitura" valendo pro resto dela e quebraria a proxima gravacao (ex.: consumo de IA).
+                    throw new FimDaLeitura;
+                });
+            } catch (FimDaLeitura) {
+                // esperado
+            }
 
             return [array_map(fn ($r) => (array) $r, $rows), null];
         } catch (\Throwable $e) {

@@ -10,6 +10,7 @@ use App\Filament\Central\Pages\DashboardVisitantes;
 use App\Filament\Central\Pages\FunilVendas;
 use App\Filament\Central\Pages\Kanban;
 use App\Filament\Central\Pages\MinhasNotificacoes;
+use App\Filament\Central\Pages\ConsumoIaPage;
 use App\Filament\Central\Pages\ParticipacaoTreinamento;
 use App\Filament\Central\Pages\Programacao;
 use App\Filament\Central\Pages\RolesTree;
@@ -153,6 +154,7 @@ class CentralPanelProvider extends PanelProvider
                 TenantTree::class,
                 AcessosClientes::class,
                 ParticipacaoTreinamento::class,
+                ConsumoIaPage::class,
                 RolesTree::class,
             ])
             ->widgets([

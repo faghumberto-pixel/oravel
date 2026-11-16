@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\Ia\ConsumoIa;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -35,7 +36,7 @@ class AnthropicApiClient
      * @param  array<int, array<string, mixed>>|string  $userContent
      * @return array{ok: bool, text: ?string, error: ?string}
      */
-    public function send(string $systemPrompt, array|string $userContent, int $maxTokens = 4096): array
+    public function send(string $systemPrompt, array|string $userContent, int $maxTokens = 4096, ?array $contexto = null): array
     {
         $apiKey = config('services.anthropic.key');
 
@@ -74,6 +75,9 @@ class AnthropicApiClient
             ];
         }
 
+        // Conta o gasto antes de ler o texto: resposta ilegivel tambem consumiu tokens.
+        ConsumoIa::registrar(self::MODEL, $response->json('usage'), $contexto ?? ConsumoIa::contextoDoChamador());
+
         $text = $this->extractText($response->json('content') ?? []);
 
         if ($text === null) {
@@ -91,9 +95,10 @@ class AnthropicApiClient
      *
      * @param  array<int, array{role: string, content: string}>  $messages
      * @param  string|null  $model  sobrescreve o modelo padrao (Sonnet) so nesta chamada
+     * @param  array{area?: string, etapa?: string, tenant_id?: ?string}|null  $contexto  atribuicao do consumo (painel da Central); sem ele a area sai do servico que chamou
      * @return array{ok: bool, text: ?string, error: ?string}
      */
-    public function sendConversation(string $systemPrompt, array $messages, int $maxTokens = 4096, ?string $model = null): array
+    public function sendConversation(string $systemPrompt, array $messages, int $maxTokens = 4096, ?string $model = null, ?array $contexto = null): array
     {
         $apiKey = config('services.anthropic.key');
 
@@ -129,6 +134,9 @@ class AnthropicApiClient
                 'error' => "Claude API respondeu {$response->status()}: ".(string) ($response->json('error.message') ?? $response->body()),
             ];
         }
+
+        // Conta o gasto antes de ler o texto: resposta ilegivel tambem consumiu tokens.
+        ConsumoIa::registrar($model ?? self::MODEL, $response->json('usage'), $contexto ?? ConsumoIa::contextoDoChamador());
 
         $text = $this->extractText($response->json('content') ?? []);
 

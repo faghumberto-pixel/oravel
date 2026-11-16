@@ -38,6 +38,7 @@ class ProspectChatService
             [...$this->historyMessages($history), ['role' => 'user', 'content' => $userContent]],
             6000,
             $this->model(),
+            $this->contextoIa('ask'),
         );
         $this->logTokens('ask', $result);
 
@@ -85,7 +86,7 @@ class ProspectChatService
                     ['role' => 'user', 'content' => $userContent],
                     ['role' => 'assistant', 'content' => $result['text']],
                     ['role' => 'user', 'content' => "A consulta falhou com o erro: {$erro}\nCorrija usando SOMENTE colunas do schema e responda de novo no mesmo formato JSON."],
-                ], 6000, $this->model());
+                ], 6000, $this->model(), $this->contextoIa('retry'));
                 $this->logTokens('retry', $retry);
 
                 $parsed2 = $retry['ok'] ? $this->client->parseJson($retry['text']) : null;
@@ -123,6 +124,18 @@ class ProspectChatService
             .json_encode($this->buildStats(), JSON_UNESCAPED_UNICODE)
             ."\n\nAmostra dos {$prospects->count()} prospects mais relevantes (formato de exemplo, NÃO é a lista completa):\n"
             .json_encode($this->buildContext($prospects), JSON_UNESCAPED_UNICODE);
+    }
+
+    /** Cliente a quem atribuir o consumo da IA (painel da Central); nulo = nenhum (Prospecao e' da plataforma). */
+    protected function tenantParaConsumo(): ?string
+    {
+        return null;
+    }
+
+    /** @return array{area: string, etapa: string, tenant_id: ?string} */
+    private function contextoIa(string $etapa): array
+    {
+        return ['area' => $this->area(), 'etapa' => $etapa, 'tenant_id' => $this->tenantParaConsumo()];
     }
 
     /** Nome da area, gravado no log de tokens. */
