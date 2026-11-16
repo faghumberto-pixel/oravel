@@ -13,6 +13,10 @@ WIDGET = (Path(__file__).resolve().parent / 'widget_whatsapp.html').read_text(en
 RODAPE_JS = '<script async src="https://app.oravel.com.br/t.js?v=2"></script>\n<script src="/protecao.js?v=3" defer></script>\n'
 WHATS = 'https://wa.me/5519999332615'
 WHATS_TESTE = WHATS + '?text=Ol%C3%A1!%20Quero%20testar%20a%20Oravel%20por%2030%20dias%20na%20minha%20locadora.'
+# Botao principal do site (novo posicionamento: o visitante pede um DIAGNOSTICO da operacao, nao uma demonstracao)
+CTA_URL = '/diagnostico/'
+CTA_LONGO = 'Solicitar um diagnóstico da operação'
+CTA_CURTO = 'Solicitar diagnóstico'
 EMAIL = 'contato@oravel.com.br'
 FONE = '(19) 99933-2615'
 
@@ -248,11 +252,11 @@ def cabecalho(atual=''):
         f'{NAV_RT}<a href="/materiais-gratuitos/">Materiais gratuitos</a>'
         f'<div class="dd"><button type="button" aria-haspopup="true">Soluções</button><div class="dd-menu">{eqp}</div></div>'
         '<a href="/contato.php">Contato</a></nav>'
-        f'<div class="top-cta"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a></div>'
+        f'<div class="top-cta"><a class="btn btn-p" href="{CTA_URL}">{CTA_CURTO}</a></div>'
         '<button class="burger" type="button" aria-expanded="false" aria-controls="mnav">Menu</button></div>'
         f'<div class="mnav" id="mnav"><h4>Recursos</h4>{m_rec}<h4>Soluções</h4>{m_eq}<h4>Mais</h4>'
         f'{MNAV_RT}<a href="/materiais-gratuitos/">Materiais gratuitos</a><a href="/contato.php">Contato</a>'
-        f'<div style="display:grid;gap:10px;margin-top:16px"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a></div></div></header>')
+        f'<div style="display:grid;gap:10px;margin-top:16px"><a class="btn btn-p" href="{CTA_URL}">{CTA_LONGO}</a></div></div></header>')
 
 
 def rodape():
@@ -296,9 +300,9 @@ def faq(itens):
     return '<div class="faq">' + ''.join(f'<details><summary>{q}</summary><p>{a}</p></details>' for q, a in itens) + '</div>'
 
 
-def cta_final(titulo='Veja a Oravel na rotina da sua locadora', texto='Teste por 30 dias, com acompanhamento, treinamento e implementação inclusos. A Oravel complementa o sistema que você já usa.'):
+def cta_final(titulo='Descubra onde sua locadora está perdendo dinheiro', texto='Conte como é a sua operação e receba um retorno sobre onde está o dinheiro parado. Depois, teste por 30 dias, com acompanhamento, treinamento e implementação inclusos. A Oravel complementa o sistema que você já usa.'):
     return (f'<section class="sec"><div class="wrap"><div class="cta"><h2>{titulo}</h2><p>{texto}</p>'
-            f'<div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a></div>'
+            f'<div class="hero-act"><a class="btn btn-p" href="{CTA_URL}">{CTA_LONGO}</a><a class="btn btn-o" href="/contato.php">Prefiro agendar uma demonstração</a></div>'
             f'<ul><li>30 dias grátis</li><li>Treinamento incluso</li><li>Implementação inclusa</li><li>WhatsApp {FONE}</li></ul></div></div></section>')
 
 
@@ -487,7 +491,7 @@ def pagina_ref(titulo, desc, canonico, corpo, ld=None, extra_js=''):
 def hero_pg(eyebrow, h1, sub, mock='', nota=True, ctas=True):
     m = f'<div>{mock}<p class="nota" style="color:#94a3b8">Tela ilustrativa, com dados fictícios.</p></div>' if mock else ''
     cols = '' if mock else ' style="grid-template-columns:1fr"'
-    a = (f'<div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a></div>') if ctas else ''
+    a = (f'<div class="hero-act"><a class="btn btn-p" href="{CTA_URL}">{CTA_LONGO}</a></div>') if ctas else ''
     return f'<section class="hero"><div class="wrap"{cols}><div><div class="eyebrow">{eyebrow}</div><h1>{h1}</h1><p class="sub">{sub}</p>{a}</div>{m}</div></section>'
 
 
