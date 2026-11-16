@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Prospects (menu Comercial, so' super admin): lista de empresas a abordar, com mensagem pronta, situacao
- * da abordagem e historico de contatos. Alimentada por `php artisan prospects:importar`.
+ * da abordagem e historico de contatos. Alimentada pela tela "Importar lista" (ImportarProspectsPage) ou por `php artisan prospects:importar`.
  */
 class ProspectResource extends Resource
 {
@@ -77,10 +77,12 @@ class ProspectResource extends Resource
                 Forms\Components\TextInput::make('razao_social')->label('Razão social')->maxLength(255),
                 Forms\Components\TextInput::make('cnpj')->label('CNPJ')->required()->maxLength(20)->unique(ignoreRecord: true),
                 Forms\Components\TextInput::make('cidade')->maxLength(120),
-                Forms\Components\TextInput::make('atividade')->maxLength(160),
+                Forms\Components\TextInput::make('atividade')->label('Atividade (descrição do CNAE)')->maxLength(160),
+                Forms\Components\TextInput::make('cnae_codigo')->label('CNAE (código)')->maxLength(12)->placeholder('7739-0/99'),
                 Forms\Components\TextInput::make('porte')->maxLength(20),
                 Forms\Components\TextInput::make('capital')->numeric()->prefix('R$'),
                 Forms\Components\TextInput::make('ano_abertura')->label('Ano de abertura')->numeric(),
+                Forms\Components\DatePicker::make('data_abertura')->label('Data de abertura')->native(false)->displayFormat('d/m/Y'),
                 Forms\Components\TextInput::make('nota')->label('Nota (0–10)')->numeric()->minValue(0)->maxValue(10),
                 Forms\Components\Toggle::make('regiao_campinas')->label('Região de Campinas'),
                 Forms\Components\Toggle::make('empresa_nova')->label('Empresa nova'),
@@ -109,7 +111,7 @@ class ProspectResource extends Resource
                             Tables\Columns\TextColumn::make('nome')->label('Empresa')->searchable(['nome', 'razao_social', 'cnpj', 'socio'])
                                 ->weight('bold')->size('lg')->color('crmOrange'),
                             Tables\Columns\TextColumn::make('cidade')->label('Cidade')->color('gray')->placeholder('—')
-                                ->formatStateUsing(fn ($state, Prospect $r): string => trim($r->cidade.' · '.$r->porte.($r->ano_abertura ? ' · desde '.$r->ano_abertura : ''), ' ·')),
+                                ->formatStateUsing(fn ($state, Prospect $r): string => trim($r->cidade.' · '.$r->porte.($r->data_abertura ? ' · desde '.$r->data_abertura->format('d/m/Y') : ($r->ano_abertura ? ' · desde '.$r->ano_abertura : '')), ' ·')),
                         ]),
                         Tables\Columns\TextColumn::make('nota')->label('Nota')->badge()->color(fn (int $state): string => $state >= 8 ? 'success' : 'gray')
                             ->formatStateUsing(fn ($state) => 'Nota '.$state)->grow(false),
@@ -126,7 +128,8 @@ class ProspectResource extends Resource
                         ->formatStateUsing(fn (string $state): string => $state === '__vazio'
                             ? self::bloco('RESULTADO', 'Sem resultado registrado', null)
                             : self::bloco('RESULTADO', Prospect::RESULTADOS[$state] ?? $state, Prospect::RESULTADO_CORES[$state] ?? 'gray')),
-                    Tables\Columns\TextColumn::make('atividade')->label('Atividade')->icon('heroicon-m-briefcase')->color('gray')->wrap()->placeholder('Sem atividade'),
+                    Tables\Columns\TextColumn::make('atividade')->label('Atividade')->icon('heroicon-m-briefcase')->color('gray')->wrap()->placeholder('Sem atividade')
+                        ->formatStateUsing(fn ($state, Prospect $r): string => trim(($r->cnae_codigo ? $r->cnae_codigo.' · ' : '').$state, ' ·')),
                     Tables\Columns\TextColumn::make('telefone')->label('Telefone')->icon('heroicon-m-phone')->copyable()->copyMessage('Número copiado')->searchable()
                         ->formatStateUsing(fn ($state, Prospect $r): string => $state.($r->ehCelular() ? ' (celular)' : ' (fixo: ligar)'))
                         ->placeholder('Sem telefone'),

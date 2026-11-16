@@ -137,6 +137,12 @@ class ListProspects extends ListRecords
                     ->openUrlInNewTab(),
             ])->label('Exportar')->icon('heroicon-o-arrow-down-tray')->color('gray')->button(),
 
+            Actions\Action::make('importar')
+                ->label('Importar lista')
+                ->icon('heroicon-o-arrow-up-tray')
+                ->color('gray')
+                ->url(fn (): string => \App\Filament\Central\Pages\ImportarProspectsPage::getUrl()),
+
             Actions\CreateAction::make()->label('Novo prospect'),
         ];
     }

@@ -391,10 +391,12 @@ class ProspectChatService
             - razao_social (varchar)
             - cnpj (varchar)
             - cidade (varchar)
-            - atividade (varchar)
+            - atividade (varchar) -- descrição do CNAE
+            - cnae_codigo (varchar, nullable) -- código do CNAE principal, ex.: 7739-0/99
             - porte (varchar) -- ex: 'EPP', 'ME', 'MEI', 'LTDA', 'EIRELI', 'SA'
             - capital (numeric)
             - ano_abertura (integer)
+            - data_abertura (date, nullable) -- data completa de abertura (pode ser nula; use ano_abertura nesse caso)
             - nota (integer 0-10)
             - regiao_campinas (boolean)
             - empresa_nova (boolean) -- aberta desde 2023

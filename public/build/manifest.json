@@ -25,7 +25,7 @@
     ]
   },
   "resources/css/filament/admin/theme.css": {
-    "file": "assets/theme-Qbp4L6Tv.css",
+    "file": "assets/theme-Cp2HIFFh.css",
     "src": "resources/css/filament/admin/theme.css"
   },
   "resources/css/filament/central/theme.css": {
@@ -33,7 +33,7 @@
     "src": "resources/css/filament/central/theme.css"
   },
   "resources/css/filament/client/theme.css": {
-    "file": "assets/theme-Dc7YU7j0.css",
+    "file": "assets/theme-B_L3NxzO.css",
     "src": "resources/css/filament/client/theme.css",
     "isEntry": true,
     "name": "theme",

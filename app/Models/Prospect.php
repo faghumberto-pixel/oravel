@@ -76,6 +76,7 @@ class Prospect extends Model
         'regiao_campinas' => 'boolean',
         'empresa_nova' => 'boolean',
         'proximo_contato' => 'date',
+        'data_abertura' => 'date',
         'ultimo_contato_em' => 'datetime',
     ];
 
