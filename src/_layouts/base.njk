@@ -27,7 +27,9 @@
 }
 
 *{box-sizing:border-box}
-body{margin:0;background:#ffffff;color:var(--texto-escuro);font-family:'Inter',system-ui,sans-serif;font-size:16px;line-height:1.6;width:100%}
+html,body{margin:0;padding:0}
+body{background:#ffffff;color:var(--texto-escuro);font-family:'Inter',system-ui,sans-serif;font-size:16px;line-height:1.6;width:100%}
+main,section{margin:0;padding:0}
 a{color:var(--azul-petroleo);text-decoration:none}
 a:hover{color:#08443f}
 
@@ -79,7 +81,7 @@ a:hover{color:#08443f}
 .site-header{
   background:var(--verde-escuro);
   height:65px;
-  position:sticky;top:0;z-index:100;
+  position:sticky;top:0;z-index:50;
   border-bottom:1px solid rgba(255,255,255,.08);
 }
 .site-header .container{
@@ -170,9 +172,14 @@ a:hover{color:#08443f}
 /* === HERO === */
 .hero{
   position:relative;
+  width:100%;
+  min-width:100vw;
   height:290px;
+  min-height:290px;
   background:var(--verde-escuro);
   overflow:hidden;
+  margin:0;
+  padding:0;
 }
 .hero-bg{
   position:absolute;inset:0;z-index:0;
@@ -185,10 +192,16 @@ a:hover{color:#08443f}
   position:absolute;inset:0;z-index:1;
   background:linear-gradient(90deg,var(--verde-escuro) 0%,rgba(11,43,42,.8) 40%,rgba(11,43,42,.3) 65%,transparent 100%);
 }
-.hero .container{
+.hero-container{
   position:relative;z-index:2;
+  max-width:1400px;
+  margin:0 auto;
+  padding:0 64px;
   height:100%;
   display:flex;flex-direction:column;justify-content:center;gap:16px;
+}
+@media (max-width:768px){
+  .hero-container{padding:0 20px}
 }
 .hero h1{
   margin:0;
@@ -600,7 +613,7 @@ a:hover{color:#08443f}
   .site-header-actions{width:100%;justify-content:flex-end;margin-top:8px}
 
   .hero{height:auto;padding:40px 0}
-  .hero .container{gap:12px}
+  .hero-container{gap:12px}
 
   .categories-bar .container{padding:24px 20px}
 
