@@ -25,10 +25,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import tema as t  # noqa: E402
 
 TURNSTILE_KEY = '0x4AAAAAAEUrIcrw2tIq9KEj'  # a mesma chave pública do /contato.php
-CTA = 'Quero um diagnóstico gratuito da minha operação'
-TITULO = 'Diagnóstico Operacional Gratuito para locadoras | Oravel'
-DESC = ('Descubra quanto a sua locadora perde por mês com equipamento parado. Um consultor que já viveu locadora '
-        'mostra onde está o dinheiro e por onde começar, sem você trocar de sistema.')
+CTA = 'Quero meu diagnóstico gratuito'
+TITULO = 'Diagnóstico Operacional para Locadoras | Oravel'
+DESC = ('Descubra onde sua locadora está perdendo dinheiro em uma reunião gratuita de 30 minutos. Analisamos a operação e '
+        'mostramos como reduzir equipamentos parados e melhorar a manutenção, sem compromisso e sem trocar seu ERP.')
 
 CSS = """
 :root{--ink:#0f172a;--soft:#5b6472;--line:#e4e7ec;--paper:#fff;--surface:#f6f7f9;--accent:#f97316;--accent-ink:#c2410c;
@@ -74,6 +74,21 @@ input[type=text],input[type=email],input[type=tel],select{width:100%;font:inheri
 .vid{padding-block:50px;background:#fff}
 .vid h2{font-size:clamp(22px,3vw,30px);margin-bottom:18px}
 .vid video{width:100%;max-width:820px;border-radius:16px;background:#000;display:block}
+.sec{padding-block:52px}.sec h2{font-size:clamp(24px,3.4vw,34px);margin-bottom:22px;max-width:26ch}
+.sec.alt{background:var(--surface)}
+.ent{list-style:none;padding:0;display:grid;gap:12px}
+@media(min-width:760px){.ent{grid-template-columns:repeat(2,1fr);gap:14px 28px}}
+.ent li{display:flex;gap:12px;align-items:flex-start;font-size:17px;font-weight:600}
+.ent .ck{flex:none;width:26px;height:26px;border-radius:50%;background:#dcfce7;color:var(--ok);display:grid;place-items:center;font-weight:800;font-size:15px}
+.ent .nx{background:#fee4e2;color:var(--err)}
+.duas{display:grid;gap:26px}@media(min-width:820px){.duas{grid-template-columns:1fr 1fr;gap:40px}}
+.duas h3{font-size:19px;margin-bottom:14px}
+.pass{list-style:none;padding:0;display:grid;gap:14px;counter-reset:p}
+@media(min-width:820px){.pass{grid-template-columns:repeat(4,1fr)}}
+.pass li{counter-increment:p;background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px}
+.pass li::before{content:counter(p);display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#fff1e4;color:var(--accent-ink);font:800 16px Manrope,sans-serif;margin-bottom:10px}
+.pass b{display:block;font-family:Manrope,sans-serif;font-size:17px;margin-bottom:4px}.pass span{color:var(--soft);font-size:15px}
+.nao{margin-top:12px;font-size:14px;color:#cbd5e1;text-align:center}.nao b{color:#fff}
 .fim{padding-block:44px;background:var(--navy2);color:#fff;text-align:center}
 .fim h2{font-size:clamp(22px,3vw,30px);margin-bottom:16px;max-width:26ch;margin-inline:auto}
 .fim .btn{max-width:520px;margin-inline:auto}
@@ -95,7 +110,7 @@ JS = """
   f.addEventListener('submit',function(e){
     e.preventDefault(); erro.hidden=true;
     var v=function(id){var el=f.elements[id];return el?(el.options?el.options[el.selectedIndex].text:el.value):''};
-    f.elements.message.value=['[Diagnóstico Operacional Gratuito - landing]','Equipamentos: '+v('eq'),'Como controla hoje: '+v('sis')].join('\\n');
+    f.elements.message.value=['[Diagnóstico Operacional - landing]','Cidade: '+v('cidade'),'Equipamentos: '+v('eq'),'ERP/sistema atual: '+(v('erp')||'não informado')].join('\\n');
     put('landing_url',location.origin+location.pathname+location.search);  // de novo no envio: garante a origem da campanha
     if(!f.checkValidity()){f.reportValidity();return}
     btn.disabled=true; btn.setAttribute('data-txt',btn.textContent); btn.textContent='Enviando...';
@@ -118,7 +133,7 @@ JS = """
 def pagina(video=None, poster=None, previa=False):
     form = (
         '<div id="form-area"><h2>Peça o seu diagnóstico</h2>'
-        '<p class="lead">Quatro campos. Um consultor responde pelo WhatsApp ou e-mail.</p>'
+        '<p class="lead">Poucos campos. Um consultor responde pelo WhatsApp ou e-mail.</p>'
         '<form class="f" id="dg" method="post" action="/contato.php" novalidate>'
         '<input type="text" name="website" class="hp" tabindex="-1" autocomplete="off">'
         '<input type="hidden" name="origem" value="lp-diagnostico">'
@@ -127,19 +142,21 @@ def pagina(video=None, poster=None, previa=False):
         + '<textarea name="message" hidden></textarea>'
         '<div><label for="name">Seu nome</label><input type="text" id="name" name="name" autocomplete="name" required></div>'
         '<div><label for="company">Empresa</label><input type="text" id="company" name="company" autocomplete="organization" required></div>'
+        '<div><label for="cidade">Cidade</label><input type="text" id="cidade" name="cidade" autocomplete="address-level2" required></div>'
         '<div><label for="phone">WhatsApp</label><input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" required></div>'
         '<div><label for="email">E-mail</label><input type="email" id="email" name="email" autocomplete="email" required></div>'
         '<div><label for="eq">Quantos equipamentos a locadora tem?</label><select id="eq" name="eq">'
         '<option>Até 20</option><option>De 21 a 50</option><option>De 51 a 100</option><option>Mais de 100</option></select></div>'
-        '<div><label for="sis">Como controla hoje?</label><select id="sis" name="sis">'
-        '<option>Planilha e papel</option><option>Tenho um ERP</option><option>Sistema só de manutenção</option><option>Não controlo direito</option></select></div>'
+        '<div><label for="erp">ERP ou sistema atual <span style="font-weight:400;color:var(--soft)">(opcional)</span></label>'
+        '<input type="text" id="erp" name="erp" placeholder="Ex.: planilha, nome do ERP"></div>'
         f'<div class="cf-turnstile" data-sitekey="{TURNSTILE_KEY}"></div>'
         '<p class="msg err" id="erro" role="alert" hidden></p>'
         f'<button class="btn" id="enviar" type="submit">{CTA}</button>'
+        '<p class="fine" style="font-weight:600;color:var(--ink)">Não é uma demonstração comercial. É um diagnóstico da sua operação.</p>'
         '<p class="fine">Gratuito e sem compromisso. Usamos seus dados só para responder a este pedido, conforme a '
         '<a href="/politica-de-privacidade/" target="_blank" rel="noopener">Política de Privacidade</a>.</p></form></div>'
         '<div class="ok-box" id="obrigado" hidden tabindex="-1"><div class="tick" aria-hidden="true">&#10003;</div>'
-        '<h2>Pedido recebido</h2><p>Um consultor da Oravel vai falar com você em breve para combinar o melhor horário do diagnóstico.</p></div>')
+        '<h2>Pedido recebido</h2><p>Em até um dia útil nossa equipe entrará em contato para entender sua operação e agendar o diagnóstico.</p></div>')
 
     video_html = ''
     if video:
@@ -151,21 +168,32 @@ def pagina(video=None, poster=None, previa=False):
     corpo = (
         '<header class="hero"><div class="w"><span class="logo" aria-label="Oravel">O<i>r</i>avel</span>'
         '<div class="grid"><div>'
-        '<div class="eyebrow">Diagnóstico Operacional Gratuito para locadoras</div>'
-        '<h1>Quanto a sua locadora perde por mês com <em>equipamento parado?</em></h1>'
-        '<p class="sub">A maioria dos donos de locadora não sabe esse número. <b>Numa conversa rápida</b>, um consultor que já viveu '
-        'locadora mostra onde está o dinheiro parado e por onde começar, sem você trocar o sistema que usa hoje.</p>'
+        '<div class="eyebrow">Diagnóstico Operacional para Locadoras</div>'
+        '<h1>Descubra onde sua locadora está <em>perdendo dinheiro</em>, em uma reunião gratuita de 30 minutos.</h1>'
+        '<p class="sub">Analisamos sua operação e mostramos oportunidades para <b>reduzir equipamentos parados</b>, melhorar o controle de manutenção '
+        'e aumentar a rentabilidade. <b>Sem compromisso e sem necessidade de trocar seu ERP.</b></p>'
         f'</div><div class="card" id="pedido">{form}</div></div></div></header>'
-        '<main><section class="ben"><div class="w"><h2>O que você leva do diagnóstico</h2><ul>'
-        '<li><span class="n">1</span><h3>O número da sua perda</h3><p>Onde a operação perde dinheiro: equipamento parado, '
-        'preventiva atrasada, contrato e cobrança.</p></li>'
-        '<li><span class="n">2</span><h3>Sem trocar de sistema</h3><p>A Oravel trabalha ao lado do ERP que você já usa. '
-        'Nada para migrar e nenhuma parada na operação.</p></li>'
-        '<li><span class="n">3</span><h3>Um primeiro passo claro</h3><p>Você sai sabendo por qual problema começar, '
-        'em vez de contratar tudo de uma vez.</p></li></ul></div></section>'
+        '<main><section class="sec"><div class="w"><h2>Ao final do diagnóstico você receberá</h2><ul class="ent">'
+        + ''.join(f'<li><span class="ck" aria-hidden="true">&#10003;</span>{x}</li>' for x in (
+            'Principais gargalos encontrados', 'Oportunidades de melhoria', 'Sugestões para reduzir equipamentos parados',
+            'Recomendações sobre manutenção preventiva', 'Avaliação da organização operacional', 'Relatório resumido da conversa'))
+        + '</ul></div></section>'
+        '<section class="sec alt"><div class="w"><div class="duas"><div><h3>Indicado para locadoras que</h3><ul class="ent" style="grid-template-columns:1fr">'
+        + ''.join(f'<li><span class="ck" aria-hidden="true">&#10003;</span>{x}</li>' for x in (
+            'possuem mais de 20 equipamentos', 'estão crescendo', 'usam planilhas ou ERP', 'querem melhorar a operação', 'desejam reduzir custos'))
+        + '</ul></div><div><h3>Não é indicado para quem</h3><ul class="ent" style="grid-template-columns:1fr">'
+        + ''.join(f'<li><span class="ck nx" aria-hidden="true">&#10005;</span>{x}</li>' for x in (
+            'está apenas pesquisando software', 'ainda não iniciou a operação', 'procura apenas orçamento'))
+        + '</ul></div></div></div></section>'
+        '<section class="sec"><div class="w"><h2>Como funciona</h2><ol class="pass">'
+        '<li><b>Você solicita</b><span>Preenche o formulário em menos de um minuto.</span></li>'
+        '<li><b>Agendamos uma conversa</b><span>Em até um dia útil nossa equipe entra em contato.</span></li>'
+        '<li><b>Entendemos sua operação</b><span>Uma conversa de 30 minutos sobre como você trabalha hoje.</span></li>'
+        '<li><b>Entregamos o diagnóstico</b><span>Oportunidades de melhoria para a sua locadora.</span></li></ol></div></section>'
         f'{video_html}'
-        '<section class="fim"><div class="w"><h2>Descubra onde a sua locadora está perdendo dinheiro</h2>'
-        f'<a class="btn" href="#pedido" id="cta-fim">{CTA}</a></div></section></main>'
+        '<section class="fim"><div class="w"><h2>Pronto para descobrir onde sua locadora está perdendo dinheiro?</h2>'
+        f'<a class="btn" href="#pedido" id="cta-fim">{CTA}</a>'
+        '<p class="nao"><b>Não é uma demonstração comercial.</b> É um diagnóstico da sua operação.</p></div></section></main>'
         f'<footer class="rod"><div class="w">Oravel &middot; CNPJ 65.707.953/0001-30 &middot; {t.EMAIL} &middot; '
         '<a href="/politica-de-privacidade/" target="_blank" rel="noopener">Política de Privacidade</a></div></footer>')
 
