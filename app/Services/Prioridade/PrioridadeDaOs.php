@@ -35,6 +35,11 @@ class PrioridadeDaOs
     /** Tenant sem nenhum nivel (criado depois da migration) ganha os 4 do sistema. */
     public static function garantirPadrao(string $tenantId): void
     {
+        // Sem empresa ativa (ex.: super admin que ainda nao escolheu uma) o id vem vazio: nao ha o que garantir, e '' quebra a consulta em uuid.
+        if ($tenantId === '') {
+            return;
+        }
+
         if (isset(self::$garantidos[$tenantId])) {
             return;
         }
@@ -52,6 +57,10 @@ class PrioridadeDaOs
     /** Niveis ativos do tenant, do mais alto para o mais baixo. */
     public static function niveis(string $tenantId): Collection
     {
+        if ($tenantId === '') {
+            return new Collection;
+        }
+
         self::garantirPadrao($tenantId);
 
         return PriorityLevel::withoutGlobalScopes()->where('tenant_id', $tenantId)->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
