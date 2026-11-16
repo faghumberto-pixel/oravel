@@ -159,6 +159,27 @@ class AssetResource extends Resource
         return \App\Support\Tenancy::current()?->interfaceSimples() ?? false;
     }
 
+    /** Bloco "Custos e histórico" (Inteligência de Ativos), usado no cadastro completo e no simples. */
+    protected static function custosPlaceholder(): Forms\Components\Placeholder
+    {
+        return Forms\Components\Placeholder::make('custos_e_historico')
+            ->label('')
+            ->content(function (?Asset $record) {
+                if (! $record?->exists) {
+                    return '';
+                }
+                $servico = app(CustoManutencaoService::class);
+
+                return new HtmlString(view('filament.partials.asset-custos-historico', [
+                    'resumo' => $servico->resumo($record),
+                    'meses' => $servico->porMes($record),
+                    'ordens' => $servico->ordens($record),
+                    'linha' => $servico->linhaDoTempo($record),
+                ])->render());
+            })
+            ->columnSpanFull();
+    }
+
     /** Cadastro curto de "o que você mantém" (carro, casa, máquina...): grava no mesmo cadastro de ativos, então nada se perde ao trocar de modo. */
     public static function formSimples(Form $form): Form
     {
@@ -171,6 +192,10 @@ class AssetResource extends Resource
                 Forms\Components\SpatieMediaLibraryFileUpload::make('fotos')->label('Fotos')->collection('fotos')->multiple()->image()->reorderable()->columnSpanFull(),
                 Forms\Components\Hidden::make('status')->default(Asset::STATUS_DISPONIVEL),
             ])->columns(2),
+            Forms\Components\Section::make('Custos e histórico')
+                ->icon('heroicon-m-banknotes')
+                ->visible(fn (?Asset $record) => (bool) $record?->exists && CustoManutencaoService::habilitado())
+                ->schema([static::custosPlaceholder()]),
         ]);
     }
 
@@ -780,22 +805,7 @@ class AssetResource extends Resource
                         ->icon('heroicon-m-banknotes')
                         ->visible(fn (?Asset $record) => (bool) $record?->exists && CustoManutencaoService::habilitado())
                         ->schema([
-                            Forms\Components\Placeholder::make('custos_e_historico')
-                                ->label('')
-                                ->content(function (?Asset $record) {
-                                    if (! $record?->exists) {
-                                        return '';
-                                    }
-                                    $servico = app(CustoManutencaoService::class);
-
-                                    return new HtmlString(view('filament.partials.asset-custos-historico', [
-                                        'resumo' => $servico->resumo($record),
-                                        'meses' => $servico->porMes($record),
-                                        'ordens' => $servico->ordens($record),
-                                        'linha' => $servico->linhaDoTempo($record),
-                                    ])->render());
-                                })
-                                ->columnSpanFull(),
+                            static::custosPlaceholder(),
                         ]),
 
                     // ABA 4: LOGS DE AUDITORIA (Rastreabilidade de Ações)
