@@ -15,7 +15,7 @@ WHATS = 'https://wa.me/5519999332615'
 WHATS_TESTE = WHATS + '?text=Ol%C3%A1!%20Quero%20testar%20a%20Oravel%20por%2030%20dias%20na%20minha%20locadora.'
 # Botao principal do site (novo posicionamento: o visitante pede um DIAGNOSTICO da operacao, nao uma demonstracao)
 CTA_URL = '/diagnostico/'
-CTA_LONGO = 'Solicitar um diagnóstico da operação'
+CTA_LONGO = 'Solicitar um diagnóstico gratuito'
 CTA_CURTO = 'Solicitar diagnóstico'
 EMAIL = 'contato@oravel.com.br'
 FONE = '(19) 99933-2615'

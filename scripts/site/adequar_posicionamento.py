@@ -3,7 +3,7 @@
 Adequa o site institucional ao novo posicionamento da Oravel:
 "ajudamos locadoras a reduzir equipamento parado, controlar a manutenção e aumentar a rentabilidade, sem obrigar a
 trocar tudo de uma vez". O site passa a falar primeiro do PROBLEMA do dono da locadora (e do que ele custa), depois
-da solução, e o botão principal deixa de ser "agendar uma demonstração" e vira "solicitar um diagnóstico da operação".
+da solução, e o botão principal deixa de ser "agendar uma demonstração" e vira "solicitar um diagnóstico gratuito".
 
 O que faz (tudo idempotente: se a home já tem o marcador <!--pos-v3-->, não repete):
   1. Home (index.html): título/descrição, hero sobre o problema (a faixa da reforma tributária continua, menor),
@@ -343,7 +343,7 @@ JS_DIAG = """
   }
   document.getElementById('dg-form').addEventListener('submit',function(){
     var v=function(id){var e=document.getElementById(id);return e&&e.value?e.options?e.options[e.selectedIndex].text:e.value:'não informado'};
-    var linhas=['[Diagnóstico da operação]','Equipamentos: '+v('d-eq'),'Sistema hoje: '+v('d-sis'),'Maior dor: '+v('d-dor')];
+    var linhas=['[Diagnóstico gratuito]','Equipamentos: '+v('d-eq'),'Sistema hoje: '+v('d-sis'),'Maior dor: '+v('d-dor')];
     if(perda&&/^\\d+$/.test(perda))linhas.push('Estimativa da calculadora: R$ '+perda+'/mês'+(eq&&/^\\d+$/.test(eq)?' ('+eq+' equipamentos)':''));
     var livre=(document.getElementById('d-obs').value||'').trim();
     if(livre)linhas.push('Observações: '+livre);
@@ -422,7 +422,7 @@ def pagina_diagnostico():
         ('3. Você recebe um retorno prático', 'Onde está o dinheiro parado e por onde começar, funcionando ao lado do sistema que você já usa.'),
     ])
     corpo = (
-        t.hero_pg('Diagnóstico da operação', 'Descubra onde sua locadora está perdendo dinheiro',
+        t.hero_pg('Diagnóstico gratuito', 'Descubra onde sua locadora está perdendo dinheiro',
                   'Conte como é a sua operação. Um consultor que já viveu uma locadora analisa e devolve onde estão os custos escondidos '
                   'e por onde começar, sem trocar o sistema que você usa.', ctas=False)
         + f'<section class="sec"><div class="wrap"><div class="dg"><div><div class="eyebrow">Como funciona</div>{passos}'
@@ -433,8 +433,8 @@ def pagina_diagnostico():
             ('Quanto tempo leva?', 'O retorno sai depois que um consultor entender a sua operação. Entramos em contato pelo WhatsApp ou e-mail que você informar.'),
             ('Preciso ter muitos equipamentos?', 'Não. O diagnóstico serve para locadoras de qualquer tamanho que queiram saber onde estão perdendo dinheiro.'),
         ]))
-    pg = t.pagina('Diagnóstico da operação para locadoras | Oravel',
-                  'Peça um diagnóstico da operação da sua locadora: um consultor que já viveu locadora mostra onde está o dinheiro parado e por onde começar.',
+    pg = t.pagina('Diagnóstico gratuito para locadoras | Oravel',
+                  'Peça um diagnóstico gratuito da sua locadora: um consultor que já viveu locadora mostra onde está o dinheiro parado e por onde começar.',
                   'https://oravel.com.br/diagnostico/', corpo)
     pg = pg.replace('</style>', CSS_NOVAS + '</style>', 1)
     return pg.replace('</main>', f'<script>{JS_DIAG}</script></main>', 1)
