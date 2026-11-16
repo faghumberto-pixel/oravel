@@ -141,15 +141,20 @@ def secao_rotina():
     return t.secao('Na prática', 'Como fica a rotina da sua locadora', '', corpo)
 
 
-def bloco_ia():
-    itens = ['Qual equipamento tem maior risco de quebrar?', 'Qual cliente gera mais manutenção?',
-             'Quais contratos estão dando prejuízo?', 'Quais preventivas precisam acontecer esta semana?']
+IA_ITENS_V3 = ['Qual equipamento tem maior risco de quebrar?', 'Qual cliente gera mais manutenção?',
+               'Quais contratos estão dando prejuízo?', 'Quais preventivas precisam acontecer esta semana?']
+IA_ITENS = ['Quais equipamentos têm maior risco de quebrar?', 'Quais propostas têm maior chance de fechar?',
+            'Quais clientes estão dando prejuízo?']
+
+
+def bloco_ia(itens=None, botao='Ver todas as aplicações da IA'):
+    itens = itens or IA_ITENS
     li = ''.join(f'<li><span><b>{x}</b></span></li>' for x in itens)
     return ('<div class="eyebrow">Inteligência artificial</div><h2>Pergunte à Oravel, em vez de procurar em planilha</h2>'
             '<p>A IA da Oravel responde perguntas como:</p>'
             f'<ul class="v2-ck">{li}</ul>'
             '<p>Quem calcula é o sistema; a IA interpreta, prioriza e sugere o próximo passo, no celular do técnico e no painel do gestor.</p>'
-            '<a class="more" href="/inteligencia-artificial/">Ver a IA da Oravel</a>')
+            f'<a class="more" href="/inteligencia-artificial/">{botao}</a>')
 
 
 def citacao_historia():
@@ -231,6 +236,51 @@ def trocar_botao_global(s):
     s = s.replace('<a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a>',
                   f'<a class="btn btn-p" href="{t.CTA_URL}">{t.CTA_LONGO}</a>')
     return s, s != n0
+
+
+# ------------------------------------------------------------------ segunda rodada (v4)
+MARCA4 = '<!--pos-v4-->'
+
+
+def promessas_hero():
+    itens = ['Reduza equipamentos parados.', 'Antecipe manutenções.', 'Controle contratos.',
+             'Tenha toda a operação em um único lugar.']
+    li = ''.join(f'<li style="display:flex;gap:10px;align-items:flex-start"><span aria-hidden="true" style="color:#f97316;font-weight:800">&#10003;</span>{x}</li>' for x in itens)
+    return ('<ul style="list-style:none;padding:0;margin:18px 0 0;display:grid;gap:8px;color:#fff;font-weight:600;font-size:clamp(16px,2vw,19px)">'
+            f'{li}</ul>')
+
+
+def secao_como_comeca():
+    passos = t.passos([
+        ('Você já possui ERP', 'Ele continua rodando. Não há troca de sistema nem parada da operação.'),
+        ('Existe um problema específico', 'Equipamento parado, manutenção atrasada, contrato ou cobrança: começamos pelo que mais dói.'),
+        ('Implantamos apenas um módulo', 'Só o que resolve esse problema, com treinamento e acompanhamento.'),
+        ('Depois você decide se quer expandir', 'Os outros módulos conversam com o primeiro, quando e se fizer sentido para você.'),
+    ])
+    return t.secao('Como normalmente começa', 'Quatro passos, sem trocar tudo de uma vez', '', passos, alt=True)
+
+
+def adequar_home_v4(s):
+    if MARCA4 in s or MARCA not in s:
+        return s, False
+    # promessa logo abaixo do título (primeira dobra)
+    ini = s.index('<p class="sub">')
+    fim = s.index('</p>', ini) + 4
+    s = s[:fim] + promessas_hero() + s[fim:]
+    # "Como normalmente começa", antes de "Como começar"
+    k = s.index('<section class="sec', s.rindex('<section', 0, s.index('Em poucos dias, sua operação rodando')))
+    s = s[:k] + secao_como_comeca() + s[k:]
+    # IA: 3 aplicações + botão
+    s = trocar(s, bloco_ia(IA_ITENS_V3, 'Ver a IA da Oravel'), bloco_ia(), 'IA v4')
+    # frase de posicionamento junto da história
+    s = trocar(s, 'na locação, na manutenção e no campo.</p></div>',
+               'na locação, na manutenção e no campo.</p>'
+               '<p style="margin:14px 0 0;color:#fff;font-weight:600;max-width:60ch">Ajudamos locadoras a reduzir equipamentos parados, controlar a manutenção '
+               'e aumentar a rentabilidade da operação. O software é apenas a ferramenta.</p></div>', 'posicionamento')
+    # módulos: frase de abertura
+    s = trocar(s, '<h2>Comece pelo que dói mais e cresça no seu ritmo</h2>',
+               '<h2>Você não precisa contratar tudo. Comece pelo problema que mais dói hoje.</h2>', 'módulos')
+    return s.replace(MARCA, MARCA + MARCA4, 1), True
 
 
 # ------------------------------------------------------------------ páginas novas
@@ -411,7 +461,10 @@ def main():
     s, mudou = adequar_home(home.read_text(encoding='utf-8'))
     if mudou:
         home.write_text(s, encoding='utf-8')
-    print('home:', 'adequada' if mudou else 'já estava adequada (marcador pos-v3)')
+    s, m4 = adequar_home_v4(home.read_text(encoding='utf-8'))
+    if m4:
+        home.write_text(s, encoding='utf-8')
+    print('home:', 'adequada' if mudou else 'já estava adequada (pos-v3)', '| v4:', 'aplicada' if m4 else 'já aplicada')
 
     for nome, fn in (('calculadora', pagina_calculadora), ('diagnostico', pagina_diagnostico)):
         (raiz / nome).mkdir(exist_ok=True)
