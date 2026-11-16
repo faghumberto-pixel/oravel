@@ -227,6 +227,9 @@ def trocar_botao_global(s):
                   f'<a class="btn btn-p" href="{t.CTA_URL}">{t.CTA_LONGO}</a></div></div></header>')
     s = s.replace('<div class="hero-act"><a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a></div>',
                   f'<div class="hero-act"><a class="btn btn-p" href="{t.CTA_URL}">{t.CTA_LONGO}</a><a class="btn btn-o" href="/contato.php">Prefiro agendar uma demonstração</a></div>')
+    # hero das páginas internas: o botão principal (seguido de outro, ex. "Ver como funciona") também pede o diagnóstico
+    s = s.replace('<a class="btn btn-p" href="/contato.php">Agendar uma demonstração</a>',
+                  f'<a class="btn btn-p" href="{t.CTA_URL}">{t.CTA_LONGO}</a>')
     return s, s != n0
 
 
