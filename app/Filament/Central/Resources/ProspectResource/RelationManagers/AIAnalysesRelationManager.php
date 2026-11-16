@@ -61,7 +61,13 @@ class AIAnalysesRelationManager extends RelationManager
             ])
             ->defaultSort('created_at', 'desc')
             ->headerActions([])
-            ->actions([Tables\Actions\ViewAction::make()])
+            ->actions([
+                Tables\Actions\Action::make('abrir')
+                    ->label('Abrir e imprimir')
+                    ->icon('heroicon-o-printer')
+                    ->visible(fn (AIAnalysis $r): bool => $r->status === AIAnalysis::STATUS_CONCLUIDA)
+                    ->url(fn (AIAnalysis $r): string => route('ai-analyses.pdf', $r), shouldOpenInNewTab: true),
+            ])
             ->emptyStateHeading('Nenhuma análise de IA realizada')
             ->emptyStateDescription('Clique em "Analisar com IA" no prospect para gerar uma análise.');
     }

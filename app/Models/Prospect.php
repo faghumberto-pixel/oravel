@@ -80,6 +80,12 @@ class Prospect extends Model
         'ultimo_contato_em' => 'datetime',
     ];
 
+    /** Só quem tem celular (9 depois do DDD): dá para chamar no WhatsApp. Mesmo critério de ehCelular(). */
+    public function scopeComCelular(Builder $q): Builder
+    {
+        return $q->where('telefone', 'like', '(__) 9%');
+    }
+
     public function scopeNotaAlta(Builder $q): Builder
     {
         return $q->where('nota', '>=', 8);

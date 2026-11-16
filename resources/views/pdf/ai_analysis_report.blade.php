@@ -150,6 +150,46 @@
                 @endforeach
             </ul>
         </div>
+    @elseif ($analysis->type === \App\Models\AIAnalysis::TYPE_PROSPECT)
+        <div class="section">
+            <div class="section-title">Prospect</div>
+            <table class="data-grid"><tr>
+                <td><span class="label">Empresa</span><span class="value">{{ $analysis->prospect?->nome ?? data_get($analysis->context, 'prospect.nome', '—') }}</span></td>
+                <td><span class="label">Prioridade</span><span class="value">{{ ucfirst($response['prioridade'] ?? '—') }}</span></td>
+                <td><span class="label">Qualificação</span><span class="value">{{ ucfirst($response['qualificacao'] ?? '—') }}</span></td>
+            </tr></table>
+        </div>
+        <div class="section">
+            <div class="section-title">Risco de perda</div>
+            <p>{{ $response['risco_perda'] ?? '—' }}</p>
+        </div>
+        <div class="section">
+            <div class="section-title">Próximos passos</div>
+            <ol>
+                @foreach ($response['proximos_passos'] ?? [] as $passo)
+                    <li><strong>{{ $passo['acao'] ?? '' }}</strong>
+                        ({{ $passo['prazo_dias'] ?? '—' }} dias, {{ $passo['canal'] ?? '—' }})
+                        @if (! empty($passo['roteiro']))<br>{{ $passo['roteiro'] }}@endif
+                    </li>
+                @endforeach
+            </ol>
+        </div>
+        @if (! empty($response['mensagem_sugerida']))
+            <div class="section">
+                <div class="section-title">Mensagem sugerida</div>
+                <p style="white-space: pre-line">{{ $response['mensagem_sugerida'] }}</p>
+            </div>
+        @endif
+        @if (! empty($response['pontos_atencao']))
+            <div class="section">
+                <div class="section-title">Pontos de atenção</div>
+                <ul>
+                    @foreach ($response['pontos_atencao'] as $item)
+                        <li>{{ $item }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
     @elseif ($analysis->type === \App\Models\AIAnalysis::TYPE_ESTOQUE)
         <div class="section">
             <div class="section-title">Resumo</div>

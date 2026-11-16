@@ -175,6 +175,8 @@ class ProspectResource extends Resource
                     }),
                 Tables\Filters\TernaryFilter::make('empresa_nova')->label('Empresa nova (desde 2023)'),
                 Tables\Filters\TernaryFilter::make('regiao_campinas')->label('Região de Campinas'),
+                Tables\Filters\Filter::make('com_celular')->label('Só com celular / WhatsApp')->toggle()
+                    ->query(fn (Builder $query): Builder => $query->comCelular()),
                 Tables\Filters\Filter::make('nota_alta')->label('Nota 8 ou mais')->toggle()->query(fn (Builder $query): Builder => $query->notaAlta()),
                 Tables\Filters\Filter::make('retorno_vencido')->label('Retorno vencido')->toggle()
                     ->query(fn (Builder $query): Builder => $query->retornoVencido()),
@@ -212,16 +214,17 @@ class ProspectResource extends Resource
 
                         if ($analysis->status === AIAnalysis::STATUS_CONCLUIDA) {
                             $resp = $analysis->response;
-                            $mensagem = "Prioridade: {$resp['prioridade']}\nRisco: {$resp['risco_perda']}\nQualificação: {$resp['qualificacao']}\n\nPróximos passos:\n";
-                            foreach ($resp['proximos_passos'] as $i => $passo) {
-                                $mensagem .= ($i + 1) . ". {$passo['acao']} ({$passo['prazo_dias']} dias, {$passo['canal']}) — {$passo['roteiro']}\n";
-                            }
-                            $mensagem .= "\nMensagem sugerida:\n{$resp['mensagem_sugerida']}";
-
                             Notification::make()
                                 ->title('Análise concluída')
-                                ->body($mensagem)
+                                ->body('Prioridade '.($resp['prioridade'] ?? '—').' · '.($resp['qualificacao'] ?? '—').'. Abra para ler com calma e imprimir.')
+                                ->success()
                                 ->persistent()
+                                ->actions([
+                                    \Filament\Notifications\Actions\Action::make('abrir')
+                                        ->label('Abrir e imprimir')
+                                        ->button()
+                                        ->url(route('ai-analyses.pdf', $analysis), shouldOpenInNewTab: true),
+                                ])
                                 ->send();
                         } else {
                             Notification::make()

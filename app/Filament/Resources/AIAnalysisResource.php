@@ -57,6 +57,7 @@ class AIAnalysisResource extends BaseResource
             AIAnalysis::TYPE_LOGISTICA => 'Otimização de Rotas',
             AIAnalysis::TYPE_RETRABALHO => 'Retrabalho / Corretivas',
             AIAnalysis::TYPE_PLANO_PREVENTIVO => 'Planos Preventivos',
+            AIAnalysis::TYPE_PROSPECT => 'Análise de Prospect',
         ];
     }
 

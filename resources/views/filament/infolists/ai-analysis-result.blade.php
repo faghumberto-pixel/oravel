@@ -97,6 +97,24 @@
             </div>
         @endif
     </div>
+@elseif ($record->type === \App\Models\AIAnalysis::TYPE_PROSPECT)
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Prioridade</p><p class="text-sm">{{ ucfirst($response['prioridade'] ?? '—') }}</p></div>
+        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Qualificação</p><p class="text-sm">{{ ucfirst($response['qualificacao'] ?? '—') }}</p></div>
+        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Risco de perda</p><p class="text-sm">{{ $response['risco_perda'] ?? '—' }}</p></div>
+        <div class="lg:col-span-3">
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Próximos passos</p>
+            <ol class="list-decimal pl-5 text-sm">
+                @foreach ($response['proximos_passos'] ?? [] as $passo)
+                    <li><strong>{{ $passo['acao'] ?? '' }}</strong> ({{ $passo['prazo_dias'] ?? '—' }} dias, {{ $passo['canal'] ?? '—' }})
+                        @if (! empty($passo['roteiro']))<br>{{ $passo['roteiro'] }}@endif</li>
+                @endforeach
+            </ol>
+        </div>
+        @if (! empty($response['mensagem_sugerida']))
+            <div class="lg:col-span-3"><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Mensagem sugerida</p><p class="whitespace-pre-line text-sm">{{ $response['mensagem_sugerida'] }}</p></div>
+        @endif
+    </div>
 @elseif ($record->type === \App\Models\AIAnalysis::TYPE_ESTOQUE)
     <p class="text-sm">{{ $response['resumo_geral'] ?? '' }}</p>
 
