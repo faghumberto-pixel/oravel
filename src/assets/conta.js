@@ -49,17 +49,6 @@ if (fc) fc.addEventListener("submit", async (ev) => {
       nome: d.nome.trim(), sobrenome: d.sobrenome.trim(), empresa: d.empresa.trim(), whatsapp: d.whatsapp.trim(),
       cidade: d.cidade.trim(), estado: d.estado, email: d.email.trim(), criado: serverTimestamp()
     });
-    // Aviso para contato@oravel.org (extensão Trigger Email lê a coleção "mail"); falha aqui não bloqueia o cadastro
-    try {
-      await setDoc(doc(db, "mail", "cadastro-" + cred.user.uid), {
-        to: ["contato@oravel.org"],
-        message: {
-          subject: "Novo cadastro no oravel.org: " + d.nome.trim() + " " + d.sobrenome.trim(),
-          text: ["Nome: " + d.nome.trim() + " " + d.sobrenome.trim(), "E-mail: " + d.email.trim(), "Empresa: " + d.empresa.trim(),
-            "WhatsApp: " + d.whatsapp.trim(), "Cidade/UF: " + d.cidade.trim() + "/" + d.estado].join("\n")
-        }
-      });
-    } catch (_) {}
     await sendPasswordResetEmail(auth, d.email.trim(), { url: "https://oravel.org/?cadastro=ok" });
     await signOut(auth);
     fc.reset();

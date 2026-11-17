@@ -10,18 +10,6 @@ service cloud.firestore {
       allow read: if request.auth != null && request.auth.uid == uid;
       allow update, delete: if false;
     }
-    // Fila da extensão Trigger Email: um aviso por usuário, sempre para contato@oravel.org
-    match /mail/{id} {
-      allow create: if request.auth != null
-        && id == 'cadastro-' + request.auth.uid
-        && request.resource.data.keys().hasOnly(['to','message'])
-        && request.resource.data.to == ['contato@oravel.org']
-        && request.resource.data.message.keys().hasOnly(['subject','text'])
-        && request.resource.data.message.subject is string && request.resource.data.message.subject.size() < 200
-        && request.resource.data.message.subject.matches('Novo cadastro no oravel.org: .*')
-        && request.resource.data.message.text is string && request.resource.data.message.text.size() < 1000;
-      allow read, update, delete: if false;
-    }
     match /comentarios/{id} {
       allow read: if true;
       allow create: if request.auth != null
