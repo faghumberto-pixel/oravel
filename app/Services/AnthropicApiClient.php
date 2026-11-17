@@ -86,7 +86,39 @@ class AnthropicApiClient
             return ['ok' => false, 'text' => null, 'error' => 'A resposta da IA não veio em um formato reconhecível.'];
         }
 
-        return ['ok' => true, 'text' => $text, 'error' => null, 'usage' => $response->json('usage')];
+        return ['ok' => true, 'text' => $text, 'error' => null, 'usage' => $response->json('usage'), 'stop_reason' => $response->json('stop_reason')];
+    }
+
+    /**
+     * send() + leitura do JSON. Se a resposta vier CORTADA pelo limite de tamanho (stop_reason = max_tokens: o modelo gasta parte do
+     * limite pensando e as vezes sobra pouco pro texto), tenta de novo UMA vez com $maxTokensRetry.
+     *
+     * @param  array<int, array<string, mixed>>|string  $userContent
+     * @return array{ok: bool, data: ?array, text: ?string, error: ?string}
+     */
+    public function sendJson(string $systemPrompt, array|string $userContent, int $maxTokens = 4096, ?array $contexto = null, int $maxTokensRetry = 16000): array
+    {
+        $result = $this->send($systemPrompt, $userContent, $maxTokens, $contexto);
+
+        if ($result['ok'] && $this->parseJson($result['text']) === null && ($result['stop_reason'] ?? null) === 'max_tokens') {
+            $result = $this->send($systemPrompt, $userContent, $maxTokensRetry, $contexto);
+        }
+
+        if (! $result['ok']) {
+            return ['ok' => false, 'data' => null, 'text' => null, 'error' => $result['error']];
+        }
+
+        $data = $this->parseJson($result['text']);
+
+        if ($data === null) {
+            $cortada = ($result['stop_reason'] ?? null) === 'max_tokens';
+
+            return ['ok' => false, 'data' => null, 'text' => $result['text'], 'error' => $cortada
+                ? 'A resposta da IA foi cortada por tamanho. Tente novamente.'
+                : 'A resposta da IA não veio em um formato reconhecível.'];
+        }
+
+        return ['ok' => true, 'data' => $data, 'text' => $result['text'], 'error' => null];
     }
 
     /**

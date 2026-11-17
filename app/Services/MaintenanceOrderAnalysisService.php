@@ -27,7 +27,7 @@ class MaintenanceOrderAnalysisService
             'status' => AIAnalysis::STATUS_PENDENTE,
         ]);
 
-        $result = $this->client->send(
+        $result = $this->client->sendJson(
             $this->systemPrompt(),
             "Dados da O.S.:\n".json_encode($context, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
             8000,
@@ -35,22 +35,16 @@ class MaintenanceOrderAnalysisService
         );
 
         if (! $result['ok']) {
-            $analysis->update(['status' => AIAnalysis::STATUS_FALHOU, 'error' => $result['error']]);
-
-            return $analysis;
-        }
-
-        $parsed = $this->client->parseJson($result['text']);
-
-        if ($parsed === null) {
             $analysis->update([
                 'status' => AIAnalysis::STATUS_FALHOU,
-                'error' => 'A resposta da IA não veio em um formato reconhecível.',
-                'response' => ['raw' => $result['text']],
+                'error' => $result['error'],
+                'response' => $result['text'] !== null ? ['raw' => $result['text']] : null,
             ]);
 
             return $analysis;
         }
+
+        $parsed = $result['data'];
 
         $analysis->update(['status' => AIAnalysis::STATUS_CONCLUIDA, 'response' => $parsed]);
 
