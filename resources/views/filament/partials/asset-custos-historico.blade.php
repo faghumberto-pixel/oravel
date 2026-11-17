@@ -16,7 +16,8 @@
 @endphp
 
 <div class="space-y-6 text-sm">
-    {{-- Identificacao do equipamento: a primeira coisa da tela --}}
+    {{-- Identificacao do equipamento: a primeira coisa da tela (na Visao de negocio ela ja vem no bloco acima) --}}
+    @unless ($semCabecalho ?? false)
     <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white p-4 dark:border-white/10 dark:bg-white/5">
         <div class="min-w-0">
             <div class="text-lg font-semibold text-gray-950 dark:text-white">{{ $ativo->name }}</div>
@@ -32,6 +33,8 @@
             </span>
         @endif
     </div>
+
+    @endunless
 
     {{-- Sinalizacao --}}
     <div class="rounded-xl border p-4 {{ $faixa }}">

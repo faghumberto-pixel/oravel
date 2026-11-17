@@ -160,22 +160,40 @@ class AssetResource extends Resource
     }
 
     /** Bloco "Custos e histórico" (Inteligência de Ativos), usado no cadastro completo e no simples. */
-    protected static function custosPlaceholder(): Forms\Components\Placeholder
+    protected static function custosPlaceholder(bool $semCabecalho = false): Forms\Components\Placeholder
     {
         return Forms\Components\Placeholder::make('custos_e_historico')
             ->label('')
-            ->content(function (?Asset $record) {
+            ->content(function (?Asset $record) use ($semCabecalho) {
                 if (! $record?->exists) {
                     return '';
                 }
                 $servico = app(CustoManutencaoService::class);
 
                 return new HtmlString(view('filament.partials.asset-custos-historico', [
+                    'semCabecalho' => $semCabecalho,
                     'ativo' => $record->loadMissing('checklistGroup:id,name'),
                     'resumo' => $servico->resumo($record),
                     'meses' => $servico->porMes($record),
                     'ordens' => $servico->ordens($record),
                     'linha' => $servico->linhaDoTempo($record),
+                ])->render());
+            })
+            ->columnSpanFull();
+    }
+
+    /** Aba "Visão de negócio" do cadastro completo: o resumo da tela simples (quem é, onde está, quanto vale) e, se o contrato libera, os custos. */
+    protected static function visaoNegocioPlaceholder(): Forms\Components\Placeholder
+    {
+        return Forms\Components\Placeholder::make('visao_de_negocio')
+            ->label('')
+            ->content(function (?Asset $record) {
+                if (! $record?->exists) {
+                    return '';
+                }
+
+                return new HtmlString(view('filament.partials.asset-visao-negocio', [
+                    'ativo' => $record->loadMissing(['checklistGroup:id,name', 'client:id,name']),
                 ])->render());
             })
             ->columnSpanFull();
@@ -209,6 +227,16 @@ class AssetResource extends Resource
         return $form->schema([
             Tabs::make('Detalhes do Ativo')
                 ->tabs([
+                    // ABA: VISÃO DE NEGÓCIO -- o conteúdo da tela simples dentro do modo completo (só em ativo já salvo).
+                    Tabs\Tab::make('Visão de negócio')
+                        ->icon('heroicon-m-presentation-chart-line')
+                        ->visible(fn (?Asset $record) => (bool) $record?->exists)
+                        ->schema([
+                            static::visaoNegocioPlaceholder(),
+                            static::custosPlaceholder(semCabecalho: true)
+                                ->visible(fn () => CustoManutencaoService::habilitado()),
+                        ]),
+
                     // ABA 1: INFORMAÇÕES GERAIS E ROI (Auditável)
                     Tabs\Tab::make('Informações Gerais')
                         ->icon('heroicon-m-information-circle')
@@ -798,15 +826,6 @@ class AssetResource extends Resource
                                     })
                                     ->columnSpanFull(),
                             ]),
-                        ]),
-
-                    // ABA: CUSTOS E HISTÓRICO (Inteligência de Ativos). Só aparece quando o contrato do cliente libera a
-                    // chave menu_custo_equipamentos (opcional por contrato, desligada por padrão).
-                    Tabs\Tab::make('Custos e histórico')
-                        ->icon('heroicon-m-banknotes')
-                        ->visible(fn (?Asset $record) => (bool) $record?->exists && CustoManutencaoService::habilitado())
-                        ->schema([
-                            static::custosPlaceholder(),
                         ]),
 
                     // ABA 4: LOGS DE AUDITORIA (Rastreabilidade de Ações)
