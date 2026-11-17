@@ -84,6 +84,9 @@ return [
         // usuario em 2026-11-15; o resto do sistema segue no Sonnet do
         // AnthropicApiClient). Pra voltar ao Sonnet: PROSPECT_CHAT_MODEL=claude-sonnet-5
         'prospect_chat_model' => env('PROSPECT_CHAT_MODEL', 'claude-haiku-5-5'),
+        // Modelo de TODAS as analises de IA (send() do AnthropicApiClient: avaria, O.S., estoque, comercial, prospect...).
+        // Haiku por decisao do usuario em 2026-11-16 (custo). Pra voltar ao Sonnet: ANTHROPIC_ANALYSIS_MODEL=claude-sonnet-5
+        'analysis_model' => env('ANTHROPIC_ANALYSIS_MODEL', 'claude-haiku-5-5'),
     ],
 
     // Push do app do colaborador (Web Push): chaves geradas por `php artisan colaborador:gerar-chaves-push`.

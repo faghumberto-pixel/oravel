@@ -30,7 +30,7 @@ class MaintenanceOrderAnalysisService
         $result = $this->client->send(
             $this->systemPrompt(),
             "Dados da O.S.:\n".json_encode($context, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
-            4096,
+            8000,
             ['area' => 'manutencao', 'etapa' => 'analise_os', 'tenant_id' => $os->tenant_id],
         );
 
@@ -68,7 +68,7 @@ class MaintenanceOrderAnalysisService
 
             Regras: use somente os dados recebidos; nunca invente números, peças ou fatos. Se um dado não
             existir, diga que não há informação. Compare custo e tempo com o histórico quando houver.
-            Responda APENAS com um objeto JSON válido, sem markdown, sem crases, sem texto antes ou depois,
+            Seja objetivo: cada texto com no máximo 3 frases. Responda APENAS com um objeto JSON válido, sem markdown, sem crases, sem texto antes ou depois,
             exatamente neste formato (todas as chaves sempre presentes):
 
             {

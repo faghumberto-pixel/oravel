@@ -44,6 +44,8 @@ class AnthropicApiClient
             return ['ok' => false, 'text' => null, 'error' => 'ANTHROPIC_API_KEY não configurada.'];
         }
 
+        $modelo = config('services.anthropic.analysis_model') ?: self::MODEL;
+
         try {
             $response = Http::withHeaders([
                 'x-api-key' => $apiKey,
@@ -52,7 +54,7 @@ class AnthropicApiClient
             ])
                 ->timeout(60)
                 ->post(self::API_URL, [
-                    'model' => self::MODEL,
+                    'model' => $modelo,
                     'max_tokens' => $maxTokens,
                     'system' => $systemPrompt,
                     'messages' => [
@@ -76,7 +78,7 @@ class AnthropicApiClient
         }
 
         // Conta o gasto antes de ler o texto: resposta ilegivel tambem consumiu tokens.
-        ConsumoIa::registrar(self::MODEL, $response->json('usage'), $contexto ?? ConsumoIa::contextoDoChamador());
+        ConsumoIa::registrar($modelo, $response->json('usage'), $contexto ?? ConsumoIa::contextoDoChamador());
 
         $text = $this->extractText($response->json('content') ?? []);
 
