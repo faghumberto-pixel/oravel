@@ -158,6 +158,20 @@ description: "Avalie a expansão da frota: NPV, TIR, payback, capacidade de paga
 <input type="number" id="dscrMin" step="0.1" min="1" max="3" value="1.3" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+<label class="form-conta" style="margin:0">
+<span>Taxa de administração do consórcio (% total)</span>
+<input type="number" id="taxaAdmConsorcio" step="0.5" min="0" max="50" value="18">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Custo operacional que permanece no aluguel (%)</span>
+<input type="number" id="custoOpAluguelPct" step="5" min="0" max="100" value="60">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Acréscimo do aluguel no sale-leaseback (%)</span>
+<input type="number" id="reajusteLeaseback" step="1" min="0" max="100" value="15">
+</label>
+</div>
 </div>
 
 <div style="display:flex;gap:12px;flex-wrap:wrap">
@@ -321,7 +335,10 @@ const DEFAULTS_FROTA = {
   waccFrota: 14.5,
   irEfetivo: 15,
   deprFiscal: 10,
-  dscrMin: 1.3
+  dscrMin: 1.3,
+  taxaAdmConsorcio: 18,
+  custoOpAluguelPct: 60,
+  reajusteLeaseback: 15
 };
 
 const inputs = {};
@@ -365,7 +382,7 @@ function calcularModalidade(v, modalidade) {
   const qtd = v.qtdUnidades;
   const preco = v.precoUnit;
   const vr = v.vrUnit;
-  const custoOp = v.custoOpUnit;
+  let custoOp = v.custoOpUnit;
   const hrsAno = v.hrsAnoUnit;
   const ocup = v.taxOcupExp / 100;
   const diaria = v.diariaPropria;
@@ -397,7 +414,7 @@ function calcularModalidade(v, modalidade) {
     }
   } else if (modalidade === 'consorcio') {
     // Consórcio: lance ou sorteio - simplificado como parcela mensal sem juros, com taxa adm
-    const taxaAdm = 0.18; // 18% total
+    const taxaAdm = v.taxaAdmConsorcio / 100;
     const totalConsorcio = preco * qtd * (1 + taxaAdm);
     const parcelaMensal = totalConsorcio / (v.prazoFinFrota || 80);
     const parcelaAnual = parcelaMensal * 12;
@@ -411,22 +428,23 @@ function calcularModalidade(v, modalidade) {
     for (let a = 1; a <= anos; a++) {
       fluxoFinanc[a] = { princ: 0, juros: 0, total: custoAluguelAnual };
     }
-    // Para aluguel, custo operacional só operador + combustível (assume 60% do custoOp)
-    custoOp = v.custoOpUnit * 0.6;
+    // Parte do custo operacional que permanece com o aluguel (operador, combustível)
+    custoOp = v.custoOpUnit * (v.custoOpAluguelPct / 100);
   } else if (modalidade === 'sale-leaseback') {
     // Vende frota existente e aluga de volta - aqui modela como aluguel com entrada negativa (recebe venda)
     investInicial = -vr * qtd; // recebe valor residual
-    const custoAluguelAnual = (v.diariaMercado / 8) * hrsAno * qtd * 1.15; // leaseback costuma ser +15%
+    const custoAluguelAnual = (v.diariaMercado / 8) * hrsAno * qtd * (1 + v.reajusteLeaseback / 100);
     for (let a = 1; a <= anos; a++) {
       fluxoFinanc[a] = { princ: 0, juros: 0, total: custoAluguelAnual };
     }
-    custoOp = v.custoOpUnit * 0.6;
+    custoOp = v.custoOpUnit * (v.custoOpAluguelPct / 100);
   }
 
   // Receita anual
   const receitaAnual = (diaria / 8) * hrsAno * ocup * qtd;
   const custoOpAnual = custoOp * qtd;
-  const depreciacaoAnual = (preco * qtd - vr * qtd) / deprAnos;
+  const temAtivo = modalidade === 'compra' || modalidade === 'financiamento' || modalidade === 'consorcio';
+  const depreciacaoAnual = temAtivo ? (preco * qtd - vr * qtd) / deprAnos : 0;
 
   // Fluxo de caixa
   let vpl = -investInicial;
@@ -438,7 +456,9 @@ function calcularModalidade(v, modalidade) {
   for (let a = 1; a <= anos; a++) {
     const fin = fluxoFinanc[a] || { total: 0, juros: 0, princ: 0 };
     const ebitda = receitaAnual - custoOpAnual;
-    const ebit = ebitda - depreciacaoAnual;
+    // Dedutíveis: depreciação (se há ativo), juros do financiamento e aluguel pago
+    const dedutivel = depreciacaoAnual + (modalidade === 'financiamento' ? fin.juros : 0) + (modalidade === 'aluguel' || modalidade === 'sale-leaseback' ? fin.total : 0);
+    const ebit = ebitda - dedutivel;
     const irValor = Math.max(0, ebit) * ir;
     const fcl = ebitda - fin.total - irValor;
 
@@ -458,9 +478,9 @@ function calcularModalidade(v, modalidade) {
   }
 
   // Valor residual no final
-  const vpVr = (vr * qtd) / Math.pow(1 + wacc, anos);
+  const vpVr = temAtivo ? (vr * qtd) / Math.pow(1 + wacc, anos) : 0;
   vpl += vpVr;
-  tirFluxo[tirFluxo.length - 1] += vr * qtd;
+  if (temAtivo) tirFluxo[tirFluxo.length - 1] -= vr * qtd; // valor residual é entrada de caixa (convenção: positivo = saída)
 
   // TIR
   let tir = 0;
@@ -472,7 +492,7 @@ function calcularModalidade(v, modalidade) {
       for (let t = 0; t < tirFluxo.length; t++) {
         npv += tirFluxo[t] / Math.pow(1 + mid, t);
       }
-      if (npv > 0) low = mid; else high = mid;
+      if (npv > 0) high = mid; else low = mid;
     }
     tir = (low + high) / 2;
   }
@@ -481,7 +501,7 @@ function calcularModalidade(v, modalidade) {
   let payback = anos;
   for (let a = 0; a < fluxoAnual.length; a++) {
     if (fluxoAnual[a].vplAcum >= 0) {
-      payback = a + (a > 0 ? (fluxoAnual[a].vplAcum - fluxoAnual[a].vpFcl) / fluxoAnual[a].vpFcl : 0);
+      payback = a + Math.max(0, -(fluxoAnual[a].vplAcum - fluxoAnual[a].vpFcl) / fluxoAnual[a].vpFcl);
       break;
     }
   }
@@ -490,12 +510,15 @@ function calcularModalidade(v, modalidade) {
   const fclMedio = fluxoAnual.reduce((s, f) => s + f.fcl, 0) / anos;
   const pontoEquil = custoOpAnual > 0 ? (custoOpAnual + (fluxoFinanc[1]?.total || 0)) / ((diaria/8) * hrsAno * qtd) * 100 : 0;
 
+  // Sem investimento inicial (aluguel, consórcio) a TIR não se aplica: o critério passa a ser só VPL
+  const tirOk = investInicial > 0 ? tir > wacc : true;
+
   // Status
   let status = '', statusClass = '';
-  if (vpl > 0 && tir > wacc && dscrMedio >= v.dscrMin) {
+  if (vpl > 0 && tirOk && dscrMedio >= v.dscrMin) {
     status = 'VIÁVEL — VPL positivo, TIR > WACC, DSCR adequado. Projeto cria valor para o acionista.';
     statusClass = 'background:#e7f1ef;border-color:#0b5f57';
-  } else if (vpl > 0 && tir > wacc) {
+  } else if (vpl > 0 && tirOk) {
     status = 'VIÁVEL COM RESSALVA — VPL e TIR ok, mas DSCR abaixo do mínimo (' + fmtNum(dscrMedio, 2) + ' < ' + fmtNum(v.dscrMin, 2) + '). Requer estrutura de financiamento mais longa ou maior entrada.';
     statusClass = 'background:#fef3e7;border-color:#f59e0b';
   } else if (vpl > 0) {
@@ -506,7 +529,7 @@ function calcularModalidade(v, modalidade) {
     statusClass = 'background:#fef3e7;border-color:#9a3412';
   }
 
-  return { vpl, tir, payback, dscrMedio, fclMedio, pontoEquil, investInicial, fluxoAnual, status, statusClass, receitaAnual, custoOpAnual };
+  return { vpl, tir, tirOk, semTir: investInicial <= 0, payback, dscrMedio, fclMedio, pontoEquil, investInicial, fluxoAnual, status, statusClass, receitaAnual, custoOpAnual };
 }
 
 function calcular() {
@@ -537,8 +560,8 @@ function calcular() {
   const stressResultados = cenarios.map(c => {
     const vMod = { ...v, taxOcupExp: c.ocup, diariaPropria: c.diaria, custoOpUnit: v.custoOpUnit * c.custoOp, waccFrota: c.wacc };
     const r = calcularModalidade(vMod, v.modalidadeFrota);
-    const viavel = r.vpl > 0 && r.tir > (c.wacc/100) && r.dscrMedio >= v.dscrMin;
-    return { ...c, vpl: r.vpl, tir: r.tir, dscr: r.dscrMedio, viavel };
+    const viavel = r.vpl > 0 && (r.semTir || r.tir > (c.wacc/100)) && r.dscrMedio >= v.dscrMin;
+    return { ...c, vpl: r.vpl, tir: r.tir, semTir: r.semTir, dscr: r.dscrMedio, viavel };
   });
 
   // Comparativo modalidades
@@ -552,7 +575,7 @@ function calcular() {
   };
   const modalidadeResults = modalidades.map(m => {
     const r = calcularModalidade(v, m);
-    const viavel = r.vpl > 0 && r.tir > (v.waccFrota/100) && r.dscrMedio >= v.dscrMin;
+    const viavel = r.vpl > 0 && (r.semTir || r.tir > (v.waccFrota/100)) && r.dscrMedio >= v.dscrMin;
     let rec = '';
     if (viavel) rec = 'Recomendado';
     else if (r.vpl > 0) rec = 'Viável c/ ressalva';
@@ -564,7 +587,7 @@ function calcular() {
   document.getElementById('resQtdFrota').textContent = v.qtdUnidades;
   document.getElementById('resCatFrota').textContent = v.catFrota.charAt(0).toUpperCase() + v.catFrota.slice(1) + 's';
   document.getElementById('resVplFrota').textContent = fmtBRL(res.vpl);
-  document.getElementById('resTirFrota').textContent = fmtNum(res.tir * 100, 1) + '%';
+  document.getElementById('resTirFrota').textContent = res.semTir ? 'n/a' : fmtNum(res.tir * 100, 1) + '%';
   document.getElementById('resPaybackFrota').textContent = fmtNum(res.payback, 1) + ' anos';
   document.getElementById('resDscrFrota').textContent = fmtNum(res.dscrMedio, 2);
   document.getElementById('resPontoEquil').textContent = fmtNum(res.pontoEquil, 1) + '%';
@@ -599,7 +622,7 @@ function calcular() {
       <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${fmtNum(c.custoOp * 100, 0)}%</td>
       <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${fmtNum(c.wacc, 1)}%</td>
       <td style="padding:10px 12px;text-align:right;color:${c.vpl >= 0 ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${fmtBRL(c.vpl)}</td>
-      <td style="padding:10px 12px;text-align:right;color:${c.tir >= c.wacc/100 ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${fmtNum(c.tir * 100, 1)}%</td>
+      <td style="padding:10px 12px;text-align:right;color:${c.tir >= c.wacc/100 ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${c.semTir ? 'n/a' : fmtNum(c.tir * 100, 1) + '%'}</td>
       <td style="padding:10px 12px;text-align:right;color:${c.dscr >= v.dscrMin ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${fmtNum(c.dscr, 2)}</td>
       <td style="padding:10px 12px;text-align:center;color:${c.viavel ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${c.viavel ? 'Sim' : 'Não'}</td>
     </tr>
@@ -611,7 +634,7 @@ function calcular() {
       <td style="padding:10px 12px;color:var(--texto-escuro)">${m.label}</td>
       <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${fmtBRL(m.investInicial)}</td>
       <td style="padding:10px 12px;text-align:right;color:${m.vpl >= 0 ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${fmtBRL(m.vpl)}</td>
-      <td style="padding:10px 12px;text-align:right;color:${m.tir >= v.waccFrota/100 ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${fmtNum(m.tir * 100, 1)}%</td>
+      <td style="padding:10px 12px;text-align:right;color:${m.tir >= v.waccFrota/100 ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${m.semTir ? 'n/a' : fmtNum(m.tir * 100, 1) + '%'}</td>
       <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${isFinite(m.payback) ? fmtNum(m.payback, 1) + 'a' : '—'}</td>
       <td style="padding:10px 12px;text-align:right;color:${m.dscrMedio >= v.dscrMin ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${fmtNum(m.dscrMedio, 2)}</td>
       <td style="padding:10px 12px;text-align:center;color:${m.viavel ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${m.rec}</td>
