@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\AIAnalysis;
 use App\Models\MaintenanceOrder;
+use Illuminate\Support\Carbon;
 
 /**
  * Analise da O.S. como um todo via Claude: prazo e SLA, custo comparado ao historico, pecas e materiais, checklist,
@@ -62,6 +63,10 @@ class MaintenanceOrderAnalysisService
 
             Regras: use somente os dados recebidos; nunca invente números, peças ou fatos. Se um dado não
             existir, diga que não há informação. Compare custo e tempo com o histórico quando houver.
+            Em "vinculos_de_retrabalho", "retorno_de" é a O.S. original da qual esta é retorno e "retornos_posteriores"
+            são as O.S. que voltaram a este serviço. Se o vínculo já existe nos dados, NÃO peça para vincular de novo e NÃO sugira marcar a
+            O.S. original como retrabalho: analise a recorrência (intervalo, mesmo componente, causa raiz tratada ou não). Só peça vínculo
+            quando houver indício de retorno SEM o vínculo registrado.
             Seja objetivo: cada texto com no máximo 3 frases. Responda APENAS com um objeto JSON válido, sem markdown, sem crases, sem texto antes ou depois,
             exatamente neste formato (todas as chaves sempre presentes):
 
@@ -80,6 +85,26 @@ class MaintenanceOrderAnalysisService
               "proximos_passos": [{"acao": "string", "responsavel_sugerido": "string", "prazo": "string"}]
             }
             PROMPT;
+    }
+
+    /**
+     * Vinculo de retrabalho nos dois sentidos: de qual O.S. esta e' retorno e quais O.S. posteriores sao retorno dela. Sem isso a IA
+     * so' via o indicador "retrabalho" e pedia pra vincular O.S. que ja' estavam vinculadas (ou marcar a original como retrabalho).
+     *
+     * @return array{retorno_de: ?array<string, mixed>, retornos_posteriores: array<int, array<string, mixed>>}
+     */
+    public function vinculosDeRetorno(MaintenanceOrder $os): array
+    {
+        $fmt = fn ($d) => $d ? Carbon::parse($d)->format('d/m/Y') : null;
+        $base = fn () => MaintenanceOrder::withoutGlobalScopes()->where('tenant_id', $os->tenant_id);
+
+        $pai = $os->parent_os_id ? $base()->find($os->parent_os_id, ['os_number', 'description', 'created_at', 'finished_at']) : null;
+        $filhos = $base()->where('parent_os_id', $os->id)->orderBy('created_at')->get(['os_number', 'description', 'created_at', 'finished_at']);
+
+        return [
+            'retorno_de' => $pai ? ['os' => $pai->os_number, 'descricao' => $pai->description, 'concluida_em' => $fmt($pai->finished_at ?? $pai->created_at)] : null,
+            'retornos_posteriores' => $filhos->map(fn ($f) => ['os' => $f->os_number, 'descricao' => $f->description, 'aberta_em' => $fmt($f->created_at)])->all(),
+        ];
     }
 
     /** @return array<string, mixed> */
@@ -160,6 +185,7 @@ class MaintenanceOrderAnalysisService
                 'retrabalho' => (bool) $o->is_rework, 'custo_total' => (float) $o->total_order_cost, 'horas' => (float) $o->hours_spent,
                 'data' => $fmt($o->finished_at ?? $o->created_at),
             ])->all(),
+            'vinculos_de_retrabalho' => $this->vinculosDeRetorno($os),
             'comparativo_mesmo_tipo' => [
                 'qtd_os_anteriores' => $mesmoTipo->count(),
                 'custo_medio' => $mesmoTipo->isNotEmpty() ? round((float) $mesmoTipo->avg('total_order_cost'), 2) : null,
