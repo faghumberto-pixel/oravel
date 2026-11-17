@@ -42,4 +42,16 @@ class AnaliseUsaHaikuTest extends TestCase
         app(AnthropicApiClient::class)->send('sistema', 'dados');
         $this->assertSame('claude-sonnet-5', $this->modeloEnviado());
     }
+
+    public function test_conversa_sem_modelo_explicito_tambem_usa_haiku(): void
+    {
+        app(AnthropicApiClient::class)->sendConversation('sistema', [['role' => 'user', 'content' => 'oi']]);
+        $this->assertSame('claude-haiku-5-5', $this->modeloEnviado());
+    }
+
+    public function test_conversa_com_modelo_explicito_respeita_o_modelo(): void
+    {
+        app(AnthropicApiClient::class)->sendConversation('sistema', [['role' => 'user', 'content' => 'oi']], 4096, 'claude-sonnet-5');
+        $this->assertSame('claude-sonnet-5', $this->modeloEnviado());
+    }
 }

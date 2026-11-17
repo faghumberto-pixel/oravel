@@ -96,7 +96,7 @@ class AnthropicApiClient
      * 'messages' da API. Mesmo contrato de retorno.
      *
      * @param  array<int, array{role: string, content: string}>  $messages
-     * @param  string|null  $model  sobrescreve o modelo padrao (Sonnet) so nesta chamada
+     * @param  string|null  $model  sobrescreve o modelo padrao (Haiku, config services.anthropic.analysis_model) so nesta chamada
      * @param  array{area?: string, etapa?: string, tenant_id?: ?string}|null  $contexto  atribuicao do consumo (painel da Central); sem ele a area sai do servico que chamou
      * @return array{ok: bool, text: ?string, error: ?string}
      */
@@ -108,6 +108,8 @@ class AnthropicApiClient
             return ['ok' => false, 'text' => null, 'error' => 'ANTHROPIC_API_KEY não configurada.'];
         }
 
+        $modelo = $model ?: (config('services.anthropic.analysis_model') ?: self::MODEL);
+
         try {
             $response = Http::withHeaders([
                 'x-api-key' => $apiKey,
@@ -116,7 +118,7 @@ class AnthropicApiClient
             ])
                 ->timeout(60)
                 ->post(self::API_URL, [
-                    'model' => $model ?? self::MODEL,
+                    'model' => $modelo,
                     'max_tokens' => $maxTokens,
                     'system' => $systemPrompt,
                     'messages' => $messages,
@@ -138,7 +140,7 @@ class AnthropicApiClient
         }
 
         // Conta o gasto antes de ler o texto: resposta ilegivel tambem consumiu tokens.
-        ConsumoIa::registrar($model ?? self::MODEL, $response->json('usage'), $contexto ?? ConsumoIa::contextoDoChamador());
+        ConsumoIa::registrar($modelo, $response->json('usage'), $contexto ?? ConsumoIa::contextoDoChamador());
 
         $text = $this->extractText($response->json('content') ?? []);
 
