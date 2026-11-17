@@ -6,85 +6,85 @@ title: "Calculadora de ROI de Manutenção"
 description: "Compare preventiva vs corretiva: calcule o ROI de investir em manutenção preventiva, preditiva ou RCM. Veja redução de falhas, ganho de disponibilidade, economia com peças e payback do programa."
 ---
 
-<section class="container" style="padding:56px 32px 24px;max-width:900px">
+<section class="container" style="padding-top:56px;padding-bottom:24px;max-width:900px">
 <div class="breadcrumb"><a href="/">Início</a> / <a href="/ferramentas/">Ferramentas</a> / Calculadora de ROI de Manutenção</div>
 <h1 class="page-title">Calculadora de ROI de Manutenção</h1>
-<p style="margin:16px 0 0;font-size:19px;color:#4a5361;max-width:64ch">Avalie se vale a pena migrar de corretiva para preventiva/preditiva. Insira custos atuais, proposta de programa e veja: economia anual, redução de falhas, ganho de disponibilidade, payback e NPV do investimento.</p>
+<p style="margin:16px 0 0;font-size:19px;color:var(--texto-secundario);max-width:64ch">Avalie se vale a pena migrar de corretiva para preventiva/preditiva. Insira custos atuais, proposta de programa e veja: economia anual, redução de falhas, ganho de disponibilidade, payback e NPV do investimento.</p>
 </section>
 
-<section class="container" style="padding:24px 32px 80px;max-width:900px">
+<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:900px">
 
-<div style="display:grid;grid-template-columns:1fr 380px;gap:32px;align-items:start">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:32px;align-items:start">
 <div>
 <h2 class="section-title section-title-h3" style="margin-bottom:20px">Cenário Atual (Baseline)</h2>
 
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Frota e Operação</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Frota e Operação</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label class="form-conta" style="margin:0">
 <span>Nº de equipamentos na frota</span>
-<input type="number" id="numEquip" step="1" min="1" value="15" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="numEquip" step="1" min="1" value="15" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Horas trabalhadas/equip/mês</span>
-<input type="number" id="horasMesEquip" step="10" min="0" max="720" value="180" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="horasMesEquip" step="10" min="0" max="720" value="180" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label class="form-conta" style="margin:0">
 <span>Diária média praticada (R$/8h)</span>
-<input type="number" id="diariaMedia" step="10" min="0" value="500" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="diariaMedia" step="10" min="0" value="500" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Taxa de ocupação média (%)</span>
-<input type="number" id="taxaOcupMedia" step="1" min="0" max="100" value="70" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="taxaOcupMedia" step="1" min="0" max="100" value="70" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 </div>
 
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Custos Atuais de Manutenção (Anual)</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Custos Atuais de Manutenção (Anual)</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label class="form-conta" style="margin:0">
 <span>Manutenção corretiva total (R$/ano)</span>
-<input type="number" id="corrAtual" step="1000" min="0" value="450000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="corrAtual" step="1000" min="0" value="450000" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Manutenção preventiva atual (R$/ano)</span>
-<input type="number" id="prevAtual" step="1000" min="0" value="120000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="prevAtual" step="1000" min="0" value="120000" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label class="form-conta" style="margin:0">
 <span>Peças de reposição emergenciais (R$/ano)</span>
-<input type="number" id="pecasEmergAtual" step="1000" min="0" value="180000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="pecasEmergAtual" step="1000" min="0" value="180000" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Mão de obra terceirizada emergencial (R$/ano)</span>
-<input type="number" id="maoObraEmergAtual" step="1000" min="0" value="90000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="maoObraEmergAtual" step="1000" min="0" value="90000" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label class="form-conta" style="margin:0">
 <span>Nº de falhas/ano (frota total)</span>
-<input type="number" id="falhasAnoAtual" step="1" min="0" value="60" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="falhasAnoAtual" step="1" min="0" value="60" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>MTTR médio atual (h/falha)</span>
-<input type="number" id="mttrAtual" step="0.5" min="0" value="8" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="mttrAtual" step="0.5" min="0" value="8" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <p class="muted-sm" style="margin:12px 0 0">Corretiva inclui: peças, mão de obra, logística, tempo parado. Preventiva atual = apenas o que já faz hoje (lubrificação, inspeções básicas).</p>
 </div>
 
-<h2 class="section-title section-title-h3" style="margin:24px 0 20px;color:#1b2230">Programa Proposto (Preventiva / Preditiva / RCM)</h2>
+<h2 class="section-title section-title-h3" style="margin:24px 0 20px;color:var(--texto-escuro)">Programa Proposto (Preventiva / Preditiva / RCM)</h2>
 
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Investimento no Programa</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Investimento no Programa</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label class="form-conta" style="margin:0">
 <span>Tipo de programa</span>
-<select id="tipoPrograma" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<select id="tipoPrograma" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 <option value="preventiva">Preventiva estruturada (planos por equipamento)</option>
 <option value="preditiva">Preditiva (análise de óleo, vibração, termografia)</option>
 <option value="rcm">RCM - Manutenção Centrada em Confiabilidade</option>
@@ -93,125 +93,125 @@ description: "Compare preventiva vs corretiva: calcule o ROI de investir em manu
 </label>
 <label class="form-conta" style="margin:0">
 <span>CAPEX inicial (R$) — ferramentas, sensores, software, treinamento</span>
-<input type="number" id="capexInicial" step="1000" min="0" value="150000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="capexInicial" step="1000" min="0" value="150000" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label class="form-conta" style="margin:0">
 <span>OPEX anual do programa (R$/ano) — contratos, licenças, equipe dedicada</span>
-<input type="number" id="opexAnual" step="1000" min="0" value="80000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="opexAnual" step="1000" min="0" value="80000" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Vida útil do programa (anos)</span>
-<input type="number" id="vidaPrograma" step="1" min="1" max="10" value="5" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="vidaPrograma" step="1" min="1" max="10" value="5" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 </div>
 
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Ganhos Esperados (Estimativas Conservadoras)</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Ganhos Esperados (Estimativas Conservadoras)</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label class="form-conta" style="margin:0">
 <span>Redução de falhas corretivas (%)</span>
-<input type="number" id="redFalhas" step="1" min="0" max="90" value="45" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="redFalhas" step="1" min="0" max="90" value="45" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Redução MTTR (%)</span>
-<input type="number" id="redMttr" step="1" min="0" max="70" value="30" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="redMttr" step="1" min="0" max="70" value="30" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label class="form-conta" style="margin:0">
 <span>Redução peças emergenciais (%)</span>
-<input type="number" id="redPecas" step="1" min="0" max="80" value="40" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="redPecas" step="1" min="0" max="80" value="40" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Redução mão de obra emergencial (%)</span>
-<input type="number" id="redMaoObra" step="1" min="0" max="80" value="35" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="redMaoObra" step="1" min="0" max="80" value="35" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label class="form-conta" style="margin:0">
 <span>Aumento vida útil equipamentos (%)</span>
-<input type="number" id="aumVidaUtil" step="1" min="0" max="50" value="15" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="aumVidaUtil" step="1" min="0" max="50" value="15" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Custo de capital / WACC (% a.a.)</span>
-<input type="number" id="waccRoi" step="0.1" min="0" max="50" value="14.5" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="waccRoi" step="0.1" min="0" max="50" value="14.5" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <p class="muted-sm" style="margin:12px 0 0">Benchmarks: Preventiva estruturada 30-50% redução falhas; Preditiva 40-60%; RCM 50-70%. MTTR cai 20-40% com planejamento. Vida útil estende 10-25%.</p>
 </div>
 
 <div style="display:flex;gap:12px;flex-wrap:wrap">
-<button class="btn" id="btnCalcRoi" style="background:#0b5f57;color:#fff;padding:14px 28px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Calcular ROI</button>
-<button class="btn btn-outline" id="btnResetRoi" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:14px 28px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Resetar</button>
-<a href="/ferramentas/" class="btn btn-outline" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:14px 28px;border-radius:8px;text-decoration:none;display:flex;align-items:center;justify-content:center;min-height:52px">← Voltar</a>
+<button class="btn" id="btnCalcRoi" style="background:var(--azul-petroleo);color:#fff;padding:14px 28px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Calcular ROI</button>
+<button class="btn btn-outline" id="btnResetRoi" style="background:transparent;color:var(--texto-escuro);border:2px solid var(--texto-escuro);padding:14px 28px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Resetar</button>
+<a href="/ferramentas/" class="btn btn-outline">← Voltar</a>
 </div>
 </div>
 
 <!-- Resultados -->
-<div id="resultadosRoi" style="position:sticky;top:100px;background:#fbfaf6;border:1px solid #e4dfd3;border-radius:16px;padding:24px;display:none">
-<h2 class="section-title section-title-h3" style="margin:0 0 20px;color:#1b2230">Resultado — ROI Manutenção</h2>
+<div id="resultadosRoi" style="position:sticky;top:100px;background:#fbfaf6;border:1px solid var(--cinza-claro);border-radius:16px;padding:24px;display:none">
+<h2 class="section-title section-title-h3" style="margin:0 0 20px;color:var(--texto-escuro)">Resultado — ROI Manutenção</h2>
 
 <!-- Cards principais -->
 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
-<div style="background:#0b5f57;border-radius:12px;padding:20px;color:#fff">
+<div style="background:var(--azul-petroleo);border-radius:12px;padding:20px;color:#fff">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ad7cd;margin-bottom:8px">Economia Líquida Anual</div>
-<div id="resEconomiaAnual" style="font-family:'Newsreader',Georgia,serif;font-size:32px;font-weight:600;color:#fff;line-height:1.1">R$ 0</div>
+<div id="resEconomiaAnual" style="font-family:var(--font-titulo);font-size:32px;font-weight:600;color:#fff;line-height:1.1">R$ 0</div>
 <p style="margin:8px 0 0;color:#c9ded9;font-size:13px">Após custos do programa</p>
 </div>
-<div style="background:#f59e0b;border-radius:12px;padding:20px;color:#1b2230">
+<div style="background:#f59e0b;border-radius:12px;padding:20px;color:var(--texto-escuro)">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7a5a08;margin-bottom:8px">Payback</div>
-<div id="resPaybackRoi" style="font-family:'Newsreader',Georgia,serif;font-size:32px;font-weight:600;color:#1b2230;line-height:1.1">0 meses</div>
-<p style="margin:8px 0 0;color:#4a5361;font-size:13px">Tempo para recuperar CAPEX</p>
+<div id="resPaybackRoi" style="font-family:var(--font-titulo);font-size:32px;font-weight:600;color:var(--texto-escuro);line-height:1.1">0 meses</div>
+<p style="margin:8px 0 0;color:var(--texto-secundario);font-size:13px">Tempo para recuperar CAPEX</p>
 </div>
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px">
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:8px">NPV (5 anos)</div>
-<div id="resNpv" style="font-family:'Newsreader',Georgia,serif;font-size:32px;font-weight:600;color:#1b2230;line-height:1.1">R$ 0</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px">
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-bottom:8px">NPV (5 anos)</div>
+<div id="resNpv" style="font-family:var(--font-titulo);font-size:32px;font-weight:600;color:var(--texto-escuro);line-height:1.1">R$ 0</div>
 <p class="muted-sm" style="margin:8px 0 0">Valor presente líquido</p>
 </div>
 </div>
 
 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
-<div id="resROI" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#1b2230">0%</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">ROI Anualizado</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
+<div id="resROI" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0%</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">ROI Anualizado</div>
 </div>
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
-<div id="resDispGanho" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#0b5f57">0%</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">Ganho Disponibilidade</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
+<div id="resDispGanho" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--azul-petroleo)">0%</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Ganho Disponibilidade</div>
 </div>
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
-<div id="resFalhasEvitadas" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#9a3412">0</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">Falhas Evitadas/Ano</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
+<div id="resFalhasEvitadas" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:#9a3412">0</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Falhas Evitadas/Ano</div>
 </div>
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
-<div id="resVidaUtilGanho" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#f59e0b">0%</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">Extensão Vida Útil</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
+<div id="resVidaUtilGanho" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:#f59e0b">0%</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Extensão Vida Útil</div>
 </div>
 </div>
 
 <!-- Breakdown economias -->
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Composição da Economia Anual</h3>
-<div id="breakdownRoi" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px;color:#27303d"></div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:var(--font-titulo);font-size:16px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Composição da Economia Anual</h3>
+<div id="breakdownRoi" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px;color:var(--texto-escuro)"></div>
 </div>
 
 <!-- Fluxo de caixa -->
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Fluxo de Caixa Projetado</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:var(--font-titulo);font-size:16px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Fluxo de Caixa Projetado</h3>
 <div style="overflow-x:auto">
 <table style="width:100%;border-collapse:collapse;font-size:14px" id="tabelaFluxoCaixa">
 <thead>
-<tr style="background:#e7f1ef;border-bottom:2px solid #0b5f57">
-<th style="padding:10px 12px;text-align:left;font-weight:600;color:#1b2230">Ano</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">CAPEX</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">OPEX Programa</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Economia Bruta</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Economia Líquida</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Fluxo Acumulado</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">VP (WACC)</th>
+<tr style="background:#e7f1ef;border-bottom:2px solid var(--azul-petroleo)">
+<th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--texto-escuro)">Ano</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">CAPEX</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">OPEX Programa</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Economia Bruta</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Economia Líquida</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Fluxo Acumulado</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">VP (WACC)</th>
 </tr>
 </thead>
 <tbody id="tbodyFluxoCaixa"></tbody>
@@ -220,19 +220,19 @@ description: "Compare preventiva vs corretiva: calcule o ROI de investir em manu
 </div>
 
 <!-- Cenários -->
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Análise de Sensibilidade — NPV 5 anos</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:var(--font-titulo);font-size:16px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Análise de Sensibilidade — NPV 5 anos</h3>
 <div id="tabelaCenariosRoi" style="overflow-x:auto">
 <table style="width:100%;border-collapse:collapse;font-size:14px">
 <thead>
-<tr style="background:#e7f1ef;border-bottom:2px solid #0b5f57">
-<th style="padding:10px 12px;text-align:left;font-weight:600;color:#1b2230">Cenário</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Red. Falhas</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Red. MTTR</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">CAPEX</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">OPEX/ano</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">NPV</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Payback</th>
+<tr style="background:#e7f1ef;border-bottom:2px solid var(--azul-petroleo)">
+<th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--texto-escuro)">Cenário</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Red. Falhas</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Red. MTTR</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">CAPEX</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">OPEX/ano</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">NPV</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Payback</th>
 </tr>
 </thead>
 <tbody id="tbodyCenariosRoi"></tbody>
@@ -240,9 +240,9 @@ description: "Compare preventiva vs corretiva: calcule o ROI de investir em manu
 </div>
 </div>
 
-<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid #e4dfd3">
-<button class="btn btn-outline" id="btnCopiarLinkRoi" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:12px 20px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px">Copiar link</button>
-<button class="btn" id="btnExportarCSVRoi" style="background:#0b5f57;color:#fff;padding:12px 20px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:14px">Exportar CSV</button>
+<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid var(--cinza-claro)">
+<button class="btn btn-outline" id="btnCopiarLinkRoi" style="background:transparent;color:var(--texto-escuro);border:2px solid var(--texto-escuro);padding:12px 20px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px">Copiar link</button>
+<button class="btn" id="btnExportarCSVRoi" style="background:var(--azul-petroleo);color:#fff;padding:12px 20px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:14px">Exportar CSV</button>
 </div>
 
 <div class="muted-sm" style="margin-top:16px">
@@ -431,35 +431,35 @@ function calcular() {
     { label: 'Valor extensão vida útil', value: valorVidaUtilAnual, cor: '#f59e0b' },
     { label: '<strong>Benefício Total Anual</strong>', value: beneficioTotalAnual, total: true }
   ].map(b => `
-    <div style="${b.total ? 'font-weight:700;color:#0b5f57;border-top:2px solid #0b5f57;padding-top:8px;margin-top:4px' : b.subtotal ? 'font-weight:600;color:#1b2230;border-top:1px solid #e4dfd3;padding-top:8px;margin-top:4px' : ''} ${b.good === false ? 'color:#9a3412' : ''}">
+    <div style="${b.total ? 'font-weight:700;color:var(--azul-petroleo);border-top:2px solid var(--azul-petroleo);padding-top:8px;margin-top:4px' : b.subtotal ? 'font-weight:600;color:var(--texto-escuro);border-top:1px solid var(--cinza-claro);padding-top:8px;margin-top:4px' : ''} ${b.good === false ? 'color:#9a3412' : ''}">
       <span>${b.label}</span>
-      <span style="text-align:right;display:block;color:${b.cor || (b.value >= 0 ? '#0b5f57' : '#9a3412')}">${fmtBRL(b.value)}</span>
+      <span style="text-align:right;display:block;color:${b.cor || (b.value >= 0 ? 'var(--azul-petroleo)' : '#9a3412')}">${fmtBRL(b.value)}</span>
     </div>
   `).join('');
 
   const tb = document.getElementById('tbodyFluxoCaixa');
   tb.innerHTML = fluxoCaixa.map(f => `
     <tr style="border-bottom:1px solid #f0efe9 ${f.ano === 1 ? ';font-weight:600' : ''}">
-      <td style="padding:10px 12px;color:#1b2230">${f.ano}</td>
+      <td style="padding:10px 12px;color:var(--texto-escuro)">${f.ano}</td>
       <td style="padding:10px 12px;text-align:right;color:#9a3412">${fmtBRL(f.capex)}</td>
       <td style="padding:10px 12px;text-align:right;color:#9a3412">${fmtBRL(f.opex)}</td>
-      <td style="padding:10px 12px;text-align:right;color:#0b5f57">${fmtBRL(f.economiaBruta)}</td>
-      <td style="padding:10px 12px;text-align:right;color:#1b2230;font-weight:600">${fmtBRL(f.economiaLiquida)}</td>
-      <td style="padding:10px 12px;text-align:right;color:#1b2230;font-weight:600">${fmtBRL(f.acumulado)}</td>
-      <td style="padding:10px 12px;text-align:right;color:#0b5f57">${fmtBRL(f.vp)}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--azul-petroleo)">${fmtBRL(f.economiaBruta)}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-escuro);font-weight:600">${fmtBRL(f.economiaLiquida)}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-escuro);font-weight:600">${fmtBRL(f.acumulado)}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--azul-petroleo)">${fmtBRL(f.vp)}</td>
     </tr>
   `).join('');
 
   const tb2 = document.getElementById('tbodyCenariosRoi');
   tb2.innerHTML = cenarioResultados.map(c => `
     <tr style="border-bottom:1px solid #f0efe9 ${c.nome === 'Base' ? ';font-weight:600' : ''}">
-      <td style="padding:10px 12px;color:#1b2230">${c.nome}</td>
-      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtNum(c.rf, 0)}%</td>
-      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtNum(c.rm, 0)}%</td>
-      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtBRL(c.capex)}</td>
-      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtBRL(c.opex)}</td>
-      <td style="padding:10px 12px;text-align:right;color:#1b2230;font-weight:600">${fmtBRL(c.npv)}</td>
-      <td style="padding:10px 12px;text-align:right;color:#4a5361;font-weight:600">${isFinite(c.payback) ? fmtNum(c.payback, 1) + 'm' : '—'}</td>
+      <td style="padding:10px 12px;color:var(--texto-escuro)">${c.nome}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${fmtNum(c.rf, 0)}%</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${fmtNum(c.rm, 0)}%</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${fmtBRL(c.capex)}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${fmtBRL(c.opex)}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-escuro);font-weight:600">${fmtBRL(c.npv)}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario);font-weight:600">${isFinite(c.payback) ? fmtNum(c.payback, 1) + 'm' : '—'}</td>
     </tr>
   `).join('');
 

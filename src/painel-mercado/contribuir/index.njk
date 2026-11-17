@@ -6,18 +6,18 @@ title: "Contribuir com Dados — Painel do Mercado"
 description: "Contribua anonimamente com os KPIs da sua locadora e receba seu benchmarking personalizado (P25/P50/P75 por segmento). Leva 3 minutos."
 ---
 
-<section class="container" style="padding:56px 32px 24px;max-width:720px">
+<section class="container" style="padding-top:56px;padding-bottom:24px;max-width:720px">
 <div class="breadcrumb"><a href="/">Início</a> / <a href="/painel-mercado/">Painel do Mercado</a> / Contribuir</div>
 <h1 class="page-title">Contribuir com Dados</h1>
-<p style="margin:16px 0 0;font-size:19px;color:#4a5361;max-width:64ch">Suas respostas são <strong>100% anônimas</strong>. Nenhum dado identifica sua empresa. Você recebe de volta seu posicionamento (P25/P50/P75) no seu segmento (porte × região × categoria).</p>
+<p style="margin:16px 0 0;font-size:19px;color:var(--texto-secundario);max-width:64ch">Suas respostas são <strong>100% anônimas</strong>. Nenhum dado identifica sua empresa. Você recebe de volta seu posicionamento (P25/P50/P75) no seu segmento (porte × região × categoria).</p>
 </section>
 
-<section class="container" style="padding:24px 32px 80px;max-width:720px">
+<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:720px">
 
 <!-- Benefícios -->
-<div style="background:#e7f1ef;border:1px solid #0b5f57;border-radius:14px;padding:24px;margin-bottom:32px">
-<h2 class="section-title section-title-h3" style="margin:0 0 12px;color:#0b5f57;display:flex;align-items:center;gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> O que você ganha contribuindo</h2>
-<ul style="margin:0;padding-left:20px;line-height:2;color:#0b5f57">
+<div style="background:#e7f1ef;border:1px solid var(--azul-petroleo);border-radius:14px;padding:24px;margin-bottom:32px">
+<h2 class="section-title section-title-h3" style="margin:0 0 12px;color:var(--azul-petroleo);display:flex;align-items:center;gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> O que você ganha contribuindo</h2>
+<ul style="margin:0;padding-left:20px;line-height:2;color:var(--azul-petroleo)">
 <li><strong>Benchmarking personalizado:</strong> Seu P25/P50/P75 em diária, utilização, disponibilidade, custo manutenção/receita — comparado ao seu segmento exato.</li>
 <li><strong>Acesso antecipado:</strong> Recebe o relatório mensal do Painel antes da publicação no portal.</li>
 <li><strong>Peso na comunidade:</strong> Sua contribuição melhora a qualidade dos dados para todos (incluindo você).</li>
@@ -31,13 +31,13 @@ description: "Contribua anonimamente com os KPIs da sua locadora e receba seu be
 <input type="hidden" name="versao" value="1.0">
 
 <!-- Seção 1: Perfil da Locadora -->
-<fieldset style="border:0;margin:0 0 24px;padding:0;border-top:3px solid #0b5f57;padding-top:16px">
-<legend style="font-family:'Newsreader',Georgia,serif;font-size:22px;font-weight:600;color:#1b2230;margin-bottom:16px">1. Perfil da Locadora</legend>
+<fieldset style="border:0;margin:0 0 24px;padding:0;border-top:3px solid var(--azul-petroleo);padding-top:16px">
+<legend style="font-family:var(--font-titulo);font-size:22px;font-weight:600;color:var(--texto-escuro);margin-bottom:16px">1. Perfil da Locadora</legend>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label>
 <span>Porte da frota (total de equipamentos)</span>
-<select name="porteFrota" required style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%">
+<select name="porteFrota" required style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%">
 <option value="">Selecione</option>
 <option value="micro">Micro (1–10 equipamentos)</option>
 <option value="pequena">Pequena (11–50 equipamentos)</option>
@@ -49,7 +49,7 @@ description: "Contribua anonimamente com os KPIs da sua locadora e receba seu be
 
 <label>
 <span>Região da sede</span>
-<select name="regiao" required style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%">
+<select name="regiao" required style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%">
 <option value="">Selecione</option>
 <option value="sudeste">Sudeste (SP, RJ, MG, ES)</option>
 <option value="sul">Sul (PR, SC, RS)</option>
@@ -63,7 +63,7 @@ description: "Contribua anonimamente com os KPIs da sua locadora e receba seu be
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label>
 <span>Categoria principal da frota (>50% dos equipamentos)</span>
-<select name="categoriaPrincipal" required style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%">
+<select name="categoriaPrincipal" required style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%">
 <option value="">Selecione</option>
 <option value="terraplanagem">Terraplanagem (escavadeiras, pás, motoniveladoras, caminhões fora de estrada)</option>
 <option value="elevacao">Elevação (plataformas tesoura/articuladas, guindastes, manipuladores)</option>
@@ -76,7 +76,7 @@ description: "Contribua anonimamente com os KPIs da sua locadora e receba seu be
 
 <label>
 <span>Anos de operação</span>
-<select name="anosOperacao" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%">
+<select name="anosOperacao" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%">
 <option value="">Selecione</option>
 <option value="0-2">0–2 anos</option>
 <option value="3-5">3–5 anos</option>
@@ -89,88 +89,88 @@ description: "Contribua anonimamente com os KPIs da sua locadora e receba seu be
 </fieldset>
 
 <!-- Seção 2: KPIs do Mês de Referência -->
-<fieldset style="border:0;margin:0 0 24px;padding:0;border-top:3px solid #0b5f57;padding-top:16px">
-<legend style="font-family:'Newsreader',Georgia,serif;font-size:22px;font-weight:600;color:#1b2230;margin-bottom:16px">2. KPIs do Mês de Referência</legend>
+<fieldset style="border:0;margin:0 0 24px;padding:0;border-top:3px solid var(--azul-petroleo);padding-top:16px">
+<legend style="font-family:var(--font-titulo);font-size:22px;font-weight:600;color:var(--texto-escuro);margin-bottom:16px">2. KPIs do Mês de Referência</legend>
 <p class="muted-sm" style="margin:0 0 16px">Referência: <strong>mês anterior completo</strong> (ex: se hoje é novembro, informe outubro). Use dados do seu financeiro/operacional.</p>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label>
 <span>Mês de referência</span>
-<input type="month" name="mesReferencia" required style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%">
+<input type="month" name="mesReferencia" required style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%">
 </label>
 
 <label>
 <span>Receita bruta de locação no mês (R$)</span>
-<input type="number" name="receitaBruta" step="1000" min="0" required placeholder="Ex: 150000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%">
+<input type="number" name="receitaBruta" step="1000" min="0" required placeholder="Ex: 150000" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%">
 </label>
 </div>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label>
 <span>Diária média praticada (R$/8h) — média ponderada por frota</span>
-<input type="number" name="diariaMedia" step="10" min="0" required placeholder="Ex: 420" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%">
+<input type="number" name="diariaMedia" step="10" min="0" required placeholder="Ex: 420" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%">
 </label>
 
 <label>
 <span>Utilização média da frota (%) — horas alugadas / horas disponíveis</span>
-<input type="number" name="utilizacaoMedia" step="1" min="0" max="100" required placeholder="Ex: 62" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%">
+<input type="number" name="utilizacaoMedia" step="1" min="0" max="100" required placeholder="Ex: 62" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%">
 </label>
 </div>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label>
 <span>Disponibilidade da frota (%) — equipamentos operacionais / total</span>
-<input type="number" name="disponibilidade" step="1" min="0" max="100" required placeholder="Ex: 87" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%">
+<input type="number" name="disponibilidade" step="1" min="0" max="100" required placeholder="Ex: 87" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%">
 </label>
 
 <label>
 <span>Custo total de manutenção no mês (R$) — preventiva + corretiva</span>
-<input type="number" name="custoManutencao" step="1000" min="0" required placeholder="Ex: 28000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%">
+<input type="number" name="custoManutencao" step="1000" min="0" required placeholder="Ex: 28000" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%">
 </label>
 </div>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label>
 <span>Nº de equipamentos na frota no mês</span>
-<input type="number" name="totalEquipamentos" step="1" min="1" required placeholder="Ex: 45" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%">
+<input type="number" name="totalEquipamentos" step="1" min="1" required placeholder="Ex: 45" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%">
 </label>
 
 <label>
 <span>Nº de ordens de serviço (manutenção) no mês</span>
-<input type="number" name="ordensServico" step="1" min="0" placeholder="Ex: 18" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%">
+<input type="number" name="ordensServico" step="1" min="0" placeholder="Ex: 18" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%">
 </label>
 </div>
 </fieldset>
 
 <!-- Seção 3: Tecnologia e Maturidade (Opcional) -->
 <fieldset style="border:0;margin:0 0 24px;padding:0;border-top:3px solid #f59e0b;padding-top:16px">
-<legend style="font-family:'Newsreader',Georgia,serif;font-size:22px;font-weight:600;color:#1b2230;margin-bottom:16px">3. Tecnologia e Maturidade <span style="font-size:13px;font-weight:400;color:#6b7280">(opcional, mas valioso)</span></legend>
+<legend style="font-family:var(--font-titulo);font-size:22px;font-weight:600;color:var(--texto-escuro);margin-bottom:16px">3. Tecnologia e Maturidade <span style="font-size:13px;font-weight:400;color:var(--texto-secundario)">(opcional, mas valioso)</span></legend>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-<input type="checkbox" name="techTelemetria" value="1" style="width:18px;height:18px;accent-color:#0b5f57"> Telemetria / GPS / Rastreador
+<input type="checkbox" name="techTelemetria" value="1" style="width:18px;height:18px;accent-color:var(--azul-petroleo)"> Telemetria / GPS / Rastreador
 </label>
 <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-<input type="checkbox" name="techERP" value="1" style="width:18px;height:18px;accent-color:#0b5f57"> ERP de Locação (gestão de contratos, faturamento, frota)
+<input type="checkbox" name="techERP" value="1" style="width:18px;height:18px;accent-color:var(--azul-petroleo)"> ERP de Locação (gestão de contratos, faturamento, frota)
 </label>
 <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-<input type="checkbox" name="techNFe" value="1" style="width:18px;height:18px;accent-color:#0b5f57"> Emissão automática de NFe/NFSe
+<input type="checkbox" name="techNFe" value="1" style="width:18px;height:18px;accent-color:var(--azul-petroleo)"> Emissão automática de NFe/NFSe
 </label>
 <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-<input type="checkbox" name="techAppCliente" value="1" style="width:18px;height:18px;accent-color:#0b5f57"> App/Portal do Cliente (solicitação, acompanhamento, notas)
+<input type="checkbox" name="techAppCliente" value="1" style="width:18px;height:18px;accent-color:var(--azul-petroleo)"> App/Portal do Cliente (solicitação, acompanhamento, notas)
 </label>
 <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-<input type="checkbox" name="techQR" value="1" style="width:18px;height:18px;accent-color:#0b5f57"> QR Code / RFID no controle de equipamentos
+<input type="checkbox" name="techQR" value="1" style="width:18px;height:18px;accent-color:var(--azul-petroleo)"> QR Code / RFID no controle de equipamentos
 </label>
 <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-<input type="checkbox" name="techIAPreditiva" value="1" style="width:18px;height:18px;accent-color:#0b5f57"> IA para manutenção preditiva / roteirização
+<input type="checkbox" name="techIAPreditiva" value="1" style="width:18px;height:18px;accent-color:var(--azul-petroleo)"> IA para manutenção preditiva / roteirização
 </label>
 </div>
 
 <div style="margin-top:20px">
 <label>
 <span>Autoavaliação de maturidade digital (1 a 5)</span>
-<select name="maturidadeDigital" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%">
+<select name="maturidadeDigital" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%">
 <option value="">Selecione</option>
 <option value="1">Nível 1 — Inicial (processos manuais, planilhas, reativo)</option>
 <option value="2">Nível 2 — Gerenciada (ERP básico, alguma telemetria, KPIs básicos)</option>
@@ -183,46 +183,46 @@ description: "Contribua anonimamente com os KPIs da sua locadora e receba seu be
 </fieldset>
 
 <!-- Seção 4: Contato para Relatório Pessoal -->
-<fieldset style="border:0;margin:0 0 24px;padding:0;border-top:3px solid #0b5f57;padding-top:16px">
-<legend style="font-family:'Newsreader',Georgia,serif;font-size:22px;font-weight:600;color:#1b2230;margin-bottom:16px">4. Onde Enviar Seu Relatório Pessoal</legend>
+<fieldset style="border:0;margin:0 0 24px;padding:0;border-top:3px solid var(--azul-petroleo);padding-top:16px">
+<legend style="font-family:var(--font-titulo);font-size:22px;font-weight:600;color:var(--texto-escuro);margin-bottom:16px">4. Onde Enviar Seu Relatório Pessoal</legend>
 <p class="muted-sm" style="margin:0 0 16px">Seu e-mail <strong>não será divulgado, vendido ou usado para marketing</strong>. Serve apenas para enviar seu benchmarking personalizado (PDF) e o relatório mensal do Painel.</p>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label>
 <span>E-mail para receber relatório *</span>
-<input type="email" name="email" required placeholder="seu@email.com" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%">
+<input type="email" name="email" required placeholder="seu@email.com" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%">
 </label>
 
 <label>
 <span>Confirmar e-mail *</span>
-<input type="email" name="emailConfirm" required placeholder="seu@email.com" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%">
+<input type="email" name="emailConfirm" required placeholder="seu@email.com" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%">
 </label>
 </div>
 
 <div style="margin-top:16px">
 <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">
-<input type="checkbox" name="aceiteLGPD" required id="aceiteLGPD" style="width:18px;height:18px;accent-color:#0b5f57;margin-top:2px">
-<span style="font-size:14px;color:#4a5361;line-height:1.6">Autorizo o processamento anônimo dos meus dados para fins estatísticos do Painel do Mercado Oravel, conforme <a href="/politica-editorial/" style="color:#0b5f57">Política Editorial</a> e <a href="/privacidade/" style="color:#0b5f57">Privacidade</a>. Posso solicitar exclusão a qualquer momento pelo e-mail <a href="mailto:dados@oravel.org" style="color:#0b5f57">dados@oravel.org</a>.</span>
+<input type="checkbox" name="aceiteLGPD" required id="aceiteLGPD" style="width:18px;height:18px;accent-color:var(--azul-petroleo);margin-top:2px">
+<span style="font-size:14px;color:var(--texto-secundario);line-height:1.6">Autorizo o processamento anônimo dos meus dados para fins estatísticos do Painel do Mercado Oravel, conforme <a href="/politica-editorial/" style="color:var(--azul-petroleo)">Política Editorial</a> e <a href="/privacidade/" style="color:var(--azul-petroleo)">Privacidade</a>. Posso solicitar exclusão a qualquer momento pelo e-mail <a href="mailto:dados@oravel.org" style="color:var(--azul-petroleo)">dados@oravel.org</a>.</span>
 </label>
 </div>
 </fieldset>
 
 <!-- Submit -->
 <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px">
-<button type="submit" class="btn" style="background:#0b5f57;color:#fff;padding:16px 32px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:16px;font-weight:600;min-height:56px;flex:1">Enviar e Receber Meu Benchmarking</button>
-<a href="/painel-mercado/" class="btn btn-outline" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:16px 32px;border-radius:8px;text-decoration:none;display:flex;align-items:center;justify-content:center;min-height:56px">← Voltar ao Painel</a>
+<button type="submit" class="btn">Enviar e Receber Meu Benchmarking</button>
+<a href="/painel-mercado/" class="btn btn-outline">← Voltar ao Painel</a>
 </div>
 
 <div id="formMsg" style="margin-top:16px;min-height:24px"></div>
 </form>
 
 <!-- Nota final -->
-<div style="margin-top:48px;padding:24px;background:#fbfaf6;border:1px solid #e4dfd3;border-radius:14px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 12px;color:#1b2230">Compromisso de Privacidade</h3>
-<ul style="margin:0;padding-left:20px;line-height:1.9;color:#4a5361;font-size:15px">
+<div style="margin-top:48px;padding:24px;background:#fbfaf6;border:1px solid var(--cinza-claro);border-radius:14px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 12px;color:var(--texto-escuro)">Compromisso de Privacidade</h3>
+<ul style="margin:0;padding-left:20px;line-height:1.9;color:var(--texto-secundario);font-size:15px">
 <li><strong>Anonimato garantido:</strong> Seu CNPJ, nome da empresa e e-mail NUNCA aparecem no Painel público nem são compartilhados.</li>
 <li><strong>Agregação mínima:</strong> Benchmarks só são exibidos com n≥10 por célula (porte × região × categoria).</li>
-<li><strong>Controle total:</strong> Pode solicitar exclusão dos seus dados a qualquer momento: <a href="mailto:dados@oravel.org" style="color:#0b5f57">dados@oravel.org</a>.</li>
+<li><strong>Controle total:</strong> Pode solicitar exclusão dos seus dados a qualquer momento: <a href="mailto:dados@oravel.org" style="color:var(--azul-petroleo)">dados@oravel.org</a>.</li>
 <li><strong>LGPD:</strong> Base legal: legítimo interesse (art. 7º, IX) + consentimento para envio do relatório pessoal.</li>
 </ul>
 </div>
@@ -301,26 +301,26 @@ document.addEventListener('DOMContentLoaded', () => {
       const benchmark = gerarBenchmarkSimulado(data);
 
       showMsg(`
-        <div style="background:#e7f1ef;border:1px solid #0b5f57;border-radius:12px;padding:20px">
-          <h3 style="margin:0 0 12px;color:#0b5f57">✅ Contribuição recebida!</h3>
-          <p style="margin:0 0 16px;color:#1b2230">Obrigado! Seus dados foram registrados anonimamente.</p>
-          <div style="background:#fff;border:1px solid #e4dfd3;border-radius:8px;padding:16px;margin-bottom:16px">
-            <strong style="color:#1b2230">Seu Benchmarking Preliminar (simulado):</strong>
+        <div style="background:#e7f1ef;border:1px solid var(--azul-petroleo);border-radius:12px;padding:20px">
+          <h3 style="margin:0 0 12px;color:var(--azul-petroleo)">✅ Contribuição recebida!</h3>
+          <p style="margin:0 0 16px;color:var(--texto-escuro)">Obrigado! Seus dados foram registrados anonimamente.</p>
+          <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:8px;padding:16px;margin-bottom:16px">
+            <strong style="color:var(--texto-escuro)">Seu Benchmarking Preliminar (simulado):</strong>
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px;font-size:14px">
               <div style="text-align:center;padding:12px;background:#fbfaf6;border-radius:8px">
-                <div style="font-family:'Newsreader',Georgia,serif;font-size:20px;font-weight:600;color:#0b5f57">${benchmark.diariaP50}</div>
-                <div style="font-size:12px;color:#6b7280">Diária P50 do seu segmento</div>
+                <div style="font-family:var(--font-titulo);font-size:20px;font-weight:600;color:var(--azul-petroleo)">${benchmark.diariaP50}</div>
+                <div style="font-size:12px;color:var(--texto-secundario)">Diária P50 do seu segmento</div>
               </div>
               <div style="text-align:center;padding:12px;background:#fbfaf6;border-radius:8px">
-                <div style="font-family:'Newsreader',Georgia,serif;font-size:20px;font-weight:600;color:#0b5f57">${benchmark.utilizacaoP50}%</div>
-                <div style="font-size:12px;color:#6b7280">Utilização P50</div>
+                <div style="font-family:var(--font-titulo);font-size:20px;font-weight:600;color:var(--azul-petroleo)">${benchmark.utilizacaoP50}%</div>
+                <div style="font-size:12px;color:var(--texto-secundario)">Utilização P50</div>
               </div>
               <div style="text-align:center;padding:12px;background:#fbfaf6;border-radius:8px">
-                <div style="font-family:'Newsreader',Georgia,serif;font-size:20px;font-weight:600;color:#0b5f57">${benchmark.manutP50}%</div>
-                <div style="font-size:12px;color:#6b7280">Manut/Receita P50</div>
+                <div style="font-family:var(--font-titulo);font-size:20px;font-weight:600;color:var(--azul-petroleo)">${benchmark.manutP50}%</div>
+                <div style="font-size:12px;color:var(--texto-secundario)">Manut/Receita P50</div>
               </div>
             </div>
-            <p style="margin:12px 0 0;font-size:13px;color:#6b7280">Seu relatório completo (P25/P50/P75 + gráficos) será enviado para <strong>${email}</strong> na próxima segunda-feira.</p>
+            <p style="margin:12px 0 0;font-size:13px;color:var(--texto-secundario)">Seu relatório completo (P25/P50/P75 + gráficos) será enviado para <strong>${email}</strong> na próxima segunda-feira.</p>
           </div>
         </div>
       `, 'success');
@@ -340,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function showMsg(html, type) {
     const colors = { error: '#9a3412', success: '#0b5f57', info: '#0b5f57' };
-    msgDiv.innerHTML = `<div style="padding:16px;border-radius:8px;border-left:4px solid ${colors[type]};background:${type === 'error' ? '#fef3e7' : '#e7f1ef'};color:#1b2230">${html}</div>`;
+    msgDiv.innerHTML = `<div style="padding:16px;border-radius:8px;border-left:4px solid ${colors[type]};background:${type === 'error' ? '#fef3e7' : '#e7f1ef'};color:var(--texto-escuro)">${html}</div>`;
   }
 
   function gerarBenchmarkSimulado(data) {

@@ -6,163 +6,163 @@ title: "Calculadora de Preço da Diária"
 description: "Calcule o preço mínimo e sugerido da diária do seu equipamento. Insira custo de aquisição, vida útil, utilização, manutenção, seguro, rastreamento, custo de capital e margem desejada."
 ---
 
-<section class="container" style="padding:56px 32px 24px;max-width:900px">
+<section class="container" style="padding-top:56px;padding-bottom:24px;max-width:900px">
 <div class="breadcrumb"><a href="/">Início</a> / <a href="/ferramentas/">Ferramentas</a> / Calculadora de Preço da Diária</div>
 <h1 class="page-title">Calculadora de Preço da Diária</h1>
-<p style="margin:16px 0 0;font-size:19px;color:#4a5361;max-width:64ch">Descubra quanto cobrar por dia para cobrir todos os custos e ter a margem que você quer. Baseada em custo total de posse (TCO) por hora disponível.</p>
+<p style="margin:16px 0 0;font-size:19px;color:var(--texto-secundario);max-width:64ch">Descubra quanto cobrar por dia para cobrir todos os custos e ter a margem que você quer. Baseada em custo total de posse (TCO) por hora disponível.</p>
 </section>
 
-<section class="container" style="padding:24px 32px 80px;max-width:900px">
+<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:900px">
 
 <!-- Inputs -->
-<div style="display:grid;grid-template-columns:1fr 380px;gap:32px;align-items:start">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:32px;align-items:start">
 <div>
 <h2 class="section-title section-title-h3" style="margin-bottom:20px">Parâmetros do Equipamento</h2>
 
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">1. Aquisição e Vida Útil</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">1. Aquisição e Vida Útil</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label class="form-conta" style="margin:0">
 <span>Custo de aquisição (R$)</span>
-<input type="number" id="custoAquisicao" step="1000" min="0" value="250000" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="custoAquisicao" step="1000" min="0" value="250000" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Vida útil estimada (meses)</span>
-<input type="number" id="vidaUtilMeses" step="1" min="1" max="360" value="60" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="vidaUtilMeses" step="1" min="1" max="360" value="60" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <p class="muted-sm" style="margin:12px 0 0">Valor de revenda ao final da vida útil é opcional (reduz depreciação).</p>
 <label class="form-conta" style="margin:16px 0 0">
-<span>Valor de revenda estimado (R$) <span style="font-weight:400;color:#6b7280">(opcional)</span></span>
-<input type="number" id="valorRevenda" step="1000" min="0" value="30000" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<span>Valor de revenda estimado (R$) <span style="font-weight:400;color:var(--texto-secundario)">(opcional)</span></span>
+<input type="number" id="valorRevenda" step="1000" min="0" value="30000" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">2. Utilização e Operação</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">2. Utilização e Operação</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label class="form-conta" style="margin:0">
 <span>Utilização esperada (% do tempo disponível)</span>
-<input type="number" id="utilizacaoPct" step="1" min="1" max="100" value="65" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="utilizacaoPct" step="1" min="1" max="100" value="65" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Horas por dia útil</span>
-<input type="number" id="horasPorDia" step="0.5" min="1" max="24" value="8" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="horasPorDia" step="0.5" min="1" max="24" value="8" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <p class="muted-sm" style="margin:12px 0 0">Utilização = horas efetivamente alugadas / horas disponíveis no mês. Mercado: 55–75%.</p>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label class="form-conta" style="margin:0">
 <span>Dias úteis por mês</span>
-<input type="number" id="diasUteisMes" step="1" min="15" max="25" value="22" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="diasUteisMes" step="1" min="15" max="25" value="22" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Meses por ano</span>
-<input type="number" id="mesesPorAno" step="1" min="6" max="12" value="12" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="mesesPorAno" step="1" min="6" max="12" value="12" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 </div>
 
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">3. Custos Operacionais Mensais</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">3. Custos Operacionais Mensais</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label class="form-conta" style="margin:0">
 <span>Manutenção preventiva + corretiva (R$/mês)</span>
-<input type="number" id="custoManutencaoMes" step="100" min="0" value="3500" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="custoManutencaoMes" step="100" min="0" value="3500" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Seguro (R$/mês)</span>
-<input type="number" id="custoSeguroMes" step="50" min="0" value="800" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="custoSeguroMes" step="50" min="0" value="800" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label class="form-conta" style="margin:0">
 <span>Rastreamento / Telemetria (R$/mês)</span>
-<input type="number" id="custoRastreamentoMes" step="50" min="0" value="180" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="custoRastreamentoMes" step="50" min="0" value="180" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Outros custos fixos (R$/mês)</span>
-<input type="number" id="outrosCustosMes" step="100" min="0" value="0" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="outrosCustosMes" step="100" min="0" value="0" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <p class="muted-sm" style="margin:12px 0 0">Inclua aqui: taxas de administração, gestão de frota, lubrificantes programados, etc.</p>
 </div>
 
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">4. Custo de Capital e Margem</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">4. Custo de Capital e Margem</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label class="form-conta" style="margin:0">
 <span>Custo de capital (% a.a.)</span>
-<input type="number" id="custoCapitalAnual" step="0.1" min="0" max="50" value="14.5" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="custoCapitalAnual" step="0.1" min="0" max="50" value="14.5" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Margem desejada (%)</span>
-<input type="number" id="margemDesejada" step="1" min="0" max="200" value="30" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="margemDesejada" step="1" min="0" max="200" value="30" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <p class="muted-sm" style="margin:12px 0 0">Custo de capital = WACC da locadora ou custo de captação (CDC, BNDES, debêntures). Mercado 2026: 13–17% a.a.</p>
 </div>
 
 <div style="display:flex;gap:12px;flex-wrap:wrap">
-<button class="btn" id="btnCalcular" style="background:#0b5f57;color:#fff;text-decoration:none;font-weight:600;padding:14px 28px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Calcular Preço da Diária</button>
-<button class="btn btn-outline" id="btnResetar" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:14px 28px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Resetar para Padrões</button>
-<a href="/ferramentas/" class="btn btn-outline" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:14px 28px;border-radius:8px;text-decoration:none;display:flex;align-items:center;justify-content:center;min-height:52px">← Voltar às Ferramentas</a>
+<button class="btn" id="btnCalcular" style="background:var(--azul-petroleo);color:#fff;text-decoration:none;font-weight:600;padding:14px 28px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Calcular Preço da Diária</button>
+<button class="btn btn-outline" id="btnResetar" style="background:transparent;color:var(--texto-escuro);border:2px solid var(--texto-escuro);padding:14px 28px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Resetar para Padrões</button>
+<a href="/ferramentas/" class="btn btn-outline">← Voltar às Ferramentas</a>
 </div>
 </div>
 
 <!-- Resultados -->
-<div id="resultados" style="position:sticky;top:100px;background:#fbfaf6;border:1px solid #e4dfd3;border-radius:16px;padding:24px;display:none">
-<h2 class="section-title section-title-h3" style="margin:0 0 20px;color:#1b2230">Resultado</h2>
+<div id="resultados" style="position:sticky;top:100px;background:#fbfaf6;border:1px solid var(--cinza-claro);border-radius:16px;padding:24px;display:none">
+<h2 class="section-title section-title-h3" style="margin:0 0 20px;color:var(--texto-escuro)">Resultado</h2>
 
 <!-- Cards principais -->
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px">
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:8px">Preço MÍNIMO da Diária (8h)</div>
-<div id="resultadoPrecoMinimo" style="font-family:'Newsreader',Georgia,serif;font-size:36px;font-weight:600;color:#1b2230;line-height:1.1">R$ 0,00</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px">
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-bottom:8px">Preço MÍNIMO da Diária (8h)</div>
+<div id="resultadoPrecoMinimo" style="font-family:var(--font-titulo);font-size:36px;font-weight:600;color:var(--texto-escuro);line-height:1.1">R$ 0,00</div>
 <p class="muted-sm" style="margin:8px 0 0">Cobre todos os custos, margem = 0%</p>
 </div>
-<div style="background:#0b5f57;border-radius:12px;padding:20px;color:#fff">
+<div style="background:var(--azul-petroleo);border-radius:12px;padding:20px;color:#fff">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ad7cd;margin-bottom:8px">Preço SUGERIDO da Diária (8h)</div>
-<div id="resultadoPrecoSugerido" style="font-family:'Newsreader',Georgia,serif;font-size:36px;font-weight:600;color:#fff;line-height:1.1">R$ 0,00</div>
+<div id="resultadoPrecoSugerido" style="font-family:var(--font-titulo);font-size:36px;font-weight:600;color:#fff;line-height:1.1">R$ 0,00</div>
 <p style="margin:8px 0 0;color:#c9ded9;font-size:13px">Com sua margem de <span id="margemDisplay">0</span>%</p>
 </div>
 </div>
 
 <!-- Métricas auxiliares -->
 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px">
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
-<div id="metricCustoHora" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#1b2230">R$ 0,00</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">Custo/hora disponível</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
+<div id="metricCustoHora" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">R$ 0,00</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Custo/hora disponível</div>
 </div>
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
-<div id="metricPontoEquilibrio" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#1b2230">0</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">Dias/mês p/ equilíbrio</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
+<div id="metricPontoEquilibrio" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Dias/mês p/ equilíbrio</div>
 </div>
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
-<div id="metricPaybackMeses" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#1b2230">0</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">Payback (meses)</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
+<div id="metricPaybackMeses" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Payback (meses)</div>
 </div>
 </div>
 
 <!-- Breakdown de custos -->
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Composição do Custo Mensal</h3>
-<div id="breakdownCustos" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px;color:#27303d"></div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:var(--font-titulo);font-size:16px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Composição do Custo Mensal</h3>
+<div id="breakdownCustos" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px;color:var(--texto-escuro)"></div>
 </div>
 
 <!-- Sensibilidade -->
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Análise de Sensibilidade — Preço Sugerido</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px">
+<h3 style="font-family:var(--font-titulo);font-size:16px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Análise de Sensibilidade — Preço Sugerido</h3>
 <p class="muted-sm" style="margin:0 0 16px">Como o preço muda se a utilização ou o custo de capital variarem:</p>
 <div id="tabelaSensibilidade" style="overflow-x:auto">
 <table style="width:100%;border-collapse:collapse;font-size:14px">
 <thead>
-<tr style="background:#e7f1ef;border-bottom:2px solid #0b5f57">
-<th style="padding:10px 12px;text-align:left;font-weight:600;color:#1b2230">Cenário</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Utilização</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Custo Capital</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Preço Sugerido</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Δ vs Base</th>
+<tr style="background:#e7f1ef;border-bottom:2px solid var(--azul-petroleo)">
+<th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--texto-escuro)">Cenário</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Utilização</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Custo Capital</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Preço Sugerido</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Δ vs Base</th>
 </tr>
 </thead>
 <tbody id="tbodySensibilidade"></tbody>
@@ -171,9 +171,9 @@ description: "Calcule o preço mínimo e sugerido da diária do seu equipamento.
 </div>
 
 <!-- Ações -->
-<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid #e4dfd3">
-<button class="btn btn-outline" id="btnCopiarLink" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:12px 20px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px">Copiar link com parâmetros</button>
-<button class="btn" id="btnExportarCSV" style="background:#0b5f57;color:#fff;padding:12px 20px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:14px">Exportar CSV</button>
+<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid var(--cinza-claro)">
+<button class="btn btn-outline" id="btnCopiarLink" style="background:transparent;color:var(--texto-escuro);border:2px solid var(--texto-escuro);padding:12px 20px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px">Copiar link com parâmetros</button>
+<button class="btn" id="btnExportarCSV" style="background:var(--azul-petroleo);color:#fff;padding:12px 20px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:14px">Exportar CSV</button>
 </div>
 
 <div class="muted-sm" style="margin-top:16px">
@@ -378,7 +378,7 @@ function renderResultados(r) {
   // Breakdown
   const bdDiv = document.getElementById('breakdownCustos');
   bdDiv.innerHTML = r.breakdown.map(b => `
-    <div style="${b.total ? 'font-weight:700;color:#0b5f57;border-top:1px solid #e4dfd3;padding-top:8px;margin-top:4px' : ''}">
+    <div style="${b.total ? 'font-weight:700;color:var(--azul-petroleo);border-top:1px solid var(--cinza-claro);padding-top:8px;margin-top:4px' : ''}">
       <span>${b.label}</span>
       <span style="text-align:right;display:block">${fmtBRL(b.value)}</span>
     </div>
@@ -388,11 +388,11 @@ function renderResultados(r) {
   const tb = document.getElementById('tbodySensibilidade');
   tb.innerHTML = r.sensibilidade.map(s => `
     <tr style="border-bottom:1px solid #f0efe9">
-      <td style="padding:10px 12px;color:#1b2230;font-weight:${s.nome === 'Base (atual)' ? '600' : '400'}">${s.nome}</td>
-      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtPct(s.util)}</td>
-      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtPct(s.cap)}</td>
-      <td style="padding:10px 12px;text-align:right;color:#1b2230;font-weight:600">${fmtBRL(s.precoSugerido)}</td>
-      <td style="padding:10px 12px;text-align:right;color:${s.delta > 0 ? '#9a3412' : s.delta < 0 ? '#0b5f57' : '#6b7280'};font-weight:600">${s.delta >= 0 ? '+' : ''}${fmtNum(s.delta, 1)}%</td>
+      <td style="padding:10px 12px;color:var(--texto-escuro);font-weight:${s.nome === 'Base (atual)' ? '600' : '400'}">${s.nome}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${fmtPct(s.util)}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${fmtPct(s.cap)}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-escuro);font-weight:600">${fmtBRL(s.precoSugerido)}</td>
+      <td style="padding:10px 12px;text-align:right;color:${s.delta > 0 ? '#9a3412' : s.delta < 0 ? 'var(--azul-petroleo)' : 'var(--texto-secundario)'};font-weight:600">${s.delta >= 0 ? '+' : ''}${fmtNum(s.delta, 1)}%</td>
     </tr>
   `).join('');
 }

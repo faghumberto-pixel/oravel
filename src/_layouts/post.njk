@@ -3,23 +3,25 @@ layout: base.njk
 pagefind: true
 ---
 {% set themePosts = collections[theme] %}
-<header class="post-head">
+<header class="post-hero">
+<div class="container post-hero__inner">
 <div class="breadcrumb"><a href="/">Início</a> / <a href="/{{ theme }}/">{{ theme | themeLabel }}</a></div>
-<span class="tag" style="background:{{ theme | themeBg }};color:{{ theme | themeColor }};padding:4px 12px;border-radius:999px">{{ theme | themeLabel }}</span>
+<span class="tag post-hero__tag">{{ theme | themeLabel }}</span>
 <h1>{{ title }}</h1>
 <p class="post-lead">{{ summary }}</p>
 <div class="post-meta"><span>{{ date | dateBr }}</span>{% if readingTime %}<span>Leitura de {{ readingTime }}</span>{% endif %}{% if source %}<span>Fonte: {{ source }}</span>{% endif %}</div>
+</div>
 </header>
-{% if image %}<figure class="post-cover"><img src="{{ image }}" alt="{{ title }}" width="1200" height="800" fetchpriority="high"></figure>{% endif %}
+{% if image %}<div class="container"><figure class="post-cover"><img src="{{ image }}" alt="{{ title }}" width="1200" height="800" fetchpriority="high"></figure></div>{% endif %}
 
-<div class="container" style="padding:0 32px 72px">
+<div class="container post-wrap">
 <div class="main-layout">
 <article class="main-content post-body">
 {{ content | safe }}
 
 {% if source %}
-<div style="margin-top:40px;padding:18px 0;color:#4a5361;font-size:14px;line-height:1.9;border-top:1px solid #e4dfd3">
-<b style="color:#1b2230;font-size:16px">Fonte</b><br>
+<div class="post-fonte">
+<strong>Fonte</strong>
 {{ source | safe }}
 </div>
 {% endif %}
@@ -36,7 +38,7 @@ pagefind: true
 <h2 class="section-title section-title-h3">Comentários</h2>
 <div id="comentarios-lista" data-slug="{{ page.url }}"><p class="muted">Carregando…</p></div>
 <div id="comentar-deslogado"><p class="muted"><a href="/entrar/">Entre</a> ou <a href="/cadastro/">cadastre-se</a> para comentar.</p></div>
-<form id="form-comentario" class="form-conta" hidden>
+<form id="form-comentario" class="form-conta form-comentario" hidden>
 <label>Seu comentário<textarea name="texto" rows="4" maxlength="2000" required></textarea></label>
 <button class="btn">Publicar comentário</button>
 <p class="muted" id="comentario-msg"></p>
@@ -61,18 +63,18 @@ pagefind: true
 <!-- Neste tema -->
 <div class="sidebar-widget">
 <h4>Neste tema</h4>
-<div style="display:flex;flex-direction:column;gap:8px">
+<div class="lista-tema">
 {% for post in themePosts %}
-<a href="{{ post.url }}" style="color:#1b2230;text-decoration:none;padding:8px 12px;border-radius:8px;font-size:14px;transition:background .15s{% if post.url == page.url %};background:#e7f1ef;font-weight:600{% endif %}">{{ post.data.title }}</a>
+<a href="{{ post.url }}"{% if post.url == page.url %} class="atual" aria-current="page"{% endif %}>{{ post.data.title }}</a>
 {% endfor %}
 </div>
 </div>
 
 <!-- Comunidade -->
-<div style="background:#12312e;border-radius:16px;padding:24px;color:#e8f1ef">
-<div style="font-weight:700;font-size:18px;color:#fff">Troque experiência</div>
-<p style="margin:8px 0 16px;color:#c9ded9;font-size:15px">Como a sua locadora lida com isso? Conte para o grupo.</p>
-<a href="/comunidade/" class="btn btn-amber">Conhecer a comunidade</a>
+<div class="sidebar-cta">
+<h4>Troque experiência</h4>
+<p>Como a sua locadora lida com isso? Conte para o grupo.</p>
+<a href="/comunidade/" class="btn">Conhecer a comunidade</a>
 </div>
 </aside>
 </div>

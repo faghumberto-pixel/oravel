@@ -6,28 +6,28 @@ title: "Calculadora de Disponibilidade de Equipamentos"
 description: "Calcule a disponibilidade física e operacional da frota: MTBF, MTTR, tempo parado por manutenção, inspeção, logística. Veja o impacto financeiro da indisponibilidade na receita."
 ---
 
-<section class="container" style="padding:56px 32px 24px;max-width:900px">
+<section class="container" style="padding-top:56px;padding-bottom:24px;max-width:900px">
 <div class="breadcrumb"><a href="/">Início</a> / <a href="/ferramentas/">Ferramentas</a> / Calculadora de Disponibilidade</div>
 <h1 class="page-title">Calculadora de Disponibilidade de Equipamentos</h1>
-<p style="margin:16px 0 0;font-size:19px;color:#4a5361;max-width:64ch">Meça a disponibilidade real de cada ativo ou da frota. Insira falhas, tempos de reparo, inspeções e logística. Veja: Disponibilidade Física, Operacional, MTBF, MTTR, horas paradas/mês e receita perdida.</p>
+<p style="margin:16px 0 0;font-size:19px;color:var(--texto-secundario);max-width:64ch">Meça a disponibilidade real de cada ativo ou da frota. Insira falhas, tempos de reparo, inspeções e logística. Veja: Disponibilidade Física, Operacional, MTBF, MTTR, horas paradas/mês e receita perdida.</p>
 </section>
 
-<section class="container" style="padding:24px 32px 80px;max-width:900px">
+<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:900px">
 
-<div style="display:grid;grid-template-columns:1fr 380px;gap:32px;align-items:start">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:32px;align-items:start">
 <div>
 <h2 class="section-title section-title-h3" style="margin-bottom:20px">Dados do Equipamento / Frota</h2>
 
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Identificação</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Identificação</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label class="form-conta" style="margin:0">
 <span>Código / Tag</span>
-<input type="text" id="codEquipDisp" placeholder="Ex: EXC-001 ou FROTA-ESCAVADEIRAS" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="text" id="codEquipDisp" placeholder="Ex: EXC-001 ou FROTA-ESCAVADEIRAS" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Modo de cálculo</span>
-<select id="modoCalculo" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<select id="modoCalculo" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 <option value="equipamento">Equipamento individual</option>
 <option value="frota">Frota (média ponderada)</option>
 </select>
@@ -36,7 +36,7 @@ description: "Calcule a disponibilidade física e operacional da frota: MTBF, MT
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label class="form-conta" style="margin:0">
 <span>Categoria</span>
-<select id="categoriaDisp" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<select id="categoriaDisp" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 <option value="escavadeira">Escavadeira</option>
 <option value="pacarreira">Pá Carregadeira</option>
 <option value="motoniveladora">Motoniveladora</option>
@@ -50,201 +50,201 @@ description: "Calcule a disponibilidade física e operacional da frota: MTBF, MT
 </label>
 <label class="form-conta" style="margin:0">
 <span>Quantidade de equipamentos (se frota)</span>
-<input type="number" id="qtdEquipamentos" step="1" min="1" value="1" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="qtdEquipamentos" step="1" min="1" value="1" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 </div>
 
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Período de Análise</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Período de Análise</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label class="form-conta" style="margin:0">
 <span>Mês de referência</span>
-<input type="month" id="mesRef" value="2026-11" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="month" id="mesRef" value="2026-11" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Horas no período (h)</span>
-<input type="number" id="horasPeriodo" step="1" min="1" max="744" value="720" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="horasPeriodo" step="1" min="1" max="744" value="720" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <p class="muted-sm" style="margin:12px 0 0">Padrão: 720h (mês 30 dias × 24h). Use 744 para 31 dias, 672 para 28 dias.</p>
 </div>
 
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Falhas e Reparos (MTBF / MTTR)</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Falhas e Reparos (MTBF / MTTR)</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label class="form-conta" style="margin:0">
 <span>Número de falhas no período</span>
-<input type="number" id="numFalhas" step="1" min="0" value="3" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="numFalhas" step="1" min="0" value="3" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Tempo total de reparo (h) — soma de todos MTTR</span>
-<input type="number" id="tempoTotalReparo" step="0.5" min="0" value="18" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="tempoTotalReparo" step="0.5" min="0" value="18" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label class="form-conta" style="margin:0">
-<span>Tempo médio para reparo — MTTR (h) <span style="font-weight:400;color:#6b7280">(opcional, calculado se vazio)</span></span>
-<input type="number" id="mttrInput" step="0.5" min="0" placeholder="Auto" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<span>Tempo médio para reparo — MTTR (h) <span style="font-weight:400;color:var(--texto-secundario)">(opcional, calculado se vazio)</span></span>
+<input type="number" id="mttrInput" step="0.5" min="0" placeholder="Auto" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
-<span>Tempo médio entre falhas — MTBF (h) <span style="font-weight:400;color:#6b7280">(opcional, calculado se vazio)</span></span>
-<input type="number" id="mtbfInput" step="1" min="0" placeholder="Auto" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<span>Tempo médio entre falhas — MTBF (h) <span style="font-weight:400;color:var(--texto-secundario)">(opcional, calculado se vazio)</span></span>
+<input type="number" id="mtbfInput" step="1" min="0" placeholder="Auto" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <p class="muted-sm" style="margin:12px 0 0">MTTR = Tempo total de reparo / Nº falhas. MTBF = (Horas período - Tempo reparo) / Nº falhas. Se informar MTTR/MTBF, eles prevalecem.</p>
 </div>
 
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Tempos Parados Não-Falha (h no período)</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Tempos Parados Não-Falha (h no período)</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label class="form-conta" style="margin:0">
 <span>Manutenção preventiva programada</span>
-<input type="number" id="tempPrev" step="0.5" min="0" value="8" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="tempPrev" step="0.5" min="0" value="8" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Inspeções / Vistorias obrigatórias</span>
-<input type="number" id="tempInsp" step="0.5" min="0" value="4" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="tempInsp" step="0.5" min="0" value="4" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label class="form-conta" style="margin:0">
 <span>Logística / Transporte (ida/volta oficina)</span>
-<input type="number" id="tempLog" step="0.5" min="0" value="6" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="tempLog" step="0.5" min="0" value="6" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Aguardando peça / Fornecedor</span>
-<input type="number" id="tempPeca" step="0.5" min="0" value="12" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="tempPeca" step="0.5" min="0" value="12" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label class="form-conta" style="margin:0">
 <span>Aguardando operador / Técnico</span>
-<input type="number" id="tempOp" step="0.5" min="0" value="3" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="tempOp" step="0.5" min="0" value="3" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Outros paradas administrativas</span>
-<input type="number" id="tempOutros" step="0.5" min="0" value="2" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="tempOutros" step="0.5" min="0" value="2" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 </div>
 
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Impacto Financeiro</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Impacto Financeiro</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label class="form-conta" style="margin:0">
 <span>Diária praticada (R$/8h)</span>
-<input type="number" id="diariaDisp" step="10" min="0" value="450" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="diariaDisp" step="10" min="0" value="450" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Taxa de ocupação média (%)</span>
-<input type="number" id="taxaOcupacao" step="1" min="0" max="100" value="75" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="taxaOcupacao" step="1" min="0" max="100" value="75" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label class="form-conta" style="margin:0">
 <span>Custo hora parado (R$/h) — opcional</span>
-<input type="number" id="custoHoraParado" step="10" min="0" placeholder="Auto = diária/8" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="custoHoraParado" step="10" min="0" placeholder="Auto = diária/8" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <p class="muted-sm" style="margin:12px 0 0">Receita perdida = Horas indisponíveis × Diária/8 × Taxa ocupação. Custo hora parado default = Diária/8.</p>
 </div>
 
 <div style="display:flex;gap:12px;flex-wrap:wrap">
-<button class="btn" id="btnCalcDisp" style="background:#0b5f57;color:#fff;padding:14px 28px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Calcular Disponibilidade</button>
-<button class="btn btn-outline" id="btnResetDisp" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:14px 28px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Resetar</button>
-<a href="/ferramentas/" class="btn btn-outline" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:14px 28px;border-radius:8px;text-decoration:none;display:flex;align-items:center;justify-content:center;min-height:52px">← Voltar</a>
+<button class="btn" id="btnCalcDisp" style="background:var(--azul-petroleo);color:#fff;padding:14px 28px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Calcular Disponibilidade</button>
+<button class="btn btn-outline" id="btnResetDisp" style="background:transparent;color:var(--texto-escuro);border:2px solid var(--texto-escuro);padding:14px 28px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Resetar</button>
+<a href="/ferramentas/" class="btn btn-outline">← Voltar</a>
 </div>
 </div>
 
 <!-- Resultados -->
-<div id="resultadosDisp" style="position:sticky;top:100px;background:#fbfaf6;border:1px solid #e4dfd3;border-radius:16px;padding:24px;display:none">
-<h2 class="section-title section-title-h3" style="margin:0 0 20px;color:#1b2230">Resultado — <span id="resCodDisp">EXC-001</span></h2>
+<div id="resultadosDisp" style="position:sticky;top:100px;background:#fbfaf6;border:1px solid var(--cinza-claro);border-radius:16px;padding:24px;display:none">
+<h2 class="section-title section-title-h3" style="margin:0 0 20px;color:var(--texto-escuro)">Resultado — <span id="resCodDisp">EXC-001</span></h2>
 
 <!-- Cards principais -->
 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
-<div style="background:#0b5f57;border-radius:12px;padding:20px;color:#fff">
+<div style="background:var(--azul-petroleo);border-radius:12px;padding:20px;color:#fff">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ad7cd;margin-bottom:8px">Disponibilidade Física</div>
-<div id="resDispFisica" style="font-family:'Newsreader',Georgia,serif;font-size:36px;font-weight:600;color:#fff;line-height:1.1">0%</div>
+<div id="resDispFisica" style="font-family:var(--font-titulo);font-size:36px;font-weight:600;color:#fff;line-height:1.1">0%</div>
 <p style="margin:8px 0 0;color:#c9ded9;font-size:13px">(Horas período - Total parado) / Horas período</p>
 </div>
-<div style="background:#f59e0b;border-radius:12px;padding:20px;color:#1b2230">
+<div style="background:#f59e0b;border-radius:12px;padding:20px;color:var(--texto-escuro)">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7a5a08;margin-bottom:8px">Disponibilidade Operacional</div>
-<div id="resDispOper" style="font-family:'Newsreader',Georgia,serif;font-size:36px;font-weight:600;color:#1b2230;line-height:1.1">0%</div>
-<p style="margin:8px 0 0;color:#4a5361;font-size:13px">Física × Taxa de ocupação</p>
+<div id="resDispOper" style="font-family:var(--font-titulo);font-size:36px;font-weight:600;color:var(--texto-escuro);line-height:1.1">0%</div>
+<p style="margin:8px 0 0;color:var(--texto-secundario);font-size:13px">Física × Taxa de ocupação</p>
 </div>
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px">
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:8px">Receita Perdida no Mês</div>
-<div id="resReceitaPerdida" style="font-family:'Newsreader',Georgia,serif;font-size:32px;font-weight:600;color:#9a3412;line-height:1.1">R$ 0</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px">
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-bottom:8px">Receita Perdida no Mês</div>
+<div id="resReceitaPerdida" style="font-family:var(--font-titulo);font-size:32px;font-weight:600;color:#9a3412;line-height:1.1">R$ 0</div>
 <p class="muted-sm" style="margin:8px 0 0">Oportunidade não realizada</p>
 </div>
 </div>
 
 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
-<div id="resMTBF" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#1b2230">0 h</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">MTBF</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
+<div id="resMTBF" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0 h</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">MTBF</div>
 </div>
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
-<div id="resMTTR" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#1b2230">0 h</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">MTTR</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
+<div id="resMTTR" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0 h</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">MTTR</div>
 </div>
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
-<div id="resHorasParadas" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#9a3412">0 h</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">Total Horas Paradas</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
+<div id="resHorasParadas" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:#9a3412">0 h</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Total Horas Paradas</div>
 </div>
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
-<div id="resConfiabilidade" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#1b2230">0%</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">Confiabilidade</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
+<div id="resConfiabilidade" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0%</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Confiabilidade</div>
 </div>
 </div>
 
 <!-- Breakdown de tempos parados -->
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Composição do Tempo Parado (h)</h3>
-<div id="breakdownDisp" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px;color:#27303d"></div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:var(--font-titulo);font-size:16px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Composição do Tempo Parado (h)</h3>
+<div id="breakdownDisp" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px;color:var(--texto-escuro)"></div>
 </div>
 
 <!-- Gráfico de pareto -->
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Pareto das Causas de Indisponibilidade</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:var(--font-titulo);font-size:16px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Pareto das Causas de Indisponibilidade</h3>
 <div style="height:280px;position:relative"><canvas id="chartParetoDisp"></canvas></div>
 </div>
 
 <!-- Benchmark -->
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Benchmark de Mercado (Painel do Mercado Oravel)</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:var(--font-titulo);font-size:16px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Benchmark de Mercado (Painel do Mercado Oravel)</h3>
 <div id="benchmarkDisp" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;text-align:center">
 <div style="padding:16px;background:#e7f1ef;border-radius:10px">
-<div id="benchP25" style="font-family:'Newsreader',Georgia,serif;font-size:28px;font-weight:600;color:#0b5f57">—</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">P25 (mín. competitivo)</div>
+<div id="benchP25" style="font-family:var(--font-titulo);font-size:28px;font-weight:600;color:var(--azul-petroleo)">—</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">P25 (mín. competitivo)</div>
 </div>
 <div style="padding:16px;background:#f0efe9;border-radius:10px">
-<div id="benchP50" style="font-family:'Newsreader',Georgia,serif;font-size:28px;font-weight:600;color:#f59e0b">—</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">P50 (mediana)</div>
+<div id="benchP50" style="font-family:var(--font-titulo);font-size:28px;font-weight:600;color:#f59e0b">—</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">P50 (mediana)</div>
 </div>
 <div style="padding:16px;background:#e7f1ef;border-radius:10px">
-<div id="benchP75" style="font-family:'Newsreader',Georgia,serif;font-size:28px;font-weight:600;color:#0b5f57">—</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">P75 (topo de mercado)</div>
+<div id="benchP75" style="font-family:var(--font-titulo);font-size:28px;font-weight:600;color:var(--azul-petroleo)">—</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">P75 (topo de mercado)</div>
 </div>
 </div>
-<p class="muted-sm" style="margin:12px 0 0;font-size:12px;text-align:center">Base: Painel do Mercado Oravel — n por categoria/porte/região. <a href="/painel-mercado/" style="color:#0b5f57">Ver painel completo</a></p>
+<p class="muted-sm" style="margin:12px 0 0;font-size:12px;text-align:center">Base: Painel do Mercado Oravel — n por categoria/porte/região. <a href="/painel-mercado/" style="color:var(--azul-petroleo)">Ver painel completo</a></p>
 </div>
 
 <!-- Cenários -->
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Cenários — Disponibilidade Física</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:var(--font-titulo);font-size:16px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Cenários — Disponibilidade Física</h3>
 <div id="tabelaCenariosDisp" style="overflow-x:auto">
 <table style="width:100%;border-collapse:collapse;font-size:14px">
 <thead>
-<tr style="background:#e7f1ef;border-bottom:2px solid #0b5f57">
-<th style="padding:10px 12px;text-align:left;font-weight:600;color:#1b2230">Cenário</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Falhas</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">MTTR (h)</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Prev/Insp (h)</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Log/Peça/Op (h)</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Disp. Física</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Receita Perdida</th>
+<tr style="background:#e7f1ef;border-bottom:2px solid var(--azul-petroleo)">
+<th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--texto-escuro)">Cenário</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Falhas</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">MTTR (h)</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Prev/Insp (h)</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Log/Peça/Op (h)</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Disp. Física</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Receita Perdida</th>
 </tr>
 </thead>
 <tbody id="tbodyCenariosDisp"></tbody>
@@ -252,9 +252,9 @@ description: "Calcule a disponibilidade física e operacional da frota: MTBF, MT
 </div>
 </div>
 
-<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid #e4dfd3">
-<button class="btn btn-outline" id="btnCopiarLinkDisp" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:12px 20px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px">Copiar link</button>
-<button class="btn" id="btnExportarCSVDisp" style="background:#0b5f57;color:#fff;padding:12px 20px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:14px">Exportar CSV</button>
+<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid var(--cinza-claro)">
+<button class="btn btn-outline" id="btnCopiarLinkDisp" style="background:transparent;color:var(--texto-escuro);border:2px solid var(--texto-escuro);padding:12px 20px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px">Copiar link</button>
+<button class="btn" id="btnExportarCSVDisp" style="background:var(--azul-petroleo);color:#fff;padding:12px 20px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:14px">Exportar CSV</button>
 </div>
 
 <div class="muted-sm" style="margin-top:16px">
@@ -423,9 +423,9 @@ function calcular() {
     { label: '<strong>Total Parado</strong>', value: totalParado, total: true },
     { label: '<strong>Horas Disponíveis</strong>', value: horasDisponiveis, total: true, good: true }
   ].map(b => `
-    <div style="${b.total ? 'font-weight:700;border-top:1px solid #e4dfd3;padding-top:8px;margin-top:4px' : ''} ${b.good ? 'color:#0b5f57' : ''}">
+    <div style="${b.total ? 'font-weight:700;border-top:1px solid var(--cinza-claro);padding-top:8px;margin-top:4px' : ''} ${b.good ? 'color:var(--azul-petroleo)' : ''}">
       <span>${b.label}</span>
-      <span style="text-align:right;display:block;color:${b.cor || '#27303d'}">${b.total || b.good ? '<strong>' : ''}${fmtNum(b.value, 1)} h${b.total || b.good ? '</strong>' : ''}</span>
+      <span style="text-align:right;display:block;color:${b.cor || 'var(--texto-escuro)'}">${b.total || b.good ? '<strong>' : ''}${fmtNum(b.value, 1)} h${b.total || b.good ? '</strong>' : ''}</span>
     </div>
   `).join('');
 
@@ -474,12 +474,12 @@ function calcular() {
   const tb = document.getElementById('tbodyCenariosDisp');
   tb.innerHTML = cenarioResultados.map(c => `
     <tr style="border-bottom:1px solid #f0efe9 ${c.nome === 'Atual' ? ';font-weight:600' : ''}">
-      <td style="padding:10px 12px;color:#1b2230">${c.nome}</td>
-      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtNum(c.falhas, 1)}</td>
-      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtNum(c.mttr, 1)}</td>
-      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtNum(c.prev, 1)}</td>
-      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtNum(c.log + c.outros, 1)}</td>
-      <td style="padding:10px 12px;text-align:right;color:#1b2230;font-weight:600">${fmtNum(c.dispFisica, 1)}%</td>
+      <td style="padding:10px 12px;color:var(--texto-escuro)">${c.nome}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${fmtNum(c.falhas, 1)}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${fmtNum(c.mttr, 1)}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${fmtNum(c.prev, 1)}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${fmtNum(c.log + c.outros, 1)}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-escuro);font-weight:600">${fmtNum(c.dispFisica, 1)}%</td>
       <td style="padding:10px 12px;text-align:right;color:#9a3412;font-weight:600">${fmtBRL(c.receitaPerdida)}</td>
     </tr>
   `).join('');

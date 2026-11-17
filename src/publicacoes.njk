@@ -7,19 +7,19 @@ pagination:
   alias: lote
 permalink: "/publicacoes/{% if pagination.pageNumber > 0 %}pagina-{{ pagination.pageNumber + 1 }}/{% endif %}"
 ---
-<section class="container" style="padding:48px 32px 16px">
+<section class="container" style="padding-top:48px;padding-bottom:16px">
 <div class="breadcrumb"><a href="/">Início</a> / Todas as publicações</div>
 <h1 class="page-title">Todas as publicações</h1>
 </section>
-<section class="container" style="padding:24px 32px 72px">
+<section class="container" style="padding-top:24px;padding-bottom:72px">
 <div style="display:flex;flex-direction:column">
 {% for post in lote %}
-<a class="item-lista" href="{{ post.url }}" style="padding:22px 0;border-top:1px solid #e4dfd3;text-decoration:none;color:inherit{% if loop.last %};border-bottom:1px solid #e4dfd3{% endif %}">
+<a class="item-lista" href="{{ post.url }}" style="padding:22px 0;border-top:1px solid var(--cinza-claro);text-decoration:none;color:inherit{% if loop.last %};border-bottom:1px solid var(--cinza-claro){% endif %}">
 {% if post.data.image %}<img class="thumb" src="{{ post.data.image }}" alt="" loading="lazy" width="200" height="133">{% endif %}
 <div class="corpo-item">
-<div class="section-title" style="font-size:21px;font-weight:600;color:#1b2230;line-height:1.3">{{ post.data.title }}</div>
-<div style="margin-top:6px;color:#4a5361">{{ post.data.summary }}</div>
-<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px 24px;font-size:13px;color:#6b7280">
+<div class="section-title" style="font-size:21px;font-weight:600;color:var(--texto-escuro);line-height:1.3">{{ post.data.title }}</div>
+<div style="margin-top:6px;color:var(--texto-secundario)">{{ post.data.summary }}</div>
+<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px 24px;font-size:13px;color:var(--texto-secundario)">
 <span>{{ post.data.theme | themeLabel }} · Leitura de {{ post.data.readingTime or '—' }} · {{ post.date | dateBr }}</span>
 </div>
 </div>

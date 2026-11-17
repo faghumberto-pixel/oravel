@@ -6,24 +6,24 @@ title: "Calculadora de Viabilidade de Nova Frota"
 description: "Avalie a expansão da frota: NPV, TIR, payback, capacidade de pagamento, ponto de equilíbrio. Compare cenários de compra, aluguel ou consórcio. Inclui análise de sensibilidade e stress test."
 ---
 
-<section class="container" style="padding:56px 32px 24px;max-width:900px">
+<section class="container" style="padding-top:56px;padding-bottom:24px;max-width:900px">
 <div class="breadcrumb"><a href="/">Início</a> / <a href="/ferramentas/">Ferramentas</a> / Viabilidade de Nova Frota</div>
 <h1 class="page-title">Calculadora de Viabilidade de Nova Frota</h1>
-<p style="margin:16px 0 0;font-size:19px;color:#4a5361;max-width:64ch">Projetar a aquisição de novos equipamentos: quantas unidades, qual categoria, qual modalidade. Veja VPL, TIR, payback, DSCR (capacidade de pagamento), ponto de equilíbrio e stress test de cenários adversos.</p>
+<p style="margin:16px 0 0;font-size:19px;color:var(--texto-secundario);max-width:64ch">Projetar a aquisição de novos equipamentos: quantas unidades, qual categoria, qual modalidade. Veja VPL, TIR, payback, DSCR (capacidade de pagamento), ponto de equilíbrio e stress test de cenários adversos.</p>
 </section>
 
-<section class="container" style="padding:24px 32px 80px;max-width:900px">
+<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:900px">
 
-<div style="display:grid;grid-template-columns:1fr 380px;gap:32px;align-items:start">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:32px;align-items:start">
 <div>
 <h2 class="section-title section-title-h3" style="margin-bottom:20px">Projeto de Expansão</h2>
 
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Equipamento e Quantidade</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Equipamento e Quantidade</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label class="form-conta" style="margin:0">
 <span>Categoria</span>
-<select id="catFrota" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<select id="catFrota" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 <option value="escavadeira">Escavadeira 20-25t</option>
 <option value="pacarreira">Pá Carregadeira 3-4m³</option>
 <option value="motoniveladora">Motoniveladora 140-160hp</option>
@@ -37,13 +37,13 @@ description: "Avalie a expansão da frota: NPV, TIR, payback, capacidade de paga
 </label>
 <label class="form-conta" style="margin:0">
 <span>Quantidade de unidades</span>
-<input type="number" id="qtdUnidades" step="1" min="1" value="3" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="qtdUnidades" step="1" min="1" value="3" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label class="form-conta" style="margin:0">
 <span>Modalidade</span>
-<select id="modalidadeFrota" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<select id="modalidadeFrota" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 <option value="compra">Compra à vista</option>
 <option value="financiamento">Financiamento (CDC/Finame)</option>
 <option value="consorcio">Consórcio</option>
@@ -53,7 +53,7 @@ description: "Avalie a expansão da frota: NPV, TIR, payback, capacidade de paga
 </label>
 <label class="form-conta" style="margin:0">
 <span>Novo ou Usado</span>
-<select id="condFrota" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<select id="condFrota" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 <option value="novo">Novo</option>
 <option value="usado">Usado (2-4 anos)</option>
 </select>
@@ -61,177 +61,177 @@ description: "Avalie a expansão da frota: NPV, TIR, payback, capacidade de paga
 </div>
 </div>
 
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Valores Unitários</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Valores Unitários</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label class="form-conta" style="margin:0">
 <span>Preço unitário (R$)</span>
-<input type="number" id="precoUnit" step="1000" min="0" value="350000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="precoUnit" step="1000" min="0" value="350000" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Valor residual unitário estimado (R$)</span>
-<input type="number" id="vrUnit" step="1000" min="0" value="60000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="vrUnit" step="1000" min="0" value="60000" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label class="form-conta" style="margin:0">
 <span>Diária de aluguel mercado (R$/8h)</span>
-<input type="number" id="diariaMercado" step="10" min="0" value="500" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="diariaMercado" step="10" min="0" value="500" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Custo operacional unitário/ano (R$)</span>
-<input type="number" id="custoOpUnit" step="1000" min="0" value="85000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="custoOpUnit" step="1000" min="0" value="85000" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <p class="muted-sm" style="margin:12px 0 0">Custo operacional = combustível + operador + manutenção + seguro + rastreamento + pneus. Para aluguel, use custo apenas de operador + combustível.</p>
 </div>
 
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Demanda e Precificação</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Demanda e Precificação</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label class="form-conta" style="margin:0">
 <span>Horas trabalhadas/unidade/ano</span>
-<input type="number" id="hrsAnoUnit" step="100" min="500" max="4000" value="1800" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="hrsAnoUnit" step="100" min="500" max="4000" value="1800" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Taxa de ocupação esperada (%)</span>
-<input type="number" id="taxOcupExp" step="1" min="0" max="100" value="75" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="taxOcupExp" step="1" min="0" max="100" value="75" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label class="form-conta" style="margin:0">
 <span>Diária praticada própria (R$/8h)</span>
-<input type="number" id="diariaPropria" step="10" min="0" value="550" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="diariaPropria" step="10" min="0" value="550" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Anos de projeto</span>
-<input type="number" id="anosProjeto" step="1" min="1" max="10" value="5" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="anosProjeto" step="1" min="1" max="10" value="5" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 </div>
 
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Estrutura de Financiamento (se aplicável)</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Estrutura de Financiamento (se aplicável)</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label class="form-conta" style="margin:0">
 <span>Entrada (%)</span>
-<input type="number" id="entradaPct" step="1" min="0" max="100" value="30" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="entradaPct" step="1" min="0" max="100" value="30" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Taxa (% a.a.)</span>
-<input type="number" id="taxaFinFrota" step="0.1" min="0" max="30" value="12.5" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="taxaFinFrota" step="0.1" min="0" max="30" value="12.5" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label class="form-conta" style="margin:0">
 <span>Prazo (meses)</span>
-<input type="number" id="prazoFinFrota" step="1" min="1" max="120" value="60" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="prazoFinFrota" step="1" min="1" max="120" value="60" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Carência (meses)</span>
-<input type="number" id="carenciaFrota" step="1" min="0" max="24" value="0" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="carenciaFrota" step="1" min="0" max="24" value="0" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 </div>
 
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Parâmetros Financeiros</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Parâmetros Financeiros</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <label class="form-conta" style="margin:0">
 <span>WACC / Custo de capital (% a.a.)</span>
-<input type="number" id="waccFrota" step="0.1" min="0" max="50" value="14.5" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="waccFrota" step="0.1" min="0" max="50" value="14.5" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>Imposto de renda/CSLL efetivo (%)</span>
-<input type="number" id="irEfetivo" step="0.1" min="0" max="34" value="15" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="irEfetivo" step="0.1" min="0" max="34" value="15" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
 <label class="form-conta" style="margin:0">
 <span>Depreciação fiscal (anos)</span>
-<input type="number" id="deprFiscal" step="1" min="1" max="20" value="10" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="deprFiscal" step="1" min="1" max="20" value="10" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
 <span>DSCR mínimo aceitável</span>
-<input type="number" id="dscrMin" step="0.1" min="1" max="3" value="1.3" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<input type="number" id="dscrMin" step="0.1" min="1" max="3" value="1.3" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 </div>
 </div>
 
 <div style="display:flex;gap:12px;flex-wrap:wrap">
-<button class="btn" id="btnCalcFrota" style="background:#0b5f57;color:#fff;padding:14px 28px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Calcular Viabilidade</button>
-<button class="btn btn-outline" id="btnResetFrota" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:14px 28px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Resetar</button>
-<a href="/ferramentas/" class="btn btn-outline" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:14px 28px;border-radius:8px;text-decoration:none;display:flex;align-items:center;justify-content:center;min-height:52px">← Voltar</a>
+<button class="btn" id="btnCalcFrota" style="background:var(--azul-petroleo);color:#fff;padding:14px 28px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Calcular Viabilidade</button>
+<button class="btn btn-outline" id="btnResetFrota" style="background:transparent;color:var(--texto-escuro);border:2px solid var(--texto-escuro);padding:14px 28px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Resetar</button>
+<a href="/ferramentas/" class="btn btn-outline">← Voltar</a>
 </div>
 </div>
 
 <!-- Resultados -->
-<div id="resultadosFrota" style="position:sticky;top:100px;background:#fbfaf6;border:1px solid #e4dfd3;border-radius:16px;padding:24px;display:none">
-<h2 class="section-title section-title-h3" style="margin:0 0 20px;color:#1b2230">Resultado — Viabilidade <span id="resQtdFrota">3</span> <span id="resCatFrota">Escavadeiras</span></h2>
+<div id="resultadosFrota" style="position:sticky;top:100px;background:#fbfaf6;border:1px solid var(--cinza-claro);border-radius:16px;padding:24px;display:none">
+<h2 class="section-title section-title-h3" style="margin:0 0 20px;color:var(--texto-escuro)">Resultado — Viabilidade <span id="resQtdFrota">3</span> <span id="resCatFrota">Escavadeiras</span></h2>
 
 <!-- Cards principais -->
 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
-<div style="background:#0b5f57;border-radius:12px;padding:20px;color:#fff">
+<div style="background:var(--azul-petroleo);border-radius:12px;padding:20px;color:#fff">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ad7cd;margin-bottom:8px">VPL (Valor Presente Líquido)</div>
-<div id="resVplFrota" style="font-family:'Newsreader',Georgia,serif;font-size:30px;font-weight:600;color:#fff;line-height:1.1">R$ 0</div>
+<div id="resVplFrota" style="font-family:var(--font-titulo);font-size:30px;font-weight:600;color:#fff;line-height:1.1">R$ 0</div>
 <p style="margin:8px 0 0;color:#c9ded9;font-size:13px">Positivo = projeto cria valor</p>
 </div>
-<div style="background:#f59e0b;border-radius:12px;padding:20px;color:#1b2230">
+<div style="background:#f59e0b;border-radius:12px;padding:20px;color:var(--texto-escuro)">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7a5a08;margin-bottom:8px">TIR (Taxa Interna de Retorno)</div>
-<div id="resTirFrota" style="font-family:'Newsreader',Georgia,serif;font-size:30px;font-weight:600;color:#1b2230;line-height:1.1">0%</div>
-<p style="margin:8px 0 0;color:#4a5361;font-size:13px">Deve ser > WACC ({{ 14.5 }}%)</p>
+<div id="resTirFrota" style="font-family:var(--font-titulo);font-size:30px;font-weight:600;color:var(--texto-escuro);line-height:1.1">0%</div>
+<p style="margin:8px 0 0;color:var(--texto-secundario);font-size:13px">Deve ser > WACC ({{ 14.5 }}%)</p>
 </div>
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px">
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:8px">Payback Descontado</div>
-<div id="resPaybackFrota" style="font-family:'Newsreader',Georgia,serif;font-size:30px;font-weight:600;color:#1b2230;line-height:1.1">0 anos</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px">
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-bottom:8px">Payback Descontado</div>
+<div id="resPaybackFrota" style="font-family:var(--font-titulo);font-size:30px;font-weight:600;color:var(--texto-escuro);line-height:1.1">0 anos</div>
 <p class="muted-sm" style="margin:8px 0 0">Tempo para recuperar investimento a VPL</p>
 </div>
 </div>
 
 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
-<div id="resDscrFrota" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#1b2230">0.00</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">DSCR Médio</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
+<div id="resDscrFrota" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0.00</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">DSCR Médio</div>
 </div>
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
-<div id="resPontoEquil" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#1b2230">0%</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">Ocupação Break-even</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
+<div id="resPontoEquil" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0%</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Ocupação Break-even</div>
 </div>
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
-<div id="resInvestTotal" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#1b2230">R$ 0</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">Investimento Total</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
+<div id="resInvestTotal" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">R$ 0</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Investimento Total</div>
 </div>
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
-<div id="resFluxoCaixaLivre" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#0b5f57">R$ 0</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">FCL Médio/Ano</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
+<div id="resFluxoCaixaLivre" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--azul-petroleo)">R$ 0</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">FCL Médio/Ano</div>
 </div>
 </div>
 
 <!-- Status do projeto -->
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Avaliação do Projeto</h3>
-<div id="statusProjeto" style="padding:16px;border-radius:8px;background:#fbfaf6;border:1px solid #e4dfd3">
-<div id="statusTexto" style="font-size:15px;color:#27303d;line-height:1.6">—</div>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:var(--font-titulo);font-size:16px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Avaliação do Projeto</h3>
+<div id="statusProjeto" style="padding:16px;border-radius:8px;background:#fbfaf6;border:1px solid var(--cinza-claro)">
+<div id="statusTexto" style="font-size:15px;color:var(--texto-escuro);line-height:1.6">—</div>
 </div>
 </div>
 
 <!-- Fluxo de caixa -->
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Fluxo de Caixa Projetado</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:var(--font-titulo);font-size:16px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Fluxo de Caixa Projetado</h3>
 <div style="overflow-x:auto">
 <table style="width:100%;border-collapse:collapse;font-size:13px" id="tabelaFluxoFrota">
 <thead>
-<tr style="background:#e7f1ef;border-bottom:2px solid #0b5f57">
-<th style="padding:8px 10px;text-align:left;font-weight:600;color:#1b2230">Ano</th>
-<th style="padding:8px 10px;text-align:right;font-weight:600;color:#1b2230">Receita</th>
-<th style="padding:8px 10px;text-align:right;font-weight:600;color:#1b2230">Custo Oper.</th>
-<th style="padding:8px 10px;text-align:right;font-weight:600;color:#1b2230">Financ. (P+J)</th>
-<th style="padding:8px 10px;text-align:right;font-weight:600;color:#1b2230">Depreciação</th>
-<th style="padding:8px 10px;text-align:right;font-weight:600;color:#1b2230">EBITDA</th>
-<th style="padding:8px 10px;text-align:right;font-weight:600;color:#1b2230">IR/CSLL</th>
-<th style="padding:8px 10px;text-align:right;font-weight:600;color:#1b2230">FCL</th>
-<th style="padding:8px 10px;text-align:right;font-weight:600;color:#1b2230">VP FCL</th>
-<th style="padding:8px 10px;text-align:right;font-weight:600;color:#1b2230">Acum. VP</th>
+<tr style="background:#e7f1ef;border-bottom:2px solid var(--azul-petroleo)">
+<th style="padding:8px 10px;text-align:left;font-weight:600;color:var(--texto-escuro)">Ano</th>
+<th style="padding:8px 10px;text-align:right;font-weight:600;color:var(--texto-escuro)">Receita</th>
+<th style="padding:8px 10px;text-align:right;font-weight:600;color:var(--texto-escuro)">Custo Oper.</th>
+<th style="padding:8px 10px;text-align:right;font-weight:600;color:var(--texto-escuro)">Financ. (P+J)</th>
+<th style="padding:8px 10px;text-align:right;font-weight:600;color:var(--texto-escuro)">Depreciação</th>
+<th style="padding:8px 10px;text-align:right;font-weight:600;color:var(--texto-escuro)">EBITDA</th>
+<th style="padding:8px 10px;text-align:right;font-weight:600;color:var(--texto-escuro)">IR/CSLL</th>
+<th style="padding:8px 10px;text-align:right;font-weight:600;color:var(--texto-escuro)">FCL</th>
+<th style="padding:8px 10px;text-align:right;font-weight:600;color:var(--texto-escuro)">VP FCL</th>
+<th style="padding:8px 10px;text-align:right;font-weight:600;color:var(--texto-escuro)">Acum. VP</th>
 </tr>
 </thead>
 <tbody id="tbodyFluxoFrota"></tbody>
@@ -240,21 +240,21 @@ description: "Avalie a expansão da frota: NPV, TIR, payback, capacidade de paga
 </div>
 
 <!-- Stress Test -->
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Stress Test — VPL nos Cenários</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:var(--font-titulo);font-size:16px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Stress Test — VPL nos Cenários</h3>
 <div id="tabelaStressFrota" style="overflow-x:auto">
 <table style="width:100%;border-collapse:collapse;font-size:14px">
 <thead>
-<tr style="background:#e7f1ef;border-bottom:2px solid #0b5f57">
-<th style="padding:10px 12px;text-align:left;font-weight:600;color:#1b2230">Cenário</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Ocupação</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Diária</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Custo Op.</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">WACC</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">VPL</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">TIR</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">DSCR</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Viável?</th>
+<tr style="background:#e7f1ef;border-bottom:2px solid var(--azul-petroleo)">
+<th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--texto-escuro)">Cenário</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Ocupação</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Diária</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Custo Op.</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">WACC</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">VPL</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">TIR</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">DSCR</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Viável?</th>
 </tr>
 </thead>
 <tbody id="tbodyStressFrota"></tbody>
@@ -263,19 +263,19 @@ description: "Avalie a expansão da frota: NPV, TIR, payback, capacidade de paga
 </div>
 
 <!-- Comparativo modalidades -->
-<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
-<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Comparativo de Modalidades</h3>
+<div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:var(--font-titulo);font-size:16px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Comparativo de Modalidades</h3>
 <div style="overflow-x:auto">
 <table style="width:100%;border-collapse:collapse;font-size:14px" id="tabelaModalidades">
 <thead>
-<tr style="background:#e7f1ef;border-bottom:2px solid #0b5f57">
-<th style="padding:10px 12px;text-align:left;font-weight:600;color:#1b2230">Modalidade</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Invest. Inicial</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">VPL</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">TIR</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Payback</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">DSCR</th>
-<th style="padding:10px 12px;text-align:center;font-weight:600;color:#1b2230">Recomendação</th>
+<tr style="background:#e7f1ef;border-bottom:2px solid var(--azul-petroleo)">
+<th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--texto-escuro)">Modalidade</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Invest. Inicial</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">VPL</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">TIR</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">Payback</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--texto-escuro)">DSCR</th>
+<th style="padding:10px 12px;text-align:center;font-weight:600;color:var(--texto-escuro)">Recomendação</th>
 </tr>
 </thead>
 <tbody id="tbodyModalidades"></tbody>
@@ -283,9 +283,9 @@ description: "Avalie a expansão da frota: NPV, TIR, payback, capacidade de paga
 </div>
 </div>
 
-<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid #e4dfd3">
-<button class="btn btn-outline" id="btnCopiarLinkFrota" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:12px 20px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px">Copiar link</button>
-<button class="btn" id="btnExportarCSVFrota" style="background:#0b5f57;color:#fff;padding:12px 20px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:14px">Exportar CSV</button>
+<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid var(--cinza-claro)">
+<button class="btn btn-outline" id="btnCopiarLinkFrota" style="background:transparent;color:var(--texto-escuro);border:2px solid var(--texto-escuro);padding:12px 20px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px">Copiar link</button>
+<button class="btn" id="btnExportarCSVFrota" style="background:var(--azul-petroleo);color:#fff;padding:12px 20px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:14px">Exportar CSV</button>
 </div>
 
 <div class="muted-sm" style="margin-top:16px">
@@ -575,44 +575,44 @@ function calcular() {
   const tb = document.getElementById('tbodyFluxoFrota');
   tb.innerHTML = res.fluxoAnual.map(f => `
     <tr style="border-bottom:1px solid #f0efe9">
-      <td style="padding:8px 10px;color:#1b2230">${f.ano}</td>
-      <td style="padding:8px 10px;text-align:right;color:#0b5f57">${fmtBRL(f.receita)}</td>
+      <td style="padding:8px 10px;color:var(--texto-escuro)">${f.ano}</td>
+      <td style="padding:8px 10px;text-align:right;color:var(--azul-petroleo)">${fmtBRL(f.receita)}</td>
       <td style="padding:8px 10px;text-align:right;color:#9a3412">${fmtBRL(f.custoOp)}</td>
       <td style="padding:8px 10px;text-align:right;color:#f59e0b">${fmtBRL(f.finTotal)}</td>
-      <td style="padding:8px 10px;text-align:right;color:#6b7280">${fmtBRL(f.depreciacao)}</td>
-      <td style="padding:8px 10px;text-align:right;color:#1b2230;font-weight:600">${fmtBRL(f.ebitda)}</td>
+      <td style="padding:8px 10px;text-align:right;color:var(--texto-secundario)">${fmtBRL(f.depreciacao)}</td>
+      <td style="padding:8px 10px;text-align:right;color:var(--texto-escuro);font-weight:600">${fmtBRL(f.ebitda)}</td>
       <td style="padding:8px 10px;text-align:right;color:#9a3412">${fmtBRL(f.ir)}</td>
-      <td style="padding:8px 10px;text-align:right;color:#0b5f57;font-weight:600">${fmtBRL(f.fcl)}</td>
-      <td style="padding:8px 10px;text-align:right;color:#0b5f57">${fmtBRL(f.vpFcl)}</td>
-      <td style="padding:8px 10px;text-align:right;color:#1b2230;font-weight:600">${fmtBRL(f.vplAcum)}</td>
+      <td style="padding:8px 10px;text-align:right;color:var(--azul-petroleo);font-weight:600">${fmtBRL(f.fcl)}</td>
+      <td style="padding:8px 10px;text-align:right;color:var(--azul-petroleo)">${fmtBRL(f.vpFcl)}</td>
+      <td style="padding:8px 10px;text-align:right;color:var(--texto-escuro);font-weight:600">${fmtBRL(f.vplAcum)}</td>
     </tr>
   `).join('');
 
   const tb2 = document.getElementById('tbodyStressFrota');
   tb2.innerHTML = stressResultados.map(c => `
     <tr style="border-bottom:1px solid #f0efe9 ${c.nome === 'Base' ? ';font-weight:600' : ''}">
-      <td style="padding:10px 12px;color:#1b2230">${c.nome}</td>
-      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtNum(c.ocup, 0)}%</td>
-      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtBRL(c.diaria)}</td>
-      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtNum(c.custoOp * 100, 0)}%</td>
-      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtNum(c.wacc, 1)}%</td>
-      <td style="padding:10px 12px;text-align:right;color:${c.vpl >= 0 ? '#0b5f57' : '#9a3412'};font-weight:600">${fmtBRL(c.vpl)}</td>
-      <td style="padding:10px 12px;text-align:right;color:${c.tir >= c.wacc/100 ? '#0b5f57' : '#9a3412'};font-weight:600">${fmtNum(c.tir * 100, 1)}%</td>
-      <td style="padding:10px 12px;text-align:right;color:${c.dscr >= v.dscrMin ? '#0b5f57' : '#9a3412'};font-weight:600">${fmtNum(c.dscr, 2)}</td>
-      <td style="padding:10px 12px;text-align:center;color:${c.viavel ? '#0b5f57' : '#9a3412'};font-weight:600">${c.viavel ? '✅ Sim' : '❌ Não'}</td>
+      <td style="padding:10px 12px;color:var(--texto-escuro)">${c.nome}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${fmtNum(c.ocup, 0)}%</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${fmtBRL(c.diaria)}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${fmtNum(c.custoOp * 100, 0)}%</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${fmtNum(c.wacc, 1)}%</td>
+      <td style="padding:10px 12px;text-align:right;color:${c.vpl >= 0 ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${fmtBRL(c.vpl)}</td>
+      <td style="padding:10px 12px;text-align:right;color:${c.tir >= c.wacc/100 ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${fmtNum(c.tir * 100, 1)}%</td>
+      <td style="padding:10px 12px;text-align:right;color:${c.dscr >= v.dscrMin ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${fmtNum(c.dscr, 2)}</td>
+      <td style="padding:10px 12px;text-align:center;color:${c.viavel ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${c.viavel ? '✅ Sim' : '❌ Não'}</td>
     </tr>
   `).join('');
 
   const tb3 = document.getElementById('tbodyModalidades');
   tb3.innerHTML = modalidadeResults.map(m => `
     <tr style="border-bottom:1px solid #f0efe9 ${m.label === modalidadeLabels[v.modalidadeFrota] ? ';font-weight:600' : ''}">
-      <td style="padding:10px 12px;color:#1b2230">${m.label}</td>
-      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtBRL(m.investInicial)}</td>
-      <td style="padding:10px 12px;text-align:right;color:${m.vpl >= 0 ? '#0b5f57' : '#9a3412'};font-weight:600">${fmtBRL(m.vpl)}</td>
-      <td style="padding:10px 12px;text-align:right;color:${m.tir >= v.waccFrota/100 ? '#0b5f57' : '#9a3412'};font-weight:600">${fmtNum(m.tir * 100, 1)}%</td>
-      <td style="padding:10px 12px;text-align:right;color:#4a5361">${isFinite(m.payback) ? fmtNum(m.payback, 1) + 'a' : '—'}</td>
-      <td style="padding:10px 12px;text-align:right;color:${m.dscrMedio >= v.dscrMin ? '#0b5f57' : '#9a3412'};font-weight:600">${fmtNum(m.dscrMedio, 2)}</td>
-      <td style="padding:10px 12px;text-align:center;color:${m.viavel ? '#0b5f57' : '#9a3412'};font-weight:600">${m.rec}</td>
+      <td style="padding:10px 12px;color:var(--texto-escuro)">${m.label}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${fmtBRL(m.investInicial)}</td>
+      <td style="padding:10px 12px;text-align:right;color:${m.vpl >= 0 ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${fmtBRL(m.vpl)}</td>
+      <td style="padding:10px 12px;text-align:right;color:${m.tir >= v.waccFrota/100 ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${fmtNum(m.tir * 100, 1)}%</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">${isFinite(m.payback) ? fmtNum(m.payback, 1) + 'a' : '—'}</td>
+      <td style="padding:10px 12px;text-align:right;color:${m.dscrMedio >= v.dscrMin ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${fmtNum(m.dscrMedio, 2)}</td>
+      <td style="padding:10px 12px;text-align:center;color:${m.viavel ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${m.rec}</td>
     </tr>
   `).join('');
 

@@ -79,7 +79,7 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addFilter('dateBr', (dateObj) => {
     if (!dateObj) return '';
     const dt = DateTime.fromJSDate(dateObj, { zone: 'America/Sao_Paulo' });
-    return dt.toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS).replace(',', ' às');
+    return dt.setLocale('pt-BR').toFormat("d 'de' LLLL 'de' yyyy");
   });
 
   eleventyConfig.addFilter('dateISO', (dateObj) => {
