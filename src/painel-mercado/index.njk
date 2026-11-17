@@ -7,38 +7,24 @@ description: "Indicadores reais do setor: diária média, utilização, disponib
 ---
 
 <header class="tema-hero">
-<div class="container" style="max-width:1200px">
+<div class="container">
 <div class="breadcrumb"><a href="/">Início</a> / Painel do Mercado</div>
 <h1 class="page-title">Painel do Mercado de Locação</h1>
 <p>Benchmarks anônimos, declarados por donos e gestores de locadoras. Atualizado mensal. Use para calibrar sua operação, negociar contratos e planejar investimentos.</p>
 </div>
 </header>
 
-<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:1200px">
+<section class="container painel">
 
-<!-- Status da amostra -->
-<div style="background:#fbfaf6;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;margin-bottom:32px;display:flex;flex-wrap:wrap;gap:24px;align-items:center">
-<div style="display:flex;align-items:center;gap:8px;font-weight:600;color:var(--texto-escuro)">
-<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0b5f57" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-<span id="statTotalLocadoras">—</span> locadoras contribuíram
+<div class="painel-meta">
+<p><span id="statTotalLocadoras">—</span> locadoras contribuíram · Atualizado em <span id="statUltimaAtualizacao">—</span> · Próxima coleta em <span id="proximaColeta">—</span></p>
+<a href="/painel-mercado/contribuir/" class="btn btn-outline">Contribuir com meus dados</a>
 </div>
-<div style="display:flex;align-items:center;gap:8px;color:var(--texto-secundario)">
-<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0b5f57" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-<span id="statUltimaAtualizacao">—</span> (atualização mensal)
-</div>
-<div style="display:flex;align-items:center;gap:8px;color:var(--texto-secundario)">
-<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0b5f57" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-Próxima coleta: <span id="proximaColeta">—</span>
-</div>
-<a href="/painel-mercado/contribuir/" class="btn ">Contribuir com meus dados</a>
-</div>
+<p class="painel-nota" role="note">Dados ilustrativos: os números abaixo são fictícios e demonstram o funcionamento dos filtros. Serão substituídos pelas respostas reais das locadoras conforme a coleta avançar.</p>
 
-<p class="aviso-ilustrativo" role="note"><strong>Dados ilustrativos.</strong> Os números deste painel são fictícios e servem para demonstrar os filtros. Eles serão substituídos pelas respostas reais das locadoras conforme a coleta avançar.</p>
-
-<!-- Filtros (aplicados na hora) -->
 <div class="painel-filtros" role="group" aria-label="Filtros do painel">
 <div class="form-group">
-<label class="form-label" for="filtroPorte">Porte da locadora</label>
+<label class="form-label" for="filtroPorte">Porte</label>
 <select id="filtroPorte" class="form-select">
 <option value="todos">Todos os portes</option>
 <option value="pequena">Pequena (até 50 equipamentos)</option>
@@ -69,100 +55,75 @@ Próxima coleta: <span id="proximaColeta">—</span>
 <option value="mista">Frota mista</option>
 </select>
 </div>
-<button type="button" class="btn btn-outline" id="btnLimparFiltros">Limpar filtros</button>
+<button type="button" class="btn btn-ghost" id="btnLimparFiltros">Limpar filtros</button>
 </div>
 <p id="resumoFiltro" class="painel-resumo" aria-live="polite"></p>
 
-<!-- Indicadores Principais (KPIs Cards) -->
-<h2 class="section-title section-title-h2" style="margin-bottom:20px">Indicadores Principais (Mediana P50)</h2>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:20px;margin-bottom:40px" id="kpiCards">
-<!-- Preenchido via JS -->
+<h2 class="painel-titulo">Indicadores principais <span>mediana (P50)</span></h2>
+<div class="kpis" id="kpiCards"></div>
+
+<div class="painel-grid">
+<section class="painel-bloco">
+<h3>Diária média por categoria</h3>
+<p class="painel-legenda">Valores médios de mercado (R$/diária 8h) — mediana P50</p>
+<div class="painel-grafico"><canvas id="chartDiariaCategoria"></canvas><div class="sem-amostra" hidden>Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</div></div>
+<p class="painel-fonte">Fonte: Painel do Mercado Oravel • n = <span id="nDiariaCategoria">—</span> • Mediana P50 • Atualizado <span id="dataDiariaCategoria">—</span></p>
+</section>
+<section class="painel-bloco">
+<h3>Utilização média por porte</h3>
+<p class="painel-legenda">% de horas alugadas / horas disponíveis — mediana P50</p>
+<div class="painel-grafico"><canvas id="chartUtilizacaoPorte"></canvas><div class="sem-amostra" hidden>Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</div></div>
+<p class="painel-fonte">Fonte: Painel do Mercado Oravel • n = <span id="nUtilizacaoPorte">—</span> • Mediana P50 • Atualizado <span id="dataUtilizacaoPorte">—</span></p>
+</section>
+<section class="painel-bloco">
+<h3>Disponibilidade de frota</h3>
+<p class="painel-legenda">% de equipamentos operacionais no mês — mediana P50</p>
+<div class="painel-grafico"><canvas id="chartDisponibilidade"></canvas><div class="sem-amostra" hidden>Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</div></div>
+<p class="painel-fonte">Fonte: Painel do Mercado Oravel • n = <span id="nDisponibilidade">—</span> • Mediana P50 • Atualizado <span id="dataDisponibilidade">—</span></p>
+</section>
+<section class="painel-bloco">
+<h3>Custo de manutenção / receita</h3>
+<p class="painel-legenda">% da receita bruta gasta com manutenção (prev. + corr.) — mediana P50</p>
+<div class="painel-grafico"><canvas id="chartCustoManutencao"></canvas><div class="sem-amostra" hidden>Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</div></div>
+<p class="painel-fonte">Fonte: Painel do Mercado Oravel • n = <span id="nCustoManutencao">—</span> • Mediana P50 • Atualizado <span id="dataCustoManutencao">—</span></p>
+</section>
 </div>
 
-<!-- Gráficos - Grid 2x2 -->
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,500px),1fr));gap:24px;margin-bottom:40px">
-
-<!-- Gráfico 1: Diária Média por Categoria -->
-<div class="card" style="background:#fff;border:1px solid var(--cinza-claro);border-radius:16px;padding:24px">
-<h3 style="font-family:var(--font-titulo);font-size:22px;font-weight:600;margin:0 0 8px;color:var(--texto-escuro)">Diária Média por Categoria</h3>
-<p class="muted-sm" style="margin:0 0 16px">Valores médios de mercado (R$/diária 8h) — mediana P50</p>
-<div style="height:300px;position:relative"><canvas id="chartDiariaCategoria"></canvas><div class="sem-amostra" hidden>Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</div></div>
-<p class="muted-sm" style="margin:12px 0 0;font-size:12px">Fonte: Painel do Mercado Oravel • n = <span id="nDiariaCategoria">—</span> • Mediana P50 • Atualizado <span id="dataDiariaCategoria">—</span></p>
-</div>
-
-<!-- Gráfico 2: Utilização Média por Porte -->
-<div class="card" style="background:#fff;border:1px solid var(--cinza-claro);border-radius:16px;padding:24px">
-<h3 style="font-family:var(--font-titulo);font-size:22px;font-weight:600;margin:0 0 8px;color:var(--texto-escuro)">Utilização Média por Porte</h3>
-<p class="muted-sm" style="margin:0 0 16px">% de horas alugadas / horas disponíveis — mediana P50</p>
-<div style="height:300px;position:relative"><canvas id="chartUtilizacaoPorte"></canvas><div class="sem-amostra" hidden>Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</div></div>
-<p class="muted-sm" style="margin:12px 0 0;font-size:12px">Fonte: Painel do Mercado Oravel • n = <span id="nUtilizacaoPorte">—</span> • Mediana P50 • Atualizado <span id="dataUtilizacaoPorte">—</span></p>
-</div>
-
-<!-- Gráfico 3: Disponibilidade de Frota -->
-<div class="card" style="background:#fff;border:1px solid var(--cinza-claro);border-radius:16px;padding:24px">
-<h3 style="font-family:var(--font-titulo);font-size:22px;font-weight:600;margin:0 0 8px;color:var(--texto-escuro)">Disponibilidade de Frota</h3>
-<p class="muted-sm" style="margin:0 0 16px">% de equipamentos operacionais no mês — mediana P50</p>
-<div style="height:300px;position:relative"><canvas id="chartDisponibilidade"></canvas><div class="sem-amostra" hidden>Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</div></div>
-<p class="muted-sm" style="margin:12px 0 0;font-size:12px">Fonte: Painel do Mercado Oravel • n = <span id="nDisponibilidade">—</span> • Mediana P50 • Atualizado <span id="dataDisponibilidade">—</span></p>
-</div>
-
-<!-- Gráfico 4: Custo Manutenção / Receita -->
-<div class="card" style="background:#fff;border:1px solid var(--cinza-claro);border-radius:16px;padding:24px">
-<h3 style="font-family:var(--font-titulo);font-size:22px;font-weight:600;margin:0 0 8px;color:var(--texto-escuro)">Custo de Manutenção / Receita</h3>
-<p class="muted-sm" style="margin:0 0 16px">% da receita bruta gasta com manutenção (prev. + corr.) — mediana P50</p>
-<div style="height:300px;position:relative"><canvas id="chartCustoManutencao"></canvas><div class="sem-amostra" hidden>Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</div></div>
-<p class="muted-sm" style="margin:12px 0 0;font-size:12px">Fonte: Painel do Mercado Oravel • n = <span id="nCustoManutencao">—</span> • Mediana P50 • Atualizado <span id="dataCustoManutencao">—</span></p>
-</div>
-
-</div>
-
-<!-- Ranking de Dores -->
-<h2 class="section-title section-title-h2" style="margin-bottom:20px">Principais Dores do Setor (Ranking Mensal)</h2>
-<div class="card" style="background:#fff;border:1px solid var(--cinza-claro);border-radius:16px;padding:24px">
-<div style="overflow-x:auto">
-<table style="width:100%;border-collapse:collapse;font-size:14.5px" id="tabelaDores">
+<h2 class="painel-titulo">Principais dores do setor <span>ranking mensal</span></h2>
+<div class="painel-bloco painel-bloco--tabela">
+<div class="tabela-rolagem">
+<table id="tabelaDores">
 <thead>
-<tr style="background:#e7f1ef;border-bottom:2px solid var(--azul-petroleo)">
-<th style="padding:12px 16px;text-align:left;font-weight:600;color:var(--texto-escuro)">Posição</th>
-<th style="padding:12px 16px;text-align:left;font-weight:600;color:var(--texto-escuro)">Dor / Desafio</th>
-<th style="padding:12px 16px;text-align:right;font-weight:600;color:var(--texto-escuro)">% das menções</th>
-<th style="padding:12px 16px;text-align:left;font-weight:600;color:var(--texto-escuro)">Tendência</th>
-<th style="padding:12px 16px;text-align:left;font-weight:600;color:var(--texto-escuro)">Artigo relacionado</th>
-</tr>
+<tr><th>Posição</th><th>Dor / desafio</th><th>% das menções</th><th>Tendência</th><th>Artigo relacionado</th></tr>
 </thead>
 <tbody id="tbodyDores"></tbody>
 </table>
 </div>
-<p class="muted-sm" style="margin:12px 0 0;font-size:12px">Base: enquete mensal na Rede Oravel • n = <span id="nDores">—</span> respondentes • Atualizado <span id="dataDores">—</span></p>
+<p class="painel-fonte">Base: enquete mensal na Rede Oravel • n = <span id="nDores">—</span> respondentes • Atualizado <span id="dataDores">—</span></p>
 </div>
 
-<!-- Maturidade Digital -->
-<h2 class="section-title section-title-h2" style="margin:40px 0 20px">Maturidade Digital das Locadoras</h2>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,450px),1fr));gap:24px;margin-bottom:40px">
-
-<div class="card" style="background:#fff;border:1px solid var(--cinza-claro);border-radius:16px;padding:24px">
-<h3 style="font-family:var(--font-titulo);font-size:22px;font-weight:600;margin:0 0 8px;color:var(--texto-escuro)">Tecnologias Adotadas</h3>
-<p class="muted-sm" style="margin:0 0 16px">% de locadoras que utilizam cada tecnologia</p>
-<div style="height:280px;position:relative"><canvas id="chartTecnologias"></canvas><div class="sem-amostra" hidden>Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</div></div>
-<p class="muted-sm" style="margin:12px 0 0;font-size:12px">Fonte: Autoavaliação trimestral • n = <span id="nTecnologias">—</span> • Atualizado <span id="dataTecnologias">—</span></p>
+<h2 class="painel-titulo">Maturidade digital das locadoras</h2>
+<div class="painel-grid">
+<section class="painel-bloco">
+<h3>Tecnologias adotadas</h3>
+<p class="painel-legenda">% de locadoras que utilizam cada tecnologia</p>
+<div class="painel-grafico painel-grafico--alto"><canvas id="chartTecnologias"></canvas><div class="sem-amostra" hidden>Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</div></div>
+<p class="painel-fonte">Fonte: Autoavaliação trimestral • n = <span id="nTecnologias">—</span> • Atualizado <span id="dataTecnologias">—</span></p>
+</section>
+<section class="painel-bloco">
+<h3>Distribuição por nível de maturidade</h3>
+<p class="painel-legenda">Modelo de 5 níveis (Inicial → Otimizada)</p>
+<div class="painel-grafico painel-grafico--alto"><canvas id="chartMaturidade"></canvas><div class="sem-amostra" hidden>Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</div></div>
+<p class="painel-fonte">Fonte: Autoavaliação anual • n = <span id="nMaturidade">—</span> • Atualizado <span id="dataMaturidade">—</span></p>
+</section>
 </div>
 
-<div class="card" style="background:#fff;border:1px solid var(--cinza-claro);border-radius:16px;padding:24px">
-<h3 style="font-family:var(--font-titulo);font-size:22px;font-weight:600;margin:0 0 8px;color:var(--texto-escuro)">Distribuição por Nível de Maturidade</h3>
-<p class="muted-sm" style="margin:0 0 16px">Modelo de 5 níveis (Inicial → Otimizada)</p>
-<div style="height:280px;position:relative"><canvas id="chartMaturidade"></canvas><div class="sem-amostra" hidden>Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</div></div>
-<p class="muted-sm" style="margin:12px 0 0;font-size:12px">Fonte: Autoavaliação anual • n = <span id="nMaturidade">—</span> • Atualizado <span id="dataMaturidade">—</span></p>
-</div>
-
-</div>
-
-<!-- Metodologia e Transparência -->
-<div style="background:#fbfaf6;border:1px solid var(--cinza-claro);border-radius:14px;padding:32px;margin-top:40px">
-<h2 class="section-title section-title-h3" style="margin-top:0">Metodologia e Transparência</h2>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:20px;margin-top:16px">
+<div class="painel-metodo">
+<h2>Metodologia e transparência</h2>
+<div class="painel-metodo__grid">
 <div>
-<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 8px;color:var(--texto-escuro)">Como os dados são coletados</h3>
-<ul style="margin:0;padding-left:20px;line-height:1.9;color:var(--texto-secundario);font-size:15px">
+<h3>Como os dados são coletados</h3>
+<ul>
 <li>Formulário anônimo, voluntário, declarado pelo respondente</li>
 <li>Campos: porte, região, categoria principal, KPIs do mês anterior</li>
 <li>Nenhum dado identifica a empresa — apenas agregados</li>
@@ -170,17 +131,17 @@ Próxima coleta: <span id="proximaColeta">—</span>
 </ul>
 </div>
 <div>
-<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 8px;color:var(--texto-escuro)">Como são agregados</h3>
-<ul style="margin:0;padding-left:20px;line-height:1.9;color:var(--texto-secundario);font-size:15px">
+<h3>Como são agregados</h3>
+<ul>
 <li>Mediana (P50) por recorte: porte × região × categoria</li>
 <li>P25 e P75 exibidos como faixa de variação</li>
 <li>Mínimo n=10 por célula para exibir benchmark</li>
-<li>Células com n<10 mostram "amostra insuficiente"</li>
+<li>Células com n&lt;10 mostram "amostra insuficiente"</li>
 </ul>
 </div>
 <div>
-<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 8px;color:var(--texto-escuro)">Limitações conhecidas</h3>
-<ul style="margin:0;padding-left:20px;line-height:1.9;color:var(--texto-secundario);font-size:15px">
+<h3>Limitações conhecidas</h3>
+<ul>
 <li>Amostra declaratória — não auditada individualmente</li>
 <li>Viés de seleção: locadoras mais engajadas tendem a responder</li>
 <li>Não representa todo o mercado brasileiro (cobertura geográfica assimétrica)</li>
@@ -188,11 +149,11 @@ Próxima coleta: <span id="proximaColeta">—</span>
 </ul>
 </div>
 <div>
-<h3 style="font-family:var(--font-titulo);font-size:18px;font-weight:600;margin:0 0 8px;color:var(--texto-escuro)">Governança</h3>
-<ul style="margin:0;padding-left:20px;line-height:1.9;color:var(--texto-secundario);font-size:15px">
-<li>Metodologia completa: <a href="/painel-mercado/metodologia/" style="color:var(--azul-petroleo)">/painel-mercado/metodologia/</a></li>
-<li>Histórico de mudanças: <a href="/painel-mercado/historico/" style="color:var(--azul-petroleo)">/painel-mercado/historico/</a></li>
-<li>Dúvidas: <a href="mailto:dados@oravel.org" style="color:var(--azul-petroleo)">dados@oravel.org</a></li>
+<h3>Governança</h3>
+<ul>
+<li>Metodologia completa: <a href="/painel-mercado/metodologia/">/painel-mercado/metodologia/</a></li>
+<li>Histórico de mudanças: <a href="/painel-mercado/historico/">/painel-mercado/historico/</a></li>
+<li>Dúvidas: <a href="mailto:dados@oravel.org">dados@oravel.org</a></li>
 <li>Rebuild mensal automático via GitHub Actions</li>
 </ul>
 </div>
@@ -281,22 +242,21 @@ const el = (id) => document.getElementById(id);
 
 // ===== Renderização =====
 function renderKPIs(sub, n) {
-  const ok = n >= MIN_N, nota = ok ? `Mediana • n = ${n}` : 'Amostra insuficiente (n < 10)';
+  const ok = n >= MIN_N, falta = 'Amostra insuficiente';
   const m = (k) => ok ? mediana(sub.map(r => r[k])) : null;
-  const mat = m('mat');
   const kpis = [
-    { label: 'Diária Média (P50)', value: ok ? brl(m('diaria')) : '—', icon: '💰', sub: ok ? `8h • ${nota}` : nota },
-    { label: 'Utilização Média (P50)', value: ok ? Math.round(m('util')) + '%' : '—', icon: '📊', sub: nota },
-    { label: 'Disponibilidade (P50)', value: ok ? Math.round(m('disp')) + '%' : '—', icon: '✅', sub: nota },
-    { label: 'Manutenção / Receita (P50)', value: ok ? Math.round(m('manut')) + '%' : '—', icon: '🔧', sub: ok ? `Prev. + Corretiva • n = ${n}` : nota },
-    { label: 'Maturidade Digital (P50)', value: ok ? 'Nível ' + Math.round(mat) : '—', icon: '🎯', sub: ok ? `De 5 (Otimizada) • n = ${n}` : nota },
-    { label: 'Payback Médio (P50)', value: ok ? Math.round(m('payback')) + ' meses' : '—', icon: '⏱', sub: ok ? `Aquisição equipamento • n = ${n}` : nota }
+    { label: 'Diária média (P50)', value: ok ? brl(m('diaria')) : '—', sub: ok ? 'Diária de 8h' : falta },
+    { label: 'Utilização (P50)', value: ok ? Math.round(m('util')) + '%' : '—', sub: ok ? 'Horas alugadas / disponíveis' : falta },
+    { label: 'Disponibilidade (P50)', value: ok ? Math.round(m('disp')) + '%' : '—', sub: ok ? 'Frota operacional no mês' : falta },
+    { label: 'Manutenção / receita (P50)', value: ok ? Math.round(m('manut')) + '%' : '—', sub: ok ? 'Preventiva + corretiva' : falta },
+    { label: 'Maturidade digital (P50)', value: ok ? 'Nível ' + Math.round(m('mat')) : '—', sub: ok ? 'Escala de 1 a 5' : falta },
+    { label: 'Payback médio (P50)', value: ok ? Math.round(m('payback')) + ' meses' : '—', sub: ok ? 'Aquisição de equipamento' : falta }
   ];
   el('kpiCards').innerHTML = kpis.map(k => `
-    <div class="kpi-card">
-      <div class="kpi-card__topo"><span class="kpi-card__icone">${k.icon}</span><span class="kpi-card__rotulo">${k.label}</span></div>
-      <div class="kpi-card__valor">${k.value}</div>
-      <div class="kpi-card__sub">${k.sub}</div>
+    <div class="kpi">
+      <div class="kpi__rotulo">${k.label}</div>
+      <div class="kpi__valor">${k.value}</div>
+      <div class="kpi__sub">${k.sub}</div>
     </div>`).join('');
 }
 
@@ -312,9 +272,9 @@ function grafico(id, tipo, labels, data, opts = {}) {
     type: horizontal ? 'bar' : tipo,
     data: { labels, datasets: [{
       label: opts.label || '', data,
-      backgroundColor: opts.cores || (tipo === 'line' ? 'rgba(11,95,87,.1)' : 'rgba(11,95,87,.7)'),
-      borderColor: opts.borda || '#0b5f57', borderWidth: tipo === 'line' ? 3 : 2, borderRadius: tipo === 'line' ? 0 : 6,
-      fill: tipo === 'line', tension: .3, pointRadius: tipo === 'line' ? 4 : 0, pointBackgroundColor: '#0b5f57'
+      backgroundColor: opts.cores || (tipo === 'line' ? 'transparent' : '#2F5D59'),
+      borderColor: opts.borda || '#2F5D59', borderWidth: tipo === 'line' ? 2 : 0, borderRadius: tipo === 'line' ? 0 : 2,
+      fill: false, tension: .25, pointRadius: tipo === 'line' ? 3 : 0, pointBackgroundColor: '#2F5D59', barThickness: tipo === 'line' ? undefined : 16, maxBarThickness: 22
     }] },
     options: {
       responsive: true, maintainAspectRatio: false, indexAxis: horizontal ? 'y' : 'x', animation: { duration: 350 },
@@ -322,7 +282,7 @@ function grafico(id, tipo, labels, data, opts = {}) {
         callbacks: { label: (c) => (opts.prefixo || '') + c.parsed[horizontal ? 'x' : 'y'].toLocaleString('pt-BR') + (opts.sufixo || '') } } },
       scales: {
         x: { grid: { display: false }, ticks: { color: '#5B6B69', font: { size: 12 } }, ...(horizontal ? { beginAtZero: true } : {}) },
-        y: { grid: { color: '#F0EFE9' }, ticks: { color: '#5B6B69', font: { size: 12 } }, beginAtZero: opts.min0 !== false, ...(opts.max ? { max: opts.max } : {}) }
+        y: { grid: { color: '#EEF1F0' }, border: { display: false }, ticks: { color: '#5B6B69', font: { size: 12 } }, beginAtZero: opts.min0 !== false, ...(opts.max ? { max: opts.max } : {}) }
       }
     }
   });
@@ -341,9 +301,9 @@ function renderCharts(f, sub, n) {
   const porteKeys = Object.keys(PORTES).filter(k => f.porte === 'todos' || f.porte === k);
   const gp = porteKeys.map(k => ({ k, rs: recorte(f, 'porte').filter(r => r.porte === k) })).filter(g => g.rs.length >= MIN_N);
   grafico('chartUtilizacaoPorte', 'bar', gp.map(g => PORTES[g.k].rot), gp.map(g => Math.round(mediana(g.rs.map(r => r.util)))),
-    { label: 'Utilização Média (%)', sufixo: '%', max: 100, cores: ['rgba(11,95,87,.5)', 'rgba(11,95,87,.7)', 'rgba(11,95,87,.9)'] });
+    { label: 'Utilização Média (%)', sufixo: '%', max: 100, cores: '#2F5D59' });
   grafico('chartCustoManutencao', 'bar', gp.map(g => PORTES[g.k].rot), gp.map(g => Math.round(mediana(g.rs.map(r => r.manut)))),
-    { label: 'Manutenção / Receita (%)', sufixo: '%', cores: 'rgba(154,52,18,.7)', borda: '#9a3412' });
+    { label: 'Manutenção / Receita (%)', sufixo: '%', cores: '#6B7C7A' });
 
   // 3) Disponibilidade mensal
   grafico('chartDisponibilidade', 'line', ok ? MESES : [], ok ? MESES.map((_, i) => Math.round(mediana(sub.map(r => r.serie[i])) * 10) / 10) : [],
@@ -355,7 +315,7 @@ function renderCharts(f, sub, n) {
 
   // 6) Maturidade
   grafico('chartMaturidade', 'bar', ok ? NIVEIS : [], ok ? NIVEIS.map((_, i) => pct(sub.filter(r => r.mat === i + 1).length, n)) : [],
-    { label: '% Locadoras', sufixo: '%', cores: ['rgba(245,158,11,.7)', 'rgba(11,95,87,.5)', 'rgba(11,95,87,.7)', 'rgba(11,95,87,.9)', 'rgba(11,95,87,1)'] });
+    { label: '% Locadoras', sufixo: '%', cores: '#2F5D59' });
 }
 
 function linkArtigo(d) {

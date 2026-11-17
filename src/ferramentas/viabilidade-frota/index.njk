@@ -493,16 +493,16 @@ function calcularModalidade(v, modalidade) {
   // Status
   let status = '', statusClass = '';
   if (vpl > 0 && tir > wacc && dscrMedio >= v.dscrMin) {
-    status = '✅ VIÁVEL — VPL positivo, TIR > WACC, DSCR adequado. Projeto cria valor para o acionista.';
+    status = 'VIÁVEL — VPL positivo, TIR > WACC, DSCR adequado. Projeto cria valor para o acionista.';
     statusClass = 'background:#e7f1ef;border-color:#0b5f57';
   } else if (vpl > 0 && tir > wacc) {
-    status = '⚠️ VIÁVEL COM RESSALVA — VPL e TIR ok, mas DSCR abaixo do mínimo (' + fmtNum(dscrMedio, 2) + ' < ' + fmtNum(v.dscrMin, 2) + '). Requer estrutura de financiamento mais longa ou maior entrada.';
+    status = 'VIÁVEL COM RESSALVA — VPL e TIR ok, mas DSCR abaixo do mínimo (' + fmtNum(dscrMedio, 2) + ' < ' + fmtNum(v.dscrMin, 2) + '). Requer estrutura de financiamento mais longa ou maior entrada.';
     statusClass = 'background:#fef3e7;border-color:#f59e0b';
   } else if (vpl > 0) {
-    status = '⚠️ MARGINAL — VPL positivo mas TIR < WACC (' + fmtNum(tir*100,1) + '% < ' + fmtNum(wacc*100,1) + '%). Projeto destrói valor econômico. Considere apenas se estratégico.';
+    status = 'MARGINAL — VPL positivo mas TIR < WACC (' + fmtNum(tir*100,1) + '% < ' + fmtNum(wacc*100,1) + '%). Projeto destrói valor econômico. Considere apenas se estratégico.';
     statusClass = 'background:#fef3e7;border-color:#f59e0b';
   } else {
-    status = '❌ NÃO VIÁVEL — VPL negativo (' + fmtBRL(vpl) + '). Projeto destrói valor. Não recomendado nas condições atuais.';
+    status = 'NÃO VIÁVEL — VPL negativo (' + fmtBRL(vpl) + '). Projeto destrói valor. Não recomendado nas condições atuais.';
     statusClass = 'background:#fef3e7;border-color:#9a3412';
   }
 
@@ -554,9 +554,9 @@ function calcular() {
     const r = calcularModalidade(v, m);
     const viavel = r.vpl > 0 && r.tir > (v.waccFrota/100) && r.dscrMedio >= v.dscrMin;
     let rec = '';
-    if (viavel) rec = '✅ Recomendado';
-    else if (r.vpl > 0) rec = '⚠️ Viável c/ ressalva';
-    else rec = '❌ Não recomendado';
+    if (viavel) rec = 'Recomendado';
+    else if (r.vpl > 0) rec = 'Viável c/ ressalva';
+    else rec = 'Não recomendado';
     return { label: modalidadeLabels[m], ...r, viavel, rec };
   });
 
@@ -601,7 +601,7 @@ function calcular() {
       <td style="padding:10px 12px;text-align:right;color:${c.vpl >= 0 ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${fmtBRL(c.vpl)}</td>
       <td style="padding:10px 12px;text-align:right;color:${c.tir >= c.wacc/100 ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${fmtNum(c.tir * 100, 1)}%</td>
       <td style="padding:10px 12px;text-align:right;color:${c.dscr >= v.dscrMin ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${fmtNum(c.dscr, 2)}</td>
-      <td style="padding:10px 12px;text-align:center;color:${c.viavel ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${c.viavel ? '✅ Sim' : '❌ Não'}</td>
+      <td style="padding:10px 12px;text-align:center;color:${c.viavel ? 'var(--azul-petroleo)' : '#9a3412'};font-weight:600">${c.viavel ? 'Sim' : 'Não'}</td>
     </tr>
   `).join('');
 

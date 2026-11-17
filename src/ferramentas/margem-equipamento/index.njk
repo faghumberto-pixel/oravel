@@ -402,16 +402,16 @@ function calcular() {
   let recomendacao = '';
   let recClass = '';
   if (margemLiquida > 0 && roiAnual > v.custoCapital) {
-    recomendacao = `✅ <strong>MANTER</strong> — Equipamento rentável (ROI ${fmtNum(roiAnual,1)}% > custo de capital ${fmtNum(v.custoCapital,1)}%). Margem líquida de ${fmtBRL(margemLiquida)}/mês. Payback em ${fmtNum(paybackMeses,1)} meses.`;
+    recomendacao = `<strong>MANTER</strong> — Equipamento rentável (ROI ${fmtNum(roiAnual,1)}% > custo de capital ${fmtNum(v.custoCapital,1)}%). Margem líquida de ${fmtBRL(margemLiquida)}/mês. Payback em ${fmtNum(paybackMeses,1)} meses.`;
     recClass = 'style="background:#e7f1ef;border-color:var(--azul-petroleo)"';
   } else if (margemLiquida > 0 && roiAnual <= v.custoCapital) {
-    recomendacao = `⚠️ <strong>MANTER COM ATENÇÃO</strong> — Margem positiva (${fmtBRL(margemLiquida)}/mês) mas ROI (${fmtNum(roiAnual,1)}%) abaixo do custo de capital (${fmtNum(v.custoCapital,1)}%). Considere: aumentar diária, reduzir manutenção corretiva ou vender se houver oportunidade.`;
+    recomendacao = `<strong>MANTER COM ATENÇÃO</strong> — Margem positiva (${fmtBRL(margemLiquida)}/mês) mas ROI (${fmtNum(roiAnual,1)}%) abaixo do custo de capital (${fmtNum(v.custoCapital,1)}%). Considere: aumentar diária, reduzir manutenção corretiva ou vender se houver oportunidade.`;
     recClass = 'style="background:#fef3e7;border-color:#f59e0b"';
   } else if (margemLiquida <= 0 && vidaRestantePct > 30) {
-    recomendacao = `🔴 <strong>REVISAR URGENTE</strong> — Margem negativa (${fmtBRL(margemLiquida)}/mês). Vida restante: ${fmtNum(vidaRestantePct,0)}%. Ações: renegociar diária, auditar manutenção corretiva, avaliar terceirização de operador, ou vender.`;
+    recomendacao = `<strong>REVISAR URGENTE</strong> — Margem negativa (${fmtBRL(margemLiquida)}/mês). Vida restante: ${fmtNum(vidaRestantePct,0)}%. Ações: renegociar diária, auditar manutenção corretiva, avaliar terceirização de operador, ou vender.`;
     recClass = 'style="background:#fef3e7;border-color:#9a3412"';
   } else {
-    recomendacao = `🔴 <strong>VENDER / SUBSTITUIR</strong> — Margem negativa (${fmtBRL(margemLiquida)}/mês) e vida restante baixa (${fmtNum(vidaRestantePct,0)}%). Custo de oportunidade alto. Melhor alocar capital em equipamento mais rentável.`;
+    recomendacao = `<strong>VENDER / SUBSTITUIR</strong> — Margem negativa (${fmtBRL(margemLiquida)}/mês) e vida restante baixa (${fmtNum(vidaRestantePct,0)}%). Custo de oportunidade alto. Melhor alocar capital em equipamento mais rentável.`;
     recClass = 'style="background:#fef3e7;border-color:#9a3412"';
   }
 
