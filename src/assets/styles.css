@@ -858,3 +858,57 @@ main :is(div,span,p)[style*="font-family:var(--font-titulo)"][style*="clamp(1.25
 
 #tabelaDores { display: table; }
 .kpi__rotulo { min-height: 2.4em; }
+
+#tabelaFatores { display: table; width: 100%; border-collapse: collapse; font-size: .9375rem; }
+#tabelaFatores th { padding: 10px 12px; text-align: left; font-size: .75rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--texto-secundario); border-bottom: 1px solid var(--texto-escuro); white-space: nowrap; }
+#tabelaFatores td { padding: 12px; border-bottom: 1px solid var(--cinza-claro); vertical-align: top; }
+#tabelaFatores .fonte-cel { color: var(--texto-secundario); font-size: .875rem; }
+.natureza { font-size: .8125rem; font-weight: 600; white-space: nowrap; }
+.natureza--desafio { color: #9A3412; }
+.natureza--neutra { color: var(--azul-petroleo); }
+.historico-lista { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; }
+.historico-lista li { padding: var(--esp-2) 0; border-bottom: 1px solid var(--cinza-claro); }
+.historico-lista strong { display: block; }
+.historico-lista span { font-size: var(--texto-pequeno); color: var(--texto-secundario); }
+.indicator-fonte { margin-top: 6px; font-size: .75rem; color: var(--texto-secundario); }
+
+/* --- Painel: mapa de calor, cartograma e comparativo --- */
+.mapa { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(96px, auto)); gap: 8px; max-width: 460px; }
+.tile { display: flex; flex-direction: column; justify-content: space-between; text-align: left; border: 0; border-radius: var(--raio-grande); padding: var(--esp-2); cursor: pointer; transition: transform var(--trans-rapida), opacity var(--trans-rapida), box-shadow var(--trans-rapida); font-family: var(--font-corpo); }
+.tile:hover { transform: translateY(-2px); }
+.tile:focus-visible, .heat__cel:focus-visible { outline: 3px solid var(--laranja); outline-offset: 2px; }
+.tile--c1-r1 { grid-column: 1; grid-row: 1; } .tile--c2-r1 { grid-column: 2; grid-row: 1; }
+.tile--c1-r2 { grid-column: 1; grid-row: 2; } .tile--c2-r2 { grid-column: 2; grid-row: 2; }
+.tile--c2-r3 { grid-column: 2; grid-row: 3; }
+.tile--sel { box-shadow: 0 0 0 3px var(--texto-escuro); }
+.tile--dim { opacity: .45; }
+.tile__nome { font-size: .875rem; font-weight: 600; }
+.tile__pct { font-family: var(--font-titulo); font-size: 1.75rem; font-weight: 600; line-height: 1; font-variant-numeric: lining-nums; }
+.tile__val { font-size: .75rem; opacity: .85; }
+
+.heat { display: grid; gap: 6px; }
+.heat__linha { display: grid; grid-template-columns: 110px minmax(0, 1fr) minmax(0, 1fr); gap: 6px; align-items: stretch; }
+.heat__linha > span { display: flex; align-items: center; font-size: .875rem; font-weight: 500; }
+.heat__linha--cab > span { font-size: .75rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--texto-secundario); justify-content: center; text-align: center; }
+.heat__linha--cab > span:first-child { justify-content: flex-start; }
+.heat__col--sel { color: var(--texto-escuro) !important; }
+.heat__linha--sel > span:first-child { font-weight: 700; }
+.heat__cel { border: 0; border-radius: var(--raio-medio); padding: 18px 8px; font-family: var(--font-corpo); font-size: .9375rem; font-weight: 600; font-variant-numeric: tabular-nums; cursor: pointer; transition: transform var(--trans-rapida); }
+.heat__cel:hover { transform: scale(1.03); }
+.heat__cel--sel { box-shadow: 0 0 0 3px var(--texto-escuro); }
+.heat-legenda { display: flex; align-items: center; gap: 8px; margin-top: var(--esp-2); font-size: .75rem; color: var(--texto-secundario); }
+.heat-legenda i { flex: 0 0 140px; height: 8px; border-radius: 999px; background: linear-gradient(90deg, #E6F1EF, #1E4D49); }
+
+.comp { display: grid; gap: var(--esp-2); margin-top: var(--esp-3); }
+.comp__linha { display: grid; grid-template-columns: 130px minmax(0, 1fr) 124px; align-items: center; gap: var(--esp-2); font-size: .9375rem; }
+.comp__rot { font-weight: 500; }
+.comp__trilho { height: 12px; border-radius: 999px; background: #EEF1F0; overflow: hidden; }
+.comp__barra { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #B9C8C6, #6E9C96); }
+.comp__barra--forte { background: linear-gradient(90deg, #6E9C96, #1E4D49); }
+.comp__val { font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+@media (max-width: 480px) {
+  .heat__linha { grid-template-columns: 84px minmax(0, 1fr) minmax(0, 1fr); }
+  .heat__cel { padding: 14px 4px; font-size: .8125rem; }
+  .comp__linha { grid-template-columns: 96px minmax(0, 1fr) 72px; gap: 8px; }
+  .mapa { max-width: none; }
+}

@@ -3,158 +3,156 @@ layout: base.njk
 pagefind: true
 permalink: /painel-mercado/
 title: "Painel do Mercado de Locação"
-description: "Indicadores reais do setor: diária média, utilização, disponibilidade, custo de manutenção, maturidade digital. Dados anônimos declarados por locadoras, agregados por porte, região e categoria."
+description: "Indicadores do mercado brasileiro de locação de equipamentos: faturamento, distribuição regional, penetração da locação, vendas de máquinas e frota parada. Dados de estudos da Analoc, Sobratema e KPMG, com fonte em cada gráfico."
 ---
 
 <header class="tema-hero">
 <div class="container">
 <div class="breadcrumb"><a href="/">Início</a> / Painel do Mercado</div>
 <h1 class="page-title">Painel do Mercado de Locação</h1>
-<p>Benchmarks anônimos, declarados por donos e gestores de locadoras. Atualizado mensal. Use para calibrar sua operação, negociar contratos e planejar investimentos.</p>
+<p>Indicadores do mercado brasileiro de locação de equipamentos, reunidos de estudos publicados por Analoc, Sobratema e KPMG. Cada número traz a fonte e a data.</p>
 </div>
 </header>
 
 <section class="container painel">
 
 <div class="painel-meta">
-<p><span id="statTotalLocadoras">—</span> locadoras contribuíram · Atualizado em <span id="statUltimaAtualizacao">—</span> · Próxima coleta em <span id="proximaColeta">—</span></p>
-<a href="/painel-mercado/contribuir/" class="btn btn-outline">Contribuir com meus dados</a>
+<p>Fontes: KPMG (Rental Market Report, encomendado pela Analoc), Sobratema · Dados de 2023 a 2026 · Última atualização do painel: novembro de 2026</p>
+<a href="/painel-mercado/metodologia/" class="btn btn-outline">Ver metodologia</a>
 </div>
-<p class="painel-nota" role="note">Dados ilustrativos: os números abaixo são fictícios e demonstram o funcionamento dos filtros. Serão substituídos pelas respostas reais das locadoras conforme a coleta avançar.</p>
 
 <div class="painel-filtros" role="group" aria-label="Filtros do painel">
 <div class="form-group">
-<label class="form-label" for="filtroPorte">Porte</label>
-<select id="filtroPorte" class="form-select">
-<option value="todos">Todos os portes</option>
-<option value="pequena">Pequena (até 50 equipamentos)</option>
-<option value="media">Média (51–200 equipamentos)</option>
-<option value="grande">Grande (201+ equipamentos)</option>
+<label class="form-label" for="filtroAno">Ano de referência</label>
+<select id="filtroAno" class="form-select">
+<option value="2025">2025 (realizado)</option>
+<option value="2026">2026 (projeção)</option>
 </select>
 </div>
 <div class="form-group">
 <label class="form-label" for="filtroRegiao">Região</label>
 <select id="filtroRegiao" class="form-select">
-<option value="todas">Todas as regiões</option>
+<option value="todas">Brasil (todas as regiões)</option>
 <option value="sudeste">Sudeste</option>
+<option value="nordeste">Nordeste</option>
 <option value="sul">Sul</option>
 <option value="centro-oeste">Centro-Oeste</option>
-<option value="nordeste">Nordeste</option>
 <option value="norte">Norte</option>
-</select>
-</div>
-<div class="form-group">
-<label class="form-label" for="filtroCategoria">Categoria principal</label>
-<select id="filtroCategoria" class="form-select">
-<option value="todas">Todas as categorias</option>
-<option value="terraplanagem">Terraplanagem (escavadeiras, pás, motoniveladoras)</option>
-<option value="elevacao">Elevação (plataformas, guindastes)</option>
-<option value="compactacao">Compactação (rolos, compactadores)</option>
-<option value="geradores">Geradores de energia</option>
-<option value="compressores">Compressores de ar</option>
-<option value="mista">Frota mista</option>
 </select>
 </div>
 <button type="button" class="btn btn-ghost" id="btnLimparFiltros">Limpar filtros</button>
 </div>
 <p id="resumoFiltro" class="painel-resumo" aria-live="polite"></p>
 
-<h2 class="painel-titulo">Indicadores principais <span>mediana (P50)</span></h2>
+<h2 class="painel-titulo">Indicadores principais <span>Brasil, salvo quando indicado</span></h2>
 <div class="kpis" id="kpiCards"></div>
 
+<h2 class="painel-titulo">Faturamento e distribuição regional <span>clique para filtrar</span></h2>
 <div class="painel-grid">
 <section class="painel-bloco">
-<h3>Diária média por categoria</h3>
-<p class="painel-legenda">Valores médios de mercado (R$/diária 8h) — mediana P50</p>
-<div class="painel-grafico"><canvas id="chartDiariaCategoria"></canvas><div class="sem-amostra" hidden>Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</div></div>
-<p class="painel-fonte">Fonte: Painel do Mercado Oravel • n = <span id="nDiariaCategoria">—</span> • Mediana P50 • Atualizado <span id="dataDiariaCategoria">—</span></p>
+<h3>Mapa de calor por região</h3>
+<p class="painel-legenda">Participação de cada região no faturamento do setor (cor mais escura = maior participação)</p>
+<div class="mapa" id="mapaRegioes" role="group" aria-label="Mapa de calor por região"></div>
+<p class="painel-fonte">Fonte: KPMG, Rental Market Report (a pedido da Analoc, com apoio da Sobratema), divulgado pela Sobratema em 26/03/2026. Cartograma esquemático: as regiões não estão em escala geográfica.</p>
 </section>
 <section class="painel-bloco">
-<h3>Utilização média por porte</h3>
-<p class="painel-legenda">% de horas alugadas / horas disponíveis — mediana P50</p>
-<div class="painel-grafico"><canvas id="chartUtilizacaoPorte"></canvas><div class="sem-amostra" hidden>Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</div></div>
-<p class="painel-fonte">Fonte: Painel do Mercado Oravel • n = <span id="nUtilizacaoPorte">—</span> • Mediana P50 • Atualizado <span id="dataUtilizacaoPorte">—</span></p>
-</section>
-<section class="painel-bloco">
-<h3>Disponibilidade de frota</h3>
-<p class="painel-legenda">% de equipamentos operacionais no mês — mediana P50</p>
-<div class="painel-grafico"><canvas id="chartDisponibilidade"></canvas><div class="sem-amostra" hidden>Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</div></div>
-<p class="painel-fonte">Fonte: Painel do Mercado Oravel • n = <span id="nDisponibilidade">—</span> • Mediana P50 • Atualizado <span id="dataDisponibilidade">—</span></p>
-</section>
-<section class="painel-bloco">
-<h3>Custo de manutenção / receita</h3>
-<p class="painel-legenda">% da receita bruta gasta com manutenção (prev. + corr.) — mediana P50</p>
-<div class="painel-grafico"><canvas id="chartCustoManutencao"></canvas><div class="sem-amostra" hidden>Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</div></div>
-<p class="painel-fonte">Fonte: Painel do Mercado Oravel • n = <span id="nCustoManutencao">—</span> • Mediana P50 • Atualizado <span id="dataCustoManutencao">—</span></p>
+<h3>Faturamento por região e ano</h3>
+<p class="painel-legenda" id="legendaFaturamento">R$ bilhões · estimativa por participação regional</p>
+<div class="heat" id="heatRegiao" role="table" aria-label="Faturamento por região e ano"></div>
+<div class="heat-legenda" aria-hidden="true"><span>Menor</span><i></i><span>Maior</span></div>
+<p class="painel-fonte">Fonte: KPMG, Rental Market Report, divulgado pela Sobratema em 26/03/2026. Faturamento nacional de 2025 (realizado) e 2026 (projeção); valores regionais são estimativas: participação da região × faturamento nacional.</p>
 </section>
 </div>
 
-<h2 class="painel-titulo">Principais dores do setor <span>ranking mensal</span></h2>
+<h2 class="painel-titulo">Vendas de máquinas e frota <span>Brasil</span></h2>
+<div class="painel-grid">
+<section class="painel-bloco">
+<h3>Vendas de máquinas para construção</h3>
+<p class="painel-legenda">Mil unidades vendidas por ano</p>
+<div class="painel-grafico"><canvas id="chartVendas"></canvas></div>
+<p class="painel-fonte">Fonte: Estudo Sobratema do Mercado Brasileiro de Equipamentos para Construção (2023 e 2024, via Analoc, 03/01/2025; 2025, via SICEPOT-RS, 02/02/2026). A linha amarela de 2023 é aproximada ("quase 32,3 mil").</p>
+</section>
+<section class="painel-bloco">
+<h3>Frota parada</h3>
+<p class="painel-legenda">% de frota parada, segundo o Estudo Sobratema</p>
+<div class="painel-grafico"><canvas id="chartFrotaParada"></canvas></div>
+<p class="painel-fonte">Fonte: Estudo Sobratema do Mercado Brasileiro de Equipamentos para Construção, via Analoc (03/01/2025).</p>
+</section>
+<section class="painel-bloco">
+<h3>Participação da locação nas vendas por categoria</h3>
+<p class="painel-legenda">Faixa de % das vendas feita para locadoras</p>
+<div class="painel-grafico"><canvas id="chartCategorias"></canvas></div>
+<p class="painel-fonte">Fonte: Estudo Sobratema, via Analoc (03/01/2025). Para guindastes e plataformas aéreas, a Analoc cita 90% a 95% das vendas (Revista Construa, 15/10/2025).</p>
+</section>
+<section class="painel-bloco">
+<h3>Forma de financiamento da compra de máquinas</h3>
+<p class="painel-legenda">% dos entrevistados que utilizaram cada modalidade</p>
+<div class="painel-grafico"><canvas id="chartFinanciamento"></canvas></div>
+<p class="painel-fonte">Fonte: Estudo Sobratema, via Analoc (03/01/2025). Entre as modalidades citadas na fonte, as três de maior participação.</p>
+</section>
+</div>
+
+<h2 class="painel-titulo">Comparativo internacional <span>Brasil e referências</span></h2>
+<div class="painel-grid">
+<section class="painel-bloco">
+<h3>Locação na mecanização</h3>
+<p class="painel-legenda">% da mecanização atendida por máquinas locadas</p>
+<div class="comp" id="compMecanizacao"></div>
+<p class="painel-fonte">Fonte: Sobratema, via SICEPOT-RS (02/02/2026): a locação responde por cerca de 30% da mecanização no Brasil, contra até 60% em mercados globais. Outro indicador, a penetração de 40% (locação vs. propriedade), vem da KPMG e tem definição diferente.</p>
+</section>
+<section class="painel-bloco">
+<h3>Peso do setor no PIB</h3>
+<p class="painel-legenda">% do PIB</p>
+<div class="comp" id="compPib"></div>
+<p class="painel-fonte">Fonte: KPMG, Rental Market Report, divulgado pela Sobratema em 26/03/2026.</p>
+</section>
+</div>
+
+<h2 class="painel-titulo">Fatores que movem o setor <span>citados nas fontes</span></h2>
 <div class="painel-bloco painel-bloco--tabela">
 <div class="tabela-rolagem">
-<table id="tabelaDores">
+<table id="tabelaFatores">
 <thead>
-<tr><th>Posição</th><th>Dor / desafio</th><th>% das menções</th><th>Tendência</th><th>Artigo relacionado</th></tr>
+<tr><th>Fator</th><th>Natureza</th><th>Fonte</th><th>Artigo relacionado</th></tr>
 </thead>
-<tbody id="tbodyDores"></tbody>
+<tbody id="tbodyFatores"></tbody>
 </table>
 </div>
-<p class="painel-fonte">Base: enquete mensal na Rede Oravel • n = <span id="nDores">—</span> respondentes • Atualizado <span id="dataDores">—</span></p>
-</div>
-
-<h2 class="painel-titulo">Maturidade digital das locadoras</h2>
-<div class="painel-grid">
-<section class="painel-bloco">
-<h3>Tecnologias adotadas</h3>
-<p class="painel-legenda">% de locadoras que utilizam cada tecnologia</p>
-<div class="painel-grafico painel-grafico--alto"><canvas id="chartTecnologias"></canvas><div class="sem-amostra" hidden>Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</div></div>
-<p class="painel-fonte">Fonte: Autoavaliação trimestral • n = <span id="nTecnologias">—</span> • Atualizado <span id="dataTecnologias">—</span></p>
-</section>
-<section class="painel-bloco">
-<h3>Distribuição por nível de maturidade</h3>
-<p class="painel-legenda">Modelo de 5 níveis (Inicial → Otimizada)</p>
-<div class="painel-grafico painel-grafico--alto"><canvas id="chartMaturidade"></canvas><div class="sem-amostra" hidden>Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</div></div>
-<p class="painel-fonte">Fonte: Autoavaliação anual • n = <span id="nMaturidade">—</span> • Atualizado <span id="dataMaturidade">—</span></p>
-</section>
 </div>
 
 <div class="painel-metodo">
-<h2>Metodologia e transparência</h2>
+<h2>Fontes e observações</h2>
 <div class="painel-metodo__grid">
 <div>
-<h3>Como os dados são coletados</h3>
+<h3>Fontes consultadas</h3>
 <ul>
-<li>Formulário anônimo, voluntário, declarado pelo respondente</li>
-<li>Campos: porte, região, categoria principal, KPIs do mês anterior</li>
-<li>Nenhum dado identifica a empresa — apenas agregados</li>
-<li>Coleta mensal via Rede Oravel (Discord) e formulário público</li>
+<li><a href="https://www.sobratema.org.br/noticias/index.php?slug=mercado-de-locacao-de-equipamentos-deve-crescer-7-em-2026-ultrapassando-r-52-bilhoes-4565163" rel="noopener">Sobratema (26/03/2026): mercado de locação deve crescer 7% em 2026</a></li>
+<li><a href="https://analoc.org.br/noticias-e-novidades/levantamento-aponta-crescimento-do-mercado/" rel="noopener">Analoc (03/01/2025): levantamento aponta crescimento do mercado</a></li>
+<li><a href="https://sicepotrs.com.br/linha-amarela-recua-1-em-2025-sobre-o-ano-anterior-mercado-de-locacao-alcanca-30-da-mecanizacao-no-brasil/" rel="noopener">SICEPOT-RS (02/02/2026): linha amarela recua 1% em 2025</a></li>
+<li><a href="https://revistaconstrua.com.br/equipamentos/mercado-de-locacao-de-maquinas-avanca-em-profissionalizacao-e-se-prepara-para-novos-desafios/" rel="noopener">Revista Construa (15/10/2025): mercado de locação avança em profissionalização</a></li>
 </ul>
 </div>
 <div>
-<h3>Como são agregados</h3>
+<h3>Como ler os números</h3>
 <ul>
-<li>Mediana (P50) por recorte: porte × região × categoria</li>
-<li>P25 e P75 exibidos como faixa de variação</li>
-<li>Mínimo n=10 por célula para exibir benchmark</li>
-<li>Células com n&lt;10 mostram "amostra insuficiente"</li>
+<li>Faturamento de 2025 é o valor realizado informado no estudo da KPMG; 2026 é projeção</li>
+<li>Os valores por região são estimativas calculadas pela participação regional, não dados medidos por região</li>
+<li>Os estudos usam definições diferentes de penetração; cada indicador indica a sua</li>
 </ul>
 </div>
 <div>
-<h3>Limitações conhecidas</h3>
+<h3>Divergências entre fontes</h3>
 <ul>
-<li>Amostra declaratória — não auditada individualmente</li>
-<li>Viés de seleção: locadoras mais engajadas tendem a responder</li>
-<li>Não representa todo o mercado brasileiro (cobertura geográfica assimétrica)</li>
-<li>Dados brutos não são compartilhados (LGPD + anonimato)</li>
+<li>A Analoc também cita cerca de R$ 70 bilhões movimentados por 50 mil empresas; o estudo da KPMG aponta R$ 49,4 bilhões em 2025. A fonte não explica a diferença de metodologia. O painel usa o estudo da KPMG</li>
+<li>Em outubro de 2025 a Analoc previa retração de 5% a 10% no faturamento; o estudo divulgado em março de 2026 informa R$ 49,4 bilhões para o ano</li>
 </ul>
 </div>
 <div>
-<h3>Governança</h3>
+<h3>Sobre este painel</h3>
 <ul>
-<li>Metodologia completa: <a href="/painel-mercado/metodologia/">/painel-mercado/metodologia/</a></li>
-<li>Histórico de mudanças: <a href="/painel-mercado/historico/">/painel-mercado/historico/</a></li>
-<li>Dúvidas: <a href="mailto:dados@oravel.org">dados@oravel.org</a></li>
-<li>Rebuild mensal automático via GitHub Actions</li>
+<li>Metodologia: <a href="/painel-mercado/metodologia/">/painel-mercado/metodologia/</a></li>
+<li>Histórico de atualizações: <a href="/painel-mercado/historico/">/painel-mercado/historico/</a></li>
+<li>Correções e dúvidas: <a href="mailto:dados@oravel.org">dados@oravel.org</a></li>
 </ul>
 </div>
 </div>
@@ -162,219 +160,185 @@ description: "Indicadores reais do setor: diária média, utilização, disponib
 
 </section>
 
-<!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-// ===== PAINEL DO MERCADO v2.0 — filtros dinâmicos =====
-// Base ILUSTRATIVA: respostas fictícias geradas com semente fixa (sempre os mesmos números).
-// Para dados reais, substituir gerarRespostas() por um carregamento do Firestore/JSON mantendo o mesmo formato.
+// ===== PAINEL DO MERCADO v3 — dados publicados, com fonte =====
+// Todos os números abaixo vêm das fontes citadas em cada gráfico. Não há dados gerados.
 
 const POSTS = [{% for p in collections.posts %}"{{ p.url }}"{% if not loop.last %},{% endif %}{% endfor %}];
-const MIN_N = 10; // metodologia: mínimo de 10 respostas por recorte
-const META = { ultimaAtualizacao: '2026-11-15', proximaColeta: '2026-12-15' };
 
-const PORTES = {
-  pequena: { rot: 'Pequena (≤50)', w: .50, util: 58, disp: 84, manut: 22, mat: 1.9, tech: .7, diaria: .95, payback: 26 },
-  media:   { rot: 'Média (51-200)', w: .35, util: 65, disp: 87, manut: 18, mat: 2.5, tech: 1,  diaria: 1,   payback: 22 },
-  grande:  { rot: 'Grande (200+)', w: .15, util: 68, disp: 90, manut: 15, mat: 3.2, tech: 1.25, diaria: 1.08, payback: 19 }
+// KPMG / Analoc / Sobratema — Rental Market Report (Sobratema, 26/03/2026)
+const FATURAMENTO = { 2025: 49.4, 2026: 52.9 }; // R$ bilhões
+const REGIOES = {
+  sudeste: { rot: 'Sudeste', pct: 60 }, nordeste: { rot: 'Nordeste', pct: 15 }, sul: { rot: 'Sul', pct: 13 },
+  'centro-oeste': { rot: 'Centro-Oeste', pct: 7 }, norte: { rot: 'Norte', pct: 5 }
 };
-const REGIOES = { sudeste: { w: .42, f: 1.08 }, sul: { w: .20, f: 1.03 }, 'centro-oeste': { w: .14, f: 1 }, nordeste: { w: .17, f: .92 }, norte: { w: .07, f: .95 } };
-const CATS = {
-  terraplanagem: { rot: 'Terraplanagem', w: .28, diaria: 420 }, elevacao: { rot: 'Elevação', w: .20, diaria: 260 },
-  compactacao: { rot: 'Compactação', w: .10, diaria: 300 }, geradores: { rot: 'Geradores', w: .14, diaria: 330 },
-  compressores: { rot: 'Compressores', w: .08, diaria: 180 }, mista: { rot: 'Frota mista', w: .20, diaria: 340 }
-};
-const TECNOLOGIAS = [
-  ['Telemetria/GPS', .68], ['ERP de Locação', .54], ['NFe/NFSe Autom.', .48], ['App Cliente', .32],
-  ['QR Code/RFID', .28], ['IA Manut. Preditiva', .12], ['Telemetria Avançada', .08], ['Assinatura Digital', .41]
+
+const FATORES = [
+  { fator: 'Clientes liberam capital por não precisarem comprar equipamentos', tipo: 'Impulso', fonte: 'Sobratema, 26/03/2026' },
+  { fator: 'O locador assume a manutenção e a gestão da frota', tipo: 'Impulso', fonte: 'Sobratema, 26/03/2026', slug: 'preventiva-ou-corretiva-qual-compensa' },
+  { fator: 'Mineração, agronegócio e infraestrutura (concessões e saneamento)', tipo: 'Impulso', fonte: 'SICEPOT-RS (Sobratema), 02/02/2026' },
+  { fator: 'Juros altos e fluxo de caixa, em um setor intensivo em capital', tipo: 'Desafio', fonte: 'Sobratema, 26/03/2026', url: '/ferramentas/viabilidade-frota/' },
+  { fator: 'Escassez de mão de obra especializada', tipo: 'Desafio', fonte: 'Sobratema, 26/03/2026' },
+  { fator: 'Reforma tributária: carga pode subir de 10% para até 14% da receita bruta', tipo: 'Desafio', fonte: 'Analoc, via Revista Construa, 15/10/2025', slug: 'split-payment-o-efeito-no-caixa-da-locadora' },
+  { fator: 'Entrada de fabricantes chineses, que segura os preços dos equipamentos', tipo: 'Fator de mercado', fonte: 'SICEPOT-RS (Sobratema), 02/02/2026' }
 ];
-const NIVEIS = ['Nível 1: Inicial', 'Nível 2: Gerenciada', 'Nível 3: Definida', 'Nível 4: Quantitativa', 'Nível 5: Otimizada'];
-const DORES = [
-  { dor: 'Mão de obra qualificada (operadores/mecânicos)', p: .78, tendencia: 'up' },
-  { dor: 'Custo de manutenção corretiva imprevisível', p: .71, tendencia: 'stable', slug: 'preventiva-ou-corretiva-qual-compensa' },
-  { dor: 'Reforma tributária (IBS/CBS) — incerteza no caixa', p: .65, tendencia: 'up', slug: 'split-payment-o-efeito-no-caixa-da-locadora' },
-  { dor: 'Inadimplência e atraso de pagamento de clientes', p: .58, tendencia: 'stable', slug: 'retorno-e-fidelizacao-o-pos-venda-e-parte-da-venda' },
-  { dor: 'Dificuldade para precificar diária com margem', p: .52, tendencia: 'up', url: '/ferramentas/preco-diaria/' },
-  { dor: 'Falta de peças de reposição / lead time longo', p: .47, tendencia: 'up' },
-  { dor: 'Tecnologia: escolher telemetria que integre com ERP', p: .41, tendencia: 'up', slug: 'telemetria-e-rastreamento-o-que-as-fontes-do-setor-descem' },
-  { dor: 'Retenção de clientes / churn de contratos', p: .38, tendencia: 'stable', slug: 'estrutura-de-uma-proposta-de-locacao-curta-clara-e-com-prazo' },
-  { dor: 'Conformidade trabalhista / NR-11 / NR-12', p: .34, tendencia: 'stable', slug: 'vistoria-na-entrega-e-na-devolucao' },
-  { dor: 'Sucessão familiar / governança na locadora', p: .26, tendencia: 'stable' }
-];
-const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov'];
-const TREND_DISP = [-3,-2,-1,0,0,1,1,0,0,0,0];
 
-function prng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-function gerarRespostas(n) {
-  const r = prng(2026), noise = () => (r() + r() + r() - 1.5) / 0.75; // ~N(0,1) limitado
-  const pick = (obj) => { let x = r(), acc = 0; const keys = Object.keys(obj); for (const k of keys) { acc += obj[k].w; if (x <= acc) return k; } return keys[keys.length - 1]; };
-  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-  return Array.from({ length: n }, () => {
-    const porte = pick(PORTES), regiao = pick(REGIOES), cat = pick(CATS), P = PORTES[porte];
-    return {
-      porte, regiao, cat,
-      diaria: Math.round(CATS[cat].diaria * P.diaria * REGIOES[regiao].f * (1 + noise() * .12)),
-      util: Math.round(clamp(P.util + noise() * 7, 30, 92)),
-      disp: Math.round(clamp(P.disp + noise() * 4, 60, 99)),
-      manut: Math.round(clamp(P.manut + noise() * 4, 5, 40)),
-      payback: Math.round(clamp(P.payback + noise() * 6, 8, 48)),
-      mat: clamp(Math.round(P.mat + noise() * 1), 1, 5),
-      tech: TECNOLOGIAS.map(([, p]) => r() < clamp(p * P.tech, 0, .95)),
-      dores: DORES.map(d => r() < clamp(d.p + (porte === 'grande' ? -.04 : porte === 'pequena' ? .03 : 0), 0, .95)),
-      serie: TREND_DISP.map(t => clamp(P.disp + t + noise() * 1.2, 60, 99))
-    };
-  });
-}
-const RESPOSTAS = gerarRespostas(240);
-
-// ===== Cálculos =====
-const mediana = (a) => { if (!a.length) return null; const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
-const pct = (x, n) => n ? Math.round(x / n * 100) : 0;
-const brl = (v) => 'R$ ' + Math.round(v).toLocaleString('pt-BR');
-
-function filtros() { return { porte: el('filtroPorte').value, regiao: el('filtroRegiao').value, categoria: el('filtroCategoria').value }; }
-function recorte(f, ignorar) {
-  return RESPOSTAS.filter(r => (ignorar === 'porte' || f.porte === 'todos' || r.porte === f.porte)
-    && (f.regiao === 'todas' || r.regiao === f.regiao)
-    && (ignorar === 'categoria' || f.categoria === 'todas' || r.cat === f.categoria));
-}
 const el = (id) => document.getElementById(id);
+const bi = (v) => 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' bi';
+const CLARO = '#B9C8C6', ESCURO = '#2F5D59';
 
-// ===== Renderização =====
-function renderKPIs(sub, n) {
-  const ok = n >= MIN_N, falta = 'Amostra insuficiente';
-  const m = (k) => ok ? mediana(sub.map(r => r[k])) : null;
+// Escala sequencial de uma só cor (verde Oravel), usada no mapa e no mapa de calor
+const hex = (h) => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+function escala(t) { const a = hex('#E6F1EF'), b = hex('#1E4D49'); return 'rgb(' + a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(',') + ')'; }
+const textoSobre = (t) => t > 0.5 ? '#FFFFFF' : '#12201F';
+
+function valor(ano, regiao) { return regiao === 'todas' ? FATURAMENTO[ano] : FATURAMENTO[ano] * REGIOES[regiao].pct / 100; }
+
+function renderKPIs(f) {
+  const reg = f.regiao !== 'todas', rot = reg ? REGIOES[f.regiao].rot : 'Brasil';
   const kpis = [
-    { label: 'Diária média (P50)', value: ok ? brl(m('diaria')) : '—', sub: ok ? 'Diária de 8h' : falta },
-    { label: 'Utilização (P50)', value: ok ? Math.round(m('util')) + '%' : '—', sub: ok ? 'Horas alugadas / disponíveis' : falta },
-    { label: 'Disponibilidade (P50)', value: ok ? Math.round(m('disp')) + '%' : '—', sub: ok ? 'Frota operacional no mês' : falta },
-    { label: 'Manutenção / receita (P50)', value: ok ? Math.round(m('manut')) + '%' : '—', sub: ok ? 'Preventiva + corretiva' : falta },
-    { label: 'Maturidade digital (P50)', value: ok ? 'Nível ' + Math.round(m('mat')) : '—', sub: ok ? 'Escala de 1 a 5' : falta },
-    { label: 'Payback médio (P50)', value: ok ? Math.round(m('payback')) + ' meses' : '—', sub: ok ? 'Aquisição de equipamento' : falta }
+    { label: 'Faturamento do setor', value: bi(valor(f.ano, f.regiao)), sub: `${f.ano === '2025' ? 'Realizado' : 'Projeção'} ${f.ano} · ${rot}${reg ? ' (estimativa)' : ''}` },
+    { label: 'Participação no mercado', value: (reg ? REGIOES[f.regiao].pct : 100) + '%', sub: reg ? `Parcela do ${rot} no faturamento` : 'Todas as regiões' },
+    { label: 'Crescimento projetado 2026', value: '+7%', sub: 'Sobre 2025 · Brasil' },
+    { label: 'Penetração da locação', value: '40%', sub: 'Locação vs. propriedade · KPMG' },
+    { label: 'Empresas no setor', value: '50 mil', sub: '200 mil funcionários · Brasil' },
+    { label: 'Peso no PIB', value: '0,4%', sub: 'EUA 0,26% · Europa 0,15%' }
   ];
   el('kpiCards').innerHTML = kpis.map(k => `
-    <div class="kpi">
-      <div class="kpi__rotulo">${k.label}</div>
-      <div class="kpi__valor">${k.value}</div>
-      <div class="kpi__sub">${k.sub}</div>
-    </div>`).join('');
+    <div class="kpi"><div class="kpi__rotulo">${k.label}</div><div class="kpi__valor">${k.value}</div><div class="kpi__sub">${k.sub}</div></div>`).join('');
 }
 
-const chartInstances = {};
-function grafico(id, tipo, labels, data, opts = {}) {
-  const canvas = el(id), aviso = canvas.parentElement.querySelector('.sem-amostra');
-  if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
-  const vazio = !labels.length;
-  canvas.hidden = vazio; if (aviso) aviso.hidden = !vazio;
-  if (vazio) return;
-  const horizontal = tipo === 'horizontalBar';
-  chartInstances[id] = new Chart(canvas, {
-    type: horizontal ? 'bar' : tipo,
-    data: { labels, datasets: [{
-      label: opts.label || '', data,
-      backgroundColor: opts.cores || (tipo === 'line' ? 'transparent' : '#2F5D59'),
-      borderColor: opts.borda || '#2F5D59', borderWidth: tipo === 'line' ? 2 : 0, borderRadius: tipo === 'line' ? 0 : 2,
-      fill: false, tension: .25, pointRadius: tipo === 'line' ? 3 : 0, pointBackgroundColor: '#2F5D59', barThickness: tipo === 'line' ? undefined : 16, maxBarThickness: 22
-    }] },
+// ---- Gráficos Chart.js: barras arredondadas com gradiente e valores sobre as barras ----
+const instancias = {};
+function gradiente(c1, c2, horizontal) {
+  return (ctx) => { const a = ctx.chart.chartArea; if (!a) return c2;
+    const g = horizontal ? ctx.chart.ctx.createLinearGradient(a.left, 0, a.right, 0) : ctx.chart.ctx.createLinearGradient(0, a.bottom, 0, a.top);
+    g.addColorStop(0, c1); g.addColorStop(1, c2); return g; };
+}
+const rotulosValor = {
+  id: 'rotulosValor',
+  afterDatasetsDraw(chart, _, o) {
+    if (!o || !o.ativo) return;
+    const ctx = chart.ctx; ctx.save(); ctx.font = '600 12px Inter, system-ui, sans-serif'; ctx.fillStyle = '#12201F';
+    const horizontal = chart.options.indexAxis === 'y';
+    chart.data.datasets.forEach((d, di) => {
+      if (o.soDataset != null && di !== o.soDataset) return;
+      chart.getDatasetMeta(di).data.forEach((pt, i) => {
+        const txt = o.formato ? o.formato(i, di) : String(d.data[i]); if (!txt) return;
+        const pos = pt.tooltipPosition ? pt.tooltipPosition() : pt;
+        ctx.textAlign = horizontal ? 'left' : 'center'; ctx.textBaseline = 'middle';
+        if (horizontal) ctx.fillText(txt, (o.xFim ? o.xFim(i, pt) : pt.x) + 8, pt.y);
+        else ctx.fillText(txt, pt.x, pt.y - 12);
+      });
+    });
+    ctx.restore();
+  }
+};
+function grafico(id, tipo, labels, datasets, opts = {}) {
+  if (instancias[id]) instancias[id].destroy();
+  const horizontal = tipo === 'horizontalBar', linha = tipo === 'line';
+  instancias[id] = new Chart(el(id), {
+    type: horizontal ? 'bar' : tipo, plugins: [rotulosValor],
+    data: { labels, datasets: datasets.map(d => ({ borderWidth: 0, borderRadius: linha ? 0 : 8, borderSkipped: false, barThickness: horizontal ? 22 : 28, maxBarThickness: 36, ...d })) },
     options: {
-      responsive: true, maintainAspectRatio: false, indexAxis: horizontal ? 'y' : 'x', animation: { duration: 350 },
-      plugins: { legend: { display: false }, tooltip: { backgroundColor: '#12201F', titleColor: '#fff', bodyColor: '#E8F1EF', padding: 12, cornerRadius: 8, displayColors: false,
-        callbacks: { label: (c) => (opts.prefixo || '') + c.parsed[horizontal ? 'x' : 'y'].toLocaleString('pt-BR') + (opts.sufixo || '') } } },
+      responsive: true, maintainAspectRatio: false, indexAxis: horizontal ? 'y' : 'x', animation: { duration: 500 },
+      layout: { padding: { top: 20, right: horizontal ? 84 : 8 } },
+      plugins: {
+        rotulosValor: { ativo: opts.valores !== false, formato: opts.formato, xFim: opts.xFim, soDataset: opts.soDataset },
+        legend: { display: datasets.length > 1, position: 'bottom', labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, color: '#5B6B69', font: { size: 12 } } },
+        tooltip: { backgroundColor: '#12201F', titleColor: '#fff', bodyColor: '#E8F1EF', padding: 12, cornerRadius: 10, displayColors: datasets.length > 1,
+          callbacks: { label: opts.tooltip || ((c) => (c.dataset.label ? c.dataset.label + ': ' : '') + (opts.prefixo || '') + c.parsed[horizontal ? 'x' : 'y'].toLocaleString('pt-BR') + (opts.sufixo || '')) } }
+      },
       scales: {
-        x: { grid: { display: false }, ticks: { color: '#5B6B69', font: { size: 12 } }, ...(horizontal ? { beginAtZero: true } : {}) },
-        y: { grid: { color: '#EEF1F0' }, border: { display: false }, ticks: { color: '#5B6B69', font: { size: 12 } }, beginAtZero: opts.min0 !== false, ...(opts.max ? { max: opts.max } : {}) }
+        x: { stacked: !!opts.stacked, display: !horizontal || opts.eixo !== false, grid: { display: false }, border: { display: false }, ticks: { color: '#5B6B69', font: { size: 12 }, display: !horizontal }, beginAtZero: true, ...(horizontal && opts.max ? { max: opts.max } : {}) },
+        y: { stacked: !!opts.stacked, grid: { display: !horizontal, color: '#EEF1F0' }, border: { display: false }, ticks: { color: '#5B6B69', font: { size: 12 }, display: true, ...(opts.ticksY ? opts.ticksY : {}) }, beginAtZero: true, ...(!horizontal && opts.max ? { max: opts.max } : {}) }
       }
     }
   });
 }
 
-function renderCharts(f, sub, n) {
-  const ok = n >= MIN_N;
-  ['nDiariaCategoria','nUtilizacaoPorte','nDisponibilidade','nCustoManutencao','nTecnologias','nMaturidade','nDores'].forEach(id => el(id).textContent = n);
-
-  // 1) Diária por categoria (respeita porte e região; se há categoria filtrada, só ela)
-  const catKeys = Object.keys(CATS).filter(k => f.categoria === 'todas' || f.categoria === k);
-  const dc = catKeys.map(k => ({ k, v: recorte(f, 'categoria').filter(r => r.cat === k).map(r => r.diaria) })).filter(g => g.v.length >= MIN_N);
-  grafico('chartDiariaCategoria', 'horizontalBar', dc.map(g => CATS[g.k].rot), dc.map(g => Math.round(mediana(g.v))), { label: 'Diária Média (R$)', prefixo: 'R$ ' });
-
-  // 2) Utilização e 4) Manutenção por porte (respeitam região e categoria)
-  const porteKeys = Object.keys(PORTES).filter(k => f.porte === 'todos' || f.porte === k);
-  const gp = porteKeys.map(k => ({ k, rs: recorte(f, 'porte').filter(r => r.porte === k) })).filter(g => g.rs.length >= MIN_N);
-  grafico('chartUtilizacaoPorte', 'bar', gp.map(g => PORTES[g.k].rot), gp.map(g => Math.round(mediana(g.rs.map(r => r.util)))),
-    { label: 'Utilização Média (%)', sufixo: '%', max: 100, cores: '#2F5D59' });
-  grafico('chartCustoManutencao', 'bar', gp.map(g => PORTES[g.k].rot), gp.map(g => Math.round(mediana(g.rs.map(r => r.manut)))),
-    { label: 'Manutenção / Receita (%)', sufixo: '%', cores: '#6B7C7A' });
-
-  // 3) Disponibilidade mensal
-  grafico('chartDisponibilidade', 'line', ok ? MESES : [], ok ? MESES.map((_, i) => Math.round(mediana(sub.map(r => r.serie[i])) * 10) / 10) : [],
-    { label: 'Disponibilidade Média (%)', sufixo: '%', min0: false });
-
-  // 5) Tecnologias
-  grafico('chartTecnologias', 'horizontalBar', ok ? TECNOLOGIAS.map(t => t[0]) : [], ok ? TECNOLOGIAS.map((_, i) => pct(sub.filter(r => r.tech[i]).length, n)) : [],
-    { label: '% Locadoras', sufixo: '%', max: 100 });
-
-  // 6) Maturidade
-  grafico('chartMaturidade', 'bar', ok ? NIVEIS : [], ok ? NIVEIS.map((_, i) => pct(sub.filter(r => r.mat === i + 1).length, n)) : [],
-    { label: '% Locadoras', sufixo: '%', cores: '#2F5D59' });
+// ---- Mapa (cartograma) e mapa de calor regional ----
+const LAYOUT_MAPA = { norte: 'c1 r1', nordeste: 'c2 r1', 'centro-oeste': 'c1 r2', sudeste: 'c2 r2', sul: 'c2 r3' };
+function renderMapa(f) {
+  const max = 60;
+  el('mapaRegioes').innerHTML = Object.keys(REGIOES).map(k => {
+    const r = REGIOES[k], t = Math.sqrt(r.pct / max), sel = f.regiao === k, dim = f.regiao !== 'todas' && !sel;
+    return `<button type="button" class="tile tile--${LAYOUT_MAPA[k].replace(' ', '-')}${sel ? ' tile--sel' : ''}${dim ? ' tile--dim' : ''}" data-regiao="${k}" aria-pressed="${sel}"
+      style="background:${escala(t)};color:${textoSobre(t)}"><span class="tile__nome">${r.rot}</span><span class="tile__pct">${r.pct}%</span><span class="tile__val">${bi(FATURAMENTO[f.ano] * r.pct / 100)}</span></button>`;
+  }).join('');
+}
+function renderHeat(f) {
+  const anos = ['2025', '2026'], ks = Object.keys(REGIOES), max = FATURAMENTO['2026'];
+  let h = `<div class="heat__linha heat__linha--cab" role="row"><span role="columnheader">Região</span>` +
+    anos.map(a => `<span role="columnheader" class="${f.ano === a ? 'heat__col--sel' : ''}">${a === '2025' ? '2025 (realizado)' : '2026 (projeção)'}</span>`).join('') + '</div>';
+  h += ks.map(k => `<div class="heat__linha${f.regiao === k ? ' heat__linha--sel' : ''}" role="row"><span role="rowheader">${REGIOES[k].rot}</span>` +
+    anos.map(a => { const v = FATURAMENTO[a] * REGIOES[k].pct / 100, t = Math.sqrt(v / max);
+      return `<button type="button" role="cell" class="heat__cel${f.regiao === k && f.ano === a ? ' heat__cel--sel' : ''}" data-regiao="${k}" data-ano="${a}" style="background:${escala(t)};color:${textoSobre(t)}">${bi(v)}</button>`; }).join('') + '</div>').join('');
+  el('heatRegiao').innerHTML = h;
 }
 
-function linkArtigo(d) {
-  const url = d.url || (d.slug && POSTS.find(u => u.endsWith('-' + d.slug + '/')));
-  return url ? `<a class="tabela-link" href="${url}">Ver artigo →</a>` : '<span class="muted-sm">—</span>';
+function renderFiltrados(f) { renderMapa(f); renderHeat(f); }
+
+function renderFixos() {
+  grafico('chartVendas', 'bar', ['2023', '2024', '2025'], [
+    { label: 'Total de máquinas para construção', data: [53.5, 58.2, 56.3], backgroundColor: gradiente('#6E9C96', '#1E4D49') },
+    { label: 'Linha amarela', data: [32.3, 36.6, 34.5], backgroundColor: gradiente('#DCE7E5', '#9FB9B5') }
+  ], { sufixo: ' mil', formato: (i, di) => (di === 0 ? [53.5, 58.2, 56.3] : [32.3, 36.6, 34.5])[i].toLocaleString('pt-BR'), ticksY: { callback: (v) => v } });
+  grafico('chartFrotaParada', 'line', ['2017', '2023', '2024'], [{
+    label: 'Frota parada', data: [57, 19, 11], borderColor: '#1E4D49', borderWidth: 3, tension: 0.35, fill: true,
+    backgroundColor: (ctx) => { const a = ctx.chart.chartArea; if (!a) return 'transparent'; const g = ctx.chart.ctx.createLinearGradient(0, a.top, 0, a.bottom); g.addColorStop(0, 'rgba(30,77,73,.35)'); g.addColorStop(1, 'rgba(30,77,73,0)'); return g; },
+    pointRadius: 5, pointBackgroundColor: '#fff', pointBorderColor: '#1E4D49', pointBorderWidth: 2, pointHoverRadius: 7
+  }], { sufixo: '%', max: 100, formato: (i) => [57, 19, 11][i] + '%' });
+  grafico('chartCategorias', 'horizontalBar', ['Plataformas aéreas', 'Betoneiras'], [
+    { label: 'Mínimo da faixa', data: [90, 70], backgroundColor: gradiente('#6E9C96', '#1E4D49', true), borderRadius: { topLeft: 8, bottomLeft: 8 } },
+    { label: 'Até o máximo da faixa', data: [5, 5], backgroundColor: '#B9C8C6', borderRadius: { topRight: 8, bottomRight: 8 } }
+  ], { max: 100, stacked: true, soDataset: 1, formato: (i) => ['90% a 95%', '70% a 75%'][i], xFim: (i, pt) => pt.x,
+       tooltip: (c) => c.datasetIndex === 0 ? `A partir de ${c.raw}% das vendas` : `Até ${c.dataIndex === 0 ? 95 : 75}% das vendas` });
+  grafico('chartFinanciamento', 'horizontalBar', ['Capital próprio', 'Finame', 'CDC'], [
+    { label: '% dos entrevistados', data: [33, 23, 19], backgroundColor: gradiente('#6E9C96', '#1E4D49', true) }
+  ], { sufixo: '%', max: 50, formato: (i) => [33, 23, 19][i] + '%' });
+  comparativo('compMecanizacao', [{ rot: 'Brasil', v: 30, txt: 'cerca de 30%', forte: true }, { rot: 'Mercados globais', v: 60, txt: 'até 60%' }], 70);
+  comparativo('compPib', [{ rot: 'Brasil', v: 0.4, txt: '0,4%', forte: true }, { rot: 'Estados Unidos', v: 0.26, txt: '0,26%' }, { rot: 'Europa', v: 0.15, txt: '0,15%' }], 0.5);
 }
-function renderDores(sub, n) {
-  const tbody = el('tbodyDores');
-  if (n < MIN_N) { tbody.innerHTML = '<tr><td colspan="5" class="sem-amostra-linha">Amostra insuficiente para este recorte (n &lt; 10). Tente ampliar os filtros.</td></tr>'; return; }
-  const rank = DORES.map((d, i) => ({ ...d, pct: pct(sub.filter(r => r.dores[i]).length, n) })).sort((a, b) => b.pct - a.pct);
-  tbody.innerHTML = rank.map((d, i) => `
-    <tr>
-      <td class="pos">${i + 1}º</td>
-      <td>${d.dor}</td>
-      <td class="num">${d.pct}%</td>
-      <td><span class="tendencia tendencia--${d.tendencia}">${d.tendencia === 'up' ? '↑ Subindo' : '→ Estável'}</span></td>
-      <td>${linkArtigo(d)}</td>
-    </tr>`).join('');
+function comparativo(id, itens, max) {
+  el(id).innerHTML = itens.map(i => `
+    <div class="comp__linha"><span class="comp__rot">${i.rot}</span>
+      <span class="comp__trilho"><span class="comp__barra${i.forte ? ' comp__barra--forte' : ''}" style="width:${Math.round(i.v / max * 100)}%"></span></span>
+      <span class="comp__val">${i.txt}</span></div>`).join('');
 }
 
-function renderMeta() {
-  el('statTotalLocadoras').textContent = RESPOSTAS.length;
-  el('statUltimaAtualizacao').textContent = new Date(META.ultimaAtualizacao + 'T12:00:00').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-  el('proximaColeta').textContent = new Date(META.proximaColeta + 'T12:00:00').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-  const d = new Date(META.ultimaAtualizacao + 'T12:00:00').toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
-  ['dataDiariaCategoria','dataUtilizacaoPorte','dataDisponibilidade','dataCustoManutencao','dataTecnologias','dataMaturidade','dataDores'].forEach(id => el(id).textContent = d);
+function renderFatores() {
+  const link = (d) => { const u = d.url || (d.slug && POSTS.find(p => p.endsWith('-' + d.slug + '/'))); return u ? `<a class="tabela-link" href="${u}">Ver conteúdo →</a>` : '<span class="muted-sm">—</span>'; };
+  el('tbodyFatores').innerHTML = FATORES.map(d => `
+    <tr><td>${d.fator}</td><td><span class="natureza natureza--${d.tipo === 'Desafio' ? 'desafio' : 'neutra'}">${d.tipo}</span></td><td class="fonte-cel">${d.fonte}</td><td>${link(d)}</td></tr>`).join('');
 }
 
-function resumo(f, n) {
-  const partes = [];
-  if (f.porte !== 'todos') partes.push(PORTES[f.porte].rot);
-  if (f.regiao !== 'todas') partes.push(el('filtroRegiao').selectedOptions[0].textContent);
-  if (f.categoria !== 'todas') partes.push(CATS[f.categoria].rot);
-  const alvo = partes.length ? partes.join(' · ') : 'Todos os recortes';
-  el('resumoFiltro').innerHTML = n >= MIN_N
-    ? `Mostrando <strong>${n}</strong> de ${RESPOSTAS.length} locadoras — ${alvo}`
-    : `<strong>${n}</strong> locadora(s) neste recorte (${alvo}) — abaixo do mínimo de ${MIN_N} para exibir benchmark.`;
-  el('resumoFiltro').classList.toggle('painel-resumo--alerta', n < MIN_N);
-}
-
+function filtros() { return { ano: el('filtroAno').value, regiao: el('filtroRegiao').value }; }
 function atualizar() {
-  const f = filtros(), sub = recorte(f), n = sub.length;
-  resumo(f, n); renderKPIs(sub, n); renderCharts(f, sub, n); renderDores(sub, n);
+  const f = filtros(), reg = f.regiao !== 'todas';
+  el('resumoFiltro').innerHTML = `Exibindo <strong>${reg ? REGIOES[f.regiao].rot : 'Brasil'}</strong> · ${f.ano === '2025' ? 'realizado 2025' : 'projeção 2026'}${reg ? ' · valores regionais são estimativas por participação' : ''}`;
+  renderKPIs(f); renderFiltrados(f);
   const q = new URLSearchParams();
-  if (f.porte !== 'todos') q.set('porte', f.porte);
-  if (f.regiao !== 'todas') q.set('regiao', f.regiao);
-  if (f.categoria !== 'todas') q.set('categoria', f.categoria);
+  if (f.ano !== '2025') q.set('ano', f.ano);
+  if (reg) q.set('regiao', f.regiao);
   history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : ''));
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   const q = new URLSearchParams(location.search);
-  [['porte', 'filtroPorte'], ['regiao', 'filtroRegiao'], ['categoria', 'filtroCategoria']].forEach(([k, id]) => {
+  [['ano', 'filtroAno'], ['regiao', 'filtroRegiao']].forEach(([k, id]) => {
     const v = q.get(k), s = el(id); if (v && [...s.options].some(o => o.value === v)) s.value = v;
     s.addEventListener('change', atualizar);
   });
-  el('btnLimparFiltros').addEventListener('click', () => {
-    el('filtroPorte').value = 'todos'; el('filtroRegiao').value = 'todas'; el('filtroCategoria').value = 'todas'; atualizar();
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('.tile, .heat__cel'); if (!t) return;
+    const k = t.dataset.regiao, a = t.dataset.ano;
+    if (a) { el('filtroAno').value = a; el('filtroRegiao').value = k; }
+    else el('filtroRegiao').value = el('filtroRegiao').value === k ? 'todas' : k;
+    atualizar();
   });
-  renderMeta(); atualizar();
+  el('btnLimparFiltros').addEventListener('click', () => { el('filtroAno').value = '2025'; el('filtroRegiao').value = 'todas'; atualizar(); });
+  renderFixos(); renderFatores(); atualizar();
 });
 </script>
