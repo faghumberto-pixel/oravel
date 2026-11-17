@@ -109,7 +109,7 @@ class AIAnalysis extends Model
             }
 
             // Nao aplica scope para analises de prospect (globais)
-            $builder->where(function ($q) use ($user) {
+            $builder->where(function ($q) use ($user, $builder) {
                 $q->where('type', '!=', self::TYPE_PROSPECT)
                     ->where($builder->getModel()->qualifyColumn('tenant_id'), $user->tenant_id)
                     ->orWhere('type', self::TYPE_PROSPECT);
