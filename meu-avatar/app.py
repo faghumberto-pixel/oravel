@@ -35,7 +35,7 @@ def previsualizar(*args):
 
 def gerar_video(avatar_img, cenario_modo, cenario_upload, cenario_prompt, cenario_salvo,
                 bokeh, escala, forca_cor, modelo_recorte,
-                texto, voz_nome, velocidade, tom, volume, movimento, restaurar,
+                texto, voz_nome, velocidade, tom, volume, movimento, restaurar, estatico,
                 progress=gr.Progress()):
     progress(0.1, "Compondo cenario...")
     quadro, info = _imagem_composta(avatar_img, cenario_modo, cenario_upload, cenario_prompt,
@@ -45,13 +45,20 @@ def gerar_video(avatar_img, cenario_modo, cenario_upload, cenario_prompt, cenari
     progress(0.4, "Sintetizando voz...")
     audio = voz.gerar_audio(texto, voz_nome, velocidade, tom, volume)
     progress(0.6, "Animando rosto (pode levar minutos)...")
-    video, metodo = animador.animar(caminho_img, audio, movimento, restaurar)
+    try:
+        video, metodo = animador.animar(caminho_img, audio, movimento, restaurar,
+                                        permitir_estatico=estatico)
+    except animador.AnimadorErro as e:
+        raise gr.Error(str(e), duration=None) from e
     return quadro, str(audio), str(video), f"{info}\nAnimacao: {metodo}"
 
 
-def animar_api(imagem, audio, movimento=True, restaurar=True):
+def animar_api(imagem: str, audio: str, movimento: bool = True, restaurar: bool = True) -> str:
     """Endpoint usado pela instancia local para delegar a animacao ao Colab."""
-    video, _ = animador.animar(imagem, audio, movimento, restaurar)
+    try:
+        video, _ = animador.animar(imagem, audio, movimento, restaurar)
+    except animador.AnimadorErro as e:
+        raise gr.Error(str(e)) from e
     return str(video)
 
 
@@ -86,6 +93,7 @@ def construir() -> gr.Blocks:
                 with gr.Row():
                     mov = gr.Checkbox(value=True, label="Movimentos de cabeca")
                     rest = gr.Checkbox(value=True, label="Restauracao facial (GFPGAN)")
+                estatico = gr.Checkbox(value=False, label="Permitir video estatico (sem animacao do rosto) se o SadTalker nao estiver disponivel")
                 btn_gerar = gr.Button("Gerar Video Falante", variant="primary")
                 info = gr.Textbox(label="Status", interactive=False, lines=2)
                 audio_out = gr.Audio(label="Audio gerado", type="filepath")
@@ -93,7 +101,7 @@ def construir() -> gr.Blocks:
 
         visual = [avatar, modo, upload, prompt, salvo, bokeh, escala, cor, modelo]
         btn_prev.click(previsualizar, visual, [previa, info])
-        btn_gerar.click(gerar_video, visual + [texto, voz_sel, vel, tom, vol, mov, rest],
+        btn_gerar.click(gerar_video, visual + [texto, voz_sel, vel, tom, vol, mov, rest, estatico],
                         [previa, audio_out, video_out, info])
         gr.api(animar_api, api_name="animar_api")
     return demo

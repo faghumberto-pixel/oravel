@@ -12,11 +12,39 @@ from config import TEMP, ffmpeg_path
 VOZES = {
     "Antonio (masculina)": "pt-BR-AntonioNeural",
     "Francisca (feminina)": "pt-BR-FranciscaNeural",
+    "Thalita (feminina, multilingue/expressiva)": "pt-BR-ThalitaMultilingualNeural",
 }
+# Ajuste base por voz (somado aos sliders): deixa a fala do Antonio menos "locutor".
+AJUSTE_BASE = {"pt-BR-AntonioNeural": {"rate": 3, "pitch": -2}}
 
-PAUSA_CURTA_MS = 350   # reticencias
-PAUSA_PADRAO_MS = 700  # [pausa]
-_TOKEN = re.compile(r"\[pausa(?::(\d+(?:\.\d+)?)s?)?\]|\.\.\.|…", re.IGNORECASE)
+# So pausas com duracao explicita viram silencio real; [pausa] e ... viram respiro inline.
+_TOKEN = re.compile(r"\[pausa:(\d+(?:\.\d+)?)s?\]", re.IGNORECASE)
+_PAUSA_SIMPLES = re.compile(r"\[pausa\]", re.IGNORECASE)
+_SIMBOLOS = re.compile(r"[*#_~`\[\]•]")
+_EMOJI = re.compile("[\U0001F000-\U0001FAFF\u2600-\u27BF\uFE0F]")
+
+
+def limpar_texto(texto: str) -> str:
+    """Remove Markdown/simbolos que o TTS leria em voz alta ("asterisco") e normaliza pausas.
+
+    `[pausa]` vira ", ... " (respiro; sem virgula extra se ja houver pontuacao).
+    `[pausa:Ns]` e preservado para virar silencio real em dividir_em_trechos.
+    Mantem letras, numeros e pontuacao natural (. , ! ? : ; - ... % R$ aspas, parenteses).
+    """
+    t = re.sub(r"\[pausa:([^\]]*)\]", lambda m: f"\x01{m.group(1)}\x02", texto, flags=re.IGNORECASE)
+    t = _PAUSA_SIMPLES.sub("\x00", t)
+    t = re.sub(r"(?m)^\s*[-•*]\s+", "", t)               # marcadores de lista
+    t = _EMOJI.sub("", t)
+    t = t.replace("_", " ")                              # snake_case / italico
+    t = _SIMBOLOS.sub("", t)                             # * # ~ ` [ ] •
+    # quebra de linha = fim de frase (sem duplicar pontuacao existente)
+    t = re.sub(r"([.!?:,;])?[ \t]*\n+[ \t]*", lambda m: (m.group(1) or ".") + " ", t)
+    # respiro natural
+    t = re.sub(r"([.!?:,;])?\s*\x00\s*",
+               lambda m: (m.group(1) if m.group(1) else ",") + " ... ", t)
+    t = re.sub(r"\x01([^\x02]*)\x02", lambda m: f"[pausa:{m.group(1)}]", t)
+    t = re.sub(r"\s{2,}", " ", t)
+    return t.strip(" ,")
 
 
 def fmt_rate(pct: int) -> str:
@@ -32,27 +60,19 @@ def fmt_volume(pct: int) -> str:
 
 
 def dividir_em_trechos(texto: str) -> list[tuple[str, int]]:
-    """Quebra o texto em (trecho, pausa_ms_apos).
-
-    Marcacoes: `[pausa]` (700ms), `[pausa:1.5s]` (customizada) e `...` (350ms).
-    As reticencias preservam a entonacao: ficam no trecho como '.'.
-    """
+    """Limpa o texto e quebra em (trecho, pausa_ms_apos) apenas nas pausas `[pausa:Ns]`."""
+    texto = limpar_texto(texto)
     trechos: list[tuple[str, int]] = []
     pos = 0
     for m in _TOKEN.finditer(texto):
-        bruto = m.group(0)
-        pedaco = texto[pos:m.start()].strip()
-        if bruto in ("...", "…"):
-            pedaco = (pedaco + ".").strip() if pedaco else ""
-            pausa = PAUSA_CURTA_MS
-        else:
-            pausa = int(float(m.group(1)) * 1000) if m.group(1) else PAUSA_PADRAO_MS
+        pedaco = texto[pos:m.start()].strip(" ,")
+        pausa = int(float(m.group(1)) * 1000)
         if pedaco:
             trechos.append((pedaco, pausa))
         elif trechos:
             trechos[-1] = (trechos[-1][0], trechos[-1][1] + pausa)
         pos = m.end()
-    resto = texto[pos:].strip()
+    resto = texto[pos:].strip(" ,")
     if resto:
         trechos.append((resto, 0))
     return trechos
@@ -82,7 +102,10 @@ def gerar_audio(texto: str, voz: str = "pt-BR-FranciscaNeural", rate: int = 0,
     trechos = dividir_em_trechos(texto)
     if not trechos:
         raise ValueError("Texto sem conteudo falavel.")
-    r, p, v = fmt_rate(rate), fmt_pitch(pitch), fmt_volume(volume)
+    base = AJUSTE_BASE.get(voz, {})
+    r = fmt_rate(rate + base.get("rate", 0))
+    p = fmt_pitch(pitch + base.get("pitch", 0))
+    v = fmt_volume(volume)
 
     if len(trechos) == 1 and trechos[0][1] == 0:
         asyncio.run(_sintetizar(trechos[0][0], voz, r, p, v, destino))

@@ -9,7 +9,7 @@ da pessoa em cenarios enviados ou gerados por IA.
 |---|---|---|
 | 1. Cenario | `gerador_cenario.py` | Fundo de `cenarios/`, upload ou IA (SDXL-Turbo na GPU -> HF Inference API -> gradiente) + bokeh (GaussianBlur) |
 | 2. Composicao | `compositor.py` | Recorte com `rembg` (`u2net_human_seg` / `isnet-general-use`, alpha matting) e harmonizacao de cor |
-| 3. Voz | `voz.py` | `edge-tts` (Antonio / Francisca), rate/pitch/volume, pausas `[pausa]`, `[pausa:1.5s]`, `...` |
+| 3. Voz | `voz.py` | `edge-tts` (Antonio / Francisca / Thalita multilingue; texto limpo de Markdown), rate/pitch/volume, pausas `[pausa]`, `[pausa:1.5s]`, `...` |
 | 4. Animacao | `animador.py` | SadTalker + GFPGAN; fallbacks abaixo |
 | UI | `app.py` | Painel Gradio |
 
@@ -32,8 +32,10 @@ Na primeira composicao o `rembg` baixa o modelo (~176 MB).
 2. **Sem GPU suficiente, com Colab**: rode `colab_runner.ipynb` (GPU T4); a ultima celula abre
    o app com link publico (`share=True`). Para usar o Colab so como motor de animacao do app
    local: `REMOTE_ANIMADOR_URL=https://xxxx.gradio.live .venv/bin/python app.py`.
-3. **Sem nada disso**: o app gera um video **estatico com o audio, sem sincronia labial**. Serve
-   apenas para validar o fluxo; o status na interface informa isso.
+3. **Sem nada disso**: o app mostra um **erro explicito** com diagnostico (GPU, caminho do SadTalker,
+   checkpoints). So gera video **estatico com audio, sem sincronia labial** se voce marcar
+   "Permitir video estatico". O SadTalker e procurado em `$SADTALKER_DIR`,
+   `/content/meu-avatar/SadTalker`, `./SadTalker` e `./engine/SadTalker`.
 
 Geracao de cenario por IA sem GPU usa a HF Inference API (defina `HF_TOKEN` para evitar limites);
 se falhar, cai num gradiente que **nao** interpreta o prompt.

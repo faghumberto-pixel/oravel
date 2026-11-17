@@ -12,11 +12,39 @@ def test_importacoes():
     import animador, app, compositor, config, gerador_cenario, voz  # noqa: F401, E401
 
 
-def test_pausas():
+def test_limpeza_e_pausas():
     import voz
-    t = voz.dividir_em_trechos("Ola. [pausa] Tudo bem... sim [pausa:1.5s] fim")
-    assert [p for _, p in t] == [700, 350, 1500, 0]
-    assert t[1][0].endswith(".")
+    sujo = "# Ola\n**Tudo** bem? [pausa] Vamos `falar_de` ~isso~ • sim [pausa:1.5s] fim"
+    limpo = voz.limpar_texto(sujo)
+    assert not any(c in limpo for c in "*#_~`•")
+    assert "[pausa]" not in limpo and "..." in limpo
+    trechos = voz.dividir_em_trechos(sujo)
+    assert [p for _, p in trechos] == [1500, 0]
+
+
+def test_vozes():
+    import voz
+    assert "pt-BR-ThalitaMultilingualNeural" in voz.VOZES.values()
+    assert "pt-BR-AntonioNeural" in voz.AJUSTE_BASE
+
+
+def test_animador_sem_gpu_nao_gera_estatico_em_silencio(tmp_path):
+    import animador
+    img = tmp_path / "i.png"; Image.new("RGB", (64, 64)).save(img)
+    aud = tmp_path / "a.mp3"; aud.write_bytes(b"x")
+    if animador.detectar_gpu()["suficiente"] and animador.sadtalker_instalado():
+        pytest.skip("ambiente com GPU e SadTalker")
+    with pytest.raises(animador.AnimadorErro) as e:
+        animador.animar(img, aud)
+    assert "Diagnostico" in str(e.value)
+
+
+def test_localizar_sadtalker(tmp_path, monkeypatch):
+    import animador
+    (tmp_path / "inference.py").write_text("")
+    monkeypatch.setenv("SADTALKER_DIR", str(tmp_path))
+    assert animador.localizar_sadtalker() == tmp_path.resolve()
+    assert not animador.checkpoints_ok(tmp_path)
 
 
 def test_bokeh_e_composicao():
