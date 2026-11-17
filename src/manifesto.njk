@@ -6,82 +6,255 @@ title: "Manifesto Oravel"
 description: "Nosso compromisso com quem aluga equipamentos: independência editorial, fontes primárias, zero propaganda e conhecimento que gera decisão."
 ---
 
-<header class="tema-hero">
-<div class="container" style="max-width:800px">
-<div class="breadcrumb"><a href="/">Início</a> / Manifesto</div>
-<h1 class="page-title">Manifesto Oravel</h1>
-<p>Conhecimento para quem administra locadoras de equipamentos. Independente, fundamentado e gratuito.</p>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+/* Manifesto: coluna editorial unica, secoes separadas por regua, grade de 6 frentes.
+   Todo o CSS e escopado em .manifesto-page para nao afetar outras paginas. */
+.manifesto-page{
+  --bg:#f2f5f7; --surface:#ffffff; --ink:#10212e; --muted:#51636f;
+  --accent:#0a6b6b; --signal:#c9561f; --line:#d3dce2;
+  --display:'Newsreader',Georgia,serif; --body:'IBM Plex Sans',system-ui,sans-serif;
+  background:var(--bg); color:var(--ink); font-family:var(--body); font-size:18px; line-height:1.65;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .manifesto-page{
+    --bg:#0c1820; --surface:#13242f; --ink:#e8eff3; --muted:#9bb0bc;
+    --accent:#4fc4bd; --signal:#f08a57; --line:#25404f;
+  }
+}
+:root[data-theme="dark"] .manifesto-page{
+  --bg:#0c1820; --surface:#13242f; --ink:#e8eff3; --muted:#9bb0bc;
+  --accent:#4fc4bd; --signal:#f08a57; --line:#25404f;
+}
+.manifesto-page *{box-sizing:border-box}
+.manifesto-page .mp-wrap{max-width:760px;margin:0 auto;padding:0 20px}
+.manifesto-page .mp-hero{padding:72px 0 56px}
+.manifesto-page .mp-tag{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--signal);font-weight:600;margin:0 0 18px}
+.manifesto-page h1{font-family:var(--display);font-weight:600;font-size:clamp(36px,6vw,58px);line-height:1.08;letter-spacing:normal;color:var(--ink);margin:0 0 22px;text-wrap:balance}
+.manifesto-page .mp-lead{font-size:21px;color:var(--muted);margin:0;max-width:60ch}
+.manifesto-page section{padding:48px 0;border-top:1px solid var(--line)}
+.manifesto-page h2{font-family:var(--display);font-weight:600;font-size:clamp(26px,4vw,34px);line-height:1.2;letter-spacing:normal;color:var(--ink);margin:0 0 20px;text-wrap:balance}
+.manifesto-page h3{font-family:var(--body);font-size:17px;line-height:1.4;letter-spacing:normal;color:var(--ink);margin:0 0 6px;font-weight:600}
+.manifesto-page p{margin:0 0 16px;max-width:65ch}
+.manifesto-page .mp-after{margin-top:24px}
+.manifesto-page .mp-after-sm{margin-top:20px}
+.manifesto-page .mp-after-xs{margin-top:16px}
+.manifesto-page .mp-scatter{list-style:none;padding:0;margin:0 0 20px;display:grid;gap:8px}
+.manifesto-page .mp-scatter li{padding:10px 14px;background:var(--surface);border-left:3px solid var(--line);color:var(--muted)}
+.manifesto-page .mp-negate{font-family:var(--display);font-size:clamp(28px,5vw,40px);line-height:1.25;margin:0 0 6px}
+.manifesto-page .mp-negate.last{color:var(--accent)}
+.manifesto-page .mp-quote{margin:8px 0 0;padding:28px 24px;background:var(--surface);border-left:5px solid var(--signal);font-family:var(--display);font-size:clamp(22px,3.4vw,28px);line-height:1.35;font-weight:600}
+.manifesto-page .mp-checklist{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.manifesto-page .mp-checklist li{display:flex;gap:12px;align-items:baseline}
+.manifesto-page .mp-checklist li::before{content:"";flex:none;width:8px;height:8px;background:var(--accent);transform:translateY(-1px)}
+.manifesto-page .mp-principles{display:grid;gap:16px;margin-top:8px}
+.manifesto-page .mp-principle{display:grid;grid-template-columns:48px 1fr;gap:14px;padding:20px;background:var(--surface);border:1px solid var(--line)}
+.manifesto-page .mp-num{font-family:var(--display);font-size:34px;line-height:1;color:var(--accent);font-weight:600}
+.manifesto-page .mp-principle p{margin:0 0 8px;color:var(--muted)}
+.manifesto-page .mp-principle p:last-child{margin:0}
+.manifesto-page .mp-fronts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.manifesto-page .mp-front{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--accent);padding:20px}
+.manifesto-page .mp-front:nth-child(3n+2){border-top-color:var(--signal)}
+.manifesto-page .mp-front h3{font-family:var(--display);font-size:22px;margin-bottom:10px}
+.manifesto-page .mp-front .mp-kw{font-size:14px;color:var(--muted);margin:0 0 10px}
+.manifesto-page .mp-front p.d{margin:0;font-size:16px}
+.manifesto-page .mp-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.manifesto-page .mp-chips li{padding:6px 14px;border:1px solid var(--line);background:var(--surface);font-size:15px}
+.manifesto-page .mp-maint{background:var(--surface);border:1px solid var(--line);padding:24px}
+.manifesto-page .mp-maint .mp-split{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:16px 0}
+.manifesto-page .mp-maint .mp-split div{padding:14px;background:var(--bg);border-left:3px solid var(--accent)}
+.manifesto-page .mp-maint .mp-split div:last-child{border-left-color:var(--signal)}
+.manifesto-page .mp-maint .mp-split p,.manifesto-page .mp-maint .mp-last-p{margin:0}
+.manifesto-page .mp-verbs{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0;padding:0;list-style:none}
+.manifesto-page .mp-verbs li{font-family:var(--display);font-size:22px;padding:4px 16px;border-bottom:3px solid var(--signal)}
+.manifesto-page .mp-welcome{padding:56px 0 72px;text-align:left;border-top:1px solid var(--line)}
+.manifesto-page .mp-welcome strong.big{display:block;font-family:var(--display);font-size:clamp(30px,5vw,44px);line-height:1.15;margin-bottom:12px}
+.manifesto-page .mp-welcome em{color:var(--muted);font-style:italic;font-family:var(--display);font-size:20px}
+.manifesto-page a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media (max-width:420px){.manifesto-page .mp-principle{grid-template-columns:1fr}.manifesto-page{font-size:17px}}
+</style>
+
+<div class="manifesto-page">
+<div class="mp-wrap">
+
+<div class="mp-hero">
+  <p class="mp-tag">Nossa estratégia</p>
+  <h1>Centro Brasileiro de Inteligência para Locadoras de Equipamentos</h1>
+  <p class="mp-lead">Conhecimento para quem administra locadoras. Inteligência para quem constrói o futuro do setor.</p>
 </div>
-</header>
 
-<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:800px">
-
-<div style="display:flex;flex-wrap:wrap;gap:16px;margin-bottom:40px;padding:24px;background:#fbfaf6;border-radius:14px;border:1px solid var(--cinza-claro)">
-<div style="flex:1 1 280px;min-width:0">
-<div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--texto-secundario);margin-bottom:8px">Princípio norteador</div>
-<p style="margin:0;font-size:16px;color:var(--texto-escuro);line-height:1.6"><strong>Quem aluga equipamento toma decisão todo dia.</strong> Decide se compra ou aluga, se faz preventiva ou corre risco, se renova frota ou aperta cinto. Essas decisões valem dinheiro — muito dinheiro. E quem decide merece informação à altura.</p>
-</div>
-</div>
-
-<article class="post-body" style="font-size:18px;line-height:1.85;color:var(--texto-escuro)">
-
-<h2 style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,1.75rem);line-height:1.25;font-weight:600;border-left:4px solid var(--azul-petroleo);border-radius:0 8px 8px 0;padding:12px 20px;margin:2.5em 0 1em;background:#e7f1ef;color:var(--texto-escuro)">Por que existimos</h2>
-
-<p>O mercado de locação de equipamentos no Brasil move bilhões por ano. É pulverizado: milhares de locadoras pequenas e médias, poucas grandes, nenhuma associação com penetração nacional forte. Quem opera no dia a dia não tem tempo para ler legislação tributária, comparar relatórios da ARA e da ERA, testar telemetria ou estruturar uma proposta comercial que não vaze margem.</p>
-
-<p>O oravel.org nasceu para preencher essa lacuna. Não somos veículo de notícias. Não somos blog de fornecedor. Somos <strong>centro de inteligência aplicada à locação</strong>.</p>
-
-<h2 style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,1.75rem);line-height:1.25;font-weight:600;border-left:4px solid var(--azul-petroleo);border-radius:0 8px 8px 0;padding:12px 20px;margin:2.5em 0 1em;background:#e7f1ef;color:var(--texto-escuro)">O que defendemos</h2>
-
-<ul style="margin:0 0 1.5em 1.4em;padding-left:1.4em">
-<li style="margin:.6em 0"><strong>Independência editorial.</strong> O conteúdo não é propaganda — nem da Oravel, nem de terceiros. Se um fornecedor aparece, é como fonte citada, nunca como anunciante disfarçado.</li>
-<li style="margin:.6em 0"><strong>Fonte primária, sempre.</strong> Lei, decreto, portaria, relatório de associação setorial, pesquisa de mercado publicada. Blog de concorrente ou release de imprensa só entram sinalizados e contextualizados.</li>
-<li style="margin:.6em 0"><strong>Zero número inventado.</strong> Quando não há dado público, o espaço fica marcado como "a preencher". Não chutamos, não extrapolamos, não criamos benchmark falso.</li>
-<li style="margin:.6em 0"><strong>Conteúdo de fora, traduzido e adaptado.</strong> Não copiamos. Resumimos, citamos a fonte original e explicamos o que vale para a realidade brasileira — legislação, cultura, escala, capital.</li>
-<li style="margin:.6em 0"><strong>Revisão datada.</strong> Todo tema indica quando foi revisado pela última vez. Reforma tributária muda todo mês; tecnologia, todo trimestre. Você sabe a frescura do que lê.</li>
-<li style="margin:.6em 0"><strong>Gratuidade real.</strong> Nenhum artigo, ferramenta, planilha ou PDF exige cadastro para ler. A comunidade (Rede Oravel) é opcional e adiciona troca entre pares, não conteúdo bloqueado.</li>
-</ul>
-
-<h2 style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,1.75rem);line-height:1.25;font-weight:600;border-left:4px solid var(--azul-petroleo);border-radius:0 8px 8px 0;padding:12px 20px;margin:2.5em 0 1em;background:#e7f1ef;color:var(--texto-escuro)">Como operamos</h2>
-
-<h3 style="font-family:var(--font-titulo);font-size:22px;font-weight:600;border-left:3px solid var(--azul-petroleo);padding:4px 0 4px 14px;margin:1.8em 0 .8em;color:var(--texto-escuro)">Seis frentes de conhecimento</h3>
-<ol style="margin:0 0 1.5em 1.4em;padding-left:1.4em;line-height:1.8">
-<li style="margin:.5em 0"><strong>Reforma tributária</strong> — IBS, CBS, créditos, split payment, contratos. A lei explicada para a rotina da locadora.</li>
-<li style="margin:.5em 0"><strong>Tecnologia na locação</strong> — Telemetria, rastreamento, QR Code, NFe, IA na operação. O que as fontes do setor dizem e como decidir.</li>
-<li style="margin:.5em 0"><strong>Lá fora</strong> — Resumos em português de relatórios e práticas dos EUA, Europa e América Latina, com fonte à mostra e nota de adaptação.</li>
-<li style="margin:.5em 0"><strong>Vendas em locadoras</strong> — Balcão, proposta, preço da diária, retorno ao cliente, fidelização. Conhecimento de vendas, não propaganda.</li>
-<li style="margin:.5em 0"><strong>Gestão e operação</strong> — Manutenção, disponibilidade, estoque, financeiro, indicadores. Onde o resultado da locadora pequena e média se decide.</li>
-<li style="margin:.5em 0"><strong>Comunidade (Rede Oravel)</strong> — Grupo moderado de donos, gestores e profissionais. Sem spam, sem venda, foco em aprendizado.</li>
-</ol>
-
-<h3 style="font-family:var(--font-titulo);font-size:22px;font-weight:600;border-left:3px solid var(--azul-petroleo);padding:4px 0 4px 14px;margin:1.8em 0 .8em;color:var(--texto-escuro)">Três camadas de entrega</h3>
-<ol style="margin:0 0 1.5em 1.4em;padding-left:1.4em;line-height:1.8">
-<li style="margin:.5em 0"><strong>Artigos de referência</strong> — Completos, fontes citadas, leitura de 10–20 min. Para estudar e guardar.</li>
-<li style="margin:.5em 0"><strong>Ferramentas gratuitas</strong> — Calculadoras, simuladores, checklists. Para usar na hora, sem cadastro.</li>
-<li style="margin:.5em 0"><strong>Inteligência de mercado</strong> — Painel de indicadores, benchmarks anônimos, publicações trimestrais do Observatório Oravel. Para decidir com dados, não achismo.</li>
-</ol>
-
-<h2 style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,1.75rem);line-height:1.25;font-weight:600;border-left:4px solid var(--azul-petroleo);border-radius:0 8px 8px 0;padding:12px 20px;margin:2.5em 0 1em;background:#e7f1ef;color:var(--texto-escuro)">O que não fazemos</h2>
-
-<ul style="margin:0 0 1.5em 1.4em;padding-left:1.4em">
-<li style="margin:.6em 0">Não vendemos software, consultoria, curso ou assinatura dentro do conteúdo.</li>
-<li style="margin:.6em 0">Não publicamos "publieditorial" disfarçado de artigo.</li>
-<li style="margin:.6em 0">Não coletamos dados para revender.</li>
-<li style="margin:.6em 0">Não fazemos lobby — apenas explicamos o que a legislação diz e como afeta a locadora.</li>
-</ul>
-
-<h2 style="fontamily:'Newsreader',Georgia,serif;font-size:clamp(1.25rem,2.4vw,1.75rem);line-height:1.25;font-weight:600;border-left:4px solid var(--azul-petroleo);border-radius:0 8px 8px 0;padding:12px 20px;margin:2.5em 0 1em;background:#e7f1ef;color:var(--texto-escuro)">Quem sustenta</h2>
-
-<p>O oravel.org é uma iniciativa da <strong>Oravel Desenvolvimento de Software LTDA</strong> (CNPJ 65.707.953/0001-30), empresa de tecnologia para locadoras. Financiamos o portal porque entendemos que <strong>locadora mais informada é cliente melhor, mercado mais saudável e setor mais forte</strong> — o que volta para nós como oportunidade de negócio legítima, não como dependência de propaganda.</p>
-
-<p>A regra é clara: o portal paga a conta, o conteúdo manda no portal.</p>
-
-<h2 style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,1.75rem);line-height:1.25;font-weight:600;border-left:4px solid var(--azul-petroleo);border-radius:0 8px 8px 0;padding:12px 20px;margin:2.5em 0 1em;background:#e7f1ef;color:var(--texto-escuro)">Compromisso público</h2>
-
-<p>Este manifesto não é decorativo. Ele norteia decisões editoriais diárias. Se você encontrar algo que o contrarie — um artigo sem fonte, um número sem lastro, um viés de fornecedor — <a href="mailto:contato@oravel.org" style="color:var(--azul-petroleo);text-decoration:underline">escreva para nós</a>. Corrigimos, indicamos a mudança e agradecemos.</p>
-
-<p style="margin-top:2.5em;padding-top:1.5em;border-top:1px solid var(--cinza-claro);font-style:italic;color:var(--texto-secundario)">Última revisão: {{ "now" | dateISO | dateBr }}. Próxima revisão programada: trimestral.</p>
-
-</article>
-
+<section id="porque">
+  <h2>Por que a Oravel.org existe?</h2>
+  <p>O mercado brasileiro de locação de equipamentos cresceu de forma extraordinária nos últimos anos. Novas empresas surgiram, a tecnologia evoluiu, a legislação tornou-se mais complexa e a competitividade aumentou. No entanto, enquanto o setor amadureceu rapidamente, o acesso ao conhecimento permaneceu fragmentado.</p>
+  <p>O empresário precisa buscar informações em dezenas de lugares diferentes:</p>
+  <ul class="mp-scatter">
+    <li>Uma notícia sobre tributação em um portal.</li>
+    <li>Um artigo sobre inteligência artificial em outro.</li>
+    <li>Uma pesquisa internacional em inglês.</li>
+    <li>Um vídeo no YouTube.</li>
+    <li>Uma conversa em um grupo de WhatsApp.</li>
+  </ul>
+  <p>Não existe hoje um ambiente que concentre, organize e traduza todo esse conhecimento para a realidade da locadora brasileira.</p>
+  <p>Foi exatamente para preencher essa lacuna que nasceu a <strong>Oravel.org</strong>.</p>
 </section>
+
+<section>
+  <p class="mp-negate">Não somos um blog.</p>
+  <p class="mp-negate">Também não somos uma revista.</p>
+  <p class="mp-negate mp-last">Muito menos um canal de propaganda.</p>
+  <p class="mp-after">A Oravel.org foi criada para ser um <strong>Centro Brasileiro de Inteligência para Locadoras de Equipamentos</strong>. Nosso trabalho é pesquisar, traduzir, organizar e produzir conhecimento que ajude empresários e gestores a tomar decisões melhores.</p>
+  <p>Acreditamos que uma empresa cresce quando as pessoas que a administram aprendem continuamente. Por isso, nosso compromisso é com o conhecimento, não com a publicidade.</p>
+</section>
+
+<section>
+  <h2>O conhecimento é o nosso produto</h2>
+  <p>Enquanto empresas de tecnologia desenvolvem sistemas, nós desenvolvemos conhecimento. Isso significa acompanhar diariamente:</p>
+  <ul class="mp-checklist">
+    <li>mudanças na legislação;</li>
+    <li>novas tecnologias;</li>
+    <li>pesquisas internacionais;</li>
+    <li>tendências de mercado;</li>
+    <li>indicadores;</li>
+    <li>boas práticas;</li>
+    <li>ferramentas de gestão;</li>
+    <li>experiências reais das locadoras.</li>
+  </ul>
+  <p class="mp-after-sm">Nosso papel é transformar informação dispersa em conhecimento aplicável.</p>
+</section>
+
+<section>
+  <h2>Nossa filosofia</h2>
+  <p>Existe uma frase que resume tudo o que acreditamos.</p>
+  <blockquote class="mp-quote">Empresas melhores são construídas por decisões melhores. E decisões melhores dependem de informação de qualidade.</blockquote>
+  <p class="mp-after-xs">É exatamente isso que buscamos entregar.</p>
+</section>
+
+<section id="compromisso">
+  <h2>Nosso compromisso</h2>
+  <p>Todo conteúdo publicado na Oravel.org segue cinco princípios.</p>
+  <div class="mp-principles">
+    <article class="mp-principle">
+      <div class="mp-num">1</div>
+      <div>
+        <h3>Utilidade</h3>
+        <p>Publicamos apenas conteúdos que possam ajudar alguém a administrar melhor sua empresa.</p>
+        <p>Não produzimos conteúdo apenas para gerar visitas. Produzimos conhecimento para resolver problemas.</p>
+      </div>
+    </article>
+    <article class="mp-principle">
+      <div class="mp-num">2</div>
+      <div>
+        <h3>Credibilidade</h3>
+        <p>Sempre que possível citamos as fontes utilizadas: pesquisas, universidades, fabricantes, associações, institutos e relatórios internacionais.</p>
+        <p>Queremos que o leitor saiba exatamente de onde veio cada informação.</p>
+      </div>
+    </article>
+    <article class="mp-principle">
+      <div class="mp-num">3</div>
+      <div>
+        <h3>Linguagem simples</h3>
+        <p>A gestão já é suficientemente complexa. Não faz sentido complicar também a comunicação.</p>
+        <p>Traduzimos assuntos técnicos para uma linguagem prática.</p>
+      </div>
+    </article>
+    <article class="mp-principle">
+      <div class="mp-num">4</div>
+      <div>
+        <h3>Aplicação prática</h3>
+        <p>Nosso objetivo não é apenas explicar. É mostrar como aquele conhecimento pode ser aplicado dentro da rotina da locadora.</p>
+      </div>
+    </article>
+    <article class="mp-principle">
+      <div class="mp-num">5</div>
+      <div>
+        <h3>Independência intelectual</h3>
+        <p>Não escrevemos para promover produtos. Escrevemos para fortalecer o mercado.</p>
+        <p>Quando uma tecnologia faz sentido, mostramos. Quando ainda não faz, também mostramos. Nosso compromisso é com a realidade do empresário.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="frentes">
+  <h2>As seis frentes de conhecimento</h2>
+  <p>Para organizar esse universo de informações, estruturamos a Oravel.org em seis grandes áreas.</p>
+  <div class="mp-fronts">
+    <article class="mp-front">
+      <h3>Gestão da Locadora</h3>
+      <p class="mp-kw">Indicadores · Manutenção · Financeiro · Disponibilidade · Operação · Contratos · Logística</p>
+      <p class="mp-d">Tudo aquilo que influencia diretamente a eficiência da empresa.</p>
+    </article>
+    <article class="mp-front">
+      <h3>Comercial e Crescimento</h3>
+      <p class="mp-kw">Vender melhor · Formar preços · Fidelizar clientes · Melhorar atendimento · Aumentar rentabilidade</p>
+      <p class="mp-d">Mais do que vender, ensinar a crescer.</p>
+    </article>
+    <article class="mp-front">
+      <h3>Tecnologia Aplicada</h3>
+      <p class="mp-kw">Inteligência Artificial · Telemetria · QR Code · Automação · Integrações</p>
+      <p class="mp-d">Não falamos sobre tecnologia pela tecnologia. Falamos sobre como ela melhora resultados, sempre ligada à operação da locadora.</p>
+    </article>
+    <article class="mp-front">
+      <h3>Mercado e Tendências</h3>
+      <p class="mp-kw">Brasil e mundo · Pesquisas traduzidas · Movimentos do setor</p>
+      <p class="mp-d">Mostramos como outros mercados estão evoluindo e antecipamos tendências.</p>
+    </article>
+    <article class="mp-front">
+      <h3>Legislação e Tributação</h3>
+      <p class="mp-kw">Reforma Tributária · Obrigações fiscais · Contratos · Normas</p>
+      <p class="mp-d">Explicamos mudanças legais de forma objetiva, voltadas para quem precisa administrar uma empresa.</p>
+    </article>
+    <article class="mp-front">
+      <h3>Comunidade e Inteligência</h3>
+      <p class="mp-kw">Empresários · Gestores · Profissionais</p>
+      <p class="mp-d">O conhecimento nasce das experiências compartilhadas. Construiremos uma comunidade que acredita que aprender juntos fortalece todo o setor.</p>
+    </article>
+  </div>
+</section>
+
+<section>
+  <h2>Muito além de artigos</h2>
+  <p>A Oravel.org não será apenas um portal de notícias. Ela reunirá diversos formatos de conhecimento, tudo em um único ambiente.</p>
+  <ul class="mp-chips">
+    <li>Artigos</li><li>Guias</li><li>Pesquisas</li><li>Relatórios</li>
+    <li>Ferramentas gratuitas</li><li>Glossários</li><li>Calculadoras</li><li>Newsletter</li>
+    <li>Estudos internacionais traduzidos</li><li>Indicadores</li><li>Eventos</li><li>Comunidade</li>
+  </ul>
+</section>
+
+<section id="visao">
+  <h2>Nossa visão de futuro</h2>
+  <p>Queremos que, quando um empresário tiver uma dúvida sobre gestão, tecnologia, tributação ou operação de uma locadora, ele saiba exatamente onde encontrar uma resposta confiável.</p>
+  <p>Queremos que a Oravel.org seja reconhecida como a principal referência brasileira em inteligência para o mercado de locação de equipamentos.</p>
+  <p>Não porque sabemos tudo. Mas porque temos o compromisso de aprender continuamente e compartilhar esse conhecimento com quem faz esse mercado acontecer.</p>
+</section>
+
+<section>
+  <h2>Quem mantém a Oravel.org</h2>
+  <div class="mp-maint">
+    <p>A Oravel.org é uma iniciativa mantida pela Oravel, mas possui uma missão própria.</p>
+    <div class="mp-split">
+      <div><h3>Oravel</h3><p>Desenvolve tecnologia para o setor.</p></div>
+      <div><h3>Oravel.org</h3><p>Desenvolve conhecimento para o setor.</p></div>
+    </div>
+    <p class="mp-last-p">As duas iniciativas compartilham o mesmo propósito: <strong>fortalecer as locadoras brasileiras por meio da inovação, da informação e da boa gestão.</strong></p>
+  </div>
+</section>
+
+<section id="convite">
+  <h2>Um convite</h2>
+  <p>Acreditamos que conhecimento só tem valor quando é compartilhado. Por isso, convidamos você a fazer parte desta iniciativa.</p>
+  <ul class="mp-verbs">
+    <li>Leia.</li><li>Questione.</li><li>Contribua.</li><li>Compartilhe experiências.</li><li>Sugira temas.</li><li>Participe das pesquisas.</li>
+  </ul>
+  <p>Ajude-nos a construir, juntos, a maior base de conhecimento sobre locação de equipamentos do Brasil.</p>
+  <p>Porque empresas mais fortes constroem um mercado mais forte. E um mercado mais forte beneficia todos que fazem parte dele.</p>
+</section>
+
+<div class="mp-welcome">
+  <strong class="mp-big">Bem-vindo à Oravel.org.</strong>
+  <em>Conhecimento para quem administra locadoras. Inteligência para quem constrói o futuro do setor.</em>
+</div>
+
+</div>
+</div>
